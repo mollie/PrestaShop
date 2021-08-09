@@ -27,10 +27,13 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\OrderStatusUtility;
+use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TransactionUtility;
+use MolPaymentMethod;
 use Order;
 use OrderDetail;
 use OrderPayment;
@@ -56,14 +59,21 @@ class TransactionService
      */
     private $feeService;
 
+    /**
+     * @var PaymentMethodRepositoryInterface
+     */
+    private $paymentMethodRepository;
+
     public function __construct(
         Mollie $module,
         OrderStatusService $orderStatusService,
-        OrderFeeService $feeService
+        OrderFeeService $feeService,
+        PaymentMethodRepositoryInterface$paymentMethodRepository
     ) {
         $this->module = $module;
         $this->orderStatusService = $orderStatusService;
         $this->feeService = $feeService;
+        $this->paymentMethodRepository = $paymentMethodRepository;
     }
 
     /**
@@ -224,6 +234,27 @@ class TransactionService
             true,
             Cart::BOTH
         );
+        $paymentFee = 0;
+
+        if ($apiPayment->resource === Config::MOLLIE_API_STATUS_PAYMENT) {
+            $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+            $paymentMethod = new MolPaymentMethod(
+                $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment)
+            );
+            $paymentFee = PaymentFeeUtility::getPaymentFee($paymentMethod, $originalAmount);
+        } else {
+            /** @var Mollie\Api\Resources\OrderLine $line */
+            foreach ($apiPayment->lines() as $line) {
+                if ($line->sku === Config::PAYMENT_FEE_SKU) {
+                    $paymentFee = $line->totalAmount->value;
+                }
+            }
+        }
+
+        if ((int)($originalAmount + $paymentFee) !== (int)$apiPayment->amount->value) {
+            $apiPayment->cancel();
+            throw new \Exception('Wrong cart amount');
+        }
 
         $this->module->validateOrder(
             (int) $cartId,
@@ -232,7 +263,6 @@ class TransactionService
             isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name
         );
 
-        $paymentFee = (new Number($apiPayment->amount->value))->minus((new Number((string) $originalAmount)))->toPrecision(2);
         $orderId = Order::getOrderByCartId((int) $cartId);
         if ($paymentFee === 0) {
             $this->orderStatusService->setOrderStatus($orderId, $orderStatus);

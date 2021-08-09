@@ -169,6 +169,7 @@ services:
       - '@mollie'
       - '@Mollie\Service\OrderStatusService'
       - '@Mollie\Service\OrderFeeService'
+      - '@Mollie\Repository\PaymentMethodRepository'
 
   Mollie\Service\MolliePaymentMailService:
     class: Mollie\Service\MolliePaymentMailService
