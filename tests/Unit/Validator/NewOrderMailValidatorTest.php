@@ -80,7 +80,7 @@ class NewOrderMailValidatorTest extends UnitTestCase
                 'sendNewOrder' => false,
                 'paidOrderState' => 55,
                 'outOfStockOrderState' => 60,
-                'expected' => true,
+                'expected' => false,
             ],
         ];
     }
