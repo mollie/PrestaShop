@@ -26,6 +26,11 @@ use Raven_Client;
  */
 class ModuleFilteredRavenClient extends Raven_Client
 {
+    /**
+     * @var string[]|null
+     */
+    protected $excluded_domains;
+
     public function capture($data, $stack = null, $vars = null)
     {
         /*
@@ -77,5 +82,16 @@ class ModuleFilteredRavenClient extends Raven_Client
         }
 
         return $atLeastOneFileIsInApp;
+    }
+
+
+    /**
+     * @return self
+     */
+    public function setExcludedDomains(array $domains)
+    {
+        $this->excluded_domains = $domains;
+
+        return $this;
     }
 }
