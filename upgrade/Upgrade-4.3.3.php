@@ -19,7 +19,7 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_4_3_3()
 {
-    $query = 'DROP TABLE ' . _DB_PREFIX_ . 'mol_payment_method_order_total_restriction';
+    $query = 'DROP TABLE IF EXISTS ' . _DB_PREFIX_ . 'mol_payment_method_order_total_restriction';
 
     if (!Db::getInstance()->execute($query)) {
         return false;
