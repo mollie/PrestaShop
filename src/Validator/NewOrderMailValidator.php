@@ -38,8 +38,9 @@ class NewOrderMailValidator implements MailValidatorInterface
             case Config::NEW_ORDER_MAIL_SEND_ON_PAID:
                 return $this->validateOrderState($orderStateId);
             case Config::NEW_ORDER_MAIL_SEND_ON_NEVER:
-            default:
                 return false;
+            default:
+                return true;
         }
     }
 

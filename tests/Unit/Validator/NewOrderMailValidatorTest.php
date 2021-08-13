@@ -68,19 +68,12 @@ class NewOrderMailValidatorTest extends UnitTestCase
                 'outOfStockOrderState' => 60,
                 'expected' => false,
             ],
-            'Given sendNewOrder is not viable to be sent' => [
-                'orderStateId' => 55,
-                'sendNewOrder' => 10,
-                'paidOrderState' => 55,
-                'outOfStockOrderState' => 60,
-                'expected' => false,
-            ],
             'sendNewOrder is not defined' => [
                 'orderStateId' => 55,
                 'sendNewOrder' => false,
                 'paidOrderState' => 55,
                 'outOfStockOrderState' => 60,
-                'expected' => false,
+                'expected' => true,
             ],
         ];
     }

@@ -38,16 +38,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     public $ssl = true;
 
     /**
-     * Unset the cart id from cookie if the order exists.
-     *
-     * @throws PrestaShopException
-     */
-    public function init()
-    {
-        parent::init();
-    }
-
-    /**
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException

@@ -273,7 +273,7 @@ class TransactionService
             isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name
         );
 
-        $orderId = Order::getOrderByCartId((int) $cartId);
+        $orderId = (int) Order::getOrderByCartId((int) $cartId);
         if ($paymentFee === 0) {
             $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
 
@@ -291,8 +291,8 @@ class TransactionService
         $this->feeService->createOrderFee($cartId, $paymentFee);
 
         $order = new Order($orderId);
-        $order->total_paid_tax_excl = (float) (new Number((string)$order->total_paid_tax_excl))->plus((new Number((string) $paymentFee)))->toPrecision(2);
-        $order->total_paid_tax_incl = (float) (new Number((string)$order->total_paid_tax_incl))->plus((new Number((string) $paymentFee)))->toPrecision(2);
+        $order->total_paid_tax_excl = (float) (new Number((string) $order->total_paid_tax_excl))->plus((new Number((string) $paymentFee)))->toPrecision(2);
+        $order->total_paid_tax_incl = (float) (new Number((string) $order->total_paid_tax_incl))->plus((new Number((string) $paymentFee)))->toPrecision(2);
         $order->total_paid = (float) $apiPayment->amount->value;
         $order->total_paid_real = (float) $apiPayment->amount->value;
         $order->update();
