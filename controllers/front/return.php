@@ -187,6 +187,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 'success' => false,
             ]));
         }
+        /* @phpstan-ignore-next-line */
         $orderId = (int) Order::getOrderByCartId((int) $cart->id);
         /** @phpstan-ignore-line */
         $order = new Order((int) $orderId);

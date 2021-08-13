@@ -273,6 +273,7 @@ class TransactionService
             isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name
         );
 
+        /* @phpstan-ignore-next-line */
         $orderId = (int) Order::getOrderByCartId((int) $cartId);
         if ($paymentFee === 0) {
             $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
