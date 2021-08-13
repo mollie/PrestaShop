@@ -84,7 +84,6 @@ class ModuleFilteredRavenClient extends Raven_Client
         return $atLeastOneFileIsInApp;
     }
 
-
     /**
      * @return self
      */

@@ -35,5 +35,18 @@ function upgrade_module_4_4_0($module)
         }
     }
 
+    $sql = [];
+
+    $sql[] = '
+        ALTER TABLE ' . _DB_PREFIX_ . 'mollie_payments
+        ADD `reason` VARCHAR(64);
+    ';
+
+    foreach ($sql as $query) {
+        if (false == Db::getInstance()->execute($query)) {
+            return false;
+        }
+    }
+
     return true;
 }

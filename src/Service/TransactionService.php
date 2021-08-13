@@ -26,7 +26,6 @@ use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
-use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
@@ -68,7 +67,7 @@ class TransactionService
         Mollie $module,
         OrderStatusService $orderStatusService,
         OrderFeeService $feeService,
-        PaymentMethodRepositoryInterface$paymentMethodRepository
+        PaymentMethodRepositoryInterface $paymentMethodRepository
     ) {
         $this->module = $module;
         $this->orderStatusService = $orderStatusService;
@@ -219,7 +218,7 @@ class TransactionService
      * @param int $cartId
      * @param bool $isKlarnaOrder
      *
-     * @return false|int|null
+     * @return int
      *
      * @throws PrestaShopException
      */
@@ -251,8 +250,19 @@ class TransactionService
             }
         }
 
-        if ((int)($originalAmount + $paymentFee) !== (int)$apiPayment->amount->value) {
-            $apiPayment->cancel();
+        if ((int) ($originalAmount + $paymentFee) !== (int) $apiPayment->amount->value) {
+            if ($apiPayment->resource === Config::MOLLIE_API_STATUS_ORDER) {
+                $apiPayment->cancel();
+            } else {
+                $apiPayment->refund([
+                    'amount' => [
+                        'currency' => (string) $apiPayment->amount->currency,
+                        'value' => $apiPayment->amount->value,
+                    ],
+                ]);
+            }
+            $this->paymentMethodRepository->updatePaymentReason($apiPayment->id, Config::WRONG_AMOUNT_REASON);
+
             throw new \Exception('Wrong cart amount');
         }
 
@@ -281,8 +291,8 @@ class TransactionService
         $this->feeService->createOrderFee($cartId, $paymentFee);
 
         $order = new Order($orderId);
-        $order->total_paid_tax_excl = (float) (new Number($order->total_paid_tax_excl))->plus((new Number((string) $paymentFee)))->toPrecision(2);
-        $order->total_paid_tax_incl = (float) (new Number($order->total_paid_tax_incl))->plus((new Number((string) $paymentFee)))->toPrecision(2);
+        $order->total_paid_tax_excl = (float) (new Number((string)$order->total_paid_tax_excl))->plus((new Number((string) $paymentFee)))->toPrecision(2);
+        $order->total_paid_tax_incl = (float) (new Number((string)$order->total_paid_tax_incl))->plus((new Number((string) $paymentFee)))->toPrecision(2);
         $order->total_paid = (float) $apiPayment->amount->value;
         $order->total_paid_real = (float) $apiPayment->amount->value;
         $order->update();
@@ -340,9 +350,7 @@ class TransactionService
                 '`transaction_id` = \'' . pSQL($transactionId) . '\''
             );
         } catch (PrestaShopDatabaseException $e) {
-            /** @var PaymentMethodRepository $paymentMethodRepo */
-            $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
-            $paymentMethodRepo->tryAddOrderReferenceColumn();
+            $this->paymentMethodRepository->tryAddOrderReferenceColumn();
             throw $e;
         }
     }

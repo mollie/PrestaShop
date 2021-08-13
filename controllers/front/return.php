@@ -12,13 +12,12 @@
 
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Api\Types\PaymentStatus;
+use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Factory\CustomerFactory;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\PaymentReturnService;
-use Mollie\Service\RestorePendingCartService;
 use Mollie\Utility\ArrayUtility;
-use Mollie\Utility\PaymentMethodUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Validator\OrderCallBackValidator;
 
@@ -233,7 +232,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         }
 
         $notSuccessfulPaymentMessage = $this->module->l('Your payment was not successful, please try again.', self::FILE_NAME);
-        $paymentMethod = PaymentMethodUtility::getPaymentMethodName($transaction->method);
+        $wrongAmountMessage = $this->module->l('Payment unsuccessful - order value differs from payment request. Please try again.', self::FILE_NAME);
 
         /** @var PaymentReturnService $paymentReturnService */
         $paymentReturnService = $this->module->getMollieContainer(PaymentReturnService::class);
@@ -248,6 +247,16 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 break;
             case PaymentStatus::STATUS_PAID:
             case PaymentStatus::STATUS_AUTHORIZED:
+                if ($transaction->resource === Config::MOLLIE_API_STATUS_PAYMENT && $transaction->hasRefunds()) {
+                    $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
+                    if ($transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
+                        $this->setWarning($wrongAmountMessage);
+                    } else {
+                        $this->setWarning($notSuccessfulPaymentMessage);
+                    }
+                    $response = $paymentReturnService->handleFailedStatus($transaction);
+                    break;
+                }
                 $response = $paymentReturnService->handleStatus(
                     $order,
                     $transaction,
@@ -257,12 +266,14 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             case PaymentStatus::STATUS_EXPIRED:
             case PaymentStatus::STATUS_CANCELED:
             case PaymentStatus::STATUS_FAILED:
-                $this->setWarning($notSuccessfulPaymentMessage);
-                /** @var RestorePendingCartService $restorePendingCart */
-                $restorePendingCart = $this->module->getMollieContainer(RestorePendingCartService::class);
-                $restorePendingCart->restore($order);
+                $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
+                if ($transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
+                    $this->setWarning($wrongAmountMessage);
+                } else {
+                    $this->setWarning($notSuccessfulPaymentMessage);
+                }
 
-                $response = $paymentReturnService->handleFailedStatus($order, $transaction, $paymentMethod);
+                $response = $paymentReturnService->handleFailedStatus($transaction);
                 break;
             default:
                 exit();
