@@ -234,4 +234,20 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
             ]
         );
     }
+
+    public function updatePaymentReason($transactionId, $reason)
+    {
+        try {
+            return Db::getInstance()->update(
+                'mollie_payments',
+                [
+                    'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
+                    'reason' => pSQL($reason),
+                ],
+                '`transaction_id` = \'' . pSQL($transactionId) . '\''
+            );
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 }

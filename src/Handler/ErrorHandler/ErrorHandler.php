@@ -54,6 +54,10 @@ class ErrorHandler
         );
         // We use realpath to get errors even if module is behind a symbolic link
         $this->client->setAppPath(realpath(_PS_MODULE_DIR_ . $module->name . '/'));
+
+        $this->client->setExcludedAppPaths([
+            realpath(_PS_MODULE_DIR_ . $module->name . '/vendor/'),
+        ]);
         // Useless as it will exclude everything even if specified in the app path
         //$this->client->setExcludedAppPaths([_PS_ROOT_DIR_]);
         $this->client->install();

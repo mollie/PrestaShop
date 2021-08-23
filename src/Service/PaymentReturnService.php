@@ -16,7 +16,6 @@ use Cart;
 use CartRule;
 use Context;
 use Mollie;
-use Mollie\Config\Config;
 use Mollie\Handler\CartRule\CartRuleQuantityChangeHandlerInterface;
 use Mollie\Repository\PaymentMethodRepository;
 use Order;
@@ -36,11 +35,6 @@ class PaymentReturnService
      * @var Context
      */
     private $context;
-
-    /**
-     * @var CartDuplicationService
-     */
-    private $cartDuplicationService;
 
     /**
      * @var PaymentMethodRepository
@@ -64,7 +58,6 @@ class PaymentReturnService
 
     public function __construct(
         Mollie $module,
-        CartDuplicationService $cartDuplicationService,
         PaymentMethodRepository $paymentMethodRepository,
         RepeatOrderLinkFactory $orderLinkFactory,
         TransactionService $transactionService,
@@ -72,7 +65,6 @@ class PaymentReturnService
     ) {
         $this->module = $module;
         $this->context = Context::getContext();
-        $this->cartDuplicationService = $cartDuplicationService;
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->orderLinkFactory = $orderLinkFactory;
         $this->transactionService = $transactionService;
@@ -126,16 +118,8 @@ class PaymentReturnService
         return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
     }
 
-    public function handleFailedStatus(Order $order, $transaction, $paymentMethod)
+    public function handleFailedStatus($transaction)
     {
-        if (null !== $paymentMethod) {
-            $this->cartDuplicationService->restoreCart($order->id_cart, Config::RESTORE_CART_BACKTRACE_RETURN_CONTROLLER);
-
-            $warning[] = $this->module->l('Your payment was not successful, please try again.', self::FILE_NAME);
-
-            $this->context->cookie->__set('mollie_payment_canceled_error', json_encode($warning));
-        }
-
         $orderLink = $this->orderLinkFactory->getLink();
 
         return [

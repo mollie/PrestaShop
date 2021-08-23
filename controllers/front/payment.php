@@ -12,8 +12,6 @@
 
 use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment as MolliePaymentAlias;
-use Mollie\Api\Resources\PaymentCollection;
-use Mollie\Api\Types\PaymentMethod;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\DTO\OrderData;
@@ -23,10 +21,8 @@ use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Handler\Exception\OrderExceptionHandler;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\ExceptionService;
-use Mollie\Service\MemorizeCartService;
 use Mollie\Service\PaymentMethodService;
-use Mollie\Utility\PaymentFeeUtility;
-use PrestaShop\Decimal\Number;
+use Mollie\Utility\OrderNumberUtility;
 
 if (!defined('_PS_VERSION_')) {
     return;
@@ -98,26 +94,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method, $environment);
         $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
-        // Prepare payment
-        $totalPrice = new Number((string) $originalAmount);
 
-        $orderStatus = $paymentMethodObj->id_method === PaymentMethod::BANKTRANSFER ?
-            Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_OPEN)
-            : Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING);
-
-        $this->module->validateOrder(
-            (int) $cart->id,
-            (int) $orderStatus,
-            (float) $totalPrice->toPrecision(2),
-            isset(Mollie\Config\Config::$methods[$paymentMethodObj->id_method]) ? Mollie\Config\Config::$methods[$method] : $this->module->name,
-            null,
-            [],
-            null,
-            false,
-            $customer->secure_key
-        );
-        $orderId = Order::getOrderByCartId($cart->id);
-        $order = new Order($orderId);
+        $orderNumber = OrderNumberUtility::generateOrderNumber($cart->id);
 
         $paymentData = $paymentMethodService->getPaymentData(
             $amount,
@@ -128,7 +106,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $customer->secure_key,
             $paymentMethodObj,
             false,
-            $order->reference,
+            $orderNumber,
             Tools::getValue('cardToken')
         );
 
@@ -137,30 +115,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             return;
         }
 
-        $this->createOrder($method, $apiPayment, $cart->id, $originalAmount, $order->reference);
-        $orderReference = isset($apiPayment->metadata->order_reference) ? pSQL($apiPayment->metadata->order_reference) : '';
-
-        $orderId = Order::getOrderByCartId($cart->id);
-        $order = new Order($orderId);
-        if (PaymentMethod::BANKTRANSFER !== $apiPayment->method) {
-            try {
-                Db::getInstance()->insert(
-                    'mollie_payments',
-                    [
-                        'cart_id' => (int) $cart->id,
-                        'order_id' => (int) $order->id,
-                        'method' => pSQL($apiPayment->method),
-                        'transaction_id' => pSQL($apiPayment->id),
-                        'order_reference' => pSQL($orderReference),
-                        'bank_status' => PaymentStatus::STATUS_OPEN,
-                        'created_at' => ['type' => 'sql', 'value' => 'NOW()'],
-                    ]
-                );
-            } catch (PrestaShopDatabaseException $e) {
-                $paymentMethodRepo->tryAddOrderReferenceColumn();
-                throw $e;
-            }
-        }
+        $this->createOrder($apiPayment, $cart->id, $orderNumber);
 
         // Go to payment url
         if (null !== $apiPayment->getCheckoutUrl()) {
@@ -311,11 +266,10 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         parent::setTemplate($template, $params, $locale);
     }
 
-    private function createOrder($method, $apiPayment, $cartId, $originalAmount, $orderReference)
+    private function createOrder($apiPayment, $cartId, $orderReference)
     {
-        if (PaymentMethod::BANKTRANSFER === $method) {
-            try {
-                Db::getInstance()->insert(
+        try {
+            Db::getInstance()->insert(
                     'mollie_payments',
                     [
                         'cart_id' => (int) $cartId,
@@ -326,66 +280,11 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                         'created_at' => ['type' => 'sql', 'value' => 'NOW()'],
                     ]
                 );
-            } catch (PrestaShopDatabaseException $e) {
-                /** @var PaymentMethodRepository $paymentMethodRepo */
-                $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
-                $paymentMethodRepo->tryAddOrderReferenceColumn();
-                throw $e;
-            }
-
-            // Set the `banktransfer` details
-            if ($apiPayment instanceof MollieOrderAlias) {
-                // If this is an order, take the first payment
-                /** @var PaymentCollection $payments */
-                $payments = $apiPayment->payments();
-                $apiPayment = $payments[0];
-            }
+        } catch (PrestaShopDatabaseException $e) {
+            /** @var PaymentMethodRepository $paymentMethodRepo */
+            $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
+            $paymentMethodRepo->tryAddOrderReferenceColumn();
+            throw $e;
         }
-        /** @var PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
-        $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
-
-        $orderFee = PaymentFeeUtility::getPaymentFee(
-            new MolPaymentMethod(
-                $paymentMethodRepo->getPaymentMethodIdByMethodId($apiPayment->method, $environment)
-            ),
-            $this->context->cart->getOrderTotal()
-        );
-
-        $totalPrice = new Number((string) $originalAmount);
-
-        $orderFeeNumber = new Number((string) 0);
-        if ($orderFee) {
-            $orderFeeObj = new MolOrderFee();
-            $orderFeeObj->id_cart = (int) $cartId;
-            $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
-            $orderFeeObj->order_fee = PaymentFeeUtility::getPaymentFee(
-                new MolPaymentMethod(
-                    $paymentMethodRepo->getPaymentMethodIdByMethodId($apiPayment->method, $environment)
-                ),
-                $this->context->cart->getOrderTotal()
-            );
-            try {
-                $orderFeeObj->add();
-            } catch (Exception $e) {
-                $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
-                $errorHandler->handle($e, $e->getCode(), false);
-                throw new PrestaShopException('Can\'t save Order fee');
-            }
-            $orderFeeNumber = new Number((string) $orderFeeObj->order_fee);
-            $totalPrice = $orderFeeNumber->plus($totalPrice);
-        }
-
-        $orderId = Order::getOrderByCartId($cartId);
-        $order = new Order($orderId);
-        $order->total_paid_tax_excl = (float) $orderFeeNumber->plus(new Number((string) $order->total_paid_tax_excl))->toPrecision(2);
-        $order->total_paid_tax_incl = (float) $orderFeeNumber->plus(new Number((string) $order->total_paid_tax_incl))->toPrecision(2);
-        $order->total_paid = (float) $totalPrice->toPrecision(2);
-        $order->update();
-
-        /** @var MemorizeCartService $memorizeCart */
-        $memorizeCart = $this->module->getMollieContainer(MemorizeCartService::class);
-
-        $memorizeCart->memorizeCart($order);
     }
 }

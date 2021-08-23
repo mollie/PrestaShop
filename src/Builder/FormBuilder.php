@@ -465,10 +465,6 @@ class FormBuilder
                 'options' => [
                     'query' => [
                         [
-                            'id' => Config::ORDER_CONF_MAIL_SEND_ON_CREATION,
-                            'name' => $this->module->l('When Order is created', self::FILE_NAME),
-                        ],
-                        [
                             'id' => Config::ORDER_CONF_MAIL_SEND_ON_PAID,
                             'name' => $this->module->l('When Order is Paid', self::FILE_NAME),
                         ],

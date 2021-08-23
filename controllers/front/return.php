@@ -12,14 +12,12 @@
 
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Api\Types\PaymentStatus;
+use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Factory\CustomerFactory;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Service\MemorizeCartService;
 use Mollie\Service\PaymentReturnService;
-use Mollie\Service\RestorePendingCartService;
 use Mollie\Utility\ArrayUtility;
-use Mollie\Utility\PaymentMethodUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Validator\OrderCallBackValidator;
 
@@ -40,27 +38,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     public $ssl = true;
 
     /**
-     * Unset the cart id from cookie if the order exists.
-     *
-     * @throws PrestaShopException
-     */
-    public function init()
-    {
-        /** @var Context $context */
-        $context = Context::getContext();
-        /** @var Cart $cart */
-        $cart = new Cart((int) $this->context->cookie->__get('id_cart'));
-        if (Validate::isLoadedObject($cart) && !$cart->orderExists()) {
-            unset($context->cart);
-            unset($context->cookie->id_cart);
-            unset($context->cookie->checkedTOS);
-            unset($context->cookie->check_cgv);
-        }
-
-        parent::init();
-    }
-
-    /**
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws SmartyException
@@ -69,6 +46,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     {
         $idCart = (int) Tools::getValue('cart_id');
         $key = Tools::getValue('key');
+        $orderNumber = Tools::getValue('order_number');
         $context = Context::getContext();
         $customer = $context->customer;
 
@@ -101,7 +79,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             $cart = new Cart($idCart);
             $data['auth'] = (int) $cart->id_customer === $customer->id;
             if ($data['auth']) {
-                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('cart_id', (string) $idCart);
+                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_reference', (string) $orderNumber);
             }
         }
 
@@ -140,6 +118,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                         'transaction_id' => $data['mollie_info']['transaction_id'],
                         'key' => $key,
                         'cart_id' => $idCart,
+                        'order_number' => $orderNumber,
                     ],
                     true
                 )
@@ -208,7 +187,9 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 'success' => false,
             ]));
         }
-        $orderId = (int) Order::getOrderByCartId((int) $cart->id); /** @phpstan-ignore-line */
+        /* @phpstan-ignore-next-line */
+        $orderId = (int) Order::getOrderByCartId((int) $cart->id);
+        /** @phpstan-ignore-line */
         $order = new Order((int) $orderId);
 
         if (!Validate::isLoadedObject($cart)) {
@@ -242,7 +223,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         }
 
         $notSuccessfulPaymentMessage = $this->module->l('Your payment was not successful, please try again.', self::FILE_NAME);
-        $paymentMethod = PaymentMethodUtility::getPaymentMethodName($transaction->method);
+        $wrongAmountMessage = $this->module->l('Payment unsuccessful - order value differs from payment request. Please try again.', self::FILE_NAME);
 
         /** @var PaymentReturnService $paymentReturnService */
         $paymentReturnService = $this->module->getMollieContainer(PaymentReturnService::class);
@@ -257,28 +238,33 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 break;
             case PaymentStatus::STATUS_PAID:
             case PaymentStatus::STATUS_AUTHORIZED:
+                if ($transaction->resource === Config::MOLLIE_API_STATUS_PAYMENT && $transaction->hasRefunds()) {
+                    $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
+                    if ($transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
+                        $this->setWarning($wrongAmountMessage);
+                    } else {
+                        $this->setWarning($notSuccessfulPaymentMessage);
+                    }
+                    $response = $paymentReturnService->handleFailedStatus($transaction);
+                    break;
+                }
                 $response = $paymentReturnService->handleStatus(
                     $order,
                     $transaction,
                     $paymentReturnService::DONE
                 );
-
-                /** @var MemorizeCartService $memorizeCart */
-                $memorizeCart = $this->module->getMollieContainer(MemorizeCartService::class);
-                $memorizeCart->removeMemorizedCart($order);
-
-                $order->total_paid_real = $transaction->amount->value;
-                $order->update();
                 break;
             case PaymentStatus::STATUS_EXPIRED:
             case PaymentStatus::STATUS_CANCELED:
             case PaymentStatus::STATUS_FAILED:
-                $this->setWarning($notSuccessfulPaymentMessage);
-                /** @var RestorePendingCartService $restorePendingCart */
-                $restorePendingCart = $this->module->getMollieContainer(RestorePendingCartService::class);
-                $restorePendingCart->restore($order);
+                $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
+                if ($transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
+                    $this->setWarning($wrongAmountMessage);
+                } else {
+                    $this->setWarning($notSuccessfulPaymentMessage);
+                }
 
-                $response = $paymentReturnService->handleFailedStatus($order, $transaction, $paymentMethod);
+                $response = $paymentReturnService->handleFailedStatus($transaction);
                 break;
             default:
                 exit();

@@ -43,6 +43,7 @@ final class DatabaseTableInstaller implements InstallerInterface
 				`order_reference` VARCHAR(191),
 				`method`          VARCHAR(128) NOT NULL,
 				`bank_status`     VARCHAR(64)  NOT NULL,
+				`reason`          VARCHAR(64),
 				`created_at`      DATETIME     NOT NULL,
 				`updated_at`      DATETIME     DEFAULT NULL,
 				 INDEX (cart_id, order_reference)

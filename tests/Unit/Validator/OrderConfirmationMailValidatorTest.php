@@ -40,13 +40,6 @@ class OrderConfirmationMailValidatorTest extends UnitTestCase
     public function getCanOrderConfirmationMailBeSentData()
     {
         return [
-            'Send on created' => [
-                'orderStateId' => 17,
-                'sendOrderConfirmation' => Config::ORDER_CONF_MAIL_SEND_ON_CREATION,
-                'paidOrderState' => 55,
-                'outOfStockOrderState' => 60,
-                'expected' => true,
-            ],
             'Send on paid because orderStateId is same as paidOrderState and send email on paid is enabled' => [
                 'orderStateId' => 55,
                 'sendOrderConfirmation' => Config::ORDER_CONF_MAIL_SEND_ON_PAID,
@@ -71,13 +64,6 @@ class OrderConfirmationMailValidatorTest extends UnitTestCase
             'Send email is on never' => [
                 'orderStateId' => 55,
                 'sendOrderConfirmation' => Config::NEW_ORDER_MAIL_SEND_ON_NEVER,
-                'paidOrderState' => 55,
-                'outOfStockOrderState' => 60,
-                'expected' => false,
-            ],
-            'Given sendNewOrder is not viable to be sent' => [
-                'orderStateId' => 55,
-                'sendOrderConfirmation' => 10,
                 'paidOrderState' => 55,
                 'outOfStockOrderState' => 60,
                 'expected' => false,

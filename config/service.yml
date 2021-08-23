@@ -128,28 +128,6 @@ services:
     arguments:
       - '@mollie'
 
-  Mollie\Service\CartDuplicationService:
-    class: Mollie\Service\CartDuplicationService
-    arguments:
-      - '@Mollie\Service\CartRuleDuplicationService'
-      - '@Mollie\Handler\CartRule\CartRuleQuantityResetHandler'
-
-  Mollie\Service\CartRuleDuplicationService:
-    class: Mollie\Service\CartRuleDuplicationService
-    arguments:
-      - '@Mollie\Repository\CartRuleRepository'
-
-  Mollie\Service\OrderCartAssociationService:
-    class: Mollie\Service\OrderCartAssociationService
-    arguments:
-      - '@Mollie\Service\CartDuplicationService'
-
-  Mollie\Service\MemorizeCartService:
-    class: Mollie\Service\MemorizeCartService
-    arguments:
-      - '@Mollie\Service\OrderCartAssociationService'
-      - '@Mollie\Repository\PendingOrderCartRepository'
-
   Mollie\Service\RepeatOrderLinkFactory:
     class: Mollie\Service\RepeatOrderLinkFactory
 
@@ -158,17 +136,13 @@ services:
 
   Psr\Log\LoggerInterface: '@Mollie\Logger\PrestaLogger'
 
-  Mollie\Service\RestorePendingCartService:
-    class: Mollie\Service\RestorePendingCartService
-    arguments:
-      - '@Mollie\Repository\PendingOrderCartRepository'
-
   Mollie\Service\TransactionService:
     class: Mollie\Service\TransactionService
     arguments:
       - '@mollie'
-      - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Service\OrderStatusService'
+      - '@Mollie\Service\OrderFeeService'
+      - '@Mollie\Repository\PaymentMethodRepository'
 
   Mollie\Service\MolliePaymentMailService:
     class: Mollie\Service\MolliePaymentMailService
@@ -192,7 +166,6 @@ services:
     class: Mollie\Service\PaymentReturnService
     arguments:
       - '@mollie'
-      - '@Mollie\Service\CartDuplicationService'
       - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Service\RepeatOrderLinkFactory'
       - '@Mollie\Service\TransactionService'
