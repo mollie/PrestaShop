@@ -189,7 +189,11 @@ class PaymentMethodService
         $apiEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
         $methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment, $this->shop->id) ?: [];
 
-        $mollieMethods = $this->getSupportedMollieMethods();
+        try {
+            $mollieMethods = $this->getSupportedMollieMethods();
+        } catch (\Exception $e) {
+            return [];
+        }
         $methods = $this->removeNotSupportedMethods($methods, $mollieMethods);
 
         foreach ($methods as $index => $method) {
