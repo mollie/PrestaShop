@@ -164,7 +164,6 @@ class TransactionService
                     break;
                 }
 
-                $isKlarnaDefault = Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON) === Config::MOLLIE_STATUS_DEFAULT;
                 $isKlarnaOrder = in_array($apiPayment->method, Config::KLARNA_PAYMENTS, false);
 
                 if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
@@ -180,21 +179,6 @@ class TransactionService
                     }
                     $apiPayment->update();
                 }
-
-                $status = OrderStatusUtility::transformPaymentStatusToRefunded($apiPayment);
-                $paymentStatus = (int) Config::getStatuses()[$status];
-                if (OrderStatus::STATUS_COMPLETED === $status && $isKlarnaOrder && !$isKlarnaDefault) {
-                    $paymentStatus = (int) Config::getStatuses()[Config::MOLLIE_STATUS_KLARNA_SHIPPED];
-                }
-                if (PaymentStatus::STATUS_PAID === $status || OrderStatus::STATUS_AUTHORIZED === $status) {
-                    $this->updateTransaction($orderId, $transaction);
-
-                    if ($this->isOrderBackOrder($orderId)) {
-                        $paymentStatus = Config::STATUS_PAID_ON_BACKORDER;
-                    }
-                }
-                $this->orderStatusService->setOrderStatus($orderId, $paymentStatus, null, []);
-
                 $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
         }
 
@@ -275,18 +259,18 @@ class TransactionService
 
         /* @phpstan-ignore-next-line */
         $orderId = (int) Order::getOrderByCartId((int) $cartId);
-        if ($paymentFee === 0) {
-            $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
 
-            return $orderId;
-        }
-        $this->updateTransaction($orderId, $apiPayment);
-
-        if (PaymentStatus::STATUS_PAID === $apiPayment->status) {
-            $this->updateTransaction($orderId, $apiPayment);
+        if (PaymentStatus::STATUS_PAID === $apiPayment->status || OrderStatus::STATUS_AUTHORIZED === $apiPayment->status) {
             if ($this->isOrderBackOrder($orderId)) {
                 $orderStatus = Config::STATUS_PAID_ON_BACKORDER;
             }
+        }
+        $this->updateTransaction($orderId, $apiPayment);
+
+        if (!$paymentFee) {
+            $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
+
+            return $orderId;
         }
 
         $this->feeService->createOrderFee($cartId, $paymentFee);
@@ -451,7 +435,7 @@ class TransactionService
             $orderDetail = new OrderDetail($detail['id_order_detail']);
             if (
                 Configuration::get('PS_STOCK_MANAGEMENT') &&
-                ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock <= 0)
+                ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
             ) {
                 return true;
             }
