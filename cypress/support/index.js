@@ -44,3 +44,6 @@ Cypress.on('uncaught:exception', (err, runnable) => {
   // failing the test
   return false
 })
+Cypress.Keyboard.defaults({
+  keystrokeDelay: 0,
+})
