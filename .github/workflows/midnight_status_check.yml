@@ -20,8 +20,6 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v2.0.0
-        with:
-          ref: 4.3.3
 
       - name: NPM install
         run: npm ci
@@ -46,9 +44,7 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v2.0.0
-        with:
-          ref: 4.3.3
-
+        
       - name: NPM install
         run: npm ci
 
@@ -71,8 +67,6 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v2.0.0
-        with:
-          ref: 4.3.3
 
       - name: NPM install
         run: npm ci
