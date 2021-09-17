@@ -5,7 +5,6 @@
 * @copyright   Mollie B.V.
 * @link        https://github.com/mollie/PrestaShop
 * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
-* @codingStandardsIgnoreStart
 *}
 {extends file="helpers/form/form.tpl"}
 

@@ -4,10 +4,9 @@
  *
  * @author      Mollie B.V. <info@mollie.nl>
  * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- *
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */
 
@@ -17,12 +16,12 @@ use Mollie\Config\Config;
 
 class ImageUtility
 {
-	public static function setOptionImage($image, $imageConfig)
-	{
-		if (Config::LOGOS_NORMAL === $imageConfig) {
-			return $image['svg'];
-		} elseif (Config::LOGOS_BIG === $imageConfig) {
-			return $image['size2x'];
-		}
-	}
+    public static function setOptionImage($image, $imageConfig)
+    {
+        if (Config::LOGOS_NORMAL === $imageConfig) {
+            return $image['svg'];
+        } elseif (Config::LOGOS_BIG === $imageConfig) {
+            return $image['size2x'];
+        }
+    }
 }

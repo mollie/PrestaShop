@@ -38,180 +38,191 @@ namespace Mollie\Tracker;
 
 use Context;
 use Module;
+use Mollie;
 use Mollie\Config\Config;
+use Mollie\Config\Env;
 
 class Segment implements TrackerInterface
 {
-	/**
-	 * @var string
-	 */
-	private $message = '';
+    /**
+     * @var string
+     */
+    private $message = '';
 
-	/**
-	 * @var array
-	 */
-	private $options = [];
+    /**
+     * @var array
+     */
+    private $options = [];
 
-	/**
-	 * @var Context
-	 */
-	private $context;
+    /**
+     * @var Context
+     */
+    private $context;
 
-	/**
-	 * Segment constructor.
-	 *
-	 * @param Context $context
-	 */
-	public function __construct(Context $context)
-	{
-		$this->context = $context;
-		$this->init();
-	}
+    /**
+     * Segment constructor.
+     *
+     * @param Context $context
+     */
 
-	/**
-	 * Init segment client with the api key
-	 */
-	private function init()
-	{
-		\Segment::init(Config::SEGMENT_KEY);
-	}
+    /**
+     * @var Env
+     */
+    private $env;
 
-	/**
-	 * Track event on segment
-	 *
-	 * @return bool
-	 *
-	 * @throws \PrestaShopException
-	 */
-	public function track()
-	{
-		if (empty($this->message)) {
-			throw new \PrestaShopException('Message cannot be empty. Need to set it with setMessage() method.');
-		}
+    public function __construct(Context $context, $env)
+    {
+        $this->context = $context;
+        $this->init();
+        $this->env = $env;
+    }
 
-		// Dispatch track depending on context shop
-		$this->dispatchTrack();
+    /**
+     * Init segment client with the api key
+     */
+    private function init()
+    {
+        \Segment::init(Config::SEGMENT_KEY);
+    }
 
-		return true;
-	}
+    /**
+     * Track event on segment
+     *
+     * @return bool
+     *
+     * @throws \PrestaShopException
+     */
+    public function track()
+    {
+        if (empty($this->message)) {
+            throw new \PrestaShopException('Message cannot be empty. Need to set it with setMessage() method.');
+        }
 
-	private function segmentTrack($userId)
-	{
-		if (!$userId) {
-			$userId = 'MissingUserId';
-		}
+        // Dispatch track depending on context shop
+        $this->dispatchTrack();
 
-		$userAgent = array_key_exists('HTTP_USER_AGENT', $_SERVER) === true ? $_SERVER['HTTP_USER_AGENT'] : '';
-		$ip = array_key_exists('REMOTE_ADDR', $_SERVER) === true ? $_SERVER['REMOTE_ADDR'] : '';
-		$referer = array_key_exists('HTTP_REFERER', $_SERVER) === true ? $_SERVER['HTTP_REFERER'] : '';
-		$url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-		$module = Module::getInstanceByName('mollie');
+        return true;
+    }
 
-		\Segment::track([
-			'userId' => $userId,
-			'event' => $this->message,
-			'channel' => 'browser',
-			'context' => [
-				'ip' => $ip,
-				'userAgent' => $userAgent,
-				'locale' => $this->context->language->iso_code,
-				'page' => [
-					'referrer' => $referer,
-					'url' => $url,
-				],
-			],
-			'properties' => array_merge([
-				'module' => 'mollie',
-				'version' => $module->version,
-			], $this->options),
-		]);
+    private function segmentTrack($userId)
+    {
+        if (!$userId) {
+            $userId = 'MissingUserId';
+        }
 
-		\Segment::flush();
-	}
+        $userAgent = array_key_exists('HTTP_USER_AGENT', $_SERVER) === true ? $_SERVER['HTTP_USER_AGENT'] : '';
+        $ip = array_key_exists('REMOTE_ADDR', $_SERVER) === true ? $_SERVER['REMOTE_ADDR'] : '';
+        $referer = array_key_exists('HTTP_REFERER', $_SERVER) === true ? $_SERVER['HTTP_REFERER'] : '';
+        $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        $module = Module::getInstanceByName('mollie');
 
-	/**
-	 * Handle tracking differently depending on the shop context
-	 *
-	 * @return mixed
-	 */
-	private function dispatchTrack()
-	{
-		$dictionary = [
-			\Shop::CONTEXT_SHOP => function () {
-				return $this->trackShop();
-			},
-			\Shop::CONTEXT_GROUP => function () {
-				return $this->trackShopGroup();
-			},
-			\Shop::CONTEXT_ALL => function () {
-				return $this->trackAllShops();
-			},
-		];
+        \Segment::track([
+            'userId' => $userId,
+            'event' => $this->message,
+            'channel' => 'browser',
+            'context' => [
+                'ip' => $ip,
+                'userAgent' => $userAgent,
+                'locale' => $this->context->language->iso_code,
+                'page' => [
+                    'referrer' => $referer,
+                    'url' => $url,
+                ],
+            ],
+            'properties' => array_merge([
+                'module' => 'mollie',
+                'version' => $module->version,
+                'psVersion' => _PS_VERSION_,
+                'env' => $this->env->get('SENTRY_ENV'),
+            ], $this->options),
+        ]);
 
-		return call_user_func($dictionary[$this->context->shop->getContext()]);
-	}
+        \Segment::flush();
+    }
 
-	/**
-	 * Send track segment only for the current shop
-	 */
-	private function trackShop()
-	{
-		$userId = $this->context->shop->domain;
+    /**
+     * Handle tracking differently depending on the shop context
+     *
+     * @return mixed
+     */
+    private function dispatchTrack()
+    {
+        $dictionary = [
+            \Shop::CONTEXT_SHOP => function () {
+                return $this->trackShop();
+            },
+            \Shop::CONTEXT_GROUP => function () {
+                return $this->trackShopGroup();
+            },
+            \Shop::CONTEXT_ALL => function () {
+                return $this->trackAllShops();
+            },
+        ];
 
-		$this->segmentTrack($userId);
-	}
+        return call_user_func($dictionary[$this->context->shop->getContext()]);
+    }
 
-	/**
-	 * Send track segment for each shop in the current shop group
-	 */
-	private function trackShopGroup()
-	{
-		$shops = $this->context->shop->getShops(true, $this->context->shop->getContextShopGroupID());
-		foreach ($shops as $shop) {
-			$this->segmentTrack($shop['domain']);
-		}
-	}
+    /**
+     * Send track segment only for the current shop
+     */
+    private function trackShop()
+    {
+        $userId = $this->context->shop->domain;
 
-	/**
-	 * Send track segment for all shops
-	 */
-	private function trackAllShops()
-	{
-		$shops = $this->context->shop->getShops();
-		foreach ($shops as $shop) {
-			$this->segmentTrack($shop['domain']);
-		}
-	}
+        $this->segmentTrack($userId);
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getMessage()
-	{
-		return $this->message;
-	}
+    /**
+     * Send track segment for each shop in the current shop group
+     */
+    private function trackShopGroup()
+    {
+        $shops = $this->context->shop->getShops(true, $this->context->shop->getContextShopGroupID());
+        foreach ($shops as $shop) {
+            $this->segmentTrack($shop['domain']);
+        }
+    }
 
-	/**
-	 * @param string $message
-	 */
-	public function setMessage($message)
-	{
-		$this->message = $message;
-	}
+    /**
+     * Send track segment for all shops
+     */
+    private function trackAllShops()
+    {
+        $shops = $this->context->shop->getShops();
+        foreach ($shops as $shop) {
+            $this->segmentTrack($shop['domain']);
+        }
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getOptions()
-	{
-		return $this->options;
-	}
+    /**
+     * @return string
+     */
+    public function getMessage()
+    {
+        return $this->message;
+    }
 
-	/**
-	 * @param array $options
-	 */
-	public function setOptions($options)
-	{
-		$this->options = $options;
-	}
+    /**
+     * @param string $message
+     */
+    public function setMessage($message)
+    {
+        $this->message = $message;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param array $options
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
+    }
 }

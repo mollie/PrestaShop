@@ -87,7 +87,6 @@ services:
       - '@Mollie\Service\MolCarrierInformationService'
       - '@Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface'
       - '@Mollie\Service\ApiKeyService'
-      - '@Mollie\Handler\OrderTotal\OrderTotalUpdaterHandler'
 
   Mollie\Service\ShipmentService:
     class: Mollie\Service\ShipmentService
@@ -129,28 +128,6 @@ services:
     arguments:
       - '@mollie'
 
-  Mollie\Service\CartDuplicationService:
-    class: Mollie\Service\CartDuplicationService
-    arguments:
-      - '@Mollie\Service\CartRuleDuplicationService'
-      - '@Mollie\Handler\CartRule\CartRuleQuantityResetHandler'
-
-  Mollie\Service\CartRuleDuplicationService:
-    class: Mollie\Service\CartRuleDuplicationService
-    arguments:
-      - '@Mollie\Repository\CartRuleRepository'
-
-  Mollie\Service\OrderCartAssociationService:
-    class: Mollie\Service\OrderCartAssociationService
-    arguments:
-      - '@Mollie\Service\CartDuplicationService'
-
-  Mollie\Service\MemorizeCartService:
-    class: Mollie\Service\MemorizeCartService
-    arguments:
-      - '@Mollie\Service\OrderCartAssociationService'
-      - '@Mollie\Repository\PendingOrderCartRepository'
-
   Mollie\Service\RepeatOrderLinkFactory:
     class: Mollie\Service\RepeatOrderLinkFactory
 
@@ -159,17 +136,13 @@ services:
 
   Psr\Log\LoggerInterface: '@Mollie\Logger\PrestaLogger'
 
-  Mollie\Service\RestorePendingCartService:
-    class: Mollie\Service\RestorePendingCartService
-    arguments:
-      - '@Mollie\Repository\PendingOrderCartRepository'
-
   Mollie\Service\TransactionService:
     class: Mollie\Service\TransactionService
     arguments:
       - '@mollie'
-      - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Service\OrderStatusService'
+      - '@Mollie\Service\OrderFeeService'
+      - '@Mollie\Repository\PaymentMethodRepository'
 
   Mollie\Service\MolliePaymentMailService:
     class: Mollie\Service\MolliePaymentMailService
@@ -193,7 +166,6 @@ services:
     class: Mollie\Service\PaymentReturnService
     arguments:
       - '@mollie'
-      - '@Mollie\Service\CartDuplicationService'
       - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Service\RepeatOrderLinkFactory'
       - '@Mollie\Service\TransactionService'
@@ -244,19 +216,6 @@ services:
     class: Mollie\Service\Content\SmartyTemplateParser
 
   Mollie\Service\Content\TemplateParserInterface: '@Mollie\Service\Content\SmartyTemplateParser'
-
-  Mollie\Service\OrderTotal\OrderTotalService:
-    class: Mollie\Service\OrderTotal\OrderTotalService
-    arguments:
-      - '@=service("mollie.adapter.context")'
-      - '@Mollie\Provider\OrderTotalRestrictionProvider'
-
-  Mollie\Service\OrderTotal\OrderTotalRestrictionService:
-    class: Mollie\Service\OrderTotal\OrderTotalRestrictionService
-    arguments:
-      - '@Mollie\Service\PaymentMethod\PaymentMethodOrderRestrictionUpdater'
-
-  Mollie\Service\OrderTotal\OrderTotalRestrictionServiceInterface: '@Mollie\Service\OrderTotal\OrderTotalRestrictionService'
 
   Mollie\Service\EntityManager\ObjectModelManager:
     class: Mollie\Service\EntityManager\ObjectModelManager

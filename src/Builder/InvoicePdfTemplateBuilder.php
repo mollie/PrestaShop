@@ -4,10 +4,9 @@
  *
  * @author      Mollie B.V. <info@mollie.nl>
  * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- *
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */
 
@@ -22,40 +21,40 @@ use Tools;
 
 final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
 {
-	private $orderFeeRepository;
+    private $orderFeeRepository;
 
-	/**
-	 * @var Order
-	 */
-	private $order;
+    /**
+     * @var Order
+     */
+    private $order;
 
-	public function __construct(OrderFeeRepository $orderFeeRepository)
-	{
-		$this->orderFeeRepository = $orderFeeRepository;
-	}
+    public function __construct(OrderFeeRepository $orderFeeRepository)
+    {
+        $this->orderFeeRepository = $orderFeeRepository;
+    }
 
-	public function setOrder(Order $order)
-	{
-		$this->order = $order;
+    public function setOrder(Order $order)
+    {
+        $this->order = $order;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function buildParams()
-	{
-		$orderFeeId = $this->orderFeeRepository->getOrderFeeIdByCartId(Cart::getCartIdByOrderId($this->order->id));
+    public function buildParams()
+    {
+        $orderFeeId = $this->orderFeeRepository->getOrderFeeIdByCartId(Cart::getCartIdByOrderId($this->order->id));
 
-		$orderFee = new MolOrderFee($orderFeeId);
+        $orderFee = new MolOrderFee($orderFeeId);
 
-		if (!$orderFee->order_fee) {
-			return [];
-		}
+        if (!$orderFee->order_fee) {
+            return [];
+        }
 
-		return [
-			'orderFeeAmountDisplay' => Tools::displayPrice(
-				$orderFee->order_fee,
-				new Currency($this->order->id_currency)
-			),
-		];
-	}
+        return [
+            'orderFeeAmountDisplay' => Tools::displayPrice(
+                $orderFee->order_fee,
+                new Currency($this->order->id_currency)
+            ),
+        ];
+    }
 }

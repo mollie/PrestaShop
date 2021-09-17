@@ -1,6 +1,11 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 4.4.0 ##
++ Changed when Prestashop order is created. Now order is only created after transaction is paid.
++ Fixed issue with backorder when last product is bought. It no longer changes status to backorder.
++ Mollie no longer kills other payment methods if mollie API breaks down on checkout page.
+
 ## Changes in release 4.3.1 ##
 + Fixed issue when returning to payment methods status of the backorder (not paid) was changed to backorder (paid) instead of canceled. https://github.com/mollie/PrestaShop/issues/349
 + Fixed issue with second chance email sending when form multi shop context

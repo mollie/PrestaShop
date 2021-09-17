@@ -46,83 +46,83 @@ use MolPaymentMethod;
 
 class PaymentOptionHandler implements PaymentOptionHandlerInterface
 {
-	/**
-	 * @var BasePaymentOptionProvider
-	 */
-	private $basePaymentOptionProvider;
+    /**
+     * @var BasePaymentOptionProvider
+     */
+    private $basePaymentOptionProvider;
 
-	/**
-	 * @var CreditCardPaymentOptionProvider
-	 */
-	private $creditCardPaymentOptionProvider;
+    /**
+     * @var CreditCardPaymentOptionProvider
+     */
+    private $creditCardPaymentOptionProvider;
 
-	/**
-	 * @var IdealPaymentOptionProvider
-	 */
-	private $idealPaymentOptionProvider;
+    /**
+     * @var IdealPaymentOptionProvider
+     */
+    private $idealPaymentOptionProvider;
 
-	public function __construct(
-		BasePaymentOptionProvider $basePaymentOptionProvider,
-		CreditCardPaymentOptionProvider $creditCardPaymentOptionProvider,
-		IdealPaymentOptionProvider $idealPaymentOptionProvider
-	) {
-		$this->basePaymentOptionProvider = $basePaymentOptionProvider;
-		$this->creditCardPaymentOptionProvider = $creditCardPaymentOptionProvider;
-		$this->idealPaymentOptionProvider = $idealPaymentOptionProvider;
-	}
+    public function __construct(
+        BasePaymentOptionProvider $basePaymentOptionProvider,
+        CreditCardPaymentOptionProvider $creditCardPaymentOptionProvider,
+        IdealPaymentOptionProvider $idealPaymentOptionProvider
+    ) {
+        $this->basePaymentOptionProvider = $basePaymentOptionProvider;
+        $this->creditCardPaymentOptionProvider = $creditCardPaymentOptionProvider;
+        $this->idealPaymentOptionProvider = $idealPaymentOptionProvider;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function handle(MolPaymentMethod $paymentMethod)
-	{
-		if ($this->isIdealPaymentMethod($paymentMethod)) {
-			return $this->idealPaymentOptionProvider->getPaymentOption($paymentMethod);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    public function handle(MolPaymentMethod $paymentMethod)
+    {
+        if ($this->isIdealPaymentMethod($paymentMethod)) {
+            return $this->idealPaymentOptionProvider->getPaymentOption($paymentMethod);
+        }
 
-		if ($this->isCreditCardPaymentMethod($paymentMethod)) {
-			return $this->creditCardPaymentOptionProvider->getPaymentOption($paymentMethod);
-		}
+        if ($this->isCreditCardPaymentMethod($paymentMethod)) {
+            return $this->creditCardPaymentOptionProvider->getPaymentOption($paymentMethod);
+        }
 
-		return $this->basePaymentOptionProvider->getPaymentOption($paymentMethod);
-	}
+        return $this->basePaymentOptionProvider->getPaymentOption($paymentMethod);
+    }
 
-	/**
-	 * @param MolPaymentMethod $paymentMethod
-	 *
-	 * @return bool
-	 */
-	private function isIdealPaymentMethod(MolPaymentMethod $paymentMethod)
-	{
-		if ($paymentMethod->getPaymentMethodName() !== PaymentMethod::IDEAL) {
-			return false;
-		}
+    /**
+     * @param MolPaymentMethod $paymentMethod
+     *
+     * @return bool
+     */
+    private function isIdealPaymentMethod(MolPaymentMethod $paymentMethod)
+    {
+        if ($paymentMethod->getPaymentMethodName() !== PaymentMethod::IDEAL) {
+            return false;
+        }
 
-		if (Configuration::get(Config::MOLLIE_ISSUERS) !== Config::ISSUERS_ON_CLICK) {
-			return false;
-		}
+        if (Configuration::get(Config::MOLLIE_ISSUERS) !== Config::ISSUERS_ON_CLICK) {
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * @param MolPaymentMethod $paymentMethod
-	 *
-	 * @return bool
-	 */
-	private function isCreditCardPaymentMethod(MolPaymentMethod $paymentMethod)
-	{
-		$isCreditCardPaymentMethod = PaymentMethod::CREDITCARD === $paymentMethod->getPaymentMethodName();
-		$isCartesBancairesPaymentMethod = Config::CARTES_BANCAIRES === $paymentMethod->getPaymentMethodName();
+    /**
+     * @param MolPaymentMethod $paymentMethod
+     *
+     * @return bool
+     */
+    private function isCreditCardPaymentMethod(MolPaymentMethod $paymentMethod)
+    {
+        $isCreditCardPaymentMethod = PaymentMethod::CREDITCARD === $paymentMethod->getPaymentMethodName();
+        $isCartesBancairesPaymentMethod = Config::CARTES_BANCAIRES === $paymentMethod->getPaymentMethodName();
 
-		if (!$isCreditCardPaymentMethod && !$isCartesBancairesPaymentMethod) {
-			return false;
-		}
+        if (!$isCreditCardPaymentMethod && !$isCartesBancairesPaymentMethod) {
+            return false;
+        }
 
-		if (!Configuration::get(Config::MOLLIE_IFRAME)) {
-			return false;
-		}
+        if (!Configuration::get(Config::MOLLIE_IFRAME)) {
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 }

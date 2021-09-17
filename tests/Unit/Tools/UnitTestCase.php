@@ -5,197 +5,113 @@ namespace Mollie\Tests\Unit\Tools;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Api\Resources\Method;
-use Mollie\Provider\OrderTotalProvider;
-use Mollie\Provider\OrderTotalRestrictionProvider;
-use Mollie\Repository\MolPaymentMethodOrderTotalRestrictionRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
-use Mollie\Service\OrderTotal\OrderTotalService;
 use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
 class UnitTestCase extends TestCase
 {
-	public function mockMethodResponse($minimumAmountValue, $maximumAmountValue)
-	{
-		$method = $this
-			->getMockBuilder(Method::class)
-			->disableOriginalConstructor()
-			->getMock()
-		;
+    public function mockMethodResponse($minimumAmountValue, $maximumAmountValue)
+    {
+        $method = $this
+            ->getMockBuilder(Method::class)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
 
-		$method->minimumAmount = new stdClass();
-		$method->maximumAmount = new stdClass();
-		$method->minimumAmount->value = $minimumAmountValue;
-		$method->maximumAmount->value = $maximumAmountValue;
+        $method->minimumAmount = new stdClass();
+        $method->maximumAmount = new stdClass();
+        $method->minimumAmount->value = $minimumAmountValue;
+        $method->maximumAmount->value = $maximumAmountValue;
 
-		return $method;
-	}
+        return $method;
+    }
 
-	public function mockContext($countryCode, $currencyCode)
-	{
-		$contextMock = $this->getMockBuilder(LegacyContext::class)
-			->disableOriginalConstructor()
-			->getMock();
+    public function mockContext($countryCode, $currencyCode)
+    {
+        $contextMock = $this->getMockBuilder(LegacyContext::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-		$contextMock
-			->method('getCountryIsoCode')
-			->willReturn($countryCode)
-		;
+        $contextMock
+            ->method('getCountryIsoCode')
+            ->willReturn($countryCode)
+        ;
 
-		$contextMock
-			->method('getCurrencyIsoCode')
-			->willReturn($currencyCode)
-		;
+        $contextMock
+            ->method('getCurrencyIsoCode')
+            ->willReturn($currencyCode)
+        ;
 
-		$contextMock
-			->method('getCurrencyId')
-			->willReturn(1)
-		;
+        $contextMock
+            ->method('getCurrencyId')
+            ->willReturn(1)
+        ;
 
-		$contextMock
-			->method('getCountryId')
-			->willReturn(1)
-		;
+        $contextMock
+            ->method('getCountryId')
+            ->willReturn(1)
+        ;
 
-		return $contextMock;
-	}
+        return $contextMock;
+    }
 
-	public function mockContextWithCookie($cookieValue)
-	{
-		$contextMock = $this->getMockBuilder(LegacyContext::class)
-			->disableOriginalConstructor()
-			->getMock();
+    public function mockContextWithCookie($cookieValue)
+    {
+        $contextMock = $this->getMockBuilder(LegacyContext::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-		$contextMock
-			->method('getCookieValue')
-			->willReturn($cookieValue)
-		;
+        $contextMock
+            ->method('getCookieValue')
+            ->willReturn($cookieValue)
+        ;
 
-		return $contextMock;
-	}
+        return $contextMock;
+    }
 
-	public function mockPaymentMethod($paymentName, $enabled)
-	{
-		$paymentMethod = $this->getMockBuilder(MolPaymentMethod::class)
-			->disableOriginalConstructor()
-			->getMock();
+    public function mockPaymentMethod($paymentName, $enabled)
+    {
+        $paymentMethod = $this->getMockBuilder(MolPaymentMethod::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-		$paymentMethod
-			->method('getPaymentMethodName')
-			->willReturn($paymentName)
-		;
-		$paymentMethod->enabled = $enabled;
+        $paymentMethod
+            ->method('getPaymentMethodName')
+            ->willReturn($paymentName)
+        ;
+        $paymentMethod->enabled = $enabled;
 
-		return $paymentMethod;
-	}
+        return $paymentMethod;
+    }
 
-	public function mockPaymentMethodRepository()
-	{
-		$paymentMethodRepository = $this->getMockBuilder(PaymentMethodRepositoryInterface::class)
-			->disableOriginalConstructor()
-			->getMock();
+    public function mockPaymentMethodRepository()
+    {
+        $paymentMethodRepository = $this->getMockBuilder(PaymentMethodRepositoryInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-		$paymentMethodRepository
-			->method('findAll')
-			->willReturn(
-				new \PrestaShopCollection(MolPaymentMethod::class)
-			)
-		;
-	}
+        $paymentMethodRepository
+            ->method('findAll')
+            ->willReturn(
+                new \PrestaShopCollection(MolPaymentMethod::class)
+            )
+        ;
+    }
 
-	public function mockConfigurationAdapter($configuration)
-	{
-		$configurationAdapter = $this->getMockBuilder(ConfigurationAdapter::class)
-			->disableOriginalConstructor()
-			->getMock();
+    public function mockConfigurationAdapter($configuration)
+    {
+        $configurationAdapter = $this->getMockBuilder(ConfigurationAdapter::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-		$configurationAdapter
-			->method('get')
-			->with('PS_SSL_ENABLED_EVERYWHERE')
-			->willReturn($configuration['PS_SSL_ENABLED_EVERYWHERE'])
-		;
+        $configurationAdapter
+            ->method('get')
+            ->with('PS_SSL_ENABLED_EVERYWHERE')
+            ->willReturn($configuration['PS_SSL_ENABLED_EVERYWHERE'])
+        ;
 
-		return $configurationAdapter;
-	}
-
-	public function mockOrderTotalRestrictionProvider($minimumValue, $maximumValue)
-	{
-		$orderTotalRestrictionProvider = $this->getMockBuilder(OrderTotalRestrictionProvider::class)
-			->disableOriginalConstructor()
-			->getMock();
-
-		$orderTotalRestrictionProvider
-			->method('getOrderTotalMinimumRestriction')
-			->willReturn($minimumValue)
-		;
-
-		$orderTotalRestrictionProvider
-			->method('getOrderTotalMaximumRestriction')
-			->willReturn($maximumValue)
-		;
-
-		return $orderTotalRestrictionProvider;
-	}
-
-	public function mockOrderTotalService($isOrderTotalHigherThanMaximum, $isOrderTotalLowerThanMinimum)
-	{
-		$orderTotalService = $this->getMockBuilder(OrderTotalService::class)
-			->disableOriginalConstructor()
-			->getMock();
-
-		$orderTotalService
-			->method('isOrderTotalLowerThanMinimumAllowed')
-			->willReturn($isOrderTotalLowerThanMinimum)
-		;
-
-		$orderTotalService
-			->method('isOrderTotalHigherThanMaximumAllowed')
-			->willReturn($isOrderTotalHigherThanMaximum)
-		;
-
-		return $orderTotalService;
-	}
-
-	public function mockOrderTotalRepository($result)
-	{
-		$restrictionsRepositoryMock = $this->getMockBuilder(MolPaymentMethodOrderTotalRestrictionRepository::class)
-			->disableOriginalConstructor()
-			->getMock();
-
-		$restrictionsRepositoryMock
-			->method('findOneBy')
-			->willReturn($result)
-		;
-
-		return $restrictionsRepositoryMock;
-	}
-
-	public function mockOrderTotalProvider($orderTotal)
-	{
-		$orderTotalProvider = $this->getMockBuilder(OrderTotalProvider::class)
-			->disableOriginalConstructor()
-			->getMock();
-
-		$orderTotalProvider
-			->method('getOrderTotal')
-			->willReturn($orderTotal)
-		;
-
-		return $orderTotalProvider;
-	}
-
-	public function mockMolPaymentMethodOrderTotalRestrictionRepository($restrictions = true)
-	{
-		$restrictionRepository = $this->getMockBuilder(MolPaymentMethodOrderTotalRestrictionRepository::class)
-			->disableOriginalConstructor()
-			->getMock();
-
-		$restrictionRepository
-			->method('findOneBy')
-			->willReturn($restrictions)
-		;
-
-		return $restrictionRepository;
-	}
+        return $configurationAdapter;
+    }
 }

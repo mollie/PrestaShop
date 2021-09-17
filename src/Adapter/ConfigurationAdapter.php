@@ -4,10 +4,9 @@
  *
  * @author      Mollie B.V. <info@mollie.nl>
  * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- *
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */
 
@@ -17,22 +16,22 @@ use Shop;
 
 class ConfigurationAdapter
 {
-	public function get($id)
-	{
-		return \Configuration::get($id);
-	}
+    public function get($key, $idShop = null, $idLang = null, $idShopGroup = null)
+    {
+        return \Configuration::get($key, $idLang, $idShopGroup, $idShop);
+    }
 
-	public static function updateValue($key, $values, $html = false, $idShopGroup = null, $idShop = null)
-	{
-		if ($idShop === null) {
-			$shops = Shop::getShops(true);
-			foreach ($shops as $shop) {
-				\Configuration::updateValue($key, $values, $html, $shop['id_shop_group'], $shop['id_shop']);
-			}
+    public function updateValue($key, $values, $idShop = null, $html = false, $idShopGroup = null)
+    {
+        if ($idShop === null) {
+            $shops = Shop::getShops(true);
+            foreach ($shops as $shop) {
+                \Configuration::updateValue($key, $values, $html, $shop['id_shop_group'], $shop['id_shop']);
+            }
 
-			return;
-		}
+            return;
+        }
 
-		\Configuration::updateValue($key, $values, $html, $idShopGroup, $idShop);
-	}
+        \Configuration::updateValue($key, $values, $html, $idShopGroup, $idShop);
+    }
 }

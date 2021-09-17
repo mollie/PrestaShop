@@ -4,295 +4,280 @@
  *
  * @author      Mollie B.V. <info@mollie.nl>
  * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- *
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  * @codingStandardsIgnoreStart
  */
 
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Api\Types\PaymentStatus;
+use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Factory\CustomerFactory;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Service\MemorizeCartService;
 use Mollie\Service\PaymentReturnService;
-use Mollie\Service\RestorePendingCartService;
 use Mollie\Utility\ArrayUtility;
-use Mollie\Utility\PaymentMethodUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Validator\OrderCallBackValidator;
 
 if (!defined('_PS_VERSION_')) {
-	exit;
+    exit;
 }
 
 require_once dirname(__FILE__) . '/../../mollie.php';
 
 class MollieReturnModuleFrontController extends AbstractMollieController
 {
-	/** @var Mollie */
-	public $module;
+    /** @var Mollie */
+    public $module;
 
-	const FILE_NAME = 'return';
+    const FILE_NAME = 'return';
 
-	/** @var bool */
-	public $ssl = true;
+    /** @var bool */
+    public $ssl = true;
 
-	/**
-	 * Unset the cart id from cookie if the order exists.
-	 *
-	 * @throws PrestaShopException
-	 */
-	public function init()
-	{
-		/** @var Context $context */
-		$context = Context::getContext();
-		/** @var Cart $cart */
-		$cart = new Cart((int) $this->context->cookie->__get('id_cart'));
-		if (Validate::isLoadedObject($cart) && !$cart->orderExists()) {
-			unset($context->cart);
-			unset($context->cookie->id_cart);
-			unset($context->cookie->checkedTOS);
-			unset($context->cookie->check_cgv);
-		}
+    /**
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws SmartyException
+     */
+    public function initContent()
+    {
+        $idCart = (int) Tools::getValue('cart_id');
+        $key = Tools::getValue('key');
+        $orderNumber = Tools::getValue('order_number');
+        $context = Context::getContext();
+        $customer = $context->customer;
 
-		parent::init();
-	}
+        /** @var OrderCallBackValidator $orderCallBackValidator */
+        $orderCallBackValidator = $this->module->getMollieContainer(OrderCallBackValidator::class);
 
-	/**
-	 * @throws PrestaShopDatabaseException
-	 * @throws PrestaShopException
-	 * @throws SmartyException
-	 */
-	public function initContent()
-	{
-		$idCart = (int) Tools::getValue('cart_id');
-		$key = Tools::getValue('key');
-		$context = Context::getContext();
-		$customer = $context->customer;
+        if (!$orderCallBackValidator->validate($key, $idCart)) {
+            Tools::redirectLink('index.php');
+        }
 
-		/** @var OrderCallBackValidator $orderCallBackValidator */
-		$orderCallBackValidator = $this->module->getMollieContainer(OrderCallBackValidator::class);
+        /** @var CustomerFactory $customerFactory */
+        $customerFactory = $this->module->getMollieContainer(CustomerFactory::class);
+        $this->context = $customerFactory->recreateFromRequest($customer->id, $key, $this->context);
+        if (Tools::getValue('ajax')) {
+            $this->processAjax();
+            exit;
+        }
 
-		if (!$orderCallBackValidator->validate($key, $idCart)) {
-			Tools::redirectLink('index.php');
-		}
+        parent::initContent();
 
-		/** @var CustomerFactory $customerFactory */
-		$customerFactory = $this->module->getMollieContainer(CustomerFactory::class);
-		$this->context = $customerFactory->recreateFromRequest($customer->id, $key, $this->context);
-		if (Tools::getValue('ajax')) {
-			$this->processAjax();
-			exit;
-		}
+        $data = [];
+        $cart = null;
 
-		parent::initContent();
+        /** @var PaymentMethodRepository $paymentMethodRepo */
+        $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
+        if (Tools::getIsset('cart_id')) {
+            $idCart = (int) Tools::getValue('cart_id');
 
-		$data = [];
-		$cart = null;
+            // Check if user that's seeing this is the cart-owner
+            $cart = new Cart($idCart);
+            $data['auth'] = (int) $cart->id_customer === $customer->id;
+            if ($data['auth']) {
+                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_reference', (string) $orderNumber);
+            }
+        }
 
-		/** @var PaymentMethodRepository $paymentMethodRepo */
-		$paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
-		if (Tools::getIsset('cart_id')) {
-			$idCart = (int) Tools::getValue('cart_id');
+        if (isset($data['auth']) && $data['auth']) {
+            // any paid payments for this cart?
 
-			// Check if user that's seeing this is the cart-owner
-			$cart = new Cart($idCart);
-			$data['auth'] = (int) $cart->id_customer === $customer->id;
-			if ($data['auth']) {
-				$data['mollie_info'] = $paymentMethodRepo->getPaymentBy('cart_id', (string) $idCart);
-			}
-		}
+            if (false === $data['mollie_info']) {
+                $data['mollie_info'] = [];
+                $data['msg_details'] = $this->module->l('The order with this id does not exist.', self::FILE_NAME);
+            } elseif (PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
+                && PaymentStatus::STATUS_OPEN === $data['mollie_info']['bank_status']
+            ) {
+                $data['msg_details'] = $this->module->l('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.', self::FILE_NAME);
+            } else {
+                $data['wait'] = true;
+            }
+        } else {
+            // Not allowed? Don't make query but redirect.
+            $data['mollie_info'] = [];
+            $data['msg_details'] = $this->module->l('You are not authorised to see this page.', self::FILE_NAME);
+            Tools::redirect(Context::getContext()->link->getPageLink('index', true));
+        }
 
-		if (isset($data['auth']) && $data['auth']) {
-			// any paid payments for this cart?
+        $this->context->smarty->assign($data);
+        $this->context->smarty->assign('link', $this->context->link);
 
-			if (false === $data['mollie_info']) {
-				$data['mollie_info'] = [];
-				$data['msg_details'] = $this->module->l('The order with this id does not exist.', self::FILE_NAME);
-			} elseif (PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
-				&& PaymentStatus::STATUS_OPEN === $data['mollie_info']['bank_status']
-			) {
-				$data['msg_details'] = $this->module->l('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.', self::FILE_NAME);
-			} else {
-				$data['wait'] = true;
-			}
-		} else {
-			// Not allowed? Don't make query but redirect.
-			$data['mollie_info'] = [];
-			$data['msg_details'] = $this->module->l('You are not authorised to see this page.', self::FILE_NAME);
-			Tools::redirect(Context::getContext()->link->getPageLink('index', true));
-		}
+        if (!empty($data['wait'])) {
+            $this->context->smarty->assign(
+                'checkStatusEndpoint',
+                $this->context->link->getModuleLink(
+                    $this->module->name,
+                    'return',
+                    [
+                        'ajax' => 1,
+                        'action' => 'getStatus',
+                        'transaction_id' => $data['mollie_info']['transaction_id'],
+                        'key' => $key,
+                        'cart_id' => $idCart,
+                        'order_number' => $orderNumber,
+                    ],
+                    true
+                )
+            );
+            $this->setTemplate('mollie_wait.tpl');
+        } else {
+            $this->setTemplate('mollie_return.tpl');
+        }
+    }
 
-		$this->context->smarty->assign($data);
-		$this->context->smarty->assign('link', $this->context->link);
+    /**
+     * Prepend module path if PS version >= 1.7.
+     *
+     * @param string $template
+     * @param array $params
+     * @param string|null $locale
+     *
+     * @throws PrestaShopException
+     *
+     * @since 3.3.2
+     */
+    public function setTemplate($template, $params = [], $locale = null)
+    {
+        if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+            $template = "module:mollie/views/templates/front/17_{$template}";
+        }
 
-		if (!empty($data['wait'])) {
-			$this->context->smarty->assign(
-				'checkStatusEndpoint',
-				$this->context->link->getModuleLink(
-					$this->module->name,
-					'return',
-					[
-						'ajax' => 1,
-						'action' => 'getStatus',
-						'transaction_id' => $data['mollie_info']['transaction_id'],
-						'key' => $key,
-						'cart_id' => $idCart,
-					],
-					true
-				)
-			);
-			$this->setTemplate('mollie_wait.tpl');
-		} else {
-			$this->setTemplate('mollie_return.tpl');
-		}
-	}
+        /* @phpstan-ignore-next-line */
+        parent::setTemplate($template, $params, $locale);
+    }
 
-	/**
-	 * Prepend module path if PS version >= 1.7.
-	 *
-	 * @param string $template
-	 * @param array $params
-	 * @param string|null $locale
-	 *
-	 * @throws PrestaShopException
-	 *
-	 * @since 3.3.2
-	 */
-	public function setTemplate($template, $params = [], $locale = null)
-	{
-		if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
-			$template = "module:mollie/views/templates/front/17_{$template}";
-		}
+    /**
+     * @throws PrestaShopException
+     * @throws SmartyException
+     */
+    protected function processAjax()
+    {
+        if (empty($this->context->customer->id)) {
+            return;
+        }
 
-		/* @phpstan-ignore-next-line */
-		parent::setTemplate($template, $params, $locale);
-	}
+        switch (Tools::getValue('action')) {
+            case 'getStatus':
+                $this->processGetStatus();
+                break;
+        }
 
-	/**
-	 * @throws PrestaShopException
-	 * @throws SmartyException
-	 */
-	protected function processAjax()
-	{
-		if (empty($this->context->customer->id)) {
-			return;
-		}
+        exit;
+    }
 
-		switch (Tools::getValue('action')) {
-			case 'getStatus':
-				$this->processGetStatus();
-				break;
-		}
+    /**
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    protected function processGetStatus()
+    {
+        header('Content-Type: application/json;charset=UTF-8');
+        /** @var PaymentMethodRepository $paymentMethodRepo */
+        $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
 
-		exit;
-	}
+        $transactionId = Tools::getValue('transaction_id');
+        $dbPayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transactionId);
+        $cart = new Cart($dbPayment['cart_id']);
+        if (!Validate::isLoadedObject($cart)) {
+            exit(json_encode([
+                'success' => false,
+            ]));
+        }
+        /* @phpstan-ignore-next-line */
+        $orderId = (int) Order::getOrderByCartId((int) $cart->id);
+        /** @phpstan-ignore-line */
+        $order = new Order((int) $orderId);
 
-	/**
-	 * @throws PrestaShopDatabaseException
-	 * @throws PrestaShopException
-	 */
-	protected function processGetStatus()
-	{
-		header('Content-Type: application/json;charset=UTF-8');
-		/** @var PaymentMethodRepository $paymentMethodRepo */
-		$paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
+        if (!Validate::isLoadedObject($cart)) {
+            exit(json_encode([
+                'success' => false,
+            ]));
+        }
 
-		$transactionId = Tools::getValue('transaction_id');
-		$dbPayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transactionId);
-		$cart = new Cart($dbPayment['cart_id']);
-		if (!Validate::isLoadedObject($cart)) {
-			exit(json_encode([
-				'success' => false,
-			]));
-		}
-		$orderId = (int) Order::getOrderByCartId((int) $cart->id); /** @phpstan-ignore-line */
-		$order = new Order((int) $orderId);
+        if ((int) $cart->id_customer !== (int) $this->context->customer->id) {
+            exit(json_encode([
+                'success' => false,
+            ]));
+        }
 
-		if (!Validate::isLoadedObject($cart)) {
-			exit(json_encode([
-				'success' => false,
-			]));
-		}
+        if (!Tools::isSubmit('module')) {
+            $_GET['module'] = $this->module->name;
+        }
 
-		if ((int) $cart->id_customer !== (int) $this->context->customer->id) {
-			exit(json_encode([
-				'success' => false,
-			]));
-		}
+        $isOrder = TransactionUtility::isOrderTransaction($transactionId);
+        if ($isOrder) {
+            $transaction = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
+        } else {
+            $transaction = $this->module->api->payments->get($transactionId);
+        }
 
-		if (!Tools::isSubmit('module')) {
-			$_GET['module'] = $this->module->name;
-		}
+        $orderStatus = $transaction->status;
 
-		$isOrder = TransactionUtility::isOrderTransaction($transactionId);
-		if ($isOrder) {
-			$transaction = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
-		} else {
-			$transaction = $this->module->api->payments->get($transactionId);
-		}
+        if ('order' === $transaction->resource) {
+            $payments = ArrayUtility::getLastElement($transaction->_embedded->payments);
+            $orderStatus = $payments->status;
+        }
 
-		$orderStatus = $transaction->status;
+        $notSuccessfulPaymentMessage = $this->module->l('Your payment was not successful, please try again.', self::FILE_NAME);
+        $wrongAmountMessage = $this->module->l('Payment unsuccessful - order value differs from payment request. Please try again.', self::FILE_NAME);
 
-		if ('order' === $transaction->resource) {
-			$payments = ArrayUtility::getLastElement($transaction->_embedded->payments);
-			$orderStatus = $payments->status;
-		}
+        /** @var PaymentReturnService $paymentReturnService */
+        $paymentReturnService = $this->module->getMollieContainer(PaymentReturnService::class);
+        switch ($orderStatus) {
+            case PaymentStatus::STATUS_OPEN:
+            case PaymentStatus::STATUS_PENDING:
+                $response = $paymentReturnService->handleStatus(
+                    $order,
+                    $transaction,
+                    $paymentReturnService::PENDING
+                );
+                break;
+            case PaymentStatus::STATUS_PAID:
+            case PaymentStatus::STATUS_AUTHORIZED:
+                if ($transaction->resource === Config::MOLLIE_API_STATUS_PAYMENT && $transaction->hasRefunds()) {
+                    $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
+                    if ($transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
+                        $this->setWarning($wrongAmountMessage);
+                    } else {
+                        $this->setWarning($notSuccessfulPaymentMessage);
+                    }
+                    $response = $paymentReturnService->handleFailedStatus($transaction);
+                    break;
+                }
+                $response = $paymentReturnService->handleStatus(
+                    $order,
+                    $transaction,
+                    $paymentReturnService::DONE
+                );
+                break;
+            case PaymentStatus::STATUS_EXPIRED:
+            case PaymentStatus::STATUS_CANCELED:
+            case PaymentStatus::STATUS_FAILED:
+                $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
+                if ($transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
+                    $this->setWarning($wrongAmountMessage);
+                } else {
+                    $this->setWarning($notSuccessfulPaymentMessage);
+                }
 
-		$notSuccessfulPaymentMessage = $this->module->l('Your payment was not successful, please try again.', self::FILE_NAME);
-		$paymentMethod = PaymentMethodUtility::getPaymentMethodName($transaction->method);
+                $response = $paymentReturnService->handleFailedStatus($transaction);
+                break;
+            default:
+                exit();
+        }
 
-		/** @var PaymentReturnService $paymentReturnService */
-		$paymentReturnService = $this->module->getMollieContainer(PaymentReturnService::class);
-		switch ($orderStatus) {
-			case PaymentStatus::STATUS_OPEN:
-			case PaymentStatus::STATUS_PENDING:
-				$response = $paymentReturnService->handleStatus(
-					$order,
-					$transaction,
-					$paymentReturnService::PENDING
-				);
-				break;
-			case PaymentStatus::STATUS_PAID:
-			case PaymentStatus::STATUS_AUTHORIZED:
-				$response = $paymentReturnService->handleStatus(
-					$order,
-					$transaction,
-					$paymentReturnService::DONE
-				);
+        exit(json_encode($response));
+    }
 
-				/** @var MemorizeCartService $memorizeCart */
-				$memorizeCart = $this->module->getMollieContainer(MemorizeCartService::class);
-				$memorizeCart->removeMemorizedCart($order);
+    private function setWarning($message)
+    {
+        /* @phpstan-ignore-next-line */
+        $this->warning[] = $message;
 
-				$order->total_paid_real = $transaction->amount->value;
-				$order->update();
-				break;
-			case PaymentStatus::STATUS_EXPIRED:
-			case PaymentStatus::STATUS_CANCELED:
-			case PaymentStatus::STATUS_FAILED:
-				$this->setWarning($notSuccessfulPaymentMessage);
-				/** @var RestorePendingCartService $restorePendingCart */
-				$restorePendingCart = $this->module->getMollieContainer(RestorePendingCartService::class);
-				$restorePendingCart->restore($order);
-
-				$response = $paymentReturnService->handleFailedStatus($order, $transaction, $paymentMethod);
-				break;
-			default:
-				exit();
-		}
-
-		exit(json_encode($response));
-	}
-
-	private function setWarning($message)
-	{
-		/* @phpstan-ignore-next-line */
-		$this->warning[] = $message;
-
-		$this->context->cookie->__set('mollie_payment_canceled_error', json_encode($this->warning));
-	}
+        $this->context->cookie->__set('mollie_payment_canceled_error', json_encode($this->warning));
+    }
 }

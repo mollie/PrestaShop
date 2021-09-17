@@ -3,8 +3,19 @@
  *
  * @author      Mollie B.V. <info@mollie.nl>
  * @copyright   Mollie B.V.
- * @link        https://github.com/mollie/PrestaShop
+ *
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ */
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
 $(document).ready(function () {
@@ -28,12 +39,10 @@ $(document).ready(function () {
         var $molliePaymentCheckboxGroup = $('#mollie-email-send-group');
         var $orderStatusSelector = $('select[name="cart_summary[order_state]"],select[name="id_order_state"]');
         if (isMolliePayment) {
-            $orderStatusSelector.closest('div.form-group').toggleClass(displayHiddenClass, true);
             $('#send_email_to_customer').toggleClass(displayHiddenClass, true);
             $molliePaymentCheckboxGroup.toggleClass(displayHiddenClass, false);
             $orderStatusSelector.val(molliePendingStatus);
         } else {
-            $orderStatusSelector.closest('div.form-group').toggleClass(displayHiddenClass, false);
             $('#send_email_to_customer').toggleClass(displayHiddenClass, false);
             $molliePaymentCheckboxGroup.toggleClass(displayHiddenClass, true);
         }
