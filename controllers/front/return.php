@@ -230,6 +230,11 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         switch ($orderStatus) {
             case PaymentStatus::STATUS_OPEN:
             case PaymentStatus::STATUS_PENDING:
+                if ($transaction->mode === "test") {
+                    $this->setWarning($this->module->l('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.'));
+                    $response = $paymentReturnService->handleTestPendingStatus();
+                    break;
+                }
                 $response = $paymentReturnService->handleStatus(
                     $order,
                     $transaction,

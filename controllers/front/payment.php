@@ -12,6 +12,7 @@
 
 use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment as MolliePaymentAlias;
+use Mollie\Api\Types\PaymentMethod;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\DTO\OrderData;
@@ -117,6 +118,9 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
         $this->createOrder($apiPayment, $cart->id, $orderNumber);
 
+        if ($method === PaymentMethod::BANKTRANSFER) {
+            unset($this->context->cookie->id_cart);
+        }
         // Go to payment url
         if (null !== $apiPayment->getCheckoutUrl()) {
             Tools::redirect($apiPayment->getCheckoutUrl());
