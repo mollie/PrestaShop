@@ -58,7 +58,6 @@ class ErrorHandler
         $this->client->setExcludedAppPaths([
             realpath(_PS_MODULE_DIR_ . $module->name . '/vendor/'),
         ]);
-        $this->client-
         // Useless as it will exclude everything even if specified in the app path
         //$this->client->setExcludedAppPaths([_PS_ROOT_DIR_]);
         $this->client->install();
