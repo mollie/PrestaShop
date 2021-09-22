@@ -152,6 +152,8 @@ class TransactionService
                         $payment = $this->module->api->payments->get($apiPayment->id);
                         $payment->description = $order->reference;
                         $payment->update();
+                    } else {
+                        $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
                     }
                     $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
                 }
@@ -178,7 +180,10 @@ class TransactionService
                         $payment->update();
                     }
                     $apiPayment->update();
+                } else {
+                    $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
                 }
+
                 $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
         }
 
