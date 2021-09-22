@@ -41,7 +41,7 @@ class ErrorHandler
         $this->client = new ModuleFilteredRavenClient(
             Config::SENTRY_KEY,
             [
-                'level' => 'warning',
+                'level' => Raven_Client::ERROR,
                 'tags' => [
                     'php_version' => phpversion(),
                     'mollie_version' => $module->version,
