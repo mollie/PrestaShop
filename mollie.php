@@ -1053,6 +1053,9 @@ class Mollie extends PaymentModule
 
         $apiKey = Configuration::get($apiKeyConfig, null, null, $shopId);
 
+        if (!$apiKey) {
+            return;
+        }
         try {
             $this->api = $apiKeyService->setApiKey($apiKey, $this->version);
         } catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {

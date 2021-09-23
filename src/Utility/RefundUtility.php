@@ -36,7 +36,8 @@ class RefundUtility
     {
         $refundedAmount = 0;
         foreach ($lines as $line) {
-            $refundedAmount = NumberUtility::plus($refundedAmount, $line['totalAmount']['value']);
+            $lineRefundAmount = NumberUtility::times($line['unitPrice']['value'], $line['quantity']);
+            $refundedAmount = NumberUtility::plus($refundedAmount, $lineRefundAmount);
         }
 
         return NumberUtility::isLowerOrEqualThan($refundedAmount, $availableRefund['value']);
