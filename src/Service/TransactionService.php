@@ -254,7 +254,12 @@ class TransactionService
             (int) $cartId,
             (int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
             (float) $originalAmount,
-            isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name
+            isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name,
+            null,
+            null,
+            null,
+            null,
+            $cart->secure_key
         );
 
         /* @phpstan-ignore-next-line */
