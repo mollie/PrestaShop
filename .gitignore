@@ -2,7 +2,6 @@
 composer.lock
 yarn.lock
 yarn-error.log
-package-lock.json
 .idea/
 build/
 .codecept.phar

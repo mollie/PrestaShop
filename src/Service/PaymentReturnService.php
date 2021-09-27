@@ -130,6 +130,17 @@ class PaymentReturnService
         ];
     }
 
+    public function handleTestPendingStatus()
+    {
+        $orderLink = $this->orderLinkFactory->getLink();
+
+        return [
+            'success' => true,
+            'status' => static::DONE,
+            'href' => $orderLink,
+        ];
+    }
+
     private function getStatusResponse($transaction, $status, $cartId, $cartSecureKey)
     {
         /* @phpstan-ignore-next-line */
