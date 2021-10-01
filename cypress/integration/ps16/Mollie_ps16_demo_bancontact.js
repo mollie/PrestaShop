@@ -42,9 +42,19 @@ it('Checkouting the item in FO [Orders API]', () => {
       cy.get('label').click({force: true})
       cy.get('.cart_navigation > .button > span').click({force: true})
       cy.get('#mollie_link_bancontact').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
       cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
-
       //Success page UI verification
       cy.get('#mollie-ok').should('include.text','Thank you')
   })
@@ -125,6 +135,17 @@ it('Checkouting the item in FO [Payments API]', () => {
       cy.get('label').click({force: true})
       cy.get('.cart_navigation > .button > span').click({force: true})
       cy.get('#mollie_link_bancontact').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
       cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
 

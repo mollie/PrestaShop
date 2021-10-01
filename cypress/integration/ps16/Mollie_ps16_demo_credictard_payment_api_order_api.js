@@ -62,6 +62,17 @@ context('Purchase automation PS16 Mollie Payment/Order API Credit Card Front Off
       getBody().find('#verificationCode').type('222')
 })
       cy.get('.fancybox-inner > .mollie-iframe-container > .row > .col-lg-3 > form > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
       cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
 
@@ -163,6 +174,17 @@ it('Checkouting the item Front-Office [Orders API]', () => {
   getBody().find('#verificationCode').type('222')
 })
   cy.get('.fancybox-inner > .mollie-iframe-container > .row > .col-lg-3 > form > .btn').click()
+  cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
   cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
   cy.get('.button').click()
 

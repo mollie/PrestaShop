@@ -175,3 +175,4 @@ it('Checking iDEAL issuer popup enabled', () => {
   cy.get('.columns-container').should('contain.text','window.MollieModule.app.default.bankList')
 })
 })
+})
