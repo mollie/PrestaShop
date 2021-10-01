@@ -25,7 +25,7 @@ jobs:
         run: npm ci
 
       - name: Run Cypress
-        run: npx cypress run --env demousername=${{ secrets.DEMO_USER }},demopassword=${{ secrets.DEMO_PASS }},FO_username=${{ secrets.MOLLIE_FO_USR }},FO_password=${{ secrets.MOLLIE_FO_PSW }},mollie_test_api_key=${{ secrets.MOLLIE_TEST_API_KEY }},mollie_test_profile_id=${{ secrets.MOLLIE_TEST_PROFILE_ID }} -s "/master/cypress/integration/ps16/**"
+        run: npx cypress run --env demousername=${{ secrets.DEMO_USER }},demopassword=${{ secrets.DEMO_PASS }},FO_username=${{ secrets.MOLLIE_FO_USR }},FO_password=${{ secrets.MOLLIE_FO_PSW }},mollie_test_api_key=${{ secrets.MOLLIE_TEST_API_KEY }},mollie_test_profile_id=${{ secrets.MOLLIE_TEST_PROFILE_ID }} -s "/home/runner/work/PrestaShop/PrestaShop/cypress/integration/ps16/**"
         #--parallel --record --key fe20a60a-0ac6-4956-a6e8-911aad86cb03
 
       - name: Archive videos and screenshots
@@ -49,7 +49,7 @@ jobs:
         run: npm ci
 
       - name: Run Cypress
-        run: npx cypress run --env demousername=${{ secrets.DEMO_USER }},demopassword=${{ secrets.DEMO_PASS }},FO_username=${{ secrets.MOLLIE_FO_USR }},FO_password=${{ secrets.MOLLIE_FO_PSW }},mollie_test_api_key=${{ secrets.MOLLIE_TEST_API_KEY }},mollie_test_profile_id=${{ secrets.MOLLIE_TEST_PROFILE_ID }} -s "/master/cypress/integration/ps17/**"
+        run: npx cypress run --env demousername=${{ secrets.DEMO_USER }},demopassword=${{ secrets.DEMO_PASS }},FO_username=${{ secrets.MOLLIE_FO_USR }},FO_password=${{ secrets.MOLLIE_FO_PSW }},mollie_test_api_key=${{ secrets.MOLLIE_TEST_API_KEY }},mollie_test_profile_id=${{ secrets.MOLLIE_TEST_PROFILE_ID }} -s "/home/runner/work/PrestaShop/PrestaShop/cypress/integration/ps17/**"
 
       - name: Archive videos and screenshots
         if: ${{ always() }}
@@ -72,7 +72,7 @@ jobs:
         run: npm ci
 
       - name: Run Cypress
-        run: npx cypress run --env demousername=${{ secrets.DEMO_USER }},demopassword=${{ secrets.DEMO_PASS }},FO_username=${{ secrets.MOLLIE_FO_USR }},FO_password=${{ secrets.MOLLIE_FO_PSW }},mollie_test_api_key=${{ secrets.MOLLIE_TEST_API_KEY }},mollie_test_profile_id=${{ secrets.MOLLIE_TEST_PROFILE_ID }} -s "/master/cypress/integration/ps177/**"
+        run: npx cypress run --env demousername=${{ secrets.DEMO_USER }},demopassword=${{ secrets.DEMO_PASS }},FO_username=${{ secrets.MOLLIE_FO_USR }},FO_password=${{ secrets.MOLLIE_FO_PSW }},mollie_test_api_key=${{ secrets.MOLLIE_TEST_API_KEY }},mollie_test_profile_id=${{ secrets.MOLLIE_TEST_PROFILE_ID }} -s "/home/runner/work/PrestaShop/PrestaShop/cypress/integration/ps177/**"
 
       - name: Archive videos and screenshots
         if: ${{ always() }}
