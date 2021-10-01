@@ -19,7 +19,9 @@
  * @codingStandardsIgnoreStart
  */
 //import 'cypress-file-upload';
-//import 'cypress-iframe';
+import 'cypress-iframe';
+// or
+require('cypress-iframe');
 
 //const compareSnapshotCommand = require('cypress-visual-regression/dist/command');
 //compareSnapshotCommand({
