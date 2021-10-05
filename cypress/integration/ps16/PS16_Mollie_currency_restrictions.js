@@ -11,7 +11,7 @@ context('PS16 Currencly Restrictions check', () => {
         return false
       })
   })
-it('DE / 100 EUR / 3 Klarna Payments should be visible', () => {
+it.only('DE / 100 EUR / 3 Klarna Payments should be visible', () => {
       cy.viewport(1920,1080)
       cy.visit('https://demo.invertus.eu/clients/mollie16-test/fr/home/9-test1.html')
       cy.get('[class="login"]').click()
@@ -31,7 +31,7 @@ it('DE / 100 EUR / 3 Klarna Payments should be visible', () => {
       cy.get('#mollie_link_sofort').should('be.visible')
       
 })
-it('DE / <45 EUR / Klarna Slice It. should not be visible', () => {
+it.only('DE / <45 EUR / Klarna Slice It. should not be visible', () => {
       cy.viewport(1920,1080)
       cy.visit('https://demo.invertus.eu/clients/mollie16-test/en/summer-dresses/7-printed-chiffon-dress.html')
       cy.get('[class="login"]').click()
@@ -78,7 +78,7 @@ it.only('DE / >10000 EUR / Klarna Slice It, Klarna Pay Later, iDEAL, Bancontact,
       cy.get('.paiement_block').contains('Giropay').should('not.exist')
       cy.get('.paiement_block').contains('Gift').should('not.exist')
 })
-it('JPN / >1000000 JPY / PayPal should not be visible', () => {
+it.only('JPN / >1000000 JPY / PayPal should not be visible', () => {
       cy.viewport(1920,1080)
       cy.visit('https://demo.invertus.eu/clients/mollie16-test/en/home/9-test1.html')
       cy.get('#setCurrency > .current').click()
