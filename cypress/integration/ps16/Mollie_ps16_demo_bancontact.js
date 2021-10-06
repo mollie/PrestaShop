@@ -2,8 +2,8 @@
 context('PS16 Bancontact Payment Orders/Payments API basic checkout',
 {
     retries: {
-      runMode: 0,
-      openMode: 0,
+      runMode: 2,
+      openMode: 2,
     }
 }, () => {
   beforeEach(() => {
