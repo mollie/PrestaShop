@@ -178,6 +178,10 @@ class RefundUtilityTest extends TestCase
                             'value' => '0.00',
                             'currency' => 'EUR',
                         ],
+                        'unitPrice' => [
+                            'value' => '100.00',
+                            'currency' => 'EUR',
+                        ],
                     ],
                 ],
                 'remainingAmount' => [
@@ -198,6 +202,10 @@ class RefundUtilityTest extends TestCase
                         ],
                         'amountRefunded' => [
                             'value' => '0.00',
+                            'currency' => 'EUR',
+                        ],
+                        'unitPrice' => [
+                            'value' => '100.00',
                             'currency' => 'EUR',
                         ],
                     ],
@@ -222,6 +230,10 @@ class RefundUtilityTest extends TestCase
                             'value' => '0.00',
                             'currency' => 'EUR',
                         ],
+                        'unitPrice' => [
+                            'value' => '100.00',
+                            'currency' => 'EUR',
+                        ],
                     ],
                     1 => [
                         'id' => 'odl_tnw1aa',
@@ -233,6 +245,10 @@ class RefundUtilityTest extends TestCase
                         ],
                         'amountRefunded' => [
                             'value' => '0.00',
+                            'currency' => 'EUR',
+                        ],
+                        'unitPrice' => [
+                            'value' => '11.00',
                             'currency' => 'EUR',
                         ],
                     ],
@@ -257,6 +273,10 @@ class RefundUtilityTest extends TestCase
                             'value' => '0.00',
                             'currency' => 'EUR',
                         ],
+                        'unitPrice' => [
+                            'value' => '100.00',
+                            'currency' => 'EUR',
+                        ],
                     ],
                     1 => [
                         'id' => 'odl_tnw1aa',
@@ -268,6 +288,10 @@ class RefundUtilityTest extends TestCase
                         ],
                         'amountRefunded' => [
                             'value' => '0.00',
+                            'currency' => 'EUR',
+                        ],
+                        'unitPrice' => [
+                            'value' => '11.00',
                             'currency' => 'EUR',
                         ],
                     ],

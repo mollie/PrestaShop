@@ -14,8 +14,10 @@ namespace Mollie\Utility;
 
 class OrderNumberUtility
 {
+    const ORDER_NUMBER_PREFIX = 'mol_';
+
     public static function generateOrderNumber($cartId)
     {
-        return 'mol_' . uniqid($cartId, false) . time();
+        return self::ORDER_NUMBER_PREFIX . uniqid($cartId, false) . time();
     }
 }
