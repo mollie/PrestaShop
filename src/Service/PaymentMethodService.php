@@ -36,6 +36,7 @@ use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\Utility\CustomLogoUtility;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\LocaleUtility;
+use Mollie\Utility\OrderNumberUtility;
 use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TextFormatUtility;
 use Mollie\Utility\TextGeneratorUtility;
@@ -252,7 +253,7 @@ class PaymentMethodService
     ) {
         $totalAmount = TextFormatUtility::formatNumber($amount, 2);
         if (!$orderReference) {
-            $this->module->currentOrderReference = $orderReference = Order::generateReference();
+            $this->module->currentOrderReference = $orderReference = OrderNumberUtility::generateOrderNumber($cartId);
         }
         $description = TextGeneratorUtility::generateDescriptionFromCart($molPaymentMethod->description, $cartId, $orderReference);
         $context = Context::getContext();
