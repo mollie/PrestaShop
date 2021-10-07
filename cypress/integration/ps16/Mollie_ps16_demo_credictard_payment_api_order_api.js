@@ -1,5 +1,11 @@
 /// <reference types="Cypress" />
-context('Purchase automation PS16 Mollie Payment/Order API Credit Card Front Office Back Office Check', () => {
+context('Purchase automation PS16 Mollie Payment/Order API Credit Card Front Office Back Office Check',
+{
+    retries: {
+      runMode: 2,
+      openMode: 2,
+    }
+}, () => {
   beforeEach(() => {
     cy.viewport(1920,1080)
   })
@@ -57,11 +63,22 @@ context('Purchase automation PS16 Mollie Payment/Order API Credit Card Front Off
   })
       cy.enter('[data-testid=mollie-container--expiryDate] > iframe').then(getBody => {
       getBody().find('#expiryDate').type('1222')
-})
+  })
       cy.enter('[data-testid=mollie-container--verificationCode] > iframe').then(getBody => {
       getBody().find('#verificationCode').type('222')
-})
+  })
       cy.get('.fancybox-inner > .mollie-iframe-container > .row > .col-lg-3 > form > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
       cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
 
@@ -69,7 +86,7 @@ context('Purchase automation PS16 Mollie Payment/Order API Credit Card Front Off
       cy.get('#mollie-ok').should('include.text','Thank you')
 
   })
-    it('Checking the Back-Office Order Existance [Payments API]', () => {
+    it('Checking the Back-Office Order Existance, Refunding [Payments API]', () => {
       Cypress.on('uncaught:exception', (err, runnable) => {
         // returning false here prevents Cypress from
         // failing the test
@@ -91,8 +108,16 @@ context('Purchase automation PS16 Mollie Payment/Order API Credit Card Front Off
       cy.get('.sc-htpNat > .panel > .card-body').should('exist')
       cy.get('.sc-bxivhb > .panel > .panel-heading').should('exist')
       cy.get('.sc-bxivhb > .panel > .card-body').should('exist')
-      //check partial refunding
-      cy.get('.form-inline > :nth-child(2) > .input-group > .form-control').type('1,5')
+      //check partial refunding on Payments API
+      cy.get('.form-inline > :nth-child(2) > .input-group > .form-control').type('1.51',{delay:0})
+      cy.get(':nth-child(2) > .input-group > .input-group-btn > .btn').click()
+      cy.get('.swal-modal').should('exist')
+      cy.get(':nth-child(2) > .swal-button').click()
+      cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
+      cy.get('.form-inline > :nth-child(1) > .btn').click()
+      cy.get('.swal-modal').should('exist')
+      cy.get(':nth-child(2) > .swal-button').click()
+      cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
 })
       it('Checking the Email Sending log in Prestashop [Payments API]', () => {
       Cypress.on('uncaught:exception', (err, runnable) => {
@@ -163,6 +188,17 @@ it('Checkouting the item Front-Office [Orders API]', () => {
   getBody().find('#verificationCode').type('222')
 })
   cy.get('.fancybox-inner > .mollie-iframe-container > .row > .col-lg-3 > form > .btn').click()
+  cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
   cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
   cy.get('.button').click()
 
@@ -170,7 +206,7 @@ it('Checkouting the item Front-Office [Orders API]', () => {
   cy.get('#mollie-ok').should('include.text','Thank you')
 
 })
-it('Checking the Back-Office Order Existance [Orders API]', () => {
+it('Checking the Back-Office Order Existance, Refunding, Shipping [Orders API]', () => {
   Cypress.on('uncaught:exception', (err, runnable) => {
     // returning false here prevents Cypress from
     // failing the test
@@ -178,24 +214,23 @@ it('Checking the Back-Office Order Existance [Orders API]', () => {
   })
   cy.mollie_test16_admin()
   cy.login_mollie16_test()
-  cy.visit('https://demo.invertus.eu/clients/mollie16-test/admin1/index.php?controller=AdminOrders&token=2e9e601079755e680c5f058da5aa16d3')
-  cy.get('tbody > :nth-child(1) > :nth-child(8)').should('include.text','Credit Card')
-  cy.get('tbody > :nth-child(1) > :nth-child(9)').should('include.text','Payment accepted')
-  cy.get(':nth-child(1) > :nth-child(14) > .btn-group > .btn').click()
-  cy.get('#mollie_order > :nth-child(1)').should('exist')
-  cy.get('.sc-htpNat > .panel').should('exist')
-  cy.get('.sc-jTzLTM > .panel').should('exist')
-  cy.get('.btn-group > [title=""]').should('exist')
-  cy.get('.btn-group > .btn-primary').should('exist')
-  cy.get('tfoot > tr > td > .btn-group > :nth-child(2)').should('exist')
-  cy.get('.sc-htpNat > .panel > .card-body > :nth-child(3)').should('exist')
-  cy.get('.card-body > :nth-child(6)').should('exist')
-  cy.get('.card-body > :nth-child(9)').should('exist')
-  cy.get('#mollie_order > :nth-child(1) > :nth-child(1)').should('exist')
-  cy.get('.sc-htpNat > .panel > .card-body').should('exist')
+  cy.visit('https://demo.invertus.eu/clients/mollie16-test/admin1/index.php?controller=AdminOrders')
+  cy.get('[class=" odd"]').eq(0).click().wait(3000)
+  //Refunding dropdown in React
   cy.get('.btn-group-action > .btn-group > .dropdown-toggle').click()
-  cy.get('.btn-group > .dropdown-menu > :nth-child(1) > a').should('exist')
-  cy.get('.dropdown-menu > :nth-child(2) > a').should('exist')
+  cy.get('[role="button"]').eq(0).click()
+  cy.get('[class="swal-button swal-button--confirm"]').click()
+  cy.get('[class="alert alert-success"]').should('be.visible')
+  //Shipping button in React
+  cy.get('.btn-group > [title=""]').click()
+  cy.get('[class="swal-button swal-button--confirm"]').click()
+  cy.get('.swal-modal').should('exist')
+  cy.get('#input-carrier').type('FedEx',{delay:0})
+  cy.get('#input-code').type('123456',{delay:0})
+  cy.get('#input-url').type('https://www.invertus.eu',{delay:0})
+  cy.get(':nth-child(2) > .swal-button').click()
+  cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
+  cy.get('[class="alert alert-success"]').should('be.visible')
 })
   it('Checking the Email Sending log in Prestashop [Orders API]', () => {
     Cypress.on('uncaught:exception', (err, runnable) => {

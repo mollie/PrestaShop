@@ -1,5 +1,11 @@
 /// <reference types="Cypress" />
-context('Klarna [Pay Later, Slice It] Payment PS16 Orders API check', () => {
+context('Klarna [Pay Later, Slice It] Payment PS16 Orders API check',
+{
+    retries: {
+      runMode: 2,
+      openMode: 2,
+    }
+}, () => {
   beforeEach(() => {
     cy.viewport(1920,1080)
   })
@@ -42,28 +48,26 @@ it('Checkouting the item Front-Office [Klarna Pay Later]', () => {
       //Success page UI verification
       cy.get('#mollie-ok').should('include.text','Thank you')
   })
-it('Checking the Back-Office Order Existance [Klarna Pay Later]', () => {
+it('Checking the Back-Office Order Existance, Refunding, Shipping [Klarna Pay Later]', () => {
   cy.mollie_test16_admin()
   cy.login_mollie16_test()
-  cy.visit('https://demo.invertus.eu/clients/mollie16-test/admin1/index.php?controller=AdminOrders&token=2e9e601079755e680c5f058da5aa16d3')
-  cy.get('tbody > :nth-child(1) > :nth-child(8)').contains('Pay later')
-  cy.get('tbody > :nth-child(1) > :nth-child(9)').contains('Klarna payment authorized')
-  cy.get(':nth-child(1) > :nth-child(14) > .btn-group > .btn').click()
-  cy.get('#formAddPaymentPanel').contains('klarnapaylater')
-  cy.get('#mollie_order > :nth-child(1)').should('exist')
-  cy.get('.sc-htpNat > .panel').should('exist')
-  cy.get('.sc-jTzLTM > .panel').should('exist')
-  cy.get('.btn-group > [title=""]').should('exist')
-  cy.get('.btn-group > .btn-primary').should('exist')
-  cy.get('tfoot > tr > td > .btn-group > :nth-child(2)').should('exist')
-  cy.get('.sc-htpNat > .panel > .card-body > :nth-child(3)').should('exist')
-  cy.get('.card-body > :nth-child(6)').should('exist')
-  cy.get('.card-body > :nth-child(9)').should('exist')
-  cy.get('#mollie_order > :nth-child(1) > :nth-child(1)').should('exist')
-  cy.get('.sc-htpNat > .panel > .card-body').should('exist')
+  cy.visit('https://demo.invertus.eu/clients/mollie16-test/admin1/index.php?controller=AdminOrders')
+  cy.get('[class=" odd"]').eq(0).click().wait(3000)
+  //Shipping button in React
+  cy.get('.btn-group > [title=""]').click()
+  cy.get('[class="swal-button swal-button--confirm"]').click()
+  cy.get('.swal-modal').should('exist')
+  cy.get('#input-carrier').type('FedEx',{delay:0})
+  cy.get('#input-code').type('123456',{delay:0})
+  cy.get('#input-url').type('https://www.invertus.eu',{delay:0})
+  cy.get(':nth-child(2) > .swal-button').click()
+  cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
+  cy.get('[class="alert alert-success"]').should('be.visible')
+  //Refunding dropdown in React
   cy.get('.btn-group-action > .btn-group > .dropdown-toggle').click()
-  cy.get('.btn-group > .dropdown-menu > :nth-child(1) > a').should('exist')
-  cy.get('.dropdown-menu > :nth-child(2) > a').should('exist')
+  cy.get('[role="button"]').eq(0).click()
+  cy.get('[class="swal-button swal-button--confirm"]').click()
+  cy.get('[class="alert alert-success"]').should('be.visible')
 })
 it('Checking the Email Sending log in Prestashop [Klarna Pay Later]', () => {
   cy.mollie_test16_admin()
@@ -110,28 +114,26 @@ it('Checkouting the item Front-Office [Klarna Slice It]', () => {
       //Success page UI verification
       cy.get('#mollie-ok').should('include.text','Thank you')
   })
-it('Checking the Back-Office Order Existance [Klarna Slice It]', () => {
+it('Checking the Back-Office Order Existance, Refunding, Shipping [Klarna Slice It]', () => {
     cy.mollie_test16_admin()
     cy.login_mollie16_test()
-    cy.visit('https://demo.invertus.eu/clients/mollie16-test/admin1/index.php?controller=AdminOrders&token=2e9e601079755e680c5f058da5aa16d3')
-    cy.get('tbody > :nth-child(1) > :nth-child(8)').contains('Slice it')
-    cy.get('tbody > :nth-child(1) > :nth-child(9)').contains('Klarna payment authorized')
-    cy.get(':nth-child(1) > :nth-child(14) > .btn-group > .btn').click()
-    cy.get('#formAddPaymentPanel').contains('klarnasliceit')
-    cy.get('#mollie_order > :nth-child(1)').should('exist')
-    cy.get('.sc-htpNat > .panel').should('exist')
-    cy.get('.sc-jTzLTM > .panel').should('exist')
-    cy.get('.btn-group > [title=""]').should('exist')
-    cy.get('.btn-group > .btn-primary').should('exist')
-    cy.get('tfoot > tr > td > .btn-group > :nth-child(2)').should('exist')
-    cy.get('.sc-htpNat > .panel > .card-body > :nth-child(3)').should('exist')
-    cy.get('.card-body > :nth-child(6)').should('exist')
-    cy.get('.card-body > :nth-child(9)').should('exist')
-    cy.get('#mollie_order > :nth-child(1) > :nth-child(1)').should('exist')
-    cy.get('.sc-htpNat > .panel > .card-body').should('exist')
+    cy.visit('https://demo.invertus.eu/clients/mollie16-test/admin1/index.php?controller=AdminOrders')
+    cy.get('[class=" odd"]').eq(0).click().wait(3000)
+    //Shipping button in React
+    cy.get('.btn-group > [title=""]').click()
+    cy.get('[class="swal-button swal-button--confirm"]').click()
+    cy.get('.swal-modal').should('exist')
+    cy.get('#input-carrier').type('FedEx',{delay:0})
+    cy.get('#input-code').type('123456',{delay:0})
+    cy.get('#input-url').type('https://www.invertus.eu',{delay:0})
+    cy.get(':nth-child(2) > .swal-button').click()
+    cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
+    cy.get('[class="alert alert-success"]').should('be.visible')
+    //Refunding dropdown in React
     cy.get('.btn-group-action > .btn-group > .dropdown-toggle').click()
-    cy.get('.btn-group > .dropdown-menu > :nth-child(1) > a').should('exist')
-    cy.get('.dropdown-menu > :nth-child(2) > a').should('exist')
+    cy.get('[role="button"]').eq(0).click()
+    cy.get('[class="swal-button swal-button--confirm"]').click()
+    cy.get('[class="alert alert-success"]').should('be.visible')
   })
 it('Checking the Email Sending log in Prestashop [Klarna Slice It]', () => {
     cy.mollie_test16_admin()

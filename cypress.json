@@ -1,6 +1,8 @@
 {
  "chromeWebSecurity": false,
  "experimentalSourceRewriting": true,
+ "numTestsKeptInMemory": 100,
+ "defaultCommandTimeout": 60000,
  "projectId": "xb89dr",
  "retries": 0
 }
