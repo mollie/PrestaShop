@@ -117,6 +117,7 @@ class TransactionService
         if (!isset($apiPayment)) {
             return $this->module->l('Transaction failed', 'webhook');
         }
+        $transactionNotUsedMessage = $this->module->l('Transaction is no longer used', 'webhook');
 
         /** @var int $orderId */
         $orderId = Order::getOrderByCartId((int)$apiPayment->metadata->cart_id);
@@ -154,7 +155,7 @@ class TransactionService
                         $payment->description = $order->reference;
                         $payment->update();
                     } elseif (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
-                        return;
+                        return $transactionNotUsedMessage;
                     }
                     else {
                         $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
@@ -185,7 +186,7 @@ class TransactionService
                     }
                     $apiPayment->update();
                 } elseif (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
-                    return;
+                    return $transactionNotUsedMessage;
                 } else {
                     $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
                 }
@@ -267,9 +268,9 @@ class TransactionService
             (float)$originalAmount,
             isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name,
             null,
+            [],
             null,
-            null,
-            null,
+            false,
             $cart->secure_key
         );
 
