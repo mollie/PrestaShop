@@ -245,8 +245,9 @@ class TransactionService
                 }
             }
         }
-
-        if ((int)($originalAmount + $paymentFee) !== (int)$apiPayment->amount->value) {
+        $cartPrice = NumberUtility::plus($originalAmount, $paymentFee);
+        $priceDifference = NumberUtility::minus($cartPrice, $apiPayment->amount->value);
+        if (abs($priceDifference) > 0.01) {
             if ($apiPayment->resource === Config::MOLLIE_API_STATUS_ORDER) {
                 $apiPayment->cancel();
             } else {

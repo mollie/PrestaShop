@@ -3,6 +3,7 @@
 # Changelog #
 ## Changes in release 4.4.2 ##
 + Fixed issue where order would get cancelled after payment was successful if customer had created another payment for the same cart.
++ Improved how cart price is compared to transaction amount. It should fix issue where sometimes payments get refunded when they are paid.
 
 ## Changes in release 4.4.1 ##
 + Fixed order status change issue where order would change status to completed or shipped.
