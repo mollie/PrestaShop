@@ -3,6 +3,7 @@
 # Changelog #
 ## Changes in release 4.4.2 ##
 + Fixed issue where order would get cancelled after payment was successful if customer had created another payment for the same cart.
++ Fixed rounding issue when creating mollie payment and there is -0.01 cent difference.
 
 ## Changes in release 4.4.1 ##
 + Fixed order status change issue where order would change status to completed or shipped.
