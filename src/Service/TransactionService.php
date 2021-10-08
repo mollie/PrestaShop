@@ -30,7 +30,6 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\OrderNumberUtility;
-use Mollie\Utility\OrderStatusUtility;
 use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TransactionUtility;
 use MolPaymentMethod;
@@ -120,7 +119,7 @@ class TransactionService
         $transactionNotUsedMessage = $this->module->l('Transaction is no longer used', 'webhook');
 
         /** @var int $orderId */
-        $orderId = Order::getOrderByCartId((int)$apiPayment->metadata->cart_id);
+        $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
 
         $cart = new Cart($apiPayment->metadata->cart_id);
 
@@ -156,11 +155,10 @@ class TransactionService
                         $payment->update();
                     } elseif (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                         return $transactionNotUsedMessage;
-                    }
-                    else {
+                    } else {
                         $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
                     }
-                    $orderId = Order::getOrderByCartId((int)$apiPayment->metadata->cart_id);
+                    $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
                 }
                 break;
             case Config::MOLLIE_API_STATUS_ORDER:
@@ -191,7 +189,7 @@ class TransactionService
                     $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
                 }
 
-                $orderId = Order::getOrderByCartId((int)$apiPayment->metadata->cart_id);
+                $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
         }
 
         // Store status in database
@@ -203,7 +201,7 @@ class TransactionService
 
         // Log successful webhook requests in extended log mode only
         if (Config::DEBUG_LOG_ALL == Configuration::get(Config::MOLLIE_DEBUG_LOG)) {
-            PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request for order ' . (int)$orderId . ' / transaction ' . $transaction->id, Config::NOTICE);
+            PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request for order ' . (int) $orderId . ' / transaction ' . $transaction->id, Config::NOTICE);
         }
 
         return $apiPayment;
@@ -221,8 +219,8 @@ class TransactionService
     private function createOrder($apiPayment, $cartId, $isKlarnaOrder = false)
     {
         $orderStatus = $isKlarnaOrder ?
-            (int)Config::getStatuses()[PaymentStatus::STATUS_AUTHORIZED] :
-            (int)Config::getStatuses()[PaymentStatus::STATUS_PAID];
+            (int) Config::getStatuses()[PaymentStatus::STATUS_AUTHORIZED] :
+            (int) Config::getStatuses()[PaymentStatus::STATUS_PAID];
 
         $cart = new Cart($cartId);
         $originalAmount = $cart->getOrderTotal(
@@ -232,7 +230,7 @@ class TransactionService
         $paymentFee = 0;
 
         if ($apiPayment->resource === Config::MOLLIE_API_STATUS_PAYMENT) {
-            $environment = (int)Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+            $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
             $paymentMethod = new MolPaymentMethod(
                 $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment)
             );
@@ -246,13 +244,13 @@ class TransactionService
             }
         }
 
-        if ((int)($originalAmount + $paymentFee) !== (int)$apiPayment->amount->value) {
+        if ((int) ($originalAmount + $paymentFee) !== (int) $apiPayment->amount->value) {
             if ($apiPayment->resource === Config::MOLLIE_API_STATUS_ORDER) {
                 $apiPayment->cancel();
             } else {
                 $apiPayment->refund([
                     'amount' => [
-                        'currency' => (string)$apiPayment->amount->currency,
+                        'currency' => (string) $apiPayment->amount->currency,
                         'value' => $apiPayment->amount->value,
                     ],
                 ]);
@@ -263,9 +261,9 @@ class TransactionService
         }
 
         $this->module->validateOrder(
-            (int)$cartId,
-            (int)Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
-            (float)$originalAmount,
+            (int) $cartId,
+            (int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
+            (float) $originalAmount,
             isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name,
             null,
             [],
@@ -275,7 +273,7 @@ class TransactionService
         );
 
         /* @phpstan-ignore-next-line */
-        $orderId = (int)Order::getOrderByCartId((int)$cartId);
+        $orderId = (int) Order::getOrderByCartId((int) $cartId);
 
         if (PaymentStatus::STATUS_PAID === $apiPayment->status || OrderStatus::STATUS_AUTHORIZED === $apiPayment->status) {
             if ($this->isOrderBackOrder($orderId)) {
@@ -293,15 +291,15 @@ class TransactionService
         $this->feeService->createOrderFee($cartId, $paymentFee);
 
         $order = new Order($orderId);
-        $order->total_paid_tax_excl = (float)(new Number((string)$order->total_paid_tax_excl))->plus((new Number((string)$paymentFee)))->toPrecision(2);
-        $order->total_paid_tax_incl = (float)(new Number((string)$order->total_paid_tax_incl))->plus((new Number((string)$paymentFee)))->toPrecision(2);
-        $order->total_paid = (float)$apiPayment->amount->value;
-        $order->total_paid_real = (float)$apiPayment->amount->value;
+        $order->total_paid_tax_excl = (float) (new Number((string) $order->total_paid_tax_excl))->plus((new Number((string) $paymentFee)))->toPrecision(2);
+        $order->total_paid_tax_incl = (float) (new Number((string) $order->total_paid_tax_incl))->plus((new Number((string) $paymentFee)))->toPrecision(2);
+        $order->total_paid = (float) $apiPayment->amount->value;
+        $order->total_paid_real = (float) $apiPayment->amount->value;
         $order->update();
 
         $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
 
-        return Order::getOrderByCartId((int)$cartId);
+        return Order::getOrderByCartId((int) $cartId);
     }
 
     public function updateOrderTransaction($transactionId, $orderReference)
@@ -347,7 +345,7 @@ class TransactionService
                 [
                     'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
                     'bank_status' => pSQL($status),
-                    'order_id' => (int)$orderId,
+                    'order_id' => (int) $orderId,
                 ],
                 '`transaction_id` = \'' . pSQL($transactionId) . '\''
             );
