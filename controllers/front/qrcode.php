@@ -13,11 +13,8 @@
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment as MolliePaymentAlias;
-use Mollie\Api\Types\PaymentMethod;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Service\ApiService;
-use Mollie\Service\PaymentMethodService;
 use Mollie\Service\TransactionService;
 use Mollie\Utility\EnvironmentUtility;
 

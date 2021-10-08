@@ -12,7 +12,6 @@
 
 namespace Mollie\Utility;
 
-use Configuration;
 use Mollie\Config\Config;
 use PrestaShop\Decimal\Number;
 
