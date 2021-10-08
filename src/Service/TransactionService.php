@@ -29,7 +29,7 @@ use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
-use Mollie\Utility\OrderStatusUtility;
+use Mollie\Utility\OrderNumberUtility;
 use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TransactionUtility;
 use MolPaymentMethod;
@@ -116,6 +116,7 @@ class TransactionService
         if (!isset($apiPayment)) {
             return $this->module->l('Transaction failed', 'webhook');
         }
+        $transactionNotUsedMessage = $this->module->l('Transaction is no longer used', 'webhook');
 
         /** @var int $orderId */
         $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
@@ -152,6 +153,8 @@ class TransactionService
                         $payment = $this->module->api->payments->get($apiPayment->id);
                         $payment->description = $order->reference;
                         $payment->update();
+                    } elseif (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
+                        return $transactionNotUsedMessage;
                     } else {
                         $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
                     }
@@ -180,6 +183,8 @@ class TransactionService
                         $payment->update();
                     }
                     $apiPayment->update();
+                } elseif (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
+                    return $transactionNotUsedMessage;
                 } else {
                     $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
                 }
@@ -261,9 +266,9 @@ class TransactionService
             (float) $originalAmount,
             isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name,
             null,
+            [],
             null,
-            null,
-            null,
+            false,
             $cart->secure_key
         );
 

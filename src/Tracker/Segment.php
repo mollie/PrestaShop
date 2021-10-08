@@ -38,7 +38,6 @@ namespace Mollie\Tracker;
 
 use Context;
 use Module;
-use Mollie;
 use Mollie\Config\Config;
 use Mollie\Config\Env;
 

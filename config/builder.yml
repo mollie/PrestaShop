@@ -34,16 +34,6 @@ services:
     arguments:
       - '@mollie'
 
-  Mollie\Builder\Content\SmartyCacheInfoBlock:
-    class: Mollie\Builder\Content\SmartyCacheInfoBlock
-    arguments:
-      - '@mollie'
-
-  Mollie\Builder\Content\SmartyForceCompileInfoBlock:
-    class: Mollie\Builder\Content\SmartyForceCompileInfoBlock
-    arguments:
-      - '@mollie'
-
   Mollie\Builder\Content\LogoInfoBlock:
     class: Mollie\Builder\Content\LogoInfoBlock
     arguments:

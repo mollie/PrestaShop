@@ -9,6 +9,7 @@ $config
     ->exclude('translations')
     ->exclude('mails')
     ->exclude('libraries')
-    ->exclude('vendor');
+    ->exclude('vendor')
+    ->exclude('upgrade');
 
 return $config;

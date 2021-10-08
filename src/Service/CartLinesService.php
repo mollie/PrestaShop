@@ -272,7 +272,7 @@ class CartLinesService
 
                 // Otherwise spread the cart line again with the updated total
                 //TODO: check why remaining comes -100 when testing and new total becomes different
-                $orderLines[$hash] = static::spreadCartLineGroup($items, $totalAmount - $remaining);
+                $orderLines[$hash] = static::spreadCartLineGroup($items, $totalAmount + $remaining);
                 break;
             }
         } elseif ($remaining > 0) {
