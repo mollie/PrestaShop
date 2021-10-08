@@ -61,16 +61,4 @@ class CartPriceUtility
         // Group the amounts and return the unit prices at the indices, with the quantities as values
         return array_count_values(array_map('strval', $spreadTotals));
     }
-
-    /**
-     * Check if the rounding mode is supported by the Orders API.
-     *
-     * @return bool
-     *
-     * @since 3.3.2
-     */
-    public static function checkRoundingMode()
-    {
-        return 2 !== (int) Configuration::get('PS_PRICE_ROUND_MODE');
-    }
 }
