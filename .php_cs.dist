@@ -10,5 +10,6 @@ $config
     ->exclude('mails')
     ->exclude('libraries')
     ->exclude('vendor');
+    ->exclude('upgrade');
 
 return $config;
