@@ -336,28 +336,4 @@ class ApiService
 
         return $order;
     }
-
-    /**
-     * Get the selected API.
-     *
-     * @throws PrestaShopException
-     *
-     * @since 3.3.0
-     *
-     * @public ✓ This method is part of the public API
-     */
-    public static function selectedApi($selectedApi)
-    {
-        if (!in_array($selectedApi, [Config::MOLLIE_ORDERS_API, Config::MOLLIE_PAYMENTS_API])) {
-            $selectedApi = Configuration::get(Config::MOLLIE_API);
-            if (!$selectedApi
-                || !in_array($selectedApi, [Config::MOLLIE_ORDERS_API, Config::MOLLIE_PAYMENTS_API])
-                || CartPriceUtility::checkRoundingMode()
-            ) {
-                $selectedApi = Config::MOLLIE_PAYMENTS_API;
-            }
-        }
-
-        return $selectedApi;
-    }
 }
