@@ -44,7 +44,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
      */
     public function initContent()
     {
-        $idCart = (int)Tools::getValue('cart_id');
+        $idCart = (int) Tools::getValue('cart_id');
         $key = Tools::getValue('key');
         $orderNumber = Tools::getValue('order_number');
         $context = Context::getContext();
@@ -73,13 +73,13 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         /** @var PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
         if (Tools::getIsset('cart_id')) {
-            $idCart = (int)Tools::getValue('cart_id');
+            $idCart = (int) Tools::getValue('cart_id');
 
             // Check if user that's seeing this is the cart-owner
             $cart = new Cart($idCart);
-            $data['auth'] = (int)$cart->id_customer === $customer->id;
+            $data['auth'] = (int) $cart->id_customer === $customer->id;
             if ($data['auth']) {
-                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_reference', (string)$orderNumber);
+                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_reference', (string) $orderNumber);
             }
         }
 
@@ -188,9 +188,9 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             ]));
         }
         /* @phpstan-ignore-next-line */
-        $orderId = (int)Order::getOrderByCartId((int)$cart->id);
+        $orderId = (int) Order::getOrderByCartId((int) $cart->id);
         /** @phpstan-ignore-line */
-        $order = new Order((int)$orderId);
+        $order = new Order((int) $orderId);
 
         if (!Validate::isLoadedObject($cart)) {
             exit(json_encode([
@@ -198,7 +198,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             ]));
         }
 
-        if ((int)$cart->id_customer !== (int)$this->context->customer->id) {
+        if ((int) $cart->id_customer !== (int) $this->context->customer->id) {
             exit(json_encode([
                 'success' => false,
             ]));

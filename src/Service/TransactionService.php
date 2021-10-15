@@ -256,6 +256,8 @@ class TransactionService
                 false,
                 $cart->secure_key
             );
+
+            /* @phpstan-ignore-next-line */
             $orderId = (int) Order::getOrderByCartId((int) $cartId);
             $this->updateTransaction($orderId, $apiPayment);
 
