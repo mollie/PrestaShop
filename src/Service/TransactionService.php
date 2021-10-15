@@ -244,9 +244,27 @@ class TransactionService
             }
         }
 
+        if (!$paymentFee) {
+            $this->module->validateOrder(
+                (int) $cartId,
+                $orderStatus,
+                (float) $apiPayment->amount->value,
+                isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name,
+                null,
+                [],
+                null,
+                false,
+                $cart->secure_key
+            );
+            $orderId = (int) Order::getOrderByCartId((int) $cartId);
+            $this->updateTransaction($orderId, $apiPayment);
+
+            return $orderId;
+        }
+
         if ((int) ($originalAmount + $paymentFee) !== (int) $apiPayment->amount->value) {
             if ($apiPayment->resource === Config::MOLLIE_API_STATUS_ORDER) {
-                $apiPayment->cancel();
+                $apiPayment->refundAll();
             } else {
                 $apiPayment->refund([
                     'amount' => [
@@ -263,7 +281,7 @@ class TransactionService
         $this->module->validateOrder(
             (int) $cartId,
             (int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
-            (float) $originalAmount,
+            (float) $apiPayment->amount->value,
             isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name,
             null,
             [],
@@ -281,12 +299,6 @@ class TransactionService
             }
         }
         $this->updateTransaction($orderId, $apiPayment);
-
-        if (!$paymentFee) {
-            $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
-
-            return $orderId;
-        }
 
         $this->feeService->createOrderFee($cartId, $paymentFee);
 

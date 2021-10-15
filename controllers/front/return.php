@@ -44,7 +44,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
      */
     public function initContent()
     {
-        $idCart = (int) Tools::getValue('cart_id');
+        $idCart = (int)Tools::getValue('cart_id');
         $key = Tools::getValue('key');
         $orderNumber = Tools::getValue('order_number');
         $context = Context::getContext();
@@ -73,13 +73,13 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         /** @var PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
         if (Tools::getIsset('cart_id')) {
-            $idCart = (int) Tools::getValue('cart_id');
+            $idCart = (int)Tools::getValue('cart_id');
 
             // Check if user that's seeing this is the cart-owner
             $cart = new Cart($idCart);
-            $data['auth'] = (int) $cart->id_customer === $customer->id;
+            $data['auth'] = (int)$cart->id_customer === $customer->id;
             if ($data['auth']) {
-                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_reference', (string) $orderNumber);
+                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_reference', (string)$orderNumber);
             }
         }
 
@@ -188,9 +188,9 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             ]));
         }
         /* @phpstan-ignore-next-line */
-        $orderId = (int) Order::getOrderByCartId((int) $cart->id);
+        $orderId = (int)Order::getOrderByCartId((int)$cart->id);
         /** @phpstan-ignore-line */
-        $order = new Order((int) $orderId);
+        $order = new Order((int)$orderId);
 
         if (!Validate::isLoadedObject($cart)) {
             exit(json_encode([
@@ -198,7 +198,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             ]));
         }
 
-        if ((int) $cart->id_customer !== (int) $this->context->customer->id) {
+        if ((int)$cart->id_customer !== (int)$this->context->customer->id) {
             exit(json_encode([
                 'success' => false,
             ]));
@@ -243,17 +243,23 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 break;
             case PaymentStatus::STATUS_PAID:
             case PaymentStatus::STATUS_AUTHORIZED:
-                if ($transaction->resource === Config::MOLLIE_API_STATUS_PAYMENT && $transaction->hasRefunds()) {
-                    $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
-                    if ($transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
-                        $this->setWarning($wrongAmountMessage);
-                    } else {
-                        $this->setWarning($notSuccessfulPaymentMessage);
-                    }
-                    $response = $paymentReturnService->handleFailedStatus($transaction);
-                    break;
+                $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
+            if ($transaction->resource === Config::MOLLIE_API_STATUS_PAYMENT && $transaction->hasRefunds()) {
+                if ($transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
+                    $this->setWarning($wrongAmountMessage);
+                } else {
+                    $this->setWarning($notSuccessfulPaymentMessage);
                 }
-                $response = $paymentReturnService->handleStatus(
+                $response = $paymentReturnService->handleFailedStatus($transaction);
+                break;
+            }
+
+            if ($transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
+                $this->setWarning($wrongAmountMessage);
+                $response = $paymentReturnService->handleFailedStatus($transaction);
+                break;
+            }
+            $response = $paymentReturnService->handleStatus(
                     $order,
                     $transaction,
                     $paymentReturnService::DONE
