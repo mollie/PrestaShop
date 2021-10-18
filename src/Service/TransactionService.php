@@ -244,9 +244,30 @@ class TransactionService
             }
         }
 
-        if ((int) ($originalAmount + $paymentFee) !== (int) $apiPayment->amount->value) {
+        if (!$paymentFee) {
+            $this->module->validateOrder(
+                (int) $cartId,
+                $orderStatus,
+                (float) $apiPayment->amount->value,
+                isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name,
+                null,
+                [],
+                null,
+                false,
+                $cart->secure_key
+            );
+
+            /* @phpstan-ignore-next-line */
+            $orderId = (int) Order::getOrderByCartId((int) $cartId);
+            $this->updateTransaction($orderId, $apiPayment);
+
+            return $orderId;
+        }
+        $cartPrice = NumberUtility::plus($originalAmount, $paymentFee);
+        $priceDifference = NumberUtility::minus($cartPrice, $apiPayment->amount->value);
+        if (abs($priceDifference) > 0.01) {
             if ($apiPayment->resource === Config::MOLLIE_API_STATUS_ORDER) {
-                $apiPayment->cancel();
+                $apiPayment->refundAll();
             } else {
                 $apiPayment->refund([
                     'amount' => [
@@ -263,7 +284,7 @@ class TransactionService
         $this->module->validateOrder(
             (int) $cartId,
             (int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
-            (float) $originalAmount,
+            (float) $apiPayment->amount->value,
             isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name,
             null,
             [],
@@ -281,12 +302,6 @@ class TransactionService
             }
         }
         $this->updateTransaction($orderId, $apiPayment);
-
-        if (!$paymentFee) {
-            $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
-
-            return $orderId;
-        }
 
         $this->feeService->createOrderFee($cartId, $paymentFee);
 

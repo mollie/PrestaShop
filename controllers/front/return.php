@@ -243,17 +243,23 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 break;
             case PaymentStatus::STATUS_PAID:
             case PaymentStatus::STATUS_AUTHORIZED:
-                if ($transaction->resource === Config::MOLLIE_API_STATUS_PAYMENT && $transaction->hasRefunds()) {
-                    $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
-                    if ($transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
-                        $this->setWarning($wrongAmountMessage);
-                    } else {
-                        $this->setWarning($notSuccessfulPaymentMessage);
-                    }
-                    $response = $paymentReturnService->handleFailedStatus($transaction);
-                    break;
+                $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
+            if ($transaction->resource === Config::MOLLIE_API_STATUS_PAYMENT && $transaction->hasRefunds()) {
+                if ($transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
+                    $this->setWarning($wrongAmountMessage);
+                } else {
+                    $this->setWarning($notSuccessfulPaymentMessage);
                 }
-                $response = $paymentReturnService->handleStatus(
+                $response = $paymentReturnService->handleFailedStatus($transaction);
+                break;
+            }
+
+            if ($transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
+                $this->setWarning($wrongAmountMessage);
+                $response = $paymentReturnService->handleFailedStatus($transaction);
+                break;
+            }
+            $response = $paymentReturnService->handleStatus(
                     $order,
                     $transaction,
                     $paymentReturnService::DONE

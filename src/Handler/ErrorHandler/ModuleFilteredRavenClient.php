@@ -78,7 +78,7 @@ class ModuleFilteredRavenClient extends Raven_Client
     {
         $lastFrame = end($data['stacktrace']['frames']);
 
-        return ((isset($lastFrame['in_app']) && $lastFrame['in_app']));
+        return isset($lastFrame['in_app']) && $lastFrame['in_app'];
     }
 
     /**
