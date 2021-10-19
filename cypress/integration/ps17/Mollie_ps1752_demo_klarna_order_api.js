@@ -29,9 +29,10 @@ it('Checkouting the item Front-Office [Pay Later]', () => {
     return false
   })
       cy.mollie_1752_test_faster_login_DE_Orders_Api()
+      cy.contains('GERMANY').click()
       cy.get('.continue').click()
       cy.get('#js-delivery > .continue').click()
-      cy.contains('Pay later').click()
+      cy.contains('Pay later').click({force:true})
       cy.get('.ps-shown-by-js > .btn').click()
       cy.get(':nth-child(1) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
@@ -40,33 +41,32 @@ it('Checkouting the item Front-Office [Pay Later]', () => {
       cy.get('.h1').should('include.text','Your order is confirmed')
       cy.get('#order-details > ul > :nth-child(2)').should('include.text','Pay later')
   })
-it('Checking the Back-Office Order Existance [Pay Later]', () => {
-      cCypress.on('uncaught:exception', (err, runnable) => {
+it('Checking the Back-Office Order Existance, Refunding, Shipping [Pay Later]', () => {
+      Cypress.on('uncaught:exception', (err, runnable) => {
         // returning false here prevents Cypress from
         // failing the test
         return false
       })
       cy.mollie_1752_test_demo_module_dashboard()
       cy.mollie_1752_test_login()
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders&token=1f3f51817ce3f9adbf23aede4ad9428e')
-      cy.get('tbody > :nth-child(1) > :nth-child(8)').should('include.text','Pay later')
-      cy.get('tbody > :nth-child(1) > :nth-child(9)').should('include.text','Klarna payment authorized')
-      cy.get('tbody > :nth-child(1) > :nth-child(9)').click()
-      cy.get('#formAddPaymentPanel').contains('klarnapaylater')
-      cy.get('#mollie_order > :nth-child(1)').should('exist')
-      cy.get('.sc-htpNat > .panel').should('exist')
-      cy.get('.sc-jTzLTM > .panel').should('exist')
-      cy.get('.btn-group > [title=""]').should('exist')
-      cy.get('.btn-group > .btn-primary').should('exist')
-      cy.get('tfoot > tr > td > .btn-group > :nth-child(2)').should('exist')
-      cy.get('.sc-htpNat > .panel > .card-body > :nth-child(3)').should('exist')
-      cy.get('.card-body > :nth-child(6)').should('exist')
-      cy.get('.card-body > :nth-child(9)').should('exist')
-      cy.get('#mollie_order > :nth-child(1) > :nth-child(1)').should('exist')
-      cy.get('.sc-htpNat > .panel > .card-body').should('exist')
+      //For Orders API only
+      cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
+      cy.get('[class=" odd"]').eq(0).click().wait(3000)
+      //Shipping button in React
+      cy.get('.btn-group > [title=""]').click()
+      cy.get('[class="swal-button swal-button--confirm"]').click()
+      cy.get('.swal-modal').should('exist')
+      cy.get('#input-carrier').type('FedEx',{delay:0})
+      cy.get('#input-code').type('123456',{delay:0})
+      cy.get('#input-url').type('https://www.invertus.eu',{delay:0})
+      cy.get(':nth-child(2) > .swal-button').click()
+      cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
+      cy.get('[class="alert alert-success"]').should('be.visible')
+      //Refunding dropdown in React
       cy.get('.btn-group-action > .btn-group > .dropdown-toggle').click()
-      cy.get('.btn-group > .dropdown-menu > :nth-child(1) > a').should('exist')
-      cy.get('.dropdown-menu > :nth-child(2) > a').should('exist')
+      cy.get('[role="button"]').eq(0).click()
+      cy.get('[class="swal-button swal-button--confirm"]').click()
+      cy.get('[class="alert alert-success"]').should('be.visible')
 })
 it('Checking the Email Sending log in Prestashop [Pay Later]', () => {
   Cypress.on('uncaught:exception', (err, runnable) => {
@@ -77,8 +77,8 @@ it('Checking the Email Sending log in Prestashop [Pay Later]', () => {
       cy.mollie_1752_test_demo_module_dashboard()
       cy.mollie_1752_test_login()
       cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminEmails&token=023927e534d296d1d25aab2eaa409760')
-      cy.get('tbody > :nth-child(2) > :nth-child(4)').should('include.text','order_conf')
-      cy.get('tbody > :nth-child(1) > :nth-child(4)').should('include.text','payment')
+      cy.get('[class="js-grid-table table "]').contains('order_conf')
+      cy.get('[class="js-grid-table table "]').contains('payment')
 })
 it('Setuping the Order API method in BO [Slice it]', () => {
       cy.mollie_1752_test_demo_module_dashboard()
@@ -105,9 +105,10 @@ it('Checkouting the item Front-Office [Slice It]', () => {
     return false
   })
       cy.mollie_1752_test_faster_login_DE_Orders_Api()
+      cy.contains('GERMANY').click()
       cy.get('.continue').click()
       cy.get('#js-delivery > .continue').click()
-      cy.contains('Slice it').click()
+      cy.contains('Slice it').click({force:true})
       cy.get('.ps-shown-by-js > .btn').click()
       cy.get(':nth-child(1) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
@@ -116,7 +117,7 @@ it('Checkouting the item Front-Office [Slice It]', () => {
       cy.get('.h1').should('include.text','Your order is confirmed')
       cy.get('#order-details > ul > :nth-child(2)').should('include.text','Slice it')
 })
-    it('Checking the Back-Office Order Existance [Slice it]', () => {
+    it('Checking the Back-Office Order Existance, Refunding, Shipping [Slice it]', () => {
       Cypress.on('uncaught:exception', (err, runnable) => {
         // returning false here prevents Cypress from
         // failing the test
@@ -124,25 +125,24 @@ it('Checkouting the item Front-Office [Slice It]', () => {
       })
       cy.mollie_1752_test_demo_module_dashboard()
       cy.mollie_1752_test_login()
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders&token=1f3f51817ce3f9adbf23aede4ad9428e')
-      cy.get('tbody > :nth-child(1) > :nth-child(8)').should('include.text','Slice it')
-      cy.get('tbody > :nth-child(1) > :nth-child(9)').should('include.text','Klarna payment authorized')
-      cy.get('tbody > :nth-child(1) > :nth-child(9)').click()
-      cy.get('#formAddPaymentPanel').contains('klarnasliceit')
-      cy.get('#mollie_order > :nth-child(1)').should('exist')
-      cy.get('.sc-htpNat > .panel').should('exist')
-      cy.get('.sc-jTzLTM > .panel').should('exist')
-      cy.get('.btn-group > [title=""]').should('exist')
-      cy.get('.btn-group > .btn-primary').should('exist')
-      cy.get('tfoot > tr > td > .btn-group > :nth-child(2)').should('exist')
-      cy.get('.sc-htpNat > .panel > .card-body > :nth-child(3)').should('exist')
-      cy.get('.card-body > :nth-child(6)').should('exist')
-      cy.get('.card-body > :nth-child(9)').should('exist')
-      cy.get('#mollie_order > :nth-child(1) > :nth-child(1)').should('exist')
-      cy.get('.sc-htpNat > .panel > .card-body').should('exist')
+      //For Orders API only
+      cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
+      cy.get('[class=" odd"]').eq(0).click().wait(3000)
+      //Shipping button in React
+      cy.get('.btn-group > [title=""]').click()
+      cy.get('[class="swal-button swal-button--confirm"]').click()
+      cy.get('.swal-modal').should('exist')
+      cy.get('#input-carrier').type('FedEx',{delay:0})
+      cy.get('#input-code').type('123456',{delay:0})
+      cy.get('#input-url').type('https://www.invertus.eu',{delay:0})
+      cy.get(':nth-child(2) > .swal-button').click()
+      cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
+      cy.get('[class="alert alert-success"]').should('be.visible')
+      //Refunding dropdown in React
       cy.get('.btn-group-action > .btn-group > .dropdown-toggle').click()
-      cy.get('.btn-group > .dropdown-menu > :nth-child(1) > a').should('exist')
-      cy.get('.dropdown-menu > :nth-child(2) > a').should('exist')
+      cy.get('[role="button"]').eq(0).click()
+      cy.get('[class="swal-button swal-button--confirm"]').click()
+      cy.get('[class="alert alert-success"]').should('be.visible')
     })
     it('Checking the Email Sending log in Prestashop [Slice it]', () => {
       Cypress.on('uncaught:exception', (err, runnable) => {
@@ -153,7 +153,7 @@ it('Checkouting the item Front-Office [Slice It]', () => {
       cy.mollie_1752_test_demo_module_dashboard()
       cy.mollie_1752_test_login()
       cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminEmails&token=023927e534d296d1d25aab2eaa409760')
-      cy.get('tbody > :nth-child(2) > :nth-child(4)').should('include.text','order_conf')
-      cy.get('tbody > :nth-child(1) > :nth-child(4)').should('include.text','payment')
+      cy.get('[class="js-grid-table table "]').contains('order_conf')
+      cy.get('[class="js-grid-table table "]').contains('payment')
     })
 })
