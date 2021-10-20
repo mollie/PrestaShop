@@ -81,41 +81,35 @@ context('Purchase automation PS1770 Mollie Payment/Order API Credit Card Front O
       cy.get('#order-details > ul > :nth-child(2)').should('include.text','Credit Card')
 
   })
-    it('Checking the Back-Office Order Existance [Payments API]', () => {
+    it('Checking the Back-Office Order Existance, Refunding [Payments API]', () => {
       cy.mollie_test17_admin()
       cy.login_mollie17_test()
       cy.get('#subtab-AdminParentOrders > :nth-child(1) > span').click()
       cy.get('#subtab-AdminOrders > .link').click()
-      cy.get('tbody > :nth-child(1) > :nth-child(8)').should('include.text','Credit Card')
-      cy.get(':nth-child(1) > .choice-type').should('include.text','Payment accepted')
+      cy.get('tbody > :nth-child(1) > :nth-child(8)').should('include.text','Bancontact')
+      cy.get('tbody > :nth-child(1) > :nth-child(9)').should('include.text','Payment accepted')
       cy.get(':nth-child(1) > .column-payment').click()
-      cy.get('#historyTabContent > .card > .card-body > .table > tbody > :nth-child(2) > :nth-child(1)').should('include.text','Awaiting Mollie payment')
+      cy.get('#view_order_payments_block > .card-body').contains('bancontact')
       cy.get('#mollie_order > :nth-child(1)').should('exist')
       cy.get('.form-inline > :nth-child(1) > .btn').should('exist')
       cy.get('.input-group-btn > .btn').should('exist')
       cy.get('.sc-htpNat > .panel > .card-body > :nth-child(3)').should('exist')
       cy.get('.card-body > :nth-child(6)').should('exist')
       cy.get('.card-body > :nth-child(9)').should('exist')
-
-//     cy.on('uncaught:exception', (err, runnable) => {
-//    expect(err.message)
-
-    // using mocha's async done callback to finish
-    // this test so we prove that an uncaught exception
-    // was thrown
-//    done()
-
-    // return false to prevent the error from
-    // failing this test
-//    return false
-//  })
       cy.get('#mollie_order > :nth-child(1) > :nth-child(1)').should('exist')
       cy.get('.sc-htpNat > .panel > .card-body').should('exist')
       cy.get('.sc-bxivhb > .panel > .panel-heading').should('exist')
       cy.get('.sc-bxivhb > .panel > .card-body').should('exist')
-      //check partial refunding
-      cy.get('.form-inline > :nth-child(2) > .input-group > .form-control').type('1,5')
-
+      //check partial refunding on Payments API
+      cy.get('.form-inline > :nth-child(2) > .input-group > .form-control').type('1.51',{delay:0})
+      cy.get(':nth-child(2) > .input-group > .input-group-btn > .btn').click()
+      cy.get('.swal-modal').should('exist')
+      cy.get(':nth-child(2) > .swal-button').click()
+      cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
+      cy.get('.form-inline > :nth-child(1) > .btn').click()
+      cy.get('.swal-modal').should('exist')
+      cy.get(':nth-child(2) > .swal-button').click()
+      cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
 })
       it('Checking the Email Sending log in Prestashop [Payments API]', () => {
       cy.mollie_test17_admin()
@@ -202,38 +196,27 @@ it('Checkouting the item Front-Office [Orders API]', () => {
   cy.get('#order-details > ul > :nth-child(2)').should('include.text','Credit Card')
 
 })
-it('Checking the Back-Office Order Existance [Orders API]', () => {
+it('Checking the Back-Office Order Existance, Refunding, Shipping [Orders API]', () => {
   cy.mollie_test17_admin()
   cy.login_mollie17_test()
   cy.get('#subtab-AdminParentOrders > :nth-child(1) > span').click()
   cy.get('#subtab-AdminOrders > .link').click()
-  cy.get('tbody > :nth-child(1) > :nth-child(8)').should('include.text','Credit Card')
-  cy.get(':nth-child(1) > .choice-type').should('include.text','Payment accepted')
   cy.get(':nth-child(1) > .column-payment').click()
-  cy.get('#historyTabContent > .card > .card-body > .table > tbody > :nth-child(2) > :nth-child(1)').should('include.text','Awaiting Mollie payment')
-  cy.get('#mollie_order > :nth-child(1)').should('exist')
-  cy.get('.sc-htpNat > .panel').should('exist')
-  cy.get('.sc-jTzLTM > .panel').should('exist')
-  cy.get('.btn-group > [title=""]').should('exist')
-  cy.get('.btn-group > .btn-primary').should('exist')
-  cy.get('tfoot > tr > td > .btn-group > :nth-child(2)').should('exist')
-
-  cy.get('.sc-htpNat > .panel > .card-body > :nth-child(3)').should('exist')
-  cy.get('.card-body > :nth-child(6)').should('exist')
-  cy.get('.card-body > :nth-child(9)').should('exist')
-
-//     cy.on('uncaught:exception', (err, runnable) => {
-//    expect(err.message)
-
-// using mocha's async done callback to finish
-// this test so we prove that an uncaught exception
-// was thrown
-//    done()
-
-// return false to prevent the error from
-// failing this test
-//    return false
-//  })
+  //Refunding dropdown in React
+  cy.get('.btn-group-action > .btn-group > .dropdown-toggle').click()
+  cy.get('[role="button"]').eq(2).click()
+  cy.get('[class="swal-button swal-button--confirm"]').click()
+  cy.get('[class="alert alert-success"]').should('be.visible')
+  //Shipping button in React
+  cy.get('.btn-group > [title=""]').click()
+  cy.get('[class="swal-button swal-button--confirm"]').click()
+  cy.get('.swal-modal').should('exist')
+  cy.get('#input-carrier').type('FedEx',{delay:0})
+  cy.get('#input-code').type('123456',{delay:0})
+  cy.get('#input-url').type('https://www.invertus.eu',{delay:0})
+  cy.get(':nth-child(2) > .swal-button').click()
+  cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
+  cy.get('[class="alert alert-success"]').should('be.visible')
   cy.get('#mollie_order > :nth-child(1) > :nth-child(1)').should('exist')
   cy.get('.sc-htpNat > .panel > .card-body').should('exist')
   cy.get('.btn-group > .dropdown-toggle')
@@ -246,7 +229,7 @@ it('Checking the Back-Office Order Existance [Orders API]', () => {
   cy.login_mollie17_test()
   cy.get('#subtab-AdminAdvancedParameters > :nth-child(1) > span').click()
   cy.get('#subtab-AdminEmails > .link').click()
-  cy.get('#email_logs_grid_table > tbody > :nth-child(2) > :nth-child(4)').should('include.text','order_conf')
-  cy.get('#email_logs_grid_table > tbody > :nth-child(1) > :nth-child(4)').should('include.text','payment')
+  cy.get('.card-body').contains('order_conf')
+  cy.get('.card-body').contains('payment')
 })
 })
