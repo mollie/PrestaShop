@@ -238,6 +238,7 @@ class Config
     const KLARNA_PAYMENTS = [
         PaymentMethod::KLARNA_PAY_LATER,
         PaymentMethod::KLARNA_SLICE_IT,
+        PaymentMethod::KLARNA_PAY_NOW,
     ];
 
     const ROUTE_RESEND_SECOND_CHANCE_PAYMENT_MESSAGE = 'mollie_module_admin_resend_payment_message';

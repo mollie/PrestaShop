@@ -633,6 +633,7 @@ class Mollie extends PaymentModule
             if (!$paymentMethod) {
                 continue;
             }
+            $paymentMethod->method_name = $method['method_name'];
             $paymentOptions[] = $paymentOptionsHandler->handle($paymentMethod);
         }
 
