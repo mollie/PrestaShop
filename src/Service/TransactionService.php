@@ -139,6 +139,9 @@ class TransactionService
                     break;
                 }
                 if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
+                    if (strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
+                        return $transactionNotUsedMessage;
+                    }
                     if (isset($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
                         && NumberUtility::isLowerOrEqualThan($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
                     ) {
@@ -153,7 +156,7 @@ class TransactionService
                         $payment = $this->module->api->payments->get($apiPayment->id);
                         $payment->description = $order->reference;
                         $payment->update();
-                    } elseif (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
+                    } elseif (strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                         return $transactionNotUsedMessage;
                     } else {
                         $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
@@ -244,9 +247,30 @@ class TransactionService
             }
         }
 
-        if ((int) ($originalAmount + $paymentFee) !== (int) $apiPayment->amount->value) {
+        if (!$paymentFee) {
+            $this->module->validateOrder(
+                (int) $cartId,
+                $orderStatus,
+                (float) $apiPayment->amount->value,
+                isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name,
+                null,
+                [],
+                null,
+                false,
+                $cart->secure_key
+            );
+
+            /* @phpstan-ignore-next-line */
+            $orderId = (int) Order::getOrderByCartId((int) $cartId);
+            $this->updateTransaction($orderId, $apiPayment);
+
+            return $orderId;
+        }
+        $cartPrice = NumberUtility::plus($originalAmount, $paymentFee);
+        $priceDifference = NumberUtility::minus($cartPrice, $apiPayment->amount->value);
+        if (abs($priceDifference) > 0.01) {
             if ($apiPayment->resource === Config::MOLLIE_API_STATUS_ORDER) {
-                $apiPayment->cancel();
+                $apiPayment->refundAll();
             } else {
                 $apiPayment->refund([
                     'amount' => [
@@ -263,7 +287,7 @@ class TransactionService
         $this->module->validateOrder(
             (int) $cartId,
             (int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
-            (float) $originalAmount,
+            (float) $apiPayment->amount->value,
             isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name,
             null,
             [],
@@ -281,12 +305,6 @@ class TransactionService
             }
         }
         $this->updateTransaction($orderId, $apiPayment);
-
-        if (!$paymentFee) {
-            $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
-
-            return $orderId;
-        }
 
         $this->feeService->createOrderFee($cartId, $paymentFee);
 
