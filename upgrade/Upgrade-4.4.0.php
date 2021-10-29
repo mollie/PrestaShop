@@ -30,9 +30,6 @@ function upgrade_module_4_4_0($module)
         if ((int) $configurationAdapter->get(Config::MOLLIE_SEND_ORDER_CONFIRMATION, $shop['id_shop']) !== Config::NEW_ORDER_MAIL_SEND_ON_NEVER) {
             $configurationAdapter->updateValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION, Config::NEW_ORDER_MAIL_SEND_ON_PAID);
         }
-        if ((int) $configurationAdapter->get(Config::MOLLIE_SEND_NEW_ORDER, $shop['id_shop']) !== Config::NEW_ORDER_MAIL_SEND_ON_NEVER) {
-            $configurationAdapter->updateValue(Config::MOLLIE_SEND_NEW_ORDER, Config::NEW_ORDER_MAIL_SEND_ON_PAID);
-        }
     }
 
     $sql = [];

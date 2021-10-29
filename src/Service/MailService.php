@@ -23,7 +23,6 @@ use Customer;
 use Hook;
 use Language;
 use Mail;
-use Module;
 use Mollie;
 use Mollie\Config\Config;
 use Order;
@@ -100,34 +99,6 @@ class MailService
             null,
             $fileAttachment,
             null, _PS_MAIL_DIR_, false, (int) $order->id_shop
-        );
-    }
-
-    /**
-     * @param Order $order
-     * @param int $orderStateId
-     *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
-    public function sendNewOrderMail(Order $order, $orderStateId)
-    {
-        if (!Module::isEnabled(Config::EMAIL_ALERTS_MODULE_NAME)) {
-            return;
-        }
-        $customer = $order->getCustomer();
-
-        /** @var \Ps_EmailAlerts $emailAlertsModule */
-        $emailAlertsModule = Module::getInstanceByName(Config::EMAIL_ALERTS_MODULE_NAME);
-
-        $emailAlertsModule->hookActionValidateOrder(
-            [
-                'currency' => $this->context->currency,
-                'order' => $order,
-                'customer' => $customer,
-                'cart' => $this->context->cart,
-                'orderStatus' => new OrderState($orderStateId),
-            ]
         );
     }
 

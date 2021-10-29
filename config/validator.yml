@@ -4,11 +4,6 @@ services:
     arguments:
       - '@Mollie\Adapter\ConfigurationAdapter'
 
-  Mollie\Validator\NewOrderMailValidator:
-    class: Mollie\Validator\NewOrderMailValidator
-    arguments:
-      - '@Mollie\Adapter\ConfigurationAdapter'
-
   Mollie\Validator\VoucherValidator:
     class: Mollie\Validator\VoucherValidator
     arguments:

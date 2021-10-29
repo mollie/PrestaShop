@@ -760,9 +760,6 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Validator\OrderConfMailValidator $orderConfMailValidator */
         $orderConfMailValidator = $this->getMollieContainer(\Mollie\Validator\OrderConfMailValidator::class);
 
-        /** @var \Mollie\Validator\NewOrderMailValidator $newOrderMailValidator */
-        $newOrderMailValidator = $this->getMollieContainer(\Mollie\Validator\NewOrderMailValidator::class);
-
         /** @var string $template */
         $template = $params['template'];
 
@@ -808,10 +805,6 @@ class Mollie extends PaymentModule
 
         if ('order_conf' === $template) {
             return $orderConfMailValidator->validate((int) $order->current_state);
-        }
-
-        if ('new_order' === $template) {
-            return $newOrderMailValidator->validate((int) $order->current_state);
         }
 
         return true;
