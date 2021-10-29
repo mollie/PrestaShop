@@ -107,34 +107,6 @@ class MailService
      * @param Order $order
      * @param int $orderStateId
      *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
-    public function sendNewOrderMail(Order $order, $orderStateId)
-    {
-        if (!Module::isEnabled(Config::EMAIL_ALERTS_MODULE_NAME)) {
-            return;
-        }
-        $customer = $order->getCustomer();
-
-        /** @var \Ps_EmailAlerts $emailAlertsModule */
-        $emailAlertsModule = Module::getInstanceByName(Config::EMAIL_ALERTS_MODULE_NAME);
-
-        $emailAlertsModule->hookActionValidateOrder(
-            [
-                'currency' => $this->context->currency,
-                'order' => $order,
-                'customer' => $customer,
-                'cart' => $this->context->cart,
-                'orderStatus' => new OrderState($orderStateId),
-            ]
-        );
-    }
-
-    /**
-     * @param Order $order
-     * @param int $orderStateId
-     *
      * @return array
      *
      * @throws \PrestaShopDatabaseException

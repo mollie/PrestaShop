@@ -76,7 +76,6 @@ class Uninstall implements UninstallerInterface
             Config::MOLLIE_PROFILE_ID,
             Config::MOLLIE_PAYMENTSCREEN_LOCALE,
             Config::MOLLIE_SEND_ORDER_CONFIRMATION,
-            Config::MOLLIE_SEND_NEW_ORDER,
             Config::MOLLIE_IFRAME,
             Config::MOLLIE_IMAGES,
             Config::MOLLIE_ISSUERS,
