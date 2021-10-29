@@ -39,7 +39,6 @@ class OrderConfirmationMailValidatorTest extends UnitTestCase
     public function getCanOrderConfirmationMailBeSentData()
     {
         return [
-
             'sendOrderConfirmation is not defined' => [
                 'orderStateId' => 55,
                 'sendOrderConfirmation' => null,
