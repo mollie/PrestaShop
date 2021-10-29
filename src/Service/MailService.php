@@ -23,7 +23,6 @@ use Customer;
 use Hook;
 use Language;
 use Mail;
-use Module;
 use Mollie;
 use Mollie\Config\Config;
 use Order;
