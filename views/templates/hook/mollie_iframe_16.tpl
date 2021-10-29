@@ -17,7 +17,7 @@
         </div>
         <label class="mollie-information-label">{l s='Enter your card information' mod='mollie'}</label>
         <div class="form-group form-group-card-holder">
-            <label class="mollie-label" for="card-holder">{l s='Card holder' mod='mollie'}</label>
+            <label class="mollie-label" for="card-holder">{l s='Name on card' mod='mollie'}</label>
             <div id="card-holder" class="mollie-input card-holder">
             </div>
         </div>
@@ -32,7 +32,7 @@
                 </div>
             </div>
             <div class="form-group form-group-verification-code">
-                <label class="mollie-label" for="verification-code">{l s='CVC' mod='mollie'}</label>
+                <label class="mollie-label" for="verification-code">{l s='CVC/CVV' mod='mollie'}</label>
                 <div id="verification-code"
                      class="mollie-input verification-code">
                 </div>

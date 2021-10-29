@@ -2,6 +2,11 @@
 
 # Changelog #
 ## Changes in release 4.4.2 ##
++ Fixed payment methods translations using API in checkout
++ Updated credit card components input labels
++ Added Klarna Pay Now check to only use Order API
+
+## Changes in release 4.4.2 ##
 + Fixed issue where order would get cancelled after payment was successful if customer had created another payment for the same cart.
 + Fixed rounding issue when creating mollie payment and there is -0.01 cent difference.
 + No longer display warnings in configuration page about cache and rounding settings.
