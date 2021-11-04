@@ -40,7 +40,6 @@ use Cart;
 use Configuration;
 use Mollie;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
-use Mollie\Api\Resources\OrderLine;
 use Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
