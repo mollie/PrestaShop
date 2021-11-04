@@ -229,7 +229,7 @@ class OrderCreationHandler
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($paymentData->getMethod(), $environment);
         $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
-        $orderNumber = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, (int) $orderId);
+        $orderNumber = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $order->id);
 
         if ($paymentData instanceof PaymentData) {
             $paymentData->setDescription($orderNumber);
