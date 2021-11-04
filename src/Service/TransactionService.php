@@ -149,7 +149,11 @@ class TransactionService
                         $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id);
                         $order = new Order($orderId);
                         $payment = $this->module->api->payments->get($apiPayment->id);
-                        $payment->description = $order->reference;
+
+                        $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+                        $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
+                        $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
+                        $payment->description = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
                         $payment->update();
                     } elseif (strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                         return $transactionNotUsedMessage;
@@ -173,11 +177,17 @@ class TransactionService
                     $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id, $isKlarnaOrder);
                     $order = new Order($orderId);
                     $apiPayment->orderNumber = $order->reference;
+
+                    $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+                    $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
+                    $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
+                    $orderNumber = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
+                    $apiPayment->orderNumber = $orderNumber;
                     $payments = $apiPayment->payments();
 
                     /** @var Payment $payment */
                     foreach ($payments as $payment) {
-                        $payment->description = 'Order ' . $order->reference;
+                        $payment->description = 'Order ' . $orderNumber;
                         $payment->update();
                     }
                     $apiPayment->update();
