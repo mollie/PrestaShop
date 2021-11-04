@@ -26,3 +26,4 @@ parameters:
     - '#Call to method setModuleName\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
     - '#Call to method setLogo\(\) on an unknown class PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption.#'
     - '#Method Mollie\\Service\\TransactionService\:\:createOrder\(\) should return int but returns array.#'
+    - '#Method Mollie\\Handler\\Order\\OrderCreationHandler\:\:createOrder\(\) should return int but returns array.#'

@@ -45,6 +45,7 @@ use Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
+use Mollie\DTO\Line;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
@@ -212,7 +213,7 @@ class OrderCreationHandler
         $paymentMethodRepository = $this->module->getMollieContainer(PaymentMethodRepositoryInterface::class);
         $this->module->validateOrder(
             (int) $cart->id,
-            Configuration::get(Config::MOLLIE_STATUS_AWAITING),
+            (int) Configuration::get(Config::MOLLIE_STATUS_AWAITING),
             (float) $paymentData->getAmount()->getValue(),
             isset(Config::$methods[$paymentData->getMethod()]) ? Config::$methods[$paymentData->getMethod()] : $this->module->name,
             null,
@@ -243,7 +244,7 @@ class OrderCreationHandler
             );
             $paymentFee = PaymentFeeUtility::getPaymentFee($paymentMethod, $originalAmount);
         } else {
-            /** @var OrderLine $line */
+            /** @var Line $line */
             foreach ($paymentData->getLines() as $line) {
                 if ($line->getSku() === Config::PAYMENT_FEE_SKU) {
                     $paymentFee = $line->getUnitPrice()->getValue();
