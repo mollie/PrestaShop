@@ -401,7 +401,7 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_METHOD_COUNTRIES, 0);
         $this->configurationAdapter->updateValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY, 0);
         $this->configurationAdapter->updateValue(Config::MOLLIE_DISPLAY_ERRORS, false);
-        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_OPEN, Configuration::get(Config::STATUS_MOLLIE_AWAITING));
+        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_OPEN, Configuration::get(Config::MOLLIE_STATUS_AWAITING));
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_COMPLETED, Configuration::get(Config::MOLLIE_STATUS_ORDER_COMPLETED));
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));

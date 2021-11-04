@@ -171,7 +171,6 @@ class Config
 
     const STATUS_PAID_ON_BACKORDER = 'paid_backorder';
     const STATUS_PENDING_ON_BACKORDER = 'pending_backorder';
-    const STATUS_MOLLIE_AWAITING = 'mollie_awaiting';
     const STATUS_ON_BACKORDER = 'on_backorder';
     const MOLLIE_AWAITING_PAYMENT = 'awaiting';
     const MOLLIE_OPEN_PAYMENT = 'open';

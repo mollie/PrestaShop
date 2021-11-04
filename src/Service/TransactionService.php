@@ -23,20 +23,16 @@ use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use Mollie\Api\Resources\PaymentCollection;
 use Mollie\Api\Types\OrderStatus;
-use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
+use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\OrderNumberUtility;
-use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TransactionUtility;
-use MolPaymentMethod;
 use Order;
-use OrderDetail;
 use OrderPayment;
-use PrestaShop\Decimal\Number;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use PrestaShopLogger;
@@ -54,25 +50,24 @@ class TransactionService
     private $orderStatusService;
 
     /**
-     * @var OrderFeeService
-     */
-    private $feeService;
-
-    /**
      * @var PaymentMethodRepositoryInterface
      */
     private $paymentMethodRepository;
+    /**
+     * @var OrderCreationHandler
+     */
+    private $orderCreationHandler;
 
     public function __construct(
         Mollie $module,
         OrderStatusService $orderStatusService,
-        OrderFeeService $feeService,
-        PaymentMethodRepositoryInterface $paymentMethodRepository
+        PaymentMethodRepositoryInterface $paymentMethodRepository,
+        OrderCreationHandler $orderCreationHandler
     ) {
         $this->module = $module;
         $this->orderStatusService = $orderStatusService;
-        $this->feeService = $feeService;
         $this->paymentMethodRepository = $paymentMethodRepository;
+        $this->orderCreationHandler = $orderCreationHandler;
     }
 
     /**
@@ -151,7 +146,7 @@ class TransactionService
                     }
                 } else {
                     if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
-                        $orderId = $this->createOrder($apiPayment, $cart->id);
+                        $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id);
                         $order = new Order($orderId);
                         $payment = $this->module->api->payments->get($apiPayment->id);
                         $payment->description = $order->reference;
@@ -175,7 +170,7 @@ class TransactionService
                 $isKlarnaOrder = in_array($apiPayment->method, Config::KLARNA_PAYMENTS, false);
 
                 if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
-                    $orderId = $this->createOrder($apiPayment, $cart->id, $isKlarnaOrder);
+                    $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id, $isKlarnaOrder);
                     $order = new Order($orderId);
                     $apiPayment->orderNumber = $order->reference;
                     $payments = $apiPayment->payments();
@@ -189,7 +184,11 @@ class TransactionService
                 } elseif (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                     return $transactionNotUsedMessage;
                 } else {
-                    $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
+                    if (in_array($apiPayment->method, Config::KLARNA_PAYMENTS) && $apiPayment->status === OrderStatus::STATUS_COMPLETED) {
+                        $this->orderStatusService->setOrderStatus($orderId, Config::MOLLIE_STATUS_KLARNA_SHIPPED);
+                    } else {
+                        $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
+                    }
                 }
 
                 $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
@@ -208,116 +207,6 @@ class TransactionService
         }
 
         return $apiPayment;
-    }
-
-    /**
-     * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
-     * @param int $cartId
-     * @param bool $isKlarnaOrder
-     *
-     * @return int
-     *
-     * @throws PrestaShopException
-     */
-    private function createOrder($apiPayment, $cartId, $isKlarnaOrder = false)
-    {
-        $orderStatus = $isKlarnaOrder ?
-            (int) Config::getStatuses()[PaymentStatus::STATUS_AUTHORIZED] :
-            (int) Config::getStatuses()[PaymentStatus::STATUS_PAID];
-
-        $cart = new Cart($cartId);
-        $originalAmount = $cart->getOrderTotal(
-            true,
-            Cart::BOTH
-        );
-        $paymentFee = 0;
-
-        if ($apiPayment->resource === Config::MOLLIE_API_STATUS_PAYMENT) {
-            $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
-            $paymentMethod = new MolPaymentMethod(
-                $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment)
-            );
-            $paymentFee = PaymentFeeUtility::getPaymentFee($paymentMethod, $originalAmount);
-        } else {
-            /** @var Mollie\Api\Resources\OrderLine $line */
-            foreach ($apiPayment->lines() as $line) {
-                if ($line->sku === Config::PAYMENT_FEE_SKU) {
-                    $paymentFee = $line->totalAmount->value;
-                }
-            }
-        }
-
-        if (!$paymentFee) {
-            $this->module->validateOrder(
-                (int) $cartId,
-                $orderStatus,
-                (float) $apiPayment->amount->value,
-                isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name,
-                null,
-                [],
-                null,
-                false,
-                $cart->secure_key
-            );
-
-            /* @phpstan-ignore-next-line */
-            $orderId = (int) Order::getOrderByCartId((int) $cartId);
-            $this->updateTransaction($orderId, $apiPayment);
-
-            return $orderId;
-        }
-        $cartPrice = NumberUtility::plus($originalAmount, $paymentFee);
-        $priceDifference = NumberUtility::minus($cartPrice, $apiPayment->amount->value);
-        if (abs($priceDifference) > 0.01) {
-            if ($apiPayment->resource === Config::MOLLIE_API_STATUS_ORDER) {
-                $apiPayment->refundAll();
-            } else {
-                $apiPayment->refund([
-                    'amount' => [
-                        'currency' => (string) $apiPayment->amount->currency,
-                        'value' => $apiPayment->amount->value,
-                    ],
-                ]);
-            }
-            $this->paymentMethodRepository->updatePaymentReason($apiPayment->id, Config::WRONG_AMOUNT_REASON);
-
-            throw new \Exception('Wrong cart amount');
-        }
-
-        $this->module->validateOrder(
-            (int) $cartId,
-            (int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
-            (float) $apiPayment->amount->value,
-            isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name,
-            null,
-            [],
-            null,
-            false,
-            $cart->secure_key
-        );
-
-        /* @phpstan-ignore-next-line */
-        $orderId = (int) Order::getOrderByCartId((int) $cartId);
-
-        if (PaymentStatus::STATUS_PAID === $apiPayment->status || OrderStatus::STATUS_AUTHORIZED === $apiPayment->status) {
-            if ($this->isOrderBackOrder($orderId)) {
-                $orderStatus = Config::STATUS_PAID_ON_BACKORDER;
-            }
-        }
-        $this->updateTransaction($orderId, $apiPayment);
-
-        $this->feeService->createOrderFee($cartId, $paymentFee);
-
-        $order = new Order($orderId);
-        $order->total_paid_tax_excl = (float) (new Number((string) $order->total_paid_tax_excl))->plus((new Number((string) $paymentFee)))->toPrecision(2);
-        $order->total_paid_tax_incl = (float) (new Number((string) $order->total_paid_tax_incl))->plus((new Number((string) $paymentFee)))->toPrecision(2);
-        $order->total_paid = (float) $apiPayment->amount->value;
-        $order->total_paid_real = (float) $apiPayment->amount->value;
-        $order->update();
-
-        $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
-
-        return Order::getOrderByCartId((int) $cartId);
     }
 
     public function updateOrderTransaction($transactionId, $orderReference)
@@ -440,40 +329,5 @@ class TransactionService
 
             $orderPayment->add();
         }
-    }
-
-    /**
-     * @param int $orderId
-     * @param MolliePaymentAlias|MollieOrderAlias $transaction
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    private function updateTransaction($orderId, $transaction)
-    {
-        /** @var TransactionService $transactionService */
-        $transactionService = $this->module->getMollieContainer(TransactionService::class);
-        $order = new Order($orderId);
-        if (!$order->getOrderPayments()) {
-            $transactionService->updateOrderTransaction($transaction->id, $order->reference);
-        }
-    }
-
-    private function isOrderBackOrder($orderId)
-    {
-        $order = new Order($orderId);
-        $orderDetails = $order->getOrderDetailList();
-        /** @var OrderDetail $detail */
-        foreach ($orderDetails as $detail) {
-            $orderDetail = new OrderDetail($detail['id_order_detail']);
-            if (
-                Configuration::get('PS_STOCK_MANAGEMENT') &&
-                ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
-            ) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
