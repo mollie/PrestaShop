@@ -36,10 +36,8 @@ use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\Utility\CustomLogoUtility;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\LocaleUtility;
-use Mollie\Utility\OrderNumberUtility;
 use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TextFormatUtility;
-use Mollie\Utility\TextGeneratorUtility;
 use MolPaymentMethod;
 use Order;
 use PrestaShopDatabaseException;
@@ -231,7 +229,6 @@ class PaymentMethodService
      * @param int|Cart $cartId
      * @param string $secureKey
      * @param MolPaymentMethod $molPaymentMethod
-     * @param bool $qrCode
      * @param string $orderReference
      * @param string $cardToken
      *
@@ -247,15 +244,10 @@ class PaymentMethodService
         $cartId,
         $secureKey,
         MolPaymentMethod $molPaymentMethod,
-        $qrCode = false,
-        $orderReference = '',
+        $orderReference,
         $cardToken = ''
     ) {
         $totalAmount = TextFormatUtility::formatNumber($amount, 2);
-        if (!$orderReference) {
-            $this->module->currentOrderReference = $orderReference = OrderNumberUtility::generateOrderNumber($cartId);
-        }
-        $description = TextGeneratorUtility::generateDescriptionFromCart($molPaymentMethod->description, $cartId, $orderReference);
         $context = Context::getContext();
         $cart = new Cart($cartId);
         $customer = new Customer($cart->id_customer);
@@ -273,26 +265,18 @@ class PaymentMethodService
             $cartId,
             $this->module->name
         );
-        $redirectUrl = ($qrCode
-            ? $context->link->getModuleLink(
-                'mollie',
-                'qrcode',
-                ['cart_id' => $cartId, 'done' => 1, 'rand' => time()],
-                true
-            )
-            : $context->link->getModuleLink(
-                'mollie',
-                'return',
-                [
-                    'cart_id' => $cartId,
-                    'utm_nooverride' => 1,
-                    'rand' => time(),
-                    'key' => $key,
-                    'customerId' => $customer->id,
-                    'order_number' => $orderReference,
-                ],
-                true
-            )
+        $redirectUrl = $context->link->getModuleLink(
+            'mollie',
+            'return',
+            [
+                'cart_id' => $cartId,
+                'utm_nooverride' => 1,
+                'rand' => time(),
+                'key' => $key,
+                'customerId' => $customer->id,
+                'order_number' => $orderReference,
+            ],
+            true
         );
 
         $webhookUrl = null;
@@ -312,18 +296,13 @@ class PaymentMethodService
         ];
 
         if (Mollie\Config\Config::MOLLIE_ORDERS_API !== $molPaymentMethod->method) {
-            $paymentData = new PaymentData($amountObj, $description, $redirectUrl, $webhookUrl);
+            $paymentData = new PaymentData($amountObj, $orderReference, $redirectUrl, $webhookUrl);
 
             $paymentData->setMetadata($metaData);
             $paymentData->setLocale($this->getLocale($molPaymentMethod->method));
             $paymentData->setMethod($molPaymentMethod->id_method);
 
-            $description = str_ireplace(
-                ['%'],
-                [$cartId],
-                $description
-            );
-            $paymentData->setDescription($description);
+            $paymentData->setDescription($orderReference);
             $paymentData->setIssuer($issuer);
 
             if (isset($cart->id_address_invoice)) {

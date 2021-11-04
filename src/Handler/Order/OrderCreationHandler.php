@@ -53,6 +53,7 @@ use Mollie\Service\OrderStatusService;
 use Mollie\Service\TransactionService;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\PaymentFeeUtility;
+use Mollie\Utility\TextGeneratorUtility;
 use MolPaymentMethod;
 use Order;
 use OrderDetail;
@@ -224,10 +225,16 @@ class OrderCreationHandler
 
         $orderId = Order::getOrderByCartId($cart->id);
         $order = new Order($orderId);
+
+        $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+        $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($paymentData->getMethod(), $environment);
+        $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
+        $orderNumber = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $order->id);
+
         if ($paymentData instanceof PaymentData) {
-            $paymentData->setDescription($order->reference);
+            $paymentData->setDescription($orderNumber);
         } elseif ($paymentData instanceof OrderData) {
-            $paymentData->setOrderNumber($order->reference);
+            $paymentData->setOrderNumber($orderNumber);
         }
 
         $originalAmount = $cart->getOrderTotal(

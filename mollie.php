@@ -24,9 +24,6 @@ class Mollie extends PaymentModule
     public $api = null;
 
     /** @var string */
-    public $currentOrderReference;
-
-    /** @var string */
     public static $selectedApi;
 
     /** @var bool Indicates whether the Smarty cache has been cleared during updates */
@@ -930,7 +927,7 @@ class Mollie extends PaymentModule
                 $cartId,
                 $customerKey,
                 $paymentMethodObj,
-                false,
+                $params['order']->reference,
                 $orderReference
             );
 
