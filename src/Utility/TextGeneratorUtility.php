@@ -25,7 +25,7 @@ class TextGeneratorUtility
      * Generate a description from the Cart.
      *
      * @param string $methodDescription
-     * @param string $orderId
+     * @param int $orderId
      *
      * @return string Description
      */

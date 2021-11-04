@@ -153,7 +153,7 @@ class TransactionService
                         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
                         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
                         $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
-                        $payment->description = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
+                        $payment->description = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, (int) $orderId);
                         $payment->update();
                     } elseif (strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                         return $transactionNotUsedMessage;
@@ -178,7 +178,7 @@ class TransactionService
                     $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
                     $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
                     $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
-                    $orderNumber = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
+                    $orderNumber = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, (int) $orderId);
                     $apiPayment->orderNumber = $orderNumber;
                     $payments = $apiPayment->payments();
 

@@ -36,10 +36,8 @@ use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\Utility\CustomLogoUtility;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\LocaleUtility;
-use Mollie\Utility\OrderNumberUtility;
 use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TextFormatUtility;
-use Mollie\Utility\TextGeneratorUtility;
 use MolPaymentMethod;
 use Order;
 use PrestaShopDatabaseException;
@@ -106,18 +104,18 @@ class PaymentMethodService
     private $shop;
 
     public function __construct(
-        Mollie                                      $module,
-        PaymentMethodRepository                     $methodRepository,
-        MethodCountryRepository                     $methodCountryRepository,
-        CartLinesService                            $cartLinesService,
-        PaymentsTranslationService                  $paymentsTranslationService,
-        CustomerService                             $customerService,
-        CreditCardLogoProvider                      $creditCardLogoProvider,
-        PaymentMethodSortProviderInterface          $paymentMethodSortProvider,
-        PhoneNumberProviderInterface                $phoneNumberProvider,
+        Mollie $module,
+        PaymentMethodRepository $methodRepository,
+        MethodCountryRepository $methodCountryRepository,
+        CartLinesService $cartLinesService,
+        PaymentsTranslationService $paymentsTranslationService,
+        CustomerService $customerService,
+        CreditCardLogoProvider $creditCardLogoProvider,
+        PaymentMethodSortProviderInterface $paymentMethodSortProvider,
+        PhoneNumberProviderInterface $phoneNumberProvider,
         PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation,
-        Country                                     $country,
-        Shop                                        $shop
+        Country $country,
+        Shop $shop
     ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
@@ -140,7 +138,7 @@ class PaymentMethodService
         $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($method['id'], $environment, $shopId);
         $paymentMethod = new MolPaymentMethod();
         if ($paymentId) {
-            $paymentMethod = new MolPaymentMethod((int)$paymentId);
+            $paymentMethod = new MolPaymentMethod((int) $paymentId);
         }
         $paymentMethod->id_method = $method['id'];
         $paymentMethod->method_name = $method['name'];
@@ -199,7 +197,7 @@ class PaymentMethodService
 
         foreach ($methods as $index => $method) {
             /** @var MolPaymentMethod|null $paymentMethod */
-            $paymentMethod = $this->methodRepository->findOneBy(['id_payment_method' => (int)$method['id_payment_method']]);
+            $paymentMethod = $this->methodRepository->findOneBy(['id_payment_method' => (int) $method['id_payment_method']]);
 
             if (!$paymentMethod || !$this->paymentMethodRestrictionValidation->isPaymentMethodValid($paymentMethod)) {
                 unset($methods[$index]);
@@ -231,7 +229,6 @@ class PaymentMethodService
      * @param int|Cart $cartId
      * @param string $secureKey
      * @param MolPaymentMethod $molPaymentMethod
-     * @param bool $qrCode
      * @param string $orderReference
      * @param string $cardToken
      *
@@ -258,8 +255,8 @@ class PaymentMethodService
         $paymentFee = PaymentFeeUtility::getPaymentFee($molPaymentMethod, $totalAmount);
         $totalAmount += $paymentFee;
 
-        $currency = (string)($currency ? Tools::strtoupper($currency) : 'EUR');
-        $value = (float)TextFormatUtility::formatNumber($totalAmount, 2);
+        $currency = (string) ($currency ? Tools::strtoupper($currency) : 'EUR');
+        $value = (float) TextFormatUtility::formatNumber($totalAmount, 2);
         $amountObj = new Amount($currency, $value);
 
         $key = Mollie\Utility\SecureKeyUtility::generateReturnKey(
@@ -280,7 +277,6 @@ class PaymentMethodService
                 'order_number' => $orderReference,
             ],
             true
-
         );
 
         $webhookUrl = null;
@@ -310,11 +306,11 @@ class PaymentMethodService
             $paymentData->setIssuer($issuer);
 
             if (isset($cart->id_address_invoice)) {
-                $billing = new Address((int)$cart->id_address_invoice);
+                $billing = new Address((int) $cart->id_address_invoice);
                 $paymentData->setBillingAddress($billing);
             }
             if (isset($cart->id_address_delivery)) {
-                $shipping = new Address((int)$cart->id_address_delivery);
+                $shipping = new Address((int) $cart->id_address_delivery);
                 $paymentData->setShippingAddress($shipping);
             }
 
@@ -339,13 +335,13 @@ class PaymentMethodService
             $orderData = new OrderData($amountObj, $redirectUrl, $webhookUrl);
 
             if (isset($cart->id_address_invoice)) {
-                $billing = new Address((int)$cart->id_address_invoice);
+                $billing = new Address((int) $cart->id_address_invoice);
 
                 $orderData->setBillingAddress($billing);
                 $orderData->setBillingPhoneNumber($this->phoneNumberProvider->getFromAddress($billing));
             }
             if (isset($cart->id_address_delivery)) {
-                $shipping = new Address((int)$cart->id_address_delivery);
+                $shipping = new Address((int) $cart->id_address_delivery);
                 $orderData->setShippingAddress($shipping);
                 $orderData->setDeliveryPhoneNumber($this->phoneNumberProvider->getFromAddress($shipping));
             }
@@ -365,7 +361,7 @@ class PaymentMethodService
                     $cart->getSummaryDetails(),
                     $cart->getTotalShippingCost(null, true),
                     $cart->getProducts(),
-                    (bool)Configuration::get('PS_GIFT_WRAPPING'),
+                    (bool) Configuration::get('PS_GIFT_WRAPPING'),
                     $selectedVoucherCategory
                 ));
             $payment = [];
@@ -460,7 +456,7 @@ class PaymentMethodService
                 'locale' => $language->language_code,
                 'billingCountry' => $country->iso_code,
                 'amount' => [
-                    'value' => (string)TextFormatUtility::formatNumber($cartAmount, 2),
+                    'value' => (string) TextFormatUtility::formatNumber($cartAmount, 2),
                     'currency' => $currency->iso_code,
                 ],
             ]
