@@ -30,7 +30,9 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\OrderNumberUtility;
+use Mollie\Utility\TextGeneratorUtility;
 use Mollie\Utility\TransactionUtility;
+use MolPaymentMethod;
 use Order;
 use OrderPayment;
 use PrestaShopDatabaseException;
@@ -147,9 +149,7 @@ class TransactionService
                 } else {
                     if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
                         $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id);
-                        $order = new Order($orderId);
                         $payment = $this->module->api->payments->get($apiPayment->id);
-
                         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
                         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
                         $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
@@ -175,9 +175,6 @@ class TransactionService
 
                 if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
                     $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id, $isKlarnaOrder);
-                    $order = new Order($orderId);
-                    $apiPayment->orderNumber = $order->reference;
-
                     $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
                     $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
                     $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);

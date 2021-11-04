@@ -53,6 +53,7 @@ use Mollie\Service\OrderStatusService;
 use Mollie\Service\TransactionService;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\PaymentFeeUtility;
+use Mollie\Utility\TextGeneratorUtility;
 use MolPaymentMethod;
 use Order;
 use OrderDetail;
@@ -79,10 +80,10 @@ class OrderCreationHandler
     private $feeService;
 
     public function __construct(
-        Mollie $module,
+        Mollie                           $module,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
-        OrderStatusService $orderStatusService,
-        OrderFeeService $feeService
+        OrderStatusService               $orderStatusService,
+        OrderFeeService                  $feeService
     ) {
         $this->module = $module;
         $this->paymentMethodRepository = $paymentMethodRepository;
@@ -102,8 +103,8 @@ class OrderCreationHandler
     public function createOrder($apiPayment, $cartId, $isKlarnaOrder = false)
     {
         $orderStatus = $isKlarnaOrder ?
-            (int) Config::getStatuses()[PaymentStatus::STATUS_AUTHORIZED] :
-            (int) Config::getStatuses()[PaymentStatus::STATUS_PAID];
+            (int)Config::getStatuses()[PaymentStatus::STATUS_AUTHORIZED] :
+            (int)Config::getStatuses()[PaymentStatus::STATUS_PAID];
 
         $cart = new Cart($cartId);
         $originalAmount = $cart->getOrderTotal(
@@ -113,7 +114,7 @@ class OrderCreationHandler
         $paymentFee = 0;
 
         if ($apiPayment->resource === Config::MOLLIE_API_STATUS_PAYMENT) {
-            $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+            $environment = (int)Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
             $paymentMethod = new MolPaymentMethod(
                 $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment)
             );
@@ -129,9 +130,9 @@ class OrderCreationHandler
 
         if (!$paymentFee) {
             $this->module->validateOrder(
-                (int) $cartId,
+                (int)$cartId,
                 $orderStatus,
-                (float) $apiPayment->amount->value,
+                (float)$apiPayment->amount->value,
                 isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name,
                 null,
                 [],
@@ -141,7 +142,7 @@ class OrderCreationHandler
             );
 
             /* @phpstan-ignore-next-line */
-            $orderId = (int) Order::getOrderByCartId((int) $cartId);
+            $orderId = (int)Order::getOrderByCartId((int)$cartId);
             $this->updateTransaction($orderId, $apiPayment);
 
             return $orderId;
@@ -154,7 +155,7 @@ class OrderCreationHandler
             } else {
                 $apiPayment->refund([
                     'amount' => [
-                        'currency' => (string) $apiPayment->amount->currency,
+                        'currency' => (string)$apiPayment->amount->currency,
                         'value' => $apiPayment->amount->value,
                     ],
                 ]);
@@ -165,9 +166,9 @@ class OrderCreationHandler
         }
 
         $this->module->validateOrder(
-            (int) $cartId,
-            (int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_OPEN),
-            (float) $apiPayment->amount->value,
+            (int)$cartId,
+            (int)Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_OPEN),
+            (float)$apiPayment->amount->value,
             isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name,
             null,
             [],
@@ -177,7 +178,7 @@ class OrderCreationHandler
         );
 
         /* @phpstan-ignore-next-line */
-        $orderId = (int) Order::getOrderByCartId((int) $cartId);
+        $orderId = (int)Order::getOrderByCartId((int)$cartId);
 
         if (PaymentStatus::STATUS_PAID === $apiPayment->status || OrderStatus::STATUS_AUTHORIZED === $apiPayment->status) {
             if ($this->isOrderBackOrder($orderId)) {
@@ -189,15 +190,15 @@ class OrderCreationHandler
         $this->feeService->createOrderFee($cartId, $paymentFee);
 
         $order = new Order($orderId);
-        $order->total_paid_tax_excl = (float) (new Number((string) $order->total_paid_tax_excl))->plus((new Number((string) $paymentFee)))->toPrecision(2);
-        $order->total_paid_tax_incl = (float) (new Number((string) $order->total_paid_tax_incl))->plus((new Number((string) $paymentFee)))->toPrecision(2);
-        $order->total_paid = (float) $apiPayment->amount->value;
-        $order->total_paid_real = (float) $apiPayment->amount->value;
+        $order->total_paid_tax_excl = (float)(new Number((string)$order->total_paid_tax_excl))->plus((new Number((string)$paymentFee)))->toPrecision(2);
+        $order->total_paid_tax_incl = (float)(new Number((string)$order->total_paid_tax_incl))->plus((new Number((string)$paymentFee)))->toPrecision(2);
+        $order->total_paid = (float)$apiPayment->amount->value;
+        $order->total_paid_real = (float)$apiPayment->amount->value;
         $order->update();
 
         $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
 
-        return Order::getOrderByCartId((int) $cartId);
+        return Order::getOrderByCartId((int)$cartId);
     }
 
     /**
@@ -211,9 +212,9 @@ class OrderCreationHandler
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
         $paymentMethodRepository = $this->module->getMollieContainer(PaymentMethodRepositoryInterface::class);
         $this->module->validateOrder(
-            (int) $cart->id,
-            (int) Configuration::get(Config::MOLLIE_STATUS_AWAITING),
-            (float) $paymentData->getAmount()->getValue(),
+            (int)$cart->id,
+            (int)Configuration::get(Config::MOLLIE_STATUS_AWAITING),
+            (float)$paymentData->getAmount()->getValue(),
             isset(Config::$methods[$paymentData->getMethod()]) ? Config::$methods[$paymentData->getMethod()] : $this->module->name,
             null,
             [],
@@ -224,10 +225,16 @@ class OrderCreationHandler
 
         $orderId = Order::getOrderByCartId($cart->id);
         $order = new Order($orderId);
+
+        $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+        $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($paymentData->getMethod(), $environment);
+        $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
+        $orderNumber = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
+
         if ($paymentData instanceof PaymentData) {
-            $paymentData->setDescription($order->reference);
+            $paymentData->setDescription($orderNumber);
         } elseif ($paymentData instanceof OrderData) {
-            $paymentData->setOrderNumber($order->reference);
+            $paymentData->setOrderNumber($orderNumber);
         }
 
         $originalAmount = $cart->getOrderTotal(
@@ -237,7 +244,7 @@ class OrderCreationHandler
         $paymentFee = 0;
 
         if ($paymentData instanceof PaymentData) {
-            $environment = (int) Configuration::get(Config::MOLLIE_ENVIRONMENT);
+            $environment = (int)Configuration::get(Config::MOLLIE_ENVIRONMENT);
             $paymentMethod = new MolPaymentMethod(
                 $paymentMethodRepository->getPaymentMethodIdByMethodId($paymentData->getMethod(), $environment)
             );
@@ -255,10 +262,10 @@ class OrderCreationHandler
             return $paymentData;
         }
 
-        $order->total_paid_tax_excl = (float) (new Number((string) $order->total_paid_tax_excl))->plus((new Number((string) $paymentFee)))->toPrecision(2);
-        $order->total_paid_tax_incl = (float) (new Number((string) $order->total_paid_tax_incl))->plus((new Number((string) $paymentFee)))->toPrecision(2);
-        $order->total_paid = (float) $paymentData->getAmount()->getValue();
-        $order->total_paid_real = (float) $paymentData->getAmount()->getValue();
+        $order->total_paid_tax_excl = (float)(new Number((string)$order->total_paid_tax_excl))->plus((new Number((string)$paymentFee)))->toPrecision(2);
+        $order->total_paid_tax_incl = (float)(new Number((string)$order->total_paid_tax_incl))->plus((new Number((string)$paymentFee)))->toPrecision(2);
+        $order->total_paid = (float)$paymentData->getAmount()->getValue();
+        $order->total_paid_real = (float)$paymentData->getAmount()->getValue();
         $order->update();
 
         return $paymentData;

@@ -17,7 +17,6 @@ use Cart;
 use Configuration;
 use Country;
 use Customer;
-use Mollie\Config\Config;
 use Order;
 
 class TextGeneratorUtility
