@@ -146,9 +146,6 @@
                                     <b>{l s='{customer.lastname}' mod='mollie'}</b>,
                                     <b>{l s='{customer.company}' mod='mollie'}</b>,
                                 </p>
-                                <p class="help-block">
-                                    {l s='(Note: This only works when the method is set to Payments API)' mod='mollie'}
-                                </p>
                             </div>
                         </div>
                         <div class="form-group">

@@ -103,7 +103,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             (int) $cart->id,
             $customer->secure_key,
             $paymentMethodObj,
-            false,
             $orderNumber,
             Tools::getValue('cardToken')
         );
