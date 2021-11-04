@@ -1,6 +1,11 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 4.4.3 ##
++ Bank transfer now creates order on open status.
++ Fixed issue with klarna shipping status where it was set as completed.
++ Mollie no longer validates new order email to merchant that is sent by another module.
+
 ## Changes in release 4.4.2 ##
 + Fixed payment methods translations using API in checkout
 + Updated credit card components input labels
