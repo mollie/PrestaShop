@@ -17,6 +17,8 @@ use Cart;
 use Configuration;
 use Country;
 use Customer;
+use Mollie\Config\Config;
+use Order;
 
 class TextGeneratorUtility
 {
@@ -31,13 +33,10 @@ class TextGeneratorUtility
      *
      * @since 3.0.0
      */
-    public static function generateDescriptionFromCart($methodDescription, $cartId, $orderReference)
+    public static function generateDescriptionFromCart($methodDescription, $orderId)
     {
-        if ($cartId instanceof Cart) {
-            $cart = $cartId;
-        } else {
-            $cart = new Cart($cartId);
-        }
+        $order = new Order($orderId);
+        $cart = Cart::getCartByOrderId($orderId);
         $buyer = null;
         if ($cart->id_customer) {
             $buyer = new Customer((int) $cart->id_customer);
@@ -51,14 +50,14 @@ class TextGeneratorUtility
             $countryCode = $country->iso_code;
         }
         $filters = [
-            '%' => $cartId,
-            '{cart.id}' => $cartId,
-            '{order.reference}' => $orderReference,
+            '%' => $cart->id,
+            '{cart.id}' => $cart->id,
+            '{order.reference}' => $order->reference,
             '{customer.firstname}' => null == $buyer ? '' : $buyer->firstname,
             '{customer.lastname}' => null == $buyer ? '' : $buyer->lastname,
             '{customer.company}' => null == $buyer ? '' : $buyer->company,
             '{storeName}' => Configuration::get('PS_SHOP_NAME'),
-            '{orderNumber}' => $orderReference,
+            '{orderNumber}' => $order->reference,
             '{countryCode}' => $countryCode,
         ];
 
@@ -68,8 +67,6 @@ class TextGeneratorUtility
             $methodDescription
         );
 
-        $description = empty($content) ? $orderReference : $content;
-
-        return $description;
+        return empty($content) ? $order->reference : $content;
     }
 }

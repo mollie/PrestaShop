@@ -255,7 +255,7 @@ class PaymentMethodService
         if (!$orderReference) {
             $this->module->currentOrderReference = $orderReference = OrderNumberUtility::generateOrderNumber($cartId);
         }
-        $description = TextGeneratorUtility::generateDescriptionFromCart($molPaymentMethod->description, $cartId, $orderReference);
+        $description = TextGeneratorUtility::generateDescriptionFromCart($molPaymentMethod->description, $cartId, $orderReference); //
         $context = Context::getContext();
         $cart = new Cart($cartId);
         $customer = new Customer($cart->id_customer);
