@@ -40,7 +40,7 @@ class TextGeneratorUtility
 
         $countryCode = '';
         if ($cart->id_address_delivery) {
-            $deliveryAddress = new Address(($cart->id_address_delivery);
+            $deliveryAddress = new Address(($cart->id_address_delivery));
             $countryId = $deliveryAddress->id_country;
             $country = new Country($countryId);
             $countryCode = $country->iso_code;
