@@ -7,6 +7,9 @@
 + Mollie no longer validates new order email to merchant that is sent by another module.
 + Fixed issue where custom payment description wasn't working and always used order reference.
 + Added custom payment number for order API.
++ Added Klarna Pay now.
++ Improved uninstall by deleting all tables except for mollie_payments
++ Fixed few small warning that kept getting sent to sentry
 
 ## Changes in release 4.4.2 ##
 + Fixed payment methods translations using API in checkout

@@ -267,6 +267,7 @@ class Config
         'applepay' => 'Apple Pay',
         'mybank' => 'MyBank',
         'voucher' => 'Voucher',
+        'klarnapaynow' => 'Klarna Pay now.',
     ];
 
     const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
