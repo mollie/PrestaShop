@@ -34,7 +34,7 @@ class TextGeneratorUtility
         $order = new Order($orderId);
         $cart = Cart::getCartByOrderId($orderId);
         $buyer = null;
-        if ($cart->id_customer) {
+        if ($cart && $cart->id_customer) {
             $buyer = new Customer($cart->id_customer);
         }
 

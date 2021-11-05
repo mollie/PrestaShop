@@ -112,7 +112,7 @@ class PaymentData implements JsonSerializable
      */
     public function getDescription()
     {
-        return $this->description;
+        return $this->description ?: ' ';
     }
 
     /**
