@@ -13,9 +13,12 @@
 namespace Mollie\Service;
 
 use Configuration;
+use Mollie\Api\Types\OrderStatus;
+use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Utility\OrderStatusUtility;
 use Order;
+use OrderDetail;
 use OrderHistory;
 use PrestaShopDatabaseException;
 use PrestaShopException;
@@ -57,6 +60,8 @@ class OrderStatusService
             if (empty(Config::getStatuses()[$statusId])) {
                 return;
             }
+            $statusId = $this->transformOrderStatusToBackorder($statusId, $orderId);
+
             $statusId = (int) Config::getStatuses()[$statusId];
         } else {
             $status = '';
@@ -78,6 +83,9 @@ class OrderStatusService
         }
 
         if ((int) $order->current_state === (int) $statusId) {
+            return;
+        }
+        if ($this->isStatusPaid($statusId) && $this->isStatusPaid($order->current_state)) {
             return;
         }
 
@@ -107,12 +115,46 @@ class OrderStatusService
         }
     }
 
+    public function transformOrderStatusToBackorder($status, $orderId)
+    {
+        if (PaymentStatus::STATUS_PAID === $status || OrderStatus::STATUS_AUTHORIZED === $status) {
+            if ($this->isOrderBackOrder($orderId)) {
+                return Config::STATUS_PAID_ON_BACKORDER;
+            }
+        }
+
+        return $status;
+    }
+
     private function checkIfOrderConfNeedsToBeSend($statusId)
     {
         if (Config::NEW_ORDER_MAIL_SEND_ON_PAID !== (int) Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION)) {
             return false;
         }
 
+        return $this->isStatusPaid($statusId);
+    }
+
+    private function isOrderBackOrder($orderId)
+    {
+        $order = new Order($orderId);
+        $orderDetails = $order->getOrderDetailList();
+        /** @var OrderDetail $detail */
+        foreach ($orderDetails as $detail) {
+            $orderDetail = new OrderDetail($detail['id_order_detail']);
+            if (
+                Configuration::get('PS_STOCK_MANAGEMENT') &&
+                ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function isStatusPaid($statusId)
+    {
         return ((int) $statusId === (int) Configuration::get(Config::MOLLIE_STATUS_PAID)) ||
             ((int) $statusId === (int) Configuration::get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID)) ||
             ((int) $statusId === (int) Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED));
