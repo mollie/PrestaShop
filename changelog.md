@@ -12,6 +12,9 @@
 + Fixed few small warning that kept getting sent to sentry
 + Fixed order API all products refund functionality
 + Status is no longer updated again to paid if it already has paid status and webhook is called again.
++ Added max address restriction for mollie. (Max 100 chars)
++ Added more validations for missing API token to handle errors.
++ Fixed open status logic to use selected open status and not awaiting.
 
 ## Changes in release 4.4.2 ##
 + Fixed payment methods translations using API in checkout
