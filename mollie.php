@@ -903,7 +903,7 @@ class Mollie extends PaymentModule
 
     public function hookActionValidateOrder($params)
     {
-        if ('admin' !== $this->context->controller->controller_type) {
+        if (!isset($this->context->controller) || 'admin' !== $this->context->controller->controller_type) {
             return;
         }
 

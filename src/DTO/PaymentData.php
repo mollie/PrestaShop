@@ -291,13 +291,13 @@ class PaymentData implements JsonSerializable
                 'value' => (string) $this->getAmount()->getValue(),
             ],
             'billingAddress' => [
-                'streetAndNumber' => $this->getBillingAddress()->address1,
+                'streetAndNumber' => substr($this->getBillingAddress()->address1, 0, 100),
                 'city' => $this->getBillingAddress()->city,
                 'postalCode' => $this->getBillingAddress()->postcode,
                 'country' => (string) Country::getIsoById($this->getBillingAddress()->id_country),
             ],
             'shippingAddress' => [
-                'streetAndNumber' => $this->getShippingAddress()->address1,
+                'streetAndNumber' => substr($this->getShippingAddress()->address1, 0, 100),
                 'city' => $this->getShippingAddress()->city,
                 'postalCode' => $this->getShippingAddress()->postcode,
                 'country' => (string) Country::getIsoById($this->getShippingAddress()->id_country),

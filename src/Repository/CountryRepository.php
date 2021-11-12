@@ -28,6 +28,10 @@ final class CountryRepository extends AbstractRepository
 
         $countryIds = Db::getInstance()->executeS($sql);
         $countryIdsArray = [];
+        if (!$countryIds) {
+            return [];
+        }
+
         foreach ($countryIds as $countryId) {
             $countryIdsArray[] = $countryId['id_country'];
         }

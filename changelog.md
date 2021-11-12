@@ -11,6 +11,7 @@
 + Improved uninstall by deleting all tables except for mollie_payments
 + Fixed few small warning that kept getting sent to sentry
 + Fixed order API all products refund functionality
++ Status is no longer updated again to paid if it already has paid status and webhook is called again.
 
 ## Changes in release 4.4.2 ##
 + Fixed payment methods translations using API in checkout
