@@ -56,6 +56,17 @@ it('Checkouting the item Front-Office [Payments API]', () => {
       cy.get('#js-delivery > .continue').click()
       cy.contains('iDEAL').click({force:true})
       cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
       cy.get('.payment-method-list > :nth-child(1)').click()
       cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
@@ -161,6 +172,17 @@ it('Checkouting the item Front-Office [Orders API]', () => {
       cy.get('#js-delivery > .continue').click()
       cy.contains('iDEAL').click({force:true})
       cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
       cy.get('.payment-method-list > :nth-child(1)').click()
       cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
