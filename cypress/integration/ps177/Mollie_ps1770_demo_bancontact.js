@@ -35,6 +35,17 @@ context('PS1770 Bancontact Payment Orders/Payments API basic checkout', () => {
       cy.contains('Bancontact').click({force:true})
       cy.get('.js-terms').click()
       cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
       cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
 
@@ -103,6 +114,17 @@ context('PS1770 Bancontact Payment Orders/Payments API basic checkout', () => {
       cy.contains('Bancontact').click({force:true})
       cy.get('.js-terms').click()
       cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
       cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
 
