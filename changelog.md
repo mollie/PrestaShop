@@ -11,6 +11,7 @@
 + Improved uninstall by deleting all tables except for mollie_payments
 + Fixed few small warning that kept getting sent to sentry
 + Fixed order API all products refund functionality
++ Fixed issue where creating mollie order from back office had issues
 
 ## Changes in release 4.4.2 ##
 + Fixed payment methods translations using API in checkout
