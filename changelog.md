@@ -15,6 +15,7 @@
 + Added max address restriction for mollie. (Max 100 chars)
 + Added more validations for missing API token to handle errors.
 + Fixed open status logic to use selected open status and not awaiting.
++ Removed mail switch for awaiting and open order statuses.
 
 ## Changes in release 4.4.2 ##
 + Fixed payment methods translations using API in checkout
