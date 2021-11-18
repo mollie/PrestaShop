@@ -930,7 +930,6 @@ class Mollie extends PaymentModule
                 $cartId,
                 $customerKey,
                 $paymentMethodObj,
-                $params['order']->reference,
                 $orderReference
             );
 

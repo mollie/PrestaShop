@@ -16,6 +16,7 @@
 + Added more validations for missing API token to handle errors.
 + Fixed open status logic to use selected open status and not awaiting.
 + Removed mail switch for awaiting and open order statuses.
++ Fixed issue where creating mollie order from back office had issues
 
 ## Changes in release 4.4.2 ##
 + Fixed payment methods translations using API in checkout
