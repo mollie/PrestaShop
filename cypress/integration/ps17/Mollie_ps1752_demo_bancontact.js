@@ -38,7 +38,6 @@ it('Checkouting the item in FO [Orders API]', () => {
       cy.get('.continue').click()
       cy.get('#js-delivery > .continue').click()
       cy.contains('Bancontact').click({force:true})
-      cy.get('#mollie_link_bancontact').click()
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
         'SESSIONID',
@@ -156,7 +155,7 @@ it('Checkouting the item in FO [Payments API]', () => {
       cy.get('tbody > :nth-child(1) > :nth-child(8)').should('include.text','Bancontact')
       cy.get('tbody > :nth-child(1) > :nth-child(9)').should('include.text','Payment accepted')
       cy.get(':nth-child(1) > :nth-child(15) > .btn-group > .btn').click()
-      cy.get('#formAddPaymentPanel').contains('bancontact')
+      cy.get('#formAddPaymentPanel').contains('Bancontact')
       cy.get('#mollie_order > :nth-child(1)').should('exist')
       cy.get('.form-inline > :nth-child(1) > .btn').should('exist')
       cy.get('.input-group-btn > .btn').should('exist')
