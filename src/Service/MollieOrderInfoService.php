@@ -80,26 +80,28 @@ class MollieOrderInfoService
         $transaction = $this->paymentMethodRepository->getPaymentBy('transaction_id', $transactionId);
         $order = new Order($transaction['order_id']);
         $this->module->updateApiKey($order->id_shop);
+        if (!$this->module->api) {
+            return ['success' => false];
+        }
         try {
-            $mollieData = $this->paymentMethodRepository->getPaymentBy('transaction_id', $input['transactionId']);
             if ('payments' === $input['resource']) {
                 switch ($input['action']) {
                     case 'refund':
                         if (!isset($input['amount']) || empty($input['amount'])) {
                             // No amount = full refund
-                            $status = $this->refundService->doPaymentRefund($mollieData['transaction_id']);
+                            $status = $this->refundService->doPaymentRefund($transactionId);
                         } else {
-                            $status = $this->refundService->doPaymentRefund($mollieData['transaction_id'], $input['amount']);
+                            $status = $this->refundService->doPaymentRefund($transactionId, $input['amount']);
                         }
 
                         return [
                             'success' => isset($status['status']) && 'success' === $status['status'],
-                            'payment' => $this->apiService->getFilteredApiPayment($this->module->api, $input['transactionId'], false),
+                            'payment' => $this->apiService->getFilteredApiPayment($this->module->api, $transactionId, false),
                         ];
                     case 'retrieve':
                         return [
                             'success' => true,
-                            'payment' => $this->apiService->getFilteredApiPayment($this->module->api, $input['transactionId'], false),
+                            'payment' => $this->apiService->getFilteredApiPayment($this->module->api, $transactionId, false),
                         ];
                     default:
                         return ['success' => false];
@@ -107,7 +109,7 @@ class MollieOrderInfoService
             } elseif ('orders' === $input['resource']) {
                 switch ($input['action']) {
                     case 'retrieve':
-                        $info = $this->paymentMethodRepository->getPaymentBy('transaction_id', $input['transactionId']);
+                        $info = $this->paymentMethodRepository->getPaymentBy('transaction_id', $transactionId);
                         if (!$info) {
                             return ['success' => false];
                         }
@@ -115,21 +117,21 @@ class MollieOrderInfoService
 
                         return [
                             'success' => true,
-                            'order' => $this->apiService->getFilteredApiOrder($this->module->api, $input['transactionId']),
+                            'order' => $this->apiService->getFilteredApiOrder($this->module->api, $transactionId),
                             'tracking' => $tracking,
                         ];
                     case 'ship':
-                        $status = $this->shipService->doShipOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : [], isset($input['tracking']) ? $input['tracking'] : null);
+                        $status = $this->shipService->doShipOrderLines($transactionId, isset($input['orderLines']) ? $input['orderLines'] : [], isset($input['tracking']) ? $input['tracking'] : null);
 
-                        return array_merge($status, ['order' => $this->apiService->getFilteredApiOrder($this->module->api, $input['transactionId'])]);
+                        return array_merge($status, ['order' => $this->apiService->getFilteredApiOrder($this->module->api, $transactionId)]);
                     case 'refund':
                         $status = $this->refundService->doRefundOrderLines($input['order'], isset($input['orderLines']) ? $input['orderLines'] : []);
 
                         return array_merge($status, ['order' => $this->apiService->getFilteredApiOrder($this->module->api, $input['order']['id'])]);
                     case 'cancel':
-                        $status = $this->cancelService->doCancelOrderLines($input['transactionId'], isset($input['orderLines']) ? $input['orderLines'] : []);
+                        $status = $this->cancelService->doCancelOrderLines($transactionId, isset($input['orderLines']) ? $input['orderLines'] : []);
 
-                        return array_merge($status, ['order' => $this->apiService->getFilteredApiOrder($this->module->api, $input['transactionId'])]);
+                        return array_merge($status, ['order' => $this->apiService->getFilteredApiOrder($this->module->api, $transactionId)]);
                     default:
                         return ['success' => false];
                 }

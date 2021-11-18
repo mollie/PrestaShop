@@ -11,6 +11,11 @@
 + Improved uninstall by deleting all tables except for mollie_payments
 + Fixed few small warning that kept getting sent to sentry
 + Fixed order API all products refund functionality
++ Status is no longer updated again to paid if it already has paid status and webhook is called again.
++ Added max address restriction for mollie. (Max 100 chars)
++ Added more validations for missing API token to handle errors.
++ Fixed open status logic to use selected open status and not awaiting.
++ Removed mail switch for awaiting and open order statuses.
 + Fixed issue where creating mollie order from back office had issues
 
 ## Changes in release 4.4.2 ##

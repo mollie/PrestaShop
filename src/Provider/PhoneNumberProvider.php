@@ -20,7 +20,7 @@ final class PhoneNumberProvider implements PhoneNumberProviderInterface
     {
         $phoneNumber = $this->getMobileOrPhone($address);
 
-        if (empty($phoneNumber)) {
+        if (empty($phoneNumber) || empty(str_replace(' ', '', $phoneNumber))) {
             return null;
         }
         $phoneNumber = str_replace(' ', '', $phoneNumber);

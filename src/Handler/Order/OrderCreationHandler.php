@@ -213,7 +213,7 @@ class OrderCreationHandler
         $paymentMethodRepository = $this->module->getMollieContainer(PaymentMethodRepositoryInterface::class);
         $this->module->validateOrder(
             (int) $cart->id,
-            (int) Configuration::get(Config::MOLLIE_STATUS_AWAITING),
+            (int) Configuration::get(Config::MOLLIE_STATUS_OPEN),
             (float) $paymentData->getAmount()->getValue(),
             isset(Config::$methods[$paymentData->getMethod()]) ? Config::$methods[$paymentData->getMethod()] : $this->module->name,
             null,

@@ -553,10 +553,10 @@ class FormBuilder
         foreach (array_filter($statuses, function ($status) {
             return in_array($status['name'], [
                 Config::MOLLIE_AWAITING_PAYMENT,
+                PaymentStatus::STATUS_OPEN,
                 PaymentStatus::STATUS_PAID,
                 OrderStatus::STATUS_COMPLETED,
                 PaymentStatus::STATUS_AUTHORIZED,
-                PaymentStatus::STATUS_OPEN,
                 PaymentStatus::STATUS_CANCELED,
                 PaymentStatus::STATUS_EXPIRED,
                 RefundStatus::STATUS_REFUNDED,
@@ -564,7 +564,7 @@ class FormBuilder
                 OrderStatus::STATUS_SHIPPING,
             ]);
         }) as $status) {
-            if (!in_array($status['name'], [Config::PARTIAL_REFUND_CODE])) {
+            if (!in_array($status['name'], [Config::PARTIAL_REFUND_CODE, Config::MOLLIE_AWAITING_PAYMENT, PaymentStatus::STATUS_OPEN])) {
                 $input[] = [
                     'type' => 'switch',
                     'label' => $status['message_mail'],
