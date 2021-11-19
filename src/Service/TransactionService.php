@@ -139,8 +139,8 @@ class TransactionService
                     if (strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                         return $transactionNotUsedMessage;
                     }
-                    if (isset($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
-                        && NumberUtility::isLowerOrEqualThan($apiPayment->settlementAmount->value, $apiPayment->amountRefunded->value)
+                    if (isset($apiPayment->amount->value, $apiPayment->amountRefunded->value)
+                        && NumberUtility::isLowerOrEqualThan($apiPayment->amount->value, $apiPayment->amountRefunded->value)
                     ) {
                         $this->orderStatusService->setOrderStatus($orderId, RefundStatus::STATUS_REFUNDED);
                     } else {
