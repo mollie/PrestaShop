@@ -117,3 +117,7 @@ label.mollie-input-error {
 #mollie-notifications {
     margin-bottom: 0;
 }
+
+.mollie-expiry-date-label {
+  font-size: 12px;
+}
