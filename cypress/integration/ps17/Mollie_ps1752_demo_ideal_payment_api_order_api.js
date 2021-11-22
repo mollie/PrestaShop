@@ -88,7 +88,7 @@ it('Checking the Back-Office Order Existance, Refunding [Payments API]', () => {
       cy.get('tbody > :nth-child(1) > :nth-child(8)').should('include.text','iDEAL')
       cy.get('tbody > :nth-child(1) > :nth-child(9)').should('include.text','Payment accepted')
       cy.get(':nth-child(1) > :nth-child(15) > .btn-group > .btn').click()
-      cy.get('#formAddPaymentPanel').contains('ideal')
+      cy.get('#formAddPaymentPanel').contains('iDEAL')
       cy.get('#mollie_order > :nth-child(1)').should('exist')
       cy.get('.form-inline > :nth-child(1) > .btn').should('exist')
       cy.get('.input-group-btn > .btn').should('exist')
