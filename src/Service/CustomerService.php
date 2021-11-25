@@ -91,9 +91,8 @@ class CustomerService
         if (PaymentMethod::CREDITCARD !== $method) {
             return false;
         }
-        $isComponentEnabled = \Configuration::get(Config::MOLLIE_IFRAME);
         $isSingleClickPaymentEnabled = \Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
-        if (!$isComponentEnabled && $isSingleClickPaymentEnabled) {
+        if ($isSingleClickPaymentEnabled) {
             return true;
         }
 

@@ -37,11 +37,14 @@
 namespace Mollie\Handler\PaymentOption;
 
 use Configuration;
+use Customer;
+use MolCustomer;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
 use Mollie\Provider\PaymentOption\BasePaymentOptionProvider;
 use Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider;
 use Mollie\Provider\PaymentOption\IdealPaymentOptionProvider;
+use Mollie\Repository\MolCustomerRepository;
 use MolPaymentMethod;
 
 class PaymentOptionHandler implements PaymentOptionHandlerInterface
@@ -60,15 +63,27 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
      * @var IdealPaymentOptionProvider
      */
     private $idealPaymentOptionProvider;
+    /**
+     * @var MolCustomerRepository
+     */
+    private $customerRepository;
+    /**
+     * @var Customer
+     */
+    private $customer;
 
     public function __construct(
         BasePaymentOptionProvider $basePaymentOptionProvider,
         CreditCardPaymentOptionProvider $creditCardPaymentOptionProvider,
-        IdealPaymentOptionProvider $idealPaymentOptionProvider
+        IdealPaymentOptionProvider $idealPaymentOptionProvider,
+        MolCustomerRepository $customerRepository,
+        Customer $customer
     ) {
         $this->basePaymentOptionProvider = $basePaymentOptionProvider;
         $this->creditCardPaymentOptionProvider = $creditCardPaymentOptionProvider;
         $this->idealPaymentOptionProvider = $idealPaymentOptionProvider;
+        $this->customerRepository = $customerRepository;
+        $this->customer = $customer;
     }
 
     /**
@@ -120,6 +135,18 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
         }
 
         if (!Configuration::get(Config::MOLLIE_IFRAME)) {
+            return false;
+        }
+        $fullName = "{$this->customer->firstname} {$this->customer->lastname}";
+
+        /** @var MolCustomer|null $molCustomer */
+        $molCustomer = $this->customerRepository->findOneBy(
+            [
+                'name' => $fullName,
+                'email' => $this->customer->email,
+            ]
+        );
+        if ($molCustomer) {
             return false;
         }
 

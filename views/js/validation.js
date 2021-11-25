@@ -57,14 +57,6 @@ $(document).ready(function () {
         $paymentMethodsEnable.each(validatePaymentMethod);
     });
 
-    var $profileSwitch = $('input[name="MOLLIE_IFRAME"]');
-    var $singleClickPayment = $('input[name="MOLLIE_SINGLE_CLICK_PAYMENT"]');
-
-    hideElementIfChecked($profileSwitch, $singleClickPayment);
-    $profileSwitch.on('change', function () {
-        hideElementIfChecked($profileSwitch, $singleClickPayment);
-    });
-
     var $automaticallyShipSwitch = $('input[name="MOLLIE_AS_MAIN"]');
     var $statusesContainer = $('#MOLLIE_AS_STATUSES_container');
     hideElementIfNotChecked($automaticallyShipSwitch, $statusesContainer);
