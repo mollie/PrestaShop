@@ -18,6 +18,9 @@
 + Removed mail switch for awaiting and open order statuses.
 + Fixed issue where creating mollie order from back office had issues
 + Fixed issue where on some payment methods refund status would not be changed after refund webhook is called
++ Fixed issue where on some payment methods refund status would not be changed after refund webhook is called
++ Added option to have credit card components and also save credit card token.
++ Fixed issue where after changing environment it would load old environment payment settings, and you would need to refresh page to see correct ones. 
 
 ## Changes in release 4.4.2 ##
 + Fixed payment methods translations using API in checkout
