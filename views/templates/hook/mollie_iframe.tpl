@@ -38,10 +38,10 @@
             </div>
         </div>
     </div>
-    <div class="form-group form-group-save-card {$methodId|escape:'html':'UTF-8'}">
+    <div class="form-group form-group-save-card {$methodId|escape:'html':'UTF-8'} mt-1">
         <label class="mollie-label" for="save-card-{$methodId|escape:'html':'UTF-8'}">{l s='Save card' mod='mollie'}</label>
         <div id="save-card-{$methodId|escape:'html':'UTF-8'}" class="save-card">
-            <input type="radio" name="mollie-save-card">
+            <input type="checkbox" name="mollie-save-card">
         </div>
     </div>
     <div role="alert" id="mollie-field-error" class="error">

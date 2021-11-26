@@ -97,7 +97,7 @@ $(document).ready(function () {
 
     $(document).on('change', 'input[name="mollie-save-card"]', function () {
         var mollieSaveCard = $('input[name="mollieSaveCard' + methodId + '"]');
-        mollieSaveCard.val($(this).val());
+        mollieSaveCard.val($(this).is(':checked'));
     });
 
     $(document).on('change', 'input[data-module-name="mollie"]', function () {
