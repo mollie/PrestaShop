@@ -45,6 +45,7 @@ use Mollie\Provider\PaymentOption\BasePaymentOptionProvider;
 use Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider;
 use Mollie\Provider\PaymentOption\IdealPaymentOptionProvider;
 use Mollie\Repository\MolCustomerRepository;
+use Mollie\Utility\CustomerUtility;
 use MolPaymentMethod;
 
 class PaymentOptionHandler implements PaymentOptionHandlerInterface
@@ -137,7 +138,7 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
         if (!Configuration::get(Config::MOLLIE_IFRAME)) {
             return false;
         }
-        $fullName = "{$this->customer->firstname} {$this->customer->lastname}";
+        $fullName = CustomerUtility::getCustomerFullName($this->customer->id);
 
         /** @var MolCustomer|null $molCustomer */
         $molCustomer = $this->customerRepository->findOneBy(
