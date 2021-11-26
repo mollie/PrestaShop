@@ -542,6 +542,7 @@ class Mollie extends PaymentModule
                 'choose' => $this->l('Choose'),
                 'cancel' => $this->l('Cancel'),
             ],
+            'isSingleClickPayment' => (bool) Configuration::get(Mollie\Config\Config::MOLLIE_SINGLE_CLICK_PAYMENT),
         ]);
 
         $iframeDisplay = '';

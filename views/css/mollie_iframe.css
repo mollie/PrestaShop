@@ -121,3 +121,12 @@ label.mollie-input-error {
 .mollie-expiry-date-label {
   font-size: 12px;
 }
+
+.mollie-iframe-container-16 .mollie-iframe-container .form-group-save-card {
+    width: 100%;
+    margin-top: 15px;
+}
+
+.mollie-iframe-container-16 .mollie-iframe-container .form-group-save-card .mollie-save-card-label{
+  margin-left: 5px;
+}

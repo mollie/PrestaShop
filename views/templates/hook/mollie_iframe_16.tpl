@@ -7,7 +7,7 @@
 * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
 *}
 
-<div id="mollie-iframe-container" style="display: none">
+<div id="mollie-iframe-container" style="display: none" class="mollie-iframe-container-16">
     <div class="mollie-iframe-container">
         <div class="container">
             <article class="alert alert-danger" role="alert" data-alert="danger"
@@ -29,7 +29,7 @@
             </div>
             <div class="form-group form-group-expiry-date">
                 <div id="expiry-date" class="mollie-input expiry-date">
-                  <label class="mollie-label mollie-expiry-date-label" for="expiry-date-{$methodId}">{l s='Expiry date' mod='mollie'}</label>
+                  <label class="mollie-label mollie-expiry-date-label" for="expiry-date">{l s='Expiry date' mod='mollie'}</label>
                 </div>
             </div>
             <div class="form-group form-group-verification-code">
@@ -38,6 +38,14 @@
                      class="mollie-input verification-code">
                 </div>
             </div>
+            {if $isSingleClickPayment}
+              <div class="form-group form-group-save-card">
+                <div id="save-card" class="save-card checkbox">
+                 <input type="checkbox" name="mollie-save-card" class="save-card">
+                <label class="mollie-label mollie-save-card-label" for="mollie-save-card">{l s='Save card' mod='mollie'}</label>
+                </div>
+              </div>
+            {/if}
         </div>
         <div role="alert" class="error mollie-field-error">
             <label class="mollie-input-error"></label>
@@ -102,6 +110,7 @@
             <div class="col-lg-3">
                 <form method="post" action="{$link->getModuleLink('mollie', 'payScreen', [], true)|escape:'html':'UTF-8'}">
                     <input type="hidden" name="mollieCardToken">
+                    <input type="hidden" name="mollieSaveCard">
                     <button type="submit" class="btn btn-primary pull-right">{l s='Order' mod='mollie'}</button>
                 </form>
             </div>

@@ -62,13 +62,19 @@ $(document).ready(function () {
             'fitToView': true,
             'autoSize': true,
             'type': 'inline',
-            'content': $('#mollie-iframe-container').html()
+            'content': $('#mollie-iframe-container').clone()
         });
+        $("input[name='mollie-save-card']").uniform();
         fieldErrors = {};
         var creditCardDataProvider = null !== creditCardFactoryCached ? creditCardFactoryCached : creditCardFactory()
         handleErrors();
         mountMollieComponents(creditCardDataProvider);
     });
+
+  $(document).on('change', 'input[name="mollie-save-card"]', function () {
+    var mollieSaveCard = $('input[name="mollieSaveCard"]');
+    mollieSaveCard.val($(this).is(':checked'));
+  });
 
     var fieldMap = {
         'card-holder': 0,
