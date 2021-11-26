@@ -117,6 +117,11 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
                 'name' => "mollieCardToken{$paymentMethod->getPaymentMethodName()}",
                 'value' => '',
             ],
+            [
+                'type' => 'hidden',
+                'name' => "mollieSaveCard{$paymentMethod->getPaymentMethodName()}",
+                'value' => '',
+            ],
         ]);
 
         $this->context->getSmarty()->assign([
@@ -131,13 +136,6 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
             $this->module->getPathUri(), 'views/templates/hook/mollie_iframe.tpl'
         ));
 
-        $paymentOption->setInputs([
-            [
-                'type' => 'hidden',
-                'name' => "mollieCardToken{$paymentMethod->getPaymentMethodName()}",
-                'value' => '',
-            ],
-        ]);
         $paymentFee = $this->paymentFeeProvider->getPaymentFee($paymentMethod);
 
         if ($paymentFee) {
