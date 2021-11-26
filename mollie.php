@@ -530,7 +530,7 @@ class Mollie extends PaymentModule
         $apiMethods = $orderFeeService->getPaymentFees($apiMethods, $this->context->cart->getOrderTotal());
 
         $customer = Context::getContext()->customer;
-        $fullName = "{$customer->firstname} {$customer->lastname}";
+        $fullName = Mollie\Utility\CustomerUtility::getCustomerFullName($customer->id);
 
         /** @var \Mollie\Repository\MolCustomerRepository $customerRepo */
         $customerRepo = $this->getMollieContainer(\Mollie\Repository\MolCustomerRepository::class);

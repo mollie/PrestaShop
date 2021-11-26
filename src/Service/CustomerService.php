@@ -19,6 +19,7 @@ use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Repository\MolCustomerRepository;
+use Mollie\Utility\CustomerUtility;
 
 class CustomerService
 {
@@ -46,7 +47,7 @@ class CustomerService
 
         $customer = new \Customer($cart->id_customer);
 
-        $fullName = "{$customer->firstname} {$customer->lastname}";
+        $fullName = CustomerUtility::getCustomerFullName($customer->id);
         /** @var MolCustomer|null $molCustomer */
         $molCustomer = $this->customerRepository->findOneBy(
             [
