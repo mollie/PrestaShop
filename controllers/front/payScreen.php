@@ -18,11 +18,12 @@ class MolliePayScreenModuleFrontController extends ModuleFrontController
     {
         $method = Tools::getValue('method');
         $cardToken = Tools::getValue('mollieCardToken' . $method);
+        $isSaveCard = Tools::getValue('mollieSaveCard' . $method);
 
         $validateUrl = Context::getContext()->link->getModuleLink(
             'mollie',
             'payment',
-            ['method' => PaymentMethod::CREDITCARD, 'rand' => time(), 'cardToken' => $cardToken],
+            ['method' => PaymentMethod::CREDITCARD, 'rand' => time(), 'cardToken' => $cardToken, 'saveCard' => $isSaveCard],
             true
         );
 

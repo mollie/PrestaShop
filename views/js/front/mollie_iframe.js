@@ -95,6 +95,11 @@ $(document).ready(function () {
     var methodId = $(this).find('input[name="method-id"]').val();
     mountMollieComponents(methodId);
 
+    $(document).on('change', 'input[name="mollie-save-card"]', function () {
+        var mollieSaveCard = $('input[name="mollieSaveCard' + methodId + '"]');
+        mollieSaveCard.val($(this).val());
+    });
+
     $(document).on('change', 'input[data-module-name="mollie"]', function () {
         var paymentOption = $(this).attr('id');
         var $additionalInformation = $('#' + paymentOption + '-additional-information');

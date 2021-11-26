@@ -104,7 +104,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $customer->secure_key,
             $paymentMethodObj,
             $orderNumber,
-            Tools::getValue('cardToken')
+            Tools::getValue('cardToken'),
+            Tools::getValue('saveCard')
         );
 
         if ($method === PaymentMethod::BANKTRANSFER) {
