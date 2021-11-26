@@ -36,6 +36,7 @@
 
 namespace Mollie\Provider\PaymentOption;
 
+use Configuration;
 use Mollie;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Provider\CreditCardLogoProvider;
@@ -129,6 +130,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
             'price' => $this->orderTotalProvider->getOrderTotal(),
             'priceSign' => $this->context->getCurrencySign(),
             'methodId' => $paymentMethod->getPaymentMethodName(),
+            'isSingleClickPayment' => (bool) Configuration::get(Mollie\Config\Config::MOLLIE_SINGLE_CLICK_PAYMENT),
         ]);
         $paymentOption->setLogo($this->creditCardLogoProvider->getMethodOptionLogo($paymentMethod));
 
