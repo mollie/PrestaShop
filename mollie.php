@@ -529,7 +529,21 @@ class Mollie extends PaymentModule
         }
         $apiMethods = $orderFeeService->getPaymentFees($apiMethods, $this->context->cart->getOrderTotal());
 
-        $isIFrameEnabled = Configuration::get(Mollie\Config\Config::MOLLIE_IFRAME);
+        $customer = Context::getContext()->customer;
+        $fullName = "{$customer->firstname} {$customer->lastname}";
+
+        /** @var \Mollie\Repository\MolCustomerRepository $customerRepo */
+        $customerRepo = $this->getMollieContainer(\Mollie\Repository\MolCustomerRepository::class);
+        /** @var MolCustomer|null $molCustomer */
+        $molCustomer = $customerRepo->findOneBy(
+            [
+                'name' => $fullName,
+                'email' => $customer->email,
+            ]
+        );
+
+        $isIFrameEnabled = Configuration::get(Mollie\Config\Config::MOLLIE_IFRAME) && !$molCustomer;
+
         /** @var Cart $cart */
         $cart = Context::getContext()->cart;
         $smarty->assign([
