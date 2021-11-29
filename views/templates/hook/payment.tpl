@@ -12,11 +12,10 @@
 
 {* use this place holder for such cases which does not redirect user to new window. *}
 {$nonRedirectPlaceholder = '#'}
-
 <div class="mollie_methods">
     {foreach $methods as $method}
         <p class="payment_module">
-            {if $mollieIframe === '1' && ($method['id_method'] === 'creditcard' || $method['id_method'] === $CARTES_BANCAIRES)}
+            {if $mollieIframe === true && ($method['id_method'] === 'creditcard' || $method['id_method'] === $CARTES_BANCAIRES)}
             <a href="{$nonRedirectPlaceholder|escape:'html':'UTF-8'}"
                title="{$msg_pay_with|sprintf:$method['method_name']|escape:'htmlall':'UTF-8'}"
                id="mollie_link_{$method['id_method']|escape:'htmlall':'UTF-8'}"
