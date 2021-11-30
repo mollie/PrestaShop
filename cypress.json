@@ -4,5 +4,6 @@
  "numTestsKeptInMemory": 100,
  "defaultCommandTimeout": 10000,
  "projectId": "xb89dr",
- "retries": 0
+ "retries": 0,
+ "experimentalSessionSupport": true
 }
