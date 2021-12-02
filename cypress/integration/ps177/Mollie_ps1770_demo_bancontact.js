@@ -27,7 +27,7 @@ context('PS1770 Bancontact Payment Orders/Payments API basic checkout', () => {
       cy.contains('The configuration has been saved!').should('exist').as('Save Successfull')
 })
     // Starting purchasing process
-    it('Checkouting the item in FO [Orders API]', () => {
+    it.only('Checkouting the item in FO [Orders API]', () => {
       cy.mollie_1770_test_faster_login_DE_Orders_Api()
       cy.contains('Germany').click()
       cy.get('.clearfix > .btn').click()
@@ -35,6 +35,16 @@ context('PS1770 Bancontact Payment Orders/Payments API basic checkout', () => {
       cy.contains('Bancontact').click({force:true})
       cy.get('.js-terms').click()
       cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
       cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
 
@@ -103,6 +113,17 @@ context('PS1770 Bancontact Payment Orders/Payments API basic checkout', () => {
       cy.contains('Bancontact').click({force:true})
       cy.get('.js-terms').click()
       cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
       cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
 

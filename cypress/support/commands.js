@@ -157,9 +157,6 @@ Cypress.Commands.add("mollie_1752_test_faster_login_DE_Payments_Api", () => {
     cy.get('.input-group > .form-control').type((Cypress.env('FO_password')),{delay: 0, log: false})
     cy.get('#submit-login').click()
     cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/home/21-testproduct1.html')
-    cy.get('.add > .btn').click()
-    cy.get('.cart-content-btn > .btn-primary').click()
-    cy.get('.text-sm-center > .btn').click()
 })
 //
 //

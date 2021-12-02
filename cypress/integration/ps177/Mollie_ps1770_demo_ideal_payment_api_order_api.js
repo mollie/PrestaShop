@@ -59,6 +59,17 @@ context('iDEAL payment automation PS1770 Mollie Orders/Payments API', () => {
       cy.contains('iDEAL').click()
       cy.get('.js-terms').click()
       cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
       cy.get('.payment-method-list > :nth-child(1)').click()
       cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
@@ -148,7 +159,6 @@ context('iDEAL payment automation PS1770 Mollie Orders/Payments API', () => {
         cy.get(':nth-child(9) > .col-md-6 > .custom-checkbox > label > input').check()
         cy.get(':nth-child(11) > .col-md-6 > .custom-checkbox > label > input').check()
         cy.get('#customer-form > .form-footer > .continue').click()
-
         cy.get(':nth-child(6) > .col-md-6 > .form-control').type('123456',{delay:0})
         cy.get(':nth-child(7) > .col-md-6 > .form-control').type('123456',{delay:0}).as('vat number')
         cy.get(':nth-child(8) > .col-md-6 > .form-control').type('ADDR',{delay:0}).as('address')
@@ -162,6 +172,17 @@ context('iDEAL payment automation PS1770 Mollie Orders/Payments API', () => {
         cy.get('.js-terms').click()
         cy.get('.ps-shown-by-js > .btn').click()
         cy.get('.payment-method-list > :nth-child(1)').click()
+        cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+        );    // reload current page to activate cookie
+        cy.reload();
         cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
         cy.get('.button').click()
 

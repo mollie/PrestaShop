@@ -73,6 +73,17 @@ context('Purchase automation PS1770 Mollie Payment/Order API Credit Card Front O
 })
       cy.get('.js-terms').click()
       cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
       cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
 
@@ -188,6 +199,17 @@ it('Checkouting the item Front-Office [Orders API]', () => {
 })
   cy.get('.js-terms').click()
   cy.get('.ps-shown-by-js > .btn').click()
+  cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
   cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
   cy.get('.button').click()
 
