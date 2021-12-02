@@ -411,9 +411,10 @@ class PaymentMethodService
 
     private function isCustomerSaveEnabled()
     {
+        $isComponentsEnabled = Configuration::get(Config::MOLLIE_IFRAME);
         $isSingleClickPaymentEnabled = Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
 
-        return $isSingleClickPaymentEnabled;
+        return !$isComponentsEnabled && $isSingleClickPaymentEnabled;
     }
 
     private function removeNotSupportedMethods($methods, $mollieMethods)

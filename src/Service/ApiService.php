@@ -147,8 +147,6 @@ class ApiService
 
     private function getMethodsObjForConfig($apiMethods)
     {
-        $this->environment = (int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT);
-
         $methods = [];
         $defaultPaymentMethod = new MolPaymentMethod();
         $defaultPaymentMethod->enabled = false;
