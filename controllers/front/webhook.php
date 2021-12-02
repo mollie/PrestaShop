@@ -74,7 +74,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         if (!$this->module->api) {
             return 'API key is missing or incorrect';
         }
-
         try {
             if (TransactionUtility::isOrderTransaction($transactionId)) {
                 $payment = $transactionService->processTransaction($this->module->api->orders->get($transactionId, ['embed' => 'payments']));

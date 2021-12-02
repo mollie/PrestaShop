@@ -167,7 +167,7 @@ class OrderCreationHandler
 
         $this->module->validateOrder(
             (int) $cartId,
-            (int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_OPEN),
+            (int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
             (float) $apiPayment->amount->value,
             isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name,
             null,
