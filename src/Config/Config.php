@@ -23,7 +23,7 @@ class Config
 {
     const SEGMENT_KEY = 'x8qDW8mWIlcY9SXbMhKLoH7xYQ1cSxF2';
 
-    const SENTRY_KEY = 'https://6c6926cfb8fa43deba653bfdc6c25b78@o497594.ingest.sentry.io/5573860';
+    const SENTRY_KEY = 'https://0fbb55276ced4210ad7d36f8c10de438@o497594.ingest.sentry.io/5573860';
 
     const SENTRY_ENV = 'MISSING_ENV';
 
