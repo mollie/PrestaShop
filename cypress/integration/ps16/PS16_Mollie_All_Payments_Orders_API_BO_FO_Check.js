@@ -475,7 +475,7 @@ it('Credit Cart checkout FO [Orders API]', () => {
       //Success page UI verification
       cy.get('#mollie-ok').should('include.text','Thank you')
 })
-it('Credit Card Order BO Refunding [Orders API]', () => {
+it('Credit Card Order BO Shiping, Refunding [Orders API]', () => {
   Cypress.on('uncaught:exception', (err, runnable) => {
     // returning false here prevents Cypress from
     // failing the test
