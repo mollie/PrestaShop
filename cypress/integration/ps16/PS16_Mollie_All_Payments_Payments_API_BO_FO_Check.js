@@ -1,5 +1,5 @@
 /// <reference types="Cypress" />
-context('PS16 All Payments Checking', () => {
+context('PS16 All Payments Checking [Payments API]', () => {
   beforeEach(() => {
     cy.viewport(1920,1080)
   })
