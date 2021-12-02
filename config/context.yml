@@ -34,7 +34,3 @@ services:
   mollie.country:
     class: 'Shop'
     factory: ['Mollie\Factory\ContextFactory', 'getCountry']
-
-  mollie.customer:
-    class: 'Customer'
-    factory: ['Mollie\Factory\ContextFactory', 'getCustomer']

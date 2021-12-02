@@ -60,9 +60,4 @@ class ContextFactory
     {
         return Context::getContext()->country;
     }
-
-    public static function getCustomer()
-    {
-        return Context::getContext()->customer;
-    }
 }
