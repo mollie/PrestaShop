@@ -86,7 +86,7 @@ it('Bancontact checkout FO [Payments API]', () => {
       cy.get('.h1').should('include.text','Your order is confirmed')
       cy.get('#order-details > ul > :nth-child(2)').should('include.text','Bancontact')
 })
-it('Bancontact Order BO Shiping, Refunding [Payments API]', () => {
+it('Bancontact Order BO Refunding [Payments API]', () => {
   Cypress.on('uncaught:exception', (err, runnable) => {
     // returning false here prevents Cypress from
     // failing the test
@@ -163,7 +163,7 @@ it('iDEAL checkout FO [Payments API]', () => {
       cy.get('.h1').should('include.text','Your order is confirmed')
       cy.get('#order-details > ul > :nth-child(2)').should('include.text','iDEAL')
 })
-it('iDEAL Order BO Shiping, Refunding [Payments API]', () => {
+it('iDEAL Order BO Refunding [Payments API]', () => {
   Cypress.on('uncaught:exception', (err, runnable) => {
     // returning false here prevents Cypress from
     // failing the test
