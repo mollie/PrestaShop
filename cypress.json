@@ -6,5 +6,5 @@
  "projectId": "xb89dr",
  "retries": 0,
  "experimentalSessionSupport": true,
- "ignoreTestFiles": ["index.php", "**/integration/ps177/**"]
+ "ignoreTestFiles": ["index.php", ""]
 }

@@ -1,17 +1,23 @@
 /// <reference types="Cypress" />
-context('PS17 All Payments Checking [Orders API]', () => {
+context('PS177 All Payments Checking [Orders API]', () => {
   beforeEach(() => {
     cy.viewport(1920,1080)
   })
 it('Enabling All Payments in BO [Orders API]', () => {
     var login = (MollieBOLoggingIn) => {
     cy.session(MollieBOLoggingIn,() => {
-    cy.mollie_1752_test_demo_module_dashboard()
-    cy.mollie_1752_test_login()
+    cy.mollie_test17_admin()
+    cy.login_mollie17_test()
     })
  	}
 login('MollieBOLoggingIn')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminMollieModule')
+      cy.visit('https://mollie1770test.invertusdemo.com/admin1/index.php?controller=AdminMollieModule')
+      cy.get('.btn-continue').click()
+      cy.get('#subtab-AdminMollieModule > .link').click()
+      //switching the multistore
+      cy.get('#header_shop > .dropdown').click()
+      cy.get('#header_shop > .dropdown > .dropdown-menu').click(100,100)
+      //
       cy.get('#MOLLIE_API_KEY_TEST').clear().type((Cypress.env('mollie_test_api_key')),{delay: 0, log: false})
       cy.get('#MOLLIE_PROFILE_ID').clear().type((Cypress.env('mollie_test_profile_id')),{delay: 0, log: false})
       cy.get('[for="MOLLIE_IFRAME_on"]').click()
@@ -56,11 +62,11 @@ it('Bancontact checkout FO [Orders API]', () => {
       })
       var fasterLoginDE = (LoginFoDE) => {
       cy.session (LoginFoDE, () => {
-      cy.mollie_1752_test_faster_login_DE_Orders_Api()
+      cy.mollie_1770_test_faster_login_DE_Orders_Api()
       })
       }
       fasterLoginDE('LoginFoDE')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/home/21-testproduct1.html')
+      cy.visit('https://mollie1770test.invertusdemo.com/en/women/2-brown-bear-printed-sweater.html')
       cy.get('.add > .btn').click()
       cy.get('.cart-content-btn > .btn-primary').click()
       cy.get('.text-sm-center > .btn').click()
@@ -68,6 +74,7 @@ it('Bancontact checkout FO [Orders API]', () => {
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       cy.contains('Bancontact').click({force:true})
+      cy.get('.js-terms').click()
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
         'SESSIONID',
@@ -82,10 +89,10 @@ it('Bancontact checkout FO [Orders API]', () => {
       cy.reload();
       cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
-
+      cy.url().should('include','https://mollie1770test.invertusdemo.com/')
       //Success page UI verification
-      cy.get('.h1').should('include.text','Your order is confirmed')
-      cy.get('#order-details > ul > :nth-child(2)').should('include.text','Bancontact')
+      // cy.get('.h1').should('include.text','Your order is confirmed')
+      // cy.get('#order-details > ul > :nth-child(2)').should('include.text','Bancontact')
 })
 it('Bancontact Order BO Shiping, Refunding [Orders API]', () => {
   Cypress.on('uncaught:exception', (err, runnable) => {
@@ -95,16 +102,16 @@ it('Bancontact Order BO Shiping, Refunding [Orders API]', () => {
   })
   var login = (MollieBOLoggingIn) => {
     cy.session(MollieBOLoggingIn,() => {
-    cy.mollie_1752_test_demo_module_dashboard()
-    cy.mollie_1752_test_login()
+    cy.mollie_test17_admin()
+    cy.login_mollie17_test()
     })
     }
   login('MollieBOLoggingIn')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
-      cy.get('[class=" odd"]').eq(0).click().wait(3000)
+      cy.visit('https://mollie1770test.invertusdemo.com/admin1/index.php?controller=AdminOrders')
+      cy.get(':nth-child(1) > .column-payment').click()
       //Refunding dropdown in React
       cy.get('.btn-group-action > .btn-group > .dropdown-toggle').click()
-      cy.get('[role="button"]').eq(0).click()
+      cy.get('[role="button"]').eq(2).click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
       cy.get('[class="alert alert-success"]').should('be.visible')
       //Shipping button in React
@@ -126,11 +133,11 @@ it('iDEAL checkout FO [Orders API]', () => {
       })
       var fasterLoginDE = (LoginFoDE) => {
       cy.session (LoginFoDE, () => {
-      cy.mollie_1752_test_faster_login_DE_Orders_Api()
+      cy.mollie_1770_test_faster_login_DE_Orders_Api()
       })
       }
       fasterLoginDE('LoginFoDE')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/home/21-testproduct1.html')
+      cy.visit('https://mollie1770test.invertusdemo.com/en/women/2-brown-bear-printed-sweater.html')
       cy.get('.add > .btn').click()
       cy.get('.cart-content-btn > .btn-primary').click()
       cy.get('.text-sm-center > .btn').click()
@@ -138,6 +145,7 @@ it('iDEAL checkout FO [Orders API]', () => {
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       cy.contains('iDEAL').click({force:true})
+      cy.get('.js-terms').click()
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
         'SESSIONID',
@@ -153,10 +161,10 @@ it('iDEAL checkout FO [Orders API]', () => {
       cy.get('.grid-button-ideal-ABNANL2A').click()
       cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
-
+      cy.url().should('include','https://mollie1770test.invertusdemo.com/')
       //Success page UI verification
-      cy.get('.h1').should('include.text','Your order is confirmed')
-      cy.get('#order-details > ul > :nth-child(2)').should('include.text','iDEAL')
+      // cy.get('.h1').should('include.text','Your order is confirmed')
+      // cy.get('#order-details > ul > :nth-child(2)').should('include.text','iDEAL')
 })
 it('iDEAL Order BO Shiping, Refunding [Orders API]', () => {
   Cypress.on('uncaught:exception', (err, runnable) => {
@@ -166,16 +174,16 @@ it('iDEAL Order BO Shiping, Refunding [Orders API]', () => {
   })
   var login = (MollieBOLoggingIn) => {
     cy.session(MollieBOLoggingIn,() => {
-    cy.mollie_1752_test_demo_module_dashboard()
-    cy.mollie_1752_test_login()
+    cy.mollie_test17_admin()
+    cy.login_mollie17_test()
     })
     }
   login('MollieBOLoggingIn')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
-      cy.get('[class=" odd"]').eq(0).click().wait(3000)
+      cy.visit('https://mollie1770test.invertusdemo.com/admin1/index.php?controller=AdminOrders')
+      cy.get(':nth-child(1) > .column-payment').click()
       //Refunding dropdown in React
       cy.get('.btn-group-action > .btn-group > .dropdown-toggle').click()
-      cy.get('[role="button"]').eq(0).click()
+      cy.get('[role="button"]').eq(2).click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
       cy.get('[class="alert alert-success"]').should('be.visible')
       //Shipping button in React
@@ -197,11 +205,11 @@ it('Klarna Slice It checkout FO [Orders API]', () => {
       })
       var fasterLoginDE = (LoginFoDE) => {
       cy.session (LoginFoDE, () => {
-      cy.mollie_1752_test_faster_login_DE_Orders_Api()
+      cy.mollie_1770_test_faster_login_DE_Orders_Api()
       })
       }
       fasterLoginDE('LoginFoDE')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/home/21-testproduct1.html')
+      cy.visit('https://mollie1770test.invertusdemo.com/en/women/2-brown-bear-printed-sweater.html')
       cy.get('.add > .btn').click()
       cy.get('.cart-content-btn > .btn-primary').click()
       cy.get('.text-sm-center > .btn').click()
@@ -209,6 +217,7 @@ it('Klarna Slice It checkout FO [Orders API]', () => {
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       cy.contains('Slice it.').click({force:true})
+      cy.get('.js-terms').click()
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
         'SESSIONID',
@@ -223,10 +232,10 @@ it('Klarna Slice It checkout FO [Orders API]', () => {
       cy.reload();
       cy.get(':nth-child(1) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
-
+      cy.url().should('include','https://mollie1770test.invertusdemo.com/')
       //Success page UI verification
-      cy.get('.h1').should('include.text','Your order is confirmed')
-      cy.get('#order-details > ul > :nth-child(2)').should('include.text','Slice it.')
+      // cy.get('.h1').should('include.text','Your order is confirmed')
+      // cy.get('#order-details > ul > :nth-child(2)').should('include.text','Slice it.')
 })
 it('Klarna Slice It Order BO Shiping, Refunding [Orders API]', () => {
   Cypress.on('uncaught:exception', (err, runnable) => {
@@ -236,13 +245,13 @@ it('Klarna Slice It Order BO Shiping, Refunding [Orders API]', () => {
   })
   var login = (MollieBOLoggingIn) => {
     cy.session(MollieBOLoggingIn,() => {
-    cy.mollie_1752_test_demo_module_dashboard()
-    cy.mollie_1752_test_login()
+    cy.mollie_test17_admin()
+    cy.login_mollie17_test()
     })
     }
   login('MollieBOLoggingIn')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
-      cy.get('[class=" odd"]').eq(0).click().wait(3000)
+      cy.visit('https://mollie1770test.invertusdemo.com/admin1/index.php?controller=AdminOrders')
+      cy.get(':nth-child(1) > .column-payment').click()
       //Shipping button in React
       cy.get('.btn-group > [title=""]').click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
@@ -255,7 +264,7 @@ it('Klarna Slice It Order BO Shiping, Refunding [Orders API]', () => {
       cy.get('[class="alert alert-success"]').should('be.visible')
       //Refunding dropdown in React
       cy.get('.btn-group-action > .btn-group > .dropdown-toggle').click()
-      cy.get('[role="button"]').eq(0).click()
+      cy.get('[role="button"]').eq(2).click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
@@ -267,11 +276,11 @@ it('Klarna Pay Later checkout FO [Orders API]', () => {
       })
       var fasterLoginDE = (LoginFoDE) => {
       cy.session (LoginFoDE, () => {
-      cy.mollie_1752_test_faster_login_DE_Orders_Api()
+      cy.mollie_1770_test_faster_login_DE_Orders_Api()
       })
       }
       fasterLoginDE('LoginFoDE')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/home/21-testproduct1.html')
+      cy.visit('https://mollie1770test.invertusdemo.com/en/women/2-brown-bear-printed-sweater.html')
       cy.get('.add > .btn').click()
       cy.get('.cart-content-btn > .btn-primary').click()
       cy.get('.text-sm-center > .btn').click()
@@ -279,6 +288,7 @@ it('Klarna Pay Later checkout FO [Orders API]', () => {
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       cy.contains('Pay later').click({force:true})
+      cy.get('.js-terms').click()
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
         'SESSIONID',
@@ -293,10 +303,10 @@ it('Klarna Pay Later checkout FO [Orders API]', () => {
       cy.reload();
       cy.get(':nth-child(1) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
-
+      cy.url().should('include','https://mollie1770test.invertusdemo.com/')
       //Success page UI verification
-      cy.get('.h1').should('include.text','Your order is confirmed')
-      cy.get('#order-details > ul > :nth-child(2)').should('include.text','Pay later')
+      // cy.get('.h1').should('include.text','Your order is confirmed')
+      // cy.get('#order-details > ul > :nth-child(2)').should('include.text','Pay later')
 })
 it('Klarna Pay Later Order BO Shiping, Refunding [Orders API]', () => {
   Cypress.on('uncaught:exception', (err, runnable) => {
@@ -306,13 +316,13 @@ it('Klarna Pay Later Order BO Shiping, Refunding [Orders API]', () => {
   })
   var login = (MollieBOLoggingIn) => {
     cy.session(MollieBOLoggingIn,() => {
-    cy.mollie_1752_test_demo_module_dashboard()
-    cy.mollie_1752_test_login()
+    cy.mollie_test17_admin()
+    cy.login_mollie17_test()
     })
     }
   login('MollieBOLoggingIn')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
-      cy.get('[class=" odd"]').eq(0).click().wait(3000)
+      cy.visit('https://mollie1770test.invertusdemo.com/admin1/index.php?controller=AdminOrders')
+      cy.get(':nth-child(1) > .column-payment').click()
       //Shipping button in React
       cy.get('.btn-group > [title=""]').click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
@@ -325,7 +335,7 @@ it('Klarna Pay Later Order BO Shiping, Refunding [Orders API]', () => {
       cy.get('[class="alert alert-success"]').should('be.visible')
       //Refunding dropdown in React
       cy.get('.btn-group-action > .btn-group > .dropdown-toggle').click()
-      cy.get('[role="button"]').eq(0).click()
+      cy.get('[role="button"]').eq(2).click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
@@ -337,11 +347,11 @@ it('Credit card checkout FO [Orders API]', () => {
       })
       var fasterLoginDE = (LoginFoDE) => {
       cy.session (LoginFoDE, () => {
-      cy.mollie_1752_test_faster_login_DE_Orders_Api()
+      cy.mollie_1770_test_faster_login_DE_Orders_Api()
       })
       }
       fasterLoginDE('LoginFoDE')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/home/21-testproduct1.html')
+      cy.visit('https://mollie1770test.invertusdemo.com/en/women/2-brown-bear-printed-sweater.html')
       cy.get('.add > .btn').click()
       cy.get('.cart-content-btn > .btn-primary').click()
       cy.get('.text-sm-center > .btn').click()
@@ -378,9 +388,10 @@ it('Credit card checkout FO [Orders API]', () => {
       cy.reload();
       cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
+      cy.url().should('include','https://mollie1770test.invertusdemo.com/')
       //Success page UI verification
-      cy.get('.h1').should('include.text','Your order is confirmed')
-      cy.get('#order-details > ul > :nth-child(2)').should('include.text','Pay later')
+      // cy.get('.h1').should('include.text','Your order is confirmed')
+      // cy.get('#order-details > ul > :nth-child(2)').should('include.text','Pay later')
 })
 it('Credit card Order BO Shiping, Refunding [Orders API]', () => {
   Cypress.on('uncaught:exception', (err, runnable) => {
@@ -390,12 +401,12 @@ it('Credit card Order BO Shiping, Refunding [Orders API]', () => {
   })
   var login = (MollieBOLoggingIn) => {
     cy.session(MollieBOLoggingIn,() => {
-    cy.mollie_1752_test_demo_module_dashboard()
-    cy.mollie_1752_test_login()
+    cy.mollie_test17_admin()
+    cy.login_mollie17_test()
     })
     }
   login('MollieBOLoggingIn')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
+      cy.visit('https://mollie1770test.invertusdemo.com/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
       //Shipping button in React
       cy.get('.btn-group > [title=""]').click()
