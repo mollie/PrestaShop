@@ -153,7 +153,10 @@ $(document).ready(function () {
                 $mollieCardToken.val(token.token);
                 isResubmit = true;
                 $form[0].submit();
+                return;
             });
+
+            $('#payment-confirmation').find('button[type=submit]').prop("disabled", false);
         });
     }
 
