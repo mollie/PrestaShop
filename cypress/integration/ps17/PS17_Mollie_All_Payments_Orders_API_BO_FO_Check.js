@@ -72,12 +72,12 @@ it('Bancontact Order BO Shiping, Refunding [Orders API]', () => {
       cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
       cy.get('[class=" odd"]').eq(0).click().wait(3000)
       //Refunding dropdown in React
-      cy.get('.btn-group-action > .btn-group > .dropdown-toggle').click()
+      cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).click()
       cy.get('[role="button"]').eq(0).click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
       cy.get('[class="alert alert-success"]').should('be.visible')
       //Shipping button in React
-      cy.get('.btn-group > [title=""]').click()
+      cy.get('.btn-group > [title=""]').eq(0).click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
       cy.get('.swal-modal').should('exist')
       cy.get('#input-carrier').type('FedEx',{delay:0})
@@ -143,12 +143,12 @@ it('iDEAL Order BO Shiping, Refunding [Orders API]', () => {
       cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
       cy.get('[class=" odd"]').eq(0).click().wait(3000)
       //Refunding dropdown in React
-      cy.get('.btn-group-action > .btn-group > .dropdown-toggle').click()
+      cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).click()
       cy.get('[role="button"]').eq(0).click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
       cy.get('[class="alert alert-success"]').should('be.visible')
       //Shipping button in React
-      cy.get('.btn-group > [title=""]').click()
+      cy.get('.btn-group > [title=""]').eq(0).click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
       cy.get('.swal-modal').should('exist')
       cy.get('#input-carrier').type('FedEx',{delay:0})
@@ -213,7 +213,7 @@ it('Klarna Slice It Order BO Shiping, Refunding [Orders API]', () => {
       cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
       cy.get('[class=" odd"]').eq(0).click().wait(3000)
       //Shipping button in React
-      cy.get('.btn-group > [title=""]').click()
+      cy.get('.btn-group > [title=""]').eq(0).click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
       cy.get('.swal-modal').should('exist')
       cy.get('#input-carrier').type('FedEx',{delay:0})
@@ -223,7 +223,7 @@ it('Klarna Slice It Order BO Shiping, Refunding [Orders API]', () => {
       cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
       cy.get('[class="alert alert-success"]').should('be.visible')
       //Refunding dropdown in React
-      cy.get('.btn-group-action > .btn-group > .dropdown-toggle').click()
+      cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).click()
       cy.get('[role="button"]').eq(0).click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
       cy.get('[class="alert alert-success"]').should('be.visible')
@@ -283,7 +283,7 @@ it('Klarna Pay Later Order BO Shiping, Refunding [Orders API]', () => {
       cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
       cy.get('[class=" odd"]').eq(0).click().wait(3000)
       //Shipping button in React
-      cy.get('.btn-group > [title=""]').click()
+      cy.get('.btn-group > [title=""]').eq(0).click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
       cy.get('.swal-modal').should('exist')
       cy.get('#input-carrier').type('FedEx',{delay:0})
@@ -293,7 +293,7 @@ it('Klarna Pay Later Order BO Shiping, Refunding [Orders API]', () => {
       cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
       cy.get('[class="alert alert-success"]').should('be.visible')
       //Refunding dropdown in React
-      cy.get('.btn-group-action > .btn-group > .dropdown-toggle').click()
+      cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).click()
       cy.get('[role="button"]').eq(0).click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
       cy.get('[class="alert alert-success"]').should('be.visible')
@@ -332,7 +332,6 @@ it('Credit card checkout FO [Orders API]', () => {
       cy.enter('[data-testid=mollie-container--verificationCode] > iframe').then(getBody => {
       getBody().find('#verificationCode').type('222')
       })
-      cy.get('.js-terms').click()
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
         'SESSIONID',
@@ -349,7 +348,7 @@ it('Credit card checkout FO [Orders API]', () => {
       cy.get('.button').click()
       //Success page UI verification
       cy.get('.h1').should('include.text','Your order is confirmed')
-      cy.get('#order-details > ul > :nth-child(2)').should('include.text','Pay later')
+      cy.get('#order-details > ul > :nth-child(2)').should('include.text','Credit Card', {matchCase: false})
 })
 it('Credit card Order BO Shiping, Refunding [Orders API]', () => {
   Cypress.on('uncaught:exception', (err, runnable) => {
@@ -365,9 +364,9 @@ it('Credit card Order BO Shiping, Refunding [Orders API]', () => {
     }
   login('MollieBOLoggingIn')
       cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
-      cy.get(':nth-child(1) > .column-payment').click()
+      cy.get('[class=" odd"]').eq(0).click().wait(3000)
       //Shipping button in React
-      cy.get('.btn-group > [title=""]').click()
+      cy.get('.btn-group > [title=""]').eq(0).click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
       cy.get('.swal-modal').should('exist')
       cy.get('#input-carrier').type('FedEx',{delay:0})
@@ -377,8 +376,8 @@ it('Credit card Order BO Shiping, Refunding [Orders API]', () => {
       cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
       cy.get('[class="alert alert-success"]').should('be.visible')
       //Refunding dropdown in React
-      cy.get('.btn-group-action > .btn-group > .dropdown-toggle').click()
-      cy.get('[role="button"]').eq(2).click()
+      cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).click()
+      cy.get('[role="button"]').eq(0).click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
