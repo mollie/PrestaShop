@@ -279,15 +279,12 @@ class PaymentMethodService
             true
         );
 
-        $webhookUrl = null;
-        if (!EnvironmentUtility::isLocalEnvironment()) {
-            $webhookUrl = $context->link->getModuleLink(
-                'mollie',
-                'webhook',
-                [],
-                true
-            );
-        }
+        $webhookUrl = $context->link->getModuleLink(
+            'mollie',
+            'webhook',
+            [],
+            true
+        );
 
         $metaData = [
             'cart_id' => $cartId,
@@ -368,14 +365,13 @@ class PaymentMethodService
             if ($cardToken) {
                 $payment['cardToken'] = $cardToken;
             }
-            if (!EnvironmentUtility::isLocalEnvironment()) {
-                $payment['webhookUrl'] = $context->link->getModuleLink(
-                    'mollie',
-                    'webhook',
-                    [],
-                    true
-                );
-            }
+            $payment['webhookUrl'] = $context->link->getModuleLink(
+                'mollie',
+                'webhook',
+                [],
+                true
+            );
+
             if ($issuer) {
                 $payment['issuer'] = $issuer;
             }
