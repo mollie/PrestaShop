@@ -62,7 +62,6 @@ final class SecondChanceRowAction extends AbstractRowAction
         $accessibilityChecker = $this->getOptions()['accessibility_checker'];
 
         if ($accessibilityChecker instanceof AccessibilityCheckerInterface) {
-            /* @phpstan-ignore-next-line */
             return $accessibilityChecker->isGranted($record);
         }
 
@@ -70,7 +69,6 @@ final class SecondChanceRowAction extends AbstractRowAction
             return call_user_func($accessibilityChecker, $record);
         }
 
-        /* @phpstan-ignore-next-line */
         return parent::isApplicable($record);
     }
 }
