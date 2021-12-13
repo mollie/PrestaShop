@@ -1,3 +1,6 @@
+includes:
+  - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
+
 parameters:
   scanDirectories:
     - %currentWorkingDirectory%/vendor
@@ -5,6 +8,8 @@ parameters:
     - ../../src
     - ../../controllers
     - ../../mollie.php
+  excludePaths:
+      - ../../src/Grid/
   excludes_analyse:
   reportUnmatchedIgnoredErrors: false
   checkMissingIterableValueType: false

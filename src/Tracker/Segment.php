@@ -133,7 +133,7 @@ class Segment implements TrackerInterface
                 'version' => $module->version,
                 'psVersion' => _PS_VERSION_,
                 'env' => $this->env->get('SENTRY_ENV'),
-                'phpVersion' => PHP_VERSION,
+                'phpVersion' => PHP_VERSION_ID,
             ], $this->options),
         ]);
 
