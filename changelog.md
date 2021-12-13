@@ -2,6 +2,9 @@
 
 # Changelog #
 ## Changes in release 4.4.3 ##
++ Fixed issue where mollie would fail to create order if address had no post code.
+
+## Changes in release 4.4.3 ##
 + Bank transfer now creates order on open status.
 + Fixed issue with klarna shipping status where it was set as completed.
 + Mollie no longer validates new order email to merchant that is sent by another module.
@@ -19,7 +22,6 @@
 + Fixed issue where creating mollie order from back office had issues
 + Fixed issue where on some payment methods refund status would not be changed after refund webhook is called
 + Fixed issue where after wrong credit card input the button got disabled.
-+ Fixed issue where mollie would fail to create order if address had no post code.
 
 ## Changes in release 4.4.2 ##
 + Fixed payment methods translations using API in checkout
