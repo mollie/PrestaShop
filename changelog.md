@@ -1,7 +1,7 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
-## Changes in release 4.4.3 ##
+## Changes in release 5.0.0 ##
 + Fixed issue where mollie would fail to create order if address had no post code.
 
 ## Changes in release 4.4.3 ##
