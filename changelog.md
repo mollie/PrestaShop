@@ -1,6 +1,9 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 5.0.0 ##
++ Fixed issue where mollie would fail to create order if address had no post code.
+
 ## Changes in release 4.4.3 ##
 + Bank transfer now creates order on open status.
 + Fixed issue with klarna shipping status where it was set as completed.

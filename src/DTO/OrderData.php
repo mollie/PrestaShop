@@ -101,8 +101,8 @@ class OrderData implements JsonSerializable
 
     public function __construct(
         Amount $amount,
-        $redirectUrl,
-        $webhookUrl
+               $redirectUrl,
+               $webhookUrl
     ) {
         $this->amount = $amount;
         $this->redirectUrl = $redirectUrl;
@@ -389,7 +389,7 @@ class OrderData implements JsonSerializable
                 'organizationName' => ltrim($this->getBillingAddress()->company),
                 'streetAndNumber' => substr($this->getBillingAddress()->address1, 0, 100),
                 'city' => $this->getBillingAddress()->city,
-                'postalCode' => $this->getBillingAddress()->postcode,
+                'postalCode' => $this->getBillingAddress()->postcode ?: 'N/A',
                 'country' => (string) Country::getIsoById($this->getBillingAddress()->id_country),
                 'givenName' => $this->getBillingAddress()->firstname,
                 'familyName' => $this->getBillingAddress()->lastname,
@@ -399,7 +399,7 @@ class OrderData implements JsonSerializable
                 'organizationName' => ltrim($this->getShippingAddress()->company),
                 'streetAndNumber' => substr($this->getShippingAddress()->address1, 0, 100),
                 'city' => $this->getShippingAddress()->city,
-                'postalCode' => $this->getShippingAddress()->postcode,
+                'postalCode' => $this->getShippingAddress()->postcode ?: 'N/A',
                 'country' => (string) Country::getIsoById($this->getShippingAddress()->id_country),
                 'givenName' => $this->getShippingAddress()->firstname,
                 'familyName' => $this->getShippingAddress()->lastname,
