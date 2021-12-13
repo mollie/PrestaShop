@@ -740,10 +740,6 @@ class Mollie extends PaymentModule
      * @param array $params
      *
      * @return bool
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
      */
     public function hookActionEmailSendBefore($params)
     {
