@@ -177,16 +177,15 @@ class MolliePaymentMailService
             ],
         ];
 
-        if (!EnvironmentUtility::isLocalEnvironment()) {
-            $paymentData['webhookUrl'] = $context->link->getModuleLink(
-                'mollie',
-                'webhook',
-                [],
-                true,
-                null,
-                $cart->id_shop
-            );
-        }
+        $paymentData['webhookUrl'] = $context->link->getModuleLink(
+            'mollie',
+            'webhook',
+            [],
+            true,
+            null,
+            $cart->id_shop
+        );
+
         $newPayment = $api->payments->create($paymentData);
         $updateTransactionId = $this->paymentMethodRepository->updateTransactionId($transactionId, $newPayment->id);
 
