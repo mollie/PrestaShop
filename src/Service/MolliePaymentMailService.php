@@ -21,7 +21,6 @@ use Mollie\Api\MollieApiClient;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\SecureKeyUtility;
 use Mollie\Utility\TransactionUtility;
 use Order;

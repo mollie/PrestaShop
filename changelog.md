@@ -4,6 +4,8 @@
 ## Changes in release 5.0.0 ##
 + Now we add webhook url on test shop where before if it finds test shop webhook url is not sent.
 + Fixed issue where mollie would fail to create order if address had no post code.
++ Upgraded supported php version from 5.6 to 7.0
++ Upgraded supported prestashop version from 1.6.1 to 1.7
 
 ## Changes in release 4.4.3 ##
 + Bank transfer now creates order on open status.
