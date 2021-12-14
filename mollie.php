@@ -1081,6 +1081,7 @@ class Mollie extends PaymentModule
         $isPrestashop177 = version_compare(_PS_VERSION_, '1.7.7.0', '>=');
 
         if (true === $isPrestashop177) {
+            /* @phpstan-ignore-next-line */
             return $this->context->controller->getCheckoutProcess()->getSteps();
         }
 
