@@ -24,7 +24,6 @@ use Hook;
 use Language;
 use Mail;
 use Mollie;
-use Mollie\Config\Config;
 use Order;
 use OrderState;
 use PDF;
@@ -159,12 +158,7 @@ class MailService
                     }
 
                     if (isset($customization['datas'][Product::CUSTOMIZE_FILE])) {
-                        Config::isVersion17() ?
-                            /* @phpstan-ignore-next-line */
-                            $customization_text .= Context::getContext()->getTranslator()->trans('%d image(s)', [count($customization['datas'][Product::CUSTOMIZE_FILE])], 'Admin.Payment.Notification') . '<br />'
-                            :
-                            /* @phpstan-ignore-next-line */
-                            $customization_text .= sprintf(Tools::displayError('%d image(s)'), count($customization['datas'][Product::CUSTOMIZE_FILE])) . '<br />';
+                        $customization_text .= Context::getContext()->getTranslator()->trans('%d image(s)', [count($customization['datas'][Product::CUSTOMIZE_FILE])], 'Admin.Payment.Notification') . '<br />';
                     }
 
                     $customization_quantity = (int) $customization['quantity'];

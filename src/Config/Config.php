@@ -298,11 +298,6 @@ class Config
         ];
     }
 
-    public static function isVersion17()
-    {
-        return (bool) version_compare(_PS_VERSION_, '1.7', '>=');
-    }
-
     public static function isTestMode()
     {
         $apiKey = EnvironmentUtility::getApiKey();

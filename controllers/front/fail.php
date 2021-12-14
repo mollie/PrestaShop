@@ -10,7 +10,6 @@
  * @codingStandardsIgnoreStart
  */
 
-use Mollie\Config\Config;
 use PrestaShop\PrestaShop\Adapter\Order\OrderPresenter;
 
 class MollieFailModuleFrontController extends ModuleFrontController
@@ -47,9 +46,6 @@ class MollieFailModuleFrontController extends ModuleFrontController
 
     public function init()
     {
-        if (!Config::isVersion17()) {
-            return parent::init();
-        }
         parent::init();
 
         $this->id_cart = (int) Tools::getValue('cartId', 0);
@@ -83,27 +79,6 @@ class MollieFailModuleFrontController extends ModuleFrontController
     public function initContent()
     {
         parent::initContent();
-
-        $cartId = Tools::getValue('cartId');
-        $moduleId = Tools::getValue('moduleId');
-        $orderId = Tools::getValue('orderId');
-        $secureKey = Tools::getValue('secureKey');
-
-        $orderLink = $this->context->link->getPageLink(
-            'order-confirmation',
-            true,
-            null,
-            [
-                'id_cart' => $cartId,
-                'id_module' => $moduleId,
-                'id_order' => $orderId,
-                'key' => $secureKey,
-                'cancel' => 1,
-            ]
-        );
-        if (!Config::isVersion17()) {
-            Tools::redirect($orderLink);
-        }
 
         $order = new Order($this->id_order);
         if ((bool) version_compare(_PS_VERSION_, '1.7', '>=')) {
