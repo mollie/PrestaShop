@@ -6,6 +6,7 @@
 + Fixed issue where mollie would fail to create order if address had no post code.
 + Upgraded supported php version from 5.6 to 7.0
 + Upgraded supported prestashop version from 1.6.1 to 1.7
++ Updated how lang locale is taken in checkout. Now it uses locale and not language code.
 
 ## Changes in release 4.4.3 ##
 + Bank transfer now creates order on open status.
