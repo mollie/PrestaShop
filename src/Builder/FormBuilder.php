@@ -89,9 +89,9 @@ class FormBuilder
         CountryRepository $countryRepository,
         ConfigFieldService $configFieldService,
         MolCarrierInformationService $carrierInformationService,
-                                     $lang,
+        $lang,
         Smarty $smarty,
-                                     $link,
+        $link,
         CustomLogoProviderInterface $creditCardLogoProvider
     ) {
         $this->module = $module;
