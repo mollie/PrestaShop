@@ -6059,8 +6059,7 @@ INSERT INTO `ps_hook` (`id_hook`, `name`, `title`, `description`, `position`) VA
 (587,	'displayReassurance',	'displayReassurance',	'',	1),
 (588,	'displayNav2',	'',	'',	1),
 (589,	'displayPayment',	'displayPayment',	'',	1),
-(590,	'actionAdminOrdersListingFieldsModifier',	'actionAdminOrdersListingFieldsModifier',	'',	1),
-(591,	'actionAdminStatusesListingFieldsModifier',	'actionAdminStatusesListingFieldsModifier',	'',	1);
+(590,	'actionAdminOrdersListingFieldsModifier',	'actionAdminOrdersListingFieldsModifier',	'',	1);
 
 DROP TABLE IF EXISTS `ps_hook_alias`;
 CREATE TABLE `ps_hook_alias` (
