@@ -811,6 +811,9 @@ class Mollie extends PaymentModule
 
     public function hookDisplayPDFInvoice($params)
     {
+        if (!isset($params['object'])) {
+            return;
+        }
         if (!$params['object'] instanceof OrderInvoice) {
             return;
         }
