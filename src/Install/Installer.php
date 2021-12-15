@@ -164,7 +164,6 @@ class Installer implements InstallerInterface
             'actionOrderStatusUpdate',
             'displayPDFInvoice',
             'actionAdminOrdersListingFieldsModifier',
-            'actionAdminStatusesListingFieldsModifier',
             'actionAdminControllerSetMedia',
             'actionValidateOrder',
             'actionOrderGridDefinitionModifier',
