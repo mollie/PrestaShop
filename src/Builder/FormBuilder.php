@@ -456,28 +456,27 @@ class FormBuilder
             ],
         ];
 
-        if (Config::isVersion17()) {
-            $input[] = [
-                'type' => 'select',
-                'label' => $this->module->l('Send order confirmation email', self::FILE_NAME),
-                'tab' => $advancedSettings,
-                'name' => Config::MOLLIE_SEND_ORDER_CONFIRMATION,
-                'options' => [
-                    'query' => [
-                        [
-                            'id' => Config::ORDER_CONF_MAIL_SEND_ON_PAID,
-                            'name' => $this->module->l('When Order is Paid', self::FILE_NAME),
-                        ],
-                        [
-                            'id' => Config::ORDER_CONF_MAIL_SEND_ON_NEVER,
-                            'name' => $this->module->l('Never', self::FILE_NAME),
-                        ],
+        $input[] = [
+            'type' => 'select',
+            'label' => $this->module->l('Send order confirmation email', self::FILE_NAME),
+            'tab' => $advancedSettings,
+            'name' => Config::MOLLIE_SEND_ORDER_CONFIRMATION,
+            'options' => [
+                'query' => [
+                    [
+                        'id' => Config::ORDER_CONF_MAIL_SEND_ON_PAID,
+                        'name' => $this->module->l('When Order is Paid', self::FILE_NAME),
                     ],
-                    'id' => 'id',
-                    'name' => 'name',
+                    [
+                        'id' => Config::ORDER_CONF_MAIL_SEND_ON_NEVER,
+                        'name' => $this->module->l('Never', self::FILE_NAME),
+                    ],
                 ],
-            ];
-        }
+                'id' => 'id',
+                'name' => 'name',
+            ],
+        ];
+
         $input[] = [
             'type' => 'select',
             'label' => $this->module->l('When to create the invoice?', self::FILE_NAME),

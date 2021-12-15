@@ -170,6 +170,7 @@ class Installer implements InstallerInterface
             'actionOrderGridDefinitionModifier',
             'actionOrderGridQueryBuilderModifier',
             'actionObjectCurrencyUpdateAfter',
+            'displayHeader',
         ];
     }
 
