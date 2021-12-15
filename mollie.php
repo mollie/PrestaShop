@@ -51,7 +51,7 @@ class Mollie extends PaymentModule
         $this->module_key = 'a48b2f8918358bcbe6436414f48d8915';
 
         parent::__construct();
-        $this->registerHook('DisplayHeader');
+
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
@@ -1070,6 +1070,7 @@ class Mollie extends PaymentModule
         $isPrestashop177 = version_compare(_PS_VERSION_, '1.7.7.0', '>=');
 
         if (true === $isPrestashop177) {
+            /* @phpstan-ignore-next-line */
             return $this->context->controller->getCheckoutProcess()->getSteps();
         }
 
