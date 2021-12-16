@@ -143,7 +143,7 @@ it('iDEAL Order BO Shiping, Refunding [Orders API]', () => {
       cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
       cy.get('[class=" odd"]').eq(0).click().wait(3000)
       //Refunding dropdown in React
-      cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).click()
+      cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).click({force: true})
       cy.get('[role="button"]').eq(0).click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
       cy.get('[class="alert alert-success"]').should('be.visible')
