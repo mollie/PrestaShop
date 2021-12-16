@@ -35,7 +35,7 @@ it('DE / 100 EUR / 3 Klarna Payments should be visible', () => {
       cy.get('#mollie_link_klarnasliceit').should('be.visible')
       cy.get('#mollie_link_sofort').should('be.visible')
       cy.get('b').trigger('mouseover')
-      cy.get('[class="ajax_cart_block_remove_link"]').click()
+      cy.get('[class="ajax_cart_block_remove_link"]').click().wait(2000)
 })
 it('DE / <45 EUR / Klarna Slice It. should not be visible', () => {
       cy.viewport(1920,1080)
@@ -59,7 +59,7 @@ it('DE / <45 EUR / Klarna Slice It. should not be visible', () => {
       cy.get('.cart_navigation > .button > span').click()
       cy.get('.paiement_block').contains('Slice it.').should('not.exist')
       cy.get('b').trigger('mouseover')
-      cy.get('[class="ajax_cart_block_remove_link"]').click()
+      cy.get('[class="ajax_cart_block_remove_link"]').click().wait(2000)
 })
 it('DE / >10000 EUR / Klarna Slice It, Klarna Pay Later, iDEAL, Bancontact, Belfius Direct Net, KBC/CBC, Credit card, SOFORT Banking, SOFORT Banking, sps, paysafecard, Przelewy 24, Gift cards should not be visible', () => {
       cy.viewport(1920,1080)
@@ -96,7 +96,7 @@ it('DE / >10000 EUR / Klarna Slice It, Klarna Pay Later, iDEAL, Bancontact, Belf
       cy.get('.paiement_block').contains('Giropay').should('not.exist')
       cy.get('.paiement_block').contains('Gift').should('not.exist')
       cy.get('b').trigger('mouseover')
-      cy.get('[class="ajax_cart_block_remove_link"]').click()
+      cy.get('[class="ajax_cart_block_remove_link"]').click().wait(2000)
 })
 it('JPN / >1000000 JPY / PayPal should not be visible', () => {
       cy.viewport(1920,1080)
@@ -133,7 +133,7 @@ it('FR / <35 EUR / Klarna Pay Later should not be visible', () => {
       cy.get('[class="login"]').click()
       cy.get('[for="email"]').type((Cypress.env('FO_username')), {log: false})
       cy.get('[for="passwd"]').type((Cypress.env('FO_password')), {log: false})
-      cy.get('[name="SubmitLogin"]').click()
+      cy.get('[name="SubmitLogin"]').click().wait(2000)
       })
       }
       fasterLogin('LoginFO')
@@ -147,7 +147,7 @@ it('FR / <35 EUR / Klarna Pay Later should not be visible', () => {
       cy.get('.cart_navigation > .button > span').click()
       cy.get('.paiement_block').contains('Pay later.').should('not.exist')
       cy.get('b').trigger('mouseover')
-      cy.get('[class="ajax_cart_block_remove_link"]').click()
+      cy.get('[class="ajax_cart_block_remove_link"]').click().wait(2000)
 })
 // it('FR / >1000 EUR / Klarna Pay Later should not be visible', () => {
 //       cy.viewport(1920,1080)
