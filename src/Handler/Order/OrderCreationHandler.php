@@ -127,7 +127,9 @@ class OrderCreationHandler
                 }
             }
         }
-
+        if (Order::getOrderByCartId((int) $cartId)) {
+            return false;
+        }
         if (!$paymentFee) {
             $this->module->validateOrder(
                 (int) $cartId,
