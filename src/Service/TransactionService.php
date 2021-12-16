@@ -114,6 +114,7 @@ class TransactionService
             return $this->module->l('Transaction failed', 'webhook');
         }
         $transactionNotUsedMessage = $this->module->l('Transaction is no longer used', 'webhook');
+        $orderIsCreateMessage = $this->module->l('Order is already created', 'webhook');
 
         /** @var int $orderId */
         $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
@@ -149,6 +150,9 @@ class TransactionService
                 } else {
                     if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
                         $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id);
+                        if (!$orderId) {
+                            return $orderIsCreateMessage;
+                        }
                         $payment = $this->module->api->payments->get($apiPayment->id);
                         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
                         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
@@ -175,6 +179,9 @@ class TransactionService
 
                 if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
                     $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id, $isKlarnaOrder);
+                    if (!$orderId) {
+                        return $orderIsCreateMessage;
+                    }
                     $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
                     $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
                     $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
