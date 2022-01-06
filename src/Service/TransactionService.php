@@ -14,7 +14,6 @@ namespace Mollie\Service;
 
 use Cart;
 use Configuration;
-use Context;
 use Currency;
 use Db;
 use Mollie;
