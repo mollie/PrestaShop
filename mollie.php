@@ -32,7 +32,7 @@ class Mollie extends PaymentModule
     // The Addons version does not include the GitHub updater
     const ADDONS = false;
 
-    const SUPPORTED_PHP_VERSION = '70800';
+    const SUPPORTED_PHP_VERSION = '70080';
 
     const ADMIN_MOLLIE_CONTROLLER = 'AdminMollieModuleController';
     const ADMIN_MOLLIE_AJAX_CONTROLLER = 'AdminMollieAjaxController';
