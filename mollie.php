@@ -32,7 +32,7 @@ class Mollie extends PaymentModule
     // The Addons version does not include the GitHub updater
     const ADDONS = false;
 
-    const SUPPORTED_PHP_VERSION = '7.0.8';
+    const SUPPORTED_PHP_VERSION = '70800';
 
     const ADMIN_MOLLIE_CONTROLLER = 'AdminMollieModuleController';
     const ADMIN_MOLLIE_AJAX_CONTROLLER = 'AdminMollieAjaxController';
@@ -55,10 +55,6 @@ class Mollie extends PaymentModule
         $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
-
-        if (-1 === version_compare(phpversion(), $this::SUPPORTED_PHP_VERSION)) {
-            return;
-        }
 
         $this->compile();
         $this->loadEnv();
@@ -94,7 +90,7 @@ class Mollie extends PaymentModule
      */
     public function install()
     {
-        if (-1 === version_compare(phpversion(), Mollie\Config\Config::SUPPORTED_PHP_VERSION)) {
+        if (!$this->isPhpVersionCompliant()) {
             $this->_errors[] = $this->l('Dear customer, your PHP version is too low. Please upgrade your PHP version to use this module. Mollie module supports PHP 7.0.8 and higher versions.');
 
             return false;
@@ -131,6 +127,17 @@ class Mollie extends PaymentModule
         }
 
         return parent::uninstall();
+    }
+
+    public function enable($force_all = false): bool
+    {
+        if (!$this->isPhpVersionCompliant()) {
+            $this->_errors[] = $this->l('Dear customer, your PHP version is too low. Please upgrade your PHP version to use this module. Mollie module supports PHP 7.0.8 and higher versions.');
+
+            return false;
+        }
+
+        return parent::enable($force_all);
     }
 
     // todo: check 1.7.2
@@ -1085,5 +1092,10 @@ class Mollie extends PaymentModule
         $checkoutProcessClass = $reflectedObject->getValue($this->context->controller);
 
         return $checkoutProcessClass->getSteps();
+    }
+
+    private function isPhpVersionCompliant()
+    {
+        return self::SUPPORTED_PHP_VERSION <= PHP_VERSION_ID;
     }
 }
