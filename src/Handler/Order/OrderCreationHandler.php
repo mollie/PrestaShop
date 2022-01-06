@@ -58,7 +58,6 @@ use MolPaymentMethod;
 use Order;
 use OrderDetail;
 use PrestaShop\Decimal\Number;
-use PrestaShopException;
 
 class OrderCreationHandler
 {
@@ -93,14 +92,8 @@ class OrderCreationHandler
 
     /**
      * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
-     * @param int $cartId
-     * @param bool $isKlarnaOrder
-     *
-     * @return int
-     *
-     * @throws PrestaShopException
      */
-    public function createOrder($apiPayment, $cartId, $isKlarnaOrder = false)
+    public function createOrder($apiPayment, int $cartId, $isKlarnaOrder = false): int
     {
         $orderStatus = $isKlarnaOrder ?
             (int) Config::getStatuses()[PaymentStatus::STATUS_AUTHORIZED] :
@@ -128,7 +121,7 @@ class OrderCreationHandler
             }
         }
         if (Order::getOrderByCartId((int) $cartId)) {
-            return false;
+            return 0;
         }
         if (!$paymentFee) {
             $this->module->validateOrder(
