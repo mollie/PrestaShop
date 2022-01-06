@@ -214,7 +214,11 @@ class SettingsSaveService
                 return [$this->module->l('Wrong API Key!')];
             }
         }
-        $this->handleKlarnaInvoiceStatus();
+        try {
+            $this->handleKlarnaInvoiceStatus();
+        } catch (Exception $e) {
+            $errors[] = $this->module->l('There are issues with your Klarna statuses, please try resetting Mollie module.');
+        }
 
         if (empty($errors)) {
             Configuration::updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
