@@ -25,5 +25,9 @@ function upgrade_module_5_0_0($module)
 {
     $module->registerHook('displayHeader');
 
+    if ($module::SUPPORTED_PHP_VERSION > PHP_VERSION_ID) {
+        $module->disable(true);
+    }
+
     return true;
 }

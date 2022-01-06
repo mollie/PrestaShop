@@ -13,6 +13,7 @@
 + Added validation to check if order is already created just before creating order to avoid creating duplicated orders when webhook gets called multiple times at the same time.
 + Fixed issue where order product price would have wrong price if it didn't use default currency.
 + Added exception catch and added error message for Klarna status error when saving status when Klarna statuses are deleted.
++ Added check that doesn't allow enabling module if php version is not supported.
 
 ## Changes in release 4.4.3 ##
 + Bank transfer now creates order on open status.
