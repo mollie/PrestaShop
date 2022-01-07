@@ -41,6 +41,7 @@ use Customer;
 use MolCustomer;
 use Mollie;
 use Mollie\Adapter\LegacyContext;
+use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
@@ -141,19 +142,19 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         $paymentOption->setInputs([
             [
                 'type' => 'hidden',
-                'name' => "mollieCardToken{$paymentMethod->getPaymentMethodName()}",
+                'name' => 'mollieCardToken',
                 'value' => '',
             ],
             [
                 'type' => 'hidden',
-                'name' => "mollieSaveCard{$paymentMethod->getPaymentMethodName()}",
+                'name' => 'mollieSaveCard',
                 'value' => '',
             ],
             [
                 'type' => 'hidden',
-                'name' => "mollieCustomerExists",
-                'value' => (bool)$molCustomer,
-            ]
+                'name' => 'mollieCustomerExists',
+                'value' => (bool) $molCustomer,
+            ],
         ]);
 
         $this->context->getSmarty()->assign([
@@ -162,6 +163,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
             'priceSign' => $this->context->getCurrencySign(),
             'methodId' => $paymentMethod->getPaymentMethodName(),
             'isSingleClickPayment' => (bool) Configuration::get(Mollie\Config\Config::MOLLIE_SINGLE_CLICK_PAYMENT),
+            'mollieUseSavedCard' => (bool) (Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT) && $molCustomer),
         ]);
         $paymentOption->setLogo($this->creditCardLogoProvider->getMethodOptionLogo($paymentMethod));
 
@@ -175,7 +177,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
             $paymentOption->setInputs([
                 [
                     'type' => 'hidden',
-                    'name' => "mollieCardToken{$paymentMethod->getPaymentMethodName()}",
+                    'name' => 'mollieCardToken',
                     'value' => '',
                 ],
                 [

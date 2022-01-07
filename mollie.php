@@ -32,7 +32,7 @@ class Mollie extends PaymentModule
     // The Addons version does not include the GitHub updater
     const ADDONS = false;
 
-    const SUPPORTED_PHP_VERSION = '70800';
+    const SUPPORTED_PHP_VERSION = '70080';
 
     const ADMIN_MOLLIE_CONTROLLER = 'AdminMollieModuleController';
     const ADMIN_MOLLIE_AJAX_CONTROLLER = 'AdminMollieAjaxController';
@@ -575,51 +575,6 @@ class Mollie extends PaymentModule
         $iframeDisplay = '';
 
         return $this->display(__FILE__, 'payment.tpl') . $iframeDisplay;
-    }
-
-    /**
-     * EU Advanced Compliance module (PrestaShop module) Advanced Checkout option enabled.
-     *
-     * @return array|null
-     *
-     * @throws PrestaShopException
-     */
-    public function hookDisplayPaymentEU()
-    {
-        // Please update your one page checkout module if it depends on `displayPaymentEU`
-        // Mollie does no longer support this hook on PresaShop v1.7 or higher
-        // due to the problems caused by mixing the hooks `paymentOptions` and `displayPaymentEU`
-        // Only uncomment the following three lines if you have no other choice:
-        if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
-            return [];
-        }
-
-        /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
-        $paymentMethodService = $this->getMollieContainer(\Mollie\Service\PaymentMethodService::class);
-
-        $methods = $paymentMethodService->getMethodsForCheckout();
-
-        $context = Context::getContext();
-        $iso = Tools::strtolower($context->currency->iso_code);
-        $paymentOptions = [];
-
-        foreach ($methods as $method) {
-            $images = json_decode($method['images_json'], true);
-            $paymentOptions[] = [
-                'cta_text' => $this->l($method['method_name'], \Mollie\Service\LanguageService::FILE_NAME),
-                'logo' => Mollie\Config\Config::LOGOS_NORMAL === Configuration::get(Mollie\Config\Config::MOLLIE_IMAGES)
-                    ? $images['size1x']
-                    : $images['size2x'],
-                'action' => $this->context->link->getModuleLink(
-                    'mollie',
-                    'payment',
-                    ['method' => $method['id_method'], 'rand' => Mollie\Utility\TimeUtility::getCurrentTimeStamp()],
-                    true
-                ),
-            ];
-        }
-
-        return $paymentOptions;
     }
 
     /**

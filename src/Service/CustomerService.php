@@ -49,15 +49,10 @@ class CustomerService
 
         $fullName = CustomerUtility::getCustomerFullName($customer->id);
         /** @var MolCustomer|null $molCustomer */
-        $molCustomer = $this->customerRepository->findOneBy(
-            [
-                'name' => $fullName,
-                'email' => $customer->email,
-            ]
-        );
+        $molCustomer = $this->getCustomer($cart->id_carrier);
 
         if ($molCustomer) {
-            return $this->mollie->api->customers->get($molCustomer->customer_id);
+            return $molCustomer;
         }
 
         $mollieCustomer = $this->createCustomer($fullName, $customer->email);
@@ -71,6 +66,20 @@ class CustomerService
         $molCustomer->add();
 
         return $mollieCustomer;
+    }
+
+    public function getCustomer(int $customerId): ?MolCustomer
+    {
+        $customer = new \Customer($customerId);
+
+        $fullName = CustomerUtility::getCustomerFullName($customer->id);
+        /* @var MolCustomer|null $molCustomer */
+        return $this->customerRepository->findOneBy(
+            [
+                'name' => $fullName,
+                'email' => $customer->email,
+            ]
+        );
     }
 
     public function createCustomer($name, $email)

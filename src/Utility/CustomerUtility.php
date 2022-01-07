@@ -19,6 +19,7 @@ class CustomerUtility
 {
     /**
      * @param int $id
+     *
      * @return string
      */
     public static function getCustomerFullName($id)
@@ -26,7 +27,7 @@ class CustomerUtility
         $customer = new Customer($id);
 
         if (!Validate::isLoadedObject($customer)) {
-            return "";
+            return '';
         }
 
         return "{$customer->firstname} {$customer->lastname}";

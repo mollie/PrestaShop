@@ -105,7 +105,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $paymentMethodObj,
             $orderNumber,
             Tools::getValue('cardToken'),
-            Tools::getValue('saveCard')
+            Tools::getValue('saveCard'),
+            Tools::getValue('useSavedCard')
         );
 
         if ($method === PaymentMethod::BANKTRANSFER) {

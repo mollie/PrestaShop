@@ -56,15 +56,17 @@
             <label class="mollie-input-error"></label>
         </div>
     </div>
-    <div class="mollie-use-saved-card">
-        <div class="form-group form-group-use-saved-card mt-1">
-            <label class="mollie-label"
-                   for="mollie-use-saved-card">{l s='Use saved card' mod='mollie'}</label>
-            <div class="save-card">
-                <input type="checkbox" name="mollie-use-saved-card" id="mollie-use-saved-card">
+    {if $mollieUseSavedCard}
+        <div class="mollie-use-saved-card">
+            <div class="form-group form-group-use-saved-card mt-1">
+                <label class="mollie-label"
+                       for="mollie-use-saved-card">{l s='Use saved card' mod='mollie'}</label>
+                <div class="save-card">
+                    <input type="checkbox" name="mollie-use-saved-card" id="mollie-use-saved-card" checked>
+                </div>
             </div>
         </div>
-    </div>
+    {/if}
 
     <div class="mollie-signature">
         <svg
