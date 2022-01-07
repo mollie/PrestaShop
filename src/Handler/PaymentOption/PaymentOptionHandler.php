@@ -37,6 +37,8 @@
 namespace Mollie\Handler\PaymentOption;
 
 use Configuration;
+use Customer;
+use MolCustomer;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
 use Mollie\Provider\PaymentOption\BasePaymentOptionProvider;
@@ -127,25 +129,12 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
     private function isCreditCardPaymentMethod(MolPaymentMethod $paymentMethod)
     {
         $isCreditCardPaymentMethod = PaymentMethod::CREDITCARD === $paymentMethod->getPaymentMethodName();
-        $isCartesBancairesPaymentMethod = Config::CARTES_BANCAIRES === $paymentMethod->getPaymentMethodName();
 
-        if (!$isCreditCardPaymentMethod && !$isCartesBancairesPaymentMethod) {
+        if (!$isCreditCardPaymentMethod) {
             return false;
         }
 
         if (!Configuration::get(Config::MOLLIE_IFRAME)) {
-            return false;
-        }
-        $fullName = CustomerUtility::getCustomerFullName($this->customer->id);
-
-        /** @var MolCustomer|null $molCustomer */
-        $molCustomer = $this->customerRepository->findOneBy(
-            [
-                'name' => $fullName,
-                'email' => $this->customer->email,
-            ]
-        );
-        if ($molCustomer) {
             return false;
         }
 

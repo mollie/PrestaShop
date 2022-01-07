@@ -33,3 +33,5 @@ services:
       - '@Mollie\Provider\OrderTotalProvider'
       - '@Mollie\Provider\PaymentFeeProvider'
       - '@Mollie\Service\LanguageService'
+      - '@mollie.customer'
+      - '@Mollie\Repository\MolCustomerRepository'

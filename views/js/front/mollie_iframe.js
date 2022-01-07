@@ -25,6 +25,10 @@ $(document).ready(function () {
         return;
     }
 
+    $(document).on('click', 'input[name="mollie-use-saved-card"]', function () {
+        handleSavedCard($(this).is(':checked'));
+    });
+
     var overridePrestaShopsAdditionalInformationHideFunctionality = function ($mollieContainer) {
       var $additionalInformationContainer = $mollieContainer.closest('.additional-information');
 
@@ -215,6 +219,15 @@ $(document).ready(function () {
         });
         if (!hasError) {
             $errorField.find('label').text('');
+        }
+    }
+
+    function handleSavedCard(useSavedCard)
+    {
+        if (useSavedCard) {
+            $('.mollie-credit-card-inputs').hide()
+        } else {
+            $('.mollie-credit-card-inputs').show()
         }
     }
 });

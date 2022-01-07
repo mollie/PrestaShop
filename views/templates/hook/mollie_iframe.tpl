@@ -9,47 +9,63 @@
 
 
 <div class="mollie-iframe-container">
-    <input type="hidden" value="{$methodId|escape:'html':'UTF-8'}" name="method-id">
-    <div class="container">
-        <article class="alert alert-danger" role="alert" data-alert="danger" style="display: none">
-            <li class="js-mollie-alert"></li>
-        </article>
-    </div>
-    <label class="mollie-information-label">{l s='Enter your card information' mod='mollie'}</label>
-    <div class="form-group form-group-card-holder {$methodId|escape:'html':'UTF-8'}">
-        <label class="mollie-label" for="card-holder-{$methodId|escape:'html':'UTF-8'}">{l s='Name on card' mod='mollie'}</label>
-        <div id="card-holder-{$methodId|escape:'html':'UTF-8'}" class="mollie-input card-holder">
+    <div class="mollie-credit-card-inputs">
+        <input type="hidden" value="{$methodId|escape:'html':'UTF-8'}" name="method-id">
+        <div class="container">
+            <article class="alert alert-danger" role="alert" data-alert="danger" style="display: none">
+                <li class="js-mollie-alert"></li>
+            </article>
         </div>
-    </div>
-    <div class="inline-form-group">
-        <div class="form-group form-group-card-number {$methodId|escape:'html':'UTF-8'}">
-            <label class="mollie-label" for="card-number-{$methodId|escape:'html':'UTF-8'}">{l s='Card number' mod='mollie'}</label>
-            <div id="card-number-{$methodId|escape:'html':'UTF-8'}" class="mollie-input card-number">
+        <label class="mollie-information-label">{l s='Enter your card information' mod='mollie'}</label>
+        <div class="form-group form-group-card-holder {$methodId|escape:'html':'UTF-8'}">
+            <label class="mollie-label"
+                   for="card-holder-{$methodId|escape:'html':'UTF-8'}">{l s='Name on card' mod='mollie'}</label>
+            <div id="card-holder-{$methodId|escape:'html':'UTF-8'}" class="mollie-input card-holder">
             </div>
         </div>
-        <div class="form-group form-group-expiry-date {$methodId|escape:'html':'UTF-8'}">
-            <div id="expiry-date-{$methodId|escape:'html':'UTF-8'}" class="mollie-input expiry-date">
-              <label class="mollie-label mollie-expiry-date-label" for="expiry-date-{$methodId}">{l s='Expiry date' mod='mollie'}</label>
+        <div class="inline-form-group">
+            <div class="form-group form-group-card-number {$methodId|escape:'html':'UTF-8'}">
+                <label class="mollie-label"
+                       for="card-number-{$methodId|escape:'html':'UTF-8'}">{l s='Card number' mod='mollie'}</label>
+                <div id="card-number-{$methodId|escape:'html':'UTF-8'}" class="mollie-input card-number">
+                </div>
+            </div>
+            <div class="form-group form-group-expiry-date {$methodId|escape:'html':'UTF-8'}">
+                <div id="expiry-date-{$methodId|escape:'html':'UTF-8'}" class="mollie-input expiry-date">
+                    <label class="mollie-label mollie-expiry-date-label"
+                           for="expiry-date-{$methodId}">{l s='Expiry date' mod='mollie'}</label>
+                </div>
+            </div>
+            <div class="form-group form-group-verification-code {$methodId|escape:'html':'UTF-8'}">
+                <label class="mollie-label"
+                       for="verification-code-{$methodId|escape:'html':'UTF-8'}">{l s='CVC/CVV' mod='mollie'}</label>
+                <div id="verification-code-{$methodId|escape:'html':'UTF-8'}" class="mollie-input verification-code">
+                </div>
             </div>
         </div>
-        <div class="form-group form-group-verification-code {$methodId|escape:'html':'UTF-8'}">
-            <label class="mollie-label" for="verification-code-{$methodId|escape:'html':'UTF-8'}">{l s='CVC/CVV' mod='mollie'}</label>
-            <div id="verification-code-{$methodId|escape:'html':'UTF-8'}" class="mollie-input verification-code">
+        {if $isSingleClickPayment}
+            <div class="form-group form-group-save-card mt-1">
+                <label class="mollie-label"
+                       for="mollie-save-card">{l s='Save card' mod='mollie'}</label>
+                <div class="save-card">
+                    <input type="checkbox" name="mollie-save-card" id="mollie-save-card">
+                </div>
+            </div>
+        {/if}
+        <div role="alert" id="mollie-field-error" class="error">
+            <label class="mollie-input-error"></label>
+        </div>
+    </div>
+    <div class="mollie-use-saved-card">
+        <div class="form-group form-group-use-saved-card mt-1">
+            <label class="mollie-label"
+                   for="mollie-use-saved-card">{l s='Use saved card' mod='mollie'}</label>
+            <div class="save-card">
+                <input type="checkbox" name="mollie-use-saved-card" id="mollie-use-saved-card">
             </div>
         </div>
     </div>
-    {if $isSingleClickPayment}
-      <div class="form-group form-group-save-card {$methodId|escape:'html':'UTF-8'} mt-1">
-        <label class="mollie-label"
-               for="save-card-{$methodId|escape:'html':'UTF-8'}">{l s='Save card' mod='mollie'}</label>
-        <div id="save-card-{$methodId|escape:'html':'UTF-8'}" class="save-card">
-          <input type="checkbox" name="mollie-save-card">
-        </div>
-      </div>
-    {/if}
-    <div role="alert" id="mollie-field-error" class="error">
-        <label class="mollie-input-error"></label>
-    </div>
+
     <div class="mollie-signature">
         <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -107,6 +123,3 @@
         </svg>
     </div>
 </div>
-
-
-
