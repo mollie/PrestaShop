@@ -39,7 +39,7 @@ class CustomerService
         $this->customerRepository = $customerRepository;
     }
 
-    public function processCustomerCreation(Cart $cart, $method)
+    public function processCustomerCreation(Cart $cart, $method) :?MolCustomer
     {
         if (!$this->isSingleCLickPaymentEnabled($method)) {
             return false;
@@ -65,7 +65,7 @@ class CustomerService
 
         $molCustomer->add();
 
-        return $mollieCustomer;
+        return $molCustomer;
     }
 
     public function getCustomer(int $customerId): ?MolCustomer

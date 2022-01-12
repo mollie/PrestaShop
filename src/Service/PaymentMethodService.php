@@ -333,6 +333,10 @@ class PaymentMethodService
             } else {
                 return $paymentData;
             }
+            if (!$apiCustomer) {
+                return $paymentData;
+            }
+
             $paymentData->setCustomerId($apiCustomer->customer_id);
 
             return $paymentData;
@@ -389,7 +393,7 @@ class PaymentMethodService
             $isCreditCardPayment = PaymentMethod::CREDITCARD === $molPaymentMethod->id_method;
             if ($isCreditCardPayment && $this->isCustomerSaveEnabled($saveCard)) {
                 $apiCustomer = $this->customerService->processCustomerCreation($cart, $molPaymentMethod->id_method);
-                $payment['customerId'] = $apiCustomer->id;
+                $payment['customerId'] = $apiCustomer->customer_id;
             }
 
             $orderData->setPayment($payment);
