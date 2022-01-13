@@ -116,18 +116,6 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
             ]));
         }
 
-        if (EnvironmentUtility::isLocalEnvironment()) {
-            /** @var MolliePaymentAlias|MollieOrderAlias $apiPayment */
-            $apiPayment = $this->module->api->payments->get(Tools::getValue('transaction_id'));
-            if (!Tools::isSubmit('module')) {
-                $_GET['module'] = $this->module->name;
-            }
-            /** @var TransactionService $transactionService */
-            $transactionService = $this->module->getMollieContainer(TransactionService::class);
-
-            $transactionService->processTransaction($apiPayment);
-        }
-
         try {
             /** @var PaymentMethodRepository $paymentMethodRepo */
             $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);

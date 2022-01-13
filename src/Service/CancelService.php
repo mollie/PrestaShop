@@ -64,16 +64,6 @@ class CancelService
                 }
                 $order->cancelLines(['lines' => $cancelableLines]);
             }
-
-            if (EnvironmentUtility::isLocalEnvironment()) {
-                // Refresh payment on local environments
-                /** @var Payment $payment */
-                $apiPayment = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
-                if (!Tools::isSubmit('module')) {
-                    $_GET['module'] = $this->module->name;
-                }
-                $this->transactionService->processTransaction($apiPayment);
-            }
         } catch (ApiException $e) {
             return [
                 'success' => false,
