@@ -17,6 +17,7 @@
 + Added credit card single click logic with components.
 + Removed custom logic for local shops.
 + Added sentry validation to avoid crash if sentry breaks down.
++ Added check to avoid exception in path utility class.
 
 ## Changes in release 4.4.3 ##
 + Bank transfer now creates order on open status.
