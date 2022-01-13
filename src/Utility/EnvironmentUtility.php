@@ -14,7 +14,6 @@ namespace Mollie\Utility;
 
 use Configuration;
 use Mollie\Config\Config;
-use Tools;
 
 class EnvironmentUtility
 {
