@@ -15,11 +15,8 @@ namespace Mollie\Service;
 use Mollie;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Order;
-use Mollie\Api\Resources\Payment;
-use Mollie\Utility\EnvironmentUtility;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use Tools;
 
 class CancelService
 {
@@ -63,16 +60,6 @@ class CancelService
                     $cancelableLines[] = ['id' => $line['id'], 'quantity' => $line['quantity']];
                 }
                 $order->cancelLines(['lines' => $cancelableLines]);
-            }
-
-            if (EnvironmentUtility::isLocalEnvironment()) {
-                // Refresh payment on local environments
-                /** @var Payment $payment */
-                $apiPayment = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
-                if (!Tools::isSubmit('module')) {
-                    $_GET['module'] = $this->module->name;
-                }
-                $this->transactionService->processTransaction($apiPayment);
             }
         } catch (ApiException $e) {
             return [

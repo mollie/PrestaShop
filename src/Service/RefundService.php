@@ -17,12 +17,10 @@ use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\PaymentCollection;
-use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\RefundUtility;
 use Mollie\Utility\TextFormatUtility;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use Tools;
 
 class RefundService
 {
@@ -91,16 +89,6 @@ class RefundService
             ];
         }
 
-        if (EnvironmentUtility::isLocalEnvironment()) {
-            // Refresh payment on local environments
-            /** @var Payment $payment */
-            $apiPayment = $this->module->api->payments->get($transactionId);
-            if (!Tools::isSubmit('module')) {
-                $_GET['module'] = $this->module->name;
-            }
-            $this->transactionService->processTransaction($apiPayment);
-        }
-
         return [
             'status' => 'success',
             'msg_success' => $this->module->l('The order has been refunded!', self::FILE_NAME),
@@ -141,16 +129,6 @@ class RefundService
                     );
                     continue;
                 }
-            }
-
-            if (EnvironmentUtility::isLocalEnvironment()) {
-                // Refresh payment on local environments
-                /** @var Payment $payment */
-                $apiPayment = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
-                if (!Tools::isSubmit('module')) {
-                    $_GET['module'] = $this->module->name;
-                }
-                $this->transactionService->processTransaction($apiPayment);
             }
         } catch (ApiException $e) {
             return [

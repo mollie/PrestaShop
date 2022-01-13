@@ -15,6 +15,8 @@
 + Added exception catch and added error message for Klarna status error when saving status when Klarna statuses are deleted.
 + Added check that doesn't allow enabling module if php version is not supported.
 + Added credit card single click logic with components.
++ Removed custom logic for local shops.
++ Added sentry validation to avoid crash if sentry breaks down.
 
 ## Changes in release 4.4.3 ##
 + Bank transfer now creates order on open status.
