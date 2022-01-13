@@ -43,7 +43,7 @@
                 </div>
             </div>
         </div>
-        {if $isSingleClickPayment}
+        {if $isSingleClickPayment && !$isGuest}
             <div class="form-group form-group-save-card mt-1">
                 <label class="mollie-label"
                        for="mollie-save-card">{l s='Save card' mod='mollie'}</label>
