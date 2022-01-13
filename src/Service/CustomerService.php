@@ -42,7 +42,7 @@ class CustomerService
     public function processCustomerCreation(Cart $cart, $method): ?MolCustomer
     {
         if (!$this->isSingleCLickPaymentEnabled($method)) {
-            return false;
+            return null;
         }
 
         $customer = new \Customer($cart->id_customer);
@@ -73,8 +73,9 @@ class CustomerService
         $customer = new \Customer($customerId);
 
         $fullName = CustomerUtility::getCustomerFullName($customer->id);
+
         /* @var MolCustomer|null $molCustomer */
-        return $this->customerRepository->findOneBy(
+        return $this->customerRepository->findOneBy(/* @phpstan-ignore-line */
             [
                 'name' => $fullName,
                 'email' => $customer->email,
