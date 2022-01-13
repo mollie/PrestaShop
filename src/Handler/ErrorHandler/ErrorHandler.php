@@ -12,6 +12,7 @@
 
 namespace Mollie\Handler\ErrorHandler;
 
+use Exception;
 use Module;
 use Mollie;
 use Mollie\Config\Config;
@@ -24,7 +25,7 @@ use Raven_Client;
 class ErrorHandler
 {
     /**
-     * @var Raven_Client
+     * @var ?Raven_Client
      */
     protected $client;
 
@@ -38,20 +39,25 @@ class ErrorHandler
         /** @var Env $env */
         $env = $module->getMollieContainer(Env::class);
 
-        $this->client = new ModuleFilteredRavenClient(
-            Config::SENTRY_KEY,
-            [
-                'level' => Raven_Client::ERROR,
-                'tags' => [
-                    'php_version' => phpversion(),
-                    'mollie_version' => $module->version,
-                    'prestashop_version' => _PS_VERSION_,
-                    'mollie_is_enabled' => \Module::isEnabled('mollie'),
-                    'mollie_is_installed' => \Module::isInstalled('mollie'),
-                    'env' => $env->get('SENTRY_ENV'),
-                ],
-            ]
-        );
+        try {
+            $this->client = new ModuleFilteredRavenClient(
+                Config::SENTRY_KEY,
+                [
+                    'level' => Raven_Client::ERROR,
+                    'tags' => [
+                        'php_version' => phpversion(),
+                        'mollie_version' => $module->version,
+                        'prestashop_version' => _PS_VERSION_,
+                        'mollie_is_enabled' => \Module::isEnabled('mollie'),
+                        'mollie_is_installed' => \Module::isInstalled('mollie'),
+                        'env' => $env->get('SENTRY_ENV'),
+                    ],
+                ]
+            );
+        } catch (Exception $e) {
+            return;
+        }
+
         // We use realpath to get errors even if module is behind a symbolic link
         $this->client->setAppPath(realpath(_PS_MODULE_DIR_ . $module->name . '/'));
 
@@ -64,16 +70,20 @@ class ErrorHandler
     }
 
     /**
-     * @param \Exception $error
+     * @param Exception $error
      * @param mixed $code
      * @param bool|null $throw
      *
      * @return void
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function handle($error, $code = null, $throw = true)
     {
+        if (!$this->client) {
+            return;
+        }
+
         $this->client->captureException($error);
         if ($code && true === $throw) {
             http_response_code($code);
