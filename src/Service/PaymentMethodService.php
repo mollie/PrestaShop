@@ -245,7 +245,9 @@ class PaymentMethodService
         $secureKey,
         MolPaymentMethod $molPaymentMethod,
         $orderReference,
-        $cardToken = ''
+        $cardToken = '',
+        $saveCard = true,
+        $useSavedCard = false
     ) {
         $totalAmount = TextFormatUtility::formatNumber($amount, 2);
         $context = Context::getContext();
@@ -320,10 +322,22 @@ class PaymentMethodService
             }
 
             $isCreditCardPayment = PaymentMethod::CREDITCARD === $molPaymentMethod->id_method;
-            if ($isCreditCardPayment && $this->isCustomerSaveEnabled()) {
-                $apiCustomer = $this->customerService->processCustomerCreation($cart, $molPaymentMethod->id_method);
-                $paymentData->setCustomerId($apiCustomer->id);
+            if (!$isCreditCardPayment) {
+                return $paymentData;
             }
+            $isSingleClickPaymentEnabled = (bool) Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
+            if ($useSavedCard || $this->isCustomerSaveEnabled($isSingleClickPaymentEnabled, $saveCard)) {
+                $apiCustomer = $this->customerService->processCustomerCreation($cart, $molPaymentMethod->id_method);
+            } elseif ($isSingleClickPaymentEnabled) {
+                $apiCustomer = $this->customerService->getCustomer($customer->id);
+            } else {
+                return $paymentData;
+            }
+            if (!$apiCustomer) {
+                return $paymentData;
+            }
+
+            $paymentData->setCustomerId($apiCustomer->customer_id);
 
             return $paymentData;
         }
@@ -377,9 +391,9 @@ class PaymentMethodService
             }
 
             $isCreditCardPayment = PaymentMethod::CREDITCARD === $molPaymentMethod->id_method;
-            if ($isCreditCardPayment && $this->isCustomerSaveEnabled()) {
+            if ($isCreditCardPayment && $this->isCustomerSaveEnabled($saveCard)) {
                 $apiCustomer = $this->customerService->processCustomerCreation($cart, $molPaymentMethod->id_method);
-                $payment['customerId'] = $apiCustomer->id;
+                $payment['customerId'] = $apiCustomer->customer_id;
             }
 
             $orderData->setPayment($payment);
@@ -405,12 +419,9 @@ class PaymentMethodService
         }
     }
 
-    private function isCustomerSaveEnabled()
+    private function isCustomerSaveEnabled(bool $isSingleClickPaymentEnabled, $saveCard = true)
     {
-        $isComponentsEnabled = Configuration::get(Config::MOLLIE_IFRAME);
-        $isSingleClickPaymentEnabled = Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
-
-        return !$isComponentsEnabled && $isSingleClickPaymentEnabled;
+        return $isSingleClickPaymentEnabled && $saveCard;
     }
 
     private function removeNotSupportedMethods($methods, $mollieMethods)

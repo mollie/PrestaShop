@@ -19,6 +19,7 @@ use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Repository\MolCustomerRepository;
+use Mollie\Utility\CustomerUtility;
 
 class CustomerService
 {
@@ -38,25 +39,20 @@ class CustomerService
         $this->customerRepository = $customerRepository;
     }
 
-    public function processCustomerCreation(Cart $cart, $method)
+    public function processCustomerCreation(Cart $cart, $method): ?MolCustomer
     {
         if (!$this->isSingleCLickPaymentEnabled($method)) {
-            return false;
+            return null;
         }
 
         $customer = new \Customer($cart->id_customer);
 
-        $fullName = "{$customer->firstname} {$customer->lastname}";
+        $fullName = CustomerUtility::getCustomerFullName($customer->id);
         /** @var MolCustomer|null $molCustomer */
-        $molCustomer = $this->customerRepository->findOneBy(
-            [
-                'name' => $fullName,
-                'email' => $customer->email,
-            ]
-        );
+        $molCustomer = $this->getCustomer($cart->id_customer);
 
         if ($molCustomer) {
-            return $this->mollie->api->customers->get($molCustomer->customer_id);
+            return $molCustomer;
         }
 
         $mollieCustomer = $this->createCustomer($fullName, $customer->email);
@@ -69,7 +65,22 @@ class CustomerService
 
         $molCustomer->add();
 
-        return $mollieCustomer;
+        return $molCustomer;
+    }
+
+    public function getCustomer(int $customerId): ?MolCustomer
+    {
+        $customer = new \Customer($customerId);
+
+        $fullName = CustomerUtility::getCustomerFullName($customer->id);
+
+        /* @var MolCustomer|null $molCustomer */
+        return $this->customerRepository->findOneBy(/* @phpstan-ignore-line */
+            [
+                'name' => $fullName,
+                'email' => $customer->email,
+            ]
+        );
     }
 
     public function createCustomer($name, $email)
@@ -91,9 +102,8 @@ class CustomerService
         if (PaymentMethod::CREDITCARD !== $method) {
             return false;
         }
-        $isComponentEnabled = \Configuration::get(Config::MOLLIE_IFRAME);
         $isSingleClickPaymentEnabled = \Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
-        if (!$isComponentEnabled && $isSingleClickPaymentEnabled) {
+        if ($isSingleClickPaymentEnabled) {
             return true;
         }
 

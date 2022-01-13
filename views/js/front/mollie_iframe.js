@@ -25,6 +25,10 @@ $(document).ready(function () {
         return;
     }
 
+    $(document).on('click', 'input[name="mollie-use-saved-card"]', function () {
+        handleSavedCard($(this).is(':checked'));
+    });
+
     var overridePrestaShopsAdditionalInformationHideFunctionality = function ($mollieContainer) {
       var $additionalInformationContainer = $mollieContainer.closest('.additional-information');
 
@@ -95,6 +99,11 @@ $(document).ready(function () {
     var methodId = $(this).find('input[name="method-id"]').val();
     mountMollieComponents(methodId);
 
+    $(document).on('change', 'input[name="mollie-save-card"]', function () {
+        var mollieSaveCard = $('input[name="mollieSaveCard"]');
+        mollieSaveCard.val($(this).is(':checked') ? 1 : 0);
+    });
+
     $(document).on('change', 'input[data-module-name="mollie"]', function () {
         var paymentOption = $(this).attr('id');
         var $additionalInformation = $('#' + paymentOption + '-additional-information');
@@ -129,16 +138,18 @@ $(document).ready(function () {
     })
 
     function mountMollieComponents(methodId) {
+        handleSavedCard($('input[name="mollie-use-saved-card"]').is(':checked'));
         cardHolderInput = mountMollieField(this, '#card-holder', methodId, cardHolder, 'card-holder');
         carNumberInput = mountMollieField(this, '#card-number', methodId, cardNumber, 'card-number');
         expiryDateInput = mountMollieField(this, '#expiry-date', methodId, expiryDate, 'expiry-date');
         verificationCodeInput = mountMollieField(this, '#verification-code', methodId, verificationCode, 'verification-code');
 
-        var $mollieCardToken = $('input[name="mollieCardToken' + methodId + '"]');
+        var $mollieCardToken = $('input[name="mollieCardToken"]');
         var isResubmit = false;
         $mollieCardToken.closest('form').on('submit', function (event) {
             var $form = $(this);
-            if (isResubmit) {
+            var useSavedCardCheckbox = $('input[name="mollie-use-saved-card"]');
+            if (isResubmit || useSavedCardCheckbox.is(':checked')) {
                 return;
             }
             event.preventDefault();
@@ -210,6 +221,16 @@ $(document).ready(function () {
         });
         if (!hasError) {
             $errorField.find('label').text('');
+        }
+    }
+
+    function handleSavedCard(useSavedCard)
+    {
+        $('input[name="mollieUseSavedCard"]').val(useSavedCard ? 1 : 0);
+        if (useSavedCard) {
+            $('.mollie-credit-card-inputs').hide();
+        } else {
+            $('.mollie-credit-card-inputs').show();
         }
     }
 });

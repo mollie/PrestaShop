@@ -36,12 +36,18 @@
 
 namespace Mollie\Provider\PaymentOption;
 
+use Configuration;
+use Customer;
+use MolCustomer;
 use Mollie;
 use Mollie\Adapter\LegacyContext;
+use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
+use Mollie\Repository\MolCustomerRepository;
 use Mollie\Service\LanguageService;
+use Mollie\Utility\CustomerUtility;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
@@ -77,6 +83,14 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
      * @var LanguageService
      */
     private $languageService;
+    /**
+     * @var Customer
+     */
+    private $customer;
+    /**
+     * @var MolCustomerRepository
+     */
+    private $customerRepository;
 
     public function __construct(
         Mollie $module,
@@ -84,7 +98,9 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         CreditCardLogoProvider $creditCardLogoProvider,
         OrderTotalProviderInterface $orderTotalProvider,
         PaymentFeeProviderInterface $paymentFeeProvider,
-        LanguageService $languageService
+        LanguageService $languageService,
+        Customer $customer,
+        MolCustomerRepository $customerRepository
     ) {
         $this->module = $module;
         $this->context = $context;
@@ -92,6 +108,8 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         $this->orderTotalProvider = $orderTotalProvider;
         $this->paymentFeeProvider = $paymentFeeProvider;
         $this->languageService = $languageService;
+        $this->customer = $customer;
+        $this->customerRepository = $customerRepository;
     }
 
     /**
@@ -111,11 +129,31 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
             ['method' => $paymentMethod->getPaymentMethodName(), 'rand' => Mollie\Utility\TimeUtility::getCurrentTimeStamp(), 'cardToken' => ''],
             true
         ));
+        $fullName = CustomerUtility::getCustomerFullName($this->customer->id);
+
+        /** @var MolCustomer|null $molCustomer */
+        $molCustomer = $this->customerRepository->findOneBy(
+            [
+                'name' => $fullName,
+                'email' => $this->customer->email,
+            ]
+        );
+
         $paymentOption->setInputs([
             [
                 'type' => 'hidden',
-                'name' => "mollieCardToken{$paymentMethod->getPaymentMethodName()}",
+                'name' => 'mollieCardToken',
                 'value' => '',
+            ],
+            [
+                'type' => 'hidden',
+                'name' => 'mollieSaveCard',
+                'value' => '',
+            ],
+            [
+                'type' => 'hidden',
+                'name' => 'mollieCustomerExists',
+                'value' => (bool) $molCustomer,
             ],
         ]);
 
@@ -124,6 +162,9 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
             'price' => $this->orderTotalProvider->getOrderTotal(),
             'priceSign' => $this->context->getCurrencySign(),
             'methodId' => $paymentMethod->getPaymentMethodName(),
+            'isSingleClickPayment' => (bool) Configuration::get(Mollie\Config\Config::MOLLIE_SINGLE_CLICK_PAYMENT),
+            'mollieUseSavedCard' => (bool) (Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT) && $molCustomer),
+            'isGuest' => $this->customer->isGuest(),
         ]);
         $paymentOption->setLogo($this->creditCardLogoProvider->getMethodOptionLogo($paymentMethod));
 
@@ -131,20 +172,13 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
             $this->module->getPathUri(), 'views/templates/hook/mollie_iframe.tpl'
         ));
 
-        $paymentOption->setInputs([
-            [
-                'type' => 'hidden',
-                'name' => "mollieCardToken{$paymentMethod->getPaymentMethodName()}",
-                'value' => '',
-            ],
-        ]);
         $paymentFee = $this->paymentFeeProvider->getPaymentFee($paymentMethod);
 
         if ($paymentFee) {
             $paymentOption->setInputs([
                 [
                     'type' => 'hidden',
-                    'name' => "mollieCardToken{$paymentMethod->getPaymentMethodName()}",
+                    'name' => 'mollieCardToken',
                     'value' => '',
                 ],
                 [
