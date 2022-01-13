@@ -1,8 +1,5 @@
 
 .mollie-iframe-container {
-    /*width: calc(100% - 80px);*/
-    /*padding-bottom: 20px;*/
-    /*padding: 20px;*/
     max-width: 600px;
     margin: 0;
 }
