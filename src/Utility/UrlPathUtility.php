@@ -71,7 +71,7 @@ class UrlPathUtility
         static $manifest = null;
         if (!$manifest) {
             $manifest = [];
-            $manifestFiles = include(_PS_MODULE_DIR_ . 'mollie/views/js/dist/manifest.php');
+            $manifestFiles = include _PS_MODULE_DIR_ . 'mollie/views/js/dist/manifest.php';
             if (!$manifestFiles) {
                 return [];
             }
