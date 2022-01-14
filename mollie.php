@@ -129,7 +129,7 @@ class Mollie extends PaymentModule
         return parent::uninstall();
     }
 
-    public function enable($force_all = false): bool
+    public function enable($force_all = false)
     {
         if (!$this->isPhpVersionCompliant()) {
             $this->_errors[] = $this->l('Dear customer, your PHP version is too low. Please upgrade your PHP version to use this module. Mollie module supports PHP 7.0.8 and higher versions.');
