@@ -365,6 +365,7 @@ class Mollie extends PaymentModule
             ['server' => 'remote', 'position' => 'bottom', 'priority' => 150]
         );
         $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe.js");
+        $this->context->controller->addJS("{$this->_path}views/js/front/mollie_single_click.js");
 
         Media::addJsDef([
             'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),

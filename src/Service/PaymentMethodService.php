@@ -390,11 +390,18 @@ class PaymentMethodService
                 $payment['issuer'] = $issuer;
             }
 
-            $isCreditCardPayment = PaymentMethod::CREDITCARD === $molPaymentMethod->id_method;
-            if ($isCreditCardPayment && $this->isCustomerSaveEnabled($saveCard)) {
+            $isSingleClickPaymentEnabled = (bool) Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
+            if ($useSavedCard || $this->isCustomerSaveEnabled($isSingleClickPaymentEnabled, $saveCard)) {
                 $apiCustomer = $this->customerService->processCustomerCreation($cart, $molPaymentMethod->id_method);
-                $payment['customerId'] = $apiCustomer->customer_id;
+            } elseif ($isSingleClickPaymentEnabled) {
+                $apiCustomer = $this->customerService->getCustomer($customer->id);
+            } else {
+                return $orderData;
             }
+            if (!$apiCustomer) {
+                return $orderData;
+            }
+            $orderData->setCustomerId($apiCustomer->customer_id);
 
             $orderData->setPayment($payment);
 

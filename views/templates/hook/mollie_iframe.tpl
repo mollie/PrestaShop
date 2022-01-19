@@ -58,7 +58,7 @@
     </div>
     {if $mollieUseSavedCard}
         <div class="mollie-use-saved-card">
-            <div class="form-group form-group-use-saved-card mt-1">
+            <div class="form-group form-group-use-saved-card mb-1">
                 <label class="mollie-label"
                        for="mollie-use-saved-card">{l s='Use saved card' mod='mollie'}</label>
                 <div class="save-card">
