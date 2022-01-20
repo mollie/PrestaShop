@@ -25,10 +25,6 @@ $(document).ready(function () {
         return;
     }
 
-    $(document).on('click', 'input[name="mollie-use-saved-card"]', function () {
-        handleSavedCard($(this).is(':checked'));
-    });
-
     var overridePrestaShopsAdditionalInformationHideFunctionality = function ($mollieContainer) {
       var $additionalInformationContainer = $mollieContainer.closest('.additional-information');
 
@@ -68,7 +64,6 @@ $(document).ready(function () {
       showAdditionalInformation($mollieContainers.closest('.additional-information'))
     }
 
-
     var options = {
         styles: {
             base: {
@@ -98,11 +93,6 @@ $(document).ready(function () {
     var fieldErrors = {};
     var methodId = $(this).find('input[name="method-id"]').val();
     mountMollieComponents(methodId);
-
-    $(document).on('change', 'input[name="mollie-save-card"]', function () {
-        var mollieSaveCard = $('input[name="mollieSaveCard"]');
-        mollieSaveCard.val($(this).is(':checked') ? 1 : 0);
-    });
 
     $(document).on('change', 'input[data-module-name="mollie"]', function () {
         var paymentOption = $(this).attr('id');
@@ -138,7 +128,6 @@ $(document).ready(function () {
     })
 
     function mountMollieComponents(methodId) {
-        handleSavedCard($('input[name="mollie-use-saved-card"]').is(':checked'));
         cardHolderInput = mountMollieField(this, '#card-holder', methodId, cardHolder, 'card-holder');
         carNumberInput = mountMollieField(this, '#card-number', methodId, cardNumber, 'card-number');
         expiryDateInput = mountMollieField(this, '#expiry-date', methodId, expiryDate, 'expiry-date');

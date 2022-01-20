@@ -42,6 +42,7 @@ use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
 use Mollie\Provider\PaymentOption\BasePaymentOptionProvider;
 use Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider;
+use Mollie\Provider\PaymentOption\CreditCardSingleClickPaymentOptionProvider;
 use Mollie\Provider\PaymentOption\IdealPaymentOptionProvider;
 use Mollie\Repository\MolCustomerRepository;
 use MolPaymentMethod;
@@ -70,10 +71,15 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
      * @var Customer
      */
     private $customer;
+    /**
+     * @var CreditCardSingleClickPaymentOptionProvider
+     */
+    private $cardSingleClickPaymentOptionProvider;
 
     public function __construct(
         BasePaymentOptionProvider $basePaymentOptionProvider,
         CreditCardPaymentOptionProvider $creditCardPaymentOptionProvider,
+        CreditCardSingleClickPaymentOptionProvider $cardSingleClickPaymentOptionProvider,
         IdealPaymentOptionProvider $idealPaymentOptionProvider,
         MolCustomerRepository $customerRepository,
         Customer $customer
@@ -83,6 +89,7 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
         $this->idealPaymentOptionProvider = $idealPaymentOptionProvider;
         $this->customerRepository = $customerRepository;
         $this->customer = $customer;
+        $this->cardSingleClickPaymentOptionProvider = $cardSingleClickPaymentOptionProvider;
     }
 
     /**
@@ -95,7 +102,11 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
         }
 
         if ($this->isCreditCardPaymentMethod($paymentMethod)) {
-            return $this->creditCardPaymentOptionProvider->getPaymentOption($paymentMethod);
+            if ($this->isIFrame()) {
+                return $this->creditCardPaymentOptionProvider->getPaymentOption($paymentMethod);
+            } elseif ($this->isSingleClick()) {
+                return $this->cardSingleClickPaymentOptionProvider->getPaymentOption($paymentMethod);
+            }
         }
 
         return $this->basePaymentOptionProvider->getPaymentOption($paymentMethod);
@@ -132,7 +143,21 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
             return false;
         }
 
+        return true;
+    }
+
+    private function isIFrame()
+    {
         if (!Configuration::get(Config::MOLLIE_IFRAME)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function isSingleClick()
+    {
+        if (!Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT)) {
             return false;
         }
 

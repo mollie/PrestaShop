@@ -1,5 +1,5 @@
 
-.mollie-iframe-container {
+.mollie-iframe-container, .mollie-single-click-container {
     max-width: 600px;
     margin: 0;
 }
@@ -25,7 +25,7 @@ label.mollie-input-error {
   position: relative;
 }
 
-.mollie-iframe-container .mollie-label {
+.mollie-iframe-container .mollie-label, .mollie-single-click-container .mollie-label {
     position: absolute;
     left: 15px;
     color: #999;
@@ -82,7 +82,7 @@ label.mollie-input-error {
     flex-wrap: wrap;
     margin: 15px 0 0;
 }
-.mollie-iframe-container .form-group {
+.mollie-iframe-container .form-group , .mollie-single-click-container .form-group{
     position: relative;
     margin: 0;
     display: flex;

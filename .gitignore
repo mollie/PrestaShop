@@ -14,3 +14,4 @@ cypress/screenshots
 .php_cs.cache
 .env
 vendor
+node_modules
