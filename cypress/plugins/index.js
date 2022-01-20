@@ -15,7 +15,10 @@
 /**
  * @type {Cypress.PluginConfig}
  */
-module.exports = (on, config) => {
-  // `on` is used to hook into various events Cypress emits
-  // `config` is the resolved Cypress config
+module.exports = (on, config) => {    on('before:browser:launch', (browser = {}, launchOptions) => {
+        if (browser.name === 'chrome' || browser.name === 'edge') {
+            launchOptions.args.push('--disable-features=SameSiteByDefaultCookies')
+            return launchOptions
+        }
+    })
 }
