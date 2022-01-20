@@ -198,7 +198,8 @@ class TransactionService
                 } elseif (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                     return $transactionNotUsedMessage;
                 } else {
-                    if (in_array($apiPayment->method, Config::KLARNA_PAYMENTS) && $apiPayment->status === OrderStatus::STATUS_COMPLETED) {
+                    $isKlarnaDefault = Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON) === Config::MOLLIE_STATUS_DEFAULT;
+                    if (in_array($apiPayment->method, Config::KLARNA_PAYMENTS) && !$isKlarnaDefault && $apiPayment->status === OrderStatus::STATUS_COMPLETED) {
                         $this->orderStatusService->setOrderStatus($orderId, Config::MOLLIE_STATUS_KLARNA_SHIPPED);
                     } else {
                         $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
