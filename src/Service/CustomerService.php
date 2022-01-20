@@ -12,10 +12,8 @@
 
 namespace Mollie\Service;
 
-use Cart;
 use MolCustomer;
 use Mollie;
-use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Repository\MolCustomerRepository;
@@ -39,17 +37,17 @@ class CustomerService
         $this->customerRepository = $customerRepository;
     }
 
-    public function processCustomerCreation(Cart $cart, $method): ?MolCustomer
+    public function processCustomerCreation($customerId): ?MolCustomer
     {
-        if (!$this->isSingleCLickPaymentEnabled($method)) {
+        if (!$this->isSingleClickPaymentEnabled()) {
             return null;
         }
 
-        $customer = new \Customer($cart->id_customer);
+        $customer = new \Customer($customerId);
 
         $fullName = CustomerUtility::getCustomerFullName($customer->id);
         /** @var MolCustomer|null $molCustomer */
-        $molCustomer = $this->getCustomer($cart->id_customer);
+        $molCustomer = $this->getCustomer($customerId);
 
         if ($molCustomer) {
             return $molCustomer;
@@ -97,11 +95,8 @@ class CustomerService
         }
     }
 
-    public function isSingleCLickPaymentEnabled($method)
+    public function isSingleClickPaymentEnabled()
     {
-        if (PaymentMethod::CREDITCARD !== $method) {
-            return false;
-        }
         $isSingleClickPaymentEnabled = \Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
         if ($isSingleClickPaymentEnabled) {
             return true;

@@ -325,19 +325,13 @@ class PaymentMethodService
             if (!$isCreditCardPayment) {
                 return $paymentData;
             }
-            $isSingleClickPaymentEnabled = (bool) Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
-            if ($useSavedCard || $this->isCustomerSaveEnabled($isSingleClickPaymentEnabled, $saveCard)) {
-                $apiCustomer = $this->customerService->processCustomerCreation($cart, $molPaymentMethod->id_method);
-            } elseif ($isSingleClickPaymentEnabled) {
-                $apiCustomer = $this->customerService->getCustomer($customer->id);
-            } else {
-                return $paymentData;
-            }
-            if (!$apiCustomer) {
-                return $paymentData;
-            }
 
-            $paymentData->setCustomerId($apiCustomer->customer_id);
+            if ($molPaymentMethod->id_method === PaymentMethod::CREDITCARD) {
+                $molCustomer = $this->handleCustomerInfo($cart->id_customer, $saveCard, $useSavedCard);
+                if ($molCustomer) {
+                    $paymentData->setCustomerId($molCustomer->customer_id);
+                }
+            }
 
             return $paymentData;
         }
@@ -390,20 +384,13 @@ class PaymentMethodService
                 $payment['issuer'] = $issuer;
             }
 
-            $isSingleClickPaymentEnabled = (bool) Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
-            if ($useSavedCard || $this->isCustomerSaveEnabled($isSingleClickPaymentEnabled, $saveCard)) {
-                $apiCustomer = $this->customerService->processCustomerCreation($cart, $molPaymentMethod->id_method);
-            } elseif ($isSingleClickPaymentEnabled) {
-                $apiCustomer = $this->customerService->getCustomer($customer->id);
-            } else {
-                return $orderData;
+            if ($molPaymentMethod->id_method === PaymentMethod::CREDITCARD) {
+                $molCustomer = $this->handleCustomerInfo($cart->id_customer, $saveCard, $useSavedCard);
+                if ($molCustomer) {
+                    $orderData->setCustomerId($molCustomer->customer_id);
+                    $orderData->setPayment($payment);
+                }
             }
-            if (!$apiCustomer) {
-                return $orderData;
-            }
-            $orderData->setCustomerId($apiCustomer->customer_id);
-
-            $orderData->setPayment($payment);
 
             return $orderData;
         }
@@ -477,5 +464,23 @@ class PaymentMethodService
         );
 
         return $methods->getArrayCopy();
+    }
+
+    public function handleCustomerInfo($customerId, $saveCard, $useSavedCard): ?\MolCustomer
+    {
+        $isSingleClickPaymentEnabled = (bool) Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
+        if (!$this->isCustomerSaveEnabled($isSingleClickPaymentEnabled)) {
+            return null;
+        }
+
+        if ($saveCard) {
+            $apiCustomer = $this->customerService->processCustomerCreation($customerId);
+        } elseif ($useSavedCard) {
+            $apiCustomer = $this->customerService->getCustomer($customerId);
+        } else {
+            return null;
+        }
+
+        return $apiCustomer;
     }
 }
