@@ -7,7 +7,6 @@
 + Upgraded supported php version from 5.6 to 7.0
 + Upgraded supported prestashop version from 1.6.1 to 1.7
 + Updated how lang locale is taken in checkout. Now it uses locale and not language code.
-<<<<<<< HEAD
 + Removed order status list custom filter because we no longer delete our order statuses on module uninstall.
 + Updated how assets are loaded. Now we load js and css only on checkout delivery step, but we load it on DisplayHeader hook and not on ActionFrontControllerSetMedia.
 + Added payment data cleanUp before sending to mollie so that it doesn't have empty or to long inputs.
