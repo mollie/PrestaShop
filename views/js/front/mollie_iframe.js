@@ -132,7 +132,6 @@ $(document).ready(function () {
     })
 
     function mountMollieComponents(methodId) {
-        // handleSavedCard($('input[name="mollie-use-saved-card"]').is(':checked'));
         cardHolderInput = mountMollieField(this, '#card-holder', methodId, cardHolder, 'card-holder');
         carNumberInput = mountMollieField(this, '#card-number', methodId, cardNumber, 'card-number');
         expiryDateInput = mountMollieField(this, '#expiry-date', methodId, expiryDate, 'expiry-date');
