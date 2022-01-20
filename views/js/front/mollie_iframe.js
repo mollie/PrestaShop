@@ -25,10 +25,6 @@ $(document).ready(function () {
         return;
     }
 
-    // $(document).on('click', 'input[name="mollie-use-saved-card"]', function () {
-    //     handleSavedCard($(this).is(':checked'));
-    // });
-
     var overridePrestaShopsAdditionalInformationHideFunctionality = function ($mollieContainer) {
       var $additionalInformationContainer = $mollieContainer.closest('.additional-information');
 
