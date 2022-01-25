@@ -179,18 +179,20 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         $paymentFee = $this->paymentFeeProvider->getPaymentFee($paymentMethod);
 
         if ($paymentFee) {
-            $paymentOption->setInputs([
-                [
-                    'type' => 'hidden',
-                    'name' => 'payment-fee-price',
-                    'value' => $paymentFee,
-                ],
-                [
-                    'type' => 'hidden',
-                    'name' => 'payment-fee-price-display',
-                    'value' => sprintf($this->module->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee)),
-                ],
-            ]);
+            $paymentOption->setInputs(
+                array_merge($paymentOption->getInputs(), [
+                    [
+                        'type' => 'hidden',
+                        'name' => 'payment-fee-price',
+                        'value' => $paymentFee,
+                    ],
+                    [
+                        'type' => 'hidden',
+                        'name' => 'payment-fee-price-display',
+                        'value' => sprintf($this->module->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee)),
+                    ],
+                ])
+            );
         }
 
         return $paymentOption;
