@@ -17,8 +17,8 @@ it('DE / 100 EUR / 3 Klarna Payments should be visible', () => {
       cy.session (LoginFO, () => {
       cy.visit('https://demo.invertus.eu/clients/mollie16-test/fr/home/9-test1.html')
       cy.get('[class="login"]').click()
-      cy.get('[for="email"]').type((Cypress.env('FO_username')), {log: false})
-      cy.get('[for="passwd"]').type((Cypress.env('FO_password')), {log: false})
+      cy.get('[for="email"]').type(('demo@demo.com'), {log: false})
+      cy.get('[for="passwd"]').type(('demodemo'), {log: false})
       cy.get('[name="SubmitLogin"]').click()
       })
       }
@@ -43,8 +43,8 @@ it('DE / <45 EUR / Klarna Slice It. should not be visible', () => {
       cy.session (LoginFO, () => {
       cy.visit('https://demo.invertus.eu/clients/mollie16-test/fr/home/9-test1.html')
       cy.get('[class="login"]').click()
-      cy.get('[for="email"]').type((Cypress.env('FO_username')), {log: false})
-      cy.get('[for="passwd"]').type((Cypress.env('FO_password')), {log: false})
+      cy.get('[for="email"]').type(('demo@demo.com'), {log: false})
+      cy.get('[for="passwd"]').type(('demodemo'), {log: false})
       cy.get('[name="SubmitLogin"]').click()
       })
       }
@@ -67,8 +67,8 @@ it('DE / >10000 EUR / Klarna Slice It, Klarna Pay Later, iDEAL, Bancontact, Belf
       cy.session (LoginFO, () => {
       cy.visit('https://demo.invertus.eu/clients/mollie16-test/fr/home/9-test1.html')
       cy.get('[class="login"]').click()
-      cy.get('[for="email"]').type((Cypress.env('FO_username')), {log: false})
-      cy.get('[for="passwd"]').type((Cypress.env('FO_password')), {log: false})
+      cy.get('[for="email"]').type(('demo@demo.com'), {log: false})
+      cy.get('[for="passwd"]').type(('demodemo'), {log: false})
       cy.get('[name="SubmitLogin"]').click()
       })
       }
@@ -104,8 +104,8 @@ it('JPN / >1000000 JPY / PayPal should not be visible', () => {
       cy.session (LoginFO, () => {
       cy.visit('https://demo.invertus.eu/clients/mollie16-test/fr/home/9-test1.html')
       cy.get('[class="login"]').click()
-      cy.get('[for="email"]').type((Cypress.env('FO_username')), {log: false})
-      cy.get('[for="passwd"]').type((Cypress.env('FO_password')), {log: false})
+      cy.get('[for="email"]').type(('demo@demo.com'), {log: false})
+      cy.get('[for="passwd"]').type(('demodemo'), {log: false})
       cy.get('[name="SubmitLogin"]').click()
       })
       }
@@ -131,8 +131,8 @@ it('FR / <35 EUR / Klarna Pay Later should not be visible', () => {
       cy.session (LoginFO, () => {
       cy.visit('https://demo.invertus.eu/clients/mollie16-test/fr/home/9-test1.html')
       cy.get('[class="login"]').click()
-      cy.get('[for="email"]').type((Cypress.env('FO_username')), {log: false})
-      cy.get('[for="passwd"]').type((Cypress.env('FO_password')), {log: false})
+      cy.get('[for="email"]').type(('demo@demo.com'), {log: false})
+      cy.get('[for="passwd"]').type(('demodemo'), {log: false})
       cy.get('[name="SubmitLogin"]').click().wait(2000)
       })
       }
@@ -153,10 +153,10 @@ it('FR / <35 EUR / Klarna Pay Later should not be visible', () => {
 //       cy.viewport(1920,1080)
 //       cy.visit('https://demo.invertus.eu/clients/mollie16-test/en/home/9-test1.html')
 //       cy.get('a > .material-icons').click()
-//       cy.get('[class="form-control"]').type((Cypress.env('FO_username')), {log: false})
-//       cy.get('[class="form-control js-child-focus js-visible-password"]').type((Cypress.env('FO_password')), {log: false})
+//       cy.get('[class="form-control"]').type(('demo@demo.com'), {log: false})
+//       cy.get('[class="form-control js-child-focus js-visible-password"]').type(('demodemo'), {log: false})
 //       cy.get('[class="btn btn-primary"]').click()
-//       cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/accueil/20-testproduct1.html')
+//       cy.visit('http://172.17.0.1:8001/en/accueil/20-testproduct1.html')
 //       cy.get('[id="quantity_wanted"]').clear().type('11')
 //       cy.get('.add > .btn').click()
 //       cy.get('.cart-content-btn > .btn-primary').click()

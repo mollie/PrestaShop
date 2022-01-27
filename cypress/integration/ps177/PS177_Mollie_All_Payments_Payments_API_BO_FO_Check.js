@@ -11,8 +11,10 @@ it('Enabling All Payments in BO [Payments API]', () => {
     })
  	}
 login('MollieBOLoggingIn')
-      cy.visit('https://mollie1770test.invertusdemo.com/admin1/index.php?controller=AdminMollieModule')
-      cy.get('.btn-continue').click()
+      cy.visit('http://172.17.0.1:8001/admin1/index.php?controller=AdminMollieModule')
+    cy.get('[class="btn btn-continue"]').first().click()
+
+    cy.get('.btn-continue').click()
       cy.get('#subtab-AdminMollieModule > .link').click()
       //switching the multistore
       cy.get('#header_shop > .dropdown').click()
@@ -35,7 +37,7 @@ it('Bancontact checkout FO [Payments API]', () => {
       })
       }
       fasterLoginDE('LoginFoDE')
-      cy.visit('https://mollie1770test.invertusdemo.com/en/women/2-brown-bear-printed-sweater.html')
+      cy.visit('http://172.17.0.1:8001/en/women/2-brown-bear-printed-sweater.html')
       cy.get('.add > .btn').click()
       cy.get('.cart-content-btn > .btn-primary').click()
       cy.get('.text-sm-center > .btn').click()
@@ -44,7 +46,8 @@ it('Bancontact checkout FO [Payments API]', () => {
       cy.get('#js-delivery > .continue').click()
       cy.contains('Bancontact').click({force:true})
       cy.get('.js-terms').click()
-      cy.get('.ps-shown-by-js > .btn').click()
+       cy.get('[name="conditions_to_approve[terms-and-conditions]"]').click()
+cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
         'SESSIONID',
         "cypress-dummy-value",
@@ -58,7 +61,7 @@ it('Bancontact checkout FO [Payments API]', () => {
       cy.reload();
       cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
-      cy.url().should('include','https://mollie1770test.invertusdemo.com/')
+      cy.url().should('include','http://172.17.0.1:8001/')
       //Success page UI verification
       // cy.get('.h1').should('include.text','Your order is confirmed')
       // cy.get('#order-details > ul > :nth-child(2)').should('include.text','Bancontact')
@@ -76,7 +79,7 @@ it('Bancontact Order BO Shiping, Refunding [Payments API]', () => {
     })
     }
   login('MollieBOLoggingIn')
-      cy.visit('https://mollie1770test.invertusdemo.com/admin1/index.php?controller=AdminOrders')
+      cy.visit('http://172.17.0.1:8001/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
       cy.get('#mollie_order > :nth-child(1)').should('exist')
       cy.get('.form-inline > :nth-child(1) > .btn').should('exist')
@@ -111,7 +114,7 @@ it('iDEAL checkout FO [Payments API]', () => {
       })
       }
       fasterLoginDE('LoginFoDE')
-      cy.visit('https://mollie1770test.invertusdemo.com/en/women/2-brown-bear-printed-sweater.html')
+      cy.visit('http://172.17.0.1:8001/en/women/2-brown-bear-printed-sweater.html')
       cy.get('.add > .btn').click()
       cy.get('.cart-content-btn > .btn-primary').click()
       cy.get('.text-sm-center > .btn').click()
@@ -120,7 +123,8 @@ it('iDEAL checkout FO [Payments API]', () => {
       cy.get('#js-delivery > .continue').click()
       cy.contains('iDEAL').click({force:true})
       cy.get('.js-terms').click()
-      cy.get('.ps-shown-by-js > .btn').click()
+       cy.get('[name="conditions_to_approve[terms-and-conditions]"]').click()
+cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
         'SESSIONID',
         "cypress-dummy-value",
@@ -135,7 +139,7 @@ it('iDEAL checkout FO [Payments API]', () => {
       cy.get('.grid-button-ideal-ABNANL2A').click()
       cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
-      cy.url().should('include','https://mollie1770test.invertusdemo.com/')
+      cy.url().should('include','http://172.17.0.1:8001/')
       //Success page UI verification
       // cy.get('.h1').should('include.text','Your order is confirmed')
       // cy.get('#order-details > ul > :nth-child(2)').should('include.text','iDEAL')
@@ -153,7 +157,7 @@ it('iDEAL Order BO Shiping, Refunding [Payments API]', () => {
     })
     }
   login('MollieBOLoggingIn')
-      cy.visit('https://mollie1770test.invertusdemo.com/admin1/index.php?controller=AdminOrders')
+      cy.visit('http://172.17.0.1:8001/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
       cy.get('#mollie_order > :nth-child(1)').should('exist')
       cy.get('.form-inline > :nth-child(1) > .btn').should('exist')
@@ -188,7 +192,7 @@ it('Credit card checkout FO [Payments API]', () => {
       })
       }
       fasterLoginDE('LoginFoDE')
-      cy.visit('https://mollie1770test.invertusdemo.com/en/women/2-brown-bear-printed-sweater.html')
+      cy.visit('http://172.17.0.1:8001/en/women/2-brown-bear-printed-sweater.html')
       cy.get('.add > .btn').click()
       cy.get('.cart-content-btn > .btn-primary').click()
       cy.get('.text-sm-center > .btn').click()
@@ -211,7 +215,8 @@ it('Credit card checkout FO [Payments API]', () => {
       getBody().find('#verificationCode').type('222')
       })
       cy.get('.js-terms').click()
-      cy.get('.ps-shown-by-js > .btn').click()
+       cy.get('[name="conditions_to_approve[terms-and-conditions]"]').click()
+cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
         'SESSIONID',
         "cypress-dummy-value",
@@ -225,7 +230,7 @@ it('Credit card checkout FO [Payments API]', () => {
       cy.reload();
       cy.get(':nth-child(2) > .checkbox > .checkbox__label').click()
       cy.get('.button').click()
-      cy.url().should('include','https://mollie1770test.invertusdemo.com/')
+      cy.url().should('include','http://172.17.0.1:8001/')
       //Success page UI verification
       // cy.get('.h1').should('include.text','Your order is confirmed')
       // cy.get('#order-details > ul > :nth-child(2)').should('include.text','Pay later')
@@ -243,7 +248,7 @@ it('Credit card Order BO Shiping, Refunding [Payments API]', () => {
     })
     }
   login('MollieBOLoggingIn')
-      cy.visit('https://mollie1770test.invertusdemo.com/admin1/index.php?controller=AdminOrders')
+      cy.visit('http://172.17.0.1:8001/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
       cy.get('#mollie_order > :nth-child(1)').should('exist')
       cy.get('.form-inline > :nth-child(1) > .btn').should('exist')

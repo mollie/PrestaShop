@@ -102,7 +102,7 @@ function deepEqual(obj1, obj2)
 
 	var k;
 	for (k in obj1) {
-		if (!obj2.hasOwnProperty(k))
+		if (!(k in obj2))
 			return (false);
 
 		if (!deepEqual(obj1[k], obj2[k]))
@@ -110,7 +110,7 @@ function deepEqual(obj1, obj2)
 	}
 
 	for (k in obj2) {
-		if (!obj1.hasOwnProperty(k))
+		if (!(k in obj1))
 			return (false);
 	}
 

@@ -11,7 +11,8 @@ it('Enabling All Payments in BO [Orders API]', () => {
     })
  	}
 login('MollieBOLoggingIn')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminMollieModule')
+      cy.visit('http://172.17.0.1:8001/admin1/index.php?controller=AdminMollieModule')
+      cy.get('[class="btn btn-continue"]').first().click()
       cy.ConfOrdersAPI()
       cy.get('[type="submit"]').first().click()
       cy.get('[class="alert alert-success"]').should('be.visible')
@@ -29,7 +30,7 @@ it('Bancontact checkout FO [Orders API]', () => {
       })
       }
       fasterLoginDE('LoginFoDE')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/home/21-testproduct1.html')
+      cy.visit('http://172.17.0.1:8001/en/art/4-16-the-adventure-begins-framed-poster.html#/19-dimension-40x60cm')
       cy.get('.add > .btn').click()
       cy.get('.cart-content-btn > .btn-primary').click()
       cy.get('.text-sm-center > .btn').click()
@@ -37,7 +38,9 @@ it('Bancontact checkout FO [Orders API]', () => {
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       cy.contains('Bancontact').click({force:true})
-      cy.get('.ps-shown-by-js > .btn').click()
+       cy.get('[name="conditions_to_approve[terms-and-conditions]"]').click()
+cy.get('.ps-shown-by-js > .btn').click()
+
       cy.setCookie(
         'SESSIONID',
         "cypress-dummy-value",
@@ -69,7 +72,7 @@ it('Bancontact Order BO Shiping, Refunding [Orders API]', () => {
     })
     }
   login('MollieBOLoggingIn')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
+      cy.visit('http://172.17.0.1:8001/admin1/index.php?controller=AdminOrders')
       cy.get('[class=" odd"]').eq(0).click().wait(3000)
       //Refunding dropdown in React
       cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).click()
@@ -99,7 +102,7 @@ it('iDEAL checkout FO [Orders API]', () => {
       })
       }
       fasterLoginDE('LoginFoDE')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/home/21-testproduct1.html')
+      cy.visit('http://172.17.0.1:8001/en/art/4-16-the-adventure-begins-framed-poster.html#/19-dimension-40x60cm')
       cy.get('.add > .btn').click()
       cy.get('.cart-content-btn > .btn-primary').click()
       cy.get('.text-sm-center > .btn').click()
@@ -107,7 +110,8 @@ it('iDEAL checkout FO [Orders API]', () => {
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       cy.contains('iDEAL').click({force:true})
-      cy.get('.ps-shown-by-js > .btn').click()
+       cy.get('[name="conditions_to_approve[terms-and-conditions]"]').click()
+cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
         'SESSIONID',
         "cypress-dummy-value",
@@ -140,7 +144,7 @@ it('iDEAL Order BO Shiping, Refunding [Orders API]', () => {
     })
     }
   login('MollieBOLoggingIn')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
+      cy.visit('http://172.17.0.1:8001/admin1/index.php?controller=AdminOrders')
       cy.get('[class=" odd"]').eq(0).click().wait(3000)
       //Refunding dropdown in React
       cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).click({force: true})
@@ -170,7 +174,7 @@ it('Klarna Slice It checkout FO [Orders API]', () => {
       })
       }
       fasterLoginDE('LoginFoDE')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/home/21-testproduct1.html')
+      cy.visit('http://172.17.0.1:8001/en/art/4-16-the-adventure-begins-framed-poster.html#/19-dimension-40x60cm')
       cy.get('.add > .btn').click()
       cy.get('.cart-content-btn > .btn-primary').click()
       cy.get('.text-sm-center > .btn').click()
@@ -178,7 +182,8 @@ it('Klarna Slice It checkout FO [Orders API]', () => {
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       cy.contains('Slice it.').click({force:true})
-      cy.get('.ps-shown-by-js > .btn').click()
+       cy.get('[name="conditions_to_approve[terms-and-conditions]"]').click()
+cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
         'SESSIONID',
         "cypress-dummy-value",
@@ -210,7 +215,7 @@ it('Klarna Slice It Order BO Shiping, Refunding [Orders API]', () => {
     })
     }
   login('MollieBOLoggingIn')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
+      cy.visit('http://172.17.0.1:8001/admin1/index.php?controller=AdminOrders')
       cy.get('[class=" odd"]').eq(0).click().wait(3000)
       //Shipping button in React
       cy.get('.btn-group > [title=""]').eq(0).click()
@@ -240,7 +245,7 @@ it('Klarna Pay Later checkout FO [Orders API]', () => {
       })
       }
       fasterLoginDE('LoginFoDE')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/home/21-testproduct1.html')
+      cy.visit('http://172.17.0.1:8001/en/art/4-16-the-adventure-begins-framed-poster.html#/19-dimension-40x60cm')
       cy.get('.add > .btn').click()
       cy.get('.cart-content-btn > .btn-primary').click()
       cy.get('.text-sm-center > .btn').click()
@@ -248,7 +253,8 @@ it('Klarna Pay Later checkout FO [Orders API]', () => {
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       cy.contains('Pay later').click({force:true})
-      cy.get('.ps-shown-by-js > .btn').click()
+       cy.get('[name="conditions_to_approve[terms-and-conditions]"]').click()
+cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
         'SESSIONID',
         "cypress-dummy-value",
@@ -280,7 +286,7 @@ it('Klarna Pay Later Order BO Shiping, Refunding [Orders API]', () => {
     })
     }
   login('MollieBOLoggingIn')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
+      cy.visit('http://172.17.0.1:8001/admin1/index.php?controller=AdminOrders')
       cy.get('[class=" odd"]').eq(0).click().wait(3000)
       //Shipping button in React
       cy.get('.btn-group > [title=""]').eq(0).click()
@@ -310,7 +316,7 @@ it('Credit card checkout FO [Orders API]', () => {
       })
       }
       fasterLoginDE('LoginFoDE')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/home/21-testproduct1.html')
+      cy.visit('http://172.17.0.1:8001/en/art/4-16-the-adventure-begins-framed-poster.html#/19-dimension-40x60cm')
       cy.get('.add > .btn').click()
       cy.get('.cart-content-btn > .btn-primary').click()
       cy.get('.text-sm-center > .btn').click()
@@ -332,7 +338,8 @@ it('Credit card checkout FO [Orders API]', () => {
       cy.enter('[data-testid=mollie-container--verificationCode] > iframe').then(getBody => {
       getBody().find('#verificationCode').type('222')
       })
-      cy.get('.ps-shown-by-js > .btn').click()
+       cy.get('[name="conditions_to_approve[terms-and-conditions]"]').click()
+cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
         'SESSIONID',
         "cypress-dummy-value",
@@ -363,7 +370,7 @@ it('Credit card Order BO Shiping, Refunding [Orders API]', () => {
     })
     }
   login('MollieBOLoggingIn')
-      cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminOrders')
+      cy.visit('http://172.17.0.1:8001/admin1/index.php?controller=AdminOrders')
       cy.get('[class=" odd"]').eq(0).click().wait(3000)
       //Shipping button in React
       cy.get('.btn-group > [title=""]').eq(0).click()

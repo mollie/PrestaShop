@@ -1,6 +1,14 @@
 version: "3.7"
 
 services:
+  node:
+    image: node:12.18.3
+    volumes:
+      - ./:/var/www/html
+    working_dir: /var/www/html
+    environment:
+      PATH: /var/www/html/_dev/node_modules/.bin/:$PATH
+
   mysql:
     container_name: mollie-mysql
     image: mysql:5.7
@@ -18,7 +26,9 @@ services:
 
   prestashop-17:
     container_name: prestashop-17
-    image: prestashop/prestashop:1.7.7.0-apache
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
     environment:
       PS_INSTALL_AUTO: 0
       DB_PASSWD: prestashop
@@ -35,6 +45,7 @@ services:
       - ./:/var/www/html/modules/mollie:cached
       - ./tests/seed/settings/defines.inc.php:/var/www/html/config/defines.inc.php
       - ./tests/seed/settings/parameters.php:/var/www/html/app/config/parameters.php
+      - ./.docker/.htaccess:/var/www/html/.htaccess
     networks:
       - prestashop_mollie_net
     healthcheck:
