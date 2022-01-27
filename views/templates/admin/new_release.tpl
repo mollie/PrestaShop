@@ -14,7 +14,7 @@
         <div class="alert alert-warning">
             <button type="button" class="close js-mollie-upgrade-tip-close" data-dismiss="alert">×</button>
             <ul class="list-unstyled">
-                {l s="You are currently using version %s of this plugin. The latest version is %s." mod='mollie' sprintf=['%this_version%' => $this_version,'%release_version%' => $release_version]}
+                {l s="You are currently using version %s of this plugin. The latest version is %s." mod='mollie' sprintf=[$this_version, $release_version]}
                 {l s="We advice you to [1]update[/1] to enjoy the latest features." html=true mod='mollie' tags =[$updateStart, $updateEnd]}
             </ul>
         </div>
