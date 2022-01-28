@@ -14,7 +14,6 @@ namespace Mollie\Provider;
 
 use Context;
 use Mollie;
-use Mollie\Utility\TagsUtility;
 use SimpleXMLElement;
 use Tools;
 
