@@ -14,7 +14,6 @@ namespace Mollie\Provider;
 
 use Context;
 use Mollie;
-use Mollie\Utility\TagsUtility;
 use SimpleXMLElement;
 use Tools;
 
@@ -64,16 +63,6 @@ class UpdateMessageProvider implements UpdateMessageProviderInterface
             [
                 'this_version' => $this->module->version,
                 'release_version' => $latestVersion,
-                'github_url' => TagsUtility::ppTags(
-                    sprintf(
-                        $this->module->l('You are currently using version \'%s\' of this plugin. The latest version is \'%s\'. We advice you to [1]update[/1] to enjoy the latest features. '),
-                        $this->module->version,
-                        $latestVersion
-                    ),
-                    [
-                        $this->module->display($this->module->getPathUri(), 'views/templates/admin/github_redirect.tpl'),
-                    ]
-                ),
             ]
         );
 
