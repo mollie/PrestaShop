@@ -98,5 +98,6 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         $cart = new Cart($cartId);
         $this->context->currency = new Currency($cart->id_currency);
         $this->context->customer = new Customer($cart->id_customer);
+        $this->context->cart = $cart;
     }
 }
