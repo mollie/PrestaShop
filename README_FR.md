@@ -23,25 +23,10 @@ Download and install the Mollie PrestaShop payment module and start receiving on
 
 ## Fabriqué et maintenu par [Invertus](https://www.invertus.eu). ##
 
-## Compatible avec PrestaShop 1.5 à 1.7 ##
-
-**Veuillez noter que** l'accès FTP à votre serveur web peut être requis pour l'installation de ce module.
-Si vous n'avez aucune expérience dans ce domaine, laissez l'installation de ce module au développeur de votre site Web ou à l'administrateur de votre serveur.
-
 ## Installation PrestaShop 1.7 ##
 
 * Télécharger la dernière version du module (le fichier '.zip') via la [page Releases](https://github.com/mollie/Prestashop/releases) qui est compatible 
-avec PrestaShop 1.5 à 1.7.
-* Allez dans le panneau d'administration de votre boutique en ligne PrestaShop
-* Dans votre panneau d'administration, sélectionnez l'onglet 'Modules' et choisissez 'upload a module' en haut à droite de votre écran
-* Sélectionnez 'select file' et téléchargez le fichier '.zip' que vous avez téléchargé précédemment
-* Après l'installation du module, choisissez 'configure'
-* Entrez votre _clé_ API et enregistrez les données.
-
-## Installation PrestaShop 1.5 et 1.6 ##
-
-* Télécharger la dernière version du module (le fichier '.zip') via [la](https://github.com/mollie/Prestashop/releases) page Releases compatible 
-avec PrestaShop 1.5 à 1.7.
+avec PrestaShop 1.7.
 * Allez dans le panneau d'administration de votre boutique en ligne PrestaShop
 * Dans votre panneau d'administration, sélectionnez l'onglet 'Modules' et choisissez 'upload a module' en haut à droite de votre écran
 * Sélectionnez 'select file' et téléchargez le fichier '.zip' que vous avez téléchargé précédemment
@@ -51,7 +36,7 @@ avec PrestaShop 1.5 à 1.7.
 ## ou ##
 
 * Télécharger la dernière version du module (le fichier '.zip') via [la](https://github.com/mollie/Prestashop/releases) page Releases compatible 
-avec PrestaShop 1.5 à 1.7.
+avec PrestaShop 1.7.
 * Extraire l'archive
 * Copiez le dossier `mollie` dans le dossier `modules` via FTP dans votre installation PrestaShop
 * Allez dans l'onglet 'Modules' dans votre panneau d'administration et choisissez 'Payments and Gateways' dans la liste 'Categories'.
