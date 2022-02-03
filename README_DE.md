@@ -23,25 +23,10 @@ Download and install the Mollie PrestaShop payment module and start receiving on
 
 ## Von [Invertus](https://www.invertus.eu) erstellt und betrieben. ##
 
-## Mit PrestaShop 1.5 bis 1.7 kompatibel ##
-
-** Bitte beachten Sie: ** Für die Installation dieses Moduls kann ein FTP-Zugriff auf Ihren Web-Server erforderlich sein.
-Sollten Sie damit keine Erfahrung haben, überlassen Sie die Installation dieses Moduls bitte Ihrem Website-Entwickler oder Ihrem Server-Administrator.
-
 ## Installation PrestaShop 1.7 ##
 
 * Laden Sie über die [Versions-Seite](https://github.com/mollie/Prestashop/releases) die aktuellste Version des Moduls herunter (die '.zip'-Datei), die mit 
-PrestaShop 1.5 bis 1.7 kompatibel ist.
-* Gehen Sie auf das Verwaltungs-Panel Ihres PrestaShop-Webshops
-* Wählen Sie in Ihrem Verwaltungs-Panel den Reiter 'Modules' und wählen Sie anschließend 'upload a module' in der oberen rechten Ecke Ihres Bildschirms
-* Wählen Sie 'select file' und laden Sie anschließend die '.zip'-Datei hoch, die Sie zuvor heruntergeladen haben
-* Wählen Sie 'configure', nachdem das Modul installiert wurde
-* Geben Sie Ihren _API-Schlüssel_ ein und sichern Sie die Daten.
-
-## Installation PrestaShop 1.5 und 1.6 ##
-
-* Laden Sie über die [Releases-Seite](https://github.com/mollie/Prestashop/releases) die aktuellste Version des Moduls herunter (die '.zip'-Datei) , die mit 
-PrestaShop 1.5 bis 1.7 kompatibel ist.
+PrestaShop 1.7 kompatibel ist.
 * Gehen Sie auf das Verwaltungs-Panel Ihres PrestaShop-Webshops
 * Wählen Sie in Ihrem Verwaltungs-Panel den Reiter 'Modules' und wählen Sie anschließend 'upload a module' in der oberen rechten Ecke Ihres Bildschirms
 * Wählen Sie 'select file' und laden Sie anschließend die '.zip'-Datei hoch, die Sie zuvor heruntergeladen haben
@@ -51,7 +36,7 @@ PrestaShop 1.5 bis 1.7 kompatibel ist.
 ## oder ##
 
 * Laden Sie über die [Releases-Seite](https://github.com/mollie/Prestashop/releases) die aktuellste Version des Moduls herunter (die '.zip'-Datei) , die mit 
-PrestaShop 1.5 bis 1.7 kompatibel ist.
+PrestaShop 1.7 kompatibel ist.
 * Extrahieren Sie das Archiv
 * Kopieren Sie über FTP den Ordner `mollie` in den Ordner `modules` in Ihrer PrestaShop-Installation
 * Gehen Sie auf Ihrem Verwaltungs-Panel auf den Reiter 'Modules' und wählen Sie in der Liste 'Categories' 'Payments and Gateways'.
