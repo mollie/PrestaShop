@@ -1,0 +1,138 @@
+{
+  "transaction": {
+    "id": "T1c3p4yBuVYJ9",
+    "type": "cc_payment",
+    "processor": "adyen_gateway",
+    "date": 1615407159447,
+    "reference": "LBLJ-TWW7-R9VC",
+    "status": "in_progress",
+    "from_consumer": {
+      "id": "AB3rJKam5DhYE",
+      "first_name": "Charlotte",
+      "last_name": "Charles",
+      "phones": [
+        {
+          "id": "123",
+          "number": "867-5309",
+          "country_code": "1",
+          "status": "active",
+          "priority": "primary"
+        }
+      ],
+      "emails": [
+        {
+          "id": "123",
+          "address": "my.email@gmail.com",
+          "status": "active",
+          "priority": "primary"
+        }
+      ]
+    },
+    "to_consumer": {
+      "id": "AB3rJKam5DhYE",
+      "first_name": "Charlotte",
+      "last_name": "Charles",
+      "phones": [
+        {
+          "id": "123",
+          "number": "867-5309",
+          "country_code": "1",
+          "status": "active",
+          "priority": "primary"
+        }
+      ],
+      "emails": [
+        {
+          "id": "123",
+          "address": "my.email@gmail.com",
+          "status": "active",
+          "priority": "primary"
+        }
+      ]
+    },
+    "from_credit_card": {
+      "id": "AB3rJKam5DhYE",
+      "last4": "4021",
+      "bin": "402201",
+      "expiration": 1654041600000,
+      "display_network": "Visa",
+      "token_type": "bolt",
+      "priority": "primary",
+      "status": "active"
+    },
+    "amount": {
+      "amount": 500,
+      "currency": "USD",
+      "currency_symbol": "$"
+    },
+    "authorization": {
+      "auth": "auth",
+      "avs_response": "avs",
+      "cvv_response": "cvv",
+      "metadata": {
+        "processor_card_token": "8416276679724052",
+        "processor_shopperReference": "05446666484094287",
+        "processor_token_alias": ""
+      },
+      "processor": "adyen_gateway",
+      "reason": "none",
+      "status": "succeeded"
+    },
+    "merchant_division": {
+      "id": "4ab56ad7865ada4ad32",
+      "merchant_id": "4ab56ad7865ada4ad32",
+      "public_id": "4ab56ad7865ada4ad32",
+      "description": "Storefront for employees only.",
+      "logo": {
+        "domain": "mystore-staging.boltapp.com",
+        "resource": "division-logo.png"
+      },
+      "platform": "big_commerce",
+      "hook_url": "https://mystore.com/api/v1/hooks",
+      "hook_type": "pending",
+      "is_universal_merchant_api": true,
+      "is_webhooks_v2": true,
+      "shipping_and_tax_url": "https://mystore.com/api/v1/shipping_and_tax",
+      "shipping_url": "https://mystore.com/api/v1/shipping",
+      "tax_url": "https://mystore.com/api/v1/tax",
+      "create_order_url": "https://mystore.com/api/v1/tax",
+      "universal_merchant_api_url": "https://mystore.com/api/bolt_universal",
+      "debug_url": "https://mystore.com/v1/debug",
+      "update_cart_url": "https://mystore.com/api/v1/cart_update",
+      "account_page_url": "https://mystore.com/account",
+      "oauth_redirect_url": "https://mystore.com/api/v1/oauth_redirect",
+      "oauth_logout_url": "https://mystore.com/api/v1/oauth_logout",
+      "get_account_url": "https://mystore.com/api/v1/account_get",
+      "validate_additional_account_data_url": "https://mystore.com/api/v1/account_validate",
+      "terms_of_service_url": "https://mystore.com/api/v1/terms",
+      "privacy_policy_url": "https://mystore.com/api/v1/privacy",
+      "plugin_config_url": "https://mystore.com/api/v1/plugin_config",
+      "product_info_url": "https://mystore.com/api/v1/product_details"
+    },
+    "merchant": {
+      "created_at": 1485997169003,
+      "description": "Brand Name Here.",
+      "processor": "adyen_gateway",
+      "operational_processors": [
+        {
+          "processor": "adyen_gateway",
+          "status": "primary"
+        }
+      ],
+      "public_id": "zSrbabI3MFe8",
+      "time_zone": "America/Los_Angeles"
+    },
+    "indemnification_decision": "indemnified",
+    "indemnification_reason": "checkout",
+    "splits": [
+      {
+        "amount": {
+          "amount": 500,
+          "currency": "USD",
+          "currency_symbol": "$"
+        },
+        "type": "processing_fee"
+      }
+    ]
+  }
+}

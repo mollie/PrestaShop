@@ -27,6 +27,8 @@ class Config
 
     const SENTRY_ENV = 'MISSING_ENV';
 
+    const MOCKLAB_ENDPOIT = 'http://172.17.0.1:8443';
+
     /**
      * Default payment method availability.
      *

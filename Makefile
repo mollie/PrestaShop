@@ -1,3 +1,5 @@
+ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
 # target: fix-lint			- Launch php cs fixer
 fix-lint:
 	docker-compose run --rm php sh -c "vendor/bin/php-cs-fixer fix --using-cache=no"
@@ -40,3 +42,6 @@ test-e2e-gui:
 	make e2e17p
 	# this should work out of the box for all linux users.
 	docker-compose -f docker-compose.e2e.yml -f docker-compose.e2e.local.yml up --force-recreate --exit-code-from cypress
+
+run-wiremock-local:
+	docker run -ti --rm -v $(ROOT_DIR)/wiremock:/home/wiremock -p 8443:8080 wiremock/wiremock

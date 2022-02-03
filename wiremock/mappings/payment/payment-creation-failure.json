@@ -1,0 +1,15 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/v1/merchant/transactions/authorize",
+    "headers": {
+      "X-Nonce": {
+        "equalTo": "nonce:generic-failure"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "bodyFileName": "authorize-card/authorize-card-nonce-generic-failure.json"
+  }
+}

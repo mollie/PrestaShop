@@ -1,0 +1,4 @@
+{
+  "title": "Hello wiremock!",
+  "description": "Basic samples of stubbing can be found here http://wiremock.org/docs/stubbing/. Need to use regex ? No problem - see http://wiremock.org/docs/request-matching/"
+}

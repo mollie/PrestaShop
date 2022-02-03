@@ -9,6 +9,10 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
+
+use Mollie\Config\Config;
+use Mollie\Config\Env;
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 class Mollie extends PaymentModule
@@ -250,7 +254,7 @@ class Mollie extends PaymentModule
         $isSubmitted = (bool) Tools::isSubmit("submit{$this->name}");
 
         /* @phpstan-ignore-next-line */
-        if (false === Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING) && !$isSubmitted) {
+        if (false === Configuration::get(Config::MOLLIE_STATUS_AWAITING) && !$isSubmitted) {
             $this->context->controller->errors[] = $this->l('Please select order status for the "Status for Awaiting payments" field in the "Advanced settings" tab');
         }
 
@@ -271,7 +275,7 @@ class Mollie extends PaymentModule
             'description_message' => addslashes($this->l('Description cannot be empty')),
             'profile_id_message' => addslashes($this->l('Wrong profile ID')),
             'profile_id_message_empty' => addslashes($this->l('Profile ID cannot be empty')),
-            'payment_api' => addslashes(Mollie\Config\Config::MOLLIE_PAYMENTS_API),
+            'payment_api' => addslashes(Config::MOLLIE_PAYMENTS_API),
             'ajaxUrl' => addslashes($this->context->link->getAdminLink('AdminMollieAjax')),
         ]);
 
@@ -355,9 +359,9 @@ class Mollie extends PaymentModule
         }
 
         Media::addJsDef([
-            'profileId' => Configuration::get(Mollie\Config\Config::MOLLIE_PROFILE_ID),
+            'profileId' => Configuration::get(Config::MOLLIE_PROFILE_ID),
             'isoCode' => $this->context->language->language_code,
-            'isTestMode' => \Mollie\Config\Config::isTestMode(),
+            'isTestMode' => Config::isTestMode(),
         ]);
         $this->context->controller->registerJavascript(
             'mollie_iframe_js',
@@ -375,7 +379,7 @@ class Mollie extends PaymentModule
             $this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
         }
         $this->context->smarty->assign([
-            'custom_css' => Configuration::get(Mollie\Config\Config::MOLLIE_CSS),
+            'custom_css' => Configuration::get(Config::MOLLIE_CSS),
         ]);
 
         $this->context->controller->addJS("{$this->_path}views/js/front/payment_fee.js");
@@ -413,7 +417,7 @@ class Mollie extends PaymentModule
 
             if (Tools::isSubmit('addorder') || version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
                 Media::addJsDef([
-                    'molliePendingStatus' => Configuration::get(\Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
+                    'molliePendingStatus' => Configuration::get(Config::MOLLIE_STATUS_AWAITING),
                     'isPsVersion177' => version_compare(_PS_VERSION_, '1.7.7.0', '>='),
                 ]);
                 $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_add.js');
@@ -442,7 +446,7 @@ class Mollie extends PaymentModule
         if ($this->context->controller->controller_name === 'AdminOrders') {
             $this->context->smarty->assign([
                 'mollieProcessUrl' => $this->context->link->getAdminLink('AdminModules', true) . '&configure=mollie&ajax=1',
-                'mollieCheckMethods' => Mollie\Utility\TimeUtility::getCurrentTimeStamp() > ((int) Configuration::get(Mollie\Config\Config::MOLLIE_METHODS_LAST_CHECK) + Mollie\Config\Config::MOLLIE_METHODS_CHECK_INTERVAL),
+                'mollieCheckMethods' => Mollie\Utility\TimeUtility::getCurrentTimeStamp() > ((int) Configuration::get(Config::MOLLIE_METHODS_LAST_CHECK) + Config::MOLLIE_METHODS_CHECK_INTERVAL),
             ]);
             $html .= $this->display(__FILE__, 'views/templates/admin/ordergrid.tpl');
             if (Tools::isSubmit('addorder') || version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
@@ -494,7 +498,7 @@ class Mollie extends PaymentModule
             'tracking' => $shipmentService->getShipmentInformation($order->reference),
             'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
             'webPackChunks' => \Mollie\Utility\UrlPathUtility::getWebpackChunks('app'),
-            'errorDisplay' => Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS),
+            'errorDisplay' => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
         ]);
 
         return $this->display(__FILE__, 'order_info.tpl');
@@ -616,13 +620,13 @@ class Mollie extends PaymentModule
         $idOrder = $params['id_order'];
         $order = new Order($idOrder);
         $checkStatuses = [];
-        if (Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES)) {
-            $checkStatuses = @json_decode(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES));
+        if (Configuration::get(Config::MOLLIE_AUTO_SHIP_STATUSES)) {
+            $checkStatuses = @json_decode(Configuration::get(Config::MOLLIE_AUTO_SHIP_STATUSES));
         }
         if (!is_array($checkStatuses)) {
             $checkStatuses = [];
         }
-        if (!(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_MAIN) && in_array($orderStatus->id, $checkStatuses))
+        if (!(Configuration::get(Config::MOLLIE_AUTO_SHIP_MAIN) && in_array($orderStatus->id, $checkStatuses))
         ) {
             return;
         }
@@ -691,7 +695,7 @@ class Mollie extends PaymentModule
                 $orderFeeId = $orderFeeRepo->getOrderFeeIdByCartId($cart->id);
                 $orderFee = new MolOrderFee($orderFeeId);
             } catch (Exception $e) {
-                PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
+                PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $e->getMessage(), Config::CRASH);
 
                 return true;
             }
@@ -782,7 +786,7 @@ class Mollie extends PaymentModule
 
     public function hookActionOrderGridDefinitionModifier(array $params)
     {
-        if (\Configuration::get(\Mollie\Config\Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK) === \Mollie\Config\Config::HIDE_RESENT_LINK) {
+        if (\Configuration::get(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK) === Config::HIDE_RESENT_LINK) {
             return;
         }
 
@@ -898,10 +902,12 @@ class Mollie extends PaymentModule
 
         /** @var \Mollie\Service\ApiKeyService $apiKeyService */
         $apiKeyService = $this->getMollieContainer(\Mollie\Service\ApiKeyService::class);
+        /** @var Env $env */
+        $env = $this->getMollieContainer(Env::class);
 
-        $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
-        $apiKeyConfig = \Mollie\Config\Config::ENVIRONMENT_LIVE === (int) $environment ?
-            Mollie\Config\Config::MOLLIE_API_KEY : Mollie\Config\Config::MOLLIE_API_KEY_TEST;
+        $environment = (int) Configuration::get(Config::MOLLIE_ENVIRONMENT);
+        $apiKeyConfig = Config::ENVIRONMENT_LIVE === (int) $environment ?
+            Config::MOLLIE_API_KEY : Config::MOLLIE_API_KEY_TEST;
 
         $apiKey = Configuration::get($apiKeyConfig, null, null, $shopId);
 
@@ -910,19 +916,22 @@ class Mollie extends PaymentModule
         }
         try {
             $this->api = $apiKeyService->setApiKey($apiKey, $this->version);
+            if ($env->get('API_ENDPOINT') === 'CYPRESS') {
+//                $this->api->setApiEndpoint(Config::MOCKLAB_ENDPOIT);
+            }
         } catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);
-            PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
+            PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Config::CRASH);
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);
             $this->warning = $this->l('Payment error:') . $e->getMessage();
-            PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $this->warning, Mollie\Config\Config::CRASH);
+            PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $this->warning, Config::CRASH);
         } catch (\Exception $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);
-            PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
+            PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Config::CRASH);
         }
     }
 
