@@ -23,25 +23,10 @@ Download and install the Mollie PrestaShop payment module and start receiving on
 
 ## Hecho y mantenido por [Invertus](https://www.invertus.eu). ##
 
-## Compatible con PrestaShop 1.5 a 1.7 ##
-
-** Tenga en cuenta: ** el acceso FTP a su servidor web podría ser necesario para la instalación de este módulo.
-Si no tiene experiencia con esto, deje la instalación de este módulo al desarrollador de su sitio web o al administrador del servidor.
-
 ## Instalación PrestaShop 1.7 ##
 
 * Descargue la última versión del módulo (el archivo '.zip') a través de la [página Releases](https://github.com/mollie/Prestashop/releases) que es compatible 
-con PrestaShop 1.5 a 1.7.
-* Vaya al panel de administración de su tienda web PrestaShop
-* En su panel de administración, seleccione la pestaña 'Modules' y luego elija 'upload a module' en la parte superior derecha de su pantalla
-* Seleccione 'select file' y luego suba el archivo '.zip' que descargó anteriormente
-* Después de que el módulo haya sido instalado, elija 'configure'
-* Ingrese su _clave API_ y guarde los datos.
-
-## Instalación PrestaShop 1.5 y 1.6 ##
-
-* Descargue la última versión del módulo (el archivo '.zip') a través de la [página Releases](https://github.com/mollie/Prestashop/releases) que es compatible 
-con PrestaShop 1.5 a 1.7.
+con PrestaShop 1.7.
 * Vaya al panel de administración de su tienda web PrestaShop
 * En su panel de administración, seleccione la pestaña 'Modules' y luego elija 'upload a module' en la parte superior derecha de su pantalla
 * Seleccione 'select file' y luego suba el archivo '.zip' que descargó anteriormente
@@ -51,7 +36,7 @@ con PrestaShop 1.5 a 1.7.
 ## o ##
 
 * Descargue la última versión del módulo (el archivo '.zip') a través de la [página Releases](https://github.com/mollie/Prestashop/releases) que es compatible 
-con PrestaShop 1.5 a 1.7.
+con PrestaShop 1.7.
 * Extraiga el archivo
 * Copie la carpeta 'mollie' a la carpeta 'modules' a través de FTP en su instalación de PrestaShop
 * Vaya a la pestaña 'Modules' en su panel de administración y elija 'Payments and Gateways' en la lista 'Categories'.
