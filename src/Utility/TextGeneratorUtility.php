@@ -63,6 +63,10 @@ class TextGeneratorUtility
             $methodDescription
         );
 
+        if (ctype_space($content)) {
+            return $order->reference;
+        }
+
         return empty($content) ? $order->reference : $content;
     }
 }
