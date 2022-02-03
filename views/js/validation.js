@@ -33,7 +33,7 @@ $(document).ready(function () {
         var isProfileChecked = $('input[name="MOLLIE_IFRAME"]').prop('checked');
         var profile = $('#MOLLIE_PROFILE_ID');
         var selectedAPI = $('select[name="MOLLIE_API"]').val();
-        if (description.val() === '' && selectedAPI === payment_api) {
+        if (!/\S/.test(description.val()) && selectedAPI === payment_api) {
             event.preventDefault();
             description.addClass('mollie-input-error');
             $('.alert.alert-success').hide();
@@ -94,7 +94,7 @@ $(document).ready(function () {
             return;
         }
         var $description = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_DESCRIPTION"]');
-        if ($description.val() === '') {
+        if (!/\S/.test($description.val())) {
             event.preventDefault();
             $description.addClass('mollie-input-error');
             $('.alert.alert-success').hide();
