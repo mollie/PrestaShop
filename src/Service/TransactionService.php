@@ -209,6 +209,7 @@ class TransactionService
                 $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
         }
 
+        $this->updateTransaction($orderId, $transaction);
         // Store status in database
         if (!$this->savePaymentStatus($transaction->id, $apiPayment->status, $orderId)) {
             if (Configuration::get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
@@ -247,6 +248,32 @@ class TransactionService
         }
 
         $this->updateOrderPayments($transactionInfos, $orderReference);
+    }
+
+    /**
+     * @param int $orderId
+     * @param MolliePaymentAlias|MollieOrderAlias $transaction
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    public function updateTransaction($orderId, $transaction)
+    {
+        /** @var TransactionService $transactionService */
+        $transactionService = $this->module->getMollieContainer(TransactionService::class);
+        $order = new Order($orderId);
+        if (!$order->getOrderPayments()) {
+            $transactionService->updateOrderTransaction($transaction->id, $order->reference);
+        } else {
+            /** @var OrderPayment $orderPayment */
+            foreach ($order->getOrderPayments() as $orderPayment) {
+                if ($orderPayment->transaction_id) {
+                    continue;
+                }
+                $orderPayment->transaction_id = $transaction->id;
+                $orderPayment->update();
+            }
+        }
     }
 
     /**
