@@ -6,8 +6,6 @@
 * @link        https://github.com/mollie/PrestaShop
 * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
 *}
-
-
 <div class="mollie-iframe-container">
     <div class="mollie-credit-card-inputs">
         <input type="hidden" value="{$methodId|escape:'html':'UTF-8'}" name="method-id">
