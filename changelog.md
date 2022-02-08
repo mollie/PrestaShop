@@ -22,6 +22,7 @@
 + Fixed issue where klarna status would be changed to klarna shipped and not completed when using default statuses for klarna.
 + Fixed issue where modules like VAT module would make mollie create wrong order prices. It was fixed by adding customer to context in webhook.
 + Fixed missing transaction id on order payments.
++ Added validation for descriptions to avoid empty spaces.
 
 ## Changes in release 4.4.3 ##
 + Bank transfer now creates order on open status.
