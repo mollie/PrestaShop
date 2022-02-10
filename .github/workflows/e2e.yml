@@ -27,7 +27,7 @@ jobs:
         shell: bash
       - run: ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
         shell: bash
-      - run: timeout 15m ./ngrok http -subdomain=demoShop 8001
+      - run: ./ngrok http -subdomain=demoShop 8001
         shell: bash
 
       - name: NPM install
