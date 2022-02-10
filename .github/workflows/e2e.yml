@@ -25,9 +25,9 @@ jobs:
         shell: bash
       - run: unzip -qq ngrok-stable-linux-amd64.zip
         shell: bash
-      - run: ./ngrok authtoken ${{ inputs.ngrok_authtoken }}
+      - run: ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
         shell: bash
-      - run: timeout ${{ inputs.timeout }} ./ngrok -subdomain=${{ inputs.sub_domain }} ${{ inputs.port }} > /dev/null &
+      - run: ./ngrok -subdomain=demoshop 8001 > /dev/null &
         shell: bash
 
       - name: Run Cypress on PS16, PS17, PS177
