@@ -25,13 +25,10 @@ jobs:
         shell: bash
       - run: unzip -qq ngrok-stable-linux-amd64.zip
         shell: bash
-      - run: ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
+      - run: ./ngrok authtoken ${{ inputs.ngrok_authtoken }}
         shell: bash
-      - run: ./ngrok http -subdomain=demoShop 8001
+      - run: timeout ${{ inputs.timeout }} ./ngrok -subdomain=${{ inputs.sub_domain }} ${{ inputs.port }} > /dev/null &
         shell: bash
-
-      - name: NPM install
-        run: npm ci
 
       - name: Run Cypress on PS16, PS17, PS177
         run: npx cypress run --env demousername=${{ secrets.DEMO_USER }},demopassword=${{ secrets.DEMO_PASS }},FO_username=${{ secrets.MOLLIE_FO_USR }},FO_password=${{ secrets.MOLLIE_FO_PSW }},mollie_test_api_key=${{ secrets.MOLLIE_TEST_API_KEY }},mollie_test_profile_id=${{ secrets.MOLLIE_TEST_PROFILE_ID }}
