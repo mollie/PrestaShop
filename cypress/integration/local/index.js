@@ -5,3 +5,8 @@ it('Should check if home page is loaded', () => {
         expect(resp.status).to.eq(200)
     })
 })
+
+it('test bo', () => {
+    cy.visit('http://demoshop.eu.ngrok.io/admin1')
+})
+
