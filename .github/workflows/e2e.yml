@@ -4,6 +4,8 @@ on: [ push ]
 jobs:
   Cypress-E2E:
     runs-on: ubuntu-latest
+    env:
+      NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
 #     strategy:
 #       fail-fast: false
 #       matrix:
@@ -19,7 +21,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.0.0
 
-      - name: ngrok
       - run: wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
         shell: bash
       - run: unzip -qq ngrok-stable-linux-amd64.zip
