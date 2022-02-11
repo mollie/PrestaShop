@@ -4,9 +4,9 @@ services:
   cypress:
     # the Docker image to use from https://github.com/cypress-io/cypress-docker-images
     image: "cypress/included:9.4.1"
-    #environment:
+    environment:
       # pass base url to test pointing at the web application
-      #- CYPRESS_baseUrl=http://172.17.0.1:8001
+      - CYPRESS_baseUrl=http://demoshop.eu.ngrok.io:8001
     # share the current folder as volume to avoid copying
     working_dir: /e2e
     volumes:
