@@ -36,7 +36,7 @@ jobs:
       - name: install package
         run: npm i
 
-      - name: Run tests on Cypress
+      - name: PS install / Module Install / Run tests on Cypress
         run: make e2eh
         #--parallel --record --key fe20a60a-0ac6-4956-a6e8-911aad86cb03
   

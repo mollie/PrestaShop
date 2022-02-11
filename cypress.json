@@ -7,5 +7,5 @@
  "retries": 2,
  "experimentalSessionSupport": true,
  "ignoreTestFiles": ["index.php", "**/cypress/integration/ps16/**", "**/cypress/integration/ps17/**"],
- "baseUrl": "http://demoshop.eu.ngrok.io"
+ "baseUrl": "https://demoshop.eu.ngrok.io"
 }
