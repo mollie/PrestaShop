@@ -23,7 +23,7 @@
         "classnames": "^2.2.6",
         "intersection-observer": "^0.5.1",
         "intl": "^1.2.5",
-        "locutus": "^2.0.10",
+        "locutus": "^2.0.15",
         "lodash": "^4.17.21",
         "moment": "^2.23.0",
         "polished": "^2.3.3",
