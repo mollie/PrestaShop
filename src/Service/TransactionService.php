@@ -73,7 +73,7 @@ class TransactionService
     }
 
     /**
-     * @param MolliePaymentAlias|MollieOrderAlias $transaction
+     * @param MolliePaymentAlias|MollieOrderAlias $apiPayment
      *
      * @return string|MolliePaymentAlias Returns a single payment (in case of Orders API it returns the highest prio Payment object) or status string
      *
@@ -95,9 +95,6 @@ class TransactionService
             return $this->module->l('Transaction failed', 'webhook');
         }
 
-        if (!isset($apiPayment)) {
-            return $this->module->l('Transaction failed', 'webhook');
-        }
         $transactionNotUsedMessage = $this->module->l('Transaction is no longer used', 'webhook');
         $orderIsCreateMessage = $this->module->l('Order is already created', 'webhook');
 
