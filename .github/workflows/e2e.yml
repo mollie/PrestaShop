@@ -30,6 +30,9 @@ jobs:
       - run: ./ngrok -subdomain=demoshop 8001 > ngrok.log &
         shell: bash
 
+      - name: install composer
+        run: composer i
+
       - name: Run Cypress on PS16, PS17, PS177
         run: make e2eh
         #--parallel --record --key fe20a60a-0ac6-4956-a6e8-911aad86cb03
