@@ -31,7 +31,7 @@ jobs:
         shell: bash
 
       - name: Run Cypress on PS16, PS17, PS177
-        run: npx cypress run --env
+        run: make e2eh
         #--parallel --record --key fe20a60a-0ac6-4956-a6e8-911aad86cb03
   
       - name: Archive videos and screenshots
