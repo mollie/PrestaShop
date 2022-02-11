@@ -24,7 +24,7 @@
         "intersection-observer": "^0.5.1",
         "intl": "^1.2.5",
         "locutus": "^2.0.10",
-        "lodash": "^4.17.11",
+        "lodash": "^4.17.21",
         "moment": "^2.23.0",
         "polished": "^2.3.3",
         "react": "^16.8.1",
