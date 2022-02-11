@@ -3,7 +3,7 @@ version: "3.7"
 services:
   cypress:
     # the Docker image to use from https://github.com/cypress-io/cypress-docker-images
-    image: "cypress/included:9.3.1"
+    image: "cypress/included:9.4.1"
     environment:
       # pass base url to test pointing at the web application
       - CYPRESS_baseUrl=http://172.17.0.1:8001

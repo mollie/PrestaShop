@@ -1,4 +1,4 @@
-name: Regular midnight test runs
+name: Cypress test run
 on: [ push ]
 
 jobs:
@@ -36,7 +36,7 @@ jobs:
       - name: install package
         run: npm i
 
-      - name: Run Cypress on PS16, PS17, PS177
+      - name: Run tests on Cypress
         run: make e2eh
         #--parallel --record --key fe20a60a-0ac6-4956-a6e8-911aad86cb03
   

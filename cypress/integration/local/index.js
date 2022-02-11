@@ -6,7 +6,11 @@ it('Should check if home page is loaded', () => {
     })
 })
 
-it('test bo', () => {
-    cy.visit('http://demoshop.eu.ngrok.io/admin1')
+it('Test BO login and Mollie shortcut', () => {
+    cy.visit('/admin1')
+    cy.get('#email').type('demo@prestashop.com',{delay: 0, log: false})
+    cy.get('#passwd').type('prestashop_demo',{delay: 0, log: false})
+    cy.get('#submit_login').click()
+    cy.contains('Mollie')
 })
 
