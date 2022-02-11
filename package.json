@@ -21,5 +21,8 @@
   "homepage": "https://github.com/mollie/PrestaShop#readme",
   "devDependencies": {
     "cypress-iframe": "^1.0.1"
+  },
+  "dependencies": {
+    "browserslist": "^4.19.1"
   }
 }

@@ -6,5 +6,5 @@
  "projectId": "xb89dr",
  "retries": 2,
  "experimentalSessionSupport": true,
- "ignoreTestFiles": ["index.php", "**/cypress/integration/ps16/**"]
+ "ignoreTestFiles": ["index.php", "**/cypress/integration/ps16/**", "**/cypress/integration/ps17/**"]
 }
