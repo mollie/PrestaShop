@@ -12,6 +12,7 @@
 
 namespace Mollie\Handler\ErrorHandler;
 
+use Configuration;
 use Exception;
 use Module;
 use Mollie;
@@ -54,6 +55,7 @@ class ErrorHandler
                     ],
                 ]
             );
+            $this->client->set_user_data($this->getServerVariable('SERVER_NAME'), Configuration::get('PS_SHOP_EMAIL'));
         } catch (Exception $e) {
             return;
         }
@@ -111,5 +113,14 @@ class ErrorHandler
      */
     private function __clone()
     {
+    }
+
+    private function getServerVariable($key)
+    {
+        if (isset($_SERVER[$key])) {
+            return $_SERVER[$key];
+        }
+
+        return '';
     }
 }

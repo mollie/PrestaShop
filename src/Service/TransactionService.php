@@ -73,7 +73,7 @@ class TransactionService
     }
 
     /**
-     * @param MolliePaymentAlias|MollieOrderAlias $transaction
+     * @param MolliePaymentAlias|MollieOrderAlias $apiPayment
      *
      * @return string|MolliePaymentAlias Returns a single payment (in case of Orders API it returns the highest prio Payment object) or status string
      *
@@ -85,9 +85,9 @@ class TransactionService
      * @since 3.3.2 Returns the ApiPayment / ApiOrder instead of OK string, NOT OK/NO ID stays the same
      * @since 3.3.2 Returns the ApiPayment instead of ApiPayment / ApiOrder
      */
-    public function processTransaction($transaction)
+    public function processTransaction($apiPayment)
     {
-        if (empty($transaction)) {
+        if (empty($apiPayment)) {
             if (Configuration::get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
                 PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request without proper transaction ID.', Config::WARNING);
             }
@@ -95,24 +95,6 @@ class TransactionService
             return $this->module->l('Transaction failed', 'webhook');
         }
 
-        // Ensure that we are dealing with a Payment object, in case of transaction ID or Payment object w/ Order ID, convert
-        if ($transaction instanceof MolliePaymentAlias) {
-            if (!empty($transaction->orderId) && TransactionUtility::isOrderTransaction($transaction->orderId)) {
-                // Part of order
-                $transaction = $this->module->api->orders->get($transaction->orderId, ['embed' => 'payments']);
-            } else {
-                // Single payment
-                $apiPayment = $transaction;
-            }
-        }
-
-        if (!empty($transaction->id) && TransactionUtility::isOrderTransaction(($transaction->id))) {
-            $apiPayment = $this->module->api->orders->get($transaction->id, ['embed' => 'payments']);
-        }
-
-        if (!isset($apiPayment)) {
-            return $this->module->l('Transaction failed', 'webhook');
-        }
         $transactionNotUsedMessage = $this->module->l('Transaction is no longer used', 'webhook');
         $orderIsCreateMessage = $this->module->l('Order is already created', 'webhook');
 
@@ -128,7 +110,7 @@ class TransactionService
             $this->module->name
         );
 
-        switch ($transaction->resource) {
+        switch ($apiPayment->resource) {
             case Config::MOLLIE_API_STATUS_PAYMENT:
                 if ($key !== $apiPayment->metadata->secure_key) {
                     break;
@@ -209,17 +191,17 @@ class TransactionService
                 $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
         }
 
-        $this->updateTransaction($orderId, $transaction);
+        $this->updateTransaction($orderId, $apiPayment);
         // Store status in database
-        if (!$this->savePaymentStatus($transaction->id, $apiPayment->status, $orderId)) {
+        if (!$this->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId)) {
             if (Configuration::get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
-                PrestaShopLogger::addLog(__METHOD__ . ' said: Could not save Mollie payment status for transaction "' . $transaction->id . '". Reason: ' . Db::getInstance()->getMsgError(), Config::WARNING);
+                PrestaShopLogger::addLog(__METHOD__ . ' said: Could not save Mollie payment status for transaction "' . $apiPayment->id . '". Reason: ' . Db::getInstance()->getMsgError(), Config::WARNING);
             }
         }
 
         // Log successful webhook requests in extended log mode only
         if (Config::DEBUG_LOG_ALL == Configuration::get(Config::MOLLIE_DEBUG_LOG)) {
-            PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request for order ' . (int) $orderId . ' / transaction ' . $transaction->id, Config::NOTICE);
+            PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request for order ' . (int) $orderId . ' / transaction ' . $apiPayment->id, Config::NOTICE);
         }
 
         return $apiPayment;
