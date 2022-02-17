@@ -10,5 +10,5 @@ it('Access BO, check Mollie shortcut', () => {
     cy.get('#email').type('demo@demo.com',{delay: 0, log: false})
     cy.get('#passwd').type('demodemo',{delay: 0, log: false})
     cy.get('#submit_login').click()
-    cy.contains('Mollie')
+    cy.contains('Mollie').click()
 })
