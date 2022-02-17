@@ -33,19 +33,32 @@ jobs:
       - name: install composer
         run: composer i
 
-      - name: install package
-        run: npm i & npx browserslist@latest --update-db
+      - name: Initializing the Prestashop 1.7.8.3 Apache
+        run: |
+          docker network create prestashop-net
+          docker run -ti --name some-mysql --network prestashop-net -e MYSQL_ROOT_PASSWORD=admin -e MYSQL_DATABASE=prestashop -p 3307:3306 -d mysql:5.7
+          docker run -ti -v $PWD:/var/www/html/modules/mollie --name some-prestashop --network prestashop-net -e DB_SERVER=some-mysql -e PS_INSTALL_AUTO=1 -e DB_NAME=prestashop -e PS_FOLDER_ADMIN=admin1 -e PS_DEV_MODE=1 -p 8001:80 -d prestashop/prestashop:1.7.8.3-apache
+          sleep 2m
 
-      - name: PS install / Module Install / Run tests on Cypress
-        run: make e2eh
-        #--parallel --record --key fe20a60a-0ac6-4956-a6e8-911aad86cb03
-  
+      - name: Installing the latest module to the Prestashop
+        run: |
+          # installing module
+          docker exec -i some-prestashop sh -c "cd / && chmod -R 777 var"
+          docker exec -i some-prestashop sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
+
+      - name: Running the E2E tests on Docker (PS + Cypress)
+        run: |
+          docker exec -i some-prestashop sh -c "cd / && chmod -R 777 var"
+          npx browserslist@latest --update-db
+          npm ci
+          npx cypress run
+        
       - name: Archive videos and screenshots
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
           name: videos_screenshots
-          retention-days: 1
+          retention-days: 5
           path: |
             cypress/videos
             cypress/screenshots
