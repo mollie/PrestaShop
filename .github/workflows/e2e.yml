@@ -37,7 +37,7 @@ jobs:
         run: |
           docker network create prestashop-net
           docker run -ti --name some-mysql --network prestashop-net -e MYSQL_ROOT_PASSWORD=admin -e MYSQL_DATABASE=prestashop -p 3307:3306 -d mysql:5.7
-          docker run -ti -v $PWD:/var/www/html/modules/mollie --name some-prestashop --network prestashop-net -e DB_SERVER=some-mysql -e PS_INSTALL_AUTO=1 -e DB_NAME=prestashop -e PS_FOLDER_ADMIN=admin1 -e PS_DEV_MODE=1 -p 8001:80 -d prestashop/prestashop:1.7.8.3-apache
+          docker run -ti -v $PWD:/var/www/html/modules/mollie --name some-prestashop --network prestashop-net -e DB_SERVER=some-mysql -e PS_INSTALL_AUTO=1 -e DB_NAME=prestashop -e PS_FOLDER_ADMIN=admin1 -e PS_DEV_MODE=1 -e PS_SSL_ENABLED=1 -p 8001:80 -d prestashop/prestashop:1.7.8.3-apache
           sleep 2m
 
       - name: Installing the latest module to the Prestashop
