@@ -34,7 +34,7 @@ jobs:
         run: composer i
 
       - name: install package
-        run: npm i & npx browserslist@latest --update-db
+        run: npm i npm-update-all -g
 
       - name: PS install / Module Install / Run tests on Cypress
         run: make e2eh
