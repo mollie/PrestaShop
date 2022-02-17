@@ -34,7 +34,7 @@ services:
       DB_PASSWD: prestashop
       DB_NAME: prestashop
       DB_SERVER: mysql
-      PS_DOMAIN: localhost:8001
+      PS_DOMAIN: 172.17.0.1:8001
       PS_FOLDER_INSTALL: install
       PS_FOLDER_ADMIN: admin1
     depends_on:

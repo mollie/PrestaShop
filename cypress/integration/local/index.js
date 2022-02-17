@@ -7,6 +7,6 @@ it('Should check if home page is loaded', () => {
 })
 
 it('test bo', () => {
-    cy.visit('http://demoshop.eu.ngrok.io/admin1')
+    cy.visit('https://demoshop.eu.ngrok.io/admin1').wait(5000)
 })
 
