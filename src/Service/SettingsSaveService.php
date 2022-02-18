@@ -21,6 +21,8 @@ use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
+use Mollie\Handler\Certificate\CertificateHandlerInterface;
+use Mollie\Handler\Certificate\Exception\CertificationException;
 use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
@@ -72,6 +74,11 @@ class SettingsSaveService
      */
     private $apiService;
 
+    /**
+     * @var CertificateHandlerInterface
+     */
+    private $applePayDirectCertificateHandler;
+
     public function __construct(
         Mollie $module,
         CountryRepository $countryRepository,
@@ -80,7 +87,8 @@ class SettingsSaveService
         ApiService $apiService,
         MolCarrierInformationService $carrierInformationService,
         PaymentMethodPositionHandlerInterface $paymentMethodPositionHandler,
-        ApiKeyService $apiKeyService
+        ApiKeyService $apiKeyService,
+        CertificateHandlerInterface $applePayDirectCertificateHandler
     ) {
         $this->module = $module;
         $this->countryRepository = $countryRepository;
@@ -90,6 +98,7 @@ class SettingsSaveService
         $this->carrierInformationService = $carrierInformationService;
         $this->paymentMethodPositionHandler = $paymentMethodPositionHandler;
         $this->apiService = $apiService;
+        $this->applePayDirectCertificateHandler = $applePayDirectCertificateHandler;
     }
 
     /**
@@ -162,6 +171,13 @@ class SettingsSaveService
                 );
                 $this->countryRepository->updatePaymentMethodCountries($paymentMethodId, $countries);
                 $this->countryRepository->updatePaymentMethodExcludedCountries($paymentMethodId, $excludedCountries);
+                if ($paymentMethod->id_method === Config::APPLEPAY) {
+                    try {
+                        $this->applePayDirectCertificateHandler->handle();
+                    } catch (CertificationException $e) {
+                        $errors[] = $e->getMessage();
+                    }
+                }
             }
             $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment);
         }

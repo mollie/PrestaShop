@@ -87,6 +87,7 @@ services:
       - '@Mollie\Service\MolCarrierInformationService'
       - '@Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface'
       - '@Mollie\Service\ApiKeyService'
+      - '@Mollie\Handler\Certificate\CertificateHandlerInterface'
 
   Mollie\Service\ShipmentService:
     class: Mollie\Service\ShipmentService
