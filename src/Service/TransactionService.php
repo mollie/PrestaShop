@@ -61,10 +61,10 @@ class TransactionService
     private $orderCreationHandler;
 
     public function __construct(
-        Mollie                           $module,
-        OrderStatusService               $orderStatusService,
+        Mollie $module,
+        OrderStatusService $orderStatusService,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
-        OrderCreationHandler             $orderCreationHandler
+        OrderCreationHandler $orderCreationHandler
     ) {
         $this->module = $module;
         $this->orderStatusService = $orderStatusService;
@@ -99,7 +99,7 @@ class TransactionService
         $orderIsCreateMessage = $this->module->l('Order is already created', 'webhook');
 
         /** @var int $orderId */
-        $orderId = Order::getOrderByCartId((int)$apiPayment->metadata->cart_id);
+        $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
 
         $cart = new Cart($apiPayment->metadata->cart_id);
 
@@ -136,9 +136,9 @@ class TransactionService
                             return $orderIsCreateMessage;
                         }
                         $payment = $this->module->api->payments->get($apiPayment->id);
-                        $environment = (int)Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+                        $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
                         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
-                        $paymentMethodObj = new MolPaymentMethod((int)$paymentMethodId);
+                        $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
                         $payment->description = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
                         $payment->update();
                     } elseif (strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
@@ -146,7 +146,7 @@ class TransactionService
                     } else {
                         $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
                     }
-                    $orderId = Order::getOrderByCartId((int)$apiPayment->metadata->cart_id);
+                    $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
                 }
                 break;
             case Config::MOLLIE_API_STATUS_ORDER:
@@ -164,9 +164,9 @@ class TransactionService
                     if (!$orderId) {
                         return $orderIsCreateMessage;
                     }
-                    $environment = (int)Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+                    $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
                     $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
-                    $paymentMethodObj = new MolPaymentMethod((int)$paymentMethodId);
+                    $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
                     $orderNumber = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
                     $apiPayment->orderNumber = $orderNumber;
                     $payments = $apiPayment->payments();
@@ -206,7 +206,7 @@ class TransactionService
                     }
                 }
 
-                $orderId = Order::getOrderByCartId((int)$apiPayment->metadata->cart_id);
+                $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
         }
 
         $this->updateTransaction($orderId, $apiPayment);
@@ -219,7 +219,7 @@ class TransactionService
 
         // Log successful webhook requests in extended log mode only
         if (Config::DEBUG_LOG_ALL == Configuration::get(Config::MOLLIE_DEBUG_LOG)) {
-            PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request for order ' . (int)$orderId . ' / transaction ' . $apiPayment->id, Config::NOTICE);
+            PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request for order ' . (int) $orderId . ' / transaction ' . $apiPayment->id, Config::NOTICE);
         }
 
         return $apiPayment;
@@ -294,7 +294,7 @@ class TransactionService
                 [
                     'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
                     'bank_status' => pSQL($status),
-                    'order_id' => (int)$orderId,
+                    'order_id' => (int) $orderId,
                 ],
                 '`transaction_id` = \'' . pSQL($transactionId) . '\''
             );
