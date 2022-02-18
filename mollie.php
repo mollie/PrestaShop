@@ -59,7 +59,6 @@ class Mollie extends PaymentModule
         $this->compile();
         $this->loadEnv();
         $this->setApiKey();
-        $this->registerHook('displayProductActions');
         new \Mollie\Handler\ErrorHandler\ErrorHandler($this);
     }
 
