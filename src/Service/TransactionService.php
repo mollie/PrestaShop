@@ -177,6 +177,24 @@ class TransactionService
                         $payment->update();
                     }
                     $apiPayment->update();
+                } elseif ($apiPayment->amountRefunded) {
+                    if (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
+                        return $transactionNotUsedMessage;
+                    }
+                    if (isset($apiPayment->amount->value, $apiPayment->amountRefunded->value)
+                        && NumberUtility::isLowerOrEqualThan($apiPayment->amount->value, $apiPayment->amountRefunded->value)
+                    ) {
+                        $this->orderStatusService->setOrderStatus($orderId, RefundStatus::STATUS_REFUNDED);
+                    } else {
+                        if ($apiPayment->method === Config::MOLLIE_VOUCHER_METHOD_ID) {
+                            $payment = $apiPayment->payments()[0];
+                            if (NumberUtility::isLowerOrEqualThan($payment->details->remainderAmount->value, $apiPayment->amountRefunded->value)) {
+                                $this->orderStatusService->setOrderStatus($orderId, RefundStatus::STATUS_REFUNDED);
+                            }
+                        } else {
+                            $this->orderStatusService->setOrderStatus($orderId, Config::PARTIAL_REFUND_CODE);
+                        }
+                    }
                 } elseif (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                     return $transactionNotUsedMessage;
                 } else {

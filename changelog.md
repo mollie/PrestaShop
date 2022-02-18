@@ -1,6 +1,9 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 5.1.0 ##
++ Added order refund statuses for methods that use Order API.
+
 ## Changes in release 5.0.1 ##
 + Fixed issue where order API refund would fail on webhook call.
 
