@@ -8,4 +8,5 @@ it('Access BO, check Mollie shortcut', () => {
     cy.get('#passwd').type('demodemo',{delay: 0, log: false})
     cy.get('#submit_login').click()
     cy.url().should('contain','https')
-}) 
+})
+})
