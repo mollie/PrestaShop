@@ -59,7 +59,7 @@ class Mollie extends PaymentModule
         $this->compile();
         $this->loadEnv();
         $this->setApiKey();
-
+        $this->registerHook('displayProductActions');
         new \Mollie\Handler\ErrorHandler\ErrorHandler($this);
     }
 
@@ -391,6 +391,7 @@ class Mollie extends PaymentModule
     {
         /** @var \Mollie\Service\ErrorDisplayService $errorDisplayService */
         $errorDisplayService = $this->getMollieContainer()->get(\Mollie\Service\ErrorDisplayService::class);
+        $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
 
         $isCartController = $this->context->controller instanceof CartControllerCore;
         if ($isCartController) {
@@ -854,6 +855,11 @@ class Mollie extends PaymentModule
                 $molliePaymentMailService->sendSecondChanceMail($orderId);
             }
         }
+    }
+
+    public function hookDisplayProductActions($params)
+    {
+        return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
     }
 
     /**
