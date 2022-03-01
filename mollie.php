@@ -9,6 +9,9 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
+
+use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 class Mollie extends PaymentModule
@@ -386,11 +389,26 @@ class Mollie extends PaymentModule
     /**
      * @throws PrestaShopException
      */
-    public function hookActionFrontControllerSetMedia()
+    public function hookActionFrontControllerSetMedia($params)
     {
         /** @var \Mollie\Service\ErrorDisplayService $errorDisplayService */
         $errorDisplayService = $this->getMollieContainer()->get(\Mollie\Service\ErrorDisplayService::class);
+
+        /** @var ApplePayCarriersBuilder $applePayCarrierBuilder */
+        $applePayCarrierBuilder = $this->getMollieContainer()->get(ApplePayCarriersBuilder::class);
+        $applePayCarriers = $applePayCarrierBuilder->build(Carrier::getCarriers($this->context->language->id, true));
+
+        Media::addJsDef([
+            'countryCode' => $this->context->country->iso_code,
+            'currencyCode' => $this->context->currency->iso_code,
+            'totalLabel' => 'test',
+            'customerId' => $this->context->customer->id ?? 0,
+            'carriers' => json_encode($applePayCarriers),
+            'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
+        ]);
+
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
+        $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirect.js');
 
         $isCartController = $this->context->controller instanceof CartControllerCore;
         if ($isCartController) {

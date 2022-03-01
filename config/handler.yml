@@ -48,4 +48,5 @@ services:
       - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Service\OrderStatusService'
       - '@Mollie\Service\OrderFeeService'
+      - '@mollie.context'
 

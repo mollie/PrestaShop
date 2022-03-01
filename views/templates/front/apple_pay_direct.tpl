@@ -1,1 +1,1 @@
-<div class="apple-pay-button apple-pay-button-white"></div>
+<div id="mollie-applepay-direct-button"></div>

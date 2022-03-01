@@ -3,3 +3,5 @@ services:
 
   Mollie\Handler\Certificate\ApplePayDirectCertificateHandler:
     class: Mollie\Handler\Certificate\ApplePayDirectCertificateHandler
+    arguments:
+      - '@mollie'

@@ -38,10 +38,13 @@ namespace Mollie\Handler\Order;
 
 use Cart;
 use Configuration;
+use Context;
+use Customer;
 use Mollie;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use Mollie\Api\Types\OrderStatus;
+use Mollie\Api\Types\PaymentMethod;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\DTO\Line;
@@ -57,6 +60,10 @@ use MolPaymentMethod;
 use Order;
 use OrderDetail;
 use PrestaShop\Decimal\Number;
+use PrestaShop\PrestaShop\Adapter\ServiceLocator;
+use PrestaShop\PrestaShop\Core\Crypto\Hashing;
+use Tools;
+use function DusanKasan\Knapsack\has;
 
 class OrderCreationHandler
 {
@@ -76,17 +83,23 @@ class OrderCreationHandler
      * @var OrderFeeService
      */
     private $feeService;
+    /**
+     * @var Context
+     */
+    private $context;
 
     public function __construct(
         Mollie $module,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         OrderStatusService $orderStatusService,
-        OrderFeeService $feeService
+        OrderFeeService $feeService,
+        Context $context
     ) {
         $this->module = $module;
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->orderStatusService = $orderStatusService;
         $this->feeService = $feeService;
+        $this->context = $context;
     }
 
     /**
@@ -261,6 +274,57 @@ class OrderCreationHandler
         $order->update();
 
         return $paymentData;
+    }
+
+    public function createApplePayDirectOrder(\Mollie\DTO\ApplePay\Order $appleOrder)
+    {
+//        $customerId = Tools::getValue('customerId');
+        $customer = $this->createAppleOrderCustomer($appleOrder);
+        //todo: check if customization is needed
+        $newCart = new Cart();
+        $newCart->id_currency = $this->context->currency->id;
+        $newCart->id_lang = $this->context->language->id;
+        $newCart->secure_key = $customer->secure_key;
+        $newCart->id_address_invoice = 1;
+        $newCart->save();
+
+        $newCart->updateQty(
+            $appleOrder->getProduct()->getWantedQuantity(),
+            $appleOrder->getProduct()->getProductId(),
+            $appleOrder->getProduct()->getProductAttribute()
+        );
+
+        $this->context->cart = $newCart;
+        $this->context->customer = $customer;
+
+        $this->module->validateOrder(
+            $newCart->id,
+            (int) Configuration::get(Config::MOLLIE_STATUS_PAID),
+            $newCart->getOrderTotal(),
+            PaymentMethod::APPLEPAY,
+            null,
+            [],
+            null,
+            false,
+            $customer->secure_key
+        );
+    }
+
+    private function createAppleOrderCustomer(\Mollie\DTO\ApplePay\Order $appleOrder): Customer
+    {
+        /** @var Hashing $crypto */
+        $crypto = ServiceLocator::get(Hashing::class);
+
+        $customer = new Customer();
+        $customer->firstname = $appleOrder->getShippingContent()->getGivenName();
+        $customer->lastname = $appleOrder->getShippingContent()->getFamilyName();
+        $customer->is_guest = true;
+        $customer->email = $appleOrder->getShippingContent()->getEmailAddress();
+        $customer->passwd = $crypto->hash(microtime(), _COOKIE_KEY_);
+
+        $customer->add();
+
+        return $customer;
     }
 
     private function isOrderBackOrder($orderId)
