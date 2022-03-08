@@ -12,6 +12,8 @@
 
 use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
 use Mollie\Builder\ApplePayDirect\ApplePayProductBuilder;
+use Mollie\DTO\ApplePay\Carrier\Carrier as AppleCarrier;
+use Mollie\Handler\ApplePay\ApplePayDirectCartCreationHandler;
 use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Utility\NumberUtility;
 use PrestaShop\Decimal\DecimalNumber;
@@ -34,9 +36,11 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
             case 'mollie_apple_pay_create_order':
                 $this->createApplePayOrder();
             case 'mollie_apple_pay_update_shipping_contact':
-                die();
+                $this->getCarriers();
             case 'mollie_apple_pay_update_shipping_method':
                 $this->updateShippingContact();
+            case 'mollie_get_apple_pay_carriers':
+                $this->getCarriers();
         }
     }
 
@@ -110,6 +114,46 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
                 ]
             )
         );
+    }
+
+    private function getCarriers()
+    {
+
+        /** @var ApplePayDirectCartCreationHandler $applePayCartCreationHandler */
+        $applePayCartCreationHandler = $this->module->getMollieContainer(ApplePayDirectCartCreationHandler::class);
+
+        $cart = $applePayCartCreationHandler->handle(Tools::getValue('simplifiedContact'));
+
+        /** @var ApplePayCarriersBuilder $applePayCarrierBuilder */
+        $applePayCarrierBuilder = $this->module->getMollieContainer()->get(ApplePayCarriersBuilder::class);
+        $applePayCarriers = $applePayCarrierBuilder->build(Carrier::getCarriersForOrder($this->context->language->id, true));
+
+        $shippingMethod = array_map(function (AppleCarrier $carrier) use ($cart) {
+            return [
+                'identifier' => $carrier->getCarrierId(),
+                'label' => $carrier->getName(),
+                'amount' => number_format($cart->getCarrierCost($carrier->getCarrierId()), 2, '.', ''),
+                'detail' => $carrier->getDelay(),
+            ];
+        }, $applePayCarriers);
+
+        $totals = array_map(function (AppleCarrier $carrier) use ($cart) {
+            return [
+                'type' => 'final',
+                'label' => $carrier->getName(),
+                'amount' => number_format($cart->getOrderTotal(true, Cart::BOTH, null, $carrier->getCarrierId()), 2, '.', ''),
+            ];
+        }, $applePayCarriers);
+
+        $this->ajaxDie(json_encode(
+            [
+                'data' => [
+                    'shipping_methods' => $shippingMethod,
+                    'totals' => $totals,
+                ],
+                'success' => true
+            ]
+        ));
     }
 
     private function displayCheckoutError()

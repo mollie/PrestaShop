@@ -40,13 +40,12 @@ $(document).ready(function () {
         e.preventDefault();
         applePaySession();
     })
+
     let applePaySession = () => {
         const subtotal = $('.product-prices').find('[itemprop="price"]').attr('content') * $('#quantity_wanted').val();
         const session = new ApplePaySession(3, createRequest(countryCode, currencyCode, totalLabel, subtotal, JSON.parse(carriers)))
         session.begin()
         session.onvalidatemerchant = (applePayValidateMerchantEvent) => {
-            console.log(applePayValidateMerchantEvent);
-            var ttt = 1;
             jQuery.ajax({
                 url: ajaxUrl,
                 method: 'POST',
@@ -58,10 +57,7 @@ $(document).ready(function () {
                 },
                 success: (merchantSession, textStatus, jqXHR) => {
                     merchantSession = JSON.parse(merchantSession);
-
-                    console.log(merchantSession);
                     if (merchantSession.success === true) {
-                        console.log(JSON.parse(merchantSession.data))
                         session.completeMerchantValidation(JSON.parse(merchantSession.data))
                     } else {
                         console.warn(merchantSession.data)
@@ -143,13 +139,14 @@ $(document).ready(function () {
             })
         }
         session.onshippingmethodselected = function (event) {
+            console.log(event);
+            console.log(session);
             jQuery.ajax({
                 url: ajaxUrl,
                 method: 'POST',
                 data: {
                     action: 'mollie_apple_pay_update_shipping_method',
                     shippingMethod: event.shippingMethod,
-                    callerPage: 'cart',
                     simplifiedContact: updatedContactInfo,
                 },
                 complete: (jqXHR, textStatus) => {
@@ -168,34 +165,44 @@ $(document).ready(function () {
                 },
             })
         }
-        // session.onshippingcontactselected = function (event) {
-        //     jQuery.ajax({
-        //         url: ajaxUrl,
-        //         method: 'POST',
-        //         data: {
-        //             action: 'mollie_apple_pay_update_shipping_contact',
-        //             simplifiedContact: event.shippingContact,
-        //             callerPage: 'cart',
-        //         },
-        //         complete: (jqXHR, textStatus) => {
-        //         },
-        //         success: (applePayShippingContactUpdate, textStatus, jqXHR) => {
-        //             let response = applePayShippingContactUpdate.data
-        //             updatedContactInfo = event.shippingContact
-        //             if (applePayShippingContactUpdate.success === false) {
-        //                 response.errors = createAppleErrors(response.errors)
-        //             }
-        //             if (response.newShippingMethods) {
-        //                 selectedShippingMethod = response.newShippingMethods[0]
-        //             }
-        //             this.completeShippingContactSelection(response)
-        //         },
-        //         error: (jqXHR, textStatus, errorThrown) => {
-        //             console.warn(textStatus, errorThrown)
-        //             session.abort()
-        //         },
-        //     })
-        // }
+        session.onshippingcontactselected = function (event) {
+            console.log(event);
+            jQuery.ajax({
+                url: ajaxUrl,
+                method: 'POST',
+                data: {
+                    action: 'mollie_apple_pay_update_shipping_contact',
+                    countryCode: event.shippingContact.countryCode,
+                    postalCode: event.shippingContact.postalCode,
+                    simplifiedContact: event.shippingContact,
+
+                },
+                complete: (jqXHR, textStatus) => {
+                },
+                success: (applePayShippingContactUpdate, textStatus, jqXHR) => {
+                    applePayShippingContactUpdate = JSON.parse(applePayShippingContactUpdate)
+                    let response = applePayShippingContactUpdate.data
+                    console.log(applePayShippingContactUpdate)
+                    console.log(ApplePaySession.STATUS_SUCCESS)
+                    console.log(response.shipping_methods[0].amount)
+                    if (applePayShippingContactUpdate.success === true) {
+                        session.completeShippingContactSelection(
+                            ApplePaySession.STATUS_SUCCESS,
+                            response.shipping_methods,
+                            {
+                                'label': 'test',
+                                'amount': '0.01'
+                            },
+                            []
+                        );
+                    }
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    console.warn(textStatus, errorThrown)
+                    session.abort()
+                },
+            })
+        }
     }
 });
 
@@ -234,7 +241,6 @@ function createRequest(countryCode, currencyCode, totalLabel, subtotal, carriers
             'postalAddress',
             'email'
         ],
-        shippingMethods: carriers,
         total: {
             label: totalLabel,
             amount: subtotal,
