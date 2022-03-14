@@ -394,16 +394,11 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Service\ErrorDisplayService $errorDisplayService */
         $errorDisplayService = $this->getMollieContainer()->get(\Mollie\Service\ErrorDisplayService::class);
 
-        /** @var ApplePayCarriersBuilder $applePayCarrierBuilder */
-        $applePayCarrierBuilder = $this->getMollieContainer()->get(ApplePayCarriersBuilder::class);
-        $applePayCarriers = $applePayCarrierBuilder->build(Carrier::getCarriers($this->context->language->id, true));
-
         Media::addJsDef([
             'countryCode' => $this->context->country->iso_code,
             'currencyCode' => $this->context->currency->iso_code,
             'totalLabel' => 'test',
             'customerId' => $this->context->customer->id ?? 0,
-            'carriers' => json_encode($applePayCarriers),
             'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
         ]);
 

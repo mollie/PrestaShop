@@ -21,12 +21,14 @@ use Tools;
 
 class ApplePayDirectCartCreationHandler
 {
-    public function handle(array $content)
+    public function handle(array $content, array $product)
     {
         $customer = $this->createCustomer();
         $address = $this->createAddress($customer->id, $content);
+        $cart = $this->createCart($customer, $address);
+        $this->addProductToCart($cart, $product);
 
-        return $this->createCart($customer, $address);
+        return $cart;
     }
 
     private function createAddress($customerId, array $content)
@@ -70,5 +72,10 @@ class ApplePayDirectCartCreationHandler
         $cart->add();
 
         return $cart;
+    }
+
+    private function addProductToCart(Cart $cart, array $product)
+    {
+        $cart->updateQty($product['quantity_wanted'], $product['id_product'], $product['id_product_attribute']);
     }
 }

@@ -2,24 +2,34 @@
 
 namespace Mollie\Builder\ApplePayDirect;
 
-use Mollie\DTO\ApplePay\Carrier\Carrier;
+use Carrier;
+use Mollie\DTO\ApplePay\Carrier\Carrier as AppleCarrier;
 
 class ApplePayCarriersBuilder
 {
     /**
      * @param array $carriers
-     * @return Carrier[]
+     * @return AppleCarrier[]
      */
-    public function build(array $carriers): array
+    public function build(array $carriers, int $idZone): array
     {
+        $price = 0;
         $applePayCarriers = [];
         foreach ($carriers as $carrier) {
-//            $priceRange = Carrier::getDeliveryPriceByRanges($carrier->getRangeTable(), (int) $carrier->id);
-            $applePayCarriers[] = new Carrier(
+            $carrierObj = new Carrier($carrier['id_carrier']);
+            if ($carrierObj->getRangeTable()) {
+                $priceRanges = Carrier::getDeliveryPriceByRanges($carrierObj->getRangeTable(), (int) $carrier['id_carrier']);
+                foreach ($priceRanges as $priceRange) {
+                    if ((int) $priceRange['id_zone'] === $idZone) {
+                        $price = (float) $priceRange['price'];
+                    }
+                }
+            }
+            $applePayCarriers[] = new AppleCarrier(
                 $carrier['name'],
                 $carrier['delay'],
                 $carrier['id_carrier'],
-                0
+                $price
             );
         }
 

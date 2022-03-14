@@ -43,7 +43,7 @@ $(document).ready(function () {
 
     let applePaySession = () => {
         const subtotal = $('.product-prices').find('[itemprop="price"]').attr('content') * $('#quantity_wanted').val();
-        const session = new ApplePaySession(3, createRequest(countryCode, currencyCode, totalLabel, subtotal, JSON.parse(carriers)))
+        const session = new ApplePaySession(3, createRequest(countryCode, currencyCode, totalLabel, subtotal))
         session.begin()
         session.onvalidatemerchant = (applePayValidateMerchantEvent) => {
             jQuery.ajax({
@@ -167,6 +167,14 @@ $(document).ready(function () {
         }
         session.onshippingcontactselected = function (event) {
             console.log(event);
+            const productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
+            const product = {
+                'id_product': productDetails.id_product,
+                'id_product_attribute': productDetails.id_product_attribute,
+                'id_customization': productDetails.id_customization,
+                'quantity_wanted': productDetails.quantity_wanted,
+            }
+
             jQuery.ajax({
                 url: ajaxUrl,
                 method: 'POST',
@@ -175,7 +183,7 @@ $(document).ready(function () {
                     countryCode: event.shippingContact.countryCode,
                     postalCode: event.shippingContact.postalCode,
                     simplifiedContact: event.shippingContact,
-
+                    product: product
                 },
                 complete: (jqXHR, textStatus) => {
                 },
@@ -206,7 +214,7 @@ $(document).ready(function () {
     }
 });
 
-function createRequest(countryCode, currencyCode, totalLabel, subtotal, carriers) {
+function createRequest(countryCode, currencyCode, totalLabel, subtotal) {
     // let applePayShippingMethod = {
     //     amount: "0.00",
     //     dateComponentsRange: {

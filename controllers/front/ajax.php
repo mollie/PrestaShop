@@ -121,18 +121,21 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
 
         /** @var ApplePayDirectCartCreationHandler $applePayCartCreationHandler */
         $applePayCartCreationHandler = $this->module->getMollieContainer(ApplePayDirectCartCreationHandler::class);
+        $product = Tools::getValue('product');
+        $simplifiedContent = Tools::getValue('simplifiedContact');
 
-        $cart = $applePayCartCreationHandler->handle(Tools::getValue('simplifiedContact'));
-
+        $cart = $applePayCartCreationHandler->handle($simplifiedContent, $product);
+        $address = new Address($cart->id_address_delivery);
+        $country = new Country($address->id_country);
         /** @var ApplePayCarriersBuilder $applePayCarrierBuilder */
         $applePayCarrierBuilder = $this->module->getMollieContainer()->get(ApplePayCarriersBuilder::class);
-        $applePayCarriers = $applePayCarrierBuilder->build(Carrier::getCarriersForOrder($this->context->language->id, true));
+        $applePayCarriers = $applePayCarrierBuilder->build(Carrier::getCarriersForOrder($this->context->language->id, true), $country->id_zone);
 
         $shippingMethod = array_map(function (AppleCarrier $carrier) use ($cart) {
             return [
                 'identifier' => $carrier->getCarrierId(),
                 'label' => $carrier->getName(),
-                'amount' => number_format($cart->getCarrierCost($carrier->getCarrierId()), 2, '.', ''),
+                'amount' => $carrier->getAmount(),
                 'detail' => $carrier->getDelay(),
             ];
         }, $applePayCarriers);
