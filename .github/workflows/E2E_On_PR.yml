@@ -1,4 +1,4 @@
-name: Cypress test run
+name: Cypress E2E test run
 on:
   pull_request:
     types: [opened, reopened]
