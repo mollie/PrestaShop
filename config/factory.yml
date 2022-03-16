@@ -1,0 +1,8 @@
+services:
+  Mollie\Factory\CustomerFactory:
+    class: Mollie\Factory\CustomerFactory
+
+#  Mollie\Factory\ModuleFactory:
+
+  mollie.factory.module_factory:
+    class: 'Mollie\Factory\ModuleFactory'

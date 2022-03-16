@@ -1,48 +1,27 @@
 <?php
 /**
- * Copyright (c) 2012-2020, Mollie B.V.
- * All rights reserved.
+ * Mollie       https://www.mollie.nl
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
- * - Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
- * DAMAGE.
- *
- * @author     Mollie B.V. <info@mollie.nl>
- * @copyright  Mollie B.V.
- * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
- * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
 use Carrier;
 use Configuration;
 use Context;
 use Exception;
 use Mollie;
+use Mollie\Api\Exceptions\ApiException;
+use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
+use Mollie\Exception\MollieException;
+use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
 use MolPaymentMethodIssuer;
@@ -53,31 +32,45 @@ use Tools;
 
 class SettingsSaveService
 {
-
     /**
      * @var Mollie
      */
     private $module;
+
     /**
      * @var CountryRepository
      */
     private $countryRepository;
+
     /**
      * @var PaymentMethodRepository
      */
     private $paymentMethodRepository;
+
     /**
      * @var PaymentMethodService
      */
     private $paymentMethodService;
+
     /**
-     * @var ApiService
+     * @var ApiKeyService
      */
-    private $apiService;
+    private $apiKeyService;
+
     /**
      * @var MolCarrierInformationService
      */
     private $carrierInformationService;
+
+    /**
+     * @var PaymentMethodPositionHandlerInterface
+     */
+    private $paymentMethodPositionHandler;
+
+    /**
+     * @var ApiService
+     */
+    private $apiService;
 
     public function __construct(
         Mollie $module,
@@ -85,30 +78,46 @@ class SettingsSaveService
         PaymentMethodRepository $paymentMethodRepository,
         PaymentMethodService $paymentMethodService,
         ApiService $apiService,
-        MolCarrierInformationService $carrierInformationService
+        MolCarrierInformationService $carrierInformationService,
+        PaymentMethodPositionHandlerInterface $paymentMethodPositionHandler,
+        ApiKeyService $apiKeyService
     ) {
         $this->module = $module;
         $this->countryRepository = $countryRepository;
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodService = $paymentMethodService;
-        $this->apiService = $apiService;
+        $this->apiKeyService = $apiKeyService;
         $this->carrierInformationService = $carrierInformationService;
+        $this->paymentMethodPositionHandler = $paymentMethodPositionHandler;
+        $this->apiService = $apiService;
     }
 
     /**
      * @param array $errors
      *
-     * @return string
+     * @return array
+     *
      * @throws ApiException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
     public function saveSettings(&$errors = [])
     {
+        $oldEnvironment = (int) Configuration::get(Config::MOLLIE_ENVIRONMENT);
+        $environment = (int) Tools::getValue(Config::MOLLIE_ENVIRONMENT);
         $mollieApiKey = Tools::getValue(Config::MOLLIE_API_KEY);
+        $mollieApiKeyTest = Tools::getValue(Config::MOLLIE_API_KEY_TEST);
         $mollieProfileId = Tools::getValue(Config::MOLLIE_PROFILE_ID);
+        $paymentOptionPositions = Tools::getValue(Config::MOLLIE_FORM_PAYMENT_OPTION_POSITION);
 
-        if (strpos($mollieApiKey, 'live') !== 0 && strpos($mollieApiKey, 'test') !== 0) {
+        if ($paymentOptionPositions) {
+            $this->paymentMethodPositionHandler->savePositions($paymentOptionPositions);
+        }
+
+        $apiKey = Config::ENVIRONMENT_LIVE === (int) $environment ? $mollieApiKey : $mollieApiKeyTest;
+        $isApiKeyIncorrect = 0 !== strpos($apiKey, 'live') && 0 !== strpos($apiKey, 'test');
+
+        if ($isApiKeyIncorrect) {
             $errors[] = $this->module->l('The API key needs to start with test or live.');
         }
 
@@ -119,17 +128,21 @@ class SettingsSaveService
             );
         }
 
-        if ($this->module->api->methods !== null && Configuration::get(Config::MOLLIE_API_KEY)) {
+        if ($oldEnvironment === $environment && $apiKey && $this->module->api !== null) {
+            $savedPaymentMethods = [];
             foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
+                $paymentMethodId = $method['obj']->id;
                 try {
                     $paymentMethod = $this->paymentMethodService->savePaymentMethod($method);
+                    $savedPaymentMethods[] = $paymentMethod->id_method;
                 } catch (Exception $e) {
-                    $errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods');
+                    $errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods') . ":{$method['id']}";
+                    continue;
                 }
 
-
                 if (!$this->paymentMethodRepository->deletePaymentMethodIssuersByPaymentMethodId($paymentMethod->id)) {
-                    $errors[] = $this->module->l('Something went wrong. Couldn\'t delete old payment methods issuers');
+                    $errors[] = $this->module->l('Something went wrong. Couldn\'t delete old payment methods issuers') . ":{$method['id']}";
+                    continue;
                 }
 
                 if ($method['issuers']) {
@@ -144,13 +157,27 @@ class SettingsSaveService
                 }
 
                 $countries = Tools::getValue(Config::MOLLIE_METHOD_CERTAIN_COUNTRIES . $method['id']);
-                $this->countryRepository->updatePaymentMethodCountries($method['id'], $countries);
+                $excludedCountries = Tools::getValue(
+                    Config::MOLLIE_METHOD_EXCLUDE_CERTAIN_COUNTRIES . $method['id']
+                );
+                $this->countryRepository->updatePaymentMethodCountries($paymentMethodId, $countries);
+                $this->countryRepository->updatePaymentMethodExcludedCountries($paymentMethodId, $excludedCountries);
             }
+            $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment);
         }
 
+        $useCustomLogo = Tools::getValue(Config::MOLLIE_SHOW_CUSTOM_LOGO);
+        Configuration::updateValue(
+            Config::MOLLIE_SHOW_CUSTOM_LOGO,
+            $useCustomLogo
+        );
+
         $molliePaymentscreenLocale = Tools::getValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE);
+        $mollieOrderConfirmationSand = Tools::getValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION);
         $mollieIFrameEnabled = Tools::getValue(Config::MOLLIE_IFRAME);
+        $mollieSingleClickPaymentEnabled = Tools::getValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
         $mollieImages = Tools::getValue(Config::MOLLIE_IMAGES);
+        $showResentPayment = Tools::getValue(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK);
         $mollieIssuers = Tools::getValue(Config::MOLLIE_ISSUERS);
         $mollieCss = Tools::getValue(Config::MOLLIE_CSS);
         if (!isset($mollieCss)) {
@@ -158,37 +185,65 @@ class SettingsSaveService
         }
         $mollieLogger = Tools::getValue(Config::MOLLIE_DEBUG_LOG);
         $mollieApi = Tools::getValue(Config::MOLLIE_API);
-        $mollieQrEnabled = (bool)Tools::getValue(Config::MOLLIE_QRENABLED);
-        $mollieMethodCountriesEnabled = (bool)Tools::getValue(Config::MOLLIE_METHOD_COUNTRIES);
-        $mollieMethodCountriesDisplayEnabled = (bool)Tools::getValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY);
+        $mollieMethodCountriesEnabled = (bool) Tools::getValue(Config::MOLLIE_METHOD_COUNTRIES);
+        $mollieMethodCountriesDisplayEnabled = (bool) Tools::getValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY);
         $mollieErrors = Tools::getValue(Config::MOLLIE_DISPLAY_ERRORS);
+        $voucherCategory = Tools::getValue(Config::MOLLIE_VOUCHER_CATEGORY);
 
         $mollieShipMain = Tools::getValue(Config::MOLLIE_AUTO_SHIP_MAIN);
         if (!isset($mollieErrors)) {
             $mollieErrors = false;
         } else {
-            $mollieErrors = ($mollieErrors == 1);
+            $mollieErrors = (1 == $mollieErrors);
+        }
+
+        $apiKey = Config::ENVIRONMENT_LIVE === (int) $environment ?
+            $mollieApiKey : $mollieApiKeyTest;
+
+        if ($apiKey) {
+            try {
+                $api = $this->apiKeyService->setApiKey($apiKey, $this->module->version);
+                if (null === $api) {
+                    throw new MollieException('Failed to connect to mollie API', MollieException::API_CONNECTION_EXCEPTION);
+                }
+                $this->module->api = $api;
+            } catch (Exception $e) {
+                $errors[] = $e->getMessage();
+                Configuration::updateValue(Config::MOLLIE_API_KEY, null);
+
+                return [$this->module->l('Wrong API Key!')];
+            }
+        }
+        try {
+            $this->handleKlarnaInvoiceStatus();
+        } catch (Exception $e) {
+            $errors[] = $this->module->l('There are issues with your Klarna statuses, please try resetting Mollie module.');
         }
 
         if (empty($errors)) {
             Configuration::updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
+            Configuration::updateValue(Config::MOLLIE_API_KEY_TEST, $mollieApiKeyTest);
+            Configuration::updateValue(Config::MOLLIE_ENVIRONMENT, $environment);
             Configuration::updateValue(Config::MOLLIE_PROFILE_ID, $mollieProfileId);
             Configuration::updateValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE, $molliePaymentscreenLocale);
+            Configuration::updateValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION, $mollieOrderConfirmationSand);
             Configuration::updateValue(Config::MOLLIE_IFRAME, $mollieIFrameEnabled);
+            Configuration::updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT, $mollieSingleClickPaymentEnabled);
             Configuration::updateValue(Config::MOLLIE_IMAGES, $mollieImages);
+            Configuration::updateValue(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK, $showResentPayment);
             Configuration::updateValue(Config::MOLLIE_ISSUERS, $mollieIssuers);
-            Configuration::updateValue(Config::MOLLIE_QRENABLED, (bool)$mollieQrEnabled);
-            Configuration::updateValue(Config::MOLLIE_METHOD_COUNTRIES, (bool)$mollieMethodCountriesEnabled);
-            Configuration::updateValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY, (bool)$mollieMethodCountriesDisplayEnabled);
+            Configuration::updateValue(Config::MOLLIE_METHOD_COUNTRIES, (bool) $mollieMethodCountriesEnabled);
+            Configuration::updateValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY, (bool) $mollieMethodCountriesDisplayEnabled);
             Configuration::updateValue(Config::MOLLIE_CSS, $mollieCss);
-            Configuration::updateValue(Config::MOLLIE_DISPLAY_ERRORS, (int)$mollieErrors);
-            Configuration::updateValue(Config::MOLLIE_DEBUG_LOG, (int)$mollieLogger);
+            Configuration::updateValue(Config::MOLLIE_DISPLAY_ERRORS, (int) $mollieErrors);
+            Configuration::updateValue(Config::MOLLIE_DEBUG_LOG, (int) $mollieLogger);
             Configuration::updateValue(Config::MOLLIE_API, $mollieApi);
+            Configuration::updateValue(Config::MOLLIE_VOUCHER_CATEGORY, $voucherCategory);
             Configuration::updateValue(
                 Config::MOLLIE_AUTO_SHIP_STATUSES,
                 json_encode($this->getStatusesValue(Config::MOLLIE_AUTO_SHIP_STATUSES))
             );
-            Configuration::updateValue(Config::MOLLIE_AUTO_SHIP_MAIN, (bool)$mollieShipMain);
+            Configuration::updateValue(Config::MOLLIE_AUTO_SHIP_MAIN, (bool) $mollieShipMain);
             Configuration::updateValue(
                 Config::MOLLIE_TRACKING_URLS,
                 json_encode(@json_decode(Tools::getValue(Config::MOLLIE_TRACKING_URLS)))
@@ -209,14 +264,14 @@ class SettingsSaveService
 
             foreach (array_keys(Config::getStatuses()) as $name) {
                 $name = Tools::strtoupper($name);
-                if (!Tools::getValue("MOLLIE_STATUS_{$name}")) {
+                if (false === Tools::getValue("MOLLIE_STATUS_{$name}")) {
                     continue;
                 }
-                $new = (int)Tools::getValue("MOLLIE_STATUS_{$name}");
+                $new = (int) Tools::getValue("MOLLIE_STATUS_{$name}");
                 Configuration::updateValue("MOLLIE_STATUS_{$name}", $new);
                 Config::getStatuses()[Tools::strtolower($name)] = $new;
 
-                if ($name != PaymentStatus::STATUS_OPEN) {
+                if (PaymentStatus::STATUS_OPEN != $name) {
                     Configuration::updateValue(
                         "MOLLIE_MAIL_WHEN_{$name}",
                         Tools::getValue("MOLLIE_MAIL_WHEN_{$name}") ? true : false
@@ -224,17 +279,7 @@ class SettingsSaveService
                 }
             }
 
-            if ($mollieApiKey) {
-                try {
-                    $this->module->api->setApiKey($mollieApiKey);
-                } catch (Exception $e) {
-                    $errors[] = $e->getMessage();
-                    Configuration::updateValue(Config::MOLLIE_API_KEY, null);
-                    return $this->module->l('Wrong API Key!');
-                }
-            }
-
-            $resultMessage = $this->module->l('The configuration has been saved!');
+            $resultMessage[] = $this->module->l('The configuration has been saved!');
         } else {
             $resultMessage = [];
             foreach ($errors as $error) {
@@ -248,12 +293,9 @@ class SettingsSaveService
     /**
      * Get all status values from the form.
      *
-     * @param $key string The key that is used in the HelperForm
+     * @param string $key The key that is used in the HelperForm
      *
      * @return array Array with statuses
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
      *
      * @since 3.3.0
      */
@@ -268,5 +310,32 @@ class SettingsSaveService
         }
 
         return $statesEnabled;
+    }
+
+    private function handleKlarnaInvoiceStatus()
+    {
+        $klarnaInvoiceStatus = Tools::getValue(Config::MOLLIE_KLARNA_INVOICE_ON);
+        Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $klarnaInvoiceStatus);
+        if (Config::MOLLIE_STATUS_KLARNA_SHIPPED === $klarnaInvoiceStatus) {
+            $this->updateKlarnaStatuses(true);
+
+            return;
+        }
+
+        $this->updateKlarnaStatuses(false);
+    }
+
+    private function updateKlarnaStatuses($isShipped = true)
+    {
+        $klarnaInvoiceShippedId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_SHIPPED);
+        $klarnaInvoiceShipped = new OrderState((int) $klarnaInvoiceShippedId);
+        $klarnaInvoiceShipped->invoice = $isShipped;
+        $klarnaInvoiceShipped->update();
+
+        $klarnaInvoiceAcceptedId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
+        $klarnaInvoiceAccepted = new OrderState((int) $klarnaInvoiceAcceptedId);
+
+        $klarnaInvoiceAccepted->invoice = !$isShipped;
+        $klarnaInvoiceAccepted->update();
     }
 }

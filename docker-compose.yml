@@ -1,34 +1,59 @@
-version: "3"
-
-volumes:
-  db-data:
-  vendor:
-  var:
+version: "3.7"
 
 services:
-  mysql:
-    image: mysql:5
-    ports:
-      - "3306"
+  node:
+    image: node:12.18.3
+    volumes:
+      - ./:/var/www/html
+    working_dir: /var/www/html
     environment:
-      MYSQL_ROOT_PASSWORD: password
+      PATH: /var/www/html/_dev/node_modules/.bin/:$PATH
+
+  mysql:
+    #platform: linux/amd64
+    container_name: mollie-mysql
+    image: mysql:5.7
+    ports:
+      - "9001:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: prestashop
       MYSQL_DATABASE: prestashop
     restart: always
-  apache:
-    container_name: prestashop
-    image: "prestashop/prestashop:${PRESTASHOP_VERSION}"
+    healthcheck:
+      test: "mysqladmin ping -h127.0.0.1 -uroot -pprestashop --silent"
+      interval: 10s
+    networks:
+      - prestashop_mollie_net
+
+  prestashop-17:
+    #platform: linux/amd64
+    container_name: prestashop-17
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
     environment:
-      PS_INSTALL_AUTO: 1
-      DB_PASSWD: password
+      PS_INSTALL_AUTO: 0
+      DB_PASSWD: prestashop
       DB_NAME: prestashop
       DB_SERVER: mysql
-      PS_DOMAIN: "localhost:${PRESTASHOP_PORT}"
-      PS_FOLDER_INSTALL: install-dev
-      PS_FOLDER_ADMIN: admin-dev
-      ADMIN_MAIL: "prestashop@mollie.com"
-      ADMIN_PASSWD: "mollie_test_156"
+      PS_DOMAIN: demoshop.eu.ngrok.io:8001
+      PS_FOLDER_INSTALL: install
+      PS_FOLDER_ADMIN: admin1
+    depends_on:
+      - mysql
     ports:
-      - "${PRESTASHOP_PORT}:80"
+      - "8001:80"
     volumes:
-      - ./prestashop:/var/www/html/:delegated
-    restart: always
+      - ./:/var/www/html/modules/mollie:cached
+      - ./tests/seed/settings/defines.inc.php:/var/www/html/config/defines.inc.php
+      - ./tests/seed/settings/parameters.php:/var/www/html/app/config/parameters.php
+      - ./.docker/.htaccess:/var/www/html/.htaccess
+    networks:
+      - prestashop_mollie_net
+    healthcheck:
+      test: "wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1"
+      interval: 10s
+
+networks:
+  prestashop_mollie_net:
+    name: 'prestashop_mollie_net'

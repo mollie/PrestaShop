@@ -1,0 +1,102 @@
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ *
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ */
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
+
+.icon-send-mail-mollie::before {
+    content: "";
+    top: -30px;
+    left: -20px;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+}
+
+.mollie-icon-container{
+    position:relative;
+}
+
+.mollie-message-container:before{
+    position: absolute;
+    content: '';
+    border-width: 10px;
+    border-style: solid;
+    left: 100%;
+    top: 20px;
+}
+
+.mollie-icon-container:hover .mollie-message-container{
+    display:block;
+}
+
+.mollie-message-container{
+    position: absolute;
+    display: none;
+    width: auto;
+    right: 90px;
+    border-radius: 10px;
+    padding: 10px;
+    color: white;
+    top: -20px;
+    z-index:100;
+    min-width:200px;
+}
+
+.mollie-message-container{
+    background-color: #92d097;
+    text-align: center;
+}
+.mollie-message-container:before{
+    position: absolute;
+    content: '';
+    border-width: 10px;
+    border-style: solid;
+    left: 100%;
+    top: 20px;
+}
+
+.mollie-message-container:before{
+    border-color: rgba(255,255,255,0) rgba(255,255,255,0) rgba(255,255,255,0) #92d097;
+}
+
+.mollie-icon-container:hover .mollie-message-container{
+    display:block;
+}
+
+
+@media only screen and (max-width: 991px) {
+    .icon-send-mail-mollie::before {
+        left: 0;
+        display: inline-block;
+        position: unset;
+    }
+
+    .mollie-message-container:before {
+        content: none;
+    }
+
+    .mollie-message-container {
+        display: inline-block;
+        position: unset;
+    }
+
+    .mollie-icon-container {
+        display: flex;
+    }
+}

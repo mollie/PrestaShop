@@ -1,35 +1,14 @@
 /**
- * Copyright (c) 2012-2020, Mollie B.V.
- * All rights reserved.
+ * Mollie       https://www.mollie.nl
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * - Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
- * DAMAGE.
- *
- * @author     Mollie B.V. <info@mollie.nl>
- * @copyright  Mollie B.V.
- * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
- * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @link        https://github.com/mollie/PrestaShop
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ * @codingStandardsIgnoreStart
  */
+import {array} from "locutus/php";
+
 export interface ITranslations {
   [key: string]: string;
 }
@@ -143,6 +122,8 @@ export interface IMollieApiOrder {
   createdAt: string;
   lines: Array<IMollieOrderLine>;
   refunds: Array<IMollieApiRefund>;
+  availableRefundAmount: IMollieAmount;
+  details: IMollieOrderDetails;
 }
 
 export interface IMollieOrderLine {
@@ -223,4 +204,15 @@ export enum QrStatus {
   pending = 1,
   success = 2,
   refresh = 3,
+}
+
+export interface IMollieOrderDetails {
+  issuer: string;
+  remainderMethod: string;
+  vouchers: Array<IMollieVoucher>;
+}
+
+export interface IMollieVoucher {
+  issuer: string;
+  amount: IMollieAmount
 }

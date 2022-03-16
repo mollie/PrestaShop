@@ -1,78 +1,56 @@
 <?php
 /**
- * Copyright (c) 2012-2020, Mollie B.V.
- * All rights reserved.
+ * Mollie       https://www.mollie.nl
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
- * - Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
- * DAMAGE.
- *
- * @author     Mollie B.V. <info@mollie.nl>
- * @copyright  Mollie B.V.
- * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
- * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Exceptions\ApiException;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Order as MollieOrderAlias;
-use _PhpScoper5eddef0da618a\Mollie\Api\Resources\Payment as MolliePaymentAlias;
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentMethod;
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
-use _PhpScoper5eddef0da618a\PrestaShop\Decimal\Number;
-use Mollie\Config\Config;
+use Mollie\Api\Resources\Order as MollieOrderAlias;
+use Mollie\Api\Resources\Payment as MolliePaymentAlias;
+use Mollie\Api\Types\PaymentMethod;
+use Mollie\Api\Types\PaymentStatus;
+use Mollie\DTO\OrderData;
+use Mollie\DTO\PaymentData;
+use Mollie\Exception\OrderCreationException;
+use Mollie\Handler\ErrorHandler\ErrorHandler;
+use Mollie\Handler\Exception\OrderExceptionHandler;
+use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Service\ExceptionService;
 use Mollie\Service\PaymentMethodService;
-use Mollie\Utility\PaymentFeeUtility;
-use PrestaShop\PrestaShop\Adapter\CoreException;
+use Mollie\Utility\OrderNumberUtility;
 
 if (!defined('_PS_VERSION_')) {
     return;
 }
 
-require_once dirname(__FILE__).'/../../mollie.php';
+require_once dirname(__FILE__) . '/../../mollie.php';
 
 /**
- * Class MolliePaymentModuleFrontController
+ * Class MolliePaymentModuleFrontController.
  *
- * @property Context? $context
- * @property Mollie       $module
+ * @property Context $context
+ * @property Mollie $module
  */
 class MolliePaymentModuleFrontController extends ModuleFrontController
 {
-    /** @var bool $ssl */
+    /** @var bool */
     public $ssl = true;
-    /** @var bool $display_column_left */
+
+    /** @var bool */
     public $display_column_left = false;
-    /** @var bool $display_column_right */
+
+    /** @var bool */
     public $display_column_right = false;
 
     /**
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
-     * @throws Adapter_Exception
-     * @throws SmartyException
-     * @throws CoreException
-     * @throws Exception
      */
     public function initContent()
     {
@@ -87,7 +65,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $customer
         )) {
             /** @var Mollie\Service\LanguageService $langService */
-            $langService = $this->module->getContainer(Mollie\Service\LanguageService::class);
+            $langService = $this->module->getMollieContainer(Mollie\Service\LanguageService::class);
             $this->errors[] = $langService->getLang()['This payment method is not available.'];
             $this->setTemplate('error.tpl');
 
@@ -95,9 +73,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         $method = Tools::getValue('method');
-        if (in_array($method, array(Config::CARTES_BANCAIRES))) {
-            $method = 'creditcard';
-        }
         $issuer = Tools::getValue('issuer') ?: null;
 
         $originalAmount = $cart->getOrderTotal(
@@ -110,17 +85,17 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         /** @var PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
-        /** @var PaymentMethodService $paymentMethodService */
-        $paymentMethodService = $this->module->getContainer(PaymentMethodService::class);
+        $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
+        /** @var PaymentMethodService $transactionService */
+        $transactionService = $this->module->getMollieContainer(PaymentMethodService::class);
 
-        $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method);
-        $paymentMethodObj = new MolPaymentMethod($paymentMethodId);
-        // Prepare payment
-        do {
-            $orderReference = Order::generateReference();
-        } while (Order::getByReference($orderReference)->count());
-        $paymentData = $paymentMethodService->getPaymentData(
+        $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+        $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method, $environment);
+        $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
+
+        $orderNumber = OrderNumberUtility::generateOrderNumber($cart->id);
+
+        $paymentData = $transactionService->getPaymentData(
             $amount,
             Tools::strtoupper($this->context->currency->iso_code),
             $method,
@@ -128,132 +103,42 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             (int) $cart->id,
             $customer->secure_key,
             $paymentMethodObj,
-            false,
-            $orderReference,
-            Tools::getValue('cardToken')
+            $orderNumber,
+            Tools::getValue('cardToken'),
+            Tools::getValue('saveCard'),
+            Tools::getValue('useSavedCard')
         );
-        try {
-            $apiPayment = $this->createPayment($paymentData, $paymentMethodObj->method);
-        } catch (ApiException $e) {
-            $this->setTemplate('error.tpl');
-            $this->errors[] = Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
-                ? $e->getMessage().'. Cart Dump: '.json_encode($paymentData, JSON_PRETTY_PRINT)
-                : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
-            return;
-        } catch (PrestaShopException $e) {
-            $this->setTemplate('error.tpl');
-            $this->errors[] = Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
-                ? $e->getMessage().' Cart Dump: '.json_encode($paymentData, JSON_PRETTY_PRINT)
-                : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
+
+        if ($method === PaymentMethod::BANKTRANSFER) {
+            /** @var OrderCreationHandler $orderCreationHandler */
+            $orderCreationHandler = $this->module->getMollieContainer(OrderCreationHandler::class);
+            $paymentData = $orderCreationHandler->createBankTransferOrder($paymentData, $cart);
+        }
+
+        $apiPayment = $this->createMollieOrder($paymentData, $paymentMethodObj);
+        if (!$apiPayment) {
             return;
         }
-        $this->createOrder($method, $apiPayment, $cart->id, $originalAmount, $customer->secure_key, $orderReference);
-        $orderReference = isset($apiPayment->metadata->order_reference) ? pSQL($apiPayment->metadata->order_reference) : '';
 
-        // Store payment linked to cart
-        if ($apiPayment->method !== PaymentMethod::BANKTRANSFER) {
-            try {
-                Db::getInstance()->insert(
-                    'mollie_payments',
-                    array(
-                        'cart_id'         => (int) $cart->id,
-                        'method'          => pSQL($apiPayment->method),
-                        'transaction_id'  => pSQL($apiPayment->id),
-                        'order_reference' => pSQL($orderReference),
-                        'bank_status'     => PaymentStatus::STATUS_OPEN,
-                        'created_at'      => array('type' => 'sql', 'value' => 'NOW()'),
-                    )
-                );
-            } catch (PrestaShopDatabaseException $e) {
-                $paymentMethodRepo->tryAddOrderReferenceColumn();
-                throw $e;
-            }
-        }
-
-        $status = $apiPayment->status;
-        if (!isset(Mollie\Config\Config::getStatuses()[$apiPayment->status])) {
-            $status = 'open';
-        }
-
-        $paymentStatus = (int) Mollie\Config\Config::getStatuses()[$status];
-
-        if ($paymentStatus < 1) {
-            $paymentStatus = Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING);
-        }
-
-        if ($apiPayment->method === PaymentMethod::BANKTRANSFER) {
-            // Set the `banktransfer` details
-            if ($apiPayment instanceof MollieOrderAlias) {
-                // If this is an order, take the first payment
-                $apiPayment = $apiPayment->payments();
-                $apiPayment = $apiPayment[0];
-            }
-
-            $details = $apiPayment->details->transferReference;
-            $address = "IBAN: {$apiPayment->details->bankAccount} / BIC: {$apiPayment->details->bankBic}";
-
-            $extraVars = array(
-                '{bankwire_owner}'   => 'Stichting Mollie Payments',
-                '{bankwire_details}' => $details,
-                '{bankwire_address}' => $address,
-            );
-
-            $this->module->currentOrderReference = $orderReference;
-            $this->module->validateOrder(
-                (int) $cart->id,
-                $paymentStatus,
-                $originalAmount,
-                isset(Mollie\Config\Config::$methods[$apiPayment->method]) ? Mollie\Config\Config::$methods[$apiPayment->method] : $this->module->name,
-                null,
-                $extraVars,
-                null,
-                false,
-                $customer->secure_key
-            );
-
-            $orderId = Order::getOrderByCartId((int) $cart->id);
-
-            try {
-                Db::getInstance()->insert(
-                    'mollie_payments',
-                    array(
-                        'cart_id'         => (int) $cart->id,
-                        'order_id'        => (int) $orderId,
-                        'order_reference' => pSQL($orderReference),
-                        'method'          => pSQL($apiPayment->method),
-                        'transaction_id'  => pSQL($apiPayment->id),
-                        'bank_status'     => PaymentStatus::STATUS_OPEN,
-                        'created_at'      => array('type' => 'sql', 'value' => 'NOW()'),
-                    )
-                );
-            } catch (PrestaShopDatabaseException $e) {
-                $paymentMethodRepo->tryAddOrderReferenceColumn();
-                $redirectLink = $this->context->link->getPageLink(
-                    'order',
-                    true,
-                    null,
-                    [
-                        'step' => 1,
-                    ]
-                );
-                $this->errors[] = $this->l('Failed to validate order', 'payment');
-                $this->redirectWithNotifications($redirectLink);
-            }
-        }
-
+        $this->createOrder($apiPayment, $cart->id, $orderNumber);
 
         // Go to payment url
-        Tools::redirect($apiPayment->getCheckoutUrl());
+        if (null !== $apiPayment->getCheckoutUrl()) {
+            Tools::redirect($apiPayment->getCheckoutUrl());
+        } else {
+            Tools::redirect($apiPayment->redirectUrl);
+        }
     }
 
     /**
      * Checks if this payment option is still available
-     * May redirect the user to a more appropriate page
+     * May redirect the user to a more appropriate page.
      *
-     * @param Cart     $cart
+     * @param Cart $cart
      * @param Customer $customer
      *
      * @return bool
+     *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
@@ -262,6 +147,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         if (!$cart->id_customer || !$cart->id_address_delivery || !$cart->id_address_invoice || !$this->module->active) {
             // We be like: how did you even get here?
             Tools::redirect(Context::getContext()->link->getPageLink('index', true));
+
             return false;
         }
 
@@ -286,113 +172,124 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @param array $data
+     * @param PaymentData|OrderData $paymentData
+     * @param MolPaymentMethod $paymentMethodObj
      *
-     * @return MolliePaymentAlias|MollieOrderAlias|null
+     * @return false|MollieOrderAlias|MolliePaymentAlias
      *
      * @throws PrestaShopException
-     * @throws ApiException
+     */
+    protected function createMollieOrder($paymentData, $paymentMethodObj)
+    {
+        try {
+            $apiPayment = $this->createPayment($paymentData->jsonSerialize(), $paymentMethodObj->method);
+        } catch (Exception $e) {
+            if ($paymentData instanceof OrderData) {
+                $paymentData->setDeliveryPhoneNumber(null);
+                $paymentData->setBillingPhoneNumber(null);
+            }
+            try {
+                $apiPayment = $this->createPayment($paymentData->jsonSerialize(), $paymentMethodObj->method);
+            } catch (OrderCreationException $e) {
+                $errorHandler = ErrorHandler::getInstance();
+                $errorHandler->handle($e, $e->getCode(), false);
+
+                $this->setTemplate('error.tpl');
+
+                if (Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)) {
+                    $message = 'Cart Dump: ' . $e->getMessage() . ' json: ' . json_encode($paymentData, JSON_PRETTY_PRINT);
+                } else {
+                    /** @var ExceptionService $exceptionService */
+                    $exceptionService = $this->module->getMollieContainer(ExceptionService::class);
+                    $message = $exceptionService->getErrorMessageForException($e, $exceptionService->getErrorMessages());
+                }
+                $this->errors[] = $message;
+
+                return false;
+            } catch (PrestaShopException $e) {
+                $errorHandler = ErrorHandler::getInstance();
+                $errorHandler->handle($e, $e->getCode(), false);
+
+                $this->setTemplate('error.tpl');
+                $this->errors[] = Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
+                    ? $e->getMessage() . ' Cart Dump: ' . json_encode($paymentData, JSON_PRETTY_PRINT)
+                    : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
+
+                return false;
+            }
+        }
+
+        return $apiPayment;
+    }
+
+    /**
+     * @param array $data
+     * @param string $selectedApi
+     *
+     * @return MollieOrderAlias|MolliePaymentAlias
+     *
+     * @throws OrderCreationException
      */
     protected function createPayment($data, $selectedApi)
     {
         try {
-            if ($selectedApi === Mollie\Config\Config::MOLLIE_ORDERS_API) {
+            if (Mollie\Config\Config::MOLLIE_ORDERS_API === $selectedApi) {
                 /** @var MollieOrderAlias $payment */
-                $payment = $this->module->api->orders->create($data, array('embed' => 'payments'));
+                $payment = $this->module->api->orders->create($data, ['embed' => 'payments']);
             } else {
                 /** @var MolliePaymentAlias $payment */
                 $payment = $this->module->api->payments->create($data);
             }
+
+            return $payment;
         } catch (Exception $e) {
-            throw new ApiException($e->getMessage());
+            /** @var OrderExceptionHandler $orderExceptionHandler */
+            $orderExceptionHandler = $this->module->getMollieContainer(OrderExceptionHandler::class);
+
+            throw $orderExceptionHandler->handle($e);
         }
-        return $payment;
     }
 
     /**
-     * Prepend module path if PS version >= 1.7
+     * Prepend module path if PS version >= 1.7.
      *
-     * @param string      $template
-     * @param array       $params
+     * @param string $template
+     * @param array $params
      * @param string|null $locale
      *
      * @throws PrestaShopException
      *
      * @since 3.3.2
      */
-    public function setTemplate($template, $params = array(), $locale = null)
+    public function setTemplate($template, $params = [], $locale = null)
     {
         if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
             $template = "module:mollie/views/templates/front/17_{$template}";
         }
 
+        /* @phpstan-ignore-next-line */
         parent::setTemplate($template, $params, $locale);
     }
 
-    private function createOrder($method, $apiPayment, $cartId, $originalAmount, $secureKey, $orderReference)
+    private function createOrder($apiPayment, $cartId, $orderReference)
     {
-        $extraVars = [];
-        if ($method === PaymentMethod::BANKTRANSFER) {
-            // Set the `banktransfer` details
-            if ($apiPayment instanceof MollieOrderAlias) {
-                // If this is an order, take the first payment
-                $apiPayment = $apiPayment->payments();
-                $apiPayment = $apiPayment[0];
-            }
-
-            $details = $apiPayment->details->transferReference;
-            $address = "IBAN: {$apiPayment->details->bankAccount} / BIC: {$apiPayment->details->bankBic}";
-
-            $extraVars = [
-                '{bankwire_owner}' => 'Stichting Mollie Payments',
-                '{bankwire_details}' => $details,
-                '{bankwire_address}' => $address,
-            ];
-        }
-        /** @var PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getContainer(PaymentMethodRepository::class);
-
-        $orderFee = PaymentFeeUtility::getPaymentFee(
-            new MolPaymentMethod($paymentMethodRepo->getPaymentMethodIdByMethodId($apiPayment->method)),
-            $this->context->cart->getOrderTotal()
-        );
-
-        $totalPrice = new Number((string) $originalAmount);
-
-        if ($orderFee) {
-            $orderFeeObj = new MolOrderFee();
-            $orderFeeObj->id_cart = (int) $cartId;
-            $orderFeeObj->order_fee = PaymentFeeUtility::getPaymentFee(
-                new MolPaymentMethod($paymentMethodRepo->getPaymentMethodIdByMethodId($apiPayment->method)),
-                $this->context->cart->getOrderTotal()
+        try {
+            Db::getInstance()->insert(
+                'mollie_payments',
+                [
+                    'cart_id' => (int) $cartId,
+                    'method' => pSQL($apiPayment->method),
+                    'transaction_id' => pSQL($apiPayment->id),
+                    'order_reference' => pSQL($orderReference),
+                    'bank_status' => PaymentStatus::STATUS_OPEN,
+                    'created_at' => ['type' => 'sql', 'value' => 'NOW()'],
+                ]
             );
-            try {
-                $orderFeeObj->add();
-            } catch (Exception $e) {
-                throw new PrestaShopException('Can\'t save Order fee');
-            }
-            $orderFeeNumber = new Number((string) $orderFeeObj->order_fee);
-            $totalPrice = $orderFeeNumber->plus($totalPrice);
+        } catch (PrestaShopDatabaseException $e) {
+            /** @var PaymentMethodRepository $paymentMethodRepo */
+            $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
+            $paymentMethodRepo->tryAddOrderReferenceColumn();
+            throw $e;
         }
-
-        $this->module->validateOrder(
-            (int) $cartId,
-            (int) Configuration::get(Mollie\Config\Config::STATUS_MOLLIE_AWAITING),
-            $totalPrice->toPrecision(2),
-            isset(Mollie\Config\Config::$methods[$apiPayment->method]) ? Mollie\Config\Config::$methods[$method] : $this->module->name,
-            null,
-            $extraVars,
-            null,
-            false,
-            $secureKey
-        );
-
-        $orderid = Order::getOrderByCartId($cartId);
-        $order = new Order($orderid);
-        $order->total_paid_tax_excl = $totalPrice->toPrecision(2);
-        $order->total_paid_tax_incl = $totalPrice->toPrecision(2);
-        $order->total_paid = $totalPrice->toPrecision(2);
-        $order->reference = $orderReference;
-        $order->update();
     }
 }

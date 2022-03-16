@@ -1,0 +1,20 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/v2/payments",
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer test_testKey"
+      }
+    },
+    "bodyPatterns": [
+      {
+        "contains": "\"method\":\"ideal\""
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "payment/payment-creation-ok.json"
+  }
+}

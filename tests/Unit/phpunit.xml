@@ -1,0 +1,16 @@
+<phpunit bootstrap="bootstrap.php"
+         stopOnFailure="true"
+         colors="true"
+         verbose="true"
+>
+    <php>
+        <env name="KERNEL_CLASS" value="AppKernel" />
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak"/>
+
+    </php>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>.</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

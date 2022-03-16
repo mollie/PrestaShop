@@ -1,0 +1,11 @@
+{
+  "result":{
+    "success":false
+  },
+  "errors":[
+    {
+      "code":4005,
+      "message":"Generic failure."
+    }
+  ]
+}

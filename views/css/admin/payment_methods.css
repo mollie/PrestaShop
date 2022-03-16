@@ -1,0 +1,27 @@
+.payment-methods-sortable {
+  list-style-type: none;
+  /* giving some room for drag action */
+  padding-bottom: 40px;
+}
+
+.payment-methods-sortable .payment-method {
+  display: flex;
+}
+
+.payment-methods-sortable .sort-handle {
+  width: 100%;
+  height: 100%;
+}
+
+.payment-methods-sortable .ui-icon {
+  cursor: grab;
+}
+
+.payment-methods-sortable .payment-method {
+  display: flex;
+  flex-direction: column;
+}
+
+.payment-method__text {
+  padding-left: 10px;
+}

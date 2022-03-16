@@ -1,0 +1,37 @@
+services:
+  Mollie\Provider\PaymentFeeProvider:
+    class: Mollie\Provider\PaymentFeeProvider
+    arguments:
+      - '@Mollie\Provider\OrderTotalProvider'
+
+  Mollie\Provider\PaymentOption\BasePaymentOptionProvider:
+    class: Mollie\Provider\PaymentOption\BasePaymentOptionProvider
+    arguments:
+      - '@mollie'
+      - '@=service("mollie.adapter.context")'
+      - '@Mollie\Provider\CreditCardLogoProvider'
+      - '@Mollie\Provider\PaymentFeeProvider'
+      - '@Mollie\Service\LanguageService'
+
+  Mollie\Provider\PaymentOption\IdealPaymentOptionProvider:
+    class: Mollie\Provider\PaymentOption\IdealPaymentOptionProvider
+    arguments:
+      - '@mollie'
+      - '@=service("mollie.adapter.context")'
+      - '@Mollie\Provider\CreditCardLogoProvider'
+      - '@Mollie\Provider\PaymentFeeProvider'
+      - '@Mollie\Service\Content\TemplateParserInterface'
+      - '@Mollie\Builder\Content\PaymentOption\IdealDropdownInfoBlock'
+      - '@Mollie\Service\LanguageService'
+
+  Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider:
+    class: Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider
+    arguments:
+      - '@mollie'
+      - '@=service("mollie.adapter.context")'
+      - '@Mollie\Provider\CreditCardLogoProvider'
+      - '@Mollie\Provider\OrderTotalProvider'
+      - '@Mollie\Provider\PaymentFeeProvider'
+      - '@Mollie\Service\LanguageService'
+      - '@mollie.customer'
+      - '@Mollie\Repository\MolCustomerRepository'

@@ -1,0 +1,63 @@
+services:
+  Mollie\Validator\OrderConfMailValidator:
+    class: Mollie\Validator\OrderConfMailValidator
+    arguments:
+      - '@Mollie\Adapter\ConfigurationAdapter'
+
+  Mollie\Validator\VoucherValidator:
+    class: Mollie\Validator\VoucherValidator
+    arguments:
+      - '@Mollie\Adapter\ConfigurationAdapter'
+      - '@Mollie\Service\VoucherService'
+
+  Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator:
+    class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator
+    arguments:
+      - '@=service("mollie.adapter.context")'
+      - '@Mollie\Adapter\ConfigurationAdapter'
+    tags:
+      - { name: mollie.paymentmethodrestriction }
+
+  Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator:
+    class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator
+    arguments:
+      - '@=service("mollie.adapter.context")'
+      - '@Mollie\Validator\VoucherValidator'
+    tags:
+      - { name: mollie.paymentmethodrestriction }
+
+  Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\EnvironmentVersionSpecificPaymentMethodRestrictionValidator:
+    class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\EnvironmentVersionSpecificPaymentMethodRestrictionValidator
+    arguments:
+      - '@=service("mollie.adapter.context")'
+      - '@Mollie\Provider\EnvironmentVersionProvider'
+      - '@Mollie\Repository\MethodCountryRepository'
+    tags:
+      - { name: mollie.paymentmethodrestriction, priority: 9}
+
+  Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator:
+    class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator
+    tags:
+      - { name: mollie.paymentmethodrestriction, priority: 10}
+
+  Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation:
+    class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation
+    arguments:
+      0:
+        - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator'
+        - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator'
+        - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\EnvironmentVersionSpecificPaymentMethodRestrictionValidator'
+        - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator'
+
+  Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface: '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation'
+
+  Mollie\Provider\OrderTotalProvider:
+    class: Mollie\Provider\OrderTotalProvider
+    arguments:
+      - '@=service("mollie.adapter.context")'
+
+  Mollie\Validator\OrderCallBackValidator:
+    class: Mollie\Validator\OrderCallBackValidator
+    arguments:
+      - '@mollie.context'
+      - '@mollie'

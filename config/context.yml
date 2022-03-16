@@ -1,32 +1,40 @@
 services:
-  context:
+  mollie.context:
     class: 'Context'
     factory: ['Mollie\Factory\ContextFactory', 'getContext']
 
-  controller:
+  mollie.controller:
     class: 'Controller'
     factory: ['Mollie\Factory\ContextFactory', 'getController']
 
-  cookie:
+  mollie.cookie:
     class: 'Cookie'
     factory: ['Mollie\Factory\ContextFactory', 'getCookie']
 
-  language:
+  mollie.language:
     class: 'Language'
     factory: ['Mollie\Factory\ContextFactory', 'getLanguage']
 
-  currency:
+  mollie.currency:
     class: 'Currency'
     factory: ['Mollie\Factory\ContextFactory', 'getCurrency']
 
-  smarty:
+  mollie.smarty:
     class: 'Smarty'
     factory: ['Mollie\Factory\ContextFactory', 'getSmarty']
 
-  shop:
+  mollie.shop:
     class: 'Shop'
     factory: ['Mollie\Factory\ContextFactory', 'getShop']
 
-  link:
+  mollie.link:
     class: 'Shop'
     factory: ['Mollie\Factory\ContextFactory', 'getLink']
+
+  mollie.country:
+    class: 'Shop'
+    factory: ['Mollie\Factory\ContextFactory', 'getCountry']
+
+  mollie.customer:
+    class: 'Customer'
+    factory: ['Mollie\Factory\ContextFactory', 'getCustomer']

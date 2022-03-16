@@ -1,48 +1,44 @@
 <?php
 /**
- * Copyright (c) 2012-2020, Mollie B.V.
- * All rights reserved.
+ * Mollie       https://www.mollie.nl
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
- * - Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
- * DAMAGE.
- *
- * @author     Mollie B.V. <info@mollie.nl>
- * @copyright  Mollie B.V.
- * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
- * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
+ * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Repository;
 
-use _PhpScoper5eddef0da618a\Mollie\Api\Types\PaymentStatus;
+use Context;
 use Db;
 use DbQuery;
+use Exception;
+use Mollie\Api\Types\PaymentStatus;
+use MolPaymentMethod;
+use mysqli_result;
+use PDOStatement;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
-class PaymentMethodRepository
+/**
+ * @deprecated - outside code must always use interface. Use PaymentMethodRepositoryInterface instead.
+ * In Containers use PaymentMethodRepositoryInterface::class
+ */
+class PaymentMethodRepository extends AbstractRepository implements PaymentMethodRepositoryInterface
 {
+    public function __construct()
+    {
+        parent::__construct(MolPaymentMethod::class);
+    }
+
+    /**
+     * @param string $paymentMethodId
+     *
+     * @return false|string|null
+     */
     public function getPaymentMethodIssuersByPaymentMethodId($paymentMethodId)
     {
         $sql = 'Select issuers_json FROM `' . _DB_PREFIX_ . 'mol_payment_method_issuer` WHERE id_payment_method = "' . pSQL($paymentMethodId) . '"';
@@ -50,6 +46,11 @@ class PaymentMethodRepository
         return Db::getInstance()->getValue($sql);
     }
 
+    /**
+     * @param string $paymentMethodId
+     *
+     * @return bool
+     */
     public function deletePaymentMethodIssuersByPaymentMethodId($paymentMethodId)
     {
         $sql = 'DELETE FROM `' . _DB_PREFIX_ . 'mol_payment_method_issuer` WHERE id_payment_method = "' . pSQL($paymentMethodId) . '"';
@@ -57,28 +58,54 @@ class PaymentMethodRepository
         return Db::getInstance()->execute($sql);
     }
 
-    public function getPaymentMethodIdByMethodId($paymentMethodId)
+    /**
+     * @param array $savedPaymentMethods
+     * @param int $environment
+     *
+     * @return bool
+     */
+    public function deleteOldPaymentMethods(array $savedPaymentMethods, $environment)
     {
-        $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method` WHERE id_method = "' . pSQL($paymentMethodId) . '"';
+        $escapedMethods = array_map(static function ($str) { return pSQL($str); }, $savedPaymentMethods);
+
+        return Db::getInstance()->delete(
+            'mol_payment_method',
+            'id_method NOT IN ("' . implode('", "', $escapedMethods) . '")
+            AND `live_environment` = ' . (int) $environment
+        );
+    }
+
+    /**
+     * @param string $paymentMethodId
+     * @param int $environment
+     *
+     * @return false|string|null
+     */
+    public function getPaymentMethodIdByMethodId($paymentMethodId, $environment, $shopId = null)
+    {
+        if (!$shopId) {
+            $shopId = Context::getContext()->shop->id;
+        }
+
+        $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method`
+        WHERE id_method = "' . pSQL($paymentMethodId) . '" AND live_environment = "' . (int) $environment . '" 
+        AND id_shop = ' . (int) $shopId;
 
         return Db::getInstance()->getValue($sql);
     }
 
-
     /**
      * @param string $column
-     * @param int $id
+     * @param string $id
      *
-     * @return array
+     * @return array|bool|object|null
+     *
      * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     *
-     * @since 3.3.0 static function
      */
     public function getPaymentBy($column, $id)
     {
         try {
-            $paidPayment = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $paidPayment = Db::getInstance()->getRow(
                 sprintf(
                     'SELECT * FROM `%s` WHERE `%s` = \'%s\' AND `bank_status` IN(\'%s\', \'%s\')',
                     _DB_PREFIX_ . 'mollie_payments',
@@ -98,7 +125,7 @@ class PaymentMethodRepository
         }
 
         try {
-            $nonPaidPayment = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
+            $nonPaidPayment = Db::getInstance()->getRow(
                 sprintf(
                     'SELECT * FROM `%s` WHERE `%s` = \'%s\' ORDER BY `created_at` DESC',
                     _DB_PREFIX_ . 'mollie_payments',
@@ -115,7 +142,7 @@ class PaymentMethodRepository
     }
 
     /**
-     * Add the order reference column in case the module upgrade script hasn't run
+     * Add the order reference column in case the module upgrade script hasn't run.
      *
      * @return bool
      *
@@ -124,7 +151,7 @@ class PaymentMethodRepository
     public function tryAddOrderReferenceColumn()
     {
         try {
-            if (!Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
+            if (!Db::getInstance()->getValue('
                 SELECT COUNT(*)
                 FROM information_schema.COLUMNS
                 WHERE TABLE_SCHEMA = \'' . _DB_NAME_ . '\'
@@ -140,12 +167,87 @@ class PaymentMethodRepository
         return true;
     }
 
-    public function getMethodsForCheckout()
+    /**
+     * @return array|false|mysqli_result|PDOStatement|resource|null
+     *
+     * @throws PrestaShopDatabaseException
+     */
+    public function getMethodsForCheckout($environment, $shopId)
     {
         $sql = new DbQuery();
         $sql->select('*');
         $sql->from('mol_payment_method');
+        $sql->where('live_environment = ' . pSQL($environment));
+        $sql->where('id_shop = ' . (int) $shopId);
 
         return Db::getInstance()->executeS($sql);
+    }
+
+    /**
+     * @param string $oldTransactionId
+     * @param string $newTransactionId
+     *
+     * @return bool
+     */
+    public function updateTransactionId($oldTransactionId, $newTransactionId)
+    {
+        return Db::getInstance()->update(
+            'mollie_payments',
+            [
+                'transaction_id' => pSQL($newTransactionId),
+            ],
+            '`transaction_id` = \'' . pSQL($oldTransactionId) . '\''
+        );
+    }
+
+    public function savePaymentStatus($transactionId, $status, $orderId, $paymentMethod)
+    {
+        try {
+            return Db::getInstance()->update(
+                'mollie_payments',
+                [
+                    'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
+                    'bank_status' => pSQL($status),
+                    'order_id' => (int) $orderId,
+                    'method' => pSQL($paymentMethod),
+                ],
+                '`transaction_id` = \'' . pSQL($transactionId) . '\''
+            );
+        } catch (Exception $e) {
+            $this->tryAddOrderReferenceColumn();
+            throw $e;
+        }
+    }
+
+    public function addOpenStatusPayment($cartId, $orderPayment, $transactionId, $orderId, $orderReference)
+    {
+        return Db::getInstance()->insert(
+            'mollie_payments',
+            [
+                'cart_id' => (int) $cartId,
+                'method' => pSQL($orderPayment),
+                'transaction_id' => pSQL($transactionId),
+                'bank_status' => PaymentStatus::STATUS_OPEN,
+                'order_id' => (int) $orderId,
+                'order_reference' => psql($orderReference),
+                'created_at' => ['type' => 'sql', 'value' => 'NOW()'],
+            ]
+        );
+    }
+
+    public function updatePaymentReason($transactionId, $reason)
+    {
+        try {
+            return Db::getInstance()->update(
+                'mollie_payments',
+                [
+                    'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
+                    'reason' => pSQL($reason),
+                ],
+                '`transaction_id` = \'' . pSQL($transactionId) . '\''
+            );
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 }

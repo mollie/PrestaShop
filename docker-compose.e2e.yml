@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  cypress:
+    # the Docker image to use from https://github.com/cypress-io/cypress-docker-images
+    image: "cypress/included:9.5.1"
+    environment:
+      # pass base url to test pointing at the web application
+      - CYPRESS_EVERY_NTH_FRAME=1 
+    # share the current folder as volume to avoid copying
+    command: /bin/sh -c "--config npx browserslist@latest --update-db"
+    working_dir: /e2e
+    volumes:
+      - ./:/e2e
+    networks:
+      - prestashop_mollie_net_e2e
+    #platform: linux/x86_64
+
+networks:
+  prestashop_mollie_net_e2e:
+    external:
+      name: 'prestashop_mollie_net'

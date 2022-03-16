@@ -1,38 +1,4 @@
-{*
- *
- * Copyright (c) 2012-2020, Mollie B.V.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * - Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
- * DAMAGE.
- *
- * @author     Mollie B.V. <info@mollie.nl>
- * @copyright  Mollie B.V.
- * @license    Berkeley Software Distribution License (BSD-License 2) http://www.opensource.org/licenses/bsd-license.php
- * @category   Mollie
- * @package    Mollie
- * @link       https://www.mollie.nl
- *
- *}
-<div id="mollie_order"></div>
+<div id="mollie_order" class="test"></div>
 <script type="text/javascript">
   (function () {
     window.MollieModule = window.MollieModule || {ldelim}{rdelim};
@@ -66,7 +32,7 @@
                 refund: '{l s='Refund' mod='mollie' js=1}',
                 cancel: '{l s='Cancel' mod='mollie' js=1}',
                 refundOrder:'{l s='Refund order' mod='mollie' js=1}',
-                remaining: '{l s='Remaining' mod='mollie' js=1}',
+                refundable: '{l s='Refundable' mod='mollie' js=1}',
                 partialRefund: '{l s='Partial refund' mod='mollie' js=1}',
                 invalidAmount: '{l s='Invalid amount' mod='mollie' js=1}',
                 notAValidAmount: '{l s='You have entered an invalid amount' mod='mollie' js=1}',
@@ -107,15 +73,20 @@
                 cancelAll: '{l s='Cancel all' mod='mollie' js=1}',
                 refundAll: '{l s='Refund all' mod='mollie' js=1}',
                 transactionInfo: '{l s='Transaction info' mod='mollie' js=1}',
+                voucherInfo: '{l s='Voucher info' mod='mollie' js=1}',
                 thereAreNoProducts: '{l s='There are no products' mod='mollie' js=1}',
                 anErrorOccurred: '{l s='An error occurred' mod='mollie' js=1}',
                 unableToShip: '{l s='Unable to ship' mod='mollie' js=1}',
                 unableToRefund: '{l s='Unable to refund' mod='mollie' js=1}',
                 unableToCancel: '{l s='Unable to cancel' mod='mollie' js=1}',
                 refundsAreCurrentlyUnavailable: '{l s='Refunds are currently unavailable' mod='mollie' js=1}',
-                refundWarning: '{l s='Refund was made successfully!' mod='mollie' js=1}',
+                refundSuccessMessage: '{l s='Refund was made successfully!' mod='mollie' js=1}',
                 shipmentWarning: '{l s='Shipment was made successfully!' mod='mollie' js=1}',
-                cancelWarning: '{l s='Order was canceled successfully!' mod='mollie' js=1}'
+                cancelWarning: '{l s='Order was canceled successfully!' mod='mollie' js=1}',
+                method: '{l s='Method' mod='mollie' js=1}',
+                remainderMethod: '{l s='Remainder method' mod='mollie' js=1}',
+                issuer: '{l s='Issuer' mod='mollie' js=1}',
+                refundWarning: '{l s='Warning! This order is (partially) paid using a voucher. You can refund a maximum of %1s.' mod='mollie' js=1}',
               },
               {$currencies|json_encode}
       );
@@ -123,5 +94,5 @@
   }());
 </script>
 {foreach $webPackChunks as $webPackChunk}
-  <script type="text/javascript" src="{$webPackChunk}"></script>
+  <script type="text/javascript" src="{$webPackChunk|escape:'html':'UTF-8'}"></script>
 {/foreach}

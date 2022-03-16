@@ -1,0 +1,10 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/simple"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "sample/simple.json"
+  }
+}

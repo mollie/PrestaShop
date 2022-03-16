@@ -1,0 +1,6 @@
+services:
+  Mollie\Tracker\Segment:
+    class: 'Mollie\Tracker\Segment'
+    arguments:
+      - '@mollie.context'
+      - '@Mollie\Config\Env'
