@@ -1,10 +1,12 @@
 {
  "chromeWebSecurity": false,
  "experimentalSourceRewriting": true,
- "numTestsKeptInMemory": 90,
- "defaultCommandTimeout": 10000,
+ "numTestsKeptInMemory": 0,
+ "defaultCommandTimeout": 20000,
  "projectId": "xb89dr",
  "retries": 2,
  "experimentalSessionSupport": true,
+ "baseUrl": "https://demoshop.eu.ngrok.io",
+ "videoUploadOnPasses": false,
  "ignoreTestFiles": ["index.php", "**/cypress/integration/ps16/**", "**/cypress/integration/ps17/**"]
 }

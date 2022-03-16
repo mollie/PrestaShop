@@ -10,89 +10,29 @@ SetEnv HTTP_MOD_REWRITE On
 RewriteEngine on
 
 
-#Domain: 172.17.0.1:8001
-RewriteCond %{HTTP_HOST} ^172.17.0.1:8001$
+#Domain: demoshop.eu.ngrok.io
+RewriteCond %{HTTP_HOST} ^demoshop.eu.ngrok.io$
 RewriteRule . - [E=REWRITEBASE:/]
 RewriteRule ^api(?:/(.*))?$ %{ENV:REWRITEBASE}webservice/dispatcher.php?url=$1 [QSA,L]
 
-# Images
-RewriteCond %{HTTP_HOST} ^172.17.0.1:8001$
-RewriteRule ^([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$1$2$3.jpg [L]
-RewriteCond %{HTTP_HOST} ^172.17.0.1:8001$
-RewriteRule ^([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$1$2$3$4.jpg [L]
-RewriteCond %{HTTP_HOST} ^172.17.0.1:8001$
-RewriteRule ^([0-9])([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$3/$1$2$3$4$5.jpg [L]
-RewriteCond %{HTTP_HOST} ^172.17.0.1:8001$
-RewriteRule ^([0-9])([0-9])([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$3/$4/$1$2$3$4$5$6.jpg [L]
-RewriteCond %{HTTP_HOST} ^172.17.0.1:8001$
-RewriteRule ^([0-9])([0-9])([0-9])([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$3/$4/$5/$1$2$3$4$5$6$7.jpg [L]
-RewriteCond %{HTTP_HOST} ^172.17.0.1:8001$
-RewriteRule ^([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$3/$4/$5/$6/$1$2$3$4$5$6$7$8.jpg [L]
-RewriteCond %{HTTP_HOST} ^172.17.0.1:8001$
-RewriteRule ^([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$3/$4/$5/$6/$7/$1$2$3$4$5$6$7$8$9.jpg [L]
-RewriteCond %{HTTP_HOST} ^172.17.0.1:8001$
-RewriteRule ^([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$3/$4/$5/$6/$7/$8/$1$2$3$4$5$6$7$8$9$10.jpg [L]
-RewriteCond %{HTTP_HOST} ^172.17.0.1:8001$
-RewriteRule ^c/([0-9]+)(\-[\.*_a-zA-Z0-9-]*)(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/c/$1$2$3.jpg [L]
-RewriteCond %{HTTP_HOST} ^172.17.0.1:8001$
-RewriteRule ^c/([a-zA-Z_-]+)(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/c/$1$2.jpg [L]
 # AlphaImageLoader for IE and fancybox
-RewriteCond %{HTTP_HOST} ^172.17.0.1:8001$
+RewriteCond %{HTTP_HOST} ^demoshop.eu.ngrok.io$
 RewriteRule ^images_ie/?([^/]+)\.(jpe?g|png|gif)$ js/jquery/plugins/fancybox/images/$1.$2 [L]
 
-# Dispatcher
-RewriteCond %{REQUEST_FILENAME} -s [OR]
-RewriteCond %{REQUEST_FILENAME} -l [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteCond %{HTTP_HOST} ^172.17.0.1:8001$
-RewriteRule ^.*$ - [NC,L]
-RewriteCond %{HTTP_HOST} ^172.17.0.1:8001$
-RewriteRule ^.*$ %{ENV:REWRITEBASE}index.php [NC,L]
 
-
-#Domain: localhost
-RewriteCond %{HTTP_HOST} ^localhost$
+#Domain: demoshop.eu.ngrok.io
+RewriteCond %{HTTP_HOST} ^demoshop.eu.ngrok.io$
 RewriteRule . - [E=REWRITEBASE:/docker177/]
 RewriteRule ^api(?:/(.*))?$ %{ENV:REWRITEBASE}webservice/dispatcher.php?url=$1 [QSA,L]
 
-RewriteCond %{HTTP_HOST} ^localhost$
-RewriteRule ^shop2$ /docker177/shop2/ [L,R]
-RewriteCond %{HTTP_HOST} ^localhost$
+RewriteCond %{HTTP_HOST} ^demoshop.eu.ngrok.io$
+RewriteRule ^shop2/?$ /docker177/shop2/index.php [L,R]
+RewriteCond %{HTTP_HOST} ^demoshop.eu.ngrok.io$
 RewriteRule ^shop2/(.*) /docker177/$1 [L]
 
-# Images
-RewriteCond %{HTTP_HOST} ^localhost$
-RewriteRule ^([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$1$2$3.jpg [L]
-RewriteCond %{HTTP_HOST} ^localhost$
-RewriteRule ^([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$1$2$3$4.jpg [L]
-RewriteCond %{HTTP_HOST} ^localhost$
-RewriteRule ^([0-9])([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$3/$1$2$3$4$5.jpg [L]
-RewriteCond %{HTTP_HOST} ^localhost$
-RewriteRule ^([0-9])([0-9])([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$3/$4/$1$2$3$4$5$6.jpg [L]
-RewriteCond %{HTTP_HOST} ^localhost$
-RewriteRule ^([0-9])([0-9])([0-9])([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$3/$4/$5/$1$2$3$4$5$6$7.jpg [L]
-RewriteCond %{HTTP_HOST} ^localhost$
-RewriteRule ^([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$3/$4/$5/$6/$1$2$3$4$5$6$7$8.jpg [L]
-RewriteCond %{HTTP_HOST} ^localhost$
-RewriteRule ^([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$3/$4/$5/$6/$7/$1$2$3$4$5$6$7$8$9.jpg [L]
-RewriteCond %{HTTP_HOST} ^localhost$
-RewriteRule ^([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$3/$4/$5/$6/$7/$8/$1$2$3$4$5$6$7$8$9$10.jpg [L]
-RewriteCond %{HTTP_HOST} ^localhost$
-RewriteRule ^c/([0-9]+)(\-[\.*_a-zA-Z0-9-]*)(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/c/$1$2$3.jpg [L]
-RewriteCond %{HTTP_HOST} ^localhost$
-RewriteRule ^c/([a-zA-Z_-]+)(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/c/$1$2.jpg [L]
 # AlphaImageLoader for IE and fancybox
-RewriteCond %{HTTP_HOST} ^localhost$
+RewriteCond %{HTTP_HOST} ^demoshop.eu.ngrok.io$
 RewriteRule ^images_ie/?([^/]+)\.(jpe?g|png|gif)$ js/jquery/plugins/fancybox/images/$1.$2 [L]
-
-# Dispatcher
-RewriteCond %{REQUEST_FILENAME} -s [OR]
-RewriteCond %{REQUEST_FILENAME} -l [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteCond %{HTTP_HOST} ^localhost$
-RewriteRule ^.*$ - [NC,L]
-RewriteCond %{HTTP_HOST} ^localhost$
-RewriteRule ^.*$ %{ENV:REWRITEBASE}index.php [NC,L]
 </IfModule>
 
 AddType application/vnd.ms-fontobject .eot
@@ -127,3 +67,4 @@ AddType font/woff2 .woff2
 ErrorDocument 404 /index.php?controller=404
 
 # ~~end~~ Do not remove this comment, Prestashop will keep automatically the code outside this comment when .htaccess will be generated again
+

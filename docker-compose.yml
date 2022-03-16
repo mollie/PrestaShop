@@ -10,6 +10,7 @@ services:
       PATH: /var/www/html/_dev/node_modules/.bin/:$PATH
 
   mysql:
+    #platform: linux/amd64
     container_name: mollie-mysql
     image: mysql:5.7
     ports:
@@ -25,6 +26,7 @@ services:
       - prestashop_mollie_net
 
   prestashop-17:
+    #platform: linux/amd64
     container_name: prestashop-17
     build:
       context: .
@@ -34,7 +36,7 @@ services:
       DB_PASSWD: prestashop
       DB_NAME: prestashop
       DB_SERVER: mysql
-      PS_DOMAIN: 172.17.0.1:8001
+      PS_DOMAIN: demoshop.eu.ngrok.io:8001
       PS_FOLDER_INSTALL: install
       PS_FOLDER_ADMIN: admin1
     depends_on:

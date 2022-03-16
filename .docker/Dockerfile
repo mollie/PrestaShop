@@ -1,4 +1,9 @@
 FROM prestashop/prestashop:1.7.7.0-apache as common
 
+RUN cd /usr/local/etc/php/conf.d/ && \
+  echo 'memory_limit = 4096M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini
+
+RUN echo 'max_execution_time = 120' >> /usr/local/etc/php/conf.d/docker-php-maxexectime.ini
+
 RUN pecl install -f xdebug
 
