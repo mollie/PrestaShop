@@ -142,32 +142,6 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
     }
 
     /**
-     * Add the order reference column in case the module upgrade script hasn't run.
-     *
-     * @return bool
-     *
-     * @since 3.3.0
-     */
-    public function tryAddOrderReferenceColumn()
-    {
-        try {
-            if (!Db::getInstance()->getValue('
-                SELECT COUNT(*)
-                FROM information_schema.COLUMNS
-                WHERE TABLE_SCHEMA = \'' . _DB_NAME_ . '\'
-                AND TABLE_NAME = \'' . _DB_PREFIX_ . 'mollie_payments\'
-                AND COLUMN_NAME = \'order_reference\'')
-            ) {
-                return Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . 'mollie_payments` ADD `order_reference` varchar(191)');
-            }
-        } catch (PrestaShopException $e) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * @return array|false|mysqli_result|PDOStatement|resource|null
      *
      * @throws PrestaShopDatabaseException

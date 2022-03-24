@@ -16,6 +16,7 @@ imports:
   - { resource: payment_option_provider.yml }
   - { resource: decoder.yml }
   - { resource: certificate.yml }
+  - { resource: command_handler.yml }
 
 services:
   mollie:

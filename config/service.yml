@@ -26,6 +26,7 @@ services:
       - '@Mollie\Service\PaymentMethod\PaymentMethodSortProvider'
       - '@Mollie\Adapter\ConfigurationAdapter'
       - '@Mollie\Service\TransactionService'
+      - '@mollie.shop'
 
   Mollie\Service\ConfigFieldService:
     class: Mollie\Service\ConfigFieldService
@@ -205,9 +206,6 @@ services:
       - '@Mollie\Repository\CartRuleRepository'
       - '@Mollie\Repository\OrderRepository'
 
-  Mollie\Handler\ApplePay\ApplePayDirectCartCreationHandler:
-    class: Mollie\Handler\ApplePay\ApplePayDirectCartCreationHandler
-
   Mollie\Service\Shipment\ShipmentInformationSender:
     class: Mollie\Service\Shipment\ShipmentInformationSender
     arguments:
@@ -223,3 +221,9 @@ services:
 
   Mollie\Service\EntityManager\ObjectModelManager:
     class: Mollie\Service\EntityManager\ObjectModelManager
+
+  Mollie\Service\MollieOrderCreationService:
+    class: Mollie\Service\MollieOrderCreationService
+    arguments:
+      - '@Mollie\Handler\Exception\OrderExceptionHandler'
+      - '@mollie'

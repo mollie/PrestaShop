@@ -10,13 +10,27 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Application\Command\CreateApplePayOrder;
+use Mollie\Application\Command\RequestApplePayPaymentSession;
+use Mollie\Application\Command\UpdateApplePayShippingContact;
+use Mollie\Application\Command\UpdateApplePayShippingMethod;
+use Mollie\Application\CommandHandler\CreateApplePayOrderHandler;
+use Mollie\Application\CommandHandler\RequestApplePayPaymentSessionHandler;
+use Mollie\Application\CommandHandler\UpdateApplePayShippingContactHandler;
+use Mollie\Application\CommandHandler\UpdateApplePayShippingMethodHandler;
 use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
 use Mollie\Builder\ApplePayDirect\ApplePayProductBuilder;
+use Mollie\Config\Config;
 use Mollie\DTO\ApplePay\Carrier\Carrier as AppleCarrier;
-use Mollie\Handler\ApplePay\ApplePayDirectCartCreationHandler;
 use Mollie\Handler\Order\OrderCreationHandler;
+use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Service\ApiService;
+use Mollie\Service\PaymentMethodService;
+use Mollie\Service\TransactionService;
 use Mollie\Utility\NumberUtility;
+use Mollie\Utility\OrderNumberUtility;
 use PrestaShop\Decimal\DecimalNumber;
+use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 
 class MollieAjaxModuleFrontController extends ModuleFrontController
 {
@@ -32,15 +46,13 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
             case 'displayCheckoutError':
                 $this->displayCheckoutError();
             case 'mollie_apple_pay_validation':
-                $this->getApplePaySession(Tools::getValue('validationUrl'));
+                $this->getApplePaySession();
+            case 'mollie_apple_pay_update_shipping_contact':
+                $this->updateAppleShippingContact();
+            case 'mollie_apple_pay_update_shipping_method':
+                $this->updateShippingMethod();
             case 'mollie_apple_pay_create_order':
                 $this->createApplePayOrder();
-            case 'mollie_apple_pay_update_shipping_contact':
-                $this->getCarriers();
-            case 'mollie_apple_pay_update_shipping_method':
-                $this->updateShippingContact();
-            case 'mollie_get_apple_pay_carriers':
-                $this->getCarriers();
         }
     }
 
@@ -116,49 +128,6 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
         );
     }
 
-    private function getCarriers()
-    {
-
-        /** @var ApplePayDirectCartCreationHandler $applePayCartCreationHandler */
-        $applePayCartCreationHandler = $this->module->getMollieContainer(ApplePayDirectCartCreationHandler::class);
-        $product = Tools::getValue('product');
-        $simplifiedContent = Tools::getValue('simplifiedContact');
-
-        $cart = $applePayCartCreationHandler->handle($simplifiedContent, $product);
-        $address = new Address($cart->id_address_delivery);
-        $country = new Country($address->id_country);
-        /** @var ApplePayCarriersBuilder $applePayCarrierBuilder */
-        $applePayCarrierBuilder = $this->module->getMollieContainer()->get(ApplePayCarriersBuilder::class);
-        $applePayCarriers = $applePayCarrierBuilder->build(Carrier::getCarriersForOrder($this->context->language->id, true), $country->id_zone);
-
-        $shippingMethod = array_map(function (AppleCarrier $carrier) use ($cart) {
-            return [
-                'identifier' => $carrier->getCarrierId(),
-                'label' => $carrier->getName(),
-                'amount' => $carrier->getAmount(),
-                'detail' => $carrier->getDelay(),
-            ];
-        }, $applePayCarriers);
-
-        $totals = array_map(function (AppleCarrier $carrier) use ($cart) {
-            return [
-                'type' => 'final',
-                'label' => $carrier->getName(),
-                'amount' => number_format($cart->getOrderTotal(true, Cart::BOTH, null, $carrier->getCarrierId()), 2, '.', ''),
-            ];
-        }, $applePayCarriers);
-
-        $this->ajaxDie(json_encode(
-            [
-                'data' => [
-                    'shipping_methods' => $shippingMethod,
-                    'totals' => $totals,
-                ],
-                'success' => true
-            ]
-        ));
-    }
-
     private function displayCheckoutError()
     {
         $errorMessages = explode('#', Tools::getValue('hashTag'));
@@ -175,46 +144,105 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
         $this->ajaxDie();
     }
 
-    private function getApplePaySession(string $validationUrl)
+    private function getApplePaySession()
     {
-        if (!$this->module->api) {
-            die();
-        }
-        $response = $this->module->api->wallets->requestApplePayPaymentSession($this->getShopUrl(), $validationUrl);
-        $this->ajaxDie(json_encode([
-            'success' => true,
-            'data' => $response
-        ]));
+        $validationUrl = Tools::getValue('validationUrl');
+        /** @var RequestApplePayPaymentSessionHandler $handler */
+        $handler = $this->module->getMollieContainer(RequestApplePayPaymentSessionHandler::class);
+
+        $command = new RequestApplePayPaymentSession(
+            $validationUrl,
+            (int) $this->context->currency->id,
+            (int) $this->context->language->id
+        );
+        $response = $handler->handle($command);
+
+        $this->ajaxDie(json_encode($response));
+    }
+
+    private function updateShippingMethod()
+    {
+        /** @var UpdateApplePayShippingMethodHandler $handler */
+        $handler = $this->module->getMollieContainer(UpdateApplePayShippingMethodHandler::class);
+        $shippingMethodDetails = Tools::getValue('shippingMethod');
+
+        $command = new UpdateApplePayShippingMethod(
+            (int) $shippingMethodDetails['identifier'],
+            (int) Tools::getValue('cartId')
+        );
+        $response = $handler->handle($command);
+
+        $this->ajaxDie(json_encode($response));
+    }
+
+    private function updateAppleShippingContact()
+    {
+        /** @var UpdateApplePayShippingContactHandler $handler */
+        $handler = $this->module->getMollieContainer(UpdateApplePayShippingContactHandler::class);
+
+        $simplifiedContent = Tools::getValue('simplifiedContact');
+        $product = Tools::getValue('product');
+        $cartId = (int) Tools::getValue('cartId');
+        $customerId = (int) Tools::getValue('customerId');
+
+        $command = new UpdateApplePayShippingContact(
+            $product['id_product'],
+            $product['id_product_attribute'],
+            $product['id_customization'],
+            $product['quantity_wanted'],
+            $cartId,
+            $simplifiedContent['postalCode'],
+            $simplifiedContent['countryCode'],
+            $simplifiedContent['country'],
+            $simplifiedContent['locality'],
+            $customerId
+        );
+        $result = $handler->handle($command);
+
+        $this->ajaxDie(json_encode($result));
     }
 
     private function createApplePayOrder()
     {
+        $cartId = (int)  Tools::getValue('cartId');
+        $cart = new Cart($cartId);
+
+        /** @var CreateApplePayOrderHandler $handler */
+        $handler = $this->module->getMollieContainer(CreateApplePayOrderHandler::class);
         /** @var ApplePayProductBuilder $applePayProductBuilder */
         $applePayProductBuilder = $this->module->getMollieContainer(ApplePayProductBuilder::class);
+
         $applePayOrderBuilder = $applePayProductBuilder->build(Tools::getAllValues());
 
-        /** @var OrderCreationHandler $orderCreationHandler */
-        $orderCreationHandler = $this->module->getMollieContainer(OrderCreationHandler::class);
-        $orderCreationHandler->createApplePayDirectOrder($applePayOrderBuilder);
+        $command = new CreateApplePayOrder(
+            $cartId,
+            $applePayOrderBuilder,
+            json_encode(Tools::getValue('token'))
+        );
+        $response = $handler->handle($command);
+        if (!$response['success']) {
+            $this->ajaxDie(json_encode($response));
+        }
+
+        $this->recoverCreatedOrder($cart->id_customer);
+
+        $this->ajaxDie(json_encode($response));
     }
 
-    //todo: calculate price and send it back to update price
-    private function updateShippingContact()
+    private function recoverCreatedOrder(int $customerId)
     {
-        /** @var ApplePayCarriersBuilder $applePayCarrierBuilder */
-        $applePayCarrierBuilder = $this->module->getMollieContainer()->get(ApplePayCarriersBuilder::class);
-        $applePayCarriers = $applePayCarrierBuilder->build(Carrier::getCarriers($this->context->language->id, true));
-
-        $this->ajaxDie(json_encode([
-            'success' => true,
-            'data' => json_encode($applePayCarriers)
-        ]));
-    }
-
-    public function getShopUrl()
-    {
-        $shop = $this->context->shop;
-
-        return $shop->domain;
+        $customer = new Customer($customerId);
+        $customer->logged = 1;
+        $this->context->customer = (int) $customerId;
+        $this->context->cookie->id_customer = (int) $customerId;
+        $this->context->customer = $customer;
+        $this->context->cookie->id_customer = (int) $customer->id;
+        $this->context->cookie->customer_lastname = $customer->lastname;
+        $this->context->cookie->customer_firstname = $customer->firstname;
+        $this->context->cookie->logged = 1;
+        $this->context->cookie->check_cgv = 1;
+        $this->context->cookie->is_guest = $customer->isGuest();
+        $this->context->cookie->passwd = $customer->passwd;
+        $this->context->cookie->email = $customer->email;
     }
 }

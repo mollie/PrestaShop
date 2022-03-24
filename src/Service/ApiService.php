@@ -24,12 +24,14 @@ use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\PaymentCollection;
 use Mollie\Config\Config;
+use Mollie\Exception\MollieApiException;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use MolPaymentMethod;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+use Shop;
 
 class ApiService
 {
@@ -64,13 +66,18 @@ class ApiService
      * @var TransactionService
      */
     private $transactionService;
+    /**
+     * @var Shop
+     */
+    private $shop;
 
     public function __construct(
         PaymentMethodRepository $methodRepository,
         CountryRepository $countryRepository,
         PaymentMethodSortProviderInterface $paymentMethodSortProvider,
         ConfigurationAdapter $configurationAdapter,
-        TransactionService $transactionService
+        TransactionService $transactionService,
+        Shop $shop
     ) {
         $this->countryRepository = $countryRepository;
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
@@ -78,6 +85,7 @@ class ApiService
         $this->configurationAdapter = $configurationAdapter;
         $this->environment = (int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT);
         $this->transactionService = $transactionService;
+        $this->shop = $shop;
     }
 
     /**
@@ -336,5 +344,14 @@ class ApiService
         }
 
         return $order;
+    }
+
+    public function requestApplePayPaymentSession(?MollieApiClient $api, string $validationUrl): string
+    {
+        if (!$api) {
+            throw new MollieApiException('Mollie API is null. Check if API key is correct', MollieApiException::MOLLIE_API_IS_NULL);
+        }
+
+        return $api->wallets->requestApplePayPaymentSession($this->shop->domain, $validationUrl);
     }
 }

@@ -95,6 +95,19 @@
                                 </select>
                             </div>
                         </div>
+                        {if $paymentMethod.id === 'applepay'}
+                            <div class="form-group">
+                                <label class="control-label col-lg-3">
+                                    {l s='ApplePay Direct' mod='mollie'}
+                                </label>
+                                <div class="col-lg-9">
+                                    <select name="MOLLIE_APPLE_PAY_DIRECT_ENABLED" class="fixed-width-xl">
+                                        <option value="0" {if $input.applePayDirect === 0} selected {/if}>{l s='No' mod='mollie'}</option>
+                                        <option value="1" {if $input.applePayDirect === 1} selected {/if}>{l s='Yes' mod='mollie'}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        {/if}
                         <div class="form-group">
                             <label class="control-label col-lg-3">
                                 {l s='Title' mod='mollie'}

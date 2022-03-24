@@ -22,6 +22,7 @@ use Mollie\Handler\Exception\OrderExceptionHandler;
 use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\ExceptionService;
+use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Utility\OrderNumberUtility;
 
@@ -88,6 +89,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
         /** @var PaymentMethodService $transactionService */
         $transactionService = $this->module->getMollieContainer(PaymentMethodService::class);
+        /** @var MollieOrderCreationService $mollieOrderCreationService */
+        $mollieOrderCreationService = $this->module->getMollieContainer(MollieOrderCreationService::class);
 
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method, $environment);
@@ -115,12 +118,42 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $paymentData = $orderCreationHandler->createBankTransferOrder($paymentData, $cart);
         }
 
-        $apiPayment = $this->createMollieOrder($paymentData, $paymentMethodObj);
+        try {
+            $apiPayment = $mollieOrderCreationService->createMollieOrder($paymentData, $paymentMethodObj);
+        } catch (OrderCreationException $e) {
+            $this->setTemplate('error.tpl');
+
+            if (Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)) {
+                $message = 'Cart Dump: ' . $e->getMessage() . ' json: ' . json_encode($paymentData, JSON_PRETTY_PRINT);
+            } else {
+                /** @var ExceptionService $exceptionService */
+                $exceptionService = $this->module->getMollieContainer(ExceptionService::class);
+                $message = $exceptionService->getErrorMessageForException($e, $exceptionService->getErrorMessages());
+            }
+            $this->errors[] = $message;
+
+            return false;
+        } catch (PrestaShopException $e) {
+            $this->setTemplate('error.tpl');
+            $this->errors[] = Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
+                ? $e->getMessage() . ' Cart Dump: ' . json_encode($paymentData, JSON_PRETTY_PRINT)
+                : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
+
+            return false;
+        }
+
         if (!$apiPayment) {
             return;
         }
 
-        $this->createOrder($apiPayment, $cart->id, $orderNumber);
+        try {
+            $mollieOrderCreationService->createOrder($apiPayment, $cart->id, $orderNumber);
+        } catch (Exception $e) {
+            $this->setTemplate('error.tpl');
+            $this->errors[] = $this->module->l('Failed to save order information.', 'payment');
+            return false;
+
+        }
 
         // Go to payment url
         if (null !== $apiPayment->getCheckoutUrl()) {
@@ -169,85 +202,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         return true;
-    }
-
-    /**
-     * @param PaymentData|OrderData $paymentData
-     * @param MolPaymentMethod $paymentMethodObj
-     *
-     * @return false|MollieOrderAlias|MolliePaymentAlias
-     *
-     * @throws PrestaShopException
-     */
-    protected function createMollieOrder($paymentData, $paymentMethodObj)
-    {
-        try {
-            $apiPayment = $this->createPayment($paymentData->jsonSerialize(), $paymentMethodObj->method);
-        } catch (Exception $e) {
-            if ($paymentData instanceof OrderData) {
-                $paymentData->setDeliveryPhoneNumber(null);
-                $paymentData->setBillingPhoneNumber(null);
-            }
-            try {
-                $apiPayment = $this->createPayment($paymentData->jsonSerialize(), $paymentMethodObj->method);
-            } catch (OrderCreationException $e) {
-                $errorHandler = ErrorHandler::getInstance();
-                $errorHandler->handle($e, $e->getCode(), false);
-
-                $this->setTemplate('error.tpl');
-
-                if (Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)) {
-                    $message = 'Cart Dump: ' . $e->getMessage() . ' json: ' . json_encode($paymentData, JSON_PRETTY_PRINT);
-                } else {
-                    /** @var ExceptionService $exceptionService */
-                    $exceptionService = $this->module->getMollieContainer(ExceptionService::class);
-                    $message = $exceptionService->getErrorMessageForException($e, $exceptionService->getErrorMessages());
-                }
-                $this->errors[] = $message;
-
-                return false;
-            } catch (PrestaShopException $e) {
-                $errorHandler = ErrorHandler::getInstance();
-                $errorHandler->handle($e, $e->getCode(), false);
-
-                $this->setTemplate('error.tpl');
-                $this->errors[] = Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
-                    ? $e->getMessage() . ' Cart Dump: ' . json_encode($paymentData, JSON_PRETTY_PRINT)
-                    : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
-
-                return false;
-            }
-        }
-
-        return $apiPayment;
-    }
-
-    /**
-     * @param array $data
-     * @param string $selectedApi
-     *
-     * @return MollieOrderAlias|MolliePaymentAlias
-     *
-     * @throws OrderCreationException
-     */
-    protected function createPayment($data, $selectedApi)
-    {
-        try {
-            if (Mollie\Config\Config::MOLLIE_ORDERS_API === $selectedApi) {
-                /** @var MollieOrderAlias $payment */
-                $payment = $this->module->api->orders->create($data, ['embed' => 'payments']);
-            } else {
-                /** @var MolliePaymentAlias $payment */
-                $payment = $this->module->api->payments->create($data);
-            }
-
-            return $payment;
-        } catch (Exception $e) {
-            /** @var OrderExceptionHandler $orderExceptionHandler */
-            $orderExceptionHandler = $this->module->getMollieContainer(OrderExceptionHandler::class);
-
-            throw $orderExceptionHandler->handle($e);
-        }
     }
 
     /**

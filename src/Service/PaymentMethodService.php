@@ -247,7 +247,8 @@ class PaymentMethodService
         $orderReference,
         $cardToken = '',
         $saveCard = true,
-        $useSavedCard = false
+        $useSavedCard = false,
+        string $applePayToken = ''
     ) {
         $totalAmount = TextFormatUtility::formatNumber($amount, 2);
         $context = Context::getContext();
@@ -321,6 +322,10 @@ class PaymentMethodService
                 $paymentData->setLocale(LocaleUtility::getWebShopLocale());
             }
 
+            if ($molPaymentMethod->id_method === PaymentMethod::APPLEPAY && $applePayToken) {
+                $paymentData->setApplePayToken($applePayToken);
+            }
+
             $isCreditCardPayment = PaymentMethod::CREDITCARD === $molPaymentMethod->id_method;
             if (!$isCreditCardPayment) {
                 return $paymentData;
@@ -390,6 +395,14 @@ class PaymentMethodService
                     $orderData->setCustomerId($molCustomer->customer_id);
                     $orderData->setPayment($payment);
                 }
+            }
+
+            if ($molPaymentMethod->id_method === PaymentMethod::APPLEPAY && $applePayToken) {
+                $orderData->setPayment(
+                    [
+                        'applePayPaymentToken' => $applePayToken
+                    ]
+                );
             }
 
             return $orderData;

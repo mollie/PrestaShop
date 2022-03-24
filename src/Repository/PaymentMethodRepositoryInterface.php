@@ -24,8 +24,6 @@ interface PaymentMethodRepositoryInterface extends ReadOnlyRepositoryInterface
 
     public function getPaymentBy($column, $id);
 
-    public function tryAddOrderReferenceColumn();
-
     public function getMethodsForCheckout($environment, $shopId);
 
     public function updateTransactionId($oldTransactionId, $newTransactionId);

@@ -276,31 +276,15 @@ class OrderCreationHandler
         return $paymentData;
     }
 
-    public function createApplePayDirectOrder(\Mollie\DTO\ApplePay\Order $appleOrder)
+    public function createApplePayDirectOrder(\Mollie\DTO\ApplePay\Order $appleOrder, int $cartId)
     {
-//        $customerId = Tools::getValue('customerId');
-        $customer = $this->createAppleOrderCustomer($appleOrder);
-        //todo: check if customization is needed
-        $newCart = new Cart();
-        $newCart->id_currency = $this->context->currency->id;
-        $newCart->id_lang = $this->context->language->id;
-        $newCart->secure_key = $customer->secure_key;
-        $newCart->id_address_invoice = 1;
-        $newCart->save();
-
-        $newCart->updateQty(
-            $appleOrder->getProduct()->getWantedQuantity(),
-            $appleOrder->getProduct()->getProductId(),
-            $appleOrder->getProduct()->getProductAttribute()
-        );
-
-        $this->context->cart = $newCart;
-        $this->context->customer = $customer;
+        $cart = new Cart($cartId);
+        $customer = $this->createAppleOrderCustomer($appleOrder, $cart);
 
         $this->module->validateOrder(
-            $newCart->id,
+            $cartId,
             (int) Configuration::get(Config::MOLLIE_STATUS_PAID),
-            $newCart->getOrderTotal(),
+            $cart->getOrderTotal(true, Cart::BOTH, null, $cart->id_carrier),
             PaymentMethod::APPLEPAY,
             null,
             [],
@@ -310,19 +294,15 @@ class OrderCreationHandler
         );
     }
 
-    private function createAppleOrderCustomer(\Mollie\DTO\ApplePay\Order $appleOrder): Customer
+    private function createAppleOrderCustomer(\Mollie\DTO\ApplePay\Order $appleOrder, Cart $cart): Customer
     {
-        /** @var Hashing $crypto */
-        $crypto = ServiceLocator::get(Hashing::class);
-
-        $customer = new Customer();
+        $customer = new Customer($cart->id_customer);
         $customer->firstname = $appleOrder->getShippingContent()->getGivenName();
         $customer->lastname = $appleOrder->getShippingContent()->getFamilyName();
-        $customer->is_guest = true;
         $customer->email = $appleOrder->getShippingContent()->getEmailAddress();
-        $customer->passwd = $crypto->hash(microtime(), _COOKIE_KEY_);
+        $customer->secure_key = $cart->secure_key;
 
-        $customer->add();
+        $customer->update();
 
         return $customer;
     }

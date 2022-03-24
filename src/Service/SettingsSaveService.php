@@ -22,10 +22,11 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Handler\Certificate\CertificateHandlerInterface;
-use Mollie\Handler\Certificate\Exception\CertificationException;
+use Mollie\Handler\Certificate\Exception\ApplePayDirectCertificateCreation;
 use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Utility\TagsUtility;
 use MolPaymentMethodIssuer;
 use OrderState;
 use PrestaShopDatabaseException;
@@ -34,6 +35,9 @@ use Tools;
 
 class SettingsSaveService
 {
+
+    private const FILE_NAME = 'SettingsSaveService';
+
     /**
      * @var Mollie
      */
@@ -171,13 +175,6 @@ class SettingsSaveService
                 );
                 $this->countryRepository->updatePaymentMethodCountries($paymentMethodId, $countries);
                 $this->countryRepository->updatePaymentMethodExcludedCountries($paymentMethodId, $excludedCountries);
-                if ($paymentMethod->id_method === Config::APPLEPAY) {
-                    try {
-                        $this->applePayDirectCertificateHandler->handle();
-                    } catch (CertificationException $e) {
-                        $errors[] = $e->getMessage();
-                    }
-                }
             }
             $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment);
         }
@@ -187,7 +184,19 @@ class SettingsSaveService
             Config::MOLLIE_SHOW_CUSTOM_LOGO,
             $useCustomLogo
         );
-
+        $isApplePayDirectEnabled = (bool) Tools::getValue('MOLLIE_APPLE_PAY_DIRECT_ENABLED');
+        if ($isApplePayDirectEnabled) {
+            try {
+                $this->applePayDirectCertificateHandler->handle();
+            } catch (ApplePayDirectCertificateCreation $e) {
+                $isApplePayDirectEnabled = false;
+                $errors[] = $e->getMessage();
+                $errors[] =TagsUtility::ppTags(
+                    $this->module->l('Grant permissions for the folder or visit [1]ApplePay[/1] to see how it can be added manually', self::FILE_NAME),
+                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/applePayDirectDocumentation.tpl')]
+                );
+            }
+        }
         $molliePaymentscreenLocale = Tools::getValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE);
         $mollieOrderConfirmationSand = Tools::getValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION);
         $mollieIFrameEnabled = Tools::getValue(Config::MOLLIE_IFRAME);
@@ -237,6 +246,7 @@ class SettingsSaveService
         }
 
         if (empty($errors)) {
+            Configuration::updateValue(Config::MOLLIE_APPLE_PAY_DIRECT, $isApplePayDirectEnabled);
             Configuration::updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
             Configuration::updateValue(Config::MOLLIE_API_KEY_TEST, $mollieApiKeyTest);
             Configuration::updateValue(Config::MOLLIE_ENVIRONMENT, $environment);
