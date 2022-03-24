@@ -1,0 +1,58 @@
+version: "3.7"
+
+services:
+  node:
+    image: node:latest
+    volumes:
+      - ./:/var/www/html
+    working_dir: /var/www/html
+    environment:
+      PATH: /var/www/html/_dev/node_modules/.bin/:$PATH
+
+  mysql:
+    #platform: linux/amd64
+    container_name: mollie-mysql-1784
+    image: mysql:5.7
+    ports:
+      - "9002:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: prestashop
+      MYSQL_DATABASE: prestashop
+    restart: always
+    healthcheck:
+      test: "mysqladmin ping -h127.0.0.1 -uroot -pprestashop --silent"
+      interval: 10s
+    networks:
+      - prestashop_mollie_net_1784
+  prestashop-17:
+    #platform: linux/amd64
+    container_name: prestashop-1784
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile.1784
+    environment:
+      PS_INSTALL_AUTO: 0
+      DB_PASSWD: prestashop
+      DB_NAME: prestashop
+      DB_SERVER: mysql
+      PS_DOMAIN: demoshop1784.eu.ngrok.io:8002
+      PS_FOLDER_INSTALL: install
+      PS_FOLDER_ADMIN: admin1
+    depends_on:
+      - mysql
+    ports:
+      - "8002:80"
+    volumes:
+      - ./:/var/www/html/modules/mollie:cached
+      - ./tests/seed/settings1784/defines.inc.php:/var/www/html/config/defines.inc.php
+      - ./tests/seed/settings1784/parameters.php:/var/www/html/app/config/parameters.php
+      - ./.docker/.htaccess1784:/var/www/html/.htaccess
+    networks:
+      - prestashop_mollie_net_1784
+    healthcheck:
+      test: "wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1"
+      interval: 10s
+
+networks:
+  prestashop_mollie_net_1784:
+    name: 'prestashop_mollie_net_1784'
