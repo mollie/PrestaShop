@@ -2,7 +2,7 @@
 
 namespace Builder;
 
-use Mollie\Builder\ApplePayDirect\ApplePayProductBuilder;
+use Mollie\Builder\ApplePayDirect\ApplePayOrderBuilder;
 use PHPUnit\Framework\TestCase;
 
 class ApplePayProductBuilderTest extends TestCase
@@ -13,7 +13,7 @@ class ApplePayProductBuilderTest extends TestCase
      */
     public function testBuild(array $productInfo)
     {
-        $builder = new ApplePayProductBuilder();
+        $builder = new ApplePayOrderBuilder();
         $applePayProduct = $builder->build($productInfo);
     }
 

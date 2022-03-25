@@ -134,7 +134,6 @@ class MollieOrderCreationService
 
             return $payment;
         } catch (Exception $e) {
-
             throw $this->exceptionHandler->handle($e);
         }
     }

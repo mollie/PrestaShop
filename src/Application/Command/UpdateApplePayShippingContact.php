@@ -2,24 +2,14 @@
 
 namespace Mollie\Application\Command;
 
+use Mollie\DTO\ApplePay\Product;
+
 final class UpdateApplePayShippingContact
 {
     /**
-     * @var int
+     * @var Product[]
      */
-    private $productId;
-    /**
-     * @var int
-     */
-    private $productAttributeId;
-    /**
-     * @var int
-     */
-    private $customizationId;
-    /**
-     * @var int
-     */
-    private $quantityWanted;
+    private $products;
     /**
      * @var int
      */
@@ -46,10 +36,7 @@ final class UpdateApplePayShippingContact
     private $customerId;
 
     public function __construct(
-        int $productId,
-        int $productAttributeId,
-        int $customizationId,
-        int $quantityWanted,
+        array $products,
         int $cartId,
         string $postalCode,
         string $countryCode,
@@ -58,10 +45,7 @@ final class UpdateApplePayShippingContact
         int $customerId
     )
     {
-        $this->productId = $productId;
-        $this->productAttributeId = $productAttributeId;
-        $this->customizationId = $customizationId;
-        $this->quantityWanted = $quantityWanted;
+        $this->products = $products;
         $this->cartId = $cartId;
         $this->postalCode = $postalCode;
         $this->countryCode = $countryCode;
@@ -70,24 +54,9 @@ final class UpdateApplePayShippingContact
         $this->customerId = $customerId;
     }
 
-    public function getProductId(): int
+    public function getProducts(): array
     {
-        return $this->productId;
-    }
-
-    public function getProductAttributeId(): int
-    {
-        return $this->productAttributeId;
-    }
-
-    public function getCustomizationId(): int
-    {
-        return $this->customizationId;
-    }
-
-    public function getQuantityWanted(): int
-    {
-        return $this->quantityWanted;
+        return $this->products;
     }
 
     public function getCartId(): int

@@ -71,21 +71,22 @@ $(document).ready(function () {
             })
         }
         session.onpaymentauthorized = (ApplePayPayment) => {
-            console.log(ApplePayPayment);
             const productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
-            const product = {
-                'id_product': productDetails.id_product,
-                'id_product_attribute': productDetails.id_product_attribute,
-                'id_customization': productDetails.id_customization,
-                'quantity_wanted': productDetails.quantity_wanted,
-            }
+            const products = [
+                {
+                    'id_product': productDetails.id_product,
+                    'id_product_attribute': productDetails.id_product_attribute,
+                    'id_customization': productDetails.id_customization,
+                    'quantity_wanted': productDetails.quantity_wanted,
+                }
+            ]
 
             jQuery.ajax({
                 url: ajaxUrl,
                 method: 'POST',
                 data: {
                     action: 'mollie_apple_pay_create_order',
-                    product: product,
+                    products: products,
                     shippingContact: ApplePayPayment.payment.shippingContact,
                     billingContact: ApplePayPayment.payment.billingContact,
                     token: ApplePayPayment.payment.token,
@@ -129,8 +130,8 @@ $(document).ready(function () {
                     session.completeShippingMethodSelection(
                         ApplePaySession.STATUS_SUCCESS,
                         {
-                            'amount' : response.data.amount,
-                            'label' : ' mollie'
+                            'amount': response.data.amount,
+                            'label': ' mollie'
                         },
                         []
                     )
@@ -143,12 +144,14 @@ $(document).ready(function () {
         }
         session.onshippingcontactselected = function (event) {
             const productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
-            const product = {
-                'id_product': productDetails.id_product,
-                'id_product_attribute': productDetails.id_product_attribute,
-                'id_customization': productDetails.id_customization,
-                'quantity_wanted': productDetails.quantity_wanted,
-            }
+            const products = [
+                {
+                    'id_product': productDetails.id_product,
+                    'id_product_attribute': productDetails.id_product_attribute,
+                    'id_customization': productDetails.id_customization,
+                    'quantity_wanted': productDetails.quantity_wanted,
+                }
+            ]
 
             jQuery.ajax({
                 url: ajaxUrl,
@@ -158,7 +161,7 @@ $(document).ready(function () {
                     countryCode: event.shippingContact.countryCode,
                     postalCode: event.shippingContact.postalCode,
                     simplifiedContact: event.shippingContact,
-                    product: product,
+                    products: products,
                     cartId: cartId,
                     customerId: customerId
                 },

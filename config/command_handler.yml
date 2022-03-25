@@ -23,7 +23,6 @@ services:
   Mollie\Application\CommandHandler\CreateApplePayOrderHandler:
     class: 'Mollie\Application\CommandHandler\CreateApplePayOrderHandler'
     arguments:
-      - '@Mollie\Handler\Order\OrderCreationHandler'
       - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Service\PaymentMethodService'
       - '@Mollie\Service\MollieOrderCreationService'

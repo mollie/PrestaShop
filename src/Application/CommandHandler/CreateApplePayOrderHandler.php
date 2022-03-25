@@ -12,7 +12,6 @@ use Mollie;
 use Mollie\Application\Command\CreateApplePayOrder;
 use Mollie\Config\Config;
 use Mollie\DTO\ApplePay\ShippingContent;
-use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\PaymentMethodService;
@@ -23,10 +22,6 @@ use Tools;
 
 final class CreateApplePayOrderHandler
 {
-    /**
-     * @var OrderCreationHandler
-     */
-    private $orderCreationHandler;
     /**
      * @var PaymentMethodRepositoryInterface
      */
@@ -49,14 +44,12 @@ final class CreateApplePayOrderHandler
     private $module;
 
     public function __construct(
-        OrderCreationHandler $orderCreationHandler,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentMethodService $paymentMethodService,
         MollieOrderCreationService $mollieOrderCreationService,
         Link $link,
         Mollie $module
     ) {
-        $this->orderCreationHandler = $orderCreationHandler;
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodService = $paymentMethodService;
         $this->mollieOrderCreationService = $mollieOrderCreationService;
@@ -87,7 +80,16 @@ final class CreateApplePayOrderHandler
             ];
         }
 
-        $order = Order::getByCartId($command->getCartId());
+        $tries = 0;
+        while ($tries <= 10) {
+            $order = Order::getByCartId($command->getCartId());
+            if ($order) {
+                break;
+            }
+            $tries++;
+            sleep(1);
+        }
+
         if (!$order) {
             return [
                 'success' => false,
@@ -102,6 +104,8 @@ final class CreateApplePayOrderHandler
             ];
         }
 
+        $this->deleteAddress($order->id_address_delivery);
+        $this->deleteAddress($order->id_address_invoice);
 
         $this->mollieOrderCreationService->createOrder($apiPayment, $cart->id, $order->reference);
 
@@ -176,5 +180,12 @@ final class CreateApplePayOrderHandler
         );
 
         return $this->mollieOrderCreationService->createMollieApplePayDirectOrder($paymentData, $paymentMethodObj);
+    }
+
+    private function deleteAddress(int $addressId): void
+    {
+        $address = new Address($addressId);
+        $address->deleted = 1;
+        $address->update();
     }
 }

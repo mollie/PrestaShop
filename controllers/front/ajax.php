@@ -18,19 +18,10 @@ use Mollie\Application\CommandHandler\CreateApplePayOrderHandler;
 use Mollie\Application\CommandHandler\RequestApplePayPaymentSessionHandler;
 use Mollie\Application\CommandHandler\UpdateApplePayShippingContactHandler;
 use Mollie\Application\CommandHandler\UpdateApplePayShippingMethodHandler;
-use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
+use Mollie\Builder\ApplePayDirect\ApplePayOrderBuilder;
 use Mollie\Builder\ApplePayDirect\ApplePayProductBuilder;
-use Mollie\Config\Config;
-use Mollie\DTO\ApplePay\Carrier\Carrier as AppleCarrier;
-use Mollie\Handler\Order\OrderCreationHandler;
-use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Service\ApiService;
-use Mollie\Service\PaymentMethodService;
-use Mollie\Service\TransactionService;
 use Mollie\Utility\NumberUtility;
-use Mollie\Utility\OrderNumberUtility;
 use PrestaShop\Decimal\DecimalNumber;
-use PrestaShop\PrestaShop\Core\CommandBus\CommandBusInterface;
 
 class MollieAjaxModuleFrontController extends ModuleFrontController
 {
@@ -53,6 +44,8 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
                 $this->updateShippingMethod();
             case 'mollie_apple_pay_create_order':
                 $this->createApplePayOrder();
+            case 'mollie_apple_pay_get_total_price':
+                $this->getTotalApplePayCartPrice();
         }
     }
 
@@ -146,6 +139,7 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
 
     private function getApplePaySession()
     {
+        $cartId = (int) Tools::getValue('cartId');
         $validationUrl = Tools::getValue('validationUrl');
         /** @var RequestApplePayPaymentSessionHandler $handler */
         $handler = $this->module->getMollieContainer(RequestApplePayPaymentSessionHandler::class);
@@ -153,7 +147,8 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
         $command = new RequestApplePayPaymentSession(
             $validationUrl,
             (int) $this->context->currency->id,
-            (int) $this->context->language->id
+            (int) $this->context->language->id,
+            $cartId
         );
         $response = $handler->handle($command);
 
@@ -179,17 +174,16 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
     {
         /** @var UpdateApplePayShippingContactHandler $handler */
         $handler = $this->module->getMollieContainer(UpdateApplePayShippingContactHandler::class);
+        /** @var ApplePayProductBuilder $productBuilder */
+        $productBuilder = $this->module->getMollieContainer(ApplePayProductBuilder::class);
 
         $simplifiedContent = Tools::getValue('simplifiedContact');
-        $product = Tools::getValue('product');
+        $products = Tools::getValue('products');
         $cartId = (int) Tools::getValue('cartId');
         $customerId = (int) Tools::getValue('customerId');
 
         $command = new UpdateApplePayShippingContact(
-            $product['id_product'],
-            $product['id_product_attribute'],
-            $product['id_customization'],
-            $product['quantity_wanted'],
+            $productBuilder->build($products),
             $cartId,
             $simplifiedContent['postalCode'],
             $simplifiedContent['countryCode'],
@@ -209,8 +203,8 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
 
         /** @var CreateApplePayOrderHandler $handler */
         $handler = $this->module->getMollieContainer(CreateApplePayOrderHandler::class);
-        /** @var ApplePayProductBuilder $applePayProductBuilder */
-        $applePayProductBuilder = $this->module->getMollieContainer(ApplePayProductBuilder::class);
+        /** @var ApplePayOrderBuilder $applePayProductBuilder */
+        $applePayProductBuilder = $this->module->getMollieContainer(ApplePayOrderBuilder::class);
 
         $applePayOrderBuilder = $applePayProductBuilder->build(Tools::getAllValues());
 
@@ -227,6 +221,18 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
         $this->recoverCreatedOrder($cart->id_customer);
 
         $this->ajaxDie(json_encode($response));
+    }
+
+    private function getTotalApplePayCartPrice()
+    {
+        $cartId = Tools::getValue('cartId');
+        $cart = new Cart($cartId);
+
+        $this->ajaxDie(json_encode(
+            [
+                'total' => $cart->getOrderTotal()
+            ]
+        ));
     }
 
     private function recoverCreatedOrder(int $customerId)

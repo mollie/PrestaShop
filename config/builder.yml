@@ -53,8 +53,11 @@ services:
       - '@mollie'
       - '@Mollie\Service\IssuerService'
 
-  Mollie\Builder\ApplePayDirect\ApplePayProductBuilder:
-    class: Mollie\Builder\ApplePayDirect\ApplePayProductBuilder
+  Mollie\Builder\ApplePayDirect\ApplePayOrderBuilder:
+    class: Mollie\Builder\ApplePayDirect\ApplePayOrderBuilder
 
   Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder:
     class: Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder
+
+  Mollie\Builder\ApplePayDirect\ApplePayProductBuilder:
+    class: Mollie\Builder\ApplePayDirect\ApplePayProductBuilder

@@ -26,12 +26,17 @@ final class RequestApplePayPaymentSession
      * @var int
      */
     private $langId;
+    /**
+     * @var int
+     */
+    private $cartId;
 
-    public function __construct(string $validationUrl, int $currencyId, int $langId)
+    public function __construct(string $validationUrl, int $currencyId, int $langId, int $cartId)
     {
         $this->validationUrl = $validationUrl;
         $this->currencyId = $currencyId;
         $this->langId = $langId;
+        $this->cartId = $cartId;
     }
 
     public function getValidationUrl(): string
@@ -47,5 +52,10 @@ final class RequestApplePayPaymentSession
     public function getLangId(): int
     {
         return $this->langId;
+    }
+
+    public function getCartId(): int
+    {
+        return $this->cartId;
     }
 }

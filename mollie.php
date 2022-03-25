@@ -11,6 +11,7 @@
  */
 
 use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
+use Mollie\Config\Config;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -394,20 +395,35 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Service\ErrorDisplayService $errorDisplayService */
         $errorDisplayService = $this->getMollieContainer()->get(\Mollie\Service\ErrorDisplayService::class);
 
-        Media::addJsDef([
-            'countryCode' => $this->context->country->iso_code,
-            'currencyCode' => $this->context->currency->iso_code,
-            'totalLabel' => 'test',
-            'customerId' => $this->context->customer->id ?? 0,
-            'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
-        ]);
-
-        $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirect.js');
-
         $isCartController = $this->context->controller instanceof CartControllerCore;
         if ($isCartController) {
             $errorDisplayService->showCookieError('mollie_payment_canceled_error');
+        }
+        if (Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT)) {
+            if ($this->context->controller instanceof ProductControllerCore) {
+                Media::addJsDef([
+                    'countryCode' => $this->context->country->iso_code,
+                    'currencyCode' => $this->context->currency->iso_code,
+                    'totalLabel' => $this->context->shop->name,
+                    'customerId' => $this->context->customer->id ?? 0,
+                    'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
+                    'cartId' => $this->context->cart->id
+                ]);
+                $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
+                $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirectProduct.js');
+            }
+            if ($this->context->controller instanceof CartControllerCore) {
+                Media::addJsDef([
+                    'countryCode' => $this->context->country->iso_code,
+                    'currencyCode' => $this->context->currency->iso_code,
+                    'totalLabel' => $this->context->shop->name,
+                    'customerId' => $this->context->customer->id ?? 0,
+                    'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
+                    'cartId' => $this->context->cart->id
+                ]);
+                $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
+                $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirectCart.js');
+            }
         }
     }
 
@@ -873,6 +889,11 @@ class Mollie extends PaymentModule
     }
 
     public function hookDisplayProductActions($params)
+    {
+        return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
+    }
+
+    public function hookDisplayExpressCheckout($params)
     {
         return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
     }

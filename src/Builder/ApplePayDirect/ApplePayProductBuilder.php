@@ -18,38 +18,17 @@ use Mollie\DTO\ApplePay\ShippingContent;
 
 class ApplePayProductBuilder
 {
-    public function build(array $orderParams): Order
+    public function build(array $productParams): array
     {
-        $productParams = $orderParams['product'];
+        $products = [];
+        foreach ($productParams as $product) {
+            $products[] = new Product(
+                $product['id_product'],
+                $product['id_product_attribute'],
+                $product['quantity_wanted']
+            );
+        }
 
-        return new Order(
-            $this->buildAppleProduct($productParams),
-            $this->buildShippingContent($orderParams['shippingContact']),
-            $this->buildShippingContent($orderParams['billingContact'])
-        );
-    }
-
-    private function buildAppleProduct(array $params)
-    {
-        return new Product(
-            $params['id_product'],
-            $params['id_product_attribute'],
-            $params['quantity_wanted']
-        );
-    }
-
-    private function buildShippingContent(array $params)
-    {
-        return new ShippingContent(
-            $params['addressLines'],
-            $params['administrativeArea'],
-            $params['country'],
-            $params['countryCode'],
-            $params['familyName'],
-            $params['givenName'],
-            $params['locality'],
-            $params['postalCode'],
-            $params['emailAddress'] ?? ''
-        );
+        return $products;
     }
 }

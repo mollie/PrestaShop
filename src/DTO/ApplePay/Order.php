@@ -15,9 +15,9 @@ class Order
 {
 
     /**
-     * @var Product
+     * @var Product[]
      */
-    private $product;
+    private $products;
     /**
      * @var ShippingContent
      */
@@ -28,18 +28,18 @@ class Order
     private $billingContent;
 
     public function __construct(
-        Product $product,
+        array $products,
         ShippingContent $shippingContent,
         ShippingContent $billingContent
     ) {
-        $this->product = $product;
+        $this->products = $products;
         $this->shippingContent = $shippingContent;
         $this->billingContent = $billingContent;
     }
 
-    public function getProduct(): Product
+    public function getProducts(): array
     {
-        return $this->product;
+        return $this->products;
     }
 
     public function getShippingContent(): ShippingContent

@@ -171,6 +171,7 @@ class Installer implements InstallerInterface
             'actionObjectCurrencyUpdateAfter',
             'displayHeader',
             'displayProductActions',
+            'displayExpressCheckout',
         ];
     }
 

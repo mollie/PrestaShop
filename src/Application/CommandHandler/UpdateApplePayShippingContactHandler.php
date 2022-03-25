@@ -36,11 +36,12 @@ final class UpdateApplePayShippingContactHandler
     public function handle(UpdateApplePayShippingContact $command): array
     {
         $customer = $this->createCustomer($command->getCustomerId());
-        $address = $this->createAddress((int) $customer->id, $command);
-        $cart = $this->updateCart($customer, $address, $command->getCartId());
+        $deliveryAddress = $this->createAddress($customer->id, $command);
+        $invoiceAddress = $this->createAddress($customer->id, $command);
+        $cart = $this->updateCart($customer, $deliveryAddress->id, $invoiceAddress->id , $command->getCartId());
         $this->addProductToCart($cart, $command);
 
-        $country = new Country($address->id_country);
+        $country = new Country($deliveryAddress->id_country);
 
         $applePayCarriers = $this->applePayCarriersBuilder->build(Carrier::getCarriersForOrder($this->language->id, true), $country->id_zone);
 
@@ -72,19 +73,19 @@ final class UpdateApplePayShippingContactHandler
 
     private function createAddress(int $customerId, UpdateApplePayShippingContact $command): Address
     {
-        $deliveryAddress = new Address();
-        $deliveryAddress->address1 = 'ApplePay';
-        $deliveryAddress->lastname = 'ApplePay';
-        $deliveryAddress->firstname = 'ApplePay';
-        $deliveryAddress->id_customer = $customerId;
-        $deliveryAddress->alias = 'applePay';
-        $deliveryAddress->postcode = $command->getPostalCode();
-        $deliveryAddress->id_country = Country::getByIso($command->getCountryCode());
-        $deliveryAddress->country = $command->getCountry();
-        $deliveryAddress->city = $command->getLocality();
-        $deliveryAddress->add();
+        $address = new Address();
+        $address->address1 = 'ApplePay';
+        $address->lastname = 'ApplePay';
+        $address->firstname = 'ApplePay';
+        $address->id_customer = $customerId;
+        $address->alias = 'applePay';
+        $address->postcode = $command->getPostalCode();
+        $address->id_country = Country::getByIso($command->getCountryCode());
+        $address->country = $command->getCountry();
+        $address->city = $command->getLocality();
+        $address->add();
 
-        return $deliveryAddress;
+        return $address;
     }
 
     private function createCustomer(int $customerId): Customer
@@ -96,20 +97,20 @@ final class UpdateApplePayShippingContactHandler
         $customer->is_guest = 1;
         $customer->firstname = 'applePay';
         $customer->lastname = 'applePay';
-        $customer->email = 'applePay@test.com';
+        $customer->email = 'applePay@mollie.com';
         $customer->passwd = Tools::hash(microtime());
         $customer->add();
 
         return $customer;
     }
 
-    private function updateCart(Customer $customer, Address $deliveryAddress, int $cartId): cart
+    private function updateCart(Customer $customer, int $deliveryAddressId, int $invoiceAddressId, int $cartId): cart
     {
         $cart = new Cart($cartId);
         $cart->id_currency = Configuration::get('PS_CURRENCY_DEFAULT');
         $cart->secure_key = $customer->secure_key;
-        $cart->id_address_delivery = $deliveryAddress->id;
-        $cart->id_address_invoice = $deliveryAddress->id;
+        $cart->id_address_delivery = $deliveryAddressId;
+        $cart->id_address_invoice = $invoiceAddressId;
         $cart->id_customer = $customer->id;
         $cart->update();
 
@@ -118,7 +119,9 @@ final class UpdateApplePayShippingContactHandler
 
     private function addProductToCart(Cart $cart, UpdateApplePayShippingContact $command): void
     {
-        $cart->deleteProduct($command->getProductId(), $command->getProductAttributeId());
-        $cart->updateQty($command->getQuantityWanted(), $command->getProductId(), $command->getProductAttributeId());
+        foreach ($command->getProducts() as $product) {
+            $cart->deleteProduct($product->getProductId(), $product->getProductAttribute());
+            $cart->updateQty($product->getWantedQuantity(), $product->getProductId(), $product->getProductAttribute());
+        }
     }
 }

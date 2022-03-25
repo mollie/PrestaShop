@@ -46,7 +46,10 @@ final class RequestApplePayPaymentSessionHandler
             ];
         }
 
-        $cartId = $this->createEmptyCart($command->getCurrencyId(), $command->getLangId());
+        $cartId = $command->getCartId();
+        if (!$cartId) {
+            $cartId = $this->createEmptyCart($command->getCurrencyId(), $command->getLangId());
+        }
 
         return [
             'success' => true,
