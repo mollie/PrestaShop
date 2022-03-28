@@ -3,6 +3,8 @@
 # Changelog #
 ## Changes in release 5.1.0 ##
 + Added order refund statuses for methods that use Order API.
++ Fixed issue where credit card token was not added if user is not saved.
++ No longer try to create second mollie transaction without number if first failed and if it has credit card.
 
 ## Changes in release 5.0.1 ##
 + Fixed issue where order API refund would fail on webhook call.
