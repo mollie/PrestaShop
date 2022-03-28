@@ -1,4 +1,4 @@
-name: Cypress E2E test run
+name: Cypress test run
 on:
   pull_request:
     types: [opened, reopened]
@@ -10,6 +10,19 @@ jobs:
       matrix:
         include:
           - prestashop: 'PS1770'
+            make: 'make e2eh'
+            demoshop: 'demoshop'
+            port: '8001'
+            yml: 'docker-compose.e2e.yml'
+            url: 'https://demoshop.eu.ngrok.io'
+            test_spec: '**/cypress/integration/ps1770/**'
+          - prestashop: 'PS1784'
+            make: 'make e2eh1784'
+            demoshop: 'demoshop1784'
+            port: '8002'
+            yml: 'docker-compose.e2e.1784.yml'
+            url: 'https://demoshop1784.eu.ngrok.io'
+            test_spec: '**/cypress/integration/ps1784/**'
     env:
       NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
     steps:
@@ -21,24 +34,37 @@ jobs:
         shell: bash
       - run: ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
         shell: bash
-      - run: ./ngrok http -region=eu -subdomain=demoshop 8001 > ngrok.log &
+      - run: ./ngrok http -region=eu -subdomain=${{ matrix.demoshop }} ${{ matrix.port }} > ngrok.log &
         shell: bash
       - name: install composer
         run: composer i
 
       - name: install package
-        run: npm ci & npx browserslist@latest --update-db
+        run: npx browserslist@latest --update-db
 
-      - name: PS ${{ matrix.prestashop }} installing / Module Install and Uninstall testing / Running ${{ matrix.prestashop }} Cypress tests
-        run: make e2eh
-        #--parallel --record --key fe20a60a-0ac6-4956-a6e8-911aad86cb03
+      - name: PS ${{ matrix.prestashop }} installing / Module Install and Uninstall testing
+        run: |
+          ${{ matrix.make }} 
   
+      - name: Running ${{ matrix.prestashop }} Cypress tests
+        uses: cypress-io/github-action@v2.9.7
+        with: 
+          spec: ${{ matrix.test_spec }}
+        env:
+          CYPRESS_MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+          CYPRESS_MOLLIE_TEST_PROFILE_ID: ${{ secrets.MOLLIE_TEST_PROFILE_ID }}
+          CYPRESS_baseUrl: ${{ matrix.url }}
+
+      # - run: |
+      #     docker-compose -f ${{ matrix.yml }} up --force-recreate --exit-code-from cypress
+        #--parallel --record --key
+
       - name: Archive videos and screenshots
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
           name: videos_screenshots
-          retention-days: 7
+          retention-days: 2
           path: |
             cypress/videos
             cypress/screenshots

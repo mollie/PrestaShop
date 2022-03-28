@@ -12,9 +12,9 @@
     cy.get('#header_shop > .dropdown > .dropdown-menu').click(100,100)
     //
     cy.visit('/index.php?controller=my-account')
-    cy.get('[type="email"]').eq(0).type('demo@demo.com')
-    cy.get('[type="password"]').eq(0).type('demodemo')
-    cy.get('[type="submit"]').eq(1).click({force:true})
+    cy.get('#login-form [name="email"]').eq(0).type('demo@demo.com')
+    cy.get('#login-form [name="password"]').eq(0).type('demodemo')
+    cy.get('#login-form [type="submit"]').eq(0).click({force:true})
     cy.get('#history-link > .link-item').click()
     //
     })

@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   node:
-    image: node:12.18.3
+    image: node:latest
     volumes:
       - ./:/var/www/html
     working_dir: /var/www/html
@@ -30,7 +30,7 @@ services:
     container_name: prestashop-17
     build:
       context: .
-      dockerfile: .docker/Dockerfile
+      dockerfile: .docker/Dockerfile.1770
     environment:
       PS_INSTALL_AUTO: 0
       DB_PASSWD: prestashop
