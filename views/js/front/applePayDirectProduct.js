@@ -179,12 +179,13 @@ $(document).ready(function () {
                     applePayShippingContactUpdate = JSON.parse(applePayShippingContactUpdate)
                     let response = applePayShippingContactUpdate.data
                     if (applePayShippingContactUpdate.success === true) {
+                        var firstTotal = response.totals.pop();
                         session.completeShippingContactSelection(
                             ApplePaySession.STATUS_SUCCESS,
                             response.shipping_methods,
                             {
-                                'label': response.totals.pop().label,
-                                'amount': response.totals.pop().amount
+                                'label': firstTotal.label,
+                                'amount': firstTotal.amount
                             },
                             []
                         );
@@ -213,6 +214,9 @@ function createRequest(countryCode, currencyCode, totalLabel, subtotal) {
         requiredShippingContactFields: [
             'postalAddress',
             'email'
+        ],
+        requiredBillingAddressFields: [
+            'countryCode',
         ],
         total: {
             label: totalLabel,
