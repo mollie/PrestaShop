@@ -11,8 +11,8 @@ use Customer;
 use Language;
 use Mollie\Application\Command\UpdateApplePayShippingContact;
 use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
-use Tools;
 use Mollie\DTO\ApplePay\Carrier\Carrier as AppleCarrier;
+use Tools;
 
 final class UpdateApplePayShippingContactHandler
 {
@@ -38,7 +38,7 @@ final class UpdateApplePayShippingContactHandler
         $customer = $this->createCustomer($command->getCustomerId());
         $deliveryAddress = $this->createAddress($customer->id, $command);
         $invoiceAddress = $this->createAddress($customer->id, $command);
-        $cart = $this->updateCart($customer, $deliveryAddress->id, $invoiceAddress->id , $command->getCartId());
+        $cart = $this->updateCart($customer, $deliveryAddress->id, $invoiceAddress->id, $command->getCartId());
         $this->addProductToCart($cart, $command);
 
         $country = new Country($deliveryAddress->id_country);
@@ -67,7 +67,7 @@ final class UpdateApplePayShippingContactHandler
                 'shipping_methods' => $shippingMethods,
                 'totals' => $totals,
             ],
-            'success' => true
+            'success' => true,
         ];
     }
 

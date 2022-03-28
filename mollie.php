@@ -10,7 +10,6 @@
  * @codingStandardsIgnoreStart
  */
 
-use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
 use Mollie\Config\Config;
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -407,7 +406,7 @@ class Mollie extends PaymentModule
                     'totalLabel' => $this->context->shop->name,
                     'customerId' => $this->context->customer->id ?? 0,
                     'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
-                    'cartId' => $this->context->cart->id
+                    'cartId' => $this->context->cart->id,
                 ]);
                 $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
                 $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirectProduct.js');
@@ -419,7 +418,7 @@ class Mollie extends PaymentModule
                     'totalLabel' => $this->context->shop->name,
                     'customerId' => $this->context->customer->id ?? 0,
                     'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
-                    'cartId' => $this->context->cart->id
+                    'cartId' => $this->context->cart->id,
                 ]);
                 $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
                 $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirectCart.js');

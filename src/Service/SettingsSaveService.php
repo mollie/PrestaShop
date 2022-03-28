@@ -35,7 +35,6 @@ use Tools;
 
 class SettingsSaveService
 {
-
     private const FILE_NAME = 'SettingsSaveService';
 
     /**
@@ -191,7 +190,7 @@ class SettingsSaveService
             } catch (ApplePayDirectCertificateCreation $e) {
                 $isApplePayDirectEnabled = false;
                 $errors[] = $e->getMessage();
-                $errors[] =TagsUtility::ppTags(
+                $errors[] = TagsUtility::ppTags(
                     $this->module->l('Grant permissions for the folder or visit [1]ApplePay[/1] to see how it can be added manually', self::FILE_NAME),
                     [$this->module->display($this->module->getPathUri(), 'views/templates/admin/applePayDirectDocumentation.tpl')]
                 );

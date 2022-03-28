@@ -15,7 +15,6 @@ use JsonSerializable;
 
 class Carrier implements JsonSerializable
 {
-
     /**
      * @var string
      */
@@ -65,14 +64,13 @@ class Carrier implements JsonSerializable
         return $this->amount;
     }
 
-
     public function jsonSerialize()
     {
         return [
             'label' => $this->getName(),
             'detail' => $this->getDelay(),
             'amount' => $this->getAmount(),
-            'identifier' => $this->getCarrierId()
+            'identifier' => $this->getCarrierId(),
         ];
     }
 }

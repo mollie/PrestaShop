@@ -12,9 +12,7 @@
 
 namespace Mollie\Builder\ApplePayDirect;
 
-use Mollie\DTO\ApplePay\Order;
 use Mollie\DTO\ApplePay\Product;
-use Mollie\DTO\ApplePay\ShippingContent;
 
 class ApplePayProductBuilder
 {

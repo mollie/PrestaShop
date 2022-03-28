@@ -43,8 +43,7 @@ final class UpdateApplePayShippingContact
         string $country,
         string $locality,
         int $customerId
-    )
-    {
+    ) {
         $this->products = $products;
         $this->cartId = $cartId;
         $this->postalCode = $postalCode;

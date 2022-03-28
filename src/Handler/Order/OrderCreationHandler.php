@@ -60,10 +60,6 @@ use MolPaymentMethod;
 use Order;
 use OrderDetail;
 use PrestaShop\Decimal\Number;
-use PrestaShop\PrestaShop\Adapter\ServiceLocator;
-use PrestaShop\PrestaShop\Core\Crypto\Hashing;
-use Tools;
-use function DusanKasan\Knapsack\has;
 
 class OrderCreationHandler
 {
@@ -276,7 +272,7 @@ class OrderCreationHandler
         return $paymentData;
     }
 
-    public function createApplePayDirectOrder(\Mollie\DTO\ApplePay\Order $appleOrder, int $cartId)
+    public function createApplePayDirectOrder(Mollie\DTO\ApplePay\Order $appleOrder, int $cartId)
     {
         $cart = new Cart($cartId);
         $customer = $this->createAppleOrderCustomer($appleOrder, $cart);
@@ -294,7 +290,7 @@ class OrderCreationHandler
         );
     }
 
-    private function createAppleOrderCustomer(\Mollie\DTO\ApplePay\Order $appleOrder, Cart $cart): Customer
+    private function createAppleOrderCustomer(Mollie\DTO\ApplePay\Order $appleOrder, Cart $cart): Customer
     {
         $customer = new Customer($cart->id_customer);
         $customer->firstname = $appleOrder->getShippingContent()->getGivenName();

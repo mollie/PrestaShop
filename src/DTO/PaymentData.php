@@ -294,6 +294,7 @@ class PaymentData implements JsonSerializable
 
     /**
      * @param string $applePayToken
+     *
      * @return PaymentData
      */
     public function setApplePayToken(?string $applePayToken): PaymentData

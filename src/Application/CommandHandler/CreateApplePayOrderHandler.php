@@ -74,9 +74,9 @@ final class CreateApplePayOrderHandler
                     [
                         'code' => 'unknown',
                         'contactField' => null,
-                        'message' => $this->module->l('Failed to create mollie transaction.')
-                    ]
-                ]
+                        'message' => $this->module->l('Failed to create mollie transaction.'),
+                    ],
+                ],
             ];
         }
 
@@ -86,7 +86,7 @@ final class CreateApplePayOrderHandler
             if ($order) {
                 break;
             }
-            $tries++;
+            ++$tries;
             sleep(1);
         }
 
@@ -98,9 +98,9 @@ final class CreateApplePayOrderHandler
                     [
                         'code' => 'unknown',
                         'contactField' => null,
-                        'message' => $this->module->l('Couldn\'t find order by card it.')
-                    ]
-                ]
+                        'message' => $this->module->l('Couldn\'t find order by card it.'),
+                    ],
+                ],
             ];
         }
 
@@ -124,7 +124,7 @@ final class CreateApplePayOrderHandler
         return [
             'success' => true,
             'successUrl' => $successUrl,
-            'responseToApple' => ['status' => 0]
+            'responseToApple' => ['status' => 0],
         ];
     }
 

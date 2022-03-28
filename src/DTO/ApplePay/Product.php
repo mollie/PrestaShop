@@ -30,8 +30,7 @@ class Product
         int $productId,
         int $productAttribute,
         int $wantedQuantity
-    )
-    {
+    ) {
         $this->productId = $productId;
         $this->productAttribute = $productAttribute;
         $this->wantedQuantity = $wantedQuantity;

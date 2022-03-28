@@ -9,6 +9,7 @@ class ApplePayCarriersBuilder
 {
     /**
      * @param array $carriers
+     *
      * @return AppleCarrier[]
      */
     public function build(array $carriers, int $idZone): array

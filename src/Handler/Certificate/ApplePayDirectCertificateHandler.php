@@ -21,7 +21,7 @@ class ApplePayDirectCertificateHandler implements CertificateHandlerInterface
     private const FILE_NAME = 'ApplePayDirectCertificateHandler';
 
     private const APPLE_PAY_CERTIFICATE_PS_FILE = 'apple-developer-merchantid-domain-association';
-    private const APPLE_PAY_CERTIFICATE_FOLDER =  '/.well-known/';
+    private const APPLE_PAY_CERTIFICATE_FOLDER = '/.well-known/';
     private const APPLE_PAY_CERTIFICATE_FILE_LOCATION = __DIR__ . '/Files/apple-developer-merchantid-domain-association';
 
     /**

@@ -54,7 +54,7 @@ final class RequestApplePayPaymentSessionHandler
         return [
             'success' => true,
             'data' => $response,
-            'cartId' => $cartId
+            'cartId' => $cartId,
         ];
     }
 

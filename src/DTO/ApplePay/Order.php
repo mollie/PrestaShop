@@ -13,7 +13,6 @@ namespace Mollie\DTO\ApplePay;
 
 class Order
 {
-
     /**
      * @var Product[]
      */

@@ -420,7 +420,7 @@ class FormBuilder
             'productAttributes' => Attribute::getAttributes($this->module->getContext()->language->id),
             'klarnaPayments' => Config::KLARNA_PAYMENTS,
             'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_AUTHORIZED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
-            'applePayDirect' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT)
+            'applePayDirect' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT),
         ];
 
         return $input;

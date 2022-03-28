@@ -10,15 +10,9 @@
  * @codingStandardsIgnoreStart
  */
 
-use Mollie\Api\Resources\Order as MollieOrderAlias;
-use Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Api\Types\PaymentStatus;
-use Mollie\DTO\OrderData;
-use Mollie\DTO\PaymentData;
 use Mollie\Exception\OrderCreationException;
-use Mollie\Handler\ErrorHandler\ErrorHandler;
-use Mollie\Handler\Exception\OrderExceptionHandler;
 use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\ExceptionService;
@@ -151,8 +145,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         } catch (Exception $e) {
             $this->setTemplate('error.tpl');
             $this->errors[] = $this->module->l('Failed to save order information.', 'payment');
-            return false;
 
+            return false;
         }
 
         // Go to payment url

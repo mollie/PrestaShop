@@ -21,7 +21,6 @@ use MolPaymentMethod;
 use mysqli_result;
 use PDOStatement;
 use PrestaShopDatabaseException;
-use PrestaShopException;
 
 /**
  * @deprecated - outside code must always use interface. Use PaymentMethodRepositoryInterface instead.

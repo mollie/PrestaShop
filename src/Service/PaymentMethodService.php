@@ -400,7 +400,7 @@ class PaymentMethodService
             if ($molPaymentMethod->id_method === PaymentMethod::APPLEPAY && $applePayToken) {
                 $orderData->setPayment(
                     [
-                        'applePayPaymentToken' => $applePayToken
+                        'applePayPaymentToken' => $applePayToken,
                     ]
                 );
             }

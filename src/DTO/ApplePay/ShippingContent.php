@@ -60,8 +60,7 @@ class ShippingContent
         string $locality,
         string $postalCode,
         string $emailAddress = ''
-    )
-    {
+    ) {
         $this->addressLines = $addressLines;
         $this->administrativeArea = $administrativeArea;
         $this->country = $country;

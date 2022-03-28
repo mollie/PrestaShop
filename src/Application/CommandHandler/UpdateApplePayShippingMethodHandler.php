@@ -7,20 +7,20 @@ use Mollie\Application\Command\UpdateApplePayShippingMethod;
 
 final class UpdateApplePayShippingMethodHandler
 {
-   public function handle(UpdateApplePayShippingMethod $command): array
-   {
-       $cart = new Cart($command->getCartId());
-       $cart->id_carrier = $command->getCarrierId();
-       $cart->setDeliveryOption([
-           $cart->id_address_delivery => $command->getCarrierId() . ','
+    public function handle(UpdateApplePayShippingMethod $command): array
+    {
+        $cart = new Cart($command->getCartId());
+        $cart->id_carrier = $command->getCarrierId();
+        $cart->setDeliveryOption([
+           $cart->id_address_delivery => $command->getCarrierId() . ',',
        ]);
-       $cart->update();
+        $cart->update();
 
-       return [
+        return [
            'success' => true,
            'data' => [
-               'amount' => $cart->getOrderTotal(true, Cart::BOTH, null, $command->getCarrierId())
-           ]
+               'amount' => $cart->getOrderTotal(true, Cart::BOTH, null, $command->getCarrierId()),
+           ],
        ];
-   }
+    }
 }
