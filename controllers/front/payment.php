@@ -182,13 +182,18 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     protected function createMollieOrder($paymentData, $paymentMethodObj)
     {
         try {
+            $paymentData->setDeliveryPhoneNumber(' ');
+            $paymentData->setBillingPhoneNumber('+00000000A');
             $apiPayment = $this->createPayment($paymentData->jsonSerialize(), $paymentMethodObj->method);
         } catch (Exception $e) {
-            if ($paymentData instanceof OrderData) {
-                $paymentData->setDeliveryPhoneNumber(null);
-                $paymentData->setBillingPhoneNumber(null);
-            }
             try {
+                if (isset($paymentData->getPayment()['cardToken'])) {
+                    throw $e;
+                }
+                if ($paymentData instanceof OrderData) {
+                    $paymentData->setDeliveryPhoneNumber(null);
+                    $paymentData->setBillingPhoneNumber(null);
+                }
                 $apiPayment = $this->createPayment($paymentData->jsonSerialize(), $paymentMethodObj->method);
             } catch (OrderCreationException $e) {
                 $errorHandler = ErrorHandler::getInstance();

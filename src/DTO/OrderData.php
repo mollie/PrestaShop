@@ -208,22 +208,6 @@ class OrderData implements JsonSerializable
     /**
      * @return string
      */
-    public function getCardToken()
-    {
-        return $this->cardToken;
-    }
-
-    /**
-     * @param string $cardToken
-     */
-    public function setCardToken($cardToken)
-    {
-        $this->cardToken = $cardToken;
-    }
-
-    /**
-     * @return string
-     */
     public function getCustomerId()
     {
         return $this->customerId;
