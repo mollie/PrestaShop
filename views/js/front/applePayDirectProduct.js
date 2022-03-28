@@ -42,7 +42,17 @@ $(document).ready(function () {
     })
 
     let applePaySession = () => {
-        const subtotal = $('.product-prices').find('[itemprop="price"]').attr('content') * $('#quantity_wanted').val();
+        const productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
+        const product =
+            {
+                'id_product': productDetails.id_product,
+                'id_product_attribute': productDetails.id_product_attribute,
+                'id_customization': productDetails.id_customization,
+                'quantity_wanted': productDetails.quantity_wanted,
+                'price_amount': productDetails.price_amount
+            }
+
+        const subtotal = product.quantity_wanted * product.price_amount;
         const session = new ApplePaySession(3, createRequest(countryCode, currencyCode, totalLabel, subtotal))
         var cartId;
         session.begin()
