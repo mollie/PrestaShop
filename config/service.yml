@@ -1,6 +1,9 @@
 services:
   Mollie\Service\OrderFeeService:
     class: Mollie\Service\OrderFeeService
+    arguments:
+      - '@Mollie\Repository\PaymentMethodRepositoryInterface'
+      - '@mollie.shop'
 
   Mollie\Service\PaymentMethodService:
     class: Mollie\Service\PaymentMethodService

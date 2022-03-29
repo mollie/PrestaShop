@@ -23,7 +23,7 @@ $(document).ready(function () {
     const applePayMethodElement = document.querySelector(
         '#mollie-applepay-direct-button',
     )
-    const canShowButton = applePayMethodElement && (ApplePaySession && ApplePaySession.canMakePayments())
+    const canShowButton = applePayMethodElement && (window.ApplePaySession && ApplePaySession.canMakePayments())
     if (!canShowButton) {
         return;
     }
@@ -179,13 +179,26 @@ $(document).ready(function () {
                     applePayShippingContactUpdate = JSON.parse(applePayShippingContactUpdate)
                     let response = applePayShippingContactUpdate.data
                     if (applePayShippingContactUpdate.success === true) {
-                        var firstTotal = response.totals.pop();
+                        if (response.totals.length > 0) {
+                            var firstTotal = response.totals[0];
+                            session.completeShippingContactSelection(
+                                ApplePaySession.STATUS_SUCCESS,
+                                response.shipping_methods,
+                                {
+                                    'label': firstTotal.label,
+                                    'amount': firstTotal.amount
+                                },
+                                [
+                                    response.paymentFee
+                                ]
+                            );
+                        }
+
                         session.completeShippingContactSelection(
-                            ApplePaySession.STATUS_SUCCESS,
-                            response.shipping_methods,
+                            ApplePaySession.STATUS_FAILURE,
+                            [],
                             {
-                                'label': firstTotal.label,
-                                'amount': firstTotal.amount
+                                label: "No carriers", amount: "0"
                             },
                             []
                         );

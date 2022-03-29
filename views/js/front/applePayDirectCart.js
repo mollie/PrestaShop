@@ -20,13 +20,29 @@
  */
 
 $(document).ready(function () {
-    const applePayMethodElement = document.querySelector(
+    var applePayMethodElement = document.querySelector(
         '#mollie-applepay-direct-button',
     )
-    const canShowButton = applePayMethodElement && (ApplePaySession && ApplePaySession.canMakePayments())
+
+    const canShowButton = applePayMethodElement && (window.ApplePaySession && ApplePaySession.canMakePayments())
     if (!canShowButton) {
         return;
     }
+
+    $( document ).ajaxComplete(function( event, request, settings ) {
+        var method = getUrlParam('action', settings.url)
+
+        if (method === 'refresh') {
+            applePayMethodElement = document.querySelector(
+                '#mollie-applepay-direct-button',
+            )
+            const button = document.createElement('button')
+            button.setAttribute('id', 'mollie_applepay_button')
+            button.classList.add('apple-pay-button')
+            button.classList.add('apple-pay-button-black')
+            applePayMethodElement.appendChild(button)
+        }
+    });
 
     const button = document.createElement('button')
     button.setAttribute('id', 'mollie_applepay_button')
@@ -37,7 +53,7 @@ $(document).ready(function () {
     let selectedShippingMethod = []
     let cartSubTotal = 0;
 
-    document.querySelector('#mollie_applepay_button').addEventListener('click', (e) => {
+    $(document).on('click', '#mollie_applepay_button', function(e) {
         e.preventDefault();
         applePaySession();
     })
@@ -173,12 +189,26 @@ $(document).ready(function () {
                     applePayShippingContactUpdate = JSON.parse(applePayShippingContactUpdate)
                     let response = applePayShippingContactUpdate.data
                     if (applePayShippingContactUpdate.success === true) {
+                        if (response.totals.length > 0) {
+                            var firstTotal = response.totals[0];
+                            session.completeShippingContactSelection(
+                                ApplePaySession.STATUS_SUCCESS,
+                                response.shipping_methods,
+                                {
+                                    'label': firstTotal.label,
+                                    'amount': firstTotal.amount
+                                },
+                                [
+                                    response.paymentFee
+                                ]
+                            );
+                        }
+
                         session.completeShippingContactSelection(
-                            ApplePaySession.STATUS_SUCCESS,
-                            response.shipping_methods,
+                            ApplePaySession.STATUS_FAILURE,
+                            [],
                             {
-                                'label': response.totals.pop().label,
-                                'amount': response.totals.pop().amount
+                                label: "No carriers", amount: "0"
                             },
                             []
                         );
@@ -242,4 +272,20 @@ function createAppleErrors(errors) {
     }
 
     return errorList
+}
+
+function getUrlParam(sParam, string)
+{
+    var sPageURL = decodeURIComponent(string),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
 }
