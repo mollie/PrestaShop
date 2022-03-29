@@ -9,13 +9,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - prestashop: 'PS1770'
-            make: 'make e2eh'
-            demoshop: 'demoshop'
-            port: '8001'
-            yml: 'docker-compose.e2e.yml'
-            url: 'https://demoshop.eu.ngrok.io'
-            test_spec: '**/cypress/integration/ps1770/**'
           - prestashop: 'PS1784'
             make: 'make e2eh1784'
             demoshop: 'demoshop1784'
@@ -42,7 +35,7 @@ jobs:
       - name: install package
         run: npm update & npx browserslist@latest --update-db
 
-      - name: PS ${{ matrix.prestashop }} installing / Module Install and Uninstall testing
+      - name: ${{ matrix.prestashop }} installing / Module Install and Uninstall testing
         run: |
           ${{ matrix.make }} 
   
