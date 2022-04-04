@@ -1,20 +1,22 @@
-                                                          /* CSS */
+/* CSS */
 @supports (-webkit-appearance: -apple-pay-button) {
     .apple-pay-button {
         display: inline-block;
         -webkit-appearance: -apple-pay-button;
     }
+
     .apple-pay-button-black {
         -apple-pay-button-style: black;
     }
+
     .apple-pay-button-white {
         -apple-pay-button-style: white;
     }
+
     .apple-pay-button-white-with-line {
         -apple-pay-button-style: white-outline;
     }
 }
-
 
 @supports not (-webkit-appearance: -apple-pay-button) {
     .apple-pay-button {
@@ -29,17 +31,24 @@
         min-height: 32px;
         max-height: 64px;
     }
+
     .apple-pay-button-black {
         background-image: -webkit-named-image(apple-pay-logo-white);
         background-color: black;
     }
+
     .apple-pay-button-white {
         background-image: -webkit-named-image(apple-pay-logo-black);
         background-color: white;
     }
+
     .apple-pay-button-white-with-line {
         background-image: -webkit-named-image(apple-pay-logo-black);
         background-color: white;
         border: .5px solid black;
     }
+}
+
+#mollie-applepay-direct-button {
+    padding: 5px;
 }
