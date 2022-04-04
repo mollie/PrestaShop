@@ -50,6 +50,7 @@ use Mollie\Config\Config;
 use Mollie\DTO\Line;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
+use Mollie\Exception\OrderCreationException;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderFeeService;
 use Mollie\Service\OrderStatusService;
@@ -114,11 +115,8 @@ class OrderCreationHandler
         );
         $paymentFee = 0;
 
+        $paymentMethod = $this->getPaymentMethod($apiPayment);
         if ($apiPayment->resource === Config::MOLLIE_API_STATUS_PAYMENT) {
-            $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
-            $paymentMethod = new MolPaymentMethod(
-                $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment)
-            );
             $paymentFee = PaymentFeeUtility::getPaymentFee($paymentMethod, $originalAmount);
         } else {
             /** @var Mollie\Api\Resources\OrderLine $line */
@@ -136,7 +134,7 @@ class OrderCreationHandler
                 (int) $cartId,
                 $orderStatus,
                 (float) $apiPayment->amount->value,
-                isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name,
+                isset(Config::$methods[$paymentMethod->id_method]) ? Config::$methods[$paymentMethod->id_method] : $this->module->name,
                 null,
                 ['transaction_id' => $apiPayment->id],
                 null,
@@ -171,7 +169,7 @@ class OrderCreationHandler
             (int) $cartId,
             (int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
             (float) $apiPayment->amount->value,
-            isset(Config::$methods[$apiPayment->method]) ? Config::$methods[$apiPayment->method] : $this->module->name,
+            isset(Config::$methods[$paymentMethod->id_method]) ? Config::$methods[$paymentMethod->id_method] : $this->module->name,
             null,
             ['transaction_id' => $apiPayment->id],
             null,
@@ -319,5 +317,34 @@ class OrderCreationHandler
         }
 
         return false;
+    }
+
+    private function getPaymentMethod($apiPayment): MolPaymentMethod
+    {
+        $transactionMethod = $apiPayment->method;
+
+        switch ($apiPayment->resource) {
+            case Config::MOLLIE_API_STATUS_PAYMENT:
+                if (!isset($apiPayment->details->wallet)) {
+                    break;
+                }
+                $transactionMethod = $apiPayment->details->wallet;
+                break;
+            case Config::MOLLIE_API_STATUS_ORDER:
+                foreach ($apiPayment->payments() as $payment) {
+                    if (!isset($payment->details->wallet)) {
+                        continue;
+                    }
+                    $transactionMethod = $payment->details->wallet;
+                }
+                break;
+            default:
+                throw new OrderCreationException('Missing order resource information',OrderCreationException::ORDER_RESOURSE_IS_MISSING);
+        }
+        $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+
+        return new MolPaymentMethod(
+            $this->paymentMethodRepository->getPaymentMethodIdByMethodId($transactionMethod, $environment)
+        );
     }
 }

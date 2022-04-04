@@ -29,6 +29,7 @@ final class UpdateApplePayShippingMethodHandler
         $cart->update();
         $orderTotal = $cart->getOrderTotal(true, Cart::BOTH, null, $command->getCarrierId());
         $fee = $this->orderFeeService->getPaymentFee($orderTotal, Config::APPLEPAY);
+
         return [
            'success' => true,
            'data' => [

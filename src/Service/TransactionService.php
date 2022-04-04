@@ -130,7 +130,7 @@ class TransactionService
                         $this->orderStatusService->setOrderStatus($orderId, Config::PARTIAL_REFUND_CODE);
                     }
                 } else {
-                    if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
+                    if (true) {
                         $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id);
                         if (!$orderId) {
                             return $orderIsCreateMessage;
@@ -159,7 +159,7 @@ class TransactionService
 
                 $isKlarnaOrder = in_array($apiPayment->method, Config::KLARNA_PAYMENTS, false);
 
-                if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
+                if (true) {
                     $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id, $isKlarnaOrder);
                     if (!$orderId) {
                         return $orderIsCreateMessage;

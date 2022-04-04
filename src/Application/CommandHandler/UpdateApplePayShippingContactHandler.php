@@ -13,11 +13,7 @@ use Mollie\Application\Command\UpdateApplePayShippingContact;
 use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
 use Mollie\Config\Config;
 use Mollie\DTO\ApplePay\Carrier\Carrier as AppleCarrier;
-use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderFeeService;
-use Mollie\Utility\PaymentFeeUtility;
-use MolPaymentMethod;
-use Shop;
 use Tools;
 
 final class UpdateApplePayShippingContactHandler
@@ -69,14 +65,14 @@ final class UpdateApplePayShippingContactHandler
         $totals = array_map(function (AppleCarrier $carrier) use ($cart) {
             $orderTotal = (float) number_format($cart->getOrderTotal(true, Cart::BOTH, null, $carrier->getCarrierId()), 2, '.', '');
             $paymentFee = $this->orderFeeService->getPaymentFee($orderTotal, Config::APPLEPAY);
+
             return [
                 'type' => 'final',
                 'label' => $carrier->getName(),
                 'amount' => $orderTotal + $paymentFee,
-                'amountWithoutFee' => $orderTotal
+                'amountWithoutFee' => $orderTotal,
             ];
         }, $applePayCarriers);
-
 
         $paymentFee = [];
         if ($totals) {

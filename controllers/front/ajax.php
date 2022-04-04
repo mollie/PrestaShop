@@ -34,16 +34,22 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
         switch ($action) {
             case 'getTotalCartPrice':
                 $this->getTotalCartPrice();
+                // no break
             case 'displayCheckoutError':
                 $this->displayCheckoutError();
+                // no break
             case 'mollie_apple_pay_validation':
                 $this->getApplePaySession();
+                // no break
             case 'mollie_apple_pay_update_shipping_contact':
                 $this->updateAppleShippingContact();
+                // no break
             case 'mollie_apple_pay_update_shipping_method':
                 $this->updateShippingMethod();
+                // no break
             case 'mollie_apple_pay_create_order':
                 $this->createApplePayOrder();
+                // no break
             case 'mollie_apple_pay_get_total_price':
                 $this->getTotalApplePayCartPrice();
         }
