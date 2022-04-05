@@ -408,6 +408,7 @@ class Mollie extends PaymentModule
                     'customerId' => $this->context->customer->id ?? 0,
                     'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
                     'cartId' => $this->context->cart->id,
+                    'applePayButtonStyle' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE)
                 ]);
                 $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
                 $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirectProduct.js');
@@ -420,6 +421,7 @@ class Mollie extends PaymentModule
                     'customerId' => $this->context->customer->id ?? 0,
                     'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
                     'cartId' => $this->context->cart->id,
+                    'applePayButtonStyle' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE)
                 ]);
                 $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
                 $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirectCart.js');

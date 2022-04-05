@@ -49,14 +49,17 @@
                 window.MollieModule.debug = {if $input.displayErrors}true{else}false{/if};
             }());
         </script>
-        <ul id="js-payment-methods-sortable" class="ui-sortable payment-methods-sortable" data-tab-id="general_settings">
+        <ul id="js-payment-methods-sortable" class="ui-sortable payment-methods-sortable"
+            data-tab-id="general_settings">
             {foreach $input.paymentMethods as $paymentMethod}
                 {assign var = 'methodObj' value=$paymentMethod.obj}
                 <li class="payment-method border border-bottom">
-                    <input type="hidden" name="payment_option_position[{$paymentMethod.obj->id|intval}]" value="{$paymentMethod.obj->position}" class="js-payment-option-position">
+                    <input type="hidden" name="payment_option_position[{$paymentMethod.obj->id|intval}]"
+                           value="{$paymentMethod.obj->position}" class="js-payment-option-position">
                     <span class="js-sort-handle sort-handle">
           <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-          <a class="text collapsed payment-method__text" data-toggle="collapse" href="#payment-method-form-{$paymentMethod.id|escape:'html':'UTF-8'}"
+          <a class="text collapsed payment-method__text" data-toggle="collapse"
+             href="#payment-method-form-{$paymentMethod.id|escape:'html':'UTF-8'}"
              role="button"
              aria-expanded="true" aria-controls="#payment-method-form-{$paymentMethod.id|escape:'html':'UTF-8'}">
             <svg class="bi bi-chevron-compact-up mollie-svg" width="1em" height="1em" viewBox="0 0 16 16"
@@ -74,22 +77,32 @@
                    onclick="togglePaymentMethod(this, '{$paymentMethod.id|escape:'html':'UTF-8'}'); return false;">
                 <i class="icon-check text-success"></i>
               </a>
-            {else}
-              <a href="#" class="payment-check-link"
-                 data-action="activate"
-                 onclick="togglePaymentMethod(this, '{$paymentMethod.id|escape:'html':'UTF-8'}'); return false;">
+
+
+
+
+{else}
+
+
+
+
+                <a href="#" class="payment-check-link"
+                   data-action="activate"
+                   onclick="togglePaymentMethod(this, '{$paymentMethod.id|escape:'html':'UTF-8'}'); return false;">
                 <i class="icon-remove text-danger"></i>
               </a>
             {/if}
           </td>
         </span>
-                    <div class="collapse multi-collapse" id="payment-method-form-{$paymentMethod.id|escape:'html':'UTF-8'}">
+                    <div class="collapse multi-collapse"
+                         id="payment-method-form-{$paymentMethod.id|escape:'html':'UTF-8'}">
                         <div class="form-group">
                             <label class="control-label col-lg-3">
                                 {l s='Enabled' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
-                                <select name="MOLLIE_METHOD_ENABLED_{$paymentMethod.id|escape:'html':'UTF-8'}" class="fixed-width-xl">
+                                <select name="MOLLIE_METHOD_ENABLED_{$paymentMethod.id|escape:'html':'UTF-8'}"
+                                        class="fixed-width-xl">
                                     <option value="0" {if $methodObj->enabled === '0'} selected {/if}>{l s='No' mod='mollie'}</option>
                                     <option value="1" {if $methodObj->enabled === '1'} selected {/if}>{l s='Yes' mod='mollie'}</option>
                                 </select>
@@ -107,13 +120,42 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label class="control-label col-lg-3">
+                                    {l s='ApplePay Direct button style' mod='mollie'}
+                                </label>
+                                <div class="col-lg-9">
+                                    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-9 text-center">
+                                        <img src="https://developer.apple.com/design/human-interface-guidelines/apple-pay/images/ApplePay_black_yes.png"
+                                             style="width: 100%;" alt="Black">
+                                        <label>
+                                            <input type="radio" name="MOLLIE_APPLE_PAY_DIRECT_STYLE" value="0" {if $input.applePayDIrectStyle === 0} checked{/if}>
+                                        </label>
+                                    </div>
+                                    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-9 text-center">
+                                        <img src="https://developer.apple.com/design/human-interface-guidelines/apple-pay/images/ApplePay_outline_yes.png"
+                                             style="width: 100%;" alt="White with Outline">
+                                        <label>
+                                            <input type="radio" name="MOLLIE_APPLE_PAY_DIRECT_STYLE" value="1" {if $input.applePayDIrectStyle === 1} checked{/if}>
+                                        </label>
+                                    </div>
+                                    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-9 text-center">
+                                        <img src="https://developer.apple.com/design/human-interface-guidelines/apple-pay/images/ApplePay_white_yes.png"
+                                             style="width: 100%;" alt="White">
+                                        <label>
+                                            <input type="radio" name="MOLLIE_APPLE_PAY_DIRECT_STYLE" value="2" {if $input.applePayDIrectStyle === 2} checked{/if}>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         {/if}
                         <div class="form-group">
                             <label class="control-label col-lg-3">
                                 {l s='Title' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
-                                <input type="text" name="MOLLIE_METHOD_TITLE_{$paymentMethod.id|escape:'html':'UTF-8'}" class="fixed-width-xl"
+                                <input type="text" name="MOLLIE_METHOD_TITLE_{$paymentMethod.id|escape:'html':'UTF-8'}"
+                                       class="fixed-width-xl"
                                        value="{$methodObj->title|escape:'html':'UTF-8'}">
                             </div>
                         </div>
@@ -122,7 +164,8 @@
                                 {l s='Method' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
-                                <select name="MOLLIE_METHOD_API_{$paymentMethod.id|escape:'html':'UTF-8'}" class="fixed-width-xl">
+                                <select name="MOLLIE_METHOD_API_{$paymentMethod.id|escape:'html':'UTF-8'}"
+                                        class="fixed-width-xl">
                                     {if !in_array($paymentMethod.id, $input.onlyOrderMethods)}
                                         <option value="payments" {if $methodObj->method === 'payments'} selected {/if}>{l s='Payments API' mod='mollie'}</option>
                                     {/if}
@@ -138,7 +181,8 @@
                                 {l s='Description' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
-                                <input type="text" name="MOLLIE_METHOD_DESCRIPTION_{$paymentMethod.id|escape:'html':'UTF-8'}"
+                                <input type="text"
+                                       name="MOLLIE_METHOD_DESCRIPTION_{$paymentMethod.id|escape:'html':'UTF-8'}"
                                        class="fixed-width-xl"
                                         {if !empty($methodObj->description)}
                                             value="{$methodObj->description|escape:'html':'UTF-8'}"
@@ -236,8 +280,10 @@
                                 {l s='Payment Surcharge Fixed Amount' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
-                                <input type="text" name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_{$paymentMethod.id|escape:'html':'UTF-8'}"
-                                       class="fixed-width-xl js-mollie-amount" value="{$methodObj->surcharge_fixed_amount|escape:'html':'UTF-8'}">
+                                <input type="text"
+                                       name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_{$paymentMethod.id|escape:'html':'UTF-8'}"
+                                       class="fixed-width-xl js-mollie-amount"
+                                       value="{$methodObj->surcharge_fixed_amount|escape:'html':'UTF-8'}">
                             </div>
                         </div>
                         <div class="form-group">
@@ -245,8 +291,10 @@
                                 {l s='Payment Surcharge percentage' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
-                                <input type="text" name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_{$paymentMethod.id|escape:'html':'UTF-8'}"
-                                       class="fixed-width-xl js-mollie-amount" value="{$methodObj->surcharge_percentage|escape:'html':'UTF-8'}">
+                                <input type="text"
+                                       name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_{$paymentMethod.id|escape:'html':'UTF-8'}"
+                                       class="fixed-width-xl js-mollie-amount"
+                                       value="{$methodObj->surcharge_percentage|escape:'html':'UTF-8'}">
                             </div>
                         </div>
                         <div class="form-group">
@@ -254,8 +302,10 @@
                                 {l s='Payment Surcharge limit' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
-                                <input type="text" name="MOLLIE_METHOD_SURCHARGE_LIMIT_{$paymentMethod.id|escape:'html':'UTF-8'}"
-                                       class="fixed-width-xl js-mollie-amount" value="{$methodObj->surcharge_limit|escape:'html':'UTF-8'}">
+                                <input type="text"
+                                       name="MOLLIE_METHOD_SURCHARGE_LIMIT_{$paymentMethod.id|escape:'html':'UTF-8'}"
+                                       class="fixed-width-xl js-mollie-amount"
+                                       value="{$methodObj->surcharge_limit|escape:'html':'UTF-8'}">
                             </div>
                         </div>
                         {if $paymentMethod.id|escape:'html':'UTF-8' === 'creditcard'}
@@ -458,6 +508,10 @@
               {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
                       {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
             />
+
+
+
+
 
 
 
@@ -707,20 +761,21 @@
               </button>
         </div>
     {elseif $input.type === 'mollie-button'}
-        <button type="button" class="btn btn-default {if isset($input.class)}{$input.class|escape:'html':'UTF-8'}{/if}">{$input.text|escape:'html':'UTF-8'}</button>
+        <button type="button"
+                class="btn btn-default {if isset($input.class)}{$input.class|escape:'html':'UTF-8'}{/if}">{$input.text|escape:'html':'UTF-8'}</button>
     {elseif $input.type === 'mollie-payment-empty-alert'}
-
         <div data-tab-id="general_settings">
             <div class="alert alert-info">
                 {l s='You haven\'t enabled any of the Mollie payments.' mod='mollie'}<br>
-                {l s='Please enable payments in your Mollie Account Dashboard.' mod='mollie'}&nbsp;<b><a href="https://www.mollie.com/dashboard/settings/profiles">{l s='Click here to configure.' mod='mollie'}</a></b>
+                {l s='Please enable payments in your Mollie Account Dashboard.' mod='mollie'}&nbsp;<b><a
+                            href="https://www.mollie.com/dashboard/settings/profiles">{l s='Click here to configure.' mod='mollie'}</a></b>
             </div>
         </div>
-
     {elseif $input.type === 'mollie-button-update-order-total-restriction'}
         <div class="mollie-order-total-restriction-update">
             <div>
-                <button type="button" class="btn btn-default {if isset($input.class)}{$input.class|escape:'html':'UTF-8'}{/if}">{$input.text|escape:'html':'UTF-8'}</button>
+                <button type="button"
+                        class="btn btn-default {if isset($input.class)}{$input.class|escape:'html':'UTF-8'}{/if}">{$input.text|escape:'html':'UTF-8'}</button>
             </div>
             <div>
                 <p class="help-block">{if isset($input.help)}{$input.help|escape:'html':'UTF-8'}{/if}</p>

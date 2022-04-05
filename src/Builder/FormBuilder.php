@@ -421,6 +421,8 @@ class FormBuilder
             'klarnaPayments' => Config::KLARNA_PAYMENTS,
             'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_AUTHORIZED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
             'applePayDirect' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT),
+            'applePayDIrectStyle' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
+
         ];
 
         return $input;

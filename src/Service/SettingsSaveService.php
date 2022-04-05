@@ -213,6 +213,7 @@ class SettingsSaveService
         $mollieMethodCountriesDisplayEnabled = (bool) Tools::getValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY);
         $mollieErrors = Tools::getValue(Config::MOLLIE_DISPLAY_ERRORS);
         $voucherCategory = Tools::getValue(Config::MOLLIE_VOUCHER_CATEGORY);
+        $applePayDirectStyle = Tools::getValue(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE);
 
         $mollieShipMain = Tools::getValue(Config::MOLLIE_AUTO_SHIP_MAIN);
         if (!isset($mollieErrors)) {
@@ -246,6 +247,7 @@ class SettingsSaveService
 
         if (empty($errors)) {
             Configuration::updateValue(Config::MOLLIE_APPLE_PAY_DIRECT, $isApplePayDirectEnabled);
+            Configuration::updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE, $applePayDirectStyle);
             Configuration::updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
             Configuration::updateValue(Config::MOLLIE_API_KEY_TEST, $mollieApiKeyTest);
             Configuration::updateValue(Config::MOLLIE_ENVIRONMENT, $environment);

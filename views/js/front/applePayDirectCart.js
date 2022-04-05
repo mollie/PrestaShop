@@ -39,7 +39,22 @@ $(document).ready(function () {
             const button = document.createElement('button')
             button.setAttribute('id', 'mollie_applepay_button')
             button.classList.add('apple-pay-button')
-            button.classList.add('apple-pay-button-black')
+            let buttonStyle;
+            switch (parseInt(applePayButtonStyle)) {
+                case 0:
+                    buttonStyle = 'apple-pay-button-black';
+                    break;
+                case 1:
+                    buttonStyle = 'apple-pay-button-white-with-line';
+                    break;
+                case 2:
+                    buttonStyle = 'apple-pay-button-white';
+                    break;
+                default:
+                    buttonStyle = 'apple-pay-button-black';
+            }
+            button.classList.add(buttonStyle)
+
             applePayMethodElement.appendChild(button)
         }
     });
@@ -47,8 +62,9 @@ $(document).ready(function () {
     const button = document.createElement('button')
     button.setAttribute('id', 'mollie_applepay_button')
     button.classList.add('apple-pay-button')
-    button.classList.add('apple-pay-button-black')
+    button.classList.add(buttonStyle)
     applePayMethodElement.appendChild(button)
+
     let updatedContactInfo = []
     let selectedShippingMethod = []
     let cartSubTotal = 0;
