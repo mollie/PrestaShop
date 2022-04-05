@@ -27,6 +27,7 @@ use Mollie\Config\Config;
 use Mollie\DTO\Object\Amount;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
+use Mollie\Exception\OrderCreationException;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\PhoneNumberProviderInterface;
 use Mollie\Repository\MethodCountryRepository;
@@ -105,7 +106,7 @@ class PaymentMethodService
 
     public function __construct(
         Mollie $module,
-        PaymentMethodRepository $methodRepository,
+        Mollie\Repository\PaymentMethodRepositoryInterface $methodRepository,
         MethodCountryRepository $methodCountryRepository,
         CartLinesService $cartLinesService,
         PaymentsTranslationService $paymentsTranslationService,
@@ -495,5 +496,34 @@ class PaymentMethodService
         }
 
         return $apiCustomer;
+    }
+
+    public function getPaymentMethod($apiPayment): MolPaymentMethod
+    {
+        $transactionMethod = $apiPayment->method;
+
+        switch ($apiPayment->resource) {
+            case Config::MOLLIE_API_STATUS_PAYMENT:
+                if (!isset($apiPayment->details->wallet)) {
+                    break;
+                }
+                $transactionMethod = $apiPayment->details->wallet;
+                break;
+            case Config::MOLLIE_API_STATUS_ORDER:
+                foreach ($apiPayment->payments() as $payment) {
+                    if (!isset($payment->details->wallet)) {
+                        continue;
+                    }
+                    $transactionMethod = $payment->details->wallet;
+                }
+                break;
+            default:
+                throw new OrderCreationException('Missing order resource information',OrderCreationException::ORDER_RESOURSE_IS_MISSING);
+        }
+        $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+
+        return new MolPaymentMethod(
+            $this->methodRepository->getPaymentMethodIdByMethodId($transactionMethod, $environment)
+        );
     }
 }

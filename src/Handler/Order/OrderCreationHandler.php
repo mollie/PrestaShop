@@ -54,6 +54,7 @@ use Mollie\Exception\OrderCreationException;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderFeeService;
 use Mollie\Service\OrderStatusService;
+use Mollie\Service\PaymentMethodService;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TextGeneratorUtility;
@@ -84,19 +85,25 @@ class OrderCreationHandler
      * @var Context
      */
     private $context;
+    /**
+     * @var PaymentMethodService
+     */
+    private $paymentMethodService;
 
     public function __construct(
         Mollie $module,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         OrderStatusService $orderStatusService,
         OrderFeeService $feeService,
-        Context $context
+        Context $context,
+        PaymentMethodService $paymentMethodService
     ) {
         $this->module = $module;
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->orderStatusService = $orderStatusService;
         $this->feeService = $feeService;
         $this->context = $context;
+        $this->paymentMethodService = $paymentMethodService;
     }
 
     /**
@@ -115,7 +122,7 @@ class OrderCreationHandler
         );
         $paymentFee = 0;
 
-        $paymentMethod = $this->getPaymentMethod($apiPayment);
+        $paymentMethod = $this->paymentMethodService->getPaymentMethod($apiPayment);
         if ($apiPayment->resource === Config::MOLLIE_API_STATUS_PAYMENT) {
             $paymentFee = PaymentFeeUtility::getPaymentFee($paymentMethod, $originalAmount);
         } else {
@@ -134,7 +141,7 @@ class OrderCreationHandler
                 (int) $cartId,
                 $orderStatus,
                 (float) $apiPayment->amount->value,
-                isset(Config::$methods[$paymentMethod->id_method]) ? Config::$methods[$paymentMethod->id_method] : $this->module->name,
+                $paymentMethod->method_name,
                 null,
                 ['transaction_id' => $apiPayment->id],
                 null,
@@ -169,7 +176,7 @@ class OrderCreationHandler
             (int) $cartId,
             (int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
             (float) $apiPayment->amount->value,
-            isset(Config::$methods[$paymentMethod->id_method]) ? Config::$methods[$paymentMethod->id_method] : $this->module->name,
+            $paymentMethod->method_name,
             null,
             ['transaction_id' => $apiPayment->id],
             null,

@@ -148,6 +148,7 @@ services:
       - '@Mollie\Service\OrderStatusService'
       - '@Mollie\Repository\PaymentMethodRepository'
       - '@Mollie\Handler\Order\OrderCreationHandler'
+      - '@Mollie\Service\PaymentMethodService'
 
   Mollie\Service\MolliePaymentMailService:
     class: Mollie\Service\MolliePaymentMailService

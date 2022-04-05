@@ -11,6 +11,7 @@
  */
 
 use Mollie\Config\Config;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -493,7 +494,7 @@ class Mollie extends PaymentModule
     public function hookDisplayAdminOrder($params)
     {
         /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->getMollieContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
+        $paymentMethodRepo = $this->getMollieContainer(PaymentMethodRepositoryInterface::class);
 
         /** @var \Mollie\Service\ShipmentServiceInterface $shipmentService */
         $shipmentService = $this->getMollieContainer(\Mollie\Service\ShipmentService::class);
@@ -544,8 +545,8 @@ class Mollie extends PaymentModule
         }
         $paymentOptions = [];
 
-        /** @var \Mollie\Repository\PaymentMethodRepositoryInterface $paymentMethodRepository */
-        $paymentMethodRepository = $this->getMollieContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
+        /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
+        $paymentMethodRepository = $this->getMollieContainer(PaymentMethodRepositoryInterface::class);
 
         /** @var \Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface $paymentOptionsHandler */
         $paymentOptionsHandler = $this->getMollieContainer(\Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface::class);
@@ -887,6 +888,28 @@ class Mollie extends PaymentModule
         }
     }
 
+    public function hookActionObjectOrderPaymentAddAfter($params)
+    {
+        /** @var OrderPayment $orderPayment */
+        $orderPayment = $params['object'];
+
+        /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+        $paymentMethodRepo = $this->getMollieContainer(PaymentMethodRepositoryInterface::class);
+
+        $orders = Order::getByReference($orderPayment->order_reference);
+        /** @var Order $order */
+        $order = $orders->getFirst();
+        if (!Validate::isLoadedObject($order)) {
+            return;
+        }
+        $mollieOrder = $paymentMethodRepo->getPaymentBy('cart_id', $order->id_cart);
+        if (!$mollieOrder) {
+            return;
+        }
+        $orderPayment->payment_method = Config::$methods[$mollieOrder['method']];
+        $orderPayment->update();
+    }
+
     public function hookDisplayProductActions($params)
     {
         return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
@@ -909,7 +932,7 @@ class Mollie extends PaymentModule
         /** @var Mollie $module */
         $module = Module::getInstanceByName('mollie');
         /** @var \Mollie\Repository\PaymentMethodRepository $molliePaymentRepo */
-        $molliePaymentRepo = $module->getMollieContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
+        $molliePaymentRepo = $module->getMollieContainer(PaymentMethodRepositoryInterface::class);
         $molPayment = $molliePaymentRepo->getPaymentBy('order_id', (string) $orderId);
         if (\Mollie\Utility\MollieStatusUtility::isPaymentFinished($molPayment['bank_status'])) {
             return false;

@@ -22,6 +22,7 @@ function upgrade_module_5_1_0($module)
 {
     $module->registerHook('displayExpressCheckout');
     $module->registerHook('displayProductActions');
+    $module->registerHook('actionObjectOrderPaymentAddAfter');
 
     return true;
 }

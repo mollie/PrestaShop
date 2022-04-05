@@ -59,17 +59,23 @@ class TransactionService
      * @var OrderCreationHandler
      */
     private $orderCreationHandler;
+    /**
+     * @var PaymentMethodService
+     */
+    private $paymentMethodService;
 
     public function __construct(
         Mollie $module,
         OrderStatusService $orderStatusService,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
-        OrderCreationHandler $orderCreationHandler
+        OrderCreationHandler $orderCreationHandler,
+        PaymentMethodService $paymentMethodService
     ) {
         $this->module = $module;
         $this->orderStatusService = $orderStatusService;
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->orderCreationHandler = $orderCreationHandler;
+        $this->paymentMethodService = $paymentMethodService;
     }
 
     /**
@@ -259,11 +265,10 @@ class TransactionService
      */
     public function updateTransaction($orderId, $transaction)
     {
-        /** @var TransactionService $transactionService */
-        $transactionService = $this->module->getMollieContainer(TransactionService::class);
+        $paymentMethod = $this->paymentMethodService->getPaymentMethod($transaction);
         $order = new Order($orderId);
         if (!$order->getOrderPayments()) {
-            $transactionService->updateOrderTransaction($transaction->id, $order->reference);
+            $this->updateOrderTransaction($transaction->id, $order->reference);
         } else {
             /** @var OrderPayment $orderPayment */
             foreach ($order->getOrderPayments() as $orderPayment) {
@@ -271,6 +276,7 @@ class TransactionService
                     continue;
                 }
                 $orderPayment->transaction_id = $transaction->id;
+                $orderPayment->payment_method = $paymentMethod->method_name;
                 $orderPayment->update();
             }
         }

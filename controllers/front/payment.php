@@ -218,26 +218,4 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         /* @phpstan-ignore-next-line */
         parent::setTemplate($template, $params, $locale);
     }
-
-    private function createOrder($apiPayment, $cartId, $orderReference)
-    {
-        try {
-            Db::getInstance()->insert(
-                'mollie_payments',
-                [
-                    'cart_id' => (int) $cartId,
-                    'method' => pSQL($apiPayment->method),
-                    'transaction_id' => pSQL($apiPayment->id),
-                    'order_reference' => pSQL($orderReference),
-                    'bank_status' => PaymentStatus::STATUS_OPEN,
-                    'created_at' => ['type' => 'sql', 'value' => 'NOW()'],
-                ]
-            );
-        } catch (PrestaShopDatabaseException $e) {
-            /** @var PaymentMethodRepository $paymentMethodRepo */
-            $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
-            $paymentMethodRepo->tryAddOrderReferenceColumn();
-            throw $e;
-        }
-    }
 }
