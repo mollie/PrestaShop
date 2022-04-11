@@ -14,12 +14,12 @@ use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Api\Types\PaymentStatus;
-use Mollie\Config\Config;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Handler\Exception\OrderExceptionHandler;
+use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\PaymentMethodService;
@@ -35,7 +35,7 @@ require_once dirname(__FILE__) . '/../../mollie.php';
  * Class MolliePaymentModuleFrontController.
  *
  * @property Context $context
- * @property Mollie  $module
+ * @property Mollie $module
  */
 class MolliePaymentModuleFrontController extends ModuleFrontController
 {
@@ -73,9 +73,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         $method = Tools::getValue('method');
-        if (in_array($method, [Config::CARTES_BANCAIRES])) {
-            $method = 'creditcard';
-        }
         $issuer = Tools::getValue('issuer') ?: null;
 
         $originalAmount = $cart->getOrderTotal(
@@ -89,8 +86,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
         /** @var PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
-        /** @var PaymentMethodService $paymentMethodService */
-        $paymentMethodService = $this->module->getMollieContainer(PaymentMethodService::class);
+        /** @var PaymentMethodService $transactionService */
+        $transactionService = $this->module->getMollieContainer(PaymentMethodService::class);
 
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method, $environment);
@@ -98,7 +95,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
         $orderNumber = OrderNumberUtility::generateOrderNumber($cart->id);
 
-        $paymentData = $paymentMethodService->getPaymentData(
+        $paymentData = $transactionService->getPaymentData(
             $amount,
             Tools::strtoupper($this->context->currency->iso_code),
             $method,
@@ -106,10 +103,17 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             (int) $cart->id,
             $customer->secure_key,
             $paymentMethodObj,
-            false,
             $orderNumber,
-            Tools::getValue('cardToken')
+            Tools::getValue('cardToken'),
+            Tools::getValue('saveCard'),
+            Tools::getValue('useSavedCard')
         );
+
+        if ($method === PaymentMethod::BANKTRANSFER) {
+            /** @var OrderCreationHandler $orderCreationHandler */
+            $orderCreationHandler = $this->module->getMollieContainer(OrderCreationHandler::class);
+            $paymentData = $orderCreationHandler->createBankTransferOrder($paymentData, $cart);
+        }
 
         $apiPayment = $this->createMollieOrder($paymentData, $paymentMethodObj);
         if (!$apiPayment) {
@@ -118,9 +122,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
         $this->createOrder($apiPayment, $cart->id, $orderNumber);
 
-        if ($method === PaymentMethod::BANKTRANSFER) {
-            unset($this->context->cookie->id_cart);
-        }
         // Go to payment url
         if (null !== $apiPayment->getCheckoutUrl()) {
             Tools::redirect($apiPayment->getCheckoutUrl());
@@ -274,16 +275,16 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     {
         try {
             Db::getInstance()->insert(
-                    'mollie_payments',
-                    [
-                        'cart_id' => (int) $cartId,
-                        'method' => pSQL($apiPayment->method),
-                        'transaction_id' => pSQL($apiPayment->id),
-                        'order_reference' => pSQL($orderReference),
-                        'bank_status' => PaymentStatus::STATUS_OPEN,
-                        'created_at' => ['type' => 'sql', 'value' => 'NOW()'],
-                    ]
-                );
+                'mollie_payments',
+                [
+                    'cart_id' => (int) $cartId,
+                    'method' => pSQL($apiPayment->method),
+                    'transaction_id' => pSQL($apiPayment->id),
+                    'order_reference' => pSQL($orderReference),
+                    'bank_status' => PaymentStatus::STATUS_OPEN,
+                    'created_at' => ['type' => 'sql', 'value' => 'NOW()'],
+                ]
+            );
         } catch (PrestaShopDatabaseException $e) {
             /** @var PaymentMethodRepository $paymentMethodRepo */
             $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);

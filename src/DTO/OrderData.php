@@ -101,8 +101,8 @@ class OrderData implements JsonSerializable
 
     public function __construct(
         Amount $amount,
-        $redirectUrl,
-        $webhookUrl
+               $redirectUrl,
+               $webhookUrl
     ) {
         $this->amount = $amount;
         $this->redirectUrl = $redirectUrl;
@@ -386,24 +386,24 @@ class OrderData implements JsonSerializable
                 'value' => (string) $this->getAmount()->getValue(),
             ],
             'billingAddress' => [
-                'organizationName' => ltrim($this->getBillingAddress()->company),
-                'streetAndNumber' => $this->getBillingAddress()->address1,
-                'city' => $this->getBillingAddress()->city,
-                'postalCode' => $this->getBillingAddress()->postcode,
-                'country' => (string) Country::getIsoById($this->getBillingAddress()->id_country),
-                'givenName' => $this->getBillingAddress()->firstname,
-                'familyName' => $this->getBillingAddress()->lastname,
-                'email' => $this->getEmail(),
+                'organizationName' => $this->cleanUpInput($this->getBillingAddress()->company),
+                'streetAndNumber' => $this->cleanUpInput($this->getBillingAddress()->address1),
+                'city' => $this->cleanUpInput($this->getBillingAddress()->city),
+                'postalCode' => $this->cleanUpInput($this->getBillingAddress()->postcode),
+                'country' => $this->cleanUpInput(Country::getIsoById($this->getBillingAddress()->id_country)),
+                'givenName' => $this->cleanUpInput($this->getBillingAddress()->firstname),
+                'familyName' => $this->cleanUpInput($this->getBillingAddress()->lastname),
+                'email' => $this->cleanUpInput($this->getEmail()),
             ],
             'shippingAddress' => [
-                'organizationName' => ltrim($this->getShippingAddress()->company),
-                'streetAndNumber' => $this->getShippingAddress()->address1,
-                'city' => $this->getShippingAddress()->city,
-                'postalCode' => $this->getShippingAddress()->postcode,
-                'country' => (string) Country::getIsoById($this->getShippingAddress()->id_country),
-                'givenName' => $this->getShippingAddress()->firstname,
-                'familyName' => $this->getShippingAddress()->lastname,
-                'email' => $this->getEmail(),
+                'organizationName' => $this->cleanUpInput($this->getShippingAddress()->company),
+                'streetAndNumber' => $this->cleanUpInput($this->getShippingAddress()->address1),
+                'city' => $this->cleanUpInput($this->getShippingAddress()->city),
+                'postalCode' => $this->cleanUpInput($this->getShippingAddress()->postcode),
+                'country' => $this->cleanUpInput(Country::getIsoById($this->getShippingAddress()->id_country)),
+                'givenName' => $this->cleanUpInput($this->getShippingAddress()->firstname),
+                'familyName' => $this->cleanUpInput($this->getShippingAddress()->lastname),
+                'email' => $this->cleanUpInput($this->getEmail()),
             ],
             'redirectUrl' => $this->getRedirectUrl(),
             'webhookUrl' => $this->getWebhookUrl(),
@@ -424,5 +424,19 @@ class OrderData implements JsonSerializable
         }
 
         return $result;
+    }
+
+    private function cleanUpInput($input)
+    {
+        $defaultValue = 'N/A';
+
+        if (!isset($input) || empty($input)) {
+            return $defaultValue;
+        }
+
+        $input = ctype_space($input) ? $defaultValue : $input;
+        $input = ltrim($input);
+
+        return substr($input, 0, 100);
     }
 }

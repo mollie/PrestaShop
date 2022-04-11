@@ -66,11 +66,15 @@ class UrlPathUtility
      *
      * @since 3.4.0
      */
-    public static function getWebpackChunks($entry)
+    public static function getWebpackChunks($entry): array
     {
         static $manifest = null;
         if (!$manifest) {
             $manifest = [];
+            $manifestFiles = include _PS_MODULE_DIR_ . 'mollie/views/js/dist/manifest.php';
+            if (!$manifestFiles) {
+                return [];
+            }
             foreach (include(_PS_MODULE_DIR_ . 'mollie/views/js/dist/manifest.php') as $chunk) {
                 $manifest[$chunk['name']] = array_map(function ($chunk) {
                     return UrlPathUtility::getMediaPath(_PS_MODULE_DIR_ . "mollie/views/js/dist/{$chunk}");

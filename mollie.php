@@ -24,9 +24,6 @@ class Mollie extends PaymentModule
     public $api = null;
 
     /** @var string */
-    public $currentOrderReference;
-
-    /** @var string */
     public static $selectedApi;
 
     /** @var bool Indicates whether the Smarty cache has been cleared during updates */
@@ -35,7 +32,7 @@ class Mollie extends PaymentModule
     // The Addons version does not include the GitHub updater
     const ADDONS = false;
 
-    const SUPPORTED_PHP_VERSION = '5.6';
+    const SUPPORTED_PHP_VERSION = '70080';
 
     const ADMIN_MOLLIE_CONTROLLER = 'AdminMollieModuleController';
     const ADMIN_MOLLIE_AJAX_CONTROLLER = 'AdminMollieAjaxController';
@@ -47,20 +44,17 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '4.4.2';
+        $this->version = '5.0.1';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
         $this->module_key = 'a48b2f8918358bcbe6436414f48d8915';
 
         parent::__construct();
-        $this->ps_versions_compliancy = ['min' => '1.6.1.0', 'max' => _PS_VERSION_];
+
+        $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
-
-        if (-1 === version_compare(phpversion(), $this::SUPPORTED_PHP_VERSION)) {
-            return;
-        }
 
         $this->compile();
         $this->loadEnv();
@@ -96,8 +90,8 @@ class Mollie extends PaymentModule
      */
     public function install()
     {
-        if (-1 === version_compare(phpversion(), Mollie\Config\Config::SUPPORTED_PHP_VERSION)) {
-            $this->_errors[] = $this->l('Dear customer, your PHP version is too low. Please upgrade your PHP version to use this module. Mollie module supports PHP 5.6 and higher versions.');
+        if (!$this->isPhpVersionCompliant()) {
+            $this->_errors[] = $this->l('Dear customer, your PHP version is too low. Please upgrade your PHP version to use this module. Mollie module supports PHP 7.0.8 and higher versions.');
 
             return false;
         }
@@ -133,6 +127,17 @@ class Mollie extends PaymentModule
         }
 
         return parent::uninstall();
+    }
+
+    public function enable($force_all = false)
+    {
+        if (!$this->isPhpVersionCompliant()) {
+            $this->_errors[] = $this->l('Dear customer, your PHP version is too low. Please upgrade your PHP version to use this module. Mollie module supports PHP 7.0.8 and higher versions.');
+
+            return false;
+        }
+
+        return parent::enable($force_all);
     }
 
     // todo: check 1.7.2
@@ -339,17 +344,14 @@ class Mollie extends PaymentModule
         return $str;
     }
 
-    /**
-     * @throws PrestaShopException
-     */
-    public function hookActionFrontControllerSetMedia()
+    public function hookDisplayHeader(array $params)
     {
-        /** @var \Mollie\Service\ErrorDisplayService $errorDisplayService */
-        $errorDisplayService = $this->getMollieContainer()->get(\Mollie\Service\ErrorDisplayService::class);
+        if (!$this->context->controller instanceof OrderController) {
+            return;
+        }
 
-        $isCartController = $this->context->controller instanceof CartControllerCore;
-        if ($isCartController) {
-            $errorDisplayService->showCookieError('mollie_payment_canceled_error');
+        if (!$this->isPaymentCheckoutStep()) {
+            return;
         }
 
         Media::addJsDef([
@@ -357,21 +359,16 @@ class Mollie extends PaymentModule
             'isoCode' => $this->context->language->language_code,
             'isTestMode' => \Mollie\Config\Config::isTestMode(),
         ]);
-        if (\Mollie\Config\Config::isVersion17()) {
-            $this->context->controller->registerJavascript(
-                'mollie_iframe_js',
-                'https://js.mollie.com/v1/mollie.js',
-                ['server' => 'remote', 'position' => 'bottom', 'priority' => 150]
-            );
-            $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe.js");
-        } else {
-            $this->context->controller->addMedia('https://js.mollie.com/v1/mollie.js', null, null, false, false);
-            $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe_16.js");
-            $this->context->controller->addJS("{$this->_path}views/js/front/mollie_payment_method_click_lock_16.js");
-        }
+        $this->context->controller->registerJavascript(
+            'mollie_iframe_js',
+            'https://js.mollie.com/v1/mollie.js',
+            ['server' => 'remote', 'position' => 'bottom', 'priority' => 150]
+        );
+        $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe.js");
+        $this->context->controller->addJS("{$this->_path}views/js/front/mollie_single_click.js");
+
         Media::addJsDef([
             'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
-            'isPS17' => \Mollie\Config\Config::isVersion17(),
         ]);
         $this->context->controller->addJS("{$this->_path}views/js/front/mollie_error_handle.js");
         $this->context->controller->addCSS("{$this->_path}views/css/mollie_iframe.css");
@@ -385,6 +382,20 @@ class Mollie extends PaymentModule
         $this->context->controller->addJS("{$this->_path}views/js/front/payment_fee.js");
 
         return $this->display(__FILE__, 'views/templates/front/custom_css.tpl');
+    }
+
+    /**
+     * @throws PrestaShopException
+     */
+    public function hookActionFrontControllerSetMedia()
+    {
+        /** @var \Mollie\Service\ErrorDisplayService $errorDisplayService */
+        $errorDisplayService = $this->getMollieContainer()->get(\Mollie\Service\ErrorDisplayService::class);
+
+        $isCartController = $this->context->controller instanceof CartControllerCore;
+        if ($isCartController) {
+            $errorDisplayService->showCookieError('mollie_payment_canceled_error');
+        }
     }
 
     /**
@@ -491,116 +502,6 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * @return string
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    public function hookDisplayPayment()
-    {
-        $smarty = $this->context->smarty;
-        $issuerSetting = Configuration::get(Mollie\Config\Config::MOLLIE_ISSUERS);
-
-        /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
-        $paymentMethodService = $this->getMollieContainer(\Mollie\Service\PaymentMethodService::class);
-
-        /** @var \Mollie\Service\IssuerService $issuerService */
-        $issuerService = $this->getMollieContainer(\Mollie\Service\IssuerService::class);
-
-        /** @var \Mollie\Service\OrderFeeService $orderFeeService */
-        $orderFeeService = $this->getMollieContainer(\Mollie\Service\OrderFeeService::class);
-
-        $apiMethods = $paymentMethodService->getMethodsForCheckout();
-        $issuerList = [];
-        foreach ($apiMethods as $apiMethod) {
-            if (\Mollie\Api\Types\PaymentMethod::IDEAL === $apiMethod['id_method']) {
-                $issuerList = $issuerService->getIdealIssuers();
-            }
-        }
-        $apiMethods = $orderFeeService->getPaymentFees($apiMethods, $this->context->cart->getOrderTotal());
-
-        $isIFrameEnabled = Configuration::get(Mollie\Config\Config::MOLLIE_IFRAME);
-        /** @var Cart $cart */
-        $cart = Context::getContext()->cart;
-        $smarty->assign([
-            'mollieIframe' => $isIFrameEnabled,
-            'link' => $this->context->link,
-            'cartAmount' => (int) ($cart->getOrderTotal(true) * 100),
-            'methods' => $apiMethods,
-            'issuers' => $issuerList,
-            'issuer_setting' => $issuerSetting,
-            'images' => Configuration::get(Mollie\Config\Config::MOLLIE_IMAGES),
-            'warning' => $this->warning,
-            'msg_pay_with' => $this->l('Pay with %s'),
-            'msg_bankselect' => $this->l('Select your bank:'),
-            'module' => $this,
-            'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
-            'CARTES_BANCAIRES' => Mollie\Config\Config::CARTES_BANCAIRES,
-            'ISSUERS_ON_CLICK' => Mollie\Config\Config::ISSUERS_ON_CLICK,
-            'web_pack_chunks' => Mollie\Utility\UrlPathUtility::getWebpackChunks('app'),
-            'display_errors' => Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS,
-            'mollie_translations' => [
-                'chooseYourBank' => $this->l('Choose your bank'),
-                'orPayByIdealQr' => $this->l('or pay by iDEAL QR'),
-                'choose' => $this->l('Choose'),
-                'cancel' => $this->l('Cancel'),
-            ],
-        ]);
-
-        $iframeDisplay = '';
-        if (!\Mollie\Config\Config::isVersion17() && $isIFrameEnabled) {
-            $iframeDisplay = $this->display(__FILE__, 'mollie_iframe_16.tpl');
-        }
-
-        return $this->display(__FILE__, 'payment.tpl') . $iframeDisplay;
-    }
-
-    /**
-     * EU Advanced Compliance module (PrestaShop module) Advanced Checkout option enabled.
-     *
-     * @return array|null
-     *
-     * @throws PrestaShopException
-     */
-    public function hookDisplayPaymentEU()
-    {
-        // Please update your one page checkout module if it depends on `displayPaymentEU`
-        // Mollie does no longer support this hook on PresaShop v1.7 or higher
-        // due to the problems caused by mixing the hooks `paymentOptions` and `displayPaymentEU`
-        // Only uncomment the following three lines if you have no other choice:
-        if (version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
-            return [];
-        }
-
-        /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
-        $paymentMethodService = $this->getMollieContainer(\Mollie\Service\PaymentMethodService::class);
-
-        $methods = $paymentMethodService->getMethodsForCheckout();
-
-        $context = Context::getContext();
-        $iso = Tools::strtolower($context->currency->iso_code);
-        $paymentOptions = [];
-
-        foreach ($methods as $method) {
-            $images = json_decode($method['images_json'], true);
-            $paymentOptions[] = [
-                'cta_text' => $this->l($method['method_name'], \Mollie\Service\LanguageService::FILE_NAME),
-                'logo' => Mollie\Config\Config::LOGOS_NORMAL === Configuration::get(Mollie\Config\Config::MOLLIE_IMAGES)
-                    ? $images['size1x']
-                    : $images['size2x'],
-                'action' => $this->context->link->getModuleLink(
-                    'mollie',
-                    'payment',
-                    ['method' => $method['id_method'], 'rand' => Mollie\Utility\TimeUtility::getCurrentTimeStamp()],
-                    true
-                ),
-            ];
-        }
-
-        return $paymentOptions;
-    }
-
-    /**
      * @param array $params
      *
      * @return array|null
@@ -633,6 +534,7 @@ class Mollie extends PaymentModule
             if (!$paymentMethod) {
                 continue;
             }
+            $paymentMethod->method_name = $method['method_name'];
             $paymentOptions[] = $paymentOptionsHandler->handle($paymentMethod);
         }
 
@@ -650,9 +552,12 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->getMollieContainer(\Mollie\Repository\PaymentMethodRepository::class);
         $payment = $paymentMethodRepo->getPaymentBy('cart_id', (string) Tools::getValue('id_cart'));
+        if (!$payment) {
+            return '';
+        }
         $isPaid = \Mollie\Api\Types\PaymentStatus::STATUS_PAID == $payment['bank_status'];
         $isAuthorized = \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED == $payment['bank_status'];
-        if ($payment && ($isPaid || $isAuthorized)) {
+        if (($isPaid || $isAuthorized)) {
             $this->context->smarty->assign('okMessage', $this->l('Thank you. Your payment has been received.'));
 
             return $this->display(__FILE__, 'ok.tpl');
@@ -739,10 +644,6 @@ class Mollie extends PaymentModule
      * @param array $params
      *
      * @return bool
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
      */
     public function hookActionEmailSendBefore($params)
     {
@@ -758,9 +659,6 @@ class Mollie extends PaymentModule
         }
         /** @var \Mollie\Validator\OrderConfMailValidator $orderConfMailValidator */
         $orderConfMailValidator = $this->getMollieContainer(\Mollie\Validator\OrderConfMailValidator::class);
-
-        /** @var \Mollie\Validator\NewOrderMailValidator $newOrderMailValidator */
-        $newOrderMailValidator = $this->getMollieContainer(\Mollie\Validator\NewOrderMailValidator::class);
 
         /** @var string $template */
         $template = $params['template'];
@@ -809,15 +707,14 @@ class Mollie extends PaymentModule
             return $orderConfMailValidator->validate((int) $order->current_state);
         }
 
-        if ('new_order' === $template) {
-            return $newOrderMailValidator->validate((int) $order->current_state);
-        }
-
         return true;
     }
 
     public function hookDisplayPDFInvoice($params)
     {
+        if (!isset($params['object'])) {
+            return;
+        }
         if (!$params['object'] instanceof OrderInvoice) {
             return;
         }
@@ -827,8 +724,7 @@ class Mollie extends PaymentModule
 
         $templateParams = $invoiceTemplateBuilder
             ->setOrder($params['object']->getOrder())
-            ->buildParams()
-        ;
+            ->buildParams();
 
         if (empty($templateParams)) {
             return;
@@ -909,7 +805,7 @@ class Mollie extends PaymentModule
 
     public function hookActionValidateOrder($params)
     {
-        if ('admin' !== $this->context->controller->controller_type) {
+        if (!isset($this->context->controller) || 'admin' !== $this->context->controller->controller_type) {
             return;
         }
 
@@ -936,7 +832,6 @@ class Mollie extends PaymentModule
                 $cartId,
                 $customerKey,
                 $paymentMethodObj,
-                false,
                 $orderReference
             );
 
@@ -983,17 +878,6 @@ class Mollie extends PaymentModule
         $orderListActionBuilder = $module->getMollieContainer(\Mollie\Presenter\OrderListActionBuilder::class);
 
         return $orderListActionBuilder->buildOrderPaymentResendButton($module->smarty, $orderId);
-    }
-
-    public function hookActionAdminStatusesListingFieldsModifier($params)
-    {
-        if ('AdminStatuses' === Tools::getValue('controller') && isset($params['fields']['id_order_state'])) {
-            $params['where'] = " AND (a.`module_name` = '{$this->name}' AND a.`deleted` = 0) OR a.`module_name` NOT LIKE '{$this->name}'";
-        }
-
-        if ('AdminStatuses' === Tools::getValue('controller') && isset($params['fields']['id_order_return_state'])) {
-            $params['where'] = null;
-        }
     }
 
     public function updateApiKey($shopId = null)
@@ -1052,5 +936,60 @@ class Mollie extends PaymentModule
         $segment->track();
 
         return parent::runUpgradeModule();
+    }
+
+    /**
+     * Tells if we are in the Payment step from the order tunnel.
+     * We use the ReflectionObject because it only exists from Prestashop 1.7.7
+     *
+     * @return bool
+     */
+    private function isPaymentCheckoutStep()
+    {
+        if (!$this->context->controller instanceof OrderController) {
+            return false;
+        }
+
+        $checkoutSteps = $this->getAllOrderSteps();
+
+        /* Get the checkoutPaymentKey from the $checkoutSteps array */
+        foreach ($checkoutSteps as $stepObject) {
+            if ($stepObject instanceof CheckoutPaymentStep) {
+                return (bool) $stepObject->isCurrent();
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get all existing Payment Steps from front office.
+     * Use ReflectionObject before Prestashop 1.7.7
+     * From Prestashop 1.7.7 object checkoutProcess is now public
+     *
+     * @return array
+     */
+    private function getAllOrderSteps()
+    {
+        $isPrestashop177 = version_compare(_PS_VERSION_, '1.7.7.0', '>=');
+
+        if (true === $isPrestashop177) {
+            /* @phpstan-ignore-next-line */
+            return $this->context->controller->getCheckoutProcess()->getSteps();
+        }
+
+        /* Reflect checkoutProcess object */
+        $reflectedObject = (new ReflectionObject($this->context->controller))->getProperty('checkoutProcess');
+        $reflectedObject->setAccessible(true);
+
+        /* Get Checkout steps data */
+        $checkoutProcessClass = $reflectedObject->getValue($this->context->controller);
+
+        return $checkoutProcessClass->getSteps();
+    }
+
+    private function isPhpVersionCompliant()
+    {
+        return self::SUPPORTED_PHP_VERSION <= PHP_VERSION_ID;
     }
 }

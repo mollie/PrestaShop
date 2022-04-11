@@ -64,7 +64,6 @@ $(document).ready(function () {
       showAdditionalInformation($mollieContainers.closest('.additional-information'))
     }
 
-
     var options = {
         styles: {
             base: {
@@ -134,11 +133,12 @@ $(document).ready(function () {
         expiryDateInput = mountMollieField(this, '#expiry-date', methodId, expiryDate, 'expiry-date');
         verificationCodeInput = mountMollieField(this, '#verification-code', methodId, verificationCode, 'verification-code');
 
-        var $mollieCardToken = $('input[name="mollieCardToken' + methodId + '"]');
+        var $mollieCardToken = $('input[name="mollieCardToken"]');
         var isResubmit = false;
         $mollieCardToken.closest('form').on('submit', function (event) {
             var $form = $(this);
-            if (isResubmit) {
+            var useSavedCardCheckbox = $('input[name="mollie-use-saved-card"]');
+            if (isResubmit || useSavedCardCheckbox.is(':checked')) {
                 return;
             }
             event.preventDefault();
@@ -153,7 +153,10 @@ $(document).ready(function () {
                 $mollieCardToken.val(token.token);
                 isResubmit = true;
                 $form[0].submit();
+                return;
             });
+
+            $('#payment-confirmation').find('button[type=submit]').prop("disabled", false);
         });
     }
 
@@ -207,6 +210,16 @@ $(document).ready(function () {
         });
         if (!hasError) {
             $errorField.find('label').text('');
+        }
+    }
+
+    function handleSavedCard(useSavedCard)
+    {
+        $('input[name="mollieUseSavedCard"]').val(useSavedCard ? 1 : 0);
+        if (useSavedCard) {
+            $('.mollie-credit-card-inputs').hide();
+        } else {
+            $('.mollie-credit-card-inputs').show();
         }
     }
 });

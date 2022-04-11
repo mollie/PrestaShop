@@ -245,7 +245,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             case PaymentStatus::STATUS_AUTHORIZED:
                 $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
             if ($transaction->resource === Config::MOLLIE_API_STATUS_PAYMENT && $transaction->hasRefunds()) {
-                if ($transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
+                if (isset($transactionInfo['reason']) && $transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
                     $this->setWarning($wrongAmountMessage);
                 } else {
                     $this->setWarning($notSuccessfulPaymentMessage);
@@ -254,7 +254,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 break;
             }
 
-            if ($transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
+            if (isset($transactionInfo['reason']) && $transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
                 $this->setWarning($wrongAmountMessage);
                 $response = $paymentReturnService->handleFailedStatus($transaction);
                 break;
@@ -269,7 +269,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             case PaymentStatus::STATUS_CANCELED:
             case PaymentStatus::STATUS_FAILED:
                 $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
-                if ($transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
+                if (isset($transactionInfo['reason']) && $transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
                     $this->setWarning($wrongAmountMessage);
                 } else {
                     $this->setWarning($notSuccessfulPaymentMessage);

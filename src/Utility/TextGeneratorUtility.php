@@ -17,6 +17,7 @@ use Cart;
 use Configuration;
 use Country;
 use Customer;
+use Order;
 
 class TextGeneratorUtility
 {
@@ -24,41 +25,35 @@ class TextGeneratorUtility
      * Generate a description from the Cart.
      *
      * @param string $methodDescription
-     * @param Cart|int $cartId Cart or Cart ID
-     * @param string $orderReference Order reference
+     * @param int $orderId
      *
      * @return string Description
-     *
-     * @since 3.0.0
      */
-    public static function generateDescriptionFromCart($methodDescription, $cartId, $orderReference)
+    public static function generateDescriptionFromCart($methodDescription, $orderId)
     {
-        if ($cartId instanceof Cart) {
-            $cart = $cartId;
-        } else {
-            $cart = new Cart($cartId);
-        }
+        $order = new Order($orderId);
+        $cart = Cart::getCartByOrderId($orderId);
         $buyer = null;
-        if ($cart->id_customer) {
-            $buyer = new Customer((int) $cart->id_customer);
+        if ($cart && $cart->id_customer) {
+            $buyer = new Customer($cart->id_customer);
         }
 
         $countryCode = '';
         if ($cart->id_address_delivery) {
-            $deliveryAddress = new Address((int) $cart->id_address_delivery);
+            $deliveryAddress = new Address(($cart->id_address_delivery));
             $countryId = $deliveryAddress->id_country;
             $country = new Country($countryId);
             $countryCode = $country->iso_code;
         }
         $filters = [
-            '%' => $cartId,
-            '{cart.id}' => $cartId,
-            '{order.reference}' => $orderReference,
+            '%' => $cart->id,
+            '{cart.id}' => $cart->id,
+            '{order.reference}' => $order->reference,
             '{customer.firstname}' => null == $buyer ? '' : $buyer->firstname,
             '{customer.lastname}' => null == $buyer ? '' : $buyer->lastname,
             '{customer.company}' => null == $buyer ? '' : $buyer->company,
             '{storeName}' => Configuration::get('PS_SHOP_NAME'),
-            '{orderNumber}' => $orderReference,
+            '{orderNumber}' => $order->reference,
             '{countryCode}' => $countryCode,
         ];
 
@@ -68,8 +63,10 @@ class TextGeneratorUtility
             $methodDescription
         );
 
-        $description = empty($content) ? $orderReference : $content;
+        if (ctype_space($content)) {
+            return $order->reference;
+        }
 
-        return $description;
+        return empty($content) ? $order->reference : $content;
     }
 }

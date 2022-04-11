@@ -37,11 +37,14 @@
 namespace Mollie\Handler\PaymentOption;
 
 use Configuration;
+use Customer;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
 use Mollie\Provider\PaymentOption\BasePaymentOptionProvider;
 use Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider;
+use Mollie\Provider\PaymentOption\CreditCardSingleClickPaymentOptionProvider;
 use Mollie\Provider\PaymentOption\IdealPaymentOptionProvider;
+use Mollie\Repository\MolCustomerRepository;
 use MolPaymentMethod;
 
 class PaymentOptionHandler implements PaymentOptionHandlerInterface
@@ -60,15 +63,33 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
      * @var IdealPaymentOptionProvider
      */
     private $idealPaymentOptionProvider;
+    /**
+     * @var MolCustomerRepository
+     */
+    private $customerRepository;
+    /**
+     * @var Customer
+     */
+    private $customer;
+    /**
+     * @var CreditCardSingleClickPaymentOptionProvider
+     */
+    private $cardSingleClickPaymentOptionProvider;
 
     public function __construct(
         BasePaymentOptionProvider $basePaymentOptionProvider,
         CreditCardPaymentOptionProvider $creditCardPaymentOptionProvider,
-        IdealPaymentOptionProvider $idealPaymentOptionProvider
+        CreditCardSingleClickPaymentOptionProvider $cardSingleClickPaymentOptionProvider,
+        IdealPaymentOptionProvider $idealPaymentOptionProvider,
+        MolCustomerRepository $customerRepository,
+        Customer $customer
     ) {
         $this->basePaymentOptionProvider = $basePaymentOptionProvider;
         $this->creditCardPaymentOptionProvider = $creditCardPaymentOptionProvider;
         $this->idealPaymentOptionProvider = $idealPaymentOptionProvider;
+        $this->customerRepository = $customerRepository;
+        $this->customer = $customer;
+        $this->cardSingleClickPaymentOptionProvider = $cardSingleClickPaymentOptionProvider;
     }
 
     /**
@@ -81,7 +102,11 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
         }
 
         if ($this->isCreditCardPaymentMethod($paymentMethod)) {
-            return $this->creditCardPaymentOptionProvider->getPaymentOption($paymentMethod);
+            if ($this->isIFrame()) {
+                return $this->creditCardPaymentOptionProvider->getPaymentOption($paymentMethod);
+            } elseif ($this->isSingleClick()) {
+                return $this->cardSingleClickPaymentOptionProvider->getPaymentOption($paymentMethod);
+            }
         }
 
         return $this->basePaymentOptionProvider->getPaymentOption($paymentMethod);
@@ -113,13 +138,26 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
     private function isCreditCardPaymentMethod(MolPaymentMethod $paymentMethod)
     {
         $isCreditCardPaymentMethod = PaymentMethod::CREDITCARD === $paymentMethod->getPaymentMethodName();
-        $isCartesBancairesPaymentMethod = Config::CARTES_BANCAIRES === $paymentMethod->getPaymentMethodName();
 
-        if (!$isCreditCardPaymentMethod && !$isCartesBancairesPaymentMethod) {
+        if (!$isCreditCardPaymentMethod) {
             return false;
         }
 
+        return true;
+    }
+
+    private function isIFrame()
+    {
         if (!Configuration::get(Config::MOLLIE_IFRAME)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function isSingleClick()
+    {
+        if (!Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT)) {
             return false;
         }
 

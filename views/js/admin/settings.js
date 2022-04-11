@@ -23,7 +23,7 @@ $(document).ready(function () {
     handleDisableForCustomUrl();
     handleRequiredApiKey();
     handleRequiredProfileId();
-    handlePaymentMethodDescriptions();
+    // handlePaymentMethodDescriptions();
     handleApiKeyVisibility();
 
     function disableCharactersInAmountInput() {

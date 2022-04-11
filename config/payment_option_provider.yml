@@ -33,3 +33,17 @@ services:
       - '@Mollie\Provider\OrderTotalProvider'
       - '@Mollie\Provider\PaymentFeeProvider'
       - '@Mollie\Service\LanguageService'
+      - '@mollie.customer'
+      - '@Mollie\Repository\MolCustomerRepository'
+
+  Mollie\Provider\PaymentOption\CreditCardSingleClickPaymentOptionProvider:
+    class: Mollie\Provider\PaymentOption\CreditCardSingleClickPaymentOptionProvider
+    arguments:
+      - '@mollie'
+      - '@=service("mollie.adapter.context")'
+      - '@Mollie\Provider\CreditCardLogoProvider'
+      - '@Mollie\Provider\OrderTotalProvider'
+      - '@Mollie\Provider\PaymentFeeProvider'
+      - '@Mollie\Service\LanguageService'
+      - '@mollie.customer'
+      - '@Mollie\Repository\MolCustomerRepository'

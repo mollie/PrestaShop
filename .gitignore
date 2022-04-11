@@ -1,5 +1,4 @@
 *mollie*.zip
-composer.lock
 yarn.lock
 yarn-error.log
 .idea/
@@ -15,10 +14,4 @@ cypress/screenshots
 .php_cs.cache
 .env
 vendor
-node_modules/.package-lock.json
-node_modules/cypress-iframe/dist/index.js
-node_modules/cypress-iframe/dist/index.js.map
-node_modules/cypress-iframe/index.d.ts
-node_modules/cypress-iframe/LICENSE
-node_modules/cypress-iframe/package.json
-node_modules/cypress-iframe/README.md
+node_modules

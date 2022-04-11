@@ -112,7 +112,7 @@ class PaymentData implements JsonSerializable
      */
     public function getDescription()
     {
-        return $this->description;
+        return $this->description ?: ' ';
     }
 
     /**
@@ -291,16 +291,16 @@ class PaymentData implements JsonSerializable
                 'value' => (string) $this->getAmount()->getValue(),
             ],
             'billingAddress' => [
-                'streetAndNumber' => $this->getBillingAddress()->address1,
-                'city' => $this->getBillingAddress()->city,
-                'postalCode' => $this->getBillingAddress()->postcode,
-                'country' => (string) Country::getIsoById($this->getBillingAddress()->id_country),
+                'streetAndNumber' => $this->cleanUpInput($this->getBillingAddress()->address1),
+                'city' => $this->cleanUpInput($this->getBillingAddress()->city),
+                'postalCode' => $this->cleanUpInput($this->getBillingAddress()->postcode),
+                'country' => $this->cleanUpInput(Country::getIsoById($this->getBillingAddress()->id_country)),
             ],
             'shippingAddress' => [
-                'streetAndNumber' => $this->getShippingAddress()->address1,
-                'city' => $this->getShippingAddress()->city,
-                'postalCode' => $this->getShippingAddress()->postcode,
-                'country' => (string) Country::getIsoById($this->getShippingAddress()->id_country),
+                'streetAndNumber' => $this->cleanUpInput($this->getShippingAddress()->address1),
+                'city' => $this->cleanUpInput($this->getShippingAddress()->city),
+                'postalCode' => $this->cleanUpInput($this->getShippingAddress()->postcode),
+                'country' => $this->cleanUpInput(Country::getIsoById($this->getShippingAddress()->id_country)),
             ],
             'description' => $this->getDescription(),
             'redirectUrl' => $this->getRedirectUrl(),
@@ -312,5 +312,19 @@ class PaymentData implements JsonSerializable
             'cardToken' => $this->getCardToken(),
             'customerId' => $this->getCustomerId(),
         ];
+    }
+
+    private function cleanUpInput($input)
+    {
+        $defaultValue = 'N/A';
+
+        if (!isset($input) || empty($input)) {
+            return $defaultValue;
+        }
+
+        $input = ctype_space($input) ? $defaultValue : $input;
+        $input = ltrim($input);
+
+        return substr($input, 0, 100);
     }
 }

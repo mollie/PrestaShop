@@ -456,59 +456,27 @@ class FormBuilder
             ],
         ];
 
-        if (Config::isVersion17()) {
-            $input[] = [
-                'type' => 'select',
-                'label' => $this->module->l('Send order confirmation email', self::FILE_NAME),
-                'tab' => $advancedSettings,
-                'name' => Config::MOLLIE_SEND_ORDER_CONFIRMATION,
-                'options' => [
-                    'query' => [
-                        [
-                            'id' => Config::ORDER_CONF_MAIL_SEND_ON_PAID,
-                            'name' => $this->module->l('When Order is Paid', self::FILE_NAME),
-                        ],
-                        [
-                            'id' => Config::ORDER_CONF_MAIL_SEND_ON_NEVER,
-                            'name' => $this->module->l('Never', self::FILE_NAME),
-                        ],
+        $input[] = [
+            'type' => 'select',
+            'label' => $this->module->l('Send order confirmation email', self::FILE_NAME),
+            'tab' => $advancedSettings,
+            'name' => Config::MOLLIE_SEND_ORDER_CONFIRMATION,
+            'options' => [
+                'query' => [
+                    [
+                        'id' => Config::ORDER_CONF_MAIL_SEND_ON_PAID,
+                        'name' => $this->module->l('When Order is Paid', self::FILE_NAME),
                     ],
-                    'id' => 'id',
-                    'name' => 'name',
+                    [
+                        'id' => Config::ORDER_CONF_MAIL_SEND_ON_NEVER,
+                        'name' => $this->module->l('Never', self::FILE_NAME),
+                    ],
                 ],
-            ];
+                'id' => 'id',
+                'name' => 'name',
+            ],
+        ];
 
-            if (Module::isEnabled(Config::EMAIL_ALERTS_MODULE_NAME)) {
-                $input[] = [
-                    'type' => 'select',
-                    'label' => $this->module->l('Send new order email to merchant', self::FILE_NAME),
-                    'tab' => $advancedSettings,
-                    'name' => Config::MOLLIE_SEND_NEW_ORDER,
-                    'desc' => TagsUtility::ppTags(
-                        $this->module->l('Change when \'new_order\' email to merchant is sent (When using PrestaShop Mail Alerts module)', self::FILE_NAME),
-                        [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl')]
-                    ),
-                    'options' => [
-                        'query' => [
-                            [
-                                'id' => Config::NEW_ORDER_MAIL_SEND_ON_CREATION,
-                                'name' => $this->module->l('When Order is created', self::FILE_NAME),
-                            ],
-                            [
-                                'id' => Config::NEW_ORDER_MAIL_SEND_ON_PAID,
-                                'name' => $this->module->l('When Order is Paid', self::FILE_NAME),
-                            ],
-                            [
-                                'id' => Config::NEW_ORDER_MAIL_SEND_ON_NEVER,
-                                'name' => $this->module->l('Never', self::FILE_NAME),
-                            ],
-                        ],
-                        'id' => 'id',
-                        'name' => 'name',
-                    ],
-                ];
-            }
-        }
         $input[] = [
             'type' => 'select',
             'label' => $this->module->l('When to create the invoice?', self::FILE_NAME),
@@ -584,10 +552,10 @@ class FormBuilder
         foreach (array_filter($statuses, function ($status) {
             return in_array($status['name'], [
                 Config::MOLLIE_AWAITING_PAYMENT,
+                PaymentStatus::STATUS_OPEN,
                 PaymentStatus::STATUS_PAID,
                 OrderStatus::STATUS_COMPLETED,
                 PaymentStatus::STATUS_AUTHORIZED,
-                PaymentStatus::STATUS_OPEN,
                 PaymentStatus::STATUS_CANCELED,
                 PaymentStatus::STATUS_EXPIRED,
                 RefundStatus::STATUS_REFUNDED,
@@ -595,7 +563,7 @@ class FormBuilder
                 OrderStatus::STATUS_SHIPPING,
             ]);
         }) as $status) {
-            if (!in_array($status['name'], [Config::PARTIAL_REFUND_CODE])) {
+            if (!in_array($status['name'], [Config::PARTIAL_REFUND_CODE, Config::MOLLIE_AWAITING_PAYMENT, PaymentStatus::STATUS_OPEN])) {
                 $input[] = [
                     'type' => 'switch',
                     'label' => $status['message_mail'],

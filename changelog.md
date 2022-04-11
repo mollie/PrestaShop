@@ -1,6 +1,56 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 5.0.1 ##
++ Fixed issue where order API refund would fail on webhook call.
+
+## Changes in release 5.0.0 ##
++ Now we add webhook url on test shop where before if it finds test shop webhook url is not sent.
++ Fixed issue where mollie would fail to create order if address had no post code.
++ Upgraded supported php version from 5.6 to 7.0
++ Upgraded supported prestashop version from 1.6.1 to 1.7
++ Updated how lang locale is taken in checkout. Now it uses locale and not language code.
++ Removed order status list custom filter because we no longer delete our order statuses on module uninstall.
++ Updated how assets are loaded. Now we load js and css only on checkout delivery step, but we load it on DisplayHeader hook and not on ActionFrontControllerSetMedia.
++ Added payment data cleanUp before sending to mollie so that it doesn't have empty or to long inputs.
++ Added validation to check if order is already created just before creating order to avoid creating duplicated orders when webhook gets called multiple times at the same time.
++ Fixed issue where order product price would have wrong price if it didn't use default currency.
++ Added exception catch and added error message for Klarna status error when saving status when Klarna statuses are deleted.
++ Added check that doesn't allow enabling module if php version is not supported.
++ Added credit card single click logic with components.
++ Removed custom logic for local shops.
++ Added sentry validation to avoid crash if sentry breaks down.
++ Added check to avoid exception in path utility class.
++ Using single click payment without component now ask if you want to save it or use saved card.
++ Fixed issue where klarna status would be changed to klarna shipped and not completed when using default statuses for klarna.
++ Fixed issue where modules like VAT module would make mollie create wrong order prices. It was fixed by adding customer to context in webhook.
++ Fixed missing transaction id on order payments.
++ Added validation for descriptions to avoid empty spaces.
+
+## Changes in release 4.4.3 ##
++ Bank transfer now creates order on open status.
++ Fixed issue with klarna shipping status where it was set as completed.
++ Mollie no longer validates new order email to merchant that is sent by another module.
++ Fixed issue where custom payment description wasn't working and always used order reference.
++ Added custom payment number for order API.
++ Added Klarna Pay now.
++ Improved uninstall by deleting all tables except for mollie_payments
++ Fixed few small warning that kept getting sent to sentry
++ Fixed order API all products refund functionality
++ Status is no longer updated again to paid if it already has paid status and webhook is called again.
++ Added max address restriction for mollie. (Max 100 chars)
++ Added more validations for missing API token to handle errors.
++ Fixed open status logic to use selected open status and not awaiting.
++ Removed mail switch for awaiting and open order statuses.
++ Fixed issue where creating mollie order from back office had issues
++ Fixed issue where on some payment methods refund status would not be changed after refund webhook is called
++ Fixed issue where after wrong credit card input the button got disabled.
+
+## Changes in release 4.4.2 ##
++ Fixed payment methods translations using API in checkout
++ Updated credit card components input labels
++ Added Klarna Pay Now check to only use Order API
+
 ## Changes in release 4.4.2 ##
 + Fixed issue where order would get cancelled after payment was successful if customer had created another payment for the same cart.
 + Fixed rounding issue when creating mollie payment and there is -0.01 cent difference.

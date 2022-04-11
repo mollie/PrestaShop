@@ -23,9 +23,7 @@ use Customer;
 use Hook;
 use Language;
 use Mail;
-use Module;
 use Mollie;
-use Mollie\Config\Config;
 use Order;
 use OrderState;
 use PDF;
@@ -107,34 +105,6 @@ class MailService
      * @param Order $order
      * @param int $orderStateId
      *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
-    public function sendNewOrderMail(Order $order, $orderStateId)
-    {
-        if (!Module::isEnabled(Config::EMAIL_ALERTS_MODULE_NAME)) {
-            return;
-        }
-        $customer = $order->getCustomer();
-
-        /** @var \Ps_EmailAlerts $emailAlertsModule */
-        $emailAlertsModule = Module::getInstanceByName(Config::EMAIL_ALERTS_MODULE_NAME);
-
-        $emailAlertsModule->hookActionValidateOrder(
-            [
-                'currency' => $this->context->currency,
-                'order' => $order,
-                'customer' => $customer,
-                'cart' => $this->context->cart,
-                'orderStatus' => new OrderState($orderStateId),
-            ]
-        );
-    }
-
-    /**
-     * @param Order $order
-     * @param int $orderStateId
-     *
      * @return array
      *
      * @throws \PrestaShopDatabaseException
@@ -188,12 +158,7 @@ class MailService
                     }
 
                     if (isset($customization['datas'][Product::CUSTOMIZE_FILE])) {
-                        Config::isVersion17() ?
-                            /* @phpstan-ignore-next-line */
-                            $customization_text .= Context::getContext()->getTranslator()->trans('%d image(s)', [count($customization['datas'][Product::CUSTOMIZE_FILE])], 'Admin.Payment.Notification') . '<br />'
-                            :
-                            /* @phpstan-ignore-next-line */
-                            $customization_text .= sprintf(Tools::displayError('%d image(s)'), count($customization['datas'][Product::CUSTOMIZE_FILE])) . '<br />';
+                        $customization_text .= Context::getContext()->getTranslator()->trans('%d image(s)', [count($customization['datas'][Product::CUSTOMIZE_FILE])], 'Admin.Payment.Notification') . '<br />';
                     }
 
                     $customization_quantity = (int) $customization['quantity'];

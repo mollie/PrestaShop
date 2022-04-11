@@ -11,12 +11,8 @@
  */
 
 use Mollie\Api\Exceptions\ApiException;
-use Mollie\Api\Resources\Order as MollieOrderAlias;
-use Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Service\TransactionService;
-use Mollie\Utility\EnvironmentUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -114,18 +110,6 @@ class MollieQrcodeModuleFrontController extends ModuleFrontController
                 'status' => false,
                 'amount' => null,
             ]));
-        }
-
-        if (EnvironmentUtility::isLocalEnvironment()) {
-            /** @var MolliePaymentAlias|MollieOrderAlias $apiPayment */
-            $apiPayment = $this->module->api->payments->get(Tools::getValue('transaction_id'));
-            if (!Tools::isSubmit('module')) {
-                $_GET['module'] = $this->module->name;
-            }
-            /** @var TransactionService $transactionService */
-            $transactionService = $this->module->getMollieContainer(TransactionService::class);
-
-            $transactionService->processTransaction($apiPayment);
         }
 
         try {

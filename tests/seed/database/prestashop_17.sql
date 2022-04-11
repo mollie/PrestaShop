@@ -3278,7 +3278,6 @@ INSERT INTO `ps_configuration` (`id_configuration`, `id_shop_group`, `id_shop`, 
 (391,	NULL,	NULL,	'MOLLIE_ENVIRONMENT',	'0',	'2020-12-23 14:56:21',	'2020-12-23 14:56:21'),
 (392,	NULL,	NULL,	'MOLLIE_PROFILE_ID',	NULL,	'2020-12-23 14:56:21',	'2020-12-23 14:56:21'),
 (393,	NULL,	NULL,	'MOLLIE_SEND_ORDER_CONFIRMATION',	'0',	'2020-12-23 14:56:21',	'2020-12-23 14:56:21'),
-(394,	NULL,	NULL,	'MOLLIE_SEND_NEW_ORDER',	'0',	'2020-12-23 14:56:21',	'2020-12-23 14:56:21'),
 (395,	NULL,	NULL,	'MOLLIE_PAYMENTSCREEN_LOCALE',	'browser_locale',	'2020-12-23 14:56:21',	'2020-12-23 14:56:21'),
 (396,	NULL,	NULL,	'MOLLIE_IMAGES',	'normal',	'2020-12-23 14:56:21',	'2020-12-23 14:56:21'),
 (397,	NULL,	NULL,	'MOLLIE_ISSUERS',	'on-click',	'2020-12-23 14:56:21',	'2020-12-23 14:56:21'),
@@ -6060,8 +6059,7 @@ INSERT INTO `ps_hook` (`id_hook`, `name`, `title`, `description`, `position`) VA
 (587,	'displayReassurance',	'displayReassurance',	'',	1),
 (588,	'displayNav2',	'',	'',	1),
 (589,	'displayPayment',	'displayPayment',	'',	1),
-(590,	'actionAdminOrdersListingFieldsModifier',	'actionAdminOrdersListingFieldsModifier',	'',	1),
-(591,	'actionAdminStatusesListingFieldsModifier',	'actionAdminStatusesListingFieldsModifier',	'',	1);
+(590,	'actionAdminOrdersListingFieldsModifier',	'actionAdminOrdersListingFieldsModifier',	'',	1);
 
 DROP TABLE IF EXISTS `ps_hook_alias`;
 CREATE TABLE `ps_hook_alias` (

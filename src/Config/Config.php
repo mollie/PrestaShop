@@ -23,7 +23,7 @@ class Config
 {
     const SEGMENT_KEY = 'x8qDW8mWIlcY9SXbMhKLoH7xYQ1cSxF2';
 
-    const SENTRY_KEY = 'https://6c6926cfb8fa43deba653bfdc6c25b78@o497594.ingest.sentry.io/5573860';
+    const SENTRY_KEY = 'https://0fbb55276ced4210ad7d36f8c10de438@o497594.ingest.sentry.io/5573860';
 
     const SENTRY_ENV = 'MISSING_ENV';
 
@@ -98,7 +98,6 @@ class Config
     const MOLLIE_ACCOUNT_SWITCH = 'MOLLIE_ACCOUNT_SWITCH';
     const MOLLIE_PAYMENTSCREEN_LOCALE = 'MOLLIE_PAYMENTSCREEN_LOCALE';
     const MOLLIE_SEND_ORDER_CONFIRMATION = 'MOLLIE_SEND_ORDER_CONFIRMATION';
-    const MOLLIE_SEND_NEW_ORDER = 'MOLLIE_SEND_NEW_ORDER';
     const MOLLIE_IFRAME = 'MOLLIE_IFRAME';
     const MOLLIE_SINGLE_CLICK_PAYMENT = 'MOLLIE_SINGLE_CLICK_PAYMENT';
     const MOLLIE_IMAGES = 'MOLLIE_IMAGES';
@@ -172,7 +171,6 @@ class Config
 
     const STATUS_PAID_ON_BACKORDER = 'paid_backorder';
     const STATUS_PENDING_ON_BACKORDER = 'pending_backorder';
-    const STATUS_MOLLIE_AWAITING = 'mollie_awaiting';
     const STATUS_ON_BACKORDER = 'on_backorder';
     const MOLLIE_AWAITING_PAYMENT = 'awaiting';
     const MOLLIE_OPEN_PAYMENT = 'open';
@@ -238,6 +236,7 @@ class Config
     const KLARNA_PAYMENTS = [
         PaymentMethod::KLARNA_PAY_LATER,
         PaymentMethod::KLARNA_SLICE_IT,
+        PaymentMethod::KLARNA_PAY_NOW,
     ];
 
     const ROUTE_RESEND_SECOND_CHANCE_PAYMENT_MESSAGE = 'mollie_module_admin_resend_payment_message';
@@ -268,6 +267,7 @@ class Config
         'applepay' => 'Apple Pay',
         'mybank' => 'MyBank',
         'voucher' => 'Voucher',
+        'klarnapaynow' => 'Klarna Pay now.',
     ];
 
     const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
@@ -296,11 +296,6 @@ class Config
             self::STATUS_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK'),
             self::MOLLIE_STATUS_KLARNA_SHIPPED => Configuration::get(self::MOLLIE_STATUS_KLARNA_SHIPPED),
         ];
-    }
-
-    public static function isVersion17()
-    {
-        return (bool) version_compare(_PS_VERSION_, '1.7', '>=');
     }
 
     public static function isTestMode()

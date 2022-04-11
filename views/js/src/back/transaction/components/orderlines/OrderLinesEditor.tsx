@@ -73,19 +73,19 @@ export default function OrderLinesEditor({ edited, lines, lineType }: IProps): R
       newLines.splice(newLineIndex, 1);
     }
     setStateLines(cloneDeep(newLines));
-    forEach(newLines, (newLine) => {
-      if (typeof newLine.quantity === 'undefined') {
-        return;
-      }
 
-      newLine.quantity = newLine.newQuantity;
-      delete newLine.newQuantity;
-    });
+    if (qty > 0) {
+      newLines[newLineIndex].quantity = newLines[newLineIndex].newQuantity;
+      delete newLines[newLineIndex].newQuantity;
+    }
+
     edited(newLines);
   }
 
   useEffect(() => {
-    _updateQty(lines[0].id, lines[0][`${lineType}Quantity`]);
+    lines.forEach((line) => {
+      _updateQty(line.id, line[`${lineType}Quantity`])
+    })
   }, []);
 
   const renderLines = cloneDeep(stateLines);

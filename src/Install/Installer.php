@@ -164,12 +164,12 @@ class Installer implements InstallerInterface
             'actionOrderStatusUpdate',
             'displayPDFInvoice',
             'actionAdminOrdersListingFieldsModifier',
-            'actionAdminStatusesListingFieldsModifier',
             'actionAdminControllerSetMedia',
             'actionValidateOrder',
             'actionOrderGridDefinitionModifier',
             'actionOrderGridQueryBuilderModifier',
             'actionObjectCurrencyUpdateAfter',
+            'displayHeader',
         ];
     }
 
@@ -391,7 +391,6 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_ENVIRONMENT, Config::ENVIRONMENT_TEST);
         $this->configurationAdapter->updateValue(Config::MOLLIE_PROFILE_ID, '');
         $this->configurationAdapter->updateValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION, 0);
-        $this->configurationAdapter->updateValue(Config::MOLLIE_SEND_NEW_ORDER, 0);
         $this->configurationAdapter->updateValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE, Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE);
         $this->configurationAdapter->updateValue(Config::MOLLIE_IFRAME, false);
         $this->configurationAdapter->updateValue(Config::MOLLIE_IMAGES, Config::LOGOS_NORMAL);
@@ -402,7 +401,7 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_METHOD_COUNTRIES, 0);
         $this->configurationAdapter->updateValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY, 0);
         $this->configurationAdapter->updateValue(Config::MOLLIE_DISPLAY_ERRORS, false);
-        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_OPEN, Configuration::get(Config::STATUS_MOLLIE_AWAITING));
+        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_OPEN, Configuration::get(Config::MOLLIE_STATUS_AWAITING));
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_COMPLETED, Configuration::get(Config::MOLLIE_STATUS_ORDER_COMPLETED));
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));
@@ -523,9 +522,22 @@ class Installer implements InstallerInterface
     {
         $status = new OrderState((int) Configuration::get($statusName));
         if (Validate::isLoadedObject($status)) {
+            $this->enableStatus($status);
+
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * @param OrderState $orderState
+     */
+    private function enableStatus($orderState)
+    {
+        if ((bool) $orderState->deleted) {
+            $orderState->deleted = false;
+            $orderState->save();
+        }
     }
 }
