@@ -22,22 +22,9 @@ Download en installeer de Mollie betaalmodule voor PrestaShop om direct online b
 
 ## Verzorgd door [Invertus](https://www.invertus.eu). ##
 
-## Voor PrestaShop 1.5 tot en met 1.7 ##
-
-**Let op:** voor de installatie van deze module is FTP-toegang tot je webserver benodigd. Heb je hier geen ervaring mee? Laat de installatie van deze module dan over aan je websitebouwer of serverbeheerder.
-
 ## Installatie Prestashop 1.7 ##
 
-* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor PrestaShop 1.5 tot en met 1.7.
-* Ga naar het administratiepaneel van uw PrestaShop webwinkel
-* In uw administratiepaneel selecteert u de tab 'Modules' en kiest vervolgens 'upload een module' rechts bovenin uw scherm
-* Kies 'selecteer bestand' en upload vervolgens het bestand met de naam 'mollie.zip' dat u eerder heeft gedownload 
-* Nadat de module zich heeft geïnstalleerd kiest u 'configureer'
-* Vul uw _API-key_ in en sla de gegevens vervolgens op.
-
-## Installatie PrestaShop 1.5 en 1.6 ##
-
-* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor PrestaShop 1.5 tot en met 1.6.
+* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor PrestaShop 1.7.
 * Ga naar het administratiepaneel van uw PrestaShop webwinkel
 * In uw administratiepaneel selecteert u de tab 'Modules' en kiest vervolgens 'upload een module' rechts bovenin uw scherm
 * Kies 'selecteer bestand' en upload vervolgens het bestand met de naam 'mollie.zip' dat u eerder heeft gedownload 
@@ -46,7 +33,7 @@ Download en installeer de Mollie betaalmodule voor PrestaShop om direct online b
 
 ## of ##
 
-* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor PrestaShop 1.5 tot en met 1.6.
+* Download de laatste versie van de module via de [Releases-pagina](https://github.com/mollie/Prestashop/releases) welke geschikt is voor PrestaShop 1.7.
 * Pak het archief uit
 * Kopieer de map `mollie` naar de map `modules` in uw PrestaShop installatie
 * Ga in uw administratiepaneel naar de tab 'Modules' en kies in het lijstje 'Categories' voor 'Payments and Gateways'
