@@ -29,7 +29,22 @@ $(document).ready(function () {
         return;
     }
 
-    $( document ).ajaxComplete(function( event, request, settings ) {
+    let buttonStyle;
+    switch (parseInt(applePayButtonStyle)) {
+        case 0:
+            buttonStyle = 'apple-pay-button-black';
+            break;
+        case 1:
+            buttonStyle = 'apple-pay-button-white-with-line';
+            break;
+        case 2:
+            buttonStyle = 'apple-pay-button-white';
+            break;
+        default:
+            buttonStyle = 'apple-pay-button-black';
+    }
+
+    $( document ).ajaxComplete(function( event, request, settings) {
         var method = getUrlParam('action', settings.url)
 
         if (method === 'refresh') {
@@ -39,20 +54,6 @@ $(document).ready(function () {
             const button = document.createElement('button')
             button.setAttribute('id', 'mollie_applepay_button')
             button.classList.add('apple-pay-button')
-            let buttonStyle;
-            switch (parseInt(applePayButtonStyle)) {
-                case 0:
-                    buttonStyle = 'apple-pay-button-black';
-                    break;
-                case 1:
-                    buttonStyle = 'apple-pay-button-white-with-line';
-                    break;
-                case 2:
-                    buttonStyle = 'apple-pay-button-white';
-                    break;
-                default:
-                    buttonStyle = 'apple-pay-button-black';
-            }
             button.classList.add(buttonStyle)
 
             applePayMethodElement.appendChild(button)
@@ -103,24 +104,11 @@ $(document).ready(function () {
             })
         }
         session.onpaymentauthorized = (ApplePayPayment) => {
-            const products = [];
-            $.each(prestashop.cart.products, function (index, product) {
-                products.push(
-                    {
-                        'id_product': product.id_product,
-                        'id_product_attribute': product.id_product_attribute,
-                        'id_customization': product.id_customization,
-                        'quantity_wanted': product.quantity_wanted,
-                    }
-                );
-            })
-
             jQuery.ajax({
                 url: ajaxUrl,
                 method: 'POST',
                 data: {
                     action: 'mollie_apple_pay_create_order',
-                    products: products,
                     shippingContact: ApplePayPayment.payment.shippingContact,
                     billingContact: ApplePayPayment.payment.billingContact,
                     token: ApplePayPayment.payment.token,
@@ -177,17 +165,6 @@ $(document).ready(function () {
             })
         }
         session.onshippingcontactselected = function (event) {
-            const products = [];
-            $.each(prestashop.cart.products, function (index, product) {
-                products.push(
-                    {
-                        'id_product': product.id_product,
-                        'id_product_attribute': product.id_product_attribute,
-                        'id_customization': product.id_customization,
-                        'quantity_wanted': product.quantity_wanted,
-                    }
-                );
-            })
 
             jQuery.ajax({
                 url: ajaxUrl,
@@ -197,7 +174,6 @@ $(document).ready(function () {
                     countryCode: event.shippingContact.countryCode,
                     postalCode: event.shippingContact.postalCode,
                     simplifiedContact: event.shippingContact,
-                    products: products,
                     cartId: cartId,
                     customerId: customerId
                 },

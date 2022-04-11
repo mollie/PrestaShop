@@ -18,12 +18,12 @@ use Mollie\DTO\ApplePay\ShippingContent;
 
 class ApplePayOrderBuilder
 {
-    public function build(array $orderParams): Order
+    public function build(array $products, array $shippingContent, array $billingContent): Order
     {
         return new Order(
-            $this->buildAppleProduct($orderParams['products']),
-            $this->buildShippingContent($orderParams['shippingContact']),
-            $this->buildShippingContent($orderParams['billingContact'])
+            $this->buildAppleProduct($products),
+            $this->buildShippingContent($shippingContent),
+            $this->buildShippingContent($billingContent)
         );
     }
 

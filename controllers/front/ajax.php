@@ -34,22 +34,16 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
         switch ($action) {
             case 'getTotalCartPrice':
                 $this->getTotalCartPrice();
-                // no break
             case 'displayCheckoutError':
                 $this->displayCheckoutError();
-                // no break
             case 'mollie_apple_pay_validation':
                 $this->getApplePaySession();
-                // no break
             case 'mollie_apple_pay_update_shipping_contact':
                 $this->updateAppleShippingContact();
-                // no break
             case 'mollie_apple_pay_update_shipping_method':
                 $this->updateShippingMethod();
-                // no break
             case 'mollie_apple_pay_create_order':
                 $this->createApplePayOrder();
-                // no break
             case 'mollie_apple_pay_get_total_price':
                 $this->getTotalApplePayCartPrice();
         }
@@ -184,9 +178,9 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
         $productBuilder = $this->module->getMollieContainer(ApplePayProductBuilder::class);
 
         $simplifiedContent = Tools::getValue('simplifiedContact');
-        $products = Tools::getValue('products');
         $cartId = (int) Tools::getValue('cartId');
         $customerId = (int) Tools::getValue('customerId');
+        $products = $this->getWantedCartProducts($cartId);
 
         $command = new UpdateApplePayShippingContact(
             $productBuilder->build($products),
@@ -207,12 +201,15 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
         $cartId = (int) Tools::getValue('cartId');
         $cart = new Cart($cartId);
 
+        $products = $this->getWantedCartProducts($cartId);
         /** @var CreateApplePayOrderHandler $handler */
         $handler = $this->module->getMollieContainer(CreateApplePayOrderHandler::class);
         /** @var ApplePayOrderBuilder $applePayProductBuilder */
         $applePayProductBuilder = $this->module->getMollieContainer(ApplePayOrderBuilder::class);
 
-        $applePayOrderBuilder = $applePayProductBuilder->build(Tools::getAllValues());
+        $shippingContent = Tools::getValue('shippingContact');
+        $billingContent = Tools::getValue('billingContact');
+        $applePayOrderBuilder = $applePayProductBuilder->build($products, $shippingContent, $billingContent);
 
         $command = new CreateApplePayOrder(
             $cartId,
@@ -239,6 +236,23 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
                 'total' => $cart->getOrderTotal(),
             ]
         ));
+    }
+
+    private function getWantedCartProducts(int $cartId)
+    {
+        $cart = new Cart($cartId);
+
+        $products = [];
+        foreach ($cart->getProducts() as $product) {
+            $products[] = [
+                'id_product' => $product['id_product'],
+                'id_product_attribute' => $product['id_product_attribute'],
+                'id_customization' => $product['id_customization'],
+                'quantity_wanted' => $product['cart_quantity'],
+            ];
+        }
+
+        return $products;
     }
 
     private function recoverCreatedOrder(int $customerId)

@@ -23,8 +23,8 @@ $(document).ready(function () {
     handleDisableForCustomUrl();
     handleRequiredApiKey();
     handleRequiredProfileId();
-    // handlePaymentMethodDescriptions();
     handleApiKeyVisibility();
+    handleApplePayButtonStylesToggle();
 
     function disableCharactersInAmountInput() {
         $('.js-mollie-amount').keypress(function (event) {
@@ -104,6 +104,28 @@ $(document).ready(function () {
             }
         });
     }
+
+    function handleApplePayButtonStylesToggle()
+    {
+        var $applePayButtonStyles = $('#js-mollie-applepay-button-styles');
+        var $applePayDirectEnableSelector = $('select[name^="MOLLIE_APPLE_PAY_DIRECT_ENABLED"]');
+
+        toggleElement($applePayButtonStyles, $applePayDirectEnableSelector.val() === '1')
+        $($applePayDirectEnableSelector).on('change', function () {
+            var isEnabled = $(this).val() === '1';
+            toggleElement($applePayButtonStyles, isEnabled)
+        })
+    }
+
+    function toggleElement(element, isShown)
+    {
+        if (isShown) {
+            element.show();
+        } else {
+            element.hide();
+        }
+    }
+
 });
 
 function togglePaymentMethod($button, paymentId) {

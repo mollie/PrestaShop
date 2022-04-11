@@ -81,7 +81,9 @@
 
 
 
+
 {else}
+
 
 
 
@@ -120,31 +122,36 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="control-label col-lg-3">
-                                    {l s='ApplePay Direct button style' mod='mollie'}
-                                </label>
-                                <div class="col-lg-9">
-                                    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-9 text-center">
-                                        <img src="https://developer.apple.com/design/human-interface-guidelines/apple-pay/images/ApplePay_black_yes.png"
-                                             style="width: 100%;" alt="Black">
-                                        <label>
-                                            <input type="radio" name="MOLLIE_APPLE_PAY_DIRECT_STYLE" value="0" {if $input.applePayDIrectStyle === 0} checked{/if}>
-                                        </label>
-                                    </div>
-                                    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-9 text-center">
-                                        <img src="https://developer.apple.com/design/human-interface-guidelines/apple-pay/images/ApplePay_outline_yes.png"
-                                             style="width: 100%;" alt="White with Outline">
-                                        <label>
-                                            <input type="radio" name="MOLLIE_APPLE_PAY_DIRECT_STYLE" value="1" {if $input.applePayDIrectStyle === 1} checked{/if}>
-                                        </label>
-                                    </div>
-                                    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-9 text-center">
-                                        <img src="https://developer.apple.com/design/human-interface-guidelines/apple-pay/images/ApplePay_white_yes.png"
-                                             style="width: 100%;" alt="White">
-                                        <label>
-                                            <input type="radio" name="MOLLIE_APPLE_PAY_DIRECT_STYLE" value="2" {if $input.applePayDIrectStyle === 2} checked{/if}>
-                                        </label>
+                            <div id="js-mollie-applepay-button-styles">
+                                <div class="form-group">
+                                    <label class="control-label col-lg-3">
+                                        {l s='ApplePay Direct button style' mod='mollie'}
+                                    </label>
+                                    <div class="col-lg-9">
+                                        <div class="col-lg-2 col-md-3 col-sm-4 col-xs-9 text-center">
+                                            <img src="https://developer.apple.com/design/human-interface-guidelines/apple-pay/images/ApplePay_black_yes.png"
+                                                 style="width: 100%;" alt="Black">
+                                            <label>
+                                                <input type="radio" name="MOLLIE_APPLE_PAY_DIRECT_STYLE"
+                                                       value="0" {if $input.applePayDIrectStyle === 0} checked{/if}>
+                                            </label>
+                                        </div>
+                                        <div class="col-lg-2 col-md-3 col-sm-4 col-xs-9 text-center">
+                                            <img src="https://developer.apple.com/design/human-interface-guidelines/apple-pay/images/ApplePay_outline_yes.png"
+                                                 style="width: 100%;" alt="White with Outline">
+                                            <label>
+                                                <input type="radio" name="MOLLIE_APPLE_PAY_DIRECT_STYLE"
+                                                       value="1" {if $input.applePayDIrectStyle === 1} checked{/if}>
+                                            </label>
+                                        </div>
+                                        <div class="col-lg-2 col-md-3 col-sm-4 col-xs-9 text-center">
+                                            <img src="https://developer.apple.com/design/human-interface-guidelines/apple-pay/images/ApplePay_white_yes.png"
+                                                 style="width: 100%;" alt="White">
+                                            <label>
+                                                <input type="radio" name="MOLLIE_APPLE_PAY_DIRECT_STYLE"
+                                                       value="2" {if $input.applePayDIrectStyle === 2} checked{/if}>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -508,6 +515,7 @@
               {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
                       {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
             />
+
 
 
 
