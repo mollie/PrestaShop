@@ -18,5 +18,11 @@
   "bugs": {
     "url": "https://github.com/mollie/PrestaShop/issues"
   },
-  "homepage": "https://github.com/mollie/PrestaShop#readme"
+  "homepage": "https://github.com/mollie/PrestaShop#readme",
+  "devDependencies": {
+    "cypress-iframe": "^1.0.1"
+  },
+  "dependencies": {
+    "browserslist": "^4.19.1"
+  }
 }
