@@ -409,7 +409,7 @@ class Mollie extends PaymentModule
                     'customerId' => $this->context->customer->id ?? 0,
                     'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'applePayDirectAjax'),
                     'cartId' => $this->context->cart->id,
-                    'applePayButtonStyle' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE)
+                    'applePayButtonStyle' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
                 ]);
                 $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
 

@@ -16,7 +16,6 @@ use Cart;
 use Exception;
 use Mollie;
 use Mollie\Application\Command\RequestApplePayPaymentSession;
-use Mollie\Service\ApiService;
 use Mollie\Service\ApiServiceInterface;
 
 final class RequestApplePayPaymentSessionHandler

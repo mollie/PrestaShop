@@ -72,6 +72,7 @@ class MollieOrderCreationService
             }
         }
 
+        /* @phpstan-ignore-next-line */
         return $apiPayment;
     }
 
@@ -95,6 +96,7 @@ class MollieOrderCreationService
             $errorHandler->handle($e, $e->getCode(), true);
         }
 
+        /* @phpstan-ignore-next-line */
         return $apiPayment;
     }
 

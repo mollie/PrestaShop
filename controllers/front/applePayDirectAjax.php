@@ -20,8 +20,6 @@ use Mollie\Application\CommandHandler\UpdateApplePayShippingContactHandler;
 use Mollie\Application\CommandHandler\UpdateApplePayShippingMethodHandler;
 use Mollie\Builder\ApplePayDirect\ApplePayOrderBuilder;
 use Mollie\Builder\ApplePayDirect\ApplePayProductBuilder;
-use Mollie\Utility\NumberUtility;
-use PrestaShop\Decimal\DecimalNumber;
 
 class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontController
 {
@@ -34,12 +32,16 @@ class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontControlle
         switch ($action) {
             case 'mollie_apple_pay_validation':
                 $this->getApplePaySession();
+                // no break
             case 'mollie_apple_pay_update_shipping_contact':
                 $this->updateAppleShippingContact();
+                // no break
             case 'mollie_apple_pay_update_shipping_method':
                 $this->updateShippingMethod();
+                // no break
             case 'mollie_apple_pay_create_order':
                 $this->createApplePayOrder();
+                // no break
             case 'mollie_apple_pay_get_total_price':
                 $this->getTotalApplePayCartPrice();
         }
@@ -166,8 +168,8 @@ class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontControlle
     private function recoverCreatedOrder(int $customerId)
     {
         $customer = new Customer($customerId);
-        $customer->logged = 1;
-        $this->context->customer = (int) $customerId;
+        $customer->logged = true;
+        $this->context->customer = new Customer($customerId);
         $this->context->cookie->id_customer = (int) $customerId;
         $this->context->customer = $customer;
         $this->context->cookie->id_customer = (int) $customer->id;

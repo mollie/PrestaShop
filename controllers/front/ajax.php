@@ -10,16 +10,6 @@
  * @codingStandardsIgnoreStart
  */
 
-use Mollie\Application\Command\CreateApplePayOrder;
-use Mollie\Application\Command\RequestApplePayPaymentSession;
-use Mollie\Application\Command\UpdateApplePayShippingContact;
-use Mollie\Application\Command\UpdateApplePayShippingMethod;
-use Mollie\Application\CommandHandler\CreateApplePayOrderHandler;
-use Mollie\Application\CommandHandler\RequestApplePayPaymentSessionHandler;
-use Mollie\Application\CommandHandler\UpdateApplePayShippingContactHandler;
-use Mollie\Application\CommandHandler\UpdateApplePayShippingMethodHandler;
-use Mollie\Builder\ApplePayDirect\ApplePayOrderBuilder;
-use Mollie\Builder\ApplePayDirect\ApplePayProductBuilder;
 use Mollie\Utility\NumberUtility;
 use PrestaShop\Decimal\DecimalNumber;
 
@@ -34,6 +24,7 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
         switch ($action) {
             case 'getTotalCartPrice':
                 $this->getTotalCartPrice();
+                // no break
             case 'displayCheckoutError':
                 $this->displayCheckoutError();
         }
