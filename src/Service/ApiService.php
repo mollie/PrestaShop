@@ -33,7 +33,7 @@ use PrestaShopDatabaseException;
 use PrestaShopException;
 use Shop;
 
-class ApiService
+class ApiService implements ApiServiceInterface
 {
     private $errors = [];
 
@@ -66,6 +66,7 @@ class ApiService
      * @var TransactionService
      */
     private $transactionService;
+
     /**
      * @var Shop
      */
@@ -92,7 +93,6 @@ class ApiService
      * Get payment methods to show on the configuration page.
      *
      * @param MollieApiClient $api
-     * @param string $path
      *
      * @return array
      *
@@ -101,7 +101,7 @@ class ApiService
      *
      * @public ✓ This method is part of the public API
      */
-    public function getMethodsForConfig(MollieApiClient $api, $path)
+    public function getMethodsForConfig(MollieApiClient $api)
     {
         $notAvailable = [];
         try {

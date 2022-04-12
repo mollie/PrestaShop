@@ -17,6 +17,7 @@ use Exception;
 use Mollie;
 use Mollie\Application\Command\RequestApplePayPaymentSession;
 use Mollie\Service\ApiService;
+use Mollie\Service\ApiServiceInterface;
 
 final class RequestApplePayPaymentSessionHandler
 {
@@ -25,11 +26,11 @@ final class RequestApplePayPaymentSessionHandler
      */
     private $module;
     /**
-     * @var ApiService
+     * @var ApiServiceInterface
      */
     private $apiService;
 
-    public function __construct(Mollie $module, ApiService $apiService)
+    public function __construct(Mollie $module, ApiServiceInterface $apiService)
     {
         $this->module = $module;
         $this->apiService = $apiService;

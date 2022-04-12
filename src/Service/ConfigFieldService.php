@@ -94,7 +94,7 @@ class ConfigFieldService
         ];
 
         if (Mollie\Utility\EnvironmentUtility::getApiKey() && $this->module->api !== null) {
-            foreach ($this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri()) as $method) {
+            foreach ($this->apiService->getMethodsForConfig($this->module->api) as $method) {
                 $countryIds = $this->countryRepository->getMethodCountryIds($method['id']);
                 if ($countryIds) {
                     $configFields = array_merge($configFields, [Config::MOLLIE_COUNTRIES . $method['id'] . '[]' => $countryIds]);
