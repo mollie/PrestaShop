@@ -28,25 +28,9 @@ $(document).ready(function () {
         return;
     }
 
-    const button = document.createElement('button')
-    button.setAttribute('id', 'mollie_applepay_button')
-    button.classList.add('apple-pay-button')
-    let buttonStyle;
-    switch (parseInt(applePayButtonStyle)) {
-        case 0:
-            buttonStyle = 'apple-pay-button-black';
-            break;
-        case 1:
-            buttonStyle = 'apple-pay-button-white-with-line';
-            break;
-        case 2:
-            buttonStyle = 'apple-pay-button-white';
-            break;
-        default:
-            buttonStyle = 'apple-pay-button-black';
-    }
-    button.classList.add(buttonStyle)
-    applePayMethodElement.appendChild(button)
+    let buttonStyle = getApplePayButtonStyle();
+    createAppleButton(applePayMethodElement, buttonStyle)
+
     let updatedContactInfo = []
     let selectedShippingMethod = []
 
@@ -227,6 +211,19 @@ $(document).ready(function () {
     }
 });
 
+function getApplePayButtonStyle() {
+    switch (parseInt(applePayButtonStyle)) {
+        case 0:
+            return 'apple-pay-button-black';
+        case 1:
+            return 'apple-pay-button-white-with-line';
+        case 2:
+            return 'apple-pay-button-white';
+        default:
+            return 'apple-pay-button-black';
+    }
+}
+
 function createRequest(countryCode, currencyCode, totalLabel, subtotal) {
     return {
         countryCode: countryCode,
@@ -262,4 +259,27 @@ function createAppleErrors(errors) {
     }
 
     return errorList
+}
+
+function getUrlParam(sParam, string) {
+    var sPageURL = decodeURIComponent(string),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+}
+
+function createAppleButton(ApplePayButtonElement, buttonStyle) {
+    const button = document.createElement('button')
+    button.setAttribute('id', 'mollie_applepay_button')
+    button.classList.add('apple-pay-button')
+    button.classList.add(buttonStyle)
+    ApplePayButtonElement.appendChild(button)
 }

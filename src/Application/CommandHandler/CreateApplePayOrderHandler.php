@@ -80,6 +80,7 @@ final class CreateApplePayOrderHandler
             ];
         }
 
+        // we need to wait for webhook to create the order. That's why we wait here for few seconds and check if order is created
         $tries = 0;
         while ($tries <= 10) {
             $order = Order::getByCartId($command->getCartId());

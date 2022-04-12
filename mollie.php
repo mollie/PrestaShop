@@ -400,31 +400,25 @@ class Mollie extends PaymentModule
             $errorDisplayService->showCookieError('mollie_payment_canceled_error');
         }
         if (Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT)) {
-            if ($this->context->controller instanceof ProductControllerCore) {
+            $controller = $this->context->controller;
+            if ($controller instanceof ProductControllerCore || $controller instanceof CartControllerCore) {
                 Media::addJsDef([
                     'countryCode' => $this->context->country->iso_code,
                     'currencyCode' => $this->context->currency->iso_code,
                     'totalLabel' => $this->context->shop->name,
                     'customerId' => $this->context->customer->id ?? 0,
-                    'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
+                    'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'applePayDirectAjax'),
                     'cartId' => $this->context->cart->id,
                     'applePayButtonStyle' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE)
                 ]);
                 $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
-                $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirectProduct.js');
-            }
-            if ($this->context->controller instanceof CartControllerCore) {
-                Media::addJsDef([
-                    'countryCode' => $this->context->country->iso_code,
-                    'currencyCode' => $this->context->currency->iso_code,
-                    'totalLabel' => $this->context->shop->name,
-                    'customerId' => $this->context->customer->id ?? 0,
-                    'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
-                    'cartId' => $this->context->cart->id,
-                    'applePayButtonStyle' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE)
-                ]);
-                $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
-                $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirectCart.js');
+
+                if ($controller instanceof ProductControllerCore) {
+                    $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirect/applePayDirectProduct.js');
+                }
+                if ($controller instanceof CartControllerCore) {
+                    $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirect/applePayDirectCart.js');
+                }
             }
         }
     }

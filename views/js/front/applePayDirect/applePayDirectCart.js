@@ -29,20 +29,8 @@ $(document).ready(function () {
         return;
     }
 
-    let buttonStyle;
-    switch (parseInt(applePayButtonStyle)) {
-        case 0:
-            buttonStyle = 'apple-pay-button-black';
-            break;
-        case 1:
-            buttonStyle = 'apple-pay-button-white-with-line';
-            break;
-        case 2:
-            buttonStyle = 'apple-pay-button-white';
-            break;
-        default:
-            buttonStyle = 'apple-pay-button-black';
-    }
+    let buttonStyle = getApplePayButtonStyle();
+    createAppleButton(applePayMethodElement, buttonStyle)
 
     $( document ).ajaxComplete(function( event, request, settings) {
         var method = getUrlParam('action', settings.url)
@@ -51,20 +39,10 @@ $(document).ready(function () {
             applePayMethodElement = document.querySelector(
                 '#mollie-applepay-direct-button',
             )
-            const button = document.createElement('button')
-            button.setAttribute('id', 'mollie_applepay_button')
-            button.classList.add('apple-pay-button')
-            button.classList.add(buttonStyle)
-
-            applePayMethodElement.appendChild(button)
+            createAppleButton(applePayMethodElement, buttonStyle)
         }
     });
 
-    const button = document.createElement('button')
-    button.setAttribute('id', 'mollie_applepay_button')
-    button.classList.add('apple-pay-button')
-    button.classList.add(buttonStyle)
-    applePayMethodElement.appendChild(button)
 
     let updatedContactInfo = []
     let selectedShippingMethod = []
@@ -214,7 +192,6 @@ $(document).ready(function () {
         }
     }
 
-
     function getCartSubTotal() {
         jQuery.ajax({
             url: ajaxUrl,
@@ -232,6 +209,19 @@ $(document).ready(function () {
     }
 });
 
+function getApplePayButtonStyle() {
+    switch (parseInt(applePayButtonStyle)) {
+        case 0:
+            return 'apple-pay-button-black';
+        case 1:
+            return 'apple-pay-button-white-with-line';
+        case 2:
+            return 'apple-pay-button-white';
+        default:
+            return 'apple-pay-button-black';
+    }
+}
+
 function createRequest(countryCode, currencyCode, totalLabel, subtotal) {
     return {
         countryCode: countryCode,
@@ -246,6 +236,9 @@ function createRequest(countryCode, currencyCode, totalLabel, subtotal) {
         requiredShippingContactFields: [
             'postalAddress',
             'email'
+        ],
+        requiredBillingAddressFields: [
+            'countryCode',
         ],
         total: {
             label: totalLabel,
@@ -266,8 +259,7 @@ function createAppleErrors(errors) {
     return errorList
 }
 
-function getUrlParam(sParam, string)
-{
+function getUrlParam(sParam, string) {
     var sPageURL = decodeURIComponent(string),
         sURLVariables = sPageURL.split('&'),
         sParameterName,
@@ -280,4 +272,12 @@ function getUrlParam(sParam, string)
             return sParameterName[1] === undefined ? true : sParameterName[1];
         }
     }
+}
+
+function createAppleButton(ApplePayButtonElement, buttonStyle) {
+    const button = document.createElement('button')
+    button.setAttribute('id', 'mollie_applepay_button')
+    button.classList.add('apple-pay-button')
+    button.classList.add(buttonStyle)
+    ApplePayButtonElement.appendChild(button)
 }

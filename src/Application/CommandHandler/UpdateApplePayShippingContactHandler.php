@@ -129,7 +129,6 @@ final class UpdateApplePayShippingContactHandler
     private function updateCart(Customer $customer, int $deliveryAddressId, int $invoiceAddressId, int $cartId): cart
     {
         $cart = new Cart($cartId);
-        $cart->id_currency = Configuration::get('PS_CURRENCY_DEFAULT');
         $cart->secure_key = $customer->secure_key;
         $cart->id_address_delivery = $deliveryAddressId;
         $cart->id_address_invoice = $invoiceAddressId;
