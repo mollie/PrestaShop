@@ -5,7 +5,6 @@ namespace Mollie\Application\CommandHandler;
 use Address;
 use Carrier;
 use Cart;
-use Configuration;
 use Country;
 use Customer;
 use Language;
@@ -51,7 +50,7 @@ final class UpdateApplePayShippingContactHandler
 
         $country = new Country($deliveryAddress->id_country);
 
-        $applePayCarriers = $this->applePayCarriersBuilder->build(Carrier::getCarriersForOrder($this->language->id, true), $country->id_zone);
+        $applePayCarriers = $this->applePayCarriersBuilder->build(Carrier::getCarriersForOrder($this->language->id), $country->id_zone);
 
         $shippingMethods = array_map(function (AppleCarrier $carrier) use ($cart) {
             return [
@@ -116,7 +115,7 @@ final class UpdateApplePayShippingContactHandler
             return new Customer($customerId);
         }
         $customer = new Customer();
-        $customer->is_guest = 1;
+        $customer->is_guest = true;
         $customer->firstname = 'applePay';
         $customer->lastname = 'applePay';
         $customer->email = 'applePay@mollie.com';

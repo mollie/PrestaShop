@@ -83,6 +83,7 @@ final class CreateApplePayOrderHandler
         // we need to wait for webhook to create the order. That's why we wait here for few seconds and check if order is created
         $tries = 0;
         while ($tries <= 10) {
+            /** @var ?Order $order */
             $order = Order::getByCartId($command->getCartId());
             if ($order) {
                 break;
@@ -186,7 +187,7 @@ final class CreateApplePayOrderHandler
     private function deleteAddress(int $addressId): void
     {
         $address = new Address($addressId);
-        $address->deleted = 1;
+        $address->deleted = true;
         $address->update();
     }
 }

@@ -115,7 +115,6 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
                 )
             );
         } catch (PrestaShopDatabaseException $e) {
-            static::tryAddOrderReferenceColumn();
             throw $e;
         }
 
@@ -133,7 +132,6 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
                 )
             );
         } catch (PrestaShopDatabaseException $e) {
-            $this->tryAddOrderReferenceColumn();
             throw $e;
         }
 
@@ -187,7 +185,6 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
                 '`transaction_id` = \'' . pSQL($transactionId) . '\''
             );
         } catch (Exception $e) {
-            $this->tryAddOrderReferenceColumn();
             throw $e;
         }
     }

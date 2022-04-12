@@ -38,7 +38,6 @@ class BaseTestCase extends TestCase
         parent::tearDown();
     }
 
-
     public function assertDatabaseHas($entityClass, array $keyValueCriteria)
     {
         $this->assertNotEmpty($this->getValueFromDatabase($entityClass, $keyValueCriteria), 'Failed asserting that database has record.');
@@ -156,4 +155,5 @@ class BaseTestCase extends TestCase
         if (method_exists(\Tab::class, 'resetStaticCache')) {
             \Tab::resetStaticCache();
         }
-    }}
+    }
+}

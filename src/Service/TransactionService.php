@@ -305,7 +305,6 @@ class TransactionService
                 '`transaction_id` = \'' . pSQL($transactionId) . '\''
             );
         } catch (PrestaShopDatabaseException $e) {
-            $this->paymentMethodRepository->tryAddOrderReferenceColumn();
             throw $e;
         }
     }

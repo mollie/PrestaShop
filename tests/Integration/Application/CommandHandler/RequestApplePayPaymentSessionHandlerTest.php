@@ -29,24 +29,22 @@ class RequestApplePayPaymentSessionHandlerTest extends BaseTestCase
     public function commandProvider()
     {
         return [
-            'new cart case' =>
-                [
+            'new cart case' => [
                     'command' => new RequestApplePayPaymentSession(
                         'test-validation-url',
                         1,
                         1,
                         0
-                    )
+                    ),
                 ],
-            'cart exist case' =>
-                [
+            'cart exist case' => [
                     'command' => new RequestApplePayPaymentSession(
                         'test-validation-url',
                         1,
                         1,
                         3
-                    )
-                ]
+                    ),
+                ],
         ];
     }
 }

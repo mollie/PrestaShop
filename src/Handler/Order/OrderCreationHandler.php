@@ -346,7 +346,7 @@ class OrderCreationHandler
                 }
                 break;
             default:
-                throw new OrderCreationException('Missing order resource information',OrderCreationException::ORDER_RESOURSE_IS_MISSING);
+                throw new OrderCreationException('Missing order resource information', OrderCreationException::ORDER_RESOURSE_IS_MISSING);
         }
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 

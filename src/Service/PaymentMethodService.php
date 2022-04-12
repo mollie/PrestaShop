@@ -31,7 +31,7 @@ use Mollie\Exception\OrderCreationException;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\PhoneNumberProviderInterface;
 use Mollie\Repository\MethodCountryRepository;
-use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\Utility\CustomLogoUtility;
@@ -54,7 +54,7 @@ class PaymentMethodService
     private $module;
 
     /**
-     * @var PaymentMethodRepository
+     * @var PaymentMethodRepositoryInterface
      */
     private $methodRepository;
 
@@ -106,7 +106,7 @@ class PaymentMethodService
 
     public function __construct(
         Mollie $module,
-        Mollie\Repository\PaymentMethodRepositoryInterface $methodRepository,
+        PaymentMethodRepositoryInterface $methodRepository,
         MethodCountryRepository $methodCountryRepository,
         CartLinesService $cartLinesService,
         PaymentsTranslationService $paymentsTranslationService,
@@ -518,7 +518,7 @@ class PaymentMethodService
                 }
                 break;
             default:
-                throw new OrderCreationException('Missing order resource information',OrderCreationException::ORDER_RESOURSE_IS_MISSING);
+                throw new OrderCreationException('Missing order resource information', OrderCreationException::ORDER_RESOURSE_IS_MISSING);
         }
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 
