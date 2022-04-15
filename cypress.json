@@ -1,10 +1,11 @@
 {
  "chromeWebSecurity": false,
  "experimentalSourceRewriting": true,
- "numTestsKeptInMemory": 90,
+ "numTestsKeptInMemory": 5,
  "defaultCommandTimeout": 10000,
  "projectId": "xb89dr",
  "retries": 2,
  "experimentalSessionSupport": true,
+ "videoUploadOnPasses": false,
  "ignoreTestFiles": ["index.php", "**/cypress/integration/ps16/**", "**/cypress/integration/ps17/**"]
 }
