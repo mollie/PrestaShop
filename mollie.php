@@ -143,7 +143,6 @@ class Mollie extends PaymentModule
         return parent::enable($force_all);
     }
 
-    // todo: check 1.7.2
     private function compile()
     {
         if (!class_exists('Symfony\Component\DependencyInjection\ContainerBuilder') ||

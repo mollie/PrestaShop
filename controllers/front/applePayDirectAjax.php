@@ -20,6 +20,7 @@ use Mollie\Application\CommandHandler\UpdateApplePayShippingContactHandler;
 use Mollie\Application\CommandHandler\UpdateApplePayShippingMethodHandler;
 use Mollie\Builder\ApplePayDirect\ApplePayOrderBuilder;
 use Mollie\Builder\ApplePayDirect\ApplePayProductBuilder;
+use Mollie\Utility\OrderRecoverUtility;
 
 class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontController
 {
@@ -90,7 +91,11 @@ class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontControlle
         $simplifiedContent = Tools::getValue('simplifiedContact');
         $cartId = (int) Tools::getValue('cartId');
         $customerId = (int) Tools::getValue('customerId');
-        $products = $this->getWantedCartProducts($cartId);
+        if (Tools::getIsset('products')) {
+            $products = Tools::getValue('products');
+        } else {
+            $products = $this->getWantedCartProducts($cartId);
+        }
 
         $command = new UpdateApplePayShippingContact(
             $productBuilder->build($products),
@@ -131,7 +136,8 @@ class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontControlle
             $this->ajaxDie(json_encode($response));
         }
 
-        $this->recoverCreatedOrder($cart->id_customer);
+        //we need to recover created order with customer settings so that we can show order confirmation page
+        OrderRecoverUtility::recoverCreatedOrder($this->context, $cart->id_customer);
 
         $this->ajaxDie(json_encode($response));
     }
@@ -163,22 +169,5 @@ class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontControlle
         }
 
         return $products;
-    }
-
-    private function recoverCreatedOrder(int $customerId)
-    {
-        $customer = new Customer($customerId);
-        $customer->logged = true;
-        $this->context->customer = new Customer($customerId);
-        $this->context->cookie->id_customer = (int) $customerId;
-        $this->context->customer = $customer;
-        $this->context->cookie->id_customer = (int) $customer->id;
-        $this->context->cookie->customer_lastname = $customer->lastname;
-        $this->context->cookie->customer_firstname = $customer->firstname;
-        $this->context->cookie->logged = 1;
-        $this->context->cookie->check_cgv = 1;
-        $this->context->cookie->is_guest = $customer->isGuest();
-        $this->context->cookie->passwd = $customer->passwd;
-        $this->context->cookie->email = $customer->email;
     }
 }

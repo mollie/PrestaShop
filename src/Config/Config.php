@@ -247,6 +247,8 @@ class Config
     const PAYMENT_FEE_SKU = 'payment-fee-sku';
     const WRONG_AMOUNT_REASON = 'wrong amount';
 
+    const APPLE_PAY_DIRECT_ORDER_CREATION_MAX_WAIT_RETRIES = 10;
+
     /** @var array */
     public static $methods = [
         'banktransfer' => 'Bank',

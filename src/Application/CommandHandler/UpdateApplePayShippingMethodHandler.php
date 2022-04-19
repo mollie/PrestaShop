@@ -19,6 +19,7 @@ final class UpdateApplePayShippingMethodHandler
         $this->orderFeeService = $orderFeeService;
     }
 
+    //todo: try to add tests
     public function handle(UpdateApplePayShippingMethod $command): array
     {
         $cart = new Cart($command->getCartId());

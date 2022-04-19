@@ -52,6 +52,7 @@ final class UpdateApplePayShippingContactHandler
 
         $applePayCarriers = $this->applePayCarriersBuilder->build(Carrier::getCarriersForOrder($this->language->id), $country->id_zone);
 
+        //todo: move to utility and test it
         $shippingMethods = array_map(function (AppleCarrier $carrier) use ($cart) {
             return [
                 'identifier' => $carrier->getCarrierId(),
@@ -61,6 +62,7 @@ final class UpdateApplePayShippingContactHandler
             ];
         }, $applePayCarriers);
 
+        //todo: move to utility and test it
         $totals = array_map(function (AppleCarrier $carrier) use ($cart) {
             $orderTotal = (float) number_format($cart->getOrderTotal(true, Cart::BOTH, null, $carrier->getCarrierId()), 2, '.', '');
             $paymentFee = $this->orderFeeService->getPaymentFee($orderTotal, Config::APPLEPAY);

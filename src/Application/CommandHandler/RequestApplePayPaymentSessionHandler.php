@@ -39,10 +39,10 @@ final class RequestApplePayPaymentSessionHandler
     {
         try {
             $response = $this->apiService->requestApplePayPaymentSession($this->module->api, $command->getValidationUrl());
-        } catch (Exception $e) {
+        } catch (Exception $e) {//todo: use normal exceptions
             return [
                 'success' => false,
-                'errors' => $e->getMessage(),
+                'errors' => $e->getMessage(), //todo: double check if client doesn't see it
             ];
         }
 
