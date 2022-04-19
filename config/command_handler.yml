@@ -31,6 +31,6 @@ services:
       - '@Mollie\Service\MollieOrderCreationService'
       - '@mollie.link'
       - '@mollie'
-      - '@Mollie\Handler\RetryHandler'
+      - '@Mollie\Handler\RetryHandlerInterface'
     tags:
       - { name: tactician.handler, command: Mollie\Application\Command\RequestApplePayPaymentSession }

@@ -51,5 +51,7 @@ services:
       - '@mollie.context'
       - '@Mollie\Service\PaymentMethodService'
 
+  Mollie\Handler\RetryHandlerInterface: '@Mollie\Handler\RetryHandler'
+
   Mollie\Handler\RetryHandler:
     class: Mollie\Handler\RetryHandler

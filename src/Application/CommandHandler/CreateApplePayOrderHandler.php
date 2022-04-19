@@ -15,6 +15,7 @@ use Mollie\DTO\ApplePay\ShippingContent;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Exception\RetryOverException;
 use Mollie\Handler\RetryHandler;
+use Mollie\Handler\RetryHandlerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\PaymentMethodService;
@@ -45,7 +46,7 @@ final class CreateApplePayOrderHandler
      * @var Mollie
      */
     private $module;
-    /** @var RetryHandler */
+    /** @var RetryHandlerInterface */
     private $retryHandler;
 
     public function __construct(
@@ -54,7 +55,7 @@ final class CreateApplePayOrderHandler
         MollieOrderCreationService $mollieOrderCreationService,
         Link $link,
         Mollie $module,
-        RetryHandler $retryHandler
+        RetryHandlerInterface $retryHandler
     ) {
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodService = $paymentMethodService;
