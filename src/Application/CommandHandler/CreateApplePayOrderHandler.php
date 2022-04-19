@@ -94,6 +94,7 @@ final class CreateApplePayOrderHandler
             if ($order) {
                 return $order;
             }
+            /* @phpstan-ignore-next-line */
             throw new OrderCreationException('Order was not created in webhook', OrderCreationException::ORDER_IS_NOT_CREATED);
         };
 
