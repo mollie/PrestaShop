@@ -25,4 +25,6 @@ class OrderCreationException extends \Exception
     const ORDER_TOTAL_HIGHER_THAN_MAXIMUM = 5;
 
     const ORDER_RESOURSE_IS_MISSING = 6;
+
+    const ORDER_IS_NOT_CREATED = 7;
 }

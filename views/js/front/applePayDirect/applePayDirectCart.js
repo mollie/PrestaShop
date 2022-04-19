@@ -19,6 +19,7 @@
  * @codingStandardsIgnoreStart
  */
 
+
 $(document).ready(function () {
     var applePayMethodElement = document.querySelector(
         '#mollie-applepay-direct-button',
@@ -55,6 +56,7 @@ $(document).ready(function () {
 
     let applePaySession = () => {
         getCartSubTotal();
+        //todo: constant
         const session = new ApplePaySession(3, createRequest(countryCode, currencyCode, totalLabel, cartSubTotal))
         session.begin()
         session.onvalidatemerchant = (applePayValidateMerchantEvent) => {
@@ -172,6 +174,8 @@ $(document).ready(function () {
                                     response.paymentFee
                                 ]
                             );
+
+                            return;
                         }
 
                         session.completeShippingContactSelection(

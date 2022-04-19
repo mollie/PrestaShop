@@ -12,6 +12,9 @@ use Mollie;
 use Mollie\Application\Command\CreateApplePayOrder;
 use Mollie\Config\Config;
 use Mollie\DTO\ApplePay\ShippingContent;
+use Mollie\Exception\OrderCreationException;
+use Mollie\Exception\RetryOverException;
+use Mollie\Handler\RetryHandler;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\PaymentMethodService;
@@ -42,19 +45,23 @@ final class CreateApplePayOrderHandler
      * @var Mollie
      */
     private $module;
+    /** @var RetryHandler */
+    private $retryHandler;
 
     public function __construct(
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentMethodService $paymentMethodService,
         MollieOrderCreationService $mollieOrderCreationService,
         Link $link,
-        Mollie $module
+        Mollie $module,
+        RetryHandler $retryHandler
     ) {
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodService = $paymentMethodService;
         $this->mollieOrderCreationService = $mollieOrderCreationService;
         $this->link = $link;
         $this->module = $module;
+        $this->retryHandler = $retryHandler;
     }
 
     public function handle(CreateApplePayOrder $command): array
@@ -81,18 +88,23 @@ final class CreateApplePayOrderHandler
         }
 
         // we need to wait for webhook to create the order. That's why we wait here for few seconds and check if order is created
-        $tries = 0;
-        while ($tries <= 10) {
-            /** @var ?Order $order */
+        $proc = function () use ($command) {
             $order = Order::getByCartId($command->getCartId());
             if ($order) {
-                break;
+                return $order;
             }
-            ++$tries;
-            sleep(1);
-        }
+            throw new OrderCreationException('Order was not created in webhook', OrderCreationException::ORDER_IS_NOT_CREATED);
+        };
 
-        if (!$order) {
+        try {
+            $order = $this->retryHandler->retry(
+                $proc,
+                [
+                    'max' => Config::APPLE_PAY_DIRECT_ORDER_CREATION_MAX_WAIT_RETRIES,
+                    'accepted_exception' => OrderCreationException::class
+                ]
+            );
+        } catch (RetryOverException $e) {
             return [
                 'success' => false,
                 'status' => 'STATUS_FAILURE',

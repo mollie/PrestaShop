@@ -190,6 +190,8 @@ $(document).ready(function () {
                                     response.paymentFee
                                 ]
                             );
+
+                            return;
                         }
 
                         session.completeShippingContactSelection(
