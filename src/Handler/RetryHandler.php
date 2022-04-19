@@ -54,6 +54,6 @@ class RetryHandler
             sleep($wait);
         }
 
-        throw new RetryOverException;
+        throw new RetryOverException();
     }
 }

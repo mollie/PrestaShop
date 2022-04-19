@@ -16,7 +16,6 @@ use Customer;
 
 class OrderRecoverUtility
 {
-
     public static function recoverCreatedOrder($context, int $customerId)
     {
         // try to move to utility

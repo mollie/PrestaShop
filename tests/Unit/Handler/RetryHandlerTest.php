@@ -46,9 +46,9 @@ class RetryHandlerTest extends TestCase
                 'options' => [
                     'max' => 3,
                     'wait' => 1,
-                    'accepted_exception' => OrderCreationException::class
+                    'accepted_exception' => OrderCreationException::class,
                 ],
-                'result' => true
+                'result' => true,
             ],
             'test with object' => [
                 'function' => function () {
@@ -62,9 +62,9 @@ class RetryHandlerTest extends TestCase
                 'options' => [
                     'max' => 3,
                     'wait' => 1,
-                    'accepted_exception' => OrderCreationException::class
+                    'accepted_exception' => OrderCreationException::class,
                 ],
-                'result' => new Order()
+                'result' => new Order(),
             ],
             'test with param' => [
                 'function' => function () use ($testId) {
@@ -78,10 +78,10 @@ class RetryHandlerTest extends TestCase
                 'options' => [
                     'max' => 3,
                     'wait' => 1,
-                    'accepted_exception' => OrderCreationException::class
+                    'accepted_exception' => OrderCreationException::class,
                 ],
-                'result' => new Order($testId)
-            ]
+                'result' => new Order($testId),
+            ],
         ];
     }
 
@@ -95,9 +95,9 @@ class RetryHandlerTest extends TestCase
                 'options' => [
                     'max' => 3,
                     'wait' => 1,
-                    'accepted_exception' => OrderCreationException::class
+                    'accepted_exception' => OrderCreationException::class,
                 ],
-                'expectedException' => RetryOverException::class
+                'expectedException' => RetryOverException::class,
             ],
             'retry without expected exception' => [
                 'function' => function () {
@@ -107,8 +107,8 @@ class RetryHandlerTest extends TestCase
                     'max' => 3,
                     'wait' => 1,
                 ],
-                'expectedException' => OrderCreationException::class
-            ]
+                'expectedException' => OrderCreationException::class,
+            ],
         ];
     }
 }

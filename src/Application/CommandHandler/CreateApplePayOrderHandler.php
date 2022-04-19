@@ -90,6 +90,7 @@ final class CreateApplePayOrderHandler
         // we need to wait for webhook to create the order. That's why we wait here for few seconds and check if order is created
         $proc = function () use ($command) {
             $order = Order::getByCartId($command->getCartId());
+            /* @phpstan-ignore-next-line */
             if ($order) {
                 return $order;
             }
@@ -101,7 +102,7 @@ final class CreateApplePayOrderHandler
                 $proc,
                 [
                     'max' => Config::APPLE_PAY_DIRECT_ORDER_CREATION_MAX_WAIT_RETRIES,
-                    'accepted_exception' => OrderCreationException::class
+                    'accepted_exception' => OrderCreationException::class,
                 ]
             );
         } catch (RetryOverException $e) {

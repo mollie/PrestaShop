@@ -30,7 +30,7 @@ class ApplePayProductBuilderTest extends TestCase
                         'id_product_attribute' => '19',
                         'id_customization' => '0',
                         'quantity_wanted' => '1',
-                    ]
+                    ],
                 ],
                 'shippingContact' => [
                     'addressLines' => [
