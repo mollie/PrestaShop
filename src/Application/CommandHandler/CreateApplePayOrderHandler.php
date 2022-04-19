@@ -14,7 +14,6 @@ use Mollie\Config\Config;
 use Mollie\DTO\ApplePay\ShippingContent;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Exception\RetryOverException;
-use Mollie\Handler\RetryHandler;
 use Mollie\Handler\RetryHandlerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MollieOrderCreationService;
