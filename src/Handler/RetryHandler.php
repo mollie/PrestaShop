@@ -14,23 +14,23 @@ namespace Mollie\Handler;
 
 use Mollie\Exception\RetryOverException;
 
-class RetryHandler
+class RetryHandler implements RetryHandlerInterface
 {
     const DEFAULT_MAX_RETRY = 3;
     const DEFAULT_WAIT_TIME = 1;
-    const DEFAULT_ACCEPTED_EXCEPTION = 'RuntimeException';
+    const DEFAULT_ACCEPTED_EXCEPTION = RetryOverException::class;
 
     /**
      * @var callable
      */
-    protected $_proc;
+    protected $function;
 
     /**
      * @throws RetryOverException
      */
-    public function retry($proc, array $options = [], $moreOptions = [])
+    public function retry($function, array $options = [], $moreOptions = [])
     {
-        $this->_proc = $proc;
+        $this->function = $function;
         $options = array_merge($options, $moreOptions);
 
         $max = $options['max'] ?? self::DEFAULT_MAX_RETRY;
@@ -45,7 +45,7 @@ class RetryHandler
         $tries = 0;
         while ($tries++ < $max) {
             try {
-                return call_user_func($this->_proc);
+                return call_user_func($this->function);
             } catch (\Exception $e) {
                 if (!is_a($e, $acceptedException)) {
                     throw $e;
