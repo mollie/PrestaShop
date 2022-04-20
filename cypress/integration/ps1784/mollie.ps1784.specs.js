@@ -28,10 +28,11 @@ it('01 Connecting test API successsfully', () => {
       cy.visit('/admin1/')
       //Enabling Multistore context for PS1784
       cy.get('#subtab-AdminMollieModule > .link').click()
-      cy.get('[name="activateModule"]').check()
+      cy.get('[name="activateModule"]').check().as('Successfully enabled the module on 2nd Multistore')
       cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click()
       cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
       cy.get('#module_form_submit_btn').click()
+      cy.get('[class="alert alert-success"]').should('be.visible').as('Successfully saved the API key')
 })
 it('02 Enabling Mollie carriers successfully', () => {
       cy.visit('/admin1/')
