@@ -400,7 +400,7 @@ class Mollie extends PaymentModule
         if ($isCartController) {
             $errorDisplayService->showCookieError('mollie_payment_canceled_error');
         }
-        /** @var MolPaymentMethod $paymentMethod */
+        /** @var ?MolPaymentMethod $paymentMethod */
         $paymentMethod = $methodRepository->findOneBy(
             [
                 'id_method' => Config::MOLLIE_METHOD_ID_APPLE_PAY,
