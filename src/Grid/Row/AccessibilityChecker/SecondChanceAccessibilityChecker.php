@@ -19,7 +19,7 @@ use PrestaShop\PrestaShop\Core\Grid\Action\Row\AccessibilityChecker\Accessibilit
  */
 final class SecondChanceAccessibilityChecker implements AccessibilityCheckerInterface
 {
-    /** @var PaymentMethodRepositoryInterface  */
+    /** @var PaymentMethodRepositoryInterface */
     public $paymentMethodRepository;
 
     public function __construct(PaymentMethodRepositoryInterface $paymentMethodRepository)
@@ -37,6 +37,7 @@ final class SecondChanceAccessibilityChecker implements AccessibilityCheckerInte
         if (\Mollie\Utility\MollieStatusUtility::isPaymentFinished($molPayment['bank_status'])) {
             return false;
         }
+
         return !empty($record['transaction_id']);
     }
 }
