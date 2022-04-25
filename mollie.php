@@ -940,7 +940,7 @@ class Mollie extends PaymentModule
         $module = Module::getInstanceByName('mollie');
         /** @var \Mollie\Repository\PaymentMethodRepository $molliePaymentRepo */
         $molliePaymentRepo = $module->getMollieContainer(PaymentMethodRepositoryInterface::class);
-        $molPayment = $molliePaymentRepo->getPaymentBy('order_id', (string) $orderId);
+        $molPayment = $molliePaymentRepo->getPaymentBy('cart_id', (string) Cart::getCartIdByOrderId($orderId));
         if (\Mollie\Utility\MollieStatusUtility::isPaymentFinished($molPayment['bank_status'])) {
             return false;
         }
