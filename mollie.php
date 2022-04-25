@@ -393,12 +393,25 @@ class Mollie extends PaymentModule
     {
         /** @var \Mollie\Service\ErrorDisplayService $errorDisplayService */
         $errorDisplayService = $this->getMollieContainer()->get(\Mollie\Service\ErrorDisplayService::class);
+        /** @var PaymentMethodRepositoryInterface $methodRepository */
+        $methodRepository = $this->getMollieContainer()->get(PaymentMethodRepositoryInterface::class);
 
         $isCartController = $this->context->controller instanceof CartControllerCore;
         if ($isCartController) {
             $errorDisplayService->showCookieError('mollie_payment_canceled_error');
         }
-        if (Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT)) {
+        $paymentMethod = $methodRepository->findOneBy(
+            [
+                'id_method' => Config::MOLLIE_METHOD_ID_APPLE_PAY,
+                'live_environment' => Configuration::get(Config::MOLLIE_ENVIRONMENT),
+            ]
+        );
+        if (!$paymentMethod || !$paymentMethod->enabled) {
+            return;
+        }
+
+        $isApplePayEnabled = Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT);
+        if ($isApplePayEnabled) {
             $controller = $this->context->controller;
             if ($controller instanceof ProductControllerCore || $controller instanceof CartControllerCore) {
                 Media::addJsDef([
@@ -793,8 +806,7 @@ class Mollie extends PaymentModule
             $params['select'] = rtrim($params['select'], ' ,') . ' ,mol.`transaction_id`';
         }
         if (isset($params['join'])) {
-            $params['join'] .= ' LEFT JOIN `' . _DB_PREFIX_ . 'mollie_payments` mol ON mol.`order_reference` = a.`reference`
-			AND mol.`cart_id` = a.`id_cart` AND mol.order_id > 0';
+            $params['join'] .= ' LEFT JOIN `' . _DB_PREFIX_ . 'mollie_payments` mol ON mol.`cart_id` = a.`id_cart` AND mol.order_id > 0';
         }
         $params['fields']['order_id'] = [
             'title' => $this->l('Payment link'),

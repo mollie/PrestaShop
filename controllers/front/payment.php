@@ -13,7 +13,7 @@
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Handler\Order\OrderCreationHandler;
-use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\PaymentMethodService;
@@ -78,8 +78,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             Tools::redirectLink('index.php');
         }
 
-        /** @var PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
+        /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+        $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepositoryInterface::class);
         /** @var PaymentMethodService $transactionService */
         $transactionService = $this->module->getMollieContainer(PaymentMethodService::class);
         /** @var MollieOrderCreationService $mollieOrderCreationService */
@@ -140,7 +140,19 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         try {
-            $mollieOrderCreationService->createOrder($apiPayment, $cart->id, $orderNumber);
+            if ($method === PaymentMethod::BANKTRANSFER) {
+                $orderId = Order::getOrderByCartId($cart->id);
+                $order = new Order($orderId);
+                $paymentMethodRepo->addOpenStatusPayment(
+                    $cart->id,
+                    $apiPayment->method,
+                    $apiPayment->id,
+                    $order->id,
+                    $order->reference
+                );
+            } else {
+                $mollieOrderCreationService->createMolliePayment($apiPayment, $cart->id, $orderNumber);
+            }
         } catch (Exception $e) {
             $this->setTemplate('error.tpl');
             $this->errors[] = $this->module->l('Failed to save order information.', 'payment');

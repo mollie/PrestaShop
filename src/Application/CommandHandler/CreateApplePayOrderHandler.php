@@ -89,13 +89,13 @@ final class CreateApplePayOrderHandler
 
         // we need to wait for webhook to create the order. That's why we wait here for few seconds and check if order is created
         $proc = function () use ($command) {
-            $order = Order::getByCartId($command->getCartId());
+            $orderId = Order::getOrderByCartId($command->getCartId());
             /* @phpstan-ignore-next-line */
-            if ($order) {
-                return $order;
+            if (!$orderId) {
+                throw new OrderCreationException('Order was not created in webhook', OrderCreationException::ORDER_IS_NOT_CREATED);
             }
-            /* @phpstan-ignore-next-line */
-            throw new OrderCreationException('Order was not created in webhook', OrderCreationException::ORDER_IS_NOT_CREATED);
+
+            return new Order($orderId);
         };
 
         try {
@@ -123,8 +123,6 @@ final class CreateApplePayOrderHandler
         $this->deleteAddress($order->id_address_delivery);
         $this->deleteAddress($order->id_address_invoice);
 
-        $this->mollieOrderCreationService->createOrder($apiPayment, $cart->id, $order->reference);
-
         $successUrl = $this->link->getPageLink(
             'order-confirmation',
             true,
@@ -132,7 +130,7 @@ final class CreateApplePayOrderHandler
             [
                 'id_cart' => (int) $cart->id,
                 'id_module' => (int) $this->module->id,
-                'id_order' => Order::getByCartId($cart->id),
+                'id_order' => Order::getOrderByCartId($cart->id),
                 'key' => $cart->secure_key,
             ]
         );
