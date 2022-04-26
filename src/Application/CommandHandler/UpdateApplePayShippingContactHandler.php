@@ -10,9 +10,10 @@ use Customer;
 use Language;
 use Mollie\Application\Command\UpdateApplePayShippingContact;
 use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
+use Mollie\Collector\ApplePayDirect\OrderTotalCollector;
 use Mollie\Config\Config;
-use Mollie\DTO\ApplePay\Carrier\Carrier as AppleCarrier;
 use Mollie\Service\OrderFeeService;
+use Mollie\Utility\ApplePayDirect\ShippingMethodUtility;
 use Tools;
 
 final class UpdateApplePayShippingContactHandler
@@ -29,15 +30,19 @@ final class UpdateApplePayShippingContactHandler
      * @var OrderFeeService
      */
     private $orderFeeService;
+    /** @var OrderTotalCollector */
+    private $orderTotalCollector;
 
     public function __construct(
         ApplePayCarriersBuilder $applePayCarriersBuilder,
         Language $language,
-        OrderFeeService $orderFeeService
+        OrderFeeService $orderFeeService,
+        OrderTotalCollector $orderTotalCollector
     ) {
         $this->applePayCarriersBuilder = $applePayCarriersBuilder;
         $this->language = $language;
         $this->orderFeeService = $orderFeeService;
+        $this->orderTotalCollector = $orderTotalCollector;
     }
 
     public function handle(UpdateApplePayShippingContact $command): array
@@ -52,28 +57,8 @@ final class UpdateApplePayShippingContactHandler
 
         $applePayCarriers = $this->applePayCarriersBuilder->build(Carrier::getCarriersForOrder($this->language->id), $country->id_zone);
 
-        //todo: move to utility and test it
-        $shippingMethods = array_map(function (AppleCarrier $carrier) use ($cart) {
-            return [
-                'identifier' => $carrier->getCarrierId(),
-                'label' => $carrier->getName(),
-                'amount' => number_format($cart->getOrderTotal(true, Cart::ONLY_SHIPPING, null, $carrier->getCarrierId()), 2, '.', ''),
-                'detail' => $carrier->getDelay(),
-            ];
-        }, $applePayCarriers);
-
-        //todo: move to utility and test it
-        $totals = array_map(function (AppleCarrier $carrier) use ($cart) {
-            $orderTotal = (float) number_format($cart->getOrderTotal(true, Cart::BOTH, null, $carrier->getCarrierId()), 2, '.', '');
-            $paymentFee = $this->orderFeeService->getPaymentFee($orderTotal, Config::APPLEPAY);
-
-            return [
-                'type' => 'final',
-                'label' => $carrier->getName(),
-                'amount' => $orderTotal + $paymentFee,
-                'amountWithoutFee' => $orderTotal,
-            ];
-        }, $applePayCarriers);
+        $shippingMethods = ShippingMethodUtility::collectShippingMethodData($applePayCarriers, $cart);
+        $totals = $this->orderTotalCollector->getOrderTotals($applePayCarriers, $cart);
 
         $paymentFee = [];
         if ($totals) {

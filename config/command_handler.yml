@@ -13,6 +13,7 @@ services:
       - '@Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder'
       - '@mollie.language'
       - '@Mollie\Service\OrderFeeService'
+      - '@Mollie\Collector\ApplePayDirect\OrderTotalCollector'
     tags:
       - { name: tactician.handler, command: Mollie\Application\Command\UpdateApplePayShippingContact }
 

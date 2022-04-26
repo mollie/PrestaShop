@@ -13,9 +13,20 @@
 
 namespace Mollie\Service;
 
+use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
+use Mollie\Exception\MollieApiException;
 
 interface ApiServiceInterface
 {
+    /**
+     * @param MollieApiClient|null $api
+     * @param string $validationUrl
+     *
+     * @return string
+     *
+     * @throws ApiException
+     * @throws MollieApiException
+     */
     public function requestApplePayPaymentSession(?MollieApiClient $api, string $validationUrl): string;
 }

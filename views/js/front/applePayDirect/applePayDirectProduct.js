@@ -68,7 +68,7 @@ $(document).ready(function () {
                         cartId = merchantSession.cartId
                         session.completeMerchantValidation(JSON.parse(merchantSession.data))
                     } else {
-                        console.warn(merchantSession.data)
+                        console.warn(merchantSession.error)
                         session.abort()
                     }
                 },

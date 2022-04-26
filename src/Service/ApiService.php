@@ -346,6 +346,15 @@ class ApiService implements ApiServiceInterface
         return $order;
     }
 
+    /**
+     * @param MollieApiClient|null $api
+     * @param string $validationUrl
+     *
+     * @return string
+     *
+     * @throws ApiException
+     * @throws MollieApiException
+     */
     public function requestApplePayPaymentSession(?MollieApiClient $api, string $validationUrl): string
     {
         if (!$api) {
