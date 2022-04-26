@@ -9,7 +9,6 @@ bps17: build-ps-17
 build-ps-17:
 	# configuring your prestashop
 	docker exec -i prestashop-17 sh -c "rm -rf /var/www/html/install"
-# 	-docker exec -i prestashop-17 sh -c "mv /var/www/html/admin /var/www/html/admin966z7uc2l"
 	# configuring base database
 	mysql -h 127.0.0.1 -P 9001 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_17.sql
 	# installing module
@@ -56,7 +55,6 @@ bps1784: build-ps-1784
 build-ps-1784:
 	# configuring your prestashop
 	docker exec -i prestashop-1784 sh -c "rm -rf /var/www/html/install"
-# 	-docker exec -i prestashop-1784 sh -c "mv /var/www/html/admin /var/www/html/admin966z7uc2l"
 	# configuring base database
 	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1784_2.sql
 	# installing module
