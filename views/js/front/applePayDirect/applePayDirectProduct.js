@@ -51,7 +51,8 @@ $(document).ready(function () {
             }
 
         const subtotal = product.quantity_wanted * product.price_amount;
-        const session = new ApplePaySession(3, createRequest(countryCode, currencyCode, totalLabel, subtotal))
+        var supportedApplePaySessionVersion = 3;
+        const session = new ApplePaySession(supportedApplePaySessionVersion, createRequest(countryCode, currencyCode, totalLabel, subtotal))
         var cartId;
         session.begin()
         session.onvalidatemerchant = (applePayValidateMerchantEvent) => {
