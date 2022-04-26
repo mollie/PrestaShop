@@ -287,17 +287,20 @@ class PaymentData implements JsonSerializable
         $this->shippingAddress = $shippingAddress;
     }
 
-    public function getApplePayToken(): ?string
+    /**
+     * @return string|null
+     */
+    public function getApplePayToken()
     {
         return $this->applePayToken;
     }
 
     /**
-     * @param string $applePayToken
+     * @param string|null $applePayToken
      *
-     * @return PaymentData
+     * @return $this
      */
-    public function setApplePayToken(?string $applePayToken): PaymentData
+    public function setApplePayToken($applePayToken): PaymentData
     {
         $this->applePayToken = $applePayToken;
 

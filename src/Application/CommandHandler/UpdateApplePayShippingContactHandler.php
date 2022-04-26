@@ -124,7 +124,7 @@ final class UpdateApplePayShippingContactHandler
         return $cart;
     }
 
-    private function addProductToCart(Cart $cart, UpdateApplePayShippingContact $command): void
+    private function addProductToCart(Cart $cart, UpdateApplePayShippingContact $command)
     {
         foreach ($command->getProducts() as $product) {
             $cart->deleteProduct($product->getProductId(), $product->getProductAttribute());

@@ -18,11 +18,11 @@ use Mollie\Utility\FileUtility;
 
 class ApplePayDirectCertificateHandler implements CertificateHandlerInterface
 {
-    private const FILE_NAME = 'ApplePayDirectCertificateHandler';
+    const FILE_NAME = 'ApplePayDirectCertificateHandler';
 
-    private const APPLE_PAY_CERTIFICATE_PS_FILE = 'apple-developer-merchantid-domain-association';
-    private const APPLE_PAY_CERTIFICATE_FOLDER = '/.well-known/';
-    private const APPLE_PAY_CERTIFICATE_FILE_LOCATION = __DIR__ . '/Files/apple-developer-merchantid-domain-association';
+    const APPLE_PAY_CERTIFICATE_PS_FILE = 'apple-developer-merchantid-domain-association';
+    const APPLE_PAY_CERTIFICATE_FOLDER = '/.well-known/';
+    const APPLE_PAY_CERTIFICATE_FILE_LOCATION = __DIR__ . '/Files/apple-developer-merchantid-domain-association';
 
     /**
      * @var Mollie
@@ -39,7 +39,7 @@ class ApplePayDirectCertificateHandler implements CertificateHandlerInterface
     /**
      * @throws ApplePayDirectCertificateCreation
      */
-    public function handle(): void
+    public function handle()
     {
         /* Checks if certificate already exists in prestashop */
         if (FileUtility::fileExists($this->serverRoot . self::APPLE_PAY_CERTIFICATE_FOLDER . self::APPLE_PAY_CERTIFICATE_PS_FILE)) {

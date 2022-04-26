@@ -21,7 +21,7 @@ class ShippingMethodUtility
      * @param AppleCarrier[] $carriers
      * @param Cart $cart
      *
-     * @return array|array[]
+     * @return array|array<string, string>
      *
      * @throws \Exception
      */

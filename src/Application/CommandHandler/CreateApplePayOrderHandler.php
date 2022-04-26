@@ -196,7 +196,7 @@ final class CreateApplePayOrderHandler
         return $this->mollieOrderCreationService->createMollieApplePayDirectOrder($paymentData, $paymentMethodObj);
     }
 
-    private function deleteAddress(int $addressId): void
+    private function deleteAddress(int $addressId)
     {
         $address = new Address($addressId);
         $address->deleted = true;
