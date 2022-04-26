@@ -57,7 +57,8 @@ $(document).ready(function () {
     let applePaySession = () => {
         getCartSubTotal();
         //todo: constant
-        const session = new ApplePaySession(3, createRequest(countryCode, currencyCode, totalLabel, cartSubTotal))
+        var supportedApplePaySessionVersion = 3;
+        const session = new ApplePaySession(supportedApplePaySessionVersion, createRequest(countryCode, currencyCode, totalLabel, cartSubTotal))
         session.begin()
         session.onvalidatemerchant = (applePayValidateMerchantEvent) => {
             jQuery.ajax({
