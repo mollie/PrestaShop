@@ -55,7 +55,7 @@ class MolliePaymentMailService
     public function sendSecondChanceMail($orderId)
     {
         $order = new Order($orderId);
-        $payment = $this->paymentMethodRepository->getPaymentBy('order_id', $orderId);
+        $payment = $this->paymentMethodRepository->getPaymentBy('cart_id', $order->id_cart);
         if (!$payment) {
             return false;
         }

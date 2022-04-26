@@ -95,13 +95,13 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 
     /**
      * @param string $column
-     * @param string $id
+     * @param string|int $value
      *
      * @return array|bool|object|null
      *
      * @throws PrestaShopDatabaseException
      */
-    public function getPaymentBy($column, $id)
+    public function getPaymentBy($column, $value)
     {
         try {
             $paidPayment = Db::getInstance()->getRow(
@@ -109,7 +109,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
                     'SELECT * FROM `%s` WHERE `%s` = \'%s\' AND `bank_status` IN(\'%s\', \'%s\')',
                     _DB_PREFIX_ . 'mollie_payments',
                     bqSQL($column),
-                    pSQL($id),
+                    pSQL($value),
                     PaymentStatus::STATUS_PAID,
                     PaymentStatus::STATUS_AUTHORIZED
                 )
@@ -128,7 +128,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
                     'SELECT * FROM `%s` WHERE `%s` = \'%s\' ORDER BY `created_at` DESC',
                     _DB_PREFIX_ . 'mollie_payments',
                     bqSQL($column),
-                    pSQL($id)
+                    pSQL($value)
                 )
             );
         } catch (PrestaShopDatabaseException $e) {

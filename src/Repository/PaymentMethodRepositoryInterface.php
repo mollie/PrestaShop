@@ -22,7 +22,7 @@ interface PaymentMethodRepositoryInterface extends ReadOnlyRepositoryInterface
 
     public function getPaymentMethodIdByMethodId($paymentMethodId, $environment, $shopId = null);
 
-    public function getPaymentBy($column, $id);
+    public function getPaymentBy($column, $value);
 
     public function getMethodsForCheckout($environment, $shopId);
 
