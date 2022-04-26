@@ -35,7 +35,7 @@ use Tools;
 
 class SettingsSaveService
 {
-    private const FILE_NAME = 'SettingsSaveService';
+    const FILE_NAME = 'SettingsSaveService';
 
     /**
      * @var Mollie

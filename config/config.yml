@@ -17,6 +17,7 @@ imports:
   - { resource: decoder.yml }
   - { resource: certificate.yml }
   - { resource: command_handler.yml }
+  - { resource: collector.yml }
 
 services:
   mollie:

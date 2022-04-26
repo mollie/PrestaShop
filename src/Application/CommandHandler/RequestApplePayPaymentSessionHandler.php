@@ -13,9 +13,10 @@
 namespace Mollie\Application\CommandHandler;
 
 use Cart;
-use Exception;
 use Mollie;
+use Mollie\Api\Exceptions\ApiException;
 use Mollie\Application\Command\RequestApplePayPaymentSession;
+use Mollie\Exception\MollieApiException;
 use Mollie\Service\ApiServiceInterface;
 
 final class RequestApplePayPaymentSessionHandler
@@ -39,10 +40,16 @@ final class RequestApplePayPaymentSessionHandler
     {
         try {
             $response = $this->apiService->requestApplePayPaymentSession($this->module->api, $command->getValidationUrl());
-        } catch (Exception $e) {//todo: use normal exceptions
+        } catch (MollieApiException $e) {
+            /* Message is only displayed in console */
             return [
                 'success' => false,
-                'errors' => $e->getMessage(), //todo: double check if client doesn't see it
+                'error' => $e->getMessage(),
+            ];
+        } catch (ApiException $e) {
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
             ];
         }
 

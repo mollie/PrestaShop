@@ -346,7 +346,16 @@ class ApiService implements ApiServiceInterface
         return $order;
     }
 
-    public function requestApplePayPaymentSession(?MollieApiClient $api, string $validationUrl): string
+    /**
+     * @param MollieApiClient|null $api
+     * @param string $validationUrl
+     *
+     * @return string
+     *
+     * @throws ApiException
+     * @throws MollieApiException
+     */
+    public function requestApplePayPaymentSession($api, string $validationUrl): string
     {
         if (!$api) {
             throw new MollieApiException('Mollie API is null. Check if API key is correct', MollieApiException::MOLLIE_API_IS_NULL);
