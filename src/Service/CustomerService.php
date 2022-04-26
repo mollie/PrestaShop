@@ -38,15 +38,13 @@ class CustomerService
     }
 
     /**
-     * @param $customerId
-     *
      * @return MolCustomer|null
      *
      * @throws MollieException
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public function processCustomerCreation($customerId)
+    public function processCustomerCreation(int $customerId)
     {
         if (!$this->isSingleClickPaymentEnabled()) {
             return null;
@@ -76,9 +74,7 @@ class CustomerService
     }
 
     /**
-     * @param int $customerId
-     *
-     * @return \ObjectModel|null
+     * @return \MolCustomer|null
      *
      * @throws \PrestaShopException
      */

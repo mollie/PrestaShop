@@ -481,13 +481,9 @@ class PaymentMethodService
     }
 
     /**
-     * @param $customerId
-     * @param $saveCard
-     * @param $useSavedCard
-     *
      * @return \MolCustomer|null
      */
-    public function handleCustomerInfo($customerId, $saveCard, $useSavedCard)
+    public function handleCustomerInfo(int $customerId, bool $saveCard, bool $useSavedCard)
     {
         $isSingleClickPaymentEnabled = (bool) Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
         if (!$this->isCustomerSaveEnabled($isSingleClickPaymentEnabled)) {
