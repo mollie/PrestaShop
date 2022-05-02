@@ -47,7 +47,7 @@ class ShipmentSenderHandlerTest extends TestCase
      */
     private $moduleLogger;
 
-    protected function setUp(): void
+    protected function setUp()
     {
         parent::setUp();
 

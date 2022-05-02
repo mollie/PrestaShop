@@ -219,12 +219,12 @@ class TransactionService
                 $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
         }
 
-        $paymentMethod = $this->paymentMethodRepository->getPaymentBy('cart_id', $cart->id);
+        $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
         $order = new Order($orderId);
         if (!$paymentMethod) {
             $this->mollieOrderCreationService->createMolliePayment($apiPayment, $cart->id, $order->reference);
         } else {
-            $this->mollieOrderCreationService->updateMolliePaymentReference($cart->id, $order->reference);
+            $this->mollieOrderCreationService->updateMolliePaymentReference($apiPayment->id, $order->reference);
         }
 
         $this->updateTransaction($orderId, $apiPayment);

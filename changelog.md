@@ -3,7 +3,9 @@
 # Changelog #
 ## Changes in release 5.1.0 ##
 + Added order refund statuses for methods that use Order API.
-
++ Fixed refund and cancel information text in order page.
++ Improved transaction information saving logic to avoid missing information.
++ 
 ## Changes in release 5.0.1 ##
 + Fixed issue where order API refund would fail on webhook call.
 
