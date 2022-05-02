@@ -115,7 +115,7 @@ class MollieOrderCreationService
         );
     }
 
-    public function updateMolliePaymentReference(int $cartId, string $orderReference)
+    public function updateMolliePaymentReference(string $transactionId, string $orderReference)
     {
         Db::getInstance()->update(
             'mollie_payments',
@@ -123,7 +123,7 @@ class MollieOrderCreationService
                 'order_reference' => pSQL($orderReference),
                 'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
             ],
-            'cart_id = ' . $cartId
+            'transaction_id = "' . pSQL($transactionId) . '"'
         );
     }
 

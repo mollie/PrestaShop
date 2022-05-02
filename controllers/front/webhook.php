@@ -98,7 +98,7 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         return 'OK';
     }
 
-    private function setContext(int $cartId): void
+    private function setContext(int $cartId)
     {
         if (!$cartId) {
             return;
