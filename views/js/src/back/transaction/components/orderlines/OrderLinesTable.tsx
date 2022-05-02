@@ -146,8 +146,8 @@ export default function OrderLinesTable(): ReactElement<{}> {
     let el: any = reviewWrapper.firstChild;
     const { default: swal }= await import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert') as never as { default: SweetAlert };
     let input = await swal({
-      title: xss(translations.reviewShipment),
-      text: xss(translations.reviewShipmentProducts),
+      title: xss(translations.reviewRefund),
+      text: xss(translations.reviewRefundProducts),
       buttons: {
         cancel: {
           text: xss(translations.cancel),
@@ -201,8 +201,8 @@ export default function OrderLinesTable(): ReactElement<{}> {
 
     const { default: swal } = await import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert') as never as { default: SweetAlert };
     let input = await swal({
-      title: xss(translations.reviewShipment),
-      text: xss(translations.reviewShipmentProducts),
+      title: xss(translations.reviewCancel),
+      text: xss(translations.reviewCancelProducts),
       buttons: {
         cancel: {
           text: xss(translations.cancel),
