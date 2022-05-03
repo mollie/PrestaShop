@@ -25,6 +25,8 @@ use Mollie\Api\Resources\PaymentCollection;
 use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
+use Mollie\Errors\Http\HttpStatusCode;
+use Mollie\Exception\TransactionException;
 use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\MollieStatusUtility;
@@ -90,6 +92,7 @@ class TransactionService
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      * @throws ApiException
+     * @throws TransactionException
      *
      * @since 3.3.0
      * @since 3.3.2 Returns the ApiPayment / ApiOrder instead of OK string, NOT OK/NO ID stays the same
@@ -102,11 +105,17 @@ class TransactionService
                 PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request without proper transaction ID.', Config::WARNING);
             }
 
-            return $this->module->l('Transaction failed', 'webhook');
+            throw new TransactionException('Transaction failed', HttpStatusCode::HTTP_BAD_REQUEST);
         }
 
-        $transactionNotUsedMessage = $this->module->l('Transaction is no longer used', 'webhook');
-        $orderIsCreateMessage = $this->module->l('Order is already created', 'webhook');
+        $transactionNotUsedMessage = new TransactionException(
+            'Transaction is no longer used',
+            HttpStatusCode::HTTP_METHOD_NOT_ALLOWED
+        );
+        $orderIsCreateMessage = new TransactionException(
+            'Order is already created',
+            HttpStatusCode::HTTP_METHOD_NOT_ALLOWED
+        );
 
         /** @var int $orderId */
         $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
@@ -123,14 +132,14 @@ class TransactionService
         switch ($apiPayment->resource) {
             case Config::MOLLIE_API_STATUS_PAYMENT:
                 if ($key !== $apiPayment->metadata->secure_key) {
-                    break;
+                    throw new TransactionException('Security key is incorrect.', HttpStatusCode::HTTP_UNAUTHORIZED);
                 }
                 if (!$apiPayment->metadata->cart_id) {
-                    break;
+                    throw new TransactionException('Cart id is missing in transaction metadata', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY);
                 }
                 if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
                     if (strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
-                        return $transactionNotUsedMessage;
+                        throw $transactionNotUsedMessage;
                     }
                     if (isset($apiPayment->amount->value, $apiPayment->amountRefunded->value)
                         && NumberUtility::isLowerOrEqualThan($apiPayment->amount->value, $apiPayment->amountRefunded->value)
@@ -143,7 +152,7 @@ class TransactionService
                     if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
                         $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id);
                         if (!$orderId) {
-                            return $orderIsCreateMessage;
+                            throw $orderIsCreateMessage;
                         }
                         $payment = $this->module->api->payments->get($apiPayment->id);
                         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
@@ -152,7 +161,7 @@ class TransactionService
                         $payment->description = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
                         $payment->update();
                     } elseif (strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
-                        return $transactionNotUsedMessage;
+                        throw $transactionNotUsedMessage;
                     } else {
                         $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
                     }
@@ -160,11 +169,11 @@ class TransactionService
                 }
                 break;
             case Config::MOLLIE_API_STATUS_ORDER:
-                if (!$apiPayment->metadata->cart_id) {
-                    break;
-                }
                 if ($key !== $apiPayment->metadata->secure_key) {
-                    break;
+                    throw new TransactionException('Security key is incorrect.', HttpStatusCode::HTTP_UNAUTHORIZED);
+                }
+                if (!$apiPayment->metadata->cart_id) {
+                    throw new TransactionException('Cart id is missing in transaction metadata', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY);
                 }
 
                 $isKlarnaOrder = in_array($apiPayment->method, Config::KLARNA_PAYMENTS, false);
@@ -172,7 +181,7 @@ class TransactionService
                 if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
                     $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id, $isKlarnaOrder);
                     if (!$orderId) {
-                        return $orderIsCreateMessage;
+                        throw $orderIsCreateMessage;
                     }
                     $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
                     $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
@@ -189,7 +198,7 @@ class TransactionService
                     $apiPayment->update();
                 } elseif ($apiPayment->amountRefunded) {
                     if (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
-                        return $transactionNotUsedMessage;
+                        throw $transactionNotUsedMessage;
                     }
                     if (isset($apiPayment->amount->value, $apiPayment->amountRefunded->value)
                         && NumberUtility::isLowerOrEqualThan($apiPayment->amount->value, $apiPayment->amountRefunded->value)
@@ -206,7 +215,7 @@ class TransactionService
                         }
                     }
                 } elseif (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
-                    return $transactionNotUsedMessage;
+                    throw $transactionNotUsedMessage;
                 } else {
                     $isKlarnaDefault = Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON) === Config::MOLLIE_STATUS_DEFAULT;
                     if (in_array($apiPayment->method, Config::KLARNA_PAYMENTS) && !$isKlarnaDefault && $apiPayment->status === OrderStatus::STATUS_COMPLETED) {

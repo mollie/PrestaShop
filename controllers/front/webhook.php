@@ -11,9 +11,11 @@
  */
 
 use Mollie\Api\Exceptions\ApiException;
+use Mollie\Controller\AbstractMollieController;
+use Mollie\Errors\Http\HttpStatusCode;
+use Mollie\Exception\TransactionException;
 use Mollie\Service\TransactionService;
 use Mollie\Utility\TransactionUtility;
-use Symfony\Component\HttpFoundation\Response;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -21,7 +23,7 @@ if (!defined('_PS_VERSION_')) {
 
 require_once dirname(__FILE__) . '/../../mollie.php';
 
-class MollieWebhookModuleFrontController extends ModuleFrontController
+class MollieWebhookModuleFrontController extends AbstractMollieController
 {
     /** @var Mollie */
     public $module;
@@ -67,14 +69,13 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         /** @var TransactionService $transactionService */
         $transactionService = $this->module->getMollieContainer(TransactionService::class);
 
-
         $transactionId = Tools::getValue('id');
         if (!$transactionId) {
-            $this->respond('failed', 422, 'Missing transaction id');
+            $this->respond('failed', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY, 'Missing transaction id');
         }
 
         if (!$this->module->api) {
-            return 'API key is missing or incorrect';
+            $this->respond('failed', HttpStatusCode::HTTP_UNAUTHORIZED, 'API key is missing or incorrect');
         }
         try {
             if (TransactionUtility::isOrderTransaction($transactionId)) {
@@ -89,8 +90,10 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             $cartId = $metaData->cart_id ?? 0;
             $this->setContext($cartId);
             $payment = $transactionService->processTransaction($transaction);
+        } catch (TransactionException $e) {
+            $this->respond('failed', $e->getCode(), $e->getMessage());
         } catch (\exception $e) {
-            return $e->getMessage();
+            $this->respond('failed', $e->getCode(), $e->getMessage());
         }
 
         if (is_string($payment)) {
@@ -109,18 +112,5 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         $this->context->currency = new Currency($cart->id_currency);
         $this->context->customer = new Customer($cart->id_customer);
         $this->context->cart = $cart;
-    }
-
-    private function respond($status, $statusCode = Response::HTTP_OK, $message = '')
-    {
-        http_response_code($statusCode);
-
-        $response = ['status' => $status];
-
-        if ($message) {
-            $response['error'] = new Mollie\Errors\Error($statusCode, $message);
-        }
-
-        $this->ajaxDie(json_encode($response));
     }
 }
