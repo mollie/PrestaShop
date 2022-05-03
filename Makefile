@@ -40,3 +40,4 @@ e2e-1784-prepare:
 e2eh1784: test-e2e-headless-1784
 test-e2e-headless-1784:
 	make e2e1784p
+	docker-compose -f docker-compose.e2e.yml -f docker-compose.e2e.local.yml up --force-recreate --exit-code-from cypress
