@@ -100,6 +100,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             $this->respond('failed', $e->getCode(), $e->getMessage());
         }
 
+        /* @phpstan-ignore-next-line */
         if (is_string($payment)) {
             return $payment;
         }
