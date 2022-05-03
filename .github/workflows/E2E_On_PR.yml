@@ -1,0 +1,63 @@
+name: Cypress test run
+on:
+  pull_request:
+    types: [opened, reopened]
+jobs:
+  Cypress-E2E:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - prestashop: 'PS1784'
+            make: 'make e2eh1784'
+            demoshop: 'demoshop1784'
+            port: '8002'
+            yml: 'docker-compose.e2e.1784.yml'
+            url: 'https://demoshop1784.eu.ngrok.io'
+            test_spec: '**/cypress/integration/ps1784/**'
+    env:
+      NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+      - run: wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+        shell: bash
+      - run: unzip -qq -o ngrok-stable-linux-amd64.zip
+        shell: bash
+      - run: ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
+        shell: bash
+      - run: ./ngrok http -region=eu -subdomain=${{ matrix.demoshop }} ${{ matrix.port }} > ngrok.log &
+        shell: bash
+      - name: install composer
+        run: composer i
+
+      - name: install package
+        run: npm install & npx browserslist@latest --update-db
+
+      - name: ${{ matrix.prestashop }} installing / Module Install and Uninstall testing
+        run: |
+          ${{ matrix.make }} 
+  
+      - name: Running ${{ matrix.prestashop }} Cypress tests
+        uses: cypress-io/github-action@v2.9.7
+        with: 
+          spec: ${{ matrix.test_spec }}
+        env:
+          CYPRESS_MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+          CYPRESS_MOLLIE_TEST_PROFILE_ID: ${{ secrets.MOLLIE_TEST_PROFILE_ID }}
+          CYPRESS_baseUrl: ${{ matrix.url }}
+
+      # - run: |
+      #     docker-compose -f ${{ matrix.yml }} up --force-recreate --exit-code-from cypress
+        #--parallel --record --key
+
+      - name: Archive videos and screenshots
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: videos_screenshots
+          retention-days: 2
+          path: |
+            cypress/videos
+            cypress/screenshots
