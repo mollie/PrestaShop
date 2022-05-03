@@ -14,6 +14,7 @@ use Mollie\Api\Exceptions\ApiException;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\TransactionException;
+use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Service\TransactionService;
 use Mollie\Utility\TransactionUtility;
 
@@ -91,6 +92,9 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             $this->setContext($cartId);
             $payment = $transactionService->processTransaction($transaction);
         } catch (TransactionException $e) {
+            /** @var ErrorHandler $errorHandler */
+            $errorHandler = $this->module->getMollieContainer(ErrorHandler::class);
+            $errorHandler->handle($e, $e->getCode(), false);
             $this->respond('failed', $e->getCode(), $e->getMessage());
         } catch (\exception $e) {
             $this->respond('failed', $e->getCode(), $e->getMessage());
