@@ -13,6 +13,7 @@
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Service\TransactionService;
 use Mollie\Utility\TransactionUtility;
+use Symfony\Component\HttpFoundation\Response;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -66,9 +67,10 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         /** @var TransactionService $transactionService */
         $transactionService = $this->module->getMollieContainer(TransactionService::class);
 
+
         $transactionId = Tools::getValue('id');
         if (!$transactionId) {
-            return 'Missing transaction id';
+            $this->respond('failed', 422, 'Missing transaction id');
         }
 
         if (!$this->module->api) {
@@ -107,5 +109,18 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
         $this->context->currency = new Currency($cart->id_currency);
         $this->context->customer = new Customer($cart->id_customer);
         $this->context->cart = $cart;
+    }
+
+    private function respond($status, $statusCode = Response::HTTP_OK, $message = '')
+    {
+        http_response_code($statusCode);
+
+        $response = ['status' => $status];
+
+        if ($message) {
+            $response['error'] = new Mollie\Errors\Error($statusCode, $message);
+        }
+
+        $this->ajaxDie(json_encode($response));
     }
 }
