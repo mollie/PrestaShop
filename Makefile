@@ -11,7 +11,6 @@ bps1784: build-ps-1784
 build-ps-1784:
 	# configuring your prestashop
 	docker exec -i prestashop-1784 sh -c "rm -rf /var/www/html/install"
-# 	-docker exec -i prestashop-1784 sh -c "mv /var/www/html/admin /var/www/html/admin966z7uc2l"
 	# configuring base database
 	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1784_2.sql
 	# installing module
@@ -40,4 +39,3 @@ e2e-1784-prepare:
 e2eh1784: test-e2e-headless-1784
 test-e2e-headless-1784:
 	make e2e1784p
-	docker-compose -f docker-compose.e2e.yml -f docker-compose.e2e.local.yml up --force-recreate --exit-code-from cypress
