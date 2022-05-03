@@ -11,6 +11,10 @@
  */
 
 use Mollie\Api\Exceptions\ApiException;
+use Mollie\Controller\AbstractMollieController;
+use Mollie\Errors\Http\HttpStatusCode;
+use Mollie\Exception\TransactionException;
+use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Service\TransactionService;
 use Mollie\Utility\TransactionUtility;
 
@@ -20,7 +24,7 @@ if (!defined('_PS_VERSION_')) {
 
 require_once dirname(__FILE__) . '/../../mollie.php';
 
-class MollieWebhookModuleFrontController extends ModuleFrontController
+class MollieWebhookModuleFrontController extends AbstractMollieController
 {
     /** @var Mollie */
     public $module;
@@ -68,11 +72,11 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
 
         $transactionId = Tools::getValue('id');
         if (!$transactionId) {
-            return 'Missing transaction id';
+            $this->respond('failed', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY, 'Missing transaction id');
         }
 
         if (!$this->module->api) {
-            return 'API key is missing or incorrect';
+            $this->respond('failed', HttpStatusCode::HTTP_UNAUTHORIZED, 'API key is missing or incorrect');
         }
         try {
             if (TransactionUtility::isOrderTransaction($transactionId)) {
@@ -87,10 +91,16 @@ class MollieWebhookModuleFrontController extends ModuleFrontController
             $cartId = $metaData->cart_id ?? 0;
             $this->setContext($cartId);
             $payment = $transactionService->processTransaction($transaction);
+        } catch (TransactionException $e) {
+            /** @var ErrorHandler $errorHandler */
+            $errorHandler = $this->module->getMollieContainer(ErrorHandler::class);
+            $errorHandler->handle($e, $e->getCode(), false);
+            $this->respond('failed', $e->getCode(), $e->getMessage());
         } catch (\exception $e) {
-            return $e->getMessage();
+            $this->respond('failed', $e->getCode(), $e->getMessage());
         }
 
+        /* @phpstan-ignore-next-line */
         if (is_string($payment)) {
             return $payment;
         }
