@@ -394,17 +394,14 @@ class PaymentMethodService
                 $molCustomer = $this->handleCustomerInfo($cart->id_customer, $saveCard, $useSavedCard);
                 if ($molCustomer) {
                     $orderData->setCustomerId($molCustomer->customer_id);
-                    $orderData->setPayment($payment);
                 }
             }
 
             if ($molPaymentMethod->id_method === PaymentMethod::APPLEPAY && $applePayToken) {
-                $orderData->setPayment(
-                    [
-                        'applePayPaymentToken' => $applePayToken,
-                    ]
-                );
+                $payment['applePayPaymentToken'] = $applePayToken;
             }
+
+            $orderData->setPayment($payment);
 
             return $orderData;
         }

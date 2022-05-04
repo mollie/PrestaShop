@@ -6,6 +6,7 @@
 + Fixed refund and cancel information text in order page.
 + Improved transaction information saving logic to avoid missing information.
 + Added http status codes and exception handle to sentry on webhook calls.
++ Fixed issue where order API would not update status if refunded.
 
 ## Changes in release 5.0.1 ##
 + Fixed issue where order API refund would fail on webhook call.
