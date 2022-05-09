@@ -109,6 +109,9 @@ class Segment implements TrackerInterface
             $userId = 'MissingUserId';
         }
 
+        if (strpos($userId, 'ngrok.io')) {
+            return;
+        }
         $userAgent = array_key_exists('HTTP_USER_AGENT', $_SERVER) === true ? $_SERVER['HTTP_USER_AGENT'] : '';
         $ip = array_key_exists('REMOTE_ADDR', $_SERVER) === true ? $_SERVER['REMOTE_ADDR'] : '';
         $referer = array_key_exists('HTTP_REFERER', $_SERVER) === true ? $_SERVER['HTTP_REFERER'] : '';
