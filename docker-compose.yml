@@ -54,6 +54,14 @@ services:
       test: "wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1"
       interval: 10s
 
+  php:
+    image: phpdockerio/php72-cli
+    volumes:
+      - ./:/var/www/html
+    working_dir: /var/www/html
+    environment:
+      _PS_ROOT_DIR_: /var/www/html
+
 networks:
   prestashop_mollie_net:
     name: 'prestashop_mollie_net'

@@ -108,15 +108,6 @@ class TransactionService
             throw new TransactionException('Transaction failed', HttpStatusCode::HTTP_BAD_REQUEST);
         }
 
-        $transactionNotUsedMessage = new TransactionException(
-            'Transaction is no longer used',
-            HttpStatusCode::HTTP_METHOD_NOT_ALLOWED
-        );
-        $orderIsCreateMessage = new TransactionException(
-            'Order is already created',
-            HttpStatusCode::HTTP_METHOD_NOT_ALLOWED
-        );
-
         /** @var int $orderId */
         $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
 
@@ -139,7 +130,7 @@ class TransactionService
                 }
                 if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
                     if (strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
-                        throw $transactionNotUsedMessage;
+                        throw new TransactionException('Transaction is no longer used', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
                     }
                     if (isset($apiPayment->amount->value, $apiPayment->amountRefunded->value)
                         && NumberUtility::isLowerOrEqualThan($apiPayment->amount->value, $apiPayment->amountRefunded->value)
@@ -152,7 +143,7 @@ class TransactionService
                     if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
                         $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id);
                         if (!$orderId) {
-                            throw $orderIsCreateMessage;
+                            throw new TransactionException('Order is already created', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
                         }
                         $payment = $this->module->api->payments->get($apiPayment->id);
                         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
@@ -161,7 +152,7 @@ class TransactionService
                         $payment->description = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
                         $payment->update();
                     } elseif (strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
-                        throw $transactionNotUsedMessage;
+                        throw new TransactionException('Transaction is no longer used', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
                     } else {
                         $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
                     }
@@ -181,7 +172,7 @@ class TransactionService
                 if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
                     $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id, $isKlarnaOrder);
                     if (!$orderId) {
-                        throw $orderIsCreateMessage;
+                        throw new TransactionException('Order is already created', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
                     }
                     $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
                     $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
@@ -198,7 +189,7 @@ class TransactionService
                     $apiPayment->update();
                 } elseif ($apiPayment->amountRefunded) {
                     if (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
-                        throw $transactionNotUsedMessage;
+                        throw new TransactionException('Transaction is no longer used', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
                     }
                     if (isset($apiPayment->amount->value, $apiPayment->amountRefunded->value)
                         && NumberUtility::isLowerOrEqualThan($apiPayment->amount->value, $apiPayment->amountRefunded->value)
@@ -215,7 +206,7 @@ class TransactionService
                         }
                     }
                 } elseif (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
-                    throw $transactionNotUsedMessage;
+                    throw new TransactionException('Transaction is no longer used', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
                 } else {
                     $isKlarnaDefault = Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON) === Config::MOLLIE_STATUS_DEFAULT;
                     if (in_array($apiPayment->method, Config::KLARNA_PAYMENTS) && !$isKlarnaDefault && $apiPayment->status === OrderStatus::STATUS_COMPLETED) {
