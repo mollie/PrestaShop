@@ -50,13 +50,15 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
      * @param string $url
      * @param array $headers
      * @param string $httpBody
+     *
      * @return \stdClass|void|null
+     *
      * @throws \Mollie\Api\Exceptions\ApiException
      * @throws \Mollie\Api\Exceptions\CurlConnectTimeoutException
      */
     public function send($httpMethod, $url, $headers, $httpBody)
     {
-        for ($i = 0; $i <= self::MAX_RETRIES; $i++) {
+        for ($i = 0; $i <= self::MAX_RETRIES; ++$i) {
             usleep($i * self::DELAY_INCREASE_MS);
 
             try {
@@ -66,9 +68,7 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
             }
         }
 
-        throw new CurlConnectTimeoutException(
-            "Unable to connect to Mollie. Maximum number of retries (". self::MAX_RETRIES .") reached."
-        );
+        throw new CurlConnectTimeoutException('Unable to connect to Mollie. Maximum number of retries (' . self::MAX_RETRIES . ') reached.');
     }
 
     /**
@@ -76,13 +76,15 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
      * @param string $url
      * @param array $headers
      * @param string $httpBody
+     *
      * @return \stdClass|void|null
+     *
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     protected function attemptRequest($httpMethod, $url, $headers, $httpBody)
     {
         $curl = curl_init($url);
-        $headers["Content-Type"] = "application/json";
+        $headers['Content-Type'] = 'application/json';
 
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $this->parseHeaders($headers));
@@ -94,7 +96,7 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
         switch ($httpMethod) {
             case MollieApiClient::HTTP_POST:
                 curl_setopt($curl, CURLOPT_POST, true);
-                curl_setopt($curl, CURLOPT_POSTFIELDS,  $httpBody);
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $httpBody);
 
                 break;
             case MollieApiClient::HTTP_GET:
@@ -106,11 +108,11 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
                 break;
             case MollieApiClient::HTTP_DELETE:
                 curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
-                curl_setopt($curl, CURLOPT_POSTFIELDS,  $httpBody);
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $httpBody);
 
                 break;
             default:
-                throw new \InvalidArgumentException("Invalid http method: ". $httpMethod);
+                throw new \InvalidArgumentException('Invalid http method: ' . $httpMethod);
         }
 
         $startTime = microtime(true);
@@ -120,10 +122,10 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
         if ($response === false) {
             $executionTime = $endTime - $startTime;
             $curlErrorNumber = curl_errno($curl);
-            $curlErrorMessage = "Curl error: " . curl_error($curl);
+            $curlErrorMessage = 'Curl error: ' . curl_error($curl);
 
             if ($this->isConnectTimeoutError($curlErrorNumber, $executionTime)) {
-                throw new CurlConnectTimeoutException("Unable to connect to Mollie. " . $curlErrorMessage);
+                throw new CurlConnectTimeoutException('Unable to connect to Mollie. ' . $curlErrorMessage);
             }
 
             throw new ApiException($curlErrorMessage);
@@ -137,6 +139,7 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
 
     /**
      * The version number for the underlying http client, if available.
+     *
      * @example Guzzle/6.3
      *
      * @return string|null
@@ -160,6 +163,7 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
     /**
      * @param int $curlErrorNumber
      * @param int $executionTime
+     *
      * @return bool
      */
     protected function isConnectTimeoutError($curlErrorNumber, $executionTime)
@@ -173,7 +177,7 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
 
         if (isset($connectErrors[$curlErrorNumber])) {
             return true;
-        };
+        }
 
         if ($curlErrorNumber === \CURLE_OPERATION_TIMEOUTED) {
             if ($executionTime > self::DEFAULT_TIMEOUT) {
@@ -190,7 +194,9 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
      * @param string $response
      * @param int $statusCode
      * @param string $httpBody
+     *
      * @return \stdClass|null
+     *
      * @throws \Mollie\Api\Exceptions\ApiException
      */
     protected function parseResponseBody($response, $statusCode, $httpBody)
@@ -200,7 +206,7 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
                 return null;
             }
 
-            throw new ApiException("No response body found.");
+            throw new ApiException('No response body found.');
         }
 
         $body = @json_decode($response);
@@ -219,7 +225,7 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
 
             $field = null;
 
-            if (! empty($body->field)) {
+            if (!empty($body->field)) {
                 $field = $body->field;
             }
 
@@ -242,7 +248,7 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
         $result = [];
 
         foreach ($headers as $key => $value) {
-            $result[] = $key .': ' . $value;
+            $result[] = $key . ': ' . $value;
         }
 
         return $result;
