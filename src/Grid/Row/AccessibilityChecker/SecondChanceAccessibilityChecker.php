@@ -34,6 +34,9 @@ final class SecondChanceAccessibilityChecker implements AccessibilityCheckerInte
     {
         $molPayment = $this->paymentMethodRepository->getPaymentBy('cart_id', (int) \Cart::getCartIdByOrderId($record['id_order']));
 
+        if (!$molPayment) {
+            return false;
+        }
         if (\Mollie\Utility\MollieStatusUtility::isPaymentFinished($molPayment['bank_status'])) {
             return false;
         }
