@@ -48,7 +48,7 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
     /**
      * @param string $httpMethod
      * @param string $url
-     * @param array $headers
+     * @param array|string $headers
      * @param string $httpBody
      *
      * @return \stdClass|void|null
@@ -162,7 +162,7 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
 
     /**
      * @param int $curlErrorNumber
-     * @param int $executionTime
+     * @param float $executionTime
      *
      * @return bool
      */
