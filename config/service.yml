@@ -150,6 +150,7 @@ services:
       - '@Mollie\Handler\Order\OrderCreationHandler'
       - '@Mollie\Service\PaymentMethodService'
       - '@Mollie\Service\MollieOrderCreationService'
+      - '@Mollie\Handler\Order\OrderFeeHandler'
 
   Mollie\Service\MolliePaymentMailService:
     class: Mollie\Service\MolliePaymentMailService
