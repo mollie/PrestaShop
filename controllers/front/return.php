@@ -47,6 +47,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $idCart = (int) Tools::getValue('cart_id');
         $key = Tools::getValue('key');
         $orderNumber = Tools::getValue('order_number');
+        $transactionId = Tools::getValue('transaction_id');
         $context = Context::getContext();
         $customer = $context->customer;
 
@@ -79,13 +80,20 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             $cart = new Cart($idCart);
             $data['auth'] = (int) $cart->id_customer === $customer->id;
             if ($data['auth']) {
-                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_reference', (string) $orderNumber);
+                if ($transactionId) {
+                    $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('transaction_id', (string) $transactionId);
+                } else {
+                    $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_reference', (string) $orderNumber);
+                }
             }
         }
 
         if (isset($data['auth']) && $data['auth']) {
             // any paid payments for this cart?
 
+            if (false === $data['mollie_info']) {
+                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_id', (int) Order::getOrderByCartId($idCart));
+            }
             if (false === $data['mollie_info']) {
                 $data['mollie_info'] = [];
                 $data['msg_details'] = $this->module->l('The order with this id does not exist.', self::FILE_NAME);

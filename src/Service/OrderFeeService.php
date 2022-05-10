@@ -12,14 +12,33 @@
 
 namespace Mollie\Service;
 
+use Configuration;
+use Mollie\Config\Config;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\PaymentFeeUtility;
 use MolOrderFee;
 use MolPaymentMethod;
 use PrestaShopException;
+use Shop;
 use Tools;
 
 class OrderFeeService
 {
+    /**
+     * @var PaymentMethodRepositoryInterface
+     */
+    private $paymentMethodRepository;
+    /**
+     * @var Shop
+     */
+    private $shop;
+
+    public function __construct(PaymentMethodRepositoryInterface $paymentMethodRepository, Shop $shop)
+    {
+        $this->paymentMethodRepository = $paymentMethodRepository;
+        $this->shop = $shop;
+    }
+
     public function getPaymentFees($methods, $totalPrice)
     {
         foreach ($methods as $index => $method) {
@@ -49,5 +68,14 @@ class OrderFeeService
             $errorHandler->handle($e, $e->getCode(), false);
             throw new PrestaShopException('Can\'t save Order fee');
         }
+    }
+
+    public function getPaymentFee(float $totalAmount, string $method): float
+    {
+        $environment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
+        $paymentId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($method, $environment, $this->shop->id);
+        $molPaymentMethod = new MolPaymentMethod($paymentId);
+
+        return (float) PaymentFeeUtility::getPaymentFee($molPaymentMethod, $totalAmount);
     }
 }

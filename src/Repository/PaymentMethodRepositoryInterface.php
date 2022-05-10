@@ -20,11 +20,9 @@ interface PaymentMethodRepositoryInterface extends ReadOnlyRepositoryInterface
 
     public function deleteOldPaymentMethods(array $savedPaymentMethods, $environment);
 
-    public function getPaymentMethodIdByMethodId($paymentMethodId, $environment);
+    public function getPaymentMethodIdByMethodId($paymentMethodId, $environment, $shopId = null);
 
-    public function getPaymentBy($column, $id);
-
-    public function tryAddOrderReferenceColumn();
+    public function getPaymentBy($column, $value);
 
     public function getMethodsForCheckout($environment, $shopId);
 

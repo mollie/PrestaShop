@@ -34,7 +34,7 @@ $(document).ready(function() {
     })
   });
 
-  $('.payment-method input') .on('focus', function(e) {
+  $('.payment-method .js-payment-option-position') .on('focus', function(e) {
     if (this.setSelectionRange) {
       var len = $(this).val().length;
       this.setSelectionRange(len, len);

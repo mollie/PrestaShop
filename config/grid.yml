@@ -1,6 +1,8 @@
 services:
     Mollie\Grid\Row\AccessibilityChecker\SecondChanceAccessibilityChecker:
         class: Mollie\Grid\Row\AccessibilityChecker\SecondChanceAccessibilityChecker
+        arguments:
+            - '@Mollie\Repository\PaymentMethodRepository'
 
     Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier:
         class: Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier

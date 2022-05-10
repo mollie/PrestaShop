@@ -44,6 +44,9 @@ class IssuerService
         $issuersJson = $this->paymentMethodRepository->getPaymentMethodIssuersByPaymentMethodId($methodId);
         $issuers = json_decode($issuersJson, true);
         $issuerList[PaymentMethod::IDEAL] = [];
+        if (!$issuers) {
+            return $issuerList;
+        }
         $context = Context::getContext();
         foreach ($issuers as $issuer) {
             $issuer['href'] = $context->link->getModuleLink(

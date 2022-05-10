@@ -13,6 +13,7 @@
 namespace Mollie\Service;
 
 use Context;
+use Mollie\Adapter\API\CurlPSMollieHttpAdapter;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
 use Tools;
@@ -29,7 +30,7 @@ class ApiKeyService
      */
     public function setApiKey($apiKey, $moduleVersion)
     {
-        $api = new MollieApiClient();
+        $api = new MollieApiClient(new CurlPSMollieHttpAdapter());
         $context = Context::getContext();
         if ($apiKey) {
             try {

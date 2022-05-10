@@ -3,6 +3,10 @@
 # Changelog #
 ## Changes in release 5.1.0 ##
 + Added order refund statuses for methods that use Order API.
++ Fixed refund and cancel information text in order page.
++ Improved transaction information saving logic to avoid missing information.
++ Added http status codes and exception handle to sentry on webhook calls.
++ Fixed issue where order API would not update status if refunded.
 + Fixed issue where credit card token was not added if user is not saved.
 + No longer try to create second mollie transaction without number if first failed and if it has credit card.
 

@@ -387,7 +387,7 @@ class FormBuilder
             'name' => '',
             'title' => $this->module->l('Payment methods', self::FILE_NAME),
         ];
-        $molliePaymentMethods = $this->apiService->getMethodsForConfig($this->module->api, $this->module->getPathUri());
+        $molliePaymentMethods = $this->apiService->getMethodsForConfig($this->module->api);
 
         if (empty($molliePaymentMethods)) {
             $input[] = [
@@ -420,6 +420,8 @@ class FormBuilder
             'productAttributes' => Attribute::getAttributes($this->module->getContext()->language->id),
             'klarnaPayments' => Config::KLARNA_PAYMENTS,
             'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_AUTHORIZED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
+            'applePayDirect' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT),
+            'applePayDIrectStyle' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
         ];
 
         return $input;

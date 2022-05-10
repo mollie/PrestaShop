@@ -105,7 +105,7 @@ class MailService
      * @param Order $order
      * @param int $orderStateId
      *
-     * @return array
+     * @return array<string, mixed>
      *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException

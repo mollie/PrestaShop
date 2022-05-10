@@ -11,6 +11,7 @@
 
 namespace Mollie\Grid\Row\AccessibilityChecker;
 
+use Mollie\Repository\PaymentMethodRepositoryInterface;
 use PrestaShop\PrestaShop\Core\Grid\Action\Row\AccessibilityChecker\AccessibilityCheckerInterface;
 
 /**
@@ -18,11 +19,28 @@ use PrestaShop\PrestaShop\Core\Grid\Action\Row\AccessibilityChecker\Accessibilit
  */
 final class SecondChanceAccessibilityChecker implements AccessibilityCheckerInterface
 {
+    /** @var PaymentMethodRepositoryInterface */
+    public $paymentMethodRepository;
+
+    public function __construct(PaymentMethodRepositoryInterface $paymentMethodRepository)
+    {
+        $this->paymentMethodRepository = $paymentMethodRepository;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function isGranted(array $record)
     {
+        $molPayment = $this->paymentMethodRepository->getPaymentBy('cart_id', (int) \Cart::getCartIdByOrderId($record['id_order']));
+
+        if (!$molPayment) {
+            return false;
+        }
+        if (\Mollie\Utility\MollieStatusUtility::isPaymentFinished($molPayment['bank_status'])) {
+            return false;
+        }
+
         return !empty($record['transaction_id']);
     }
 }

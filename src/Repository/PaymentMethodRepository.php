@@ -21,7 +21,6 @@ use MolPaymentMethod;
 use mysqli_result;
 use PDOStatement;
 use PrestaShopDatabaseException;
-use PrestaShopException;
 
 /**
  * @deprecated - outside code must always use interface. Use PaymentMethodRepositoryInterface instead.
@@ -96,13 +95,13 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 
     /**
      * @param string $column
-     * @param string $id
+     * @param string|int $value
      *
      * @return array|bool|object|null
      *
      * @throws PrestaShopDatabaseException
      */
-    public function getPaymentBy($column, $id)
+    public function getPaymentBy($column, $value)
     {
         try {
             $paidPayment = Db::getInstance()->getRow(
@@ -110,13 +109,12 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
                     'SELECT * FROM `%s` WHERE `%s` = \'%s\' AND `bank_status` IN(\'%s\', \'%s\')',
                     _DB_PREFIX_ . 'mollie_payments',
                     bqSQL($column),
-                    pSQL($id),
+                    pSQL($value),
                     PaymentStatus::STATUS_PAID,
                     PaymentStatus::STATUS_AUTHORIZED
                 )
             );
         } catch (PrestaShopDatabaseException $e) {
-            static::tryAddOrderReferenceColumn();
             throw $e;
         }
 
@@ -130,41 +128,14 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
                     'SELECT * FROM `%s` WHERE `%s` = \'%s\' ORDER BY `created_at` DESC',
                     _DB_PREFIX_ . 'mollie_payments',
                     bqSQL($column),
-                    pSQL($id)
+                    pSQL($value)
                 )
             );
         } catch (PrestaShopDatabaseException $e) {
-            $this->tryAddOrderReferenceColumn();
             throw $e;
         }
 
         return $nonPaidPayment;
-    }
-
-    /**
-     * Add the order reference column in case the module upgrade script hasn't run.
-     *
-     * @return bool
-     *
-     * @since 3.3.0
-     */
-    public function tryAddOrderReferenceColumn()
-    {
-        try {
-            if (!Db::getInstance()->getValue('
-                SELECT COUNT(*)
-                FROM information_schema.COLUMNS
-                WHERE TABLE_SCHEMA = \'' . _DB_NAME_ . '\'
-                AND TABLE_NAME = \'' . _DB_PREFIX_ . 'mollie_payments\'
-                AND COLUMN_NAME = \'order_reference\'')
-            ) {
-                return Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . 'mollie_payments` ADD `order_reference` varchar(191)');
-            }
-        } catch (PrestaShopException $e) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -214,7 +185,6 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
                 '`transaction_id` = \'' . pSQL($transactionId) . '\''
             );
         } catch (Exception $e) {
-            $this->tryAddOrderReferenceColumn();
             throw $e;
         }
     }

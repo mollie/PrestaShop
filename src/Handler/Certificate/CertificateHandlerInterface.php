@@ -19,5 +19,5 @@ interface CertificateHandlerInterface
     /**
      * @throws CertificationException
      */
-    public function handle(): void;
+    public function handle();
 }

@@ -78,6 +78,10 @@ class PaymentData implements JsonSerializable
      * @var Address
      */
     private $shippingAddress;
+    /**
+     * @var ?string
+     */
+    private $applePayToken;
 
     public function __construct(
         Amount $amount,
@@ -283,6 +287,26 @@ class PaymentData implements JsonSerializable
         $this->shippingAddress = $shippingAddress;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getApplePayToken()
+    {
+        return $this->applePayToken;
+    }
+
+    /**
+     * @param string|null $applePayToken
+     *
+     * @return $this
+     */
+    public function setApplePayToken($applePayToken): PaymentData
+    {
+        $this->applePayToken = $applePayToken;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return [
@@ -311,6 +335,7 @@ class PaymentData implements JsonSerializable
             'issuer' => $this->getIssuer(),
             'cardToken' => $this->getCardToken(),
             'customerId' => $this->getCustomerId(),
+            'applePayPaymentToken' => $this->getApplePayToken(),
         ];
     }
 

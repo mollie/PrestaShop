@@ -1,6 +1,6 @@
 <?php
 
-use Mollie\Handler\Certificate\Exception\CertificationException;
+namespace Mollie\Handler\Certificate\Exception;
 
 class ApplePayDirectCertificateCreation extends CertificationException
 {

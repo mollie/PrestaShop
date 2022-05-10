@@ -9,6 +9,10 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
+
+use Mollie\Config\Config;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 class Mollie extends PaymentModule
@@ -139,7 +143,6 @@ class Mollie extends PaymentModule
         return parent::enable($force_all);
     }
 
-    // todo: check 1.7.2
     private function compile()
     {
         if (!class_exists('Symfony\Component\DependencyInjection\ContainerBuilder') ||
@@ -386,15 +389,50 @@ class Mollie extends PaymentModule
     /**
      * @throws PrestaShopException
      */
-    public function hookActionFrontControllerSetMedia()
+    public function hookActionFrontControllerSetMedia($params)
     {
         /** @var \Mollie\Service\ErrorDisplayService $errorDisplayService */
         $errorDisplayService = $this->getMollieContainer()->get(\Mollie\Service\ErrorDisplayService::class);
-        $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
+        /** @var PaymentMethodRepositoryInterface $methodRepository */
+        $methodRepository = $this->getMollieContainer()->get(PaymentMethodRepositoryInterface::class);
 
         $isCartController = $this->context->controller instanceof CartControllerCore;
         if ($isCartController) {
             $errorDisplayService->showCookieError('mollie_payment_canceled_error');
+        }
+        /** @var ?MolPaymentMethod $paymentMethod */
+        $paymentMethod = $methodRepository->findOneBy(
+            [
+                'id_method' => Config::MOLLIE_METHOD_ID_APPLE_PAY,
+                'live_environment' => Configuration::get(Config::MOLLIE_ENVIRONMENT),
+            ]
+        );
+        if (!$paymentMethod || !$paymentMethod->enabled) {
+            return;
+        }
+
+        $isApplePayEnabled = Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT);
+        if ($isApplePayEnabled) {
+            $controller = $this->context->controller;
+            if ($controller instanceof ProductControllerCore || $controller instanceof CartControllerCore) {
+                Media::addJsDef([
+                    'countryCode' => $this->context->country->iso_code,
+                    'currencyCode' => $this->context->currency->iso_code,
+                    'totalLabel' => $this->context->shop->name,
+                    'customerId' => $this->context->customer->id ?? 0,
+                    'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'applePayDirectAjax'),
+                    'cartId' => $this->context->cart->id,
+                    'applePayButtonStyle' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
+                ]);
+                $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
+
+                if ($controller instanceof ProductControllerCore) {
+                    $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirect/applePayDirectProduct.js');
+                }
+                if ($controller instanceof CartControllerCore) {
+                    $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirect/applePayDirectCart.js');
+                }
+            }
         }
     }
 
@@ -465,7 +503,7 @@ class Mollie extends PaymentModule
     public function hookDisplayAdminOrder($params)
     {
         /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->getMollieContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
+        $paymentMethodRepo = $this->getMollieContainer(PaymentMethodRepositoryInterface::class);
 
         /** @var \Mollie\Service\ShipmentServiceInterface $shipmentService */
         $shipmentService = $this->getMollieContainer(\Mollie\Service\ShipmentService::class);
@@ -516,8 +554,8 @@ class Mollie extends PaymentModule
         }
         $paymentOptions = [];
 
-        /** @var \Mollie\Repository\PaymentMethodRepositoryInterface $paymentMethodRepository */
-        $paymentMethodRepository = $this->getMollieContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
+        /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
+        $paymentMethodRepository = $this->getMollieContainer(PaymentMethodRepositoryInterface::class);
 
         /** @var \Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface $paymentOptionsHandler */
         $paymentOptionsHandler = $this->getMollieContainer(\Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface::class);
@@ -633,6 +671,9 @@ class Mollie extends PaymentModule
             Mollie\Handler\Shipment\ShipmentSenderHandlerInterface::class
         );
 
+        if (!$this->api) {
+            return;
+        }
         try {
             $shipmentSenderHandler->handleShipmentSender($this->api, $order, $orderStatus);
         } catch (Exception $e) {
@@ -766,8 +807,7 @@ class Mollie extends PaymentModule
             $params['select'] = rtrim($params['select'], ' ,') . ' ,mol.`transaction_id`';
         }
         if (isset($params['join'])) {
-            $params['join'] .= ' LEFT JOIN `' . _DB_PREFIX_ . 'mollie_payments` mol ON mol.`order_reference` = a.`reference`
-			AND mol.`cart_id` = a.`id_cart` AND mol.order_id > 0';
+            $params['join'] .= ' LEFT JOIN `' . _DB_PREFIX_ . 'mollie_payments` mol ON mol.`cart_id` = a.`id_cart` AND mol.order_id > 0';
         }
         $params['fields']['order_id'] = [
             'title' => $this->l('Payment link'),
@@ -856,7 +896,34 @@ class Mollie extends PaymentModule
         }
     }
 
+    public function hookActionObjectOrderPaymentAddAfter($params)
+    {
+        /** @var OrderPayment $orderPayment */
+        $orderPayment = $params['object'];
+
+        /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+        $paymentMethodRepo = $this->getMollieContainer(PaymentMethodRepositoryInterface::class);
+
+        $orders = Order::getByReference($orderPayment->order_reference);
+        /** @var Order $order */
+        $order = $orders->getFirst();
+        if (!Validate::isLoadedObject($order)) {
+            return;
+        }
+        $mollieOrder = $paymentMethodRepo->getPaymentBy('cart_id', $order->id_cart);
+        if (!$mollieOrder) {
+            return;
+        }
+        $orderPayment->payment_method = Config::$methods[$mollieOrder['method']];
+        $orderPayment->update();
+    }
+
     public function hookDisplayProductActions($params)
+    {
+        return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
+    }
+
+    public function hookDisplayExpressCheckout($params)
     {
         return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
     }
@@ -873,8 +940,8 @@ class Mollie extends PaymentModule
         /** @var Mollie $module */
         $module = Module::getInstanceByName('mollie');
         /** @var \Mollie\Repository\PaymentMethodRepository $molliePaymentRepo */
-        $molliePaymentRepo = $module->getMollieContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
-        $molPayment = $molliePaymentRepo->getPaymentBy('order_id', (string) $orderId);
+        $molliePaymentRepo = $module->getMollieContainer(PaymentMethodRepositoryInterface::class);
+        $molPayment = $molliePaymentRepo->getPaymentBy('cart_id', (string) Cart::getCartIdByOrderId($orderId));
         if (\Mollie\Utility\MollieStatusUtility::isPaymentFinished($molPayment['bank_status'])) {
             return false;
         }

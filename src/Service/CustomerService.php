@@ -37,7 +37,14 @@ class CustomerService
         $this->customerRepository = $customerRepository;
     }
 
-    public function processCustomerCreation($customerId): ?MolCustomer
+    /**
+     * @return MolCustomer|null
+     *
+     * @throws MollieException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    public function processCustomerCreation(int $customerId)
     {
         if (!$this->isSingleClickPaymentEnabled()) {
             return null;
@@ -66,7 +73,12 @@ class CustomerService
         return $molCustomer;
     }
 
-    public function getCustomer(int $customerId): ?MolCustomer
+    /**
+     * @return \MolCustomer|null
+     *
+     * @throws \PrestaShopException
+     */
+    public function getCustomer(int $customerId)
     {
         $customer = new \Customer($customerId);
 
