@@ -38,21 +38,15 @@ namespace Mollie\Handler\Order;
 
 use Cart;
 use Configuration;
-use Context;
-use Customer;
 use Mollie;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment as MolliePaymentAlias;
-use Mollie\Api\Types\OrderStatus;
-use Mollie\Api\Types\PaymentMethod;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\DTO\Line;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
-use Mollie\Exception\OrderCreationException;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
-use Mollie\Service\OrderFeeService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Utility\NumberUtility;
@@ -60,7 +54,6 @@ use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TextGeneratorUtility;
 use MolPaymentMethod;
 use Order;
-use OrderDetail;
 use PrestaShop\Decimal\Number;
 
 class OrderCreationHandler
@@ -74,36 +67,26 @@ class OrderCreationHandler
      */
     private $paymentMethodRepository;
     /**
-     * @var OrderStatusService
-     */
-    private $orderStatusService;
-    /**
-     * @var OrderFeeService
-     */
-    private $feeService;
-    /**
-     * @var Context
-     */
-    private $context;
-    /**
      * @var PaymentMethodService
      */
     private $paymentMethodService;
+    /** @var OrderFeeHandler */
+    private $orderFeeHandler;
+    /** @var OrderStatusService */
+    private $orderStatusService;
 
     public function __construct(
         Mollie $module,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
-        OrderStatusService $orderStatusService,
-        OrderFeeService $feeService,
-        Context $context,
-        PaymentMethodService $paymentMethodService
+        PaymentMethodService $paymentMethodService,
+        OrderFeeHandler $orderFeeHandler,
+        OrderStatusService $orderStatusService
     ) {
         $this->module = $module;
         $this->paymentMethodRepository = $paymentMethodRepository;
-        $this->orderStatusService = $orderStatusService;
-        $this->feeService = $feeService;
-        $this->context = $context;
         $this->paymentMethodService = $paymentMethodService;
+        $this->orderFeeHandler = $orderFeeHandler;
+        $this->orderStatusService = $orderStatusService;
     }
 
     /**
@@ -186,25 +169,11 @@ class OrderCreationHandler
 
         /* @phpstan-ignore-next-line */
         $orderId = (int) Order::getOrderByCartId((int) $cartId);
-
-        if (PaymentStatus::STATUS_PAID === $apiPayment->status || OrderStatus::STATUS_AUTHORIZED === $apiPayment->status) {
-            if ($this->isOrderBackOrder($orderId)) {
-                $orderStatus = Config::STATUS_PAID_ON_BACKORDER;
-            }
-        }
-
-        $this->feeService->createOrderFee($cartId, $paymentFee);
-
-        $order = new Order($orderId);
-        $order->total_paid_tax_excl = (float) (new Number((string) $order->total_paid_tax_excl))->plus((new Number((string) $paymentFee)))->toPrecision(2);
-        $order->total_paid_tax_incl = (float) (new Number((string) $order->total_paid_tax_incl))->plus((new Number((string) $paymentFee)))->toPrecision(2);
-        $order->total_paid = (float) $apiPayment->amount->value;
-        $order->total_paid_real = (float) $apiPayment->amount->value;
-        $order->update();
+        $this->orderFeeHandler->addOrderFee($orderId, $apiPayment);
 
         $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
 
-        return Order::getOrderByCartId((int) $cartId);
+        return $orderId;
     }
 
     /**
@@ -275,83 +244,5 @@ class OrderCreationHandler
         $order->update();
 
         return $paymentData;
-    }
-
-    public function createApplePayDirectOrder(Mollie\DTO\ApplePay\Order $appleOrder, int $cartId)
-    {
-        $cart = new Cart($cartId);
-        $customer = $this->createAppleOrderCustomer($appleOrder, $cart);
-
-        $this->module->validateOrder(
-            $cartId,
-            (int) Configuration::get(Config::MOLLIE_STATUS_PAID),
-            $cart->getOrderTotal(true, Cart::BOTH, null, $cart->id_carrier),
-            PaymentMethod::APPLEPAY,
-            null,
-            [],
-            null,
-            false,
-            $customer->secure_key
-        );
-    }
-
-    private function createAppleOrderCustomer(Mollie\DTO\ApplePay\Order $appleOrder, Cart $cart): Customer
-    {
-        $customer = new Customer($cart->id_customer);
-        $customer->firstname = $appleOrder->getShippingContent()->getGivenName();
-        $customer->lastname = $appleOrder->getShippingContent()->getFamilyName();
-        $customer->email = $appleOrder->getShippingContent()->getEmailAddress();
-        $customer->secure_key = $cart->secure_key;
-
-        $customer->update();
-
-        return $customer;
-    }
-
-    private function isOrderBackOrder($orderId)
-    {
-        $order = new Order($orderId);
-        $orderDetails = $order->getOrderDetailList();
-        /** @var OrderDetail $detail */
-        foreach ($orderDetails as $detail) {
-            $orderDetail = new OrderDetail($detail['id_order_detail']);
-            if (
-                Configuration::get('PS_STOCK_MANAGEMENT') &&
-                ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
-            ) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private function getPaymentMethod($apiPayment): MolPaymentMethod
-    {
-        $transactionMethod = $apiPayment->method;
-
-        switch ($apiPayment->resource) {
-            case Config::MOLLIE_API_STATUS_PAYMENT:
-                if (!isset($apiPayment->details->wallet)) {
-                    break;
-                }
-                $transactionMethod = $apiPayment->details->wallet;
-                break;
-            case Config::MOLLIE_API_STATUS_ORDER:
-                foreach ($apiPayment->payments() as $payment) {
-                    if (!isset($payment->details->wallet)) {
-                        continue;
-                    }
-                    $transactionMethod = $payment->details->wallet;
-                }
-                break;
-            default:
-                throw new OrderCreationException('Missing order resource information', OrderCreationException::ORDER_RESOURSE_IS_MISSING);
-        }
-        $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
-
-        return new MolPaymentMethod(
-            $this->paymentMethodRepository->getPaymentMethodIdByMethodId($transactionMethod, $environment)
-        );
     }
 }

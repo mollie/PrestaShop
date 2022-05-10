@@ -46,9 +46,14 @@ services:
     arguments:
       - '@mollie'
       - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Service\PaymentMethodService'
+      - '@Mollie\Handler\Order\OrderFeeHandler'
       - '@Mollie\Service\OrderStatusService'
+
+  Mollie\Handler\Order\OrderFeeHandler:
+    class: Mollie\Handler\Order\OrderFeeHandler
+    arguments:
       - '@Mollie\Service\OrderFeeService'
-      - '@mollie.context'
       - '@Mollie\Service\PaymentMethodService'
 
   Mollie\Handler\RetryHandlerInterface: '@Mollie\Handler\RetryHandler'

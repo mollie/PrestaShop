@@ -27,6 +27,7 @@ use Mollie\Config\Config;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\TransactionException;
 use Mollie\Handler\Order\OrderCreationHandler;
+use Mollie\Handler\Order\OrderFeeHandler;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
@@ -66,6 +67,8 @@ class TransactionService
     private $paymentMethodService;
     /** @var MollieOrderCreationService */
     private $mollieOrderCreationService;
+    /** @var OrderFeeHandler */
+    private $orderFeeHandler;
 
     public function __construct(
         Mollie $module,
@@ -73,7 +76,8 @@ class TransactionService
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         OrderCreationHandler $orderCreationHandler,
         PaymentMethodService $paymentMethodService,
-        MollieOrderCreationService $mollieOrderCreationService
+        MollieOrderCreationService $mollieOrderCreationService,
+        OrderFeeHandler $orderFeeHandler
     ) {
         $this->module = $module;
         $this->orderStatusService = $orderStatusService;
@@ -81,6 +85,7 @@ class TransactionService
         $this->orderCreationHandler = $orderCreationHandler;
         $this->paymentMethodService = $paymentMethodService;
         $this->mollieOrderCreationService = $mollieOrderCreationService;
+        $this->orderFeeHandler = $orderFeeHandler;
     }
 
     /**
@@ -106,7 +111,6 @@ class TransactionService
 
             throw new TransactionException('Transaction failed', HttpStatusCode::HTTP_BAD_REQUEST);
         }
-
         /** @var int $orderId */
         $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
 
@@ -408,6 +412,7 @@ class TransactionService
         if ($paymentMethod) {
             $orderId = Order::getOrderByCartId($paymentMethod['cart_id']);
             $apiPayment = $this->updatePaymentDescription($apiPayment, $orderId);
+            $this->orderFeeHandler->addOrderFee($orderId, $apiPayment);
             $this->processTransaction($apiPayment);
         } else {
             throw new TransactionException('Transaction is no longer used', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
@@ -420,6 +425,7 @@ class TransactionService
         if ($paymentMethod) {
             $orderId = Order::getOrderByCartId($paymentMethod['cart_id']);
             $apiPayment = $this->updateOrderDescription($apiPayment, $orderId);
+            $this->orderFeeHandler->addOrderFee($orderId, $apiPayment);
             $this->processTransaction($apiPayment);
         } else {
             throw new TransactionException('Transaction is no longer used', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
