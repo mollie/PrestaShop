@@ -55,7 +55,7 @@ final class UpdateApplePayShippingContactHandler
 
         $country = new Country($deliveryAddress->id_country);
 
-        $applePayCarriers = $this->applePayCarriersBuilder->build(Carrier::getCarriersForOrder($this->language->id), $country->id_zone);
+        $applePayCarriers = $this->applePayCarriersBuilder->build(Carrier::getCarriersForOrder($country->id_zone), $country->id_zone);
 
         $shippingMethods = ShippingMethodUtility::collectShippingMethodData($applePayCarriers, $cart);
         $totals = $this->orderTotalCollector->getOrderTotals($applePayCarriers, $cart);
