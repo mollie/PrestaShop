@@ -390,6 +390,8 @@ class PaymentMethodService
                 $payment['issuer'] = $issuer;
             }
 
+            $orderData->setPayment($payment);
+
             if ($molPaymentMethod->id_method === PaymentMethod::CREDITCARD) {
                 $molCustomer = $this->handleCustomerInfo($cart->id_customer, $saveCard, $useSavedCard);
                 if ($molCustomer) {
