@@ -52,6 +52,7 @@ class UpdateMessageProvider implements UpdateMessageProviderInterface
             return $this->module->l('Warning: Update xml file from github follows an unexpected format.', $this->module->name);
         }
 
+        $title = '';
         foreach ($tags->entry as $entity) {
             if (strpos($entity->id, 'beta')) {
                 continue;
