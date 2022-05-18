@@ -9,6 +9,7 @@
 + Fixed issue where order API would not update status if refunded.
 + Fixed issue where credit card token was not added if user is not saved.
 + No longer try to create second mollie transaction without number if first failed and if it has credit card.
++ Ignore beta releases when showing warning about new version in module.
 
 ## Changes in release 5.0.1 ##
 + Fixed issue where order API refund would fail on webhook call.
