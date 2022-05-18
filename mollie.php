@@ -232,7 +232,8 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
         $moduleRepository = $this->getMollieContainer(\Mollie\Repository\ModuleRepository::class);
         $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->name);
-        if ($moduleDatabaseVersion < $this->version) {
+        $needsUpgrade = Tools::version_compare($this->version, $moduleDatabaseVersion, '>');
+        if ($needsUpgrade) {
             $this->context->controller->errors[] = $this->l('Please upgrade Mollie module.');
 
             return;
