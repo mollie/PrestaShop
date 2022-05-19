@@ -468,7 +468,7 @@ class PaymentMethodService
                 'include' => 'issuers',
                 'includeWallets' => 'applepay',
                 'locale' => $language->locale,
-                'billingCountry' => 'gb',
+                'billingCountry' => $country->iso_code,
                 'amount' => [
                     'value' => (string) TextFormatUtility::formatNumber($cartAmount, 2),
                     'currency' => $currency->iso_code,
