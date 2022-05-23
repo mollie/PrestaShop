@@ -349,11 +349,8 @@ class Mollie extends PaymentModule
 
     public function hookDisplayHeader(array $params)
     {
-        if (!$this->context->controller instanceof OrderController) {
-            return;
-        }
-
-        if (!$this->isPaymentCheckoutStep()) {
+        if ($this->context->controller->php_self !== 'order')
+        {
             return;
         }
 
@@ -1010,56 +1007,6 @@ class Mollie extends PaymentModule
         $segment->track();
 
         return parent::runUpgradeModule();
-    }
-
-    /**
-     * Tells if we are in the Payment step from the order tunnel.
-     * We use the ReflectionObject because it only exists from Prestashop 1.7.7
-     *
-     * @return bool
-     */
-    private function isPaymentCheckoutStep()
-    {
-        if (!$this->context->controller instanceof OrderController) {
-            return false;
-        }
-
-        $checkoutSteps = $this->getAllOrderSteps();
-
-        /* Get the checkoutPaymentKey from the $checkoutSteps array */
-        foreach ($checkoutSteps as $stepObject) {
-            if ($stepObject instanceof CheckoutPaymentStep) {
-                return (bool) $stepObject->isCurrent();
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Get all existing Payment Steps from front office.
-     * Use ReflectionObject before Prestashop 1.7.7
-     * From Prestashop 1.7.7 object checkoutProcess is now public
-     *
-     * @return array
-     */
-    private function getAllOrderSteps()
-    {
-        $isPrestashop177 = version_compare(_PS_VERSION_, '1.7.7.0', '>=');
-
-        if (true === $isPrestashop177) {
-            /* @phpstan-ignore-next-line */
-            return $this->context->controller->getCheckoutProcess()->getSteps();
-        }
-
-        /* Reflect checkoutProcess object */
-        $reflectedObject = (new ReflectionObject($this->context->controller))->getProperty('checkoutProcess');
-        $reflectedObject->setAccessible(true);
-
-        /* Get Checkout steps data */
-        $checkoutProcessClass = $reflectedObject->getValue($this->context->controller);
-
-        return $checkoutProcessClass->getSteps();
     }
 
     private function isPhpVersionCompliant()
