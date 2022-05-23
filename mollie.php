@@ -349,8 +349,7 @@ class Mollie extends PaymentModule
 
     public function hookDisplayHeader(array $params)
     {
-        if ($this->context->controller->php_self !== 'order')
-        {
+        if ($this->context->controller->php_self !== 'order') {
             return;
         }
 
