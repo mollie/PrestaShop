@@ -25,6 +25,8 @@ jobs:
         shell: bash
       - run: unzip -qq -o ngrok-stable-linux-amd64.zip
         shell: bash
+      - run: ./ngrok config add-authtoken ${{ secrets.NGROK_TOKEN }}
+        shell: bash
       - run: ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
         shell: bash
       - run: ./ngrok http -region=eu -subdomain=${{ matrix.demoshop }} ${{ matrix.port }} > ngrok.log &
