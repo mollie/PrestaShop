@@ -425,6 +425,7 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_CSS, '');
 
         $this->configurationAdapter->updateValue(Config::MOLLIE_API, Config::MOLLIE_ORDERS_API);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE, 0);
     }
 
     public function setDefaultCarrierStatuses()
