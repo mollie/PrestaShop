@@ -1,6 +1,9 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 5.2.0 ##
++ Fixed issue where customer id was not added when using saved credit card for order API.
+
 ## Changes in release 5.1.0 ##
 + Added order refund statuses for methods that use Order API.
 + Fixed refund and cancel information text in order page.
