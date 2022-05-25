@@ -5,6 +5,7 @@ on:
 jobs:
   Cypress-E2E:
     runs-on: ubuntu-latest
+    environment: mollie_e2e
     strategy:
       fail-fast: false
       matrix:
