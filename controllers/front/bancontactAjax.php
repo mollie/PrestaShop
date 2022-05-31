@@ -44,7 +44,12 @@ class MollieBancontactAjaxModuleFrontController extends ModuleFrontController
         $paymentMethodRepository = $this->module->getMollieContainer(PaymentMethodRepositoryInterface::class);
 
         /** @var MolPaymentMethod|null $paymentMethod */
-        $paymentMethod = $paymentMethodRepository->findOneBy(['id_method' => PaymentMethod::BANCONTACT]);
+        $paymentMethod = $paymentMethodRepository->findOneBy(
+            [
+                'id_method' => PaymentMethod::BANCONTACT,
+                'live_environment' => Configuration::get(Config::MOLLIE_ENVIRONMENT),
+            ]
+        );
 
         $cart = Context::getContext()->cart;
         $currency = new Currency($cart->id_currency);
