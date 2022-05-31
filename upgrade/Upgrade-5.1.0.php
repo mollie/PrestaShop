@@ -20,7 +20,7 @@ if (!defined('_PS_VERSION_')) {
  *
  * @return bool
  */
-function upgrade_module_5_1_0_b($module)
+function upgrade_module_5_1_0($module)
 {
     $module->registerHook('displayExpressCheckout');
     $module->registerHook('displayProductActions');
