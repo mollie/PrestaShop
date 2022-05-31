@@ -365,9 +365,11 @@ class Mollie extends PaymentModule
         );
         $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe.js");
         $this->context->controller->addJS("{$this->_path}views/js/front/mollie_single_click.js");
+        $this->context->controller->addJS("{$this->_path}views/js/front/bancontact/qr_code.js");
 
         Media::addJsDef([
             'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
+            'bancontactAjaxUrl' => $this->context->link->getModuleLink('mollie', 'bancontactAjax'),
         ]);
         $this->context->controller->addJS("{$this->_path}views/js/front/mollie_error_handle.js");
         $this->context->controller->addCSS("{$this->_path}views/css/mollie_iframe.css");

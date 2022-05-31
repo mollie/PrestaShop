@@ -40,6 +40,7 @@ use Configuration;
 use Customer;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
+use Mollie\Provider\PaymentOption\BancontactPaymentOptionProvider;
 use Mollie\Provider\PaymentOption\BasePaymentOptionProvider;
 use Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider;
 use Mollie\Provider\PaymentOption\CreditCardSingleClickPaymentOptionProvider;
@@ -75,6 +76,8 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
      * @var CreditCardSingleClickPaymentOptionProvider
      */
     private $cardSingleClickPaymentOptionProvider;
+    /** @var BancontactPaymentOptionProvider */
+    private $bancontactPaymentOptionProvider;
 
     public function __construct(
         BasePaymentOptionProvider $basePaymentOptionProvider,
@@ -82,7 +85,8 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
         CreditCardSingleClickPaymentOptionProvider $cardSingleClickPaymentOptionProvider,
         IdealPaymentOptionProvider $idealPaymentOptionProvider,
         MolCustomerRepository $customerRepository,
-        Customer $customer
+        Customer $customer,
+        BancontactPaymentOptionProvider $bancontactPaymentOptionProvider
     ) {
         $this->basePaymentOptionProvider = $basePaymentOptionProvider;
         $this->creditCardPaymentOptionProvider = $creditCardPaymentOptionProvider;
@@ -90,6 +94,7 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
         $this->customerRepository = $customerRepository;
         $this->customer = $customer;
         $this->cardSingleClickPaymentOptionProvider = $cardSingleClickPaymentOptionProvider;
+        $this->bancontactPaymentOptionProvider = $bancontactPaymentOptionProvider;
     }
 
     /**
@@ -107,6 +112,9 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
             } elseif ($this->isSingleClick()) {
                 return $this->cardSingleClickPaymentOptionProvider->getPaymentOption($paymentMethod);
             }
+        }
+        if ($this->isBancontactPaymentMethod($paymentMethod)) {
+            return $this->bancontactPaymentOptionProvider->getPaymentOption($paymentMethod);
         }
 
         return $this->basePaymentOptionProvider->getPaymentOption($paymentMethod);
@@ -135,15 +143,19 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
      *
      * @return bool
      */
-    private function isCreditCardPaymentMethod(MolPaymentMethod $paymentMethod)
+    private function isCreditCardPaymentMethod(MolPaymentMethod $paymentMethod): bool
     {
-        $isCreditCardPaymentMethod = PaymentMethod::CREDITCARD === $paymentMethod->getPaymentMethodName();
+        return PaymentMethod::CREDITCARD === $paymentMethod->getPaymentMethodName();
+    }
 
-        if (!$isCreditCardPaymentMethod) {
-            return false;
-        }
-
-        return true;
+    /**
+     * @param MolPaymentMethod $paymentMethod
+     *
+     * @return bool
+     */
+    private function isBancontactPaymentMethod(MolPaymentMethod $paymentMethod): bool
+    {
+        return PaymentMethod::BANCONTACT === $paymentMethod->getPaymentMethodName();
     }
 
     private function isIFrame()
