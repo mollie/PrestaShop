@@ -2,6 +2,7 @@ name: Cypress test run
 on:
   pull_request:
     types: [opened, reopened]
+    branches: [master, v*.*.*]
 jobs:
   Cypress-E2E:
     runs-on: ubuntu-latest
