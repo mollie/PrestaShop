@@ -1,19 +1,15 @@
 $(document).ready(function () {
-    var continueWithoutQr = false;
     var paymentMethodInput = $('input[name="mollie-method-id"]');
     paymentMethodInput.closest('form').on('submit', function (e) {
         var selectedPayment = $('input[name="payment-option"]:checked');
         var isMollie = selectedPayment.attr('data-module-name') === 'mollie'
         if (!isMollie) {
-            return true;
+            return;
         }
         var $nextDiv = selectedPayment.closest('.payment-option').parent().next();
         var mollieMethodName = $nextDiv.find('input[name="mollie-method-id"]').val();
         if (mollieMethodName !== 'bancontact') {
-            return true;
-        }
-        if (continueWithoutQr) {
-            return true;
+            return;
         }
         e.preventDefault();
 
@@ -63,8 +59,7 @@ $(document).ready(function () {
     function continueWithoutQR(formSubmitEvent)
     {
         $('#js-mollie-bancontact-continue').on('click', function (){
-            continueWithoutQr = true;
-            $(formSubmitEvent.target).submit();
+            window.location.href = $(formSubmitEvent.target).attr('action');
         })
     }
 });
