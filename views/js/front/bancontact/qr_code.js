@@ -5,15 +5,15 @@ $(document).ready(function () {
         var selectedPayment = $('input[name="payment-option"]:checked');
         var isMollie = selectedPayment.attr('data-module-name') === 'mollie'
         if (!isMollie) {
-            return;
+            return true;
         }
         var $nextDiv = selectedPayment.closest('.payment-option').parent().next();
         var mollieMethodName = $nextDiv.find('input[name="mollie-method-id"]').val();
         if (mollieMethodName !== 'bancontact') {
-            return;
+            return true;
         }
         if (continueWithoutQr) {
-            return;
+            return true;
         }
         e.preventDefault();
 
