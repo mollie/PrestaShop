@@ -217,6 +217,7 @@ class Config
     const MOLLIE_METHOD_ID_KLARNA_SLICE_IT = 'klarnasliceit';
     const MOLLIE_METHOD_ID_APPLE_PAY = 'applepay';
     const MOLLIE_VOUCHER_METHOD_ID = 'voucher';
+    const MOLLIE_in3_METHOD_ID = 'in3';
 
     const MOLLIE_VOUCHER_CATEGORY_NULL = 'null';
     const MOLLIE_VOUCHER_CATEGORY_MEAL = 'meal';
@@ -240,6 +241,14 @@ class Config
         PaymentMethod::KLARNA_PAY_LATER,
         PaymentMethod::KLARNA_SLICE_IT,
         PaymentMethod::KLARNA_PAY_NOW,
+    ];
+
+    const ORDER_API_ONLY_METHODS = [
+        PaymentMethod::KLARNA_PAY_LATER,
+        PaymentMethod::KLARNA_SLICE_IT,
+        PaymentMethod::KLARNA_PAY_NOW,
+        self::MOLLIE_VOUCHER_METHOD_ID,
+        self::MOLLIE_in3_METHOD_ID,
     ];
 
     const ROUTE_RESEND_SECOND_CHANCE_PAYMENT_MESSAGE = 'mollie_module_admin_resend_payment_message';
