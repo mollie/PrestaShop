@@ -156,6 +156,9 @@
                                         <option value="0" {if $input.isBancontactQrCodeEnabled === 0} selected {/if}>{l s='No' mod='mollie'}</option>
                                         <option value="1" {if $input.isBancontactQrCodeEnabled === 1} selected {/if}>{l s='Yes' mod='mollie'}</option>
                                     </select>
+                                    <p class="help-block">
+                                        {$input.bancontactQRCodeDescription}
+                                    </p>
                                 </div>
                             </div>
                         {/if}
