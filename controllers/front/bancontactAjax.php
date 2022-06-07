@@ -31,6 +31,7 @@ class MollieBancontactAjaxModuleFrontController extends ModuleFrontController
         switch ($action) {
             case 'createTransaction':
                 $this->createTransaction();
+                // no break
             case 'checkForPaidTransaction':
                 $this->checkForPaidTransaction();
         }
@@ -65,11 +66,11 @@ class MollieBancontactAjaxModuleFrontController extends ModuleFrontController
             $paymentMethod,
             $orderNumber
         );
-        $newPayment = $this->module->api->payments->create($paymentData->jsonSerialize(), ["include" => "details.qrCode"]);
+        $newPayment = $this->module->api->payments->create($paymentData->jsonSerialize(), ['include' => 'details.qrCode']);
 
         $this->ajaxDie(json_encode(
             [
-                'qr_code' => $newPayment->details->qrCode->src
+                'qr_code' => $newPayment->details->qrCode->src,
             ]
         ));
     }
@@ -90,6 +91,7 @@ class MollieBancontactAjaxModuleFrontController extends ModuleFrontController
             return $orderId;
         };
 
+        $orderId = false;
         try {
             $orderId = $retryHandler->retry(
                 $proc,
@@ -101,7 +103,7 @@ class MollieBancontactAjaxModuleFrontController extends ModuleFrontController
         } catch (RetryOverException $e) {
             $this->ajaxDie(json_encode(
                 [
-                    'success' => false
+                    'success' => false,
                 ]
             ));
         }
@@ -109,7 +111,7 @@ class MollieBancontactAjaxModuleFrontController extends ModuleFrontController
         if (!$orderId) {
             $this->ajaxDie(json_encode(
                 [
-                    'success' => false
+                    'success' => false,
                 ]
             ));
         }
@@ -130,7 +132,7 @@ class MollieBancontactAjaxModuleFrontController extends ModuleFrontController
         $this->ajaxDie(json_encode(
             [
                 'success' => true,
-                'redirectUrl' => $successUrl
+                'redirectUrl' => $successUrl,
             ]
         ));
     }

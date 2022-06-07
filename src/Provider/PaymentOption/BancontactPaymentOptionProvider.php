@@ -36,17 +36,14 @@
 
 namespace Mollie\Provider\PaymentOption;
 
-use Cart;
 use Mollie;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Api\Types\PaymentMethod;
-use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\LanguageService;
 use Mollie\Service\PaymentMethodService;
-use Mollie\Utility\OrderNumberUtility;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
@@ -133,7 +130,7 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
                     'type' => 'hidden',
                     'name' => 'mollie-method-id',
                     'value' => PaymentMethod::BANCONTACT,
-                ]
+                ],
             ]
         );
         if ($paymentFee) {
@@ -153,7 +150,7 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
                         'type' => 'hidden',
                         'name' => 'mollie-method-id',
                         'value' => PaymentMethod::BANCONTACT,
-                    ]
+                    ],
                 ]
             );
         }
