@@ -113,7 +113,7 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
                 return $this->cardSingleClickPaymentOptionProvider->getPaymentOption($paymentMethod);
             }
         }
-        if ($this->isBancontactPaymentMethod($paymentMethod)) {
+        if ($this->isBancontactWithQRCodePaymentMethod($paymentMethod)) {
             return $this->bancontactPaymentOptionProvider->getPaymentOption($paymentMethod);
         }
 
@@ -153,9 +153,9 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
      *
      * @return bool
      */
-    private function isBancontactPaymentMethod(MolPaymentMethod $paymentMethod): bool
+    private function isBancontactWithQRCodePaymentMethod(MolPaymentMethod $paymentMethod): bool
     {
-        return PaymentMethod::BANCONTACT === $paymentMethod->getPaymentMethodName();
+        return PaymentMethod::BANCONTACT === $paymentMethod->getPaymentMethodName() && Configuration::get(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED);
     }
 
     private function isIFrame()

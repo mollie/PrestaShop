@@ -1,0 +1,6 @@
+#mollie-bancontact-qr-code {
+    width: 180px;
+    height: 180px;
+    background: white;
+    background:url(../../gif/loader.gif) center
+}

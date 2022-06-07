@@ -104,22 +104,6 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
      */
     public function getPaymentOption(MolPaymentMethod $paymentMethod)
     {
-        $cart = $this->context->getCart();
-        $currency = new \Currency($cart->id_currency);
-        $orderNumber = OrderNumberUtility::generateOrderNumber($cart->id);
-//
-//        $paymentData = $this->paymentMethodService->getPaymentData(
-//            $cart->getOrderTotal(),
-//            $currency->iso_code,
-//            PaymentMethod::BANCONTACT,
-//            null,
-//            $cart->id,
-//            $cart->secure_key,
-//            $paymentMethod,
-//            $orderNumber
-//        );
-//        $newPayment = $this->module->api->payments->create($paymentData->jsonSerialize(), ["include" => "details.qrCode"]);
-
         $paymentOption = new PaymentOption();
         $paymentOption->setCallToActionText(
             $paymentMethod->title ?:
@@ -134,14 +118,6 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
         ));
         $paymentOption->setLogo($this->creditCardLogoProvider->getMethodOptionLogo($paymentMethod));
         $paymentFee = $this->paymentFeeProvider->getPaymentFee($paymentMethod);
-
-//        $smarty = $this->context->getSmarty();
-//        $smarty->assign('qrCode', $newPayment->details->qrCode->src);
-//        $paymentOption->setAdditionalInformation(
-//            $smarty->fetch(
-//                $this->module->getLocalPath() . 'views/templates/hook/qr_code.tpl'
-//            )
-//        );
 
         $this->context->getSmarty()->assign([
             'methodId' => $paymentMethod->getPaymentMethodName(),
@@ -173,6 +149,11 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
                         'name' => 'payment-fee-price-display',
                         'value' => sprintf($this->module->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee)),
                     ],
+                    [
+                        'type' => 'hidden',
+                        'name' => 'mollie-method-id',
+                        'value' => PaymentMethod::BANCONTACT,
+                    ]
                 ]
             );
         }

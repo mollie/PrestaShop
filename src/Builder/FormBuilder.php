@@ -422,6 +422,8 @@ class FormBuilder
             'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_AUTHORIZED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
             'applePayDirect' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT),
             'applePayDIrectStyle' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
+            'isBancontactQrCodeEnabled' => (int) Configuration::get(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED),
+            'isLive' => (int) Configuration::get(Config::MOLLIE_ENVIRONMENT),
         ];
 
         return $input;
