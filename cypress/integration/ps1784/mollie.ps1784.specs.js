@@ -1,4 +1,4 @@
-/// <reference types="Cypress" />
+/// <reference types="cypress" />
 function prepareCookie()
       {
             const name = 'PrestaShop-';
@@ -42,7 +42,6 @@ function prepareCookie()
       //switching the multistore PS1784
       cy.get('#header_shop > .dropdown').click()
       cy.get('.open > .dropdown-menu').find('[class="shop"]').eq(1).find('[href]').eq(0).click()
-      //
       cy.visit('/SHOP2/index.php?controller=my-account')
       cy.get('#login-form [name="email"]').eq(0).type('demo@demo.com')
       cy.get('#login-form [name="password"]').eq(0).type('demodemo')
@@ -50,7 +49,6 @@ function prepareCookie()
       cy.get('#history-link > .link-item').click()
       })
       }
-      //
 describe('PS1784 Tests Suite', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
@@ -81,7 +79,6 @@ it('03 Enabling All payments in Module BO [Orders API]', () => {
 it('04 Bancontact Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
-      //
       cy.contains('Reorder').click()
       cy.contains('LT').click()
       //Billing country LT, DE etc.
@@ -126,19 +123,15 @@ it('05 Bancontact Order BO Shiping, Refunding [Orders API]', () => {
       cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it.only('06 iDEAL Checkouting [Orders API]', () => {
+it('06 iDEAL Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
-      //
       cy.contains('Reorder').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
       cy.contains('iDEAL').click({force:true})
-      //If issuer dropdown is enabled
-      // cy.get('#mollie-issuer-dropdown-button').click()
-      // cy.get('[data-ideal-issuer="ideal_ABNANL2A"]').click()
       cy.get('[type="checkbox"]').check()
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
@@ -180,7 +173,6 @@ it('07 iDEAL Order BO Shiping, Refunding [Orders API]', () => {
 it('08 Klarna Slice It Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
-      //
       cy.contains('Reorder').click()
       //Billing country LT, DE etc.
       cy.contains('DE').click()
@@ -224,7 +216,6 @@ it('09 Klarna Slice It Order BO Shiping, Refunding [Orders API]', () => {
       cy.get('[role="button"]').eq(2).click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
       cy.get('[class="alert alert-success"]').should('be.visible')
-
 })
 it('10 Klarna Pay Later Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
@@ -277,7 +268,6 @@ it('11 Klarna Pay Later Order BO Shiping, Refunding [Orders API]', () => {
 it('12 Credit Card Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/en/index.php?controller=history')
       cy.get('a').click()
-      //
       cy.contains('Reorder').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
@@ -398,16 +388,12 @@ it('16 Bancontact Order BO Shiping, Refunding [Payments API]', () => {
 it('17 iDEAL Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/en/index.php?controller=history')
       cy.get('a').click()
-      //
       cy.contains('Reorder').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
       cy.contains('iDEAL').click({force:true})
-      //If issuer dropdown is enabled
-      // cy.get('#mollie-issuer-dropdown-button').click()
-      // cy.get('[data-ideal-issuer="ideal_ABNANL2A"]').click()
       cy.get('[type="checkbox"]').check()
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
@@ -454,7 +440,6 @@ it('18 iDEAL Order BO Shiping, Refunding [Payments API]', () => {
 it('19 Credit Card Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/en/index.php?controller=history')
       cy.get('a').click()
-      //
       cy.contains('Reorder').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
