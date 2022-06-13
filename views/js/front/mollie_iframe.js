@@ -91,7 +91,7 @@ $(document).ready(function () {
         'verification-code': 3
     };
     var fieldErrors = {};
-    var methodId = $(this).find('input[name="method-id"]').val();
+    var methodId = $(this).find('input[name="mollie-method-id"]').val();
     mountMollieComponents(methodId);
 
     $(document).on('change', 'input[data-module-name="mollie"]', function () {
@@ -101,8 +101,8 @@ $(document).ready(function () {
 
         showAdditionalInformation($additionalInformation)
 
-        var methodId = $additionalInformation.find('input[name="method-id"]').val();
-        if (!methodId) {
+        var methodId = $additionalInformation.find('input[name="mollie-method-id"]').val();
+        if (methodId !== 'creditcard') {
             return;
         }
         cardHolderInput.unmount();

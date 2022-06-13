@@ -2,6 +2,7 @@
 
 # Changelog #
 ## Changes in release 5.2.0 ##
++ Added QR code option for bancontact payment on live mode
 + Added in3 payment method restriction for using only order API.
 
 ## Changes in release 5.1.0 ##

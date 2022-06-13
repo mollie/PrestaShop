@@ -48,7 +48,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '5.1.0';
+        $this->version = '5.2.0';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -365,9 +365,12 @@ class Mollie extends PaymentModule
         );
         $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe.js");
         $this->context->controller->addJS("{$this->_path}views/js/front/mollie_single_click.js");
+        $this->context->controller->addJS("{$this->_path}views/js/front/bancontact/qr_code.js");
+        $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/bancontact_qr_code.css');
 
         Media::addJsDef([
             'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
+            'bancontactAjaxUrl' => $this->context->link->getModuleLink('mollie', 'bancontactAjax'),
         ]);
         $this->context->controller->addJS("{$this->_path}views/js/front/mollie_error_handle.js");
         $this->context->controller->addCSS("{$this->_path}views/css/mollie_iframe.css");

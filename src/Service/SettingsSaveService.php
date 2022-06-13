@@ -214,6 +214,7 @@ class SettingsSaveService
         $mollieErrors = Tools::getValue(Config::MOLLIE_DISPLAY_ERRORS);
         $voucherCategory = Tools::getValue(Config::MOLLIE_VOUCHER_CATEGORY);
         $applePayDirectStyle = Tools::getValue(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE);
+        $isBancontactQrCodeEnabled = Tools::getValue(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED);
 
         $mollieShipMain = Tools::getValue(Config::MOLLIE_AUTO_SHIP_MAIN);
         if (!isset($mollieErrors)) {
@@ -246,6 +247,9 @@ class SettingsSaveService
         }
 
         if (empty($errors)) {
+            if ($isBancontactQrCodeEnabled !== false) {
+                Configuration::updateValue(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED, $isBancontactQrCodeEnabled);
+            }
             Configuration::updateValue(Config::MOLLIE_APPLE_PAY_DIRECT, $isApplePayDirectEnabled);
             Configuration::updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE, $applePayDirectStyle);
             Configuration::updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
