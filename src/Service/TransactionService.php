@@ -205,6 +205,9 @@ class TransactionService
                 $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
         }
 
+        if (!$orderId) {
+            return;
+        }
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
         $order = new Order($orderId);
         if (!$paymentMethod) {
@@ -397,6 +400,9 @@ class TransactionService
 
     private function updatePaymentDescription(Payment $apiPayment, int $orderId): Payment
     {
+        if (!$orderId) {
+            throw new TransactionException('Order does not exist', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
+        }
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
         $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
@@ -411,6 +417,9 @@ class TransactionService
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('order_reference', $apiPayment->description);
         if ($paymentMethod) {
             $orderId = Order::getOrderByCartId($paymentMethod['cart_id']);
+            if (!$orderId) {
+                return;
+            }
             $apiPayment = $this->updatePaymentDescription($apiPayment, $orderId);
             $this->orderFeeHandler->addOrderFee($orderId, $apiPayment);
             $this->processTransaction($apiPayment);
@@ -424,6 +433,9 @@ class TransactionService
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('order_reference', $apiPayment->orderNumber);
         if ($paymentMethod) {
             $orderId = Order::getOrderByCartId($paymentMethod['cart_id']);
+            if (!$orderId) {
+                return;
+            }
             $apiPayment = $this->updateOrderDescription($apiPayment, $orderId);
             $this->orderFeeHandler->addOrderFee($orderId, $apiPayment);
             $this->processTransaction($apiPayment);
