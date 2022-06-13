@@ -206,7 +206,7 @@ class TransactionService
         }
 
         if (!$orderId) {
-            return;
+            return 'Order with given transaction was not found';
         }
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
         $order = new Order($orderId);
