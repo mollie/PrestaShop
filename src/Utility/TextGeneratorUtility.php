@@ -33,8 +33,11 @@ class TextGeneratorUtility
     {
         $order = new Order($orderId);
         $cart = Cart::getCartByOrderId($orderId);
+        if (!$cart) {
+            return 'missing-cart';
+        }
         $buyer = null;
-        if ($cart && $cart->id_customer) {
+        if ($cart->id_customer) {
             $buyer = new Customer($cart->id_customer);
         }
 
@@ -49,9 +52,9 @@ class TextGeneratorUtility
             '%' => $cart->id,
             '{cart.id}' => $cart->id,
             '{order.reference}' => $order->reference,
-            '{customer.firstname}' => null == $buyer ? '' : $buyer->firstname,
-            '{customer.lastname}' => null == $buyer ? '' : $buyer->lastname,
-            '{customer.company}' => null == $buyer ? '' : $buyer->company,
+            '{customer.firstname}' => null === $buyer ? '' : $buyer->firstname,
+            '{customer.lastname}' => null === $buyer ? '' : $buyer->lastname,
+            '{customer.company}' => null === $buyer ? '' : $buyer->company,
             '{storeName}' => Configuration::get('PS_SHOP_NAME'),
             '{orderNumber}' => $order->reference,
             '{countryCode}' => $countryCode,
