@@ -404,7 +404,7 @@ class FormBuilder
             'paymentMethods' => $molliePaymentMethods,
             'countries' => $this->countryService->getActiveCountriesList(),
             'tab' => $generalSettings,
-            'onlyOrderMethods' => array_merge(Config::KLARNA_PAYMENTS, ['voucher']),
+            'onlyOrderMethods' => Config::ORDER_API_ONLY_METHODS,
             'displayErrors' => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
             'methodDescription' => TagsUtility::ppTags(
                 $this->module->l('Click [1]here[/1] to read more about the differences between the Payment and Orders API.', self::FILE_NAME),
