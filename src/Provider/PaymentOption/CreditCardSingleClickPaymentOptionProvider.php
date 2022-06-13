@@ -139,6 +139,8 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
             ]
         );
 
+        $useSavedUser = (bool) (Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT) && $molCustomer);
+
         $paymentOption->setInputs([
             [
                 'type' => 'hidden',
@@ -158,7 +160,7 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
             [
                 'type' => 'hidden',
                 'name' => 'mollieUseSavedCard',
-                'value' => '',
+                'value' => $useSavedUser,
             ],
         ]);
 
@@ -167,7 +169,7 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
             'priceSign' => $this->context->getCurrencySign(),
             'methodId' => $paymentMethod->getPaymentMethodName(),
             'isSingleClickPayment' => (bool) Configuration::get(Mollie\Config\Config::MOLLIE_SINGLE_CLICK_PAYMENT),
-            'mollieUseSavedCard' => (bool) (Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT) && $molCustomer),
+            'mollieUseSavedCard' => $useSavedUser,
             'isGuest' => $this->customer->isGuest(),
         ]);
         $paymentOption->setLogo($this->creditCardLogoProvider->getMethodOptionLogo($paymentMethod));
