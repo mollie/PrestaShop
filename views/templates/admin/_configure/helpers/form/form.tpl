@@ -77,17 +77,7 @@
                    onclick="togglePaymentMethod(this, '{$paymentMethod.id|escape:'html':'UTF-8'}'); return false;">
                 <i class="icon-check text-success"></i>
               </a>
-
-
-
-
-
 {else}
-
-
-
-
-
                 <a href="#" class="payment-check-link"
                    data-action="activate"
                    onclick="togglePaymentMethod(this, '{$paymentMethod.id|escape:'html':'UTF-8'}'); return false;">
@@ -153,6 +143,22 @@
                                             </label>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        {/if}
+                        {if $paymentMethod.id === 'bancontact'}
+                            <div class="form-group">
+                                <label class="control-label col-lg-3">
+                                    {l s='QR code' mod='mollie'}
+                                </label>
+                                <div class="col-lg-9">
+                                    <select name="MOLLIE_BANCONTACT_QR_CODE_ENABLED" class="fixed-width-xl" {if $input.isLive === 0}disabled{/if}>
+                                        <option value="0" {if $input.isBancontactQrCodeEnabled === 0} selected {/if}>{l s='No' mod='mollie'}</option>
+                                        <option value="1" {if $input.isBancontactQrCodeEnabled === 1} selected {/if}>{l s='Yes' mod='mollie'}</option>
+                                    </select>
+                                    <p class="help-block">
+                                        {$input.bancontactQRCodeDescription}
+                                    </p>
                                 </div>
                             </div>
                         {/if}

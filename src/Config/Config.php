@@ -139,6 +139,7 @@ class Config
     const MOLLIE_APPLE_PAY_DIRECT = 'MOLLIE_APPLE_PAY_DIRECT';
 
     const MOLLIE_APPLE_PAY_DIRECT_STYLE = 'MOLLIE_APPLE_PAY_DIRECT_STYLE';
+    const MOLLIE_BANCONTACT_QR_CODE_ENABLED = 'MOLLIE_BANCONTACT_QR_CODE_ENABLED';
 
     const MOLLIE_CARRIER_URL_SOURCE = 'MOLLIE_CARRIER_URL_SOURCE_';
     const MOLLIE_CARRIER_CUSTOM_URL = 'MOLLIE_CARRIER_CUSTOM_URL_';
@@ -217,6 +218,7 @@ class Config
     const MOLLIE_METHOD_ID_KLARNA_SLICE_IT = 'klarnasliceit';
     const MOLLIE_METHOD_ID_APPLE_PAY = 'applepay';
     const MOLLIE_VOUCHER_METHOD_ID = 'voucher';
+    const MOLLIE_in3_METHOD_ID = 'in3';
 
     const MOLLIE_VOUCHER_CATEGORY_NULL = 'null';
     const MOLLIE_VOUCHER_CATEGORY_MEAL = 'meal';
@@ -242,12 +244,21 @@ class Config
         PaymentMethod::KLARNA_PAY_NOW,
     ];
 
+    const ORDER_API_ONLY_METHODS = [
+        PaymentMethod::KLARNA_PAY_LATER,
+        PaymentMethod::KLARNA_SLICE_IT,
+        PaymentMethod::KLARNA_PAY_NOW,
+        self::MOLLIE_VOUCHER_METHOD_ID,
+        self::MOLLIE_in3_METHOD_ID,
+    ];
+
     const ROUTE_RESEND_SECOND_CHANCE_PAYMENT_MESSAGE = 'mollie_module_admin_resend_payment_message';
 
     const PAYMENT_FEE_SKU = 'payment-fee-sku';
     const WRONG_AMOUNT_REASON = 'wrong amount';
 
     const APPLE_PAY_DIRECT_ORDER_CREATION_MAX_WAIT_RETRIES = 10;
+    const BANCONTACT_ORDER_CREATION_MAX_WAIT_RETRIES = 600;
 
     /** @var array */
     public static $methods = [

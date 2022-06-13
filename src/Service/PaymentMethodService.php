@@ -390,12 +390,10 @@ class PaymentMethodService
                 $payment['issuer'] = $issuer;
             }
 
-            $orderData->setPayment($payment);
-
             if ($molPaymentMethod->id_method === PaymentMethod::CREDITCARD) {
                 $molCustomer = $this->handleCustomerInfo($cart->id_customer, $saveCard, $useSavedCard);
                 if ($molCustomer) {
-                    $orderData->setCustomerId($molCustomer->customer_id);
+                    $payment['customerId'] = $molCustomer->customer_id;
                 }
             }
 
@@ -468,7 +466,7 @@ class PaymentMethodService
                 'include' => 'issuers',
                 'includeWallets' => 'applepay',
                 'locale' => $language->locale,
-                'billingCountry' => 'gb',
+                'billingCountry' => $country->iso_code,
                 'amount' => [
                     'value' => (string) TextFormatUtility::formatNumber($cartAmount, 2),
                     'currency' => $currency->iso_code,

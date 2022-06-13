@@ -48,7 +48,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '5.1.0';
+        $this->version = '5.2.0';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -232,7 +232,8 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
         $moduleRepository = $this->getMollieContainer(\Mollie\Repository\ModuleRepository::class);
         $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->name);
-        if ($moduleDatabaseVersion < $this->version) {
+        $needsUpgrade = Tools::version_compare($this->version, $moduleDatabaseVersion, '>');
+        if ($needsUpgrade) {
             $this->context->controller->errors[] = $this->l('Please upgrade Mollie module.');
 
             return;
@@ -348,11 +349,7 @@ class Mollie extends PaymentModule
 
     public function hookDisplayHeader(array $params)
     {
-        if (!$this->context->controller instanceof OrderController) {
-            return;
-        }
-
-        if (!$this->isPaymentCheckoutStep()) {
+        if ($this->context->controller->php_self !== 'order') {
             return;
         }
 
@@ -368,9 +365,12 @@ class Mollie extends PaymentModule
         );
         $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe.js");
         $this->context->controller->addJS("{$this->_path}views/js/front/mollie_single_click.js");
+        $this->context->controller->addJS("{$this->_path}views/js/front/bancontact/qr_code.js");
+        $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/bancontact_qr_code.css');
 
         Media::addJsDef([
             'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
+            'bancontactAjaxUrl' => $this->context->link->getModuleLink('mollie', 'bancontactAjax'),
         ]);
         $this->context->controller->addJS("{$this->_path}views/js/front/mollie_error_handle.js");
         $this->context->controller->addCSS("{$this->_path}views/css/mollie_iframe.css");
@@ -965,7 +965,8 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
         $moduleRepository = $this->getMollieContainer(\Mollie\Repository\ModuleRepository::class);
         $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->name);
-        if ($moduleDatabaseVersion < $this->version) {
+        $needsUpgrade = Tools::version_compare($this->version, $moduleDatabaseVersion, '>');
+        if ($needsUpgrade) {
             return;
         }
 
@@ -1008,56 +1009,6 @@ class Mollie extends PaymentModule
         $segment->track();
 
         return parent::runUpgradeModule();
-    }
-
-    /**
-     * Tells if we are in the Payment step from the order tunnel.
-     * We use the ReflectionObject because it only exists from Prestashop 1.7.7
-     *
-     * @return bool
-     */
-    private function isPaymentCheckoutStep()
-    {
-        if (!$this->context->controller instanceof OrderController) {
-            return false;
-        }
-
-        $checkoutSteps = $this->getAllOrderSteps();
-
-        /* Get the checkoutPaymentKey from the $checkoutSteps array */
-        foreach ($checkoutSteps as $stepObject) {
-            if ($stepObject instanceof CheckoutPaymentStep) {
-                return (bool) $stepObject->isCurrent();
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Get all existing Payment Steps from front office.
-     * Use ReflectionObject before Prestashop 1.7.7
-     * From Prestashop 1.7.7 object checkoutProcess is now public
-     *
-     * @return array
-     */
-    private function getAllOrderSteps()
-    {
-        $isPrestashop177 = version_compare(_PS_VERSION_, '1.7.7.0', '>=');
-
-        if (true === $isPrestashop177) {
-            /* @phpstan-ignore-next-line */
-            return $this->context->controller->getCheckoutProcess()->getSteps();
-        }
-
-        /* Reflect checkoutProcess object */
-        $reflectedObject = (new ReflectionObject($this->context->controller))->getProperty('checkoutProcess');
-        $reflectedObject->setAccessible(true);
-
-        /* Get Checkout steps data */
-        $checkoutProcessClass = $reflectedObject->getValue($this->context->controller);
-
-        return $checkoutProcessClass->getSteps();
     }
 
     private function isPhpVersionCompliant()

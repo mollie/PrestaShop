@@ -33,6 +33,7 @@ services:
       - '@Mollie\Provider\PaymentOption\IdealPaymentOptionProvider'
       - '@Mollie\Repository\MolCustomerRepository'
       - '@mollie.customer'
+      - '@Mollie\Provider\PaymentOption\BancontactPaymentOptionProvider'
 
   Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface: '@Mollie\Handler\PaymentOption\PaymentOptionHandler'
 
