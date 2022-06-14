@@ -56,4 +56,3 @@ services:
       - '@Mollie\Provider\CreditCardLogoProvider'
       - '@Mollie\Provider\PaymentFeeProvider'
       - '@Mollie\Service\LanguageService'
-      - '@Mollie\Service\PaymentMethodService'
