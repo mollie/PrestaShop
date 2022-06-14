@@ -425,7 +425,7 @@ class FormBuilder
             'isBancontactQrCodeEnabled' => (int) Configuration::get(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED),
             'isLive' => (int) Configuration::get(Config::MOLLIE_ENVIRONMENT),
             'bancontactQRCodeDescription' => TagsUtility::ppTags(
-                $this->module->l('Only available with the Live API key. [1]Learn more[/1] about QR Codes.', self::FILE_NAME),
+                $this->module->l('Only available on LIVE Key and Payments API. [1]Learn more[/1] about QR Codes.', self::FILE_NAME),
                 [
                     $this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_bancontact_qr_code_info.tpl'),
                 ]
