@@ -23,7 +23,7 @@ class Config
 {
     const SEGMENT_KEY = 'x8qDW8mWIlcY9SXbMhKLoH7xYQ1cSxF2';
 
-    const SENTRY_KEY = 'https://0fbb55276ced4210ad7d36f8c10de438@o497594.ingest.sentry.io/5573860';
+    const SENTRY_KEY = 'https://2f39ccfafa3348e581b61e6bd6db2fa9@o497594.ingest.sentry.io/5573860';
 
     const SENTRY_ENV = 'MISSING_ENV';
 
@@ -284,6 +284,7 @@ class Config
         'mybank' => 'MyBank',
         'voucher' => 'Voucher',
         'klarnapaynow' => 'Klarna Pay now.',
+        'in3' => 'in3',
     ];
 
     const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
