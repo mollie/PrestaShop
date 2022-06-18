@@ -1,4 +1,4 @@
-/// <reference types="cypress" />
+/// <reference types="Cypress" />
 function prepareCookie()
       {
             const name = 'PrestaShop-';
@@ -306,7 +306,23 @@ it('12 Credit Card Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('[id="mollie-ok"]').should('be.visible')
 })
-it('13 Credit Card Order BO Shiping, Refunding [Orders API]', () => {
+it.only('13 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
+  cy.visit('/admin1/')
+  cy.get('#subtab-AdminMollieModule > .link').click()
+  cy.get('[id="MOLLIE_SINGLE_CLICK_PAYMENT_on"]').click()
+  cy.get('[type="submit"]').first().click()
+  cy.get('[class="alert alert-success"]').should('be.visible')
+  cy.visit('/SHOP2/en/index.php?controller=history')
+  cy.get('a').click()
+  cy.contains('Reorder').click()
+  //Billing country LT, DE etc.
+  cy.get('.clearfix > .btn').click()
+  cy.get('#js-delivery > .continue').click()
+  //Payment method choosing
+  cy.contains('Credit card').click({force:true})
+  cy.pause()
+})
+it('14 Credit Card Order BO Shiping, Refunding [Orders API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
       //Refunding dropdown in React
@@ -325,7 +341,8 @@ it('13 Credit Card Order BO Shiping, Refunding [Orders API]', () => {
       cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it('14 IN3 Checkouting [Orders API]', () => {
+
+it('15 IN3 Checkouting [Orders API]', () => {
   cy.visit('/SHOP2/de/index.php?controller=history')
   cy.get('a').click()
   cy.contains('Reorder').click()
@@ -353,7 +370,7 @@ it('14 IN3 Checkouting [Orders API]', () => {
   cy.get('[class="button form__button"]').click()
   cy.get('[id="mollie-ok"]').should('be.visible')
 })
-it('15 IN3 Order BO Shiping, Refunding [Orders API]', () => {
+it('16 IN3 Order BO Shiping, Refunding [Orders API]', () => {
   cy.visit('/admin1/index.php?controller=AdminOrders')
   cy.get(':nth-child(1) > .column-payment').click()
   //Refunding dropdown in React
@@ -372,7 +389,7 @@ it('15 IN3 Order BO Shiping, Refunding [Orders API]', () => {
   cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
   cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it('16 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
+it('17 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
   cy.visit('/admin1/')
   cy.get('#subtab-AdminMollieModule > .link').click()
   cy.get('[href="#advanced_settings"]').click()
@@ -390,19 +407,19 @@ it('16 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
   cy.get('html').should('contain.html','src="https://www.mollie.com/externnnnal/icons/payment-methods/klarnapaylater%402x.png"')
   //todo finish
 })
-it('17 Enabling All payments in Module BO [Payments API]', () => {
+it('18 Enabling All payments in Module BO [Payments API]', () => {
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule > .link').click()
       cy.ConfPaymentsAPI1784()
       cy.get('[type="submit"]').first().click()
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it('18 Check if Bancontact QR payment dropdown exists [Payments API]', () => {
+it('19 Check if Bancontact QR payment dropdown exists [Payments API]', () => {
   cy.visit('/admin1/')
   cy.get('#subtab-AdminMollieModule > .link').click()
   cy.get('[name="MOLLIE_BANCONTACT_QR_CODE_ENABLED"]').should('exist')
 })
-it('19 Bancontact Checkouting [Payments API]', () => {
+it('20 Bancontact Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       //
@@ -431,7 +448,7 @@ it('19 Bancontact Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('[id="mollie-ok"]').should('be.visible')
 })
-it('20 Bancontact Order BO Shiping, Refunding [Payments API]', () => {
+it('21 Bancontact Order BO Shiping, Refunding [Payments API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
       cy.get('#mollie_order > :nth-child(1)').should('exist')
@@ -455,7 +472,7 @@ it('20 Bancontact Order BO Shiping, Refunding [Payments API]', () => {
       cy.get(':nth-child(2) > .swal-button').click()
       cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
 })
-it('21 iDEAL Checkouting [Payments API]', () => {
+it('22 iDEAL Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -483,7 +500,7 @@ it('21 iDEAL Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('[id="mollie-ok"]').should('be.visible')
 })
-it('22 iDEAL Order BO Shiping, Refunding [Payments API]', () => {
+it('23 iDEAL Order BO Shiping, Refunding [Payments API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
       cy.get('#mollie_order > :nth-child(1)').should('exist')
@@ -507,7 +524,7 @@ it('22 iDEAL Order BO Shiping, Refunding [Payments API]', () => {
       cy.get(':nth-child(2) > .swal-button').click()
       cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
 })
-it('23 Credit Card Checkouting [Payments API]', () => {
+it('24 Credit Card Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -548,7 +565,7 @@ it('23 Credit Card Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('[id="mollie-ok"]').should('be.visible')
 })
-it('24 Credit Card Order BO Shiping, Refunding [Payments API]', () => {
+it('25 Credit Card Order BO Shiping, Refunding [Payments API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
       cy.get('#mollie_order > :nth-child(1)').should('exist')
@@ -572,7 +589,7 @@ it('24 Credit Card Order BO Shiping, Refunding [Payments API]', () => {
       cy.get(':nth-child(2) > .swal-button').click()
       cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
 })
-it('25 Credit Card Guest Checkouting [Payments API]', () => {
+it('26 Credit Card Guest Checkouting [Payments API]', () => {
       cy.clearCookies()
       //Payments API item
       cy.visit('/SHOP2/en/', { headers: {"Accept-Encoding": "gzip, deflate"}})
