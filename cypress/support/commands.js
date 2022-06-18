@@ -42,6 +42,7 @@ import 'cypress-iframe';
 // Cypress.Commands.add("login", (email, password) => { ... })
 Cypress.Commands.add("ConfOrdersAPI", () => {
       cy.get('[for="MOLLIE_IFRAME_on"]').click()
+      cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_on').click()
       cy.get('#MOLLIE_PROFILE_ID').clear({force: true}).type((Cypress.env('MOLLIE_TEST_PROFILE_ID')),{delay: 0, log: false})
       //giropay
       cy.get('[name="MOLLIE_METHOD_ENABLED_giropay"]').select('Yes', {force: true})
@@ -248,6 +249,7 @@ Cypress.Commands.add("ConfPaymentsAPI", () => {
 })
 Cypress.Commands.add("ConfOrdersAPI1784", () => {
       cy.get('#MOLLIE_IFRAME_on').click()
+      cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_on').click()
       cy.get('#MOLLIE_PROFILE_ID').clear({force: true}).type((Cypress.env('MOLLIE_TEST_PROFILE_ID')),{delay: 0, log: false})
       //giropay
       cy.get('[name="MOLLIE_METHOD_ENABLED_giropay"]').select('Yes', {force: true})

@@ -69,7 +69,7 @@ it('02 Enabling Mollie carriers successfully', () => {
       cy.get('[class="js-multiple-choice-table-select-column"]').eq(6).click()
       cy.get('[class="btn btn-primary"]').eq(3).click()
 })
-it('03 Enabling All payments in Module BO [Orders API]', () => {
+it.only('03 Enabling All payments in Module BO [Orders API]', () => {
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule > .link').click()
       cy.ConfOrdersAPI1784()
@@ -265,7 +265,7 @@ it('11 Klarna Pay Later Order BO Shiping, Refunding [Orders API]', () => {
       cy.get('[class="swal-button swal-button--confirm"]').click()
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it('12 Credit Card Checkouting [Orders API]', () => {
+it.only('12 Credit Card Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -307,11 +307,6 @@ it('12 Credit Card Checkouting [Orders API]', () => {
       cy.get('[id="mollie-ok"]').should('be.visible')
 })
 it.only('13 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
-  cy.visit('/admin1/')
-  cy.get('#subtab-AdminMollieModule > .link').click()
-  cy.get('[id="MOLLIE_SINGLE_CLICK_PAYMENT_on"]').click()
-  cy.get('[type="submit"]').first().click()
-  cy.get('[class="alert alert-success"]').should('be.visible')
   cy.visit('/SHOP2/en/index.php?controller=history')
   cy.get('a').click()
   cy.contains('Reorder').click()
