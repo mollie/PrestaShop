@@ -54,21 +54,21 @@ describe('PS1784 Tests Suite', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it('01 Connecting test API successsfully', () => {
-      cy.visit('/admin1/')
-      //Enabling Multistore context for PS1784
-      cy.get('#subtab-AdminMollieModule > .link').click()
-      cy.get('[name="activateModule"]').check()
-      cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click()
-      cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
-      cy.get('#module_form_submit_btn').click()
-})
-it('02 Enabling Mollie carriers successfully', () => {
-      cy.visit('/admin1/')
-      cy.get('[id="subtab-AdminPaymentPreferences"]').find('[href]').eq(0).click({force:true})
-      cy.get('[class="js-multiple-choice-table-select-column"]').eq(6).click()
-      cy.get('[class="btn btn-primary"]').eq(3).click()
-})
+// it('01 Connecting test API successsfully', () => {
+//       cy.visit('/admin1/')
+//       //Enabling Multistore context for PS1784
+//       cy.get('#subtab-AdminMollieModule > .link').click()
+//       cy.get('[name="activateModule"]').check()
+//       cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click()
+//       cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
+//       cy.get('#module_form_submit_btn').click()
+// })
+// it('02 Enabling Mollie carriers successfully', () => {
+//       cy.visit('/admin1/')
+//       cy.get('[id="subtab-AdminPaymentPreferences"]').find('[href]').eq(0).click({force:true})
+//       cy.get('[class="js-multiple-choice-table-select-column"]').eq(6).click()
+//       cy.get('[class="btn btn-primary"]').eq(3).click()
+// })
 it('03 Enabling All payments in Module BO [Orders API]', () => {
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule > .link').click()
@@ -180,7 +180,7 @@ it('08 Klarna Slice It Checkouting [Orders API]', () => {
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
       cy.contains('Ratenkauf.').click({force:true})
-      cy.get('#conditions_to_approve\[terms-and-conditions\]').check({force:true})
+      cy.get('.condition-label > .js-terms').click()
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
@@ -228,7 +228,7 @@ it('10 Klarna Pay Later Checkouting [Orders API]', () => {
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
       cy.contains('Rechnung.').click({force:true})
-      cy.get('#conditions_to_approve\[terms-and-conditions\]').check({force:true})
+      cy.get('.condition-label > .js-terms').click()
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
@@ -307,6 +307,11 @@ it('12 Credit Card Checkouting [Orders API]', () => {
       cy.get('[id="mollie-ok"]').should('be.visible')
 })
 it('13 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
+  cy.visit('/admin1/')
+  cy.get('#subtab-AdminMollieModule > .link').click()
+  cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_on').click()
+  cy.get('[type="submit"]').first().click()
+  cy.get('[class="alert alert-success"]').should('be.visible')
   cy.visit('/SHOP2/en/index.php?controller=history')
   cy.get('a').click()
   cy.contains('Reorder').click()
