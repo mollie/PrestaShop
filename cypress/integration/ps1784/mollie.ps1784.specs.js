@@ -306,7 +306,7 @@ it('12 Credit Card Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('[id="mollie-ok"]').should('be.visible')
 })
-it.only('13 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
+it('13 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
   cy.visit('/SHOP2/en/index.php?controller=history')
   cy.get('a').click()
   cy.contains('Reorder').click()
