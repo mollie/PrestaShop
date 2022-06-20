@@ -12,6 +12,7 @@
 
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Utility\PsVersionUtility;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -920,12 +921,21 @@ class Mollie extends PaymentModule
 
     public function hookDisplayProductActions($params)
     {
-        return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
+        if (PsVersionUtility::isPsVersionHigherThen(_PS_VERSION_, '1.7.6.0')) {
+            return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
+        }
     }
 
     public function hookDisplayExpressCheckout($params)
     {
         return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
+    }
+
+    public function hookDisplayProductAdditionalInfo()
+    {
+        if (!PsVersionUtility::isPsVersionHigherThen(_PS_VERSION_, '1.7.6.0')) {
+            return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
+        }
     }
 
     /**

@@ -173,6 +173,7 @@ class Installer implements InstallerInterface
             'displayProductActions',
             'displayExpressCheckout',
             'actionObjectOrderPaymentAddAfter',
+            'displayProductAdditionalInfo',
         ];
     }
 
