@@ -65,6 +65,7 @@ $(document).ready(function () {
             method: 'GET',
             data: {
                 ajax: 1,
+                timeout: 0,
                 action: 'checkForPaidTransaction'
             },
             success: function (response) {
