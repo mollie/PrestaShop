@@ -22,6 +22,7 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_5_2_0($module)
 {
+    $module->registerHook('displayProductAdditionalInfo');
     Configuration::updateValue(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED, 0);
 
     return true;
