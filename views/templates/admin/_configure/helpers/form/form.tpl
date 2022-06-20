@@ -119,7 +119,7 @@
                                     </label>
                                     <div class="col-lg-9">
                                         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-9 text-center">
-                                            <img src="https://developer.apple.com/design/human-interface-guidelines/apple-pay/images/ApplePay_black_yes.png"
+                                            <img src="{$input.applePayButtonBlack}"
                                                  style="width: 100%;" alt="Black">
                                             <label>
                                                 <input type="radio" name="MOLLIE_APPLE_PAY_DIRECT_STYLE"
@@ -127,7 +127,7 @@
                                             </label>
                                         </div>
                                         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-9 text-center">
-                                            <img src="https://developer.apple.com/design/human-interface-guidelines/apple-pay/images/ApplePay_outline_yes.png"
+                                            <img src="{$input.applePayButtonOutline}"
                                                  style="width: 100%;" alt="White with Outline">
                                             <label>
                                                 <input type="radio" name="MOLLIE_APPLE_PAY_DIRECT_STYLE"
@@ -135,7 +135,7 @@
                                             </label>
                                         </div>
                                         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-9 text-center">
-                                            <img src="https://developer.apple.com/design/human-interface-guidelines/apple-pay/images/ApplePay_white_yes.png"
+                                            <img src="{$input.applePayButtonWhite}"
                                                  style="width: 100%;" alt="White">
                                             <label>
                                                 <input type="radio" name="MOLLIE_APPLE_PAY_DIRECT_STYLE"

@@ -430,6 +430,9 @@ class FormBuilder
                     $this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_bancontact_qr_code_info.tpl'),
                 ]
             ),
+            'applePayButtonBlack' => $this->module->getPathUri() . 'views/img/applePayButtons/ApplePay_black_yes.png',
+            'applePayButtonOutline' => $this->module->getPathUri() . 'views/img/applePayButtons/ApplePay_outline_yes.png',
+            'applePayButtonWhite' => $this->module->getPathUri() . 'views/img/applePayButtons/ApplePay_white_yes.png'
         ];
 
         return $input;
