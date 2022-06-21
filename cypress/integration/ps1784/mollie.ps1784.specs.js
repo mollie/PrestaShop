@@ -429,7 +429,7 @@ it('17 IN3 should not be shown under 5000 EUR [Orders API]', () => {
   cy.get('.blockcart').click()
   cy.get('.remove-from-cart > .material-icons').click()
 })
-it.only('18 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
+it('18 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
   cy.visit('/admin1/')
   cy.get('#subtab-AdminMollieModule > .link').click()
   cy.get('[href="#advanced_settings"]').click()
@@ -453,7 +453,7 @@ it.only('18 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
   cy.get('[type="submit"]').first().click()
   cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it('19 Enabling All payments in Module BO [Payments API]', () => {
+it.only('19 Enabling All payments in Module BO [Payments API]', () => {
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule > .link').click()
       cy.ConfPaymentsAPI1784()
