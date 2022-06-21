@@ -18,7 +18,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="mollie-bancontact-modal-label">{l s='Scane QR' mod='mollie'}</h5>
+                <h5 class="modal-title" id="mollie-bancontact-modal-label">{l s='Scan QR' mod='mollie'}</h5>
             </div>
             <div class="modal-body" style="text-align: center;">
                 <div style="margin: 5px">

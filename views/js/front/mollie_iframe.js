@@ -91,8 +91,7 @@ $(document).ready(function () {
         'verification-code': 3
     };
     var fieldErrors = {};
-    var methodId = $(this).find('input[name="mollie-method-id"]').val();
-    mountMollieComponents(methodId);
+    mountMollieComponents();
 
     $(document).on('change', 'input[data-module-name="mollie"]', function () {
         var paymentOption = $(this).attr('id');
@@ -112,7 +111,7 @@ $(document).ready(function () {
         fieldErrors = {};
         handleErrors();
         $('.mollie-input').removeClass('is-invalid');
-        mountMollieComponents(methodId);
+        mountMollieComponents();
     });
 
     $(document).on('change', 'input[name="payment-option"]', function () {
@@ -127,7 +126,8 @@ $(document).ready(function () {
       hideAdditionalInformation($additionalInformation)
     })
 
-    function mountMollieComponents(methodId) {
+    function mountMollieComponents() {
+        methodId = 'creditcard';
         cardHolderInput = mountMollieField(this, '#card-holder', methodId, cardHolder, 'card-holder');
         carNumberInput = mountMollieField(this, '#card-number', methodId, cardNumber, 'card-number');
         expiryDateInput = mountMollieField(this, '#expiry-date', methodId, expiryDate, 'expiry-date');
