@@ -453,7 +453,7 @@ it('18 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
   cy.get('[type="submit"]').first().click()
   cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it.only('19 Enabling All payments in Module BO [Payments API]', () => {
+it('19 Enabling All payments in Module BO [Payments API]', () => {
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule > .link').click()
       cy.ConfPaymentsAPI1784()
