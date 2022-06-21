@@ -54,28 +54,28 @@ describe('PS1784 Tests Suite', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-// it('01 Connecting test API successsfully', () => {
-//       cy.visit('/admin1/')
-//       //Enabling Multistore context for PS1784
-//       cy.get('#subtab-AdminMollieModule > .link').click()
-//       cy.get('[name="activateModule"]').check()
-//       cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click()
-//       cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
-//       cy.get('#module_form_submit_btn').click()
-// })
-// it('02 Enabling Mollie carriers successfully', () => {
-//       cy.visit('/admin1/')
-//       cy.get('[id="subtab-AdminPaymentPreferences"]').find('[href]').eq(0).click({force:true})
-//       cy.get('[class="js-multiple-choice-table-select-column"]').eq(6).click()
-//       cy.get('[class="btn btn-primary"]').eq(3).click()
-// })
-// it('03 Enabling All payments in Module BO [Orders API]', () => {
-//       cy.visit('/admin1/')
-//       cy.get('#subtab-AdminMollieModule > .link').click()
-//       cy.ConfOrdersAPI1784()
-//       cy.get('[type="submit"]').first().click()
-//       cy.get('[class="alert alert-success"]').should('be.visible')
-//})
+it('01 Connecting test API successsfully', () => {
+      cy.visit('/admin1/')
+      //Enabling Multistore context for PS1784
+      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.get('[name="activateModule"]').check()
+      cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click()
+      cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
+      cy.get('#module_form_submit_btn').click()
+})
+it('02 Enabling Mollie carriers successfully', () => {
+      cy.visit('/admin1/')
+      cy.get('[id="subtab-AdminPaymentPreferences"]').find('[href]').eq(0).click({force:true})
+      cy.get('[class="js-multiple-choice-table-select-column"]').eq(6).click()
+      cy.get('[class="btn btn-primary"]').eq(3).click()
+})
+it('03 Enabling All payments in Module BO [Orders API]', () => {
+      cy.visit('/admin1/')
+      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.ConfOrdersAPI1784()
+      cy.get('[type="submit"]').first().click()
+      cy.get('[class="alert alert-success"]').should('be.visible')
+})
 it('04 Bancontact Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
