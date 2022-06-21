@@ -86,7 +86,7 @@ it('04 Bancontact Checkouting [Orders API]', () => {
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
       cy.contains('Bancontact').click({force:true})
-      cy.get('.condition-label > .js-terms').click()
+      cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
@@ -123,7 +123,7 @@ it('05 Bancontact Order BO Shiping, Refunding [Orders API]', () => {
       cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it.only('06 iDEAL Checkouting [Orders API]', () => {
+it('06 iDEAL Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -132,7 +132,7 @@ it.only('06 iDEAL Checkouting [Orders API]', () => {
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
       cy.contains('iDEAL').click({force:true})
-      cy.get('.condition-label > .js-terms').click()
+      cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
@@ -151,7 +151,7 @@ it.only('06 iDEAL Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('[id="mollie-ok"]').should('be.visible')
 })
-it.only('07 iDEAL Order BO Shiping, Refunding [Orders API]', () => {
+it('07 iDEAL Order BO Shiping, Refunding [Orders API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
       //Refunding dropdown in React
@@ -180,7 +180,7 @@ it('08 Klarna Slice It Checkouting [Orders API]', () => {
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
       cy.contains('Ratenkauf.').click({force:true})
-      cy.get('.condition-label > .js-terms').click()
+      cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
@@ -228,7 +228,7 @@ it('10 Klarna Pay Later Checkouting [Orders API]', () => {
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
       cy.contains('Rechnung.').click({force:true})
-      cy.get('.condition-label > .js-terms').click()
+      cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
@@ -288,7 +288,8 @@ it('12 Credit Card Checkouting [Orders API]', () => {
       cy.enter('[data-testid=mollie-container--verificationCode] > iframe').then(getBody => {
       getBody().find('#verificationCode').clear({force: true}).type('222')
       })
-      cy.get('.condition-label > .js-terms').click()
+      cy.get('.condition-label > .js-terms').click({force:true})
+      cy.get('#mollie-save-card').check()
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
@@ -320,8 +321,8 @@ it('13 Check if customerId is passed during the 2nd payment using Single Click P
   cy.get('#js-delivery > .continue').click()
   //Payment method choosing
   cy.contains('Credit card').click({force:true})
-  cy.get('[for="mollie-use-saved-card"]').should('exist').click().click()
-  cy.get('.condition-label > .js-terms').click()
+  cy.get('[for="mollie-use-saved-card"]').should('exist')
+  cy.get('.condition-label > .js-terms').click({force:true})
   prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
@@ -375,7 +376,7 @@ it('15 IN3 Checkouting [Orders API]', () => {
   //Payment method choosing
   // waiting for enabling IN3 payment
   cy.contains('in3').click({force:true})
-  cy.get('.condition-label > .js-terms').click()
+  cy.get('.condition-label > .js-terms').click({force:true})
   prepareCookie();
   cy.get('.ps-shown-by-js > .btn').click()
   cy.setCookie(
@@ -428,7 +429,7 @@ it('17 IN3 should not be shown under 5000 EUR [Orders API]', () => {
   cy.get('.blockcart').click()
   cy.get('.remove-from-cart > .material-icons').click()
 })
-it('18 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
+it.only('18 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
   cy.visit('/admin1/')
   cy.get('#subtab-AdminMollieModule > .link').click()
   cy.get('[href="#advanced_settings"]').click()
@@ -443,7 +444,7 @@ it('18 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
   cy.get('.clearfix > .btn').click()
   cy.get('#js-delivery > .continue').click()
   //asserting i3 image
-  cy.get('html').should('contain.html','src="https://www.mollie.com/external/icons/payment-methods/in3.png"')
+  cy.get('html').should('contain.html','src="https://www.mollie.com/external/icons/payment-methods/in3%402x.png"')
   //todo finish
   cy.visit('/admin1/')
   cy.get('#subtab-AdminMollieModule > .link').click()
@@ -475,7 +476,7 @@ it('21 Bancontact Checkouting [Payments API]', () => {
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
       cy.contains('Bancontact').click({force:true})
-      cy.get('.condition-label > .js-terms').click()
+      cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
@@ -526,7 +527,7 @@ it('23 iDEAL Checkouting [Payments API]', () => {
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
       cy.contains('iDEAL').click({force:true})
-      cy.get('.condition-label > .js-terms').click()
+      cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
@@ -592,7 +593,7 @@ it('25 Credit Card Checkouting [Payments API]', () => {
       cy.enter('[data-testid=mollie-container--verificationCode] > iframe').then(getBody => {
       getBody().find('#verificationCode').clear({force: true}).type('222')
       })
-      cy.get('.condition-label > .js-terms').click()
+      cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
@@ -678,7 +679,7 @@ it('27 Credit Card Guest Checkouting [Payments API]', () => {
       cy.enter('[data-testid=mollie-container--verificationCode] > iframe').then(getBody => {
       getBody().find('#verificationCode').clear({force: true}).type('222')
       })
-      cy.get('.condition-label > .js-terms').click()
+      cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
