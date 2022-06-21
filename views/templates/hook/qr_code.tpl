@@ -23,7 +23,7 @@
             <div class="modal-body" style="text-align: center;">
                 <div style="margin: 5px">
                     <h6 class="modal-title"
-                        id="mollie-bancontact-modal-label">{l s='Open the APP or scan the QR code' mod='mollie'}</h6>
+                        id="mollie-bancontact-modal-label">{l s='Open your Bancontact app to scan the QR code' mod='mollie'}</h6>
                 </div>
                 <div>
                     <img id="mollie-bancontact-qr-code" src="#"/>
