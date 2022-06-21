@@ -54,28 +54,28 @@ describe('PS1784 Tests Suite', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it('01 Connecting test API successsfully', () => {
-      cy.visit('/admin1/')
-      //Enabling Multistore context for PS1784
-      cy.get('#subtab-AdminMollieModule > .link').click()
-      cy.get('[name="activateModule"]').check()
-      cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click()
-      cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
-      cy.get('#module_form_submit_btn').click()
-})
-it('02 Enabling Mollie carriers successfully', () => {
-      cy.visit('/admin1/')
-      cy.get('[id="subtab-AdminPaymentPreferences"]').find('[href]').eq(0).click({force:true})
-      cy.get('[class="js-multiple-choice-table-select-column"]').eq(6).click()
-      cy.get('[class="btn btn-primary"]').eq(3).click()
-})
-it('03 Enabling All payments in Module BO [Orders API]', () => {
-      cy.visit('/admin1/')
-      cy.get('#subtab-AdminMollieModule > .link').click()
-      cy.ConfOrdersAPI1784()
-      cy.get('[type="submit"]').first().click()
-      cy.get('[class="alert alert-success"]').should('be.visible')
-})
+// it('01 Connecting test API successsfully', () => {
+//       cy.visit('/admin1/')
+//       //Enabling Multistore context for PS1784
+//       cy.get('#subtab-AdminMollieModule > .link').click()
+//       cy.get('[name="activateModule"]').check()
+//       cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click()
+//       cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
+//       cy.get('#module_form_submit_btn').click()
+// })
+// it('02 Enabling Mollie carriers successfully', () => {
+//       cy.visit('/admin1/')
+//       cy.get('[id="subtab-AdminPaymentPreferences"]').find('[href]').eq(0).click({force:true})
+//       cy.get('[class="js-multiple-choice-table-select-column"]').eq(6).click()
+//       cy.get('[class="btn btn-primary"]').eq(3).click()
+// })
+// it('03 Enabling All payments in Module BO [Orders API]', () => {
+//       cy.visit('/admin1/')
+//       cy.get('#subtab-AdminMollieModule > .link').click()
+//       cy.ConfOrdersAPI1784()
+//       cy.get('[type="submit"]').first().click()
+//       cy.get('[class="alert alert-success"]').should('be.visible')
+//})
 it('04 Bancontact Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
@@ -123,7 +123,7 @@ it('05 Bancontact Order BO Shiping, Refunding [Orders API]', () => {
       cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it('06 iDEAL Checkouting [Orders API]', () => {
+it.only('06 iDEAL Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -151,7 +151,7 @@ it('06 iDEAL Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('[id="mollie-ok"]').should('be.visible')
 })
-it('07 iDEAL Order BO Shiping, Refunding [Orders API]', () => {
+it.only('07 iDEAL Order BO Shiping, Refunding [Orders API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
       //Refunding dropdown in React
@@ -374,44 +374,44 @@ it('15 IN3 Checkouting [Orders API]', () => {
   cy.get('#js-delivery > .continue').click()
   //Payment method choosing
   // waiting for enabling IN3 payment
-  // cy.contains('in3').click({force:true})
-  // cy.get('.condition-label > .js-terms').click()
-  // prepareCookie();
-  // cy.get('.ps-shown-by-js > .btn').click()
-  // cy.setCookie(
-  //   'SESSIONID',
-  //   "cypress-dummy-value",
-  //   {
-  //       domain: '.www.mollie.com',
-  //       sameSite: 'None',
-  //       secure: true,
-  //       httpOnly: true
-  //   }
-  // );    // reload current page to activate cookie
-  // cy.reload();
-  // cy.get('[value="paid"]').click()
-  // cy.get('[class="button form__button"]').click()
-  // cy.get('[id="mollie-ok"]').should('be.visible')
+  cy.contains('in3').click({force:true})
+  cy.get('.condition-label > .js-terms').click()
+  prepareCookie();
+  cy.get('.ps-shown-by-js > .btn').click()
+  cy.setCookie(
+    'SESSIONID',
+    "cypress-dummy-value",
+    {
+        domain: '.www.mollie.com',
+        sameSite: 'None',
+        secure: true,
+        httpOnly: true
+    }
+  );    // reload current page to activate cookie
+  cy.reload();
+  cy.get('[value="paid"]').click()
+  cy.get('[class="button form__button"]').click()
+  cy.get('[id="mollie-ok"]').should('be.visible')
 })
-// it('16 IN3 Order BO Shiping, Refunding [Orders API]', () => {
-//   cy.visit('/admin1/index.php?controller=AdminOrders')
-//   cy.get(':nth-child(1) > .column-payment').click()
-//   //Refunding dropdown in React
-//   cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).click()
-//   cy.get('[role="button"]').eq(2).click()
-//   cy.get('[class="swal-button swal-button--confirm"]').click()
-//   cy.get('[class="alert alert-success"]').should('be.visible')
-//   //Shipping button in React
-//   cy.get('.btn-group > [title=""]').eq(0).click()
-//   cy.get('[class="swal-button swal-button--confirm"]').click()
-//   cy.get('.swal-modal').should('exist')
-//   cy.get('#input-carrier').clear({force: true}).type('FedEx',{delay:0})
-//   cy.get('#input-code').clear({force: true}).type('123456',{delay:0})
-//   cy.get('#input-url').clear({force: true}).type('https://www.invertus.eu',{delay:0})
-//   cy.get(':nth-child(2) > .swal-button').click()
-//   cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
-//   cy.get('[class="alert alert-success"]').should('be.visible')
-// })
+it('16 IN3 Order BO Shiping, Refunding [Orders API]', () => {
+  cy.visit('/admin1/index.php?controller=AdminOrders')
+  cy.get(':nth-child(1) > .column-payment').click()
+  //Refunding dropdown in React
+  cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).click()
+  cy.get('[role="button"]').eq(2).click()
+  cy.get('[class="swal-button swal-button--confirm"]').click()
+  cy.get('[class="alert alert-success"]').should('be.visible')
+  //Shipping button in React
+  cy.get('.btn-group > [title=""]').eq(0).click()
+  cy.get('[class="swal-button swal-button--confirm"]').click()
+  cy.get('.swal-modal').should('exist')
+  cy.get('#input-carrier').clear({force: true}).type('FedEx',{delay:0})
+  cy.get('#input-code').clear({force: true}).type('123456',{delay:0})
+  cy.get('#input-url').clear({force: true}).type('https://www.invertus.eu',{delay:0})
+  cy.get(':nth-child(2) > .swal-button').click()
+  cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
+  cy.get('[class="alert alert-success"]').should('be.visible')
+})
 it('17 IN3 should not be shown under 5000 EUR [Orders API]', () => {
   cy.visit('/SHOP2/de/')
   cy.contains('Hummingbird printed sweater').click()
@@ -442,8 +442,8 @@ it('18 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
   //Billing country LT, DE etc.
   cy.get('.clearfix > .btn').click()
   cy.get('#js-delivery > .continue').click()
-  //image assertioin example, todo replace with in3
-  cy.get('html').should('contain.html','src="https://www.mollie.com/external/icons/payment-methods/klarnapaylater%402x.png"')
+  //asserting i3 image
+  cy.get('html').should('contain.html','src="https://www.mollie.com/external/icons/payment-methods/in3.png"')
   //todo finish
   cy.visit('/admin1/')
   cy.get('#subtab-AdminMollieModule > .link').click()
