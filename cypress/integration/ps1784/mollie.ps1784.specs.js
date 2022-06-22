@@ -266,6 +266,12 @@ it('11 Klarna Pay Later Order BO Shiping, Refunding [Orders API]', () => {
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
 it('12 Credit Card Checkouting [Orders API]', () => {
+      //Enabling the Single-Click for now
+      cy.visit('/admin1/')
+      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_on').click()
+      cy.get('[type="submit"]').first().click()
+      cy.get('[class="alert alert-success"]').should('be.visible')
       cy.visit('/SHOP2/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -308,11 +314,6 @@ it('12 Credit Card Checkouting [Orders API]', () => {
       cy.get('[id="mollie-ok"]').should('be.visible')
 })
 it('13 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
-  cy.visit('/admin1/')
-  cy.get('#subtab-AdminMollieModule > .link').click()
-  cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_on').click()
-  cy.get('[type="submit"]').first().click()
-  cy.get('[class="alert alert-success"]').should('be.visible')
   cy.visit('/SHOP2/en/index.php?controller=history')
   cy.get('a').click()
   cy.contains('Reorder').click()
@@ -340,7 +341,7 @@ it('13 Check if customerId is passed during the 2nd payment using Single Click P
       cy.get('[class="button form__button"]').click()
       cy.get('[id="mollie-ok"]').should('be.visible')
       cy.visit('/admin1/')
-      //disabling the single-click
+      //Disabling the single-click - no need again
       cy.get('#subtab-AdminMollieModule > .link').click()
       cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_off').click()
       cy.get('[type="submit"]').first().click()
