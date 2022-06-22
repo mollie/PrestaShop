@@ -167,6 +167,14 @@ Cypress.Commands.add("ConfOrdersAPI", () => {
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_applepay"]').clear({force: true}).type('11', {force: true})
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_applepay"]').clear({force: true}).type('22', {force: true})
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_applepay"]').clear({force: true}).type('33', {force: true})
+      //in3
+      cy.get('[name="MOLLIE_METHOD_ENABLED_in3"]').select('Yes', {force: true})
+      cy.get('[name="MOLLIE_METHOD_API_in3"]').select('Orders API', {force: true})
+      cy.get('[name="MOLLIE_METHOD_DESCRIPTION_in3"]').clear({force: true}).type('Lorem Ipsum dummy text 123 !@#$%^&*', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_TYPE_in3"]').select('Fixed Fee and Percentage', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_in3"]').clear({force: true}).type('11', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_in3"]').clear({force: true}).type('22', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_in3"]').clear({force: true}).type('33', {force: true})
  })
 Cypress.Commands.add("ConfPaymentsAPI", () => {
       //giropay
@@ -365,7 +373,15 @@ Cypress.Commands.add("ConfOrdersAPI1784", () => {
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_applepay"]').clear({force: true}).type('11', {force: true})
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_applepay"]').clear({force: true}).type('22', {force: true})
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_applepay"]').clear({force: true}).type('33', {force: true})
- })
+      //in3
+      cy.get('[name="MOLLIE_METHOD_ENABLED_in3"]').select('Yes', {force: true})
+      cy.get('[name="MOLLIE_METHOD_API_in3"]').select('Orders API', {force: true})
+      cy.get('[name="MOLLIE_METHOD_DESCRIPTION_in3"]').clear({force: true}).type('Lorem Ipsum dummy text 123 !@#$%^&*', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_TYPE_in3"]').select('Fixed Fee and Percentage', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_in3"]').clear({force: true}).type('11', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_in3"]').clear({force: true}).type('22', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_in3"]').clear({force: true}).type('33', {force: true})
+  })
 Cypress.Commands.add("ConfPaymentsAPI1784", () => {
       //giropay
       cy.get('[name="MOLLIE_METHOD_ENABLED_giropay"]').select('Yes', {force: true})
@@ -555,15 +571,3 @@ Cypress.Commands.add("mollie_1752_test_faster_login_DE_Orders_Api", () => {
     cy.get('.cart-content-btn > .btn-primary').click()
     cy.get('.text-sm-center > .btn').click()
 })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This is will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
