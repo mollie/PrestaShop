@@ -1,11 +1,11 @@
 {
- "chromeWebSecurity": false,
- "experimentalSourceRewriting": true,
- "numTestsKeptInMemory": 5,
- "defaultCommandTimeout": 90000,
- "projectId": "xb89dr",
- "retries": 3,
- "experimentalSessionAndOrigin": true,
- "videoUploadOnPasses": false,
- "ignoreTestFiles": ["index.php"]
-}
+  "chromeWebSecurity": false,
+  "experimentalSourceRewriting": true,
+  "numTestsKeptInMemory": 5,
+  "defaultCommandTimeout": 30000,
+  "projectId": "xb89dr",
+  "retries": 2,
+  "experimentalSessionAndOrigin": true,
+  "videoUploadOnPasses": false,
+  "ignoreTestFiles": ["index.php"]
+ }
