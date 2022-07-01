@@ -1,6 +1,9 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 5.2.1 ##
++ Fixed duplicated orders when multiple transactions are created.
+
 ## Changes in release 5.2.0 ##
 + Fixed issue where customer id was not added when using saved credit card for order API.
 + Added QR code option for bancontact payment on live mode
