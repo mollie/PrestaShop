@@ -307,7 +307,7 @@ class Config
             PaymentStatus::STATUS_PENDING => Configuration::get(self::MOLLIE_STATUS_AWAITING),
             OrderStatus::STATUS_SHIPPING => Configuration::get(self::MOLLIE_STATUS_SHIPPING),
             self::PARTIAL_REFUND_CODE => Configuration::get(self::MOLLIE_STATUS_PARTIAL_REFUND),
-            'created' => Configuration::get(self::MOLLIE_STATUS_OPEN),
+            OrderStatus::STATUS_CREATED => Configuration::get(self::MOLLIE_STATUS_AWAITING),
             self::STATUS_PAID_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK_PAID'),
             self::STATUS_PENDING_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK_UNPAID'),
             self::STATUS_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK'),
