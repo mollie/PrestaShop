@@ -27,7 +27,7 @@ class OrderGridQueryModifier implements GridQueryModifierInterface
             'o',
             '`' . pSQL(_DB_PREFIX_) . 'mollie_payments`',
             'mol',
-            'mol.`order_reference` = o.`reference` AND mol.`cart_id` = o.`id_cart`'
+            'mol.`cart_id` = o.`id_cart` AND mol.order_id > 0'
         );
     }
 }

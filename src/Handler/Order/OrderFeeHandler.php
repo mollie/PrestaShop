@@ -92,8 +92,8 @@ class OrderFeeHandler
         $this->feeService->createOrderFee($order->id_cart, $paymentFee);
 
         $order = new Order($orderId);
-        $order->total_paid_tax_excl = (float) (new Number((string) $originalAmountWithTax))->plus((new Number((string) $paymentFee)))->toPrecision(2);
-        $order->total_paid_tax_incl = (float) (new Number((string) $originalAmountWithoutTax))->plus((new Number((string) $paymentFee)))->toPrecision(2);
+        $order->total_paid_tax_excl = (float) (new Number((string) $originalAmountWithoutTax))->plus((new Number((string) $paymentFee)))->toPrecision(2);
+        $order->total_paid_tax_incl = (float) (new Number((string) $originalAmountWithTax))->plus((new Number((string) $paymentFee)))->toPrecision(2);
         $order->total_paid = (float) $apiPayment->amount->value;
         $order->total_paid_real = (float) $apiPayment->amount->value;
         $order->update();

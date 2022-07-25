@@ -1,17 +1,16 @@
 <?php
 /**
- * NOTICE OF LICENSE.
+ * Mollie       https://www.mollie.nl
  *
- * @author    INVERTUS, UAB www.invertus.eu <support@invertus.eu>
- * @copyright Copyright (c) permanent, INVERTUS, UAB
- * @license   Addons PrestaShop license limitation
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
- * @see       /LICENSE
- *
- * International Registered Trademark & Property of INVERTUS, UAB
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
  */
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
 header('Cache-Control: no-store, no-cache, must-revalidate');
 header('Cache-Control: post-check=0, pre-check=0', false);

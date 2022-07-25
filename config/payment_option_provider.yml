@@ -47,3 +47,12 @@ services:
       - '@Mollie\Service\LanguageService'
       - '@mollie.customer'
       - '@Mollie\Repository\MolCustomerRepository'
+
+  Mollie\Provider\PaymentOption\BancontactPaymentOptionProvider:
+    class: Mollie\Provider\PaymentOption\BancontactPaymentOptionProvider
+    arguments:
+      - '@mollie'
+      - '@mollie.adapter.context'
+      - '@Mollie\Provider\CreditCardLogoProvider'
+      - '@Mollie\Provider\PaymentFeeProvider'
+      - '@Mollie\Service\LanguageService'

@@ -56,6 +56,14 @@ class PhoneNumberProviderTest extends TestCase
                 'phoneNumber' => '000000',
                 'result' => null,
             ],
+            'number is empty string' => [
+                'phoneNumber' => '',
+                'result' => null,
+            ],
+            'number is only +' => [
+                'phoneNumber' => '+',
+                'result' => null,
+            ],
         ];
     }
 }

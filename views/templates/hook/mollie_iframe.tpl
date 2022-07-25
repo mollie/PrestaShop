@@ -8,7 +8,7 @@
 *}
 <div class="mollie-iframe-container">
     <div class="mollie-credit-card-inputs">
-        <input type="hidden" value="{$methodId|escape:'html':'UTF-8'}" name="method-id">
+        <input type="hidden" value="{$methodId|escape:'html':'UTF-8'}" name="mollie-method-id">
         <div class="container">
             <article class="alert alert-danger" role="alert" data-alert="danger" style="display: none">
                 <li class="js-mollie-alert"></li>
