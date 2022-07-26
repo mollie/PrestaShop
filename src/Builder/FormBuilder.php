@@ -12,11 +12,10 @@
 
 namespace Mollie\Builder;
 
-use AttributeCore as Attribute;
 use Configuration;
 use HelperFormCore as HelperForm;
-use ModuleCore as Module;
 use Mollie;
+use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
@@ -416,8 +415,6 @@ class FormBuilder
             'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri() . "?{$dateStamp}",
             'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
             'voucherCategory' => Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
-            'categoryList' => \Category::getCategories($this->module->getContext()->language->id, true, false),
-            'productAttributes' => Attribute::getAttributes($this->module->getContext()->language->id),
             'klarnaPayments' => Config::KLARNA_PAYMENTS,
             'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_AUTHORIZED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
             'applePayDirect' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT),

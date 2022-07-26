@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    public: true
+
   Mollie\Handler\Certificate\CertificateHandlerInterface: '@Mollie\Handler\Certificate\ApplePayDirectCertificateHandler'
 
   Mollie\Handler\Certificate\ApplePayDirectCertificateHandler:

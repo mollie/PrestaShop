@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    public: true
+
   mollie.context:
     class: 'Context'
     factory: ['Mollie\Factory\ContextFactory', 'getContext']

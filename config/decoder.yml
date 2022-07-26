@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    public: true
+
   Mollie\Utility\Decoder\JsonDecoder:
     class: Mollie\Utility\Decoder\JsonDecoder
 
