@@ -15,7 +15,6 @@ namespace Mollie\Builder;
 use Configuration;
 use HelperFormCore as HelperForm;
 use Mollie;
-use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
