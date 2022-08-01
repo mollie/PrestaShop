@@ -139,7 +139,7 @@ class TransactionService
                     throw new TransactionException('Cart id is missing in transaction metadata', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY);
                 }
                 if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
-                    if ($isGeneratedOrderNumber && $isPaymentFinished) {
+                    if ($isGeneratedOrderNumber) {
                         $this->handlePaymentDescription($apiPayment);
                     }
                     if (isset($apiPayment->amount->value, $apiPayment->amountRefunded->value)
