@@ -129,7 +129,7 @@ class TransactionService
             $cart->id,
             $this->module->name
         );
-        
+
         $isPaymentFinished = MollieStatusUtility::isPaymentFinished($apiPayment->status);
         $orderDescription = $apiPayment->description ?? $apiPayment->orderNumber;
         $isGeneratedOrderNumber = strpos($orderDescription, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0;
