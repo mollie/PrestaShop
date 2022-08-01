@@ -264,7 +264,6 @@ class PaymentMethodService
         $amountObj = new Amount($currency, $value);
 
         $key = Mollie\Utility\SecureKeyUtility::generateReturnKey(
-            $secureKey,
             $customer->id,
             $cartId,
             $this->module->name
