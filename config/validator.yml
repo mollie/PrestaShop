@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    public: true
+
   Mollie\Validator\OrderConfMailValidator:
     class: Mollie\Validator\OrderConfMailValidator
     arguments:

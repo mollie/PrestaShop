@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    public: true
+
 #  @deprecated - dont call repositories directly, use interface instead
   Mollie\Repository\PaymentMethodRepository:
     class: Mollie\Repository\PaymentMethodRepository

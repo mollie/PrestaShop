@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    public: true
+
   Mollie\Builder\FormBuilder:
     class: Mollie\Builder\FormBuilder
     arguments:
