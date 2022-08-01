@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    public: true
+
   Mollie\Verification\Shipment\CanSendShipment:
     class: Mollie\Verification\Shipment\CanSendShipment
     arguments:

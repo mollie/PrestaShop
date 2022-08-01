@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    public: true
+
   Mollie\Application\CommandHandler\RequestApplePayPaymentSessionHandler:
     class: 'Mollie\Application\CommandHandler\RequestApplePayPaymentSessionHandler'
     arguments:

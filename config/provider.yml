@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    public: true
+
   Mollie\Provider\CreditCardLogoProvider:
     class: Mollie\Provider\CreditCardLogoProvider
     arguments:

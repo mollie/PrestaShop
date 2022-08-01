@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    public: true
+
   Mollie\Provider\PaymentFeeProvider:
     class: Mollie\Provider\PaymentFeeProvider
     arguments:

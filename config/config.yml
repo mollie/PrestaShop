@@ -1,3 +1,4 @@
+
 imports:
   - { resource: builder.yml }
   - { resource: service.yml }
@@ -20,6 +21,9 @@ imports:
   - { resource: collector.yml }
 
 services:
+  _defaults:
+    public: true
+
   mollie:
     class: 'Mollie'
     factory: ['Module', 'getInstanceByName']
