@@ -177,6 +177,9 @@ class TransactionService
                     $apiPayment = $this->updateOrderDescription($apiPayment, $orderId);
                 } elseif ($apiPayment->amountRefunded) {
                     if (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
+                        if (!MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
+                            return $apiPayment;
+                        }
                         $this->handleOrderDescription($apiPayment);
                     }
                     if (isset($apiPayment->amount->value, $apiPayment->amountRefunded->value)
@@ -194,6 +197,9 @@ class TransactionService
                         }
                     }
                 } elseif (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
+                    if (!MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
+                        return $apiPayment;
+                    }
                     $this->handleOrderDescription($apiPayment);
                 } else {
                     $isKlarnaDefault = Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON) === Config::MOLLIE_STATUS_DEFAULT;
