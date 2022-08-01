@@ -123,7 +123,13 @@ class TransactionService
             $this->module->name
         );
 
+        $orderDescription = $apiPayment->description ?? $apiPayment->orderNumber;
+        $isGeneratedOrderNumber = strpos($orderDescription, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0;
         $isPaymentFinished = MollieStatusUtility::isPaymentFinished($apiPayment->status);
+        if (!$isPaymentFinished && $isGeneratedOrderNumber) {
+            return $apiPayment;
+        }
+
         switch ($apiPayment->resource) {
             case Config::MOLLIE_API_STATUS_PAYMENT:
                 if ($key !== $apiPayment->metadata->secure_key) {
@@ -133,7 +139,6 @@ class TransactionService
                     throw new TransactionException('Cart id is missing in transaction metadata', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY);
                 }
                 if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
-                    $isGeneratedOrderNumber = strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0;
                     if ($isGeneratedOrderNumber && $isPaymentFinished) {
                         $this->handlePaymentDescription($apiPayment);
                     }
@@ -194,7 +199,9 @@ class TransactionService
                         }
                     }
                 } elseif (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
-                    $this->handleOrderDescription($apiPayment);
+                    if ($isPaymentFinished) {
+                        $this->handlePaymentDescription($apiPayment);
+                    }
                 } else {
                     $isKlarnaDefault = Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON) === Config::MOLLIE_STATUS_DEFAULT;
                     if (in_array($apiPayment->method, Config::KLARNA_PAYMENTS) && !$isKlarnaDefault && $apiPayment->status === OrderStatus::STATUS_COMPLETED) {
