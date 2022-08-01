@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    public: true
+
   Mollie\Collector\ApplePayDirect\OrderTotalCollector:
     class: Mollie\Collector\ApplePayDirect\OrderTotalCollector
     arguments:

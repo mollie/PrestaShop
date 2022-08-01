@@ -153,8 +153,6 @@ class Installer implements InstallerInterface
     public static function getHooks()
     {
         return [
-            'displayPayment',
-            'displayPaymentEU',
             'paymentOptions',
             'displayAdminOrder',
             'displayBackOfficeHeader',
@@ -168,7 +166,6 @@ class Installer implements InstallerInterface
             'actionValidateOrder',
             'actionOrderGridDefinitionModifier',
             'actionOrderGridQueryBuilderModifier',
-            'actionObjectCurrencyUpdateAfter',
             'displayHeader',
             'displayProductActions',
             'displayExpressCheckout',
