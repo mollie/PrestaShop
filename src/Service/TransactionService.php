@@ -117,12 +117,20 @@ class TransactionService
         $cart = new Cart($apiPayment->metadata->cart_id);
 
         $key = Mollie\Utility\SecureKeyUtility::generateReturnKey(
+            $cart->id_customer,
+            $cart->id,
+            $this->module->name
+        );
+
+        // remove after few releases
+        $deprecatedKey = Mollie\Utility\SecureKeyUtility::deprecatedGenerateReturnKey(
             $cart->secure_key,
             $cart->id_customer,
             $cart->id,
             $this->module->name
         );
 
+        $isPaymentFinished = MollieStatusUtility::isPaymentFinished($apiPayment->status);
         $orderDescription = $apiPayment->description ?? $apiPayment->orderNumber;
         $isGeneratedOrderNumber = strpos($orderDescription, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0;
         $isPaymentFinished = MollieStatusUtility::isPaymentFinished($apiPayment->status);
@@ -132,7 +140,7 @@ class TransactionService
 
         switch ($apiPayment->resource) {
             case Config::MOLLIE_API_STATUS_PAYMENT:
-                if ($key !== $apiPayment->metadata->secure_key) {
+                if ($key !== $apiPayment->metadata->secure_key && $deprecatedKey !== $apiPayment->metadata->secure_key) {
                     throw new TransactionException('Security key is incorrect.', HttpStatusCode::HTTP_UNAUTHORIZED);
                 }
                 if (!$apiPayment->metadata->cart_id) {
@@ -165,7 +173,7 @@ class TransactionService
                 }
                 break;
             case Config::MOLLIE_API_STATUS_ORDER:
-                if ($key !== $apiPayment->metadata->secure_key) {
+                if ($key !== $apiPayment->metadata->secure_key && $deprecatedKey !== $apiPayment->metadata->secure_key) {
                     throw new TransactionException('Security key is incorrect.', HttpStatusCode::HTTP_UNAUTHORIZED);
                 }
                 if (!$apiPayment->metadata->cart_id) {
@@ -182,6 +190,9 @@ class TransactionService
                     $apiPayment = $this->updateOrderDescription($apiPayment, $orderId);
                 } elseif ($apiPayment->amountRefunded) {
                     if (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
+                        if (!MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
+                            return $apiPayment;
+                        }
                         $this->handleOrderDescription($apiPayment);
                     }
                     if (isset($apiPayment->amount->value, $apiPayment->amountRefunded->value)

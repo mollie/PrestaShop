@@ -148,7 +148,7 @@ class MolliePaymentMailService
         $cart = new Cart($paymentApi->metadata->cart_id);
         $customer = new Customer($cart->id_customer);
 
-        $key = SecureKeyUtility::generateReturnKey($customer->secure_key, $customer->id, $cart->id, $this->module->name);
+        $key = SecureKeyUtility::generateReturnKey($customer->id, $cart->id, $this->module->name);
 
         $paymentData = [
             'amount' => [
