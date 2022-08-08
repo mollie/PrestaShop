@@ -102,7 +102,7 @@ it('04 Bancontact Checkouting [Orders API]', () => {
       cy.reload();
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
-      cy.get('[id="mollie-ok"]').should('be.visible')
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
 it('05 Bancontact Order BO Shiping, Refunding [Orders API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
@@ -149,7 +149,7 @@ it('06 iDEAL Checkouting [Orders API]', () => {
       cy.get('.payment-method-list > :nth-child(1)').click()
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
-      cy.get('[id="mollie-ok"]').should('be.visible')
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
 it('07 iDEAL Order BO Shiping, Refunding [Orders API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
@@ -196,7 +196,7 @@ it('08 Klarna Slice It Checkouting [Orders API]', () => {
       cy.reload();
       cy.get('[value="authorized"]').click()
       cy.get('[class="button form__button"]').click()
-      cy.get('[id="mollie-ok"]').should('be.visible')
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
 it('09 Klarna Slice It Order BO Shiping, Refunding [Orders API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
@@ -244,7 +244,7 @@ it('10 Klarna Pay Later Checkouting [Orders API]', () => {
       cy.reload();
       cy.get('[value="authorized"]').click()
       cy.get('[class="button form__button"]').click()
-      cy.get('[id="mollie-ok"]').should('be.visible')
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
 it('11 Klarna Pay Later Order BO Shiping, Refunding [Orders API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
@@ -311,7 +311,7 @@ it('12 Credit Card Checkouting [Orders API]', () => {
       cy.reload();
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
-      cy.get('[id="mollie-ok"]').should('be.visible')
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
 it('13 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
   cy.visit('/SHOP2/en/index.php?controller=history')
@@ -339,7 +339,7 @@ it('13 Check if customerId is passed during the 2nd payment using Single Click P
       cy.reload();
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
-      cy.get('[id="mollie-ok"]').should('be.visible')
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
       cy.visit('/admin1/')
       //Disabling the single-click - no need again
       cy.get('#subtab-AdminMollieModule > .link').click()
@@ -393,7 +393,7 @@ it('15 IN3 Checkouting [Orders API]', () => {
   cy.reload();
   cy.get('[value="paid"]').click()
   cy.get('[class="button form__button"]').click()
-  cy.get('[id="mollie-ok"]').should('be.visible')
+  cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
 it('16 IN3 Order BO Shiping, Refunding [Orders API]', () => {
   cy.visit('/admin1/index.php?controller=AdminOrders')
@@ -493,7 +493,7 @@ it('21 Bancontact Checkouting [Payments API]', () => {
       cy.reload();
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
-      cy.get('[id="mollie-ok"]').should('be.visible')
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
 it('22 Bancontact Order BO Shiping, Refunding [Payments API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
@@ -545,7 +545,7 @@ it('23 iDEAL Checkouting [Payments API]', () => {
       cy.get('.payment-method-list > :nth-child(1)').click()
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
-      cy.get('[id="mollie-ok"]').should('be.visible')
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
 it('24 iDEAL Order BO Shiping, Refunding [Payments API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
@@ -610,7 +610,7 @@ it('25 Credit Card Checkouting [Payments API]', () => {
       cy.reload();
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
-      cy.get('[id="mollie-ok"]').should('be.visible')
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
 it('26 Credit Card Order BO Shiping, Refunding [Payments API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
@@ -696,6 +696,6 @@ it('27 Credit Card Guest Checkouting [Payments API]', () => {
       cy.reload();
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
-      cy.get('[id="mollie-ok"]').should('be.visible')
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
 })
