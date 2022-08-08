@@ -123,6 +123,7 @@ class TransactionService
             $this->module->name
         );
 
+        $isPaymentFinished = MollieStatusUtility::isPaymentFinished($apiPayment->status);
         switch ($apiPayment->resource) {
             case Config::MOLLIE_API_STATUS_PAYMENT:
                 if ($key !== $apiPayment->metadata->secure_key) {
@@ -132,7 +133,8 @@ class TransactionService
                     throw new TransactionException('Cart id is missing in transaction metadata', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY);
                 }
                 if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
-                    if (strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
+                    $isGeneratedOrderNumber = strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0;
+                    if ($isGeneratedOrderNumber && $isPaymentFinished) {
                         $this->handlePaymentDescription($apiPayment);
                     }
                     if (isset($apiPayment->amount->value, $apiPayment->amountRefunded->value)
@@ -143,7 +145,7 @@ class TransactionService
                         $this->orderStatusService->setOrderStatus($orderId, Config::PARTIAL_REFUND_CODE);
                     }
                 } else {
-                    if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
+                    if (!$orderId && $isPaymentFinished) {
                         $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id);
                         if (!$orderId) {
                             throw new TransactionException('Order is already created', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
@@ -167,7 +169,7 @@ class TransactionService
 
                 $isKlarnaOrder = in_array($apiPayment->method, Config::KLARNA_PAYMENTS, false);
 
-                if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
+                if (!$orderId && $isPaymentFinished) {
                     $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id, $isKlarnaOrder);
                     if (!$orderId) {
                         throw new TransactionException('Order is already created', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
@@ -175,6 +177,9 @@ class TransactionService
                     $apiPayment = $this->updateOrderDescription($apiPayment, $orderId);
                 } elseif ($apiPayment->amountRefunded) {
                     if (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
+                        if (!MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
+                            return $apiPayment;
+                        }
                         $this->handleOrderDescription($apiPayment);
                     }
                     if (isset($apiPayment->amount->value, $apiPayment->amountRefunded->value)
@@ -192,6 +197,9 @@ class TransactionService
                         }
                     }
                 } elseif (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
+                    if (!MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
+                        return $apiPayment;
+                    }
                     $this->handleOrderDescription($apiPayment);
                 } else {
                     $isKlarnaDefault = Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON) === Config::MOLLIE_STATUS_DEFAULT;

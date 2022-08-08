@@ -1,7 +1,9 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
-## Changes in release 5.3.0 ##
+## Changes in release 5.2.1 ##
++ Fixed duplicated orders when multiple transactions are created.
++ Fixed issue where orders would have duplicated lines in list if there are more than 1 transaction.
 + Added PS8.0.0+ compatibility
 
 ## Changes in release 5.2.0 ##
