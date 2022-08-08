@@ -31,6 +31,7 @@ use MolPaymentMethodIssuer;
 use OrderState;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+use Shop;
 use Tools;
 
 class SettingsSaveService
@@ -82,6 +83,9 @@ class SettingsSaveService
      */
     private $applePayDirectCertificateHandler;
 
+    /** @var Shop */
+    private $shop;
+
     public function __construct(
         Mollie $module,
         CountryRepository $countryRepository,
@@ -91,7 +95,8 @@ class SettingsSaveService
         MolCarrierInformationService $carrierInformationService,
         PaymentMethodPositionHandlerInterface $paymentMethodPositionHandler,
         ApiKeyService $apiKeyService,
-        CertificateHandlerInterface $applePayDirectCertificateHandler
+        CertificateHandlerInterface $applePayDirectCertificateHandler,
+        Shop $shop
     ) {
         $this->module = $module;
         $this->countryRepository = $countryRepository;
@@ -102,6 +107,7 @@ class SettingsSaveService
         $this->paymentMethodPositionHandler = $paymentMethodPositionHandler;
         $this->apiService = $apiService;
         $this->applePayDirectCertificateHandler = $applePayDirectCertificateHandler;
+        $this->shop = $shop;
     }
 
     /**
@@ -175,7 +181,7 @@ class SettingsSaveService
                 $this->countryRepository->updatePaymentMethodCountries($paymentMethodId, $countries);
                 $this->countryRepository->updatePaymentMethodExcludedCountries($paymentMethodId, $excludedCountries);
             }
-            $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment);
+            $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment, (int) $this->shop->id);
         }
 
         $useCustomLogo = Tools::getValue(Config::MOLLIE_SHOW_CUSTOM_LOGO);
