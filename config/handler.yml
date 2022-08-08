@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    public: true
+
   Mollie\Handler\Settings\PaymentMethodPositionHandler:
     class: Mollie\Handler\Settings\PaymentMethodPositionHandler
     arguments:

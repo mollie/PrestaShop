@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    public: true
+
   Mollie\Service\OrderFeeService:
     class: Mollie\Service\OrderFeeService
     arguments:

@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    public: true
+
   Mollie\Tracker\Segment:
     class: 'Mollie\Tracker\Segment'
     arguments:
