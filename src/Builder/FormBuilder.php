@@ -519,12 +519,28 @@ class FormBuilder
         $allStatuses = OrderState::getOrderStates($this->lang->id);
         $allStatusesWithSkipOption = array_merge([['id_order_state' => 0, 'name' => $this->module->l('Skip this status', self::FILE_NAME), 'color' => '#565656']], $allStatuses);
 
+        $statusOptions = [
+            Config::MOLLIE_AWAITING_PAYMENT,
+            PaymentStatus::STATUS_OPEN,
+            PaymentStatus::STATUS_PAID,
+            OrderStatus::STATUS_COMPLETED,
+            PaymentStatus::STATUS_AUTHORIZED,
+            PaymentStatus::STATUS_CANCELED,
+            PaymentStatus::STATUS_EXPIRED,
+            RefundStatus::STATUS_REFUNDED,
+            Config::PARTIAL_REFUND_CODE,
+            OrderStatus::STATUS_SHIPPING,
+        ];
+
         $statuses = [];
         foreach (Config::getStatuses() as $name => $val) {
             if (PaymentStatus::STATUS_AUTHORIZED === $name) {
                 continue;
             }
 
+            if (!in_array($name, $statusOptions)) {
+                continue;
+            }
             $val = (int) $val;
             if ($val) {
                 $orderStatus = new OrderState($val);
@@ -558,19 +574,8 @@ class FormBuilder
             'title' => $this->module->l('Order statuses', self::FILE_NAME),
         ];
 
-        foreach (array_filter($statuses, function ($status) {
-            return in_array($status['name'], [
-                Config::MOLLIE_AWAITING_PAYMENT,
-                PaymentStatus::STATUS_OPEN,
-                PaymentStatus::STATUS_PAID,
-                OrderStatus::STATUS_COMPLETED,
-                PaymentStatus::STATUS_AUTHORIZED,
-                PaymentStatus::STATUS_CANCELED,
-                PaymentStatus::STATUS_EXPIRED,
-                RefundStatus::STATUS_REFUNDED,
-                Config::PARTIAL_REFUND_CODE,
-                OrderStatus::STATUS_SHIPPING,
-            ]);
+        foreach (array_filter($statuses, function ($status) use ($statusOptions) {
+            return in_array($status['name'], $statusOptions);
         }) as $status) {
             if (!in_array($status['name'], [Config::PARTIAL_REFUND_CODE, Config::MOLLIE_AWAITING_PAYMENT, PaymentStatus::STATUS_OPEN])) {
                 $input[] = [
