@@ -1,10 +1,10 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
-
 ## Changes in release 5.3.0 ##
 + Added PS8.0.0+ compatibility
 + Changed how secure key is generated to avoid errors.
++ Fixed issue where payment method save with multishop would break another shop payment method settings.
 
 ## Changes in release 5.2.1 ##
 + Fixed issue where orders would have duplicated lines in list if there are more than 1 transaction.
