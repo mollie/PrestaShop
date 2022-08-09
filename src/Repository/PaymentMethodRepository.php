@@ -60,17 +60,18 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
     /**
      * @param array $savedPaymentMethods
      * @param int $environment
+     * @param int $shopId
      *
      * @return bool
      */
-    public function deleteOldPaymentMethods(array $savedPaymentMethods, $environment)
+    public function deleteOldPaymentMethods(array $savedPaymentMethods, $environment, int $shopId)
     {
         $escapedMethods = array_map(static function ($str) { return pSQL($str); }, $savedPaymentMethods);
 
         return Db::getInstance()->delete(
             'mol_payment_method',
             'id_method NOT IN ("' . implode('", "', $escapedMethods) . '")
-            AND `live_environment` = ' . (int) $environment
+            AND `live_environment` = ' . (int) $environment . ' AND `id_shop` = ' . (int) $shopId
         );
     }
 
