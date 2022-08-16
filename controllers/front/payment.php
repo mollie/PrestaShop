@@ -153,7 +153,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                     $order->reference
                 );
             } else {
-                throw new Exception('test');
                 $mollieOrderCreationService->createMolliePayment($apiPayment, $cart->id, $orderNumber);
             }
         } catch (Exception $e) {
