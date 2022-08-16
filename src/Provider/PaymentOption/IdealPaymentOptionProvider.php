@@ -49,7 +49,6 @@ use Tools;
 
 class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
 {
-
     const FILE_NAME = 'IdealPaymentOptionProvider';
 
     /**
