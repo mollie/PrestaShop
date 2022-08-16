@@ -136,7 +136,7 @@ class SettingsSaveService
         $isApiKeyIncorrect = 0 !== strpos($apiKey, 'live') && 0 !== strpos($apiKey, 'test');
 
         if ($isApiKeyIncorrect) {
-            $errors[] = $this->module->l('The API key needs to start with test or live.');
+            $errors[] = $this->module->l('The API key needs to start with test or live.', self::FILE_NAME);
         }
 
         if (Tools::getValue(Config::METHODS_CONFIG) && json_decode(Tools::getValue(Config::METHODS_CONFIG))) {
@@ -154,12 +154,12 @@ class SettingsSaveService
                     $paymentMethod = $this->paymentMethodService->savePaymentMethod($method);
                     $savedPaymentMethods[] = $paymentMethod->id_method;
                 } catch (Exception $e) {
-                    $errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods') . ":{$method['id']}";
+                    $errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods', self::FILE_NAME) . ":{$method['id']}";
                     continue;
                 }
 
                 if (!$this->paymentMethodRepository->deletePaymentMethodIssuersByPaymentMethodId($paymentMethod->id)) {
-                    $errors[] = $this->module->l('Something went wrong. Couldn\'t delete old payment methods issuers') . ":{$method['id']}";
+                    $errors[] = $this->module->l('Something went wrong. Couldn\'t delete old payment methods issuers', self::FILE_NAME) . ":{$method['id']}";
                     continue;
                 }
 
@@ -170,7 +170,7 @@ class SettingsSaveService
                     try {
                         $paymentMethodIssuer->add();
                     } catch (Exception $e) {
-                        $errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods issuer');
+                        $errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods issuer', self::FILE_NAME);
                     }
                 }
 
@@ -243,13 +243,13 @@ class SettingsSaveService
                 $errors[] = $e->getMessage();
                 Configuration::updateValue(Config::MOLLIE_API_KEY, null);
 
-                return [$this->module->l('Wrong API Key!')];
+                return [$this->module->l('Wrong API Key!', self::FILE_NAME)];
             }
         }
         try {
             $this->handleKlarnaInvoiceStatus();
         } catch (Exception $e) {
-            $errors[] = $this->module->l('There are issues with your Klarna statuses, please try resetting Mollie module.');
+            $errors[] = $this->module->l('There are issues with your Klarna statuses, please try resetting Mollie module.', self::FILE_NAME);
         }
 
         if (empty($errors)) {
@@ -316,7 +316,7 @@ class SettingsSaveService
                 }
             }
 
-            $resultMessage[] = $this->module->l('The configuration has been saved!');
+            $resultMessage[] = $this->module->l('The configuration has been saved!', self::FILE_NAME);
         } else {
             $resultMessage = [];
             foreach ($errors as $error) {

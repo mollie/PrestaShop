@@ -33,6 +33,8 @@ require_once dirname(__FILE__) . '/../../mollie.php';
  */
 class MolliePaymentModuleFrontController extends ModuleFrontController
 {
+    const FILE_NAME = 'payment';
+
     /** @var bool */
     public $ssl = true;
 
@@ -130,7 +132,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $this->setTemplate('error.tpl');
             $this->errors[] = Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
                 ? $e->getMessage() . ' Cart Dump: ' . json_encode($paymentData, JSON_PRETTY_PRINT)
-                : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
+                : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', self::FILE_NAME);
 
             return false;
         }
@@ -151,11 +153,12 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                     $order->reference
                 );
             } else {
+                throw new Exception('test');
                 $mollieOrderCreationService->createMolliePayment($apiPayment, $cart->id, $orderNumber);
             }
         } catch (Exception $e) {
             $this->setTemplate('error.tpl');
-            $this->errors[] = $this->module->l('Failed to save order information.', 'payment');
+            $this->errors[] = $this->module->l('Failed to save order information.', self::FILE_NAME);
 
             return false;
         }
