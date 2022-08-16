@@ -21,11 +21,6 @@ use Mollie\Service\UpgradeNoticeService;
 class UpdateMessageInfoBlock implements TemplateBuilderInterface
 {
     /**
-     * @var Mollie
-     */
-    private $module;
-
-    /**
      * @var UpgradeNoticeService
      */
     private $upgradeNoticeService;
@@ -46,12 +41,10 @@ class UpdateMessageInfoBlock implements TemplateBuilderInterface
     private $updateMessageProvider;
 
     public function __construct(
-        Mollie $module,
         UpgradeNoticeService $upgradeNoticeService,
         ConfigurationAdapter $configurationAdapter,
         UpdateMessageProviderInterface $updateMessageProvider
     ) {
-        $this->module = $module;
         $this->upgradeNoticeService = $upgradeNoticeService;
         $this->configurationAdapter = $configurationAdapter;
         $this->updateMessageProvider = $updateMessageProvider;

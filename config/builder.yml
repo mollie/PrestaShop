@@ -32,11 +32,6 @@ services:
     arguments:
       - '@mollie'
 
-  Mollie\Builder\Content\RoundingModeInfoBlock:
-    class: Mollie\Builder\Content\RoundingModeInfoBlock
-    arguments:
-      - '@mollie'
-
   Mollie\Builder\Content\LogoInfoBlock:
     class: Mollie\Builder\Content\LogoInfoBlock
     arguments:
@@ -45,7 +40,6 @@ services:
   Mollie\Builder\Content\UpdateMessageInfoBlock:
     class: Mollie\Builder\Content\UpdateMessageInfoBlock
     arguments:
-      - '@mollie'
       - '@Mollie\Service\UpgradeNoticeService'
       - '@Mollie\Adapter\ConfigurationAdapter'
       - '@Mollie\Provider\UpdateMessageProvider'

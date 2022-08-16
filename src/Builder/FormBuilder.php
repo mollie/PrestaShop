@@ -120,7 +120,7 @@ class FormBuilder
                 'tabs' => $this->getSettingTabs($isApiKeyProvided),
                 'input' => $inputs,
                 'submit' => [
-                    'title' => $this->module->l('Save'),
+                    'title' => $this->module->l('Save', self::FILE_NAME),
                     'class' => 'btn btn-default pull-right',
                 ],
             ],

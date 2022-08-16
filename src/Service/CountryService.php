@@ -18,6 +18,8 @@ use Mollie;
 
 class CountryService
 {
+    const FILE_NAME = 'CountryService';
+
     /**
      * @var Mollie
      */
@@ -36,7 +38,7 @@ class CountryService
         $countriesWithNames = [];
         $countriesWithNames[] = [
             'id' => 0,
-            'name' => $this->module->l('All'),
+            'name' => $this->module->l('All', self::FILE_NAME),
         ];
         foreach ($countries as $key => $country) {
             $countriesWithNames[] = [

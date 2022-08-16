@@ -239,7 +239,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             case PaymentStatus::STATUS_OPEN:
             case PaymentStatus::STATUS_PENDING:
                 if ($transaction->mode === 'test') {
-                    $this->setWarning($this->module->l('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.'));
+                    $this->setWarning($this->module->l('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.', self::FILE_NAME));
                     $response = $paymentReturnService->handleTestPendingStatus();
                     break;
                 }
