@@ -1,4 +1,4 @@
-name: Cypress test run
+name: Cypress test run MOLLIE
 on:
   pull_request:
     types: [opened, reopened]
@@ -41,7 +41,7 @@ jobs:
           ${{ matrix.make }} 
   
       - name: Running ${{ matrix.prestashop }} Cypress tests
-        uses: cypress-io/github-action@v2.9.7
+        uses: cypress-io/github-action@v4.2.0
         with: 
           spec: ${{ matrix.test_spec }}
         env:
