@@ -5,6 +5,7 @@
 + Added PS8.0.0+ compatibility
 + Changed how secure key is generated to avoid errors.
 + Fixed issue where payment method save with multishop would break another shop payment method settings.
++ Fixed translations that were not working because of php.
 
 ## Changes in release 5.2.1 ##
 + Fixed issue where orders would have duplicated lines in list if there are more than 1 transaction.
