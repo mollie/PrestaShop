@@ -130,7 +130,6 @@ class TransactionService
             $this->module->name
         );
 
-        $isPaymentFinished = MollieStatusUtility::isPaymentFinished($apiPayment->status);
         $orderDescription = $apiPayment->description ?? $apiPayment->orderNumber;
         $isGeneratedOrderNumber = strpos($orderDescription, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0;
         $isPaymentFinished = MollieStatusUtility::isPaymentFinished($apiPayment->status);
@@ -211,7 +210,7 @@ class TransactionService
                     }
                 } elseif (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                     if ($isPaymentFinished) {
-                        $this->handlePaymentDescription($apiPayment);
+                        $this->handleOrderDescription($apiPayment);
                     }
                 } else {
                     $isKlarnaDefault = Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON) === Config::MOLLIE_STATUS_DEFAULT;
