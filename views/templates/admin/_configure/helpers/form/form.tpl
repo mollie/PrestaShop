@@ -214,7 +214,7 @@
                                     <b>{'{order.reference}'}</b>,
                                     <b>{'{customer.firstname}'}</b>,
                                     <b>{'{customer.lastname}'}</b>,
-                                    <b>{'{customer.company}'}</b>,
+                                    <b>{'{customer.company}'}</b>
                                 </p>
                             </div>
                         </div>

@@ -2,7 +2,7 @@
 
 # Changelog #
 ## Changes in release 5.4.0 ##
-+ Removed reference variables from transaltions.
++ Removed reference variables from translations.
 
 ## Changes in release 5.3.0 ##
 + Added PS8.0.0+ compatibility
