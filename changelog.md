@@ -1,6 +1,9 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 5.4.0 ##
++ Removed reference variables from transaltions.
+
 ## Changes in release 5.3.0 ##
 + Added PS8.0.0+ compatibility
 + Changed how secure key is generated to avoid errors.
