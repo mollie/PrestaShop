@@ -86,7 +86,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $transactionService = $this->module->getMollieContainer(PaymentMethodService::class);
         /** @var MollieOrderCreationService $mollieOrderCreationService */
         $mollieOrderCreationService = $this->module->getMollieContainer(MollieOrderCreationService::class);
-      /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
+        /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
         $paymentMethodRepository = $this->module->getMollieContainer(PaymentMethodRepositoryInterface::class);
 
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
