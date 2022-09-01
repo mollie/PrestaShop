@@ -86,6 +86,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $transactionService = $this->module->getMollieContainer(PaymentMethodService::class);
         /** @var MollieOrderCreationService $mollieOrderCreationService */
         $mollieOrderCreationService = $this->module->getMollieContainer(MollieOrderCreationService::class);
+        /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
+        $paymentMethodRepository = $this->module->getMollieContainer(PaymentMethodRepositoryInterface::class);
 
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method, $environment);
@@ -153,7 +155,10 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                     $order->reference
                 );
             } else {
-                $mollieOrderCreationService->createMolliePayment($apiPayment, $cart->id, $orderNumber);
+                $paymentMethod = $paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
+                if (!$paymentMethod) {
+                    $mollieOrderCreationService->createMolliePayment($apiPayment, $cart->id, $orderNumber);
+                }
             }
         } catch (Exception $e) {
             $this->setTemplate('error.tpl');
