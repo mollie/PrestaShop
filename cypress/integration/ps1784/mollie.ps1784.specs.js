@@ -698,4 +698,52 @@ it('27 Credit Card Guest Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
+it('28 Credit Card Guest Checkouting with not 3DS secure card [Payments API]', () => {
+  cy.clearCookies()
+  //Payments API item
+  cy.visit('/SHOP2/en/', { headers: {"Accept-Encoding": "gzip, deflate"}})
+  cy.get('[class="h3 product-title"]').eq(0).click()
+  cy.get('.add > .btn').click()
+  cy.get('.cart-content-btn > .btn-primary').click()
+  cy.get('.text-sm-center > .btn').click()
+  // Creating random user all the time
+  cy.get(':nth-child(1) > .custom-radio > input').check()
+  cy.get('#field-firstname').type('AUT',{delay:0})
+  cy.get(':nth-child(3) > .col-md-6 > .form-control').type('AUT',{delay:0})
+  const uuid = () => Cypress._.random(0, 1e6)
+  const id = uuid()
+  const testname = `testemail${id}@testing.com`
+  cy.get(':nth-child(4) > .col-md-6 > .form-control').type(testname, {delay: 0})
+  cy.get(':nth-child(6) > .col-md-6 > .input-group > .form-control').type('123456',{delay:0})
+  cy.get(':nth-child(9) > .col-md-6 > .custom-checkbox > label > input').check()
+  cy.get('#customer-form > .form-footer > .continue').click()
+  cy.reload()
+  cy.get(':nth-child(6) > .col-md-6 > .form-control').type('123456',{delay:0})
+  cy.get(':nth-child(7) > .col-md-6 > .form-control').type('123456',{delay:0}).as('vat number')
+  cy.get(':nth-child(8) > .col-md-6 > .form-control').type('ADDR',{delay:0}).as('address')
+  cy.get(':nth-child(10) > .col-md-6 > .form-control').type('54469',{delay:0}).as('zip')
+  cy.get(':nth-child(11) > .col-md-6 > .form-control').type('CIT',{delay:0}).as('city')
+  cy.get(':nth-child(12) > .col-md-6 > .form-control').select('Lithuania').as('country')
+  cy.get(':nth-child(13) > .col-md-6 > .form-control').type('+370 000',{delay:0}).as('telephone')
+  cy.get('.form-footer > .continue').click()
+  cy.get('#js-delivery > .continue').click()
+  cy.contains('Credit card').click({force:true})
+  //Credit card inputing
+  cy.frameLoaded('[data-testid=mollie-container--cardHolder] > iframe')
+  cy.enter('[data-testid=mollie-container--cardHolder] > iframe').then(getBody => {
+  getBody().find('#cardHolder').clear({force: true}).type('TEST TEEESSSTT')
+  })
+  cy.enter('[data-testid=mollie-container--cardNumber] > iframe').then(getBody => {
+  getBody().find('#cardNumber').clear({force: true}).type('4242424242424242')
+  })
+  cy.enter('[data-testid=mollie-container--expiryDate] > iframe').then(getBody => {
+  getBody().find('#expiryDate').clear({force: true}).type('1222')
+  })
+  cy.enter('[data-testid=mollie-container--verificationCode] > iframe').then(getBody => {
+  getBody().find('#verificationCode').clear({force: true}).type('222')
+  })
+  cy.get('.condition-label > .js-terms').click({force:true})
+  cy.get('.ps-shown-by-js > .btn').click()
+  cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+})
 })
