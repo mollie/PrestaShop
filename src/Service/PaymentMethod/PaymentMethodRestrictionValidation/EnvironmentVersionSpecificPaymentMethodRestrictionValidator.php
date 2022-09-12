@@ -96,13 +96,13 @@ class EnvironmentVersionSpecificPaymentMethodRestrictionValidator implements Pay
         if ($paymentMethod->is_countries_applicable) {
             return $this->methodCountryRepository->checkIfMethodIsAvailableInCountry(
                 $paymentMethod->id,
-                $this->context->getCountryId()
+                $this->context->getInvoiceCountryId()
             );
         }
 
         return !$this->methodCountryRepository->checkIfCountryIsExcluded(
             $paymentMethod->id,
-            $this->context->getCountryId()
+            $this->context->getInvoiceCountryId()
         );
     }
 }

@@ -207,14 +207,14 @@
                                     {l s='The description to be used for this transaction. These variables are available:' mod='mollie'}
                                 </p>
                                 <p class="help-block">
-                                    <b>{'{orderNumber}'}</b>,
-                                    <b>{'{storeName}'}</b>,
-                                    <b>{'{countryCode}'}</b>,
-                                    <b>{'{cart.id}'}</b>,
-                                    <b>{'{order.reference}'}</b>,
-                                    <b>{'{customer.firstname}'}</b>,
-                                    <b>{'{customer.lastname}'}</b>,
-                                    <b>{'{customer.company}'}</b>
+                                    <b>{'{orderNumber}'|escape:'htmlall':'UTF-8'}</b>,
+                                    <b>{'{storeName}'|escape:'htmlall':'UTF-8'}</b>,
+                                    <b>{'{countryCode}'|escape:'htmlall':'UTF-8'}</b>,
+                                    <b>{'{cart.id}'|escape:'htmlall':'UTF-8'}</b>,
+                                    <b>{'{order.reference}'|escape:'htmlall':'UTF-8'}</b>,
+                                    <b>{'{customer.firstname}'|escape:'htmlall':'UTF-8'}</b>,
+                                    <b>{'{customer.lastname}'|escape:'htmlall':'UTF-8'}</b>,
+                                    <b>{'{customer.company}'|escape:'htmlall':'UTF-8'}</b>
                                 </p>
                             </div>
                         </div>
