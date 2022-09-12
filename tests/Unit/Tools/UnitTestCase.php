@@ -54,6 +54,11 @@ class UnitTestCase extends TestCase
             ->willReturn(1)
         ;
 
+        $contextMock
+            ->method('getInvoiceCountryId')
+            ->willReturn(1)
+        ;
+
         return $contextMock;
     }
 
