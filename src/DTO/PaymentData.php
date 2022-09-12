@@ -82,6 +82,15 @@ class PaymentData implements JsonSerializable
      * @var ?string
      */
     private $applePayToken;
+    /**
+     * @var string
+     */
+    private $shippingStreetAndNumber;
+
+    /**
+     * @var string
+     */
+    private $billingStreetAndNumber;
 
     public function __construct(
         Amount $amount,
@@ -307,6 +316,26 @@ class PaymentData implements JsonSerializable
         return $this;
     }
 
+    public function getShippingStreetAndNumber(): string
+    {
+        return $this->shippingStreetAndNumber;
+    }
+
+    public function setShippingStreetAndNumber(string $shippingStreetAndNumber): void
+    {
+        $this->shippingStreetAndNumber = $shippingStreetAndNumber;
+    }
+
+    public function getBillingStreetAndNumber(): string
+    {
+        return $this->billingStreetAndNumber;
+    }
+
+    public function setBillingStreetAndNumber(string $billingStreetAndNumber): void
+    {
+        $this->billingStreetAndNumber = $billingStreetAndNumber;
+    }
+
     public function jsonSerialize()
     {
         return [
@@ -315,13 +344,13 @@ class PaymentData implements JsonSerializable
                 'value' => (string) $this->getAmount()->getValue(),
             ],
             'billingAddress' => [
-                'streetAndNumber' => $this->cleanUpInput($this->getBillingAddress()->address1),
+                'streetAndNumber' => $this->cleanUpInput($this->getBillingStreetAndNumber()),
                 'city' => $this->cleanUpInput($this->getBillingAddress()->city),
                 'postalCode' => $this->cleanUpInput($this->getBillingAddress()->postcode),
                 'country' => $this->cleanUpInput(Country::getIsoById($this->getBillingAddress()->id_country)),
             ],
             'shippingAddress' => [
-                'streetAndNumber' => $this->cleanUpInput($this->getShippingAddress()->address1),
+                'streetAndNumber' => $this->cleanUpInput($this->getShippingStreetAndNumber()),
                 'city' => $this->cleanUpInput($this->getShippingAddress()->city),
                 'postalCode' => $this->cleanUpInput($this->getShippingAddress()->postcode),
                 'country' => $this->cleanUpInput(Country::getIsoById($this->getShippingAddress()->id_country)),
