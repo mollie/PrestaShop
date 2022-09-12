@@ -30,6 +30,7 @@ use Mollie\DTO\PaymentData;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\PhoneNumberProviderInterface;
+use Mollie\Provider\StreetAndNumberProviderInterface;
 use Mollie\Repository\MethodCountryRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
@@ -89,6 +90,8 @@ class PaymentMethodService
 
     private $phoneNumberProvider;
 
+    private $streetAndNumberProvider;
+
     /**
      * @var PaymentMethodRestrictionValidationInterface
      */
@@ -116,7 +119,8 @@ class PaymentMethodService
         PhoneNumberProviderInterface $phoneNumberProvider,
         PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation,
         Country $country,
-        Shop $shop
+        Shop $shop,
+        StreetAndNumberProviderInterface $streetAndNumberProvider
     ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
@@ -130,6 +134,7 @@ class PaymentMethodService
         $this->paymentMethodRestrictionValidation = $paymentMethodRestrictionValidation;
         $this->country = $country;
         $this->shop = $shop;
+        $this->streetAndNumberProvider = $streetAndNumberProvider;
     }
 
     public function savePaymentMethod($method)
@@ -306,12 +311,14 @@ class PaymentMethodService
             $paymentData->setIssuer($issuer);
 
             if (isset($cart->id_address_invoice)) {
-                $billing = new Address((int) $cart->id_address_invoice);
-                $paymentData->setBillingAddress($billing);
+                $billingAddress = new Address((int) $cart->id_address_invoice);
+                $paymentData->setBillingAddress($billingAddress);
+                $paymentData->setBillingStreetAndNumber($this->streetAndNumberProvider->getStreetAndNumberFromAddress($billingAddress));
             }
             if (isset($cart->id_address_delivery)) {
-                $shipping = new Address((int) $cart->id_address_delivery);
-                $paymentData->setShippingAddress($shipping);
+                $shippingAddress = new Address((int) $cart->id_address_delivery);
+                $paymentData->setShippingAddress($shippingAddress);
+                $paymentData->setShippingStreetAndNumber($this->streetAndNumberProvider->getStreetAndNumberFromAddress($shippingAddress));
             }
 
             if ($cardToken) {
@@ -345,15 +352,17 @@ class PaymentMethodService
             $orderData = new OrderData($amountObj, $redirectUrl, $webhookUrl);
 
             if (isset($cart->id_address_invoice)) {
-                $billing = new Address((int) $cart->id_address_invoice);
+                $billingAddress = new Address((int) $cart->id_address_invoice);
 
-                $orderData->setBillingAddress($billing);
-                $orderData->setBillingPhoneNumber($this->phoneNumberProvider->getFromAddress($billing));
+                $orderData->setBillingAddress($billingAddress);
+                $orderData->setBillingPhoneNumber($this->phoneNumberProvider->getFromAddress($billingAddress));
+                $orderData->setBillingStreetAndNumber($this->streetAndNumberProvider->getStreetAndNumberFromAddress($billingAddress));
             }
             if (isset($cart->id_address_delivery)) {
-                $shipping = new Address((int) $cart->id_address_delivery);
-                $orderData->setShippingAddress($shipping);
-                $orderData->setDeliveryPhoneNumber($this->phoneNumberProvider->getFromAddress($shipping));
+                $shippingAddress = new Address((int) $cart->id_address_delivery);
+                $orderData->setShippingAddress($shippingAddress);
+                $orderData->setDeliveryPhoneNumber($this->phoneNumberProvider->getFromAddress($shippingAddress));
+                $orderData->setShippingStreetAndNumber($this->streetAndNumberProvider->getStreetAndNumberFromAddress($shippingAddress));
             }
             $orderData->setOrderNumber($orderReference);
             $orderData->setLocale($this->getLocale($molPaymentMethod->method));
