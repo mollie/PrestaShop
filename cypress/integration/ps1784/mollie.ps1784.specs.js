@@ -76,6 +76,12 @@ it('03 Enabling All payments in Module BO [Orders API]', () => {
       cy.get('[type="submit"]').first().click()
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
+it.only('04 Checking the Advanced Settings tab, verifying the front-end', () => {
+      cy.visit('/admin1/')
+      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.get('[href="#advanced_settings"]').click()
+      cy.get('[id="MOLLIE_PAYMENTSCREEN_LOCALE"]').should('be.visible')
+});
 it('04 Bancontact Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
