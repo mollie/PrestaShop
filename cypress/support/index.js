@@ -49,6 +49,7 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 Cypress.Keyboard.defaults({
   keystrokeDelay: 0,
 })
+//Console checker
 Cypress.on('window:before:load', (win) => {
   cy.spy(win.console, 'error');
   //cy.spy(win.console, 'warn');
