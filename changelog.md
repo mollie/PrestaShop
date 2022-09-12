@@ -4,6 +4,7 @@
 ## Changes in release 5.3.0 ##
 + Removed reference variables from translations.
 + Fixed issue where credit card components would throw error even taught order was created.
++ Changed country restrictions to use invoice and not delivery address when checking for country restrictions.
 + Added PS8.0.0+ compatibility
 + Changed how secure key is generated to avoid errors.
 + Fixed issue where payment method save with multishop would break another shop payment method settings.
