@@ -628,7 +628,7 @@ it('SOFORT Order Shipping, Refunding [Orders API]', () => {
       cy.get('[class="alert alert-success"]').should('be.visible')
       //Refunding not possible because "We haven't received the payment on our bank accounts yet" message from Mollie Dashboard
 })
-it.only('Przelewy24 Checkouting [Orders API]', () => {
+it('Przelewy24 Checkouting [Orders API]', () => {
   cy.visit('/SHOP2/de/index.php?controller=history')
   cy.get('a').click()
   cy.contains('Reorder').click()
@@ -657,11 +657,16 @@ it.only('Przelewy24 Checkouting [Orders API]', () => {
   cy.get('[class="button form__button"]').click()
   cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it.only('Przelewy24 Order Shipping, Refunding [Orders API]', () => {
+it('Przelewy24 Order Shipping, Refunding [Orders API]', () => {
   cy.visit('/admin1/index.php?controller=AdminOrders')
   cy.get(':nth-child(1) > .column-payment').click()
+      //Refunding dropdown in React
+      cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).click()
+      cy.get('[role="button"]').eq(2).click()
+      cy.get('[class="swal-button swal-button--confirm"]').click()
+      cy.get('[class="alert alert-success"]').should('be.visible')
       //Shipping button in React
-      cy.get('.btn-group > .btn-primary').click()
+      cy.get('.btn-group > [title=""]').eq(0).click()
       cy.get('[class="swal-button swal-button--confirm"]').click()
       cy.get('.swal-modal').should('exist')
       cy.get('#input-carrier').clear({force: true}).type('FedEx',{delay:0})
@@ -670,7 +675,54 @@ it.only('Przelewy24 Order Shipping, Refunding [Orders API]', () => {
       cy.get(':nth-child(2) > .swal-button').click()
       cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
       cy.get('[class="alert alert-success"]').should('be.visible')
-      //Refunding not possible because "We haven't received the payment on our bank accounts yet" message from Mollie Dashboard
+})
+it.only('Giropay Checkouting [Orders API]', () => {
+  cy.visit('/SHOP2/de/index.php?controller=history')
+  cy.get('a').click()
+  cy.contains('Reorder').click()
+  cy.contains('NL').click()
+  //Billing country LT, DE etc.
+  cy.get('.clearfix > .btn').click()
+  cy.get('#js-delivery > .continue').click()
+  //Payment method choosing
+  // waiting for enabling IN3 payment
+  cy.contains('Giropay').click({force:true})
+  cy.get('.condition-label > .js-terms').click({force:true})
+  prepareCookie();
+  cy.get('.ps-shown-by-js > .btn').click()
+  cy.setCookie(
+    'SESSIONID',
+    "cypress-dummy-value",
+    {
+        domain: '.www.mollie.com',
+        sameSite: 'None',
+        secure: true,
+        httpOnly: true
+    }
+  );    // reload current page to activate cookie
+  cy.reload();
+  cy.get('[value="paid"]').click()
+  cy.get('[class="button form__button"]').click()
+  cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it.only('Giropay Order Shipping, Refunding [Orders API]', () => {
+  cy.visit('/admin1/index.php?controller=AdminOrders')
+  cy.get(':nth-child(1) > .column-payment').click()
+      //Refunding dropdown in React
+      cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).click()
+      cy.get('[role="button"]').eq(2).click()
+      cy.get('[class="swal-button swal-button--confirm"]').click()
+      cy.get('[class="alert alert-success"]').should('be.visible')
+      //Shipping button in React
+      cy.get('.btn-group > [title=""]').eq(0).click()
+      cy.get('[class="swal-button swal-button--confirm"]').click()
+      cy.get('.swal-modal').should('exist')
+      cy.get('#input-carrier').clear({force: true}).type('FedEx',{delay:0})
+      cy.get('#input-code').clear({force: true}).type('123456',{delay:0})
+      cy.get('#input-url').clear({force: true}).type('https://www.invertus.eu',{delay:0})
+      cy.get(':nth-child(2) > .swal-button').click()
+      cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
+      cy.get('[class="alert alert-success"]').should('be.visible')
 })
 it('20 Enabling All payments in Module BO [Payments API]', () => {
       cy.visit('/admin1/')
