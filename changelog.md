@@ -4,6 +4,7 @@
 ## Changes in release 5.4.0 ##
 + Removed reference variables from translations.
 + Fixed issue where credit card components would throw error even taught order was created.
++ Changed country restrictions to use invoice and not delivery address when checking for country restrictions.
 
 ## Changes in release 5.3.0 ##
 + Added PS8.0.0+ compatibility
