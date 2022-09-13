@@ -911,7 +911,7 @@ it('49 Credit Card Guest Checkouting with not 3DS secure card [Payments API]', (
       cy.get('.ps-shown-by-js > .btn').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it.only('50 Paypal Checkouting [Payments API]', () => {
+it('50 Paypal Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       //
@@ -940,10 +940,17 @@ it.only('50 Paypal Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it.only('51 Paypal BO Refunding, Partial Refunding [Payments API]', () => {
-      cy.OrderRefundingPartialPaymentsAPI()
+it('51 Paypal BO Refunding, Partial Refunding [Payments API]', () => {
+      cy.visit('/admin1/index.php?controller=AdminOrders')
+      cy.get(':nth-child(1) > .column-payment').click()
+      //Check partial refunding on Payments API - seems that Paypal has only Partial Refunding without Refund button
+      cy.get('.form-inline > :nth-child(2) > .input-group > .form-control').type('1.51',{delay:0})
+      cy.get(':nth-child(2) > .input-group > .input-group-btn > .btn').click()
+      cy.get('.swal-modal').should('exist')
+      cy.get(':nth-child(2) > .swal-button').click()
+      cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
 });
-it.only('52 SOFORT Checkouting [Payments API]', () => {
+it('52 SOFORT Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       //
@@ -972,8 +979,11 @@ it.only('52 SOFORT Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it.only('53 SOFORT BO Refunding, Partial Refunding [Payments API]', () => {
-      cy.OrderRefundingPartialPaymentsAPI()
+it('53 SOFORT BO Refunding, Partial Refunding [Payments API]', () => {
+      cy.visit('/admin1/index.php?controller=AdminOrders')
+      cy.get(':nth-child(1) > .column-payment').click()
+      cy.get('#mollie_order > :nth-child(1)').should('exist')
+      //Refunding is unavailable - information from Mollie Dashboard - but checking the UI itself
 });
 it('54 Przelewy24 Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
@@ -1000,6 +1010,8 @@ it('54 Przelewy24 Checkouting [Payments API]', () => {
         }
       );    // reload current page to activate cookie
       cy.reload();
+      cy.get('.input-float > input').type('testing@testing.com')
+      cy.get('[class="button form__button"]').click()
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -1017,7 +1029,7 @@ it('56 Giropay Checkouting [Payments API]', () => {
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
-      cy.contains('Giropay').click({force:true})
+      cy.contains('giropay').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
@@ -1071,7 +1083,7 @@ it('58 EPS Checkouting [Payments API]', () => {
 it('59 EPS BO Refunding, Partial Refunding [Payments API]', () => {
       cy.OrderRefundingPartialPaymentsAPI()
 });
-it('60 KBC/CBC Checkouting [Payments API]', () => {
+it.only('60 KBC/CBC Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       //
