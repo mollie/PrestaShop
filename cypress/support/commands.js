@@ -247,7 +247,7 @@ Cypress.Commands.add("ConfPaymentsAPI", () => {
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_applepay"]').clear({force: true}).type('33', {force: true})
 })
 Cypress.Commands.add("ConfOrdersAPI1784", () => {
-      cy.get('#MOLLIE_IFRAME_on').click()
+      cy.get('#MOLLIE_IFRAME_on').click({force:true})
       cy.get('#MOLLIE_PROFILE_ID').clear({force: true}).type((Cypress.env('MOLLIE_TEST_PROFILE_ID')),{delay: 0, log: false})
       //giropay
       cy.get('[name="MOLLIE_METHOD_ENABLED_giropay"]').select('Yes', {force: true})
