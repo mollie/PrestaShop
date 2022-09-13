@@ -96,8 +96,6 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             $errorHandler = $this->module->getMollieContainer(ErrorHandler::class);
             $errorHandler->handle($e, $e->getCode(), false);
             $this->respond('failed', $e->getCode(), $e->getMessage());
-        } catch (\exception $e) {
-            $this->respond('failed', $e->getCode(), $e->getMessage());
         }
 
         /* @phpstan-ignore-next-line */
