@@ -944,6 +944,7 @@ it.only('Gift Card Checkouting [Orders API]', () => {
     }
   );    // reload current page to activate cookie
   cy.reload();
+  cy.get('.grid-button-giftcard-yourgift').click()
   cy.get('[value="paid"]').click()
   cy.get('[class="button form__button"]').click()
   cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
