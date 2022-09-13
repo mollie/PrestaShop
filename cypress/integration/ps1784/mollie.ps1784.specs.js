@@ -929,7 +929,7 @@ it.only('Gift Card Checkouting [Orders API]', () => {
   cy.get('.clearfix > .btn').click()
   cy.get('#js-delivery > .continue').click()
   //Payment method choosing
-  cy.contains('Gift card').click({force:true})
+  cy.contains('Gift cards').click({force:true})
   cy.get('.condition-label > .js-terms').click({force:true})
   prepareCookie();
   cy.get('.ps-shown-by-js > .btn').click()
@@ -945,6 +945,9 @@ it.only('Gift Card Checkouting [Orders API]', () => {
   );    // reload current page to activate cookie
   cy.reload();
   cy.get('.grid-button-giftcard-yourgift').click()
+  cy.get('[value="paid"]').click()
+  cy.get('[class="button form__button"]').click()
+  cy.get('.grid-button-paypal').click()
   cy.get('[value="paid"]').click()
   cy.get('[class="button form__button"]').click()
   cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
