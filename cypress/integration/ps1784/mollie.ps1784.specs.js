@@ -49,6 +49,16 @@ function prepareCookie()
       cy.get('#history-link > .link-item').click()
       })
       }
+
+//Checing the console for errors
+let windowConsoleError;
+Cypress.on('window:before:load', (win) => {
+  windowConsoleError = cy.spy(win.console, 'error');
+})
+afterEach(() => {
+  expect(windowConsoleError).to.not.be.called;
+})
+
 describe('PS1784 Tests Suite', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
@@ -76,7 +86,7 @@ it('03 Enabling All payments in Module BO [Orders API]', () => {
       cy.get('[type="submit"]').first().click()
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it('04 Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
+it.only('04 Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule > .link').click()
       cy.get('[href="#advanced_settings"]').click()
@@ -862,7 +872,7 @@ it('Belfius Order Shipping, Refunding [Orders API]', () => {
       cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it('Bank Transfer Checkouting [Orders API]', () => {
+it.only('Bank Transfer Checkouting [Orders API]', () => {
   cy.visit('/SHOP2/en/index.php?controller=history')
   cy.get('a').click()
   cy.contains('Reorder').click()
@@ -871,7 +881,6 @@ it('Bank Transfer Checkouting [Orders API]', () => {
   cy.get('.clearfix > .btn').click()
   cy.get('#js-delivery > .continue').click()
   //Payment method choosing
-  // waiting for enabling IN3 payment
   cy.contains('Bank transfer').click({force:true})
   cy.get('.condition-label > .js-terms').click({force:true})
   prepareCookie();
@@ -889,10 +898,10 @@ it('Bank Transfer Checkouting [Orders API]', () => {
   cy.reload();
   cy.get('[value="paid"]').click()
   cy.get('[class="button form__button"]').click()
-  //TODO - should be validation screen or what?
+  //TODO - Welcome page?
   //cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it.only('Bank Transfer Order Shipping, Refunding [Orders API]', () => {
+it('Bank Transfer Order Shipping, Refunding [Orders API]', () => {
   cy.visit('/admin1/index.php?controller=AdminOrders')
   cy.get(':nth-child(1) > .column-payment').click()
       //Refunding dropdown in React
