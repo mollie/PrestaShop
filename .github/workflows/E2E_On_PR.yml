@@ -34,7 +34,7 @@ jobs:
         run: composer i
 
       - name: Install package
-        run: npm install & npx browserslist@latest --update-db
+        run: npm ci & npm update & npx browserslist@latest --update-db
 
       - name: ${{ matrix.prestashop }} installing / Module Install and Uninstall testing
         run: |
