@@ -34,15 +34,15 @@ jobs:
         run: composer i
 
       - name: install package
-        run: npm ci & npx browserslist@latest --update-db
+        run: npm install & npx browserslist@latest --update-db
 
       - name: ${{ matrix.prestashop }} installing / Module Install and Uninstall testing
         run: |
-          ${{ matrix.make }} 
-  
+          ${{ matrix.make }}
+
       - name: Running ${{ matrix.prestashop }} Cypress tests
         uses: cypress-io/github-action@v4.2.0
-        with: 
+        with:
           spec: ${{ matrix.test_spec }}
         env:
           CYPRESS_MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
