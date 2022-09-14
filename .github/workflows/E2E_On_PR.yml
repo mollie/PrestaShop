@@ -30,10 +30,10 @@ jobs:
         shell: bash
       - run: ./ngrok http -region=eu -subdomain=${{ matrix.demoshop }} ${{ matrix.port }} > ngrok.log &
         shell: bash
-      - name: install composer
+      - name: Install composer
         run: composer i
 
-      - name: install package
+      - name: Install package
         run: npm install & npx browserslist@latest --update-db
 
       - name: ${{ matrix.prestashop }} installing / Module Install and Uninstall testing
@@ -44,6 +44,7 @@ jobs:
         uses: cypress-io/github-action@v4.2.0
         with:
           spec: ${{ matrix.test_spec }}
+          browser: chrome
         env:
           CYPRESS_MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
           CYPRESS_MOLLIE_TEST_PROFILE_ID: ${{ secrets.MOLLIE_TEST_PROFILE_ID }}
