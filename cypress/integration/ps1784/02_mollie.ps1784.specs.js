@@ -232,7 +232,7 @@ it('15 Credit Card Checkouting [Orders API]', () => {
       //Enabling the Single-Click for now
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule > .link').click()
-      cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_on').click()
+      cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_on').click({force:true})
       cy.get('[type="submit"]').first().click()
       cy.get('[class="alert alert-success"]').should('be.visible')
       cy.visit('/SHOP2/en/index.php?controller=history')
@@ -242,7 +242,7 @@ it('15 Credit Card Checkouting [Orders API]', () => {
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
-      cy.contains('Credit card').click({force:true})
+      cy.contains('Credit/Debit Card').click({force:true})
       //Credit card inputing
       cy.frameLoaded('[data-testid=mollie-container--cardHolder] > iframe')
       cy.enter('[data-testid=mollie-container--cardHolder] > iframe').then(getBody => {
