@@ -766,7 +766,6 @@ it('46 Credit Card Checkouting [Payments API]', () => {
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
       cy.contains('Credit/Debit Card').click({force:true})
-      cy.get('#mollie-use-saved-card').click({force:true})
       //Credit card inputing
       cy.frameLoaded('[data-testid=mollie-container--cardHolder] > iframe')
       cy.enter('[data-testid=mollie-container--cardHolder] > iframe').then(getBody => {
