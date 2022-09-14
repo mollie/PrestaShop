@@ -1,0 +1,1216 @@
+/// <reference types="Cypress" />
+function prepareCookie()
+      {
+            const name = 'PrestaShop-';
+
+                   cy.request(
+            {
+                url: '/'
+            }
+        ).then((res) => {
+
+            const cookies = res.requestHeaders.cookie.split(/; */);
+
+            cookies.forEach(cookie => {
+
+                const parts = cookie.split('=');
+                const key = parts[0]
+                const value = parts[1];
+
+                if (key.startsWith(name)) {
+                    cy.setCookie(
+                        key,
+                        value,
+                        {
+                            sameSite: 'None',
+                            secure: true
+                        }
+                    );
+                }
+            });
+
+        });
+      }
+      //Caching the BO and FO session
+      const login = (MollieBOFOLoggingIn) => {
+      cy.session(MollieBOFOLoggingIn,() => {
+      cy.visit('/admin1/')
+      cy.url().should('contain', 'https').as('Check if HTTPS exists')
+      cy.get('#email').type('demo@demo.com',{delay: 0, log: false})
+      cy.get('#passwd').type('demodemo',{delay: 0, log: false})
+      cy.get('#submit_login').click().wait(1000).as('Connection successsful')
+      //switching the multistore PS1784
+      cy.get('#header_shop > .dropdown').click()
+      cy.get('.open > .dropdown-menu').find('[class="shop"]').eq(1).find('[href]').eq(0).click()
+      cy.visit('/SHOP2/index.php?controller=my-account')
+      cy.get('#login-form [name="email"]').eq(0).type('demo@demo.com')
+      cy.get('#login-form [name="password"]').eq(0).type('demodemo')
+      cy.get('#login-form [type="submit"]').eq(0).click({force:true})
+      cy.get('#history-link > .link-item').click()
+      })
+      }
+
+//Checing the console for errors
+let windowConsoleError;
+Cypress.on('window:before:load', (win) => {
+  windowConsoleError = cy.spy(win.console, 'error');
+})
+afterEach(() => {
+  expect(windowConsoleError).to.not.be.called;
+})
+
+describe('PS1784 Tests Suite', () => {
+  beforeEach(() => {
+      cy.viewport(1920,1080)
+      login('MollieBOFOLoggingIn')
+  })
+it('04 Enabling All payments in Module BO [Orders API]', () => {
+      cy.visit('/admin1/')
+      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.ConfOrdersAPI1784()
+      cy.get('[type="submit"]').first().click()
+      cy.get('[class="alert alert-success"]').should('be.visible')
+})
+it('05 Bancontact Checkouting [Orders API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.contains('LT').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Bancontact').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+})
+it('06 Bancontact Order BO Shiping, Refunding [Orders API]', () => {
+      cy.OrderRefundingShippingOrdersAPI()
+})
+it('07 iDEAL Checkouting [Orders API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('iDEAL').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('.payment-method-list > :nth-child(1)').click()
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+})
+it('08 iDEAL Order BO Shiping, Refunding [Orders API]', () => {
+      cy.OrderRefundingShippingOrdersAPI()
+})
+it('09 Klarna Slice It Checkouting [Orders API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      //Billing country LT, DE etc.
+      cy.contains('DE').click()
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Ratenkauf.').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="authorized"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+})
+it('10 Klarna Slice It Order BO Shiping, Refunding [Orders API]', () => {
+      cy.OrderShippingRefundingOrdersAPI()
+})
+it('11 Klarna Pay Later Checkouting [Orders API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      //
+      cy.contains('Reorder').click()
+      //Billing country LT, DE etc.
+      cy.contains('DE').click()
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Rechnung.').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="authorized"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+})
+it('12 Klarna Pay Later Order BO Shiping, Refunding [Orders API]', () => {
+      cy.OrderShippingRefundingOrdersAPI()
+})
+it('13 Klarna Pay Now Checkouting [Orders API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      //
+      cy.contains('Reorder').click()
+      //Billing country LT, DE etc.
+      cy.contains('DE').click()
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Pay now.').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="authorized"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+})
+it('14 Klarna Pay Now Order BO Shiping, Refunding [Orders API]', () => {
+      cy.OrderShippingRefundingOrdersAPI()
+})
+it('15 Credit Card Checkouting [Orders API]', () => {
+      //Enabling the Single-Click for now
+      cy.visit('/admin1/')
+      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_on').click({force:true})
+      cy.get('[type="submit"]').first().click()
+      cy.get('[class="alert alert-success"]').should('be.visible')
+      cy.visit('/SHOP2/en/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Credit/Debit Card').click({force:true})
+      //Credit card inputing
+      cy.frameLoaded('[data-testid=mollie-container--cardHolder] > iframe')
+      cy.enter('[data-testid=mollie-container--cardHolder] > iframe').then(getBody => {
+      getBody().find('#cardHolder').clear({force: true}).type('TEST TEEESSSTT',{force:true})
+      })
+      cy.enter('[data-testid=mollie-container--cardNumber] > iframe').then(getBody => {
+      getBody().find('#cardNumber').clear({force: true}).type('5555555555554444',{force:true})
+      })
+      cy.enter('[data-testid=mollie-container--expiryDate] > iframe').then(getBody => {
+      getBody().find('#expiryDate').clear({force: true}).type('1222',{force:true})
+      })
+      cy.enter('[data-testid=mollie-container--verificationCode] > iframe').then(getBody => {
+      getBody().find('#verificationCode').clear({force: true}).type('222',{force:true})
+      })
+      cy.get('.condition-label > .js-terms').click({force:true})
+      cy.get('#mollie-save-card').check({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+})
+it('16 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
+  cy.visit('/SHOP2/en/index.php?controller=history')
+  cy.get('a').click()
+  cy.contains('Reorder').click()
+  //Billing country LT, DE etc.
+  cy.get('.clearfix > .btn').click()
+  cy.get('#js-delivery > .continue').click()
+  //Payment method choosing
+  cy.contains('Credit/Debit Card').click({force:true})
+  cy.get('.condition-label > .js-terms').click({force:true})
+  prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      //temporary disabling the flow, might be bug
+      // cy.get('[value="paid"]').click()
+      // cy.get('[class="button form__button"]').click()
+      // cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+      cy.visit('/admin1/')
+      //Disabling the single-click - no need again
+      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_off').click({force:true})
+      cy.get('[type="submit"]').first().click()
+      cy.get('[class="alert alert-success"]').should('be.visible')
+})
+it('17 Credit Card Order BO Shiping, Refunding [Orders API]', () => {
+      cy.OrderRefundingShippingOrdersAPI()
+})
+it('18 IN3 Checkouting [Orders API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.contains('NL').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      // waiting for enabling IN3 payment
+      cy.contains('in3').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+})
+it('19 IN3 Order BO Shiping, Refunding [Orders API]', () => {
+      cy.OrderRefundingShippingOrdersAPI()
+})
+it('20 IN3 should not be shown under 5000 EUR [Orders API]', () => {
+      cy.visit('/SHOP2/de/')
+      cy.contains('Hummingbird printed sweater').click()
+      cy.get('[class="btn btn-primary add-to-cart"]').click()
+      cy.get('.cart-content-btn > .btn-primary').click()
+      cy.get('.text-sm-center > .btn').click()
+      cy.contains('NL').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('in3').should('not.exist')
+      cy.get('.logo').click()
+      cy.get('.blockcart').click()
+      cy.get('.remove-from-cart > .material-icons').click()
+})
+it('21 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
+      cy.visit('/admin1/')
+      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.get('[href="#advanced_settings"]').click()
+      cy.get('[name="MOLLIE_IMAGES"]').select('big')
+      cy.get('[type="submit"]').first().click()
+      cy.get('[class="alert alert-success"]').should('be.visible')
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.contains('NL').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //asserting i3 image
+      cy.get('html').should('contain.html','src="https://www.mollie.com/external/icons/payment-methods/in3%402x.png"')
+      //todo finish
+      cy.visit('/admin1/')
+      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.get('[href="#advanced_settings"]').click()
+      cy.get('[name="MOLLIE_IMAGES"]').select('hide')
+      cy.get('[type="submit"]').first().click()
+      cy.get('[class="alert alert-success"]').should('be.visible')
+})
+it('22 Paypal Checkouting [Orders API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.contains('NL').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('PayPal').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('23 Paypal Order Shipping, Refunding [Orders API]', () => {
+      cy.OrderRefundingShippingOrdersAPI()
+})
+it('24 SOFORT Checkouting [Orders API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.contains('NL').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('SOFORT').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('25 SOFORT Order Shipping, Refunding [Orders API]', () => {
+      cy.visit('/admin1/index.php?controller=AdminOrders')
+      cy.get(':nth-child(1) > .column-payment').click()
+          //Shipping button in React
+          cy.get('.btn-group > .btn-primary').click()
+          cy.get('[class="swal-button swal-button--confirm"]').click()
+          cy.get('.swal-modal').should('exist')
+          cy.get('#input-carrier').clear({force: true}).type('FedEx',{delay:0})
+          cy.get('#input-code').clear({force: true}).type('123456',{delay:0})
+          cy.get('#input-url').clear({force: true}).type('https://www.invertus.eu',{delay:0})
+          cy.get(':nth-child(2) > .swal-button').click()
+          cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
+          cy.get('[class="alert alert-success"]').should('be.visible')
+          //Refunding not possible because "We haven't received the payment on our bank accounts yet" message from Mollie Dashboard
+})
+it('26 Przelewy24 Checkouting [Orders API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.contains('NL').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Przelewy24').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('27 Przelewy24 Order Shipping, Refunding [Orders API]', () => {
+      cy.OrderRefundingShippingOrdersAPI()
+})
+it('28 Giropay Checkouting [Orders API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.contains('NL').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('giropay').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('29 Giropay Order Shipping, Refunding [Orders API]', () => {
+  cy.OrderRefundingShippingOrdersAPI()
+})
+it('30 EPS Checkouting [Orders API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.contains('NL').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('eps').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('31 EPS Order Shipping, Refunding [Orders API]', () => {
+      cy.OrderRefundingShippingOrdersAPI()
+})
+it('32 KBC/CBC Checkouting [Orders API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.contains('NL').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('KBC/CBC').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('.grid-button-kbc-cbc').click()
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('33 KBC/CBC Order Shipping, Refunding [Orders API]', () => {
+      cy.OrderRefundingShippingOrdersAPI()
+})
+it('34 Belfius Checkouting [Orders API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.contains('NL').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Belfius').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('35 Belfius Order Shipping, Refunding [Orders API]', () => {
+      cy.OrderRefundingShippingOrdersAPI()
+})
+it('36 Bank Transfer Checkouting [Orders API]', () => {
+      cy.visit('/SHOP2/en/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.contains('NL').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Bank transfer').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      //TODO - Welcome page?
+      //cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('37 Bank Transfer Order Shipping, Refunding [Orders API]', () => {
+      cy.OrderRefundingShippingOrdersAPI()
+})
+it('38 Gift Card Checkouting [Orders API]', () => {
+      cy.visit('/SHOP2/en/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.contains('NL').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Gift cards').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('.grid-button-giftcard-yourgift').click()
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('.grid-button-paypal').click()
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('39 Gift Card Order Shipping, Refunding [Orders API]', () => {
+      cy.OrderRefundingShippingOrdersAPI()
+})
+it('40 [SWITCH TO PAYMENTS API] Enabling All payments in Module BO [Payments API]', () => {
+      cy.visit('/admin1/')
+      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.ConfPaymentsAPI1784()
+      cy.get('[type="submit"]').first().click()
+      cy.get('[class="alert alert-success"]').should('be.visible')
+})
+it('41 Check if Bancontact QR payment dropdown exists [Payments API]', () => {
+      cy.visit('/admin1/')
+      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.get('[name="MOLLIE_BANCONTACT_QR_CODE_ENABLED"]').should('exist')
+})
+it('42 Bancontact Checkouting [Payments API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      //
+      cy.contains('Reorder').click()
+      cy.contains('LT').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Bancontact').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+})
+it('43 Bancontact Order BO Refunding, Partial Refunding [Payments API]', () => {
+      cy.OrderRefundingPartialPaymentsAPI()
+})
+it('44 iDEAL Checkouting [Payments API]', () => {
+      cy.visit('/SHOP2/en/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('iDEAL').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('.payment-method-list > :nth-child(1)').click()
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+})
+it('45 iDEAL Order BO Refunding, Partial Refunding [Payments API]', () => {
+      cy.OrderRefundingPartialPaymentsAPI()
+})
+it('46 Credit Card Checkouting [Payments API]', () => {
+      cy.visit('/SHOP2/en/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Credit/Debit Card').click({force:true})
+      //Credit card inputing
+      cy.frameLoaded('[data-testid=mollie-container--cardHolder] > iframe')
+      cy.enter('[data-testid=mollie-container--cardHolder] > iframe').then(getBody => {
+      getBody().find('#cardHolder').clear({force: true}).type('TEST TEEESSSTT',{force:true})
+      })
+      cy.enter('[data-testid=mollie-container--cardNumber] > iframe').then(getBody => {
+      getBody().find('#cardNumber').clear({force: true}).type('5555555555554444',{force:true})
+      })
+      cy.enter('[data-testid=mollie-container--expiryDate] > iframe').then(getBody => {
+      getBody().find('#expiryDate').clear({force: true}).type('1222',{force:true})
+      })
+      cy.enter('[data-testid=mollie-container--verificationCode] > iframe').then(getBody => {
+      getBody().find('#verificationCode').clear({force: true}).type('222',{force:true})
+      })
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+})
+it('47 Credit Card Order BO Refunding, Partial Refunding [Payments API]', () => {
+      cy.OrderRefundingPartialPaymentsAPI()
+})
+it('48 Credit Card Guest Checkouting [Payments API]', () => {
+      cy.clearCookies()
+      //Payments API item
+      cy.visit('/SHOP2/en/', { headers: {"Accept-Encoding": "gzip, deflate"}})
+      cy.get('[class="h3 product-title"]').eq(0).click()
+      cy.get('.add > .btn').click()
+      cy.get('.cart-content-btn > .btn-primary').click()
+      cy.get('.text-sm-center > .btn').click()
+      // Creating random user all the time
+      cy.get(':nth-child(1) > .custom-radio > input').check()
+      cy.get('#field-firstname').type('AUT',{delay:0})
+      cy.get(':nth-child(3) > .col-md-6 > .form-control').type('AUT',{delay:0})
+      const uuid = () => Cypress._.random(0, 1e6)
+      const id = uuid()
+      const testname = `testemail${id}@testing.com`
+      cy.get(':nth-child(4) > .col-md-6 > .form-control').type(testname, {delay: 0})
+      cy.get(':nth-child(6) > .col-md-6 > .input-group > .form-control').type('123456',{delay:0})
+      cy.get(':nth-child(9) > .col-md-6 > .custom-checkbox > label > input').check()
+      cy.get('#customer-form > .form-footer > .continue').click()
+      cy.reload()
+      cy.get(':nth-child(6) > .col-md-6 > .form-control').type('123456',{delay:0})
+      cy.get(':nth-child(7) > .col-md-6 > .form-control').type('123456',{delay:0}).as('vat number')
+      cy.get(':nth-child(8) > .col-md-6 > .form-control').type('ADDR',{delay:0}).as('address')
+      cy.get(':nth-child(10) > .col-md-6 > .form-control').type('54469',{delay:0}).as('zip')
+      cy.get(':nth-child(11) > .col-md-6 > .form-control').type('CIT',{delay:0}).as('city')
+      cy.get(':nth-child(12) > .col-md-6 > .form-control').select('Lithuania').as('country')
+      cy.get(':nth-child(13) > .col-md-6 > .form-control').type('+370 000',{delay:0}).as('telephone')
+      cy.get('.form-footer > .continue').click()
+      cy.get('#js-delivery > .continue').click()
+      cy.contains('Credit/Debit Card').click({force:true})
+      //Credit card inputing
+      cy.frameLoaded('[data-testid=mollie-container--cardHolder] > iframe')
+      cy.enter('[data-testid=mollie-container--cardHolder] > iframe').then(getBody => {
+      getBody().find('#cardHolder').clear({force: true}).type('TEST TEEESSSTT')
+      })
+      cy.enter('[data-testid=mollie-container--cardNumber] > iframe').then(getBody => {
+      getBody().find('#cardNumber').clear({force: true}).type('5555555555554444')
+      })
+      cy.enter('[data-testid=mollie-container--expiryDate] > iframe').then(getBody => {
+      getBody().find('#expiryDate').clear({force: true}).type('1222')
+      })
+      cy.enter('[data-testid=mollie-container--verificationCode] > iframe').then(getBody => {
+      getBody().find('#verificationCode').clear({force: true}).type('222')
+      })
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+})
+it('49 Credit Card Guest Checkouting with not 3DS secure card [Payments API]', () => {
+      cy.clearCookies()
+      //Payments API item
+      cy.visit('/SHOP2/en/', { headers: {"Accept-Encoding": "gzip, deflate"}})
+      cy.get('[class="h3 product-title"]').eq(0).click()
+      cy.get('.add > .btn').click()
+      cy.get('.cart-content-btn > .btn-primary').click()
+      cy.get('.text-sm-center > .btn').click()
+      // Creating random user all the time
+      cy.get(':nth-child(1) > .custom-radio > input').check()
+      cy.get('#field-firstname').type('AUT',{delay:0})
+      cy.get(':nth-child(3) > .col-md-6 > .form-control').type('AUT',{delay:0})
+      const uuid = () => Cypress._.random(0, 1e6)
+      const id = uuid()
+      const testname = `testemail${id}@testing.com`
+      cy.get(':nth-child(4) > .col-md-6 > .form-control').type(testname, {delay: 0})
+      cy.get(':nth-child(6) > .col-md-6 > .input-group > .form-control').type('123456',{delay:0})
+      cy.get(':nth-child(9) > .col-md-6 > .custom-checkbox > label > input').check()
+      cy.get('#customer-form > .form-footer > .continue').click()
+      cy.reload()
+      cy.get(':nth-child(6) > .col-md-6 > .form-control').type('123456',{delay:0})
+      cy.get(':nth-child(7) > .col-md-6 > .form-control').type('123456',{delay:0}).as('vat number')
+      cy.get(':nth-child(8) > .col-md-6 > .form-control').type('ADDR',{delay:0}).as('address')
+      cy.get(':nth-child(10) > .col-md-6 > .form-control').type('54469',{delay:0}).as('zip')
+      cy.get(':nth-child(11) > .col-md-6 > .form-control').type('CIT',{delay:0}).as('city')
+      cy.get(':nth-child(12) > .col-md-6 > .form-control').select('Lithuania').as('country')
+      cy.get(':nth-child(13) > .col-md-6 > .form-control').type('+370 000',{delay:0}).as('telephone')
+      cy.get('.form-footer > .continue').click()
+      cy.get('#js-delivery > .continue').click()
+      cy.contains('Credit/Debit Card').click({force:true})
+      //Credit card inputing
+      cy.frameLoaded('[data-testid=mollie-container--cardHolder] > iframe')
+      cy.enter('[data-testid=mollie-container--cardHolder] > iframe').then(getBody => {
+      getBody().find('#cardHolder').clear({force: true}).type('TEST TEEESSSTT')
+      })
+      cy.enter('[data-testid=mollie-container--cardNumber] > iframe').then(getBody => {
+      getBody().find('#cardNumber').clear({force: true}).type('4242424242424242')
+      })
+      cy.enter('[data-testid=mollie-container--expiryDate] > iframe').then(getBody => {
+      getBody().find('#expiryDate').clear({force: true}).type('1222')
+      })
+      cy.enter('[data-testid=mollie-container--verificationCode] > iframe').then(getBody => {
+      getBody().find('#verificationCode').clear({force: true}).type('222')
+      })
+      cy.get('.condition-label > .js-terms').click({force:true})
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+})
+it('50 Paypal Checkouting [Payments API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      //
+      cy.contains('Reorder').click()
+      cy.contains('LT').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('PayPal').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('51 Paypal BO Refunding, Partial Refunding [Payments API]', () => {
+      cy.visit('/admin1/index.php?controller=AdminOrders')
+      cy.get(':nth-child(1) > .column-payment').click()
+      //Check partial refunding on Payments API - seems that Paypal has only Partial Refunding without Refund button
+      cy.get('.form-inline > :nth-child(2) > .input-group > .form-control').type('1.51',{delay:0})
+      cy.get(':nth-child(2) > .input-group > .input-group-btn > .btn').click()
+      cy.get('.swal-modal').should('exist')
+      cy.get(':nth-child(2) > .swal-button').click()
+      cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
+});
+it('52 SOFORT Checkouting [Payments API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      //
+      cy.contains('Reorder').click()
+      cy.contains('LT').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('SOFORT').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('53 SOFORT BO Refunding, Partial Refunding [Payments API]', () => {
+      cy.visit('/admin1/index.php?controller=AdminOrders')
+      cy.get(':nth-child(1) > .column-payment').click()
+      cy.get('#mollie_order > :nth-child(1)').should('exist')
+      //Refunding is unavailable - information from Mollie Dashboard - but checking the UI itself
+});
+it('54 Przelewy24 Checkouting [Payments API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      //
+      cy.contains('Reorder').click()
+      cy.contains('LT').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Przelewy24').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('.input-float > input').type('testing@testing.com')
+      cy.get('[class="button form__button"]').click()
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('55 Przelewy24 BO Refunding, Partial Refunding [Payments API]', () => {
+      cy.OrderRefundingPartialPaymentsAPI()
+});
+it('56 Giropay Checkouting [Payments API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      //
+      cy.contains('Reorder').click()
+      cy.contains('LT').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('giropay').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('57 Giropay BO Refunding, Partial Refunding [Payments API]', () => {
+      cy.OrderRefundingPartialPaymentsAPI()
+});
+it('58 EPS Checkouting [Payments API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      //
+      cy.contains('Reorder').click()
+      cy.contains('LT').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('eps').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('59 EPS BO Refunding, Partial Refunding [Payments API]', () => {
+      cy.OrderRefundingPartialPaymentsAPI()
+});
+it('60 KBC/CBC Checkouting [Payments API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      //
+      cy.contains('Reorder').click()
+      cy.contains('LT').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('KBC/CBC').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('.grid-button-kbc-cbc').click()
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('61 KBC/CBC BO Refunding, Partial Refunding [Payments API]', () => {
+      cy.OrderRefundingPartialPaymentsAPI()
+});
+it('62 Belfius Checkouting [Payments API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      //
+      cy.contains('Reorder').click()
+      cy.contains('LT').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Belfius').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('63 Belfius BO Refunding, Partial Refunding [Payments API]', () => {
+      cy.OrderRefundingPartialPaymentsAPI()
+});
+it('64 Bank Transfer Checkouting [Payments API]', () => {
+      cy.visit('/SHOP2/en/index.php?controller=history')
+      cy.get('a').click()
+      //
+      cy.contains('Reorder').click()
+      cy.contains('LT').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Bank transfer').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('65 Bank Transfer BO Refunding, Partial Refunding [Payments API]', () => {
+      cy.OrderRefundingPartialPaymentsAPI()
+});
+it('66 Gift cards Checkouting [Payments API]', () => {
+      cy.visit('/SHOP2/en/index.php?controller=history')
+      cy.get('a').click()
+      //
+      cy.contains('Reorder').click()
+      cy.contains('LT').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Bank transfer').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      //Welcome UI in this Payment method
+      //cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('67 Gift cards BO Refunding, Partial Refunding [Payments API]', () => {
+      cy.OrderRefundingPartialPaymentsAPI()
+});
+})
