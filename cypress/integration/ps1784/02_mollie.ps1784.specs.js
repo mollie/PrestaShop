@@ -246,19 +246,19 @@ it('15 Credit Card Checkouting [Orders API]', () => {
       //Credit card inputing
       cy.frameLoaded('[data-testid=mollie-container--cardHolder] > iframe')
       cy.enter('[data-testid=mollie-container--cardHolder] > iframe').then(getBody => {
-      getBody().find('#cardHolder').clear({force: true}).type('TEST TEEESSSTT')
+      getBody().find('#cardHolder').clear({force: true}).type('TEST TEEESSSTT',{force:true})
       })
       cy.enter('[data-testid=mollie-container--cardNumber] > iframe').then(getBody => {
-      getBody().find('#cardNumber').clear({force: true}).type('5555555555554444')
+      getBody().find('#cardNumber').clear({force: true}).type('5555555555554444',{force:true})
       })
       cy.enter('[data-testid=mollie-container--expiryDate] > iframe').then(getBody => {
-      getBody().find('#expiryDate').clear({force: true}).type('1222')
+      getBody().find('#expiryDate').clear({force: true}).type('1222',{force:true})
       })
       cy.enter('[data-testid=mollie-container--verificationCode] > iframe').then(getBody => {
-      getBody().find('#verificationCode').clear({force: true}).type('222')
+      getBody().find('#verificationCode').clear({force: true}).type('222',{force:true})
       })
       cy.get('.condition-label > .js-terms').click({force:true})
-      cy.get('#mollie-save-card').check()
+      cy.get('#mollie-save-card').check({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
       cy.setCookie(
@@ -284,7 +284,7 @@ it('16 Check if customerId is passed during the 2nd payment using Single Click P
   cy.get('.clearfix > .btn').click()
   cy.get('#js-delivery > .continue').click()
   //Payment method choosing
-  cy.contains('Credit card').click({force:true})
+  cy.contains('Credit/Debit Card').click({force:true})
   cy.get('.condition-label > .js-terms').click({force:true})
   prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
@@ -765,20 +765,21 @@ it('46 Credit Card Checkouting [Payments API]', () => {
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
-      cy.contains('Credit card').click({force:true})
+      cy.contains('Credit/Debit Card').click({force:true})
+      cy.get('#mollie-use-saved-card').click({force:true})
       //Credit card inputing
       cy.frameLoaded('[data-testid=mollie-container--cardHolder] > iframe')
       cy.enter('[data-testid=mollie-container--cardHolder] > iframe').then(getBody => {
-      getBody().find('#cardHolder').clear({force: true}).type('TEST TEEESSSTT')
+      getBody().find('#cardHolder').clear({force: true}).type('TEST TEEESSSTT',{force:true})
       })
       cy.enter('[data-testid=mollie-container--cardNumber] > iframe').then(getBody => {
-      getBody().find('#cardNumber').clear({force: true}).type('5555555555554444')
+      getBody().find('#cardNumber').clear({force: true}).type('5555555555554444',{force:true})
       })
       cy.enter('[data-testid=mollie-container--expiryDate] > iframe').then(getBody => {
-      getBody().find('#expiryDate').clear({force: true}).type('1222')
+      getBody().find('#expiryDate').clear({force: true}).type('1222',{force:true})
       })
       cy.enter('[data-testid=mollie-container--verificationCode] > iframe').then(getBody => {
-      getBody().find('#verificationCode').clear({force: true}).type('222')
+      getBody().find('#verificationCode').clear({force: true}).type('222',{force:true})
       })
       cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
@@ -830,7 +831,7 @@ it('48 Credit Card Guest Checkouting [Payments API]', () => {
       cy.get(':nth-child(13) > .col-md-6 > .form-control').type('+370 000',{delay:0}).as('telephone')
       cy.get('.form-footer > .continue').click()
       cy.get('#js-delivery > .continue').click()
-      cy.contains('Credit card').click({force:true})
+      cy.contains('Credit/Debit Card').click({force:true})
       //Credit card inputing
       cy.frameLoaded('[data-testid=mollie-container--cardHolder] > iframe')
       cy.enter('[data-testid=mollie-container--cardHolder] > iframe').then(getBody => {
@@ -892,7 +893,7 @@ it('49 Credit Card Guest Checkouting with not 3DS secure card [Payments API]', (
       cy.get(':nth-child(13) > .col-md-6 > .form-control').type('+370 000',{delay:0}).as('telephone')
       cy.get('.form-footer > .continue').click()
       cy.get('#js-delivery > .continue').click()
-      cy.contains('Credit card').click({force:true})
+      cy.contains('Credit/Debit Card').click({force:true})
       //Credit card inputing
       cy.frameLoaded('[data-testid=mollie-container--cardHolder] > iframe')
       cy.enter('[data-testid=mollie-container--cardHolder] > iframe').then(getBody => {
