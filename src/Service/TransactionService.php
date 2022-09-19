@@ -159,6 +159,7 @@ class TransactionService
                 } else {
                     if (!$orderId && $isPaymentFinished) {
                         $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id);
+
                         if (!$orderId) {
                             throw new TransactionException('Order is already created', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
                         }
