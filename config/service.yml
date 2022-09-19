@@ -23,7 +23,6 @@ services:
       - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation'
       - '@mollie.country'
       - '@mollie.shop'
-      - '@Mollie\Provider\StreetAndNumberProvider'
 
   Mollie\Service\ApiService:
     class: Mollie\Service\ApiService

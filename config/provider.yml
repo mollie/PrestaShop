@@ -31,9 +31,6 @@ services:
   Mollie\Provider\EnvironmentVersionProvider:
     class: Mollie\Provider\EnvironmentVersionProvider
 
-  Mollie\Provider\StreetAndNumberProvider:
-    class: Mollie\Provider\StreetAndNumberProvider
-
   Mollie\Provider\ProfileIdProviderInterface: '@Mollie\Provider\ProfileIdProvider'
 
   Mollie\Provider\ProfileIdProvider:
