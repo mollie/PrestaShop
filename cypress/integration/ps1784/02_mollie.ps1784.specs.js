@@ -856,6 +856,7 @@ it('50 Credit Card Guest Checkouting [Payments API]', () => {
       cy.get(':nth-child(6) > .col-md-6 > .form-control').type('123456',{delay:0})
       cy.get(':nth-child(7) > .col-md-6 > .form-control').type('123456',{delay:0}).as('vat number')
       cy.get(':nth-child(8) > .col-md-6 > .form-control').type('ADDR',{delay:0}).as('address')
+      cy.get('#field-address2').type('ADDR2',{delay:0}).as('address2')
       cy.get(':nth-child(10) > .col-md-6 > .form-control').type('54469',{delay:0}).as('zip')
       cy.get(':nth-child(11) > .col-md-6 > .form-control').type('CIT',{delay:0}).as('city')
       cy.get(':nth-child(12) > .col-md-6 > .form-control').select('Lithuania').as('country')
