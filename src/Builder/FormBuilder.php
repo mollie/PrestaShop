@@ -20,7 +20,6 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
 use Mollie\Provider\CustomLogoProviderInterface;
-use Mollie\Repository\CountryRepository;
 use Mollie\Service\ApiService;
 use Mollie\Service\ConfigFieldService;
 use Mollie\Service\CountryService;
@@ -61,11 +60,6 @@ class FormBuilder
     private $link;
 
     /**
-     * @var CountryRepository
-     */
-    private $countryRepository;
-
-    /**
      * @var ConfigFieldService
      */
     private $configFieldService;
@@ -84,7 +78,6 @@ class FormBuilder
         Mollie $module,
         ApiService $apiService,
         CountryService $countryService,
-        CountryRepository $countryRepository,
         ConfigFieldService $configFieldService,
         MolCarrierInformationService $carrierInformationService,
         $lang,
@@ -98,7 +91,6 @@ class FormBuilder
         $this->lang = $lang;
         $this->smarty = $smarty;
         $this->link = $link;
-        $this->countryRepository = $countryRepository;
         $this->configFieldService = $configFieldService;
         $this->carrierInformationService = $carrierInformationService;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
@@ -205,19 +197,6 @@ class FormBuilder
                 'form_group_class' => 'js-live-api-group',
             ];
             $input[] = [
-                'type' => 'mollie-password',
-                'label' => $this->module->l('Profile ID', self::FILE_NAME),
-                'tab' => $generalSettings,
-                'desc' => TagsUtility::ppTags(
-                    $this->module->l('You can find your Profile ID in your [1]Mollie Profile[/1]', self::FILE_NAME),
-                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
-                ),
-                'name' => Config::MOLLIE_PROFILE_ID,
-                'required' => true,
-                'class' => 'fixed-width-xxl',
-                'form_group_class' => 'js-api-profile-id',
-            ];
-            $input[] = [
                 'type' => 'mollie-button',
                 'label' => '',
                 'tab' => $generalSettings,
@@ -303,6 +282,12 @@ class FormBuilder
         if (!$isApiKeyProvided) {
             return $input;
         }
+        $input[] = [
+            'type' => 'mollie-save-warning',
+            'name' => 'warning',
+            'tab' => $generalSettings,
+        ];
+
         $input[] = [
             'type' => 'switch',
             'label' => $this->module->l('Use Mollie Components for CreditCards', self::FILE_NAME),

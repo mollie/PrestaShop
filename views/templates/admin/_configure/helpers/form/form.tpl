@@ -41,14 +41,6 @@
             </div>
         </div>
     {elseif $input.type === 'mollie-methods'}
-        <script type="text/javascript">
-            (function () {
-                window.MollieModule = window.MollieModule || {ldelim}{rdelim};
-                window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
-                window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8'}';
-                window.MollieModule.debug = {if $input.displayErrors}true{else}false{/if};
-            }());
-        </script>
         <ul id="js-payment-methods-sortable" class="ui-sortable payment-methods-sortable"
             data-tab-id="general_settings">
             {foreach $input.paymentMethods as $paymentMethod}
@@ -793,6 +785,14 @@
             </div>
             <div>
                 <p class="help-block">{if isset($input.help)}{$input.help|escape:'html':'UTF-8'}{/if}</p>
+            </div>
+        </div>
+    {elseif $input.type === 'mollie-save-warning'}
+        <div class="bootstrap">
+            <div class="alert alert-warning js-mollie-save-warning hidden">
+                <ul class="list-unstyled">
+                    {l s="Scroll down and save the changes you made to your environment or API keys before configuring your payment methods." mod='mollie'}
+                </ul>
             </div>
         </div>
     {else}

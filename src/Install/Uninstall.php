@@ -73,7 +73,6 @@ class Uninstall implements UninstallerInterface
     {
         $configurations = [
             Config::MOLLIE_API_KEY,
-            Config::MOLLIE_PROFILE_ID,
             Config::MOLLIE_PAYMENTSCREEN_LOCALE,
             Config::MOLLIE_SEND_ORDER_CONFIRMATION,
             Config::MOLLIE_IFRAME,

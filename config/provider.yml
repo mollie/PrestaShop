@@ -33,3 +33,8 @@ services:
 
   Mollie\Provider\StreetAndNumberProvider:
     class: Mollie\Provider\StreetAndNumberProvider
+
+  Mollie\Provider\ProfileIdProviderInterface: '@Mollie\Provider\ProfileIdProvider'
+
+  Mollie\Provider\ProfileIdProvider:
+    class: Mollie\Provider\ProfileIdProvider
