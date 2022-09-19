@@ -248,7 +248,6 @@ Cypress.Commands.add("ConfPaymentsAPI", () => {
 })
 Cypress.Commands.add("ConfOrdersAPI1784", () => {
       cy.get('#MOLLIE_IFRAME_on').click({force:true})
-      cy.get('#MOLLIE_PROFILE_ID').clear({force: true}).type((Cypress.env('MOLLIE_TEST_PROFILE_ID')),{delay: 0, log: false})
       //giropay
       cy.get('[name="MOLLIE_METHOD_ENABLED_giropay"]').select('Yes', {force: true})
       cy.get('[name="MOLLIE_METHOD_API_giropay"]').select('Orders API', {force: true})
