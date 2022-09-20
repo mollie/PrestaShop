@@ -9,7 +9,7 @@
 + Changed how secure key is generated to avoid errors.
 + Fixed issue where payment method save with multishop would break another shop payment method settings.
 + Fixed translations that were not working because of php.
-+ Improved address by adding address2 part to mollie API if it is added to address.
++ Added street additional information when creating order.
 + Components now use language locale and not language code when looking for iso code.
 + No longer need to add profile id, now we take it from API before each call.
 + Now all inputs are disabled if API key or environment is changed.
