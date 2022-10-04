@@ -145,7 +145,7 @@ class TransactionService
                 if (!$apiPayment->metadata->cart_id) {
                     throw new TransactionException('Cart id is missing in transaction metadata', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY);
                 }
-                if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
+                if ($apiPayment->hasRefunds()) {
                     if ($isGeneratedOrderNumber) {
                         $this->handlePaymentDescription($apiPayment);
                     }
@@ -153,9 +153,11 @@ class TransactionService
                         && NumberUtility::isLowerOrEqualThan($apiPayment->amount->value, $apiPayment->amountRefunded->value)
                     ) {
                         $this->orderStatusService->setOrderStatus($orderId, RefundStatus::STATUS_REFUNDED);
-                    } else {
+                    } elseif ($apiPayment->amountRefunded->value > 0) {
                         $this->orderStatusService->setOrderStatus($orderId, Config::PARTIAL_REFUND_CODE);
                     }
+                } elseif ($this->paymentHasChargedBacks($apiPayment)) {
+                    $this->orderStatusService->setOrderStatus($orderId, Config::MOLLIE_CHARGEBACK);
                 } else {
                     if (!$orderId && $isPaymentFinished) {
                         $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id);
@@ -166,7 +168,7 @@ class TransactionService
                         $this->updatePaymentDescription($apiPayment, $orderId);
                     } elseif (strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                         $this->handlePaymentDescription($apiPayment);
-                    } else {
+                    } elseif ($apiPayment->amountRefunded->value > 0) {
                         $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
                     }
                     $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
@@ -209,6 +211,8 @@ class TransactionService
                             $this->orderStatusService->setOrderStatus($orderId, Config::PARTIAL_REFUND_CODE);
                         }
                     }
+                } elseif ($this->orderHasChargedBacks($apiPayment)) {
+                    $this->orderStatusService->setOrderStatus($orderId, Config::MOLLIE_CHARGEBACK);
                 } elseif (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                     if ($isPaymentFinished) {
                         $this->handleOrderDescription($apiPayment);
@@ -462,5 +466,23 @@ class TransactionService
         } else {
             throw new TransactionException('Transaction is no longer used', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
         }
+    }
+
+    private function orderHasChargedBacks(MollieOrderAlias $apiOrder): bool
+    {
+        $payments = $apiOrder->payments();
+        /** @var Payment $payment */
+        foreach ($payments as $payment) {
+            if ($payment->hasChargebacks()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function paymentHasChargedBacks(Payment $apiPayment): bool
+    {
+        return $apiPayment->hasChargebacks();
     }
 }

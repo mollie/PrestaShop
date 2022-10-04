@@ -13,6 +13,8 @@
 + Components now use language locale and not language code when looking for iso code.
 + No longer need to add profile id, now we take it from API before each call.
 + Now all inputs are disabled if API key or environment is changed.
++ Improved refund logic to only change status when refund amount is bigger then 0.
++ Added new chargeback status.
 
 ## Changes in release 5.2.1 ##
 + Fixed issue where orders would have duplicated lines in list if there are more than 1 transaction.
