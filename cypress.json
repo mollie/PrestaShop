@@ -7,5 +7,6 @@
   "retries": 1,
   "experimentalSessionAndOrigin": true,
   "videoUploadOnPasses": false,
+  "videoCompression": 15,
   "ignoreTestFiles": ["index.php"]
  }

@@ -71,7 +71,43 @@ it('04 Enabling All payments in Module BO [Orders API]', () => {
       cy.get('[type="submit"]').first().click()
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it('05 Bancontact Checkouting [Orders API]', () => {
+it('05 Vouchers Checkouting [Orders API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.contains('LT').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Voucher').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('.grid-button-voucher-monizze-meal').click()
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('.grid-button-paypal').click()
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+})
+it('06 Vouchers Order BO Refunding, Shipping (Paid part only) [Orders API]', () => {
+      cy.OrderRefundingShippingOrdersAPI()
+      cy.get('[class="card-body"]').find('[class="alert alert-warning"]').should('exist') //additional checking if the warning alert for vouchers exist
+})
+it('07 Bancontact Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -99,10 +135,10 @@ it('05 Bancontact Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it('06 Bancontact Order BO Shiping, Refunding [Orders API]', () => {
+it('08 Bancontact Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it('07 iDEAL Checkouting [Orders API]', () => {
+it('09 iDEAL Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -130,10 +166,10 @@ it('07 iDEAL Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it('08 iDEAL Order BO Shiping, Refunding [Orders API]', () => {
+it('10 iDEAL Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it('09 Klarna Slice It Checkouting [Orders API]', () => {
+it('11 Klarna Slice It Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -161,10 +197,10 @@ it('09 Klarna Slice It Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it('10 Klarna Slice It Order BO Shiping, Refunding [Orders API]', () => {
+it('12 Klarna Slice It Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderShippingRefundingOrdersAPI()
 })
-it('11 Klarna Pay Later Checkouting [Orders API]', () => {
+it('13 Klarna Pay Later Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       //
@@ -193,10 +229,10 @@ it('11 Klarna Pay Later Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it('12 Klarna Pay Later Order BO Shiping, Refunding [Orders API]', () => {
+it('14 Klarna Pay Later Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderShippingRefundingOrdersAPI()
 })
-it('13 Klarna Pay Now Checkouting [Orders API]', () => {
+it('15 Klarna Pay Now Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       //
@@ -225,10 +261,10 @@ it('13 Klarna Pay Now Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it('14 Klarna Pay Now Order BO Shiping, Refunding [Orders API]', () => {
+it('16 Klarna Pay Now Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderShippingRefundingOrdersAPI()
 })
-it('15 Credit Card Checkouting [Orders API]', () => {
+it('17 Credit Card Checkouting [Orders API]', () => {
       //Enabling the Single-Click for now
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule > .link').click()
@@ -276,7 +312,7 @@ it('15 Credit Card Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it('16 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
+it('18 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
   cy.visit('/SHOP2/en/index.php?controller=history')
   cy.get('a').click()
   cy.contains('Reorder').click()
@@ -299,10 +335,6 @@ it('16 Check if customerId is passed during the 2nd payment using Single Click P
         }
       );    // reload current page to activate cookie
       cy.reload();
-      //temporary disabling the flow, might be bug
-      // cy.get('[value="paid"]').click()
-      // cy.get('[class="button form__button"]').click()
-      // cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
       cy.visit('/admin1/')
       //Disabling the single-click - no need again
       cy.get('#subtab-AdminMollieModule > .link').click()
@@ -310,10 +342,10 @@ it('16 Check if customerId is passed during the 2nd payment using Single Click P
       cy.get('[type="submit"]').first().click()
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it('17 Credit Card Order BO Shiping, Refunding [Orders API]', () => {
+it('19 Credit Card Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it('18 IN3 Checkouting [Orders API]', () => {
+it('20 IN3 Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -342,10 +374,10 @@ it('18 IN3 Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it('19 IN3 Order BO Shiping, Refunding [Orders API]', () => {
+it('21 IN3 Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it('20 IN3 should not be shown under 5000 EUR [Orders API]', () => {
+it('22 IN3 should not be shown under 5000 EUR [Orders API]', () => {
       cy.visit('/SHOP2/de/')
       cy.contains('Hummingbird printed sweater').click()
       cy.get('[class="btn btn-primary add-to-cart"]').click()
@@ -361,7 +393,7 @@ it('20 IN3 should not be shown under 5000 EUR [Orders API]', () => {
       cy.get('.blockcart').click()
       cy.get('.remove-from-cart > .material-icons').click()
 })
-it('21 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
+it('23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule > .link').click()
       cy.get('[href="#advanced_settings"]').click()
@@ -385,7 +417,7 @@ it('21 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.get('[type="submit"]').first().click()
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it('22 Paypal Checkouting [Orders API]', () => {
+it('24 Paypal Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -413,10 +445,10 @@ it('22 Paypal Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('23 Paypal Order Shipping, Refunding [Orders API]', () => {
+it('25 Paypal Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it('24 SOFORT Checkouting [Orders API]', () => {
+it('26 SOFORT Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -444,7 +476,7 @@ it('24 SOFORT Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('25 SOFORT Order Shipping, Refunding [Orders API]', () => {
+it('27 SOFORT Order Shipping, Refunding [Orders API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
           //Shipping button in React
@@ -459,7 +491,7 @@ it('25 SOFORT Order Shipping, Refunding [Orders API]', () => {
           cy.get('[class="alert alert-success"]').should('be.visible')
           //Refunding not possible because "We haven't received the payment on our bank accounts yet" message from Mollie Dashboard
 })
-it('26 Przelewy24 Checkouting [Orders API]', () => {
+it('28 Przelewy24 Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -487,10 +519,10 @@ it('26 Przelewy24 Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('27 Przelewy24 Order Shipping, Refunding [Orders API]', () => {
+it('29 Przelewy24 Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it('28 Giropay Checkouting [Orders API]', () => {
+it('30 Giropay Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -518,10 +550,10 @@ it('28 Giropay Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('29 Giropay Order Shipping, Refunding [Orders API]', () => {
+it('31 Giropay Order Shipping, Refunding [Orders API]', () => {
   cy.OrderRefundingShippingOrdersAPI()
 })
-it('30 EPS Checkouting [Orders API]', () => {
+it('32 EPS Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -549,10 +581,10 @@ it('30 EPS Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('31 EPS Order Shipping, Refunding [Orders API]', () => {
+it('33 EPS Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it('32 KBC/CBC Checkouting [Orders API]', () => {
+it('34 KBC/CBC Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -581,10 +613,10 @@ it('32 KBC/CBC Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('33 KBC/CBC Order Shipping, Refunding [Orders API]', () => {
+it('35 KBC/CBC Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it('34 Belfius Checkouting [Orders API]', () => {
+it('36 Belfius Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -612,10 +644,10 @@ it('34 Belfius Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('35 Belfius Order Shipping, Refunding [Orders API]', () => {
+it('37 Belfius Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it('36 Bank Transfer Checkouting [Orders API]', () => {
+it('38 Bank Transfer Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -644,10 +676,10 @@ it('36 Bank Transfer Checkouting [Orders API]', () => {
       //TODO - Welcome page?
       //cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('37 Bank Transfer Order Shipping, Refunding [Orders API]', () => {
+it('39 Bank Transfer Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it('38 Gift Card Checkouting [Orders API]', () => {
+it('40 Gift Card Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -679,22 +711,22 @@ it('38 Gift Card Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('39 Gift Card Order Shipping, Refunding [Orders API]', () => {
+it('41 Gift Card Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it('40 [SWITCH TO PAYMENTS API] Enabling All payments in Module BO [Payments API]', () => {
+it('42 [SWITCH TO PAYMENTS API] Enabling All payments in Module BO [Payments API]', () => {
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule > .link').click()
       cy.ConfPaymentsAPI1784()
       cy.get('[type="submit"]').first().click()
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it('41 Check if Bancontact QR payment dropdown exists [Payments API]', () => {
+it('43 Check if Bancontact QR payment dropdown exists [Payments API]', () => {
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule > .link').click()
       cy.get('[name="MOLLIE_BANCONTACT_QR_CODE_ENABLED"]').should('exist')
 })
-it('42 Bancontact Checkouting [Payments API]', () => {
+it('44 Bancontact Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       //
@@ -723,10 +755,10 @@ it('42 Bancontact Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it('43 Bancontact Order BO Refunding, Partial Refunding [Payments API]', () => {
+it('45 Bancontact Order BO Refunding, Partial Refunding [Payments API]', () => {
       cy.OrderRefundingPartialPaymentsAPI()
 })
-it('44 iDEAL Checkouting [Payments API]', () => {
+it('46 iDEAL Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -754,10 +786,10 @@ it('44 iDEAL Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it('45 iDEAL Order BO Refunding, Partial Refunding [Payments API]', () => {
+it('47 iDEAL Order BO Refunding, Partial Refunding [Payments API]', () => {
       cy.OrderRefundingPartialPaymentsAPI()
 })
-it('46 Credit Card Checkouting [Payments API]', () => {
+it('48 Credit Card Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -798,10 +830,10 @@ it('46 Credit Card Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it('47 Credit Card Order BO Refunding, Partial Refunding [Payments API]', () => {
+it('49 Credit Card Order BO Refunding, Partial Refunding [Payments API]', () => {
       cy.OrderRefundingPartialPaymentsAPI()
 })
-it('48 Credit Card Guest Checkouting [Payments API]', () => {
+it('50 Credit Card Guest Checkouting [Payments API]', () => {
       cy.clearCookies()
       //Payments API item
       cy.visit('/SHOP2/en/', { headers: {"Accept-Encoding": "gzip, deflate"}})
@@ -824,6 +856,7 @@ it('48 Credit Card Guest Checkouting [Payments API]', () => {
       cy.get(':nth-child(6) > .col-md-6 > .form-control').type('123456',{delay:0})
       cy.get(':nth-child(7) > .col-md-6 > .form-control').type('123456',{delay:0}).as('vat number')
       cy.get(':nth-child(8) > .col-md-6 > .form-control').type('ADDR',{delay:0}).as('address')
+      cy.get('#field-address2').type('ADDR2',{delay:0}).as('address2')
       cy.get(':nth-child(10) > .col-md-6 > .form-control').type('54469',{delay:0}).as('zip')
       cy.get(':nth-child(11) > .col-md-6 > .form-control').type('CIT',{delay:0}).as('city')
       cy.get(':nth-child(12) > .col-md-6 > .form-control').select('Lithuania').as('country')
@@ -863,7 +896,7 @@ it('48 Credit Card Guest Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it('49 Credit Card Guest Checkouting with not 3DS secure card [Payments API]', () => {
+it('51 Credit Card Guest Checkouting with not 3DS secure card [Payments API]', () => {
       cy.clearCookies()
       //Payments API item
       cy.visit('/SHOP2/en/', { headers: {"Accept-Encoding": "gzip, deflate"}})
@@ -911,7 +944,7 @@ it('49 Credit Card Guest Checkouting with not 3DS secure card [Payments API]', (
       cy.get('.ps-shown-by-js > .btn').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it('50 Paypal Checkouting [Payments API]', () => {
+it('52 Paypal Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       //
@@ -940,7 +973,7 @@ it('50 Paypal Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('51 Paypal BO Refunding, Partial Refunding [Payments API]', () => {
+it('53 Paypal BO Refunding, Partial Refunding [Payments API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
       //Check partial refunding on Payments API - seems that Paypal has only Partial Refunding without Refund button
@@ -950,7 +983,7 @@ it('51 Paypal BO Refunding, Partial Refunding [Payments API]', () => {
       cy.get(':nth-child(2) > .swal-button').click()
       cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
 });
-it('52 SOFORT Checkouting [Payments API]', () => {
+it('54 SOFORT Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       //
@@ -979,13 +1012,13 @@ it('52 SOFORT Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('53 SOFORT BO Refunding, Partial Refunding [Payments API]', () => {
+it('55 SOFORT BO Refunding, Partial Refunding [Payments API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
       cy.get('#mollie_order > :nth-child(1)').should('exist')
       //Refunding is unavailable - information from Mollie Dashboard - but checking the UI itself
 });
-it('54 Przelewy24 Checkouting [Payments API]', () => {
+it('56 Przelewy24 Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       //
@@ -1016,10 +1049,10 @@ it('54 Przelewy24 Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('55 Przelewy24 BO Refunding, Partial Refunding [Payments API]', () => {
+it('57 Przelewy24 BO Refunding, Partial Refunding [Payments API]', () => {
       cy.OrderRefundingPartialPaymentsAPI()
 });
-it('56 Giropay Checkouting [Payments API]', () => {
+it('58 Giropay Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       //
@@ -1048,10 +1081,10 @@ it('56 Giropay Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('57 Giropay BO Refunding, Partial Refunding [Payments API]', () => {
+it('59 Giropay BO Refunding, Partial Refunding [Payments API]', () => {
       cy.OrderRefundingPartialPaymentsAPI()
 });
-it('58 EPS Checkouting [Payments API]', () => {
+it('60 EPS Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       //
@@ -1080,10 +1113,10 @@ it('58 EPS Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('59 EPS BO Refunding, Partial Refunding [Payments API]', () => {
+it('61 EPS BO Refunding, Partial Refunding [Payments API]', () => {
       cy.OrderRefundingPartialPaymentsAPI()
 });
-it('60 KBC/CBC Checkouting [Payments API]', () => {
+it('62 KBC/CBC Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       //
@@ -1113,10 +1146,10 @@ it('60 KBC/CBC Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('61 KBC/CBC BO Refunding, Partial Refunding [Payments API]', () => {
+it('63 KBC/CBC BO Refunding, Partial Refunding [Payments API]', () => {
       cy.OrderRefundingPartialPaymentsAPI()
 });
-it('62 Belfius Checkouting [Payments API]', () => {
+it('64 Belfius Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       //
@@ -1145,10 +1178,10 @@ it('62 Belfius Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('63 Belfius BO Refunding, Partial Refunding [Payments API]', () => {
+it('65 Belfius BO Refunding, Partial Refunding [Payments API]', () => {
       cy.OrderRefundingPartialPaymentsAPI()
 });
-it('64 Bank Transfer Checkouting [Payments API]', () => {
+it('66 Bank Transfer Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/en/index.php?controller=history')
       cy.get('a').click()
       //
@@ -1177,10 +1210,10 @@ it('64 Bank Transfer Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('65 Bank Transfer BO Refunding, Partial Refunding [Payments API]', () => {
+it('67 Bank Transfer BO Refunding, Partial Refunding [Payments API]', () => {
       cy.OrderRefundingPartialPaymentsAPI()
 });
-it('66 Gift cards Checkouting [Payments API]', () => {
+it('68 Gift cards Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/en/index.php?controller=history')
       cy.get('a').click()
       //
@@ -1210,7 +1243,7 @@ it('66 Gift cards Checkouting [Payments API]', () => {
       //Welcome UI in this Payment method
       //cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('67 Gift cards BO Refunding, Partial Refunding [Payments API]', () => {
+it('69 Gift cards BO Refunding, Partial Refunding [Payments API]', () => {
       cy.OrderRefundingPartialPaymentsAPI()
 });
 })
