@@ -16,21 +16,21 @@
                 <div>
                     <p>
                         <i class="icon-remove text-danger"></i>
-                        {l s='Test API-key: Failed! Key must start with test_.' mod='mollie'}
+                        {l s='Test API key: Failed! Key must start with test_.' mod='mollie'}
                     </p>
                 </div>
             {else}
                 <div>
                     <p>
                         <i class="icon-check text-success"></i>
-                        {l s='Test API-key: Success!' mod='mollie'}
+                        {l s='Test API key: Successful!' mod='mollie'}
                     </p>
                 </div>
                 <div class="clearfix"></div>
                 <div>
                     <p>
                         <i class="icon-gear text-success"></i>
-                        <strong>{l s='Enabled Methods: ' mod='mollie'}</strong>
+                        <strong>{l s='Enabled Methods:' mod='mollie'}</strong>
                         {', '|implode:$testKeyInfo.methods}
 
                     </p>
@@ -40,7 +40,7 @@
             <div>
                 <p>
                     <i class="icon-remove text-danger"></i>
-                    {l s='Test API-key: Failed! Key does not exist.' mod='mollie'}
+                    {l s='Test API key: Failed! Key does not exist.' mod='mollie'}
                 </p>
             </div>
         {/if}
@@ -57,21 +57,21 @@
                 <div>
                     <p>
                         <i class="icon-remove text-danger"></i>
-                        {l s='Live API-key: Failed! Key must start with live_.' mod='mollie'}
+                        {l s='Live API key: Failed! Key must start with live_.' mod='mollie'}
                     </p>
                 </div>
             {else}
                 <div>
                     <p>
                         <i class="icon-check text-success"></i>
-                        {l s='Live API-key: Success!' mod='mollie'}
+                        {l s='Live API key: Successful!' mod='mollie'}
                     </p>
                 </div>
                 <div class="clearfix"></div>
                 <div>
                     <p>
                         <i class="icon-gear text-success"></i>
-                        <strong>{l s='Enabled Methods: ' mod='mollie'}</strong>
+                        <strong>{l s='Enabled Methods:' mod='mollie'}</strong>
                         {', '|implode:$liveKeyInfo.methods}
                     </p>
                 </div>
@@ -80,7 +80,7 @@
             <div>
                 <p>
                     <i class="icon-remove text-danger"></i>
-                    {l s='Live API-key: Failed! Key does not exist.' mod='mollie'}
+                    {l s='Live API key: Failed! Key does not exist.' mod='mollie'}
                 </p>
             </div>
         {/if}

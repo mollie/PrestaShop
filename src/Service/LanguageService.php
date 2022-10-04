@@ -50,7 +50,6 @@ class LanguageService
             'Click here to continue' => $this->module->l('Click here to continue', self::FILE_NAME),
             'This payment method is only available for Euros.' => $this->module->l('This payment method is only available for Euros.', self::FILE_NAME),
             'There was an error while processing your request: ' => $this->module->l('There was an error while processing your request: ', self::FILE_NAME),
-            'The order with this id does not exist.' => $this->module->l('The order with this id does not exist.', self::FILE_NAME),
             'We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.' => $this->module->l('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.', self::FILE_NAME),
             'Unfortunately your payment was expired.' => $this->module->l('Unfortunately your payment was expired.', self::FILE_NAME),
             'Thank you. Your payment has been received.' => $this->module->l('Thank you. Your payment has been received.', self::FILE_NAME),
@@ -90,7 +89,7 @@ class LanguageService
             'Slice it.' => $this->module->l('Slice it.', self::FILE_NAME),
             'MyBank' => $this->module->l('MyBank', self::FILE_NAME),
             'Completed' => $this->module->l('Completed', self::FILE_NAME),
-            'Payment Fee' => $this->module->l('Payment Fee', self::FILE_NAME),
+            'Payment fee' => $this->module->l('Payment fee', self::FILE_NAME),
             'Shipping' => $this->module->l('Shipping', self::FILE_NAME),
             'Gift wrapping' => $this->module->l('Gift wrapping', self::FILE_NAME),
         ];

@@ -7,4 +7,4 @@
 * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
 *}
 
-{l s='Please select order status for the "Status for Awaiting payments" field in the "Advanced settings" tab' mod='mollie'}.
+{l s='Select an order status for \"Status for Awaiting payments\" in the \"Advanced settings\" tab' mod='mollie'}.

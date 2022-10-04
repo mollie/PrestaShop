@@ -73,7 +73,7 @@
     <hr>
     <table>
         <tr>
-            <td>{l s='Payment Fee' mod='mollie'}</td>
+            <td>{l s='Payment fee' mod='mollie'}</td>
             <td>{$payment_fee|escape:'html':'UTF-8'}</td>
         </tr>
         {foreach $subtotals as $subtotal}
