@@ -87,6 +87,7 @@ class Uninstall implements UninstallerInterface
             Config::MOLLIE_MAIL_WHEN_CANCELED,
             Config::MOLLIE_MAIL_WHEN_EXPIRED,
             Config::MOLLIE_MAIL_WHEN_REFUNDED,
+            Config::MOLLIE_MAIL_WHEN_CHARGEBACK,
             Config::MOLLIE_ACCOUNT_SWITCH,
             Config::MOLLIE_METHOD_COUNTRIES,
             Config::MOLLIE_METHOD_COUNTRIES_DISPLAY,

@@ -194,22 +194,16 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 'success' => false,
             ]));
         }
-        $cart = new Cart($dbPayment['cart_id']);
-        if (!Validate::isLoadedObject($cart)) {
+        if (!isset($dbPayment['cart_id']) || !Validate::isLoadedObject($cart = new Cart($dbPayment['cart_id']))) {
             exit(json_encode([
                 'success' => false,
             ]));
         }
+
         /* @phpstan-ignore-next-line */
         $orderId = (int) Order::getOrderByCartId((int) $cart->id);
         /** @phpstan-ignore-line */
         $order = new Order((int) $orderId);
-
-        if (!Validate::isLoadedObject($cart)) {
-            exit(json_encode([
-                'success' => false,
-            ]));
-        }
 
         if ((int) $cart->id_customer !== (int) $this->context->customer->id) {
             exit(json_encode([

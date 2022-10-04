@@ -44,6 +44,7 @@ class LanguageService
             PaymentStatus::STATUS_OPEN => $this->module->l('Open', self::FILE_NAME),
             Config::MOLLIE_AWAITING_PAYMENT => $this->module->l('Awaiting', self::FILE_NAME),
             Mollie\Config\Config::PARTIAL_REFUND_CODE => $this->module->l('Partially refunded', self::FILE_NAME),
+            Mollie\Config\Config::MOLLIE_CHARGEBACK => $this->module->l('Chargeback', self::FILE_NAME),
             'created' => $this->module->l('Created', self::FILE_NAME),
             'This payment method is not available.' => $this->module->l('This payment method is not available.', self::FILE_NAME),
             'Click here to continue' => $this->module->l('Click here to continue', self::FILE_NAME),

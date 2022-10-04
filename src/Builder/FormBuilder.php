@@ -515,6 +515,7 @@ class FormBuilder
             RefundStatus::STATUS_REFUNDED,
             Config::PARTIAL_REFUND_CODE,
             OrderStatus::STATUS_SHIPPING,
+            Config::MOLLIE_CHARGEBACK,
         ];
 
         $statuses = [];

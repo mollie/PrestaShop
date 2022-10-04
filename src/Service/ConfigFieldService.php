@@ -72,6 +72,7 @@ class ConfigFieldService
             Config::MOLLIE_STATUS_EXPIRED => Configuration::get(Config::MOLLIE_STATUS_EXPIRED),
             Config::MOLLIE_STATUS_PARTIAL_REFUND => Configuration::get(Config::MOLLIE_STATUS_PARTIAL_REFUND),
             Config::MOLLIE_STATUS_REFUNDED => Configuration::get(Config::MOLLIE_STATUS_REFUNDED),
+            Config::MOLLIE_STATUS_CHARGEBACK => Configuration::get(Config::MOLLIE_STATUS_CHARGEBACK),
             Config::MOLLIE_MAIL_WHEN_OPEN => Configuration::get(Config::MOLLIE_MAIL_WHEN_OPEN),
             Config::MOLLIE_MAIL_WHEN_AWAITING => Configuration::get(Config::MOLLIE_MAIL_WHEN_AWAITING),
             Config::MOLLIE_MAIL_WHEN_PAID => Configuration::get(Config::MOLLIE_MAIL_WHEN_PAID),
@@ -79,6 +80,7 @@ class ConfigFieldService
             Config::MOLLIE_MAIL_WHEN_CANCELED => Configuration::get(Config::MOLLIE_MAIL_WHEN_CANCELED),
             Config::MOLLIE_MAIL_WHEN_EXPIRED => Configuration::get(Config::MOLLIE_MAIL_WHEN_EXPIRED),
             Config::MOLLIE_MAIL_WHEN_REFUNDED => Configuration::get(Config::MOLLIE_MAIL_WHEN_REFUNDED),
+            Config::MOLLIE_MAIL_WHEN_CHARGEBACK => Configuration::get(Config::MOLLIE_MAIL_WHEN_CHARGEBACK),
             Config::MOLLIE_ACCOUNT_SWITCH => Configuration::get(Config::MOLLIE_ACCOUNT_SWITCH),
 
             Config::MOLLIE_DISPLAY_ERRORS => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),

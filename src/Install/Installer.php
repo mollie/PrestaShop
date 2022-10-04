@@ -251,6 +251,9 @@ class Installer implements InstallerInterface
         if (!$this->klarnaPaymentShippedState()) {
             return false;
         }
+        if (!$this->createChargedbackState()) {
+            return false;
+        }
 
         return true;
     }
@@ -383,6 +386,34 @@ class Installer implements InstallerInterface
     }
 
     /**
+     * @return bool
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    public function createChargedbackState()
+    {
+        if ($this->isStatusCreated(Config::MOLLIE_STATUS_CHARGEBACK)) {
+            return true;
+        }
+        $orderState = new OrderState();
+        $orderState->send_email = false;
+        $orderState->color = '#E74C3C';
+        $orderState->hidden = false;
+        $orderState->delivery = false;
+        $orderState->logable = false;
+        $orderState->invoice = false;
+        $orderState->module_name = $this->module->name;
+        $orderState->name = MultiLangUtility::createMultiLangField('Mollie Chargeback');
+        if ($orderState->add()) {
+            $this->imageService->createOrderStateLogo($orderState->id);
+        }
+        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_CHARGEBACK, (int) $orderState->id);
+
+        return true;
+    }
+
+    /**
      * @return void
      */
     protected function initConfig()
@@ -418,6 +449,7 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_CANCELED, true);
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_EXPIRED, true);
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_REFUNDED, true);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_CHARGEBACK, true);
         $this->configurationAdapter->updateValue(Config::MOLLIE_ACCOUNT_SWITCH, false);
         $this->configurationAdapter->updateValue(Config::MOLLIE_CSS, '');
 
