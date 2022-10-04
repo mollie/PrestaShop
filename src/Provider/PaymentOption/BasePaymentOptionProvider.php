@@ -47,6 +47,8 @@ use Tools;
 
 class BasePaymentOptionProvider implements PaymentOptionProviderInterface
 {
+    const FILE_NAME = 'BasePaymentOptionProvider';
+
     /**
      * @var Mollie
      */
@@ -117,7 +119,7 @@ class BasePaymentOptionProvider implements PaymentOptionProviderInterface
                     [
                         'type' => 'hidden',
                         'name' => 'payment-fee-price-display',
-                        'value' => sprintf($this->module->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee)),
+                        'value' => sprintf($this->module->l('Payment Fee: %1s', self::FILE_NAME), Tools::displayPrice($paymentFee)),
                     ],
                 ]
             );

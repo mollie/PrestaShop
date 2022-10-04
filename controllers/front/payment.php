@@ -33,6 +33,8 @@ require_once dirname(__FILE__) . '/../../mollie.php';
  */
 class MolliePaymentModuleFrontController extends ModuleFrontController
 {
+    const FILE_NAME = 'payment';
+
     /** @var bool */
     public $ssl = true;
 
@@ -84,6 +86,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $transactionService = $this->module->getMollieContainer(PaymentMethodService::class);
         /** @var MollieOrderCreationService $mollieOrderCreationService */
         $mollieOrderCreationService = $this->module->getMollieContainer(MollieOrderCreationService::class);
+        /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
+        $paymentMethodRepository = $this->module->getMollieContainer(PaymentMethodRepositoryInterface::class);
 
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method, $environment);
@@ -130,7 +134,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $this->setTemplate('error.tpl');
             $this->errors[] = Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
                 ? $e->getMessage() . ' Cart Dump: ' . json_encode($paymentData, JSON_PRETTY_PRINT)
-                : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', 'payment');
+                : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', self::FILE_NAME);
 
             return false;
         }
@@ -151,11 +155,14 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                     $order->reference
                 );
             } else {
-                $mollieOrderCreationService->createMolliePayment($apiPayment, $cart->id, $orderNumber);
+                $paymentMethod = $paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
+                if (!$paymentMethod) {
+                    $mollieOrderCreationService->createMolliePayment($apiPayment, $cart->id, $orderNumber);
+                }
             }
         } catch (Exception $e) {
             $this->setTemplate('error.tpl');
-            $this->errors[] = $this->module->l('Failed to save order information.', 'payment');
+            $this->errors[] = $this->module->l('Failed to save order information.', self::FILE_NAME);
 
             return false;
         }

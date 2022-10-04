@@ -70,6 +70,13 @@ class LegacyContext
         return $this->getContext()->country->id;
     }
 
+    public function getInvoiceCountryId()
+    {
+        $invoiceAddress = new \Address($this->getContext()->cart->id_address_invoice);
+
+        return $invoiceAddress->id_country;
+    }
+
     public function getCurrencyId()
     {
         return $this->getContext()->currency->id;

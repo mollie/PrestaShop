@@ -18,7 +18,7 @@ use Mollie\Exception\ShipmentCannotBeSentException;
 
 class ExceptionService
 {
-    const SHORT_CLASS_NAME = 'ExceptionService';
+    const FILE_NAME = 'ExceptionService';
 
     /**
      * @var Mollie
@@ -34,25 +34,17 @@ class ExceptionService
     {
         return [
             OrderCreationException::class => [
-                    OrderCreationException::DEFAULT_ORDER_CREATION_EXCEPTION => $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', self::SHORT_CLASS_NAME),
-                    OrderCreationException::WRONG_BILLING_PHONE_NUMBER_EXCEPTION => $this->module->l('It looks like you have entered incorrect phone number format in billing address step. Please change the number and try again.', self::SHORT_CLASS_NAME),
-                    OrderCreationException::WRONG_SHIPPING_PHONE_NUMBER_EXCEPTION => $this->module->l('It looks like you have entered incorrect phone number format in shipping address step. Please change the number and try again.', self::SHORT_CLASS_NAME),
-                    OrderCreationException::ORDER_TOTAL_LOWER_THAN_MINIMUM => $this->module->l('Chosen payment option is unavailable for your order total amount. Please consider using other payment option and try again.', self::SHORT_CLASS_NAME),
-                    OrderCreationException::ORDER_TOTAL_HIGHER_THAN_MAXIMUM => $this->module->l('Chosen payment option is unavailable for your order total amount. Please consider using other payment option and try again.', self::SHORT_CLASS_NAME),
+                    OrderCreationException::DEFAULT_ORDER_CREATION_EXCEPTION => $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', self::FILE_NAME),
+                    OrderCreationException::WRONG_BILLING_PHONE_NUMBER_EXCEPTION => $this->module->l('It looks like you have entered incorrect phone number format in billing address step. Please change the number and try again.', self::FILE_NAME),
+                    OrderCreationException::WRONG_SHIPPING_PHONE_NUMBER_EXCEPTION => $this->module->l('It looks like you have entered incorrect phone number format in shipping address step. Please change the number and try again.', self::FILE_NAME),
+                    OrderCreationException::ORDER_TOTAL_LOWER_THAN_MINIMUM => $this->module->l('Chosen payment option is unavailable for your order total amount. Please consider using other payment option and try again.', self::FILE_NAME),
+                    OrderCreationException::ORDER_TOTAL_HIGHER_THAN_MAXIMUM => $this->module->l('Chosen payment option is unavailable for your order total amount. Please consider using other payment option and try again.', self::FILE_NAME),
             ],
             ShipmentCannotBeSentException::class => [
-                ShipmentCannotBeSentException::NO_SHIPPING_INFORMATION => $this->module->l(
-                    'Shipment information cannot be sent. Order reference (%s) has no shipping information.'
-                ),
-                ShipmentCannotBeSentException::AUTOMATIC_SHIPMENT_SENDER_IS_NOT_AVAILABLE => $this->module->l(
-                    'Shipment information cannot be sent. Order reference (%s) does not have automatic shipment sender available.'
-                ),
-                ShipmentCannotBeSentException::ORDER_HAS_NO_PAYMENT_INFORMATION => $this->module->l(
-                    'Shipment information cannot be sent. Order reference (%s) has no payment information.'
-                ),
-                ShipmentCannotBeSentException::PAYMENT_IS_NOT_ORDER => $this->module->l(
-                    'Shipment information cannot be sent. Order reference (%s) is a regular payment.'
-                ),
+                ShipmentCannotBeSentException::NO_SHIPPING_INFORMATION => $this->module->l('Shipment information cannot be sent. Order reference (%s) has no shipping information.', self::FILE_NAME),
+                ShipmentCannotBeSentException::AUTOMATIC_SHIPMENT_SENDER_IS_NOT_AVAILABLE => $this->module->l('Shipment information cannot be sent. Order reference (%s) does not have automatic shipment sender available.', self::FILE_NAME),
+                ShipmentCannotBeSentException::ORDER_HAS_NO_PAYMENT_INFORMATION => $this->module->l('Shipment information cannot be sent. Order reference (%s) has no payment information.', self::FILE_NAME),
+                ShipmentCannotBeSentException::PAYMENT_IS_NOT_ORDER => $this->module->l('Shipment information cannot be sent. Order reference (%s) is a regular payment.', self::FILE_NAME),
             ],
         ];
     }
@@ -78,6 +70,6 @@ class ExceptionService
             }
         }
 
-        return $this->module->l('Unknown exception in Mollie');
+        return $this->module->l('Unknown exception in Mollie', self::FILE_NAME);
     }
 }

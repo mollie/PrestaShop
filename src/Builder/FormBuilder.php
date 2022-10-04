@@ -12,17 +12,14 @@
 
 namespace Mollie\Builder;
 
-use AttributeCore as Attribute;
 use Configuration;
 use HelperFormCore as HelperForm;
-use ModuleCore as Module;
 use Mollie;
 use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
 use Mollie\Provider\CustomLogoProviderInterface;
-use Mollie\Repository\CountryRepository;
 use Mollie\Service\ApiService;
 use Mollie\Service\ConfigFieldService;
 use Mollie\Service\CountryService;
@@ -63,11 +60,6 @@ class FormBuilder
     private $link;
 
     /**
-     * @var CountryRepository
-     */
-    private $countryRepository;
-
-    /**
      * @var ConfigFieldService
      */
     private $configFieldService;
@@ -86,7 +78,6 @@ class FormBuilder
         Mollie $module,
         ApiService $apiService,
         CountryService $countryService,
-        CountryRepository $countryRepository,
         ConfigFieldService $configFieldService,
         MolCarrierInformationService $carrierInformationService,
         $lang,
@@ -100,7 +91,6 @@ class FormBuilder
         $this->lang = $lang;
         $this->smarty = $smarty;
         $this->link = $link;
-        $this->countryRepository = $countryRepository;
         $this->configFieldService = $configFieldService;
         $this->carrierInformationService = $carrierInformationService;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
@@ -122,7 +112,7 @@ class FormBuilder
                 'tabs' => $this->getSettingTabs($isApiKeyProvided),
                 'input' => $inputs,
                 'submit' => [
-                    'title' => $this->module->l('Save'),
+                    'title' => $this->module->l('Save', self::FILE_NAME),
                     'class' => 'btn btn-default pull-right',
                 ],
             ],
@@ -205,19 +195,6 @@ class FormBuilder
                 'required' => true,
                 'class' => 'fixed-width-xxl',
                 'form_group_class' => 'js-live-api-group',
-            ];
-            $input[] = [
-                'type' => 'mollie-password',
-                'label' => $this->module->l('Profile ID', self::FILE_NAME),
-                'tab' => $generalSettings,
-                'desc' => TagsUtility::ppTags(
-                    $this->module->l('You can find your Profile ID in your [1]Mollie Profile[/1]', self::FILE_NAME),
-                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
-                ),
-                'name' => Config::MOLLIE_PROFILE_ID,
-                'required' => true,
-                'class' => 'fixed-width-xxl',
-                'form_group_class' => 'js-api-profile-id',
             ];
             $input[] = [
                 'type' => 'mollie-button',
@@ -305,6 +282,12 @@ class FormBuilder
         if (!$isApiKeyProvided) {
             return $input;
         }
+        $input[] = [
+            'type' => 'mollie-save-warning',
+            'name' => 'warning',
+            'tab' => $generalSettings,
+        ];
+
         $input[] = [
             'type' => 'switch',
             'label' => $this->module->l('Use Mollie Components for CreditCards', self::FILE_NAME),
@@ -416,8 +399,6 @@ class FormBuilder
             'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri() . "?{$dateStamp}",
             'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
             'voucherCategory' => Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
-            'categoryList' => \Category::getCategories($this->module->getContext()->language->id, true, false),
-            'productAttributes' => Attribute::getAttributes($this->module->getContext()->language->id),
             'klarnaPayments' => Config::KLARNA_PAYMENTS,
             'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_AUTHORIZED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
             'applePayDirect' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT),
@@ -523,12 +504,29 @@ class FormBuilder
         $allStatuses = OrderState::getOrderStates($this->lang->id);
         $allStatusesWithSkipOption = array_merge([['id_order_state' => 0, 'name' => $this->module->l('Skip this status', self::FILE_NAME), 'color' => '#565656']], $allStatuses);
 
+        $statusOptions = [
+            Config::MOLLIE_AWAITING_PAYMENT,
+            PaymentStatus::STATUS_OPEN,
+            PaymentStatus::STATUS_PAID,
+            OrderStatus::STATUS_COMPLETED,
+            PaymentStatus::STATUS_AUTHORIZED,
+            PaymentStatus::STATUS_CANCELED,
+            PaymentStatus::STATUS_EXPIRED,
+            RefundStatus::STATUS_REFUNDED,
+            Config::PARTIAL_REFUND_CODE,
+            OrderStatus::STATUS_SHIPPING,
+            Config::MOLLIE_CHARGEBACK,
+        ];
+
         $statuses = [];
         foreach (Config::getStatuses() as $name => $val) {
             if (PaymentStatus::STATUS_AUTHORIZED === $name) {
                 continue;
             }
 
+            if (!in_array($name, $statusOptions)) {
+                continue;
+            }
             $val = (int) $val;
             if ($val) {
                 $orderStatus = new OrderState($val);
@@ -562,19 +560,8 @@ class FormBuilder
             'title' => $this->module->l('Order statuses', self::FILE_NAME),
         ];
 
-        foreach (array_filter($statuses, function ($status) {
-            return in_array($status['name'], [
-                Config::MOLLIE_AWAITING_PAYMENT,
-                PaymentStatus::STATUS_OPEN,
-                PaymentStatus::STATUS_PAID,
-                OrderStatus::STATUS_COMPLETED,
-                PaymentStatus::STATUS_AUTHORIZED,
-                PaymentStatus::STATUS_CANCELED,
-                PaymentStatus::STATUS_EXPIRED,
-                RefundStatus::STATUS_REFUNDED,
-                Config::PARTIAL_REFUND_CODE,
-                OrderStatus::STATUS_SHIPPING,
-            ]);
+        foreach (array_filter($statuses, function ($status) use ($statusOptions) {
+            return in_array($status['name'], $statusOptions);
         }) as $status) {
             if (!in_array($status['name'], [Config::PARTIAL_REFUND_CODE, Config::MOLLIE_AWAITING_PAYMENT, PaymentStatus::STATUS_OPEN])) {
                 $input[] = [

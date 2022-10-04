@@ -41,14 +41,6 @@
             </div>
         </div>
     {elseif $input.type === 'mollie-methods'}
-        <script type="text/javascript">
-            (function () {
-                window.MollieModule = window.MollieModule || {ldelim}{rdelim};
-                window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
-                window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8'}';
-                window.MollieModule.debug = {if $input.displayErrors}true{else}false{/if};
-            }());
-        </script>
         <ul id="js-payment-methods-sortable" class="ui-sortable payment-methods-sortable"
             data-tab-id="general_settings">
             {foreach $input.paymentMethods as $paymentMethod}
@@ -95,8 +87,8 @@
                             <div class="col-lg-9">
                                 <select name="MOLLIE_METHOD_ENABLED_{$paymentMethod.id|escape:'html':'UTF-8'}"
                                         class="fixed-width-xl">
-                                    <option value="0" {if $methodObj->enabled === '0'} selected {/if}>{l s='No' mod='mollie'}</option>
-                                    <option value="1" {if $methodObj->enabled === '1'} selected {/if}>{l s='Yes' mod='mollie'}</option>
+                                    <option value="0" {if $methodObj->enabled == 0} selected {/if}>{l s='No' mod='mollie'}</option>
+                                    <option value="1" {if $methodObj->enabled == 1} selected {/if}>{l s='Yes' mod='mollie'}</option>
                                 </select>
                             </div>
                         </div>
@@ -107,8 +99,8 @@
                                 </label>
                                 <div class="col-lg-9">
                                     <select name="MOLLIE_APPLE_PAY_DIRECT_ENABLED" class="fixed-width-xl">
-                                        <option value="0" {if $input.applePayDirect === 0} selected {/if}>{l s='No' mod='mollie'}</option>
-                                        <option value="1" {if $input.applePayDirect === 1} selected {/if}>{l s='Yes' mod='mollie'}</option>
+                                        <option value="0" {if $input.applePayDirect == 0} selected {/if}>{l s='No' mod='mollie'}</option>
+                                        <option value="1" {if $input.applePayDirect == 1} selected {/if}>{l s='Yes' mod='mollie'}</option>
                                     </select>
                                 </div>
                             </div>
@@ -123,7 +115,7 @@
                                                  style="width: 100%;" alt="Black">
                                             <label>
                                                 <input type="radio" name="MOLLIE_APPLE_PAY_DIRECT_STYLE"
-                                                       value="0" {if $input.applePayDIrectStyle === 0} checked{/if}>
+                                                       value="0" {if $input.applePayDIrectStyle == 0} checked{/if}>
                                             </label>
                                         </div>
                                         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-9 text-center">
@@ -131,7 +123,7 @@
                                                  style="width: 100%;" alt="White with Outline">
                                             <label>
                                                 <input type="radio" name="MOLLIE_APPLE_PAY_DIRECT_STYLE"
-                                                       value="1" {if $input.applePayDIrectStyle === 1} checked{/if}>
+                                                       value="1" {if $input.applePayDIrectStyle == 1} checked{/if}>
                                             </label>
                                         </div>
                                         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-9 text-center">
@@ -139,7 +131,7 @@
                                                  style="width: 100%;" alt="White">
                                             <label>
                                                 <input type="radio" name="MOLLIE_APPLE_PAY_DIRECT_STYLE"
-                                                       value="2" {if $input.applePayDIrectStyle === 2} checked{/if}>
+                                                       value="2" {if $input.applePayDIrectStyle == 2} checked{/if}>
                                             </label>
                                         </div>
                                     </div>
@@ -152,9 +144,9 @@
                                     {l s='QR code' mod='mollie'}
                                 </label>
                                 <div class="col-lg-9">
-                                    <select name="MOLLIE_BANCONTACT_QR_CODE_ENABLED" class="fixed-width-xl" {if $input.isLive === 0}disabled{/if}>
-                                        <option value="0" {if $input.isBancontactQrCodeEnabled === 0} selected {/if}>{l s='No' mod='mollie'}</option>
-                                        <option value="1" {if $input.isBancontactQrCodeEnabled === 1} selected {/if}>{l s='Yes' mod='mollie'}</option>
+                                    <select name="MOLLIE_BANCONTACT_QR_CODE_ENABLED" class="fixed-width-xl" {if $input.isLive == 0}disabled{/if}>
+                                        <option value="0" {if $input.isBancontactQrCodeEnabled == 0} selected {/if}>{l s='No' mod='mollie'}</option>
+                                        <option value="1" {if $input.isBancontactQrCodeEnabled == 1} selected {/if}>{l s='Yes' mod='mollie'}</option>
                                     </select>
                                     <p class="help-block">
                                         {$input.bancontactQRCodeDescription}
@@ -207,14 +199,14 @@
                                     {l s='The description to be used for this transaction. These variables are available:' mod='mollie'}
                                 </p>
                                 <p class="help-block">
-                                    <b>{l s='{orderNumber}' mod='mollie'}</b>,
-                                    <b>{l s='{storeName}' mod='mollie'}</b>,
-                                    <b>{l s='{countryCode}' mod='mollie'}</b>,
-                                    <b>{l s='{cart.id}' mod='mollie'}</b>,
-                                    <b>{l s='{order.reference}' mod='mollie'}</b>,
-                                    <b>{l s='{customer.firstname}' mod='mollie'}</b>,
-                                    <b>{l s='{customer.lastname}' mod='mollie'}</b>,
-                                    <b>{l s='{customer.company}' mod='mollie'}</b>,
+                                    <b>{'{orderNumber}'|escape:'htmlall':'UTF-8'}</b>,
+                                    <b>{'{storeName}'|escape:'htmlall':'UTF-8'}</b>,
+                                    <b>{'{countryCode}'|escape:'htmlall':'UTF-8'}</b>,
+                                    <b>{'{cart.id}'|escape:'htmlall':'UTF-8'}</b>,
+                                    <b>{'{order.reference}'|escape:'htmlall':'UTF-8'}</b>,
+                                    <b>{'{customer.firstname}'|escape:'htmlall':'UTF-8'}</b>,
+                                    <b>{'{customer.lastname}'|escape:'htmlall':'UTF-8'}</b>,
+                                    <b>{'{customer.company}'|escape:'htmlall':'UTF-8'}</b>
                                 </p>
                             </div>
                         </div>
@@ -225,8 +217,8 @@
                             <div class="col-lg-9">
                                 <select name="MOLLIE_METHOD_APPLICABLE_COUNTRIES_{$paymentMethod.id|escape:'html':'UTF-8'}"
                                         class="fixed-width-xl">
-                                    <option value="0" {if $methodObj->is_countries_applicable === '0'} selected {/if}>{l s='All countries' mod='mollie'}</option>
-                                    <option value="1" {if $methodObj->is_countries_applicable === '1'} selected {/if}>{l s='Selected Countries' mod='mollie'}</option>
+                                    <option value="0" {if $methodObj->is_countries_applicable == 0} selected {/if}>{l s='All countries' mod='mollie'}</option>
+                                    <option value="1" {if $methodObj->is_countries_applicable == 1} selected {/if}>{l s='Selected Countries' mod='mollie'}</option>
                                 </select>
                             </div>
                         </div>
@@ -265,16 +257,16 @@
                             <div class="col-lg-9">
                                 <select name="MOLLIE_METHOD_SURCHARGE_TYPE_{$paymentMethod.id|escape:'html':'UTF-8'}"
                                         class="fixed-width-xl">
-                                    <option value="0" {if $methodObj->surcharge === '0'} selected {/if}>
+                                    <option value="0" {if $methodObj->surcharge == 0} selected {/if}>
                                         {l s='No fee' mod='mollie'}
                                     </option>
-                                    <option value="1" {if $methodObj->surcharge === '1'} selected {/if}>
+                                    <option value="1" {if $methodObj->surcharge == 1} selected {/if}>
                                         {l s='Fixed Fee' mod='mollie'}
                                     </option>
-                                    <option value="2" {if $methodObj->surcharge === '2'} selected {/if}>
+                                    <option value="2" {if $methodObj->surcharge == 2} selected {/if}>
                                         {l s='Percentage' mod='mollie'}
                                     </option>
-                                    <option value="3" {if $methodObj->surcharge === '3'} selected {/if}>
+                                    <option value="3" {if $methodObj->surcharge == 3} selected {/if}>
                                         {l s='Fixed Fee and Percentage' mod='mollie'}
                                     </option>
                                 </select>
@@ -329,10 +321,10 @@
                                 <div class="col-lg-9">
                                     <select name="MOLLIE_SHOW_CUSTOM_LOGO"
                                             class="fixed-width-xl">
-                                        <option value="0" {if $input.showCustomLogo === '0'} selected {/if}>
+                                        <option value="0" {if $input.showCustomLogo == 0} selected {/if}>
                                             {l s='No' mod='mollie'}
                                         </option>
-                                        <option value="1" {if $input.showCustomLogo === '1'} selected {/if}>
+                                        <option value="1" {if $input.showCustomLogo == 1} selected {/if}>
                                             {l s='Yes, Upload custom logo' mod='mollie'}
                                         </option>
                                     </select>
@@ -374,9 +366,9 @@
                                     {l s='Your custom logo' mod='mollie'}
                                 </label>
                                 <div class="col-lg-9">
-                                    <img src="{$input.customLogoUrl|escape:'html':'UTF-8'}"
+                                    <img src="{if $input.customLogoExist == true}{$input.customLogoUrl|escape:'html':'UTF-8'}{/if}"
                                          class="js-mollie-credit-card-custom-logo
-                                     {if $input.customLogoExist === false}hidden{/if}
+                                     {if $input.customLogoExist == false}hidden{/if}
                                 ">
                                 </div>
                             </div>
@@ -793,6 +785,14 @@
             </div>
             <div>
                 <p class="help-block">{if isset($input.help)}{$input.help|escape:'html':'UTF-8'}{/if}</p>
+            </div>
+        </div>
+    {elseif $input.type === 'mollie-save-warning'}
+        <div class="bootstrap">
+            <div class="alert alert-warning js-mollie-save-warning hidden">
+                <ul class="list-unstyled">
+                    {l s="Scroll down and save the changes you made to your environment or API keys before configuring your payment methods." mod='mollie'}
+                </ul>
             </div>
         </div>
     {else}

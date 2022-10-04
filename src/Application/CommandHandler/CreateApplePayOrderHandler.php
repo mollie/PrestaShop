@@ -25,6 +25,8 @@ use Tools;
 
 final class CreateApplePayOrderHandler
 {
+    const FILE_NAME = 'CreateApplePayOrderHandler';
+
     /**
      * @var PaymentMethodRepositoryInterface
      */
@@ -81,7 +83,7 @@ final class CreateApplePayOrderHandler
                     [
                         'code' => 'unknown',
                         'contactField' => null,
-                        'message' => $this->module->l('Failed to create mollie transaction.'),
+                        'message' => $this->module->l('Failed to create mollie transaction.', self::FILE_NAME),
                     ],
                 ],
             ];
@@ -114,7 +116,7 @@ final class CreateApplePayOrderHandler
                     [
                         'code' => 'unknown',
                         'contactField' => null,
-                        'message' => $this->module->l('Couldn\'t find order by card it.'),
+                        'message' => $this->module->l('Couldn\'t find order by cart id.', self::FILE_NAME),
                     ],
                 ],
             ];

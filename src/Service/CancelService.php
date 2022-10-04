@@ -20,6 +20,7 @@ use PrestaShopException;
 
 class CancelService
 {
+    const FILE_NAME = 'CancelService';
     /**
      * @var Mollie
      */
@@ -64,7 +65,7 @@ class CancelService
         } catch (ApiException $e) {
             return [
                 'success' => false,
-                'message' => $this->module->l('The product(s) could not be canceled!'),
+                'message' => $this->module->l('The product(s) could not be canceled!', self::FILE_NAME),
                 'detailed' => $e->getMessage(),
             ];
         }

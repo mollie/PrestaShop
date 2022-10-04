@@ -11,6 +11,7 @@
  */
 
 use Mollie\Config\Config;
+use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\PsVersionUtility;
 
@@ -49,7 +50,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '5.2.1';
+        $this->version = '5.3.0';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -273,8 +274,6 @@ class Mollie extends PaymentModule
 
         Media::addJsDef([
             'description_message' => addslashes($this->l('Description cannot be empty')),
-            'profile_id_message' => addslashes($this->l('Wrong profile ID')),
-            'profile_id_message_empty' => addslashes($this->l('Profile ID cannot be empty')),
             'payment_api' => addslashes(Mollie\Config\Config::MOLLIE_PAYMENTS_API),
             'ajaxUrl' => addslashes($this->context->link->getAdminLink('AdminMollieAjax')),
         ]);
@@ -354,9 +353,12 @@ class Mollie extends PaymentModule
             return;
         }
 
+        /** @var ProfileIdProviderInterface $profileIdProvider */
+        $profileIdProvider = $this->getMollieContainer(ProfileIdProviderInterface::class);
+
         Media::addJsDef([
-            'profileId' => Configuration::get(Mollie\Config\Config::MOLLIE_PROFILE_ID),
-            'isoCode' => $this->context->language->language_code,
+            'profileId' => $profileIdProvider->getProfileId($this->api),
+            'isoCode' => $this->context->language->locale,
             'isTestMode' => \Mollie\Config\Config::isTestMode(),
         ]);
         $this->context->controller->registerJavascript(

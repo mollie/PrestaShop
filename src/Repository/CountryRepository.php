@@ -41,7 +41,7 @@ final class CountryRepository extends AbstractRepository
 
     public function updatePaymentMethodCountries($idMethod, $idCountries)
     {
-        $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'mol_country WHERE `id_method` = "' . $idMethod . '"';
+        $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'mol_country WHERE `id_method` = "' . (int) $idMethod . '"';
         if (!Db::getInstance()->execute($sql)) {
             return false;
         }
@@ -85,7 +85,7 @@ final class CountryRepository extends AbstractRepository
 
     public function updatePaymentMethodExcludedCountries($idMethod, $idCountries)
     {
-        $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'mol_excluded_country WHERE `id_method` = "' . $idMethod . '"';
+        $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'mol_excluded_country WHERE `id_method` = "' . (int) $idMethod . '"';
         if (!Db::getInstance()->execute($sql)) {
             return false;
         }
