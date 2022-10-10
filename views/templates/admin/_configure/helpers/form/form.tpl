@@ -795,6 +795,10 @@
                 </ul>
             </div>
         </div>
+    {elseif $input.type === 'mollie-hidden-input'}
+    <div>
+        <input type="hidden" name="{$input.name}" value="{$input.value}">
+    </div>
     {else}
         {$smarty.block.parent}
     {/if}

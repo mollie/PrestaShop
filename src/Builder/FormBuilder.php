@@ -153,6 +153,13 @@ class FormBuilder
             ],
         ];
         if ($isApiKeyProvided) {
+            $input[] = [
+                'type' => 'mollie-hidden-input',
+                'tab' => $generalSettings,
+                'name' => Config::MOLLIE_ENV_CHANGED,
+                'value' => 0,
+            ];
+
             $input[] =
                 [
                     'type' => 'select',

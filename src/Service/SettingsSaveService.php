@@ -26,7 +26,6 @@ use Mollie\Handler\Certificate\Exception\ApplePayDirectCertificateCreation;
 use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\TagsUtility;
 use MolPaymentMethodIssuer;
 use OrderState;
@@ -133,7 +132,6 @@ class SettingsSaveService
         }
 
         $apiKey = Config::ENVIRONMENT_LIVE === (int) $environment ? $mollieApiKey : $mollieApiKeyTest;
-        $oldApiKey = EnvironmentUtility::getApiKey();
         $isApiKeyIncorrect = 0 !== strpos($apiKey, 'live') && 0 !== strpos($apiKey, 'test');
 
         if ($isApiKeyIncorrect) {
@@ -147,7 +145,7 @@ class SettingsSaveService
             );
         }
 
-        if ($oldEnvironment !== $environment || $apiKey !== $oldApiKey) {
+        if ((int) Tools::getValue(Config::MOLLIE_ENV_CHANGED) === 1) {
             Configuration::updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
             Configuration::updateValue(Config::MOLLIE_API_KEY_TEST, $mollieApiKeyTest);
             Configuration::updateValue(Config::MOLLIE_ENVIRONMENT, $environment);
