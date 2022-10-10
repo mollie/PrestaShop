@@ -40,11 +40,11 @@ final class PaymentMethodPositionHandler implements PaymentMethodPositionHandler
         /** @var \MolPaymentMethod[] $paymentMethods */
         $paymentMethods = $this->paymentMethodRepository
             ->findAll()
-            ->where('id_payment_method', 'in', $ids)
+            ->where('id_method', 'in', $ids)
         ;
 
         foreach ($paymentMethods as $paymentMethod) {
-            $position = $positions[$paymentMethod->id];
+            $position = $positions[$paymentMethod->id_method];
 
             $paymentMethod->position = $position;
 
