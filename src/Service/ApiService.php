@@ -158,18 +158,18 @@ class ApiService implements ApiServiceInterface
         $this->environment = (int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT);
 
         $methods = [];
-        $defaultPaymentMethod = new MolPaymentMethod();
-        $defaultPaymentMethod->enabled = false;
-        $defaultPaymentMethod->title = '';
-        $defaultPaymentMethod->method = 'payments';
-        $defaultPaymentMethod->description = '';
-        $defaultPaymentMethod->is_countries_applicable = false;
-        $defaultPaymentMethod->minimal_order_value = '';
-        $defaultPaymentMethod->max_order_value = '';
-        $defaultPaymentMethod->surcharge = 0;
-        $defaultPaymentMethod->surcharge_fixed_amount = '';
-        $defaultPaymentMethod->surcharge_percentage = '';
-        $defaultPaymentMethod->surcharge_limit = '';
+        $emptyPaymentMethod = new MolPaymentMethod();
+        $emptyPaymentMethod->enabled = false;
+        $emptyPaymentMethod->title = '';
+        $emptyPaymentMethod->method = 'payments';
+        $emptyPaymentMethod->description = '';
+        $emptyPaymentMethod->is_countries_applicable = false;
+        $emptyPaymentMethod->minimal_order_value = '';
+        $emptyPaymentMethod->max_order_value = '';
+        $emptyPaymentMethod->surcharge = 0;
+        $emptyPaymentMethod->surcharge_fixed_amount = '';
+        $emptyPaymentMethod->surcharge_percentage = '';
+        $emptyPaymentMethod->surcharge_limit = '';
 
         foreach ($apiMethods as $apiMethod) {
             $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($apiMethod['id'], $this->environment);
@@ -179,6 +179,7 @@ class ApiService implements ApiServiceInterface
                 $methods[$apiMethod['id']]['obj'] = $paymentMethod;
                 continue;
             }
+            $defaultPaymentMethod = clone $emptyPaymentMethod;
             $defaultPaymentMethod->id_method = $apiMethod['id'];
             $defaultPaymentMethod->method_name = $apiMethod['name'];
             $methods[$apiMethod['id']] = $apiMethod;

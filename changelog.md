@@ -15,6 +15,7 @@
 + Now all inputs are disabled if API key or environment is changed.
 + Improved refund logic to only change status when refund amount is bigger then 0.
 + Added new chargeback status.
++ Fixed issue where on first settings save the positions would not save.
 
 ## Changes in release 5.2.1 ##
 + Fixed issue where orders would have duplicated lines in list if there are more than 1 transaction.
