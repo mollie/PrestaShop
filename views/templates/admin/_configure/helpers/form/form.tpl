@@ -46,7 +46,7 @@
             {foreach $input.paymentMethods as $paymentMethod}
                 {assign var = 'methodObj' value=$paymentMethod.obj}
                 <li class="payment-method border border-bottom">
-                    <input type="hidden" name="payment_option_position[{$paymentMethod.obj->id|intval}]"
+                    <input type="hidden" name="payment_option_position[{$paymentMethod.obj->id_method|escape:'html':'UTF-8'}]"
                            value="{$paymentMethod.obj->position}" class="js-payment-option-position">
                     <span class="js-sort-handle sort-handle">
           <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
