@@ -92,7 +92,7 @@ class RefundService
         return [
             'status' => 'success',
             'msg_success' => $this->module->l('The order has been refunded!', self::FILE_NAME),
-            'msg_details' => $this->module->l('Mollie B.V. will transfer the money back to the customer on the next business day.', self::FILE_NAME),
+            'msg_details' => $this->module->l('Mollie will transfer the amount back to the customer on the next business day.', self::FILE_NAME),
         ];
     }
 
