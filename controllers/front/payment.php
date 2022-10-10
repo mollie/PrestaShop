@@ -62,7 +62,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         )) {
             /** @var Mollie\Service\LanguageService $langService */
             $langService = $this->module->getMollieContainer(Mollie\Service\LanguageService::class);
-            $this->errors[] = $langService->getLang()['This payment method is not available.'];
+            $this->errors[] = $langService->lang('This payment method is not available.');
             $this->setTemplate('error.tpl');
 
             return;
