@@ -212,7 +212,7 @@
                         </div>
                         <div class="form-group">
                             <label class="control-label col-lg-3">
-                                {l s='Payment allowed from:' mod='mollie'}
+                                {l s='Accept payments from:' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
                                 <select name="MOLLIE_METHOD_APPLICABLE_COUNTRIES_{$paymentMethod.id|escape:'html':'UTF-8'}"
