@@ -132,7 +132,7 @@ function togglePaymentMethod($button, paymentId) {
 function handleApiKeyChanges()
 {
     $('select[name="MOLLIE_ENVIRONMENT"], input[name="MOLLIE_API_KEY_TEST"], input[name="MOLLIE_API_KEY"]').on('change', function () {
-        $('input').not('input[name="MOLLIE_API_KEY_TEST"], input[name="MOLLIE_API_KEY"], input[name="MOLLIE_ENV_CHANGED"]').attr('disabled', true);
+        $('input').not('input[name="MOLLIE_API_KEY_TEST"], input[name="MOLLIE_API_KEY"], input[name="MOLLIE_ENV_CHANGED"], input[name="MOLLIE_ACCOUNT_SWITCH"]').attr('disabled', true);
         $('select').not('select[name="MOLLIE_ENVIRONMENT"]').attr('disabled', true).trigger("chosen:updated");
         $('.js-mollie-save-warning').removeClass('hidden');
         $('input[name="MOLLIE_ENV_CHANGED"]').val(1);
