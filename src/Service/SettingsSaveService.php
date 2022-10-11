@@ -127,10 +127,6 @@ class SettingsSaveService
         $mollieApiKeyTest = Tools::getValue(Config::MOLLIE_API_KEY_TEST);
         $paymentOptionPositions = Tools::getValue(Config::MOLLIE_FORM_PAYMENT_OPTION_POSITION);
 
-        if ($paymentOptionPositions) {
-            $this->paymentMethodPositionHandler->savePositions($paymentOptionPositions);
-        }
-
         $apiKey = Config::ENVIRONMENT_LIVE === (int) $environment ? $mollieApiKey : $mollieApiKeyTest;
         $isApiKeyIncorrect = 0 !== strpos($apiKey, 'live') && 0 !== strpos($apiKey, 'test');
 
@@ -201,6 +197,10 @@ class SettingsSaveService
                 $this->countryRepository->updatePaymentMethodExcludedCountries($paymentMethodId, $excludedCountries);
             }
             $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment, (int) $this->shop->id);
+        }
+
+        if ($paymentOptionPositions) {
+            $this->paymentMethodPositionHandler->savePositions($paymentOptionPositions);
         }
 
         $useCustomLogo = Tools::getValue(Config::MOLLIE_SHOW_CUSTOM_LOGO);
