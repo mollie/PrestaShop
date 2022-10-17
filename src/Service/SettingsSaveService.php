@@ -132,6 +132,8 @@ class SettingsSaveService
 
         if ($isApiKeyIncorrect) {
             $errors[] = $this->module->l('The API key needs to start with test or live.', self::FILE_NAME);
+
+            return $errors;
         }
 
         if (Tools::getValue(Config::METHODS_CONFIG) && json_decode(Tools::getValue(Config::METHODS_CONFIG))) {
