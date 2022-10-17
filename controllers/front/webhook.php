@@ -52,7 +52,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
      */
     public function initContent()
     {
-        if (Configuration::get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_ALL) {
+        if ((int) Configuration::get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_ALL) {
             PrestaShopLogger::addLog('Mollie incoming webhook: ' . Tools::file_get_contents('php://input'));
         }
 
