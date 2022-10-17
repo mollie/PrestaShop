@@ -4,6 +4,7 @@
 ## Changes in release 5.3.1 ##
 + Fixed issue where saving wrong API key would reset settings page.
 + Fixed issue where auto shipment would not work on order creation and only on status update.
++ Error logging no longer logs webhook calls. Only logg all logs webhook calls.
 
 ## Changes in release 5.3.0 ##
 + Removed reference variables from translations.
