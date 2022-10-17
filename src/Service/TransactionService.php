@@ -28,6 +28,7 @@ use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\TransactionException;
 use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Handler\Order\OrderFeeHandler;
+use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
@@ -69,6 +70,8 @@ class TransactionService
     private $mollieOrderCreationService;
     /** @var OrderFeeHandler */
     private $orderFeeHandler;
+    /** @var ShipmentSenderHandlerInterface */
+    private $shipmentSenderHandler;
 
     public function __construct(
         Mollie $module,
@@ -77,7 +80,8 @@ class TransactionService
         OrderCreationHandler $orderCreationHandler,
         PaymentMethodService $paymentMethodService,
         MollieOrderCreationService $mollieOrderCreationService,
-        OrderFeeHandler $orderFeeHandler
+        OrderFeeHandler $orderFeeHandler,
+        ShipmentSenderHandlerInterface $shipmentSenderHandler
     ) {
         $this->module = $module;
         $this->orderStatusService = $orderStatusService;
@@ -86,6 +90,7 @@ class TransactionService
         $this->paymentMethodService = $paymentMethodService;
         $this->mollieOrderCreationService = $mollieOrderCreationService;
         $this->orderFeeHandler = $orderFeeHandler;
+        $this->shipmentSenderHandler = $shipmentSenderHandler;
     }
 
     /**
@@ -190,6 +195,9 @@ class TransactionService
                         throw new TransactionException('Order is already created', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
                     }
                     $apiPayment = $this->updateOrderDescription($apiPayment, $orderId);
+                    $this->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId);
+                    $order = new Order($orderId);
+                    $this->shipmentSenderHandler->handleShipmentSender($this->module->api, $order, new \OrderState($order->current_state));
                 } elseif ($apiPayment->amountRefunded) {
                     if (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                         if (!MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
@@ -242,11 +250,7 @@ class TransactionService
 
         $this->updateTransaction($orderId, $apiPayment);
         // Store status in database
-        if (!$this->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId)) {
-            if (Configuration::get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
-                PrestaShopLogger::addLog(__METHOD__ . ' said: Could not save Mollie payment status for transaction "' . $apiPayment->id . '". Reason: ' . Db::getInstance()->getMsgError(), Config::WARNING);
-            }
-        }
+        $this->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId);
 
         // Log successful webhook requests in extended log mode only
         if (Config::DEBUG_LOG_ALL == Configuration::get(Config::MOLLIE_DEBUG_LOG)) {
@@ -317,10 +321,10 @@ class TransactionService
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    protected function savePaymentStatus($transactionId, $status, $orderId)
+    private function savePaymentStatus($transactionId, $status, $orderId)
     {
         try {
-            return Db::getInstance()->update(
+            $result = Db::getInstance()->update(
                 'mollie_payments',
                 [
                     'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
@@ -332,6 +336,12 @@ class TransactionService
         } catch (PrestaShopDatabaseException $e) {
             throw $e;
         }
+
+        if (!$result && Configuration::get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
+            PrestaShopLogger::addLog(__METHOD__ . ' said: Could not save Mollie payment status for transaction "' . $transactionId . '". Reason: ' . Db::getInstance()->getMsgError(), Config::WARNING);
+        }
+
+        return $result;
     }
 
     /**
