@@ -421,7 +421,7 @@ class CartLinesService
         if ($paymentFee) {
             $orderLines['surcharge'] = [
                 [
-                    'name' => $this->languageService->lang('Payment Fee'),
+                    'name' => $this->languageService->lang('Payment fee'),
                     'sku' => Config::PAYMENT_FEE_SKU,
                     'quantity' => 1,
                     'unitPrice' => round($paymentFee, $apiRoundingPrecision),

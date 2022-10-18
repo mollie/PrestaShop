@@ -131,7 +131,7 @@ class AdminMollieAjaxController extends ModuleAdminController
         $returnText = '';
         // Check image format
         if ('jpg' !== $imageFileType && 'png' !== $imageFileType) {
-            $returnText = $this->l('Sorry, only JPG, PNG files are allowed.');
+            $returnText = $this->l('Upload a .jpg or .png file.');
             $isUploaded = 0;
         }
 
@@ -141,7 +141,7 @@ class AdminMollieAjaxController extends ModuleAdminController
                 $returnText = basename($_FILES['fileToUpload']['name']);
             } else {
                 $isUploaded = 0;
-                $returnText = $this->l('Sorry, there was an error uploading your logo.');
+                $returnText = $this->l('Something went wrong when uploading your logo.');
             }
         }
 

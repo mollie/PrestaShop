@@ -96,7 +96,7 @@ class Mollie extends PaymentModule
     public function install()
     {
         if (!$this->isPhpVersionCompliant()) {
-            $this->_errors[] = $this->l('Dear customer, your PHP version is too low. Please upgrade your PHP version to use this module. Mollie module supports PHP 7.0.8 and higher versions.');
+            $this->_errors[] = $this->l('You\'re using an outdated PHP version. Upgrade your PHP version to use this module. The Mollie module supports versions PHP 7.0.8 and higher.');
 
             return false;
         }
@@ -137,7 +137,7 @@ class Mollie extends PaymentModule
     public function enable($force_all = false)
     {
         if (!$this->isPhpVersionCompliant()) {
-            $this->_errors[] = $this->l('Dear customer, your PHP version is too low. Please upgrade your PHP version to use this module. Mollie module supports PHP 7.0.8 and higher versions.');
+            $this->_errors[] = $this->l('You\'re using an outdated PHP version. Upgrade your PHP version to use this module. The Mollie module supports versions PHP 7.0.8 and higher.');
 
             return false;
         }
@@ -160,7 +160,7 @@ class Mollie extends PaymentModule
             if ($isAdmin) {
                 http_response_code(500);
                 exit(
-                $this->l('The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com')
+                $this->l('The module upload requires an extra refresh. Upload the Mollie module ZIP file again. If you continue to see this message after reuploading the module, contact Mollie support at info@mollie.com and attach a screenshot of the error. ')
                 );
             }
         }
@@ -236,7 +236,7 @@ class Mollie extends PaymentModule
         $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->name);
         $needsUpgrade = Tools::version_compare($this->version, $moduleDatabaseVersion, '>');
         if ($needsUpgrade) {
-            $this->context->controller->errors[] = $this->l('Please upgrade Mollie module.');
+            $this->context->controller->errors[] = $this->l('Please upgrade Mollie module');
 
             return;
         }
@@ -244,7 +244,7 @@ class Mollie extends PaymentModule
         $isShopContext = Shop::getContext() === Shop::CONTEXT_SHOP;
 
         if (!$isShopContext) {
-            $this->context->controller->errors[] = $this->l('Please select the specific shop to configure.');
+            $this->context->controller->errors[] = $this->l('Select the shop that you want to configure');
 
             return;
         }
@@ -256,7 +256,7 @@ class Mollie extends PaymentModule
 
         /* @phpstan-ignore-next-line */
         if (false === Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING) && !$isSubmitted) {
-            $this->context->controller->errors[] = $this->l('Please select order status for the "Status for Awaiting payments" field in the "Advanced settings" tab');
+            $this->context->controller->errors[] = $this->l('Select an order status for \"Status for Awaiting payments\" in the \"Advanced settings\" tab');
         }
 
         $errors = [];
@@ -273,15 +273,15 @@ class Mollie extends PaymentModule
         }
 
         Media::addJsDef([
-            'description_message' => addslashes($this->l('Description cannot be empty')),
+            'description_message' => addslashes($this->l('Enter a description')),
             'payment_api' => addslashes(Mollie\Config\Config::MOLLIE_PAYMENTS_API),
             'ajaxUrl' => addslashes($this->context->link->getAdminLink('AdminMollieAjax')),
         ]);
 
         /* Custom logo JS vars*/
         Media::addJsDef([
-            'image_size_message' => addslashes($this->l('Image size must be %s%x%s1%')),
-            'not_valid_file_message' => addslashes($this->l('not a valid file: %s%')),
+            'image_size_message' => addslashes($this->l('Upload an image %s%x%s1%')),
+            'not_valid_file_message' => addslashes($this->l('Invalid file: %s%')),
         ]);
 
         $this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
@@ -322,7 +322,7 @@ class Mollie extends PaymentModule
         } catch (PrestaShopDatabaseException $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);
-            $this->context->controller->errors[] = $this->l('You are missing database tables. Try resetting module.');
+            $this->context->controller->errors[] = $this->l('The database tables are missing. Reset the module.');
         }
 
         return $html;
@@ -599,7 +599,7 @@ class Mollie extends PaymentModule
         $isPaid = \Mollie\Api\Types\PaymentStatus::STATUS_PAID == $payment['bank_status'];
         $isAuthorized = \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED == $payment['bank_status'];
         if (($isPaid || $isAuthorized)) {
-            $this->context->smarty->assign('okMessage', $this->l('Thank you. Your payment has been received.'));
+            $this->context->smarty->assign('okMessage', $this->l('Thank you. We received your payment.'));
 
             return $this->display(__FILE__, 'ok.tpl');
         }
