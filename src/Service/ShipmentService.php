@@ -153,7 +153,7 @@ class ShipmentService implements ShipmentServiceInterface
 
             $langIso = Tools::strtoupper(Language::getIsoById($langId));
 
-            if (!$carrier->name) {
+            if (!$carrier->name || !$shippingNumber) {
                 return [];
             }
 
