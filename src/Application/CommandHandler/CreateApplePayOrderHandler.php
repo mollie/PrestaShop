@@ -116,7 +116,7 @@ final class CreateApplePayOrderHandler
                     [
                         'code' => 'unknown',
                         'contactField' => null,
-                        'message' => $this->module->l('Couldn\'t find order by cart id.', self::FILE_NAME),
+                        'message' => $this->module->l('Couldn\'t find order by cart.', self::FILE_NAME),
                     ],
                 ],
             ];

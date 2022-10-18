@@ -7,13 +7,13 @@
 * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
 *}
 <p>
-    {l s='When do you want the invoice for Klarna Payments?' mod='mollie'}
+    {l s='Select when to send Klarna invoices' mod='mollie'}
 </p>
 <p class="help-block">
-    {l s='Default: Invoice creation is based on order settings > statuses. Custom status is not created.' mod='mollie'}
+    {l s='Default: The invoice is created based on Order settings > Statuses. There is no custom status created for Klarna.' mod='mollie'}
 </p>
 <p class="help-block">
-    {l s='On Authorize: Create a full invoice when the order is authorized. Custom status is created.' mod='mollie'}
+    {l s='Authorised: Create a full invoice when the order is authorized. Custom status is created.' mod='mollie'}
 </p>
 <p class="help-block">
     {l s='On Shipment: Create a full invoice when the order is shipped. Custom status is created.' mod='mollie'}

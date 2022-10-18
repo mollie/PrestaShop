@@ -187,7 +187,7 @@ class FormBuilder
                 'label' => $this->module->l('API Key Test', self::FILE_NAME),
                 'tab' => $generalSettings,
                 'desc' => TagsUtility::ppTags(
-                    $this->module->l('You can find your API key in your [1]Mollie Profile[/1]; it starts with test or live.', self::FILE_NAME),
+                    $this->module->l('Go to your [1]Mollie account[/1] to get your API keys. They start with test and live.', self::FILE_NAME),
                     [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
                 ),
                 'name' => Config::MOLLIE_API_KEY_TEST,
@@ -197,7 +197,7 @@ class FormBuilder
             ];
             $input[] = [
                 'type' => 'mollie-password',
-                'label' => $this->module->l('API Key Live', self::FILE_NAME),
+                'label' => $this->module->l('Live API key', self::FILE_NAME),
                 'tab' => $generalSettings,
                 'name' => Config::MOLLIE_API_KEY,
                 'required' => true,
@@ -209,7 +209,7 @@ class FormBuilder
                 'label' => '',
                 'tab' => $generalSettings,
                 'name' => Config::MOLLIE_API_KEY_TESTING_BUTTON,
-                'text' => $this->module->l('Test API Key', self::FILE_NAME),
+                'text' => $this->module->l('Test API key', self::FILE_NAME),
                 'class' => 'js-test-api-keys',
                 'form_group_class' => 'js-api-key-test',
             ];
@@ -298,7 +298,7 @@ class FormBuilder
 
         $input[] = [
             'type' => 'switch',
-            'label' => $this->module->l('Use Mollie Components for CreditCards', self::FILE_NAME),
+            'label' => $this->module->l('Use Mollie Components for credit cards', self::FILE_NAME),
             'tab' => $generalSettings,
             'name' => Config::MOLLIE_IFRAME,
             'desc' => TagsUtility::ppTags(
@@ -323,7 +323,7 @@ class FormBuilder
 
         $input[] = [
             'type' => 'switch',
-            'label' => $this->module->l('Use Single Click Payments for CreditCards', self::FILE_NAME),
+            'label' => $this->module->l('Use one-click payments for credit cards', self::FILE_NAME),
             'tab' => $generalSettings,
             'name' => Config::MOLLIE_SINGLE_CLICK_PAYMENT,
             'desc' => TagsUtility::ppTags(
@@ -352,17 +352,17 @@ class FormBuilder
                     'type' => 'select',
                     'label' => $this->module->l('Issuer list', self::FILE_NAME),
                     'tab' => $generalSettings,
-                    'desc' => $this->module->l('Some payment methods (eg. iDEAL) have an issuer list. This setting specifies where it is shown.', self::FILE_NAME),
+                    'desc' => $this->module->l('Some payment methods (e.g. iDEAL) have an issuer list. Select where to display the list.', self::FILE_NAME),
                     'name' => Config::MOLLIE_ISSUERS,
                     'options' => [
                         'query' => [
                             [
                                 'id' => Config::ISSUERS_ON_CLICK,
-                                'name' => $this->module->l('On click', self::FILE_NAME),
+                                'name' => $this->module->l('In the shop checkout', self::FILE_NAME),
                             ],
                             [
                                 'id' => Config::ISSUERS_PAYMENT_PAGE,
-                                'name' => $this->module->l('Payment page', self::FILE_NAME),
+                                'name' => $this->module->l('In the Mollie Checkout', self::FILE_NAME),
                             ],
                         ],
                         'id' => 'id',
@@ -398,7 +398,7 @@ class FormBuilder
             'onlyOrderMethods' => Config::ORDER_API_ONLY_METHODS,
             'displayErrors' => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
             'methodDescription' => TagsUtility::ppTags(
-                $this->module->l('Click [1]here[/1] to read more about the differences between the Payment and Orders API.', self::FILE_NAME),
+                $this->module->l('[1]Read more[/1] about the differences between Payments and Orders API.', self::FILE_NAME),
                 [
                     $this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_method_info.tpl'),
                 ]
@@ -414,7 +414,7 @@ class FormBuilder
             'isBancontactQrCodeEnabled' => (int) Configuration::get(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED),
             'isLive' => (int) Configuration::get(Config::MOLLIE_ENVIRONMENT),
             'bancontactQRCodeDescription' => TagsUtility::ppTags(
-                $this->module->l('Only available on LIVE Key and Payments API. [1]Learn more[/1] about QR Codes.', self::FILE_NAME),
+                $this->module->l('Only available with your Live API key and Payments API. [1]Learn more[/1] about QR Codes.', self::FILE_NAME),
                 [
                     $this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_bancontact_qr_code_info.tpl'),
                 ]
@@ -435,10 +435,10 @@ class FormBuilder
         $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->id));
         $input[] = [
             'type' => 'select',
-            'label' => $this->module->l('Push Locale to Payment Screen', self::FILE_NAME),
+            'label' => $this->module->l('Use selected locale in webshop', self::FILE_NAME),
             'tab' => $advancedSettings,
             'desc' => TagsUtility::ppTags(
-                $this->module->l('When activated, Mollie will use your webshop\'s [1]Locale[/1]. If not, the browser\'s locale will be used.', self::FILE_NAME),
+                $this->module->l('Activate to use your shop\'s [1]locale[/1]. Otherwise, your shop uses the browser\'s locale. ', self::FILE_NAME),
                 [$this->module->display($this->module->getPathUri(), 'views/templates/admin/locale_wiki.tpl')]
             ),
             'name' => Config::MOLLIE_PAYMENTSCREEN_LOCALE,
@@ -446,11 +446,11 @@ class FormBuilder
                 'query' => [
                     [
                         'id' => Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE,
-                        'name' => $this->module->l('Yes, push webshop Locale', self::FILE_NAME),
+                        'name' => $this->module->l('Use webshop locale', self::FILE_NAME),
                     ],
                     [
                         'id' => Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE,
-                        'name' => $this->module->l('No, use browser\'s Locale', self::FILE_NAME),
+                        'name' => $this->module->l('Use browser locale', self::FILE_NAME),
                     ],
                 ],
                 'id' => 'id',
@@ -467,7 +467,7 @@ class FormBuilder
                 'query' => [
                     [
                         'id' => Config::ORDER_CONF_MAIL_SEND_ON_PAID,
-                        'name' => $this->module->l('When Order is Paid', self::FILE_NAME),
+                        'name' => $this->module->l('When the order is paid', self::FILE_NAME),
                     ],
                     [
                         'id' => Config::ORDER_CONF_MAIL_SEND_ON_NEVER,
@@ -481,7 +481,7 @@ class FormBuilder
 
         $input[] = [
             'type' => 'select',
-            'label' => $this->module->l('When to create the invoice?', self::FILE_NAME),
+            'label' => $this->module->l('Select when to create the Klarna invoice', self::FILE_NAME),
             'desc' => $this->module->display($this->module->getPathUri(), 'views/templates/admin/invoice_description.tpl'),
             'tab' => $advancedSettings,
             'name' => Config::MOLLIE_KLARNA_INVOICE_ON,
@@ -493,7 +493,7 @@ class FormBuilder
                     ],
                     [
                         'id' => Config::MOLLIE_STATUS_KLARNA_AUTHORIZED,
-                        'name' => $this->module->l('Authorized', self::FILE_NAME),
+                        'name' => $this->module->l('Authorised', self::FILE_NAME),
                     ],
                     [
                         'id' => Config::MOLLIE_STATUS_KLARNA_SHIPPED,
@@ -506,9 +506,9 @@ class FormBuilder
         ];
 
         $messageStatus = $this->module->l('Status for %s payments', self::FILE_NAME);
-        $descriptionStatus = $this->module->l('`%s` payments get status `%s`', self::FILE_NAME);
-        $messageMail = $this->module->l('Send mails when %s', self::FILE_NAME);
-        $descriptionMail = $this->module->l('Send mails when transaction status becomes %s?, self::FILE_NAME', self::FILE_NAME);
+        $descriptionStatus = $this->module->l('`%s` payments get `%s` status', self::FILE_NAME);
+        $messageMail = $this->module->l('Send email when %s', self::FILE_NAME);
+        $descriptionMail = $this->module->l('Send email when transaction status becomes %s?, self::FILE_NAME', self::FILE_NAME);
         $allStatuses = OrderState::getOrderStates($this->lang->id);
         $allStatusesWithSkipOption = array_merge([['id_order_state' => 0, 'name' => $this->module->l('Skip this status', self::FILE_NAME), 'color' => '#565656']], $allStatuses);
 
@@ -547,7 +547,7 @@ class FormBuilder
                     )
                 );
             } else {
-                $desc = sprintf($this->module->l('`%s` payments do not get a status', self::FILE_NAME), $this->module->lang($name));
+                $desc = sprintf($this->module->l('`%s` payments don\'t get a status', self::FILE_NAME), $this->module->lang($name));
             }
             $statuses[] = [
                 'name' => $name,
@@ -614,60 +614,39 @@ class FormBuilder
                 'type' => 'mollie-h2',
                 'name' => '',
                 'tab' => $advancedSettings,
-                'title' => $this->module->l('Visual Settings', self::FILE_NAME),
+                'title' => $this->module->l('Visual settings', self::FILE_NAME),
             ],
             [
                 'type' => 'select',
                 'label' => $this->module->l('Images', self::FILE_NAME),
                 'tab' => $advancedSettings,
-                'desc' => $this->module->l('Show big, normal or no payment method logos on checkout.', self::FILE_NAME),
+                'desc' => $this->module->l('Show big, normal, or no payment method logos on checkout.', self::FILE_NAME),
                 'name' => Config::MOLLIE_IMAGES,
                 'options' => [
                     'query' => [
                         [
                             'id' => Config::LOGOS_HIDE,
-                            'name' => $this->module->l('hide', self::FILE_NAME),
+                            'name' => $this->module->l('Hide', self::FILE_NAME),
                         ],
                         [
                             'id' => Config::LOGOS_NORMAL,
-                            'name' => $this->module->l('normal', self::FILE_NAME),
+                            'name' => $this->module->l('Normal', self::FILE_NAME),
                         ],
                         [
                             'id' => Config::LOGOS_BIG,
-                            'name' => $this->module->l('big', self::FILE_NAME),
+                            'name' => $this->module->l('Big', self::FILE_NAME),
                         ],
                     ],
                     'id' => 'id',
                     'name' => 'name',
                 ],
             ],
-//			[
-//				'type' => 'select',
-//				'label' => $this->module->l('Resend payment link', self::FILE_NAME),
-//				'tab' => $advancedSettings,
-//				'desc' => $this->module->l('Show resent payment link column in order list page', self::FILE_NAME),
-//				'name' => Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK,
-//				'options' => [
-//					'query' => [
-//						[
-//							'id' => Config::HIDE_RESENT_LINK,
-//							'name' => $this->module->l('hide', self::FILE_NAME),
-//						],
-//						[
-//							'id' => Config::SHOW_RESENT_LINK,
-//							'name' => $this->module->l('show', self::FILE_NAME),
-//						],
-//					],
-//					'id' => 'id',
-//					'name' => 'name',
-//				],
-//			],
             [
                 'type' => 'text',
                 'label' => $this->module->l('CSS file', self::FILE_NAME),
                 'tab' => $advancedSettings,
                 'desc' => TagsUtility::ppTags(
-                    $this->module->l('Leave empty for default stylesheet. Should include file path when set. Hint: You can use [1]{BASE}[/1], [1]{THEME}[/1], [1]{CSS}[/1], [1]{MOBILE}[/1], [1]{MOBILE_CSS}[/1] and [1]{OVERRIDE}[/1] for easy folder mapping.', self::FILE_NAME),
+                    $this->module->l('Leave empty for the default stylesheet. Include the file path when applying custom CSS. You can use [1]{BASE}[/1], [1]{THEME}[/1], [1]{CSS}[/1], [1]{MOBILE}[/1], [1]{MOBILE_CSS}[/1], and [1]{OVERRIDE}[/1] for easy folder mapping.', self::FILE_NAME),
                     [$this->module->display($this->module->getPathUri(), 'views/templates/front/kbd.tpl')]
                 ),
                 'name' => Config::MOLLIE_CSS,
@@ -688,7 +667,7 @@ class FormBuilder
             'label' => $this->module->l('Automatically ship on marked statuses', self::FILE_NAME),
             'tab' => $advancedSettings,
             'name' => Config::MOLLIE_AUTO_SHIP_MAIN,
-            'desc' => $this->module->l('Enabling this feature will automatically send shipment information when an order gets marked status.', self::FILE_NAME),
+            'desc' => $this->module->l('Enable to automatically send shipment information when an order gets a marked status.', self::FILE_NAME),
             'is_bool' => true,
             'values' => [
                 [
@@ -709,7 +688,7 @@ class FormBuilder
             'type' => 'checkbox',
             'label' => $this->module->l('Automatically ship when one of these statuses is reached', self::FILE_NAME),
             'tab' => $advancedSettings,
-            'desc' => $this->module->l('If an order reaches one of these statuses the module will automatically send shipment information', self::FILE_NAME),
+            'desc' => $this->module->l('If an order reaches one of these statuses, the module automatically sends shipment information', self::FILE_NAME),
             'name' => Config::MOLLIE_AUTO_SHIP_STATUSES,
             'multiple' => true,
             'values' => [
@@ -757,7 +736,7 @@ class FormBuilder
                     'label' => $this->module->l('Display errors', self::FILE_NAME),
                     'tab' => $advancedSettings,
                     'name' => Config::MOLLIE_DISPLAY_ERRORS,
-                    'desc' => $this->module->l('Enabling this feature will display error messages (if any) on the front page. Use for debug purposes only!', self::FILE_NAME),
+                    'desc' => $this->module->l('Enable to display full error messages in the webshop. Only use this for debugging.', self::FILE_NAME),
                     'is_bool' => true,
                     'values' => [
                         [

@@ -96,18 +96,18 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             }
             if (false === $data['mollie_info']) {
                 $data['mollie_info'] = [];
-                $data['msg_details'] = $this->module->l('The order with this id does not exist.', self::FILE_NAME);
+                $data['msg_details'] = $this->module->l('There is no order with this ID.', self::FILE_NAME);
             } elseif (PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
                 && PaymentStatus::STATUS_OPEN === $data['mollie_info']['bank_status']
             ) {
-                $data['msg_details'] = $this->module->l('We have not received a definite payment status. You will be notified as soon as we receive a confirmation of the bank/merchant.', self::FILE_NAME);
+                $data['msg_details'] = $this->module->l('The payment is still being processed. You\'ll be notified when the bank or merchant confirms the payment./merchant.', self::FILE_NAME);
             } else {
                 $data['wait'] = true;
             }
         } else {
             // Not allowed? Don't make query but redirect.
             $data['mollie_info'] = [];
-            $data['msg_details'] = $this->module->l('You are not authorised to see this page.', self::FILE_NAME);
+            $data['msg_details'] = $this->module->l('You\'re not authorised to see this page.', self::FILE_NAME);
             Tools::redirect(Context::getContext()->link->getPageLink('index', true));
         }
 
@@ -229,8 +229,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             $orderStatus = $payments->status;
         }
 
-        $notSuccessfulPaymentMessage = $this->module->l('Your payment was not successful, please try again.', self::FILE_NAME);
-        $wrongAmountMessage = $this->module->l('Payment unsuccessful - order value differs from payment request. Please try again.', self::FILE_NAME);
+        $notSuccessfulPaymentMessage = $this->module->l('Your payment was not successful. Try again.', self::FILE_NAME);
+        $wrongAmountMessage = $this->module->l('The payment failed because the order and payment amounts are different. Try again.', self::FILE_NAME);
 
         /** @var PaymentReturnService $paymentReturnService */
         $paymentReturnService = $this->module->getMollieContainer(PaymentReturnService::class);

@@ -62,7 +62,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         )) {
             /** @var Mollie\Service\LanguageService $langService */
             $langService = $this->module->getMollieContainer(Mollie\Service\LanguageService::class);
-            $this->errors[] = $langService->getLang()['This payment method is not available.'];
+            $this->errors[] = $langService->lang('This payment method is not available.');
             $this->setTemplate('error.tpl');
 
             return;
@@ -134,7 +134,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $this->setTemplate('error.tpl');
             $this->errors[] = Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
                 ? $e->getMessage() . ' Cart Dump: ' . json_encode($paymentData, JSON_PRETTY_PRINT)
-                : $this->module->l('An error occurred while initializing your payment. Please contact our customer support.', self::FILE_NAME);
+                : $this->module->l('An error occurred when creating your payment. Contact customer support.', self::FILE_NAME);
 
             return false;
         }

@@ -193,7 +193,7 @@ class Installer implements InstallerInterface
         $orderState->logable = false;
         $orderState->invoice = false;
         $orderState->module_name = $this->module->name;
-        $orderState->name = MultiLangUtility::createMultiLangField('Mollie partially refunded');
+        $orderState->name = MultiLangUtility::createMultiLangField('Partially refunded by Mollie');
         if ($orderState->add()) {
             $this->imageService->createOrderStateLogo($orderState->id);
         }
