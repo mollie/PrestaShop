@@ -10,7 +10,8 @@
         "mollie/mollie-api-php": "v2.42.1",
         "segmentio/analytics-php": "^1.5",
         "sentry/sentry": "^1.11.0",
-        "vlucas/phpdotenv": "3.4"
+        "vlucas/phpdotenv": "3.4",
+        "prestashop/autoindex": "^1.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
