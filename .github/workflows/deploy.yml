@@ -11,19 +11,20 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v2
             - name: build
-              # IF YOU EDIT THIS, DON'T FORGET TO EDIT release.yml
+                # IF YOU EDIT THIS, DON'T FORGET TO EDIT release.yml
               run: |
                   composer install --no-dev --optimize-autoloader --classmap-authoritative
                   composer dump-autoload --no-dev --optimize --classmap-authoritative
                   npm install --quiet --no-progress
-                  npm run build
                   rm -rf node_modules
-                  cp .github/.htaccess vendor/.htaccess
                   rm -rf .git
                   rm -rf .github
                   rm -rf tests
                   rm -rf cypress
                   rm -rf .docker
+                  rm -rf vendor/segmentio/analytics-php/.buildscript
+                  rm -rf vendor/segmentio/analytics-php/.circleci
+                  rm -rf vendor/segmentio/analytics-php/.github
                   vendor/bin/autoindex
                   mkdir mollie
                   rsync -Rr ./ ./mollie
@@ -41,9 +42,6 @@ jobs:
     demo:
         name: Demo deployment
         runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                presta-instance: [ 'latest' ]
         steps:
             -   name: executing remote ssh commands using password
                 uses: appleboy/ssh-action@master
@@ -51,5 +49,4 @@ jobs:
                     host: ${{ secrets.HOST }}
                     username: ${{ secrets.USERNAME }}
                     key: ${{ secrets.KEY }}
-                    port: ${{ secrets.PORT }}
-                    script: cd ${{ secrets.PATH }} && sh deploy.sh ${{ matrix.presta-instance }}
+                    script: cd ${{ secrets.PATH }} && sh deploy.sh
