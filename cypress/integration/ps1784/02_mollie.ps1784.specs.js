@@ -296,7 +296,7 @@ it('17 Credit Card Checkouting [Orders API]', () => {
       cy.get('.condition-label > .js-terms').click({force:true})
       cy.get('#mollie-save-card').check({force:true})
       prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
+      cy.get('.ps-shown-by-js > .btn').click({force: true})
       cy.setCookie(
         'SESSIONID',
         "cypress-dummy-value",
@@ -313,17 +313,17 @@ it('17 Credit Card Checkouting [Orders API]', () => {
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
 it('18 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
-  cy.visit('/SHOP2/en/index.php?controller=history')
-  cy.get('a').click()
-  cy.contains('Reorder').click()
-  //Billing country LT, DE etc.
-  cy.get('.clearfix > .btn').click()
-  cy.get('#js-delivery > .continue').click()
-  //Payment method choosing
-  cy.contains('Credit/Debit Card').click({force:true})
-  cy.get('.condition-label > .js-terms').click({force:true})
-  prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
+      cy.visit('/SHOP2/en/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Credit/Debit Card').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click({force: true})
       cy.setCookie(
         'SESSIONID',
         "cypress-dummy-value",
