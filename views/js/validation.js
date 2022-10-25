@@ -129,7 +129,7 @@ $(document).ready(function () {
             case '1':
                 $feeFixed.closest('.form-group').show();
                 $feePercentage.closest('.form-group').hide();
-                $feeLimit.closest('.form-group').show();
+                $feeLimit.closest('.form-group').hide();
                 break;
             case '2':
                 $feeFixed.closest('.form-group').hide();
