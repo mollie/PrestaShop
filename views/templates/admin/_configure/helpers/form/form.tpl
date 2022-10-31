@@ -267,7 +267,7 @@
                                         {l s='Percentage' mod='mollie'}
                                     </option>
                                     <option value="3" {if $methodObj->surcharge == 3} selected {/if}>
-                                        {l s='Fixed and percentage fees' mod='mollie'}
+                                        {l s='Combined payment surcharge limit' mod='mollie'}
                                     </option>
                                 </select>
                                 <p class="help-block">
