@@ -59,12 +59,15 @@ class AmountPaymentMethodRestrictionValidator implements PaymentMethodRestrictio
     {
         $orderTotal = $this->context->getCart()->getOrderTotal();
 
-        $orderTotalAmount = (new Number((string) $this->context->getCurrency()->getConversionRate()))->times(new Number((string) $orderTotal))->toPrecision(2);
+        $orderTotalAmount = (new Number((string) $this->context->getCurrency()->getConversionRate()))->times(new Number((string) $orderTotal));
 
-        if ($paymentMethod->min_amount > $orderTotalAmount) {
+        $minAllowedAmount = new Number((string) $paymentMethod->min_amount);
+        $maxAllowedAmount = new Number((string) $paymentMethod->max_amount);
+
+        if ($minAllowedAmount->isGreaterThan($orderTotalAmount)) {
             return false;
         }
-        if ($paymentMethod->max_amount > 0 && $paymentMethod->max_amount < $orderTotalAmount) {
+        if ($paymentMethod->max_amount > 0 && $maxAllowedAmount->isLowerThan($orderTotalAmount)) {
             return false;
         }
 
