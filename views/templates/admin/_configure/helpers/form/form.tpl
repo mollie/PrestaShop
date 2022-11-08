@@ -73,7 +73,11 @@
 
 
 
+
+
 {else}
+
+
 
 
 
@@ -556,31 +560,6 @@
               {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
                       {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
             />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{strip}
               <label {if $value.value == 1} for="{$input.name|escape:'htmlall':'UTF-8'}_on"{else} for="{$input.name|escape:'htmlall':'UTF-8'}_off"{/if}>
             {if $value.value == 1}
                 {l s='Yes' mod='mollie'}
@@ -588,7 +567,6 @@
                 {l s='No' mod='mollie'}
             {/if}
           </label>
-          {/strip}
           {/foreach}
           <a class="slide-button btn"></a>
         </span>

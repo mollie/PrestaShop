@@ -266,8 +266,6 @@ class Config
     const APPLE_PAY_DIRECT_ORDER_CREATION_MAX_WAIT_RETRIES = 10;
     const BANCONTACT_ORDER_CREATION_MAX_WAIT_RETRIES = 600;
 
-    const DEFAULT_MOLLIE_CURRENCY_ISO = 'EUR';
-
     /** @var array */
     public static $methods = [
         'banktransfer' => 'Bank',
