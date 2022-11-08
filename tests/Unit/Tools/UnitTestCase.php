@@ -2,6 +2,8 @@
 
 namespace Mollie\Tests\Unit\Tools;
 
+use Cart;
+use Currency;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Api\Resources\Method;
@@ -118,5 +120,34 @@ class UnitTestCase extends TestCase
         ;
 
         return $configurationAdapter;
+    }
+
+    protected function mockCart($totalOrderAmount)
+    {
+        $cartMock = $this->getMockBuilder(Cart::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $cartMock
+            ->method('getOrderTotal')
+            ->willReturn($totalOrderAmount)
+        ;
+
+        return $cartMock;
+    }
+
+    protected function mockCurrency($currencyIsoCode, $conversionRate)
+    {
+        $cartMock = $this->getMockBuilder(Currency::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $cartMock
+            ->method('getConversionRate')
+            ->willReturn($conversionRate)
+        ;
+        $cartMock->iso_code = $currencyIsoCode;
+
+        return $cartMock;
     }
 }
