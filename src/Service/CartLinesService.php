@@ -102,7 +102,7 @@ class CartLinesService
         $orderLines = $this->fillProductLinesWithRemainingData($orderLines, $apiRoundingPrecision, $vatRatePrecision);
 
         // Add shipping
-        $orderLines = $this->addShippingLine($roundedShippingCost, $cartSummary, $apiRoundingPrecision, $orderLines);
+        $orderLines = $this->addShippingLine($roundedShippingCost, $cartSummary, $apiRoundingPrecision, $vatRatePrecision, $orderLines);
 
         // Add wrapping
         $orderLines = $this->addWrappingLine($wrappingPrice, $cartSummary, $vatRatePrecision, $apiRoundingPrecision, $orderLines);
@@ -332,7 +332,7 @@ class CartLinesService
                     'quantity' => (int) $quantity,
                     'unitPrice' => round($unitPrice, $apiRoundingPrecision),
                     'totalAmount' => round($totalAmount, $apiRoundingPrecision),
-                    'vatRate' => round($actualVatRate, $apiRoundingPrecision),
+                    'vatRate' => round($actualVatRate, $vatRatePrecision),
                     'vatAmount' => round($vatAmount, $apiRoundingPrecision),
                 ];
                 if (isset($line['sku'])) {
@@ -354,10 +354,10 @@ class CartLinesService
      *
      * @return array
      */
-    private function addShippingLine($roundedShippingCost, $cartSummary, $apiRoundingPrecision, array $orderLines)
+    private function addShippingLine($roundedShippingCost, $cartSummary, $apiRoundingPrecision, $vatRatePrecision, array $orderLines)
     {
         if (round($roundedShippingCost, 2) > 0) {
-            $shippingVatRate = round(($cartSummary['total_shipping'] - $cartSummary['total_shipping_tax_exc']) / $cartSummary['total_shipping_tax_exc'] * 100, $apiRoundingPrecision);
+            $shippingVatRate = round(($cartSummary['total_shipping'] - $cartSummary['total_shipping_tax_exc']) / $cartSummary['total_shipping_tax_exc'] * 100, $vatRatePrecision);
 
             $orderLines['shipping'] = [
                 [
@@ -400,7 +400,7 @@ class CartLinesService
                     'quantity' => 1,
                     'unitPrice' => round($wrappingPrice, $apiRoundingPrecision),
                     'totalAmount' => round($wrappingPrice, $apiRoundingPrecision),
-                    'vatAmount' => round($wrappingPrice * $wrappingVatRate / ($wrappingVatRate + 100), $apiRoundingPrecision),
+                    'vatAmount' => round($wrappingPrice * $wrappingVatRate / ($wrappingVatRate + 100), $vatRatePrecision),
                     'vatRate' => $wrappingVatRate,
                 ],
             ];
