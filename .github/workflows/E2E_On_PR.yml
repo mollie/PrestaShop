@@ -44,7 +44,7 @@ jobs:
           ${{ matrix.make }}
 
       - name: Running ${{ matrix.prestashop }} Cypress tests
-        uses: cypress-io/github-action@v4.2.0
+        uses: cypress-io/github-action@v5.0.0
         with:
           spec: ${{ matrix.test_spec }}
           browser: chrome
