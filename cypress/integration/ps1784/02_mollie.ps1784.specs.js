@@ -68,7 +68,7 @@ it('04 Enabling All payments in Module BO [Orders API]', () => {
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule > .link').click()
       cy.ConfOrdersAPI1784()
-      cy.get('[type="submit"]').first().click()
+      cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
 it('05 Vouchers Checkouting [Orders API]', () => {
@@ -718,7 +718,7 @@ it('42 [SWITCH TO PAYMENTS API] Enabling All payments in Module BO [Payments API
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule > .link').click()
       cy.ConfPaymentsAPI1784()
-      cy.get('[type="submit"]').first().click()
+      cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
 it('43 Check if Bancontact QR payment dropdown exists [Payments API]', () => {
