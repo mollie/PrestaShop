@@ -79,6 +79,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         if (!$this->module->api) {
             $this->respond('failed', HttpStatusCode::HTTP_UNAUTHORIZED, 'API key is missing or incorrect');
         }
+
         try {
             if (TransactionUtility::isOrderTransaction($transactionId)) {
                 $transaction = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);

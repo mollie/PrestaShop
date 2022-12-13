@@ -19,6 +19,7 @@ use Context;
 use Country;
 use Currency;
 use Customer;
+use Hook;
 use Mollie;
 use Mollie\Api\Resources\BaseCollection;
 use Mollie\Api\Resources\MethodCollection;
@@ -328,6 +329,12 @@ class PaymentMethodService
                 $paymentData->setApplePayToken($applePayToken);
             }
 
+            $sequenceType = Hook::exec('actionMollieSequenceType', ['cart_id' => $cartId]);
+
+            if ($sequenceType) {
+                $paymentData->setSequenceType($sequenceType);
+            }
+
             $isCreditCardPayment = PaymentMethod::CREDITCARD === $molPaymentMethod->id_method;
             if (!$isCreditCardPayment) {
                 return $paymentData;
@@ -403,6 +410,12 @@ class PaymentMethodService
             }
 
             $orderData->setPayment($payment);
+
+            $sequenceType = Hook::exec('actionMollieSequenceType', array('object' => ['cart_id' => $cartId]));
+
+            if ($sequenceType) {
+                $orderData->setSequenceType($sequenceType);
+            }
 
             return $orderData;
         }

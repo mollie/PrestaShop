@@ -109,6 +109,11 @@ class OrderData implements JsonSerializable
      */
     private $billingStreetAndNumber;
 
+    /**
+     * @var string
+     */
+    private $sequenceType;
+
     public function __construct(
         Amount $amount,
                $redirectUrl,
@@ -367,6 +372,17 @@ class OrderData implements JsonSerializable
         $this->payment = $payment;
     }
 
+    public function getSequenceType(): string
+    {
+        return $this->sequenceType;
+    }
+
+    public function setSequenceType(string $sequenceType): void
+    {
+        $this->sequenceType = $sequenceType;
+    }
+
+
     public function jsonSerialize()
     {
         $lines = [];
@@ -417,6 +433,10 @@ class OrderData implements JsonSerializable
 
         if ($this->deliveryPhoneNumber) {
             $result['shippingAddress']['phone'] = $this->deliveryPhoneNumber;
+        }
+
+        if ($this->sequenceType) {
+            $result['sequenceType'] = $this->sequenceType;
         }
 
         return $result;
