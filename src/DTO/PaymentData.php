@@ -341,10 +341,9 @@ class PaymentData implements JsonSerializable
         $this->sequenceType = $sequenceType;
     }
 
-
     public function jsonSerialize()
     {
-        $result =  [
+        $result = [
             'amount' => [
                 'currency' => $this->getAmount()->getCurrency(),
                 'value' => (string) $this->getAmount()->getValue(),

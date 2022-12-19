@@ -382,7 +382,6 @@ class OrderData implements JsonSerializable
         $this->sequenceType = $sequenceType;
     }
 
-
     public function jsonSerialize()
     {
         $lines = [];

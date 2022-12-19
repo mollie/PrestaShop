@@ -330,6 +330,9 @@ class PaymentMethodService
             $sequenceType = Hook::exec('actionMollieSequenceType', ['cart_id' => $cartId]);
 
             if ($sequenceType) {
+                $molCustomer = $this->handleCustomerInfo($cart->id_customer, true, false);
+                $paymentData->setCustomerId($molCustomer->customer_id);
+
                 $paymentData->setSequenceType($sequenceType);
             }
 
@@ -407,13 +410,16 @@ class PaymentMethodService
                 $payment['applePayPaymentToken'] = $applePayToken;
             }
 
-            $orderData->setPayment($payment);
-
-            $sequenceType = Hook::exec('actionMollieSequenceType', array('object' => ['cart_id' => $cartId]));
+            $sequenceType = Hook::exec('actionMollieSequenceType', ['object' => ['cart_id' => $cartId]]);
 
             if ($sequenceType) {
+                $molCustomer = $this->handleCustomerInfo($cart->id_customer, true, false);
+                $payment['customerId'] = $molCustomer->customer_id;
+
                 $orderData->setSequenceType($sequenceType);
             }
+
+            $orderData->setPayment($payment);
 
             return $orderData;
         }
