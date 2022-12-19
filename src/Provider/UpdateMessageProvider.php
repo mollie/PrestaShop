@@ -19,6 +19,8 @@ use Tools;
 
 class UpdateMessageProvider implements UpdateMessageProviderInterface
 {
+    const FILE_NAME = 'UpdateMessageProvider';
+
     /**
      * @var Mollie
      */
@@ -42,14 +44,14 @@ class UpdateMessageProvider implements UpdateMessageProviderInterface
         $updateXml = $this->getUpdateXML($url, $addons);
 
         if (!$updateXml) {
-            return $this->module->l('Warning: Could not retrieve update xml file from github.');
+            return $this->module->l('Warning: Could not retrieve update xml file from github.', self::FILE_NAME);
         }
 
         /* @var SimpleXMLElement $tags */
         $tags = new SimpleXMLElement($updateXml);
 
         if (!$this->xmlFileFollowsExpectedFormat($tags)) {
-            return $this->module->l('Warning: Update xml file from github follows an unexpected format.', $this->module->name);
+            return $this->module->l('Warning: Update xml file from github follows an unexpected format.', self::FILE_NAME);
         }
 
         $title = '';

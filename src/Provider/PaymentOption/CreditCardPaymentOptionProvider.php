@@ -54,6 +54,8 @@ use Tools;
 
 class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
 {
+    const FILE_NAME = 'CreditCardPaymentOptionProvider';
+
     /**
      * @var Mollie
      */
@@ -192,7 +194,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
                     [
                         'type' => 'hidden',
                         'name' => 'payment-fee-price-display',
-                        'value' => sprintf($this->module->l('Payment Fee: %1s'), Tools::displayPrice($paymentFee)),
+                        'value' => sprintf($this->module->l('Payment Fee: %1s', self::FILE_NAME), Tools::displayPrice($paymentFee)),
                     ],
                 ])
             );

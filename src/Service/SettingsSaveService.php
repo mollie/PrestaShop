@@ -31,6 +31,7 @@ use MolPaymentMethodIssuer;
 use OrderState;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+use Shop;
 use Tools;
 
 class SettingsSaveService
@@ -82,6 +83,9 @@ class SettingsSaveService
      */
     private $applePayDirectCertificateHandler;
 
+    /** @var Shop */
+    private $shop;
+
     public function __construct(
         Mollie $module,
         CountryRepository $countryRepository,
@@ -91,7 +95,8 @@ class SettingsSaveService
         MolCarrierInformationService $carrierInformationService,
         PaymentMethodPositionHandlerInterface $paymentMethodPositionHandler,
         ApiKeyService $apiKeyService,
-        CertificateHandlerInterface $applePayDirectCertificateHandler
+        CertificateHandlerInterface $applePayDirectCertificateHandler,
+        Shop $shop
     ) {
         $this->module = $module;
         $this->countryRepository = $countryRepository;
@@ -102,6 +107,7 @@ class SettingsSaveService
         $this->paymentMethodPositionHandler = $paymentMethodPositionHandler;
         $this->apiService = $apiService;
         $this->applePayDirectCertificateHandler = $applePayDirectCertificateHandler;
+        $this->shop = $shop;
     }
 
     /**
@@ -119,18 +125,13 @@ class SettingsSaveService
         $environment = (int) Tools::getValue(Config::MOLLIE_ENVIRONMENT);
         $mollieApiKey = Tools::getValue(Config::MOLLIE_API_KEY);
         $mollieApiKeyTest = Tools::getValue(Config::MOLLIE_API_KEY_TEST);
-        $mollieProfileId = Tools::getValue(Config::MOLLIE_PROFILE_ID);
         $paymentOptionPositions = Tools::getValue(Config::MOLLIE_FORM_PAYMENT_OPTION_POSITION);
-
-        if ($paymentOptionPositions) {
-            $this->paymentMethodPositionHandler->savePositions($paymentOptionPositions);
-        }
 
         $apiKey = Config::ENVIRONMENT_LIVE === (int) $environment ? $mollieApiKey : $mollieApiKeyTest;
         $isApiKeyIncorrect = 0 !== strpos($apiKey, 'live') && 0 !== strpos($apiKey, 'test');
 
         if ($isApiKeyIncorrect) {
-            $errors[] = $this->module->l('The API key needs to start with test or live.');
+            $errors[] = $this->module->l('The API key needs to start with test or live.', self::FILE_NAME);
         }
 
         if (Tools::getValue(Config::METHODS_CONFIG) && json_decode(Tools::getValue(Config::METHODS_CONFIG))) {
@@ -138,6 +139,26 @@ class SettingsSaveService
                 Config::METHODS_CONFIG,
                 json_encode(@json_decode(Tools::getValue(Config::METHODS_CONFIG)))
             );
+        }
+
+        if ((int) Tools::getValue(Config::MOLLIE_ENV_CHANGED) === 1) {
+            Configuration::updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
+            Configuration::updateValue(Config::MOLLIE_API_KEY_TEST, $mollieApiKeyTest);
+            Configuration::updateValue(Config::MOLLIE_ENVIRONMENT, $environment);
+            try {
+                $api = $this->apiKeyService->setApiKey($apiKey, $this->module->version);
+                if (null === $api) {
+                    throw new MollieException('Failed to connect to mollie API', MollieException::API_CONNECTION_EXCEPTION);
+                }
+                $this->module->api = $api;
+            } catch (Exception $e) {
+                $errors[] = $e->getMessage();
+                Configuration::updateValue(Config::MOLLIE_API_KEY, null);
+
+                return [$this->module->l('Wrong API Key!', self::FILE_NAME)];
+            }
+
+            return [];
         }
 
         if ($oldEnvironment === $environment && $apiKey && $this->module->api !== null) {
@@ -148,12 +169,12 @@ class SettingsSaveService
                     $paymentMethod = $this->paymentMethodService->savePaymentMethod($method);
                     $savedPaymentMethods[] = $paymentMethod->id_method;
                 } catch (Exception $e) {
-                    $errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods') . ":{$method['id']}";
+                    $errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods', self::FILE_NAME) . ":{$method['id']}";
                     continue;
                 }
 
                 if (!$this->paymentMethodRepository->deletePaymentMethodIssuersByPaymentMethodId($paymentMethod->id)) {
-                    $errors[] = $this->module->l('Something went wrong. Couldn\'t delete old payment methods issuers') . ":{$method['id']}";
+                    $errors[] = $this->module->l('Something went wrong. Couldn\'t delete old payment methods issuers', self::FILE_NAME) . ":{$method['id']}";
                     continue;
                 }
 
@@ -164,7 +185,7 @@ class SettingsSaveService
                     try {
                         $paymentMethodIssuer->add();
                     } catch (Exception $e) {
-                        $errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods issuer');
+                        $errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods issuer', self::FILE_NAME);
                     }
                 }
 
@@ -175,7 +196,11 @@ class SettingsSaveService
                 $this->countryRepository->updatePaymentMethodCountries($paymentMethodId, $countries);
                 $this->countryRepository->updatePaymentMethodExcludedCountries($paymentMethodId, $excludedCountries);
             }
-            $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment);
+            $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment, (int) $this->shop->id);
+        }
+
+        if ($paymentOptionPositions) {
+            $this->paymentMethodPositionHandler->savePositions($paymentOptionPositions);
         }
 
         $useCustomLogo = Tools::getValue(Config::MOLLIE_SHOW_CUSTOM_LOGO);
@@ -237,13 +262,13 @@ class SettingsSaveService
                 $errors[] = $e->getMessage();
                 Configuration::updateValue(Config::MOLLIE_API_KEY, null);
 
-                return [$this->module->l('Wrong API Key!')];
+                return [$this->module->l('Wrong API Key!', self::FILE_NAME)];
             }
         }
         try {
             $this->handleKlarnaInvoiceStatus();
         } catch (Exception $e) {
-            $errors[] = $this->module->l('There are issues with your Klarna statuses, please try resetting Mollie module.');
+            $errors[] = $this->module->l('There are issues with your Klarna statuses, please try resetting Mollie module.', self::FILE_NAME);
         }
 
         if (empty($errors)) {
@@ -255,7 +280,6 @@ class SettingsSaveService
             Configuration::updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
             Configuration::updateValue(Config::MOLLIE_API_KEY_TEST, $mollieApiKeyTest);
             Configuration::updateValue(Config::MOLLIE_ENVIRONMENT, $environment);
-            Configuration::updateValue(Config::MOLLIE_PROFILE_ID, $mollieProfileId);
             Configuration::updateValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE, $molliePaymentscreenLocale);
             Configuration::updateValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION, $mollieOrderConfirmationSand);
             Configuration::updateValue(Config::MOLLIE_IFRAME, $mollieIFrameEnabled);
@@ -310,7 +334,7 @@ class SettingsSaveService
                 }
             }
 
-            $resultMessage[] = $this->module->l('The configuration has been saved!');
+            $resultMessage[] = $this->module->l('The configuration has been saved!', self::FILE_NAME);
         } else {
             $resultMessage = [];
             foreach ($errors as $error) {

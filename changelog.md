@@ -1,6 +1,26 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 5.3.0 ##
++ Removed reference variables from translations.
++ Fixed issue where credit card components would throw error even taught order was created.
++ Changed country restrictions to use invoice and not delivery address when checking for country restrictions.
++ Added PS8.0.0+ compatibility.
++ Changed how secure key is generated to avoid errors.
++ Fixed issue where payment method save with multishop would break another shop payment method settings.
++ Fixed translations that were not working because of php.
++ Added street additional information when creating order.
++ Components now use language locale and not language code when looking for iso code.
++ No longer need to add profile id, now we take it from API before each call.
++ Now all inputs are disabled if API key or environment is changed.
++ Improved refund logic to only change status when refund amount is bigger then 0.
++ Added new chargeback status.
++ Fixed issue where on first settings save the positions would not save.
+
+## Changes in release 5.2.1 ##
++ Fixed issue where orders would have duplicated lines in list if there are more than 1 transaction.
++ Fixed duplicated orders when multiple transactions are created.
+
 ## Changes in release 5.2.0 ##
 + Fixed issue where customer id was not added when using saved credit card for order API.
 + Added QR code option for bancontact payment on live mode

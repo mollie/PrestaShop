@@ -27,6 +27,8 @@ use Order;
 
 class MolliePaymentMailService
 {
+    const FILE_NAME = 'MolliePaymentMailService';
+
     /**
      * @var PaymentMethodRepository
      */
@@ -62,7 +64,7 @@ class MolliePaymentMailService
 
         $response = [
             'success' => false,
-            'message' => $this->module->l('Failed to created second chance email!'),
+            'message' => $this->module->l('Failed to created second chance email!', self::FILE_NAME),
         ];
 
         $transactionId = $payment['transaction_id'];
@@ -80,7 +82,7 @@ class MolliePaymentMailService
                 $response = $this->sendSecondChanceMailWithPaymentApi($api, $transactionId);
             }
         } catch (Exception $exception) {
-            $response['message'] = $this->module->l('Failed to create second chance email - API error');
+            $response['message'] = $this->module->l('Failed to create second chance email - API error', self::FILE_NAME);
 
             return $response;
         }
@@ -99,7 +101,7 @@ class MolliePaymentMailService
             return
                 [
                     'success' => false,
-                    'message' => $this->module->l('Failed to send second chance email! Order is already paid!'),
+                    'message' => $this->module->l('Failed to send second chance email! Order is already paid!', self::FILE_NAME),
                 ];
         }
 
@@ -117,7 +119,7 @@ class MolliePaymentMailService
 
         return [
             'success' => true,
-            'message' => $this->module->l('Second chance email was successfully send!'),
+            'message' => $this->module->l('Second chance email was successfully send!', self::FILE_NAME),
             'checkoutUrl' => $checkoutUrl,
         ];
     }
@@ -131,7 +133,7 @@ class MolliePaymentMailService
             return
                 [
                     'success' => false,
-                    'message' => $this->module->l('Failed to send second chance email! Order is already paid or expired!'),
+                    'message' => $this->module->l('Failed to send second chance email! Order is already paid or expired!', self::FILE_NAME),
                 ];
         }
 
@@ -140,7 +142,7 @@ class MolliePaymentMailService
 
             return [
                 'success' => true,
-                'message' => $this->module->l('Second chance email was successfully send!'),
+                'message' => $this->module->l('Second chance email was successfully send!', self::FILE_NAME),
                 'checkoutUrl' => $checkoutUrl,
             ];
         }
@@ -148,7 +150,7 @@ class MolliePaymentMailService
         $cart = new Cart($paymentApi->metadata->cart_id);
         $customer = new Customer($cart->id_customer);
 
-        $key = SecureKeyUtility::generateReturnKey($customer->secure_key, $customer->id, $cart->id, $this->module->name);
+        $key = SecureKeyUtility::generateReturnKey($customer->id, $cart->id, $this->module->name);
 
         $paymentData = [
             'amount' => [
@@ -193,7 +195,7 @@ class MolliePaymentMailService
 
             return [
                 'success' => true,
-                'message' => $this->module->l('Second chance email was successfully send!'),
+                'message' => $this->module->l('Second chance email was successfully send!', self::FILE_NAME),
                 'checkoutUrl' => $checkoutUrl,
             ];
         }

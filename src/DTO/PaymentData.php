@@ -82,6 +82,15 @@ class PaymentData implements JsonSerializable
      * @var ?string
      */
     private $applePayToken;
+    /**
+     * @var string
+     */
+    private $shippingStreetAndNumber;
+
+    /**
+     * @var string
+     */
+    private $billingStreetAndNumber;
 
     public function __construct(
         Amount $amount,
@@ -307,6 +316,16 @@ class PaymentData implements JsonSerializable
         return $this;
     }
 
+    public function getShippingStreetAndNumber(): string
+    {
+        return $this->shippingStreetAndNumber;
+    }
+
+    public function setShippingStreetAndNumber(string $shippingStreetAndNumber): void
+    {
+        $this->shippingStreetAndNumber = $shippingStreetAndNumber;
+    }
+
     public function jsonSerialize()
     {
         return [
@@ -316,12 +335,14 @@ class PaymentData implements JsonSerializable
             ],
             'billingAddress' => [
                 'streetAndNumber' => $this->cleanUpInput($this->getBillingAddress()->address1),
+                'streetAdditional' => $this->cleanUpInput($this->getBillingAddress()->address2, null),
                 'city' => $this->cleanUpInput($this->getBillingAddress()->city),
                 'postalCode' => $this->cleanUpInput($this->getBillingAddress()->postcode),
                 'country' => $this->cleanUpInput(Country::getIsoById($this->getBillingAddress()->id_country)),
             ],
             'shippingAddress' => [
                 'streetAndNumber' => $this->cleanUpInput($this->getShippingAddress()->address1),
+                'streetAdditional' => $this->cleanUpInput($this->getShippingAddress()->address2, null),
                 'city' => $this->cleanUpInput($this->getShippingAddress()->city),
                 'postalCode' => $this->cleanUpInput($this->getShippingAddress()->postcode),
                 'country' => $this->cleanUpInput(Country::getIsoById($this->getShippingAddress()->id_country)),
@@ -339,15 +360,15 @@ class PaymentData implements JsonSerializable
         ];
     }
 
-    private function cleanUpInput($input)
+    private function cleanUpInput($input, $defaultValue = 'N/A')
     {
-        $defaultValue = 'N/A';
-
-        if (!isset($input) || empty($input)) {
+        if (empty($input)) {
             return $defaultValue;
         }
 
-        $input = ctype_space($input) ? $defaultValue : $input;
+        if (ctype_space($input)) {
+            return $defaultValue;
+        }
         $input = ltrim($input);
 
         return substr($input, 0, 100);

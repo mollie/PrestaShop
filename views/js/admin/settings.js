@@ -22,9 +22,9 @@ $(document).ready(function () {
     disableCharactersInAmountInput();
     handleDisableForCustomUrl();
     handleRequiredApiKey();
-    handleRequiredProfileId();
     handleApiKeyVisibility();
     handleApplePayButtonStylesToggle();
+    handleApiKeyChanges();
 
     function disableCharactersInAmountInput() {
         $('.js-mollie-amount').keypress(function (event) {
@@ -50,37 +50,6 @@ $(document).ready(function () {
             var selectedEnvironment = $(this).val();
             toggleRequiredApiKey(selectedEnvironment);
         });
-    }
-
-    function handleRequiredProfileId() {
-        var $profileSwitch = $('input[name="MOLLIE_IFRAME"]');
-        var isProfileIdRequired = $profileSwitch.prop('checked');
-        $('.js-api-profile-id').find('label.control-label').toggleClass('required', isProfileIdRequired);
-
-        $profileSwitch.on('change', function () {
-            var isProfileIdRequired = $profileSwitch.prop('checked');
-            $('.js-api-profile-id').find('label.control-label').toggleClass('required', isProfileIdRequired);
-        });
-    }
-
-    function handlePaymentMethodDescriptions() {
-        var $apiPaymentMethodSelect = $('select[name^="MOLLIE_METHOD_API"]');
-
-        $apiPaymentMethodSelect.each(function () {
-            togglePaymentMethodDescription($(this));
-        });
-
-        $apiPaymentMethodSelect.on('change', function () {
-            togglePaymentMethodDescription($(this));
-        });
-    }
-
-    function togglePaymentMethodDescription(apiPaymentMethodSelect) {
-        if (apiPaymentMethodSelect.val() === 'payments') {
-            apiPaymentMethodSelect.closest('.payment-method').find('.payment-api-description').slideDown();
-        } else {
-            apiPaymentMethodSelect.closest('.payment-method').find('.payment-api-description').slideUp();
-        }
     }
 
     function toggleRequiredApiKey(selectedEnvironment) {
@@ -158,4 +127,14 @@ function togglePaymentMethod($button, paymentId) {
             }
         }
     })
+}
+
+function handleApiKeyChanges()
+{
+    $('select[name="MOLLIE_ENVIRONMENT"], input[name="MOLLIE_API_KEY_TEST"], input[name="MOLLIE_API_KEY"]').on('change', function () {
+        $('input').not('input[name="MOLLIE_API_KEY_TEST"], input[name="MOLLIE_API_KEY"], input[name="MOLLIE_ENV_CHANGED"], input[name="MOLLIE_ACCOUNT_SWITCH"]').attr('disabled', true);
+        $('select').not('select[name="MOLLIE_ENVIRONMENT"]').attr('disabled', true).trigger("chosen:updated");
+        $('.js-mollie-save-warning').removeClass('hidden');
+        $('input[name="MOLLIE_ENV_CHANGED"]').val(1);
+    });
 }

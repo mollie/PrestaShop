@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    public: true
+
   Mollie\Provider\CreditCardLogoProvider:
     class: Mollie\Provider\CreditCardLogoProvider
     arguments:
@@ -27,3 +30,8 @@ services:
 
   Mollie\Provider\EnvironmentVersionProvider:
     class: Mollie\Provider\EnvironmentVersionProvider
+
+  Mollie\Provider\ProfileIdProviderInterface: '@Mollie\Provider\ProfileIdProvider'
+
+  Mollie\Provider\ProfileIdProvider:
+    class: Mollie\Provider\ProfileIdProvider

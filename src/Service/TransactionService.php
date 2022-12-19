@@ -117,48 +117,65 @@ class TransactionService
         $cart = new Cart($apiPayment->metadata->cart_id);
 
         $key = Mollie\Utility\SecureKeyUtility::generateReturnKey(
+            $cart->id_customer,
+            $cart->id,
+            $this->module->name
+        );
+
+        // remove after few releases
+        $deprecatedKey = Mollie\Utility\SecureKeyUtility::deprecatedGenerateReturnKey(
             $cart->secure_key,
             $cart->id_customer,
             $cart->id,
             $this->module->name
         );
 
+        $orderDescription = $apiPayment->description ?? $apiPayment->orderNumber;
+        $isGeneratedOrderNumber = strpos($orderDescription, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0;
+        $isPaymentFinished = MollieStatusUtility::isPaymentFinished($apiPayment->status);
+        if (!$isPaymentFinished && $isGeneratedOrderNumber) {
+            return $apiPayment;
+        }
+
         switch ($apiPayment->resource) {
             case Config::MOLLIE_API_STATUS_PAYMENT:
-                if ($key !== $apiPayment->metadata->secure_key) {
+                if ($key !== $apiPayment->metadata->secure_key && $deprecatedKey !== $apiPayment->metadata->secure_key) {
                     throw new TransactionException('Security key is incorrect.', HttpStatusCode::HTTP_UNAUTHORIZED);
                 }
                 if (!$apiPayment->metadata->cart_id) {
                     throw new TransactionException('Cart id is missing in transaction metadata', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY);
                 }
-                if ($apiPayment->hasRefunds() || $apiPayment->hasChargebacks()) {
-                    if (strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
+                if ($apiPayment->hasRefunds()) {
+                    if ($isGeneratedOrderNumber) {
                         $this->handlePaymentDescription($apiPayment);
                     }
                     if (isset($apiPayment->amount->value, $apiPayment->amountRefunded->value)
                         && NumberUtility::isLowerOrEqualThan($apiPayment->amount->value, $apiPayment->amountRefunded->value)
                     ) {
                         $this->orderStatusService->setOrderStatus($orderId, RefundStatus::STATUS_REFUNDED);
-                    } else {
+                    } elseif ($apiPayment->amountRefunded->value > 0) {
                         $this->orderStatusService->setOrderStatus($orderId, Config::PARTIAL_REFUND_CODE);
                     }
+                } elseif ($this->paymentHasChargedBacks($apiPayment)) {
+                    $this->orderStatusService->setOrderStatus($orderId, Config::MOLLIE_CHARGEBACK);
                 } else {
-                    if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
+                    if (!$orderId && $isPaymentFinished) {
                         $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id);
+
                         if (!$orderId) {
                             throw new TransactionException('Order is already created', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
                         }
                         $this->updatePaymentDescription($apiPayment, $orderId);
                     } elseif (strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                         $this->handlePaymentDescription($apiPayment);
-                    } else {
+                    } elseif ($apiPayment->amountRefunded->value > 0) {
                         $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
                     }
                     $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
                 }
                 break;
             case Config::MOLLIE_API_STATUS_ORDER:
-                if ($key !== $apiPayment->metadata->secure_key) {
+                if ($key !== $apiPayment->metadata->secure_key && $deprecatedKey !== $apiPayment->metadata->secure_key) {
                     throw new TransactionException('Security key is incorrect.', HttpStatusCode::HTTP_UNAUTHORIZED);
                 }
                 if (!$apiPayment->metadata->cart_id) {
@@ -167,7 +184,7 @@ class TransactionService
 
                 $isKlarnaOrder = in_array($apiPayment->method, Config::KLARNA_PAYMENTS, false);
 
-                if (!$orderId && MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
+                if (!$orderId && $isPaymentFinished) {
                     $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id, $isKlarnaOrder);
                     if (!$orderId) {
                         throw new TransactionException('Order is already created', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
@@ -175,6 +192,9 @@ class TransactionService
                     $apiPayment = $this->updateOrderDescription($apiPayment, $orderId);
                 } elseif ($apiPayment->amountRefunded) {
                     if (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
+                        if (!MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
+                            return $apiPayment;
+                        }
                         $this->handleOrderDescription($apiPayment);
                     }
                     if (isset($apiPayment->amount->value, $apiPayment->amountRefunded->value)
@@ -191,8 +211,12 @@ class TransactionService
                             $this->orderStatusService->setOrderStatus($orderId, Config::PARTIAL_REFUND_CODE);
                         }
                     }
+                } elseif ($this->orderHasChargedBacks($apiPayment)) {
+                    $this->orderStatusService->setOrderStatus($orderId, Config::MOLLIE_CHARGEBACK);
                 } elseif (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
-                    $this->handleOrderDescription($apiPayment);
+                    if ($isPaymentFinished) {
+                        $this->handleOrderDescription($apiPayment);
+                    }
                 } else {
                     $isKlarnaDefault = Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON) === Config::MOLLIE_STATUS_DEFAULT;
                     if (in_array($apiPayment->method, Config::KLARNA_PAYMENTS) && !$isKlarnaDefault && $apiPayment->status === OrderStatus::STATUS_COMPLETED) {
@@ -442,5 +466,23 @@ class TransactionService
         } else {
             throw new TransactionException('Transaction is no longer used', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
         }
+    }
+
+    private function orderHasChargedBacks(MollieOrderAlias $apiOrder): bool
+    {
+        $payments = $apiOrder->payments();
+        /** @var Payment $payment */
+        foreach ($payments as $payment) {
+            if ($payment->hasChargebacks()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function paymentHasChargedBacks(Payment $apiPayment): bool
+    {
+        return $apiPayment->hasChargebacks();
     }
 }

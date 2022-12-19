@@ -1,4 +1,14 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Application\CommandHandler;
 
@@ -25,6 +35,8 @@ use Tools;
 
 final class CreateApplePayOrderHandler
 {
+    const FILE_NAME = 'CreateApplePayOrderHandler';
+
     /**
      * @var PaymentMethodRepositoryInterface
      */
@@ -81,7 +93,7 @@ final class CreateApplePayOrderHandler
                     [
                         'code' => 'unknown',
                         'contactField' => null,
-                        'message' => $this->module->l('Failed to create mollie transaction.'),
+                        'message' => $this->module->l('Failed to create mollie transaction.', self::FILE_NAME),
                     ],
                 ],
             ];
@@ -114,7 +126,7 @@ final class CreateApplePayOrderHandler
                     [
                         'code' => 'unknown',
                         'contactField' => null,
-                        'message' => $this->module->l('Couldn\'t find order by card it.'),
+                        'message' => $this->module->l('Couldn\'t find order by cart.', self::FILE_NAME),
                     ],
                 ],
             ];

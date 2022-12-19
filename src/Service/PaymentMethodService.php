@@ -264,7 +264,6 @@ class PaymentMethodService
         $amountObj = new Amount($currency, $value);
 
         $key = Mollie\Utility\SecureKeyUtility::generateReturnKey(
-            $secureKey,
             $customer->id,
             $cartId,
             $this->module->name
@@ -307,12 +306,12 @@ class PaymentMethodService
             $paymentData->setIssuer($issuer);
 
             if (isset($cart->id_address_invoice)) {
-                $billing = new Address((int) $cart->id_address_invoice);
-                $paymentData->setBillingAddress($billing);
+                $billingAddress = new Address((int) $cart->id_address_invoice);
+                $paymentData->setBillingAddress($billingAddress);
             }
             if (isset($cart->id_address_delivery)) {
-                $shipping = new Address((int) $cart->id_address_delivery);
-                $paymentData->setShippingAddress($shipping);
+                $shippingAddress = new Address((int) $cart->id_address_delivery);
+                $paymentData->setShippingAddress($shippingAddress);
             }
 
             if ($cardToken) {
@@ -346,15 +345,15 @@ class PaymentMethodService
             $orderData = new OrderData($amountObj, $redirectUrl, $webhookUrl);
 
             if (isset($cart->id_address_invoice)) {
-                $billing = new Address((int) $cart->id_address_invoice);
+                $billingAddress = new Address((int) $cart->id_address_invoice);
 
-                $orderData->setBillingAddress($billing);
-                $orderData->setBillingPhoneNumber($this->phoneNumberProvider->getFromAddress($billing));
+                $orderData->setBillingAddress($billingAddress);
+                $orderData->setBillingPhoneNumber($this->phoneNumberProvider->getFromAddress($billingAddress));
             }
             if (isset($cart->id_address_delivery)) {
-                $shipping = new Address((int) $cart->id_address_delivery);
-                $orderData->setShippingAddress($shipping);
-                $orderData->setDeliveryPhoneNumber($this->phoneNumberProvider->getFromAddress($shipping));
+                $shippingAddress = new Address((int) $cart->id_address_delivery);
+                $orderData->setShippingAddress($shippingAddress);
+                $orderData->setDeliveryPhoneNumber($this->phoneNumberProvider->getFromAddress($shippingAddress));
             }
             $orderData->setOrderNumber($orderReference);
             $orderData->setLocale($this->getLocale($molPaymentMethod->method));

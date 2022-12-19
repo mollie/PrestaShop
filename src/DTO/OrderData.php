@@ -99,6 +99,16 @@ class OrderData implements JsonSerializable
      */
     private $deliveryPhoneNumber;
 
+    /**
+     * @var string
+     */
+    private $shippingStreetAndNumber;
+
+    /**
+     * @var string
+     */
+    private $billingStreetAndNumber;
+
     public function __construct(
         Amount $amount,
                $redirectUrl,
@@ -372,6 +382,7 @@ class OrderData implements JsonSerializable
             'billingAddress' => [
                 'organizationName' => $this->cleanUpInput($this->getBillingAddress()->company),
                 'streetAndNumber' => $this->cleanUpInput($this->getBillingAddress()->address1),
+                'streetAdditional' => $this->cleanUpInput($this->getBillingAddress()->address2, null),
                 'city' => $this->cleanUpInput($this->getBillingAddress()->city),
                 'postalCode' => $this->cleanUpInput($this->getBillingAddress()->postcode),
                 'country' => $this->cleanUpInput(Country::getIsoById($this->getBillingAddress()->id_country)),
@@ -382,6 +393,7 @@ class OrderData implements JsonSerializable
             'shippingAddress' => [
                 'organizationName' => $this->cleanUpInput($this->getShippingAddress()->company),
                 'streetAndNumber' => $this->cleanUpInput($this->getShippingAddress()->address1),
+                'streetAdditional' => $this->cleanUpInput($this->getShippingAddress()->address2, null),
                 'city' => $this->cleanUpInput($this->getShippingAddress()->city),
                 'postalCode' => $this->cleanUpInput($this->getShippingAddress()->postcode),
                 'country' => $this->cleanUpInput(Country::getIsoById($this->getShippingAddress()->id_country)),
@@ -410,15 +422,15 @@ class OrderData implements JsonSerializable
         return $result;
     }
 
-    private function cleanUpInput($input)
+    private function cleanUpInput($input, $defaultValue = 'N/A')
     {
-        $defaultValue = 'N/A';
-
-        if (!isset($input) || empty($input)) {
+        if (empty($input)) {
             return $defaultValue;
         }
 
-        $input = ctype_space($input) ? $defaultValue : $input;
+        if (ctype_space($input)) {
+            return $defaultValue;
+        }
         $input = ltrim($input);
 
         return substr($input, 0, 100);

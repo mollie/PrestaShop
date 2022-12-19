@@ -11,9 +11,13 @@
  */
 
 use Mollie\Api\Types\PaymentMethod;
+use Mollie\Provider\ProfileIdProviderInterface;
 
 class MolliePayScreenModuleFrontController extends ModuleFrontController
 {
+    /** @var Mollie */
+    public $module;
+
     public function postProcess()
     {
         $cardToken = Tools::getValue('mollieCardToken');
@@ -50,8 +54,11 @@ class MolliePayScreenModuleFrontController extends ModuleFrontController
 
     public function setMedia()
     {
+        /** @var ProfileIdProviderInterface $profileIdProvider */
+        $profileIdProvider = $this->module->getMollieContainer(ProfileIdProviderInterface::class);
+
         Media::addJsDef([
-            'profileId' => Configuration::get(Mollie\Config\Config::MOLLIE_PROFILE_ID),
+            'profileId' => $profileIdProvider->getProfileId($this->module->api),
         ]);
         $this->addJS("{$this->module->getPathUri()}views/js/front/mollie_iframe.js");
         $this->addCSS("{$this->module->getPathUri()}views/css/mollie_iframe.css");

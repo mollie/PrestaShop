@@ -30,28 +30,12 @@ $(document).ready(function () {
 
     $('#module_form').on('submit', function () {
         var description = $('#MOLLIE_DESCRIPTION');
-        var isProfileChecked = $('input[name="MOLLIE_IFRAME"]').prop('checked');
-        var profile = $('#MOLLIE_PROFILE_ID');
         var selectedAPI = $('select[name="MOLLIE_API"]').val();
         if (!/\S/.test(description.val()) && selectedAPI === payment_api) {
             event.preventDefault();
             description.addClass('mollie-input-error');
             $('.alert.alert-success').hide();
             showErrorMessage(description_message);
-        }
-        if (isProfileChecked && profile.val() === '') {
-            event.preventDefault();
-            profile.addClass('mollie-input-error');
-            $('.alert.alert-success').hide();
-            showErrorMessage(profile_id_message_empty);
-            return;
-        }
-
-        if (isProfileChecked && profile.val().substring(0, 4) !== 'pfl_') {
-            event.preventDefault();
-            profile.addClass('mollie-input-error');
-            $('.alert.alert-success').hide();
-            showErrorMessage(profile_id_message);
         }
 
         $paymentMethodsEnable.each(validatePaymentMethod);

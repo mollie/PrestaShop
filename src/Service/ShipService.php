@@ -18,6 +18,8 @@ use Mollie\Api\Resources\Order as MollieOrderAlias;
 
 class ShipService
 {
+    const FILE_NAME = 'ShipService';
+
     /**
      * @var Mollie
      */
@@ -59,7 +61,7 @@ class ShipService
         } catch (ApiException $e) {
             return [
                 'success' => false,
-                'message' => $this->module->l('The product(s) could not be shipped!'),
+                'message' => $this->module->l('The product(s) could not be shipped!', self::FILE_NAME),
                 'detailed' => $e->getMessage(),
             ];
         }

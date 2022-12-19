@@ -153,8 +153,6 @@ class Installer implements InstallerInterface
     public static function getHooks()
     {
         return [
-            'displayPayment',
-            'displayPaymentEU',
             'paymentOptions',
             'displayAdminOrder',
             'displayBackOfficeHeader',
@@ -168,7 +166,6 @@ class Installer implements InstallerInterface
             'actionValidateOrder',
             'actionOrderGridDefinitionModifier',
             'actionOrderGridQueryBuilderModifier',
-            'actionObjectCurrencyUpdateAfter',
             'displayHeader',
             'displayProductActions',
             'displayExpressCheckout',
@@ -196,7 +193,7 @@ class Installer implements InstallerInterface
         $orderState->logable = false;
         $orderState->invoice = false;
         $orderState->module_name = $this->module->name;
-        $orderState->name = MultiLangUtility::createMultiLangField('Mollie partially refunded');
+        $orderState->name = MultiLangUtility::createMultiLangField('Partially refunded by Mollie');
         if ($orderState->add()) {
             $this->imageService->createOrderStateLogo($orderState->id);
         }
@@ -252,6 +249,9 @@ class Installer implements InstallerInterface
             return false;
         }
         if (!$this->klarnaPaymentShippedState()) {
+            return false;
+        }
+        if (!$this->createChargedbackState()) {
             return false;
         }
 
@@ -386,6 +386,34 @@ class Installer implements InstallerInterface
     }
 
     /**
+     * @return bool
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    public function createChargedbackState()
+    {
+        if ($this->isStatusCreated(Config::MOLLIE_STATUS_CHARGEBACK)) {
+            return true;
+        }
+        $orderState = new OrderState();
+        $orderState->send_email = false;
+        $orderState->color = '#E74C3C';
+        $orderState->hidden = false;
+        $orderState->delivery = false;
+        $orderState->logable = false;
+        $orderState->invoice = false;
+        $orderState->module_name = $this->module->name;
+        $orderState->name = MultiLangUtility::createMultiLangField('Mollie Chargeback');
+        if ($orderState->add()) {
+            $this->imageService->createOrderStateLogo($orderState->id);
+        }
+        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_CHARGEBACK, (int) $orderState->id);
+
+        return true;
+    }
+
+    /**
      * @return void
      */
     protected function initConfig()
@@ -393,10 +421,9 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_API_KEY, '');
         $this->configurationAdapter->updateValue(Config::MOLLIE_API_KEY_TEST, '');
         $this->configurationAdapter->updateValue(Config::MOLLIE_ENVIRONMENT, Config::ENVIRONMENT_TEST);
-        $this->configurationAdapter->updateValue(Config::MOLLIE_PROFILE_ID, '');
         $this->configurationAdapter->updateValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION, 0);
         $this->configurationAdapter->updateValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE, Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE);
-        $this->configurationAdapter->updateValue(Config::MOLLIE_IFRAME, false);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_IFRAME, true);
         $this->configurationAdapter->updateValue(Config::MOLLIE_IMAGES, Config::LOGOS_NORMAL);
         $this->configurationAdapter->updateValue(Config::MOLLIE_ISSUERS, Config::ISSUERS_ON_CLICK);
         $this->configurationAdapter->updateValue(Config::MOLLIE_CSS, '');
@@ -422,6 +449,7 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_CANCELED, true);
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_EXPIRED, true);
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_REFUNDED, true);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_CHARGEBACK, true);
         $this->configurationAdapter->updateValue(Config::MOLLIE_ACCOUNT_SWITCH, false);
         $this->configurationAdapter->updateValue(Config::MOLLIE_CSS, '');
 
