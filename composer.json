@@ -10,7 +10,8 @@
         "mollie/mollie-api-php": "v2.42.1",
         "segmentio/analytics-php": "^1.5",
         "sentry/sentry": "^1.11.0",
-        "vlucas/phpdotenv": "3.4"
+        "vlucas/phpdotenv": "3.4",
+        "league/container": "2.5.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
@@ -23,17 +24,19 @@
     },
     "autoload": {
         "psr-4": {
-            "Mollie\\": "src/"
+            "Mollie\\": "src/",
+            "Mollie\\Subscription\\": "subscription/"
         },
         "classmap": [
             "mollie.php",
             "controllers/",
-            "src/"
+            "src/",
+            "subscription/"
         ]
     },
     "config": {
         "platform": {
-            "php": "7.0.8"
+            "php": "7.2"
         },
         "prepend-autoloader": false
     },

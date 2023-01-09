@@ -1,3 +1,8 @@
+app:
+    # The main bundle is PrestaShopCoreBundle which will load other dependencies.
+    resource: "Subscription/routes.yml"
+
+
 mollie_module_admin_resend_payment_message:
     path: /mollie/email/{orderId}/secondChance/send
     methods: [GET]

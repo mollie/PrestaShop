@@ -121,15 +121,16 @@ class Installer implements InstallerInterface
             return false;
         }
 
-        try {
-            $this->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);
-            $this->installTab('AdminMollieModule', 'IMPROVE', 'Mollie', true, 'mollie');
-        } catch (Exception $e) {
-            $errorHandler->handle($e, $e->getCode(), false);
-            $this->errors[] = $this->module->l('Unable to install new controllers', self::FILE_NAME);
-
-            return false;
-        }
+//        try {
+//            $this->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);
+            $this->installTab('AdminMollieModule_MTR', 'IMPROVE', 'Mollie', true, 'mollie');
+            $this->installTab('AdminMollieModule', 'AdminMollieModule_MTR', 'Settings', true, 'mollie');
+//        } catch (Exception $e) {
+//            $errorHandler->handle($e, $e->getCode(), false);
+//            $this->errors[] = $this->module->l('Unable to install new controllers', self::FILE_NAME);
+//
+//            return false;
+//        }
 
         try {
             $this->installVoucherFeatures();

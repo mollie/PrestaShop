@@ -14,6 +14,17 @@ use Mollie\Config\Config;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\PsVersionUtility;
+use Mollie\Subscription\Install\AttributeInstaller;
+use Mollie\Subscription\Install\DatabaseTableInstaller;
+use Mollie\Subscription\Install\HookInstaller;
+use Mollie\Subscription\Install\Installer;
+use Mollie\Subscription\Logger\NullLogger;
+use Mollie\Subscription\ServiceProvider\LeagueServiceContainerProvider;
+use Mollie\Subscription\Repository\Language as LanguageAdapter;
+use Mollie\Subscription\Adapter\Configuration as SubscriptionConfiguration;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -21,6 +32,8 @@ class Mollie extends PaymentModule
 {
     /**
      * Symfony DI Container.
+     *
+     * @var ContainerBuilder
      **/
     private $moduleContainer;
 
@@ -40,8 +53,11 @@ class Mollie extends PaymentModule
 
     const SUPPORTED_PHP_VERSION = '70080';
 
-    const ADMIN_MOLLIE_CONTROLLER = 'AdminMollieModuleController';
-    const ADMIN_MOLLIE_AJAX_CONTROLLER = 'AdminMollieAjaxController';
+    const ADMIN_MOLLIE_PARENT_CONTROLLER = 'AdminMollieModuleParent';
+    const ADMIN_MOLLIE_CONTROLLER = 'AdminMollieModule';
+    const ADMIN_MOLLIE_AJAX_CONTROLLER = 'AdminMollieAjax';
+    /** @var LeagueServiceContainerProvider */
+    private $containerProvider;
 
     /**
      * Mollie constructor.
@@ -62,10 +78,30 @@ class Mollie extends PaymentModule
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 
-        $this->compile();
+//        $this->compile();
         $this->loadEnv();
         $this->setApiKey();
         new \Mollie\Handler\ErrorHandler\ErrorHandler($this);
+    }
+
+    /**
+     * Gets service that is defined by module container.
+     *
+     * @param string $serviceName
+     * @returns mixed
+     */
+    public function getService(string $serviceName)
+    {
+        if ($this->containerProvider === null) {
+            $this->containerProvider = new LeagueServiceContainerProvider();
+        }
+
+        try {
+            return $this->containerProvider->getService($serviceName);
+
+        } catch (Exception $e) {
+            $a = 1;
+        }
     }
 
     private function loadEnv()
@@ -111,6 +147,19 @@ class Mollie extends PaymentModule
         $installer = $this->getMollieContainer(\Mollie\Install\Installer::class);
         if (!$installer->install()) {
             $this->_errors = array_merge($this->_errors, $installer->getErrors());
+
+            return false;
+        }
+
+        $subscriptionInstaller = new Installer(
+            new DatabaseTableInstaller(),
+            new AttributeInstaller(new NullLogger(), new SubscriptionConfiguration(), $this, new LanguageAdapter()),
+            new HookInstaller($this)
+        );
+
+        if (!$subscriptionInstaller->install()) {
+            $this->_errors = array_merge($this->_errors, $subscriptionInstaller->getErrors());
+            parent::uninstall();
 
             return false;
         }
@@ -165,9 +214,9 @@ class Mollie extends PaymentModule
             }
         }
 
-        $containerBuilder = new \Symfony\Component\DependencyInjection\ContainerBuilder();
-        $locator = new \Symfony\Component\Config\FileLocator($this->getLocalPath() . 'config');
-        $loader = new \Symfony\Component\DependencyInjection\Loader\YamlFileLoader($containerBuilder, $locator);
+        $containerBuilder = new ContainerBuilder();
+        $locator = new FileLocator($this->getLocalPath() . 'config');
+        $loader = new YamlFileLoader($containerBuilder, $locator);
         $loader->load('config.yml');
         $containerBuilder->compile();
 
@@ -181,6 +230,7 @@ class Mollie extends PaymentModule
      */
     public function getMollieContainer($id = false)
     {
+        return $this->getService($id);
         if ($id) {
             return $this->moduleContainer->get($id);
         }
@@ -211,121 +261,9 @@ class Mollie extends PaymentModule
         return $this->identifier;
     }
 
-    /**
-     * @return string|void
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws SmartyException
-     * @throws \Mollie\Api\Exceptions\ApiException
-     */
     public function getContent()
     {
-        if (Tools::getValue('ajax')) {
-            header('Content-Type: application/json;charset=UTF-8');
-
-            if (!method_exists($this, 'displayAjax' . Tools::ucfirst(Tools::getValue('action')))) {
-                exit(json_encode([
-                    'success' => false,
-                ]));
-            }
-            exit(json_encode($this->{'displayAjax' . Tools::ucfirst(Tools::getValue('action'))}()));
-        }
-        /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
-        $moduleRepository = $this->getMollieContainer(\Mollie\Repository\ModuleRepository::class);
-        $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->name);
-        $needsUpgrade = Tools::version_compare($this->version, $moduleDatabaseVersion, '>');
-        if ($needsUpgrade) {
-            $this->context->controller->errors[] = $this->l('Please upgrade Mollie module');
-
-            return;
-        }
-
-        $isShopContext = Shop::getContext() === Shop::CONTEXT_SHOP;
-
-        if (!$isShopContext) {
-            $this->context->controller->errors[] = $this->l('Select the shop that you want to configure');
-
-            return;
-        }
-
-        /** @var \Mollie\Service\Content\TemplateParserInterface $templateParser */
-        $templateParser = $this->getMollieContainer(\Mollie\Service\Content\TemplateParserInterface::class);
-
-        $isSubmitted = (bool) Tools::isSubmit("submit{$this->name}");
-
-        /* @phpstan-ignore-next-line */
-        if (false === Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING) && !$isSubmitted) {
-            $this->context->controller->errors[] = $this->l('Select an order status for \"Status for Awaiting payments\" in the \"Advanced settings\" tab');
-        }
-
-        $errors = [];
-
-        if (Tools::isSubmit("submit{$this->name}")) {
-            /** @var \Mollie\Service\SettingsSaveService $saveSettingsService */
-            $saveSettingsService = $this->getMollieContainer(\Mollie\Service\SettingsSaveService::class);
-            $resultMessages = $saveSettingsService->saveSettings($errors);
-            if (!empty($errors)) {
-                $this->context->controller->errors = $resultMessages;
-            } else {
-                $this->context->controller->confirmations = $resultMessages;
-            }
-        }
-
-        Media::addJsDef([
-            'description_message' => addslashes($this->l('Enter a description')),
-            'payment_api' => addslashes(Mollie\Config\Config::MOLLIE_PAYMENTS_API),
-            'ajaxUrl' => addslashes($this->context->link->getAdminLink('AdminMollieAjax')),
-        ]);
-
-        /* Custom logo JS vars*/
-        Media::addJsDef([
-            'image_size_message' => addslashes($this->l('Upload an image %s%x%s1%')),
-            'not_valid_file_message' => addslashes($this->l('Invalid file: %s%')),
-        ]);
-
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/validation.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/settings.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/custom_logo.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/upgrade_notice.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/api_key_test.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/init_mollie_account.js');
-        $this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
-        $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/logo_input.css');
-
-        $html = $templateParser->parseTemplate(
-            $this->context->smarty,
-            $this->getMollieContainer(\Mollie\Builder\Content\LogoInfoBlock::class),
-            $this->getLocalPath() . 'views/templates/admin/logo.tpl'
-        );
-
-        /** @var \Mollie\Builder\Content\UpdateMessageInfoBlock $updateMessageInfoBlock */
-        $updateMessageInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\UpdateMessageInfoBlock::class);
-        $updateMessageInfoBlockData = $updateMessageInfoBlock->setAddons(self::ADDONS);
-
-        $html .= $templateParser->parseTemplate(
-            $this->context->smarty,
-            $updateMessageInfoBlockData,
-            $this->getLocalPath() . 'views/templates/admin/updateMessage.tpl'
-        );
-
-        /** @var \Mollie\Builder\Content\BaseInfoBlock $baseInfoBlock */
-        $baseInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\BaseInfoBlock::class);
-        $this->context->smarty->assign($baseInfoBlock->buildParams());
-
-        /** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
-        $settingsFormBuilder = $this->getMollieContainer(\Mollie\Builder\FormBuilder::class);
-
-        try {
-            $html .= $settingsFormBuilder->buildSettingsForm();
-        } catch (PrestaShopDatabaseException $e) {
-            $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
-            $errorHandler->handle($e, $e->getCode(), false);
-            $this->context->controller->errors[] = $this->l('The database tables are missing. Reset the module.');
-        }
-
-        return $html;
+        Tools::redirectAdmin($this->context->link->getAdminLink('AdminMollieSettings'));
     }
 
     /**
@@ -465,7 +403,7 @@ class Mollie extends PaymentModule
         $moduleName = Tools::getValue('configure');
 
         // We are on module configuration page
-        if ($this->name === $moduleName && 'AdminModules' === $currentController) {
+        if ($this->name === $moduleName && 'AdminMollieSettings' === $currentController) {
             $this->context->controller->addJqueryPlugin('sortable');
             $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/payment_methods.js');
             $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/payment_methods.css');
@@ -788,18 +726,32 @@ class Mollie extends PaymentModule
     {
         return [
             [
-                'name' => $this->name,
-                'class_name' => self::ADMIN_MOLLIE_CONTROLLER,
-                'ParentClassName' => 'AdminParentShipping',
-                'parent' => 'AdminParentShipping',
-            ],
-            [
                 'name' => $this->l('AJAX', __CLASS__),
                 'class_name' => self::ADMIN_MOLLIE_AJAX_CONTROLLER,
-                'ParentClassName' => self::ADMIN_MOLLIE_CONTROLLER,
-                'parent' => self::ADMIN_MOLLIE_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
                 'module_tab' => true,
                 'visible' => false,
+            ],
+            [
+                'name' => 'parent',
+                'class_name' => 'AdminMollieTabParent',
+                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
+                'visible' => false,
+            ],
+            [
+                'name' => 'settings',
+                'class_name' => 'AdminMollieSettings',
+                'parent_class_name' => 'AdminMollieTabParent',
+            ],
+            [
+                'name' => $this->l('Subscription settings'),
+                'class_name' => 'AdminMollieSubscriptionSettings',
+                'parent_class_name' => 'AdminMollieTabParent',
+            ],
+            [
+                'name' => $this->l('Subscriptions'),
+                'class_name' => 'AdminMollieSubscriptionOrders',
+                'parent_class_name' => 'AdminMollieTabParent',
             ],
         ];
     }
