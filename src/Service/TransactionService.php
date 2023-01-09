@@ -17,7 +17,6 @@ use Configuration;
 use Currency;
 use Db;
 use Mollie;
-use Mollie\Api\Endpoints\OrderEndpoint;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment;
@@ -420,7 +419,7 @@ class TransactionService
         $this->module->api->orders->update(
             $apiPayment->id,
             [
-                'orderNumber' => $orderNumber
+                'orderNumber' => $orderNumber,
             ]
         );
 
