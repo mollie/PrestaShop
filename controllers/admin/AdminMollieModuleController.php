@@ -11,18 +11,8 @@
  */
 class AdminMollieModuleController extends ModuleAdminController
 {
-    public function postProcess()
+    public function init()
     {
-        Tools::redirectAdmin(
-        /* @phpstan-ignore-next-line */
-            $this->context->link->getAdminLink(
-                'AdminModules',
-                true,
-                [],
-                [
-                    'configure' => 'mollie',
-                ]
-            )
-        );
+        Tools::redirectAdmin($this->context->link->getAdminLink('AdminMollieSettings'));
     }
 }

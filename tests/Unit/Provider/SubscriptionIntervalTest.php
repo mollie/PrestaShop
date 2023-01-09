@@ -1,0 +1,96 @@
+<?php
+
+namespace Mollie\Subscription\Tests\Unit\Provider;
+
+use Mollie\Subscription\Config\Config;
+use Mollie\Subscription\DTO\Object\Interval;
+use Mollie\Subscription\Exception\SubscriptionIntervalException;
+use Mollie\Subscription\Provider\SubscriptionInterval;
+use PHPUnit\Framework\TestCase;
+
+class SubscriptionIntervalTest extends TestCase
+{
+    /**
+     * @dataProvider descriptionDataProvider
+     */
+    public function testGetSubscriptionInterval(array $attributeId, array $mockedGetResults, ?Interval $expectedInterval): void
+    {
+        $configurationMock = $this->createMock('MollieSubscription\Adapter\Configuration');
+        $configurationMock
+            ->method('get')
+            ->will(
+                $this->returnValueMap($mockedGetResults)
+            );
+        $subscriptionIntervalProvider = new SubscriptionInterval($configurationMock);
+
+        if ($expectedInterval === null) {
+            $this->expectException(SubscriptionIntervalException::class);
+        }
+        $combination = $this->createMock('Combination');
+        $combination->method('getWsProductOptionValues')->willReturn($attributeId);
+        $description = $subscriptionIntervalProvider->getSubscriptionInterval($combination);
+
+        $this->assertEquals($expectedInterval, $description);
+    }
+
+    public function descriptionDataProvider(): array
+    {
+        $langId = null;
+        $dailyProductAttributeId = 1;
+        $weeklyProductAttributeId = 2;
+        $monthlyProductAttributeId = 3;
+        $basicProductAttribute = 4;
+
+        return [
+            'example daily' => [
+                'attribute ids' => [
+                    [
+                        'id' => $dailyProductAttributeId,
+                    ],
+                ],
+                'mocked get result' => [
+                    [Config::SUBSCRIPTION_ATTRIBUTE_DAILY, $langId, $dailyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY, $langId, $weeklyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY, $langId, $monthlyProductAttributeId],
+                ],
+                'expected result' => Config::getSubscriptionIntervals()[Config::SUBSCRIPTION_ATTRIBUTE_DAILY],
+            ],
+            'example weekly' => [
+                'attribute ids' => [
+                    [
+                        'id' => $weeklyProductAttributeId,
+                    ],
+                ],
+                'mocked get result' => [
+                    [Config::SUBSCRIPTION_ATTRIBUTE_DAILY, $langId, $dailyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY, $langId, $weeklyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY, $langId, $monthlyProductAttributeId],
+                ],
+                'expected result' => Config::getSubscriptionIntervals()[Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY],
+            ],
+            'example monthly' => [
+                'attribute ids' => [
+                    ['id' => $monthlyProductAttributeId],
+                    ['id' => $basicProductAttribute],
+                ],
+                'mocked get result' => [
+                    [Config::SUBSCRIPTION_ATTRIBUTE_DAILY, $langId, $dailyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY, $langId, $weeklyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY, $langId, $monthlyProductAttributeId],
+                ],
+                'expected result' => Config::getSubscriptionIntervals()[Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY],
+            ],
+            'example unknown' => [
+                'attribute ids' => [
+                    ['id' => $basicProductAttribute],
+                ],
+                'mocked get result' => [
+                    [Config::SUBSCRIPTION_ATTRIBUTE_DAILY, $langId, $dailyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY, $langId, $weeklyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY, $langId, $monthlyProductAttributeId],
+                ],
+                'expected result' => null,
+            ],
+        ];
+    }
+}
