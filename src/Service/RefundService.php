@@ -31,7 +31,6 @@ class RefundService
      */
     private $module;
 
-
     public function __construct(Mollie $module)
     {
         $this->module = $module;

@@ -15,7 +15,6 @@ namespace Mollie\Handler\CartRule;
 use Cart;
 use CartRule;
 use Mollie\Repository\CartRuleRepositoryInterface;
-use Mollie\Repository\OrderCartRuleRepositoryInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
 use MolPendingOrderCartRule;

@@ -23,6 +23,6 @@ class Link
 
     public function getPageLink($controller, $ssl = null, $idLang = null, $request = null, $requestUrlEncode = false, $idShop = null, $relativeProtocol = false)
     {
-        return PrestashopContext::getContext()->link->getPageLink($controller, $ssl, $idLang, $request, $requestUrlEncode , $idShop , $relativeProtocol );
+        return PrestashopContext::getContext()->link->getPageLink($controller, $ssl, $idLang, $request, $requestUrlEncode, $idShop, $relativeProtocol);
     }
 }

@@ -14,11 +14,9 @@ namespace Mollie\Service;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
-use Mollie\Repository\AttributeRepository;
 
 class VoucherService
 {
-
     /**
      * @var ConfigurationAdapter
      */

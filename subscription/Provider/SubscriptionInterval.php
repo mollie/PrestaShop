@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace Mollie\Subscription\Provider;
 
 use Combination;
-use Mollie\Subscription\Adapter\Configuration;
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\DTO\Object\Interval;
 use Mollie\Subscription\Exception\SubscriptionIntervalException;
 
 class SubscriptionInterval
 {
-    /** @var Configuration */
+    /** @var ConfigurationAdapter */
     private $configuration;
 
-    public function __construct(Configuration $configuration)
+    public function __construct(ConfigurationAdapter $configuration)
     {
         $this->configuration = $configuration;
     }

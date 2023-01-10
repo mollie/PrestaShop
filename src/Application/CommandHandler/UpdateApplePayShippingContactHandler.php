@@ -17,7 +17,6 @@ use Carrier;
 use Cart;
 use Country;
 use Customer;
-use Mollie\Adapter\Language;
 use Mollie\Application\Command\UpdateApplePayShippingContact;
 use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
 use Mollie\Collector\ApplePayDirect\OrderTotalCollector;
