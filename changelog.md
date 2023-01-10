@@ -7,6 +7,10 @@
 + Error logging no longer logs webhook calls. Only logg all logs webhook calls.
 + Fixed component navigation with tab when card is saved.
 + Fixed fee no longer has max amount limitation input.
++ Fixed order number update issue with klarna method.
+
+## Changes in release 5.3.1 ##
++ Improved UI and updated translations.
 
 ## Changes in release 5.3.0 ##
 + Removed reference variables from translations.

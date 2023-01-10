@@ -12,6 +12,6 @@
 
 namespace Mollie\Repository;
 
-final class MolCustomerRepository extends AbstractRepository
+class MolCustomerRepository extends AbstractRepository
 {
 }

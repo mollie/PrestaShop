@@ -413,13 +413,12 @@ class TransactionService
         }
     }
 
-    private function updateOrderDescription($apiPayment, int $orderId)
+    private function updateOrderDescription(MollieOrderAlias $apiPayment, int $orderId)
     {
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
         $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
         $orderNumber = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
-        $apiPayment->orderNumber = $orderNumber;
         $payments = $apiPayment->payments();
 
         /** @var Payment $payment */
@@ -427,7 +426,12 @@ class TransactionService
             $payment->description = 'Order ' . $orderNumber;
             $payment->update();
         }
-        $apiPayment->update();
+        $this->module->api->orders->update(
+            $apiPayment->id,
+            [
+                'orderNumber' => $orderNumber,
+            ]
+        );
 
         return $apiPayment;
     }
