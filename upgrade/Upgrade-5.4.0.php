@@ -19,7 +19,7 @@ if (!defined('_PS_VERSION_')) {
 /**
  * @return bool
  */
-function upgrade_module_5_5_0(Mollie $module)
+function upgrade_module_5_4_0(Mollie $module)
 {
     $sql = '
         ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
