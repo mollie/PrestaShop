@@ -17,7 +17,6 @@ class LeagueServiceContainerProvider implements ServiceContainerProviderInterfac
         $container = new Container();
 
         $container->delegate(new ReflectionContainer());
-//        $container->delegate(new MollieContainer());
         $container->delegate(new PrestashopContainer());
 
         (new BaseServiceProvider($this->extendedServices))->register($container);

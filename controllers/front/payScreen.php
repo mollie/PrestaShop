@@ -55,7 +55,7 @@ class MolliePayScreenModuleFrontController extends ModuleFrontController
     public function setMedia()
     {
         /** @var ProfileIdProviderInterface $profileIdProvider */
-        $profileIdProvider = $this->module->getMollieContainer(ProfileIdProviderInterface::class);
+        $profileIdProvider = $this->module->getService(ProfileIdProviderInterface::class);
 
         Media::addJsDef([
             'profileId' => $profileIdProvider->getProfileId($this->module->api),

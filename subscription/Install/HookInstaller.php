@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Mollie\Subscription\Install;
 
 use Mollie;
-use Mollie\Subscription;
 
 class HookInstaller extends AbstractInstaller
 {

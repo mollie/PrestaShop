@@ -4,7 +4,6 @@ namespace Mollie\Subscription\Controller\Symfony;
 
 use Module;
 use Mollie;
-use Mollie\Subscription;
 use Mollie\Subscription\ServiceProvider\LeagueServiceContainerProvider;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 

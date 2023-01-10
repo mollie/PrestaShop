@@ -100,7 +100,7 @@ class BaseTestCase extends TestCase
         /** @var Mollie $mollie */
         $mollie = Module::getInstanceByName('mollie');
 
-        return $mollie->getMollieContainer($serviceName);
+        return $mollie->getService($serviceName);
     }
 
     public function getContextBuilder()

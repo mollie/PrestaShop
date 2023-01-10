@@ -38,7 +38,7 @@ class ErrorHandler
     public function __construct($module)
     {
         /** @var Env $env */
-        $env = $module->getMollieContainer(Env::class);
+        $env = $module->getService(Env::class);
 
         try {
             $this->client = new ModuleFilteredRavenClient(
