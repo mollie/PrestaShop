@@ -52,14 +52,14 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $customer = $context->customer;
 
         /** @var OrderCallBackValidator $orderCallBackValidator */
-        $orderCallBackValidator = $this->module->getMollieContainer(OrderCallBackValidator::class);
+        $orderCallBackValidator = $this->module->getService(OrderCallBackValidator::class);
 
         if (!$orderCallBackValidator->validate($key, $idCart)) {
             Tools::redirectLink('index.php');
         }
 
         /** @var CustomerFactory $customerFactory */
-        $customerFactory = $this->module->getMollieContainer(CustomerFactory::class);
+        $customerFactory = $this->module->getService(CustomerFactory::class);
         $this->context = $customerFactory->recreateFromRequest($customer->id, $key, $this->context);
         if (Tools::getValue('ajax')) {
             $this->processAjax();
@@ -72,7 +72,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $cart = null;
 
         /** @var PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
+        $paymentMethodRepo = $this->module->getService(PaymentMethodRepository::class);
         if (Tools::getIsset('cart_id')) {
             $idCart = (int) Tools::getValue('cart_id');
 
@@ -185,7 +185,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     {
         header('Content-Type: application/json;charset=UTF-8');
         /** @var PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
+        $paymentMethodRepo = $this->module->getService(PaymentMethodRepository::class);
 
         $transactionId = Tools::getValue('transaction_id');
         $dbPayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transactionId);
@@ -233,7 +233,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $wrongAmountMessage = $this->module->l('The payment failed because the order and payment amounts are different. Try again.', self::FILE_NAME);
 
         /** @var PaymentReturnService $paymentReturnService */
-        $paymentReturnService = $this->module->getMollieContainer(PaymentReturnService::class);
+        $paymentReturnService = $this->module->getService(PaymentReturnService::class);
         switch ($orderStatus) {
             case PaymentStatus::STATUS_OPEN:
             case PaymentStatus::STATUS_PENDING:

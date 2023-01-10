@@ -1,8 +1,3 @@
-app:
-    # The main bundle is PrestaShopCoreBundle which will load other dependencies.
-    resource: "Subscription/routes.yml"
-
-
 mollie_module_admin_resend_payment_message:
     path: /mollie/email/{orderId}/secondChance/send
     methods: [GET]
@@ -10,3 +5,21 @@ mollie_module_admin_resend_payment_message:
         _controller: 'Mollie\Controller\AdminMollieEmailController::sendSecondChanceMessage'
     requirements:
         orderId: "^[0-9]*"
+
+admin_subscription_index:
+    path: admin-subscription
+    methods: GET
+    defaults:
+        _controller: Mollie\Subscription\Controller\Symfony\SubscriptionController::indexAction
+        _legacy_controller: AdminMollieSubscriptionOrders
+        _legacy_link: AdminMollieSubscriptionOrders
+
+admin_subscription_delete:
+    path: admin-subscription/{subscriptionId}/delete
+    methods: POST
+    defaults:
+        _controller: Mollie\Subscription\Controller\Symfony\SubscriptionController::deleteAction
+        _legacy_controller: AdminMollieSubscriptionOrders
+        _legacy_link: AdminMollieSubscriptionOrders
+    requirements:
+        subscriptionId: \d+

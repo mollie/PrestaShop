@@ -14,6 +14,6 @@ class MollieModuleServiceProvider
         /** @var Mollie $mollie */
         $mollie = Module::getInstanceByName('mollie');
 
-        return $mollie->getMollieContainer($service);
+        return $mollie->getService($service);
     }
 }

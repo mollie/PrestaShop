@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 class AdminMollieSettingsController extends ModuleAdminController
 {
@@ -24,7 +26,7 @@ class AdminMollieSettingsController extends ModuleAdminController
             exit(json_encode($this->module->{'displayAjax' . Tools::ucfirst(Tools::getValue('action'))}()));
         }
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
-        $moduleRepository = $this->module->getMollieContainer(\Mollie\Repository\ModuleRepository::class);
+        $moduleRepository = $this->module->getService(\Mollie\Repository\ModuleRepository::class);
         $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->module->name);
         $needsUpgrade = Tools::version_compare($this->module->version, $moduleDatabaseVersion, '>');
         if ($needsUpgrade) {
@@ -42,7 +44,7 @@ class AdminMollieSettingsController extends ModuleAdminController
         }
 
         /** @var \Mollie\Service\Content\TemplateParserInterface $templateParser */
-        $templateParser = $this->module->getMollieContainer(\Mollie\Service\Content\TemplateParserInterface::class);
+        $templateParser = $this->module->getService(\Mollie\Service\Content\TemplateParserInterface::class);
 
         $isSubmitted = (bool) Tools::isSubmit("submit{$this->module->name}");
 
@@ -55,7 +57,7 @@ class AdminMollieSettingsController extends ModuleAdminController
 
         if (Tools::isSubmit("submit{$this->module->name}")) {
             /** @var \Mollie\Service\SettingsSaveService $saveSettingsService */
-            $saveSettingsService = $this->module->getMollieContainer(\Mollie\Service\SettingsSaveService::class);
+            $saveSettingsService = $this->module->getService(\Mollie\Service\SettingsSaveService::class);
             $resultMessages = $saveSettingsService->saveSettings($errors);
             if (!empty($errors)) {
                 $this->context->controller->errors = $resultMessages;
@@ -88,12 +90,12 @@ class AdminMollieSettingsController extends ModuleAdminController
 
         $html = $templateParser->parseTemplate(
             $this->context->smarty,
-            $this->module->getMollieContainer(\Mollie\Builder\Content\LogoInfoBlock::class),
+            $this->module->getService(\Mollie\Builder\Content\LogoInfoBlock::class),
             $this->module->getLocalPath() . 'views/templates/admin/logo.tpl'
         );
 
         /** @var \Mollie\Builder\Content\UpdateMessageInfoBlock $updateMessageInfoBlock */
-        $updateMessageInfoBlock = $this->module->getMollieContainer(\Mollie\Builder\Content\UpdateMessageInfoBlock::class);
+        $updateMessageInfoBlock = $this->module->getService(\Mollie\Builder\Content\UpdateMessageInfoBlock::class);
         $updateMessageInfoBlockData = $updateMessageInfoBlock->setAddons(false);
 
         $html .= $templateParser->parseTemplate(
@@ -103,11 +105,11 @@ class AdminMollieSettingsController extends ModuleAdminController
         );
 
         /** @var \Mollie\Builder\Content\BaseInfoBlock $baseInfoBlock */
-        $baseInfoBlock = $this->module->getMollieContainer(\Mollie\Builder\Content\BaseInfoBlock::class);
+        $baseInfoBlock = $this->module->getService(\Mollie\Builder\Content\BaseInfoBlock::class);
         $this->context->smarty->assign($baseInfoBlock->buildParams());
 
         /** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
-        $settingsFormBuilder = $this->module->getMollieContainer(\Mollie\Builder\FormBuilder::class);
+        $settingsFormBuilder = $this->module->getService(\Mollie\Builder\FormBuilder::class);
 
         try {
             $html .= $settingsFormBuilder->buildSettingsForm();
@@ -119,5 +121,4 @@ class AdminMollieSettingsController extends ModuleAdminController
 
         $this->content .= $html;
     }
-
 }

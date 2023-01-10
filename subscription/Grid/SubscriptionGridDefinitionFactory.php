@@ -22,10 +22,10 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
 
     public const GRID_ID = 'invertus_mollie_subscription';
 
-    /** @var \MollieSubscription */
+    /** @var \Mollie */
     private $module;
 
-    public function __construct(HookDispatcherInterface $hookDispatcher = null, \MollieSubscription $module)
+    public function __construct(HookDispatcherInterface $hookDispatcher = null, \Mollie $module)
     {
         parent::__construct($hookDispatcher);
         $this->module = $module;

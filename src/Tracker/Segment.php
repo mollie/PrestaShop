@@ -36,8 +36,10 @@
 
 namespace Mollie\Tracker;
 
-use Context;
 use Module;
+use Mollie\Adapter\Context;
+use Mollie\Adapter\Language;
+use Mollie\Adapter\Shop;
 use Mollie\Config\Config;
 use Mollie\Config\Env;
 
@@ -54,9 +56,9 @@ class Segment implements TrackerInterface
     private $options = [];
 
     /**
-     * @var Context
+     * @var Shop
      */
-    private $context;
+    private $shop;
 
     /**
      * Segment constructor.
@@ -68,12 +70,15 @@ class Segment implements TrackerInterface
      * @var Env
      */
     private $env;
+    /** @var Language */
+    private $language;
 
-    public function __construct(Context $context, $env)
+    public function __construct(Shop $shop, Language $language, Env $env)
     {
-        $this->context = $context;
+        $this->shop = $shop;
         $this->init();
         $this->env = $env;
+        $this->language = $language;
     }
 
     /**
@@ -125,7 +130,7 @@ class Segment implements TrackerInterface
             'context' => [
                 'ip' => $ip,
                 'userAgent' => $userAgent,
-                'locale' => $this->context->language->iso_code,
+                'locale' => $this->language->getContextLanguage()->iso_code,
                 'page' => [
                     'referrer' => $referer,
                     'url' => $url,
@@ -162,7 +167,7 @@ class Segment implements TrackerInterface
             },
         ];
 
-        return call_user_func($dictionary[$this->context->shop->getContext()]);
+        return call_user_func($dictionary[$this->shop->getShop()->getContext()]);
     }
 
     /**
@@ -170,7 +175,7 @@ class Segment implements TrackerInterface
      */
     private function trackShop()
     {
-        $userId = $this->context->shop->domain;
+        $userId = $this->shop->getShop()->domain;
 
         $this->segmentTrack($userId);
     }
@@ -180,7 +185,7 @@ class Segment implements TrackerInterface
      */
     private function trackShopGroup()
     {
-        $shops = $this->context->shop->getShops(true, $this->context->shop->getContextShopGroupID());
+        $shops = $this->shop->getShop()->getShops(true, $this->shop->getShop()->getContextShopGroupID());
         foreach ($shops as $shop) {
             $this->segmentTrack($shop['domain']);
         }
@@ -191,7 +196,7 @@ class Segment implements TrackerInterface
      */
     private function trackAllShops()
     {
-        $shops = $this->context->shop->getShops();
+        $shops = $this->shop->getShop()->getShops();
         foreach ($shops as $shop) {
             $this->segmentTrack($shop['domain']);
         }

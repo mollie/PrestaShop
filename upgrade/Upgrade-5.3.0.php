@@ -25,7 +25,7 @@ function upgrade_module_5_3_0(Mollie $module)
     Configuration::updateValue(Config::MOLLIE_MAIL_WHEN_CHARGEBACK, true);
 
     /** @var Installer $installer */
-    $installer = $module->getMollieContainer(Installer::class);
+    $installer = $module->getService(Installer::class);
 
     $installer->createChargedbackState();
 

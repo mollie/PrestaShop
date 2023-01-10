@@ -7,6 +7,7 @@ namespace Mollie\Subscription\ServiceProvider;
 use League\Container\Container;
 use Mollie;
 use Mollie\Factory\ModuleFactory;
+use Mollie\Install\UninstallerInterface;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\CustomLogoProviderInterface;
 use Mollie\Provider\PhoneNumberProvider;
@@ -23,9 +24,6 @@ use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProvider;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\Subscription\Factory\CreateSubscriptionData;
-use Mollie\Subscription\Install\AttributeUninstaller;
-use Mollie\Subscription\Install\DatabaseTableUninstaller;
-use Mollie\Subscription\Install\Uninstaller;
 use Mollie\Subscription\Logger\LoggerInterface;
 use Mollie\Subscription\Logger\NullLogger;
 use Mollie\Subscription\Provider\SubscriptionDescription;
@@ -59,9 +57,8 @@ final class BaseServiceProvider
         $this->addService($container, PaymentMethodRepositoryInterface::class, $container->get(PaymentMethodRepository::class));
         $this->addService($container, MolCustomerRepository::class, MolCustomerRepository::class)
             ->withArgument('MolCustomer');
-        $this->addService($container, Uninstaller::class, Uninstaller::class)
-            ->withArgument(DatabaseTableUninstaller::class)
-            ->withArgument(AttributeUninstaller::class);
+
+        $this->addService($container, UninstallerInterface::class, Mollie\Install\DatabaseTableUninstaller::class);
 
         $this->addService($container, CreateSubscriptionData::class, CreateSubscriptionData::class)
             ->withArgument(MolCustomerRepository::class)
@@ -86,7 +83,7 @@ final class BaseServiceProvider
                 '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator',
                 '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator',
                 '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\EnvironmentVersionSpecificPaymentMethodRestrictionValidator',
-                '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator'
+                '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator',
             ]);
 
         $this->addService($container, CustomLogoProviderInterface::class, CreditCardLogoProvider::class)

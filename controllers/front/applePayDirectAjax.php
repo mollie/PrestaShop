@@ -53,7 +53,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontControlle
         $cartId = (int) Tools::getValue('cartId');
         $validationUrl = Tools::getValue('validationUrl');
         /** @var RequestApplePayPaymentSessionHandler $handler */
-        $handler = $this->module->getMollieContainer(RequestApplePayPaymentSessionHandler::class);
+        $handler = $this->module->getService(RequestApplePayPaymentSessionHandler::class);
 
         $command = new RequestApplePayPaymentSession(
             $validationUrl,
@@ -69,7 +69,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontControlle
     private function updateShippingMethod()
     {
         /** @var UpdateApplePayShippingMethodHandler $handler */
-        $handler = $this->module->getMollieContainer(UpdateApplePayShippingMethodHandler::class);
+        $handler = $this->module->getService(UpdateApplePayShippingMethodHandler::class);
         $shippingMethodDetails = Tools::getValue('shippingMethod');
 
         $command = new UpdateApplePayShippingMethod(
@@ -84,9 +84,9 @@ class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontControlle
     private function updateAppleShippingContact()
     {
         /** @var UpdateApplePayShippingContactHandler $handler */
-        $handler = $this->module->getMollieContainer(UpdateApplePayShippingContactHandler::class);
+        $handler = $this->module->getService(UpdateApplePayShippingContactHandler::class);
         /** @var ApplePayProductBuilder $productBuilder */
-        $productBuilder = $this->module->getMollieContainer(ApplePayProductBuilder::class);
+        $productBuilder = $this->module->getService(ApplePayProductBuilder::class);
 
         $simplifiedContent = Tools::getValue('simplifiedContact');
         $cartId = (int) Tools::getValue('cartId');
@@ -118,9 +118,9 @@ class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontControlle
 
         $products = $this->getWantedCartProducts($cartId);
         /** @var CreateApplePayOrderHandler $handler */
-        $handler = $this->module->getMollieContainer(CreateApplePayOrderHandler::class);
+        $handler = $this->module->getService(CreateApplePayOrderHandler::class);
         /** @var ApplePayOrderBuilder $applePayProductBuilder */
-        $applePayProductBuilder = $this->module->getMollieContainer(ApplePayOrderBuilder::class);
+        $applePayProductBuilder = $this->module->getService(ApplePayOrderBuilder::class);
 
         $shippingContent = Tools::getValue('shippingContact');
         $billingContent = Tools::getValue('billingContact');

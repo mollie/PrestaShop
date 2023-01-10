@@ -40,9 +40,9 @@ class MollieBancontactAjaxModuleFrontController extends ModuleFrontController
     private function createTransaction()
     {
         /** @var PaymentMethodService $paymentMethodService */
-        $paymentMethodService = $this->module->getMollieContainer(PaymentMethodService::class);
+        $paymentMethodService = $this->module->getService(PaymentMethodService::class);
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
-        $paymentMethodRepository = $this->module->getMollieContainer(PaymentMethodRepositoryInterface::class);
+        $paymentMethodRepository = $this->module->getService(PaymentMethodRepositoryInterface::class);
 
         /** @var MolPaymentMethod|null $paymentMethod */
         $paymentMethod = $paymentMethodRepository->findOneBy(
@@ -78,7 +78,7 @@ class MollieBancontactAjaxModuleFrontController extends ModuleFrontController
     private function checkForPaidTransaction()
     {
         /** @var RetryHandlerInterface $retryHandler */
-        $retryHandler = $this->module->getMollieContainer(RetryHandlerInterface::class);
+        $retryHandler = $this->module->getService(RetryHandlerInterface::class);
         $cart = Context::getContext()->cart;
 
         $proc = function () use ($cart) {

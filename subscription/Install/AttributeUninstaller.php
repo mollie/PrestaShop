@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Install;
 
-use Mollie\Subscription;
 use Mollie\Subscription\Adapter\Configuration;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Logger\LoggerInterface;

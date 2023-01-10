@@ -69,7 +69,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
     protected function executeWebhook()
     {
         /** @var TransactionService $transactionService */
-        $transactionService = $this->module->getMollieContainer(TransactionService::class);
+        $transactionService = $this->module->getService(TransactionService::class);
 
         $transactionId = Tools::getValue('id');
         if (!$transactionId) {
@@ -95,7 +95,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             $payment = $transactionService->processTransaction($transaction);
         } catch (TransactionException $e) {
             /** @var ErrorHandler $errorHandler */
-            $errorHandler = $this->module->getMollieContainer(ErrorHandler::class);
+            $errorHandler = $this->module->getService(ErrorHandler::class);
             $errorHandler->handle($e, $e->getCode(), false);
             $this->respond('failed', $e->getCode(), $e->getMessage());
         }
