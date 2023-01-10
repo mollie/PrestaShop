@@ -99,7 +99,7 @@ class ErrorHandler
         $module = Module::getInstanceByName('mollie');
 
         if (self::$instance === null) {
-            self::$instance = new ErrorHandler($module);
+            self::$instance = new ErrorHandler($module, new Env());
         }
 
         return self::$instance;

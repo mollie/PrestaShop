@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Install;
 
-use Attribute;
+use AttributeCore as Attribute;
 use AttributeGroup;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
@@ -75,7 +75,9 @@ class AttributeInstaller extends AbstractInstaller
 
         $attributeGroup = new AttributeGroup();
         foreach ($languages as $language) {
+            /* @phpstan-ignore-next-line */
             $attributeGroup->name[$language['id_lang']] = 'Mollie subscription';
+            /* @phpstan-ignore-next-line */
             $attributeGroup->public_name[$language['id_lang']] = 'Subscription';
         }
 
@@ -95,13 +97,14 @@ class AttributeInstaller extends AbstractInstaller
     private function createAttributes(array $languages, int $attributeGroupId): void
     {
         foreach (Config::getSubscriptionAttributeOptions() as $attributeName => $attributeConfigKey) {
-            $existingAttribute = new Attribute($attributeConfigKey);
+            $existingAttribute = new Attribute((int) $attributeConfigKey);
             if (Validate::isLoadedObject($existingAttribute)) {
                 continue;
             }
 
             $attribute = new Attribute();
             foreach ($languages as $language) {
+                /* @phpstan-ignore-next-line */
                 $attribute->name[$language['id_lang']] = $attributeName;
             }
             $attribute->id_attribute_group = $attributeGroupId;

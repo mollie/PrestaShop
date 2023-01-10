@@ -37,7 +37,7 @@ class Subscription
     /**
      * @throws SubscriptionApiException
      */
-    public function cancelSubscription(CancelSubscriptionData $subscriptionData): MollieSubscription
+    public function cancelSubscription(CancelSubscriptionData $subscriptionData): ?MollieSubscription
     {
         try {
             return $this->apiClient->subscriptions->cancelForId($subscriptionData->getCustomerId(), $subscriptionData->getSubscriptionId());

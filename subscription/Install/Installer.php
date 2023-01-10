@@ -6,10 +6,10 @@ namespace Mollie\Subscription\Install;
 
 class Installer extends AbstractInstaller
 {
-    /** @var DatabaseTableInstaller */
+    /** @var InstallerInterface */
     private $databaseInstaller;
 
-    /** @var AttributeInstaller */
+    /** @var InstallerInterface */
     private $attributeInstaller;
 
     /** @var InstallerInterface */

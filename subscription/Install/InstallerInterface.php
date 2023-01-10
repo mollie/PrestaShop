@@ -8,4 +8,6 @@ interface InstallerInterface
      * @return bool
      */
     public function install();
+
+    public function getErrors(): array;
 }

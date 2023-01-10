@@ -10,6 +10,9 @@ class SubscriptionRepository extends AbstractRepository implements SubscriptionR
 {
     public function findOneBy(array $keyValueCriteria): ?MolSubRecurringOrder
     {
-        return parent::findOneBy($keyValueCriteria);
+        /** @var ?MolSubRecurringOrder $result */
+        $result = parent::findOneBy($keyValueCriteria);
+
+        return $result;
     }
 }
