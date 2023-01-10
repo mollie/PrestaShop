@@ -1,8 +1,8 @@
 <?php
 
-namespace MollieSubscription\Tests\Integration\Tool;
-
 //NOTE need to handle employee id_lang and shop context by these functions as it changes stock and requires these values to not crash.
+
+namespace Mollie\Tests\Integration\Subscription\Tool;
 
 use Configuration;
 use Context;

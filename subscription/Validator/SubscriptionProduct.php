@@ -5,25 +5,25 @@ declare(strict_types=1);
 namespace Mollie\Subscription\Validator;
 
 use Combination;
-use Mollie\Subscription\Adapter\Configuration;
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Repository\ProductCombinationRepository;
 
 class SubscriptionProduct
 {
-    /** @var Configuration */
+    /** @var ConfigurationAdapter */
     private $configuration;
 
     /** @var ProductCombinationRepository */
     private $combinationRepository;
 
-    /** @var \MollieSubscription\Repository\Combination */
+    /** @var \Mollie\Subscription\Repository\Combination */
     private $combination;
 
     public function __construct(
-        Configuration $configuration,
+        ConfigurationAdapter $configuration,
         ProductCombinationRepository $combinationRepository,
-        \MollieSubscription\Repository\Combination $combination
+        \Mollie\Subscription\Repository\Combination $combination
     ) {
         $this->configuration = $configuration;
         $this->combinationRepository = $combinationRepository;

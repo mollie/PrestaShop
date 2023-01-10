@@ -27,5 +27,5 @@ interface ApiServiceInterface
      * @throws ApiException
      * @throws MollieApiException
      */
-    public function requestApplePayPaymentSession($api, string $validationUrl): string;
+    public function requestApplePayPaymentSession(?MollieApiClient $api, string $validationUrl): string;
 }

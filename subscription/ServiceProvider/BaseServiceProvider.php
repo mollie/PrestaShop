@@ -6,7 +6,6 @@ namespace Mollie\Subscription\ServiceProvider;
 
 use League\Container\Container;
 use Mollie;
-use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Certificate\ApplePayDirectCertificateHandler;
 use Mollie\Handler\Certificate\CertificateHandlerInterface;
 use Mollie\Handler\PaymentOption\PaymentOptionHandler;
@@ -44,10 +43,6 @@ use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\Subscription\Factory\CreateSubscriptionData;
 use Mollie\Subscription\Logger\LoggerInterface;
 use Mollie\Subscription\Logger\NullLogger;
-use Mollie\Subscription\Provider\SubscriptionDescription;
-use Mollie\Subscription\Provider\SubscriptionInterval;
-use Mollie\Subscription\Repository\Combination;
-use Mollie\Subscription\Repository\Currency as CurrencyAdapter;
 use Mollie\Subscription\Repository\SubscriptionRepository;
 use Mollie\Subscription\Repository\SubscriptionRepositoryInterface;
 use Mollie\Subscription\Utility\Clock;

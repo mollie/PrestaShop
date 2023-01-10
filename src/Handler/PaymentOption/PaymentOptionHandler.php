@@ -37,7 +37,6 @@
 namespace Mollie\Handler\PaymentOption;
 
 use Configuration;
-use Customer;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
 use Mollie\Provider\PaymentOption\BancontactPaymentOptionProvider;
@@ -45,7 +44,6 @@ use Mollie\Provider\PaymentOption\BasePaymentOptionProvider;
 use Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider;
 use Mollie\Provider\PaymentOption\CreditCardSingleClickPaymentOptionProvider;
 use Mollie\Provider\PaymentOption\IdealPaymentOptionProvider;
-use Mollie\Repository\MolCustomerRepository;
 use MolPaymentMethod;
 
 class PaymentOptionHandler implements PaymentOptionHandlerInterface

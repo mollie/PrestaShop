@@ -12,8 +12,6 @@
 
 namespace Mollie\Service;
 
-use Mollie;
-
 class PaymentsTranslationService
 {
     /**

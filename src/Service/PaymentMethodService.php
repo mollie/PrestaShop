@@ -21,6 +21,7 @@ use Currency;
 use Customer;
 use Hook;
 use Mollie;
+use Mollie\Adapter\Shop;
 use Mollie\Api\Resources\BaseCollection;
 use Mollie\Api\Resources\MethodCollection;
 use Mollie\Api\Types\PaymentMethod;
@@ -31,7 +32,6 @@ use Mollie\DTO\PaymentData;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\PhoneNumberProviderInterface;
-use Mollie\Repository\MethodCountryRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
@@ -43,7 +43,6 @@ use Mollie\Utility\TextFormatUtility;
 use MolPaymentMethod;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use Mollie\Adapter\Shop;
 use Tools;
 
 class PaymentMethodService
