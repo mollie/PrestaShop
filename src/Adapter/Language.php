@@ -14,23 +14,17 @@ namespace Mollie\Adapter;
 
 class Language
 {
-    /**
-     * @return int
-     **/
-    public function getDefaultLanguageId()
+    public function getDefaultLanguageId(): int
     {
-        return \Configuration::get('PS_LANG_DEFAULT');
+        return (int) \Configuration::get('PS_LANG_DEFAULT');
     }
 
-    /**
-     * @return array
-     **/
-    public function getAllLanguages()
+    public function getAllLanguages(): array
     {
         return \Language::getLanguages(false);
     }
 
-    public function getContextLanguage()
+    public function getContextLanguage(): \Language
     {
         return \Context::getContext()->language;
     }
