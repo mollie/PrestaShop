@@ -40,7 +40,7 @@ class RecurringOrderCreation
         $recurringOrder->id_order = $order->id;
         $recurringOrder->description = $subscription->description;
         $recurringOrder->status = $subscription->status;
-        $recurringOrder->quantity = 0; //todo: check if we really need it
+        $recurringOrder->quantity = '0'; //todo: check if we really need it
         $recurringOrder->amount = $subscription->amount->value;
         $recurringOrder->currency_iso = $subscription->amount->currency;
         $recurringOrder->next_payment = $subscription->nextPaymentDate;

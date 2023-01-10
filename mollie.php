@@ -10,11 +10,11 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Config\Env;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
-use Mollie\Subscription\Adapter\Configuration as SubscriptionConfiguration;
 use Mollie\Subscription\Install\AttributeInstaller;
 use Mollie\Subscription\Install\DatabaseTableInstaller;
 use Mollie\Subscription\Install\HookInstaller;
@@ -65,7 +65,7 @@ class Mollie extends PaymentModule
 
         parent::__construct();
 
-        $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = ['min' => '1.7.6', 'max' => _PS_VERSION_];
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 
@@ -156,7 +156,7 @@ class Mollie extends PaymentModule
 
         $subscriptionInstaller = new Installer(
             new DatabaseTableInstaller(),
-            new AttributeInstaller(new NullLogger(), new SubscriptionConfiguration(), $this, new LanguageAdapter()),
+            new AttributeInstaller(new NullLogger(), new ConfigurationAdapter(), $this, new LanguageAdapter()),
             new HookInstaller($this)
         );
 

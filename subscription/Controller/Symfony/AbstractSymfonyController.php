@@ -22,6 +22,7 @@ abstract class AbstractSymfonyController extends FrameworkBundleAdminController
     {
         parent::__construct();
         $this->leagueContainer = new LeagueServiceContainerProvider();
+        /* @phpstan-ignore-next-line */
         $this->module = Module::getInstanceByName('mollie');
     }
 }

@@ -19,6 +19,7 @@ class HookInstaller extends AbstractInstaller
 
     public function install(): bool
     {
+        /* @phpstan-ignore-next-line */
         $this->module->registerHook($this->getHooks());
 
         return true;

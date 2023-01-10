@@ -6,10 +6,10 @@ namespace Mollie\Subscription\Install;
 
 class Uninstaller extends AbstractUninstaller
 {
-    /** @var DatabaseTableUninstaller */
+    /** @var UninstallerInterface */
     private $databaseUninstaller;
 
-    /** @var AttributeUninstaller */
+    /** @var UninstallerInterface */
     private $attributeUninstaller;
 
     public function __construct(
