@@ -25,6 +25,10 @@ class PrestashopContainer implements InteropContainerInterface
 
     public function has($id): bool
     {
+        if ($this->container === null) {
+            return false;
+        }
+
         return $this->container->has($id);
     }
 }

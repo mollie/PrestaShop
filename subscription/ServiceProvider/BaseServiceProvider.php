@@ -7,11 +7,19 @@ namespace Mollie\Subscription\ServiceProvider;
 use League\Container\Container;
 use Mollie;
 use Mollie\Factory\ModuleFactory;
+use Mollie\Handler\Certificate\ApplePayDirectCertificateHandler;
+use Mollie\Handler\Certificate\CertificateHandlerInterface;
+use Mollie\Handler\PaymentOption\PaymentOptionHandler;
+use Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface;
+use Mollie\Handler\Settings\PaymentMethodPositionHandler;
+use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Install\UninstallerInterface;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\CustomLogoProviderInterface;
 use Mollie\Provider\PhoneNumberProvider;
 use Mollie\Provider\PhoneNumberProviderInterface;
+use Mollie\Provider\ProfileIdProvider;
+use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Provider\UpdateMessageProvider;
 use Mollie\Provider\UpdateMessageProviderInterface;
 use Mollie\Repository\MolCustomerRepository;
@@ -60,21 +68,14 @@ final class BaseServiceProvider
 
         $this->addService($container, UninstallerInterface::class, Mollie\Install\DatabaseTableUninstaller::class);
 
-        $this->addService($container, CreateSubscriptionData::class, CreateSubscriptionData::class)
-            ->withArgument(MolCustomerRepository::class)
-            ->withArgument(SubscriptionInterval::class)
-            ->withArgument(SubscriptionDescription::class)
-            ->withArgument(CurrencyAdapter::class)
-            ->withArgument(Combination::class)
-            ->withArgument(PaymentMethodRepositoryInterface::class);
+        $this->addService($container, CreateSubscriptionData::class, $container->get(CreateSubscriptionData::class));
 
         $this->addService($container, SubscriptionRepositoryInterface::class, SubscriptionRepository::class)
             ->withArgument('MolSubRecurringOrder');
 
         $this->addService($container, TemplateParserInterface::class, SmartyTemplateParser::class);
 
-        $this->addService($container, UpdateMessageProviderInterface::class, UpdateMessageProvider::class)
-            ->withArgument(Mollie::class);
+        $this->addService($container, UpdateMessageProviderInterface::class, $container->get(UpdateMessageProvider::class));
 
         $this->addService($container, PaymentMethodSortProviderInterface::class, PaymentMethodSortProvider::class);
         $this->addService($container, PhoneNumberProviderInterface::class, PhoneNumberProvider::class);
@@ -86,8 +87,17 @@ final class BaseServiceProvider
                 '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator',
             ]);
 
-        $this->addService($container, CustomLogoProviderInterface::class, CreditCardLogoProvider::class)
-            ->withArgument(ModuleFactory::class);
+        $this->addService($container, CustomLogoProviderInterface::class, $container->get(CreditCardLogoProvider::class));
+
+        $this->addService($container, PaymentMethodPositionHandlerInterface::class, PaymentMethodPositionHandler::class)
+            ->withArgument(PaymentMethodRepositoryInterface::class);
+
+        $this->addService($container, CertificateHandlerInterface::class, ApplePayDirectCertificateHandler::class)
+            ->withArgument(Mollie::class);
+
+        $this->addService($container, ProfileIdProviderInterface::class, ProfileIdProvider::class);
+
+        $this->addService($container, PaymentOptionHandlerInterface::class, $container->get(PaymentOptionHandler::class));
 
         //todo: Try to make it work without prestashop container in services.yml. Skipping now because its taking to much time
 //        $this->addService($container, HookDispatcherInterface::class, HookDispatcher::class);
