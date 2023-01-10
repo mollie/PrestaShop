@@ -50,7 +50,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '5.3.1';
+        $this->version = '5.4.0';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -274,6 +274,9 @@ class Mollie extends PaymentModule
 
         Media::addJsDef([
             'description_message' => addslashes($this->l('Enter a description')),
+            'min_amount_message' => addslashes($this->l('You have entered incorrect min amount')),
+            'max_amount_message' => addslashes($this->l('You have entered incorrect max amount')),
+
             'payment_api' => addslashes(Mollie\Config\Config::MOLLIE_PAYMENTS_API),
             'ajaxUrl' => addslashes($this->context->link->getAdminLink('AdminMollieAjax')),
         ]);

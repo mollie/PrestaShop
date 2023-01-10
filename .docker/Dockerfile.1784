@@ -5,5 +5,5 @@ RUN cd /usr/local/etc/php/conf.d/ && \
 
 RUN echo 'max_execution_time = 120' >> /usr/local/etc/php/conf.d/docker-php-maxexectime.ini
 
-RUN pecl install -f xdebug
+RUN pecl install -f xdebug-3.1.6
 
