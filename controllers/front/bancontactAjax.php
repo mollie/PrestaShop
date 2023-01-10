@@ -66,7 +66,7 @@ class MollieBancontactAjaxModuleFrontController extends ModuleFrontController
             $paymentMethod,
             $orderNumber
         );
-        $newPayment = $this->module->api->payments->create($paymentData->jsonSerialize(), ['include' => 'details.qrCode']);
+        $newPayment = $this->module->getApiClient()->payments->create($paymentData->jsonSerialize(), ['include' => 'details.qrCode']);
 
         $this->ajaxDie(json_encode(
             [

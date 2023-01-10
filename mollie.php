@@ -11,6 +11,7 @@
  */
 
 use Mollie\Config\Config;
+use Mollie\Config\Env;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Subscription\Adapter\Configuration as SubscriptionConfiguration;
@@ -30,7 +31,7 @@ class Mollie extends PaymentModule
     const DISABLE_CACHE = true;
 
     /** @var \Mollie\Api\MollieApiClient|null */
-    public $api = null;
+    private $api = null;
 
     /** @var string */
     public static $selectedApi;
@@ -70,7 +71,7 @@ class Mollie extends PaymentModule
 
         $this->loadEnv();
 //        $this->setApiKey();
-        new \Mollie\Handler\ErrorHandler\ErrorHandler($this);
+        new \Mollie\Handler\ErrorHandler\ErrorHandler($this, new Env());
     }
 
     /**

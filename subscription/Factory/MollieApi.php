@@ -21,6 +21,6 @@ class MollieApi
             throw new MollieModuleNotFoundException('Mollie is not installed');
         }
 
-        return $mollie->api;
+        return $mollie->getApiClient();
     }
 }

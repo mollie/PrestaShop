@@ -9,11 +9,11 @@ namespace Mollie\Subscription\Constants;
  */
 class IntervalConstant
 {
-    const DAY = 'day';
-    const WEEK = 'week';
-    const MONTH = 'month';
+    public const DAY = 'day';
+    public const WEEK = 'week';
+    public const MONTH = 'month';
 
-    const DAYS = 'days';
-    const WEEKS = 'weeks';
-    const MONTHS = 'months';
+    public const DAYS = 'days';
+    public const WEEKS = 'weeks';
+    public const MONTHS = 'months';
 }

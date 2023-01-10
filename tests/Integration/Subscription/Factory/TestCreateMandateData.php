@@ -2,14 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Mollie\Subscription\Tests\Integration\Factory;
 
 use MolCustomer;
 use Mollie\Api\Types\MandateMethod;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Subscription\Factory\CreateMandateData;
-use Mollie\Subscription\Tests\Integration\BaseTestCase;
 
 class TestCreateMandateData extends BaseTestCase
 {

@@ -16,6 +16,12 @@ use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Install\UninstallerInterface;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\CustomLogoProviderInterface;
+use Mollie\Provider\EnvironmentVersionProvider;
+use Mollie\Provider\EnvironmentVersionProviderInterface;
+use Mollie\Provider\OrderTotalProvider;
+use Mollie\Provider\OrderTotalProviderInterface;
+use Mollie\Provider\PaymentFeeProvider;
+use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Provider\PhoneNumberProvider;
 use Mollie\Provider\PhoneNumberProviderInterface;
 use Mollie\Provider\ProfileIdProvider;
@@ -28,6 +34,10 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\Content\SmartyTemplateParser;
 use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
+use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
+use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator;
+use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\EnvironmentVersionSpecificPaymentMethodRestrictionValidator;
+use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProvider;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
@@ -69,6 +79,9 @@ final class BaseServiceProvider
         $this->addService($container, UninstallerInterface::class, Mollie\Install\DatabaseTableUninstaller::class);
 
         $this->addService($container, CreateSubscriptionData::class, $container->get(CreateSubscriptionData::class));
+        $this->addService($container, OrderTotalProviderInterface::class, $container->get(OrderTotalProvider::class));
+        $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
+        $this->addService($container, EnvironmentVersionProviderInterface::class, $container->get(EnvironmentVersionProvider::class));
 
         $this->addService($container, SubscriptionRepositoryInterface::class, SubscriptionRepository::class)
             ->withArgument('MolSubRecurringOrder');
@@ -81,10 +94,10 @@ final class BaseServiceProvider
         $this->addService($container, PhoneNumberProviderInterface::class, PhoneNumberProvider::class);
         $this->addService($container, PaymentMethodRestrictionValidationInterface::class, PaymentMethodRestrictionValidation::class)
             ->withArgument([
-                '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator',
-                '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator',
-                '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\EnvironmentVersionSpecificPaymentMethodRestrictionValidator',
-                '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator',
+                $container->get(BasePaymentMethodRestrictionValidator::class),
+                $container->get(VoucherPaymentMethodRestrictionValidator::class),
+                $container->get(EnvironmentVersionSpecificPaymentMethodRestrictionValidator::class),
+                $container->get(ApplePayPaymentMethodRestrictionValidator::class),
             ]);
 
         $this->addService($container, CustomLogoProviderInterface::class, $container->get(CreditCardLogoProvider::class));

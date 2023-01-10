@@ -37,9 +37,9 @@
 namespace Mollie\Provider\PaymentOption;
 
 use Configuration;
-use Customer;
 use MolCustomer;
 use Mollie;
+use Mollie\Adapter\Customer;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
@@ -95,7 +95,6 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
     private $customerRepository;
 
     public function __construct(
-        Mollie $module,
         LegacyContext $context,
         CreditCardLogoProvider $creditCardLogoProvider,
         OrderTotalProviderInterface $orderTotalProvider,
@@ -104,7 +103,6 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         Customer $customer,
         MolCustomerRepository $customerRepository
     ) {
-        $this->module = $module;
         $this->context = $context;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
         $this->orderTotalProvider = $orderTotalProvider;
@@ -131,13 +129,13 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
             ['method' => $paymentMethod->getPaymentMethodName(), 'rand' => Mollie\Utility\TimeUtility::getCurrentTimeStamp(), 'cardToken' => ''],
             true
         ));
-        $fullName = CustomerUtility::getCustomerFullName($this->customer->id);
+        $fullName = CustomerUtility::getCustomerFullName($this->customer->getCustomer()->id);
 
         /** @var MolCustomer|null $molCustomer */
         $molCustomer = $this->customerRepository->findOneBy(
             [
                 'name' => $fullName,
-                'email' => $this->customer->email,
+                'email' => $this->customer->getCustomer()->email,
             ]
         );
 
@@ -173,7 +171,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
             'methodId' => $paymentMethod->getPaymentMethodName(),
             'isSingleClickPayment' => (bool) Configuration::get(Mollie\Config\Config::MOLLIE_SINGLE_CLICK_PAYMENT),
             'mollieUseSavedCard' => $useSavedUser,
-            'isGuest' => $this->customer->isGuest(),
+            'isGuest' => $this->customer->getCustomer()->isGuest(),
         ]);
         $paymentOption->setLogo($this->creditCardLogoProvider->getMethodOptionLogo($paymentMethod));
 

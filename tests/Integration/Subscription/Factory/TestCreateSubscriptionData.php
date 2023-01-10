@@ -2,9 +2,6 @@
 
 declare(strict_types=1);
 
-namespace Mollie\Subscription\Tests\Integration\Factory;
-
-use MolCustomer;
 use Mollie\Api\Types\MandateMethod;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodRepository;
@@ -16,7 +13,7 @@ use Mollie\Subscription\Provider\SubscriptionDescription;
 use Mollie\Subscription\Provider\SubscriptionInterval;
 use Mollie\Subscription\Repository\Combination;
 use Mollie\Subscription\Repository\Currency;
-use Mollie\Subscription\Tests\Integration\BaseTestCase;
+use Mollie\Tests\Integration\BaseTestCase;
 
 class TestCreateSubscriptionData extends BaseTestCase
 {

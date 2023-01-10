@@ -6,6 +6,7 @@ parameters:
     - %currentWorkingDirectory%/vendor
   paths:
     - ../../src
+    - ../../subscription
     - ../../controllers
     - ../../mollie.php
   excludePaths:

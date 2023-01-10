@@ -1,17 +1,17 @@
 <?php
 
-namespace Mollie\Subscription\Tests\Integration\Validator;
+namespace MollieSubscription\Tests\Integration\Validator;
 
 use Combination;
 use Language;
-use Mollie\Subscription\Adapter\Configuration;
-use Mollie\Subscription\Config\Config;
-use Mollie\Subscription\Exception\ProductValidationException;
-use Mollie\Subscription\Exception\SubscriptionProductValidationException;
-use Mollie\Subscription\Repository\ProductCombinationRepository;
-use Mollie\Subscription\Tests\Integration\BaseTestCase;
-use Mollie\Subscription\Validator\CanProductBeAddedToCart;
-use Mollie\Subscription\Validator\SubscriptionProduct;
+use MollieSubscription\Adapter\Configuration;
+use MollieSubscription\Config\Config;
+use MollieSubscription\Exception\ProductValidationException;
+use MollieSubscription\Exception\SubscriptionProductValidationException;
+use MollieSubscription\Repository\ProductCombinationRepository;
+use MollieSubscription\Tests\Integration\BaseTestCase;
+use MollieSubscription\Validator\CanProductBeAddedToCart;
+use MollieSubscription\Validator\SubscriptionProduct;
 use Product;
 
 class SubscriptionCartTest extends BaseTestCase

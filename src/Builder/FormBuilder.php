@@ -106,7 +106,7 @@ class FormBuilder
     public function buildSettingsForm()
     {
         $isApiKeyProvided = (bool) EnvironmentUtility::getApiKey();
-        $isApiKeyProvided = ($isApiKeyProvided && $this->module->api !== null);
+        $isApiKeyProvided = ($isApiKeyProvided && $this->module->getApiClient() !== null);
 
         $inputs = $this->getAccountSettingsSection($isApiKeyProvided);
 
@@ -383,7 +383,7 @@ class FormBuilder
             'name' => '',
             'title' => $this->module->l('Payment methods', self::FILE_NAME),
         ];
-        $molliePaymentMethods = $this->apiService->getMethodsForConfig($this->module->api);
+        $molliePaymentMethods = $this->apiService->getMethodsForConfig($this->module->getApiClient());
 
         if (empty($molliePaymentMethods)) {
             $input[] = [

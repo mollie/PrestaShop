@@ -7,7 +7,7 @@ namespace Mollie\Subscription\Install;
 use Attribute;
 use AttributeGroup;
 use Mollie;
-use Mollie\Subscription\Adapter\Configuration;
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Logger\LoggerInterface;
 use Mollie\Subscription\Repository\Language;
@@ -20,7 +20,7 @@ class AttributeInstaller extends AbstractInstaller
 {
     private const FILE_NAME = 'AttributeInstaller';
 
-    /** @var Configuration */
+    /** @var ConfigurationAdapter */
     private $configuration;
 
     /** @var Mollie */
@@ -34,7 +34,7 @@ class AttributeInstaller extends AbstractInstaller
 
     public function __construct(
         LoggerInterface $logger,
-        Configuration $configuration,
+        ConfigurationAdapter $configuration,
         Mollie $module,
         Language $language
     ) {

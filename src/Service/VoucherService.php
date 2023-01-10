@@ -18,10 +18,6 @@ use Mollie\Repository\AttributeRepository;
 
 class VoucherService
 {
-    /**
-     * @var AttributeRepository
-     */
-    private $attributeRepository;
 
     /**
      * @var ConfigurationAdapter
@@ -29,10 +25,8 @@ class VoucherService
     private $configuration;
 
     public function __construct(
-        AttributeRepository $attributeRepository,
         ConfigurationAdapter $configuration
     ) {
-        $this->attributeRepository = $attributeRepository;
         $this->configuration = $configuration;
     }
 

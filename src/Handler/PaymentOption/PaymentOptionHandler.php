@@ -64,14 +64,7 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
      * @var IdealPaymentOptionProvider
      */
     private $idealPaymentOptionProvider;
-    /**
-     * @var MolCustomerRepository
-     */
-    private $customerRepository;
-    /**
-     * @var Customer
-     */
-    private $customer;
+
     /**
      * @var CreditCardSingleClickPaymentOptionProvider
      */
@@ -84,15 +77,11 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
         CreditCardPaymentOptionProvider $creditCardPaymentOptionProvider,
         CreditCardSingleClickPaymentOptionProvider $cardSingleClickPaymentOptionProvider,
         IdealPaymentOptionProvider $idealPaymentOptionProvider,
-        MolCustomerRepository $customerRepository,
-        Customer $customer,
         BancontactPaymentOptionProvider $bancontactPaymentOptionProvider
     ) {
         $this->basePaymentOptionProvider = $basePaymentOptionProvider;
         $this->creditCardPaymentOptionProvider = $creditCardPaymentOptionProvider;
         $this->idealPaymentOptionProvider = $idealPaymentOptionProvider;
-        $this->customerRepository = $customerRepository;
-        $this->customer = $customer;
         $this->cardSingleClickPaymentOptionProvider = $cardSingleClickPaymentOptionProvider;
         $this->bancontactPaymentOptionProvider = $bancontactPaymentOptionProvider;
     }
