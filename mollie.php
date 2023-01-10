@@ -22,9 +22,6 @@ use Mollie\Subscription\Logger\NullLogger;
 use Mollie\Subscription\Repository\Language as LanguageAdapter;
 use Mollie\Subscription\ServiceProvider\LeagueServiceContainerProvider;
 use Mollie\Utility\PsVersionUtility;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
