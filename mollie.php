@@ -69,7 +69,7 @@ class Mollie extends PaymentModule
         $this->description = $this->l('Mollie Payments');
 
         $this->loadEnv();
-        $this->setApiKey();
+//        $this->setApiKey();
         new \Mollie\Handler\ErrorHandler\ErrorHandler($this);
     }
 
@@ -86,6 +86,15 @@ class Mollie extends PaymentModule
         }
 
         return $this->containerProvider->getService($serviceName);
+    }
+
+    public function getApiClient()
+    {
+        if (!$this->api) {
+            $this->setApiKey();
+        }
+
+        return $this->api;
     }
 
     private function loadEnv()
@@ -244,7 +253,7 @@ class Mollie extends PaymentModule
         $profileIdProvider = $this->getService(ProfileIdProviderInterface::class);
 
         Media::addJsDef([
-            'profileId' => $profileIdProvider->getProfileId($this->api),
+            'profileId' => $profileIdProvider->getProfileId($this->getApiClient()),
             'isoCode' => $this->context->language->locale,
             'isTestMode' => \Mollie\Config\Config::isTestMode(),
         ]);
@@ -561,11 +570,11 @@ class Mollie extends PaymentModule
             Mollie\Handler\Shipment\ShipmentSenderHandlerInterface::class
         );
 
-        if (!$this->api) {
+        if (!$this->getApiClient()) {
             return;
         }
         try {
-            $shipmentSenderHandler->handleShipmentSender($this->api, $order, $orderStatus);
+            $shipmentSenderHandler->handleShipmentSender($this->getApiClient(), $order, $orderStatus);
         } catch (Exception $e) {
             //todo: we logg error in handleShipment
         }
@@ -791,7 +800,7 @@ class Mollie extends PaymentModule
                 $orderReference
             );
 
-            $newPayment = $this->api->payments->create($paymentData->jsonSerialize());
+            $newPayment = $this->getApiClient()->payments->create($paymentData->jsonSerialize());
 
             /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepository */
             $paymentMethodRepository = $this->getService(\Mollie\Repository\PaymentMethodRepository::class);
@@ -884,9 +893,6 @@ class Mollie extends PaymentModule
 
     private function setApiKey($shopId = null)
     {
-        if ($this->api && $shopId === null) {
-            return;
-        }
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
         $moduleRepository = $this->getService(\Mollie\Repository\ModuleRepository::class);
         $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->name);
