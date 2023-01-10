@@ -12,28 +12,23 @@
 
 namespace Mollie\Adapter;
 
-use Configuration as PrestashopConfiguration;
 use Context as PrestashopContext;
 
 class Context
 {
-    public function getShopId()
-    {
-        return (int) PrestashopContext::getContext()->shop->id;
-    }
-
-    public function getLanguageId()
+    public function getLanguageId(): int
     {
         return (int) PrestashopContext::getContext()->language->id;
     }
 
-    public function getLanguageIso()
+    public function getLanguageIso(): string
     {
         return (string) PrestashopContext::getContext()->currency->iso_code ?: 'en';
     }
 
-    public function getCurrencyIso()
+    public function getCurrencyIso(): string
     {
+        /* @phpstan-ignore-next-line */
         if (!PrestashopContext::getContext()->currency) {
             return '';
         }
@@ -41,8 +36,9 @@ class Context
         return (string) PrestashopContext::getContext()->currency->iso_code;
     }
 
-    public function getCustomerId()
+    public function getCustomerId(): int
     {
+        /* @phpstan-ignore-next-line */
         if (!PrestashopContext::getContext()->customer) {
             return 0;
         }
@@ -50,31 +46,12 @@ class Context
         return (int) PrestashopContext::getContext()->customer->id;
     }
 
-    public function getCustomerEmail()
-    {
-        if (!PrestashopContext::getContext()->customer) {
-            return '';
-        }
-
-        return PrestashopContext::getContext()->customer->email;
-    }
-
-    public function getShopDomain()
+    public function getShopDomain(): string
     {
         return (string) PrestashopContext::getContext()->shop->domain;
     }
 
-    public function getShopName()
-    {
-        return (string) PrestashopContext::getContext()->shop->name;
-    }
-
-    public function getComputingPrecision()
-    {
-        return PrestashopConfiguration::get('PS_PRICE_DISPLAY_PRECISION');
-    }
-
-    public function getAdminLink($controllerName, array $params = [])
+    public function getAdminLink($controllerName, array $params = []): string
     {
         return (string) PrestashopContext::getContext()->link->getAdminLink($controllerName, true, [], $params);
     }

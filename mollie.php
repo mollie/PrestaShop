@@ -282,9 +282,9 @@ class Mollie extends PaymentModule
     public function hookActionFrontControllerSetMedia($params)
     {
         /** @var \Mollie\Service\ErrorDisplayService $errorDisplayService */
-        $errorDisplayService = $this->getService()->get(\Mollie\Service\ErrorDisplayService::class);
+        $errorDisplayService = $this->getService(\Mollie\Service\ErrorDisplayService::class);
         /** @var PaymentMethodRepositoryInterface $methodRepository */
-        $methodRepository = $this->getService()->get(PaymentMethodRepositoryInterface::class);
+        $methodRepository = $this->getService(PaymentMethodRepositoryInterface::class);
 
         $isCartController = $this->context->controller instanceof CartControllerCore;
         if ($isCartController) {
