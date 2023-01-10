@@ -9,7 +9,7 @@ namespace Mollie\Subscription\Constants;
  */
 class Interval
 {
-    const DAYS = 'days';
-    const WEEKS = 'weeks';
-    const MONTHS = 'months';
+    public const DAYS = 'days';
+    public const WEEKS = 'weeks';
+    public const MONTHS = 'months';
 }

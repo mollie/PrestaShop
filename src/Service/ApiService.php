@@ -15,6 +15,7 @@ namespace Mollie\Service;
 use Configuration;
 use Exception;
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\Shop;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
 use Mollie\Api\Resources\BaseCollection;
@@ -31,7 +32,6 @@ use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use MolPaymentMethod;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use Shop;
 
 class ApiService implements ApiServiceInterface
 {
@@ -370,6 +370,6 @@ class ApiService implements ApiServiceInterface
             throw new MollieApiException('Mollie API is null. Check if API key is correct', MollieApiException::MOLLIE_API_IS_NULL);
         }
 
-        return $api->wallets->requestApplePayPaymentSession($this->shop->domain, $validationUrl);
+        return $api->wallets->requestApplePayPaymentSession($this->shop->getShop()->domain, $validationUrl);
     }
 }

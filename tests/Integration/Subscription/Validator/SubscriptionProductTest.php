@@ -1,11 +1,11 @@
 <?php
 
-namespace Mollie\Subscription\Tests\Integration\Validator;
+namespace MollieSubscription\Tests\Integration\Validator;
 
 use Combination;
-use Mollie\Subscription\Config\Config;
-use Mollie\Subscription\Tests\Integration\BaseTestCase;
-use Mollie\Subscription\Validator\SubscriptionProduct;
+use MollieSubscription\Config\Config;
+use MollieSubscription\Tests\Integration\BaseTestCase;
+use MollieSubscription\Validator\SubscriptionProduct;
 use Product;
 
 class SubscriptionProductTest extends BaseTestCase

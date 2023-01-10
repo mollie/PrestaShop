@@ -265,7 +265,7 @@ class TransactionService
         $transactionInfos = [];
         $isOrder = TransactionUtility::isOrderTransaction($transactionId);
         if ($isOrder) {
-            $transaction = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
+            $transaction = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
             /** @var PaymentCollection|null $payments */
             $payments = $transaction->payments();
 
@@ -278,7 +278,7 @@ class TransactionService
                 }
             }
         } else {
-            $transaction = $this->module->api->payments->get($transactionId);
+            $transaction = $this->module->getApiClient()->payments->get($transactionId);
             $transactionInfos = $this->getPaymentTransactionInfo($transaction, $transactionInfos);
         }
 

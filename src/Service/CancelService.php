@@ -26,15 +26,9 @@ class CancelService
      */
     private $module;
 
-    /**
-     * @var TransactionService
-     */
-    private $transactionService;
-
-    public function __construct(Mollie $module, TransactionService $transactionService)
+    public function __construct(Mollie $module)
     {
         $this->module = $module;
-        $this->transactionService = $transactionService;
     }
 
     /**
@@ -52,7 +46,7 @@ class CancelService
     {
         try {
             /** @var Order $payment */
-            $order = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
+            $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
             if ([] === $lines) {
                 $order->cancel();
             } else {

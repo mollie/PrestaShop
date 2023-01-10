@@ -86,10 +86,6 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
      */
     private $languageService;
     /**
-     * @var Customer
-     */
-    private $customer;
-    /**
      * @var MolCustomerRepository
      */
     private $customerRepository;
@@ -101,7 +97,6 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         OrderTotalProviderInterface $orderTotalProvider,
         PaymentFeeProviderInterface $paymentFeeProvider,
         LanguageService $languageService,
-        Customer $customer,
         MolCustomerRepository $customerRepository
     ) {
         $this->module = $module;
@@ -110,7 +105,6 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         $this->orderTotalProvider = $orderTotalProvider;
         $this->paymentFeeProvider = $paymentFeeProvider;
         $this->languageService = $languageService;
-        $this->customer = $customer;
         $this->customerRepository = $customerRepository;
     }
 

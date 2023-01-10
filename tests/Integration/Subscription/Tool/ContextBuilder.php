@@ -1,16 +1,6 @@
 <?php
-/**
- * Mollie       https://www.mollie.nl
- *
- * @author      Mollie B.V. <info@mollie.nl>
- * @copyright   Mollie B.V.
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
- *
- * @see        https://github.com/mollie/PrestaShop
- * @codingStandardsIgnoreStart
- */
 
-namespace Mollie\Tests\Integration\Tool;
+namespace MollieSubscription\Tests\Integration\Tool;
 
 //NOTE need to handle employee id_lang and shop context by these functions as it changes stock and requires these values to not crash.
 
@@ -26,10 +16,10 @@ class ContextBuilder
 {
     public function setDefaults()
     {
-        $this->setCurrency(new Currency((int) Configuration::get('PS_CURRENCY_DEFAULT')));  //TODO maybe a factory.
-        $this->setEmployee(new Employee(1));  //TODO maybe a factory.
-        $this->setLanguage(new Language(1));  //TODO maybe a factory.
-        $this->setShop(new Shop(1));  //TODO maybe a factory.
+        $this->setCurrency(new Currency((int) Configuration::get('PS_CURRENCY_DEFAULT')));
+        $this->setEmployee(new Employee(1));
+        $this->setLanguage(new Language(1));
+        $this->setShop(new Shop(1));
     }
 
     public function setEmployee(Employee $employee)
