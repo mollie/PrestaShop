@@ -33,6 +33,5 @@ class Language
     public function getContextLanguage()
     {
         return \Context::getContext()->language;
-
     }
 }
