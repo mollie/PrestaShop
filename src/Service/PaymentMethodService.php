@@ -35,7 +35,7 @@ use Mollie\Provider\PhoneNumberProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
-use Mollie\Subscription\Validator\SubscriptionOrder;
+use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Utility\CustomLogoUtility;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\LocaleUtility;
@@ -91,7 +91,7 @@ class PaymentMethodService
      * @var Shop
      */
     private $shop;
-    /** @var SubscriptionOrder */
+    /** @var SubscriptionOrderValidator */
     private $subscriptionOrder;
 
     public function __construct(
@@ -105,7 +105,7 @@ class PaymentMethodService
         PhoneNumberProviderInterface $phoneNumberProvider,
         PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation,
         Shop $shop,
-        SubscriptionOrder $subscriptionOrder
+        SubscriptionOrderValidator $subscriptionOrder
     ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;

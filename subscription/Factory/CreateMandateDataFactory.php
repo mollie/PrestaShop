@@ -9,7 +9,7 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Subscription\DTO\CreateMandateData as CreateMandateDataDTO;
 use Order;
 
-class CreateMandateData
+class CreateMandateDataFactory
 {
     /** @var MolCustomerRepository */
     private $customerRepository;

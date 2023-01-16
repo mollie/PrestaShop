@@ -12,7 +12,7 @@
 
 use Mollie\Subscription\Exception\ProductValidationException;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
-use Mollie\Subscription\Validator\CanProductBeAddedToCart;
+use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\NumberUtility;
 use PrestaShop\Decimal\DecimalNumber;
 
@@ -128,8 +128,8 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
 
     private function validateProduct()
     {
-        /** @var CanProductBeAddedToCart $cartValidation */
-        $cartValidation = $this->module->getService(CanProductBeAddedToCart::class);
+        /** @var CanProductBeAddedToCartValidator $cartValidation */
+        $cartValidation = $this->module->getService(CanProductBeAddedToCartValidator::class);
 
         $product = Tools::getValue('product');
 

@@ -6,7 +6,7 @@ namespace Mollie\Subscription\Handler;
 
 use Mollie\Subscription\Utility\ClockInterface;
 
-class RecurringOrderCancellation
+class RecurringOrderCancellationHandler
 {
     /** @var ClockInterface */
     private $clock;

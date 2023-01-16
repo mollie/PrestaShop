@@ -1,9 +1,9 @@
 <?php
 
 use Mollie\Subscription\Config\Config;
-use Mollie\Subscription\Repository\Combination as CombinationAdapter;
-use Mollie\Subscription\Validator\SubscriptionOrder;
-use Mollie\Subscription\Validator\SubscriptionProduct;
+use Mollie\Subscription\Repository\CombinationRepository as CombinationAdapter;
+use Mollie\Subscription\Validator\SubscriptionOrderValidator;
+use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use Mollie\Tests\Integration\BaseTestCase;
 
 class SubscriptionOrderTest extends BaseTestCase
@@ -66,7 +66,7 @@ class SubscriptionOrderTest extends BaseTestCase
             ->method('getById')
             ->willReturn(new Combination(1));
 
-        $subscriptionProductMock = $this->createMock(SubscriptionProduct::class);
+        $subscriptionProductMock = $this->createMock(SubscriptionProductValidator::class);
         $mockedValidation = [
             [(int) $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_NONE), false],
             [(int) $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_DAILY), true],
@@ -78,7 +78,7 @@ class SubscriptionOrderTest extends BaseTestCase
             $this->returnValueMap($mockedValidation)
         );
 
-        $subscriptionOrderValidator = new SubscriptionOrder($subscriptionProductMock);
+        $subscriptionOrderValidator = new SubscriptionOrderValidator($subscriptionProductMock);
 
         $canBeAdded = $subscriptionOrderValidator->validate($cartMock);
 

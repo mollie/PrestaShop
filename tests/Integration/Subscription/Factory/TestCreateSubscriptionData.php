@@ -8,11 +8,11 @@ use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Constants\IntervalConstant;
 use Mollie\Subscription\DTO\Object\Interval;
-use Mollie\Subscription\Factory\CreateSubscriptionData;
-use Mollie\Subscription\Provider\SubscriptionDescription;
-use Mollie\Subscription\Provider\SubscriptionInterval;
-use Mollie\Subscription\Repository\Combination;
-use Mollie\Subscription\Repository\Currency;
+use Mollie\Subscription\Factory\CreateSubscriptionDataFactory;
+use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
+use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
+use Mollie\Subscription\Repository\CombinationRepository;
+use Mollie\Subscription\Repository\CurrencyRepository;
 use Mollie\Tests\Integration\BaseTestCase;
 
 class TestCreateSubscriptionData extends BaseTestCase
@@ -45,7 +45,7 @@ class TestCreateSubscriptionData extends BaseTestCase
 
         $intervalAmount = 1;
 
-        $subscriptionIntervalMock = $this->createMock(SubscriptionInterval::class);
+        $subscriptionIntervalMock = $this->createMock(SubscriptionIntervalProvider::class);
         $subscriptionIntervalMock->method('getSubscriptionInterval')->willReturn(new Interval($intervalAmount, IntervalConstant::DAY));
 
         $paymentMethodMock = $this->createMock(PaymentMethodRepository::class);
@@ -64,16 +64,16 @@ class TestCreateSubscriptionData extends BaseTestCase
             ]
         );
 
-        $combinationRepositoryMock = $this->createMock(Combination::class);
+        $combinationRepositoryMock = $this->createMock(CombinationRepository::class);
         $combinationRepositoryMock->method('getById')->willReturn($combinationMock);
 
         $customerRepository = new MolCustomerRepository('MolCustomer');
-        /** @var CreateSubscriptionData $createSubscriptionData */
-        $createSubscriptionData = new CreateSubscriptionData(
+        /** @var CreateSubscriptionDataFactory $createSubscriptionData */
+        $createSubscriptionData = new CreateSubscriptionDataFactory(
             $customerRepository,
             $subscriptionIntervalMock,
-            new SubscriptionDescription(),
-            new Currency(),
+            new SubscriptionDescriptionProvider(),
+            new CurrencyRepository(),
             $combinationRepositoryMock,
             $paymentMethodMock
         );

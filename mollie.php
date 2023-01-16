@@ -23,8 +23,8 @@ use Mollie\Subscription\Install\DatabaseTableInstaller;
 use Mollie\Subscription\Install\HookInstaller;
 use Mollie\Subscription\Install\Installer;
 use Mollie\Subscription\Logger\NullLogger;
-use Mollie\Subscription\Repository\Language as LanguageAdapter;
-use Mollie\Subscription\Validator\CanProductBeAddedToCart;
+use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
+use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\PsVersionUtility;
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -876,8 +876,8 @@ class Mollie extends PaymentModule
 
     public function hookActionCartUpdateQuantityBefore($params)
     {
-        /** @var CanProductBeAddedToCart $cartValidation */
-        $cartValidation = $this->getService(CanProductBeAddedToCart::class);
+        /** @var CanProductBeAddedToCartValidator $cartValidation */
+        $cartValidation = $this->getService(CanProductBeAddedToCartValidator::class);
 
         try {
             $cartValidation->validate((int) $params['id_product_attribute']);

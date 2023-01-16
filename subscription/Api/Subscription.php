@@ -11,14 +11,14 @@ use Mollie\Subscription\DTO\CancelSubscriptionData;
 use Mollie\Subscription\DTO\CreateSubscriptionData;
 use Mollie\Subscription\DTO\GetSubscriptionData;
 use Mollie\Subscription\Exception\SubscriptionApiException;
-use Mollie\Subscription\Factory\MollieApi;
+use Mollie\Subscription\Factory\MollieApiFactory;
 
 class Subscription
 {
     /** @var MollieApiClient */
     private $apiClient;
 
-    public function __construct(MollieApi $mollieApiFactory)
+    public function __construct(MollieApiFactory $mollieApiFactory)
     {
         $this->apiClient = $mollieApiFactory->getMollieClient();
     }

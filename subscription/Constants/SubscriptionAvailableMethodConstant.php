@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Constants;
 
-class SubscriptionAvailableMethods
+class SubscriptionAvailableMethodConstant
 {
     public const CREDIT_CARD = 'creditcard';
     public const DIRECT_DEBIT = 'directdebit';

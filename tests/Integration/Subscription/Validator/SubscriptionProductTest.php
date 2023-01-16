@@ -1,7 +1,7 @@
 <?php
 
 use Mollie\Subscription\Config\Config;
-use Mollie\Subscription\Validator\SubscriptionProduct;
+use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use Mollie\Tests\Integration\BaseTestCase;
 
 class SubscriptionProductTest extends BaseTestCase
@@ -48,7 +48,7 @@ class SubscriptionProductTest extends BaseTestCase
     public function testValidate(string $combinationReference, bool $hasExtraAttribute, bool $expectedResult): void
     {
         $combination = $this->getCombination($combinationReference, $hasExtraAttribute);
-        $subscriptionProductValidator = $this->getService(SubscriptionProduct::class);
+        $subscriptionProductValidator = $this->getService(SubscriptionProductValidator::class);
         $isSubscriptionProduct = $subscriptionProductValidator->validate($combination);
 
         $this->assertEquals($expectedResult, $isSubscriptionProduct);

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Repository;
 
-class Combination
+class CombinationRepository
 {
     public function getById(int $id): \Combination
     {

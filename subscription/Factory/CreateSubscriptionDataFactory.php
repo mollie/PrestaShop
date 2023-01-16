@@ -9,28 +9,28 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Subscription\DTO\CreateSubscriptionData as SubscriptionDataDTO;
 use Mollie\Subscription\DTO\Object\Amount;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
-use Mollie\Subscription\Provider\SubscriptionDescription;
-use Mollie\Subscription\Provider\SubscriptionInterval;
-use Mollie\Subscription\Repository\Combination;
-use Mollie\Subscription\Repository\Currency as CurrencyAdapter;
+use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
+use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
+use Mollie\Subscription\Repository\CombinationRepository;
+use Mollie\Subscription\Repository\CurrencyRepository as CurrencyAdapter;
 use Order;
 use Product;
 
-class CreateSubscriptionData
+class CreateSubscriptionDataFactory
 {
     /** @var MolCustomerRepository */
     private $customerRepository;
 
-    /** @var SubscriptionInterval */
+    /** @var SubscriptionIntervalProvider */
     private $subscriptionInterval;
 
-    /** @var SubscriptionDescription */
+    /** @var SubscriptionDescriptionProvider */
     private $subscriptionDescription;
 
     /** @var CurrencyAdapter */
     private $currencyAdapter;
 
-    /** @var Combination */
+    /** @var CombinationRepository */
     private $combination;
 
     /** @var PaymentMethodRepositoryInterface */
@@ -38,10 +38,10 @@ class CreateSubscriptionData
 
     public function __construct(
         MolCustomerRepository $customerRepository,
-        SubscriptionInterval $subscriptionInterval,
-        SubscriptionDescription $subscriptionDescription,
+        SubscriptionIntervalProvider $subscriptionInterval,
+        SubscriptionDescriptionProvider $subscriptionDescription,
         CurrencyAdapter $currencyAdapter,
-        Combination $combination,
+        CombinationRepository $combination,
         PaymentMethodRepositoryInterface $methodRepository
     ) {
         $this->customerRepository = $customerRepository;

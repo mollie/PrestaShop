@@ -10,7 +10,7 @@ use Mollie\Api\MollieApiClient;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Exception\MollieModuleNotFoundException;
 
-class MollieApi
+class MollieApiFactory
 {
     public function getMollieClient(): MollieApiClient
     {
