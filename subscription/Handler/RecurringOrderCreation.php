@@ -51,7 +51,5 @@ class RecurringOrderCreation
         $recurringOrder->date_add = $this->clock->getCurrentDate();
         $recurringOrder->date_update = $this->clock->getCurrentDate();
         $recurringOrder->add();
-
-        throw new NotImplementedException('Not implemented');
     }
 }

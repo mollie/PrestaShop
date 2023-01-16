@@ -47,7 +47,7 @@ class Subscription
         }
     }
 
-    public function getSubscription(GetSubscriptionData $subscriptionData)
+    public function getSubscription(GetSubscriptionData $subscriptionData): MollieSubscription
     {
         try {
             return $this->apiClient->subscriptions->getForId($subscriptionData->getCustomerId(), $subscriptionData->getSubscriptionId());
