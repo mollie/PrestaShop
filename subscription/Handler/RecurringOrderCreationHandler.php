@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Mollie\Subscription\Handler;
 
 use Mollie\Subscription\Api\Subscription;
-use Mollie\Subscription\Exception\NotImplementedException;
-use Mollie\Subscription\Factory\CreateSubscriptionData;
+use Mollie\Subscription\Factory\CreateSubscriptionDataFactory;
 use Mollie\Subscription\Utility\ClockInterface;
 use Order;
 
-class RecurringOrderCreation
+class RecurringOrderCreationHandler
 {
     /** @var ClockInterface */
     private $clock;
@@ -18,13 +17,13 @@ class RecurringOrderCreation
     /** @var Subscription */
     private $subscriptionApi;
 
-    /** @var CreateSubscriptionData */
+    /** @var CreateSubscriptionDataFactory */
     private $subscriptionDataFactory;
 
     public function __construct(
         ClockInterface $clock,
         Subscription $subscriptionApi,
-        CreateSubscriptionData $subscriptionDataFactory
+        CreateSubscriptionDataFactory $subscriptionDataFactory
     ) {
         $this->clock = $clock;
         $this->subscriptionApi = $subscriptionApi;
@@ -48,10 +47,8 @@ class RecurringOrderCreation
         $recurringOrder->cancelled_at = $subscription->canceledAt;
         $recurringOrder->mollie_sub_id = $subscription->id;
         $recurringOrder->mollie_customer_id = $subscription->customerId;
-        $recurringOrder->date_add = $this->clock->getCurrentDate();
+        $recurringOrder->date_add = $this->clock->getDateFromTimeStamp(strtotime($subscription->createdAt));
         $recurringOrder->date_update = $this->clock->getCurrentDate();
         $recurringOrder->add();
-
-//        throw new NotImplementedException('Not implemented');
     }
 }

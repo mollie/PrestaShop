@@ -9,7 +9,7 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Repository\ProductCombinationRepository;
 
-class SubscriptionProduct
+class SubscriptionProductValidator
 {
     /** @var ConfigurationAdapter */
     private $configuration;
@@ -17,13 +17,13 @@ class SubscriptionProduct
     /** @var ProductCombinationRepository */
     private $combinationRepository;
 
-    /** @var \Mollie\Subscription\Repository\Combination */
+    /** @var \Mollie\Subscription\Repository\CombinationRepository */
     private $combination;
 
     public function __construct(
         ConfigurationAdapter $configuration,
         ProductCombinationRepository $combinationRepository,
-        \Mollie\Subscription\Repository\Combination $combination
+        \Mollie\Subscription\Repository\CombinationRepository $combination
     ) {
         $this->configuration = $configuration;
         $this->combinationRepository = $combinationRepository;

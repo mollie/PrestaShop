@@ -48,13 +48,14 @@ use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPayme
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProvider;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
-use Mollie\Subscription\Factory\CreateSubscriptionData;
+use Mollie\Subscription\Grid\Accessibility\SubscriptionCancelAccessibility;
 use Mollie\Subscription\Logger\LoggerInterface;
 use Mollie\Subscription\Logger\NullLogger;
 use Mollie\Subscription\Repository\SubscriptionRepository;
 use Mollie\Subscription\Repository\SubscriptionRepositoryInterface;
 use Mollie\Subscription\Utility\Clock;
 use Mollie\Subscription\Utility\ClockInterface;
+use PrestaShop\PrestaShop\Core\Grid\Action\Row\AccessibilityChecker\AccessibilityCheckerInterface;
 
 /**
  * Load base services here which are usually required
@@ -81,10 +82,11 @@ final class BaseServiceProvider
 
         $this->addService($container, UninstallerInterface::class, Mollie\Install\DatabaseTableUninstaller::class);
 
-        $this->addService($container, CreateSubscriptionData::class, $container->get(CreateSubscriptionData::class));
         $this->addService($container, OrderTotalProviderInterface::class, $container->get(OrderTotalProvider::class));
         $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
         $this->addService($container, EnvironmentVersionProviderInterface::class, $container->get(EnvironmentVersionProvider::class));
+
+        $this->addService($container, AccessibilityCheckerInterface::class, $container->get(SubscriptionCancelAccessibility::class));
 
         $this->addService($container, PendingOrderCartRuleRepositoryInterface::class, $container->get(PendingOrderCartRuleRepository::class));
         $this->addService($container, CartRuleRepositoryInterface::class, $container->get(CartRuleRepository::class));
@@ -96,7 +98,7 @@ final class BaseServiceProvider
 
         $this->addService($container, TemplateParserInterface::class, SmartyTemplateParser::class);
 
-        $this->addService($container, UpdateMessageProviderInterface::class, $container->get(UpdateMessageProvider::class));
+        $this->addService($container, UpdateMessageProviderInterface::class, UpdateMessageProvider::class);
 
         $this->addService($container, PaymentMethodSortProviderInterface::class, PaymentMethodSortProvider::class);
         $this->addService($container, PhoneNumberProviderInterface::class, PhoneNumberProvider::class);
@@ -119,31 +121,6 @@ final class BaseServiceProvider
         $this->addService($container, ProfileIdProviderInterface::class, ProfileIdProvider::class);
 
         $this->addService($container, PaymentOptionHandlerInterface::class, $container->get(PaymentOptionHandler::class));
-
-        //todo: Try to make it work without prestashop container in services.yml. Skipping now because its taking to much time
-//        $this->addService($container, HookDispatcherInterface::class, HookDispatcher::class);
-//
-//        $this->addService($container, SubscriptionGridQueryBuilder::class, SubscriptionGridQueryBuilder::class)
-//            ->withArgument(Connection::class)
-//            ->withArgument('ps_') //todo: change to adapter
-//            ->withArgument('@prestashop.core.query.doctrine_search_criteria_applicator')
-//        ;
-//
-//        $this->addService($container, SubscriptionGridDefinitionFactory::class, DoctrineGridDataFactory::class)
-//            ->withArgument(SubscriptionGridQueryBuilder::class)
-//            ->withArgument('@prestashop.core.hook.dispatcher')
-//            ->withArgument('@prestashop.core.grid.query.doctrine_query_parser')
-//            ->withArgument('invertus_mollie_subscription')
-//            ->withArgument(HookDispatcher::class)
-//            ->withArgument(\MollieSubscription::class)
-//        ;
-
-//        $this->addService($container, GridFactory::class, GridFactory::class)
-//            ->withArgument(SubscriptionGridDefinitionFactory::class)
-//            ->withArgument(SubscriptionGridQueryBuilder::class)
-//            ->withArgument('@prestashop.core.grid.filter.form_factory')
-//            ->withArgument('@prestashop.core.hook.dispatcher')
-//        ;
     }
 
     private function addService(Container $container, $className, $service)

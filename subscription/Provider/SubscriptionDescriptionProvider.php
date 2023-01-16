@@ -7,7 +7,7 @@ namespace Mollie\Subscription\Provider;
 use Mollie\Subscription\Config\Config;
 use Order;
 
-class SubscriptionDescription
+class SubscriptionDescriptionProvider
 {
     public function getSubscriptionDescription(Order $order, string $currencyIsoCode)
     {

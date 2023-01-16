@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Repository;
 
-class Language
+class LanguageRepository
 {
     /**
      * @return int

@@ -10,4 +10,9 @@ class Clock implements ClockInterface
     {
         return date($format);
     }
+
+    public function getDateFromTimeStamp(int $timestamp, string $format = 'Y-m-d H:i:s'): string
+    {
+        return date($format, $timestamp);
+    }
 }

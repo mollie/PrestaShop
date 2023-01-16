@@ -10,7 +10,7 @@ use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Logger\LoggerInterface;
-use Mollie\Subscription\Repository\Language;
+use Mollie\Subscription\Repository\LanguageRepository;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use Psr\Log\LogLevel;
@@ -26,7 +26,7 @@ class AttributeInstaller extends AbstractInstaller
     /** @var Mollie */
     private $module;
 
-    /** @var Language */
+    /** @var LanguageRepository */
     private $language;
 
     /** @var LoggerInterface */
@@ -36,7 +36,7 @@ class AttributeInstaller extends AbstractInstaller
         LoggerInterface $logger,
         ConfigurationAdapter $configuration,
         Mollie $module,
-        Language $language
+        LanguageRepository $language
     ) {
         $this->logger = $logger;
         $this->configuration = $configuration;

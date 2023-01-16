@@ -6,12 +6,12 @@ namespace Mollie\Subscription\Validator;
 
 use Cart;
 
-class SubscriptionOrder
+class SubscriptionOrderValidator
 {
-    /** @var SubscriptionProduct */
+    /** @var SubscriptionProductValidator */
     private $subscriptionProduct;
 
-    public function __construct(SubscriptionProduct $subscriptionProduct)
+    public function __construct(SubscriptionProductValidator $subscriptionProduct)
     {
         $this->subscriptionProduct = $subscriptionProduct;
     }

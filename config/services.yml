@@ -20,6 +20,7 @@ services:
     parent: 'prestashop.core.grid.definition.factory.abstract_grid_definition'
     arguments:
       - '@Mollie'
+      - '@Mollie\Subscription\Grid\Accessibility\SubscriptionCancelAccessibility'
     public: true
 
   subscription_grid_data_factory:
@@ -37,3 +38,6 @@ services:
       - '@subscription_grid_data_factory'
       - '@prestashop.core.grid.filter.form_factory'
       - '@prestashop.core.hook.dispatcher'
+
+  Mollie\Subscription\Grid\Accessibility\SubscriptionCancelAccessibility:
+    class: Mollie\Subscription\Grid\Accessibility\SubscriptionCancelAccessibility

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Factory;
 
-use Mollie\Subscription\DTO\CancelSubscriptionData as CancelSubscriptionDataDTO;
+use Mollie\Subscription\DTO\GetSubscriptionData as GetSubscriptionDataDTO;
 use Mollie\Subscription\Repository\SubscriptionRepositoryInterface;
 
-class CancelSubscriptionData
+class GetSubscriptionDataFactory
 {
     /** @var SubscriptionRepositoryInterface */
     private $customerRepository;
@@ -18,11 +18,11 @@ class CancelSubscriptionData
         $this->customerRepository = $customerRepository;
     }
 
-    public function build(int $subscriptionId): CancelSubscriptionDataDTO
+    public function build(int $subscriptionId): GetSubscriptionDataDTO
     {
         /** @var \MolSubRecurringOrder $subscription */
         $subscription = $this->customerRepository->findOneBy(['id_mol_sub_recurring_order' => $subscriptionId]);
 
-        return new CancelSubscriptionDataDTO($subscription->mollie_customer_id, $subscription->mollie_sub_id);
+        return new GetSubscriptionDataDTO($subscription->mollie_customer_id, $subscription->mollie_sub_id);
     }
 }

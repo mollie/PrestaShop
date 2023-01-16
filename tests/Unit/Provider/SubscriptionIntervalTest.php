@@ -5,7 +5,7 @@ namespace Mollie\Subscription\Tests\Unit\Provider;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\DTO\Object\Interval;
 use Mollie\Subscription\Exception\SubscriptionIntervalException;
-use Mollie\Subscription\Provider\SubscriptionInterval;
+use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
 use PHPUnit\Framework\TestCase;
 
 class SubscriptionIntervalTest extends TestCase
@@ -21,7 +21,7 @@ class SubscriptionIntervalTest extends TestCase
             ->will(
                 $this->returnValueMap($mockedGetResults)
             );
-        $subscriptionIntervalProvider = new SubscriptionInterval($configurationMock);
+        $subscriptionIntervalProvider = new SubscriptionIntervalProvider($configurationMock);
 
         if ($expectedInterval === null) {
             $this->expectException(SubscriptionIntervalException::class);

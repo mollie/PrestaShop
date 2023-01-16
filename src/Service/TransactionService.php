@@ -29,7 +29,7 @@ use Mollie\Exception\TransactionException;
 use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Handler\Order\OrderFeeHandler;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
-use Mollie\Subscription\Handler\RecurringOrderCreation;
+use Mollie\Subscription\Handler\RecurringOrderCreationHandler;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\OrderNumberUtility;
@@ -70,7 +70,7 @@ class TransactionService
     private $mollieOrderCreationService;
     /** @var OrderFeeHandler */
     private $orderFeeHandler;
-    /** @var RecurringOrderCreation */
+    /** @var RecurringOrderCreationHandler */
     private $recurringOrderCreation;
 
     public function __construct(
@@ -81,7 +81,7 @@ class TransactionService
         PaymentMethodService $paymentMethodService,
         MollieOrderCreationService $mollieOrderCreationService,
         OrderFeeHandler $orderFeeHandler,
-        RecurringOrderCreation $recurringOrderCreation
+        RecurringOrderCreationHandler $recurringOrderCreation
     ) {
         $this->module = $module;
         $this->orderStatusService = $orderStatusService;
@@ -109,8 +109,6 @@ class TransactionService
      */
     public function processTransaction($apiPayment)
     {
-//        die();
-//        $this->recurringOrderCreation->handle(new Order(904));
         if (empty($apiPayment)) {
             if (Configuration::get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
                 PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request without proper transaction ID.', Config::WARNING);
