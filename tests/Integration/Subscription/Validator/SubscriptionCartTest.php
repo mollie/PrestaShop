@@ -4,8 +4,8 @@ use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Exception\ProductValidationException;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 use Mollie\Subscription\Repository\ProductCombinationRepository;
-use Mollie\Subscription\Validator\CanProductBeAddedToCart;
-use Mollie\Subscription\Validator\SubscriptionProduct;
+use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
+use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use Mollie\Tests\Integration\BaseTestCase;
 
 class SubscriptionCartTest extends BaseTestCase
@@ -68,12 +68,12 @@ class SubscriptionCartTest extends BaseTestCase
 
         $combination = $this->getCombination($combinationReference, $hasExtraAttribute);
 
-        $subscriptionCartValidator = new CanProductBeAddedToCart(
+        $subscriptionCartValidator = new CanProductBeAddedToCartValidator(
             $cartMock,
-            new SubscriptionProduct(
+            new SubscriptionProductValidator(
                 $this->configuration,
                 new ProductCombinationRepository(),
-                new \Mollie\Subscription\Repository\Combination()
+                new \Mollie\Subscription\Repository\CombinationRepository()
             )
         );
 

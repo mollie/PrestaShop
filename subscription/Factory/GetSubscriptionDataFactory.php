@@ -7,7 +7,7 @@ namespace Mollie\Subscription\Factory;
 use Mollie\Subscription\DTO\GetSubscriptionData as GetSubscriptionDataDTO;
 use Mollie\Subscription\Repository\SubscriptionRepositoryInterface;
 
-class GetSubscriptionData
+class GetSubscriptionDataFactory
 {
     /** @var SubscriptionRepositoryInterface */
     private $customerRepository;

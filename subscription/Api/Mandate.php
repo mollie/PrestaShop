@@ -8,14 +8,14 @@ use Mollie\Api\MollieApiClient;
 use Mollie\Api\Resources\BaseResource;
 use Mollie\Api\Resources\Mandate as MandateMollie;
 use Mollie\Subscription\DTO\CreateMandateData;
-use Mollie\Subscription\Factory\MollieApi;
+use Mollie\Subscription\Factory\MollieApiFactory;
 
 class Mandate
 {
     /** @var MollieApiClient */
     private $apiClient;
 
-    public function __construct(MollieApi $mollieApiFactory)
+    public function __construct(MollieApiFactory $mollieApiFactory)
     {
         $this->apiClient = $mollieApiFactory->getMollieClient();
     }

@@ -8,10 +8,10 @@ use Exception;
 use Mollie\Api\Types\SubscriptionStatus;
 use Mollie\Subscription\Api\Subscription;
 use Mollie\Subscription\Exception\SubscriptionApiException;
-use Mollie\Subscription\Factory\CancelSubscriptionData;
-use Mollie\Subscription\Factory\GetSubscriptionData;
+use Mollie\Subscription\Factory\CancelSubscriptionDataFactory;
+use Mollie\Subscription\Factory\GetSubscriptionDataFactory;
 use Mollie\Subscription\Filters\SubscriptionFilters;
-use Mollie\Subscription\Handler\RecurringOrderCancellation;
+use Mollie\Subscription\Handler\RecurringOrderCancellationHandler;
 use PrestaShop\PrestaShop\Core\Grid\GridFactoryInterface;
 use PrestaShopBundle\Security\Annotation\AdminSecurity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -54,14 +54,14 @@ class SubscriptionController extends AbstractSymfonyController
         /** @var Subscription $subscriptionApi */
         $subscriptionApi = $this->leagueContainer->getService(Subscription::class);
 
-        /** @var RecurringOrderCancellation $orderCancellationHandler */
-        $orderCancellationHandler = $this->leagueContainer->getService(RecurringOrderCancellation::class);
+        /** @var RecurringOrderCancellationHandler $orderCancellationHandler */
+        $orderCancellationHandler = $this->leagueContainer->getService(RecurringOrderCancellationHandler::class);
 
-        /** @var CancelSubscriptionData $cancelSubscriptionDataFactory */
-        $cancelSubscriptionDataFactory = $this->leagueContainer->getService(CancelSubscriptionData::class);
+        /** @var CancelSubscriptionDataFactory $cancelSubscriptionDataFactory */
+        $cancelSubscriptionDataFactory = $this->leagueContainer->getService(CancelSubscriptionDataFactory::class);
 
-        /** @var GetSubscriptionData $getSubscriptionDataFactory */
-        $getSubscriptionDataFactory = $this->leagueContainer->getService(GetSubscriptionData::class);
+        /** @var GetSubscriptionDataFactory $getSubscriptionDataFactory */
+        $getSubscriptionDataFactory = $this->leagueContainer->getService(GetSubscriptionDataFactory::class);
 
         try {
             $cancelSubscriptionData = $cancelSubscriptionDataFactory->build($subscriptionId);
@@ -69,9 +69,18 @@ class SubscriptionController extends AbstractSymfonyController
         } catch (SubscriptionApiException $e) {
             // if subscription cancel fails we check if its already canceled and if its then we update it to canceled
             $getSubscriptionData = $getSubscriptionDataFactory->build($subscriptionId);
-            $subscription = $subscriptionApi->getSubscription($getSubscriptionData);
+            try {
+                $subscription = $subscriptionApi->getSubscription($getSubscriptionData);
+            } catch (SubscriptionApiException $e) {
+                $this->addFlash('error', $this->getErrorMessage($e));
+
+                return $this->redirectToRoute('admin_subscription_index');
+            }
+
             if ($subscription->status !== SubscriptionStatus::STATUS_CANCELED) {
                 $this->addFlash('error', $this->getErrorMessage($e));
+
+                return $this->redirectToRoute('admin_subscription_index');
             }
         }
 

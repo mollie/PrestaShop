@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Mollie\Subscription\DTO;
 
 use JsonSerializable;
-use Mollie\Subscription\Constants\SubscriptionAvailableMethods;
 use Mollie\Subscription\DTO\Object\Amount;
 use Mollie\Subscription\DTO\Object\Interval;
 

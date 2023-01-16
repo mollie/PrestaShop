@@ -10,7 +10,7 @@ use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\DTO\Object\Interval;
 use Mollie\Subscription\Exception\SubscriptionIntervalException;
 
-class SubscriptionInterval
+class SubscriptionIntervalProvider
 {
     /** @var ConfigurationAdapter */
     private $configuration;

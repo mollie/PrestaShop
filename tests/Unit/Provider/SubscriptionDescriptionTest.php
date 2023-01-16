@@ -2,7 +2,7 @@
 
 namespace Mollie\Subscription\Tests\Unit\Provider;
 
-use Mollie\Subscription\Provider\SubscriptionDescription;
+use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use PHPUnit\Framework\TestCase;
 
 class subscriptionDescriptionTest extends TestCase
@@ -16,7 +16,7 @@ class subscriptionDescriptionTest extends TestCase
         $orderMock->id = $orderId;
         $orderMock->total_paid_tax_incl = $totalPaid;
 
-        $subscriptionDescriptionProvider = new SubscriptionDescription();
+        $subscriptionDescriptionProvider = new SubscriptionDescriptionProvider();
 
         $description = $subscriptionDescriptionProvider->getSubscriptionDescription($orderMock, $currencyIso);
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Mollie\Api\Types\MandateMethod;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Subscription\Factory\CreateMandateData;
+use Mollie\Subscription\Factory\CreateMandateDataFactory;
 use Mollie\Tests\Integration\BaseTestCase;
 
 class TestCreateMandateData extends BaseTestCase
@@ -35,8 +35,8 @@ class TestCreateMandateData extends BaseTestCase
                 'name' => self::CUSTOMER_NAME,
             ]
         );
-        /** @var CreateMandateData $mandateDataBuilder */
-        $mandateDataBuilder = new CreateMandateData(new MolCustomerRepository('MolCustomer'), $paymentMethodMock);
+        /** @var CreateMandateDataFactory $mandateDataBuilder */
+        $mandateDataBuilder = new CreateMandateDataFactory(new MolCustomerRepository('MolCustomer'), $paymentMethodMock);
 
         $customer = $this->createMock('Customer');
         $customer->email = self::CUSTOMER_EMAIL;

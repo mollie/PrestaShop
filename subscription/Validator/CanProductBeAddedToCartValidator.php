@@ -8,18 +8,18 @@ use Cart;
 use Mollie\Subscription\Exception\ProductValidationException;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 
-class CanProductBeAddedToCart
+class CanProductBeAddedToCartValidator
 {
     /** @var Cart */
     private $cart;
 
-    /** @var SubscriptionProduct */
+    /** @var SubscriptionProductValidator */
     private $subscriptionProduct;
 
     /** @var string */
     private $error;
 
-    public function __construct(Cart $cart, SubscriptionProduct $subscriptionProduct)
+    public function __construct(Cart $cart, SubscriptionProductValidator $subscriptionProduct)
     {
         $this->cart = $cart;
         $this->subscriptionProduct = $subscriptionProduct;

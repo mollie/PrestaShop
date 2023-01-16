@@ -11,11 +11,11 @@ use Mollie\Subscription\Constants\IntervalConstant;
 use Mollie\Subscription\DTO\CreateSubscriptionData as SubscriptionDataDTO;
 use Mollie\Subscription\DTO\Object\Amount;
 use Mollie\Subscription\DTO\Object\Interval;
-use Mollie\Subscription\Factory\CreateSubscriptionData;
-use Mollie\Subscription\Provider\SubscriptionDescription;
-use Mollie\Subscription\Provider\SubscriptionInterval;
-use Mollie\Subscription\Repository\Combination;
-use Mollie\Subscription\Repository\Currency;
+use Mollie\Subscription\Factory\CreateSubscriptionDataFactory;
+use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
+use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
+use Mollie\Subscription\Repository\CombinationRepository;
+use Mollie\Subscription\Repository\CurrencyRepository;
 use PHPUnit\Framework\TestCase;
 
 class SubscriptionDataTest extends TestCase
@@ -34,16 +34,16 @@ class SubscriptionDataTest extends TestCase
         $customerRepositoryMock = $this->createMock(MolCustomerRepository::class);
         $customerRepositoryMock->method('findOneBy')->willReturn($molCustomer);
 
-        $subscriptionIntervalProviderMock = $this->createMock(SubscriptionInterval::class);
+        $subscriptionIntervalProviderMock = $this->createMock(SubscriptionIntervalProvider::class);
         $subscriptionIntervalProviderMock->method('getSubscriptionInterval')->willReturn(new Interval(1, IntervalConstant::DAY));
 
-        $subscriptionDescriptionProviderMock = $this->createMock(SubscriptionDescription::class);
+        $subscriptionDescriptionProviderMock = $this->createMock(SubscriptionDescriptionProvider::class);
         $subscriptionDescriptionProviderMock->method('getSubscriptionDescription')->willReturn($description);
 
         $currency = $this->createMock('Currency');
         $currency->iso_code = 'EUR';
 
-        $currencyAdapterMock = $this->createMock(Currency::class);
+        $currencyAdapterMock = $this->createMock(CurrencyRepository::class);
         $currencyAdapterMock->method('getById')->willReturn($currency);
 
         $paymentMethodRepositoryMock = $this->createMock(PaymentMethodRepository::class);
@@ -53,12 +53,12 @@ class SubscriptionDataTest extends TestCase
             ]
         );
 
-        $subscriptionDataFactory = new CreateSubscriptionData(
+        $subscriptionDataFactory = new CreateSubscriptionDataFactory(
             $customerRepositoryMock,
             $subscriptionIntervalProviderMock,
             $subscriptionDescriptionProviderMock,
             $currencyAdapterMock,
-            new Combination(),
+            new CombinationRepository(),
             $paymentMethodRepositoryMock
         );
 

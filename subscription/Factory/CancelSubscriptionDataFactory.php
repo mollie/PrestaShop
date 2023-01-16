@@ -7,7 +7,7 @@ namespace Mollie\Subscription\Factory;
 use Mollie\Subscription\DTO\CancelSubscriptionData as CancelSubscriptionDataDTO;
 use Mollie\Subscription\Repository\SubscriptionRepositoryInterface;
 
-class CancelSubscriptionData
+class CancelSubscriptionDataFactory
 {
     /** @var SubscriptionRepositoryInterface */
     private $customerRepository;
