@@ -47,7 +47,7 @@ class RecurringOrderCreation
         $recurringOrder->cancelled_at = $subscription->canceledAt;
         $recurringOrder->mollie_sub_id = $subscription->id;
         $recurringOrder->mollie_customer_id = $subscription->customerId;
-        $recurringOrder->date_add = $this->clock->getCurrentDate();
+        $recurringOrder->date_add = $this->clock->getDateFromTimeStamp(strtotime($subscription->canceledAt));
         $recurringOrder->date_update = $this->clock->getCurrentDate();
         $recurringOrder->add();
     }
