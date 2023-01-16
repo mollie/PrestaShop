@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Mollie\Subscription\Controller\Symfony;
 
 use Exception;
+use Mollie\Api\Types\SubscriptionStatus;
 use Mollie\Subscription\Api\Subscription;
 use Mollie\Subscription\Exception\SubscriptionApiException;
 use Mollie\Subscription\Factory\CancelSubscriptionData;
+use Mollie\Subscription\Factory\GetSubscriptionData;
 use Mollie\Subscription\Filters\SubscriptionFilters;
+use Mollie\Subscription\Handler\RecurringOrderCancellation;
 use PrestaShop\PrestaShop\Core\Grid\GridFactoryInterface;
 use PrestaShopBundle\Security\Annotation\AdminSecurity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -51,21 +54,33 @@ class SubscriptionController extends AbstractSymfonyController
         /** @var Subscription $subscriptionApi */
         $subscriptionApi = $this->leagueContainer->getService(Subscription::class);
 
+        /** @var RecurringOrderCancellation $orderCancellationHandler */
+        $orderCancellationHandler = $this->leagueContainer->getService(RecurringOrderCancellation::class);
+
         /** @var CancelSubscriptionData $cancelSubscriptionDataFactory */
         $cancelSubscriptionDataFactory = $this->leagueContainer->getService(CancelSubscriptionData::class);
 
+        /** @var GetSubscriptionData $getSubscriptionDataFactory */
+        $getSubscriptionDataFactory = $this->leagueContainer->getService(GetSubscriptionData::class);
+
         try {
             $cancelSubscriptionData = $cancelSubscriptionDataFactory->build($subscriptionId);
-            $response = $subscriptionApi->cancelSubscription($cancelSubscriptionData);
-
-            //todo: add response handle by updating entity
-            $this->addFlash(
-                'success',
-                $this->module->l('Successfully canceled', self::FILE_NAME)
-            );
+            $subscription = $subscriptionApi->cancelSubscription($cancelSubscriptionData);
         } catch (SubscriptionApiException $e) {
-            $this->addFlash('error', $this->getErrorMessage($e));
+            // if subscription cancel fails we check if its already canceled and if its then we update it to canceled
+            $getSubscriptionData = $getSubscriptionDataFactory->build($subscriptionId);
+            $subscription = $subscriptionApi->getSubscription($getSubscriptionData);
+            if ($subscription->status !== SubscriptionStatus::STATUS_CANCELED) {
+                $this->addFlash('error', $this->getErrorMessage($e));
+            }
         }
+
+        $this->addFlash(
+            'success',
+            $this->module->l('Successfully canceled', self::FILE_NAME)
+        );
+
+        $orderCancellationHandler->handle($subscriptionId, $subscription->status, $subscription->canceledAt);
 
         return $this->redirectToRoute('admin_subscription_index');
     }

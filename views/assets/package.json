@@ -1,0 +1,16 @@
+{
+  "devDependencies": {
+    "@symfony/webpack-encore": "^0.31.0",
+    "babel": "^6.23.0",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^9.0.1"
+  },
+  "scripts": {
+    "build": "NODE_ENV=production webpack --progress --colors --debug --display-chunks",
+    "watch": "encore dev --watch"
+  },
+  "dependencies": {
+    "core-js": "^3.6.5",
+    "regenerator-runtime": "^0.13.7"
+  }
+}
