@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mollie\Subscription\ServiceProvider;
+namespace Mollie\ServiceProvider;
 
 use Interop\Container\ContainerInterface as InteropContainerInterface;
 use PrestaShop\PrestaShop\Adapter\SymfonyContainer;

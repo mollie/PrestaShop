@@ -30,6 +30,7 @@ use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Handler\Order\OrderFeeHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Subscription\Handler\RecurringOrderCreation;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\OrderNumberUtility;
@@ -70,6 +71,8 @@ class TransactionService
     private $mollieOrderCreationService;
     /** @var OrderFeeHandler */
     private $orderFeeHandler;
+    /** @var RecurringOrderCreation */
+    private $recurringOrderCreation;
     /** @var ShipmentSenderHandlerInterface */
     private $shipmentSenderHandler;
 
@@ -81,6 +84,7 @@ class TransactionService
         PaymentMethodService $paymentMethodService,
         MollieOrderCreationService $mollieOrderCreationService,
         OrderFeeHandler $orderFeeHandler,
+        RecurringOrderCreation $recurringOrderCreation,
         ShipmentSenderHandlerInterface $shipmentSenderHandler
     ) {
         $this->module = $module;
@@ -90,6 +94,7 @@ class TransactionService
         $this->paymentMethodService = $paymentMethodService;
         $this->mollieOrderCreationService = $mollieOrderCreationService;
         $this->orderFeeHandler = $orderFeeHandler;
+        $this->recurringOrderCreation = $recurringOrderCreation;
         $this->shipmentSenderHandler = $shipmentSenderHandler;
     }
 

@@ -19,12 +19,12 @@ use Context;
 use Country;
 use Currency;
 use Customer;
-use Hook;
 use Mollie;
 use Mollie\Adapter\Shop;
 use Mollie\Api\Resources\BaseCollection;
 use Mollie\Api\Resources\MethodCollection;
 use Mollie\Api\Types\PaymentMethod;
+use Mollie\Api\Types\SequenceType;
 use Mollie\Config\Config;
 use Mollie\DTO\Object\Amount;
 use Mollie\DTO\OrderData;
@@ -35,6 +35,7 @@ use Mollie\Provider\PhoneNumberProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
+use Mollie\Subscription\Validator\SubscriptionOrder;
 use Mollie\Utility\CustomLogoUtility;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\LocaleUtility;
@@ -90,6 +91,8 @@ class PaymentMethodService
      * @var Shop
      */
     private $shop;
+    /** @var SubscriptionOrder */
+    private $subscriptionOrder;
 
     public function __construct(
         Mollie $module,
@@ -101,7 +104,8 @@ class PaymentMethodService
         PaymentMethodSortProviderInterface $paymentMethodSortProvider,
         PhoneNumberProviderInterface $phoneNumberProvider,
         PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation,
-        Shop $shop
+        Shop $shop,
+        SubscriptionOrder $subscriptionOrder
     ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
@@ -113,6 +117,7 @@ class PaymentMethodService
         $this->phoneNumberProvider = $phoneNumberProvider;
         $this->paymentMethodRestrictionValidation = $paymentMethodRestrictionValidation;
         $this->shop = $shop;
+        $this->subscriptionOrder = $subscriptionOrder;
     }
 
     public function savePaymentMethod($method)
@@ -311,13 +316,11 @@ class PaymentMethodService
                 $paymentData->setApplePayToken($applePayToken);
             }
 
-            $sequenceType = Hook::exec('actionMollieSequenceType', ['cart_id' => $cartId]);
-
-            if ($sequenceType) {
+            if ($this->subscriptionOrder->validate(new Cart($cartId))) {
                 $molCustomer = $this->handleCustomerInfo($cart->id_customer, true, false);
                 $paymentData->setCustomerId($molCustomer->customer_id);
 
-                $paymentData->setSequenceType($sequenceType);
+                $paymentData->setSequenceType(SequenceType::SEQUENCETYPE_FIRST);
             }
 
             $isCreditCardPayment = PaymentMethod::CREDITCARD === $molPaymentMethod->id_method;
@@ -394,13 +397,11 @@ class PaymentMethodService
                 $payment['applePayPaymentToken'] = $applePayToken;
             }
 
-            $sequenceType = Hook::exec('actionMollieSequenceType', ['object' => ['cart_id' => $cartId]]);
-
-            if ($sequenceType) {
+            if ($this->subscriptionOrder->validate(new Cart($cartId))) {
                 $molCustomer = $this->handleCustomerInfo($cart->id_customer, true, false);
                 $payment['customerId'] = $molCustomer->customer_id;
 
-                $orderData->setSequenceType($sequenceType);
+                $orderData->setSequenceType(SequenceType::SEQUENCETYPE_FIRST);
             }
 
             $orderData->setPayment($payment);

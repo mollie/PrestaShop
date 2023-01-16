@@ -101,7 +101,8 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         PaymentFeeProviderInterface $paymentFeeProvider,
         LanguageService $languageService,
         Customer $customer,
-        MolCustomerRepository $customerRepository
+        MolCustomerRepository $customerRepository,
+        Mollie $module
     ) {
         $this->context = $context;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
@@ -110,6 +111,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         $this->languageService = $languageService;
         $this->customer = $customer;
         $this->customerRepository = $customerRepository;
+        $this->module = $module;
     }
 
     /**

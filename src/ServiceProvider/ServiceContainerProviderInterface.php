@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mollie\Subscription\ServiceProvider;
+namespace Mollie\ServiceProvider;
 
 use League\Container\Container;
 

@@ -60,17 +60,17 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                     'sortable' => true,
                 ])
             )
-            ->add((new DataColumn('mollie_customer_id'))
-                ->setName($this->module->l('Customer ID', self::FILE_NAME))
-                ->setOptions([
-                    'field' => 'mollie_customer_id',
-                    'sortable' => true,
-                ])
-            )
             ->add((new DataColumn('mollie_sub_id'))
                 ->setName($this->module->l('Subscription ID', self::FILE_NAME))
                 ->setOptions([
                     'field' => 'mollie_sub_id',
+                    'sortable' => true,
+                ])
+            )
+            ->add((new DataColumn('mollie_customer_id'))
+                ->setName($this->module->l('Customer ID', self::FILE_NAME))
+                ->setOptions([
+                    'field' => 'mollie_customer_id',
                     'sortable' => true,
                 ])
             )
@@ -172,15 +172,6 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                 ])
                 ->setAssociatedColumn('id_mol_sub_recurring_order')
             )
-            ->add((new Filter('mollie_customer_id', TextType::class))
-                ->setTypeOptions([
-                    'required' => false,
-                    'attr' => [
-                        'placeholder' => $this->trans('Customer ID', [], 'Admin.International.Feature'),
-                    ],
-                ])
-                ->setAssociatedColumn('mollie_customer_id')
-            )
             ->add((new Filter('mollie_sub_id', TextType::class))
                 ->setTypeOptions([
                     'required' => false,
@@ -189,6 +180,15 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                     ],
                 ])
                 ->setAssociatedColumn('mollie_sub_id')
+            )
+            ->add((new Filter('mollie_customer_id', TextType::class))
+                ->setTypeOptions([
+                    'required' => false,
+                    'attr' => [
+                        'placeholder' => $this->trans('Customer ID', [], 'Admin.International.Feature'),
+                    ],
+                ])
+                ->setAssociatedColumn('mollie_customer_id')
             )
             ->add((new Filter('fullname', TextType::class))
                 ->setTypeOptions([

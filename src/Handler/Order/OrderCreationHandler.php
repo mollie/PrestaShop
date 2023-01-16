@@ -49,6 +49,8 @@ use Mollie\DTO\PaymentData;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
+use Mollie\Subscription\Handler\RecurringOrderCreation;
+use Mollie\Subscription\Validator\SubscriptionOrder;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TextGeneratorUtility;
@@ -74,19 +76,27 @@ class OrderCreationHandler
     private $orderFeeHandler;
     /** @var OrderStatusService */
     private $orderStatusService;
+    /** @var RecurringOrderCreation */
+    private $recurringOrderCreation;
+    /** @var SubscriptionOrder */
+    private $subscriptionOrder;
 
     public function __construct(
         Mollie $module,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentMethodService $paymentMethodService,
         OrderFeeHandler $orderFeeHandler,
-        OrderStatusService $orderStatusService
+        OrderStatusService $orderStatusService,
+        RecurringOrderCreation $recurringOrderCreation,
+        SubscriptionOrder $subscriptionOrder
     ) {
         $this->module = $module;
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodService = $paymentMethodService;
         $this->orderFeeHandler = $orderFeeHandler;
         $this->orderStatusService = $orderStatusService;
+        $this->recurringOrderCreation = $recurringOrderCreation;
+        $this->subscriptionOrder = $subscriptionOrder;
     }
 
     /**
@@ -135,6 +145,8 @@ class OrderCreationHandler
             /* @phpstan-ignore-next-line */
             $orderId = (int) Order::getOrderByCartId((int) $cartId);
 
+            $this->createRecurringOrderEntity(new Order($orderId));
+
             return $orderId;
         }
         $cartPrice = NumberUtility::plus($originalAmount, $paymentFee);
@@ -172,6 +184,8 @@ class OrderCreationHandler
         $this->orderFeeHandler->addOrderFee($orderId, $apiPayment);
 
         $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
+
+        $this->createRecurringOrderEntity(new Order($orderId));
 
         return $orderId;
     }
@@ -244,5 +258,15 @@ class OrderCreationHandler
         $order->update();
 
         return $paymentData;
+    }
+
+    private function createRecurringOrderEntity(Order $order)
+    {
+        $cart = new Cart($order->id_cart);
+        if (!$this->subscriptionOrder->validate($cart)) {
+            return;
+        }
+
+        $this->recurringOrderCreation->handle($order);
     }
 }

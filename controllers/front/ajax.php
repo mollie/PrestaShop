@@ -10,11 +10,16 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Subscription\Exception\ProductValidationException;
+use Mollie\Subscription\Exception\SubscriptionProductValidationException;
+use Mollie\Subscription\Validator\CanProductBeAddedToCart;
 use Mollie\Utility\NumberUtility;
 use PrestaShop\Decimal\DecimalNumber;
 
 class MollieAjaxModuleFrontController extends ModuleFrontController
 {
+    private const FILE_NAME = 'ajax';
+
     /** @var Mollie */
     public $module;
 
@@ -27,6 +32,9 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
                 // no break
             case 'displayCheckoutError':
                 $this->displayCheckoutError();
+                // no break
+            case 'validateProduct':
+                $this->validateProduct();
         }
     }
 
@@ -116,5 +124,35 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
             }
         }
         $this->ajaxDie();
+    }
+
+    private function validateProduct()
+    {
+        /** @var CanProductBeAddedToCart $cartValidation */
+        $cartValidation = $this->module->getService(CanProductBeAddedToCart::class);
+
+        $product = Tools::getValue('product');
+
+        $productCanBeAdded = true;
+        $message = '';
+        try {
+            $cartValidation->validate((int) $product['id_product_attribute']);
+        } catch (ProductValidationException $e) {
+            $productCanBeAdded = false;
+            $message = $this->module->l('Product cannot be added because you have subscription product in your cart', self::FILE_NAME);
+        } catch (SubscriptionProductValidationException $e) {
+            $productCanBeAdded = false;
+            $message = $this->module->l('Subscription product cannot be added if you have other products in your cart', self::FILE_NAME);
+        }
+
+        $this->ajaxDie(
+            json_encode(
+                [
+                    'success' => true,
+                    'isValid' => $productCanBeAdded,
+                    'message' => $message,
+                ]
+            )
+        );
     }
 }
