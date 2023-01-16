@@ -41,7 +41,10 @@ class Subscription
     public function cancelSubscription(CancelSubscriptionData $subscriptionData): MollieSubscription
     {
         try {
-            return $this->apiClient->subscriptions->cancelForId($subscriptionData->getCustomerId(), $subscriptionData->getSubscriptionId());
+            /** @var MollieSubscription $subscription */
+            $subscription = $this->apiClient->subscriptions->cancelForId($subscriptionData->getCustomerId(), $subscriptionData->getSubscriptionId());
+
+            return $subscription;
         } catch (ApiException $e) {
             throw new SubscriptionApiException('Failed to cancel subscription', SubscriptionApiException::CANCELLATION_FAILED, $e);
         }
