@@ -21,6 +21,7 @@ class RecurringOrderCancellation
         $recurringOrder = new \MolSubRecurringOrder($subscriptionId);
         $recurringOrder->status = $status;
         $recurringOrder->cancelled_at = $this->clock->getDateFromTimeStamp(strtotime($canceledAt)); //todo: maybe we will need to change what date is added
+        $recurringOrder->date_update = $this->clock->getCurrentDate();
         $recurringOrder->update();
     }
 }
