@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Mollie\Subscription\ServiceProvider;
+namespace Mollie\ServiceProvider;
 
 use League\Container\Container;
 use Mollie;
+use Mollie\Handler\CartRule\CartRuleQuantityChangeHandler;
+use Mollie\Handler\CartRule\CartRuleQuantityChangeHandlerInterface;
 use Mollie\Handler\Certificate\ApplePayDirectCertificateHandler;
 use Mollie\Handler\Certificate\CertificateHandlerInterface;
 use Mollie\Handler\PaymentOption\PaymentOptionHandler;
@@ -27,9 +29,15 @@ use Mollie\Provider\ProfileIdProvider;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Provider\UpdateMessageProvider;
 use Mollie\Provider\UpdateMessageProviderInterface;
+use Mollie\Repository\CartRuleRepository;
+use Mollie\Repository\CartRuleRepositoryInterface;
 use Mollie\Repository\MolCustomerRepository;
+use Mollie\Repository\OrderRepository;
+use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Repository\PendingOrderCartRuleRepository;
+use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
 use Mollie\Service\Content\SmartyTemplateParser;
 use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
@@ -77,6 +85,11 @@ final class BaseServiceProvider
         $this->addService($container, OrderTotalProviderInterface::class, $container->get(OrderTotalProvider::class));
         $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
         $this->addService($container, EnvironmentVersionProviderInterface::class, $container->get(EnvironmentVersionProvider::class));
+
+        $this->addService($container, PendingOrderCartRuleRepositoryInterface::class, $container->get(PendingOrderCartRuleRepository::class));
+        $this->addService($container, CartRuleRepositoryInterface::class, $container->get(CartRuleRepository::class));
+        $this->addService($container, OrderRepositoryInterface::class, $container->get(OrderRepository::class));
+        $this->addService($container, CartRuleQuantityChangeHandlerInterface::class, $container->get(CartRuleQuantityChangeHandler::class));
 
         $this->addService($container, SubscriptionRepositoryInterface::class, SubscriptionRepository::class)
             ->withArgument('MolSubRecurringOrder');

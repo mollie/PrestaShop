@@ -15,13 +15,16 @@ use Mollie\Config\Config;
 use Mollie\Config\Env;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\ServiceProvider\LeagueServiceContainerProvider;
+use Mollie\Subscription\Exception\ProductValidationException;
+use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 use Mollie\Subscription\Install\AttributeInstaller;
 use Mollie\Subscription\Install\DatabaseTableInstaller;
 use Mollie\Subscription\Install\HookInstaller;
 use Mollie\Subscription\Install\Installer;
 use Mollie\Subscription\Logger\NullLogger;
 use Mollie\Subscription\Repository\Language as LanguageAdapter;
-use Mollie\Subscription\ServiceProvider\LeagueServiceContainerProvider;
+use Mollie\Subscription\Validator\CanProductBeAddedToCart;
 use Mollie\Utility\PsVersionUtility;
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -307,6 +310,14 @@ class Mollie extends PaymentModule
                 'live_environment' => Configuration::get(Config::MOLLIE_ENVIRONMENT),
             ]
         );
+
+        $isProductController = $this->context->controller instanceof ProductControllerCore;
+        if ($isProductController) {
+            $this->context->controller->addJS("{$this->_path}views/js/front/subscription/product.js");
+            Media::addJsDef([
+                'mollieSubAjaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
+            ]);
+        }
         if (!$paymentMethod || !$paymentMethod->enabled) {
             return;
         }
@@ -863,6 +874,20 @@ class Mollie extends PaymentModule
         }
     }
 
+    public function hookActionCartUpdateQuantityBefore($params)
+    {
+        /** @var CanProductBeAddedToCart $cartValidation */
+        $cartValidation = $this->getService(CanProductBeAddedToCart::class);
+
+        try {
+            $cartValidation->validate((int) $params['id_product_attribute']);
+        } catch (ProductValidationException|SubscriptionProductValidationException $e) {
+            $product = $this->makeProductNotOrderable($params['product']);
+
+            $params['product'] = $product;
+        }
+    }
+
     /**
      * @param int $orderId
      *
@@ -890,6 +915,17 @@ class Mollie extends PaymentModule
     public function updateApiKey($shopId = null)
     {
         $this->setApiKey($shopId);
+    }
+
+    public function runUpgradeModule()
+    {
+        /** @var Mollie\Tracker\Segment $segment */
+        $segment = $this->getService(Mollie\Tracker\Segment::class);
+
+        $segment->setMessage('Mollie module upgrade');
+        $segment->track();
+
+        return parent::runUpgradeModule();
     }
 
     private function setApiKey($shopId = null)
@@ -932,19 +968,21 @@ class Mollie extends PaymentModule
         }
     }
 
-    public function runUpgradeModule()
-    {
-        /** @var Mollie\Tracker\Segment $segment */
-        $segment = $this->getService(Mollie\Tracker\Segment::class);
-
-        $segment->setMessage('Mollie module upgrade');
-        $segment->track();
-
-        return parent::runUpgradeModule();
-    }
-
     private function isPhpVersionCompliant()
     {
         return self::SUPPORTED_PHP_VERSION <= PHP_VERSION_ID;
+    }
+
+    private function makeProductNotOrderable($product): Product
+    {
+        if ($product instanceof Product) {
+            $product->available_for_order = false;
+
+            return $product;
+        }
+
+        $product['isOrderable'] = false;
+
+        return $product;
     }
 }

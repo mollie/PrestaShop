@@ -15,6 +15,7 @@ namespace Mollie\Builder;
 use HelperFormCore as HelperForm;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\Language;
 use Mollie\Adapter\Link;
 use Mollie\Adapter\Smarty;
 use Mollie\Api\Types\OrderStatus;
@@ -50,6 +51,9 @@ class FormBuilder
      */
     private $countryService;
 
+    /**
+     * @var Language
+     */
     private $lang;
 
     /**
@@ -85,7 +89,7 @@ class FormBuilder
         CountryService $countryService,
         ConfigFieldService $configFieldService,
         MolCarrierInformationService $carrierInformationService,
-        \Language $lang,
+        Language $lang,
         Smarty $smarty,
         Link $link,
         CustomLogoProviderInterface $creditCardLogoProvider,
@@ -437,7 +441,7 @@ class FormBuilder
         $advancedSettings = 'advanced_settings';
         $input = [];
         $orderStatuses = [];
-        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->id));
+        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->getDefaultLanguageId()));
         $input[] = [
             'type' => 'select',
             'label' => $this->module->l('Use selected locale in webshop', self::FILE_NAME),
@@ -514,7 +518,7 @@ class FormBuilder
         $descriptionStatus = $this->module->l('`%s` payments get `%s` status', self::FILE_NAME);
         $messageMail = $this->module->l('Send email when %s', self::FILE_NAME);
         $descriptionMail = $this->module->l('Send email when transaction status becomes %s?, self::FILE_NAME', self::FILE_NAME);
-        $allStatuses = OrderState::getOrderStates($this->lang->id);
+        $allStatuses = OrderState::getOrderStates($this->lang->getDefaultLanguageId());
         $allStatusesWithSkipOption = array_merge([['id_order_state' => 0, 'name' => $this->module->l('Skip this status', self::FILE_NAME), 'color' => '#565656']], $allStatuses);
 
         $statusOptions = [
@@ -543,7 +547,7 @@ class FormBuilder
             $val = (int) $val;
             if ($val) {
                 $orderStatus = new OrderState($val);
-                $statusName = $orderStatus->getFieldByLang('name', $this->lang->id);
+                $statusName = $orderStatus->getFieldByLang('name', $this->lang->getDefaultLanguageId());
                 $desc = Tools::strtolower(
                     sprintf(
                         $descriptionStatus,
@@ -665,7 +669,7 @@ class FormBuilder
             'name' => Config::MOLLIE_TRACKING_URLS,
             'depends' => Config::MOLLIE_API,
             'depends_value' => Config::MOLLIE_ORDERS_API,
-            'carriers' => $this->carrierInformationService->getAllCarriersInformation($this->lang->id),
+            'carriers' => $this->carrierInformationService->getAllCarriersInformation($this->lang->getDefaultLanguageId()),
         ];
         $input[] = [
             'type' => 'mollie-carrier-switch',
@@ -716,7 +720,7 @@ class FormBuilder
                 'id_order_state' => '0',
             ],
         ];
-        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->id));
+        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->getDefaultLanguageId()));
         $orderStatusesCount = count($orderStatuses);
         for ($i = 0; $i < $orderStatusesCount; ++$i) {
             $orderStatuses[$i]['name'] = $orderStatuses[$i]['id_order_state'] . ' - ' . $orderStatuses[$i]['name'];
