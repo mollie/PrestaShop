@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Mollie\Subscription\Handler;
 
 use Mollie\Subscription\Api\Subscription;
-use Mollie\Subscription\Exception\NotImplementedException;
 use Mollie\Subscription\Factory\CreateSubscriptionData;
 use Mollie\Subscription\Utility\ClockInterface;
 use Order;
