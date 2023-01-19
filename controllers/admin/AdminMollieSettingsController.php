@@ -15,16 +15,6 @@ class AdminMollieSettingsController extends ModuleAdminController
 
     public function postProcess()
     {
-        if (Tools::getValue('ajax')) {
-            header('Content-Type: application/json;charset=UTF-8');
-
-            if (!method_exists($this->module, 'displayAjax' . Tools::ucfirst(Tools::getValue('action')))) {
-                exit(json_encode([
-                    'success' => false,
-                ]));
-            }
-            exit(json_encode($this->module->{'displayAjax' . Tools::ucfirst(Tools::getValue('action'))}()));
-        }
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
         $moduleRepository = $this->module->getService(\Mollie\Repository\ModuleRepository::class);
         $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->module->name);

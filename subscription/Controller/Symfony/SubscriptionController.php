@@ -6,12 +6,12 @@ namespace Mollie\Subscription\Controller\Symfony;
 
 use Exception;
 use Mollie\Api\Types\SubscriptionStatus;
-use Mollie\Subscription\Api\Subscription;
+use Mollie\Subscription\Api\SubscriptionApi;
 use Mollie\Subscription\Exception\SubscriptionApiException;
 use Mollie\Subscription\Factory\CancelSubscriptionDataFactory;
 use Mollie\Subscription\Factory\GetSubscriptionDataFactory;
 use Mollie\Subscription\Filters\SubscriptionFilters;
-use Mollie\Subscription\Handler\RecurringOrderCancellationHandler;
+use Mollie\Subscription\Handler\SubscriptionCancellationHandler;
 use PrestaShop\PrestaShop\Core\Grid\GridFactoryInterface;
 use PrestaShopBundle\Security\Annotation\AdminSecurity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -51,11 +51,11 @@ class SubscriptionController extends AbstractSymfonyController
      */
     public function deleteAction(int $subscriptionId): RedirectResponse
     {
-        /** @var Subscription $subscriptionApi */
-        $subscriptionApi = $this->leagueContainer->getService(Subscription::class);
+        /** @var SubscriptionApi $subscriptionApi */
+        $subscriptionApi = $this->leagueContainer->getService(SubscriptionApi::class);
 
-        /** @var RecurringOrderCancellationHandler $orderCancellationHandler */
-        $orderCancellationHandler = $this->leagueContainer->getService(RecurringOrderCancellationHandler::class);
+        /** @var SubscriptionCancellationHandler $orderCancellationHandler */
+        $orderCancellationHandler = $this->leagueContainer->getService(SubscriptionCancellationHandler::class);
 
         /** @var CancelSubscriptionDataFactory $cancelSubscriptionDataFactory */
         $cancelSubscriptionDataFactory = $this->leagueContainer->getService(CancelSubscriptionDataFactory::class);

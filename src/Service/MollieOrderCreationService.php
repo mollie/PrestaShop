@@ -100,12 +100,13 @@ class MollieOrderCreationService
         return $apiPayment;
     }
 
-    public function createMolliePayment(MolliePaymentAlias $apiPayment, $cartId, $orderReference)
+    public function createMolliePayment(MolliePaymentAlias $apiPayment, $cartId, $orderReference, $orderId = null)
     {
         Db::getInstance()->insert(
             'mollie_payments',
             [
                 'cart_id' => (int) $cartId,
+                'order_id' => $orderId,
                 'method' => pSQL($apiPayment->method),
                 'transaction_id' => pSQL($apiPayment->id),
                 'order_reference' => pSQL($orderReference),

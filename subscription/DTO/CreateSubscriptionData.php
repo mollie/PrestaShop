@@ -71,6 +71,16 @@ class CreateSubscriptionData implements JsonSerializable
         $this->mandateId = $mandateId;
     }
 
+    public function getWebhookUrl(): string
+    {
+        return $this->webhookUrl;
+    }
+
+    public function setWebhookUrl(string $webhookUrl): void
+    {
+        $this->webhookUrl = $webhookUrl;
+    }
+
     public function jsonSerialize(): array
     {
         $json = [];

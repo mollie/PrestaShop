@@ -28,9 +28,10 @@ final class DatabaseTableInstaller extends AbstractInstaller
     {
         $sql = [];
 
-        $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_sub_recurring_order` (
-				`id_mol_sub_recurring_order`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_recurring_order` (
+				`id_mol_recurring_order`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`id_order` INT(64) NOT NULL,
+				`id_cart` INT(64) NOT NULL,
 				`description` VARCHAR(64) NOT NULL,
 				`status` VARCHAR(64) NOT NULL,
 				`quantity` INT(64) NOT NULL,
@@ -39,7 +40,7 @@ final class DatabaseTableInstaller extends AbstractInstaller
 				`next_payment` datetime NOT NULL,
 				`reminder_at` datetime NOT NULL,
 				`cancelled_at` datetime NOT NULL,
-				`mollie_sub_id` VARCHAR(64) NOT NULL,
+				`mollie_subscription_id` VARCHAR(64) NOT NULL,
 				`mollie_customer_id` VARCHAR(64) NOT NULL,
 				`date_add` datetime NOT NULL,
 				`date_update` datetime NOT NULL

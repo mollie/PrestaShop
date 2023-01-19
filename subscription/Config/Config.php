@@ -20,7 +20,7 @@ class Config
 
     public const DESCRIPTION_PREFIX = 'mol';
 
-    public const DB_PREFIX = 'mol_sub_';
+    public const DB_PREFIX = 'mol_';
 
     /**
      * @return array<string, string>

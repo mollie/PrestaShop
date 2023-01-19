@@ -97,7 +97,7 @@ class AttributeInstaller extends AbstractInstaller
     private function createAttributes(array $languages, int $attributeGroupId): void
     {
         foreach (Config::getSubscriptionAttributeOptions() as $attributeName => $attributeConfigKey) {
-            $existingAttribute = new Attribute((int) $attributeConfigKey);
+            $existingAttribute = new Attribute($this->configuration->get($attributeConfigKey));
             if (Validate::isLoadedObject($existingAttribute)) {
                 continue;
             }
