@@ -60,17 +60,17 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
     protected function getColumns()
     {
         return (new ColumnCollection())
-            ->add((new DataColumn('id_mol_sub_recurring_order'))
+            ->add((new DataColumn('id_mol_recurring_order'))
                 ->setName($this->module->l('ID', self::FILE_NAME))
                 ->setOptions([
-                    'field' => 'id_mol_sub_recurring_order',
+                    'field' => 'id_mol_recurring_order',
                     'sortable' => true,
                 ])
             )
-            ->add((new DataColumn('mollie_sub_id'))
+            ->add((new DataColumn('mollie_subscription_id'))
                 ->setName($this->module->l('Subscription ID', self::FILE_NAME))
                 ->setOptions([
-                    'field' => 'mollie_sub_id',
+                    'field' => 'mollie_subscription_id',
                     'sortable' => true,
                 ])
             )
@@ -156,7 +156,7 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                                     ->setOptions([
                                         'route' => 'admin_subscription_delete',
                                         'route_param_name' => 'subscriptionId',
-                                        'route_param_field' => 'id_mol_sub_recurring_order',
+                                        'route_param_field' => 'id_mol_recurring_order',
                                         'confirm_message' => $this->module->l('Cancel selected subscription?', self::FILE_NAME),
                                         'accessibility_checker' => $this->subscriptionCancelAccessibilityChecker,
                                     ])
@@ -171,23 +171,23 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
     protected function getFilters()
     {
         return (new FilterCollection())
-            ->add((new Filter('id_mol_sub_recurring_order', TextType::class))
+            ->add((new Filter('id_mol_recurring_order', TextType::class))
                 ->setTypeOptions([
                     'required' => false,
                     'attr' => [
                         'placeholder' => $this->trans('ID', [], 'Admin.International.Feature'),
                     ],
                 ])
-                ->setAssociatedColumn('id_mol_sub_recurring_order')
+                ->setAssociatedColumn('id_mol_recurring_order')
             )
-            ->add((new Filter('mollie_sub_id', TextType::class))
+            ->add((new Filter('mollie_subscription_id', TextType::class))
                 ->setTypeOptions([
                     'required' => false,
                     'attr' => [
                         'placeholder' => $this->trans('Subscription ID', [], 'Admin.International.Feature'),
                     ],
                 ])
-                ->setAssociatedColumn('mollie_sub_id')
+                ->setAssociatedColumn('mollie_subscription_id')
             )
             ->add((new Filter('mollie_customer_id', TextType::class))
                 ->setTypeOptions([

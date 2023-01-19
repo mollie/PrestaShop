@@ -225,6 +225,17 @@ class Mollie extends PaymentModule
 
     public function getContent()
     {
+        if (Tools::getValue('ajax')) {
+            header('Content-Type: application/json;charset=UTF-8');
+
+            if (!method_exists($this, 'displayAjax' . Tools::ucfirst(Tools::getValue('action')))) {
+                exit(json_encode([
+                    'success' => false,
+                ]));
+            }
+            exit(json_encode($this->{'displayAjax' . Tools::ucfirst(Tools::getValue('action'))}()));
+        }
+
         Tools::redirectAdmin($this->context->link->getAdminLink('AdminMollieSettings'));
     }
 
@@ -253,11 +264,15 @@ class Mollie extends PaymentModule
             return;
         }
 
+        $apiClient = $this->getApiClient();
+        if (!$apiClient) {
+            return;
+        }
         /** @var ProfileIdProviderInterface $profileIdProvider */
         $profileIdProvider = $this->getService(ProfileIdProviderInterface::class);
 
         Media::addJsDef([
-            'profileId' => $profileIdProvider->getProfileId($this->getApiClient()),
+            'profileId' => $profileIdProvider->getProfileId($apiClient),
             'isoCode' => $this->context->language->locale,
             'isTestMode' => \Mollie\Config\Config::isTestMode(),
         ]);
@@ -785,6 +800,10 @@ class Mollie extends PaymentModule
         if (!isset($this->context->controller) || 'admin' !== $this->context->controller->controller_type) {
             return;
         }
+        $apiClient = $this->getApiClient();
+        if (!$apiClient) {
+            return;
+        }
 
         //NOTE as mollie-email-send is only in manual order creation in backoffice this should work only when mollie payment is chosen.
         if (!empty(Tools::getValue('mollie-email-send')) &&
@@ -812,7 +831,7 @@ class Mollie extends PaymentModule
                 $orderReference
             );
 
-            $newPayment = $this->getApiClient()->payments->create($paymentData->jsonSerialize());
+            $newPayment = $apiClient->payments->create($paymentData->jsonSerialize());
 
             /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepository */
             $paymentMethodRepository = $this->getService(\Mollie\Repository\PaymentMethodRepository::class);
@@ -909,7 +928,7 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Presenter\OrderListActionBuilder $orderListActionBuilder */
         $orderListActionBuilder = $module->getService(\Mollie\Presenter\OrderListActionBuilder::class);
 
-        return $orderListActionBuilder->buildOrderPaymentResendButton($module->smarty, $orderId);
+        return $orderListActionBuilder->buildOrderPaymentResendButton($orderId);
     }
 
     public function updateApiKey($shopId = null)

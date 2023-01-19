@@ -12,7 +12,7 @@ use Mollie\Subscription\Exception\MollieModuleNotFoundException;
 
 class MollieApiFactory
 {
-    public function getMollieClient(): MollieApiClient
+    public function getMollieClient(): ?MollieApiClient
     {
         try {
             /** @var Mollie $mollie */

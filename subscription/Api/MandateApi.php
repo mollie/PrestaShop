@@ -10,7 +10,7 @@ use Mollie\Api\Resources\Mandate as MandateMollie;
 use Mollie\Subscription\DTO\CreateMandateData;
 use Mollie\Subscription\Factory\MollieApiFactory;
 
-class Mandate
+class MandateApi
 {
     /** @var MollieApiClient */
     private $apiClient;
