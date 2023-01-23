@@ -72,6 +72,18 @@ it('01 Connecting test API successsfully', () => {
       cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click()
       cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
       cy.get('#module_form_submit_btn').click()
+      cy.get('[class="alert alert-success"]').should('be.visible') //checking if saving returns green alert
+      //Check if strange bulletpoints in UI are not appearing after module setup
+      cy.get('#js-payment-methods-sortable')
+        .then($els => {
+          // get Window reference from element
+          const win = $els[0].ownerDocument.defaultView
+          // use getComputedStyle to read the pseudo selector
+          const marker = win.getComputedStyle($els[0], '::marker')
+          const markerContent = marker.getPropertyValue('unicode-bidi')
+          // strange pseudo bulletpoints should not appear near Payment Methods
+          expect(markerContent).not.to.equal('isolate')
+        })
 })
 it('02 Enabling Mollie carriers in Prestashop successfully', () => {
       cy.visit('/admin1/')

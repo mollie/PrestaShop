@@ -68,18 +68,6 @@ it('04 Enabling All payments in Module BO [Orders API]', () => {
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
       cy.get('#subtab-AdminMollieModule > .link').click()
-      //Check if strange bulletpoints in UI are not appearing after module setup
-      cy.get('#js-payment-methods-sortable')
-        .then($els => {
-          // get Window reference from element
-          const win = $els[0].ownerDocument.defaultView
-          // use getComputedStyle to read the pseudo selector
-          const marker = win.getComputedStyle($els[0], '::marker')
-          const markerContent = marker.getPropertyValue('unicode-bidi')
-          // strange pseudo bulletpoints should not appear near Payment Methods
-          expect(markerContent).not.to.equal('isolate')
-        })
-      cy.pause()
       cy.ConfOrdersAPI1784()
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
