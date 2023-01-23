@@ -39,7 +39,7 @@ final class RequestApplePayPaymentSessionHandler
     public function handle(RequestApplePayPaymentSession $command): array
     {
         try {
-            $response = $this->apiService->requestApplePayPaymentSession($this->module->api, $command->getValidationUrl());
+            $response = $this->apiService->requestApplePayPaymentSession($this->module->getApiClient(), $command->getValidationUrl());
         } catch (MollieApiException $e) {
             /* Message is only displayed in console */
             return [

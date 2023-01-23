@@ -100,16 +100,18 @@ class MollieOrderCreationService
         return $apiPayment;
     }
 
-    public function createMolliePayment($apiPayment, $cartId, $orderReference)
+    public function createMolliePayment(MolliePaymentAlias $apiPayment, $cartId, $orderReference, $orderId = null)
     {
         Db::getInstance()->insert(
             'mollie_payments',
             [
                 'cart_id' => (int) $cartId,
+                'order_id' => $orderId,
                 'method' => pSQL($apiPayment->method),
                 'transaction_id' => pSQL($apiPayment->id),
                 'order_reference' => pSQL($orderReference),
                 'bank_status' => PaymentStatus::STATUS_OPEN,
+                'mandate_id' => $apiPayment->mandateId,
                 'created_at' => ['type' => 'sql', 'value' => 'NOW()'],
             ]
         );
@@ -140,10 +142,10 @@ class MollieOrderCreationService
         try {
             if (Config::MOLLIE_ORDERS_API === $selectedApi) {
                 /** @var MollieOrderAlias $payment */
-                $payment = $this->module->api->orders->create($data, ['embed' => 'payments']);
+                $payment = $this->module->getApiClient()->orders->create($data, ['embed' => 'payments']);
             } else {
                 /** @var MolliePaymentAlias $payment */
-                $payment = $this->module->api->payments->create($data);
+                $payment = $this->module->getApiClient()->payments->create($data);
             }
 
             return $payment;

@@ -29,6 +29,7 @@ use Mollie\Exception\TransactionException;
 use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Handler\Order\OrderFeeHandler;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Subscription\Handler\SubscriptionCreationHandler;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\OrderNumberUtility;
@@ -69,6 +70,8 @@ class TransactionService
     private $mollieOrderCreationService;
     /** @var OrderFeeHandler */
     private $orderFeeHandler;
+    /** @var SubscriptionCreationHandler */
+    private $recurringOrderCreation;
 
     public function __construct(
         Mollie $module,
@@ -77,7 +80,8 @@ class TransactionService
         OrderCreationHandler $orderCreationHandler,
         PaymentMethodService $paymentMethodService,
         MollieOrderCreationService $mollieOrderCreationService,
-        OrderFeeHandler $orderFeeHandler
+        OrderFeeHandler $orderFeeHandler,
+        SubscriptionCreationHandler $recurringOrderCreation
     ) {
         $this->module = $module;
         $this->orderStatusService = $orderStatusService;
@@ -86,6 +90,7 @@ class TransactionService
         $this->paymentMethodService = $paymentMethodService;
         $this->mollieOrderCreationService = $mollieOrderCreationService;
         $this->orderFeeHandler = $orderFeeHandler;
+        $this->recurringOrderCreation = $recurringOrderCreation;
     }
 
     /**
@@ -104,6 +109,8 @@ class TransactionService
      */
     public function processTransaction($apiPayment)
     {
+        $this->recurringOrderCreation->handle(new Order(919));
+//die();
         if (empty($apiPayment)) {
             if (Configuration::get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
                 PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request without proper transaction ID.', Config::WARNING);
@@ -261,7 +268,7 @@ class TransactionService
         $transactionInfos = [];
         $isOrder = TransactionUtility::isOrderTransaction($transactionId);
         if ($isOrder) {
-            $transaction = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
+            $transaction = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
             /** @var PaymentCollection|null $payments */
             $payments = $transaction->payments();
 
@@ -274,7 +281,7 @@ class TransactionService
                 }
             }
         } else {
-            $transaction = $this->module->api->payments->get($transactionId);
+            $transaction = $this->module->getApiClient()->payments->get($transactionId);
             $transactionInfos = $this->getPaymentTransactionInfo($transaction, $transactionInfos);
         }
 

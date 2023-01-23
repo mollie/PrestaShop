@@ -24,10 +24,15 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
     private $fullyClassifiedClassName;
 
     /**
-     * @param string $fullyClassifiedClassName
+     * @param string|\stdClass $fullyClassifiedClassName
      */
     public function __construct($fullyClassifiedClassName)
     {
+        if (is_object($fullyClassifiedClassName)) {
+            $this->fullyClassifiedClassName = get_class($fullyClassifiedClassName);
+
+            return;
+        }
         $this->fullyClassifiedClassName = $fullyClassifiedClassName;
     }
 

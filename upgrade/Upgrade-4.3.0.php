@@ -39,7 +39,7 @@ function upgrade_module_4_3_0($module)
     }
 
     /** @var \Mollie\Repository\PaymentMethodRepositoryInterface $paymentMethodRepo */
-    $paymentMethodRepo = $module->getMollieContainer(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
+    $paymentMethodRepo = $module->getService(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
 
     $sql = new DbQuery();
     $sql->select('`id_mol_country`, `id_method`');

@@ -68,23 +68,24 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
     protected function executeWebhook()
     {
         /** @var TransactionService $transactionService */
-        $transactionService = $this->module->getMollieContainer(TransactionService::class);
+        $transactionService = $this->module->getService(TransactionService::class);
 
         $transactionId = Tools::getValue('id');
         if (!$transactionId) {
             $this->respond('failed', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY, 'Missing transaction id');
         }
 
-        if (!$this->module->api) {
+        if (!$this->module->getApiClient()) {
             $this->respond('failed', HttpStatusCode::HTTP_UNAUTHORIZED, 'API key is missing or incorrect');
         }
+
         try {
             if (TransactionUtility::isOrderTransaction($transactionId)) {
-                $transaction = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
+                $transaction = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
             } else {
-                $transaction = $this->module->api->payments->get($transactionId);
+                $transaction = $this->module->getApiClient()->payments->get($transactionId);
                 if ($transaction->orderId) {
-                    $transaction = $this->module->api->orders->get($transaction->orderId, ['embed' => 'payments']);
+                    $transaction = $this->module->getApiClient()->orders->get($transaction->orderId, ['embed' => 'payments']);
                 }
             }
             $metaData = $transaction->metadata;
@@ -93,7 +94,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             $payment = $transactionService->processTransaction($transaction);
         } catch (TransactionException $e) {
             /** @var ErrorHandler $errorHandler */
-            $errorHandler = $this->module->getMollieContainer(ErrorHandler::class);
+            $errorHandler = $this->module->getService(ErrorHandler::class);
             $errorHandler->handle($e, $e->getCode(), false);
             $this->respond('failed', $e->getCode(), $e->getMessage());
         }

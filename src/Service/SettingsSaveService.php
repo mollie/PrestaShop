@@ -17,6 +17,7 @@ use Configuration;
 use Context;
 use Exception;
 use Mollie;
+use Mollie\Adapter\Shop;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
@@ -31,7 +32,6 @@ use MolPaymentMethodIssuer;
 use OrderState;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use Shop;
 use Tools;
 
 class SettingsSaveService
@@ -150,7 +150,6 @@ class SettingsSaveService
                 if (null === $api) {
                     throw new MollieException('Failed to connect to mollie API', MollieException::API_CONNECTION_EXCEPTION);
                 }
-                $this->module->api = $api;
             } catch (Exception $e) {
                 $errors[] = $e->getMessage();
                 Configuration::updateValue(Config::MOLLIE_API_KEY, null);
@@ -161,9 +160,9 @@ class SettingsSaveService
             return [];
         }
 
-        if ($oldEnvironment === $environment && $apiKey && $this->module->api !== null) {
+        if ($oldEnvironment === $environment && $apiKey && $this->module->getApiClient() !== null) {
             $savedPaymentMethods = [];
-            foreach ($this->apiService->getMethodsForConfig($this->module->api) as $method) {
+            foreach ($this->apiService->getMethodsForConfig($this->module->getApiClient()) as $method) {
                 $paymentMethodId = $method['obj']->id;
                 try {
                     $paymentMethod = $this->paymentMethodService->savePaymentMethod($method);
@@ -196,7 +195,7 @@ class SettingsSaveService
                 $this->countryRepository->updatePaymentMethodCountries($paymentMethodId, $countries);
                 $this->countryRepository->updatePaymentMethodExcludedCountries($paymentMethodId, $excludedCountries);
             }
-            $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment, (int) $this->shop->id);
+            $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment, (int) $this->shop->getShop()->id);
         }
 
         if ($paymentOptionPositions) {
@@ -257,7 +256,6 @@ class SettingsSaveService
                 if (null === $api) {
                     throw new MollieException('Failed to connect to mollie API', MollieException::API_CONNECTION_EXCEPTION);
                 }
-                $this->module->api = $api;
             } catch (Exception $e) {
                 $errors[] = $e->getMessage();
                 Configuration::updateValue(Config::MOLLIE_API_KEY, null);

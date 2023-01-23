@@ -17,7 +17,6 @@ use Carrier;
 use Cart;
 use Country;
 use Customer;
-use Language;
 use Mollie\Application\Command\UpdateApplePayShippingContact;
 use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
 use Mollie\Collector\ApplePayDirect\OrderTotalCollector;
@@ -32,10 +31,7 @@ final class UpdateApplePayShippingContactHandler
      * @var ApplePayCarriersBuilder
      */
     private $applePayCarriersBuilder;
-    /**
-     * @var Language
-     */
-    private $language;
+
     /**
      * @var OrderFeeService
      */
@@ -45,12 +41,10 @@ final class UpdateApplePayShippingContactHandler
 
     public function __construct(
         ApplePayCarriersBuilder $applePayCarriersBuilder,
-        Language $language,
         OrderFeeService $orderFeeService,
         OrderTotalCollector $orderTotalCollector
     ) {
         $this->applePayCarriersBuilder = $applePayCarriersBuilder;
-        $this->language = $language;
         $this->orderFeeService = $orderFeeService;
         $this->orderTotalCollector = $orderTotalCollector;
     }

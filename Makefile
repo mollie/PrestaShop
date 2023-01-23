@@ -39,3 +39,6 @@ e2e-1784-prepare:
 e2eh1784: test-e2e-headless-1784
 test-e2e-headless-1784:
 	make e2e1784p
+
+npm-package-install:
+	cd views/assets && npm i && npm run build

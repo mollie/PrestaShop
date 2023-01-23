@@ -19,8 +19,7 @@
  * @codingStandardsIgnoreStart
  */
 
-#maintab-AdminMollieModule > a > i,
-#subtab-AdminMollieModule > a > i {
+#subtab-AdminMollieModule_MTR > a > i.mi-mollie{
     background: url('../../img/mollie.png') no-repeat scroll center center / contain transparent;
     width: 16px;
 }

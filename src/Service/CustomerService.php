@@ -96,7 +96,7 @@ class CustomerService
     public function createCustomer($name, $email)
     {
         try {
-            return $this->mollie->api->customers->create(
+            return $this->mollie->getApiClient()->customers->create(
                 [
                     'name' => $name,
                     'email' => $email,

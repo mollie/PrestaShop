@@ -92,6 +92,11 @@ class PaymentData implements JsonSerializable
      */
     private $billingStreetAndNumber;
 
+    /**
+     * @var string
+     */
+    private $sequenceType;
+
     public function __construct(
         Amount $amount,
         $description,
@@ -326,9 +331,19 @@ class PaymentData implements JsonSerializable
         $this->shippingStreetAndNumber = $shippingStreetAndNumber;
     }
 
+    public function getSequenceType(): string
+    {
+        return $this->sequenceType;
+    }
+
+    public function setSequenceType(string $sequenceType): void
+    {
+        $this->sequenceType = $sequenceType;
+    }
+
     public function jsonSerialize()
     {
-        return [
+        $result = [
             'amount' => [
                 'currency' => $this->getAmount()->getCurrency(),
                 'value' => (string) $this->getAmount()->getValue(),
@@ -358,6 +373,12 @@ class PaymentData implements JsonSerializable
             'customerId' => $this->getCustomerId(),
             'applePayPaymentToken' => $this->getApplePayToken(),
         ];
+
+        if ($this->sequenceType) {
+            $result['sequenceType'] = $this->sequenceType;
+        }
+
+        return $result;
     }
 
     private function cleanUpInput($input, $defaultValue = 'N/A')

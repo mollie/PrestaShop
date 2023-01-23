@@ -10,24 +10,31 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
+use Mollie\Config\Env;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\ServiceProvider\LeagueServiceContainerProvider;
+use Mollie\Subscription\Exception\ProductValidationException;
+use Mollie\Subscription\Exception\SubscriptionProductValidationException;
+use Mollie\Subscription\Install\AttributeInstaller;
+use Mollie\Subscription\Install\DatabaseTableInstaller;
+use Mollie\Subscription\Install\HookInstaller;
+use Mollie\Subscription\Install\Installer;
+use Mollie\Subscription\Logger\NullLogger;
+use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
+use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\PsVersionUtility;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
 class Mollie extends PaymentModule
 {
-    /**
-     * Symfony DI Container.
-     **/
-    private $moduleContainer;
-
     const DISABLE_CACHE = true;
 
     /** @var \Mollie\Api\MollieApiClient|null */
-    public $api = null;
+    private $api = null;
 
     /** @var string */
     public static $selectedApi;
@@ -40,8 +47,11 @@ class Mollie extends PaymentModule
 
     const SUPPORTED_PHP_VERSION = '70080';
 
-    const ADMIN_MOLLIE_CONTROLLER = 'AdminMollieModuleController';
-    const ADMIN_MOLLIE_AJAX_CONTROLLER = 'AdminMollieAjaxController';
+    const ADMIN_MOLLIE_PARENT_CONTROLLER = 'AdminMollieModuleParent';
+    const ADMIN_MOLLIE_CONTROLLER = 'AdminMollieModule';
+    const ADMIN_MOLLIE_AJAX_CONTROLLER = 'AdminMollieAjax';
+    /** @var LeagueServiceContainerProvider */
+    private $containerProvider;
 
     /**
      * Mollie constructor.
@@ -50,7 +60,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '5.3.1';
+        $this->version = '5.4.0';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -58,14 +68,37 @@ class Mollie extends PaymentModule
 
         parent::__construct();
 
-        $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = ['min' => '1.7.6', 'max' => _PS_VERSION_];
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 
-        $this->compile();
         $this->loadEnv();
-        $this->setApiKey();
-        new \Mollie\Handler\ErrorHandler\ErrorHandler($this);
+//        $this->setApiKey();
+        new \Mollie\Handler\ErrorHandler\ErrorHandler($this, new Env());
+    }
+
+    /**
+     * Gets service that is defined by module container.
+     *
+     * @param string $serviceName
+     * @returns mixed
+     */
+    public function getService(string $serviceName)
+    {
+        if ($this->containerProvider === null) {
+            $this->containerProvider = new LeagueServiceContainerProvider();
+        }
+
+        return $this->containerProvider->getService($serviceName);
+    }
+
+    public function getApiClient()
+    {
+        if (!$this->api) {
+            $this->setApiKey();
+        }
+
+        return $this->api;
     }
 
     private function loadEnv()
@@ -107,10 +140,32 @@ class Mollie extends PaymentModule
             return false;
         }
 
-        /** @var \Mollie\Install\Installer $installer */
-        $installer = $this->getMollieContainer(\Mollie\Install\Installer::class);
+        $installer = new \Mollie\Install\Installer(
+            $this,
+            new \Mollie\Service\OrderStateImageService(),
+            new \Mollie\Install\DatabaseTableInstaller(),
+            new \Mollie\Tracker\Segment(
+                new \Mollie\Adapter\Shop(),
+                new \Mollie\Adapter\Language(),
+                new \Mollie\Config\Env()
+            ),
+            new \Mollie\Adapter\ConfigurationAdapter()
+        );
         if (!$installer->install()) {
             $this->_errors = array_merge($this->_errors, $installer->getErrors());
+
+            return false;
+        }
+
+        $subscriptionInstaller = new Installer(
+            new DatabaseTableInstaller(),
+            new AttributeInstaller(new NullLogger(), new ConfigurationAdapter(), $this, new LanguageAdapter()),
+            new HookInstaller($this)
+        );
+
+        if (!$subscriptionInstaller->install()) {
+            $this->_errors = array_merge($this->_errors, $subscriptionInstaller->getErrors());
+            parent::uninstall();
 
             return false;
         }
@@ -124,7 +179,7 @@ class Mollie extends PaymentModule
     public function uninstall()
     {
         /** @var \Mollie\Install\Uninstall $uninstall */
-        $uninstall = $this->getMollieContainer(\Mollie\Install\Uninstall::class);
+        $uninstall = $this->getService(\Mollie\Install\Uninstall::class);
         if (!$uninstall->uninstall()) {
             $this->_errors[] = $uninstall->getErrors();
 
@@ -143,49 +198,6 @@ class Mollie extends PaymentModule
         }
 
         return parent::enable($force_all);
-    }
-
-    private function compile()
-    {
-        if (!class_exists('Symfony\Component\DependencyInjection\ContainerBuilder') ||
-            !class_exists('Segment') ||
-            !class_exists('Dotenv\Dotenv') ||
-            !class_exists('\Mollie\Repository\ModuleRepository')) {
-            // If you wonder why this happens then this problem occurs in rare case when upgrading mollie from old versions
-            // where dependency injection container was without "MolliePrefix".
-            // On Upgrade PrestaShop cached previous vendor thus causing missing class issues - the only way is to convince
-            // merchant to try installing again where.
-            $isAdmin = $this->context->controller instanceof AdminController;
-
-            if ($isAdmin) {
-                http_response_code(500);
-                exit(
-                $this->l('The module upload requires an extra refresh. Upload the Mollie module ZIP file again. If you continue to see this message after reuploading the module, contact Mollie support at info@mollie.com and attach a screenshot of the error. ')
-                );
-            }
-        }
-
-        $containerBuilder = new \Symfony\Component\DependencyInjection\ContainerBuilder();
-        $locator = new \Symfony\Component\Config\FileLocator($this->getLocalPath() . 'config');
-        $loader = new \Symfony\Component\DependencyInjection\Loader\YamlFileLoader($containerBuilder, $locator);
-        $loader->load('config.yml');
-        $containerBuilder->compile();
-
-        $this->moduleContainer = $containerBuilder;
-    }
-
-    /**
-     * @param string|bool $id
-     *
-     * @return mixed
-     */
-    public function getMollieContainer($id = false)
-    {
-        if ($id) {
-            return $this->moduleContainer->get($id);
-        }
-
-        return $this->moduleContainer;
     }
 
     /**
@@ -211,14 +223,6 @@ class Mollie extends PaymentModule
         return $this->identifier;
     }
 
-    /**
-     * @return string|void
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws SmartyException
-     * @throws \Mollie\Api\Exceptions\ApiException
-     */
     public function getContent()
     {
         if (Tools::getValue('ajax')) {
@@ -231,101 +235,8 @@ class Mollie extends PaymentModule
             }
             exit(json_encode($this->{'displayAjax' . Tools::ucfirst(Tools::getValue('action'))}()));
         }
-        /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
-        $moduleRepository = $this->getMollieContainer(\Mollie\Repository\ModuleRepository::class);
-        $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->name);
-        $needsUpgrade = Tools::version_compare($this->version, $moduleDatabaseVersion, '>');
-        if ($needsUpgrade) {
-            $this->context->controller->errors[] = $this->l('Please upgrade Mollie module');
 
-            return;
-        }
-
-        $isShopContext = Shop::getContext() === Shop::CONTEXT_SHOP;
-
-        if (!$isShopContext) {
-            $this->context->controller->errors[] = $this->l('Select the shop that you want to configure');
-
-            return;
-        }
-
-        /** @var \Mollie\Service\Content\TemplateParserInterface $templateParser */
-        $templateParser = $this->getMollieContainer(\Mollie\Service\Content\TemplateParserInterface::class);
-
-        $isSubmitted = (bool) Tools::isSubmit("submit{$this->name}");
-
-        /* @phpstan-ignore-next-line */
-        if (false === Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING) && !$isSubmitted) {
-            $this->context->controller->errors[] = $this->l('Select an order status for \"Status for Awaiting payments\" in the \"Advanced settings\" tab');
-        }
-
-        $errors = [];
-
-        if (Tools::isSubmit("submit{$this->name}")) {
-            /** @var \Mollie\Service\SettingsSaveService $saveSettingsService */
-            $saveSettingsService = $this->getMollieContainer(\Mollie\Service\SettingsSaveService::class);
-            $resultMessages = $saveSettingsService->saveSettings($errors);
-            if (!empty($errors)) {
-                $this->context->controller->errors = $resultMessages;
-            } else {
-                $this->context->controller->confirmations = $resultMessages;
-            }
-        }
-
-        Media::addJsDef([
-            'description_message' => addslashes($this->l('Enter a description')),
-            'payment_api' => addslashes(Mollie\Config\Config::MOLLIE_PAYMENTS_API),
-            'ajaxUrl' => addslashes($this->context->link->getAdminLink('AdminMollieAjax')),
-        ]);
-
-        /* Custom logo JS vars*/
-        Media::addJsDef([
-            'image_size_message' => addslashes($this->l('Upload an image %s%x%s1%')),
-            'not_valid_file_message' => addslashes($this->l('Invalid file: %s%')),
-        ]);
-
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/method_countries.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/validation.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/settings.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/custom_logo.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/upgrade_notice.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/api_key_test.js');
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/init_mollie_account.js');
-        $this->context->controller->addCSS($this->getPathUri() . 'views/css/mollie.css');
-        $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/logo_input.css');
-
-        $html = $templateParser->parseTemplate(
-            $this->context->smarty,
-            $this->getMollieContainer(\Mollie\Builder\Content\LogoInfoBlock::class),
-            $this->getLocalPath() . 'views/templates/admin/logo.tpl'
-        );
-
-        /** @var \Mollie\Builder\Content\UpdateMessageInfoBlock $updateMessageInfoBlock */
-        $updateMessageInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\UpdateMessageInfoBlock::class);
-        $updateMessageInfoBlockData = $updateMessageInfoBlock->setAddons(self::ADDONS);
-
-        $html .= $templateParser->parseTemplate(
-            $this->context->smarty,
-            $updateMessageInfoBlockData,
-            $this->getLocalPath() . 'views/templates/admin/updateMessage.tpl'
-        );
-
-        /** @var \Mollie\Builder\Content\BaseInfoBlock $baseInfoBlock */
-        $baseInfoBlock = $this->getMollieContainer(\Mollie\Builder\Content\BaseInfoBlock::class);
-        $this->context->smarty->assign($baseInfoBlock->buildParams());
-
-        /** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
-        $settingsFormBuilder = $this->getMollieContainer(\Mollie\Builder\FormBuilder::class);
-
-        try {
-            $html .= $settingsFormBuilder->buildSettingsForm();
-        } catch (PrestaShopDatabaseException $e) {
-            $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
-            $errorHandler->handle($e, $e->getCode(), false);
-            $this->context->controller->errors[] = $this->l('The database tables are missing. Reset the module.');
-        }
-
-        return $html;
+        Tools::redirectAdmin($this->context->link->getAdminLink('AdminMollieSettings'));
     }
 
     /**
@@ -338,7 +249,7 @@ class Mollie extends PaymentModule
     public function lang($str)
     {
         /** @var Mollie\Service\LanguageService $langService */
-        $langService = $this->getMollieContainer(Mollie\Service\LanguageService::class);
+        $langService = $this->getService(Mollie\Service\LanguageService::class);
         $lang = $langService->getLang();
         if (array_key_exists($str, $lang)) {
             return $lang[$str];
@@ -353,11 +264,15 @@ class Mollie extends PaymentModule
             return;
         }
 
+        $apiClient = $this->getApiClient();
+        if (!$apiClient) {
+            return;
+        }
         /** @var ProfileIdProviderInterface $profileIdProvider */
-        $profileIdProvider = $this->getMollieContainer(ProfileIdProviderInterface::class);
+        $profileIdProvider = $this->getService(ProfileIdProviderInterface::class);
 
         Media::addJsDef([
-            'profileId' => $profileIdProvider->getProfileId($this->api),
+            'profileId' => $profileIdProvider->getProfileId($apiClient),
             'isoCode' => $this->context->language->locale,
             'isTestMode' => \Mollie\Config\Config::isTestMode(),
         ]);
@@ -395,9 +310,9 @@ class Mollie extends PaymentModule
     public function hookActionFrontControllerSetMedia($params)
     {
         /** @var \Mollie\Service\ErrorDisplayService $errorDisplayService */
-        $errorDisplayService = $this->getMollieContainer()->get(\Mollie\Service\ErrorDisplayService::class);
+        $errorDisplayService = $this->getService(\Mollie\Service\ErrorDisplayService::class);
         /** @var PaymentMethodRepositoryInterface $methodRepository */
-        $methodRepository = $this->getMollieContainer()->get(PaymentMethodRepositoryInterface::class);
+        $methodRepository = $this->getService(PaymentMethodRepositoryInterface::class);
 
         $isCartController = $this->context->controller instanceof CartControllerCore;
         if ($isCartController) {
@@ -410,6 +325,14 @@ class Mollie extends PaymentModule
                 'live_environment' => Configuration::get(Config::MOLLIE_ENVIRONMENT),
             ]
         );
+
+        $isProductController = $this->context->controller instanceof ProductControllerCore;
+        if ($isProductController) {
+            $this->context->controller->addJS("{$this->_path}views/js/front/subscription/product.js");
+            Media::addJsDef([
+                'mollieSubAjaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
+            ]);
+        }
         if (!$paymentMethod || !$paymentMethod->enabled) {
             return;
         }
@@ -465,7 +388,7 @@ class Mollie extends PaymentModule
         $moduleName = Tools::getValue('configure');
 
         // We are on module configuration page
-        if ($this->name === $moduleName && 'AdminModules' === $currentController) {
+        if ($this->name === $moduleName && 'AdminMollieSettings' === $currentController) {
             $this->context->controller->addJqueryPlugin('sortable');
             $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/payment_methods.js');
             $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/payment_methods.css');
@@ -506,10 +429,10 @@ class Mollie extends PaymentModule
     public function hookDisplayAdminOrder($params)
     {
         /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->getMollieContainer(PaymentMethodRepositoryInterface::class);
+        $paymentMethodRepo = $this->getService(PaymentMethodRepositoryInterface::class);
 
         /** @var \Mollie\Service\ShipmentServiceInterface $shipmentService */
-        $shipmentService = $this->getMollieContainer(\Mollie\Service\ShipmentService::class);
+        $shipmentService = $this->getService(\Mollie\Service\ShipmentService::class);
 
         $cartId = Cart::getCartIdByOrderId((int) $params['id_order']);
         $transaction = $paymentMethodRepo->getPaymentBy('cart_id', (string) $cartId);
@@ -558,13 +481,13 @@ class Mollie extends PaymentModule
         $paymentOptions = [];
 
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
-        $paymentMethodRepository = $this->getMollieContainer(PaymentMethodRepositoryInterface::class);
+        $paymentMethodRepository = $this->getService(PaymentMethodRepositoryInterface::class);
 
         /** @var \Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface $paymentOptionsHandler */
-        $paymentOptionsHandler = $this->getMollieContainer(\Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface::class);
+        $paymentOptionsHandler = $this->getService(\Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface::class);
 
         /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
-        $paymentMethodService = $this->getMollieContainer(\Mollie\Service\PaymentMethodService::class);
+        $paymentMethodService = $this->getService(\Mollie\Service\PaymentMethodService::class);
 
         $methods = $paymentMethodService->getMethodsForCheckout();
 
@@ -591,7 +514,7 @@ class Mollie extends PaymentModule
     public function hookDisplayOrderConfirmation()
     {
         /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->getMollieContainer(\Mollie\Repository\PaymentMethodRepository::class);
+        $paymentMethodRepo = $this->getService(\Mollie\Repository\PaymentMethodRepository::class);
         $payment = $paymentMethodRepo->getPaymentBy('cart_id', (string) Tools::getValue('id_cart'));
         if (!$payment) {
             return '';
@@ -617,7 +540,7 @@ class Mollie extends PaymentModule
         header('Content-Type: application/json;charset=UTF-8');
 
         /** @var \Mollie\Service\MollieOrderInfoService $orderInfoService */
-        $orderInfoService = $this->getMollieContainer(\Mollie\Service\MollieOrderInfoService::class);
+        $orderInfoService = $this->getService(\Mollie\Service\MollieOrderInfoService::class);
 
         $input = @json_decode(Tools::file_get_contents('php://input'), true);
 
@@ -670,15 +593,15 @@ class Mollie extends PaymentModule
         }
 
         /** @var \Mollie\Handler\Shipment\ShipmentSenderHandlerInterface $shipmentSenderHandler */
-        $shipmentSenderHandler = $this->getMollieContainer(
+        $shipmentSenderHandler = $this->getService(
             Mollie\Handler\Shipment\ShipmentSenderHandlerInterface::class
         );
 
-        if (!$this->api) {
+        if (!$this->getApiClient()) {
             return;
         }
         try {
-            $shipmentSenderHandler->handleShipmentSender($this->api, $order, $orderStatus);
+            $shipmentSenderHandler->handleShipmentSender($this->getApiClient(), $order, $orderStatus);
         } catch (Exception $e) {
             //todo: we logg error in handleShipment
         }
@@ -702,7 +625,7 @@ class Mollie extends PaymentModule
             return true;
         }
         /** @var \Mollie\Validator\OrderConfMailValidator $orderConfMailValidator */
-        $orderConfMailValidator = $this->getMollieContainer(\Mollie\Validator\OrderConfMailValidator::class);
+        $orderConfMailValidator = $this->getService(\Mollie\Validator\OrderConfMailValidator::class);
 
         /** @var string $template */
         $template = $params['template'];
@@ -732,7 +655,7 @@ class Mollie extends PaymentModule
             }
             try {
                 /** @var \Mollie\Repository\OrderFeeRepository $orderFeeRepo */
-                $orderFeeRepo = $this->getMollieContainer(\Mollie\Repository\OrderFeeRepository::class);
+                $orderFeeRepo = $this->getService(\Mollie\Repository\OrderFeeRepository::class);
                 $orderFeeId = $orderFeeRepo->getOrderFeeIdByCartId($cart->id);
                 $orderFee = new MolOrderFee($orderFeeId);
             } catch (Exception $e) {
@@ -764,7 +687,7 @@ class Mollie extends PaymentModule
         }
 
         /** @var \Mollie\Builder\InvoicePdfTemplateBuilder $invoiceTemplateBuilder */
-        $invoiceTemplateBuilder = $this->getMollieContainer(\Mollie\Builder\InvoicePdfTemplateBuilder::class);
+        $invoiceTemplateBuilder = $this->getService(\Mollie\Builder\InvoicePdfTemplateBuilder::class);
 
         $templateParams = $invoiceTemplateBuilder
             ->setOrder($params['object']->getOrder())
@@ -788,18 +711,44 @@ class Mollie extends PaymentModule
     {
         return [
             [
-                'name' => $this->name,
-                'class_name' => self::ADMIN_MOLLIE_CONTROLLER,
-                'ParentClassName' => 'AdminParentShipping',
-                'parent' => 'AdminParentShipping',
-            ],
-            [
                 'name' => $this->l('AJAX', __CLASS__),
                 'class_name' => self::ADMIN_MOLLIE_AJAX_CONTROLLER,
-                'ParentClassName' => self::ADMIN_MOLLIE_CONTROLLER,
-                'parent' => self::ADMIN_MOLLIE_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
                 'module_tab' => true,
                 'visible' => false,
+            ],
+            [
+                'name' => 'parent',
+                'class_name' => 'AdminMollieTabParent',
+                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
+                'visible' => false,
+            ],
+            [
+                'name' => 'settings',
+                'class_name' => 'AdminMollieSettings',
+                'parent_class_name' => 'AdminMollieTabParent',
+            ],
+            [
+                'name' => $this->l('Subscription settings'),
+                'class_name' => 'AdminMollieSubscriptionSettingsParent',
+                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
+                'module_tab' => true,
+            ],
+            [
+                'name' => $this->l('Subscription settings'),
+                'class_name' => 'AdminMollieSubscriptionSettings',
+                'parent_class_name' => 'AdminMollieTabParent',
+                'module_tab' => true,
+            ],
+            [
+                'name' => $this->l('Subscriptions'),
+                'class_name' => 'AdminMollieSubscriptionOrdersParent',
+                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
+            ],
+            [
+                'name' => $this->l('Subscriptions'),
+                'class_name' => 'AdminMollieSubscriptionOrders',
+                'parent_class_name' => 'AdminMollieTabParent',
             ],
         ];
     }
@@ -831,7 +780,7 @@ class Mollie extends PaymentModule
         }
 
         /** @var \Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier $orderGridDefinitionModifier */
-        $orderGridDefinitionModifier = $this->getMollieContainer(\Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier::class);
+        $orderGridDefinitionModifier = $this->getService(\Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier::class);
         $gridDefinition = $params['definition'];
 
         $orderGridDefinitionModifier->modify($gridDefinition);
@@ -840,7 +789,7 @@ class Mollie extends PaymentModule
     public function hookActionOrderGridQueryBuilderModifier(array $params)
     {
         /** @var \Mollie\Grid\Query\Modifier\OrderGridQueryModifier $orderGridQueryModifier */
-        $orderGridQueryModifier = $this->getMollieContainer(\Mollie\Grid\Query\Modifier\OrderGridQueryModifier::class);
+        $orderGridQueryModifier = $this->getService(\Mollie\Grid\Query\Modifier\OrderGridQueryModifier::class);
         $searchQueryBuilder = $params['search_query_builder'];
 
         $orderGridQueryModifier->modify($searchQueryBuilder);
@@ -849,6 +798,10 @@ class Mollie extends PaymentModule
     public function hookActionValidateOrder($params)
     {
         if (!isset($this->context->controller) || 'admin' !== $this->context->controller->controller_type) {
+            return;
+        }
+        $apiClient = $this->getApiClient();
+        if (!$apiClient) {
             return;
         }
 
@@ -865,7 +818,7 @@ class Mollie extends PaymentModule
             $orderId = $params['order']->id;
 
             /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
-            $paymentMethodService = $this->getMollieContainer(\Mollie\Service\PaymentMethodService::class);
+            $paymentMethodService = $this->getService(\Mollie\Service\PaymentMethodService::class);
             $paymentMethodObj = new MolPaymentMethod();
             $paymentData = $paymentMethodService->getPaymentData(
                 $totalPaid,
@@ -878,10 +831,10 @@ class Mollie extends PaymentModule
                 $orderReference
             );
 
-            $newPayment = $this->api->payments->create($paymentData->jsonSerialize());
+            $newPayment = $apiClient->payments->create($paymentData->jsonSerialize());
 
             /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepository */
-            $paymentMethodRepository = $this->getMollieContainer(\Mollie\Repository\PaymentMethodRepository::class);
+            $paymentMethodRepository = $this->getService(\Mollie\Repository\PaymentMethodRepository::class);
             $paymentMethodRepository->addOpenStatusPayment(
                 $cartId,
                 $orderPayment,
@@ -893,7 +846,7 @@ class Mollie extends PaymentModule
             $sendMolliePaymentMail = Tools::getValue('mollie-email-send');
             if ('on' === $sendMolliePaymentMail) {
                 /** @var \Mollie\Service\MolliePaymentMailService $molliePaymentMailService */
-                $molliePaymentMailService = $this->getMollieContainer(\Mollie\Service\MolliePaymentMailService::class);
+                $molliePaymentMailService = $this->getService(\Mollie\Service\MolliePaymentMailService::class);
                 $molliePaymentMailService->sendSecondChanceMail($orderId);
             }
         }
@@ -905,7 +858,7 @@ class Mollie extends PaymentModule
         $orderPayment = $params['object'];
 
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
-        $paymentMethodRepo = $this->getMollieContainer(PaymentMethodRepositoryInterface::class);
+        $paymentMethodRepo = $this->getService(PaymentMethodRepositoryInterface::class);
 
         $orders = Order::getByReference($orderPayment->order_reference);
         /** @var Order $order */
@@ -940,6 +893,20 @@ class Mollie extends PaymentModule
         }
     }
 
+    public function hookActionCartUpdateQuantityBefore($params)
+    {
+        /** @var CanProductBeAddedToCartValidator $cartValidation */
+        $cartValidation = $this->getService(CanProductBeAddedToCartValidator::class);
+
+        try {
+            $cartValidation->validate((int) $params['id_product_attribute']);
+        } catch (ProductValidationException|SubscriptionProductValidationException $e) {
+            $product = $this->makeProductNotOrderable($params['product']);
+
+            $params['product'] = $product;
+        }
+    }
+
     /**
      * @param int $orderId
      *
@@ -952,16 +919,16 @@ class Mollie extends PaymentModule
         /** @var Mollie $module */
         $module = Module::getInstanceByName('mollie');
         /** @var \Mollie\Repository\PaymentMethodRepository $molliePaymentRepo */
-        $molliePaymentRepo = $module->getMollieContainer(PaymentMethodRepositoryInterface::class);
+        $molliePaymentRepo = $module->getService(PaymentMethodRepositoryInterface::class);
         $molPayment = $molliePaymentRepo->getPaymentBy('cart_id', (string) Cart::getCartIdByOrderId($orderId));
         if (\Mollie\Utility\MollieStatusUtility::isPaymentFinished($molPayment['bank_status'])) {
             return false;
         }
 
         /** @var \Mollie\Presenter\OrderListActionBuilder $orderListActionBuilder */
-        $orderListActionBuilder = $module->getMollieContainer(\Mollie\Presenter\OrderListActionBuilder::class);
+        $orderListActionBuilder = $module->getService(\Mollie\Presenter\OrderListActionBuilder::class);
 
-        return $orderListActionBuilder->buildOrderPaymentResendButton($module->smarty, $orderId);
+        return $orderListActionBuilder->buildOrderPaymentResendButton($orderId);
     }
 
     public function updateApiKey($shopId = null)
@@ -969,13 +936,21 @@ class Mollie extends PaymentModule
         $this->setApiKey($shopId);
     }
 
+    public function runUpgradeModule()
+    {
+        /** @var Mollie\Tracker\Segment $segment */
+        $segment = $this->getService(Mollie\Tracker\Segment::class);
+
+        $segment->setMessage('Mollie module upgrade');
+        $segment->track();
+
+        return parent::runUpgradeModule();
+    }
+
     private function setApiKey($shopId = null)
     {
-        if ($this->api && $shopId === null) {
-            return;
-        }
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
-        $moduleRepository = $this->getMollieContainer(\Mollie\Repository\ModuleRepository::class);
+        $moduleRepository = $this->getService(\Mollie\Repository\ModuleRepository::class);
         $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->name);
         $needsUpgrade = Tools::version_compare($this->version, $moduleDatabaseVersion, '>');
         if ($needsUpgrade) {
@@ -983,7 +958,7 @@ class Mollie extends PaymentModule
         }
 
         /** @var \Mollie\Service\ApiKeyService $apiKeyService */
-        $apiKeyService = $this->getMollieContainer(\Mollie\Service\ApiKeyService::class);
+        $apiKeyService = $this->getService(\Mollie\Service\ApiKeyService::class);
 
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $apiKeyConfig = \Mollie\Config\Config::ENVIRONMENT_LIVE === (int) $environment ?
@@ -1012,19 +987,21 @@ class Mollie extends PaymentModule
         }
     }
 
-    public function runUpgradeModule()
-    {
-        /** @var Mollie\Tracker\Segment $segment */
-        $segment = $this->getMollieContainer(Mollie\Tracker\Segment::class);
-
-        $segment->setMessage('Mollie module upgrade');
-        $segment->track();
-
-        return parent::runUpgradeModule();
-    }
-
     private function isPhpVersionCompliant()
     {
         return self::SUPPORTED_PHP_VERSION <= PHP_VERSION_ID;
+    }
+
+    private function makeProductNotOrderable($product): Product
+    {
+        if ($product instanceof Product) {
+            $product->available_for_order = false;
+
+            return $product;
+        }
+
+        $product['isOrderable'] = false;
+
+        return $product;
     }
 }

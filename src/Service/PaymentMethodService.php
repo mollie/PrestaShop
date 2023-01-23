@@ -20,9 +20,11 @@ use Country;
 use Currency;
 use Customer;
 use Mollie;
+use Mollie\Adapter\Shop;
 use Mollie\Api\Resources\BaseCollection;
 use Mollie\Api\Resources\MethodCollection;
 use Mollie\Api\Types\PaymentMethod;
+use Mollie\Api\Types\SequenceType;
 use Mollie\Config\Config;
 use Mollie\DTO\Object\Amount;
 use Mollie\DTO\OrderData;
@@ -30,20 +32,18 @@ use Mollie\DTO\PaymentData;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\PhoneNumberProviderInterface;
-use Mollie\Repository\MethodCountryRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
+use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Utility\CustomLogoUtility;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TextFormatUtility;
 use MolPaymentMethod;
-use Order;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use Shop;
 use Tools;
 
 class PaymentMethodService
@@ -57,11 +57,6 @@ class PaymentMethodService
      * @var PaymentMethodRepositoryInterface
      */
     private $methodRepository;
-
-    /**
-     * @var MethodCountryRepository
-     */
-    private $methodCountryRepository;
 
     /**
      * @var CartLinesService
@@ -85,8 +80,6 @@ class PaymentMethodService
 
     private $paymentMethodSortProvider;
 
-    private $countryRepository;
-
     private $phoneNumberProvider;
 
     /**
@@ -95,19 +88,15 @@ class PaymentMethodService
     private $paymentMethodRestrictionValidation;
 
     /**
-     * @var \Country
-     */
-    private $country;
-
-    /**
      * @var Shop
      */
     private $shop;
+    /** @var SubscriptionOrderValidator */
+    private $subscriptionOrder;
 
     public function __construct(
         Mollie $module,
         PaymentMethodRepositoryInterface $methodRepository,
-        MethodCountryRepository $methodCountryRepository,
         CartLinesService $cartLinesService,
         PaymentsTranslationService $paymentsTranslationService,
         CustomerService $customerService,
@@ -115,12 +104,11 @@ class PaymentMethodService
         PaymentMethodSortProviderInterface $paymentMethodSortProvider,
         PhoneNumberProviderInterface $phoneNumberProvider,
         PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation,
-        Country $country,
-        Shop $shop
+        Shop $shop,
+        SubscriptionOrderValidator $subscriptionOrder
     ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
-        $this->methodCountryRepository = $methodCountryRepository;
         $this->cartLinesService = $cartLinesService;
         $this->paymentsTranslationService = $paymentsTranslationService;
         $this->customerService = $customerService;
@@ -128,13 +116,13 @@ class PaymentMethodService
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
         $this->phoneNumberProvider = $phoneNumberProvider;
         $this->paymentMethodRestrictionValidation = $paymentMethodRestrictionValidation;
-        $this->country = $country;
         $this->shop = $shop;
+        $this->subscriptionOrder = $subscriptionOrder;
     }
 
     public function savePaymentMethod($method)
     {
-        $shopId = \Context::getContext()->shop->id;
+        $shopId = $this->shop->getShop()->id;
         $environment = Tools::getValue(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($method['id'], $environment, $shopId);
         $paymentMethod = new MolPaymentMethod();
@@ -179,7 +167,7 @@ class PaymentMethodService
     public function getMethodsForCheckout()
     {
         $apiKey = EnvironmentUtility::getApiKey();
-        if (!$apiKey || $this->module->api === null) {
+        if (!$apiKey || $this->module->getApiClient() === null) {
             return [];
         }
         /* @phpstan-ignore-next-line */
@@ -187,7 +175,7 @@ class PaymentMethodService
             return [];
         }
         $apiEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
-        $methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment, $this->shop->id) ?: [];
+        $methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment, $this->shop->getShop()->id) ?: [];
 
         try {
             $mollieMethods = $this->getSupportedMollieMethods();
@@ -326,6 +314,13 @@ class PaymentMethodService
                 $paymentData->setApplePayToken($applePayToken);
             }
 
+            if ($this->subscriptionOrder->validate(new Cart($cartId))) {
+                $molCustomer = $this->handleCustomerInfo($cart->id_customer, true, false);
+                $paymentData->setCustomerId($molCustomer->customer_id);
+
+                $paymentData->setSequenceType(SequenceType::SEQUENCETYPE_FIRST);
+            }
+
             $isCreditCardPayment = PaymentMethod::CREDITCARD === $molPaymentMethod->id_method;
             if (!$isCreditCardPayment) {
                 return $paymentData;
@@ -400,6 +395,13 @@ class PaymentMethodService
                 $payment['applePayPaymentToken'] = $applePayToken;
             }
 
+            if ($this->subscriptionOrder->validate(new Cart($cartId))) {
+                $molCustomer = $this->handleCustomerInfo($cart->id_customer, true, false);
+                $payment['customerId'] = $molCustomer->customer_id;
+
+                $orderData->setSequenceType(SequenceType::SEQUENCETYPE_FIRST);
+            }
+
             $orderData->setPayment($payment);
 
             return $orderData;
@@ -459,7 +461,7 @@ class PaymentMethodService
         $cartAmount = $context->cart->getOrderTotal();
 
         /** @var BaseCollection|MethodCollection $methods */
-        $methods = $this->module->api->methods->allActive(
+        $methods = $this->module->getApiClient()->methods->allActive(
             [
                 'resource' => 'orders',
                 'include' => 'issuers',

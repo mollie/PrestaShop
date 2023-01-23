@@ -12,24 +12,16 @@
 
 namespace Mollie\Service;
 
-use Mollie;
-
 class PaymentsTranslationService
 {
-    /**
-     * @var Mollie
-     */
-    private $module;
     /**
      * @var LanguageService
      */
     private $languageService;
 
     public function __construct(
-        Mollie $module,
         LanguageService $languageService
     ) {
-        $this->module = $module;
         $this->languageService = $languageService;
     }
 

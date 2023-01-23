@@ -14,25 +14,17 @@ namespace Mollie\Service;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
-use Mollie\Repository\AttributeRepository;
 
 class VoucherService
 {
-    /**
-     * @var AttributeRepository
-     */
-    private $attributeRepository;
-
     /**
      * @var ConfigurationAdapter
      */
     private $configuration;
 
     public function __construct(
-        AttributeRepository $attributeRepository,
         ConfigurationAdapter $configuration
     ) {
-        $this->attributeRepository = $attributeRepository;
         $this->configuration = $configuration;
     }
 

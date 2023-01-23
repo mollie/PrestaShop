@@ -49,6 +49,8 @@ use Mollie\DTO\PaymentData;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
+use Mollie\Subscription\Handler\SubscriptionCreationHandler;
+use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TextGeneratorUtility;
@@ -74,19 +76,27 @@ class OrderCreationHandler
     private $orderFeeHandler;
     /** @var OrderStatusService */
     private $orderStatusService;
+    /** @var SubscriptionCreationHandler */
+    private $recurringOrderCreation;
+    /** @var SubscriptionOrderValidator */
+    private $subscriptionOrder;
 
     public function __construct(
         Mollie $module,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentMethodService $paymentMethodService,
         OrderFeeHandler $orderFeeHandler,
-        OrderStatusService $orderStatusService
+        OrderStatusService $orderStatusService,
+        SubscriptionCreationHandler $recurringOrderCreation,
+        SubscriptionOrderValidator $subscriptionOrder
     ) {
         $this->module = $module;
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodService = $paymentMethodService;
         $this->orderFeeHandler = $orderFeeHandler;
         $this->orderStatusService = $orderStatusService;
+        $this->recurringOrderCreation = $recurringOrderCreation;
+        $this->subscriptionOrder = $subscriptionOrder;
     }
 
     /**
@@ -135,6 +145,8 @@ class OrderCreationHandler
             /* @phpstan-ignore-next-line */
             $orderId = (int) Order::getOrderByCartId((int) $cartId);
 
+            $this->createRecurringOrderEntity(new Order($orderId));
+
             return $orderId;
         }
         $cartPrice = NumberUtility::plus($originalAmount, $paymentFee);
@@ -173,6 +185,8 @@ class OrderCreationHandler
 
         $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
 
+        $this->createRecurringOrderEntity(new Order($orderId));
+
         return $orderId;
     }
 
@@ -185,7 +199,7 @@ class OrderCreationHandler
     public function createBankTransferOrder($paymentData, Cart $cart)
     {
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
-        $paymentMethodRepository = $this->module->getMollieContainer(PaymentMethodRepositoryInterface::class);
+        $paymentMethodRepository = $this->module->getService(PaymentMethodRepositoryInterface::class);
         $this->module->validateOrder(
             (int) $cart->id,
             (int) Configuration::get(Config::MOLLIE_STATUS_OPEN),
@@ -244,5 +258,15 @@ class OrderCreationHandler
         $order->update();
 
         return $paymentData;
+    }
+
+    private function createRecurringOrderEntity(Order $order)
+    {
+        $cart = new Cart($order->id_cart);
+        if (!$this->subscriptionOrder->validate($cart)) {
+            return;
+        }
+
+        $this->recurringOrderCreation->handle($order);
     }
 }
