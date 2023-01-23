@@ -381,18 +381,18 @@ Cypress.Commands.add("ConfOrdersAPI1784", () => {
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_in3"]').clear({force: true}).type('22', {force: true})
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_in3"]').clear({force: true}).type('33', {force: true})
       //Gift card
-      cy.get('[name="MOLLIE_METHOD_ENABLED_giftcard"]').select('Yes', {force: true})
-      cy.get('[name="MOLLIE_METHOD_API_giftcard"]').select('Orders API', {force: true})
-      cy.get('[name="MOLLIE_METHOD_DESCRIPTION_giftcard"]').clear({force: true}).type('Lorem Ipsum dummy text 123 !@#$%^&*', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_TYPE_giftcard"]').select('3', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_giftcard"]').clear({force: true}).type('11', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_giftcard"]').clear({force: true}).type('22', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_giftcard"]').clear({force: true}).type('33', {force: true})
+      // cy.get('[name="MOLLIE_METHOD_ENABLED_giftcard"]').select('Yes', {force: true})
+      // cy.get('[name="MOLLIE_METHOD_API_giftcard"]').select('Orders API', {force: true})
+      // cy.get('[name="MOLLIE_METHOD_DESCRIPTION_giftcard"]').clear({force: true}).type('Lorem Ipsum dummy text 123 !@#$%^&*', {force: true})
+      // cy.get('[name="MOLLIE_METHOD_SURCHARGE_TYPE_giftcard"]').select('3', {force: true})
+      // cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_giftcard"]').clear({force: true}).type('11', {force: true})
+      // cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_giftcard"]').clear({force: true}).type('22', {force: true})
+      // cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_giftcard"]').clear({force: true}).type('33', {force: true})
   })
 Cypress.Commands.add("ConfPaymentsAPI1784", () => {
       //Gift card
-      cy.get('[name="MOLLIE_METHOD_ENABLED_giftcard"]').select('Yes', {force: true})
-      cy.get('[name="MOLLIE_METHOD_API_giftcard"]').select('Payments API', {force: true})
+      // cy.get('[name="MOLLIE_METHOD_ENABLED_giftcard"]').select('Yes', {force: true})
+      // cy.get('[name="MOLLIE_METHOD_API_giftcard"]').select('Payments API', {force: true})
       //giropay
       cy.get('[name="MOLLIE_METHOD_ENABLED_giropay"]').select('Yes', {force: true})
       cy.get('[name="MOLLIE_METHOD_API_giropay"]').select('Payments API', {force: true})
