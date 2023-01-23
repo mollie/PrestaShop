@@ -66,6 +66,7 @@ describe('PS1784 Tests Suite', () => {
   })
 it('04 Enabling All payments in Module BO [Orders API]', () => {
       cy.visit('/admin1/')
+      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
       cy.get('#subtab-AdminMollieModule > .link').click()
       cy.ConfOrdersAPI1784()
       cy.get('[type="submit"]').first().click({force:true})
@@ -267,6 +268,7 @@ it('16 Klarna Pay Now Order BO Shipping, Refunding [Orders API]', () => {
 it('17 Credit Card Checkouting [Orders API]', () => {
       //Enabling the Single-Click for now
       cy.visit('/admin1/')
+      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
       cy.get('#subtab-AdminMollieModule > .link').click()
       cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_on').click({force:true})
       cy.get('[type="submit"]').first().click()
@@ -337,6 +339,7 @@ it('18 Check if customerId is passed during the 2nd payment using Single Click P
       cy.reload();
       cy.visit('/admin1/')
       //Disabling the single-click - no need again
+      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
       cy.get('#subtab-AdminMollieModule > .link').click()
       cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_off').click({force:true})
       cy.get('[type="submit"]').first().click()
@@ -395,6 +398,7 @@ it('22 IN3 should not be shown under 5000 EUR [Orders API]', () => {
 })
 it('23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.visit('/admin1/')
+      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
       cy.get('#subtab-AdminMollieModule > .link').click()
       cy.get('[href="#advanced_settings"]').click()
       cy.get('[name="MOLLIE_IMAGES"]').select('big')
@@ -411,6 +415,7 @@ it('23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.get('html').should('contain.html','src="https://www.mollie.com/external/icons/payment-methods/in3%402x.png"')
       //todo finish
       cy.visit('/admin1/')
+      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
       cy.get('#subtab-AdminMollieModule > .link').click()
       cy.get('[href="#advanced_settings"]').click()
       cy.get('[name="MOLLIE_IMAGES"]').select('hide')
@@ -716,6 +721,7 @@ it('41 Gift Card Order Shipping, Refunding [Orders API]', () => {
 })
 it('42 [SWITCH TO PAYMENTS API] Enabling All payments in Module BO [Payments API]', () => {
       cy.visit('/admin1/')
+      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
       cy.get('#subtab-AdminMollieModule > .link').click()
       cy.ConfPaymentsAPI1784()
       cy.get('[type="submit"]').first().click({force:true})
@@ -723,6 +729,7 @@ it('42 [SWITCH TO PAYMENTS API] Enabling All payments in Module BO [Payments API
 })
 it('43 Check if Bancontact QR payment dropdown exists [Payments API]', () => {
       cy.visit('/admin1/')
+      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
       cy.get('#subtab-AdminMollieModule > .link').click()
       cy.get('[name="MOLLIE_BANCONTACT_QR_CODE_ENABLED"]').should('exist')
 })
@@ -1211,39 +1218,6 @@ it('66 Bank Transfer Checkouting [Payments API]', () => {
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
 it('67 Bank Transfer BO Refunding, Partial Refunding [Payments API]', () => {
-      cy.OrderRefundingPartialPaymentsAPI()
-});
-it('68 Gift cards Checkouting [Payments API]', () => {
-      cy.visit('/SHOP2/en/index.php?controller=history')
-      cy.get('a').click()
-      //
-      cy.contains('Reorder').click()
-      cy.contains('LT').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
-      //Payment method choosing
-      cy.contains('Bank transfer').click({force:true})
-      cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
-      cy.get('[value="paid"]').click()
-      cy.get('[class="button form__button"]').click()
-      //Welcome UI in this Payment method
-      //cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
-});
-it('69 Gift cards BO Refunding, Partial Refunding [Payments API]', () => {
       cy.OrderRefundingPartialPaymentsAPI()
 });
 })

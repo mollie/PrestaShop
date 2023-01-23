@@ -16,7 +16,7 @@ jobs:
             port: '8002'
             yml: 'docker-compose.e2e.1784.yml'
             url: 'https://demoshop1784.eu.ngrok.io'
-            test_spec: '**/cypress/integration/ps1784/**'
+            test_spec: '**/cypress/e2e/ps1784/**'
     env:
       NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
     steps:
@@ -44,7 +44,7 @@ jobs:
           ${{ matrix.make }}
 
       - name: Running ${{ matrix.prestashop }} Cypress tests
-        uses: cypress-io/github-action@v5.0.0
+        uses: cypress-io/github-action@v5.0.5
         with:
           spec: ${{ matrix.test_spec }}
           browser: chrome
