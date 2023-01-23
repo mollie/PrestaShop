@@ -49,7 +49,7 @@ use Mollie\DTO\PaymentData;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
-use Mollie\Subscription\Handler\RecurringOrderCreationHandler;
+use Mollie\Subscription\Handler\SubscriptionCreationHandler;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\PaymentFeeUtility;
@@ -76,7 +76,7 @@ class OrderCreationHandler
     private $orderFeeHandler;
     /** @var OrderStatusService */
     private $orderStatusService;
-    /** @var RecurringOrderCreationHandler */
+    /** @var SubscriptionCreationHandler */
     private $recurringOrderCreation;
     /** @var SubscriptionOrderValidator */
     private $subscriptionOrder;
@@ -87,7 +87,7 @@ class OrderCreationHandler
         PaymentMethodService $paymentMethodService,
         OrderFeeHandler $orderFeeHandler,
         OrderStatusService $orderStatusService,
-        RecurringOrderCreationHandler $recurringOrderCreation,
+        SubscriptionCreationHandler $recurringOrderCreation,
         SubscriptionOrderValidator $subscriptionOrder
     ) {
         $this->module = $module;

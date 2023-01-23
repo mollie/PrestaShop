@@ -48,11 +48,13 @@ use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPayme
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProvider;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
+use Mollie\Service\ShipmentService;
+use Mollie\Service\ShipmentServiceInterface;
 use Mollie\Subscription\Grid\Accessibility\SubscriptionCancelAccessibility;
 use Mollie\Subscription\Logger\LoggerInterface;
 use Mollie\Subscription\Logger\NullLogger;
-use Mollie\Subscription\Repository\SubscriptionRepository;
-use Mollie\Subscription\Repository\SubscriptionRepositoryInterface;
+use Mollie\Subscription\Repository\RecurringOrderRepository;
+use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Utility\Clock;
 use Mollie\Subscription\Utility\ClockInterface;
 use PrestaShop\PrestaShop\Core\Grid\Action\Row\AccessibilityChecker\AccessibilityCheckerInterface;
@@ -92,13 +94,14 @@ final class BaseServiceProvider
         $this->addService($container, CartRuleRepositoryInterface::class, $container->get(CartRuleRepository::class));
         $this->addService($container, OrderRepositoryInterface::class, $container->get(OrderRepository::class));
         $this->addService($container, CartRuleQuantityChangeHandlerInterface::class, $container->get(CartRuleQuantityChangeHandler::class));
+        $this->addService($container, ShipmentServiceInterface::class, $container->get(ShipmentService::class));
 
-        $this->addService($container, SubscriptionRepositoryInterface::class, SubscriptionRepository::class)
-            ->withArgument('MolSubRecurringOrder');
+        $this->addService($container, RecurringOrderRepositoryInterface::class, RecurringOrderRepository::class)
+            ->withArgument('MolRecurringOrder');
 
         $this->addService($container, TemplateParserInterface::class, SmartyTemplateParser::class);
 
-        $this->addService($container, UpdateMessageProviderInterface::class, UpdateMessageProvider::class);
+        $this->addService($container, UpdateMessageProviderInterface::class, $container->get(UpdateMessageProvider::class));
 
         $this->addService($container, PaymentMethodSortProviderInterface::class, PaymentMethodSortProvider::class);
         $this->addService($container, PhoneNumberProviderInterface::class, PhoneNumberProvider::class);

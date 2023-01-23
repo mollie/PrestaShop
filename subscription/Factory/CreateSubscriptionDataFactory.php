@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Factory;
 
+use Mollie\Adapter\Link;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Subscription\DTO\CreateSubscriptionData as SubscriptionDataDTO;
@@ -35,6 +36,8 @@ class CreateSubscriptionDataFactory
 
     /** @var PaymentMethodRepositoryInterface */
     private $methodRepository;
+    /** @var Link */
+    private $link;
 
     public function __construct(
         MolCustomerRepository $customerRepository,
@@ -42,7 +45,8 @@ class CreateSubscriptionDataFactory
         SubscriptionDescriptionProvider $subscriptionDescription,
         CurrencyAdapter $currencyAdapter,
         CombinationRepository $combination,
-        PaymentMethodRepositoryInterface $methodRepository
+        PaymentMethodRepositoryInterface $methodRepository,
+        Link $link
     ) {
         $this->customerRepository = $customerRepository;
         $this->subscriptionInterval = $subscriptionInterval;
@@ -50,6 +54,7 @@ class CreateSubscriptionDataFactory
         $this->currencyAdapter = $currencyAdapter;
         $this->combination = $combination;
         $this->methodRepository = $methodRepository;
+        $this->link = $link;
     }
 
     public function build(Order $order): SubscriptionDataDTO
@@ -80,6 +85,11 @@ class CreateSubscriptionDataFactory
             $interval,
             $description
         );
+
+        $subscriptionData->setWebhookUrl($this->link->getModuleLink(
+            'mollie',
+            'subscriptionWebhook'
+        ));
 
         // todo: check for solution what to do when mandate is missing
         $payment = $this->methodRepository->getPaymentBy('cart_id', $order->id_cart);

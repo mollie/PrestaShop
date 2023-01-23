@@ -65,7 +65,7 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
     public function getCountQueryBuilder(SearchCriteriaInterface $searchCriteria): QueryBuilder
     {
         $qb = $this->getQueryBuilder($searchCriteria->getFilters());
-        $qb->select('COUNT(recurring_order.id_mol_sub_recurring_order)');
+        $qb->select('COUNT(recurring_order.id_mol_recurring_order)');
 
         return $qb;
     }

@@ -25,4 +25,16 @@ class Link
     {
         return PrestashopContext::getContext()->link->getPageLink($controller, $ssl, $idLang, $request, $requestUrlEncode, $idShop, $relativeProtocol);
     }
+
+    public function getModuleLink(
+        $module,
+        $controller = 'default',
+        array $params = [],
+        $ssl = null,
+        $idLang = null,
+        $idShop = null,
+        $relativeProtocol = false
+    ) {
+        return PrestashopContext::getContext()->link->getModuleLink($module, $controller, $params, $ssl, $idLang, $idShop, $relativeProtocol);
+    }
 }

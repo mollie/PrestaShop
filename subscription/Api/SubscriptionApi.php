@@ -13,7 +13,7 @@ use Mollie\Subscription\DTO\GetSubscriptionData;
 use Mollie\Subscription\Exception\SubscriptionApiException;
 use Mollie\Subscription\Factory\MollieApiFactory;
 
-class Subscription
+class SubscriptionApi
 {
     /** @var MollieApiClient */
     private $apiClient;

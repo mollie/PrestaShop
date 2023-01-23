@@ -18,7 +18,7 @@ class SubscriptionFilters extends Filters
         return [
             'limit' => 50,
             'offset' => 0,
-            'orderBy' => 'id_mol_sub_recurring_order',
+            'orderBy' => 'id_mol_recurring_order',
             'sortOrder' => 'asc',
             'filters' => [],
         ];
