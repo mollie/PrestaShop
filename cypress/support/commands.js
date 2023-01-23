@@ -643,3 +643,17 @@ Cypress.Commands.add("OrderRefundingPartialPaymentsAPI", () => {
     cy.get(':nth-child(2) > .swal-button').click()
     cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
 })
+Cypress.Commands.add("EnablingModuleMultistore", () => {
+  cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
+  cy.get('#subtab-AdminModulesSf').click()
+  cy.get('.pstaggerAddTagInput').type('mollie')
+  cy.get('#module-search-button').click()
+  cy.get('.btn-group > .btn-primary-reverse').click()
+})
+Cypress.Commands.add("OpenModuleDashboard", () => {
+    cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
+    cy.get('#subtab-AdminModulesSf').click()
+    cy.get('.pstaggerAddTagInput').type('mollie')
+    cy.get('#module-search-button').click()
+    cy.get('.btn-group > .btn-primary-reverse').click()
+})

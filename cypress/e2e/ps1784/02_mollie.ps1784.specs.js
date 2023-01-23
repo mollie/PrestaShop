@@ -58,7 +58,11 @@ Cypress.on('window:before:load', (win) => {
 afterEach(() => {
   expect(windowConsoleError).to.not.be.called;
 })
-
+afterEach(function() {
+  if (this.currentTest.state === 'failed') {
+    Cypress.runner.stop()
+  }
+});
 describe('PS1784 Tests Suite', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
@@ -66,8 +70,7 @@ describe('PS1784 Tests Suite', () => {
   })
 it('04 Enabling All payments in Module BO [Orders API]', () => {
       cy.visit('/admin1/')
-      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
-      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.OpenModuleDashboard()
       cy.ConfOrdersAPI1784()
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
@@ -268,8 +271,7 @@ it('16 Klarna Pay Now Order BO Shipping, Refunding [Orders API]', () => {
 it('17 Credit Card Checkouting [Orders API]', () => {
       //Enabling the Single-Click for now
       cy.visit('/admin1/')
-      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
-      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.OpenModuleDashboard()
       cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_on').click({force:true})
       cy.get('[type="submit"]').first().click()
       cy.get('[class="alert alert-success"]').should('be.visible')
@@ -339,8 +341,7 @@ it('18 Check if customerId is passed during the 2nd payment using Single Click P
       cy.reload();
       cy.visit('/admin1/')
       //Disabling the single-click - no need again
-      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
-      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.OpenModuleDashboard()
       cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_off').click({force:true})
       cy.get('[type="submit"]').first().click()
       cy.get('[class="alert alert-success"]').should('be.visible')
@@ -398,8 +399,7 @@ it('22 IN3 should not be shown under 5000 EUR [Orders API]', () => {
 })
 it('23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.visit('/admin1/')
-      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
-      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.OpenModuleDashboard()
       cy.get('[href="#advanced_settings"]').click()
       cy.get('[name="MOLLIE_IMAGES"]').select('big')
       cy.get('[type="submit"]').first().click()
@@ -415,8 +415,7 @@ it('23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.get('html').should('contain.html','src="https://www.mollie.com/external/icons/payment-methods/in3%402x.png"')
       //todo finish
       cy.visit('/admin1/')
-      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
-      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.OpenModuleDashboard()
       cy.get('[href="#advanced_settings"]').click()
       cy.get('[name="MOLLIE_IMAGES"]').select('hide')
       cy.get('[type="submit"]').first().click()
@@ -721,16 +720,14 @@ it('41 Gift Card Order Shipping, Refunding [Orders API]', () => {
 })
 it('42 [SWITCH TO PAYMENTS API] Enabling All payments in Module BO [Payments API]', () => {
       cy.visit('/admin1/')
-      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
-      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.OpenModuleDashboard()
       cy.ConfPaymentsAPI1784()
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
 it('43 Check if Bancontact QR payment dropdown exists [Payments API]', () => {
       cy.visit('/admin1/')
-      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
-      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.OpenModuleDashboard()
       cy.get('[name="MOLLIE_BANCONTACT_QR_CODE_ENABLED"]').should('exist')
 })
 it('44 Bancontact Checkouting [Payments API]', () => {
