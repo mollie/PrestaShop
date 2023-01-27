@@ -58,7 +58,11 @@ Cypress.on('window:before:load', (win) => {
 afterEach(() => {
   expect(windowConsoleError).to.not.be.called;
 })
-
+afterEach(function() {
+  if (this.currentTest.state === 'failed') {
+    Cypress.runner.stop()
+  }
+});
 describe('PS1784 Tests Suite', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
@@ -66,8 +70,7 @@ describe('PS1784 Tests Suite', () => {
   })
 it('04 Enabling All payments in Module BO [Orders API]', () => {
       cy.visit('/admin1/')
-      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
-      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.OpenModuleDashboard()
       cy.ConfOrdersAPI1784()
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
@@ -268,8 +271,7 @@ it('16 Klarna Pay Now Order BO Shipping, Refunding [Orders API]', () => {
 it('17 Credit Card Checkouting [Orders API]', () => {
       //Enabling the Single-Click for now
       cy.visit('/admin1/')
-      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
-      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.OpenModuleDashboard()
       cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_on').click({force:true})
       cy.get('[type="submit"]').first().click()
       cy.get('[class="alert alert-success"]').should('be.visible')
@@ -282,19 +284,7 @@ it('17 Credit Card Checkouting [Orders API]', () => {
       //Payment method choosing
       cy.contains('Credit/Debit Card').click({force:true})
       //Credit card inputing
-      cy.frameLoaded('[data-testid=mollie-container--cardHolder] > iframe')
-      cy.enter('[data-testid=mollie-container--cardHolder] > iframe').then(getBody => {
-      getBody().find('#cardHolder').clear({force: true}).type('TEST TEEESSSTT',{force:true})
-      })
-      cy.enter('[data-testid=mollie-container--cardNumber] > iframe').then(getBody => {
-      getBody().find('#cardNumber').clear({force: true}).type('5555555555554444',{force:true})
-      })
-      cy.enter('[data-testid=mollie-container--expiryDate] > iframe').then(getBody => {
-      getBody().find('#expiryDate').clear({force: true}).type('1222',{force:true})
-      })
-      cy.enter('[data-testid=mollie-container--verificationCode] > iframe').then(getBody => {
-      getBody().find('#verificationCode').clear({force: true}).type('222',{force:true})
-      })
+      cy.CreditCardFillingIframe()
       cy.get('.condition-label > .js-terms').click({force:true})
       cy.get('#mollie-save-card').check({force:true})
       prepareCookie();
@@ -339,8 +329,7 @@ it('18 Check if customerId is passed during the 2nd payment using Single Click P
       cy.reload();
       cy.visit('/admin1/')
       //Disabling the single-click - no need again
-      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
-      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.OpenModuleDashboard()
       cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_off').click({force:true})
       cy.get('[type="submit"]').first().click()
       cy.get('[class="alert alert-success"]').should('be.visible')
@@ -398,8 +387,7 @@ it('22 IN3 should not be shown under 5000 EUR [Orders API]', () => {
 })
 it('23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.visit('/admin1/')
-      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
-      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.OpenModuleDashboard()
       cy.get('[href="#advanced_settings"]').click()
       cy.get('[name="MOLLIE_IMAGES"]').select('big')
       cy.get('[type="submit"]').first().click()
@@ -415,8 +403,7 @@ it('23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.get('html').should('contain.html','src="https://www.mollie.com/external/icons/payment-methods/in3%402x.png"')
       //todo finish
       cy.visit('/admin1/')
-      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
-      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.OpenModuleDashboard()
       cy.get('[href="#advanced_settings"]').click()
       cy.get('[name="MOLLIE_IMAGES"]').select('hide')
       cy.get('[type="submit"]').first().click()
@@ -684,53 +671,52 @@ it('38 Bank Transfer Checkouting [Orders API]', () => {
 it('39 Bank Transfer Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it('40 Gift Card Checkouting [Orders API]', () => {
-      cy.visit('/SHOP2/en/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      cy.contains('NL').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
-      //Payment method choosing
-      cy.contains('Gift cards').click({force:true})
-      cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
-      cy.get('.grid-button-giftcard-yourgift').click()
-      cy.get('[value="paid"]').click()
-      cy.get('[class="button form__button"]').click()
-      cy.get('.grid-button-paypal').click()
-      cy.get('[value="paid"]').click()
-      cy.get('[class="button form__button"]').click()
-      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
-});
-it('41 Gift Card Order Shipping, Refunding [Orders API]', () => {
-      cy.OrderRefundingShippingOrdersAPI()
-})
+// Temporary disabled, Payment Method disables automatically in My Mollie Dashboard, because of the fake testing account...
+// it('40 Gift Card Checkouting [Orders API]', () => {
+//       cy.visit('/SHOP2/en/index.php?controller=history')
+//       cy.get('a').click()
+//       cy.contains('Reorder').click()
+//       cy.contains('NL').click()
+//       //Billing country LT, DE etc.
+//       cy.get('.clearfix > .btn').click()
+//       cy.get('#js-delivery > .continue').click()
+//       //Payment method choosing
+//       cy.contains('Gift cards').click({force:true})
+//       cy.get('.condition-label > .js-terms').click({force:true})
+//       prepareCookie();
+//       cy.get('.ps-shown-by-js > .btn').click()
+//       cy.setCookie(
+//         'SESSIONID',
+//         "cypress-dummy-value",
+//         {
+//             domain: '.www.mollie.com',
+//             sameSite: 'None',
+//             secure: true,
+//             httpOnly: true
+//         }
+//       );    // reload current page to activate cookie
+//       cy.reload();
+//       cy.get('.grid-button-giftcard-yourgift').click()
+//       cy.get('[value="paid"]').click()
+//       cy.get('[class="button form__button"]').click()
+//       cy.get('.grid-button-paypal').click()
+//       cy.get('[value="paid"]').click()
+//       cy.get('[class="button form__button"]').click()
+//       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+// });
+// it('41 Gift Card Order Shipping, Refunding [Orders API]', () => {
+//       cy.OrderRefundingShippingOrdersAPI()
+// })
 it('42 [SWITCH TO PAYMENTS API] Enabling All payments in Module BO [Payments API]', () => {
       cy.visit('/admin1/')
-      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
-      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.OpenModuleDashboard()
       cy.ConfPaymentsAPI1784()
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
 it('43 Check if Bancontact QR payment dropdown exists [Payments API]', () => {
       cy.visit('/admin1/')
-      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
-      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.OpenModuleDashboard()
       cy.get('[name="MOLLIE_BANCONTACT_QR_CODE_ENABLED"]').should('exist')
 })
 it('44 Bancontact Checkouting [Payments API]', () => {
@@ -806,19 +792,7 @@ it('48 Credit Card Checkouting [Payments API]', () => {
       //Payment method choosing
       cy.contains('Credit/Debit Card').click({force:true})
       //Credit card inputing
-      cy.frameLoaded('[data-testid=mollie-container--cardHolder] > iframe')
-      cy.enter('[data-testid=mollie-container--cardHolder] > iframe').then(getBody => {
-      getBody().find('#cardHolder').clear({force: true}).type('TEST TEEESSSTT',{force:true})
-      })
-      cy.enter('[data-testid=mollie-container--cardNumber] > iframe').then(getBody => {
-      getBody().find('#cardNumber').clear({force: true}).type('5555555555554444',{force:true})
-      })
-      cy.enter('[data-testid=mollie-container--expiryDate] > iframe').then(getBody => {
-      getBody().find('#expiryDate').clear({force: true}).type('1222',{force:true})
-      })
-      cy.enter('[data-testid=mollie-container--verificationCode] > iframe').then(getBody => {
-      getBody().find('#verificationCode').clear({force: true}).type('222',{force:true})
-      })
+      cy.CreditCardFillingIframe()
       cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
@@ -872,19 +846,7 @@ it('50 Credit Card Guest Checkouting [Payments API]', () => {
       cy.get('#js-delivery > .continue').click()
       cy.contains('Credit/Debit Card').click({force:true})
       //Credit card inputing
-      cy.frameLoaded('[data-testid=mollie-container--cardHolder] > iframe')
-      cy.enter('[data-testid=mollie-container--cardHolder] > iframe').then(getBody => {
-      getBody().find('#cardHolder').clear({force: true}).type('TEST TEEESSSTT')
-      })
-      cy.enter('[data-testid=mollie-container--cardNumber] > iframe').then(getBody => {
-      getBody().find('#cardNumber').clear({force: true}).type('5555555555554444')
-      })
-      cy.enter('[data-testid=mollie-container--expiryDate] > iframe').then(getBody => {
-      getBody().find('#expiryDate').clear({force: true}).type('1222')
-      })
-      cy.enter('[data-testid=mollie-container--verificationCode] > iframe').then(getBody => {
-      getBody().find('#verificationCode').clear({force: true}).type('222')
-      })
+      cy.CreditCardFillingIframe()
       cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
@@ -934,19 +896,7 @@ it('51 Credit Card Guest Checkouting with not 3DS secure card [Payments API]', (
       cy.get('#js-delivery > .continue').click()
       cy.contains('Credit/Debit Card').click({force:true})
       //Credit card inputing
-      cy.frameLoaded('[data-testid=mollie-container--cardHolder] > iframe')
-      cy.enter('[data-testid=mollie-container--cardHolder] > iframe').then(getBody => {
-      getBody().find('#cardHolder').clear({force: true}).type('TEST TEEESSSTT')
-      })
-      cy.enter('[data-testid=mollie-container--cardNumber] > iframe').then(getBody => {
-      getBody().find('#cardNumber').clear({force: true}).type('4242424242424242')
-      })
-      cy.enter('[data-testid=mollie-container--expiryDate] > iframe').then(getBody => {
-      getBody().find('#expiryDate').clear({force: true}).type('1222')
-      })
-      cy.enter('[data-testid=mollie-container--verificationCode] > iframe').then(getBody => {
-      getBody().find('#verificationCode').clear({force: true}).type('222')
-      })
+      cy.NotSecureCreditCardFillingIframe()
       cy.get('.condition-label > .js-terms').click({force:true})
       cy.get('.ps-shown-by-js > .btn').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
