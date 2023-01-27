@@ -58,7 +58,11 @@ Cypress.on('window:before:load', (win) => {
 afterEach(() => {
   expect(windowConsoleError).to.not.be.called;
 })
-
+afterEach(function() {
+  if (this.currentTest.state === 'failed') {
+    Cypress.runner.stop()
+  }
+});
 describe('PS1784 Module initial configuration setup', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
@@ -66,9 +70,9 @@ describe('PS1784 Module initial configuration setup', () => {
   })
 it('01 Connecting test API successsfully', () => {
       cy.visit('/admin1/')
-      //Enabling Multistore context for PS1784
-      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
-      cy.get('#subtab-AdminMollieModule > .link').click()
+      // enabling the module on multistore shop - one time action
+      cy.EnablingModuleMultistore()
+      cy.OpenModuleDashboard()
       cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click()
       cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
       cy.get('#module_form_submit_btn').click()
@@ -81,8 +85,7 @@ it('02 Enabling Mollie carriers in Prestashop successfully', () => {
 })
 it('03 Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
       cy.visit('/admin1/')
-      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
-      cy.get('#subtab-AdminMollieModule > .link').click()
+      cy.OpenModuleDashboard()
       cy.get('[href="#advanced_settings"]').click()
       cy.get('[id="MOLLIE_PAYMENTSCREEN_LOCALE"]').should('be.visible')
       cy.get('[id="MOLLIE_SEND_ORDER_CONFIRMATION"]').should('be.visible')
