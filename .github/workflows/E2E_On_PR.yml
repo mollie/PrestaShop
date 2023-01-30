@@ -47,8 +47,8 @@ jobs:
         uses: cypress-io/github-action@v5.0.5
         with:
           spec: ${{ matrix.test_spec }}
-          browser: chrome
         env:
+          DEBUG: '@cypress/github-action'
           CYPRESS_MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
           CYPRESS_MOLLIE_TEST_PROFILE_ID: ${{ secrets.MOLLIE_TEST_PROFILE_ID }}
           CYPRESS_baseUrl: ${{ matrix.url }}

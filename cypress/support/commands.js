@@ -643,3 +643,47 @@ Cypress.Commands.add("OrderRefundingPartialPaymentsAPI", () => {
     cy.get(':nth-child(2) > .swal-button').click()
     cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
 })
+Cypress.Commands.add("EnablingModuleMultistore", () => {
+  cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
+  cy.get('#subtab-AdminModulesSf').click()
+  cy.get('.pstaggerAddTagInput').type('mollie')
+  cy.get('#module-search-button').click()
+  cy.get('.btn-group > .btn-primary-reverse').click()
+})
+Cypress.Commands.add("OpenModuleDashboard", () => {
+    cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
+    cy.get('#subtab-AdminModulesSf').click()
+    cy.get('.pstaggerAddTagInput').type('mollie')
+    cy.get('#module-search-button').click()
+    cy.get('.btn-group > .btn-primary-reverse').click()
+})
+Cypress.Commands.add("CreditCardFillingIframe", () => {
+  cy.frameLoaded('[name="cardHolder-input"]')
+  cy.enter('[name="cardHolder-input"]').then(getBody => {
+  getBody().find('#cardHolder').clear({force: true}).type('TEST TEEESSSTT',{force:true})
+  })
+  cy.enter('[name="cardNumber-input"]').then(getBody => {
+  getBody().find('#cardNumber').clear({force: true}).type('5555555555554444',{force:true})
+  })
+  cy.enter('[name="expiryDate-input"]').then(getBody => {
+  getBody().find('#expiryDate').clear({force: true}).type('1226',{force:true})
+  })
+  cy.enter('[name="verificationCode-input"]').then(getBody => {
+  getBody().find('#verificationCode').clear({force: true}).type('222',{force:true})
+  })
+})
+Cypress.Commands.add("NotSecureCreditCardFillingIframe", () => {
+  cy.frameLoaded('[name="cardHolder-input"]')
+  cy.enter('[name="cardHolder-input"]').then(getBody => {
+  getBody().find('#cardHolder').clear({force: true}).type('TEST TEEESSSTT',{force:true})
+  })
+  cy.enter('[name="cardNumber-input"]').then(getBody => {
+  getBody().find('#cardNumber').clear({force: true}).type('4242424242424242',{force:true})
+  })
+  cy.enter('[name="expiryDate-input"]').then(getBody => {
+  getBody().find('#expiryDate').clear({force: true}).type('1226',{force:true})
+  })
+  cy.enter('[name="verificationCode-input"]').then(getBody => {
+  getBody().find('#verificationCode').clear({force: true}).type('222',{force:true})
+  })
+})
