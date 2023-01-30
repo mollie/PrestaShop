@@ -44,7 +44,7 @@ jobs:
           ${{ matrix.make }}
 
       - name: Running ${{ matrix.prestashop }} Cypress E2E tests
-        run: docker run -i -v $PWD:/e2e -w /e2e -e CYPRESS_baseUrl='https://demoshop1784.eu.ngrok.io' -e CYPRESS_MOLLIE_TEST_API_KEY=${{ secrets.MOLLIE_TEST_API_KEY }} -e CYPRESS_MOLLIE_TEST_PROFILE_ID=${{ secrets.MOLLIE_TEST_PROFILE_ID }} cypress/included:12.4.1
+        run: docker run -i -v $PWD:/e2e -w /e2e -e CYPRESS_baseUrl='https://demoshop1784.eu.ngrok.io' -e CYPRESS_MOLLIE_TEST_API_KEY=${{ secrets.MOLLIE_TEST_API_KEY }} -e CYPRESS_MOLLIE_TEST_PROFILE_ID=${{ secrets.MOLLIE_TEST_PROFILE_ID }} cypress/included:12.0.0
 
       # - run: |
       #     docker-compose -f ${{ matrix.yml }} up --force-recreate --exit-code-from cypress
