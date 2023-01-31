@@ -58,7 +58,7 @@ Cypress.on('window:before:load', (win) => {
 let failEarly = false;
 afterEach(() => {
   expect(windowConsoleError).to.not.be.called;
-  if (failEarly) throw new Error("Failing Early due to a fail somewhere in the workflow. Please check Cypress VIDEOS/SCREENSHOTS in the Artifacts for more details")
+  if (failEarly) throw new Error("Failing Early due to a fail somewhere in the workflow. If running on CI, please check Cypress VIDEOS/SCREENSHOTS in the Artifacts for more details.")
 })
 afterEach(function() {
   if (this.currentTest.state === "failed") failEarly = true
@@ -273,7 +273,7 @@ it('17 Credit Card Checkouting [Orders API]', () => {
       cy.visit('/admin1/')
       cy.OpenModuleDashboard()
       cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_on').click({force:true})
-      cy.get('[type="submit"]').first().click()
+      cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
       cy.visit('/SHOP2/en/index.php?controller=history')
       cy.get('a').click()
@@ -331,7 +331,7 @@ it('18 Check if customerId is passed during the 2nd payment using Single Click P
       //Disabling the single-click - no need again
       cy.OpenModuleDashboard()
       cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_off').click({force:true})
-      cy.get('[type="submit"]').first().click()
+      cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
 it('19 Credit Card Order BO Shipping, Refunding [Orders API]', () => {
@@ -390,7 +390,7 @@ it('23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.OpenModuleDashboard()
       cy.get('[href="#advanced_settings"]').click()
       cy.get('[name="MOLLIE_IMAGES"]').select('big')
-      cy.get('[type="submit"]').first().click()
+      cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
@@ -406,7 +406,7 @@ it('23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.OpenModuleDashboard()
       cy.get('[href="#advanced_settings"]').click()
       cy.get('[name="MOLLIE_IMAGES"]').select('hide')
-      cy.get('[type="submit"]').first().click()
+      cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
 it('24 Paypal Checkouting [Orders API]', () => {
