@@ -31,21 +31,32 @@ class SubscriptionCreationHandler
         $this->subscriptionDataFactory = $subscriptionDataFactory;
     }
 
-    public function handle(Order $order)
+    public function handle(Order $order, string $method)
     {
         $subscriptionData = $this->subscriptionDataFactory->build($order);
         $subscription = $this->subscriptionApi->subscribeOrder($subscriptionData);
 
+        $products = $order->getProducts();
+        $product = reset($products);
+
+        $recurringOrdersProduct = new \MolRecurringOrdersProduct();
+        $recurringOrdersProduct->id_product = $product['id_product'];
+        $recurringOrdersProduct->id_product_attribute = $product['product_attribute_id'];
+        $recurringOrdersProduct->quantity = $product['product_quantity'];
+        $recurringOrdersProduct->unit_price = $product['product_price'];
+        $recurringOrdersProduct->add();
+
         $recurringOrder = new MolRecurringOrder();
+        $recurringOrder->id_mol_recurring_orders_product = $recurringOrdersProduct->id;
         $recurringOrder->id_order = $order->id;
         $recurringOrder->id_cart = $order->id_cart;
+        $recurringOrder->id_currency = $order->id_currency;
+        $recurringOrder->id_customer = $order->id_customer;
         $recurringOrder->description = $subscription->description;
         $recurringOrder->status = $subscription->status;
-        $recurringOrder->quantity = '0'; //todo: check if we really need it
-        $recurringOrder->amount = $subscription->amount->value;
-        $recurringOrder->currency_iso = $subscription->amount->currency;
+        $recurringOrder->payment_method = $method;
         $recurringOrder->next_payment = $subscription->nextPaymentDate;
-        $recurringOrder->reminder_at = $subscription->nextPaymentDate; //todo: add logic to get reminder date when remidner is done
+        $recurringOrder->reminder_at = $subscription->nextPaymentDate; //todo: add logic to get reminder date when reminder is done
         $recurringOrder->cancelled_at = $subscription->canceledAt;
         $recurringOrder->mollie_subscription_id = $subscription->id;
         $recurringOrder->mollie_customer_id = $subscription->customerId;

@@ -12,6 +12,15 @@
 
 namespace Mollie\Repository;
 
+use MolCustomer;
+
 class MolCustomerRepository extends AbstractRepository
 {
+    public function findOneBy(array $keyValueCriteria): ?MolCustomer
+    {
+        /** @var ?MolCustomer $result */
+        $result = parent::findOneBy($keyValueCriteria);
+
+        return $result;
+    }
 }

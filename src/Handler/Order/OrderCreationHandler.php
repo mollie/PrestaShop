@@ -145,7 +145,7 @@ class OrderCreationHandler
             /* @phpstan-ignore-next-line */
             $orderId = (int) Order::getOrderByCartId((int) $cartId);
 
-            $this->createRecurringOrderEntity(new Order($orderId));
+            $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method);
 
             return $orderId;
         }
@@ -185,7 +185,7 @@ class OrderCreationHandler
 
         $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
 
-        $this->createRecurringOrderEntity(new Order($orderId));
+        $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->method);
 
         return $orderId;
     }
@@ -260,13 +260,13 @@ class OrderCreationHandler
         return $paymentData;
     }
 
-    private function createRecurringOrderEntity(Order $order)
+    private function createRecurringOrderEntity(Order $order, string $method)
     {
         $cart = new Cart($order->id_cart);
         if (!$this->subscriptionOrder->validate($cart)) {
             return;
         }
 
-        $this->recurringOrderCreation->handle($order);
+        $this->recurringOrderCreation->handle($order, $method);
     }
 }

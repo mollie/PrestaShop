@@ -46,7 +46,10 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
     {
         $qb = $this->getQueryBuilder($searchCriteria->getFilters())
             ->select('recurring_order.*')
-            ->addSelect('CONCAT(customer.firstname, " ", customer.lastname) as fullname');
+            ->addSelect('CONCAT(customer.firstname, " ", customer.lastname) as fullname')
+            ->addSelect('recurring_orders_product.*')
+            ->addSelect('currency.iso_code')
+        ;
 
         $this->searchCriteriaApplicator
             ->applyPagination($searchCriteria, $qb)
@@ -81,8 +84,10 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
             ->from($this->dbPrefix . Config::DB_PREFIX . 'recurring_order', 'recurring_order')
         ;
 
+        $qb->leftJoin('recurring_order', $this->dbPrefix . Config::DB_PREFIX . 'recurring_orders_product', 'recurring_orders_product', 'recurring_order.id_mol_recurring_orders_product = recurring_orders_product.id_mol_recurring_orders_product');
         $qb->leftJoin('recurring_order', $this->dbPrefix . 'orders', 'orders', 'recurring_order.id_order = orders.id_order');
         $qb->leftJoin('orders', $this->dbPrefix . 'customer', 'customer', 'orders.id_customer = customer.id_customer');
+        $qb->leftJoin('recurring_orders_product', $this->dbPrefix . 'currency', 'currency', 'currency.id_currency = recurring_order.id_currency');
 
         $this->applyFilters($filters, $qb);
 

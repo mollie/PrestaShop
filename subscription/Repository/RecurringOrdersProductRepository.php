@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Repository;
 
-use MolRecurringOrder;
+use MolRecurringOrdersProduct;
 use PrestaShopCollection;
 
-class RecurringOrderRepository extends AbstractRepository implements RecurringOrderRepositoryInterface
+class RecurringOrdersProductRepository extends AbstractRepository implements RecurringOrdersProductRepositoryInterface
 {
-    public function findOneBy(array $keyValueCriteria): ?MolRecurringOrder
+    public function findOneBy(array $keyValueCriteria): ?MolRecurringOrdersProduct
     {
-        /** @var ?MolRecurringOrder $result */
+        /** @var ?MolRecurringOrdersProduct $result */
         $result = parent::findOneBy($keyValueCriteria);
 
         return $result;

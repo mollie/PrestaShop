@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Tests\Unit\Factory;
 
+use Mollie\Adapter\Link;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Subscription\Config\Config;
@@ -59,7 +60,8 @@ class SubscriptionDataTest extends TestCase
             $subscriptionDescriptionProviderMock,
             $currencyAdapterMock,
             new CombinationRepository(),
-            $paymentMethodRepositoryMock
+            $paymentMethodRepositoryMock,
+            new Link()
         );
 
         $customerMock = $this->createMock('Customer');
@@ -91,6 +93,12 @@ class SubscriptionDataTest extends TestCase
             Config::DESCRIPTION_PREFIX . '-' . self::TEST_ORDER_ID . '-' . 19.99 . '-' . self::TEST_CURRENCY_ISO
         );
         $subscriptionDto->setMandateId(self::TEST_MANDATE_ID);
+
+        $link = new Link();
+        $subscriptionDto->setWebhookUrl($link->getModuleLink(
+            'mollie',
+            'subscriptionWebhook'
+        ));
 
         return [
             'first example' => [

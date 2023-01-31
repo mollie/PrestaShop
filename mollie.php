@@ -73,7 +73,6 @@ class Mollie extends PaymentModule
         $this->description = $this->l('Mollie Payments');
 
         $this->loadEnv();
-//        $this->setApiKey();
         new \Mollie\Handler\ErrorHandler\ErrorHandler($this, new Env());
     }
 
@@ -905,6 +904,24 @@ class Mollie extends PaymentModule
 
             $params['product'] = $product;
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function hookDisplayCustomerAccount()
+    {
+        $context = Context::getContext();
+        $id_customer = $context->customer->id;
+
+        $url = Context::getContext()->link->getModuleLink($this->name, 'subscriptions', [], true);
+
+        $this->context->smarty->assign([
+            'front_controller' => $url,
+            'id_customer' => $id_customer,
+        ]);
+
+        return $this->display(dirname(__FILE__), '/views/templates/front/subscription/customerAccount.tpl');
     }
 
     /**

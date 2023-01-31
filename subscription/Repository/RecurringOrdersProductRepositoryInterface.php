@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace Mollie\Subscription\Repository;
 
 use MolRecurringOrder;
+use MolRecurringOrdersProduct;
 use PrestaShopCollection;
 
-interface RecurringOrderRepositoryInterface
+interface RecurringOrdersProductRepositoryInterface
 {
     /**
      * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
      *
-     * @return ?MolRecurringOrder
+     * @return ?MolRecurringOrdersProduct
      */
-    public function findOneBy(array $keyValueCriteria): ?MolRecurringOrder;
+    public function findOneBy(array $keyValueCriteria): ?MolRecurringOrdersProduct;
 
     /**
      * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]

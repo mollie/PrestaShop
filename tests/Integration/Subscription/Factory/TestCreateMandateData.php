@@ -44,7 +44,7 @@ class TestCreateMandateData extends BaseTestCase
         $orderMock = $this->createMock('Order');
         $orderMock->method('getCustomer')->willReturn($customer);
 
-        $CreateMandateData = $mandateDataBuilder->build($orderMock);
+        $CreateMandateData = $mandateDataBuilder->buildFromOrder($orderMock);
         $this->assertEquals(self::CUSTOMER_ID, $CreateMandateData->getCustomerId());
         $this->assertEquals(
             [

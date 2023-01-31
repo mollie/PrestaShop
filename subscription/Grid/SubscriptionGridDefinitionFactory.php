@@ -95,17 +95,17 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                     'sortable' => true,
                 ])
             )
-            ->add((new DataColumn('amount'))
-                ->setName($this->module->l('Amount ID', self::FILE_NAME))
+            ->add((new DataColumn('unit_price'))
+                ->setName($this->module->l('Unit price', self::FILE_NAME))
                 ->setOptions([
-                    'field' => 'amount',
+                    'field' => 'unit_price',
                     'sortable' => true,
                 ])
             )
-            ->add((new DataColumn('currency_iso'))
+            ->add((new DataColumn('iso_code'))
                 ->setName($this->module->l('Currency', self::FILE_NAME))
                 ->setOptions([
-                    'field' => 'currency_iso',
+                    'field' => 'iso_code',
                     'sortable' => true,
                 ])
             )
@@ -217,23 +217,23 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                 ])
                 ->setAssociatedColumn('status')
             )
-            ->add((new Filter('amount', TextType::class))
+            ->add((new Filter('unit_price', TextType::class))
                 ->setTypeOptions([
                     'required' => false,
                     'attr' => [
-                        'placeholder' => $this->trans('Amount', [], 'Admin.International.Feature'),
+                        'placeholder' => $this->trans('Unit price', [], 'Admin.International.Feature'),
                     ],
                 ])
-                ->setAssociatedColumn('amount')
+                ->setAssociatedColumn('unit_price')
             )
-            ->add((new Filter('currency_iso', TextType::class))
+            ->add((new Filter('iso_code', TextType::class))
                 ->setTypeOptions([
                     'required' => false,
                     'attr' => [
                         'placeholder' => $this->trans('Currency', [], 'Admin.International.Feature'),
                     ],
                 ])
-                ->setAssociatedColumn('currency_iso')
+                ->setAssociatedColumn('iso_code')
             )
             ->add((new Filter('date_add', DateRangeType::class))
                 ->setAssociatedColumn('date_add')
