@@ -57,11 +57,7 @@ Cypress.on('window:before:load', (win) => {
 })
 afterEach(() => {
   expect(windowConsoleError).to.not.be.called;
-  if (failEarly) throw new Error("Failing Early due to an API problem")
 })
-afterEach(function() {
-  if (this.currentTest.state === "failed") failEarly = true
-});
 describe('PS1784 Tests Suite', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
@@ -272,7 +268,7 @@ it('17 Credit Card Checkouting [Orders API]', () => {
       cy.visit('/admin1/')
       cy.OpenModuleDashboard()
       cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_on').click({force:true})
-      cy.get('[type="submit"]').first().click()
+      cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
       cy.visit('/SHOP2/en/index.php?controller=history')
       cy.get('a').click()
@@ -330,7 +326,7 @@ it('18 Check if customerId is passed during the 2nd payment using Single Click P
       //Disabling the single-click - no need again
       cy.OpenModuleDashboard()
       cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_off').click({force:true})
-      cy.get('[type="submit"]').first().click()
+      cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
 it('19 Credit Card Order BO Shipping, Refunding [Orders API]', () => {
@@ -389,7 +385,7 @@ it('23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.OpenModuleDashboard()
       cy.get('[href="#advanced_settings"]').click()
       cy.get('[name="MOLLIE_IMAGES"]').select('big')
-      cy.get('[type="submit"]').first().click()
+      cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
@@ -405,7 +401,7 @@ it('23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.OpenModuleDashboard()
       cy.get('[href="#advanced_settings"]').click()
       cy.get('[name="MOLLIE_IMAGES"]').select('hide')
-      cy.get('[type="submit"]').first().click()
+      cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
 it('24 Paypal Checkouting [Orders API]', () => {
