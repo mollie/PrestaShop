@@ -655,6 +655,7 @@ Cypress.Commands.add("EnablingModuleMultistore", () => {
 Cypress.Commands.add("OpenModuleDashboard", () => {
     cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
     cy.get('#subtab-AdminModulesSf').click().wait(1000)
+    cy.reload()
     cy.get('[class="pstaggerAddTagInput "]').type('mollie')
     cy.get('[id="module-search-button"]').click()
     cy.get('.btn-group > .btn-primary-reverse').click()
