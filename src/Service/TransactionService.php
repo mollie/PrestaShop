@@ -109,7 +109,7 @@ class TransactionService
      */
     public function processTransaction($apiPayment)
     {
-//        $this->recurringOrderCreation->handle(new Order(965));
+//        $this->recurringOrderCreation->handle(new Order(1019), 'ideal');
         //die();
         if (empty($apiPayment)) {
             if (Configuration::get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
