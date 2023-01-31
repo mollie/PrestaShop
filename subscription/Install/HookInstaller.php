@@ -33,7 +33,6 @@ class HookInstaller extends AbstractInstaller
         return [
             'actionFrontControllerSetMedia',
             'actionValidateOrder',
-            'actionMollieSequenceType',
         ];
     }
 }
