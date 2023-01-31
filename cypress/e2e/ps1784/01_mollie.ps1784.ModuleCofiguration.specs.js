@@ -55,13 +55,13 @@ let windowConsoleError;
 Cypress.on('window:before:load', (win) => {
   windowConsoleError = cy.spy(win.console, 'error');
 })
+let failEarly = false;
 afterEach(() => {
   expect(windowConsoleError).to.not.be.called;
+  if (failEarly) throw new Error("Failing Early due to an API problem")
 })
 afterEach(function() {
-  if (this.currentTest.state === 'failed') {
-    Cypress.runner.stop()
-  }
+  if (this.currentTest.state === "failed") failEarly = true
 });
 describe('PS1784 Module initial configuration setup', () => {
   beforeEach(() => {
