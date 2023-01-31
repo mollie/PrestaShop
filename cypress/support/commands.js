@@ -646,8 +646,8 @@ Cypress.Commands.add("OrderRefundingPartialPaymentsAPI", () => {
 Cypress.Commands.add("EnablingModuleMultistore", () => {
   cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
   cy.get('#subtab-AdminModulesSf').click().wait(1000)
-  cy.get('.pstaggerAddTagInput').type('mollie')
-  cy.get('#module-search-button').click()
+  cy.get('[class="pstaggerAddTagInput "]').type('mollie')
+  cy.get('[id="module-search-button"]').click()
   cy.get('.btn-group > .btn-primary-reverse').click().wait(10000)
   // back to dashboard
   cy.get('#tab-AdminDashboard > .link').click()
@@ -655,8 +655,8 @@ Cypress.Commands.add("EnablingModuleMultistore", () => {
 Cypress.Commands.add("OpenModuleDashboard", () => {
     cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
     cy.get('#subtab-AdminModulesSf').click().wait(1000)
-    cy.get('.pstaggerAddTagInput').type('mollie')
-    cy.get('#module-search-button').click()
+    cy.get('[class="pstaggerAddTagInput "]').type('mollie')
+    cy.get('[id="module-search-button"]').click()
     cy.get('.btn-group > .btn-primary-reverse').click()
 })
 Cypress.Commands.add("CreditCardFillingIframe", () => {
