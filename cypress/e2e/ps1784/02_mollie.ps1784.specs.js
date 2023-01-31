@@ -58,7 +58,7 @@ Cypress.on('window:before:load', (win) => {
 let failEarly = false;
 afterEach(() => {
   expect(windowConsoleError).to.not.be.called;
-  if (failEarly) throw new Error("Failing Early due to a fail somewhere in the workflow. Please check Cypress VIDEOS/SCREENSHOTS in the Artifacts for more details")
+  if (failEarly) throw new Error("Failing Early due to a fail somewhere in the workflow. If running on CI, please check Cypress VIDEOS/SCREENSHOTS in the Artifacts for more details.")
 })
 afterEach(function() {
   if (this.currentTest.state === "failed") failEarly = true

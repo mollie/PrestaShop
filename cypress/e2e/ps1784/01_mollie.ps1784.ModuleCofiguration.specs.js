@@ -58,7 +58,7 @@ Cypress.on('window:before:load', (win) => {
 let failEarly = false;
 afterEach(() => {
   expect(windowConsoleError).to.not.be.called;
-  if (failEarly) throw new Error("Failing Early due to an API or other module configuration problem. Please check Cypress VIDEOS/SCREENSHOTS in the Artifacts for more details.")
+  if (failEarly) throw new Error("Failing Early due to an API or other module configuration problem. If running on CI, please check Cypress VIDEOS/SCREENSHOTS in the Artifacts for more details.")
 })
 afterEach(function() {
   if (this.currentTest.state === "failed") failEarly = true
@@ -86,7 +86,7 @@ it('02 Enabling Mollie carriers in Prestashop successfully', () => {
 it('03 Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
       cy.visit('/admin1/')
       cy.OpenModuleDashboard()
-      cy.get('[href="#advanced_settings"]').click()
+      cy.get('[href="#advanced_settings"]').click({force:true})
       cy.get('[id="MOLLIE_PAYMENTSCREEN_LOCALE"]').should('be.visible')
       cy.get('[id="MOLLIE_SEND_ORDER_CONFIRMATION"]').should('be.visible')
       cy.get('[id="MOLLIE_KLARNA_INVOICE_ON"]').should('be.visible')
