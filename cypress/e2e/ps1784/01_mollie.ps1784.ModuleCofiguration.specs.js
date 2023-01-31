@@ -58,7 +58,7 @@ Cypress.on('window:before:load', (win) => {
 let failEarly = false;
 afterEach(() => {
   expect(windowConsoleError).to.not.be.called;
-  if (failEarly) throw new Error("Failing Early due to an API problem")
+  if (failEarly) throw new Error("Failing Early due to an API or other module configuration problem. Please check Cypress VIDEOS/SCREENSHOTS in the Artifacts for more details.")
 })
 afterEach(function() {
   if (this.currentTest.state === "failed") failEarly = true
