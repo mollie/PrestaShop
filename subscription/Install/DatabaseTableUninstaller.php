@@ -24,6 +24,7 @@ final class DatabaseTableUninstaller extends AbstractUninstaller
         $sql = [];
 
         $sql[] = 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'mol_recurring_order`;';
+        $sql[] = 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'mol_recurring_orders_product`;';
 
         return $sql;
     }

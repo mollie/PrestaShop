@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mollie\Subscription\Handler;
 
@@ -31,8 +33,7 @@ class RecurringOrderCreationHandler
         RecurringOrderRepositoryInterface $recurringOrderRepository,
         Mollie $mollie,
         MollieOrderCreationService $mollieOrderCreationService
-    )
-    {
+    ) {
         $this->subscriptionApi = $subscriptionApi;
         $this->subscriptionDataFactory = $subscriptionDataFactory;
         $this->recurringOrderRepository = $recurringOrderRepository;

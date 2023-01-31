@@ -10,6 +10,7 @@ use Mollie\Api\Resources\Subscription as MollieSubscription;
 use Mollie\Subscription\DTO\CancelSubscriptionData;
 use Mollie\Subscription\DTO\CreateSubscriptionData;
 use Mollie\Subscription\DTO\GetSubscriptionData;
+use Mollie\Subscription\DTO\UpdateSubscriptionData;
 use Mollie\Subscription\Exception\SubscriptionApiException;
 use Mollie\Subscription\Factory\MollieApiFactory;
 
@@ -55,7 +56,16 @@ class SubscriptionApi
         try {
             return $this->apiClient->subscriptions->getForId($subscriptionData->getCustomerId(), $subscriptionData->getSubscriptionId());
         } catch (ApiException $e) {
-            throw new SubscriptionApiException('Failed to cancel subscription', SubscriptionApiException::CANCELLATION_FAILED, $e);
+            throw new SubscriptionApiException('Failed to get subscription', SubscriptionApiException::GETTER_FAILED, $e);
+        }
+    }
+
+    public function updateSubscription(UpdateSubscriptionData $updateSubscriptionData): MollieSubscription
+    {
+        try {
+            return $this->apiClient->subscriptions->update($updateSubscriptionData->getCustomerId(), $updateSubscriptionData->getSubscriptionId(), $updateSubscriptionData->jsonSerialize());
+        } catch (ApiException $e) {
+            throw new SubscriptionApiException('Failed to update subscription', SubscriptionApiException::UPDATE_FAILED, $e);
         }
     }
 }

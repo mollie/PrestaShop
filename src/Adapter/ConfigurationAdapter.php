@@ -16,9 +16,9 @@ use Shop;
 
 class ConfigurationAdapter
 {
-    public function get($key, $idShop = null, $idLang = null, $idShopGroup = null)
+    public function get($key, $idShop = null)
     {
-        return \Configuration::get($key, $idLang, $idShopGroup, $idShop);
+        return \Configuration::get($key, null, null, $idShop);
     }
 
     public function updateValue($key, $values, $idShop = null, $html = false, $idShopGroup = null)

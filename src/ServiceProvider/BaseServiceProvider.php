@@ -55,6 +55,8 @@ use Mollie\Subscription\Logger\LoggerInterface;
 use Mollie\Subscription\Logger\NullLogger;
 use Mollie\Subscription\Repository\RecurringOrderRepository;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
+use Mollie\Subscription\Repository\RecurringOrdersProductRepository;
+use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
 use Mollie\Subscription\Utility\Clock;
 use Mollie\Subscription\Utility\ClockInterface;
 use PrestaShop\PrestaShop\Core\Grid\Action\Row\AccessibilityChecker\AccessibilityCheckerInterface;
@@ -98,6 +100,8 @@ final class BaseServiceProvider
 
         $this->addService($container, RecurringOrderRepositoryInterface::class, RecurringOrderRepository::class)
             ->withArgument('MolRecurringOrder');
+        $this->addService($container, RecurringOrdersProductRepositoryInterface::class, RecurringOrdersProductRepository::class)
+            ->withArgument('MolRecurringOrdersProduct');
 
         $this->addService($container, TemplateParserInterface::class, SmartyTemplateParser::class);
 
