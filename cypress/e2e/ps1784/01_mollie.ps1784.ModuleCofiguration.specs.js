@@ -113,7 +113,7 @@ it('03 Checking the Advanced Settings tab, verifying the Front-end components, S
       cy.get('[id="MOLLIE_AS_STATUSES_info"]').should('exist')
       cy.get('[name="MOLLIE_DISPLAY_ERRORS"]').should('exist')
       cy.get('[name="MOLLIE_DEBUG_LOG"]').should('exist')
-      cy.get('#module_form_submit_btn').click() //checking the saving
+      cy.get('#module_form_submit_btn').click({force:true}) //checking the saving
       cy.get('[class="alert alert-success"]').should('be.visible') //checking if saving returns green alert
       //cy.window() will check if there are no Errors in console
 });
