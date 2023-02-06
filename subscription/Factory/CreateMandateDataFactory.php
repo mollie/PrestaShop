@@ -25,15 +25,19 @@ class CreateMandateDataFactory
         $this->methodRepository = $methodRepository;
     }
 
-    public function build(Order $order): CreateMandateDataDTO
+    public function buildFromOrder(Order $order): CreateMandateDataDTO
     {
         $customer = $order->getCustomer();
         /** @var \MolCustomer $molCustomer */
         $molCustomer = $this->customerRepository->findOneBy(['email' => $customer->email]);
 
         $payment = $this->methodRepository->getPaymentBy('cart_id', $order->id_cart);
-        $createMandateData = new CreateMandateDataDTO($molCustomer->customer_id, $payment['method'], $molCustomer->name);
 
-        return $createMandateData;
+        return new CreateMandateDataDTO($molCustomer->customer_id, $payment['method'], $molCustomer->name);
+    }
+
+    public function build(string $method, string $mollieCustomerId, string $customerName)
+    {
+        return new CreateMandateDataDTO($mollieCustomerId, $method, $customerName);
     }
 }

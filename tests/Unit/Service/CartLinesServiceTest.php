@@ -16,7 +16,6 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\DTO\Line;
 use Mollie\DTO\Object\Amount;
-use Mollie\Repository\AttributeRepository;
 use Mollie\Service\CartLinesService;
 use Mollie\Service\LanguageService;
 use Mollie\Service\VoucherService;
@@ -73,7 +72,7 @@ class CartLinesServiceTest extends TestCase
             $toolsAdapter->method($mock['function'])->with($mock['expects'])->willReturn($mock['return']);
         }
 
-        $voucherService = new VoucherService(new AttributeRepository(), $configurationAdapter);
+        $voucherService = new VoucherService($configurationAdapter);
 
         $cartLineService = new CartLinesService($languageService, $voucherService, $toolsAdapter);
         $cartLines = $cartLineService->getCartLines(

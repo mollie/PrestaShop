@@ -32,7 +32,7 @@ class Amount implements JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'value' => (string) $this->value,
+            'value' => (string) number_format($this->value, 2, '.', ''),
             'currency' => $this->currency,
         ];
     }

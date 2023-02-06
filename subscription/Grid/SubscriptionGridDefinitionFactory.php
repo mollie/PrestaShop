@@ -102,17 +102,17 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                     'sortable' => true,
                 ])
             )
-            ->add((new DataColumn('amount'))
-                ->setName($this->module->l('Amount ID', self::FILE_NAME))
+            ->add((new DataColumn('unit_price'))
+                ->setName($this->module->l('Unit price', self::FILE_NAME))
                 ->setOptions([
-                    'field' => 'amount',
+                    'field' => 'unit_price',
                     'sortable' => true,
                 ])
             )
-            ->add((new DataColumn('currency_iso'))
+            ->add((new DataColumn('iso_code'))
                 ->setName($this->module->l('Currency', self::FILE_NAME))
                 ->setOptions([
-                    'field' => 'currency_iso',
+                    'field' => 'iso_code',
                     'sortable' => true,
                 ])
             )
@@ -146,7 +146,7 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
             )
             ->add(
                 (new ActionColumn('actions'))
-                    ->setName($this->trans('Actions', [], 'Admin.Global'))
+                    ->setName($this->module->l('Actions', self::FILE_NAME))
                     ->setOptions([
                         'actions' => (new RowActionCollection())
                             ->add(
@@ -175,7 +175,7 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                 ->setTypeOptions([
                     'required' => false,
                     'attr' => [
-                        'placeholder' => $this->trans('ID', [], 'Admin.International.Feature'),
+                        'placeholder' => $this->module->l('ID', self::FILE_NAME),
                     ],
                 ])
                 ->setAssociatedColumn('id_mol_recurring_order')
@@ -184,7 +184,7 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                 ->setTypeOptions([
                     'required' => false,
                     'attr' => [
-                        'placeholder' => $this->trans('Subscription ID', [], 'Admin.International.Feature'),
+                        'placeholder' => $this->module->l('Subscription ID', self::FILE_NAME),
                     ],
                 ])
                 ->setAssociatedColumn('mollie_subscription_id')
@@ -193,7 +193,7 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                 ->setTypeOptions([
                     'required' => false,
                     'attr' => [
-                        'placeholder' => $this->trans('Customer ID', [], 'Admin.International.Feature'),
+                        'placeholder' => $this->module->l('Customer ID', self::FILE_NAME),
                     ],
                 ])
                 ->setAssociatedColumn('mollie_customer_id')
@@ -202,7 +202,7 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                 ->setTypeOptions([
                     'required' => false,
                     'attr' => [
-                        'placeholder' => $this->trans('Full name', [], 'Admin.International.Feature'),
+                        'placeholder' => $this->module->l('Full name', self::FILE_NAME),
                     ],
                 ])
                 ->setAssociatedColumn('fullname')
@@ -211,7 +211,7 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                 ->setTypeOptions([
                     'required' => false,
                     'attr' => [
-                        'placeholder' => $this->trans('Description', [], 'Admin.International.Feature'),
+                        'placeholder' => $this->module->l('Description', self::FILE_NAME),
                     ],
                 ])
                 ->setAssociatedColumn('description')
@@ -220,28 +220,28 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                 ->setTypeOptions([
                     'required' => false,
                     'attr' => [
-                        'placeholder' => $this->trans('Status', [], 'Admin.International.Feature'),
+                        'placeholder' => $this->module->l('Status', self::FILE_NAME),
                     ],
                 ])
                 ->setAssociatedColumn('status')
             )
-            ->add((new Filter('amount', TextType::class))
+            ->add((new Filter('unit_price', TextType::class))
                 ->setTypeOptions([
                     'required' => false,
                     'attr' => [
-                        'placeholder' => $this->trans('Amount', [], 'Admin.International.Feature'),
+                        'placeholder' => $this->module->l('Unit price', self::FILE_NAME),
                     ],
                 ])
-                ->setAssociatedColumn('amount')
+                ->setAssociatedColumn('unit_price')
             )
-            ->add((new Filter('currency_iso', TextType::class))
+            ->add((new Filter('iso_code', TextType::class))
                 ->setTypeOptions([
                     'required' => false,
                     'attr' => [
-                        'placeholder' => $this->trans('Currency', [], 'Admin.International.Feature'),
+                        'placeholder' => $this->module->l('Currency', self::FILE_NAME),
                     ],
                 ])
-                ->setAssociatedColumn('currency_iso')
+                ->setAssociatedColumn('iso_code')
             )
             ->add((new Filter('date_add', DateRangeType::class))
                 ->setAssociatedColumn('date_add')

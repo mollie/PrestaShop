@@ -12,13 +12,13 @@
 
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Errors\Http\HttpStatusCode;
-use Mollie\Subscription\Handler\RecurringOrderCreationHandler;
+use Mollie\Subscription\Handler\SubscriptionPaymentMethodUpdateHandler;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieController
+class MollieSubscriptionUpdateWebhookModuleFrontController extends AbstractMollieController
 {
     /** @var Mollie */
     public $module;
@@ -50,13 +50,18 @@ class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieContr
     protected function executeWebhook()
     {
         $transactionId = Tools::getValue('id');
+        $subscriptionId = Tools::getValue('subscription_id');
+
         if (!$transactionId) {
             $this->respond('failed', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY, 'Missing transaction id');
         }
+        if (!$subscriptionId) {
+            $this->respond('failed', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY, 'Missing subscription id');
+        }
 
-        /** @var RecurringOrderCreationHandler $recurringOrderCreationHandler */
-        $recurringOrderCreationHandler = $this->module->getService(RecurringOrderCreationHandler::class);
-        $recurringOrderCreationHandler->handle($transactionId);
+        /** @var SubscriptionPaymentMethodUpdateHandler $subscriptionPaymentMethodUpdateHandler */
+        $subscriptionPaymentMethodUpdateHandler = $this->module->getService(SubscriptionPaymentMethodUpdateHandler::class);
+        $subscriptionPaymentMethodUpdateHandler->handle($transactionId, $subscriptionId);
 
         return 'OK';
     }

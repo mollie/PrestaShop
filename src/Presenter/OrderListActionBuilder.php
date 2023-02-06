@@ -12,10 +12,8 @@
 
 namespace Mollie\Presenter;
 
-use Context;
 use Mollie;
 use Mollie\Adapter\Smarty;
-use Smarty_Data;
 
 class OrderListActionBuilder
 {

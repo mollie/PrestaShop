@@ -44,14 +44,14 @@ class TestCreateMandateData extends BaseTestCase
         $orderMock = $this->createMock('Order');
         $orderMock->method('getCustomer')->willReturn($customer);
 
-        $CreateMandateData = $mandateDataBuilder->build($orderMock);
-        $this->assertEquals(self::CUSTOMER_ID, $CreateMandateData->getCustomerId());
+        $createMandateData = $mandateDataBuilder->buildFromOrder($orderMock);
+        $this->assertEquals(self::CUSTOMER_ID, $createMandateData->getCustomerId());
         $this->assertEquals(
             [
                 'method' => MandateMethod::CREDITCARD,
                 'consumerName' => self::CUSTOMER_NAME,
             ],
-            $CreateMandateData->jsonSerialize()
+            $createMandateData->jsonSerialize()
         );
     }
 }
