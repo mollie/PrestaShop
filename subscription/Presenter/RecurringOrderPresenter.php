@@ -42,7 +42,7 @@ class RecurringOrderPresenter
         $recurringOrder = $this->recurringOrderRepository->findOneBy(['id_mol_recurring_order' => $recurringOrderId]);
         $recurringProduct = $this->recurringOrdersProductRepository->findOneBy(['id_mol_recurring_orders_product' => $recurringOrderId]);
 
-        $product = new Product($recurringProduct->id_product, null, $this->language->getDefaultLanguageId());
+        $product = new Product($recurringProduct->id_product, false, $this->language->getDefaultLanguageId());
         $combination = new Combination($recurringProduct->id_product_attribute, null, $this->language->getDefaultLanguageId());
         $order = new Order($recurringOrder->id_order);
         $currency = new Currency($order->id_currency);
