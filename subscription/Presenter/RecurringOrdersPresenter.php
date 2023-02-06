@@ -34,7 +34,7 @@ class RecurringOrdersPresenter
         $this->language = $language;
     }
 
-    public function present(string $molCustomerId)
+    public function present(string $molCustomerId): array
     {
         $recurringOrders = $this->recurringOrderRepository->findAllBy(['mollie_customer_id' => $molCustomerId]);
 

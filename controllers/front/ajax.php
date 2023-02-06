@@ -75,7 +75,7 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
         $presentedCart['totals'] = [
             'total' => [
                 'type' => 'total',
-                'label' => $this->translator->trans('Total', [], 'Shop.Theme.Checkout'),
+                'label' => $this->module->l('Total', self::FILE_NAME),
                 'amount' => $taxConfiguration->includeTaxes() ? $total_including_tax : $total_excluding_tax,
                 'value' => Tools::displayPrice(
                     $taxConfiguration->includeTaxes() ? (float) $total_including_tax : (float) $total_excluding_tax
@@ -83,13 +83,13 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
             ],
             'total_including_tax' => [
                 'type' => 'total',
-                'label' => $this->translator->trans('Total (tax incl.)', [], 'Shop.Theme.Checkout'),
+                'label' => $this->module->l('Total (tax incl.)', self::FILE_NAME),
                 'amount' => $total_including_tax,
                 'value' => Tools::displayPrice((float) $total_including_tax),
             ],
             'total_excluding_tax' => [
                 'type' => 'total',
-                'label' => $this->translator->trans('Total (tax excl.)', [], 'Shop.Theme.Checkout'),
+                'label' => $this->module->l('Total (tax excl.)', self::FILE_NAME),
                 'amount' => $total_excluding_tax,
                 'value' => Tools::displayPrice((float) $total_excluding_tax),
             ],

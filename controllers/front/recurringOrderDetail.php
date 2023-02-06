@@ -30,6 +30,8 @@ use Mollie\Subscription\Logger\RecurringOrderPresenter;
 
 class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieController
 {
+    private const FILE_NAME = 'recurringOrderDetail';
+
     /**
      * @var Mollie
      */
@@ -65,7 +67,7 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
         }
 
         $recurringOrderId = (int) Tools::getValue('id_mol_recurring_order');
-        $recurringOrderId = $recurringOrderId && Validate::isUnsignedId($recurringOrderId) ? $recurringOrderId : false;
+        $recurringOrderId = Validate::isUnsignedId($recurringOrderId) ? $recurringOrderId : false;
 
         if (!$recurringOrderId) {
             $this->redirect_after = '404';
@@ -90,7 +92,7 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
 
         $breadcrumb['links'][] = $this->addMyAccountToBreadcrumb();
         $breadcrumb['links'][] = [
-            'title' => $this->trans('Order history', [], 'Shop.Theme.Customeraccount'),
+            'title' => $this->module->l('Order history', self::FILE_NAME),
             'url' => $this->context->link->getPageLink('history'),
         ];
 

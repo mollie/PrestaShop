@@ -19,7 +19,7 @@ interface RecurringOrderRepositoryInterface
     /**
      * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
      *
-     * @return ?MolRecurringOrder
+     * @return ?PrestaShopCollection
      */
     public function findAllBy(array $keyValueCriteria): ?PrestaShopCollection;
 }
