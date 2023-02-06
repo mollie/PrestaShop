@@ -13,7 +13,7 @@
         "vlucas/phpdotenv": "3.4",
         "league/container": "2.5.0",
         "prestashop/module-lib-service-container": "v2.0",
-        "prestashop/autoindex": "^1.0"
+        "webmozart/assert": "^1.11"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
