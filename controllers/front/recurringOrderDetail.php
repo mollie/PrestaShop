@@ -85,17 +85,4 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
         $this->context->controller->addCSS($this->module->getPathUri() . 'views/css/front/subscription/customer_order_detail.css');
         $this->setTemplate('module:mollie/views/templates/front/subscription/customerRecurringOrderDetail.tpl');
     }
-
-    public function getBreadcrumbLinks()
-    {
-        $breadcrumb = parent::getBreadcrumbLinks();
-
-        $breadcrumb['links'][] = $this->addMyAccountToBreadcrumb();
-        $breadcrumb['links'][] = [
-            'title' => $this->module->l('Order history', self::FILE_NAME),
-            'url' => $this->context->link->getPageLink('history'),
-        ];
-
-        return $breadcrumb;
-    }
 }
