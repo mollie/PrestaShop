@@ -48,17 +48,24 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
             $newMethod = Tools::getValue('payment_method');
             $recurringOrderId = Tools::getValue('recurring_order_id');
 
+            if (!$this->isTokenValid()) {
+                $this->errors[] = $this->module->l('Error: token invalid.', self::FILE_NAME);
+
+                return;
+            }
+
             if (!$newMethod) {
-                $this->errors[] = $this->module->l('Failed to get new payment method.');
+                $this->errors[] = $this->module->l('Failed to get new payment method.', self::FILE_NAME);
 
                 return;
             }
 
             if (!$recurringOrderId) {
-                $this->errors[] = $this->module->l('Failed to get recurring order.');
+                $this->errors[] = $this->module->l('Failed to get recurring order.', self::FILE_NAME);
 
                 return;
             }
+
 
             /** @var FreeOrderCreationHandler $freeOrderCreationHandler */
             $freeOrderCreationHandler = $this->module->getService(FreeOrderCreationHandler::class);
@@ -74,10 +81,6 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
      */
     public function initContent()
     {
-        if (Configuration::isCatalogMode()) {
-            Tools::redirect('index.php');
-        }
-
         $recurringOrderId = (int) Tools::getValue('id_mol_recurring_order');
         $recurringOrderId = Validate::isUnsignedId($recurringOrderId) ? $recurringOrderId : false;
 
