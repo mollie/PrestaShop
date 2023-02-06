@@ -66,7 +66,6 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
                 return;
             }
 
-
             /** @var FreeOrderCreationHandler $freeOrderCreationHandler */
             $freeOrderCreationHandler = $this->module->getService(FreeOrderCreationHandler::class);
             $checkoutUrl = $freeOrderCreationHandler->handle($recurringOrderId, $newMethod);

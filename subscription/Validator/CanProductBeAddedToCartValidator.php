@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Mollie\Subscription\Validator;
 
 use Cart;
+use Mollie\Adapter\CartAdapter;
 use Mollie\Subscription\Exception\ProductValidationException;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 
 class CanProductBeAddedToCartValidator
 {
-    /** @var Cart */
+    /** @var CartAdapter */
     private $cart;
 
     /** @var SubscriptionProductValidator */
@@ -19,7 +20,7 @@ class CanProductBeAddedToCartValidator
     /** @var string */
     private $error;
 
-    public function __construct(Cart $cart, SubscriptionProductValidator $subscriptionProduct)
+    public function __construct(CartAdapter $cart, SubscriptionProductValidator $subscriptionProduct)
     {
         $this->cart = $cart;
         $this->subscriptionProduct = $subscriptionProduct;
