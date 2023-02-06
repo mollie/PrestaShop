@@ -185,7 +185,7 @@ class OrderCreationHandler
 
         $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
 
-        $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->method);
+        $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method);
 
         return $orderId;
     }
