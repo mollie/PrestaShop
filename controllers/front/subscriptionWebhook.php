@@ -11,13 +11,12 @@
  */
 
 use Mollie\Controller\AbstractMollieController;
+use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Subscription\Handler\RecurringOrderCreationHandler;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-
-require_once dirname(__FILE__) . '/../../mollie.php';
 
 class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieController
 {
@@ -51,6 +50,9 @@ class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieContr
     protected function executeWebhook()
     {
         $transactionId = Tools::getValue('id');
+        if (!$transactionId) {
+            $this->respond('failed', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY, 'Missing transaction id');
+        }
 
         /** @var RecurringOrderCreationHandler $recurringOrderCreationHandler */
         $recurringOrderCreationHandler = $this->module->getService(RecurringOrderCreationHandler::class);

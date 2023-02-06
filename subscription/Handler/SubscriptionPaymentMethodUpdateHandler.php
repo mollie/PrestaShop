@@ -37,9 +37,11 @@ class SubscriptionPaymentMethodUpdateHandler
     {
         $molPayment = $this->paymentApi->getPayment($transactionId);
         $recurringOrder = $this->recurringOrderRepository->findOneBy(['mollie_subscription_id' => $subscriptionId]);
+
         if (!$recurringOrder) {
             throw new MollieException('todo');
         }
+
         $subscriptionUpdateData = $this->subscriptionDataFactory->build($recurringOrder, $molPayment->mandateId);
         $newSubscription = $this->subscriptionApi->updateSubscription($subscriptionUpdateData);
         $recurringOrder->payment_method = $molPayment->method;

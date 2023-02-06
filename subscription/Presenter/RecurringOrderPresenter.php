@@ -46,6 +46,7 @@ class RecurringOrderPresenter
         $combination = new Combination($recurringProduct->id_product_attribute, null, $this->language->getDefaultLanguageId());
         $order = new Order($recurringOrder->id_order);
         $currency = new Currency($order->id_currency);
+
         $recurringOrderData = [];
         $recurringOrderData['recurring_order'] = $recurringOrder;
         $recurringOrderData['recurring_product'] = $recurringProduct;
