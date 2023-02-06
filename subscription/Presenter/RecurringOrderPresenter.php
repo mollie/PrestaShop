@@ -37,7 +37,7 @@ class RecurringOrderPresenter
         $this->methodApi = $methodApi;
     }
 
-    public function present(string $recurringOrderId)
+    public function present(string $recurringOrderId): array
     {
         $recurringOrder = $this->recurringOrderRepository->findOneBy(['id_mol_recurring_order' => $recurringOrderId]);
         $recurringProduct = $this->recurringOrdersProductRepository->findOneBy(['id_mol_recurring_orders_product' => $recurringOrderId]);
