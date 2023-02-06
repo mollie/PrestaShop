@@ -566,10 +566,22 @@ Cypress.Commands.add("OrderRefundingPartialPaymentsAPI", () => {
 Cypress.Commands.add("EnablingModuleMultistore", () => {
   cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
   cy.get('#subtab-AdminModulesSf').click().wait(1000)
-  cy.get('[data-name="Mollie"]').find('[data-confirm_modal="module-modal-confirm-mollie-enable"]').contains('Enable')
-  cy.get('[data-name="Mollie"]').find('[data-confirm_modal="module-modal-confirm-mollie-enable"]').click()
+  // enable or upgrade the module
+  cy.get('[data-name="Mollie"]').then(($body) => {
+    if ($body.text().includes('Upgrade')) {
+      // yup, module needs to be upgraded
+      cy.get('[data-name="Mollie"]').contains('Upgrade').click()
+      cy.get('.btn-secondary').click()
+    } else if ($body.text().includes('Enable')) {
+      // or just enable the module first
+      cy.get('[data-name="Mollie"]').contains('Enable').click()
+    } else {
+      // nop, just enter the module configuration
+      cy.get('[data-name="Mollie"]').contains('Configure').click()
+    }
+    })
   // back to dashboard
-  cy.get('#tab-AdminDashboard > .link').click()
+  cy.get('#tab-AdminDashboard > .link').click({force:true})
 })
 Cypress.Commands.add("OpenModuleDashboard", () => {
     cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
@@ -605,4 +617,8 @@ Cypress.Commands.add("NotSecureCreditCardFillingIframe", () => {
   cy.enter('[name="verificationCode-input"]').then(getBody => {
   getBody().find('#verificationCode').clear({force: true}).type('222',{force:true})
   })
+})
+Cypress.Commands.add("OpeningModuleDashboardURL", () => {
+  cy.visit('/admin1/index.php?controller=AdminModules&configure=mollie')
+  cy.get('.btn-continue').click()
 })
