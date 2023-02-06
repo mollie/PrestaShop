@@ -572,6 +572,7 @@ Cypress.Commands.add("EnablingModuleMultistore", () => {
       // yup, module needs to be upgraded
       cy.get('[data-name="Mollie"]').contains('Upgrade').click()
       cy.get('.btn-secondary').click()
+      cy.get('.growl').should('have.text','succeeded.')
     } else if ($body.text().includes('Enable')) {
       // or just enable the module first
       cy.get('[data-name="Mollie"]').contains('Enable').click()
