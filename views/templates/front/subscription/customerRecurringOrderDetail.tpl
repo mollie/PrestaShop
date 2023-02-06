@@ -25,7 +25,7 @@
 {extends file='customer/page.tpl'}
 
 {block name='page_title'}
-  {l s='Mollie recurring order details' d='Shop.Theme.Customeraccount'}
+  {l s='Mollie recurring order details' mod='mollie'}
 {/block}
 
 {block name='page_content'}
@@ -64,8 +64,8 @@
       <form action="" method="post">
 
         <header>
-          <h3>{l s='Recurring order method' d='Shop.Theme.Customeraccount'}</h3>
-          <p>{l s='If you would like to change the method of recurring order, you can select it here.' d='Shop.Theme.Customeraccount'}</p>
+          <h3>{l s='Recurring order method' mod='mollie'}</h3>
+          <p>{l s='If you would like to change the method of recurring order, you can select it here.' mod='mollie'}</p>
         </header>
 
         <section class="form-fields">

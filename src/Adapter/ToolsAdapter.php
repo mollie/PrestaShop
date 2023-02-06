@@ -30,4 +30,9 @@ class ToolsAdapter
     {
         return Tools::substr($str, $start, $length);
     }
+
+    public function displayPrice($price, $currency)
+    {
+        return Tools::displayPrice($price, $currency);
+    }
 }

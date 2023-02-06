@@ -34,8 +34,8 @@
                 <th>{l s='Status' d='Shop.Theme.Checkout'}</th>
                 <th>{l s='Method' d='Shop.Theme.Checkout'}</th>
                 <th>{l s='Product name' d='Shop.Theme.Checkout'}</th>
-                <th>{l s='Price' d='Shop.Theme.Checkout'}</th>
-                <th>{l s='Date add' d='Shop.Theme.Checkout'}</th>
+                <th>{l s='Total price' d='Shop.Theme.Checkout'}</th>
+                <th>{l s='Date created' d='Shop.Theme.Checkout'}</th>
                 <th></th>
             </tr>
             </thead>
@@ -46,7 +46,7 @@
                     <td>{$recurringOrder.recurring_order->status}</td>
                     <td>{$recurringOrder.recurring_order->payment_method}</td>
                     <td>{$recurringOrder.product->name}</td>
-                    <td>{$recurringOrder.product_combination_price}</td>
+                    <td>{$recurringOrder.total_price}</td>
                     <td>{$recurringOrder.recurring_order->date_add}</td>
                     <td class="text-sm-center order-actions">
                         <a href="{$recurringOrder.details_url}" data-link-action="view-order-details">
