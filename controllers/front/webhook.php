@@ -23,8 +23,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require_once dirname(__FILE__) . '/../../mollie.php';
-
 class MollieWebhookModuleFrontController extends AbstractMollieController
 {
     /** @var Mollie */

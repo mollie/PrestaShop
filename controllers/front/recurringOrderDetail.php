@@ -48,6 +48,18 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
             $newMethod = Tools::getValue('payment_method');
             $recurringOrderId = Tools::getValue('recurring_order_id');
 
+            if (!$newMethod) {
+                $this->errors[] = $this->module->l('Failed to get new payment method.');
+
+                return;
+            }
+
+            if (!$recurringOrderId) {
+                $this->errors[] = $this->module->l('Failed to get recurring order.');
+
+                return;
+            }
+
             /** @var FreeOrderCreationHandler $freeOrderCreationHandler */
             $freeOrderCreationHandler = $this->module->getService(FreeOrderCreationHandler::class);
             $checkoutUrl = $freeOrderCreationHandler->handle($recurringOrderId, $newMethod);
@@ -70,8 +82,7 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
         $recurringOrderId = Validate::isUnsignedId($recurringOrderId) ? $recurringOrderId : false;
 
         if (!$recurringOrderId) {
-            $this->redirect_after = '404';
-            $this->redirect();
+            Tools::redirect(Context::getContext()->link->getModuleLink($this->module->name, 'subscriptions', [], true));
         }
 
         /** @var RecurringOrderPresenter $recurringOrderPresenter */

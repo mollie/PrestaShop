@@ -43,6 +43,7 @@ class RecurringOrdersPresenter
             $recurringProduct = $this->recurringOrdersProductRepository->findOneBy(['id_mol_recurring_orders_product' => $recurringOrder->id]);
             $product = new Product($recurringProduct->id_product, false, $this->language->getDefaultLanguageId());
             $combination = new Combination($recurringProduct->id_product_attribute, null, $this->language->getDefaultLanguageId());
+
             $recurringOrderData = [];
             $recurringOrderData['recurring_order'] = $recurringOrder;
             $recurringOrderData['details_url'] = $this->link->getModuleLink('mollie', 'recurringOrderDetail', ['id_mol_recurring_order' => $recurringOrder->id]);

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Handler;
 
+use Mollie\Api\Resources\Subscription;
 use Mollie\Subscription\Api\SubscriptionApi;
 use Mollie\Subscription\Factory\CreateSubscriptionDataFactory;
 use Mollie\Subscription\Utility\ClockInterface;
 use MolRecurringOrder;
+use MolRecurringOrdersProduct;
 use Order;
 
 class SubscriptionCreationHandler
@@ -39,13 +41,25 @@ class SubscriptionCreationHandler
         $products = $order->getProducts();
         $product = reset($products);
 
-        $recurringOrdersProduct = new \MolRecurringOrdersProduct();
+        $recurringOrdersProduct = $this->createRecurringOrdersProduct($product);
+
+        $this->createRecurringOrder($recurringOrdersProduct, $order, $subscription, $method);
+    }
+
+    private function createRecurringOrdersProduct(array $product): MolRecurringOrdersProduct
+    {
+        $recurringOrdersProduct = new MolRecurringOrdersProduct();
         $recurringOrdersProduct->id_product = $product['id_product'];
         $recurringOrdersProduct->id_product_attribute = $product['product_attribute_id'];
         $recurringOrdersProduct->quantity = $product['product_quantity'];
         $recurringOrdersProduct->unit_price = $product['product_price'];
         $recurringOrdersProduct->add();
 
+        return $recurringOrdersProduct;
+    }
+
+    private function createRecurringOrder(MolRecurringOrdersProduct $recurringOrdersProduct, Order $order, Subscription $subscription, string $method): void
+    {
         $recurringOrder = new MolRecurringOrder();
         $recurringOrder->id_mol_recurring_orders_product = $recurringOrdersProduct->id;
         $recurringOrder->id_order = $order->id;
