@@ -73,14 +73,6 @@ class mollieSubscriptionsModuleFrontController extends ModuleFrontController
         $this->setTemplate('module:mollie/views/templates/front/subscription/customerSubscriptionsData.tpl');
     }
 
-    public function getBreadcrumbLinks()
-    {
-        $breadcrumb = parent::getBreadcrumbLinks();
-        $breadcrumb['links'][] = $this->addMyAccountToBreadcrumb();
-
-        return $breadcrumb;
-    }
-
     public function setMedia()
     {
         $js_path = $this->module->getPathUri() . '/views/js/';
