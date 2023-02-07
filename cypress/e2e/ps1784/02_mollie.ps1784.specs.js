@@ -399,7 +399,7 @@ it('C339360: 23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       //todo finish
       cy.visit('/admin1/')
       cy.OpenModuleDashboard()
-      cy.get('[href="#advanced_settings"]').click()
+      cy.get('[href="#advanced_settings"]').click({force:true})
       cy.get('[name="MOLLIE_IMAGES"]').select('hide')
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
