@@ -6,7 +6,6 @@ namespace Mollie\Subscription\Handler;
 
 use Cart;
 use Mollie;
-use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Subscription\Api\SubscriptionApi;
@@ -47,7 +46,7 @@ class RecurringOrderCreationHandler
         $recurringOrder = $this->recurringOrderRepository->findOneBy(['mollie_subscription_id' => $transaction->subscriptionId]);
         $subscriptionData = $this->subscriptionDataFactory->build((int) $recurringOrder->id);
         $subscription = $this->subscriptionApi->getSubscription($subscriptionData);
-//todo: add transaction status check
+        //todo: add transaction status check
         $cart = new Cart($recurringOrder->id_cart);
         $newCart = $cart->duplicate();
         if (!$newCart['success']) {
