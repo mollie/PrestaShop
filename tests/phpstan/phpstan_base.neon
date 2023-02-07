@@ -37,7 +37,7 @@ parameters:
     - '#Access to an undefined property Cookie\:\:\$[a-zA-Z0-9_]+#'
     - '#Access to property \$[a-zA-Z0-9_]+ on an unknown class ProductAttributeCore.#'
     - '#Access to property \$[a-zA-Z0-9_]+ on an unknown class AttributeCore.#'
-    - '#Call to method add\(\) on an unknown class ProductAttributeCore.#'
-    - '#Call to method add\(\) on an unknown class AttributeCore.#'
+    - '#Call to method [a-zA-Z0-9_]+\(\) on an unknown class ProductAttributeCore.#'
+    - '#Call to method [a-zA-Z0-9_]+\(\) on an unknown class AttributeCore.#'
 
   level: 5
