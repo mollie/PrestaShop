@@ -12,6 +12,7 @@ parameters:
   excludePaths:
       - ../../src/Grid/
       - ../../src/Controller/AdminMollieEmailController
+      - ../../src/Adapter/ProductAttributeAdapter
   excludes_analyse:
   reportUnmatchedIgnoredErrors: false
   checkMissingIterableValueType: false

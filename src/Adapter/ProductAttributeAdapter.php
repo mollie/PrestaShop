@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Mollie\Adapter;
 
@@ -8,6 +10,7 @@ class ProductAttributeAdapter
 {
     /**
      * @return \AttributeCore|\ProductAttributeCore
+     *
      * @throws MollieException
      */
     public function getProductAttribute(?int $id = null, ?int $idLang = null, ?int $idShop = null)
