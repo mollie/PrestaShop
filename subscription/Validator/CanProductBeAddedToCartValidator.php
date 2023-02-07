@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Validator;
 
-use Cart;
 use Mollie\Adapter\CartAdapter;
 use Mollie\Subscription\Exception\ProductValidationException;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;

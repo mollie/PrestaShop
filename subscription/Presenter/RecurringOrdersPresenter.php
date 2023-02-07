@@ -11,6 +11,7 @@ use Mollie\Adapter\ToolsAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
 use MolRecurringOrder;
+use PrestaShop\Decimal\Number;
 use Product;
 
 class RecurringOrdersPresenter
@@ -49,13 +50,14 @@ class RecurringOrdersPresenter
         foreach ($recurringOrders as $recurringOrder) {
             $recurringProduct = $this->recurringOrdersProductRepository->findOneBy(['id_mol_recurring_orders_product' => $recurringOrder->id]);
             $product = new Product($recurringProduct->id_product, false, $this->language->getDefaultLanguageId());
+            $totalPrice = (new Number((string) $recurringProduct->unit_price))->times(new Number((string) $recurringProduct->quantity));
 
             $recurringOrderData = [];
             $recurringOrderData['recurring_order'] = $recurringOrder;
             $recurringOrderData['details_url'] = $this->link->getModuleLink('mollie', 'recurringOrderDetail', ['id_mol_recurring_order' => $recurringOrder->id]);
             $recurringOrderData['recurring_product'] = $recurringProduct;
             $recurringOrderData['product'] = $product;
-            $recurringOrderData['total_price'] = $this->tools->displayPrice($recurringProduct->unit_price * $recurringProduct->quantity, new Currency($recurringOrder->id_currency));
+            $recurringOrderData['total_price'] = $this->tools->displayPrice($totalPrice->toPrecision(2), new Currency($recurringOrder->id_currency));
             $recurringOrderData['currency'] = new \Currency($recurringOrder->id_currency);
             $recurringOrdersPresentData[] = $recurringOrderData;
         }
