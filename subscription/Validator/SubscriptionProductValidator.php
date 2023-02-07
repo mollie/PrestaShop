@@ -6,7 +6,9 @@ namespace Mollie\Subscription\Validator;
 
 use Combination;
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Subscription\Config\Config;
+use Mollie\Subscription\Repository\CombinationRepository;
 use Mollie\Subscription\Repository\ProductCombinationRepository;
 
 class SubscriptionProductValidator
@@ -17,17 +19,21 @@ class SubscriptionProductValidator
     /** @var ProductCombinationRepository */
     private $combinationRepository;
 
-    /** @var \Mollie\Subscription\Repository\CombinationRepository */
+    /** @var CombinationRepository */
     private $combination;
+    /** @var ProductAttributeAdapter */
+    private $attributeAdapter;
 
     public function __construct(
         ConfigurationAdapter $configuration,
         ProductCombinationRepository $combinationRepository,
-        \Mollie\Subscription\Repository\CombinationRepository $combination
+        CombinationRepository $combination,
+        ProductAttributeAdapter $attributeAdapter
     ) {
         $this->configuration = $configuration;
         $this->combinationRepository = $combinationRepository;
         $this->combination = $combination;
+        $this->attributeAdapter = $attributeAdapter;
     }
 
     /**
@@ -49,7 +55,7 @@ class SubscriptionProductValidator
     private function isSubscriptionAttribute(int $attributeId): bool
     {
         // need to add core because if we use Attribute then symfony attribute is used
-        $attribute = new \AttributeCore($attributeId);
+        $attribute = $this->attributeAdapter->getProductAttribute($attributeId);
 
         if ($attributeId === (int) $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_NONE)) {
             return false;
