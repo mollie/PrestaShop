@@ -44,7 +44,15 @@ jobs:
           ${{ matrix.make }}
 
       - name: Running ${{ matrix.prestashop }} Cypress E2E tests
-        run: docker run -i -v $PWD:/e2e -w /e2e -e CYPRESS_baseUrl='https://demoshop1784.eu.ngrok.io' -e CYPRESS_MOLLIE_TEST_API_KEY=${{ secrets.MOLLIE_TEST_API_KEY }} -e CYPRESS_MOLLIE_TEST_PROFILE_ID=${{ secrets.MOLLIE_TEST_PROFILE_ID }} cypress/included:cypress-12.4.1-node-16.18.1-chrome-109.0.5414.74-1-ff-109.0-edge-109.0.1518.52-1 --browser chrome #cypress/included:12.4.1
+        run: docker run -i -v $PWD:/e2e -w /e2e \
+        -e CYPRESS_baseUrl='https://demoshop1784.eu.ngrok.io' \
+        -e CYPRESS_MOLLIE_TEST_API_KEY=${{ secrets.MOLLIE_TEST_API_KEY }} \
+        -e CYPRESS_MOLLIE_TEST_PROFILE_ID=${{ secrets.MOLLIE_TEST_PROFILE_ID }} \
+        -e CYPRESS_TESTRAIL_DOMAIN=${{ secrets.TESTRAIL_DOMAIN }} \
+        -e CYPRESS_TESTRAIL_USERNAME=${{ secrets.TESTRAIL_USERNAME }} \
+        -e CYPRESS_TESTRAIL_PASSWORD=${{ secrets.TESTRAIL_PASSWORD }} \
+        -e CYPRESS_TESTRAIL_RUN_CLOSE=true \
+        cypress/included:cypress-12.4.1-node-16.18.1-chrome-109.0.5414.74-1-ff-109.0-edge-109.0.1518.52-1 --browser chrome #cypress/included:12.4.1
 
       - name: Archive videos and screenshots
         if: ${{ always() }}
