@@ -16,9 +16,15 @@
  * @type {Cypress.PluginConfig}
  */
 module.exports = (on, config) => {    on('before:browser:launch', (browser = {}, launchOptions) => {
-        if (browser.name === 'chrome' || browser.name === 'edge') {
-            launchOptions.args.push('--disable-features=SameSiteByDefaultCookies')
-            return launchOptions
-        }
-    })
+  if (browser.name === 'chrome' || browser.name === 'edge') {
+      launchOptions.args.push('--disable-features=SameSiteByDefaultCookies')
+      return launchOptions
+  }
+})
+}
+const TestRailReporter = require('cypress-testrail');
+
+module.exports = (on, config) => {
+new TestRailReporter(on, config).register();
+return config
 }
