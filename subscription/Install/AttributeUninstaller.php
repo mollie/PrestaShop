@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Install;
 
-use AttributeCore as Attribute;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\ProductAttributeAdapter;
@@ -44,7 +43,7 @@ class AttributeUninstaller extends AbstractUninstaller
     {
         try {
             foreach (Config::getSubscriptionAttributeOptions() as $attributeName => $attributeConfigKey) {
-                $attribute = $this->attributeAdapter->getProductAttribute((int) $this->configuration->get($attributeConfigKey)) ;
+                $attribute = $this->attributeAdapter->getProductAttribute((int) $this->configuration->get($attributeConfigKey));
                 $attribute->delete();
             }
 
