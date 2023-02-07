@@ -24,6 +24,7 @@ use Hook;
 use Language;
 use Mail;
 use Mollie;
+use Mollie\Adapter\ProductAttributeAdapter;
 use Order;
 use OrderState;
 use PDF;
@@ -44,11 +45,14 @@ class MailService
      * @var Context
      */
     private $context;
+    /** @var ProductAttributeAdapter */
+    private $attributeAdapter;
 
-    public function __construct(Mollie $module)
+    public function __construct(Mollie $module, ProductAttributeAdapter $attributeAdapter)
     {
         $this->module = $module;
         $this->context = Context::getContext();
+        $this->attributeAdapter = $attributeAdapter;
     }
 
     public function sendSecondChanceMail(Customer $customer, $checkoutUrl, $methodName, $shopId)
@@ -127,7 +131,7 @@ class MailService
 
             $product_price = PS_TAX_EXC == Product::getTaxCalculationMethod() ? Tools::ps_round($price, 2) : $price_wt;
 
-            $attribute = new Attribute($product['product_attribute_id'], $this->context->language->id);
+            $attribute = $this->attributeAdapter->getProductAttribute($product['product_attribute_id'], $this->context->language->id);
             $product_var_tpl = [
                 'id_product' => $product['id_product'],
                 'reference' => $product['reference'],

@@ -16,9 +16,6 @@ class CanProductBeAddedToCartValidator
     /** @var SubscriptionProductValidator */
     private $subscriptionProduct;
 
-    /** @var string */
-    private $error;
-
     public function __construct(CartAdapter $cart, SubscriptionProductValidator $subscriptionProduct)
     {
         $this->cart = $cart;

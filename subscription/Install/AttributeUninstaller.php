@@ -7,6 +7,7 @@ namespace Mollie\Subscription\Install;
 use AttributeCore as Attribute;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Logger\LoggerInterface;
 use PrestaShopException;
@@ -24,22 +25,26 @@ class AttributeUninstaller extends AbstractUninstaller
 
     /** @var LoggerInterface */
     private $logger;
+    /** @var ProductAttributeAdapter */
+    private $attributeAdapter;
 
     public function __construct(
         LoggerInterface $logger,
         ConfigurationAdapter $configuration,
-        Mollie $module
+        Mollie $module,
+        ProductAttributeAdapter $attributeAdapter
     ) {
         $this->configuration = $configuration;
         $this->module = $module;
         $this->logger = $logger;
+        $this->attributeAdapter = $attributeAdapter;
     }
 
     public function uninstall(): bool
     {
         try {
             foreach (Config::getSubscriptionAttributeOptions() as $attributeName => $attributeConfigKey) {
-                $attribute = new Attribute($this->configuration->get($attributeConfigKey));
+                $attribute = $this->attributeAdapter->getProductAttribute((int) $this->configuration->get($attributeConfigKey)) ;
                 $attribute->delete();
             }
 
