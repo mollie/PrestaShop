@@ -47,7 +47,7 @@ class RecurringOrderCreationHandler
         $recurringOrder = $this->recurringOrderRepository->findOneBy(['mollie_subscription_id' => $transaction->subscriptionId]);
         $subscriptionData = $this->subscriptionDataFactory->build((int) $recurringOrder->id);
         $subscription = $this->subscriptionApi->getSubscription($subscriptionData);
-
+//todo: add transaction status check
         $cart = new Cart($recurringOrder->id_cart);
         $newCart = $cart->duplicate();
         if (!$newCart['success']) {
@@ -57,7 +57,7 @@ class RecurringOrderCreationHandler
         $newCart = $newCart['cart'];
         $this->mollie->validateOrder(
             (int) $newCart->id,
-            Config::getStatuses()[PaymentStatus::STATUS_PAID],
+            Config::getStatuses()[$transaction->status],
             (float) $subscription->amount->value,
             $transaction->method,
             null,
