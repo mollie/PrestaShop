@@ -49,7 +49,6 @@ class RecurringOrderPresenter
         $recurringOrderData['recurring_order'] = $recurringOrder;
         $recurringOrderData['recurring_product'] = $recurringProduct;
         $recurringOrderData['product'] = $product;
-        $recurringOrderData['total_price'] = $recurringProduct->unit_price * $recurringProduct->quantity;
         $recurringOrderData['order'] = (new OrderPresenter())->present($order);
         $recurringOrderData['payment_methods'] = $this->methodApi->getMethodsForFirstPayment($this->language->getContextLanguage()->locale, $currency->iso_code);
 
