@@ -26,6 +26,7 @@
 
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Subscription\Handler\FreeOrderCreationHandler;
+use Mollie\Subscription\Handler\SubscriptionCancellationHandler;
 use Mollie\Subscription\Logger\RecurringOrderPresenter;
 
 class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieController
@@ -48,7 +49,7 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
             $newMethod = Tools::getValue('payment_method');
             $recurringOrderId = Tools::getValue('recurring_order_id');
 
-            if (!$this->isTokenValid()) {
+            if (!$this->validateToken()) {
                 $this->errors[] = $this->module->l('Error: token invalid.', self::FILE_NAME);
 
                 return;
@@ -70,6 +71,28 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
             $freeOrderCreationHandler = $this->module->getService(FreeOrderCreationHandler::class);
             $checkoutUrl = $freeOrderCreationHandler->handle($recurringOrderId, $newMethod);
             Tools::redirect($checkoutUrl);
+        }
+
+        if (Tools::isSubmit('submitCancelSubscriptionMethod')) {
+            $recurringOrderId = Tools::getValue('recurring_order_id');
+
+            if (!$this->validateToken()) {
+                $this->errors[] = $this->module->l('Error: token invalid.', self::FILE_NAME);
+
+                return;
+            }
+
+            if (!$recurringOrderId) {
+                $this->errors[] = $this->module->l('Failed to get recurring order.', self::FILE_NAME);
+
+                return;
+            }
+
+            /** @var SubscriptionCancellationHandler $subscriptionCancellationHandler */
+            $subscriptionCancellationHandler = $this->module->getService(SubscriptionCancellationHandler::class);
+
+            $subscriptionCancellationHandler->handle($recurringOrderId);
+            $this->success[] = $this->module->l('Successfully canceled subscription.', self::FILE_NAME);
         }
     }
 
@@ -93,10 +116,20 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
 
         $this->context->smarty->assign([
             'recurringOrderData' => $recurringOrderPresenter->present($recurringOrderId),
+            'token' => Tools::getToken(),
         ]);
 
         parent::initContent();
         $this->context->controller->addCSS($this->module->getPathUri() . 'views/css/front/subscription/customer_order_detail.css');
         $this->setTemplate('module:mollie/views/templates/front/subscription/customerRecurringOrderDetail.tpl');
+    }
+
+    private function validateToken(): bool
+    {
+        if (!Configuration::get('PS_TOKEN_ENABLE')) {
+            return true;
+        }
+
+        return strcasecmp(Tools::getToken(), Tools::getValue('token')) == 0;
     }
 }

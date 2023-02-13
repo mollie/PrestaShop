@@ -5,11 +5,7 @@ declare(strict_types=1);
 namespace Mollie\Subscription\Controller\Symfony;
 
 use Exception;
-use Mollie\Api\Types\SubscriptionStatus;
-use Mollie\Subscription\Api\SubscriptionApi;
 use Mollie\Subscription\Exception\SubscriptionApiException;
-use Mollie\Subscription\Factory\CancelSubscriptionDataFactory;
-use Mollie\Subscription\Factory\GetSubscriptionDataFactory;
 use Mollie\Subscription\Filters\SubscriptionFilters;
 use Mollie\Subscription\Handler\SubscriptionCancellationHandler;
 use PrestaShop\PrestaShop\Core\Grid\GridFactoryInterface;
@@ -49,47 +45,22 @@ class SubscriptionController extends AbstractSymfonyController
      *
      * @return RedirectResponse
      */
-    public function deleteAction(int $subscriptionId): RedirectResponse
+    public function cancelAction(int $subscriptionId): RedirectResponse
     {
-        /** @var SubscriptionApi $subscriptionApi */
-        $subscriptionApi = $this->leagueContainer->getService(SubscriptionApi::class);
-
         /** @var SubscriptionCancellationHandler $orderCancellationHandler */
         $orderCancellationHandler = $this->leagueContainer->getService(SubscriptionCancellationHandler::class);
-
-        /** @var CancelSubscriptionDataFactory $cancelSubscriptionDataFactory */
-        $cancelSubscriptionDataFactory = $this->leagueContainer->getService(CancelSubscriptionDataFactory::class);
-
-        /** @var GetSubscriptionDataFactory $getSubscriptionDataFactory */
-        $getSubscriptionDataFactory = $this->leagueContainer->getService(GetSubscriptionDataFactory::class);
-
         try {
-            $cancelSubscriptionData = $cancelSubscriptionDataFactory->build($subscriptionId);
-            $subscription = $subscriptionApi->cancelSubscription($cancelSubscriptionData);
+            $orderCancellationHandler->handle($subscriptionId);
         } catch (SubscriptionApiException $e) {
-            // if subscription cancel fails we check if its already canceled and if its then we update it to canceled
-            $getSubscriptionData = $getSubscriptionDataFactory->build($subscriptionId);
-            try {
-                $subscription = $subscriptionApi->getSubscription($getSubscriptionData);
-            } catch (SubscriptionApiException $e) {
-                $this->addFlash('error', $this->getErrorMessage($e));
+            $this->addFlash('error', $this->getErrorMessage($e));
 
-                return $this->redirectToRoute('admin_subscription_index');
-            }
-
-            if ($subscription->status !== SubscriptionStatus::STATUS_CANCELED) {
-                $this->addFlash('error', $this->getErrorMessage($e));
-
-                return $this->redirectToRoute('admin_subscription_index');
-            }
+            return $this->redirectToRoute('admin_subscription_index');
         }
 
         $this->addFlash(
             'success',
             $this->module->l('Successfully canceled', self::FILE_NAME)
         );
-
-        $orderCancellationHandler->handle($subscriptionId, $subscription->status, $subscription->canceledAt);
 
         return $this->redirectToRoute('admin_subscription_index');
     }
