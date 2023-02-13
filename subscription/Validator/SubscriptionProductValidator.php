@@ -22,18 +22,18 @@ class SubscriptionProductValidator
     /** @var CombinationRepository */
     private $combination;
     /** @var ProductAttributeAdapter */
-    private $attributeAdapter;
+    private $productAttributeAdapter;
 
     public function __construct(
         ConfigurationAdapter $configuration,
         ProductCombinationRepository $combinationRepository,
         CombinationRepository $combination,
-        ProductAttributeAdapter $attributeAdapter
+        ProductAttributeAdapter $productAttributeAdapter
     ) {
         $this->configuration = $configuration;
         $this->combinationRepository = $combinationRepository;
         $this->combination = $combination;
-        $this->attributeAdapter = $attributeAdapter;
+        $this->productAttributeAdapter = $productAttributeAdapter;
     }
 
     /**
@@ -55,7 +55,7 @@ class SubscriptionProductValidator
     private function isSubscriptionAttribute(int $attributeId): bool
     {
         // need to add core because if we use Attribute then symfony attribute is used
-        $attribute = $this->attributeAdapter->getProductAttribute($attributeId);
+        $attribute = $this->productAttributeAdapter->getProductAttribute($attributeId);
 
         if ($attributeId === (int) $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_NONE)) {
             return false;

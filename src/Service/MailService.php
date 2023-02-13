@@ -45,13 +45,13 @@ class MailService
      */
     private $context;
     /** @var ProductAttributeAdapter */
-    private $attributeAdapter;
+    private $productAttributeAdapter;
 
-    public function __construct(Mollie $module, ProductAttributeAdapter $attributeAdapter)
+    public function __construct(Mollie $module, ProductAttributeAdapter $productAttributeAdapter)
     {
         $this->module = $module;
         $this->context = Context::getContext();
-        $this->attributeAdapter = $attributeAdapter;
+        $this->productAttributeAdapter = $productAttributeAdapter;
     }
 
     public function sendSecondChanceMail(Customer $customer, $checkoutUrl, $methodName, $shopId)
@@ -130,7 +130,7 @@ class MailService
 
             $product_price = PS_TAX_EXC == Product::getTaxCalculationMethod() ? Tools::ps_round($price, 2) : $price_wt;
 
-            $attribute = $this->attributeAdapter->getProductAttribute($product['product_attribute_id'], $this->context->language->id);
+            $attribute = $this->productAttributeAdapter->getProductAttribute((int) $product['product_attribute_id'], $this->context->language->id);
             $product_var_tpl = [
                 'id_product' => $product['id_product'],
                 'reference' => $product['reference'],

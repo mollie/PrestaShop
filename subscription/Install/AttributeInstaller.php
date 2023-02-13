@@ -33,20 +33,20 @@ class AttributeInstaller extends AbstractInstaller
     private $logger;
 
     /** @var ProductAttributeAdapter */
-    private $attributeAdapter;
+    private $productAttributeAdapter;
 
     public function __construct(
         LoggerInterface $logger,
         ConfigurationAdapter $configuration,
         Mollie $module,
         LanguageRepository $language,
-        ProductAttributeAdapter $attributeAdapter
+        ProductAttributeAdapter $productAttributeAdapter
     ) {
         $this->logger = $logger;
         $this->configuration = $configuration;
         $this->module = $module;
         $this->language = $language;
-        $this->attributeAdapter = $attributeAdapter;
+        $this->productAttributeAdapter = $productAttributeAdapter;
     }
 
     public function install(): bool
@@ -102,12 +102,12 @@ class AttributeInstaller extends AbstractInstaller
     private function createAttributes(array $languages, int $attributeGroupId): void
     {
         foreach (Config::getSubscriptionAttributeOptions() as $attributeName => $attributeConfigKey) {
-            $existingAttribute = $this->attributeAdapter->getProductAttribute((int) $this->configuration->get($attributeConfigKey));
+            $existingAttribute = $this->productAttributeAdapter->getProductAttribute((int) $this->configuration->get($attributeConfigKey));
             if (Validate::isLoadedObject($existingAttribute)) {
                 continue;
             }
 
-            $attribute = $this->attributeAdapter->getProductAttribute();
+            $attribute = $this->productAttributeAdapter->getProductAttribute();
             foreach ($languages as $language) {
                 /* @phpstan-ignore-next-line */
                 $attribute->name[$language['id_lang']] = $attributeName;
