@@ -14,11 +14,11 @@ admin_subscription_index:
         _legacy_controller: AdminMollieSubscriptionOrders
         _legacy_link: AdminMollieSubscriptionOrders
 
-admin_subscription_delete:
-    path: admin-subscription/{subscriptionId}/delete
+admin_subscription_cancel:
+    path: admin-subscription/{subscriptionId}/cancel
     methods: POST
     defaults:
-        _controller: Mollie\Subscription\Controller\Symfony\SubscriptionController::deleteAction
+        _controller: Mollie\Subscription\Controller\Symfony\SubscriptionController::cancelAction
         _legacy_controller: AdminMollieSubscriptionOrders
         _legacy_link: AdminMollieSubscriptionOrders
     requirements:

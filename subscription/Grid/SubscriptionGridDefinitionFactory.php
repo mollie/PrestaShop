@@ -154,7 +154,7 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                                     ->setName($this->module->l('Cancel', self::FILE_NAME))
                                     ->setIcon('delete')
                                     ->setOptions([
-                                        'route' => 'admin_subscription_delete',
+                                        'route' => 'admin_subscription_cancel',
                                         'route_param_name' => 'subscriptionId',
                                         'route_param_field' => 'id_mol_recurring_order',
                                         'confirm_message' => $this->module->l('Cancel selected subscription?', self::FILE_NAME),

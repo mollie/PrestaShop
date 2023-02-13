@@ -25,73 +25,101 @@
 {extends file='customer/page.tpl'}
 
 {block name='page_title'}
-  {l s='Mollie recurring order details' mod='mollie'}
+    {l s='Mollie recurring order details' mod='mollie'}
 {/block}
 
 {block name='page_content'}
-  {block name='order_infos'}
-    <div id="order-infos">
-    </div>
-  {/block}
-
-  {block name='addresses'}
-    <div class="addresses">
-      {if $recurringOrderData.order.addresses.delivery}
-        <div class="col-lg-6 col-md-6 col-sm-6">
-          <article id="delivery-address" class="box">
-            <h4>{l s='Delivery address %alias%' d='Shop.Theme.Checkout' sprintf=['%alias%' => $recurringOrderData.order.addresses.delivery.alias]}</h4>
-            <address>{$recurringOrderData.order.addresses.delivery.formatted nofilter}</address>
-          </article>
+    {block name='order_infos'}
+        <div id="order-infos">
         </div>
-      {/if}
+    {/block}
 
-      <div class="col-lg-6 col-md-6 col-sm-6">
-        <article id="invoice-address" class="box">
-          <h4>{l s='Invoice address %alias%' d='Shop.Theme.Checkout' sprintf=['%alias%' => $recurringOrderData.order.addresses.invoice.alias]}</h4>
-          <address>{$recurringOrderData.order.addresses.invoice.formatted nofilter}</address>
-        </article>
-      </div>
-      <div class="clearfix"></div>
-    </div>
-  {/block}
+    {block name='addresses'}
+        <div class="addresses">
+            {if $recurringOrderData.order.addresses.delivery}
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <article id="delivery-address" class="box">
+                        <h4>{l s='Delivery address %alias%' d='Shop.Theme.Checkout' sprintf=['%alias%' => $recurringOrderData.order.addresses.delivery.alias]}</h4>
+                        <address>{$recurringOrderData.order.addresses.delivery.formatted nofilter}</address>
+                    </article>
+                </div>
+            {/if}
 
-  {block name='order_detail'}
-      {include file='customer/_partials/order-detail-no-return.tpl' order=$recurringOrderData.order}
-  {/block}
-
-  {block name='recurring_method'}
-    <section class="recurring-method-form box">
-      <form action="" method="post">
-
-        <header>
-          <h3>{l s='Recurring order method' mod='mollie'}</h3>
-          <p>{l s='If you would like to change the method of recurring order, you can select it here.' mod='mollie'}</p>
-        </header>
-
-        <section class="form-fields">
-
-          <div class="form-group row">
-            <label class="col-md-3 form-control-label">{l s='Payment method' d='Shop.Forms.Labels'}</label>
-            <div class="col-md-5">
-              <select name="payment_method" class="form-control form-control-select">
-                {foreach from=$recurringOrderData.payment_methods item=method}
-                  <option value="{$method->id}" {if $method->id === $recurringOrderData.recurring_order->payment_method} selected {/if}>{$method->description}</option>
-                {/foreach}
-              </select>
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <article id="invoice-address" class="box">
+                    <h4>{l s='Invoice address %alias%' d='Shop.Theme.Checkout' sprintf=['%alias%' => $recurringOrderData.order.addresses.invoice.alias]}</h4>
+                    <address>{$recurringOrderData.order.addresses.invoice.formatted nofilter}</address>
+                </article>
             </div>
-          </div>
+            <div class="clearfix"></div>
+        </div>
+    {/block}
 
-        </section>
+    {block name='order_detail'}
+        {include file='customer/_partials/order-detail-no-return.tpl' order=$recurringOrderData.order}
+    {/block}
+    {if $recurringOrderData.recurring_order->status !== 'canceled'}
 
-        <footer class="form-footer text-sm-center">
-          <input type="hidden" name="recurring_order_id" value="{$recurringOrderData.recurring_order->id}">
-          <button type="submit" name="submitUpdatePaymentMethod" class="btn btn-primary form-control-submit">
-            {l s='Update' d='Shop.Theme.Actions'}
-          </button>
-        </footer>
+        {block name='recurring_method'}
+            <section class="recurring-method-form box">
+                <form action="" method="post">
 
-      </form>
-    </section>
-  {/block}
+                    <header>
+                        <h3>{l s='Recurring order method' mod='mollie'}</h3>
+                        <p>{l s='If you would like to change the method of recurring order, you can select it here.' mod='mollie'}</p>
+                    </header>
+
+                    <section class="form-fields">
+
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label">{l s='Payment method' d='Shop.Forms.Labels'}</label>
+                            <div class="col-md-5">
+                                <select name="payment_method" class="form-control form-control-select">
+                                    {foreach from=$recurringOrderData.payment_methods item=method}
+                                        <option value="{$method->id}" {if $method->id === $recurringOrderData.recurring_order->payment_method} selected {/if}>{$method->description}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+
+                    </section>
+
+                    <footer class="form-footer text-sm-center">
+                        <input type="hidden" name="recurring_order_id"
+                               value="{$recurringOrderData.recurring_order->id}">
+                        <input type="hidden" name="token" value="{$token}">
+                        <button type="submit" name="submitUpdatePaymentMethod"
+                                class="btn btn-primary form-control-submit">
+                            {l s='Update' mod='mollie'}
+                        </button>
+                    </footer>
+
+                </form>
+            </section>
+        {/block}
+
+        {block name='recurring_order_cancelation'}
+            <section class="recurring-method-form box">
+                <form action="" method="post">
+
+                    <header>
+                        <h3>{l s='Recurring order cancelation' mod='mollie'}</h3>
+                        <p>{l s='If you would like to cancel your subscription, you can do it here.' mod='mollie'}</p>
+                    </header>
+
+                    <footer class="form-footer text-sm-center">
+                        <input type="hidden" name="recurring_order_id"
+                               value="{$recurringOrderData.recurring_order->id}">
+                        <input type="hidden" name="token" value="{$token}">
+                        <button type="submit" name="submitCancelSubscriptionMethod"
+                                class="btn btn-primary form-control-submit">
+                            {l s='Cancel' mod='mollie'}
+                        </button>
+                    </footer>
+
+                </form>
+            </section>
+        {/block}
+    {/if}
 
 {/block}
