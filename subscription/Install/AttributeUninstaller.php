@@ -25,25 +25,25 @@ class AttributeUninstaller extends AbstractUninstaller
     /** @var LoggerInterface */
     private $logger;
     /** @var ProductAttributeAdapter */
-    private $attributeAdapter;
+    private $productAttributeAdapter;
 
     public function __construct(
         LoggerInterface $logger,
         ConfigurationAdapter $configuration,
         Mollie $module,
-        ProductAttributeAdapter $attributeAdapter
+        ProductAttributeAdapter $productAttributeAdapter
     ) {
         $this->configuration = $configuration;
         $this->module = $module;
         $this->logger = $logger;
-        $this->attributeAdapter = $attributeAdapter;
+        $this->productAttributeAdapter = $productAttributeAdapter;
     }
 
     public function uninstall(): bool
     {
         try {
             foreach (Config::getSubscriptionAttributeOptions() as $attributeName => $attributeConfigKey) {
-                $attribute = $this->attributeAdapter->getProductAttribute((int) $this->configuration->get($attributeConfigKey));
+                $attribute = $this->productAttributeAdapter->getProductAttribute((int) $this->configuration->get($attributeConfigKey));
                 $attribute->delete();
             }
 
