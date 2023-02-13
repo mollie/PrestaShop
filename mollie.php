@@ -11,6 +11,7 @@
  */
 
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Config\Config;
 use Mollie\Config\Env;
 use Mollie\Provider\ProfileIdProviderInterface;
@@ -158,7 +159,7 @@ class Mollie extends PaymentModule
 
         $subscriptionInstaller = new Installer(
             new DatabaseTableInstaller(),
-            new AttributeInstaller(new NullLogger(), new ConfigurationAdapter(), $this, new LanguageAdapter()),
+            new AttributeInstaller(new NullLogger(), new ConfigurationAdapter(), $this, new LanguageAdapter(), new ProductAttributeAdapter()),
             new HookInstaller($this)
         );
 
@@ -328,6 +329,7 @@ class Mollie extends PaymentModule
         $isProductController = $this->context->controller instanceof ProductControllerCore;
         if ($isProductController) {
             $this->context->controller->addJS("{$this->_path}views/js/front/subscription/product.js");
+            $this->context->controller->addJqueryPlugin('growl');
             Media::addJsDef([
                 'mollieSubAjaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
             ]);

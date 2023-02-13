@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Install;
 
-use AttributeCore as Attribute;
 use AttributeGroup;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Logger\LoggerInterface;
 use Mollie\Subscription\Repository\LanguageRepository;
@@ -32,16 +32,21 @@ class AttributeInstaller extends AbstractInstaller
     /** @var LoggerInterface */
     private $logger;
 
+    /** @var ProductAttributeAdapter */
+    private $productAttributeAdapter;
+
     public function __construct(
         LoggerInterface $logger,
         ConfigurationAdapter $configuration,
         Mollie $module,
-        LanguageRepository $language
+        LanguageRepository $language,
+        ProductAttributeAdapter $productAttributeAdapter
     ) {
         $this->logger = $logger;
         $this->configuration = $configuration;
         $this->module = $module;
         $this->language = $language;
+        $this->productAttributeAdapter = $productAttributeAdapter;
     }
 
     public function install(): bool
@@ -97,12 +102,12 @@ class AttributeInstaller extends AbstractInstaller
     private function createAttributes(array $languages, int $attributeGroupId): void
     {
         foreach (Config::getSubscriptionAttributeOptions() as $attributeName => $attributeConfigKey) {
-            $existingAttribute = new Attribute($this->configuration->get($attributeConfigKey));
+            $existingAttribute = $this->productAttributeAdapter->getProductAttribute((int) $this->configuration->get($attributeConfigKey));
             if (Validate::isLoadedObject($existingAttribute)) {
                 continue;
             }
 
-            $attribute = new Attribute();
+            $attribute = $this->productAttributeAdapter->getProductAttribute();
             foreach ($languages as $language) {
                 /* @phpstan-ignore-next-line */
                 $attribute->name[$language['id_lang']] = $attributeName;
