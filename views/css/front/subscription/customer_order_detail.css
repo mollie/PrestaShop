@@ -8,22 +8,3 @@
 .addresses {
     margin: 0 -.9375rem
 }
-
-.address .address-footer {
-    border-top: 1px solid #7a7a7a;
-    padding: 0.5rem 1rem;
-}
-.address .address-footer a span {
-    font-size: .9375rem;
-    vertical-align: middle;
-}
-
-.address .address-footer a {
-    color: #7a7a7a;
-    margin-right: 0.5rem;
-}
-
-.page-addresses .address .address-footer a {
-    color: #7a7a7a;
-    margin-right: 0.5rem;
-}
