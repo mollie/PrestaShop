@@ -41,6 +41,12 @@
                     <article id="delivery-address" class="box">
                         <h4>{l s='Delivery address %alias%' d='Shop.Theme.Checkout' sprintf=['%alias%' => $recurringOrderData.order.addresses.delivery.alias]}</h4>
                         <address>{$recurringOrderData.order.addresses.delivery.formatted nofilter}</address>
+                        <div class="address-footer">
+                            <a href="{url entity=address id=$recurringOrderData.order.addresses.delivery.id}" data-link-action="edit-address">
+                                <i class="material-icons">edit</i>
+                                <span>{l s='Update' d='Shop.Theme.Actions'}</span>
+                            </a>
+                        </div>
                     </article>
                 </div>
             {/if}
@@ -49,6 +55,12 @@
                 <article id="invoice-address" class="box">
                     <h4>{l s='Invoice address %alias%' d='Shop.Theme.Checkout' sprintf=['%alias%' => $recurringOrderData.order.addresses.invoice.alias]}</h4>
                     <address>{$recurringOrderData.order.addresses.invoice.formatted nofilter}</address>
+                    <div class="address-footer">
+                        <a href="{url entity=address id=$recurringOrderData.order.addresses.invoice.id}" data-link-action="edit-address">
+                            <i class="material-icons">edit</i>
+                            <span>{l s='Update' d='Shop.Theme.Actions'}</span>
+                        </a>
+                    </div>
                 </article>
             </div>
             <div class="clearfix"></div>
