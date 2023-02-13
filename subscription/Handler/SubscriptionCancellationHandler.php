@@ -21,18 +21,18 @@ class SubscriptionCancellationHandler
     /** @var CancelSubscriptionDataFactory */
     private $cancelSubscriptionDataFactory;
     /** @var GetSubscriptionDataFactory */
-    private $subscriptionDataFactory;
+    private $getSubscriptionDataFactory;
 
     public function __construct(
         ClockInterface $clock,
         SubscriptionApi $subscriptionApi,
         CancelSubscriptionDataFactory $cancelSubscriptionDataFactory,
-        GetSubscriptionDataFactory $subscriptionDataFactory
+        GetSubscriptionDataFactory $getSubscriptionDataFactory
     ) {
         $this->clock = $clock;
         $this->subscriptionApi = $subscriptionApi;
         $this->cancelSubscriptionDataFactory = $cancelSubscriptionDataFactory;
-        $this->subscriptionDataFactory = $subscriptionDataFactory;
+        $this->getSubscriptionDataFactory = $getSubscriptionDataFactory;
     }
 
     public function handle(int $subscriptionId): MollieSubscription
@@ -41,7 +41,7 @@ class SubscriptionCancellationHandler
         try {
             $subscription = $this->subscriptionApi->cancelSubscription($cancelSubscriptionData);
         } catch (SubscriptionApiException $e) {
-            $getSubscriptionData = $this->subscriptionDataFactory->build($subscriptionId);
+            $getSubscriptionData = $this->getSubscriptionDataFactory->build($subscriptionId);
             $subscription = $this->subscriptionApi->getSubscription($getSubscriptionData);
         }
 
