@@ -47,10 +47,10 @@ class SubscriptionController extends AbstractSymfonyController
      */
     public function cancelAction(int $subscriptionId): RedirectResponse
     {
-        /** @var SubscriptionCancellationHandler $orderCancellationHandler */
-        $orderCancellationHandler = $this->leagueContainer->getService(SubscriptionCancellationHandler::class);
+        /** @var SubscriptionCancellationHandler $subscriptionCancellationHandler */
+        $subscriptionCancellationHandler = $this->leagueContainer->getService(SubscriptionCancellationHandler::class);
         try {
-            $orderCancellationHandler->handle($subscriptionId);
+            $subscriptionCancellationHandler->handle($subscriptionId);
         } catch (SubscriptionApiException $e) {
             $this->addFlash('error', $this->getErrorMessage($e));
 

@@ -63,14 +63,11 @@
         {block name='recurring_method'}
             <section class="recurring-method-form box">
                 <form action="" method="post">
-
                     <header>
                         <h3>{l s='Recurring order method' mod='mollie'}</h3>
                         <p>{l s='If you would like to change the method of recurring order, you can select it here.' mod='mollie'}</p>
                     </header>
-
                     <section class="form-fields">
-
                         <div class="form-group row">
                             <label class="col-md-3 form-control-label">{l s='Payment method' d='Shop.Forms.Labels'}</label>
                             <div class="col-md-5">
@@ -81,9 +78,7 @@
                                 </select>
                             </div>
                         </div>
-
                     </section>
-
                     <footer class="form-footer text-sm-center">
                         <input type="hidden" name="recurring_order_id"
                                value="{$recurringOrderData.recurring_order->id}">
@@ -93,7 +88,6 @@
                             {l s='Update' mod='mollie'}
                         </button>
                     </footer>
-
                 </form>
             </section>
         {/block}
@@ -101,12 +95,10 @@
         {block name='recurring_order_cancelation'}
             <section class="recurring-method-form box">
                 <form action="" method="post">
-
                     <header>
                         <h3>{l s='Recurring order cancelation' mod='mollie'}</h3>
                         <p>{l s='If you would like to cancel your subscription, you can do it here.' mod='mollie'}</p>
                     </header>
-
                     <footer class="form-footer text-sm-center">
                         <input type="hidden" name="recurring_order_id"
                                value="{$recurringOrderData.recurring_order->id}">
@@ -116,7 +108,6 @@
                             {l s='Cancel' mod='mollie'}
                         </button>
                     </footer>
-
                 </form>
             </section>
         {/block}

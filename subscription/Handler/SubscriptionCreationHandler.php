@@ -21,7 +21,7 @@ class SubscriptionCreationHandler
     private $subscriptionApi;
 
     /** @var CreateSubscriptionDataFactory */
-    private $subscriptionDataFactory;
+    private $createSubscriptionDataFactory;
 
     public function __construct(
         ClockInterface $clock,
@@ -30,12 +30,12 @@ class SubscriptionCreationHandler
     ) {
         $this->clock = $clock;
         $this->subscriptionApi = $subscriptionApi;
-        $this->subscriptionDataFactory = $subscriptionDataFactory;
+        $this->createSubscriptionDataFactory = $subscriptionDataFactory;
     }
 
     public function handle(Order $order, string $method)
     {
-        $subscriptionData = $this->subscriptionDataFactory->build($order);
+        $subscriptionData = $this->createSubscriptionDataFactory->build($order);
         $subscription = $this->subscriptionApi->subscribeOrder($subscriptionData);
 
         $products = $order->getProducts();
