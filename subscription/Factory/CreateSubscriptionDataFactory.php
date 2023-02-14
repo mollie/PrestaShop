@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Factory;
 
+use Mollie;
 use Mollie\Adapter\Link;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
@@ -14,6 +15,7 @@ use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
 use Mollie\Subscription\Repository\CombinationRepository;
 use Mollie\Subscription\Repository\CurrencyRepository as CurrencyAdapter;
+use Mollie\Utility\SecureKeyUtility;
 use Order;
 use Product;
 
@@ -38,6 +40,8 @@ class CreateSubscriptionDataFactory
     private $methodRepository;
     /** @var Link */
     private $link;
+    /** @var Mollie */
+    private $module;
 
     public function __construct(
         MolCustomerRepository $customerRepository,
@@ -46,7 +50,8 @@ class CreateSubscriptionDataFactory
         CurrencyAdapter $currencyAdapter,
         CombinationRepository $combination,
         PaymentMethodRepositoryInterface $methodRepository,
-        Link $link
+        Link $link,
+        Mollie $module
     ) {
         $this->customerRepository = $customerRepository;
         $this->subscriptionInterval = $subscriptionInterval;
@@ -55,6 +60,7 @@ class CreateSubscriptionDataFactory
         $this->combination = $combination;
         $this->methodRepository = $methodRepository;
         $this->link = $link;
+        $this->module = $module;
     }
 
     public function build(Order $order): SubscriptionDataDTO
@@ -76,7 +82,7 @@ class CreateSubscriptionDataFactory
         $interval = $this->subscriptionInterval->getSubscriptionInterval($combination);
 
         $currency = $this->currencyAdapter->getById((int) $order->id_currency);
-        $description = $this->subscriptionDescription->getSubscriptionDescription($order, $currency->iso_code);
+        $description = $this->subscriptionDescription->getSubscriptionDescription($order);
 
         $orderAmount = new Amount((float) $order->total_paid_tax_incl, $currency->iso_code);
         $subscriptionData = new SubscriptionDataDTO(
@@ -90,6 +96,18 @@ class CreateSubscriptionDataFactory
             'mollie',
             'subscriptionWebhook'
         ));
+
+        $key = SecureKeyUtility::generateReturnKey(
+            $order->id_customer,
+            $order->id_cart,
+            $this->module->name
+        );
+
+        $subscriptionData->setMetaData(
+            [
+                'secure_key' => $key,
+            ]
+        );
 
         // todo: check for solution what to do when mandate is missing
         $payment = $this->methodRepository->getPaymentBy('cart_id', $order->id_cart);

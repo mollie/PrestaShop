@@ -129,6 +129,18 @@ class MollieOrderCreationService
         );
     }
 
+    public function addTransactionMandate(string $transactionId, string $mandateId)
+    {
+        Db::getInstance()->update(
+            'mollie_payments',
+            [
+                'mandate_id' => pSQL($mandateId),
+                'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
+            ],
+            'transaction_id = "' . pSQL($transactionId) . '"'
+        );
+    }
+
     /**
      * @param array $data
      * @param string $selectedApi
