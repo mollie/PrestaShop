@@ -94,6 +94,8 @@ class PaymentMethodService
     private $shop;
     /** @var SubscriptionOrderValidator */
     private $subscriptionOrder;
+    /** @var Mollie\Adapter\CartAdapter */
+    private $cartAdapter;
 
     public function __construct(
         Mollie $module,
@@ -106,7 +108,8 @@ class PaymentMethodService
         PhoneNumberProviderInterface $phoneNumberProvider,
         PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation,
         Shop $shop,
-        SubscriptionOrderValidator $subscriptionOrder
+        SubscriptionOrderValidator $subscriptionOrder,
+        Mollie\Adapter\CartAdapter $cartAdapter
     ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
@@ -119,6 +122,7 @@ class PaymentMethodService
         $this->paymentMethodRestrictionValidation = $paymentMethodRestrictionValidation;
         $this->shop = $shop;
         $this->subscriptionOrder = $subscriptionOrder;
+        $this->cartAdapter = $cartAdapter;
     }
 
     public function savePaymentMethod($method)
@@ -178,11 +182,15 @@ class PaymentMethodService
         $apiEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
         $methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment, $this->shop->getShop()->id) ?: [];
 
+        $isSubscriptionOrder = $this->subscriptionOrder->validate($this->cartAdapter->getCart());
+        $sequenceType = $isSubscriptionOrder ? SequenceType::SEQUENCETYPE_FIRST : null;
+
         try {
-            $mollieMethods = $this->getSupportedMollieMethods();
+            $mollieMethods = $this->getSupportedMollieMethods($sequenceType);
         } catch (\Exception $e) {
             return [];
         }
+
         $methods = $this->removeNotSupportedMethods($methods, $mollieMethods);
 
         foreach ($methods as $index => $method) {
@@ -450,7 +458,7 @@ class PaymentMethodService
         return $methods;
     }
 
-    private function getSupportedMollieMethods()
+    private function getSupportedMollieMethods(?string $sequenceType = null)
     {
         $context = Context::getContext();
         $addressId = $context->cart->id_address_invoice;
@@ -473,6 +481,7 @@ class PaymentMethodService
                     'value' => (string) TextFormatUtility::formatNumber($cartAmount, 2),
                     'currency' => $currency->iso_code,
                 ],
+                'sequenceType' => $sequenceType,
             ]
         );
 

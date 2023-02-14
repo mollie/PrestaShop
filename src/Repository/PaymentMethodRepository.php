@@ -95,6 +95,8 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
     }
 
     /**
+     * @todo create const for table keys
+     *
      * @param string $column
      * @param string|int $value
      *
