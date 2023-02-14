@@ -34,6 +34,7 @@ use Mollie\Subscription\Handler\RecurringOrderCreation;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\OrderNumberUtility;
+use Mollie\Utility\SecureKeyUtility;
 use Mollie\Utility\TextGeneratorUtility;
 use Mollie\Utility\TransactionUtility;
 use MolPaymentMethod;
@@ -126,14 +127,14 @@ class TransactionService
 
         $cart = new Cart($apiPayment->metadata->cart_id);
 
-        $key = Mollie\Utility\SecureKeyUtility::generateReturnKey(
+        $key = SecureKeyUtility::generateReturnKey(
             $cart->id_customer,
             $cart->id,
             $this->module->name
         );
 
         // remove after few releases
-        $deprecatedKey = Mollie\Utility\SecureKeyUtility::deprecatedGenerateReturnKey(
+        $deprecatedKey = SecureKeyUtility::deprecatedGenerateReturnKey(
             $cart->secure_key,
             $cart->id_customer,
             $cart->id,

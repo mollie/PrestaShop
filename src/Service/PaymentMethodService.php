@@ -40,6 +40,7 @@ use Mollie\Utility\CustomLogoUtility;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\PaymentFeeUtility;
+use Mollie\Utility\SecureKeyUtility;
 use Mollie\Utility\TextFormatUtility;
 use MolPaymentMethod;
 use PrestaShopDatabaseException;
@@ -253,7 +254,7 @@ class PaymentMethodService
         $value = (float) TextFormatUtility::formatNumber($totalAmount, 2);
         $amountObj = new Amount($currency, $value);
 
-        $key = Mollie\Utility\SecureKeyUtility::generateReturnKey(
+        $key = SecureKeyUtility::generateReturnKey(
             $customer->id,
             $cartId,
             $this->module->name
