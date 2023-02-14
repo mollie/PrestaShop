@@ -19,6 +19,7 @@ use Mollie\Service\PaymentMethodService;
 use Mollie\Subscription\Api\SubscriptionApi;
 use Mollie\Subscription\Factory\GetSubscriptionDataFactory;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
+use Mollie\Utility\SecureKeyUtility;
 use MolRecurringOrder;
 use Order;
 
@@ -61,14 +62,14 @@ class RecurringOrderCreationHandler
         $this->paymentMethodService = $paymentMethodService;
     }
 
-    public function handle(string $transactionId)
+    public function handle(string $transactionId): string
     {
         $transaction = $this->mollie->getApiClient()->payments->get($transactionId);
         $recurringOrder = $this->recurringOrderRepository->findOneBy(['mollie_subscription_id' => $transaction->subscriptionId]);
         $subscriptionData = $this->subscriptionDataFactory->build((int) $recurringOrder->id);
         $subscription = $this->subscriptionApi->getSubscription($subscriptionData);
 
-        $key = Mollie\Utility\SecureKeyUtility::generateReturnKey(
+        $key = SecureKeyUtility::generateReturnKey(
             $recurringOrder->id_customer,
             $recurringOrder->id_cart,
             $this->mollie->name
@@ -111,7 +112,7 @@ class RecurringOrderCreationHandler
             (int) $newCart->id,
             Config::getStatuses()[$transaction->status],
             (float) $subscription->amount->value,
-            'subscription/' . $methodName,
+            sprintf('subscription/%s', $methodName),
             null,
             ['transaction_id' => $transaction->id],
             null,
