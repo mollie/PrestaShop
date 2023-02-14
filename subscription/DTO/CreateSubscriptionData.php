@@ -81,6 +81,16 @@ class CreateSubscriptionData implements JsonSerializable
         $this->webhookUrl = $webhookUrl;
     }
 
+    public function getMetaData(): array
+    {
+        return $this->metaData;
+    }
+
+    public function setMetaData(array $metaData): void
+    {
+        $this->metaData = $metaData;
+    }
+
     public function jsonSerialize(): array
     {
         $json = [];

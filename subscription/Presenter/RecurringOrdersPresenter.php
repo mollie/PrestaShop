@@ -43,7 +43,12 @@ class RecurringOrdersPresenter
 
     public function present(string $molCustomerId): array
     {
-        $recurringOrders = $this->recurringOrderRepository->findAllBy(['mollie_customer_id' => $molCustomerId]);
+        $recurringOrders = $this->recurringOrderRepository->findAllBy(['mollie_customer_id' => $molCustomerId])->getResults();
+
+        // this part sorts array so that the new ones are at the top
+        usort($recurringOrders, function ($a, $b) {
+            return $a->date_add < $b->date_add;
+        });
 
         $recurringOrdersPresentData = [];
         /** @var MolRecurringOrder $recurringOrder */
@@ -55,7 +60,6 @@ class RecurringOrdersPresenter
             $recurringOrderData = [];
             $recurringOrderData['recurring_order'] = $recurringOrder;
             $recurringOrderData['details_url'] = $this->link->getModuleLink('mollie', 'recurringOrderDetail', ['id_mol_recurring_order' => $recurringOrder->id]);
-            $recurringOrderData['recurring_product'] = $recurringProduct;
             $recurringOrderData['product'] = $product;
             $recurringOrderData['total_price'] = $this->tools->displayPrice($totalPrice->toPrecision(2), new Currency($recurringOrder->id_currency));
             $recurringOrderData['currency'] = new \Currency($recurringOrder->id_currency);

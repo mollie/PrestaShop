@@ -147,6 +147,11 @@ class TransactionService
             return $apiPayment;
         }
 
+        $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
+        if ($paymentMethod && $paymentMethod['mandate_id'] !== $apiPayment->mandateId) {
+            $this->mollieOrderCreationService->addTransactionMandate($apiPayment->id, $apiPayment->mandateId);
+        }
+
         switch ($apiPayment->resource) {
             case Config::MOLLIE_API_STATUS_PAYMENT:
                 if ($key !== $apiPayment->metadata->secure_key && $deprecatedKey !== $apiPayment->metadata->secure_key) {
