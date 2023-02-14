@@ -47,7 +47,7 @@ class RecurringOrdersPresenter
 
         // this part sorts array so that the new ones are at the top
         usort($recurringOrders, function ($a, $b) {
-            return $a->date_add < $b->date_add;
+            return strtotime($b->date_add) - strtotime($a->date_add);
         });
 
         $recurringOrdersPresentData = [];
