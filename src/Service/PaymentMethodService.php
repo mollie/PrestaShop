@@ -19,6 +19,7 @@ use Context;
 use Country;
 use Currency;
 use Customer;
+use MolCustomer;
 use Mollie;
 use Mollie\Adapter\Shop;
 use Mollie\Api\Resources\BaseCollection;
@@ -419,7 +420,7 @@ class PaymentMethodService
         }
     }
 
-    private function getLocale($method)
+    private function getLocale($method): string
     {
         // Send webshop locale
         if ((Mollie\Config\Config::MOLLIE_PAYMENTS_API === $method
@@ -460,7 +461,7 @@ class PaymentMethodService
         return $methods;
     }
 
-    private function getSupportedMollieMethods(?string $sequenceType = null)
+    private function getSupportedMollieMethods(?string $sequenceType = null): array
     {
         $context = Context::getContext();
         $addressId = $context->cart->id_address_invoice;
@@ -491,9 +492,9 @@ class PaymentMethodService
     }
 
     /**
-     * @return \MolCustomer|null
+     * @return MolCustomer|null
      */
-    public function handleCustomerInfo(int $customerId, bool $saveCard, bool $useSavedCard)
+    public function handleCustomerInfo(int $customerId, bool $saveCard, bool $useSavedCard): ?MolCustomer
     {
         $isSingleClickPaymentEnabled = (bool) Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
         if (!$this->isCustomerSaveEnabled($isSingleClickPaymentEnabled)) {
