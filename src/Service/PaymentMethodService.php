@@ -21,6 +21,7 @@ use Currency;
 use Customer;
 use MolCustomer;
 use Mollie;
+use Mollie\Adapter\CartAdapter;
 use Mollie\Adapter\Shop;
 use Mollie\Api\Resources\BaseCollection;
 use Mollie\Api\Resources\MethodCollection;
@@ -95,7 +96,7 @@ class PaymentMethodService
     private $shop;
     /** @var SubscriptionOrderValidator */
     private $subscriptionOrder;
-    /** @var Mollie\Adapter\CartAdapter */
+    /** @var CartAdapter */
     private $cartAdapter;
 
     public function __construct(
@@ -110,7 +111,7 @@ class PaymentMethodService
         PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation,
         Shop $shop,
         SubscriptionOrderValidator $subscriptionOrder,
-        Mollie\Adapter\CartAdapter $cartAdapter
+        CartAdapter $cartAdapter
     ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
@@ -420,7 +421,7 @@ class PaymentMethodService
         }
     }
 
-    private function getLocale($method): string
+    private function getLocale($method)
     {
         // Send webshop locale
         if ((Mollie\Config\Config::MOLLIE_PAYMENTS_API === $method
