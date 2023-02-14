@@ -123,13 +123,6 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                     'sortable' => true,
                 ])
             )
-            ->add((new DataColumn('reminder_at'))
-                ->setName($this->module->l('Reminder at', self::FILE_NAME))
-                ->setOptions([
-                    'field' => 'reminder_at',
-                    'sortable' => true,
-                ])
-            )
             ->add((new DataColumn('cancelled_at'))
                 ->setName($this->module->l('Reminder at', self::FILE_NAME))
                 ->setOptions([
@@ -240,9 +233,6 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
             )
             ->add((new Filter('date_update', DateRangeType::class))
                 ->setAssociatedColumn('date_update')
-            )
-            ->add((new Filter('reminder_at', DateRangeType::class))
-                ->setAssociatedColumn('reminder_at')
             )
             ->add((new Filter('cancelled_at', DateRangeType::class))
                 ->setAssociatedColumn('cancelled_at')
