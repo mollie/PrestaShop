@@ -143,11 +143,13 @@ class TransactionService
         $orderDescription = $apiPayment->description ?? $apiPayment->orderNumber;
         $isGeneratedOrderNumber = strpos($orderDescription, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0;
         $isPaymentFinished = MollieStatusUtility::isPaymentFinished($apiPayment->status);
+
         if (!$isPaymentFinished && $isGeneratedOrderNumber) {
             return $apiPayment;
         }
 
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
+
         if ($paymentMethod && $paymentMethod['mandate_id'] !== $apiPayment->mandateId) {
             $this->mollieOrderCreationService->addTransactionMandate($apiPayment->id, $apiPayment->mandateId);
         }
