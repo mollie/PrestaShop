@@ -22,7 +22,7 @@
   "devDependencies": {
     "cypress": "^12.4.1",
     "cypress-iframe": "^1.0.1",
-    "cypress-testrail": "^2.5.0",
+    "cypress-testrail": "^2.6.0",
     "human-signals": "^3.0.1"
   }
 }
