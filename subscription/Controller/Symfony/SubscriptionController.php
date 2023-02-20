@@ -31,7 +31,7 @@ class SubscriptionController extends AbstractSymfonyController
         $currencyGridFactory = $this->leagueContainer->getService('subscription_grid_factory');
         $currencyGrid = $currencyGridFactory->getGrid($filters);
 
-        return $this->render('@Modules/mollie/views/templates/admin/Subscription/index.html.twig', [
+        return $this->render('@Modules/mollie/views/templates/admin/Subscription/subscriptions-grid.html.twig', [
             'currencyGrid' => $this->presentGrid($currencyGrid),
             'enableSidebar' => true,
             'help_link' => $this->generateSidebarLink($request->attributes->get('_legacy_controller')),
