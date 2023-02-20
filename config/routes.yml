@@ -23,3 +23,11 @@ admin_subscription_cancel:
         _legacy_link: AdminMollieSubscriptionOrders
     requirements:
         subscriptionId: \d+
+
+admin_subscription_faq_index:
+    path: admin-subscription-faq
+    methods: GET
+    defaults:
+        _controller: Mollie\Subscription\Controller\Symfony\SubscriptionFAQController::indexAction
+        _legacy_controller: AdminMollieSubscriptionFAQ
+        _legacy_link: AdminMollieSubscriptionFAQ

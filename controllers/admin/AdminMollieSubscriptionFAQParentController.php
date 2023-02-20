@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * This controller is only used to create tab in dashboard for subscription settings controller
  */
-class AdminMollieSubscriptionSettingsParentController extends ModuleAdminController
+class AdminMollieSubscriptionFAQParentController extends ModuleAdminController
 {
     public function init()
     {

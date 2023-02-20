@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Mollie\Subscription\Handler;
 
 use Cart;
+use CartRule;
 use Mollie;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\Subscription as MollieSubscription;
 use Mollie\Api\Types\PaymentStatus;
+use Mollie\Api\Types\SubscriptionStatus;
 use Mollie\Config\Config;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\TransactionException;
@@ -19,8 +21,11 @@ use Mollie\Service\PaymentMethodService;
 use Mollie\Subscription\Api\SubscriptionApi;
 use Mollie\Subscription\Factory\GetSubscriptionDataFactory;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
+use Mollie\Subscription\Utility\ClockInterface;
+use Mollie\Utility\MultiLangUtility;
 use Mollie\Utility\SecureKeyUtility;
 use MolRecurringOrder;
+use MolRecurringOrdersProduct;
 use Order;
 
 class RecurringOrderCreationHandler
@@ -41,6 +46,8 @@ class RecurringOrderCreationHandler
     private $orderStatusService;
     /** @var PaymentMethodService */
     private $paymentMethodService;
+    /** @var ClockInterface */
+    private $clock;
 
     public function __construct(
         SubscriptionApi $subscriptionApi,
@@ -50,7 +57,8 @@ class RecurringOrderCreationHandler
         MollieOrderCreationService $mollieOrderCreationService,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         OrderStatusService $orderStatusService,
-        PaymentMethodService $paymentMethodService
+        PaymentMethodService $paymentMethodService,
+        ClockInterface $clock
     ) {
         $this->subscriptionApi = $subscriptionApi;
         $this->subscriptionDataFactory = $subscriptionDataFactory;
@@ -60,6 +68,7 @@ class RecurringOrderCreationHandler
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->orderStatusService = $orderStatusService;
         $this->paymentMethodService = $paymentMethodService;
+        $this->clock = $clock;
     }
 
     public function handle(string $transactionId): string
@@ -80,6 +89,7 @@ class RecurringOrderCreationHandler
         }
 
         $existingTransaction = $this->paymentMethodRepository->getPaymentBy('transaction_id', $transaction->id);
+        $this->createSubscription($transaction, $recurringOrder, $subscription);
 
         switch (true) {
             case $existingTransaction:
@@ -87,6 +97,9 @@ class RecurringOrderCreationHandler
                 break;
             case $transaction->status === PaymentStatus::STATUS_PAID:
                 $this->createSubscription($transaction, $recurringOrder, $subscription);
+                break;
+            case $transaction->status === PaymentStatus::STATUS_FAILED:
+                $this->cancelSubscription($recurringOrder->id);
                 break;
             default:
                 break;
@@ -107,7 +120,16 @@ class RecurringOrderCreationHandler
 
         $methodName = $paymentMethod->method_name ?: Config::$methods[$transaction->method];
 
+        /** @var Cart $newCart */
         $newCart = $newCart['cart'];
+
+        $recurringOrderProduct = new MolRecurringOrdersProduct($recurringOrder->id_mol_recurring_orders_product);
+        $newCartRuleId = $this->updateCartPriceRules($newCart, $recurringOrderProduct);
+
+        if ($newCartRuleId) {
+            $newCart->addCartRule($newCartRuleId);
+        }
+
         $this->mollie->validateOrder(
             (int) $newCart->id,
             Config::getStatuses()[$transaction->status],
@@ -123,11 +145,55 @@ class RecurringOrderCreationHandler
         $orderId = Order::getIdByCartId((int) $newCart->id);
         $order = new Order($orderId);
 
+        if ($newCartRuleId) {
+            $newCartRule = new CartRule($newCartRuleId);
+            $newCartRule->delete();
+        }
+
         $this->mollieOrderCreationService->createMolliePayment($transaction, $newCart->id, $order->reference, $orderId);
     }
 
     private function updateOrderStatus(Payment $transaction, int $orderId)
     {
         $this->orderStatusService->setOrderStatus($orderId, $transaction->status);
+    }
+
+    private function cancelSubscription(int $recurringOrderId): void
+    {
+        //todo: do we cancel on first failed transaction or after few?
+        $recurringOrder = new MolRecurringOrder($recurringOrderId);
+
+        $recurringOrder->status = SubscriptionStatus::STATUS_CANCELED;
+        $recurringOrder->cancelled_at = $this->clock->getCurrentDate();
+        $recurringOrder->date_update = $this->clock->getCurrentDate();
+        $recurringOrder->update();
+    }
+
+    private function updateCartPriceRules(Cart $newCart, MolRecurringOrdersProduct $molRecurringOrdersProduct): int
+    {
+        foreach ($newCart->getProducts() as $product) {
+            if ((int) $product['price'] !== (int) $molRecurringOrdersProduct->unit_price) {
+                $cartRule = $this->createCartRule($molRecurringOrdersProduct, (int) $newCart->id_customer);
+                return (int) $cartRule->id;
+            }
+        }
+
+        return 0;
+    }
+
+    private function createCartRule(MolRecurringOrdersProduct $molRecurringOrdersProduct, int $customerId): CartRule
+    {
+        $cartRule = new CartRule();
+        $cartRule->id_customer = $customerId;
+        $cartRule->name = MultiLangUtility::createMultiLangField('mollie subscription rule');
+        $cartRule->reduction_product = $molRecurringOrdersProduct->id_product;
+        $cartRule->reduction_amount = $molRecurringOrdersProduct->unit_price;
+        $cartRule->reduction_tax = true;
+        $cartRule->date_from = $this->clock->getCurrentDate();
+        $cartRule->date_to = $this->clock->getDateFromTimeStamp(time() + 24 * 36000);
+
+        $cartRule->add();
+
+        return $cartRule;
     }
 }
