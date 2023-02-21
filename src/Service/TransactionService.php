@@ -151,7 +151,7 @@ class TransactionService
 
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
 
-        if ($paymentMethod && $paymentMethod['mandate_id'] !== $apiPayment->mandateId) {
+        if ($paymentMethod && $apiPayment->mandateId && $paymentMethod['mandate_id'] !== $apiPayment->mandateId) {
             $this->mollieOrderCreationService->addTransactionMandate($apiPayment->id, $apiPayment->mandateId);
         }
 
