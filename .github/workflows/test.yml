@@ -31,7 +31,7 @@ jobs:
       - run: composer update
 
       - name: Run PHPunit
-        run:  php ./vendor/bin/phpunit -c ./tests/phpunit.xml
+        run:  php ./vendor/bin/phpunit -c ./tests/phpunit.xml  -c tests/
 
   phpstan:
     name: PHPStan
