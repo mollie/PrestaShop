@@ -28,7 +28,7 @@ jobs:
           path: ~/.composer/cache
           key: php-composer-cache
 
-      - run: composer update
+      - run: composer i
 
       - name: Run PHPunit
         run:  php ./vendor/bin/phpunit -c ./tests/phpunit.xml  -c tests/

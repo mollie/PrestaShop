@@ -1,8 +1,11 @@
 <?php
 
+use Mollie\Adapter\CartAdapter;
+use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Exception\ProductValidationException;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
+use Mollie\Subscription\Repository\CombinationRepository;
 use Mollie\Subscription\Repository\ProductCombinationRepository;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Subscription\Validator\SubscriptionProductValidator;
@@ -56,7 +59,7 @@ class SubscriptionCartTest extends BaseTestCase
     public function testValidate(string $combinationReference, bool $hasExtraAttribute, array $cartProducts, $expectedResult): void
     {
         $language = new Language(1);
-        $cartMock = $this->createMock('Cart');
+        $cartAdapterMock = $this->createMock(CartAdapter::class);
 
         $cartProducts = array_map(function (array $product) {
             return [
@@ -64,16 +67,17 @@ class SubscriptionCartTest extends BaseTestCase
             ];
         }, $cartProducts);
 
-        $cartMock->method('getProducts')->willReturn($cartProducts);
+        $cartAdapterMock->method('getProducts')->willReturn($cartProducts);
 
         $combination = $this->getCombination($combinationReference, $hasExtraAttribute);
 
         $subscriptionCartValidator = new CanProductBeAddedToCartValidator(
-            $cartMock,
+            $cartAdapterMock,
             new SubscriptionProductValidator(
                 $this->configuration,
                 new ProductCombinationRepository(),
-                new \Mollie\Subscription\Repository\CombinationRepository()
+                new CombinationRepository(),
+                new ProductAttributeAdapter()
             )
         );
 
