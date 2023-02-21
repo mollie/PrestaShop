@@ -730,6 +730,16 @@ class Mollie extends PaymentModule
                 'parent_class_name' => 'AdminMollieTabParent',
             ],
             [
+                'name' => $this->l('Subscriptions'),
+                'class_name' => 'AdminMollieSubscriptionOrdersParent',
+                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
+            ],
+            [
+                'name' => $this->l('Subscriptions'),
+                'class_name' => 'AdminMollieSubscriptionOrders',
+                'parent_class_name' => 'AdminMollieTabParent',
+            ],
+            [
                 'name' => $this->l('Subscription FAQ'),
                 'class_name' => 'AdminMollieSubscriptionFAQParent',
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
@@ -740,16 +750,6 @@ class Mollie extends PaymentModule
                 'class_name' => 'AdminMollieSubscriptionFAQ',
                 'parent_class_name' => 'AdminMollieTabParent',
                 'module_tab' => true,
-            ],
-            [
-                'name' => $this->l('Subscriptions'),
-                'class_name' => 'AdminMollieSubscriptionOrdersParent',
-                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
-            ],
-            [
-                'name' => $this->l('Subscriptions'),
-                'class_name' => 'AdminMollieSubscriptionOrders',
-                'parent_class_name' => 'AdminMollieTabParent',
             ],
         ];
     }
