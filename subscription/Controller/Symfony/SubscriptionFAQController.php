@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Mollie\Subscription\Controller\Symfony;
 
 use PrestaShopBundle\Security\Annotation\AdminSecurity;
-
 use Symfony\Component\HttpFoundation\Response;
 
 class SubscriptionFAQController extends AbstractSymfonyController
@@ -30,6 +29,9 @@ class SubscriptionFAQController extends AbstractSymfonyController
                 'subscriptionOrderLogicTitle' => $this->module->l('Recurring order creation', self::FILE_NAME),
                 'recurringOrderCreation' => $this->module->l('New order will be created when module gets mollie notification that subscription translation is paid', self::FILE_NAME),
                 'recurringOrderPrice' => $this->module->l('Recurring order will always be using the same product price that was used when subscription was created', self::FILE_NAME),
+                'discountRestrictionTitle' => $this->module->l('Cart rules', self::FILE_NAME),
+                'discountRestriction' => $this->module->l('For subscription products you should avoid created cart rules and for specific price use combination price', self::FILE_NAME),
+                'discountRestrictionWarning' => $this->module->l('If your order will have cart rules when creating recurring order. The recurring orders will not have cart rules and prestashop will display error status because the price that will be paid will be different then recurring order requires.', self::FILE_NAME),
             ]);
     }
 }
