@@ -158,7 +158,7 @@ class RecurringOrderHandler
 
     private function cancelSubscription(int $recurringOrderId): void
     {
-        $recurringOrder = new MolRecurringOrder($recurringOrderId);
+        $recurringOrder = $this->recurringOrderRepository->findOneBy(['id_mol_recurring_order' => $recurringOrderId]);
 
         $recurringOrder->status = SubscriptionStatus::STATUS_CANCELED;
         $recurringOrder->cancelled_at = $this->clock->getCurrentDate();
