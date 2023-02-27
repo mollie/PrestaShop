@@ -118,7 +118,8 @@ class MailService
             Mail::l('Order confirmation', (int) $order->id_lang),
             $data,
             $customer->email,
-            $customer->firstname . ' ' . $customer->lastname,
+
+            implode(' ', [$customer->firstname, $customer->lastname]),
             null,
             null,
             $fileAttachment,
@@ -141,7 +142,7 @@ class MailService
             sprintf(Mail::l('Your payment for the subscription of %s failed', (int) $customer->id_lang), $product->name),
             $data,
             $customer->email,
-            $customer->firstname . ' ' . $customer->lastname,
+            implode(' ', [$customer->firstname, $customer->lastname]),
             null,
             null,
             null,
