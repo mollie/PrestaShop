@@ -1,0 +1,40 @@
+ 
+
+Hi firstName lastName,
+
+
+We are emailing you because the following item was set to renew and that the payment method on file failed. Please log in into your account and update the payment method.
+
+We’ll keep trying to process your payment however if it continues to fail your subscription will get cancelled.
+t
+Reference	Product	Unit price	Quantity	Total price
+subscription_reference	product_name	unit_price	quantity	total_price
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

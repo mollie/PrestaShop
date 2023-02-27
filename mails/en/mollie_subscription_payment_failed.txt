@@ -1,0 +1,38 @@
+ 
+
+Hi firstName lastName,
+
+
+We are emailing you because we have retried to process the payment and failed. Your subscription has been cancelled.
+
+Reference	Product	Unit price	Quantity	Total price
+subscription_reference	product_name	unit_price	quantity	total_price
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

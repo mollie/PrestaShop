@@ -15,6 +15,7 @@ use Mollie\Config\Config;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\TransactionException;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Service\MailService;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
@@ -50,6 +51,8 @@ class RecurringOrderHandler
     private $clock;
     /** @var Shop */
     private $shop;
+    /** @var MailService */
+    private $mailService;
 
     public function __construct(
         SubscriptionApi $subscriptionApi,
@@ -61,7 +64,8 @@ class RecurringOrderHandler
         OrderStatusService $orderStatusService,
         PaymentMethodService $paymentMethodService,
         ClockInterface $clock,
-        Shop $shop
+        Shop $shop,
+        MailService $mailService
     ) {
         $this->subscriptionApi = $subscriptionApi;
         $this->subscriptionDataFactory = $subscriptionDataFactory;
@@ -73,6 +77,7 @@ class RecurringOrderHandler
         $this->paymentMethodService = $paymentMethodService;
         $this->clock = $clock;
         $this->shop = $shop;
+        $this->mailService = $mailService;
     }
 
     public function handle(string $transactionId): string
@@ -93,7 +98,6 @@ class RecurringOrderHandler
         }
 
         $existingTransaction = $this->paymentMethodRepository->getPaymentBy('transaction_id', $transaction->id);
-        $this->createSubscription($transaction, $recurringOrder, $subscription);
 
         switch (true) {
             case $existingTransaction:
@@ -103,7 +107,7 @@ class RecurringOrderHandler
                 $this->createSubscription($transaction, $recurringOrder, $subscription);
                 break;
             case $transaction->status === PaymentStatus::STATUS_FAILED:
-                $this->cancelSubscription($recurringOrder->id);
+                $this->handleFailedTransaction((int) $recurringOrder->id);
                 break;
             default:
                 break;
@@ -156,6 +160,21 @@ class RecurringOrderHandler
         $this->orderStatusService->setOrderStatus($orderId, $transaction->status);
     }
 
+    private function handleFailedTransaction(int $recurringOrderId): void
+    {
+        $subscriptionData = $this->subscriptionDataFactory->build($recurringOrderId);
+        $molSubscription = $this->subscriptionApi->getSubscription($subscriptionData);
+        switch ($molSubscription->status) {
+            case SubscriptionStatus::STATUS_CANCELED:
+            case SubscriptionStatus::STATUS_SUSPENDED:
+                $this->cancelSubscription($recurringOrderId);
+                break;
+            case SubscriptionStatus::STATUS_ACTIVE:
+                $this->mailService->sendSubscriptionPaymentFailWarningMail($recurringOrderId);
+                break;
+        }
+    }
+
     private function cancelSubscription(int $recurringOrderId): void
     {
         $recurringOrder = $this->recurringOrderRepository->findOneBy(['id_mol_recurring_order' => $recurringOrderId]);
@@ -164,6 +183,8 @@ class RecurringOrderHandler
         $recurringOrder->cancelled_at = $this->clock->getCurrentDate();
         $recurringOrder->date_update = $this->clock->getCurrentDate();
         $recurringOrder->update();
+
+        $this->mailService->sendSubscriptionCancellationWarningMail($recurringOrderId);
     }
 
     /**
