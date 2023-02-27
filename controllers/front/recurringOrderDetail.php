@@ -28,6 +28,7 @@ use Mollie\Controller\AbstractMollieController;
 use Mollie\Subscription\Handler\FreeOrderCreationHandler;
 use Mollie\Subscription\Handler\SubscriptionCancellationHandler;
 use Mollie\Subscription\Logger\RecurringOrderPresenter;
+use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 
 class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieController
 {
@@ -63,7 +64,11 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
     {
         $recurringOrderId = (int) Tools::getValue('id_mol_recurring_order');
         $recurringOrderId = Validate::isUnsignedId($recurringOrderId) ? $recurringOrderId : false;
-        $recurringOrder = new MolRecurringOrder($recurringOrderId);
+
+        /** @var RecurringOrderRepositoryInterface $recurringOrderRepository */
+        $recurringOrderRepository = $this->module->getService(RecurringOrderRepositoryInterface::class);
+
+        $recurringOrder = $recurringOrderRepository->findOneBy(['id_mol_recurring_order' => $recurringOrderId]);
 
         if (!Validate::isLoadedObject($recurringOrder) || (int) $recurringOrder->id_customer !== (int) $this->context->customer->id) {
             Tools::redirect(Context::getContext()->link->getModuleLink($this->module->name, 'subscriptions', [], true));
