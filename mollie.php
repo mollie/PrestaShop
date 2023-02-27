@@ -725,21 +725,9 @@ class Mollie extends PaymentModule
                 'visible' => false,
             ],
             [
-                'name' => 'settings',
+                'name' => 'Settings',
                 'class_name' => 'AdminMollieSettings',
                 'parent_class_name' => 'AdminMollieTabParent',
-            ],
-            [
-                'name' => $this->l('Subscription settings'),
-                'class_name' => 'AdminMollieSubscriptionSettingsParent',
-                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
-                'module_tab' => true,
-            ],
-            [
-                'name' => $this->l('Subscription settings'),
-                'class_name' => 'AdminMollieSubscriptionSettings',
-                'parent_class_name' => 'AdminMollieTabParent',
-                'module_tab' => true,
             ],
             [
                 'name' => $this->l('Subscriptions'),
@@ -750,6 +738,18 @@ class Mollie extends PaymentModule
                 'name' => $this->l('Subscriptions'),
                 'class_name' => 'AdminMollieSubscriptionOrders',
                 'parent_class_name' => 'AdminMollieTabParent',
+            ],
+            [
+                'name' => $this->l('Subscription FAQ'),
+                'class_name' => 'AdminMollieSubscriptionFAQParent',
+                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
+                'module_tab' => true,
+            ],
+            [
+                'name' => $this->l('Subscription FAQ'),
+                'class_name' => 'AdminMollieSubscriptionFAQ',
+                'parent_class_name' => 'AdminMollieTabParent',
+                'module_tab' => true,
             ],
         ];
     }
