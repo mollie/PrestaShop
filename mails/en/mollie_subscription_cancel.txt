@@ -1,5 +1,3 @@
- 
-
 Hi firstName lastName,
 
 
@@ -9,32 +7,3 @@ We’ll keep trying to process your payment however if it continues to fail your
 t
 Reference	Product	Unit price	Quantity	Total price
 subscription_reference	product_name	unit_price	quantity	total_price
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

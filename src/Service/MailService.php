@@ -138,7 +138,7 @@ class MailService
         Mail::Send(
             (int) $customer->id_lang,
             'mollie_subscription_cancel',
-            sprintf(Mail::l('Your payment for the subscription of %s failed', (int) $customer->id_lang), $product->name),//todo:
+            sprintf(Mail::l('Your payment for the subscription of %s failed', (int) $customer->id_lang), $product->name),
             $data,
             $customer->email,
             $customer->firstname . ' ' . $customer->lastname,
@@ -164,7 +164,7 @@ class MailService
         Mail::Send(
             (int) $customer->id_lang,
             'mollie_subscription_payment_failed',
-            sprintf(Mail::l('Your subscription for %s cancelled', (int) $customer->id_lang), $product->name),//todo:
+            sprintf(Mail::l('Your subscription for %s cancelled', (int) $customer->id_lang), $product->name),
             $data,
             $customer->email,
             $customer->firstname . ' ' . $customer->lastname,
