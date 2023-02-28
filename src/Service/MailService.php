@@ -28,6 +28,7 @@ use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
+use Mollie\Utility\NumberUtility;
 use MolRecurringOrder;
 use MolRecurringOrdersProduct;
 use Order;
@@ -127,7 +128,7 @@ class MailService
         );
     }
 
-    public function sendSubscriptionCancellationWarningMail(int $recurringOrderId): void
+    public function sendSubscriptionCancelWarningEmail(int $recurringOrderId): void
     {
         $recurringOrder = $this->recurringOrderRepository->findOneBy(['id_mol_recurring_order' => $recurringOrderId]);
         $recurringOrderProduct = $this->recurringOrdersProductRepository->findOneBy(['id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product]);
@@ -168,7 +169,7 @@ class MailService
             sprintf(Mail::l('Your subscription for %s cancelled', (int) $customer->id_lang), $product->name),
             $data,
             $customer->email,
-            $customer->firstname . ' ' . $customer->lastname,
+            implode(' ', [$customer->firstname, $customer->lastname]),
             null,
             null,
             null,
@@ -185,7 +186,7 @@ class MailService
         Customer $customer
     ): array {
         $product = new Product($recurringOrderProduct->id_product, false, $customer->id_lang);
-        $totalPrice = (new Number((string) $recurringOrderProduct->unit_price))->times(new Number((string) $recurringOrderProduct->quantity));
+        $totalPrice = NumberUtility::times((string) $recurringOrderProduct->unit_price, (string) $recurringOrderProduct->quantity);
         $unitPrice = new Number($recurringOrderProduct->unit_price);
 
         return [
@@ -193,7 +194,7 @@ class MailService
             'product_name' => $product->name,
             'unit_price' => $this->toolsAdapter->displayPrice($unitPrice->toPrecision(2), new Currency($recurringOrder->id_currency)),
             'quantity' => $recurringOrderProduct->quantity,
-            'total_price' => $this->toolsAdapter->displayPrice($totalPrice->toPrecision(2), new Currency($recurringOrder->id_currency)),
+            'total_price' => $this->toolsAdapter->displayPrice($totalPrice, new Currency($recurringOrder->id_currency)),
             'firstName' => $customer->firstname,
             'lastName' => $customer->lastname,
         ];
@@ -446,7 +447,7 @@ class MailService
                         ),
                         $params,
                         $customer->email,
-                        $customer->firstname . ' ' . $customer->lastname,
+                        implode(' ', [$customer->firstname, $customer->lastname]),
                         null, null, null, null, _PS_MAIL_DIR_, false, (int) $order->id_shop
                     );
                 }

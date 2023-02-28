@@ -164,6 +164,7 @@ class RecurringOrderHandler
     {
         $subscriptionData = $this->subscriptionDataFactory->build($recurringOrderId);
         $molSubscription = $this->subscriptionApi->getSubscription($subscriptionData);
+
         switch ($molSubscription->status) {
             case SubscriptionStatus::STATUS_CANCELED:
             case SubscriptionStatus::STATUS_SUSPENDED:
@@ -184,7 +185,7 @@ class RecurringOrderHandler
         $recurringOrder->date_update = $this->clock->getCurrentDate();
         $recurringOrder->update();
 
-        $this->mailService->sendSubscriptionCancellationWarningMail($recurringOrderId);
+        $this->mailService->sendSubscriptionCancelWarningEmail($recurringOrderId);
     }
 
     /**
