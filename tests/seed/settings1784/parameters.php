@@ -13,7 +13,7 @@ return [
     'mailer_host' => '127.0.0.1',
     'mailer_user' => null,
     'mailer_password' => null,
-    'secret' => '5me4mdumTjYo4jPpNtQSuRN1MyD9wSSze7VuLg4s2ktMUxkXHihrLXZV1NaHuzhU',
+    'secret' => '${PS_SECRET}',
     'ps_caching' => 'CacheMemcache',
     'ps_cache_enable' => false,
     'ps_creation_date' => '2020-12-23',
