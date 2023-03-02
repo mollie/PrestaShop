@@ -121,5 +121,6 @@ it('04 Checking the Subscriptions tab, and console errors', () => {
       cy.visit('/admin1/')
       cy.OpenModuleDashboard()
       cy.get('#subtab-AdminMollieSubscriptionOrders').click()
+      cy.get('[id="invertus_mollie_subscription_grid_panel"]').should('be.visible')
 });
 })
