@@ -43,8 +43,8 @@ it.only('Check if Subscription options are in Product Page', () => {
   cy.wait(5000)
   cy.contains('Mollie subscription - Daily').should('be.visible')
   cy.wait(5000)
-  cy.get('#attribute_44 > .attribute-quantity > div > .form-control').clear().type('999')
+  cy.get('[class="attribute-quantity"]').last().find('[type="text"]').clear().type('999')
   cy.get('#submit').click()
-  cy.wait(5000)
+  cy.get('.growl-message').contains('Settings updated.')
 });
 })
