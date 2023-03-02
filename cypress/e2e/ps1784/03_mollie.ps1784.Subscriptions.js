@@ -30,7 +30,7 @@ describe('PS1784 Tests Suite', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it.only('Check if Subscription options are in Product Page', () => {
+it('Check if Subscription options added in Product BO', () => {
   cy.visit('/admin1/')
   cy.get('#subtab-AdminCatalog > :nth-child(1)').click()
   cy.get('#subtab-AdminProducts > .link').click()
@@ -46,5 +46,12 @@ it.only('Check if Subscription options are in Product Page', () => {
   cy.get('[class="attribute-quantity"]').last().find('[type="text"]').clear().type('999')
   cy.get('#submit').click()
   cy.get('.growl-message').contains('Settings updated.')
+});
+it.only('Check if Subscription options are in Product Page FO', () => {
+  cy.visit('/')
+  cy.get('.products > :nth-child(1)').click()
+  cy.get('.add > .btn').click()
+  cy.get('.cart-content-btn > .btn-primary').click()
+  cy.get('.text-sm-center > .btn').click()
 });
 })
