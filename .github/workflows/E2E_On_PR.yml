@@ -12,10 +12,10 @@ jobs:
         include:
           - prestashop: 'PS1784'
             make: 'make e2eh1784'
-            demoshop: 'demoshop1784'
+            demoshop: 'wipdemoshop1784'
             port: '8002'
             yml: 'docker-compose.e2e.1784.yml'
-            url: 'https://demoshop1784.eu.ngrok.io'
+            url: 'https://wipdemoshop1784.eu.ngrok.io'
             test_spec: '**/cypress/integration/ps1784/**'
     env:
       NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
