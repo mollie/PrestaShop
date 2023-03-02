@@ -117,7 +117,7 @@ it('C339339: 03 Checking the Advanced Settings tab, verifying the Front-end comp
       cy.get('[class="alert alert-success"]').should('be.visible') //checking if saving returns green alert
       //cy.window() will check if there are no Errors in console
 });
-it('04 Checking the Subscriptions tab, and console errors', () => {
+it('[todo testrail ID] 04 Checking the Subscriptions tab, and console errors', () => {
       cy.visit('/admin1/')
       cy.OpenModuleDashboard()
       cy.get('#subtab-AdminMollieSubscriptionOrders').click()
