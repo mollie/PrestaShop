@@ -123,4 +123,14 @@ it('[todo testrail ID] 04 Checking the Subscriptions tab, and console errors', (
       cy.get('#subtab-AdminMollieSubscriptionOrders').click()
       cy.get('[id="invertus_mollie_subscription_grid_panel"]').should('be.visible')
 });
+it.only('[todo testrail ID] 05 Checking the Subscriptions FQA, and console errors', () => {
+      cy.visit('/admin1/')
+      cy.OpenModuleDashboard()
+      cy.get('#subtab-AdminMollieSubscriptionFAQ').click()
+      cy.get(':nth-child(2) > .col-lg-12 > .card').should('be.visible')
+      cy.get(':nth-child(3) > .col-lg-12 > .card').should('be.visible')
+      cy.get(':nth-child(4) > .col-lg-12 > .card').should('be.visible')
+      cy.get(':nth-child(5) > .col-lg-12 > .card').should('be.visible')
+      cy.get(':nth-child(6) > .col-lg-12 > .card').should('be.visible')
+});
 })
