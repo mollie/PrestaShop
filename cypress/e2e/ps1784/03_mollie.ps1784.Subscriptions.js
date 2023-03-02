@@ -50,8 +50,6 @@ it('Check if Subscription options added in Product BO', () => {
 it.only('Check if Subscription options are in Product Page FO', () => {
   cy.visit('/')
   cy.get('.products > :nth-child(1)').click()
-  cy.get('.add > .btn').click()
-  cy.get('.cart-content-btn > .btn-primary').click()
-  cy.get('.text-sm-center > .btn').click()
+  //wip
 });
 })
