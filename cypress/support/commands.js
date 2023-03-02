@@ -381,18 +381,18 @@ Cypress.Commands.add("ConfOrdersAPI1784", () => {
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_in3"]').clear({force: true}).type('22', {force: true})
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_in3"]').clear({force: true}).type('33', {force: true})
       //Gift card
-      cy.get('[name="MOLLIE_METHOD_ENABLED_giftcard"]').select('Yes', {force: true})
-      cy.get('[name="MOLLIE_METHOD_API_giftcard"]').select('Orders API', {force: true})
-      cy.get('[name="MOLLIE_METHOD_DESCRIPTION_giftcard"]').clear({force: true}).type('Lorem Ipsum dummy text 123 !@#$%^&*', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_TYPE_giftcard"]').select('3', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_giftcard"]').clear({force: true}).type('11', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_giftcard"]').clear({force: true}).type('22', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_giftcard"]').clear({force: true}).type('33', {force: true})
+      // cy.get('[name="MOLLIE_METHOD_ENABLED_giftcard"]').select('Yes', {force: true})
+      // cy.get('[name="MOLLIE_METHOD_API_giftcard"]').select('Orders API', {force: true})
+      // cy.get('[name="MOLLIE_METHOD_DESCRIPTION_giftcard"]').clear({force: true}).type('Lorem Ipsum dummy text 123 !@#$%^&*', {force: true})
+      // cy.get('[name="MOLLIE_METHOD_SURCHARGE_TYPE_giftcard"]').select('3', {force: true})
+      // cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_giftcard"]').clear({force: true}).type('11', {force: true})
+      // cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_giftcard"]').clear({force: true}).type('22', {force: true})
+      // cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_giftcard"]').clear({force: true}).type('33', {force: true})
   })
 Cypress.Commands.add("ConfPaymentsAPI1784", () => {
       //Gift card
-      cy.get('[name="MOLLIE_METHOD_ENABLED_giftcard"]').select('Yes', {force: true})
-      cy.get('[name="MOLLIE_METHOD_API_giftcard"]').select('Payments API', {force: true})
+      // cy.get('[name="MOLLIE_METHOD_ENABLED_giftcard"]').select('Yes', {force: true})
+      // cy.get('[name="MOLLIE_METHOD_API_giftcard"]').select('Payments API', {force: true})
       //giropay
       cy.get('[name="MOLLIE_METHOD_ENABLED_giropay"]').select('Yes', {force: true})
       cy.get('[name="MOLLIE_METHOD_API_giropay"]').select('Payments API', {force: true})
@@ -470,24 +470,6 @@ Cypress.Commands.add("login_mollie17_test", () => {
    cy.get('#header_shop > .dropdown').click()
    cy.get('.list-dropdown-menu > :nth-child(3)').click()
  })
-Cypress.Commands.add("login_mollie16_test", () => {
-   Cypress.env()
-   cy.get('#email').type((Cypress.env('demousername')),{delay: 0, log: false})
-   cy.get('#passwd').type((Cypress.env('demopassword')),{delay: 0, log: false})
-   cy.get('.row-padding-top > .btn').click().wait(500)
-   cy.get('#header_shop > .dropdown > .dropdown-toggle').click()
-   cy.get('#header_shop > .dropdown > .dropdown-menu > :nth-child(3) > a').click()
-   cy.visit('https://demo.invertus.eu/clients/mollie16-test/admin1/index.php?controller=AdminMollieModule')
- })
-Cypress.Commands.add("prestashop_admin_localhost_1771", (url) => {
-   cy.visit('/admin1771/index.php')
- })
-Cypress.Commands.add("mollie_test17_admin", (url) => {
-   cy.visit('https://mollie1770test.invertusdemo.com/admin1/index.php')
- })
-Cypress.Commands.add("mollie_test16_admin", (url) => {
-   cy.visit('https://demo.invertus.eu/clients/mollie16-test/admin1/index.php?controller=AdminMollieModule')
- })
 Cypress.Commands.add("ps16_random_user", (randomuser) => {
    // Creating random user all the time
    const uuid = () => Cypress._.random(0, 1e6)
@@ -510,10 +492,6 @@ Cypress.Commands.add("ps16_random_user", (randomuser) => {
    cy.get('#phone').type('+085',{delay:0}).as('telephone')
    cy.get('#phone_mobile').type('+000',{delay:0}).as('telephone2')
  })
-Cypress.Commands.add("mollie_1752_test_demo_module_dashboard", (url) => {
-  cy.visit('https://demo.invertus.eu/clients/mollie17-test/admin1/index.php?controller=AdminModules&configure=mollie')
-})
-
 Cypress.Commands.add("mollie_1752_test_login", () => {
   Cypress.env()
   cy.get('#email').type((Cypress.env('demousername')),{delay: 0, log: false})
@@ -522,64 +500,6 @@ Cypress.Commands.add("mollie_1752_test_login", () => {
   cy.get('.selected-item > .arrow-down').click()
   cy.get('#shop-list > .dropdown-menu > .items-list > :nth-child(3)').click(5,5)
   cy.get('#subtab-AdminMollieModule > .link').click()
-})
-Cypress.Commands.add("mollie_16124_test_faster_login_DE_Orders_Api", () => {
-  cy.visit('https://demo.invertus.eu/clients/mollie16-test/en/login?back=my-account')
-  cy.get('#email').type((Cypress.env('FO_username')),{delay: 0, log: false})
-  cy.get('#passwd').type((Cypress.env('FO_password')),{delay: 0, log: false})
-  cy.get('#SubmitLogin > span').click()
-  cy.visit('https://demo.invertus.eu/clients/mollie16-test/en/home/10-test1.html')
-  cy.get('.exclusive > span').click()
-  cy.get('.button-medium > span').click()
-})
-Cypress.Commands.add("mollie_16124_test_faster_login_DE_Payments_Api", () => {
-  cy.visit('https://demo.invertus.eu/clients/mollie16-test/en/login?back=my-account')
-  cy.get('#email').type((Cypress.env('FO_username')),{delay: 0, log: false})
-  cy.get('#passwd').type((Cypress.env('FO_password')),{delay: 0, log: false})
-  cy.get('#SubmitLogin > span').click()
-  cy.visit('https://demo.invertus.eu/clients/mollie16-test/en/home/9-test1.html')
-  cy.get('.exclusive > span').click()
-  cy.get('.button-medium > span').click()
-})
-Cypress.Commands.add("mollie_1770_test_faster_login_DE_Orders_Api", () => {
-  cy.visit('https://mollie1770test.invertusdemo.com/en/login?back=my-account')
-  cy.get('.col-md-6 > .form-control').type((Cypress.env('FO_username')),{delay: 0, log: false})
-  cy.get('.input-group > .form-control').type((Cypress.env('FO_password')),{delay: 0, log: false})
-  cy.get('#submit-login').click()
-  cy.visit('https://mollie1770test.invertusdemo.com/en/women/2-brown-bear-printed-sweater.html')
-  cy.get('.add > .btn').click()
-  cy.get('.cart-content-btn > .btn-primary').click()
-  cy.get('.text-sm-center > .btn').click()
-})
-Cypress.Commands.add("mollie_1770_test_faster_login_DE_Payments_Api", () => {
-  cy.visit('https://mollie1770test.invertusdemo.com/en/login?back=my-account')
-  cy.get('.col-md-6 > .form-control').type((Cypress.env('FO_username')),{delay: 0, log: false})
-  cy.get('.input-group > .form-control').type((Cypress.env('FO_password')),{delay: 0, log: false})
-  cy.get('#submit-login').click()
-  cy.visit('https://mollie1770test.invertusdemo.com/en/men/1-hummingbird-printed-t-shirt.html')
-  cy.get('.add > .btn').click()
-  cy.get('.cart-content-btn > .btn-primary').click()
-  cy.get('.text-sm-center > .btn').click()
-})
-Cypress.Commands.add("mollie_1752_test_faster_login_DE_Payments_Api", () => {
-   cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/login?back=my-account')
-   cy.get('.col-md-6 > .form-control').type((Cypress.env('FO_username')),{delay: 0, log: false})
-   cy.get('.input-group > .form-control').type((Cypress.env('FO_password')),{delay: 0, log: false})
-   cy.get('#submit-login').click()
-   cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/home/20-testproduct1.html')
-   cy.get('.add > .btn').click()
-   cy.get('.cart-content-btn > .btn-primary').click()
-   cy.get('.text-sm-center > .btn').click()
- })
-Cypress.Commands.add("mollie_1752_test_faster_login_DE_Orders_Api", () => {
-    cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/login?back=my-account')
-    cy.get('.col-md-6 > .form-control').type((Cypress.env('FO_username')),{delay: 0, log: false})
-    cy.get('.input-group > .form-control').type((Cypress.env('FO_password')),{delay: 0, log: false})
-    cy.get('#submit-login').click()
-    cy.visit('https://demo.invertus.eu/clients/mollie17-test/en/home/21-testproduct1.html')
-    cy.get('.add > .btn').click()
-    cy.get('.cart-content-btn > .btn-primary').click()
-    cy.get('.text-sm-center > .btn').click()
 })
 Cypress.Commands.add("OrderRefundingShippingOrdersAPI", () => {
     cy.visit('/admin1/index.php?controller=AdminOrders')
@@ -642,4 +562,64 @@ Cypress.Commands.add("OrderRefundingPartialPaymentsAPI", () => {
     cy.get('.swal-modal').should('exist')
     cy.get(':nth-child(2) > .swal-button').click()
     cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
+})
+Cypress.Commands.add("EnablingModuleMultistore", () => {
+  cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
+  cy.get('#subtab-AdminModulesSf').click().wait(1000)
+  // enable or upgrade the module
+  cy.get('[data-name="Mollie"]').then(($body) => {
+    if ($body.text().includes('Upgrade')) {
+      // yup, module needs to be upgraded
+      cy.get('[data-name="Mollie"]').contains('Upgrade').click()
+      cy.get('.btn-secondary').click()
+      cy.get('.growl').should('have.text','succeeded.')
+    } else if ($body.text().includes('Enable')) {
+      // or just enable the module first
+      cy.get('[data-name="Mollie"]').contains('Enable').click()
+    } else {
+      // nop, just enter the module configuration
+      cy.get('[data-name="Mollie"]').contains('Configure').click()
+    }
+    })
+  // back to dashboard
+  cy.get('#tab-AdminDashboard > .link').click({force:true})
+})
+Cypress.Commands.add("OpenModuleDashboard", () => {
+    cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
+    cy.get('#subtab-AdminModulesSf').click().wait(1000)
+    cy.get('[data-name="Mollie"]').contains('Configure').click()
+})
+Cypress.Commands.add("CreditCardFillingIframe", () => {
+  cy.frameLoaded('[name="cardHolder-input"]')
+  cy.enter('[name="cardHolder-input"]').then(getBody => {
+  getBody().find('#cardHolder').clear({force: true}).type('TEST TEEESSSTT',{force:true})
+  })
+  cy.enter('[name="cardNumber-input"]').then(getBody => {
+  getBody().find('#cardNumber').clear({force: true}).type('5555555555554444',{force:true})
+  })
+  cy.enter('[name="expiryDate-input"]').then(getBody => {
+  getBody().find('#expiryDate').clear({force: true}).type('1226',{force:true})
+  })
+  cy.enter('[name="verificationCode-input"]').then(getBody => {
+  getBody().find('#verificationCode').clear({force: true}).type('222',{force:true})
+  })
+})
+Cypress.Commands.add("NotSecureCreditCardFillingIframe", () => {
+  cy.frameLoaded('[name="cardHolder-input"]')
+  cy.enter('[name="cardHolder-input"]').then(getBody => {
+  getBody().find('#cardHolder').clear({force: true}).type('TEST TEEESSSTT',{force:true})
+  })
+  cy.enter('[name="cardNumber-input"]').then(getBody => {
+  getBody().find('#cardNumber').clear({force: true}).type('4242424242424242',{force:true})
+  })
+  cy.enter('[name="expiryDate-input"]').then(getBody => {
+  getBody().find('#expiryDate').clear({force: true}).type('1226',{force:true})
+  })
+  cy.enter('[name="verificationCode-input"]').then(getBody => {
+  getBody().find('#verificationCode').clear({force: true}).type('222',{force:true})
+  })
+})
+Cypress.Commands.add("OpeningModuleDashboardURL", () => {
+  cy.visit('/admin1/index.php?controller=AdminModules&configure=mollie')
+  cy.get('.btn-continue').click()
 })

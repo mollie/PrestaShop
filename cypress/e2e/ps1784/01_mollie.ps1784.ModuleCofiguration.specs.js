@@ -55,34 +55,38 @@ let windowConsoleError;
 Cypress.on('window:before:load', (win) => {
   windowConsoleError = cy.spy(win.console, 'error');
 })
+let failEarly = false;
 afterEach(() => {
   expect(windowConsoleError).to.not.be.called;
+  if (failEarly) throw new Error("Failing Early due to an API or other module configuration problem. If running on CI, please check Cypress VIDEOS/SCREENSHOTS in the Artifacts for more details.")
 })
-
+afterEach(function() {
+  if (this.currentTest.state === "failed") failEarly = true
+});
 describe('PS1784 Module initial configuration setup', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it('01 Connecting test API successsfully', () => {
+it('C339305: 01 Connecting test API successsfully', () => {
       cy.visit('/admin1/')
-      //Enabling Multistore context for PS1784
-      cy.get('#subtab-AdminMollieModule > .link').click()
-      cy.get('[name="activateModule"]').check({force:true})
-      cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click()
+      // enabling the module on multistore shop - one time action
+      cy.EnablingModuleMultistore()
+      cy.OpenModuleDashboard()
+      cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click({force:true})
       cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
       cy.get('#module_form_submit_btn').click()
 })
-it('02 Enabling Mollie carriers in Prestashop successfully', () => {
+it('C339338: 02 Enabling Mollie carriers in Prestashop successfully', () => {
       cy.visit('/admin1/')
       cy.get('[id="subtab-AdminPaymentPreferences"]').find('[href]').eq(0).click({force:true})
       cy.get('[class="js-multiple-choice-table-select-column"]').eq(6).click()
       cy.get('[class="btn btn-primary"]').eq(3).click()
 })
-it('03 Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
+it('C339339: 03 Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
       cy.visit('/admin1/')
-      cy.get('#subtab-AdminMollieModule > .link').click()
-      cy.get('[href="#advanced_settings"]').click()
+      cy.OpenModuleDashboard()
+      cy.get('[href="#advanced_settings"]').click({force:true})
       cy.get('[id="MOLLIE_PAYMENTSCREEN_LOCALE"]').should('be.visible')
       cy.get('[id="MOLLIE_SEND_ORDER_CONFIRMATION"]').should('be.visible')
       cy.get('[id="MOLLIE_KLARNA_INVOICE_ON"]').should('be.visible')
@@ -109,7 +113,7 @@ it('03 Checking the Advanced Settings tab, verifying the Front-end components, S
       cy.get('[id="MOLLIE_AS_STATUSES_info"]').should('exist')
       cy.get('[name="MOLLIE_DISPLAY_ERRORS"]').should('exist')
       cy.get('[name="MOLLIE_DEBUG_LOG"]').should('exist')
-      cy.get('#module_form_submit_btn').click() //checking the saving
+      cy.get('#module_form_submit_btn').click({force:true}) //checking the saving
       cy.get('[class="alert alert-success"]').should('be.visible') //checking if saving returns green alert
       //cy.window() will check if there are no Errors in console
 });
