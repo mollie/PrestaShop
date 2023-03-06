@@ -25,12 +25,12 @@ windowConsoleError = cy.spy(win.console, 'error');
 afterEach(() => {
 expect(windowConsoleError).to.not.be.called;
 })
-describe('PS1784 Tests Suite', () => {
+describe('PS1784 Subscriptions Test Suit', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it('Check if Subscription options added in Product BO', () => {
+it.only('Check if Subscription options added in Product BO', () => {
   cy.visit('/admin1/')
   cy.get('#subtab-AdminCatalog > :nth-child(1)').click()
   cy.get('#subtab-AdminProducts > .link').click()
