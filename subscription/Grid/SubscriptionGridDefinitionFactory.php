@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Grid;
 
+use PrestaShop\PrestaShop\Core\Grid\Action\Row\AccessibilityChecker\AccessibilityCheckerInterface;
 use PrestaShop\PrestaShop\Core\Grid\Action\Row\RowActionCollection;
 use PrestaShop\PrestaShop\Core\Grid\Action\Row\Type\SubmitRowAction;
 use PrestaShop\PrestaShop\Core\Grid\Column\ColumnCollection;
@@ -14,6 +15,7 @@ use PrestaShop\PrestaShop\Core\Grid\Filter\Filter;
 use PrestaShop\PrestaShop\Core\Grid\Filter\FilterCollection;
 use PrestaShop\PrestaShop\Core\Hook\HookDispatcherInterface;
 use PrestaShopBundle\Form\Admin\Type\DateRangeType;
+use PrestaShopBundle\Form\Admin\Type\SearchAndResetType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
@@ -24,11 +26,17 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
 
     /** @var \Mollie */
     private $module;
+    /** @var AccessibilityCheckerInterface */
+    private $subscriptionCancelAccessibilityChecker;
 
-    public function __construct(HookDispatcherInterface $hookDispatcher = null, \Mollie $module)
-    {
+    public function __construct(
+        HookDispatcherInterface $hookDispatcher = null,
+        \Mollie $module,
+        AccessibilityCheckerInterface $subscriptionCancelAccessibilityChecker
+    ) {
         parent::__construct($hookDispatcher);
         $this->module = $module;
+        $this->subscriptionCancelAccessibilityChecker = $subscriptionCancelAccessibilityChecker;
     }
 
     /**
@@ -109,22 +117,22 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                     'sortable' => true,
                 ])
             )
-            ->add((new DataColumn('date_add'))
+            ->add((new DataColumn('recurring_order.date_add'))
                 ->setName($this->module->l('Created at', self::FILE_NAME))
                 ->setOptions([
                     'field' => 'date_add',
                     'sortable' => true,
                 ])
             )
-            ->add((new DataColumn('date_update'))
+            ->add((new DataColumn('recurring_order.date_update'))
                 ->setName($this->module->l('Updated at', self::FILE_NAME))
                 ->setOptions([
                     'field' => 'date_update',
                     'sortable' => true,
                 ])
             )
-            ->add((new DataColumn('cancelled_at'))
-                ->setName($this->module->l('Reminder at', self::FILE_NAME))
+            ->add((new DataColumn('recurring_order.cancelled_at'))
+                ->setName($this->module->l('Canceled at', self::FILE_NAME))
                 ->setOptions([
                     'field' => 'cancelled_at',
                     'sortable' => true,
@@ -144,6 +152,7 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                                         'route_param_name' => 'subscriptionId',
                                         'route_param_field' => 'id_mol_recurring_order',
                                         'confirm_message' => $this->module->l('Cancel selected subscription?', self::FILE_NAME),
+                                        'accessibility_checker' => $this->subscriptionCancelAccessibilityChecker,
                                     ])
                             ),
                     ])
@@ -229,13 +238,24 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                 ->setAssociatedColumn('iso_code')
             )
             ->add((new Filter('date_add', DateRangeType::class))
-                ->setAssociatedColumn('date_add')
+                ->setAssociatedColumn('recurring_order.date_add')
             )
             ->add((new Filter('date_update', DateRangeType::class))
-                ->setAssociatedColumn('date_update')
+                ->setAssociatedColumn('recurring_order.date_update')
             )
             ->add((new Filter('cancelled_at', DateRangeType::class))
-                ->setAssociatedColumn('cancelled_at')
+                ->setAssociatedColumn('recurring_order.cancelled_at')
+            )
+            ->add(
+                (new Filter('actions', SearchAndResetType::class))
+                    ->setTypeOptions([
+                        'reset_route' => 'admin_common_reset_search_by_filter_id',
+                        'reset_route_params' => [
+                            'filterId' => self::GRID_ID,
+                        ],
+                        'redirect_route' => 'admin_subscription_index',
+                    ])
+                    ->setAssociatedColumn('actions')
             );
     }
 }
