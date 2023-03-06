@@ -17,7 +17,6 @@ jobs:
     strategy:
       matrix:
         php-versions: [ '7.2' ]
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
@@ -31,10 +30,10 @@ jobs:
       - run: composer i
 
       - name: Pull PrestaShop files (Tag 1.7.7.0)
-        run: docker run -tid --rm -v ps-volume:/var/www/html -v $PWD/:/var/www/html/modules/mollie --name temp-ps prestashop/prestashop:1.7.7.0
+        run: docker run -tid --rm -v ps-volume:/var/www/html -v $PWD/:/var/www/html/modules/mollie --name temp-ps prestashop/prestashop:1.7.8.1-7.4-apache
 
       - name: Run PHPunit
-        run: docker run --rm --volumes-from temp-ps --workdir=/var/www/html/modules/mollie phpunit/phpunit:5.7.12 -c tests/Unit/
+        run: docker run --rm --volumes-from temp-ps --workdir=/var/www/html/modules/mollie php ./vendor/bin/phpunit -c ./tests/phpunit.xml -c tests/
 
   phpstan:
     name: PHPStan
