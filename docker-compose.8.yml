@@ -14,7 +14,7 @@ services:
     container_name: mollie-mysql-8
     image: mysql:5.7
     ports:
-      - "9002:3306"
+      - "9003:3306"
     environment:
       MYSQL_ROOT_PASSWORD: prestashop
       MYSQL_DATABASE: prestashop
@@ -41,7 +41,7 @@ services:
     depends_on:
       - mysql
     ports:
-      - "8002:80"
+      - "8003:80"
     volumes:
       - ./:/var/www/html/modules/mollie:cached
       - ./tests/seed/settings8/defines.inc.php:/var/www/html/config/defines.inc.php
