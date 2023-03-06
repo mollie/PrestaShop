@@ -43,6 +43,13 @@ services:
     tags:
       - { name: mollie.paymentmethodrestriction, priority: 10}
 
+  Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\AmountPaymentMethodRestrictionValidator:
+    class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\AmountPaymentMethodRestrictionValidator
+    arguments:
+      - '@=service("mollie.adapter.context")'
+    tags:
+      - { name: mollie.paymentmethodrestriction, priority: 11}
+
   Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation:
     class: Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation
     arguments:
@@ -51,6 +58,7 @@ services:
         - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator'
         - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\EnvironmentVersionSpecificPaymentMethodRestrictionValidator'
         - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator'
+        - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\AmountPaymentMethodRestrictionValidator'
 
   Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface: '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation'
 

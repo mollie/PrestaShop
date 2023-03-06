@@ -34,76 +34,51 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Adapter;
+namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
-use Context;
+use Mollie\Adapter\LegacyContext;
+use MolPaymentMethod;
+use PrestaShop\Decimal\Number;
 
-class LegacyContext
+/** Validator to check if cart total is valid for amount restrictions */
+class AmountPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
-    public function getContext()
-    {
-        return Context::getContext();
+    /** @var LegacyContext */
+    private $context;
+
+    public function __construct(
+        LegacyContext $context
+    ) {
+        $this->context = $context;
     }
 
-    public function getCookieValue($key)
+    /**
+     * {@inheritDoc}
+     */
+    public function isValid(MolPaymentMethod $paymentMethod)
     {
-        return $this->getContext()->cookie->__get($key);
+        $orderTotal = $this->context->getCart()->getOrderTotal();
+
+        $orderTotalAmount = (new Number((string) $this->context->getCurrency()->getConversionRate()))->times(new Number((string) $orderTotal));
+
+        $minAllowedAmount = new Number((string) $paymentMethod->min_amount);
+        $maxAllowedAmount = new Number((string) $paymentMethod->max_amount);
+
+        if ($minAllowedAmount->isGreaterThan($orderTotalAmount)) {
+            return false;
+        }
+        if ($paymentMethod->max_amount > 0 && $maxAllowedAmount->isLowerThan($orderTotalAmount)) {
+            return false;
+        }
+
+        return true;
     }
 
-    public function getCurrencyIsoCode()
+    /**
+     * {@inheritDoc}
+     */
+    public function supports(MolPaymentMethod $paymentMethod)
     {
-        return $this->getContext()->currency->iso_code;
-    }
-
-    public function getCurrencySign()
-    {
-        return $this->getContext()->currency->sign;
-    }
-
-    public function getCountryIsoCode()
-    {
-        return $this->getContext()->country->iso_code;
-    }
-
-    public function getCountryId()
-    {
-        return $this->getContext()->country->id;
-    }
-
-    public function getInvoiceCountryId()
-    {
-        $invoiceAddress = new \Address($this->getContext()->cart->id_address_invoice);
-
-        return $invoiceAddress->id_country;
-    }
-
-    public function getCurrency()
-    {
-        return $this->getContext()->currency;
-    }
-
-    public function getCurrencyId()
-    {
-        return $this->getContext()->currency->id;
-    }
-
-    public function getCart()
-    {
-        return $this->getContext()->cart;
-    }
-
-    public function getMobileDetect()
-    {
-        return $this->getContext()->getMobileDetect();
-    }
-
-    public function getLink()
-    {
-        return $this->getContext()->link;
-    }
-
-    public function getSmarty()
-    {
-        return $this->getContext()->smarty;
+        return true;
     }
 }

@@ -136,6 +136,14 @@ class ApiService implements ApiServiceInterface
                 'image' => (array) $apiMethod->image,
                 'issuers' => $apiMethod->issuers,
                 'tipEnableSSL' => $tipEnableSSL,
+                'minimumAmount' => $apiMethod->minimumAmount ? [
+                    'value' => $apiMethod->minimumAmount->value,
+                    'currency' => $apiMethod->minimumAmount->currency,
+                ] : false,
+                'maximumAmount' => $apiMethod->maximumAmount ? [
+                    'value' => $apiMethod->maximumAmount->value,
+                    'currency' => $apiMethod->maximumAmount->currency,
+                ] : false,
             ];
         }
 

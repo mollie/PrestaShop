@@ -212,14 +212,4 @@ $(document).ready(function () {
             $errorField.find('label').text('');
         }
     }
-
-    function handleSavedCard(useSavedCard)
-    {
-        $('input[name="mollieUseSavedCard"]').val(useSavedCard ? 1 : 0);
-        if (useSavedCard) {
-            $('.mollie-credit-card-inputs').hide();
-        } else {
-            $('.mollie-credit-card-inputs').show();
-        }
-    }
 });
