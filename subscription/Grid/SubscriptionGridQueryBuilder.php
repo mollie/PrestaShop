@@ -156,7 +156,7 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
     /**
      * @return string
      */
-    private function getNameField()
+    private function getNameField(): string
     {
         return 'CONCAT(customer.firstname, " ", customer.lastname)';
     }
