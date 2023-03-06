@@ -10,11 +10,11 @@ services:
       PATH: /var/www/html/_dev/node_modules/.bin/:$PATH
 
   mysql:
-    #platform: linux/amd64
-    container_name: mollie-mysql-8
-    image: mysql:5.7
+    platform: linux/arm64
+    container_name: mysql-mollie-8
+    image: mysql:latest
     ports:
-      - "9003:3306"
+      - "9459:3306"
     environment:
       MYSQL_ROOT_PASSWORD: prestashop
       MYSQL_DATABASE: prestashop
@@ -25,33 +25,40 @@ services:
     networks:
       - prestashop_mollie_net_8
   prestashop-8:
-    #platform: linux/amd64
-    container_name: prestashop-8
+    platform: linux/amd64
+    container_name: prestashop-mollie-8
     build:
       context: .
       dockerfile: .docker/Dockerfile.8
     environment:
-      PS_INSTALL_AUTO: 1
+      PS_INSTALL_AUTO: 0
       DB_PASSWD: ${DB_PASSWD}
       DB_NAME: prestashop
       DB_SERVER: mysql
-      PS_DOMAIN: wipdemoshop8.eu.ngrok.io:8003
+      PS_DOMAIN: wipdemoshop8.eu.ngrok.io:8142
       PS_FOLDER_INSTALL: install
       PS_FOLDER_ADMIN: admin1
     depends_on:
       - mysql
     ports:
-      - "8003:80"
+      - "8142:80"
     volumes:
-      - ./:/var/www/html/modules/mollie:cached
-      # - ./tests/seed/settings8/defines.inc.php:/var/www/html/config/defines.inc.php
-      # - ./tests/seed/settings8/parameters.php:/var/www/html/app/config/parameters.php
+      - ./:/var/www/html/modules/mollie
       - ./.docker/.htaccess8:/var/www/html/.htaccess
+      - ./tests/seed/settings8/parameters.php:/var/www/html/app/config/parameters.php
     networks:
       - prestashop_mollie_net_8
     healthcheck:
       test: "wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1"
       interval: 10s
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - '6969:8080'
+    networks:
+      - prestashop_mollie_net_8
 
 networks:
   prestashop_mollie_net_8:
