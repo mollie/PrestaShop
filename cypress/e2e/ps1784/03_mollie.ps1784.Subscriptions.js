@@ -52,7 +52,7 @@ it('Check if Subscription options are in Product Page FO', () => {
   cy.get('.products > :nth-child(1)').click()
   //wip
 });
-it.only('Check if Subscription options Menu is implemented in FO', () => {
+it.only('Check if Subscription options are implemented in My Account FO', () => {
   cy.visit('/SHOP2/')
   cy.get('[class="account"]').click()
   cy.contains('Mollie subscriptions').click()
