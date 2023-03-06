@@ -44,8 +44,8 @@ services:
       - "8003:80"
     volumes:
       - ./:/var/www/html/modules/mollie:cached
-      - ./tests/seed/settings8/defines.inc.php:/var/www/html/config/defines.inc.php
-      - ./tests/seed/settings8/parameters.php:/var/www/html/app/config/parameters.php
+      # - ./tests/seed/settings8/defines.inc.php:/var/www/html/config/defines.inc.php
+      # - ./tests/seed/settings8/parameters.php:/var/www/html/app/config/parameters.php
       - ./.docker/.htaccess8:/var/www/html/.htaccess
     networks:
       - prestashop_mollie_net_8
