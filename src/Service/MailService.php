@@ -186,8 +186,8 @@ class MailService
         Customer $customer
     ): array {
         $product = new Product($recurringOrderProduct->id_product, false, $customer->id_lang);
-        $totalPrice = NumberUtility::times((string) $recurringOrderProduct->unit_price, (string) $recurringOrderProduct->quantity);
-        $unitPrice = new Number($recurringOrderProduct->unit_price);
+        $totalPrice = NumberUtility::times((float) $recurringOrderProduct->unit_price, (float) $recurringOrderProduct->quantity);
+        $unitPrice = new Number((string) $recurringOrderProduct->unit_price);
 
         return [
             'subscription_reference' => $recurringOrder->mollie_subscription_id,
