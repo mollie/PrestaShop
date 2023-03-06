@@ -2886,7 +2886,7 @@ INSERT INTO `ps_configuration` (`id_configuration`, `id_shop_group`, `id_shop`, 
 (234,	NULL,	NULL,	'PS_SHOP_DOMAIN',	'wipdemoshop8.eu.ngrok.io',	'0000-00-00 00:00:00',	'2023-01-17 11:20:03'),
 (235,	NULL,	NULL,	'PS_SHOP_DOMAIN_SSL',	'wipdemoshop8.eu.ngrok.io',	'0000-00-00 00:00:00',	'2023-01-17 11:20:03'),
 (236,	NULL,	NULL,	'PS_SHOP_NAME',	'PrestaShop',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
-(237,	NULL,	NULL,	'PS_SHOP_EMAIL',	'demo@prestashop.com',	'0000-00-00 00:00:00',	'2023-01-17 11:20:05'),
+(237,	NULL,	NULL,	'PS_SHOP_EMAIL',	'demo@demo.com',	'0000-00-00 00:00:00',	'2023-01-17 11:20:05'),
 (238,	NULL,	NULL,	'PS_MAIL_METHOD',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (239,	NULL,	NULL,	'PS_SHOP_ACTIVITY',	'0',	'0000-00-00 00:00:00',	'2023-01-17 11:20:03'),
 (240,	NULL,	NULL,	'PS_LOGO',	'logo.png',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
@@ -2939,7 +2939,7 @@ INSERT INTO `ps_configuration` (`id_configuration`, `id_shop_group`, `id_shop`, 
 (287,	NULL,	NULL,	'PS_CATALOG_MODE_WITH_PRICES',	'0',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (288,	NULL,	NULL,	'PS_MAIL_THEME',	'modern',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (289,	NULL,	NULL,	'PS_ORDER_PRODUCTS_NB_PER_PAGE',	'8',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
-(290,	NULL,	NULL,	'PS_LOGS_EMAIL_RECEIVERS',	'demo@prestashop.com',	'0000-00-00 00:00:00',	'2023-01-17 11:20:05'),
+(290,	NULL,	NULL,	'PS_LOGS_EMAIL_RECEIVERS',	'demo@demo.com',	'0000-00-00 00:00:00',	'2023-01-17 11:20:05'),
 (291,	NULL,	NULL,	'PS_SHOW_LABEL_OOS_LISTING_PAGES',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (292,	NULL,	NULL,	'ADDONS_API_MODULE_CHANNEL',	'stable',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (293,	NULL,	NULL,	'PS_SECURITY_TOKEN',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
@@ -3003,7 +3003,7 @@ INSERT INTO `ps_configuration` (`id_configuration`, `id_shop_group`, `id_shop`, 
 (360,	NULL,	NULL,	'MA_CUSTOMER_QTY',	'1',	'2023-01-17 11:21:40',	'2023-01-17 11:21:40'),
 (361,	NULL,	NULL,	'MA_ORDER_EDIT',	'1',	'2023-01-17 11:21:40',	'2023-01-17 11:21:40'),
 (362,	NULL,	NULL,	'MA_RETURN_SLIP',	'1',	'2023-01-17 11:21:40',	'2023-01-17 11:21:40'),
-(363,	NULL,	NULL,	'MA_MERCHANT_MAILS',	'demo@prestashop.com',	'2023-01-17 11:21:40',	'2023-01-17 11:21:40'),
+(363,	NULL,	NULL,	'MA_MERCHANT_MAILS',	'demo@demo.com',	'2023-01-17 11:21:40',	'2023-01-17 11:21:40'),
 (364,	NULL,	NULL,	'MA_LAST_QTIES',	'3',	'2023-01-17 11:21:40',	'2023-01-17 11:21:40'),
 (365,	NULL,	NULL,	'MA_MERCHANT_COVERAGE',	'0',	'2023-01-17 11:21:40',	'2023-01-17 11:21:40'),
 (366,	NULL,	NULL,	'MA_PRODUCT_COVERAGE',	'0',	'2023-01-17 11:21:40',	'2023-01-17 11:21:40'),
@@ -3195,8 +3195,8 @@ CREATE TABLE `ps_contact` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `ps_contact` (`id_contact`, `email`, `customer_service`, `position`) VALUES
-(1,	'demo@prestashop.com',	1,	0),
-(2,	'demo@prestashop.com',	1,	0);
+(1,	'demo@demo.com',	1,	0),
+(2,	'demo@demo.com',	1,	0);
 
 DROP TABLE IF EXISTS `ps_contact_lang`;
 CREATE TABLE `ps_contact_lang` (
@@ -4309,7 +4309,7 @@ CREATE TABLE `ps_employee` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `ps_employee` (`id_employee`, `id_profile`, `id_lang`, `lastname`, `firstname`, `email`, `passwd`, `last_passwd_gen`, `stats_date_from`, `stats_date_to`, `stats_compare_from`, `stats_compare_to`, `stats_compare_option`, `preselect_date_range`, `bo_color`, `bo_theme`, `bo_css`, `default_tab`, `bo_width`, `bo_menu`, `active`, `optin`, `id_last_order`, `id_last_customer_message`, `id_last_customer`, `last_connection_date`, `reset_password_token`, `reset_password_validity`, `has_enabled_gravatar`) VALUES
-(1,	1,	1,	'Doe',	'John',	'demo@prestashop.com',	'$2y$10$/x8UZNv.a4yKuTYHrdPdTe97LAukeo4adEmGHXCzluyr2a/xF.nFS',	'2023-01-17 05:20:05',	'2022-12-17',	'2023-01-17',	'0000-00-00',	'0000-00-00',	1,	NULL,	NULL,	'default',	'theme.css',	1,	0,	1,	1,	NULL,	0,	0,	0,	'2023-01-17',	NULL,	'0000-00-00 00:00:00',	0);
+(1,	1,	1,	'Doe',	'John',	'demo@demo.com',	'$2y$10$/x8UZNv.a4yKuTYHrdPdTe97LAukeo4adEmGHXCzluyr2a/xF.nFS',	'2023-01-17 05:20:05',	'2022-12-17',	'2023-01-17',	'0000-00-00',	'0000-00-00',	1,	NULL,	NULL,	'default',	'theme.css',	1,	0,	1,	1,	NULL,	0,	0,	0,	'2023-01-17',	NULL,	'0000-00-00 00:00:00',	0);
 
 DROP TABLE IF EXISTS `ps_employee_session`;
 CREATE TABLE `ps_employee_session` (
