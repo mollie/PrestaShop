@@ -100,7 +100,16 @@ class MollieOrderCreationService
         return $apiPayment;
     }
 
-    public function createMolliePayment(MolliePaymentAlias $apiPayment, $cartId, $orderReference, $orderId = null)
+    /**
+     * @param MolliePaymentAlias|MollieOrderAlias $apiPayment
+     * @param int $cartId
+     * @param string $orderReference
+     * @param int $orderId
+     *
+     * @return void
+     * @throws \PrestaShopDatabaseException
+     */
+    public function createMolliePayment($apiPayment, $cartId, $orderReference, $orderId = null): void
     {
         Db::getInstance()->insert(
             'mollie_payments',
