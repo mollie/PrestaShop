@@ -122,12 +122,6 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
                 continue;
             }
 
-            if ('id_attribute_subgroup' === $filterName) {
-                $qb->andWhere($likeComparisonFilters[$filterName] . ' = :' . $filterName)
-                    ->setParameter($filterName, $value);
-                continue;
-            }
-
             if (array_key_exists($filterName, $likeComparisonFilters)) {
                 $qb->andWhere($likeComparisonFilters[$filterName] . ' LIKE :' . $filterName)
                     ->setParameter($filterName, '%' . $value . '%');
@@ -153,9 +147,6 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
         }
     }
 
-    /**
-     * @return string
-     */
     private function getNameField(): string
     {
         return 'CONCAT(customer.firstname, " ", customer.lastname)';
