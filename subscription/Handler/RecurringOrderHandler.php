@@ -152,7 +152,7 @@ class RecurringOrderHandler
 
         $specificPrice->delete();
 
-        $this->mollieOrderCreationService->createMolliePayment($transaction, $newCart->id, $order->reference, $orderId);
+        $this->mollieOrderCreationService->createMolliePayment($transaction, (int) $newCart->id, $order->reference, (int) $orderId);
     }
 
     private function updateOrderStatus(Payment $transaction, int $orderId)

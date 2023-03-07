@@ -248,7 +248,7 @@ class TransactionService
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
         $order = new Order($orderId);
         if (!$paymentMethod) {
-            $this->mollieOrderCreationService->createMolliePayment($apiPayment, $cart->id, $order->reference);
+            $this->mollieOrderCreationService->createMolliePayment($apiPayment, (int) $cart->id, $order->reference);
         } else {
             $this->mollieOrderCreationService->updateMolliePaymentReference($apiPayment->id, $order->reference);
         }
