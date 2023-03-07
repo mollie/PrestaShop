@@ -104,12 +104,13 @@ class MollieOrderCreationService
      * @param MolliePaymentAlias|MollieOrderAlias $apiPayment
      * @param int $cartId
      * @param string $orderReference
-     * @param int $orderId
+     * @param ?int $orderId
      *
      * @return void
+     *
      * @throws \PrestaShopDatabaseException
      */
-    public function createMolliePayment($apiPayment, $cartId, $orderReference, $orderId = null): void
+    public function createMolliePayment($apiPayment, int $cartId, string $orderReference, ?int $orderId = null): void
     {
         Db::getInstance()->insert(
             'mollie_payments',

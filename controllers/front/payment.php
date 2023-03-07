@@ -157,7 +157,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             } else {
                 $paymentMethod = $paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
                 if (!$paymentMethod) {
-                    $mollieOrderCreationService->createMolliePayment($apiPayment, $cart->id, $orderNumber);
+                    $mollieOrderCreationService->createMolliePayment($apiPayment, (int) $cart->id, $orderNumber);
                 }
             }
         } catch (Exception $e) {
