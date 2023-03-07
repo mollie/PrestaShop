@@ -15,6 +15,7 @@ use PrestaShop\PrestaShop\Core\Grid\Filter\Filter;
 use PrestaShop\PrestaShop\Core\Grid\Filter\FilterCollection;
 use PrestaShop\PrestaShop\Core\Hook\HookDispatcherInterface;
 use PrestaShopBundle\Form\Admin\Type\DateRangeType;
+use PrestaShopBundle\Form\Admin\Type\SearchAndResetType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
@@ -116,21 +117,21 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                     'sortable' => true,
                 ])
             )
-            ->add((new DataColumn('date_add'))
+            ->add((new DataColumn('recurring_order.date_add'))
                 ->setName($this->module->l('Created at', self::FILE_NAME))
                 ->setOptions([
                     'field' => 'date_add',
                     'sortable' => true,
                 ])
             )
-            ->add((new DataColumn('date_update'))
+            ->add((new DataColumn('recurring_order.date_update'))
                 ->setName($this->module->l('Updated at', self::FILE_NAME))
                 ->setOptions([
                     'field' => 'date_update',
                     'sortable' => true,
                 ])
             )
-            ->add((new DataColumn('cancelled_at'))
+            ->add((new DataColumn('recurring_order.cancelled_at'))
                 ->setName($this->module->l('Canceled at', self::FILE_NAME))
                 ->setOptions([
                     'field' => 'cancelled_at',
@@ -237,13 +238,24 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                 ->setAssociatedColumn('iso_code')
             )
             ->add((new Filter('date_add', DateRangeType::class))
-                ->setAssociatedColumn('date_add')
+                ->setAssociatedColumn('recurring_order.date_add')
             )
             ->add((new Filter('date_update', DateRangeType::class))
-                ->setAssociatedColumn('date_update')
+                ->setAssociatedColumn('recurring_order.date_update')
             )
             ->add((new Filter('cancelled_at', DateRangeType::class))
-                ->setAssociatedColumn('cancelled_at')
+                ->setAssociatedColumn('recurring_order.cancelled_at')
+            )
+            ->add(
+                (new Filter('actions', SearchAndResetType::class))
+                    ->setTypeOptions([
+                        'reset_route' => 'admin_common_reset_search_by_filter_id',
+                        'reset_route_params' => [
+                            'filterId' => self::GRID_ID,
+                        ],
+                        'redirect_route' => 'admin_subscription_index',
+                    ])
+                    ->setAssociatedColumn('actions')
             );
     }
 }
