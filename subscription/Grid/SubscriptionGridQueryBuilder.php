@@ -50,7 +50,7 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
             ->addSelect('recurring_orders_product.quantity, recurring_orders_product.unit_price')
             ->addSelect('currency.iso_code')
         ;
-            
+
         $this->searchCriteriaApplicator
             ->applyPagination($searchCriteria, $qb)
             ->applySorting($searchCriteria, $qb);
