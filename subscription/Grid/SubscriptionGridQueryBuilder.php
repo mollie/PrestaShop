@@ -46,11 +46,11 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
     {
         $qb = $this->getQueryBuilder($searchCriteria->getFilters())
             ->select('recurring_order.*')
-            ->addSelect('CONCAT(customer.firstname, " ", customer.lastname) as fullname')
+            ->addSelect($this->getNameField() . ' as fullname')
             ->addSelect('recurring_orders_product.quantity, recurring_orders_product.unit_price')
             ->addSelect('currency.iso_code')
         ;
-
+            
         $this->searchCriteriaApplicator
             ->applyPagination($searchCriteria, $qb)
             ->applySorting($searchCriteria, $qb);
@@ -81,8 +81,7 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
     private function getQueryBuilder(array $filters): QueryBuilder
     {
         $qb = $this->connection->createQueryBuilder()
-            ->from($this->dbPrefix . Config::DB_PREFIX . 'recurring_order', 'recurring_order')
-        ;
+            ->from($this->dbPrefix . Config::DB_PREFIX . 'recurring_order', 'recurring_order');
 
         $qb->leftJoin('recurring_order', $this->dbPrefix . Config::DB_PREFIX . 'recurring_orders_product', 'recurring_orders_product', 'recurring_order.id_mol_recurring_orders_product = recurring_orders_product.id_mol_recurring_orders_product');
         $qb->leftJoin('recurring_order', $this->dbPrefix . 'orders', 'orders', 'recurring_order.id_order = orders.id_order');
@@ -100,28 +99,57 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
      */
     private function applyFilters(array $filters, QueryBuilder $qb): void
     {
-        $allowedFiltersMap = [
-            'id_attribute_subgroup' => 'asg.id_attribute_subgroup',
-            'name' => 'asgl.name',
-            'description' => 'asgl.description',
-            'attribute_group_name' => 'agl.name',
+        $likeComparisonFilters = [
+            'id_mol_recurring_order' => 'id_mol_recurring_order',
+            'mollie_subscription_id' => 'mollie_subscription_id',
+            'mollie_customer_id' => 'mollie_customer_id',
+            'fullname' => $this->getNameField(),
+            'description' => 'recurring_order.description',
+            'status' => 'recurring_order.status',
+            'unit_price' => 'recurring_orders_product.unit_price',
+            'iso_code' => 'currency.iso_code',
+        ];
+
+        $dateComparisonFilters = [
+            'date_add' => 'recurring_order.date_add',
+            'date_update' => 'recurring_order.date_update',
+            'cancelled_at' => 'recurring_order.cancelled_at',
         ];
 
         foreach ($filters as $filterName => $value) {
-            if (!array_key_exists($filterName, $allowedFiltersMap)) {
+            if ('fullname' === $filterName) {
+                $qb->andWhere($likeComparisonFilters[$filterName] . ' LIKE :' . $filterName)
+                    ->setParameter($filterName, '%' . $value . '%');
                 continue;
             }
 
-            if ('id_attribute_subgroup' === $filterName) {
-                $qb->andWhere($allowedFiltersMap[$filterName] . ' = :' . $filterName)
-                    ->setParameter($filterName, $value)
-                ;
+            if (array_key_exists($filterName, $likeComparisonFilters)) {
+                $qb->andWhere($likeComparisonFilters[$filterName] . ' LIKE :' . $filterName)
+                    ->setParameter($filterName, '%' . $value . '%');
                 continue;
             }
 
-            $qb->andWhere($allowedFiltersMap[$filterName] . ' LIKE :' . $filterName)
-                ->setParameter($filterName, '%' . $value . '%')
-            ;
+            if (array_key_exists($filterName, $dateComparisonFilters)) {
+                $alias = $dateComparisonFilters[$filterName];
+
+                foreach ($value as $name => $dateValue) {
+                    switch ($name) {
+                        case 'from':
+                            $qb->andWhere("$alias >= :$name");
+                            $qb->setParameter($name, sprintf('%s %s', $dateValue, '0:0:0'));
+                            break;
+                        case 'to':
+                            $qb->andWhere("$alias <= :$name");
+                            $qb->setParameter($name, sprintf('%s %s', $dateValue, '23:59:59'));
+                            break;
+                    }
+                }
+            }
         }
+    }
+
+    private function getNameField(): string
+    {
+        return 'CONCAT(customer.firstname, " ", customer.lastname)';
     }
 }
