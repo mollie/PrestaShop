@@ -68,8 +68,7 @@ class RecurringOrderHandler
         PaymentMethodService $paymentMethodService,
         ClockInterface $clock,
         Shop $shop,
-        MailService $mailService,
-        TransactionService $transactionService
+        MailService $mailService
     ) {
         $this->subscriptionApi = $subscriptionApi;
         $this->subscriptionDataFactory = $subscriptionDataFactory;
@@ -82,7 +81,6 @@ class RecurringOrderHandler
         $this->clock = $clock;
         $this->shop = $shop;
         $this->mailService = $mailService;
-        $this->transactionService = $transactionService;
     }
 
     public function handle(string $transactionId): string
@@ -163,7 +161,7 @@ class RecurringOrderHandler
     private function updateOrderStatus(Payment $transaction, int $orderId)
     {
         $this->orderStatusService->setOrderStatus($orderId, $transaction->status);
-        $this->transactionService->savePaymentStatus($transaction->id, $transaction->status, $orderId);
+        $this->paymentMethodRepository->savePaymentStatus($transaction->id, $transaction->status, $orderId, $transaction->method);
     }
 
     private function handleFailedTransaction(int $recurringOrderId): void
