@@ -81,7 +81,7 @@ class AttributeInstaller extends AbstractInstaller
         $attributeGroup = new AttributeGroup();
         foreach ($languages as $language) {
             /* @phpstan-ignore-next-line */
-            $attributeGroup->name[$language['id_lang']] = 'Mollie subscription';
+            $attributeGroup->name[$language['id_lang']] = 'Mollie Subscription';
             /* @phpstan-ignore-next-line */
             $attributeGroup->public_name[$language['id_lang']] = 'Subscription';
         }

@@ -255,7 +255,7 @@ class TransactionService
 
         $this->updateTransaction($orderId, $apiPayment);
         // Store status in database
-        if (!$this->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId)) {
+        if (!$this->paymentMethodRepository->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId, $apiPayment->method)) {
             if (Configuration::get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
                 PrestaShopLogger::addLog(__METHOD__ . ' said: Could not save Mollie payment status for transaction "' . $apiPayment->id . '". Reason: ' . Db::getInstance()->getMsgError(), Config::WARNING);
             }
@@ -317,33 +317,6 @@ class TransactionService
                 $orderPayment->payment_method = $paymentMethod->method_name;
                 $orderPayment->update();
             }
-        }
-    }
-
-    /**
-     * @param string $transactionId
-     * @param string $status
-     * @param int $orderId
-     *
-     * @return bool
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    protected function savePaymentStatus($transactionId, $status, $orderId)
-    {
-        try {
-            return Db::getInstance()->update(
-                'mollie_payments',
-                [
-                    'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
-                    'bank_status' => pSQL($status),
-                    'order_id' => (int) $orderId,
-                ],
-                '`transaction_id` = \'' . pSQL($transactionId) . '\''
-            );
-        } catch (PrestaShopDatabaseException $e) {
-            throw $e;
         }
     }
 

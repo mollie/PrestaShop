@@ -47,8 +47,9 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
         $qb = $this->getQueryBuilder($searchCriteria->getFilters())
             ->select('recurring_order.*')
             ->addSelect($this->getNameField() . ' as fullname')
-            ->addSelect('recurring_orders_product.*')
-            ->addSelect('currency.iso_code');
+            ->addSelect('recurring_orders_product.quantity, recurring_orders_product.unit_price')
+            ->addSelect('currency.iso_code')
+        ;
 
         $this->searchCriteriaApplicator
             ->applyPagination($searchCriteria, $qb)
