@@ -27,6 +27,7 @@ use Mollie\Subscription\Logger\NullLogger;
 use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\PsVersionUtility;
+use Symfony\Component\Dotenv\Dotenv;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -107,17 +108,22 @@ class Mollie extends PaymentModule
             return;
         }
 
-        if (file_exists(_PS_MODULE_DIR_ . 'mollie/.env')) {
-            $dotenv = \Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env');
+        $dovenv = new Dotenv();
+
+        $envPath = _PS_MODULE_DIR_ . $this->name .  '/.env';
+
+        if (file_exists($envPath)) {
             /* @phpstan-ignore-next-line */
-            $dotenv->load();
+            $dovenv->load($envPath);
 
             return;
         }
-        if (file_exists(_PS_MODULE_DIR_ . 'mollie/.env.dist')) {
-            $dotenv = \Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'mollie/', '.env.dist');
+
+        $envDistPath = _PS_MODULE_DIR_ . $this->name . '/.env.dist';
+
+        if (file_exists($envDistPath)) {
             /* @phpstan-ignore-next-line */
-            $dotenv->load();
+            $dovenv->load($envDistPath);
         }
     }
 
