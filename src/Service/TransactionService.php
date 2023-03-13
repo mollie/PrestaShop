@@ -330,7 +330,7 @@ class TransactionService
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    protected function savePaymentStatus($transactionId, $status, $orderId)
+    public function savePaymentStatus($transactionId, $status, $orderId)
     {
         try {
             return Db::getInstance()->update(

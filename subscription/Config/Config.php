@@ -17,6 +17,7 @@ class Config
     public const SUBSCRIPTION_ATTRIBUTE_DAILY = 'SUBSCRIPTION_ATTRIBUTE_DAILY';
     public const SUBSCRIPTION_ATTRIBUTE_WEEKLY = 'SUBSCRIPTION_ATTRIBUTE_WEEKLY';
     public const SUBSCRIPTION_ATTRIBUTE_MONTHLY = 'SUBSCRIPTION_ATTRIBUTE_MONTHLY';
+    public const SUBSCRIPTION_ATTRIBUTE_YEARLY = 'SUBSCRIPTION_ATTRIBUTE_YEARLY';
 
     public const DESCRIPTION_PREFIX = 'mol';
 
@@ -32,6 +33,7 @@ class Config
             'Daily' => Config::SUBSCRIPTION_ATTRIBUTE_DAILY,
             'Weekly' => Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY,
             'Monthly' => Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY,
+            'Yearly' => Config::SUBSCRIPTION_ATTRIBUTE_YEARLY,
         ];
     }
 
@@ -46,6 +48,7 @@ class Config
             Config::SUBSCRIPTION_ATTRIBUTE_DAILY => new Interval($intervalAmount, IntervalConstant::DAY),
             Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY => new Interval($intervalAmount, IntervalConstant::WEEK),
             Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY => new Interval($intervalAmount, IntervalConstant::MONTH),
+            Config::SUBSCRIPTION_ATTRIBUTE_YEARLY => new Interval($intervalAmount, IntervalConstant::YEAR),
         ];
     }
 
