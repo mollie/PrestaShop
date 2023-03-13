@@ -47,7 +47,7 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
         $qb = $this->getQueryBuilder($searchCriteria->getFilters())
             ->select('recurring_order.*')
             ->addSelect('CONCAT(customer.firstname, " ", customer.lastname) as fullname')
-            ->addSelect('recurring_orders_product.*')
+            ->addSelect('recurring_orders_product.quantity, recurring_orders_product.unit_price')
             ->addSelect('currency.iso_code')
         ;
 

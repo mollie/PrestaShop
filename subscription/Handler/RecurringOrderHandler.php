@@ -19,6 +19,7 @@ use Mollie\Service\MailService;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
+use Mollie\Service\TransactionService;
 use Mollie\Subscription\Api\SubscriptionApi;
 use Mollie\Subscription\Factory\GetSubscriptionDataFactory;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
@@ -53,6 +54,8 @@ class RecurringOrderHandler
     private $shop;
     /** @var MailService */
     private $mailService;
+    /** @var TransactionService */
+    private $transactionService;
 
     public function __construct(
         SubscriptionApi $subscriptionApi,
@@ -65,7 +68,8 @@ class RecurringOrderHandler
         PaymentMethodService $paymentMethodService,
         ClockInterface $clock,
         Shop $shop,
-        MailService $mailService
+        MailService $mailService,
+        TransactionService $transactionService
     ) {
         $this->subscriptionApi = $subscriptionApi;
         $this->subscriptionDataFactory = $subscriptionDataFactory;
@@ -78,6 +82,7 @@ class RecurringOrderHandler
         $this->clock = $clock;
         $this->shop = $shop;
         $this->mailService = $mailService;
+        $this->transactionService = $transactionService;
     }
 
     public function handle(string $transactionId): string
@@ -158,6 +163,7 @@ class RecurringOrderHandler
     private function updateOrderStatus(Payment $transaction, int $orderId)
     {
         $this->orderStatusService->setOrderStatus($orderId, $transaction->status);
+        $this->transactionService->savePaymentStatus($transaction->id, $transaction->status, $orderId);
     }
 
     private function handleFailedTransaction(int $recurringOrderId): void
