@@ -12,12 +12,21 @@
 
 namespace Mollie\Adapter;
 
+use Context;
 use Shop;
 
 class ConfigurationAdapter
 {
     public function get($key, $idShop = null, $idLang = null, $idShopGroup = null)
     {
+        if (!$idShop) {
+            $idShop = Context::getContext()->shop->id;
+        }
+
+        if (!$idShopGroup) {
+            $idShopGroup = Context::getContext()->shop->id_shop_group;
+        }
+
         return \Configuration::get($key, $idLang, $idShopGroup, $idShop);
     }
 

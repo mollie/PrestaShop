@@ -28,7 +28,7 @@ class ApiKeyService
      *
      * @throws ApiException
      */
-    public function setApiKey($apiKey, $moduleVersion)
+    public function setApiKey(string $apiKey, string $moduleVersion): ?MollieApiClient
     {
         $api = new MollieApiClient(new CurlPSMollieHttpAdapter());
         $context = Context::getContext();

@@ -10,11 +10,16 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Subscription\Exception\ProductValidationException;
+use Mollie\Subscription\Exception\SubscriptionProductValidationException;
+use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\NumberUtility;
 use PrestaShop\Decimal\DecimalNumber;
 
 class MollieAjaxModuleFrontController extends ModuleFrontController
 {
+    private const FILE_NAME = 'ajax';
+
     /** @var Mollie */
     public $module;
 
@@ -27,6 +32,9 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
                 // no break
             case 'displayCheckoutError':
                 $this->displayCheckoutError();
+                // no break
+            case 'validateProduct':
+                $this->validateProduct();
         }
     }
 
@@ -67,7 +75,7 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
         $presentedCart['totals'] = [
             'total' => [
                 'type' => 'total',
-                'label' => $this->translator->trans('Total', [], 'Shop.Theme.Checkout'),
+                'label' => $this->module->l('Total', self::FILE_NAME),
                 'amount' => $taxConfiguration->includeTaxes() ? $total_including_tax : $total_excluding_tax,
                 'value' => Tools::displayPrice(
                     $taxConfiguration->includeTaxes() ? (float) $total_including_tax : (float) $total_excluding_tax
@@ -75,13 +83,13 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
             ],
             'total_including_tax' => [
                 'type' => 'total',
-                'label' => $this->translator->trans('Total (tax incl.)', [], 'Shop.Theme.Checkout'),
+                'label' => $this->module->l('Total (tax incl.)', self::FILE_NAME),
                 'amount' => $total_including_tax,
                 'value' => Tools::displayPrice((float) $total_including_tax),
             ],
             'total_excluding_tax' => [
                 'type' => 'total',
-                'label' => $this->translator->trans('Total (tax excl.)', [], 'Shop.Theme.Checkout'),
+                'label' => $this->module->l('Total (tax excl.)', self::FILE_NAME),
                 'amount' => $total_excluding_tax,
                 'value' => Tools::displayPrice((float) $total_excluding_tax),
             ],
@@ -116,5 +124,35 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
             }
         }
         $this->ajaxDie();
+    }
+
+    private function validateProduct()
+    {
+        /** @var CanProductBeAddedToCartValidator $cartValidation */
+        $cartValidation = $this->module->getService(CanProductBeAddedToCartValidator::class);
+
+        $product = Tools::getValue('product');
+
+        $productCanBeAdded = true;
+        $message = '';
+        try {
+            $cartValidation->validate((int) $product['id_product_attribute']);
+        } catch (ProductValidationException $e) {
+            $productCanBeAdded = false;
+            $message = $this->module->l('Product cannot be added because you have subscription product in your cart', self::FILE_NAME);
+        } catch (SubscriptionProductValidationException $e) {
+            $productCanBeAdded = false;
+            $message = $this->module->l('Subscription product cannot be added if you have other products in your cart', self::FILE_NAME);
+        }
+
+        $this->ajaxDie(
+            json_encode(
+                [
+                    'success' => true,
+                    'isValid' => $productCanBeAdded,
+                    'message' => $message,
+                ]
+            )
+        );
     }
 }

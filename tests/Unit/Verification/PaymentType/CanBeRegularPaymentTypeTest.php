@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 class CanBeRegularPaymentTypeTest extends TestCase
 {
     /**
-     * @var \Mollie\Provider\PaymentType\RegularPaymentTypeIdentification|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Mollie\Provider\PaymentType\RegularInterfacePaymentTypeIdentification|\PHPUnit\Framework\MockObject\MockObject
      */
     private $regularPaymentTypeIdentification;
 
@@ -19,7 +19,7 @@ class CanBeRegularPaymentTypeTest extends TestCase
         parent::setUp();
 
         $this->regularPaymentTypeIdentification = $this
-            ->getMockBuilder(\Mollie\Provider\PaymentType\RegularPaymentTypeIdentification::class)
+            ->getMockBuilder(\Mollie\Provider\PaymentType\RegularInterfacePaymentTypeIdentification::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;

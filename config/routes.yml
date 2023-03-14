@@ -5,3 +5,37 @@ mollie_module_admin_resend_payment_message:
         _controller: 'Mollie\Controller\AdminMollieEmailController::sendSecondChanceMessage'
     requirements:
         orderId: "^[0-9]*"
+
+admin_subscription_index:
+    path: admin-subscription
+    methods: GET
+    defaults:
+        _controller: Mollie\Subscription\Controller\Symfony\SubscriptionController::indexAction
+        _legacy_controller: AdminMollieSubscriptionOrders
+        _legacy_link: AdminMollieSubscriptionOrders
+
+admin_subscription_search:
+    path: admin-subscription
+    methods: POST
+    defaults:
+        _controller: Mollie\Subscription\Controller\Symfony\SubscriptionController::searchAction
+        _legacy_controller: AdminMollieSubscriptionOrders
+        _legacy_link: AdminMollieSubscriptionOrders
+
+admin_subscription_cancel:
+    path: admin-subscription/{subscriptionId}/cancel
+    methods: POST
+    defaults:
+        _controller: Mollie\Subscription\Controller\Symfony\SubscriptionController::cancelAction
+        _legacy_controller: AdminMollieSubscriptionOrders
+        _legacy_link: AdminMollieSubscriptionOrders
+    requirements:
+        subscriptionId: \d+
+
+admin_subscription_faq_index:
+    path: admin-subscription-faq
+    methods: GET
+    defaults:
+        _controller: Mollie\Subscription\Controller\Symfony\SubscriptionFAQController::indexAction
+        _legacy_controller: AdminMollieSubscriptionFAQ
+        _legacy_link: AdminMollieSubscriptionFAQ

@@ -14,6 +14,7 @@ namespace Mollie\Provider;
 
 use Configuration;
 use Mollie\Config\Config;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Utility\CustomLogoUtility;
 use Mollie\Utility\ImageUtility;
 use MolPaymentMethod;
@@ -30,10 +31,10 @@ final class CreditCardLogoProvider extends AbstractCustomLogoProvider
      */
     private $pathUri;
 
-    public function __construct($localPath, $pathUri)
+    public function __construct(ModuleFactory $moduleFactory)
     {
-        $this->localPath = $localPath;
-        $this->pathUri = $pathUri;
+        $this->localPath = $moduleFactory->getLocalPath();
+        $this->pathUri = $moduleFactory->getPathUri();
     }
 
     public function getName()

@@ -35,11 +35,8 @@ class ErrorHandler
      */
     private static $instance;
 
-    public function __construct($module)
+    public function __construct($module, Env $env)
     {
-        /** @var Env $env */
-        $env = $module->getMollieContainer(Env::class);
-
         try {
             $this->client = new ModuleFilteredRavenClient(
                 Config::SENTRY_KEY,
@@ -102,7 +99,7 @@ class ErrorHandler
         $module = Module::getInstanceByName('mollie');
 
         if (self::$instance === null) {
-            self::$instance = new ErrorHandler($module);
+            self::$instance = new ErrorHandler($module, new Env());
         }
 
         return self::$instance;

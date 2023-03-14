@@ -14,19 +14,27 @@ namespace Mollie\Service;
 
 use Address;
 use AddressFormat;
-use AttributeCore as Attribute;
 use Carrier;
 use CartRule;
 use Configuration;
 use Context;
+use Currency;
 use Customer;
 use Hook;
 use Language;
 use Mail;
 use Mollie;
+use Mollie\Adapter\ProductAttributeAdapter;
+use Mollie\Adapter\ToolsAdapter;
+use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
+use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
+use Mollie\Utility\NumberUtility;
+use MolRecurringOrder;
+use MolRecurringOrdersProduct;
 use Order;
 use OrderState;
 use PDF;
+use PrestaShop\Decimal\Number;
 use Product;
 use State;
 use Tools;
@@ -44,11 +52,28 @@ class MailService
      * @var Context
      */
     private $context;
+    /** @var ProductAttributeAdapter */
+    private $productAttributeAdapter;
+    /** @var RecurringOrderRepositoryInterface */
+    private $recurringOrderRepository;
+    /** @var RecurringOrdersProductRepositoryInterface */
+    private $recurringOrdersProductRepository;
+    /** @var ToolsAdapter */
+    private $toolsAdapter;
 
-    public function __construct(Mollie $module)
-    {
+    public function __construct(
+        Mollie $module,
+        ProductAttributeAdapter $productAttributeAdapter,
+        RecurringOrderRepositoryInterface $recurringOrderRepository,
+        RecurringOrdersProductRepositoryInterface $recurringOrdersProductRepository,
+        ToolsAdapter $toolsAdapter
+    ) {
         $this->module = $module;
         $this->context = Context::getContext();
+        $this->productAttributeAdapter = $productAttributeAdapter;
+        $this->recurringOrderRepository = $recurringOrderRepository;
+        $this->recurringOrdersProductRepository = $recurringOrdersProductRepository;
+        $this->toolsAdapter = $toolsAdapter;
     }
 
     public function sendSecondChanceMail(Customer $customer, $checkoutUrl, $methodName, $shopId)
@@ -87,18 +112,92 @@ class MailService
         $data = $this->getOrderConfData($order, $orderStateId);
         $fileAttachment = $this->getFileAttachment($orderStateId, $order);
         $customer = $order->getCustomer();
+
         Mail::Send(
             (int) $order->id_lang,
             'order_conf',
             Mail::l('Order confirmation', (int) $order->id_lang),
             $data,
             $customer->email,
-            $customer->firstname . ' ' . $customer->lastname,
+
+            implode(' ', [$customer->firstname, $customer->lastname]),
             null,
             null,
             $fileAttachment,
             null, _PS_MAIL_DIR_, false, (int) $order->id_shop
         );
+    }
+
+    public function sendSubscriptionCancelWarningEmail(int $recurringOrderId): void
+    {
+        $recurringOrder = $this->recurringOrderRepository->findOneBy(['id_mol_recurring_order' => $recurringOrderId]);
+        $recurringOrderProduct = $this->recurringOrdersProductRepository->findOneBy(['id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product]);
+        $customer = new Customer($recurringOrder->id_customer);
+        $product = new Product($recurringOrderProduct->id_product, false, $customer->id_lang);
+
+        $data = $this->getSubscriptionCancellationWarningMailData($recurringOrder, $recurringOrderProduct, $customer);
+
+        Mail::Send(
+            (int) $customer->id_lang,
+            'mollie_subscription_cancel',
+            sprintf(Mail::l('Your payment for the subscription of %s failed', (int) $customer->id_lang), $product->name),
+            $data,
+            $customer->email,
+            implode(' ', [$customer->firstname, $customer->lastname]),
+            null,
+            null,
+            null,
+            null,
+            $this->module->getLocalPath() . 'mails/',
+            false,
+            (int) $customer->id_shop
+        );
+    }
+
+    public function sendSubscriptionPaymentFailWarningMail(int $recurringOrderId): void
+    {
+        $recurringOrder = $this->recurringOrderRepository->findOneBy(['id_mol_recurring_order' => $recurringOrderId]);
+        $recurringOrderProduct = $this->recurringOrdersProductRepository->findOneBy(['id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product]);
+        $customer = new Customer($recurringOrder->id_customer);
+        $product = new Product($recurringOrderProduct->id_product, false, $customer->id_lang);
+
+        $data = $this->getSubscriptionCancellationWarningMailData($recurringOrder, $recurringOrderProduct, $customer);
+
+        Mail::Send(
+            (int) $customer->id_lang,
+            'mollie_subscription_payment_failed',
+            sprintf(Mail::l('Your subscription for %s cancelled', (int) $customer->id_lang), $product->name),
+            $data,
+            $customer->email,
+            implode(' ', [$customer->firstname, $customer->lastname]),
+            null,
+            null,
+            null,
+            null,
+            $this->module->getLocalPath() . 'mails/',
+            false,
+            (int) $customer->id_shop
+        );
+    }
+
+    private function getSubscriptionCancellationWarningMailData(
+        MolRecurringOrder $recurringOrder,
+        MolRecurringOrdersProduct $recurringOrderProduct,
+        Customer $customer
+    ): array {
+        $product = new Product($recurringOrderProduct->id_product, false, $customer->id_lang);
+        $totalPrice = NumberUtility::times((float) $recurringOrderProduct->unit_price, (float) $recurringOrderProduct->quantity);
+        $unitPrice = new Number((string) $recurringOrderProduct->unit_price);
+
+        return [
+            'subscription_reference' => $recurringOrder->mollie_subscription_id,
+            'product_name' => $product->name,
+            'unit_price' => $this->toolsAdapter->displayPrice($unitPrice->toPrecision(2), new Currency($recurringOrder->id_currency)),
+            'quantity' => $recurringOrderProduct->quantity,
+            'total_price' => $this->toolsAdapter->displayPrice($totalPrice, new Currency($recurringOrder->id_currency)),
+            'firstName' => $customer->firstname,
+            'lastName' => $customer->lastname,
+        ];
     }
 
     /**
@@ -127,7 +226,7 @@ class MailService
 
             $product_price = PS_TAX_EXC == Product::getTaxCalculationMethod() ? Tools::ps_round($price, 2) : $price_wt;
 
-            $attribute = new Attribute($product['product_attribute_id'], $this->context->language->id);
+            $attribute = $this->productAttributeAdapter->getProductAttribute((int) $product['product_attribute_id'], $this->context->language->id);
             $product_var_tpl = [
                 'id_product' => $product['id_product'],
                 'reference' => $product['reference'],
@@ -348,7 +447,7 @@ class MailService
                         ),
                         $params,
                         $customer->email,
-                        $customer->firstname . ' ' . $customer->lastname,
+                        implode(' ', [$customer->firstname, $customer->lastname]),
                         null, null, null, null, _PS_MAIL_DIR_, false, (int) $order->id_shop
                     );
                 }

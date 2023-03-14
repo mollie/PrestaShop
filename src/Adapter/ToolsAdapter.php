@@ -16,18 +16,23 @@ use Tools;
 
 class ToolsAdapter
 {
-    public function strtoupper($str)
+    public function strtoupper($str): string
     {
         return Tools::strtoupper($str);
     }
 
-    public function strlen($str)
+    public function strlen($str): string
     {
         return Tools::strlen($str);
     }
 
-    public function substr($str, $start, $length = false)
+    public function substr($str, $start, $length = false): string
     {
         return Tools::substr($str, $start, $length);
+    }
+
+    public function displayPrice($price, $currency): string
+    {
+        return Tools::displayPrice($price, $currency);
     }
 }

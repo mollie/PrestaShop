@@ -14,7 +14,8 @@ namespace Mollie\Tests\Integration;
 
 use Module;
 use Mollie;
-use Mollie\Tests\Integration\Tool\ContextBuilder;
+use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Tests\Integration\Subscription\Tool\ContextBuilder;
 use PHPUnit\Framework\TestCase;
 use Shop;
 
@@ -23,6 +24,9 @@ class BaseTestCase extends TestCase
     protected $backupGlobals = false;
     /** @var ContextBuilder */
     public $contextBuilder;
+
+    /** @var ConfigurationAdapter */
+    protected $configuration;
 
     protected function setUp()
     {
@@ -39,6 +43,7 @@ class BaseTestCase extends TestCase
 
         $this->contextBuilder = new ContextBuilder();
         $this->contextBuilder->setDefaults();
+        $this->configuration = new ConfigurationAdapter();
     }
 
     protected function tearDown()
@@ -100,7 +105,7 @@ class BaseTestCase extends TestCase
         /** @var Mollie $mollie */
         $mollie = Module::getInstanceByName('mollie');
 
-        return $mollie->getMollieContainer($serviceName);
+        return $mollie->getService($serviceName);
     }
 
     public function getContextBuilder()

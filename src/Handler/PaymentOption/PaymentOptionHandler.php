@@ -37,7 +37,6 @@
 namespace Mollie\Handler\PaymentOption;
 
 use Configuration;
-use Customer;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
 use Mollie\Provider\PaymentOption\BancontactPaymentOptionProvider;
@@ -45,7 +44,6 @@ use Mollie\Provider\PaymentOption\BasePaymentOptionProvider;
 use Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider;
 use Mollie\Provider\PaymentOption\CreditCardSingleClickPaymentOptionProvider;
 use Mollie\Provider\PaymentOption\IdealPaymentOptionProvider;
-use Mollie\Repository\MolCustomerRepository;
 use MolPaymentMethod;
 
 class PaymentOptionHandler implements PaymentOptionHandlerInterface
@@ -64,14 +62,7 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
      * @var IdealPaymentOptionProvider
      */
     private $idealPaymentOptionProvider;
-    /**
-     * @var MolCustomerRepository
-     */
-    private $customerRepository;
-    /**
-     * @var Customer
-     */
-    private $customer;
+
     /**
      * @var CreditCardSingleClickPaymentOptionProvider
      */
@@ -84,15 +75,11 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
         CreditCardPaymentOptionProvider $creditCardPaymentOptionProvider,
         CreditCardSingleClickPaymentOptionProvider $cardSingleClickPaymentOptionProvider,
         IdealPaymentOptionProvider $idealPaymentOptionProvider,
-        MolCustomerRepository $customerRepository,
-        Customer $customer,
         BancontactPaymentOptionProvider $bancontactPaymentOptionProvider
     ) {
         $this->basePaymentOptionProvider = $basePaymentOptionProvider;
         $this->creditCardPaymentOptionProvider = $creditCardPaymentOptionProvider;
         $this->idealPaymentOptionProvider = $idealPaymentOptionProvider;
-        $this->customerRepository = $customerRepository;
-        $this->customer = $customer;
         $this->cardSingleClickPaymentOptionProvider = $cardSingleClickPaymentOptionProvider;
         $this->bancontactPaymentOptionProvider = $bancontactPaymentOptionProvider;
     }

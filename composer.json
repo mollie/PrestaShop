@@ -11,11 +11,14 @@
         "segmentio/analytics-php": "^1.5",
         "sentry/sentry": "^1.11.0",
         "vlucas/phpdotenv": "3.4",
-        "prestashop/autoindex": "^1.0"
+        "league/container": "2.5.0",
+        "prestashop/module-lib-service-container": "v2.0",
+        "webmozart/assert": "^1.11"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
-        "prestashop/php-dev-tools": "*"
+        "prestashop/php-dev-tools": "*",
+        "phpunit/phpunit": "~5.7"
     },
     "autoload-dev": {
         "psr-4": {
@@ -24,17 +27,19 @@
     },
     "autoload": {
         "psr-4": {
-            "Mollie\\": "src/"
+            "Mollie\\": "src/",
+            "Mollie\\Subscription\\": "subscription/"
         },
         "classmap": [
             "mollie.php",
             "controllers/",
-            "src/"
+            "src/",
+            "subscription/"
         ]
     },
     "config": {
         "platform": {
-            "php": "7.0.8"
+            "php": "7.2"
         },
         "prepend-autoloader": false
     },

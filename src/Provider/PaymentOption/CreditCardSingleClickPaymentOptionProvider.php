@@ -37,7 +37,6 @@
 namespace Mollie\Provider\PaymentOption;
 
 use Configuration;
-use Customer;
 use MolCustomer;
 use Mollie;
 use Mollie\Adapter\LegacyContext;
@@ -86,13 +85,11 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
      */
     private $languageService;
     /**
-     * @var Customer
-     */
-    private $customer;
-    /**
      * @var MolCustomerRepository
      */
     private $customerRepository;
+    /** @var Mollie\Adapter\Customer */
+    private $customer;
 
     public function __construct(
         Mollie $module,
@@ -101,8 +98,8 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         OrderTotalProviderInterface $orderTotalProvider,
         PaymentFeeProviderInterface $paymentFeeProvider,
         LanguageService $languageService,
-        Customer $customer,
-        MolCustomerRepository $customerRepository
+        MolCustomerRepository $customerRepository,
+        Mollie\Adapter\Customer $customer
     ) {
         $this->module = $module;
         $this->context = $context;
@@ -110,8 +107,8 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         $this->orderTotalProvider = $orderTotalProvider;
         $this->paymentFeeProvider = $paymentFeeProvider;
         $this->languageService = $languageService;
-        $this->customer = $customer;
         $this->customerRepository = $customerRepository;
+        $this->customer = $customer;
     }
 
     /**
@@ -131,13 +128,13 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
             ['method' => $paymentMethod->getPaymentMethodName(), 'rand' => Mollie\Utility\TimeUtility::getCurrentTimeStamp()],
             true
         ));
-        $fullName = CustomerUtility::getCustomerFullName($this->customer->id);
+        $fullName = CustomerUtility::getCustomerFullName($this->customer->getCustomer()->id);
 
         /** @var MolCustomer|null $molCustomer */
         $molCustomer = $this->customerRepository->findOneBy(
             [
                 'name' => $fullName,
-                'email' => $this->customer->email,
+                'email' => $this->customer->getCustomer()->email,
             ]
         );
 
@@ -172,7 +169,7 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
             'methodId' => $paymentMethod->getPaymentMethodName(),
             'isSingleClickPayment' => (bool) Configuration::get(Mollie\Config\Config::MOLLIE_SINGLE_CLICK_PAYMENT),
             'mollieUseSavedCard' => $useSavedUser,
-            'isGuest' => $this->customer->isGuest(),
+            'isGuest' => $this->customer->getCustomer()->isGuest(),
         ]);
         $paymentOption->setLogo($this->creditCardLogoProvider->getMethodOptionLogo($paymentMethod));
 

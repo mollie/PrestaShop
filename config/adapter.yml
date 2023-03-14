@@ -1,9 +1,0 @@
-services:
-  _defaults:
-    public: true
-
-  Mollie\Adapter\ConfigurationAdapter:
-    class: Mollie\Adapter\ConfigurationAdapter
-
-  Mollie\Adapter\ToolsAdapter:
-    class: Mollie\Adapter\ToolsAdapter

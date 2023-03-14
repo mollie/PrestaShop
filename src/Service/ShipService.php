@@ -43,7 +43,7 @@ class ShipService
     {
         try {
             /** @var MollieOrderAlias $payment */
-            $order = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
+            $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
             $shipment = [
                 'lines' => array_map(function ($line) {
                     return array_intersect_key(
