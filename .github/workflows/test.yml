@@ -14,10 +14,6 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php-versions: [ '7.1' ]
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
@@ -28,20 +24,21 @@ jobs:
           path: ~/.composer/cache
           key: php-composer-cache
 
-      - run: composer update
+      - run: composer i
 
       - name: Pull PrestaShop files (Tag 1.7.7.0)
-        run: docker run -tid --rm -v ps-volume:/var/www/html -v $PWD/:/var/www/html/modules/mollie --name temp-ps prestashop/prestashop:1.7.7.0
+        run: docker run -tid --rm -v ps-volume:/var/www/html -v $PWD/:/var/www/html/modules/mollie --name temp-ps prestashop/prestashop:1.7.8.1-7.4-apache
 
       - name: Run PHPunit
-        run: docker run --rm --volumes-from temp-ps --workdir=/var/www/html/modules/mollie phpunit/phpunit:5.7.12 -c tests/Unit/
+        run: docker exec temp-ps php /var/www/html/modules/mollie/vendor/bin/phpunit -c /var/www/html/modules/mollie/tests/phpunit.xml -c /var/www/html/modules/mollie/tests/
+#        run: docker run --rm --volumes-from temp-ps --workdir=/var/www/html/modules/mollie php ./vendor/bin/phpunit -c ./tests/phpunit.xml -c tests/
 
   phpstan:
     name: PHPStan
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        presta-versions: [ '1.7.6.8', '1.7.5.1', '1.7.7.0', 'nightly-apache' ]
+        presta-versions: [ '1.7.6.8', '1.7.7.0', 'nightly-apache' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0

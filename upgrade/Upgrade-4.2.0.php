@@ -25,13 +25,13 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_4_2_0($module)
 {
     /** @var Mollie\Tracker\Segment $segment */
-    $segment = $module->getMollieContainer(Mollie\Tracker\Segment::class);
+    $segment = $module->getService(Mollie\Tracker\Segment::class);
 
     $segment->setMessage('Mollie upgrade 4.2.0');
     $segment->track();
 
     /** @var Installer $installer */
-    $installer = $module->getMollieContainer(Installer::class);
+    $installer = $module->getService(Installer::class);
 
     $installer->klarnaPaymentAuthorizedState();
     $installer->klarnaPaymentShippedState();
@@ -64,7 +64,7 @@ function upgrade_module_4_2_0($module)
     /**
      * @var OrderStateImageService $imageService
      */
-    $imageService = $module->getMollieContainer(OrderStateImageService::class);
+    $imageService = $module->getService(OrderStateImageService::class);
     $mollieOrderStatuses = Config::getMollieOrderStatuses();
 
     foreach ($mollieOrderStatuses as $mollieOrderStatus) {

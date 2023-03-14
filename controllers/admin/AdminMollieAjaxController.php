@@ -56,7 +56,7 @@ class AdminMollieAjaxController extends ModuleAdminController
         $paymentStatus = Tools::getValue('status');
 
         /** @var PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getMollieContainer(PaymentMethodRepository::class);
+        $paymentMethodRepo = $this->module->getService(PaymentMethodRepository::class);
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $methodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($paymentMethod, $environment);
         $method = new MolPaymentMethod($methodId);
@@ -86,7 +86,7 @@ class AdminMollieAjaxController extends ModuleAdminController
         $orderId = Tools::getValue('id_order');
 
         /** @var MolliePaymentMailService $molliePaymentMailService */
-        $molliePaymentMailService = $this->module->getMollieContainer(MolliePaymentMailService::class);
+        $molliePaymentMailService = $this->module->getService(MolliePaymentMailService::class);
 
         $response = $molliePaymentMailService->sendSecondChanceMail($orderId);
 
@@ -103,7 +103,7 @@ class AdminMollieAjaxController extends ModuleAdminController
         $liveKey = Tools::getValue('liveKey');
 
         /** @var ApiTestFeedbackBuilder $apiTestFeedbackBuilder */
-        $apiTestFeedbackBuilder = $this->module->getMollieContainer(ApiTestFeedbackBuilder::class);
+        $apiTestFeedbackBuilder = $this->module->getService(ApiTestFeedbackBuilder::class);
         $apiTestFeedbackBuilder->setTestKey($testKey);
         $apiTestFeedbackBuilder->setLiveKey($liveKey);
         $apiKeysTestInfo = $apiTestFeedbackBuilder->buildParams();
@@ -124,7 +124,7 @@ class AdminMollieAjaxController extends ModuleAdminController
     private function validateLogo()
     {
         /** @var CreditCardLogoProvider $creditCardLogoProvider */
-        $creditCardLogoProvider = $this->module->getMollieContainer(CreditCardLogoProvider::class);
+        $creditCardLogoProvider = $this->module->getService(CreditCardLogoProvider::class);
         $target_file = $creditCardLogoProvider->getLocalLogoPath();
         $isUploaded = 1;
         $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);

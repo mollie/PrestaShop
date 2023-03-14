@@ -24,7 +24,7 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_4_4_0($module)
 {
     /** @var ConfigurationAdapter $configurationAdapter */
-    $configurationAdapter = $module->getMollieContainer(ConfigurationAdapter::class);
+    $configurationAdapter = $module->getService(ConfigurationAdapter::class);
     $shops = Shop::getShops();
     foreach ($shops as $shop) {
         if ((int) $configurationAdapter->get(Config::MOLLIE_SEND_ORDER_CONFIRMATION, $shop['id_shop']) !== Config::NEW_ORDER_MAIL_SEND_ON_NEVER) {

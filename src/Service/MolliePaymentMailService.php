@@ -73,7 +73,7 @@ class MolliePaymentMailService
 
         $this->module->updateApiKey($order->id_shop);
         /** @var MollieApiClient $api */
-        $api = $this->module->api;
+        $api = $this->module->getApiClient();
 
         try {
             if (TransactionUtility::isOrderTransaction($transactionId)) {

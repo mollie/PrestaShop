@@ -12,9 +12,12 @@
 
 namespace Mollie\Builder;
 
-use Configuration;
 use HelperFormCore as HelperForm;
 use Mollie;
+use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\Language;
+use Mollie\Adapter\Link;
+use Mollie\Adapter\Smarty;
 use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
@@ -24,11 +27,9 @@ use Mollie\Service\ApiService;
 use Mollie\Service\ConfigFieldService;
 use Mollie\Service\CountryService;
 use Mollie\Service\MolCarrierInformationService;
-use Mollie\Utility\AssortUtility;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\TagsUtility;
 use OrderStateCore as OrderState;
-use Smarty;
 use ToolsCore as Tools;
 
 class FormBuilder
@@ -50,6 +51,9 @@ class FormBuilder
      */
     private $countryService;
 
+    /**
+     * @var Language
+     */
     private $lang;
 
     /**
@@ -74,16 +78,22 @@ class FormBuilder
      */
     private $creditCardLogoProvider;
 
+    /**
+     * @var ConfigurationAdapter
+     */
+    private $configuration;
+
     public function __construct(
         Mollie $module,
         ApiService $apiService,
         CountryService $countryService,
         ConfigFieldService $configFieldService,
         MolCarrierInformationService $carrierInformationService,
-        $lang,
+        Language $lang,
         Smarty $smarty,
-        $link,
-        CustomLogoProviderInterface $creditCardLogoProvider
+        Link $link,
+        CustomLogoProviderInterface $creditCardLogoProvider,
+        ConfigurationAdapter $configuration
     ) {
         $this->module = $module;
         $this->apiService = $apiService;
@@ -94,12 +104,13 @@ class FormBuilder
         $this->configFieldService = $configFieldService;
         $this->carrierInformationService = $carrierInformationService;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
+        $this->configuration = $configuration;
     }
 
     public function buildSettingsForm()
     {
         $isApiKeyProvided = (bool) EnvironmentUtility::getApiKey();
-        $isApiKeyProvided = ($isApiKeyProvided && $this->module->api !== null);
+        $isApiKeyProvided = ($isApiKeyProvided && $this->module->getApiClient() !== null);
 
         $inputs = $this->getAccountSettingsSection($isApiKeyProvided);
 
@@ -124,12 +135,10 @@ class FormBuilder
         $helper->table = $this->module->getTable();
         $helper->module = $this->module;
         $helper->default_form_language = $this->module->getContext()->language->id;
-        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
+        $helper->allow_employee_form_lang = $this->configuration->get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
 
         $helper->identifier = $this->module->getIdentifier();
         $helper->submit_action = 'submitmollie';
-        $helper->currentIndex = $this->module->getContext()->link->getAdminLink('AdminModules', false)
-            . "&configure={$this->module->name}&tab_module={$this->module->tab}&module_name={$this->module->name}";
         $helper->token = Tools::getAdminTokenLite('AdminModules');
 
         $helper->tpl_vars = [
@@ -378,7 +387,7 @@ class FormBuilder
             'name' => '',
             'title' => $this->module->l('Payment methods', self::FILE_NAME),
         ];
-        $molliePaymentMethods = $this->apiService->getMethodsForConfig($this->module->api);
+        $molliePaymentMethods = $this->apiService->getMethodsForConfig($this->module->getApiClient());
 
         if (empty($molliePaymentMethods)) {
             $input[] = [
@@ -396,23 +405,23 @@ class FormBuilder
             'countries' => $this->countryService->getActiveCountriesList(),
             'tab' => $generalSettings,
             'onlyOrderMethods' => Config::ORDER_API_ONLY_METHODS,
-            'displayErrors' => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
+            'displayErrors' => $this->configuration->get(Config::MOLLIE_DISPLAY_ERRORS),
             'methodDescription' => TagsUtility::ppTags(
                 $this->module->l('[1]Read more[/1] about the differences between Payments and Orders API.', self::FILE_NAME),
                 [
                     $this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_method_info.tpl'),
                 ]
             ),
-            'showCustomLogo' => Configuration::get(Config::MOLLIE_SHOW_CUSTOM_LOGO),
+            'showCustomLogo' => $this->configuration->get(Config::MOLLIE_SHOW_CUSTOM_LOGO),
             'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri() . "?{$dateStamp}",
             'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
-            'voucherCategory' => Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
+            'voucherCategory' => $this->configuration->get(Config::MOLLIE_VOUCHER_CATEGORY),
             'klarnaPayments' => Config::KLARNA_PAYMENTS,
             'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_AUTHORIZED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
-            'applePayDirect' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT),
-            'applePayDIrectStyle' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
-            'isBancontactQrCodeEnabled' => (int) Configuration::get(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED),
-            'isLive' => (int) Configuration::get(Config::MOLLIE_ENVIRONMENT),
+            'applePayDirect' => (int) $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT),
+            'applePayDIrectStyle' => (int) $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
+            'isBancontactQrCodeEnabled' => (int) $this->configuration->get(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED),
+            'isLive' => (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT),
             'bancontactQRCodeDescription' => TagsUtility::ppTags(
                 $this->module->l('Only available with your Live API key and Payments API. [1]Learn more[/1] about QR Codes.', self::FILE_NAME),
                 [
@@ -432,7 +441,7 @@ class FormBuilder
         $advancedSettings = 'advanced_settings';
         $input = [];
         $orderStatuses = [];
-        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->id));
+        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->getDefaultLanguageId()));
         $input[] = [
             'type' => 'select',
             'label' => $this->module->l('Use selected locale in webshop', self::FILE_NAME),
@@ -509,7 +518,7 @@ class FormBuilder
         $descriptionStatus = $this->module->l('`%s` payments get `%s` status', self::FILE_NAME);
         $messageMail = $this->module->l('Send email when %s', self::FILE_NAME);
         $descriptionMail = $this->module->l('Send email when transaction status becomes %s?, self::FILE_NAME', self::FILE_NAME);
-        $allStatuses = OrderState::getOrderStates($this->lang->id);
+        $allStatuses = OrderState::getOrderStates($this->lang->getDefaultLanguageId());
         $allStatusesWithSkipOption = array_merge([['id_order_state' => 0, 'name' => $this->module->l('Skip this status', self::FILE_NAME), 'color' => '#565656']], $allStatuses);
 
         $statusOptions = [
@@ -538,7 +547,7 @@ class FormBuilder
             $val = (int) $val;
             if ($val) {
                 $orderStatus = new OrderState($val);
-                $statusName = $orderStatus->getFieldByLang('name', $this->lang->id);
+                $statusName = $orderStatus->getFieldByLang('name', $this->lang->getDefaultLanguageId());
                 $desc = Tools::strtolower(
                     sprintf(
                         $descriptionStatus,
@@ -556,7 +565,7 @@ class FormBuilder
                 'description' => $desc,
                 'message' => sprintf($messageStatus, $this->module->lang($name)),
                 'key_mail' => @constant('Mollie\Config\Config::MOLLIE_MAIL_WHEN_' . Tools::strtoupper($name)),
-                'value_mail' => Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($name)),
+                'value_mail' => $this->configuration->get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($name)),
                 'description_mail' => sprintf($descriptionMail, $this->module->lang($name)),
                 'message_mail' => sprintf($messageMail, $this->module->lang($name)),
             ];
@@ -660,7 +669,7 @@ class FormBuilder
             'name' => Config::MOLLIE_TRACKING_URLS,
             'depends' => Config::MOLLIE_API,
             'depends_value' => Config::MOLLIE_ORDERS_API,
-            'carriers' => $this->carrierInformationService->getAllCarriersInformation($this->lang->id),
+            'carriers' => $this->carrierInformationService->getAllCarriersInformation($this->lang->getDefaultLanguageId()),
         ];
         $input[] = [
             'type' => 'mollie-carrier-switch',
@@ -711,13 +720,13 @@ class FormBuilder
                 'id_order_state' => '0',
             ],
         ];
-        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->id));
+        $orderStatuses = array_merge($orderStatuses, OrderState::getOrderStates($this->lang->getDefaultLanguageId()));
         $orderStatusesCount = count($orderStatuses);
         for ($i = 0; $i < $orderStatusesCount; ++$i) {
             $orderStatuses[$i]['name'] = $orderStatuses[$i]['id_order_state'] . ' - ' . $orderStatuses[$i]['name'];
         }
 
-        AssortUtility::aasort($orderStatuses, 'id_order_state');
+//        AssortUtility::aasort($orderStatuses, 'id_order_state');
 
         $this->smarty->assign([
             'logs' => $this->link->getAdminLink('AdminLogs'),

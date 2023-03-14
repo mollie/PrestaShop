@@ -16,9 +16,9 @@ use Mollie\Exception\RetryOverException;
 
 class RetryHandler implements RetryHandlerInterface
 {
-    const DEFAULT_MAX_RETRY = 3;
-    const DEFAULT_WAIT_TIME = 1;
-    const DEFAULT_ACCEPTED_EXCEPTION = RetryOverException::class;
+    private const DEFAULT_MAX_RETRY = 3;
+    private const DEFAULT_WAIT_TIME = 1;
+    private const DEFAULT_ACCEPTED_EXCEPTION = RetryOverException::class;
 
     /**
      * @var callable
