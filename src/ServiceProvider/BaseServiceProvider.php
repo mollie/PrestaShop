@@ -6,6 +6,8 @@ namespace Mollie\ServiceProvider;
 
 use League\Container\Container;
 use Mollie;
+use Mollie\Handler\Api\OrderEndpointPaymentTypeHandler;
+use Mollie\Handler\Api\OrderEndpointPaymentTypeHandlerInterface;
 use Mollie\Handler\CartRule\CartRuleQuantityChangeHandler;
 use Mollie\Handler\CartRule\CartRuleQuantityChangeHandlerInterface;
 use Mollie\Handler\Certificate\ApplePayDirectCertificateHandler;
@@ -14,6 +16,8 @@ use Mollie\Handler\PaymentOption\PaymentOptionHandler;
 use Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface;
 use Mollie\Handler\Settings\PaymentMethodPositionHandler;
 use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
+use Mollie\Handler\Shipment\ShipmentSenderHandler;
+use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
 use Mollie\Install\UninstallerInterface;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\CustomLogoProviderInterface;
@@ -23,10 +27,14 @@ use Mollie\Provider\OrderTotalProvider;
 use Mollie\Provider\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProvider;
 use Mollie\Provider\PaymentFeeProviderInterface;
+use Mollie\Provider\PaymentType\PaymentTypeIdentificationProviderInterface;
+use Mollie\Provider\PaymentType\RegularInterfacePaymentTypeIdentification;
 use Mollie\Provider\PhoneNumberProvider;
 use Mollie\Provider\PhoneNumberProviderInterface;
 use Mollie\Provider\ProfileIdProvider;
 use Mollie\Provider\ProfileIdProviderInterface;
+use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider;
+use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProviderInterface;
 use Mollie\Provider\UpdateMessageProvider;
 use Mollie\Provider\UpdateMessageProviderInterface;
 use Mollie\Repository\CartRuleRepository;
@@ -40,6 +48,7 @@ use Mollie\Repository\PendingOrderCartRuleRepository;
 use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
 use Mollie\Service\Content\SmartyTemplateParser;
 use Mollie\Service\Content\TemplateParserInterface;
+use Mollie\Service\ExceptionService;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator;
@@ -48,17 +57,25 @@ use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPayme
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProvider;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
+use Mollie\Service\Shipment\ShipmentInformationSender;
+use Mollie\Service\Shipment\ShipmentInformationSenderInterface;
 use Mollie\Service\ShipmentService;
 use Mollie\Service\ShipmentServiceInterface;
 use Mollie\Subscription\Grid\Accessibility\SubscriptionCancelAccessibility;
+use Mollie\Subscription\Logger\Logger;
 use Mollie\Subscription\Logger\LoggerInterface;
-use Mollie\Subscription\Logger\NullLogger;
 use Mollie\Subscription\Repository\RecurringOrderRepository;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepository;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
 use Mollie\Subscription\Utility\Clock;
 use Mollie\Subscription\Utility\ClockInterface;
+use Mollie\Utility\Decoder\DecoderInterface;
+use Mollie\Utility\Decoder\JsonDecoder;
+use Mollie\Verification\PaymentType\CanBeRegularPaymentType;
+use Mollie\Verification\PaymentType\PaymentTypeVerificationInterface;
+use Mollie\Verification\Shipment\CanSendShipment;
+use Mollie\Verification\Shipment\ShipmentVerificationInterface;
 use PrestaShop\PrestaShop\Core\Grid\Action\Row\AccessibilityChecker\AccessibilityCheckerInterface;
 
 /**
@@ -76,7 +93,7 @@ final class BaseServiceProvider
     public function register(Container $container)
     {
         /* Logger */
-        $this->addService($container, LoggerInterface::class, $container->get(NullLogger::class));
+        $this->addService($container, LoggerInterface::class, $container->get(Logger::class));
         /* Utility */
         $this->addService($container, ClockInterface::class, $container->get(Clock::class));
 
@@ -85,6 +102,26 @@ final class BaseServiceProvider
             ->withArgument('MolCustomer');
 
         $this->addService($container, UninstallerInterface::class, Mollie\Install\DatabaseTableUninstaller::class);
+
+        $this->addService($container, DecoderInterface::class, JsonDecoder::class);
+
+        /* shipping */
+        $this->addService($container, ShipmentServiceInterface::class, $container->get(ShipmentService::class));
+        $this->addService($container, PaymentTypeIdentificationProviderInterface::class, $container->get(RegularInterfacePaymentTypeIdentification::class));
+        $this->addService($container, AutomaticShipmentSenderStatusesProviderInterface::class, $container->get(AutomaticShipmentSenderStatusesProvider::class));
+        $this->addService($container, PaymentTypeVerificationInterface::class, $container->get(CanBeRegularPaymentType::class));
+        $this->addService($container, OrderEndpointPaymentTypeHandlerInterface::class, $container->get(OrderEndpointPaymentTypeHandler::class));
+        $this->addService($container, ShipmentVerificationInterface::class, $container->get(CanSendShipment::class));
+        $this->addService($container, ShipmentInformationSenderInterface::class, $container->get(ShipmentInformationSender::class));
+        $this->addService($container, ShipmentSenderHandlerInterface::class, ShipmentSenderHandler::class)
+            ->withArguments(
+                [
+                    $container->get(ShipmentVerificationInterface::class),
+                    $container->get(ShipmentInformationSenderInterface::class),
+                    $container->get(ExceptionService::class),
+                    $container->get(Logger::class),
+                ]
+            );
 
         $this->addService($container, OrderTotalProviderInterface::class, $container->get(OrderTotalProvider::class));
         $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
@@ -96,7 +133,6 @@ final class BaseServiceProvider
         $this->addService($container, CartRuleRepositoryInterface::class, $container->get(CartRuleRepository::class));
         $this->addService($container, OrderRepositoryInterface::class, $container->get(OrderRepository::class));
         $this->addService($container, CartRuleQuantityChangeHandlerInterface::class, $container->get(CartRuleQuantityChangeHandler::class));
-        $this->addService($container, ShipmentServiceInterface::class, $container->get(ShipmentService::class));
 
         $this->addService($container, RecurringOrderRepositoryInterface::class, RecurringOrderRepository::class)
             ->withArgument('MolRecurringOrder');

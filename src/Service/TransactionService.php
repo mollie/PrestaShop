@@ -30,7 +30,6 @@ use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Handler\Order\OrderFeeHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
-use Mollie\Subscription\Handler\RecurringOrderCreation;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\OrderNumberUtility;
@@ -72,8 +71,6 @@ class TransactionService
     private $mollieOrderCreationService;
     /** @var OrderFeeHandler */
     private $orderFeeHandler;
-    /** @var RecurringOrderCreation */
-    private $recurringOrderCreation;
     /** @var ShipmentSenderHandlerInterface */
     private $shipmentSenderHandler;
 
@@ -85,7 +82,6 @@ class TransactionService
         PaymentMethodService $paymentMethodService,
         MollieOrderCreationService $mollieOrderCreationService,
         OrderFeeHandler $orderFeeHandler,
-        RecurringOrderCreation $recurringOrderCreation,
         ShipmentSenderHandlerInterface $shipmentSenderHandler
     ) {
         $this->module = $module;
@@ -95,7 +91,6 @@ class TransactionService
         $this->paymentMethodService = $paymentMethodService;
         $this->mollieOrderCreationService = $mollieOrderCreationService;
         $this->orderFeeHandler = $orderFeeHandler;
-        $this->recurringOrderCreation = $recurringOrderCreation;
         $this->shipmentSenderHandler = $shipmentSenderHandler;
     }
 
@@ -210,7 +205,7 @@ class TransactionService
                     $apiPayment = $this->updateOrderDescription($apiPayment, $orderId);
                     $this->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId);
                     $order = new Order($orderId);
-                    $this->shipmentSenderHandler->handleShipmentSender($this->module->api, $order, new \OrderState($order->current_state));
+                    $this->shipmentSenderHandler->handleShipmentSender($this->module->getApiClient(), $order, new \OrderState($order->current_state));
                 } elseif ($apiPayment->amountRefunded) {
                     if (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                         if (!MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
@@ -426,12 +421,13 @@ class TransactionService
         }
     }
 
-    private function updateOrderDescription(MollieOrderAlias $apiPayment, int $orderId)
+    private function updateOrderDescription($apiPayment, int $orderId)
     {
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
         $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
         $orderNumber = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
+        $apiPayment->orderNumber = $orderNumber;
         $payments = $apiPayment->payments();
 
         /** @var Payment $payment */
@@ -439,12 +435,7 @@ class TransactionService
             $payment->description = 'Order ' . $orderNumber;
             $payment->update();
         }
-        $this->module->api->orders->update(
-            $apiPayment->id,
-            [
-                'orderNumber' => $orderNumber,
-            ]
-        );
+        $apiPayment->update();
 
         return $apiPayment;
     }
