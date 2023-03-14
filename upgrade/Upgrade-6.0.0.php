@@ -9,9 +9,6 @@
  * @see        https://github.com/mollie/PrestaShop
  */
 
-use Mollie\Config\Config;
-use Mollie\Install\Installer;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -19,13 +16,16 @@ if (!defined('_PS_VERSION_')) {
 /**
  * @return bool
  */
-function upgrade_module_5_4_0(Mollie $module)
+function upgrade_module_6_0_0(Mollie $module)
 {
     $sql = '
-        ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
-        ADD COLUMN min_amount decimal(20,6) DEFAULT 0,
-        ADD COLUMN max_amount decimal(20,6) DEFAULT 0;
-     ';
+        ALTER TABLE ' . _DB_PREFIX_ . 'mollie_payments
+        ADD `mandate_id` VARCHAR(64);
+    ';
 
-    return Db::getInstance()->execute($sql);
+    if (!Db::getInstance()->execute($sql)) {
+        return false;
+    }
+
+    return true;
 }

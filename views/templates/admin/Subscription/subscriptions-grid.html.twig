@@ -25,14 +25,7 @@
 
 {% extends '@PrestaShop/Admin/layout.html.twig' %}
 
-{% set layoutHeaderToolbarBtn = {
-  add: {
-    href: path('admin_currencies_create'),
-    desc: 'Add new currency'|trans({}, 'Admin.International.Feature'),
-    icon: 'add_circle_outline',
-  }
-}
-%}
+{% set help_link = false %}
 
 {% block content %}
 
@@ -47,5 +40,5 @@
 {% block javascripts %}
   {{ parent() }}
 
-  <script src="{{ asset('../modules/mollie/views/assets/compiled/subscription.bundle.js') }}"></script>
+  <script src="{{ asset('../modules/molliesubscription/views/assets/compiled/subscription.bundle.js') }}"></script>
 {% endblock %}

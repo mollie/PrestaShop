@@ -82,6 +82,16 @@ class MolPaymentMethod extends ObjectModel
     public $images_json;
 
     /**
+     * @var float
+     */
+    public $min_amount;
+
+    /**
+     * @var float
+     */
+    public $max_amount;
+
+    /**
      * @var bool
      */
     public $live_environment;
@@ -115,6 +125,8 @@ class MolPaymentMethod extends ObjectModel
             'surcharge_percentage' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
             'surcharge_limit' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
             'images_json' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
+            'min_amount' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
+            'max_amount' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
             'live_environment' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
             'position' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'id_shop' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'],

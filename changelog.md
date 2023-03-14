@@ -1,6 +1,17 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 5.4.0 ##
++ Fixed issue where saving wrong API key would reset settings page.
++ Fixed issue where auto shipment would not work on order creation and only on status update.
++ Error logging no longer logs webhook calls. Only logg all logs webhook calls.
++ Fixed component navigation with tab when card is saved.
++ Fixed fee no longer has max amount limitation input.
++ Fixed order number update issue with klarna method.
+
+## Changes in release 5.3.1 ##
++ Improved UI and updated translations.
+
 ## Changes in release 5.3.0 ##
 + Removed reference variables from translations.
 + Fixed issue where credit card components would throw error even taught order was created.

@@ -11,6 +11,7 @@
  */
 
 use Mollie\Api\Exceptions\ApiException;
+use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\TransactionException;
@@ -49,7 +50,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
      */
     public function initContent()
     {
-        if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG)) {
+        if ((int) Configuration::get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_ALL) {
             PrestaShopLogger::addLog('Mollie incoming webhook: ' . Tools::file_get_contents('php://input'));
         }
 
