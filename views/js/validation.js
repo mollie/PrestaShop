@@ -84,6 +84,23 @@ $(document).ready(function () {
             $('.alert.alert-success').hide();
             showErrorMessage(description_message);
         }
+
+        var minAmount = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_MIN_AMOUNT"]');
+        var maxAmount = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_MAX_AMOUNT"]');
+
+        if (parseFloat(minAmount.val()) < parseFloat(minAmount.attr('min')) || parseFloat(minAmount.val()) > parseFloat(maxAmount.attr('max'))) {
+            event.preventDefault();
+            minAmount.addClass('mollie-input-error');
+            $('.alert.alert-success').hide();
+            showErrorMessage(min_amount_message);
+        }
+
+        if (parseFloat(maxAmount.val()) < parseFloat(minAmount.attr('min')) || parseFloat(maxAmount.val()) > parseFloat(maxAmount.attr('max'))) {
+            event.preventDefault();
+            maxAmount.addClass('mollie-input-error');
+            $('.alert.alert-success').hide();
+            showErrorMessage(max_amount_message);
+        }
     }
 
     function paymentMethodOnChangeToggle(method) {
@@ -129,7 +146,7 @@ $(document).ready(function () {
             case '1':
                 $feeFixed.closest('.form-group').show();
                 $feePercentage.closest('.form-group').hide();
-                $feeLimit.closest('.form-group').show();
+                $feeLimit.closest('.form-group').hide();
                 break;
             case '2':
                 $feeFixed.closest('.form-group').hide();

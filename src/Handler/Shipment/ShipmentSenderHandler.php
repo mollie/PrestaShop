@@ -68,6 +68,7 @@ class ShipmentSenderHandler implements ShipmentSenderHandlerInterface
             if (!$this->canSendShipment->verify($order, $orderState)) {
                 return false;
             }
+            $this->shipmentInformationSender->sendShipmentInformation($apiClient, $order);
         } catch (ShipmentCannotBeSentException $exception) {
             $message = $this->exceptionService->getErrorMessageForException(
                 $exception,
@@ -77,9 +78,11 @@ class ShipmentSenderHandler implements ShipmentSenderHandlerInterface
             $this->moduleLogger->error($message);
 
             return false;
-        }
+        } catch (\Exception $exception) {
+            $this->moduleLogger->error($exception->getMessage());
 
-        $this->shipmentInformationSender->sendShipmentInformation($apiClient, $order);
+            return false;
+        }
 
         return true;
     }

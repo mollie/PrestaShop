@@ -73,6 +73,8 @@ final class DatabaseTableInstaller implements InstallerInterface
 				`surcharge_percentage` decimal(20,6),
 				`surcharge_limit` decimal(20,6),
 				`images_json` TEXT,
+				`min_amount` decimal(20,6),
+				`max_amount` decimal(20,6),
 				`live_environment` TINYINT(1),
 				`position` INT(10),
 			    `id_shop` INT(64) DEFAULT 1

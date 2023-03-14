@@ -61,7 +61,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '5.4.0';
+        $this->version = '6.0.0';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -386,10 +386,8 @@ class Mollie extends PaymentModule
             }
         }
 
-        $moduleName = Tools::getValue('configure');
-
         // We are on module configuration page
-        if ($this->name === $moduleName && 'AdminMollieSettings' === $currentController) {
+        if ('AdminMollieSettings' === $currentController) {
             $this->context->controller->addJqueryPlugin('sortable');
             $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/payment_methods.js');
             $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/payment_methods.css');

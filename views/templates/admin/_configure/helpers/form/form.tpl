@@ -46,7 +46,8 @@
             {foreach $input.paymentMethods as $paymentMethod}
                 {assign var = 'methodObj' value=$paymentMethod.obj}
                 <li class="payment-method border border-bottom">
-                    <input type="hidden" name="payment_option_position[{$paymentMethod.obj->id_method|escape:'html':'UTF-8'}]"
+                    <input type="hidden"
+                           name="payment_option_position[{$paymentMethod.obj->id_method|escape:'html':'UTF-8'}]"
                            value="{$paymentMethod.obj->position}" class="js-payment-option-position">
                     <span class="js-sort-handle sort-handle">
           <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
@@ -69,7 +70,17 @@
                    onclick="togglePaymentMethod(this, '{$paymentMethod.id|escape:'html':'UTF-8'}'); return false;">
                 <i class="icon-check text-success"></i>
               </a>
+
+
+
+
+
 {else}
+
+
+
+
+
                 <a href="#" class="payment-check-link"
                    data-action="activate"
                    onclick="togglePaymentMethod(this, '{$paymentMethod.id|escape:'html':'UTF-8'}'); return false;">
@@ -144,7 +155,8 @@
                                     {l s='QR code' mod='mollie'}
                                 </label>
                                 <div class="col-lg-9">
-                                    <select name="MOLLIE_BANCONTACT_QR_CODE_ENABLED" class="fixed-width-xl" {if $input.isLive == 0}disabled{/if}>
+                                    <select name="MOLLIE_BANCONTACT_QR_CODE_ENABLED" class="fixed-width-xl"
+                                            {if $input.isLive == 0}disabled{/if}>
                                         <option value="0" {if $input.isBancontactQrCodeEnabled == 0} selected {/if}>{l s='No' mod='mollie'}</option>
                                         <option value="1" {if $input.isBancontactQrCodeEnabled == 1} selected {/if}>{l s='Yes' mod='mollie'}</option>
                                     </select>
@@ -267,7 +279,7 @@
                                         {l s='Percentage' mod='mollie'}
                                     </option>
                                     <option value="3" {if $methodObj->surcharge == 3} selected {/if}>
-                                        {l s='Fixed and percentage fees' mod='mollie'}
+                                        {l s='Combined payment surcharge limit' mod='mollie'}
                                     </option>
                                 </select>
                                 <p class="help-block">
@@ -311,6 +323,41 @@
                                        name="MOLLIE_METHOD_SURCHARGE_LIMIT_{$paymentMethod.id|escape:'html':'UTF-8'}"
                                        class="fixed-width-xl js-mollie-amount"
                                        value="{$methodObj->surcharge_limit|escape:'html':'UTF-8'}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-lg-3">
+                                {l s='Min amount' mod='mollie'}
+                            </label>
+                            <div class="col-lg-9">
+                                <input type="text"
+                                       name="MOLLIE_METHOD_MIN_AMOUNT_{$paymentMethod.id|escape:'html':'UTF-8'}"
+                                       class="fixed-width-xl"
+                                       min="{$paymentMethod.minimumAmount.value}"
+                                        {if $paymentMethod.maximumAmount != false } max="{$paymentMethod.maximumAmount.value}" {/if}
+                                       value="{if $methodObj->min_amount == 0}{$paymentMethod.minimumAmount.value}{else}{$methodObj->min_amount}{/if}">
+                                <p class="help-block">
+                                    {l s='Default min amount in mollie is: ' mod='mollie'} {$paymentMethod.minimumAmount.value}{$paymentMethod.minimumAmount.currency}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-lg-3">
+                                {l s='Max amount' mod='mollie'}
+                            </label>
+                            <div class="col-lg-9">
+                                <input type="text"
+                                       name="MOLLIE_METHOD_MAX_AMOUNT_{$paymentMethod.id|escape:'html':'UTF-8'}"
+                                       class="fixed-width-xl"
+                                        {if $paymentMethod.maximumAmount != false } max='{$paymentMethod.maximumAmount.value}' {/if}
+                                       value="{if $methodObj->max_amount == 0}{$paymentMethod.maximumAmount.value}{else}{$methodObj->max_amount}{/if}">
+                                <p class="help-block">
+                                    {if $paymentMethod.maximumAmount == false}
+                                        {l s='Default max amount has no limitation' mod='mollie'}
+                                    {else}
+                                        {l s='Default max amount in mollie is: ' mod='mollie'}{$paymentMethod.maximumAmount.value}{$paymentMethod.maximumAmount.currency}
+                                    {/if}
+                                </p>
                             </div>
                         </div>
                         {if $paymentMethod.id|escape:'html':'UTF-8' === 'creditcard'}
@@ -513,28 +560,6 @@
               {if $fields_value[$input.name] == $value.value}checked="checked"{/if}
                       {if isset($input.disabled) && $input.disabled}disabled="disabled"{/if}
             />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{strip}
               <label {if $value.value == 1} for="{$input.name|escape:'htmlall':'UTF-8'}_on"{else} for="{$input.name|escape:'htmlall':'UTF-8'}_off"{/if}>
             {if $value.value == 1}
                 {l s='Yes' mod='mollie'}
@@ -542,7 +567,6 @@
                 {l s='No' mod='mollie'}
             {/if}
           </label>
-          {/strip}
           {/foreach}
           <a class="slide-button btn"></a>
         </span>
@@ -796,9 +820,9 @@
             </div>
         </div>
     {elseif $input.type === 'mollie-hidden-input'}
-    <div>
-        <input type="hidden" name="{$input.name}" value="{$input.value}">
-    </div>
+        <div>
+            <input type="hidden" name="{$input.name}" value="{$input.value}">
+        </div>
     {else}
         {$smarty.block.parent}
     {/if}

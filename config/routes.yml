@@ -14,6 +14,14 @@ admin_subscription_index:
         _legacy_controller: AdminMollieSubscriptionOrders
         _legacy_link: AdminMollieSubscriptionOrders
 
+admin_subscription_search:
+    path: admin-subscription
+    methods: POST
+    defaults:
+        _controller: Mollie\Subscription\Controller\Symfony\SubscriptionController::searchAction
+        _legacy_controller: AdminMollieSubscriptionOrders
+        _legacy_link: AdminMollieSubscriptionOrders
+
 admin_subscription_cancel:
     path: admin-subscription/{subscriptionId}/cancel
     methods: POST

@@ -34,10 +34,10 @@ $(document).ready(function () {
     {
         $('input[name="mollieUseSavedCard"]').val(useSavedCard ? 1 : 0);
         if (useSavedCard) {
-            $('.mollie-credit-card-inputs').hide();
+            $('.mollie-credit-card-inputs').addClass('mollie-credit-card-container__hide')
+
         } else {
-            $('.mollie-credit-card-inputs').show();
+            $('.mollie-credit-card-inputs').removeClass('mollie-credit-card-container__hide')
         }
     }
-
 });

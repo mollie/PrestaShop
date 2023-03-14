@@ -7,6 +7,7 @@ namespace Mollie\Subscription\Controller\Symfony;
 use Exception;
 use Mollie\Subscription\Exception\SubscriptionApiException;
 use Mollie\Subscription\Filters\SubscriptionFilters;
+use Mollie\Subscription\Grid\SubscriptionGridDefinitionFactory;
 use Mollie\Subscription\Handler\SubscriptionCancellationHandler;
 use PrestaShop\PrestaShop\Core\Grid\GridFactoryInterface;
 use PrestaShopBundle\Security\Annotation\AdminSecurity;
@@ -36,6 +37,27 @@ class SubscriptionController extends AbstractSymfonyController
             'enableSidebar' => true,
             'help_link' => $this->generateSidebarLink($request->attributes->get('_legacy_controller')),
         ]);
+    }
+
+    /**
+     * Provides filters functionality.
+     *
+     * @AdminSecurity("is_granted('read', request.get('_legacy_controller'))")
+     *
+     * @param Request $request
+     *
+     * @return RedirectResponse
+     */
+    public function searchAction(Request $request): RedirectResponse
+    {
+        $responseBuilder = $this->get('prestashop.bundle.grid.response_builder');
+
+        return $responseBuilder->buildSearchResponse(
+            $this->get(SubscriptionGridDefinitionFactory::class),
+            $request,
+            SubscriptionGridDefinitionFactory::GRID_ID,
+            'admin_subscription_index'
+        );
     }
 
     /**
