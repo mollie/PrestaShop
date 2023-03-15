@@ -63,7 +63,7 @@ afterEach(() => {
 afterEach(function() {
   if (this.currentTest.state === "failed") failEarly = true
 });
-describe('PS8 Module initial configuration setup', () => {
+describe('PS1784 Module initial configuration setup', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
