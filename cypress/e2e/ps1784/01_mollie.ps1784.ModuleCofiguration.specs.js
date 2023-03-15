@@ -63,11 +63,7 @@ afterEach(() => {
 afterEach(function() {
   if (this.currentTest.state === "failed") failEarly = true
 });
-<<<<<<<< HEAD:cypress/e2e/ps8/01_mollie.ps8.ModuleCofiguration.specs.js
 describe('PS8 Module initial configuration setup', () => {
-========
-describe('PS1784 Module initial configuration setup', () => {
->>>>>>>> master:cypress/e2e/ps1784/01_mollie.ps1784.ModuleCofiguration.specs.js
   beforeEach(() => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
