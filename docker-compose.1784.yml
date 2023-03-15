@@ -26,7 +26,7 @@ services:
       - prestashop_mollie_net_1784
   prestashop-17:
     #platform: linux/amd64
-    container_name: prestashop-1784
+    container_name: prestashop-mollie-1784
     build:
       context: .
       dockerfile: .docker/Dockerfile.1784
