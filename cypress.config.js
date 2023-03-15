@@ -5,7 +5,7 @@ module.exports = defineConfig({
   experimentalSourceRewriting: true,
   numTestsKeptInMemory: 5,
   defaultCommandTimeout: 10000,
-  projectId: 'xb89dr',
+  projectId: '87zjmm',
   retries: 3,
   videoUploadOnPasses: false,
   videoCompression: 15,
