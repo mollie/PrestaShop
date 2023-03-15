@@ -11,7 +11,7 @@ services:
 
   mysql:
     #platform: linux/amd64
-    container_name: mollie-mysql-1784
+    container_name: mysql-mollie-1784
     image: mysql:5.7
     ports:
       - "9002:3306"
