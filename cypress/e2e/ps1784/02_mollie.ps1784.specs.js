@@ -37,14 +37,14 @@ function prepareCookie()
       cy.visit('/admin1/')
       cy.url().should('contain', 'https').as('Check if HTTPS exists')
       cy.get('#email').type('demo@demo.com',{delay: 0, log: false})
-      cy.get('#passwd').type('prestashop_demo',{delay: 0, log: false})
+      cy.get('#passwd').type('demodemo',{delay: 0, log: false})
       cy.get('#submit_login').click().wait(1000).as('Connection successsful')
       //switching the multistore PS1784
       cy.get('#header_shop > .dropdown').click()
       cy.get('.open > .dropdown-menu').find('[class="shop"]').eq(1).find('[href]').eq(0).click()
       cy.visit('/SHOP2/index.php?controller=my-account')
       cy.get('#login-form [name="email"]').eq(0).type('demo@demo.com')
-      cy.get('#login-form [name="password"]').eq(0).type('prestashop_demo')
+      cy.get('#login-form [name="password"]').eq(0).type('demodemo')
       cy.get('#login-form [type="submit"]').eq(0).click({force:true})
       cy.get('#history-link > .link-item').click()
       })
@@ -58,11 +58,7 @@ Cypress.on('window:before:load', (win) => {
 afterEach(() => {
   expect(windowConsoleError).to.not.be.called;
 })
-<<<<<<<< HEAD:cypress/e2e/ps8/02_mollie.ps8.specs.js
-describe('PS8 Tests Suite', () => {
-========
 describe('PS1784 Tests Suite', () => {
->>>>>>>> master:cypress/e2e/ps1784/02_mollie.ps1784.specs.js
   beforeEach(() => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
@@ -388,11 +384,7 @@ it('C339360: 23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.visit('/admin1/')
       cy.OpenModuleDashboard()
       cy.get('[href="#advanced_settings"]').click({force:true})
-<<<<<<<< HEAD:cypress/e2e/ps8/02_mollie.ps8.specs.js
-      cy.get('[name="MOLLIE_IMAGES"]').select('big',{force:true})
-========
       cy.get('[name="MOLLIE_IMAGES"]').select('big')
->>>>>>>> master:cypress/e2e/ps1784/02_mollie.ps1784.specs.js
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
       cy.visit('/SHOP2/de/index.php?controller=history')
