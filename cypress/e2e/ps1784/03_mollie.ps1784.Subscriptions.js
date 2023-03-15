@@ -30,7 +30,7 @@ describe('PS1784 Subscriptions Test Suit', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it('Check if Subscription options added in Product BO', () => {
+it('C176305 Check if Subscription options added in Product BO', () => {
   cy.visit('/admin1/')
   cy.get('#subtab-AdminCatalog > :nth-child(1)').click()
   cy.get('#subtab-AdminProducts > .link').click()
@@ -46,18 +46,16 @@ it('Check if Subscription options added in Product BO', () => {
   cy.get('[class="attribute-quantity"]').last().find('[type="text"]').clear().type('999')
   cy.get('#submit').click()
   cy.get('.growl-message').contains('Settings updated.')
-});
-it.only('Check if Subscription options are in Product Page FO', () => {
+  //Check if Subscription options are in Product Page FO
   cy.visit('/SHOP2/de/')
   cy.get('.products > :nth-child(1)').click()
   cy.get('a').click()
-  //wip
-});
-it('Check if Subscription options are implemented in My Account FO', () => {
+  //wip ...
+  //Check if Subscription options are implemented in My Account FO
   cy.visit('/SHOP2/')
   cy.get('[class="account"]').click()
   cy.contains('Mollie subscriptions').click()
   cy.get('[class="page-content"]').should('be.visible')
-  //wip
+  //wip ...
 });
 })
