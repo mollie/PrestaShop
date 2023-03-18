@@ -67,13 +67,11 @@ describe('PS8 Module initial configuration setup', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
-      //wip illegal invocation
   })
-it('C339305: 01 Connecting test API successsfully', () => {
+it.only('C339305: 01 Connecting test API successsfully', () => {
       cy.visit('/admin1/')
-      // enabling the module on multistore shop - one time action
-      cy.EnablingModuleMultistore()
-      cy.OpenModuleDashboard()
+      cy.get('.mi-mollie').click({fore:true})
+      cy.get('#subtab-AdminMollieModule').click()
       cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click({force:true})
       cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
       cy.get('#module_form_submit_btn').click()
@@ -86,7 +84,8 @@ it('C339338: 02 Enabling Mollie carriers in Prestashop successfully', () => {
 })
 it('C339339: 03 Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
       cy.visit('/admin1/')
-      cy.OpenModuleDashboard()
+      cy.get('.mi-mollie').click({fore:true})
+      cy.get('#subtab-AdminMollieModule').click()
       cy.get('[href="#advanced_settings"]').click({force:true})
       cy.get('[id="MOLLIE_PAYMENTSCREEN_LOCALE"]').should('be.visible')
       cy.get('[id="MOLLIE_SEND_ORDER_CONFIRMATION"]').should('be.visible')
@@ -119,14 +118,14 @@ it('C339339: 03 Checking the Advanced Settings tab, verifying the Front-end comp
       //cy.window() will check if there are no Errors in console
 });
 it('[todo testrail ID] 04 Checking the Subscriptions tab, and console errors', () => {
-      cy.visit('/admin1/')
-      cy.OpenModuleDashboard()
+      cy.get('.mi-mollie').click({fore:true})
+      cy.get('#subtab-AdminMollieModule').click()
       cy.get('#subtab-AdminMollieSubscriptionOrders').click()
       cy.get('[id="invertus_mollie_subscription_grid_panel"]').should('be.visible')
 });
 it('[todo testrail ID] 05 Checking the Subscriptions FQA, and console errors', () => {
-      cy.visit('/admin1/')
-      cy.OpenModuleDashboard()
+      cy.get('.mi-mollie').click({fore:true})
+      cy.get('#subtab-AdminMollieModule').click()
       cy.get('#subtab-AdminMollieSubscriptionFAQ').click()
       cy.get(':nth-child(2) > .col-lg-12 > .card').should('be.visible')
       cy.get(':nth-child(3) > .col-lg-12 > .card').should('be.visible')
