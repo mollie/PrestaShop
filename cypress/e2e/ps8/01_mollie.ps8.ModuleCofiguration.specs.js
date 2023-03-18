@@ -68,7 +68,7 @@ describe('PS8 Module initial configuration setup', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it.only('C339305: 01 Connecting test API successsfully', () => {
+it('C339305: 01 Connecting test API successsfully', () => {
       cy.visit('/admin1/')
       cy.get('.mi-mollie').click({fore:true})
       cy.get('#subtab-AdminMollieModule').click()
@@ -117,13 +117,13 @@ it('C339339: 03 Checking the Advanced Settings tab, verifying the Front-end comp
       cy.get('[class="alert alert-success"]').should('be.visible') //checking if saving returns green alert
       //cy.window() will check if there are no Errors in console
 });
-it('[todo testrail ID] 04 Checking the Subscriptions tab, and console errors', () => {
+it('C688472 Checking the Subscriptions tab, and console errors', () => {
       cy.get('.mi-mollie').click({fore:true})
       cy.get('#subtab-AdminMollieModule').click()
       cy.get('#subtab-AdminMollieSubscriptionOrders').click()
       cy.get('[id="invertus_mollie_subscription_grid_panel"]').should('be.visible')
 });
-it('[todo testrail ID] 05 Checking the Subscriptions FQA, and console errors', () => {
+it('C688473 Checking the Subscriptions FAQ, and console errors', () => {
       cy.get('.mi-mollie').click({fore:true})
       cy.get('#subtab-AdminMollieModule').click()
       cy.get('#subtab-AdminMollieSubscriptionFAQ').click()
