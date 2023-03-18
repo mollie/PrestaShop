@@ -117,13 +117,13 @@ it('C339339: 03 Checking the Advanced Settings tab, verifying the Front-end comp
       cy.get('[class="alert alert-success"]').should('be.visible') //checking if saving returns green alert
       //cy.window() will check if there are no Errors in console
 });
-it('[todo testrail ID] 04 Checking the Subscriptions tab, and console errors', () => {
+it('C688472 Checking the Subscriptions tab, and console errors', () => {
       cy.visit('/admin1/')
       cy.OpenModuleDashboard()
       cy.get('#subtab-AdminMollieSubscriptionOrders').click()
       cy.get('[id="invertus_mollie_subscription_grid_panel"]').should('be.visible')
 });
-it('[todo testrail ID] 05 Checking the Subscriptions FQA, and console errors', () => {
+it('C688473 Checking the Subscriptions FAQ, and console errors', () => {
       cy.visit('/admin1/')
       cy.OpenModuleDashboard()
       cy.get('#subtab-AdminMollieSubscriptionFAQ').click()
