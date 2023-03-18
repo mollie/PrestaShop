@@ -67,7 +67,6 @@ describe('PS1784 Module initial configuration setup', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
-      //wip illegal invocation
   })
 it('C339305: 01 Connecting test API successsfully', () => {
       cy.visit('/admin1/')
