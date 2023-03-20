@@ -48,9 +48,14 @@ class Mollie extends PaymentModule
 
     const SUPPORTED_PHP_VERSION = '70080';
 
-    const ADMIN_MOLLIE_PARENT_CONTROLLER = 'AdminMollieModuleParent';
     const ADMIN_MOLLIE_CONTROLLER = 'AdminMollieModule';
     const ADMIN_MOLLIE_AJAX_CONTROLLER = 'AdminMollieAjax';
+    const ADMIN_MOLLIE_TAB_CONTROLLER = 'AdminMollieTabParent';
+    const ADMIN_MOLLIE_SETTINGS_CONTROLLER = 'AdminMollieSettings';
+    const ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_PARENT_CONTROLLER = 'AdminMollieSubscriptionOrdersParent';
+    const ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_CONTROLLER = 'AdminMollieSubscriptionOrders';
+    const ADMIN_MOLLIE_SUBSCRIPTION_FAQ_PARENT_CONTROLLER = 'AdminMollieSubscriptionFAQParent';
+    const ADMIN_MOLLIE_SUBSCRIPTION_FAQ_CONTROLLER = 'AdminMollieSubscriptionFAQ';
     /** @var LeagueServiceContainerProvider */
     private $containerProvider;
 
@@ -718,35 +723,35 @@ class Mollie extends PaymentModule
             ],
             [
                 'name' => 'parent',
-                'class_name' => 'AdminMollieTabParent',
+                'class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
                 'visible' => false,
             ],
             [
                 'name' => 'Settings',
-                'class_name' => 'AdminMollieSettings',
-                'parent_class_name' => 'AdminMollieTabParent',
+                'class_name' => self::ADMIN_MOLLIE_SETTINGS_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
             ],
             [
                 'name' => $this->l('Subscriptions'),
-                'class_name' => 'AdminMollieSubscriptionOrdersParent',
+                'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_PARENT_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
             ],
             [
                 'name' => $this->l('Subscriptions'),
-                'class_name' => 'AdminMollieSubscriptionOrders',
-                'parent_class_name' => 'AdminMollieTabParent',
+                'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
             ],
             [
                 'name' => $this->l('Subscription FAQ'),
-                'class_name' => 'AdminMollieSubscriptionFAQParent',
+                'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_FAQ_PARENT_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
                 'module_tab' => true,
             ],
             [
                 'name' => $this->l('Subscription FAQ'),
-                'class_name' => 'AdminMollieSubscriptionFAQ',
-                'parent_class_name' => 'AdminMollieTabParent',
+                'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_FAQ_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
                 'module_tab' => true,
             ],
         ];
