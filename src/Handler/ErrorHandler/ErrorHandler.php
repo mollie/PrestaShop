@@ -15,6 +15,7 @@ namespace Mollie\Handler\ErrorHandler;
 use Configuration;
 use Exception;
 use Module;
+use Mollie;
 use Mollie\Config\Config;
 use Mollie\Config\Env;
 use Sentry\ClientBuilder;
@@ -28,31 +29,29 @@ use Sentry\UserDataBag;
  */
 class ErrorHandler
 {
+    /** @var ErrorHandler */
+    private static $instance;
     /** @var ClientBuilderInterface */
     private $client;
 
     /** @var Scope */
     private $exceptionContext;
 
-    public function __construct($module, Env $env)
+    private function __construct(Mollie $module, Env $env)
     {
-        /** @var Env $env */
-        $env = $module->getMollieContainer(Env::class);
-
         $client = ClientBuilder::create([
             'dsn' => Config::SENTRY_KEY,
             'release' => $module->version,
             'environment' => $env->get('SENTRY_ENV'),
-            'debug' => false,
             'max_breadcrumbs' => 50
         ]);
 
-        $client->getOptions()->setBeforeSendCallback(function ($exception) use ($module) {
-            if ($this->shouldSkipError($exception, $module)) {
+        $client->getOptions()->setBeforeSendCallback(function ($event) use ($module) {
+            if ($this->shouldSkipError($event, $module)) {
                 return null;
             }
 
-            return $exception;
+            return $event;
         });
 
         $userData = new UserDataBag();
@@ -82,7 +81,7 @@ class ErrorHandler
             'mollie_version' => $module->version,
             'prestashop_version' => _PS_VERSION_,
             'mollie_is_enabled' => \Module::isEnabled('mollie'),
-            'mollie_is_installed' => \Module::isInstalled('mollie'),
+            'mollie_is_installed' => \Module::isInstalled('mollie'), //TODO this is deprecated since 1.7, rewrite someday
         ]);
 
         $this->exceptionContext = $scope;
@@ -111,54 +110,46 @@ class ErrorHandler
         }
     }
 
-    /**
-     * @return ErrorHandler
-     */
-    public static function getInstance(): self
+    public static function getInstance(Mollie $module = null): ErrorHandler
     {
-        $module = Module::getInstanceByName('mollie');
-
-        return new ErrorHandler($module, new Env());
-    }
-
-    private function shouldSkipError(array $data, Module $module): bool
-    {
-        //NOTE: unsure from where this error is coming from but without request might as well log it.
-        if (!isset($data['request'], $data['request']['url'])) {
-            return true;
+        if (!$module) {
+            $module = Module::getInstanceByName('mollie');
         }
 
-        $parsedUrl = parse_url($data['request']['url']);
+        if (self::$instance === null) {
+            self::$instance = new ErrorHandler($module, new Env());
+        }
 
-        if (isset($parsedUrl['query'])) {
-            parse_str($parsedUrl['query'], $query);
+        return self::$instance;
+    }
 
-            $moduleQueryParameter = isset($query['module']) ? $query['module'] : null;
-            $controllerQueryParameter = isset($query['controller']) ? $query['controller'] : null;
-        } else {
-            $pathParameters = explode('/', $parsedUrl['path']);
+    private function shouldSkipError(\Sentry\Event $event, Mollie $module): bool
+    {
+        $result = true;
 
-            //NOTE only need to check for module, controller should only be on BO and it has query parameters.
-            $controllerQueryParameter = null;
+        foreach ($event->getExceptions() as $exception) {
+            if (!$exception->getStacktrace()) {
+                continue;
+            }
 
-            $position = array_search('module', $pathParameters, true);
+            foreach ($exception->getStacktrace()->getFrames() as $frame) {
+                $filePath = $frame->getAbsoluteFilePath();
 
-            if ($position !== false && array_key_exists($position + 1, $pathParameters)) {
-                $moduleQueryParameter = $pathParameters[$position + 1];
-            } else {
-                $moduleQueryParameter = null;
+                if (!$filePath) {
+                    continue;
+                }
+
+                if (strpos($filePath, '/' . $module->name . '/') !== false) {
+                    $result = false;
+                    break;
+                }
+            }
+
+            if (!$result) {
+                break;
             }
         }
 
-        //NOTE: module parameter is mostly from frontend of PS while controller is from backend.
-        $moduleQueryParameterHasModuleName = strtolower($moduleQueryParameter) === strtolower($module->name);
-        $controllerQueryParameterHasModuleName = strpos(strtolower($controllerQueryParameter), strtolower($module->name)) !== false;
-
-        //NOTE: at least one should be given, else we will not be sending it.
-        if (!$moduleQueryParameter && !$controllerQueryParameter) {
-            return false;
-        }
-
-        return $moduleQueryParameterHasModuleName || $controllerQueryParameterHasModuleName;
+        return $result;
     }
 }

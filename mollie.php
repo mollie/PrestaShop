@@ -13,7 +13,7 @@
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Config\Config;
-use Mollie\Config\Env;
+use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
@@ -75,7 +75,7 @@ class Mollie extends PaymentModule
         $this->description = $this->l('Mollie Payments');
 
         $this->loadEnv();
-        new \Mollie\Handler\ErrorHandler\ErrorHandler($this, new Env());
+        ErrorHandler::getInstance($this);
     }
 
     /**
