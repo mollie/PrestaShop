@@ -28,15 +28,25 @@ function upgrade_module_6_0_0(Mollie $module): bool
         return false;
     }
 
+    $sql = '
+        ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
+        ADD COLUMN min_amount decimal(20,6) DEFAULT 0,
+        ADD COLUMN max_amount decimal(20,6) DEFAULT 0;
+     ';
+
+    if (!Db::getInstance()->execute($sql)) {
+        return false;
+    }
+
     /** @var Installer $installer */
     $installer = $module->getService(Installer::class);
 
     /** @var ModuleTabRegister $tabRegister */
     $tabRegister = $module->getService('prestashop.adapter.module.tab.register');
 
-    $a = new \PrestaShop\PrestaShop\Adapter\Module\Module();
-    $a->instance = $module;
-    $a->disk = new ParameterBag(
+    $moduleAdapter = new \PrestaShop\PrestaShop\Adapter\Module\Module();
+    $moduleAdapter->instance = $module;
+    $moduleAdapter->disk = new ParameterBag(
         [
             'filemtype' => 0,
             'is_present' => 1,
@@ -46,8 +56,8 @@ function upgrade_module_6_0_0(Mollie $module): bool
         ]
     );
 
-    $a->attributes->set('name', 'mollie');
-    $tabRegister->registerTabs($a);
+    $moduleAdapter->attributes->set('name', 'mollie');
+    $tabRegister->registerTabs($moduleAdapter);
 
     return $installer->install();
 }
