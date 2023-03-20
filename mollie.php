@@ -48,7 +48,6 @@ class Mollie extends PaymentModule
 
     const SUPPORTED_PHP_VERSION = '70080';
 
-//    const ADMIN_MOLLIE_PARENT_CONTROLLER = 'AdminMollieModuleParent';
     const ADMIN_MOLLIE_CONTROLLER = 'AdminMollieModule';
     const ADMIN_MOLLIE_AJAX_CONTROLLER = 'AdminMollieAjax';
     const ADMIN_MOLLIE_TAB_CONTROLLER = 'AdminMollieTabParent';
