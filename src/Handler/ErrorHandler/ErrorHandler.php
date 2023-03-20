@@ -14,7 +14,7 @@ namespace Mollie\Handler\ErrorHandler;
 
 use Configuration;
 use Exception;
-use Module;
+use ModuleCore;
 use Mollie\Config\Config;
 use Mollie\Config\Env;
 use Mollie\Factory\ModuleFactory;
@@ -37,13 +37,13 @@ class ErrorHandler
     /** @var Scope */
     private $exceptionContext;
 
-    private function __construct(Module $module, Env $env)
+    private function __construct(ModuleCore $module, Env $env)
     {
         $client = ClientBuilder::create([
             'dsn' => Config::SENTRY_KEY,
             'release' => $module->version,
             'environment' => $env->get('SENTRY_ENV'),
-            'max_breadcrumbs' => 50
+            'max_breadcrumbs' => 50,
         ]);
 
         $client->getOptions()->setBeforeSendCallback(function ($event) use ($module) {
@@ -66,11 +66,11 @@ class ErrorHandler
         });
 
         $client->getOptions()->setInAppIncludedPaths([
-            realpath(_PS_MODULE_DIR_ . $module->name . '/')
+            realpath(_PS_MODULE_DIR_ . $module->name . '/'),
         ]);
 
         $client->getOptions()->setInAppExcludedPaths([
-            realpath(_PS_MODULE_DIR_ . $module->name . '/vendor/')
+            realpath(_PS_MODULE_DIR_ . $module->name . '/vendor/'),
         ]);
 
         $this->client = $client->getClient();
@@ -80,8 +80,8 @@ class ErrorHandler
         $scope->setTags([
             'mollie_version' => $module->version,
             'prestashop_version' => _PS_VERSION_,
-            'mollie_is_enabled' => (string) \Module::isEnabled('mollie'),
-            'mollie_is_installed' => (string) \Module::isInstalled('mollie'), //TODO this is deprecated since 1.7, rewrite someday
+            'mollie_is_enabled' => (string) \ModuleCore::isEnabled('mollie'),
+            'mollie_is_installed' => (string) \ModuleCore::isInstalled('mollie'), //TODO this is deprecated since 1.7, rewrite someday
         ]);
 
         $this->exceptionContext = $scope;
@@ -100,7 +100,7 @@ class ErrorHandler
         }
     }
 
-    public static function getInstance(Module $module = null): ErrorHandler
+    public static function getInstance(ModuleCore $module = null): ErrorHandler
     {
         if (!$module) {
             $module = (new ModuleFactory())->getModule();
@@ -113,7 +113,7 @@ class ErrorHandler
         return self::$instance;
     }
 
-    private function shouldSkipError(\Sentry\Event $event, Module $module): bool
+    private function shouldSkipError(\Sentry\Event $event, ModuleCore $module): bool
     {
         $result = true;
 
