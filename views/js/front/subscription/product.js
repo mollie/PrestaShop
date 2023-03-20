@@ -1,13 +1,13 @@
 $(document).ready(function () {
     prestashop.on('updateCart', function() {
-            const productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
-            const product =
-                {
-                    'id_product': productDetails.id_product,
-                    'id_product_attribute': productDetails.id_product_attribute,
-                }
+        const productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
+        const product =
+            {
+                'id_product': productDetails.id_product,
+                'id_product_attribute': productDetails.id_product_attribute,
+            }
 
-            validateProduct(product);
+        validateProduct(product);
     });
 
     function validateProduct(product)
@@ -32,6 +32,6 @@ $(document).ready(function () {
     }
 
     function successMsg(message) {
-        $.growl.warning({ title: "", message: message });
+        $.growl.warning({ title: "", message: message, duration: 15000});
     }
 });
