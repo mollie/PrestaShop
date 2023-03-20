@@ -108,13 +108,13 @@ class Mollie extends PaymentModule
             return;
         }
 
-        $dovenv = new Dotenv();
+        $dotenv = new Dotenv();
 
         $envPath = _PS_MODULE_DIR_ . $this->name . '/.env';
 
         if (file_exists($envPath)) {
             /* @phpstan-ignore-next-line */
-            $dovenv->load($envPath);
+            $dotenv->load($envPath);
 
             return;
         }
@@ -123,7 +123,7 @@ class Mollie extends PaymentModule
 
         if (file_exists($envDistPath)) {
             /* @phpstan-ignore-next-line */
-            $dovenv->load($envDistPath);
+            $dotenv->load($envDistPath);
         }
     }
 
