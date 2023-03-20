@@ -39,6 +39,7 @@ class ErrorHandler
 
     private function __construct(ModuleCore $module, Env $env)
     {
+        //TODO in PS8 sentry_env is not passed for some reason, fix this.
         $client = ClientBuilder::create([
             'dsn' => Config::SENTRY_KEY,
             'release' => $module->version,
