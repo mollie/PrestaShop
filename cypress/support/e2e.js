@@ -49,3 +49,4 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 Cypress.Keyboard.defaults({
   keystrokeDelay: 0,
 })
+import "cypress-fail-fast";
