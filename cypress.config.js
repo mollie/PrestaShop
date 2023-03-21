@@ -4,9 +4,9 @@ module.exports = defineConfig({
   chromeWebSecurity: false,
   experimentalSourceRewriting: true,
   numTestsKeptInMemory: 5,
-  defaultCommandTimeout: 10000,
+  defaultCommandTimeout: 8000,
   projectId: 'xb89dr',
-  retries: 3,
+  retries: 2,
   videoUploadOnPasses: false,
   videoCompression: 15,
   e2e: {
