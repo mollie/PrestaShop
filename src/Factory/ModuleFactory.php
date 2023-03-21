@@ -13,21 +13,45 @@
 namespace Mollie\Factory;
 
 use Module;
+use ModuleCore;
 
 class ModuleFactory
 {
-    public function getModuleVersion()
+    public function getModuleVersion(): ?string
     {
-        return Module::getInstanceByName('mollie')->version;
+        $module = $this->getModule();
+
+        if (!$module) {
+            return null;
+        }
+
+        return $module->version ?? null;
     }
 
-    public function getLocalPath()
+    public function getLocalPath(): ?string
     {
-        return Module::getInstanceByName('mollie')->getLocalPath();
+        $module = $this->getModule();
+
+        if (!$module) {
+            return null;
+        }
+
+        return $module->getLocalPath();
     }
 
-    public function getPathUri()
+    public function getPathUri(): ?string
     {
-        return Module::getInstanceByName('mollie')->getPathUri();
+        $module = $this->getModule();
+
+        if (!$module) {
+            return null;
+        }
+
+        return $module->getPathUri();
+    }
+
+    public function getModule(): ?ModuleCore
+    {
+        return Module::getInstanceByName('mollie') ?: null;
     }
 }
