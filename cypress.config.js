@@ -5,7 +5,7 @@ module.exports = defineConfig({
   experimentalSourceRewriting: true,
   numTestsKeptInMemory: 5,
   defaultCommandTimeout: 10000,
-  projectId: 'xb89dr',
+  projectId: '87zjmm',
   retries: 3,
   videoUploadOnPasses: false,
   videoCompression: 15,
@@ -14,6 +14,10 @@ module.exports = defineConfig({
     // You may want to clean this up later by importing these.
     setupNodeEvents(on, config) {
       return require('./cypress/plugins/index.js')(on, config)
+    },
+    setupNodeEvents(on, config) {
+      require("cypress-fail-fast/plugin")(on, config);
+      return config;
     },
     excludeSpecPattern: ['index.php'],
     specPattern: 'cypress/e2e/**/*.{js,jsx,ts,tsx}',
