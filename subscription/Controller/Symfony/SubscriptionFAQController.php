@@ -31,6 +31,7 @@ class SubscriptionFAQController extends AbstractSymfonyController
                 'subscriptionOrderLogicTitle' => $this->module->l('Recurring order creation', self::FILE_NAME),
                 'recurringOrderCreation' => $this->module->l('Mollie for Prestashop automatically creates a new order when the previous order is paid for.', self::FILE_NAME),
                 'recurringOrderPrice' => $this->module->l('Recurring orders always use the product price that was specified when the related subscription was created.', self::FILE_NAME),
+                'recurringOrderAPIChanges' => $this->module->l('Recurring order will override the “Method” payment setting and will be using Mollie’s Payment API.', self::FILE_NAME),
             ]);
     }
 }

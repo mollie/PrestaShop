@@ -46,10 +46,6 @@ class CustomerService
      */
     public function processCustomerCreation(int $customerId)
     {
-        if (!$this->isSingleClickPaymentEnabled()) {
-            return null;
-        }
-
         $customer = new \Customer($customerId);
 
         $fullName = CustomerUtility::getCustomerFullName($customer->id);
