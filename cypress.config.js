@@ -9,6 +9,8 @@ module.exports = defineConfig({
   retries: 3,
   videoUploadOnPasses: false,
   videoCompression: 15,
+  viewportHeight: 1080,
+  viewportWidth: 1920,
   e2e: {
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
