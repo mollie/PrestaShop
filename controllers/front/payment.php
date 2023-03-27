@@ -100,6 +100,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         if ($subscriptionOrderValidator->validate($cart)) {
             $paymentMethodObj->method = Mollie\Config\Config::MOLLIE_PAYMENTS_API;
         }
+
         $orderNumber = OrderNumberUtility::generateOrderNumber($cart->id);
 
         $paymentData = $transactionService->getPaymentData(

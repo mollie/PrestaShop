@@ -102,14 +102,4 @@ class CustomerService
             throw new MollieException('Failed to create Mollie customer', MollieException::CUSTOMER_EXCEPTION, $e);
         }
     }
-
-    public function isSingleClickPaymentEnabled()
-    {
-        $isSingleClickPaymentEnabled = \Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
-        if ($isSingleClickPaymentEnabled) {
-            return true;
-        }
-
-        return false;
-    }
 }
