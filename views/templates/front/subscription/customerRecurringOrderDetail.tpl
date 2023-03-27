@@ -25,7 +25,7 @@
 {extends file='customer/page.tpl'}
 
 {block name='page_title'}
-    {l s='Mollie recurring order details' mod='mollie'}
+    {l s='Subscription order details' mod='mollie'}
 {/block}
 
 {block name='page_content'}

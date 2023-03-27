@@ -19,7 +19,7 @@
 {extends file='customer/page.tpl'}
 
 {block name='page_title'}
-    {l s='Mollie subscriptons' mod='mollie'}
+    {l s='Subscriptons' mod='mollie'}
 {/block}
 
 
