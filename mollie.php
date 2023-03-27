@@ -75,7 +75,7 @@ class Mollie extends PaymentModule
 
         parent::__construct();
 
-        $this->ps_versions_compliancy = ['min' => '1.7.6', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = ['min' => '1.7.4', 'max' => _PS_VERSION_];
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 
@@ -910,7 +910,11 @@ class Mollie extends PaymentModule
 
         try {
             $cartValidation->validate((int) $params['id_product_attribute']);
-        } catch (ProductValidationException|SubscriptionProductValidationException $e) {
+        } catch (SubscriptionProductValidationException $e) {
+            $product = $this->makeProductNotOrderable($params['product']);
+
+            $params['product'] = $product;
+        } catch (ProductValidationException $e) {
             $product = $this->makeProductNotOrderable($params['product']);
 
             $params['product'] = $product;
