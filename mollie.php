@@ -47,7 +47,7 @@ class Mollie extends PaymentModule
     // The Addons version does not include the GitHub updater
     const ADDONS = false;
 
-    const SUPPORTED_PHP_VERSION = '70080';
+    const SUPPORTED_PHP_VERSION = '70200';
 
     const ADMIN_MOLLIE_CONTROLLER = 'AdminMollieModule';
     const ADMIN_MOLLIE_AJAX_CONTROLLER = 'AdminMollieAjax';
@@ -75,7 +75,7 @@ class Mollie extends PaymentModule
 
         parent::__construct();
 
-        $this->ps_versions_compliancy = ['min' => '1.7.4', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = ['min' => '1.7.6', 'max' => _PS_VERSION_];
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 
@@ -140,7 +140,7 @@ class Mollie extends PaymentModule
     public function install()
     {
         if (!$this->isPhpVersionCompliant()) {
-            $this->_errors[] = $this->l('You\'re using an outdated PHP version. Upgrade your PHP version to use this module. The Mollie module supports versions PHP 7.0.8 and higher.');
+            $this->_errors[] = $this->l('You\'re using an outdated PHP version. Upgrade your PHP version to use this module. The Mollie module supports versions PHP 7.2.0 and higher.');
 
             return false;
         }
@@ -203,7 +203,7 @@ class Mollie extends PaymentModule
     public function enable($force_all = false)
     {
         if (!$this->isPhpVersionCompliant()) {
-            $this->_errors[] = $this->l('You\'re using an outdated PHP version. Upgrade your PHP version to use this module. The Mollie module supports versions PHP 7.0.8 and higher.');
+            $this->_errors[] = $this->l('You\'re using an outdated PHP version. Upgrade your PHP version to use this module. The Mollie module supports versions PHP 7.2.0 and higher.');
 
             return false;
         }

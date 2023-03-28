@@ -14,7 +14,7 @@ namespace Mollie\Handler\ErrorHandler;
 
 use Configuration;
 use Exception;
-use ModuleCore;
+use Mollie;
 use Mollie\Config\Config;
 use Mollie\Config\Env;
 use Mollie\Factory\ModuleFactory;
@@ -37,7 +37,7 @@ class ErrorHandler
     /** @var Scope */
     private $exceptionContext;
 
-    private function __construct(ModuleCore $module, Env $env)
+    public function __construct(Mollie $module, Env $env)
     {
         //TODO in PS8 sentry_env is not passed for some reason, fix this.
         $client = ClientBuilder::create([
@@ -81,8 +81,8 @@ class ErrorHandler
         $scope->setTags([
             'mollie_version' => $module->version,
             'prestashop_version' => _PS_VERSION_,
-            'mollie_is_enabled' => (string) \ModuleCore::isEnabled('mollie'),
-            'mollie_is_installed' => (string) \ModuleCore::isInstalled('mollie'), //TODO this is deprecated since 1.7, rewrite someday
+            'mollie_is_enabled' => (string) Mollie::isEnabled('mollie'),
+            'mollie_is_installed' => (string) Mollie::isInstalled('mollie'), //TODO this is deprecated since 1.7, rewrite someday
         ]);
 
         $this->exceptionContext = $scope;
@@ -101,7 +101,7 @@ class ErrorHandler
         }
     }
 
-    public static function getInstance(ModuleCore $module = null): ErrorHandler
+    public static function getInstance(Mollie $module = null): ErrorHandler
     {
         if (!$module) {
             $module = (new ModuleFactory())->getModule();
@@ -114,7 +114,7 @@ class ErrorHandler
         return self::$instance;
     }
 
-    private function shouldSkipError(\Sentry\Event $event, ModuleCore $module): bool
+    private function shouldSkipError(\Sentry\Event $event, Mollie $module): bool
     {
         $result = true;
 
