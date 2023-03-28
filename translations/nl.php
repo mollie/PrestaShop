@@ -4,7 +4,7 @@ global $_MODULE;
 $_MODULE = array();
 $_MODULE['<{mollie}prestashop>mollie_7c478959c218087ffc4ad5d96e7f66a6'] = 'Mollie';
 $_MODULE['<{mollie}prestashop>mollie_95b3b272e06dcc3cc2aa62f6887aebc5'] = 'Mollie betalingen';
-$_MODULE['<{mollie}prestashop>mollie_bd5af78a81aefe461ac607f5c1cddaef'] = 'De PHP-versie die je gebruikt is verouderd. Upgrade je PHP-versie om deze module te kunnen gebruiken. De Mollie-module ondersteunt alle versies vanaf PHP 7.0.8.';
+$_MODULE['<{mollie}prestashop>mollie_bd5af78a81aefe461ac607f5c1cddaef'] = 'De PHP-versie die je gebruikt is verouderd. Upgrade je PHP-versie om deze module te kunnen gebruiken. De Mollie-module ondersteunt alle versies vanaf PHP 7.2.0.';
 $_MODULE['<{mollie}prestashop>mollie_46e2d06b80d816b2916f1f27492fbabd'] = 'Het installeren van de module is mislukt';
 $_MODULE['<{mollie}prestashop>mollie_934e5da227f106999fb2c4d7161ddaa9'] = 'De module upload moet opnieuw geladen worden. Upload het zipbestand van de Mollie-module nog een keer. Mocht je na het opnieuw uploaden nog steeds deze foutmelding zien, neem dan contact op met Mollie support via info@mollie.com en voeg een screenshot dit het scherm toe.';
 $_MODULE['<{mollie}prestashop>mollie_329d067eb590f966ceeaed2bacf99d8e'] = 'Upgrade de Mollie-module';

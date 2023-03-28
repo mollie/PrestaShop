@@ -14,7 +14,6 @@ namespace Mollie\Service;
 
 use MolCustomer;
 use Mollie;
-use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Utility\CustomerUtility;
