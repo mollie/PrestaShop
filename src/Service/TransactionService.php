@@ -117,6 +117,12 @@ class TransactionService
 
             throw new TransactionException('Transaction failed', HttpStatusCode::HTTP_BAD_REQUEST);
         }
+
+        $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
+        if (!$paymentMethod) {
+            $this->mollieOrderCreationService->createMolliePayment($apiPayment, (int) $apiPayment->metadata->cart_id, $apiPayment->description);
+        }
+
         /** @var int $orderId */
         $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
 
