@@ -1,6 +1,12 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+
+## Changes in release 6.0.0 ##
++ Fixed order state duplication on install when single shop instance/ multishop instances were switched during module usage.
++ Upgraded sentry logger to support PHP 8.0 version. 
++ Dropped dotenv vendor package from module as it is accessible via symfony PrestaShop package.
+
 ## Changes in release 5.4.0 ##
 + Fixed issue where saving wrong API key would reset settings page.
 + Fixed issue where auto shipment would not work on order creation and only on status update.

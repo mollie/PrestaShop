@@ -328,7 +328,7 @@ class PaymentMethodService
             }
 
             if ($this->subscriptionOrder->validate(new Cart($cartId))) {
-                $molCustomer = $this->handleCustomerInfo($cart->id_customer, true, false);
+                $molCustomer = $this->getCustomerInfo($cart->id_customer, true, false);
                 $paymentData->setCustomerId($molCustomer->customer_id);
 
                 $paymentData->setSequenceType(SequenceType::SEQUENCETYPE_FIRST);
@@ -406,13 +406,6 @@ class PaymentMethodService
 
             if ($molPaymentMethod->id_method === PaymentMethod::APPLEPAY && $applePayToken) {
                 $payment['applePayPaymentToken'] = $applePayToken;
-            }
-
-            if ($this->subscriptionOrder->validate(new Cart($cartId))) {
-                $molCustomer = $this->handleCustomerInfo($cart->id_customer, true, false);
-                $payment['customerId'] = $molCustomer->customer_id;
-
-                $orderData->setSequenceType(SequenceType::SEQUENCETYPE_FIRST);
             }
 
             $orderData->setPayment($payment);
@@ -502,6 +495,11 @@ class PaymentMethodService
             return null;
         }
 
+        return $this->getCustomerInfo($customerId, $saveCard, $useSavedCard);
+    }
+
+    public function getCustomerInfo(int $customerId, bool $saveCard, bool $useSavedCard): ?MolCustomer
+    {
         if ($saveCard) {
             $apiCustomer = $this->customerService->processCustomerCreation($customerId);
         } elseif ($useSavedCard) {

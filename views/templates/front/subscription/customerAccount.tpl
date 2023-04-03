@@ -19,6 +19,6 @@
 
 <a class="col-lg-4 col-md-6 col-sm-6 col-xs-12" href="{$front_controller}">
     <span class="link-item">
-        <i class="material-icons">account_box</i> {l s='Mollie subscriptions' mod='mollie'}
+        <i class="material-icons">account_box</i> {l s='Subscriptions' mod='mollie'}
     </span>
 </a>
