@@ -23,7 +23,7 @@ class SubscriptionFAQController extends AbstractSymfonyController
                 'subscriptionCreationTittle' => $this->module->l('Subscription creation', self::FILE_NAME),
                 'subscriptionCreation' => $this->module->l('To create a subscription option for a product variation, assign it a Mollie subscription attribute.', self::FILE_NAME),
                 'importantInformationTittle' => $this->module->l('IMPORTANT points', self::FILE_NAME),
-                'importantInformation' => $this->module->l('When you add Mollie subscription attributes, make sure you always include "none" as a fallback.', self::FILE_NAME),
+                'importantInformation' => $this->module->l('When you add Mollie subscription attributes, make sure you always include \'none\' as a fallback.', self::FILE_NAME),
                 'cartRuleTitle' => $this->module->l('Cart rules', self::FILE_NAME),
                 'cartRule' => $this->module->l('A customer can\'t add a subscription item to the shopping cart if it already contains a non-subscription item.', self::FILE_NAME),
                 'cartRule2' => $this->module->l('A customer can\'t add subscription items with different recurring periods to the same shopping cart.', self::FILE_NAME),
