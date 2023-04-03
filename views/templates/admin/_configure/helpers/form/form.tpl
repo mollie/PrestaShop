@@ -350,7 +350,7 @@
                                        name="MOLLIE_METHOD_MAX_AMOUNT_{$paymentMethod.id|escape:'html':'UTF-8'}"
                                        class="fixed-width-xl"
                                         {if $paymentMethod.maximumAmount != false } max='{$paymentMethod.maximumAmount.value}' {/if}
-                                       value="{if $methodObj->max_amount == 0}{$paymentMethod.maximumAmount.value}{else}{$methodObj->max_amount}{/if}">
+                                       value="{if $methodObj->max_amount == 0}{($paymentMethod.maximumAmount) ? $paymentMethod.maximumAmount.value : ''}{else}{$methodObj->max_amount}{/if}">
                                 <p class="help-block">
                                     {if $paymentMethod.maximumAmount == false}
                                         {l s='Default max amount has no limitation' mod='mollie'}

@@ -47,7 +47,7 @@ class Mollie extends PaymentModule
     // The Addons version does not include the GitHub updater
     const ADDONS = false;
 
-    const SUPPORTED_PHP_VERSION = '70080';
+    const SUPPORTED_PHP_VERSION = '70200';
 
     const ADMIN_MOLLIE_CONTROLLER = 'AdminMollieModule';
     const ADMIN_MOLLIE_AJAX_CONTROLLER = 'AdminMollieAjax';
@@ -140,7 +140,7 @@ class Mollie extends PaymentModule
     public function install()
     {
         if (!$this->isPhpVersionCompliant()) {
-            $this->_errors[] = $this->l('You\'re using an outdated PHP version. Upgrade your PHP version to use this module. The Mollie module supports versions PHP 7.0.8 and higher.');
+            $this->_errors[] = $this->l('You\'re using an outdated PHP version. Upgrade your PHP version to use this module. The Mollie module supports versions PHP 7.2.0 and higher.');
 
             return false;
         }
@@ -203,7 +203,7 @@ class Mollie extends PaymentModule
     public function enable($force_all = false)
     {
         if (!$this->isPhpVersionCompliant()) {
-            $this->_errors[] = $this->l('You\'re using an outdated PHP version. Upgrade your PHP version to use this module. The Mollie module supports versions PHP 7.0.8 and higher.');
+            $this->_errors[] = $this->l('You\'re using an outdated PHP version. Upgrade your PHP version to use this module. The Mollie module supports versions PHP 7.2.0 and higher.');
 
             return false;
         }
@@ -910,7 +910,11 @@ class Mollie extends PaymentModule
 
         try {
             $cartValidation->validate((int) $params['id_product_attribute']);
-        } catch (ProductValidationException|SubscriptionProductValidationException $e) {
+        } catch (SubscriptionProductValidationException $e) {
+            $product = $this->makeProductNotOrderable($params['product']);
+
+            $params['product'] = $product;
+        } catch (ProductValidationException $e) {
             $product = $this->makeProductNotOrderable($params['product']);
 
             $params['product'] = $product;

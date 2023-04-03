@@ -13,7 +13,7 @@
 namespace Mollie\Factory;
 
 use Module;
-use ModuleCore;
+use Mollie;
 
 class ModuleFactory
 {
@@ -50,8 +50,11 @@ class ModuleFactory
         return $module->getPathUri();
     }
 
-    public function getModule(): ?ModuleCore
+    public function getModule(): ?Mollie
     {
-        return Module::getInstanceByName('mollie') ?: null;
+        /** @var ?Mollie $module */
+        $module = Module::getInstanceByName('mollie') ?: null;
+
+        return $module;
     }
 }

@@ -17,6 +17,7 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\PaymentMethodService;
+use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Utility\OrderNumberUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -88,10 +89,17 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $mollieOrderCreationService = $this->module->getService(MollieOrderCreationService::class);
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
         $paymentMethodRepository = $this->module->getService(PaymentMethodRepositoryInterface::class);
+        /** @var SubscriptionOrderValidator $subscriptionOrderValidator */
+        $subscriptionOrderValidator = $this->module->getService(SubscriptionOrderValidator::class);
 
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method, $environment);
         $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
+
+        /* if its subscription order only payment API is allowed */
+        if ($subscriptionOrderValidator->validate($cart)) {
+            $paymentMethodObj->method = Mollie\Config\Config::MOLLIE_PAYMENTS_API;
+        }
 
         $orderNumber = OrderNumberUtility::generateOrderNumber($cart->id);
 
@@ -154,11 +162,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                     $order->id,
                     $order->reference
                 );
-            } else {
-                $paymentMethod = $paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
-                if (!$paymentMethod) {
-                    $mollieOrderCreationService->createMolliePayment($apiPayment, (int) $cart->id, $orderNumber);
-                }
             }
         } catch (Exception $e) {
             $this->setTemplate('error.tpl');

@@ -28,8 +28,8 @@ use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\TransactionException;
 use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Handler\Order\OrderFeeHandler;
-use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Subscription\Handler\SubscriptionCreationHandler;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\OrderNumberUtility;
@@ -71,8 +71,8 @@ class TransactionService
     private $mollieOrderCreationService;
     /** @var OrderFeeHandler */
     private $orderFeeHandler;
-    /** @var ShipmentSenderHandlerInterface */
-    private $shipmentSenderHandler;
+    /** @var SubscriptionCreationHandler */
+    private $recurringOrderCreation;
 
     public function __construct(
         Mollie $module,
@@ -82,7 +82,7 @@ class TransactionService
         PaymentMethodService $paymentMethodService,
         MollieOrderCreationService $mollieOrderCreationService,
         OrderFeeHandler $orderFeeHandler,
-        ShipmentSenderHandlerInterface $shipmentSenderHandler
+        SubscriptionCreationHandler $recurringOrderCreation
     ) {
         $this->module = $module;
         $this->orderStatusService = $orderStatusService;
@@ -91,7 +91,7 @@ class TransactionService
         $this->paymentMethodService = $paymentMethodService;
         $this->mollieOrderCreationService = $mollieOrderCreationService;
         $this->orderFeeHandler = $orderFeeHandler;
-        $this->shipmentSenderHandler = $shipmentSenderHandler;
+        $this->recurringOrderCreation = $recurringOrderCreation;
     }
 
     /**
@@ -117,6 +117,12 @@ class TransactionService
 
             throw new TransactionException('Transaction failed', HttpStatusCode::HTTP_BAD_REQUEST);
         }
+
+        $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
+        if (!$paymentMethod) {
+            $this->mollieOrderCreationService->createMolliePayment($apiPayment, (int) $apiPayment->metadata->cart_id, $apiPayment->description);
+        }
+
         /** @var int $orderId */
         $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
 
@@ -203,9 +209,6 @@ class TransactionService
                         throw new TransactionException('Order is already created', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
                     }
                     $apiPayment = $this->updateOrderDescription($apiPayment, $orderId);
-                    $this->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId);
-                    $order = new Order($orderId);
-                    $this->shipmentSenderHandler->handleShipmentSender($this->module->getApiClient(), $order, new \OrderState($order->current_state));
                 } elseif ($apiPayment->amountRefunded) {
                     if (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                         if (!MollieStatusUtility::isPaymentFinished($apiPayment->status)) {
@@ -258,7 +261,11 @@ class TransactionService
 
         $this->updateTransaction($orderId, $apiPayment);
         // Store status in database
-        $this->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId);
+        if (!$this->paymentMethodRepository->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId, $apiPayment->method)) {
+            if (Configuration::get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
+                PrestaShopLogger::addLog(__METHOD__ . ' said: Could not save Mollie payment status for transaction "' . $apiPayment->id . '". Reason: ' . Db::getInstance()->getMsgError(), Config::WARNING);
+            }
+        }
 
         // Log successful webhook requests in extended log mode only
         if (Config::DEBUG_LOG_ALL == Configuration::get(Config::MOLLIE_DEBUG_LOG)) {
@@ -317,39 +324,6 @@ class TransactionService
                 $orderPayment->update();
             }
         }
-    }
-
-    /**
-     * @param string $transactionId
-     * @param string $status
-     * @param int $orderId
-     *
-     * @return bool
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    private function savePaymentStatus($transactionId, $status, $orderId)
-    {
-        try {
-            $result = Db::getInstance()->update(
-                'mollie_payments',
-                [
-                    'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
-                    'bank_status' => pSQL($status),
-                    'order_id' => (int) $orderId,
-                ],
-                '`transaction_id` = \'' . pSQL($transactionId) . '\''
-            );
-        } catch (PrestaShopDatabaseException $e) {
-            throw $e;
-        }
-
-        if (!$result && Configuration::get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
-            PrestaShopLogger::addLog(__METHOD__ . ' said: Could not save Mollie payment status for transaction "' . $transactionId . '". Reason: ' . Db::getInstance()->getMsgError(), Config::WARNING);
-        }
-
-        return $result;
     }
 
     /**

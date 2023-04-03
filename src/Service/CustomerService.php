@@ -14,7 +14,6 @@ namespace Mollie\Service;
 
 use MolCustomer;
 use Mollie;
-use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Utility\CustomerUtility;
@@ -46,10 +45,6 @@ class CustomerService
      */
     public function processCustomerCreation(int $customerId)
     {
-        if (!$this->isSingleClickPaymentEnabled()) {
-            return null;
-        }
-
         $customer = new \Customer($customerId);
 
         $fullName = CustomerUtility::getCustomerFullName($customer->id);
@@ -105,15 +100,5 @@ class CustomerService
         } catch (\Exception $e) {
             throw new MollieException('Failed to create Mollie customer', MollieException::CUSTOMER_EXCEPTION, $e);
         }
-    }
-
-    public function isSingleClickPaymentEnabled()
-    {
-        $isSingleClickPaymentEnabled = \Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
-        if ($isSingleClickPaymentEnabled) {
-            return true;
-        }
-
-        return false;
     }
 }
