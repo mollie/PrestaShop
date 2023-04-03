@@ -251,13 +251,9 @@ class TransactionService
         if (!$orderId) {
             return 'Order with given transaction was not found';
         }
-        $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
         $order = new Order($orderId);
-        if (!$paymentMethod) {
-            $this->mollieOrderCreationService->createMolliePayment($apiPayment, (int) $cart->id, $order->reference);
-        } else {
-            $this->mollieOrderCreationService->updateMolliePaymentReference($apiPayment->id, $order->reference);
-        }
+
+        $this->mollieOrderCreationService->updateMolliePaymentReference($apiPayment->id, $order->reference);
 
         $this->updateTransaction($orderId, $apiPayment);
         // Store status in database
