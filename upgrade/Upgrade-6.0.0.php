@@ -9,14 +9,15 @@
  * @see        https://github.com/mollie/PrestaShop
  */
 
+use Mollie\Subscription\Install\Installer;
+use PrestaShop\PrestaShop\Adapter\Module\Tab\ModuleTabRegister;
+use Symfony\Component\HttpFoundation\ParameterBag;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * @return bool
- */
-function upgrade_module_6_0_0(Mollie $module)
+function upgrade_module_6_0_0(Mollie $module): bool
 {
     $sql = '
         ALTER TABLE ' . _DB_PREFIX_ . 'mollie_payments
@@ -27,5 +28,36 @@ function upgrade_module_6_0_0(Mollie $module)
         return false;
     }
 
-    return true;
+    $sql = '
+        ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
+        ADD COLUMN min_amount decimal(20,6) DEFAULT 0,
+        ADD COLUMN max_amount decimal(20,6) DEFAULT 0;
+     ';
+
+    if (!Db::getInstance()->execute($sql)) {
+        return false;
+    }
+
+    /** @var Installer $installer */
+    $installer = $module->getService(Installer::class);
+
+    /** @var ModuleTabRegister $tabRegister */
+    $tabRegister = $module->getService('prestashop.adapter.module.tab.register');
+
+    $moduleAdapter = new \PrestaShop\PrestaShop\Adapter\Module\Module();
+    $moduleAdapter->instance = $module;
+    $moduleAdapter->disk = new ParameterBag(
+        [
+            'filemtype' => 0,
+            'is_present' => 1,
+            'is_valid' => 1,
+            'version' => null,
+            'path' => '',
+        ]
+    );
+
+    $moduleAdapter->attributes->set('name', 'mollie');
+    $tabRegister->registerTabs($moduleAdapter);
+
+    return $installer->install();
 }
