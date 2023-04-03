@@ -51,7 +51,6 @@ e2e-8-prepare:
 	/bin/bash .docker/wait-for-container.sh mysql-mollie-8
 	# preloads initial data
 	make bps8
-	/bin/bash .docker/wait-for-container.sh prestashop-mollie-8
 
 bps8: build-ps-8
 build-ps-8:
