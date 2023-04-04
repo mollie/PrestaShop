@@ -1,6 +1,10 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+
+## Changes in release 5.4.1 ##
++ Fixed order state duplication on install when single shop instance/ multishop instances were switched during module usage.
+
 ## Changes in release 5.4.0 ##
 + Fixed issue where saving wrong API key would reset settings page.
 + Fixed issue where auto shipment would not work on order creation and only on status update.
