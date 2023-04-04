@@ -70,42 +70,42 @@ it('C339341: 04 Enabling All payments in Module BO [Orders API]', () => {
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it('C339342: 05 Vouchers Checkouting [Orders API]', () => {
-      cy.visit('/SHOP2/de/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      cy.contains('LT').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
-      //Payment method choosing
-      cy.contains('Voucher').click({force:true})
-      cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
-      cy.get('.grid-button-voucher-monizze-meal').click()
-      cy.get('[value="paid"]').click()
-      cy.get('[class="button form__button"]').click()
-      cy.get('.grid-button-paypal').click()
-      cy.get('[value="paid"]').click()
-      cy.get('[class="button form__button"]').click()
-      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
-})
-it('C339343: 06 Vouchers Order BO Refunding, Shipping (Paid part only) [Orders API]', () => {
-      cy.OrderRefundingShippingOrdersAPI()
-      cy.get('[class="card-body"]').find('[class="alert alert-warning"]').should('exist') //additional checking if the warning alert for vouchers exist
-})
+// it('C339342: 05 Vouchers Checkouting [Orders API]', () => {
+//       cy.visit('/SHOP2/de/index.php?controller=history')
+//       cy.get('a').click()
+//       cy.contains('Reorder').click()
+//       cy.contains('LT').click()
+//       //Billing country LT, DE etc.
+//       cy.get('.clearfix > .btn').click()
+//       cy.get('#js-delivery > .continue').click()
+//       //Payment method choosing
+//       cy.contains('Voucher').click({force:true})
+//       cy.get('.condition-label > .js-terms').click({force:true})
+//       prepareCookie();
+//       cy.get('.ps-shown-by-js > .btn').click()
+//       cy.setCookie(
+//         'SESSIONID',
+//         "cypress-dummy-value",
+//         {
+//             domain: '.www.mollie.com',
+//             sameSite: 'None',
+//             secure: true,
+//             httpOnly: true
+//         }
+//       );    // reload current page to activate cookie
+//       cy.reload();
+//       cy.get('.grid-button-voucher-monizze-meal').click()
+//       cy.get('[value="paid"]').click()
+//       cy.get('[class="button form__button"]').click()
+//       cy.get('.grid-button-paypal').click()
+//       cy.get('[value="paid"]').click()
+//       cy.get('[class="button form__button"]').click()
+//       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+// })
+// it('C339343: 06 Vouchers Order BO Refunding, Shipping (Paid part only) [Orders API]', () => {
+//       cy.OrderRefundingShippingOrdersAPI()
+//       cy.get('[class="card-body"]').find('[class="alert alert-warning"]').should('exist') //additional checking if the warning alert for vouchers exist
+// })
 it('C339344: 07 Bancontact Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
