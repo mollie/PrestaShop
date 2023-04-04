@@ -33,6 +33,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 class Mollie extends PaymentModule
 {
+    use Mollie\Subscription\Traits\HookTraits;
+
     const DISABLE_CACHE = true;
 
     /** @var \Mollie\Api\MollieApiClient|null */

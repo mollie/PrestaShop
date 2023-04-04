@@ -34,6 +34,8 @@ final class DatabaseTableInstaller extends AbstractInstaller
 				`id_cart` INT(64) NOT NULL,
 				`id_currency` INT(64) NOT NULL,
 				`id_customer` INT(64) NOT NULL,
+				`id_address_delivery` INT(64) NOT NULL,
+				`id_address_invoice` INT(64) NOT NULL,
 				`description` VARCHAR(64) NOT NULL,
 				`status` VARCHAR(64) NOT NULL,
 				`next_payment` datetime NOT NULL,
