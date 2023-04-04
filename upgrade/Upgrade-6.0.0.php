@@ -10,6 +10,7 @@
  */
 
 use Mollie\Subscription\Install\Installer;
+use Mollie\Subscription\Install\InstallerInterface;
 use PrestaShop\PrestaShop\Adapter\Module\Tab\ModuleTabRegister;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -56,6 +57,7 @@ function upgrade_module_6_0_0(Mollie $module): bool
         }
     }
 
+    //todo: maybe move to container
     $installer = new \Mollie\Install\Installer(
         $module,
         new \Mollie\Service\OrderStateImageService(),
@@ -89,8 +91,8 @@ function upgrade_module_6_0_0(Mollie $module): bool
 
     $tabRegister->registerTabs($moduleAdapter);
 
-    /** @var Installer $installer */
-    $installer = $module->getService(Installer::class);
+    /** @var InstallerInterface $installer */
+    $installer = $module->getService(InstallerInterface::class);
 
     return $installer->install();
 }
