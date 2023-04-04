@@ -44,7 +44,7 @@ class SubscriptionPaymentMethodUpdateHandler
         $recurringOrder = $this->recurringOrderRepository->findOneBy(['mollie_subscription_id' => $subscriptionId]);
 
         if (!$recurringOrder) {
-            throw new MollieException('todo');
+            throw new MollieException('Subscription does not exist.');
         }
 
         $subscriptionUpdateData = $this->subscriptionDataFactory->build($recurringOrder, $molPayment->mandateId);
