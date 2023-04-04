@@ -20,26 +20,64 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_6_0_0(Mollie $module): bool
 {
     $sql = '
-        ALTER TABLE ' . _DB_PREFIX_ . 'mollie_payments
-        ADD `mandate_id` VARCHAR(64);
+    SELECT COUNT(*) AS count
+    FROM information_schema.columns
+    WHERE table_name = "' . _DB_PREFIX_ . 'mol_payment_method" AND column_name = \'mandate_id\';
     ';
 
+    /** only add it if it doesn't exist */
     if (!Db::getInstance()->execute($sql)) {
-        return false;
+        $sql = '
+        ALTER TABLE ' . _DB_PREFIX_ . 'mollie_payments
+        ADD `mandate_id` VARCHAR(64);
+        ';
+
+        if (!Db::getInstance()->execute($sql)) {
+            return false;
+        }
     }
 
     $sql = '
+    SELECT COUNT(*) AS count
+    FROM information_schema.columns
+    WHERE table_name = "' . _DB_PREFIX_ . 'mol_payment_method" AND column_name = \'min_amount\';
+    ';
+
+    /** only add it if it doesn't exist */
+    if (!Db::getInstance()->execute($sql)) {
+        $sql = '
         ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
         ADD COLUMN min_amount decimal(20,6) DEFAULT 0,
         ADD COLUMN max_amount decimal(20,6) DEFAULT 0;
-     ';
+        ';
 
-    if (!Db::getInstance()->execute($sql)) {
-        return false;
+        if (!Db::getInstance()->execute($sql)) {
+            return false;
+        }
     }
 
-    /** @var Installer $installer */
-    $installer = $module->getService(Installer::class);
+//    $sql = '
+//        DELETE FROM ' . _DB_PREFIX_ . 'tab
+//        WHERE module = "'. $module->name .' AND NOT IN ("AdminMollieModule", "AdminMollieModule_MTR")
+//        ';
+//
+//    if (!Db::getInstance()->execute($sql)) {
+//        return false;
+//    }
+
+    $installer = new \Mollie\Install\Installer(
+        $module,
+        new \Mollie\Service\OrderStateImageService(),
+        new \Mollie\Install\DatabaseTableInstaller(),
+        new \Mollie\Tracker\Segment(
+            new \Mollie\Adapter\Shop(),
+            new \Mollie\Adapter\Language(),
+            new \Mollie\Config\Env()
+        ),
+        new \Mollie\Adapter\ConfigurationAdapter()
+    );
+
+    $installer->installSpecificTabs();
 
     /** @var ModuleTabRegister $tabRegister */
     $tabRegister = $module->getService('prestashop.adapter.module.tab.register');
@@ -56,8 +94,12 @@ function upgrade_module_6_0_0(Mollie $module): bool
         ]
     );
 
-    $moduleAdapter->attributes->set('name', 'mollie');
+    $moduleAdapter->attributes->set('name', $module->name);
+
     $tabRegister->registerTabs($moduleAdapter);
+
+    /** @var Installer $installer */
+    $installer = $module->getService(Installer::class);
 
     return $installer->install();
 }

@@ -37,8 +37,13 @@ class ErrorHandler
     /** @var Scope */
     private $exceptionContext;
 
-    public function __construct(Mollie $module, Env $env)
+    public function __construct(Mollie $module, Env $env = null)
     {
+        /* We need to add this check and make env = null because when upgrading module the old constructor logic is called, and it breaks upgrade */
+        if (!$env || !class_exists('Sentry\ClientBuilder')) {
+            return;
+        }
+
         //TODO in PS8 sentry_env is not passed for some reason, fix this.
         $client = ClientBuilder::create([
             'dsn' => Config::SENTRY_KEY,
