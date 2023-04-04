@@ -56,15 +56,6 @@ function upgrade_module_6_0_0(Mollie $module): bool
         }
     }
 
-//    $sql = '
-//        DELETE FROM ' . _DB_PREFIX_ . 'tab
-//        WHERE module = "'. $module->name .' AND NOT IN ("AdminMollieModule", "AdminMollieModule_MTR")
-//        ';
-//
-//    if (!Db::getInstance()->execute($sql)) {
-//        return false;
-//    }
-
     $installer = new \Mollie\Install\Installer(
         $module,
         new \Mollie\Service\OrderStateImageService(),
