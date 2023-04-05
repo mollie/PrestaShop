@@ -6,10 +6,10 @@ use Address;
 use AddressFormat;
 use MolRecurringOrder;
 use Order;
-use PrestaShop\PrestaShop\Adapter\Presenter\Order\OrderLazyArray;
 use PrestaShop\PrestaShop\Adapter\Presenter\Object\ObjectPresenter;
+use PrestaShop\PrestaShop\Adapter\Presenter\Order\OrderLazyArray;
 
-class RecurringOrderLazyArray  extends OrderLazyArray
+class RecurringOrderLazyArray extends OrderLazyArray
 {
     /** @var \MolRecurringOrder */
     private $molRecurringOrder;
@@ -42,7 +42,7 @@ class RecurringOrderLazyArray  extends OrderLazyArray
      *
      * @return array
      */
-    public function getAddresses()
+    public function getAddresses(): array
     {
         $order = $this->order;
 

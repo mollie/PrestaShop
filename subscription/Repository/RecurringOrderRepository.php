@@ -37,7 +37,7 @@ class RecurringOrderRepository extends AbstractRepository implements RecurringOr
         $sql->where('mro.id_customer = ' . $customerId);
         $sql->where('o.id_address_delivery = ' . $oldAddressId . ' OR o.id_address_invoice = ' . $oldAddressId);
 
-        $result =  Db::getInstance()->executeS($sql);
+        $result = Db::getInstance()->executeS($sql);
 
         if (is_array($result) && !empty($result)) {
             return $result;

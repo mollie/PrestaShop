@@ -21,9 +21,12 @@ trait HookTraits
 
     public function hookActionObjectAddressAddAfter(array $params): void
     {
-/**        TODO address gets updated if it's not used in any order.
- * For some reason it doesn't come to this hook and it just updates address each time.
- */
+        /**
+         * NOTE: If on update customer address action address gets re-created, then new address gets detached
+         * from original order. Next time on address update it won't be re-created, instead it will be updated.
+         * In this case this hook won't be active.
+         */
+
         /** @var Address $address */
         $address = $params['object'];
 
@@ -56,7 +59,6 @@ trait HookTraits
         /** @var OrderLazyArray $orderLazyArray */
         $orderLazyArray = $params['presentedOrder'];
 
-        /** @var OrderDetailLazyArray $orderDetails */
         $orderDetails = $orderLazyArray->getDetails();
 
         $order = new Order($orderDetails->getId());
