@@ -9,7 +9,6 @@ use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
 use MollieRecurringOrderDetailModuleFrontController;
 use MolRecurringOrder;
 use Order;
-use PrestaShop\PrestaShop\Adapter\Presenter\Order\OrderDetailLazyArray;
 use PrestaShop\PrestaShop\Adapter\Presenter\Order\OrderLazyArray;
 
 /**

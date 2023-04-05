@@ -11,6 +11,7 @@ use PrestaShopException;
 interface RecurringOrderRepositoryInterface
 {
 //    TODO add return types for all repositories
+
     /**
      * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
      *
