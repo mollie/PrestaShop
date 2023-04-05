@@ -66,6 +66,8 @@ class SubscriptionCreationHandler
         $recurringOrder->id_cart = $order->id_cart;
         $recurringOrder->id_currency = $order->id_currency;
         $recurringOrder->id_customer = $order->id_customer;
+        $recurringOrder->id_address_delivery = $order->id_address_delivery;
+        $recurringOrder->id_address_invoice = $order->id_address_invoice;
         $recurringOrder->description = $subscription->description;
         $recurringOrder->status = $subscription->status;
         $recurringOrder->payment_method = $method;

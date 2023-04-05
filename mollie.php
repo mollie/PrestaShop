@@ -33,6 +33,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 class Mollie extends PaymentModule
 {
+    use Mollie\Subscription\Traits\HookTraits;
+
     const DISABLE_CACHE = true;
 
     /** @var \Mollie\Api\MollieApiClient|null */
@@ -151,6 +153,7 @@ class Mollie extends PaymentModule
             return false;
         }
 
+//        TODO inject base install and subscription services
         $installer = new \Mollie\Install\Installer(
             $this,
             new \Mollie\Service\OrderStateImageService(),
@@ -162,6 +165,7 @@ class Mollie extends PaymentModule
             ),
             new \Mollie\Adapter\ConfigurationAdapter()
         );
+
         if (!$installer->install()) {
             $this->_errors = array_merge($this->_errors, $installer->getErrors());
 

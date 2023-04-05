@@ -34,6 +34,9 @@ class HookInstaller extends AbstractInstaller
             'actionFrontControllerSetMedia',
             'actionValidateOrder',
             'actionCartUpdateQuantityBefore',
+            'actionObjectAddressAddAfter',
+            'actionObjectAddressUpdateAfter',
+            'actionPresentOrder',
         ];
     }
 }
