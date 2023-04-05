@@ -62,6 +62,8 @@ use Mollie\Service\Shipment\ShipmentInformationSenderInterface;
 use Mollie\Service\ShipmentService;
 use Mollie\Service\ShipmentServiceInterface;
 use Mollie\Subscription\Grid\Accessibility\SubscriptionCancelAccessibility;
+use Mollie\Subscription\Install\Installer;
+use Mollie\Subscription\Install\InstallerInterface;
 use Mollie\Subscription\Logger\Logger;
 use Mollie\Subscription\Logger\LoggerInterface;
 use Mollie\Subscription\Repository\RecurringOrderRepository;
@@ -102,6 +104,13 @@ final class BaseServiceProvider
             ->withArgument('MolCustomer');
 
         $this->addService($container, UninstallerInterface::class, Mollie\Install\DatabaseTableUninstaller::class);
+
+        $this->addService($container, InstallerInterface::class, Installer::class)
+            ->withArguments([
+                $container->get(Mollie\Subscription\Install\DatabaseTableInstaller::class),
+                $container->get(Mollie\Subscription\Install\AttributeInstaller::class),
+                $container->get(Mollie\Subscription\Install\HookInstaller::class),
+            ]);
 
         $this->addService($container, DecoderInterface::class, JsonDecoder::class);
 
