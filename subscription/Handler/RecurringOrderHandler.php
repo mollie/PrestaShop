@@ -135,7 +135,7 @@ class RecurringOrderHandler
         $newCart = $newCart['cart'];
 
         $newCart->id_address_invoice = $recurringOrder->id_address_invoice;
-        $newCart->id_address_shipping = $recurringOrder->id_address_delivery;
+        $newCart->id_address_delivery = $recurringOrder->id_address_delivery;
 
         $recurringOrderProduct = new MolRecurringOrdersProduct($recurringOrder->id_mol_recurring_orders_product);
 

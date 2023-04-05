@@ -27,7 +27,7 @@ class RecurringOrderRepository extends AbstractRepository implements RecurringOr
         return $result;
     }
 
-    public function getCustomerOrdersByOldAddress(int $customerId, int $oldAddressId): ?PrestaShopCollection
+    public function getCustomerOrdersByOldAddress(int $customerId, int $oldAddressId): ?array
     {
         $sql = new DbQuery();
 
