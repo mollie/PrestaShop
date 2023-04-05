@@ -6,6 +6,7 @@
 + Fixed order state duplication on install when single shop instance/ multishop instances were switched during module usage.
 + Upgraded sentry logger to support PHP 8.0 version. 
 + Dropped dotenv vendor package from module as it is accessible via symfony PrestaShop package.
++ Added subscriptions
 
 ## Changes in release 5.4.0 ##
 + Fixed issue where saving wrong API key would reset settings page.

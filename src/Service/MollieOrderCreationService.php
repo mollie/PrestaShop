@@ -110,8 +110,13 @@ class MollieOrderCreationService
      *
      * @throws \PrestaShopDatabaseException
      */
-    public function createMolliePayment($apiPayment, int $cartId, string $orderReference, ?int $orderId = null): void
+    public function createMolliePayment($apiPayment, int $cartId, string $orderReference, ?int $orderId = null, string $status = PaymentStatus::STATUS_OPEN): void
     {
+        $mandateId = '';
+        if ($apiPayment instanceof MolliePaymentAlias) {
+            $mandateId = $apiPayment->mandateId;
+        }
+
         Db::getInstance()->insert(
             'mollie_payments',
             [
@@ -120,8 +125,8 @@ class MollieOrderCreationService
                 'method' => pSQL($apiPayment->method),
                 'transaction_id' => pSQL($apiPayment->id),
                 'order_reference' => pSQL($orderReference),
-                'bank_status' => PaymentStatus::STATUS_OPEN,
-                'mandate_id' => $apiPayment->mandateId,
+                'bank_status' => $status,
+                'mandate_id' => $mandateId,
                 'created_at' => ['type' => 'sql', 'value' => 'NOW()'],
             ]
         );

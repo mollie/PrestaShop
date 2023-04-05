@@ -17,6 +17,12 @@ class MolRecurringOrder extends ObjectModel
     /** @var int */
     public $id_customer;
 
+    /** @var int */
+    public $id_address_delivery;
+
+    /** @var int */
+    public $id_address_invoice;
+
     /** @var string */
     public $description;
 
@@ -59,6 +65,8 @@ class MolRecurringOrder extends ObjectModel
             'id_cart' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'id_currency' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'id_customer' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
+            'id_address_delivery' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
+            'id_address_invoice' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'mollie_subscription_id' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'mollie_customer_id' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'description' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],

@@ -33,6 +33,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 class Mollie extends PaymentModule
 {
+    use Mollie\Subscription\Traits\HookTraits;
+
     const DISABLE_CACHE = true;
 
     /** @var \Mollie\Api\MollieApiClient|null */
@@ -151,6 +153,7 @@ class Mollie extends PaymentModule
             return false;
         }
 
+//        TODO inject base install and subscription services
         $installer = new \Mollie\Install\Installer(
             $this,
             new \Mollie\Service\OrderStateImageService(),
@@ -162,6 +165,7 @@ class Mollie extends PaymentModule
             ),
             new \Mollie\Adapter\ConfigurationAdapter()
         );
+
         if (!$installer->install()) {
             $this->_errors = array_merge($this->_errors, $installer->getErrors());
 
@@ -970,13 +974,21 @@ class Mollie extends PaymentModule
 
     public function runUpgradeModule()
     {
-        /** @var Mollie\Tracker\Segment $segment */
-        $segment = $this->getService(Mollie\Tracker\Segment::class);
+        /* if module is upgraded from older versions to new 6+ then vendor changes are not found on first try and we need to ask to try again */
+        try {
+            /** @var Mollie\Tracker\Segment $segment */
+            $segment = $this->getService(Mollie\Tracker\Segment::class);
 
-        $segment->setMessage('Mollie module upgrade');
-        $segment->track();
+            $segment->setMessage('Mollie module upgrade');
+            $segment->track();
 
-        return parent::runUpgradeModule();
+            return parent::runUpgradeModule();
+        } catch (Error $e) {
+            http_response_code(500);
+            exit(
+            $this->l('The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com')
+            );
+        }
     }
 
     private function setApiKey($shopId = null)
