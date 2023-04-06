@@ -11,7 +11,6 @@ use MollieRecurringOrderDetailModuleFrontController;
 use MolRecurringOrder;
 use Order;
 use PrestaShop\PrestaShop\Adapter\Presenter\Order\OrderLazyArray;
-use PrestaShopCollection;
 
 /**
  * NOTE: used this hook trait as we need to access private property's data during single code execution.
@@ -92,7 +91,7 @@ trait HookTraits
         $newAddress = $deletedAddress;
 
         $newAddress->id = 0;
-        $newAddress->deleted = 1;
+        $newAddress->deleted = true;
 
         /*
          * NOTE: this triggers addAfter hook, which replaces old ID with the new one
