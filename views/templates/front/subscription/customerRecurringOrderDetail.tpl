@@ -109,7 +109,6 @@
                 <form action="" method="post">
                     <header>
                         <h3>{l s='Cancel subscription' mod='mollie'}</h3>
-                        <p>{l s='If you would like to cancel your subscription, you can do it here.' mod='mollie'}</p>
                     </header>
                     <footer class="form-footer text-sm-center">
                         <input type="hidden" name="recurring_order_id"
