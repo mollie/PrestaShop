@@ -11,6 +11,7 @@ use MollieRecurringOrderDetailModuleFrontController;
 use MolRecurringOrder;
 use Order;
 use PrestaShop\PrestaShop\Adapter\Presenter\Order\OrderLazyArray;
+use PrestaShopCollection;
 
 /**
  * NOTE: used this hook trait as we need to access private property's data during single code execution.
@@ -42,10 +43,24 @@ trait HookTraits
         /** @var Address $address */
         $address = $params['object'];
 
+        $customerId = (int) $address->id_customer;
+        $newAddressId = (int) $this->newAddressId;
+        $oldAddressId = (int) $address->id;
+
+        /** @var MolRecurringOrder[]|null $orders */
+        $orders = $this->getRecurringOrdersByCustomerAddress($customerId, $oldAddressId);
+
+        if (!$orders) {
+            //NOTE: No exception is needed as there could be no subscription orders with the old address
+            $this->newAddressId = null;
+
+            return;
+        }
+
         /** @var CustomerAddressUpdateHandler $subscriptionShippingAddressUpdateHandler */
         $subscriptionShippingAddressUpdateHandler = $this->getService(CustomerAddressUpdateHandler::class);
 
-        $subscriptionShippingAddressUpdateHandler->handle((int) $address->id_customer, (int) $this->newAddressId, (int) $address->id);
+        $subscriptionShippingAddressUpdateHandler->handle($orders, $newAddressId, $oldAddressId);
 
         $this->newAddressId = null;
     }
@@ -55,19 +70,15 @@ trait HookTraits
         /** @var Address $deletedAddress */
         $deletedAddress = $params['object'];
 
-        /** @var RecurringOrderRepositoryInterface $recurringOrderRepository */
-        $recurringOrderRepository = $this->getService(RecurringOrderRepositoryInterface::class);
+        $customerId = (int) $deletedAddress->id_customer;
+        $oldAddressId = (int) $deletedAddress->id;
 
-//        TODO reuse customerAddressUpdateHandler, this case is different as we don't need to save deleted address if it's not linked with subscription address.
-
-        /** @var \MolRecurringOrder[]|null $orders */
-        $orders = $recurringOrderRepository
-            ->findAll()
-            ->where('id_customer', '=', (int) $deletedAddress->id_customer)
-            ->sqlWhere('id_address_delivery = ' . (int) $deletedAddress->id . ' OR id_address_invoice = ' . (int) $deletedAddress->id)
-            ->getAll();
+        /** @var MolRecurringOrder[]|null $orders */
+        $orders = $this->getRecurringOrdersByCustomerAddress($customerId, $oldAddressId);
 
         if (!$orders) {
+            //NOTE: No exception is needed as there could be no subscription orders with the old address
+
             return;
         }
 
@@ -75,22 +86,14 @@ trait HookTraits
 
         $newAddress->id = 0;
         $newAddress->deleted = 1;
-
         $newAddress->save();
 
-        foreach ($orders as $order) {
-            if ((int) $order->id_address_delivery === $deletedAddress->id) {
-                $order->id_address_delivery = $newAddress->id;
-            }
+        $newAddressId = (int) $newAddress->id;
 
-            if ((int) $order->id_address_invoice === $deletedAddress->id) {
-                $order->id_address_invoice = $newAddress->id;
-            }
+        /** @var CustomerAddressUpdateHandler $subscriptionShippingAddressUpdateHandler */
+        $subscriptionShippingAddressUpdateHandler = $this->getService(CustomerAddressUpdateHandler::class);
 
-            $order->date_update = $this->clock->getCurrentDate();
-
-            $order->update();
-        }
+        $subscriptionShippingAddressUpdateHandler->handle($orders, $newAddressId, $oldAddressId);
     }
 
     public function hookActionPresentOrder(array &$params): void
@@ -122,5 +125,17 @@ trait HookTraits
         }
 
         $params['presentedOrder'] = new RecurringOrderLazyArray($order, $molRecurringOrder);
+    }
+
+    private function getRecurringOrdersByCustomerAddress(int $customerId, int $oldAddressId): ?PrestaShopCollection
+    {
+        /** @var RecurringOrderRepositoryInterface $recurringOrderRepository */
+        $recurringOrderRepository = $this->getService(RecurringOrderRepositoryInterface::class);
+
+        return $recurringOrderRepository
+            ->findAll()
+            ->where('id_customer', '=', $customerId)
+            ->sqlWhere('id_address_delivery = ' . $oldAddressId . ' OR id_address_invoice = ' . $oldAddressId)
+            ->getAll();
     }
 }

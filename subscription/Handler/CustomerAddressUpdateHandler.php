@@ -2,7 +2,6 @@
 
 namespace Mollie\Subscription\Handler;
 
-use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Utility\ClockInterface;
 use MolRecurringOrder;
 
@@ -15,33 +14,26 @@ use MolRecurringOrder;
  */
 class CustomerAddressUpdateHandler
 {
-    /** @var RecurringOrderRepositoryInterface */
-    private $recurringOrderRepository;
     /** @var ClockInterface */
     private $clock;
 
-    public function __construct(
-        RecurringOrderRepositoryInterface $recurringOrderRepository,
-        ClockInterface $clock
-    ) {
-        $this->recurringOrderRepository = $recurringOrderRepository;
+    public function __construct(ClockInterface $clock)
+    {
         $this->clock = $clock;
     }
 
-    public function handle(int $customerId, int $newAddressId, int $oldAddressId): void
+    /**
+     * @param MolRecurringOrder[] $orders
+     * @param int $newAddressId
+     * @param int $oldAddressId
+     *
+     * @return void
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    public function handle(array $orders, int $newAddressId, int $oldAddressId): void
     {
-        /** @var \MolRecurringOrder[]|null $orders */
-        $orders = $this->recurringOrderRepository
-            ->findAll()
-            ->where('id_customer', '=', $customerId)
-            ->sqlWhere('id_address_delivery = ' . $oldAddressId . ' OR id_address_invoice = ' . $oldAddressId)
-            ->getAll();
-
-        if (!$orders) {
-            //NOTE: No exception is needed as there could be no subscription orders with the old address
-            return;
-        }
-
         foreach ($orders as $order) {
             if ((int) $order->id_address_delivery === $oldAddressId) {
                 $order->id_address_delivery = $newAddressId;
