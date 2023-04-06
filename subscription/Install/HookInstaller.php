@@ -37,6 +37,7 @@ class HookInstaller extends AbstractInstaller
             'actionObjectAddressAddAfter',
             'actionObjectAddressUpdateAfter',
             'actionPresentOrder',
+            'actionObjectAddressDeleteAfter',
         ];
     }
 }

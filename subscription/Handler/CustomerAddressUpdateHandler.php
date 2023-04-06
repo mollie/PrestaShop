@@ -2,61 +2,47 @@
 
 namespace Mollie\Subscription\Handler;
 
-use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Utility\ClockInterface;
 use MolRecurringOrder;
 
 /**
  * NOTE: this handler is used specifically for address update,
- * where address was already used for subscription product.
- *
- * actionObjectAddressAddAfter and actionObjectAddressUpdateAfter hooks are called one after another
- * to get previous address and current address IDs.
+ * when address was already used for original subscription order.
  */
 class CustomerAddressUpdateHandler
 {
-    /** @var RecurringOrderRepositoryInterface */
-    private $recurringOrderRepository;
     /** @var ClockInterface */
     private $clock;
 
-    public function __construct(
-        RecurringOrderRepositoryInterface $recurringOrderRepository,
-        ClockInterface $clock
-    ) {
-        $this->recurringOrderRepository = $recurringOrderRepository;
+    public function __construct(ClockInterface $clock)
+    {
         $this->clock = $clock;
     }
 
-    public function handle(int $customerId, int $newAddressId, int $oldAddressId): void
+    /**
+     * @param MolRecurringOrder[] $orders
+     * @param int $newAddressId
+     * @param int $oldAddressId
+     *
+     * @return void
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    public function handle(array $orders, int $newAddressId, int $oldAddressId): void
     {
-        /** @var \MolRecurringOrder[]|null $orders */
-        $orders = $this->recurringOrderRepository
-            ->findAll()
-            ->where('id_customer', '=', $customerId)
-            ->sqlWhere('id_address_delivery = ' . $oldAddressId . ' OR id_address_invoice = ' . $oldAddressId)
-            ->getAll()
-        ;
-
-        if (!$orders) {
-            //NOTE: No exception is needed as there could be no subscription orders with the old address
-            return;
-        }
-
         foreach ($orders as $order) {
-            $updatedOrder = new MolRecurringOrder($order->id_mol_recurring_orders_product);
-
             if ((int) $order->id_address_delivery === $oldAddressId) {
-                $updatedOrder->id_address_delivery = $newAddressId;
+                $order->id_address_delivery = $newAddressId;
             }
 
             if ((int) $order->id_address_invoice === $oldAddressId) {
-                $updatedOrder->id_address_invoice = $newAddressId;
+                $order->id_address_invoice = $newAddressId;
             }
 
-            $updatedOrder->date_update = $this->clock->getCurrentDate();
+            $order->date_update = $this->clock->getCurrentDate();
 
-            $updatedOrder->update();
+            $order->update();
         }
     }
 }
