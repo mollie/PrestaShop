@@ -7,10 +7,7 @@ use MolRecurringOrder;
 
 /**
  * NOTE: this handler is used specifically for address update,
- * where address was already used for subscription product.
- *
- * actionObjectAddressAddAfter and actionObjectAddressUpdateAfter hooks are called one after another
- * to get previous address and current address IDs.
+ * when address was already used for original subscription order.
  */
 class CustomerAddressUpdateHandler
 {

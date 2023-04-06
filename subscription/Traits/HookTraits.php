@@ -18,42 +18,27 @@ use PrestaShopCollection;
  */
 trait HookTraits
 {
-    private $newAddressId;
-
     public function hookActionObjectAddressAddAfter(array $params): void
     {
-        /**
-         * NOTE: If on update customer address action address gets re-created, then new address gets detached
-         * from original order. Next time on address update it won't be re-created, instead it will be updated.
-         * In this case this hook won't be active.
-         */
-
         /** @var Address $address */
         $address = $params['object'];
 
-        $this->newAddressId = $address->id;
-    }
+        /** @var ToolsAdapter $tools */
+        $tools = $this->getService(ToolsAdapter::class);
 
-    public function hookActionObjectAddressUpdateAfter(array $params): void
-    {
-        if (!$this->newAddressId) {
+        $customerId = (int) $address->id_customer;
+        $oldAddressId = (int) $tools->getValue('id_address');
+        $newAddressId = (int) $address->id;
+
+        if (!$oldAddressId) {
             return;
         }
 
-        /** @var Address $address */
-        $address = $params['object'];
-
-        $customerId = (int) $address->id_customer;
-        $newAddressId = (int) $this->newAddressId;
-        $oldAddressId = (int) $address->id;
-
-        /** @var MolRecurringOrder[]|null $orders */
+        /** @var MolRecurringOrder[] $orders */
         $orders = $this->getRecurringOrdersByCustomerAddress($customerId, $oldAddressId);
 
         if (!$orders) {
             //NOTE: No exception is needed as there could be no subscription orders with the old address
-            $this->newAddressId = null;
-
             return;
         }
 
@@ -61,8 +46,31 @@ trait HookTraits
         $subscriptionShippingAddressUpdateHandler = $this->getService(CustomerAddressUpdateHandler::class);
 
         $subscriptionShippingAddressUpdateHandler->handle($orders, $newAddressId, $oldAddressId);
+    }
 
-        $this->newAddressId = null;
+    public function hookActionObjectAddressUpdateAfter(array $params): void
+    {
+        /** @var Address $address */
+        $address = $params['object'];
+
+        $customerId = (int) $address->id_customer;
+        $addressId = (int) $address->id;
+
+        /** @var MolRecurringOrder[] $orders */
+        $orders = $this->getRecurringOrdersByCustomerAddress($customerId, $addressId);
+
+        if (!$orders) {
+            //NOTE: No exception is needed as there could be no subscription orders with the old address
+            return;
+        }
+
+        /**
+         * NOTE: using handler just to update data_updated field
+         */
+        /** @var CustomerAddressUpdateHandler $subscriptionShippingAddressUpdateHandler */
+        $subscriptionShippingAddressUpdateHandler = $this->getService(CustomerAddressUpdateHandler::class);
+
+        $subscriptionShippingAddressUpdateHandler->handle($orders, $addressId, $addressId);
     }
 
     public function hookActionObjectAddressDeleteAfter(array $params): void
@@ -73,12 +81,11 @@ trait HookTraits
         $customerId = (int) $deletedAddress->id_customer;
         $oldAddressId = (int) $deletedAddress->id;
 
-        /** @var MolRecurringOrder[]|null $orders */
+        /** @var MolRecurringOrder[] $orders */
         $orders = $this->getRecurringOrdersByCustomerAddress($customerId, $oldAddressId);
 
         if (!$orders) {
             //NOTE: No exception is needed as there could be no subscription orders with the old address
-
             return;
         }
 
@@ -86,14 +93,11 @@ trait HookTraits
 
         $newAddress->id = 0;
         $newAddress->deleted = 1;
+
+        /*
+         * NOTE: this triggers addAfter hook, which replaces old ID with the new one
+         */
         $newAddress->save();
-
-        $newAddressId = (int) $newAddress->id;
-
-        /** @var CustomerAddressUpdateHandler $subscriptionShippingAddressUpdateHandler */
-        $subscriptionShippingAddressUpdateHandler = $this->getService(CustomerAddressUpdateHandler::class);
-
-        $subscriptionShippingAddressUpdateHandler->handle($orders, $newAddressId, $oldAddressId);
     }
 
     public function hookActionPresentOrder(array &$params): void
@@ -127,7 +131,7 @@ trait HookTraits
         $params['presentedOrder'] = new RecurringOrderLazyArray($order, $molRecurringOrder);
     }
 
-    private function getRecurringOrdersByCustomerAddress(int $customerId, int $oldAddressId): ?PrestaShopCollection
+    private function getRecurringOrdersByCustomerAddress(int $customerId, int $oldAddressId): array
     {
         /** @var RecurringOrderRepositoryInterface $recurringOrderRepository */
         $recurringOrderRepository = $this->getService(RecurringOrderRepositoryInterface::class);
@@ -136,6 +140,6 @@ trait HookTraits
             ->findAll()
             ->where('id_customer', '=', $customerId)
             ->sqlWhere('id_address_delivery = ' . $oldAddressId . ' OR id_address_invoice = ' . $oldAddressId)
-            ->getAll();
+            ->getResults();
     }
 }
