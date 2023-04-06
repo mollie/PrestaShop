@@ -35,8 +35,7 @@ class CustomerAddressUpdateHandler
             ->findAll()
             ->where('id_customer', '=', $customerId)
             ->sqlWhere('id_address_delivery = ' . $oldAddressId . ' OR id_address_invoice = ' . $oldAddressId)
-            ->getAll()
-        ;
+            ->getAll();
 
         if (!$orders) {
             //NOTE: No exception is needed as there could be no subscription orders with the old address
@@ -44,19 +43,17 @@ class CustomerAddressUpdateHandler
         }
 
         foreach ($orders as $order) {
-            $updatedOrder = new MolRecurringOrder($order->id_mol_recurring_orders_product);
-
             if ((int) $order->id_address_delivery === $oldAddressId) {
-                $updatedOrder->id_address_delivery = $newAddressId;
+                $order->id_address_delivery = $newAddressId;
             }
 
             if ((int) $order->id_address_invoice === $oldAddressId) {
-                $updatedOrder->id_address_invoice = $newAddressId;
+                $order->id_address_invoice = $newAddressId;
             }
 
-            $updatedOrder->date_update = $this->clock->getCurrentDate();
+            $order->date_update = $this->clock->getCurrentDate();
 
-            $updatedOrder->update();
+            $order->update();
         }
     }
 }
