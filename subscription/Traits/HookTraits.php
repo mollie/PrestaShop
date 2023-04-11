@@ -4,16 +4,14 @@ namespace Mollie\Subscription\Traits;
 
 use Address;
 use Mollie\Adapter\ToolsAdapter;
-use Mollie\Decorator\RecurringOrderLazyArray;
 use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
-use MollieRecurringOrderDetailModuleFrontController;
 use MolRecurringOrder;
-use Order;
-use PrestaShop\PrestaShop\Adapter\Presenter\Order\OrderLazyArray;
 
 /**
- * NOTE: used this hook trait as we need to access private property's data during single code execution.
+ * NOTE: used this hook trait to extract some code from mollie.php
+ *
+ * Address add, update, delete hooks are being used for recurring order address handling.
  */
 trait HookTraits
 {
@@ -97,37 +95,6 @@ trait HookTraits
          * NOTE: this triggers addAfter hook, which replaces old ID with the new one
          */
         $newAddress->save();
-    }
-
-    public function hookActionPresentOrder(array &$params): void
-    {
-        if (!$this->context->controller instanceof MollieRecurringOrderDetailModuleFrontController) {
-            return;
-        }
-
-        /** @var OrderLazyArray $orderLazyArray */
-        $orderLazyArray = $params['presentedOrder'];
-
-        $orderDetails = $orderLazyArray->getDetails();
-
-        $order = new Order($orderDetails->getId());
-
-        /** @var ToolsAdapter $tools */
-        $tools = $this->getService(ToolsAdapter::class);
-
-        $molRecurringOrderId = (int) $tools->getValue('id_mol_recurring_order');
-
-        if (!$molRecurringOrderId) {
-            return;
-        }
-
-        $molRecurringOrder = new MolRecurringOrder($molRecurringOrderId);
-
-        if (!$molRecurringOrder->id_mol_recurring_orders_product) {
-            return;
-        }
-
-        $params['presentedOrder'] = new RecurringOrderLazyArray($order, $molRecurringOrder);
     }
 
     private function getRecurringOrdersByCustomerAddress(int $customerId, int $oldAddressId): array
