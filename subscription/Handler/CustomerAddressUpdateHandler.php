@@ -5,10 +5,6 @@ namespace Mollie\Subscription\Handler;
 use Mollie\Subscription\Utility\ClockInterface;
 use MolRecurringOrder;
 
-/**
- * NOTE: this handler is used specifically for address update,
- * when address was already used for original subscription order.
- */
 class CustomerAddressUpdateHandler
 {
     /** @var ClockInterface */

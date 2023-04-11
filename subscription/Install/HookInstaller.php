@@ -36,7 +36,6 @@ class HookInstaller extends AbstractInstaller
             'actionCartUpdateQuantityBefore',
             'actionObjectAddressAddAfter',
             'actionObjectAddressUpdateAfter',
-            'actionPresentOrder',
             'actionObjectAddressDeleteAfter',
         ];
     }
