@@ -44,7 +44,7 @@ class RecurringOrderPresenter
         $product = new Product($recurringProduct->id_product, false, $this->language->getDefaultLanguageId());
         $order = new Order($recurringOrder->id_order);
 
-        /**
+        /*
          * NOTE: setting address IDs only for presentation, don't want to edit original recurring order.
          */
         $order->id_address_delivery = $recurringOrder->id_address_delivery;
