@@ -991,6 +991,22 @@ class Mollie extends PaymentModule
         }
     }
 
+    public function hookActionAjaxDieCartControllerdisplayAjaxUpdateBefore(array $params): void
+    {
+//        TODO doesn't work as ps_shoppingcart.js logic only triggers on updateCart emitted event
+//        http_response_code(500);
+//
+//        die((
+//            json_encode(
+//                [
+//                    'success' => true,
+//                    'isValid' => false,
+//                    'message' => 'test-message',
+//                ]
+//            )
+//        ));
+    }
+
     private function setApiKey($shopId = null)
     {
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
