@@ -3,7 +3,7 @@ const { defineConfig } = require('cypress')
 module.exports = defineConfig({
   chromeWebSecurity: false,
   experimentalSourceRewriting: true,
-  numTestsKeptInMemory: 5,
+  numTestsKeptInMemory: 2,
   defaultCommandTimeout: 7000,
   projectId: 'xb89dr',
   retries: 1,
