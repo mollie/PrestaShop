@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $(document).ajaxComplete(function (event, xhr, settings) {
-      if (!isVersionLessThan177) {
+      if (isVersionGreaterOrEqualTo177) {
         return;
       }
 
@@ -14,7 +14,7 @@ $(document).ready(function () {
     });
 
     prestashop.on('updateCart', function() {
-        validateProduct(getProductData());
+      validateProduct(getProductData());
     });
 
     function getProductData()
@@ -22,7 +22,7 @@ $(document).ready(function () {
       let productDetails = $('#product-details').attr('data-product');
 
       if (productDetails.length < 1) {
-        return;
+        return null;
       }
 
       productDetails = JSON.parse(productDetails);
@@ -35,6 +35,10 @@ $(document).ready(function () {
 
     function validateProduct(product)
     {
+        if (!product) {
+          return;
+        }
+
         $.ajax({
             url: mollieSubAjaxUrl,
             method: 'GET',
@@ -45,10 +49,9 @@ $(document).ready(function () {
             },
             success: function (response) {
                 response = jQuery.parseJSON(response);
+
                 if (!response.isValid) {
                     successMsg(response.message);
-
-                    return false;
                 }
             }
         })
