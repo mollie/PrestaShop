@@ -1,16 +1,10 @@
 $(document).ready(function () {
-    $(document).ajaxComplete(function (event, xhr, settings) {
-      if (isVersionGreaterOrEqualTo177) {
+    prestashop.on('handleError', function(parameters) {
+      if (parameters.eventType !== 'addProductToCart' || isVersionGreaterOrEqualTo177) {
         return;
       }
 
-      if (
-        settings.url.toLowerCase().indexOf('controller=cart') > 0 &&
-        settings.data.toLowerCase().indexOf('action=update') > 0 &&
-        settings.data.toLowerCase().indexOf('add=1') > 0
-      ) {
-        validateProduct(getProductData());
-      }
+      validateProduct(getProductData());
     });
 
     prestashop.on('updateCart', function() {
