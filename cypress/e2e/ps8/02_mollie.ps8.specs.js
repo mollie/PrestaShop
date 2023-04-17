@@ -71,6 +71,7 @@ it('C339341: 04 Enabling All payments in Module BO [Orders API]', () => {
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
+// Somehow the Payment is not appearing in the ecommerce frontend...needs to be checked...TODO
 // it('C339342: 05 Vouchers Checkouting [Orders API]', () => {
 //       cy.visit('/SHOP2/de/index.php?controller=history')
 //       cy.contains('Reorder').click()
@@ -261,7 +262,8 @@ it('C339353: 16 Klarna Pay Now Order BO Shipping, Refunding [Orders API]', () =>
 it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
       //Enabling the Single-Click for now
       cy.visit('/admin1/')
-      cy.OpenModuleDashboard()
+      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
+      cy.get('#subtab-AdminMollieModule > .link').click()
       cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_on').click({force:true})
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
@@ -316,8 +318,9 @@ it('C339355: 18 Check if customerId is passed during the 2nd payment using Singl
       );    // reload current page to activate cookie
       cy.reload();
       cy.visit('/admin1/')
+      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
+      cy.get('#subtab-AdminMollieModule > .link').click()
       //Disabling the single-click - no need again
-      cy.OpenModuleDashboard()
       cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_off').click({force:true})
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
