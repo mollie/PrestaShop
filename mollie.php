@@ -972,7 +972,6 @@ class Mollie extends PaymentModule
         $orderListActionBuilder = $module->getService(\Mollie\Presenter\OrderListActionBuilder::class);
 
         return $orderListActionBuilder->buildOrderPaymentResendButton($orderId);
-        return $orderListActionBuilder->buildOrderPaymentResendButton($orderId);
     }
 
     public function updateApiKey($shopId = null)
@@ -1018,7 +1017,7 @@ class Mollie extends PaymentModule
 
         http_response_code(Response::HTTP_BAD_REQUEST);
 
-        die(json_encode(
+        exit(json_encode(
             [
                 'hasError' => $hasError,
                 'errors' => $errors,
