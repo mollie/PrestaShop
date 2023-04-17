@@ -6,7 +6,7 @@ services:
     image: "cypress/included:9.5.2"
     environment:
       # pass base url to test pointing at the web application
-      - CYPRESS_baseUrl=https://wipdemoshop1784.eu.ngrok.io
+      - CYPRESS_baseUrl=https://demoshop1784.eu.ngrok.io
       - CYPRESS_EVERY_NTH_FRAME=1
     entrypoint: cypress run --spec "**/cypress/integration/ps1784/**"
     command: /bin/sh -c "--config npx browserslist@latest --update-db"
