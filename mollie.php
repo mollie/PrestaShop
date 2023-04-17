@@ -349,7 +349,7 @@ class Mollie extends PaymentModule
 
             Media::addJsDef([
                 'mollieSubAjaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
-                'isVersionGreaterThan176' => PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.7.0'),
+                'isVersionLessThan177' => PsVersionUtility::isPsVersionLessThan(_PS_VERSION_, '1.7.7.0'),
             ]);
         }
         if (!$paymentMethod || !$paymentMethod->enabled) {

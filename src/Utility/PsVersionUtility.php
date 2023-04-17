@@ -18,4 +18,9 @@ class PsVersionUtility
     {
         return version_compare($psVersion, $targetVersion, '>=');
     }
+
+    public static function isPsVersionLessThan(string $psVersion, string $targetVersion)
+    {
+        return version_compare($psVersion, $targetVersion, '<');
+    }
 }
