@@ -28,6 +28,7 @@ use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\PsVersionUtility;
 use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\HttpFoundation\Response;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -345,8 +346,10 @@ class Mollie extends PaymentModule
         if ($isProductController) {
             $this->context->controller->addJS("{$this->_path}views/js/front/subscription/product.js");
             $this->context->controller->addJqueryPlugin('growl');
+
             Media::addJsDef([
                 'mollieSubAjaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
+                'isVersionHigherThan176' => PsVersionUtility::isPsVersionHigherOrEqualsThan(_PS_VERSION_, '1.7.7.0'),
             ]);
         }
         if (!$paymentMethod || !$paymentMethod->enabled) {
@@ -890,9 +893,11 @@ class Mollie extends PaymentModule
 
     public function hookDisplayProductActions($params)
     {
-        if (PsVersionUtility::isPsVersionHigherThen(_PS_VERSION_, '1.7.6.0')) {
+        if (PsVersionUtility::isPsVersionHigherOrEqualsThan(_PS_VERSION_, '1.7.6.0')) {
             return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
         }
+
+        return '';
     }
 
     public function hookDisplayExpressCheckout($params)
@@ -902,9 +907,11 @@ class Mollie extends PaymentModule
 
     public function hookDisplayProductAdditionalInfo()
     {
-        if (!PsVersionUtility::isPsVersionHigherThen(_PS_VERSION_, '1.7.6.0')) {
+        if (!PsVersionUtility::isPsVersionHigherOrEqualsThan(_PS_VERSION_, '1.7.6.0')) {
             return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
         }
+
+        return '';
     }
 
     public function hookActionCartUpdateQuantityBefore($params)
@@ -965,6 +972,7 @@ class Mollie extends PaymentModule
         $orderListActionBuilder = $module->getService(\Mollie\Presenter\OrderListActionBuilder::class);
 
         return $orderListActionBuilder->buildOrderPaymentResendButton($orderId);
+        return $orderListActionBuilder->buildOrderPaymentResendButton($orderId);
     }
 
     public function updateApiKey($shopId = null)
@@ -984,27 +992,39 @@ class Mollie extends PaymentModule
 
             return parent::runUpgradeModule();
         } catch (Error $e) {
-            http_response_code(500);
+            http_response_code(Response::HTTP_INTERNAL_SERVER_ERROR);
+
             exit(
             $this->l('The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com')
             );
         }
     }
 
-    public function hookActionAjaxDieCartControllerdisplayAjaxUpdateBefore(array $params): void
+    public function hookActionAjaxDieCartControllerDisplayAjaxUpdateBefore(array $params): void
     {
-//        TODO doesn't work as ps_shoppingcart.js logic only triggers on updateCart emitted event
-//        http_response_code(500);
-//
-//        die((
-//            json_encode(
-//                [
-//                    'success' => true,
-//                    'isValid' => false,
-//                    'message' => 'test-message',
-//                ]
-//            )
-//        ));
+        if (PsVersionUtility::isPsVersionHigherOrEqualsThan(_PS_VERSION_, '1.7.7.0')) {
+            return;
+        }
+
+        $response = json_decode($params['value'], true);
+
+        $hasError = $response['hasError'] ?? false;
+        $errors = $response['errors'] ?? '';
+        $quantity = $response['quantity'] ?? null;
+
+        if (!$hasError) {
+            return;
+        }
+
+        http_response_code(Response::HTTP_BAD_REQUEST);
+
+        die(json_encode(
+            [
+                'hasError' => $hasError,
+                'errors' => $errors,
+                'quantity' => $quantity,
+            ]
+        ));
     }
 
     private function setApiKey($shopId = null)

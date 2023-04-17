@@ -1,14 +1,37 @@
 $(document).ready(function () {
-    prestashop.on('updateCart', function() {
-        const productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
-        const product =
-            {
-                'id_product': productDetails.id_product,
-                'id_product_attribute': productDetails.id_product_attribute,
-            }
+    $(document).ajaxComplete(function (event, xhr, settings) {
+      if (isVersionHigherThan176) {
+        return;
+      }
 
-        validateProduct(product);
+      if (
+        settings.url.toLowerCase().indexOf('controller=cart') > 0 &&
+        settings.data.toLowerCase().indexOf('action=update') > 0 &&
+        settings.data.toLowerCase().indexOf('add=1') > 0
+      ) {
+        validateProduct(getProductData());
+      }
     });
+
+    prestashop.on('updateCart', function() {
+        validateProduct(getProductData());
+    });
+
+    function getProductData()
+    {
+      let productDetails = $('#product-details').attr('data-product');
+
+      if (productDetails.length < 1) {
+        return;
+      }
+
+      productDetails = JSON.parse(productDetails);
+
+      return {
+        'id_product': productDetails.id_product,
+        'id_product_attribute': productDetails.id_product_attribute,
+      }
+    }
 
     function validateProduct(product)
     {
