@@ -65,7 +65,7 @@ build-ps-8:
 	# installing the module again
 	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
 	# enabling the module
-	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module enable mollie"
+	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module enable mollie --id_shop=2"
 	# chmod all folders
 	docker exec -i prestashop-mollie-8 sh -c "chmod -R 777 /var/www/html"
 
