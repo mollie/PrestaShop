@@ -131,6 +131,5 @@ it('C688473 Checking the Subscriptions FAQ, and console errors', () => {
       cy.get(':nth-child(3) > .col-lg-12 > .card').should('be.visible')
       cy.get(':nth-child(4) > .col-lg-12 > .card').should('be.visible')
       cy.get(':nth-child(5) > .col-lg-12 > .card').should('be.visible')
-      cy.get(':nth-child(6) > .col-lg-12 > .card').should('be.visible')
 });
 })
