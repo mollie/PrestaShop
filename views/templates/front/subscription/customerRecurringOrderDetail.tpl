@@ -76,8 +76,8 @@
             <section class="recurring-method-form box">
                 <form action="" method="post">
                     <header>
-                        <h3>{l s='Recurring order method' mod='mollie'}</h3>
-                        <p>{l s='If you would like to change the method of recurring order, you can select it here.' mod='mollie'}</p>
+                        <h3>{l s='Update subscription payment method' mod='mollie'}</h3>
+                        <p>{l s='If you would like to update the payment method of a subscription, you can select it here.' mod='mollie'}</p>
                     </header>
                     <section class="form-fields">
                         <div class="form-group row">
@@ -108,8 +108,7 @@
             <section class="recurring-method-form box">
                 <form action="" method="post">
                     <header>
-                        <h3>{l s='Recurring order cancelation' mod='mollie'}</h3>
-                        <p>{l s='If you would like to cancel your subscription, you can do it here.' mod='mollie'}</p>
+                        <h3>{l s='Cancel subscription' mod='mollie'}</h3>
                     </header>
                     <footer class="form-footer text-sm-center">
                         <input type="hidden" name="recurring_order_id"

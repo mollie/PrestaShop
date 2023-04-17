@@ -1,0 +1,9 @@
+{
+  "entrypoints": {
+    "subscription": {
+      "js": [
+        "/subscription.bundle.js"
+      ]
+    }
+  }
+}
