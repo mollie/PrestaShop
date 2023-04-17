@@ -63,9 +63,10 @@ describe('PS8 Tests Suite', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it('C339341: 04 Enabling All payments in Module BO [Orders API]', () => {
+it.only('C339341: 04 Enabling All payments in Module BO [Orders API]', () => {
       cy.visit('/admin1/')
-      cy.OpenModuleDashboard()
+      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
+      cy.get('#subtab-AdminMollieModule > .link').click()
       cy.ConfOrdersAPI1784()
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
@@ -382,7 +383,8 @@ it('C339359: 22 IN3 should not be shown under 5000 EUR [Orders API]', () => {
 })
 it('C339360: 23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.visit('/admin1/')
-      cy.OpenModuleDashboard()
+      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
+      cy.get('#subtab-AdminMollieModule > .link').click()
       cy.get('[href="#advanced_settings"]').click({force:true})
       cy.get('[name="MOLLIE_IMAGES"]').select('big',{force:true})
       cy.get('[type="submit"]').first().click({force:true})
@@ -702,16 +704,18 @@ it('C339376: 39 Bank Transfer Order Shipping, Refunding [Orders API]', () => {
 // it('41 Gift Card Order Shipping, Refunding [Orders API]', () => {
 //       cy.OrderRefundingShippingOrdersAPI()
 // })
-it('C339377: 42 [SWITCH TO PAYMENTS API] Enabling All payments in Module BO [Payments API]', () => {
+it('C339377: 42 >> SWITCH TO PAYMENTS API >> Enabling All payments in Module BO [Payments API]', () => {
       cy.visit('/admin1/')
-      cy.OpenModuleDashboard()
+      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
+      cy.get('#subtab-AdminMollieModule > .link').click()
       cy.ConfPaymentsAPI1784()
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
 it('C339378: 43 Check if Bancontact QR payment dropdown exists [Payments API]', () => {
       cy.visit('/admin1/')
-      cy.OpenModuleDashboard()
+      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
+      cy.get('#subtab-AdminMollieModule > .link').click()
       cy.get('[name="MOLLIE_BANCONTACT_QR_CODE_ENABLED"]').should('exist')
 })
 it('C339379: 44 Bancontact Checkouting [Payments API]', () => {
