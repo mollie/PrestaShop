@@ -20,9 +20,9 @@ class PsVersionUtilityTest extends TestCase
     /**
      * @dataProvider psVersionsProvider
      */
-    public function testIsPsVersionHigherOrEqualsThan(string $psVersion, string $higherThen, bool $result)
+    public function testIsPsVersionGreaterOrEqualTo(string $psVersion, string $higherThen, bool $result)
     {
-        $isHigherThenGivenVersion = PsVersionUtility::isPsVersionHigherOrEqualsThan($psVersion, $higherThen);
+        $isHigherThenGivenVersion = PsVersionUtility::isPsVersionGreaterOrEqualTo($psVersion, $higherThen);
         $this->assertEquals($result, $isHigherThenGivenVersion);
     }
 

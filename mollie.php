@@ -349,7 +349,7 @@ class Mollie extends PaymentModule
 
             Media::addJsDef([
                 'mollieSubAjaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
-                'isVersionHigherThan176' => PsVersionUtility::isPsVersionHigherOrEqualsThan(_PS_VERSION_, '1.7.7.0'),
+                'isVersionGreaterThan176' => PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.7.0'),
             ]);
         }
         if (!$paymentMethod || !$paymentMethod->enabled) {
@@ -893,7 +893,7 @@ class Mollie extends PaymentModule
 
     public function hookDisplayProductActions($params)
     {
-        if (PsVersionUtility::isPsVersionHigherOrEqualsThan(_PS_VERSION_, '1.7.6.0')) {
+        if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.6.0')) {
             return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
         }
 
@@ -907,7 +907,7 @@ class Mollie extends PaymentModule
 
     public function hookDisplayProductAdditionalInfo()
     {
-        if (!PsVersionUtility::isPsVersionHigherOrEqualsThan(_PS_VERSION_, '1.7.6.0')) {
+        if (!PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.6.0')) {
             return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
         }
 
@@ -1001,7 +1001,7 @@ class Mollie extends PaymentModule
 
     public function hookActionAjaxDieCartControllerDisplayAjaxUpdateBefore(array $params): void
     {
-        if (PsVersionUtility::isPsVersionHigherOrEqualsThan(_PS_VERSION_, '1.7.7.0')) {
+        if (PsVersionUtility::isPsVersionHigherThan(_PS_VERSION_, '1.7.7.0')) {
             return;
         }
 

@@ -14,7 +14,7 @@ namespace Mollie\Utility;
 
 class PsVersionUtility
 {
-    public static function isPsVersionHigherOrEqualsThan(string $psVersion, string $targetVersion)
+    public static function isPsVersionGreaterOrEqualTo(string $psVersion, string $targetVersion)
     {
         return version_compare($psVersion, $targetVersion, '>=');
     }

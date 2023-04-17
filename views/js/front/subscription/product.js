@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $(document).ajaxComplete(function (event, xhr, settings) {
-      if (isVersionHigherThan176) {
+      if (isVersionGreaterThan176) {
         return;
       }
 
