@@ -6,7 +6,7 @@ module.exports = defineConfig({
   numTestsKeptInMemory: 2,
   defaultCommandTimeout: 7000,
   projectId: 'xb89dr',
-  retries: 1,
+  retries: 2,
   videoUploadOnPasses: false,
   videoCompression: 8,
   viewportHeight: 1080,
