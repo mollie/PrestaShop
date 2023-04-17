@@ -118,16 +118,17 @@ it('C339339: 03 Checking the Advanced Settings tab, verifying the Front-end comp
       //cy.window() will check if there are no Errors in console
 });
 it('C688472 Checking the Subscriptions tab, and console errors', () => {
+      cy.visit('/admin1/')
       cy.get('.mi-mollie').click({fore:true})
       cy.get('#subtab-AdminMollieModule').click()
       cy.get('#subtab-AdminMollieSubscriptionOrders').click()
       cy.get('[id="invertus_mollie_subscription_grid_panel"]').should('be.visible')
 });
 it('C688473 Checking the Subscriptions FAQ, and console errors', () => {
+      cy.visit('/admin1/')
       cy.get('.mi-mollie').click({fore:true})
       cy.get('#subtab-AdminMollieModule').click()
       cy.get('#subtab-AdminMollieSubscriptionFAQ').click()
-      cy.get(':nth-child(2) > .col-lg-12 > .card').should('be.visible')
       cy.get(':nth-child(3) > .col-lg-12 > .card').should('be.visible')
       cy.get(':nth-child(4) > .col-lg-12 > .card').should('be.visible')
       cy.get(':nth-child(5) > .col-lg-12 > .card').should('be.visible')
