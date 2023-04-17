@@ -15,4 +15,3 @@ cypress/screenshots
 .env
 vendor
 node_modules
-/views/assets/compiled
