@@ -1001,7 +1001,7 @@ class Mollie extends PaymentModule
 
     public function hookActionAjaxDieCartControllerDisplayAjaxUpdateBefore(array $params): void
     {
-        if (PsVersionUtility::isPsVersionHigherThan(_PS_VERSION_, '1.7.7.0')) {
+        if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.7.0')) {
             return;
         }
 
