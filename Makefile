@@ -48,11 +48,12 @@ e2e-8-prepare:
 	# sees what containers are running
 	docker-compose -f docker-compose.8.yml ps
 	# preloads initial data
-  sleep3m
 	make bps8
 
 bps8: build-ps-8
 build-ps-8:
+	# installing the PS
+	sleep 3m
 	# installing module
 	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
 	# uninstalling module
