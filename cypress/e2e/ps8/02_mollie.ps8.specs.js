@@ -72,41 +72,41 @@ it('C339341: 04 Enabling All payments in Module BO [Orders API]', () => {
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
 // Somehow the Payment is not appearing in the ecommerce frontend...needs to be checked...TODO
-// it('C339342: 05 Vouchers Checkouting [Orders API]', () => {
-//       cy.visit('/SHOP2/de/index.php?controller=history')
-//       cy.contains('Reorder').click()
-//       cy.contains('DE').click()
-//       //Billing country LT, DE etc.
-//       cy.get('.clearfix > .btn').click()
-//       cy.get('#js-delivery > .continue').click()
-//       //Payment method choosing
-//       cy.contains('Voucher').click({force:true})
-//       cy.get('.condition-label > .js-terms').click({force:true})
-//       prepareCookie();
-//       cy.get('.ps-shown-by-js > .btn').click()
-//       cy.setCookie(
-//         'SESSIONID',
-//         "cypress-dummy-value",
-//         {
-//             domain: '.www.mollie.com',
-//             sameSite: 'None',
-//             secure: true,
-//             httpOnly: true
-//         }
-//       );    // reload current page to activate cookie
-//       cy.reload();
-//       cy.get('.grid-button-voucher-monizze-meal').click()
-//       cy.get('[value="paid"]').click()
-//       cy.get('[class="button form__button"]').click()
-//       cy.get('.grid-button-paypal').click()
-//       cy.get('[value="paid"]').click()
-//       cy.get('[class="button form__button"]').click()
-//       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
-// })
-// it('C339343: 06 Vouchers Order BO Refunding, Shipping (Paid part only) [Orders API]', () => {
-//       cy.OrderRefundingShippingOrdersAPI()
-//       cy.get('[class="card-body"]').find('[class="alert alert-warning"]').should('exist') //additional checking if the warning alert for vouchers exist
-// })
+it.skip('C339342: 05 Vouchers Checkouting [Orders API]', () => {
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.contains('Reorder').click()
+      cy.contains('DE').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Voucher').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('.grid-button-voucher-monizze-meal').click()
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('.grid-button-paypal').click()
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+})
+it.skip('C339343: 06 Vouchers Order BO Refunding, Shipping (Paid part only) [Orders API]', () => {
+      cy.OrderRefundingShippingOrdersAPI()
+      cy.get('[class="card-body"]').find('[class="alert alert-warning"]').should('exist') //additional checking if the warning alert for vouchers exist
+})
 it('C339344: 07 Bancontact Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.contains('Reorder').click()
@@ -1108,10 +1108,10 @@ it('C339399: 64 Belfius Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('C339400: 65 Belfius BO Refunding, Partial Refunding [Payments API]', () => {
+it('65 Belfius BO Refunding, Partial Refunding [Payments API]', () => {
       cy.OrderRefundingPartialPaymentsAPI()
 });
-it('C339401: 66 Bank Transfer Checkouting [Payments API]', () => {
+it('66 Bank Transfer Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/en/index.php?controller=history')
       //
       cy.contains('Reorder').click()
@@ -1139,7 +1139,7 @@ it('C339401: 66 Bank Transfer Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('C339402: 67 Bank Transfer BO Refunding, Partial Refunding [Payments API]', () => {
+it('67 Bank Transfer BO Refunding, Partial Refunding [Payments API]', () => {
       cy.OrderRefundingPartialPaymentsAPI()
 });
 })
