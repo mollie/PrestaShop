@@ -52,8 +52,8 @@ e2e-8-prepare:
 
 bps8: build-ps-8
 build-ps-8:
-	# configuring base database
-	mysql -h 127.0.0.1 -P 9459 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_8.sql
+	# installing the PS
+	sleep 3m
 	# installing module
 	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
 	# uninstalling module
