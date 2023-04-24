@@ -61,7 +61,7 @@ class CanProductBeAddedToCartValidator
         // if it's the same product we can add more of the same product
         if ($numberOfProductsInCart === 1) {
             $cartProduct = reset($cartProducts);
-
+            //TODO this doesn't work if I, as a customer, currently have other products in cart.
             $isTheSameProduct = $productAttributeId === (int) $cartProduct['id_product_attribute'];
 
             if (!$isTheSameProduct) {
