@@ -1,5 +1,4 @@
 <?php
-<<<<<<<< HEAD:tests/seed/settings8/index.php
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -10,9 +9,6 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
-========
-
->>>>>>>> master:tests/Integration/Subscription/Tool/index.php
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
