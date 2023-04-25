@@ -6,6 +6,8 @@ namespace Mollie\ServiceProvider;
 
 use League\Container\Container;
 use Mollie;
+use Mollie\Builder\ApiTestFeedbackBuilder;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandler;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandlerInterface;
 use Mollie\Handler\CartRule\CartRuleQuantityChangeHandler;
@@ -46,6 +48,7 @@ use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Repository\PendingOrderCartRuleRepository;
 use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
+use Mollie\Service\ApiKeyService;
 use Mollie\Service\Content\SmartyTemplateParser;
 use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\ExceptionService;
@@ -173,6 +176,10 @@ final class BaseServiceProvider
         $this->addService($container, ProfileIdProviderInterface::class, ProfileIdProvider::class);
 
         $this->addService($container, PaymentOptionHandlerInterface::class, $container->get(PaymentOptionHandler::class));
+
+        $this->addService($container, ApiTestFeedbackBuilder::class, ApiTestFeedbackBuilder::class)
+            ->withArgument($container->get(ModuleFactory::class)->getModuleVersion() ?? '')
+            ->withArgument(ApiKeyService::class);
     }
 
     private function addService(Container $container, $className, $service)
