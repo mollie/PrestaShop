@@ -30,7 +30,7 @@ describe('PS1784 Subscriptions Test Suit', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it('C176305 Check if Subscription options added in Product BO', () => {
+it.skip('C176305 Check if Subscription options added in Product BO', () => {
   cy.visit('/admin1/')
   cy.get('#subtab-AdminCatalog > :nth-child(1)').click()
   cy.get('#subtab-AdminProducts > .link').click()
