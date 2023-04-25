@@ -63,7 +63,7 @@ describe('PS8 Tests Suite', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it('C339341: 04 Enabling All payments in Module BO [Orders API]', () => {
+it('04 Enabling All payments in Module BO [Orders API]', () => {
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
       cy.get('#subtab-AdminMollieModule > .link').click()
@@ -72,7 +72,7 @@ it('C339341: 04 Enabling All payments in Module BO [Orders API]', () => {
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
 // Somehow the Payment is not appearing in the ecommerce frontend...needs to be checked...TODO
-it.skip('C339342: 05 Vouchers Checkouting [Orders API]', () => {
+it.skip('05 Vouchers Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.contains('Reorder').click()
       cy.contains('DE').click()
