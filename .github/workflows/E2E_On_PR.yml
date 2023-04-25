@@ -20,10 +20,10 @@ jobs:
             TestRailID: R4954
           - prestashop: 'PS8'
             make: 'make e2eh8'
-            wipdemoshop: 'wipdemoshop8'
+            wipdemoshop: 'demoshop'
             port: '8142'
             yml: 'docker-compose.8.yml'
-            url: 'https://wipdemoshop8.eu.ngrok.io'
+            url: 'https://demoshop.eu.ngrok.io'
             test_spec: '**/cypress/e2e/ps8/**'
             TestRailID: R6470
     env:
