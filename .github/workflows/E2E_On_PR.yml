@@ -1,4 +1,4 @@
-name: Cypress test run MOLLIE
+name: Cypress E2E Automation
 on:
   pull_request:
     types: [opened, reopened]
