@@ -36,7 +36,7 @@ class ToolsAdapter
         return Tools::displayPrice($price, $currency);
     }
 
-    public function getValue(string $key, string $defaultValue = null): string
+    public function getValue(string $key, string $defaultValue = null)
     {
         return Tools::getValue($key, $defaultValue);
     }

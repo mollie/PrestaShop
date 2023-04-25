@@ -122,7 +122,9 @@ class RecurringOrderHandler
     private function createSubscription(Payment $transaction, MolRecurringOrder $recurringOrder, MollieSubscription $subscription)
     {
         $cart = new Cart($recurringOrder->id_cart);
+
         $newCart = $cart->duplicate();
+
         if (!$newCart['success']) {
             return;
         }
@@ -134,8 +136,14 @@ class RecurringOrderHandler
         /** @var Cart $newCart */
         $newCart = $newCart['cart'];
 
-        $newCart->id_address_invoice = $recurringOrder->id_address_invoice;
-        $newCart->id_address_delivery = $recurringOrder->id_address_delivery;
+        /**
+         * NOTE: New order can't have soft deleted delivery address
+         */
+        $newCart = $this->updateSubscriptionOrderAddress(
+            $newCart,
+            (int) $recurringOrder->id_address_invoice,
+            (int) $recurringOrder->id_address_delivery
+        );
 
         $recurringOrderProduct = new MolRecurringOrdersProduct($recurringOrder->id_mol_recurring_orders_product);
 
@@ -219,5 +227,26 @@ class RecurringOrderHandler
         $specificPrice->add();
 
         return $specificPrice;
+    }
+
+    private function updateSubscriptionOrderAddress(Cart $cart, int $addressInvoiceId, int $addressDeliveryId): Cart
+    {
+        $cart->id_address_invoice = $addressInvoiceId;
+        $cart->id_address_delivery = $addressDeliveryId;
+
+        $cartProducts = $cart->getProducts();
+
+        foreach ($cartProducts as $cartProduct) {
+            $cart->setProductAddressDelivery(
+                (int) $cartProduct['id_product'],
+                (int) $cartProduct['id_product_attribute'],
+                (int) $cartProduct['id_address_delivery'],
+                $addressDeliveryId
+            );
+        }
+
+        $cart->save();
+
+        return $cart;
     }
 }
