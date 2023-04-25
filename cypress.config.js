@@ -3,15 +3,14 @@ const { defineConfig } = require('cypress')
 module.exports = defineConfig({
   chromeWebSecurity: false,
   experimentalSourceRewriting: true,
-  numTestsKeptInMemory: 2,
-  defaultCommandTimeout: 8000,
+  numTestsKeptInMemory: 5,
+  defaultCommandTimeout: 10000,
   projectId: 'xb89dr',
-  retries: 2,
+  retries: 3,
   videoUploadOnPasses: false,
   videoCompression: 8,
   viewportHeight: 1080,
   viewportWidth: 1920,
-  experimentalMemoryManagement: true,
   e2e: {
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
