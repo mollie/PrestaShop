@@ -12,7 +12,7 @@
     'mailer_host' => '127.0.0.1',
     'mailer_user' => NULL,
     'mailer_password' => NULL,
-    'secret' => '${PS_SECRET}',
+    'secret' => '$${PS_SECRET}',
     'ps_caching' => 'CacheMemcache',
     'ps_cache_enable' => false,
     'ps_creation_date' => '2023-02-21',
