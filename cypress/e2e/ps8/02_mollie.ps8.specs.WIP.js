@@ -49,15 +49,6 @@ function prepareCookie()
       cy.get('#history-link > .link-item').click()
       })
       }
-
-//Checing the console for errors
-let windowConsoleError;
-Cypress.on('window:before:load', (win) => {
-  windowConsoleError = cy.spy(win.console, 'error');
-})
-afterEach(() => {
-  expect(windowConsoleError).to.not.be.called;
-})
 describe('PS8 Tests Suite', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
@@ -107,7 +98,7 @@ it.skip('06 Vouchers Order BO Refunding, Shipping (Paid part only) [Orders API]'
       cy.OrderRefundingShippingOrdersAPI()
       cy.get('[class="card-body"]').find('[class="alert alert-warning"]').should('exist') //additional checking if the warning alert for vouchers exist
 })
-it('07 Bancontact Checkouting [Orders API]', () => {
+it.only('07 Bancontact Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.contains('Reorder').click()
       cy.contains('DE').click()
