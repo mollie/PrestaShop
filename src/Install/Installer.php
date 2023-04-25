@@ -436,10 +436,6 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_COMPLETED, $this->configurationAdapter->get(Config::MOLLIE_STATUS_ORDER_COMPLETED));
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
-        $this->configurationAdapter->updateValue(
-            Config::MOLLIE_STATUS_PARTIAL_REFUND,
-            $this->configurationAdapter->get(Configuration::get(Config::MOLLIE_STATUS_PARTIAL_REFUND))
-        );
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_REFUNDED, Configuration::get('PS_OS_REFUND'));
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_SHIPPING, $this->configurationAdapter->get(Config::MOLLIE_STATUS_PARTIALLY_SHIPPED));
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_SHIPPING, true);
