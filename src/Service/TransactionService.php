@@ -117,10 +117,11 @@ class TransactionService
 
             throw new TransactionException('Transaction failed', HttpStatusCode::HTTP_BAD_REQUEST);
         }
+        $orderDescription = $apiPayment->description ?? $apiPayment->orderNumber;
 
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
         if (!$paymentMethod) {
-            $this->mollieOrderCreationService->createMolliePayment($apiPayment, (int) $apiPayment->metadata->cart_id, $apiPayment->description);
+            $this->mollieOrderCreationService->createMolliePayment($apiPayment, (int) $apiPayment->metadata->cart_id, $orderDescription);
         }
 
         /** @var int $orderId */
@@ -142,7 +143,6 @@ class TransactionService
             $this->module->name
         );
 
-        $orderDescription = $apiPayment->description ?? $apiPayment->orderNumber;
         $isGeneratedOrderNumber = strpos($orderDescription, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0;
         $isPaymentFinished = MollieStatusUtility::isPaymentFinished($apiPayment->status);
 
@@ -150,14 +150,14 @@ class TransactionService
             return $apiPayment;
         }
 
-        $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
-
-        if ($paymentMethod && $apiPayment->mandateId && $paymentMethod['mandate_id'] !== $apiPayment->mandateId) {
-            $this->mollieOrderCreationService->addTransactionMandate($apiPayment->id, $apiPayment->mandateId);
-        }
-
         switch ($apiPayment->resource) {
             case Config::MOLLIE_API_STATUS_PAYMENT:
+                $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
+
+                if ($paymentMethod && $apiPayment->mandateId && $paymentMethod['mandate_id'] !== $apiPayment->mandateId) {
+                    $this->mollieOrderCreationService->addTransactionMandate($apiPayment->id, $apiPayment->mandateId);
+                }
+
                 if ($key !== $apiPayment->metadata->secure_key && $deprecatedKey !== $apiPayment->metadata->secure_key) {
                     throw new TransactionException('Security key is incorrect.', HttpStatusCode::HTTP_UNAUTHORIZED);
                 }
@@ -251,13 +251,9 @@ class TransactionService
         if (!$orderId) {
             return 'Order with given transaction was not found';
         }
-        $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
         $order = new Order($orderId);
-        if (!$paymentMethod) {
-            $this->mollieOrderCreationService->createMolliePayment($apiPayment, (int) $cart->id, $order->reference);
-        } else {
-            $this->mollieOrderCreationService->updateMolliePaymentReference($apiPayment->id, $order->reference);
-        }
+
+        $this->mollieOrderCreationService->updateMolliePaymentReference($apiPayment->id, $order->reference);
 
         $this->updateTransaction($orderId, $apiPayment);
         // Store status in database

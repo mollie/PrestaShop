@@ -43,12 +43,13 @@ class Config
     public static function getSubscriptionIntervals(): array
     {
         $intervalAmount = 1;
+        $intervalAmountForYears = 12;
 
         return [
             Config::SUBSCRIPTION_ATTRIBUTE_DAILY => new Interval($intervalAmount, IntervalConstant::DAY),
             Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY => new Interval($intervalAmount, IntervalConstant::WEEK),
             Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY => new Interval($intervalAmount, IntervalConstant::MONTH),
-            Config::SUBSCRIPTION_ATTRIBUTE_YEARLY => new Interval($intervalAmount, IntervalConstant::YEAR),
+            Config::SUBSCRIPTION_ATTRIBUTE_YEARLY => new Interval($intervalAmountForYears, IntervalConstant::MONTHS),
         ];
     }
 

@@ -121,16 +121,7 @@ class Installer implements InstallerInterface
             return false;
         }
 
-//        try {
-//            $this->installTab('AdminMollieAjax', 0, 'AdminMollieAjax', false);
-        $this->installTab('AdminMollieModule_MTR', 'IMPROVE', 'Mollie', true, 'mollie');
-        $this->installTab('AdminMollieModule', 'AdminMollieModule_MTR', 'Settings', true, 'mollie');
-//        } catch (Exception $e) {
-//            $errorHandler->handle($e, $e->getCode(), false);
-//            $this->errors[] = $this->module->l('Unable to install new controllers', self::FILE_NAME);
-//
-//            return false;
-//        }
+        $this->installSpecificTabs();
 
         try {
             $this->installVoucherFeatures();
@@ -144,6 +135,12 @@ class Installer implements InstallerInterface
         $this->copyEmailTemplates();
 
         return $this->databaseTableInstaller->install();
+    }
+
+    public function installSpecificTabs(): void
+    {
+        $this->installTab('AdminMollieModule_MTR', 'IMPROVE', 'Mollie', true, 'mollie');
+        $this->installTab('AdminMollieModule', 'AdminMollieModule_MTR', 'Settings', true, 'mollie');
     }
 
     public function getErrors()
@@ -439,10 +436,6 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_COMPLETED, $this->configurationAdapter->get(Config::MOLLIE_STATUS_ORDER_COMPLETED));
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
-        $this->configurationAdapter->updateValue(
-            Config::MOLLIE_STATUS_PARTIAL_REFUND,
-            $this->configurationAdapter->get(Configuration::get(Config::MOLLIE_STATUS_PARTIAL_REFUND))
-        );
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_REFUNDED, Configuration::get('PS_OS_REFUND'));
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_SHIPPING, $this->configurationAdapter->get(Config::MOLLIE_STATUS_PARTIALLY_SHIPPED));
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_SHIPPING, true);

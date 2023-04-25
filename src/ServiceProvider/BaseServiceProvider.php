@@ -6,6 +6,8 @@ namespace Mollie\ServiceProvider;
 
 use League\Container\Container;
 use Mollie;
+use Mollie\Builder\ApiTestFeedbackBuilder;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandler;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandlerInterface;
 use Mollie\Handler\CartRule\CartRuleQuantityChangeHandler;
@@ -46,6 +48,7 @@ use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Repository\PendingOrderCartRuleRepository;
 use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
+use Mollie\Service\ApiKeyService;
 use Mollie\Service\Content\SmartyTemplateParser;
 use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\ExceptionService;
@@ -62,6 +65,8 @@ use Mollie\Service\Shipment\ShipmentInformationSenderInterface;
 use Mollie\Service\ShipmentService;
 use Mollie\Service\ShipmentServiceInterface;
 use Mollie\Subscription\Grid\Accessibility\SubscriptionCancelAccessibility;
+use Mollie\Subscription\Install\Installer;
+use Mollie\Subscription\Install\InstallerInterface;
 use Mollie\Subscription\Logger\Logger;
 use Mollie\Subscription\Logger\LoggerInterface;
 use Mollie\Subscription\Repository\RecurringOrderRepository;
@@ -102,6 +107,13 @@ final class BaseServiceProvider
             ->withArgument('MolCustomer');
 
         $this->addService($container, UninstallerInterface::class, Mollie\Install\DatabaseTableUninstaller::class);
+
+        $this->addService($container, InstallerInterface::class, Installer::class)
+            ->withArguments([
+                $container->get(Mollie\Subscription\Install\DatabaseTableInstaller::class),
+                $container->get(Mollie\Subscription\Install\AttributeInstaller::class),
+                $container->get(Mollie\Subscription\Install\HookInstaller::class),
+            ]);
 
         $this->addService($container, DecoderInterface::class, JsonDecoder::class);
 
@@ -164,6 +176,10 @@ final class BaseServiceProvider
         $this->addService($container, ProfileIdProviderInterface::class, ProfileIdProvider::class);
 
         $this->addService($container, PaymentOptionHandlerInterface::class, $container->get(PaymentOptionHandler::class));
+
+        $this->addService($container, ApiTestFeedbackBuilder::class, ApiTestFeedbackBuilder::class)
+            ->withArgument($container->get(ModuleFactory::class)->getModuleVersion() ?? '')
+            ->withArgument(ApiKeyService::class);
     }
 
     private function addService(Container $container, $className, $service)

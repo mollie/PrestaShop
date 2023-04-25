@@ -50,6 +50,7 @@ class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieContr
     protected function executeWebhook()
     {
         $transactionId = Tools::getValue('id');
+
         if (!$transactionId) {
             $this->respond('failed', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY, 'Missing transaction id');
         }

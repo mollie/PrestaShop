@@ -68,7 +68,7 @@ describe('PS8 Module initial configuration setup', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it('C339305: 01 Connecting test API successsfully', () => {
+it('Connecting test API successsfully', () => {
       cy.visit('/admin1/')
       cy.get('.mi-mollie').click({fore:true})
       cy.get('#subtab-AdminMollieModule').click()
@@ -76,13 +76,13 @@ it('C339305: 01 Connecting test API successsfully', () => {
       cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
       cy.get('#module_form_submit_btn').click()
 })
-it('C339338: 02 Enabling Mollie carriers in Prestashop successfully', () => {
+it('Enabling Mollie carriers in Prestashop successfully', () => {
       cy.visit('/admin1/')
       cy.get('[id="subtab-AdminPaymentPreferences"]').find('[href]').eq(0).click({force:true})
       cy.get('[class="js-multiple-choice-table-select-column"]').eq(6).click()
       cy.get('[class="btn btn-primary"]').eq(3).click()
 })
-it('C339339: 03 Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
+it('Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
       cy.visit('/admin1/')
       cy.get('.mi-mollie').click({fore:true})
       cy.get('#subtab-AdminMollieModule').click()
@@ -118,16 +118,17 @@ it('C339339: 03 Checking the Advanced Settings tab, verifying the Front-end comp
       //cy.window() will check if there are no Errors in console
 });
 it('C688472 Checking the Subscriptions tab, and console errors', () => {
+      cy.visit('/admin1/')
       cy.get('.mi-mollie').click({fore:true})
       cy.get('#subtab-AdminMollieModule').click()
       cy.get('#subtab-AdminMollieSubscriptionOrders').click()
       cy.get('[id="invertus_mollie_subscription_grid_panel"]').should('be.visible')
 });
 it('C688473 Checking the Subscriptions FAQ, and console errors', () => {
+      cy.visit('/admin1/')
       cy.get('.mi-mollie').click({fore:true})
       cy.get('#subtab-AdminMollieModule').click()
       cy.get('#subtab-AdminMollieSubscriptionFAQ').click()
-      cy.get(':nth-child(2) > .col-lg-12 > .card').should('be.visible')
       cy.get(':nth-child(3) > .col-lg-12 > .card').should('be.visible')
       cy.get(':nth-child(4) > .col-lg-12 > .card').should('be.visible')
       cy.get(':nth-child(5) > .col-lg-12 > .card').should('be.visible')

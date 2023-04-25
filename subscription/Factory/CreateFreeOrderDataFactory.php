@@ -25,9 +25,14 @@ class CreateFreeOrderDataFactory
         $redirectUrl = $this->link->getModuleLink('mollie', 'recurringOrderDetail', ['id_mol_recurring_order' => $recurringOrder->id]);
         $webhookUrl = $this->link->getModuleLink('mollie', 'subscriptionUpdateWebhook', ['subscription_id' => $recurringOrder->mollie_subscription_id]);
 
+        $description = implode('-', [
+            'subscription-update-',
+            $recurringOrder->mollie_subscription_id,
+        ]);
+
         return new CreateFreeOrderData(
             $currencyIso->iso_code,
-            'subscription-description-test',
+            $description,
             $redirectUrl,
             $webhookUrl,
             $newMethod,
