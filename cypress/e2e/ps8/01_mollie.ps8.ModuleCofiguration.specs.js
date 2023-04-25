@@ -36,17 +36,17 @@ function prepareCookie()
       cy.session(MollieBOFOLoggingIn,() => {
       cy.visit('/admin1/')
       cy.url().should('contain', 'https').as('Check if HTTPS exists')
-      cy.get('#email').type('demo@prestashop.com',{delay: 0, log: false})
+      cy.get('#email').type('demo@demo.com',{delay: 0, log: false})
       cy.get('#passwd').type('prestashop_demo',{delay: 0, log: false})
       cy.get('#submit_login').click().wait(1000).as('Connection successsful')
       //switching the multistore PS1784
-      // cy.get('#header_shop > .dropdown').click()
-      // cy.get('.open > .dropdown-menu').find('[class="shop"]').eq(1).find('[href]').eq(0).click()
-      // cy.visit('/SHOP2/index.php?controller=my-account')
-      // cy.get('#login-form [name="email"]').eq(0).type('demo@demo.com')
-      // cy.get('#login-form [name="password"]').eq(0).type('prestashop_demo')
-      // cy.get('#login-form [type="submit"]').eq(0).click({force:true})
-      // cy.get('#history-link > .link-item').click()
+      cy.get('#header_shop > .dropdown').click()
+      cy.get('.open > .dropdown-menu').find('[class="shop"]').eq(1).find('[href]').eq(0).click()
+      cy.visit('/SHOP2/index.php?controller=my-account')
+      cy.get('#login-form [name="email"]').eq(0).type('demo@demo.com')
+      cy.get('#login-form [name="password"]').eq(0).type('prestashop_demo')
+      cy.get('#login-form [type="submit"]').eq(0).click({force:true})
+      cy.get('#history-link > .link-item').click()
       })
       }
 
@@ -68,7 +68,7 @@ describe('PS8 Module initial configuration setup', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it('01 Connecting test API successsfully', () => {
+it('Connecting test API successsfully', () => {
       cy.visit('/admin1/')
       cy.get('.mi-mollie').click({fore:true})
       cy.get('#subtab-AdminMollieModule').click()
@@ -76,13 +76,13 @@ it('01 Connecting test API successsfully', () => {
       cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
       cy.get('#module_form_submit_btn').click()
 })
-it('02 Enabling Mollie carriers in Prestashop successfully', () => {
+it('Enabling Mollie carriers in Prestashop successfully', () => {
       cy.visit('/admin1/')
       cy.get('[id="subtab-AdminPaymentPreferences"]').find('[href]').eq(0).click({force:true})
       cy.get('[class="js-multiple-choice-table-select-column"]').eq(6).click()
       cy.get('[class="btn btn-primary"]').eq(3).click()
 })
-it('03 Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
+it('Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
       cy.visit('/admin1/')
       cy.get('.mi-mollie').click({fore:true})
       cy.get('#subtab-AdminMollieModule').click()

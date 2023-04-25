@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Mollie\Subscription\Validator;
 
 use Mollie\Adapter\CartAdapter;
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Subscription\Exception\ProductValidationException;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 
@@ -16,10 +17,17 @@ class CanProductBeAddedToCartValidator
     /** @var SubscriptionProductValidator */
     private $subscriptionProduct;
 
-    public function __construct(CartAdapter $cart, SubscriptionProductValidator $subscriptionProduct)
-    {
+    /** @var ToolsAdapter */
+    private $tools;
+
+    public function __construct(
+        CartAdapter $cart,
+        SubscriptionProductValidator $subscriptionProduct,
+        ToolsAdapter $tools
+    ) {
         $this->cart = $cart;
         $this->subscriptionProduct = $subscriptionProduct;
+        $this->tools = $tools;
     }
 
     /**
@@ -33,6 +41,12 @@ class CanProductBeAddedToCartValidator
      */
     public function validate(int $productAttributeId): bool
     {
+        $isSubscriptionDuplicateProduct = $this->tools->getValue('controller');
+
+        if ($isSubscriptionDuplicateProduct === 'subscriptionWebhook') {
+            return true;
+        }
+
         $isNewSubscriptionProduct = $this->subscriptionProduct->validate($productAttributeId);
 
         if ($isNewSubscriptionProduct) {

@@ -667,41 +667,41 @@ it('C339376: 39 Bank Transfer Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
 // Temporary disabled, Payment Method disables automatically in My Mollie Dashboard, because of the fake testing account...
-// it('40 Gift Card Checkouting [Orders API]', () => {
-//       cy.visit('/SHOP2/en/index.php?controller=history')
-//       cy.get('a').click()
-//       cy.contains('Reorder').click()
-//       cy.contains('NL').click()
-//       //Billing country LT, DE etc.
-//       cy.get('.clearfix > .btn').click()
-//       cy.get('#js-delivery > .continue').click()
-//       //Payment method choosing
-//       cy.contains('Gift cards').click({force:true})
-//       cy.get('.condition-label > .js-terms').click({force:true})
-//       prepareCookie();
-//       cy.get('.ps-shown-by-js > .btn').click()
-//       cy.setCookie(
-//         'SESSIONID',
-//         "cypress-dummy-value",
-//         {
-//             domain: '.www.mollie.com',
-//             sameSite: 'None',
-//             secure: true,
-//             httpOnly: true
-//         }
-//       );    // reload current page to activate cookie
-//       cy.reload();
-//       cy.get('.grid-button-giftcard-yourgift').click()
-//       cy.get('[value="paid"]').click()
-//       cy.get('[class="button form__button"]').click()
-//       cy.get('.grid-button-paypal').click()
-//       cy.get('[value="paid"]').click()
-//       cy.get('[class="button form__button"]').click()
-//       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
-// });
-// it('41 Gift Card Order Shipping, Refunding [Orders API]', () => {
-//       cy.OrderRefundingShippingOrdersAPI()
-// })
+it.skip('40 Gift Card Checkouting [Orders API]', () => {
+      cy.visit('/SHOP2/en/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.contains('NL').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Gift cards').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.setCookie(
+        'SESSIONID',
+        "cypress-dummy-value",
+        {
+            domain: '.www.mollie.com',
+            sameSite: 'None',
+            secure: true,
+            httpOnly: true
+        }
+      );    // reload current page to activate cookie
+      cy.reload();
+      cy.get('.grid-button-giftcard-yourgift').click()
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('.grid-button-paypal').click()
+      cy.get('[value="paid"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it.skip('41 Gift Card Order Shipping, Refunding [Orders API]', () => {
+      cy.OrderRefundingShippingOrdersAPI()
+})
 it('C339377: 42 [SWITCH TO PAYMENTS API] Enabling All payments in Module BO [Payments API]', () => {
       cy.visit('/admin1/')
       cy.OpenModuleDashboard()
