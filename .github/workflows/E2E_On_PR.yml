@@ -12,7 +12,7 @@ jobs:
         include:
           - prestashop: 'PS1784'
             make: 'make e2eh1784'
-            wipdemoshop: 'demoshop'
+            demoshop: 'demoshop'
             port: '8002'
             yml: 'docker-compose.1784.yml'
             url: 'https://demoshop1784.eu.ngrok.io'
@@ -20,7 +20,7 @@ jobs:
             TestRailID: R4954
           - prestashop: 'PS8'
             make: 'make e2eh8'
-            wipdemoshop: 'demoshop'
+            demoshop: 'demoshop'
             port: '8142'
             yml: 'docker-compose.8.yml'
             url: 'https://demoshop1784.eu.ngrok.io'
@@ -37,7 +37,7 @@ jobs:
         shell: bash
       - run: ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
         shell: bash
-      - run: ./ngrok http -region=eu -subdomain=${{ matrix.wipdemoshop }} ${{ matrix.port }} > ngrok.log &
+      - run: ./ngrok http -region=eu -subdomain=${{ matrix.demoshop }} ${{ matrix.port }} > ngrok.log &
         shell: bash
       - name: Install composer
         run: composer i
