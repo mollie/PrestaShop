@@ -2883,8 +2883,8 @@ INSERT INTO `ps_configuration` (`id_configuration`, `id_shop_group`, `id_shop`, 
 (231,	NULL,	NULL,	'HOMESLIDER_PAUSE',	'7700',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (232,	NULL,	NULL,	'HOMESLIDER_LOOP',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (233,	NULL,	NULL,	'PS_BASE_DISTANCE_UNIT',	'm',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
-(234,	NULL,	NULL,	'PS_SHOP_DOMAIN',	'demoshop8.eu.ngrok.io:8142',	'0000-00-00 00:00:00',	'2023-05-02 12:16:57'),
-(235,	NULL,	NULL,	'PS_SHOP_DOMAIN_SSL',	'demoshop8.eu.ngrok.io:8142',	'0000-00-00 00:00:00',	'2023-05-02 12:16:57'),
+(234,	NULL,	NULL,	'PS_SHOP_DOMAIN',	'demoshop8.eu.ngrok.io',	'0000-00-00 00:00:00',	'2023-05-02 12:16:57'),
+(235,	NULL,	NULL,	'PS_SHOP_DOMAIN_SSL',	'demoshop8.eu.ngrok.io',	'0000-00-00 00:00:00',	'2023-05-02 12:16:57'),
 (236,	NULL,	NULL,	'PS_SHOP_NAME',	'PrestaShop',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (237,	NULL,	NULL,	'PS_SHOP_EMAIL',	'demo@prestashop.com',	'0000-00-00 00:00:00',	'2023-05-02 12:16:59'),
 (238,	NULL,	NULL,	'PS_MAIL_METHOD',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
@@ -3186,7 +3186,7 @@ CREATE TABLE `ps_connections_source` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `ps_connections_source` (`id_connections_source`, `id_connections`, `http_referer`, `request_uri`, `keywords`, `date_add`) VALUES
-(1,	2,	'',	'demoshop8.eu.ngrok.io:8142/',	'',	'2023-05-02 12:19:12');
+(1,	2,	'',	'demoshop8.eu.ngrok.io/',	'',	'2023-05-02 12:19:12');
 
 DROP TABLE IF EXISTS `ps_contact`;
 CREATE TABLE `ps_contact` (
@@ -10167,7 +10167,7 @@ CREATE TABLE `ps_shop_url` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `ps_shop_url` (`id_shop_url`, `id_shop`, `domain`, `domain_ssl`, `physical_uri`, `virtual_uri`, `main`, `active`) VALUES
-(1,	1,	'demoshop8.eu.ngrok.io:8142',	'demoshop8.eu.ngrok.io:8142',	'/',	'',	1,	1);
+(1,	1,	'demoshop8.eu.ngrok.io',	'demoshop8.eu.ngrok.io',	'/',	'',	1,	1);
 
 DROP TABLE IF EXISTS `ps_smarty_cache`;
 CREATE TABLE `ps_smarty_cache` (
