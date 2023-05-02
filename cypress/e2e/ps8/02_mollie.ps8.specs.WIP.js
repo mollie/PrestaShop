@@ -39,7 +39,7 @@ function prepareCookie()
       cy.get('#email').type('demo@demo.com',{delay: 0, log: false})
       cy.get('#passwd').type('prestashop_demo',{delay: 0, log: false})
       cy.get('#submit_login').click().wait(1000).as('Connection successsful')
-      //switching the multistore PS1784
+      //switching the multistore PS8
       cy.get('#header_shop > .dropdown').click()
       cy.get('.open > .dropdown-menu').find('[class="shop"]').eq(1).find('[href]').eq(0).click()
       cy.visit('/SHOP2/index.php?controller=my-account')
