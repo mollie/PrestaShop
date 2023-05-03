@@ -23,7 +23,7 @@ function upgrade_module_6_0_0(Mollie $module): bool
     $sql = '
     SELECT COUNT(*) AS count
     FROM information_schema.columns
-    WHERE table_name = "' . _DB_PREFIX_ . 'mol_payment_method" AND column_name = \'mandate_id\';
+    WHERE table_name = "' . _DB_PREFIX_ . 'mollie_payments" AND column_name = \'mandate_id\';
     ';
 
     /** only add it if it doesn't exist */
