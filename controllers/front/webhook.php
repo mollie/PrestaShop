@@ -57,7 +57,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         try {
             exit($this->executeWebhook());
         } catch (\Throwable $exception) {
-            PrestaShopLogger::addLog('Error occurred' . $exception->getMessage(), 3, null, 'Mollie');
+            PrestaShopLogger::addLog('Error occurred: ' . $exception->getMessage(), 3, null, 'Mollie');
         }
     }
 
@@ -95,7 +95,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             $cartId = $metaData->cart_id ?? 0;
             $this->setContext($cartId);
             $payment = $transactionService->processTransaction($transaction);
-        } catch (\Exception $e) {
+        } catch (TransactionException $e) {
             /** @var ErrorHandler $errorHandler */
             $errorHandler = $this->module->getService(ErrorHandler::class);
             $errorHandler->handle($e, $e->getCode(), false);
