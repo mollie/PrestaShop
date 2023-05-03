@@ -47,7 +47,8 @@ e2e-8-prepare:
 	docker-compose -f docker-compose.8.yml up -d --force-recreate
 	# sees what containers are running
 	docker-compose -f docker-compose.8.yml ps
-	sleep 10s
+	# waits for mysql to load
+	/bin/bash .docker/wait-for-container.sh mysql-mollie-8
 	# preloads initial data
 	make bps8
 
