@@ -45,6 +45,7 @@ class ConfigurationAdapter
      * @param ?int $idShop
      * @param bool $html
      * @param ?int $idShopGroup
+     *
      * @return void
      */
     public function updateValue($key, $value, $idShop = null, $html = false, $idShopGroup = null)
