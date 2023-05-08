@@ -369,6 +369,10 @@ class PaymentMethodService
             $orderData->setMethod($molPaymentMethod->id_method);
             $orderData->setMetadata($metaData);
 
+            if (!empty($customer->birthday) && $customer->birthday !== '0000-00-00') {
+                $orderData->setConsumerDateOfBirth((string) $customer->birthday);
+            }
+
             $currency = new Currency($cart->id_currency);
             $selectedVoucherCategory = Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY);
             $orderData->setLines(

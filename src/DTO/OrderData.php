@@ -114,6 +114,9 @@ class OrderData implements JsonSerializable
      */
     private $sequenceType;
 
+    /** @var string */
+    private $consumerDateOfBirth;
+
     public function __construct(
         Amount $amount,
                $redirectUrl,
@@ -372,6 +375,19 @@ class OrderData implements JsonSerializable
         $this->payment = $payment;
     }
 
+    public function getConsumerDateOfBirth(): string
+    {
+        return $this->consumerDateOfBirth;
+    }
+
+    /**
+     * @param string $consumerDateOfBirth
+     */
+    public function setConsumerDateOfBirth(string $consumerDateOfBirth): void
+    {
+        $this->consumerDateOfBirth = $consumerDateOfBirth;
+    }
+
     public function getSequenceType(): string
     {
         return $this->sequenceType;
@@ -424,6 +440,7 @@ class OrderData implements JsonSerializable
             'orderNumber' => $this->getOrderNumber(),
             'lines' => $lines,
             'payment' => $this->getPayment(),
+            'consumerDateOfBirth' => $this->getConsumerDateOfBirth(),
         ];
 
         if ($this->billingPhoneNumber) {
