@@ -10,7 +10,7 @@ services:
       PATH: /var/www/html/_dev/node_modules/.bin/:$PATH
 
   mysql:
-    platform: linux/arm64
+    platform: linux/amd64
     container_name: mysql-mollie-8
     image: mysql:5.7
     ports:
