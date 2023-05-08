@@ -12,7 +12,7 @@ services:
   mysql:
     platform: linux/arm64
     container_name: mysql-mollie-8
-    image: mysql:latest
+    image: mysql:5.7
     ports:
       - "9459:3306"
     environment:
