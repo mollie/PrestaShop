@@ -60,4 +60,14 @@ class Context
     {
         return PrestashopContext::getContext()->cart->getProducts();
     }
+
+    public function getProductLink($product): string
+    {
+        return (string) PrestashopContext::getContext()->link->getProductLink($product);
+    }
+
+    public function getImageLink($name, $ids, $type = null): string
+    {
+        return (string) PrestashopContext::getContext()->link->getImageLink($name, $ids, $type);
+    }
 }

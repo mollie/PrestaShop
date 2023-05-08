@@ -34,6 +34,7 @@ use Mollie\DTO\PaymentData;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\PhoneNumberProviderInterface;
+use Mollie\Repository\GenderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
@@ -98,6 +99,7 @@ class PaymentMethodService
     private $subscriptionOrder;
     /** @var CartAdapter */
     private $cartAdapter;
+    private $genderRepository;
 
     public function __construct(
         Mollie $module,
@@ -111,7 +113,8 @@ class PaymentMethodService
         PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation,
         Shop $shop,
         SubscriptionOrderValidator $subscriptionOrder,
-        CartAdapter $cartAdapter
+        CartAdapter $cartAdapter,
+        GenderRepositoryInterface $genderRepository
     ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
@@ -125,6 +128,7 @@ class PaymentMethodService
         $this->shop = $shop;
         $this->subscriptionOrder = $subscriptionOrder;
         $this->cartAdapter = $cartAdapter;
+        $this->genderRepository = $genderRepository;
     }
 
     public function savePaymentMethod($method)
@@ -367,7 +371,8 @@ class PaymentMethodService
             $orderData->setLocale($this->getLocale($molPaymentMethod->method));
             $orderData->setEmail($customer->email);
 
-            $gender = new \Gender((int) $customer->id_gender);
+            /** @var \Gender|null $gender */
+            $gender = $this->genderRepository->findOneBy(['id_gender' => $customer->id_gender]);
 
             if (!empty($gender) && isset($gender->name[$cart->id_lang])) {
                 $orderData->setTitle((string) $gender->name[$cart->id_lang]);
