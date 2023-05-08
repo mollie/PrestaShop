@@ -41,6 +41,8 @@ use Mollie\Provider\UpdateMessageProvider;
 use Mollie\Provider\UpdateMessageProviderInterface;
 use Mollie\Repository\CartRuleRepository;
 use Mollie\Repository\CartRuleRepositoryInterface;
+use Mollie\Repository\GenderRepository;
+use Mollie\Repository\GenderRepositoryInterface;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\OrderRepository;
 use Mollie\Repository\OrderRepositoryInterface;
@@ -103,6 +105,7 @@ final class BaseServiceProvider
         $this->addService($container, ClockInterface::class, $container->get(Clock::class));
 
         $this->addService($container, PaymentMethodRepositoryInterface::class, $container->get(PaymentMethodRepository::class));
+        $this->addService($container, GenderRepositoryInterface::class, $container->get(GenderRepository::class));
         $this->addService($container, MolCustomerRepository::class, MolCustomerRepository::class)
             ->withArgument('MolCustomer');
 
