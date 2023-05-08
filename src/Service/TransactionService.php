@@ -120,6 +120,7 @@ class TransactionService
         $orderDescription = $apiPayment->description ?? $apiPayment->orderNumber;
 
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
+
         if (!$paymentMethod) {
             $this->mollieOrderCreationService->createMolliePayment($apiPayment, (int) $apiPayment->metadata->cart_id, $orderDescription);
         }
@@ -152,6 +153,8 @@ class TransactionService
 
         switch ($apiPayment->resource) {
             case Config::MOLLIE_API_STATUS_PAYMENT:
+                PrestaShopLogger::addLog(__METHOD__ . ' said: Starting to process PAYMENT transaction.', Config::NOTICE);
+
                 $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
 
                 if ($paymentMethod && $apiPayment->mandateId && $paymentMethod['mandate_id'] !== $apiPayment->mandateId) {
@@ -194,6 +197,8 @@ class TransactionService
                 }
                 break;
             case Config::MOLLIE_API_STATUS_ORDER:
+                PrestaShopLogger::addLog(__METHOD__ . ' said: Starting to process ORDER transaction.', Config::NOTICE);
+
                 if ($key !== $apiPayment->metadata->secure_key && $deprecatedKey !== $apiPayment->metadata->secure_key) {
                     throw new TransactionException('Security key is incorrect.', HttpStatusCode::HTTP_UNAUTHORIZED);
                 }
