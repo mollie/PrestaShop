@@ -78,7 +78,8 @@ class SubscriptionCartTest extends BaseTestCase
                 new ProductCombinationRepository(),
                 new CombinationRepository(),
                 new ProductAttributeAdapter()
-            )
+            ),
+            $this->getService(\Mollie\Adapter\ToolsAdapter::class)
         );
 
         if ($expectedResult !== true) {

@@ -13,6 +13,7 @@
 namespace Mollie\Service;
 
 use Cart;
+use Mollie\Adapter\Context;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
 use Mollie\DTO\Line;
@@ -38,12 +39,14 @@ class CartLinesService
      * @var ToolsAdapter
      */
     private $tools;
+    private $context;
 
-    public function __construct(LanguageService $languageService, VoucherService $voucherService, ToolsAdapter $tools)
+    public function __construct(LanguageService $languageService, VoucherService $voucherService, ToolsAdapter $tools, Context $context)
     {
         $this->voucherService = $voucherService;
         $this->languageService = $languageService;
         $this->tools = $tools;
+        $this->context = $context;
     }
 
     /**
@@ -194,6 +197,8 @@ class CartLinesService
                         'unitPrice' => 0,
                         'totalAmount' => 0,
                         'category' => '',
+                        'product_url' => $this->context->getProductLink($cartItem['id_product']),
+                        'image_url' => $this->context->getImageLink($cartItem['link_rewrite'], $cartItem['id_image']),
                     ];
                     continue;
                 }
@@ -212,6 +217,8 @@ class CartLinesService
                 'unitPrice' => round($cartItem['price_wt'], $apiRoundingPrecision),
                 'totalAmount' => (float) $roundedTotalWithTax,
                 'category' => $this->voucherService->getVoucherCategory($cartItem, $selectedVoucherCategory),
+                'product_url' => $this->context->getProductLink($cartItem['id_product']),
+                'image_url' => $this->context->getImageLink($cartItem['link_rewrite'], $cartItem['id_image']),
             ];
             $remaining -= $roundedTotalWithTax;
         }
@@ -334,6 +341,8 @@ class CartLinesService
                     'totalAmount' => round($totalAmount, $apiRoundingPrecision),
                     'vatRate' => round($actualVatRate, $apiRoundingPrecision),
                     'vatAmount' => round($vatAmount, $apiRoundingPrecision),
+                    'product_url' => $line['product_url'] ?? null,
+                    'image_url' => $line['image_url'] ?? null,
                 ];
                 if (isset($line['sku'])) {
                     $newItem['sku'] = $line['sku'];
@@ -497,6 +506,8 @@ class CartLinesService
             }
 
             $line->setVatRate(TextFormatUtility::formatNumber($item['vatRate'], $apiRoundingPrecision, '.', ''));
+            $line->setProductUrl($item['product_url'] ?? null);
+            $line->setImageUrl($item['image_url'] ?? null);
 
             $newItems[$index] = $line;
         }

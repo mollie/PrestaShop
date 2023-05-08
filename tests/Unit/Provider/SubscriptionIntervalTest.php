@@ -18,6 +18,7 @@ class SubscriptionIntervalTest extends TestCase
     {
         $configurationMock = $this->createMock(ConfigurationAdapter::class);
         $configurationMock
+            ->expects($this->any())
             ->method('get')
             ->will(
                 $this->returnValueMap($mockedGetResults)
@@ -37,6 +38,9 @@ class SubscriptionIntervalTest extends TestCase
     public function descriptionDataProvider(): array
     {
         $langId = null;
+        $shopGroupId = null;
+        $shopId = null;
+
         $dailyProductAttributeId = 1;
         $weeklyProductAttributeId = 2;
         $monthlyProductAttributeId = 3;
@@ -50,9 +54,9 @@ class SubscriptionIntervalTest extends TestCase
                     ],
                 ],
                 'mocked get result' => [
-                    [Config::SUBSCRIPTION_ATTRIBUTE_DAILY, $langId, $dailyProductAttributeId],
-                    [Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY, $langId, $weeklyProductAttributeId],
-                    [Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY, $langId, $monthlyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_DAILY, $langId, $shopGroupId, $shopId, $dailyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY, $langId, $shopGroupId, $shopId, $weeklyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY, $langId, $shopGroupId, $shopId, $monthlyProductAttributeId],
                 ],
                 'expected result' => Config::getSubscriptionIntervals()[Config::SUBSCRIPTION_ATTRIBUTE_DAILY],
             ],
@@ -63,9 +67,9 @@ class SubscriptionIntervalTest extends TestCase
                     ],
                 ],
                 'mocked get result' => [
-                    [Config::SUBSCRIPTION_ATTRIBUTE_DAILY, $langId, $dailyProductAttributeId],
-                    [Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY, $langId, $weeklyProductAttributeId],
-                    [Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY, $langId, $monthlyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_DAILY, $langId, $shopGroupId, $shopId, $dailyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY, $langId, $shopGroupId, $shopId, $weeklyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY, $langId, $shopGroupId, $shopId, $monthlyProductAttributeId],
                 ],
                 'expected result' => Config::getSubscriptionIntervals()[Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY],
             ],
@@ -75,9 +79,9 @@ class SubscriptionIntervalTest extends TestCase
                     ['id' => $basicProductAttribute],
                 ],
                 'mocked get result' => [
-                    [Config::SUBSCRIPTION_ATTRIBUTE_DAILY, $langId, $dailyProductAttributeId],
-                    [Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY, $langId, $weeklyProductAttributeId],
-                    [Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY, $langId, $monthlyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_DAILY, $langId, $shopGroupId, $shopId, $dailyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY, $langId, $shopGroupId, $shopId, $weeklyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY, $langId, $shopGroupId, $shopId, $monthlyProductAttributeId],
                 ],
                 'expected result' => Config::getSubscriptionIntervals()[Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY],
             ],
@@ -86,9 +90,9 @@ class SubscriptionIntervalTest extends TestCase
                     ['id' => $basicProductAttribute],
                 ],
                 'mocked get result' => [
-                    [Config::SUBSCRIPTION_ATTRIBUTE_DAILY, $langId, $dailyProductAttributeId],
-                    [Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY, $langId, $weeklyProductAttributeId],
-                    [Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY, $langId, $monthlyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_DAILY, $langId, $shopGroupId, $shopId, $dailyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY, $langId, $shopGroupId, $shopId, $weeklyProductAttributeId],
+                    [Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY, $langId, $shopGroupId, $shopId, $monthlyProductAttributeId],
                 ],
                 'expected result' => null,
             ],

@@ -55,4 +55,14 @@ class Context
     {
         return (string) PrestashopContext::getContext()->link->getAdminLink($controllerName, true, [], $params);
     }
+
+    public function getProductLink($product): string
+    {
+        return (string) PrestashopContext::getContext()->link->getProductLink($product);
+    }
+
+    public function getImageLink($name, $ids, $type = null): string
+    {
+        return (string) PrestashopContext::getContext()->link->getImageLink($name, $ids, $type);
+    }
 }
