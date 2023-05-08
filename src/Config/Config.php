@@ -100,17 +100,17 @@ class Config
     const MOLLIE_SEND_ORDER_CONFIRMATION = 'MOLLIE_SEND_ORDER_CONFIRMATION';
     const MOLLIE_IFRAME = [
         'sandbox' => 'MOLLIE_SANDBOX_IFRAME',
-        'production' => 'MOLLIE_PRODUCTION_IFRAME'
+        'production' => 'MOLLIE_PRODUCTION_IFRAME',
     ];
     const MOLLIE_SINGLE_CLICK_PAYMENT = [
         'sandbox' => 'MOLLIE_SANDBOX_SINGLE_CLICK_PAYMENT',
-        'production' => 'MOLLIE_PRODUCTION_SINGLE_CLICK_PAYMENT'
+        'production' => 'MOLLIE_PRODUCTION_SINGLE_CLICK_PAYMENT',
     ];
     const MOLLIE_IMAGES = 'MOLLIE_IMAGES';
     const MOLLIE_SHOW_RESEND_PAYMENT_LINK = 'MOLLIE_SHOW_RESEND_PAYMENT_LINK';
     const MOLLIE_ISSUERS = [
         'sandbox' => 'MOLLIE_SANDBOX_ISSUERS',
-        'production' => 'MOLLIE_PRODUCTION_ISSUERS'
+        'production' => 'MOLLIE_PRODUCTION_ISSUERS',
     ];
     const MOLLIE_CSS = 'MOLLIE_CSS';
     const MOLLIE_DEBUG_LOG = 'MOLLIE_DEBUG_LOG';

@@ -12,7 +12,6 @@
 
 namespace Mollie\Install;
 
-use Configuration;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Tracker\Segment;
