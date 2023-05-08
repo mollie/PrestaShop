@@ -194,6 +194,8 @@ class CartLinesService
                         'unitPrice' => 0,
                         'totalAmount' => 0,
                         'category' => '',
+                        'product_url' => \Context::getContext()->link->getProductLink($cartItem['id_product']),
+                        'image_url' => \Context::getContext()->link->getImageLink($cartItem['link_rewrite'], $cartItem['id_image'])
                     ];
                     continue;
                 }
@@ -212,6 +214,8 @@ class CartLinesService
                 'unitPrice' => round($cartItem['price_wt'], $apiRoundingPrecision),
                 'totalAmount' => (float) $roundedTotalWithTax,
                 'category' => $this->voucherService->getVoucherCategory($cartItem, $selectedVoucherCategory),
+                'product_url' => \Context::getContext()->link->getProductLink($cartItem['id_product']),
+                'image_url' => \Context::getContext()->link->getImageLink($cartItem['link_rewrite'], $cartItem['id_image'])
             ];
             $remaining -= $roundedTotalWithTax;
         }
@@ -334,6 +338,8 @@ class CartLinesService
                     'totalAmount' => round($totalAmount, $apiRoundingPrecision),
                     'vatRate' => round($actualVatRate, $apiRoundingPrecision),
                     'vatAmount' => round($vatAmount, $apiRoundingPrecision),
+                    'product_url' =>  $line['product_url'] ?? null,
+                    'image_url' =>  $line['image_url'] ?? null,
                 ];
                 if (isset($line['sku'])) {
                     $newItem['sku'] = $line['sku'];
@@ -497,6 +503,8 @@ class CartLinesService
             }
 
             $line->setVatRate(TextFormatUtility::formatNumber($item['vatRate'], $apiRoundingPrecision, '.', ''));
+            $line->setProductUrl($item['product_url'] ?? null);
+            $line->setImageUrl($item['image_url'] ?? null);
 
             $newItems[$index] = $line;
         }
