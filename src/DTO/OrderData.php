@@ -439,7 +439,7 @@ class OrderData implements JsonSerializable
                 'givenName' => $this->cleanUpInput($this->getBillingAddress()->firstname),
                 'familyName' => $this->cleanUpInput($this->getBillingAddress()->lastname),
                 'email' => $this->cleanUpInput($this->getEmail()),
-                'title' => $this->cleanUpInput($this->getTitle())
+                'title' => $this->cleanUpInput($this->getTitle()),
             ],
             'shippingAddress' => [
                 'organizationName' => $this->cleanUpInput($this->getShippingAddress()->company),
@@ -451,7 +451,7 @@ class OrderData implements JsonSerializable
                 'givenName' => $this->cleanUpInput($this->getShippingAddress()->firstname),
                 'familyName' => $this->cleanUpInput($this->getShippingAddress()->lastname),
                 'email' => $this->cleanUpInput($this->getEmail()),
-                'title' => $this->cleanUpInput($this->getTitle())
+                'title' => $this->cleanUpInput($this->getTitle()),
             ],
             'redirectUrl' => $this->getRedirectUrl(),
             'webhookUrl' => $this->getWebhookUrl(),
