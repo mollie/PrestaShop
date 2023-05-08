@@ -121,7 +121,7 @@ class MollieOrderCreationService
             'mollie_payments',
             [
                 'cart_id' => (int) $cartId,
-                'order_id' => $orderId,
+                'order_id' => (int) $orderId,
                 'method' => pSQL($apiPayment->method),
                 'transaction_id' => pSQL($apiPayment->id),
                 'order_reference' => pSQL($orderReference),
