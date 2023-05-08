@@ -12,6 +12,7 @@
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\ProductAttributeAdapter;
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Provider\ProfileIdProviderInterface;
@@ -19,23 +20,27 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
 use Mollie\Subscription\Exception\ProductValidationException;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
+use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
 use Mollie\Subscription\Install\AttributeInstaller;
 use Mollie\Subscription\Install\DatabaseTableInstaller;
 use Mollie\Subscription\Install\HookInstaller;
 use Mollie\Subscription\Install\Installer;
 use Mollie\Subscription\Logger\NullLogger;
 use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
+use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\PsVersionUtility;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Response;
+use Address;
+use AddressControllerCore;
+use MolRecurringOrder;
+use OrderControllerCore;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
 class Mollie extends PaymentModule
 {
-    use Mollie\Subscription\Traits\HookTraits;
-
     const DISABLE_CACHE = true;
 
     /** @var \Mollie\Api\MollieApiClient|null */
@@ -1082,5 +1087,134 @@ class Mollie extends PaymentModule
         $product['isOrderable'] = false;
 
         return $product;
+    }
+
+    public function hookActionObjectAddressAddAfter(array $params): void
+    {
+        /** @var Address $address */
+        $address = $params['object'];
+
+        /** @var ToolsAdapter $tools */
+        $tools = $this->getService(ToolsAdapter::class);
+
+        $customerId = (int) $address->id_customer;
+        $oldAddressId = (int) $tools->getValue('id_address');
+        $newAddressId = (int) $address->id;
+
+        if (!$oldAddressId) {
+            return;
+        }
+
+        /** @var MolRecurringOrder[] $orders */
+        $orders = $this->getRecurringOrdersByCustomerAddress($customerId, $oldAddressId);
+
+        if (!$orders) {
+            //NOTE: No exception is needed as there could be no subscription orders with the old address
+            return;
+        }
+
+        /** @var CustomerAddressUpdateHandler $subscriptionShippingAddressUpdateHandler */
+        $subscriptionShippingAddressUpdateHandler = $this->getService(CustomerAddressUpdateHandler::class);
+
+        $subscriptionShippingAddressUpdateHandler->handle($orders, $newAddressId, $oldAddressId);
+    }
+
+    public function hookActionObjectAddressUpdateAfter(array $params): void
+    {
+        /** @var Address $address */
+        $address = $params['object'];
+
+        $customerId = (int) $address->id_customer;
+        $addressId = (int) $address->id;
+
+        /** @var MolRecurringOrder[] $orders */
+        $orders = $this->getRecurringOrdersByCustomerAddress($customerId, $addressId);
+
+        if (!$orders) {
+            //NOTE: No exception is needed as there could be no subscription orders with the old address
+            return;
+        }
+
+        if ($address->deleted) {
+            $address->deleted = false;
+
+            $address->save();
+        }
+
+        /**
+         * NOTE: using handler just to update data_updated field
+         */
+        /** @var CustomerAddressUpdateHandler $subscriptionShippingAddressUpdateHandler */
+        $subscriptionShippingAddressUpdateHandler = $this->getService(CustomerAddressUpdateHandler::class);
+
+        $subscriptionShippingAddressUpdateHandler->handle($orders, $addressId, $addressId);
+
+        $this->addPreventDeleteErrorMessage();
+    }
+
+    public function hookActionObjectAddressDeleteAfter(array $params): void
+    {
+        /** @var Address $deletedAddress */
+        $deletedAddress = $params['object'];
+
+        $customerId = (int) $deletedAddress->id_customer;
+        $oldAddressId = (int) $deletedAddress->id;
+
+        /** @var MolRecurringOrder[] $orders */
+        $orders = $this->getRecurringOrdersByCustomerAddress($customerId, $oldAddressId);
+
+        if (!$orders) {
+            //NOTE: No exception is needed as there could be no subscription orders with the old address
+            return;
+        }
+
+        $newAddress = $deletedAddress;
+
+        $newAddress->id = 0;
+        $newAddress->deleted = false;
+
+        /*
+         * NOTE: this triggers addAfter hook, which replaces old ID with the new one
+         */
+        $newAddress->save();
+
+        $this->addPreventDeleteErrorMessage();
+    }
+
+    private function getRecurringOrdersByCustomerAddress(int $customerId, int $oldAddressId): array
+    {
+        /** @var RecurringOrderRepositoryInterface $recurringOrderRepository */
+        $recurringOrderRepository = $this->getService(RecurringOrderRepositoryInterface::class);
+
+        return $recurringOrderRepository
+            ->findAll()
+            ->where('id_customer', '=', $customerId)
+            ->sqlWhere('id_address_delivery = ' . $oldAddressId . ' OR id_address_invoice = ' . $oldAddressId)
+            ->sqlWhere('status = "' . pSQL('active') . '"')
+            ->getResults();
+    }
+
+    private function addPreventDeleteErrorMessage(): void
+    {
+        /** @var ToolsAdapter $tools */
+        $tools = $this->getService(ToolsAdapter::class);
+
+        if (
+            is_null($tools->getValue('delete')) &&
+            is_null($tools->getValue('deleteAddress'))
+        ) {
+            return;
+        }
+
+        if (
+            !$this->context->controller instanceof AddressControllerCore &&
+            !$this->context->controller instanceof OrderControllerCore
+        ) {
+            return;
+        }
+
+        if (!in_array('You can\'t remove address associated with subscription', $this->context->controller->errors, true)) {
+            $this->context->controller->errors[] = $this->l('You can\'t remove address associated with subscription');
+        }
     }
 }
