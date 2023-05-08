@@ -40,7 +40,7 @@ class TestCreateSubscriptionData extends BaseTestCase
             [
                 'method' => MandateMethod::CREDITCARD,
                 'name' => self::CUSTOMER_NAME,
-                'mandate_id' => 'test-mandate-id'
+                'mandate_id' => 'test-mandate-id',
             ]
         );
 
@@ -54,7 +54,7 @@ class TestCreateSubscriptionData extends BaseTestCase
             [
                 'method' => MandateMethod::CREDITCARD,
                 'name' => self::CUSTOMER_NAME,
-                'mandate_id' => 'test-mandate-id'
+                'mandate_id' => 'test-mandate-id',
             ]
         );
         $combinationMock = $this->createMock(\Combination::class);
