@@ -366,6 +366,13 @@ class PaymentMethodService
             $orderData->setOrderNumber($orderReference);
             $orderData->setLocale($this->getLocale($molPaymentMethod->method));
             $orderData->setEmail($customer->email);
+
+            $gender = new \Gender((int) $customer->id_gender);
+
+            if (!empty($gender) && isset($gender->name[$cart->id_lang])) {
+                $orderData->setTitle((string) $gender->name[$cart->id_lang]);
+            }
+
             $orderData->setMethod($molPaymentMethod->id_method);
             $orderData->setMetadata($metaData);
 
