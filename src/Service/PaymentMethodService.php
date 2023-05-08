@@ -22,6 +22,7 @@ use Customer;
 use MolCustomer;
 use Mollie;
 use Mollie\Adapter\CartAdapter;
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Shop;
 use Mollie\Api\Resources\BaseCollection;
 use Mollie\Api\Resources\MethodCollection;
@@ -99,6 +100,8 @@ class PaymentMethodService
     private $subscriptionOrder;
     /** @var CartAdapter */
     private $cartAdapter;
+    /** @var ConfigurationAdapter */
+    private $configurationAdapter;
     private $genderRepository;
 
     public function __construct(
@@ -114,6 +117,7 @@ class PaymentMethodService
         Shop $shop,
         SubscriptionOrderValidator $subscriptionOrder,
         CartAdapter $cartAdapter,
+        ConfigurationAdapter $configurationAdapter,
         GenderRepositoryInterface $genderRepository
     ) {
         $this->module = $module;
@@ -128,6 +132,7 @@ class PaymentMethodService
         $this->shop = $shop;
         $this->subscriptionOrder = $subscriptionOrder;
         $this->cartAdapter = $cartAdapter;
+        $this->configurationAdapter = $configurationAdapter;
         $this->genderRepository = $genderRepository;
     }
 
@@ -506,7 +511,7 @@ class PaymentMethodService
      */
     public function handleCustomerInfo(int $customerId, bool $saveCard, bool $useSavedCard): ?MolCustomer
     {
-        $isSingleClickPaymentEnabled = (bool) Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
+        $isSingleClickPaymentEnabled = (bool) (int) $this->configurationAdapter->get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
         if (!$this->isCustomerSaveEnabled($isSingleClickPaymentEnabled)) {
             return null;
         }
