@@ -63,7 +63,7 @@ describe('PS1784 Tests Suite', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it.only('C339341: 04 Enabling All payments in Module BO [Orders API]', () => {
+it('C339341: 04 Enabling All payments in Module BO [Orders API]', () => {
       cy.visit('/admin1/')
       cy.OpenModuleDashboard()
       cy.ConfOrdersAPI1784()
