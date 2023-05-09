@@ -54,7 +54,7 @@ describe('PS8 Tests Suite', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it('04 Enabling All payments in Module BO [Orders API]', () => {
+it.only('04 Enabling All payments in Module BO [Orders API]', () => {
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
       cy.get('#subtab-AdminMollieModule > .link').click()
