@@ -14,6 +14,7 @@ RewriteEngine on
 RewriteCond %{HTTP_HOST} ^demoshop8.eu.ngrok.io$
 RewriteRule . - [E=REWRITEBASE:/]
 RewriteRule ^api(?:/(.*))?$ %{ENV:REWRITEBASE}webservice/dispatcher.php?url=$1 [QSA,L]
+RewriteRule ^upload/.+$ %{ENV:REWRITEBASE}index.php [QSA,L]
 
 # Images
 RewriteCond %{HTTP_HOST} ^demoshop8.eu.ngrok.io$
@@ -43,6 +44,7 @@ RewriteRule ^images_ie/?([^/]+)\.(jpe?g|png|gif)$ js/jquery/plugins/fancybox/ima
 RewriteCond %{HTTP_HOST} ^demoshop8.eu.ngrok.io$
 RewriteRule . - [E=REWRITEBASE:/]
 RewriteRule ^api(?:/(.*))?$ %{ENV:REWRITEBASE}webservice/dispatcher.php?url=$1 [QSA,L]
+RewriteRule ^upload/.+$ %{ENV:REWRITEBASE}index.php [QSA,L]
 
 RewriteCond %{HTTP_HOST} ^demoshop8.eu.ngrok.io$
 RewriteRule ^shop2$ /shop2/ [L,R]

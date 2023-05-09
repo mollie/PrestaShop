@@ -4,7 +4,7 @@
       cy.session(MollieBOFOLoggingIn,() => {
       cy.visit('/admin1/')
       cy.url().should('contain', 'https').as('Check if HTTPS exists')
-      cy.get('#email').type('demo@demo.com',{delay: 0, log: false})
+      cy.get('#email').type('demo@prestashop.com',{delay: 0, log: false})
       cy.get('#passwd').type('prestashop_demo',{delay: 0, log: false})
       cy.get('#submit_login').click().wait(1000).as('Connection successsful')
       //switching the multistore PS8
