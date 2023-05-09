@@ -1,50 +1,18 @@
 /// <reference types="Cypress" />
-function prepareCookie()
-      {
-            const name = 'PrestaShop-';
-
-                   cy.request(
-            {
-                url: '/'
-            }
-        ).then((res) => {
-
-            const cookies = res.requestHeaders.cookie.split(/; */);
-
-            cookies.forEach(cookie => {
-
-                const parts = cookie.split('=');
-                const key = parts[0]
-                const value = parts[1];
-
-                if (key.startsWith(name)) {
-                    cy.setCookie(
-                        key,
-                        value,
-                        {
-                            sameSite: 'None',
-                            secure: true
-                        }
-                    );
-                }
-            });
-
-        });
-      }
       //Caching the BO and FO session
       const login = (MollieBOFOLoggingIn) => {
       cy.session(MollieBOFOLoggingIn,() => {
       cy.visit('/admin1/')
       cy.url().should('contain', 'https').as('Check if HTTPS exists')
-      cy.get('#email').type('demo@demo.com',{delay: 0, log: false})
-      cy.get('#passwd').type('demodemo',{delay: 0, log: false})
+      cy.get('#email').type('demo@prestashop.com',{delay: 0, log: false})
+      cy.get('#passwd').type('prestashop_demo',{delay: 0, log: false})
       cy.get('#submit_login').click().wait(1000).as('Connection successsful')
-      //switching the multistore PS1784
+      //switching the multistore PS8
       cy.get('#header_shop > .dropdown').click()
       cy.get('.open > .dropdown-menu').find('[class="shop"]').eq(1).find('[href]').eq(0).click()
       cy.visit('/SHOP2/index.php?controller=my-account')
       cy.get('#login-form [name="email"]').eq(0).type('demo@demo.com')
-      cy.get('#login-form [name="password"]').eq(0).type('demodemo')
+      cy.get('#login-form [name="password"]').eq(0).type('prestashop_demo')
       cy.get('#login-form [type="submit"]').eq(0).click({force:true})
       cy.get('#history-link > .link-item').click()
       })
@@ -63,29 +31,29 @@ afterEach(() => {
 afterEach(function() {
   if (this.currentTest.state === "failed") failEarly = true
 });
-describe('PS1784 Module initial configuration setup', () => {
+describe('PS8 Module initial configuration setup', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it('C339305: 01 Connecting test API successsfully', () => {
+it('Connecting test API successsfully', () => {
       cy.visit('/admin1/')
-      // enabling the module on multistore shop - one time action
-      cy.EnablingModuleMultistore()
-      cy.OpenModuleDashboard()
+      cy.get('.mi-mollie').click({fore:true})
+      cy.get('#subtab-AdminMollieModule').click()
       cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click({force:true})
       cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
       cy.get('#module_form_submit_btn').click()
 })
-it('C339338: 02 Enabling Mollie carriers in Prestashop successfully', () => {
+it('Enabling Mollie carriers in Prestashop successfully', () => {
       cy.visit('/admin1/')
       cy.get('[id="subtab-AdminPaymentPreferences"]').find('[href]').eq(0).click({force:true})
       cy.get('[class="js-multiple-choice-table-select-column"]').eq(6).click()
       cy.get('[class="btn btn-primary"]').eq(3).click()
 })
-it('C339339: 03 Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
+it('Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
       cy.visit('/admin1/')
-      cy.OpenModuleDashboard()
+      cy.get('.mi-mollie').click({fore:true})
+      cy.get('#subtab-AdminMollieModule').click()
       cy.get('[href="#advanced_settings"]').click({force:true})
       cy.get('[id="MOLLIE_PAYMENTSCREEN_LOCALE"]').should('be.visible')
       cy.get('[id="MOLLIE_SEND_ORDER_CONFIRMATION"]').should('be.visible')
@@ -119,17 +87,19 @@ it('C339339: 03 Checking the Advanced Settings tab, verifying the Front-end comp
 });
 it('C688472 Checking the Subscriptions tab, and console errors', () => {
       cy.visit('/admin1/')
-      cy.OpenModuleDashboard()
+      cy.get('.mi-mollie').click({fore:true})
+      cy.get('#subtab-AdminMollieModule').click()
       cy.get('#subtab-AdminMollieSubscriptionOrders').click()
       cy.get('[id="invertus_mollie_subscription_grid_panel"]').should('be.visible')
 });
 it('C688473 Checking the Subscriptions FAQ, and console errors', () => {
       cy.visit('/admin1/')
-      cy.OpenModuleDashboard()
+      cy.get('.mi-mollie').click({fore:true})
+      cy.get('#subtab-AdminMollieModule').click()
       cy.get('#subtab-AdminMollieSubscriptionFAQ').click()
-      cy.get(':nth-child(2) > .col-lg-12 > .card').should('be.visible')
       cy.get(':nth-child(3) > .col-lg-12 > .card').should('be.visible')
       cy.get(':nth-child(4) > .col-lg-12 > .card').should('be.visible')
       cy.get(':nth-child(5) > .col-lg-12 > .card').should('be.visible')
+      cy.get(':nth-child(6) > .col-lg-12 > .card').should('be.visible')
 });
 })
