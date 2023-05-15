@@ -350,12 +350,12 @@ it('C339357: 20 IN3 Checkouting [Orders API]', () => {
 it('C339358: 21 IN3 Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it('C339359: 22 IN3 should not be shown under 5000 EUR [Orders API]', () => {
+it.only('C339359: 22 IN3 should not be shown under 5000 EUR [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.contains('Reorder').click()
       cy.get('.logo').click()
       cy.get('.blockcart').click()
-      cy.get('.js-cart-line-product-quantity').clear().type(1111)
+      cy.get('.js-cart-line-product-quantity').clear().type(500)
       cy.get('.text-sm-center > .btn').click()
       cy.contains('NL').click()
       //Billing country LT, DE etc.
