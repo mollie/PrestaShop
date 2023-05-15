@@ -384,9 +384,10 @@ it.only('23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.get('#js-delivery > .continue').click()
       //asserting i3 image
       cy.get('html').should('contain.html','src="https://www.mollie.com/external/icons/payment-methods/in3%402x.png"')
-      //todo finish
+      //Unsetting the images setting for clear end
       cy.visit('/admin1/')
-      cy.OpenModuleDashboard()
+      cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
+      cy.get('#subtab-AdminMollieModule > .link').click()
       cy.get('[href="#advanced_settings"]').click({force:true})
       cy.get('[name="MOLLIE_IMAGES"]').select('hide')
       cy.get('[type="submit"]').first().click({force:true})
