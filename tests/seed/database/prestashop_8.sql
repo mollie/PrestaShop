@@ -3156,8 +3156,8 @@ INSERT INTO `ps_configuration` (`id_configuration`, `id_shop_group`, `id_shop`, 
 (231,	NULL,	NULL,	'HOMESLIDER_PAUSE',	'7700',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (232,	NULL,	NULL,	'HOMESLIDER_LOOP',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (233,	NULL,	NULL,	'PS_BASE_DISTANCE_UNIT',	'm',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
-(234,	NULL,	NULL,	'PS_SHOP_DOMAIN',	'demoshop8.eu.ngrok.io',	'0000-00-00 00:00:00',	'2023-05-02 12:16:57'),
-(235,	NULL,	NULL,	'PS_SHOP_DOMAIN_SSL',	'demoshop8.eu.ngrok.io',	'0000-00-00 00:00:00',	'2023-05-02 12:16:57'),
+(234,	NULL,	NULL,	'PS_SHOP_DOMAIN',	'wipdemoshop8.eu.ngrok.io',	'0000-00-00 00:00:00',	'2023-05-02 12:16:57'),
+(235,	NULL,	NULL,	'PS_SHOP_DOMAIN_SSL',	'wipdemoshop8.eu.ngrok.io',	'0000-00-00 00:00:00',	'2023-05-02 12:16:57'),
 (236,	NULL,	NULL,	'PS_SHOP_NAME',	'PrestaShop',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (237,	NULL,	NULL,	'PS_SHOP_EMAIL',	'demo@prestashop.com',	'0000-00-00 00:00:00',	'2023-05-02 12:16:59'),
 (238,	NULL,	NULL,	'PS_MAIL_METHOD',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
@@ -3534,12 +3534,12 @@ CREATE TABLE `ps_connections_source` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_connections_source` (`id_connections_source`, `id_connections`, `http_referer`, `request_uri`, `keywords`, `date_add`) VALUES
-(1,	2,	'',	'demoshop8.eu.ngrok.io/',	'',	'2023-05-02 12:19:12'),
-(2,	3,	'',	'demoshop8.eu.ngrok.io/',	'',	'2023-05-08 16:44:27'),
-(3,	3,	'',	'demoshop8.eu.ngrok.io/robots.txt',	'',	'2023-05-08 16:44:33'),
-(4,	3,	'',	'demoshop8.eu.ngrok.io/robots.txt',	'',	'2023-05-08 16:44:33'),
-(5,	4,	'',	'demoshop8.eu.ngrok.io/shop2/en/',	'',	'2023-05-08 17:09:17'),
-(6,	5,	'',	'demoshop8.eu.ngrok.io/shop2/en/',	'',	'2023-05-09 08:24:34');
+(1,	2,	'',	'wipdemoshop8.eu.ngrok.io/',	'',	'2023-05-02 12:19:12'),
+(2,	3,	'',	'wipdemoshop8.eu.ngrok.io/',	'',	'2023-05-08 16:44:27'),
+(3,	3,	'',	'wipdemoshop8.eu.ngrok.io/robots.txt',	'',	'2023-05-08 16:44:33'),
+(4,	3,	'',	'wipdemoshop8.eu.ngrok.io/robots.txt',	'',	'2023-05-08 16:44:33'),
+(5,	4,	'',	'wipdemoshop8.eu.ngrok.io/shop2/en/',	'',	'2023-05-08 17:09:17'),
+(6,	5,	'',	'wipdemoshop8.eu.ngrok.io/shop2/en/',	'',	'2023-05-09 08:24:34');
 
 DROP TABLE IF EXISTS `ps_contact`;
 CREATE TABLE `ps_contact` (
@@ -12067,23 +12067,23 @@ CREATE TABLE `ps_pagenotfound` (
 INSERT INTO `ps_pagenotfound` (`id_pagenotfound`, `id_shop`, `id_shop_group`, `request_uri`, `http_referer`, `date_add`) VALUES
 (1,	1,	1,	'/robots.txt',	'',	'2023-05-08 14:44:32'),
 (2,	1,	1,	'/robots.txt',	'',	'2023-05-08 14:44:33'),
-(3,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://demoshop8.eu.ngrok.io/admin1/index.php/sell/customers/?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 14:48:20'),
-(4,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://demoshop8.eu.ngrok.io/admin1/index.php/improve/modules/manage?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 14:57:32'),
-(5,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://demoshop8.eu.ngrok.io/admin1/index.php/improve/modules/manage?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 14:58:03'),
-(6,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://demoshop8.eu.ngrok.io/admin1/index.php/improve/international/localization/?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 14:58:18'),
-(7,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://demoshop8.eu.ngrok.io/admin1/index.php/improve/international/localization/?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 14:58:45'),
-(8,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://demoshop8.eu.ngrok.io/admin1/index.php/configure/shop/preferences/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 14:59:01'),
-(9,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://demoshop8.eu.ngrok.io/admin1/index.php/configure/shop/preferences/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 14:59:11'),
-(10,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://demoshop8.eu.ngrok.io/admin1/index.php/improve/payment/payment_methods?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 16:31:52'),
-(11,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://demoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 16:31:55'),
-(12,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://demoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 16:32:24'),
-(13,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://demoshop8.eu.ngrok.io/admin1/index.php/improve/payment/payment_methods?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 16:33:49'),
-(14,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://demoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 16:34:09'),
-(15,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://demoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 16:34:17'),
-(16,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://demoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-09 06:25:39'),
-(17,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://demoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-09 06:25:44'),
-(18,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://demoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-09 06:25:53'),
-(19,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://demoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-09 06:26:04');
+(3,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/sell/customers/?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 14:48:20'),
+(4,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/modules/manage?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 14:57:32'),
+(5,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/modules/manage?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 14:58:03'),
+(6,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/international/localization/?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 14:58:18'),
+(7,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/international/localization/?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 14:58:45'),
+(8,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/configure/shop/preferences/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 14:59:01'),
+(9,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/configure/shop/preferences/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 14:59:11'),
+(10,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/payment/payment_methods?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 16:31:52'),
+(11,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 16:31:55'),
+(12,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 16:32:24'),
+(13,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/payment/payment_methods?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 16:33:49'),
+(14,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 16:34:09'),
+(15,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-08 16:34:17'),
+(16,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-09 06:25:39'),
+(17,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-09 06:25:44'),
+(18,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-09 06:25:53'),
+(19,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-09 06:26:04');
 
 DROP TABLE IF EXISTS `ps_page_type`;
 CREATE TABLE `ps_page_type` (
@@ -16029,8 +16029,8 @@ CREATE TABLE `ps_shop_url` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_shop_url` (`id_shop_url`, `id_shop`, `domain`, `domain_ssl`, `physical_uri`, `virtual_uri`, `main`, `active`) VALUES
-(1,	1,	'demoshop8.eu.ngrok.io',	'demoshop8.eu.ngrok.io',	'/',	'',	1,	1),
-(2,	2,	'demoshop8.eu.ngrok.io',	'demoshop8.eu.ngrok.io',	'/',	'shop2/',	1,	1);
+(1,	1,	'wipdemoshop8.eu.ngrok.io',	'wipdemoshop8.eu.ngrok.io',	'/',	'',	1,	1),
+(2,	2,	'wipdemoshop8.eu.ngrok.io',	'wipdemoshop8.eu.ngrok.io',	'/',	'shop2/',	1,	1);
 
 DROP TABLE IF EXISTS `ps_smarty_cache`;
 CREATE TABLE `ps_smarty_cache` (
