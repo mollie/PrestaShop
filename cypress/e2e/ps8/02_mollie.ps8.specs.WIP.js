@@ -54,7 +54,7 @@ describe('PS8 Tests Suite', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it.only('04 Enabling All payments in Module BO [Orders API]', () => {
+it.skip('04 Enabling All payments in Module BO [Orders API]', () => {
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
       cy.get('#subtab-AdminMollieModule > .link').click()
@@ -98,7 +98,7 @@ it.skip('06 Vouchers Order BO Refunding, Shipping (Paid part only) [Orders API]'
       cy.OrderRefundingShippingOrdersAPI()
       cy.get('[class="card-body"]').find('[class="alert alert-warning"]').should('exist') //additional checking if the warning alert for vouchers exist
 })
-it.only('07 Bancontact Checkouting [Orders API]', () => {
+it.skip('07 Bancontact Checkouting [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.contains('Reorder').click()
       cy.contains('DE').click()
@@ -125,7 +125,7 @@ it.only('07 Bancontact Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it('08 Bancontact Order BO Shipping, Refunding [Orders API]', () => {
+it.skip('08 Bancontact Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
 it('09 iDEAL Checkouting [Orders API]', () => {

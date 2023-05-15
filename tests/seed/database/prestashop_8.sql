@@ -1128,7 +1128,9 @@ CREATE TABLE `ps_admin_filter` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `ps_admin_filter` (`id`, `employee`, `shop`, `controller`, `action`, `filter`, `filter_id`) VALUES
-(1,	1,	1,	'',	'',	'{\"limit\":50,\"orderBy\":\"date_add\",\"sortOrder\":\"DESC\",\"filters\":[]}',	'customer');
+(1,	1,	1,	'',	'',	'{\"limit\":50,\"orderBy\":\"date_add\",\"sortOrder\":\"DESC\",\"filters\":[]}',	'customer'),
+(2,	1,	2,	'',	'',	'{\"limit\":50,\"orderBy\":\"id_mol_recurring_order\",\"sortOrder\":\"asc\",\"filters\":[]}',	'invertus_mollie_subscription'),
+(3,	1,	2,	'',	'',	'{\"limit\":50,\"orderBy\":\"id_order\",\"sortOrder\":\"DESC\",\"filters\":[]}',	'order');
 
 DROP TABLE IF EXISTS `ps_alias`;
 CREATE TABLE `ps_alias` (
@@ -2386,7 +2388,21 @@ INSERT INTO `ps_cart` (`id_cart`, `id_shop_group`, `id_shop`, `id_carrier`, `del
 (3,	1,	1,	2,	'{\"3\":\"2,\"}',	1,	5,	5,	1,	2,	1,	'b44a6d9efd7a0076a0fbce6b15eaf3b1',	0,	0,	'',	0,	0,	'2023-05-02 12:18:38',	'2023-05-02 12:18:38',	NULL),
 (4,	1,	1,	2,	'{\"3\":\"2,\"}',	1,	5,	5,	1,	2,	1,	'b44a6d9efd7a0076a0fbce6b15eaf3b1',	0,	0,	'',	0,	0,	'2023-05-02 12:18:38',	'2023-05-02 12:18:38',	NULL),
 (5,	1,	1,	2,	'{\"3\":\"2,\"}',	1,	5,	5,	1,	2,	1,	'b44a6d9efd7a0076a0fbce6b15eaf3b1',	0,	0,	'',	0,	0,	'2023-05-02 12:18:38',	'2023-05-02 12:18:38',	NULL),
-(6,	1,	2,	1,	'{\"7\":\"1,\"}',	1,	7,	7,	1,	3,	124,	'0c46e3398a8f3f024dc6569fc56ed4eb',	0,	0,	'',	0,	0,	'2023-05-08 17:20:15',	'2023-05-09 08:25:11',	'{\"checkout-personal-information-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-addresses-step\":{\"step_is_reachable\":true,\"step_is_complete\":true,\"use_same_address\":true},\"checkout-delivery-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-payment-step\":{\"step_is_reachable\":true,\"step_is_complete\":false},\"checksum\":\"23271e817fe29b0d55854dd155af0545e941bdef\"}');
+(6,	1,	2,	1,	'{\"7\":\"1,\"}',	1,	7,	7,	1,	3,	124,	'0c46e3398a8f3f024dc6569fc56ed4eb',	0,	0,	'',	0,	0,	'2023-05-08 17:20:15',	'2023-05-09 08:25:11',	'{\"checkout-personal-information-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-addresses-step\":{\"step_is_reachable\":true,\"step_is_complete\":true,\"use_same_address\":true},\"checkout-delivery-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-payment-step\":{\"step_is_reachable\":true,\"step_is_complete\":false},\"checksum\":\"23271e817fe29b0d55854dd155af0545e941bdef\"}'),
+(7,	1,	2,	1,	'{\"7\":\"1,\"}',	2,	7,	7,	1,	3,	124,	'0c46e3398a8f3f024dc6569fc56ed4eb',	0,	0,	'',	0,	0,	'2023-05-15 09:56:39',	'2023-05-15 09:56:50',	'{\"checkout-personal-information-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-addresses-step\":{\"step_is_reachable\":true,\"step_is_complete\":true,\"use_same_address\":true},\"checkout-delivery-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-payment-step\":{\"step_is_reachable\":true,\"step_is_complete\":false},\"checksum\":\"6b93efd2e8ab71e5a5cc0519e778b6279b19f955\"}'),
+(8,	1,	2,	1,	'{\"7\":\"1,\"}',	2,	7,	7,	1,	3,	124,	'0c46e3398a8f3f024dc6569fc56ed4eb',	0,	0,	'',	0,	0,	'2023-05-15 09:58:01',	'2023-05-15 09:58:07',	'{\"checkout-personal-information-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-addresses-step\":{\"step_is_reachable\":true,\"step_is_complete\":true,\"use_same_address\":true},\"checkout-delivery-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-payment-step\":{\"step_is_reachable\":true,\"step_is_complete\":false},\"checksum\":\"6b93efd2e8ab71e5a5cc0519e778b6279b19f955\"}'),
+(9,	1,	2,	1,	'{\"7\":\"1,\"}',	2,	7,	7,	1,	3,	124,	'0c46e3398a8f3f024dc6569fc56ed4eb',	0,	0,	'',	0,	0,	'2023-05-15 09:58:21',	'2023-05-15 09:58:28',	'{\"checkout-personal-information-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-addresses-step\":{\"step_is_reachable\":true,\"step_is_complete\":true,\"use_same_address\":true},\"checkout-delivery-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-payment-step\":{\"step_is_reachable\":true,\"step_is_complete\":false},\"checksum\":\"6b93efd2e8ab71e5a5cc0519e778b6279b19f955\"}'),
+(10,	1,	2,	1,	'{\"7\":\"1,\"}',	2,	7,	7,	1,	3,	124,	'0c46e3398a8f3f024dc6569fc56ed4eb',	0,	0,	'',	0,	0,	'2023-05-15 09:58:43',	'2023-05-15 09:58:52',	'{\"checkout-personal-information-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-addresses-step\":{\"step_is_reachable\":true,\"step_is_complete\":true,\"use_same_address\":true},\"checkout-delivery-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-payment-step\":{\"step_is_reachable\":true,\"step_is_complete\":false},\"checksum\":\"6b93efd2e8ab71e5a5cc0519e778b6279b19f955\"}'),
+(11,	1,	2,	1,	'{\"7\":\"1,\"}',	2,	7,	7,	1,	3,	124,	'0c46e3398a8f3f024dc6569fc56ed4eb',	0,	0,	'',	0,	0,	'2023-05-15 09:59:08',	'2023-05-15 09:59:15',	'{\"checkout-personal-information-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-addresses-step\":{\"step_is_reachable\":true,\"step_is_complete\":true,\"use_same_address\":true},\"checkout-delivery-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-payment-step\":{\"step_is_reachable\":true,\"step_is_complete\":false},\"checksum\":\"6b93efd2e8ab71e5a5cc0519e778b6279b19f955\"}'),
+(12,	1,	2,	1,	'{\"7\":\"1,\"}',	2,	7,	7,	1,	3,	124,	'0c46e3398a8f3f024dc6569fc56ed4eb',	0,	0,	'',	0,	0,	'2023-05-15 10:00:45',	'2023-05-15 10:00:49',	'{\"checkout-personal-information-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-addresses-step\":{\"step_is_reachable\":true,\"step_is_complete\":true,\"use_same_address\":true},\"checkout-delivery-step\":{\"step_is_reachable\":true,\"step_is_complete\":false},\"checkout-payment-step\":{\"step_is_reachable\":false,\"step_is_complete\":false},\"checksum\":\"6b93efd2e8ab71e5a5cc0519e778b6279b19f955\"}'),
+(13,	1,	2,	1,	'{\"7\":\"1,\"}',	2,	7,	7,	1,	3,	124,	'0c46e3398a8f3f024dc6569fc56ed4eb',	0,	0,	'',	0,	0,	'2023-05-15 10:00:51',	'2023-05-15 10:00:57',	'{\"checkout-personal-information-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-addresses-step\":{\"step_is_reachable\":true,\"step_is_complete\":true,\"use_same_address\":true},\"checkout-delivery-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-payment-step\":{\"step_is_reachable\":true,\"step_is_complete\":false},\"checksum\":\"6b93efd2e8ab71e5a5cc0519e778b6279b19f955\"}'),
+(14,	1,	2,	1,	'{\"7\":\"1,\"}',	2,	7,	7,	1,	3,	124,	'0c46e3398a8f3f024dc6569fc56ed4eb',	0,	0,	'',	0,	0,	'2023-05-15 10:02:07',	'2023-05-15 10:02:11',	'{\"checkout-personal-information-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-addresses-step\":{\"step_is_reachable\":true,\"step_is_complete\":true,\"use_same_address\":true},\"checkout-delivery-step\":{\"step_is_reachable\":true,\"step_is_complete\":false},\"checkout-payment-step\":{\"step_is_reachable\":false,\"step_is_complete\":false},\"checksum\":\"6b93efd2e8ab71e5a5cc0519e778b6279b19f955\"}'),
+(15,	1,	2,	1,	'{\"7\":\"1,\"}',	2,	7,	7,	1,	3,	124,	'0c46e3398a8f3f024dc6569fc56ed4eb',	0,	0,	'',	0,	0,	'2023-05-15 10:02:16',	'2023-05-15 10:02:22',	'{\"checkout-personal-information-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-addresses-step\":{\"step_is_reachable\":true,\"step_is_complete\":true,\"use_same_address\":true},\"checkout-delivery-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-payment-step\":{\"step_is_reachable\":true,\"step_is_complete\":false},\"checksum\":\"6b93efd2e8ab71e5a5cc0519e778b6279b19f955\"}'),
+(16,	1,	2,	1,	'{\"7\":\"1,\"}',	2,	7,	7,	1,	3,	124,	'0c46e3398a8f3f024dc6569fc56ed4eb',	0,	0,	'',	0,	0,	'2023-05-15 10:03:09',	'2023-05-15 10:03:14',	'{\"checkout-personal-information-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-addresses-step\":{\"step_is_reachable\":true,\"step_is_complete\":true,\"use_same_address\":true},\"checkout-delivery-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-payment-step\":{\"step_is_reachable\":true,\"step_is_complete\":false},\"checksum\":\"6b93efd2e8ab71e5a5cc0519e778b6279b19f955\"}'),
+(17,	1,	2,	1,	'{\"7\":\"1,\"}',	2,	7,	7,	1,	3,	124,	'0c46e3398a8f3f024dc6569fc56ed4eb',	0,	0,	'',	0,	0,	'2023-05-15 10:03:30',	'2023-05-15 10:03:38',	'{\"checkout-personal-information-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-addresses-step\":{\"step_is_reachable\":true,\"step_is_complete\":true,\"use_same_address\":true},\"checkout-delivery-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-payment-step\":{\"step_is_reachable\":true,\"step_is_complete\":false},\"checksum\":\"6b93efd2e8ab71e5a5cc0519e778b6279b19f955\"}'),
+(18,	1,	2,	1,	'{\"7\":\"1,\"}',	2,	7,	7,	1,	3,	124,	'0c46e3398a8f3f024dc6569fc56ed4eb',	0,	0,	'',	0,	0,	'2023-05-15 10:03:52',	'2023-05-15 10:03:58',	'{\"checkout-personal-information-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-addresses-step\":{\"step_is_reachable\":true,\"step_is_complete\":true,\"use_same_address\":true},\"checkout-delivery-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-payment-step\":{\"step_is_reachable\":true,\"step_is_complete\":false},\"checksum\":\"6b93efd2e8ab71e5a5cc0519e778b6279b19f955\"}'),
+(19,	1,	2,	1,	'{\"7\":\"1,\"}',	2,	7,	7,	1,	3,	124,	'0c46e3398a8f3f024dc6569fc56ed4eb',	0,	0,	'',	0,	0,	'2023-05-15 10:04:14',	'2023-05-15 10:04:21',	'{\"checkout-personal-information-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-addresses-step\":{\"step_is_reachable\":true,\"step_is_complete\":true,\"use_same_address\":true},\"checkout-delivery-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-payment-step\":{\"step_is_reachable\":true,\"step_is_complete\":false},\"checksum\":\"6b93efd2e8ab71e5a5cc0519e778b6279b19f955\"}'),
+(20,	1,	2,	1,	'{\"7\":\"1,\"}',	2,	7,	7,	1,	3,	124,	'0c46e3398a8f3f024dc6569fc56ed4eb',	0,	0,	'',	0,	0,	'2023-05-15 10:11:07',	'2023-05-15 10:11:36',	'{\"checkout-personal-information-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-addresses-step\":{\"step_is_reachable\":true,\"step_is_complete\":true,\"use_same_address\":true},\"checkout-delivery-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-payment-step\":{\"step_is_reachable\":true,\"step_is_complete\":false},\"checksum\":\"baebafa63ae2b6a5948e4fd2f2e6a31598dddee0\"}');
 
 DROP TABLE IF EXISTS `ps_cart_cart_rule`;
 CREATE TABLE `ps_cart_cart_rule` (
@@ -2420,7 +2436,21 @@ INSERT INTO `ps_cart_product` (`id_cart`, `id_product`, `id_address_delivery`, `
 (3,	16,	3,	1,	28,	0,	1,	'0000-00-00 00:00:00'),
 (4,	16,	3,	1,	29,	0,	1,	'0000-00-00 00:00:00'),
 (5,	10,	3,	1,	25,	0,	1,	'0000-00-00 00:00:00'),
-(6,	2,	7,	2,	9,	0,	1,	'2023-05-09 08:24:47');
+(6,	2,	7,	2,	9,	0,	1,	'2023-05-09 08:24:47'),
+(7,	2,	7,	2,	9,	0,	1,	'2023-05-15 09:56:39'),
+(8,	2,	7,	2,	9,	0,	1,	'2023-05-15 09:58:01'),
+(9,	2,	7,	2,	9,	0,	1,	'2023-05-15 09:58:22'),
+(10,	2,	7,	2,	9,	0,	1,	'2023-05-15 09:58:43'),
+(11,	2,	7,	2,	9,	0,	1,	'2023-05-15 09:59:08'),
+(12,	2,	7,	2,	9,	0,	1,	'2023-05-15 10:00:45'),
+(13,	2,	7,	2,	9,	0,	1,	'2023-05-15 10:00:51'),
+(14,	2,	7,	2,	9,	0,	1,	'2023-05-15 10:02:07'),
+(15,	2,	7,	2,	9,	0,	1,	'2023-05-15 10:02:16'),
+(16,	2,	7,	2,	9,	0,	1,	'2023-05-15 10:03:09'),
+(17,	2,	7,	2,	9,	0,	1,	'2023-05-15 10:03:30'),
+(18,	2,	7,	2,	9,	0,	1,	'2023-05-15 10:03:52'),
+(19,	2,	7,	2,	9,	0,	1,	'2023-05-15 10:04:14'),
+(20,	2,	7,	2,	9,	0,	4,	'2023-05-15 10:11:07');
 
 DROP TABLE IF EXISTS `ps_cart_rule`;
 CREATE TABLE `ps_cart_rule` (
@@ -3354,7 +3384,39 @@ INSERT INTO `ps_configuration` (`id_configuration`, `id_shop_group`, `id_shop`, 
 (484,	NULL,	NULL,	'PS_ALLOW_HTML_IFRAME',	NULL,	'2023-05-08 16:59:10',	'2023-05-08 16:59:10'),
 (485,	NULL,	NULL,	'PS_MULTISHOP_FEATURE_ACTIVE',	'1',	'2023-05-08 16:59:10',	'2023-05-08 16:59:10'),
 (486,	NULL,	NULL,	'PS_CCCJS_VERSION',	'1',	'2023-05-08 17:09:12',	'2023-05-08 17:09:12'),
-(487,	NULL,	NULL,	'PS_CCCCSS_VERSION',	'1',	'2023-05-08 17:09:12',	'2023-05-08 17:09:12');
+(487,	NULL,	NULL,	'PS_CCCCSS_VERSION',	'1',	'2023-05-08 17:09:12',	'2023-05-08 17:09:12'),
+(492,	1,	1,	'MOLLIE_ENVIRONMENT',	'0',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(493,	1,	2,	'MOLLIE_ENVIRONMENT',	'0',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(516,	1,	1,	'MOLLIE_STATUS_OPEN',	'15',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(517,	1,	2,	'MOLLIE_STATUS_OPEN',	'15',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(518,	1,	1,	'MOLLIE_STATUS_PAID',	'2',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(519,	1,	2,	'MOLLIE_STATUS_PAID',	'2',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(520,	1,	1,	'MOLLIE_STATUS_COMPLETED',	'17',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(521,	1,	2,	'MOLLIE_STATUS_COMPLETED',	'17',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(522,	1,	1,	'MOLLIE_STATUS_CANCELED',	'6',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(523,	1,	2,	'MOLLIE_STATUS_CANCELED',	'6',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(524,	1,	1,	'MOLLIE_STATUS_EXPIRED',	'6',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(525,	1,	2,	'MOLLIE_STATUS_EXPIRED',	'6',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(526,	1,	1,	'MOLLIE_STATUS_REFUNDED',	'7',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(527,	1,	2,	'MOLLIE_STATUS_REFUNDED',	'7',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(528,	1,	1,	'MOLLIE_STATUS_SHIPPING',	'16',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(529,	1,	2,	'MOLLIE_STATUS_SHIPPING',	'16',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(548,	1,	1,	'MOLLIE_APPLE_PAY_DIRECT_STYLE',	'0',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(549,	1,	2,	'MOLLIE_APPLE_PAY_DIRECT_STYLE',	'0',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(550,	1,	1,	'MOLLIE_BANCONTACT_QR_CODE_ENABLED',	'0',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(551,	1,	2,	'MOLLIE_BANCONTACT_QR_CODE_ENABLED',	'0',	'2023-05-15 09:46:59',	'2023-05-15 09:46:59'),
+(600,	1,	2,	'MOLLIE_SHOW_CUSTOM_LOGO',	'0',	'2023-05-15 09:54:40',	'2023-05-15 09:54:40'),
+(601,	1,	2,	'MOLLIE_KLARNA_INVOICE_ON',	'MOLLIE_STATUS_KLARNA_AUTHORIZED',	'2023-05-15 09:54:40',	'2023-05-15 09:54:40'),
+(602,	1,	2,	'MOLLIE_APPLE_PAY_DIRECT',	NULL,	'2023-05-15 09:54:40',	'2023-05-15 09:56:30'),
+(603,	1,	2,	'MOLLIE_SINGLE_CLICK_PAYMENT',	NULL,	'2023-05-15 09:54:40',	'2023-05-15 09:54:40'),
+(604,	1,	2,	'MOLLIE_SHOW_RESEND_PAYMENT_LINK',	NULL,	'2023-05-15 09:54:40',	'2023-05-15 09:56:30'),
+(605,	1,	2,	'MOLLIE_VOUCHER_CATEGORY',	'null',	'2023-05-15 09:54:40',	'2023-05-15 09:54:40'),
+(606,	1,	2,	'MOLLIE_AS_MAIN',	NULL,	'2023-05-15 09:54:40',	'2023-05-15 09:56:30'),
+(607,	1,	2,	'MOLLIE_STATUS_AWAITING',	'15',	'2023-05-15 09:54:40',	'2023-05-15 09:54:40'),
+(608,	1,	2,	'MOLLIE_MAIL_WHEN_AWAITING',	NULL,	'2023-05-15 09:54:40',	'2023-05-15 09:56:30'),
+(610,	1,	2,	'MOLLIE_STATUS_PARTIAL_REFUND',	'14',	'2023-05-15 09:54:40',	'2023-05-15 09:54:40'),
+(611,	1,	2,	'MOLLIE_MAIL_WHEN_PARTIAL_REFUND',	NULL,	'2023-05-15 09:54:40',	'2023-05-15 09:56:30'),
+(612,	1,	2,	'MOLLIE_STATUS_CHARGEBACK',	'20',	'2023-05-15 09:54:40',	'2023-05-15 09:54:40');
 
 DROP TABLE IF EXISTS `ps_configuration_kpi`;
 CREATE TABLE `ps_configuration_kpi` (
@@ -3415,7 +3477,15 @@ INSERT INTO `ps_configuration_kpi` (`id_configuration_kpi`, `id_shop_group`, `id
 (41,	NULL,	NULL,	'CUSTOMER_MAIN_GENDER',	NULL,	'2023-05-08 16:48:21',	'2023-05-08 16:48:21'),
 (42,	NULL,	NULL,	'CUSTOMER_MAIN_GENDER_EXPIRE',	NULL,	'2023-05-08 16:48:21',	'2023-05-08 16:48:21'),
 (43,	NULL,	NULL,	'ORDERS_PER_CUSTOMER',	'0',	'2023-05-08 16:48:21',	'2023-05-08 16:48:21'),
-(44,	NULL,	NULL,	'ORDERS_PER_CUSTOMER_EXPIRE',	'1683643701',	'2023-05-08 16:48:21',	'2023-05-08 16:48:21');
+(44,	NULL,	NULL,	'ORDERS_PER_CUSTOMER_EXPIRE',	'1683643701',	'2023-05-08 16:48:21',	'2023-05-08 16:48:21'),
+(45,	1,	2,	'AVG_ORDER_VALUE',	'€0.00',	'2023-05-15 10:01:22',	'2023-05-15 10:01:22'),
+(46,	1,	2,	'AVG_ORDER_VALUE_EXPIRE',	'1684188000',	'2023-05-15 10:01:22',	'2023-05-15 10:01:22'),
+(47,	1,	2,	'ABANDONED_CARTS',	'0',	'2023-05-15 10:01:23',	'2023-05-15 10:01:23'),
+(48,	1,	2,	'ABANDONED_CARTS_EXPIRE',	'1684141283',	'2023-05-15 10:01:23',	'2023-05-15 10:01:23'),
+(49,	1,	2,	'NETPROFIT_VISIT',	'€0.00',	'2023-05-15 10:01:23',	'2023-05-15 10:01:23'),
+(50,	1,	2,	'NETPROFIT_VISIT_EXPIRE',	'1684188000',	'2023-05-15 10:01:23',	'2023-05-15 10:01:23'),
+(51,	1,	2,	'CONVERSION_RATE',	'0%',	'2023-05-15 10:01:24',	'2023-05-15 10:01:24'),
+(52,	1,	2,	'CONVERSION_RATE_EXPIRE',	'1684188000',	'2023-05-15 10:01:24',	'2023-05-15 10:01:24');
 
 DROP TABLE IF EXISTS `ps_configuration_kpi_lang`;
 CREATE TABLE `ps_configuration_kpi_lang` (
@@ -3506,7 +3576,23 @@ INSERT INTO `ps_connections` (`id_connections`, `id_shop_group`, `id_shop`, `id_
 (2,	1,	1,	3,	1,	3232235521,	'2023-05-02 12:19:12',	''),
 (3,	1,	1,	4,	1,	1404794126,	'2023-05-08 16:44:27',	''),
 (4,	1,	2,	124,	1,	1404794126,	'2023-05-08 17:09:17',	''),
-(5,	1,	2,	124,	1,	1490595887,	'2023-05-09 08:24:34',	'');
+(5,	1,	2,	124,	1,	1490595887,	'2023-05-09 08:24:34',	''),
+(6,	1,	2,	124,	2,	1490595887,	'2023-05-15 09:53:49',	''),
+(7,	1,	1,	642,	3,	1490595887,	'2023-05-15 09:54:23',	''),
+(8,	1,	1,	644,	3,	1490595887,	'2023-05-15 09:54:31',	''),
+(9,	1,	1,	647,	3,	1490595887,	'2023-05-15 09:54:54',	''),
+(10,	1,	1,	648,	3,	1490595887,	'2023-05-15 09:55:04',	''),
+(11,	1,	2,	124,	2,	1490595887,	'2023-05-15 09:55:48',	''),
+(12,	1,	1,	660,	1,	1490595887,	'2023-05-15 09:56:57',	''),
+(13,	1,	1,	682,	1,	1490595887,	'2023-05-15 10:01:02',	''),
+(14,	1,	1,	685,	3,	1490595887,	'2023-05-15 10:01:20',	''),
+(15,	1,	1,	686,	3,	1490595887,	'2023-05-15 10:01:27',	''),
+(16,	1,	1,	692,	1,	1490595887,	'2023-05-15 10:02:26',	''),
+(17,	1,	1,	695,	3,	1490595887,	'2023-05-15 10:02:46',	''),
+(18,	1,	1,	696,	3,	1490595887,	'2023-05-15 10:02:51',	''),
+(19,	1,	2,	124,	4,	1490595887,	'2023-05-15 10:09:16',	''),
+(20,	1,	1,	751,	3,	1490595887,	'2023-05-15 10:12:52',	''),
+(21,	1,	1,	752,	1,	1490595887,	'2023-05-15 10:12:52',	'');
 
 DROP TABLE IF EXISTS `ps_connections_page`;
 CREATE TABLE `ps_connections_page` (
@@ -3539,7 +3625,35 @@ INSERT INTO `ps_connections_source` (`id_connections_source`, `id_connections`, 
 (3,	3,	'',	'wipdemoshop8.eu.ngrok.io/robots.txt',	'',	'2023-05-08 16:44:33'),
 (4,	3,	'',	'wipdemoshop8.eu.ngrok.io/robots.txt',	'',	'2023-05-08 16:44:33'),
 (5,	4,	'',	'wipdemoshop8.eu.ngrok.io/shop2/en/',	'',	'2023-05-08 17:09:17'),
-(6,	5,	'',	'wipdemoshop8.eu.ngrok.io/shop2/en/',	'',	'2023-05-09 08:24:34');
+(6,	5,	'',	'wipdemoshop8.eu.ngrok.io/shop2/en/',	'',	'2023-05-09 08:24:34'),
+(7,	6,	'https://wipdemoshop8.eu.ngrok.io/SHOP2/index.php?controller=my-account',	'wipdemoshop8.eu.ngrok.io/shop2/en/login?back=my-account',	'',	'2023-05-15 09:53:49'),
+(8,	11,	'https://wipdemoshop8.eu.ngrok.io/SHOP2/index.php?controller=my-account',	'wipdemoshop8.eu.ngrok.io/shop2/en/login?back=my-account',	'',	'2023-05-15 09:55:48'),
+(9,	11,	'https://wipdemoshop8.eu.ngrok.io/SHOP2/de/index.php?controller=history',	'wipdemoshop8.eu.ngrok.io/shop2/de/bestellungsverlauf',	'',	'2023-05-15 09:56:37'),
+(10,	11,	'https://www.mollie.com/',	'wipdemoshop8.eu.ngrok.io/shop2/de/module/mollie/return?cart_id=7&utm_nooverride=1&rand=1684137420&key=d3706ec244ca9eab42f1fc44b328f4ae&customerId=3&order_number=mol_76461e5cc3a5e51684137420',	'',	'2023-05-15 09:57:11'),
+(11,	11,	'https://wipdemoshop8.eu.ngrok.io/SHOP2/de/index.php?controller=history',	'wipdemoshop8.eu.ngrok.io/shop2/de/bestellungsverlauf',	'',	'2023-05-15 09:58:00'),
+(12,	11,	'https://wipdemoshop8.eu.ngrok.io/SHOP2/de/index.php?controller=history',	'wipdemoshop8.eu.ngrok.io/shop2/de/bestellungsverlauf',	'',	'2023-05-15 09:58:21'),
+(13,	11,	'https://wipdemoshop8.eu.ngrok.io/SHOP2/de/index.php?controller=history',	'wipdemoshop8.eu.ngrok.io/shop2/de/bestellungsverlauf',	'',	'2023-05-15 09:58:42'),
+(14,	11,	'https://wipdemoshop8.eu.ngrok.io/SHOP2/de/index.php?controller=history',	'wipdemoshop8.eu.ngrok.io/shop2/de/bestellungsverlauf',	'',	'2023-05-15 09:59:07'),
+(15,	11,	'https://wipdemoshop8.eu.ngrok.io/SHOP2/de/index.php?controller=history',	'wipdemoshop8.eu.ngrok.io/shop2/de/bestellungsverlauf',	'',	'2023-05-15 10:00:43'),
+(16,	11,	'https://wipdemoshop8.eu.ngrok.io/SHOP2/de/index.php?controller=history',	'wipdemoshop8.eu.ngrok.io/shop2/de/bestellungsverlauf',	'',	'2023-05-15 10:00:50'),
+(17,	11,	'https://www.mollie.com/',	'wipdemoshop8.eu.ngrok.io/shop2/de/module/mollie/return?cart_id=13&utm_nooverride=1&rand=1684137664&key=8900fd298500393a9e33f64884749e5d&customerId=3&order_number=mol_136461e6c020e831684137664',	'',	'2023-05-15 10:01:13'),
+(18,	11,	'https://wipdemoshop8.eu.ngrok.io/SHOP2/de/index.php?controller=history',	'wipdemoshop8.eu.ngrok.io/shop2/de/bestellungsverlauf',	'',	'2023-05-15 10:02:04'),
+(19,	11,	'https://wipdemoshop8.eu.ngrok.io/SHOP2/de/index.php?controller=history',	'wipdemoshop8.eu.ngrok.io/shop2/de/bestellungsverlauf',	'',	'2023-05-15 10:02:16'),
+(20,	11,	'https://wipdemoshop8.eu.ngrok.io/',	'wipdemoshop8.eu.ngrok.io/shop2/de/module/mollie/return?cart_id=15&utm_nooverride=1&rand=1684137749&key=8cb2296283120dba6295254e168228b8&customerId=3&order_number=mol_156461e71509c031684137749',	'',	'2023-05-15 10:02:40'),
+(21,	11,	'https://wipdemoshop8.eu.ngrok.io/__/',	'wipdemoshop8.eu.ngrok.io/shop2/de/bestellbestatigung?id_cart=15&id_module=68&id_order=9&key=0c46e3398a8f3f024dc6569fc56ed4eb',	'',	'2023-05-15 10:02:43'),
+(22,	11,	'https://wipdemoshop8.eu.ngrok.io/SHOP2/de/index.php?controller=history',	'wipdemoshop8.eu.ngrok.io/shop2/de/bestellungsverlauf',	'',	'2023-05-15 10:03:08'),
+(23,	11,	'https://wipdemoshop8.eu.ngrok.io/SHOP2/de/index.php?controller=history',	'wipdemoshop8.eu.ngrok.io/shop2/de/bestellungsverlauf',	'',	'2023-05-15 10:03:29'),
+(24,	11,	'https://wipdemoshop8.eu.ngrok.io/SHOP2/de/index.php?controller=history',	'wipdemoshop8.eu.ngrok.io/shop2/de/bestellungsverlauf',	'',	'2023-05-15 10:03:51'),
+(25,	11,	'https://wipdemoshop8.eu.ngrok.io/SHOP2/de/index.php?controller=history',	'wipdemoshop8.eu.ngrok.io/shop2/de/bestellungsverlauf',	'',	'2023-05-15 10:04:13'),
+(26,	19,	'',	'wipdemoshop8.eu.ngrok.io/shop2/de/warenkorb?action=show',	'',	'2023-05-15 10:09:16'),
+(27,	19,	'',	'wipdemoshop8.eu.ngrok.io/shop2/de/warenkorb?action=show',	'',	'2023-05-15 10:09:23'),
+(28,	19,	'',	'wipdemoshop8.eu.ngrok.io/shop2/de/warenkorb?action=show',	'',	'2023-05-15 10:09:27'),
+(29,	19,	'',	'wipdemoshop8.eu.ngrok.io/shop2/de/warenkorb?action=show',	'',	'2023-05-15 10:09:33'),
+(30,	19,	'',	'wipdemoshop8.eu.ngrok.io/shop2/de/warenkorb?action=show',	'',	'2023-05-15 10:09:34'),
+(31,	19,	'',	'wipdemoshop8.eu.ngrok.io/shop2/de/',	'',	'2023-05-15 10:10:26'),
+(32,	19,	'https://www.mollie.com/',	'wipdemoshop8.eu.ngrok.io/shop2/de/module/mollie/return?cart_id=20&utm_nooverride=1&rand=1684138327&key=2e74e2ae079c17082613558eb9b9c2db&customerId=3&order_number=mol_206461e95746ba71684138327',	'',	'2023-05-15 10:12:18'),
+(33,	20,	'',	'wipdemoshop8.eu.ngrok.io/robots.txt',	'',	'2023-05-15 10:12:52'),
+(34,	21,	'',	'wipdemoshop8.eu.ngrok.io/en/',	'',	'2023-05-15 10:12:52');
 
 DROP TABLE IF EXISTS `ps_contact`;
 CREATE TABLE `ps_contact` (
@@ -4926,7 +5040,7 @@ CREATE TABLE `ps_customer` (
 INSERT INTO `ps_customer` (`id_customer`, `id_shop_group`, `id_shop`, `id_gender`, `id_default_group`, `id_lang`, `id_risk`, `company`, `siret`, `ape`, `firstname`, `lastname`, `email`, `passwd`, `last_passwd_gen`, `birthday`, `newsletter`, `ip_registration_newsletter`, `newsletter_date_add`, `optin`, `website`, `outstanding_allow_amount`, `show_public_prices`, `max_payment_days`, `secure_key`, `note`, `active`, `is_guest`, `deleted`, `date_add`, `date_upd`, `reset_password_token`, `reset_password_validity`) VALUES
 (1,	1,	1,	1,	3,	1,	0,	'',	'',	'',	'Anonymous',	'Anonymous',	'anonymous@psgdpr.com',	'$2y$10$T4rXnzJ6WlMwZ3foAIYfqOrivupBqnh0sZ6KGHHEVocwtY6NFsxF.',	'2023-05-02 06:17:00',	'0000-00-00',	0,	'',	'0000-00-00 00:00:00',	0,	'',	0.000000,	0,	0,	'902ad78a4595938c30f9f27665f54a28',	'',	0,	0,	0,	'2023-05-02 12:17:00',	'2023-05-02 12:17:00',	'',	'0000-00-00 00:00:00'),
 (2,	1,	1,	1,	3,	1,	0,	'',	'',	'',	'John',	'DOE',	'pub@prestashop.com',	'$2y$10$f2BEuL7S22hIQbCKKIntGuaSpPLi4A.2Zy5qfeb3DsPqI9pGVARJa',	'2023-05-02 06:18:38',	'1970-01-15',	1,	'',	'2013-12-13 08:19:15',	1,	'',	0.000000,	0,	0,	'dde10d65a88301c97a07d0778504c572',	'',	1,	0,	0,	'2023-05-02 12:18:38',	'2023-05-02 12:18:38',	'',	'0000-00-00 00:00:00'),
-(3,	1,	2,	1,	3,	1,	0,	'',	'',	'',	'INVERTUS',	'RRRRRRR',	'demo@demo.com',	'$2y$10$ql1JyAHrvAXIlu9d8y3Jou9kmjB.syg7F.Jqs/DcSFekW7rXtsqDW',	'2023-05-08 11:09:50',	'0000-00-00',	1,	'',	'2023-05-08 17:09:50',	1,	'',	0.000000,	0,	0,	'0c46e3398a8f3f024dc6569fc56ed4eb',	'',	1,	0,	0,	'2023-05-08 17:09:50',	'2023-05-08 17:09:50',	'',	'0000-00-00 00:00:00');
+(3,	1,	2,	1,	3,	2,	0,	NULL,	NULL,	NULL,	'INVERTUS',	'RRRRRRR',	'demo@demo.com',	'$2y$10$ql1JyAHrvAXIlu9d8y3Jou9kmjB.syg7F.Jqs/DcSFekW7rXtsqDW',	'2023-05-08 11:09:50',	'0000-00-00',	1,	NULL,	'2023-05-08 17:09:50',	1,	NULL,	0.000000,	0,	0,	'0c46e3398a8f3f024dc6569fc56ed4eb',	NULL,	1,	0,	0,	'2023-05-08 17:09:50',	'2023-05-15 10:04:14',	NULL,	'0000-00-00 00:00:00');
 
 DROP TABLE IF EXISTS `ps_customer_group`;
 CREATE TABLE `ps_customer_group` (
@@ -4979,7 +5093,10 @@ CREATE TABLE `ps_customer_session` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_customer_session` (`id_customer_session`, `id_customer`, `token`, `date_add`, `date_upd`) VALUES
-(1,	3,	'b89b580c4791ecaa32c8b832ffd0cba90dc7cef7',	'2023-05-08 17:09:50',	'2023-05-09 08:26:16');
+(1,	3,	'b89b580c4791ecaa32c8b832ffd0cba90dc7cef7',	'2023-05-08 17:09:50',	'2023-05-09 08:26:16'),
+(2,	3,	'32822b1e2f0a880cefac8582c395858c5df5340f',	'2023-05-15 09:53:53',	'2023-05-15 09:53:56'),
+(3,	3,	'6d6fb28c3e98fed31691246d7e13ddbd3b715859',	'2023-05-15 09:55:49',	'2023-05-15 10:04:22'),
+(4,	3,	'0775365b2d960dc57ba7e74f530c9d38f26a0df5',	'2023-05-15 10:10:56',	'2023-05-15 10:12:27');
 
 DROP TABLE IF EXISTS `ps_customer_thread`;
 CREATE TABLE `ps_customer_thread` (
@@ -5170,7 +5287,7 @@ CREATE TABLE `ps_employee` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_employee` (`id_employee`, `id_profile`, `id_lang`, `lastname`, `firstname`, `email`, `passwd`, `last_passwd_gen`, `stats_date_from`, `stats_date_to`, `stats_compare_from`, `stats_compare_to`, `stats_compare_option`, `preselect_date_range`, `bo_color`, `bo_theme`, `bo_css`, `default_tab`, `bo_width`, `bo_menu`, `active`, `optin`, `id_last_order`, `id_last_customer_message`, `id_last_customer`, `last_connection_date`, `reset_password_token`, `reset_password_validity`, `has_enabled_gravatar`) VALUES
-(1,	1,	1,	'Doe',	'John',	'demo@prestashop.com',	'$2y$10$q322jp6mz0cb71ZbjPycduo540qj3ptvpvX/CkuSI3TV4HmvmdPG2',	'2023-05-02 06:16:59',	'2023-04-02',	'2023-05-02',	'0000-00-00',	'0000-00-00',	1,	NULL,	NULL,	'default',	'theme.css',	1,	0,	1,	1,	NULL,	0,	0,	0,	'2023-05-09',	NULL,	'0000-00-00 00:00:00',	0);
+(1,	1,	1,	'Doe',	'John',	'demo@prestashop.com',	'$2y$10$q322jp6mz0cb71ZbjPycduo540qj3ptvpvX/CkuSI3TV4HmvmdPG2',	'2023-05-02 06:16:59',	'2023-04-02',	'2023-05-02',	'0000-00-00',	'0000-00-00',	1,	NULL,	NULL,	'default',	'theme.css',	1,	0,	1,	1,	NULL,	0,	0,	0,	'2023-05-15',	NULL,	'0000-00-00 00:00:00',	0);
 
 DROP TABLE IF EXISTS `ps_employee_session`;
 CREATE TABLE `ps_employee_session` (
@@ -5183,7 +5300,10 @@ CREATE TABLE `ps_employee_session` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_employee_session` (`id_employee_session`, `id_employee`, `token`, `date_add`, `date_upd`) VALUES
-(2,	1,	'67bce813a9adb970ad2c9813d74cb830104423fd',	'2023-05-09 08:25:33',	'2023-05-09 08:36:07');
+(2,	1,	'67bce813a9adb970ad2c9813d74cb830104423fd',	'2023-05-09 08:25:33',	'2023-05-09 08:36:07'),
+(3,	1,	'1871862a3644644536938d69cb4c237747d55ce1',	'2023-05-15 09:53:35',	'2023-05-15 09:55:03'),
+(4,	1,	'96e2c290feb46f4ae5e970d08e94297506a85240',	'2023-05-15 09:55:41',	'2023-05-15 10:03:03'),
+(5,	1,	'82ec834d1e15c6d8d559b89e35f3de0fade68d29',	'2023-05-15 10:13:30',	'2023-05-15 10:15:09');
 
 DROP TABLE IF EXISTS `ps_employee_shop`;
 CREATE TABLE `ps_employee_shop` (
@@ -5370,7 +5490,11 @@ CREATE TABLE `ps_ganalytics` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_ganalytics` (`id_google_analytics`, `id_order`, `id_customer`, `id_shop`, `sent`, `refund_sent`, `date_add`) VALUES
-(1,	6,	0,	2,	0,	NULL,	'2023-05-09 06:26:16');
+(1,	6,	0,	2,	0,	NULL,	'2023-05-09 06:26:16'),
+(2,	7,	0,	2,	0,	NULL,	'2023-05-15 07:57:13'),
+(3,	8,	0,	2,	0,	NULL,	'2023-05-15 08:01:15'),
+(4,	9,	0,	2,	0,	NULL,	'2023-05-15 08:02:42'),
+(5,	10,	0,	2,	0,	NULL,	'2023-05-15 08:12:20');
 
 DROP TABLE IF EXISTS `ps_ganalytics_data`;
 CREATE TABLE `ps_ganalytics_data` (
@@ -5381,7 +5505,21 @@ CREATE TABLE `ps_ganalytics_data` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_ganalytics_data` (`id_cart`, `id_shop`, `data`) VALUES
-(6,	2,	'[[[[[[[[[\"MBG.addCheckoutOption(2,\'\');\"]]]]]]]]]');
+(6,	2,	'[[[[[[[[[\"MBG.addCheckoutOption(2,\'\');\"]]]]]]]]]'),
+(7,	2,	'[[[[[[[\"MBG.addCheckoutOption(2,\'Click and collect\');\"]]]]]]]'),
+(8,	2,	'[[[[[\"MBG.addCheckoutOption(2,\'Click and collect\');\"]]]]]'),
+(9,	2,	'[[[[[\"MBG.addCheckoutOption(2,\'Click and collect\');\"]]]]]'),
+(10,	2,	'[[[[[\"MBG.addCheckoutOption(2,\'Click and collect\');\"]]]]]'),
+(11,	2,	'[[[[[\"MBG.addCheckoutOption(2,\'Click and collect\');\"]]]]]'),
+(12,	2,	'[[\"MBG.addCheckoutOption(2,\'Click and collect\');\"]]'),
+(13,	2,	'[[[[[[[\"MBG.addCheckoutOption(2,\'Click and collect\');\"]]]]]]]'),
+(14,	2,	'[[[\"MBG.addCheckoutOption(2,\'Click and collect\');\"]]]'),
+(15,	2,	'[[[[[[[\"MBG.addCheckoutOption(2,\'Click and collect\');\"]]]]]]]'),
+(16,	2,	'[[[[[\"MBG.addCheckoutOption(2,\'Click and collect\');\"]]]]]'),
+(17,	2,	'[[[[[\"MBG.addCheckoutOption(2,\'Click and collect\');\"]]]]]'),
+(18,	2,	'[[[[[\"MBG.addCheckoutOption(2,\'Click and collect\');\"]]]]]'),
+(19,	2,	'[[[[[\"MBG.addCheckoutOption(2,\'Click and collect\');\"]]]]]'),
+(20,	2,	'[[[[[[{\"2\":{\"id\":\"2-9\",\"name\":\"hummingbird-printed-sweater\",\"category\":\"women\",\"brand\":\"studio-design\",\"variant\":\"s\",\"type\":\"typical\",\"position\":\"0\",\"quantity\":3,\"list\":\"cart\",\"url\":\"\",\"price\":28.719999999999999}}]]]]]]');
 
 DROP TABLE IF EXISTS `ps_gender`;
 CREATE TABLE `ps_gender` (
@@ -5623,7 +5761,7 @@ INSERT INTO `ps_guest` (`id_guest`, `id_operating_system`, `id_web_browser`, `id
 (121,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
 (122,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
 (123,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
-(124,	7,	3,	3,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'en',	0),
+(124,	7,	11,	3,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'en',	0),
 (125,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
 (126,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
 (127,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
@@ -6105,7 +6243,168 @@ INSERT INTO `ps_guest` (`id_guest`, `id_operating_system`, `id_web_browser`, `id
 (603,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
 (604,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
 (605,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
-(606,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0);
+(606,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(607,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(608,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(609,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(610,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(611,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(612,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(613,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(614,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(615,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(616,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(617,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(618,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(619,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(620,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(621,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(622,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(623,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(624,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(625,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(626,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(627,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(628,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(629,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(630,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(631,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(632,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(633,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(634,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(635,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(636,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(637,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(639,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(640,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(641,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(642,	7,	11,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'en',	0),
+(643,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(644,	7,	11,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'en',	0),
+(645,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(646,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(647,	7,	11,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'en',	0),
+(648,	7,	11,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'en',	0),
+(649,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(650,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(651,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(652,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(654,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(655,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(656,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(657,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(658,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(659,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(660,	7,	11,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(661,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(662,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(663,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(664,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(665,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(666,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(667,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(668,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(669,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(670,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(671,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(672,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(673,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(674,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(675,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(676,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(677,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(678,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(679,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(680,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(681,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(682,	7,	11,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(683,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(684,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(685,	7,	11,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'en',	0),
+(686,	7,	11,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'en',	0),
+(687,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(688,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(689,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(690,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(691,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(692,	7,	11,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(693,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(694,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(695,	7,	11,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'en',	0),
+(696,	7,	11,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'en',	0),
+(697,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(698,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(699,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(700,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(701,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(702,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(703,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(704,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(705,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(706,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(707,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(708,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(709,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(710,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(711,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(712,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(713,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(714,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(715,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(716,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(717,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(718,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(719,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(720,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(721,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(722,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(723,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(724,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(725,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(726,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(727,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(728,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(729,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(730,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(732,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(733,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(734,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(735,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(736,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(737,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(738,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(739,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(740,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(741,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(742,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(743,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(744,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(745,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(746,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(747,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(748,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(749,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(750,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(751,	7,	3,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'en',	0),
+(752,	7,	3,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'en',	0),
+(753,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(754,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(755,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(756,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(757,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(758,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(759,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(760,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(761,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(762,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(763,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(764,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(765,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(766,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(767,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(768,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(769,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(770,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0);
 
 DROP TABLE IF EXISTS `ps_homeslider`;
 CREATE TABLE `ps_homeslider` (
@@ -8767,7 +9066,61 @@ INSERT INTO `ps_log` (`id_log`, `severity`, `error_code`, `message`, `object_typ
 (364,	1,	0,	'Error - The following e-mail template is missing: en/cheque.txt',	'',	0,	2,	NULL,	1,	0,	0,	'2023-05-09 08:26:15',	'2023-05-09 08:26:15'),
 (365,	1,	0,	'Error - The following e-mail template is missing: cheque',	'',	0,	2,	NULL,	1,	0,	0,	'2023-05-09 08:26:15',	'2023-05-09 08:26:15'),
 (366,	1,	0,	'Error - The following e-mail template is missing: en/order_conf.txt',	'',	0,	2,	NULL,	1,	0,	0,	'2023-05-09 08:26:15',	'2023-05-09 08:26:15'),
-(367,	1,	0,	'Error - The following e-mail template is missing: order_conf',	'',	0,	2,	NULL,	1,	0,	0,	'2023-05-09 08:26:15',	'2023-05-09 08:26:15');
+(367,	1,	0,	'Error - The following e-mail template is missing: order_conf',	'',	0,	2,	NULL,	1,	0,	0,	'2023-05-09 08:26:15',	'2023-05-09 08:26:15'),
+(368,	1,	0,	'Protect vendor folder in module mollie',	'',	0,	1,	NULL,	1,	0,	0,	'2023-05-15 09:47:00',	'2023-05-15 09:47:00'),
+(369,	1,	0,	'Protect vendor folder in module mollie',	'',	0,	1,	NULL,	1,	0,	0,	'2023-05-15 09:47:16',	'2023-05-15 09:47:16'),
+(370,	1,	0,	'Protect vendor folder in module mollie',	'',	0,	2,	NULL,	1,	0,	0,	'2023-05-15 09:47:28',	'2023-05-15 09:47:28'),
+(371,	1,	0,	'Back office connection from 88.216.176.47',	'',	0,	NULL,	NULL,	1,	1,	1,	'2023-05-15 09:53:35',	'2023-05-15 09:53:35'),
+(372,	1,	0,	'Back office connection from 88.216.176.47',	'',	0,	NULL,	NULL,	1,	1,	1,	'2023-05-15 09:55:41',	'2023-05-15 09:55:41'),
+(373,	1,	0,	'Mollie\\Service\\TransactionService::processTransaction said: Starting to process ORDER transaction.',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 09:57:06',	'2023-05-15 09:57:06'),
+(374,	3,	0,	'Swift Error: Expected response code 220 but got an empty response',	'SwiftMessage',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 09:57:06',	'2023-05-15 09:57:06'),
+(375,	1,	0,	'Error - The following e-mail template is missing: de/order_conf.txt',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 09:57:07',	'2023-05-15 09:57:07'),
+(376,	1,	0,	'Error - The following e-mail template is missing: en/order_conf.txt',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 09:57:07',	'2023-05-15 09:57:07'),
+(377,	1,	0,	'Error - The following e-mail template is missing: order_conf',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 09:57:07',	'2023-05-15 09:57:07'),
+(378,	1,	0,	'Error - The following e-mail template is missing: de/payment.txt',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 09:57:09',	'2023-05-15 09:57:09'),
+(379,	1,	0,	'Error - The following e-mail template is missing: en/payment.txt',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 09:57:09',	'2023-05-15 09:57:09'),
+(380,	1,	0,	'Error - The following e-mail template is missing: payment',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 09:57:09',	'2023-05-15 09:57:09'),
+(381,	1,	0,	'Frontcontroller::init - Cart cannot be loaded or an order has already been placed using this cart',	'Cart',	7,	2,	NULL,	2,	0,	0,	'2023-05-15 09:57:11',	'2023-05-15 09:57:11'),
+(382,	1,	0,	'Frontcontroller::init - Cart cannot be loaded or an order has already been placed using this cart',	'Cart',	7,	2,	NULL,	2,	0,	0,	'2023-05-15 09:57:12',	'2023-05-15 09:57:12'),
+(383,	1,	0,	'Frontcontroller::init - Cart cannot be loaded or an order has already been placed using this cart',	'Cart',	7,	2,	NULL,	2,	0,	0,	'2023-05-15 09:57:12',	'2023-05-15 09:57:12'),
+(384,	1,	0,	'Mollie\\Service\\TransactionService::processTransaction said: Starting to process ORDER transaction.',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:01:09',	'2023-05-15 10:01:09'),
+(385,	3,	0,	'Swift Error: Expected response code 220 but got an empty response',	'SwiftMessage',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:01:09',	'2023-05-15 10:01:09'),
+(386,	1,	0,	'Error - The following e-mail template is missing: de/order_conf.txt',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:01:09',	'2023-05-15 10:01:09'),
+(387,	1,	0,	'Error - The following e-mail template is missing: en/order_conf.txt',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:01:09',	'2023-05-15 10:01:09'),
+(388,	1,	0,	'Error - The following e-mail template is missing: order_conf',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:01:09',	'2023-05-15 10:01:09'),
+(389,	1,	0,	'Error - The following e-mail template is missing: de/payment.txt',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:01:11',	'2023-05-15 10:01:11'),
+(390,	1,	0,	'Error - The following e-mail template is missing: en/payment.txt',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:01:11',	'2023-05-15 10:01:11'),
+(391,	1,	0,	'Error - The following e-mail template is missing: payment',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:01:11',	'2023-05-15 10:01:11'),
+(392,	1,	0,	'Frontcontroller::init - Cart cannot be loaded or an order has already been placed using this cart',	'Cart',	13,	2,	NULL,	2,	0,	0,	'2023-05-15 10:01:13',	'2023-05-15 10:01:13'),
+(393,	1,	0,	'Frontcontroller::init - Cart cannot be loaded or an order has already been placed using this cart',	'Cart',	13,	2,	NULL,	2,	0,	0,	'2023-05-15 10:01:14',	'2023-05-15 10:01:14'),
+(394,	1,	0,	'Frontcontroller::init - Cart cannot be loaded or an order has already been placed using this cart',	'Cart',	13,	2,	NULL,	2,	0,	0,	'2023-05-15 10:01:14',	'2023-05-15 10:01:14'),
+(395,	1,	0,	'Mollie\\Service\\TransactionService::processTransaction said: Starting to process ORDER transaction.',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:01:38',	'2023-05-15 10:01:38'),
+(396,	1,	0,	'Mollie\\Service\\TransactionService::processTransaction said: Starting to process ORDER transaction.',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:01:50',	'2023-05-15 10:01:50'),
+(397,	1,	0,	'Mollie\\Service\\TransactionService::processTransaction said: Starting to process ORDER transaction.',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:02:35',	'2023-05-15 10:02:35'),
+(398,	3,	0,	'Swift Error: Expected response code 220 but got an empty response',	'SwiftMessage',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:02:35',	'2023-05-15 10:02:35'),
+(399,	1,	0,	'Error - The following e-mail template is missing: de/order_conf.txt',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:02:35',	'2023-05-15 10:02:35'),
+(400,	1,	0,	'Error - The following e-mail template is missing: en/order_conf.txt',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:02:35',	'2023-05-15 10:02:35'),
+(401,	1,	0,	'Error - The following e-mail template is missing: order_conf',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:02:35',	'2023-05-15 10:02:35'),
+(402,	1,	0,	'Error - The following e-mail template is missing: de/payment.txt',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:02:37',	'2023-05-15 10:02:37'),
+(403,	1,	0,	'Error - The following e-mail template is missing: en/payment.txt',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:02:37',	'2023-05-15 10:02:37'),
+(404,	1,	0,	'Error - The following e-mail template is missing: payment',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:02:37',	'2023-05-15 10:02:37'),
+(405,	1,	0,	'Frontcontroller::init - Cart cannot be loaded or an order has already been placed using this cart',	'Cart',	15,	2,	NULL,	2,	0,	0,	'2023-05-15 10:02:40',	'2023-05-15 10:02:40'),
+(406,	1,	0,	'Mollie\\Service\\TransactionService::processTransaction said: Starting to process ORDER transaction.',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:03:05',	'2023-05-15 10:03:05'),
+(407,	1,	0,	'Mollie\\Service\\TransactionService::processTransaction said: Starting to process ORDER transaction.',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:03:06',	'2023-05-15 10:03:06'),
+(408,	1,	0,	'Mollie\\Service\\TransactionService::processTransaction said: Starting to process ORDER transaction.',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:12:13',	'2023-05-15 10:12:13'),
+(409,	3,	0,	'Swift Error: Expected response code 220 but got an empty response',	'SwiftMessage',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:12:14',	'2023-05-15 10:12:14'),
+(410,	1,	0,	'Error - The following e-mail template is missing: de/order_conf.txt',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:12:14',	'2023-05-15 10:12:14'),
+(411,	1,	0,	'Error - The following e-mail template is missing: en/order_conf.txt',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:12:14',	'2023-05-15 10:12:14'),
+(412,	1,	0,	'Error - The following e-mail template is missing: order_conf',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:12:14',	'2023-05-15 10:12:14'),
+(413,	1,	0,	'Error - The following e-mail template is missing: de/payment.txt',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:12:16',	'2023-05-15 10:12:16'),
+(414,	1,	0,	'Error - The following e-mail template is missing: en/payment.txt',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:12:16',	'2023-05-15 10:12:16'),
+(415,	1,	0,	'Error - The following e-mail template is missing: payment',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:12:16',	'2023-05-15 10:12:16'),
+(416,	1,	0,	'Frontcontroller::init - Cart cannot be loaded or an order has already been placed using this cart',	'Cart',	20,	2,	NULL,	2,	0,	0,	'2023-05-15 10:12:18',	'2023-05-15 10:12:18'),
+(417,	1,	0,	'Frontcontroller::init - Cart cannot be loaded or an order has already been placed using this cart',	'Cart',	20,	2,	NULL,	2,	0,	0,	'2023-05-15 10:12:18',	'2023-05-15 10:12:18'),
+(418,	1,	0,	'Frontcontroller::init - Cart cannot be loaded or an order has already been placed using this cart',	'Cart',	20,	2,	NULL,	2,	0,	0,	'2023-05-15 10:12:18',	'2023-05-15 10:12:18'),
+(419,	1,	0,	'Mollie\\Service\\TransactionService::processTransaction said: Starting to process ORDER transaction.',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:12:28',	'2023-05-15 10:12:28'),
+(420,	1,	0,	'Mollie\\Service\\TransactionService::processTransaction said: Starting to process ORDER transaction.',	'',	0,	2,	NULL,	2,	0,	0,	'2023-05-15 10:13:28',	'2023-05-15 10:13:28'),
+(421,	1,	0,	'Back office connection from 88.216.176.47',	'',	0,	NULL,	NULL,	1,	1,	1,	'2023-05-15 10:13:30',	'2023-05-15 10:13:30');
 
 DROP TABLE IF EXISTS `ps_mail`;
 CREATE TABLE `ps_mail` (
@@ -11597,7 +11950,11 @@ INSERT INTO `ps_orders` (`id_order`, `reference`, `id_shop_group`, `id_shop`, `i
 (3,	'UOYEVOLI',	1,	1,	2,	1,	2,	3,	1,	5,	5,	8,	'b44a6d9efd7a0076a0fbce6b15eaf3b1',	'Payment by check',	1.000000,	'ps_checkpayment',	0,	0,	'',	0,	0.000000,	0.000000,	0.000000,	14.900000,	21.300000,	19.900000,	0.000000,	12.900000,	12.900000,	7.000000,	8.400000,	7.000000,	0.000,	0.000000,	0.000000,	0.000000,	0,	0,	0,	0,	'0000-00-00 00:00:00',	'0000-00-00 00:00:00',	0,	'2023-05-02 12:18:39',	'2023-05-02 12:18:39',	''),
 (4,	'FFATNOMMJ',	1,	1,	2,	1,	2,	4,	1,	5,	5,	1,	'b44a6d9efd7a0076a0fbce6b15eaf3b1',	'Payment by check',	1.000000,	'ps_checkpayment',	0,	0,	'',	0,	0.000000,	0.000000,	0.000000,	14.900000,	21.300000,	19.900000,	0.000000,	12.900000,	12.900000,	7.000000,	8.400000,	7.000000,	0.000,	0.000000,	0.000000,	0.000000,	0,	0,	0,	0,	'0000-00-00 00:00:00',	'0000-00-00 00:00:00',	0,	'2023-05-02 12:18:39',	'2023-05-02 12:18:39',	''),
 (5,	'KHWLILZLL',	1,	1,	2,	1,	2,	5,	1,	5,	5,	10,	'b44a6d9efd7a0076a0fbce6b15eaf3b1',	'Bank wire',	1.000000,	'ps_wirepayment',	0,	0,	'',	0,	0.000000,	0.000000,	0.000000,	20.900000,	27.300000,	25.900000,	0.000000,	18.900000,	18.900000,	7.000000,	8.400000,	7.000000,	0.000,	0.000000,	0.000000,	0.000000,	0,	0,	0,	0,	'0000-00-00 00:00:00',	'0000-00-00 00:00:00',	0,	'2023-05-02 12:18:39',	'2023-05-02 12:18:39',	''),
-(6,	'XPFLRJMAQ',	1,	2,	1,	1,	3,	6,	1,	7,	7,	1,	'0c46e3398a8f3f024dc6569fc56ed4eb',	'Payments by check',	1.000000,	'ps_checkpayment',	0,	0,	'',	0,	0.000000,	0.000000,	0.000000,	34.180000,	34.180000,	28.720000,	0.000000,	28.720000,	34.180000,	0.000000,	0.000000,	0.000000,	19.000,	0.000000,	0.000000,	0.000000,	2,	2,	0,	0,	'0000-00-00 00:00:00',	'0000-00-00 00:00:00',	0,	'2023-05-09 08:26:15',	'2023-05-09 08:26:15',	'');
+(6,	'XPFLRJMAQ',	1,	2,	1,	1,	3,	6,	1,	7,	7,	1,	'0c46e3398a8f3f024dc6569fc56ed4eb',	'Payments by check',	1.000000,	'ps_checkpayment',	0,	0,	'',	0,	0.000000,	0.000000,	0.000000,	34.180000,	34.180000,	28.720000,	0.000000,	28.720000,	34.180000,	0.000000,	0.000000,	0.000000,	19.000,	0.000000,	0.000000,	0.000000,	2,	2,	0,	0,	'0000-00-00 00:00:00',	'0000-00-00 00:00:00',	0,	'2023-05-09 08:26:15',	'2023-05-09 08:26:15',	''),
+(7,	'UJYXWUVXZ',	1,	2,	1,	2,	3,	7,	1,	7,	7,	2,	'0c46e3398a8f3f024dc6569fc56ed4eb',	'Bancontact',	1.000000,	'mollie',	0,	0,	'',	0,	0.000000,	0.000000,	0.000000,	52.690000,	52.690000,	47.230000,	105.380000,	28.720000,	34.180000,	0.000000,	0.000000,	0.000000,	19.000,	0.000000,	0.000000,	0.000000,	2,	2,	1,	0,	'2023-05-15 09:57:07',	'0000-00-00 00:00:00',	1,	'2023-05-15 09:57:06',	'2023-05-15 09:57:07',	''),
+(8,	'ABVITGLOT',	1,	2,	1,	2,	3,	13,	1,	7,	7,	14,	'0c46e3398a8f3f024dc6569fc56ed4eb',	'Bancontact',	1.000000,	'mollie',	0,	0,	'',	0,	0.000000,	0.000000,	0.000000,	52.690000,	52.690000,	47.230000,	105.380000,	28.720000,	34.180000,	0.000000,	0.000000,	0.000000,	19.000,	0.000000,	0.000000,	0.000000,	2,	2,	2,	0,	'2023-05-15 10:01:09',	'0000-00-00 00:00:00',	0,	'2023-05-15 10:01:09',	'2023-05-15 10:12:29',	''),
+(9,	'FXQJCYYRS',	1,	2,	1,	2,	3,	15,	1,	7,	7,	14,	'0c46e3398a8f3f024dc6569fc56ed4eb',	'iDEAL',	1.000000,	'mollie',	0,	0,	'',	0,	0.000000,	0.000000,	0.000000,	52.690000,	52.690000,	47.230000,	105.380000,	28.720000,	34.180000,	0.000000,	0.000000,	0.000000,	19.000,	0.000000,	0.000000,	0.000000,	2,	2,	3,	0,	'2023-05-15 10:02:35',	'0000-00-00 00:00:00',	0,	'2023-05-15 10:02:35',	'2023-05-15 10:13:28',	''),
+(10,	'QDATPMUMJ',	1,	2,	1,	2,	3,	20,	1,	7,	7,	18,	'0c46e3398a8f3f024dc6569fc56ed4eb',	'Slice it.',	1.000000,	'mollie',	0,	0,	'',	0,	0.000000,	0.000000,	0.000000,	169.710000,	169.710000,	147.880000,	339.420000,	114.880000,	136.710000,	0.000000,	0.000000,	0.000000,	19.000,	0.000000,	0.000000,	0.000000,	2,	2,	4,	0,	'2023-05-15 10:12:14',	'0000-00-00 00:00:00',	1,	'2023-05-15 10:12:13',	'2023-05-15 10:12:14',	'');
 
 DROP TABLE IF EXISTS `ps_order_carrier`;
 CREATE TABLE `ps_order_carrier` (
@@ -11622,7 +11979,11 @@ INSERT INTO `ps_order_carrier` (`id_order_carrier`, `id_order`, `id_carrier`, `i
 (3,	3,	2,	0,	0.000000,	7.000000,	8.400000,	'',	'2023-05-02 12:18:39'),
 (4,	4,	2,	0,	0.000000,	7.000000,	8.400000,	'',	'2023-05-02 12:18:39'),
 (5,	5,	2,	0,	0.000000,	7.000000,	8.400000,	'',	'2023-05-02 12:18:39'),
-(6,	6,	1,	0,	0.300000,	0.000000,	0.000000,	'',	'2023-05-09 08:26:15');
+(6,	6,	1,	0,	0.300000,	0.000000,	0.000000,	'',	'2023-05-09 08:26:15'),
+(7,	7,	1,	1,	0.300000,	0.000000,	0.000000,	'',	'2023-05-15 09:57:06'),
+(8,	8,	1,	2,	0.300000,	0.000000,	0.000000,	'',	'2023-05-15 10:01:09'),
+(9,	9,	1,	3,	0.300000,	0.000000,	0.000000,	'',	'2023-05-15 10:02:35'),
+(10,	10,	1,	4,	1.200000,	0.000000,	0.000000,	'',	'2023-05-15 10:12:13');
 
 DROP TABLE IF EXISTS `ps_order_cart_rule`;
 CREATE TABLE `ps_order_cart_rule` (
@@ -11708,7 +12069,11 @@ INSERT INTO `ps_order_detail` (`id_order_detail`, `id_order`, `id_order_invoice`
 (5,	3,	0,	0,	1,	16,	28,	0,	'Mountain fox notebook Style : Ruled',	1,	1,	0,	0,	0,	12.900000,	0.00,	0.000000,	0.000000,	0.000000,	0.00,	0.000000,	'',	'',	'',	'',	'demo_8',	'',	0.000000,	0,	0,	'',	0.000,	0.000000,	0.000,	0,	'',	0,	'0000-00-00 00:00:00',	12.900000,	12.900000,	12.900000,	12.900000,	0.000000,	0.000000,	0.000000,	12.900000,	5.490000,	0.000000,	0.000000),
 (6,	4,	0,	0,	1,	16,	29,	0,	'Mountain fox notebook Style : Plain',	1,	1,	0,	0,	0,	12.900000,	0.00,	0.000000,	0.000000,	0.000000,	0.00,	0.000000,	'',	'',	'',	'',	'demo_8',	'',	0.000000,	0,	0,	'',	0.000,	0.000000,	0.000,	0,	'',	0,	'0000-00-00 00:00:00',	12.900000,	12.900000,	12.900000,	12.900000,	0.000000,	0.000000,	0.000000,	12.900000,	5.490000,	0.000000,	0.000000),
 (7,	5,	0,	0,	1,	10,	25,	0,	'Brown bear cushion Color : Black',	1,	1,	0,	0,	0,	18.900000,	0.00,	0.000000,	0.000000,	0.000000,	0.00,	0.000000,	'',	'',	'',	'',	'demo_16',	'',	0.000000,	0,	0,	'',	0.000,	0.000000,	0.000,	0,	'',	0,	'0000-00-00 00:00:00',	18.900000,	18.900000,	18.900000,	18.900000,	0.000000,	0.000000,	0.000000,	18.900000,	5.490000,	0.000000,	0.000000),
-(8,	6,	0,	0,	2,	2,	9,	0,	'Hummingbird printed sweater (Size: S)',	1,	1,	0,	0,	0,	28.720000,	20.00,	0.000000,	0.000000,	0.000000,	0.00,	35.370000,	'',	'',	'',	'',	'demo_3',	'demo_3_62',	0.300000,	1,	0,	'MwSt. DE 19%',	19.000,	0.000000,	0.000,	0,	'',	0,	'0000-00-00 00:00:00',	34.180000,	28.720000,	34.176800,	28.720000,	0.000000,	0.000000,	5.490000,	35.900000,	5.490000,	0.000000,	0.000000);
+(8,	6,	0,	0,	2,	2,	9,	0,	'Hummingbird printed sweater (Size: S)',	1,	1,	0,	0,	0,	28.720000,	20.00,	0.000000,	0.000000,	0.000000,	0.00,	35.370000,	'',	'',	'',	'',	'demo_3',	'demo_3_62',	0.300000,	1,	0,	'MwSt. DE 19%',	19.000,	0.000000,	0.000,	0,	'',	0,	'0000-00-00 00:00:00',	34.180000,	28.720000,	34.176800,	28.720000,	0.000000,	0.000000,	5.490000,	35.900000,	5.490000,	0.000000,	0.000000),
+(9,	7,	1,	0,	2,	2,	9,	0,	'Hummingbird printed sweater (Größe: S)',	1,	1,	0,	0,	0,	28.720000,	20.00,	0.000000,	0.000000,	0.000000,	0.00,	35.370000,	'',	'',	'',	'',	'demo_3',	'demo_3_62',	0.300000,	1,	0,	'MwSt. DE 19%',	19.000,	0.000000,	0.000,	0,	'',	0,	'0000-00-00 00:00:00',	34.180000,	28.720000,	34.176800,	28.720000,	0.000000,	0.000000,	5.490000,	35.900000,	5.490000,	0.000000,	0.000000),
+(10,	8,	2,	0,	2,	2,	9,	0,	'Hummingbird printed sweater (Größe: S)',	1,	1,	0,	0,	0,	28.720000,	20.00,	0.000000,	0.000000,	0.000000,	0.00,	35.370000,	'',	'',	'',	'',	'demo_3',	'demo_3_62',	0.300000,	1,	0,	'MwSt. DE 19%',	19.000,	0.000000,	0.000,	0,	'',	0,	'0000-00-00 00:00:00',	34.180000,	28.720000,	34.176800,	28.720000,	0.000000,	0.000000,	5.490000,	35.900000,	5.490000,	0.000000,	0.000000),
+(11,	9,	3,	0,	2,	2,	9,	0,	'Hummingbird printed sweater (Größe: S)',	1,	1,	0,	0,	0,	28.720000,	20.00,	0.000000,	0.000000,	0.000000,	0.00,	35.370000,	'',	'',	'',	'',	'demo_3',	'demo_3_62',	0.300000,	1,	0,	'MwSt. DE 19%',	19.000,	0.000000,	0.000,	0,	'',	0,	'0000-00-00 00:00:00',	34.180000,	28.720000,	34.176800,	28.720000,	0.000000,	0.000000,	5.490000,	35.900000,	5.490000,	0.000000,	0.000000),
+(12,	10,	4,	0,	2,	2,	9,	0,	'Hummingbird printed sweater (Größe: S)',	4,	4,	0,	0,	0,	28.720000,	20.00,	0.000000,	0.000000,	0.000000,	0.00,	0.000000,	'',	'',	'',	'',	'demo_3',	'demo_3_62',	0.300000,	1,	0,	'MwSt. DE 19%',	19.000,	0.000000,	0.000,	0,	'',	0,	'0000-00-00 00:00:00',	136.710000,	114.880000,	34.176800,	28.720000,	0.000000,	0.000000,	5.490000,	35.900000,	5.490000,	0.000000,	0.000000);
 
 DROP TABLE IF EXISTS `ps_order_detail_tax`;
 CREATE TABLE `ps_order_detail_tax` (
@@ -11721,7 +12086,11 @@ CREATE TABLE `ps_order_detail_tax` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_order_detail_tax` (`id_order_detail`, `id_tax`, `unit_amount`, `total_amount`) VALUES
-(8,	1,	5.456800,	5.460000);
+(8,	1,	5.456800,	5.460000),
+(9,	1,	5.456800,	5.460000),
+(10,	1,	5.456800,	5.460000),
+(11,	1,	5.456800,	5.460000),
+(12,	1,	5.456800,	21.830000);
 
 DROP TABLE IF EXISTS `ps_order_history`;
 CREATE TABLE `ps_order_history` (
@@ -11744,7 +12113,19 @@ INSERT INTO `ps_order_history` (`id_order_history`, `id_employee`, `id_order`, `
 (5,	0,	5,	10,	'2023-05-02 12:18:39'),
 (6,	1,	1,	6,	'2023-05-02 12:18:39'),
 (7,	1,	3,	8,	'2023-05-02 12:18:39'),
-(8,	0,	6,	1,	'2023-05-09 08:26:15');
+(8,	0,	6,	1,	'2023-05-09 08:26:15'),
+(9,	0,	7,	15,	'2023-05-15 09:57:06'),
+(10,	0,	7,	2,	'2023-05-15 09:57:07'),
+(11,	0,	8,	15,	'2023-05-15 10:01:09'),
+(12,	0,	8,	2,	'2023-05-15 10:01:09'),
+(13,	0,	8,	16,	'2023-05-15 10:01:38'),
+(14,	0,	9,	15,	'2023-05-15 10:02:35'),
+(15,	0,	9,	2,	'2023-05-15 10:02:35'),
+(16,	0,	9,	16,	'2023-05-15 10:03:06'),
+(17,	0,	10,	15,	'2023-05-15 10:12:14'),
+(18,	0,	10,	18,	'2023-05-15 10:12:14'),
+(19,	0,	8,	14,	'2023-05-15 10:12:29'),
+(20,	0,	9,	14,	'2023-05-15 10:13:28');
 
 DROP TABLE IF EXISTS `ps_order_invoice`;
 CREATE TABLE `ps_order_invoice` (
@@ -11771,6 +12152,11 @@ CREATE TABLE `ps_order_invoice` (
   KEY `id_order` (`id_order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+INSERT INTO `ps_order_invoice` (`id_order_invoice`, `id_order`, `number`, `delivery_number`, `delivery_date`, `total_discount_tax_excl`, `total_discount_tax_incl`, `total_paid_tax_excl`, `total_paid_tax_incl`, `total_products`, `total_products_wt`, `total_shipping_tax_excl`, `total_shipping_tax_incl`, `shipping_tax_computation_method`, `total_wrapping_tax_excl`, `total_wrapping_tax_incl`, `shop_address`, `note`, `date_add`) VALUES
+(1,	7,	1,	0,	'0000-00-00 00:00:00',	0.000000,	0.000000,	47.230000,	52.690000,	28.720000,	34.180000,	0.000000,	0.000000,	0,	0.000000,	0.000000,	'PrestaShop',	'',	'2023-05-15 09:57:07'),
+(2,	8,	2,	0,	'0000-00-00 00:00:00',	0.000000,	0.000000,	47.230000,	52.690000,	28.720000,	34.180000,	0.000000,	0.000000,	0,	0.000000,	0.000000,	'PrestaShop',	'',	'2023-05-15 10:01:09'),
+(3,	9,	3,	0,	'0000-00-00 00:00:00',	0.000000,	0.000000,	47.230000,	52.690000,	28.720000,	34.180000,	0.000000,	0.000000,	0,	0.000000,	0.000000,	'PrestaShop',	'',	'2023-05-15 10:02:35'),
+(4,	10,	4,	0,	'0000-00-00 00:00:00',	0.000000,	0.000000,	147.880000,	169.710000,	114.880000,	136.710000,	0.000000,	0.000000,	0,	0.000000,	0.000000,	'PrestaShop',	'',	'2023-05-15 10:12:14');
 
 DROP TABLE IF EXISTS `ps_order_invoice_payment`;
 CREATE TABLE `ps_order_invoice_payment` (
@@ -11782,6 +12168,11 @@ CREATE TABLE `ps_order_invoice_payment` (
   KEY `id_order` (`id_order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+INSERT INTO `ps_order_invoice_payment` (`id_order_invoice`, `id_order_payment`, `id_order`) VALUES
+(1,	1,	7),
+(2,	2,	8),
+(3,	3,	9),
+(4,	4,	10);
 
 DROP TABLE IF EXISTS `ps_order_invoice_tax`;
 CREATE TABLE `ps_order_invoice_tax` (
@@ -11792,6 +12183,11 @@ CREATE TABLE `ps_order_invoice_tax` (
   KEY `id_tax` (`id_tax`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+INSERT INTO `ps_order_invoice_tax` (`id_order_invoice`, `type`, `id_tax`, `amount`) VALUES
+(1,	'shipping',	1,	0.000000),
+(2,	'shipping',	1,	0.000000),
+(3,	'shipping',	1,	0.000000),
+(4,	'shipping',	1,	0.000000);
 
 DROP TABLE IF EXISTS `ps_order_message`;
 CREATE TABLE `ps_order_message` (
@@ -11834,6 +12230,11 @@ CREATE TABLE `ps_order_payment` (
   KEY `order_reference` (`order_reference`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+INSERT INTO `ps_order_payment` (`id_order_payment`, `order_reference`, `id_currency`, `amount`, `payment_method`, `conversion_rate`, `transaction_id`, `card_number`, `card_brand`, `card_expiration`, `card_holder`, `date_add`) VALUES
+(1,	'UJYXWUVXZ',	1,	52.690000,	'Bancontact',	1.000000,	'ord_669hzt',	'',	'',	'',	'',	'2023-05-15 09:57:07'),
+(2,	'ABVITGLOT',	1,	52.690000,	'Bancontact',	1.000000,	'ord_srdwat',	'',	'',	'',	'',	'2023-05-15 10:01:09'),
+(3,	'FXQJCYYRS',	1,	52.690000,	'iDEAL',	1.000000,	'ord_8rjvbf',	'',	'',	'',	'',	'2023-05-15 10:02:35'),
+(4,	'QDATPMUMJ',	1,	169.710000,	'Slice it.',	1.000000,	'ord_d9j8y9',	'',	'',	'',	'',	'2023-05-15 10:12:14');
 
 DROP TABLE IF EXISTS `ps_order_return`;
 CREATE TABLE `ps_order_return` (
@@ -12050,7 +12451,10 @@ CREATE TABLE `ps_page` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_page` (`id_page`, `id_page_type`, `id_object`) VALUES
-(1,	1,	NULL);
+(1,	1,	NULL),
+(2,	2,	NULL),
+(3,	3,	NULL),
+(4,	4,	NULL);
 
 DROP TABLE IF EXISTS `ps_pagenotfound`;
 CREATE TABLE `ps_pagenotfound` (
@@ -12083,7 +12487,19 @@ INSERT INTO `ps_pagenotfound` (`id_pagenotfound`, `id_shop`, `id_shop_group`, `r
 (16,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-09 06:25:39'),
 (17,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-09 06:25:44'),
 (18,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-09 06:25:53'),
-(19,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-09 06:26:04');
+(19,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=8kvKNoRR8zrWFaljFxM8vyqMXp5uLVayut0W-xnrpUE',	'2023-05-09 06:26:04'),
+(20,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=FBFec2BM6y2n7FM8SUlUEcj4uuGSbAnZNlluYTShj_E',	'2023-05-15 07:54:22'),
+(21,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/payment/preferences?_token=FBFec2BM6y2n7FM8SUlUEcj4uuGSbAnZNlluYTShj_E',	'2023-05-15 07:54:31'),
+(22,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/modules/admin-subscription?_token=FBFec2BM6y2n7FM8SUlUEcj4uuGSbAnZNlluYTShj_E',	'2023-05-15 07:54:54'),
+(23,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/modules/admin-subscription-faq?_token=FBFec2BM6y2n7FM8SUlUEcj4uuGSbAnZNlluYTShj_E',	'2023-05-15 07:55:04'),
+(24,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/sell/orders/?_token=XNo2X-Z6uF5_Y4eQvBKTTxo6gbJA0PESflgIwMVLiW4',	'2023-05-15 08:01:20'),
+(25,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/sell/orders/8/view?_token=XNo2X-Z6uF5_Y4eQvBKTTxo6gbJA0PESflgIwMVLiW4',	'2023-05-15 08:01:27'),
+(26,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/sell/orders/?_token=XNo2X-Z6uF5_Y4eQvBKTTxo6gbJA0PESflgIwMVLiW4',	'2023-05-15 08:02:46'),
+(27,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/sell/orders/9/view?_token=XNo2X-Z6uF5_Y4eQvBKTTxo6gbJA0PESflgIwMVLiW4',	'2023-05-15 08:02:51'),
+(28,	1,	1,	'/robots.txt',	'',	'2023-05-15 08:12:52'),
+(29,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/modules/manage?_token=1TeDOpdXf_3KK90TVh8l08EoOZb5eaLtz9669VA5A24',	'2023-05-15 08:13:43'),
+(30,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/modules/manage?_token=1TeDOpdXf_3KK90TVh8l08EoOZb5eaLtz9669VA5A24',	'2023-05-15 08:14:11'),
+(31,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'https://wipdemoshop8.eu.ngrok.io/admin1/index.php/improve/modules/manage?_token=1TeDOpdXf_3KK90TVh8l08EoOZb5eaLtz9669VA5A24',	'2023-05-15 08:15:10');
 
 DROP TABLE IF EXISTS `ps_page_type`;
 CREATE TABLE `ps_page_type` (
@@ -12094,7 +12510,10 @@ CREATE TABLE `ps_page_type` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_page_type` (`id_page_type`, `name`) VALUES
-(1,	'index');
+(2,	'authentication'),
+(4,	'cart'),
+(1,	'index'),
+(3,	'pagenotfound');
 
 DROP TABLE IF EXISTS `ps_page_viewed`;
 CREATE TABLE `ps_page_viewed` (
@@ -12719,6 +13138,8 @@ CREATE TABLE `ps_product_sale` (
   KEY `quantity` (`quantity`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+INSERT INTO `ps_product_sale` (`id_product`, `quantity`, `sale_nbr`, `date_upd`) VALUES
+(2,	5,	2,	'2023-05-15');
 
 DROP TABLE IF EXISTS `ps_product_shop`;
 CREATE TABLE `ps_product_shop` (
@@ -16634,7 +17055,7 @@ INSERT INTO `ps_stock_available` (`id_stock_available`, `id_product`, `id_produc
 (57,	18,	38,	1,	0,	300,	0,	0,	0,	2,	''),
 (58,	18,	39,	1,	0,	300,	0,	0,	0,	2,	''),
 (59,	1,	0,	2,	0,	2400,	0,	0,	0,	2,	''),
-(60,	2,	0,	2,	0,	2099,	2099,	0,	0,	2,	''),
+(60,	2,	0,	2,	0,	2092,	2092,	0,	0,	2,	''),
 (61,	3,	0,	2,	0,	1500,	0,	0,	0,	2,	''),
 (62,	4,	0,	2,	0,	1500,	0,	0,	0,	2,	''),
 (63,	5,	0,	2,	0,	900,	0,	0,	0,	2,	''),
@@ -16660,7 +17081,7 @@ INSERT INTO `ps_stock_available` (`id_stock_available`, `id_product`, `id_produc
 (83,	1,	6,	2,	0,	300,	0,	0,	0,	2,	''),
 (84,	1,	7,	2,	0,	300,	0,	0,	0,	2,	''),
 (85,	1,	8,	2,	0,	300,	0,	0,	0,	2,	''),
-(86,	2,	9,	2,	0,	1199,	1200,	1,	0,	2,	''),
+(86,	2,	9,	2,	0,	1192,	1200,	8,	0,	2,	''),
 (87,	2,	10,	2,	0,	300,	300,	0,	0,	2,	''),
 (88,	2,	11,	2,	0,	300,	300,	0,	0,	2,	''),
 (89,	2,	12,	2,	0,	300,	300,	0,	0,	2,	''),
@@ -18544,4 +18965,4 @@ INSERT INTO `ps_zone_shop` (`id_zone`, `id_shop`) VALUES
 (7,	2),
 (8,	2);
 
--- 2023-05-09 06:36:34
+-- 2023-05-15 08:16:22
