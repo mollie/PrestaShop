@@ -350,7 +350,7 @@ it('C339357: 20 IN3 Checkouting [Orders API]', () => {
 it('C339358: 21 IN3 Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it.only('C339359: 22 IN3 should not be shown under 5000 EUR [Orders API]', () => {
+it('C339359: 22 IN3 should not be shown under 5000 EUR [Orders API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.contains('Reorder').click()
       cy.get('.logo').click()
