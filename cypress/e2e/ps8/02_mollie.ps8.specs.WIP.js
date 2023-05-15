@@ -54,7 +54,7 @@ describe('PS8 Tests Suite', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it.skip('04 Enabling All payments in Module BO [Orders API]', () => {
+it('04 Enabling All payments in Module BO [Orders API]', () => {
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
       cy.get('#subtab-AdminMollieModule > .link').click()
@@ -351,10 +351,11 @@ it('21 IN3 Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
 it('22 IN3 should not be shown under 5000 EUR [Orders API]', () => {
-      cy.visit('/SHOP2/de/')
-      cy.contains('Hummingbird printed sweater').click()
-      cy.get('[class="btn btn-primary add-to-cart"]').click()
-      cy.get('.cart-content-btn > .btn-primary').click()
+      cy.visit('/SHOP2/de/index.php?controller=history')
+      cy.contains('Reorder').click()
+      cy.get('.logo').click()
+      cy.get('.blockcart').click()
+      cy.get('.js-cart-line-product-quantity').clear().type(1111)
       cy.get('.text-sm-center > .btn').click()
       cy.contains('NL').click()
       //Billing country LT, DE etc.
@@ -364,9 +365,10 @@ it('22 IN3 should not be shown under 5000 EUR [Orders API]', () => {
       cy.contains('in3').should('not.exist')
       cy.get('.logo').click()
       cy.get('.blockcart').click()
+      //removing the cart for clear end
       cy.get('.remove-from-cart > .material-icons').click()
 })
-it('23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
+it.only('23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
       cy.get('#subtab-AdminMollieModule > .link').click()
