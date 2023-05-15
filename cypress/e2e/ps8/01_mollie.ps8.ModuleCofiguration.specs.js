@@ -36,7 +36,7 @@ describe('PS8 Module initial configuration setup', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it('Connecting test API successsfully', () => {
+it('C339305: Connecting test API successsfully', () => {
       cy.visit('/admin1/')
       cy.get('.mi-mollie').click({fore:true})
       cy.get('#subtab-AdminMollieModule').click()
@@ -44,13 +44,13 @@ it('Connecting test API successsfully', () => {
       cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
       cy.get('#module_form_submit_btn').click()
 })
-it('Enabling Mollie carriers in Prestashop successfully', () => {
+it('C339338: Enabling Mollie carriers in Prestashop successfully', () => {
       cy.visit('/admin1/')
       cy.get('[id="subtab-AdminPaymentPreferences"]').find('[href]').eq(0).click({force:true})
       cy.get('[class="js-multiple-choice-table-select-column"]').eq(6).click()
       cy.get('[class="btn btn-primary"]').eq(3).click()
 })
-it('Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
+it('C339339: Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
       cy.visit('/admin1/')
       cy.get('.mi-mollie').click({fore:true})
       cy.get('#subtab-AdminMollieModule').click()
