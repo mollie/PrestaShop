@@ -31,7 +31,7 @@ function prepareCookie()
 
         });
       }
-      //Caching the BO and FO session
+      //Catching the BO and FO session
       const login = (MollieBOFOLoggingIn) => {
       cy.session(MollieBOFOLoggingIn,() => {
       cy.visit('/admin1/')

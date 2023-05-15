@@ -18,7 +18,7 @@
       })
       }
 
-//Checing the console for errors
+//Checking the console for errors
 let windowConsoleError;
 Cypress.on('window:before:load', (win) => {
   windowConsoleError = cy.spy(win.console, 'error');
