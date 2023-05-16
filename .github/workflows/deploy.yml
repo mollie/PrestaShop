@@ -40,13 +40,19 @@ jobs:
                       .
 
     demo:
-        name: Demo deployment
-        runs-on: ubuntu-latest
-        steps:
-            -   name: executing remote ssh commands using password
-                uses: appleboy/ssh-action@master
-                with:
-                    host: ${{ secrets.HOST }}
-                    username: ${{ secrets.USERNAME }}
-                    key: ${{ secrets.KEY }}
-                    script: cd ${{ secrets.PATH }} && sh deploy.sh
+      name: Demo deployment
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+
+        - name: Pull repositories
+          run: |
+            IFS=';' read -ra repos <<< ${{ secrets.REPO_PATHS }}
+            ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+            ssh-add - <<< ${{ secrets.KEY }}
+            ssh -T ${{ secrets.USERNAME }}@${{ secrets.HOST }} << EOF
+            for repo_path in ${repos[@]}; do
+              cd $repo_path && git pull origin main && rm -r vendor && composer install
+            done
+            EOF
