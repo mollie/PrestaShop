@@ -25,7 +25,6 @@ jobs:
                   rm -rf vendor/segmentio/analytics-php/.buildscript
                   rm -rf vendor/segmentio/analytics-php/.circleci
                   rm -rf vendor/segmentio/analytics-php/.github
-                  vendor/bin/autoindex
                   mkdir mollie
                   rsync -Rr ./ ./mollie
                   shopt -s extglob
@@ -47,8 +46,10 @@ jobs:
           uses: actions/checkout@v2
 
         - name: Pull repositories
+          env:
+            SSH_AUTH_SOCK: /tmp/ssh_agent.sock
           run: |
-            IFS=';' read -ra repos <<< "${{ secrets.REPO_PATHS }}"
+            IFS=';' read -ra repos <<< "${{ secrets.SERVER_PATHS }}"
             ssh-agent -a $SSH_AUTH_SOCK > /dev/null
             ssh-add - <<< "${{ secrets.KEY }}"
             ssh -T ${{ secrets.USERNAME }}@${{ secrets.HOST }} << EOF
