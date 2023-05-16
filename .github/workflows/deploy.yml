@@ -47,8 +47,10 @@ jobs:
           uses: actions/checkout@v2
 
         - name: Pull repositories
+          env:
+            SSH_AUTH_SOCK: /tmp/ssh_agent.sock
           run: |
-            IFS=';' read -ra repos <<< "${{ secrets.REPO_PATHS }}"
+            IFS=';' read -ra repos <<< "${{ secrets.SERVER_PATHS }}"
             ssh-agent -a $SSH_AUTH_SOCK > /dev/null
             ssh-add - <<< "${{ secrets.KEY }}"
             ssh -T ${{ secrets.USERNAME }}@${{ secrets.HOST }} << EOF
