@@ -11,6 +11,7 @@
  */
 
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\Link;
 use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
@@ -29,6 +30,7 @@ use Mollie\Subscription\Logger\NullLogger;
 use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
+use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use Mollie\Utility\PsVersionUtility;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Response;
@@ -1175,6 +1177,39 @@ class Mollie extends PaymentModule
         $newAddress->save();
 
         $this->addPreventDeleteErrorMessage();
+    }
+
+    public function hookActionFrontControllerAfterInit(): void
+    {
+        /**
+         * NOTE: only logged in customers can buy subscription items
+         */
+        if (!$this->context->controller instanceof OrderControllerCore) {
+            return;
+        }
+
+        if ($this->context->customer->isLogged()) {
+            return;
+        }
+
+        /** @var SubscriptionProductValidator $subscriptionProductValidator */
+        $subscriptionProductValidator = $this->getService(SubscriptionProductValidator::class);
+
+        /** @var Link $link */
+        $link = $this->getService(Link::class);
+
+        /** @var array $cartProducts */
+        $cartProducts = $this->context->cart->getProducts();
+
+        foreach ($cartProducts as $cartProduct) {
+            if ($subscriptionProductValidator->validate((int) $cartProduct['id_product_attribute'])) {
+                $this->context->controller->warning[] = $this->l('Customer must be logged in to buy subscription item.');
+
+                $this->context->controller->redirectWithNotifications($link->getPageLink('authentication'));
+
+                exit;
+            }
+        }
     }
 
     private function getRecurringOrdersByCustomerAddress(int $customerId, int $oldAddressId): array
