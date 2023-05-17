@@ -30,7 +30,7 @@ use Mollie\Subscription\Logger\NullLogger;
 use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
-use Mollie\Subscription\Validator\SubscriptionProductValidator;
+use Mollie\Subscription\Verification\HasSubscriptionProductInCart;
 use Mollie\Utility\PsVersionUtility;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Response;
@@ -1181,10 +1181,6 @@ class Mollie extends PaymentModule
 
     public function hookActionFrontControllerAfterInit(): void
     {
-        /*
-         * NOTE: only logged in customers can buy subscription items.
-         * We redirect non-logged-in customers to authentication page if subscription item is in cart.
-         */
         if (!$this->context->controller instanceof OrderControllerCore) {
             return;
         }
@@ -1193,24 +1189,19 @@ class Mollie extends PaymentModule
             return;
         }
 
-        /** @var SubscriptionProductValidator $subscriptionProductValidator */
-        $subscriptionProductValidator = $this->getService(SubscriptionProductValidator::class);
+        /** @var HasSubscriptionProductInCart $hasSubscriptionProductInCart */
+        $hasSubscriptionProductInCart = $this->getService(HasSubscriptionProductInCart::class);
 
         /** @var Link $link */
         $link = $this->getService(Link::class);
 
-        /** @var array $cartProducts */
-        $cartProducts = $this->context->cart->getProducts();
-
-        foreach ($cartProducts as $cartProduct) {
-            if ($subscriptionProductValidator->validate((int) $cartProduct['id_product_attribute'])) {
-                $this->context->controller->warning[] = $this->l('Customer must be logged in to buy subscription item.');
-
-                $this->context->controller->redirectWithNotifications($link->getPageLink('authentication'));
-
-                exit;
-            }
+        if (!$hasSubscriptionProductInCart->verify()) {
+            return;
         }
+
+        $this->context->controller->warning[] = $this->l('Customer must be logged in to buy subscription item.');
+
+        $this->context->controller->redirectWithNotifications($link->getPageLink('authentication'));
     }
 
     private function getRecurringOrdersByCustomerAddress(int $customerId, int $oldAddressId): array
