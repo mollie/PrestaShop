@@ -1182,7 +1182,8 @@ class Mollie extends PaymentModule
     public function hookActionFrontControllerAfterInit(): void
     {
         /*
-         * NOTE: only logged in customers can buy subscription items
+         * NOTE: only logged in customers can buy subscription items.
+         * We redirect non-logged-in customers to authentication page if subscription item is in cart.
          */
         if (!$this->context->controller instanceof OrderControllerCore) {
             return;
