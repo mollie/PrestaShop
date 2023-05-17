@@ -126,18 +126,19 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
                 ],
             ]
         );
-        if ($paymentFee) {
+        if ($paymentFee->getPaymentFeeTaxIncl()) {
             $paymentOption->setInputs(
                 [
                     [
                         'type' => 'hidden',
                         'name' => 'payment-fee-price',
-                        'value' => $paymentFee,
+                        'value' => $paymentFee->getPaymentFeeTaxIncl(),
                     ],
                     [
                         'type' => 'hidden',
                         'name' => 'payment-fee-price-display',
-                        'value' => sprintf($this->module->l('Payment Fee: %1s', self::FILE_NAME), Tools::displayPrice($paymentFee)),
+                        // TODO deprecated method, replace
+                        'value' => sprintf($this->module->l('Payment Fee: %1s', self::FILE_NAME), Tools::displayPrice($paymentFee->getPaymentFeeTaxIncl())),
                     ],
                     [
                         'type' => 'hidden',

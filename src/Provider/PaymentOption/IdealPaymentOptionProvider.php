@@ -138,7 +138,7 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
 
         $paymentFee = $this->paymentFeeProvider->getPaymentFee($paymentMethod);
 
-        if ($paymentFee) {
+        if ($paymentFee->getPaymentFeeTaxIncl()) {
             $paymentOption->setInputs(
                 [
                     [
@@ -149,12 +149,12 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
                     [
                         'type' => 'hidden',
                         'name' => 'payment-fee-price',
-                        'value' => $paymentFee,
+                        'value' => $paymentFee->getPaymentFeeTaxIncl(),
                     ],
                     [
                         'type' => 'hidden',
                         'name' => 'payment-fee-price-display',
-                        'value' => sprintf($this->module->l('Payment Fee: %1s', self::FILE_NAME), Tools::displayPrice($paymentFee)),
+                        'value' => sprintf($this->module->l('Payment Fee: %1s', self::FILE_NAME), Tools::displayPrice($paymentFee->getPaymentFeeTaxIncl())),
                     ],
                 ]
             );

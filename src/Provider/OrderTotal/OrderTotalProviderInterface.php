@@ -35,8 +35,8 @@
  */
 
 namespace Mollie\Provider;
-
+//TODO fix namespace and change it everywhere
 interface OrderTotalProviderInterface
 {
-    public function getOrderTotal();
+    public function getOrderTotal(): float;
 }

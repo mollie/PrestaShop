@@ -177,20 +177,21 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
             $this->module->getPathUri(), 'views/templates/hook/mollie_single_click.tpl'
         ));
 
+        // TODO some duplciate stuff from other payment option providers, unify it somehow.
         $paymentFee = $this->paymentFeeProvider->getPaymentFee($paymentMethod);
 
-        if ($paymentFee) {
+        if ($paymentFee->getPaymentFeeTaxIncl()) {
             $paymentOption->setInputs(
                 array_merge($paymentOption->getInputs(), [
                     [
                         'type' => 'hidden',
                         'name' => 'payment-fee-price',
-                        'value' => $paymentFee,
+                        'value' => $paymentFee->getPaymentFeeTaxIncl(),
                     ],
                     [
                         'type' => 'hidden',
                         'name' => 'payment-fee-price-display',
-                        'value' => sprintf($this->module->l('Payment Fee: %1s', self::FILE_NAME), Tools::displayPrice($paymentFee)),
+                        'value' => sprintf($this->module->l('Payment Fee: %1s', self::FILE_NAME), Tools::displayPrice($paymentFee->getPaymentFeeTaxIncl())),
                     ],
                 ])
             );

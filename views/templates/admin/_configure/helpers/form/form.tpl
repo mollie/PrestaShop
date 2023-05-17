@@ -294,14 +294,48 @@
                         </div>
                         <div class="form-group">
                             <label class="control-label col-lg-3">
-                                {l s='Fixed fee' mod='mollie'}
+                                {l s='Fixed fee (tax incl)' mod='mollie'}
                             </label>
                             <div class="col-lg-9">
                                 <input type="text"
-                                       name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_{$paymentMethod.id|escape:'html':'UTF-8'}"
+                                       name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_INCL_{$paymentMethod.id|escape:'html':'UTF-8'}"
                                        class="fixed-width-xl js-mollie-amount"
-                                       value="{$methodObj->surcharge_fixed_amount|escape:'html':'UTF-8'}">
+                                       value="{$methodObj->surcharge_fixed_amount_tax_incl|escape:'html':'UTF-8'}">
                             </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-lg-3">
+                              {l s='Fixed fee (tax excl)' mod='mollie'}
+                          </label>
+                          <div class="col-lg-9">
+                            <input type="text"
+                                   name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_EXCL_{$paymentMethod.id|escape:'html':'UTF-8'}"
+                                   class="fixed-width-xl js-mollie-amount"
+                                   value="{$methodObj->surcharge_fixed_amount_tax_excl|escape:'html':'UTF-8'}">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-lg-3">
+                              {l s='Tax rule for fixed fee' mod='mollie'}
+                          </label>
+                          <div class="col-lg-9">
+{*                            TODO loop through tax rules*}
+                            <select name="MOLLIE_METHOD_TAX_RULE_ID_{$paymentMethod.id|escape:'html':'UTF-8'}"
+                                    class="fixed-width-xl">
+                              <option value="0" {if $methodObj->surcharge == 0} selected {/if}>
+                                  {l s='No fee' mod='mollie'}
+                              </option>
+                              <option value="1" {if $methodObj->surcharge == 1} selected {/if}>
+                                  {l s='Fixed fee' mod='mollie'}
+                              </option>
+                              <option value="2" {if $methodObj->surcharge == 2} selected {/if}>
+                                  {l s='Percentage' mod='mollie'}
+                              </option>
+                              <option value="3" {if $methodObj->surcharge == 3} selected {/if}>
+                                  {l s='Combined payment surcharge limit' mod='mollie'}
+                              </option>
+                            </select>
+                          </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-lg-3">
