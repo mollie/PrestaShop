@@ -1181,7 +1181,7 @@ class Mollie extends PaymentModule
 
     public function hookActionFrontControllerAfterInit(): void
     {
-        /**
+        /*
          * NOTE: only logged in customers can buy subscription items
          */
         if (!$this->context->controller instanceof OrderControllerCore) {
