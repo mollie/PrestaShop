@@ -55,4 +55,9 @@ class Context
     {
         return (string) PrestashopContext::getContext()->link->getAdminLink($controllerName, true, [], $params);
     }
+
+    public function getCartProducts(): array
+    {
+        return PrestashopContext::getContext()->cart->getProducts();
+    }
 }
