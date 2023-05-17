@@ -37,23 +37,3 @@ jobs:
                   name: mollie
                   path: |
                       .
-
-    demo:
-      name: Demo deployment
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v2
-
-        - name: Pull repositories
-          env:
-            SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-          run: |
-            IFS=';' read -ra repos <<< "${{ secrets.SERVER_PATHS }}"
-            ssh-agent -a $SSH_AUTH_SOCK > /dev/null
-            ssh-add - <<< "${{ secrets.KEY }}"
-            ssh -T ${{ secrets.USERNAME }}@${{ secrets.HOST }} << EOF
-            for repo_path in "${repos[@]}"; do
-              cd "$repo_path" && git pull origin main && rm -r vendor && composer install
-            done
-            EOF
