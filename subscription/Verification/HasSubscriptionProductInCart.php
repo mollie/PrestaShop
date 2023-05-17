@@ -12,7 +12,7 @@ class HasSubscriptionProductInCart
     /** @var SubscriptionProductValidator */
     private $subscriptionProductValidator;
 
-    public function __construct (
+    public function __construct(
         Context $context,
         SubscriptionProductValidator $subscriptionProductValidator
     ) {
