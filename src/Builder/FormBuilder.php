@@ -23,6 +23,7 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
 use Mollie\Provider\CustomLogoProviderInterface;
+use Mollie\Repository\TaxRulesGroupRepositoryInterface;
 use Mollie\Service\ApiService;
 use Mollie\Service\ConfigFieldService;
 use Mollie\Service\CountryService;
@@ -83,6 +84,9 @@ class FormBuilder
      */
     private $configuration;
 
+    /** @var TaxRulesGroupRepositoryInterface */
+    private $taxRulesGroupRepository;
+
     public function __construct(
         Mollie $module,
         ApiService $apiService,
@@ -93,7 +97,8 @@ class FormBuilder
         Smarty $smarty,
         Link $link,
         CustomLogoProviderInterface $creditCardLogoProvider,
-        ConfigurationAdapter $configuration
+        ConfigurationAdapter $configuration,
+        TaxRulesGroupRepositoryInterface $taxRulesGroupRepository
     ) {
         $this->module = $module;
         $this->apiService = $apiService;
@@ -105,6 +110,7 @@ class FormBuilder
         $this->carrierInformationService = $carrierInformationService;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
         $this->configuration = $configuration;
+        $this->taxRulesGroupRepository = $taxRulesGroupRepository;
     }
 
     public function buildSettingsForm()
@@ -403,6 +409,10 @@ class FormBuilder
             'name' => Config::METHODS_CONFIG,
             'paymentMethods' => $molliePaymentMethods,
             'countries' => $this->countryService->getActiveCountriesList(),
+            'taxRules' => $this->taxRulesGroupRepository->findAllBy([
+                'active' => true,
+                'deleted' => false
+            ]) ?? [],
             'tab' => $generalSettings,
             'onlyOrderMethods' => Config::ORDER_API_ONLY_METHODS,
             'displayErrors' => $this->configuration->get(Config::MOLLIE_DISPLAY_ERRORS),
