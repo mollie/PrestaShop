@@ -14,7 +14,9 @@ use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Repository\TaxRuleRepositoryInterface;
 use Mollie\Service\MolliePaymentMailService;
+use Mollie\Utility\TaxUtility;
 use Mollie\Utility\TimeUtility;
 
 class AdminMollieAjaxController extends ModuleAdminController
@@ -40,6 +42,9 @@ class AdminMollieAjaxController extends ModuleAdminController
                 break;
             case 'validateLogo':
                 $this->validateLogo();
+                break;
+            case 'updateFixedPaymentFeePrice':
+                $this->updateFixedPaymentFeePrice();
                 break;
             default:
                 break;
@@ -146,5 +151,98 @@ class AdminMollieAjaxController extends ModuleAdminController
         }
 
         echo json_encode(['status' => $isUploaded, 'message' => $returnText]);
+    }
+
+    private function updateFixedPaymentFeePrice(): void
+    {
+        $paymentFeeTaxIncl = (float) Tools::getValue('paymentFeeTaxIncl');
+        $paymentFeeTaxExcl = (float) Tools::getValue('paymentFeeTaxExcl');
+
+        $taxRuleId = (int) Tools::getValue('taxRuleId');
+
+        if ($paymentFeeTaxIncl === 0.00 && $paymentFeeTaxExcl === 0.00) {
+            $this->ajaxRender(
+                json_encode([
+                    'error' => true,
+                    'message' => $this->module->l('No fee was submitted.'),
+                ])
+            );
+
+            return;
+        }
+
+        if ($paymentFeeTaxIncl < 0.00 || $paymentFeeTaxExcl < 0.00) {
+            $this->ajaxRender(
+                json_encode([
+                    'error' => true,
+                    'message' => $this->module->l('Invalid fee'),
+                ])
+            );
+
+            return;
+        }
+
+        if ($taxRuleId < 1) {
+            $this->ajaxRender(
+                json_encode([
+                    'error' => true,
+                    'message' => $this->module->l('Missing tax rule ID'),
+                ])
+            );
+
+            return;
+        }
+
+        /** @var TaxRuleRepositoryInterface $taxRuleRepository */
+        $taxRuleRepository = $this->module->getService(TaxRuleRepositoryInterface::class);
+
+        /** @var TaxRule|null $taxRule */
+        $taxRule = $taxRuleRepository->findOneBy([
+            'id_tax_rules_group' => $taxRuleId,
+            'id_country' => $this->context->country->id,
+        ]);
+
+        if (!$taxRule || !$taxRule->id) {
+            $this->ajaxRender(
+                json_encode([
+                    'error' => true,
+                    'message' => $this->module->l('Failed to find tax rule'),
+                ])
+            );
+
+            return;
+        }
+
+        $tax = new Tax($taxRule->id_tax);
+
+        if (!$tax->id) {
+            $this->ajaxRender(
+                json_encode([
+                    'error' => true,
+                    'message' => $this->module->l('Failed to find tax'),
+                ])
+            );
+
+            return;
+        }
+
+        /** @var TaxUtility $taxUtility */
+        $taxUtility = $this->module->getService(TaxUtility::class);
+
+        if ($paymentFeeTaxIncl === 0.00) {
+            $paymentFeeTaxIncl = $taxUtility->addTax($paymentFeeTaxExcl, $tax);
+        }
+
+        if ($paymentFeeTaxExcl === 0.00) {
+            $paymentFeeTaxExcl = $taxUtility->removeTax($paymentFeeTaxIncl, $tax);
+        }
+
+        $this->ajaxRender(
+            json_encode([
+                'error' => false,
+                'paymentFeeTaxIncl' => $paymentFeeTaxIncl,
+                'paymentFeeTaxExcl' => $paymentFeeTaxExcl,
+            ])
+        );
     }
 }

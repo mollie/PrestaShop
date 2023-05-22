@@ -175,7 +175,9 @@ class ApiService implements ApiServiceInterface
         $emptyPaymentMethod->minimal_order_value = '';
         $emptyPaymentMethod->max_order_value = '';
         $emptyPaymentMethod->surcharge = 0;
-        $emptyPaymentMethod->surcharge_fixed_amount = '';
+        $emptyPaymentMethod->surcharge_fixed_amount_tax_incl = 0;
+        $emptyPaymentMethod->surcharge_fixed_amount_tax_excl = 0;
+        $emptyPaymentMethod->tax_rule_id = 0;
         $emptyPaymentMethod->surcharge_percentage = '';
         $emptyPaymentMethod->surcharge_limit = '';
 

@@ -48,6 +48,10 @@ use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Repository\PendingOrderCartRuleRepository;
 use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
+use Mollie\Repository\TaxRulesGroupRepository;
+use Mollie\Repository\TaxRulesGroupRepositoryInterface;
+use Mollie\Repository\TaxRuleRepository;
+use Mollie\Repository\TaxRuleRepositoryInterface;
 use Mollie\Service\ApiKeyService;
 use Mollie\Service\Content\SmartyTemplateParser;
 use Mollie\Service\Content\TemplateParserInterface;
@@ -180,6 +184,9 @@ final class BaseServiceProvider
         $this->addService($container, ApiTestFeedbackBuilder::class, ApiTestFeedbackBuilder::class)
             ->withArgument($container->get(ModuleFactory::class)->getModuleVersion() ?? '')
             ->withArgument(ApiKeyService::class);
+
+        $this->addService($container, TaxRulesGroupRepositoryInterface::class, $container->get(TaxRulesGroupRepository::class));
+        $this->addService($container, TaxRuleRepositoryInterface::class, $container->get(TaxRuleRepository::class));
     }
 
     private function addService(Container $container, $className, $service)
