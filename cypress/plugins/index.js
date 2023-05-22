@@ -25,6 +25,6 @@ module.exports = (on, config) => {    on('before:browser:launch', (browser = {},
 const TestRailReporter = require('cypress-testrail');
 
 module.exports = (on, config) => {
-new TestRailReporter(on, config).register();
-return config
+    new TestRailReporter(on, config).register();
+    return config
 }
