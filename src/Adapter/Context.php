@@ -13,6 +13,7 @@
 namespace Mollie\Adapter;
 
 use Context as PrestashopContext;
+use Configuration as PrestashopConfiguration;
 
 class Context
 {
@@ -59,5 +60,14 @@ class Context
     public function getCartProducts(): array
     {
         return PrestashopContext::getContext()->cart->getProducts();
+    }
+
+    public function getComputingPrecision(): int
+    {
+        if (method_exists(PrestashopContext::getContext(), 'getComputingPrecision')) {
+            return PrestashopContext::getContext()->getComputingPrecision();
+        }
+
+        return (int) PrestashopConfiguration::get('PS_PRICE_DISPLAY_PRECISION');
     }
 }
