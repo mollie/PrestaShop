@@ -1,8 +1,11 @@
 <?php
 
+namespace Mollie\Tests\Unit\Utility;
+
 use Mollie\Adapter\Context;
 use Mollie\Utility\TaxUtility;
 use PHPUnit\Framework\TestCase;
+use Tax;
 
 class TaxUtilityTest extends TestCase
 {
