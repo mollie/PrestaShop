@@ -15,12 +15,14 @@ module.exports = defineConfig({
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
     setupNodeEvents(on, config) {
-      return require('./cypress/plugins/index.js')(on, config)
-    },
-    setupNodeEvents(on, config) {
+      require('./cypress/plugins/index.js')(on, config)
       require("cypress-fail-fast/plugin")(on, config);
       return config;
     },
+    // setupNodeEvents(on, config) {
+    //   require("cypress-fail-fast/plugin")(on, config);
+    //   return config;
+    // },
     excludeSpecPattern: ['index.php'],
     specPattern: 'cypress/e2e/**/*.{js,jsx,ts,tsx}',
   },
