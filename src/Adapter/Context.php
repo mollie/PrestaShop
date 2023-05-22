@@ -12,8 +12,8 @@
 
 namespace Mollie\Adapter;
 
-use Context as PrestashopContext;
 use Configuration as PrestashopConfiguration;
+use Context as PrestashopContext;
 
 class Context
 {

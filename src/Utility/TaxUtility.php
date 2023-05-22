@@ -19,19 +19,19 @@ class TaxUtility
 
     public function addTax(float $totalFeePrice, Tax $tax): float
     {
-        $taxCalculator = new \TaxCalculator(array($tax));
+        $taxCalculator = new \TaxCalculator([$tax]);
 
-        $calculatedPrice = new Number((string) $taxCalculator->addTaxes($totalFeePrice));
+        $calculatedPrice = new Number(((string) $taxCalculator->addTaxes($totalFeePrice)));
 
-        return $calculatedPrice->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
+        return (float) $calculatedPrice->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
     }
 
     public function removeTax(float $totalFeePrice, Tax $tax): float
     {
-        $taxCalculator = new \TaxCalculator(array($tax));
+        $taxCalculator = new \TaxCalculator([$tax]);
 
-        $calculatedPrice =  new Number((string) $taxCalculator->removeTaxes($totalFeePrice));
+        $calculatedPrice = new Number(((string) $taxCalculator->removeTaxes($totalFeePrice)));
 
-        return $calculatedPrice->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
+        return (float) $calculatedPrice->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
     }
 }
