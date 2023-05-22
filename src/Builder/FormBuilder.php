@@ -411,7 +411,7 @@ class FormBuilder
             'countries' => $this->countryService->getActiveCountriesList(),
             'taxRules' => $this->taxRulesGroupRepository->findAllBy([
                 'active' => true,
-                'deleted' => false
+                'deleted' => false,
             ]) ?? [],
             'tab' => $generalSettings,
             'onlyOrderMethods' => Config::ORDER_API_ONLY_METHODS,
