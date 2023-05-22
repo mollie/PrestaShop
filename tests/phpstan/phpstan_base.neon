@@ -39,6 +39,6 @@ parameters:
     - '#Access to property \$[a-zA-Z0-9_]+ on an unknown class AttributeCore.#'
     - '#Call to method [a-zA-Z0-9_]+\(\) on an unknown class ProductAttributeCore.#'
     - '#Call to method [a-zA-Z0-9_]+\(\) on an unknown class AttributeCore.#'
-    - '#Parameter \#1 $value of method ControllerCore\:\:ajaxRender\(\) expects null, string\|false given.#'
+    - '#Parameter \#1 \$value of method ControllerCore\:\:ajaxRender\(\) expects null, string\|false given.#'
 
   level: 5
