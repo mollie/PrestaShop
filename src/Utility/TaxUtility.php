@@ -17,24 +17,20 @@ class TaxUtility
         $this->context = $context;
     }
 
-    public function addTax(float $totalFeePrice, Tax $tax): float
+    public function addTax(float $price, Tax $tax): float
     {
         $taxCalculator = new \TaxCalculator([$tax]);
 
-        $fee = (string) $taxCalculator->addTaxes($totalFeePrice);
-
-        $calculatedPrice = new Number($fee);
+        $calculatedPrice = new Number((string) $taxCalculator->addTaxes($price));
 
         return (float) $calculatedPrice->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
     }
 
-    public function removeTax(float $totalFeePrice, Tax $tax): float
+    public function removeTax(float $price, Tax $tax): float
     {
         $taxCalculator = new \TaxCalculator([$tax]);
 
-        $fee = (string) $taxCalculator->removeTaxes($totalFeePrice);
-
-        $calculatedPrice = new Number($fee);
+        $calculatedPrice = new Number((string) $taxCalculator->removeTaxes($price));
 
         return (float) $calculatedPrice->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
     }
