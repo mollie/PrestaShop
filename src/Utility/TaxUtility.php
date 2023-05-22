@@ -21,7 +21,9 @@ class TaxUtility
     {
         $taxCalculator = new \TaxCalculator([$tax]);
 
-        $calculatedPrice = new Number(((string) $taxCalculator->addTaxes($totalFeePrice)));
+        $fee = (string) $taxCalculator->addTaxes($totalFeePrice);
+
+        $calculatedPrice = new Number($fee);
 
         return (float) $calculatedPrice->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
     }
@@ -30,7 +32,9 @@ class TaxUtility
     {
         $taxCalculator = new \TaxCalculator([$tax]);
 
-        $calculatedPrice = new Number(((string) $taxCalculator->removeTaxes($totalFeePrice)));
+        $fee = (string) $taxCalculator->removeTaxes($totalFeePrice);
+
+        $calculatedPrice = new Number($fee);
 
         return (float) $calculatedPrice->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
     }
