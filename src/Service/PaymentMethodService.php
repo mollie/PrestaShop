@@ -148,7 +148,8 @@ class PaymentMethodService
         $paymentMethod->surcharge = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_TYPE . $method['id']);
         $paymentMethod->surcharge_fixed_amount_tax_incl = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_INCL . $method['id']);
         $paymentMethod->surcharge_fixed_amount_tax_excl = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_EXCL . $method['id']);
-        $paymentMethod->tax_rule_id = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_TAX_RULE_ID . $method['id']);        $paymentMethod->surcharge_percentage = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_PERCENTAGE . $method['id']);
+        $paymentMethod->tax_rule_id = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_TAX_RULE_ID . $method['id']);
+        $paymentMethod->surcharge_percentage = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_PERCENTAGE . $method['id']);
         $paymentMethod->surcharge_limit = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_LIMIT . $method['id']);
         $paymentMethod->images_json = json_encode($method['image']);
         $paymentMethod->live_environment = $environment;
