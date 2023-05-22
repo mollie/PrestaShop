@@ -22,7 +22,7 @@ class PaymentFeeUtility
     {
         switch ($paymentMethod->surcharge) {
             case Config::FEE_FIXED_FEE:
-                $totalFeePrice = new Number($paymentMethod->surcharge_fixed_amount_tax_excl);
+                $totalFeePrice = new Number((string) $paymentMethod->surcharge_fixed_amount_tax_excl);
                 break;
             case Config::FEE_PERCENTAGE:
                 $totalCartPrice = new Number((string) $totalCartPrice);
@@ -38,7 +38,7 @@ class PaymentFeeUtility
                 $totalCartPrice = new Number((string) $totalCartPrice);
                 $surchargePercentage = new Number($paymentMethod->surcharge_percentage);
                 $maxPercentage = new Number('100');
-                $surchargeFixedPrice = new Number($paymentMethod->surcharge_fixed_amount_tax_excl);
+                $surchargeFixedPrice = new Number((string) $paymentMethod->surcharge_fixed_amount_tax_excl);
                 $totalFeePrice = $totalCartPrice->times(
                     $surchargePercentage->dividedBy(
                         $maxPercentage
