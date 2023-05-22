@@ -623,3 +623,6 @@ Cypress.Commands.add("OpeningModuleDashboardURL", () => {
   cy.visit('/admin1/index.php?controller=AdminModules&configure=mollie')
   cy.get('.btn-continue').click()
 })
+const customComment = 'AUT v' + Cypress.env('MY_APP_VERSION');
+
+new TestRailReporter(on, config, customComment).register();
