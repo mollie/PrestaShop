@@ -136,7 +136,7 @@ class OrderCreationHandler
         $paymentMethod = $this->paymentMethodService->getPaymentMethod($apiPayment);
 
         if ($apiPayment->resource === Config::MOLLIE_API_STATUS_PAYMENT) {
-            $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float)$originalAmount);
+            $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmount);
 
             $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
         } else {
