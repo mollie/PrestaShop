@@ -63,7 +63,7 @@ class PaymentFeeProviderTest extends TestCase
 
         $this->taxRuleRepository->method('findOneBy')->willReturn($taxRule);
         $this->taxRepository->method('findOneBy')->willReturn($tax);
-        $this->context->method('getTaxCountryId')->willReturn(1);
+        $this->context->method('getCustomerAddressInvoiceId')->willReturn(1);
         $this->context->method('getComputingPrecision')->willReturn(2);
 
         $paymentFeeProvider = new PaymentFeeProvider(

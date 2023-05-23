@@ -76,9 +76,9 @@ class Context
         return (int) PrestashopContext::getContext()->shop->id;
     }
 
-    public function getTaxCountryId(): int
+    public function getCustomerAddressInvoiceId(): int
     {
-        return (int) PrestashopContext::getContext()->cart->getTaxCountry()->id;
+        return (int) PrestashopContext::getContext()->cart->id_address_invoice;
     }
 
     public function getModuleLink(
