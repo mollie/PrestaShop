@@ -92,7 +92,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
         /** @var TaxRule|null $taxRule */
         $taxRule = $this->taxRuleRepository->findOneBy([
             'id_tax_rules_group' => $paymentMethod->tax_rules_group_id,
-            'id_country' => $this->context->getTaxCountryId(),
+            'id_country' => $this->context->getCustomerAddressInvoiceId(),
         ]);
 
         if (!$taxRule || !$taxRule->id) {
