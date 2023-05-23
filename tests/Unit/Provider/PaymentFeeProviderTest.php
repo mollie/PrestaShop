@@ -101,7 +101,7 @@ class PaymentFeeProviderTest extends TestCase
                     'paymentFeeTaxIncl' => 11.00,
                     'paymentFeeTaxExcl' => 10.00,
                     'active' => true,
-                ]
+                ],
             ],
             'success with percentage price' => [
                 'paymentMethod' => [
@@ -121,7 +121,7 @@ class PaymentFeeProviderTest extends TestCase
                     'paymentFeeTaxIncl' => 1.1,
                     'paymentFeeTaxExcl' => 1.0,
                     'active' => true,
-                ]
+                ],
             ],
             'success with percentage price with reached limit' => [
                 'paymentMethod' => [
@@ -141,24 +141,28 @@ class PaymentFeeProviderTest extends TestCase
                     'paymentFeeTaxIncl' => 11.00,
                     'paymentFeeTaxExcl' => 10.00,
                     'active' => true,
-                ]
+                ],
             ],
-//            'success with fee and percentage price' => [
-//                'paymentMethod' => [
-//                    'surcharge' => Config::FEE_FIXED_FEE_AND_PERCENTAGE,
-//                    'surcharge_percentage' => '0',
-//                    'surcharge_limit' => '0',
-//                    'surcharge_fixed_amount_tax_incl' => 12.10,
-//                    'surcharge_fixed_amount_tax_excl' => 10.00,
-//                    'tax_rules_group_id' => 1,
-//                ],
-//                'totalCartPrice' => 10,
-//                'expectedResult' => [
-//                    'paymentFeeTaxIncl' => 12.10,
-//                    'paymentFeeTaxExcl' => 10.00,
-//                    'active' => true,
-//                ]
-//            ],
+            'success with fee and percentage price' => [
+                'paymentMethod' => [
+                    'surcharge' => Config::FEE_FIXED_FEE_AND_PERCENTAGE,
+                    'surcharge_percentage' => '10',
+                    'surcharge_limit' => 100.00,
+                    'surcharge_fixed_amount_tax_incl' => 0.00,
+                    'surcharge_fixed_amount_tax_excl' => 10.00,
+                    'tax_rules_group_id' => 1,
+                ],
+                'taxUtility' => [
+                    'addTaxResult' => 22.00,
+                    'removeTaxResult' => 0.00,
+                ],
+                'totalCartPrice' => 100,
+                'expectedResult' => [
+                    'paymentFeeTaxIncl' => 22.00,
+                    'paymentFeeTaxExcl' => 20.00,
+                    'active' => true,
+                ],
+            ],
         ];
     }
 }

@@ -114,8 +114,8 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
                 $totalFeePriceTaxExcl = $surchargeFixedPriceTaxExcl;
 
                 return new PaymentFeeData(
-                    $totalFeePriceTaxIncl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP),
-                    $totalFeePriceTaxExcl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP),
+                    (float) $totalFeePriceTaxIncl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP),
+                    (float) $totalFeePriceTaxExcl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP),
                     true
                 );
             case Config::FEE_PERCENTAGE:
@@ -126,7 +126,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
                 );
 
                 $totalFeePriceTaxIncl = $this->taxUtility->addTax(
-                    $totalFeePriceTaxExcl->toPrecision(self::TEMPORARY_PRECISION, Rounding::ROUND_HALF_UP),
+                    (float) $totalFeePriceTaxExcl->toPrecision(self::TEMPORARY_PRECISION, Rounding::ROUND_HALF_UP),
                     $tax
                 );
 
@@ -141,7 +141,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
                 )->plus($surchargeFixedPriceTaxExcl);
 
                 $totalFeePriceTaxIncl = $this->taxUtility->addTax(
-                    $totalFeePriceTaxExcl->toPrecision(self::TEMPORARY_PRECISION, Rounding::ROUND_HALF_UP),
+                    (float) $totalFeePriceTaxExcl->toPrecision(self::TEMPORARY_PRECISION, Rounding::ROUND_HALF_UP),
                     $tax
                 );
 
@@ -150,7 +150,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
                 break;
             case Config::FEE_NO_FEE:
             default:
-                return new PaymentFeeData(0, 0, true);
+                return new PaymentFeeData(0.00, 0.00, true);
         }
 
         $surchargeMaxValue = new DecimalNumber((string) $paymentMethod->surcharge_limit);
@@ -159,7 +159,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
         if ($surchargeMaxValue->isGreaterThan($lowestValue) && $totalFeePriceTaxIncl->isGreaterOrEqualThan($surchargeMaxValue)) {
             $totalFeePriceTaxIncl = $surchargeMaxValue;
             $totalFeePriceTaxExcl = $this->taxUtility->removeTax(
-                $surchargeMaxValue->toPrecision(self::TEMPORARY_PRECISION, Rounding::ROUND_HALF_UP),
+                (float) $surchargeMaxValue->toPrecision(self::TEMPORARY_PRECISION, Rounding::ROUND_HALF_UP),
                 $tax
             );
 
@@ -167,8 +167,8 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
         }
 
         return new PaymentFeeData(
-            $totalFeePriceTaxIncl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP),
-            $totalFeePriceTaxExcl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP),
+            (float) $totalFeePriceTaxIncl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP),
+            (float) $totalFeePriceTaxExcl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP),
             true
         );
     }
