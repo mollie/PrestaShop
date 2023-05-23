@@ -14,6 +14,7 @@ namespace Mollie\Adapter;
 
 use Configuration as PrestashopConfiguration;
 use Context as PrestashopContext;
+use Country;
 
 class Context
 {
@@ -83,6 +84,41 @@ class Context
 
     public function getShopId(): int
     {
-        return (int) PrestashopContext::getContext()->shop->id;
+        return (int)PrestashopContext::getContext()->shop->id;
+    }
+
+    public function getTaxCountryId(): int
+    {
+        return (int) PrestashopContext::getContext()->cart->getTaxCountry()->id;
+    }
+
+    public function getModuleLink(
+        $module,
+        $controller = 'default',
+        array $params = [],
+        $ssl = null,
+        $idLang = null,
+        $idShop = null,
+        $relativeProtocol = false
+    ): string {
+        return (string) PrestashopContext::getContext()->link->getModuleLink(
+            $module,
+            $controller,
+            $params,
+            $ssl,
+            $idLang,
+            $idShop,
+            $relativeProtocol
+        );
+    }
+
+    public function getAddressInvoiceId(): int
+    {
+        return (int) PrestashopContext::getContext()->cart->id_address_invoice;
+    }
+
+    public function getLanguageLocale(): string
+    {
+        return (string) PrestashopContext::getContext()->language->locale;
     }
 }

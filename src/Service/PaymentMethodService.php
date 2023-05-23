@@ -15,7 +15,6 @@ namespace Mollie\Service;
 use Address;
 use Cart;
 use Configuration;
-use Context;
 use Country;
 use Currency;
 use Customer;
@@ -23,6 +22,7 @@ use MolCustomer;
 use Mollie;
 use Mollie\Adapter\CartAdapter;
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\Context;
 use Mollie\Adapter\Shop;
 use Mollie\Api\Resources\BaseCollection;
 use Mollie\Api\Resources\MethodCollection;
@@ -34,6 +34,8 @@ use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Provider\CreditCardLogoProvider;
+use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
+use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Provider\PhoneNumberProviderInterface;
 use Mollie\Repository\GenderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
@@ -43,7 +45,6 @@ use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Utility\CustomLogoUtility;
 use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\LocaleUtility;
-use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\SecureKeyUtility;
 use Mollie\Utility\TextFormatUtility;
 use MolPaymentMethod;
@@ -103,6 +104,12 @@ class PaymentMethodService
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
     private $genderRepository;
+    /** @var PaymentFeeProviderInterface */
+    private $paymentFeeProvider;
+    /** @var Context */
+    private $context;
+    /** @var OrderTotalProviderInterface */
+    private $orderTotalProvider;
 
     public function __construct(
         Mollie $module,
@@ -118,7 +125,10 @@ class PaymentMethodService
         SubscriptionOrderValidator $subscriptionOrder,
         CartAdapter $cartAdapter,
         ConfigurationAdapter $configurationAdapter,
-        GenderRepositoryInterface $genderRepository
+        GenderRepositoryInterface $genderRepository,
+        PaymentFeeProviderInterface $paymentFeeProvider,
+        Context $context,
+        OrderTotalProviderInterface $orderTotalProvider
     ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
@@ -134,6 +144,9 @@ class PaymentMethodService
         $this->cartAdapter = $cartAdapter;
         $this->configurationAdapter = $configurationAdapter;
         $this->genderRepository = $genderRepository;
+        $this->paymentFeeProvider = $paymentFeeProvider;
+        $this->context = $context;
+        $this->orderTotalProvider = $orderTotalProvider;
     }
 
     public function savePaymentMethod($method)
@@ -264,11 +277,13 @@ class PaymentMethodService
         string $applePayToken = ''
     ) {
         $totalAmount = TextFormatUtility::formatNumber($amount, 2);
-        $context = Context::getContext();
         $cart = new Cart($cartId);
         $customer = new Customer($cart->id_customer);
 
-        $paymentFee = PaymentFeeUtility::getPaymentFee($molPaymentMethod, $totalAmount);
+        $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($molPaymentMethod, $totalAmount);
+
+        $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
+
         $totalAmount += $paymentFee;
 
         $currency = (string) ($currency ? Tools::strtoupper($currency) : 'EUR');
@@ -280,7 +295,7 @@ class PaymentMethodService
             $cartId,
             $this->module->name
         );
-        $redirectUrl = $context->link->getModuleLink(
+        $redirectUrl = $this->context->getModuleLink(
             'mollie',
             'return',
             [
@@ -294,7 +309,7 @@ class PaymentMethodService
             true
         );
 
-        $webhookUrl = $context->link->getModuleLink(
+        $webhookUrl = $this->context->getModuleLink(
             'mollie',
             'webhook',
             [],
@@ -340,7 +355,13 @@ class PaymentMethodService
 
             if ($this->subscriptionOrder->validate(new Cart($cartId))) {
                 $molCustomer = $this->getCustomerInfo($cart->id_customer, true, false);
-                $paymentData->setCustomerId($molCustomer->customer_id);
+
+                // TODO handle this - throw exception or add log message.
+                $paymentData->setCustomerId('');
+
+                if ($molCustomer) {
+                    $paymentData->setCustomerId($molCustomer->customer_id);
+                }
 
                 $paymentData->setSequenceType(SequenceType::SEQUENCETYPE_FIRST);
             }
@@ -409,7 +430,7 @@ class PaymentMethodService
             if ($cardToken) {
                 $payment['cardToken'] = $cardToken;
             }
-            $payment['webhookUrl'] = $context->link->getModuleLink(
+            $payment['webhookUrl'] = $this->context->getModuleLink(
                 'mollie',
                 'webhook',
                 [],
@@ -435,6 +456,8 @@ class PaymentMethodService
 
             return $orderData;
         }
+
+        // TODO handle no return option - throw exception
     }
 
     private function getLocale($method)
@@ -480,14 +503,10 @@ class PaymentMethodService
 
     private function getSupportedMollieMethods(?string $sequenceType = null): array
     {
-        $context = Context::getContext();
-        $addressId = $context->cart->id_address_invoice;
-        $address = new Address($addressId);
+        $address = new Address($this->context->getAddressInvoiceId());
         $country = new Country($address->id_country);
 
-        $currency = $context->currency;
-        $language = $context->language;
-        $cartAmount = $context->cart->getOrderTotal();
+        $cartAmount = $this->orderTotalProvider->getOrderTotal();
 
         /** @var BaseCollection|MethodCollection $methods */
         $methods = $this->module->getApiClient()->methods->allActive(
@@ -495,11 +514,11 @@ class PaymentMethodService
                 'resource' => 'orders',
                 'include' => 'issuers',
                 'includeWallets' => 'applepay',
-                'locale' => $language->locale,
+                'locale' => $this->context->getLanguageLocale(),
                 'billingCountry' => $country->iso_code,
                 'amount' => [
                     'value' => (string) TextFormatUtility::formatNumber($cartAmount, 2),
-                    'currency' => $currency->iso_code,
+                    'currency' => $this->context->getCurrencyIso(),
                 ],
                 'sequenceType' => $sequenceType,
             ]

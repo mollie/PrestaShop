@@ -14,6 +14,7 @@ use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Repository\TaxRepositoryInterface;
 use Mollie\Repository\TaxRuleRepositoryInterface;
 use Mollie\Service\MolliePaymentMailService;
 use Mollie\Utility\TaxUtility;
@@ -213,9 +214,15 @@ class AdminMollieAjaxController extends ModuleAdminController
             return;
         }
 
-        $tax = new Tax($taxRule->id_tax, $this->context->language->id, $this->context->shop->id);
+        /** @var TaxRepositoryInterface $taxRepository */
+        $taxRepository = $this->module->getService(TaxRepositoryInterface::class);
 
-        if (!$tax->id) {
+        /** @var Tax|null $tax */
+        $tax = $taxRepository->findOneBy([
+            'id_tax' => $taxRule->id_tax,
+        ]);
+
+        if (!$tax || !$tax->id) {
             $this->ajaxRender(
                 json_encode([
                     'error' => true,

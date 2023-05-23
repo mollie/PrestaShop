@@ -40,9 +40,9 @@ use Cart;
 use Configuration;
 use Mollie\Api\Resources\OrderLine;
 use Mollie\Config\Config;
+use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Service\OrderFeeService;
 use Mollie\Service\PaymentMethodService;
-use Mollie\Utility\PaymentFeeUtility;
 use Order;
 use OrderDetail;
 use PrestaShop\Decimal\Number;
@@ -53,13 +53,17 @@ class OrderFeeHandler
     private $feeService;
     /** @var PaymentMethodService */
     private $paymentMethodService;
+    /** @var PaymentFeeProviderInterface */
+    private $paymentFeeProvider;
 
     public function __construct(
         OrderFeeService $feeService,
-        PaymentMethodService $paymentMethodService
+        PaymentMethodService $paymentMethodService,
+        PaymentFeeProviderInterface $paymentFeeProvider
     ) {
         $this->feeService = $feeService;
         $this->paymentMethodService = $paymentMethodService;
+        $this->paymentFeeProvider = $paymentFeeProvider;
     }
 
     public function addOrderFee(int $orderId, $apiPayment)
@@ -75,11 +79,15 @@ class OrderFeeHandler
             false,
             Cart::BOTH
         );
+
         $paymentFee = 0;
 
         $paymentMethod = $this->paymentMethodService->getPaymentMethod($apiPayment);
+
         if ($apiPayment->resource === Config::MOLLIE_API_STATUS_PAYMENT) {
-            $paymentFee = PaymentFeeUtility::getPaymentFee($paymentMethod, $originalAmountWithTax);
+            $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmountWithTax);
+
+            $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
         } else {
             /** @var OrderLine $line */
             foreach ($apiPayment->lines() as $line) {
