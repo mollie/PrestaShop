@@ -21,7 +21,7 @@ class TaxRulesGroupRepository extends AbstractRepository implements TaxRulesGrou
             ->leftJoin('tax_rules_group_shop', 'trgs', 'trgs.id_tax_rules_group = trg.id_tax_rules_group')
             ->where('trgs.id_shop = ' . $shopId);
 
-        $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($query);
+        $result = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS($query);
 
         if (empty($result)) {
             return [];
