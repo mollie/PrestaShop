@@ -14,7 +14,6 @@ namespace Mollie\Adapter;
 
 use Configuration as PrestashopConfiguration;
 use Context as PrestashopContext;
-use Country;
 
 class Context
 {
@@ -84,7 +83,7 @@ class Context
 
     public function getShopId(): int
     {
-        return (int)PrestashopContext::getContext()->shop->id;
+        return (int) PrestashopContext::getContext()->shop->id;
     }
 
     public function getTaxCountryId(): int
