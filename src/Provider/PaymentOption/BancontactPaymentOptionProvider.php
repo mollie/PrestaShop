@@ -40,6 +40,7 @@ use Mollie;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Provider\CreditCardLogoProvider;
+use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Service\LanguageService;
 use MolPaymentMethod;
@@ -74,25 +75,29 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
      * @var LanguageService
      */
     private $languageService;
+    /** @var OrderTotalProviderInterface */
+    private $orderTotalProvider;
 
     public function __construct(
         Mollie $module,
         LegacyContext $context,
         CreditCardLogoProvider $creditCardLogoProvider,
         PaymentFeeProviderInterface $paymentFeeProvider,
-        LanguageService $languageService
+        LanguageService $languageService,
+        OrderTotalProviderInterface $orderTotalProvider
     ) {
         $this->module = $module;
         $this->context = $context;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
         $this->paymentFeeProvider = $paymentFeeProvider;
         $this->languageService = $languageService;
+        $this->orderTotalProvider = $orderTotalProvider;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getPaymentOption(MolPaymentMethod $paymentMethod)
+    public function getPaymentOption(MolPaymentMethod $paymentMethod): PaymentOption
     {
         $paymentOption = new PaymentOption();
         $paymentOption->setCallToActionText(
@@ -107,7 +112,7 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
             true
         ));
         $paymentOption->setLogo($this->creditCardLogoProvider->getMethodOptionLogo($paymentMethod));
-        $paymentFee = $this->paymentFeeProvider->getPaymentFee($paymentMethod);
+        $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, $this->orderTotalProvider->getOrderTotal());
 
         $this->context->getSmarty()->assign([
             'methodId' => $paymentMethod->getPaymentMethodName(),
@@ -126,18 +131,22 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
                 ],
             ]
         );
-        if ($paymentFee) {
+
+        if ($paymentFeeData->isActive()) {
             $paymentOption->setInputs(
                 [
                     [
                         'type' => 'hidden',
                         'name' => 'payment-fee-price',
-                        'value' => $paymentFee,
+                        'value' => $paymentFeeData->getPaymentFeeTaxIncl(),
                     ],
                     [
                         'type' => 'hidden',
                         'name' => 'payment-fee-price-display',
-                        'value' => sprintf($this->module->l('Payment Fee: %1s', self::FILE_NAME), Tools::displayPrice($paymentFee)),
+                        'value' => sprintf(
+                            $this->module->l('Payment Fee: %1s', self::FILE_NAME),
+                            Tools::displayPrice($paymentFeeData->getPaymentFeeTaxIncl())
+                        ),
                     ],
                     [
                         'type' => 'hidden',

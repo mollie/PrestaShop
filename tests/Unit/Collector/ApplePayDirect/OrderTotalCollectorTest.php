@@ -1,7 +1,11 @@
 <?php
 
+namespace Mollie\Tests\Unit\Collector\ApplePayDirect;
+
+use Cart;
 use Mollie\Collector\ApplePayDirect\OrderTotalCollector;
 use Mollie\DTO\ApplePay\Carrier\Carrier as AppleCarrier;
+use Mollie\DTO\PaymentFeeData;
 use Mollie\Service\OrderFeeService;
 use PHPUnit\Framework\TestCase;
 
@@ -10,10 +14,13 @@ class OrderTotalCollectorTest extends TestCase
     /**
      * @dataProvider  getCarriersDataProvider
      */
-    public function testGetOrderTotals($carriers, $expectedResult)
+    public function testGetOrderTotals($carriers, $expectedResult): void
     {
+        $paymentFeeData = $this->createMock(PaymentFeeData::class);
+        $paymentFeeData->method('getPaymentFeeTaxIncl')->willReturn(0.5);
+
         $orderFeeServiceMock = $this->createMock(OrderFeeService::class);
-        $orderFeeServiceMock->method('getPaymentFee')->willReturn(0.5);
+        $orderFeeServiceMock->method('getPaymentFee')->willReturn($paymentFeeData);
 
         $cart = $this->createMock(Cart::class);
         $cart->method('getOrderTotal')->willReturn(1.95);
@@ -24,7 +31,7 @@ class OrderTotalCollectorTest extends TestCase
         $this->assertEquals($expectedResult, $orderTotals);
     }
 
-    public function getCarriersDataProvider()
+    public function getCarriersDataProvider(): array
     {
         return [
             'basic case' => [
