@@ -318,14 +318,14 @@
                         </div>
                         <div class="form-group">
                           <label class="control-label col-lg-3">
-                              {l s='Tax rule for fixed fee' mod='mollie'}
+                              {l s='Tax rules group for fixed fee' mod='mollie'}
                           </label>
                           <div class="col-lg-9">
-                            <select name="MOLLIE_METHOD_TAX_RULE_ID_{$paymentMethod.id|escape:'html':'UTF-8'}"
+                            <select name="MOLLIE_METHOD_TAX_RULES_GROUP_ID_{$paymentMethod.id|escape:'html':'UTF-8'}"
                                     class="fixed-width-xl">
-                                {foreach $input.taxRules as $taxRule}
-                                  <option value="{$taxRule->id|intval}"
-                                          {if $taxRule->id == $methodObj->tax_rule_id}selected{/if}>{$taxRule->name|escape:'html':'UTF-8'}
+                                {foreach $input.taxRulesGroups as $taxRulesGroup}
+                                  <option value="{$taxRulesGroup.id|intval}"
+                                          {if $taxRulesGroup.id == $methodObj->tax_rules_group_id}selected{/if}>{$taxRulesGroup.name|escape:'html':'UTF-8'}
                                   </option>
                                 {/foreach}
                             </select>

@@ -71,7 +71,7 @@ final class DatabaseTableInstaller implements InstallerInterface
 				`surcharge` INT(10),
 				`surcharge_fixed_amount_tax_incl` decimal(20,6),
 				`surcharge_fixed_amount_tax_excl` decimal(20,6),
-				`tax_rule_id` INT(10),
+				`tax_rules_group_id` INT(10),
 				`surcharge_percentage` decimal(20,6),
 				`surcharge_limit` decimal(20,6),
 				`images_json` TEXT,

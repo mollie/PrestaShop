@@ -15,6 +15,7 @@ namespace Mollie\Builder;
 use HelperFormCore as HelperForm;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\Context;
 use Mollie\Adapter\Language;
 use Mollie\Adapter\Link;
 use Mollie\Adapter\Smarty;
@@ -87,6 +88,9 @@ class FormBuilder
     /** @var TaxRulesGroupRepositoryInterface */
     private $taxRulesGroupRepository;
 
+    /** @var Context */
+    private $context;
+
     public function __construct(
         Mollie $module,
         ApiService $apiService,
@@ -98,7 +102,8 @@ class FormBuilder
         Link $link,
         CustomLogoProviderInterface $creditCardLogoProvider,
         ConfigurationAdapter $configuration,
-        TaxRulesGroupRepositoryInterface $taxRulesGroupRepository
+        TaxRulesGroupRepositoryInterface $taxRulesGroupRepository,
+        Context $context
     ) {
         $this->module = $module;
         $this->apiService = $apiService;
@@ -111,6 +116,7 @@ class FormBuilder
         $this->creditCardLogoProvider = $creditCardLogoProvider;
         $this->configuration = $configuration;
         $this->taxRulesGroupRepository = $taxRulesGroupRepository;
+        $this->context = $context;
     }
 
     public function buildSettingsForm()
@@ -409,10 +415,7 @@ class FormBuilder
             'name' => Config::METHODS_CONFIG,
             'paymentMethods' => $molliePaymentMethods,
             'countries' => $this->countryService->getActiveCountriesList(),
-            'taxRules' => $this->taxRulesGroupRepository->findAllBy([
-                'active' => true,
-                'deleted' => false,
-            ]) ?? [],
+            'taxRulesGroups' => $this->taxRulesGroupRepository->getTaxRulesGroups($this->context->getShopId()),
             'tab' => $generalSettings,
             'onlyOrderMethods' => Config::ORDER_API_ONLY_METHODS,
             'displayErrors' => $this->configuration->get(Config::MOLLIE_DISPLAY_ERRORS),

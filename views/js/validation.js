@@ -136,7 +136,7 @@ $(document).ready(function () {
         let $paymentFeeType = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_SURCHARGE_TYPE"]');
         let $feeFixedTaxIncl = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_INCL"]');
         let $feeFixedTaxExcl = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_EXCL"]');
-        let $taxRuleId = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_TAX_RULE_ID"]');
+        let $taxRulesGroupId = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_TAX_RULES_GROUP_ID"]');
         let $feePercentage = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_SURCHARGE_PERCENTAGE"]');
         let $feeLimit = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_SURCHARGE_LIMIT"]');
 
@@ -144,28 +144,28 @@ $(document).ready(function () {
             case '0':
                 $feeFixedTaxIncl.closest('.form-group').hide();
                 $feeFixedTaxExcl.closest('.form-group').hide();
-                $taxRuleId.closest('.form-group').hide();
+                $taxRulesGroupId.closest('.form-group').hide();
                 $feePercentage.closest('.form-group').hide();
                 $feeLimit.closest('.form-group').hide();
                 break;
             case '1':
                 $feeFixedTaxIncl.closest('.form-group').show();
                 $feeFixedTaxExcl.closest('.form-group').show();
-                $taxRuleId.closest('.form-group').show();
+                $taxRulesGroupId.closest('.form-group').show();
                 $feePercentage.closest('.form-group').hide();
                 $feeLimit.closest('.form-group').hide();
                 break;
             case '2':
                 $feeFixedTaxIncl.closest('.form-group').hide();
                 $feeFixedTaxExcl.closest('.form-group').hide();
-                $taxRuleId.closest('.form-group').hide();
+                $taxRulesGroupId.closest('.form-group').hide();
                 $feePercentage.closest('.form-group').show();
                 $feeLimit.closest('.form-group').show();
                 break;
             case '3':
                 $feeFixedTaxIncl.closest('.form-group').show();
                 $feeFixedTaxExcl.closest('.form-group').show();
-                $taxRuleId.closest('.form-group').show();
+                $taxRulesGroupId.closest('.form-group').show();
                 $feePercentage.closest('.form-group').show();
                 $feeLimit.closest('.form-group').show();
                 break;

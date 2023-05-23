@@ -80,4 +80,9 @@ class Context
     {
         return (string) PrestashopContext::getContext()->link->getImageLink($name, $ids, $type);
     }
+
+    public function getShopId(): int
+    {
+        return (int) PrestashopContext::getContext()->shop->id;
+    }
 }
