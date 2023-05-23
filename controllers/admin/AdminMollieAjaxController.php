@@ -158,9 +158,9 @@ class AdminMollieAjaxController extends ModuleAdminController
         $paymentFeeTaxIncl = (float) Tools::getValue('paymentFeeTaxIncl');
         $paymentFeeTaxExcl = (float) Tools::getValue('paymentFeeTaxExcl');
 
-        $taxRuleId = (int) Tools::getValue('taxRuleId');
+        $taxRulesGroupId = (int) Tools::getValue('taxRulesGroupId');
 
-        if ($paymentFeeTaxIncl === 0.00 && $paymentFeeTaxExcl === 0.00) {
+        if (empty($paymentFeeTaxIncl) && empty($paymentFeeTaxExcl)) {
             $this->ajaxRender(
                 json_encode([
                     'error' => true,
@@ -182,11 +182,11 @@ class AdminMollieAjaxController extends ModuleAdminController
             return;
         }
 
-        if ($taxRuleId < 1) {
+        if ($taxRulesGroupId < 1) {
             $this->ajaxRender(
                 json_encode([
                     'error' => true,
-                    'message' => $this->module->l('Missing tax rule ID'),
+                    'message' => $this->module->l('Missing tax rules group ID'),
                 ])
             );
 
@@ -198,7 +198,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 
         /** @var TaxRule|null $taxRule */
         $taxRule = $taxRuleRepository->findOneBy([
-            'id_tax_rules_group' => $taxRuleId,
+            'id_tax_rules_group' => $taxRulesGroupId,
             'id_country' => $this->context->country->id,
         ]);
 
@@ -213,9 +213,9 @@ class AdminMollieAjaxController extends ModuleAdminController
             return;
         }
 
-        $tax = new Tax($taxRule->id_tax);
+        $tax = new Tax($taxRule->id_tax, $this->context->language->id, $this->context->shop->id);
 
-        if (!$tax->id) {
+        if (!$tax || !$tax->id) {
             $this->ajaxRender(
                 json_encode([
                     'error' => true,

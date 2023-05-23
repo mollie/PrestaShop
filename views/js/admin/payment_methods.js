@@ -52,8 +52,8 @@ $(document).ready(function() {
   let doneTypingInterval = 500;
 
   $(document).on('keyup',
-    'input[name^="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_INCL_"],' +
-    'input[name^="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_EXCL_"]',
+    'input[name^="' + paymentMethodSurchargeFixedAmountTaxInclConfig + '"],' +
+    'input[name^="' + paymentMethodSurchargeFixedAmountTaxExclConfig + '"]',
     function () {
       clearTimeout(typingTimer);
 
@@ -61,13 +61,13 @@ $(document).ready(function() {
       const inputElement = this;
 
       if (inputValue) {
-        typingTimer = setTimeout(async function () {
+        typingTimer = setTimeout(function () {
           let inputName = $(inputElement).attr('name');
 
           let paymentFeeTaxIncl = 0.00;
           let paymentFeeTaxExcl = 0.00;
 
-          if (inputName.indexOf('MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_INCL_') >= 0) {
+          if (inputName.indexOf(paymentMethodSurchargeFixedAmountTaxInclConfig) >= 0) {
             paymentFeeTaxIncl = inputValue;
           } else {
             paymentFeeTaxExcl = inputValue;
@@ -81,17 +81,17 @@ $(document).ready(function() {
             return;
           }
 
-          let taxRuleId = $paymentMethod.find('select[name^="MOLLIE_METHOD_TAX_RULE_ID_"]').val();
+          let taxRulesGroupId = $paymentMethod.find('select[name^="' + paymentMethodTaxRulesGroupIdConfig + '"]').val();
 
-          updatePaymentFee($paymentMethod, paymentFeeTaxIncl, paymentFeeTaxExcl, taxRuleId);
+          updatePaymentFee($paymentMethod, paymentFeeTaxIncl, paymentFeeTaxExcl, taxRulesGroupId);
         }, doneTypingInterval)
       }
     });
 
   $(document).on('change',
-    'select[name^="MOLLIE_METHOD_TAX_RULE_ID_"]',
+    'select[name^="' + paymentMethodTaxRulesGroupIdConfig + '"]',
     function () {
-      const taxRuleId = this.value;
+      const taxRulesGroupId = this.value;
       const inputElement = this;
 
       const $paymentMethod = $(inputElement.closest('div[id^="payment-method-form-"]'));
@@ -103,7 +103,7 @@ $(document).ready(function() {
       }
 
       let paymentFeeTaxIncl = 0.00;
-      let $paymentFeeTaxExcl = $paymentMethod.find('input[name^="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_EXCL_"]');
+      let $paymentFeeTaxExcl = $paymentMethod.find('input[name^="' + paymentMethodSurchargeFixedAmountTaxExclConfig + '"]');
 
       if ($paymentFeeTaxExcl.length < 1) {
         console.error('Failed to find payment fee tax excluded price');
@@ -113,17 +113,17 @@ $(document).ready(function() {
 
       let paymentFeeTaxExcl = $paymentFeeTaxExcl.val();
 
-      updatePaymentFee($paymentMethod, paymentFeeTaxIncl, paymentFeeTaxExcl, taxRuleId);
+      updatePaymentFee($paymentMethod, paymentFeeTaxIncl, paymentFeeTaxExcl, taxRulesGroupId);
     });
 
-  function updatePaymentFee($paymentMethod, paymentFeeTaxIncl, paymentFeeTaxExcl, taxRuleId) {
+  function updatePaymentFee($paymentMethod, paymentFeeTaxIncl, paymentFeeTaxExcl, taxRulesGroupId) {
     $.ajax(ajaxUrl, {
         method: 'POST',
         data: {
           'action': 'updateFixedPaymentFeePrice',
           'paymentFeeTaxIncl': paymentFeeTaxIncl,
           'paymentFeeTaxExcl': paymentFeeTaxExcl,
-          'taxRuleId': taxRuleId,
+          'taxRulesGroupId': taxRulesGroupId,
           'ajax': 1,
         },
         success: function (response) {
@@ -135,8 +135,8 @@ $(document).ready(function() {
             return;
           }
 
-          let $paymentFeeTaxIncl = $paymentMethod.find('input[name^="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_INCL_"]');
-          let $paymentFeeTaxExcl = $paymentMethod.find('input[name^="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_EXCL_"]');
+          let $paymentFeeTaxIncl = $paymentMethod.find('input[name^="' + paymentMethodSurchargeFixedAmountTaxInclConfig + '"]');
+          let $paymentFeeTaxExcl = $paymentMethod.find('input[name^="' + paymentMethodSurchargeFixedAmountTaxExclConfig + '"]');
 
           if ($paymentFeeTaxIncl.length < 1 || $paymentFeeTaxExcl.length < 1) {
             console.error('Failed to find payment fee input');
