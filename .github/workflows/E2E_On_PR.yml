@@ -53,7 +53,7 @@ jobs:
           ${{ matrix.make }}
 
       - name: Running ${{ matrix.prestashop }} Cypress E2E tests
-        run: docker run -i -v $PWD:/e2e -w /e2e -e CYPRESS_baseUrl='${{ matrix.url }}' -e CYPRESS_MOLLIE_TEST_API_KEY=${{ secrets.MOLLIE_TEST_API_KEY }} -e CYPRESS_MOLLIE_TEST_PROFILE_ID=${{ secrets.MOLLIE_TEST_PROFILE_ID }} -e CYPRESS_TESTRAIL_RUN_ID=${{ matrix.TestRailID }} cypress/included:cypress-12.8.1-node-18.14.1-chrome-111.0.5563.110-1-ff-111.0-edge-111.0.1661.51-1 --spec "${{ matrix.test_spec }}" --browser chrome
+        run: docker run -i -v $PWD:/e2e -w /e2e -e CYPRESS_baseUrl='${{ matrix.url }}' -e CYPRESS_MOLLIE_TEST_API_KEY=${{ secrets.MOLLIE_TEST_API_KEY }} -e CYPRESS_MOLLIE_TEST_PROFILE_ID=${{ secrets.MOLLIE_TEST_PROFILE_ID }} -e CYPRESS_TESTRAIL_RUN_ID=${{ matrix.TestRailID }} cypress/included:latest --spec "${{ matrix.test_spec }}" --browser chrome
 
       - name: Archive videos and screenshots
         if: ${{ always() }}
