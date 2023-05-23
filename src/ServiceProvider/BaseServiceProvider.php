@@ -6,6 +6,7 @@ namespace Mollie\ServiceProvider;
 
 use League\Container\Container;
 use Mollie;
+use Mollie\Adapter\Context;
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandler;
@@ -25,8 +26,8 @@ use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\CustomLogoProviderInterface;
 use Mollie\Provider\EnvironmentVersionProvider;
 use Mollie\Provider\EnvironmentVersionProviderInterface;
-use Mollie\Provider\OrderTotalProvider;
-use Mollie\Provider\OrderTotalProviderInterface;
+use Mollie\Provider\OrderTotal\OrderTotalProvider;
+use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProvider;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Provider\PaymentType\PaymentTypeIdentificationProviderInterface;
@@ -48,6 +49,8 @@ use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Repository\PendingOrderCartRuleRepository;
 use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
+use Mollie\Repository\TaxRepository;
+use Mollie\Repository\TaxRepositoryInterface;
 use Mollie\Repository\TaxRuleRepository;
 use Mollie\Repository\TaxRuleRepositoryInterface;
 use Mollie\Repository\TaxRulesGroupRepository;
@@ -81,6 +84,7 @@ use Mollie\Subscription\Utility\Clock;
 use Mollie\Subscription\Utility\ClockInterface;
 use Mollie\Utility\Decoder\DecoderInterface;
 use Mollie\Utility\Decoder\JsonDecoder;
+use Mollie\Utility\TaxUtility;
 use Mollie\Verification\PaymentType\CanBeRegularPaymentType;
 use Mollie\Verification\PaymentType\PaymentTypeVerificationInterface;
 use Mollie\Verification\Shipment\CanSendShipment;
@@ -139,8 +143,13 @@ final class BaseServiceProvider
                 ]
             );
 
+        $this->addService($container, TaxRulesGroupRepositoryInterface::class, $container->get(TaxRulesGroupRepository::class));
+        $this->addService($container, TaxRuleRepositoryInterface::class, $container->get(TaxRuleRepository::class));
+        $this->addService($container, TaxRepositoryInterface::class, $container->get(TaxRepository::class));
+
         $this->addService($container, OrderTotalProviderInterface::class, $container->get(OrderTotalProvider::class));
         $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
+
         $this->addService($container, EnvironmentVersionProviderInterface::class, $container->get(EnvironmentVersionProvider::class));
 
         $this->addService($container, AccessibilityCheckerInterface::class, $container->get(SubscriptionCancelAccessibility::class));
@@ -184,9 +193,6 @@ final class BaseServiceProvider
         $this->addService($container, ApiTestFeedbackBuilder::class, ApiTestFeedbackBuilder::class)
             ->withArgument($container->get(ModuleFactory::class)->getModuleVersion() ?? '')
             ->withArgument(ApiKeyService::class);
-
-        $this->addService($container, TaxRulesGroupRepositoryInterface::class, $container->get(TaxRulesGroupRepository::class));
-        $this->addService($container, TaxRuleRepositoryInterface::class, $container->get(TaxRuleRepository::class));
     }
 
     private function addService(Container $container, $className, $service)

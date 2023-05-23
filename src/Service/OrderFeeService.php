@@ -14,13 +14,13 @@ namespace Mollie\Service;
 
 use Configuration;
 use Mollie\Config\Config;
+use Mollie\DTO\PaymentFeeData;
+use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
-use Mollie\Utility\PaymentFeeUtility;
 use MolOrderFee;
 use MolPaymentMethod;
 use PrestaShopException;
 use Shop;
-use Tools;
 
 class OrderFeeService
 {
@@ -32,50 +32,42 @@ class OrderFeeService
      * @var Shop
      */
     private $shop;
+    /** @var PaymentFeeProviderInterface */
+    private $paymentFeeProvider;
 
-    public function __construct(PaymentMethodRepositoryInterface $paymentMethodRepository, Shop $shop)
-    {
+    public function __construct(
+        PaymentMethodRepositoryInterface $paymentMethodRepository,
+        Shop $shop,
+        PaymentFeeProviderInterface $paymentFeeProvider
+    ) {
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->shop = $shop;
+        $this->paymentFeeProvider = $paymentFeeProvider;
     }
 
-    public function getPaymentFees($methods, $totalPrice)
-    {
-        foreach ($methods as $index => $method) {
-            if (0 === (int) $method['surcharge']) {
-                $methods[$index]['fee'] = false;
-                $methods[$index]['fee_display'] = false;
-                continue;
-            }
-            $paymentMethod = new MolPaymentMethod($method['id_payment_method']);
-            $paymentFee = PaymentFeeUtility::getPaymentFee($paymentMethod, $totalPrice);
-            $methods[$index]['fee'] = $paymentFee;
-            $methods[$index]['fee_display'] = Tools::displayPrice($paymentFee);
-        }
-
-        return $methods;
-    }
-
-    public function createOrderFee($cartId, $orderFee)
+    public function createOrderFee($cartId, $orderFee): void
     {
         $orderFeeObj = new MolOrderFee();
+
         $orderFeeObj->id_cart = (int) $cartId;
         $orderFeeObj->order_fee = $orderFee;
+
         try {
             $orderFeeObj->add();
         } catch (\Exception $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);
+
             throw new PrestaShopException('Can\'t save Order fee');
         }
     }
 
-    public function getPaymentFee(float $totalAmount, string $method): float
+    public function getPaymentFee(float $totalAmount, string $method): PaymentFeeData
     {
         $environment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
         $paymentId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($method, $environment, $this->shop->id);
         $molPaymentMethod = new MolPaymentMethod($paymentId);
 
-        return (float) PaymentFeeUtility::getPaymentFee($molPaymentMethod, $totalAmount);
+        return $this->paymentFeeProvider->getPaymentFee($molPaymentMethod, $totalAmount);
     }
 }

@@ -36,23 +36,140 @@
 
 namespace Mollie\Provider;
 
-use Mollie\Utility\PaymentFeeUtility;
+use Mollie\Adapter\Context;
+use Mollie\Config\Config;
+use Mollie\DTO\PaymentFeeData;
+use Mollie\Exception\FailedToProvidePaymentFeeException;
+use Mollie\Repository\TaxRepositoryInterface;
+use Mollie\Repository\TaxRuleRepositoryInterface;
+use Mollie\Utility\TaxUtility;
 use MolPaymentMethod;
+use PrestaShop\Decimal\DecimalNumber;
+use PrestaShop\Decimal\Operation\Rounding;
+use Tax;
+use TaxRule;
 
 class PaymentFeeProvider implements PaymentFeeProviderInterface
 {
-    /**
-     * @var OrderTotalProviderInterface
-     */
-    private $orderTotalProvider;
+    private const MAX_PERCENTAGE = '100';
+    private const LOWEST_VALUE = '0';
+    private const TEMPORARY_PRECISION = 6;
 
-    public function __construct(OrderTotalProviderInterface $orderTotalProvider)
-    {
-        $this->orderTotalProvider = $orderTotalProvider;
+    /** @var Context */
+    private $context;
+    /** @var TaxUtility */
+    private $taxUtility;
+    /** @var TaxRuleRepositoryInterface */
+    private $taxRuleRepository;
+    /** @var TaxRepositoryInterface */
+    private $taxRepository;
+
+    public function __construct(
+        Context $context,
+        TaxUtility $taxUtility,
+        TaxRuleRepositoryInterface $taxRuleRepository,
+        TaxRepositoryInterface $taxRepository
+    ) {
+        $this->context = $context;
+        $this->taxUtility = $taxUtility;
+        $this->taxRuleRepository = $taxRuleRepository;
+        $this->taxRepository = $taxRepository;
     }
 
-    public function getPaymentFee(MolPaymentMethod $paymentMethod)
+    /**
+     * {@inheritDoc}
+     */
+    public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPrice): PaymentFeeData
     {
-        return PaymentFeeUtility::getPaymentFee($paymentMethod, $this->orderTotalProvider->getOrderTotal());
+        // TODO handle exception on all calls.
+        // TODO test it on 1.7.6, DecimalNumber could be issue
+        $totalDecimalCartPrice = new DecimalNumber((string) $totalCartPrice);
+        $maxPercentage = new DecimalNumber(self::MAX_PERCENTAGE);
+        $surchargePercentage = new DecimalNumber($paymentMethod->surcharge_percentage);
+        $surchargeFixedPriceTaxIncl = new DecimalNumber((string) $paymentMethod->surcharge_fixed_amount_tax_incl);
+        $surchargeFixedPriceTaxExcl = new DecimalNumber((string) $paymentMethod->surcharge_fixed_amount_tax_excl);
+
+        /** @var TaxRule|null $taxRule */
+        $taxRule = $this->taxRuleRepository->findOneBy([
+            'id_tax_rules_group' => $paymentMethod->tax_rules_group_id,
+            'id_country' => $this->context->getTaxCountryId(),
+        ]);
+
+        if (!$taxRule || !$taxRule->id) {
+            throw new FailedToProvidePaymentFeeException('Failed to find tax rules', FailedToProvidePaymentFeeException::FAILED_TO_FIND_TAX_RULES);
+        }
+
+        /** @var Tax|null $tax */
+        $tax = $this->taxRepository->findOneBy([
+            'id_tax' => $taxRule->id_tax,
+        ]);
+
+        if (!$tax || !$tax->id) {
+            throw new FailedToProvidePaymentFeeException('Failed to find tax', FailedToProvidePaymentFeeException::FAILED_TO_FIND_TAX);
+        }
+
+        switch ($paymentMethod->surcharge) {
+            case Config::FEE_FIXED_FEE:
+                $totalFeePriceTaxIncl = $surchargeFixedPriceTaxIncl;
+                $totalFeePriceTaxExcl = $surchargeFixedPriceTaxExcl;
+
+                return new PaymentFeeData(
+                    $totalFeePriceTaxIncl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP),
+                    $totalFeePriceTaxExcl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP),
+                    true
+                );
+            case Config::FEE_PERCENTAGE:
+                $totalFeePriceTaxExcl = $totalDecimalCartPrice->times(
+                    $surchargePercentage->dividedBy(
+                        $maxPercentage
+                    )
+                );
+
+                $totalFeePriceTaxIncl = $this->taxUtility->addTax(
+                    $totalFeePriceTaxExcl->toPrecision(self::TEMPORARY_PRECISION, Rounding::ROUND_HALF_UP),
+                    $tax
+                );
+
+                $totalFeePriceTaxIncl = new DecimalNumber((string) $totalFeePriceTaxIncl);
+
+                break;
+            case Config::FEE_FIXED_FEE_AND_PERCENTAGE:
+                $totalFeePriceTaxExcl = $totalDecimalCartPrice->times(
+                    $surchargePercentage->dividedBy(
+                        $maxPercentage
+                    )
+                )->plus($surchargeFixedPriceTaxExcl);
+
+                $totalFeePriceTaxIncl = $this->taxUtility->addTax(
+                    $totalFeePriceTaxExcl->toPrecision(self::TEMPORARY_PRECISION, Rounding::ROUND_HALF_UP),
+                    $tax
+                );
+
+                $totalFeePriceTaxIncl = new DecimalNumber((string) $totalFeePriceTaxIncl);
+
+                break;
+            case Config::FEE_NO_FEE:
+            default:
+                return new PaymentFeeData(0, 0, true);
+        }
+
+        $surchargeMaxValue = new DecimalNumber((string) $paymentMethod->surcharge_limit);
+        $lowestValue = new DecimalNumber((string) self::LOWEST_VALUE);
+
+        if ($surchargeMaxValue->isGreaterThan($lowestValue) && $totalFeePriceTaxIncl->isGreaterOrEqualThan($surchargeMaxValue)) {
+            $totalFeePriceTaxIncl = $surchargeMaxValue;
+            $totalFeePriceTaxExcl = $this->taxUtility->removeTax(
+                $surchargeMaxValue->toPrecision(self::TEMPORARY_PRECISION, Rounding::ROUND_HALF_UP),
+                $tax
+            );
+
+            $totalFeePriceTaxExcl = new DecimalNumber((string) $totalFeePriceTaxExcl);
+        }
+
+        return new PaymentFeeData(
+            $totalFeePriceTaxIncl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP),
+            $totalFeePriceTaxExcl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP),
+            true
+        );
     }
 }

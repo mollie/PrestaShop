@@ -65,8 +65,11 @@ final class UpdateApplePayShippingContactHandler
         $totals = $this->orderTotalCollector->getOrderTotals($applePayCarriers, $cart);
 
         $paymentFee = 0;
+
         if ($totals) {
-            $paymentFee = $this->orderFeeService->getPaymentFee($totals[0]['amountWithoutFee'], Config::APPLEPAY);
+            $paymentFeeData = $this->orderFeeService->getPaymentFee($totals[0]['amountWithoutFee'], Config::APPLEPAY);
+
+            $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
         }
 
         return [
