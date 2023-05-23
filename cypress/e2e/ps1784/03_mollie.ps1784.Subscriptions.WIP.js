@@ -49,7 +49,7 @@ it('C176305 Check if Subscription options added in Product BO', () => {
   cy.get('.growl-message').contains('Settings updated.')
   //Check if Subscription options are in Product Page FO
   cy.visit('/SHOP2/de/')
-  cy.get('[data-id-product="8"]').click()
+  cy.get('[data-id-product="8"]').click() //possible PS1784 notice exception, checking with dev...
   cy.get('a').click()
   //wip ...
   //Check if Subscription options are implemented in My Account FO
