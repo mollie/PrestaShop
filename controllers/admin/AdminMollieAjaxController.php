@@ -215,7 +215,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 
         $tax = new Tax($taxRule->id_tax, $this->context->language->id, $this->context->shop->id);
 
-        if (!$tax || !$tax->id) {
+        if (!$tax->id) {
             $this->ajaxRender(
                 json_encode([
                     'error' => true,
