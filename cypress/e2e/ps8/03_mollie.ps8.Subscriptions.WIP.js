@@ -45,17 +45,17 @@ it('C176305 Check if Subscription options added in Product BO', () => {
   cy.contains('Mollie Subscription - Daily').should('be.visible')
   cy.get('[class="attribute-quantity"]').last().find('[type="text"]').clear().type('999')
   cy.get('#submit').click()
-  cy.get('.growl-message').contains('Settings updated.')
-  // //Check if Subscription options are in Product Page FO
+  cy.get('.growl-message').contains('Settings updated.') //somehow PS8 has a combinations creation bug probably...
+  //Check if Subscription options are in Product Page FO
   cy.visit('/SHOP2/de/')
   // cy.get('.products > :nth-child(1)').click()
   // cy.get('a').click()
-  // //wip ...
-  // //Check if Subscription options are implemented in My Account FO
+  // wip ...
+  //Check if Subscription options are implemented in My Account FO
   // cy.visit('/SHOP2/')
   // cy.get('[class="account"]').click()
   // cy.contains('Mollie subscriptions').click()
   // cy.get('[class="page-content"]').should('be.visible')
-  // //wip ...
+  // wip ...
 });
 })
