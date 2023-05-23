@@ -70,4 +70,9 @@ class Context
 
         return (int) PrestashopConfiguration::get('PS_PRICE_DISPLAY_PRECISION');
     }
+
+    public function getShopId(): int
+    {
+        return (int) PrestashopContext::getContext()->shop->id;
+    }
 }

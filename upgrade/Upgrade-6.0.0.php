@@ -52,7 +52,7 @@ function upgrade_module_6_0_0(Mollie $module): bool
         ADD COLUMN max_amount decimal(20,6) DEFAULT 0,
         CHANGE surcharge_fixed_amount surcharge_fixed_amount_tax_excl decimal(20,6),
         ADD COLUMN surcharge_fixed_amount_tax_incl decimal(20,6) DEFAULT 0,
-        ADD COLUMN tax_rule_id int(10) DEFAULT 0;
+        ADD COLUMN tax_rules_group_id int(10) DEFAULT 0;
         ';
 
         if (!Db::getInstance()->execute($sql)) {
