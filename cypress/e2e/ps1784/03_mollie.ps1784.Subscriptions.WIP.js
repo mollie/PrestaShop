@@ -55,7 +55,7 @@ it('C176305 Check if Subscription options added in Product BO', () => {
   //Check if Subscription options are implemented in My Account FO
   cy.visit('/SHOP2/')
   cy.get('[class="account"]').click()
-  cy.contains('Mollie subscriptions').click()
+  cy.contains('Subscriptions').click()
   cy.get('[class="page-content"]').should('be.visible')
   //wip ...
 });
