@@ -440,13 +440,6 @@ Cypress.Commands.add("ConfPaymentsAPI1784", () => {
       //kbc
       cy.get('[name="MOLLIE_METHOD_ENABLED_kbc"]').select('Yes', {force: true})
       cy.get('[name="MOLLIE_METHOD_API_kbc"]').select('Payments API', {force: true})
-      //voucher
-      cy.get('[name="MOLLIE_METHOD_ENABLED_voucher"]').select('Yes', {force: true})
-      cy.get('[name="MOLLIE_METHOD_DESCRIPTION_voucher"]').clear({force: true}).type('Lorem Ipsum 123 !@#$%^&*', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_TYPE_voucher"]').select('3', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_voucher"]').clear({force: true}).type('11', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_voucher"]').clear({force: true}).type('22', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_voucher"]').clear({force: true}).type('33', {force: true})
       //belfius
       cy.get('[name="MOLLIE_METHOD_ENABLED_belfius"]').select('Yes', {force: true})
       cy.get('[name="MOLLIE_METHOD_API_belfius"]').select('Payments API', {force: true})
@@ -462,27 +455,6 @@ Cypress.Commands.add("ConfPaymentsAPI1784", () => {
       //ideal
       cy.get('[name="MOLLIE_METHOD_ENABLED_ideal"]').select('Yes', {force: true})
       cy.get('[name="MOLLIE_METHOD_API_ideal"]').select('Payments API', {force: true})
-      //klarnapaylater
-      cy.get('[name="MOLLIE_METHOD_ENABLED_klarnapaylater"]').select('Yes', {force: true})
-      cy.get('[name="MOLLIE_METHOD_DESCRIPTION_klarnapaylater"]').clear({force: true}).type('Lorem Ipsum 123 !@#$%^&*', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_TYPE_klarnapaylater"]').select('3', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_klarnapaylater"]').clear({force: true}).type('11', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_klarnapaylater"]').clear({force: true}).type('22', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_klarnapaylater"]').clear({force: true}).type('33', {force: true})
-      //klarnasliceit
-      cy.get('[name="MOLLIE_METHOD_ENABLED_klarnasliceit"]').select('Yes', {force: true})
-      cy.get('[name="MOLLIE_METHOD_DESCRIPTION_klarnasliceit"]').clear({force: true}).type('Lorem Ipsum 123 !@#$%^&*', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_TYPE_klarnasliceit"]').select('3', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_klarnasliceit"]').clear({force: true}).type('11', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_klarnasliceit"]').clear({force: true}).type('22', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_klarnasliceit"]').clear({force: true}).type('33', {force: true})
-      //klarnapaynow
-      cy.get('[name="MOLLIE_METHOD_ENABLED_klarnapaynow"]').select('Yes', {force: true})
-      cy.get('[name="MOLLIE_METHOD_DESCRIPTION_klarnapaynow"]').clear({force: true}).type('Lorem Ipsum 123 !@#$%^&*', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_TYPE_klarnapaynow"]').select('3', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_klarnapaynow"]').clear({force: true}).type('11', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_klarnapaynow"]').clear({force: true}).type('22', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_klarnapaynow"]').clear({force: true}).type('33', {force: true})
       //banktransfer
       cy.get('[name="MOLLIE_METHOD_ENABLED_banktransfer"]').select('Yes', {force: true})
       cy.get('[name="MOLLIE_METHOD_API_banktransfer"]').select('Payments API', {force: true})
@@ -490,12 +462,7 @@ Cypress.Commands.add("ConfPaymentsAPI1784", () => {
       cy.get('[name="MOLLIE_METHOD_ENABLED_paypal"]').select('Yes', {force: true})
       cy.get('[name="MOLLIE_METHOD_API_paypal"]').select('Payments API', {force: true})
       //applepay
-      cy.get('[name="MOLLIE_METHOD_ENABLED_applepay"]').select('Yes', {force: true})
-      cy.get('[name="MOLLIE_METHOD_DESCRIPTION_applepay"]').clear({force: true}).type('Lorem Ipsum 123 !@#$%^&*', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_TYPE_applepay"]').select('3', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_applepay"]').clear({force: true}).type('11', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_applepay"]').clear({force: true}).type('22', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_applepay"]').clear({force: true}).type('33', {force: true})
+      cy.get('[name="MOLLIE_METHOD_API_applepay"]').select('Payments API', {force: true})
 })
 Cypress.Commands.add("login_mollie17_test", () => {
    Cypress.env()
