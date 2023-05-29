@@ -35,7 +35,7 @@ services:
       DB_PASSWD: $${DB_PASSWD}
       DB_NAME: prestashop
       DB_SERVER: mysql
-      PS_DOMAIN: wipdemoshop8.eu.ngrok.io:8142
+      PS_DOMAIN: demoshop8.eu.ngrok.io:8142
       PS_FOLDER_INSTALL: install
       PS_FOLDER_ADMIN: admin1
     depends_on:
