@@ -36,44 +36,44 @@
 
 namespace Mollie\Provider;
 
+use Address;
 use Mollie\Adapter\Context;
 use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
+use Mollie\Exception\Code\ExceptionCode;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
-use Mollie\Repository\TaxRepositoryInterface;
-use Mollie\Repository\TaxRuleRepositoryInterface;
+use Mollie\Exception\FailedToProvideTaxException;
+use Mollie\Repository\AddressRepositoryInterface;
 use Mollie\Utility\TaxUtility;
 use MolPaymentMethod;
 use PrestaShop\Decimal\DecimalNumber;
 use PrestaShop\Decimal\Operation\Rounding;
 use Tax;
-use TaxRule;
 
 class PaymentFeeProvider implements PaymentFeeProviderInterface
 {
     private const MAX_PERCENTAGE = '100';
-    private const LOWEST_VALUE = '0';
     private const TEMPORARY_PRECISION = 6;
 
     /** @var Context */
     private $context;
     /** @var TaxUtility */
     private $taxUtility;
-    /** @var TaxRuleRepositoryInterface */
-    private $taxRuleRepository;
-    /** @var TaxRepositoryInterface */
-    private $taxRepository;
+    /** @var AddressRepositoryInterface */
+    private $addressRepository;
+    /** @var TaxProvider */
+    private $taxProvider;
 
     public function __construct(
         Context $context,
         TaxUtility $taxUtility,
-        TaxRuleRepositoryInterface $taxRuleRepository,
-        TaxRepositoryInterface $taxRepository
+        AddressRepositoryInterface $addressRepository,
+        TaxProvider $taxProvider
     ) {
         $this->context = $context;
         $this->taxUtility = $taxUtility;
-        $this->taxRuleRepository = $taxRuleRepository;
-        $this->taxRepository = $taxRepository;
+        $this->addressRepository = $addressRepository;
+        $this->taxProvider = $taxProvider;
     }
 
     /**
@@ -86,38 +86,38 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
         $totalDecimalCartPrice = new DecimalNumber((string) $totalCartPrice);
         $maxPercentage = new DecimalNumber(self::MAX_PERCENTAGE);
         $surchargePercentage = new DecimalNumber($paymentMethod->surcharge_percentage);
-        $surchargeFixedPriceTaxIncl = new DecimalNumber((string) $paymentMethod->surcharge_fixed_amount_tax_incl);
         $surchargeFixedPriceTaxExcl = new DecimalNumber((string) $paymentMethod->surcharge_fixed_amount_tax_excl);
 
-        /** @var TaxRule|null $taxRule */
-        $taxRule = $this->taxRuleRepository->findOneBy([
-            'id_tax_rules_group' => $paymentMethod->tax_rules_group_id,
-            'id_country' => $this->context->getCustomerAddressInvoiceId(),
+        /** @var Address|null $address */
+        $address = $this->addressRepository->findOneBy([
+            'id_address' => $this->context->getCustomerAddressInvoiceId(),
+            'deleted' => 0,
         ]);
 
-        if (!$taxRule || !$taxRule->id) {
-            throw new FailedToProvidePaymentFeeException('Failed to find tax rules', FailedToProvidePaymentFeeException::FAILED_TO_FIND_TAX_RULES);
+        if (!$address || !$address->id) {
+            throw new FailedToProvidePaymentFeeException('Failed to find customer address', ExceptionCode::FAILED_TO_FIND_CUSTOMER_ADDRESS);
         }
 
-        /** @var Tax|null $tax */
-        $tax = $this->taxRepository->findOneBy([
-            'id_tax' => $taxRule->id_tax,
-        ]);
-
-        if (!$tax || !$tax->id) {
-            throw new FailedToProvidePaymentFeeException('Failed to find tax', FailedToProvidePaymentFeeException::FAILED_TO_FIND_TAX);
+        // TODO allign on what to do on missing tax if country with states is used
+        try {
+            $tax = $this->taxProvider->getTax(
+                $paymentMethod->tax_rules_group_id,
+                $address->id_country,
+                $address->id_state
+            );
+        } catch (FailedToProvideTaxException $exception) {
+            throw new FailedToProvidePaymentFeeException('Failed to get tax', ExceptionCode::FAILED_TO_GET_TAX);
         }
 
         switch ($paymentMethod->surcharge) {
             case Config::FEE_FIXED_FEE:
-                $totalFeePriceTaxIncl = $surchargeFixedPriceTaxIncl;
                 $totalFeePriceTaxExcl = $surchargeFixedPriceTaxExcl;
+                $totalFeePriceTaxIncl = new DecimalNumber((string) $this->taxUtility->addTax(
+                    (float) $totalFeePriceTaxExcl->toPrecision(self::TEMPORARY_PRECISION, Rounding::ROUND_HALF_UP),
+                    $tax
+                ));
 
-                return new PaymentFeeData(
-                    (float) $totalFeePriceTaxIncl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP),
-                    (float) $totalFeePriceTaxExcl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP),
-                    true
-                );
+                return $this->returnFormattedResult($totalFeePriceTaxIncl, $totalFeePriceTaxExcl);
             case Config::FEE_PERCENTAGE:
                 $totalFeePriceTaxExcl = $totalDecimalCartPrice->times(
                     $surchargePercentage->dividedBy(
@@ -125,14 +125,17 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
                     )
                 );
 
-                $totalFeePriceTaxIncl = $this->taxUtility->addTax(
+                $totalFeePriceTaxIncl = new DecimalNumber((string) $this->taxUtility->addTax(
                     (float) $totalFeePriceTaxExcl->toPrecision(self::TEMPORARY_PRECISION, Rounding::ROUND_HALF_UP),
                     $tax
+                ));
+
+                return $this->handleSurchargeMaxValue(
+                    $paymentMethod->surcharge_limit,
+                    $totalFeePriceTaxIncl,
+                    $totalFeePriceTaxExcl,
+                    $tax
                 );
-
-                $totalFeePriceTaxIncl = new DecimalNumber((string) $totalFeePriceTaxIncl);
-
-                break;
             case Config::FEE_FIXED_FEE_AND_PERCENTAGE:
                 $totalFeePriceTaxExcl = $totalDecimalCartPrice->times(
                     $surchargePercentage->dividedBy(
@@ -140,32 +143,43 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
                     )
                 )->plus($surchargeFixedPriceTaxExcl);
 
-                $totalFeePriceTaxIncl = $this->taxUtility->addTax(
+                $totalFeePriceTaxIncl = new DecimalNumber((string) $this->taxUtility->addTax(
                     (float) $totalFeePriceTaxExcl->toPrecision(self::TEMPORARY_PRECISION, Rounding::ROUND_HALF_UP),
                     $tax
+                ));
+
+                return $this->handleSurchargeMaxValue(
+                    $paymentMethod->surcharge_limit,
+                    $totalFeePriceTaxIncl,
+                    $totalFeePriceTaxExcl,
+                    $tax
                 );
-
-                $totalFeePriceTaxIncl = new DecimalNumber((string) $totalFeePriceTaxIncl);
-
-                break;
-            case Config::FEE_NO_FEE:
-            default:
-                return new PaymentFeeData(0.00, 0.00, true);
         }
 
-        $surchargeMaxValue = new DecimalNumber((string) $paymentMethod->surcharge_limit);
-        $lowestValue = new DecimalNumber((string) self::LOWEST_VALUE);
+        return new PaymentFeeData(0.00, 0.00, true);
+    }
 
-        if ($surchargeMaxValue->isGreaterThan($lowestValue) && $totalFeePriceTaxIncl->isGreaterOrEqualThan($surchargeMaxValue)) {
+    private function handleSurchargeMaxValue(
+        string $surchargeLimit,
+        DecimalNumber $totalFeePriceTaxIncl,
+        DecimalNumber $totalFeePriceTaxExcl,
+        Tax $tax
+    ): PaymentFeeData {
+        $surchargeMaxValue = new DecimalNumber($surchargeLimit);
+
+        if ($surchargeMaxValue->isGreaterOrEqualThanZero() && $totalFeePriceTaxIncl->isGreaterOrEqualThan($surchargeMaxValue)) {
             $totalFeePriceTaxIncl = $surchargeMaxValue;
-            $totalFeePriceTaxExcl = $this->taxUtility->removeTax(
+            $totalFeePriceTaxExcl = new DecimalNumber((string) $this->taxUtility->removeTax(
                 (float) $surchargeMaxValue->toPrecision(self::TEMPORARY_PRECISION, Rounding::ROUND_HALF_UP),
                 $tax
-            );
-
-            $totalFeePriceTaxExcl = new DecimalNumber((string) $totalFeePriceTaxExcl);
+            ));
         }
 
+        return $this->returnFormattedResult($totalFeePriceTaxIncl, $totalFeePriceTaxExcl);
+    }
+
+    private function returnFormattedResult(DecimalNumber $totalFeePriceTaxIncl, DecimalNumber $totalFeePriceTaxExcl): PaymentFeeData
+    {
         return new PaymentFeeData(
             (float) $totalFeePriceTaxIncl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP),
             (float) $totalFeePriceTaxExcl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP),
