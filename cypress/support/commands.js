@@ -314,7 +314,9 @@ Cypress.Commands.add("ConfOrdersAPI1784", () => {
       cy.get('[name="MOLLIE_METHOD_API_bancontact"]').select('Orders API', {force: true})
       cy.get('[name="MOLLIE_METHOD_DESCRIPTION_bancontact"]').clear({force: true}).type('text 123 !@#$%^&*', {force: true})
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_TYPE_bancontact"]').select('3', {force: true})
-      cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_bancontact"]').clear({force: true}).type('11', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_INCL_bancontact"]').clear({force: true}).type('4', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_EXCL_bancontact"]').clear({force: true}).type('5', {force: true})
+      cy.get('[name="MOLLIE_METHOD_TAX_RULES_GROUP_ID_bancontact"]').select('1', {force: true})
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_bancontact"]').clear({force: true}).type('22', {force: true})
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_bancontact"]').clear({force: true}).type('33', {force: true})
       //sofort
