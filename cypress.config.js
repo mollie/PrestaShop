@@ -2,6 +2,7 @@ const { defineConfig } = require('cypress')
 
 module.exports = defineConfig({
   chromeWebSecurity: false,
+  experimentalMemoryManagement: true,
   experimentalSourceRewriting: true,
   numTestsKeptInMemory: 5,
   defaultCommandTimeout: 15000,
