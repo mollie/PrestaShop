@@ -39,6 +39,7 @@ namespace Mollie\Handler\Order;
 use Cart;
 use Configuration;
 use Mollie;
+use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use Mollie\Api\Types\PaymentStatus;
@@ -46,13 +47,15 @@ use Mollie\Config\Config;
 use Mollie\DTO\Line;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
+use Mollie\Exception\FailedToProvidePaymentFeeException;
+use Mollie\Exception\OrderCreationException;
+use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Subscription\Handler\SubscriptionCreationHandler;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Utility\NumberUtility;
-use Mollie\Utility\PaymentFeeUtility;
 use Mollie\Utility\TextGeneratorUtility;
 use MolPaymentMethod;
 use Order;
@@ -80,6 +83,8 @@ class OrderCreationHandler
     private $recurringOrderCreation;
     /** @var SubscriptionOrderValidator */
     private $subscriptionOrder;
+    /** @var PaymentFeeProviderInterface */
+    private $paymentFeeProvider;
 
     public function __construct(
         Mollie $module,
@@ -88,7 +93,8 @@ class OrderCreationHandler
         OrderFeeHandler $orderFeeHandler,
         OrderStatusService $orderStatusService,
         SubscriptionCreationHandler $recurringOrderCreation,
-        SubscriptionOrderValidator $subscriptionOrder
+        SubscriptionOrderValidator $subscriptionOrder,
+        PaymentFeeProviderInterface $paymentFeeProvider
     ) {
         $this->module = $module;
         $this->paymentMethodRepository = $paymentMethodRepository;
@@ -97,10 +103,21 @@ class OrderCreationHandler
         $this->orderStatusService = $orderStatusService;
         $this->recurringOrderCreation = $recurringOrderCreation;
         $this->subscriptionOrder = $subscriptionOrder;
+        $this->paymentFeeProvider = $paymentFeeProvider;
     }
 
     /**
      * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
+     * @param int $cartId
+     * @param bool $isKlarnaOrder
+     *
+     * @return int
+     *
+     * @throws FailedToProvidePaymentFeeException
+     * @throws ApiException
+     * @throws OrderCreationException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function createOrder($apiPayment, int $cartId, $isKlarnaOrder = false): int
     {
@@ -113,11 +130,15 @@ class OrderCreationHandler
             true,
             Cart::BOTH
         );
+
         $paymentFee = 0;
 
         $paymentMethod = $this->paymentMethodService->getPaymentMethod($apiPayment);
+
         if ($apiPayment->resource === Config::MOLLIE_API_STATUS_PAYMENT) {
-            $paymentFee = PaymentFeeUtility::getPaymentFee($paymentMethod, $originalAmount);
+            $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmount);
+
+            $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
         } else {
             /** @var Mollie\Api\Resources\OrderLine $line */
             foreach ($apiPayment->lines() as $line) {
@@ -237,7 +258,10 @@ class OrderCreationHandler
             $paymentMethod = new MolPaymentMethod(
                 $paymentMethodRepository->getPaymentMethodIdByMethodId($paymentData->getMethod(), $environment)
             );
-            $paymentFee = PaymentFeeUtility::getPaymentFee($paymentMethod, $originalAmount);
+
+            $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmount);
+
+            $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
         } else {
             /** @var Line $line */
             foreach ($paymentData->getLines() as $line) {

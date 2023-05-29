@@ -47,4 +47,107 @@ $(document).ready(function() {
     });
 
   $('input[name="activateModule"]').parent('div').hide();
+
+  let typingTimer;
+  let doneTypingInterval = 500;
+
+  $(document).on('keyup',
+    'input[name^="' + paymentMethodSurchargeFixedAmountTaxInclConfig + '"],' +
+    'input[name^="' + paymentMethodSurchargeFixedAmountTaxExclConfig + '"]',
+    function () {
+      clearTimeout(typingTimer);
+
+      const inputValue = this.value;
+      const inputElement = this;
+
+      if (inputValue) {
+        typingTimer = setTimeout(function () {
+          let inputName = $(inputElement).attr('name');
+
+          let paymentFeeTaxIncl = 0.00;
+          let paymentFeeTaxExcl = 0.00;
+
+          if (inputName.indexOf(paymentMethodSurchargeFixedAmountTaxInclConfig) >= 0) {
+            paymentFeeTaxIncl = inputValue;
+          } else {
+            paymentFeeTaxExcl = inputValue;
+          }
+
+          const $paymentMethod = $(inputElement.closest('div[id^="payment-method-form-"]'));
+
+          if ($paymentMethod.length < 1) {
+            console.error('Failed to find payment form parent element');
+
+            return;
+          }
+
+          let taxRulesGroupId = $paymentMethod.find('select[name^="' + paymentMethodTaxRulesGroupIdConfig + '"]').val();
+
+          updatePaymentFee($paymentMethod, paymentFeeTaxIncl, paymentFeeTaxExcl, taxRulesGroupId);
+        }, doneTypingInterval)
+      }
+    });
+
+  $(document).on('change',
+    'select[name^="' + paymentMethodTaxRulesGroupIdConfig + '"]',
+    function () {
+      const taxRulesGroupId = this.value;
+      const inputElement = this;
+
+      const $paymentMethod = $(inputElement.closest('div[id^="payment-method-form-"]'));
+
+      if ($paymentMethod.length < 1) {
+        console.error('Failed to find payment form parent element');
+
+        return;
+      }
+
+      let paymentFeeTaxIncl = 0.00;
+      let $paymentFeeTaxExcl = $paymentMethod.find('input[name^="' + paymentMethodSurchargeFixedAmountTaxExclConfig + '"]');
+
+      if ($paymentFeeTaxExcl.length < 1) {
+        console.error('Failed to find payment fee tax excluded price');
+
+        return;
+      }
+
+      let paymentFeeTaxExcl = $paymentFeeTaxExcl.val();
+
+      updatePaymentFee($paymentMethod, paymentFeeTaxIncl, paymentFeeTaxExcl, taxRulesGroupId);
+    });
+
+  function updatePaymentFee($paymentMethod, paymentFeeTaxIncl, paymentFeeTaxExcl, taxRulesGroupId) {
+    $.ajax(ajaxUrl, {
+        method: 'POST',
+        data: {
+          'action': 'updateFixedPaymentFeePrice',
+          'paymentFeeTaxIncl': paymentFeeTaxIncl,
+          'paymentFeeTaxExcl': paymentFeeTaxExcl,
+          'taxRulesGroupId': taxRulesGroupId,
+          'ajax': 1,
+        },
+        success: function (response) {
+          response = JSON.parse(response);
+
+          if (response.error) {
+            console.error(response.message)
+
+            return;
+          }
+
+          let $paymentFeeTaxIncl = $paymentMethod.find('input[name^="' + paymentMethodSurchargeFixedAmountTaxInclConfig + '"]');
+          let $paymentFeeTaxExcl = $paymentMethod.find('input[name^="' + paymentMethodSurchargeFixedAmountTaxExclConfig + '"]');
+
+          if ($paymentFeeTaxIncl.length < 1 || $paymentFeeTaxExcl.length < 1) {
+            console.error('Failed to find payment fee input');
+
+            return;
+          }
+
+          $paymentFeeTaxIncl.val(response.paymentFeeTaxIncl);
+          $paymentFeeTaxExcl.val(response.paymentFeeTaxExcl);
+        }
+      }
+    )
+  }
 })
