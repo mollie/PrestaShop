@@ -702,19 +702,19 @@ it.skip('40 Gift Card Checkouting [Orders API]', () => {
 it.skip('41 Gift Card Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it.only('C339377: 42 [SWITCH TO PAYMENTS API] Enabling All payments in Module BO [Payments API]', () => {
+it('C339377: 42 [SWITCH TO PAYMENTS API] Enabling All payments in Module BO [Payments API]', () => {
       cy.visit('/admin1/')
       cy.OpenModuleDashboard()
       cy.ConfPaymentsAPI1784()
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it.only('C339378: 43 Check if Bancontact QR payment dropdown exists [Payments API]', () => {
+it('C339378: 43 Check if Bancontact QR payment dropdown exists [Payments API]', () => {
       cy.visit('/admin1/')
       cy.OpenModuleDashboard()
       cy.get('[name="MOLLIE_BANCONTACT_QR_CODE_ENABLED"]').should('exist')
 })
-it.only('C339379: 44 Bancontact Checkouting [Payments API]', () => {
+it('C339379: 44 Bancontact Checkouting [Payments API]', () => {
       cy.visit('/SHOP2/de/index.php?controller=history')
       cy.get('a').click()
       //
