@@ -110,4 +110,9 @@ class Context
     {
         return (string) PrestashopContext::getContext()->language->locale;
     }
+
+    public function getCountryId(): int
+    {
+        return (string) PrestashopContext::getContext()->country->id;
+    }
 }

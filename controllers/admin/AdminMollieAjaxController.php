@@ -12,10 +12,10 @@
 
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
+use Mollie\Exception\FailedToProvideTaxException;
 use Mollie\Provider\CreditCardLogoProvider;
+use Mollie\Provider\TaxProvider;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Repository\TaxRepositoryInterface;
-use Mollie\Repository\TaxRuleRepositoryInterface;
 use Mollie\Service\MolliePaymentMailService;
 use Mollie\Utility\TaxUtility;
 use Mollie\Utility\TimeUtility;
@@ -194,39 +194,20 @@ class AdminMollieAjaxController extends ModuleAdminController
             return;
         }
 
-        /** @var TaxRuleRepositoryInterface $taxRuleRepository */
-        $taxRuleRepository = $this->module->getService(TaxRuleRepositoryInterface::class);
+        /** @var TaxProvider $taxProvider */
+        $taxProvider = $this->module->getService(TaxProvider::class);
 
-        /** @var TaxRule|null $taxRule */
-        $taxRule = $taxRuleRepository->findOneBy([
-            'id_tax_rules_group' => $taxRulesGroupId,
-            'id_country' => $this->context->country->id,
-        ]);
-
-        if (!$taxRule || !$taxRule->id) {
-            $this->ajaxRender(
-                json_encode([
-                    'error' => true,
-                    'message' => $this->module->l('Failed to find tax rule'),
-                ])
+        try {
+            $tax = $taxProvider->getTax(
+                $taxRulesGroupId,
+                (int) $this->context->country->id,
+                0 // NOTE: there is no default state for back office so setting no state
             );
-
-            return;
-        }
-
-        /** @var TaxRepositoryInterface $taxRepository */
-        $taxRepository = $this->module->getService(TaxRepositoryInterface::class);
-
-        /** @var Tax|null $tax */
-        $tax = $taxRepository->findOneBy([
-            'id_tax' => $taxRule->id_tax,
-        ]);
-
-        if (!$tax || !$tax->id) {
+        } catch (FailedToProvideTaxException $exception) {
             $this->ajaxRender(
                 json_encode([
                     'error' => true,
-                    'message' => $this->module->l('Failed to find tax'),
+                    'message' => $this->module->l('Failed to get tax'),
                 ])
             );
 

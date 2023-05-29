@@ -300,7 +300,7 @@
                               <input type="text"
                                      name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_INCL_{$paymentMethod.id|escape:'html':'UTF-8'}"
                                      class="fixed-width-xl js-mollie-amount"
-                                     value="{$methodObj->surcharge_fixed_amount_tax_incl|escape:'html':'UTF-8'}"
+                                     value="{$paymentMethod.surcharge_fixed_amount_tax_incl|escape:'html':'UTF-8'}"
                               >
                             </div>
                         </div>

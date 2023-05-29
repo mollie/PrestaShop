@@ -64,11 +64,6 @@ class MolPaymentMethod extends ObjectModel
     /**
      * @var float
      */
-    public $surcharge_fixed_amount_tax_incl;
-
-    /**
-     * @var float
-     */
     public $surcharge_fixed_amount_tax_excl;
 
     /**
@@ -131,7 +126,6 @@ class MolPaymentMethod extends ObjectModel
             'minimal_order_value' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
             'max_order_value' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
             'surcharge' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
-            'surcharge_fixed_amount_tax_incl' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
             'surcharge_fixed_amount_tax_excl' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
             'tax_rules_group_id' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'surcharge_percentage' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],

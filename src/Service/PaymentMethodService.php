@@ -159,7 +159,6 @@ class PaymentMethodService
         $paymentMethod->minimal_order_value = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MINIMUM_ORDER_VALUE . $method['id']);
         $paymentMethod->max_order_value = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_ORDER_VALUE . $method['id']);
         $paymentMethod->surcharge = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_TYPE . $method['id']);
-        $paymentMethod->surcharge_fixed_amount_tax_incl = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_INCL . $method['id']);
         $paymentMethod->surcharge_fixed_amount_tax_excl = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_EXCL . $method['id']);
         $paymentMethod->tax_rules_group_id = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_TAX_RULES_GROUP_ID . $method['id']);
         $paymentMethod->surcharge_percentage = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_PERCENTAGE . $method['id']);
