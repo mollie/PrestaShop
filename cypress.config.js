@@ -4,7 +4,7 @@ module.exports = defineConfig({
   chromeWebSecurity: false,
   experimentalMemoryManagement: true,
   experimentalSourceRewriting: true,
-  numTestsKeptInMemory: 1,
+  numTestsKeptInMemory: 4,
   defaultCommandTimeout: 15000,
   projectId: 'xb89dr',
   retries: 3,
