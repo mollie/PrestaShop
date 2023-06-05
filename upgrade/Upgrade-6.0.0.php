@@ -27,14 +27,16 @@ function upgrade_module_6_0_0(Mollie $module): bool
     ';
 
     /** only add it if it doesn't exist */
-    if (!(int) Db::getInstance()->getValue($sql)) {
+    if (!Db::getInstance()->getValue($sql)) {
         $sql = '
         ALTER TABLE ' . _DB_PREFIX_ . 'mollie_payments
         ADD `mandate_id` VARCHAR(64);
         ';
 
         try {
-            Db::getInstance()->execute($sql);
+            if (!Db::getInstance()->execute($sql)) {
+                return false;
+            }
         } catch (Exception $e) {
             return false;
         }
@@ -47,7 +49,7 @@ function upgrade_module_6_0_0(Mollie $module): bool
     ';
 
     /** only add it if it doesn't exist */
-    if (!(int) Db::getInstance()->getValue($sql)) {
+    if (!Db::getInstance()->getValue($sql)) {
         $sql = '
         ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
         ADD COLUMN min_amount decimal(20,6) DEFAULT 0,
@@ -55,7 +57,9 @@ function upgrade_module_6_0_0(Mollie $module): bool
         ';
 
         try {
-            Db::getInstance()->execute($sql);
+            if (!Db::getInstance()->execute($sql)) {
+                return false;
+            }
         } catch (Exception $e) {
             return false;
         }
