@@ -23,7 +23,7 @@
     "cypress": "^12.8.1",
     "cypress-fail-fast": "^7.0.0",
     "cypress-iframe": "^1.0.1",
-    "cypress-testrail": "^2.7.0",
+    "cypress-testrail": "^2.7.1",
     "human-signals": "^3.0.1"
   }
 }
