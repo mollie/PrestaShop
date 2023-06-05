@@ -65,6 +65,21 @@ function upgrade_module_6_0_0(Mollie $module): bool
         }
     }
 
+    $sql = '
+    DELETE t, tl
+    FROM `' . _DB_PREFIX_ . 'tab` t
+    JOIN `' . _DB_PREFIX_ . 'tab_lang` tl ON t.id_tab = tl.id_tab
+    WHERE t.class_name IN (\'' . $module::ADMIN_MOLLIE_CONTROLLER . '\', \'' . $module::ADMIN_MOLLIE_AJAX_CONTROLLER . '\');
+    ';
+
+    try {
+        if (!Db::getInstance()->execute($sql)) {
+            return false;
+        }
+    } catch (Exception $e) {
+        return false;
+    }
+
     //todo: maybe move to container
     $installer = new \Mollie\Install\Installer(
         $module,
