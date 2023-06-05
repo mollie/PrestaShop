@@ -80,6 +80,29 @@ function upgrade_module_6_0_0(Mollie $module): bool
         return false;
     }
 
+    // only for 1.7.6 version
+    if (version_compare(_PS_VERSION_, '1.7.7.0', '<')) {
+        $sql = '
+        DELETE FROM `' . _DB_PREFIX_ . 'authorization_role`
+        WHERE `slug` = "ROLE_MOD_TAB_' . $module::ADMIN_MOLLIE_CONTROLLER . '_CREATE"
+        OR `slug` = "ROLE_MOD_TAB_' . $module::ADMIN_MOLLIE_CONTROLLER . '_READ"
+        OR `slug` = "ROLE_MOD_TAB_' . $module::ADMIN_MOLLIE_CONTROLLER . '_UPDATE"
+        OR `slug` = "ROLE_MOD_TAB_' . $module::ADMIN_MOLLIE_CONTROLLER . '_DELETE"
+        OR `slug` = "ROLE_MOD_TAB_' . $module::ADMIN_MOLLIE_AJAX_CONTROLLER . '_CREATE"
+        OR `slug` = "ROLE_MOD_TAB_' . $module::ADMIN_MOLLIE_AJAX_CONTROLLER . '_READ"
+        OR `slug` = "ROLE_MOD_TAB_' . $module::ADMIN_MOLLIE_AJAX_CONTROLLER . '_UPDATE"
+        OR `slug` = "ROLE_MOD_TAB_' . $module::ADMIN_MOLLIE_AJAX_CONTROLLER . '_DELETE";
+        ';
+
+        try {
+            if (!Db::getInstance()->execute($sql)) {
+                return false;
+            }
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
     //todo: maybe move to container
     $installer = new \Mollie\Install\Installer(
         $module,
