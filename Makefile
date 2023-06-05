@@ -29,7 +29,7 @@ build-ps-1784:
 	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1784_2.sql
 	# installing older module version first
 	git fetch
-	git checkout 4.0.0 -- .
+	git checkout 4.0.0 .
 	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
 	# installing the newest module then
 	git branch master
@@ -61,7 +61,7 @@ build-ps-8:
 	mysql -h 127.0.0.1 -P 9459 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_8.sql
 	# installing older module version first
 	git fetch
-	git checkout 4.0.0 -- .
+	git checkout 4.0.0 .
 	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
 	# installing the newest module then
 	git branch master
