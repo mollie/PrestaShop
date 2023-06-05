@@ -28,12 +28,7 @@ build-ps-1784:
 	# configuring base database
 	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1784_2.sql
 	# installing older module version first
-	git fetch
-	git checkout 4.3.3 .
-	docker exec -i prestashop-mollie-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
-	# installing the newest module then
-	git branch master
-  docker exec -i prestashop-mollie-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
+	composer require prestashop/mollie:4.3.3
 	# chmod all folders
 	docker exec -i prestashop-mollie-1784 sh -c "chmod -R 777 /var/www/html"
 
@@ -60,12 +55,7 @@ build-ps-8:
 	# configuring base database
 	mysql -h 127.0.0.1 -P 9459 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_8.sql
 	# installing older module version first
-	git fetch
-	git checkout 4.3.3 .
-	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
-	# installing the newest module then
-	git branch master
-  docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
+	composer require prestashop/mollie:4.3.3
 	# enabling the module
 	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module enable mollie --id_shop=2"
 	# chmod all folders
