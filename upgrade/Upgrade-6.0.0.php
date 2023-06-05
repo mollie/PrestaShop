@@ -20,6 +20,155 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_6_0_0(Mollie $module): bool
 {
+    if (!modifyExistingTables()) {
+        return false;
+    }
+
+    if (!deleteOldTabs($module)) {
+        return false;
+    }
+
+    // only for 1.7.6 version
+    if (version_compare(_PS_VERSION_, '1.7.7.0', '<')) {
+        if (!deleteOldTabAuthorizationRoles($module)) {
+            return false;
+        }
+    }
+
+    //todo: maybe move to container
+    $installer = new \Mollie\Install\Installer(
+        $module,
+        new \Mollie\Service\OrderStateImageService(),
+        new \Mollie\Install\DatabaseTableInstaller(),
+        new \Mollie\Tracker\Segment(
+            new \Mollie\Adapter\Shop(),
+            new \Mollie\Adapter\Language(),
+            new \Mollie\Config\Env()
+        ),
+        new \Mollie\Adapter\ConfigurationAdapter()
+    );
+
+    $installer->installSpecificTabs();
+
+    /** @var ModuleTabRegister $tabRegister */
+    $tabRegister = $module->getService('prestashop.adapter.module.tab.register');
+
+    $moduleAdapter = new \PrestaShop\PrestaShop\Adapter\Module\Module();
+    $moduleAdapter->instance = $module;
+    $moduleAdapter->disk = new ParameterBag(
+        [
+            'filemtype' => 0,
+            'is_present' => 1,
+            'is_valid' => 1,
+            'version' => null,
+            'path' => '',
+        ]
+    );
+
+    $moduleAdapter->attributes->set('name', $module->name);
+
+    $tabRegister->registerTabs($moduleAdapter);
+
+    /** @var InstallerInterface $installer */
+    $installer = $module->getService(InstallerInterface::class);
+
+    return $installer->install();
+}
+
+function deleteOldTabs($module): bool
+{
+    $classNames = [$module::ADMIN_MOLLIE_CONTROLLER, $module::ADMIN_MOLLIE_AJAX_CONTROLLER];
+    $preparedClassNames = [];
+
+    foreach ($classNames as $className) {
+        $preparedClassNames[] = pSQL($className);
+    }
+
+    $preparedClassNames = implode("', '", $preparedClassNames);
+
+    $sql = '
+        SELECT id_tab
+        FROM `' . _DB_PREFIX_ . 'tab`
+        WHERE class_name IN (\'' . $preparedClassNames . '\');
+    ';
+
+    try {
+        $tabIds = Db::getInstance()->executeS($sql);
+    } catch (Exception $e) {
+        return false;
+    }
+
+    if (empty($tabIds)) {
+        return false;
+    }
+
+    $preparedTabIds = [];
+
+    foreach ($tabIds as $tabId) {
+        $preparedTabIds[] = $tabId['id_tab'];
+    }
+
+    $preparedTabIds = implode("', '", $preparedTabIds);
+
+    $sql = '
+    DELETE FROM `' . _DB_PREFIX_ . 'tab`
+    WHERE id_tab IN (\'' . $preparedTabIds . '\');
+    ';
+
+    try {
+        if (!Db::getInstance()->execute($sql)) {
+            return false;
+        }
+    } catch (Exception $e) {
+        return false;
+    }
+
+    $sql = '
+    DELETE FROM `' . _DB_PREFIX_ . 'tab_lang`
+    WHERE id_tab IN (\'' . $preparedTabIds . '\');
+    ';
+
+    try {
+        if (!Db::getInstance()->execute($sql)) {
+            return false;
+        }
+    } catch (Exception $e) {
+        return false;
+    }
+
+    return true;
+}
+
+function deleteOldTabAuthorizationRoles($module): bool
+{
+    $crudActions = ['_CREATE', '_READ', '_UPDATE', '_DELETE'];
+    $preparedTabs = [];
+
+    foreach ($crudActions as $crudAction) {
+        $preparedTabs[] = 'ROLE_MOD_TAB_' . pSQL($module::ADMIN_MOLLIE_CONTROLLER) . $crudAction;
+        $preparedTabs[] = 'ROLE_MOD_TAB_' . pSQL($module::ADMIN_MOLLIE_AJAX_CONTROLLER) . $crudAction;
+    }
+
+    $preparedTabs = implode("', '", $preparedTabs);
+
+    $sql = '
+        DELETE FROM `' . _DB_PREFIX_ . 'authorization_role`
+        WHERE slug IN (\'' . $preparedTabs . '\');
+        ';
+
+    try {
+        if (!Db::getInstance()->execute($sql)) {
+            return false;
+        }
+    } catch (Exception $e) {
+        return false;
+    }
+
+    return true;
+}
+
+function modifyExistingTables(): bool
+{
     $sql = '
     SELECT COUNT(*) > 0 AS count
     FROM INFORMATION_SCHEMA.COLUMNS
@@ -65,80 +214,5 @@ function upgrade_module_6_0_0(Mollie $module): bool
         }
     }
 
-    $sql = '
-    DELETE t, tl
-    FROM `' . _DB_PREFIX_ . 'tab` t
-    JOIN `' . _DB_PREFIX_ . 'tab_lang` tl ON t.id_tab = tl.id_tab
-    WHERE t.class_name IN (\'' . $module::ADMIN_MOLLIE_CONTROLLER . '\', \'' . $module::ADMIN_MOLLIE_AJAX_CONTROLLER . '\');
-    ';
-
-    try {
-        if (!Db::getInstance()->execute($sql)) {
-            return false;
-        }
-    } catch (Exception $e) {
-        return false;
-    }
-
-    // only for 1.7.6 version
-    if (version_compare(_PS_VERSION_, '1.7.7.0', '<')) {
-        $sql = '
-        DELETE FROM `' . _DB_PREFIX_ . 'authorization_role`
-        WHERE `slug` = "ROLE_MOD_TAB_' . $module::ADMIN_MOLLIE_CONTROLLER . '_CREATE"
-        OR `slug` = "ROLE_MOD_TAB_' . $module::ADMIN_MOLLIE_CONTROLLER . '_READ"
-        OR `slug` = "ROLE_MOD_TAB_' . $module::ADMIN_MOLLIE_CONTROLLER . '_UPDATE"
-        OR `slug` = "ROLE_MOD_TAB_' . $module::ADMIN_MOLLIE_CONTROLLER . '_DELETE"
-        OR `slug` = "ROLE_MOD_TAB_' . $module::ADMIN_MOLLIE_AJAX_CONTROLLER . '_CREATE"
-        OR `slug` = "ROLE_MOD_TAB_' . $module::ADMIN_MOLLIE_AJAX_CONTROLLER . '_READ"
-        OR `slug` = "ROLE_MOD_TAB_' . $module::ADMIN_MOLLIE_AJAX_CONTROLLER . '_UPDATE"
-        OR `slug` = "ROLE_MOD_TAB_' . $module::ADMIN_MOLLIE_AJAX_CONTROLLER . '_DELETE";
-        ';
-
-        try {
-            if (!Db::getInstance()->execute($sql)) {
-                return false;
-            }
-        } catch (Exception $e) {
-            return false;
-        }
-    }
-
-    //todo: maybe move to container
-    $installer = new \Mollie\Install\Installer(
-        $module,
-        new \Mollie\Service\OrderStateImageService(),
-        new \Mollie\Install\DatabaseTableInstaller(),
-        new \Mollie\Tracker\Segment(
-            new \Mollie\Adapter\Shop(),
-            new \Mollie\Adapter\Language(),
-            new \Mollie\Config\Env()
-        ),
-        new \Mollie\Adapter\ConfigurationAdapter()
-    );
-
-    $installer->installSpecificTabs();
-
-    /** @var ModuleTabRegister $tabRegister */
-    $tabRegister = $module->getService('prestashop.adapter.module.tab.register');
-
-    $moduleAdapter = new \PrestaShop\PrestaShop\Adapter\Module\Module();
-    $moduleAdapter->instance = $module;
-    $moduleAdapter->disk = new ParameterBag(
-        [
-            'filemtype' => 0,
-            'is_present' => 1,
-            'is_valid' => 1,
-            'version' => null,
-            'path' => '',
-        ]
-    );
-
-    $moduleAdapter->attributes->set('name', $module->name);
-
-    $tabRegister->registerTabs($moduleAdapter);
-
-    /** @var InstallerInterface $installer */
-    $installer = $module->getService(InstallerInterface::class);
-
-    return $installer->install();
+    return true;
 }
