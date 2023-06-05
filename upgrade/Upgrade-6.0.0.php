@@ -9,7 +9,6 @@
  * @see        https://github.com/mollie/PrestaShop
  */
 
-use Mollie\Subscription\Install\Installer;
 use Mollie\Subscription\Install\InstallerInterface;
 use PrestaShop\PrestaShop\Adapter\Module\Tab\ModuleTabRegister;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -99,20 +98,20 @@ function deleteOldTabs($module): bool
     }
 
     if (empty($tabIds)) {
-        return false;
+        return true;
     }
 
     $preparedTabIds = [];
 
     foreach ($tabIds as $tabId) {
-        $preparedTabIds[] = $tabId['id_tab'];
+        $preparedTabIds[] = (int) $tabId['id_tab'];
     }
 
-    $preparedTabIds = implode("', '", $preparedTabIds);
+    $preparedTabIds = implode(", ", $preparedTabIds);
 
     $sql = '
     DELETE FROM `' . _DB_PREFIX_ . 'tab`
-    WHERE id_tab IN (\'' . $preparedTabIds . '\');
+    WHERE id_tab IN (' . $preparedTabIds . ');
     ';
 
     try {
@@ -125,7 +124,7 @@ function deleteOldTabs($module): bool
 
     $sql = '
     DELETE FROM `' . _DB_PREFIX_ . 'tab_lang`
-    WHERE id_tab IN (\'' . $preparedTabIds . '\');
+    WHERE id_tab IN (' . $preparedTabIds . ');
     ';
 
     try {
@@ -141,12 +140,14 @@ function deleteOldTabs($module): bool
 
 function deleteOldTabAuthorizationRoles($module): bool
 {
-    $crudActions = ['_CREATE', '_READ', '_UPDATE', '_DELETE'];
+    $controllers = [$module::ADMIN_MOLLIE_CONTROLLER, $module::ADMIN_MOLLIE_AJAX_CONTROLLER];
     $preparedTabs = [];
 
-    foreach ($crudActions as $crudAction) {
-        $preparedTabs[] = 'ROLE_MOD_TAB_' . pSQL($module::ADMIN_MOLLIE_CONTROLLER) . $crudAction;
-        $preparedTabs[] = 'ROLE_MOD_TAB_' . pSQL($module::ADMIN_MOLLIE_AJAX_CONTROLLER) . $crudAction;
+    foreach ($controllers as $controller) {
+        $preparedTabs[] = 'ROLE_MOD_TAB_' . pSQL($controller) . '_CREATE';
+        $preparedTabs[] = 'ROLE_MOD_TAB_' . pSQL($controller) . '_READ';
+        $preparedTabs[] = 'ROLE_MOD_TAB_' . pSQL($controller) . '_UPDATE';
+        $preparedTabs[] = 'ROLE_MOD_TAB_' . pSQL($controller) . '_DELETE';
     }
 
     $preparedTabs = implode("', '", $preparedTabs);
