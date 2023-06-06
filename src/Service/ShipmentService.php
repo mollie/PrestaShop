@@ -119,11 +119,9 @@ class ShipmentService implements ShipmentServiceInterface
 
         if (Config::MOLLIE_CARRIER_CARRIER === $carrierInformation->url_source) {
             $carrier = new Carrier($order->id_carrier);
-            $shippingNumber = $order->shipping_number;
-            if (!$shippingNumber && method_exists($order, 'getIdOrderCarrier')) {
-                $orderCarrier = new OrderCarrier($order->getIdOrderCarrier());
-                $shippingNumber = $orderCarrier->tracking_number;
-            }
+            $orderCarrier = new OrderCarrier($order->getIdOrderCarrier());
+
+            $shippingNumber = $orderCarrier->tracking_number;
 
             if (!$shippingNumber || !$carrier->name) {
                 return [];
@@ -140,11 +138,9 @@ class ShipmentService implements ShipmentServiceInterface
 
         if (Config::MOLLIE_CARRIER_CUSTOM === $carrierInformation->url_source) {
             $carrier = new Carrier($order->id_carrier);
-            $shippingNumber = $order->shipping_number;
-            if (!$shippingNumber && method_exists($order, 'getIdOrderCarrier')) {
-                $orderCarrier = new OrderCarrier($order->getIdOrderCarrier());
-                $shippingNumber = $orderCarrier->tracking_number;
-            }
+            $orderCarrier = new OrderCarrier($order->getIdOrderCarrier());
+
+            $shippingNumber = $orderCarrier->tracking_number;
 
             $invoicePostcode = Tools::strtoupper(str_replace(' ', '', $invoiceAddress->postcode));
             $invoiceCountryIso = Tools::strtoupper(Country::getIsoById($invoiceAddress->id_country));
