@@ -42,7 +42,6 @@ use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Exception\Code\ExceptionCode;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
-use Mollie\Exception\FailedToProvideTaxCalculatorException;
 use Mollie\Repository\AddressRepositoryInterface;
 use MolPaymentMethod;
 use PrestaShop\Decimal\DecimalNumber;
@@ -93,16 +92,11 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
             throw new FailedToProvidePaymentFeeException('Failed to find customer address', ExceptionCode::FAILED_TO_FIND_CUSTOMER_ADDRESS);
         }
 
-        try {
-            $taxCalculator = $this->taxProvider->getTaxCalculator(
-                $paymentMethod->tax_rules_group_id,
-                $address->id_country,
-                $address->id_state
-            );
-        } catch (FailedToProvideTaxCalculatorException $exception) {
-            // TODO -> if no tax is found, we should provide fee without taxes
-            throw new FailedToProvidePaymentFeeException('Failed to get tax calculator', ExceptionCode::FAILED_TO_GET_TAX);
-        }
+        $taxCalculator = $this->taxProvider->getTaxCalculator(
+            $paymentMethod->tax_rules_group_id,
+            $address->id_country,
+            $address->id_state
+        );
 
         switch ($paymentMethod->surcharge) {
             case Config::FEE_FIXED_FEE:

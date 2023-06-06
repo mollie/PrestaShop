@@ -12,7 +12,6 @@
 
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
-use Mollie\Exception\FailedToProvideTaxCalculatorException;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\PaymentMethodRepository;
@@ -196,22 +195,11 @@ class AdminMollieAjaxController extends ModuleAdminController
         /** @var TaxCalculatorProvider $taxProvider */
         $taxProvider = $this->module->getService(TaxCalculatorProvider::class);
 
-        try {
-            $taxCalculator = $taxProvider->getTaxCalculator(
-                $taxRulesGroupId,
-                (int) $this->context->country->id,
-                0 // NOTE: there is no default state for back office so setting no state
-            );
-        } catch (FailedToProvideTaxCalculatorException $exception) {
-            $this->ajaxRender(
-                json_encode([
-                    'error' => true,
-                    'message' => $this->module->l('Failed to get tax calculator'),
-                ])
-            );
-
-            return;
-        }
+        $taxCalculator = $taxProvider->getTaxCalculator(
+            $taxRulesGroupId,
+            (int) $this->context->country->id,
+            0 // NOTE: there is no default state for back office so setting no state
+        );
 
         if ($paymentFeeTaxIncl === 0.00) {
             $paymentFeeTaxIncl = $taxCalculator->addTaxes($paymentFeeTaxExcl);
