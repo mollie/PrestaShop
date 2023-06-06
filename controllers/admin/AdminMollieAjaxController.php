@@ -12,12 +12,11 @@
 
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
-use Mollie\Exception\FailedToProvideTaxException;
+use Mollie\Exception\FailedToProvideTaxCalculatorException;
 use Mollie\Provider\CreditCardLogoProvider;
-use Mollie\Provider\TaxProvider;
+use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\MolliePaymentMailService;
-use Mollie\Utility\TaxUtility;
 use Mollie\Utility\TimeUtility;
 
 class AdminMollieAjaxController extends ModuleAdminController
@@ -194,35 +193,32 @@ class AdminMollieAjaxController extends ModuleAdminController
             return;
         }
 
-        /** @var TaxProvider $taxProvider */
-        $taxProvider = $this->module->getService(TaxProvider::class);
+        /** @var TaxCalculatorProvider $taxProvider */
+        $taxProvider = $this->module->getService(TaxCalculatorProvider::class);
 
         try {
-            $tax = $taxProvider->getTax(
+            $taxCalculator = $taxProvider->getTaxCalculator(
                 $taxRulesGroupId,
                 (int) $this->context->country->id,
                 0 // NOTE: there is no default state for back office so setting no state
             );
-        } catch (FailedToProvideTaxException $exception) {
+        } catch (FailedToProvideTaxCalculatorException $exception) {
             $this->ajaxRender(
                 json_encode([
                     'error' => true,
-                    'message' => $this->module->l('Failed to get tax'),
+                    'message' => $this->module->l('Failed to get tax calculator'),
                 ])
             );
 
             return;
         }
 
-        /** @var TaxUtility $taxUtility */
-        $taxUtility = $this->module->getService(TaxUtility::class);
-
         if ($paymentFeeTaxIncl === 0.00) {
-            $paymentFeeTaxIncl = $taxUtility->addTax($paymentFeeTaxExcl, $tax);
+            $paymentFeeTaxIncl = $taxCalculator->addTaxes($paymentFeeTaxExcl);
         }
 
         if ($paymentFeeTaxExcl === 0.00) {
-            $paymentFeeTaxExcl = $taxUtility->removeTax($paymentFeeTaxIncl, $tax);
+            $paymentFeeTaxExcl = $taxCalculator->removeTaxes($paymentFeeTaxIncl);
         }
 
         $this->ajaxRender(

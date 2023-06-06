@@ -6,7 +6,7 @@ use Address;
 use Mollie\Adapter\Context;
 use Mollie\Config\Config;
 use Mollie\Provider\PaymentFeeProvider;
-use Mollie\Provider\TaxProvider;
+use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\AddressRepositoryInterface;
 use Mollie\Utility\TaxUtility;
 use MolPaymentMethod;
@@ -22,7 +22,7 @@ class PaymentFeeProviderTest extends TestCase
     /** @var AddressRepositoryInterface */
     private $addressRepository;
 
-    /** @var TaxProvider */
+    /** @var TaxCalculatorProvider */
     private $taxProvider;
 
     public function setUp()
@@ -32,7 +32,7 @@ class PaymentFeeProviderTest extends TestCase
         $this->context = $this->createMock(Context::class);
         $this->taxUtility = $this->createMock(TaxUtility::class);
         $this->addressRepository = $this->createMock(AddressRepositoryInterface::class);
-        $this->taxProvider = $this->createMock(TaxProvider::class);
+        $this->taxProvider = $this->createMock(TaxCalculatorProvider::class);
     }
 
     /**
