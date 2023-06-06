@@ -123,6 +123,6 @@ class Context
 
     public function getCountryId(): int
     {
-        return (string) PrestashopContext::getContext()->country->id;
+        return (int) PrestashopContext::getContext()->country->id;
     }
 }

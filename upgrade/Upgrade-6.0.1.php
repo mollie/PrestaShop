@@ -45,7 +45,9 @@ function upgrade_module_6_0_1(Mollie $module): bool
         ';
 
         try {
-            Db::getInstance()->execute($sql);
+            if (!Db::getInstance()->execute($sql)) {
+                return false;
+            }
         } catch (Exception $e) {
             return false;
         }
