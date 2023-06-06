@@ -25,13 +25,12 @@ use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\PaymentCollection;
 use Mollie\Config\Config;
-use Mollie\Exception\FailedToProvideTaxException;
+use Mollie\Exception\FailedToProvideTaxCalculatorException;
 use Mollie\Exception\MollieApiException;
-use Mollie\Provider\TaxProvider;
+use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
-use Mollie\Utility\TaxUtility;
 use MolPaymentMethod;
 use PrestaShopDatabaseException;
 use PrestaShopException;
@@ -74,23 +73,20 @@ class ApiService implements ApiServiceInterface
      * @var Shop
      */
     private $shop;
-    /** @var TaxProvider */
+    /** @var TaxCalculatorProvider */
     private $taxProvider;
-    /** @var TaxUtility */
-    private $taxUtility;
     /** @var Context */
     private $context;
 
     public function __construct(
-        PaymentMethodRepository $methodRepository,
-        CountryRepository $countryRepository,
+        PaymentMethodRepository            $methodRepository,
+        CountryRepository                  $countryRepository,
         PaymentMethodSortProviderInterface $paymentMethodSortProvider,
-        ConfigurationAdapter $configurationAdapter,
-        TransactionService $transactionService,
-        Shop $shop,
-        TaxProvider $taxProvider,
-        TaxUtility $taxUtility,
-        Context $context
+        ConfigurationAdapter               $configurationAdapter,
+        TransactionService                 $transactionService,
+        Shop                               $shop,
+        TaxCalculatorProvider              $taxProvider,
+        Context                            $context
     ) {
         $this->countryRepository = $countryRepository;
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
@@ -100,7 +96,6 @@ class ApiService implements ApiServiceInterface
         $this->transactionService = $transactionService;
         $this->shop = $shop;
         $this->taxProvider = $taxProvider;
-        $this->taxUtility = $taxUtility;
         $this->context = $context;
     }
 
@@ -407,15 +402,15 @@ class ApiService implements ApiServiceInterface
     private function getSurchargeFixedAmountTaxInclPrice(float $priceTaxExcl, int $taxRulesGroupId, int $countryId): float
     {
         try {
-            $tax = $this->taxProvider->getTax(
+            $taxCalculator = $this->taxProvider->getTaxCalculator(
                 $taxRulesGroupId,
                 $countryId,
                 0 // NOTE: there is no default state for back office so setting no state
             );
-        } catch (FailedToProvideTaxException $exception) {
-            return $priceTaxExcl;
+        } catch (FailedToProvideTaxCalculatorException $exception) {
+            return 0.00;
         }
 
-        return $this->taxUtility->addTax($priceTaxExcl, $tax);
+        return $taxCalculator->addTaxes($priceTaxExcl);
     }
 }
