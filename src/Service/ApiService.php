@@ -77,14 +77,14 @@ class ApiService implements ApiServiceInterface
     private $context;
 
     public function __construct(
-        PaymentMethodRepository            $methodRepository,
-        CountryRepository                  $countryRepository,
+        PaymentMethodRepository $methodRepository,
+        CountryRepository $countryRepository,
         PaymentMethodSortProviderInterface $paymentMethodSortProvider,
-        ConfigurationAdapter               $configurationAdapter,
-        TransactionService                 $transactionService,
-        Shop                               $shop,
-        TaxCalculatorProvider              $taxProvider,
-        Context                            $context
+        ConfigurationAdapter $configurationAdapter,
+        TransactionService $transactionService,
+        Shop $shop,
+        TaxCalculatorProvider $taxProvider,
+        Context $context
     ) {
         $this->countryRepository = $countryRepository;
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
