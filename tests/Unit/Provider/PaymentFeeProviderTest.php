@@ -8,17 +8,15 @@ use Mollie\Config\Config;
 use Mollie\Provider\PaymentFeeProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\AddressRepositoryInterface;
-use Mollie\Utility\TaxUtility;
 use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
 use Tax;
+use TaxCalculator;
 
 class PaymentFeeProviderTest extends TestCase
 {
     /** @var Context */
     private $context;
-    /** @var TaxUtility */
-    private $taxUtility;
     /** @var AddressRepositoryInterface */
     private $addressRepository;
 
@@ -30,7 +28,6 @@ class PaymentFeeProviderTest extends TestCase
         parent::setUp();
 
         $this->context = $this->createMock(Context::class);
-        $this->taxUtility = $this->createMock(TaxUtility::class);
         $this->addressRepository = $this->createMock(AddressRepositoryInterface::class);
         $this->taxProvider = $this->createMock(TaxCalculatorProvider::class);
     }
@@ -40,7 +37,7 @@ class PaymentFeeProviderTest extends TestCase
      */
     public function testItProvidesPaymentFee(
         array $paymentMethod,
-        array $taxUtility,
+        array $taxCalculatorResults,
         float $totalCartPrice,
         array $expectedResult
     ): void {
@@ -60,19 +57,18 @@ class PaymentFeeProviderTest extends TestCase
 
         $this->addressRepository->method('findOneBy')->willReturn($address);
 
-        $tax = $this->createMock(Tax::class);
-        $tax->id = 1;
+        $taxCalculator = $this->createMock(TaxCalculator::class);
 
-        $this->taxUtility->method('addTax')->willReturn($taxUtility['addTaxResult']);
-        $this->taxUtility->method('removeTax')->willReturn($taxUtility['removeTaxResult']);
+        $taxCalculator->method('addTaxes')->willReturn($taxCalculatorResults['addTaxResult']);
+        $taxCalculator->method('removeTaxes')->willReturn($taxCalculatorResults['removeTaxResult']);
 
-        $this->taxProvider->method('getTax')->willReturn($tax);
+        $this->taxProvider->method('getTaxCalculator')->willReturn($taxCalculator);
+
         $this->context->method('getCustomerAddressInvoiceId')->willReturn(1);
         $this->context->method('getComputingPrecision')->willReturn(2);
 
         $paymentFeeProvider = new PaymentFeeProvider(
             $this->context,
-            $this->taxUtility,
             $this->addressRepository,
             $this->taxProvider
         );
@@ -95,7 +91,7 @@ class PaymentFeeProviderTest extends TestCase
                     'surcharge_fixed_amount_tax_excl' => 10.00,
                     'tax_rules_group_id' => 1,
                 ],
-                'taxUtility' => [
+                'taxCalculatorResults' => [
                     'addTaxResult' => 11.00,
                     'removeTaxResult' => 0.00,
                 ],
@@ -114,7 +110,7 @@ class PaymentFeeProviderTest extends TestCase
                     'surcharge_fixed_amount_tax_excl' => 0,
                     'tax_rules_group_id' => 1,
                 ],
-                'taxUtility' => [
+                'taxCalculatorResults' => [
                     'addTaxResult' => 1.1,
                     'removeTaxResult' => 0.00,
                 ],
@@ -133,7 +129,7 @@ class PaymentFeeProviderTest extends TestCase
                     'surcharge_fixed_amount_tax_excl' => 0,
                     'tax_rules_group_id' => 1,
                 ],
-                'taxUtility' => [
+                'taxCalculatorResults' => [
                     'addTaxResult' => 22.00,
                     'removeTaxResult' => 10.00,
                 ],
@@ -152,7 +148,7 @@ class PaymentFeeProviderTest extends TestCase
                     'surcharge_fixed_amount_tax_excl' => 10.00,
                     'tax_rules_group_id' => 1,
                 ],
-                'taxUtility' => [
+                'taxCalculatorResults' => [
                     'addTaxResult' => 22.00,
                     'removeTaxResult' => 0.00,
                 ],

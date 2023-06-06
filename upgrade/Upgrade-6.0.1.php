@@ -25,7 +25,7 @@ function upgrade_module_6_0_1(Mollie $module): bool
     if (!(int) Db::getInstance()->getValue($sql)) {
         $sql = '
         ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
-        CHANGE surcharge_fixed_amount surcharge_fixed_amount_tax_excl decimal(20,6),
+        CHANGE surcharge_fixed_amount surcharge_fixed_amount_tax_excl decimal(20,2),
         ADD COLUMN tax_rules_group_id int(10) DEFAULT 0;
         ';
 

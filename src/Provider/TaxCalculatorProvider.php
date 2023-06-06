@@ -2,8 +2,6 @@
 
 namespace Mollie\Provider;
 
-use Mollie\Exception\Code\ExceptionCode;
-use Mollie\Exception\FailedToProvideTaxCalculatorException;
 use Mollie\Repository\TaxRepositoryInterface;
 use Mollie\Repository\TaxRuleRepositoryInterface;
 use Tax;
@@ -30,8 +28,6 @@ class TaxCalculatorProvider
      * @param int $stateId
      *
      * @return TaxCalculator
-     *
-     * @throws FailedToProvideTaxCalculatorException
      */
     public function getTaxCalculator(int $taxRulesGroupId, int $countryId, int $stateId): TaxCalculator
     {
@@ -40,10 +36,6 @@ class TaxCalculatorProvider
             $countryId,
             $stateId
         );
-
-        if (empty($taxRules)) {
-            throw new FailedToProvideTaxCalculatorException('Failed to find tax rules.', ExceptionCode::FAILED_TO_FIND_TAX_RULE);
-        }
 
         $taxes = [];
         $behavior = 0;
@@ -56,7 +48,7 @@ class TaxCalculatorProvider
             ]);
 
             if (!$tax || !$tax->id) {
-                throw new FailedToProvideTaxCalculatorException('Failed to find tax.', ExceptionCode::FAILED_TO_FIND_TAX);
+                continue;
             }
 
             $taxes[] = $tax;

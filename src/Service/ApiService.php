@@ -12,7 +12,6 @@
 
 namespace Mollie\Service;
 
-use Configuration;
 use Exception;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
@@ -25,7 +24,6 @@ use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\PaymentCollection;
 use Mollie\Config\Config;
-use Mollie\Exception\FailedToProvideTaxCalculatorException;
 use Mollie\Exception\MollieApiException;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\CountryRepository;
@@ -401,15 +399,11 @@ class ApiService implements ApiServiceInterface
 
     private function getSurchargeFixedAmountTaxInclPrice(float $priceTaxExcl, int $taxRulesGroupId, int $countryId): float
     {
-        try {
-            $taxCalculator = $this->taxProvider->getTaxCalculator(
-                $taxRulesGroupId,
-                $countryId,
-                0 // NOTE: there is no default state for back office so setting no state
-            );
-        } catch (FailedToProvideTaxCalculatorException $exception) {
-            return 0.00;
-        }
+        $taxCalculator = $this->taxProvider->getTaxCalculator(
+            $taxRulesGroupId,
+            $countryId,
+            0 // NOTE: there is no default state for back office so setting no state
+        );
 
         return $taxCalculator->addTaxes($priceTaxExcl);
     }

@@ -2,14 +2,11 @@
 
 namespace Mollie\Tests\Unit\Provider;
 
-use Mollie\Exception\Code\ExceptionCode;
-use Mollie\Exception\FailedToProvideTaxCalculatorException;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\TaxRepositoryInterface;
 use Mollie\Repository\TaxRuleRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 use Tax;
-use TaxRule;
 
 class TaxCalculatorProviderTest extends TestCase
 {
@@ -31,7 +28,9 @@ class TaxCalculatorProviderTest extends TestCase
         $taxRule = ['id_tax' => 1, 'behavior' => 0];
 
         $tax = $this->createMock(Tax::class);
+
         $tax->id = 1;
+        $tax->rate = 10;
 
         $this->taxRuleRepository->method('getTaxRule')->willReturn([$taxRule]);
         $this->taxRepository->method('findOneBy')->willReturn($tax);
@@ -41,7 +40,9 @@ class TaxCalculatorProviderTest extends TestCase
             $this->taxRepository
         );
 
-        $taxProvider->getTaxCalculator(1, 1, 1);
+        $result = $taxProvider->getTaxCalculator(1, 1, 1);
+
+        $this->assertEquals(10.00, $result->getTotalRate());
     }
 
     public function testItUnsuccessfullyProvidesTaxCalculatorFailedToFindTaxRule(): void
@@ -53,10 +54,9 @@ class TaxCalculatorProviderTest extends TestCase
             $this->taxRepository
         );
 
-        $this->expectExceptionCode(ExceptionCode::FAILED_TO_FIND_TAX_RULES);
-        $this->expectException(FailedToProvideTaxCalculatorException::class);
+        $result = $taxProvider->getTaxCalculator(1, 1, 1);
 
-        $taxProvider->getTaxCalculator(1, 1, 1);
+        $this->assertEquals(0.00, $result->getTotalRate());
     }
 
     public function testItUnsuccessfullyProvidesTaxCalculatorFailedToFindTax(): void
@@ -71,9 +71,8 @@ class TaxCalculatorProviderTest extends TestCase
             $this->taxRepository
         );
 
-        $this->expectExceptionCode(ExceptionCode::FAILED_TO_FIND_TAX);
-        $this->expectException(FailedToProvideTaxCalculatorException::class);
+        $result = $taxProvider->getTaxCalculator(1, 1, 1);
 
-        $taxProvider->getTaxCalculator(1, 1, 1);
+        $this->assertEquals(0.00, $result->getTotalRate());
     }
 }
