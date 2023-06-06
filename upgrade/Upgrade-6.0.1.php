@@ -13,7 +13,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_6_0_0(Mollie $module): bool
+function upgrade_module_6_0_1(Mollie $module): bool
 {
     $sql = '
     SELECT COUNT(*) > 0 AS count
@@ -30,7 +30,9 @@ function upgrade_module_6_0_0(Mollie $module): bool
         ';
 
         try {
-            Db::getInstance()->execute($sql);
+            if (!Db::getInstance()->execute($sql)) {
+                return false;
+            }
         } catch (Exception $e) {
             return false;
         }
