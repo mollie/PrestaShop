@@ -10,7 +10,6 @@ use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\AddressRepositoryInterface;
 use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
-use Tax;
 use TaxCalculator;
 
 class PaymentFeeProviderTest extends TestCase
