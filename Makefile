@@ -56,8 +56,6 @@ build-ps-8:
 	mysql -h 127.0.0.1 -P 9459 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_8.sql
 	# installing older module version first
 	make installing-older-module
-	# enabling the module
-	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module enable mollie --id_shop=2"
 	# chmod all folders
 	docker exec -i prestashop-mollie-8 sh -c "chmod -R 777 /var/www/html"
 
