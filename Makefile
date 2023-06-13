@@ -11,6 +11,8 @@ test-e2e-headless-1784:
 	composer install
 	make e2e1784p
 	git checkout master
+	git checkout -- .
+	git checkout master --force
 
 e2e1784p: e2e-1784-prepare
 e2e-1784-prepare:
@@ -40,6 +42,8 @@ test-e2e-headless-8:
 	composer install
 	make e2e8p
 	git checkout master
+	git checkout -- .
+	git checkout master --force
 
 e2e8p: e2e-8-prepare
 e2e-8-prepare:
