@@ -17,13 +17,12 @@ const login = (MollieBOFOLoggingIn) => {
   cy.get('#history-link > .link-item').click()
   })
   }
-
-        describe('PS1784 Module Upgrade testing', () => {
-          beforeEach(() => {
-              cy.viewport(1920,1080)
-              login('MollieBOFOLoggingIn')
-          })
-        it('Upgrading the module should be successful', () => {
-              cy.visit('/admin1/')
-        })
-        })
+describe('PS1784 Module Upgrade testing', () => {
+  beforeEach(() => {
+    cy.viewport(1920,1080)
+    login('MollieBOFOLoggingIn')
+    })
+  it('Upgrading the module should be successful', () => {
+      cy.visit('/admin1/')
+    })
+  })
