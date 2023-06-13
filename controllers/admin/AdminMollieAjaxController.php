@@ -10,6 +10,7 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Adapter\Context;
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
@@ -17,6 +18,8 @@ use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\MolliePaymentMailService;
 use Mollie\Utility\TimeUtility;
+use PrestaShop\Decimal\DecimalNumber;
+use PrestaShop\Decimal\Operation\Rounding;
 
 class AdminMollieAjaxController extends ModuleAdminController
 {
@@ -195,9 +198,12 @@ class AdminMollieAjaxController extends ModuleAdminController
         /** @var TaxCalculatorProvider $taxProvider */
         $taxProvider = $this->module->getService(TaxCalculatorProvider::class);
 
+        /** @var Context $context */
+        $context = $this->module->getService(Context::class);
+
         $taxCalculator = $taxProvider->getTaxCalculator(
             $taxRulesGroupId,
-            (int) $this->context->country->id,
+            $context->getCountryId(),
             0 // NOTE: there is no default state for back office so setting no state
         );
 
@@ -209,11 +215,20 @@ class AdminMollieAjaxController extends ModuleAdminController
             $paymentFeeTaxExcl = $taxCalculator->removeTaxes($paymentFeeTaxIncl);
         }
 
+        $paymentFeeTaxInclDecimal = new DecimalNumber((string) $paymentFeeTaxIncl);
+        $paymentFeeTaxExclDecimal = new DecimalNumber((string) $paymentFeeTaxExcl);
+
         $this->ajaxRender(
             json_encode([
                 'error' => false,
-                'paymentFeeTaxIncl' => $paymentFeeTaxIncl,
-                'paymentFeeTaxExcl' => $paymentFeeTaxExcl,
+                'paymentFeeTaxIncl' => $paymentFeeTaxInclDecimal->toPrecision(
+                    $context->getComputingPrecision(),
+                    Rounding::ROUND_HALF_UP
+                ),
+                'paymentFeeTaxExcl' => $paymentFeeTaxExclDecimal->toPrecision(
+                    $context->getComputingPrecision(),
+                    Rounding::ROUND_HALF_UP
+                ),
             ])
         );
     }

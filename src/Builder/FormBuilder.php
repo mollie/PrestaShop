@@ -399,6 +399,7 @@ class FormBuilder
             'name' => '',
             'title' => $this->module->l('Payment methods', self::FILE_NAME),
         ];
+
         $molliePaymentMethods = $this->apiService->getMethodsForConfig($this->module->getApiClient());
 
         if (empty($molliePaymentMethods)) {
