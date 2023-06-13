@@ -27,7 +27,6 @@ build-ps-1784:
 	docker exec -i prestashop-mollie-1784 sh -c "rm -rf /var/www/html/install"
 	# configuring base database
 	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1784_2.sql
-	# installing older module version first
 	# chmod all folders
 	docker exec -i prestashop-mollie-1784 sh -c "chmod -R 777 /var/www/html"
 
@@ -53,7 +52,6 @@ build-ps-8:
 	docker exec -i prestashop-mollie-8 sh -c "rm -rf /var/www/html/install"
 	# configuring base database
 	mysql -h 127.0.0.1 -P 9459 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_8.sql
-	# installing older module version first
 	# chmod all folders
 	docker exec -i prestashop-mollie-8 sh -c "chmod -R 777 /var/www/html"
 
