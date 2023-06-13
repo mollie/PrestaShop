@@ -69,16 +69,12 @@ build-ps-8:
 	# chmod all folders
 	docker exec -i prestashop-mollie-8 sh -c "chmod -R 777 /var/www/html"
 
-installing-older-module:
-	git checkout 5.0.0
-	docker exec -i prestashop-mollie-${version} sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
-
 npm-package-install:
 	cd views/assets && npm i && npm run build
 
 # checking the module upgrading - installs older module then installs from master branch
 upgrading-module-test-1784:
-	git checkout v5.2.1
+	git checkout v5.2.1 .
 	composer install
 	make e2e1784p
 	git checkout -- .
@@ -87,7 +83,7 @@ upgrading-module-test-1784:
 	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
 
 upgrading-module-test-8:
-	git checkout v5.2.1
+	git checkout v5.2.1 .
 	composer install
 	make e2e8p
 	git checkout -- .
