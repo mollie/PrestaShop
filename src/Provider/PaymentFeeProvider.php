@@ -142,7 +142,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
                 );
         }
 
-        return new PaymentFeeData(0.00, 0.00, true);
+        return new PaymentFeeData(0.00, 0.00, false);
     }
 
     private function handleSurchargeMaxValue(
@@ -165,10 +165,13 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
 
     private function returnFormattedResult(DecimalNumber $totalFeePriceTaxIncl, DecimalNumber $totalFeePriceTaxExcl): PaymentFeeData
     {
+        $totalFeePriceTaxInclResult = (float) $totalFeePriceTaxIncl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
+        $totalFeePriceTaxExclResult = (float) $totalFeePriceTaxExcl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
+
         return new PaymentFeeData(
-            (float) $totalFeePriceTaxIncl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP),
-            (float) $totalFeePriceTaxExcl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP),
-            true
+            $totalFeePriceTaxInclResult,
+            $totalFeePriceTaxExclResult,
+            $totalFeePriceTaxInclResult > 0 && $totalFeePriceTaxExclResult > 0
         );
     }
 }
