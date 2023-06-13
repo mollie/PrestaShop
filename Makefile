@@ -27,11 +27,8 @@ build-ps-1784:
 	docker exec -i prestashop-mollie-1784 sh -c "rm -rf /var/www/html/install"
 	# configuring base database
 	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1784_2.sql
-<<<<<<< HEAD
-=======
 	# installing older module version first
 	make installing-older-module
->>>>>>> parent of f5843eab (Update Makefile)
 	# chmod all folders
 	docker exec -i prestashop-mollie-1784 sh -c "chmod -R 777 /var/www/html"
 
@@ -57,11 +54,6 @@ build-ps-8:
 	docker exec -i prestashop-mollie-8 sh -c "rm -rf /var/www/html/install"
 	# configuring base database
 	mysql -h 127.0.0.1 -P 9459 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_8.sql
-<<<<<<< HEAD
-	# chmod all folders
-	docker exec -i prestashop-mollie-8 sh -c "chmod -R 777 /var/www/html"
-
-=======
 	# installing older module version first
 	make installing-older-module
 	# chmod all folders
@@ -71,6 +63,5 @@ installing-older-module:
 	git checkout 5.0.0
 	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
 
->>>>>>> parent of f5843eab (Update Makefile)
 npm-package-install:
 	cd views/assets && npm i && npm run build
