@@ -62,10 +62,6 @@ class ModuleFactory
     {
         $module = $this->getModule();
 
-        if (!$module) {
-            return null;
-        }
-
         return $module->name ?? null;
     }
 }
