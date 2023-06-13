@@ -87,4 +87,4 @@ upgrading-module-test-8:
 	make e2e8p
 	git checkout -- .
 	git checkout master --force
-	docker exec -i prestashop-mollie-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
+	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
