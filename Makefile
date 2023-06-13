@@ -12,6 +12,7 @@ test-e2e-headless-1784:
 	make e2e1784p
 	git checkout -- .
 	git checkout master --force
+	docker exec -i prestashop-mollie-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
 
 e2e1784p: e2e-1784-prepare
 e2e-1784-prepare:
@@ -42,6 +43,7 @@ test-e2e-headless-8:
 	make e2e8p
 	git checkout -- .
 	git checkout master --force
+	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
 
 e2e8p: e2e-8-prepare
 e2e-8-prepare:
@@ -69,3 +71,20 @@ installing-older-module:
 
 npm-package-install:
 	cd views/assets && npm i && npm run build
+
+# checking the module upgrading - installs older module then installs from master branch
+upgrading-module-test-1784:
+	git checkout v5.2.1
+	composer install
+	make e2e1784p
+	git checkout -- .
+	git checkout master --force
+	docker exec -i prestashop-mollie-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
+
+upgrading-module-test-8:
+	git checkout v5.2.1
+	composer install
+	make e2e8p
+	git checkout -- .
+	git checkout master --force
+	docker exec -i prestashop-mollie-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
