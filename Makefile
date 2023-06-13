@@ -10,7 +10,6 @@ test-e2e-headless-1784:
 	git checkout v5.2.1
 	composer install
 	make e2e1784p
-	git checkout master
 	git checkout -- .
 	git checkout master --force
 
@@ -41,7 +40,6 @@ test-e2e-headless-8:
 	git checkout v5.2.1
 	composer install
 	make e2e8p
-	git checkout master
 	git checkout -- .
 	git checkout master --force
 
