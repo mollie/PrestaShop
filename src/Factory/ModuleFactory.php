@@ -57,4 +57,11 @@ class ModuleFactory
 
         return $module;
     }
+
+    public function getModuleName(): ?string
+    {
+        $module = $this->getModule();
+
+        return $module->name ?? null;
+    }
 }
