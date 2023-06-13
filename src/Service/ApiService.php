@@ -407,7 +407,7 @@ class ApiService implements ApiServiceInterface
             0 // NOTE: there is no default state for back office so setting no state
         );
 
-        return (new DecimalNumber((string) $taxCalculator->addTaxes($priceTaxExcl)))
+        return (float) (new DecimalNumber((string) $taxCalculator->addTaxes($priceTaxExcl)))
             ->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
     }
 }
