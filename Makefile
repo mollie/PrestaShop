@@ -7,6 +7,7 @@ fix-lint:
 #PS1784
 e2eh1784: test-e2e-headless-1784
 test-e2e-headless-1784:
+	git checkout 5.2.1
 	make e2e1784p
 
 e2e1784p: e2e-1784-prepare
@@ -27,14 +28,13 @@ build-ps-1784:
 	docker exec -i prestashop-mollie-1784 sh -c "rm -rf /var/www/html/install"
 	# configuring base database
 	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1784_2.sql
-	# installing older module version first
-	make installing-older-module version=1784
 	# chmod all folders
 	docker exec -i prestashop-mollie-1784 sh -c "chmod -R 777 /var/www/html"
 
 #PS8
 e2eh8: test-e2e-headless-8
 test-e2e-headless-8:
+	git checkout 5.2.1
 	make e2e8p
 
 e2e8p: e2e-8-prepare
@@ -54,8 +54,6 @@ build-ps-8:
 	docker exec -i prestashop-mollie-8 sh -c "rm -rf /var/www/html/install"
 	# configuring base database
 	mysql -h 127.0.0.1 -P 9459 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_8.sql
-	# installing older module version first
-	make installing-older-module version=8
 	# chmod all folders
 	docker exec -i prestashop-mollie-8 sh -c "chmod -R 777 /var/www/html"
 
