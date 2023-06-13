@@ -7,7 +7,7 @@ fix-lint:
 #PS1784
 e2eh1784: test-e2e-headless-1784
 test-e2e-headless-1784:
-	git checkout 5.2.1
+	git checkout v5.2.1
 	make e2e1784p
 
 e2e1784p: e2e-1784-prepare
@@ -34,7 +34,7 @@ build-ps-1784:
 #PS8
 e2eh8: test-e2e-headless-8
 test-e2e-headless-8:
-	git checkout 5.2.1
+	git checkout v5.2.1
 	make e2e8p
 
 e2e8p: e2e-8-prepare
