@@ -88,7 +88,7 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         $configuration = $this->module->getService(ConfigurationAdapter::class);
 
         try {
-            $paymentFeeData = $paymentFeeProvider->getPaymentFee($molPaymentMethod, (float)$cart->getOrderTotal());
+            $paymentFeeData = $paymentFeeProvider->getPaymentFee($molPaymentMethod, (float) $cart->getOrderTotal());
         } catch (FailedToProvidePaymentFeeException $exception) {
             $errorData = [
                 'error' => true,
@@ -98,14 +98,11 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
             $this->returnDefaultOrderSummaryBlock($cart, $errorData);
         }
 
-        $orderTotalWithFee = NumberUtility::plus($paymentFeeData->getPaymentFeeTaxIncl(), $cart->getOrderTotal());
+        $orderTotalWithTax = NumberUtility::plus($paymentFeeData->getPaymentFeeTaxIncl(), $cart->getOrderTotal());
 
-        $orderTotalNoTaxWithFee = NumberUtility::plus($paymentFeeData->getPaymentFeeTaxExcl(), $cart->getOrderTotal(false));
+        $orderTotalWithoutTax = NumberUtility::plus($paymentFeeData->getPaymentFeeTaxExcl(), $cart->getOrderTotal(false));
 
-        $orderTotalWithTax = $orderTotalWithFee;
-        $orderTotalWithoutTax = $orderTotalNoTaxWithFee;
-
-        $orderTotalTax = NumberUtility::minus($orderTotalWithFee, $orderTotalNoTaxWithFee);
+        $orderTotalTax = NumberUtility::minus($orderTotalWithTax, $orderTotalWithoutTax);
 
         $taxConfiguration = new TaxConfiguration();
         $presentedCart = $this->cart_presenter->present($cart);
@@ -155,7 +152,7 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
                     $orderTotalTax,
                     $cartCurrency->iso_code
                 ),
-            ]
+            ],
         ];
 
         $this->returnDefaultOrderSummaryBlock($cart, [], $presentedCart);
