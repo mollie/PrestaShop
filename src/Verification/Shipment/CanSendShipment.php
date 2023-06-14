@@ -16,7 +16,6 @@ use Exception;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Enum\PaymentTypeEnum;
-use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandlerInterface;
 use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
@@ -69,23 +68,29 @@ class CanSendShipment implements ShipmentVerificationInterface
     /**
      * {@inheritDoc}
      */
-    public function verify(Order $order, OrderState $orderState)
+    public function verify(Order $order, OrderState $orderState): bool
     {
         /* todo: doesnt work with no tracking information. Will need to create new validation */
         //		if (!$this->hasShipmentInformation($order->reference)) {
         //			throw new ShipmentCannotBeSentException('Shipment information cannot be sent. No shipment information found by order reference', ShipmentCannotBeSentException::NO_SHIPPING_INFORMATION, $order->reference);
         //		}
 
+        /**
+         * TODO can't throw exception as this method is being called on every actionOrderStatusUpdate hook.
+         * If initial order's state has available shipment, then it will fail as there is no payment inserted yet.
+         * On actual failure exceptions would help us a lot, but we need to figure out how to prevent calling this service when it should not be called.
+         */
+
         if (!$this->isAutomaticShipmentAvailable($orderState->id)) {
-            throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Automatic shipment sender is not available', ShipmentCannotBeSentException::AUTOMATIC_SHIPMENT_SENDER_IS_NOT_AVAILABLE, $order->reference);
+            return false;
         }
 
         if (!$this->hasPaymentInformation($order->id)) {
-            throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Missing payment information', ShipmentCannotBeSentException::ORDER_HAS_NO_PAYMENT_INFORMATION, $order->reference);
+            return false;
         }
 
         if (!$this->isRegularPayment($order->id)) {
-            throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Is regular payment', ShipmentCannotBeSentException::PAYMENT_IS_NOT_ORDER, $order->reference);
+            return false;
         }
 
         return true;
@@ -96,7 +101,7 @@ class CanSendShipment implements ShipmentVerificationInterface
      *
      * @return bool
      */
-    private function isRegularPayment($orderId)
+    private function isRegularPayment(int $orderId): bool
     {
         $payment = $this->paymentMethodRepository->getPaymentBy('order_id', (int) $orderId);
 
@@ -117,7 +122,7 @@ class CanSendShipment implements ShipmentVerificationInterface
      *
      * @return bool
      */
-    private function isAutomaticShipmentAvailable($orderStateId)
+    private function isAutomaticShipmentAvailable(int $orderStateId): bool
     {
         if (!$this->isAutomaticShipmentInformationSenderEnabled()) {
             return false;
@@ -135,7 +140,7 @@ class CanSendShipment implements ShipmentVerificationInterface
      *
      * @return bool
      */
-    private function hasPaymentInformation($orderId)
+    private function hasPaymentInformation(int $orderId): bool
     {
         $payment = $this->paymentMethodRepository->getPaymentBy('order_id', (int) $orderId);
 
@@ -155,7 +160,7 @@ class CanSendShipment implements ShipmentVerificationInterface
      *
      * @return bool
      */
-    private function hasShipmentInformation($orderReference)
+    private function hasShipmentInformation(string $orderReference): bool
     {
         try {
             return !empty($this->shipmentService->getShipmentInformation($orderReference));
@@ -169,7 +174,7 @@ class CanSendShipment implements ShipmentVerificationInterface
     /**
      * @return bool
      */
-    private function isAutomaticShipmentInformationSenderEnabled()
+    private function isAutomaticShipmentInformationSenderEnabled(): bool
     {
         return (bool) $this->configurationAdapter->get(Config::MOLLIE_AUTO_SHIP_MAIN);
     }
@@ -179,11 +184,15 @@ class CanSendShipment implements ShipmentVerificationInterface
      *
      * @return bool
      */
-    private function isOrderStateInAutomaticShipmentSenderOrderStateList($orderStateId)
+    private function isOrderStateInAutomaticShipmentSenderOrderStateList(int $orderStateId): bool
     {
         return in_array(
             (int) $orderStateId,
-            array_map('intval', $this->automaticShipmentSenderStatusesProvider->getAutomaticShipmentSenderStatuses())
+            array_map(
+                'intval',
+                $this->automaticShipmentSenderStatusesProvider->getAutomaticShipmentSenderStatuses()
+            ),
+            true
         );
     }
 }

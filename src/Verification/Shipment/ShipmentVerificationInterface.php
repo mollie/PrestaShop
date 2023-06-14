@@ -22,7 +22,7 @@ interface ShipmentVerificationInterface
      * @param Order $order
      * @param OrderState $orderState
      *
-     * @throws ShipmentCannotBeSentException
+     * @returns bool
      */
     public function verify(Order $order, OrderState $orderState);
 }
