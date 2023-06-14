@@ -43,7 +43,7 @@ use Mollie\Adapter\Customer;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
-use Mollie\Provider\OrderTotalProviderInterface;
+use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Service\LanguageService;
@@ -121,7 +121,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function getPaymentOption(MolPaymentMethod $paymentMethod)
+    public function getPaymentOption(MolPaymentMethod $paymentMethod): PaymentOption
     {
         $paymentOption = new PaymentOption();
         $paymentOption->setCallToActionText(
@@ -185,20 +185,23 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
             $this->module->getPathUri(), 'views/templates/hook/mollie_iframe.tpl'
         ));
 
-        $paymentFee = $this->paymentFeeProvider->getPaymentFee($paymentMethod);
+        $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, $this->orderTotalProvider->getOrderTotal());
 
-        if ($paymentFee) {
+        if ($paymentFeeData->isActive()) {
             $paymentOption->setInputs(
                 array_merge($paymentOption->getInputs(), [
                     [
                         'type' => 'hidden',
                         'name' => 'payment-fee-price',
-                        'value' => $paymentFee,
+                        'value' => $paymentFeeData->getPaymentFeeTaxIncl(),
                     ],
                     [
                         'type' => 'hidden',
                         'name' => 'payment-fee-price-display',
-                        'value' => sprintf($this->module->l('Payment Fee: %1s', self::FILE_NAME), Tools::displayPrice($paymentFee)),
+                        'value' => sprintf(
+                            $this->module->l('Payment Fee: %1s', self::FILE_NAME),
+                            Tools::displayPrice($paymentFeeData->getPaymentFeeTaxIncl())
+                        ),
                     ],
                 ])
             );

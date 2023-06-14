@@ -36,23 +36,142 @@
 
 namespace Mollie\Provider;
 
-use Mollie\Utility\PaymentFeeUtility;
+use Address;
+use Mollie\Adapter\Context;
+use Mollie\Config\Config;
+use Mollie\DTO\PaymentFeeData;
+use Mollie\Exception\Code\ExceptionCode;
+use Mollie\Exception\FailedToProvidePaymentFeeException;
+use Mollie\Repository\AddressRepositoryInterface;
 use MolPaymentMethod;
+use PrestaShop\Decimal\DecimalNumber;
+use PrestaShop\Decimal\Operation\Rounding;
+use TaxCalculator;
 
 class PaymentFeeProvider implements PaymentFeeProviderInterface
 {
-    /**
-     * @var OrderTotalProviderInterface
-     */
-    private $orderTotalProvider;
+    private const MAX_PERCENTAGE = '100';
+    private const TEMPORARY_PRECISION = 6;
 
-    public function __construct(OrderTotalProviderInterface $orderTotalProvider)
-    {
-        $this->orderTotalProvider = $orderTotalProvider;
+    /** @var Context */
+    private $context;
+    /** @var AddressRepositoryInterface */
+    private $addressRepository;
+    /** @var TaxCalculatorProvider */
+    private $taxProvider;
+
+    public function __construct(
+        Context $context,
+        AddressRepositoryInterface $addressRepository,
+        TaxCalculatorProvider $taxProvider
+    ) {
+        $this->context = $context;
+        $this->addressRepository = $addressRepository;
+        $this->taxProvider = $taxProvider;
     }
 
-    public function getPaymentFee(MolPaymentMethod $paymentMethod)
+    /**
+     * {@inheritDoc}
+     */
+    public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPrice): PaymentFeeData
     {
-        return PaymentFeeUtility::getPaymentFee($paymentMethod, $this->orderTotalProvider->getOrderTotal());
+        // TODO handle exception on all calls.
+        // TODO test it on 1.7.6, DecimalNumber could be issue
+        $totalDecimalCartPrice = new DecimalNumber((string) $totalCartPrice);
+        $maxPercentage = new DecimalNumber(self::MAX_PERCENTAGE);
+        $surchargePercentage = new DecimalNumber($paymentMethod->surcharge_percentage);
+        $surchargeFixedPriceTaxExcl = new DecimalNumber((string) $paymentMethod->surcharge_fixed_amount_tax_excl);
+
+        /** @var Address|null $address */
+        $address = $this->addressRepository->findOneBy([
+            'id_address' => $this->context->getCustomerAddressInvoiceId(),
+            'deleted' => 0,
+        ]);
+
+        if (!$address || !$address->id) {
+            throw new FailedToProvidePaymentFeeException('Failed to find customer address', ExceptionCode::FAILED_TO_FIND_CUSTOMER_ADDRESS);
+        }
+
+        $taxCalculator = $this->taxProvider->getTaxCalculator(
+            $paymentMethod->tax_rules_group_id,
+            $address->id_country,
+            $address->id_state
+        );
+
+        switch ($paymentMethod->surcharge) {
+            case Config::FEE_FIXED_FEE:
+                $totalFeePriceTaxExcl = $surchargeFixedPriceTaxExcl;
+                $totalFeePriceTaxIncl = new DecimalNumber((string) $taxCalculator->addTaxes(
+                    (float) $totalFeePriceTaxExcl->toPrecision(self::TEMPORARY_PRECISION, Rounding::ROUND_HALF_UP)
+                ));
+
+                return $this->returnFormattedResult($totalFeePriceTaxIncl, $totalFeePriceTaxExcl);
+            case Config::FEE_PERCENTAGE:
+                $totalFeePriceTaxExcl = $totalDecimalCartPrice->times(
+                    $surchargePercentage->dividedBy(
+                        $maxPercentage
+                    )
+                );
+
+                $totalFeePriceTaxIncl = new DecimalNumber((string) $taxCalculator->addTaxes(
+                    (float) $totalFeePriceTaxExcl->toPrecision(self::TEMPORARY_PRECISION, Rounding::ROUND_HALF_UP)
+                ));
+
+                return $this->handleSurchargeMaxValue(
+                    $paymentMethod->surcharge_limit,
+                    $totalFeePriceTaxIncl,
+                    $totalFeePriceTaxExcl,
+                    $taxCalculator
+                );
+            case Config::FEE_FIXED_FEE_AND_PERCENTAGE:
+                $totalFeePriceTaxExcl = $totalDecimalCartPrice->times(
+                    $surchargePercentage->dividedBy(
+                        $maxPercentage
+                    )
+                )->plus($surchargeFixedPriceTaxExcl);
+
+                $totalFeePriceTaxIncl = new DecimalNumber((string) $taxCalculator->addTaxes(
+                    (float) $totalFeePriceTaxExcl->toPrecision(self::TEMPORARY_PRECISION, Rounding::ROUND_HALF_UP)
+                ));
+
+                return $this->handleSurchargeMaxValue(
+                    $paymentMethod->surcharge_limit,
+                    $totalFeePriceTaxIncl,
+                    $totalFeePriceTaxExcl,
+                    $taxCalculator
+                );
+        }
+
+        return new PaymentFeeData(0.00, 0.00, false);
+    }
+
+    private function handleSurchargeMaxValue(
+        string $surchargeLimit,
+        DecimalNumber $totalFeePriceTaxIncl,
+        DecimalNumber $totalFeePriceTaxExcl,
+        TaxCalculator $taxCalculator
+    ): PaymentFeeData {
+        $surchargeMaxValue = new DecimalNumber($surchargeLimit);
+
+        if ($surchargeMaxValue->isGreaterOrEqualThanZero() && $totalFeePriceTaxIncl->isGreaterOrEqualThan($surchargeMaxValue)) {
+            $totalFeePriceTaxIncl = $surchargeMaxValue;
+            $totalFeePriceTaxExcl = new DecimalNumber((string) $taxCalculator->removeTaxes(
+                (float) $surchargeMaxValue->toPrecision(self::TEMPORARY_PRECISION, Rounding::ROUND_HALF_UP)
+            ));
+        }
+
+        return $this->returnFormattedResult($totalFeePriceTaxIncl, $totalFeePriceTaxExcl);
+    }
+
+    private function returnFormattedResult(DecimalNumber $totalFeePriceTaxIncl, DecimalNumber $totalFeePriceTaxExcl): PaymentFeeData
+    {
+        $totalFeePriceTaxInclResult = (float) $totalFeePriceTaxIncl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
+        $totalFeePriceTaxExclResult = (float) $totalFeePriceTaxExcl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
+
+        return new PaymentFeeData(
+            $totalFeePriceTaxInclResult,
+            $totalFeePriceTaxExclResult,
+            $totalFeePriceTaxInclResult > 0 && $totalFeePriceTaxExclResult > 0
+        );
     }
 }

@@ -25,8 +25,8 @@ use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\CustomLogoProviderInterface;
 use Mollie\Provider\EnvironmentVersionProvider;
 use Mollie\Provider\EnvironmentVersionProviderInterface;
-use Mollie\Provider\OrderTotalProvider;
-use Mollie\Provider\OrderTotalProviderInterface;
+use Mollie\Provider\OrderTotal\OrderTotalProvider;
+use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProvider;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Provider\PaymentType\PaymentTypeIdentificationProviderInterface;
@@ -39,6 +39,8 @@ use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider;
 use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProviderInterface;
 use Mollie\Provider\UpdateMessageProvider;
 use Mollie\Provider\UpdateMessageProviderInterface;
+use Mollie\Repository\AddressRepository;
+use Mollie\Repository\AddressRepositoryInterface;
 use Mollie\Repository\CartRuleRepository;
 use Mollie\Repository\CartRuleRepositoryInterface;
 use Mollie\Repository\GenderRepository;
@@ -50,6 +52,12 @@ use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Repository\PendingOrderCartRuleRepository;
 use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
+use Mollie\Repository\TaxRepository;
+use Mollie\Repository\TaxRepositoryInterface;
+use Mollie\Repository\TaxRuleRepository;
+use Mollie\Repository\TaxRuleRepositoryInterface;
+use Mollie\Repository\TaxRulesGroupRepository;
+use Mollie\Repository\TaxRulesGroupRepositoryInterface;
 use Mollie\Service\ApiKeyService;
 use Mollie\Service\Content\SmartyTemplateParser;
 use Mollie\Service\Content\TemplateParserInterface;
@@ -138,8 +146,14 @@ final class BaseServiceProvider
                 ]
             );
 
+        $this->addService($container, AddressRepositoryInterface::class, $container->get(AddressRepository::class));
+        $this->addService($container, TaxRulesGroupRepositoryInterface::class, $container->get(TaxRulesGroupRepository::class));
+        $this->addService($container, TaxRuleRepositoryInterface::class, $container->get(TaxRuleRepository::class));
+        $this->addService($container, TaxRepositoryInterface::class, $container->get(TaxRepository::class));
+
         $this->addService($container, OrderTotalProviderInterface::class, $container->get(OrderTotalProvider::class));
         $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
+
         $this->addService($container, EnvironmentVersionProviderInterface::class, $container->get(EnvironmentVersionProvider::class));
 
         $this->addService($container, AccessibilityCheckerInterface::class, $container->get(SubscriptionCancelAccessibility::class));

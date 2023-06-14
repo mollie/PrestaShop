@@ -30,5 +30,28 @@ function upgrade_module_6_0_1(Mollie $module): bool
     $configuration->updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT['production'], Configuration::get('MOLLIE_SINGLE_CLICK_PAYMENT'));
     $configuration->updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT['sandbox'], Configuration::get('MOLLIE_SINGLE_CLICK_PAYMENT'));
 
+    $sql = '
+    SELECT COUNT(*) > 0 AS count
+    FROM information_schema.columns
+    WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND table_name = "' . _DB_PREFIX_ . 'mol_payment_method" AND column_name = "tax_rules_group_id";
+    ';
+
+    /** only add it if it doesn't exist */
+    if (!(int) Db::getInstance()->getValue($sql)) {
+        $sql = '
+        ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
+        CHANGE surcharge_fixed_amount surcharge_fixed_amount_tax_excl decimal(20,2),
+        ADD COLUMN tax_rules_group_id int(10) DEFAULT 0;
+        ';
+
+        try {
+            if (!Db::getInstance()->execute($sql)) {
+                return false;
+            }
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
     return true;
 }

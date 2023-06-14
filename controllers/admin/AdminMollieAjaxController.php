@@ -10,12 +10,16 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Adapter\Context;
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
+use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\MolliePaymentMailService;
 use Mollie\Utility\TimeUtility;
+use PrestaShop\Decimal\DecimalNumber;
+use PrestaShop\Decimal\Operation\Rounding;
 
 class AdminMollieAjaxController extends ModuleAdminController
 {
@@ -40,6 +44,9 @@ class AdminMollieAjaxController extends ModuleAdminController
                 break;
             case 'validateLogo':
                 $this->validateLogo();
+                break;
+            case 'updateFixedPaymentFeePrice':
+                $this->updateFixedPaymentFeePrice();
                 break;
             default:
                 break;
@@ -146,5 +153,83 @@ class AdminMollieAjaxController extends ModuleAdminController
         }
 
         echo json_encode(['status' => $isUploaded, 'message' => $returnText]);
+    }
+
+    private function updateFixedPaymentFeePrice(): void
+    {
+        $paymentFeeTaxIncl = (float) Tools::getValue('paymentFeeTaxIncl');
+        $paymentFeeTaxExcl = (float) Tools::getValue('paymentFeeTaxExcl');
+
+        $taxRulesGroupId = (int) Tools::getValue('taxRulesGroupId');
+
+        if (empty($paymentFeeTaxIncl) && empty($paymentFeeTaxExcl)) {
+            $this->ajaxRender(
+                json_encode([
+                    'error' => true,
+                    'message' => $this->module->l('No fee was submitted.'),
+                ])
+            );
+
+            return;
+        }
+
+        if ($paymentFeeTaxIncl < 0.00 || $paymentFeeTaxExcl < 0.00) {
+            $this->ajaxRender(
+                json_encode([
+                    'error' => true,
+                    'message' => $this->module->l('Invalid fee'),
+                ])
+            );
+
+            return;
+        }
+
+        if ($taxRulesGroupId < 1) {
+            $this->ajaxRender(
+                json_encode([
+                    'error' => true,
+                    'message' => $this->module->l('Missing tax rules group ID'),
+                ])
+            );
+
+            return;
+        }
+
+        /** @var TaxCalculatorProvider $taxProvider */
+        $taxProvider = $this->module->getService(TaxCalculatorProvider::class);
+
+        /** @var Context $context */
+        $context = $this->module->getService(Context::class);
+
+        $taxCalculator = $taxProvider->getTaxCalculator(
+            $taxRulesGroupId,
+            $context->getCountryId(),
+            0 // NOTE: there is no default state for back office so setting no state
+        );
+
+        if ($paymentFeeTaxIncl === 0.00) {
+            $paymentFeeTaxIncl = $taxCalculator->addTaxes($paymentFeeTaxExcl);
+        }
+
+        if ($paymentFeeTaxExcl === 0.00) {
+            $paymentFeeTaxExcl = $taxCalculator->removeTaxes($paymentFeeTaxIncl);
+        }
+
+        $paymentFeeTaxInclDecimal = new DecimalNumber((string) $paymentFeeTaxIncl);
+        $paymentFeeTaxExclDecimal = new DecimalNumber((string) $paymentFeeTaxExcl);
+
+        $this->ajaxRender(
+            json_encode([
+                'error' => false,
+                'paymentFeeTaxIncl' => $paymentFeeTaxInclDecimal->toPrecision(
+                    $context->getComputingPrecision(),
+                    Rounding::ROUND_HALF_UP
+                ),
+                'paymentFeeTaxExcl' => $paymentFeeTaxExclDecimal->toPrecision(
+                    $context->getComputingPrecision(),
+                    Rounding::ROUND_HALF_UP
+                ),
+            ])
+        );
     }
 }
