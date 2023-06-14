@@ -96,6 +96,8 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
             ];
 
             $this->returnDefaultOrderSummaryBlock($cart, $errorData);
+
+            exit;
         }
 
         $orderTotalWithTax = NumberUtility::plus($paymentFeeData->getPaymentFeeTaxIncl(), $cart->getOrderTotal());
