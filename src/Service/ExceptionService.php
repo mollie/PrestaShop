@@ -30,7 +30,7 @@ class ExceptionService
         $this->module = $module;
     }
 
-    public function getErrorMessages()
+    public function getErrorMessages(): array
     {
         return [
             OrderCreationException::class => [
@@ -42,15 +42,18 @@ class ExceptionService
             ],
             ShipmentCannotBeSentException::class => [
                 ShipmentCannotBeSentException::NO_SHIPPING_INFORMATION => $this->module->l('Shipment information cannot be sent. Order reference (%s) has no shipping information.', self::FILE_NAME),
-                ShipmentCannotBeSentException::AUTOMATIC_SHIPMENT_SENDER_IS_NOT_AVAILABLE => $this->module->l('Shipment information cannot be sent. Order reference (%s) does not have automatic shipment sender available.', self::FILE_NAME),
                 ShipmentCannotBeSentException::ORDER_HAS_NO_PAYMENT_INFORMATION => $this->module->l('Shipment information cannot be sent. Order reference (%s) has no payment information.', self::FILE_NAME),
                 ShipmentCannotBeSentException::PAYMENT_IS_NOT_ORDER => $this->module->l('Shipment information cannot be sent. Order reference (%s) is a regular payment.', self::FILE_NAME),
             ],
         ];
     }
 
-    public function getErrorMessageForException(Exception $exception, array $messages, array $params = [])
+    public function getErrorMessageForException(Exception $exception, array $messages = [], array $params = [])
     {
+        if (empty($messages)) {
+            $messages = $this->getErrorMessages();
+        }
+
         $exceptionType = get_class($exception);
         $exceptionCode = $exception->getCode();
 

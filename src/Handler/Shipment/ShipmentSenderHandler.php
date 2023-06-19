@@ -12,14 +12,13 @@
 
 namespace Mollie\Handler\Shipment;
 
+use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
 use Mollie\Exception\ShipmentCannotBeSentException;
-use Mollie\Service\ExceptionService;
 use Mollie\Service\Shipment\ShipmentInformationSenderInterface;
 use Mollie\Verification\Shipment\ShipmentVerificationInterface;
 use Order;
 use OrderState;
-use Psr\Log\LoggerInterface;
 
 class ShipmentSenderHandler implements ShipmentSenderHandlerInterface
 {
@@ -33,57 +32,25 @@ class ShipmentSenderHandler implements ShipmentSenderHandlerInterface
      */
     private $shipmentInformationSender;
 
-    /**
-     * @var ExceptionService
-     */
-    private $exceptionService;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $moduleLogger;
-
     public function __construct(
         ShipmentVerificationInterface $canSendShipment,
-        ShipmentInformationSenderInterface $shipmentInformationSender,
-        ExceptionService $exceptionService,
-        LoggerInterface $moduleLogger
+        ShipmentInformationSenderInterface $shipmentInformationSender
     ) {
         $this->canSendShipment = $canSendShipment;
         $this->shipmentInformationSender = $shipmentInformationSender;
-        $this->exceptionService = $exceptionService;
-        $this->moduleLogger = $moduleLogger;
     }
 
     /**
-     * @param MollieApiClient $apiClient
-     * @param Order $order
-     * @param OrderState $orderState
-     *
-     * @return bool
+     * @throws ShipmentCannotBeSentException
+     * @throws ApiException
      */
-    public function handleShipmentSender(MollieApiClient $apiClient, Order $order, OrderState $orderState)
+    public function handleShipmentSender(?MollieApiClient $apiClient, Order $order, OrderState $orderState): void
     {
-        try {
-            if (!$this->canSendShipment->verify($order, $orderState)) {
-                return false;
-            }
-            $this->shipmentInformationSender->sendShipmentInformation($apiClient, $order);
-        } catch (ShipmentCannotBeSentException $exception) {
-            $message = $this->exceptionService->getErrorMessageForException(
-                $exception,
-                $this->exceptionService->getErrorMessages(),
-                ['orderReference' => $order->reference]
-            );
-            $this->moduleLogger->error($message);
-
-            return false;
-        } catch (\Exception $exception) {
-            $this->moduleLogger->error($exception->getMessage());
-
-            return false;
+        // TODO testing doesn't make sense as we can't even see if bool has changed anything
+        if (!$this->canSendShipment->verify($order, $orderState)) {
+            return;
         }
 
-        return true;
+        $this->shipmentInformationSender->sendShipmentInformation($apiClient, $order);
     }
 }
