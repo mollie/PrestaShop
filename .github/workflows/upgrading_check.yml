@@ -1,0 +1,37 @@
+name: Module upgrade / downgrade testing (last version > v.5.2.1 > master version)
+on:
+  pull_request:
+    types: [opened, reopened]
+    branches: [master, v*.*.*]
+jobs:
+  Module-upgrading-check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - prestashop: 'PS1784'
+            make: 'make e2eh1784'
+            demoshop: 'demoshop1784'
+            port: '8002'
+            yml: 'docker-compose.1784.yml'
+            ModuleUpgradeTest: 'make upgrading-module-test-1784'
+          - prestashop: 'PS8'
+            make: 'make e2eh8'
+            demoshop: 'demoshop8'
+            port: '8142'
+            yml: 'docker-compose.8.yml'
+            ModuleUpgradeTest: 'make upgrading-module-test-8'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.3
+
+      - name: Install composer
+        run: composer update
+
+      - name: ${{ matrix.prestashop }} installing
+        run: |
+          ${{ matrix.make }}
+
+      - name: Testing if module upgrades after older module installation into ${{ matrix.prestashop }}
+        run:  ${{ matrix.ModuleUpgradeTest }}

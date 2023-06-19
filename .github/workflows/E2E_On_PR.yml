@@ -18,6 +18,7 @@ jobs:
             url: 'https://demoshop1784.eu.ngrok.io'
             test_spec: '**/cypress/e2e/ps1784/**'
             TestRailID: R4954
+            ModuleUpgradeTest: 'make upgrading-module-test-1784'
           - prestashop: 'PS8'
             make: 'make e2eh8'
             demoshop: 'demoshop8'
