@@ -77,7 +77,7 @@ upgrading-module-test-1784:
 	git checkout v5.2.1 .
 	composer install
 	# installing 5.2.1 module
-	docker exec -i prestashop-mollie-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
+	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
 	git checkout -- .
 	git checkout master --force
 	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
