@@ -17,15 +17,17 @@ jobs:
             yml: 'docker-compose.1784.yml'
             test_spec: '**/cypress/e2e/ps1784/**'
             ModuleUpgradeTest: 'make upgrading-module-test-1784'
+            PS_version: '1784'
           - prestashop: 'PS8'
             make: 'make e2eh8'
             demoshop: 'demoshop8'
             port: '8142'
             yml: 'docker-compose.8.yml'
             test_spec: '**/cypress/e2e/ps8/**'
+            PS_version: '8'
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3.5.3
+      - name: Checkouting the newest branch changes
+        uses: actions/checkout@v2.0.0
 
       - name: Install composer
         run: composer update
@@ -34,5 +36,22 @@ jobs:
         run: |
           ${{ matrix.make }}
 
-      - name: Testing if module upgrades after older module installation into ${{ matrix.prestashop }}
-        run:  ${{ matrix.ModuleUpgradeTest }}
+      - name: Checkouting to the older v5.2.1 module
+        uses: actions/checkout@v2.0.0
+        with:
+          ref: v5.2.1
+
+      - name: Install composer
+        run: composer update
+
+      - name: Installing the older module
+        run: docker exec -i prestashop-mollie-${{ matrix.PS_version }} sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
+
+      - name: Checkouting to the newest module
+        uses: actions/checkout@v2.0.0
+
+      - name: Install composer
+        run: composer update
+
+      - name: Installing the newest module
+        run: docker exec -i prestashop-mollie-${{ matrix.PS_version }} sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
