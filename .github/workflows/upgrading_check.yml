@@ -24,6 +24,9 @@ jobs:
             yml: 'docker-compose.8.yml'
             test_spec: '**/cypress/e2e/ps8/**'
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.3
+
       - name: ${{ matrix.prestashop }} installing
         run: |
           ${{ matrix.make }}
