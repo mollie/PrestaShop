@@ -24,12 +24,6 @@ jobs:
             yml: 'docker-compose.8.yml'
             test_spec: '**/cypress/e2e/ps8/**'
     steps:
-      - name: Install package
-        run: |
-          npm ci
-          npm update
-          npx browserslist@latest --update-db
-
       - name: ${{ matrix.prestashop }} installing
         run: |
           ${{ matrix.make }}
