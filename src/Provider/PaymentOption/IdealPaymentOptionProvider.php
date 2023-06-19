@@ -115,6 +115,7 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
     public function getPaymentOption(MolPaymentMethod $paymentMethod): PaymentOption
     {
         $paymentOption = new PaymentOption();
+
         $paymentOption->setCallToActionText(
             $paymentMethod->title ?:
             $this->languageService->lang($paymentMethod->method_name)
@@ -163,6 +164,11 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
                             $this->module->l('Payment Fee: %1s', self::FILE_NAME),
                             Tools::displayPrice($paymentFeeData->getPaymentFeeTaxIncl())
                         ),
+                    ],
+                    [
+                        'type' => 'hidden',
+                        'name' => 'payment-method-id',
+                        'value' => $paymentMethod->id,
                     ],
                 ]
             );

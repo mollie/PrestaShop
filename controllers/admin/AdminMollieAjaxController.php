@@ -195,13 +195,13 @@ class AdminMollieAjaxController extends ModuleAdminController
             return;
         }
 
-        /** @var TaxCalculatorProvider $taxProvider */
-        $taxProvider = $this->module->getService(TaxCalculatorProvider::class);
+        /** @var TaxCalculatorProvider $taxCalculatorProvider */
+        $taxCalculatorProvider = $this->module->getService(TaxCalculatorProvider::class);
 
         /** @var Context $context */
         $context = $this->module->getService(Context::class);
 
-        $taxCalculator = $taxProvider->getTaxCalculator(
+        $taxCalculator = $taxCalculatorProvider->getTaxCalculator(
             $taxRulesGroupId,
             $context->getCountryId(),
             0 // NOTE: there is no default state for back office so setting no state

@@ -203,6 +203,11 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
                             Tools::displayPrice($paymentFeeData->getPaymentFeeTaxIncl())
                         ),
                     ],
+                    [
+                        'type' => 'hidden',
+                        'name' => 'payment-method-id',
+                        'value' => $paymentMethod->id,
+                    ],
                 ])
             );
         }
