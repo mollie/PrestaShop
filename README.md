@@ -13,7 +13,6 @@ Choose the best payment provider available for your online PrestaShop store. Cre
 
 Mollie supports the following payment methods: iDEAL, Credit card, Bancontact, SOFORT Banking, ING Home’Pay, Bank transfers, PayPal, KBC / CBC Payment Button, Belfius, CartaSi, Cartes Bancaires, EPS, Giropay, Klarna: Pay later, Klarna: Slice it
 
-[![Cypress test run MOLLIE](https://github.com/mollie/PrestaShop1.7/actions/workflows/E2E_On_PR.yml/badge.svg?branch=e2e-check-1&event=pull_request)](https://github.com/mollie/PrestaShop1.7/actions/workflows/E2E_On_PR.yml)
 [![Build Status](https://travis-ci.org/mollie/PrestaShop.svg?branch=master)](https://travis-ci.org/mollie/PrestaShop)
 [![Greenkeeper badge](https://badges.greenkeeper.io/mollie/PrestaShop.svg)](https://greenkeeper.io/)
 [![Release badge](https://img.shields.io/github/release/mollie/PrestaShop.svg)](https://github.com/mollie/PrestaShop/releases/latest)
