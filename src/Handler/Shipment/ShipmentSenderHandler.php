@@ -46,7 +46,6 @@ class ShipmentSenderHandler implements ShipmentSenderHandlerInterface
      */
     public function handleShipmentSender(?MollieApiClient $apiClient, Order $order, OrderState $orderState): void
     {
-        // TODO testing doesn't make sense as we can't even see if bool has changed anything
         if (!$this->canSendShipment->verify($order, $orderState)) {
             return;
         }
