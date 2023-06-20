@@ -14,6 +14,7 @@ namespace Mollie\Adapter;
 
 use Configuration as PrestashopConfiguration;
 use Context as PrestashopContext;
+use PrestaShop\PrestaShop\Core\Localization\LocaleInterface;
 
 class Context
 {
@@ -124,5 +125,10 @@ class Context
     public function getCountryId(): int
     {
         return (int) PrestashopContext::getContext()->country->id;
+    }
+
+    public function getCurrentLocale(): ?LocaleInterface
+    {
+        return PrestashopContext::getContext()->getCurrentLocale();
     }
 }

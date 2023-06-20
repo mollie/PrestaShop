@@ -12,14 +12,12 @@
 
 namespace Mollie\Repository;
 
-use Db;
+use MolOrderPaymentFee;
 
-class OrderFeeRepository
+class MolOrderPaymentFeeRepository extends AbstractRepository implements MolOrderPaymentFeeRepositoryInterface
 {
-    public function getOrderFeeIdByCartId($cartId)
+    public function __construct()
     {
-        $sql = 'Select id_mol_order_fee FROM `' . _DB_PREFIX_ . 'mol_order_fee` WHERE id_cart = "' . (int) $cartId . '"';
-
-        return Db::getInstance()->getValue($sql);
+        parent::__construct(MolOrderPaymentFee::class);
     }
 }

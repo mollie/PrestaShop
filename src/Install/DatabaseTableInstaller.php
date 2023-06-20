@@ -87,10 +87,12 @@ final class DatabaseTableInstaller implements InstallerInterface
 				`issuers_json` TEXT NOT NULL
 			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
-        $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_order_fee` (
-				`id_mol_order_fee`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_order_payment_fee` (
+				`id_mol_order_payment_fee`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`id_cart` INT(64) NOT NULL,
-				`order_fee` decimal(20,6) NOT NULL
+				`id_order` INT(64) NOT NULL,
+				`fee_tax_incl` decimal(20,6) NOT NULL
+				`fee_tax_excl` decimal(20,6) NOT NULL
 			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
         $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_carrier_information` (

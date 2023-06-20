@@ -12,48 +12,53 @@
 
 namespace Mollie\Builder;
 
-use Cart;
 use Currency;
-use Mollie\Repository\OrderFeeRepository;
-use MolOrderFee;
+use Mollie\Adapter\Context;
+use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
+use MolOrderPaymentFee;
 use Order;
-use Tools;
 
 final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
 {
-    private $orderFeeRepository;
-
     /**
      * @var Order
      */
     private $order;
+    /** @var MolOrderPaymentFeeRepositoryInterface */
+    private $molOrderPaymentFeeRepository;
+    /** @var Context */
+    private $context;
 
-    public function __construct(OrderFeeRepository $orderFeeRepository)
-    {
-        $this->orderFeeRepository = $orderFeeRepository;
+    public function __construct(
+        MolOrderPaymentFeeRepositoryInterface $molOrderPaymentFeeRepository,
+        Context $context
+    ) {
+        $this->molOrderPaymentFeeRepository = $molOrderPaymentFeeRepository;
+        $this->context = $context;
     }
 
-    public function setOrder(Order $order)
+    public function setOrder(Order $order): InvoicePdfTemplateBuilder
     {
         $this->order = $order;
 
         return $this;
     }
 
-    public function buildParams()
+    public function buildParams(): array
     {
-        $orderFeeId = $this->orderFeeRepository->getOrderFeeIdByCartId(Cart::getCartIdByOrderId($this->order->id));
+        /** @var MolOrderPaymentFee|null $molOrderPaymentFee */
+        $molOrderPaymentFee = $this->molOrderPaymentFeeRepository->findOneBy([
+            'id_order' => (int) $this->order->id,
+        ]);
 
-        $orderFee = new MolOrderFee($orderFeeId);
-
-        if (!$orderFee->order_fee) {
+        if (!$molOrderPaymentFee || !$molOrderPaymentFee->id_order) {
             return [];
         }
 
         return [
-            'orderFeeAmountDisplay' => Tools::displayPrice(
-                $orderFee->order_fee,
-                new Currency($this->order->id_currency)
+            'orderFeeAmountDisplay' => $this->context->getCurrentLocale()->formatPrice(
+                $molOrderPaymentFee->fee_tax_incl,
+                (new Currency($this->order->id_currency))->iso_code
             ),
         ];
     }

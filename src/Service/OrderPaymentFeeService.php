@@ -17,12 +17,12 @@ use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
-use MolOrderFee;
+use MolOrderPaymentFee;
 use MolPaymentMethod;
 use PrestaShopException;
 use Shop;
 
-class OrderFeeService
+class OrderPaymentFeeService
 {
     /**
      * @var PaymentMethodRepositoryInterface
@@ -45,27 +45,30 @@ class OrderFeeService
         $this->paymentFeeProvider = $paymentFeeProvider;
     }
 
-    public function createOrderFee($cartId, $orderFee): void
+    public function createOrderPaymentFee(int $orderId, int $cartId, PaymentFeeData $paymentFeeData): void
     {
-        // TODO do we really need this? Haven't see where this is used
+        $molOrderPaymentFee = new MolOrderPaymentFee();
 
-        $orderFeeObj = new MolOrderFee();
-
-        $orderFeeObj->id_cart = (int) $cartId;
-        $orderFeeObj->order_fee = $orderFee;
+        $molOrderPaymentFee->id_cart = $cartId;
+        $molOrderPaymentFee->id_order = $orderId;
+        $molOrderPaymentFee->fee_tax_incl = $paymentFeeData->getPaymentFeeTaxIncl();
+        $molOrderPaymentFee->fee_tax_excl = $paymentFeeData->getPaymentFeeTaxExcl();
 
         try {
-            $orderFeeObj->add();
+            $molOrderPaymentFee->add();
         } catch (\Exception $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);
 
+            // TODO use custom exceptions
             throw new PrestaShopException('Can\'t save Order fee');
         }
     }
 
     public function getPaymentFee(float $totalAmount, string $method): PaymentFeeData
     {
+        // TODO order and payment fee in same service? Separate logic as this is probably used in cart context
+
         $environment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
         $paymentId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($method, $environment, $this->shop->id);
         $molPaymentMethod = new MolPaymentMethod($paymentId);
