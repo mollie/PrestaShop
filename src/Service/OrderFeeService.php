@@ -47,6 +47,8 @@ class OrderFeeService
 
     public function createOrderFee($cartId, $orderFee): void
     {
+        // TODO do we really need this? Haven't see where this is used
+
         $orderFeeObj = new MolOrderFee();
 
         $orderFeeObj->id_cart = (int) $cartId;

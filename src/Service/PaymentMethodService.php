@@ -281,9 +281,9 @@ class PaymentMethodService
 
         $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($molPaymentMethod, $totalAmount);
 
-        $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
-
-        $totalAmount += $paymentFee;
+        if ($paymentFeeData->isActive()) {
+            $totalAmount += $paymentFeeData->getPaymentFeeTaxIncl();
+        }
 
         $currency = (string) ($currency ? Tools::strtoupper($currency) : 'EUR');
         $value = (float) TextFormatUtility::formatNumber($totalAmount, 2);
@@ -417,7 +417,7 @@ class PaymentMethodService
             $orderData->setLines(
                 $this->cartLinesService->getCartLines(
                     $amount,
-                    $paymentFee,
+                    $paymentFeeData,
                     $currency->iso_code,
                     $cart->getSummaryDetails(),
                     $cart->getTotalShippingCost(null, true),

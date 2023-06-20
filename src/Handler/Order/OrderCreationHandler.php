@@ -126,31 +126,21 @@ class OrderCreationHandler
             (int) Config::getStatuses()[PaymentStatus::STATUS_PAID];
 
         $cart = new Cart($cartId);
+
         $originalAmount = $cart->getOrderTotal(
             true,
             Cart::BOTH
         );
 
-        $paymentFee = 0;
-
         $paymentMethod = $this->paymentMethodService->getPaymentMethod($apiPayment);
 
-        if ($apiPayment->resource === Config::MOLLIE_API_STATUS_PAYMENT) {
-            $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmount);
+        $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmount);
 
-            $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
-        } else {
-            /** @var Mollie\Api\Resources\OrderLine $line */
-            foreach ($apiPayment->lines() as $line) {
-                if ($line->sku === Config::PAYMENT_FEE_SKU) {
-                    $paymentFee = $line->totalAmount->value;
-                }
-            }
-        }
         if (Order::getOrderByCartId((int) $cartId)) {
             return 0;
         }
-        if (!$paymentFee) {
+
+        if (!$paymentFeeData->isActive()) {
             $this->module->validateOrder(
                 (int) $cartId,
                 $orderStatus,
@@ -170,9 +160,11 @@ class OrderCreationHandler
 
             return $orderId;
         }
-        $cartPrice = NumberUtility::plus($originalAmount, $paymentFee);
+
+        $cartPrice = NumberUtility::plus($originalAmount, $paymentFeeData->getPaymentFeeTaxIncl());
         $priceDifference = NumberUtility::minus($cartPrice, $apiPayment->amount->value);
-        if (abs($priceDifference) > 0.01) {
+
+        if (abs($priceDifference) !== 0.00) {
             if ($apiPayment->resource === Config::MOLLIE_API_STATUS_ORDER) {
                 $apiPayment->refundAll();
             } else {
@@ -183,6 +175,7 @@ class OrderCreationHandler
                     ],
                 ]);
             }
+
             $this->paymentMethodRepository->updatePaymentReason($apiPayment->id, Config::WRONG_AMOUNT_REASON);
 
             throw new \Exception('Wrong cart amount');
@@ -202,6 +195,7 @@ class OrderCreationHandler
 
         /* @phpstan-ignore-next-line */
         $orderId = (int) Order::getOrderByCartId((int) $cartId);
+
         $this->orderFeeHandler->addOrderFee($orderId, $apiPayment);
 
         $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
