@@ -21,6 +21,8 @@ use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Handler\Shipment\ShipmentSenderHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
 use Mollie\Install\UninstallerInterface;
+use Mollie\Logger\PrestaLogger;
+use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\CustomLogoProviderInterface;
 use Mollie\Provider\EnvironmentVersionProvider;
@@ -63,7 +65,6 @@ use Mollie\Repository\TaxRulesGroupRepositoryInterface;
 use Mollie\Service\ApiKeyService;
 use Mollie\Service\Content\SmartyTemplateParser;
 use Mollie\Service\Content\TemplateParserInterface;
-use Mollie\Service\ExceptionService;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator;
@@ -111,6 +112,8 @@ final class BaseServiceProvider
     {
         /* Logger */
         $this->addService($container, LoggerInterface::class, $container->get(Logger::class));
+        $this->addService($container, PrestaLoggerInterface::class, $container->get(PrestaLogger::class));
+
         /* Utility */
         $this->addService($container, ClockInterface::class, $container->get(Clock::class));
 
@@ -143,8 +146,6 @@ final class BaseServiceProvider
                 [
                     $container->get(ShipmentVerificationInterface::class),
                     $container->get(ShipmentInformationSenderInterface::class),
-                    $container->get(ExceptionService::class),
-                    $container->get(Logger::class),
                 ]
             );
 

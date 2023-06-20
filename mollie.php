@@ -14,10 +14,15 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Link;
 use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Adapter\ToolsAdapter;
+use Mollie\Api\Exceptions\ApiException;
 use Mollie\Config\Config;
+use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
+use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
+use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Service\ExceptionService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
 use Mollie\Subscription\Exception\ProductValidationException;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
@@ -32,6 +37,7 @@ use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Subscription\Verification\HasSubscriptionProductInCart;
 use Mollie\Utility\PsVersionUtility;
+use Mollie\Verification\IsPaymentInformationAvailable;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -584,9 +590,9 @@ class Mollie extends PaymentModule
      *
      * @since 3.3.0
      */
-    public function hookActionOrderStatusUpdate($params = [])
+    public function hookActionOrderStatusUpdate(array $params): void
     {
-        if (!isset($params['newOrderStatus']) || !isset($params['id_order'])) {
+        if (!isset($params['newOrderStatus'], $params['id_order'])) {
             return;
         }
 
@@ -595,6 +601,7 @@ class Mollie extends PaymentModule
         } else {
             $orderStatus = new OrderState((int) $params['newOrderStatus']);
         }
+
         $order = new Order($params['id_order']);
 
         if (!Validate::isLoadedObject($orderStatus)) {
@@ -605,32 +612,40 @@ class Mollie extends PaymentModule
             return;
         }
 
-        $idOrder = $params['id_order'];
-        $order = new Order($idOrder);
-        $checkStatuses = [];
-        if (Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES)) {
-            $checkStatuses = @json_decode(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES));
-        }
-        if (!is_array($checkStatuses)) {
-            $checkStatuses = [];
-        }
-        if (!(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_MAIN) && in_array($orderStatus->id, $checkStatuses))
-        ) {
-            return;
-        }
-
-        /** @var \Mollie\Handler\Shipment\ShipmentSenderHandlerInterface $shipmentSenderHandler */
-        $shipmentSenderHandler = $this->getService(
-            Mollie\Handler\Shipment\ShipmentSenderHandlerInterface::class
-        );
-
         if (!$this->getApiClient()) {
             return;
         }
+
+        /** @var IsPaymentInformationAvailable $isPaymentInformationAvailable */
+        $isPaymentInformationAvailable = $this->getService(IsPaymentInformationAvailable::class);
+
+        if (!$isPaymentInformationAvailable->verify((int) $order->id)) {
+            return;
+        }
+
+        /** @var ShipmentSenderHandlerInterface $shipmentSenderHandler */
+        $shipmentSenderHandler = $this->getService(ShipmentSenderHandlerInterface::class);
+
+        /** @var ExceptionService $exceptionService */
+        $exceptionService = $this->getService(ExceptionService::class);
+
+        /** @var PrestaLoggerInterface $logger */
+        $logger = $this->getService(PrestaLoggerInterface::class);
+
         try {
             $shipmentSenderHandler->handleShipmentSender($this->getApiClient(), $order, $orderStatus);
-        } catch (Exception $e) {
-            //todo: we logg error in handleShipment
+        } catch (ShipmentCannotBeSentException $exception) {
+            $logger->error($exceptionService->getErrorMessageForException(
+                $exception,
+                [],
+                ['orderReference' => $order->reference]
+            ));
+
+            return;
+        } catch (ApiException $exception) {
+            $logger->error($exception->getMessage());
+
+            return;
         }
     }
 
@@ -1059,6 +1074,7 @@ class Mollie extends PaymentModule
             return;
         }
         try {
+            // TODO handle api key set differently. Throw error and don't let do further actions.
             $this->api = $apiKeyService->setApiKey($apiKey, $this->version);
         } catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();

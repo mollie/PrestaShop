@@ -133,7 +133,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             } else {
                 /** @var ExceptionService $exceptionService */
                 $exceptionService = $this->module->getService(ExceptionService::class);
-                $message = $exceptionService->getErrorMessageForException($e, $exceptionService->getErrorMessages());
+                $message = $exceptionService->getErrorMessageForException($e);
             }
             $this->errors[] = $message;
 

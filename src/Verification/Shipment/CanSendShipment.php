@@ -21,6 +21,7 @@ use Mollie\Handler\Api\OrderEndpointPaymentTypeHandlerInterface;
 use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ShipmentServiceInterface;
+use Mollie\Verification\IsPaymentInformationAvailable;
 use Order;
 use OrderState;
 use PrestaShopLogger;
@@ -51,40 +52,44 @@ class CanSendShipment implements ShipmentVerificationInterface
      * @var ShipmentServiceInterface
      */
     private $shipmentService;
+    /** @var IsPaymentInformationAvailable */
+    private $isPaymentInformationAvailable;
 
     public function __construct(
         ConfigurationAdapter $configurationAdapter,
         AutomaticShipmentSenderStatusesProviderInterface $automaticShipmentSenderStatusesProvider,
         OrderEndpointPaymentTypeHandlerInterface $endpointPaymentTypeHandler,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
-        ShipmentServiceInterface $shipmentService
+        ShipmentServiceInterface $shipmentService,
+        IsPaymentInformationAvailable $isPaymentInformationAvailable
     ) {
         $this->automaticShipmentSenderStatusesProvider = $automaticShipmentSenderStatusesProvider;
         $this->configurationAdapter = $configurationAdapter;
         $this->endpointPaymentTypeHandler = $endpointPaymentTypeHandler;
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->shipmentService = $shipmentService;
+        $this->isPaymentInformationAvailable = $isPaymentInformationAvailable;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function verify(Order $order, OrderState $orderState)
+    public function verify(Order $order, OrderState $orderState): bool
     {
         /* todo: doesnt work with no tracking information. Will need to create new validation */
         //		if (!$this->hasShipmentInformation($order->reference)) {
         //			throw new ShipmentCannotBeSentException('Shipment information cannot be sent. No shipment information found by order reference', ShipmentCannotBeSentException::NO_SHIPPING_INFORMATION, $order->reference);
         //		}
 
-        if (!$this->isAutomaticShipmentAvailable($orderState->id)) {
-            throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Automatic shipment sender is not available', ShipmentCannotBeSentException::AUTOMATIC_SHIPMENT_SENDER_IS_NOT_AVAILABLE, $order->reference);
+        if (!$this->isAutomaticShipmentAvailable((int) $orderState->id)) {
+            return false;
         }
 
-        if (!$this->hasPaymentInformation($order->id)) {
+        if (!$this->isPaymentInformationAvailable->verify((int) $order->id)) {
             throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Missing payment information', ShipmentCannotBeSentException::ORDER_HAS_NO_PAYMENT_INFORMATION, $order->reference);
         }
 
-        if (!$this->isRegularPayment($order->id)) {
+        if (!$this->isRegularPayment((int) $order->id)) {
             throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Is regular payment', ShipmentCannotBeSentException::PAYMENT_IS_NOT_ORDER, $order->reference);
         }
 
@@ -96,20 +101,17 @@ class CanSendShipment implements ShipmentVerificationInterface
      *
      * @return bool
      */
-    private function isRegularPayment($orderId)
+    private function isRegularPayment(int $orderId): bool
     {
         $payment = $this->paymentMethodRepository->getPaymentBy('order_id', (int) $orderId);
 
         if (empty($payment)) {
             return false;
         }
+
         $paymentType = $this->endpointPaymentTypeHandler->getPaymentTypeFromTransactionId($payment['transaction_id']);
 
-        if ((int) $paymentType !== PaymentTypeEnum::PAYMENT_TYPE_ORDER) {
-            return false;
-        }
-
-        return true;
+        return (int) $paymentType === PaymentTypeEnum::PAYMENT_TYPE_ORDER;
     }
 
     /**
@@ -117,7 +119,7 @@ class CanSendShipment implements ShipmentVerificationInterface
      *
      * @return bool
      */
-    private function isAutomaticShipmentAvailable($orderStateId)
+    private function isAutomaticShipmentAvailable(int $orderStateId): bool
     {
         if (!$this->isAutomaticShipmentInformationSenderEnabled()) {
             return false;
@@ -131,31 +133,11 @@ class CanSendShipment implements ShipmentVerificationInterface
     }
 
     /**
-     * @param int $orderId
-     *
-     * @return bool
-     */
-    private function hasPaymentInformation($orderId)
-    {
-        $payment = $this->paymentMethodRepository->getPaymentBy('order_id', (int) $orderId);
-
-        if (empty($payment)) {
-            return false;
-        }
-
-        if (empty($payment['transaction_id'])) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * @param string $orderReference
      *
      * @return bool
      */
-    private function hasShipmentInformation($orderReference)
+    private function hasShipmentInformation(string $orderReference): bool
     {
         try {
             return !empty($this->shipmentService->getShipmentInformation($orderReference));
@@ -169,7 +151,7 @@ class CanSendShipment implements ShipmentVerificationInterface
     /**
      * @return bool
      */
-    private function isAutomaticShipmentInformationSenderEnabled()
+    private function isAutomaticShipmentInformationSenderEnabled(): bool
     {
         return (bool) $this->configurationAdapter->get(Config::MOLLIE_AUTO_SHIP_MAIN);
     }
@@ -179,11 +161,15 @@ class CanSendShipment implements ShipmentVerificationInterface
      *
      * @return bool
      */
-    private function isOrderStateInAutomaticShipmentSenderOrderStateList($orderStateId)
+    private function isOrderStateInAutomaticShipmentSenderOrderStateList(int $orderStateId): bool
     {
         return in_array(
-            (int) $orderStateId,
-            array_map('intval', $this->automaticShipmentSenderStatusesProvider->getAutomaticShipmentSenderStatuses())
+            $orderStateId,
+            array_map(
+                'intval',
+                $this->automaticShipmentSenderStatusesProvider->getAutomaticShipmentSenderStatuses()
+            ),
+            true
         );
     }
 }
