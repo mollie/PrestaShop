@@ -65,7 +65,6 @@ use Mollie\Repository\TaxRulesGroupRepositoryInterface;
 use Mollie\Service\ApiKeyService;
 use Mollie\Service\Content\SmartyTemplateParser;
 use Mollie\Service\Content\TemplateParserInterface;
-use Mollie\Service\ExceptionService;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator;

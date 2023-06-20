@@ -234,7 +234,7 @@ class TransactionService
 
                     try {
                         $this->shipmentSenderHandler->handleShipmentSender($this->module->getApiClient(), $order, new \OrderState($order->current_state));
-                    }  catch (ShipmentCannotBeSentException $exception) {
+                    } catch (ShipmentCannotBeSentException $exception) {
                         $this->logger->error($this->exceptionService->getErrorMessageForException(
                             $exception,
                             [],

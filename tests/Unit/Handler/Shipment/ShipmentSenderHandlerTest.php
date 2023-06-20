@@ -113,12 +113,15 @@ class ShipmentSenderHandlerTest extends TestCase
 
     public function testItSuccessfullyFailsToSendShipmentVerificationReturnedFalse(): void
     {
-        $this->order->reference = 'test';
-
         $this->canSendShipment
             ->expects($this->once())
             ->method('verify')
             ->willReturn(false)
+        ;
+
+        $this->shipmentInformationSender
+            ->expects($this->never())
+            ->method('sendShipmentInformation')
         ;
 
         $shipmentSenderHandler = new ShipmentSenderHandler(
