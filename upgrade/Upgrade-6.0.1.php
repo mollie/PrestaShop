@@ -68,9 +68,20 @@ function modifyExistingTables(): bool
 
     /** only add it if it doesn't exist */
     if (!(int) Db::getInstance()->getValue($sql)) {
+        $sql = 'ALTER TABLE ' . _DB_PREFIX_ . 'mol_order_payment_fee DROP PRIMARY KEY';
+
+        try {
+            if (!Db::getInstance()->execute($sql)) {
+                return false;
+            }
+        } catch (Exception $e) {
+            return false;
+        }
+
         $sql = '
         ALTER TABLE ' . _DB_PREFIX_ . 'mol_order_fee
         CHANGE order_fee fee_tax_incl decimal(20,6)  NOT NULL,
+        CHANGE id_mol_order_fee id_mol_order_payment_fee,
         ADD COLUMN id_order INT(64) NOT NULL,
         ADD COLUMN fee_tax_excl decimal(20,6) NOT NULL;
         ';
@@ -84,6 +95,18 @@ function modifyExistingTables(): bool
         }
 
         $sql = 'RENAME TABLE ' . _DB_PREFIX_ . 'mol_order_fee TO ' . _DB_PREFIX_ . 'mol_order_payment_fee';
+
+        try {
+            if (!Db::getInstance()->execute($sql)) {
+                return false;
+            }
+        } catch (Exception $e) {
+            return false;
+        }
+
+        $sql = 'ALTER TABLE ' . _DB_PREFIX_ . 'mol_order_payment_fee
+        ADD CONSTRAINT mol_order_payment_fee PRIMARY KEY (id_mol_order_payment_fee)
+        ';
 
         try {
             if (!Db::getInstance()->execute($sql)) {

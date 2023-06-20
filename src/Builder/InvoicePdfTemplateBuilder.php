@@ -56,6 +56,7 @@ final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
         }
 
         return [
+            // TODO check if formatPrice method was available in 1.7.6 as phpstan tells that localeInterface doesn't have this method
             'orderFeeAmountDisplay' => $this->context->getCurrentLocale()->formatPrice(
                 $molOrderPaymentFee->fee_tax_incl,
                 (new Currency($this->order->id_currency))->iso_code

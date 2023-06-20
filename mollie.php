@@ -697,7 +697,7 @@ class Mollie extends PaymentModule
             'outofstock' === $template ||
             'bankwire' === $template ||
             'refund' === $template) {
-            /** @var MolOrderPaymentFeeRepositoryInterface $orderFeeRepo */
+            /** @var MolOrderPaymentFeeRepositoryInterface $molOrderPaymentFeeRepository */
             $molOrderPaymentFeeRepository = $this->getService(MolOrderPaymentFeeRepositoryInterface::class);
 
             $orderCurrency = new Currency($order->id_currency);
