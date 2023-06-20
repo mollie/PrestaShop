@@ -78,6 +78,11 @@ class ShipmentSenderHandlerTest extends TestCase
             ->willReturn(true)
         ;
 
+        $this->shipmentInformationSender
+            ->expects($this->once())
+            ->method('sendShipmentInformation')
+        ;
+
         $shipmentSenderHandler = new ShipmentSenderHandler(
             $this->canSendShipment,
             $this->shipmentInformationSender
