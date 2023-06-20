@@ -74,6 +74,8 @@ class CartLinesService
         $psGiftWrapping,
         $selectedVoucherCategory
     ) {
+        // TODO refactor whole service, split order line append into separate services and test them individually at least!!!
+
         $apiRoundingPrecision = Config::API_ROUNDING_PRECISION;
         $vatRatePrecision = Config::VAT_RATE_ROUNDING_PRECISION;
 

@@ -84,6 +84,27 @@ class PaymentFeeProviderTest extends TestCase
     public function paymentFeeDataProvider(): array
     {
         return [
+            'success with no surcharge found' => [
+                'paymentMethod' => [
+                    'surcharge' => 'not-found',
+                    'surcharge_percentage' => '0',
+                    'surcharge_limit' => '0',
+                    'surcharge_fixed_amount_tax_excl' => 0,
+                    'tax_rules_group_id' => 0,
+                ],
+                'taxCalculatorResults' => [
+                    'taxRate' => 0.00,
+                    'addTaxResult' => 0.00,
+                    'removeTaxResult' => 0.00,
+                ],
+                'totalCartPrice' => 0,
+                'expectedResult' => [
+                    'taxRate' => 0.00,
+                    'paymentFeeTaxIncl' => 0.00,
+                    'paymentFeeTaxExcl' => 0.00,
+                    'active' => false,
+                ],
+            ],
             'success with fixed price' => [
                 'paymentMethod' => [
                     'surcharge' => Config::FEE_FIXED_FEE,

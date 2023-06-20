@@ -141,7 +141,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
                 );
         }
 
-        return new PaymentFeeData(0.00, 0.00, false);
+        return new PaymentFeeData(0.00, 0.00, 0.00, false);
     }
 
     private function handleSurchargeMaxValue(
