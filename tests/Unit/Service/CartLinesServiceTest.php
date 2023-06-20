@@ -21,7 +21,6 @@ use Mollie\DTO\PaymentFeeData;
 use Mollie\Service\CartLinesService;
 use Mollie\Service\LanguageService;
 use Mollie\Service\VoucherService;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class CartLinesServiceTest extends TestCase

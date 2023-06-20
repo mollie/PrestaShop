@@ -38,8 +38,6 @@ namespace Mollie\Handler\Order;
 
 use Cart;
 use Configuration;
-use Mollie\Api\Resources\OrderLine;
-use Mollie\Config\Config;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Service\OrderFeeService;
 use Mollie\Service\PaymentMethodService;
