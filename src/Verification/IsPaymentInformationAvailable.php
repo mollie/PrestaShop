@@ -23,14 +23,6 @@ class IsPaymentInformationAvailable
     {
         $payment = $this->paymentMethodRepository->getPaymentBy('order_id', (int) $orderId);
 
-        if (empty($payment)) {
-            return false;
-        }
-
-        if (empty($payment['transaction_id'])) {
-            return false;
-        }
-
-        return true;
+        return !(empty($payment) || empty($payment['transaction_id']));
     }
 }
