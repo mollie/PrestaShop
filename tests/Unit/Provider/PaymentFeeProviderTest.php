@@ -60,6 +60,7 @@ class PaymentFeeProviderTest extends TestCase
 
         $taxCalculator->method('addTaxes')->willReturn($taxCalculatorResults['addTaxResult']);
         $taxCalculator->method('removeTaxes')->willReturn($taxCalculatorResults['removeTaxResult']);
+        $taxCalculator->method('getTotalRate')->willReturn($taxCalculatorResults['taxRate']);
 
         $this->taxProvider->method('getTaxCalculator')->willReturn($taxCalculator);
 
@@ -76,6 +77,7 @@ class PaymentFeeProviderTest extends TestCase
 
         $this->assertEquals($result->getPaymentFeeTaxIncl(), $expectedResult['paymentFeeTaxIncl']);
         $this->assertEquals($result->getPaymentFeeTaxExcl(), $expectedResult['paymentFeeTaxExcl']);
+        $this->assertEquals($result->getTaxRate(), $expectedResult['taxRate']);
         $this->assertEquals($result->isActive(), $expectedResult['active']);
     }
 
@@ -91,11 +93,13 @@ class PaymentFeeProviderTest extends TestCase
                     'tax_rules_group_id' => 1,
                 ],
                 'taxCalculatorResults' => [
+                    'taxRate' => 10.00,
                     'addTaxResult' => 11.00,
                     'removeTaxResult' => 0.00,
                 ],
                 'totalCartPrice' => 10,
                 'expectedResult' => [
+                    'taxRate' => 10.00,
                     'paymentFeeTaxIncl' => 11.00,
                     'paymentFeeTaxExcl' => 10.00,
                     'active' => true,
@@ -110,11 +114,13 @@ class PaymentFeeProviderTest extends TestCase
                     'tax_rules_group_id' => 1,
                 ],
                 'taxCalculatorResults' => [
+                    'taxRate' => 10.00,
                     'addTaxResult' => 1.1,
                     'removeTaxResult' => 0.00,
                 ],
                 'totalCartPrice' => 10,
                 'expectedResult' => [
+                    'taxRate' => 10.00,
                     'paymentFeeTaxIncl' => 1.1,
                     'paymentFeeTaxExcl' => 1.0,
                     'active' => true,
@@ -129,11 +135,13 @@ class PaymentFeeProviderTest extends TestCase
                     'tax_rules_group_id' => 1,
                 ],
                 'taxCalculatorResults' => [
+                    'taxRate' => 10.00,
                     'addTaxResult' => 22.00,
                     'removeTaxResult' => 10.00,
                 ],
                 'totalCartPrice' => 200,
                 'expectedResult' => [
+                    'taxRate' => 10.00,
                     'paymentFeeTaxIncl' => 11.00,
                     'paymentFeeTaxExcl' => 10.00,
                     'active' => true,
@@ -148,11 +156,13 @@ class PaymentFeeProviderTest extends TestCase
                     'tax_rules_group_id' => 1,
                 ],
                 'taxCalculatorResults' => [
+                    'taxRate' => 10.00,
                     'addTaxResult' => 22.00,
                     'removeTaxResult' => 0.00,
                 ],
                 'totalCartPrice' => 100,
                 'expectedResult' => [
+                    'taxRate' => 10.00,
                     'paymentFeeTaxIncl' => 22.00,
                     'paymentFeeTaxExcl' => 20.00,
                     'active' => true,

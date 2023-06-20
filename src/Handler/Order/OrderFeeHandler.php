@@ -69,12 +69,13 @@ class OrderFeeHandler
     public function addOrderFee(int $orderId, $apiPayment)
     {
         $order = new Order($orderId);
-
         $cart = new Cart($order->id_cart);
+
         $originalAmountWithTax = $cart->getOrderTotal(
             true,
             Cart::BOTH
         );
+
         $originalAmountWithoutTax = $cart->getOrderTotal(
             false,
             Cart::BOTH
@@ -84,26 +85,17 @@ class OrderFeeHandler
 
         $paymentMethod = $this->paymentMethodService->getPaymentMethod($apiPayment);
 
-        if ($apiPayment->resource === Config::MOLLIE_API_STATUS_PAYMENT) {
-            $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmountWithTax);
-
-            $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
-        } else {
-            /** @var OrderLine $line */
-            foreach ($apiPayment->lines() as $line) {
-                if ($line->sku === Config::PAYMENT_FEE_SKU) {
-                    $paymentFee = $line->totalAmount->value;
-                }
-            }
-        }
+        $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmountWithTax);
 
         $this->feeService->createOrderFee($order->id_cart, $paymentFee);
 
         $order = new Order($orderId);
-        $order->total_paid_tax_excl = (float) (new Number((string) $originalAmountWithoutTax))->plus((new Number((string) $paymentFee)))->toPrecision(2);
-        $order->total_paid_tax_incl = (float) (new Number((string) $originalAmountWithTax))->plus((new Number((string) $paymentFee)))->toPrecision(2);
+
+        $order->total_paid_tax_excl = (float) (new Number((string) $originalAmountWithoutTax))->plus((new Number((string) $paymentFeeData->getPaymentFeeTaxExcl())))->toPrecision(2);
+        $order->total_paid_tax_incl = (float) (new Number((string) $originalAmountWithTax))->plus((new Number((string) $paymentFeeData->getPaymentFeeTaxIncl())))->toPrecision(2);
         $order->total_paid = (float) $apiPayment->amount->value;
         $order->total_paid_real = (float) $apiPayment->amount->value;
+
         $order->update();
 
         return $orderId;

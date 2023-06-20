@@ -76,7 +76,6 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
     public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPrice): PaymentFeeData
     {
         // TODO handle exception on all calls.
-        // TODO test it on 1.7.6, DecimalNumber could be issue
         $totalDecimalCartPrice = new DecimalNumber((string) $totalCartPrice);
         $maxPercentage = new DecimalNumber(self::MAX_PERCENTAGE);
         $surchargePercentage = new DecimalNumber($paymentMethod->surcharge_percentage);
@@ -105,7 +104,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
                     (float) $totalFeePriceTaxExcl->toPrecision(self::TEMPORARY_PRECISION, Rounding::ROUND_HALF_UP)
                 ));
 
-                return $this->returnFormattedResult($totalFeePriceTaxIncl, $totalFeePriceTaxExcl);
+                return $this->returnFormattedResult($totalFeePriceTaxIncl, $totalFeePriceTaxExcl, $taxCalculator->getTotalRate());
             case Config::FEE_PERCENTAGE:
                 $totalFeePriceTaxExcl = $totalDecimalCartPrice->times(
                     $surchargePercentage->dividedBy(
@@ -160,17 +159,21 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
             ));
         }
 
-        return $this->returnFormattedResult($totalFeePriceTaxIncl, $totalFeePriceTaxExcl);
+        return $this->returnFormattedResult($totalFeePriceTaxIncl, $totalFeePriceTaxExcl, $taxCalculator->getTotalRate());
     }
 
-    private function returnFormattedResult(DecimalNumber $totalFeePriceTaxIncl, DecimalNumber $totalFeePriceTaxExcl): PaymentFeeData
-    {
+    private function returnFormattedResult(
+        DecimalNumber $totalFeePriceTaxIncl,
+        DecimalNumber $totalFeePriceTaxExcl,
+        float $taxRate
+    ): PaymentFeeData {
         $totalFeePriceTaxInclResult = (float) $totalFeePriceTaxIncl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
         $totalFeePriceTaxExclResult = (float) $totalFeePriceTaxExcl->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
 
         return new PaymentFeeData(
             $totalFeePriceTaxInclResult,
             $totalFeePriceTaxExclResult,
+            $taxRate,
             $totalFeePriceTaxInclResult > 0 && $totalFeePriceTaxExclResult > 0
         );
     }
