@@ -63,7 +63,7 @@ jobs:
           export CYPRESS_TESTRAIL_PASSWORD='${{ secrets.TESTRAIL_PASSWORD }}'
           npm install cypress@12.15.0
           npm ci
-          npm cypress run --spec "${{ matrix.test_spec }}" --browser chrome
+          npx cypress run --spec "${{ matrix.test_spec }}" --browser chrome
 
       - name: Archive videos and screenshots
         if: ${{ always() }}
