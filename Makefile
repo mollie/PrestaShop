@@ -71,3 +71,8 @@ build-ps-8:
 
 npm-package-install:
 	cd views/assets && npm i && npm run build
+
+run-e2e-tests-locally:
+	npm install cypress@12.15.0
+	npm ci
+	npx cypress run

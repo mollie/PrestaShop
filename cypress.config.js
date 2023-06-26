@@ -2,8 +2,9 @@ const { defineConfig } = require('cypress')
 
 module.exports = defineConfig({
   chromeWebSecurity: false,
+  experimentalMemoryManagement: true,
   experimentalSourceRewriting: true,
-  numTestsKeptInMemory: 5,
+  numTestsKeptInMemory: 4,
   defaultCommandTimeout: 15000,
   projectId: 'xb89dr',
   retries: 3,
@@ -19,6 +20,10 @@ module.exports = defineConfig({
       require("cypress-fail-fast/plugin")(on, config);
       return config;
     },
+    // setupNodeEvents(on, config) {
+    //   require("cypress-fail-fast/plugin")(on, config);
+    //   return config;
+    // },
     excludeSpecPattern: ['index.php'],
     specPattern: 'cypress/e2e/**/*.{js,jsx,ts,tsx}',
   },
