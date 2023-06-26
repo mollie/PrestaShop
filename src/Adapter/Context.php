@@ -126,9 +126,4 @@ class Context
     {
         return (int) PrestashopContext::getContext()->country->id;
     }
-
-    public function getCurrentLocale(): ?LocaleInterface
-    {
-        return PrestashopContext::getContext()->getCurrentLocale();
-    }
 }

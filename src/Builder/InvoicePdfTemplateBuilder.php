@@ -17,7 +17,7 @@ use Mollie\Repository\CurrencyRepositoryInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use MolOrderPaymentFee;
 use Order;
-use PrestaShop\PrestaShop\Core\Localization\LocaleInterface;
+use PrestaShop\PrestaShop\Core\Localization\Locale;
 
 final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
 {
@@ -27,7 +27,7 @@ final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
     private $order;
     /** @var MolOrderPaymentFeeRepositoryInterface */
     private $molOrderPaymentFeeRepository;
-    /** @var LocaleInterface */
+    /** @var Locale */
     private $locale;
     /** @var CurrencyRepositoryInterface */
     private $currencyRepository;
@@ -47,7 +47,7 @@ final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
         return $this;
     }
 
-    public function setLocale(LocaleInterface $locale): InvoicePdfTemplateBuilder
+    public function setLocale(Locale $locale): InvoicePdfTemplateBuilder
     {
         $this->locale = $locale;
 

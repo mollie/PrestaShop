@@ -7,7 +7,7 @@ use Mollie\Repository\CurrencyRepositoryInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use MolOrderPaymentFee;
 use PHPUnit\Framework\TestCase;
-use PrestaShop\PrestaShop\Core\Localization\LocaleInterface;
+use PrestaShop\PrestaShop\Core\Localization\Locale;
 
 class InvoicePdfTemplateBuilderTest extends TestCase
 {
@@ -45,7 +45,7 @@ class InvoicePdfTemplateBuilderTest extends TestCase
         $order->id = 1;
         $order->id_currency = 1;
 
-        $locale = $this->createMock(LocaleInterface::class);
+        $locale = $this->createMock(Locale::class);
         $locale->expects($this->once())->method('formatPrice')->willReturn('$ 10.00');
 
         $result = $invoicePdfTemplateBuilder
@@ -78,7 +78,7 @@ class InvoicePdfTemplateBuilderTest extends TestCase
         $order->id = 1;
         $order->id_currency = 1;
 
-        $locale = $this->createMock(LocaleInterface::class);
+        $locale = $this->createMock(Locale::class);
         $locale->expects($this->never())->method('formatPrice')->willReturn('$ 10.00');
 
         $result = $invoicePdfTemplateBuilder
@@ -109,7 +109,7 @@ class InvoicePdfTemplateBuilderTest extends TestCase
         $order->id = 1;
         $order->id_currency = 1;
 
-        $locale = $this->createMock(LocaleInterface::class);
+        $locale = $this->createMock(Locale::class);
         $locale->expects($this->never())->method('formatPrice')->willReturn('$ 10.00');
 
         $result = $invoicePdfTemplateBuilder

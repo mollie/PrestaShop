@@ -707,7 +707,7 @@ class Mollie extends PaymentModule
                 'id_order' => (int) $order->id,
             ]);
 
-            if (!$molOrderPaymentFee || !$molOrderPaymentFee->id_order) {
+            if (!$molOrderPaymentFee) {
                 $orderFee = $this->context->getCurrentLocale()->formatPrice(
                     0,
                     $orderCurrency->iso_code
@@ -740,6 +740,10 @@ class Mollie extends PaymentModule
         }
 
         $localeRepo = $this->get('prestashop.core.localization.locale.repository');
+
+        if (!$localeRepo) {
+            return '';
+        }
 
         /**
          * NOTE: context language is set based on customer/employee context
