@@ -41,7 +41,6 @@ import 'cypress-iframe';
 // -- This is a parent command --
 // Cypress.Commands.add("login", (email, password) => { ... })
 Cypress.Commands.add("ConfOrdersAPI", () => {
-      cy.get('[for="MOLLIE_IFRAME_on"]').click()
       cy.get('#MOLLIE_PROFILE_ID').clear({force: true}).type((Cypress.env('MOLLIE_TEST_PROFILE_ID')),{delay: 0, log: false})
       //giropay
       cy.get('[name="MOLLIE_METHOD_ENABLED_giropay"]').select('Yes', {force: true})
@@ -248,7 +247,6 @@ Cypress.Commands.add("ConfPaymentsAPI", () => {
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_applepay"]').clear({force: true}).type('33', {force: true})
 })
 Cypress.Commands.add("ConfOrdersAPI1784", () => {
-      cy.get('#MOLLIE_IFRAME_on').click({force:true})
       //giropay
       cy.get('[name="MOLLIE_METHOD_ENABLED_giropay"]').select('Yes', {force: true})
       cy.get('[name="MOLLIE_METHOD_API_giropay"]').select('Orders API', {force: true})
