@@ -30,7 +30,9 @@ function upgrade_module_6_0_1(Mollie $module): bool
     $configuration->updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT['production'], Configuration::get('MOLLIE_SINGLE_CLICK_PAYMENT'));
     $configuration->updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT['sandbox'], Configuration::get('MOLLIE_SINGLE_CLICK_PAYMENT'));
 
-    modifyExistingTables();
+    if (!modifyExistingTables()) {
+        return false;
+    }
 
     return true;
 }
@@ -68,6 +70,16 @@ function modifyExistingTables(): bool
 
     /** only add it if it doesn't exist */
     if (!(int) Db::getInstance()->getValue($sql)) {
+        $sql = 'ALTER TABLE ' . _DB_PREFIX_ . 'mol_order_fee MODIFY id_mol_order_fee INT(64)';
+
+        try {
+            if (!Db::getInstance()->execute($sql)) {
+                return false;
+            }
+        } catch (Exception $e) {
+            return false;
+        }
+
         $sql = 'ALTER TABLE ' . _DB_PREFIX_ . 'mol_order_fee DROP PRIMARY KEY';
 
         try {
@@ -81,7 +93,7 @@ function modifyExistingTables(): bool
         $sql = '
         ALTER TABLE ' . _DB_PREFIX_ . 'mol_order_fee
         CHANGE order_fee fee_tax_incl decimal(20,6)  NOT NULL,
-        CHANGE id_mol_order_fee id_mol_order_payment_fee,
+        CHANGE id_mol_order_fee id_mol_order_payment_fee INT AUTO_INCREMENT PRIMARY KEY,
         ADD COLUMN id_order INT(64) NOT NULL,
         ADD COLUMN fee_tax_excl decimal(20,6) NOT NULL;
         ';
@@ -95,18 +107,6 @@ function modifyExistingTables(): bool
         }
 
         $sql = 'RENAME TABLE ' . _DB_PREFIX_ . 'mol_order_fee TO ' . _DB_PREFIX_ . 'mol_order_payment_fee';
-
-        try {
-            if (!Db::getInstance()->execute($sql)) {
-                return false;
-            }
-        } catch (Exception $e) {
-            return false;
-        }
-
-        $sql = 'ALTER TABLE ' . _DB_PREFIX_ . 'mol_order_payment_fee
-        ADD CONSTRAINT mol_order_payment_fee PRIMARY KEY (id_mol_order_payment_fee)
-        ';
 
         try {
             if (!Db::getInstance()->execute($sql)) {

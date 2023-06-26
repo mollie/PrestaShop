@@ -734,15 +734,21 @@ class Mollie extends PaymentModule
         if (!isset($params['object'])) {
             return '';
         }
+
         if (!$params['object'] instanceof OrderInvoice) {
             return '';
         }
+
+        $localeRepo = $this->get('prestashop.core.localization.locale.repository');
+
+        $locale = $localeRepo->getLocale($this->context->language->getLocale());
 
         /** @var \Mollie\Builder\InvoicePdfTemplateBuilder $invoiceTemplateBuilder */
         $invoiceTemplateBuilder = $this->getService(\Mollie\Builder\InvoicePdfTemplateBuilder::class);
 
         $templateParams = $invoiceTemplateBuilder
             ->setOrder($params['object']->getOrder())
+            ->setLocale($locale)
             ->buildParams();
 
         if (empty($templateParams)) {

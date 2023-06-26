@@ -13,10 +13,11 @@
 namespace Mollie\Builder;
 
 use Currency;
-use Mollie\Adapter\Context;
+use Mollie\Repository\CurrencyRepositoryInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use MolOrderPaymentFee;
 use Order;
+use PrestaShop\PrestaShop\Core\Localization\LocaleInterface;
 
 final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
 {
@@ -26,20 +27,29 @@ final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
     private $order;
     /** @var MolOrderPaymentFeeRepositoryInterface */
     private $molOrderPaymentFeeRepository;
-    /** @var Context */
-    private $context;
+    /** @var LocaleInterface */
+    private $locale;
+    /** @var CurrencyRepositoryInterface */
+    private $currencyRepository;
 
     public function __construct(
         MolOrderPaymentFeeRepositoryInterface $molOrderPaymentFeeRepository,
-        Context $context
+        CurrencyRepositoryInterface $currencyRepository
     ) {
         $this->molOrderPaymentFeeRepository = $molOrderPaymentFeeRepository;
-        $this->context = $context;
+        $this->currencyRepository = $currencyRepository;
     }
 
     public function setOrder(Order $order): InvoicePdfTemplateBuilder
     {
         $this->order = $order;
+
+        return $this;
+    }
+
+    public function setLocale(LocaleInterface $locale): InvoicePdfTemplateBuilder
+    {
+        $this->locale = $locale;
 
         return $this;
     }
@@ -51,18 +61,25 @@ final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
             'id_order' => (int) $this->order->id,
         ]);
 
-        if (!$molOrderPaymentFee || !$molOrderPaymentFee->id_order) {
+        if (!$molOrderPaymentFee) {
             return [];
         }
 
-        $currentLocale = $this->context->getCurrentLocale();
+        /** @var Currency|null $orderCurrency */
+        $orderCurrency = $this->currencyRepository->findOneBy([
+            'id_currency' => $this->order->id_currency,
+            'deleted' => 0,
+            'active' => 1,
+        ]);
+
+        if (!$orderCurrency) {
+            return [];
+        }
 
         return [
-            'orderFeeAmountDisplay' => $currentLocale === null ?
-                $molOrderPaymentFee->fee_tax_incl :
-                $currentLocale->formatPrice(
-                    $molOrderPaymentFee->fee_tax_incl,
-                    (new Currency($this->order->id_currency))->iso_code
+            'orderFeeAmountDisplay' => $this->locale->formatPrice(
+                $molOrderPaymentFee->fee_tax_incl,
+                $orderCurrency->iso_code
             ),
         ];
     }

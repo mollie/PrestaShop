@@ -91,7 +91,7 @@ final class DatabaseTableInstaller implements InstallerInterface
 				`id_mol_order_payment_fee`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`id_cart` INT(64) NOT NULL,
 				`id_order` INT(64) NOT NULL,
-				`fee_tax_incl` decimal(20,6) NOT NULL
+				`fee_tax_incl` decimal(20,6) NOT NULL,
 				`fee_tax_excl` decimal(20,6) NOT NULL
 			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
