@@ -22,10 +22,13 @@ if (!defined('_PS_VERSION_')) {
  * @throws PrestaShopDatabaseException
  * @throws PrestaShopException
  */
-function upgrade_module_4_0_8()
+function upgrade_module_4_0_8(Mollie $module)
 {
-    Configuration::updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT, 0);
-    Configuration::updateValue(Config::MOLLIE_ENVIRONMENT, Config::ENVIRONMENT_LIVE);
+    /** @var \Mollie\Adapter\ConfigurationAdapter $configuration */
+    $configuration = $module->getService(\Mollie\Adapter\ConfigurationAdapter::class);
+
+    $configuration->updateValue(Config::MOLLIE_ENVIRONMENT, Config::ENVIRONMENT_LIVE);
+    $configuration->updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT, 0);
 
     $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_customer` (
 				`id_mol_customer`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,

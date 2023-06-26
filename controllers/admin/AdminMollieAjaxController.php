@@ -10,15 +10,16 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Adapter\Context;
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
+use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Repository\TaxRepositoryInterface;
-use Mollie\Repository\TaxRuleRepositoryInterface;
 use Mollie\Service\MolliePaymentMailService;
-use Mollie\Utility\TaxUtility;
 use Mollie\Utility\TimeUtility;
+use PrestaShop\Decimal\DecimalNumber;
+use PrestaShop\Decimal\Operation\Rounding;
 
 class AdminMollieAjaxController extends ModuleAdminController
 {
@@ -194,61 +195,40 @@ class AdminMollieAjaxController extends ModuleAdminController
             return;
         }
 
-        /** @var TaxRuleRepositoryInterface $taxRuleRepository */
-        $taxRuleRepository = $this->module->getService(TaxRuleRepositoryInterface::class);
+        /** @var TaxCalculatorProvider $taxCalculatorProvider */
+        $taxCalculatorProvider = $this->module->getService(TaxCalculatorProvider::class);
 
-        /** @var TaxRule|null $taxRule */
-        $taxRule = $taxRuleRepository->findOneBy([
-            'id_tax_rules_group' => $taxRulesGroupId,
-            'id_country' => $this->context->country->id,
-        ]);
+        /** @var Context $context */
+        $context = $this->module->getService(Context::class);
 
-        if (!$taxRule || !$taxRule->id) {
-            $this->ajaxRender(
-                json_encode([
-                    'error' => true,
-                    'message' => $this->module->l('Failed to find tax rule'),
-                ])
-            );
-
-            return;
-        }
-
-        /** @var TaxRepositoryInterface $taxRepository */
-        $taxRepository = $this->module->getService(TaxRepositoryInterface::class);
-
-        /** @var Tax|null $tax */
-        $tax = $taxRepository->findOneBy([
-            'id_tax' => $taxRule->id_tax,
-        ]);
-
-        if (!$tax || !$tax->id) {
-            $this->ajaxRender(
-                json_encode([
-                    'error' => true,
-                    'message' => $this->module->l('Failed to find tax'),
-                ])
-            );
-
-            return;
-        }
-
-        /** @var TaxUtility $taxUtility */
-        $taxUtility = $this->module->getService(TaxUtility::class);
+        $taxCalculator = $taxCalculatorProvider->getTaxCalculator(
+            $taxRulesGroupId,
+            $context->getCountryId(),
+            0 // NOTE: there is no default state for back office so setting no state
+        );
 
         if ($paymentFeeTaxIncl === 0.00) {
-            $paymentFeeTaxIncl = $taxUtility->addTax($paymentFeeTaxExcl, $tax);
+            $paymentFeeTaxIncl = $taxCalculator->addTaxes($paymentFeeTaxExcl);
         }
 
         if ($paymentFeeTaxExcl === 0.00) {
-            $paymentFeeTaxExcl = $taxUtility->removeTax($paymentFeeTaxIncl, $tax);
+            $paymentFeeTaxExcl = $taxCalculator->removeTaxes($paymentFeeTaxIncl);
         }
+
+        $paymentFeeTaxInclDecimal = new DecimalNumber((string) $paymentFeeTaxIncl);
+        $paymentFeeTaxExclDecimal = new DecimalNumber((string) $paymentFeeTaxExcl);
 
         $this->ajaxRender(
             json_encode([
                 'error' => false,
-                'paymentFeeTaxIncl' => $paymentFeeTaxIncl,
-                'paymentFeeTaxExcl' => $paymentFeeTaxExcl,
+                'paymentFeeTaxIncl' => $paymentFeeTaxInclDecimal->toPrecision(
+                    $context->getComputingPrecision(),
+                    Rounding::ROUND_HALF_UP
+                ),
+                'paymentFeeTaxExcl' => $paymentFeeTaxExclDecimal->toPrecision(
+                    $context->getComputingPrecision(),
+                    Rounding::ROUND_HALF_UP
+                ),
             ])
         );
     }

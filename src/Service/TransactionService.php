@@ -25,10 +25,12 @@ use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
 use Mollie\Errors\Http\HttpStatusCode;
+use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Exception\TransactionException;
 use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Handler\Order\OrderFeeHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
+use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
@@ -73,6 +75,10 @@ class TransactionService
     private $orderFeeHandler;
     /** @var ShipmentSenderHandlerInterface */
     private $shipmentSenderHandler;
+    /** @var PrestaLoggerInterface */
+    private $logger;
+    /** @var ExceptionService */
+    private $exceptionService;
 
     public function __construct(
         Mollie $module,
@@ -82,7 +88,9 @@ class TransactionService
         PaymentMethodService $paymentMethodService,
         MollieOrderCreationService $mollieOrderCreationService,
         OrderFeeHandler $orderFeeHandler,
-        ShipmentSenderHandlerInterface $shipmentSenderHandler
+        ShipmentSenderHandlerInterface $shipmentSenderHandler,
+        PrestaLoggerInterface $logger,
+        ExceptionService $exceptionService
     ) {
         $this->module = $module;
         $this->orderStatusService = $orderStatusService;
@@ -92,6 +100,8 @@ class TransactionService
         $this->mollieOrderCreationService = $mollieOrderCreationService;
         $this->orderFeeHandler = $orderFeeHandler;
         $this->shipmentSenderHandler = $shipmentSenderHandler;
+        $this->logger = $logger;
+        $this->exceptionService = $exceptionService;
     }
 
     /**
@@ -117,6 +127,7 @@ class TransactionService
 
             throw new TransactionException('Transaction failed', HttpStatusCode::HTTP_BAD_REQUEST);
         }
+
         $orderDescription = $apiPayment->description ?? $apiPayment->orderNumber;
 
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
@@ -210,13 +221,28 @@ class TransactionService
 
                 if (!$orderId && $isPaymentFinished) {
                     $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id, $isKlarnaOrder);
+
                     if (!$orderId) {
                         throw new TransactionException('Order is already created', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
                     }
+
                     $apiPayment = $this->updateOrderDescription($apiPayment, $orderId);
+
                     $this->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId);
+
                     $order = new Order($orderId);
-                    $this->shipmentSenderHandler->handleShipmentSender($this->module->getApiClient(), $order, new \OrderState($order->current_state));
+
+                    try {
+                        $this->shipmentSenderHandler->handleShipmentSender($this->module->getApiClient(), $order, new \OrderState($order->current_state));
+                    } catch (ShipmentCannotBeSentException $exception) {
+                        $this->logger->error($this->exceptionService->getErrorMessageForException(
+                            $exception,
+                            [],
+                            ['orderReference' => $order->reference]
+                        ));
+                    } catch (ApiException $exception) {
+                        $this->logger->error($exception->getMessage());
+                    }
                 } elseif ($apiPayment->amountRefunded) {
                     if (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                         if (!MollieStatusUtility::isPaymentFinished($apiPayment->status)) {

@@ -3,6 +3,7 @@
 use Mollie\Config\Config;
 use Mollie\Enum\PaymentTypeEnum;
 use Mollie\Exception\ShipmentCannotBeSentException;
+use Mollie\Verification\IsPaymentInformationAvailable;
 use PHPUnit\Framework\TestCase;
 
 class CanSendShipmentTest extends TestCase
@@ -41,6 +42,9 @@ class CanSendShipmentTest extends TestCase
      * @var OrderState|\PHPUnit\Framework\MockObject\MockObject
      */
     private $orderState;
+
+    /** @var \Mollie\Verification\isPaymentInformationAvailable|\PHPUnit\Framework\MockObject\MockObject */
+    private $isPaymentInformationAvailable;
 
     protected function setUp(): void
     {
@@ -87,6 +91,12 @@ class CanSendShipmentTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock()
         ;
+
+        $this->isPaymentInformationAvailable = $this
+            ->getMockBuilder(IsPaymentInformationAvailable::class)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
     }
 
     /** @dataProvider getSendShipmentVerificationData */
@@ -95,6 +105,7 @@ class CanSendShipmentTest extends TestCase
         $configuration,
         $automaticShipmentSenderStatuses,
         $paymentInformation,
+        $paymentInformationAvailable,
         $paymentType,
         $exception,
         $expected
@@ -136,18 +147,26 @@ class CanSendShipmentTest extends TestCase
             ->willReturn($paymentType)
         ;
 
+        $this->isPaymentInformationAvailable
+            ->expects($this->any())
+            ->method('verify')
+            ->willReturn($paymentInformationAvailable)
+        ;
+
         $canSendShipment = new \Mollie\Verification\Shipment\CanSendShipment(
             $this->configurationAdapter,
             $this->automaticShipmentSenderStatusesProvider,
             $this->orderEndpointPaymentTypeHandler,
             $this->paymentMethodRepository,
-            $this->shipmentService
+            $this->shipmentService,
+            $this->isPaymentInformationAvailable
         );
 
         if ($exception) {
             $this->expectException($exception['class']);
             $this->expectExceptionCode($exception['code']);
         }
+
         $result = $canSendShipment->verify($this->order, $this->orderState);
 
         $this->assertEquals($expected, $result);
@@ -167,6 +186,7 @@ class CanSendShipmentTest extends TestCase
                 'paymentInformation' => [
                     'transaction_id' => 'test',
                 ],
+                'paymentInformationAvailable' => true,
                 'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_ORDER,
                 'exception' => [],
                 'expected' => true,
@@ -180,6 +200,7 @@ class CanSendShipmentTest extends TestCase
                 'paymentInformation' => [
                     'transaction_id' => 'test',
                 ],
+                'paymentInformationAvailable' => true,
                 'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_ORDER,
                 'exception' => [],
                 'expected' => true,
@@ -195,12 +216,10 @@ class CanSendShipmentTest extends TestCase
                 'paymentInformation' => [
                     'transaction_id' => 'test',
                 ],
+                'paymentInformationAvailable' => true,
                 'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_ORDER,
-                'exception' => [
-                    'class' => ShipmentCannotBeSentException::class,
-                    'code' => ShipmentCannotBeSentException::AUTOMATIC_SHIPMENT_SENDER_IS_NOT_AVAILABLE,
-                ],
-                'expected' => null,
+                'exception' => [],
+                'expected' => false,
             ],
             'Order state is not in automatic shipment sender list' => [
                 'shipmentInformation' => [
@@ -213,12 +232,10 @@ class CanSendShipmentTest extends TestCase
                 'paymentInformation' => [
                     'transaction_id' => 'test',
                 ],
+                'paymentInformationAvailable' => true,
                 'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_ORDER,
-                'exception' => [
-                    'class' => ShipmentCannotBeSentException::class,
-                    'code' => ShipmentCannotBeSentException::AUTOMATIC_SHIPMENT_SENDER_IS_NOT_AVAILABLE,
-                ],
-                'expected' => null,
+                'exception' => [],
+                'expected' => false,
             ],
             'Has no payment information' => [
                 'shipmentInformation' => [
@@ -229,6 +246,7 @@ class CanSendShipmentTest extends TestCase
                 ],
                 'automaticShipmentSenderStatuses' => [0, 1, 2, 3],
                 'paymentInformation' => [],
+                'paymentInformationAvailable' => false,
                 'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_ORDER,
                 'exception' => [
                     'class' => ShipmentCannotBeSentException::class,
@@ -247,6 +265,7 @@ class CanSendShipmentTest extends TestCase
                 'paymentInformation' => [
                     'test' => 123,
                 ],
+                'paymentInformationAvailable' => false,
                 'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_ORDER,
                 'exception' => [
                     'class' => ShipmentCannotBeSentException::class,
@@ -265,6 +284,7 @@ class CanSendShipmentTest extends TestCase
                 'paymentInformation' => [
                     'transaction_id' => 'test',
                 ],
+                'paymentInformationAvailable' => true,
                 'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_PAYMENT,
                 'exception' => [
                     'class' => ShipmentCannotBeSentException::class,

@@ -21,6 +21,7 @@ use Customer;
 use MolCustomer;
 use Mollie;
 use Mollie\Adapter\CartAdapter;
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\Shop;
 use Mollie\Api\Resources\BaseCollection;
@@ -36,6 +37,7 @@ use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Provider\PhoneNumberProviderInterface;
+use Mollie\Repository\GenderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
@@ -99,6 +101,9 @@ class PaymentMethodService
     private $subscriptionOrder;
     /** @var CartAdapter */
     private $cartAdapter;
+    /** @var ConfigurationAdapter */
+    private $configurationAdapter;
+    private $genderRepository;
     /** @var PaymentFeeProviderInterface */
     private $paymentFeeProvider;
     /** @var Context */
@@ -119,6 +124,8 @@ class PaymentMethodService
         Shop $shop,
         SubscriptionOrderValidator $subscriptionOrder,
         CartAdapter $cartAdapter,
+        ConfigurationAdapter $configurationAdapter,
+        GenderRepositoryInterface $genderRepository,
         PaymentFeeProviderInterface $paymentFeeProvider,
         Context $context,
         OrderTotalProviderInterface $orderTotalProvider
@@ -135,6 +142,8 @@ class PaymentMethodService
         $this->shop = $shop;
         $this->subscriptionOrder = $subscriptionOrder;
         $this->cartAdapter = $cartAdapter;
+        $this->configurationAdapter = $configurationAdapter;
+        $this->genderRepository = $genderRepository;
         $this->paymentFeeProvider = $paymentFeeProvider;
         $this->context = $context;
         $this->orderTotalProvider = $orderTotalProvider;
@@ -159,7 +168,6 @@ class PaymentMethodService
         $paymentMethod->minimal_order_value = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MINIMUM_ORDER_VALUE . $method['id']);
         $paymentMethod->max_order_value = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_ORDER_VALUE . $method['id']);
         $paymentMethod->surcharge = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_TYPE . $method['id']);
-        $paymentMethod->surcharge_fixed_amount_tax_incl = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_INCL . $method['id']);
         $paymentMethod->surcharge_fixed_amount_tax_excl = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_EXCL . $method['id']);
         $paymentMethod->tax_rules_group_id = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_TAX_RULES_GROUP_ID . $method['id']);
         $paymentMethod->surcharge_percentage = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_PERCENTAGE . $method['id']);
@@ -273,9 +281,9 @@ class PaymentMethodService
 
         $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($molPaymentMethod, $totalAmount);
 
-        $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
-
-        $totalAmount += $paymentFee;
+        if ($paymentFeeData->isActive()) {
+            $totalAmount += $paymentFeeData->getPaymentFeeTaxIncl();
+        }
 
         $currency = (string) ($currency ? Tools::strtoupper($currency) : 'EUR');
         $value = (float) TextFormatUtility::formatNumber($totalAmount, 2);
@@ -389,15 +397,27 @@ class PaymentMethodService
             $orderData->setOrderNumber($orderReference);
             $orderData->setLocale($this->getLocale($molPaymentMethod->method));
             $orderData->setEmail($customer->email);
+
+            /** @var \Gender|null $gender */
+            $gender = $this->genderRepository->findOneBy(['id_gender' => $customer->id_gender]);
+
+            if (!empty($gender) && isset($gender->name[$cart->id_lang])) {
+                $orderData->setTitle((string) $gender->name[$cart->id_lang]);
+            }
+
             $orderData->setMethod($molPaymentMethod->id_method);
             $orderData->setMetadata($metaData);
+
+            if (!empty($customer->birthday) && $customer->birthday !== '0000-00-00') {
+                $orderData->setConsumerDateOfBirth((string) $customer->birthday);
+            }
 
             $currency = new Currency($cart->id_currency);
             $selectedVoucherCategory = Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY);
             $orderData->setLines(
                 $this->cartLinesService->getCartLines(
                     $amount,
-                    $paymentFee,
+                    $paymentFeeData,
                     $currency->iso_code,
                     $cart->getSummaryDetails(),
                     $cart->getTotalShippingCost(null, true),
@@ -511,7 +531,7 @@ class PaymentMethodService
      */
     public function handleCustomerInfo(int $customerId, bool $saveCard, bool $useSavedCard): ?MolCustomer
     {
-        $isSingleClickPaymentEnabled = (bool) Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
+        $isSingleClickPaymentEnabled = (bool) (int) $this->configurationAdapter->get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
         if (!$this->isCustomerSaveEnabled($isSingleClickPaymentEnabled)) {
             return null;
         }

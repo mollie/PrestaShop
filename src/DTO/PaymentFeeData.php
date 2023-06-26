@@ -8,16 +8,20 @@ class PaymentFeeData
     private $paymentFeeTaxIncl;
     /** @var float */
     private $paymentFeeTaxExcl;
+    /** @var float */
+    private $taxRate;
     /** @var bool */
     private $active;
 
     public function __construct(
         float $paymentFeeTaxIncl,
         float $paymentFeeTaxExcl,
+        float $taxRate,
         bool $active
     ) {
         $this->paymentFeeTaxIncl = $paymentFeeTaxIncl;
         $this->paymentFeeTaxExcl = $paymentFeeTaxExcl;
+        $this->taxRate = $taxRate;
         $this->active = $active;
     }
 
@@ -35,6 +39,14 @@ class PaymentFeeData
     public function getPaymentFeeTaxExcl(): float
     {
         return $this->paymentFeeTaxExcl;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTaxRate(): float
+    {
+        return $this->taxRate;
     }
 
     /**

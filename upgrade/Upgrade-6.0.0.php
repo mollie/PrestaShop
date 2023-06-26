@@ -9,7 +9,6 @@
  * @see        https://github.com/mollie/PrestaShop
  */
 
-use Mollie\Subscription\Install\Installer;
 use Mollie\Subscription\Install\InstallerInterface;
 use PrestaShop\PrestaShop\Adapter\Module\Tab\ModuleTabRegister;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -20,42 +19,17 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_6_0_0(Mollie $module): bool
 {
-    $sql = '
-    SELECT COUNT(*) AS count
-    FROM information_schema.columns
-    WHERE table_name = "' . _DB_PREFIX_ . 'mollie_payments" AND column_name = \'mandate_id\';
-    ';
-
-    /** only add it if it doesn't exist */
-    if (!Db::getInstance()->execute($sql)) {
-        $sql = '
-        ALTER TABLE ' . _DB_PREFIX_ . 'mollie_payments
-        ADD `mandate_id` VARCHAR(64);
-        ';
-
-        if (!Db::getInstance()->execute($sql)) {
-            return false;
-        }
+    if (!modifyExistingTables()) {
+        return false;
     }
 
-    $sql = '
-    SELECT COUNT(*) AS count
-    FROM information_schema.columns
-    WHERE table_name = "' . _DB_PREFIX_ . 'mol_payment_method" AND column_name = \'min_amount\';
-    ';
+    if (!deleteOldTabs($module)) {
+        return false;
+    }
 
-    /** only add it if it doesn't exist */
-    if (!Db::getInstance()->execute($sql)) {
-        $sql = '
-        ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
-        ADD COLUMN min_amount decimal(20,6) DEFAULT 0,
-        ADD COLUMN max_amount decimal(20,6) DEFAULT 0,
-        CHANGE surcharge_fixed_amount surcharge_fixed_amount_tax_excl decimal(20,6),
-        ADD COLUMN surcharge_fixed_amount_tax_incl decimal(20,6) DEFAULT 0,
-        ADD COLUMN tax_rules_group_id int(10) DEFAULT 0;
-        ';
-
-        if (!Db::getInstance()->execute($sql)) {
+    // only for 1.7.6 version
+    if (version_compare(_PS_VERSION_, '1.7.7.0', '<')) {
+        if (!deleteOldTabAuthorizationRoles($module)) {
             return false;
         }
     }
@@ -98,4 +72,148 @@ function upgrade_module_6_0_0(Mollie $module): bool
     $installer = $module->getService(InstallerInterface::class);
 
     return $installer->install();
+}
+
+function deleteOldTabs($module): bool
+{
+    $classNames = [$module::ADMIN_MOLLIE_CONTROLLER, $module::ADMIN_MOLLIE_AJAX_CONTROLLER];
+    $preparedClassNames = [];
+
+    foreach ($classNames as $className) {
+        $preparedClassNames[] = pSQL($className);
+    }
+
+    $preparedClassNames = implode("', '", $preparedClassNames);
+
+    $sql = '
+        SELECT id_tab
+        FROM `' . _DB_PREFIX_ . 'tab`
+        WHERE class_name IN (\'' . $preparedClassNames . '\');
+    ';
+
+    try {
+        $tabIds = Db::getInstance()->executeS($sql);
+    } catch (Exception $e) {
+        return false;
+    }
+
+    if (empty($tabIds)) {
+        return true;
+    }
+
+    $preparedTabIds = [];
+
+    foreach ($tabIds as $tabId) {
+        $preparedTabIds[] = (int) $tabId['id_tab'];
+    }
+
+    $preparedTabIds = implode(", ", $preparedTabIds);
+
+    $sql = '
+    DELETE FROM `' . _DB_PREFIX_ . 'tab`
+    WHERE id_tab IN (' . $preparedTabIds . ');
+    ';
+
+    try {
+        if (!Db::getInstance()->execute($sql)) {
+            return false;
+        }
+    } catch (Exception $e) {
+        return false;
+    }
+
+    $sql = '
+    DELETE FROM `' . _DB_PREFIX_ . 'tab_lang`
+    WHERE id_tab IN (' . $preparedTabIds . ');
+    ';
+
+    try {
+        if (!Db::getInstance()->execute($sql)) {
+            return false;
+        }
+    } catch (Exception $e) {
+        return false;
+    }
+
+    return true;
+}
+
+function deleteOldTabAuthorizationRoles($module): bool
+{
+    $controllers = [$module::ADMIN_MOLLIE_CONTROLLER, $module::ADMIN_MOLLIE_AJAX_CONTROLLER];
+    $preparedTabs = [];
+
+    foreach ($controllers as $controller) {
+        $preparedTabs[] = 'ROLE_MOD_TAB_' . pSQL($controller) . '_CREATE';
+        $preparedTabs[] = 'ROLE_MOD_TAB_' . pSQL($controller) . '_READ';
+        $preparedTabs[] = 'ROLE_MOD_TAB_' . pSQL($controller) . '_UPDATE';
+        $preparedTabs[] = 'ROLE_MOD_TAB_' . pSQL($controller) . '_DELETE';
+    }
+
+    $preparedTabs = implode("', '", $preparedTabs);
+
+    $sql = '
+        DELETE FROM `' . _DB_PREFIX_ . 'authorization_role`
+        WHERE slug IN (\'' . $preparedTabs . '\');
+        ';
+
+    try {
+        if (!Db::getInstance()->execute($sql)) {
+            return false;
+        }
+    } catch (Exception $e) {
+        return false;
+    }
+
+    return true;
+}
+
+function modifyExistingTables(): bool
+{
+    $sql = '
+    SELECT COUNT(*) > 0 AS count
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND TABLE_NAME = "' . _DB_PREFIX_ . 'mollie_payments" AND COLUMN_NAME = "mandate_id"
+    ';
+
+    /** only add it if it doesn't exist */
+    if (!Db::getInstance()->getValue($sql)) {
+        $sql = '
+        ALTER TABLE ' . _DB_PREFIX_ . 'mollie_payments
+        ADD `mandate_id` VARCHAR(64);
+        ';
+
+        try {
+            if (!Db::getInstance()->execute($sql)) {
+                return false;
+            }
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    $sql = '
+    SELECT COUNT(*) > 0 AS count
+    FROM information_schema.columns
+    WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND table_name = "' . _DB_PREFIX_ . 'mol_payment_method" AND column_name = "min_amount";
+    ';
+
+    /** only add it if it doesn't exist */
+    if (!Db::getInstance()->getValue($sql)) {
+        $sql = '
+        ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
+        ADD COLUMN min_amount decimal(20,6) DEFAULT 0,
+        ADD COLUMN max_amount decimal(20,6) DEFAULT 0;
+        ';
+
+        try {
+            if (!Db::getInstance()->execute($sql)) {
+                return false;
+            }
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    return true;
 }

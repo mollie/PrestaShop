@@ -16,7 +16,7 @@ use Mollie\Errors\Http\HttpStatusCode;
 
 class AbstractMollieController extends \ModuleFrontControllerCore
 {
-    protected function respond($status, $statusCode = HttpStatusCode::HTTP_OK, $message = '')
+    protected function respond($status, $statusCode = HttpStatusCode::HTTP_OK, $message = ''): void
     {
         http_response_code($statusCode);
 
@@ -26,6 +26,13 @@ class AbstractMollieController extends \ModuleFrontControllerCore
             $response['error'] = new Error($statusCode, $message);
         }
 
-        $this->ajaxDie(json_encode($response));
+        $this->ajaxRender(json_encode($response));
+    }
+
+    protected function ajaxRender($value = null, $controller = null, $method = null): void
+    {
+        parent::ajaxRender($value, $controller, $method);
+
+        exit;
     }
 }

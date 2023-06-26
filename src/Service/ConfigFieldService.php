@@ -31,15 +31,19 @@ class ConfigFieldService
      * @var CountryRepository
      */
     private $countryRepository;
+    /** @var Mollie\Adapter\ConfigurationAdapter */
+    private $configurationAdapter;
 
     public function __construct(
         Mollie $module,
         ApiService $apiService,
-        CountryRepository $countryRepository
+        CountryRepository $countryRepository,
+        Mollie\Adapter\ConfigurationAdapter $configurationAdapter
     ) {
         $this->module = $module;
         $this->apiService = $apiService;
         $this->countryRepository = $countryRepository;
+        $this->configurationAdapter = $configurationAdapter;
     }
 
     /**
@@ -53,13 +57,13 @@ class ConfigFieldService
             Config::MOLLIE_API_KEY_TEST => Configuration::get(Config::MOLLIE_API_KEY_TEST),
             Config::MOLLIE_PAYMENTSCREEN_LOCALE => Configuration::get(Config::MOLLIE_PAYMENTSCREEN_LOCALE),
             Config::MOLLIE_SEND_ORDER_CONFIRMATION => Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION),
-            Config::MOLLIE_IFRAME => Configuration::get(Config::MOLLIE_IFRAME),
-            Config::MOLLIE_SINGLE_CLICK_PAYMENT => Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT),
+            Config::MOLLIE_IFRAME[(int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT) ? 'production' : 'sandbox'] => $this->configurationAdapter->get(Config::MOLLIE_IFRAME),
+            Config::MOLLIE_SINGLE_CLICK_PAYMENT[(int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT) ? 'production' : 'sandbox'] => $this->configurationAdapter->get(Config::MOLLIE_SINGLE_CLICK_PAYMENT),
 
             Config::MOLLIE_CSS => Configuration::get(Config::MOLLIE_CSS),
             Config::MOLLIE_IMAGES => Configuration::get(Config::MOLLIE_IMAGES),
             Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK => Configuration::get(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK),
-            Config::MOLLIE_ISSUERS => Configuration::get(Config::MOLLIE_ISSUERS),
+            Config::MOLLIE_ISSUERS[(int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT) ? 'production' : 'sandbox'] => $this->configurationAdapter->get(Config::MOLLIE_ISSUERS),
 
             Config::MOLLIE_METHOD_COUNTRIES => Configuration::get(Config::MOLLIE_METHOD_COUNTRIES),
             Config::MOLLIE_METHOD_COUNTRIES_DISPLAY => Configuration::get(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY),

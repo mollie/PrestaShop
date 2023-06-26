@@ -2,36 +2,33 @@
 
 namespace Mollie\Tests\Unit\Provider;
 
+use Address;
 use Mollie\Adapter\Context;
 use Mollie\Config\Config;
 use Mollie\Provider\PaymentFeeProvider;
-use Mollie\Repository\TaxRepositoryInterface;
-use Mollie\Repository\TaxRuleRepositoryInterface;
-use Mollie\Utility\TaxUtility;
+use Mollie\Provider\TaxCalculatorProvider;
+use Mollie\Repository\AddressRepositoryInterface;
 use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
-use Tax;
-use TaxRule;
+use TaxCalculator;
 
 class PaymentFeeProviderTest extends TestCase
 {
     /** @var Context */
     private $context;
-    /** @var TaxUtility */
-    private $taxUtility;
-    /** @var TaxRuleRepositoryInterface */
-    private $taxRuleRepository;
-    /** @var TaxRepositoryInterface */
-    private $taxRepository;
+    /** @var AddressRepositoryInterface */
+    private $addressRepository;
+
+    /** @var TaxCalculatorProvider */
+    private $taxProvider;
 
     public function setUp()
     {
         parent::setUp();
 
         $this->context = $this->createMock(Context::class);
-        $this->taxUtility = $this->createMock(TaxUtility::class);
-        $this->taxRuleRepository = $this->createMock(TaxRuleRepositoryInterface::class);
-        $this->taxRepository = $this->createMock(TaxRepositoryInterface::class);
+        $this->addressRepository = $this->createMock(AddressRepositoryInterface::class);
+        $this->taxProvider = $this->createMock(TaxCalculatorProvider::class);
     }
 
     /**
@@ -39,7 +36,7 @@ class PaymentFeeProviderTest extends TestCase
      */
     public function testItProvidesPaymentFee(
         array $paymentMethod,
-        array $taxUtility,
+        array $taxCalculatorResults,
         float $totalCartPrice,
         array $expectedResult
     ): void {
@@ -48,56 +45,82 @@ class PaymentFeeProviderTest extends TestCase
         $molPaymentMethod->surcharge = $paymentMethod['surcharge'];
         $molPaymentMethod->surcharge_percentage = $paymentMethod['surcharge_percentage'];
         $molPaymentMethod->surcharge_limit = $paymentMethod['surcharge_limit'];
-        $molPaymentMethod->surcharge_fixed_amount_tax_incl = $paymentMethod['surcharge_fixed_amount_tax_incl'];
         $molPaymentMethod->surcharge_fixed_amount_tax_excl = $paymentMethod['surcharge_fixed_amount_tax_excl'];
-        $molPaymentMethod->tax_rules_group_id = $paymentMethod['tax_rules_group_id'];
+        $molPaymentMethod->tax_rules_group_id = 1; // NOTE: It's always the same in the test
 
-        $taxRule = $this->createMock(TaxRule::class);
-        $taxRule->id = 1;
+        $address = $this->createMock(Address::class);
 
-        $tax = $this->createMock(Tax::class);
-        $tax->id = 1;
+        $address->id = 1;
+        $address->id_country = 1;
+        $address->id_state = 0;
 
-        $this->taxUtility->method('addTax')->willReturn($taxUtility['addTaxResult']);
-        $this->taxUtility->method('removeTax')->willReturn($taxUtility['removeTaxResult']);
+        $this->addressRepository->method('findOneBy')->willReturn($address);
 
-        $this->taxRuleRepository->method('findOneBy')->willReturn($taxRule);
-        $this->taxRepository->method('findOneBy')->willReturn($tax);
+        $taxCalculator = $this->createMock(TaxCalculator::class);
+
+        $taxCalculator->method('addTaxes')->willReturn($taxCalculatorResults['addTaxResult']);
+        $taxCalculator->method('removeTaxes')->willReturn($taxCalculatorResults['removeTaxResult']);
+        $taxCalculator->method('getTotalRate')->willReturn($taxCalculatorResults['taxRate']);
+
+        $this->taxProvider->method('getTaxCalculator')->willReturn($taxCalculator);
+
         $this->context->method('getCustomerAddressInvoiceId')->willReturn(1);
         $this->context->method('getComputingPrecision')->willReturn(2);
 
         $paymentFeeProvider = new PaymentFeeProvider(
             $this->context,
-            $this->taxUtility,
-            $this->taxRuleRepository,
-            $this->taxRepository
+            $this->addressRepository,
+            $this->taxProvider
         );
 
         $result = $paymentFeeProvider->getPaymentFee($molPaymentMethod, $totalCartPrice);
 
         $this->assertEquals($result->getPaymentFeeTaxIncl(), $expectedResult['paymentFeeTaxIncl']);
         $this->assertEquals($result->getPaymentFeeTaxExcl(), $expectedResult['paymentFeeTaxExcl']);
+        $this->assertEquals($result->getTaxRate(), $expectedResult['taxRate']);
         $this->assertEquals($result->isActive(), $expectedResult['active']);
     }
 
     public function paymentFeeDataProvider(): array
     {
         return [
+            'success with no surcharge found' => [
+                'paymentMethod' => [
+                    'surcharge' => 'not-found',
+                    'surcharge_percentage' => '0',
+                    'surcharge_limit' => '0',
+                    'surcharge_fixed_amount_tax_excl' => 0,
+                    'tax_rules_group_id' => 0,
+                ],
+                'taxCalculatorResults' => [
+                    'taxRate' => 0.00,
+                    'addTaxResult' => 0.00,
+                    'removeTaxResult' => 0.00,
+                ],
+                'totalCartPrice' => 0,
+                'expectedResult' => [
+                    'taxRate' => 0.00,
+                    'paymentFeeTaxIncl' => 0.00,
+                    'paymentFeeTaxExcl' => 0.00,
+                    'active' => false,
+                ],
+            ],
             'success with fixed price' => [
                 'paymentMethod' => [
                     'surcharge' => Config::FEE_FIXED_FEE,
                     'surcharge_percentage' => '0',
                     'surcharge_limit' => '0',
-                    'surcharge_fixed_amount_tax_incl' => 11.00,
                     'surcharge_fixed_amount_tax_excl' => 10.00,
                     'tax_rules_group_id' => 1,
                 ],
-                'taxUtility' => [
-                    'addTaxResult' => 0.00,
+                'taxCalculatorResults' => [
+                    'taxRate' => 10.00,
+                    'addTaxResult' => 11.00,
                     'removeTaxResult' => 0.00,
                 ],
                 'totalCartPrice' => 10,
                 'expectedResult' => [
+                    'taxRate' => 10.00,
                     'paymentFeeTaxIncl' => 11.00,
                     'paymentFeeTaxExcl' => 10.00,
                     'active' => true,
@@ -108,16 +131,17 @@ class PaymentFeeProviderTest extends TestCase
                     'surcharge' => Config::FEE_PERCENTAGE,
                     'surcharge_percentage' => '10',
                     'surcharge_limit' => 5.00,
-                    'surcharge_fixed_amount_tax_incl' => 0,
                     'surcharge_fixed_amount_tax_excl' => 0,
                     'tax_rules_group_id' => 1,
                 ],
-                'taxUtility' => [
+                'taxCalculatorResults' => [
+                    'taxRate' => 10.00,
                     'addTaxResult' => 1.1,
                     'removeTaxResult' => 0.00,
                 ],
                 'totalCartPrice' => 10,
                 'expectedResult' => [
+                    'taxRate' => 10.00,
                     'paymentFeeTaxIncl' => 1.1,
                     'paymentFeeTaxExcl' => 1.0,
                     'active' => true,
@@ -128,16 +152,17 @@ class PaymentFeeProviderTest extends TestCase
                     'surcharge' => Config::FEE_PERCENTAGE,
                     'surcharge_percentage' => '10',
                     'surcharge_limit' => 11.00,
-                    'surcharge_fixed_amount_tax_incl' => 0,
                     'surcharge_fixed_amount_tax_excl' => 0,
                     'tax_rules_group_id' => 1,
                 ],
-                'taxUtility' => [
+                'taxCalculatorResults' => [
+                    'taxRate' => 10.00,
                     'addTaxResult' => 22.00,
                     'removeTaxResult' => 10.00,
                 ],
                 'totalCartPrice' => 200,
                 'expectedResult' => [
+                    'taxRate' => 10.00,
                     'paymentFeeTaxIncl' => 11.00,
                     'paymentFeeTaxExcl' => 10.00,
                     'active' => true,
@@ -148,16 +173,17 @@ class PaymentFeeProviderTest extends TestCase
                     'surcharge' => Config::FEE_FIXED_FEE_AND_PERCENTAGE,
                     'surcharge_percentage' => '10',
                     'surcharge_limit' => 100.00,
-                    'surcharge_fixed_amount_tax_incl' => 0.00,
                     'surcharge_fixed_amount_tax_excl' => 10.00,
                     'tax_rules_group_id' => 1,
                 ],
-                'taxUtility' => [
+                'taxCalculatorResults' => [
+                    'taxRate' => 10.00,
                     'addTaxResult' => 22.00,
                     'removeTaxResult' => 0.00,
                 ],
                 'totalCartPrice' => 100,
                 'expectedResult' => [
+                    'taxRate' => 10.00,
                     'paymentFeeTaxIncl' => 22.00,
                     'paymentFeeTaxExcl' => 20.00,
                     'active' => true,

@@ -38,7 +38,6 @@ class BaseInfoBlock implements TemplateBuilderInterface
             'path' => $this->module->getPathUri(),
             'payscreen_locale_value' => Configuration::get(Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE),
             'val_images' => Configuration::get(Mollie\Config\Config::MOLLIE_IMAGES),
-            'val_issuers' => Configuration::get(Mollie\Config\Config::MOLLIE_ISSUERS),
             'val_css' => Configuration::get(Mollie\Config\Config::MOLLIE_CSS),
             'val_errors' => Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS),
             'val_logger' => Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG),

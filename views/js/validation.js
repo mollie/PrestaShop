@@ -134,9 +134,9 @@ $(document).ready(function () {
     function paymentMethodFeeToggle(method) {
         let $paymentMethodForm = $(method).closest('.payment-method');
         let $paymentFeeType = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_SURCHARGE_TYPE"]');
-        let $feeFixedTaxIncl = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_INCL"]');
-        let $feeFixedTaxExcl = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_EXCL"]');
-        let $taxRulesGroupId = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_TAX_RULES_GROUP_ID"]');
+        let $feeFixedTaxIncl = $paymentMethodForm.find('input[name^="' + paymentMethodSurchargeFixedAmountTaxInclConfig + '"]');
+        let $feeFixedTaxExcl = $paymentMethodForm.find('input[name^="' + paymentMethodSurchargeFixedAmountTaxExclConfig + '"]');
+        let $taxRulesGroupId = $paymentMethodForm.find('select[name^="' + paymentMethodTaxRulesGroupIdConfig + '"]');
         let $feePercentage = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_SURCHARGE_PERCENTAGE"]');
         let $feeLimit = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_SURCHARGE_LIMIT"]');
 

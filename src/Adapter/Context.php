@@ -71,6 +71,16 @@ class Context
         return (int) PrestashopConfiguration::get('PS_PRICE_DISPLAY_PRECISION');
     }
 
+    public function getProductLink($product): string
+    {
+        return (string) PrestashopContext::getContext()->link->getProductLink($product);
+    }
+
+    public function getImageLink($name, $ids, $type = null): string
+    {
+        return (string) PrestashopContext::getContext()->link->getImageLink($name, $ids, $type);
+    }
+
     public function getShopId(): int
     {
         return (int) PrestashopContext::getContext()->shop->id;
@@ -109,5 +119,10 @@ class Context
     public function getLanguageLocale(): string
     {
         return (string) PrestashopContext::getContext()->language->locale;
+    }
+
+    public function getCountryId(): int
+    {
+        return (int) PrestashopContext::getContext()->country->id;
     }
 }

@@ -100,6 +100,7 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
     public function getPaymentOption(MolPaymentMethod $paymentMethod): PaymentOption
     {
         $paymentOption = new PaymentOption();
+
         $paymentOption->setCallToActionText(
             $paymentMethod->title ?:
                 $this->languageService->lang($paymentMethod->method_name)
@@ -112,6 +113,7 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
             true
         ));
         $paymentOption->setLogo($this->creditCardLogoProvider->getMethodOptionLogo($paymentMethod));
+
         $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, $this->orderTotalProvider->getOrderTotal());
 
         $this->context->getSmarty()->assign([
@@ -152,6 +154,11 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
                         'type' => 'hidden',
                         'name' => 'mollie-method-id',
                         'value' => PaymentMethod::BANCONTACT,
+                    ],
+                    [
+                        'type' => 'hidden',
+                        'name' => 'payment-method-id',
+                        'value' => $paymentMethod->id,
                     ],
                 ]
             );

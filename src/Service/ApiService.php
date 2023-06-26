@@ -12,24 +12,26 @@
 
 namespace Mollie\Service;
 
-use Configuration;
 use Exception;
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\Context;
 use Mollie\Adapter\Shop;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
 use Mollie\Api\Resources\BaseCollection;
-use Mollie\Api\Resources\Method;
 use Mollie\Api\Resources\MethodCollection;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\PaymentCollection;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieApiException;
+use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use MolPaymentMethod;
+use PrestaShop\Decimal\DecimalNumber;
+use PrestaShop\Decimal\Operation\Rounding;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
@@ -71,6 +73,10 @@ class ApiService implements ApiServiceInterface
      * @var Shop
      */
     private $shop;
+    /** @var TaxCalculatorProvider */
+    private $taxProvider;
+    /** @var Context */
+    private $context;
 
     public function __construct(
         PaymentMethodRepository $methodRepository,
@@ -78,7 +84,9 @@ class ApiService implements ApiServiceInterface
         PaymentMethodSortProviderInterface $paymentMethodSortProvider,
         ConfigurationAdapter $configurationAdapter,
         TransactionService $transactionService,
-        Shop $shop
+        Shop $shop,
+        TaxCalculatorProvider $taxProvider,
+        Context $context
     ) {
         $this->countryRepository = $countryRepository;
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
@@ -87,6 +95,8 @@ class ApiService implements ApiServiceInterface
         $this->environment = (int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT);
         $this->transactionService = $transactionService;
         $this->shop = $shop;
+        $this->taxProvider = $taxProvider;
+        $this->context = $context;
     }
 
     /**
@@ -144,6 +154,7 @@ class ApiService implements ApiServiceInterface
                     'value' => $apiMethod->maximumAmount->value,
                     'currency' => $apiMethod->maximumAmount->currency,
                 ] : false,
+                'surcharge_fixed_amount_tax_incl' => 0,
             ];
         }
 
@@ -175,7 +186,6 @@ class ApiService implements ApiServiceInterface
         $emptyPaymentMethod->minimal_order_value = '';
         $emptyPaymentMethod->max_order_value = '';
         $emptyPaymentMethod->surcharge = 0;
-        $emptyPaymentMethod->surcharge_fixed_amount_tax_incl = 0;
         $emptyPaymentMethod->surcharge_fixed_amount_tax_excl = 0;
         $emptyPaymentMethod->tax_rules_group_id = 0;
         $emptyPaymentMethod->surcharge_percentage = '';
@@ -183,15 +193,29 @@ class ApiService implements ApiServiceInterface
 
         foreach ($apiMethods as $apiMethod) {
             $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($apiMethod['id'], $this->environment);
+
             if ($paymentId) {
                 $paymentMethod = new MolPaymentMethod((int) $paymentId);
+
+                if (!empty($paymentMethod->surcharge_fixed_amount_tax_excl)) {
+                    $apiMethod['surcharge_fixed_amount_tax_incl'] = $this->getSurchargeFixedAmountTaxInclPrice(
+                        $paymentMethod->surcharge_fixed_amount_tax_excl,
+                        $paymentMethod->tax_rules_group_id,
+                        $this->context->getCountryId()
+                    );
+                }
+
                 $methods[$apiMethod['id']] = $apiMethod;
                 $methods[$apiMethod['id']]['obj'] = $paymentMethod;
+
                 continue;
             }
+
             $defaultPaymentMethod = clone $emptyPaymentMethod;
+
             $defaultPaymentMethod->id_method = $apiMethod['id'];
             $defaultPaymentMethod->method_name = $apiMethod['name'];
+
             $methods[$apiMethod['id']] = $apiMethod;
             $methods[$apiMethod['id']]['obj'] = $defaultPaymentMethod;
         }
@@ -373,5 +397,17 @@ class ApiService implements ApiServiceInterface
         }
 
         return $api->wallets->requestApplePayPaymentSession($this->shop->getShop()->domain, $validationUrl);
+    }
+
+    private function getSurchargeFixedAmountTaxInclPrice(float $priceTaxExcl, int $taxRulesGroupId, int $countryId): float
+    {
+        $taxCalculator = $this->taxProvider->getTaxCalculator(
+            $taxRulesGroupId,
+            $countryId,
+            0 // NOTE: there is no default state for back office so setting no state
+        );
+
+        return (float) (new DecimalNumber((string) $taxCalculator->addTaxes($priceTaxExcl)))
+            ->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
     }
 }
