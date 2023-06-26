@@ -14,7 +14,6 @@ namespace Mollie\Adapter;
 
 use Configuration as PrestashopConfiguration;
 use Context as PrestashopContext;
-use PrestaShop\PrestaShop\Core\Localization\LocaleInterface;
 
 class Context
 {
