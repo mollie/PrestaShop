@@ -2,7 +2,7 @@ name: Cypress E2E Automation
 on:
   pull_request:
     types: [opened, reopened]
-    branches: [master, v*.*.*]
+    branches: '*'
 jobs:
   Cypress-E2E:
     runs-on: ubuntu-latest
