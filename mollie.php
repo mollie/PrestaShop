@@ -741,6 +741,9 @@ class Mollie extends PaymentModule
 
         $localeRepo = $this->get('prestashop.core.localization.locale.repository');
 
+        /**
+         * NOTE: context language is set based on customer/employee context
+         */
         $locale = $localeRepo->getLocale($this->context->language->getLocale());
 
         /** @var \Mollie\Builder\InvoicePdfTemplateBuilder $invoiceTemplateBuilder */
