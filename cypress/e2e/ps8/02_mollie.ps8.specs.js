@@ -255,7 +255,7 @@ it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
       cy.visit('/admin1/')
       cy.get('#subtab-AdminMollieModule_MTR > :nth-child(1)').click()
       cy.get('#subtab-AdminMollieModule > .link').click()
-      cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_on').click({force:true})
+      cy.get('#MOLLIE_SANDBOX_SINGLE_CLICK_PAYMENT_on').click({force:true})
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
       cy.visit('/SHOP2/en/index.php?controller=history')

@@ -4,7 +4,7 @@ module.exports = defineConfig({
   chromeWebSecurity: false,
   experimentalMemoryManagement: true,
   experimentalSourceRewriting: true,
-  numTestsKeptInMemory: 4,
+  numTestsKeptInMemory: 3,
   defaultCommandTimeout: 15000,
   projectId: 'xb89dr',
   retries: 3,
@@ -24,6 +24,7 @@ module.exports = defineConfig({
     //   require("cypress-fail-fast/plugin")(on, config);
     //   return config;
     // },
+    experimentalMemoryManagement: true,
     excludeSpecPattern: ['index.php'],
     specPattern: 'cypress/e2e/**/*.{js,jsx,ts,tsx}',
   },
