@@ -68,7 +68,7 @@ function modifyExistingTables(): bool
 
     /** only add it if it doesn't exist */
     if (!(int) Db::getInstance()->getValue($sql)) {
-        $sql = 'ALTER TABLE ' . _DB_PREFIX_ . 'mol_order_payment_fee DROP PRIMARY KEY';
+        $sql = 'ALTER TABLE ' . _DB_PREFIX_ . 'mol_order_fee DROP PRIMARY KEY';
 
         try {
             if (!Db::getInstance()->execute($sql)) {
