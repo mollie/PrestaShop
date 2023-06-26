@@ -263,11 +263,11 @@ it('C339352: 15 Klarna Pay Now Checkouting [Orders API]', () => {
 it('C339353: 16 Klarna Pay Now Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderShippingRefundingOrdersAPI()
 })
-it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
+it.only('C339354: 17 Credit Card Checkouting [Orders API]', () => {
       //Enabling the Single-Click for now
       cy.visit('/admin1/')
       cy.OpenModuleDashboard()
-      cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_on').click({force:true})
+      cy.get('#MOLLIE_SANDBOX_SINGLE_CLICK_PAYMENT_on').click({force:true})
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
       cy.visit('/SHOP2/en/index.php?controller=history')
