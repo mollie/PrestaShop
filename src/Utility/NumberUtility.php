@@ -17,6 +17,8 @@ use PrestaShop\Decimal\Number;
 
 class NumberUtility
 {
+    private const PRECISION = 6;
+
     // TODO make all methods consistent: either pass string/float as parameter or cast members to Number/DecimalNumber class beforehand.
 
     /**
@@ -31,6 +33,17 @@ class NumberUtility
         }
 
         return new Number((string) $number);
+    }
+
+    public static function setDecimalPrecision(float $number, int $precision): string
+    {
+        if (is_subclass_of(Number::class, DecimalNumber::class)) {
+            $decimalNumber = new DecimalNumber((string) $number);
+        } else {
+            $decimalNumber = new Number((string) $number);
+        }
+
+        return $decimalNumber->toPrecision($precision);
     }
 
     /**
@@ -85,41 +98,24 @@ class NumberUtility
         return (float) $result;
     }
 
-    /**
-     * ($a*$b).
-     *
-     * @param float $a
-     * @param float $b
-     *
-     * @return float
-     */
-    public static function times($a, $b)
+    public static function times(float $target, float $factor): float
     {
-        $firstNumber = self::toObject($a);
-        $secondNumber = self::toObject($b);
-        $result = (string) $firstNumber->times($secondNumber);
+        $firstNumber = self::toObject($target);
+        $secondNumber = self::toObject($factor);
 
-        return (float) $result;
+        $result = $firstNumber->times($secondNumber);
+
+        return (float) $result->toPrecision(self::PRECISION);
     }
 
-    /**
-     * ($a/$b).
-     *
-     * @param float $a
-     * @param float $b
-     * @param int $precision
-     *
-     * @return float
-     *
-     * @throws \PrestaShop\Decimal\Exception\DivisionByZeroException
-     */
-    public static function divide($a, $b, $precision = 20)
+    public static function divide(float $target, float $divisor, int $precision = self::PRECISION): float
     {
-        $firstNumber = self::toObject($a);
-        $secondNumber = self::toObject($b);
-        $result = (string) $firstNumber->dividedBy($secondNumber, $precision);
+        $firstNumber = self::toObject($target);
+        $secondNumber = self::toObject($divisor);
 
-        return (float) $result;
+        $result = $firstNumber->dividedBy($secondNumber, $precision);
+
+        return (float) $result->toPrecision(self::PRECISION);
     }
 
     public static function isEqual($a, $b)
@@ -146,6 +142,14 @@ class NumberUtility
         return $firstNumber->isLowerOrEqualThan($secondNumber);
     }
 
+    public static function isGreaterThan(float $target, float $comparison): float
+    {
+        $firstNumber = self::toObject($target);
+        $secondNumber = self::toObject($comparison);
+
+        return $firstNumber->isGreaterThan($secondNumber);
+    }
+
     public static function minus($a, $b)
     {
         $firstNumber = self::toObject($a);
@@ -165,10 +169,14 @@ class NumberUtility
     /**
      * @param float $number
      *
-     * @return Number
+     * @return Number|DecimalNumber
      */
-    private static function toObject($number)
+    private static function toObject(float $number)
     {
+        if (is_subclass_of(Number::class, DecimalNumber::class)) {
+            return new DecimalNumber((string) $number);
+        }
+
         return new Number((string) $number);
     }
 }

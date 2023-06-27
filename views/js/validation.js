@@ -158,7 +158,7 @@ $(document).ready(function () {
             case '2':
                 $feeFixedTaxIncl.closest('.form-group').hide();
                 $feeFixedTaxExcl.closest('.form-group').hide();
-                $taxRulesGroupId.closest('.form-group').hide();
+                $taxRulesGroupId.closest('.form-group').show();
                 $feePercentage.closest('.form-group').show();
                 $feeLimit.closest('.form-group').show();
                 break;

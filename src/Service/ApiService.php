@@ -39,6 +39,8 @@ class ApiService implements ApiServiceInterface
 {
     private $errors = [];
 
+    private const DECIMAL_PRECISION_TO_DISPLAY = 2;
+
     /**
      * @var PaymentMethodRepository
      */
@@ -147,11 +149,11 @@ class ApiService implements ApiServiceInterface
                 'issuers' => $apiMethod->issuers,
                 'tipEnableSSL' => $tipEnableSSL,
                 'minimumAmount' => $apiMethod->minimumAmount ? [
-                    'value' => $apiMethod->minimumAmount->value,
+                    'value' => NumberUtility::setDecimalPrecision($apiMethod->minimumAmount->value, self::DECIMAL_PRECISION_TO_DISPLAY),
                     'currency' => $apiMethod->minimumAmount->currency,
                 ] : false,
                 'maximumAmount' => $apiMethod->maximumAmount ? [
-                    'value' => $apiMethod->maximumAmount->value,
+                    'value' => NumberUtility::setDecimalPrecision($apiMethod->maximumAmount->value, self::DECIMAL_PRECISION_TO_DISPLAY),
                     'currency' => $apiMethod->maximumAmount->currency,
                 ] : false,
                 'surcharge_fixed_amount_tax_incl' => 0,
@@ -197,11 +199,23 @@ class ApiService implements ApiServiceInterface
             if ($paymentId) {
                 $paymentMethod = new MolPaymentMethod((int) $paymentId);
 
+                $paymentMethod = $this->setPrecisionForDecimalNumbers($paymentMethod);
+
                 if (!empty($paymentMethod->surcharge_fixed_amount_tax_excl)) {
                     $apiMethod['surcharge_fixed_amount_tax_incl'] = $this->getSurchargeFixedAmountTaxInclPrice(
                         $paymentMethod->surcharge_fixed_amount_tax_excl,
                         $paymentMethod->tax_rules_group_id,
                         $this->context->getCountryId()
+                    );
+
+                    $paymentMethod->surcharge_fixed_amount_tax_excl = NumberUtility::setDecimalPrecision(
+                        $paymentMethod->surcharge_fixed_amount_tax_excl,
+                        self::DECIMAL_PRECISION_TO_DISPLAY
+                    );
+
+                    $apiMethod['surcharge_fixed_amount_tax_incl'] = NumberUtility::setDecimalPrecision(
+                        $apiMethod['surcharge_fixed_amount_tax_incl'],
+                        self::DECIMAL_PRECISION_TO_DISPLAY
                     );
                 }
 
@@ -409,5 +423,30 @@ class ApiService implements ApiServiceInterface
 
         return (float) (NumberUtility::getNumber($taxCalculator->addTaxes($priceTaxExcl)))
             ->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
+    }
+
+    private function setPrecisionForDecimalNumbers(MolPaymentMethod $paymentMethod): MolPaymentMethod
+    {
+        $paymentMethod->surcharge_percentage = NumberUtility::setDecimalPrecision(
+            $paymentMethod->surcharge_percentage,
+            self::DECIMAL_PRECISION_TO_DISPLAY
+        );
+
+        $paymentMethod->surcharge_limit = NumberUtility::setDecimalPrecision(
+            $paymentMethod->surcharge_percentage,
+            self::DECIMAL_PRECISION_TO_DISPLAY
+        );
+
+        $paymentMethod->min_amount = NumberUtility::setDecimalPrecision(
+            $paymentMethod->surcharge_percentage,
+            self::DECIMAL_PRECISION_TO_DISPLAY
+        );
+
+        $paymentMethod->max_amount = NumberUtility::setDecimalPrecision(
+            $paymentMethod->surcharge_percentage,
+            self::DECIMAL_PRECISION_TO_DISPLAY
+        );
+
+        return $paymentMethod;
     }
 }
