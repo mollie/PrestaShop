@@ -21,6 +21,7 @@ use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\ProfileIdProviderInterface;
+use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
@@ -663,9 +664,15 @@ class Mollie extends PaymentModule
         $cart = new Cart($params['cart']->id);
         $orderId = Order::getOrderByCartId($cart->id);
         $order = new Order($orderId);
+
+        if (!Validate::isLoadedObject($order)) {
+            return true;
+        }
+
         if ($order->module !== $this->name) {
             return true;
         }
+
         /** @var \Mollie\Validator\OrderConfMailValidator $orderConfMailValidator */
         $orderConfMailValidator = $this->getService(\Mollie\Validator\OrderConfMailValidator::class);
 
@@ -690,26 +697,29 @@ class Mollie extends PaymentModule
             'outofstock' === $template ||
             'bankwire' === $template ||
             'refund' === $template) {
-            $orderId = Order::getOrderByCartId($cart->id);
-            $order = new Order($orderId);
-            if (!Validate::isLoadedObject($order)) {
-                return true;
-            }
-            try {
-                /** @var \Mollie\Repository\OrderFeeRepository $orderFeeRepo */
-                $orderFeeRepo = $this->getService(\Mollie\Repository\OrderFeeRepository::class);
-                $orderFeeId = $orderFeeRepo->getOrderFeeIdByCartId($cart->id);
-                $orderFee = new MolOrderFee($orderFeeId);
-            } catch (Exception $e) {
-                PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
+            /** @var MolOrderPaymentFeeRepositoryInterface $molOrderPaymentFeeRepository */
+            $molOrderPaymentFeeRepository = $this->getService(MolOrderPaymentFeeRepositoryInterface::class);
 
-                return true;
-            }
-            if ($orderFee->order_fee) {
-                $params['templateVars']['{payment_fee}'] = Tools::displayPrice($orderFee->order_fee);
+            $orderCurrency = new Currency($order->id_currency);
+
+            /** @var MolOrderPaymentFee|null $molOrderPaymentFee */
+            $molOrderPaymentFee = $molOrderPaymentFeeRepository->findOneBy([
+                'id_order' => (int) $order->id,
+            ]);
+
+            if (!$molOrderPaymentFee) {
+                $orderFee = $this->context->getCurrentLocale()->formatPrice(
+                    0,
+                    $orderCurrency->iso_code
+                );
             } else {
-                $params['templateVars']['{payment_fee}'] = Tools::displayPrice(0);
+                $orderFee = $this->context->getCurrentLocale()->formatPrice(
+                    $molOrderPaymentFee->fee_tax_incl,
+                    $orderCurrency->iso_code
+                );
             }
+
+            $params['templateVars']['{payment_fee}'] = $orderFee;
         }
 
         if ('order_conf' === $template) {
@@ -719,24 +729,37 @@ class Mollie extends PaymentModule
         return true;
     }
 
-    public function hookDisplayPDFInvoice($params)
+    public function hookDisplayPDFInvoice($params): string
     {
         if (!isset($params['object'])) {
-            return;
+            return '';
         }
+
         if (!$params['object'] instanceof OrderInvoice) {
-            return;
+            return '';
         }
+
+        $localeRepo = $this->get('prestashop.core.localization.locale.repository');
+
+        if (!$localeRepo) {
+            return '';
+        }
+
+        /**
+         * NOTE: context language is set based on customer/employee context
+         */
+        $locale = $localeRepo->getLocale($this->context->language->getLocale());
 
         /** @var \Mollie\Builder\InvoicePdfTemplateBuilder $invoiceTemplateBuilder */
         $invoiceTemplateBuilder = $this->getService(\Mollie\Builder\InvoicePdfTemplateBuilder::class);
 
         $templateParams = $invoiceTemplateBuilder
             ->setOrder($params['object']->getOrder())
+            ->setLocale($locale)
             ->buildParams();
 
         if (empty($templateParams)) {
-            return;
+            return '';
         }
 
         $this->context->smarty->assign($templateParams);

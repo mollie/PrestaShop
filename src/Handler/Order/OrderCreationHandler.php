@@ -75,8 +75,8 @@ class OrderCreationHandler
      * @var PaymentMethodService
      */
     private $paymentMethodService;
-    /** @var OrderFeeHandler */
-    private $orderFeeHandler;
+    /** @var OrderPaymentFeeHandler */
+    private $orderPaymentFeeHandler;
     /** @var OrderStatusService */
     private $orderStatusService;
     /** @var SubscriptionCreationHandler */
@@ -90,7 +90,7 @@ class OrderCreationHandler
         Mollie $module,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentMethodService $paymentMethodService,
-        OrderFeeHandler $orderFeeHandler,
+        OrderPaymentFeeHandler $orderPaymentFeeHandler,
         OrderStatusService $orderStatusService,
         SubscriptionCreationHandler $recurringOrderCreation,
         SubscriptionOrderValidator $subscriptionOrder,
@@ -99,7 +99,7 @@ class OrderCreationHandler
         $this->module = $module;
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodService = $paymentMethodService;
-        $this->orderFeeHandler = $orderFeeHandler;
+        $this->orderPaymentFeeHandler = $orderPaymentFeeHandler;
         $this->orderStatusService = $orderStatusService;
         $this->recurringOrderCreation = $recurringOrderCreation;
         $this->subscriptionOrder = $subscriptionOrder;
@@ -196,7 +196,7 @@ class OrderCreationHandler
         /* @phpstan-ignore-next-line */
         $orderId = (int) Order::getOrderByCartId((int) $cartId);
 
-        $this->orderFeeHandler->addOrderFee($orderId, $apiPayment);
+        $this->orderPaymentFeeHandler->addOrderPaymentFee($orderId, $apiPayment);
 
         $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
 

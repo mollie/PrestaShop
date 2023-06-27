@@ -50,6 +50,8 @@ use Mollie\Repository\CurrencyRepositoryInterface;
 use Mollie\Repository\GenderRepository;
 use Mollie\Repository\GenderRepositoryInterface;
 use Mollie\Repository\MolCustomerRepository;
+use Mollie\Repository\MolOrderPaymentFeeRepository;
+use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\OrderRepository;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepository;
@@ -165,6 +167,7 @@ final class BaseServiceProvider
         $this->addService($container, CartRuleRepositoryInterface::class, $container->get(CartRuleRepository::class));
         $this->addService($container, OrderRepositoryInterface::class, $container->get(OrderRepository::class));
         $this->addService($container, CurrencyRepositoryInterface::class, $container->get(CurrencyRepository::class));
+        $this->addService($container, MolOrderPaymentFeeRepositoryInterface::class, $container->get(MolOrderPaymentFeeRepository::class));
         $this->addService($container, CartRuleQuantityChangeHandlerInterface::class, $container->get(CartRuleQuantityChangeHandler::class));
 
         $this->addService($container, RecurringOrderRepositoryInterface::class, RecurringOrderRepository::class)

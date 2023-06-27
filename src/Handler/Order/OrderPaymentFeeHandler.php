@@ -39,32 +39,32 @@ namespace Mollie\Handler\Order;
 use Cart;
 use Configuration;
 use Mollie\Provider\PaymentFeeProviderInterface;
-use Mollie\Service\OrderFeeService;
+use Mollie\Service\OrderPaymentFeeService;
 use Mollie\Service\PaymentMethodService;
 use Order;
 use OrderDetail;
 use PrestaShop\Decimal\Number;
 
-class OrderFeeHandler
+class OrderPaymentFeeHandler
 {
-    /** @var OrderFeeService */
-    private $feeService;
+    /** @var OrderPaymentFeeService */
+    private $orderPaymentFeeService;
     /** @var PaymentMethodService */
     private $paymentMethodService;
     /** @var PaymentFeeProviderInterface */
     private $paymentFeeProvider;
 
     public function __construct(
-        OrderFeeService $feeService,
+        OrderPaymentFeeService $orderPaymentFeeService,
         PaymentMethodService $paymentMethodService,
         PaymentFeeProviderInterface $paymentFeeProvider
     ) {
-        $this->feeService = $feeService;
+        $this->orderPaymentFeeService = $orderPaymentFeeService;
         $this->paymentMethodService = $paymentMethodService;
         $this->paymentFeeProvider = $paymentFeeProvider;
     }
 
-    public function addOrderFee(int $orderId, $apiPayment)
+    public function addOrderPaymentFee(int $orderId, $apiPayment): int
     {
         $order = new Order($orderId);
         $cart = new Cart($order->id_cart);
@@ -79,13 +79,11 @@ class OrderFeeHandler
             Cart::BOTH
         );
 
-        $paymentFee = 0;
-
         $paymentMethod = $this->paymentMethodService->getPaymentMethod($apiPayment);
 
         $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmountWithTax);
 
-        $this->feeService->createOrderFee($order->id_cart, $paymentFee);
+        $this->orderPaymentFeeService->createOrderPaymentFee($orderId, (int) $order->id_cart, $paymentFeeData);
 
         $order = new Order($orderId);
 

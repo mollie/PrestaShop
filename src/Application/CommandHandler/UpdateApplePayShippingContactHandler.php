@@ -21,7 +21,7 @@ use Mollie\Application\Command\UpdateApplePayShippingContact;
 use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
 use Mollie\Collector\ApplePayDirect\OrderTotalCollector;
 use Mollie\Config\Config;
-use Mollie\Service\OrderFeeService;
+use Mollie\Service\OrderPaymentFeeService;
 use Mollie\Utility\ApplePayDirect\ShippingMethodUtility;
 use Tools;
 
@@ -33,19 +33,19 @@ final class UpdateApplePayShippingContactHandler
     private $applePayCarriersBuilder;
 
     /**
-     * @var OrderFeeService
+     * @var OrderPaymentFeeService
      */
-    private $orderFeeService;
+    private $orderPaymentFeeService;
     /** @var OrderTotalCollector */
     private $orderTotalCollector;
 
     public function __construct(
         ApplePayCarriersBuilder $applePayCarriersBuilder,
-        OrderFeeService $orderFeeService,
+        OrderPaymentFeeService $orderPaymentFeeService,
         OrderTotalCollector $orderTotalCollector
     ) {
         $this->applePayCarriersBuilder = $applePayCarriersBuilder;
-        $this->orderFeeService = $orderFeeService;
+        $this->orderPaymentFeeService = $orderPaymentFeeService;
         $this->orderTotalCollector = $orderTotalCollector;
     }
 
@@ -67,7 +67,7 @@ final class UpdateApplePayShippingContactHandler
         $paymentFee = 0;
 
         if ($totals) {
-            $paymentFeeData = $this->orderFeeService->getPaymentFee($totals[0]['amountWithoutFee'], Config::APPLEPAY);
+            $paymentFeeData = $this->orderPaymentFeeService->getPaymentFee($totals[0]['amountWithoutFee'], Config::APPLEPAY);
 
             $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
         }

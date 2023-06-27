@@ -15,18 +15,18 @@ namespace Mollie\Application\CommandHandler;
 use Cart;
 use Mollie\Application\Command\UpdateApplePayShippingMethod;
 use Mollie\Config\Config;
-use Mollie\Service\OrderFeeService;
+use Mollie\Service\OrderPaymentFeeService;
 
 final class UpdateApplePayShippingMethodHandler
 {
     /**
-     * @var OrderFeeService
+     * @var OrderPaymentFeeService
      */
-    private $orderFeeService;
+    private $orderPaymentFeeService;
 
-    public function __construct(OrderFeeService $orderFeeService)
+    public function __construct(OrderPaymentFeeService $orderPaymentFeeService)
     {
-        $this->orderFeeService = $orderFeeService;
+        $this->orderPaymentFeeService = $orderPaymentFeeService;
     }
 
     public function handle(UpdateApplePayShippingMethod $command): array
@@ -42,7 +42,7 @@ final class UpdateApplePayShippingMethodHandler
 
         $orderTotal = (float) $cart->getOrderTotal(true, Cart::BOTH, null, $command->getCarrierId());
 
-        $paymentFeeData = $this->orderFeeService->getPaymentFee($orderTotal, Config::APPLEPAY);
+        $paymentFeeData = $this->orderPaymentFeeService->getPaymentFee($orderTotal, Config::APPLEPAY);
 
         $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
 
