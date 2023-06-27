@@ -12,10 +12,27 @@
 
 namespace Mollie\Utility;
 
+use PrestaShop\Decimal\DecimalNumber;
 use PrestaShop\Decimal\Number;
 
 class NumberUtility
 {
+    // TODO make all methods consistent: either pass string/float as parameter or cast members to Number/DecimalNumber class beforehand.
+
+    /**
+     * @param float $number
+     *
+     * @return DecimalNumber|Number
+     */
+    public static function getNumber(float $number)
+    {
+        if (is_subclass_of(Number::class, DecimalNumber::class)) {
+            return new DecimalNumber((string) $number);
+        }
+
+        return new Number((string) $number);
+    }
+
     /**
      * Decreases number by its given percentage
      * E.g 75/1.5 = 50.

@@ -17,8 +17,8 @@ use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\MolliePaymentMailService;
+use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TimeUtility;
-use PrestaShop\Decimal\DecimalNumber;
 use PrestaShop\Decimal\Operation\Rounding;
 
 class AdminMollieAjaxController extends ModuleAdminController
@@ -215,8 +215,8 @@ class AdminMollieAjaxController extends ModuleAdminController
             $paymentFeeTaxExcl = $taxCalculator->removeTaxes($paymentFeeTaxIncl);
         }
 
-        $paymentFeeTaxInclDecimal = new DecimalNumber((string) $paymentFeeTaxIncl);
-        $paymentFeeTaxExclDecimal = new DecimalNumber((string) $paymentFeeTaxExcl);
+        $paymentFeeTaxInclDecimal = NumberUtility::getNumber($paymentFeeTaxIncl);
+        $paymentFeeTaxExclDecimal = NumberUtility::getNumber($paymentFeeTaxExcl);
 
         $this->ajaxRender(
             json_encode([

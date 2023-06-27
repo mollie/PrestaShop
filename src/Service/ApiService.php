@@ -29,8 +29,8 @@ use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
+use Mollie\Utility\NumberUtility;
 use MolPaymentMethod;
-use PrestaShop\Decimal\DecimalNumber;
 use PrestaShop\Decimal\Operation\Rounding;
 use PrestaShopDatabaseException;
 use PrestaShopException;
@@ -407,7 +407,7 @@ class ApiService implements ApiServiceInterface
             0 // NOTE: there is no default state for back office so setting no state
         );
 
-        return (float) (new DecimalNumber((string) $taxCalculator->addTaxes($priceTaxExcl)))
+        return (float) (NumberUtility::getNumber($taxCalculator->addTaxes($priceTaxExcl)))
             ->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
     }
 }
