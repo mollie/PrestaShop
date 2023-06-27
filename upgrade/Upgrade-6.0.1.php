@@ -58,6 +58,8 @@ function modifyExistingTables(): bool
                 return false;
             }
         } catch (Exception $e) {
+            PrestaShopLogger::addLog("Mollie upgrade error: {$e->getMessage()}");
+
             return false;
         }
     }
@@ -77,6 +79,8 @@ function modifyExistingTables(): bool
                 return false;
             }
         } catch (Exception $e) {
+            PrestaShopLogger::addLog("Mollie upgrade error: {$e->getMessage()}");
+
             return false;
         }
 
@@ -87,6 +91,8 @@ function modifyExistingTables(): bool
                 return false;
             }
         } catch (Exception $e) {
+            PrestaShopLogger::addLog("Mollie upgrade error: {$e->getMessage()}");
+
             return false;
         }
 
@@ -103,6 +109,8 @@ function modifyExistingTables(): bool
                 return false;
             }
         } catch (Exception $e) {
+            PrestaShopLogger::addLog("Mollie upgrade error: {$e->getMessage()}");
+
             return false;
         }
 
@@ -113,6 +121,8 @@ function modifyExistingTables(): bool
                 return false;
             }
         } catch (Exception $e) {
+            PrestaShopLogger::addLog("Mollie upgrade error: {$e->getMessage()}");
+
             return false;
         }
     }
