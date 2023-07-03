@@ -48,9 +48,6 @@ use MolPaymentMethod;
 
 class PaymentFeeProvider implements PaymentFeeProviderInterface
 {
-    private const MAX_PERCENTAGE = 100.00;
-    private const TEMPORARY_PRECISION = 6;
-
     /** @var Context */
     private $context;
     /** @var AddressRepositoryInterface */
@@ -71,7 +68,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxExcl): PaymentFeeData
+    public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl): PaymentFeeData
     {
         // TODO handle exception on all calls.
         $surchargeFixedPriceTaxExcl = $paymentMethod->surcharge_fixed_amount_tax_excl;
@@ -94,7 +91,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
             $address->id_state
         );
 
-        $paymentFeeCalculator = new PaymentFeeCalculator($taxCalculator);
+        $paymentFeeCalculator = new PaymentFeeCalculator($taxCalculator, $this->context);
 
         switch ($paymentMethod->surcharge) {
             case Config::FEE_FIXED_FEE:
@@ -103,16 +100,14 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
                 );
             case Config::FEE_PERCENTAGE:
                 return $paymentFeeCalculator->calculatePercentageFee(
-                    $totalCartPriceTaxExcl,
+                    $totalCartPriceTaxIncl,
                     $surchargePercentage,
-                    self::MAX_PERCENTAGE,
                     $surchargeLimit
                 );
             case Config::FEE_FIXED_FEE_AND_PERCENTAGE:
                 return $paymentFeeCalculator->calculatePercentageAndFixedPriceFee(
-                    $totalCartPriceTaxExcl,
+                    $totalCartPriceTaxIncl,
                     $surchargePercentage,
-                    self::MAX_PERCENTAGE,
                     $surchargeFixedPriceTaxExcl,
                     $surchargeLimit
                 );

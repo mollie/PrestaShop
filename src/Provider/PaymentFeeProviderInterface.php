@@ -45,5 +45,5 @@ interface PaymentFeeProviderInterface
     /**
      * @throws FailedToProvidePaymentFeeException
      */
-    public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxExcl): PaymentFeeData;
+    public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl): PaymentFeeData;
 }

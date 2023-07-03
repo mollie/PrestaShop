@@ -2,18 +2,24 @@
 
 namespace Mollie\Calculator;
 
+use Mollie\Adapter\Context;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Utility\NumberUtility;
 use TaxCalculator;
 
 class PaymentFeeCalculator
 {
+    private const MAX_PERCENTAGE = 100;
+
     /** @var TaxCalculator */
     private $taxCalculator;
+    /** @var Context */
+    private $context;
 
-    public function __construct(TaxCalculator $taxCalculator)
+    public function __construct(TaxCalculator $taxCalculator, Context $context)
     {
         $this->taxCalculator = $taxCalculator;
+        $this->context = $context;
     }
 
     public function calculateFixedFee(float $totalFeePriceTaxExcl): PaymentFeeData
@@ -27,14 +33,13 @@ class PaymentFeeCalculator
     }
 
     public function calculatePercentageFee(
-        float $totalCartPriceTaxExcl,
+        float $totalCartPriceTaxIncl,
         float $surchargePercentage,
-        float $maxPercentage,
         float $surchargeLimit
     ): PaymentFeeData {
         $totalFeePriceTaxIncl = NumberUtility::times(
-            $totalCartPriceTaxExcl,
-            NumberUtility::divide($surchargePercentage, $maxPercentage)
+            $totalCartPriceTaxIncl,
+            NumberUtility::divide($surchargePercentage, self::MAX_PERCENTAGE)
         );
 
         if ($this->isPaymentFeeGreaterThanMaxLimit(
@@ -53,17 +58,16 @@ class PaymentFeeCalculator
     }
 
     public function calculatePercentageAndFixedPriceFee(
-        float $totalCartPriceTaxExcl,
+        float $totalCartPriceTaxIncl,
         float $surchargePercentage,
-        float $maxPercentage,
         float $surchargeFixedPriceTaxExcl,
         float $surchargeLimit
     ): PaymentFeeData {
         $surchargeFixedPriceTaxIncl = $this->taxCalculator->addTaxes($surchargeFixedPriceTaxExcl);
 
         $totalFeePriceTaxIncl = NumberUtility::plus(NumberUtility::times(
-            $totalCartPriceTaxExcl,
-            NumberUtility::divide($surchargePercentage, $maxPercentage)
+            $totalCartPriceTaxIncl,
+            NumberUtility::divide($surchargePercentage, self::MAX_PERCENTAGE)
         ), $surchargeFixedPriceTaxIncl);
 
         if ($this->isPaymentFeeGreaterThanMaxLimit(
@@ -108,8 +112,8 @@ class PaymentFeeCalculator
         float $totalFeePriceTaxExcl
     ): PaymentFeeData {
         return new PaymentFeeData(
-            $totalFeePriceTaxIncl,
-            $totalFeePriceTaxExcl,
+            NumberUtility::setDecimalPrecision($totalFeePriceTaxIncl, $this->context->getComputingPrecision()),
+            NumberUtility::setDecimalPrecision($totalFeePriceTaxExcl, $this->context->getComputingPrecision()),
             $this->taxCalculator->getTotalRate(),
             $totalFeePriceTaxIncl > 0 && $totalFeePriceTaxExcl > 0
         );

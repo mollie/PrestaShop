@@ -14,10 +14,12 @@ namespace Mollie\Utility;
 
 use PrestaShop\Decimal\DecimalNumber;
 use PrestaShop\Decimal\Number;
+use PrestaShop\Decimal\Operation\Rounding;
 
 class NumberUtility
 {
     private const PRECISION = 6;
+    private const ROUNDING = Rounding::ROUND_HALF_UP;
 
     // TODO make all methods consistent: either pass string/float as parameter or cast members to Number/DecimalNumber class beforehand.
 
@@ -35,15 +37,18 @@ class NumberUtility
         return new Number((string) $number);
     }
 
-    public static function setDecimalPrecision(float $number, int $precision): float
-    {
+    public static function setDecimalPrecision(
+        float $number,
+        int $precision,
+        string $roundingMode = self::ROUNDING
+    ): float {
         if (is_subclass_of(Number::class, DecimalNumber::class)) {
             $decimalNumber = new DecimalNumber((string) $number);
         } else {
             $decimalNumber = new Number((string) $number);
         }
 
-        return (float) $decimalNumber->toPrecision($precision);
+        return (float) $decimalNumber->toPrecision($precision, $roundingMode);
     }
 
     /**
@@ -98,24 +103,32 @@ class NumberUtility
         return (float) $result;
     }
 
-    public static function times(float $target, float $factor): float
-    {
+    public static function times(
+        float $target,
+        float $factor,
+        int $precision = self::PRECISION,
+        string $roundingMode = self::ROUNDING
+    ): float {
         $firstNumber = self::toObject($target);
         $secondNumber = self::toObject($factor);
 
         $result = $firstNumber->times($secondNumber);
 
-        return (float) $result->toPrecision(self::PRECISION);
+        return (float) $result->toPrecision($precision, $roundingMode);
     }
 
-    public static function divide(float $target, float $divisor, int $precision = self::PRECISION): float
-    {
+    public static function divide(
+        float $target,
+        float $divisor,
+        int $precision = self::PRECISION,
+        string $roundingMode = self::ROUNDING
+    ): float {
         $firstNumber = self::toObject($target);
         $secondNumber = self::toObject($divisor);
 
         $result = $firstNumber->dividedBy($secondNumber, $precision);
 
-        return (float) $result->toPrecision(self::PRECISION);
+        return (float) $result->toPrecision($precision, $roundingMode);
     }
 
     public static function isEqual($a, $b)
