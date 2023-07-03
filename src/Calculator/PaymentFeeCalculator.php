@@ -112,8 +112,8 @@ class PaymentFeeCalculator
         float $totalFeePriceTaxExcl
     ): PaymentFeeData {
         return new PaymentFeeData(
-            NumberUtility::setDecimalPrecision($totalFeePriceTaxIncl, $this->context->getComputingPrecision()),
-            NumberUtility::setDecimalPrecision($totalFeePriceTaxExcl, $this->context->getComputingPrecision()),
+            NumberUtility::toPrecision($totalFeePriceTaxIncl, $this->context->getComputingPrecision()),
+            NumberUtility::toPrecision($totalFeePriceTaxExcl, $this->context->getComputingPrecision()),
             $this->taxCalculator->getTotalRate(),
             $totalFeePriceTaxIncl > 0 && $totalFeePriceTaxExcl > 0
         );

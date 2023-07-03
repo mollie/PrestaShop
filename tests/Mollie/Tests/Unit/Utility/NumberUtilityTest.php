@@ -9,11 +9,11 @@ class NumberUtilityTest extends TestCase
 {
     public function testItSuccessfullySetsDecimalPrecision(): void
     {
-        $result = NumberUtility::setDecimalPrecision(6.56739, 2);
+        $result = NumberUtility::toPrecision(6.56739, 2);
 
         $this->assertEquals(6.57, $result);
 
-        $result = NumberUtility::setDecimalPrecision(6.56139, 2);
+        $result = NumberUtility::toPrecision(6.56139, 2);
 
         $this->assertEquals(6.56, $result);
     }

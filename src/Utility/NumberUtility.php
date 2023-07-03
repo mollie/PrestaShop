@@ -18,35 +18,18 @@ use PrestaShop\Decimal\Operation\Rounding;
 
 class NumberUtility
 {
-    private const PRECISION = 6;
+    private const DECIMAL_PRECISION = 2;
+    private const FLOAT_PRECISION = 6;
     private const ROUNDING = Rounding::ROUND_HALF_UP;
 
     // TODO make all methods consistent: either pass string/float as parameter or cast members to Number/DecimalNumber class beforehand.
 
-    /**
-     * @param float $number
-     *
-     * @return DecimalNumber|Number
-     */
-    public static function getNumber(float $number)
-    {
-        if (is_subclass_of(Number::class, DecimalNumber::class)) {
-            return new DecimalNumber((string) $number);
-        }
-
-        return new Number((string) $number);
-    }
-
-    public static function setDecimalPrecision(
+    public static function toPrecision(
         float $number,
-        int $precision,
+        int $precision = self::DECIMAL_PRECISION,
         string $roundingMode = self::ROUNDING
     ): float {
-        if (is_subclass_of(Number::class, DecimalNumber::class)) {
-            $decimalNumber = new DecimalNumber((string) $number);
-        } else {
-            $decimalNumber = new Number((string) $number);
-        }
+        $decimalNumber = self::getNumber($number);
 
         return (float) $decimalNumber->toPrecision($precision, $roundingMode);
     }
@@ -67,9 +50,9 @@ class NumberUtility
         if (!$percentage || $percentage <= 0) {
             return $number;
         }
-        $numberTransformed = self::toObject($number);
+        $numberTransformed = self::getNumber($number);
         $totalDecrease = self::toPercentageIncrease($percentage);
-        $decrement = (string) $numberTransformed->dividedBy(self::toObject($totalDecrease));
+        $decrement = (string) $numberTransformed->dividedBy(self::getNumber($totalDecrease));
 
         return (float) $decrement;
     }
@@ -79,9 +62,9 @@ class NumberUtility
         if (!$percentage || $percentage <= 0) {
             return $number;
         }
-        $numberTransformed = self::toObject($number);
+        $numberTransformed = self::getNumber($number);
         $percentageIncrease = self::toPercentageIncrease($percentage);
-        $percentageIncreaseTransformed = self::toObject($percentageIncrease);
+        $percentageIncreaseTransformed = self::getNumber($percentageIncrease);
         $result = (string) $numberTransformed->times($percentageIncreaseTransformed);
 
         return (float) $result;
@@ -96,9 +79,9 @@ class NumberUtility
      */
     public static function toPercentageIncrease($percentage)
     {
-        $percentageNumber = self::toObject($percentage);
-        $smallerNumber = $percentageNumber->dividedBy(self::toObject(100));
-        $result = (string) $smallerNumber->plus(self::toObject(1));
+        $percentageNumber = self::getNumber($percentage);
+        $smallerNumber = $percentageNumber->dividedBy(self::getNumber(100));
+        $result = (string) $smallerNumber->plus(self::getNumber(1));
 
         return (float) $result;
     }
@@ -106,11 +89,11 @@ class NumberUtility
     public static function times(
         float $target,
         float $factor,
-        int $precision = self::PRECISION,
+        int $precision = self::FLOAT_PRECISION,
         string $roundingMode = self::ROUNDING
     ): float {
-        $firstNumber = self::toObject($target);
-        $secondNumber = self::toObject($factor);
+        $firstNumber = self::getNumber($target);
+        $secondNumber = self::getNumber($factor);
 
         $result = $firstNumber->times($secondNumber);
 
@@ -120,11 +103,11 @@ class NumberUtility
     public static function divide(
         float $target,
         float $divisor,
-        int $precision = self::PRECISION,
+        int $precision = self::FLOAT_PRECISION,
         string $roundingMode = self::ROUNDING
     ): float {
-        $firstNumber = self::toObject($target);
-        $secondNumber = self::toObject($divisor);
+        $firstNumber = self::getNumber($target);
+        $secondNumber = self::getNumber($divisor);
 
         $result = $firstNumber->dividedBy($secondNumber, $precision);
 
@@ -133,48 +116,48 @@ class NumberUtility
 
     public static function isEqual($a, $b)
     {
-        $firstNumber = self::toObject($a);
-        $secondNumber = self::toObject($b);
+        $firstNumber = self::getNumber($a);
+        $secondNumber = self::getNumber($b);
 
         return $firstNumber->equals($secondNumber);
     }
 
     public static function isLowerThan($a, $b)
     {
-        $firstNumber = self::toObject($a);
-        $secondNumber = self::toObject($b);
+        $firstNumber = self::getNumber($a);
+        $secondNumber = self::getNumber($b);
 
         return $firstNumber->isLowerThan($secondNumber);
     }
 
     public static function isLowerOrEqualThan($a, $b)
     {
-        $firstNumber = self::toObject($a);
-        $secondNumber = self::toObject($b);
+        $firstNumber = self::getNumber($a);
+        $secondNumber = self::getNumber($b);
 
         return $firstNumber->isLowerOrEqualThan($secondNumber);
     }
 
     public static function isGreaterThan(float $target, float $comparison): bool
     {
-        $firstNumber = self::toObject($target);
-        $secondNumber = self::toObject($comparison);
+        $firstNumber = self::getNumber($target);
+        $secondNumber = self::getNumber($comparison);
 
         return $firstNumber->isGreaterThan($secondNumber);
     }
 
     public static function minus($a, $b)
     {
-        $firstNumber = self::toObject($a);
-        $secondNumber = self::toObject($b);
+        $firstNumber = self::getNumber($a);
+        $secondNumber = self::getNumber($b);
 
         return (float) ((string) $firstNumber->minus($secondNumber));
     }
 
     public static function plus($a, $b)
     {
-        $firstNumber = self::toObject($a);
-        $secondNumber = self::toObject($b);
+        $firstNumber = self::getNumber($a);
+        $secondNumber = self::getNumber($b);
 
         return (float) ((string) $firstNumber->plus($secondNumber));
     }
@@ -184,7 +167,7 @@ class NumberUtility
      *
      * @return Number|DecimalNumber
      */
-    private static function toObject(float $number)
+    private static function getNumber(float $number)
     {
         if (is_subclass_of(Number::class, DecimalNumber::class)) {
             return new DecimalNumber((string) $number);

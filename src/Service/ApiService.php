@@ -31,15 +31,12 @@ use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\Utility\NumberUtility;
 use MolPaymentMethod;
-use PrestaShop\Decimal\Operation\Rounding;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
 class ApiService implements ApiServiceInterface
 {
     private $errors = [];
-
-    private const DECIMAL_PRECISION_TO_DISPLAY = 2;
 
     /**
      * @var PaymentMethodRepository
@@ -149,11 +146,17 @@ class ApiService implements ApiServiceInterface
                 'issuers' => $apiMethod->issuers,
                 'tipEnableSSL' => $tipEnableSSL,
                 'minimumAmount' => $apiMethod->minimumAmount ? [
-                    'value' => NumberUtility::setDecimalPrecision($apiMethod->minimumAmount->value, self::DECIMAL_PRECISION_TO_DISPLAY),
+                    'value' => NumberUtility::toPrecision(
+                        $apiMethod->minimumAmount->value,
+                        $this->context->getComputingPrecision()
+                    ),
                     'currency' => $apiMethod->minimumAmount->currency,
                 ] : false,
                 'maximumAmount' => $apiMethod->maximumAmount ? [
-                    'value' => NumberUtility::setDecimalPrecision($apiMethod->maximumAmount->value, self::DECIMAL_PRECISION_TO_DISPLAY),
+                    'value' => NumberUtility::toPrecision(
+                        $apiMethod->maximumAmount->value,
+                        $this->context->getComputingPrecision()
+                    ),
                     'currency' => $apiMethod->maximumAmount->currency,
                 ] : false,
                 'surcharge_fixed_amount_tax_incl' => 0,
@@ -199,7 +202,7 @@ class ApiService implements ApiServiceInterface
             if ($paymentId) {
                 $paymentMethod = new MolPaymentMethod((int) $paymentId);
 
-                $paymentMethod = $this->setPrecisionForDecimalNumbers($paymentMethod);
+                $paymentMethod = $this->toPrecisionForDecimalNumbers($paymentMethod);
 
                 if (!empty($paymentMethod->surcharge_fixed_amount_tax_excl)) {
                     $apiMethod['surcharge_fixed_amount_tax_incl'] = $this->getSurchargeFixedAmountTaxInclPrice(
@@ -208,14 +211,14 @@ class ApiService implements ApiServiceInterface
                         $this->context->getCountryId()
                     );
 
-                    $paymentMethod->surcharge_fixed_amount_tax_excl = NumberUtility::setDecimalPrecision(
+                    $paymentMethod->surcharge_fixed_amount_tax_excl = NumberUtility::toPrecision(
                         $paymentMethod->surcharge_fixed_amount_tax_excl,
-                        self::DECIMAL_PRECISION_TO_DISPLAY
+                        $this->context->getComputingPrecision()
                     );
 
-                    $apiMethod['surcharge_fixed_amount_tax_incl'] = NumberUtility::setDecimalPrecision(
+                    $apiMethod['surcharge_fixed_amount_tax_incl'] = NumberUtility::toPrecision(
                         $apiMethod['surcharge_fixed_amount_tax_incl'],
-                        self::DECIMAL_PRECISION_TO_DISPLAY
+                        $this->context->getComputingPrecision()
                     );
                 }
 
@@ -421,30 +424,32 @@ class ApiService implements ApiServiceInterface
             0 // NOTE: there is no default state for back office so setting no state
         );
 
-        return (float) (NumberUtility::getNumber($taxCalculator->addTaxes($priceTaxExcl)))
-            ->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
+        return NumberUtility::toPrecision(
+            $taxCalculator->addTaxes($priceTaxExcl),
+            $this->context->getComputingPrecision()
+        );
     }
 
-    private function setPrecisionForDecimalNumbers(MolPaymentMethod $paymentMethod): MolPaymentMethod
+    private function toPrecisionForDecimalNumbers(MolPaymentMethod $paymentMethod): MolPaymentMethod
     {
-        $paymentMethod->surcharge_percentage = (string) NumberUtility::setDecimalPrecision(
+        $paymentMethod->surcharge_percentage = (string) NumberUtility::toPrecision(
             (float) $paymentMethod->surcharge_percentage,
-            self::DECIMAL_PRECISION_TO_DISPLAY
+            $this->context->getComputingPrecision()
         );
 
-        $paymentMethod->surcharge_limit = (string) NumberUtility::setDecimalPrecision(
+        $paymentMethod->surcharge_limit = (string) NumberUtility::toPrecision(
             (float) $paymentMethod->surcharge_limit,
-            self::DECIMAL_PRECISION_TO_DISPLAY
+            $this->context->getComputingPrecision()
         );
 
-        $paymentMethod->min_amount = NumberUtility::setDecimalPrecision(
+        $paymentMethod->min_amount = NumberUtility::toPrecision(
             $paymentMethod->min_amount,
-            self::DECIMAL_PRECISION_TO_DISPLAY
+            $this->context->getComputingPrecision()
         );
 
-        $paymentMethod->max_amount = NumberUtility::setDecimalPrecision(
+        $paymentMethod->max_amount = NumberUtility::toPrecision(
             $paymentMethod->max_amount,
-            self::DECIMAL_PRECISION_TO_DISPLAY
+            $this->context->getComputingPrecision()
         );
 
         return $paymentMethod;

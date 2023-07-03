@@ -93,6 +93,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
 
         $paymentFeeCalculator = new PaymentFeeCalculator($taxCalculator, $this->context);
 
+        // TODO it would be good to use Abstract class, which would hold common private methods and then create separate services, which would provide calculated fee.
         switch ($paymentMethod->surcharge) {
             case Config::FEE_FIXED_FEE:
                 return $paymentFeeCalculator->calculateFixedFee(
