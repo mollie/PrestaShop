@@ -35,7 +35,7 @@ class NumberUtility
         return new Number((string) $number);
     }
 
-    public static function setDecimalPrecision(float $number, int $precision): string
+    public static function setDecimalPrecision(float $number, int $precision): float
     {
         if (is_subclass_of(Number::class, DecimalNumber::class)) {
             $decimalNumber = new DecimalNumber((string) $number);
@@ -43,7 +43,7 @@ class NumberUtility
             $decimalNumber = new Number((string) $number);
         }
 
-        return $decimalNumber->toPrecision($precision);
+        return (float) $decimalNumber->toPrecision($precision);
     }
 
     /**
