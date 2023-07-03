@@ -5,6 +5,8 @@ namespace Mollie\Tests\Unit\Provider;
 use Address;
 use Mollie\Adapter\Context;
 use Mollie\Config\Config;
+use Mollie\Exception\Code\ExceptionCode;
+use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Provider\PaymentFeeProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\AddressRepositoryInterface;
@@ -20,7 +22,16 @@ class PaymentFeeProviderTest extends TestCase
     private $addressRepository;
 
     /** @var TaxCalculatorProvider */
-    private $taxProvider;
+    private $taxCalculatorProvider;
+
+    /** @var MolPaymentMethod */
+    private $molPaymentMethod;
+
+    /** @var Address */
+    private $address;
+
+    /** @var TaxCalculator */
+    private $taxCalculator;
 
     public function setUp()
     {
@@ -28,41 +39,35 @@ class PaymentFeeProviderTest extends TestCase
 
         $this->context = $this->createMock(Context::class);
         $this->addressRepository = $this->createMock(AddressRepositoryInterface::class);
-        $this->taxProvider = $this->createMock(TaxCalculatorProvider::class);
+        $this->taxCalculatorProvider = $this->createMock(TaxCalculatorProvider::class);
+
+        $this->molPaymentMethod = $this->createMock(MolPaymentMethod::class);
+        $this->address = $this->createMock(Address::class);
+        $this->taxCalculator = $this->createMock(TaxCalculator::class);
     }
 
-    /**
-     * @dataProvider paymentFeeDataProvider
-     */
-    public function testItProvidesPaymentFee(
-        array $paymentMethod,
-        array $taxCalculatorResults,
-        float $totalCartPrice,
-        array $expectedResult
-    ): void {
-        $molPaymentMethod = $this->createMock(MolPaymentMethod::class);
+    public function testItSuccessfullyProvidesFixedPaymentFee(): void
+    {
+        $this->molPaymentMethod->surcharge = Config::FEE_FIXED_FEE;
+        $this->molPaymentMethod->surcharge_percentage = 0;
+        $this->molPaymentMethod->surcharge_limit = 0;
+        $this->molPaymentMethod->surcharge_fixed_amount_tax_excl = 10;
+        $this->molPaymentMethod->tax_rules_group_id = 1;
 
-        $molPaymentMethod->surcharge = $paymentMethod['surcharge'];
-        $molPaymentMethod->surcharge_percentage = $paymentMethod['surcharge_percentage'];
-        $molPaymentMethod->surcharge_limit = $paymentMethod['surcharge_limit'];
-        $molPaymentMethod->surcharge_fixed_amount_tax_excl = $paymentMethod['surcharge_fixed_amount_tax_excl'];
-        $molPaymentMethod->tax_rules_group_id = 1; // NOTE: It's always the same in the test
+        $this->address = $this->createMock(Address::class);
 
-        $address = $this->createMock(Address::class);
+        $this->address->id = 1;
+        $this->address->id_country = 1;
+        $this->address->id_state = 0;
 
-        $address->id = 1;
-        $address->id_country = 1;
-        $address->id_state = 0;
+        $this->addressRepository->method('findOneBy')->willReturn($this->address);
 
-        $this->addressRepository->method('findOneBy')->willReturn($address);
+        $this->taxCalculator = $this->createMock(TaxCalculator::class);
 
-        $taxCalculator = $this->createMock(TaxCalculator::class);
+        $this->taxCalculator->method('addTaxes')->willReturn(11.0);
+        $this->taxCalculator->method('getTotalRate')->willReturn(10);
 
-        $taxCalculator->method('addTaxes')->willReturn($taxCalculatorResults['addTaxResult']);
-        $taxCalculator->method('removeTaxes')->willReturn($taxCalculatorResults['removeTaxResult']);
-        $taxCalculator->method('getTotalRate')->willReturn($taxCalculatorResults['taxRate']);
-
-        $this->taxProvider->method('getTaxCalculator')->willReturn($taxCalculator);
+        $this->taxCalculatorProvider->method('getTaxCalculator')->willReturn($this->taxCalculator);
 
         $this->context->method('getCustomerAddressInvoiceId')->willReturn(1);
         $this->context->method('getComputingPrecision')->willReturn(2);
@@ -70,125 +75,140 @@ class PaymentFeeProviderTest extends TestCase
         $paymentFeeProvider = new PaymentFeeProvider(
             $this->context,
             $this->addressRepository,
-            $this->taxProvider
+            $this->taxCalculatorProvider
         );
 
-        $result = $paymentFeeProvider->getPaymentFee($molPaymentMethod, $totalCartPrice);
+        $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
 
-        $this->assertEquals($result->getPaymentFeeTaxIncl(), $expectedResult['paymentFeeTaxIncl']);
-        $this->assertEquals($result->getPaymentFeeTaxExcl(), $expectedResult['paymentFeeTaxExcl']);
-        $this->assertEquals($result->getTaxRate(), $expectedResult['taxRate']);
-        $this->assertEquals($result->isActive(), $expectedResult['active']);
+        $this->assertEquals(11.0, $result->getPaymentFeeTaxIncl());
+        $this->assertEquals(10.0, $result->getPaymentFeeTaxExcl());
+        $this->assertEquals(10.0, $result->getTaxRate());
+        $this->assertEquals(true, $result->isActive());
     }
 
-    public function paymentFeeDataProvider(): array
+    public function testItSuccessfullyProvidesPercentagePaymentFee(): void
     {
-        return [
-            'success with no surcharge found' => [
-                'paymentMethod' => [
-                    'surcharge' => 'not-found',
-                    'surcharge_percentage' => '0',
-                    'surcharge_limit' => '0',
-                    'surcharge_fixed_amount_tax_excl' => 0,
-                    'tax_rules_group_id' => 0,
-                ],
-                'taxCalculatorResults' => [
-                    'taxRate' => 0.00,
-                    'addTaxResult' => 0.00,
-                    'removeTaxResult' => 0.00,
-                ],
-                'totalCartPrice' => 0,
-                'expectedResult' => [
-                    'taxRate' => 0.00,
-                    'paymentFeeTaxIncl' => 0.00,
-                    'paymentFeeTaxExcl' => 0.00,
-                    'active' => false,
-                ],
-            ],
-            'success with fixed price' => [
-                'paymentMethod' => [
-                    'surcharge' => Config::FEE_FIXED_FEE,
-                    'surcharge_percentage' => '0',
-                    'surcharge_limit' => '0',
-                    'surcharge_fixed_amount_tax_excl' => 10.00,
-                    'tax_rules_group_id' => 1,
-                ],
-                'taxCalculatorResults' => [
-                    'taxRate' => 10.00,
-                    'addTaxResult' => 11.00,
-                    'removeTaxResult' => 0.00,
-                ],
-                'totalCartPrice' => 10,
-                'expectedResult' => [
-                    'taxRate' => 10.00,
-                    'paymentFeeTaxIncl' => 11.00,
-                    'paymentFeeTaxExcl' => 10.00,
-                    'active' => true,
-                ],
-            ],
-            'success with percentage price' => [
-                'paymentMethod' => [
-                    'surcharge' => Config::FEE_PERCENTAGE,
-                    'surcharge_percentage' => '10',
-                    'surcharge_limit' => 5.00,
-                    'surcharge_fixed_amount_tax_excl' => 0,
-                    'tax_rules_group_id' => 1,
-                ],
-                'taxCalculatorResults' => [
-                    'taxRate' => 10.00,
-                    'addTaxResult' => 1.1,
-                    'removeTaxResult' => 0.00,
-                ],
-                'totalCartPrice' => 10,
-                'expectedResult' => [
-                    'taxRate' => 10.00,
-                    'paymentFeeTaxIncl' => 1.1,
-                    'paymentFeeTaxExcl' => 1.0,
-                    'active' => true,
-                ],
-            ],
-            'success with percentage price with reached limit' => [
-                'paymentMethod' => [
-                    'surcharge' => Config::FEE_PERCENTAGE,
-                    'surcharge_percentage' => '10',
-                    'surcharge_limit' => 11.00,
-                    'surcharge_fixed_amount_tax_excl' => 0,
-                    'tax_rules_group_id' => 1,
-                ],
-                'taxCalculatorResults' => [
-                    'taxRate' => 10.00,
-                    'addTaxResult' => 22.00,
-                    'removeTaxResult' => 10.00,
-                ],
-                'totalCartPrice' => 200,
-                'expectedResult' => [
-                    'taxRate' => 10.00,
-                    'paymentFeeTaxIncl' => 11.00,
-                    'paymentFeeTaxExcl' => 10.00,
-                    'active' => true,
-                ],
-            ],
-            'success with fee and percentage price' => [
-                'paymentMethod' => [
-                    'surcharge' => Config::FEE_FIXED_FEE_AND_PERCENTAGE,
-                    'surcharge_percentage' => '10',
-                    'surcharge_limit' => 100.00,
-                    'surcharge_fixed_amount_tax_excl' => 10.00,
-                    'tax_rules_group_id' => 1,
-                ],
-                'taxCalculatorResults' => [
-                    'taxRate' => 10.00,
-                    'addTaxResult' => 22.00,
-                    'removeTaxResult' => 0.00,
-                ],
-                'totalCartPrice' => 100,
-                'expectedResult' => [
-                    'taxRate' => 10.00,
-                    'paymentFeeTaxIncl' => 22.00,
-                    'paymentFeeTaxExcl' => 20.00,
-                    'active' => true,
-                ],
-            ],
-        ];
+        $this->molPaymentMethod->surcharge = Config::FEE_PERCENTAGE;
+        $this->molPaymentMethod->surcharge_percentage = 10;
+        $this->molPaymentMethod->surcharge_limit = 10;
+        $this->molPaymentMethod->surcharge_fixed_amount_tax_excl = 0;
+        $this->molPaymentMethod->tax_rules_group_id = 1;
+
+        $this->address->id = 1;
+        $this->address->id_country = 1;
+        $this->address->id_state = 0;
+
+        $this->addressRepository->method('findOneBy')->willReturn($this->address);
+
+        $this->taxCalculator->method('removeTaxes')->willReturn(0.9);
+        $this->taxCalculator->method('getTotalRate')->willReturn(10);
+
+        $this->taxCalculatorProvider->method('getTaxCalculator')->willReturn($this->taxCalculator);
+
+        $this->context->method('getCustomerAddressInvoiceId')->willReturn(1);
+        $this->context->method('getComputingPrecision')->willReturn(2);
+
+        $paymentFeeProvider = new PaymentFeeProvider(
+            $this->context,
+            $this->addressRepository,
+            $this->taxCalculatorProvider
+        );
+
+        $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
+
+        $this->assertEquals(1.0, $result->getPaymentFeeTaxIncl());
+        $this->assertEquals(0.9, $result->getPaymentFeeTaxExcl());
+        $this->assertEquals(10.0, $result->getTaxRate());
+        $this->assertEquals(true, $result->isActive());
+    }
+
+    public function testItSuccessfullyProvidesPercentageAndFixedPricePaymentFee(): void
+    {
+        $this->molPaymentMethod->surcharge = Config::FEE_FIXED_FEE_AND_PERCENTAGE;
+        $this->molPaymentMethod->surcharge_percentage = 10;
+        $this->molPaymentMethod->surcharge_limit = 100;
+        $this->molPaymentMethod->surcharge_fixed_amount_tax_excl = 10;
+        $this->molPaymentMethod->tax_rules_group_id = 1;
+
+        $this->address->id = 1;
+        $this->address->id_country = 1;
+        $this->address->id_state = 0;
+
+        $this->addressRepository->method('findOneBy')->willReturn($this->address);
+
+        $this->taxCalculator->method('addTaxes')->willReturn(11.0);
+        $this->taxCalculator->method('removeTaxes')->willReturn(10.8);
+        $this->taxCalculator->method('getTotalRate')->willReturn(10);
+
+        $this->taxCalculatorProvider->method('getTaxCalculator')->willReturn($this->taxCalculator);
+
+        $this->context->method('getCustomerAddressInvoiceId')->willReturn(1);
+        $this->context->method('getComputingPrecision')->willReturn(2);
+
+        $paymentFeeProvider = new PaymentFeeProvider(
+            $this->context,
+            $this->addressRepository,
+            $this->taxCalculatorProvider
+        );
+
+        $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
+
+        $this->assertEquals(12.0, $result->getPaymentFeeTaxIncl());
+        $this->assertEquals(10.8, $result->getPaymentFeeTaxExcl());
+        $this->assertEquals(10.0, $result->getTaxRate());
+        $this->assertEquals(true, $result->isActive());
+    }
+
+    public function testItSuccessfullyProvidesFeeSurchageTypeNotFound(): void
+    {
+        $this->molPaymentMethod->surcharge = 999;
+        $this->molPaymentMethod->surcharge_percentage = 0;
+        $this->molPaymentMethod->surcharge_limit = 0;
+        $this->molPaymentMethod->surcharge_fixed_amount_tax_excl = 0;
+        $this->molPaymentMethod->tax_rules_group_id = 0;
+
+        $this->address->id = 1;
+        $this->address->id_country = 1;
+        $this->address->id_state = 0;
+
+        $this->addressRepository->method('findOneBy')->willReturn($this->address);
+
+        $this->taxCalculatorProvider->method('getTaxCalculator')->willReturn($this->taxCalculator);
+
+        $this->context->method('getCustomerAddressInvoiceId')->willReturn(1);
+        $this->context->method('getComputingPrecision')->willReturn(2);
+
+        $paymentFeeProvider = new PaymentFeeProvider(
+            $this->context,
+            $this->addressRepository,
+            $this->taxCalculatorProvider
+        );
+
+        $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
+
+        $this->assertEquals(0.0, $result->getPaymentFeeTaxIncl());
+        $this->assertEquals(0.0, $result->getPaymentFeeTaxExcl());
+        $this->assertEquals(0.0, $result->getTaxRate());
+        $this->assertEquals(false, $result->isActive());
+    }
+
+    public function testItUnsuccessfullyProvidesFeeAddressNotFound(): void
+    {
+        $this->molPaymentMethod->surcharge_percentage = 0;
+        $this->molPaymentMethod->surcharge_limit = 0;
+        $this->molPaymentMethod->surcharge_fixed_amount_tax_excl = 0;
+
+        $this->addressRepository->method('findOneBy')->willReturn(null);
+
+        $paymentFeeProvider = new PaymentFeeProvider(
+            $this->context,
+            $this->addressRepository,
+            $this->taxCalculatorProvider
+        );
+
+        $this->expectException(FailedToProvidePaymentFeeException::class);
+        $this->expectExceptionCode(ExceptionCode::FAILED_TO_FIND_CUSTOMER_ADDRESS);
+
+        $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
     }
 }

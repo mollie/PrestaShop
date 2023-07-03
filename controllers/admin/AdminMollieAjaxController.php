@@ -19,7 +19,6 @@ use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\MolliePaymentMailService;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TimeUtility;
-use PrestaShop\Decimal\Operation\Rounding;
 
 class AdminMollieAjaxController extends ModuleAdminController
 {
@@ -215,19 +214,16 @@ class AdminMollieAjaxController extends ModuleAdminController
             $paymentFeeTaxExcl = $taxCalculator->removeTaxes($paymentFeeTaxIncl);
         }
 
-        $paymentFeeTaxInclDecimal = NumberUtility::getNumber($paymentFeeTaxIncl);
-        $paymentFeeTaxExclDecimal = NumberUtility::getNumber($paymentFeeTaxExcl);
-
         $this->ajaxRender(
             json_encode([
                 'error' => false,
-                'paymentFeeTaxIncl' => $paymentFeeTaxInclDecimal->toPrecision(
-                    $context->getComputingPrecision(),
-                    Rounding::ROUND_HALF_UP
+                'paymentFeeTaxIncl' => NumberUtility::toPrecision(
+                    $paymentFeeTaxIncl,
+                    $context->getComputingPrecision()
                 ),
-                'paymentFeeTaxExcl' => $paymentFeeTaxExclDecimal->toPrecision(
-                    $context->getComputingPrecision(),
-                    Rounding::ROUND_HALF_UP
+                'paymentFeeTaxExcl' => NumberUtility::toPrecision(
+                    $paymentFeeTaxExcl,
+                    $context->getComputingPrecision()
                 ),
             ])
         );

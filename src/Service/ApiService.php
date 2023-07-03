@@ -31,7 +31,6 @@ use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\Utility\NumberUtility;
 use MolPaymentMethod;
-use PrestaShop\Decimal\Operation\Rounding;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
@@ -147,11 +146,17 @@ class ApiService implements ApiServiceInterface
                 'issuers' => $apiMethod->issuers,
                 'tipEnableSSL' => $tipEnableSSL,
                 'minimumAmount' => $apiMethod->minimumAmount ? [
-                    'value' => $apiMethod->minimumAmount->value,
+                    'value' => NumberUtility::toPrecision(
+                        $apiMethod->minimumAmount->value,
+                        $this->context->getComputingPrecision()
+                    ),
                     'currency' => $apiMethod->minimumAmount->currency,
                 ] : false,
                 'maximumAmount' => $apiMethod->maximumAmount ? [
-                    'value' => $apiMethod->maximumAmount->value,
+                    'value' => NumberUtility::toPrecision(
+                        $apiMethod->maximumAmount->value,
+                        $this->context->getComputingPrecision()
+                    ),
                     'currency' => $apiMethod->maximumAmount->currency,
                 ] : false,
                 'surcharge_fixed_amount_tax_incl' => 0,
@@ -197,11 +202,23 @@ class ApiService implements ApiServiceInterface
             if ($paymentId) {
                 $paymentMethod = new MolPaymentMethod((int) $paymentId);
 
+                $paymentMethod = $this->toPrecisionForDecimalNumbers($paymentMethod);
+
                 if (!empty($paymentMethod->surcharge_fixed_amount_tax_excl)) {
                     $apiMethod['surcharge_fixed_amount_tax_incl'] = $this->getSurchargeFixedAmountTaxInclPrice(
                         $paymentMethod->surcharge_fixed_amount_tax_excl,
                         $paymentMethod->tax_rules_group_id,
                         $this->context->getCountryId()
+                    );
+
+                    $paymentMethod->surcharge_fixed_amount_tax_excl = NumberUtility::toPrecision(
+                        $paymentMethod->surcharge_fixed_amount_tax_excl,
+                        $this->context->getComputingPrecision()
+                    );
+
+                    $apiMethod['surcharge_fixed_amount_tax_incl'] = NumberUtility::toPrecision(
+                        $apiMethod['surcharge_fixed_amount_tax_incl'],
+                        $this->context->getComputingPrecision()
                     );
                 }
 
@@ -407,7 +424,34 @@ class ApiService implements ApiServiceInterface
             0 // NOTE: there is no default state for back office so setting no state
         );
 
-        return (float) (NumberUtility::getNumber($taxCalculator->addTaxes($priceTaxExcl)))
-            ->toPrecision($this->context->getComputingPrecision(), Rounding::ROUND_HALF_UP);
+        return NumberUtility::toPrecision(
+            $taxCalculator->addTaxes($priceTaxExcl),
+            $this->context->getComputingPrecision()
+        );
+    }
+
+    private function toPrecisionForDecimalNumbers(MolPaymentMethod $paymentMethod): MolPaymentMethod
+    {
+        $paymentMethod->surcharge_percentage = (string) NumberUtility::toPrecision(
+            (float) $paymentMethod->surcharge_percentage,
+            $this->context->getComputingPrecision()
+        );
+
+        $paymentMethod->surcharge_limit = (string) NumberUtility::toPrecision(
+            (float) $paymentMethod->surcharge_limit,
+            $this->context->getComputingPrecision()
+        );
+
+        $paymentMethod->min_amount = NumberUtility::toPrecision(
+            $paymentMethod->min_amount,
+            $this->context->getComputingPrecision()
+        );
+
+        $paymentMethod->max_amount = NumberUtility::toPrecision(
+            $paymentMethod->max_amount,
+            $this->context->getComputingPrecision()
+        );
+
+        return $paymentMethod;
     }
 }

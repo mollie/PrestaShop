@@ -43,11 +43,7 @@ use MolPaymentMethod;
 interface PaymentFeeProviderInterface
 {
     /**
-     * @param MolPaymentMethod $paymentMethod
-     *
-     * @return PaymentFeeData
-     *
      * @throws FailedToProvidePaymentFeeException
      */
-    public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPrice): PaymentFeeData;
+    public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl): PaymentFeeData;
 }

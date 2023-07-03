@@ -69,7 +69,7 @@ final class DatabaseTableInstaller implements InstallerInterface
 				`minimal_order_value` decimal(20,6),
 				`max_order_value` decimal(20,6),
 				`surcharge` INT(10),
-				`surcharge_fixed_amount_tax_excl` decimal(20,2),
+				`surcharge_fixed_amount_tax_excl` decimal(20,6),
 				`tax_rules_group_id` INT(10),
 				`surcharge_percentage` decimal(20,6),
 				`surcharge_limit` decimal(20,6),
