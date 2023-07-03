@@ -30,14 +30,14 @@ function upgrade_module_6_0_1(Mollie $module): bool
     $configuration->updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT['production'], Configuration::get('MOLLIE_SINGLE_CLICK_PAYMENT'));
     $configuration->updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT['sandbox'], Configuration::get('MOLLIE_SINGLE_CLICK_PAYMENT'));
 
-    if (!modifyExistingTables()) {
+    if (!modifyExistingTables601()) {
         return false;
     }
 
     return true;
 }
 
-function modifyExistingTables(): bool
+function modifyExistingTables601(): bool
 {
     $sql = '
     SELECT COUNT(*) > 0 AS count
