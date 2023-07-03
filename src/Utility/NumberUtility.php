@@ -155,7 +155,7 @@ class NumberUtility
         return $firstNumber->isLowerOrEqualThan($secondNumber);
     }
 
-    public static function isGreaterThan(float $target, float $comparison): float
+    public static function isGreaterThan(float $target, float $comparison): bool
     {
         $firstNumber = self::toObject($target);
         $secondNumber = self::toObject($comparison);

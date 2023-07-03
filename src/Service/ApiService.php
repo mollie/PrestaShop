@@ -428,22 +428,22 @@ class ApiService implements ApiServiceInterface
     private function setPrecisionForDecimalNumbers(MolPaymentMethod $paymentMethod): MolPaymentMethod
     {
         $paymentMethod->surcharge_percentage = (string) NumberUtility::setDecimalPrecision(
-            $paymentMethod->surcharge_percentage,
+            (float) $paymentMethod->surcharge_percentage,
             self::DECIMAL_PRECISION_TO_DISPLAY
         );
 
         $paymentMethod->surcharge_limit = (string) NumberUtility::setDecimalPrecision(
-            $paymentMethod->surcharge_percentage,
+            (float) $paymentMethod->surcharge_limit,
             self::DECIMAL_PRECISION_TO_DISPLAY
         );
 
         $paymentMethod->min_amount = NumberUtility::setDecimalPrecision(
-            $paymentMethod->surcharge_percentage,
+            $paymentMethod->min_amount,
             self::DECIMAL_PRECISION_TO_DISPLAY
         );
 
         $paymentMethod->max_amount = NumberUtility::setDecimalPrecision(
-            $paymentMethod->surcharge_percentage,
+            $paymentMethod->max_amount,
             self::DECIMAL_PRECISION_TO_DISPLAY
         );
 
