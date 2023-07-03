@@ -26,7 +26,7 @@ class PaymentFeeCalculator
     {
         $totalFeePriceTaxIncl = $this->taxCalculator->addTaxes($totalFeePriceTaxExcl);
 
-        return $this->returnFormattedResult(
+        return $this->buildPaymentFee(
             $totalFeePriceTaxIncl,
             $totalFeePriceTaxExcl
         );
@@ -51,7 +51,7 @@ class PaymentFeeCalculator
 
         $totalFeePriceTaxExcl = $this->taxCalculator->removeTaxes($totalFeePriceTaxIncl);
 
-        return $this->returnFormattedResult(
+        return $this->buildPaymentFee(
             $totalFeePriceTaxIncl,
             $totalFeePriceTaxExcl
         );
@@ -79,18 +79,18 @@ class PaymentFeeCalculator
 
         $totalFeePriceTaxExcl = $this->taxCalculator->removeTaxes($totalFeePriceTaxIncl);
 
-        return $this->returnFormattedResult(
+        return $this->buildPaymentFee(
             $totalFeePriceTaxIncl,
             $totalFeePriceTaxExcl
         );
     }
 
-    public function calculateSurchargeMaxValue(float $surchargeMaxValue): PaymentFeeData
+    private function calculateSurchargeMaxValue(float $surchargeMaxValue): PaymentFeeData
     {
         $totalFeePriceTaxIncl = $surchargeMaxValue;
         $totalFeePriceTaxExcl = $this->taxCalculator->removeTaxes($totalFeePriceTaxIncl);
 
-        return $this->returnFormattedResult(
+        return $this->buildPaymentFee(
             $totalFeePriceTaxIncl,
             $totalFeePriceTaxExcl
         );
@@ -107,15 +107,17 @@ class PaymentFeeCalculator
         return false;
     }
 
-    private function returnFormattedResult(
+    private function buildPaymentFee(
         float $totalFeePriceTaxIncl,
         float $totalFeePriceTaxExcl
     ): PaymentFeeData {
+        $isPaymentFeeActive = $totalFeePriceTaxIncl > 0 && $totalFeePriceTaxExcl > 0;
+
         return new PaymentFeeData(
             NumberUtility::toPrecision($totalFeePriceTaxIncl, $this->context->getComputingPrecision()),
             NumberUtility::toPrecision($totalFeePriceTaxExcl, $this->context->getComputingPrecision()),
             $this->taxCalculator->getTotalRate(),
-            $totalFeePriceTaxIncl > 0 && $totalFeePriceTaxExcl > 0
+            $isPaymentFeeActive
         );
     }
 }
