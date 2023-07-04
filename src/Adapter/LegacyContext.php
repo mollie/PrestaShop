@@ -37,6 +37,7 @@
 namespace Mollie\Adapter;
 
 use Context;
+use Product;
 
 class LegacyContext
 {
@@ -105,5 +106,21 @@ class LegacyContext
     public function getSmarty()
     {
         return $this->getContext()->smarty;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProductLink(Product $product)
+    {
+        return $this->getContext()->link->getProductLink($product);
+    }
+
+    /**
+     * @return string
+     */
+    public function getImageLink(string $name, string $ids, string $type = null)
+    {
+        return $this->getContext()->link->getImageLink($name, $ids, $type);
     }
 }

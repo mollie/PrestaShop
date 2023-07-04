@@ -19,6 +19,7 @@ use Context;
 use Country;
 use Currency;
 use Customer;
+use Gender;
 use Mollie;
 use Mollie\Api\Resources\BaseCollection;
 use Mollie\Api\Resources\MethodCollection;
@@ -30,6 +31,7 @@ use Mollie\DTO\PaymentData;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\PhoneNumberProviderInterface;
+use Mollie\Repository\GenderRepositoryInterface;
 use Mollie\Repository\MethodCountryRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
@@ -103,6 +105,8 @@ class PaymentMethodService
      * @var Shop
      */
     private $shop;
+    /** @var GenderRepositoryInterface */
+    private $genderRepository;
 
     public function __construct(
         Mollie $module,
@@ -116,7 +120,8 @@ class PaymentMethodService
         PhoneNumberProviderInterface $phoneNumberProvider,
         PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation,
         Country $country,
-        Shop $shop
+        Shop $shop,
+        GenderRepositoryInterface $genderRepository
     ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
@@ -130,6 +135,7 @@ class PaymentMethodService
         $this->paymentMethodRestrictionValidation = $paymentMethodRestrictionValidation;
         $this->country = $country;
         $this->shop = $shop;
+        $this->genderRepository = $genderRepository;
     }
 
     public function savePaymentMethod($method)
@@ -360,8 +366,20 @@ class PaymentMethodService
             $orderData->setOrderNumber($orderReference);
             $orderData->setLocale($this->getLocale($molPaymentMethod->method));
             $orderData->setEmail($customer->email);
+
+            /** @var Gender|null $gender */
+            $gender = $this->genderRepository->findOneBy(['id_gender' => $customer->id_gender]);
+
+            if (!empty($gender) && isset($gender->name[$cart->id_lang])) {
+                $orderData->setTitle((string) $gender->name[$cart->id_lang]);
+            }
+
             $orderData->setMethod($molPaymentMethod->id_method);
             $orderData->setMetadata($metaData);
+
+            if (!empty($customer->birthday) && $customer->birthday !== '0000-00-00') {
+                $orderData->setConsumerDateOfBirth((string) $customer->birthday);
+            }
 
             $currency = new Currency($cart->id_currency);
             $selectedVoucherCategory = Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY);
