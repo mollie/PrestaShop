@@ -143,8 +143,6 @@ services:
   Mollie\Logger\PrestaLogger:
     class: Mollie\Logger\PrestaLogger
 
-  Psr\Log\LoggerInterface: '@Mollie\Logger\PrestaLogger'
-
   Mollie\Service\TransactionService:
     class: Mollie\Service\TransactionService
     arguments:
@@ -156,6 +154,8 @@ services:
       - '@Mollie\Service\MollieOrderCreationService'
       - '@Mollie\Handler\Order\OrderFeeHandler'
       - '@Mollie\Handler\Shipment\ShipmentSenderHandlerInterface'
+      - '@Mollie\Logger\PrestaLoggerInterface'
+      - '@Mollie\Service\ExceptionService'
 
   Mollie\Service\MolliePaymentMailService:
     class: Mollie\Service\MolliePaymentMailService

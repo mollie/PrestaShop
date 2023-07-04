@@ -17,12 +17,8 @@ use Exception;
 class ShipmentCannotBeSentException extends Exception
 {
     const NO_SHIPPING_INFORMATION = 1;
-
-    const AUTOMATIC_SHIPMENT_SENDER_IS_NOT_AVAILABLE = 2;
-
-    const ORDER_HAS_NO_PAYMENT_INFORMATION = 3;
-
-    const PAYMENT_IS_NOT_ORDER = 4;
+    const ORDER_HAS_NO_PAYMENT_INFORMATION = 2;
+    const PAYMENT_IS_NOT_ORDER = 3;
 
     /**
      * @var string

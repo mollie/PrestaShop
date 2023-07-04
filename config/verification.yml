@@ -2,6 +2,11 @@ services:
   _defaults:
     public: true
 
+  Mollie\Verification\IsPaymentInformationAvailable:
+    class: Mollie\Verification\IsPaymentInformationAvailable
+    arguments:
+      - '@Mollie\Repository\PaymentMethodRepositoryInterface'
+
   Mollie\Verification\Shipment\CanSendShipment:
     class: Mollie\Verification\Shipment\CanSendShipment
     arguments:
@@ -10,6 +15,7 @@ services:
       - '@Mollie\Handler\Api\OrderEndpointPaymentTypeHandler'
       - '@Mollie\Repository\PaymentMethodRepositoryInterface'
       - '@Mollie\Service\ShipmentService'
+      - '@Mollie\Verification\IsPaymentInformationAvailable'
     tags:
       - { name: 'shipment.information.verification' }
 

@@ -22,8 +22,6 @@ services:
     arguments:
       - '@Mollie\Verification\Shipment\CanSendShipment'
       - '@Mollie\Service\Shipment\ShipmentInformationSender'
-      - '@Mollie\Service\ExceptionService'
-      - '@Mollie\Logger\PrestaLogger'
 
   Mollie\Handler\Shipment\ShipmentSenderHandlerInterface: '@Mollie\Handler\Shipment\ShipmentSenderHandler'
 
