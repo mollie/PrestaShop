@@ -57,4 +57,8 @@ services:
   Mollie\Repository\CurrencyRepository:
     class: Mollie\Repository\CurrencyRepository
 
+  Mollie\Repository\GenderRepository:
+    class: Mollie\Repository\GenderRepository
+
   Mollie\Repository\CurrencyRepositoryInterface: '@Mollie\Repository\CurrencyRepository'
+  Mollie\Repository\GenderRepositoryInterface: '@Mollie\Repository\GenderRepository'
