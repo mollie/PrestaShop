@@ -12,6 +12,7 @@
 
 namespace Mollie\Service\Shipment;
 
+use Mollie\Api\MollieApiClient;
 use Mollie\Api\Resources\Order as ApiOrder;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ShipmentServiceInterface;
@@ -40,12 +41,14 @@ class ShipmentInformationSender implements ShipmentInformationSenderInterface
     /**
      * {@inheritDoc}
      */
-    public function sendShipmentInformation($apiGateway, Order $order)
+    public function sendShipmentInformation(MollieApiClient $apiGateway, Order $order)
     {
         if (empty($apiGateway)) {
             return;
         }
+
         $payment = $this->paymentMethodRepository->getPaymentBy('order_id', (int) $order->id);
+
         $apiOrder = $apiGateway->orders->get($payment['transaction_id']);
 
         if (empty($apiOrder)) {

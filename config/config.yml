@@ -1,5 +1,5 @@
-
 imports:
+  - { resource: logger.yml }
   - { resource: builder.yml }
   - { resource: service.yml }
   - { resource: repository.yml }

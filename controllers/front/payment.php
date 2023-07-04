@@ -125,7 +125,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             } else {
                 /** @var ExceptionService $exceptionService */
                 $exceptionService = $this->module->getMollieContainer(ExceptionService::class);
-                $message = $exceptionService->getErrorMessageForException($e, $exceptionService->getErrorMessages());
+                $message = $exceptionService->getErrorMessageForException($e);
             }
             $this->errors[] = $message;
 

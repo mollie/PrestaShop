@@ -1,0 +1,8 @@
+services:
+  _defaults:
+    public: true
+
+  Mollie\Logger\PrestaLogger:
+      class: Mollie\Logger\PrestaLogger
+
+  Mollie\Logger\PrestaLoggerInterface: '@Mollie\Logger\PrestaLogger'

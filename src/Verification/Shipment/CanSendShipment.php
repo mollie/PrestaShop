@@ -21,6 +21,7 @@ use Mollie\Handler\Api\OrderEndpointPaymentTypeHandlerInterface;
 use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ShipmentServiceInterface;
+use Mollie\Verification\IsPaymentInformationAvailable;
 use Order;
 use OrderState;
 use PrestaShopLogger;
@@ -51,19 +52,23 @@ class CanSendShipment implements ShipmentVerificationInterface
      * @var ShipmentServiceInterface
      */
     private $shipmentService;
+    /** @var IsPaymentInformationAvailable */
+    private $isPaymentInformationAvailable;
 
     public function __construct(
         ConfigurationAdapter $configurationAdapter,
         AutomaticShipmentSenderStatusesProviderInterface $automaticShipmentSenderStatusesProvider,
         OrderEndpointPaymentTypeHandlerInterface $endpointPaymentTypeHandler,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
-        ShipmentServiceInterface $shipmentService
+        ShipmentServiceInterface $shipmentService,
+        IsPaymentInformationAvailable $isPaymentInformationAvailable
     ) {
         $this->automaticShipmentSenderStatusesProvider = $automaticShipmentSenderStatusesProvider;
         $this->configurationAdapter = $configurationAdapter;
         $this->endpointPaymentTypeHandler = $endpointPaymentTypeHandler;
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->shipmentService = $shipmentService;
+        $this->isPaymentInformationAvailable = $isPaymentInformationAvailable;
     }
 
     /**
@@ -77,15 +82,15 @@ class CanSendShipment implements ShipmentVerificationInterface
         //		}
 
         if (!$this->isAutomaticShipmentAvailable($orderState->id)) {
-            throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Automatic shipment sender is not available', ShipmentCannotBeSentException::AUTOMATIC_SHIPMENT_SENDER_IS_NOT_AVAILABLE, $order->reference);
-        }
-
-        if (!$this->hasPaymentInformation($order->id)) {
             return false;
         }
 
-        if (!$this->isRegularPayment($order->id)) {
-            return false;
+        if (!$this->isPaymentInformationAvailable->verify((int) $order->id)) {
+            throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Missing payment information', ShipmentCannotBeSentException::ORDER_HAS_NO_PAYMENT_INFORMATION, $order->reference);
+        }
+
+        if (!$this->isRegularPayment((int) $order->id)) {
+            throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Is regular payment', ShipmentCannotBeSentException::PAYMENT_IS_NOT_ORDER, $order->reference);
         }
 
         return true;
@@ -96,20 +101,17 @@ class CanSendShipment implements ShipmentVerificationInterface
      *
      * @return bool
      */
-    private function isRegularPayment($orderId)
+    private function isRegularPayment(int $orderId)
     {
         $payment = $this->paymentMethodRepository->getPaymentBy('order_id', (int) $orderId);
 
         if (empty($payment)) {
             return false;
         }
-        $paymentType = $this->endpointPaymentTypeHandler->getPaymentTypeFromTransactionId($payment['transaction_id']);
 
-        if ((int) $paymentType !== PaymentTypeEnum::PAYMENT_TYPE_ORDER) {
-            return false;
-        }
+        $paymentType = (int) $this->endpointPaymentTypeHandler->getPaymentTypeFromTransactionId($payment['transaction_id']);
 
-        return true;
+        return $paymentType === PaymentTypeEnum::PAYMENT_TYPE_ORDER;
     }
 
     /**
@@ -117,7 +119,7 @@ class CanSendShipment implements ShipmentVerificationInterface
      *
      * @return bool
      */
-    private function isAutomaticShipmentAvailable($orderStateId)
+    private function isAutomaticShipmentAvailable(int $orderStateId)
     {
         if (!$this->isAutomaticShipmentInformationSenderEnabled()) {
             return false;
@@ -131,31 +133,11 @@ class CanSendShipment implements ShipmentVerificationInterface
     }
 
     /**
-     * @param int $orderId
-     *
-     * @return bool
-     */
-    private function hasPaymentInformation($orderId)
-    {
-        $payment = $this->paymentMethodRepository->getPaymentBy('order_id', (int) $orderId);
-
-        if (empty($payment)) {
-            return false;
-        }
-
-        if (empty($payment['transaction_id'])) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * @param string $orderReference
      *
      * @return bool
      */
-    private function hasShipmentInformation($orderReference)
+    private function hasShipmentInformation(string $orderReference)
     {
         try {
             return !empty($this->shipmentService->getShipmentInformation($orderReference));
@@ -179,11 +161,15 @@ class CanSendShipment implements ShipmentVerificationInterface
      *
      * @return bool
      */
-    private function isOrderStateInAutomaticShipmentSenderOrderStateList($orderStateId)
+    private function isOrderStateInAutomaticShipmentSenderOrderStateList(int $orderStateId)
     {
         return in_array(
-            (int) $orderStateId,
-            array_map('intval', $this->automaticShipmentSenderStatusesProvider->getAutomaticShipmentSenderStatuses())
+            $orderStateId,
+            array_map(
+                'intval',
+                $this->automaticShipmentSenderStatusesProvider->getAutomaticShipmentSenderStatuses()
+            ),
+            true
         );
     }
 }

@@ -10,10 +10,16 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Api\Exceptions\ApiException;
 use Mollie\Config\Config;
+use Mollie\Exception\ShipmentCannotBeSentException;
+use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
+use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Service\ExceptionService;
 use Mollie\Utility\PsVersionUtility;
+use Mollie\Verification\IsPaymentInformationAvailable;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -637,9 +643,9 @@ class Mollie extends PaymentModule
      *
      * @since 3.3.0
      */
-    public function hookActionOrderStatusUpdate($params = [])
+    public function hookActionOrderStatusUpdate(array $params = [])
     {
-        if (!isset($params['newOrderStatus']) || !isset($params['id_order'])) {
+        if (!isset($params['newOrderStatus'], $params['id_order'])) {
             return;
         }
 
@@ -648,6 +654,7 @@ class Mollie extends PaymentModule
         } else {
             $orderStatus = new OrderState((int) $params['newOrderStatus']);
         }
+
         $order = new Order($params['id_order']);
 
         if (!Validate::isLoadedObject($orderStatus)) {
@@ -658,32 +665,40 @@ class Mollie extends PaymentModule
             return;
         }
 
-        $idOrder = $params['id_order'];
-        $order = new Order($idOrder);
-        $checkStatuses = [];
-        if (Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES)) {
-            $checkStatuses = @json_decode(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_STATUSES));
-        }
-        if (!is_array($checkStatuses)) {
-            $checkStatuses = [];
-        }
-        if (!(Configuration::get(Mollie\Config\Config::MOLLIE_AUTO_SHIP_MAIN) && in_array($orderStatus->id, $checkStatuses))
-        ) {
-            return;
-        }
-
-        /** @var \Mollie\Handler\Shipment\ShipmentSenderHandlerInterface $shipmentSenderHandler */
-        $shipmentSenderHandler = $this->getMollieContainer(
-            Mollie\Handler\Shipment\ShipmentSenderHandlerInterface::class
-        );
-
         if (!$this->api) {
             return;
         }
+
+        /** @var IsPaymentInformationAvailable $isPaymentInformationAvailable */
+        $isPaymentInformationAvailable = $this->getMollieContainer(IsPaymentInformationAvailable::class);
+
+        if (!$isPaymentInformationAvailable->verify((int) $order->id)) {
+            return;
+        }
+
+        /** @var ShipmentSenderHandlerInterface $shipmentSenderHandler */
+        $shipmentSenderHandler = $this->getMollieContainer(ShipmentSenderHandlerInterface::class);
+
+        /** @var ExceptionService $exceptionService */
+        $exceptionService = $this->getMollieContainer(ExceptionService::class);
+
+        /** @var PrestaLoggerInterface $logger */
+        $logger = $this->getMollieContainer(PrestaLoggerInterface::class);
+
         try {
             $shipmentSenderHandler->handleShipmentSender($this->api, $order, $orderStatus);
-        } catch (Exception $e) {
-            //todo: we logg error in handleShipment
+        } catch (ShipmentCannotBeSentException $exception) {
+            $logger->error($exceptionService->getErrorMessageForException(
+                $exception,
+                [],
+                ['orderReference' => $order->reference]
+            ));
+
+            return;
+        } catch (ApiException $exception) {
+            $logger->error($exception->getMessage());
+
+            return;
         }
     }
 
