@@ -37,7 +37,7 @@
 namespace Mollie\Handler\PaymentOption;
 
 use Configuration;
-use Customer;
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
 use Mollie\Provider\PaymentOption\BancontactPaymentOptionProvider;
@@ -45,7 +45,6 @@ use Mollie\Provider\PaymentOption\BasePaymentOptionProvider;
 use Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider;
 use Mollie\Provider\PaymentOption\CreditCardSingleClickPaymentOptionProvider;
 use Mollie\Provider\PaymentOption\IdealPaymentOptionProvider;
-use Mollie\Repository\MolCustomerRepository;
 use MolPaymentMethod;
 
 class PaymentOptionHandler implements PaymentOptionHandlerInterface
@@ -65,36 +64,28 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
      */
     private $idealPaymentOptionProvider;
     /**
-     * @var MolCustomerRepository
-     */
-    private $customerRepository;
-    /**
-     * @var Customer
-     */
-    private $customer;
-    /**
      * @var CreditCardSingleClickPaymentOptionProvider
      */
     private $cardSingleClickPaymentOptionProvider;
     /** @var BancontactPaymentOptionProvider */
     private $bancontactPaymentOptionProvider;
+    /** @var ConfigurationAdapter */
+    private $configurationAdapter;
 
     public function __construct(
         BasePaymentOptionProvider $basePaymentOptionProvider,
         CreditCardPaymentOptionProvider $creditCardPaymentOptionProvider,
         CreditCardSingleClickPaymentOptionProvider $cardSingleClickPaymentOptionProvider,
         IdealPaymentOptionProvider $idealPaymentOptionProvider,
-        MolCustomerRepository $customerRepository,
-        Customer $customer,
-        BancontactPaymentOptionProvider $bancontactPaymentOptionProvider
+        BancontactPaymentOptionProvider $bancontactPaymentOptionProvider,
+        ConfigurationAdapter $configurationAdapter
     ) {
         $this->basePaymentOptionProvider = $basePaymentOptionProvider;
         $this->creditCardPaymentOptionProvider = $creditCardPaymentOptionProvider;
         $this->idealPaymentOptionProvider = $idealPaymentOptionProvider;
-        $this->customerRepository = $customerRepository;
-        $this->customer = $customer;
         $this->cardSingleClickPaymentOptionProvider = $cardSingleClickPaymentOptionProvider;
         $this->bancontactPaymentOptionProvider = $bancontactPaymentOptionProvider;
+        $this->configurationAdapter = $configurationAdapter;
     }
 
     /**
@@ -131,7 +122,7 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
             return false;
         }
 
-        if (Configuration::get(Config::MOLLIE_ISSUERS) !== Config::ISSUERS_ON_CLICK) {
+        if ($this->configurationAdapter->get(Config::MOLLIE_ISSUERS) !== Config::ISSUERS_ON_CLICK) {
             return false;
         }
 
@@ -165,7 +156,7 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
 
     private function isIFrame()
     {
-        if (!Configuration::get(Config::MOLLIE_IFRAME)) {
+        if (!(int) $this->configurationAdapter->get(Config::MOLLIE_IFRAME)) {
             return false;
         }
 
@@ -174,7 +165,7 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
 
     private function isSingleClick()
     {
-        if (!Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT)) {
+        if (!(int) $this->configurationAdapter->get(Config::MOLLIE_SINGLE_CLICK_PAYMENT)) {
             return false;
         }
 

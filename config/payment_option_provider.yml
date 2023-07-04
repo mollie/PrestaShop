@@ -38,6 +38,7 @@ services:
       - '@Mollie\Service\LanguageService'
       - '@mollie.customer'
       - '@Mollie\Repository\MolCustomerRepository'
+      - '@Mollie\Adapter\ConfigurationAdapter'
 
   Mollie\Provider\PaymentOption\CreditCardSingleClickPaymentOptionProvider:
     class: Mollie\Provider\PaymentOption\CreditCardSingleClickPaymentOptionProvider
@@ -50,6 +51,7 @@ services:
       - '@Mollie\Service\LanguageService'
       - '@mollie.customer'
       - '@Mollie\Repository\MolCustomerRepository'
+      - '@Mollie\Adapter\ConfigurationAdapter'
 
   Mollie\Provider\PaymentOption\BancontactPaymentOptionProvider:
     class: Mollie\Provider\PaymentOption\BancontactPaymentOptionProvider

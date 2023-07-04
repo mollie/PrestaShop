@@ -13,7 +13,6 @@ services:
     arguments:
       - '@mollie'
       - '@Mollie\Repository\PaymentMethodRepository'
-      - '@Mollie\Repository\MethodCountryRepository'
       - '@Mollie\Service\CartLinesService'
       - '@Mollie\Service\PaymentsTranslationService'
       - '@Mollie\Service\CustomerService'
@@ -21,8 +20,9 @@ services:
       - '@Mollie\Service\PaymentMethod\PaymentMethodSortProvider'
       - '@Mollie\Provider\PhoneNumberProvider'
       - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation'
-      - '@mollie.country'
       - '@mollie.shop'
+      - '@Mollie\Repository\GenderRepositoryInterface'
+      - '@Mollie\Adapter\ConfigurationAdapter'
 
   Mollie\Service\ApiService:
     class: Mollie\Service\ApiService
@@ -40,6 +40,7 @@ services:
       - '@mollie'
       - '@Mollie\Service\ApiService'
       - '@Mollie\Repository\CountryRepository'
+      - '@Mollie\Adapter\ConfigurationAdapter'
 
   Mollie\Service\IssuerService:
     class: Mollie\Service\IssuerService
@@ -96,6 +97,7 @@ services:
       - '@Mollie\Service\ApiKeyService'
       - '@Mollie\Handler\Certificate\CertificateHandlerInterface'
       - '@mollie.shop'
+      - '@Mollie\Adapter\ConfigurationAdapter'
 
   Mollie\Service\ShipmentService:
     class: Mollie\Service\ShipmentService
@@ -109,6 +111,7 @@ services:
       - '@Mollie\Service\LanguageService'
       - '@Mollie\Service\VoucherService'
       - '@Mollie\Adapter\ToolsAdapter'
+      - '@mollie.adapter.context'
 
   Mollie\Service\CustomerService:
     class: Mollie\Service\CustomerService

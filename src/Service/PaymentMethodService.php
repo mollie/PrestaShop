@@ -21,6 +21,7 @@ use Currency;
 use Customer;
 use Gender;
 use Mollie;
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Resources\BaseCollection;
 use Mollie\Api\Resources\MethodCollection;
 use Mollie\Api\Types\PaymentMethod;
@@ -32,7 +33,6 @@ use Mollie\Exception\OrderCreationException;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\PhoneNumberProviderInterface;
 use Mollie\Repository\GenderRepositoryInterface;
-use Mollie\Repository\MethodCountryRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
@@ -61,11 +61,6 @@ class PaymentMethodService
     private $methodRepository;
 
     /**
-     * @var MethodCountryRepository
-     */
-    private $methodCountryRepository;
-
-    /**
      * @var CartLinesService
      */
     private $cartLinesService;
@@ -87,8 +82,6 @@ class PaymentMethodService
 
     private $paymentMethodSortProvider;
 
-    private $countryRepository;
-
     private $phoneNumberProvider;
 
     /**
@@ -97,21 +90,17 @@ class PaymentMethodService
     private $paymentMethodRestrictionValidation;
 
     /**
-     * @var \Country
-     */
-    private $country;
-
-    /**
      * @var Shop
      */
     private $shop;
     /** @var GenderRepositoryInterface */
     private $genderRepository;
+    /** @var ConfigurationAdapter */
+    private $configurationAdapter;
 
     public function __construct(
         Mollie $module,
         PaymentMethodRepositoryInterface $methodRepository,
-        MethodCountryRepository $methodCountryRepository,
         CartLinesService $cartLinesService,
         PaymentsTranslationService $paymentsTranslationService,
         CustomerService $customerService,
@@ -119,13 +108,12 @@ class PaymentMethodService
         PaymentMethodSortProviderInterface $paymentMethodSortProvider,
         PhoneNumberProviderInterface $phoneNumberProvider,
         PaymentMethodRestrictionValidationInterface $paymentMethodRestrictionValidation,
-        Country $country,
         Shop $shop,
-        GenderRepositoryInterface $genderRepository
+        GenderRepositoryInterface $genderRepository,
+        ConfigurationAdapter $configurationAdapter
     ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
-        $this->methodCountryRepository = $methodCountryRepository;
         $this->cartLinesService = $cartLinesService;
         $this->paymentsTranslationService = $paymentsTranslationService;
         $this->customerService = $customerService;
@@ -133,9 +121,9 @@ class PaymentMethodService
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
         $this->phoneNumberProvider = $phoneNumberProvider;
         $this->paymentMethodRestrictionValidation = $paymentMethodRestrictionValidation;
-        $this->country = $country;
         $this->shop = $shop;
         $this->genderRepository = $genderRepository;
+        $this->configurationAdapter = $configurationAdapter;
     }
 
     public function savePaymentMethod($method)
@@ -501,7 +489,7 @@ class PaymentMethodService
      */
     public function handleCustomerInfo(int $customerId, bool $saveCard, bool $useSavedCard)
     {
-        $isSingleClickPaymentEnabled = (bool) Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
+        $isSingleClickPaymentEnabled = (bool) (int) $this->configurationAdapter->get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
         if (!$this->isCustomerSaveEnabled($isSingleClickPaymentEnabled)) {
             return null;
         }

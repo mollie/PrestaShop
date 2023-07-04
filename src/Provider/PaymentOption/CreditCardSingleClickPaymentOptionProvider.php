@@ -36,10 +36,10 @@
 
 namespace Mollie\Provider\PaymentOption;
 
-use Configuration;
 use Customer;
 use MolCustomer;
 use Mollie;
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
@@ -93,6 +93,8 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
      * @var MolCustomerRepository
      */
     private $customerRepository;
+    /** @var ConfigurationAdapter */
+    private $configurationAdapter;
 
     public function __construct(
         Mollie $module,
@@ -102,7 +104,8 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         PaymentFeeProviderInterface $paymentFeeProvider,
         LanguageService $languageService,
         Customer $customer,
-        MolCustomerRepository $customerRepository
+        MolCustomerRepository $customerRepository,
+        ConfigurationAdapter $configurationAdapter
     ) {
         $this->module = $module;
         $this->context = $context;
@@ -112,6 +115,7 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         $this->languageService = $languageService;
         $this->customer = $customer;
         $this->customerRepository = $customerRepository;
+        $this->configurationAdapter = $configurationAdapter;
     }
 
     /**
@@ -141,7 +145,7 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
             ]
         );
 
-        $useSavedUser = (bool) (Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT) && $molCustomer);
+        $useSavedUser = (bool) (int) ($this->configurationAdapter->get(Config::MOLLIE_SINGLE_CLICK_PAYMENT) && $molCustomer);
 
         $paymentOption->setInputs([
             [
@@ -170,7 +174,7 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
             'price' => $this->orderTotalProvider->getOrderTotal(),
             'priceSign' => $this->context->getCurrencySign(),
             'methodId' => $paymentMethod->getPaymentMethodName(),
-            'isSingleClickPayment' => (bool) Configuration::get(Mollie\Config\Config::MOLLIE_SINGLE_CLICK_PAYMENT),
+            'isSingleClickPayment' => (bool) (int) $this->configurationAdapter->get(Mollie\Config\Config::MOLLIE_SINGLE_CLICK_PAYMENT),
             'mollieUseSavedCard' => $useSavedUser,
             'isGuest' => $this->customer->isGuest(),
         ]);

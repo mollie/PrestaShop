@@ -15,6 +15,7 @@ namespace Mollie\Builder;
 use Configuration;
 use HelperFormCore as HelperForm;
 use Mollie;
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
@@ -74,6 +75,9 @@ class FormBuilder
      */
     private $creditCardLogoProvider;
 
+    /** @var ConfigurationAdapter */
+    private $configurationAdapter;
+
     public function __construct(
         Mollie $module,
         ApiService $apiService,
@@ -83,7 +87,8 @@ class FormBuilder
         $lang,
         Smarty $smarty,
         $link,
-        CustomLogoProviderInterface $creditCardLogoProvider
+        CustomLogoProviderInterface $creditCardLogoProvider,
+        ConfigurationAdapter $configurationAdapter
     ) {
         $this->module = $module;
         $this->apiService = $apiService;
@@ -94,6 +99,7 @@ class FormBuilder
         $this->configFieldService = $configFieldService;
         $this->carrierInformationService = $carrierInformationService;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
+        $this->configurationAdapter = $configurationAdapter;
     }
 
     public function buildSettingsForm()
@@ -300,7 +306,7 @@ class FormBuilder
             'type' => 'switch',
             'label' => $this->module->l('Use Mollie Components for credit cards', self::FILE_NAME),
             'tab' => $generalSettings,
-            'name' => Config::MOLLIE_IFRAME,
+            'name' => Config::MOLLIE_IFRAME[(int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT) ? 'production' : 'sandbox'],
             'desc' => TagsUtility::ppTags(
                 $this->module->l('Read more about [1]Mollie Components[/1] and how it improves your conversion.', self::FILE_NAME),
                 [$this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_components_info.tpl')]
@@ -325,7 +331,7 @@ class FormBuilder
             'type' => 'switch',
             'label' => $this->module->l('Use one-click payments for credit cards', self::FILE_NAME),
             'tab' => $generalSettings,
-            'name' => Config::MOLLIE_SINGLE_CLICK_PAYMENT,
+            'name' => Config::MOLLIE_SINGLE_CLICK_PAYMENT[(int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT) ? 'production' : 'sandbox'],
             'desc' => TagsUtility::ppTags(
                 $this->module->l('Read more about [1]Single Click Payments[/1] and how it improves your conversion.', self::FILE_NAME),
                 [
@@ -353,7 +359,7 @@ class FormBuilder
                     'label' => $this->module->l('Issuer list', self::FILE_NAME),
                     'tab' => $generalSettings,
                     'desc' => $this->module->l('Some payment methods (e.g. iDEAL) have an issuer list. Select where to display the list.', self::FILE_NAME),
-                    'name' => Config::MOLLIE_ISSUERS,
+                    'name' => Config::MOLLIE_ISSUERS[(int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT) ? 'production' : 'sandbox'],
                     'options' => [
                         'query' => [
                             [

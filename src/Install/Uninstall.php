@@ -12,9 +12,8 @@
 
 namespace Mollie\Install;
 
-use Configuration;
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
-use Mollie\Repository\OrderStateRepository;
 use Mollie\Tracker\Segment;
 use Tab;
 
@@ -31,23 +30,20 @@ class Uninstall implements UninstallerInterface
     private $databaseUninstaller;
 
     /**
-     * @var OrderStateRepository
-     */
-    private $orderStateRepository;
-
-    /**
      * @var Segment
      */
     private $segment;
+    /** @var ConfigurationAdapter */
+    private $configurationAdapter;
 
     public function __construct(
         UninstallerInterface $databaseUninstaller,
-        OrderStateRepository $orderStateRepository,
-        Segment $segment
+        Segment $segment,
+        ConfigurationAdapter $configurationAdapter
     ) {
         $this->databaseUninstaller = $databaseUninstaller;
-        $this->orderStateRepository = $orderStateRepository;
         $this->segment = $segment;
+        $this->configurationAdapter = $configurationAdapter;
     }
 
     public function uninstall()
@@ -106,7 +102,7 @@ class Uninstall implements UninstallerInterface
     private function deleteConfigurations(array $configurations)
     {
         foreach ($configurations as $configuration) {
-            Configuration::deleteByName($configuration);
+            $this->configurationAdapter->delete($configuration);
         }
     }
 

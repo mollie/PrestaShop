@@ -17,6 +17,7 @@ use Configuration;
 use Context;
 use Exception;
 use Mollie;
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
@@ -85,6 +86,8 @@ class SettingsSaveService
 
     /** @var Shop */
     private $shop;
+    /** @var ConfigurationAdapter */
+    private $configurationAdapter;
 
     public function __construct(
         Mollie $module,
@@ -96,7 +99,8 @@ class SettingsSaveService
         PaymentMethodPositionHandlerInterface $paymentMethodPositionHandler,
         ApiKeyService $apiKeyService,
         CertificateHandlerInterface $applePayDirectCertificateHandler,
-        Shop $shop
+        Shop $shop,
+        ConfigurationAdapter $configurationAdapter
     ) {
         $this->module = $module;
         $this->countryRepository = $countryRepository;
@@ -108,6 +112,7 @@ class SettingsSaveService
         $this->apiService = $apiService;
         $this->applePayDirectCertificateHandler = $applePayDirectCertificateHandler;
         $this->shop = $shop;
+        $this->configurationAdapter = $configurationAdapter;
     }
 
     /**
@@ -137,16 +142,16 @@ class SettingsSaveService
         }
 
         if (Tools::getValue(Config::METHODS_CONFIG) && json_decode(Tools::getValue(Config::METHODS_CONFIG))) {
-            Configuration::updateValue(
+            $this->configurationAdapter->updateValue(
                 Config::METHODS_CONFIG,
                 json_encode(@json_decode(Tools::getValue(Config::METHODS_CONFIG)))
             );
         }
 
         if ((int) Tools::getValue(Config::MOLLIE_ENV_CHANGED) === 1) {
-            Configuration::updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
-            Configuration::updateValue(Config::MOLLIE_API_KEY_TEST, $mollieApiKeyTest);
-            Configuration::updateValue(Config::MOLLIE_ENVIRONMENT, $environment);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_API_KEY_TEST, $mollieApiKeyTest);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_ENVIRONMENT, $environment);
             try {
                 $api = $this->apiKeyService->setApiKey($apiKey, $this->module->version);
                 if (null === $api) {
@@ -155,7 +160,7 @@ class SettingsSaveService
                 $this->module->api = $api;
             } catch (Exception $e) {
                 $errors[] = $e->getMessage();
-                Configuration::updateValue(Config::MOLLIE_API_KEY, null);
+                $this->configurationAdapter->updateValue(Config::MOLLIE_API_KEY, null);
 
                 return [$this->module->l('Wrong API Key!', self::FILE_NAME)];
             }
@@ -206,7 +211,7 @@ class SettingsSaveService
         }
 
         $useCustomLogo = Tools::getValue(Config::MOLLIE_SHOW_CUSTOM_LOGO);
-        Configuration::updateValue(
+        $this->configurationAdapter->updateValue(
             Config::MOLLIE_SHOW_CUSTOM_LOGO,
             $useCustomLogo
         );
@@ -225,11 +230,11 @@ class SettingsSaveService
         }
         $molliePaymentscreenLocale = Tools::getValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE);
         $mollieOrderConfirmationSand = Tools::getValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION);
-        $mollieIFrameEnabled = Tools::getValue(Config::MOLLIE_IFRAME);
-        $mollieSingleClickPaymentEnabled = Tools::getValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
+        $mollieIFrameEnabled = Tools::getValue(Config::MOLLIE_IFRAME[$environment ? 'production' : 'sandbox']);
+        $mollieSingleClickPaymentEnabled = Tools::getValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT[$environment ? 'production' : 'sandbox']);
         $mollieImages = Tools::getValue(Config::MOLLIE_IMAGES);
         $showResentPayment = Tools::getValue(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK);
-        $mollieIssuers = Tools::getValue(Config::MOLLIE_ISSUERS);
+        $mollieIssuers = Tools::getValue(Config::MOLLIE_ISSUERS[$environment ? 'production' : 'sandbox']);
         $mollieCss = Tools::getValue(Config::MOLLIE_CSS);
         if (!isset($mollieCss)) {
             $mollieCss = '';
@@ -262,7 +267,7 @@ class SettingsSaveService
                 $this->module->api = $api;
             } catch (Exception $e) {
                 $errors[] = $e->getMessage();
-                Configuration::updateValue(Config::MOLLIE_API_KEY, null);
+                $this->configurationAdapter->updateValue(Config::MOLLIE_API_KEY, null);
 
                 return [$this->module->l('Wrong API Key!', self::FILE_NAME)];
             }
@@ -275,33 +280,33 @@ class SettingsSaveService
 
         if (empty($errors)) {
             if ($isBancontactQrCodeEnabled !== false) {
-                Configuration::updateValue(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED, $isBancontactQrCodeEnabled);
+                $this->configurationAdapter->updateValue(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED, $isBancontactQrCodeEnabled);
             }
-            Configuration::updateValue(Config::MOLLIE_APPLE_PAY_DIRECT, $isApplePayDirectEnabled);
-            Configuration::updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE, $applePayDirectStyle);
-            Configuration::updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
-            Configuration::updateValue(Config::MOLLIE_API_KEY_TEST, $mollieApiKeyTest);
-            Configuration::updateValue(Config::MOLLIE_ENVIRONMENT, $environment);
-            Configuration::updateValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE, $molliePaymentscreenLocale);
-            Configuration::updateValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION, $mollieOrderConfirmationSand);
-            Configuration::updateValue(Config::MOLLIE_IFRAME, $mollieIFrameEnabled);
-            Configuration::updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT, $mollieSingleClickPaymentEnabled);
-            Configuration::updateValue(Config::MOLLIE_IMAGES, $mollieImages);
-            Configuration::updateValue(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK, $showResentPayment);
-            Configuration::updateValue(Config::MOLLIE_ISSUERS, $mollieIssuers);
-            Configuration::updateValue(Config::MOLLIE_METHOD_COUNTRIES, (bool) $mollieMethodCountriesEnabled);
-            Configuration::updateValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY, (bool) $mollieMethodCountriesDisplayEnabled);
-            Configuration::updateValue(Config::MOLLIE_CSS, $mollieCss);
-            Configuration::updateValue(Config::MOLLIE_DISPLAY_ERRORS, (int) $mollieErrors);
-            Configuration::updateValue(Config::MOLLIE_DEBUG_LOG, (int) $mollieLogger);
-            Configuration::updateValue(Config::MOLLIE_API, $mollieApi);
-            Configuration::updateValue(Config::MOLLIE_VOUCHER_CATEGORY, $voucherCategory);
-            Configuration::updateValue(
+            $this->configurationAdapter->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT, $isApplePayDirectEnabled);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE, $applePayDirectStyle);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_API_KEY_TEST, $mollieApiKeyTest);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_ENVIRONMENT, $environment);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE, $molliePaymentscreenLocale);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION, $mollieOrderConfirmationSand);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_IFRAME, $mollieIFrameEnabled);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT, $mollieSingleClickPaymentEnabled);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_IMAGES, $mollieImages);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK, $showResentPayment);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_ISSUERS, $mollieIssuers);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_METHOD_COUNTRIES, (bool) $mollieMethodCountriesEnabled);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY, (bool) $mollieMethodCountriesDisplayEnabled);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_CSS, $mollieCss);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_DISPLAY_ERRORS, (int) $mollieErrors);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_DEBUG_LOG, (int) $mollieLogger);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_API, $mollieApi);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_VOUCHER_CATEGORY, $voucherCategory);
+            $this->configurationAdapter->updateValue(
                 Config::MOLLIE_AUTO_SHIP_STATUSES,
                 json_encode($this->getStatusesValue(Config::MOLLIE_AUTO_SHIP_STATUSES))
             );
-            Configuration::updateValue(Config::MOLLIE_AUTO_SHIP_MAIN, (bool) $mollieShipMain);
-            Configuration::updateValue(
+            $this->configurationAdapter->updateValue(Config::MOLLIE_AUTO_SHIP_MAIN, (bool) $mollieShipMain);
+            $this->configurationAdapter->updateValue(
                 Config::MOLLIE_TRACKING_URLS,
                 json_encode(@json_decode(Tools::getValue(Config::MOLLIE_TRACKING_URLS)))
             );
@@ -325,11 +330,11 @@ class SettingsSaveService
                     continue;
                 }
                 $new = (int) Tools::getValue("MOLLIE_STATUS_{$name}");
-                Configuration::updateValue("MOLLIE_STATUS_{$name}", $new);
+                $this->configurationAdapter->updateValue("MOLLIE_STATUS_{$name}", $new);
                 Config::getStatuses()[Tools::strtolower($name)] = $new;
 
                 if (PaymentStatus::STATUS_OPEN != $name) {
-                    Configuration::updateValue(
+                    $this->configurationAdapter->updateValue(
                         "MOLLIE_MAIL_WHEN_{$name}",
                         Tools::getValue("MOLLIE_MAIL_WHEN_{$name}") ? true : false
                     );
@@ -372,7 +377,7 @@ class SettingsSaveService
     private function handleKlarnaInvoiceStatus()
     {
         $klarnaInvoiceStatus = Tools::getValue(Config::MOLLIE_KLARNA_INVOICE_ON);
-        Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $klarnaInvoiceStatus);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $klarnaInvoiceStatus);
         if (Config::MOLLIE_STATUS_KLARNA_SHIPPED === $klarnaInvoiceStatus) {
             $this->updateKlarnaStatuses(true);
 

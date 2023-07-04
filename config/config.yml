@@ -1,5 +1,6 @@
 imports:
   - { resource: logger.yml }
+  - { resource: adapter.yml }
   - { resource: builder.yml }
   - { resource: service.yml }
   - { resource: repository.yml }
@@ -9,7 +10,6 @@ imports:
   - { resource: validator.yml }
   - { resource: command.yml }
   - { resource: provider.yml }
-  - { resource: adapter.yml }
   - { resource: handler.yml }
   - { resource: grid.yml }
   - { resource: segment.yml }
@@ -43,8 +43,8 @@ services:
     class: Mollie\Install\Uninstall
     arguments:
       - '@Mollie\Install\DatabaseTableUninstaller'
-      - '@Mollie\Repository\OrderStateRepository'
       - '@Mollie\Tracker\Segment'
+      - '@Mollie\Adapter\ConfigurationAdapter'
 
   Mollie\Install\DatabaseTableInstaller:
     class: Mollie\Install\DatabaseTableInstaller
