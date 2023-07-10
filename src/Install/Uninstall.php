@@ -94,27 +94,7 @@ class Uninstall
             Config::MOLLIE_API_KEY_TEST,
         ];
 
-        $orderStateConfigurations = [
-            Config::MOLLIE_STATUS_PARTIAL_REFUND,
-            Config::MOLLIE_STATUS_AWAITING,
-            Config::MOLLIE_STATUS_PARTIALLY_SHIPPED,
-            Config::MOLLIE_STATUS_ORDER_COMPLETED,
-            Config::MOLLIE_STATUS_KLARNA_AUTHORIZED,
-            Config::MOLLIE_STATUS_KLARNA_SHIPPED,
-            Config::MOLLIE_STATUS_CHARGEBACK,
-            Config::MOLLIE_STATUS_OPEN,
-            Config::MOLLIE_STATUS_PAID,
-            Config::MOLLIE_STATUS_COMPLETED,
-            Config::MOLLIE_STATUS_CANCELED,
-            Config::MOLLIE_STATUS_EXPIRED,
-            Config::MOLLIE_STATUS_REFUNDED,
-            Config::MOLLIE_STATUS_SHIPPING,
-            Config::MOLLIE_STATUS_DEFAULT,
-        ];
-
-        $this->deleteConfigurations(
-            array_merge($configurations, $orderStateConfigurations)
-        );
+        $this->deleteConfigurations($configurations);
     }
 
     private function deleteConfigurations(array $configurations)

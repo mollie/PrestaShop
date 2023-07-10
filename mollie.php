@@ -165,20 +165,10 @@ class Mollie extends PaymentModule
         }
 
 //        TODO inject base install and subscription services
-        $installer = new \Mollie\Install\Installer(
-            $this,
-            new \Mollie\Service\OrderStateImageService(),
-            new \Mollie\Install\DatabaseTableInstaller(),
-            new \Mollie\Tracker\Segment(
-                new \Mollie\Adapter\Shop(),
-                new \Mollie\Adapter\Language(),
-                new \Mollie\Config\Env()
-            ),
-            new \Mollie\Adapter\ConfigurationAdapter()
-        );
+        $coreInstaller = $this->getService(Mollie\Install\Installer::class);
 
-        if (!$installer->install()) {
-            $this->_errors = array_merge($this->_errors, $installer->getErrors());
+        if (!$coreInstaller->install()) {
+            $this->_errors = array_merge($this->_errors, $coreInstaller->getErrors());
 
             return false;
         }
