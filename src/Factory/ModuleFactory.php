@@ -30,4 +30,12 @@ class ModuleFactory
     {
         return Module::getInstanceByName('mollie')->getPathUri();
     }
+
+    /**
+     * @return string
+     */
+    public function getModuleName()
+    {
+        return Module::getInstanceByName('mollie')->name;
+    }
 }
