@@ -37,8 +37,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
-      - name: Cancel Workflow Action
-        uses: styfle/cancel-workflow-action@0.11.0
       - run: wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
         shell: bash
       - run: unzip -qq -o ngrok-stable-linux-amd64.zip
