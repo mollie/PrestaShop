@@ -18,6 +18,7 @@ jobs:
             url: 'https://demoshop1784.eu.ngrok.io'
             test_spec: '**/cypress/e2e/ps1784/**'
             TestRailID: R4954
+            ModuleUpgradeTest: 'make upgrading-module-test-1784'
           - prestashop: 'PS8'
             make: 'make e2eh8'
             demoshop: 'demoshop8'
@@ -55,7 +56,7 @@ jobs:
           ${{ matrix.make }}
 
       - name: Running ${{ matrix.prestashop }} Cypress E2E tests
-        run: docker run -i -v $PWD:/e2e -w /e2e -e CYPRESS_baseUrl='${{ matrix.url }}' -e CYPRESS_MOLLIE_TEST_API_KEY=${{ secrets.MOLLIE_TEST_API_KEY }} -e CYPRESS_MOLLIE_TEST_PROFILE_ID=${{ secrets.MOLLIE_TEST_PROFILE_ID }} -e CYPRESS_TESTRAIL_RUN_ID=${{ matrix.TestRailID }} cypress/included:cypress-12.8.1-node-18.14.1-chrome-111.0.5563.110-1-ff-111.0-edge-111.0.1661.51-1 --spec "${{ matrix.test_spec }}" --browser chrome
+        run: docker run -i -v $PWD:/e2e -w /e2e -e CYPRESS_baseUrl='${{ matrix.url }}' -e CYPRESS_MOLLIE_TEST_API_KEY=${{ secrets.MOLLIE_TEST_API_KEY }} -e CYPRESS_MOLLIE_TEST_PROFILE_ID=${{ secrets.MOLLIE_TEST_PROFILE_ID }} -e CYPRESS_TESTRAIL_RUN_ID=${{ matrix.TestRailID }} -e CYPRESS_TESTRAIL_DOMAIN=${{ secrets.TESTRAIL_DOMAIN }} -e CYPRESS_TESTRAIL_USERNAME=${{ secrets.TESTRAIL_USERNAME }} -e CYPRESS_TESTRAIL_PASSWORD='${{ secrets.TESTRAIL_PASSWORD }}' cypress/included:cypress-12.13.0-node-18.16.0-chrome-113.0.5672.92-1-ff-113.0-edge-113.0.1774.35-1 --spec "${{ matrix.test_spec }}" --browser chrome
 
       - name: Archive videos and screenshots
         if: ${{ always() }}

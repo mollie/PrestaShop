@@ -71,3 +71,23 @@ build-ps-8:
 
 npm-package-install:
 	cd views/assets && npm i && npm run build
+
+# checking the module upgrading - installs older module then installs from master branch
+upgrading-module-test-1784:
+	git fetch
+	git checkout origin/v5.2.1 .
+	composer install
+	# installing 5.2.1 module
+	docker exec -i prestashop-mollie-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
+	git checkout -- .
+	git checkout master --force
+	docker exec -i prestashop-mollie-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
+
+upgrading-module-test-8:
+	git fetch
+	git checkout origin/v5.2.1 .
+	composer install
+	make e2e8p
+	git checkout -- .
+	git checkout master --force
+	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"

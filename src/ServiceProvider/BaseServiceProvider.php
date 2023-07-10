@@ -106,7 +106,7 @@ final class BaseServiceProvider
         $this->addService($container, MolCustomerRepository::class, MolCustomerRepository::class)
             ->withArgument('MolCustomer');
 
-        $this->addService($container, UninstallerInterface::class, Mollie\Install\DatabaseTableUninstaller::class);
+        $this->addService($container, UninstallerInterface::class, $container->get(Mollie\Install\DatabaseTableUninstaller::class));
 
         $this->addService($container, InstallerInterface::class, Installer::class)
             ->withArguments([
