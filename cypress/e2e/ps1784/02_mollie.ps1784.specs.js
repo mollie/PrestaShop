@@ -277,7 +277,7 @@ it.only('C339354: 17 Credit Card Checkouting [Orders API]', () => {
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
-      cy.contains('Credit/Debit Card').click({force:true})
+      cy.contains('Card').click({force:true})
       //Credit card inputing
       cy.CreditCardFillingIframe()
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -307,7 +307,7 @@ it('C339355: 18 Check if customerId is passed during the 2nd payment using Singl
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
-      cy.contains('Credit/Debit Card').click({force:true})
+      cy.contains('Card').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click({force: true})
@@ -785,7 +785,7 @@ it('C339383: 48 Credit Card Checkouting [Payments API]', () => {
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
-      cy.contains('Credit/Debit Card').click({force:true})
+      cy.contains('Card').click({force:true})
       //Credit card inputing
       cy.CreditCardFillingIframe()
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -839,7 +839,7 @@ it('C339385: 50 Credit Card Guest Checkouting [Payments API]', () => {
       cy.get(':nth-child(13) > .col-md-6 > .form-control').type('+370 000',{delay:0}).as('telephone')
       cy.get('.form-footer > .continue').click()
       cy.get('#js-delivery > .continue').click()
-      cy.contains('Credit/Debit Card').click({force:true})
+      cy.contains('Card').click({force:true})
       //Credit card inputing
       cy.CreditCardFillingIframe()
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -889,7 +889,7 @@ it('C339386: 51 Credit Card Guest Checkouting with not 3DS secure card [Payments
       cy.get(':nth-child(13) > .col-md-6 > .form-control').type('+370 000',{delay:0}).as('telephone')
       cy.get('.form-footer > .continue').click()
       cy.get('#js-delivery > .continue').click()
-      cy.contains('Credit/Debit Card').click({force:true})
+      cy.contains('Card').click({force:true})
       //Credit card inputing
       cy.NotSecureCreditCardFillingIframe()
       cy.get('.condition-label > .js-terms').click({force:true})
