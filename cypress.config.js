@@ -4,7 +4,7 @@ module.exports = defineConfig({
   chromeWebSecurity: false,
   experimentalMemoryManagement: true,
   experimentalSourceRewriting: true,
-  numTestsKeptInMemory: 0,
+  numTestsKeptInMemory: 3,
   defaultCommandTimeout: 15000,
   projectId: 'xb89dr',
   retries: 3,
@@ -18,7 +18,6 @@ module.exports = defineConfig({
     setupNodeEvents(on, config) {
       require('./cypress/plugins/index.js')(on, config)
       require("cypress-fail-fast/plugin")(on, config);
-      require('cypress-terminal-report/src/installLogsPrinter')(on);
       return config;
     },
     // setupNodeEvents(on, config) {

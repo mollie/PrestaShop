@@ -1,8 +1,8 @@
-name: Cypress E2E Automation [develop branch]
+name: Cypress E2E Automation
 on:
   pull_request:
     types: [opened, reopened]
-    branches: [develop]
+    branches: '**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -17,18 +17,19 @@ jobs:
         include:
           - prestashop: 'PS1784'
             make: 'make e2eh1784'
-            subdomain: 'demoshop1784'
+            demoshop: 'demoshop1784'
             port: '8002'
             yml: 'docker-compose.1784.yml'
-            url: 'https://demoshop1784.ngrok.io'
+            url: 'https://demoshop1784.eu.ngrok.io'
             test_spec: '**/cypress/e2e/ps1784/**'
             TestRailID: R4954
+            ModuleUpgradeTest: 'make upgrading-module-test-1784'
           - prestashop: 'PS8'
             make: 'make e2eh8'
-            subdomain: 'demoshop8'
+            demoshop: 'demoshop8'
             port: '8142'
             yml: 'docker-compose.8.yml'
-            url: 'https://demoshop8.ngrok.io'
+            url: 'https://demoshop8.eu.ngrok.io'
             test_spec: '**/cypress/e2e/ps8/**'
             TestRailID: R6470
     env:
@@ -42,7 +43,7 @@ jobs:
         shell: bash
       - run: ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
         shell: bash
-      - run: ./ngrok http -region=eu -subdomain=${{ matrix.subdomain }} ${{ matrix.port }} > ngrok.log &
+      - run: ./ngrok http -region=eu -subdomain=${{ matrix.demoshop }} ${{ matrix.port }} > ngrok.log &
         shell: bash
       - name: Install composer
         run: composer i
@@ -57,22 +58,6 @@ jobs:
         run: |
           ${{ matrix.make }}
 
-      - name: Waiting for Ngrok tunnel
-        run: |
-          URL="${{ matrix.url }}"
-
-          while true; do
-            response=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
-            if [ "$response" = "302" ]; then
-              echo "URL is returning 302 HTTP status code, Ngrok tunnel is reached, good to go!"
-              break  # Exit the loop if the response is 302
-            else
-              echo "URL is not ready yet, because Ngrok sessions are all in use at the moment, please wait. Retrying to build the Ngrok tunnel again in 5 seconds..."
-              sleep 5  # Wait for 5 seconds before retrying
-              ./ngrok http -region=us -subdomain=${{ matrix.subdomain }} ${{ matrix.port }} > ngrok.log &
-            fi
-          done
-
       - name: Running ${{ matrix.prestashop }} Cypress E2E tests
         run: |
           export CYPRESS_baseUrl='${{ matrix.url }}'
@@ -82,7 +67,7 @@ jobs:
           export CYPRESS_TESTRAIL_DOMAIN='${{ secrets.TESTRAIL_DOMAIN }}'
           export CYPRESS_TESTRAIL_USERNAME='${{ secrets.TESTRAIL_USERNAME }}'
           export CYPRESS_TESTRAIL_PASSWORD='${{ secrets.TESTRAIL_PASSWORD }}'
-          npm install -D cypress
+          npm install cypress@12.15.0
           npm ci
           npx cypress run --spec "${{ matrix.test_spec }}" --browser chrome
 
@@ -90,7 +75,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
-          name: Cypress_Mollie_videos_screenshots_${{ matrix.prestashop }}
+          name: videos_screenshots
           retention-days: 2
           path: |
             cypress/videos
