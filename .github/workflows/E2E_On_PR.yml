@@ -1,8 +1,8 @@
-name: Cypress E2E Automation
+name: Cypress E2E Automation [develop branch]
 on:
   pull_request:
     types: [opened, reopened]
-    branches: '**'
+    branches: [develop]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -23,7 +23,6 @@ jobs:
             url: 'https://demoshop1784.eu.ngrok.io'
             test_spec: '**/cypress/e2e/ps1784/**'
             TestRailID: R4954
-            ModuleUpgradeTest: 'make upgrading-module-test-1784'
           - prestashop: 'PS8'
             make: 'make e2eh8'
             demoshop: 'demoshop8'
@@ -67,7 +66,7 @@ jobs:
           export CYPRESS_TESTRAIL_DOMAIN='${{ secrets.TESTRAIL_DOMAIN }}'
           export CYPRESS_TESTRAIL_USERNAME='${{ secrets.TESTRAIL_USERNAME }}'
           export CYPRESS_TESTRAIL_PASSWORD='${{ secrets.TESTRAIL_PASSWORD }}'
-          npm install cypress@12.15.0
+          npm install -D cypress
           npm ci
           npx cypress run --spec "${{ matrix.test_spec }}" --browser chrome
 
@@ -75,7 +74,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
-          name: videos_screenshots
+          name: Cypress_Mollie_videos_screenshots_${{ matrix.prestashop }}
           retention-days: 2
           path: |
             cypress/videos
