@@ -3,8 +3,6 @@
 use Mollie\Api\MollieApiClient;
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Handler\Shipment\ShipmentSenderHandler;
-use Mollie\Logger\PrestaLogger;
-use Mollie\Service\ExceptionService;
 use Mollie\Service\Shipment\ShipmentInformationSender;
 use Mollie\Verification\Shipment\CanSendShipment;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -36,16 +34,6 @@ class ShipmentSenderHandlerTest extends TestCase
      * @var ShipmentInformationSender|MockObject
      */
     private $shipmentInformationSender;
-
-    /**
-     * @var ExceptionService|MockObject
-     */
-    private $exceptionService;
-
-    /**
-     * @var PrestaLogger|MockObject
-     */
-    private $moduleLogger;
 
     protected function setUp()
     {
@@ -80,21 +68,9 @@ class ShipmentSenderHandlerTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock()
         ;
-
-        $this->exceptionService = $this
-            ->getMockBuilder(ExceptionService::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $this->moduleLogger = $this
-            ->getMockBuilder(PrestaLogger::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
     }
 
-    public function testCanSendShipment()
+    public function testCanSendShipment(): void
     {
         $this->canSendShipment
             ->expects($this->once())
@@ -102,34 +78,20 @@ class ShipmentSenderHandlerTest extends TestCase
             ->willReturn(true)
         ;
 
-        $this->exceptionService
-            ->expects($this->never())
-            ->method('getErrorMessages')
-            ->willReturn([])
-        ;
-
-        $this->exceptionService
-            ->expects($this->never())
-            ->method('getErrorMessageForException')
-        ;
-
-        $this->moduleLogger
-            ->expects($this->never())
-            ->method('error')
+        $this->shipmentInformationSender
+            ->expects($this->once())
+            ->method('sendShipmentInformation')
         ;
 
         $shipmentSenderHandler = new ShipmentSenderHandler(
             $this->canSendShipment,
-            $this->shipmentInformationSender,
-            $this->exceptionService,
-            $this->moduleLogger
+            $this->shipmentInformationSender
         );
-        $result = $shipmentSenderHandler->handleShipmentSender($this->apiClient, $this->order, $this->orderState);
 
-        $this->assertEquals(true, $result);
+        $shipmentSenderHandler->handleShipmentSender($this->apiClient, $this->order, $this->orderState);
     }
 
-    public function testOnVerificationExceptionLogExceptionAndNotSendInformation()
+    public function testItSuccessfullyFailsToSendShipmentExceptionThrown(): void
     {
         $this->order->reference = 'test';
 
@@ -137,36 +99,41 @@ class ShipmentSenderHandlerTest extends TestCase
             ->expects($this->once())
             ->method('verify')
             ->willThrowException(new ShipmentCannotBeSentException(
-                'Shipment information cannot be sent. No shipment information found by order reference',
-                ShipmentCannotBeSentException::NO_SHIPPING_INFORMATION,
+                '',
+                ShipmentCannotBeSentException::ORDER_HAS_NO_PAYMENT_INFORMATION,
                 $this->order->reference
             ))
         ;
 
-        $this->exceptionService
+        $shipmentSenderHandler = new ShipmentSenderHandler(
+            $this->canSendShipment,
+            $this->shipmentInformationSender
+        );
+
+        $this->expectException(ShipmentCannotBeSentException::class);
+        $this->expectExceptionCode(ShipmentCannotBeSentException::ORDER_HAS_NO_PAYMENT_INFORMATION);
+
+        $shipmentSenderHandler->handleShipmentSender($this->apiClient, $this->order, $this->orderState);
+    }
+
+    public function testItSuccessfullyFailsToSendShipmentVerificationReturnedFalse(): void
+    {
+        $this->canSendShipment
             ->expects($this->once())
-            ->method('getErrorMessages')
-            ->willReturn([])
+            ->method('verify')
+            ->willReturn(false)
         ;
 
-        $this->exceptionService
-            ->expects($this->once())
-            ->method('getErrorMessageForException')
-        ;
-
-        $this->moduleLogger
-            ->expects($this->once())
-            ->method('error')
+        $this->shipmentInformationSender
+            ->expects($this->never())
+            ->method('sendShipmentInformation')
         ;
 
         $shipmentSenderHandler = new ShipmentSenderHandler(
             $this->canSendShipment,
-            $this->shipmentInformationSender,
-            $this->exceptionService,
-            $this->moduleLogger
+            $this->shipmentInformationSender
         );
-        $result = $shipmentSenderHandler->handleShipmentSender($this->apiClient, $this->order, $this->orderState);
 
-        $this->assertEquals(false, $result);
+        $shipmentSenderHandler->handleShipmentSender($this->apiClient, $this->order, $this->orderState);
     }
 }

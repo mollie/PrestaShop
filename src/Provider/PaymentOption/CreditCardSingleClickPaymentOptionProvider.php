@@ -36,13 +36,13 @@
 
 namespace Mollie\Provider\PaymentOption;
 
-use Configuration;
 use MolCustomer;
 use Mollie;
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
-use Mollie\Provider\OrderTotalProviderInterface;
+use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Service\LanguageService;
@@ -90,6 +90,8 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
     private $customerRepository;
     /** @var Mollie\Adapter\Customer */
     private $customer;
+    /** @var ConfigurationAdapter */
+    private $configurationAdapter;
 
     public function __construct(
         Mollie $module,
@@ -99,7 +101,8 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         PaymentFeeProviderInterface $paymentFeeProvider,
         LanguageService $languageService,
         MolCustomerRepository $customerRepository,
-        Mollie\Adapter\Customer $customer
+        Mollie\Adapter\Customer $customer,
+        ConfigurationAdapter $configurationAdapter
     ) {
         $this->module = $module;
         $this->context = $context;
@@ -109,14 +112,16 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         $this->languageService = $languageService;
         $this->customerRepository = $customerRepository;
         $this->customer = $customer;
+        $this->configurationAdapter = $configurationAdapter;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getPaymentOption(MolPaymentMethod $paymentMethod)
+    public function getPaymentOption(MolPaymentMethod $paymentMethod): PaymentOption
     {
         $paymentOption = new PaymentOption();
+
         $paymentOption->setCallToActionText(
             $paymentMethod->title ?:
                 $this->languageService->lang($paymentMethod->method_name)
@@ -138,7 +143,7 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
             ]
         );
 
-        $useSavedUser = (bool) (Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT) && $molCustomer);
+        $useSavedUser = (bool) ($this->configurationAdapter->get(Config::MOLLIE_SINGLE_CLICK_PAYMENT) && $molCustomer);
 
         $paymentOption->setInputs([
             [
@@ -167,7 +172,7 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
             'price' => $this->orderTotalProvider->getOrderTotal(),
             'priceSign' => $this->context->getCurrencySign(),
             'methodId' => $paymentMethod->getPaymentMethodName(),
-            'isSingleClickPayment' => (bool) Configuration::get(Mollie\Config\Config::MOLLIE_SINGLE_CLICK_PAYMENT),
+            'isSingleClickPayment' => (bool) (int) $this->configurationAdapter->get(Mollie\Config\Config::MOLLIE_SINGLE_CLICK_PAYMENT),
             'mollieUseSavedCard' => $useSavedUser,
             'isGuest' => $this->customer->getCustomer()->isGuest(),
         ]);
@@ -177,20 +182,28 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
             $this->module->getPathUri(), 'views/templates/hook/mollie_single_click.tpl'
         ));
 
-        $paymentFee = $this->paymentFeeProvider->getPaymentFee($paymentMethod);
+        $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, $this->orderTotalProvider->getOrderTotal());
 
-        if ($paymentFee) {
+        if ($paymentFeeData->isActive()) {
             $paymentOption->setInputs(
                 array_merge($paymentOption->getInputs(), [
                     [
                         'type' => 'hidden',
                         'name' => 'payment-fee-price',
-                        'value' => $paymentFee,
+                        'value' => $paymentFeeData->getPaymentFeeTaxIncl(),
                     ],
                     [
                         'type' => 'hidden',
                         'name' => 'payment-fee-price-display',
-                        'value' => sprintf($this->module->l('Payment Fee: %1s', self::FILE_NAME), Tools::displayPrice($paymentFee)),
+                        'value' => sprintf(
+                            $this->module->l('Payment Fee: %1s', self::FILE_NAME),
+                            Tools::displayPrice($paymentFeeData->getPaymentFeeTaxIncl())
+                        ),
+                    ],
+                    [
+                        'type' => 'hidden',
+                        'name' => 'payment-method-id',
+                        'value' => $paymentMethod->id,
                     ],
                 ])
             );

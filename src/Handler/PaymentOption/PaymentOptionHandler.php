@@ -37,6 +37,7 @@
 namespace Mollie\Handler\PaymentOption;
 
 use Configuration;
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
 use Mollie\Provider\PaymentOption\BancontactPaymentOptionProvider;
@@ -69,19 +70,23 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
     private $cardSingleClickPaymentOptionProvider;
     /** @var BancontactPaymentOptionProvider */
     private $bancontactPaymentOptionProvider;
+    /** @var ConfigurationAdapter */
+    private $configurationAdapter;
 
     public function __construct(
         BasePaymentOptionProvider $basePaymentOptionProvider,
         CreditCardPaymentOptionProvider $creditCardPaymentOptionProvider,
         CreditCardSingleClickPaymentOptionProvider $cardSingleClickPaymentOptionProvider,
         IdealPaymentOptionProvider $idealPaymentOptionProvider,
-        BancontactPaymentOptionProvider $bancontactPaymentOptionProvider
+        BancontactPaymentOptionProvider $bancontactPaymentOptionProvider,
+        ConfigurationAdapter $configurationAdapter
     ) {
         $this->basePaymentOptionProvider = $basePaymentOptionProvider;
         $this->creditCardPaymentOptionProvider = $creditCardPaymentOptionProvider;
         $this->idealPaymentOptionProvider = $idealPaymentOptionProvider;
         $this->cardSingleClickPaymentOptionProvider = $cardSingleClickPaymentOptionProvider;
         $this->bancontactPaymentOptionProvider = $bancontactPaymentOptionProvider;
+        $this->configurationAdapter = $configurationAdapter;
     }
 
     /**
@@ -118,7 +123,7 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
             return false;
         }
 
-        if (Configuration::get(Config::MOLLIE_ISSUERS) !== Config::ISSUERS_ON_CLICK) {
+        if ($this->configurationAdapter->get(Config::MOLLIE_ISSUERS) !== Config::ISSUERS_ON_CLICK) {
             return false;
         }
 
@@ -152,7 +157,7 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
 
     private function isIFrame()
     {
-        if (!Configuration::get(Config::MOLLIE_IFRAME)) {
+        if (!(int) $this->configurationAdapter->get(Config::MOLLIE_IFRAME)) {
             return false;
         }
 
@@ -161,7 +166,7 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
 
     private function isSingleClick()
     {
-        if (!Configuration::get(Config::MOLLIE_SINGLE_CLICK_PAYMENT)) {
+        if (!(int) $this->configurationAdapter->get(Config::MOLLIE_SINGLE_CLICK_PAYMENT)) {
             return false;
         }
 
