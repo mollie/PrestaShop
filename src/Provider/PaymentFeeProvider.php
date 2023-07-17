@@ -36,23 +36,84 @@
 
 namespace Mollie\Provider;
 
-use Mollie\Utility\PaymentFeeUtility;
+use Address;
+use Mollie\Adapter\LegacyContext;
+use Mollie\Calculator\PaymentFeeCalculator;
+use Mollie\Config\Config;
+use Mollie\DTO\PaymentFeeData;
+use Mollie\Exception\ExceptionCode;
+use Mollie\Exception\FailedToProvidePaymentFeeException;
+use Mollie\Repository\AddressRepositoryInterface;
 use MolPaymentMethod;
 
 class PaymentFeeProvider implements PaymentFeeProviderInterface
 {
-    /**
-     * @var OrderTotalProviderInterface
-     */
-    private $orderTotalProvider;
+    /** @var LegacyContext */
+    private $context;
+    /** @var AddressRepositoryInterface */
+    private $addressRepository;
+    /** @var TaxCalculatorProvider */
+    private $taxProvider;
 
-    public function __construct(OrderTotalProviderInterface $orderTotalProvider)
-    {
-        $this->orderTotalProvider = $orderTotalProvider;
+    public function __construct(
+        LegacyContext $context,
+        AddressRepositoryInterface $addressRepository,
+        TaxCalculatorProvider $taxProvider
+    ) {
+        $this->context = $context;
+        $this->addressRepository = $addressRepository;
+        $this->taxProvider = $taxProvider;
     }
 
-    public function getPaymentFee(MolPaymentMethod $paymentMethod)
+    /**
+     * {@inheritDoc}
+     */
+    public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl): PaymentFeeData
     {
-        return PaymentFeeUtility::getPaymentFee($paymentMethod, $this->orderTotalProvider->getOrderTotal());
+        // TODO handle exception on all calls.
+        $surchargeFixedPriceTaxExcl = $paymentMethod->surcharge_fixed_amount_tax_excl;
+        $surchargePercentage = (float) $paymentMethod->surcharge_percentage;
+        $surchargeLimit = (float) $paymentMethod->surcharge_limit;
+
+        /** @var Address|null $address */
+        $address = $this->addressRepository->findOneBy([
+            'id_address' => $this->context->getCustomerAddressInvoiceId(),
+            'deleted' => 0,
+        ]);
+
+        if (!$address || !$address->id) {
+            throw new FailedToProvidePaymentFeeException('Failed to find customer address', ExceptionCode::FAILED_TO_FIND_CUSTOMER_ADDRESS);
+        }
+
+        $taxCalculator = $this->taxProvider->getTaxCalculator(
+            $paymentMethod->tax_rules_group_id,
+            $address->id_country,
+            $address->id_state
+        );
+
+        $paymentFeeCalculator = new PaymentFeeCalculator($taxCalculator, $this->context);
+
+        // TODO it would be good to use Abstract class, which would hold common private methods and then create separate services, which would provide calculated fee.
+        switch ($paymentMethod->surcharge) {
+            case Config::FEE_FIXED_FEE:
+                return $paymentFeeCalculator->calculateFixedFee(
+                    $surchargeFixedPriceTaxExcl
+                );
+            case Config::FEE_PERCENTAGE:
+                return $paymentFeeCalculator->calculatePercentageFee(
+                    $totalCartPriceTaxIncl,
+                    $surchargePercentage,
+                    $surchargeLimit
+                );
+            case Config::FEE_FIXED_FEE_AND_PERCENTAGE:
+                return $paymentFeeCalculator->calculatePercentageAndFixedPriceFee(
+                    $totalCartPriceTaxIncl,
+                    $surchargePercentage,
+                    $surchargeFixedPriceTaxExcl,
+                    $surchargeLimit
+                );
+        }
+
+        return new PaymentFeeData(0.00, 0.00, 0.00, false);
     }
 }

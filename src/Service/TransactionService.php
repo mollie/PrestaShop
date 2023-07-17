@@ -28,7 +28,7 @@ use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Exception\TransactionException;
 use Mollie\Handler\Order\OrderCreationHandler;
-use Mollie\Handler\Order\OrderFeeHandler;
+use Mollie\Handler\Order\OrderPaymentFeeHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
@@ -70,8 +70,8 @@ class TransactionService
     private $paymentMethodService;
     /** @var MollieOrderCreationService */
     private $mollieOrderCreationService;
-    /** @var OrderFeeHandler */
-    private $orderFeeHandler;
+    /** @var OrderPaymentFeeHandler */
+    private $orderPaymentFeeHandler;
     /** @var ShipmentSenderHandlerInterface */
     private $shipmentSenderHandler;
     /** @var PrestaLoggerInterface */
@@ -86,7 +86,7 @@ class TransactionService
         OrderCreationHandler $orderCreationHandler,
         PaymentMethodService $paymentMethodService,
         MollieOrderCreationService $mollieOrderCreationService,
-        OrderFeeHandler $orderFeeHandler,
+        OrderPaymentFeeHandler $orderPaymentFeeHandler,
         ShipmentSenderHandlerInterface $shipmentSenderHandler,
         PrestaLoggerInterface $logger,
         ExceptionService $exceptionService
@@ -97,7 +97,7 @@ class TransactionService
         $this->orderCreationHandler = $orderCreationHandler;
         $this->paymentMethodService = $paymentMethodService;
         $this->mollieOrderCreationService = $mollieOrderCreationService;
-        $this->orderFeeHandler = $orderFeeHandler;
+        $this->orderPaymentFeeHandler = $orderPaymentFeeHandler;
         $this->shipmentSenderHandler = $shipmentSenderHandler;
         $this->logger = $logger;
         $this->exceptionService = $exceptionService;
@@ -488,7 +488,7 @@ class TransactionService
                 return;
             }
             $apiPayment = $this->updatePaymentDescription($apiPayment, $orderId);
-            $this->orderFeeHandler->addOrderFee($orderId, $apiPayment);
+            $this->orderPaymentFeeHandler->addOrderPaymentFee($orderId, $apiPayment);
             $this->processTransaction($apiPayment);
         } else {
             throw new TransactionException('Transaction is no longer used', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
@@ -504,7 +504,7 @@ class TransactionService
                 return;
             }
             $apiPayment = $this->updateOrderDescription($apiPayment, $orderId);
-            $this->orderFeeHandler->addOrderFee($orderId, $apiPayment);
+            $this->orderPaymentFeeHandler->addOrderPaymentFee($orderId, $apiPayment);
             $this->processTransaction($apiPayment);
         } else {
             throw new TransactionException('Transaction is no longer used', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);

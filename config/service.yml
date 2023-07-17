@@ -2,37 +2,43 @@ services:
   _defaults:
     public: true
 
-  Mollie\Service\OrderFeeService:
-    class: Mollie\Service\OrderFeeService
+  Mollie\Service\OrderPaymentFeeService:
+    class: Mollie\Service\OrderPaymentFeeService
     arguments:
       - '@Mollie\Repository\PaymentMethodRepositoryInterface'
       - '@mollie.shop'
+      - '@Mollie\Provider\PaymentFeeProviderInterface'
 
   Mollie\Service\PaymentMethodService:
     class: Mollie\Service\PaymentMethodService
     arguments:
       - '@mollie'
-      - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Repository\PaymentMethodRepositoryInterface'
       - '@Mollie\Service\CartLinesService'
       - '@Mollie\Service\PaymentsTranslationService'
       - '@Mollie\Service\CustomerService'
       - '@Mollie\Provider\CreditCardLogoProvider'
-      - '@Mollie\Service\PaymentMethod\PaymentMethodSortProvider'
-      - '@Mollie\Provider\PhoneNumberProvider'
-      - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation'
+      - '@Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface'
+      - '@Mollie\Provider\PhoneNumberProviderInterface'
+      - '@Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface'
       - '@mollie.shop'
       - '@Mollie\Repository\GenderRepositoryInterface'
       - '@Mollie\Adapter\ConfigurationAdapter'
+      - '@Mollie\Provider\PaymentFeeProviderInterface'
+      - '@mollie.adapter.context'
+      - '@Mollie\Provider\OrderTotal\OrderTotalProviderInterface'
 
   Mollie\Service\ApiService:
     class: Mollie\Service\ApiService
     arguments:
-      - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Repository\PaymentMethodRepositoryInterface'
       - '@Mollie\Repository\CountryRepository'
       - '@Mollie\Service\PaymentMethod\PaymentMethodSortProvider'
       - '@Mollie\Adapter\ConfigurationAdapter'
       - '@Mollie\Service\TransactionService'
       - '@mollie.shop'
+      - '@Mollie\Provider\TaxCalculatorProvider'
+      - '@mollie.adapter.context'
 
   Mollie\Service\ConfigFieldService:
     class: Mollie\Service\ConfigFieldService
@@ -151,11 +157,11 @@ services:
     arguments:
       - '@mollie'
       - '@Mollie\Service\OrderStatusService'
-      - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Repository\PaymentMethodRepositoryInterface'
       - '@Mollie\Handler\Order\OrderCreationHandler'
       - '@Mollie\Service\PaymentMethodService'
       - '@Mollie\Service\MollieOrderCreationService'
-      - '@Mollie\Handler\Order\OrderFeeHandler'
+      - '@Mollie\Handler\Order\OrderPaymentFeeHandler'
       - '@Mollie\Handler\Shipment\ShipmentSenderHandlerInterface'
       - '@Mollie\Logger\PrestaLoggerInterface'
       - '@Mollie\Service\ExceptionService'

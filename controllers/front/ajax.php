@@ -10,17 +10,25 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\ToolsAdapter;
+use Mollie\Controller\AbstractMollieController;
+use Mollie\Exception\FailedToProvidePaymentFeeException;
+use Mollie\Provider\PaymentFeeProviderInterface;
+use Mollie\Repository\CurrencyRepositoryInterface;
 use Mollie\Utility\NumberUtility;
-use PrestaShop\Decimal\DecimalNumber;
 
-class MollieAjaxModuleFrontController extends ModuleFrontController
+class MollieAjaxModuleFrontController extends AbstractMollieController
 {
+    const FILE_NAME = 'ajax';
+
     /** @var Mollie */
     public $module;
 
     public function postProcess()
     {
         $action = Tools::getValue('action');
+
         switch ($action) {
             case 'getTotalCartPrice':
                 $this->getTotalCartPrice();
@@ -33,88 +41,165 @@ class MollieAjaxModuleFrontController extends ModuleFrontController
     private function getTotalCartPrice()
     {
         $cart = Context::getContext()->cart;
-        $paymentFee = Tools::getValue('paymentFee');
-        if (!$paymentFee) {
-            $presentedCart = $this->cart_presenter->present($this->context->cart);
-            $this->context->smarty->assign([
-                'configuration' => $this->getTemplateVarConfiguration(),
-                'cart' => $presentedCart,
-                'display_transaction_updated_info' => Tools::getIsset('updatedTransaction'),
-            ]);
 
-            $this->ajaxDie(
-                json_encode(
-                    [
-                        'cart_summary_totals' => $this->render('checkout/_partials/cart-summary-totals'),
-                    ]
-                )
-            );
+        /** @var ToolsAdapter $tools */
+        $tools = $this->module->getMollieContainer(ToolsAdapter::class);
+
+        $paymentMethodId = (int) $tools->getValue('paymentMethodId');
+
+        if (!$paymentMethodId) {
+            $errorData = [
+                'error' => true,
+                'message' => 'Failed to get payment method ID.',
+            ];
+
+            $this->returnDefaultOrderSummaryBlock($cart, $errorData);
         }
 
-        $paymentFee = new DecimalNumber(Tools::getValue('paymentFee'));
-        $orderTotal = new DecimalNumber((string) $cart->getOrderTotal());
-        $orderTotalWithFee = NumberUtility::plus($paymentFee->toPrecision(2), $orderTotal->toPrecision(2));
+        $molPaymentMethod = new MolPaymentMethod($paymentMethodId);
 
-        $orderTotalNoTax = new DecimalNumber((string) $cart->getOrderTotal(false));
-        $orderTotalNoTaxWithFee = NumberUtility::plus($paymentFee->toPrecision(2), $orderTotalNoTax->toPrecision(2));
+        if (!$molPaymentMethod->id) {
+            $errorData = [
+                'error' => true,
+                'message' => 'Failed to find payment method.',
+            ];
 
-        $total_including_tax = $orderTotalWithFee;
-        $total_excluding_tax = $orderTotalNoTaxWithFee;
+            $this->returnDefaultOrderSummaryBlock($cart, $errorData);
+        }
+
+        /** @var CurrencyRepositoryInterface $currencyRepository */
+        $currencyRepository = $this->module->getMollieContainer(CurrencyRepositoryInterface::class);
+
+        /** @var Currency $cartCurrency */
+        $cartCurrency = $currencyRepository->findOneBy([
+            'id_currency' => $cart->id_currency,
+        ]);
+
+        /** @var PaymentFeeProviderInterface $paymentFeeProvider */
+        $paymentFeeProvider = $this->module->getMollieContainer(PaymentFeeProviderInterface::class);
+
+        /** @var ConfigurationAdapter $configuration */
+        $configuration = $this->module->getMollieContainer(ConfigurationAdapter::class);
+
+        try {
+            $paymentFeeData = $paymentFeeProvider->getPaymentFee($molPaymentMethod, (float) $cart->getOrderTotal());
+        } catch (FailedToProvidePaymentFeeException $exception) {
+            $errorData = [
+                'error' => true,
+                'message' => 'Failed to get payment fee data.',
+            ];
+
+            $this->returnDefaultOrderSummaryBlock($cart, $errorData);
+
+            exit;
+        }
+
+        $orderTotalWithTax = NumberUtility::plus($paymentFeeData->getPaymentFeeTaxIncl(), $cart->getOrderTotal());
+
+        $orderTotalWithoutTax = NumberUtility::plus($paymentFeeData->getPaymentFeeTaxExcl(), $cart->getOrderTotal(false));
+
+        $orderTotalTax = NumberUtility::minus($orderTotalWithTax, $orderTotalWithoutTax);
 
         $taxConfiguration = new TaxConfiguration();
-        $presentedCart = $this->cart_presenter->present($this->context->cart);
+        $presentedCart = $this->cart_presenter->present($cart);
 
         $presentedCart['totals'] = [
             'total' => [
                 'type' => 'total',
-                'label' => $this->translator->trans('Total', [], 'Shop.Theme.Checkout'),
-                'amount' => $taxConfiguration->includeTaxes() ? $total_including_tax : $total_excluding_tax,
-                'value' => Tools::displayPrice(
-                    $taxConfiguration->includeTaxes() ? (float) $total_including_tax : (float) $total_excluding_tax
+                'label' => $this->module->l('Total', self::FILE_NAME),
+                'amount' => $taxConfiguration->includeTaxes() ? $orderTotalWithTax : $orderTotalWithoutTax,
+                'value' => $this->context->getCurrentLocale()->formatPrice(
+                    $taxConfiguration->includeTaxes() ? $orderTotalWithTax : $orderTotalWithoutTax,
+                    $cartCurrency->iso_code
                 ),
             ],
             'total_including_tax' => [
                 'type' => 'total',
-                'label' => $this->translator->trans('Total (tax incl.)', [], 'Shop.Theme.Checkout'),
-                'amount' => $total_including_tax,
-                'value' => Tools::displayPrice((float) $total_including_tax),
+                'label' => $this->module->l('Total (tax incl.)', self::FILE_NAME),
+                'amount' => $orderTotalWithTax,
+                'value' => $this->context->getCurrentLocale()->formatPrice(
+                    $orderTotalWithTax,
+                    $cartCurrency->iso_code
+                ),
             ],
             'total_excluding_tax' => [
                 'type' => 'total',
-                'label' => $this->translator->trans('Total (tax excl.)', [], 'Shop.Theme.Checkout'),
-                'amount' => $total_excluding_tax,
-                'value' => Tools::displayPrice((float) $total_excluding_tax),
+                'label' => $this->module->l('Total (tax excl.)', self::FILE_NAME),
+                'amount' => $orderTotalWithoutTax,
+                'value' => $this->context->getCurrentLocale()->formatPrice(
+                    $orderTotalWithoutTax,
+                    $cartCurrency->iso_code
+                ),
             ],
         ];
 
-        $this->context->smarty->assign([
-            'configuration' => $this->getTemplateVarConfiguration(),
-            'cart' => $presentedCart,
-            'display_transaction_updated_info' => Tools::getIsset('updatedTransaction'),
-        ]);
+        if (!$configuration->get('PS_TAX_DISPLAY')) {
+            $this->returnDefaultOrderSummaryBlock($cart, [], $presentedCart);
+        }
 
-        $this->ajaxDie(
+        $presentedCart['subtotals'] = [
+            'tax' => [
+                'type' => 'tax',
+                'label' => $taxConfiguration->includeTaxes()
+                    ? $this->translator->trans('Included taxes', [], 'Shop.Theme.Checkout')
+                    : $this->translator->trans('Taxes', [], 'Shop.Theme.Checkout'),
+                'amount' => $orderTotalTax,
+                'value' => $this->context->getCurrentLocale()->formatPrice(
+                    $orderTotalTax,
+                    $cartCurrency->iso_code
+                ),
+            ],
+        ];
+
+        $this->returnDefaultOrderSummaryBlock($cart, [], $presentedCart);
+    }
+
+    private function displayCheckoutError()
+    {
+        $errorMessages = explode('#', Tools::getValue('hashTag'));
+
+        foreach ($errorMessages as $errorMessage) {
+            if (0 === strpos($errorMessage, 'mollieMessage=')) {
+                $errorMessage = str_replace(
+                    ['mollieMessage=', '_'],
+                    ['', ' '],
+                    $errorMessage
+                );
+
+                $this->context->smarty->assign([
+                    'errorMessage' => $errorMessage,
+                ]);
+
+                $this->ajaxRender($this->context->smarty->fetch("{$this->module->getLocalPath()}views/templates/front/mollie_error.tpl"));
+            }
+        }
+
+        exit;
+    }
+
+    private function returnDefaultOrderSummaryBlock(Cart $cart, array $errorData = [], array $presentedCart = null)
+    {
+        if (!$presentedCart) {
+            $presentedCart = $this->cart_presenter->present($cart);
+        }
+
+        if (empty($errorData)) {
+            $errorData['error'] = false;
+        }
+
+        $this->context->smarty->assign(array_merge([
+                'configuration' => $this->getTemplateVarConfiguration(),
+                'cart' => $presentedCart,
+                'display_transaction_updated_info' => Tools::getIsset('updatedTransaction'),
+            ], $errorData)
+        );
+
+        $this->ajaxRender(
             json_encode(
                 [
                     'cart_summary_totals' => $this->render('checkout/_partials/cart-summary-totals'),
                 ]
             )
         );
-    }
-
-    private function displayCheckoutError()
-    {
-        $errorMessages = explode('#', Tools::getValue('hashTag'));
-        foreach ($errorMessages as $errorMessage) {
-            if (0 === strpos($errorMessage, 'mollieMessage=')) {
-                $errorMessage = str_replace('mollieMessage=', '', $errorMessage);
-                $errorMessage = str_replace('_', ' ', $errorMessage);
-                $this->context->smarty->assign([
-                    'errorMessage' => $errorMessage,
-                ]);
-                $this->ajaxDie($this->context->smarty->fetch("{$this->module->getLocalPath()}views/templates/front/mollie_error.tpl"));
-            }
-        }
-        $this->ajaxDie();
     }
 }

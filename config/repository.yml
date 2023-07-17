@@ -8,8 +8,8 @@ services:
 
   Mollie\Repository\PaymentMethodRepositoryInterface: '@Mollie\Repository\PaymentMethodRepository'
 
-  Mollie\Repository\OrderFeeRepository:
-    class: Mollie\Repository\OrderFeeRepository
+  Mollie\Repository\MolOrderPaymentFeeRepository:
+    class: Mollie\Repository\MolOrderPaymentFeeRepository
 
   Mollie\Repository\CountryRepository:
     class: Mollie\Repository\CountryRepository
@@ -60,5 +60,22 @@ services:
   Mollie\Repository\GenderRepository:
     class: Mollie\Repository\GenderRepository
 
+  Mollie\Repository\AddressRepository:
+    class: Mollie\Repository\AddressRepository
+
+  Mollie\Repository\TaxRepository:
+    class: Mollie\Repository\TaxRepository
+
+  Mollie\Repository\TaxRuleRepository:
+    class: Mollie\Repository\TaxRuleRepository
+
+  Mollie\Repository\TaxRulesGroupRepository:
+    class: Mollie\Repository\TaxRulesGroupRepository
+
   Mollie\Repository\CurrencyRepositoryInterface: '@Mollie\Repository\CurrencyRepository'
   Mollie\Repository\GenderRepositoryInterface: '@Mollie\Repository\GenderRepository'
+  Mollie\Repository\AddressRepositoryInterface: '@Mollie\Repository\AddressRepository'
+  Mollie\Repository\MolOrderPaymentFeeRepositoryInterface: '@Mollie\Repository\MolOrderPaymentFeeRepository'
+  Mollie\Repository\TaxRepositoryInterface: '@Mollie\Repository\TaxRepository'
+  Mollie\Repository\TaxRuleRepositoryInterface: '@Mollie\Repository\TaxRuleRepository'
+  Mollie\Repository\TaxRulesGroupRepositoryInterface: '@Mollie\Repository\TaxRulesGroupRepository'

@@ -12,6 +12,7 @@
 
 namespace Mollie\Adapter;
 
+use Currency;
 use Tools;
 
 class ToolsAdapter
@@ -29,5 +30,15 @@ class ToolsAdapter
     public function substr($str, $start, $length = false)
     {
         return Tools::substr($str, $start, $length);
+    }
+
+    public function getValue(string $key, string $defaultValue = null)
+    {
+        return Tools::getValue($key, $defaultValue);
+    }
+
+    public function displayPrice(float $price, Currency $currency): string
+    {
+        return Tools::displayPrice($price, $currency);
     }
 }

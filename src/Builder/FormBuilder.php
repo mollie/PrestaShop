@@ -16,11 +16,13 @@ use Configuration;
 use HelperFormCore as HelperForm;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\LegacyContext;
 use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
-use Mollie\Provider\CustomLogoProviderInterface;
+use Mollie\Provider\CreditCardLogoProvider;
+use Mollie\Repository\TaxRulesGroupRepositoryInterface;
 use Mollie\Service\ApiService;
 use Mollie\Service\ConfigFieldService;
 use Mollie\Service\CountryService;
@@ -71,12 +73,16 @@ class FormBuilder
     private $carrierInformationService;
 
     /**
-     * @var CustomLogoProviderInterface
+     * @var CreditCardLogoProvider
      */
     private $creditCardLogoProvider;
 
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
+    /** @var TaxRulesGroupRepositoryInterface */
+    private $taxRulesGroupRepository;
+    /** @var LegacyContext */
+    private $context;
 
     public function __construct(
         Mollie $module,
@@ -87,8 +93,10 @@ class FormBuilder
         $lang,
         Smarty $smarty,
         $link,
-        CustomLogoProviderInterface $creditCardLogoProvider,
-        ConfigurationAdapter $configurationAdapter
+        CreditCardLogoProvider $creditCardLogoProvider,
+        ConfigurationAdapter $configurationAdapter,
+        TaxRulesGroupRepositoryInterface $taxRulesGroupRepository,
+        LegacyContext $context
     ) {
         $this->module = $module;
         $this->apiService = $apiService;
@@ -100,6 +108,8 @@ class FormBuilder
         $this->carrierInformationService = $carrierInformationService;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
         $this->configurationAdapter = $configurationAdapter;
+        $this->taxRulesGroupRepository = $taxRulesGroupRepository;
+        $this->context = $context;
     }
 
     public function buildSettingsForm()
@@ -400,6 +410,7 @@ class FormBuilder
             'name' => Config::METHODS_CONFIG,
             'paymentMethods' => $molliePaymentMethods,
             'countries' => $this->countryService->getActiveCountriesList(),
+            'taxRulesGroups' => $this->taxRulesGroupRepository->getTaxRulesGroups($this->context->getShopId()),
             'tab' => $generalSettings,
             'onlyOrderMethods' => Config::ORDER_API_ONLY_METHODS,
             'displayErrors' => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),

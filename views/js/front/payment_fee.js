@@ -19,40 +19,55 @@
  * @codingStandardsIgnoreStart
  */
 $(document).ready(function () {
-    displayPaymentFee();
-    function displayPaymentFee() {
-        var paymentFees = $('input[name="payment-fee-price-display"]');
-        paymentFees.each(function () {
-            var $prev = $(this).closest('.js-payment-option-form').prev();
-            if ($prev.hasClass('additional-information')) {
-                $prev.prev().find('label').append("<span class='h6'>" + $(this).val() + "</span>");
-            } else {
-                $prev.find('label').append("<span class='h6'>" + $(this).val() + "</span>");
-            }
-        });
+  displayPaymentFee();
+
+  function displayPaymentFee() {
+    var paymentFees = $('input[name="payment-fee-price-display"]');
+    paymentFees.each(function () {
+      var $prev = $(this).closest('.js-payment-option-form').prev();
+      if ($prev.hasClass('additional-information')) {
+        $prev.prev().find('label').append("<span class='h6'>" + $(this).val() + "</span>");
+      } else {
+        $prev.find('label').append("<span class='h6'>" + $(this).val() + "</span>");
+      }
+    });
+  }
+
+  $('input[name="payment-option"]').on('change', function () {
+    const $nextDiv = $(this).closest('.payment-option').parent().next();
+
+    let paymentMethodId = 0;
+    let $paymentMethodId;
+
+    if ($nextDiv.hasClass('js-payment-option-form')) {
+      $paymentMethodId = $nextDiv.find('input[name="payment-method-id"]');
+    } else {
+      $paymentMethodId = $nextDiv.next().find('input[name="payment-method-id"]');
     }
 
-    $('input[name="payment-option"]').on('change', function () {
-        var $nextDiv = $(this).closest('.payment-option').parent().next();
-        var paymentFee;
-        if ($nextDiv.hasClass('js-payment-option-form')) {
-            paymentFee = $nextDiv.find('input[name="payment-fee-price"]').val();
-        } else {
-            paymentFee = $nextDiv.next().find('input[name="payment-fee-price"]').val();
+    if ($paymentMethodId.length > 0) {
+      paymentMethodId = $paymentMethodId.val();
+    }
+
+    $.ajax({
+      url: ajaxUrl,
+      method: 'GET',
+      data: {
+        paymentMethodId: paymentMethodId,
+        ajax: 1,
+        action: 'getTotalCartPrice'
+      },
+      success: function (response) {
+        response = jQuery.parseJSON(response);
+
+        if (response.error) {
+          console.error(response.message);
+
+          return;
         }
 
-        $.ajax({
-            url: ajaxUrl,
-            method: 'GET',
-            data: {
-                'paymentFee': paymentFee,
-                ajax: 1,
-                action: 'getTotalCartPrice'
-            },
-            success: function (response) {
-                response = jQuery.parseJSON(response);
-                $('.card-block.cart-summary-totals').replaceWith(response.cart_summary_totals);
-            }
-        })
+        $('.card-block.cart-summary-totals').replaceWith(response.cart_summary_totals);
+      }
     })
+  })
 });

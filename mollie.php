@@ -10,12 +10,15 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Api\Exceptions\ApiException;
+use Mollie\Builder\InvoicePdfTemplateBuilder;
 use Mollie\Config\Config;
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\ProfileIdProviderInterface;
+use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\Utility\PsVersionUtility;
@@ -475,6 +478,12 @@ class Mollie extends PaymentModule
 
         // We are on module configuration page
         if ($this->name === $moduleName && 'AdminModules' === $currentController) {
+            Media::addJsDef([
+                'paymentMethodTaxRulesGroupIdConfig' => Config::MOLLIE_METHOD_TAX_RULES_GROUP_ID,
+                'paymentMethodSurchargeFixedAmountTaxInclConfig' => Config::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_INCL,
+                'paymentMethodSurchargeFixedAmountTaxExclConfig' => Config::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_EXCL,
+            ]);
+
             $this->context->controller->addJqueryPlugin('sortable');
             $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/payment_methods.js');
             $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/payment_methods.css');
@@ -716,9 +725,15 @@ class Mollie extends PaymentModule
         $cart = new Cart($params['cart']->id);
         $orderId = Order::getOrderByCartId($cart->id);
         $order = new Order($orderId);
+
+        if (!Validate::isLoadedObject($order)) {
+            return true;
+        }
+
         if ($order->module !== $this->name) {
             return true;
         }
+
         /** @var \Mollie\Validator\OrderConfMailValidator $orderConfMailValidator */
         $orderConfMailValidator = $this->getMollieContainer(\Mollie\Validator\OrderConfMailValidator::class);
 
@@ -743,26 +758,34 @@ class Mollie extends PaymentModule
             'outofstock' === $template ||
             'bankwire' === $template ||
             'refund' === $template) {
-            $orderId = Order::getOrderByCartId($cart->id);
-            $order = new Order($orderId);
-            if (!Validate::isLoadedObject($order)) {
-                return true;
-            }
-            try {
-                /** @var \Mollie\Repository\OrderFeeRepository $orderFeeRepo */
-                $orderFeeRepo = $this->getMollieContainer(\Mollie\Repository\OrderFeeRepository::class);
-                $orderFeeId = $orderFeeRepo->getOrderFeeIdByCartId($cart->id);
-                $orderFee = new MolOrderFee($orderFeeId);
-            } catch (Exception $e) {
-                PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
+            /** @var MolOrderPaymentFeeRepositoryInterface $molOrderPaymentFeeRepository */
+            $molOrderPaymentFeeRepository = $this->getMollieContainer(MolOrderPaymentFeeRepositoryInterface::class);
 
-                return true;
-            }
-            if ($orderFee->order_fee) {
-                $params['templateVars']['{payment_fee}'] = Tools::displayPrice($orderFee->order_fee);
+            /** @var ToolsAdapter $tools */
+            $tools = $this->getMollieContainer(ToolsAdapter::class);
+
+            $orderCurrency = new Currency($order->id_currency);
+
+            /** @var MolOrderPaymentFee|null $molOrderPaymentFee */
+            $molOrderPaymentFee = $molOrderPaymentFeeRepository->findOneBy([
+                'id_order' => (int) $order->id,
+            ]);
+
+            $feeTaxIncl = $molOrderPaymentFee->fee_tax_incl ?? 0.00;
+
+            if (PsVersionUtility::isPsVersionLowerThan(_PS_VERSION_, '1.7.6.0')) {
+                $orderFee = $tools->displayPrice(
+                    $feeTaxIncl,
+                    $orderCurrency
+                );
             } else {
-                $params['templateVars']['{payment_fee}'] = Tools::displayPrice(0);
+                $orderFee = $this->context->getCurrentLocale()->formatPrice(
+                    $feeTaxIncl,
+                    $orderCurrency->iso_code
+                );
             }
+
+            $params['templateVars']['{payment_fee}'] = $orderFee;
         }
 
         if ('order_conf' === $template) {
@@ -772,24 +795,37 @@ class Mollie extends PaymentModule
         return true;
     }
 
-    public function hookDisplayPDFInvoice($params)
+    public function hookDisplayPDFInvoice($params): string
     {
         if (!isset($params['object'])) {
-            return;
-        }
-        if (!$params['object'] instanceof OrderInvoice) {
-            return;
+            return '';
         }
 
-        /** @var \Mollie\Builder\InvoicePdfTemplateBuilder $invoiceTemplateBuilder */
-        $invoiceTemplateBuilder = $this->getMollieContainer(\Mollie\Builder\InvoicePdfTemplateBuilder::class);
+        if (!$params['object'] instanceof OrderInvoice) {
+            return '';
+        }
+
+        $localeRepo = $this->get('prestashop.core.localization.locale.repository');
+
+        if (!$localeRepo) {
+            return '';
+        }
+
+        /**
+         * NOTE: context language is set based on customer/employee context
+         */
+        $locale = $localeRepo->getLocale($this->context->language->getLocale());
+
+        /** @var InvoicePdfTemplateBuilder $invoiceTemplateBuilder */
+        $invoiceTemplateBuilder = $this->getMollieContainer(InvoicePdfTemplateBuilder::class);
 
         $templateParams = $invoiceTemplateBuilder
             ->setOrder($params['object']->getOrder())
+            ->setLocale($locale)
             ->buildParams();
 
         if (empty($templateParams)) {
-            return;
+            return '';
         }
 
         $this->context->smarty->assign($templateParams);

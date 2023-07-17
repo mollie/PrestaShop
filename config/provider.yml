@@ -11,8 +11,12 @@ services:
   Mollie\Service\PaymentMethod\PaymentMethodSortProvider:
     class: Mollie\Service\PaymentMethod\PaymentMethodSortProvider
 
+  Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface: '@Mollie\Service\PaymentMethod\PaymentMethodSortProvider'
+
   Mollie\Provider\PhoneNumberProvider:
     class: Mollie\Provider\PhoneNumberProvider
+
+  Mollie\Provider\PhoneNumberProviderInterface: '@Mollie\Provider\PhoneNumberProvider'
 
   Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider:
     class: Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider
@@ -35,3 +39,8 @@ services:
 
   Mollie\Provider\ProfileIdProvider:
     class: Mollie\Provider\ProfileIdProvider
+
+  Mollie\Provider\PaymentFeeProvider:
+    class: Mollie\Provider\PaymentFeeProvider
+
+  Mollie\Provider\PaymentFeeProviderInterface: '@Mollie\Provider\PaymentFeeProvider'

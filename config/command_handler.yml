@@ -14,8 +14,7 @@ services:
     class: 'Mollie\Application\CommandHandler\UpdateApplePayShippingContactHandler'
     arguments:
       - '@Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder'
-      - '@mollie.language'
-      - '@Mollie\Service\OrderFeeService'
+      - '@Mollie\Service\OrderPaymentFeeService'
       - '@Mollie\Collector\ApplePayDirect\OrderTotalCollector'
     tags:
       - { name: tactician.handler, command: Mollie\Application\Command\UpdateApplePayShippingContact }
@@ -23,7 +22,7 @@ services:
   Mollie\Application\CommandHandler\UpdateApplePayShippingMethodHandler:
     class: 'Mollie\Application\CommandHandler\UpdateApplePayShippingMethodHandler'
     arguments:
-      - '@Mollie\Service\OrderFeeService'
+      - '@Mollie\Service\OrderPaymentFeeService'
     tags:
       - { name: tactician.handler, command: Mollie\Application\Command\RequestApplePayPaymentSession }
 

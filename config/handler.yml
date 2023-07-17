@@ -46,16 +46,18 @@ services:
     class: Mollie\Handler\Order\OrderCreationHandler
     arguments:
       - '@mollie'
-      - '@Mollie\Repository\PaymentMethodRepository'
+      - '@Mollie\Repository\PaymentMethodRepositoryInterface'
       - '@Mollie\Service\PaymentMethodService'
-      - '@Mollie\Handler\Order\OrderFeeHandler'
+      - '@Mollie\Handler\Order\OrderPaymentFeeHandler'
       - '@Mollie\Service\OrderStatusService'
+      - '@Mollie\Provider\PaymentFeeProviderInterface'
 
-  Mollie\Handler\Order\OrderFeeHandler:
-    class: Mollie\Handler\Order\OrderFeeHandler
+  Mollie\Handler\Order\OrderPaymentFeeHandler:
+    class: Mollie\Handler\Order\OrderPaymentFeeHandler
     arguments:
-      - '@Mollie\Service\OrderFeeService'
+      - '@Mollie\Service\OrderPaymentFeeService'
       - '@Mollie\Service\PaymentMethodService'
+      - '@Mollie\Provider\PaymentFeeProviderInterface'
 
   Mollie\Handler\RetryHandlerInterface: '@Mollie\Handler\RetryHandler'
 

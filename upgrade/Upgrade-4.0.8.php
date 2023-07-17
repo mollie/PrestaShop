@@ -25,7 +25,7 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_4_0_8(Mollie $module)
 {
-    /** @var \Mollie\Adapter\ConfigurationAdapter $configuration */
+    /** @var ConfigurationAdapter $configuration */
     $configuration = $module->getMollieContainer(ConfigurationAdapter::class);
 
     $configuration->updateValue(Config::MOLLIE_ENVIRONMENT, Config::ENVIRONMENT_LIVE);

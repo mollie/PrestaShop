@@ -22,8 +22,10 @@ interface ShipmentInformationSenderInterface
      * @param MollieApiClient|null $apiGateway
      * @param Order $order
      *
+     * @returns void
+     *
      * @throws ApiException
      * @throws \Exception
      */
-    public function sendShipmentInformation(MollieApiClient $apiGateway, Order $order);
+    public function sendShipmentInformation($apiGateway, Order $order);
 }

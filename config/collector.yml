@@ -5,4 +5,4 @@ services:
   Mollie\Collector\ApplePayDirect\OrderTotalCollector:
     class: Mollie\Collector\ApplePayDirect\OrderTotalCollector
     arguments:
-      - '@Mollie\Service\OrderFeeService'
+      - '@Mollie\Service\OrderPaymentFeeService'

@@ -36,8 +36,8 @@
 
 namespace Mollie\Adapter;
 
+use Configuration as PrestashopConfiguration;
 use Context;
-use Product;
 
 class LegacyContext
 {
@@ -66,9 +66,9 @@ class LegacyContext
         return $this->getContext()->country->iso_code;
     }
 
-    public function getCountryId()
+    public function getCountryId(): int
     {
-        return $this->getContext()->country->id;
+        return (int) $this->getContext()->country->id;
     }
 
     public function getInvoiceCountryId()
@@ -108,19 +108,70 @@ class LegacyContext
         return $this->getContext()->smarty;
     }
 
-    /**
-     * @return string
-     */
-    public function getProductLink(Product $product)
+    public function getProductLink(int $idProduct): string
     {
-        return $this->getContext()->link->getProductLink($product);
+        return (string) $this->getContext()->link->getProductLink($idProduct);
     }
 
     /**
      * @return string
      */
-    public function getImageLink(string $name, string $ids, string $type = null)
+    public function getImageLink(string $name, string $ids, string $type = null): string
     {
         return $this->getContext()->link->getImageLink($name, $ids, $type);
+    }
+
+    public function getComputingPrecision(): int
+    {
+        if (method_exists($this->getContext(), 'getComputingPrecision')) {
+            return $this->getContext()->getComputingPrecision();
+        }
+
+        return (int) PrestashopConfiguration::get('PS_PRICE_DISPLAY_PRECISION');
+    }
+
+    public function getShopId(): int
+    {
+        return (int) $this->getContext()->shop->id;
+    }
+
+    public function getCustomerAddressInvoiceId(): int
+    {
+        return (int) $this->getContext()->cart->id_address_invoice;
+    }
+
+    public function getModuleLink(
+        $module,
+        $controller = 'default',
+        array $params = [],
+        $ssl = null,
+        $idLang = null,
+        $idShop = null,
+        $relativeProtocol = false
+    ): string {
+        return (string) $this->getContext()->link->getModuleLink(
+            $module,
+            $controller,
+            $params,
+            $ssl,
+            $idLang,
+            $idShop,
+            $relativeProtocol
+        );
+    }
+
+    public function getAddressInvoiceId(): int
+    {
+        return (int) $this->getContext()->cart->id_address_invoice;
+    }
+
+    public function getLanguageLocale(): string
+    {
+        return (string) $this->getContext()->language->locale;
+    }
+
+    public function getCurrencyIso(): string
+    {
+        return (string) $this->getContext()->currency->iso_code;
     }
 }

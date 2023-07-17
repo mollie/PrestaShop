@@ -33,5 +33,7 @@ parameters:
     - '#Parameter \#4 \$templateVars of static method MailCore\:\:Send\(\) expects string, array<string, mixed> given.#'
     - '#Property CustomerCore\:\:\$passwd \(int\) does not accept string.#'
     - '#Access to an undefined property Cookie\:\:\$[a-zA-Z0-9_]+#'
+    - '#Parameter \#1 \$value of method ControllerCore\:\:ajaxRender\(\) expects null, string\|false given.#'
+    - '#Call to function is_subclass_of\(\) with.*will always evaluate to false.#'
 
   level: 5

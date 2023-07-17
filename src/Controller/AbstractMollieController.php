@@ -13,6 +13,7 @@ namespace Mollie\Controller;
 
 use Mollie\Errors\Error;
 use Mollie\Errors\Http\HttpStatusCode;
+use Mollie\Utility\PsVersionUtility;
 
 class AbstractMollieController extends \ModuleFrontControllerCore
 {
@@ -26,6 +27,19 @@ class AbstractMollieController extends \ModuleFrontControllerCore
             $response['error'] = new Error($statusCode, $message);
         }
 
-        $this->ajaxDie(json_encode($response));
+        $this->ajaxRender(json_encode($response));
+    }
+
+    protected function ajaxRender($value = null, $controller = null, $method = null)
+    {
+        if (PsVersionUtility::isPsVersionLowerThan(_PS_VERSION_, '1.7.5.0')) {
+            $this->ajaxDie($value, $controller, $method);
+
+            exit;
+        }
+
+        parent::ajaxRender($value, $controller, $method);
+
+        exit;
     }
 }

@@ -2,10 +2,18 @@ services:
   _defaults:
     public: true
 
+  Mollie\Provider\TaxCalculatorProvider:
+    class: Mollie\Provider\TaxCalculatorProvider
+    arguments:
+      - '@Mollie\Repository\TaxRuleRepositoryInterface'
+      - '@Mollie\Repository\TaxRepositoryInterface'
+
   Mollie\Provider\PaymentFeeProvider:
     class: Mollie\Provider\PaymentFeeProvider
     arguments:
-      - '@Mollie\Provider\OrderTotalProvider'
+      - '@mollie.adapter.context'
+      - '@Mollie\Repository\AddressRepositoryInterface'
+      - '@Mollie\Provider\TaxCalculatorProvider'
 
   Mollie\Provider\PaymentOption\BasePaymentOptionProvider:
     class: Mollie\Provider\PaymentOption\BasePaymentOptionProvider
@@ -13,8 +21,9 @@ services:
       - '@mollie'
       - '@=service("mollie.adapter.context")'
       - '@Mollie\Provider\CreditCardLogoProvider'
-      - '@Mollie\Provider\PaymentFeeProvider'
+      - '@Mollie\Provider\PaymentFeeProviderInterface'
       - '@Mollie\Service\LanguageService'
+      - '@Mollie\Provider\OrderTotal\OrderTotalProviderInterface'
 
   Mollie\Provider\PaymentOption\IdealPaymentOptionProvider:
     class: Mollie\Provider\PaymentOption\IdealPaymentOptionProvider
@@ -22,10 +31,11 @@ services:
       - '@mollie'
       - '@=service("mollie.adapter.context")'
       - '@Mollie\Provider\CreditCardLogoProvider'
-      - '@Mollie\Provider\PaymentFeeProvider'
+      - '@Mollie\Provider\PaymentFeeProviderInterface'
       - '@Mollie\Service\Content\TemplateParserInterface'
       - '@Mollie\Builder\Content\PaymentOption\IdealDropdownInfoBlock'
       - '@Mollie\Service\LanguageService'
+      - '@Mollie\Provider\OrderTotal\OrderTotalProviderInterface'
 
   Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider:
     class: Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider
@@ -33,8 +43,8 @@ services:
       - '@mollie'
       - '@=service("mollie.adapter.context")'
       - '@Mollie\Provider\CreditCardLogoProvider'
-      - '@Mollie\Provider\OrderTotalProvider'
-      - '@Mollie\Provider\PaymentFeeProvider'
+      - '@Mollie\Provider\OrderTotal\OrderTotalProviderInterface'
+      - '@Mollie\Provider\PaymentFeeProviderInterface'
       - '@Mollie\Service\LanguageService'
       - '@mollie.customer'
       - '@Mollie\Repository\MolCustomerRepository'
@@ -46,8 +56,8 @@ services:
       - '@mollie'
       - '@=service("mollie.adapter.context")'
       - '@Mollie\Provider\CreditCardLogoProvider'
-      - '@Mollie\Provider\OrderTotalProvider'
-      - '@Mollie\Provider\PaymentFeeProvider'
+      - '@Mollie\Provider\OrderTotal\OrderTotalProviderInterface'
+      - '@Mollie\Provider\PaymentFeeProviderInterface'
       - '@Mollie\Service\LanguageService'
       - '@mollie.customer'
       - '@Mollie\Repository\MolCustomerRepository'
@@ -59,5 +69,6 @@ services:
       - '@mollie'
       - '@mollie.adapter.context'
       - '@Mollie\Provider\CreditCardLogoProvider'
-      - '@Mollie\Provider\PaymentFeeProvider'
+      - '@Mollie\Provider\PaymentFeeProviderInterface'
       - '@Mollie\Service\LanguageService'
+      - '@Mollie\Provider\OrderTotal\OrderTotalProviderInterface'
