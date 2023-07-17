@@ -15,7 +15,8 @@ class CartAdapter
     }
 
     public function getProducts(): array
-    { 
+    {
+        /* @phpstan-ignore-next-line */
         return Context::getContext()->cart ? Context::getContext()->cart->getProducts() : [];
     }
-} 
+}
