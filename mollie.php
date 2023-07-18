@@ -573,6 +573,7 @@ class Mollie extends PaymentModule
         if (version_compare(_PS_VERSION_, '1.7.0.0', '<')) {
             return [];
         }
+
         $paymentOptions = [];
 
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
@@ -584,6 +585,9 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
         $paymentMethodService = $this->getMollieContainer(\Mollie\Service\PaymentMethodService::class);
 
+        /** @var PrestaLoggerInterface $logger */
+        $logger = $this->getMollieContainer(PrestaLoggerInterface::class);
+
         $methods = $paymentMethodService->getMethodsForCheckout();
 
         foreach ($methods as $method) {
@@ -594,7 +598,14 @@ class Mollie extends PaymentModule
                 continue;
             }
             $paymentMethod->method_name = $method['method_name'];
-            $paymentOptions[] = $paymentOptionsHandler->handle($paymentMethod);
+
+            try {
+                $paymentOptions[] = $paymentOptionsHandler->handle($paymentMethod);
+            } catch (Exception $exception) {
+                // TODO handle payment fee exception and other exceptions with custom exception throw
+
+                $logger->error($exception->getMessage());
+            }
         }
 
         return $paymentOptions;

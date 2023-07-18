@@ -3,10 +3,10 @@
 # Changelog #
 
 ## Changes in release 5.4.1 ##
-+ Fixed order state duplication on install when single shop instance/ multishop instances were switched during module usage.
-+ Added environment based settings support for iframe, single click payment and mollie issuers settings.
-+ Improved payment fee handling. Added support to select tax rule for payment fee. Improved logic to append fee taxes to the order totals.
-+ Improved auto-shipping functionality with better error/message handling.
++ Fixed payment fee tax problems and improved fee set-up process.
++ Sync Mollie components and Single click flag to the environment selected.
++ Overall improvements and bug fixes.
++ Fixed order state duplication on install when single shop instance/multishop instances were switched during module usage. Reset your module to remove any duplicates.
 
 ## Changes in release 5.4.0 ##
 + Fixed issue where saving wrong API key would reset settings page.
