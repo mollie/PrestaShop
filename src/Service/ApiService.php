@@ -148,14 +148,14 @@ class ApiService implements ApiServiceInterface
                 'minimumAmount' => $apiMethod->minimumAmount ? [
                     'value' => NumberUtility::toPrecision(
                         $apiMethod->minimumAmount->value,
-                        $this->context->getComputingPrecision()
+                        NumberUtility::FLOAT_PRECISION
                     ),
                     'currency' => $apiMethod->minimumAmount->currency,
                 ] : false,
                 'maximumAmount' => $apiMethod->maximumAmount ? [
                     'value' => NumberUtility::toPrecision(
                         $apiMethod->maximumAmount->value,
-                        $this->context->getComputingPrecision()
+                        NumberUtility::FLOAT_PRECISION
                     ),
                     'currency' => $apiMethod->maximumAmount->currency,
                 ] : false,
@@ -213,12 +213,12 @@ class ApiService implements ApiServiceInterface
 
                     $paymentMethod->surcharge_fixed_amount_tax_excl = NumberUtility::toPrecision(
                         $paymentMethod->surcharge_fixed_amount_tax_excl,
-                        $this->context->getComputingPrecision()
+                        NumberUtility::FLOAT_PRECISION
                     );
 
                     $apiMethod['surcharge_fixed_amount_tax_incl'] = NumberUtility::toPrecision(
                         $apiMethod['surcharge_fixed_amount_tax_incl'],
-                        $this->context->getComputingPrecision()
+                        NumberUtility::FLOAT_PRECISION
                     );
                 }
 
@@ -426,7 +426,7 @@ class ApiService implements ApiServiceInterface
 
         return NumberUtility::toPrecision(
             $taxCalculator->addTaxes($priceTaxExcl),
-            $this->context->getComputingPrecision()
+            NumberUtility::FLOAT_PRECISION
         );
     }
 
@@ -434,22 +434,22 @@ class ApiService implements ApiServiceInterface
     {
         $paymentMethod->surcharge_percentage = (string) NumberUtility::toPrecision(
             (float) $paymentMethod->surcharge_percentage,
-            $this->context->getComputingPrecision()
+            NumberUtility::FLOAT_PRECISION
         );
 
         $paymentMethod->surcharge_limit = (string) NumberUtility::toPrecision(
             (float) $paymentMethod->surcharge_limit,
-            $this->context->getComputingPrecision()
+            NumberUtility::FLOAT_PRECISION
         );
 
         $paymentMethod->min_amount = NumberUtility::toPrecision(
             $paymentMethod->min_amount,
-            $this->context->getComputingPrecision()
+            NumberUtility::FLOAT_PRECISION
         );
 
         $paymentMethod->max_amount = NumberUtility::toPrecision(
             $paymentMethod->max_amount,
-            $this->context->getComputingPrecision()
+            NumberUtility::FLOAT_PRECISION
         );
 
         return $paymentMethod;

@@ -219,11 +219,11 @@ class AdminMollieAjaxController extends ModuleAdminController
                 'error' => false,
                 'paymentFeeTaxIncl' => NumberUtility::toPrecision(
                     $paymentFeeTaxIncl,
-                    $context->getComputingPrecision()
+                    NumberUtility::FLOAT_PRECISION
                 ),
                 'paymentFeeTaxExcl' => NumberUtility::toPrecision(
                     $paymentFeeTaxExcl,
-                    $context->getComputingPrecision()
+                    NumberUtility::FLOAT_PRECISION
                 ),
             ])
         );
