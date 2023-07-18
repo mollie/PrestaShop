@@ -18,8 +18,8 @@ use PrestaShop\Decimal\Operation\Rounding;
 
 class NumberUtility
 {
-    private const DECIMAL_PRECISION = 2;
-    private const FLOAT_PRECISION = 6;
+    public const DECIMAL_PRECISION = 2;
+    public const FLOAT_PRECISION = 6;
     private const ROUNDING = Rounding::ROUND_HALF_UP;
 
     // TODO make all methods consistent: either pass string/float as parameter or cast members to Number/DecimalNumber class beforehand.
