@@ -2,6 +2,11 @@
 
 # Changelog #
 
+## Changes in release 6.0.1 ##
++ Fixed payment fee tax problems and improved fee set-up process.
++ Sync Mollie components and Single click flag to the environment selected.
++ Overall improvements and bug fixes.
+
 ## Changes in release 6.0.0 ##
 + Fixed order state duplication on install when single shop instance/ multishop instances were switched during module usage.
 + Upgraded sentry logger to support PHP 8.0 version. 

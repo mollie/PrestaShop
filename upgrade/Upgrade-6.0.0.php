@@ -34,18 +34,8 @@ function upgrade_module_6_0_0(Mollie $module): bool
         }
     }
 
-    //todo: maybe move to container
-    $installer = new \Mollie\Install\Installer(
-        $module,
-        new \Mollie\Service\OrderStateImageService(),
-        new \Mollie\Install\DatabaseTableInstaller(),
-        new \Mollie\Tracker\Segment(
-            new \Mollie\Adapter\Shop(),
-            new \Mollie\Adapter\Language(),
-            new \Mollie\Config\Env()
-        ),
-        new \Mollie\Adapter\ConfigurationAdapter()
-    );
+    /** @var Mollie\Install\Installer $installer */
+    $installer = $module->getService(Mollie\Install\Installer::class);
 
     $installer->installSpecificTabs();
 

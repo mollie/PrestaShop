@@ -12,7 +12,6 @@
 
 namespace Mollie\Install;
 
-use Configuration;
 use Db;
 use DbQuery;
 use Exception;
@@ -22,12 +21,12 @@ use Language;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
+use Mollie\Exception\CouldNotInstallModule;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
-use Mollie\Service\OrderStateImageService;
 use Mollie\Tracker\Segment;
 use Mollie\Utility\MultiLangUtility;
 use OrderState;
-use PrestaShopDatabaseException;
 use PrestaShopException;
 use Tab;
 use Tools;
@@ -48,12 +47,7 @@ class Installer implements InstallerInterface
     private $module;
 
     /**
-     * @var OrderStateImageService
-     */
-    private $imageService;
-
-    /**
-     * @var InstallerInterface
+     * @var DatabaseTableInstaller
      */
     private $databaseTableInstaller;
 
@@ -66,25 +60,28 @@ class Installer implements InstallerInterface
      * @var ConfigurationAdapter
      */
     private $configurationAdapter;
+    /** @var OrderStateInstaller */
+    private $orderStateInstaller;
 
     public function __construct(
-        Mollie $module,
-        OrderStateImageService $imageService,
-        InstallerInterface $databaseTableInstaller,
+        ModuleFactory $moduleFactory,
+        DatabaseTableInstaller $databaseTableInstaller,
         Segment $segment,
-        ConfigurationAdapter $configurationAdapter
+        ConfigurationAdapter $configurationAdapter,
+        OrderStateInstaller $orderStateInstaller
     ) {
-        $this->module = $module;
-        $this->imageService = $imageService;
+        $this->module = $moduleFactory->getModule();
         $this->databaseTableInstaller = $databaseTableInstaller;
         $this->segment = $segment;
         $this->configurationAdapter = $configurationAdapter;
+        $this->orderStateInstaller = $orderStateInstaller;
     }
 
     public function install()
     {
         $this->segment->setMessage('Mollie installed');
         $this->segment->track();
+
         $errorHandler = ErrorHandler::getInstance();
 
         foreach (self::getHooks() as $hook) {
@@ -96,8 +93,8 @@ class Installer implements InstallerInterface
         }
 
         try {
-            $this->createMollieStatuses();
-        } catch (Exception $e) {
+            $this->orderStateInstaller->install();
+        } catch (CouldNotInstallModule $e) {
             $errorHandler->handle($e, $e->getCode(), false);
             $this->errors[] = $this->module->l('Unable to install Mollie statuses', self::FILE_NAME);
 
@@ -174,245 +171,6 @@ class Installer implements InstallerInterface
     }
 
     /**
-     * @return bool
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    private function createPartialRefundOrderState()
-    {
-        if ($this->isStatusCreated(Config::MOLLIE_STATUS_PARTIAL_REFUND)) {
-            return true;
-        }
-        $orderState = new OrderState();
-        $orderState->send_email = false;
-        $orderState->color = '#6F8C9F';
-        $orderState->hidden = false;
-        $orderState->delivery = false;
-        $orderState->logable = false;
-        $orderState->invoice = false;
-        $orderState->module_name = $this->module->name;
-        $orderState->name = MultiLangUtility::createMultiLangField('Partially refunded by Mollie');
-        if ($orderState->add()) {
-            $this->imageService->createOrderStateLogo($orderState->id);
-        }
-        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_PARTIAL_REFUND, (int) $orderState->id);
-
-        return true;
-    }
-
-    /**
-     * @return bool
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    public function createPartialShippedOrderState()
-    {
-        if ($this->isStatusCreated(Config::MOLLIE_STATUS_PARTIALLY_SHIPPED)) {
-            return true;
-        }
-        $orderState = new OrderState();
-        $orderState->send_email = false;
-        $orderState->color = '#8A2BE2';
-        $orderState->hidden = false;
-        $orderState->delivery = false;
-        $orderState->logable = false;
-        $orderState->invoice = false;
-        $orderState->module_name = $this->module->name;
-        $orderState->name = MultiLangUtility::createMultiLangField('Partially shipped');
-
-        if ($orderState->add()) {
-            $this->imageService->createOrderStateLogo($orderState->id);
-        }
-        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_PARTIALLY_SHIPPED, (int) $orderState->id);
-
-        return true;
-    }
-
-    public function createMollieStatuses()
-    {
-        if (!$this->createPartialRefundOrderState()) {
-            return false;
-        }
-        if (!$this->createAwaitingMollieOrderState()) {
-            return false;
-        }
-        if (!$this->createPartialShippedOrderState()) {
-            return false;
-        }
-        if (!$this->createOrderCompletedOrderState()) {
-            return false;
-        }
-        if (!$this->klarnaPaymentAuthorizedState()) {
-            return false;
-        }
-        if (!$this->klarnaPaymentShippedState()) {
-            return false;
-        }
-        if (!$this->createChargedbackState()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @return bool
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    public function createAwaitingMollieOrderState()
-    {
-        if ($this->isStatusCreated(Config::MOLLIE_STATUS_AWAITING)) {
-            return true;
-        }
-        $orderState = new OrderState();
-        $orderState->send_email = false;
-        $orderState->color = '#4169E1';
-        $orderState->hidden = false;
-        $orderState->delivery = false;
-        $orderState->logable = false;
-        $orderState->invoice = false;
-        $orderState->module_name = $this->module->name;
-        $orderState->name = MultiLangUtility::createMultiLangField('Awaiting Mollie payment');
-
-        if ($orderState->add()) {
-            $this->imageService->createOrderStateLogo($orderState->id);
-        }
-        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_AWAITING, (int) $orderState->id);
-
-        return true;
-    }
-
-    /**
-     * @return bool
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    public function createOrderCompletedOrderState()
-    {
-        if ($this->isStatusCreated(Config::MOLLIE_STATUS_ORDER_COMPLETED)) {
-            return true;
-        }
-        $orderState = new OrderState();
-        $orderState->send_email = false;
-        $orderState->color = '#3d7d1c';
-        $orderState->hidden = false;
-        $orderState->delivery = false;
-        $orderState->logable = false;
-        $orderState->invoice = false;
-        $orderState->send_email = true;
-        $orderState->module_name = $this->module->name;
-        $orderState->name = MultiLangUtility::createMultiLangField('Completed');
-
-        if ($orderState->add()) {
-            $this->imageService->createOrderStateLogo($orderState->id);
-        }
-        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_ORDER_COMPLETED, (int) $orderState->id);
-
-        return true;
-    }
-
-    /**
-     * @return bool
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    public function klarnaPaymentAuthorizedState()
-    {
-        if ($this->isStatusCreated(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED)) {
-            return true;
-        }
-        $orderState = new OrderState();
-        $orderState->send_email = true;
-        $orderState->color = '#8A2BE2';
-        $orderState->hidden = false;
-        $orderState->delivery = false;
-        $orderState->logable = true;
-        $orderState->invoice = true;
-        $orderState->pdf_invoice = true;
-        $orderState->paid = true;
-        $orderState->send_email = true;
-        $orderState->template = 'payment';
-        $orderState->module_name = $this->module->name;
-        $orderState->name = MultiLangUtility::createMultiLangField('Klarna payment authorized');
-
-        if ($orderState->add()) {
-            $this->imageService->createOrderStateLogo($orderState->id);
-        }
-        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED, (int) $orderState->id);
-        $this->configurationAdapter->updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
-
-        return true;
-    }
-
-    /**
-     * @return bool
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    public function klarnaPaymentShippedState()
-    {
-        if ($this->isStatusCreated(Config::MOLLIE_STATUS_KLARNA_SHIPPED)) {
-            return true;
-        }
-        $orderState = new OrderState();
-        $orderState->send_email = true;
-        $orderState->color = '#8A2BE2';
-        $orderState->hidden = false;
-        $orderState->delivery = false;
-        $orderState->logable = true;
-        $orderState->invoice = false;
-        $orderState->shipped = true;
-        $orderState->paid = true;
-        $orderState->delivery = true;
-        $orderState->template = 'shipped';
-        $orderState->pdf_invoice = true;
-        $orderState->module_name = $this->module->name;
-        $orderState->name = MultiLangUtility::createMultiLangField('Klarna payment shipped');
-
-        if ($orderState->add()) {
-            $this->imageService->createOrderStateLogo($orderState->id);
-        }
-        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_KLARNA_SHIPPED, (int) $orderState->id);
-
-        return true;
-    }
-
-    /**
-     * @return bool
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    public function createChargedbackState()
-    {
-        if ($this->isStatusCreated(Config::MOLLIE_STATUS_CHARGEBACK)) {
-            return true;
-        }
-        $orderState = new OrderState();
-        $orderState->send_email = false;
-        $orderState->color = '#E74C3C';
-        $orderState->hidden = false;
-        $orderState->delivery = false;
-        $orderState->logable = false;
-        $orderState->invoice = false;
-        $orderState->module_name = $this->module->name;
-        $orderState->name = MultiLangUtility::createMultiLangField('Mollie Chargeback');
-        if ($orderState->add()) {
-            $this->imageService->createOrderStateLogo($orderState->id);
-        }
-        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_CHARGEBACK, (int) $orderState->id);
-
-        return true;
-    }
-
-    /**
      * @return void
      */
     protected function initConfig()
@@ -432,11 +190,11 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY, 0);
         $this->configurationAdapter->updateValue(Config::MOLLIE_DISPLAY_ERRORS, false);
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_OPEN, $this->configurationAdapter->get(Config::MOLLIE_STATUS_AWAITING));
-        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_PAID, Configuration::get('PS_OS_PAYMENT'));
+        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_PAID, $this->configurationAdapter->get('PS_OS_PAYMENT'));
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_COMPLETED, $this->configurationAdapter->get(Config::MOLLIE_STATUS_ORDER_COMPLETED));
-        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_CANCELED, Configuration::get('PS_OS_CANCELED'));
-        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_EXPIRED, Configuration::get('PS_OS_CANCELED'));
-        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_REFUNDED, Configuration::get('PS_OS_REFUND'));
+        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_CANCELED, $this->configurationAdapter->get('PS_OS_CANCELED'));
+        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_EXPIRED, $this->configurationAdapter->get('PS_OS_CANCELED'));
+        $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_REFUNDED, $this->configurationAdapter->get('PS_OS_REFUND'));
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_SHIPPING, $this->configurationAdapter->get(Config::MOLLIE_STATUS_PARTIALLY_SHIPPED));
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_SHIPPING, true);
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_PAID, true);
@@ -523,7 +281,7 @@ class Installer implements InstallerInterface
 
     public function installVoucherFeatures()
     {
-        $mollieVoucherId = Configuration::get(Config::MOLLIE_VOUCHER_FEATURE_ID);
+        $mollieVoucherId = $this->configurationAdapter->get(Config::MOLLIE_VOUCHER_FEATURE_ID);
         if ($mollieVoucherId) {
             $mollieFeature = new Feature((int) $mollieVoucherId);
             $doesFeatureExist = Validate::isLoadedObject($mollieFeature);
@@ -545,28 +303,5 @@ class Installer implements InstallerInterface
         }
 
         $this->configurationAdapter->updateValue(Config::MOLLIE_VOUCHER_FEATURE_ID, $feature->id);
-    }
-
-    private function isStatusCreated($statusName)
-    {
-        $status = new OrderState((int) $this->configurationAdapter->get($statusName));
-        if (Validate::isLoadedObject($status)) {
-            $this->enableStatus($status);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param OrderState $orderState
-     */
-    private function enableStatus($orderState)
-    {
-        if ((bool) $orderState->deleted) {
-            $orderState->deleted = false;
-            $orderState->save();
-        }
     }
 }

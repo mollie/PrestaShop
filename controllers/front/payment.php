@@ -81,19 +81,17 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             Tools::redirectLink('index.php');
         }
 
-        /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getService(PaymentMethodRepositoryInterface::class);
+        /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
+        $paymentMethodRepository = $this->module->getService(PaymentMethodRepositoryInterface::class);
         /** @var PaymentMethodService $transactionService */
         $transactionService = $this->module->getService(PaymentMethodService::class);
         /** @var MollieOrderCreationService $mollieOrderCreationService */
         $mollieOrderCreationService = $this->module->getService(MollieOrderCreationService::class);
-        /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
-        $paymentMethodRepository = $this->module->getService(PaymentMethodRepositoryInterface::class);
         /** @var SubscriptionOrderValidator $subscriptionOrderValidator */
         $subscriptionOrderValidator = $this->module->getService(SubscriptionOrderValidator::class);
 
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
-        $paymentMethodId = $paymentMethodRepo->getPaymentMethodIdByMethodId($method, $environment);
+        $paymentMethodId = $paymentMethodRepository->getPaymentMethodIdByMethodId($method, $environment);
         $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
 
         /* if its subscription order only payment API is allowed */
@@ -133,7 +131,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             } else {
                 /** @var ExceptionService $exceptionService */
                 $exceptionService = $this->module->getService(ExceptionService::class);
-                $message = $exceptionService->getErrorMessageForException($e, $exceptionService->getErrorMessages());
+                $message = $exceptionService->getErrorMessageForException($e);
             }
             $this->errors[] = $message;
 
@@ -155,7 +153,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             if ($method === PaymentMethod::BANKTRANSFER) {
                 $orderId = Order::getOrderByCartId($cart->id);
                 $order = new Order($orderId);
-                $paymentMethodRepo->addOpenStatusPayment(
+                $paymentMethodRepository->addOpenStatusPayment(
                     $cart->id,
                     $apiPayment->method,
                     $apiPayment->id,
