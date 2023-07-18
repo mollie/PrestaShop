@@ -38,64 +38,60 @@ namespace Mollie\Handler\Order;
 
 use Cart;
 use Configuration;
-use Mollie\Api\Resources\OrderLine;
-use Mollie\Config\Config;
-use Mollie\Service\OrderFeeService;
+use Mollie\Provider\PaymentFeeProviderInterface;
+use Mollie\Service\OrderPaymentFeeService;
 use Mollie\Service\PaymentMethodService;
-use Mollie\Utility\PaymentFeeUtility;
 use Order;
 use OrderDetail;
 use PrestaShop\Decimal\Number;
 
-class OrderFeeHandler
+class OrderPaymentFeeHandler
 {
-    /** @var OrderFeeService */
-    private $feeService;
+    /** @var OrderPaymentFeeService */
+    private $orderPaymentFeeService;
     /** @var PaymentMethodService */
     private $paymentMethodService;
+    /** @var PaymentFeeProviderInterface */
+    private $paymentFeeProvider;
 
     public function __construct(
-        OrderFeeService $feeService,
-        PaymentMethodService $paymentMethodService
+        OrderPaymentFeeService $orderPaymentFeeService,
+        PaymentMethodService $paymentMethodService,
+        PaymentFeeProviderInterface $paymentFeeProvider
     ) {
-        $this->feeService = $feeService;
+        $this->orderPaymentFeeService = $orderPaymentFeeService;
         $this->paymentMethodService = $paymentMethodService;
+        $this->paymentFeeProvider = $paymentFeeProvider;
     }
 
-    public function addOrderFee(int $orderId, $apiPayment)
+    public function addOrderPaymentFee(int $orderId, $apiPayment): int
     {
         $order = new Order($orderId);
-
         $cart = new Cart($order->id_cart);
+
         $originalAmountWithTax = $cart->getOrderTotal(
             true,
             Cart::BOTH
         );
+
         $originalAmountWithoutTax = $cart->getOrderTotal(
             false,
             Cart::BOTH
         );
-        $paymentFee = 0;
 
         $paymentMethod = $this->paymentMethodService->getPaymentMethod($apiPayment);
-        if ($apiPayment->resource === Config::MOLLIE_API_STATUS_PAYMENT) {
-            $paymentFee = PaymentFeeUtility::getPaymentFee($paymentMethod, $originalAmountWithTax);
-        } else {
-            /** @var OrderLine $line */
-            foreach ($apiPayment->lines() as $line) {
-                if ($line->sku === Config::PAYMENT_FEE_SKU) {
-                    $paymentFee = $line->totalAmount->value;
-                }
-            }
-        }
 
-        $this->feeService->createOrderFee($order->id_cart, $paymentFee);
+        $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmountWithTax);
+
+        $this->orderPaymentFeeService->createOrderPaymentFee($orderId, (int) $order->id_cart, $paymentFeeData);
 
         $order = new Order($orderId);
-        $order->total_paid_tax_excl = (float) (new Number((string) $originalAmountWithoutTax))->plus((new Number((string) $paymentFee)))->toPrecision(2);
-        $order->total_paid_tax_incl = (float) (new Number((string) $originalAmountWithTax))->plus((new Number((string) $paymentFee)))->toPrecision(2);
+
+        $order->total_paid_tax_excl = (float) (new Number((string) $originalAmountWithoutTax))->plus((new Number((string) $paymentFeeData->getPaymentFeeTaxExcl())))->toPrecision(2);
+        $order->total_paid_tax_incl = (float) (new Number((string) $originalAmountWithTax))->plus((new Number((string) $paymentFeeData->getPaymentFeeTaxIncl())))->toPrecision(2);
         $order->total_paid = (float) $apiPayment->amount->value;
         $order->total_paid_real = (float) $apiPayment->amount->value;
+
         $order->update();
 
         return $orderId;

@@ -72,6 +72,11 @@ build-ps-8:
 npm-package-install:
 	cd views/assets && npm i && npm run build
 
+run-e2e-tests-locally:
+	npm install cypress@12.15.0
+	npm ci
+	npx cypress run
+  
 # checking the module upgrading - installs older module then installs from master branch
 upgrading-module-test-1784:
 	git fetch

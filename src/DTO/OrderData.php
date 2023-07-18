@@ -114,6 +114,12 @@ class OrderData implements JsonSerializable
      */
     private $sequenceType;
 
+    /** @var ?string */
+    private $consumerDateOfBirth;
+
+    /** @var ?string */
+    private $title;
+
     public function __construct(
         Amount $amount,
                $redirectUrl,
@@ -372,6 +378,19 @@ class OrderData implements JsonSerializable
         $this->payment = $payment;
     }
 
+    public function getConsumerDateOfBirth(): ?string
+    {
+        return $this->consumerDateOfBirth;
+    }
+
+    /**
+     * @param string $consumerDateOfBirth
+     */
+    public function setConsumerDateOfBirth(string $consumerDateOfBirth): void
+    {
+        $this->consumerDateOfBirth = $consumerDateOfBirth;
+    }
+
     public function getSequenceType(): string
     {
         return $this->sequenceType;
@@ -380,6 +399,22 @@ class OrderData implements JsonSerializable
     public function setSequenceType(string $sequenceType): void
     {
         $this->sequenceType = $sequenceType;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string|null $title
+     */
+    public function setTitle(?string $title): void
+    {
+        $this->title = $title;
     }
 
     public function jsonSerialize()
@@ -404,6 +439,7 @@ class OrderData implements JsonSerializable
                 'givenName' => $this->cleanUpInput($this->getBillingAddress()->firstname),
                 'familyName' => $this->cleanUpInput($this->getBillingAddress()->lastname),
                 'email' => $this->cleanUpInput($this->getEmail()),
+                'title' => $this->cleanUpInput($this->getTitle()),
             ],
             'shippingAddress' => [
                 'organizationName' => $this->cleanUpInput($this->getShippingAddress()->company),
@@ -415,6 +451,7 @@ class OrderData implements JsonSerializable
                 'givenName' => $this->cleanUpInput($this->getShippingAddress()->firstname),
                 'familyName' => $this->cleanUpInput($this->getShippingAddress()->lastname),
                 'email' => $this->cleanUpInput($this->getEmail()),
+                'title' => $this->cleanUpInput($this->getTitle()),
             ],
             'redirectUrl' => $this->getRedirectUrl(),
             'webhookUrl' => $this->getWebhookUrl(),
@@ -424,6 +461,7 @@ class OrderData implements JsonSerializable
             'orderNumber' => $this->getOrderNumber(),
             'lines' => $lines,
             'payment' => $this->getPayment(),
+            'consumerDateOfBirth' => $this->getConsumerDateOfBirth(),
         ];
 
         if ($this->billingPhoneNumber) {

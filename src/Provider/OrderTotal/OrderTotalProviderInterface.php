@@ -34,9 +34,9 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Provider;
+namespace Mollie\Provider\OrderTotal;
 
 interface OrderTotalProviderInterface
 {
-    public function getOrderTotal();
+    public function getOrderTotal(): float;
 }

@@ -9,7 +9,7 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
-class MolOrderFee extends ObjectModel
+class MolOrderPaymentFee extends ObjectModel
 {
     /**
      * @var int
@@ -17,19 +17,31 @@ class MolOrderFee extends ObjectModel
     public $id_cart;
 
     /**
+     * @var int
+     */
+    public $id_order;
+
+    /**
      * @var float
      */
-    public $order_fee;
+    public $fee_tax_incl;
+
+    /**
+     * @var float
+     */
+    public $fee_tax_excl;
 
     /**
      * @var array
      */
     public static $definition = [
-        'table' => 'mol_order_fee',
-        'primary' => 'id_mol_order_fee',
+        'table' => 'mol_order_payment_fee',
+        'primary' => 'id_mol_order_payment_fee',
         'fields' => [
             'id_cart' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
-            'order_fee' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
+            'id_order' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
+            'fee_tax_incl' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
+            'fee_tax_excl' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
         ],
     ];
 }

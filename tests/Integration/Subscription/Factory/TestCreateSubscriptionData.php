@@ -40,6 +40,7 @@ class TestCreateSubscriptionData extends BaseTestCase
             [
                 'method' => MandateMethod::CREDITCARD,
                 'name' => self::CUSTOMER_NAME,
+                'mandate_id' => 'test-mandate-id',
             ]
         );
 
@@ -53,6 +54,7 @@ class TestCreateSubscriptionData extends BaseTestCase
             [
                 'method' => MandateMethod::CREDITCARD,
                 'name' => self::CUSTOMER_NAME,
+                'mandate_id' => 'test-mandate-id',
             ]
         );
         $combinationMock = $this->createMock(\Combination::class);
@@ -68,6 +70,10 @@ class TestCreateSubscriptionData extends BaseTestCase
         $combinationRepositoryMock->method('getById')->willReturn($combinationMock);
 
         $customerRepository = new MolCustomerRepository('MolCustomer');
+
+        $link = $this->createMock(\Mollie\Adapter\Link::class);
+        $link->method('getModuleLink')->willReturn('test-link');
+
         /** @var CreateSubscriptionDataFactory $createSubscriptionData */
         $createSubscriptionData = new CreateSubscriptionDataFactory(
             $customerRepository,
@@ -75,7 +81,9 @@ class TestCreateSubscriptionData extends BaseTestCase
             new SubscriptionDescriptionProvider(),
             new CurrencyRepository(),
             $combinationRepositoryMock,
-            $paymentMethodMock
+            $paymentMethodMock,
+            $link,
+            new Mollie()
         );
 
         $customer = $this->createMock('Customer');
@@ -83,6 +91,7 @@ class TestCreateSubscriptionData extends BaseTestCase
 
         $orderMock = $this->createMock('Order');
         $orderMock->id = 9999;
+        $orderMock->reference = 'REFERENCE123';
         $orderMock->id_currency = 1;
         $orderMock->total_paid_tax_incl = 19.99;
         $orderMock->method('getCustomer')->willReturn($customer);
@@ -104,8 +113,12 @@ class TestCreateSubscriptionData extends BaseTestCase
                         'currency' => 'EUR',
                     ],
                 'interval' => '1 day',
-                'description' => 'mol-9999-19.99-EUR',
-                'method' => MandateMethod::CREDITCARD,
+                'description' => 'subscription-REFERENCE123',
+                'webhookUrl' => 'test-link',
+                'mandateId' => 'test-mandate-id',
+                'metadata' => [
+                    'secure_key' => $subscriptionData->getMetaData()['secure_key'], //NOTE: cannot really mock static methods.
+                ],
             ],
             $subscriptionData->jsonSerialize()
         );
