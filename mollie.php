@@ -80,7 +80,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.0.1';
+        $this->version = '6.0.2';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -328,23 +328,20 @@ class Mollie extends PaymentModule
     {
         /** @var \Mollie\Service\ErrorDisplayService $errorDisplayService */
         $errorDisplayService = $this->getService(\Mollie\Service\ErrorDisplayService::class);
+
         /** @var PaymentMethodRepositoryInterface $methodRepository */
         $methodRepository = $this->getService(PaymentMethodRepositoryInterface::class);
 
-        $isCartController = $this->context->controller instanceof CartControllerCore;
-        if ($isCartController) {
+        /** @var ConfigurationAdapter $configuration */
+        $configuration = $this->getService(ConfigurationAdapter::class);
+
+        $controller = $this->context->controller;
+
+        if ($controller instanceof CartControllerCore) {
             $errorDisplayService->showCookieError('mollie_payment_canceled_error');
         }
-        /** @var ?MolPaymentMethod $paymentMethod */
-        $paymentMethod = $methodRepository->findOneBy(
-            [
-                'id_method' => Config::MOLLIE_METHOD_ID_APPLE_PAY,
-                'live_environment' => Configuration::get(Config::MOLLIE_ENVIRONMENT),
-            ]
-        );
 
-        $isProductController = $this->context->controller instanceof ProductControllerCore;
-        if ($isProductController) {
+        if ($controller instanceof ProductControllerCore) {
             $this->context->controller->addJS("{$this->_path}views/js/front/subscription/product.js");
             $this->context->controller->addJqueryPlugin('growl');
 
@@ -353,32 +350,47 @@ class Mollie extends PaymentModule
                 'isVersionGreaterOrEqualTo177' => PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.7.0'),
             ]);
         }
+
+        /** @var ?MolPaymentMethod $paymentMethod */
+        $paymentMethod = $methodRepository->findOneBy(
+            [
+                'id_method' => Config::MOLLIE_METHOD_ID_APPLE_PAY,
+                'live_environment' => (int) $configuration->get(Config::MOLLIE_ENVIRONMENT),
+            ]
+        );
+
         if (!$paymentMethod || !$paymentMethod->enabled) {
             return;
         }
 
-        $isApplePayEnabled = Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT);
-        if ($isApplePayEnabled) {
-            $controller = $this->context->controller;
-            if ($controller instanceof ProductControllerCore || $controller instanceof CartControllerCore) {
-                Media::addJsDef([
-                    'countryCode' => $this->context->country->iso_code,
-                    'currencyCode' => $this->context->currency->iso_code,
-                    'totalLabel' => $this->context->shop->name,
-                    'customerId' => $this->context->customer->id ?? 0,
-                    'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'applePayDirectAjax'),
-                    'cartId' => $this->context->cart->id,
-                    'applePayButtonStyle' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
-                ]);
-                $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
+        $isApplePayDirectProductEnabled = (int) $configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT);
+        $isApplePayDirectCartEnabled = (int) $configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART);
 
-                if ($controller instanceof ProductControllerCore) {
-                    $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirect/applePayDirectProduct.js');
-                }
-                if ($controller instanceof CartControllerCore) {
-                    $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirect/applePayDirectCart.js');
-                }
-            }
+        $canDisplayInProductPage = $controller instanceof ProductControllerCore && $isApplePayDirectProductEnabled;
+        $canDisplayInCartPage = $controller instanceof CartControllerCore && $isApplePayDirectCartEnabled;
+
+        if (!$canDisplayInProductPage && !$canDisplayInCartPage) {
+            return;
+        }
+
+        Media::addJsDef([
+            'countryCode' => $this->context->country->iso_code,
+            'currencyCode' => $this->context->currency->iso_code,
+            'totalLabel' => $this->context->shop->name,
+            'customerId' => $this->context->customer->id ?? 0,
+            'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'applePayDirectAjax'),
+            'cartId' => $this->context->cart->id,
+            'applePayButtonStyle' => (int) $configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
+        ]);
+
+        $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
+
+        if ($controller instanceof ProductControllerCore) {
+            $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirect/applePayDirectProduct.js');
+        }
+
+        if ($controller instanceof CartControllerCore) {
+            $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirect/applePayDirectCart.js');
         }
     }
 
