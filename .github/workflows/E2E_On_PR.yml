@@ -20,7 +20,7 @@ jobs:
             subdomain: 'demoshop1784'
             port: '8002'
             yml: 'docker-compose.1784.yml'
-            url: 'https://demoshop1784.eu.ngrok.io'
+            url: 'https://demoshop1784.ngrok.io'
             test_spec: '**/cypress/e2e/ps1784/**'
             TestRailID: R4954
           - prestashop: 'PS8'
@@ -28,7 +28,7 @@ jobs:
             subdomain: 'demoshop8'
             port: '8142'
             yml: 'docker-compose.8.yml'
-            url: 'https://demoshop8.eu.ngrok.io'
+            url: 'https://demoshop8.ngrok.io'
             test_spec: '**/cypress/e2e/ps8/**'
             TestRailID: R6470
     env:
@@ -42,7 +42,7 @@ jobs:
         shell: bash
       - run: ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
         shell: bash
-      - run: ./ngrok http -region=eu -subdomain=${{ matrix.demoshop }} ${{ matrix.port }} > ngrok.log &
+      - run: ./ngrok http -region=eu -subdomain=${{ matrix.subdomain }} ${{ matrix.port }} > ngrok.log &
         shell: bash
       - name: Install composer
         run: composer i
