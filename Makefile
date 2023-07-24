@@ -59,7 +59,7 @@ run-e2e-tests-locally:
 # checking the module upgrading - installs older module then installs from master branch
 upgrading-module-test-1784:
 	git fetch
-	git checkout origin/v5.2.0 .
+	git checkout v5.2.0 .
 	composer install
 	# installing 5.2.0 module
 	docker exec -i prestashop-mollie-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
@@ -69,7 +69,7 @@ upgrading-module-test-1784:
 
 upgrading-module-test-8:
 	git fetch
-	git checkout origin/v5.2.0 .
+	git checkout v5.2.0 .
 	composer install
 	make e2e8p
 	git checkout -- .
