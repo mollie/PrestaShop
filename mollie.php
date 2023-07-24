@@ -355,7 +355,7 @@ class Mollie extends PaymentModule
         $paymentMethod = $methodRepository->findOneBy(
             [
                 'id_method' => Config::MOLLIE_METHOD_ID_APPLE_PAY,
-                'live_environment' => Configuration::get(Config::MOLLIE_ENVIRONMENT),
+                'live_environment' => (int) $configuration->get(Config::MOLLIE_ENVIRONMENT),
             ]
         );
 
@@ -366,19 +366,10 @@ class Mollie extends PaymentModule
         $isApplePayDirectProductEnabled = (int) $configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT);
         $isApplePayDirectCartEnabled = (int) $configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART);
 
-        if (!$isApplePayDirectProductEnabled && !$isApplePayDirectCartEnabled) {
-            return;
-        }
+        $canDisplayInProductPage = $controller instanceof ProductControllerCore && $isApplePayDirectProductEnabled;
+        $canDisplayInCartPage = $controller instanceof CartControllerCore && $isApplePayDirectCartEnabled;
 
-        if (!$controller instanceof ProductControllerCore && !$controller instanceof CartControllerCore) {
-            return;
-        }
-
-        if ($controller instanceof ProductControllerCore && !$isApplePayDirectProductEnabled) {
-            return;
-        }
-
-        if ($controller instanceof CartControllerCore && !$isApplePayDirectCartEnabled) {
+        if (!$canDisplayInProductPage && !$canDisplayInCartPage) {
             return;
         }
 
@@ -389,7 +380,7 @@ class Mollie extends PaymentModule
             'customerId' => $this->context->customer->id ?? 0,
             'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'applePayDirectAjax'),
             'cartId' => $this->context->cart->id,
-            'applePayButtonStyle' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
+            'applePayButtonStyle' => (int) $configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
         ]);
 
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
