@@ -15,6 +15,7 @@ use Mollie\Adapter\Link;
 use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Api\Exceptions\ApiException;
+use Mollie\Api\MollieApiClient;
 use Mollie\Config\Config;
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
@@ -111,10 +112,10 @@ class Mollie extends PaymentModule
         return $this->containerProvider->getService($serviceName);
     }
 
-    public function getApiClient()
+    public function getApiClient(int $shopId = null, bool $subscriptionOrder = false): ?MollieApiClient
     {
         if (!$this->api) {
-            $this->setApiKey();
+            $this->setApiKey($shopId, $subscriptionOrder);
         }
 
         return $this->api;
@@ -1036,7 +1037,7 @@ class Mollie extends PaymentModule
         return $orderListActionBuilder->buildOrderPaymentResendButton($orderId);
     }
 
-    public function updateApiKey($shopId = null)
+    public function updateApiKey(int $shopId = null): void
     {
         $this->setApiKey($shopId);
     }
@@ -1088,7 +1089,7 @@ class Mollie extends PaymentModule
         ));
     }
 
-    private function setApiKey($shopId = null)
+    private function setApiKey(int $shopId = null, bool $subscriptionOrder = false): void
     {
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
         $moduleRepository = $this->getService(\Mollie\Repository\ModuleRepository::class);
@@ -1112,7 +1113,7 @@ class Mollie extends PaymentModule
         }
         try {
             // TODO handle api key set differently. Throw error and don't let do further actions.
-            $this->api = $apiKeyService->setApiKey($apiKey, $this->version);
+            $this->api = $apiKeyService->setApiKey($apiKey, $this->version, $subscriptionOrder);
         } catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);
@@ -1129,7 +1130,7 @@ class Mollie extends PaymentModule
         }
     }
 
-    private function isPhpVersionCompliant()
+    private function isPhpVersionCompliant(): bool
     {
         return self::SUPPORTED_PHP_VERSION <= PHP_VERSION_ID;
     }

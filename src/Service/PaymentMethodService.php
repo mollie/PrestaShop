@@ -353,6 +353,8 @@ class PaymentMethodService
             }
 
             if ($this->subscriptionOrder->validate(new Cart($cartId))) {
+                $paymentData->setSubscriptionOrder(true);
+
                 $molCustomer = $this->getCustomerInfo($cart->id_customer, true, false);
 
                 // TODO handle this - throw exception or add log message.

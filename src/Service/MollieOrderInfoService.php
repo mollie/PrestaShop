@@ -79,7 +79,7 @@ class MollieOrderInfoService
         $transactionId = isset($input['transactionId']) ? $input['transactionId'] : $input['order']['id'];
         $transaction = $this->paymentMethodRepository->getPaymentBy('transaction_id', $transactionId);
         $order = new Order($transaction['order_id']);
-        $this->module->updateApiKey($order->id_shop);
+        $this->module->updateApiKey((int) $order->id_shop);
         if (!$this->module->getApiClient()) {
             return ['success' => false];
         }
