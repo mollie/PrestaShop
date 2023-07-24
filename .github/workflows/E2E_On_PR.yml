@@ -17,7 +17,7 @@ jobs:
         include:
           - prestashop: 'PS1784'
             make: 'make e2eh1784'
-            demoshop: 'demoshop1784'
+            subdomain: 'demoshop1784'
             port: '8002'
             yml: 'docker-compose.1784.yml'
             url: 'https://demoshop1784.eu.ngrok.io'
@@ -25,7 +25,7 @@ jobs:
             TestRailID: R4954
           - prestashop: 'PS8'
             make: 'make e2eh8'
-            demoshop: 'demoshop8'
+            subdomain: 'demoshop8'
             port: '8142'
             yml: 'docker-compose.8.yml'
             url: 'https://demoshop8.eu.ngrok.io'
@@ -56,6 +56,22 @@ jobs:
       - name: ${{ matrix.prestashop }} installing / Module Install and Uninstall testing
         run: |
           ${{ matrix.make }}
+
+      - name: Waiting for Ngrok tunnel
+        run: |
+          URL="${{ matrix.url }}"
+
+          while true; do
+            response=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+            if [ "$response" = "302" ]; then
+              echo "URL is returning 302 HTTP status code, Ngrok tunnel is reached, good to go!"
+              break  # Exit the loop if the response is 302
+            else
+              echo "URL is not ready yet, because Ngrok sessions are all in use at the moment, please wait. Retrying to build the Ngrok tunnel again in 5 seconds..."
+              sleep 5  # Wait for 5 seconds before retrying
+              ./ngrok http -region=us -subdomain=${{ matrix.subdomain }} ${{ matrix.port }} > ngrok.log &
+            fi
+          done
 
       - name: Running ${{ matrix.prestashop }} Cypress E2E tests
         run: |
