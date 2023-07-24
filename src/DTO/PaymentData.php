@@ -97,6 +97,11 @@ class PaymentData implements JsonSerializable
      */
     private $sequenceType;
 
+    /**
+     * @var bool
+     */
+    private $subscriptionOrder = false;
+
     public function __construct(
         Amount $amount,
         $description,
@@ -339,6 +344,22 @@ class PaymentData implements JsonSerializable
     public function setSequenceType(string $sequenceType): void
     {
         $this->sequenceType = $sequenceType;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSubscriptionOrder(): bool
+    {
+        return $this->subscriptionOrder;
+    }
+
+    /**
+     * @param bool $subscriptionOrder
+     */
+    public function setSubscriptionOrder(bool $subscriptionOrder): void
+    {
+        $this->subscriptionOrder = $subscriptionOrder;
     }
 
     public function jsonSerialize()
