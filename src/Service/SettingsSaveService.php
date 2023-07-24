@@ -221,7 +221,8 @@ class SettingsSaveService
             try {
                 $this->applePayDirectCertificateHandler->handle();
             } catch (ApplePayDirectCertificateCreation $e) {
-                $isApplePayDirectProductEnabled = $isApplePayDirectCartEnabled = false;
+                $isApplePayDirectProductEnabled = false;
+                $isApplePayDirectCartEnabled = false;
 
                 $errors[] = $e->getMessage();
                 $errors[] = TagsUtility::ppTags(
