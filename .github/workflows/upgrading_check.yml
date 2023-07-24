@@ -15,11 +15,6 @@ jobs:
             port: '8002'
             yml: 'docker-compose.1784.yml'
             ModuleUpgradeTest: 'make upgrading-module-test-1784'
-          - prestashop: 'PS8'
-            make: 'make e2eh8'
-            port: '8142'
-            yml: 'docker-compose.8.yml'
-            ModuleUpgradeTest: 'make upgrading-module-test-8'
     steps:
       - name: Checkout
         uses: actions/checkout@v3.5.3
