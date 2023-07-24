@@ -263,7 +263,7 @@ it('C339352: 15 Klarna Pay Now Checkouting [Orders API]', () => {
 it('C339353: 16 Klarna Pay Now Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderShippingRefundingOrdersAPI()
 })
-it.only('C339354: 17 Credit Card Checkouting [Orders API]', () => {
+it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
       //Enabling the Single-Click for now
       cy.visit('/admin1/')
       cy.OpenModuleDashboard()

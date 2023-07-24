@@ -71,7 +71,6 @@ upgrading-module-test-8:
 	git fetch
 	git checkout v5.2.0 .
 	composer install
-	make e2e8p
 	git checkout -- .
 	git checkout develop --force
 	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
