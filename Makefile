@@ -73,26 +73,26 @@ npm-package-install:
 	cd views/assets && npm i && npm run build
 
 run-e2e-tests-locally:
-	npm install cypress@12.15.0
+	npm install -D cypress
 	npm ci
 	npx cypress run
-  
+
 # checking the module upgrading - installs older module then installs from master branch
 upgrading-module-test-1784:
 	git fetch
-	git checkout origin/v5.2.1 .
+	git checkout origin/v5.2.0 .
 	composer install
-	# installing 5.2.1 module
+	# installing 5.2.0 module
 	docker exec -i prestashop-mollie-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
 	git checkout -- .
-	git checkout master --force
+	git checkout develop --force
 	docker exec -i prestashop-mollie-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
 
 upgrading-module-test-8:
 	git fetch
-	git checkout origin/v5.2.1 .
+	git checkout origin/v5.2.0 .
 	composer install
 	make e2e8p
 	git checkout -- .
-	git checkout master --force
+	git checkout develop --force
 	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
