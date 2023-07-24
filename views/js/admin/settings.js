@@ -86,9 +86,9 @@ $(document).ready(function () {
         )
 
         $applePayDirectProductEnableSelector.add($applePayDirectCartEnableSelector).on('change', function() {
-            let isEnabled = $(this).val() === '1';
+          let isEnabled = $applePayDirectProductEnableSelector.val() === '1' || $applePayDirectCartEnableSelector.val() === '1';
 
-            toggleElement($applePayButtonStyles, isEnabled)
+          toggleElement($applePayButtonStyles, isEnabled)
         })
     }
 
