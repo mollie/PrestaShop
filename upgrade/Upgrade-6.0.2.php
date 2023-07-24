@@ -23,7 +23,7 @@ function upgrade_module_6_0_2(Mollie $module): bool
     $configuration = $module->getService(ConfigurationAdapter::class);
 
     $configuration->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT, Configuration::get('MOLLIE_APPLE_PAY_DIRECT'));
-    $configuration->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT, Configuration::get('MOLLIE_APPLE_PAY_DIRECT'));
+    $configuration->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_CART, Configuration::get('MOLLIE_APPLE_PAY_DIRECT'));
 
     $configuration->delete('MOLLIE_APPLE_PAY_DIRECT');
 
