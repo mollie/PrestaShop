@@ -1,4 +1,4 @@
-name: Module upgrade / downgrade testing (last version > v.5.2.1 > master version)
+name: Module upgrade / downgrade testing (last version > v.5.2.0 > `develop` version)
 on:
   pull_request:
     types: [opened, reopened]
@@ -12,13 +12,11 @@ jobs:
         include:
           - prestashop: 'PS1784'
             make: 'make e2eh1784'
-            demoshop: 'demoshop1784'
             port: '8002'
             yml: 'docker-compose.1784.yml'
             ModuleUpgradeTest: 'make upgrading-module-test-1784'
           - prestashop: 'PS8'
             make: 'make e2eh8'
-            demoshop: 'demoshop8'
             port: '8142'
             yml: 'docker-compose.8.yml'
             ModuleUpgradeTest: 'make upgrading-module-test-8'
