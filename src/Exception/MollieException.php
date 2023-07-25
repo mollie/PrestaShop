@@ -12,9 +12,21 @@
 
 namespace Mollie\Exception;
 
+use Exception;
+use Mollie\Exception\Code\ExceptionCode;
+
 class MollieException extends \Exception
 {
     const CUSTOMER_EXCEPTION = 1;
 
     const API_CONNECTION_EXCEPTION = 2;
+
+    public static function unknownError(Exception $exception): self
+    {
+        return new static(
+            'An unknown error error occurred. Please check system logs or contact Klarna payment support.',
+            ExceptionCode::INFRASTRUCTURE_UNKNOWN_ERROR,
+            $exception
+        );
+    }
 }

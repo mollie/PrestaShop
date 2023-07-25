@@ -43,6 +43,8 @@ use Mollie\Provider\UpdateMessageProvider;
 use Mollie\Provider\UpdateMessageProviderInterface;
 use Mollie\Repository\AddressRepository;
 use Mollie\Repository\AddressRepositoryInterface;
+use Mollie\Repository\CartRepository;
+use Mollie\Repository\CartRepositoryInterface;
 use Mollie\Repository\CartRuleRepository;
 use Mollie\Repository\CartRuleRepositoryInterface;
 use Mollie\Repository\CurrencyRepository;
@@ -155,6 +157,7 @@ final class BaseServiceProvider
         $this->addService($container, TaxRulesGroupRepositoryInterface::class, $container->get(TaxRulesGroupRepository::class));
         $this->addService($container, TaxRuleRepositoryInterface::class, $container->get(TaxRuleRepository::class));
         $this->addService($container, TaxRepositoryInterface::class, $container->get(TaxRepository::class));
+        $this->addService($container, CartRepositoryInterface::class, $container->get(CartRepository::class));
 
         $this->addService($container, OrderTotalProviderInterface::class, $container->get(OrderTotalProvider::class));
         $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
