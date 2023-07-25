@@ -66,6 +66,8 @@ class OrderPaymentFeeHandler
 
     public function addOrderPaymentFee(int $orderId, $apiPayment): int
     {
+        // TODO use created payment fee services for DB actions, add exception throw
+
         $order = new Order($orderId);
         $cart = new Cart($order->id_cart);
 

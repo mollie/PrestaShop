@@ -52,7 +52,7 @@ class SubscriptionCreationHandler
         $recurringOrdersProduct->id_product = $product['id_product'];
         $recurringOrdersProduct->id_product_attribute = $product['product_attribute_id'];
         $recurringOrdersProduct->quantity = $product['product_quantity'];
-        $recurringOrdersProduct->unit_price = $product['product_price'];
+        $recurringOrdersProduct->unit_price = $product['price'];
         $recurringOrdersProduct->add();
 
         return $recurringOrdersProduct;

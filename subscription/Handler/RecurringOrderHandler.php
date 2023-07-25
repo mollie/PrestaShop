@@ -166,6 +166,8 @@ class RecurringOrderHandler
 
         $specificPrice->delete();
 
+        // TODO add order fee append to order and new instance insert into database
+
         $this->mollieOrderCreationService->createMolliePayment($transaction, (int) $newCart->id, $order->reference, (int) $orderId, PaymentStatus::STATUS_PAID);
     }
 
