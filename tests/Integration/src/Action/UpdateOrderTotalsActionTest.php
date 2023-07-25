@@ -4,8 +4,6 @@ namespace Mollie\Tests\Integration\src\Action;
 
 use Mollie\Action\UpdateOrderTotalsAction;
 use Mollie\DTO\UpdateOrderTotalsData;
-use Mollie\Exception\Code\ExceptionCode;
-use Mollie\Exception\CouldNotUpdateOrderTotals;
 use Mollie\Tests\Integration\BaseTestCase;
 
 class UpdateOrderTotalsActionTest extends BaseTestCase
