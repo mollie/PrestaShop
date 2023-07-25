@@ -42,22 +42,4 @@ class UpdateOrderTotalsActionTest extends BaseTestCase
             ]
         );
     }
-
-    public function testItUnsuccessfullyUpdatesOrderTotalsAmountsDoesNotMatch(): void
-    {
-        /** @var UpdateOrderTotalsAction $updateOrderTotalsAction */
-        $updateOrderTotalsAction = $this->getService(UpdateOrderTotalsAction::class);
-
-        $this->expectException(CouldNotUpdateOrderTotals::class);
-        $this->expectExceptionCode(ExceptionCode::ORDER_TOTALS_DOES_NOT_MATCH);
-
-        $updateOrderTotalsAction->run(UpdateOrderTotalsData::create(
-            1,
-            12,
-            10,
-            22.1,
-            10,
-            8.264462
-        ));
-    }
 }

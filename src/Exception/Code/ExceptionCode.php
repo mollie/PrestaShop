@@ -13,6 +13,5 @@ class ExceptionCode
     //Order error codes starts from 3000
 
     public const ORDER_FAILED_TO_UPDATE_ORDER_TOTALS = 3001;
-    public const ORDER_TOTALS_DOES_NOT_MATCH = 3002;
-    public const ORDER_FAILED_TO_INSERT_ORDER_PAYMENT_FEE = 3003;
+    public const ORDER_FAILED_TO_INSERT_ORDER_PAYMENT_FEE = 3002;
 }

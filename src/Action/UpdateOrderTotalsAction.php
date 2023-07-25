@@ -24,32 +24,28 @@ class UpdateOrderTotalsAction
      */
     public function run(UpdateOrderTotalsData $updateOrderTotalsData): void
     {
-        /** @var Order $order */
-        $order = $this->orderRepository->findOneBy([
-            'id_order' => $updateOrderTotalsData->getOrderId(),
-        ]);
-
-        $order->total_paid_tax_excl = NumberUtility::toPrecision(
-            NumberUtility::plus(
-                $updateOrderTotalsData->getOriginalCartAmountTaxExcl(),
-                $updateOrderTotalsData->getPaymentFeeTaxExcl()
-            )
-        );
-
-        $order->total_paid_tax_incl = NumberUtility::toPrecision(
-            NumberUtility::plus(
-                $updateOrderTotalsData->getOriginalCartAmountTaxIncl(),
-                $updateOrderTotalsData->getPaymentFeeTaxIncl()
-            )
-        );
-
-        $order->total_paid = $updateOrderTotalsData->getTransactionAmount();
-
-        if ($order->total_paid !== $order->total_paid_tax_incl) {
-            throw CouldNotUpdateOrderTotals::totalsDoesNotMatch($order->total_paid, $order->total_paid_tax_incl);
-        }
-
         try {
+            /** @var Order $order */
+            $order = $this->orderRepository->findOneBy([
+                'id_order' => $updateOrderTotalsData->getOrderId(),
+            ]);
+
+            $order->total_paid_tax_excl = NumberUtility::toPrecision(
+                NumberUtility::plus(
+                    $updateOrderTotalsData->getOriginalCartAmountTaxExcl(),
+                    $updateOrderTotalsData->getPaymentFeeTaxExcl()
+                )
+            );
+
+            $order->total_paid_tax_incl = NumberUtility::toPrecision(
+                NumberUtility::plus(
+                    $updateOrderTotalsData->getOriginalCartAmountTaxIncl(),
+                    $updateOrderTotalsData->getPaymentFeeTaxIncl()
+                )
+            );
+
+            $order->total_paid = $updateOrderTotalsData->getTransactionAmount();
+
             $order->update();
         } catch (Exception $exception) {
             throw CouldNotUpdateOrderTotals::failedToUpdateOrderTotals($exception);
