@@ -47,6 +47,8 @@ class OrderPaymentFeeService
 
     public function createOrderPaymentFee(int $orderId, int $cartId, PaymentFeeData $paymentFeeData): void
     {
+        // TODO remove this method when separate actions for DB will be in use
+
         $molOrderPaymentFee = new MolOrderPaymentFee();
 
         $molOrderPaymentFee->id_cart = $cartId;
