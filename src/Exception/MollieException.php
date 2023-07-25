@@ -22,7 +22,7 @@ class MollieException extends \Exception
 
     const API_CONNECTION_EXCEPTION = 2;
 
-    final public function __construct($message = "", $code = 0, Throwable $previous = null)
+    final public function __construct($message = '', $code = 0, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }
