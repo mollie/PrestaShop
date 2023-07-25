@@ -2,7 +2,7 @@
 
 namespace Mollie\DTO;
 
-class UpdateOrderTotalsWithPaymentFeeData
+class UpdateOrderTotalsData
 {
     /** @var int */
     private $orderId;
@@ -88,7 +88,7 @@ class UpdateOrderTotalsWithPaymentFeeData
         float $transactionAmount,
         float $originalCartAmountTaxIncl,
         float $originalCartAmountTaxExcl
-    ): UpdateOrderTotalsWithPaymentFeeData {
+    ): UpdateOrderTotalsData {
         return new self(
             $orderId,
             $paymentFeeTaxIncl,
