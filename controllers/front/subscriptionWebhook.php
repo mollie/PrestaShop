@@ -64,7 +64,7 @@ class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieContr
 
         try {
             $recurringOrderHandler->handle($transactionId);
-        } catch (Throwable $exception) {
+        } catch (Exception $exception) {
             $errorHandler->handle($exception, null, false);
 
             $this->respond('failed', HttpStatusCode::HTTP_BAD_REQUEST);

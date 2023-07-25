@@ -149,7 +149,7 @@ class RecurringOrderHandler
     {
         $cart = new Cart($recurringOrder->id_cart);
 
-        /** @var $newCart array{success: bool, cart: Cart}|bool $newCart */
+        /** @var array{success: bool, cart: Cart}|bool $newCart */
         $newCart = $cart->duplicate();
 
         if (!$newCart || !$newCart['success']) {
