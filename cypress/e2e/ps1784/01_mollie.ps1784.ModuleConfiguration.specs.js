@@ -70,8 +70,6 @@ describe('PS1784 Module initial configuration setup', () => {
   })
 it('C339305: 01 Connecting test API successsfully', () => {
       cy.visit('/admin1/')
-      // enabling the module on multistore shop - one time action
-      cy.EnablingModuleMultistore()
       cy.OpenModuleDashboard()
       cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click({force:true})
       cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
