@@ -70,6 +70,7 @@ use Mollie\Service\ApiKeyService;
 use Mollie\Service\Content\SmartyTemplateParser;
 use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
+use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\AmountPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\EnvironmentVersionSpecificPaymentMethodRestrictionValidator;
@@ -190,6 +191,7 @@ final class BaseServiceProvider
                 $container->get(VoucherPaymentMethodRestrictionValidator::class),
                 $container->get(EnvironmentVersionSpecificPaymentMethodRestrictionValidator::class),
                 $container->get(ApplePayPaymentMethodRestrictionValidator::class),
+                $container->get(AmountPaymentMethodRestrictionValidator::class),
             ]);
 
         $this->addService($container, CustomLogoProviderInterface::class, $container->get(CreditCardLogoProvider::class));
