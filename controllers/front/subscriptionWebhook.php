@@ -12,6 +12,7 @@
 
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Errors\Http\HttpStatusCode;
+use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Subscription\Handler\RecurringOrderHandler;
 
 if (!defined('_PS_VERSION_')) {
@@ -57,8 +58,18 @@ class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieContr
 
         /** @var RecurringOrderHandler $recurringOrderHandler */
         $recurringOrderHandler = $this->module->getService(RecurringOrderHandler::class);
-        $recurringOrderHandler->handle($transactionId);
 
-        return 'OK';
+        /** @var ErrorHandler $errorHandler */
+        $errorHandler = $this->module->getService(ErrorHandler::class);
+
+        try {
+            $recurringOrderHandler->handle($transactionId);
+        } catch (Exception $exception) {
+            $errorHandler->handle($exception, null, false);
+
+            $this->respond('failed', HttpStatusCode::HTTP_BAD_REQUEST);
+        }
+
+        $this->respond('OK');
     }
 }
