@@ -724,7 +724,7 @@ class Mollie extends PaymentModule
             ]);
 
             /**
-             * NOTE: Locale is set at init() method but in this case init() doesn't always get executed first.
+             * NOTE: Locale in context is set at init() method but in this case init() doesn't always get executed first.
              */
             /** @var Repository $localeRepo */
             $localeRepo = $this->get('prestashop.core.localization.locale.repository');
