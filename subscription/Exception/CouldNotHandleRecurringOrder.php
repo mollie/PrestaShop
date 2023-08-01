@@ -2,11 +2,11 @@
 
 namespace Mollie\Subscription\Exception;
 
-use Exception;
+use Throwable;
 
 class CouldNotHandleRecurringOrder extends MollieSubscriptionException
 {
-    public static function failedToCreateOrderPaymentFee(Exception $exception): CouldNotHandleRecurringOrder
+    public static function failedToCreateOrderPaymentFee(Throwable $exception): CouldNotHandleRecurringOrder
     {
         return new self(
             'Failed to create order payment fee',
@@ -15,7 +15,7 @@ class CouldNotHandleRecurringOrder extends MollieSubscriptionException
         );
     }
 
-    public static function failedToUpdateOrderTotalWithPaymentFee(Exception $exception): CouldNotHandleRecurringOrder
+    public static function failedToUpdateOrderTotalWithPaymentFee(Throwable $exception): CouldNotHandleRecurringOrder
     {
         return new self(
             'Failed to update order total with payment fee.',

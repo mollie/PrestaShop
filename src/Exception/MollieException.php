@@ -12,7 +12,6 @@
 
 namespace Mollie\Exception;
 
-use Exception;
 use Mollie\Exception\Code\ExceptionCode;
 use Throwable;
 
@@ -27,7 +26,7 @@ class MollieException extends \Exception
         parent::__construct($message, $code, $previous);
     }
 
-    public static function unknownError(Exception $exception): self
+    public static function unknownError(Throwable $exception): self
     {
         return new static(
             'An unknown error error occurred. Please check system logs or contact Klarna payment support.',
