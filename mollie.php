@@ -723,17 +723,16 @@ class Mollie extends PaymentModule
                 'id_order' => (int) $order->id,
             ]);
 
-            $locale = $this->context->getCurrentLocale();
+            /**
+             * NOTE: Locale is set at init() method but in this case init() doesn't always get executed first.
+             */
+            /** @var Repository $localeRepo */
+            $localeRepo = $this->get('prestashop.core.localization.locale.repository');
 
-            if (!$locale) {
-                /** @var Repository $localeRepo */
-                $localeRepo = $this->get('prestashop.core.localization.locale.repository');
-
-                /**
-                 * NOTE: context language is set based on customer/employee context
-                 */
-                $locale = $localeRepo->getLocale($this->context->language->getLocale());
-            }
+            /**
+             * NOTE: context language is set based on customer/employee context
+             */
+            $locale = $localeRepo->getLocale($this->context->language->getLocale());
 
             if (!$molOrderPaymentFee) {
                 $orderFee = $locale->formatPrice(
