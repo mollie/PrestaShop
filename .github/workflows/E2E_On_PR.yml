@@ -17,18 +17,18 @@ jobs:
         include:
           - prestashop: 'PS1784'
             make: 'make e2eh1784'
-            subdomain: 'demoshop1784'
+            subdomain: 'demoshop1784debug'
             port: '8002'
             yml: 'docker-compose.1784.yml'
-            url: 'https://demoshop1784.ngrok.io'
+            url: 'https://demoshop1784debug.ngrok.io'
             test_spec: '**/cypress/e2e/ps1784/**'
             TestRailID: R4954
           - prestashop: 'PS8'
             make: 'make e2eh8'
-            subdomain: 'demoshop8'
+            subdomain: 'demoshop8debug'
             port: '8142'
             yml: 'docker-compose.8.yml'
-            url: 'https://demoshop8.ngrok.io'
+            url: 'https://demoshop8debug.ngrok.io'
             test_spec: '**/cypress/e2e/ps8/**'
             TestRailID: R6470
     env:
