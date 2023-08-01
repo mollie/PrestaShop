@@ -40,6 +40,7 @@ use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Subscription\Verification\HasSubscriptionProductInCart;
 use Mollie\Utility\PsVersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
+use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -722,13 +723,24 @@ class Mollie extends PaymentModule
                 'id_order' => (int) $order->id,
             ]);
 
+            /**
+             * NOTE: Locale in context is set at init() method but in this case init() doesn't always get executed first.
+             */
+            /** @var Repository $localeRepo */
+            $localeRepo = $this->get('prestashop.core.localization.locale.repository');
+
+            /**
+             * NOTE: context language is set based on customer/employee context
+             */
+            $locale = $localeRepo->getLocale($this->context->language->getLocale());
+
             if (!$molOrderPaymentFee) {
-                $orderFee = $this->context->getCurrentLocale()->formatPrice(
+                $orderFee = $locale->formatPrice(
                     0,
                     $orderCurrency->iso_code
                 );
             } else {
-                $orderFee = $this->context->getCurrentLocale()->formatPrice(
+                $orderFee = $locale->formatPrice(
                     $molOrderPaymentFee->fee_tax_incl,
                     $orderCurrency->iso_code
                 );
