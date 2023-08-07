@@ -8,6 +8,7 @@ use Cart;
 use Mollie;
 use Mollie\Action\CreateOrderPaymentFeeAction;
 use Mollie\Action\UpdateOrderTotalsAction;
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Shop;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\Subscription as MollieSubscription;
@@ -69,6 +70,8 @@ class RecurringOrderHandler
     private $updateOrderTotalsAction;
     /** @var CreateOrderPaymentFeeAction */
     private $createOrderPaymentFeeAction;
+    /** @var ConfigurationAdapter */
+    private $configuration;
 
     public function __construct(
         SubscriptionApi $subscriptionApi,
@@ -84,7 +87,8 @@ class RecurringOrderHandler
         MailService $mailService,
         MolOrderPaymentFeeRepositoryInterface $molOrderPaymentFeeRepository,
         UpdateOrderTotalsAction $updateOrderTotalsAction,
-        CreateOrderPaymentFeeAction $createOrderPaymentFeeAction
+        CreateOrderPaymentFeeAction $createOrderPaymentFeeAction,
+        ConfigurationAdapter $configuration
     ) {
         $this->subscriptionApi = $subscriptionApi;
         $this->subscriptionDataFactory = $subscriptionDataFactory;
@@ -100,6 +104,7 @@ class RecurringOrderHandler
         $this->molOrderPaymentFeeRepository = $molOrderPaymentFeeRepository;
         $this->updateOrderTotalsAction = $updateOrderTotalsAction;
         $this->createOrderPaymentFeeAction = $createOrderPaymentFeeAction;
+        $this->configuration = $configuration;
     }
 
     public function handle(string $transactionId): string
@@ -178,7 +183,7 @@ class RecurringOrderHandler
 
         $this->mollie->validateOrder(
             (int) $newCart->id,
-            Config::getStatuses()[$transaction->status],
+            (int) $this->configuration->get(Config::MOLLIE_STATUS_AWAITING),
             (float) $subscription->amount->value,
             sprintf('subscription/%s', $methodName),
             null,
@@ -225,6 +230,8 @@ class RecurringOrderHandler
                 throw CouldNotHandleRecurringOrder::failedToUpdateOrderTotalWithPaymentFee($exception);
             }
         }
+
+        $this->orderStatusService->setOrderStatus($orderId, (int) Config::getStatuses()[$transaction->status]);
     }
 
     private function updateOrderStatus(Payment $transaction, int $orderId): void
