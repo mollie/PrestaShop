@@ -37,81 +37,121 @@
 namespace Mollie\Handler\Order;
 
 use Cart;
-use Configuration;
+use Exception;
+use Mollie\Action\CreateOrderPaymentFeeAction;
+use Mollie\Action\UpdateOrderTotalsAction;
+use Mollie\Api\Resources\Order as MollieOrderAlias;
+use Mollie\Api\Resources\Payment as MolliePaymentAlias;
+use Mollie\DTO\CreateOrderPaymentFeeActionData;
+use Mollie\DTO\UpdateOrderTotalsData;
+use Mollie\Exception\CouldNotCreateOrderPaymentFee;
+use Mollie\Exception\CouldNotUpdateOrderTotals;
+use Mollie\Exception\FailedToProvidePaymentFeeException;
+use Mollie\Exception\OrderCreationException;
+use Mollie\Handler\Exception\CouldNotHandleOrderPaymentFee;
 use Mollie\Provider\PaymentFeeProviderInterface;
-use Mollie\Service\OrderPaymentFeeService;
+use Mollie\Repository\CartRepositoryInterface;
+use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Service\PaymentMethodService;
 use Order;
-use OrderDetail;
-use PrestaShop\Decimal\Number;
 
 class OrderPaymentFeeHandler
 {
-    /** @var OrderPaymentFeeService */
-    private $orderPaymentFeeService;
     /** @var PaymentMethodService */
     private $paymentMethodService;
     /** @var PaymentFeeProviderInterface */
     private $paymentFeeProvider;
+    /** @var CreateOrderPaymentFeeAction */
+    private $createOrderPaymentFeeAction;
+    /** @var UpdateOrderTotalsAction */
+    private $updateOrderTotalsAction;
+    /** @var OrderRepositoryInterface */
+    private $orderRepository;
+    /** @var CartRepositoryInterface */
+    private $cartRepository;
 
     public function __construct(
-        OrderPaymentFeeService $orderPaymentFeeService,
         PaymentMethodService $paymentMethodService,
-        PaymentFeeProviderInterface $paymentFeeProvider
+        PaymentFeeProviderInterface $paymentFeeProvider,
+        CreateOrderPaymentFeeAction $createOrderPaymentFeeAction,
+        UpdateOrderTotalsAction $updateOrderTotalsAction,
+        OrderRepositoryInterface $orderRepository,
+        CartRepositoryInterface $cartRepository
     ) {
-        $this->orderPaymentFeeService = $orderPaymentFeeService;
         $this->paymentMethodService = $paymentMethodService;
         $this->paymentFeeProvider = $paymentFeeProvider;
+        $this->createOrderPaymentFeeAction = $createOrderPaymentFeeAction;
+        $this->updateOrderTotalsAction = $updateOrderTotalsAction;
+        $this->orderRepository = $orderRepository;
+        $this->cartRepository = $cartRepository;
     }
 
-    public function addOrderPaymentFee(int $orderId, $apiPayment): int
+    /**
+     * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
+     *
+     * @throws CouldNotHandleOrderPaymentFee
+     */
+    public function addOrderPaymentFee(int $orderId, $apiPayment): void
     {
-        $order = new Order($orderId);
-        $cart = new Cart($order->id_cart);
+        /** @var Order $order */
+        $order = $this->orderRepository->findOneBy([
+            'id_order' => $orderId,
+        ]);
 
-        $originalAmountWithTax = $cart->getOrderTotal(
-            true,
-            Cart::BOTH
-        );
+        /** @var Cart $cart */
+        $cart = $this->cartRepository->findOneBy([
+            'id_cart' => $order->id_cart,
+        ]);
 
-        $originalAmountWithoutTax = $cart->getOrderTotal(
-            false,
-            Cart::BOTH
-        );
+        try {
+            $originalAmountWithTax = (float) $cart->getOrderTotal(
+                true,
+                Cart::BOTH
+            );
 
-        $paymentMethod = $this->paymentMethodService->getPaymentMethod($apiPayment);
-
-        $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmountWithTax);
-
-        $this->orderPaymentFeeService->createOrderPaymentFee($orderId, (int) $order->id_cart, $paymentFeeData);
-
-        $order = new Order($orderId);
-
-        $order->total_paid_tax_excl = (float) (new Number((string) $originalAmountWithoutTax))->plus((new Number((string) $paymentFeeData->getPaymentFeeTaxExcl())))->toPrecision(2);
-        $order->total_paid_tax_incl = (float) (new Number((string) $originalAmountWithTax))->plus((new Number((string) $paymentFeeData->getPaymentFeeTaxIncl())))->toPrecision(2);
-        $order->total_paid = (float) $apiPayment->amount->value;
-        $order->total_paid_real = (float) $apiPayment->amount->value;
-
-        $order->update();
-
-        return $orderId;
-    }
-
-    private function isOrderBackOrder($orderId)
-    {
-        $order = new Order($orderId);
-        $orderDetails = $order->getOrderDetailList();
-        /** @var OrderDetail $detail */
-        foreach ($orderDetails as $detail) {
-            $orderDetail = new OrderDetail($detail['id_order_detail']);
-            if (
-                Configuration::get('PS_STOCK_MANAGEMENT') &&
-                ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
-            ) {
-                return true;
-            }
+            $originalAmountWithoutTax = (float) $cart->getOrderTotal(
+                false,
+                Cart::BOTH
+            );
+        } catch (Exception $exception) {
+            throw CouldNotHandleOrderPaymentFee::unknownError($exception);
         }
 
-        return false;
+        try {
+            $paymentMethod = $this->paymentMethodService->getPaymentMethod($apiPayment);
+        } catch (OrderCreationException $exception) {
+            throw CouldNotHandleOrderPaymentFee::failedToRetrievePaymentMethod($exception);
+        }
+
+        try {
+            $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmountWithTax);
+        } catch (FailedToProvidePaymentFeeException $exception) {
+            throw CouldNotHandleOrderPaymentFee::failedToRetrievePaymentFee($exception);
+        }
+
+        try {
+            $this->createOrderPaymentFeeAction->run(CreateOrderPaymentFeeActionData::create(
+                $orderId,
+                (int) $order->id_cart,
+                $paymentFeeData->getPaymentFeeTaxIncl(),
+                $paymentFeeData->getPaymentFeeTaxExcl()
+            ));
+        } catch (CouldNotCreateOrderPaymentFee $exception) {
+            throw CouldNotHandleOrderPaymentFee::failedToCreateOrderPaymentFee($exception);
+        }
+
+        try {
+            $this->updateOrderTotalsAction->run(UpdateOrderTotalsData::create(
+                $orderId,
+                $paymentFeeData->getPaymentFeeTaxIncl(),
+                $paymentFeeData->getPaymentFeeTaxExcl(),
+                // TODO abstraction for apiPayment
+                (float) $apiPayment->amount->value,
+                $originalAmountWithTax,
+                $originalAmountWithoutTax
+            ));
+        } catch (CouldNotUpdateOrderTotals $exception) {
+            throw CouldNotHandleOrderPaymentFee::failedToUpdateOrderTotalWithPaymentFee($exception);
+        }
     }
 }

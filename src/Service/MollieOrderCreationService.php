@@ -45,24 +45,21 @@ class MollieOrderCreationService
     }
 
     /**
-     * @param PaymentData|OrderData $paymentData
-     * @param MolPaymentMethod $paymentMethodObj
+     * @param PaymentData|OrderData $data
      *
      * @return false|MollieOrderAlias|MolliePaymentAlias
-     *
-     * @throws PrestaShopException
      */
-    public function createMollieOrder($paymentData, $paymentMethodObj)
+    public function createMollieOrder($data, MolPaymentMethod $paymentMethodObj)
     {
         try {
-            $apiPayment = $this->createPayment($paymentData->jsonSerialize(), $paymentMethodObj->method);
+            $apiPayment = $this->createPayment($data, $paymentMethodObj->method);
         } catch (Exception $e) {
-            if ($paymentData instanceof OrderData) {
-                $paymentData->setDeliveryPhoneNumber(null);
-                $paymentData->setBillingPhoneNumber(null);
+            if ($data instanceof OrderData) {
+                $data->setDeliveryPhoneNumber(null);
+                $data->setBillingPhoneNumber(null);
             }
             try {
-                $apiPayment = $this->createPayment($paymentData->jsonSerialize(), $paymentMethodObj->method);
+                $apiPayment = $this->createPayment($data, $paymentMethodObj->method);
             } catch (OrderCreationException $e) {
                 $errorHandler = ErrorHandler::getInstance();
                 $errorHandler->handle($e, $e->getCode(), true);
@@ -77,17 +74,16 @@ class MollieOrderCreationService
     }
 
     /**
-     * @param PaymentData|OrderData $paymentData
-     * @param MolPaymentMethod $paymentMethodObj
+     * @param PaymentData|OrderData $data
      *
      * @return false|MollieOrderAlias|MolliePaymentAlias
      *
      * @throws PrestaShopException
      */
-    public function createMollieApplePayDirectOrder($paymentData, $paymentMethodObj)
+    public function createMollieApplePayDirectOrder($data, MolPaymentMethod $paymentMethodObj)
     {
         try {
-            $apiPayment = $this->createPayment($paymentData->jsonSerialize(), $paymentMethodObj->method);
+            $apiPayment = $this->createPayment($data, $paymentMethodObj->method);
         } catch (OrderCreationException $e) {
             $errorHandler = ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), true);
@@ -157,22 +153,29 @@ class MollieOrderCreationService
     }
 
     /**
-     * @param array $data
-     * @param string $selectedApi
+     * @param PaymentData|OrderData $data
      *
      * @return MollieOrderAlias|MolliePaymentAlias
      *
      * @throws OrderCreationException
      */
-    private function createPayment($data, $selectedApi)
+    private function createPayment($data, string $selectedApi)
     {
+        $subscriptionOrder = false;
+
+        if ($data instanceof PaymentData) {
+            $subscriptionOrder = $data->isSubscriptionOrder();
+        }
+
+        $serializedData = $data->jsonSerialize();
+
         try {
             if (Config::MOLLIE_ORDERS_API === $selectedApi) {
                 /** @var MollieOrderAlias $payment */
-                $payment = $this->module->getApiClient()->orders->create($data, ['embed' => 'payments']);
+                $payment = $this->module->getApiClient(null, $subscriptionOrder)->orders->create($serializedData, ['embed' => 'payments']);
             } else {
                 /** @var MolliePaymentAlias $payment */
-                $payment = $this->module->getApiClient()->payments->create($data);
+                $payment = $this->module->getApiClient(null, $subscriptionOrder)->payments->create($serializedData);
             }
 
             return $payment;

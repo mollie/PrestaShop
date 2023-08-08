@@ -55,7 +55,7 @@ class AmountPaymentMethodRestrictionValidator implements PaymentMethodRestrictio
     /**
      * {@inheritDoc}
      */
-    public function isValid(MolPaymentMethod $paymentMethod)
+    public function isValid(MolPaymentMethod $paymentMethod): bool
     {
         $orderTotal = $this->context->getCart()->getOrderTotal();
 
@@ -77,7 +77,7 @@ class AmountPaymentMethodRestrictionValidator implements PaymentMethodRestrictio
     /**
      * {@inheritDoc}
      */
-    public function supports(MolPaymentMethod $paymentMethod)
+    public function supports(MolPaymentMethod $paymentMethod): bool
     {
         return true;
     }

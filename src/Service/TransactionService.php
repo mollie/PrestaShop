@@ -201,9 +201,10 @@ class TransactionService
                         $this->updatePaymentDescription($apiPayment, $orderId);
                     } elseif (strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                         $this->handlePaymentDescription($apiPayment);
-                    } elseif ($apiPayment->amountRefunded->value > 0) {
+                    } elseif ($orderId) {
                         $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
                     }
+
                     $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
                 }
                 break;
