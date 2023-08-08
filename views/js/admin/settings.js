@@ -76,14 +76,20 @@ $(document).ready(function () {
 
     function handleApplePayButtonStylesToggle()
     {
-        var $applePayButtonStyles = $('#js-mollie-applepay-button-styles');
-        var $applePayDirectEnableSelector = $('select[name^="MOLLIE_APPLE_PAY_DIRECT_ENABLED"]');
+      let $applePayButtonStyles = $('#js-mollie-applepay-button-styles');
+      let $applePayDirectProductEnableSelector = $('select[name^="MOLLIE_APPLE_PAY_DIRECT_PRODUCT_ENABLED"]');
+      let $applePayDirectCartEnableSelector = $('select[name^="MOLLIE_APPLE_PAY_DIRECT_CART_ENABLED"]');
 
-        toggleElement($applePayButtonStyles, $applePayDirectEnableSelector.val() === '1')
-        $($applePayDirectEnableSelector).on('change', function () {
-            var isEnabled = $(this).val() === '1';
-            toggleElement($applePayButtonStyles, isEnabled)
-        })
+      toggleElement(
+        $applePayButtonStyles,
+        $applePayDirectProductEnableSelector.val() === '1' || $applePayDirectCartEnableSelector.val() === '1'
+      )
+
+      $applePayDirectProductEnableSelector.add($applePayDirectCartEnableSelector).on('change', function() {
+        let isEnabled = $applePayDirectProductEnableSelector.val() === '1' || $applePayDirectCartEnableSelector.val() === '1';
+
+        toggleElement($applePayButtonStyles, isEnabled)
+      })
     }
 
     function toggleElement(element, isShown)

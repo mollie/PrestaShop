@@ -140,7 +140,7 @@ class FormBuilder
         $helper->table = $this->module->getTable();
         $helper->module = $this->module;
         $helper->default_form_language = $this->module->getContext()->language->id;
-        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
+        $helper->allow_employee_form_lang = $this->configurationAdapter->get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG');
 
         $helper->identifier = $this->module->getIdentifier();
         $helper->submit_action = 'submitmollie';
@@ -413,23 +413,24 @@ class FormBuilder
             'taxRulesGroups' => $this->taxRulesGroupRepository->getTaxRulesGroups($this->context->getShopId()),
             'tab' => $generalSettings,
             'onlyOrderMethods' => Config::ORDER_API_ONLY_METHODS,
-            'displayErrors' => Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
+            'displayErrors' => $this->configurationAdapter->get(Config::MOLLIE_DISPLAY_ERRORS),
             'methodDescription' => TagsUtility::ppTags(
                 $this->module->l('[1]Read more[/1] about the differences between Payments and Orders API.', self::FILE_NAME),
                 [
                     $this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_method_info.tpl'),
                 ]
             ),
-            'showCustomLogo' => Configuration::get(Config::MOLLIE_SHOW_CUSTOM_LOGO),
+            'showCustomLogo' => $this->configurationAdapter->get(Config::MOLLIE_SHOW_CUSTOM_LOGO),
             'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri() . "?{$dateStamp}",
             'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
-            'voucherCategory' => Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
+            'voucherCategory' => $this->configurationAdapter->get(Config::MOLLIE_VOUCHER_CATEGORY),
             'klarnaPayments' => Config::KLARNA_PAYMENTS,
             'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_AUTHORIZED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
-            'applePayDirect' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT),
-            'applePayDIrectStyle' => (int) Configuration::get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
-            'isBancontactQrCodeEnabled' => (int) Configuration::get(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED),
-            'isLive' => (int) Configuration::get(Config::MOLLIE_ENVIRONMENT),
+            'applePayDirectProduct' => (int) $this->configurationAdapter->get(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT),
+            'applePayDirectCart' => (int) $this->configurationAdapter->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART),
+            'applePayDirectStyle' => (int) $this->configurationAdapter->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
+            'isBancontactQrCodeEnabled' => (int) $this->configurationAdapter->get(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED),
+            'isLive' => (int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT),
             'bancontactQRCodeDescription' => TagsUtility::ppTags(
                 $this->module->l('Only available with your Live API key and Payments API. [1]Learn more[/1] about QR Codes.', self::FILE_NAME),
                 [
@@ -573,7 +574,7 @@ class FormBuilder
                 'description' => $desc,
                 'message' => sprintf($messageStatus, $this->module->lang($name)),
                 'key_mail' => @constant('Mollie\Config\Config::MOLLIE_MAIL_WHEN_' . Tools::strtoupper($name)),
-                'value_mail' => Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($name)),
+                'value_mail' => $this->configurationAdapter->get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($name)),
                 'description_mail' => sprintf($descriptionMail, $this->module->lang($name)),
                 'message_mail' => sprintf($messageMail, $this->module->lang($name)),
             ];
