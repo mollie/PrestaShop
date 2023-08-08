@@ -4,6 +4,7 @@
 
 ## Changes in release 6.0.2 ##
 + Decoupled Apple Pay direct feature flag into product and cart separate settings.
++ Overall improvements and bug fixes.
 
 ## Changes in release 6.0.1 ##
 + Fixed payment fee tax problems and improved fee set-up process.
