@@ -6,25 +6,35 @@ namespace Mollie\Subscription\Handler;
 
 use Cart;
 use Mollie;
+use Mollie\Action\CreateOrderPaymentFeeAction;
+use Mollie\Action\UpdateOrderTotalsAction;
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Shop;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\Subscription as MollieSubscription;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\SubscriptionStatus;
 use Mollie\Config\Config;
+use Mollie\DTO\CreateOrderPaymentFeeActionData;
+use Mollie\DTO\UpdateOrderTotalsData;
 use Mollie\Errors\Http\HttpStatusCode;
+use Mollie\Exception\CouldNotCreateOrderPaymentFee;
+use Mollie\Exception\CouldNotUpdateOrderTotals;
+use Mollie\Exception\OrderCreationException;
 use Mollie\Exception\TransactionException;
+use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MailService;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
-use Mollie\Service\TransactionService;
 use Mollie\Subscription\Api\SubscriptionApi;
+use Mollie\Subscription\Exception\CouldNotHandleRecurringOrder;
 use Mollie\Subscription\Factory\GetSubscriptionDataFactory;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Utility\ClockInterface;
 use Mollie\Utility\SecureKeyUtility;
+use MolOrderPaymentFee;
 use MolRecurringOrder;
 use MolRecurringOrdersProduct;
 use Order;
@@ -54,8 +64,14 @@ class RecurringOrderHandler
     private $shop;
     /** @var MailService */
     private $mailService;
-    /** @var TransactionService */
-    private $transactionService;
+    /** @var MolOrderPaymentFeeRepositoryInterface */
+    private $molOrderPaymentFeeRepository;
+    /** @var UpdateOrderTotalsAction */
+    private $updateOrderTotalsAction;
+    /** @var CreateOrderPaymentFeeAction */
+    private $createOrderPaymentFeeAction;
+    /** @var ConfigurationAdapter */
+    private $configuration;
 
     public function __construct(
         SubscriptionApi $subscriptionApi,
@@ -68,7 +84,11 @@ class RecurringOrderHandler
         PaymentMethodService $paymentMethodService,
         ClockInterface $clock,
         Shop $shop,
-        MailService $mailService
+        MailService $mailService,
+        MolOrderPaymentFeeRepositoryInterface $molOrderPaymentFeeRepository,
+        UpdateOrderTotalsAction $updateOrderTotalsAction,
+        CreateOrderPaymentFeeAction $createOrderPaymentFeeAction,
+        ConfigurationAdapter $configuration
     ) {
         $this->subscriptionApi = $subscriptionApi;
         $this->subscriptionDataFactory = $subscriptionDataFactory;
@@ -81,6 +101,10 @@ class RecurringOrderHandler
         $this->clock = $clock;
         $this->shop = $shop;
         $this->mailService = $mailService;
+        $this->molOrderPaymentFeeRepository = $molOrderPaymentFeeRepository;
+        $this->updateOrderTotalsAction = $updateOrderTotalsAction;
+        $this->createOrderPaymentFeeAction = $createOrderPaymentFeeAction;
+        $this->configuration = $configuration;
     }
 
     public function handle(string $transactionId): string
@@ -102,6 +126,7 @@ class RecurringOrderHandler
 
         $existingTransaction = $this->paymentMethodRepository->getPaymentBy('transaction_id', $transaction->id);
 
+        // TODO separate these actions into separate service. Test them as well.
         switch (true) {
             case $existingTransaction:
                 $this->updateOrderStatus($transaction, (int) $existingTransaction['order_id']);
@@ -119,13 +144,20 @@ class RecurringOrderHandler
         return 'OK';
     }
 
-    private function createSubscription(Payment $transaction, MolRecurringOrder $recurringOrder, MollieSubscription $subscription)
+    /**
+     * @throws CouldNotHandleRecurringOrder
+     * @throws OrderCreationException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    private function createSubscription(Payment $transaction, MolRecurringOrder $recurringOrder, MollieSubscription $subscription): void
     {
         $cart = new Cart($recurringOrder->id_cart);
 
+        /** @var array{success: bool, cart: Cart}|bool $newCart */
         $newCart = $cart->duplicate();
 
-        if (!$newCart['success']) {
+        if (!$newCart || !$newCart['success']) {
             return;
         }
 
@@ -151,7 +183,7 @@ class RecurringOrderHandler
 
         $this->mollie->validateOrder(
             (int) $newCart->id,
-            Config::getStatuses()[$transaction->status],
+            (int) $this->configuration->get(Config::MOLLIE_STATUS_AWAITING),
             (float) $subscription->amount->value,
             sprintf('subscription/%s', $methodName),
             null,
@@ -161,15 +193,48 @@ class RecurringOrderHandler
             $newCart->secure_key
         );
 
-        $orderId = Order::getIdByCartId((int) $newCart->id);
+        $orderId = (int) Order::getIdByCartId((int) $newCart->id);
         $order = new Order($orderId);
 
         $specificPrice->delete();
 
         $this->mollieOrderCreationService->createMolliePayment($transaction, (int) $newCart->id, $order->reference, (int) $orderId, PaymentStatus::STATUS_PAID);
+
+        /** @var MolOrderPaymentFee|null $molOrderPaymentFee */
+        $molOrderPaymentFee = $this->molOrderPaymentFeeRepository->findOneBy([
+            'id_order' => $recurringOrder->id_order,
+        ]);
+
+        if ($molOrderPaymentFee) {
+            try {
+                $this->createOrderPaymentFeeAction->run(CreateOrderPaymentFeeActionData::create(
+                    $orderId,
+                    (int) $newCart->id,
+                    (float) $molOrderPaymentFee->fee_tax_incl,
+                    (float) $molOrderPaymentFee->fee_tax_excl
+                ));
+            } catch (CouldNotCreateOrderPaymentFee $exception) {
+                throw CouldNotHandleRecurringOrder::failedToCreateOrderPaymentFee($exception);
+            }
+
+            try {
+                $this->updateOrderTotalsAction->run(UpdateOrderTotalsData::create(
+                    $orderId,
+                    (float) $molOrderPaymentFee->fee_tax_incl,
+                    (float) $molOrderPaymentFee->fee_tax_excl,
+                    (float) $transaction->amount->value,
+                    (float) $cart->getOrderTotal(true, Cart::BOTH),
+                    (float) $cart->getOrderTotal(false, Cart::BOTH)
+                ));
+            } catch (CouldNotUpdateOrderTotals $exception) {
+                throw CouldNotHandleRecurringOrder::failedToUpdateOrderTotalWithPaymentFee($exception);
+            }
+        }
+
+        $this->orderStatusService->setOrderStatus($orderId, (int) Config::getStatuses()[$transaction->status]);
     }
 
-    private function updateOrderStatus(Payment $transaction, int $orderId)
+    private function updateOrderStatus(Payment $transaction, int $orderId): void
     {
         $this->orderStatusService->setOrderStatus($orderId, $transaction->status);
         $this->paymentMethodRepository->savePaymentStatus($transaction->id, $transaction->status, $orderId, $transaction->method);

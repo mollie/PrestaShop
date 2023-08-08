@@ -20,17 +20,19 @@ use DbQuery;
  */
 class MethodCountryRepository
 {
-    public function checkIfMethodIsAvailableInCountry($methodId, $countryId)
+    public function checkIfMethodIsAvailableInCountry($methodId, $countryId): bool
     {
         $sql = new DbQuery();
         $sql->select('`id_mol_country`');
         $sql->from('mol_country');
         $sql->where('`id_method` = "' . (int) $methodId . '" AND ( id_country = ' . (int) $countryId . ' OR all_countries = 1)');
 
-        return Db::getInstance()->getValue($sql);
+        $result = Db::getInstance()->getValue($sql);
+
+        return !empty($result);
     }
 
-    public function checkIfCountryIsExcluded($methodId, $countryId)
+    public function checkIfCountryIsExcluded($methodId, $countryId): bool
     {
         $sql = new DbQuery();
         $sql->select('`id_mol_country`');
