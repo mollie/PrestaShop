@@ -188,7 +188,7 @@ class PaymentMethodService
     public function getMethodsForCheckout()
     {
         $apiKey = EnvironmentUtility::getApiKey();
-        if (!$apiKey || $this->module->api === null) {
+        if (!$apiKey || $this->module->getApiClient() === null) {
             return [];
         }
         /* @phpstan-ignore-next-line */
@@ -478,7 +478,7 @@ class PaymentMethodService
         $cartAmount = $this->orderTotalProvider->getOrderTotal();
 
         /** @var BaseCollection|MethodCollection $methods */
-        $methods = $this->module->api->methods->allActive(
+        $methods = $this->module->getApiClient()->methods->allActive(
             [
                 'resource' => 'orders',
                 'include' => 'issuers',

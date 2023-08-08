@@ -27,7 +27,7 @@ final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
     private $order;
     /** @var MolOrderPaymentFeeRepositoryInterface */
     private $molOrderPaymentFeeRepository;
-    /** @var Locale */
+    /** @var Locale|null */
     private $locale;
     /** @var CurrencyRepositoryInterface */
     private $currencyRepository;
@@ -51,7 +51,10 @@ final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
         return $this;
     }
 
-    public function setLocale(Locale $locale): InvoicePdfTemplateBuilder
+    /**
+     * @param Locale|null $locale
+     */
+    public function setLocale($locale): InvoicePdfTemplateBuilder
     {
         $this->locale = $locale;
 

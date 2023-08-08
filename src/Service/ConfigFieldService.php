@@ -99,8 +99,8 @@ class ConfigFieldService
             Config::MOLLIE_KLARNA_INVOICE_ON => Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON),
         ];
 
-        if (Mollie\Utility\EnvironmentUtility::getApiKey() && $this->module->api !== null) {
-            foreach ($this->apiService->getMethodsForConfig($this->module->api) as $method) {
+        if (Mollie\Utility\EnvironmentUtility::getApiKey() && $this->module->getApiClient() !== null) {
+            foreach ($this->apiService->getMethodsForConfig($this->module->getApiClient()) as $method) {
                 $countryIds = $this->countryRepository->getMethodCountryIds($method['id']);
                 if ($countryIds) {
                     $configFields = array_merge($configFields, [Config::MOLLIE_COUNTRIES . $method['id'] . '[]' => $countryIds]);

@@ -168,9 +168,9 @@ class SettingsSaveService
             return [];
         }
 
-        if ($oldEnvironment === $environment && $apiKey && $this->module->api !== null) {
+        if ($oldEnvironment === $environment && $apiKey && $this->module->getApiClient() !== null) {
             $savedPaymentMethods = [];
-            foreach ($this->apiService->getMethodsForConfig($this->module->api) as $method) {
+            foreach ($this->apiService->getMethodsForConfig($this->module->getApiClient()) as $method) {
                 $paymentMethodId = $method['obj']->id;
                 try {
                     $paymentMethod = $this->paymentMethodService->savePaymentMethod($method);

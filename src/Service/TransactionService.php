@@ -183,9 +183,10 @@ class TransactionService
                         $this->updatePaymentDescription($apiPayment, $orderId);
                     } elseif (strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                         $this->handlePaymentDescription($apiPayment);
-                    } elseif ($apiPayment->amountRefunded->value > 0) {
+                    } elseif ($orderId) {
                         $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
                     }
+
                     $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
                 }
                 break;
@@ -214,7 +215,7 @@ class TransactionService
 
                     try {
                         $this->shipmentSenderHandler->handleShipmentSender(
-                            $this->module->api,
+                            $this->module->getApiClient(),
                             $order,
                             new \OrderState($order->current_state)
                         );
@@ -294,7 +295,7 @@ class TransactionService
         $transactionInfos = [];
         $isOrder = TransactionUtility::isOrderTransaction($transactionId);
         if ($isOrder) {
-            $transaction = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
+            $transaction = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
             /** @var PaymentCollection|null $payments */
             $payments = $transaction->payments();
 
@@ -307,7 +308,7 @@ class TransactionService
                 }
             }
         } else {
-            $transaction = $this->module->api->payments->get($transactionId);
+            $transaction = $this->module->getApiClient()->payments->get($transactionId);
             $transactionInfos = $this->getPaymentTransactionInfo($transaction, $transactionInfos);
         }
 
@@ -455,7 +456,7 @@ class TransactionService
             $payment->description = 'Order ' . $orderNumber;
             $payment->update();
         }
-        $this->module->api->orders->update(
+        $this->module->getApiClient()->orders->update(
             $apiPayment->id,
             [
                 'orderNumber' => $orderNumber,

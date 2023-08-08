@@ -24,6 +24,7 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\Utility\PsVersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
+use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -68,7 +69,7 @@ class Mollie extends PaymentModule
 
         parent::__construct();
 
-        $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = ['min' => '1.7', 'max' => '1.7.8.9'];
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 
@@ -142,6 +143,15 @@ class Mollie extends PaymentModule
         }
 
         return parent::uninstall();
+    }
+
+    public function getApiClient(int $shopId = null)
+    {
+        if (!$this->api) {
+            $this->setApiKey($shopId);
+        }
+
+        return $this->api;
     }
 
     public function enable($force_all = false)
@@ -366,11 +376,17 @@ class Mollie extends PaymentModule
             return;
         }
 
+        $apiClient = $this->getApiClient();
+
+        if (!$apiClient) {
+            return '';
+        }
+
         /** @var ProfileIdProviderInterface $profileIdProvider */
         $profileIdProvider = $this->getMollieContainer(ProfileIdProviderInterface::class);
 
         Media::addJsDef([
-            'profileId' => $profileIdProvider->getProfileId($this->api),
+            'profileId' => $profileIdProvider->getProfileId($apiClient),
             'isoCode' => $this->context->language->locale,
             'isTestMode' => \Mollie\Config\Config::isTestMode(),
         ]);
@@ -699,7 +715,9 @@ class Mollie extends PaymentModule
             return;
         }
 
-        if (!$this->api) {
+        $apiClient = $this->getApiClient($this->context->shop->id);
+
+        if (!$apiClient) {
             return;
         }
 
@@ -720,7 +738,7 @@ class Mollie extends PaymentModule
         $logger = $this->getMollieContainer(PrestaLoggerInterface::class);
 
         try {
-            $shipmentSenderHandler->handleShipmentSender($this->api, $order, $orderStatus);
+            $shipmentSenderHandler->handleShipmentSender($apiClient, $order, $orderStatus);
         } catch (ShipmentCannotBeSentException $exception) {
             $logger->error($exceptionService->getErrorMessageForException(
                 $exception,
@@ -796,7 +814,7 @@ class Mollie extends PaymentModule
                 'id_order' => (int) $order->id,
             ]);
 
-            $feeTaxIncl = $molOrderPaymentFee->fee_tax_incl ?? 0.00;
+            $feeTaxIncl = !empty($molOrderPaymentFee->fee_tax_incl) ? (float) $molOrderPaymentFee->fee_tax_incl : 0.00;
 
             if (PsVersionUtility::isPsVersionLowerThan(_PS_VERSION_, '1.7.6.0')) {
                 $orderFee = $tools->displayPrice(
@@ -804,7 +822,18 @@ class Mollie extends PaymentModule
                     $orderCurrency
                 );
             } else {
-                $orderFee = $this->context->getCurrentLocale()->formatPrice(
+                /**
+                 * NOTE: Locale in context is set at init() method but in this case init() doesn't always get executed first.
+                 */
+                /** @var Repository $localeRepo */
+                $localeRepo = $this->get('prestashop.core.localization.locale.repository');
+
+                /**
+                 * NOTE: context language is set based on customer/employee context
+                 */
+                $locale = $localeRepo->getLocale($this->context->language->getLocale());
+
+                $orderFee = $locale->formatPrice(
                     $feeTaxIncl,
                     $orderCurrency->iso_code
                 );
@@ -830,19 +859,20 @@ class Mollie extends PaymentModule
             return '';
         }
 
-        $localeRepo = $this->get('prestashop.core.localization.locale.repository');
-
-        if (!$localeRepo) {
-            return '';
-        }
-
-        /**
-         * NOTE: context language is set based on customer/employee context
-         */
-        $locale = $localeRepo->getLocale($this->context->language->getLocale());
-
         /** @var InvoicePdfTemplateBuilder $invoiceTemplateBuilder */
         $invoiceTemplateBuilder = $this->getMollieContainer(InvoicePdfTemplateBuilder::class);
+
+        $locale = null;
+
+        if (PsVersionUtility::isPsVersionHigherThen(_PS_VERSION_, '1.7.6.0')) {
+            /** @var Repository $localeRepo */
+            $localeRepo = $this->get('prestashop.core.localization.locale.repository');
+
+             /**
+             * NOTE: context language is set based on customer/employee context
+             */
+             $locale = $localeRepo->getLocale($this->context->language->getLocale());
+        }
 
         $templateParams = $invoiceTemplateBuilder
             ->setOrder($params['object']->getOrder())
@@ -931,6 +961,12 @@ class Mollie extends PaymentModule
             return;
         }
 
+        $apiClient = $this->getApiClient($this->context->shop->id);
+
+        if (!$apiClient) {
+            return;
+        }
+
         //NOTE as mollie-email-send is only in manual order creation in backoffice this should work only when mollie payment is chosen.
         if (!empty(Tools::getValue('mollie-email-send')) &&
             $params['order']->module === $this->name
@@ -957,7 +993,7 @@ class Mollie extends PaymentModule
                 $orderReference
             );
 
-            $newPayment = $this->api->payments->create($paymentData->jsonSerialize());
+            $newPayment = $apiClient->payments->create($paymentData->jsonSerialize());
 
             /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepository */
             $paymentMethodRepository = $this->getMollieContainer(\Mollie\Repository\PaymentMethodRepository::class);

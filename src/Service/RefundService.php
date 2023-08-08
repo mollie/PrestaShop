@@ -59,7 +59,7 @@ class RefundService
     {
         try {
             /** @var Payment $payment */
-            $payment = $this->module->api->payments->get($transactionId);
+            $payment = $this->module->getApiClient()->payments->get($transactionId);
             if ($amount) {
                 $payment->refund([
                     'amount' => [
@@ -112,7 +112,7 @@ class RefundService
         $availableRefund = $orderData['availableRefundAmount'];
         try {
             /** @var MollieOrderAlias $payment */
-            $order = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
+            $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
             $isOrderLinesRefundPossible = RefundUtility::isOrderLinesRefundPossible($lines, $availableRefund);
             if ($isOrderLinesRefundPossible) {
                 $refund = RefundUtility::getRefundLines($lines);

@@ -76,16 +76,16 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             $this->respond('failed', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY, 'Missing transaction id');
         }
 
-        if (!$this->module->api) {
+        if (!$this->module->getApiClient()) {
             $this->respond('failed', HttpStatusCode::HTTP_UNAUTHORIZED, 'API key is missing or incorrect');
         }
         try {
             if (TransactionUtility::isOrderTransaction($transactionId)) {
-                $transaction = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
+                $transaction = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
             } else {
-                $transaction = $this->module->api->payments->get($transactionId);
+                $transaction = $this->module->getApiClient()->payments->get($transactionId);
                 if ($transaction->orderId) {
-                    $transaction = $this->module->api->orders->get($transaction->orderId, ['embed' => 'payments']);
+                    $transaction = $this->module->getApiClient()->orders->get($transaction->orderId, ['embed' => 'payments']);
                 }
             }
             $metaData = $transaction->metadata;

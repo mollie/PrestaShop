@@ -52,7 +52,7 @@ class CancelService
     {
         try {
             /** @var Order $payment */
-            $order = $this->module->api->orders->get($transactionId, ['embed' => 'payments']);
+            $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
             if ([] === $lines) {
                 $order->cancel();
             } else {

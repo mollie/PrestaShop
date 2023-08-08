@@ -140,10 +140,10 @@ class MollieOrderCreationService
         try {
             if (Config::MOLLIE_ORDERS_API === $selectedApi) {
                 /** @var MollieOrderAlias $payment */
-                $payment = $this->module->api->orders->create($data, ['embed' => 'payments']);
+                $payment = $this->module->getApiClient()->orders->create($data, ['embed' => 'payments']);
             } else {
                 /** @var MolliePaymentAlias $payment */
-                $payment = $this->module->api->payments->create($data);
+                $payment = $this->module->getApiClient()->payments->create($data);
             }
 
             return $payment;
