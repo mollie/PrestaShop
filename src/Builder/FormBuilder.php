@@ -432,8 +432,9 @@ class FormBuilder
             'voucherCategory' => $this->configuration->get(Config::MOLLIE_VOUCHER_CATEGORY),
             'klarnaPayments' => Config::KLARNA_PAYMENTS,
             'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_AUTHORIZED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
-            'applePayDirect' => (int) $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT),
-            'applePayDIrectStyle' => (int) $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
+            'applePayDirectProduct' => (int) $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT),
+            'applePayDirectCart' => (int) $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART),
+            'applePayDirectStyle' => (int) $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
             'isBancontactQrCodeEnabled' => (int) $this->configuration->get(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED),
             'isLive' => (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT),
             'bancontactQRCodeDescription' => TagsUtility::ppTags(

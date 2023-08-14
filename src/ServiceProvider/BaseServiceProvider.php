@@ -43,6 +43,8 @@ use Mollie\Provider\UpdateMessageProvider;
 use Mollie\Provider\UpdateMessageProviderInterface;
 use Mollie\Repository\AddressRepository;
 use Mollie\Repository\AddressRepositoryInterface;
+use Mollie\Repository\CartRepository;
+use Mollie\Repository\CartRepositoryInterface;
 use Mollie\Repository\CartRuleRepository;
 use Mollie\Repository\CartRuleRepositoryInterface;
 use Mollie\Repository\CurrencyRepository;
@@ -68,6 +70,7 @@ use Mollie\Service\ApiKeyService;
 use Mollie\Service\Content\SmartyTemplateParser;
 use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
+use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\AmountPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\EnvironmentVersionSpecificPaymentMethodRestrictionValidator;
@@ -155,6 +158,7 @@ final class BaseServiceProvider
         $this->addService($container, TaxRulesGroupRepositoryInterface::class, $container->get(TaxRulesGroupRepository::class));
         $this->addService($container, TaxRuleRepositoryInterface::class, $container->get(TaxRuleRepository::class));
         $this->addService($container, TaxRepositoryInterface::class, $container->get(TaxRepository::class));
+        $this->addService($container, CartRepositoryInterface::class, $container->get(CartRepository::class));
 
         $this->addService($container, OrderTotalProviderInterface::class, $container->get(OrderTotalProvider::class));
         $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
@@ -187,6 +191,7 @@ final class BaseServiceProvider
                 $container->get(VoucherPaymentMethodRestrictionValidator::class),
                 $container->get(EnvironmentVersionSpecificPaymentMethodRestrictionValidator::class),
                 $container->get(ApplePayPaymentMethodRestrictionValidator::class),
+                $container->get(AmountPaymentMethodRestrictionValidator::class),
             ]);
 
         $this->addService($container, CustomLogoProviderInterface::class, $container->get(CreditCardLogoProvider::class));

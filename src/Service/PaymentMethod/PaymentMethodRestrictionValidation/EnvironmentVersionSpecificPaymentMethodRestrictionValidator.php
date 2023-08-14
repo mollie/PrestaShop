@@ -37,7 +37,6 @@
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
 use Mollie\Adapter\LegacyContext;
-use Mollie\Provider\EnvironmentVersionProviderInterface;
 use Mollie\Repository\MethodCountryRepository;
 use MolPaymentMethod;
 
@@ -50,34 +49,25 @@ class EnvironmentVersionSpecificPaymentMethodRestrictionValidator implements Pay
     private $context;
 
     /**
-     * @var EnvironmentVersionProviderInterface
-     */
-    private $prestashopVersionProvider;
-
-    /**
      * @var MethodCountryRepository
      */
     private $methodCountryRepository;
 
     public function __construct(
         LegacyContext $context,
-        EnvironmentVersionProviderInterface $prestashopVersionProvider,
         MethodCountryRepository $methodCountryRepository
     ) {
         $this->context = $context;
-        $this->prestashopVersionProvider = $prestashopVersionProvider;
         $this->methodCountryRepository = $methodCountryRepository;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function isValid(MolPaymentMethod $paymentMethod)
+    public function isValid(MolPaymentMethod $paymentMethod): bool
     {
-        if (version_compare($this->prestashopVersionProvider->getPrestashopVersion(), '1.6.0.9', '>')) {
-            if (!$this->isCountryAvailable($paymentMethod)) {
-                return false;
-            }
+        if (!$this->isCountryAvailable($paymentMethod)) {
+            return false;
         }
 
         return true;
@@ -86,12 +76,12 @@ class EnvironmentVersionSpecificPaymentMethodRestrictionValidator implements Pay
     /**
      * {@inheritDoc}
      */
-    public function supports(MolPaymentMethod $paymentMethod)
+    public function supports(MolPaymentMethod $paymentMethod): bool
     {
         return true;
     }
 
-    private function isCountryAvailable(MolPaymentMethod $paymentMethod)
+    private function isCountryAvailable(MolPaymentMethod $paymentMethod): bool
     {
         if ($paymentMethod->is_countries_applicable) {
             return $this->methodCountryRepository->checkIfMethodIsAvailableInCountry(

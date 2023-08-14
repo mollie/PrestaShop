@@ -16,6 +16,7 @@ use PrestaShop\PrestaShop\Core\Grid\Filter\FilterCollection;
 use PrestaShop\PrestaShop\Core\Hook\HookDispatcherInterface;
 use PrestaShopBundle\Form\Admin\Type\DateRangeType;
 use PrestaShopBundle\Form\Admin\Type\SearchAndResetType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
@@ -219,7 +220,7 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                 ])
                 ->setAssociatedColumn('status')
             )
-            ->add((new Filter('unit_price', TextType::class))
+            ->add((new Filter('unit_price', MoneyType::class))
                 ->setTypeOptions([
                     'required' => false,
                     'attr' => [
