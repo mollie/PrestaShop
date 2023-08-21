@@ -49,6 +49,8 @@ use Mollie\Repository\CartRuleRepository;
 use Mollie\Repository\CartRuleRepositoryInterface;
 use Mollie\Repository\CurrencyRepository;
 use Mollie\Repository\CurrencyRepositoryInterface;
+use Mollie\Repository\CustomerRepository;
+use Mollie\Repository\CustomerRepositoryInterface;
 use Mollie\Repository\GenderRepository;
 use Mollie\Repository\GenderRepositoryInterface;
 use Mollie\Repository\MolCustomerRepository;
@@ -72,6 +74,7 @@ use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\AmountPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
+use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\B2bPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\EnvironmentVersionSpecificPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator;
@@ -171,6 +174,7 @@ final class BaseServiceProvider
         $this->addService($container, CartRuleRepositoryInterface::class, $container->get(CartRuleRepository::class));
         $this->addService($container, OrderRepositoryInterface::class, $container->get(OrderRepository::class));
         $this->addService($container, CurrencyRepositoryInterface::class, $container->get(CurrencyRepository::class));
+        $this->addService($container, CustomerRepositoryInterface::class, $container->get(CustomerRepository::class));
         $this->addService($container, MolOrderPaymentFeeRepositoryInterface::class, $container->get(MolOrderPaymentFeeRepository::class));
         $this->addService($container, CartRuleQuantityChangeHandlerInterface::class, $container->get(CartRuleQuantityChangeHandler::class));
 
@@ -192,6 +196,7 @@ final class BaseServiceProvider
                 $container->get(EnvironmentVersionSpecificPaymentMethodRestrictionValidator::class),
                 $container->get(ApplePayPaymentMethodRestrictionValidator::class),
                 $container->get(AmountPaymentMethodRestrictionValidator::class),
+                $container->get(B2bPaymentMethodRestrictionValidator::class),
             ]);
 
         $this->addService($container, CustomLogoProviderInterface::class, $container->get(CreditCardLogoProvider::class));
