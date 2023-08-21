@@ -252,7 +252,7 @@ it('C339352: 15 Klarna Pay Now Checkouting [Orders API]', () => {
 it('C339353: 16 Klarna Pay Now Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderShippingRefundingOrdersAPI()
 })
-it.only('C339354: 17 Credit Card Checkouting [Orders API]', () => {
+it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
       //Enabling the Single-Click for now
       cy.visit('/admin1/')
       cy.OpeningModuleDashboardURL()
@@ -288,7 +288,7 @@ it.only('C339354: 17 Credit Card Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it.only('C339355: 18 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
+it('C339355: 18 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
       cy.visit('/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -322,11 +322,11 @@ it.only('C339355: 18 Check if customerId is passed during the 2nd payment using 
 it('C339356: 19 Credit Card Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it('C339357: 20 IN3 Checkouting [Orders API]', () => {
+it.only('C339357: 20 IN3 Checkouting [Orders API]', () => {
       cy.visit('/de/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
-      cy.contains('NL').click()
+      cy.contains('DE').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
