@@ -270,7 +270,7 @@ it.only('C339354: 17 Credit Card Checkouting [Orders API]', () => {
       //Credit card inputing
       cy.CreditCardFillingIframe()
       cy.get('.condition-label > .js-terms').click({force:true})
-      cy.get('#mollie-save-card').check({force:true})
+      cy.get('#mollie-save-card').check({force:true}).check({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click({force: true})
       cy.setCookie(
