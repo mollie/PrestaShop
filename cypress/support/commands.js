@@ -600,4 +600,5 @@ const login = (MollieBOFOLoggingIn) => {
   cy.get('#history-link > .link-item').click()
   })
   }
+  login('MollieBOFOLoggingIn')
 })

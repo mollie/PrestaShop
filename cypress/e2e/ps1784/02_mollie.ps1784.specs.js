@@ -32,9 +32,7 @@ function prepareCookie()
         });
       }
 
-cy.CachingBOFOPS1784()
-
-//Checing the console for errors
+//Checking the console for errors
 let windowConsoleError;
 Cypress.on('window:before:load', (win) => {
   windowConsoleError = cy.spy(win.console, 'error');
@@ -45,7 +43,7 @@ afterEach(() => {
 describe('PS1784 Tests Suite', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
-      login('MollieBOFOLoggingIn')
+      cy.CachingBOFOPS1784()
   })
 it('C339341: 04 Enabling All payments in Module BO [Orders API]', () => {
       cy.visit('/admin1/')
