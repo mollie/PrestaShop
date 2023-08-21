@@ -31,7 +31,21 @@ function prepareCookie()
 
         });
       }
-
+//Caching the BO and FO session
+const login = (MollieBOFOLoggingIn) => {
+  cy.session(MollieBOFOLoggingIn,() => {
+  cy.visit('/admin1/')
+  cy.url().should('contain', 'https').as('Check if HTTPS exists')
+  cy.get('#email').type('demo@demo.com',{delay: 0, log: false})
+  cy.get('#passwd').type('demodemo',{delay: 0, log: false})
+  cy.get('#submit_login').click().wait(1000).as('Connection successsful')
+  cy.visit('/en/my-account')
+  cy.get('#login-form [name="email"]').eq(0).type('demo@demo.com')
+  cy.get('#login-form [name="password"]').eq(0).type('demodemo')
+  cy.get('#login-form [type="submit"]').eq(0).click({force:true})
+  cy.get('#history-link > .link-item').click()
+  })
+  }
 //Checking the console for errors
 let windowConsoleError;
 Cypress.on('window:before:load', (win) => {
@@ -42,10 +56,10 @@ afterEach(() => {
 })
 describe('PS1784 Tests Suite', () => {
   beforeEach(() => {
+      login('MollieBOFOLoggingIn')
       cy.viewport(1920,1080)
-      cy.CachingBOFOPS1784()
   })
-it('C339341: 04 Enabling All payments in Module BO [Orders API]', () => {
+it.only('C339341: 04 Enabling All payments in Module BO [Orders API]', () => {
       cy.visit('/admin1/')
       cy.OpeningModuleDashboardURL()
       cy.ConfOrdersAPI1784()
@@ -245,7 +259,7 @@ it('C339352: 15 Klarna Pay Now Checkouting [Orders API]', () => {
 it('C339353: 16 Klarna Pay Now Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderShippingRefundingOrdersAPI()
 })
-it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
+it.only('C339354: 17 Credit Card Checkouting [Orders API]', () => {
       //Enabling the Single-Click for now
       cy.visit('/admin1/')
       cy.OpeningModuleDashboardURL()
@@ -277,11 +291,13 @@ it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
         }
       );    // reload current page to activate cookie
       cy.reload();
+      cy.CreditCardFillingIframe()
+      cy.get('[id="submit-button"]').click()
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it('C339355: 18 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
+it.only('C339355: 18 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
       cy.visit('/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
