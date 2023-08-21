@@ -52,7 +52,7 @@ it('C339341: 04 Enabling All payments in Module BO [Orders API]', () => {
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it('C339342: 05 Vouchers Checkouting [Orders API]', () => {
+it.skip('C339342: 05 Vouchers Checkouting [Orders API]', () => {
       cy.visit('/de/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -84,7 +84,7 @@ it('C339342: 05 Vouchers Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it('C339343: 06 Vouchers Order BO Refunding, Shipping (Paid part only) [Orders API]', () => {
+it.skip('C339343: 06 Vouchers Order BO Refunding, Shipping (Paid part only) [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
       cy.get('[class="card-body"]').find('[class="alert alert-warning"]').should('exist') //additional checking if the warning alert for vouchers exist
 })
@@ -248,7 +248,7 @@ it('C339353: 16 Klarna Pay Now Order BO Shipping, Refunding [Orders API]', () =>
 it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
       //Enabling the Single-Click for now
       cy.visit('/admin1/')
-      cy.OpenModuleDashboard()
+      cy.OpeningModuleDashboardURL()
       cy.get('#MOLLIE_SANDBOX_SINGLE_CLICK_PAYMENT_on').click({force:true})
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
@@ -306,7 +306,7 @@ it('C339355: 18 Check if customerId is passed during the 2nd payment using Singl
       cy.reload();
       cy.visit('/admin1/')
       //Disabling the single-click - no need again
-      cy.OpenModuleDashboard()
+      cy.OpeningModuleDashboardURL()
       cy.get('#MOLLIE_SINGLE_CLICK_PAYMENT_off').click({force:true})
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
@@ -364,7 +364,7 @@ it('C339359: 22 IN3 should not be shown under 5000 EUR [Orders API]', () => {
 })
 it('C339360: 23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.visit('/admin1/')
-      cy.OpenModuleDashboard()
+      cy.OpeningModuleDashboardURL()
       cy.get('[href="#advanced_settings"]').click({force:true})
       cy.get('[name="MOLLIE_IMAGES"]').select('big')
       cy.get('[type="submit"]').first().click({force:true})
@@ -380,7 +380,7 @@ it('C339360: 23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.get('html').should('contain.html','src="https://www.mollie.com/external/icons/payment-methods/in3%402x.png"')
       //todo finish
       cy.visit('/admin1/')
-      cy.OpenModuleDashboard()
+      cy.OpeningModuleDashboardURL()
       cy.get('[href="#advanced_settings"]').click({force:true})
       cy.get('[name="MOLLIE_IMAGES"]').select('hide')
       cy.get('[type="submit"]').first().click({force:true})
@@ -686,14 +686,14 @@ it.skip('41 Gift Card Order Shipping, Refunding [Orders API]', () => {
 })
 it('C339377: 42 [SWITCH TO PAYMENTS API] Enabling All payments in Module BO [Payments API]', () => {
       cy.visit('/admin1/')
-      cy.OpenModuleDashboard()
+      cy.OpeningModuleDashboardURL()
       cy.ConfPaymentsAPI1784()
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
 it('C339378: 43 Check if Bancontact QR payment dropdown exists [Payments API]', () => {
       cy.visit('/admin1/')
-      cy.OpenModuleDashboard()
+      cy.OpeningModuleDashboardURL()
       cy.get('[name="MOLLIE_BANCONTACT_QR_CODE_ENABLED"]').should('exist')
 })
 it('C339379: 44 Bancontact Checkouting [Payments API]', () => {

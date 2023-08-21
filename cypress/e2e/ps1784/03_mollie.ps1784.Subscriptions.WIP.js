@@ -1,3 +1,4 @@
+/// <reference types="Cypress" />
 //Checking the console for errors
 let windowConsoleError;
 Cypress.on('window:before:load', (win) => {
