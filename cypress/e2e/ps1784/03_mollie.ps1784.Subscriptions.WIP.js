@@ -1,5 +1,3 @@
-cy.CachingBOFOPS1784()
-
 //Checking the console for errors
 let windowConsoleError;
 Cypress.on('window:before:load', (win) => {
@@ -12,6 +10,7 @@ describe('PS1784 Subscriptions Test Suit', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
+      cy.CachingBOFOPS1784()
   })
 it('C176305 Check if Subscription options added in Product BO', () => {
   cy.visit('/admin1/')
