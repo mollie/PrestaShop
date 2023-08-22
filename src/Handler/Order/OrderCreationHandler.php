@@ -109,7 +109,7 @@ class OrderCreationHandler
     /**
      * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
      * @param int $cartId
-     * @param bool $isKlarnaOrder
+     * @param bool $isAuthorizablePayment
      *
      * @return int
      *
@@ -119,9 +119,9 @@ class OrderCreationHandler
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public function createOrder($apiPayment, int $cartId, $isKlarnaOrder = false): int
+    public function createOrder($apiPayment, int $cartId, bool $isAuthorizablePayment = false): int
     {
-        $orderStatus = $isKlarnaOrder ?
+        $orderStatus = $isAuthorizablePayment ?
             (int) Config::getStatuses()[PaymentStatus::STATUS_AUTHORIZED] :
             (int) Config::getStatuses()[PaymentStatus::STATUS_PAID];
 

@@ -52,15 +52,9 @@ class VersionSpecificPaymentRestrictionValidationTest extends UnitTestCase
     /**
      * @dataProvider getVersionSpecificPaymentRestrictionValidationDataProvider
      */
-    public function testIsValid($isCountriesApplicable, $prestashopVersion, $countryExcluded, $countryAvailable, $expectedResult)
+    public function testIsValid($isCountriesApplicable, $countryExcluded, $countryAvailable, $expectedResult)
     {
         $this->paymentMethod->is_countries_applicable = $isCountriesApplicable;
-
-        $this->environmentVersionProvider
-            ->expects($this->any())
-            ->method('getPrestashopVersion')
-            ->willReturn($prestashopVersion)
-        ;
 
         $this->methodCountryRepository
             ->expects($this->any())
@@ -76,7 +70,6 @@ class VersionSpecificPaymentRestrictionValidationTest extends UnitTestCase
 
         $versionSpecificValidation = new EnvironmentVersionSpecificPaymentMethodRestrictionValidator(
             $this->context,
-            $this->environmentVersionProvider,
             $this->methodCountryRepository
         );
 
@@ -90,28 +83,24 @@ class VersionSpecificPaymentRestrictionValidationTest extends UnitTestCase
         return [
             'All checks pass' => [
                 'isCountriesApplicable' => true,
-                'prestashopVersion' => '1.7.0.5',
                 'countryExcluded' => false,
                 'countryAvailable' => true,
                 'expectedResult' => true,
             ],
             'Current environment version is not applicable to validation' => [
                 'isCountriesApplicable' => true,
-                'prestashopVersion' => '1.5.0.1',
                 'countryExcluded' => false,
                 'countryAvailable' => true,
                 'expectedResult' => true,
             ],
             'Method country is not available by not being in available list' => [
                 'isCountriesApplicable' => true,
-                'prestashopVersion' => '1.7.0.5',
                 'countryExcluded' => false,
                 'countryAvailable' => false,
                 'expectedResult' => false,
             ],
             'Method country is not available by exclusion and not being applicable' => [
                 'isCountriesApplicable' => false,
-                'prestashopVersion' => '1.7.0.5',
                 'countryExcluded' => true,
                 'countryAvailable' => false,
                 'expectedResult' => false,
