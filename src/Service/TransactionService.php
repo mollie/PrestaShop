@@ -13,10 +13,10 @@
 namespace Mollie\Service;
 
 use Cart;
-use Configuration;
 use Currency;
 use Db;
 use Mollie;
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment;
@@ -79,6 +79,8 @@ class TransactionService
     private $logger;
     /** @var ExceptionService */
     private $exceptionService;
+    /** @var ConfigurationAdapter */
+    private $configurationAdapter;
 
     public function __construct(
         Mollie $module,
@@ -90,7 +92,8 @@ class TransactionService
         OrderPaymentFeeHandler $orderPaymentFeeHandler,
         ShipmentSenderHandlerInterface $shipmentSenderHandler,
         PrestaLoggerInterface $logger,
-        ExceptionService $exceptionService
+        ExceptionService $exceptionService,
+        ConfigurationAdapter $configurationAdapter
     ) {
         $this->module = $module;
         $this->orderStatusService = $orderStatusService;
@@ -102,6 +105,7 @@ class TransactionService
         $this->shipmentSenderHandler = $shipmentSenderHandler;
         $this->logger = $logger;
         $this->exceptionService = $exceptionService;
+        $this->configurationAdapter = $configurationAdapter;
     }
 
     /**
@@ -121,7 +125,7 @@ class TransactionService
     public function processTransaction($apiPayment)
     {
         if (empty($apiPayment)) {
-            if (Configuration::get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
+            if ($this->configurationAdapter->get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
                 PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request without proper transaction ID.', Config::WARNING);
             }
 
@@ -218,10 +222,10 @@ class TransactionService
                     throw new TransactionException('Cart id is missing in transaction metadata', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY);
                 }
 
-                $isKlarnaOrder = in_array($apiPayment->method, Config::KLARNA_PAYMENTS, false);
+                $isAuthorizablePayment = in_array($apiPayment->method, Config::AUTHORIZABLE_PAYMENTS, false);
 
                 if (!$orderId && $isPaymentFinished) {
-                    $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id, $isKlarnaOrder);
+                    $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id, $isAuthorizablePayment);
 
                     if (!$orderId) {
                         throw new TransactionException('Order is already created', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
@@ -272,9 +276,16 @@ class TransactionService
                         $this->handleOrderDescription($apiPayment);
                     }
                 } else {
-                    $isKlarnaDefault = Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON) === Config::MOLLIE_STATUS_DEFAULT;
-                    if (in_array($apiPayment->method, Config::KLARNA_PAYMENTS) && !$isKlarnaDefault && $apiPayment->status === OrderStatus::STATUS_COMPLETED) {
-                        $this->orderStatusService->setOrderStatus($orderId, Config::MOLLIE_STATUS_KLARNA_SHIPPED);
+                    $isAuthorizablePaymentInvoiceOnStatusDefault =
+                        $this->configurationAdapter->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS)
+                        === Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_DEFAULT;
+
+                    if (
+                        !$isAuthorizablePaymentInvoiceOnStatusDefault
+                        && $apiPayment->status === OrderStatus::STATUS_COMPLETED
+                        && in_array($apiPayment->method, Config::AUTHORIZABLE_PAYMENTS, true)
+                    ) {
+                        $this->orderStatusService->setOrderStatus($orderId, Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED);
                     } else {
                         $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
                     }
@@ -295,7 +306,7 @@ class TransactionService
         $this->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId);
 
         // Log successful webhook requests in extended log mode only
-        if (Config::DEBUG_LOG_ALL == Configuration::get(Config::MOLLIE_DEBUG_LOG)) {
+        if (Config::DEBUG_LOG_ALL == $this->configurationAdapter->get(Config::MOLLIE_DEBUG_LOG)) {
             PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request for order ' . (int) $orderId . ' / transaction ' . $apiPayment->id, Config::NOTICE);
         }
 
@@ -379,7 +390,7 @@ class TransactionService
             throw $e;
         }
 
-        if (!$result && Configuration::get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
+        if (!$result && $this->configurationAdapter->get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
             PrestaShopLogger::addLog(__METHOD__ . ' said: Could not save Mollie payment status for transaction "' . $transactionId . '". Reason: ' . Db::getInstance()->getMsgError(), Config::WARNING);
         }
 
@@ -457,7 +468,7 @@ class TransactionService
 
     private function updateOrderDescription($apiPayment, int $orderId)
     {
-        $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+        $environment = (int) $this->configurationAdapter->get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
         $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
         $orderNumber = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
@@ -479,7 +490,7 @@ class TransactionService
         if (!$orderId) {
             throw new TransactionException('Order does not exist', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
         }
-        $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+        $environment = (int) $this->configurationAdapter->get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
         $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
         $apiPayment->description = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);

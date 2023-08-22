@@ -10,7 +10,7 @@
  */
 
 use Mollie\Config\Config;
-use Mollie\Install\Installer;
+use Mollie\Install\OrderStateInstaller;
 use Mollie\Service\OrderStateImageService;
 
 if (!defined('_PS_VERSION_')) {
@@ -30,14 +30,13 @@ function upgrade_module_4_2_0($module)
     $segment->setMessage('Mollie upgrade 4.2.0');
     $segment->track();
 
-    /** @var Installer $installer */
-    $installer = $module->getService(Installer::class);
+    /** @var OrderStateInstaller $orderStateInstaller */
+    $orderStateInstaller = $module->getService(OrderStateInstaller::class);
 
-    $installer->klarnaPaymentAuthorizedState();
-    $installer->klarnaPaymentShippedState();
+    $orderStateInstaller->install();
 
-    $acceptedStatusId = Configuration::get(Config::MOLLIE_STATUS_KLARNA_AUTHORIZED);
-    Configuration::updateValue(Config::MOLLIE_KLARNA_INVOICE_ON, $acceptedStatusId);
+    $acceptedStatusId = Configuration::get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED);
+    Configuration::updateValue(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS, $acceptedStatusId);
 
     $module->registerHook('actionOrderGridQueryBuilderModifier');
     $module->registerHook('actionOrderGridDefinitionModifier');

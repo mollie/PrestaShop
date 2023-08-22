@@ -430,8 +430,6 @@ class FormBuilder
             'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri() . "?{$dateStamp}",
             'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
             'voucherCategory' => $this->configuration->get(Config::MOLLIE_VOUCHER_CATEGORY),
-            'klarnaPayments' => Config::KLARNA_PAYMENTS,
-            'klarnaStatuses' => [Config::MOLLIE_STATUS_KLARNA_AUTHORIZED, Config::MOLLIE_STATUS_KLARNA_SHIPPED],
             'applePayDirectProduct' => (int) $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT),
             'applePayDirectCart' => (int) $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART),
             'applePayDirectStyle' => (int) $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
@@ -505,22 +503,22 @@ class FormBuilder
 
         $input[] = [
             'type' => 'select',
-            'label' => $this->module->l('Select when to create the Klarna invoice', self::FILE_NAME),
+            'label' => $this->module->l('Select when to create the Order invoice', self::FILE_NAME),
             'desc' => $this->module->display($this->module->getPathUri(), 'views/templates/admin/invoice_description.tpl'),
             'tab' => $advancedSettings,
-            'name' => Config::MOLLIE_KLARNA_INVOICE_ON,
+            'name' => Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS,
             'options' => [
                 'query' => [
                     [
-                        'id' => Config::MOLLIE_STATUS_DEFAULT,
+                        'id' => Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_DEFAULT,
                         'name' => $this->module->l('Default', self::FILE_NAME),
                     ],
                     [
-                        'id' => Config::MOLLIE_STATUS_KLARNA_AUTHORIZED,
+                        'id' => Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED,
                         'name' => $this->module->l('Authorised', self::FILE_NAME),
                     ],
                     [
-                        'id' => Config::MOLLIE_STATUS_KLARNA_SHIPPED,
+                        'id' => Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED,
                         'name' => $this->module->l('Shipped', self::FILE_NAME),
                     ],
                 ],
