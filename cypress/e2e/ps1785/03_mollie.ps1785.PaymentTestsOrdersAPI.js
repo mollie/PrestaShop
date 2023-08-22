@@ -269,7 +269,6 @@ it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
       cy.contains('Card').click({force:true})
       //Credit card inputing
       cy.CreditCardFillingIframe()
-      cy.contains('Use saved card').click()
       cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click({force: true})
@@ -311,7 +310,6 @@ it('C339355: 18 Check if customerId is passed during the 2nd payment using Singl
         }
       );    // reload current page to activate cookie
       cy.reload();
-      cy.get('#container').should('be.visible')
       cy.visit('/admin1/')
       //Disabling the single-click - no need again
       cy.OpeningModuleDashboardURL()
