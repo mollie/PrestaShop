@@ -370,7 +370,7 @@ it('C339359: 22 IN3 should not be shown under 5000 EUR [Orders API]', () => {
       cy.get('.blockcart').click()
       cy.get('.remove-from-cart > .material-icons').click()
 })
-it.only('C339360: 23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
+it('C339360: 23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.visit('/admin1/')
       cy.OpeningModuleDashboardURL()
       cy.get('[href="#advanced_settings"]').click({force:true})
@@ -394,7 +394,7 @@ it.only('C339360: 23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it.only('C339361: 24 Paypal Checkouting [Orders API]', () => {
+it('C339361: 24 Paypal Checkouting [Orders API]', () => {
       cy.visit('/de/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -422,7 +422,7 @@ it.only('C339361: 24 Paypal Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it.only('C339362: 25 Paypal Order Shipping, Refunding [Orders API]', () => {
+it('C339362: 25 Paypal Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
 it('C339363: 26 SOFORT Checkouting [Orders API]', () => {
