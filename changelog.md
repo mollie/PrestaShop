@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.0.3 ##
++ High priority bug fix impacting product add to cart pop-up.
+
 ## Changes in release 6.0.2 ##
 + Decoupled Apple Pay direct feature flag into product and cart separate settings.
 + Overall improvements and bug fixes.
