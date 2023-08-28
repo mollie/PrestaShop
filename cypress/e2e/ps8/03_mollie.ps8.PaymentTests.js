@@ -40,7 +40,7 @@ const login = (MollieBOFOLoggingIn) => {
   cy.get('#passwd').type('prestashop_demo',{delay: 0, log: false})
   cy.get('#submit_login').click().wait(1000).as('Connection successsful')
   cy.visit('/en/my-account')
-  cy.get('#login-form [name="email"]').eq(0).type('demo@demo.com')
+  cy.get('#login-form [name="email"]').eq(0).type('demo@prestashop.com')
   cy.get('#login-form [name="password"]').eq(0).type('prestashop_demo')
   cy.get('#login-form [type="submit"]').eq(0).click({force:true})
   cy.get('#history-link > .link-item').click()
