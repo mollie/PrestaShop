@@ -35,7 +35,7 @@ describe('PS8 Enabling Payments', () => {
 it('C339341: 04 Enabling All payments in Module BO [Orders API]', () => {
     cy.visit('/admin1/')
     cy.OpeningModuleDashboardURL()
-    cy.ConfOrdersAPI1784()
+    cy.ConfOrdersAPI8()
     cy.get('[type="submit"]').first().click({force:true})
     cy.get('[class="alert alert-success"]').should('be.visible')
 })
