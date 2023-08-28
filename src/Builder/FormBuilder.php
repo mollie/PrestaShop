@@ -870,7 +870,7 @@ class FormBuilder
 
         return [
             $header,
-            $options
+            $options,
         ];
     }
 }
