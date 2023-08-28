@@ -8,6 +8,7 @@ use Mollie\Api\Resources\Subscription;
 use Mollie\Subscription\Api\SubscriptionApi;
 use Mollie\Subscription\Factory\CreateSubscriptionDataFactory;
 use Mollie\Subscription\Utility\ClockInterface;
+use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use MolRecurringOrder;
 use MolRecurringOrdersProduct;
 use Order;
@@ -22,15 +23,19 @@ class SubscriptionCreationHandler
 
     /** @var CreateSubscriptionDataFactory */
     private $createSubscriptionDataFactory;
+    /** @var SubscriptionProductValidator */
+    private $subscriptionProductValidator;
 
     public function __construct(
         ClockInterface $clock,
         SubscriptionApi $subscriptionApi,
-        CreateSubscriptionDataFactory $subscriptionDataFactory
+        CreateSubscriptionDataFactory $subscriptionDataFactory,
+        SubscriptionProductValidator $subscriptionProductValidator
     ) {
         $this->clock = $clock;
         $this->subscriptionApi = $subscriptionApi;
         $this->createSubscriptionDataFactory = $subscriptionDataFactory;
+        $this->subscriptionProductValidator = $subscriptionProductValidator;
     }
 
     public function handle(Order $order, string $method)
@@ -39,9 +44,19 @@ class SubscriptionCreationHandler
         $subscription = $this->subscriptionApi->subscribeOrder($subscriptionData);
 
         $products = $order->getProducts();
-        $product = reset($products);
+        $subscriptionProduct = [];
 
-        $recurringOrdersProduct = $this->createRecurringOrdersProduct($product);
+        foreach ($products as $product) {
+            if (!$this->subscriptionProductValidator->validate((int) $product['product_attribute_id'])) {
+                continue;
+            }
+
+            $subscriptionProduct = $product;
+
+            break;
+        }
+
+        $recurringOrdersProduct = $this->createRecurringOrdersProduct($subscriptionProduct);
 
         $this->createRecurringOrder($recurringOrdersProduct, $order, $subscription, $method);
     }
@@ -52,7 +67,7 @@ class SubscriptionCreationHandler
         $recurringOrdersProduct->id_product = $product['id_product'];
         $recurringOrdersProduct->id_product_attribute = $product['product_attribute_id'];
         $recurringOrdersProduct->quantity = $product['product_quantity'];
-        $recurringOrdersProduct->unit_price = $product['price'];
+        $recurringOrdersProduct->unit_price = $product['unit_price_tax_excl'];
         $recurringOrdersProduct->add();
 
         return $recurringOrdersProduct;
