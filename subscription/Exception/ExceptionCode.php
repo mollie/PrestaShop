@@ -8,4 +8,8 @@ class ExceptionCode
 
     public const ORDER_FAILED_TO_CREATE_ORDER_PAYMENT_FEE = 1001;
     public const ORDER_FAILED_TO_UPDATE_ORDER_TOTAL_WITH_PAYMENT_FEE = 1002;
+
+    //Cart error codes starts from 2000
+
+    public const CART_ALREADY_HAS_SUBSCRIPTION_PRODUCT = 2001;
 }

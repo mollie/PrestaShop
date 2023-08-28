@@ -1,19 +1,21 @@
 <?php
 
+namespace Mollie\Tests\Integration\Subscription\Validator;
+
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Repository\CombinationRepository as CombinationAdapter;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use Mollie\Tests\Integration\BaseTestCase;
 
-class SubscriptionOrderTest extends BaseTestCase
+class SubscriptionOrderValidatorTest extends BaseTestCase
 {
     private const NORMAL_PRODUCT_ATTRIBUTE_ID = 999;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $product = new Product(1);
+        $product = new \Product(1);
 
         $this->randomAttributeId = self::NORMAL_PRODUCT_ATTRIBUTE_ID;
 
@@ -64,7 +66,7 @@ class SubscriptionOrderTest extends BaseTestCase
         $combinationMock = $this->createMock(CombinationAdapter::class);
         $combinationMock
             ->method('getById')
-            ->willReturn(new Combination(1));
+            ->willReturn(new \Combination(1));
 
         $subscriptionProductMock = $this->createMock(SubscriptionProductValidator::class);
         $mockedValidation = [
@@ -106,7 +108,7 @@ class SubscriptionOrderTest extends BaseTestCase
                     Config::SUBSCRIPTION_ATTRIBUTE_DAILY,
                     self::NORMAL_PRODUCT_ATTRIBUTE_ID,
                 ],
-                'expected result' => false,
+                'expected result' => true,
             ],
             'Only normal product' => [
                 'order products' => [

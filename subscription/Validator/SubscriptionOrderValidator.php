@@ -21,15 +21,15 @@ class SubscriptionOrderValidator
     {
         $products = $cart->getProducts();
 
-        // TODO add exception handling scenario where subscription fails to be created due to multiple subscription products but flow continues
+        $subscriptionProductCount = 0;
 
         // checks if one of cart products is subscription product
         foreach ($products as $product) {
             if ($this->subscriptionProduct->validate((int) $product['id_product_attribute'])) {
-                return true;
+                ++$subscriptionProductCount;
             }
         }
 
-        return false;
+        return $subscriptionProductCount > 0 && $subscriptionProductCount < 2;
     }
 }
