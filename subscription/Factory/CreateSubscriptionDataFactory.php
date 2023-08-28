@@ -10,7 +10,6 @@ use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Subscription\DTO\CreateSubscriptionData as SubscriptionDataDTO;
 use Mollie\Subscription\DTO\Object\Amount;
-use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
 use Mollie\Subscription\Repository\CombinationRepository;
@@ -18,7 +17,6 @@ use Mollie\Subscription\Repository\CurrencyRepository as CurrencyAdapter;
 use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use Mollie\Utility\SecureKeyUtility;
 use Order;
-use Product;
 
 class CreateSubscriptionDataFactory
 {
