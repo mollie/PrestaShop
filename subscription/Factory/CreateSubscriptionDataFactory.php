@@ -76,8 +76,6 @@ class CreateSubscriptionDataFactory
         $products = $order->getCartProducts();
         $subscriptionProduct = [];
 
-        // TODO add shipping option that is selected in BO
-
         foreach ($products as $product) {
             if (!$this->subscriptionProductValidator->validate((int) $product['id_product_attribute'])) {
                 continue;
