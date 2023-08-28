@@ -208,13 +208,6 @@ class RecurringOrderHandler
         $newCart->setDeliveryOption([(int) $recurringOrder->id_address_delivery => sprintf('%d,', 8)]);
         $newCart->update();
 
-        $newCart->getDeliveryOption(null, false, false)[$cart->id_address_delivery];
-
-//                $this->assertNotEquals(
-//            sprintf('%d,', (int) $carrier->id),
-//            $this->contextBuilder->getContext()->cart->getDeliveryOption(null, false, false)[$cart->id_address_delivery]
-//        );
-
         $this->mollie->validateOrder(
             (int) $newCart->id,
             (int) $this->configuration->get(Config::MOLLIE_STATUS_AWAITING),
