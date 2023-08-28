@@ -30,6 +30,8 @@ use Mollie\Api\Types\PaymentMethod;
 use Mollie\Api\Types\SequenceType;
 use Mollie\Config\Config;
 use Mollie\DTO\Object\Amount;
+use Mollie\DTO\Object\Company;
+use Mollie\DTO\Object\Payment;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
 use Mollie\Exception\OrderCreationException;
@@ -325,6 +327,7 @@ class PaymentMethodService
             $paymentData = new PaymentData($amountObj, $orderReference, $redirectUrl, $webhookUrl);
 
             $paymentData->setMetadata($metaData);
+
             $paymentData->setLocale($this->getLocale($molPaymentMethod->method));
             $paymentData->setMethod($molPaymentMethod->id_method);
 
@@ -388,14 +391,22 @@ class PaymentMethodService
             if (isset($cart->id_address_invoice)) {
                 $billingAddress = new Address((int) $cart->id_address_invoice);
 
+                if (!empty($billingAddress->vat_number) && !empty($customer->siret)) {
+                    $company = new Company();
+                    $company->setVatNumber($billingAddress->vat_number);
+                    $company->setRegistrationNumber($customer->siret);
+                }
+
                 $orderData->setBillingAddress($billingAddress);
                 $orderData->setBillingPhoneNumber($this->phoneNumberProvider->getFromAddress($billingAddress));
             }
             if (isset($cart->id_address_delivery)) {
                 $shippingAddress = new Address((int) $cart->id_address_delivery);
+
                 $orderData->setShippingAddress($shippingAddress);
                 $orderData->setDeliveryPhoneNumber($this->phoneNumberProvider->getFromAddress($shippingAddress));
             }
+
             $orderData->setOrderNumber($orderReference);
             $orderData->setLocale($this->getLocale($molPaymentMethod->method));
             $orderData->setEmail($customer->email);
@@ -427,30 +438,37 @@ class PaymentMethodService
                     (bool) Configuration::get('PS_GIFT_WRAPPING'),
                     $selectedVoucherCategory
                 ));
-            $payment = [];
-            if ($cardToken) {
-                $payment['cardToken'] = $cardToken;
+
+            $payment = new Payment();
+
+            if (!empty($cardToken)) {
+                $payment->setCardToken($cardToken);
             }
-            $payment['webhookUrl'] = $this->context->getModuleLink(
+
+            $payment->setWebhookUrl($this->context->getModuleLink(
                 'mollie',
                 'webhook',
                 [],
                 true
-            );
+            ));
 
-            if ($issuer) {
-                $payment['issuer'] = $issuer;
+            if (!empty($issuer)) {
+                $payment->setIssuer($issuer);
             }
 
             if ($molPaymentMethod->id_method === PaymentMethod::CREDITCARD) {
                 $molCustomer = $this->handleCustomerInfo($cart->id_customer, $saveCard, $useSavedCard);
-                if ($molCustomer) {
-                    $payment['customerId'] = $molCustomer->customer_id;
+                if ($molCustomer && !empty($molCustomer->customer_id)) {
+                    $payment->setCustomerId($molCustomer->customer_id);
                 }
             }
 
-            if ($molPaymentMethod->id_method === PaymentMethod::APPLEPAY && $applePayToken) {
-                $payment['applePayPaymentToken'] = $applePayToken;
+            if ($molPaymentMethod->id_method === PaymentMethod::APPLEPAY && !empty($applePayToken)) {
+                $payment->setApplePayPaymentToken($applePayToken);
+            }
+
+            if (isset($company)) {
+                $payment->setCompany($company);
             }
 
             $orderData->setPayment($payment);
@@ -504,7 +522,7 @@ class PaymentMethodService
 
     private function getSupportedMollieMethods(?string $sequenceType = null): array
     {
-        $address = new Address($this->context->getAddressInvoiceId());
+        $address = new Address($this->context->getInvoiceAddressId());
         $country = new Country($address->id_country);
 
         $cartAmount = $this->orderTotalProvider->getOrderTotal();

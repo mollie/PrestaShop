@@ -111,7 +111,7 @@ class Context
         );
     }
 
-    public function getAddressInvoiceId(): int
+    public function getInvoiceAddressId(): int
     {
         return (int) PrestashopContext::getContext()->cart->id_address_invoice;
     }
