@@ -22,7 +22,7 @@ afterEach(() => {
 afterEach(function() {
   if (this.currentTest.state === "failed") failEarly = true
 });
-describe('PS1784 Enabling Payments', () => {
+describe('PS8 Enabling Payments', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
