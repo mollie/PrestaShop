@@ -4,9 +4,14 @@ const login = (MollieBOFOLoggingIn) => {
   cy.session(MollieBOFOLoggingIn,() => {
   cy.visit('/admin1/')
   cy.url().should('contain', 'https').as('Check if HTTPS exists')
-  cy.get('#email').type('demo@demo.com',{delay: 0, log: false})
+  cy.get('#email').type('demo@prestashop.com',{delay: 0, log: false})
   cy.get('#passwd').type('prestashop_demo',{delay: 0, log: false})
   cy.get('#submit_login').click().wait(1000).as('Connection successsful')
+  cy.visit('/en/my-account')
+  cy.get('#login-form [name="email"]').eq(0).type('demo@demo.com')
+  cy.get('#login-form [name="password"]').eq(0).type('prestashop_demo')
+  cy.get('#login-form [type="submit"]').eq(0).click({force:true})
+  cy.get('#history-link > .link-item').click()
   })
   }
 //Checking the console for errors
@@ -30,7 +35,7 @@ describe('PS8 Enabling Payments', () => {
 it('C339341: 04 Enabling All payments in Module BO [Orders API]', () => {
     cy.visit('/admin1/')
     cy.OpeningModuleDashboardURL()
-    cy.ConfOrdersAPI8()
+    cy.ConfOrdersAPI1784()
     cy.get('[type="submit"]').first().click({force:true})
     cy.get('[class="alert alert-success"]').should('be.visible')
 })
