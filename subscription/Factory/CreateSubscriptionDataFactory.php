@@ -15,6 +15,7 @@ use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
 use Mollie\Subscription\Repository\CombinationRepository;
 use Mollie\Subscription\Repository\CurrencyRepository as CurrencyAdapter;
+use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use Mollie\Utility\SecureKeyUtility;
 use Order;
 use Product;
@@ -42,6 +43,8 @@ class CreateSubscriptionDataFactory
     private $link;
     /** @var Mollie */
     private $module;
+    /** @var SubscriptionProductValidator */
+    private $subscriptionProductValidator;
 
     public function __construct(
         MolCustomerRepository $customerRepository,
@@ -51,7 +54,8 @@ class CreateSubscriptionDataFactory
         CombinationRepository $combination,
         PaymentMethodRepositoryInterface $methodRepository,
         Link $link,
-        Mollie $module
+        Mollie $module,
+        SubscriptionProductValidator $subscriptionProductValidator
     ) {
         $this->customerRepository = $customerRepository;
         $this->subscriptionInterval = $subscriptionInterval;
@@ -61,6 +65,7 @@ class CreateSubscriptionDataFactory
         $this->methodRepository = $methodRepository;
         $this->link = $link;
         $this->module = $module;
+        $this->subscriptionProductValidator = $subscriptionProductValidator;
     }
 
     public function build(Order $order): SubscriptionDataDTO
@@ -71,20 +76,29 @@ class CreateSubscriptionDataFactory
         $molCustomer = $this->customerRepository->findOneBy(['email' => $customer->email]);
 
         $products = $order->getCartProducts();
+        $subscriptionProduct = [];
 
-        // only one product is expected to be in order for subscription, if there are more than validation failed.
-        if (count($products) !== 1) {
-            throw new SubscriptionProductValidationException('Invalid amount of products for subscription', SubscriptionProductValidationException::MULTTIPLE_PRODUCTS_IN_CART);
+        // TODO add shipping option that is selected in BO
+
+        foreach ($products as $product) {
+            if (!$this->subscriptionProductValidator->validate((int) $product['id_product_attribute'])) {
+                continue;
+            }
+
+            $subscriptionProduct = $product;
+
+            break;
         }
-        /** @var Product $product */
-        $product = reset($products);
-        $combination = $this->combination->getById((int) $product['id_product_attribute']);
+
+        $combination = $this->combination->getById((int) $subscriptionProduct['id_product_attribute']);
         $interval = $this->subscriptionInterval->getSubscriptionInterval($combination);
 
         $currency = $this->currencyAdapter->getById((int) $order->id_currency);
         $description = $this->subscriptionDescription->getSubscriptionDescription($order);
 
-        $orderAmount = new Amount((float) $order->total_paid_tax_incl, $currency->iso_code);
+        // TODO if we decide to include shipping, add it here (new cart instance is needed)
+
+        $orderAmount = new Amount((float) $subscriptionProduct['total_price_tax_incl'], $currency->iso_code);
         $subscriptionData = new SubscriptionDataDTO(
             $molCustomer->customer_id,
             $orderAmount,

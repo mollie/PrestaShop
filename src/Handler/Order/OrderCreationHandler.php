@@ -278,9 +278,10 @@ class OrderCreationHandler
         return $paymentData;
     }
 
-    private function createRecurringOrderEntity(Order $order, string $method)
+    private function createRecurringOrderEntity(Order $order, string $method): void
     {
         $cart = new Cart($order->id_cart);
+
         if (!$this->subscriptionOrder->validate($cart)) {
             return;
         }

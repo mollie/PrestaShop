@@ -53,7 +53,9 @@ class CanProductBeAddedToCartValidator
             return $this->validateIfSubscriptionProductCanBeAdded($productAttributeId);
         }
 
-        return $this->validateIfProductCanBeAdded();
+        return true;
+//
+//        return $this->validateIfProductCanBeAdded();
     }
 
     /**
@@ -66,22 +68,36 @@ class CanProductBeAddedToCartValidator
     private function validateIfSubscriptionProductCanBeAdded(int $productAttributeId): bool
     {
         $cartProducts = $this->cart->getProducts();
-        $numberOfProductsInCart = count($cartProducts);
-        // we can only have 1 product in cart if its subscription product
-        if ($numberOfProductsInCart > 1) {
+
+        foreach ($cartProducts as $cartProduct) {
+            if (!$this->subscriptionProduct->validate((int) $cartProduct['id_product_attribute'])) {
+                continue;
+            }
+
+            if ((int) $cartProduct['id_product_attribute'] === $productAttributeId) {
+                continue;
+            }
+
+            // TODO new exception to show that only single subscription product can be added
             throw new SubscriptionProductValidationException('Cart has multiple products', SubscriptionProductValidationException::MULTTIPLE_PRODUCTS_IN_CART);
         }
 
-        // if it's the same product we can add more of the same product
-        if ($numberOfProductsInCart === 1) {
-            $cartProduct = reset($cartProducts);
-
-            $isTheSameProduct = $productAttributeId === (int) $cartProduct['id_product_attribute'];
-
-            if (!$isTheSameProduct) {
-                throw new SubscriptionProductValidationException('Cart has multiple products', SubscriptionProductValidationException::MULTTIPLE_PRODUCTS_IN_CART);
-            }
-        }
+//        $numberOfProductsInCart = count($cartProducts);
+//        // we can only have 1 product in cart if its subscription product
+//        if ($numberOfProductsInCart > 1) {
+//            throw new SubscriptionProductValidationException('Cart has multiple products', SubscriptionProductValidationException::MULTTIPLE_PRODUCTS_IN_CART);
+//        }
+//
+//        // if it's the same product we can add more of the same product
+//        if ($numberOfProductsInCart === 1) {
+//            $cartProduct = reset($cartProducts);
+//
+//            $isTheSameProduct = $productAttributeId === (int) $cartProduct['id_product_attribute'];
+//
+//            if (!$isTheSameProduct) {
+//                throw new SubscriptionProductValidationException('Cart has multiple products', SubscriptionProductValidationException::MULTTIPLE_PRODUCTS_IN_CART);
+//            }
+//        }
 
         return true;
     }
