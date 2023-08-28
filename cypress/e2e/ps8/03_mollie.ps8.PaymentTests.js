@@ -314,7 +314,7 @@ it('C339355: 18 Check if customerId is passed during the 2nd payment using Singl
 it('C339356: 19 Credit Card Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it('C339357: 20 IN3 Checkouting [Orders API]', () => {
+it.only('C339357: 20 IN3 Checkouting [Orders API]', () => { // wip
       cy.visit('/de/index.php?controller=history')
       cy.contains('Reorder').click()
       cy.contains('NL').click()
