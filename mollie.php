@@ -1254,6 +1254,16 @@ class Mollie extends PaymentModule
 
     public function hookActionFrontControllerAfterInit(): void
     {
+        $this->frontControllerAfterInit();
+    }
+
+    public function hookActionFrontControllerInitAfter(): void
+    {
+        $this->frontControllerAfterInit();
+    }
+
+    private function frontControllerAfterInit(): void
+    {
         if (!$this->context->controller instanceof OrderControllerCore) {
             return;
         }
