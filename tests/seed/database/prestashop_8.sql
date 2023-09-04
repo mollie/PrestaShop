@@ -3053,8 +3053,8 @@ INSERT INTO `ps_configuration` (`id_configuration`, `id_shop_group`, `id_shop`, 
 (231,	NULL,	NULL,	'HOMESLIDER_PAUSE',	'7700',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (232,	NULL,	NULL,	'HOMESLIDER_LOOP',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (233,	NULL,	NULL,	'PS_BASE_DISTANCE_UNIT',	'm',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
-(234,	NULL,	NULL,	'PS_SHOP_DOMAIN',	'demoshop8debug.ngrok.io',	'0000-00-00 00:00:00',	'2023-08-28 13:26:18'),
-(235,	NULL,	NULL,	'PS_SHOP_DOMAIN_SSL',	'demoshop8debug.ngrok.io',	'0000-00-00 00:00:00',	'2023-08-28 13:26:18'),
+(234,	NULL,	NULL,	'PS_SHOP_DOMAIN',	'demoshop8ngrok.io',	'0000-00-00 00:00:00',	'2023-08-28 13:26:18'),
+(235,	NULL,	NULL,	'PS_SHOP_DOMAIN_SSL',	'demoshop8ngrok.io',	'0000-00-00 00:00:00',	'2023-08-28 13:26:18'),
 (236,	NULL,	NULL,	'PS_SHOP_NAME',	'PrestaShop',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (237,	NULL,	NULL,	'PS_SHOP_EMAIL',	'demo@prestashop.com',	'0000-00-00 00:00:00',	'2023-08-28 13:26:21'),
 (238,	NULL,	NULL,	'PS_MAIL_METHOD',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
@@ -3425,37 +3425,37 @@ CREATE TABLE `ps_connections_source` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_connections_source` (`id_connections_source`, `id_connections`, `http_referer`, `request_uri`, `keywords`, `date_add`) VALUES
-(1,	2,	'',	'demoshop8debug.ngrok.io/',	'',	'2023-08-28 13:41:41'),
-(2,	2,	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8debug.ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:42:41'),
-(3,	2,	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8debug.ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:43:15'),
-(4,	2,	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8debug.ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:43:23'),
-(5,	2,	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8debug.ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:44:23'),
-(6,	2,	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8debug.ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:44:30'),
-(7,	2,	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8debug.ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:46:16'),
-(8,	2,	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/international/localization/?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8debug.ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:46:41'),
-(9,	2,	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/international/localization/?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8debug.ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:47:09'),
-(10,	2,	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/international/localization/?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8debug.ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:47:56'),
-(11,	2,	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/international/localization/?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8debug.ngrok.io/en/',	'',	'2023-08-28 13:48:03'),
-(12,	2,	'http://demoshop8debug.ngrok.io/en/',	'demoshop8debug.ngrok.io/en/login?back=http%3A%2F%2Flocalhost%3A8142%2Fen%2F',	'',	'2023-08-28 13:48:07'),
-(13,	2,	'http://demoshop8debug.ngrok.io/en/login?back=http%3A%2F%2Flocalhost%3A8142%2Fen%2F',	'demoshop8debug.ngrok.io/en/registration',	'',	'2023-08-28 13:48:09'),
-(14,	2,	'http://demoshop8debug.ngrok.io/en/registration',	'demoshop8debug.ngrok.io/en/',	'',	'2023-08-28 13:48:30'),
-(15,	2,	'http://demoshop8debug.ngrok.io/en/',	'demoshop8debug.ngrok.io/en/my-account',	'',	'2023-08-28 13:48:33'),
-(16,	2,	'http://demoshop8debug.ngrok.io/en/my-account',	'demoshop8debug.ngrok.io/en/address',	'',	'2023-08-28 13:48:44'),
-(17,	2,	'http://demoshop8debug.ngrok.io/en/address',	'demoshop8debug.ngrok.io/en/addresses',	'',	'2023-08-28 13:49:09'),
-(18,	2,	'http://demoshop8debug.ngrok.io/en/addresses',	'demoshop8debug.ngrok.io/en/address',	'',	'2023-08-28 13:49:11'),
-(19,	2,	'http://demoshop8debug.ngrok.io/en/address',	'demoshop8debug.ngrok.io/en/addresses',	'',	'2023-08-28 13:50:31'),
-(20,	2,	'http://demoshop8debug.ngrok.io/en/addresses',	'demoshop8debug.ngrok.io/en/',	'',	'2023-08-28 13:50:35'),
-(21,	2,	'http://demoshop8debug.ngrok.io/en/',	'demoshop8debug.ngrok.io/en/art/4-16-the-adventure-begins-framed-poster.html',	'',	'2023-08-28 13:50:41'),
-(22,	2,	'http://demoshop8debug.ngrok.io/en/art/4-16-the-adventure-begins-framed-poster.html',	'demoshop8debug.ngrok.io/en/cart?action=show',	'',	'2023-08-28 13:50:48'),
-(23,	2,	'http://demoshop8debug.ngrok.io/en/cart?action=show',	'demoshop8debug.ngrok.io/en/order',	'',	'2023-08-28 13:50:50'),
-(24,	2,	'http://demoshop8debug.ngrok.io/en/order',	'demoshop8debug.ngrok.io/en/order',	'',	'2023-08-28 13:50:52'),
-(25,	2,	'http://demoshop8debug.ngrok.io/en/order',	'demoshop8debug.ngrok.io/en/order',	'',	'2023-08-28 13:50:55'),
-(26,	2,	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/payment/preferences?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8debug.ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:51:04'),
-(27,	2,	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/payment/preferences?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8debug.ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:51:12'),
-(28,	2,	'http://demoshop8debug.ngrok.io/en/order',	'demoshop8debug.ngrok.io/en/order',	'',	'2023-08-28 13:51:14'),
-(29,	2,	'http://demoshop8debug.ngrok.io/en/order',	'demoshop8debug.ngrok.io/en/order-confirmation?id_cart=6&id_module=53&id_order=6&key=4c26b11e96bb59693af803acba66be93',	'',	'2023-08-28 13:51:23'),
-(30,	2,	'http://demoshop8debug.ngrok.io/en/order-confirmation?id_cart=6&id_module=53&id_order=6&key=4c26b11e96bb59693af803acba66be93',	'demoshop8debug.ngrok.io/en/my-account',	'',	'2023-08-28 13:51:25'),
-(31,	2,	'http://demoshop8debug.ngrok.io/en/my-account',	'demoshop8debug.ngrok.io/en/order-history',	'',	'2023-08-28 13:51:28');
+(1,	2,	'',	'demoshop8ngrok.io/',	'',	'2023-08-28 13:41:41'),
+(2,	2,	'http://demoshop8ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:42:41'),
+(3,	2,	'http://demoshop8ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:43:15'),
+(4,	2,	'http://demoshop8ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:43:23'),
+(5,	2,	'http://demoshop8ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:44:23'),
+(6,	2,	'http://demoshop8ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:44:30'),
+(7,	2,	'http://demoshop8ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:46:16'),
+(8,	2,	'http://demoshop8ngrok.io/admin1/index.php/improve/international/localization/?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:46:41'),
+(9,	2,	'http://demoshop8ngrok.io/admin1/index.php/improve/international/localization/?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:47:09'),
+(10,	2,	'http://demoshop8ngrok.io/admin1/index.php/improve/international/localization/?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:47:56'),
+(11,	2,	'http://demoshop8ngrok.io/admin1/index.php/improve/international/localization/?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8ngrok.io/en/',	'',	'2023-08-28 13:48:03'),
+(12,	2,	'http://demoshop8ngrok.io/en/',	'demoshop8ngrok.io/en/login?back=http%3A%2F%2Flocalhost%3A8142%2Fen%2F',	'',	'2023-08-28 13:48:07'),
+(13,	2,	'http://demoshop8ngrok.io/en/login?back=http%3A%2F%2Flocalhost%3A8142%2Fen%2F',	'demoshop8ngrok.io/en/registration',	'',	'2023-08-28 13:48:09'),
+(14,	2,	'http://demoshop8ngrok.io/en/registration',	'demoshop8ngrok.io/en/',	'',	'2023-08-28 13:48:30'),
+(15,	2,	'http://demoshop8ngrok.io/en/',	'demoshop8ngrok.io/en/my-account',	'',	'2023-08-28 13:48:33'),
+(16,	2,	'http://demoshop8ngrok.io/en/my-account',	'demoshop8ngrok.io/en/address',	'',	'2023-08-28 13:48:44'),
+(17,	2,	'http://demoshop8ngrok.io/en/address',	'demoshop8ngrok.io/en/addresses',	'',	'2023-08-28 13:49:09'),
+(18,	2,	'http://demoshop8ngrok.io/en/addresses',	'demoshop8ngrok.io/en/address',	'',	'2023-08-28 13:49:11'),
+(19,	2,	'http://demoshop8ngrok.io/en/address',	'demoshop8ngrok.io/en/addresses',	'',	'2023-08-28 13:50:31'),
+(20,	2,	'http://demoshop8ngrok.io/en/addresses',	'demoshop8ngrok.io/en/',	'',	'2023-08-28 13:50:35'),
+(21,	2,	'http://demoshop8ngrok.io/en/',	'demoshop8ngrok.io/en/art/4-16-the-adventure-begins-framed-poster.html',	'',	'2023-08-28 13:50:41'),
+(22,	2,	'http://demoshop8ngrok.io/en/art/4-16-the-adventure-begins-framed-poster.html',	'demoshop8ngrok.io/en/cart?action=show',	'',	'2023-08-28 13:50:48'),
+(23,	2,	'http://demoshop8ngrok.io/en/cart?action=show',	'demoshop8ngrok.io/en/order',	'',	'2023-08-28 13:50:50'),
+(24,	2,	'http://demoshop8ngrok.io/en/order',	'demoshop8ngrok.io/en/order',	'',	'2023-08-28 13:50:52'),
+(25,	2,	'http://demoshop8ngrok.io/en/order',	'demoshop8ngrok.io/en/order',	'',	'2023-08-28 13:50:55'),
+(26,	2,	'http://demoshop8ngrok.io/admin1/index.php/improve/payment/preferences?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:51:04'),
+(27,	2,	'http://demoshop8ngrok.io/admin1/index.php/improve/payment/preferences?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'demoshop8ngrok.io/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'',	'2023-08-28 13:51:12'),
+(28,	2,	'http://demoshop8ngrok.io/en/order',	'demoshop8ngrok.io/en/order',	'',	'2023-08-28 13:51:14'),
+(29,	2,	'http://demoshop8ngrok.io/en/order',	'demoshop8ngrok.io/en/order-confirmation?id_cart=6&id_module=53&id_order=6&key=4c26b11e96bb59693af803acba66be93',	'',	'2023-08-28 13:51:23'),
+(30,	2,	'http://demoshop8ngrok.io/en/order-confirmation?id_cart=6&id_module=53&id_order=6&key=4c26b11e96bb59693af803acba66be93',	'demoshop8ngrok.io/en/my-account',	'',	'2023-08-28 13:51:25'),
+(31,	2,	'http://demoshop8ngrok.io/en/my-account',	'demoshop8ngrok.io/en/order-history',	'',	'2023-08-28 13:51:28');
 
 DROP TABLE IF EXISTS `ps_contact`;
 CREATE TABLE `ps_contact` (
@@ -10243,17 +10243,17 @@ CREATE TABLE `ps_pagenotfound` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_pagenotfound` (`id_pagenotfound`, `id_shop`, `id_shop_group`, `request_uri`, `http_referer`, `date_add`) VALUES
-(1,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:42:41'),
-(2,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:43:15'),
-(3,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:43:23'),
-(4,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:44:23'),
-(5,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:44:29'),
-(6,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:46:16'),
-(7,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/international/localization/?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:46:41'),
-(8,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/international/localization/?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:47:09'),
-(9,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/international/localization/?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:47:56'),
-(10,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/payment/preferences?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:51:04'),
-(11,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8debug.ngrok.io/admin1/index.php/improve/payment/preferences?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:51:12');
+(1,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:42:41'),
+(2,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:43:15'),
+(3,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:43:23'),
+(4,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:44:23'),
+(5,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:44:29'),
+(6,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8ngrok.io/admin1/index.php/improve/modules/manage?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:46:16'),
+(7,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8ngrok.io/admin1/index.php/improve/international/localization/?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:46:41'),
+(8,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8ngrok.io/admin1/index.php/improve/international/localization/?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:47:09'),
+(9,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8ngrok.io/admin1/index.php/improve/international/localization/?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:47:56'),
+(10,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8ngrok.io/admin1/index.php/improve/payment/preferences?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:51:04'),
+(11,	1,	1,	'/admin1/themes/new-theme/public/index.php?controller=AdminDashboard&token=7ce3ba8406914d581737513944a076fe',	'http://demoshop8ngrok.io/admin1/index.php/improve/payment/preferences?_token=iHz2B3KMeESrucKO9NHNUL8lnnCUG7s9nDPyWcZUiVM',	'2023-08-28 11:51:12');
 
 DROP TABLE IF EXISTS `ps_page_type`;
 CREATE TABLE `ps_page_type` (
@@ -12272,7 +12272,7 @@ CREATE TABLE `ps_shop_url` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_shop_url` (`id_shop_url`, `id_shop`, `domain`, `domain_ssl`, `physical_uri`, `virtual_uri`, `main`, `active`) VALUES
-(1,	1,	'demoshop8debug.ngrok.io',	'demoshop8debug.ngrok.io',	'/',	'',	1,	1);
+(1,	1,	'demoshop8ngrok.io',	'demoshop8ngrok.io',	'/',	'',	1,	1);
 
 DROP TABLE IF EXISTS `ps_smarty_cache`;
 CREATE TABLE `ps_smarty_cache` (
