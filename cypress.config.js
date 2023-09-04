@@ -8,7 +8,6 @@ module.exports = defineConfig({
   defaultCommandTimeout: 15000,
   projectId: 'xb89dr',
   retries: 3,
-  videoUploadOnPasses: false,
   videoCompression: 8,
   viewportHeight: 1080,
   viewportWidth: 1920,
