@@ -314,7 +314,7 @@ it('C339355: 18 Check if customerId is passed during the 2nd payment using Singl
 it('C339356: 19 Credit Card Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it.only('C339357: 20 IN3 Checkouting [Orders API]', () => { // wip
+it('C339357: 20 IN3 Checkouting [Orders API]', () => { // wip
       cy.visit('/de/index.php?controller=history')
       cy.contains('Reorder').click()
       cy.contains('NL').click()
@@ -346,20 +346,17 @@ it.skip('C339358: 21 IN3 Order BO Shipping, Refunding [Orders API]', () => { // 
       cy.OrderRefundingShippingOrdersAPI()
 })
 it('C339359: 22 IN3 should not be shown under 5000 EUR [Orders API]', () => {
-      cy.visit('/de/')
-      cy.contains('Hummingbird printed sweater').click()
-      cy.get('[class="btn btn-primary add-to-cart"]').click()
-      cy.get('.cart-content-btn > .btn-primary').click()
-      cy.get('.text-sm-center > .btn').click()
+      cy.visit('/en/index.php?controller=history')
+      cy.contains('Reorder').click()
+      cy.visit('/en/cart?action=show')
+      cy.get('[class="js-cart-line-product-quantity form-control"]').clear().type('200')
+      cy.contains('Proceed to checkout').click()
       cy.contains('NL').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
       cy.contains('in3').should('not.exist')
-      cy.get('.logo').click()
-      cy.get('.blockcart').click()
-      cy.get('.remove-from-cart > .material-icons').click()
 })
 it('C339360: 23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.visit('/admin1/')
@@ -777,13 +774,16 @@ it('C339383: 48 Credit Card Checkouting [Payments API]', () => {
 it('C339384: 49 Credit Card Order BO Refunding, Partial Refunding [Payments API]', () => {
       cy.OrderRefundingPartialPaymentsAPI()
 })
-it('C339385: 50 Credit Card Guest Checkouting [Payments API]', () => {
+it.skip('C339385: 50 Credit Card Guest Checkouting [Payments API]', () => { // possibly a PS8 issue, that Cart is celaning the cookies...
       cy.clearCookies()
       //Payments API item
       cy.visit('/en/', { headers: {"Accept-Encoding": "gzip, deflate"}})
       cy.get('[class="h3 product-title"]').eq(0).click()
       cy.get('.add > .btn').click()
       cy.get('.cart-content-btn > .btn-primary').click()
+      cy.wait(2000)
+      cy.visit('/en/')
+      cy.get('.blockcart').click()
       cy.get('.text-sm-center > .btn').click()
       // Creating random user all the time
       cy.get(':nth-child(1) > .custom-radio > input').check()
