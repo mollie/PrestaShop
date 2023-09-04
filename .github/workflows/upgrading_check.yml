@@ -2,7 +2,7 @@ name: Module upgrade / downgrade testing (last version > v.5.2.0 > `develop` ver
 on:
   pull_request:
     types: [opened, reopened]
-    branches: [develop]
+    branches: [develop, develop**, develop-**]
 jobs:
   Module-upgrading-check:
     runs-on: ubuntu-latest
