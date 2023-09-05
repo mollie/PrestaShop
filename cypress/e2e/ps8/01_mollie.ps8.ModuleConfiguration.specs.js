@@ -53,7 +53,7 @@ it('C339339: Checking the Advanced Settings tab, verifying the Front-end compone
       cy.get('[href="#advanced_settings"]').click({force:true})
       cy.get('[id="MOLLIE_PAYMENTSCREEN_LOCALE"]').should('be.visible')
       cy.get('[id="MOLLIE_SEND_ORDER_CONFIRMATION"]').should('be.visible')
-      cy.get('[id="MOLLIE_KLARNA_INVOICE_ON"]').should('be.visible')
+      cy.get('[id="MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS"]').should('be.visible')
       cy.get('[class="help-block"]').should('be.visible')
       cy.get('[id="MOLLIE_STATUS_AWAITING"]').should('be.visible')
       cy.get('[id="MOLLIE_STATUS_PAID"]').should('be.visible')
