@@ -2,7 +2,7 @@ name: Cypress E2E Automation [develop branch]
 on:
   pull_request:
     types: [opened, reopened]
-    branches: [develop]
+    branches: [develop, develop**, develop-**]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

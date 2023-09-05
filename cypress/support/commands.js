@@ -462,45 +462,6 @@ Cypress.Commands.add("ConfPaymentsAPI1784", () => {
       //applepay
       cy.get('[name="MOLLIE_METHOD_API_applepay"]').select('Payments API', {force: true})
 })
-Cypress.Commands.add("login_mollie17_test", () => {
-   Cypress.env()
-   cy.get('#email').type((Cypress.env('demousername')),{delay: 0, log: false})
-   cy.get('#passwd').type((Cypress.env('demopassword')),{delay: 0, log: false})
-   cy.get('#submit_login').click()
-   cy.get('#header_shop > .dropdown').click()
-   cy.get('.list-dropdown-menu > :nth-child(3)').click()
- })
-Cypress.Commands.add("ps16_random_user", (randomuser) => {
-   // Creating random user all the time
-   const uuid = () => Cypress._.random(0, 1e6)
-   const id = uuid()
-   const testname = `testemail${id}@testing.com`
-   cy.get('#email_create').type(testname, {delay: 0})
-   cy.get('#SubmitCreate > span').click()
-   cy.get('#id_gender1').check()
-   cy.get('#customer_firstname').type('AUT',{delay:0}).as('firstname')
-   cy.get('#customer_lastname').type('AUT',{delay:0}).as('lastname')
-   cy.get('#passwd').type('123456',{delay:0}).as('pasw')
-   cy.get('#submitAccount > span').click()
-   cy.get('#company').type('123456',{delay:0}).as('company')
-   cy.get('#vat-number').type('123456',{delay:0}).as('vat number')
-   cy.get('#address1').type('ADDR',{delay:0}).as('address')
-   cy.get('#address2').type('ADDR',{delay:0}).as('address2')
-   cy.get('#postcode').type('54469',{delay:0}).as('zip')
-   cy.get('#city').type('CIT',{delay:0}).as('city')
-   cy.get('#id_country').select('Lithuania').as('country')
-   cy.get('#phone').type('+085',{delay:0}).as('telephone')
-   cy.get('#phone_mobile').type('+000',{delay:0}).as('telephone2')
- })
-Cypress.Commands.add("mollie_1752_test_login", () => {
-  Cypress.env()
-  cy.get('#email').type((Cypress.env('demousername')),{delay: 0, log: false})
-  cy.get('#passwd').type((Cypress.env('demopassword')),{delay: 0, log: false})
-  cy.get('#submit_login').click().wait(3000)
-  cy.get('.selected-item > .arrow-down').click()
-  cy.get('#shop-list > .dropdown-menu > .items-list > :nth-child(3)').click(5,5)
-  cy.get('#subtab-AdminMollieModule > .link').click()
-})
 Cypress.Commands.add("OrderRefundingShippingOrdersAPI", () => {
     cy.visit('/admin1/index.php?controller=AdminOrders')
     cy.get(':nth-child(1) > .column-payment').click()
@@ -623,3 +584,39 @@ Cypress.Commands.add("OpeningModuleDashboardURL", () => {
   cy.visit('/admin1/index.php?controller=AdminModules&configure=mollie')
   cy.get('.btn-continue').click()
 })
+Cypress.Commands.add("CachingBOFOPS1784", () => {
+//Caching the BO and FO session
+const login = (MollieBOFOLoggingIn) => {
+  cy.session(MollieBOFOLoggingIn,() => {
+  cy.visit('/admin1/')
+  cy.url().should('contain', 'https').as('Check if HTTPS exists')
+  cy.get('#email').type('demo@demo.com',{delay: 0, log: false})
+  cy.get('#passwd').type('demodemo',{delay: 0, log: false})
+  cy.get('#submit_login').click().wait(1000).as('Connection successsful')
+  cy.visit('/en/my-account')
+  cy.get('#login-form [name="email"]').eq(0).type('demo@demo.com')
+  cy.get('#login-form [name="password"]').eq(0).type('demodemo')
+  cy.get('#login-form [type="submit"]').eq(0).click({force:true})
+  cy.get('#history-link > .link-item').click()
+  })
+  }
+  login('MollieBOFOLoggingIn')
+})
+Cypress.Commands.add("CachingBOFOPS8", () => {
+  //Caching the BO and FO session
+  const login = (MollieBOFOLoggingIn) => {
+    cy.session(MollieBOFOLoggingIn,() => {
+    cy.visit('/admin1/')
+    cy.url().should('contain', 'https').as('Check if HTTPS exists')
+    cy.get('#email').type('demo@prestashop.com',{delay: 0, log: false})
+    cy.get('#passwd').type('prestashop_demo',{delay: 0, log: false})
+    cy.get('#submit_login').click().wait(1000).as('Connection successsful')
+    cy.visit('/en/my-account')
+    cy.get('#login-form [name="email"]').eq(0).type('demo@demo.com')
+    cy.get('#login-form [name="password"]').eq(0).type('prestashop_demo')
+    cy.get('#login-form [type="submit"]').eq(0).click({force:true})
+    cy.get('#history-link > .link-item').click()
+    })
+    }
+    login('MollieBOFOLoggingIn')
+  })
