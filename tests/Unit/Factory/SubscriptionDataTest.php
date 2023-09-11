@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mollie\Subscription\Tests\Unit\Factory;
+namespace Mollie\Tests\Unit\Factory;
 
 use Mollie;
 use Mollie\Adapter\Link;
@@ -17,6 +17,7 @@ use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
 use Mollie\Subscription\Repository\CombinationRepository;
 use Mollie\Subscription\Repository\CurrencyRepository;
+use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use Mollie\Utility\SecureKeyUtility;
 use PHPUnit\Framework\TestCase;
 
@@ -58,6 +59,9 @@ class SubscriptionDataTest extends TestCase
             ]
         );
 
+        $subscriptionProductValidator = $this->createMock(SubscriptionProductValidator::class);
+        $subscriptionProductValidator->method('validate')->willReturn(true);
+
         $subscriptionDataFactory = new CreateSubscriptionDataFactory(
             $customerRepositoryMock,
             $subscriptionIntervalProviderMock,
@@ -66,7 +70,8 @@ class SubscriptionDataTest extends TestCase
             new CombinationRepository(),
             $paymentMethodRepositoryMock,
             new Link(),
-            new Mollie()
+            new Mollie(),
+            $subscriptionProductValidator
         );
 
         $customerMock = $this->createMock('Customer');
@@ -77,6 +82,7 @@ class SubscriptionDataTest extends TestCase
         $order->method('getCartProducts')->willReturn([
             [
                 'id_product_attribute' => 1,
+                'total_price_tax_incl' => 19.99,
             ],
         ]);
         $order->id = self::TEST_ORDER_ID;
