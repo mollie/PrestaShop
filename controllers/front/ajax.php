@@ -193,7 +193,7 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
             $cartValidation->validate((int) $product['id_product_attribute']);
         } catch (SubscriptionProductValidationException $e) {
             $productCanBeAdded = false;
-            $message = $this->module->l('Subscription product cannot be added if you have other products in your cart', self::FILE_NAME);
+            $message = $this->module->l('Please note: Only one subscription product can be added to the cart at a time.', self::FILE_NAME);
         }
 
         $this->ajaxRender(

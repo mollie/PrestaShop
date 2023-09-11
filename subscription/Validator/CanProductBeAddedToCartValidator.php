@@ -32,8 +32,7 @@ class CanProductBeAddedToCartValidator
 
     /**
      * Validates if product can be added to the cart.
-     * Only 1 subscription product can be in cart and no other products can be added if there are subscription products
-     * For now we only allow one subscription product with any quantities, later might need to add logic to allow more products
+     * Only 1 subscription product can be to the cart
      *
      * @param int $productAttributeId
      *

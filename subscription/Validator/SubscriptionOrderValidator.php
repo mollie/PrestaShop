@@ -16,7 +16,7 @@ class SubscriptionOrderValidator
         $this->subscriptionProduct = $subscriptionProduct;
     }
 
-    /** Returns true if cart has subscription products */
+    /** Returns true if cart has subscription product */
     public function validate(Cart $cart): bool
     {
         $products = $cart->getProducts();

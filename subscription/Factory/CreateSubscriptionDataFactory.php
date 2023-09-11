@@ -92,8 +92,9 @@ class CreateSubscriptionDataFactory
         $currency = $this->currencyAdapter->getById((int) $order->id_currency);
         $description = $this->subscriptionDescription->getSubscriptionDescription($order);
 
-        // TODO if we decide to include shipping, add it here (new cart instance is needed)
-
+        /**
+         * NOTE: we will only send product price as total for subscriptions
+         */
         $orderAmount = new Amount((float) $subscriptionProduct['total_price_tax_incl'], $currency->iso_code);
         $subscriptionData = new SubscriptionDataDTO(
             $molCustomer->customer_id,

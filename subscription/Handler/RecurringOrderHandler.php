@@ -184,10 +184,6 @@ class RecurringOrderHandler
 
         $specificPrice = $this->createSpecificPrice($recurringOrderProduct, $recurringOrder);
 
-        // TODO set delivery option from back office settings
-        $newCart->setDeliveryOption([(int) $recurringOrder->id_address_delivery => sprintf('%d,', 8)]);
-        $newCart->update();
-
         $this->mollie->validateOrder(
             (int) $newCart->id,
             (int) $this->configuration->get(Config::MOLLIE_STATUS_AWAITING),
