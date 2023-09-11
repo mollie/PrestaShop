@@ -15,13 +15,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - prestashop: 'PS1784'
+          - prestashop: 'PS1785'
             make: 'make e2eh1784'
             subdomain: 'demoshop1784'
             port: '8002'
             yml: 'docker-compose.1784.yml'
-            url: 'https://demoshop1784debug.ngrok.io'
-            test_spec: '**/cypress/e2e/ps1784/**'
+            url: 'https://demoshop1785debug.ngrok.io'
+            test_spec: '**/cypress/e2e/PS1785/**'
             TestRailID: R4954
           - prestashop: 'PS8'
             make: 'make e2eh8'

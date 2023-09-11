@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - prestashop: 'PS1784'
+          - prestashop: 'PS1785'
             make: 'make e2eh1784'
             port: '8002'
             yml: 'docker-compose.1784.yml'

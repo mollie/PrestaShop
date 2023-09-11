@@ -54,7 +54,7 @@ const login = (MollieBOFOLoggingIn) => {
 // afterEach(() => {
 //   expect(windowConsoleError).to.not.be.called;
 // })
-describe('PS1784 Tests Suite', () => {
+describe('PS1785 Tests Suite', () => {
   beforeEach(() => {
       login('MollieBOFOLoggingIn')
       cy.viewport(1920,1080)

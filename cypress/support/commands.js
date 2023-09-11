@@ -584,7 +584,7 @@ Cypress.Commands.add("OpeningModuleDashboardURL", () => {
   cy.visit('/admin1/index.php?controller=AdminModules&configure=mollie')
   cy.get('.btn-continue').click()
 })
-Cypress.Commands.add("CachingBOFOPS1784", () => {
+Cypress.Commands.add("CachingBOFOPS1785", () => {
 //Caching the BO and FO session
 const login = (MollieBOFOLoggingIn) => {
   cy.session(MollieBOFOLoggingIn,() => {
