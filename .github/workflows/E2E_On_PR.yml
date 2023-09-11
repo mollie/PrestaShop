@@ -42,7 +42,7 @@ jobs:
         shell: bash
       - run: ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
         shell: bash
-      - run: ./ngrok http -region=eu -subdomain=${{ matrix.subdomain }} ${{ matrix.port }} > ngrok.log &
+      - run: ./ngrok http -region=us -subdomain=${{ matrix.subdomain }} ${{ matrix.port }} > ngrok.log &
         shell: bash
       - name: Install composer
         run: composer i
