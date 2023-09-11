@@ -40,9 +40,6 @@ class SubscriptionCreationHandler
 
     public function handle(Order $order, string $method)
     {
-        $subscriptionData = $this->createSubscriptionDataFactory->build($order);
-        $subscription = $this->subscriptionApi->subscribeOrder($subscriptionData);
-
         $products = $order->getProducts();
         $subscriptionProduct = [];
 
@@ -55,6 +52,9 @@ class SubscriptionCreationHandler
 
             break;
         }
+
+        $subscriptionData = $this->createSubscriptionDataFactory->build($order, $subscriptionProduct);
+        $subscription = $this->subscriptionApi->subscribeOrder($subscriptionData);
 
         $recurringOrdersProduct = $this->createRecurringOrdersProduct($subscriptionProduct);
 

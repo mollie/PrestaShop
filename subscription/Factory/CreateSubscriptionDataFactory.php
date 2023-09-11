@@ -14,7 +14,6 @@ use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
 use Mollie\Subscription\Repository\CombinationRepository;
 use Mollie\Subscription\Repository\CurrencyRepository as CurrencyAdapter;
-use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use Mollie\Utility\SecureKeyUtility;
 use Order;
 
@@ -41,8 +40,6 @@ class CreateSubscriptionDataFactory
     private $link;
     /** @var Mollie */
     private $module;
-    /** @var SubscriptionProductValidator */
-    private $subscriptionProductValidator;
 
     public function __construct(
         MolCustomerRepository $customerRepository,
@@ -52,8 +49,7 @@ class CreateSubscriptionDataFactory
         CombinationRepository $combination,
         PaymentMethodRepositoryInterface $methodRepository,
         Link $link,
-        Mollie $module,
-        SubscriptionProductValidator $subscriptionProductValidator
+        Mollie $module
     ) {
         $this->customerRepository = $customerRepository;
         $this->subscriptionInterval = $subscriptionInterval;
@@ -63,28 +59,14 @@ class CreateSubscriptionDataFactory
         $this->methodRepository = $methodRepository;
         $this->link = $link;
         $this->module = $module;
-        $this->subscriptionProductValidator = $subscriptionProductValidator;
     }
 
-    public function build(Order $order): SubscriptionDataDTO
+    public function build(Order $order, array $subscriptionProduct): SubscriptionDataDTO
     {
         $customer = $order->getCustomer();
         /** @var \MolCustomer $molCustomer */
         //todo: will need to improve mollie module logic to have shop id or card it so that multishop doesn't break
         $molCustomer = $this->customerRepository->findOneBy(['email' => $customer->email]);
-
-        $products = $order->getCartProducts();
-        $subscriptionProduct = [];
-
-        foreach ($products as $product) {
-            if (!$this->subscriptionProductValidator->validate((int) $product['id_product_attribute'])) {
-                continue;
-            }
-
-            $subscriptionProduct = $product;
-
-            break;
-        }
 
         $combination = $this->combination->getById((int) $subscriptionProduct['id_product_attribute']);
         $interval = $this->subscriptionInterval->getSubscriptionInterval($combination);

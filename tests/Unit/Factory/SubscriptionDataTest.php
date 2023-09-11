@@ -17,7 +17,6 @@ use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
 use Mollie\Subscription\Repository\CombinationRepository;
 use Mollie\Subscription\Repository\CurrencyRepository;
-use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use Mollie\Utility\SecureKeyUtility;
 use PHPUnit\Framework\TestCase;
 
@@ -59,9 +58,6 @@ class SubscriptionDataTest extends TestCase
             ]
         );
 
-        $subscriptionProductValidator = $this->createMock(SubscriptionProductValidator::class);
-        $subscriptionProductValidator->method('validate')->willReturn(true);
-
         $subscriptionDataFactory = new CreateSubscriptionDataFactory(
             $customerRepositoryMock,
             $subscriptionIntervalProviderMock,
@@ -70,8 +66,7 @@ class SubscriptionDataTest extends TestCase
             new CombinationRepository(),
             $paymentMethodRepositoryMock,
             new Link(),
-            new Mollie(),
-            $subscriptionProductValidator
+            new Mollie()
         );
 
         $customerMock = $this->createMock('Customer');
@@ -79,12 +74,6 @@ class SubscriptionDataTest extends TestCase
 
         $order = $this->createMock('Order');
         $order->method('getCustomer')->willReturn($customerMock);
-        $order->method('getCartProducts')->willReturn([
-            [
-                'id_product_attribute' => 1,
-                'total_price_tax_incl' => 19.99,
-            ],
-        ]);
         $order->id = self::TEST_ORDER_ID;
         $order->reference = self::TEST_ORDER_REFERENCE;
         $order->id_cart = self::TEST_CART_ID;
@@ -92,7 +81,12 @@ class SubscriptionDataTest extends TestCase
         $order->id_currency = 1;
         $order->total_paid_tax_incl = $totalAmount;
 
-        $subscriptionData = $subscriptionDataFactory->build($order);
+        $subscriptionProduct = [
+            'id_product_attribute' => 1,
+            'total_price_tax_incl' => 19.99,
+        ];
+
+        $subscriptionData = $subscriptionDataFactory->build($order, $subscriptionProduct);
 
         $this->assertEquals($expectedResult, $subscriptionData);
     }
