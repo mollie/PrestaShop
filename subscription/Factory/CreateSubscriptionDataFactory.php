@@ -68,7 +68,7 @@ class CreateSubscriptionDataFactory
         //todo: will need to improve mollie module logic to have shop id or card it so that multishop doesn't break
         $molCustomer = $this->customerRepository->findOneBy(['email' => $customer->email]);
 
-        $combination = $this->combination->getById((int) $subscriptionProduct['id_product_attribute']);
+        $combination = $this->combination->getById((int) $subscriptionProduct['product_attribute_id']);
         $interval = $this->subscriptionInterval->getSubscriptionInterval($combination);
 
         $currency = $this->currencyAdapter->getById((int) $order->id_currency);
