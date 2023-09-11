@@ -26,7 +26,6 @@ use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
-use Mollie\Subscription\Exception\ProductValidationException;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
 use Mollie\Subscription\Install\AttributeInstaller;
@@ -997,10 +996,6 @@ class Mollie extends PaymentModule
         try {
             $cartValidation->validate((int) $params['id_product_attribute']);
         } catch (SubscriptionProductValidationException $e) {
-            $product = $this->makeProductNotOrderable($params['product']);
-
-            $params['product'] = $product;
-        } catch (ProductValidationException $e) {
             $product = $this->makeProductNotOrderable($params['product']);
 
             $params['product'] = $product;

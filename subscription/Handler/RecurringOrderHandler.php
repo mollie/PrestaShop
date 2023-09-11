@@ -6,8 +6,6 @@ namespace Mollie\Subscription\Handler;
 
 use Cart;
 use Mollie;
-use Mollie\Action\CreateOrderPaymentFeeAction;
-use Mollie\Action\UpdateOrderTotalsAction;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Shop;
 use Mollie\Api\Resources\Payment;
@@ -15,14 +13,9 @@ use Mollie\Api\Resources\Subscription as MollieSubscription;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\SubscriptionStatus;
 use Mollie\Config\Config;
-use Mollie\DTO\CreateOrderPaymentFeeActionData;
-use Mollie\DTO\UpdateOrderTotalsData;
 use Mollie\Errors\Http\HttpStatusCode;
-use Mollie\Exception\CouldNotCreateOrderPaymentFee;
-use Mollie\Exception\CouldNotUpdateOrderTotals;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Exception\TransactionException;
-use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MailService;
 use Mollie\Service\MollieOrderCreationService;
@@ -32,9 +25,9 @@ use Mollie\Subscription\Api\SubscriptionApi;
 use Mollie\Subscription\Exception\CouldNotHandleRecurringOrder;
 use Mollie\Subscription\Factory\GetSubscriptionDataFactory;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
+use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
 use Mollie\Subscription\Utility\ClockInterface;
 use Mollie\Utility\SecureKeyUtility;
-use MolOrderPaymentFee;
 use MolRecurringOrder;
 use MolRecurringOrdersProduct;
 use Order;
@@ -64,14 +57,10 @@ class RecurringOrderHandler
     private $shop;
     /** @var MailService */
     private $mailService;
-    /** @var MolOrderPaymentFeeRepositoryInterface */
-    private $molOrderPaymentFeeRepository;
-    /** @var UpdateOrderTotalsAction */
-    private $updateOrderTotalsAction;
-    /** @var CreateOrderPaymentFeeAction */
-    private $createOrderPaymentFeeAction;
     /** @var ConfigurationAdapter */
     private $configuration;
+    /** @var RecurringOrdersProductRepositoryInterface */
+    private $recurringOrdersProductRepository;
 
     public function __construct(
         SubscriptionApi $subscriptionApi,
@@ -85,10 +74,8 @@ class RecurringOrderHandler
         ClockInterface $clock,
         Shop $shop,
         MailService $mailService,
-        MolOrderPaymentFeeRepositoryInterface $molOrderPaymentFeeRepository,
-        UpdateOrderTotalsAction $updateOrderTotalsAction,
-        CreateOrderPaymentFeeAction $createOrderPaymentFeeAction,
-        ConfigurationAdapter $configuration
+        ConfigurationAdapter $configuration,
+        RecurringOrdersProductRepositoryInterface $recurringOrdersProductRepository
     ) {
         $this->subscriptionApi = $subscriptionApi;
         $this->subscriptionDataFactory = $subscriptionDataFactory;
@@ -101,10 +88,8 @@ class RecurringOrderHandler
         $this->clock = $clock;
         $this->shop = $shop;
         $this->mailService = $mailService;
-        $this->molOrderPaymentFeeRepository = $molOrderPaymentFeeRepository;
-        $this->updateOrderTotalsAction = $updateOrderTotalsAction;
-        $this->createOrderPaymentFeeAction = $createOrderPaymentFeeAction;
         $this->configuration = $configuration;
+        $this->recurringOrdersProductRepository = $recurringOrdersProductRepository;
     }
 
     public function handle(string $transactionId): string
@@ -168,6 +153,24 @@ class RecurringOrderHandler
         /** @var Cart $newCart */
         $newCart = $newCart['cart'];
 
+        /** @var MolRecurringOrdersProduct $subscriptionProduct */
+        $subscriptionProduct = $this->recurringOrdersProductRepository->findOneBy([
+            'id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product,
+        ]);
+
+        $cartProducts = $newCart->getProducts();
+
+        foreach ($cartProducts as $cartProduct) {
+            if (
+                (int) $cartProduct['id_product'] === (int) $subscriptionProduct->id_product &&
+                (int) $cartProduct['id_product_attribute'] === (int) $subscriptionProduct->id_product_attribute
+            ) {
+                continue;
+            }
+
+            $newCart->deleteProduct((int) $cartProduct['id_product'], (int) $cartProduct['id_product_attribute']);
+        }
+
         /**
          * NOTE: New order can't have soft deleted delivery address
          */
@@ -199,37 +202,6 @@ class RecurringOrderHandler
         $specificPrice->delete();
 
         $this->mollieOrderCreationService->createMolliePayment($transaction, (int) $newCart->id, $order->reference, (int) $orderId, PaymentStatus::STATUS_PAID);
-
-        /** @var MolOrderPaymentFee|null $molOrderPaymentFee */
-        $molOrderPaymentFee = $this->molOrderPaymentFeeRepository->findOneBy([
-            'id_order' => $recurringOrder->id_order,
-        ]);
-
-        if ($molOrderPaymentFee) {
-            try {
-                $this->createOrderPaymentFeeAction->run(CreateOrderPaymentFeeActionData::create(
-                    $orderId,
-                    (int) $newCart->id,
-                    (float) $molOrderPaymentFee->fee_tax_incl,
-                    (float) $molOrderPaymentFee->fee_tax_excl
-                ));
-            } catch (CouldNotCreateOrderPaymentFee $exception) {
-                throw CouldNotHandleRecurringOrder::failedToCreateOrderPaymentFee($exception);
-            }
-
-            try {
-                $this->updateOrderTotalsAction->run(UpdateOrderTotalsData::create(
-                    $orderId,
-                    (float) $molOrderPaymentFee->fee_tax_incl,
-                    (float) $molOrderPaymentFee->fee_tax_excl,
-                    (float) $transaction->amount->value,
-                    (float) $cart->getOrderTotal(true, Cart::BOTH),
-                    (float) $cart->getOrderTotal(false, Cart::BOTH)
-                ));
-            } catch (CouldNotUpdateOrderTotals $exception) {
-                throw CouldNotHandleRecurringOrder::failedToUpdateOrderTotalWithPaymentFee($exception);
-            }
-        }
 
         $this->orderStatusService->setOrderStatus($orderId, (int) Config::getStatuses()[$transaction->status]);
     }
