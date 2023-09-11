@@ -40,11 +40,11 @@ class SubscriptionCreationHandler
 
     public function handle(Order $order, string $method)
     {
-        $products = $order->getProducts();
+        $products = $order->getCartProducts();
         $subscriptionProduct = [];
 
         foreach ($products as $product) {
-            if (!$this->subscriptionProductValidator->validate((int) $product['product_attribute_id'])) {
+            if (!$this->subscriptionProductValidator->validate((int) $product['id_product_attribute'])) {
                 continue;
             }
 
@@ -65,7 +65,7 @@ class SubscriptionCreationHandler
     {
         $recurringOrdersProduct = new MolRecurringOrdersProduct();
         $recurringOrdersProduct->id_product = $product['id_product'];
-        $recurringOrdersProduct->id_product_attribute = $product['product_attribute_id'];
+        $recurringOrdersProduct->id_product_attribute = $product['id_product_attribute'];
         $recurringOrdersProduct->quantity = $product['product_quantity'];
         $recurringOrdersProduct->unit_price = $product['unit_price_tax_excl'];
         $recurringOrdersProduct->add();
