@@ -125,4 +125,9 @@ class Context
     {
         return (int) PrestashopContext::getContext()->country->id;
     }
+
+    public function getShopGroupId(): int
+    {
+        return (int) PrestashopContext::getContext()->shop->id_shop_group;
+    }
 }

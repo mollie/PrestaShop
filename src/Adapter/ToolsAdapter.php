@@ -16,11 +16,6 @@ use Tools;
 
 class ToolsAdapter
 {
-    public function strtoupper($str): string
-    {
-        return Tools::strtoupper($str);
-    }
-
     public function strlen($str): string
     {
         return Tools::strlen($str);
@@ -39,6 +34,13 @@ class ToolsAdapter
 
     public function getValue(string $key, string $defaultValue = null)
     {
-        return Tools::getValue($key, $defaultValue);
+        $result = Tools::getValue($key, $defaultValue);
+
+        return !empty($result) ? $result : null;
+    }
+
+    public function isSubmit(string $string): bool
+    {
+        return (bool) Tools::isSubmit($string);
     }
 }
