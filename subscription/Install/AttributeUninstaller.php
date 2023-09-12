@@ -47,7 +47,7 @@ class AttributeUninstaller extends AbstractUninstaller
                 $attribute->delete();
             }
 
-            $attributeGroup = new \AttributeGroup($this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_GROUP));
+            $attributeGroup = new \AttributeGroup((int) $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_GROUP));
             $attributeGroup->delete();
         } catch (PrestaShopException $e) {
             $this->errors[] = $this->module->l('Failed to delete attributes', self::FILE_NAME);

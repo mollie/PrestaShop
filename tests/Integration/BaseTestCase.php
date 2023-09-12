@@ -43,7 +43,7 @@ class BaseTestCase extends TestCase
 
         $this->contextBuilder = new ContextBuilder();
         $this->contextBuilder->setDefaults();
-        $this->configuration = new ConfigurationAdapter();
+        $this->configuration = $this->getService(ConfigurationAdapter::class);
     }
 
     protected function tearDown()

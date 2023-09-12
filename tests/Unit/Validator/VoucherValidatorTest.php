@@ -10,7 +10,7 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Validator;
+namespace Mollie\Tests\Unit\Validator;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
@@ -31,7 +31,8 @@ class VoucherValidatorTest extends TestCase
     public function testValidate(array $products, $configurationMocks, $voucherServiceMocks, $result)
     {
         /** @var MockObject $configurationAdapter */
-        $configurationAdapter = $this->getMockBuilder(ConfigurationAdapter::class)->getMock();
+        $configurationAdapter = $this->createMock(ConfigurationAdapter::class);
+
         foreach ($configurationMocks as $mock) {
             $configurationAdapter->expects(self::at($mock['at']))->method($mock['function'])->with($mock['expects'])->willReturn($mock['return']);
         }
