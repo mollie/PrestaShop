@@ -74,10 +74,14 @@ class CreateSubscriptionDataFactory
         $currency = $this->currencyAdapter->getById((int) $order->id_currency);
         $description = $this->subscriptionDescription->getSubscriptionDescription($order);
 
+        $orderTotal = (float) $subscriptionProduct['total_price_tax_incl']
+            + (float) $order->total_wrapping_tax_incl
+            + (float) $order->total_shipping_tax_incl;
+
         /**
          * NOTE: we will only send product price as total for subscriptions
          */
-        $orderAmount = new Amount((float) $subscriptionProduct['total_price_tax_incl'], $currency->iso_code);
+        $orderAmount = new Amount($orderTotal, $currency->iso_code);
         $subscriptionData = new SubscriptionDataDTO(
             $molCustomer->customer_id,
             $orderAmount,

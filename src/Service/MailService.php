@@ -28,7 +28,6 @@ use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
-use Mollie\Utility\NumberUtility;
 use MolRecurringOrder;
 use MolRecurringOrdersProduct;
 use Order;
@@ -186,7 +185,7 @@ class MailService
         Customer $customer
     ): array {
         $product = new Product($recurringOrderProduct->id_product, false, $customer->id_lang);
-        $totalPrice = NumberUtility::times((float) $recurringOrderProduct->unit_price, (float) $recurringOrderProduct->quantity);
+        $totalPrice = $recurringOrder->total_tax_incl;
         $unitPrice = new Number((string) $recurringOrderProduct->unit_price);
 
         return [

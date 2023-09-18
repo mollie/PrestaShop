@@ -27,7 +27,7 @@
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Subscription\Handler\FreeOrderCreationHandler;
 use Mollie\Subscription\Handler\SubscriptionCancellationHandler;
-use Mollie\Subscription\Logger\RecurringOrderPresenter;
+use Mollie\Subscription\Presenter\RecurringOrderPresenter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 
 class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieController

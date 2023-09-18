@@ -29,6 +29,9 @@ class MolRecurringOrder extends ObjectModel
     /** @var string */
     public $status;
 
+    /** @var float */
+    public $total_tax_incl;
+
     /** @var string */
     public $payment_method;
 
@@ -71,6 +74,7 @@ class MolRecurringOrder extends ObjectModel
             'mollie_customer_id' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'description' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'status' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
+            'total_tax_incl' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
             'payment_method' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'next_payment' => ['type' => self::TYPE_DATE],
             'reminder_at' => ['type' => self::TYPE_DATE],

@@ -18,7 +18,7 @@ final class DatabaseTableInstaller extends AbstractInstaller
             }
         }
 
-        return true;
+        return $this->alterTableCommands();
     }
 
     /**
@@ -45,6 +45,7 @@ final class DatabaseTableInstaller extends AbstractInstaller
 				`mollie_customer_id` VARCHAR(64) NOT NULL,
 				`payment_method` VARCHAR(64) NOT NULL,
 				`id_mol_recurring_orders_product` INT(64) NOT NULL,
+				`total_tax_incl` decimal(20, 6) NOT NULL,
 				`date_add` datetime NOT NULL,
 				`date_update` datetime NOT NULL
 			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
@@ -60,5 +61,57 @@ final class DatabaseTableInstaller extends AbstractInstaller
 			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
         return $sql;
+    }
+
+    private function alterTableCommands(): bool
+    {
+        $queries = [
+            [
+                'verification' => '
+                    SELECT COUNT(*) > 0 AS count
+                    FROM information_schema.columns
+                    WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND table_name = "' . _DB_PREFIX_ . 'mollie_payments" AND column_name = "mandate_id";
+                ',
+                'alter' => [
+                    '
+                        ALTER TABLE ' . _DB_PREFIX_ . 'mollie_payments
+                        ADD COLUMN mandate_id VARCHAR(64);
+                    ',
+                ],
+            ],
+            [
+                'verification' => '
+                    SELECT COUNT(*) > 0 AS count
+                    FROM information_schema.columns
+                    WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND table_name = "' . _DB_PREFIX_ . 'mol_recurring_order" AND column_name = "total_tax_incl";
+                ',
+                'alter' => [
+                    '
+                        ALTER TABLE ' . _DB_PREFIX_ . 'mol_recurring_order
+                        ADD COLUMN total_tax_incl decimal(20, 6) NOT NULL;
+                    ',
+                    '
+                        UPDATE ' . _DB_PREFIX_ . 'mol_recurring_order ro
+                        JOIN ' . _DB_PREFIX_ . 'orders o ON ro.id_order = o.id_order
+                        SET ro.total_tax_incl = o.total_paid_tax_incl;
+                    ',
+                ],
+            ],
+        ];
+
+        foreach ($queries as $query) {
+            /* only run if it doesn't exist */
+            if (Db::getInstance()->getValue($query['verification'])) {
+                continue;
+            }
+
+            foreach ($query['alter'] as $alterQuery) {
+                if (!Db::getInstance()->execute($alterQuery)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
