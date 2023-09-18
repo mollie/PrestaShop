@@ -176,7 +176,13 @@ class Mollie extends PaymentModule
 
         $subscriptionInstaller = new Installer(
             new DatabaseTableInstaller(),
-            new AttributeInstaller(new NullLogger(), new ConfigurationAdapter(), $this, new LanguageAdapter(), new ProductAttributeAdapter()),
+            new AttributeInstaller(
+                new NullLogger(),
+                $this->getService(ConfigurationAdapter::class),
+                $this,
+                new LanguageAdapter(),
+                new ProductAttributeAdapter()
+            ),
             new HookInstaller($this)
         );
 

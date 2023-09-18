@@ -481,7 +481,7 @@ class CartLinesService
             $line->setQuantity((int) $item['quantity']);
             $line->setSku(isset($item['sku']) ? $item['sku'] : '');
 
-            $currency = $this->tools->strtoupper($currencyIsoCode);
+            $currency = strtoupper(strtolower($currencyIsoCode));
 
             if (isset($item['discount'])) {
                 $line->setDiscountAmount(new Amount(
