@@ -63,7 +63,10 @@ class RecurringOrderPresenter
         $recurringOrderData['order'] = $this->orderPresenter->present(
             $order,
             (int) $recurringProduct->id_product_attribute,
-            NumberUtility::toPrecision((float) $recurringOrder->total_tax_incl, 2)
+            NumberUtility::toPrecision(
+                (float) $recurringOrder->total_tax_incl,
+                NumberUtility::DECIMAL_PRECISION
+            )
         );
         $recurringOrderData['payment_methods'] = $this->methodApi->getMethodsForFirstPayment($this->language->getContextLanguage()->locale, $currency->iso_code);
 

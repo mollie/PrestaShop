@@ -185,8 +185,16 @@ class MailService
         Customer $customer
     ): array {
         $product = new Product($recurringOrderProduct->id_product, false, $customer->id_lang);
-        $totalPrice = NumberUtility::toPrecision((float) $recurringOrder->total_tax_incl, 2);
-        $unitPrice = NumberUtility::toPrecision((float) $recurringOrderProduct->unit_price, 2);
+
+        $totalPrice = NumberUtility::toPrecision(
+            (float) $recurringOrder->total_tax_incl,
+            NumberUtility::DECIMAL_PRECISION
+        );
+
+        $unitPrice = NumberUtility::toPrecision(
+            (float) $recurringOrderProduct->unit_price,
+            NumberUtility::DECIMAL_PRECISION
+        );
 
         return [
             'subscription_reference' => $recurringOrder->mollie_subscription_id,

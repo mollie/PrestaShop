@@ -145,33 +145,24 @@ final class DatabaseTableInstaller implements InstallerInterface
 
     private function alterTableCommands(): bool
     {
-        $queries = [
-            [
-                'verification' => '
-                    SELECT COUNT(*) > 0 AS count
-                    FROM information_schema.columns
-                    WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND table_name = "' . _DB_PREFIX_ . 'mollie_payments" AND column_name = "mandate_id";
-                ',
-                'alter' => [
-                    '
-                        ALTER TABLE ' . _DB_PREFIX_ . 'mollie_payments
-                        ADD COLUMN mandate_id VARCHAR(64);
-                    ',
-                ],
-            ],
-        ];
+        $query = '
+            SELECT COUNT(*) > 0 AS count
+            FROM information_schema.columns
+            WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND table_name = "' . _DB_PREFIX_ . 'mollie_payments" AND column_name = "mandate_id";
+        ';
 
-        foreach ($queries as $query) {
-            /* only run if it doesn't exist */
-            if (Db::getInstance()->getValue($query['verification'])) {
-                continue;
-            }
+        /* only run if it doesn't exist */
+        if (Db::getInstance()->getValue($query)) {
+            return true;
+        }
 
-            foreach ($query['alter'] as $alterQuery) {
-                if (!Db::getInstance()->execute($alterQuery)) {
-                    return false;
-                }
-            }
+        $query = '
+            ALTER TABLE ' . _DB_PREFIX_ . 'mollie_payments
+            ADD COLUMN mandate_id VARCHAR(64);
+        ';
+
+        if (!Db::getInstance()->execute($query)) {
+            return false;
         }
 
         return true;

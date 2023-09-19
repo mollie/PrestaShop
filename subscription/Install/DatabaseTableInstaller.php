@@ -65,38 +65,34 @@ final class DatabaseTableInstaller extends AbstractInstaller
 
     private function alterTableCommands(): bool
     {
-        $queries = [
-            [
-                'verification' => '
-                    SELECT COUNT(*) > 0 AS count
-                    FROM information_schema.columns
-                    WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND table_name = "' . _DB_PREFIX_ . 'mol_recurring_order" AND column_name = "total_tax_incl";
-                ',
-                'alter' => [
-                    '
-                        ALTER TABLE ' . _DB_PREFIX_ . 'mol_recurring_order
-                        ADD COLUMN total_tax_incl decimal(20, 6) NOT NULL;
-                    ',
-                    '
-                        UPDATE ' . _DB_PREFIX_ . 'mol_recurring_order ro
-                        JOIN ' . _DB_PREFIX_ . 'orders o ON ro.id_order = o.id_order
-                        SET ro.total_tax_incl = o.total_paid_tax_incl;
-                    ',
-                ],
-            ],
-        ];
+        $query = '
+            SELECT COUNT(*) > 0 AS count
+            FROM information_schema.columns
+            WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND table_name = "' . _DB_PREFIX_ . 'mol_recurring_order" AND column_name = "total_tax_incl";
+        ';
 
-        foreach ($queries as $query) {
-            /* only run if it doesn't exist */
-            if (Db::getInstance()->getValue($query['verification'])) {
-                continue;
-            }
+        /* only run if it doesn't exist */
+        if (Db::getInstance()->getValue($query)) {
+            return true;
+        }
 
-            foreach ($query['alter'] as $alterQuery) {
-                if (!Db::getInstance()->execute($alterQuery)) {
-                    return false;
-                }
-            }
+        $query = '
+            ALTER TABLE ' . _DB_PREFIX_ . 'mol_recurring_order
+            ADD COLUMN total_tax_incl decimal(20, 6) NOT NULL;
+        ';
+
+        if (!Db::getInstance()->execute($query)) {
+            return false;
+        }
+
+        $query = '
+            UPDATE ' . _DB_PREFIX_ . 'mol_recurring_order ro
+            JOIN ' . _DB_PREFIX_ . 'orders o ON ro.id_order = o.id_order
+            SET ro.total_tax_incl = o.total_paid_tax_incl;
+        ';
+
+        if (!Db::getInstance()->execute($query)) {
+            return false;
         }
 
         return true;
