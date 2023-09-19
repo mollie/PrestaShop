@@ -5,6 +5,7 @@ namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Api\Types\PaymentMethod;
+use Mollie\Repository\AddressFormatRepositoryInterface;
 use Mollie\Repository\AddressRepositoryInterface;
 use Mollie\Repository\CustomerRepositoryInterface;
 use MolPaymentMethod;
@@ -19,17 +20,21 @@ class B2bPaymentMethodRestrictionValidator implements PaymentMethodRestrictionVa
     private $customerRepository;
     /** @var ConfigurationAdapter */
     private $configuration;
+    /** @var AddressFormatRepositoryInterface */
+    private $addressFormatRepository;
 
     public function __construct(
         Context $context,
         AddressRepositoryInterface $addressRepository,
         CustomerRepositoryInterface $customerRepository,
-        ConfigurationAdapter $configuration
+        ConfigurationAdapter $configuration,
+        AddressFormatRepositoryInterface $addressFormatRepository
     ) {
         $this->context = $context;
         $this->addressRepository = $addressRepository;
         $this->customerRepository = $customerRepository;
         $this->configuration = $configuration;
+        $this->addressFormatRepository = $addressFormatRepository;
     }
 
     /**
@@ -80,6 +85,15 @@ class B2bPaymentMethodRestrictionValidator implements PaymentMethodRestrictionVa
         $billingAddress = $this->addressRepository->findOneBy([
             'id_address' => (int) $billingAddressId,
         ]);
+
+        /** @var \AddressFormat $addressFormat */
+        $addressFormat = $this->addressFormatRepository->findOneBy([
+            'id_country' => $billingAddress->id_country,
+        ]);
+
+        if (!str_contains($addressFormat->getFormat($billingAddress->id_country), 'vat_number')) {
+            return true;
+        }
 
         return !empty($billingAddress->vat_number);
     }

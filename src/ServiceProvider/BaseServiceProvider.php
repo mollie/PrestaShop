@@ -41,6 +41,8 @@ use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider;
 use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProviderInterface;
 use Mollie\Provider\UpdateMessageProvider;
 use Mollie\Provider\UpdateMessageProviderInterface;
+use Mollie\Repository\AddressFormatRepository;
+use Mollie\Repository\AddressFormatRepositoryInterface;
 use Mollie\Repository\AddressRepository;
 use Mollie\Repository\AddressRepositoryInterface;
 use Mollie\Repository\CartRepository;
@@ -158,6 +160,7 @@ final class BaseServiceProvider
             );
 
         $this->addService($container, AddressRepositoryInterface::class, $container->get(AddressRepository::class));
+        $this->addService($container, AddressFormatRepositoryInterface::class, $container->get(AddressFormatRepository::class));
         $this->addService($container, TaxRulesGroupRepositoryInterface::class, $container->get(TaxRulesGroupRepository::class));
         $this->addService($container, TaxRuleRepositoryInterface::class, $container->get(TaxRuleRepository::class));
         $this->addService($container, TaxRepositoryInterface::class, $container->get(TaxRepository::class));
