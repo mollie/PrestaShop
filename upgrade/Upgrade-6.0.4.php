@@ -112,16 +112,16 @@ function updateOrderStatusNames604(Mollie $module)
 function modifyExistingTables604(): bool
 {
     $sql = '
-    SELECT COUNT(*) > 0 AS count
-    FROM information_schema.columns
-    WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND table_name = "' . _DB_PREFIX_ . 'mol_recurring_order" AND column_name = "total_tax_incl";
+        SELECT COUNT(*) > 0 AS count
+        FROM information_schema.columns
+        WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND table_name = "' . _DB_PREFIX_ . 'mol_recurring_order" AND column_name = "total_tax_incl";
     ';
 
     /** only add it if it doesn't exist */
     if (!(int) Db::getInstance()->getValue($sql)) {
         $sql = '
-        ALTER TABLE ' . _DB_PREFIX_ . 'mol_recurring_order
-        ADD COLUMN total_tax_incl decimal(20, 6) NOT NULL;
+            ALTER TABLE ' . _DB_PREFIX_ . 'mol_recurring_order
+            ADD COLUMN total_tax_incl decimal(20, 6) NOT NULL;
         ';
 
         try {
@@ -147,6 +147,30 @@ function modifyExistingTables604(): bool
         PrestaShopLogger::addLog("Mollie upgrade error: {$e->getMessage()}");
 
         return false;
+    }
+
+    $sql = '
+        SELECT COUNT(*) > 0 AS count
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND TABLE_NAME = "' . _DB_PREFIX_ . 'mollie_payments" AND COLUMN_NAME = "mandate_id"
+    ';
+
+    /** only add it if it doesn't exist */
+    if (!Db::getInstance()->getValue($sql)) {
+        $sql = '
+            ALTER TABLE ' . _DB_PREFIX_ . 'mollie_payments
+            ADD `mandate_id` VARCHAR(64);
+        ';
+
+        try {
+            if (!Db::getInstance()->execute($sql)) {
+                return false;
+            }
+        } catch (Exception $e) {
+            PrestaShopLogger::addLog("Mollie upgrade error: {$e->getMessage()}");
+
+            return false;
+        }
     }
 
     return true;
