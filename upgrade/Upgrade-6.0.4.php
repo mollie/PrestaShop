@@ -28,6 +28,10 @@ function upgrade_module_6_0_4(Mollie $module): bool
     updateConfigurationValues604($module);
     updateOrderStatusNames604($module);
 
+    if (!modifyExistingTables604()) {
+        return false;
+    }
+
     return true;
 }
 
@@ -103,5 +107,72 @@ function updateOrderStatusNames604(Mollie $module)
     }
 
     $authorizablePaymentStatusAuthorized->save();
+}
+
+function modifyExistingTables604(): bool
+{
+    $sql = '
+        SELECT COUNT(*) > 0 AS count
+        FROM information_schema.columns
+        WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND table_name = "' . _DB_PREFIX_ . 'mol_recurring_order" AND column_name = "total_tax_incl";
+    ';
+
+    /** only add it if it doesn't exist */
+    if (!(int) Db::getInstance()->getValue($sql)) {
+        $sql = '
+            ALTER TABLE ' . _DB_PREFIX_ . 'mol_recurring_order
+            ADD COLUMN total_tax_incl decimal(20, 6) NOT NULL;
+        ';
+
+        try {
+            if (!Db::getInstance()->execute($sql)) {
+                return false;
+            }
+        } catch (Exception $e) {
+            PrestaShopLogger::addLog("Mollie upgrade error: {$e->getMessage()}");
+
+            return false;
+        }
+    }
+
+    $sql = '
+        UPDATE ' . _DB_PREFIX_ . 'mol_recurring_order ro
+        JOIN ' . _DB_PREFIX_ . 'orders o ON ro.id_order = o.id_order
+        SET ro.total_tax_incl = o.total_paid_tax_incl;
+    ';
+
+    try {
+        Db::getInstance()->execute($sql);
+    } catch (Exception $e) {
+        PrestaShopLogger::addLog("Mollie upgrade error: {$e->getMessage()}");
+
+        return false;
+    }
+
+    $sql = '
+        SELECT COUNT(*) > 0 AS count
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND TABLE_NAME = "' . _DB_PREFIX_ . 'mollie_payments" AND COLUMN_NAME = "mandate_id"
+    ';
+
+    /** only add it if it doesn't exist */
+    if (!Db::getInstance()->getValue($sql)) {
+        $sql = '
+            ALTER TABLE ' . _DB_PREFIX_ . 'mollie_payments
+            ADD `mandate_id` VARCHAR(64);
+        ';
+
+        try {
+            if (!Db::getInstance()->execute($sql)) {
+                return false;
+            }
+        } catch (Exception $e) {
+            PrestaShopLogger::addLog("Mollie upgrade error: {$e->getMessage()}");
+
+            return false;
+        }
+    }
+
+    return true;
 }
 

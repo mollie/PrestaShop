@@ -34,7 +34,6 @@ use MolRecurringOrdersProduct;
 use Order;
 use OrderState;
 use PDF;
-use PrestaShop\Decimal\Number;
 use Product;
 use State;
 use Tools;
@@ -186,13 +185,21 @@ class MailService
         Customer $customer
     ): array {
         $product = new Product($recurringOrderProduct->id_product, false, $customer->id_lang);
-        $totalPrice = NumberUtility::times((float) $recurringOrderProduct->unit_price, (float) $recurringOrderProduct->quantity);
-        $unitPrice = new Number((string) $recurringOrderProduct->unit_price);
+
+        $totalPrice = NumberUtility::toPrecision(
+            (float) $recurringOrder->total_tax_incl,
+            NumberUtility::DECIMAL_PRECISION
+        );
+
+        $unitPrice = NumberUtility::toPrecision(
+            (float) $recurringOrderProduct->unit_price,
+            NumberUtility::DECIMAL_PRECISION
+        );
 
         return [
             'subscription_reference' => $recurringOrder->mollie_subscription_id,
             'product_name' => $product->name,
-            'unit_price' => $this->toolsAdapter->displayPrice($unitPrice->toPrecision(2), new Currency($recurringOrder->id_currency)),
+            'unit_price' => $this->toolsAdapter->displayPrice($unitPrice, new Currency($recurringOrder->id_currency)),
             'quantity' => $recurringOrderProduct->quantity,
             'total_price' => $this->toolsAdapter->displayPrice($totalPrice, new Currency($recurringOrder->id_currency)),
             'firstName' => $customer->firstname,

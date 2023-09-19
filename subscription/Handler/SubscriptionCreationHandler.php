@@ -85,6 +85,7 @@ class SubscriptionCreationHandler
         $recurringOrder->id_address_invoice = $order->id_address_invoice;
         $recurringOrder->description = $subscription->description;
         $recurringOrder->status = $subscription->status;
+        $recurringOrder->total_tax_incl = (float) $subscription->amount->value;
         $recurringOrder->payment_method = $method;
         $recurringOrder->next_payment = $subscription->nextPaymentDate;
         $recurringOrder->reminder_at = $subscription->nextPaymentDate; //todo: add logic to get reminder date when reminder is done
