@@ -47,7 +47,7 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
         $qb = $this->getQueryBuilder($searchCriteria->getFilters())
             ->select('recurring_order.*')
             ->addSelect($this->getNameField() . ' as fullname')
-            ->addSelect('recurring_order.total_tax_incl as total_price')
+            ->addSelect('ROUND(recurring_order.total_tax_incl, 2) as total_price')
             ->addSelect('currency.iso_code')
         ;
 

@@ -28,12 +28,12 @@ use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
+use Mollie\Utility\NumberUtility;
 use MolRecurringOrder;
 use MolRecurringOrdersProduct;
 use Order;
 use OrderState;
 use PDF;
-use PrestaShop\Decimal\Number;
 use Product;
 use State;
 use Tools;
@@ -185,13 +185,13 @@ class MailService
         Customer $customer
     ): array {
         $product = new Product($recurringOrderProduct->id_product, false, $customer->id_lang);
-        $totalPrice = $recurringOrder->total_tax_incl;
-        $unitPrice = new Number((string) $recurringOrderProduct->unit_price);
+        $totalPrice = NumberUtility::toPrecision((float) $recurringOrder->total_tax_incl, 2);
+        $unitPrice = NumberUtility::toPrecision((float) $recurringOrderProduct->unit_price, 2);
 
         return [
             'subscription_reference' => $recurringOrder->mollie_subscription_id,
             'product_name' => $product->name,
-            'unit_price' => $this->toolsAdapter->displayPrice($unitPrice->toPrecision(2), new Currency($recurringOrder->id_currency)),
+            'unit_price' => $this->toolsAdapter->displayPrice($unitPrice, new Currency($recurringOrder->id_currency)),
             'quantity' => $recurringOrderProduct->quantity,
             'total_price' => $this->toolsAdapter->displayPrice($totalPrice, new Currency($recurringOrder->id_currency)),
             'firstName' => $customer->firstname,

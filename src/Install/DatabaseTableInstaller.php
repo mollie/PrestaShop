@@ -21,12 +21,12 @@ final class DatabaseTableInstaller implements InstallerInterface
         $commands = $this->getCommands();
 
         foreach ($commands as $query) {
-            if (false == Db::getInstance()->execute($query)) {
+            if (!Db::getInstance()->execute($query)) {
                 return false;
             }
         }
 
-        return true;
+        return $this->alterTableCommands();
     }
 
     /**
@@ -141,5 +141,39 @@ final class DatabaseTableInstaller implements InstallerInterface
         ';
 
         return $sql;
+    }
+
+    private function alterTableCommands(): bool
+    {
+        $queries = [
+            [
+                'verification' => '
+                    SELECT COUNT(*) > 0 AS count
+                    FROM information_schema.columns
+                    WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND table_name = "' . _DB_PREFIX_ . 'mollie_payments" AND column_name = "mandate_id";
+                ',
+                'alter' => [
+                    '
+                        ALTER TABLE ' . _DB_PREFIX_ . 'mollie_payments
+                        ADD COLUMN mandate_id VARCHAR(64);
+                    ',
+                ],
+            ],
+        ];
+
+        foreach ($queries as $query) {
+            /* only run if it doesn't exist */
+            if (Db::getInstance()->getValue($query['verification'])) {
+                continue;
+            }
+
+            foreach ($query['alter'] as $alterQuery) {
+                if (!Db::getInstance()->execute($alterQuery)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

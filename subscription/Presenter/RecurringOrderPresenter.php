@@ -9,6 +9,7 @@ use Mollie\Adapter\Language;
 use Mollie\Subscription\Api\MethodApi;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
+use Mollie\Utility\NumberUtility;
 use Order;
 use Product;
 
@@ -62,7 +63,7 @@ class RecurringOrderPresenter
         $recurringOrderData['order'] = $this->orderPresenter->present(
             $order,
             (int) $recurringProduct->id_product_attribute,
-            (float) $recurringOrder->total_tax_incl
+            NumberUtility::toPrecision((float) $recurringOrder->total_tax_incl, 2)
         );
         $recurringOrderData['payment_methods'] = $this->methodApi->getMethodsForFirstPayment($this->language->getContextLanguage()->locale, $currency->iso_code);
 
