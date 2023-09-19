@@ -60,7 +60,8 @@ class OrderPresenterTest extends BaseTestCase
         $order->method('getCartProducts')->willReturn($products);
         $order->method('getProducts')->willReturn($products);
 
-        $orderPresenter = new OrderPresenter();
+        /** @var OrderPresenter $orderPresenter */
+        $orderPresenter = $this->getService(OrderPresenter::class);
 
         $result = $orderPresenter->present(
             $order,
