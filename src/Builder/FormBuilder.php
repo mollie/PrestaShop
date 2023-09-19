@@ -839,6 +839,11 @@ class FormBuilder
 
         $mappedCarriers = [];
 
+        $mappedCarriers[] = [
+            'id' => 0,
+            'name' => $this->module->l('Not selected', self::FILE_NAME),
+        ];
+
         foreach ($carriers as $carrier) {
             $mappedCarrier = [];
 
@@ -858,7 +863,7 @@ class FormBuilder
         $options = [
             'type' => 'select',
             'label' => $this->module->l('Select shipping option to use in subscription orders', self::FILE_NAME),
-            'desc' => $this->module->l('This method is used when recurring orders are created.', self::FILE_NAME),
+            'desc' => $this->module->l('WARNING: do not change selection after getting first subscription order.', self::FILE_NAME),
             'tab' => $tab,
             'name' => Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID,
             'options' => [
