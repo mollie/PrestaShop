@@ -38,7 +38,10 @@ class SubscriptionCreationHandler
         $this->subscriptionProductValidator = $subscriptionProductValidator;
     }
 
-    public function handle(Order $order, string $method)
+    /**
+     * @throws \Throwable
+     */
+    public function handle(Order $order, string $method): void
     {
         $products = $order->getCartProducts();
         $subscriptionProduct = [];

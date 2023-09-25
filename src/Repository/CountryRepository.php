@@ -15,7 +15,7 @@ namespace Mollie\Repository;
 use Country;
 use Db;
 
-final class CountryRepository extends AbstractRepository
+final class CountryRepository extends AbstractRepository implements CountryRepositoryInterface
 {
     public function __construct()
     {

@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace Mollie\Subscription\Factory;
 
 use Mollie;
-use Mollie\Adapter\Link;
+use Mollie\Adapter\Context;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Subscription\DTO\CreateSubscriptionData as SubscriptionDataDTO;
 use Mollie\Subscription\DTO\Object\Amount;
+use Mollie\Subscription\Exception\CouldNotProvideCarrierDeliveryPrice;
+use Mollie\Subscription\Exception\SubscriptionIntervalException;
+use Mollie\Subscription\Provider\CarrierDeliveryPriceProvider;
 use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
 use Mollie\Subscription\Repository\CombinationRepository;
@@ -36,10 +39,12 @@ class CreateSubscriptionDataFactory
 
     /** @var PaymentMethodRepositoryInterface */
     private $methodRepository;
-    /** @var Link */
-    private $link;
     /** @var Mollie */
     private $module;
+    /** @var Context */
+    private $context;
+    /** @var CarrierDeliveryPriceProvider */
+    private $carrierDeliveryPriceProvider;
 
     public function __construct(
         MolCustomerRepository $customerRepository,
@@ -48,8 +53,9 @@ class CreateSubscriptionDataFactory
         CurrencyAdapter $currencyAdapter,
         CombinationRepository $combination,
         PaymentMethodRepositoryInterface $methodRepository,
-        Link $link,
-        Mollie $module
+        Mollie $module,
+        Context $context,
+        CarrierDeliveryPriceProvider $carrierDeliveryPriceProvider
     ) {
         $this->customerRepository = $customerRepository;
         $this->subscriptionInterval = $subscriptionInterval;
@@ -57,10 +63,16 @@ class CreateSubscriptionDataFactory
         $this->currencyAdapter = $currencyAdapter;
         $this->combination = $combination;
         $this->methodRepository = $methodRepository;
-        $this->link = $link;
         $this->module = $module;
+        $this->context = $context;
+        $this->carrierDeliveryPriceProvider = $carrierDeliveryPriceProvider;
     }
 
+    /**
+     * @throws \PrestaShopException
+     * @throws CouldNotProvideCarrierDeliveryPrice
+     * @throws SubscriptionIntervalException
+     */
     public function build(Order $order, array $subscriptionProduct): SubscriptionDataDTO
     {
         $customer = $order->getCustomer();
@@ -74,13 +86,20 @@ class CreateSubscriptionDataFactory
         $currency = $this->currencyAdapter->getById((int) $order->id_currency);
         $description = $this->subscriptionDescription->getSubscriptionDescription($order);
 
-        $orderTotal = (float) $subscriptionProduct['total_price_tax_incl']
-            + (float) $order->total_wrapping_tax_incl
-            + (float) $order->total_shipping_tax_incl;
+        try {
+            $deliveryPrice = $this->carrierDeliveryPriceProvider->getPrice(
+                (int) $order->id_address_delivery,
+                (int) $order->id_cart,
+                (int) $order->id_customer,
+                $subscriptionProduct
+            );
+        } catch (CouldNotProvideCarrierDeliveryPrice $exception) {
+            // TODO throw generic error when new logger will be implemented
+            throw $exception;
+        }
 
-        /**
-         * NOTE: we will only send product price as total for subscriptions
-         */
+        $orderTotal = (float) $subscriptionProduct['total_price_tax_incl'] + $deliveryPrice;
+
         $orderAmount = new Amount($orderTotal, $currency->iso_code);
         $subscriptionData = new SubscriptionDataDTO(
             $molCustomer->customer_id,
@@ -89,7 +108,7 @@ class CreateSubscriptionDataFactory
             $description
         );
 
-        $subscriptionData->setWebhookUrl($this->link->getModuleLink(
+        $subscriptionData->setWebhookUrl($this->context->getModuleLink(
             'mollie',
             'subscriptionWebhook'
         ));

@@ -49,6 +49,7 @@ use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Exception\OrderCreationException;
+use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderStatusService;
@@ -85,6 +86,8 @@ class OrderCreationHandler
     private $subscriptionOrder;
     /** @var PaymentFeeProviderInterface */
     private $paymentFeeProvider;
+    /** @var PrestaLoggerInterface */
+    private $logger;
 
     public function __construct(
         Mollie $module,
@@ -94,7 +97,8 @@ class OrderCreationHandler
         OrderStatusService $orderStatusService,
         SubscriptionCreationHandler $recurringOrderCreation,
         SubscriptionOrderValidator $subscriptionOrder,
-        PaymentFeeProviderInterface $paymentFeeProvider
+        PaymentFeeProviderInterface $paymentFeeProvider,
+        PrestaLoggerInterface $logger
     ) {
         $this->module = $module;
         $this->paymentMethodRepository = $paymentMethodRepository;
@@ -104,6 +108,7 @@ class OrderCreationHandler
         $this->recurringOrderCreation = $recurringOrderCreation;
         $this->subscriptionOrder = $subscriptionOrder;
         $this->paymentFeeProvider = $paymentFeeProvider;
+        $this->logger = $logger;
     }
 
     /**
@@ -286,6 +291,15 @@ class OrderCreationHandler
             return;
         }
 
-        $this->recurringOrderCreation->handle($order, $method);
+        try {
+            $this->recurringOrderCreation->handle($order, $method);
+        } catch (\Throwable $exception) {
+            $this->logger->error(
+                'Failed to create recurring order',
+                [
+                    'Exception message' => $exception->getMessage(),
+                ]
+            );
+        }
     }
 }
