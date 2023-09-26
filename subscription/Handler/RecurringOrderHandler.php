@@ -14,8 +14,9 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\SubscriptionStatus;
 use Mollie\Config\Config;
 use Mollie\Errors\Http\HttpStatusCode;
-use Mollie\Exception\OrderCreationException;
 use Mollie\Exception\TransactionException;
+use Mollie\Logger\PrestaLoggerInterface;
+use Mollie\Repository\CarrierRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MailService;
 use Mollie\Service\MollieOrderCreationService;
@@ -61,6 +62,10 @@ class RecurringOrderHandler
     private $configuration;
     /** @var RecurringOrdersProductRepositoryInterface */
     private $recurringOrdersProductRepository;
+    /** @var CarrierRepositoryInterface */
+    private $carrierRepository;
+    /** @var PrestaLoggerInterface */
+    private $logger;
 
     public function __construct(
         SubscriptionApi $subscriptionApi,
@@ -75,7 +80,9 @@ class RecurringOrderHandler
         Shop $shop,
         MailService $mailService,
         ConfigurationAdapter $configuration,
-        RecurringOrdersProductRepositoryInterface $recurringOrdersProductRepository
+        RecurringOrdersProductRepositoryInterface $recurringOrdersProductRepository,
+        CarrierRepositoryInterface $carrierRepository,
+        PrestaLoggerInterface $logger
     ) {
         $this->subscriptionApi = $subscriptionApi;
         $this->subscriptionDataFactory = $subscriptionDataFactory;
@@ -90,6 +97,8 @@ class RecurringOrderHandler
         $this->mailService = $mailService;
         $this->configuration = $configuration;
         $this->recurringOrdersProductRepository = $recurringOrdersProductRepository;
+        $this->carrierRepository = $carrierRepository;
+        $this->logger = $logger;
     }
 
     public function handle(string $transactionId): string
@@ -130,10 +139,7 @@ class RecurringOrderHandler
     }
 
     /**
-     * @throws CouldNotHandleRecurringOrder
-     * @throws OrderCreationException
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @throws \Throwable
      */
     private function createSubscription(Payment $transaction, MolRecurringOrder $recurringOrder, MollieSubscription $subscription): void
     {
@@ -145,10 +151,6 @@ class RecurringOrderHandler
         if (!$newCart || !$newCart['success']) {
             return;
         }
-
-        $paymentMethod = $this->paymentMethodService->getPaymentMethod($transaction);
-
-        $methodName = $paymentMethod->method_name ?: Config::$methods[$transaction->method];
 
         /** @var Cart $newCart */
         $newCart = $newCart['cart'];
@@ -182,24 +184,66 @@ class RecurringOrderHandler
 
         $recurringOrderProduct = new MolRecurringOrdersProduct($recurringOrder->id_mol_recurring_orders_product);
 
+        $subscriptionCarrierId = (int) $this->configuration->get(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID);
+
+        /** @var \Carrier|null $carrier */
+        $carrier = $this->carrierRepository->findOneBy([
+            'id_carrier' => $subscriptionCarrierId,
+            'active' => 1,
+            'deleted' => 0,
+        ]);
+
+        if (!$carrier) {
+            throw CouldNotHandleRecurringOrder::failedToFindSelectedCarrier();
+        }
+
+        $newCart->setDeliveryOption(
+            [(int) $newCart->id_address_delivery => sprintf('%d,', (int) $carrier->id)]
+        );
+
+        $newCart->update();
+
+        if (sprintf('%d,', (int) $carrier->id) !==
+            $newCart->getDeliveryOption(null, false, false)[$newCart->id_address_delivery]
+        ) {
+            throw CouldNotHandleRecurringOrder::failedToApplySelectedCarrier();
+        }
+
         $specificPrice = $this->createSpecificPrice($recurringOrderProduct, $recurringOrder);
 
-        $this->mollie->validateOrder(
-            (int) $newCart->id,
-            (int) $this->configuration->get(Config::MOLLIE_STATUS_AWAITING),
-            (float) $subscription->amount->value,
-            sprintf('subscription/%s', $methodName),
-            null,
-            ['transaction_id' => $transaction->id],
-            null,
-            false,
-            $newCart->secure_key
-        );
+        $paymentMethod = $this->paymentMethodService->getPaymentMethod($transaction);
+
+        $methodName = $paymentMethod->method_name ?: Config::$methods[$transaction->method];
+
+        try {
+            $this->mollie->validateOrder(
+                (int) $newCart->id,
+                (int) $this->configuration->get(Config::MOLLIE_STATUS_AWAITING),
+                (float) $subscription->amount->value,
+                sprintf('subscription/%s', $methodName),
+                null,
+                ['transaction_id' => $transaction->id],
+                null,
+                false,
+                $newCart->secure_key
+            );
+        } catch (\Throwable $exception) {
+            $specificPrice->delete();
+
+            throw $exception;
+        }
+
+        $specificPrice->delete();
 
         $orderId = (int) Order::getIdByCartId((int) $newCart->id);
         $order = new Order($orderId);
 
-        $specificPrice->delete();
+        if ((float) $order->total_paid_tax_incl !== (float) $subscription->amount->value) {
+            $this->logger->error('Paid price is not equal to the order\'s total', [
+                'Paid price' => (float) $subscription->amount->value,
+                'Order price' => (float) $order->total_paid_tax_incl,
+            ]);
+        }
 
         $this->mollieOrderCreationService->createMolliePayment($transaction, (int) $newCart->id, $order->reference, (int) $orderId, PaymentStatus::STATUS_PAID);
 

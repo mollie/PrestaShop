@@ -2,25 +2,21 @@
 
 namespace Mollie\Subscription\Exception;
 
-use Throwable;
-
 class CouldNotHandleRecurringOrder extends MollieSubscriptionException
 {
-    public static function failedToCreateOrderPaymentFee(Throwable $exception): CouldNotHandleRecurringOrder
+    public static function failedToFindSelectedCarrier(): CouldNotHandleRecurringOrder
     {
         return new self(
-            'Failed to create order payment fee',
-            ExceptionCode::ORDER_FAILED_TO_CREATE_ORDER_PAYMENT_FEE,
-            $exception
+            'Failed to find selected carrier',
+            ExceptionCode::RECURRING_ORDER_FAILED_TO_FIND_SELECTED_CARRIER
         );
     }
 
-    public static function failedToUpdateOrderTotalWithPaymentFee(Throwable $exception): CouldNotHandleRecurringOrder
+    public static function failedToApplySelectedCarrier(): CouldNotHandleRecurringOrder
     {
         return new self(
-            'Failed to update order total with payment fee.',
-            ExceptionCode::ORDER_FAILED_TO_UPDATE_ORDER_TOTAL_WITH_PAYMENT_FEE,
-            $exception
+            'Failed to apply selected carrier',
+            ExceptionCode::RECURRING_ORDER_FAILED_TO_APPLY_SELECTED_CARRIER
         );
     }
 }
