@@ -130,4 +130,18 @@ class Context
     {
         return (int) PrestashopContext::getContext()->shop->id_shop_group;
     }
+
+    public function formatPrice(float $price, string $isoCode): string
+    {
+        $locale = PrestashopContext::getContext()->getCurrentLocale();
+
+        if (!$locale) {
+            return (string) $price;
+        }
+
+        return $locale->formatPrice(
+            $price,
+            $isoCode
+        );
+    }
 }
