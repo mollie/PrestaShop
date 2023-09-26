@@ -27,11 +27,12 @@ class SubscriptionFAQController extends AbstractSymfonyController
             'carrierInformation1' => $this->module->l('Make sure to select default carrier for recurring orders in advanced settings.', self::FILE_NAME),
             'carrierInformation2' => $this->module->l('Carrier should cover all supported shop regions.', self::FILE_NAME),
             'carrierInformation3' => $this->module->l('Carrier cannot be changed after first subscription order is placed.', self::FILE_NAME),
-            // TODO add text to not use gift wrapping for subscription products
             'carrierInformation4' => $this->module->l('Selected carrier pricing/weight settings or carrier selection in Mollie should not change. If they do, subscription orders must be cancelled and carrier re-selected in module settings.', self::FILE_NAME),
             'cartRuleTitle' => $this->module->l('Cart rules', self::FILE_NAME),
             'cartRule' => $this->module->l('A customer can\'t add subscription items with different recurring periods to the same shopping cart.', self::FILE_NAME),
             'cartRule2' => $this->module->l('Do not use cart rules with subscription products as this will cause errors due to incorrect pricing.', self::FILE_NAME),
+            'giftWrappingTitle' => $this->module->l('Gift wrapping', self::FILE_NAME),
+            'giftWrapping1' => $this->module->l('Gift wrapping feature is not supported for subscription orders.', self::FILE_NAME),
             'subscriptionOrderLogicTitle' => $this->module->l('Recurring order creation', self::FILE_NAME),
             'recurringOrderCreation' => $this->module->l('Mollie for Prestashop automatically creates a new order when the previous order is paid for.', self::FILE_NAME),
             'recurringOrderPrice' => $this->module->l('Recurring orders always use the product price that was specified when the related subscription was created.', self::FILE_NAME),
