@@ -298,6 +298,7 @@ class OrderCreationHandler
                 'Failed to create recurring order',
                 [
                     'Exception message' => $exception->getMessage(),
+                    'Exception code' => $exception->getCode(),
                 ]
             );
         }

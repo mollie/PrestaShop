@@ -4,16 +4,16 @@ namespace Mollie\Tests\Integration\Subscription\Provider;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
-use Mollie\Subscription\Exception\CouldNotProvideCarrierDeliveryPrice;
+use Mollie\Subscription\Exception\CouldNotProvideSubscriptionCarrierDeliveryPrice;
 use Mollie\Subscription\Exception\ExceptionCode;
-use Mollie\Subscription\Provider\CarrierDeliveryPriceProvider;
+use Mollie\Subscription\Provider\SubscriptionCarrierDeliveryPriceProvider;
 use Mollie\Tests\Integration\BaseTestCase;
 use Mollie\Tests\Integration\Factory\AddressFactory;
 use Mollie\Tests\Integration\Factory\CarrierFactory;
 use Mollie\Tests\Integration\Factory\CartFactory;
 use Mollie\Tests\Integration\Factory\ProductFactory;
 
-class CarrierDeliveryPriceProviderTest extends BaseTestCase
+class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
 {
     public function setUp(): void
     {
@@ -67,10 +67,10 @@ class CarrierDeliveryPriceProviderTest extends BaseTestCase
         $cart->updateQty(2, $product1->id);
         $cart->updateQty(3, $product2->id);
 
-        /** @var CarrierDeliveryPriceProvider $carrierDeliveryPriceProvider */
-        $carrierDeliveryPriceProvider = $this->getService(CarrierDeliveryPriceProvider::class);
+        /** @var SubscriptionCarrierDeliveryPriceProvider $subscriptionCarrierDeliveryPriceProvider */
+        $subscriptionCarrierDeliveryPriceProvider = $this->getService(SubscriptionCarrierDeliveryPriceProvider::class);
 
-        $result = $carrierDeliveryPriceProvider->getPrice(
+        $result = $subscriptionCarrierDeliveryPriceProvider->getPrice(
             $address->id,
             $cart->id,
             $cart->id_customer,
@@ -124,13 +124,13 @@ class CarrierDeliveryPriceProviderTest extends BaseTestCase
         $cart->updateQty(2, $product1->id);
         $cart->updateQty(3, $product2->id);
 
-        $this->expectException(CouldNotProvideCarrierDeliveryPrice::class);
-        $this->expectExceptionCode(ExceptionCode::ORDER_FAILED_TO_APPLY_SELECTED_CARRIER_FOR_SUBSCRIPTION_ORDER);
+        $this->expectException(CouldNotProvideSubscriptionCarrierDeliveryPrice::class);
+        $this->expectExceptionCode(ExceptionCode::ORDER_FAILED_TO_APPLY_SELECTED_CARRIER);
 
-        /** @var CarrierDeliveryPriceProvider $carrierDeliveryPriceProvider */
-        $carrierDeliveryPriceProvider = $this->getService(CarrierDeliveryPriceProvider::class);
+        /** @var SubscriptionCarrierDeliveryPriceProvider $subscriptionCarrierDeliveryPriceProvider */
+        $subscriptionCarrierDeliveryPriceProvider = $this->getService(SubscriptionCarrierDeliveryPriceProvider::class);
 
-        $carrierDeliveryPriceProvider->getPrice(
+        $subscriptionCarrierDeliveryPriceProvider->getPrice(
             $address->id,
             $cart->id,
             $cart->id_customer,

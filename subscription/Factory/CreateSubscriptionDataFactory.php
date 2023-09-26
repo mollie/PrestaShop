@@ -10,9 +10,9 @@ use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Subscription\DTO\CreateSubscriptionData as SubscriptionDataDTO;
 use Mollie\Subscription\DTO\Object\Amount;
-use Mollie\Subscription\Exception\CouldNotProvideCarrierDeliveryPrice;
+use Mollie\Subscription\Exception\CouldNotProvideSubscriptionCarrierDeliveryPrice;
 use Mollie\Subscription\Exception\SubscriptionIntervalException;
-use Mollie\Subscription\Provider\CarrierDeliveryPriceProvider;
+use Mollie\Subscription\Provider\SubscriptionCarrierDeliveryPriceProvider;
 use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
 use Mollie\Subscription\Repository\CombinationRepository;
@@ -43,8 +43,8 @@ class CreateSubscriptionDataFactory
     private $module;
     /** @var Context */
     private $context;
-    /** @var CarrierDeliveryPriceProvider */
-    private $carrierDeliveryPriceProvider;
+    /** @var SubscriptionCarrierDeliveryPriceProvider */
+    private $subscriptionCarrierDeliveryPriceProvider;
 
     public function __construct(
         MolCustomerRepository $customerRepository,
@@ -55,7 +55,7 @@ class CreateSubscriptionDataFactory
         PaymentMethodRepositoryInterface $methodRepository,
         Mollie $module,
         Context $context,
-        CarrierDeliveryPriceProvider $carrierDeliveryPriceProvider
+        SubscriptionCarrierDeliveryPriceProvider $subscriptionCarrierDeliveryPriceProvider
     ) {
         $this->customerRepository = $customerRepository;
         $this->subscriptionInterval = $subscriptionInterval;
@@ -65,12 +65,12 @@ class CreateSubscriptionDataFactory
         $this->methodRepository = $methodRepository;
         $this->module = $module;
         $this->context = $context;
-        $this->carrierDeliveryPriceProvider = $carrierDeliveryPriceProvider;
+        $this->subscriptionCarrierDeliveryPriceProvider = $subscriptionCarrierDeliveryPriceProvider;
     }
 
     /**
      * @throws \PrestaShopException
-     * @throws CouldNotProvideCarrierDeliveryPrice
+     * @throws CouldNotProvideSubscriptionCarrierDeliveryPrice
      * @throws SubscriptionIntervalException
      */
     public function build(Order $order, array $subscriptionProduct): SubscriptionDataDTO
@@ -87,13 +87,13 @@ class CreateSubscriptionDataFactory
         $description = $this->subscriptionDescription->getSubscriptionDescription($order);
 
         try {
-            $deliveryPrice = $this->carrierDeliveryPriceProvider->getPrice(
+            $deliveryPrice = $this->subscriptionCarrierDeliveryPriceProvider->getPrice(
                 (int) $order->id_address_delivery,
                 (int) $order->id_cart,
                 (int) $order->id_customer,
                 $subscriptionProduct
             );
-        } catch (CouldNotProvideCarrierDeliveryPrice $exception) {
+        } catch (CouldNotProvideSubscriptionCarrierDeliveryPrice $exception) {
             // TODO throw generic error when new logger will be implemented
             throw $exception;
         }
