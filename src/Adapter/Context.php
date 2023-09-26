@@ -135,6 +135,7 @@ class Context
     {
         $locale = PrestashopContext::getContext()->getCurrentLocale();
 
+        /* @phpstan-ignore-next-line */
         if (!$locale) {
             return (string) $price;
         }

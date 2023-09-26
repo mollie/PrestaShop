@@ -9,7 +9,7 @@
         </div>
         <div class="col-12 col-lg-6">
           <a href="{$order.link}"><p><b>{l s='Product:' mod='mollie'}</b> {$order.name}</p></a>
-          <p><b></b> {$order.quantity}</p>
+          <p><b>{l s='Quantity:' mod='mollie'}</b> {$order.quantity}</p>
           <p><b>{l s='Unit price:' mod='mollie'}</b> {$order.unit_price}</p>
         </div>
       </div>

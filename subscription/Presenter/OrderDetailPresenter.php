@@ -85,9 +85,8 @@ class OrderDetailPresenter
             throw CouldNotPresentOrderDetail::failedToFindCurrency();
         }
 
-        $linkRewrite = is_array($product->link_rewrite) && isset($product->link_rewrite[$order->id_lang])
-            ? $product->link_rewrite[$order->id_lang]
-            : $product->link_rewrite;
+        /* @phpstan-ignore-next-line */
+        $linkRewrite = $product->link_rewrite[$order->id_lang] ?? $product->link_rewrite;
 
         $image = $this->productRepository->getCombinationImageById((int) $recurringProduct->id_product_attribute, (int) $order->id_lang);
 
