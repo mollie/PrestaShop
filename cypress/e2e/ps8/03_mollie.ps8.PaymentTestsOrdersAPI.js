@@ -46,14 +46,14 @@ const login = (MollieBOFOLoggingIn) => {
   cy.get('#history-link > .link-item').click()
   })
   }
-// //Checking the console for errors
-// let windowConsoleError;
-// Cypress.on('window:before:load', (win) => {
-//   windowConsoleError = cy.spy(win.console, 'error');
-// })
-// afterEach(() => {
-//   expect(windowConsoleError).to.not.be.called;
-// })
+//Checking the console for errors
+let windowConsoleError;
+Cypress.on('window:before:load', (win) => {
+  windowConsoleError = cy.spy(win.console, 'error');
+})
+afterEach(() => {
+  expect(windowConsoleError).to.not.be.called;
+})
 describe('PS8 Tests Suite', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
