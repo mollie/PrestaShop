@@ -27,7 +27,7 @@ describe('PS1785 Subscriptions Test Suit', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it('C176305 Check if Subscription options added in Product BO', () => {
+it('C176305: Check if Subscription options added in Product BO', () => {
   cy.visit('/admin1/')
   cy.get('#subtab-AdminCatalog > :nth-child(1)').click()
   cy.get('#subtab-AdminProducts > .link').click()
@@ -45,7 +45,7 @@ it('C176305 Check if Subscription options added in Product BO', () => {
   cy.get('#submit').click()
   cy.get('.growl-message').contains('Settings updated.')
 })
-it('Check if Subscription options are in Product Page FO and then register the Subscription product by purchasing it', () => {
+it('C1672516: Check if Subscription options are in Product Page FO and then register the Subscription product by purchasing it', () => {
   cy.visit('/de/')
   cy.get('[data-id-product="8"]').click()
   cy.get('[aria-label="Subscription"]').should('be.visible') //asserting if there is a Subscription dropdown in product page
@@ -64,7 +64,7 @@ it('Check if Subscription options are in Product Page FO and then register the S
   cy.get('[value="paid"]').click()
   cy.get('[class="button form__button"]').click()
 });
-it('Check if Subscription options are implemented in My Account FO', () => {
+it('C1672517: Check if Subscription options are implemented in My Account FO', () => {
   cy.visit('/en/')
   cy.get('[class="account"]').click()
   cy.contains('Subscriptions').click()
