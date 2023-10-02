@@ -24,6 +24,7 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
 use Mollie\Provider\CustomLogoProviderInterface;
+use Mollie\Repository\CarrierRepositoryInterface;
 use Mollie\Repository\TaxRulesGroupRepositoryInterface;
 use Mollie\Service\ApiService;
 use Mollie\Service\ConfigFieldService;
@@ -90,6 +91,8 @@ class FormBuilder
 
     /** @var Context */
     private $context;
+    /** @var CarrierRepositoryInterface */
+    private $carrierRepository;
 
     public function __construct(
         Mollie $module,
@@ -103,7 +106,8 @@ class FormBuilder
         CustomLogoProviderInterface $creditCardLogoProvider,
         ConfigurationAdapter $configuration,
         TaxRulesGroupRepositoryInterface $taxRulesGroupRepository,
-        Context $context
+        Context $context,
+        CarrierRepositoryInterface $carrierRepository
     ) {
         $this->module = $module;
         $this->apiService = $apiService;
@@ -117,6 +121,7 @@ class FormBuilder
         $this->configuration = $configuration;
         $this->taxRulesGroupRepository = $taxRulesGroupRepository;
         $this->context = $context;
+        $this->carrierRepository = $carrierRepository;
     }
 
     public function buildSettingsForm()
@@ -527,6 +532,8 @@ class FormBuilder
             ],
         ];
 
+        $input = array_merge($input, $this->getShippingOptions($advancedSettings));
+
         $messageStatus = $this->module->l('Status for %s payments', self::FILE_NAME);
         $descriptionStatus = $this->module->l('`%s` payments get `%s` status', self::FILE_NAME);
         $messageMail = $this->module->l('Send email when %s', self::FILE_NAME);
@@ -820,5 +827,55 @@ class FormBuilder
         }
 
         return $tabs;
+    }
+
+    private function getShippingOptions(string $tab): array
+    {
+        /** @var \Carrier[] $carriers */
+        $carriers = $this->carrierRepository->findAllBy([
+            'active' => 1,
+            'deleted' => 0,
+        ]);
+
+        $mappedCarriers = [];
+
+        $mappedCarriers[] = [
+            'id' => 0,
+            'name' => $this->module->l('Not selected', self::FILE_NAME),
+        ];
+
+        foreach ($carriers as $carrier) {
+            $mappedCarrier = [];
+
+            $mappedCarrier['id'] = $carrier->id;
+            $mappedCarrier['name'] = $carrier->name;
+
+            $mappedCarriers[] = $mappedCarrier;
+        }
+
+        $header = [
+            'type' => 'mollie-h2',
+            'name' => '',
+            'tab' => $tab,
+            'title' => $this->module->l('Subscriptions', self::FILE_NAME),
+        ];
+
+        $options = [
+            'type' => 'select',
+            'label' => $this->module->l('Select shipping option to use in subscription orders', self::FILE_NAME),
+            'desc' => $this->module->l('WARNING: do not change selection after getting first subscription order.', self::FILE_NAME),
+            'tab' => $tab,
+            'name' => Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID,
+            'options' => [
+                'query' => $mappedCarriers,
+                'id' => 'id',
+                'name' => 'name',
+            ],
+        ];
+
+        return [
+            $header,
+            $options,
+        ];
     }
 }

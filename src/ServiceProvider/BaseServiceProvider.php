@@ -16,6 +16,8 @@ use Mollie\Handler\Certificate\ApplePayDirectCertificateHandler;
 use Mollie\Handler\Certificate\CertificateHandlerInterface;
 use Mollie\Handler\PaymentOption\PaymentOptionHandler;
 use Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface;
+use Mollie\Handler\RetryHandler;
+use Mollie\Handler\RetryHandlerInterface;
 use Mollie\Handler\Settings\PaymentMethodPositionHandler;
 use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Handler\Shipment\ShipmentSenderHandler;
@@ -45,6 +47,8 @@ use Mollie\Repository\AddressFormatRepository;
 use Mollie\Repository\AddressFormatRepositoryInterface;
 use Mollie\Repository\AddressRepository;
 use Mollie\Repository\AddressRepositoryInterface;
+use Mollie\Repository\CarrierRepository;
+use Mollie\Repository\CarrierRepositoryInterface;
 use Mollie\Repository\CartRepository;
 use Mollie\Repository\CartRepositoryInterface;
 use Mollie\Repository\CartRuleRepository;
@@ -127,6 +131,8 @@ final class BaseServiceProvider
         /* Utility */
         $this->addService($container, ClockInterface::class, $container->get(Clock::class));
 
+        $this->addService($container, RetryHandlerInterface::class, $container->get(RetryHandler::class));
+
         $this->addService($container, PaymentMethodRepositoryInterface::class, $container->get(PaymentMethodRepository::class));
         $this->addService($container, GenderRepositoryInterface::class, $container->get(GenderRepository::class));
         $this->addService($container, MolCustomerRepository::class, MolCustomerRepository::class)
@@ -179,6 +185,7 @@ final class BaseServiceProvider
         $this->addService($container, CurrencyRepositoryInterface::class, $container->get(CurrencyRepository::class));
         $this->addService($container, CustomerRepositoryInterface::class, $container->get(CustomerRepository::class));
         $this->addService($container, MolOrderPaymentFeeRepositoryInterface::class, $container->get(MolOrderPaymentFeeRepository::class));
+        $this->addService($container, CarrierRepositoryInterface::class, $container->get(CarrierRepository::class));
         $this->addService($container, CartRuleQuantityChangeHandlerInterface::class, $container->get(CartRuleQuantityChangeHandler::class));
 
         $this->addService($container, RecurringOrderRepositoryInterface::class, RecurringOrderRepository::class)
