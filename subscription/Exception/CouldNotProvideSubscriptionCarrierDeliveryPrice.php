@@ -4,7 +4,7 @@ namespace Mollie\Subscription\Exception;
 
 class CouldNotProvideSubscriptionCarrierDeliveryPrice extends MollieSubscriptionException
 {
-    public static function failedToFindSelectedCarrier(): CouldNotProvideSubscriptionCarrierDeliveryPrice
+    public static function failedToFindSelectedCarrier(): self
     {
         return new self(
             'Failed to find selected carrier',
@@ -12,7 +12,7 @@ class CouldNotProvideSubscriptionCarrierDeliveryPrice extends MollieSubscription
         );
     }
 
-    public static function failedToFindOrderCart(): CouldNotProvideSubscriptionCarrierDeliveryPrice
+    public static function failedToFindOrderCart(): self
     {
         return new self(
             'Failed to find order cart',
@@ -20,7 +20,7 @@ class CouldNotProvideSubscriptionCarrierDeliveryPrice extends MollieSubscription
         );
     }
 
-    public static function failedToFindOrderCustomer(): CouldNotProvideSubscriptionCarrierDeliveryPrice
+    public static function failedToFindOrderCustomer(): self
     {
         return new self(
             'Failed to find order customer',
@@ -28,7 +28,7 @@ class CouldNotProvideSubscriptionCarrierDeliveryPrice extends MollieSubscription
         );
     }
 
-    public static function failedToApplySelectedCarrier(): CouldNotProvideSubscriptionCarrierDeliveryPrice
+    public static function failedToApplySelectedCarrier(): self
     {
         return new self(
             'Failed to apply selected carrier',
@@ -36,7 +36,7 @@ class CouldNotProvideSubscriptionCarrierDeliveryPrice extends MollieSubscription
         );
     }
 
-    public static function failedToFindOrderDeliveryAddress(): CouldNotProvideSubscriptionCarrierDeliveryPrice
+    public static function failedToFindOrderDeliveryAddress(): self
     {
         return new self(
             'Failed to find order delivery address',
@@ -44,7 +44,7 @@ class CouldNotProvideSubscriptionCarrierDeliveryPrice extends MollieSubscription
         );
     }
 
-    public static function failedToFindOrderDeliveryCountry(): CouldNotProvideSubscriptionCarrierDeliveryPrice
+    public static function failedToFindOrderDeliveryCountry(): self
     {
         return new self(
             'Failed to find order delivery country',
@@ -52,7 +52,7 @@ class CouldNotProvideSubscriptionCarrierDeliveryPrice extends MollieSubscription
         );
     }
 
-    public static function failedToGetSelectedCarrierPrice(): CouldNotProvideSubscriptionCarrierDeliveryPrice
+    public static function failedToGetSelectedCarrierPrice(): self
     {
         return new self(
             'Failed to get selected carrier price',

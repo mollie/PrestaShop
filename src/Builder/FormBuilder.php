@@ -845,12 +845,10 @@ class FormBuilder
         ];
 
         foreach ($carriers as $carrier) {
-            $mappedCarrier = [];
-
-            $mappedCarrier['id'] = $carrier->id;
-            $mappedCarrier['name'] = $carrier->name;
-
-            $mappedCarriers[] = $mappedCarrier;
+            $mappedCarriers[] = [
+                'id' => $carrier->id,
+                'name' => $carrier->name,
+            ];
         }
 
         $header = [

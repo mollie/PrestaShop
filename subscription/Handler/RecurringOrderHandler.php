@@ -203,9 +203,9 @@ class RecurringOrderHandler
 
         $newCart->update();
 
-        if (sprintf('%d,', (int) $carrier->id) !==
-            $newCart->getDeliveryOption(null, false, false)[$newCart->id_address_delivery]
-        ) {
+        $cartCarrier = (int) ($newCart->getDeliveryOption(null, false, false)[$newCart->id_address_delivery] ?? 0);
+
+        if ((int) $carrier->id !== $cartCarrier) {
             throw CouldNotHandleRecurringOrder::failedToApplySelectedCarrier();
         }
 

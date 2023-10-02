@@ -4,7 +4,7 @@ namespace Mollie\Subscription\Exception;
 
 class CouldNotPresentOrderDetail extends MollieSubscriptionException
 {
-    public static function failedToFindOrder(): CouldNotPresentOrderDetail
+    public static function failedToFindOrder(): self
     {
         return new self(
             'Failed to find order',
@@ -12,7 +12,7 @@ class CouldNotPresentOrderDetail extends MollieSubscriptionException
         );
     }
 
-    public static function failedToFindOrderDetail(): CouldNotPresentOrderDetail
+    public static function failedToFindOrderDetail(): self
     {
         return new self(
             'Failed to find order detail',
@@ -20,7 +20,7 @@ class CouldNotPresentOrderDetail extends MollieSubscriptionException
         );
     }
 
-    public static function failedToFindProduct(): CouldNotPresentOrderDetail
+    public static function failedToFindProduct(): self
     {
         return new self(
             'Failed to find product',
@@ -28,7 +28,7 @@ class CouldNotPresentOrderDetail extends MollieSubscriptionException
         );
     }
 
-    public static function failedToFindCurrency(): CouldNotPresentOrderDetail
+    public static function failedToFindCurrency(): self
     {
         return new self(
             'Failed to find currency',

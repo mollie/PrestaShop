@@ -4,7 +4,7 @@ namespace Mollie\Subscription\Exception;
 
 class CouldNotHandleRecurringOrder extends MollieSubscriptionException
 {
-    public static function failedToFindSelectedCarrier(): CouldNotHandleRecurringOrder
+    public static function failedToFindSelectedCarrier(): self
     {
         return new self(
             'Failed to find selected carrier',
@@ -12,7 +12,7 @@ class CouldNotHandleRecurringOrder extends MollieSubscriptionException
         );
     }
 
-    public static function failedToApplySelectedCarrier(): CouldNotHandleRecurringOrder
+    public static function failedToApplySelectedCarrier(): self
     {
         return new self(
             'Failed to apply selected carrier',
