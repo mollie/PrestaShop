@@ -9,8 +9,8 @@ use Mollie\Adapter\Language;
 use Mollie\Subscription\Api\MethodApi;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
-use Mollie\Utility\NumberUtility;
 use Order;
+use PrestaShop\PrestaShop\Adapter\Presenter\Order\OrderPresenter;
 use Product;
 
 class RecurringOrderPresenter
@@ -23,23 +23,26 @@ class RecurringOrderPresenter
     private $language;
     /** @var MethodApi */
     private $methodApi;
-    /** @var OrderPresenter */
-    private $orderPresenter;
+    /** @var OrderDetailPresenter */
+    private $orderDetailPresenter;
 
     public function __construct(
         RecurringOrderRepositoryInterface $recurringOrderRepository,
         RecurringOrdersProductRepositoryInterface $recurringOrdersProductRepository,
         Language $language,
         MethodApi $methodApi,
-        OrderPresenter $orderPresenter
+        OrderDetailPresenter $orderDetailPresenter
     ) {
         $this->recurringOrderRepository = $recurringOrderRepository;
         $this->recurringOrdersProductRepository = $recurringOrdersProductRepository;
         $this->language = $language;
         $this->methodApi = $methodApi;
-        $this->orderPresenter = $orderPresenter;
+        $this->orderDetailPresenter = $orderDetailPresenter;
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function present(int $recurringOrderId): array
     {
         $recurringOrder = $this->recurringOrderRepository->findOneBy(['id_mol_recurring_order' => $recurringOrderId]);
@@ -60,13 +63,10 @@ class RecurringOrderPresenter
         $recurringOrderData['recurring_order'] = $recurringOrder;
         $recurringOrderData['recurring_product'] = $recurringProduct;
         $recurringOrderData['product'] = $product;
-        $recurringOrderData['order'] = $this->orderPresenter->present(
-            $order,
-            (int) $recurringProduct->id_product_attribute,
-            NumberUtility::toPrecision(
-                (float) $recurringOrder->total_tax_incl,
-                NumberUtility::DECIMAL_PRECISION
-            )
+        $recurringOrderData['order'] = (new OrderPresenter())->present($order);
+        $recurringOrderData['order_detail'] = $this->orderDetailPresenter->present(
+            $recurringOrder,
+            $recurringProduct
         );
         $recurringOrderData['payment_methods'] = $this->methodApi->getMethodsForFirstPayment($this->language->getContextLanguage()->locale, $currency->iso_code);
 

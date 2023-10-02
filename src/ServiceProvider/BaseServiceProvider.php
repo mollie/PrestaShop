@@ -70,6 +70,8 @@ use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Repository\PendingOrderCartRuleRepository;
 use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
+use Mollie\Repository\ProductRepository;
+use Mollie\Repository\ProductRepositoryInterface;
 use Mollie\Repository\TaxRepository;
 use Mollie\Repository\TaxRepositoryInterface;
 use Mollie\Repository\TaxRuleRepository;
@@ -98,6 +100,8 @@ use Mollie\Subscription\Install\Installer;
 use Mollie\Subscription\Install\InstallerInterface;
 use Mollie\Subscription\Logger\Logger;
 use Mollie\Subscription\Logger\LoggerInterface;
+use Mollie\Subscription\Repository\OrderDetailRepository;
+use Mollie\Subscription\Repository\OrderDetailRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrderRepository;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepository;
@@ -135,6 +139,8 @@ final class BaseServiceProvider
 
         $this->addService($container, RetryHandlerInterface::class, $container->get(RetryHandler::class));
 
+        $this->addService($container, ProductRepositoryInterface::class, $container->get(ProductRepository::class));
+        $this->addService($container, OrderDetailRepositoryInterface::class, $container->get(OrderDetailRepository::class));
         $this->addService($container, CountryRepositoryInterface::class, $container->get(CountryRepository::class));
         $this->addService($container, PaymentMethodRepositoryInterface::class, $container->get(PaymentMethodRepository::class));
         $this->addService($container, GenderRepositoryInterface::class, $container->get(GenderRepository::class));

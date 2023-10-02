@@ -13,6 +13,10 @@ class ExceptionCode
     public const ORDER_FAILED_TO_FIND_ORDER_DELIVERY_ADDRESS = 1005;
     public const ORDER_FAILED_TO_FIND_ORDER_DELIVERY_COUNTRY = 1006;
     public const ORDER_FAILED_TO_GET_SELECTED_CARRIER_PRICE = 1007;
+    public const ORDER_FAILED_TO_FIND_ORDER = 1008;
+    public const ORDER_FAILED_TO_FIND_ORDER_DETAIL = 1009;
+    public const ORDER_FAILED_TO_FIND_PRODUCT = 1010;
+    public const ORDER_FAILED_TO_FIND_CURRENCY = 1011;
 
     //Cart error codes starts from 2000
 
