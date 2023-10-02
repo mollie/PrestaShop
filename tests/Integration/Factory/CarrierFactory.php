@@ -37,6 +37,10 @@ class CarrierFactory implements FactoryInterface
         $prices = [];
 
         foreach ($zones as $zone) {
+            if (in_array($zone['id_zone'], $data['id_zones_to_delete'] ?? [], false)) {
+                continue;
+            }
+
             $carrier->addZone($zone['id_zone']);
 
             $prices[] = [
@@ -49,6 +53,10 @@ class CarrierFactory implements FactoryInterface
         }
         // enable all zones
         $carrier->addDeliveryPrice($prices);
+
+        $allGroups = \Group::getGroups(\Context::getContext()->language->id);
+
+        $carrier->setGroups(array_column($allGroups, 'id_group'));
 
         return $carrier;
     }

@@ -2,12 +2,15 @@
 
 namespace Mollie\Repository;
 
-use Address;
-
 class AddressRepository extends AbstractRepository implements AddressRepositoryInterface
 {
     public function __construct()
     {
-        parent::__construct(Address::class);
+        parent::__construct(\Address::class);
+    }
+
+    public function getZoneById(int $id_address_delivery): int
+    {
+        return \Address::getZoneById($id_address_delivery);
     }
 }

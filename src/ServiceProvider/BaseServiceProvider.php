@@ -53,6 +53,8 @@ use Mollie\Repository\CartRepository;
 use Mollie\Repository\CartRepositoryInterface;
 use Mollie\Repository\CartRuleRepository;
 use Mollie\Repository\CartRuleRepositoryInterface;
+use Mollie\Repository\CountryRepository;
+use Mollie\Repository\CountryRepositoryInterface;
 use Mollie\Repository\CurrencyRepository;
 use Mollie\Repository\CurrencyRepositoryInterface;
 use Mollie\Repository\CustomerRepository;
@@ -133,6 +135,7 @@ final class BaseServiceProvider
 
         $this->addService($container, RetryHandlerInterface::class, $container->get(RetryHandler::class));
 
+        $this->addService($container, CountryRepositoryInterface::class, $container->get(CountryRepository::class));
         $this->addService($container, PaymentMethodRepositoryInterface::class, $container->get(PaymentMethodRepository::class));
         $this->addService($container, GenderRepositoryInterface::class, $container->get(GenderRepository::class));
         $this->addService($container, MolCustomerRepository::class, MolCustomerRepository::class)
