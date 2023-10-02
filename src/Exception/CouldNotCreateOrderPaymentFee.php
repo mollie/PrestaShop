@@ -7,7 +7,7 @@ use Mollie\Exception\Code\ExceptionCode;
 
 class CouldNotCreateOrderPaymentFee extends MollieException
 {
-    public static function failedToInsertOrderPaymentFee(Exception $exception): CouldNotCreateOrderPaymentFee
+    public static function failedToInsertOrderPaymentFee(Exception $exception): self
     {
         return new self(
             'Failed to insert order payment fee.',
