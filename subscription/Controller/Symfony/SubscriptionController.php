@@ -33,7 +33,9 @@ class SubscriptionController extends AbstractSymfonyController
         $shop = $this->leagueContainer->getService(Shop::class);
 
         if ($shop->getContext() !== \Shop::CONTEXT_SHOP) {
-            $this->addFlash('error', $this->module->l('Select the shop that you want to configure'));
+            if (!$this->get('session')->getFlashBag()->has('error')) {
+                $this->addFlash('error', $this->module->l('Select the shop that you want to configure'));
+            }
 
             return $this->render('@PrestaShop/Admin/layout.html.twig');
         }
