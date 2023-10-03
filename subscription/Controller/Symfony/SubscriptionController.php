@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Mollie\Subscription\Controller\Symfony;
 
 use Exception;
+use Mollie\Adapter\Shop;
 use Mollie\Subscription\Exception\SubscriptionApiException;
 use Mollie\Subscription\Filters\SubscriptionFilters;
 use Mollie\Subscription\Grid\SubscriptionGridDefinitionFactory;
@@ -28,6 +29,15 @@ class SubscriptionController extends AbstractSymfonyController
      */
     public function indexAction(SubscriptionFilters $filters, Request $request)
     {
+        /** @var Shop $shop */
+        $shop = $this->leagueContainer->getService(Shop::class);
+
+        if ($shop->getContext() !== \Shop::CONTEXT_SHOP) {
+            $this->addFlash('error', $this->module->l('Select the shop that you want to configure'));
+
+            return $this->render('@PrestaShop/Admin/layout.html.twig');
+        }
+
         /** @var GridFactoryInterface $currencyGridFactory */
         $currencyGridFactory = $this->leagueContainer->getService('subscription_grid_factory');
         $currencyGrid = $currencyGridFactory->getGrid($filters);
@@ -71,6 +81,7 @@ class SubscriptionController extends AbstractSymfonyController
     {
         /** @var SubscriptionCancellationHandler $subscriptionCancellationHandler */
         $subscriptionCancellationHandler = $this->leagueContainer->getService(SubscriptionCancellationHandler::class);
+
         try {
             $subscriptionCancellationHandler->handle($subscriptionId);
         } catch (SubscriptionApiException $e) {
