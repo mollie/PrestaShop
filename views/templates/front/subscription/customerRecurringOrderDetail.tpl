@@ -67,9 +67,8 @@
         </div>
     {/block}
 
-    {block name='order_detail'}
-        {include file='customer/_partials/order-detail-no-return.tpl' order=$recurringOrderData.order}
-    {/block}
+    {include file='module:mollie/views/templates/front/subscription/customerRecurringOrderDetailProduct.tpl' order=$recurringOrderData.order_detail}
+
     {if $recurringOrderData.recurring_order->status !== 'canceled'}
 
         {block name='recurring_method'}
