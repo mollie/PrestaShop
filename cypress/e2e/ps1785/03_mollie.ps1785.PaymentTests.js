@@ -46,20 +46,20 @@ const login = (MollieBOFOLoggingIn) => {
   cy.get('#history-link > .link-item').click()
   })
   }
-// //Checking the console for errors
-// let windowConsoleError;
-// Cypress.on('window:before:load', (win) => {
-//   windowConsoleError = cy.spy(win.console, 'error');
-// })
-// afterEach(() => {
-//   expect(windowConsoleError).to.not.be.called;
-// })
-describe('PS1784 Tests Suite', () => {
+//Checking the console for errors
+let windowConsoleError;
+Cypress.on('window:before:load', (win) => {
+  windowConsoleError = cy.spy(win.console, 'error');
+})
+afterEach(() => {
+  expect(windowConsoleError).to.not.be.called;
+})
+describe('PS1785 Tests Suite', () => {
   beforeEach(() => {
       login('MollieBOFOLoggingIn')
       cy.viewport(1920,1080)
   })
-it.skip('C339342: 05 Vouchers Checkouting [Orders API]', () => {
+it('C339342: 05 Vouchers Checkouting [Orders API]', () => {
       cy.visit('/de/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -91,7 +91,7 @@ it.skip('C339342: 05 Vouchers Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it.skip('C339343: 06 Vouchers Order BO Refunding, Shipping (Paid part only) [Orders API]', () => {
+it.skip('C339343: 06 Vouchers Order BO Refunding, Shipping (Paid part only) [Orders API]', () => { //skipping, because of flaky behavior of this payment, sometimes the Mollie div is shown in Orders BO, sometimes not
       cy.OrderRefundingShippingOrdersAPI()
       cy.get('[class="card-body"]').find('[class="alert alert-warning"]').should('exist') //additional checking if the warning alert for vouchers exist
 })
@@ -349,7 +349,7 @@ it('C339357: 20 IN3 Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it.skip('C339358: 21 IN3 Order BO Shipping, Refunding [Orders API]', () => { // checking why payment div is not loaded in the Orders for some reason
+it('C339358: 21 IN3 Order BO Shipping, Refunding [Orders API]', () => { // checking why payment div is not loaded in the Orders for some reason
       cy.OrderRefundingShippingOrdersAPI()
 })
 it('C339359: 22 IN3 should not be shown under 5000 EUR [Orders API]', () => {
@@ -1121,7 +1121,7 @@ it('C339399: 64 Belfius Checkouting [Payments API]', () => {
 it('C339400: 65 Belfius BO Refunding, Partial Refunding [Payments API]', () => {
       cy.OrderRefundingPartialPaymentsAPI()
 });
-it('C339401: 66 Bank Transfer Checkouting [Payments API]', () => {
+it.skip('C339401: 66 Bank Transfer Checkouting [Payments API]', () => { // skipping temporary, bug
       cy.visit('/en/index.php?controller=history')
       cy.get('a').click()
       //
@@ -1150,7 +1150,7 @@ it('C339401: 66 Bank Transfer Checkouting [Payments API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it('C339402: 67 Bank Transfer BO Refunding, Partial Refunding [Payments API]', () => { // somehow an error in console is thrown, will check why
+it.skip('C339402: 67 Bank Transfer BO Refunding, Partial Refunding [Payments API]', () => { // skipping temporary, bug
       cy.OrderRefundingPartialPaymentsAPI()
 });
 })

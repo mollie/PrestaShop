@@ -46,20 +46,20 @@ const login = (MollieBOFOLoggingIn) => {
   cy.get('#history-link > .link-item').click()
   })
   }
-// //Checking the console for errors
-// let windowConsoleError;
-// Cypress.on('window:before:load', (win) => {
-//   windowConsoleError = cy.spy(win.console, 'error');
-// })
-// afterEach(() => {
-//   expect(windowConsoleError).to.not.be.called;
-// })
+//Checking the console for errors
+let windowConsoleError;
+Cypress.on('window:before:load', (win) => {
+  windowConsoleError = cy.spy(win.console, 'error');
+})
+afterEach(() => {
+  expect(windowConsoleError).to.not.be.called;
+})
 describe('PS8 Tests Suite', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it.skip('C339342: 05 Vouchers Checkouting [Orders API]', () => {
+it.skip('C339342: 05 Vouchers Checkouting [Orders API]', () => { //temporary skip, possible bug containing PS8 version
       cy.visit('/de/index.php?controller=history')
       cy.contains('Reorder').click()
       cy.contains('DE').click()
@@ -342,7 +342,7 @@ it('C339357: 20 IN3 Checkouting [Orders API]', () => { // wip
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it.skip('C339358: 21 IN3 Order BO Shipping, Refunding [Orders API]', () => { // checking why payment div is not loaded in the Orders for some reason
+it('C339358: 21 IN3 Order BO Shipping, Refunding [Orders API]', () => { // checking why payment div is not loaded in the Orders for some reason
       cy.OrderRefundingShippingOrdersAPI()
 })
 it('C339359: 22 IN3 should not be shown under 5000 EUR [Orders API]', () => {

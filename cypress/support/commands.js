@@ -465,6 +465,7 @@ Cypress.Commands.add("ConfPaymentsAPI1784", () => {
 Cypress.Commands.add("OrderRefundingShippingOrdersAPI", () => {
     cy.visit('/admin1/index.php?controller=AdminOrders')
     cy.get(':nth-child(1) > .column-payment').click()
+    cy.scrollTo('bottom')
     //Refunding dropdown in React
     cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).click()
     cy.get('[role="button"]').eq(2).click()
@@ -484,6 +485,7 @@ Cypress.Commands.add("OrderRefundingShippingOrdersAPI", () => {
 Cypress.Commands.add("OrderShippingRefundingOrdersAPI", () => {
     cy.visit('/admin1/index.php?controller=AdminOrders')
     cy.get(':nth-child(1) > .column-payment').click()
+    cy.scrollTo('bottom')
     //Shipping button in React
     cy.get('.btn-group > [title=""]').eq(0).click()
     cy.get('[class="swal-button swal-button--confirm"]').click()
@@ -503,6 +505,7 @@ Cypress.Commands.add("OrderShippingRefundingOrdersAPI", () => {
 Cypress.Commands.add("OrderRefundingPartialPaymentsAPI", () => {
     cy.visit('/admin1/index.php?controller=AdminOrders')
     cy.get(':nth-child(1) > .column-payment').click()
+    cy.scrollTo('bottom')
     cy.get('#mollie_order > :nth-child(1)').should('exist')
     cy.get('.form-inline > :nth-child(1) > .btn').should('exist')
     cy.get('.input-group-btn > .btn').should('exist')
@@ -584,7 +587,7 @@ Cypress.Commands.add("OpeningModuleDashboardURL", () => {
   cy.visit('/admin1/index.php?controller=AdminModules&configure=mollie')
   cy.get('.btn-continue').click()
 })
-Cypress.Commands.add("CachingBOFOPS1784", () => {
+Cypress.Commands.add("CachingBOFOPS1785", () => {
 //Caching the BO and FO session
 const login = (MollieBOFOLoggingIn) => {
   cy.session(MollieBOFOLoggingIn,() => {

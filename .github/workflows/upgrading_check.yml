@@ -10,11 +10,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - prestashop: 'PS1784'
-            make: 'make e2eh1784'
+          - prestashop: 'PS1785'
+            make: 'make e2eh1785'
             port: '8002'
-            yml: 'docker-compose.1784.yml'
-            ModuleUpgradeTest: 'make upgrading-module-test-1784'
+            yml: 'docker-compose.1785.yml'
+            ModuleUpgradeTest: 'make upgrading-module-test-1785'
     steps:
       - name: Checkout
         uses: actions/checkout@v3.5.3
