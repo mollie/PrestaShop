@@ -106,6 +106,8 @@ use Mollie\Subscription\Repository\RecurringOrderRepository;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepository;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
+use Mollie\Subscription\Repository\SpecificPriceRepository;
+use Mollie\Subscription\Repository\SpecificPriceRepositoryInterface;
 use Mollie\Subscription\Utility\Clock;
 use Mollie\Subscription\Utility\ClockInterface;
 use Mollie\Utility\Decoder\DecoderInterface;
@@ -139,6 +141,7 @@ final class BaseServiceProvider
 
         $this->addService($container, RetryHandlerInterface::class, $container->get(RetryHandler::class));
 
+        $this->addService($container, SpecificPriceRepositoryInterface::class, $container->get(SpecificPriceRepository::class));
         $this->addService($container, ProductRepositoryInterface::class, $container->get(ProductRepository::class));
         $this->addService($container, OrderDetailRepositoryInterface::class, $container->get(OrderDetailRepository::class));
         $this->addService($container, CountryRepositoryInterface::class, $container->get(CountryRepository::class));

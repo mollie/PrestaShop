@@ -7,7 +7,6 @@ namespace Mollie\Subscription\Handler;
 use Cart;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
-use Mollie\Adapter\Shop;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\Subscription as MollieSubscription;
 use Mollie\Api\Types\PaymentStatus;
@@ -17,12 +16,15 @@ use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\TransactionException;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\CarrierRepositoryInterface;
+use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MailService;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
+use Mollie\Subscription\Action\CreateSpecificPriceAction;
 use Mollie\Subscription\Api\SubscriptionApi;
+use Mollie\Subscription\DTO\CreateSpecificPriceData;
 use Mollie\Subscription\Exception\CouldNotHandleRecurringOrder;
 use Mollie\Subscription\Factory\GetSubscriptionDataFactory;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
@@ -32,7 +34,6 @@ use Mollie\Utility\SecureKeyUtility;
 use MolRecurringOrder;
 use MolRecurringOrdersProduct;
 use Order;
-use SpecificPrice;
 
 class RecurringOrderHandler
 {
@@ -54,8 +55,6 @@ class RecurringOrderHandler
     private $paymentMethodService;
     /** @var ClockInterface */
     private $clock;
-    /** @var Shop */
-    private $shop;
     /** @var MailService */
     private $mailService;
     /** @var ConfigurationAdapter */
@@ -66,6 +65,10 @@ class RecurringOrderHandler
     private $carrierRepository;
     /** @var PrestaLoggerInterface */
     private $logger;
+    /** @var CreateSpecificPriceAction */
+    private $createSpecificPriceAction;
+    /** @var Mollie\Repository\OrderRepositoryInterface */
+    private $orderRepository;
 
     public function __construct(
         SubscriptionApi $subscriptionApi,
@@ -77,12 +80,13 @@ class RecurringOrderHandler
         OrderStatusService $orderStatusService,
         PaymentMethodService $paymentMethodService,
         ClockInterface $clock,
-        Shop $shop,
         MailService $mailService,
         ConfigurationAdapter $configuration,
         RecurringOrdersProductRepositoryInterface $recurringOrdersProductRepository,
         CarrierRepositoryInterface $carrierRepository,
-        PrestaLoggerInterface $logger
+        PrestaLoggerInterface $logger,
+        CreateSpecificPriceAction $createSpecificPriceAction,
+        OrderRepositoryInterface $orderRepository
     ) {
         $this->subscriptionApi = $subscriptionApi;
         $this->subscriptionDataFactory = $subscriptionDataFactory;
@@ -93,12 +97,13 @@ class RecurringOrderHandler
         $this->orderStatusService = $orderStatusService;
         $this->paymentMethodService = $paymentMethodService;
         $this->clock = $clock;
-        $this->shop = $shop;
         $this->mailService = $mailService;
         $this->configuration = $configuration;
         $this->recurringOrdersProductRepository = $recurringOrdersProductRepository;
         $this->carrierRepository = $carrierRepository;
         $this->logger = $logger;
+        $this->createSpecificPriceAction = $createSpecificPriceAction;
+        $this->orderRepository = $orderRepository;
     }
 
     public function handle(string $transactionId): string
@@ -152,8 +157,22 @@ class RecurringOrderHandler
             return;
         }
 
+        /** @var \Order|null $originalOrder */
+        $originalOrder = $this->orderRepository->findOneBy([
+            'id_order' => $recurringOrder->id_order,
+        ]);
+
+        if (!$originalOrder) {
+            return;
+        }
+
         /** @var Cart $newCart */
         $newCart = $newCart['cart'];
+
+        $newCart->id_shop = $originalOrder->id_shop;
+        $newCart->id_shop_group = $originalOrder->id_shop_group;
+
+        $newCart->update();
 
         /** @var MolRecurringOrdersProduct $subscriptionProduct */
         $subscriptionProduct = $this->recurringOrdersProductRepository->findOneBy([
@@ -209,7 +228,18 @@ class RecurringOrderHandler
             throw CouldNotHandleRecurringOrder::failedToApplySelectedCarrier();
         }
 
-        $specificPrice = $this->createSpecificPrice($recurringOrderProduct, $recurringOrder);
+        /**
+         * Creating temporary specific price for recurring order that will be deleted after order is created
+         */
+        $specificPrice = $this->createSpecificPriceAction->run(CreateSpecificPriceData::create(
+            (int) $recurringOrderProduct->id_product,
+            (int) $recurringOrderProduct->id_product_attribute,
+            (float) $recurringOrderProduct->unit_price,
+            (int) $recurringOrder->id_customer,
+            (int) $newCart->id_shop,
+            (int) $newCart->id_shop_group,
+            (int) $recurringOrder->id_currency
+        ));
 
         $paymentMethod = $this->paymentMethodService->getPaymentMethod($transaction);
 
@@ -282,32 +312,6 @@ class RecurringOrderHandler
         $recurringOrder->update();
 
         $this->mailService->sendSubscriptionCancelWarningEmail($recurringOrderId);
-    }
-
-    /**
-     * creating temporary specific price for recurring order that will be deleted after order is created
-     */
-    private function createSpecificPrice(MolRecurringOrdersProduct $molRecurringOrdersProduct, MolRecurringOrder $recurringOrder): SpecificPrice
-    {
-        $specificPrice = new SpecificPrice();
-        $specificPrice->id_product = $molRecurringOrdersProduct->id_product;
-        $specificPrice->id_product_attribute = $molRecurringOrdersProduct->id_product_attribute;
-        $specificPrice->price = $molRecurringOrdersProduct->unit_price;
-        $specificPrice->id_customer = $recurringOrder->id_customer;
-        $specificPrice->id_shop = $this->shop->getShop()->id;
-        $specificPrice->id_currency = $recurringOrder->id_currency;
-        $specificPrice->id_country = 0;
-        $specificPrice->id_shop_group = 0;
-        $specificPrice->id_group = 0;
-        $specificPrice->from_quantity = 0;
-        $specificPrice->reduction = 0;
-        $specificPrice->reduction_type = 'amount';
-        $specificPrice->from = '0000-00-00 00:00:00';
-        $specificPrice->to = '0000-00-00 00:00:00';
-
-        $specificPrice->add();
-
-        return $specificPrice;
     }
 
     private function updateSubscriptionOrderAddress(Cart $cart, int $addressInvoiceId, int $addressDeliveryId): Cart
