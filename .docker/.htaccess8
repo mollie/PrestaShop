@@ -10,29 +10,29 @@ SetEnv HTTP_MOD_REWRITE On
 RewriteEngine on
 
 
-#Domain: demoshop8debug.ngrok.io
+#Domain: demoshop8.ngrok.io
 RewriteRule . - [E=REWRITEBASE:/]
 RewriteRule ^api(?:/(.*))?$ %{ENV:REWRITEBASE}webservice/dispatcher.php?url=$1 [QSA,L]
 RewriteRule ^upload/.+$ %{ENV:REWRITEBASE}index.php [QSA,L]
 
 # Images
-RewriteCond %{HTTP_HOST} ^demoshop8debug.ngrok.io$
+RewriteCond %{HTTP_HOST} ^demoshop8.ngrok.io$
 RewriteRule ^([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$1$2$3.jpg [L]
-RewriteCond %{HTTP_HOST} ^demoshop8debug.ngrok.io$
+RewriteCond %{HTTP_HOST} ^demoshop8.ngrok.io$
 RewriteRule ^([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$1$2$3$4.jpg [L]
-RewriteCond %{HTTP_HOST} ^demoshop8debug.ngrok.io$
+RewriteCond %{HTTP_HOST} ^demoshop8.ngrok.io$
 RewriteRule ^([0-9])([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$3/$1$2$3$4$5.jpg [L]
-RewriteCond %{HTTP_HOST} ^demoshop8debug.ngrok.io$
+RewriteCond %{HTTP_HOST} ^demoshop8.ngrok.io$
 RewriteRule ^([0-9])([0-9])([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$3/$4/$1$2$3$4$5$6.jpg [L]
-RewriteCond %{HTTP_HOST} ^demoshop8debug.ngrok.io$
+RewriteCond %{HTTP_HOST} ^demoshop8.ngrok.io$
 RewriteRule ^([0-9])([0-9])([0-9])([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$3/$4/$5/$1$2$3$4$5$6$7.jpg [L]
-RewriteCond %{HTTP_HOST} ^demoshop8debug.ngrok.io$
+RewriteCond %{HTTP_HOST} ^demoshop8.ngrok.io$
 RewriteRule ^([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$3/$4/$5/$6/$1$2$3$4$5$6$7$8.jpg [L]
-RewriteCond %{HTTP_HOST} ^demoshop8debug.ngrok.io$
+RewriteCond %{HTTP_HOST} ^demoshop8.ngrok.io$
 RewriteRule ^([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])(\-[_a-zA-Z0-9-]*)?(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/p/$1/$2/$3/$4/$5/$6/$7/$1$2$3$4$5$6$7$8$9.jpg [L]
-RewriteCond %{HTTP_HOST} ^demoshop8debug.ngrok.io$
+RewriteCond %{HTTP_HOST} ^demoshop8.ngrok.io$
 RewriteRule ^c/([0-9]+)(\-[\.*_a-zA-Z0-9-]*)(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/c/$1$2$3.jpg [L]
-RewriteCond %{HTTP_HOST} ^demoshop8debug.ngrok.io$
+RewriteCond %{HTTP_HOST} ^demoshop8.ngrok.io$
 RewriteRule ^c/([a-zA-Z_-]+)(-[0-9]+)?/.+\.jpg$ %{ENV:REWRITEBASE}img/c/$1$2.jpg [L]
 # AlphaImageLoader for IE and fancybox
 RewriteRule ^images_ie/?([^/]+)\.(jpe?g|png|gif)$ js/jquery/plugins/fancybox/images/$1.$2 [L]
