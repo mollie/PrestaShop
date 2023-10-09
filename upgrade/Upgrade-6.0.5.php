@@ -10,7 +10,7 @@
  * @see        https://github.com/mollie/PrestaShop
  */
 
-use Mollie\Logger\PrestaLogger;
+use Mollie\Logger\PrestaLoggerInterface;
 use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 use PrestaShop\PsAccountsInstaller\Installer\Installer as PsAccountsInstaller;
 
@@ -26,8 +26,8 @@ function upgrade_module_6_0_5(Mollie $module): bool
 
 function installPsAccounts605(Mollie $module): bool
 {
-    /** @var PrestaLogger $logger */
-    $logger = $module->getService(PrestaLogger::class);
+    /** @var PrestaLoggerInterface $logger */
+    $logger = $module->getService(PrestaLoggerInterface::class);
 
     try {
         /** @var PsAccountsInstaller $prestashopAccountsInstaller */
@@ -52,8 +52,8 @@ function installPsAccounts605(Mollie $module): bool
 
 function installCloudSync605(Mollie $module): bool
 {
-    /** @var PrestaLogger $logger */
-    $logger = $module->getService(PrestaLogger::class);
+    /** @var PrestaLoggerInterface $logger */
+    $logger = $module->getService(PrestaLoggerInterface::class);
 
     $moduleManager = ModuleManagerBuilder::getInstance()->build();
 

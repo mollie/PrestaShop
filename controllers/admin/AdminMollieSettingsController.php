@@ -7,7 +7,7 @@ use Mollie\Adapter\ToolsAdapter;
 use Mollie\Builder\Content\BaseInfoBlock;
 use Mollie\Builder\Content\UpdateMessageInfoBlock;
 use Mollie\Config\Config;
-use Mollie\Logger\PrestaLogger;
+use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\ModuleRepository;
 use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\SettingsSaveService;
@@ -167,8 +167,8 @@ class AdminMollieSettingsController extends ModuleAdminController
 
     private function setEnvironmentForAccounts(): void
     {
-        /** @var PrestaLogger $logger */
-        $logger = $this->module->getService(PrestaLogger::class);
+        /** @var PrestaLoggerInterface $logger */
+        $logger = $this->module->getService(PrestaLoggerInterface::class);
 
         try {
             /** @var PsAccounts $accountsFacade */
