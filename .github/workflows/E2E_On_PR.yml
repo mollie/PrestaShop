@@ -20,7 +20,7 @@ jobs:
             subdomain: 'demoshop1785debug'
             port: '8002'
             yml: 'docker-compose.1785.yml'
-            url: 'https://demoshop1785debug.ngrok.io'
+            url: 'https://demoshop1785.ngrok.io'
             test_spec: '**/cypress/e2e/ps1785/**'
             TestRailID: R4954
           - prestashop: 'PS8'
