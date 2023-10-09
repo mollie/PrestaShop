@@ -110,9 +110,7 @@ class AdminMollieSettingsController extends ModuleAdminController
             return '';
         }
 
-        $isShopContext = Shop::getContext() === Shop::CONTEXT_SHOP;
-
-        if (!$isShopContext) {
+        if (\Shop::getContext() !== \Shop::CONTEXT_SHOP) {
             $this->context->controller->errors[] = $this->module->l('Select the shop that you want to configure');
 
             return '';
