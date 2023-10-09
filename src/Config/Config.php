@@ -312,6 +312,9 @@ class Config
 
     const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
 
+    public const PRESTASHOP_ACCOUNTS_INSTALLER_VERSION = '5.0.0';
+    public const PRESTASHOP_CLOUDSYNC_CDN = 'https://integration-assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js';
+
     // TODO migrate functions below to separate service
     public static function getStatuses()
     {

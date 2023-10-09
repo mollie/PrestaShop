@@ -2,8 +2,25 @@
 
 declare(strict_types=1);
 
+use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\ToolsAdapter;
+use Mollie\Builder\Content\BaseInfoBlock;
+use Mollie\Builder\Content\UpdateMessageInfoBlock;
+use Mollie\Config\Config;
+use Mollie\Logger\PrestaLogger;
+use Mollie\Repository\ModuleRepository;
+use Mollie\Service\Content\TemplateParserInterface;
+use Mollie\Service\SettingsSaveService;
+use PrestaShop\Module\PsEventbus\Service\PresenterService;
+use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
+use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException;
+use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
+use PrestaShop\PsAccountsInstaller\Installer\Installer as PsAccountsInstaller;
+
 class AdminMollieSettingsController extends ModuleAdminController
 {
+    private const FILE_NAME = 'AdminMollieSettingsController';
+
     /** @var Mollie */
     public $module;
 
@@ -13,49 +30,59 @@ class AdminMollieSettingsController extends ModuleAdminController
         $this->bootstrap = true;
     }
 
+    public function initContent(): void
+    {
+        $this->setEnvironmentForAccounts();
+        $this->setEnvironmentForCloudSync();
+
+        $this->content .= $this->context->smarty->fetch($this->module->getLocalPath() . '/views/templates/admin/_configure/configuration.tpl');
+
+        $this->content .= $this->displayModuleSettings();
+
+        $this->addJs($this->module->getPathUri() . '/views/js/admin/_configure/configuration.js');
+
+        parent::initContent();
+    }
+
     public function postProcess()
     {
-        /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
-        $moduleRepository = $this->module->getService(\Mollie\Repository\ModuleRepository::class);
-        $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->module->name);
-        $needsUpgrade = Tools::version_compare($this->module->version, $moduleDatabaseVersion, '>');
-        if ($needsUpgrade) {
-            $this->context->controller->errors[] = $this->module->l('Please upgrade Mollie module');
+        /** @var ConfigurationAdapter $configuration */
+        $configuration = $this->module->getService(ConfigurationAdapter::class);
 
-            return;
-        }
+        /** @var ToolsAdapter $tools */
+        $tools = $this->module->getService(ToolsAdapter::class);
 
-        $isShopContext = Shop::getContext() === Shop::CONTEXT_SHOP;
-
-        if (!$isShopContext) {
-            $this->context->controller->errors[] = $this->module->l('Select the shop that you want to configure');
-
-            return;
-        }
-
-        /** @var \Mollie\Service\Content\TemplateParserInterface $templateParser */
-        $templateParser = $this->module->getService(\Mollie\Service\Content\TemplateParserInterface::class);
-
-        $isSubmitted = (bool) Tools::isSubmit("submit{$this->module->name}");
+        $isSubmitted = $tools->isSubmit("submit{$this->module->name}");
 
         /* @phpstan-ignore-next-line */
-        if (false === Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING) && !$isSubmitted) {
+        if (!$isSubmitted && !$configuration->get(Config::MOLLIE_STATUS_AWAITING)) {
             $this->context->controller->errors[] = $this->module->l('Select an order status for \"Status for Awaiting payments\" in the \"Advanced settings\" tab');
         }
 
         $errors = [];
 
-        if (Tools::isSubmit("submit{$this->module->name}")) {
-            /** @var \Mollie\Service\SettingsSaveService $saveSettingsService */
-            $saveSettingsService = $this->module->getService(\Mollie\Service\SettingsSaveService::class);
+        if ($tools->isSubmit("submit{$this->module->name}")) {
+            /** @var SettingsSaveService $saveSettingsService */
+            $saveSettingsService = $this->module->getService(SettingsSaveService::class);
+
             $resultMessages = $saveSettingsService->saveSettings($errors);
+
             if (!empty($errors)) {
-                $this->context->controller->errors = $resultMessages;
+                $this->context->controller->errors = array_merge(
+                    $this->context->controller->errors,
+                    $resultMessages
+                );
             } else {
-                $this->context->controller->confirmations = $resultMessages;
+                $this->context->controller->confirmations = array_merge(
+                    $this->context->controller->confirmations,
+                    $resultMessages
+                );
             }
         }
+    }
 
+    private function displayModuleSettings(): string
+    {
         Media::addJsDef([
             'description_message' => addslashes($this->module->l('Enter a description')),
             'min_amount_message' => addslashes($this->l('You have entered incorrect min amount')),
@@ -70,6 +97,29 @@ class AdminMollieSettingsController extends ModuleAdminController
             'image_size_message' => addslashes($this->module->l('Upload an image %s%x%s1%')),
             'not_valid_file_message' => addslashes($this->module->l('Invalid file: %s%')),
         ]);
+
+        /** @var ModuleRepository $moduleRepository */
+        $moduleRepository = $this->module->getService(ModuleRepository::class);
+
+        $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->module->name);
+        $needsUpgrade = Tools::version_compare($this->module->version, $moduleDatabaseVersion, '>');
+
+        if ($needsUpgrade) {
+            $this->context->controller->errors[] = $this->module->l('Please upgrade Mollie module');
+
+            return '';
+        }
+
+        $isShopContext = Shop::getContext() === Shop::CONTEXT_SHOP;
+
+        if (!$isShopContext) {
+            $this->context->controller->errors[] = $this->module->l('Select the shop that you want to configure');
+
+            return '';
+        }
+
+        /** @var TemplateParserInterface $templateParser */
+        $templateParser = $this->module->getService(TemplateParserInterface::class);
 
         $this->context->controller->addJS($this->module->getPathUri() . 'views/js/method_countries.js');
         $this->context->controller->addJS($this->module->getPathUri() . 'views/js/validation.js');
@@ -87,8 +137,9 @@ class AdminMollieSettingsController extends ModuleAdminController
             $this->module->getLocalPath() . 'views/templates/admin/logo.tpl'
         );
 
-        /** @var \Mollie\Builder\Content\UpdateMessageInfoBlock $updateMessageInfoBlock */
-        $updateMessageInfoBlock = $this->module->getService(\Mollie\Builder\Content\UpdateMessageInfoBlock::class);
+        /** @var UpdateMessageInfoBlock $updateMessageInfoBlock */
+        $updateMessageInfoBlock = $this->module->getService(UpdateMessageInfoBlock::class);
+
         $updateMessageInfoBlockData = $updateMessageInfoBlock->setAddons(false);
 
         $html .= $templateParser->parseTemplate(
@@ -97,8 +148,9 @@ class AdminMollieSettingsController extends ModuleAdminController
             $this->module->getLocalPath() . 'views/templates/admin/updateMessage.tpl'
         );
 
-        /** @var \Mollie\Builder\Content\BaseInfoBlock $baseInfoBlock */
-        $baseInfoBlock = $this->module->getService(\Mollie\Builder\Content\BaseInfoBlock::class);
+        /** @var BaseInfoBlock $baseInfoBlock */
+        $baseInfoBlock = $this->module->getService(BaseInfoBlock::class);
+
         $this->context->smarty->assign($baseInfoBlock->buildParams());
 
         /** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
@@ -112,6 +164,83 @@ class AdminMollieSettingsController extends ModuleAdminController
             $this->context->controller->errors[] = $this->module->l('The database tables are missing. Reset the module.');
         }
 
-        $this->content .= $html;
+        return $html;
+    }
+
+    private function setEnvironmentForAccounts(): void
+    {
+        /** @var PrestaLogger $logger */
+        $logger = $this->module->getService(PrestaLogger::class);
+
+        try {
+            /** @var PsAccounts $accountsFacade */
+            $accountsFacade = $this->module->getService(PsAccounts::class);
+
+            $psAccountsPresenter = $accountsFacade->getPsAccountsPresenter();
+            $psAccountsService = $accountsFacade->getPsAccountsService();
+        } catch (ModuleNotInstalledException $exception) {
+            try {
+                /** @var PsAccountsInstaller $prestashopAccountsInstaller */
+                $prestashopAccountsInstaller = $this->module->getService(PsAccountsInstaller::class);
+
+                if (!$prestashopAccountsInstaller->install()) {
+                    $this->context->controller->errors[] =
+                        $this->module->l('Failed to install Prestashop Accounts module. Please contact support.');
+
+                    return;
+                }
+            } catch (\Throwable $exception) {
+                $this->context->controller->errors[] =
+                    $this->module->l('Failed to install Prestashop Accounts module. Please contact support.');
+
+                return;
+            }
+
+            $psAccountsPresenter = $accountsFacade->getPsAccountsPresenter();
+            $psAccountsService = $accountsFacade->getPsAccountsService();
+        } catch (\Throwable $exception) {
+            $logger->error('"PrestaShop Accounts" unknown error.', [
+                'Exception message' => $exception->getMessage(),
+                'Exception code' => $exception->getCode(),
+            ]);
+
+            $this->context->controller->errors[] =
+                $this->module->l('"PrestaShop Accounts" initialization failed.', self::FILE_NAME);
+
+            return;
+        }
+
+        Media::addJsDef([
+            'contextPsAccounts' => $psAccountsPresenter->present(),
+        ]);
+
+        $this->context->smarty->assign([
+            'urlAccountsCdn' => $psAccountsService->getAccountsCdn(),
+        ]);
+    }
+
+    private function setEnvironmentForCloudSync(): void
+    {
+        $moduleManager = ModuleManagerBuilder::getInstance()->build();
+
+        if (!$moduleManager->isInstalled('ps_eventbus')) {
+            return;
+        }
+
+        /** @var \Ps_eventbus $eventbusModule */
+        $eventbusModule = \Module::getInstanceByName('ps_eventbus');
+
+        if (version_compare($eventbusModule->version, '1.9.0', '>=')) {
+            /** @var PresenterService $eventbusPresenterService */
+            $eventbusPresenterService = $eventbusModule->getService(PresenterService::class);
+
+            Media::addJsDef([
+                'contextPsEventbus' => $eventbusPresenterService->expose($this->module, ['orders',]),
+            ]);
+        }
+
+        $this->context->smarty->assign([
+            'cloudSyncPathCDC' => Config::PRESTASHOP_CLOUDSYNC_CDN,
+        ]);
     }
 }

@@ -6,7 +6,7 @@
 * @link        https://github.com/mollie/PrestaShop
 * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
 *}
-<div style="width: 263px; align-content: center; text-align: left; padding-bottom: 12px;">
-  <img src="{$logo_url|escape:'htmlall':'UTF-8'}" style="max-width:100%; height:auto; margin: 0 auto">
+<div class="header-logo">
+  <img src="{$logo_url|escape:'htmlall':'UTF-8'}">
 </div>
 
