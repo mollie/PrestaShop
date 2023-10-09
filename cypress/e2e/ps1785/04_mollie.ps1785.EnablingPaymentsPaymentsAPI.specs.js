@@ -27,11 +27,11 @@ describe('PS1785 Enabling Payments', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-  it('C339377: 42 [SWITCH TO PAYMENTS API] Enabling All payments in Module BO [Payments API]', () => {
-    cy.visit('/admin1/')
-    cy.OpeningModuleDashboardURL()
-    cy.ConfPaymentsAPI1784()
-    cy.get('[type="submit"]').first().click({force:true})
-    cy.get('[class="alert alert-success"]').should('be.visible')
+it('C339377: 42 [SWITCH TO PAYMENTS API] Enabling All payments in Module BO [Payments API]', () => {
+  cy.visit('/admin1/')
+  cy.OpeningModuleDashboardURL()
+  cy.ConfPaymentsAPI1784()
+  cy.get('[type="submit"]').first().click({force:true})
+  cy.get('[class="alert alert-success"]').should('be.visible')
 })
 })
