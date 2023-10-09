@@ -42,5 +42,7 @@ parameters:
     - '#Parameter \#1 \$value of method ControllerCore\:\:ajaxRender\(\) expects null, string\|false given.#'
     - '#Call to function is_subclass_of\(\) with.*will always evaluate to false.#'
     - '#Call to function is_array\(\) with.*will always evaluate to false.#'
+    - '#ps_eventbus#'
+    - '#PsEventbus#'
 
   level: 5

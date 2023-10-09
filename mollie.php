@@ -185,7 +185,7 @@ class Mollie extends PaymentModule
         $moduleManager = ModuleManagerBuilder::getInstance()->build();
 
         try {
-            /**
+            /*
              * NOTE: install method upgrades the module if there is a newer version
              */
             if (
