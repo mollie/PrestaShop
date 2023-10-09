@@ -17,7 +17,7 @@ jobs:
         include:
           - prestashop: 'PS1785'
             make: 'make e2eh1785'
-            subdomain: 'demoshop1785debug'
+            subdomain: 'demoshop1785'
             port: '8002'
             yml: 'docker-compose.1785.yml'
             url: 'https://demoshop1785.ngrok.io'
@@ -25,7 +25,7 @@ jobs:
             TestRailID: R4954
           - prestashop: 'PS8'
             make: 'make e2eh8'
-            subdomain: 'demoshop8debug'
+            subdomain: 'demoshop8'
             port: '8142'
             yml: 'docker-compose.8.yml'
             url: 'https://demoshop8.ngrok.io'
