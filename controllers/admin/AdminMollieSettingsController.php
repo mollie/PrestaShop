@@ -227,15 +227,19 @@ class AdminMollieSettingsController extends ModuleAdminController
             return;
         }
 
+        /* @phpstan-ignore-next-line */
         /** @var \Ps_eventbus $eventbusModule */
         $eventbusModule = \Module::getInstanceByName('ps_eventbus');
 
+        /* @phpstan-ignore-next-line */
         if (version_compare($eventbusModule->version, '1.9.0', '>=')) {
+            /* @phpstan-ignore-next-line */
             /** @var PresenterService $eventbusPresenterService */
             $eventbusPresenterService = $eventbusModule->getService(PresenterService::class);
 
+            /* @phpstan-ignore-next-line */
             Media::addJsDef([
-                'contextPsEventbus' => $eventbusPresenterService->expose($this->module, ['orders',]),
+                'contextPsEventbus' => $eventbusPresenterService->expose($this->module, ['orders']),
             ]);
         }
 

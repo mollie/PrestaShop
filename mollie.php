@@ -185,15 +185,17 @@ class Mollie extends PaymentModule
         $moduleManager = ModuleManagerBuilder::getInstance()->build();
 
         try {
-            if (!$moduleManager->isInstalled('ps_eventbus')) {
-                $moduleManager->install('ps_eventbus');
-            }
-
-            if (!$moduleManager->isEnabled('ps_eventbus')) {
+            /**
+             * NOTE: install method upgrades the module if there is a newer version
+             */
+            if (
+                $moduleManager->isInstalled('ps_eventbus') &&
+                !$moduleManager->isEnabled('ps_eventbus')
+            ) {
                 $moduleManager->enable('ps_eventbus');
             }
 
-            $moduleManager->upgrade('ps_eventbus');
+            $moduleManager->install('ps_eventbus');
         } catch (Exception $exception) {
             $this->_errors[] = $this->l('Failed to install/upgrade Prestashop event bus module. Please contact support.');
 
