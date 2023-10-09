@@ -43,6 +43,7 @@ parameters:
     - '#Call to function is_subclass_of\(\) with.*will always evaluate to false.#'
     - '#Call to function is_array\(\) with.*will always evaluate to false.#'
     - '#ps_eventbus#'
+    - '#Ps_eventbus#'
     - '#PsEventbus#'
 
   level: 5

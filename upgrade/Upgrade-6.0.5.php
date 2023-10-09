@@ -58,15 +58,14 @@ function installCloudSync605(Mollie $module): bool
     $moduleManager = ModuleManagerBuilder::getInstance()->build();
 
     try {
-        if (!$moduleManager->isInstalled('ps_eventbus')) {
-            $moduleManager->install('ps_eventbus');
-        }
-
-        if (!$moduleManager->isEnabled('ps_eventbus')) {
+        if (
+            $moduleManager->isInstalled('ps_eventbus') &&
+            !$moduleManager->isEnabled('ps_eventbus')
+        ) {
             $moduleManager->enable('ps_eventbus');
         }
 
-        $moduleManager->upgrade('ps_eventbus');
+        $moduleManager->install('ps_eventbus');
     } catch (Exception $exception) {
         $logger->error('Failed to install/upgrade Prestashop event bus module. Please contact support.', [
             'Exception message' => $exception->getMessage(),
