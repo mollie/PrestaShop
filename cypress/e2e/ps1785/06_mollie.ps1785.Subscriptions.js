@@ -22,7 +22,7 @@ windowConsoleError = cy.spy(win.console, 'error');
 afterEach(() => {
 expect(windowConsoleError).to.not.be.called;
 })
-describe('PS1785 Subscriptions Test Suit', () => {
+describe('PS1785 Subscriptions Test Suite', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
