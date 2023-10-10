@@ -6,5 +6,12 @@
   <div id="prestashop-cloudsync"></div>
 </div>
 
-<script src="{$cloudSyncPathCDC|escape:'htmlall':'UTF-8'}"></script>
-<script src="{$urlAccountsCdn|escape:'htmlall':'UTF-8'}" rel=preload></script>
+{if isset($cloudSyncPathCDC)}
+  <script src="{$cloudSyncPathCDC|escape:'htmlall':'UTF-8'}"></script>
+{/if}
+
+{if isset($urlAccountsCdn)}
+  <script src="{$urlAccountsCdn|escape:'htmlall':'UTF-8'}" rel=preload></script>
+{/if}
+
+
