@@ -18,6 +18,7 @@ use Mollie\Api\Types\PaymentMethod;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
 use Mollie\Utility\EnvironmentUtility;
+use Mollie\Utility\PsVersionUtility;
 
 class Config
 {
@@ -314,6 +315,15 @@ class Config
 
     public const PRESTASHOP_ACCOUNTS_INSTALLER_VERSION = '5.0.0';
     public const PRESTASHOP_CLOUDSYNC_CDN = 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js';
+
+    public static function getPsAccountsVersion(): string
+    {
+        if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '8.0.0')) {
+            return '6.0.0';
+        }
+
+        return '5.0.0';
+    }
 
     // TODO migrate functions below to separate service
     public static function getStatuses()

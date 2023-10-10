@@ -241,7 +241,7 @@ final class BaseServiceProvider
             ->withArgument(ApiKeyService::class);
 
         $this->addService($container, PsAccountsInstaller::class, PsAccountsInstaller::class)
-            ->withArgument(Config::PRESTASHOP_ACCOUNTS_INSTALLER_VERSION);
+            ->withArgument(Config::getPsAccountsVersion());
 
         $this->addService($container, PsAccounts::class, PsAccounts::class)
             ->withArgument(PsAccountsInstaller::class);
