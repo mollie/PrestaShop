@@ -83,21 +83,6 @@ class AdminMollieSettingsController extends ModuleAdminController
 
     private function displayModuleSettings(): string
     {
-        Media::addJsDef([
-            'description_message' => addslashes($this->module->l('Enter a description')),
-            'min_amount_message' => addslashes($this->l('You have entered incorrect min amount')),
-            'max_amount_message' => addslashes($this->l('You have entered incorrect max amount')),
-
-            'payment_api' => addslashes(Mollie\Config\Config::MOLLIE_PAYMENTS_API),
-            'ajaxUrl' => addslashes($this->context->link->getAdminLink('AdminMollieAjax')),
-        ]);
-
-        /* Custom logo JS vars*/
-        Media::addJsDef([
-            'image_size_message' => addslashes($this->module->l('Upload an image %s%x%s1%')),
-            'not_valid_file_message' => addslashes($this->module->l('Invalid file: %s%')),
-        ]);
-
         /** @var ModuleRepository $moduleRepository */
         $moduleRepository = $this->module->getService(ModuleRepository::class);
 
@@ -115,6 +100,21 @@ class AdminMollieSettingsController extends ModuleAdminController
 
             return '';
         }
+
+        Media::addJsDef([
+            'description_message' => addslashes($this->module->l('Enter a description')),
+            'min_amount_message' => addslashes($this->l('You have entered incorrect min amount')),
+            'max_amount_message' => addslashes($this->l('You have entered incorrect max amount')),
+
+            'payment_api' => addslashes(Mollie\Config\Config::MOLLIE_PAYMENTS_API),
+            'ajaxUrl' => addslashes($this->context->link->getAdminLink('AdminMollieAjax')),
+        ]);
+
+        /* Custom logo JS vars*/
+        Media::addJsDef([
+            'image_size_message' => addslashes($this->module->l('Upload an image %s%x%s1%')),
+            'not_valid_file_message' => addslashes($this->module->l('Invalid file: %s%')),
+        ]);
 
         /** @var TemplateParserInterface $templateParser */
         $templateParser = $this->module->getService(TemplateParserInterface::class);
@@ -188,6 +188,11 @@ class AdminMollieSettingsController extends ModuleAdminController
                     return;
                 }
             } catch (\Throwable $exception) {
+                $logger->error('"PrestaShop Accounts" install failed.', [
+                    'Exception message' => $exception->getMessage(),
+                    'Exception code' => $exception->getCode(),
+                ]);
+
                 $this->context->controller->errors[] =
                     $this->module->l('Failed to install Prestashop Accounts module. Please contact support.');
 
