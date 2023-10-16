@@ -30,6 +30,7 @@ use Mollie\Subscription\Factory\GetSubscriptionDataFactory;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
 use Mollie\Subscription\Utility\ClockInterface;
+use Mollie\Utility\NumberUtility;
 use Mollie\Utility\SecureKeyUtility;
 use MolRecurringOrder;
 use MolRecurringOrdersProduct;
@@ -245,11 +246,14 @@ class RecurringOrderHandler
 
         $methodName = $paymentMethod->method_name ?: Config::$methods[$transaction->method];
 
+        $subscriptionPaidTotal = (float) $subscription->amount->value;
+        $cartTotal = (float) $newCart->getOrderTotal(true, Cart::BOTH);
+
         try {
             $this->mollie->validateOrder(
                 (int) $newCart->id,
-                (int) $this->configuration->get(Config::MOLLIE_STATUS_AWAITING),
-                (float) $subscription->amount->value,
+                (int) Config::getStatuses()[$transaction->status],
+                $subscriptionPaidTotal,
                 sprintf('subscription/%s', $methodName),
                 null,
                 ['transaction_id' => $transaction->id],
@@ -258,22 +262,29 @@ class RecurringOrderHandler
                 $newCart->secure_key
             );
         } catch (\Throwable $exception) {
+            if (!NumberUtility::isEqual($cartTotal, $subscriptionPaidTotal)) {
+                $this->logger->error('Order failed. Paid price is not equal to the order\'s total', [
+                    'Paid price' => $subscriptionPaidTotal,
+                    'Order price' => $cartTotal,
+                ]);
+            }
+
             $specificPrice->delete();
 
             throw $exception;
+        }
+
+        if (!NumberUtility::isEqual($cartTotal, $subscriptionPaidTotal)) {
+            $this->logger->info('Paid price is not equal to the order\'s total', [
+                'Paid price' => $subscriptionPaidTotal,
+                'Order price' => $cartTotal,
+            ]);
         }
 
         $specificPrice->delete();
 
         $orderId = (int) Order::getIdByCartId((int) $newCart->id);
         $order = new Order($orderId);
-
-        if ((float) $order->total_paid_tax_incl !== (float) $subscription->amount->value) {
-            $this->logger->error('Paid price is not equal to the order\'s total', [
-                'Paid price' => (float) $subscription->amount->value,
-                'Order price' => (float) $order->total_paid_tax_incl,
-            ]);
-        }
 
         $this->mollieOrderCreationService->createMolliePayment($transaction, (int) $newCart->id, $order->reference, (int) $orderId, PaymentStatus::STATUS_PAID);
 

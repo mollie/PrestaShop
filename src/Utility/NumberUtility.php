@@ -114,7 +114,7 @@ class NumberUtility
         return (float) $result->toPrecision($precision, $roundingMode);
     }
 
-    public static function isEqual($a, $b)
+    public static function isEqual(float $a, float $b): bool
     {
         $firstNumber = self::getNumber($a);
         $secondNumber = self::getNumber($b);
