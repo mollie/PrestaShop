@@ -103,7 +103,12 @@ class TestCreateSubscriptionData extends BaseTestCase
             ]
         );
 
-        $subscriptionData = $createSubscriptionData->build($orderMock);
+        $subscriptionProduct = [
+            'id_product_attribute' => 999,
+            'total_price_tax_incl' => 19.99,
+        ];
+
+        $subscriptionData = $createSubscriptionData->build($orderMock, $subscriptionProduct);
 
         $this->assertEquals(self::CUSTOMER_ID, $subscriptionData->getCustomerId());
         $this->assertEquals(

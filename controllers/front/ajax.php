@@ -16,7 +16,6 @@ use Mollie\Controller\AbstractMollieController;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\CurrencyRepositoryInterface;
-use Mollie\Subscription\Exception\ProductValidationException;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\NumberUtility;
@@ -192,12 +191,9 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
 
         try {
             $cartValidation->validate((int) $product['id_product_attribute']);
-        } catch (ProductValidationException $e) {
-            $productCanBeAdded = false;
-            $message = $this->module->l('Product cannot be added because you have subscription product in your cart', self::FILE_NAME);
         } catch (SubscriptionProductValidationException $e) {
             $productCanBeAdded = false;
-            $message = $this->module->l('Subscription product cannot be added if you have other products in your cart', self::FILE_NAME);
+            $message = $this->module->l('Please note: Only one subscription product can be added to the cart at a time.', self::FILE_NAME);
         }
 
         $this->ajaxRender(

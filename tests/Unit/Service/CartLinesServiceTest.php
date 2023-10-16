@@ -10,7 +10,7 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Service;
+namespace Mollie\Tests\Unit\Service;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
@@ -55,7 +55,7 @@ class CartLinesServiceTest extends TestCase
         $mocks,
         $result
     ) {
-        $configurationAdapter = $this->getMockBuilder(ConfigurationAdapter::class)->getMock();
+        $configurationAdapter = $this->createMock(ConfigurationAdapter::class);
 
         foreach ($mocks as $mock) {
             $configurationAdapter->expects(self::at($mock['at']))->method($mock['function'])->with($mock['expects'])->willReturn($mock['return']);
@@ -165,12 +165,6 @@ class CartLinesServiceTest extends TestCase
                     ],
                 ],
                 'toolsMocks' => [
-                    0 => [
-                        'function' => 'strtoupper',
-                        'expects' => $currencyIsoCode,
-                        'return' => $currencyIsoCode,
-                        'at' => 0,
-                    ],
                 ],
                 'mocks' => [],
                 'result' => [
@@ -279,12 +273,6 @@ class CartLinesServiceTest extends TestCase
                     ],
                 ],
                 'toolsMocks' => [
-                    0 => [
-                        'function' => 'strtoupper',
-                        'expects' => $currencyIsoCode,
-                        'return' => $currencyIsoCode,
-                        'at' => 0,
-                    ],
                 ],
                 'mocks' => [],
                 'result' => [
@@ -370,12 +358,6 @@ class CartLinesServiceTest extends TestCase
                     ],
                 ],
                 'toolsMocks' => [
-                    0 => [
-                        'function' => 'strtoupper',
-                        'expects' => $currencyIsoCode,
-                        'return' => $currencyIsoCode,
-                        'at' => 0,
-                    ],
                 ],
                 'mocks' => [],
                 'result' => [
@@ -447,12 +429,6 @@ class CartLinesServiceTest extends TestCase
                     ],
                 ],
                 'toolsMocks' => [
-                    0 => [
-                        'function' => 'strtoupper',
-                        'expects' => $currencyIsoCode,
-                        'return' => $currencyIsoCode,
-                        'at' => 0,
-                    ],
                 ],
                 'mocks' => [],
                 'result' => [

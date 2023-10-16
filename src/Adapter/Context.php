@@ -111,7 +111,7 @@ class Context
         );
     }
 
-    public function getAddressInvoiceId(): int
+    public function getInvoiceAddressId(): int
     {
         return (int) PrestashopContext::getContext()->cart->id_address_invoice;
     }
@@ -124,5 +124,25 @@ class Context
     public function getCountryId(): int
     {
         return (int) PrestashopContext::getContext()->country->id;
+    }
+
+    public function getShopGroupId(): int
+    {
+        return (int) PrestashopContext::getContext()->shop->id_shop_group;
+    }
+
+    public function formatPrice(float $price, string $isoCode): string
+    {
+        $locale = PrestashopContext::getContext()->getCurrentLocale();
+
+        /* @phpstan-ignore-next-line */
+        if (!$locale) {
+            return (string) $price;
+        }
+
+        return $locale->formatPrice(
+            $price,
+            $isoCode
+        );
     }
 }

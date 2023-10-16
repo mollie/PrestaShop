@@ -13,7 +13,6 @@
 namespace Mollie\Handler\ErrorHandler;
 
 use Configuration;
-use Exception;
 use Mollie;
 use Mollie\Config\Config;
 use Mollie\Config\Env;
@@ -94,9 +93,9 @@ class ErrorHandler
     }
 
     /**
-     * @throws Exception
+     * @throws \Throwable
      */
-    public function handle(Exception $error, ?int $code = null, ?bool $throw = true): void
+    public function handle(\Throwable $error, ?int $code = null, ?bool $throw = true): void
     {
         $this->client->captureException($error, $this->exceptionContext);
 

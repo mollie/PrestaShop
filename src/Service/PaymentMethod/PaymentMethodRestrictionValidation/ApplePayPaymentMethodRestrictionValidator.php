@@ -37,7 +37,7 @@
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
 use Mollie\Adapter\ConfigurationAdapter;
-use Mollie\Config\Config;
+use Mollie\Api\Types\PaymentMethod;
 use MolPaymentMethod;
 
 class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
@@ -73,7 +73,7 @@ class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrict
      */
     public function supports(MolPaymentMethod $paymentMethod): bool
     {
-        return $paymentMethod->getPaymentMethodName() === Config::MOLLIE_METHOD_ID_APPLE_PAY;
+        return $paymentMethod->getPaymentMethodName() === PaymentMethod::APPLEPAY;
     }
 
     /**

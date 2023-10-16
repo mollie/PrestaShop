@@ -33,7 +33,7 @@ class OrderStateInstaller implements InstallerInterface
     /**
      * @throws CouldNotInstallModule
      */
-    public function install()
+    public function install(): bool
     {
         $this->installOrderState(
             Config::MOLLIE_STATUS_PARTIAL_REFUND,
@@ -69,9 +69,9 @@ class OrderStateInstaller implements InstallerInterface
         );
 
         $this->installOrderState(
-            Config::MOLLIE_STATUS_KLARNA_AUTHORIZED,
+            Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED,
             new OrderStateData(
-                'Klarna payment authorized',
+                'Order payment authorized',
                 '#8A2BE2',
                 true,
                 true,
@@ -85,9 +85,9 @@ class OrderStateInstaller implements InstallerInterface
         );
 
         $this->installOrderState(
-            Config::MOLLIE_STATUS_KLARNA_SHIPPED,
+            Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED,
             new OrderStateData(
-                'Klarna payment shipped',
+                'Order payment shipped',
                 '#8A2BE2',
                 true,
                 true,
@@ -114,7 +114,7 @@ class OrderStateInstaller implements InstallerInterface
     /**
      * @throws CouldNotInstallModule
      */
-    private function installOrderState(string $orderStatus, OrderStateData $orderStateInstallerData)
+    private function installOrderState(string $orderStatus, OrderStateData $orderStateInstallerData): void
     {
         if ($this->validateIfStatusExists($orderStatus)) {
             $this->enableState($orderStatus);
@@ -136,7 +136,7 @@ class OrderStateInstaller implements InstallerInterface
         return \Validate::isLoadedObject($orderState);
     }
 
-    private function enableState(string $key)
+    private function enableState(string $key): void
     {
         $existingStateId = (int) $this->configurationAdapter->get($key);
         $orderState = new OrderState($existingStateId);
@@ -186,7 +186,7 @@ class OrderStateInstaller implements InstallerInterface
         return $orderState;
     }
 
-    private function updateStateConfiguration(string $key, OrderState $orderState)
+    private function updateStateConfiguration(string $key, OrderState $orderState): void
     {
         $this->configurationAdapter->updateValue($key, (int) $orderState->id);
     }

@@ -25,9 +25,10 @@
  */
 
 use Mollie\Controller\AbstractMollieController;
+use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\Handler\FreeOrderCreationHandler;
 use Mollie\Subscription\Handler\SubscriptionCancellationHandler;
-use Mollie\Subscription\Logger\RecurringOrderPresenter;
+use Mollie\Subscription\Presenter\RecurringOrderPresenter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 
 class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieController
@@ -74,13 +75,25 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
             Tools::redirect(Context::getContext()->link->getModuleLink($this->module->name, 'subscriptions', [], true));
         }
 
+        /** @var PrestaLoggerInterface $logger */
+        $logger = $this->module->getService(PrestaLoggerInterface::class);
+
         /** @var RecurringOrderPresenter $recurringOrderPresenter */
         $recurringOrderPresenter = $this->module->getService(RecurringOrderPresenter::class);
 
-        $this->context->smarty->assign([
-            'recurringOrderData' => $recurringOrderPresenter->present($recurringOrderId),
-            'token' => Tools::getToken(),
-        ]);
+        try {
+            $this->context->smarty->assign([
+                'recurringOrderData' => $recurringOrderPresenter->present($recurringOrderId),
+                'token' => Tools::getToken(),
+            ]);
+        } catch (Throwable $exception) {
+            $logger->error('Failed to present subscription order', [
+                'Exception message' => $exception->getMessage(),
+                'Exception code' => $exception->getCode(),
+            ]);
+
+            Tools::redirect(Context::getContext()->link->getModuleLink($this->module->name, 'subscriptions', [], true));
+        }
 
         parent::initContent();
         $this->context->controller->addCSS($this->module->getPathUri() . 'views/css/front/subscription/customer_order_detail.css');

@@ -14,7 +14,6 @@ use Mollie\Api\Exceptions\ApiException;
 use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Errors\Http\HttpStatusCode;
-use Mollie\Exception\TransactionException;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Service\TransactionService;
 use Mollie\Utility\TransactionUtility;
@@ -73,6 +72,9 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         /** @var TransactionService $transactionService */
         $transactionService = $this->module->getService(TransactionService::class);
 
+        /** @var ErrorHandler $errorHandler */
+        $errorHandler = $this->module->getService(ErrorHandler::class);
+
         $transactionId = Tools::getValue('id');
         if (!$transactionId) {
             $this->respond('failed', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY, 'Missing transaction id');
@@ -95,9 +97,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             $cartId = $metaData->cart_id ?? 0;
             $this->setContext($cartId);
             $payment = $transactionService->processTransaction($transaction);
-        } catch (TransactionException $e) {
-            /** @var ErrorHandler $errorHandler */
-            $errorHandler = $this->module->getService(ErrorHandler::class);
+        } catch (\Throwable $e) {
             $errorHandler->handle($e, $e->getCode(), false);
             $this->respond('failed', $e->getCode(), $e->getMessage());
         }

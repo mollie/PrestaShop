@@ -1,23 +1,19 @@
 /// <reference types="Cypress" />
-      //Caching the BO and FO session
-      const login = (MollieBOFOLoggingIn) => {
-      cy.session(MollieBOFOLoggingIn,() => {
-      cy.visit('/admin1/')
-      cy.url().should('contain', 'https').as('Check if HTTPS exists')
-      cy.get('#email').type('demo@prestashop.com',{delay: 0, log: false})
-      cy.get('#passwd').type('prestashop_demo',{delay: 0, log: false})
-      cy.get('#submit_login').click().wait(1000).as('Connection successsful')
-      //switching the multistore PS8
-      cy.get('#header_shop > .dropdown').click()
-      cy.get('.open > .dropdown-menu').find('[class="shop"]').eq(1).find('[href]').eq(0).click()
-      cy.visit('/SHOP2/index.php?controller=my-account')
-      cy.get('#login-form [name="email"]').eq(0).type('demo@demo.com')
-      cy.get('#login-form [name="password"]').eq(0).type('prestashop_demo')
-      cy.get('#login-form [type="submit"]').eq(0).click({force:true})
-      cy.get('#history-link > .link-item').click()
-      })
-      }
-
+//Caching the BO and FO session
+const login = (MollieBOFOLoggingIn) => {
+  cy.session(MollieBOFOLoggingIn,() => {
+  cy.visit('/admin1/')
+  cy.url().should('contain', 'https').as('Check if HTTPS exists')
+  cy.get('#email').type('demo@prestashop.com',{delay: 0, log: false})
+  cy.get('#passwd').type('prestashop_demo',{delay: 0, log: false})
+  cy.get('#submit_login').click().wait(1000).as('Connection successsful')
+  cy.visit('/en/my-account')
+  cy.get('#login-form [name="email"]').eq(0).type('demo@prestashop.com')
+  cy.get('#login-form [name="password"]').eq(0).type('prestashop_demo')
+  cy.get('#login-form [type="submit"]').eq(0).click({force:true})
+  cy.get('#history-link > .link-item').click()
+  })
+  }
 //Checking the console for errors
 let windowConsoleError;
 Cypress.on('window:before:load', (win) => {
@@ -57,7 +53,7 @@ it('C339339: Checking the Advanced Settings tab, verifying the Front-end compone
       cy.get('[href="#advanced_settings"]').click({force:true})
       cy.get('[id="MOLLIE_PAYMENTSCREEN_LOCALE"]').should('be.visible')
       cy.get('[id="MOLLIE_SEND_ORDER_CONFIRMATION"]').should('be.visible')
-      cy.get('[id="MOLLIE_KLARNA_INVOICE_ON"]').should('be.visible')
+      cy.get('[id="MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS"]').should('be.visible')
       cy.get('[class="help-block"]').should('be.visible')
       cy.get('[id="MOLLIE_STATUS_AWAITING"]').should('be.visible')
       cy.get('[id="MOLLIE_STATUS_PAID"]').should('be.visible')

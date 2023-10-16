@@ -143,11 +143,11 @@ class Config
     const PARTIAL_REFUND_CODE = 'partial_refund';
     const MOLLIE_STATUS_PARTIALLY_SHIPPED = 'MOLLIE_PARTIALLY_SHIPPED';
     const MOLLIE_STATUS_ORDER_COMPLETED = 'MOLLIE_STATUS_ORDER_COMPLETED';
-    const MOLLIE_STATUS_DEFAULT = 'MOLLIE_STATUS_DEFAULT';
-    const MOLLIE_STATUS_KLARNA_AUTHORIZED = 'MOLLIE_STATUS_KLARNA_AUTHORIZED';
-    const MOLLIE_STATUS_KLARNA_SHIPPED = 'MOLLIE_STATUS_KLARNA_SHIPPED';
+    const MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_DEFAULT = 'MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_DEFAULT';
+    const MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED = 'MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED';
+    const MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED = 'MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED';
     const MOLLIE_STATUS_CHARGEBACK = 'MOLLIE_STATUS_CHARGEBACK';
-    const MOLLIE_KLARNA_INVOICE_ON = 'MOLLIE_KLARNA_INVOICE_ON';
+    const MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS = 'MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS';
     const MOLLIE_APPLE_PAY_DIRECT_PRODUCT = 'MOLLIE_APPLE_PAY_DIRECT_PRODUCT';
     const MOLLIE_APPLE_PAY_DIRECT_CART = 'MOLLIE_APPLE_PAY_DIRECT_CART';
 
@@ -156,6 +156,8 @@ class Config
 
     const MOLLIE_CARRIER_URL_SOURCE = 'MOLLIE_CARRIER_URL_SOURCE_';
     const MOLLIE_CARRIER_CUSTOM_URL = 'MOLLIE_CARRIER_CUSTOM_URL_';
+
+    const MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID = 'MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID';
 
     const MOLLIE_METHOD_ENABLED = 'MOLLIE_METHOD_ENABLED_';
     const MOLLIE_METHOD_TITLE = 'MOLLIE_METHOD_TITLE_';
@@ -256,16 +258,18 @@ class Config
     const RESTORE_CART_BACKTRACE_MEMORIZATION_SERVICE = 'memo';
     const RESTORE_CART_BACKTRACE_RETURN_CONTROLLER = 'return';
 
-    const KLARNA_PAYMENTS = [
+    const AUTHORIZABLE_PAYMENTS = [
         PaymentMethod::KLARNA_PAY_LATER,
         PaymentMethod::KLARNA_SLICE_IT,
         PaymentMethod::KLARNA_PAY_NOW,
+        PaymentMethod::BILLIE,
     ];
 
     const ORDER_API_ONLY_METHODS = [
         PaymentMethod::KLARNA_PAY_LATER,
         PaymentMethod::KLARNA_SLICE_IT,
         PaymentMethod::KLARNA_PAY_NOW,
+        PaymentMethod::BILLIE,
         self::MOLLIE_VOUCHER_METHOD_ID,
         self::MOLLIE_in3_METHOD_ID,
     ];
@@ -303,20 +307,22 @@ class Config
         'voucher' => 'Voucher',
         'klarnapaynow' => 'Klarna Pay now.',
         'in3' => 'in3',
+        'billie' => 'Billie',
     ];
 
     const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
 
+    // TODO migrate functions below to separate service
     public static function getStatuses()
     {
-        $isKlarnaDefault = Configuration::get(Config::MOLLIE_KLARNA_INVOICE_ON) === Config::MOLLIE_STATUS_DEFAULT;
+        $isAuthorizablePaymentInvoiceOnStatusDefault = Configuration::get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS) === Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_DEFAULT;
 
         return [
             self::MOLLIE_AWAITING_PAYMENT => Configuration::get(self::MOLLIE_STATUS_AWAITING),
             PaymentStatus::STATUS_PAID => Configuration::get(self::MOLLIE_STATUS_PAID),
             OrderStatus::STATUS_COMPLETED => Configuration::get(self::MOLLIE_STATUS_COMPLETED),
-            PaymentStatus::STATUS_AUTHORIZED => $isKlarnaDefault ?
-                Configuration::get(self::MOLLIE_STATUS_PAID) : Configuration::get(self::MOLLIE_STATUS_KLARNA_AUTHORIZED),
+            PaymentStatus::STATUS_AUTHORIZED => $isAuthorizablePaymentInvoiceOnStatusDefault ?
+                Configuration::get(self::MOLLIE_STATUS_PAID) : Configuration::get(self::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED),
             PaymentStatus::STATUS_CANCELED => Configuration::get(self::MOLLIE_STATUS_CANCELED),
             PaymentStatus::STATUS_EXPIRED => Configuration::get(self::MOLLIE_STATUS_EXPIRED),
             RefundStatus::STATUS_REFUNDED => Configuration::get(self::MOLLIE_STATUS_REFUNDED),
@@ -329,7 +335,7 @@ class Config
             self::STATUS_PAID_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK_PAID'),
             self::STATUS_PENDING_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK_UNPAID'),
             self::STATUS_ON_BACKORDER => Configuration::get('PS_OS_OUTOFSTOCK'),
-            self::MOLLIE_STATUS_KLARNA_SHIPPED => Configuration::get(self::MOLLIE_STATUS_KLARNA_SHIPPED),
+            self::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED => Configuration::get(self::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED),
             self::MOLLIE_CHARGEBACK => Configuration::get(self::MOLLIE_STATUS_CHARGEBACK),
         ];
     }
@@ -351,8 +357,8 @@ class Config
             self::MOLLIE_STATUS_PARTIAL_REFUND,
             self::MOLLIE_STATUS_AWAITING,
             self::MOLLIE_STATUS_ORDER_COMPLETED,
-            self::MOLLIE_STATUS_KLARNA_AUTHORIZED,
-            self::MOLLIE_STATUS_KLARNA_SHIPPED,
+            self::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED,
+            self::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED,
             self::MOLLIE_STATUS_CHARGEBACK,
         ];
     }

@@ -8,3 +8,10 @@
 .addresses {
     margin: 0 -.9375rem
 }
+
+@media only screen and (max-width: 991px) {
+  .recurring-method-form .product-info .product-img {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+}
