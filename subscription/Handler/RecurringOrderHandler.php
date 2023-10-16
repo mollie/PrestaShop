@@ -249,6 +249,16 @@ class RecurringOrderHandler
         $subscriptionPaidTotal = (float) $subscription->amount->value;
         $cartTotal = (float) $newCart->getOrderTotal(true, Cart::BOTH);
 
+        if (!NumberUtility::isEqual($cartTotal, $subscriptionPaidTotal)) {
+            // TODO when improved logging with context will be implemented, remove this logging
+            $this->logger->error('Paid price is not equal to the order\'s total', [
+                'Paid price' => $subscriptionPaidTotal,
+                'Order price' => $cartTotal,
+            ]);
+
+            throw CouldNotHandleRecurringOrder::cartAndPaidPriceAreNotEqual();
+        }
+
         try {
             $this->mollie->validateOrder(
                 (int) $newCart->id,
@@ -262,23 +272,9 @@ class RecurringOrderHandler
                 $newCart->secure_key
             );
         } catch (\Throwable $exception) {
-            if (!NumberUtility::isEqual($cartTotal, $subscriptionPaidTotal)) {
-                $this->logger->error('Order failed. Paid price is not equal to the order\'s total', [
-                    'Paid price' => $subscriptionPaidTotal,
-                    'Order price' => $cartTotal,
-                ]);
-            }
-
             $specificPrice->delete();
 
             throw $exception;
-        }
-
-        if (!NumberUtility::isEqual($cartTotal, $subscriptionPaidTotal)) {
-            $this->logger->info('Paid price is not equal to the order\'s total', [
-                'Paid price' => $subscriptionPaidTotal,
-                'Order price' => $cartTotal,
-            ]);
         }
 
         $specificPrice->delete();
