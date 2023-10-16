@@ -56,10 +56,10 @@ class OrderStatusUtility
                 $remainingAmount = $payment->getAmountRemaining();
             }
         }
-        $amountRefunded = $transaction->amountRefunded->value;
-        $amountPayed = $transaction->amountCaptured->value;
-        $isPartiallyRefunded = NumberUtility::isLowerThan($amountRefunded, $amountPayed);
-        $isFullyRefunded = NumberUtility::isEqual($amountRefunded, $amountPayed);
+        $amountRefunded = (float) $transaction->amountRefunded->value;
+        $amountPaid = (float) $transaction->amountCaptured->value;
+        $isPartiallyRefunded = NumberUtility::isLowerThan($amountRefunded, $amountPaid);
+        $isFullyRefunded = NumberUtility::isEqual($amountRefunded, $amountPaid);
 
         if ($isPartiallyRefunded) {
             if ($isVoucher && NumberUtility::isEqual(0, $remainingAmount)) {
