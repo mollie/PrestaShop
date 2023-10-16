@@ -1563,7 +1563,12 @@ INSERT INTO `ps_attribute` (`id_attribute`, `id_attribute_group`, `color`, `posi
 (27,	5,	'',	1),
 (28,	5,	'',	2),
 (29,	5,	'',	3),
-(30,	5,	'',	4);
+(30,	5,	'',	4),
+(31,	6,	'',	0),
+(32,	6,	'',	1),
+(33,	6,	'',	2),
+(34,	6,	'',	3),
+(35,	6,	'',	4);
 
 DROP TABLE IF EXISTS `ps_attribute_group`;
 CREATE TABLE `ps_attribute_group` (
@@ -1579,7 +1584,8 @@ INSERT INTO `ps_attribute_group` (`id_attribute_group`, `is_color_group`, `group
 (2,	1,	'color',	1),
 (3,	0,	'select',	2),
 (4,	0,	'select',	3),
-(5,	0,	'select',	4);
+(5,	0,	'select',	4),
+(6,	0,	'select',	5);
 
 DROP TABLE IF EXISTS `ps_attribute_group_lang`;
 CREATE TABLE `ps_attribute_group_lang` (
@@ -1612,7 +1618,11 @@ INSERT INTO `ps_attribute_group_lang` (`id_attribute_group`, `id_lang`, `name`, 
 (5,	1,	'Mollie Subscription',	'Subscription'),
 (5,	5,	'Mollie Subscription',	'Subscription'),
 (5,	6,	'Mollie Subscription',	'Subscription'),
-(5,	7,	'Mollie Subscription',	'Subscription');
+(5,	7,	'Mollie Subscription',	'Subscription'),
+(6,	1,	'Mollie Subscription',	'Subscription'),
+(6,	5,	'Mollie Subscription',	'Subscription'),
+(6,	6,	'Mollie Subscription',	'Subscription'),
+(6,	7,	'Mollie Subscription',	'Subscription');
 
 DROP TABLE IF EXISTS `ps_attribute_group_shop`;
 CREATE TABLE `ps_attribute_group_shop` (
@@ -1632,7 +1642,8 @@ INSERT INTO `ps_attribute_group_shop` (`id_attribute_group`, `id_shop`) VALUES
 (3,	3),
 (4,	1),
 (4,	3),
-(5,	1);
+(5,	1),
+(6,	1);
 
 DROP TABLE IF EXISTS `ps_attribute_impact`;
 CREATE TABLE `ps_attribute_impact` (
@@ -1776,7 +1787,27 @@ INSERT INTO `ps_attribute_lang` (`id_attribute`, `id_lang`, `name`) VALUES
 (30,	1,	'Yearly'),
 (30,	5,	'Yearly'),
 (30,	6,	'Yearly'),
-(30,	7,	'Yearly');
+(30,	7,	'Yearly'),
+(31,	1,	'None'),
+(31,	5,	'None'),
+(31,	6,	'None'),
+(31,	7,	'None'),
+(32,	1,	'Daily'),
+(32,	5,	'Daily'),
+(32,	6,	'Daily'),
+(32,	7,	'Daily'),
+(33,	1,	'Weekly'),
+(33,	5,	'Weekly'),
+(33,	6,	'Weekly'),
+(33,	7,	'Weekly'),
+(34,	1,	'Monthly'),
+(34,	5,	'Monthly'),
+(34,	6,	'Monthly'),
+(34,	7,	'Monthly'),
+(35,	1,	'Yearly'),
+(35,	5,	'Yearly'),
+(35,	6,	'Yearly'),
+(35,	7,	'Yearly');
 
 DROP TABLE IF EXISTS `ps_attribute_shop`;
 CREATE TABLE `ps_attribute_shop` (
@@ -1842,7 +1873,12 @@ INSERT INTO `ps_attribute_shop` (`id_attribute`, `id_shop`) VALUES
 (27,	1),
 (28,	1),
 (29,	1),
-(30,	1);
+(30,	1),
+(31,	1),
+(32,	1),
+(33,	1),
+(34,	1),
+(35,	1);
 
 DROP TABLE IF EXISTS `ps_authorization_role`;
 CREATE TABLE `ps_authorization_role` (
@@ -3052,7 +3088,8 @@ INSERT INTO `ps_cart` (`id_cart`, `id_shop_group`, `id_shop`, `id_carrier`, `del
 (104,	1,	3,	1,	'{\"9\":\"1,\"}',	5,	9,	9,	2,	3,	559,	'c87361b275fdc73622d49fd9819156e4',	0,	0,	'',	0,	0,	'2023-04-05 11:09:50',	'2023-04-05 11:09:56',	'{\"checkout-personal-information-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-addresses-step\":{\"step_is_reachable\":true,\"step_is_complete\":true,\"use_same_address\":true},\"checkout-delivery-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-payment-step\":{\"step_is_reachable\":true,\"step_is_complete\":false},\"checksum\":\"77001047173e0075371114d50dac23c31e9f64de\"}'),
 (105,	1,	3,	0,	'',	6,	9,	9,	2,	3,	559,	'c87361b275fdc73622d49fd9819156e4',	0,	0,	'',	0,	0,	'2023-04-05 11:12:06',	'2023-04-05 11:12:06',	NULL),
 (106,	1,	1,	1,	'{\"8\":\"1,\"}',	5,	8,	8,	2,	4,	777,	'2a2e13b68c1848dd39c9421bab31b01b',	0,	0,	'',	0,	0,	'2023-08-21 07:27:00',	'2023-08-21 07:34:04',	'{\"checkout-personal-information-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-addresses-step\":{\"step_is_reachable\":true,\"step_is_complete\":true,\"use_same_address\":true},\"checkout-delivery-step\":{\"step_is_reachable\":true,\"step_is_complete\":true},\"checkout-payment-step\":{\"step_is_reachable\":true,\"step_is_complete\":false},\"checksum\":\"ea17cf1aa50fc85327eee2165d3954f47828a98a\"}'),
-(107,	1,	1,	0,	'',	1,	7,	7,	2,	4,	777,	'2a2e13b68c1848dd39c9421bab31b01b',	0,	0,	'',	0,	0,	'2023-08-22 07:38:42',	'2023-08-22 07:38:42',	NULL);
+(107,	1,	1,	0,	'',	1,	7,	7,	2,	4,	777,	'2a2e13b68c1848dd39c9421bab31b01b',	0,	0,	'',	0,	0,	'2023-08-22 07:38:42',	'2023-08-22 07:38:42',	NULL),
+(108,	1,	1,	0,	'',	1,	7,	7,	2,	4,	777,	'2a2e13b68c1848dd39c9421bab31b01b',	0,	0,	'',	0,	0,	'2023-10-16 12:39:55',	'2023-10-16 12:40:05',	NULL);
 
 DROP TABLE IF EXISTS `ps_cart_cart_rule`;
 CREATE TABLE `ps_cart_cart_rule` (
@@ -4225,7 +4262,20 @@ INSERT INTO `ps_configuration` (`id_configuration`, `id_shop_group`, `id_shop`, 
 (1112,	1,	1,	'MOLLIE_APPLE_PAY_DIRECT_CART',	'0',	'2023-08-21 07:30:55',	'2023-08-21 07:34:18'),
 (1113,	1,	3,	'MOLLIE_APPLE_PAY_DIRECT_CART',	'0',	'2023-08-21 07:30:55',	'2023-08-21 07:34:18'),
 (1114,	1,	1,	'MOLLIE_AS_MAIN',	'0',	'2023-08-21 07:32:37',	'2023-08-21 07:34:18'),
-(1115,	1,	3,	'MOLLIE_AS_MAIN',	'0',	'2023-08-21 07:32:37',	'2023-08-21 07:34:18');
+(1115,	1,	3,	'MOLLIE_AS_MAIN',	'0',	'2023-08-21 07:32:37',	'2023-08-21 07:34:18'),
+(1116,	NULL,	NULL,	'MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED',	'30',	'2023-10-16 12:34:16',	'2023-10-16 12:34:16'),
+(1117,	NULL,	NULL,	'MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED',	'31',	'2023-10-16 12:34:16',	'2023-10-16 12:34:16'),
+(1118,	NULL,	NULL,	'MOLLIE_STATUS_CHARGEBACK',	'32',	'2023-10-16 12:34:16',	'2023-10-16 12:34:16'),
+(1139,	NULL,	NULL,	'MOLLIE_APPLE_PAY_DIRECT_STYLE',	'0',	'2023-10-16 12:34:16',	'2023-10-16 12:34:16'),
+(1140,	NULL,	NULL,	'MOLLIE_BANCONTACT_QR_CODE_ENABLED',	'0',	'2023-10-16 12:34:16',	'2023-10-16 12:34:16'),
+(1143,	NULL,	NULL,	'SUBSCRIPTION_ATTRIBUTE_GROUP',	'6',	'2023-10-16 12:34:16',	'2023-10-16 12:34:16'),
+(1144,	NULL,	NULL,	'SUBSCRIPTION_ATTRIBUTE_NONE',	'31',	'2023-10-16 12:34:16',	'2023-10-16 12:34:16'),
+(1145,	NULL,	NULL,	'SUBSCRIPTION_ATTRIBUTE_DAILY',	'32',	'2023-10-16 12:34:17',	'2023-10-16 12:34:17'),
+(1146,	NULL,	NULL,	'SUBSCRIPTION_ATTRIBUTE_WEEKLY',	'33',	'2023-10-16 12:34:17',	'2023-10-16 12:34:17'),
+(1147,	NULL,	NULL,	'SUBSCRIPTION_ATTRIBUTE_MONTHLY',	'34',	'2023-10-16 12:34:17',	'2023-10-16 12:34:17'),
+(1148,	NULL,	NULL,	'SUBSCRIPTION_ATTRIBUTE_YEARLY',	'35',	'2023-10-16 12:34:17',	'2023-10-16 12:34:17'),
+(1171,	NULL,	NULL,	'PS_CART_FOLLOWING',	'0',	'2023-10-16 12:38:30',	'2023-10-16 12:38:30'),
+(1172,	NULL,	NULL,	'PS_B2B_ENABLE',	'1',	'2023-10-16 12:38:30',	'2023-10-16 12:38:30');
 
 DROP TABLE IF EXISTS `ps_configuration_kpi`;
 CREATE TABLE `ps_configuration_kpi` (
@@ -6566,7 +6616,7 @@ INSERT INTO `ps_customer` (`id_customer`, `id_shop_group`, `id_shop`, `id_gender
 (1,	1,	1,	1,	3,	1,	0,	'',	'',	'',	'Anonymous',	'Anonymous',	'anonymous@psgdpr.com',	'prestashop',	'2022-03-18 05:46:19',	'0000-00-00',	0,	'',	'0000-00-00 00:00:00',	1,	'',	0.000000,	0,	0,	'3a4b0cf34ebfc312864d223e16b1933b',	'',	0,	0,	0,	'2022-03-18 13:46:19',	'2022-03-18 13:46:19',	'',	'0000-00-00 00:00:00'),
 (2,	1,	1,	1,	3,	1,	0,	'',	'',	'',	'John',	'DOE',	'pub@prestashop.com',	'4ca759021832aa869edb52c32e3505bf',	'2022-03-18 05:46:59',	'1970-01-15',	1,	'',	'2013-12-13 08:19:15',	1,	'',	0.000000,	0,	0,	'6abc5fd172e577f03982d4897dbd80dd',	'',	1,	0,	0,	'2022-03-18 13:46:59',	'2022-03-18 13:46:59',	'',	'0000-00-00 00:00:00'),
 (3,	1,	3,	1,	3,	6,	0,	NULL,	NULL,	NULL,	'TEST',	'TEST',	'demo@demo.com',	'$2y$10$lX.QL.p2B9gZ3Gp3tLNGf.RBECHobOwmxWINL2OLdI2ZTwlKpyUeC',	'2022-03-22 04:21:30',	'0000-00-00',	0,	NULL,	'0000-00-00 00:00:00',	0,	NULL,	0.000000,	0,	0,	'c87361b275fdc73622d49fd9819156e4',	NULL,	1,	0,	0,	'2022-03-22 10:21:30',	'2023-04-05 11:11:51',	NULL,	'0000-00-00 00:00:00'),
-(4,	1,	1,	1,	3,	1,	0,	NULL,	NULL,	NULL,	'TEST',	'TEST',	'demo@demo.com',	'$2y$10$DlSF.ajwpzcMajQyrYx7QuXuynJZ.5zElY73CQyfmA4kvHVljTBKi',	'2022-03-22 04:28:08',	'0000-00-00',	0,	NULL,	'0000-00-00 00:00:00',	0,	NULL,	0.000000,	0,	0,	'2a2e13b68c1848dd39c9421bab31b01b',	NULL,	1,	0,	0,	'2022-03-22 10:28:08',	'2023-08-22 07:36:03',	NULL,	'0000-00-00 00:00:00'),
+(4,	1,	1,	1,	3,	1,	0,	'TEST COMP',	'61-5203873',	NULL,	'TEST',	'TEST',	'demo@demo.com',	'$2y$10$UTHynGguXlk2XTKnN68Oye3dmFJFeZfEXQ7nUJ1mZSCPFVCLPAEeC',	'2022-03-22 04:28:08',	'0000-00-00',	1,	NULL,	'2023-10-16 12:40:05',	1,	NULL,	0.000000,	0,	0,	'2a2e13b68c1848dd39c9421bab31b01b',	NULL,	1,	0,	0,	'2022-03-22 10:28:08',	'2023-10-16 12:40:05',	NULL,	'0000-00-00 00:00:00'),
 (5,	1,	1,	1,	3,	5,	0,	'',	'',	'',	'AUT',	'AUT',	'testemail582761@testing.com',	'$2y$10$m.K/Ai4igZ9wtG10ePK1fuWDOYsYlVgIWMn399fXy2y86AmG8vxMy',	'2022-03-23 02:24:05',	'0000-00-00',	0,	'',	'0000-00-00 00:00:00',	0,	'',	0.000000,	0,	0,	'ab7f21e4aa47d691761ba425f9328070',	'',	1,	0,	0,	'2022-03-23 08:24:05',	'2022-03-23 08:24:05',	'',	'0000-00-00 00:00:00'),
 (6,	1,	1,	1,	3,	5,	0,	'',	'',	'',	'AUT',	'AUT',	'testemail569040@testing.com',	'$2y$10$neU.cusyV.dHSG6O8FcQtuCNne4GSNqKvlwx62vjrAU8Dlz0D44Xy',	'2022-03-23 02:24:40',	'0000-00-00',	0,	'',	'0000-00-00 00:00:00',	0,	'',	0.000000,	0,	0,	'df2d197e4c2645bbea847426c6c8192f',	'',	1,	0,	0,	'2022-03-23 08:24:40',	'2022-03-23 08:24:40',	'',	'0000-00-00 00:00:00'),
 (7,	1,	1,	1,	3,	5,	0,	'',	'',	'',	'AUT',	'AUT',	'testemail697645@testing.com',	'$2y$10$4TUCxAqGhmn11YiyrIhtPOWeoeJALq.34opKHo/97TNFcgmTqoHJy',	'2022-03-23 02:25:02',	'0000-00-00',	0,	'',	'0000-00-00 00:00:00',	0,	'',	0.000000,	0,	0,	'073a1016cef8b45ab2e8d038ecdd9497',	'',	1,	0,	0,	'2022-03-23 08:25:02',	'2022-03-23 08:25:02',	'',	'0000-00-00 00:00:00'),
@@ -6700,7 +6750,9 @@ INSERT INTO `ps_customer_session` (`id_customer_session`, `id_customer`, `token`
 (55,	3,	'fd19d3ad25f2845d92ae90cf1a28f752ac7e12a9'),
 (56,	3,	'dd77f79431391f1b1332ea0f2cfb7de9f07dab68'),
 (57,	4,	'545fbc9b7abffae9676bb7979f8c2a51ad1fd485'),
-(58,	4,	'2d8aa2662afb94688393eec10ad162e7a452fa5b');
+(58,	4,	'2d8aa2662afb94688393eec10ad162e7a452fa5b'),
+(59,	4,	'daf5d0b8ba4238bc468807c1939a4a9c55b520ea'),
+(60,	4,	'486efac9b1534fb8141434a4e20a5fbfd4f2d1dc');
 
 DROP TABLE IF EXISTS `ps_customer_thread`;
 CREATE TABLE `ps_customer_thread` (
@@ -6887,7 +6939,7 @@ CREATE TABLE `ps_employee` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_employee` (`id_employee`, `id_profile`, `id_lang`, `lastname`, `firstname`, `email`, `passwd`, `last_passwd_gen`, `stats_date_from`, `stats_date_to`, `stats_compare_from`, `stats_compare_to`, `stats_compare_option`, `preselect_date_range`, `bo_color`, `bo_theme`, `bo_css`, `default_tab`, `bo_width`, `bo_menu`, `active`, `optin`, `id_last_order`, `id_last_customer_message`, `id_last_customer`, `last_connection_date`, `reset_password_token`, `reset_password_validity`, `has_enabled_gravatar`) VALUES
-(1,	1,	1,	'DOCKERTEST',	'DOCKERTEST',	'demo@demo.com',	'$2y$10$uBqV01rbU9HfTOavWJBO1.V9yF1CDKHXR8qhcCreYZhBSnn..X8uy',	'2022-03-18 05:44:56',	'2022-02-18',	'2022-03-18',	'0000-00-00',	'0000-00-00',	1,	NULL,	NULL,	'default',	'theme.css',	1,	0,	1,	1,	NULL,	0,	0,	0,	'2023-08-22',	NULL,	'0000-00-00 00:00:00',	0);
+(1,	1,	1,	'DOCKERTEST',	'DOCKERTEST',	'demo@demo.com',	'$2y$10$uBqV01rbU9HfTOavWJBO1.V9yF1CDKHXR8qhcCreYZhBSnn..X8uy',	'2022-03-18 05:44:56',	'2022-02-18',	'2022-03-18',	'0000-00-00',	'0000-00-00',	1,	NULL,	NULL,	'default',	'theme.css',	1,	0,	1,	1,	NULL,	0,	0,	0,	'2023-10-16',	NULL,	'0000-00-00 00:00:00',	0);
 
 DROP TABLE IF EXISTS `ps_employee_session`;
 CREATE TABLE `ps_employee_session` (
@@ -6926,7 +6978,8 @@ INSERT INTO `ps_employee_session` (`id_employee_session`, `id_employee`, `token`
 (33,	1,	'9d36eafff20e95bf20932a6ddc59e7dcfc93fa0b'),
 (34,	1,	'471603853984dc736b3c105e01eef2d0bfb24c31'),
 (35,	1,	'7b8ba5063f812577b765acd62661794b34e5acfe'),
-(36,	1,	'd9141415d2567c42f919c175cacbd5e34124f286');
+(36,	1,	'd9141415d2567c42f919c175cacbd5e34124f286'),
+(37,	1,	'd64ab031f9ce3b12b54253a910bc6565e3768189');
 
 DROP TABLE IF EXISTS `ps_employee_shop`;
 CREATE TABLE `ps_employee_shop` (
@@ -10013,7 +10066,38 @@ INSERT INTO `ps_guest` (`id_guest`, `id_operating_system`, `id_web_browser`, `id
 (2780,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
 (2781,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
 (2782,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
-(2783,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0);
+(2783,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2784,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2785,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2786,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2787,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2788,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2789,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2790,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2791,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2792,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2793,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2794,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2795,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2796,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2797,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2798,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2799,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2800,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2801,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2802,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2803,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2804,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2805,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2806,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2807,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2808,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2809,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2810,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2811,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2812,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2813,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
+(2814,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0);
 
 DROP TABLE IF EXISTS `ps_homeslider`;
 CREATE TABLE `ps_homeslider` (
@@ -13823,7 +13907,11 @@ INSERT INTO `ps_log` (`id_log`, `severity`, `error_code`, `message`, `object_typ
 (1655,	1,	0,	'Back office connection from 83.187.117.14',	'',	0,	NULL,	NULL,	5,	1,	1,	'2023-08-21 07:27:31',	'2023-08-21 07:27:31'),
 (1656,	1,	0,	'Protect vendor folder in module mollie',	'',	0,	1,	NULL,	1,	0,	1,	'2023-08-21 07:30:55',	'2023-08-21 07:30:55'),
 (1657,	1,	0,	'Protect vendor folder in module mollie',	'',	0,	1,	NULL,	1,	0,	1,	'2023-08-21 07:31:13',	'2023-08-21 07:31:13'),
-(1658,	1,	0,	'Back office connection from 83.187.117.14',	'',	0,	NULL,	NULL,	5,	1,	1,	'2023-08-22 07:36:36',	'2023-08-22 07:36:36');
+(1658,	1,	0,	'Back office connection from 83.187.117.14',	'',	0,	NULL,	NULL,	5,	1,	1,	'2023-08-22 07:36:36',	'2023-08-22 07:36:36'),
+(1659,	1,	0,	'Protect vendor folder in module mollie',	'',	0,	1,	NULL,	5,	0,	0,	'2023-10-16 12:34:17',	'2023-10-16 12:34:17'),
+(1660,	1,	0,	'Protect vendor folder in module mollie',	'',	0,	1,	NULL,	5,	0,	0,	'2023-10-16 12:34:50',	'2023-10-16 12:34:50'),
+(1661,	1,	0,	'Protect vendor folder in module mollie',	'',	0,	1,	NULL,	5,	0,	0,	'2023-10-16 12:35:02',	'2023-10-16 12:35:02'),
+(1662,	1,	0,	'Back office connection from 83.187.117.14',	'',	0,	NULL,	NULL,	5,	1,	1,	'2023-10-16 12:36:11',	'2023-10-16 12:36:11');
 
 DROP TABLE IF EXISTS `ps_mail`;
 CREATE TABLE `ps_mail` (
@@ -16128,6 +16216,17 @@ INSERT INTO `ps_module_shop` (`id_module`, `id_shop`, `enable_device`) VALUES
 (63,	1,	7),
 (63,	3,	7);
 
+DROP TABLE IF EXISTS `ps_mol_order_payment_fee`;
+CREATE TABLE `ps_mol_order_payment_fee` (
+  `id_mol_order_payment_fee` int(64) NOT NULL AUTO_INCREMENT,
+  `id_cart` int(64) NOT NULL,
+  `id_order` int(64) NOT NULL,
+  `fee_tax_incl` decimal(20,6) NOT NULL,
+  `fee_tax_excl` decimal(20,6) NOT NULL,
+  PRIMARY KEY (`id_mol_order_payment_fee`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 DROP TABLE IF EXISTS `ps_operating_system`;
 CREATE TABLE `ps_operating_system` (
   `id_operating_system` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -16847,7 +16946,10 @@ INSERT INTO `ps_order_state` (`id_order_state`, `invoice`, `send_email`, `module
 (26,	0,	0,	'mollie',	'#E74C3C',	0,	0,	0,	0,	0,	0,	0,	0,	0),
 (27,	0,	0,	'mollie',	'#6F8C9F',	0,	0,	0,	0,	0,	0,	0,	0,	0),
 (28,	0,	0,	'mollie',	'#6F8C9F',	0,	0,	0,	0,	0,	0,	0,	0,	0),
-(29,	0,	0,	'mollie',	'#6F8C9F',	0,	0,	0,	0,	0,	0,	0,	0,	0);
+(29,	0,	0,	'mollie',	'#6F8C9F',	0,	0,	0,	0,	0,	0,	0,	0,	0),
+(30,	1,	1,	'mollie',	'#8A2BE2',	0,	0,	1,	0,	0,	1,	1,	0,	0),
+(31,	0,	1,	'mollie',	'#8A2BE2',	0,	0,	1,	1,	1,	1,	1,	0,	0),
+(32,	0,	0,	'mollie',	'#E74C3C',	0,	0,	0,	0,	0,	0,	0,	0,	0);
 
 DROP TABLE IF EXISTS `ps_order_state_lang`;
 CREATE TABLE `ps_order_state_lang` (
@@ -16974,7 +17076,19 @@ INSERT INTO `ps_order_state_lang` (`id_order_state`, `id_lang`, `name`, `templat
 (29,	1,	'Partially refunded by Mollie',	''),
 (29,	5,	'Partially refunded by Mollie',	''),
 (29,	6,	'Partially refunded by Mollie',	''),
-(29,	7,	'Partially refunded by Mollie',	'');
+(29,	7,	'Partially refunded by Mollie',	''),
+(30,	1,	'Order payment authorized',	'payment'),
+(30,	5,	'Order payment authorized',	'payment'),
+(30,	6,	'Order payment authorized',	'payment'),
+(30,	7,	'Order payment authorized',	'payment'),
+(31,	1,	'Order payment shipped',	'shipped'),
+(31,	5,	'Order payment shipped',	'shipped'),
+(31,	6,	'Order payment shipped',	'shipped'),
+(31,	7,	'Order payment shipped',	'shipped'),
+(32,	1,	'Mollie Chargeback',	''),
+(32,	5,	'Mollie Chargeback',	''),
+(32,	6,	'Mollie Chargeback',	''),
+(32,	7,	'Mollie Chargeback',	'');
 
 DROP TABLE IF EXISTS `ps_pack`;
 CREATE TABLE `ps_pack` (
@@ -25210,7 +25324,7 @@ INSERT INTO `ps_tab` (`id_tab`, `id_parent`, `position`, `module`, `class_name`,
 (24,	2,	2,	NULL,	'AdminParentCustomer',	NULL,	1,	1,	0,	'account_circle',	'Customers',	'Admin.Navigation.Menu'),
 (25,	24,	0,	NULL,	'AdminCustomers',	NULL,	1,	1,	0,	'',	'Customers',	'Admin.Navigation.Menu'),
 (26,	24,	1,	NULL,	'AdminAddresses',	NULL,	1,	1,	0,	'',	'Addresses',	'Admin.Navigation.Menu'),
-(27,	24,	2,	NULL,	'AdminOutstanding',	NULL,	0,	1,	0,	'',	'Outstanding',	'Admin.Navigation.Menu'),
+(27,	24,	2,	NULL,	'AdminOutstanding',	NULL,	1,	1,	0,	'',	'Outstanding',	'Admin.Navigation.Menu'),
 (28,	2,	3,	NULL,	'AdminParentCustomerThreads',	NULL,	1,	1,	0,	'chat',	'Customer Service',	'Admin.Navigation.Menu'),
 (29,	28,	0,	NULL,	'AdminCustomerThreads',	NULL,	1,	1,	0,	'',	'Customer Service',	'Admin.Navigation.Menu'),
 (30,	28,	1,	NULL,	'AdminOrderMessage',	NULL,	1,	1,	0,	'',	'Order Messages',	'Admin.Navigation.Menu'),
@@ -28016,4 +28130,4 @@ INSERT INTO `ps_zone_shop` (`id_zone`, `id_shop`) VALUES
 (7,	3),
 (8,	3);
 
--- 2023-08-22 06:41:39
+-- 2023-10-16 11:42:05
