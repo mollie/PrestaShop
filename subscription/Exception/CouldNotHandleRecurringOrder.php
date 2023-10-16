@@ -19,4 +19,12 @@ class CouldNotHandleRecurringOrder extends MollieSubscriptionException
             ExceptionCode::RECURRING_ORDER_FAILED_TO_APPLY_SELECTED_CARRIER
         );
     }
+
+    public static function cartAndPaidPriceAreNotEqual(): self
+    {
+        return new self(
+            'Cart and paid price are not equal',
+            ExceptionCode::RECURRING_ORDER_CART_AND_PAID_PRICE_ARE_NOT_EQUAL
+        );
+    }
 }
