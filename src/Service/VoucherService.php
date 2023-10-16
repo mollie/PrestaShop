@@ -55,11 +55,11 @@ class VoucherService
         $idFeatureValue = false;
 
         foreach ($cartItem['features'] as $feature) {
-            if ($this->isVoucherFeature((int) $feature['id_feature'])) {
-                $idFeatureValue = (int) $feature['id_feature_value'];
-
-                break;
+            if (!$this->isVoucherFeature((int) $feature['id_feature'])) {
+                continue;
             }
+
+            $idFeatureValue = (int) $feature['id_feature_value'];
         }
 
         if (!$idFeatureValue) {
