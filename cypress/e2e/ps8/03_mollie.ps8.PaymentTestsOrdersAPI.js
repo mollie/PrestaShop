@@ -670,4 +670,24 @@ it.skip('40 Gift Card Checkouting [Orders API]', () => {
 it.skip('41 Gift Card Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
+it('C1765085: Billie Checkouting [Orders API]', () => {
+  cy.visit('/en/index.php?controller=history')
+  cy.get('a').click()
+  cy.contains('Reorder').click()
+  cy.contains('DE').click()
+  //Billing country LT, DE etc.
+  cy.get('.clearfix > .btn').click()
+  cy.get('#js-delivery > .continue').click()
+  //Payment method choosing
+  cy.contains('Billie').click({force:true})
+  cy.get('.condition-label > .js-terms').click({force:true})
+  prepareCookie();
+  cy.get('.ps-shown-by-js > .btn').click()
+  cy.get('[value="authorized"]').click()
+  cy.get('[class="button form__button"]').click()
+  cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('C1765086: Billie Order Shipping, Refunding [Orders API]', () => {
+  cy.OrderShippingRefundingOrdersAPI()
+})
 })

@@ -413,6 +413,16 @@ Cypress.Commands.add("ConfOrdersAPI1784", () => {
       cy.get('[name="MOLLIE_METHOD_TAX_RULES_GROUP_ID_in3"]').select('1', {force: true})
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_in3"]').clear({force: true}).type('22', {force: true})
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_in3"]').clear({force: true}).type('33', {force: true})
+      //billie
+      cy.get('[name="MOLLIE_METHOD_ENABLED_billie"]').select('Yes', {force: true})
+      cy.get('[name="MOLLIE_METHOD_API_billie"]').select('Orders API', {force: true})
+      cy.get('[name="MOLLIE_METHOD_DESCRIPTION_billie"]').clear({force: true}).type('text 123 !@#$%^&*', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_TYPE_billie"]').select('3', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_INCL_billie"]').clear({force: true}).type('4', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_EXCL_billie"]').clear({force: true}).type('5', {force: true})
+      cy.get('[name="MOLLIE_METHOD_TAX_RULES_GROUP_ID_billie"]').select('1', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_billie"]').clear({force: true}).type('22', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_billie"]').clear({force: true}).type('33', {force: true})
       //Gift card
       // cy.get('[name="MOLLIE_METHOD_ENABLED_giftcard"]').select('Yes', {force: true})
       // cy.get('[name="MOLLIE_METHOD_API_giftcard"]').select('Orders API', {force: true})
