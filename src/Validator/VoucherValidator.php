@@ -34,7 +34,7 @@ class VoucherValidator
         $this->voucherService = $voucherService;
     }
 
-    public function validate(array $products)
+    public function validate(array $products): bool
     {
         if (Config::MOLLIE_VOUCHER_CATEGORY_NULL !== $this->configuration->get(Config::MOLLIE_VOUCHER_CATEGORY)) {
             return true;
@@ -42,6 +42,7 @@ class VoucherValidator
 
         foreach ($products as $product) {
             $voucherCategory = $this->voucherService->getProductCategory($product);
+
             if ($voucherCategory) {
                 return true;
             }
