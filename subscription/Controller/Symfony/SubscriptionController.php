@@ -43,12 +43,33 @@ class SubscriptionController extends AbstractSymfonyController
         /** @var GridFactoryInterface $currencyGridFactory */
         $currencyGridFactory = $this->leagueContainer->getService('subscription_grid_factory');
         $currencyGrid = $currencyGridFactory->getGrid($filters);
+        $optionsForm = $this->get('subscription_options_form_handler')->getForm();
 
         return $this->render('@Modules/mollie/views/templates/admin/Subscription/subscriptions-grid.html.twig', [
             'currencyGrid' => $this->presentGrid($currencyGrid),
             'enableSidebar' => true,
             'help_link' => $this->generateSidebarLink($request->attributes->get('_legacy_controller')),
+            'subscriptionOptionsForm' => $optionsForm->createView(),
         ]);
+    }
+
+    /**
+     * @AdminSecurity("is_granted('create', request.get('_legacy_controller'))")
+     *
+     * @param Request $request
+     *
+     * @return RedirectResponse
+     */
+    public function submitOptionsAction(Request $request): RedirectResponse
+    {
+        // TODO implement data submit request
+
+        $this->addFlash(
+            'success',
+            $this->module->l('Options saved successfully', self::FILE_NAME)
+        );
+
+        return $this->redirectToRoute('admin_subscription_index');
     }
 
     /**
