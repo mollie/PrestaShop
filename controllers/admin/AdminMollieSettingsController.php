@@ -253,7 +253,7 @@ class AdminMollieSettingsController extends ModuleAdminController
 
         if (!version_compare($eventbusModule->version, '1.9.0', '>=')) {
             try {
-                $moduleManager->upgrade('ps_eventbus');
+                $moduleManager->install('ps_eventbus');
             } catch (\Throwable $exception) {
                 $logger->error('Failed to upgrade PrestaShop Event Bus.', [
                     'Exception message' => $exception->getMessage(),
@@ -288,7 +288,7 @@ class AdminMollieSettingsController extends ModuleAdminController
         $logger = $this->module->getService(PrestaLoggerInterface::class);
 
         try {
-            /**
+            /*
              * TODO if eventbus is installed in current page load context, error still will be thrown "install eventbus".
              * After refresh everything is working, but it could be annoying to some merchants.
              * Not critical error, but improvement would be nice.
