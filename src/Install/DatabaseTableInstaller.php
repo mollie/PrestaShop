@@ -20,7 +20,7 @@ if (!defined('_PS_VERSION_')) {
 
 final class DatabaseTableInstaller implements InstallerInterface
 {
-    public function install()
+    public function install(): bool
     {
         $commands = $this->getCommands();
 

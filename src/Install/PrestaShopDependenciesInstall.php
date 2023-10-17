@@ -23,7 +23,7 @@ class PrestaShopDependenciesInstall implements InstallerInterface
     /**
      * @throws CouldNotInstallPrestaShopDependencies
      */
-    public function install(): void
+    public function install(): bool
     {
         $mboStatus = (new Presenter())->present();
 
@@ -40,6 +40,8 @@ class PrestaShopDependenciesInstall implements InstallerInterface
         } catch (\Throwable $exception) {
             throw CouldNotInstallPrestaShopDependencies::failedToInstallDependencies($exception);
         }
+
+        return true;
     }
 
     /**
