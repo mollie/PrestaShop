@@ -75,7 +75,7 @@ services:
       - '@prestashop.core.hook.dispatcher'
       - '@subscription_options_data_provider'
       - 'Mollie\Subscription\Form\Options\SubscriptionOptionsType'
-      - 'SubscriptionsOptions'
+      - 'SubscriptionOptions'
 
   # NOTE: works for PS < 1.7.8
   subscription_options_form_handler_deprecated:
@@ -84,6 +84,5 @@ services:
     - '@=service("form.factory").createBuilder()'
     - '@prestashop.core.hook.dispatcher'
     - '@subscription_options_data_provider'
-    -
-      'subscription_options_type': 'Mollie\Subscription\Form\Options\SubscriptionOptionsType'
-    - 'SubscriptionsOptions'
+    - 'subscription_options': 'Mollie\Subscription\Form\Options\SubscriptionOptionsType'
+    - 'SubscriptionOptions'

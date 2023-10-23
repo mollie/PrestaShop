@@ -69,8 +69,13 @@ class SubscriptionController extends AbstractSymfonyController
      */
     public function submitOptionsAction(Request $request): RedirectResponse
     {
-        /** @var FormHandlerInterface $formHandler */
-        $formHandler = $this->get('subscription_options_form_handler');
+        if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.8.0')) {
+            /** @var FormHandlerInterface $formHandler */
+            $formHandler = $this->get('subscription_options_form_handler');
+        } else {
+            /** @var FormHandlerInterface $formHandler */
+            $formHandler = $this->get('subscription_options_form_handler_deprecated');
+        }
 
         try {
             if (!$this->processForm($formHandler, $request)) {
