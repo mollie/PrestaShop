@@ -175,6 +175,14 @@ Cypress.Commands.add("ConfOrdersAPI", () => {
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_in3"]').clear({force: true}).type('11', {force: true})
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_in3"]').clear({force: true}).type('22', {force: true})
       cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_in3"]').clear({force: true}).type('33', {force: true})
+      //billie
+      cy.get('[name="MOLLIE_METHOD_ENABLED_billie"]').select('Yes', {force: true})
+      cy.get('[name="MOLLIE_METHOD_API_billie"]').select('Orders API', {force: true})
+      cy.get('[name="MOLLIE_METHOD_DESCRIPTION_billie"]').clear({force: true}).type('text 123 !@#$%^&*', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_TYPE_billie"]').select('3', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_billie"]').clear({force: true}).type('11', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_billie"]').clear({force: true}).type('22', {force: true})
+      cy.get('[name="MOLLIE_METHOD_SURCHARGE_LIMIT_billie"]').clear({force: true}).type('33', {force: true})
  })
 Cypress.Commands.add("ConfPaymentsAPI", () => {
       //giropay
