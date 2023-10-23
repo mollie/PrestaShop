@@ -212,7 +212,7 @@ it('C339385: 50 Credit Card Guest Checkouting [Payments API]', () => {
     cy.get('[class="button form__button"]').click()
     cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it.only('C339386: 51 Credit Card Guest Checkouting with not 3DS secure card [Payments API]', () => {
+it('C339386: 51 Credit Card Guest Checkouting with not 3DS secure card [Payments API]', () => {
     cy.clearCookies()
     //Payments API item
     cy.visit('/en/', { headers: {"Accept-Encoding": "gzip, deflate"}})
