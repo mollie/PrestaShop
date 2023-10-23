@@ -487,7 +487,7 @@ it('C339399: 64 Belfius Checkouting [Payments API]', () => {
 it('C339400: 65 Belfius BO Refunding, Partial Refunding [Payments API]', () => {
     cy.OrderRefundingPartialPaymentsAPI()
 });
-it.skip('C339401: 66 Bank Transfer Checkouting [Payments API]', () => { // skipping temporary, bug
+it('C339401: 66 Bank Transfer Checkouting [Payments API]', () => {
     cy.visit('/en/index.php?controller=history')
     cy.get('a').click()
     //
@@ -514,9 +514,9 @@ it.skip('C339401: 66 Bank Transfer Checkouting [Payments API]', () => { // skipp
     cy.reload();
     cy.get('[value="paid"]').click()
     cy.get('[class="button form__button"]').click()
-    cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+    cy.contains('Welcome back').should('be.visible')
 });
-it.skip('C339402: 67 Bank Transfer BO Refunding, Partial Refunding [Payments API]', () => { // skipping temporary, bug
+it('C339402: 67 Bank Transfer BO Refunding, Partial Refunding [Payments API]', () => {
     cy.OrderRefundingPartialPaymentsAPI()
 });
 })
