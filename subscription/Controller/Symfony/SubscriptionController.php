@@ -6,10 +6,13 @@ namespace Mollie\Subscription\Controller\Symfony;
 
 use Exception;
 use Mollie\Adapter\Shop;
+use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\Exception\SubscriptionApiException;
 use Mollie\Subscription\Filters\SubscriptionFilters;
 use Mollie\Subscription\Grid\SubscriptionGridDefinitionFactory;
 use Mollie\Subscription\Handler\SubscriptionCancellationHandler;
+use Mollie\Utility\PsVersionUtility;
+use PrestaShop\PrestaShop\Core\Form\FormHandlerInterface;
 use PrestaShop\PrestaShop\Core\Grid\GridFactoryInterface;
 use PrestaShopBundle\Security\Annotation\AdminSecurity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -30,7 +33,7 @@ class SubscriptionController extends AbstractSymfonyController
     public function indexAction(SubscriptionFilters $filters, Request $request)
     {
         /** @var Shop $shop */
-        $shop = $this->leagueContainer->getService(Shop::class);
+        $shop = $this->serviceProvider->getService(Shop::class);
 
         if ($shop->getContext() !== \Shop::CONTEXT_SHOP) {
             if (!$this->get('session')->getFlashBag()->has('error')) {
@@ -41,14 +44,20 @@ class SubscriptionController extends AbstractSymfonyController
         }
 
         /** @var GridFactoryInterface $currencyGridFactory */
-        $currencyGridFactory = $this->leagueContainer->getService('subscription_grid_factory');
+        $currencyGridFactory = $this->serviceProvider->getService('subscription_grid_factory');
         $currencyGrid = $currencyGridFactory->getGrid($filters);
-        $optionsForm = $this->get('subscription_options_form_handler')->getForm();
+
+        if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.8.0')) {
+            /** @var FormHandlerInterface $formHandler */
+            $optionsForm = $this->get('subscription_options_form_handler')->getForm();
+        } else {
+            /** @var FormHandlerInterface $formHandler */
+            $optionsForm = $this->get('subscription_options_form_handler_deprecated')->getForm();
+        }
 
         return $this->render('@Modules/mollie/views/templates/admin/Subscription/subscriptions-grid.html.twig', [
             'currencyGrid' => $this->presentGrid($currencyGrid),
             'enableSidebar' => true,
-            'help_link' => $this->generateSidebarLink($request->attributes->get('_legacy_controller')),
             'subscriptionOptionsForm' => $optionsForm->createView(),
         ]);
     }
@@ -62,11 +71,39 @@ class SubscriptionController extends AbstractSymfonyController
      */
     public function submitOptionsAction(Request $request): RedirectResponse
     {
-        // TODO implement data submit request
+        /** @var FormHandlerInterface $formHandler */
+        $formHandler = $this->get('subscription_options_form_handler');
+
+        try {
+            if (!$this->processForm($formHandler, $request)) {
+                $this->addFlash(
+                    'error',
+                    $this->module->l('Failed to save options. Try again or contact support.', self::FILE_NAME)
+                );
+
+                return $this->redirectToRoute('admin_subscription_index');
+            }
+        } catch (\Throwable $exception) {
+            $this->addFlash(
+                'error',
+                $this->module->l('Failed to save options. For more information check logs.', self::FILE_NAME)
+            );
+
+            // TODO use subscription logger after it's fixed
+            /** @var PrestaLoggerInterface $logger */
+            $logger = $this->serviceProvider->getService(PrestaLoggerInterface::class);
+
+            $logger->error('Failed to save subscription options.', [
+                'Exception message' => $exception->getMessage(),
+                'Exception code' => $exception->getCode(),
+            ]);
+
+            return $this->redirectToRoute('admin_subscription_index');
+        }
 
         $this->addFlash(
             'success',
-            $this->module->l('Options saved successfully', self::FILE_NAME)
+            $this->module->l('Options saved successfully.', self::FILE_NAME)
         );
 
         return $this->redirectToRoute('admin_subscription_index');
@@ -103,7 +140,7 @@ class SubscriptionController extends AbstractSymfonyController
     public function cancelAction(int $subscriptionId): RedirectResponse
     {
         /** @var SubscriptionCancellationHandler $subscriptionCancellationHandler */
-        $subscriptionCancellationHandler = $this->leagueContainer->getService(SubscriptionCancellationHandler::class);
+        $subscriptionCancellationHandler = $this->serviceProvider->getService(SubscriptionCancellationHandler::class);
 
         try {
             $subscriptionCancellationHandler->handle($subscriptionId);
@@ -119,6 +156,34 @@ class SubscriptionController extends AbstractSymfonyController
         );
 
         return $this->redirectToRoute('admin_subscription_index');
+    }
+
+    /**
+     * Processes the form in a generic way.
+     *
+     * @param FormHandlerInterface $formHandler
+     * @param Request $request
+     *
+     * @return bool false if an error occurred, true otherwise
+     *
+     * @throws \Throwable
+     */
+    private function processForm(FormHandlerInterface $formHandler, Request $request)
+    {
+        $form = $formHandler->getForm();
+        $form->submit($request->request->get($form->getName()));
+
+        if (!$form->isSubmitted()) {
+            return true;
+        }
+
+        if ($errors = $formHandler->save($form->getData())) {
+            $this->flashErrors($errors);
+
+            return false;
+        }
+
+        return true;
     }
 
     private function getErrorMessage(Exception $e): string

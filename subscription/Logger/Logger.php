@@ -10,6 +10,8 @@ class Logger implements LoggerInterface
 
     const LOG_OBJECT_TYPE = 'mollie_sub_log';
 
+    // TODO fix this logger
+
     /**
      * @return null
      */

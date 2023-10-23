@@ -13,7 +13,7 @@ use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 abstract class AbstractSymfonyController extends FrameworkBundleAdminController
 {
     /** @var LeagueServiceContainerProvider */
-    protected $leagueContainer;
+    protected $serviceProvider;
 
     /** @var Mollie */
     protected $module;
@@ -21,7 +21,9 @@ abstract class AbstractSymfonyController extends FrameworkBundleAdminController
     public function __construct()
     {
         parent::__construct();
-        $this->leagueContainer = new LeagueServiceContainerProvider();
+
+        $this->serviceProvider = new LeagueServiceContainerProvider();
+
         /* @phpstan-ignore-next-line */
         $this->module = Module::getInstanceByName('mollie');
     }

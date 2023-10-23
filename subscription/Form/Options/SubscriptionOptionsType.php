@@ -34,11 +34,6 @@ class SubscriptionOptionsType extends TranslatorAwareType
             ->add('carrier', ChoiceType::class, [
                 'required' => true,
                 'choices' => $this->carrierOptionProvider->getChoices(),
-// TODO structure should look like below visible => writable to configuration value
-//         [
-//            'Yes' => 'stock_yes',
-//            'No' => 'stock_no',
-//        ],
                 // TODO migrate to modern translation system
                 'placeholder' => $this->module->l('Choose your carrier'),
             ]);
