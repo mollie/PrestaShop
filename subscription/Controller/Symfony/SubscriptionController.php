@@ -33,7 +33,7 @@ class SubscriptionController extends AbstractSymfonyController
     public function indexAction(SubscriptionFilters $filters, Request $request)
     {
         /** @var Shop $shop */
-        $shop = $this->serviceProvider->getService(Shop::class);
+        $shop = $this->module->getService(Shop::class);
 
         if ($shop->getContext() !== \Shop::CONTEXT_SHOP) {
             if (!$this->get('session')->getFlashBag()->has('error')) {
@@ -44,7 +44,7 @@ class SubscriptionController extends AbstractSymfonyController
         }
 
         /** @var GridFactoryInterface $currencyGridFactory */
-        $currencyGridFactory = $this->serviceProvider->getService('subscription_grid_factory');
+        $currencyGridFactory = $this->module->getService('subscription_grid_factory');
         $currencyGrid = $currencyGridFactory->getGrid($filters);
 
         if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.8.0')) {
@@ -94,7 +94,7 @@ class SubscriptionController extends AbstractSymfonyController
 
             // TODO use subscription logger after it's fixed
             /** @var PrestaLoggerInterface $logger */
-            $logger = $this->serviceProvider->getService(PrestaLoggerInterface::class);
+            $logger = $this->module->getService(PrestaLoggerInterface::class);
 
             $logger->error('Failed to save subscription options.', [
                 'Exception message' => $exception->getMessage(),
@@ -143,7 +143,7 @@ class SubscriptionController extends AbstractSymfonyController
     public function cancelAction(int $subscriptionId): RedirectResponse
     {
         /** @var SubscriptionCancellationHandler $subscriptionCancellationHandler */
-        $subscriptionCancellationHandler = $this->serviceProvider->getService(SubscriptionCancellationHandler::class);
+        $subscriptionCancellationHandler = $this->module->getService(SubscriptionCancellationHandler::class);
 
         try {
             $subscriptionCancellationHandler->handle($subscriptionId);
@@ -171,22 +171,12 @@ class SubscriptionController extends AbstractSymfonyController
      *
      * @throws \Throwable
      */
-    private function processForm(FormHandlerInterface $formHandler, Request $request)
+    private function processForm(FormHandlerInterface $formHandler, Request $request): bool
     {
         $form = $formHandler->getForm();
-        $form->submit($request->request->get($form->getName()));
+        $form->handleRequest($request);
 
-        if (!$form->isSubmitted()) {
-            return true;
-        }
-
-        if ($errors = $formHandler->save($form->getData())) {
-            $this->flashErrors($errors);
-
-            return false;
-        }
-
-        return true;
+        return $form->isSubmitted() && $form->isValid();
     }
 
     private function getErrorMessage(Exception $e): string
