@@ -671,8 +671,6 @@ it.skip('41 Gift Card Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
 it('C1765085: Billie Checkouting [Orders API]', () => {
-  // enabling the B2B functionality in PS
-  cy.visit('/admin1/')
   cy.visit('/en/index.php?controller=history')
   cy.contains('Reorder').click()
   cy.contains('DE').click()
