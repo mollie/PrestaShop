@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@symfony/webpack-encore": "^0.31.0",
+    "@symfony/webpack-encore": "^4.4.0",
     "babel": "^6.23.0",
     "node-sass": "^8.0.0",
     "sass-loader": "^9.0.1"
