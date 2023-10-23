@@ -48,17 +48,15 @@ class SubscriptionController extends AbstractSymfonyController
         $currencyGrid = $currencyGridFactory->getGrid($filters);
 
         if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.8.0')) {
-            /** @var FormHandlerInterface $formHandler */
-            $optionsForm = $this->get('subscription_options_form_handler')->getForm();
+            $formHandler = $this->get('subscription_options_form_handler')->getForm();
         } else {
-            /** @var FormHandlerInterface $formHandler */
-            $optionsForm = $this->get('subscription_options_form_handler_deprecated')->getForm();
+            $formHandler = $this->get('subscription_options_form_handler_deprecated')->getForm();
         }
 
         return $this->render('@Modules/mollie/views/templates/admin/Subscription/subscriptions-grid.html.twig', [
             'currencyGrid' => $this->presentGrid($currencyGrid),
             'enableSidebar' => true,
-            'subscriptionOptionsForm' => $optionsForm->createView(),
+            'subscriptionOptionsForm' => $formHandler->createView(),
         ]);
     }
 
