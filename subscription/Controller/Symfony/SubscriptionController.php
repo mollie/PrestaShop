@@ -6,7 +6,6 @@ namespace Mollie\Subscription\Controller\Symfony;
 
 use Exception;
 use Mollie\Adapter\Shop;
-use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\Exception\SubscriptionApiException;
 use Mollie\Subscription\Filters\SubscriptionFilters;
 use Mollie\Subscription\Grid\SubscriptionGridDefinitionFactory;
@@ -77,32 +76,19 @@ class SubscriptionController extends AbstractSymfonyController
             $formHandler = $this->get('subscription_options_form_handler_deprecated');
         }
 
-        try {
-            if (!$this->processForm($formHandler, $request)) {
-                $this->addFlash(
-                    'error',
-                    $this->module->l('Failed to save options. Try again or contact support.', self::FILE_NAME)
-                );
+        $form = $formHandler->getForm();
+        $form->handleRequest($request);
 
-                return $this->redirectToRoute('admin_subscription_index');
-            }
-        } catch (\Throwable $exception) {
+        if (!$form->isSubmitted() || !$form->isValid()) {
             $this->addFlash(
                 'error',
-                $this->module->l('Failed to save options. For more information check logs.', self::FILE_NAME)
+                $this->module->l('Failed to save options. Try again or contact support.', self::FILE_NAME)
             );
-
-            // TODO use subscription logger after it's fixed
-            /** @var PrestaLoggerInterface $logger */
-            $logger = $this->module->getService(PrestaLoggerInterface::class);
-
-            $logger->error('Failed to save subscription options.', [
-                'Exception message' => $exception->getMessage(),
-                'Exception code' => $exception->getCode(),
-            ]);
 
             return $this->redirectToRoute('admin_subscription_index');
         }
+
+        $formHandler->save($form->getData());
 
         $this->addFlash(
             'success',
@@ -159,24 +145,6 @@ class SubscriptionController extends AbstractSymfonyController
         );
 
         return $this->redirectToRoute('admin_subscription_index');
-    }
-
-    /**
-     * Processes the form in a generic way.
-     *
-     * @param FormHandlerInterface $formHandler
-     * @param Request $request
-     *
-     * @return bool false if an error occurred, true otherwise
-     *
-     * @throws \Throwable
-     */
-    private function processForm(FormHandlerInterface $formHandler, Request $request): bool
-    {
-        $form = $formHandler->getForm();
-        $form->handleRequest($request);
-
-        return $form->isSubmitted() && $form->isValid();
     }
 
     private function getErrorMessage(Exception $e): string
