@@ -45,7 +45,7 @@
         },
         "prepend-autoloader": false,
         "allow-plugins": {
-            "php-http/discovery": false
+            "php-http/discovery": true
         }
     },
     "type": "prestashop-module",
