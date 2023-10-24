@@ -206,13 +206,13 @@ class ApiService implements ApiServiceInterface
 
                 if (!empty($paymentMethod->surcharge_fixed_amount_tax_excl)) {
                     $apiMethod['surcharge_fixed_amount_tax_incl'] = $this->getSurchargeFixedAmountTaxInclPrice(
-                        $paymentMethod->surcharge_fixed_amount_tax_excl,
-                        $paymentMethod->tax_rules_group_id,
+                        (float) $paymentMethod->surcharge_fixed_amount_tax_excl,
+                        (int) $paymentMethod->tax_rules_group_id,
                         $this->context->getCountryId()
                     );
 
                     $paymentMethod->surcharge_fixed_amount_tax_excl = NumberUtility::toPrecision(
-                        $paymentMethod->surcharge_fixed_amount_tax_excl,
+                        (float) $paymentMethod->surcharge_fixed_amount_tax_excl,
                         NumberUtility::FLOAT_PRECISION
                     );
 
@@ -443,12 +443,12 @@ class ApiService implements ApiServiceInterface
         );
 
         $paymentMethod->min_amount = NumberUtility::toPrecision(
-            $paymentMethod->min_amount,
+            (float) $paymentMethod->min_amount,
             NumberUtility::FLOAT_PRECISION
         );
 
         $paymentMethod->max_amount = NumberUtility::toPrecision(
-            $paymentMethod->max_amount,
+            (float) $paymentMethod->max_amount,
             NumberUtility::FLOAT_PRECISION
         );
 
