@@ -24,7 +24,9 @@
  * #}
 
 {% if subscriptionOptionsForm.subscription_options is defined and subscriptionOptionsForm.subscription_options %}
-  {% set subscriptionOptionsForm = subscriptionOptionsForm.subscription_options %}
+  {% set subscriptionOptions = subscriptionOptionsForm.subscription_options %}
+{% else %}
+  {% set subscriptionOptions = subscriptionOptionsForm %}
 {% endif %}
 
 {% block subscription_options %}
@@ -41,11 +43,10 @@
               {# TODO translations will be enabled only after we will migrate to moden translation system #}
               {{ ps.label_with_help('Carrier to use in subscription orders'|trans, 'WARNING: do not change selection after getting first subscription order.'|trans) }}
               <div class="col-sm">
-                {{ form_errors(subscriptionOptionsForm.carrier) }}
-                {{ form_widget(subscriptionOptionsForm.carrier) }}
+                {{ form_errors(subscriptionOptions.carrier) }}
+                {{ form_widget(subscriptionOptions.carrier) }}
               </div>
             </div>
-            {{ form_rest(subscriptionOptionsForm) }}
           </div>
         </div>
         <div class="card-footer">
@@ -55,6 +56,7 @@
           </div>
         </div>
       </div>
+      {{ form_rest(subscriptionOptionsForm) }}
       {{ form_end(subscriptionOptionsForm) }}
     </div>
   </div>
