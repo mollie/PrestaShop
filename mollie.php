@@ -471,7 +471,7 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayAdminOrder($params)
     {
-        /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
+        /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
         $paymentMethodRepo = $this->getService(PaymentMethodRepositoryInterface::class);
 
         /** @var \Mollie\Service\ShipmentServiceInterface $shipmentService */
@@ -568,8 +568,8 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayOrderConfirmation()
     {
-        /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->getService(\Mollie\Repository\PaymentMethodRepository::class);
+        /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+        $paymentMethodRepo = $this->getService(PaymentMethodRepositoryInterface::class);
         $payment = $paymentMethodRepo->getPaymentBy('cart_id', (string) Tools::getValue('id_cart'));
         if (!$payment) {
             return '';
@@ -631,6 +631,10 @@ class Mollie extends PaymentModule
         }
 
         if (!Validate::isLoadedObject($order)) {
+            return;
+        }
+
+        if ($order->module !== $this->name) {
             return;
         }
 
@@ -771,6 +775,12 @@ class Mollie extends PaymentModule
             return '';
         }
 
+        $order = $params['object']->getOrder();
+
+        if ($order->module !== $this->name) {
+            return '';
+        }
+
         $localeRepo = $this->get('prestashop.core.localization.locale.repository');
 
         if (!$localeRepo) {
@@ -786,7 +796,7 @@ class Mollie extends PaymentModule
         $invoiceTemplateBuilder = $this->getService(\Mollie\Builder\InvoicePdfTemplateBuilder::class);
 
         $templateParams = $invoiceTemplateBuilder
-            ->setOrder($params['object']->getOrder())
+            ->setOrder($order)
             ->setLocale($locale)
             ->buildParams();
 
@@ -930,8 +940,8 @@ class Mollie extends PaymentModule
 
             $newPayment = $apiClient->payments->create($paymentData->jsonSerialize());
 
-            /** @var \Mollie\Repository\PaymentMethodRepository $paymentMethodRepository */
-            $paymentMethodRepository = $this->getService(\Mollie\Repository\PaymentMethodRepository::class);
+            /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
+            $paymentMethodRepository = $this->getService(PaymentMethodRepositoryInterface::class);
             $paymentMethodRepository->addOpenStatusPayment(
                 $cartId,
                 $orderPayment,
@@ -958,15 +968,24 @@ class Mollie extends PaymentModule
         $paymentMethodRepo = $this->getService(PaymentMethodRepositoryInterface::class);
 
         $orders = Order::getByReference($orderPayment->order_reference);
+
         /** @var Order $order */
         $order = $orders->getFirst();
+
         if (!Validate::isLoadedObject($order)) {
             return;
         }
+
+        if ($order->module !== $this->name) {
+            return;
+        }
+
         $mollieOrder = $paymentMethodRepo->getPaymentBy('cart_id', $order->id_cart);
+
         if (!$mollieOrder) {
             return;
         }
+
         $orderPayment->payment_method = Config::$methods[$mollieOrder['method']];
         $orderPayment->update();
     }
@@ -1037,7 +1056,7 @@ class Mollie extends PaymentModule
     {
         /** @var Mollie $module */
         $module = Module::getInstanceByName('mollie');
-        /** @var \Mollie\Repository\PaymentMethodRepository $molliePaymentRepo */
+        /** @var PaymentMethodRepositoryInterface $molliePaymentRepo */
         $molliePaymentRepo = $module->getService(PaymentMethodRepositoryInterface::class);
         $molPayment = $molliePaymentRepo->getPaymentBy('cart_id', (string) Cart::getCartIdByOrderId($orderId));
         if (\Mollie\Utility\MollieStatusUtility::isPaymentFinished($molPayment['bank_status'])) {
