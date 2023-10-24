@@ -85,6 +85,7 @@ class RecurringOrderHandler
         ConfigurationAdapter $configuration,
         RecurringOrdersProductRepositoryInterface $recurringOrdersProductRepository,
         CarrierRepositoryInterface $carrierRepository,
+        // TODO use subscription logger after it's fixed
         PrestaLoggerInterface $logger,
         CreateSpecificPriceAction $createSpecificPriceAction,
         OrderRepositoryInterface $orderRepository
