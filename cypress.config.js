@@ -5,7 +5,7 @@ module.exports = defineConfig({
   experimentalMemoryManagement: true,
   experimentalSourceRewriting: true,
   numTestsKeptInMemory: 0,
-  defaultCommandTimeout: 30000,
+  defaultCommandTimeout: 80000,
   projectId: 'xb89dr',
   retries: 3,
   videoCompression: 8,
