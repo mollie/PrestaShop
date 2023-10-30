@@ -709,4 +709,23 @@ it('C1765085: Billie Checkouting [Orders API]', () => {
 it('C1765086: Billie Order Shipping, Refunding [Orders API]', () => {
   cy.OrderShippingRefundingOrdersAPI()
 })
+it.skip('Pay with Klarna UK Checkouting [Orders API]', () => { //bug reported
+  cy.visit('/en/order-history')
+  cy.contains('Reorder').click()
+  cy.contains('UK').click({force:true})
+  //Billing country LT, DE etc.
+  cy.get('.clearfix > .btn').click()
+  cy.get('#js-delivery > .continue').click()
+  //Payment method choosing
+  cy.contains('Pay with Klarna').click({force:true})
+  cy.get('.condition-label > .js-terms').click({force:true})
+  prepareCookie();
+  cy.get('.ps-shown-by-js > .btn').click()
+  cy.get('[value="authorized"]').click()
+  cy.get('[class="button form__button"]').click()
+  cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it.skip('Pay with Klarna UK Order Shipping, Refunding [Orders API]', () => {
+  cy.OrderShippingRefundingOrdersAPI()
+})
 })
