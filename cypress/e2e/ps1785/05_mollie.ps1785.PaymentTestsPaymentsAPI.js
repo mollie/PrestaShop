@@ -54,7 +54,11 @@ Cypress.on('window:before:load', (win) => {
 afterEach(() => {
   expect(windowConsoleError).to.not.be.called;
 })
-describe('PS1785 Tests Suite', () => {
+describe('PS1785 Tests Suite', {
+  failFast: {
+    enabled: false,
+  },
+}, () => {
   beforeEach(() => {
       login('MollieBOFOLoggingIn')
       cy.viewport(1920,1080)
