@@ -64,13 +64,7 @@ describe('PS1785 Tests Suite', {
       cy.viewport(1920,1080)
   })
 it.skip('C339342: 05 Vouchers Checkouting [Orders API]', () => { //possible bug
-      cy.visit('/de/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      cy.contains('LT').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
+      cy.navigatingToThePayment()
       //Payment method choosing
       cy.contains('Voucher').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -100,13 +94,7 @@ it.skip('C339343: 06 Vouchers Order BO Refunding, Shipping (Paid part only) [Ord
       cy.get('[class="card-body"]').find('[class="alert alert-warning"]').should('exist') //additional checking if the warning alert for vouchers exist
 })
 it('C339344: 07 Bancontact Checkouting [Orders API]', () => {
-      cy.visit('/de/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      cy.contains('LT').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
+      cy.navigatingToThePayment()
       //Payment method choosing
       cy.contains('Bancontact').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -131,12 +119,7 @@ it('C339345: 08 Bancontact Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
 it('C339346: 09 iDEAL Checkouting [Orders API]', () => {
-      cy.visit('/de/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
+      cy.navigatingToThePayment()
       //Payment method choosing
       cy.contains('iDEAL').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -162,13 +145,7 @@ it('C339347: 10 iDEAL Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
 it('C339348: 11 Klarna Slice It Checkouting [Orders API]', () => {
-      cy.visit('/de/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      //Billing country LT, DE etc.
-      cy.contains('DE').click()
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
+      cy.navigatingToThePayment()
       //Payment method choosing
       cy.contains('Ratenkauf.').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -193,14 +170,7 @@ it('C339349: 12 Klarna Slice It Order BO Shipping, Refunding [Orders API]', () =
       cy.OrderShippingRefundingOrdersAPI()
 })
 it('C339350: 13 Klarna Pay Later Checkouting [Orders API]', () => {
-      cy.visit('/de/index.php?controller=history')
-      cy.get('a').click()
-      //
-      cy.contains('Reorder').click()
-      //Billing country LT, DE etc.
-      cy.contains('DE').click()
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
+      cy.navigatingToThePayment()
       //Payment method choosing
       cy.contains('Rechnung.').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -225,14 +195,7 @@ it('C339351: 14 Klarna Pay Later Order BO Shipping, Refunding [Orders API]', () 
       cy.OrderShippingRefundingOrdersAPI()
 })
 it('C339352: 15 Klarna Pay Now Checkouting [Orders API]', () => {
-      cy.visit('/de/index.php?controller=history')
-      cy.get('a').click()
-      //
-      cy.contains('Reorder').click()
-      //Billing country LT, DE etc.
-      cy.contains('DE').click()
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
+      cy.navigatingToThePayment()
       //Payment method choosing
       cy.contains('Pay now.').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -263,12 +226,7 @@ it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
       cy.get('#MOLLIE_SANDBOX_SINGLE_CLICK_PAYMENT_on').click({force:true})
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
-      cy.visit('/en/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
+      cy.navigatingToThePayment()
       //Payment method choosing
       cy.contains('Card').click({force:true})
       //Credit card inputing
@@ -292,12 +250,7 @@ it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
 it('C339355: 18 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
-      cy.visit('/en/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
+      cy.navigatingToThePayment()
       //Payment method choosing
       cy.contains('Card').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -325,13 +278,7 @@ it('C339356: 19 Credit Card Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
 it('C339357: 20 IN3 Checkouting [Orders API]', () => {
-      cy.visit('/de/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      cy.contains('NL').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
+      cy.navigatingToThePayment()
       //Payment method choosing
       // waiting for enabling IN3 payment
       cy.contains('in3').click({force:true})
@@ -397,13 +344,7 @@ it('C339360: 23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
 it('C339361: 24 Paypal Checkouting [Orders API]', () => {
-      cy.visit('/de/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      cy.contains('NL').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
+      cy.navigatingToThePayment()
       //Payment method choosing
       cy.contains('PayPal').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -428,13 +369,7 @@ it('C339362: 25 Paypal Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
 it('C339363: 26 SOFORT Checkouting [Orders API]', () => {
-      cy.visit('/de/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      cy.contains('NL').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
+      cy.navigatingToThePayment()
       //Payment method choosing
       cy.contains('SOFORT').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -458,26 +393,20 @@ it('C339363: 26 SOFORT Checkouting [Orders API]', () => {
 it('C339364: 27 SOFORT Order Shipping, Refunding [Orders API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
-          //Shipping button in React
-          cy.get('.btn-group > .btn-primary').click()
-          cy.get('[class="swal-button swal-button--confirm"]').click()
-          cy.get('.swal-modal').should('exist')
-          cy.get('#input-carrier').clear({force: true}).type('FedEx',{delay:0})
-          cy.get('#input-code').clear({force: true}).type('123456',{delay:0})
-          cy.get('#input-url').clear({force: true}).type('https://www.invertus.eu',{delay:0})
-          cy.get(':nth-child(2) > .swal-button').click()
-          cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
-          cy.get('[class="alert alert-success"]').should('be.visible')
-          //Refunding not possible because "We haven't received the payment on our bank accounts yet" message from Mollie Dashboard
+      //Shipping button in React
+      cy.get('.btn-group > .btn-primary').click()
+      cy.get('[class="swal-button swal-button--confirm"]').click()
+      cy.get('.swal-modal').should('exist')
+      cy.get('#input-carrier').clear({force: true}).type('FedEx',{delay:0})
+      cy.get('#input-code').clear({force: true}).type('123456',{delay:0})
+      cy.get('#input-url').clear({force: true}).type('https://www.invertus.eu',{delay:0})
+      cy.get(':nth-child(2) > .swal-button').click()
+      cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
+      cy.get('[class="alert alert-success"]').should('be.visible')
+      //Refunding not possible because "We haven't received the payment on our bank accounts yet" message from Mollie Dashboard
 })
 it('C339365: 28 Przelewy24 Checkouting [Orders API]', () => {
-      cy.visit('/de/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      cy.contains('NL').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
+      cy.navigatingToThePayment()
       //Payment method choosing
       cy.contains('Przelewy24').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -502,13 +431,7 @@ it('C339366: 29 Przelewy24 Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
 it('C339367: 30 Giropay Checkouting [Orders API]', () => {
-      cy.visit('/de/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      cy.contains('NL').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
+      cy.navigatingToThePayment()
       //Payment method choosing
       cy.contains('giropay').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -533,13 +456,7 @@ it('C339368: 31 Giropay Order Shipping, Refunding [Orders API]', () => {
   cy.OrderRefundingShippingOrdersAPI()
 })
 it('C339369: 32 EPS Checkouting [Orders API]', () => {
-      cy.visit('/de/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      cy.contains('NL').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
+      cy.navigatingToThePayment()
       //Payment method choosing
       cy.contains('eps').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -564,13 +481,7 @@ it('C339370: 33 EPS Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
 it('C339371: 34 KBC/CBC Checkouting [Orders API]', () => {
-      cy.visit('/de/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      cy.contains('NL').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
+      cy.navigatingToThePayment()
       //Payment method choosing
       cy.contains('KBC/CBC').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -596,13 +507,7 @@ it('C339372: 35 KBC/CBC Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
 it('C339373: 36 Belfius Checkouting [Orders API]', () => {
-      cy.visit('/de/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      cy.contains('NL').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
+      cy.navigatingToThePayment()
       //Payment method choosing
       cy.contains('Belfius').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -627,13 +532,7 @@ it('C339374: 37 Belfius Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
 it('C339375: 38 Bank Transfer Checkouting [Orders API]', () => {
-      cy.visit('/en/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      cy.contains('NL').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
+      cy.navigatingToThePayment()
       //Payment method choosing
       cy.contains('Bank transfer').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -660,13 +559,7 @@ it('C339376: 39 Bank Transfer Order Shipping, Refunding [Orders API]', () => {
 })
 // Temporary disabled, Payment Method disables automatically in My Mollie Dashboard, because of the fake testing account...
 it.skip('40 Gift Card Checkouting [Orders API]', () => {
-      cy.visit('/en/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      cy.contains('NL').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
+      cy.navigatingToThePayment()
       //Payment method choosing
       cy.contains('Gift cards').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -695,41 +588,36 @@ it.skip('41 Gift Card Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
 it('C1765085: Billie Checkouting [Orders API]', () => {
-  cy.visit('/en/order-history')
-  cy.contains('Reorder').click()
-  cy.contains('DE').click()
-  //Billing country LT, DE etc.
-  cy.get('.clearfix > .btn').click()
-  cy.get('#js-delivery > .continue').click()
-  //Payment method choosing
-  cy.contains('Billie').click({force:true})
-  cy.get('.condition-label > .js-terms').click({force:true})
-  prepareCookie();
-  cy.get('.ps-shown-by-js > .btn').click()
-  cy.get('[value="authorized"]').click()
-  cy.get('[class="button form__button"]').click()
-  cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+      cy.navigatingToThePayment()
+      //Payment method choosing
+      cy.contains('Billie').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.get('[value="authorized"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
 it('C1765086: Billie Order Shipping, Refunding [Orders API]', () => {
-  cy.OrderShippingRefundingOrdersAPI()
+      cy.OrderShippingRefundingOrdersAPI()
 })
 it.skip('C1860460: Pay with Klarna UK Checkouting [Orders API]', () => { // currently not supported for PS, skipping temporary
-  cy.visit('/en/order-history')
-  cy.contains('Reorder').click()
-  cy.contains('UK').click({force:true})
-  //Billing country LT, DE etc.
-  cy.get('.clearfix > .btn').click()
-  cy.get('#js-delivery > .continue').click()
-  //Payment method choosing
-  cy.contains('Pay with Klarna').click({force:true})
-  cy.get('.condition-label > .js-terms').click({force:true})
-  prepareCookie();
-  cy.get('.ps-shown-by-js > .btn').click()
-  cy.get('[value="authorized"]').click()
-  cy.get('[class="button form__button"]').click()
-  cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+      cy.visit('/en/order-history')
+      cy.contains('Reorder').click()
+      cy.contains('UK').click({force:true})
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Pay with Klarna').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.get('[value="authorized"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
 it.skip('C1860461: Pay with Klarna UK Order Shipping, Refunding [Orders API]', () => { // currently not supported for PS, skipping temporary
-  cy.OrderShippingRefundingOrdersAPI()
+      cy.OrderShippingRefundingOrdersAPI()
 })
 })

@@ -67,6 +67,15 @@ Cypress.Commands.add("ConfPaymentsAPI1784", () => {
         cy.get(`[name="MOLLIE_METHOD_API_${method}"]`).select('Payments API', {force: true})
       });
 })
+Cypress.Commands.add("navigatingToThePayment", () => {
+    cy.visit('/de/index.php?controller=history')
+    cy.get('a').click()
+    cy.contains('Reorder').click()
+    cy.contains('NL').click()
+    //Billing country LT, DE etc.
+    cy.get('.clearfix > .btn').click()
+    cy.get('#js-delivery > .continue').click()
+})
 Cypress.Commands.add("OrderRefundingShippingOrdersAPI", () => {
     cy.visit('/admin1/index.php?controller=AdminOrders')
     cy.get(':nth-child(1) > .column-payment').click()
