@@ -190,7 +190,6 @@ it('C339349: 12 Klarna Slice It Order BO Shipping, Refunding [Orders API]', () =
 })
 it('C339350: 13 Klarna Pay Later Checkouting [Orders API]', () => {
       cy.visit('/de/index.php?controller=history')
-
       //
       cy.contains('Reorder').click()
       //Billing country LT, DE etc.
@@ -259,7 +258,6 @@ it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
       cy.visit('/en/index.php?controller=history')
-
       cy.contains('Reorder').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
