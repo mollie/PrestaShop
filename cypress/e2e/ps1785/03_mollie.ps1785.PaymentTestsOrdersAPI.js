@@ -54,7 +54,7 @@ Cypress.on('window:before:load', (win) => {
 afterEach(() => {
   expect(windowConsoleError).to.not.be.called;
 })
-describe('PS1785 Tests Suite', {
+describe('PS1785 Tests Suite [Orders API]', {
   failFast: {
     enabled: false,
   },
@@ -228,7 +228,7 @@ it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
       cy.get('[class="alert alert-success"]').should('be.visible')
       cy.navigatingToThePayment()
       //Payment method choosing
-      cy.contains('Card').click({force:true})
+      cy.contains('Karte').click({force:true})
       //Credit card inputing
       cy.CreditCardFillingIframe()
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -252,7 +252,7 @@ it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
 it('C339355: 18 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
       cy.navigatingToThePayment()
       //Payment method choosing
-      cy.contains('Card').click({force:true})
+      cy.contains('Karte').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click({force: true})
@@ -534,7 +534,7 @@ it('C339374: 37 Belfius Order Shipping, Refunding [Orders API]', () => {
 it('C339375: 38 Bank Transfer Checkouting [Orders API]', () => {
       cy.navigatingToThePayment()
       //Payment method choosing
-      cy.contains('Bank transfer').click({force:true})
+      cy.contains('Überweisung').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
@@ -588,9 +588,15 @@ it.skip('41 Gift Card Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
 it('C1765085: Billie Checkouting [Orders API]', () => {
-      cy.navigatingToThePayment()
+      cy.visit('/de/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.contains('DE').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
       //Payment method choosing
-      cy.contains('Billie').click({force:true})
+      cy.contains('Rechnungskauf').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()

@@ -54,7 +54,7 @@ Cypress.on('window:before:load', (win) => {
 afterEach(() => {
   expect(windowConsoleError).to.not.be.called;
 })
-describe('PS8 Tests Suite', {
+describe('PS8 Tests Suite [Orders API]', {
   failFast: {
     enabled: false,
   },
