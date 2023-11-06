@@ -21,7 +21,7 @@
   "homepage": "https://github.com/mollie/PrestaShop#readme",
   "devDependencies": {
     "cypress": "^13.4.0",
-    "cypress-fail-fast": "^7.0.0",
+    "cypress-fail-fast": "^7.0.3",
     "cypress-iframe": "^1.0.1",
     "cypress-terminal-report": "^5.3.3",
     "cypress-testrail": "^2.8.2",
