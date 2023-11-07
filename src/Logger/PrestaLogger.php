@@ -62,7 +62,7 @@ class PrestaLogger implements PrestaLoggerInterface
 
     public function debug($message, array $context = [])
     {
-        throw new NotImplementedException('not implemented method');
+        // TODO implement all methods when logger on/off switch and logs admin tab will be implemented
     }
 
     public function log($level, $message, array $context = [])

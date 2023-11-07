@@ -145,4 +145,9 @@ class Context
             $isoCode
         );
     }
+
+    public function getShopName(): string
+    {
+        return (string) PrestashopContext::getContext()->shop->name;
+    }
 }

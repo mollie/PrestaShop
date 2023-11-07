@@ -7,6 +7,8 @@ namespace Mollie\ServiceProvider;
 use League\Container\Container;
 use Mollie;
 use Mollie\Builder\ApiTestFeedbackBuilder;
+use Mollie\Core\Shared\Repository\MollieCartRepository;
+use Mollie\Core\Shared\Repository\MollieCartRepositoryInterface;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandler;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandlerInterface;
@@ -22,6 +24,10 @@ use Mollie\Handler\Settings\PaymentMethodPositionHandler;
 use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Handler\Shipment\ShipmentSenderHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
+use Mollie\Infrastructure\Context\GlobalShopContext;
+use Mollie\Infrastructure\Context\GlobalShopContextInterface;
+use Mollie\Infrastructure\EntityManager\EntityManagerInterface;
+use Mollie\Infrastructure\EntityManager\ObjectModelManager;
 use Mollie\Install\UninstallerInterface;
 use Mollie\Logger\PrestaLogger;
 use Mollie\Logger\PrestaLoggerInterface;
@@ -199,6 +205,7 @@ final class BaseServiceProvider
         $this->addService($container, MolOrderPaymentFeeRepositoryInterface::class, $container->get(MolOrderPaymentFeeRepository::class));
         $this->addService($container, CarrierRepositoryInterface::class, $container->get(CarrierRepository::class));
         $this->addService($container, CartRuleQuantityChangeHandlerInterface::class, $container->get(CartRuleQuantityChangeHandler::class));
+        $this->addService($container, MollieCartRepositoryInterface::class, $container->get(MollieCartRepository::class));
 
         $this->addService($container, RecurringOrderRepositoryInterface::class, RecurringOrderRepository::class)
             ->withArgument('MolRecurringOrder');
@@ -232,6 +239,10 @@ final class BaseServiceProvider
         $this->addService($container, ProfileIdProviderInterface::class, ProfileIdProvider::class);
 
         $this->addService($container, PaymentOptionHandlerInterface::class, $container->get(PaymentOptionHandler::class));
+
+        $this->addService($container, GlobalShopContextInterface::class, $container->get(GlobalShopContext::class));
+
+        $this->addService($container, EntityManagerInterface::class, $container->get(ObjectModelManager::class));
 
         $this->addService($container, ApiTestFeedbackBuilder::class, ApiTestFeedbackBuilder::class)
             ->withArgument($container->get(ModuleFactory::class)->getModuleVersion() ?? '')

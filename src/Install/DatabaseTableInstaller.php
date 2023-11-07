@@ -13,9 +13,19 @@
 namespace Mollie\Install;
 
 use Db;
+use Mollie\Install\Install\Command\MollieCartTableInstallCommand;
 
 final class DatabaseTableInstaller implements InstallerInterface
 {
+    /** @var MollieCartTableInstallCommand */
+    private $mollieCartTableInstallCommand;
+
+    public function __construct(
+        MollieCartTableInstallCommand $mollieCartTableInstallCommand
+    ) {
+        $this->mollieCartTableInstallCommand = $mollieCartTableInstallCommand;
+    }
+
     public function install()
     {
         $commands = $this->getCommands();
@@ -139,6 +149,8 @@ final class DatabaseTableInstaller implements InstallerInterface
                 `id_order_invoice` INT(64) NOT NULL
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
         ';
+
+        $sql[] = $this->mollieCartTableInstallCommand->getCommand();
 
         return $sql;
     }
