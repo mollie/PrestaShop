@@ -59,10 +59,14 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
 
         if (!$transactionId) {
             $this->respond('failed', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY, 'Missing transaction id');
+
+            exit;
         }
 
         if (!$this->module->getApiClient()) {
             $this->respond('failed', HttpStatusCode::HTTP_UNAUTHORIZED, 'API key is missing or incorrect');
+
+            exit;
         }
 
         /** @var Lock $lock */
@@ -85,10 +89,14 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             $errorHandler->handle($exception, $exception->getCode(), false);
 
             $this->respond('failed', HttpStatusCode::HTTP_BAD_REQUEST, 'Failed to lock process');
+
+            exit;
         }
 
         if (!$acquired) {
             $this->respond('failed', HttpStatusCode::HTTP_BAD_REQUEST, 'Another process is locked');
+
+            exit;
         }
 
         try {
@@ -106,6 +114,8 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             $errorHandler->handle($exception, $exception->getCode(), false);
 
             $this->respond('failed', HttpStatusCode::HTTP_BAD_REQUEST, 'Failed to process webhook');
+
+            exit;
         }
 
         $this->respond('success', HttpStatusCode::HTTP_OK, $result);
