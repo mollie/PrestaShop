@@ -282,6 +282,8 @@ class Config
     const APPLE_PAY_DIRECT_ORDER_CREATION_MAX_WAIT_RETRIES = 10;
     const BANCONTACT_ORDER_CREATION_MAX_WAIT_RETRIES = 600;
 
+    public const LOCK_TIME_TO_LIVE = 60;
+
     /** @var array */
     public static $methods = [
         'banktransfer' => 'Bank',
