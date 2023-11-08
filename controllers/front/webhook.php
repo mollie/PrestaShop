@@ -10,11 +10,12 @@
  * @codingStandardsIgnoreStart
  */
 
-use Mollie\Api\Exceptions\ApiException;
 use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
+use Mollie\Infrastructure\Adapter\Lock;
+use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Service\TransactionService;
 use Mollie\Utility\TransactionUtility;
 
@@ -38,44 +39,24 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
      *
      * @return void
      */
-    protected function displayMaintenancePage()
+    protected function displayMaintenancePage(): void
     {
     }
 
-    /**
-     * @throws ApiException
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    public function initContent()
+    public function initContent(): void
     {
-        if ((int) Configuration::get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_ALL) {
-            PrestaShopLogger::addLog('Mollie incoming webhook: ' . Tools::file_get_contents('php://input'));
-        }
-
-        try {
-            exit($this->executeWebhook());
-        } catch (\Throwable $exception) {
-            PrestaShopLogger::addLog('Error occurred: ' . $exception->getMessage(), 3, null, 'Mollie');
-        }
-    }
-
-    /**
-     * @return string
-     *
-     * @throws ApiException
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    protected function executeWebhook()
-    {
-        /** @var TransactionService $transactionService */
-        $transactionService = $this->module->getService(TransactionService::class);
+        /** @var PrestaLoggerInterface $logger */
+        $logger = $this->module->getService(PrestaLoggerInterface::class);
 
         /** @var ErrorHandler $errorHandler */
         $errorHandler = $this->module->getService(ErrorHandler::class);
 
-        $transactionId = Tools::getValue('id');
+        if ((int) Configuration::get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_ALL) {
+            $logger->info('Mollie incoming webhook: ' . Tools::file_get_contents('php://input'));
+        }
+
+        $transactionId = (string) Tools::getValue('id');
+
         if (!$transactionId) {
             $this->respond('failed', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY, 'Missing transaction id');
         }
@@ -84,25 +65,77 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             $this->respond('failed', HttpStatusCode::HTTP_UNAUTHORIZED, 'API key is missing or incorrect');
         }
 
+        /** @var Lock $lock */
+        $lock = $this->module->getService(Lock::class);
+
         try {
-            if (TransactionUtility::isOrderTransaction($transactionId)) {
-                $transaction = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
-            } else {
-                $transaction = $this->module->getApiClient()->payments->get($transactionId);
-                if ($transaction->orderId) {
-                    $transaction = $this->module->getApiClient()->orders->get($transaction->orderId, ['embed' => 'payments']);
-                }
-            }
-            $metaData = $transaction->metadata;
-            $cartId = $metaData->cart_id ?? 0;
-            $this->setContext($cartId);
-            $payment = $transactionService->processTransaction($transaction);
-        } catch (\Throwable $e) {
-            $errorHandler->handle($e, $e->getCode(), false);
-            $this->respond('failed', $e->getCode(), $e->getMessage());
+            $lock->create($transactionId);
+
+            $acquired = $lock->acquire();
+        } catch (\Throwable $exception) {
+            $logger->error(
+                'Failed to lock process',
+                [
+                    'Exception message' => $exception->getMessage(),
+                    'Exception code' => $exception->getCode(),
+                    'transaction_id' => $transactionId,
+                ]
+            );
+
+            $errorHandler->handle($exception, $exception->getCode(), false);
+
+            $this->respond('failed', HttpStatusCode::HTTP_BAD_REQUEST, 'Failed to lock process');
         }
 
-        /* @phpstan-ignore-next-line */
+        if (!$acquired) {
+            $this->respond('failed', HttpStatusCode::HTTP_BAD_REQUEST, 'Another process is locked');
+        }
+
+        try {
+            $result = $this->executeWebhook($transactionId);
+        } catch (\Throwable $exception) {
+            $logger->error(
+                'Failed to process webhook',
+                [
+                    'Exception message' => $exception->getMessage(),
+                    'Exception code' => $exception->getCode(),
+                    'transaction_id' => $transactionId,
+                ]
+            );
+
+            $errorHandler->handle($exception, $exception->getCode(), false);
+
+            $this->respond('failed', HttpStatusCode::HTTP_BAD_REQUEST, 'Failed to process webhook');
+        }
+
+        $this->respond('success', HttpStatusCode::HTTP_OK, $result);
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    protected function executeWebhook(string $transactionId): string
+    {
+        /** @var TransactionService $transactionService */
+        $transactionService = $this->module->getService(TransactionService::class);
+
+        // TODO even if transaction is not found, we should return OK 200
+
+        if (TransactionUtility::isOrderTransaction($transactionId)) {
+            $transaction = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
+        } else {
+            $transaction = $this->module->getApiClient()->payments->get($transactionId);
+
+            if ($transaction->orderId) {
+                $transaction = $this->module->getApiClient()->orders->get($transaction->orderId, ['embed' => 'payments']);
+            }
+        }
+
+        $metaData = $transaction->metadata;
+        $cartId = $metaData->cart_id ?? 0;
+        $this->setContext($cartId);
+        $payment = $transactionService->processTransaction($transaction);
+
         if (is_string($payment)) {
             return $payment;
         }
@@ -110,7 +143,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         return 'OK';
     }
 
-    private function setContext(int $cartId)
+    private function setContext(int $cartId): void
     {
         if (!$cartId) {
             return;

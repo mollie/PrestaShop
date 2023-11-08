@@ -16,6 +16,9 @@ use Mollie\Exception\NotImplementedException;
 
 class PrestaLogger implements PrestaLoggerInterface
 {
+    // TODO integrate sentry into logger service
+    // TODO integrate logs switch into logger service
+
     public function emergency($message, array $context = [])
     {
         throw new NotImplementedException('not implemented method');
