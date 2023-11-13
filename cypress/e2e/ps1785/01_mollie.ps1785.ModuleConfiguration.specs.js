@@ -74,8 +74,10 @@ it('C339305: 01 Connecting test API successsfully', () => {
 it('C339338: 02 Enabling Mollie carriers in Prestashop successfully', () => {
       cy.visit('/admin1/')
       cy.get('[id="subtab-AdminPaymentPreferences"]').find('[href]').eq(0).click({force:true})
-      cy.get('[class="js-multiple-choice-table-select-column"]').eq(6).click()
-      cy.get('[class="btn btn-primary"]').eq(3).click()
+      cy.get('[class="js-multiple-choice-table-select-column"]').each(($element) => { // checks all the checkboxes in the loop, if not checked
+        cy.wrap($element).click()
+      })
+      cy.get('[id="form-carrier-restrictions-save-button"]').click()
 })
 it('C339339: 03 Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
       cy.visit('/admin1/')
@@ -108,6 +110,7 @@ it('C339339: 03 Checking the Advanced Settings tab, verifying the Front-end comp
       cy.get('[name="MOLLIE_DISPLAY_ERRORS"]').should('exist')
       cy.get('[name="MOLLIE_DEBUG_LOG"]').should('exist')
       cy.get('[name="MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID"]').should('be.visible') // checking the Subscriptions carriers select
+      cy.get('[name="MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID"]').select('Click and collect')
       cy.get('#module_form_submit_btn').click({force:true}) //checking the saving
       cy.get('[class="alert alert-success"]').should('be.visible') //checking if saving returns green alert
       //cy.window() will check if there are no Errors in console
