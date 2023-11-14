@@ -10,8 +10,12 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Errors\Http\HttpStatusCode;
+use Mollie\Handler\ErrorHandler\ErrorHandler;
+use Mollie\Infrastructure\Response\JsonResponse;
+use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\Handler\SubscriptionPaymentMethodUpdateHandler;
 
 if (!defined('_PS_VERSION_')) {
@@ -20,6 +24,8 @@ if (!defined('_PS_VERSION_')) {
 
 class MollieSubscriptionUpdateWebhookModuleFrontController extends AbstractMollieController
 {
+    private const FILE_NAME = 'subscriptionUpdateWebhook';
+
     /** @var Mollie */
     public $module;
     /** @var bool */
@@ -40,29 +46,89 @@ class MollieSubscriptionUpdateWebhookModuleFrontController extends AbstractMolli
 
     public function initContent()
     {
-        if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG)) {
-            PrestaShopLogger::addLog('Mollie incoming subscription webhook: ' . Tools::file_get_contents('php://input'));
+        /** @var PrestaLoggerInterface $logger */
+        $logger = $this->module->getService(PrestaLoggerInterface::class);
+
+        /** @var ErrorHandler $errorHandler */
+        $errorHandler = $this->module->getService(ErrorHandler::class);
+
+        /** @var ToolsAdapter $tools */
+        $tools = $this->module->getService(ToolsAdapter::class);
+
+        $logger->info(sprintf('%s - Controller called', self::FILE_NAME));
+
+        if (!$this->module->getApiClient()) {
+            $logger->error(sprintf('Unauthorized in %s', self::FILE_NAME));
+
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Unauthorized', self::FILE_NAME),
+                HttpStatusCode::HTTP_UNAUTHORIZED
+            ));
         }
 
-        exit($this->executeWebhook());
-    }
-
-    protected function executeWebhook()
-    {
-        $transactionId = Tools::getValue('id');
-        $subscriptionId = Tools::getValue('subscription_id');
+        $transactionId = (string) $tools->getValue('id');
 
         if (!$transactionId) {
-            $this->respond('failed', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY, 'Missing transaction id');
+            $logger->error(sprintf('Missing transaction id in %s', self::FILE_NAME));
+
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Missing transaction id', self::FILE_NAME),
+                HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY
+            ));
         }
+
+        $subscriptionId = (string) $tools->getValue('subscription_id');
+
         if (!$subscriptionId) {
-            $this->respond('failed', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY, 'Missing subscription id');
+            $logger->error(sprintf('Missing subscription id in %s', self::FILE_NAME));
+
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Missing subscription id', self::FILE_NAME),
+                HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY
+            ));
+        }
+
+        $lockResult = $this->applyLock(sprintf(
+            '%s-%s-%s',
+            self::FILE_NAME,
+            $transactionId,
+            $subscriptionId
+        ));
+
+        if (!$lockResult->isSuccessful()) {
+            $logger->error(sprintf('Resource conflict in %s', self::FILE_NAME));
+
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Resource conflict', self::FILE_NAME),
+                HttpStatusCode::HTTP_CONFLICT
+            ));
         }
 
         /** @var SubscriptionPaymentMethodUpdateHandler $subscriptionPaymentMethodUpdateHandler */
         $subscriptionPaymentMethodUpdateHandler = $this->module->getService(SubscriptionPaymentMethodUpdateHandler::class);
-        $subscriptionPaymentMethodUpdateHandler->handle($transactionId, $subscriptionId);
 
-        return 'OK';
+        try {
+            $subscriptionPaymentMethodUpdateHandler->handle($transactionId, $subscriptionId);
+        } catch (\Throwable $exception) {
+            $logger->error('Failed to handle subscription update', [
+                'Exception message' => $exception->getMessage(),
+                'Exception code' => $exception->getCode(),
+            ]);
+
+            $errorHandler->handle($exception, null, false);
+
+            $this->releaseLock();
+
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Failed to handle subscription update', self::FILE_NAME),
+                $exception->getCode()
+            ));
+        }
+
+        $this->releaseLock();
+
+        $logger->info(sprintf('%s - Controller action ended', self::FILE_NAME));
+
+        $this->ajaxResponse(JsonResponse::success([]));
     }
 }
