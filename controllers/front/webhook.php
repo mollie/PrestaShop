@@ -10,11 +10,12 @@
  * @codingStandardsIgnoreStart
  */
 
-use Mollie\Api\Exceptions\ApiException;
-use Mollie\Config\Config;
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
+use Mollie\Infrastructure\Response\JsonResponse;
+use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Service\TransactionService;
 use Mollie\Utility\TransactionUtility;
 
@@ -24,6 +25,8 @@ if (!defined('_PS_VERSION_')) {
 
 class MollieWebhookModuleFrontController extends AbstractMollieController
 {
+    private const FILE_NAME = 'webhook';
+
     /** @var Mollie */
     public $module;
     /** @var bool */
@@ -42,82 +45,117 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
     {
     }
 
-    /**
-     * @throws ApiException
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    public function initContent()
+    public function initContent(): void
     {
-        if ((int) Configuration::get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_ALL) {
-            PrestaShopLogger::addLog('Mollie incoming webhook: ' . Tools::file_get_contents('php://input'));
-        }
-
-        try {
-            exit($this->executeWebhook());
-        } catch (\Throwable $exception) {
-            PrestaShopLogger::addLog('Error occurred: ' . $exception->getMessage(), 3, null, 'Mollie');
-        }
-    }
-
-    /**
-     * @return string
-     *
-     * @throws ApiException
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    protected function executeWebhook()
-    {
-        /** @var TransactionService $transactionService */
-        $transactionService = $this->module->getService(TransactionService::class);
+        /** @var PrestaLoggerInterface $logger */
+        $logger = $this->module->getService(PrestaLoggerInterface::class);
 
         /** @var ErrorHandler $errorHandler */
         $errorHandler = $this->module->getService(ErrorHandler::class);
 
-        $transactionId = Tools::getValue('id');
-        if (!$transactionId) {
-            $this->respond('failed', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY, 'Missing transaction id');
-        }
+        /** @var ToolsAdapter $tools */
+        $tools = $this->module->getService(ToolsAdapter::class);
+
+        $logger->info(sprintf('%s - Controller called', self::FILE_NAME));
 
         if (!$this->module->getApiClient()) {
-            $this->respond('failed', HttpStatusCode::HTTP_UNAUTHORIZED, 'API key is missing or incorrect');
+            $logger->error(sprintf('Unauthorized in %s', self::FILE_NAME));
+
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Unauthorized', self::FILE_NAME),
+                HttpStatusCode::HTTP_UNAUTHORIZED
+            ));
+        }
+
+        $transactionId = (string) $tools->getValue('id');
+
+        if (!$transactionId) {
+            $logger->error(sprintf('Missing transaction id %s', self::FILE_NAME));
+
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Missing transaction id', self::FILE_NAME),
+                HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY
+            ));
+        }
+
+        $lockResult = $this->applyLock(sprintf(
+            '%s-%s',
+            self::FILE_NAME,
+            $transactionId
+        ));
+
+        if (!$lockResult->isSuccessful()) {
+            $logger->error(sprintf('Resource conflict in %s', self::FILE_NAME));
+
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Resource conflict', self::FILE_NAME),
+                HttpStatusCode::HTTP_CONFLICT
+            ));
         }
 
         try {
-            if (TransactionUtility::isOrderTransaction($transactionId)) {
-                $transaction = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
-            } else {
-                $transaction = $this->module->getApiClient()->payments->get($transactionId);
-                if ($transaction->orderId) {
-                    $transaction = $this->module->getApiClient()->orders->get($transaction->orderId, ['embed' => 'payments']);
-                }
-            }
-            $metaData = $transaction->metadata;
-            $cartId = $metaData->cart_id ?? 0;
-            $this->setContext($cartId);
-            $payment = $transactionService->processTransaction($transaction);
-        } catch (\Throwable $e) {
-            $errorHandler->handle($e, $e->getCode(), false);
-            $this->respond('failed', $e->getCode(), $e->getMessage());
+            $this->executeWebhook($transactionId);
+        } catch (\Throwable $exception) {
+            $logger->error('Failed to handle webhook', [
+                'Exception message' => $exception->getMessage(),
+                'Exception code' => $exception->getCode(),
+            ]);
+
+            $errorHandler->handle($exception, $exception->getCode(), false);
+
+            $this->releaseLock();
+
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Failed to handle webhook', self::FILE_NAME),
+                $exception->getCode()
+            ));
         }
 
-        /* @phpstan-ignore-next-line */
-        if (is_string($payment)) {
-            return $payment;
-        }
+        $this->releaseLock();
 
-        return 'OK';
+        $logger->info(sprintf('%s - Controller action ended', self::FILE_NAME));
+
+        $this->ajaxResponse(JsonResponse::success([]));
     }
 
-    private function setContext(int $cartId)
+    /**
+     * @throws Throwable
+     */
+    protected function executeWebhook(string $transactionId): void
     {
-        if (!$cartId) {
-            return;
+        /** @var TransactionService $transactionService */
+        $transactionService = $this->module->getService(TransactionService::class);
+
+        if (TransactionUtility::isOrderTransaction($transactionId)) {
+            $transaction = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
+        } else {
+            $transaction = $this->module->getApiClient()->payments->get($transactionId);
+
+            if ($transaction->orderId) {
+                $transaction = $this->module->getApiClient()->orders->get($transaction->orderId, ['embed' => 'payments']);
+            }
         }
+
+        $cartId = $transaction->metadata->cart_id ?? 0;
+
+        if (!$cartId) {
+            // TODO webhook structure will change, no need to create custom exception for one time usage
+
+            throw new \Exception('Missing cart_id', 404);
+        }
+
+        $this->setContext($cartId);
+
+        $transactionService->processTransaction($transaction);
+    }
+
+    private function setContext(int $cartId): void
+    {
         $cart = new Cart($cartId);
+
         $this->context->currency = new Currency($cart->id_currency);
         $this->context->customer = new Customer($cart->id_customer);
+
         $this->context->cart = $cart;
     }
 }
