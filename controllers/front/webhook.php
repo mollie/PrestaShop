@@ -141,7 +141,10 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         if (!$cartId) {
             // TODO webhook structure will change, no need to create custom exception for one time usage
 
-            throw new \Exception('Missing cart_id', 404);
+            throw new \Exception(
+                sprintf('Missing Cart ID. Transaction ID: [%s]', $transactionId),
+                HttpStatusCode::HTTP_NOT_FOUND
+            );
         }
 
         $this->setContext($cartId);
