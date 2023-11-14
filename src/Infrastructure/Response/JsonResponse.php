@@ -31,12 +31,7 @@ class JsonResponse extends BaseJsonResponse
      */
     public static function error($error, int $status = 400): self
     {
-        if ($status === JsonResponse::HTTP_UNPROCESSABLE_ENTITY) {
-            // NOTE: removing rule name. ['required' => 'message'] becomes [0 => 'message']
-            foreach ($error as $key => $messages) {
-                $error[$key] = array_values($messages);
-            }
-        }
+        // TODO add compatibility for json string object when logs will be implemented
 
         if (!is_array($error)) {
             $error = [$error];

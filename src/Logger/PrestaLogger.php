@@ -53,7 +53,7 @@ class PrestaLogger implements PrestaLoggerInterface
 
         \PrestaShopLogger::addLog(
             $this->getMessageWithContext($uniqueMessage, $context),
-            2
+            3
         );
     }
 
