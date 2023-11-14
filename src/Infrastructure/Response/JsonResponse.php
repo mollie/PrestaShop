@@ -25,9 +25,6 @@ class JsonResponse extends BaseJsonResponse
 
     /**
      * @param string|array $error
-     * @param int $status
-     *
-     * @return static
      */
     public static function error($error, int $status = 400): self
     {
