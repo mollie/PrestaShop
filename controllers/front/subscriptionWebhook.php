@@ -10,9 +10,11 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
+use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\Handler\RecurringOrderHandler;
 
@@ -22,6 +24,8 @@ if (!defined('_PS_VERSION_')) {
 
 class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieController
 {
+    private const FILE_NAME = 'subscriptionWebhook';
+
     /** @var Mollie */
     public $module;
     /** @var bool */
@@ -42,29 +46,54 @@ class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieContr
 
     public function initContent()
     {
-        if (Configuration::get(Mollie\Config\Config::MOLLIE_DEBUG_LOG)) {
-            PrestaShopLogger::addLog('Mollie incoming subscription webhook: ' . Tools::file_get_contents('php://input'));
-        }
-
-        exit($this->executeWebhook());
-    }
-
-    protected function executeWebhook()
-    {
-        $transactionId = Tools::getValue('id');
-
-        if (!$transactionId) {
-            $this->respond('failed', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY, 'Missing transaction id');
-        }
-
-        /** @var RecurringOrderHandler $recurringOrderHandler */
-        $recurringOrderHandler = $this->module->getService(RecurringOrderHandler::class);
+        /** @var PrestaLoggerInterface $logger */
+        $logger = $this->module->getService(PrestaLoggerInterface::class);
 
         /** @var ErrorHandler $errorHandler */
         $errorHandler = $this->module->getService(ErrorHandler::class);
 
-        /** @var PrestaLoggerInterface $logger */
-        $logger = $this->module->getService(PrestaLoggerInterface::class);
+        /** @var ToolsAdapter $tools */
+        $tools = $this->module->getService(ToolsAdapter::class);
+
+        $logger->info(sprintf('%s - Controller called', self::FILE_NAME));
+
+        if (!$this->module->getApiClient()) {
+            $logger->error(sprintf('Unauthorized in %s', self::FILE_NAME));
+
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Unauthorized', self::FILE_NAME),
+                HttpStatusCode::HTTP_UNAUTHORIZED
+            ));
+        }
+
+        $transactionId = (string) $tools->getValue('id');
+
+        if (!$transactionId) {
+            $logger->error(sprintf('Missing transaction id in %s', self::FILE_NAME));
+
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Missing transaction id', self::FILE_NAME),
+                HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY
+            ));
+        }
+
+        $lockResult = $this->applyLock(sprintf(
+            '%s-%s',
+            self::FILE_NAME,
+            $transactionId
+        ));
+
+        if (!$lockResult->isSuccessful()) {
+            $logger->error(sprintf('Resource conflict in %s', self::FILE_NAME));
+
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Resource conflict', self::FILE_NAME),
+                HttpStatusCode::HTTP_CONFLICT
+            ));
+        }
+
+        /** @var RecurringOrderHandler $recurringOrderHandler */
+        $recurringOrderHandler = $this->module->getService(RecurringOrderHandler::class);
 
         try {
             $recurringOrderHandler->handle($transactionId);
@@ -76,9 +105,18 @@ class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieContr
 
             $errorHandler->handle($exception, null, false);
 
-            $this->respond('failed', HttpStatusCode::HTTP_BAD_REQUEST);
+            $this->releaseLock();
+
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Failed to handle recurring order', self::FILE_NAME),
+                $exception->getCode()
+            ));
         }
 
-        $this->respond('OK');
+        $this->releaseLock();
+
+        $logger->info(sprintf('%s - Controller action ended', self::FILE_NAME));
+
+        $this->ajaxResponse(JsonResponse::success([]));
     }
 }

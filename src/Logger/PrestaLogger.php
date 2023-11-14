@@ -12,10 +12,22 @@
 
 namespace Mollie\Logger;
 
+use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Config\Config;
 use Mollie\Exception\NotImplementedException;
 
 class PrestaLogger implements PrestaLoggerInterface
 {
+    // TODO refactor whole logger logic and implement leftover methods
+
+    /** @var ConfigurationAdapter */
+    private $configuration;
+
+    public function __construct(ConfigurationAdapter $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
     public function emergency($message, array $context = [])
     {
         throw new NotImplementedException('not implemented method');
@@ -33,11 +45,15 @@ class PrestaLogger implements PrestaLoggerInterface
 
     public function error($message, array $context = [])
     {
+        if ((int) $this->configuration->get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_NONE) {
+            return;
+        }
+
         $uniqueMessage = sprintf('Log ID (%s) | %s', uniqid('', true), $message);
 
         \PrestaShopLogger::addLog(
             $this->getMessageWithContext($uniqueMessage, $context),
-            2
+            3
         );
     }
 
@@ -53,6 +69,10 @@ class PrestaLogger implements PrestaLoggerInterface
 
     public function info($message, array $context = [])
     {
+        if ((int) $this->configuration->get(Config::MOLLIE_DEBUG_LOG) !== Config::DEBUG_LOG_ALL) {
+            return;
+        }
+
         $uniqueMessage = sprintf('Log ID (%s) | %s', uniqid('', true), $message);
 
         \PrestaShopLogger::addLog(

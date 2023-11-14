@@ -32,7 +32,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     /** @var Mollie */
     public $module;
 
-    const FILE_NAME = 'return';
+    private const FILE_NAME = 'return';
 
     /** @var bool */
     public $ssl = true;
