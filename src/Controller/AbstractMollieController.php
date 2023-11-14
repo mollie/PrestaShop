@@ -25,6 +25,9 @@ class AbstractMollieController extends \ModuleFrontControllerCore
     /** @var Lock */
     private $lock;
 
+    /** @var \Mollie */
+    public $module;
+
     public function __construct()
     {
         parent::__construct();
@@ -47,21 +50,13 @@ class AbstractMollieController extends \ModuleFrontControllerCore
 
     protected function ajaxRender($value = null, $controller = null, $method = null): void
     {
+        // TODO remove this later
         parent::ajaxRender($value, $controller, $method);
 
         exit;
     }
 
-    /**
-     * @param null $value
-     * @param null $controller
-     * @param null $method
-     *
-     * @return never
-     *
-     * @throws \PrestaShopException
-     */
-    protected function ajaxResponse($value = null, $controller = null, $method = null)
+    protected function ajaxResponse($value, $controller = null, $method = null): void
     {
         /** @var PrestaLoggerInterface $logger */
         $logger = $this->module->getService(PrestaLoggerInterface::class);
