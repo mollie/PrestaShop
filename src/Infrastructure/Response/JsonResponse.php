@@ -28,8 +28,6 @@ class JsonResponse extends BaseJsonResponse
      */
     public static function error($error, int $status = 400): self
     {
-        // TODO add compatibility for json string object when logs will be implemented
-
         if (!is_array($error)) {
             $error = [$error];
         }
