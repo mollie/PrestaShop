@@ -34,7 +34,7 @@ require_once dirname(__FILE__) . '/../../mollie.php';
  */
 class MolliePaymentModuleFrontController extends ModuleFrontController
 {
-    const FILE_NAME = 'payment';
+    private const FILE_NAME = 'payment';
 
     /** @var bool */
     public $ssl = true;
