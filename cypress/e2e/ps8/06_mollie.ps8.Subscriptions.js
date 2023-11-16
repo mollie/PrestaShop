@@ -43,6 +43,7 @@ it('C176305: Check if Subscription options added in Product BO', () => {
   cy.wait(5000)
   cy.contains('Mollie Subscription - Daily').should('be.visible')
   cy.contains('Mollie Subscription - None').should('be.visible')
+  cy.get('[class="attribute-quantity"]').first().find('[type="text"]').clear().type('999')
   cy.get('[class="attribute-quantity"]').last().find('[type="text"]').clear().type('999')
   cy.get('#submit').click()
   cy.get('.growl-message').contains('Settings updated.')
