@@ -78,6 +78,7 @@ Cypress.Commands.add("navigatingToThePaymentPS8", () => {
 Cypress.Commands.add("navigatingToThePayment", () => {
   cy.visit('/de/index.php?controller=history')
   cy.get('a').click()
+  cy.contains('Reorder').click()
   cy.contains('NL').click()
   //Billing country LT, DE etc.
   cy.get('.clearfix > .btn').click()
