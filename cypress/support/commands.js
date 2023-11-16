@@ -73,7 +73,7 @@ Cypress.Commands.add("navigatingToThePayment", () => {
       if ($body.find('I understand').length > 0) {
           // If 'I understand' element is found, click it
           cy.contains('I understand').click()
-      } else if ($body.find('a').length > 0) {
+      } else if ($body.find('I understand').length > 0) {
           // If some other element is found, perform some action
           cy.get('a').click()
           cy.contains('Reorder').click()

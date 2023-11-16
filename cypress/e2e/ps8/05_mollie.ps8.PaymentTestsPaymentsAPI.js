@@ -89,7 +89,7 @@ it('C339379: 44 Bancontact Checkouting [Payments API]', () => {
     cy.get('[class="button form__button"]').click()
     cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it.skip('C339380: 45 Bancontact Order BO Refunding, Partial Refunding [Payments API]', () => { // somehow sometimes the payment div is not loaded in Cypress
+it('C339380: 45 Bancontact Order BO Refunding, Partial Refunding [Payments API]', () => { // somehow sometimes the payment div is not loaded in Cypress
     cy.OrderRefundingPartialPaymentsAPI()
 })
 it('C339381: 46 iDEAL Checkouting [Payments API]', () => {
