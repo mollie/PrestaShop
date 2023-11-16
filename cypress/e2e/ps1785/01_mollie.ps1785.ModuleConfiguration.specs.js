@@ -110,7 +110,7 @@ it('C339339: 03 Checking the Advanced Settings tab, verifying the Front-end comp
       cy.get('[name="MOLLIE_DISPLAY_ERRORS"]').should('exist')
       cy.get('[name="MOLLIE_DEBUG_LOG"]').should('exist')
       cy.get('[name="MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID"]').should('be.visible') // checking the Subscriptions carriers select
-      cy.get('[name="MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID"]').select('Click and collect')
+      cy.get('[name="MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID"]').select('My carrier')
       cy.get('#module_form_submit_btn').click({force:true}) //checking the saving
       cy.get('[class="alert alert-success"]').should('be.visible') //checking if saving returns green alert
       //cy.window() will check if there are no Errors in console

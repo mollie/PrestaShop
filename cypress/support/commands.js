@@ -72,12 +72,16 @@ Cypress.Commands.add("navigatingToThePayment", () => {
     cy.get('body').then(($body) => {
       if ($body.find('I understand').length > 0) {
           // If 'I understand' element is found, click it
-          cy.contains('I understand').click();
+          cy.contains('I understand').click()
+      } else if ($body.find('a').length > 0) {
+          // If some other element is found, perform some action
+          cy.get('a').click()
+          cy.contains('Reorder').click()
       } else {
-          // If 'I understand' element is not found, continue with 'Reorder'
-          cy.contains('Reorder').click();
+          // If neither 'I understand' nor the other element is found, continue with 'Reorder'
+          cy.contains('Reorder').click()
       }
-    })
+  })
     cy.contains('NL').click()
     //Billing country LT, DE etc.
     cy.get('.clearfix > .btn').click()
