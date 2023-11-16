@@ -67,25 +67,21 @@ Cypress.Commands.add("ConfPaymentsAPI1784", () => {
         cy.get(`[name="MOLLIE_METHOD_API_${method}"]`).select('Payments API', {force: true})
       });
 })
-Cypress.Commands.add("navigatingToThePayment", () => {
+Cypress.Commands.add("navigatingToThePaymentPS8", () => {
     cy.visit('/de/index.php?controller=history')
-    cy.get('body').then(($body) => {
-      if ($body.find('I understand').length > 0) {
-          // If 'I understand' element is found, click it
-          cy.contains('I understand').click()
-      } else if ($body.find('I understand').length > 0) {
-          // If some other element is found, perform some action
-          cy.get('a').click()
-          cy.contains('Reorder').click()
-      } else {
-          // If neither 'I understand' nor the other element is found, continue with 'Reorder'
-          cy.contains('Reorder').click()
-      }
-  })
+    cy.contains('Reorder').click()
     cy.contains('NL').click()
     //Billing country LT, DE etc.
     cy.get('.clearfix > .btn').click()
     cy.get('#js-delivery > .continue').click()
+})
+Cypress.Commands.add("navigatingToThePayment", () => {
+  cy.visit('/de/index.php?controller=history')
+  cy.get('a').click()
+  cy.contains('NL').click()
+  //Billing country LT, DE etc.
+  cy.get('.clearfix > .btn').click()
+  cy.get('#js-delivery > .continue').click()
 })
 Cypress.Commands.add("OrderRefundingShippingOrdersAPI", () => {
     cy.visit('/admin1/index.php?controller=AdminOrders')

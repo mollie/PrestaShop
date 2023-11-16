@@ -69,7 +69,7 @@ it('C339378: 43 Check if Bancontact QR payment dropdown exists [Payments API]', 
   cy.get('[name="MOLLIE_BANCONTACT_QR_CODE_ENABLED"]').should('exist')
 })
 it('C339379: 44 Bancontact Checkouting [Payments API]', () => {
-    cy.navigatingToThePayment()
+    cy.navigatingToThePaymentPS8()
     cy.contains('Bancontact').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
     prepareCookie();
@@ -93,7 +93,7 @@ it('C339380: 45 Bancontact Order BO Refunding, Partial Refunding [Payments API]'
     cy.OrderRefundingPartialPaymentsAPI()
 })
 it('C339381: 46 iDEAL Checkouting [Payments API]', () => {
-    cy.navigatingToThePayment()
+    cy.navigatingToThePaymentPS8()
     //Payment method choosing
     cy.contains('iDEAL').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
@@ -119,7 +119,7 @@ it('C339382: 47 iDEAL Order BO Refunding, Partial Refunding [Payments API]', () 
     cy.OrderRefundingPartialPaymentsAPI()
 })
 it('C339383: 48 Credit Card Checkouting [Payments API]', () => {
-    cy.navigatingToThePayment()
+    cy.navigatingToThePaymentPS8()
     //Payment method choosing
     cy.contains('Karte').click({force:true})
     //Credit card inputing
@@ -236,7 +236,7 @@ it.skip('C339386: 51 Credit Card Guest Checkouting with not 3DS secure card [Pay
     cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
 it('C339387: 52 Paypal Checkouting [Payments API]', () => {
-    cy.navigatingToThePayment()
+    cy.navigatingToThePaymentPS8()
     //Payment method choosing
     cy.contains('PayPal').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
@@ -268,7 +268,7 @@ it('C339388: 53 Paypal BO Refunding, Partial Refunding [Payments API]', () => {
     cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
 });
 it('C339389: 54 SOFORT Checkouting [Payments API]', () => {
-    cy.navigatingToThePayment()
+    cy.navigatingToThePaymentPS8()
     //Payment method choosing
     cy.contains('SOFORT').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
@@ -296,7 +296,7 @@ it('C339390: 55 SOFORT BO Refunding, Partial Refunding [Payments API]', () => {
     //Refunding is unavailable - information from Mollie Dashboard - but checking the UI itself
 });
 it('C339391: 56 Przelewy24 Checkouting [Payments API]', () => {
-    cy.navigatingToThePayment()
+    cy.navigatingToThePaymentPS8()
     //Payment method choosing
     cy.contains('Przelewy24').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
@@ -323,7 +323,7 @@ it('C339392: 57 Przelewy24 BO Refunding, Partial Refunding [Payments API]', () =
     cy.OrderRefundingPartialPaymentsAPI()
 });
 it('C339393: 58 Giropay Checkouting [Payments API]', () => {
-    cy.navigatingToThePayment()
+    cy.navigatingToThePaymentPS8()
     //Payment method choosing
     cy.contains('giropay').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
@@ -348,7 +348,7 @@ it('C339394: 59 Giropay BO Refunding, Partial Refunding [Payments API]', () => {
     cy.OrderRefundingPartialPaymentsAPI()
 });
 it('C339395: 60 EPS Checkouting [Payments API]', () => {
-    cy.navigatingToThePayment()
+    cy.navigatingToThePaymentPS8()
     //Payment method choosing
     cy.contains('eps').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
@@ -373,7 +373,7 @@ it('C339396: 61 EPS BO Refunding, Partial Refunding [Payments API]', () => {
     cy.OrderRefundingPartialPaymentsAPI()
 });
 it('C339397: 62 KBC/CBC Checkouting [Payments API]', () => {
-    cy.navigatingToThePayment()
+    cy.navigatingToThePaymentPS8()
     //Payment method choosing
     cy.contains('KBC/CBC').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
@@ -399,7 +399,7 @@ it('C339398: 63 KBC/CBC BO Refunding, Partial Refunding [Payments API]', () => {
     cy.OrderRefundingPartialPaymentsAPI()
 });
 it('C339399: 64 Belfius Checkouting [Payments API]', () => {
-    cy.navigatingToThePayment()
+    cy.navigatingToThePaymentPS8()
     //Payment method choosing
     cy.contains('Belfius').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
@@ -424,7 +424,7 @@ it('C339400: 65 Belfius BO Refunding, Partial Refunding [Payments API]', () => {
     cy.OrderRefundingPartialPaymentsAPI()
 });
 it('C339401: 66 Bank Transfer Checkouting [Payments API]', () => {
-    cy.navigatingToThePayment()
+    cy.navigatingToThePaymentPS8()
     //Payment method choosing
     cy.contains('Überweisung').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
@@ -449,7 +449,7 @@ it('C339402: 67 Bank Transfer BO Refunding, Partial Refunding [Payments API]', (
     cy.OrderRefundingPartialPaymentsAPI()
 })
 it.skip('C1860462: Pay with Klarna UK Checkouting [Payments API]', () => { // currently not supported for PS, skipping temporary
-  cy.navigatingToThePayment()
+  cy.navigatingToThePaymentPS8()
   //Payment method choosing
   cy.contains('Pay with Klarna').click({force:true})
   cy.get('.condition-label > .js-terms').click({force:true})
