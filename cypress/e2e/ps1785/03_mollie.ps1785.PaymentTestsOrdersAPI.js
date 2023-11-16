@@ -144,7 +144,7 @@ it('C339346: 09 iDEAL Checkouting [Orders API]', () => {
 it('C339347: 10 iDEAL Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it.only('C339348: 11 Klarna Slice It Checkouting [Orders API]', () => {
+it('C339348: 11 Klarna Slice It Checkouting [Orders API]', () => {
       cy.navigatingToThePayment()
       //Payment method choosing
       cy.contains('Ratenkauf.').click({force:true})
@@ -166,7 +166,7 @@ it.only('C339348: 11 Klarna Slice It Checkouting [Orders API]', () => {
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it.only('C339349: 12 Klarna Slice It Order BO Shipping, Refunding [Orders API]', () => {
+it('C339349: 12 Klarna Slice It Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderShippingRefundingOrdersAPI()
 })
 it('C339350: 13 Klarna Pay Later Checkouting [Orders API]', () => {
