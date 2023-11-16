@@ -69,8 +69,15 @@ Cypress.Commands.add("ConfPaymentsAPI1784", () => {
 })
 Cypress.Commands.add("navigatingToThePayment", () => {
     cy.visit('/de/index.php?controller=history')
-    cy.get('a').click()
-    cy.contains('Reorder').click()
+    cy.get('body').then(($body) => {
+      if ($body.find('I understand').length > 0) {
+          // If 'I understand' element is found, click it
+          cy.contains('I understand').click();
+      } else {
+          // If 'I understand' element is not found, continue with 'Reorder'
+          cy.contains('Reorder').click();
+      }
+    })
     cy.contains('NL').click()
     //Billing country LT, DE etc.
     cy.get('.clearfix > .btn').click()
