@@ -163,10 +163,8 @@ class CartLinesService
     }
 
     /**
-     * @param array $cartItems
      * @param int $apiRoundingPrecision
      * @param array $giftProducts
-     * @param array $orderLines
      * @param string $selectedVoucherCategory
      * @param float $remaining
      *
@@ -303,7 +301,6 @@ class CartLinesService
     }
 
     /**
-     * @param array $orderLines
      * @param int $apiRoundingPrecision
      * @param int $vatRatePrecision
      *
@@ -366,7 +363,6 @@ class CartLinesService
      * @param float $roundedShippingCost
      * @param array $cartSummary
      * @param int $apiRoundingPrecision
-     * @param array $orderLines
      *
      * @return array
      */
@@ -392,10 +388,8 @@ class CartLinesService
 
     /**
      * @param float $wrappingPrice
-     * @param array $cartSummary
      * @param int $vatRatePrecision
      * @param int $apiRoundingPrecision
-     * @param array $orderLines
      *
      * @return array
      */
@@ -428,7 +422,6 @@ class CartLinesService
     /**
      * @param PaymentFeeData $paymentFeeData
      * @param int $apiRoundingPrecision
-     * @param array $orderLines
      *
      * @return array
      */
@@ -454,8 +447,6 @@ class CartLinesService
     }
 
     /**
-     * @param array $orderLines
-     *
      * @return array
      */
     private function ungroupLines(array $orderLines)
@@ -471,7 +462,6 @@ class CartLinesService
     }
 
     /**
-     * @param array $newItems
      * @param string $currencyIsoCode
      * @param int $apiRoundingPrecision
      *

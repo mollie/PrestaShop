@@ -9,7 +9,6 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
-
 $rootDirectory = __DIR__ . '/../../../';
 $projectDir = __DIR__ . '/../';
 

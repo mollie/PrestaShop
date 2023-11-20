@@ -47,49 +47,31 @@ class UpdateOrderTotalsData
         $this->originalCartAmountTaxExcl = $originalCartAmountTaxExcl;
     }
 
-    /**
-     * @return int
-     */
     public function getOrderId(): int
     {
         return $this->orderId;
     }
 
-    /**
-     * @return float
-     */
     public function getPaymentFeeTaxIncl(): float
     {
         return $this->paymentFeeTaxIncl;
     }
 
-    /**
-     * @return float
-     */
     public function getPaymentFeeTaxExcl(): float
     {
         return $this->paymentFeeTaxExcl;
     }
 
-    /**
-     * @return float
-     */
     public function getTransactionAmount(): float
     {
         return $this->transactionAmount;
     }
 
-    /**
-     * @return float
-     */
     public function getOriginalCartAmountTaxIncl(): float
     {
         return $this->originalCartAmountTaxIncl;
     }
 
-    /**
-     * @return float
-     */
     public function getOriginalCartAmountTaxExcl(): float
     {
         return $this->originalCartAmountTaxExcl;

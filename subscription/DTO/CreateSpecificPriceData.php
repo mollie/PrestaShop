@@ -51,57 +51,36 @@ class CreateSpecificPriceData
         $this->currencyId = $currencyId;
     }
 
-    /**
-     * @return int
-     */
     public function getProductId(): int
     {
         return $this->productId;
     }
 
-    /**
-     * @return int
-     */
     public function getProductAttributeId(): int
     {
         return $this->productAttributeId;
     }
 
-    /**
-     * @return float
-     */
     public function getPrice(): float
     {
         return $this->price;
     }
 
-    /**
-     * @return int
-     */
     public function getCustomerId(): int
     {
         return $this->customerId;
     }
 
-    /**
-     * @return int
-     */
     public function getShopId(): int
     {
         return $this->shopId;
     }
 
-    /**
-     * @return int
-     */
     public function getShopGroupId(): int
     {
         return $this->shopGroupId;
     }
 
-    /**
-     * @return int
-     */
     public function getCurrencyId(): int
     {
         return $this->currencyId;

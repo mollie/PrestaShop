@@ -35,11 +35,6 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
      */
     private $searchCriteriaApplicator;
 
-    /**
-     * @param Connection $connection
-     * @param string $dbPrefix
-     * @param DoctrineSearchCriteriaApplicatorInterface $searchCriteriaApplicator
-     */
     public function __construct(
         Connection $connection,
         string $dbPrefix,
@@ -51,10 +46,6 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
 
     /**
      * Get query that searches grid rows.
-     *
-     * @param SearchCriteriaInterface $searchCriteria
-     *
-     * @return QueryBuilder
      */
     public function getSearchQueryBuilder(SearchCriteriaInterface $searchCriteria): QueryBuilder
     {
@@ -74,10 +65,6 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
 
     /**
      * Get query that counts grid rows.
-     *
-     * @param SearchCriteriaInterface $searchCriteria
-     *
-     * @return QueryBuilder
      */
     public function getCountQueryBuilder(SearchCriteriaInterface $searchCriteria): QueryBuilder
     {
@@ -89,8 +76,6 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
 
     /**
      * @param array<string, mixed> $filters
-     *
-     * @return QueryBuilder
      */
     private function getQueryBuilder(array $filters): QueryBuilder
     {
@@ -109,7 +94,6 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
 
     /**
      * @param array<string, mixed> $filters
-     * @param QueryBuilder $qb
      */
     private function applyFilters(array $filters, QueryBuilder $qb): void
     {

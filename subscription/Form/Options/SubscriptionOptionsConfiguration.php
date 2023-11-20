@@ -27,9 +27,6 @@ final class SubscriptionOptionsConfiguration implements DataConfigurationInterfa
      */
     private $configuration;
 
-    /**
-     * @param Configuration $configuration
-     */
     public function __construct(Configuration $configuration)
     {
         $this->configuration = $configuration;

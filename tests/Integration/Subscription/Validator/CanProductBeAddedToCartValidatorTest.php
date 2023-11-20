@@ -65,8 +65,6 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
 
     /**
      * @dataProvider productDataProvider
-     *
-     * @return void
      */
     public function testValidate(string $combinationReference, bool $hasExtraAttribute, array $cartProducts, $expectedResult): void
     {

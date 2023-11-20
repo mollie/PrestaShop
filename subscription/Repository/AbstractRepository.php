@@ -53,8 +53,6 @@ abstract class AbstractRepository
     }
 
     /**
-     * @param array $keyValueCriteria
-     *
      * @return ObjectModel|null
      *
      * @throws PrestaShopException
@@ -74,8 +72,6 @@ abstract class AbstractRepository
     }
 
     /**
-     * @param array $keyValueCriteria
-     *
      * @return PrestaShopCollection|null
      *
      * @throws PrestaShopException

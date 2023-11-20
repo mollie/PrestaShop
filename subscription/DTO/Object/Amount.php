@@ -31,10 +31,6 @@ class Amount implements JsonSerializable
      */
     private $currency;
 
-    /**
-     * @param float $value
-     * @param string $currency
-     */
     public function __construct(float $value, string $currency)
     {
         Assert::greaterThanEq($value, 0, 'Amount Value cannot be negative');

@@ -23,17 +23,12 @@ class Company implements \JsonSerializable
     /** @var string */
     private $registrationNumber;
 
-    /**
-     * @return string
-     */
     public function getVatNumber(): string
     {
         return $this->vatNumber;
     }
 
     /**
-     * @param string $vatNumber
-     *
      * @maps vatNumber
      */
     public function setVatNumber(string $vatNumber): void
@@ -41,17 +36,12 @@ class Company implements \JsonSerializable
         $this->vatNumber = $vatNumber;
     }
 
-    /**
-     * @return string
-     */
     public function getRegistrationNumber(): string
     {
         return $this->registrationNumber;
     }
 
     /**
-     * @param string $registrationNumber
-     *
      * @maps registrationNumber
      */
     public function setRegistrationNumber(string $registrationNumber): void

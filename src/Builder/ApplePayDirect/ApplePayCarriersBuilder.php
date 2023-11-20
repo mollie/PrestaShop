@@ -22,8 +22,6 @@ if (!defined('_PS_VERSION_')) {
 class ApplePayCarriersBuilder
 {
     /**
-     * @param array $carriers
-     *
      * @return AppleCarrier[]
      */
     public function build(array $carriers, int $idZone): array

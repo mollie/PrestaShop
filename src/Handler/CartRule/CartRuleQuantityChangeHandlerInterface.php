@@ -17,7 +17,6 @@ use Cart;
 interface CartRuleQuantityChangeHandlerInterface
 {
     /**
-     * @param Cart $cart
      * @param array $cartRules
      */
     public function handle(Cart $cart, $cartRules = []);

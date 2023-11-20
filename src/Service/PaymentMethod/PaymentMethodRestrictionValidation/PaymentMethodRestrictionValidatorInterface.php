@@ -46,19 +46,11 @@ interface PaymentMethodRestrictionValidatorInterface
 {
     /**
      * Returns if payment is valid
-     *
-     * @param MolPaymentMethod $paymentMethod
-     *
-     * @return bool
      */
     public function isValid(MolPaymentMethod $paymentMethod): bool;
 
     /**
      * Returns if payment restriction validator is supported by payment name
-     *
-     * @param MolPaymentMethod $paymentMethod
-     *
-     * @return bool
      */
     public function supports(MolPaymentMethod $paymentMethod): bool;
 }

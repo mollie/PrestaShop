@@ -34,10 +34,6 @@ class Interval implements JsonSerializable
      */
     private $intervalValue;
 
-    /**
-     * @param int $amount
-     * @param string $intervalValue
-     */
     public function __construct(int $amount, string $intervalValue)
     {
         Assert::greaterThanEq($amount, 0, 'Interval amount cannot be negative');

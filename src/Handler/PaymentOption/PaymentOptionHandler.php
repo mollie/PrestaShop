@@ -117,8 +117,6 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
     }
 
     /**
-     * @param MolPaymentMethod $paymentMethod
-     *
      * @return bool
      */
     private function isIdealPaymentMethod(MolPaymentMethod $paymentMethod)
@@ -134,21 +132,11 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
         return true;
     }
 
-    /**
-     * @param MolPaymentMethod $paymentMethod
-     *
-     * @return bool
-     */
     private function isCreditCardPaymentMethod(MolPaymentMethod $paymentMethod): bool
     {
         return PaymentMethod::CREDITCARD === $paymentMethod->getPaymentMethodName();
     }
 
-    /**
-     * @param MolPaymentMethod $paymentMethod
-     *
-     * @return bool
-     */
     private function isBancontactWithQRCodePaymentMethod(MolPaymentMethod $paymentMethod): bool
     {
         $isBancontactMethod = PaymentMethod::BANCONTACT === $paymentMethod->getPaymentMethodName();

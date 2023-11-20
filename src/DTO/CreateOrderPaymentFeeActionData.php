@@ -39,33 +39,21 @@ class CreateOrderPaymentFeeActionData
         $this->paymentFeeTaxExcl = $paymentFeeTaxExcl;
     }
 
-    /**
-     * @return int
-     */
     public function getOrderId(): int
     {
         return $this->orderId;
     }
 
-    /**
-     * @return int
-     */
     public function getCartId(): int
     {
         return $this->cartId;
     }
 
-    /**
-     * @return float
-     */
     public function getPaymentFeeTaxIncl(): float
     {
         return $this->paymentFeeTaxIncl;
     }
 
-    /**
-     * @return float
-     */
     public function getPaymentFeeTaxExcl(): float
     {
         return $this->paymentFeeTaxExcl;

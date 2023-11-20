@@ -113,10 +113,6 @@ class OrderCreationHandler
 
     /**
      * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
-     * @param int $cartId
-     * @param bool $isAuthorizablePayment
-     *
-     * @return int
      *
      * @throws FailedToProvidePaymentFeeException
      * @throws ApiException
@@ -212,7 +208,6 @@ class OrderCreationHandler
 
     /**
      * @param PaymentData|OrderData $paymentData
-     * @param Cart $cart
      *
      * @return OrderData|PaymentData
      */

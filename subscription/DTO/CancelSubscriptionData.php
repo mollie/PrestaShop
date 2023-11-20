@@ -28,10 +28,6 @@ class CancelSubscriptionData implements JsonSerializable
     /** @var string */
     private $subscriptionId;
 
-    /**
-     * @param string $customerId
-     * @param string $subscriptionId
-     */
     public function __construct(string $customerId, string $subscriptionId)
     {
         $this->customerId = $customerId;

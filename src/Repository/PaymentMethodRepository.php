@@ -62,9 +62,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
     }
 
     /**
-     * @param array $savedPaymentMethods
      * @param int $environment
-     * @param int $shopId
      *
      * @return bool
      */

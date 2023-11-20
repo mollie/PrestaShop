@@ -9,7 +9,6 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
-
 $projectDir = __DIR__ . '/../../';
 require_once $projectDir . 'vendor/autoload.php';
 

@@ -88,8 +88,6 @@ class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInte
     }
 
     /**
-     * @param Order $order
-     * @param CartRule $cartRule
      * @param MolPendingOrderCartRule $pendingOrderCartRule
      *
      * @throws \PrestaShopDatabaseException
@@ -102,8 +100,6 @@ class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInte
     }
 
     /**
-     * @param CartRule $cartRule
-     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
@@ -113,11 +109,6 @@ class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInte
         $cartRule->update();
     }
 
-    /**
-     * @param Order $order
-     * @param CartRule $cartRule
-     * @param MolPendingOrderCartRule $pendingOrderCartRule
-     */
     private function increaseCustomerUsedCartRuleQuantity(Order $order, CartRule $cartRule, MolPendingOrderCartRule $pendingOrderCartRule)
     {
         $this->pendingOrderCartRuleRepository->usePendingOrderCartRule($order, $pendingOrderCartRule);

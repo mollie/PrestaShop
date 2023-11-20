@@ -102,11 +102,7 @@ class MollieOrderCreationService
 
     /**
      * @param MolliePaymentAlias|MollieOrderAlias $apiPayment
-     * @param int $cartId
-     * @param string $orderReference
      * @param ?int $orderId
-     *
-     * @return void
      *
      * @throws \PrestaShopDatabaseException
      */

@@ -23,9 +23,6 @@ if (!defined('_PS_VERSION_')) {
 interface ShipmentVerificationInterface
 {
     /**
-     * @param Order $order
-     * @param OrderState $orderState
-     *
      * @returns bool
      *
      * @throws ShipmentCannotBeSentException

@@ -31,10 +31,6 @@ class UpdateSubscriptionData implements JsonSerializable
     /** @var string */
     private $mandateId;
 
-    /**
-     * @param string $customerId
-     * @param string $subscriptionId
-     */
     public function __construct(string $customerId, string $subscriptionId, string $mandateId)
     {
         $this->customerId = $customerId;

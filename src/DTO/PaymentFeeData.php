@@ -39,33 +39,21 @@ class PaymentFeeData
         $this->active = $active;
     }
 
-    /**
-     * @return float
-     */
     public function getPaymentFeeTaxIncl(): float
     {
         return $this->paymentFeeTaxIncl;
     }
 
-    /**
-     * @return float
-     */
     public function getPaymentFeeTaxExcl(): float
     {
         return $this->paymentFeeTaxExcl;
     }
 
-    /**
-     * @return float
-     */
     public function getTaxRate(): float
     {
         return $this->taxRate;
     }
 
-    /**
-     * @return bool
-     */
     public function isActive(): bool
     {
         return $this->active;

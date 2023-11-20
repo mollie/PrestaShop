@@ -80,17 +80,11 @@ class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrict
         return $paymentMethod->getPaymentMethodName() === PaymentMethod::APPLEPAY;
     }
 
-    /**
-     * @return bool
-     */
     private function isSslEnabledEverywhere(): bool
     {
         return (bool) $this->configurationAdapter->get('PS_SSL_ENABLED_EVERYWHERE');
     }
 
-    /**
-     * @return bool
-     */
     private function isPaymentMethodInCookie(): bool
     {
         if (!isset($_COOKIE['isApplePayMethod'])) {

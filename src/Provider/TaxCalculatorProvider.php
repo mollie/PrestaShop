@@ -36,13 +36,6 @@ class TaxCalculatorProvider
         $this->taxRepository = $taxRepository;
     }
 
-    /**
-     * @param int $taxRulesGroupId
-     * @param int $countryId
-     * @param int $stateId
-     *
-     * @return TaxCalculator
-     */
     public function getTaxCalculator(int $taxRulesGroupId, int $countryId, int $stateId): TaxCalculator
     {
         $taxRules = $this->taxRuleRepository->getTaxRule(

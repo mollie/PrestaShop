@@ -33,15 +33,11 @@ interface PendingOrderCartRuleRepositoryInterface extends ReadOnlyRepositoryInte
      *
      * @param int $orderId
      * @param int $cartRuleId
-     * @param OrderCartRule $orderCartRule
      */
     public function createPendingOrderCartRule($orderId, $cartRuleId, OrderCartRule $orderCartRule);
 
     /**
      * Used to create OrderCartRule from MolPendingOrderCartRule
-     *
-     * @param Order $order
-     * @param MolPendingOrderCartRule $pendingOrderCartRule
      */
     public function usePendingOrderCartRule(Order $order, MolPendingOrderCartRule $pendingOrderCartRule);
 }

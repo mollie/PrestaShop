@@ -48,10 +48,6 @@ class CanProductBeAddedToCartValidator
      * Validates if product can be added to the cart.
      * Only 1 subscription product can be to the cart
      *
-     * @param int $productAttributeId
-     *
-     * @return bool
-     *
      * @throws SubscriptionProductValidationException
      */
     public function validate(int $productAttributeId): bool
@@ -68,10 +64,6 @@ class CanProductBeAddedToCartValidator
     }
 
     /**
-     * @param int $productAttributeId
-     *
-     * @return bool
-     *
      * @throws SubscriptionProductValidationException
      */
     private function validateIfSubscriptionProductCanBeAdded(int $productAttributeId): bool

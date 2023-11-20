@@ -23,11 +23,6 @@ if (!defined('_PS_VERSION_')) {
 interface ApiServiceInterface
 {
     /**
-     * @param MollieApiClient|null $api
-     * @param string $validationUrl
-     *
-     * @return string
-     *
      * @throws ApiException
      * @throws MollieApiException
      */

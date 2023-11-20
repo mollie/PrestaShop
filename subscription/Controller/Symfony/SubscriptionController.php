@@ -39,8 +39,6 @@ class SubscriptionController extends AbstractSymfonyController
     /**
      * @AdminSecurity("is_granted('read', request.get('_legacy_controller'))")
      *
-     * @param SubscriptionFilters $filters
-     *
      * @return Response
      */
     public function indexAction(SubscriptionFilters $filters, Request $request)
@@ -75,10 +73,6 @@ class SubscriptionController extends AbstractSymfonyController
 
     /**
      * @AdminSecurity("is_granted('create', request.get('_legacy_controller'))")
-     *
-     * @param Request $request
-     *
-     * @return RedirectResponse
      */
     public function submitOptionsAction(Request $request): RedirectResponse
     {
@@ -116,10 +110,6 @@ class SubscriptionController extends AbstractSymfonyController
      * Provides filters functionality.
      *
      * @AdminSecurity("is_granted('read', request.get('_legacy_controller'))")
-     *
-     * @param Request $request
-     *
-     * @return RedirectResponse
      */
     public function searchAction(Request $request): RedirectResponse
     {
@@ -135,10 +125,6 @@ class SubscriptionController extends AbstractSymfonyController
 
     /**
      * @AdminSecurity("is_granted('delete', request.get('_legacy_controller'))", redirectRoute="admin_subscription_index")
-     *
-     * @param int $subscriptionId
-     *
-     * @return RedirectResponse
      */
     public function cancelAction(int $subscriptionId): RedirectResponse
     {

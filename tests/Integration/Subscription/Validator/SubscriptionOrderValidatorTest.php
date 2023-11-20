@@ -60,8 +60,6 @@ class SubscriptionOrderValidatorTest extends BaseTestCase
 
     /**
      * @dataProvider productDataProvider
-     *
-     * @return void
      */
     public function testValidate(array $orderProducts, $expectedResult): void
     {

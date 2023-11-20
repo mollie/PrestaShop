@@ -350,17 +350,11 @@ class PaymentData implements JsonSerializable
         $this->sequenceType = $sequenceType;
     }
 
-    /**
-     * @return bool
-     */
     public function isSubscriptionOrder(): bool
     {
         return $this->subscriptionOrder;
     }
 
-    /**
-     * @param bool $subscriptionOrder
-     */
     public function setSubscriptionOrder(bool $subscriptionOrder): void
     {
         $this->subscriptionOrder = $subscriptionOrder;

@@ -31,10 +31,6 @@ class CustomerAddressUpdateHandler
 
     /**
      * @param MolRecurringOrder[] $orders
-     * @param int $newAddressId
-     * @param int $oldAddressId
-     *
-     * @return void
      *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException

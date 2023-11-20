@@ -35,9 +35,6 @@ final class DatabaseTableInstaller extends AbstractInstaller
         return $this->alterTableCommands();
     }
 
-    /**
-     * @return array
-     */
     private function getCommands(): array
     {
         $sql = [];

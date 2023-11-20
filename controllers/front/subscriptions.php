@@ -13,7 +13,7 @@
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Subscription\Presenter\RecurringOrdersPresenter;
 
-/**
+/*
  * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE

@@ -22,8 +22,6 @@ if (!defined('_PS_VERSION_')) {
 class SmartyTemplateParser implements TemplateParserInterface
 {
     /**
-     * @param Smarty $smarty
-     * @param TemplateBuilderInterface $templateBuilder
      * @param string $templatePath
      *
      * @return string

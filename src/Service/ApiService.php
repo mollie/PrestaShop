@@ -105,8 +105,6 @@ class ApiService implements ApiServiceInterface
     /**
      * Get payment methods to show on the configuration page.
      *
-     * @param MollieApiClient $api
-     *
      * @return array
      *
      * @since 3.0.0
@@ -403,11 +401,6 @@ class ApiService implements ApiServiceInterface
     }
 
     /**
-     * @param MollieApiClient|null $api
-     * @param string $validationUrl
-     *
-     * @return string
-     *
      * @throws ApiException
      * @throws MollieApiException
      */

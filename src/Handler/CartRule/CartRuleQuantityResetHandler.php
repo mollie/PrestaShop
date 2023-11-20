@@ -98,8 +98,6 @@ class CartRuleQuantityResetHandler implements CartRuleQuantityResetHandlerInterf
 
     /**
      * @param int $orderId
-     * @param CartRule $cartRule
-     * @param OrderCartRule $orderCartRule
      *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
@@ -112,8 +110,6 @@ class CartRuleQuantityResetHandler implements CartRuleQuantityResetHandlerInterf
 
     /**
      * @param int $orderId
-     * @param CartRule $cartRule
-     * @param OrderCartRule $orderCartRule
      *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
@@ -126,8 +122,6 @@ class CartRuleQuantityResetHandler implements CartRuleQuantityResetHandlerInterf
     }
 
     /**
-     * @param CartRule $cartRule
-     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */

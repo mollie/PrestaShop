@@ -42,8 +42,6 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 interface PaymentOptionHandlerInterface
 {
     /**
-     * @param MolPaymentMethod $paymentMethod
-     *
      * @return PaymentOption
      */
     public function handle(MolPaymentMethod $paymentMethod);

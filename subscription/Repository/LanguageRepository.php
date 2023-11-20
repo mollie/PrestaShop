@@ -20,17 +20,11 @@ if (!defined('_PS_VERSION_')) {
 
 class LanguageRepository
 {
-    /**
-     * @return int
-     **/
     public function getDefaultLanguageId(): int
     {
         return (int) \Configuration::get('PS_LANG_DEFAULT');
     }
 
-    /**
-     * @return array
-     **/
     public function getAllLanguages(): array
     {
         return \Language::getLanguages(false);

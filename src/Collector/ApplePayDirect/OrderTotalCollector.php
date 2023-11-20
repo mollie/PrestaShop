@@ -33,7 +33,6 @@ class OrderTotalCollector
 
     /**
      * @param AppleCarrier[] $applePayCarriers
-     * @param Cart $cart
      *
      * @return array|array
      *

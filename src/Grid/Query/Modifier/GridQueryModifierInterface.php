@@ -18,8 +18,6 @@ interface GridQueryModifierInterface
 {
     /**
      * Used to modify Grid Query Builder.
-     *
-     * @param QueryBuilder $queryBuilder
      */
     public function modify(QueryBuilder $queryBuilder);
 }

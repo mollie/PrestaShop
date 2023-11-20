@@ -45,8 +45,6 @@ if (!defined('_PS_VERSION_')) {
 interface PaymentMethodRestrictionValidationInterface
 {
     /**
-     * @param MolPaymentMethod $paymentMethod
-     *
      * @return bool
      */
     public function isPaymentMethodValid(MolPaymentMethod $paymentMethod);

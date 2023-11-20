@@ -56,8 +56,6 @@ class OrderTotalProvider implements OrderTotalProviderInterface
     }
 
     /**
-     * @return float
-     *
      * @throws Exception
      */
     public function getOrderTotal(): float

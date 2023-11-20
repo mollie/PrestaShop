@@ -367,17 +367,12 @@ class OrderData implements JsonSerializable
         $this->lines = $lines;
     }
 
-    /**
-     * @return Payment
-     */
     public function getPayment(): Payment
     {
         return $this->payment;
     }
 
     /**
-     * @param \Mollie\DTO\Object\Payment $payment
-     *
      * @maps payment
      */
     public function setPayment(Payment $payment): void
@@ -390,9 +385,6 @@ class OrderData implements JsonSerializable
         return $this->consumerDateOfBirth;
     }
 
-    /**
-     * @param string $consumerDateOfBirth
-     */
     public function setConsumerDateOfBirth(string $consumerDateOfBirth): void
     {
         $this->consumerDateOfBirth = $consumerDateOfBirth;
@@ -408,17 +400,11 @@ class OrderData implements JsonSerializable
         $this->sequenceType = $sequenceType;
     }
 
-    /**
-     * @return string|null
-     */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    /**
-     * @param string|null $title
-     */
     public function setTitle(?string $title): void
     {
         $this->title = $title;

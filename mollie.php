@@ -104,7 +104,6 @@ class Mollie extends PaymentModule
     /**
      * Gets service that is defined by module container.
      *
-     * @param string $serviceName
      * @returns mixed
      */
     public function getService(string $serviceName)
@@ -608,8 +607,6 @@ class Mollie extends PaymentModule
 
     /**
      * actionOrderStatusUpdate hook.
-     *
-     * @param array $params
      *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
