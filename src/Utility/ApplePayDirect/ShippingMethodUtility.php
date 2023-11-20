@@ -15,6 +15,10 @@ namespace Mollie\Utility\ApplePayDirect;
 use Cart;
 use Mollie\DTO\ApplePay\Carrier\Carrier as AppleCarrier;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ShippingMethodUtility
 {
     /**

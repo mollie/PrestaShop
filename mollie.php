@@ -45,6 +45,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class Mollie extends PaymentModule
 {
     const DISABLE_CACHE = true;

@@ -15,6 +15,10 @@ namespace Mollie\Service\EntityManager;
 use ObjectModel;
 use PrestaShopException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface EntityManagerInterface
 {
     /**

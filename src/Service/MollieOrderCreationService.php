@@ -27,6 +27,10 @@ use Mollie\Handler\Exception\OrderExceptionHandler;
 use MolPaymentMethod;
 use PrestaShopException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MollieOrderCreationService
 {
     /**

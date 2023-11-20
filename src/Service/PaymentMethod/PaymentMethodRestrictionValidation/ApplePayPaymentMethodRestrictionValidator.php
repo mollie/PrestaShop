@@ -40,6 +40,10 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Types\PaymentMethod;
 use MolPaymentMethod;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
     /**

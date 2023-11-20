@@ -20,6 +20,10 @@ use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\NumberUtility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MollieAjaxModuleFrontController extends AbstractMollieController
 {
     private const FILE_NAME = 'ajax';

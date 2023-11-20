@@ -38,6 +38,10 @@ use Product;
 use State;
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MailService
 {
     const FILE_NAME = 'MailService';

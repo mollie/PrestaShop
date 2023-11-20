@@ -43,6 +43,10 @@ use Mollie\Adapter\Shop;
 use Mollie\Config\Config;
 use Mollie\Config\Env;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class Segment implements TrackerInterface
 {
     /**

@@ -12,6 +12,10 @@
 
 namespace Mollie\Utility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class FileUtility
 {
     public static function isWritable(string $folderUrl): bool

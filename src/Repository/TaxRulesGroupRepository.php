@@ -1,9 +1,23 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Repository;
 
 use Db;
 use DbQuery;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class TaxRulesGroupRepository extends AbstractRepository implements TaxRulesGroupRepositoryInterface
 {

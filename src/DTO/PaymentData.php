@@ -17,6 +17,10 @@ use Country;
 use JsonSerializable;
 use Mollie\DTO\Object\Amount;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentData implements JsonSerializable
 {
     /**

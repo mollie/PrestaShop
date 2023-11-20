@@ -42,6 +42,10 @@ use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\PaymentMetho
 use MolPaymentMethod;
 use PrestaShopLogger;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionValidationInterface
 {
     /**

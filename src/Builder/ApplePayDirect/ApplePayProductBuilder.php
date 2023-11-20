@@ -14,6 +14,10 @@ namespace Mollie\Builder\ApplePayDirect;
 
 use Mollie\DTO\ApplePay\Product;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ApplePayProductBuilder
 {
     public function build(array $productParams): array

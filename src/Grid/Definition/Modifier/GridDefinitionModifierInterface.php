@@ -14,6 +14,10 @@ namespace Mollie\Grid\Definition\Modifier;
 
 use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface GridDefinitionModifierInterface
 {
     /**

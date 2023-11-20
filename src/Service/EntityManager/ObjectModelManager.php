@@ -14,6 +14,10 @@ namespace Mollie\Service\EntityManager;
 
 use ObjectModel;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ObjectModelManager implements EntityManagerInterface
 {
     /**

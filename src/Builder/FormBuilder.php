@@ -34,6 +34,10 @@ use Mollie\Utility\TagsUtility;
 use OrderStateCore as OrderState;
 use ToolsCore as Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class FormBuilder
 {
     const FILE_NAME = 'FormBuilder';

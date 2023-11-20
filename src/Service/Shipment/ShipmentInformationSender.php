@@ -18,6 +18,10 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ShipmentServiceInterface;
 use Order;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ShipmentInformationSender implements ShipmentInformationSenderInterface
 {
     /**

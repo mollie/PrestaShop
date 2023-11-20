@@ -38,6 +38,10 @@ namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
 use MolPaymentMethod;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /** Validator to check all cases for every payment method */
 class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {

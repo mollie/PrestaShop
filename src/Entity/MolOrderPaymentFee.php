@@ -9,6 +9,11 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MolOrderPaymentFee extends ObjectModel
 {
     /**

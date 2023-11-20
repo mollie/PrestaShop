@@ -25,6 +25,10 @@ use Mollie\Service\OrderPaymentFeeService;
 use Mollie\Utility\ApplePayDirect\ShippingMethodUtility;
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 final class UpdateApplePayShippingContactHandler
 {
     /**

@@ -24,6 +24,10 @@ use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TextFormatUtility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CartLinesService
 {
     /**

@@ -47,6 +47,10 @@ use Mollie\Provider\PaymentOption\CreditCardSingleClickPaymentOptionProvider;
 use Mollie\Provider\PaymentOption\IdealPaymentOptionProvider;
 use MolPaymentMethod;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentOptionHandler implements PaymentOptionHandlerInterface
 {
     /**

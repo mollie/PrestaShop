@@ -15,6 +15,10 @@ namespace Mollie\Service;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class VoucherService
 {
     /**

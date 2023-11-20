@@ -16,6 +16,10 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Utility\Decoder\DecoderInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AutomaticShipmentSenderStatusesProvider implements AutomaticShipmentSenderStatusesProviderInterface
 {
     /**

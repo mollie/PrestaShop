@@ -55,6 +55,10 @@ use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Service\PaymentMethodService;
 use Order;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderPaymentFeeHandler
 {
     /** @var PaymentMethodService */

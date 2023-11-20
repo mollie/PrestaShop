@@ -22,6 +22,10 @@ use Mollie\Utility\TextFormatUtility;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class RefundService
 {
     const FILE_NAME = 'RefundService';

@@ -12,6 +12,10 @@
 
 namespace Mollie\Repository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface PaymentMethodRepositoryInterface extends ReadOnlyRepositoryInterface
 {
     public function getPaymentMethodIssuersByPaymentMethodId($paymentMethodId);

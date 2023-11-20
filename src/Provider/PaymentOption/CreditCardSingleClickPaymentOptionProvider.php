@@ -51,6 +51,10 @@ use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProviderInterface
 {
     const FILE_NAME = 'CreditCardSingleClickPaymentOptionProvider';

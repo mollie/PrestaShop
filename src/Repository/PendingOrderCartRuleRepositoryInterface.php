@@ -16,6 +16,10 @@ use MolPendingOrderCartRule;
 use Order;
 use OrderCartRule;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface PendingOrderCartRuleRepositoryInterface extends ReadOnlyRepositoryInterface
 {
     /**

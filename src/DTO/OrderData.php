@@ -18,6 +18,10 @@ use JsonSerializable;
 use Mollie\DTO\Object\Amount;
 use Mollie\DTO\Object\Payment;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderData implements JsonSerializable
 {
     /**

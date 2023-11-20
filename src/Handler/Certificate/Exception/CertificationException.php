@@ -14,6 +14,10 @@ namespace Mollie\Handler\Certificate\Exception;
 
 use Exception;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CertificationException extends Exception
 {
     const FILE_COPY_EXCEPTON = 0;

@@ -11,6 +11,10 @@
 
 namespace Mollie\Service;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderStateImageService
 {
     /**

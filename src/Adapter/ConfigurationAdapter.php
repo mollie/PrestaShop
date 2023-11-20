@@ -14,6 +14,10 @@ namespace Mollie\Adapter;
 
 use Mollie\Config\Config;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ConfigurationAdapter
 {
     /** @var Context */

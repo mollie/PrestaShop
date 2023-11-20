@@ -20,6 +20,10 @@ use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
 use MolPendingOrderCartRule;
 use Order;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInterface
 {
     /**

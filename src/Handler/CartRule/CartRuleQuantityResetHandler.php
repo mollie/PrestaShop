@@ -21,6 +21,10 @@ use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
 use Order;
 use OrderCartRule;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CartRuleQuantityResetHandler implements CartRuleQuantityResetHandlerInterface
 {
     /**

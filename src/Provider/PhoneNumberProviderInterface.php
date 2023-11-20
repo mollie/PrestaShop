@@ -14,6 +14,10 @@ namespace Mollie\Provider;
 
 use Address;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface PhoneNumberProviderInterface
 {
     /**

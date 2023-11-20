@@ -14,6 +14,10 @@ namespace Mollie\Handler\Exception;
 
 use Exception;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface ExceptionHandlerInterface
 {
     public function handle(Exception $e);

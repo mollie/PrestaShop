@@ -12,6 +12,10 @@
 
 namespace Mollie\Enum;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentTypeEnum
 {
     const PAYMENT_TYPE_PAYMENT = 0;

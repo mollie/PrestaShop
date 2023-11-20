@@ -26,6 +26,10 @@ use Order;
 use OrderState;
 use PrestaShopLogger;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CanSendShipment implements ShipmentVerificationInterface
 {
     /**

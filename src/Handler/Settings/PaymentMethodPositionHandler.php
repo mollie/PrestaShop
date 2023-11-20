@@ -14,6 +14,10 @@ namespace Mollie\Handler\Settings;
 
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 final class PaymentMethodPositionHandler implements PaymentMethodPositionHandlerInterface
 {
     private $paymentMethodRepository;

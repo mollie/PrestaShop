@@ -14,6 +14,10 @@ namespace Mollie\Utility;
 
 use Customer;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderRecoverUtility
 {
     public static function recoverCreatedOrder($context, int $customerId)

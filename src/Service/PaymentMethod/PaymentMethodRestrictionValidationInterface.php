@@ -38,6 +38,10 @@ namespace Mollie\Service\PaymentMethod;
 
 use MolPaymentMethod;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface PaymentMethodRestrictionValidationInterface
 {
     /**
