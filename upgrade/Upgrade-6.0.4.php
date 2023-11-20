@@ -92,6 +92,8 @@ function updateOrderStatusNames604(Mollie $module)
         foreach ($authorizablePaymentStatusShipped->name as $langId => $name) {
             $authorizablePaymentStatusShipped->name[$langId] = 'Order payment shipped';
         }
+    } else {
+        $authorizablePaymentStatusShipped->name = 'Order payment shipped';
     }
 
     $authorizablePaymentStatusShipped->save();
@@ -103,6 +105,8 @@ function updateOrderStatusNames604(Mollie $module)
         foreach ($authorizablePaymentStatusAuthorized->name as $langId => $name) {
             $authorizablePaymentStatusAuthorized->name[$langId] = 'Order payment authorized';
         }
+    } else {
+        $authorizablePaymentStatusAuthorized->name = 'Order payment authorized';
     }
 
     $authorizablePaymentStatusAuthorized->save();
