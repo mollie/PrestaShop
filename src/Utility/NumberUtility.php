@@ -16,6 +16,10 @@ use PrestaShop\Decimal\DecimalNumber;
 use PrestaShop\Decimal\Number;
 use PrestaShop\Decimal\Operation\Rounding;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class NumberUtility
 {
     public const DECIMAL_PRECISION = 2;
@@ -163,8 +167,6 @@ class NumberUtility
     }
 
     /**
-     * @param float $number
-     *
      * @return Number|DecimalNumber
      */
     private static function getNumber(float $number)

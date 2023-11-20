@@ -18,6 +18,10 @@ use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Infrastructure\Response\Response;
 use Mollie\Logger\PrestaLoggerInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AbstractMollieController extends \ModuleFrontControllerCore
 {
     private const FILE_NAME = 'AbstractMollieController';

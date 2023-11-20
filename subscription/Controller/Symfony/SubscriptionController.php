@@ -1,4 +1,14 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 declare(strict_types=1);
 
@@ -18,14 +28,16 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SubscriptionController extends AbstractSymfonyController
 {
     private const FILE_NAME = 'SubscriptionController';
 
     /**
      * @AdminSecurity("is_granted('read', request.get('_legacy_controller'))")
-     *
-     * @param SubscriptionFilters $filters
      *
      * @return Response
      */
@@ -61,10 +73,6 @@ class SubscriptionController extends AbstractSymfonyController
 
     /**
      * @AdminSecurity("is_granted('create', request.get('_legacy_controller'))")
-     *
-     * @param Request $request
-     *
-     * @return RedirectResponse
      */
     public function submitOptionsAction(Request $request): RedirectResponse
     {
@@ -102,10 +110,6 @@ class SubscriptionController extends AbstractSymfonyController
      * Provides filters functionality.
      *
      * @AdminSecurity("is_granted('read', request.get('_legacy_controller'))")
-     *
-     * @param Request $request
-     *
-     * @return RedirectResponse
      */
     public function searchAction(Request $request): RedirectResponse
     {
@@ -121,10 +125,6 @@ class SubscriptionController extends AbstractSymfonyController
 
     /**
      * @AdminSecurity("is_granted('delete', request.get('_legacy_controller'))", redirectRoute="admin_subscription_index")
-     *
-     * @param int $subscriptionId
-     *
-     * @return RedirectResponse
      */
     public function cancelAction(int $subscriptionId): RedirectResponse
     {

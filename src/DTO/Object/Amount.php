@@ -12,6 +12,10 @@
 
 namespace Mollie\DTO\Object;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class Amount
 {
     /**

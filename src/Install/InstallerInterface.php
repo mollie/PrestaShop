@@ -12,6 +12,10 @@
 
 namespace Mollie\Install;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface InstallerInterface
 {
     /**

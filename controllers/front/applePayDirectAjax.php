@@ -22,6 +22,10 @@ use Mollie\Builder\ApplePayDirect\ApplePayOrderBuilder;
 use Mollie\Builder\ApplePayDirect\ApplePayProductBuilder;
 use Mollie\Utility\OrderRecoverUtility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontController
 {
     /** @var Mollie */

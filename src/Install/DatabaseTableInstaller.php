@@ -14,6 +14,10 @@ namespace Mollie\Install;
 
 use Db;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 final class DatabaseTableInstaller implements InstallerInterface
 {
     public function install()

@@ -16,6 +16,10 @@ use Mollie\Api\Resources\BaseCollection;
 use Mollie\Api\Resources\MethodCollection;
 use Mollie\Service\ApiKeyService;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ApiTestFeedbackBuilder implements TemplateBuilderInterface
 {
     /**

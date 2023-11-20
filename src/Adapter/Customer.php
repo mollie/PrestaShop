@@ -12,6 +12,10 @@
 
 namespace Mollie\Adapter;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class Customer
 {
     public function getCustomer(): \Customer

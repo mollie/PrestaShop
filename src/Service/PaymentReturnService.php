@@ -20,6 +20,10 @@ use Mollie\Handler\CartRule\CartRuleQuantityChangeHandlerInterface;
 use Mollie\Repository\PaymentMethodRepository;
 use Order;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentReturnService
 {
     const PENDING = 1;

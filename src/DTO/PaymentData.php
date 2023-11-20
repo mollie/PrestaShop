@@ -17,6 +17,10 @@ use Country;
 use JsonSerializable;
 use Mollie\DTO\Object\Amount;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentData implements JsonSerializable
 {
     /**
@@ -346,17 +350,11 @@ class PaymentData implements JsonSerializable
         $this->sequenceType = $sequenceType;
     }
 
-    /**
-     * @return bool
-     */
     public function isSubscriptionOrder(): bool
     {
         return $this->subscriptionOrder;
     }
 
-    /**
-     * @param bool $subscriptionOrder
-     */
     public function setSubscriptionOrder(bool $subscriptionOrder): void
     {
         $this->subscriptionOrder = $subscriptionOrder;

@@ -27,6 +27,10 @@ if (!defined('_PS_VERSION_')) {
 
 require_once dirname(__FILE__) . '/../../mollie.php';
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MollieReturnModuleFrontController extends AbstractMollieController
 {
     /** @var Mollie */

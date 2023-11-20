@@ -12,6 +12,10 @@
 
 namespace Mollie\Verification\PaymentType;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface PaymentTypeVerificationInterface
 {
     /**

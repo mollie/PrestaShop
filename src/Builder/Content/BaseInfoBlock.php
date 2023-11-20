@@ -17,6 +17,10 @@ use Context;
 use Mollie;
 use Mollie\Builder\TemplateBuilderInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class BaseInfoBlock implements TemplateBuilderInterface
 {
     /**

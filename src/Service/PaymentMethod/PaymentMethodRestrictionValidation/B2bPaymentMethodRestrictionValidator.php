@@ -1,4 +1,14 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
@@ -9,6 +19,10 @@ use Mollie\Repository\AddressFormatRepositoryInterface;
 use Mollie\Repository\AddressRepositoryInterface;
 use Mollie\Repository\CustomerRepositoryInterface;
 use MolPaymentMethod;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class B2bPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {

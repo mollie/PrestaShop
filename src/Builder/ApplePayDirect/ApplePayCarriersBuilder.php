@@ -15,11 +15,13 @@ namespace Mollie\Builder\ApplePayDirect;
 use Carrier;
 use Mollie\DTO\ApplePay\Carrier\Carrier as AppleCarrier;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ApplePayCarriersBuilder
 {
     /**
-     * @param array $carriers
-     *
      * @return AppleCarrier[]
      */
     public function build(array $carriers, int $idZone): array

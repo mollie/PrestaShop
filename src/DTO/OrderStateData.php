@@ -1,6 +1,20 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\DTO;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class OrderStateData
 {
@@ -49,81 +63,51 @@ class OrderStateData
         $this->pdfInvoice = $pdfInvoice;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return bool
-     */
     public function isSendEmail(): bool
     {
         return $this->sendEmail;
     }
 
-    /**
-     * @return string
-     */
     public function getColor(): string
     {
         return $this->color;
     }
 
-    /**
-     * @return bool
-     */
     public function isLogable(): bool
     {
         return $this->logable;
     }
 
-    /**
-     * @return bool
-     */
     public function isDelivery(): bool
     {
         return $this->delivery;
     }
 
-    /**
-     * @return bool
-     */
     public function isInvoice(): bool
     {
         return $this->invoice;
     }
 
-    /**
-     * @return bool
-     */
     public function isShipped(): bool
     {
         return $this->shipped;
     }
 
-    /**
-     * @return bool
-     */
     public function isPaid(): bool
     {
         return $this->paid;
     }
 
-    /**
-     * @return string
-     */
     public function getTemplate(): string
     {
         return $this->template;
     }
 
-    /**
-     * @return bool
-     */
     public function isPdfInvoice(): bool
     {
         return $this->pdfInvoice;

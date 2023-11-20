@@ -18,6 +18,10 @@ use Mollie;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Repository\PaymentMethodRepository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class IssuerService
 {
     /**

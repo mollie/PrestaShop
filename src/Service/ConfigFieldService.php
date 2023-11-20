@@ -18,6 +18,10 @@ use Mollie\Config\Config;
 use Mollie\Repository\CountryRepository;
 use Mollie\Utility\EnvironmentUtility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ConfigFieldService
 {
     /**

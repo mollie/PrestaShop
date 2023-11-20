@@ -3,21 +3,12 @@
  *
  * @author      Mollie B.V. <info@mollie.nl>
  * @copyright   Mollie B.V.
- *
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
- *
- * @see        https://github.com/mollie/PrestaShop
- */
-/**
- * Mollie       https://www.mollie.nl
- *
- * @author      Mollie B.V. <info@mollie.nl>
- * @copyright   Mollie B.V.
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
+
 $(document).ready(function () {
     var $paymentSelector = isPsVersion177 ? 'select[name="cart_summary[payment_module]"]' : 'select[name="payment_module_name"]';
     var displayHiddenClass = 'd-none hidden';

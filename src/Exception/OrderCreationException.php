@@ -12,6 +12,10 @@
 
 namespace Mollie\Exception;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderCreationException extends \Exception
 {
     const DEFAULT_ORDER_CREATION_EXCEPTION = 1;

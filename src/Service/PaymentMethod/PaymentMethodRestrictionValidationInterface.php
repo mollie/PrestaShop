@@ -38,11 +38,13 @@ namespace Mollie\Service\PaymentMethod;
 
 use MolPaymentMethod;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface PaymentMethodRestrictionValidationInterface
 {
     /**
-     * @param MolPaymentMethod $paymentMethod
-     *
      * @return bool
      */
     public function isPaymentMethodValid(MolPaymentMethod $paymentMethod);

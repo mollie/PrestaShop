@@ -20,6 +20,10 @@ use Mollie\Service\PaymentMethodService;
 use Mollie\Utility\OrderNumberUtility;
 use Mollie\Utility\OrderRecoverUtility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MollieBancontactAjaxModuleFrontController extends ModuleFrontController
 {
     /** @var Mollie */

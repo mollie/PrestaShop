@@ -18,6 +18,10 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Order;
 use PrestaShopLogger;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MollieOrderInfoService
 {
     /**

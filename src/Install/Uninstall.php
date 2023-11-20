@@ -17,6 +17,10 @@ use Mollie\Config\Config;
 use Mollie\Tracker\Segment;
 use Tab;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class Uninstall
 {
     /**

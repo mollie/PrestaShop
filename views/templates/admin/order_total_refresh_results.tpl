@@ -1,11 +1,13 @@
 {**
-* Mollie       https://www.mollie.nl
-*
-* @author      Mollie B.V. <info@mollie.nl>
-* @copyright   Mollie B.V.
-* @link        https://github.com/mollie/PrestaShop
-* @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
-*}
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ *}
 <div class="form-group js-order-total-refresh-results" data-tab-id="general_settings">
     <div class="col-log-9">
         {if $refreshOrderTotalInfoStatus}

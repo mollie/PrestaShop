@@ -14,6 +14,10 @@ namespace Mollie\Utility;
 
 use Language;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MultiLangUtility
 {
     public static function createMultiLangField($field, $languageIds = null)

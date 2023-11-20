@@ -1,10 +1,24 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Subscription\Form\Options;
 
 use Mollie\Config\Config;
 use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShop\PrestaShop\Core\Configuration\DataConfigurationInterface;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 final class SubscriptionOptionsConfiguration implements DataConfigurationInterface
 {
@@ -13,9 +27,6 @@ final class SubscriptionOptionsConfiguration implements DataConfigurationInterfa
      */
     private $configuration;
 
-    /**
-     * @param Configuration $configuration
-     */
     public function __construct(Configuration $configuration)
     {
         $this->configuration = $configuration;

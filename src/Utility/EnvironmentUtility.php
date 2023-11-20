@@ -15,6 +15,10 @@ namespace Mollie\Utility;
 use Configuration;
 use Mollie\Config\Config;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class EnvironmentUtility
 {
     public static function getApiKey()

@@ -1,3 +1,13 @@
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 $(document).ready(function () {
   prestashop.on('handleError', function(parameters) {
     if (parameters.eventType !== 'addProductToCart' || isVersionGreaterOrEqualTo177) {

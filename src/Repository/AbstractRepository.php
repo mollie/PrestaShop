@@ -16,6 +16,10 @@ use ObjectModel;
 use PrestaShopCollection;
 use PrestaShopException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AbstractRepository implements ReadOnlyRepositoryInterface
 {
     /**
@@ -42,8 +46,6 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
     }
 
     /**
-     * @param array $keyValueCriteria
-     *
      * @return ObjectModel|null
      *
      * @throws PrestaShopException
@@ -63,8 +65,6 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
     }
 
     /**
-     * @param array $keyValueCriteria
-     *
      * @return PrestaShopCollection|null
      *
      * @throws PrestaShopException

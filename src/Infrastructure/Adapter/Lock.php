@@ -1,4 +1,14 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Infrastructure\Adapter;
 
@@ -8,6 +18,10 @@ use Symfony\Component\Lock\Factory as LockFactoryV3;
 use Symfony\Component\Lock\LockFactory as LockFactoryV4;
 use Symfony\Component\Lock\LockInterface;
 use Symfony\Component\Lock\Store\FlockStore;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class Lock
 {

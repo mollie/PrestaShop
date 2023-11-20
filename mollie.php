@@ -45,6 +45,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class Mollie extends PaymentModule
 {
     const DISABLE_CACHE = true;
@@ -100,7 +104,6 @@ class Mollie extends PaymentModule
     /**
      * Gets service that is defined by module container.
      *
-     * @param string $serviceName
      * @returns mixed
      */
     public function getService(string $serviceName)
@@ -604,8 +607,6 @@ class Mollie extends PaymentModule
 
     /**
      * actionOrderStatusUpdate hook.
-     *
-     * @param array $params
      *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
