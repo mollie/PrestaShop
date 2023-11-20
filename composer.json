@@ -20,9 +20,7 @@
     "require-dev": {
         "roave/security-advisories": "dev-latest",
         "prestashop/php-dev-tools": "*",
-        "phpunit/phpunit": "~5.7",
-        "prestashop/autoindex": "v2.1.0",
-        "prestashop/header-stamp": "v2.3"
+        "phpunit/phpunit": "~5.7"
     },
     "autoload-dev": {
         "psr-4": {
