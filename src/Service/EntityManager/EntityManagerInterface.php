@@ -22,8 +22,6 @@ if (!defined('_PS_VERSION_')) {
 interface EntityManagerInterface
 {
     /**
-     * @param ObjectModel $model
-     *
      * @throws PrestaShopException
      */
     public function flush(ObjectModel $model);

@@ -21,8 +21,6 @@ if (!defined('_PS_VERSION_')) {
 class ObjectModelManager implements EntityManagerInterface
 {
     /**
-     * @param ObjectModel $model
-     *
      * @throws \PrestaShopException
      */
     public function flush(ObjectModel $model)

@@ -66,11 +66,6 @@ class ShipmentInformationSender implements ShipmentInformationSenderInterface
         $apiOrder->shipAll($this->shipmentService->getShipmentInformation($order->reference));
     }
 
-    /**
-     * @param ApiOrder $apiOrder
-     *
-     * @return bool
-     */
     private function hasShippableItems(ApiOrder $apiOrder): bool
     {
         $shippableItems = 0;

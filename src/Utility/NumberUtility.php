@@ -167,8 +167,6 @@ class NumberUtility
     }
 
     /**
-     * @param float $number
-     *
      * @return Number|DecimalNumber
      */
     private static function getNumber(float $number)
