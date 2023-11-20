@@ -12,6 +12,10 @@
 
 namespace Mollie\Handler;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface RetryHandlerInterface
 {
     public function retry($function, array $options = [], $moreOptions = []);

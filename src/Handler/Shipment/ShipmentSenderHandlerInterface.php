@@ -18,6 +18,10 @@ use Mollie\Exception\ShipmentCannotBeSentException;
 use Order;
 use OrderState;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface ShipmentSenderHandlerInterface
 {
     /**

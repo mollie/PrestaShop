@@ -36,6 +36,10 @@
 
 namespace Mollie\Provider\OrderTotal;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface OrderTotalProviderInterface
 {
     public function getOrderTotal(): float;

@@ -16,6 +16,10 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Exception\NotImplementedException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PrestaLogger implements PrestaLoggerInterface
 {
     // TODO refactor whole logger logic and implement leftover methods
