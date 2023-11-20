@@ -12,6 +12,10 @@
 
 namespace Mollie\Handler\Settings;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface PaymentMethodPositionHandlerInterface
 {
     /**

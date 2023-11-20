@@ -17,6 +17,10 @@ use Mollie;
 use SimpleXMLElement;
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class UpdateMessageProvider implements UpdateMessageProviderInterface
 {
     const FILE_NAME = 'UpdateMessageProvider';

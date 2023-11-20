@@ -15,6 +15,10 @@ namespace Mollie\Handler\Exception;
 use Exception;
 use Mollie\Exception\OrderCreationException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderExceptionHandler implements ExceptionHandlerInterface
 {
     /**
