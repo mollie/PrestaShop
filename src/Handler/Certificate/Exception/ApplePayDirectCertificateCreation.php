@@ -12,6 +12,10 @@
 
 namespace Mollie\Handler\Certificate\Exception;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ApplePayDirectCertificateCreation extends CertificationException
 {
 }
