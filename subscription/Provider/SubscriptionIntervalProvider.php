@@ -14,11 +14,11 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Provider;
 
-use Combination;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\DTO\Object\Interval;
 use Mollie\Subscription\Exception\SubscriptionIntervalException;
+use Mollie\Subscription\Repository\CombinationRepositoryInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -28,10 +28,15 @@ class SubscriptionIntervalProvider
 {
     /** @var ConfigurationAdapter */
     private $configuration;
+    /** @var CombinationRepositoryInterface */
+    private $combinationRepository;
 
-    public function __construct(ConfigurationAdapter $configuration)
-    {
+    public function __construct(
+        ConfigurationAdapter $configuration,
+        CombinationRepositoryInterface $combinationRepository
+    ) {
         $this->configuration = $configuration;
+        $this->combinationRepository = $combinationRepository;
     }
 
     /**
@@ -39,8 +44,17 @@ class SubscriptionIntervalProvider
      *
      * @throws SubscriptionIntervalException
      */
-    public function getSubscriptionInterval(Combination $combination): Interval
+    public function getSubscriptionInterval(int $productAttributeId): Interval
     {
+        /** @var \Combination|null $combination */
+        $combination = $this->combinationRepository->findOneBy([
+            'id_product_attribute' => $productAttributeId,
+        ]);
+
+        if (!$combination) {
+            throw SubscriptionIntervalException::failedToFindCombination($productAttributeId);
+        }
+
         foreach ($combination->getWsProductOptionValues() as $attribute) {
             switch ($attribute['id']) {
                 case $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_DAILY):
@@ -54,6 +68,6 @@ class SubscriptionIntervalProvider
             }
         }
 
-        throw new SubscriptionIntervalException(sprintf('No interval exists for this %s attribute', $combination->id));
+        throw SubscriptionIntervalException::failedToFindMatchingInterval($productAttributeId);
     }
 }

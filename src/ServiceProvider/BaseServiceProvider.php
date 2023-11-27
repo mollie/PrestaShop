@@ -65,8 +65,6 @@ use Mollie\Repository\CartRuleRepository;
 use Mollie\Repository\CartRuleRepositoryInterface;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\CountryRepositoryInterface;
-use Mollie\Repository\CurrencyRepository;
-use Mollie\Repository\CurrencyRepositoryInterface;
 use Mollie\Repository\CustomerRepository;
 use Mollie\Repository\CustomerRepositoryInterface;
 use Mollie\Repository\GenderRepository;
@@ -105,11 +103,15 @@ use Mollie\Service\Shipment\ShipmentInformationSender;
 use Mollie\Service\Shipment\ShipmentInformationSenderInterface;
 use Mollie\Service\ShipmentService;
 use Mollie\Service\ShipmentServiceInterface;
+use Mollie\Shared\Infrastructure\Repository\CurrencyRepository;
+use Mollie\Shared\Infrastructure\Repository\CurrencyRepositoryInterface;
 use Mollie\Subscription\Grid\Accessibility\SubscriptionCancelAccessibility;
 use Mollie\Subscription\Install\Installer;
 use Mollie\Subscription\Install\InstallerInterface;
 use Mollie\Subscription\Logger\Logger;
 use Mollie\Subscription\Logger\LoggerInterface;
+use Mollie\Subscription\Repository\CombinationRepository;
+use Mollie\Subscription\Repository\CombinationRepositoryInterface;
 use Mollie\Subscription\Repository\OrderDetailRepository;
 use Mollie\Subscription\Repository\OrderDetailRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrderRepository;
@@ -161,6 +163,7 @@ final class BaseServiceProvider
         $this->addService($container, CountryRepositoryInterface::class, $container->get(CountryRepository::class));
         $this->addService($container, PaymentMethodRepositoryInterface::class, $container->get(PaymentMethodRepository::class));
         $this->addService($container, GenderRepositoryInterface::class, $container->get(GenderRepository::class));
+        $this->addService($container, CombinationRepositoryInterface::class, $container->get(CombinationRepository::class));
         $this->addService($container, MolCustomerRepository::class, MolCustomerRepository::class)
             ->withArgument('MolCustomer');
 

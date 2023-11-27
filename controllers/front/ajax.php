@@ -15,7 +15,7 @@ use Mollie\Adapter\ToolsAdapter;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Provider\PaymentFeeProviderInterface;
-use Mollie\Repository\CurrencyRepositoryInterface;
+use Mollie\Shared\Infrastructure\Repository\CurrencyRepositoryInterface;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\NumberUtility;

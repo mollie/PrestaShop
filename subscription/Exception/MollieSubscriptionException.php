@@ -14,12 +14,18 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Exception;
 
-use Exception;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class MollieSubscriptionException extends Exception
+class MollieSubscriptionException extends \Exception
 {
+    public static function unknownError(\Throwable $exception): self
+    {
+        return new static(
+            'An unknown error error occurred. Please check system logs or contact Mollie support.',
+            ExceptionCode::UNKNOWN_ERROR,
+            $exception
+        );
+    }
 }

@@ -29,25 +29,22 @@ class CanProductBeAddedToCartValidator
     private $cart;
 
     /** @var SubscriptionProductValidator */
-    private $subscriptionProduct;
+    private $subscriptionProductValidator;
 
     /** @var ToolsAdapter */
     private $tools;
 
     public function __construct(
         CartAdapter $cart,
-        SubscriptionProductValidator $subscriptionProduct,
+        SubscriptionProductValidator $subscriptionProductValidator,
         ToolsAdapter $tools
     ) {
         $this->cart = $cart;
-        $this->subscriptionProduct = $subscriptionProduct;
+        $this->subscriptionProductValidator = $subscriptionProductValidator;
         $this->tools = $tools;
     }
 
     /**
-     * Validates if product can be added to the cart.
-     * Only 1 subscription product can be to the cart
-     *
      * @throws SubscriptionProductValidationException
      */
     public function validate(int $productAttributeId): bool
@@ -58,7 +55,7 @@ class CanProductBeAddedToCartValidator
             return true;
         }
 
-        $isNewSubscriptionProduct = $this->subscriptionProduct->validate($productAttributeId);
+        $isNewSubscriptionProduct = $this->subscriptionProductValidator->validate($productAttributeId);
 
         return !$isNewSubscriptionProduct || $this->validateIfSubscriptionProductCanBeAdded($productAttributeId);
     }
@@ -71,7 +68,7 @@ class CanProductBeAddedToCartValidator
         $cartProducts = $this->cart->getProducts();
 
         foreach ($cartProducts as $cartProduct) {
-            if (!$this->subscriptionProduct->validate((int) $cartProduct['id_product_attribute'])) {
+            if (!$this->subscriptionProductValidator->validate((int) $cartProduct['id_product_attribute'])) {
                 continue;
             }
 
