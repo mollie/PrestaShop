@@ -18,8 +18,7 @@ use Combination;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Subscription\Config\Config;
-use Mollie\Subscription\Repository\CombinationRepository;
-use Mollie\Subscription\Repository\ProductCombinationRepository;
+use Mollie\Subscription\Repository\CombinationRepositoryInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -29,24 +28,18 @@ class SubscriptionProductValidator
 {
     /** @var ConfigurationAdapter */
     private $configuration;
-
-    /** @var ProductCombinationRepository */
+    /** @var CombinationRepositoryInterface */
     private $combinationRepository;
-
-    /** @var CombinationRepository */
-    private $combination;
     /** @var ProductAttributeAdapter */
     private $productAttributeAdapter;
 
     public function __construct(
         ConfigurationAdapter $configuration,
-        ProductCombinationRepository $combinationRepository,
-        CombinationRepository $combination,
+        CombinationRepositoryInterface $combinationRepository,
         ProductAttributeAdapter $productAttributeAdapter
     ) {
         $this->configuration = $configuration;
         $this->combinationRepository = $combinationRepository;
-        $this->combination = $combination;
         $this->productAttributeAdapter = $productAttributeAdapter;
     }
 
@@ -55,11 +48,17 @@ class SubscriptionProductValidator
      */
     public function validate(int $productAttributeId): bool
     {
-        $combination = $this->combination->getById($productAttributeId);
-        $attributeIds = $this->combinationRepository->getIds((int) $combination->id);
+        /** @var \Combination|null $combination */
+        $combination = $this->combinationRepository->findOneBy([
+            'id_product_attribute' => $productAttributeId,
+        ]);
 
-        foreach ($attributeIds as $attributeId) {
-            if ($this->isSubscriptionAttribute((int) $attributeId['id_attribute'])) {
+        if (!$combination) {
+            return false;
+        }
+
+        foreach ($combination->getWsProductOptionValues() as $attribute) {
+            if ($this->isSubscriptionAttribute((int) $attribute['id'])) {
                 return true;
             }
         }

@@ -13,8 +13,8 @@
 namespace Mollie\Tests\Unit\Builder;
 
 use Mollie\Builder\InvoicePdfTemplateBuilder;
-use Mollie\Repository\CurrencyRepositoryInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
+use Mollie\Shared\Infrastructure\Repository\CurrencyRepositoryInterface;
 use MolOrderPaymentFee;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\PrestaShop\Core\Localization\Locale;

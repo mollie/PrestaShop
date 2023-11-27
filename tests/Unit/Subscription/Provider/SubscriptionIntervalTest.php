@@ -10,13 +10,14 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Subscription\Tests\Unit\Provider;
+namespace Mollie\Tests\Unit\Subscription\Provider;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\DTO\Object\Interval;
 use Mollie\Subscription\Exception\SubscriptionIntervalException;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
+use Mollie\Subscription\Repository\CombinationRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
 class SubscriptionIntervalTest extends TestCase
@@ -27,20 +28,26 @@ class SubscriptionIntervalTest extends TestCase
     public function testGetSubscriptionInterval(array $attributeId, array $mockedGetResults, ?Interval $expectedInterval): void
     {
         $configurationMock = $this->createMock(ConfigurationAdapter::class);
-        $configurationMock
-            ->expects($this->any())
-            ->method('get')
-            ->will(
-                $this->returnValueMap($mockedGetResults)
-            );
-        $subscriptionIntervalProvider = new SubscriptionIntervalProvider($configurationMock);
+        $configurationMock->method('get')->will(
+            $this->returnValueMap($mockedGetResults)
+        );
+
+        $combination = $this->createMock('Combination');
+        $combination->method('getWsProductOptionValues')->willReturn($attributeId);
+
+        $combinationRepository = $this->createMock(CombinationRepositoryInterface::class);
+        $combinationRepository->method('findOneBy')->willReturn($combination);
+
+        $subscriptionIntervalProvider = new SubscriptionIntervalProvider(
+            $configurationMock,
+            $combinationRepository
+        );
 
         if ($expectedInterval === null) {
             $this->expectException(SubscriptionIntervalException::class);
         }
-        $combination = $this->createMock('Combination');
-        $combination->method('getWsProductOptionValues')->willReturn($attributeId);
-        $description = $subscriptionIntervalProvider->getSubscriptionInterval($combination);
+
+        $description = $subscriptionIntervalProvider->getSubscriptionInterval(1);
 
         $this->assertEquals($expectedInterval, $description);
     }

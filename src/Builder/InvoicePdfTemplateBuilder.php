@@ -13,8 +13,8 @@
 namespace Mollie\Builder;
 
 use Currency;
-use Mollie\Repository\CurrencyRepositoryInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
+use Mollie\Shared\Infrastructure\Repository\CurrencyRepositoryInterface;
 use MolOrderPaymentFee;
 use Order;
 use PrestaShop\PrestaShop\Core\Localization\Locale;

@@ -219,11 +219,16 @@ class RecurringOrderHandler
 
         $recurringOrderProduct = new MolRecurringOrdersProduct($recurringOrder->id_mol_recurring_orders_product);
 
-        $subscriptionCarrierId = (int) $this->configuration->get(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID);
+        $activeSubscriptionCarrierId = (int) $this->configuration->get(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID);
+        $orderSubscriptionCarrierId = (int) ($subscription->metadata->subscription_carrier_id ?? 0);
+
+        if ($activeSubscriptionCarrierId !== $orderSubscriptionCarrierId) {
+            throw CouldNotHandleRecurringOrder::failedToMatchSelectedCarrier($activeSubscriptionCarrierId, $orderSubscriptionCarrierId);
+        }
 
         /** @var \Carrier|null $carrier */
         $carrier = $this->carrierRepository->findOneBy([
-            'id_carrier' => $subscriptionCarrierId,
+            'id_carrier' => $activeSubscriptionCarrierId,
             'active' => 1,
             'deleted' => 0,
         ]);

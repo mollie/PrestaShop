@@ -10,18 +10,14 @@
  * @codingStandardsIgnoreStart
  */
 
-declare(strict_types=1);
-
 namespace Mollie\Subscription\Repository;
+
+use Mollie\Repository\ReadOnlyRepositoryInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CurrencyRepository
+interface CombinationRepositoryInterface extends ReadOnlyRepositoryInterface
 {
-    public function getById(int $id): \Currency
-    {
-        return new \Currency($id);
-    }
 }

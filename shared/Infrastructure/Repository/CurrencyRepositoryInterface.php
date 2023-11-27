@@ -34,7 +34,9 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Repository;
+namespace Mollie\Shared\Infrastructure\Repository;
+
+use Mollie\Repository\ReadOnlyRepositoryInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;

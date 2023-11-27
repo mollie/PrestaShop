@@ -18,10 +18,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CombinationRepository
+class CombinationRepository extends AbstractRepository implements CombinationRepositoryInterface
 {
-    public function getById(int $id): \Combination
+    public function __construct()
     {
-        return new \Combination($id);
+        parent::__construct(\Combination::class);
     }
 }

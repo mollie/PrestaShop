@@ -18,58 +18,79 @@ if (!defined('_PS_VERSION_')) {
 
 class CouldNotProvideSubscriptionCarrierDeliveryPrice extends MollieSubscriptionException
 {
-    public static function failedToFindSelectedCarrier(): self
+    public static function failedToFindSelectedCarrier(int $subscriptionCarrierId): self
     {
         return new self(
-            'Failed to find selected carrier',
+            sprintf(
+                'Failed to find selected carrier. Subscription carrier ID: (%s)',
+                $subscriptionCarrierId
+            ),
             ExceptionCode::ORDER_FAILED_TO_FIND_SELECTED_CARRIER
         );
     }
 
-    public static function failedToFindOrderCart(): self
+    public static function failedToFindOrderCart(int $cartId): self
     {
         return new self(
-            'Failed to find order cart',
+            sprintf(
+                'Failed to find order cart. Cart ID: (%s)',
+                $cartId
+            ),
             ExceptionCode::ORDER_FAILED_TO_FIND_ORDER_CART
         );
     }
 
-    public static function failedToFindOrderCustomer(): self
+    public static function failedToFindOrderCustomer(int $customerId): self
     {
         return new self(
-            'Failed to find order customer',
+            sprintf(
+                'Failed to find order customer. Customer ID: (%s)',
+                $customerId
+            ),
             ExceptionCode::ORDER_FAILED_TO_FIND_ORDER_CUSTOMER
         );
     }
 
-    public static function failedToApplySelectedCarrier(): self
+    public static function failedToApplySelectedCarrier(int $subscriptionCarrierId): self
     {
         return new self(
-            'Failed to apply selected carrier',
+            sprintf(
+                'Failed to apply selected carrier. Subscription carrier ID: (%s)',
+                $subscriptionCarrierId
+            ),
             ExceptionCode::ORDER_FAILED_TO_APPLY_SELECTED_CARRIER
         );
     }
 
-    public static function failedToFindOrderDeliveryAddress(): self
+    public static function failedToFindOrderDeliveryAddress(int $deliveryAddressId): self
     {
         return new self(
-            'Failed to find order delivery address',
+            sprintf(
+                'Failed to find order delivery address. Delivery address ID: (%s)',
+                $deliveryAddressId
+            ),
             ExceptionCode::ORDER_FAILED_TO_FIND_ORDER_DELIVERY_ADDRESS
         );
     }
 
-    public static function failedToFindOrderDeliveryCountry(): self
+    public static function failedToFindOrderDeliveryCountry(int $countryId): self
     {
         return new self(
-            'Failed to find order delivery country',
+            sprintf(
+                'Failed to find order delivery country. Country ID: (%s)',
+                $countryId
+            ),
             ExceptionCode::ORDER_FAILED_TO_FIND_ORDER_DELIVERY_COUNTRY
         );
     }
 
-    public static function failedToGetSelectedCarrierPrice(): self
+    public static function failedToGetSelectedCarrierPrice(int $subscriptionCarrierId): self
     {
         return new self(
-            'Failed to get selected carrier price',
+            sprintf(
+                'Failed to get selected carrier price. Subscription carrier ID: (%s)',
+                $subscriptionCarrierId
+            ),
             ExceptionCode::ORDER_FAILED_TO_GET_SELECTED_CARRIER_PRICE
         );
     }

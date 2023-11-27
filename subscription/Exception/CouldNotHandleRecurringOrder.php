@@ -18,6 +18,19 @@ if (!defined('_PS_VERSION_')) {
 
 class CouldNotHandleRecurringOrder extends MollieSubscriptionException
 {
+    public static function failedToMatchSelectedCarrier(
+        int $activeSubscriptionCarrierId,
+        int $orderSubscriptionCarrierId
+    ): self {
+        return new self(
+            sprintf('Failed to match selected carrier. active_carrier_id: (%s), order_carrier_id: (%s),',
+                $activeSubscriptionCarrierId,
+                $orderSubscriptionCarrierId
+            ),
+            ExceptionCode::RECURRING_ORDER_FAILED_TO_MATCH_SELECTED_CARRIER
+        );
+    }
+
     public static function failedToFindSelectedCarrier(): self
     {
         return new self(

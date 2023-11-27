@@ -12,13 +12,12 @@
 
 namespace Mollie\Subscription\Provider;
 
-use Mollie\Adapter\ConfigurationAdapter;
-use Mollie\Config\Config;
 use Mollie\Repository\AddressRepositoryInterface;
 use Mollie\Repository\CarrierRepositoryInterface;
 use Mollie\Repository\CartRepositoryInterface;
 use Mollie\Repository\CountryRepositoryInterface;
 use Mollie\Repository\CustomerRepositoryInterface;
+use Mollie\Subscription\DTO\SubscriptionCarrierDeliveryPriceProviderData;
 use Mollie\Subscription\Exception\CouldNotProvideSubscriptionCarrierDeliveryPrice;
 
 if (!defined('_PS_VERSION_')) {
@@ -27,8 +26,6 @@ if (!defined('_PS_VERSION_')) {
 
 class SubscriptionCarrierDeliveryPriceProvider
 {
-    /** @var ConfigurationAdapter */
-    private $configuration;
     /** @var CarrierRepositoryInterface */
     private $carrierRepository;
     /** @var AddressRepositoryInterface */
@@ -41,14 +38,12 @@ class SubscriptionCarrierDeliveryPriceProvider
     private $countryRepository;
 
     public function __construct(
-        ConfigurationAdapter $configuration,
         CarrierRepositoryInterface $carrierRepository,
         AddressRepositoryInterface $addressRepository,
         CustomerRepositoryInterface $customerRepository,
         CartRepositoryInterface $cartRepository,
         CountryRepositoryInterface $countryRepository
     ) {
-        $this->configuration = $configuration;
         $this->carrierRepository = $carrierRepository;
         $this->addressRepository = $addressRepository;
         $this->customerRepository = $customerRepository;
@@ -59,56 +54,54 @@ class SubscriptionCarrierDeliveryPriceProvider
     /**
      * @throws CouldNotProvideSubscriptionCarrierDeliveryPrice
      */
-    public function getPrice(int $addressDeliveryId, int $cartId, int $customerId, array $subscriptionProduct): float
+    public function getPrice(SubscriptionCarrierDeliveryPriceProviderData $data): float
     {
-        $subscriptionCarrierId = (int) $this->configuration->get(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID);
-
         /** @var \Carrier|null $carrier */
         $carrier = $this->carrierRepository->findOneBy([
-            'id_carrier' => $subscriptionCarrierId,
+            'id_carrier' => $data->getSubscriptionCarrierId(),
             'active' => 1,
             'deleted' => 0,
         ]);
 
         if (!$carrier) {
-            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToFindSelectedCarrier();
+            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToFindSelectedCarrier($data->getSubscriptionCarrierId());
         }
 
         /** @var \Cart|null $cart */
         $cart = $this->cartRepository->findOneBy([
-            'id_cart' => $cartId,
+            'id_cart' => $data->getCartId(),
         ]);
 
         if (!$cart) {
-            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToFindOrderCart();
+            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToFindOrderCart($data->getCartId());
         }
 
         /** @var \Customer|null $customer */
         $customer = $this->customerRepository->findOneBy([
-            'id_customer' => $customerId,
+            'id_customer' => $data->getCustomerId(),
         ]);
 
         if (!$customer) {
-            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToFindOrderCustomer();
+            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToFindOrderCustomer($data->getCustomerId());
         }
 
         $getAvailableOrderCarriers = $this->carrierRepository->getCarriersForOrder(
-            $this->addressRepository->getZoneById($addressDeliveryId),
+            $this->addressRepository->getZoneById($data->getDeliveryAddressId()),
             $customer->getGroups(),
             $cart
         );
 
-        if (!in_array($subscriptionCarrierId, array_column($getAvailableOrderCarriers, 'id_carrier'), false)) {
-            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToApplySelectedCarrier();
+        if (!in_array($data->getSubscriptionCarrierId(), array_column($getAvailableOrderCarriers, 'id_carrier'), false)) {
+            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToApplySelectedCarrier($data->getSubscriptionCarrierId());
         }
 
         /** @var \Address|bool $address */
         $address = $this->addressRepository->findOneBy([
-            'id_address' => $addressDeliveryId,
+            'id_address' => $data->getDeliveryAddressId(),
         ]);
 
         if (!$address) {
-            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToFindOrderDeliveryAddress();
+            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToFindOrderDeliveryAddress($data->getDeliveryAddressId());
         }
 
         /** @var \Country|bool $country */
@@ -117,20 +110,20 @@ class SubscriptionCarrierDeliveryPriceProvider
         ]);
 
         if (!$country) {
-            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToFindOrderDeliveryCountry();
+            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToFindOrderDeliveryCountry((int) $address->id_country);
         }
 
         /** @var float|bool $deliveryPrice */
         $deliveryPrice = $cart->getPackageShippingCost(
-            $subscriptionCarrierId,
+            $data->getSubscriptionCarrierId(),
             true,
             $country,
-            [$subscriptionProduct],
-            $this->addressRepository->getZoneById($addressDeliveryId)
+            [$data->getSubscriptionProduct()],
+            $this->addressRepository->getZoneById($data->getDeliveryAddressId())
         );
 
         if (is_bool($deliveryPrice) && !$deliveryPrice) {
-            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToGetSelectedCarrierPrice();
+            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToGetSelectedCarrierPrice($data->getSubscriptionCarrierId());
         }
 
         return (float) $deliveryPrice;
