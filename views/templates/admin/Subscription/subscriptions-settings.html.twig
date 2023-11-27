@@ -27,6 +27,14 @@
           <div class="card-text">
             <div class="form-group row">
               {# TODO translations will be enabled only after we will migrate to moden translation system #}
+              {{ ps.label_with_help('Enable subscription service'|trans, 'Toggle this option to enable products to be bought as recurring items.'|trans) }}
+              <div class="col-sm">
+                {{ form_errors(subscriptionOptions.enable_subscriptions) }}
+                {{ form_widget(subscriptionOptions.enable_subscriptions) }}
+              </div>
+            </div>
+            <div class="form-group row">
+              {# TODO translations will be enabled only after we will migrate to moden translation system #}
               {{ ps.label_with_help('Carrier to use in subscription orders'|trans, 'WARNING: do not change selection after getting first subscription order.'|trans) }}
               <div class="col-sm">
                 {{ form_errors(subscriptionOptions.carrier) }}
