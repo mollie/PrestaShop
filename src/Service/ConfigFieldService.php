@@ -101,8 +101,6 @@ class ConfigFieldService
             Config::MOLLIE_STATUS_SHIPPING => $this->configurationAdapter->get(Config::MOLLIE_STATUS_SHIPPING),
             Config::MOLLIE_MAIL_WHEN_SHIPPING => $this->configurationAdapter->get(Config::MOLLIE_MAIL_WHEN_SHIPPING),
             Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS => $this->configurationAdapter->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS),
-
-            Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID => $this->configurationAdapter->get(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID),
         ];
 
         if (EnvironmentUtility::getApiKey() && $this->module->getApiClient() !== null) {

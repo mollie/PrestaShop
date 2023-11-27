@@ -261,8 +261,6 @@ class SettingsSaveService
         $applePayDirectStyle = $this->tools->getValue(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE);
         $isBancontactQrCodeEnabled = $this->tools->getValue(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED);
 
-        $subscriptionsShippingOption = (int) $this->tools->getValue(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID);
-
         $mollieShipMain = $this->tools->getValue(Config::MOLLIE_AUTO_SHIP_MAIN);
         if (!isset($mollieErrors)) {
             $mollieErrors = false;
@@ -317,7 +315,6 @@ class SettingsSaveService
             $this->configurationAdapter->updateValue(Config::MOLLIE_DEBUG_LOG, (int) $mollieLogger);
             $this->configurationAdapter->updateValue(Config::MOLLIE_API, $mollieApi);
             $this->configurationAdapter->updateValue(Config::MOLLIE_VOUCHER_CATEGORY, $voucherCategory);
-            $this->configurationAdapter->updateValue(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID, $subscriptionsShippingOption);
             $this->configurationAdapter->updateValue(
                 Config::MOLLIE_AUTO_SHIP_STATUSES,
                 json_encode($this->getStatusesValue(Config::MOLLIE_AUTO_SHIP_STATUSES))
