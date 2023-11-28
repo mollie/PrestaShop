@@ -16,7 +16,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class SubscriptionCarrierDeliveryPriceProviderData
+class SubscriptionCarrierDeliveryPriceData
 {
     /** @var int */
     private $deliveryAddressId;

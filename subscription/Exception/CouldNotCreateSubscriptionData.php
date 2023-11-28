@@ -18,14 +18,14 @@ if (!defined('_PS_VERSION_')) {
 
 class CouldNotCreateSubscriptionData extends MollieSubscriptionException
 {
-    public static function failedToFindMolCustomer(string $email): self
+    public static function failedToFindMollieCustomer(string $email): self
     {
         return new self(
             sprintf(
-                'Failed to find Mol customer. Email: (%s)',
+                'Failed to find Mollie customer. Email: (%s)',
                 $email
             ),
-            ExceptionCode::ORDER_FAILED_TO_FIND_MOL_CUSTOMER
+            ExceptionCode::ORDER_FAILED_TO_FIND_MOLLIE_CUSTOMER
         );
     }
 

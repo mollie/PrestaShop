@@ -12,7 +12,7 @@
 
 namespace Mollie\Tests\Integration\Subscription\Provider;
 
-use Mollie\Subscription\DTO\SubscriptionCarrierDeliveryPriceProviderData;
+use Mollie\Subscription\DTO\SubscriptionCarrierDeliveryPriceData;
 use Mollie\Subscription\Exception\CouldNotProvideSubscriptionCarrierDeliveryPrice;
 use Mollie\Subscription\Exception\ExceptionCode;
 use Mollie\Subscription\Provider\SubscriptionCarrierDeliveryPriceProvider;
@@ -55,7 +55,7 @@ class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
         $subscriptionCarrierDeliveryPriceProvider = $this->getService(SubscriptionCarrierDeliveryPriceProvider::class);
 
         $result = $subscriptionCarrierDeliveryPriceProvider->getPrice(
-            new SubscriptionCarrierDeliveryPriceProviderData(
+            new SubscriptionCarrierDeliveryPriceData(
                 $address->id,
                 $cart->id,
                 $cart->id_customer,
@@ -113,7 +113,7 @@ class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
         $subscriptionCarrierDeliveryPriceProvider = $this->getService(SubscriptionCarrierDeliveryPriceProvider::class);
 
         $subscriptionCarrierDeliveryPriceProvider->getPrice(
-            new SubscriptionCarrierDeliveryPriceProviderData(
+            new SubscriptionCarrierDeliveryPriceData(
                 $address->id,
                 $cart->id,
                 $cart->id_customer,

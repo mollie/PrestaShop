@@ -17,7 +17,7 @@ use Mollie\Repository\CarrierRepositoryInterface;
 use Mollie\Repository\CartRepositoryInterface;
 use Mollie\Repository\CountryRepositoryInterface;
 use Mollie\Repository\CustomerRepositoryInterface;
-use Mollie\Subscription\DTO\SubscriptionCarrierDeliveryPriceProviderData;
+use Mollie\Subscription\DTO\SubscriptionCarrierDeliveryPriceData;
 use Mollie\Subscription\Exception\CouldNotProvideSubscriptionCarrierDeliveryPrice;
 
 if (!defined('_PS_VERSION_')) {
@@ -54,7 +54,7 @@ class SubscriptionCarrierDeliveryPriceProvider
     /**
      * @throws CouldNotProvideSubscriptionCarrierDeliveryPrice
      */
-    public function getPrice(SubscriptionCarrierDeliveryPriceProviderData $data): float
+    public function getPrice(SubscriptionCarrierDeliveryPriceData $data): float
     {
         /** @var \Carrier|null $carrier */
         $carrier = $this->carrierRepository->findOneBy([
