@@ -13,10 +13,12 @@
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Controller\AbstractMollieController;
+use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
+use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Shared\Infrastructure\Repository\CurrencyRepositoryInterface;
-use Mollie\Subscription\Exception\SubscriptionProductValidationException;
+use Mollie\Subscription\Exception\ExceptionCode;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\NumberUtility;
 
@@ -185,30 +187,35 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
 
     private function validateProduct(): void
     {
-        /** @var CanProductBeAddedToCartValidator $cartValidation */
-        $cartValidation = $this->module->getService(CanProductBeAddedToCartValidator::class);
+        /** @var CanProductBeAddedToCartValidator $canProductBeAddedToCartValidator */
+        $canProductBeAddedToCartValidator = $this->module->getService(CanProductBeAddedToCartValidator::class);
 
         $product = Tools::getValue('product');
 
-        $productCanBeAdded = true;
-        $message = '';
-
         try {
-            $cartValidation->validate((int) $product['id_product_attribute']);
-        } catch (SubscriptionProductValidationException $e) {
-            $productCanBeAdded = false;
-            $message = $this->module->l('Please note: Only one subscription product can be added to the cart at a time.', self::FILE_NAME);
+            $canProductBeAddedToCartValidator->validate((int) ($product['id_product_attribute'] ?? 0));
+        } catch (\Throwable $exception) {
+            if ($exception->getCode() === ExceptionCode::CART_ALREADY_HAS_SUBSCRIPTION_PRODUCT) {
+                $this->ajaxResponse(JsonResponse::error(
+                    $this->module->l('Please note: Only one subscription product can be added to the cart at a time.', self::FILE_NAME),
+                    HttpStatusCode::HTTP_BAD_REQUEST
+                ));
+            }
+
+            if ($exception->getCode() === ExceptionCode::CART_INVALID_SUBSCRIPTION_SETTINGS) {
+                $this->ajaxResponse(JsonResponse::error(
+                    $this->module->l('Subscription service is disabled. Please change the attribute to Subscription: none.', self::FILE_NAME),
+                    HttpStatusCode::HTTP_BAD_REQUEST
+                ));
+            }
+
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Unknown error. Try again or change the attribute to Subscription: none.', self::FILE_NAME),
+                HttpStatusCode::HTTP_BAD_REQUEST
+            ));
         }
 
-        $this->ajaxRender(
-            json_encode(
-                [
-                    'success' => true,
-                    'isValid' => $productCanBeAdded,
-                    'message' => $message,
-                ]
-            )
-        );
+        $this->ajaxResponse(JsonResponse::success([]));
     }
 
     private function returnDefaultOrderSummaryBlock(Cart $cart, array $errorData = [], array $presentedCart = null): void

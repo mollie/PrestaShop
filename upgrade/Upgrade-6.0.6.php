@@ -28,5 +28,5 @@ function updateConfigurationValues606(Mollie $module)
     /** @var ConfigurationAdapter $configuration */
     $configuration = $module->getService(ConfigurationAdapter::class);
 
-    $configuration->updateValue(Config::MOLLIE_SUBSCRIPTION_ENABLE, '0');
+    $configuration->updateValue(Config::MOLLIE_SUBSCRIPTION_ENABLED, '0');
 }

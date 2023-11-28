@@ -16,7 +16,7 @@ namespace Mollie\Subscription\Validator;
 
 use Mollie\Adapter\CartAdapter;
 use Mollie\Adapter\ToolsAdapter;
-use Mollie\Subscription\Exception\ExceptionCode;
+use Mollie\Subscription\Exception\CouldNotValidateSubscriptionSettings;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 
 if (!defined('_PS_VERSION_')) {
@@ -33,15 +33,19 @@ class CanProductBeAddedToCartValidator
 
     /** @var ToolsAdapter */
     private $tools;
+    /** @var SubscriptionSettingsValidator */
+    private $subscriptionSettingsValidator;
 
     public function __construct(
         CartAdapter $cart,
         SubscriptionProductValidator $subscriptionProductValidator,
-        ToolsAdapter $tools
+        ToolsAdapter $tools,
+        SubscriptionSettingsValidator $subscriptionSettingsValidator
     ) {
         $this->cart = $cart;
         $this->subscriptionProductValidator = $subscriptionProductValidator;
         $this->tools = $tools;
+        $this->subscriptionSettingsValidator = $subscriptionSettingsValidator;
     }
 
     /**
@@ -55,14 +59,21 @@ class CanProductBeAddedToCartValidator
             return true;
         }
 
-        $isNewSubscriptionProduct = $this->subscriptionProductValidator->validate($productAttributeId);
+        if (!$this->subscriptionProductValidator->validate($productAttributeId)) {
+            return true;
+        }
 
-        return !$isNewSubscriptionProduct || $this->validateIfSubscriptionProductCanBeAdded($productAttributeId);
+        if (!$this->validateSubscriptionSettings()) {
+            throw SubscriptionProductValidationException::invalidSubscriptionSettings();
+        }
+
+        if (!$this->validateIfSubscriptionProductCanBeAdded($productAttributeId)) {
+            throw SubscriptionProductValidationException::cartAlreadyHasSubscriptionProduct();
+        }
+
+        return true;
     }
 
-    /**
-     * @throws SubscriptionProductValidationException
-     */
     private function validateIfSubscriptionProductCanBeAdded(int $productAttributeId): bool
     {
         $cartProducts = $this->cart->getProducts();
@@ -76,7 +87,18 @@ class CanProductBeAddedToCartValidator
                 continue;
             }
 
-            throw new SubscriptionProductValidationException('Cart already has subscription product', ExceptionCode::CART_ALREADY_HAS_SUBSCRIPTION_PRODUCT);
+            return false;
+        }
+
+        return true;
+    }
+
+    private function validateSubscriptionSettings(): bool
+    {
+        try {
+            $this->subscriptionSettingsValidator->validate();
+        } catch (CouldNotValidateSubscriptionSettings $exception) {
+            return false;
         }
 
         return true;

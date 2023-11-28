@@ -26,7 +26,6 @@ use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
-use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
 use Mollie\Subscription\Install\AttributeInstaller;
 use Mollie\Subscription\Install\DatabaseTableInstaller;
@@ -1014,14 +1013,14 @@ class Mollie extends PaymentModule
         return '';
     }
 
-    public function hookActionCartUpdateQuantityBefore($params)
+    public function hookActionCartUpdateQuantityBefore($params): void
     {
-        /** @var CanProductBeAddedToCartValidator $cartValidation */
-        $cartValidation = $this->getService(CanProductBeAddedToCartValidator::class);
+        /** @var CanProductBeAddedToCartValidator $canProductBeAddedToCartValidator */
+        $canProductBeAddedToCartValidator = $this->getService(CanProductBeAddedToCartValidator::class);
 
         try {
-            $cartValidation->validate((int) $params['id_product_attribute']);
-        } catch (SubscriptionProductValidationException $e) {
+            $canProductBeAddedToCartValidator->validate((int) $params['id_product_attribute']);
+        } catch (\Throwable $exception) {
             $product = $this->makeProductNotOrderable($params['product']);
 
             $params['product'] = $product;

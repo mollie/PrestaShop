@@ -38,7 +38,7 @@ final class SubscriptionOptionsConfiguration implements DataConfigurationInterfa
     public function getConfiguration(): array
     {
         return [
-            'enable_subscriptions' => $this->configuration->getBoolean(Config::MOLLIE_SUBSCRIPTION_ENABLE),
+            'enable_subscriptions' => $this->configuration->getBoolean(Config::MOLLIE_SUBSCRIPTION_ENABLED),
             'carrier' => $this->configuration->getInt(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID),
         ];
     }
@@ -53,7 +53,7 @@ final class SubscriptionOptionsConfiguration implements DataConfigurationInterfa
         }
 
         $this->configuration->set(
-            Config::MOLLIE_SUBSCRIPTION_ENABLE,
+            Config::MOLLIE_SUBSCRIPTION_ENABLED,
             (int) $configuration['enable_subscriptions']
         );
 
