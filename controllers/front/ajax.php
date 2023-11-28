@@ -13,11 +13,16 @@
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Controller\AbstractMollieController;
+use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
+use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Shared\Infrastructure\Repository\CurrencyRepositoryInterface;
+use Mollie\Subscription\Exception\CouldNotValidateSubscriptionSettings;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
+use Mollie\Subscription\Validator\SubscriptionProductValidator;
+use Mollie\Subscription\Validator\SubscriptionSettingsValidator;
 use Mollie\Utility\NumberUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -185,30 +190,43 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
 
     private function validateProduct(): void
     {
-        /** @var CanProductBeAddedToCartValidator $cartValidation */
-        $cartValidation = $this->module->getService(CanProductBeAddedToCartValidator::class);
+        /** @var SubscriptionSettingsValidator $subscriptionSettingsValidator */
+        $subscriptionSettingsValidator = $this->module->getService(SubscriptionSettingsValidator::class);
+
+        /** @var CanProductBeAddedToCartValidator $canProductBeAddedToCartValidator */
+        $canProductBeAddedToCartValidator = $this->module->getService(CanProductBeAddedToCartValidator::class);
+
+        /** @var SubscriptionProductValidator $subscriptionProductValidator */
+        $subscriptionProductValidator = $this->module->getService(SubscriptionProductValidator::class);
 
         $product = Tools::getValue('product');
 
-        $productCanBeAdded = true;
-        $message = '';
-
-        try {
-            $cartValidation->validate((int) $product['id_product_attribute']);
-        } catch (SubscriptionProductValidationException $e) {
-            $productCanBeAdded = false;
-            $message = $this->module->l('Please note: Only one subscription product can be added to the cart at a time.', self::FILE_NAME);
+        if (!$subscriptionProductValidator->validate((int) ($product['id_product_attribute'] ?? 0))) {
+            $this->ajaxResponse(JsonResponse::success([]));
         }
 
-        $this->ajaxRender(
-            json_encode(
-                [
-                    'success' => true,
-                    'isValid' => $productCanBeAdded,
-                    'message' => $message,
-                ]
-            )
-        );
+        try {
+            $subscriptionSettingsValidator->validate();
+
+            $canProductBeAddedToCartValidator->validate((int) ($product['id_product_attribute'] ?? 0));
+        } catch (SubscriptionProductValidationException $exception) {
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Please note: Only one subscription product can be added to the cart at a time.', self::FILE_NAME),
+                HttpStatusCode::HTTP_BAD_REQUEST
+            ));
+        } catch (CouldNotValidateSubscriptionSettings $exception) {
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Subscription service is disabled. Please change the attribute to Subscription: none.', self::FILE_NAME),
+                HttpStatusCode::HTTP_BAD_REQUEST
+            ));
+        } catch (\Throwable $exception) {
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Unknown error. Try again or change the attribute to Subscription: none.', self::FILE_NAME),
+                HttpStatusCode::HTTP_BAD_REQUEST
+            ));
+        }
+
+        $this->ajaxResponse(JsonResponse::success([]));
     }
 
     private function returnDefaultOrderSummaryBlock(Cart $cart, array $errorData = [], array $presentedCart = null): void

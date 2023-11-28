@@ -15,6 +15,7 @@ namespace Mollie\Tests\Integration\Subscription\Validator;
 use Mollie\Adapter\CartAdapter;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Subscription\Config\Config;
+use Mollie\Subscription\Exception\ExceptionCode;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Subscription\Validator\SubscriptionProductValidator;
@@ -64,8 +65,15 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
     /**
      * @dataProvider productDataProvider
      */
-    public function testValidate(string $combinationReference, bool $hasExtraAttribute, array $cartProducts, $expectedResult): void
-    {
+    public function testValidate(
+        string $combinationReference,
+        bool $hasExtraAttribute,
+        array $cartProducts,
+        bool $subscriptionEnabled,
+        bool $expectedResult,
+        string $expectedException,
+        int $expectedExceptionCode
+    ): void {
         // TODO cart factory
         $cart = $this->createMock(CartAdapter::class);
 
@@ -85,8 +93,9 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
             $this->getService(ToolsAdapter::class)
         );
 
-        if ($expectedResult !== true) {
-            $this->expectException($expectedResult);
+        if (!$expectedResult) {
+            $this->expectException($expectedException);
+            $this->expectExceptionCode($expectedExceptionCode);
         }
 
         $canBeAdded = $subscriptionCartValidator->validate($combination);
@@ -101,13 +110,19 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
                 'subscription reference' => Config::SUBSCRIPTION_ATTRIBUTE_DAILY,
                 'has extra attribute' => false,
                 'cart products' => [],
+                'subscription enabled' => true,
                 'expected result' => true,
+                'expected exception' => '',
+                'expected exception code' => 0,
             ],
             'One normal product' => [
                 'subscription reference' => '',
                 'has extra attribute' => true,
                 'cart products' => [],
+                'subscription enabled' => true,
                 'expected result' => true,
+                'expected exception' => '',
+                'expected exception code' => 0,
             ],
             'Add subscription product but already have normal product in cart' => [
                 'subscription reference' => Config::SUBSCRIPTION_ATTRIBUTE_DAILY,
@@ -117,7 +132,10 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
                         'id_product_attribute' => self::NORMAL_PRODUCT_ATTRIBUTE_ID,
                     ],
                 ],
+                'subscription enabled' => true,
                 'expected result' => true,
+                'expected exception' => '',
+                'expected exception code' => 0,
             ],
             'Add subscription product but already have another subscription product in cart' => [
                 'subscription reference' => Config::SUBSCRIPTION_ATTRIBUTE_DAILY,
@@ -127,7 +145,10 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
                         'id_product_attribute' => Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY,
                     ],
                 ],
-                'expected result' => SubscriptionProductValidationException::class,
+                'subscription enabled' => true,
+                'expected result' => false,
+                'expected exception' => SubscriptionProductValidationException::class,
+                'expected exception code' => ExceptionCode::CART_ALREADY_HAS_SUBSCRIPTION_PRODUCT,
             ],
             'Add normal product but already have another subscription product in cart' => [
                 'subscription reference' => '',
@@ -137,7 +158,10 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
                         'id_product_attribute' => Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY,
                     ],
                 ],
+                'subscription enabled' => true,
                 'expected result' => true,
+                'expected exception' => '',
+                'expected exception code' => 0,
             ],
             'Add normal product but already have another normal product in cart' => [
                 'subscription reference' => '',
@@ -147,7 +171,10 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
                         'id_product_attribute' => self::NORMAL_PRODUCT_ATTRIBUTE_ID,
                     ],
                 ],
+                'subscription enabled' => true,
                 'expected result' => true,
+                'expected exception' => '',
+                'expected exception code' => 0,
             ],
         ];
     }

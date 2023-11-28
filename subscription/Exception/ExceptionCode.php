@@ -40,6 +40,8 @@ class ExceptionCode
     //Cart error codes starts from 2000
 
     public const CART_ALREADY_HAS_SUBSCRIPTION_PRODUCT = 2001;
+    public const CART_SUBSCRIPTION_SERVICE_DISABLED = 2002;
+    public const CART_SUBSCRIPTION_CARRIER_INVALID = 2003;
 
     //Recurring order error codes starts from 3000
 

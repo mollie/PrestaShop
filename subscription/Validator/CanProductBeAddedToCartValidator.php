@@ -16,7 +16,6 @@ namespace Mollie\Subscription\Validator;
 
 use Mollie\Adapter\CartAdapter;
 use Mollie\Adapter\ToolsAdapter;
-use Mollie\Subscription\Exception\ExceptionCode;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 
 if (!defined('_PS_VERSION_')) {
@@ -55,14 +54,17 @@ class CanProductBeAddedToCartValidator
             return true;
         }
 
-        $isNewSubscriptionProduct = $this->subscriptionProductValidator->validate($productAttributeId);
+        if (!$this->subscriptionProductValidator->validate($productAttributeId)) {
+            return true;
+        }
 
-        return !$isNewSubscriptionProduct || $this->validateIfSubscriptionProductCanBeAdded($productAttributeId);
+        if (!$this->validateIfSubscriptionProductCanBeAdded($productAttributeId)) {
+            throw SubscriptionProductValidationException::cartAlreadyHasSubscriptionProduct();
+        }
+
+        return true;
     }
 
-    /**
-     * @throws SubscriptionProductValidationException
-     */
     private function validateIfSubscriptionProductCanBeAdded(int $productAttributeId): bool
     {
         $cartProducts = $this->cart->getProducts();
@@ -76,7 +78,7 @@ class CanProductBeAddedToCartValidator
                 continue;
             }
 
-            throw new SubscriptionProductValidationException('Cart already has subscription product', ExceptionCode::CART_ALREADY_HAS_SUBSCRIPTION_PRODUCT);
+            return false;
         }
 
         return true;

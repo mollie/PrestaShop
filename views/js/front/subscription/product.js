@@ -62,12 +62,20 @@ $(document).ready(function () {
         action: 'validateProduct',
         product: product
       },
-      success: function (response) {
-        response = jQuery.parseJSON(response);
+      error: function (error) {
+        const response = jQuery.parseJSON(error.responseText);
 
-        if (!response.isValid) {
-          noticeMessage(response.message);
+        const responseErrors = response.errors;
+
+        if ($.isArray(responseErrors)) {
+          console.error(responseErrors[0])
+          noticeMessage(responseErrors[0]);
+
+          return;
         }
+
+        console.error(responseErrors)
+        noticeMessage(responseErrors);
       }
     })
   }

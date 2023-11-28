@@ -20,4 +20,11 @@ if (!defined('_PS_VERSION_')) {
 
 class SubscriptionProductValidationException extends MollieSubscriptionException
 {
+    public static function cartAlreadyHasSubscriptionProduct(): self
+    {
+        return new self(
+            'Cart already has subscription product',
+            ExceptionCode::CART_ALREADY_HAS_SUBSCRIPTION_PRODUCT
+        );
+    }
 }
