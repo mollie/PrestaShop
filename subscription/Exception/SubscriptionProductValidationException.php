@@ -20,6 +20,14 @@ if (!defined('_PS_VERSION_')) {
 
 class SubscriptionProductValidationException extends MollieSubscriptionException
 {
+    public static function invalidSubscriptionSettings(): self
+    {
+        return new self(
+            'Invalid subscription settings',
+            ExceptionCode::CART_INVALID_SUBSCRIPTION_SETTINGS
+        );
+    }
+
     public static function cartAlreadyHasSubscriptionProduct(): self
     {
         return new self(

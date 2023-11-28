@@ -35,8 +35,6 @@ use Mollie\Subscription\Logger\NullLogger;
 use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
-use Mollie\Subscription\Validator\SubscriptionProductValidator;
-use Mollie\Subscription\Validator\SubscriptionSettingsValidator;
 use Mollie\Subscription\Verification\HasSubscriptionProductInCart;
 use Mollie\Utility\PsVersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
@@ -1020,19 +1018,7 @@ class Mollie extends PaymentModule
         /** @var CanProductBeAddedToCartValidator $canProductBeAddedToCartValidator */
         $canProductBeAddedToCartValidator = $this->getService(CanProductBeAddedToCartValidator::class);
 
-        /** @var SubscriptionSettingsValidator $subscriptionSettingsValidator */
-        $subscriptionSettingsValidator = $this->getService(SubscriptionSettingsValidator::class);
-
-        /** @var SubscriptionProductValidator $subscriptionProductValidator */
-        $subscriptionProductValidator = $this->getService(SubscriptionProductValidator::class);
-
-        if (!$subscriptionProductValidator->validate($params['id_product_attribute'])) {
-            return;
-        }
-
         try {
-            $subscriptionSettingsValidator->validate();
-
             $canProductBeAddedToCartValidator->validate((int) $params['id_product_attribute']);
         } catch (\Throwable $exception) {
             $product = $this->makeProductNotOrderable($params['product']);
