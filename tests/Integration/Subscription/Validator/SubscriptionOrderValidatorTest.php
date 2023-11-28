@@ -70,7 +70,7 @@ class SubscriptionOrderValidatorTest extends BaseTestCase
 
         $cart->method('getProducts')->willReturn($orderProductsMapped);
 
-        $subscriptionProduct = $this->createMock(SubscriptionProductValidator::class);
+        $subscriptionProductValidator = $this->createMock(SubscriptionProductValidator::class);
 
         $mockedValidation = [
             [(int) $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_NONE), false],
@@ -80,11 +80,11 @@ class SubscriptionOrderValidatorTest extends BaseTestCase
             [self::NORMAL_PRODUCT_ATTRIBUTE_ID, false],
         ];
 
-        $subscriptionProduct->method('validate')->will(
+        $subscriptionProductValidator->method('validate')->will(
             $this->returnValueMap($mockedValidation)
         );
 
-        $subscriptionOrderValidator = new SubscriptionOrderValidator($subscriptionProduct);
+        $subscriptionOrderValidator = new SubscriptionOrderValidator($subscriptionProductValidator);
 
         $canBeAdded = $subscriptionOrderValidator->validate($cart);
 
