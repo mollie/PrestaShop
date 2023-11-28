@@ -22,7 +22,7 @@ class MollieSubscriptionException extends \Exception
 {
     public static function unknownError(\Throwable $exception): self
     {
-        return new static(
+        return new self(
             'An unknown error error occurred. Please check system logs or contact Mollie support.',
             ExceptionCode::UNKNOWN_ERROR,
             $exception
