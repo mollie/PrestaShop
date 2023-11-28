@@ -15,7 +15,9 @@ declare(strict_types=1);
 namespace Mollie\Subscription\Handler;
 
 use Mollie\Api\Resources\Subscription;
+use Mollie\Subscription\Action\CreateRecurringOrdersProductAction;
 use Mollie\Subscription\Api\SubscriptionApi;
+use Mollie\Subscription\DTO\CreateRecurringOrdersProductData;
 use Mollie\Subscription\Factory\CreateSubscriptionDataFactory;
 use Mollie\Subscription\Utility\ClockInterface;
 use Mollie\Subscription\Validator\SubscriptionProductValidator;
@@ -39,17 +41,21 @@ class SubscriptionCreationHandler
     private $createSubscriptionDataFactory;
     /** @var SubscriptionProductValidator */
     private $subscriptionProductValidator;
+    /** @var CreateRecurringOrdersProductAction */
+    private $createRecurringOrdersProductAction;
 
     public function __construct(
         ClockInterface $clock,
         SubscriptionApi $subscriptionApi,
         CreateSubscriptionDataFactory $subscriptionDataFactory,
-        SubscriptionProductValidator $subscriptionProductValidator
+        SubscriptionProductValidator $subscriptionProductValidator,
+        CreateRecurringOrdersProductAction $createRecurringOrdersProductAction
     ) {
         $this->clock = $clock;
         $this->subscriptionApi = $subscriptionApi;
         $this->createSubscriptionDataFactory = $subscriptionDataFactory;
         $this->subscriptionProductValidator = $subscriptionProductValidator;
+        $this->createRecurringOrdersProductAction = $createRecurringOrdersProductAction;
     }
 
     /**
@@ -73,21 +79,22 @@ class SubscriptionCreationHandler
         $subscriptionData = $this->createSubscriptionDataFactory->build($order, $subscriptionProduct);
         $subscription = $this->subscriptionApi->subscribeOrder($subscriptionData);
 
-        $recurringOrdersProduct = $this->createRecurringOrdersProduct($subscriptionProduct);
+        try {
+            $recurringOrdersProduct = $this->createRecurringOrdersProductAction->run(
+                CreateRecurringOrdersProductData::create(
+                    (int) $subscriptionProduct['id_product'],
+                    (int) $subscriptionProduct['id_product_attribute'],
+                    (int) $subscriptionProduct['product_quantity'],
+                    (float) $subscriptionProduct['unit_price_tax_excl']
+                )
+            );
+        } catch (\Throwable $exception) {
+            // TODO throw different exception
+
+            throw $exception;
+        }
 
         $this->createRecurringOrder($recurringOrdersProduct, $order, $subscription, $method);
-    }
-
-    private function createRecurringOrdersProduct(array $product): MolRecurringOrdersProduct
-    {
-        $recurringOrdersProduct = new MolRecurringOrdersProduct();
-        $recurringOrdersProduct->id_product = $product['id_product'];
-        $recurringOrdersProduct->id_product_attribute = $product['id_product_attribute'];
-        $recurringOrdersProduct->quantity = $product['product_quantity'];
-        $recurringOrdersProduct->unit_price = $product['unit_price_tax_excl'];
-        $recurringOrdersProduct->add();
-
-        return $recurringOrdersProduct;
     }
 
     private function createRecurringOrder(MolRecurringOrdersProduct $recurringOrdersProduct, Order $order, Subscription $subscription, string $method): void
