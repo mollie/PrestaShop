@@ -23,7 +23,7 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Shared\Infrastructure\Repository\CurrencyRepositoryInterface;
 use Mollie\Subscription\DTO\CreateSubscriptionData as SubscriptionDataDTO;
 use Mollie\Subscription\DTO\Object\Amount;
-use Mollie\Subscription\DTO\SubscriptionCarrierDeliveryPriceProviderData;
+use Mollie\Subscription\DTO\SubscriptionCarrierDeliveryPriceData;
 use Mollie\Subscription\Exception\CouldNotCreateSubscriptionData;
 use Mollie\Subscription\Exception\MollieSubscriptionException;
 use Mollie\Subscription\Provider\SubscriptionCarrierDeliveryPriceProvider;
@@ -96,7 +96,7 @@ class CreateSubscriptionDataFactory
         }
 
         if (!$molCustomer) {
-            throw CouldNotCreateSubscriptionData::failedToFindMolCustomer((string) $order->getCustomer()->email);
+            throw CouldNotCreateSubscriptionData::failedToFindMollieCustomer((string) $order->getCustomer()->email);
         }
 
         try {
@@ -111,7 +111,7 @@ class CreateSubscriptionDataFactory
 
         try {
             $deliveryPrice = $this->subscriptionCarrierDeliveryPriceProvider->getPrice(
-                new SubscriptionCarrierDeliveryPriceProviderData(
+                new SubscriptionCarrierDeliveryPriceData(
                     (int) $order->id_address_delivery,
                     (int) $order->id_cart,
                     (int) $order->id_customer,
