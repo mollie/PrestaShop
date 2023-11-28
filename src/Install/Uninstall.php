@@ -97,7 +97,7 @@ class Uninstall
             Config::MOLLIE_MAIL_WHEN_COMPLETED,
             Config::MOLLIE_API_KEY_TEST,
             Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID,
-            Config::MOLLIE_SUBSCRIPTION_ENABLE,
+            Config::MOLLIE_SUBSCRIPTION_ENABLED,
         ];
 
         $this->deleteConfigurations($configurations);

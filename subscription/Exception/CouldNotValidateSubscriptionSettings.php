@@ -10,29 +10,27 @@
  * @codingStandardsIgnoreStart
  */
 
-declare(strict_types=1);
-
 namespace Mollie\Subscription\Exception;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class SubscriptionProductValidationException extends MollieSubscriptionException
+class CouldNotValidateSubscriptionSettings extends MollieSubscriptionException
 {
-    public static function invalidSubscriptionSettings(): self
+    public static function subscriptionServiceDisabled(): self
     {
         return new self(
-            'Invalid subscription settings',
-            ExceptionCode::CART_INVALID_SUBSCRIPTION_SETTINGS
+            'Subscription service disabled.',
+            ExceptionCode::CART_SUBSCRIPTION_SERVICE_DISABLED
         );
     }
 
-    public static function cartAlreadyHasSubscriptionProduct(): self
+    public static function subscriptionCarrierInvalid(): self
     {
         return new self(
-            'Cart already has subscription product',
-            ExceptionCode::CART_ALREADY_HAS_SUBSCRIPTION_PRODUCT
+            'Subscription carrier invalid.',
+            ExceptionCode::CART_SUBSCRIPTION_CARRIER_INVALID
         );
     }
 }
