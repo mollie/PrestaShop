@@ -20,4 +20,25 @@ if (!defined('_PS_VERSION_')) {
 
 class SubscriptionIntervalException extends MollieSubscriptionException
 {
+    public static function failedToFindCombination(int $productAttributeId): self
+    {
+        return new self(
+            sprintf(
+                'Failed to find combination. Product attribute ID: (%s)',
+                $productAttributeId
+            ),
+            ExceptionCode::ORDER_FAILED_TO_FIND_COMBINATION
+        );
+    }
+
+    public static function failedToFindMatchingInterval(int $productAttributeId): self
+    {
+        return new self(
+            sprintf(
+                'Failed to find matching interval. Product attribute ID: (%s)',
+                $productAttributeId
+            ),
+            ExceptionCode::ORDER_FAILED_TO_FIND_MATCHING_INTERVAL
+        );
+    }
 }

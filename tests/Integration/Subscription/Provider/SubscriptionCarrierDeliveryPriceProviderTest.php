@@ -12,8 +12,7 @@
 
 namespace Mollie\Tests\Integration\Subscription\Provider;
 
-use Mollie\Adapter\ConfigurationAdapter;
-use Mollie\Config\Config;
+use Mollie\Subscription\DTO\SubscriptionCarrierDeliveryPriceData;
 use Mollie\Subscription\Exception\CouldNotProvideSubscriptionCarrierDeliveryPrice;
 use Mollie\Subscription\Exception\ExceptionCode;
 use Mollie\Subscription\Provider\SubscriptionCarrierDeliveryPriceProvider;
@@ -25,26 +24,6 @@ use Mollie\Tests\Integration\Factory\ProductFactory;
 
 class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
 {
-    public function setUp(): void
-    {
-        /** @var ConfigurationAdapter $configuration */
-        $configuration = $this->getService(ConfigurationAdapter::class);
-
-        $this->subscriptionOrderCarrierId = $configuration->get(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID);
-
-        parent::setUp();
-    }
-
-    public function tearDown(): void
-    {
-        /** @var ConfigurationAdapter $configuration */
-        $configuration = $this->getService(ConfigurationAdapter::class);
-
-        $configuration->updateValue(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID, $this->subscriptionOrderCarrierId);
-
-        parent::tearDown();
-    }
-
     public function testItSuccessfullyProvidesCarrierDeliveryPrice(): void
     {
         $address = AddressFactory::create();
@@ -54,11 +33,6 @@ class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
         $cart = CartFactory::create([
             'id_carrier' => $carrier->id,
         ]);
-
-        /** @var ConfigurationAdapter $configuration */
-        $configuration = $this->getService(ConfigurationAdapter::class);
-
-        $configuration->updateValue(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID, $carrier->id);
 
         $targetProduct = ProductFactory::create([
             'quantity' => 10,
@@ -81,10 +55,13 @@ class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
         $subscriptionCarrierDeliveryPriceProvider = $this->getService(SubscriptionCarrierDeliveryPriceProvider::class);
 
         $result = $subscriptionCarrierDeliveryPriceProvider->getPrice(
-            $address->id,
-            $cart->id,
-            $cart->id_customer,
-            $targetProductArray
+            new SubscriptionCarrierDeliveryPriceData(
+                $address->id,
+                $cart->id,
+                $cart->id_customer,
+                $targetProductArray,
+                $carrier->id
+            )
         );
 
         $this->assertEquals(999.00, $result);
@@ -112,11 +89,6 @@ class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
             'id_carrier' => $carrier->id,
         ]);
 
-        /** @var ConfigurationAdapter $configuration */
-        $configuration = $this->getService(ConfigurationAdapter::class);
-
-        $configuration->updateValue(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID, $carrier->id);
-
         $targetProduct = ProductFactory::create([
             'quantity' => 10,
         ]);
@@ -141,10 +113,13 @@ class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
         $subscriptionCarrierDeliveryPriceProvider = $this->getService(SubscriptionCarrierDeliveryPriceProvider::class);
 
         $subscriptionCarrierDeliveryPriceProvider->getPrice(
-            $address->id,
-            $cart->id,
-            $cart->id_customer,
-            $targetProductArray
+            new SubscriptionCarrierDeliveryPriceData(
+                $address->id,
+                $cart->id,
+                $cart->id_customer,
+                $targetProductArray,
+                $carrier->id
+            )
         );
 
         $this->removeFactories([

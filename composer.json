@@ -30,7 +30,8 @@
     "autoload": {
         "psr-4": {
             "Mollie\\": "src/",
-            "Mollie\\Subscription\\": "subscription/"
+            "Mollie\\Subscription\\": "subscription/",
+            "Mollie\\Shared\\": "shared/"
         },
         "classmap": [
             "mollie.php",

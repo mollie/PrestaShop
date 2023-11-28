@@ -34,9 +34,10 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Repository;
+namespace Mollie\Shared\Infrastructure\Repository;
 
 use Currency;
+use Mollie\Repository\AbstractRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;

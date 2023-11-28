@@ -13,11 +13,9 @@
 namespace Mollie\Tests\Integration\Subscription\Validator;
 
 use Mollie\Adapter\CartAdapter;
-use Mollie\Adapter\ProductAttributeAdapter;
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
-use Mollie\Subscription\Repository\CombinationRepository;
-use Mollie\Subscription\Repository\ProductCombinationRepository;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use Mollie\Tests\Integration\BaseTestCase;
@@ -68,7 +66,8 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
      */
     public function testValidate(string $combinationReference, bool $hasExtraAttribute, array $cartProducts, $expectedResult): void
     {
-        $cartAdapterMock = $this->createMock(CartAdapter::class);
+        // TODO cart factory
+        $cart = $this->createMock(CartAdapter::class);
 
         $cartProducts = array_map(function (array $product) {
             return [
@@ -76,19 +75,14 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
             ];
         }, $cartProducts);
 
-        $cartAdapterMock->method('getProducts')->willReturn($cartProducts);
+        $cart->method('getProducts')->willReturn($cartProducts);
 
         $combination = $this->getCombination($combinationReference, $hasExtraAttribute);
 
         $subscriptionCartValidator = new CanProductBeAddedToCartValidator(
-            $cartAdapterMock,
-            new SubscriptionProductValidator(
-                $this->configuration,
-                new ProductCombinationRepository(),
-                new CombinationRepository(),
-                new ProductAttributeAdapter()
-            ),
-            $this->getService(\Mollie\Adapter\ToolsAdapter::class)
+            $cart,
+            $this->getService(SubscriptionProductValidator::class),
+            $this->getService(ToolsAdapter::class)
         );
 
         if ($expectedResult !== true) {
@@ -161,6 +155,7 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
     private function getCombination(string $combinationReference, bool $hasExtraAttribute): int
     {
         $reference = $this->configuration->get($combinationReference);
+
         if ($hasExtraAttribute) {
             $reference = $reference ? implode('-', [
                 $this->configuration->get($combinationReference),

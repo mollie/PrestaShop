@@ -12,12 +12,11 @@
 
 declare(strict_types=1);
 
-namespace Mollie\Tests\Unit\Factory;
+namespace Mollie\Tests\Unit\Subscription\Factory;
 
-use Mollie;
-use Mollie\Adapter\Context;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Shared\Infrastructure\Repository\CurrencyRepositoryInterface;
 use Mollie\Subscription\Constants\IntervalConstant;
 use Mollie\Subscription\DTO\CreateSubscriptionData as SubscriptionDataDTO;
 use Mollie\Subscription\DTO\Object\Amount;
@@ -26,12 +25,10 @@ use Mollie\Subscription\Factory\CreateSubscriptionDataFactory;
 use Mollie\Subscription\Provider\SubscriptionCarrierDeliveryPriceProvider;
 use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
-use Mollie\Subscription\Repository\CombinationRepository;
-use Mollie\Subscription\Repository\CurrencyRepository;
+use Mollie\Tests\Unit\BaseTestCase;
 use Mollie\Utility\SecureKeyUtility;
-use PHPUnit\Framework\TestCase;
 
-class SubscriptionDataTest extends TestCase
+class CreateSubscriptionDataFactoryTest extends BaseTestCase
 {
     private const TEST_ORDER_ID = 1;
     private const TEST_ORDER_REFERENCE = 111;
@@ -45,22 +42,34 @@ class SubscriptionDataTest extends TestCase
      */
     public function testBuildSubscriptionData(string $customerId, float $totalAmount, string $description, SubscriptionDataDTO $expectedResult): void
     {
-        $molCustomer = $this->createMock('MolCustomer');
-        $molCustomer->customer_id = $customerId;
-        $customerRepositoryMock = $this->createMock(MolCustomerRepository::class);
-        $customerRepositoryMock->method('findOneBy')->willReturn($molCustomer);
+        // TODO replace data provider with multiple methods, which tests various exception cases
 
-        $subscriptionIntervalProviderMock = $this->createMock(SubscriptionIntervalProvider::class);
-        $subscriptionIntervalProviderMock->method('getSubscriptionInterval')->willReturn(new Interval(1, IntervalConstant::DAY));
+        /** @var \MolCustomer $molCustomer */
+        $molCustomer = $this->createMock(\MolCustomer::class);
+        $molCustomer->customer_id = $customerId;
+
+        $customerRepository = $this->createMock(MolCustomerRepository::class);
+        $customerRepository->method('findOneBy')->willReturn($molCustomer);
+
+        $interval = new Interval(1, 'day');
+
+        $subscriptionIntervalProvider = $this->createMock(SubscriptionIntervalProvider::class);
+        $subscriptionIntervalProvider->method('getSubscriptionInterval')->willReturn($interval);
 
         $subscriptionDescriptionProviderMock = $this->createMock(SubscriptionDescriptionProvider::class);
         $subscriptionDescriptionProviderMock->method('getSubscriptionDescription')->willReturn($description);
 
-        $currency = $this->createMock('Currency');
+        $this->configuration->method('get')->willReturn(1);
+
+        $subscriptionCarrierDeliveryPriceProvider = $this->createMock(SubscriptionCarrierDeliveryPriceProvider::class);
+        $subscriptionCarrierDeliveryPriceProvider->method('getPrice')->willReturn(10.00);
+
+        /** @var \Currency $currency */
+        $currency = $this->createMock(\Currency::class);
         $currency->iso_code = 'EUR';
 
-        $currencyAdapterMock = $this->createMock(CurrencyRepository::class);
-        $currencyAdapterMock->method('getById')->willReturn($currency);
+        $currencyRepository = $this->createMock(CurrencyRepositoryInterface::class);
+        $currencyRepository->method('findOneBy')->willReturn($currency);
 
         $paymentMethodRepositoryMock = $this->createMock(PaymentMethodRepository::class);
         $paymentMethodRepositoryMock->method('getPaymentBy')->willReturn(
@@ -69,29 +78,27 @@ class SubscriptionDataTest extends TestCase
             ]
         );
 
-        $context = $this->createMock(Context::class);
-        $context->expects($this->once())->method('getModuleLink')->willReturn('example-link');
+        $this->context->method('getModuleLink')->willReturn('example-link');
 
-        $subscriptionCarrierDeliveryPriceProvider = $this->createMock(SubscriptionCarrierDeliveryPriceProvider::class);
-        $subscriptionCarrierDeliveryPriceProvider->expects($this->once())->method('getPrice')->willReturn(10.00);
+        $this->module->name = 'mollie';
 
         $subscriptionDataFactory = new CreateSubscriptionDataFactory(
-            $customerRepositoryMock,
-            $subscriptionIntervalProviderMock,
+            $customerRepository,
+            $subscriptionIntervalProvider,
             $subscriptionDescriptionProviderMock,
-            $currencyAdapterMock,
-            new CombinationRepository(),
+            $currencyRepository,
             $paymentMethodRepositoryMock,
-            new Mollie(),
-            $context,
-            $subscriptionCarrierDeliveryPriceProvider
+            $this->module,
+            $this->context,
+            $subscriptionCarrierDeliveryPriceProvider,
+            $this->configuration
         );
 
-        $customerMock = $this->createMock('Customer');
-        $customerMock->email = 'test.gmail.com';
+        $this->customer->email = 'test.gmail.com';
 
         $order = $this->createMock('Order');
-        $order->method('getCustomer')->willReturn($customerMock);
+        $order->method('getCustomer')->willReturn($this->customer);
+
         $order->id = self::TEST_ORDER_ID;
         $order->reference = self::TEST_ORDER_REFERENCE;
         $order->id_cart = self::TEST_CART_ID;
@@ -117,6 +124,7 @@ class SubscriptionDataTest extends TestCase
             new Interval(1, IntervalConstant::DAY),
             'subscription-' . self::TEST_ORDER_REFERENCE
         );
+
         $subscriptionDto->setMandateId(self::TEST_MANDATE_ID);
 
         $key = SecureKeyUtility::generateReturnKey(
@@ -128,6 +136,7 @@ class SubscriptionDataTest extends TestCase
         $subscriptionDto->setMetaData(
             [
                 'secure_key' => $key,
+                'subscription_carrier_id' => 1,
             ]
         );
 
