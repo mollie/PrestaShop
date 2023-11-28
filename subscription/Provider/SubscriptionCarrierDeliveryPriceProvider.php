@@ -73,7 +73,7 @@ class SubscriptionCarrierDeliveryPriceProvider
         ]);
 
         if (!$cart) {
-            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToFindOrderCart($data->getCartId());
+            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToFindCart($data->getCartId());
         }
 
         /** @var \Customer|null $customer */
@@ -82,7 +82,7 @@ class SubscriptionCarrierDeliveryPriceProvider
         ]);
 
         if (!$customer) {
-            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToFindOrderCustomer($data->getCustomerId());
+            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToFindCustomer($data->getCustomerId());
         }
 
         $getAvailableOrderCarriers = $this->carrierRepository->getCarriersForOrder(
@@ -101,7 +101,7 @@ class SubscriptionCarrierDeliveryPriceProvider
         ]);
 
         if (!$address) {
-            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToFindOrderDeliveryAddress($data->getDeliveryAddressId());
+            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToFindDeliveryAddress($data->getDeliveryAddressId());
         }
 
         /** @var \Country|bool $country */
@@ -110,7 +110,7 @@ class SubscriptionCarrierDeliveryPriceProvider
         ]);
 
         if (!$country) {
-            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToFindOrderDeliveryCountry((int) $address->id_country);
+            throw CouldNotProvideSubscriptionCarrierDeliveryPrice::failedToFindDeliveryCountry((int) $address->id_country);
         }
 
         /** @var float|bool $deliveryPrice */

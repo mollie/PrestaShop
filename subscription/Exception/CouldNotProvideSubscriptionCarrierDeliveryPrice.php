@@ -29,25 +29,25 @@ class CouldNotProvideSubscriptionCarrierDeliveryPrice extends MollieSubscription
         );
     }
 
-    public static function failedToFindOrderCart(int $cartId): self
+    public static function failedToFindCart(int $cartId): self
     {
         return new self(
             sprintf(
-                'Failed to find order cart. Cart ID: (%s)',
+                'Failed to find cart. Cart ID: (%s)',
                 $cartId
             ),
-            ExceptionCode::ORDER_FAILED_TO_FIND_ORDER_CART
+            ExceptionCode::ORDER_FAILED_TO_FIND_CART
         );
     }
 
-    public static function failedToFindOrderCustomer(int $customerId): self
+    public static function failedToFindCustomer(int $customerId): self
     {
         return new self(
             sprintf(
-                'Failed to find order customer. Customer ID: (%s)',
+                'Failed to find customer. Customer ID: (%s)',
                 $customerId
             ),
-            ExceptionCode::ORDER_FAILED_TO_FIND_ORDER_CUSTOMER
+            ExceptionCode::ORDER_FAILED_TO_FIND_CUSTOMER
         );
     }
 
@@ -62,25 +62,25 @@ class CouldNotProvideSubscriptionCarrierDeliveryPrice extends MollieSubscription
         );
     }
 
-    public static function failedToFindOrderDeliveryAddress(int $deliveryAddressId): self
+    public static function failedToFindDeliveryAddress(int $deliveryAddressId): self
     {
         return new self(
             sprintf(
-                'Failed to find order delivery address. Delivery address ID: (%s)',
+                'Failed to find delivery address. Delivery address ID: (%s)',
                 $deliveryAddressId
             ),
-            ExceptionCode::ORDER_FAILED_TO_FIND_ORDER_DELIVERY_ADDRESS
+            ExceptionCode::ORDER_FAILED_TO_FIND_DELIVERY_ADDRESS
         );
     }
 
-    public static function failedToFindOrderDeliveryCountry(int $countryId): self
+    public static function failedToFindDeliveryCountry(int $countryId): self
     {
         return new self(
             sprintf(
-                'Failed to find order delivery country. Country ID: (%s)',
+                'Failed to find delivery country. Country ID: (%s)',
                 $countryId
             ),
-            ExceptionCode::ORDER_FAILED_TO_FIND_ORDER_DELIVERY_COUNTRY
+            ExceptionCode::ORDER_FAILED_TO_FIND_DELIVERY_COUNTRY
         );
     }
 
