@@ -79,8 +79,6 @@ it('C339339: Checking the Advanced Settings tab, verifying the Front-end compone
       cy.get('[id="MOLLIE_AS_STATUSES_info"]').should('exist')
       cy.get('[name="MOLLIE_DISPLAY_ERRORS"]').should('exist')
       cy.get('[name="MOLLIE_DEBUG_LOG"]').should('exist')
-      cy.get('[name="MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID"]').should('be.visible') // checking the Subscriptions carriers select
-      cy.get('[name="MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID"]').select('Click and collect')
       cy.get('#module_form_submit_btn').click({force:true}) //checking the saving
       cy.get('[class="alert alert-success"]').should('be.visible') //checking if saving returns green alert
       //cy.window() will check if there are no Errors in console
@@ -91,6 +89,10 @@ it('C688472: Checking the Subscriptions tab, and console errors', () => {
       cy.get('#subtab-AdminMollieModule').click()
       cy.get('#subtab-AdminMollieSubscriptionOrders').click()
       cy.get('[id="invertus_mollie_subscription_grid_panel"]').should('be.visible')
+      cy.get('[name="form[carrier]"').should('be.visible') // checking the Subscriptions carriers select
+      cy.get('[name="form[carrier]"').select('Click and collect')
+      cy.get('#save-invoices-options-button').click()
+      cy.contains('Options saved successfully.').should('be.visible')
 });
 it('C688473: Checking the Subscriptions FAQ, and console errors', () => {
       cy.visit('/admin1/')
