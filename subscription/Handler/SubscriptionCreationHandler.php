@@ -19,8 +19,11 @@ use Mollie\Subscription\Action\CreateRecurringOrdersProductAction;
 use Mollie\Subscription\Api\SubscriptionApi;
 use Mollie\Subscription\DTO\CreateRecurringOrderData;
 use Mollie\Subscription\DTO\CreateRecurringOrdersProductData;
+use Mollie\Subscription\Exception\CouldNotCreateSubscription;
+use Mollie\Subscription\Exception\MollieSubscriptionException;
 use Mollie\Subscription\Factory\CreateSubscriptionDataFactory;
 use Mollie\Subscription\Validator\SubscriptionProductValidator;
+use Mollie\Subscription\Validator\SubscriptionSettingsValidator;
 use Order;
 
 if (!defined('_PS_VERSION_')) {
@@ -35,6 +38,8 @@ class SubscriptionCreationHandler
     private $createSubscriptionDataFactory;
     /** @var SubscriptionProductValidator */
     private $subscriptionProductValidator;
+    /** @var SubscriptionSettingsValidator */
+    private $subscriptionSettingsValidator;
     /** @var CreateRecurringOrdersProductAction */
     private $createRecurringOrdersProductAction;
     /** @var CreateRecurringOrderAction */
@@ -44,21 +49,29 @@ class SubscriptionCreationHandler
         SubscriptionApi $subscriptionApi,
         CreateSubscriptionDataFactory $subscriptionDataFactory,
         SubscriptionProductValidator $subscriptionProductValidator,
+        SubscriptionSettingsValidator $subscriptionSettingsValidator,
         CreateRecurringOrdersProductAction $createRecurringOrdersProductAction,
         CreateRecurringOrderAction $createRecurringOrderAction
     ) {
         $this->subscriptionApi = $subscriptionApi;
         $this->createSubscriptionDataFactory = $subscriptionDataFactory;
         $this->subscriptionProductValidator = $subscriptionProductValidator;
+        $this->subscriptionSettingsValidator = $subscriptionSettingsValidator;
         $this->createRecurringOrdersProductAction = $createRecurringOrdersProductAction;
         $this->createRecurringOrderAction = $createRecurringOrderAction;
     }
 
     /**
-     * @throws \Throwable
+     * @throws MollieSubscriptionException
      */
     public function handle(Order $order, string $method): void
     {
+        try {
+            $this->subscriptionSettingsValidator->validate();
+        } catch (\Throwable $exception) {
+            throw CouldNotCreateSubscription::invalidSubscriptionSettings($exception);
+        }
+
         $products = $order->getCartProducts();
         $subscriptionProduct = [];
 
@@ -72,8 +85,21 @@ class SubscriptionCreationHandler
             break;
         }
 
-        $subscriptionData = $this->createSubscriptionDataFactory->build($order, $subscriptionProduct);
-        $subscription = $this->subscriptionApi->subscribeOrder($subscriptionData);
+        if (empty($subscriptionProduct)) {
+            throw CouldNotCreateSubscription::failedToFindSubscriptionProduct();
+        }
+
+        try {
+            $subscriptionData = $this->createSubscriptionDataFactory->build($order, $subscriptionProduct);
+        } catch (\Throwable $exception) {
+            throw CouldNotCreateSubscription::failedToCreateSubscriptionData($exception);
+        }
+
+        try {
+            $subscription = $this->subscriptionApi->subscribeOrder($subscriptionData);
+        } catch (\Throwable $exception) {
+            throw CouldNotCreateSubscription::failedToSubscribeOrder($exception);
+        }
 
         try {
             $recurringOrdersProduct = $this->createRecurringOrdersProductAction->run(
@@ -85,9 +111,7 @@ class SubscriptionCreationHandler
                 )
             );
         } catch (\Throwable $exception) {
-            // TODO throw different exception
-
-            throw $exception;
+            throw CouldNotCreateSubscription::failedToCreateRecurringOrdersProduct($exception);
         }
 
         try {
@@ -110,9 +134,7 @@ class SubscriptionCreationHandler
                 (string) $subscription->customerId
             ));
         } catch (\Throwable $exception) {
-            // TODO throw different exception
-
-            throw $exception;
+            throw CouldNotCreateSubscription::failedToCreateRecurringOrder($exception);
         }
     }
 }
