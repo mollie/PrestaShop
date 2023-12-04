@@ -10,40 +10,35 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Subscription\Verification;
+namespace Mollie\Subscription\Provider;
 
-use Mollie\Adapter\Context;
 use Mollie\Subscription\Validator\SubscriptionProductValidator;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class HasSubscriptionProductInCart
+class SubscriptionProductProvider
 {
-    /** @var Context */
-    private $context;
     /** @var SubscriptionProductValidator */
     private $subscriptionProductValidator;
 
     public function __construct(
-        Context $context,
         SubscriptionProductValidator $subscriptionProductValidator
     ) {
-        $this->context = $context;
         $this->subscriptionProductValidator = $subscriptionProductValidator;
     }
 
-    public function verify(): bool
+    public function getProduct(array $products): array
     {
-        $cartProducts = $this->context->getCartProducts();
-
-        foreach ($cartProducts as $cartProduct) {
-            if ($this->subscriptionProductValidator->validate((int) $cartProduct['id_product_attribute'])) {
-                return true;
+        foreach ($products as $product) {
+            if (!$this->subscriptionProductValidator->validate((int) $product['id_product_attribute'])) {
+                continue;
             }
+
+            return $product;
         }
 
-        return false;
+        return [];
     }
 }

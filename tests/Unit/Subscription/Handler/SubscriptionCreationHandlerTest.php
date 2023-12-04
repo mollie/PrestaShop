@@ -22,7 +22,7 @@ use Mollie\Subscription\Exception\ExceptionCode;
 use Mollie\Subscription\Exception\MollieSubscriptionException;
 use Mollie\Subscription\Factory\CreateSubscriptionDataFactory;
 use Mollie\Subscription\Handler\SubscriptionCreationHandler;
-use Mollie\Subscription\Validator\SubscriptionProductValidator;
+use Mollie\Subscription\Provider\SubscriptionProductProvider;
 use Mollie\Subscription\Validator\SubscriptionSettingsValidator;
 use Mollie\Tests\Unit\BaseTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -33,14 +33,14 @@ class SubscriptionCreationHandlerTest extends BaseTestCase
     private $subscriptionApi;
     /** @var CreateSubscriptionDataFactory */
     private $createSubscriptionDataFactory;
-    /** @var SubscriptionProductValidator */
-    private $subscriptionProductValidator;
     /** @var SubscriptionSettingsValidator */
     private $subscriptionSettingsValidator;
     /** @var CreateRecurringOrdersProductAction */
     private $createRecurringOrdersProductAction;
     /** @var CreateRecurringOrderAction */
     private $createRecurringOrderAction;
+    /** @var SubscriptionProductProvider */
+    private $subscriptionProductProvider;
 
     public function setUp(): void
     {
@@ -48,17 +48,43 @@ class SubscriptionCreationHandlerTest extends BaseTestCase
 
         $this->subscriptionApi = $this->mock(SubscriptionApi::class);
         $this->createSubscriptionDataFactory = $this->mock(CreateSubscriptionDataFactory::class);
-        $this->subscriptionProductValidator = $this->mock(SubscriptionProductValidator::class);
         $this->subscriptionSettingsValidator = $this->mock(SubscriptionSettingsValidator::class);
         $this->createRecurringOrdersProductAction = $this->mock(CreateRecurringOrdersProductAction::class);
         $this->createRecurringOrderAction = $this->mock(CreateRecurringOrderAction::class);
+        $this->subscriptionProductProvider = $this->mock(SubscriptionProductProvider::class);
     }
 
     public function testItSuccessfullyHandlesSubscriptionCreation(): void
     {
         $this->subscriptionSettingsValidator->expects($this->once())->method('validate');
 
-        $this->subscriptionProductValidator->expects($this->exactly(2))->method('validate')->willReturnOnConsecutiveCalls(false, true);
+        $products = [
+            [
+                'id_product' => 1,
+                'id_product_attribute' => 1,
+                'product_quantity' => 1,
+                'unit_price_tax_excl' => 19.99,
+            ],
+            [
+                'id_product' => 2,
+                'id_product_attribute' => 2,
+                'product_quantity' => 1,
+                'unit_price_tax_excl' => 19.99,
+            ],
+        ];
+
+        /** @var \Order|MockObject $order */
+        $order = $this->mock(\Order::class);
+        $order->id = 1;
+        $order->id_cart = 1;
+        $order->id_currency = 1;
+        $order->id_customer = 1;
+        $order->id_address_delivery = 1;
+        $order->id_address_invoice = 1;
+
+        $order->expects($this->once())->method('getCartProducts')->willReturn($products);
+
+        $this->subscriptionProductProvider->expects($this->once())->method('getProduct')->willReturn($products[0]);
 
         $subscriptionData = $this->mock(CreateSubscriptionData::class);
 
@@ -90,37 +116,11 @@ class SubscriptionCreationHandlerTest extends BaseTestCase
         $subscriptionCreationHandler = new SubscriptionCreationHandler(
             $this->subscriptionApi,
             $this->createSubscriptionDataFactory,
-            $this->subscriptionProductValidator,
             $this->subscriptionSettingsValidator,
             $this->createRecurringOrdersProductAction,
-            $this->createRecurringOrderAction
+            $this->createRecurringOrderAction,
+            $this->subscriptionProductProvider
         );
-
-        $products = [
-            [
-                'id_product' => 1,
-                'id_product_attribute' => 1,
-                'product_quantity' => 1,
-                'unit_price_tax_excl' => 19.99,
-            ],
-            [
-                'id_product' => 2,
-                'id_product_attribute' => 2,
-                'product_quantity' => 1,
-                'unit_price_tax_excl' => 19.99,
-            ],
-        ];
-
-        /** @var \Order|MockObject $order */
-        $order = $this->mock(\Order::class);
-        $order->id = 1;
-        $order->id_cart = 1;
-        $order->id_currency = 1;
-        $order->id_customer = 1;
-        $order->id_address_delivery = 1;
-        $order->id_address_invoice = 1;
-
-        $order->expects($this->once())->method('getCartProducts')->willReturn($products);
 
         $subscriptionCreationHandler->handle($order, 'test-method');
     }
@@ -129,7 +129,12 @@ class SubscriptionCreationHandlerTest extends BaseTestCase
     {
         $this->subscriptionSettingsValidator->expects($this->once())->method('validate')->willThrowException(new MollieSubscriptionException());
 
-        $this->subscriptionProductValidator->expects($this->never())->method('validate');
+        /** @var \Order|MockObject $order */
+        $order = $this->mock(\Order::class);
+
+        $order->expects($this->never())->method('getCartProducts');
+
+        $this->subscriptionProductProvider->expects($this->never())->method('getProduct');
 
         $this->createSubscriptionDataFactory->expects($this->never())->method('build');
 
@@ -142,19 +147,14 @@ class SubscriptionCreationHandlerTest extends BaseTestCase
         $subscriptionCreationHandler = new SubscriptionCreationHandler(
             $this->subscriptionApi,
             $this->createSubscriptionDataFactory,
-            $this->subscriptionProductValidator,
             $this->subscriptionSettingsValidator,
             $this->createRecurringOrdersProductAction,
-            $this->createRecurringOrderAction
+            $this->createRecurringOrderAction,
+            $this->subscriptionProductProvider
         );
 
         $this->expectException(CouldNotCreateSubscription::class);
         $this->expectExceptionCode(ExceptionCode::ORDER_INVALID_SUBSCRIPTION_SETTINGS);
-
-        /** @var \Order|MockObject $order */
-        $order = $this->mock(\Order::class);
-
-        $order->expects($this->never())->method('getCartProducts');
 
         $subscriptionCreationHandler->handle($order, 'test-method');
     }
@@ -162,28 +162,6 @@ class SubscriptionCreationHandlerTest extends BaseTestCase
     public function testItUnsuccessfullyHandlesSubscriptionCreationFailedToFindSubscriptionProducts(): void
     {
         $this->subscriptionSettingsValidator->expects($this->once())->method('validate');
-
-        $this->subscriptionProductValidator->expects($this->exactly(2))->method('validate')->willReturnOnConsecutiveCalls(false, false);
-
-        $this->createSubscriptionDataFactory->expects($this->never())->method('build');
-
-        $this->subscriptionApi->expects($this->never())->method('subscribeOrder');
-
-        $this->createRecurringOrdersProductAction->expects($this->never())->method('run');
-
-        $this->createRecurringOrderAction->expects($this->never())->method('run');
-
-        $subscriptionCreationHandler = new SubscriptionCreationHandler(
-            $this->subscriptionApi,
-            $this->createSubscriptionDataFactory,
-            $this->subscriptionProductValidator,
-            $this->subscriptionSettingsValidator,
-            $this->createRecurringOrdersProductAction,
-            $this->createRecurringOrderAction
-        );
-
-        $this->expectException(CouldNotCreateSubscription::class);
-        $this->expectExceptionCode(ExceptionCode::ORDER_FAILED_TO_FIND_SUBSCRIPTION_PRODUCT);
 
         $products = [
             [
@@ -205,6 +183,28 @@ class SubscriptionCreationHandlerTest extends BaseTestCase
 
         $order->expects($this->once())->method('getCartProducts')->willReturn($products);
 
+        $this->subscriptionProductProvider->expects($this->once())->method('getProduct')->willReturn([]);
+
+        $this->createSubscriptionDataFactory->expects($this->never())->method('build');
+
+        $this->subscriptionApi->expects($this->never())->method('subscribeOrder');
+
+        $this->createRecurringOrdersProductAction->expects($this->never())->method('run');
+
+        $this->createRecurringOrderAction->expects($this->never())->method('run');
+
+        $subscriptionCreationHandler = new SubscriptionCreationHandler(
+            $this->subscriptionApi,
+            $this->createSubscriptionDataFactory,
+            $this->subscriptionSettingsValidator,
+            $this->createRecurringOrdersProductAction,
+            $this->createRecurringOrderAction,
+            $this->subscriptionProductProvider
+        );
+
+        $this->expectException(CouldNotCreateSubscription::class);
+        $this->expectExceptionCode(ExceptionCode::ORDER_FAILED_TO_FIND_SUBSCRIPTION_PRODUCT);
+
         $subscriptionCreationHandler->handle($order, 'test-method');
     }
 
@@ -212,7 +212,27 @@ class SubscriptionCreationHandlerTest extends BaseTestCase
     {
         $this->subscriptionSettingsValidator->expects($this->once())->method('validate');
 
-        $this->subscriptionProductValidator->expects($this->exactly(2))->method('validate')->willReturnOnConsecutiveCalls(false, true);
+        $products = [
+            [
+                'id_product' => 1,
+                'id_product_attribute' => 1,
+                'product_quantity' => 1,
+                'unit_price_tax_excl' => 19.99,
+            ],
+            [
+                'id_product' => 2,
+                'id_product_attribute' => 2,
+                'product_quantity' => 1,
+                'unit_price_tax_excl' => 19.99,
+            ],
+        ];
+
+        /** @var \Order|MockObject $order */
+        $order = $this->mock(\Order::class);
+
+        $order->expects($this->once())->method('getCartProducts')->willReturn($products);
+
+        $this->subscriptionProductProvider->expects($this->once())->method('getProduct')->willReturn($products[0]);
 
         $this->createSubscriptionDataFactory->expects($this->once())->method('build')->willThrowException(new MollieSubscriptionException());
 
@@ -225,14 +245,21 @@ class SubscriptionCreationHandlerTest extends BaseTestCase
         $subscriptionCreationHandler = new SubscriptionCreationHandler(
             $this->subscriptionApi,
             $this->createSubscriptionDataFactory,
-            $this->subscriptionProductValidator,
             $this->subscriptionSettingsValidator,
             $this->createRecurringOrdersProductAction,
-            $this->createRecurringOrderAction
+            $this->createRecurringOrderAction,
+            $this->subscriptionProductProvider
         );
 
         $this->expectException(CouldNotCreateSubscription::class);
         $this->expectExceptionCode(ExceptionCode::ORDER_FAILED_TO_CREATE_SUBSCRIPTION_DATA);
+
+        $subscriptionCreationHandler->handle($order, 'test-method');
+    }
+
+    public function testItUnsuccessfullyHandlesSubscriptionCreationFailedToSubscribeOrder(): void
+    {
+        $this->subscriptionSettingsValidator->expects($this->once())->method('validate');
 
         $products = [
             [
@@ -254,14 +281,7 @@ class SubscriptionCreationHandlerTest extends BaseTestCase
 
         $order->expects($this->once())->method('getCartProducts')->willReturn($products);
 
-        $subscriptionCreationHandler->handle($order, 'test-method');
-    }
-
-    public function testItUnsuccessfullyHandlesSubscriptionCreationFailedToSubscribeOrder(): void
-    {
-        $this->subscriptionSettingsValidator->expects($this->once())->method('validate');
-
-        $this->subscriptionProductValidator->expects($this->exactly(2))->method('validate')->willReturnOnConsecutiveCalls(false, true);
+        $this->subscriptionProductProvider->expects($this->once())->method('getProduct')->willReturn($products[0]);
 
         $subscriptionData = $this->mock(CreateSubscriptionData::class);
 
@@ -276,14 +296,21 @@ class SubscriptionCreationHandlerTest extends BaseTestCase
         $subscriptionCreationHandler = new SubscriptionCreationHandler(
             $this->subscriptionApi,
             $this->createSubscriptionDataFactory,
-            $this->subscriptionProductValidator,
             $this->subscriptionSettingsValidator,
             $this->createRecurringOrdersProductAction,
-            $this->createRecurringOrderAction
+            $this->createRecurringOrderAction,
+            $this->subscriptionProductProvider
         );
 
         $this->expectException(CouldNotCreateSubscription::class);
         $this->expectExceptionCode(ExceptionCode::ORDER_FAILED_TO_SUBSCRIBE_ORDER);
+
+        $subscriptionCreationHandler->handle($order, 'test-method');
+    }
+
+    public function testItUnsuccessfullyHandlesSubscriptionCreationFailedToCreateRecurringOrdersProduct(): void
+    {
+        $this->subscriptionSettingsValidator->expects($this->once())->method('validate');
 
         $products = [
             [
@@ -305,14 +332,7 @@ class SubscriptionCreationHandlerTest extends BaseTestCase
 
         $order->expects($this->once())->method('getCartProducts')->willReturn($products);
 
-        $subscriptionCreationHandler->handle($order, 'test-method');
-    }
-
-    public function testItUnsuccessfullyHandlesSubscriptionCreationFailedToCreateRecurringOrdersProduct(): void
-    {
-        $this->subscriptionSettingsValidator->expects($this->once())->method('validate');
-
-        $this->subscriptionProductValidator->expects($this->exactly(2))->method('validate')->willReturnOnConsecutiveCalls(false, true);
+        $this->subscriptionProductProvider->expects($this->once())->method('getProduct')->willReturn($products[0]);
 
         $subscriptionData = $this->mock(CreateSubscriptionData::class);
 
@@ -330,14 +350,21 @@ class SubscriptionCreationHandlerTest extends BaseTestCase
         $subscriptionCreationHandler = new SubscriptionCreationHandler(
             $this->subscriptionApi,
             $this->createSubscriptionDataFactory,
-            $this->subscriptionProductValidator,
             $this->subscriptionSettingsValidator,
             $this->createRecurringOrdersProductAction,
-            $this->createRecurringOrderAction
+            $this->createRecurringOrderAction,
+            $this->subscriptionProductProvider
         );
 
         $this->expectException(CouldNotCreateSubscription::class);
         $this->expectExceptionCode(ExceptionCode::ORDER_FAILED_TO_CREATE_RECURRING_ORDERS_PRODUCT);
+
+        $subscriptionCreationHandler->handle($order, 'test-method');
+    }
+
+    public function testItUnsuccessfullyHandlesSubscriptionCreationFailedToCreateRecurringOrder(): void
+    {
+        $this->subscriptionSettingsValidator->expects($this->once())->method('validate');
 
         $products = [
             [
@@ -359,14 +386,7 @@ class SubscriptionCreationHandlerTest extends BaseTestCase
 
         $order->expects($this->once())->method('getCartProducts')->willReturn($products);
 
-        $subscriptionCreationHandler->handle($order, 'test-method');
-    }
-
-    public function testItUnsuccessfullyHandlesSubscriptionCreationFailedToCreateRecurringOrder(): void
-    {
-        $this->subscriptionSettingsValidator->expects($this->once())->method('validate');
-
-        $this->subscriptionProductValidator->expects($this->exactly(2))->method('validate')->willReturnOnConsecutiveCalls(false, true);
+        $this->subscriptionProductProvider->expects($this->once())->method('getProduct')->willReturn($products[0]);
 
         $subscriptionData = $this->mock(CreateSubscriptionData::class);
 
@@ -398,34 +418,14 @@ class SubscriptionCreationHandlerTest extends BaseTestCase
         $subscriptionCreationHandler = new SubscriptionCreationHandler(
             $this->subscriptionApi,
             $this->createSubscriptionDataFactory,
-            $this->subscriptionProductValidator,
             $this->subscriptionSettingsValidator,
             $this->createRecurringOrdersProductAction,
-            $this->createRecurringOrderAction
+            $this->createRecurringOrderAction,
+            $this->subscriptionProductProvider
         );
 
         $this->expectException(CouldNotCreateSubscription::class);
         $this->expectExceptionCode(ExceptionCode::ORDER_FAILED_TO_CREATE_RECURRING_ORDER);
-
-        $products = [
-            [
-                'id_product' => 1,
-                'id_product_attribute' => 1,
-                'product_quantity' => 1,
-                'unit_price_tax_excl' => 19.99,
-            ],
-            [
-                'id_product' => 2,
-                'id_product_attribute' => 2,
-                'product_quantity' => 1,
-                'unit_price_tax_excl' => 19.99,
-            ],
-        ];
-
-        /** @var \Order|MockObject $order */
-        $order = $this->mock(\Order::class);
-
-        $order->expects($this->once())->method('getCartProducts')->willReturn($products);
 
         $subscriptionCreationHandler->handle($order, 'test-method');
     }

@@ -22,7 +22,7 @@ use Mollie\Subscription\DTO\CreateRecurringOrdersProductData;
 use Mollie\Subscription\Exception\CouldNotCreateSubscription;
 use Mollie\Subscription\Exception\MollieSubscriptionException;
 use Mollie\Subscription\Factory\CreateSubscriptionDataFactory;
-use Mollie\Subscription\Validator\SubscriptionProductValidator;
+use Mollie\Subscription\Provider\SubscriptionProductProvider;
 use Mollie\Subscription\Validator\SubscriptionSettingsValidator;
 use Order;
 
@@ -36,29 +36,29 @@ class SubscriptionCreationHandler
     private $subscriptionApi;
     /** @var CreateSubscriptionDataFactory */
     private $createSubscriptionDataFactory;
-    /** @var SubscriptionProductValidator */
-    private $subscriptionProductValidator;
     /** @var SubscriptionSettingsValidator */
     private $subscriptionSettingsValidator;
     /** @var CreateRecurringOrdersProductAction */
     private $createRecurringOrdersProductAction;
     /** @var CreateRecurringOrderAction */
     private $createRecurringOrderAction;
+    /** @var SubscriptionProductProvider */
+    private $subscriptionProductProvider;
 
     public function __construct(
         SubscriptionApi $subscriptionApi,
         CreateSubscriptionDataFactory $subscriptionDataFactory,
-        SubscriptionProductValidator $subscriptionProductValidator,
         SubscriptionSettingsValidator $subscriptionSettingsValidator,
         CreateRecurringOrdersProductAction $createRecurringOrdersProductAction,
-        CreateRecurringOrderAction $createRecurringOrderAction
+        CreateRecurringOrderAction $createRecurringOrderAction,
+        SubscriptionProductProvider $subscriptionProductProvider
     ) {
         $this->subscriptionApi = $subscriptionApi;
         $this->createSubscriptionDataFactory = $subscriptionDataFactory;
-        $this->subscriptionProductValidator = $subscriptionProductValidator;
         $this->subscriptionSettingsValidator = $subscriptionSettingsValidator;
         $this->createRecurringOrdersProductAction = $createRecurringOrdersProductAction;
         $this->createRecurringOrderAction = $createRecurringOrderAction;
+        $this->subscriptionProductProvider = $subscriptionProductProvider;
     }
 
     /**
@@ -72,18 +72,7 @@ class SubscriptionCreationHandler
             throw CouldNotCreateSubscription::invalidSubscriptionSettings($exception);
         }
 
-        $products = $order->getCartProducts();
-        $subscriptionProduct = [];
-
-        foreach ($products as $product) {
-            if (!$this->subscriptionProductValidator->validate((int) $product['id_product_attribute'])) {
-                continue;
-            }
-
-            $subscriptionProduct = $product;
-
-            break;
-        }
+        $subscriptionProduct = $this->subscriptionProductProvider->getProduct($order->getCartProducts());
 
         if (empty($subscriptionProduct)) {
             throw CouldNotCreateSubscription::failedToFindSubscriptionProduct();

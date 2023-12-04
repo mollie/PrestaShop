@@ -19,6 +19,7 @@ use Mollie\Config\Config as SettingsConfig;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Exception\ExceptionCode;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
+use Mollie\Subscription\Provider\SubscriptionProductProvider;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use Mollie\Subscription\Validator\SubscriptionSettingsValidator;
@@ -112,7 +113,8 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
             $cart,
             $this->getService(SubscriptionProductValidator::class),
             $this->getService(ToolsAdapter::class),
-            $this->getService(SubscriptionSettingsValidator::class)
+            $this->getService(SubscriptionSettingsValidator::class),
+            $this->getService(SubscriptionProductProvider::class)
         );
 
         if (!$expectedResult) {
