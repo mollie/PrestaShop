@@ -32,10 +32,10 @@ use Mollie\Subscription\Install\DatabaseTableInstaller;
 use Mollie\Subscription\Install\HookInstaller;
 use Mollie\Subscription\Install\Installer;
 use Mollie\Subscription\Logger\NullLogger;
+use Mollie\Subscription\Provider\SubscriptionProductProvider;
 use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
-use Mollie\Subscription\Verification\HasSubscriptionProductInCart;
 use Mollie\Utility\PsVersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
 use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
@@ -1292,13 +1292,13 @@ class Mollie extends PaymentModule
             return;
         }
 
-        /** @var HasSubscriptionProductInCart $hasSubscriptionProductInCart */
-        $hasSubscriptionProductInCart = $this->getService(HasSubscriptionProductInCart::class);
+        /** @var SubscriptionProductProvider $subscriptionProductProvider */
+        $subscriptionProductProvider = $this->getService(SubscriptionProductProvider::class);
 
         /** @var Link $link */
         $link = $this->getService(Link::class);
 
-        if (!$hasSubscriptionProductInCart->verify()) {
+        if (!empty($subscriptionProductProvider->getProduct($this->context->cart->getProducts()))) {
             return;
         }
 
