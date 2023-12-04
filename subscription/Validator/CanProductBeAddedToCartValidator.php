@@ -18,6 +18,7 @@ use Mollie\Adapter\CartAdapter;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Subscription\Exception\CouldNotValidateSubscriptionSettings;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
+use Mollie\Subscription\Provider\SubscriptionProductProvider;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -35,17 +36,21 @@ class CanProductBeAddedToCartValidator
     private $tools;
     /** @var SubscriptionSettingsValidator */
     private $subscriptionSettingsValidator;
+    /** @var SubscriptionProductProvider */
+    private $subscriptionProductProvider;
 
     public function __construct(
         CartAdapter $cart,
         SubscriptionProductValidator $subscriptionProductValidator,
         ToolsAdapter $tools,
-        SubscriptionSettingsValidator $subscriptionSettingsValidator
+        SubscriptionSettingsValidator $subscriptionSettingsValidator,
+        SubscriptionProductProvider $subscriptionProductProvider
     ) {
         $this->cart = $cart;
         $this->subscriptionProductValidator = $subscriptionProductValidator;
         $this->tools = $tools;
         $this->subscriptionSettingsValidator = $subscriptionSettingsValidator;
+        $this->subscriptionProductProvider = $subscriptionProductProvider;
     }
 
     /**
@@ -76,21 +81,17 @@ class CanProductBeAddedToCartValidator
 
     private function validateIfSubscriptionProductCanBeAdded(int $productAttributeId): bool
     {
-        $cartProducts = $this->cart->getProducts();
+        $subscriptionProduct = $this->subscriptionProductProvider->getProduct($this->cart->getProducts());
 
-        foreach ($cartProducts as $cartProduct) {
-            if (!$this->subscriptionProductValidator->validate((int) $cartProduct['id_product_attribute'])) {
-                continue;
-            }
-
-            if ((int) $cartProduct['id_product_attribute'] === $productAttributeId) {
-                continue;
-            }
-
-            return false;
+        if (empty($subscriptionProduct)) {
+            return true;
         }
 
-        return true;
+        if ((int) $subscriptionProduct['id_product_attribute'] === $productAttributeId) {
+            return true;
+        }
+
+        return false;
     }
 
     private function validateSubscriptionSettings(): bool
