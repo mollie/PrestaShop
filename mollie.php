@@ -1292,15 +1292,19 @@ class Mollie extends PaymentModule
             return;
         }
 
+        if (empty($this->context->cart) || empty($this->context->cart->getProducts())) {
+            return;
+        }
+
         /** @var SubscriptionProductProvider $subscriptionProductProvider */
         $subscriptionProductProvider = $this->getService(SubscriptionProductProvider::class);
 
-        /** @var Link $link */
-        $link = $this->getService(Link::class);
-
-        if (!empty($subscriptionProductProvider->getProduct($this->context->cart->getProducts()))) {
+        if (empty($subscriptionProductProvider->getProduct($this->context->cart->getProducts()))) {
             return;
         }
+
+        /** @var Link $link */
+        $link = $this->getService(Link::class);
 
         $this->context->controller->warning[] = $this->l('Customer must be logged in to buy subscription item.');
 
