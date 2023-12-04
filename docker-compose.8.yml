@@ -31,12 +31,12 @@ services:
       context: .
       dockerfile: .docker/Dockerfile.8
     environment:
-      PS_INSTALL_AUTO: 0
+      PS_INSTALL_AUTO: 1
       PS_ENABLE_SSL: 1
       DB_PASSWD: $${DB_PASSWD}
       DB_NAME: prestashop
       DB_SERVER: mysql
-      PS_DOMAIN: demoshop8.ngrok.io:8142
+      PS_DOMAIN: demoshop8.ngrok.io
       PS_FOLDER_INSTALL: install
       PS_FOLDER_ADMIN: admin1
     depends_on:
@@ -46,7 +46,6 @@ services:
     volumes:
       - ./:/var/www/html/modules/mollie
       - ./.docker/.htaccess8:/var/www/html/.htaccess
-      - ./tests/seed/settings8/parameters.php:/var/www/html/app/config/parameters.php
     networks:
       - prestashop_mollie_net_8
     healthcheck:

@@ -14,11 +14,11 @@ const login = (MollieBOFOLoggingIn) => {
   cy.get('#history-link > .link-item').click()
   })
   }
-// //Checking the console for errors
-// let windowConsoleError;
-// Cypress.on('window:before:load', (win) => {
-//   windowConsoleError = cy.spy(win.console, 'error');
-// })
+//Checking the console for errors
+let windowConsoleError;
+Cypress.on('window:before:load', (win) => {
+  windowConsoleError = cy.spy(win.console, 'error');
+})
 let failEarly = false;
 afterEach(() => {
   expect(windowConsoleError).to.not.be.called;
