@@ -14,6 +14,9 @@ namespace Mollie\Tests\Unit;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
+use Mollie\Factory\ModuleFactory;
+use Mollie\Repository\OrderRepositoryInterface;
+use Mollie\Shared\Infrastructure\Repository\CurrencyRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
 class BaseTestCase extends TestCase
@@ -28,6 +31,12 @@ class BaseTestCase extends TestCase
     public $context;
     /** @var \Customer */
     public $customer;
+    /** @var ModuleFactory */
+    public $moduleFactory;
+    /** @var OrderRepositoryInterface */
+    public $orderRepository;
+    /** @var CurrencyRepositoryInterface */
+    public $currencyRepository;
 
     protected function setUp(): void
     {
@@ -35,6 +44,9 @@ class BaseTestCase extends TestCase
         $this->configuration = $this->mock(ConfigurationAdapter::class);
         $this->context = $this->mock(Context::class);
         $this->customer = $this->mock(\Customer::class);
+        $this->moduleFactory = $this->mock(ModuleFactory::class);
+        $this->orderRepository = $this->mock(OrderRepositoryInterface::class);
+        $this->currencyRepository = $this->mock(CurrencyRepositoryInterface::class);
 
         parent::setUp();
     }
