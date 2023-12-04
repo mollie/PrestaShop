@@ -14,15 +14,13 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Handler;
 
-use Mollie\Api\Resources\Subscription;
+use Mollie\Subscription\Action\CreateRecurringOrderAction;
 use Mollie\Subscription\Action\CreateRecurringOrdersProductAction;
 use Mollie\Subscription\Api\SubscriptionApi;
+use Mollie\Subscription\DTO\CreateRecurringOrderData;
 use Mollie\Subscription\DTO\CreateRecurringOrdersProductData;
 use Mollie\Subscription\Factory\CreateSubscriptionDataFactory;
-use Mollie\Subscription\Utility\ClockInterface;
 use Mollie\Subscription\Validator\SubscriptionProductValidator;
-use MolRecurringOrder;
-use MolRecurringOrdersProduct;
 use Order;
 
 if (!defined('_PS_VERSION_')) {
@@ -31,31 +29,29 @@ if (!defined('_PS_VERSION_')) {
 
 class SubscriptionCreationHandler
 {
-    /** @var ClockInterface */
-    private $clock;
-
     /** @var SubscriptionApi */
     private $subscriptionApi;
-
     /** @var CreateSubscriptionDataFactory */
     private $createSubscriptionDataFactory;
     /** @var SubscriptionProductValidator */
     private $subscriptionProductValidator;
     /** @var CreateRecurringOrdersProductAction */
     private $createRecurringOrdersProductAction;
+    /** @var CreateRecurringOrderAction */
+    private $createRecurringOrderAction;
 
     public function __construct(
-        ClockInterface $clock,
         SubscriptionApi $subscriptionApi,
         CreateSubscriptionDataFactory $subscriptionDataFactory,
         SubscriptionProductValidator $subscriptionProductValidator,
-        CreateRecurringOrdersProductAction $createRecurringOrdersProductAction
+        CreateRecurringOrdersProductAction $createRecurringOrdersProductAction,
+        CreateRecurringOrderAction $createRecurringOrderAction
     ) {
-        $this->clock = $clock;
         $this->subscriptionApi = $subscriptionApi;
         $this->createSubscriptionDataFactory = $subscriptionDataFactory;
         $this->subscriptionProductValidator = $subscriptionProductValidator;
         $this->createRecurringOrdersProductAction = $createRecurringOrdersProductAction;
+        $this->createRecurringOrderAction = $createRecurringOrderAction;
     }
 
     /**
@@ -94,30 +90,29 @@ class SubscriptionCreationHandler
             throw $exception;
         }
 
-        $this->createRecurringOrder($recurringOrdersProduct, $order, $subscription, $method);
-    }
+        try {
+            $this->createRecurringOrderAction->run(CreateRecurringOrderData::create(
+                (int) $recurringOrdersProduct->id,
+                (int) $order->id,
+                (int) $order->id_cart,
+                (int) $order->id_currency,
+                (int) $order->id_customer,
+                (int) $order->id_address_delivery,
+                (int) $order->id_address_invoice,
+                (string) $subscription->description,
+                (string) $subscription->status,
+                (float) $subscription->amount->value,
+                $method,
+                (string) $subscription->nextPaymentDate,
+                (string) $subscription->nextPaymentDate, // TODO: add logic to get reminder date when reminder is done
+                (string) $subscription->canceledAt,
+                (string) $subscription->id,
+                (string) $subscription->customerId
+            ));
+        } catch (\Throwable $exception) {
+            // TODO throw different exception
 
-    private function createRecurringOrder(MolRecurringOrdersProduct $recurringOrdersProduct, Order $order, Subscription $subscription, string $method): void
-    {
-        $recurringOrder = new MolRecurringOrder();
-        $recurringOrder->id_mol_recurring_orders_product = $recurringOrdersProduct->id;
-        $recurringOrder->id_order = $order->id;
-        $recurringOrder->id_cart = $order->id_cart;
-        $recurringOrder->id_currency = $order->id_currency;
-        $recurringOrder->id_customer = $order->id_customer;
-        $recurringOrder->id_address_delivery = $order->id_address_delivery;
-        $recurringOrder->id_address_invoice = $order->id_address_invoice;
-        $recurringOrder->description = $subscription->description;
-        $recurringOrder->status = $subscription->status;
-        $recurringOrder->total_tax_incl = (float) $subscription->amount->value;
-        $recurringOrder->payment_method = $method;
-        $recurringOrder->next_payment = $subscription->nextPaymentDate;
-        $recurringOrder->reminder_at = $subscription->nextPaymentDate; //todo: add logic to get reminder date when reminder is done
-        $recurringOrder->cancelled_at = $subscription->canceledAt;
-        $recurringOrder->mollie_subscription_id = $subscription->id;
-        $recurringOrder->mollie_customer_id = $subscription->customerId;
-        $recurringOrder->date_add = $this->clock->getDateFromTimeStamp(strtotime($subscription->createdAt));
-        $recurringOrder->date_update = $this->clock->getCurrentDate();
-        $recurringOrder->add();
+            throw $exception;
+        }
     }
 }
