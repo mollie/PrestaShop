@@ -41,8 +41,10 @@ services:
     networks:
       - prestashop_mollie_net_8
     healthcheck:
-      test: "wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1"
-      interval: 10s
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
 
   adminer:
     image: adminer
