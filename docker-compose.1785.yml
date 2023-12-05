@@ -32,7 +32,7 @@ services:
       dockerfile: .docker/Dockerfile.1785
     environment:
       PS_INSTALL_AUTO: 0
-      DB_PASSWD: $${DB_PASSWD}
+      DB_PASSWD: $DB_PASSWD
       DB_NAME: prestashop
       DB_SERVER: mysql
       PS_DOMAIN: demoshop1785.ngrok.io:8002
