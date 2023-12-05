@@ -14,28 +14,37 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\DTO;
 
-use JsonSerializable;
+use Mollie\Subscription\DTO\Object\Amount;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class UpdateSubscriptionData implements JsonSerializable
+class UpdateSubscriptionData
 {
     /** @var string */
     private $customerId;
-
     /** @var string */
     private $subscriptionId;
-
-    /** @var string */
+    /** @var ?string */
     private $mandateId;
+    /** @var ?array */
+    private $metadata;
+    /** @var ?Amount */
+    private $amount;
 
-    public function __construct(string $customerId, string $subscriptionId, string $mandateId)
-    {
+    public function __construct(
+        string $customerId,
+        string $subscriptionId,
+        string $mandateId = null,
+        array $metadata = null,
+        Amount $amount = null
+    ) {
         $this->customerId = $customerId;
         $this->subscriptionId = $subscriptionId;
         $this->mandateId = $mandateId;
+        $this->metadata = $metadata;
+        $this->amount = $amount;
     }
 
     public function getCustomerId(): string
@@ -48,10 +57,16 @@ class UpdateSubscriptionData implements JsonSerializable
         return $this->subscriptionId;
     }
 
-    public function jsonSerialize(): array
+    public function toArray(): array
     {
-        return [
+        $data = [
             'mandateId' => $this->mandateId,
+            'metadata' => $this->metadata,
+            'amount' => $this->amount ? $this->amount->toArray() : null,
         ];
+
+        return array_filter($data, static function ($val) {
+            return !empty($val);
+        });
     }
 }
