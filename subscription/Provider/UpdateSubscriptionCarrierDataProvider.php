@@ -14,8 +14,8 @@ namespace Mollie\Subscription\Provider;
 
 use Mollie\Factory\ModuleFactory;
 use Mollie\Repository\OrderRepositoryInterface;
-use Mollie\Subscription\DTO\SubscriptionCarrierProviderData;
 use Mollie\Subscription\DTO\SubscriptionOrderAmountProviderData;
+use Mollie\Subscription\DTO\UpdateSubscriptionCarrierProviderData;
 use Mollie\Subscription\DTO\UpdateSubscriptionData;
 use Mollie\Subscription\Exception\CouldNotProvideSubscriptionCarrierData;
 use Mollie\Subscription\Exception\MollieSubscriptionException;
@@ -25,7 +25,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class SubscriptionCarrierProvider
+class UpdateSubscriptionCarrierDataProvider
 {
     /** @var OrderRepositoryInterface */
     private $orderRepository;
@@ -51,7 +51,7 @@ class SubscriptionCarrierProvider
     /**
      * @throws MollieSubscriptionException
      */
-    public function get(SubscriptionCarrierProviderData $data): UpdateSubscriptionData
+    public function get(UpdateSubscriptionCarrierProviderData $data): UpdateSubscriptionData
     {
         /** @var ?\Order $order */
         $order = $this->orderRepository->findOneBy([

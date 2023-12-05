@@ -13,16 +13,16 @@
 namespace Mollie\Tests\Unit\Subscription\Provider;
 
 use Mollie\Subscription\DTO\Object\Amount;
-use Mollie\Subscription\DTO\SubscriptionCarrierProviderData;
+use Mollie\Subscription\DTO\UpdateSubscriptionCarrierProviderData;
 use Mollie\Subscription\Exception\CouldNotProvideSubscriptionCarrierData;
 use Mollie\Subscription\Exception\ExceptionCode;
-use Mollie\Subscription\Provider\SubscriptionCarrierProvider;
 use Mollie\Subscription\Provider\SubscriptionOrderAmountProvider;
 use Mollie\Subscription\Provider\SubscriptionProductProvider;
+use Mollie\Subscription\Provider\UpdateSubscriptionCarrierDataProvider;
 use Mollie\Tests\Unit\BaseTestCase;
 use Mollie\Utility\SecureKeyUtility;
 
-class SubscriptionCarrierProviderTest extends BaseTestCase
+class UpdateSubscriptionCarrierDataProviderTest extends BaseTestCase
 {
     /** @var SubscriptionProductProvider */
     private $subscriptionProductProvider;
@@ -58,14 +58,14 @@ class SubscriptionCarrierProviderTest extends BaseTestCase
 
         $this->subscriptionOrderAmountProvider->expects($this->once())->method('get')->willReturn(new Amount(22.34, 'EUR'));
 
-        $subscriptionCarrierProvider = new SubscriptionCarrierProvider(
+        $updateSubscriptionCarrierDataProvider = new UpdateSubscriptionCarrierDataProvider(
             $this->orderRepository,
             $this->moduleFactory,
             $this->subscriptionProductProvider,
             $this->subscriptionOrderAmountProvider
         );
 
-        $result = $subscriptionCarrierProvider->get(SubscriptionCarrierProviderData::create(
+        $result = $updateSubscriptionCarrierDataProvider->get(UpdateSubscriptionCarrierProviderData::create(
             'test-mollie-customer-id',
             'test-mollie-subscription-id',
             3,
@@ -102,7 +102,7 @@ class SubscriptionCarrierProviderTest extends BaseTestCase
 
         $this->subscriptionOrderAmountProvider->expects($this->never())->method('get');
 
-        $subscriptionCarrierProvider = new SubscriptionCarrierProvider(
+        $updateSubscriptionCarrierDataProvider = new UpdateSubscriptionCarrierDataProvider(
             $this->orderRepository,
             $this->moduleFactory,
             $this->subscriptionProductProvider,
@@ -112,7 +112,7 @@ class SubscriptionCarrierProviderTest extends BaseTestCase
         $this->expectException(CouldNotProvideSubscriptionCarrierData::class);
         $this->expectExceptionCode(ExceptionCode::ORDER_FAILED_TO_FIND_ORDER);
 
-        $subscriptionCarrierProvider->get(SubscriptionCarrierProviderData::create(
+        $updateSubscriptionCarrierDataProvider->get(UpdateSubscriptionCarrierProviderData::create(
             'test-mollie-customer-id',
             'test-mollie-subscription-id',
             3,
@@ -141,7 +141,7 @@ class SubscriptionCarrierProviderTest extends BaseTestCase
 
         $this->subscriptionOrderAmountProvider->expects($this->never())->method('get');
 
-        $subscriptionCarrierProvider = new SubscriptionCarrierProvider(
+        $updateSubscriptionCarrierDataProvider = new UpdateSubscriptionCarrierDataProvider(
             $this->orderRepository,
             $this->moduleFactory,
             $this->subscriptionProductProvider,
@@ -151,7 +151,7 @@ class SubscriptionCarrierProviderTest extends BaseTestCase
         $this->expectException(CouldNotProvideSubscriptionCarrierData::class);
         $this->expectExceptionCode(ExceptionCode::ORDER_FAILED_TO_FIND_SUBSCRIPTION_PRODUCT);
 
-        $subscriptionCarrierProvider->get(SubscriptionCarrierProviderData::create(
+        $updateSubscriptionCarrierDataProvider->get(UpdateSubscriptionCarrierProviderData::create(
             'test-mollie-customer-id',
             'test-mollie-subscription-id',
             3,
@@ -180,7 +180,7 @@ class SubscriptionCarrierProviderTest extends BaseTestCase
 
         $this->subscriptionOrderAmountProvider->expects($this->once())->method('get')->willThrowException(new \Exception('', 0));
 
-        $subscriptionCarrierProvider = new SubscriptionCarrierProvider(
+        $updateSubscriptionCarrierDataProvider = new UpdateSubscriptionCarrierDataProvider(
             $this->orderRepository,
             $this->moduleFactory,
             $this->subscriptionProductProvider,
@@ -190,7 +190,7 @@ class SubscriptionCarrierProviderTest extends BaseTestCase
         $this->expectException(CouldNotProvideSubscriptionCarrierData::class);
         $this->expectExceptionCode(ExceptionCode::ORDER_FAILED_TO_PROVIDE_SUBSCRIPTION_ORDER_AMOUNT);
 
-        $subscriptionCarrierProvider->get(SubscriptionCarrierProviderData::create(
+        $updateSubscriptionCarrierDataProvider->get(UpdateSubscriptionCarrierProviderData::create(
             'test-mollie-customer-id',
             'test-mollie-subscription-id',
             3,

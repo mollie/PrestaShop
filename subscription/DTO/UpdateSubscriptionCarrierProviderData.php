@@ -16,7 +16,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class SubscriptionCarrierProviderData
+class UpdateSubscriptionCarrierProviderData
 {
     /** @var string */
     private $mollieCustomerId;
