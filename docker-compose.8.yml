@@ -1,14 +1,6 @@
 version: "3.7"
 
 services:
-  node:
-    image: node:latest
-    volumes:
-      - ./:/var/www/html
-    working_dir: /var/www/html
-    environment:
-      PATH: /var/www/html/_dev/node_modules/.bin/:$PATH
-
   mysql:
     platform: linux/amd64
     container_name: mysql-mollie-8
@@ -33,7 +25,7 @@ services:
     environment:
       PS_INSTALL_AUTO: 1
       PS_ENABLE_SSL: 1
-      DB_PASSWD: $DB_PASSWD
+      DB_PASSWD: $${DB_PASSWD}
       DB_NAME: prestashop
       DB_SERVER: mysql
       PS_DOMAIN: demoshop8.ngrok.io

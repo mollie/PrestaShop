@@ -33,7 +33,6 @@ jobs:
             TestRailID: R6470
     env:
       NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
-      DB_PASSWD: ${{ secrets.DB_PASSWD }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
