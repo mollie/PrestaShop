@@ -7,7 +7,7 @@ fix-lint:
 #PS1785
 e2eh1785:
 	# detaching containers
-	docker-compose -f docker-compose.1785.yml up -d --force-recreate --wait
+	docker-compose -f docker-compose.1785.yml up -d -wait --force-recreate
 	# sees what containers are running
 	docker-compose -f docker-compose.1785.yml ps
 	# waits for mysql to load
@@ -30,7 +30,7 @@ e2eh1785:
 #PS8
 e2eh8:
 	# detaching containers
-	docker-compose -f docker-compose.8.yml up -d --force-recreate --wait
+	docker-compose -f docker-compose.8.yml up -d -wait --force-recreate
 	# sees what containers are running
 	docker-compose -f docker-compose.8.yml ps
 	# waits for mysql to load
