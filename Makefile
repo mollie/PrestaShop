@@ -33,10 +33,8 @@ e2eh8:
 	docker-compose -f docker-compose.8.yml up -d --force-recreate
 	# sees what containers are running
 	docker-compose -f docker-compose.8.yml ps
-	# waits for mysql to load
-	/bin/bash .docker/wait-for-container.sh mysql-mollie-8
-	# waits for apache container to load
-	/bin/bash .docker/wait-for-container.sh prestashop-mollie-8
+	# waiting for app containers to build up
+	/bin/bash .docker/wait-loader.sh
 	# installing module
 	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
 	# uninstalling module

@@ -25,7 +25,7 @@ services:
     environment:
       PS_INSTALL_AUTO: 1
       PS_ENABLE_SSL: 1
-      DB_PASSWD: $${DB_PASSWD}
+      DB_PASSWD: prestashop
       DB_NAME: prestashop
       DB_SERVER: mysql
       PS_DOMAIN: demoshop8.ngrok.io
@@ -41,10 +41,10 @@ services:
     networks:
       - prestashop_mollie_net_8
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/"]
+      test: "curl -f localhost:8142"
       interval: 5s
-      timeout: 3s
-      retries: 3
+      timeout: 5s
+      retries: 10
 
   adminer:
     image: adminer

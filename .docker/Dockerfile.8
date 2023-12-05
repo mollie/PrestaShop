@@ -5,3 +5,7 @@ RUN cd /usr/local/etc/php/conf.d/ && \
 
 RUN echo 'max_execution_time = 120' >> /usr/local/etc/php/conf.d/docker-php-maxexectime.ini
 
+HEALTHCHECK --interval=5m --timeout=3s \
+  CMD curl -f http://localhost/ || exit 1
+
+
