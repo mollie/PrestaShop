@@ -47,7 +47,7 @@ class UpdateRecurringOrderAction
         try {
             $recurringOrder = new \MolRecurringOrder($data->getMollieRecurringOrderId());
 
-            /**
+            /*
              * NOTE: When more properties will be needed to update, pass them up as nullable parameters.
              */
             $recurringOrder->total_tax_incl = $data->getSubscriptionTotalAmount();
