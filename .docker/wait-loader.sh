@@ -20,10 +20,13 @@ show_loader() {
   shift
   echo -n "$message"
   ( "$@" ) &
-  spinner $!
-  wait $!
+  local loader_pid=$!
+  while ps a | awk '{print $1}' | grep -q $loader_pid; do
+    sleep 0.5
+    echo -n "■"
+  done
   echo " Done."
 }
 
 # Usage example
-show_loader "Waiting for 60 seconds" sleep 60
+show_loader "Building app containers. Please wait " sleep 60
