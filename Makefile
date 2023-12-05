@@ -30,7 +30,7 @@ e2eh1785:
 #PS8
 e2eh8:
 	# detaching containers
-	docker-compose -f docker-compose.8.yml up -d --force-recreate
+	docker-compose -f docker-compose.8.yml up --force-recreate
 	# sees what containers are running
 	docker-compose -f docker-compose.8.yml ps
 	# waiting for app containers to build up

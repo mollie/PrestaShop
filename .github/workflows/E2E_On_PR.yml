@@ -57,21 +57,32 @@ jobs:
         run: |
           ${{ matrix.make }}
 
-      - name: Waiting for Ngrok tunnel
-        run: |
-          URL="${{ matrix.url }}"
+          - name: Waiting for Ngrok tunnel
+          run: |
+            URL="${{ matrix.url }}"
+            TIMEOUT=120
+            start_time=$(date +%s)
 
-          while true; do
-            response=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
-            if [ "$response" = "302" ]; then
-              echo "URL is returning 302 HTTP status code, Ngrok tunnel is reached, good to go!"
-              break  # Exit the loop if the response is 302
-            else
-              echo "URL is not ready yet, because Ngrok sessions are all in use at the moment, please wait. Retrying to build the Ngrok tunnel again in 5 seconds..."
-              sleep 5  # Wait for 5 seconds before retrying
-              ./ngrok http -region=us -subdomain=${{ matrix.subdomain }} ${{ matrix.port }} > ngrok.log &
-            fi
-          done
+            while true; do
+              current_time=$(date +%s)
+              elapsed_time=$((current_time - start_time))
+
+              if [ "$elapsed_time" -ge "$TIMEOUT" ]; then
+                echo "Timeout reached. Ngrok tunnel is not ready within $TIMEOUT seconds."
+                exit 1
+              fi
+
+              response=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+              if [ "$response" = "302" ]; then
+                echo "URL is returning 302 HTTP status code, Ngrok tunnel is reached, good to go!"
+                break  # Exit the loop if the response is 302
+              else
+                echo "URL is not ready yet, because Ngrok sessions are all in use at the moment, please wait. Retrying to build the Ngrok tunnel again in 5 seconds..."
+                sleep 5  # Wait for 5 seconds before retrying
+                ./ngrok http -region=us -subdomain=${{ matrix.subdomain }} ${{ matrix.port }} > ngrok.log &
+              fi
+            done
+
 
       - name: Running ${{ matrix.prestashop }} Cypress E2E tests
         run: |
