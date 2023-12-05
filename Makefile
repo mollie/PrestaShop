@@ -35,10 +35,8 @@ e2eh8:
 	docker-compose -f docker-compose.8.yml ps
 	# waits for mysql to load
 	/bin/bash .docker/wait-for-container.sh mysql-mollie-8
-	# configuring your prestashop
-	docker exec -i prestashop-mollie-8 sh -c "rm -rf /var/www/html/install"
-	# configuring base database
-	mysql -h 127.0.0.1 -P 9459 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_8.sql
+	# waits for apache container to load
+	/bin/bash .docker/wait-for-container.sh prestashop-mollie-8
 	# installing module
 	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
 	# uninstalling module
@@ -49,6 +47,8 @@ e2eh8:
 	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module enable mollie"
 	# chmod all folders
 	docker exec -i prestashop-mollie-8 sh -c "chmod -R 777 /var/www/html"
+	# seeding the customized settings for PS
+	mysql -h 127.0.0.1 -P 9459 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_8.sql
 
 npm-package-install:
 	cd views/assets && npm i && npm run build
