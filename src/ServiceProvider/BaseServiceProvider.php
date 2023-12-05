@@ -108,8 +108,6 @@ use Mollie\Shared\Infrastructure\Repository\CurrencyRepositoryInterface;
 use Mollie\Subscription\Grid\Accessibility\SubscriptionCancelAccessibility;
 use Mollie\Subscription\Install\Installer;
 use Mollie\Subscription\Install\InstallerInterface;
-use Mollie\Subscription\Logger\Logger;
-use Mollie\Subscription\Logger\LoggerInterface;
 use Mollie\Subscription\Repository\CombinationRepository;
 use Mollie\Subscription\Repository\CombinationRepositoryInterface;
 use Mollie\Subscription\Repository\OrderDetailRepository;
@@ -149,7 +147,6 @@ final class BaseServiceProvider
     public function register(Container $container)
     {
         /* Logger */
-        $this->addService($container, LoggerInterface::class, $container->get(Logger::class));
         $this->addService($container, PrestaLoggerInterface::class, $container->get(PrestaLogger::class));
 
         /* Utility */

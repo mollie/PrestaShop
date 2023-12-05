@@ -22,6 +22,7 @@ if (!defined('_PS_VERSION_')) {
 
 class PrestaLogger implements PrestaLoggerInterface
 {
+    // TODO move this as a shared service for subscriptions and main source
     // TODO refactor whole logger logic and implement leftover methods
 
     /** @var ConfigurationAdapter */

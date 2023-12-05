@@ -12,10 +12,10 @@
 
 namespace Mollie\Subscription\Action;
 
+use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\DTO\CreateRecurringOrderData;
 use Mollie\Subscription\Exception\CouldNotCreateRecurringOrder;
 use Mollie\Subscription\Exception\MollieSubscriptionException;
-use Mollie\Subscription\Logger\LoggerInterface;
 use Mollie\Subscription\Utility\ClockInterface;
 
 if (!defined('_PS_VERSION_')) {
@@ -24,13 +24,13 @@ if (!defined('_PS_VERSION_')) {
 
 class CreateRecurringOrderAction
 {
-    /** @var LoggerInterface */
+    /** @var PrestaLoggerInterface */
     private $logger;
     /** @var ClockInterface */
     private $clock;
 
     public function __construct(
-        LoggerInterface $logger,
+        PrestaLoggerInterface $logger,
         ClockInterface $clock
     ) {
         $this->logger = $logger;

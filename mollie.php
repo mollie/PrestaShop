@@ -31,7 +31,6 @@ use Mollie\Subscription\Install\AttributeInstaller;
 use Mollie\Subscription\Install\DatabaseTableInstaller;
 use Mollie\Subscription\Install\HookInstaller;
 use Mollie\Subscription\Install\Installer;
-use Mollie\Subscription\Logger\NullLogger;
 use Mollie\Subscription\Provider\SubscriptionProductProvider;
 use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
@@ -179,7 +178,7 @@ class Mollie extends PaymentModule
         $subscriptionInstaller = new Installer(
             new DatabaseTableInstaller(),
             new AttributeInstaller(
-                new NullLogger(),
+                $this->getService(PrestaLoggerInterface::class),
                 $this->getService(ConfigurationAdapter::class),
                 $this,
                 new LanguageAdapter(),
