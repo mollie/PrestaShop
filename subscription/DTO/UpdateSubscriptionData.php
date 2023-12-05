@@ -30,7 +30,7 @@ class UpdateSubscriptionData
     private $mandateId;
     /** @var ?array */
     private $metadata;
-    /** @var ?string */
+    /** @var ?Amount */
     private $amount;
 
     public function __construct(
