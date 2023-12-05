@@ -41,11 +41,12 @@ class CouldNotCreateSubscriptionData extends MollieSubscriptionException
         );
     }
 
-    public static function failedToProvideSubscriptionOrderAmount(): self
+    public static function failedToProvideSubscriptionOrderAmount(\Throwable $exception): self
     {
         return new self(
             'Failed to provide subscription order amount.',
-            ExceptionCode::ORDER_FAILED_TO_PROVIDE_SUBSCRIPTION_ORDER_AMOUNT
+            ExceptionCode::ORDER_FAILED_TO_PROVIDE_SUBSCRIPTION_ORDER_AMOUNT,
+            $exception
         );
     }
 }

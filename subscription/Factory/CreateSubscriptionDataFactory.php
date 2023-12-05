@@ -115,7 +115,7 @@ class CreateSubscriptionDataFactory
                 )
             );
         } catch (\Throwable $exception) {
-            throw CouldNotCreateSubscriptionData::failedToProvideSubscriptionOrderAmount();
+            throw CouldNotCreateSubscriptionData::failedToProvideSubscriptionOrderAmount($exception);
         }
 
         $subscriptionData = new SubscriptionDataDTO(
