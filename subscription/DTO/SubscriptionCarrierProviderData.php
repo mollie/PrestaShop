@@ -18,9 +18,9 @@ if (!defined('_PS_VERSION_')) {
 
 class SubscriptionCarrierProviderData
 {
-    /** @var int */
+    /** @var string */
     private $mollieCustomerId;
-    /** @var int */
+    /** @var string */
     private $mollieSubscriptionId;
     /** @var int */
     private $subscriptionCarrierId;
@@ -28,8 +28,8 @@ class SubscriptionCarrierProviderData
     private $orderId;
 
     private function __construct(
-        int $mollieCustomerId,
-        int $mollieSubscriptionId,
+        string $mollieCustomerId,
+        string $mollieSubscriptionId,
         int $subscriptionCarrierId,
         int $orderId
     ) {
@@ -40,17 +40,17 @@ class SubscriptionCarrierProviderData
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getMollieCustomerId(): int
+    public function getMollieCustomerId(): string
     {
         return $this->mollieCustomerId;
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getMollieSubscriptionId(): int
+    public function getMollieSubscriptionId(): string
     {
         return $this->mollieSubscriptionId;
     }
@@ -72,8 +72,8 @@ class SubscriptionCarrierProviderData
     }
 
     public static function create(
-        int $mollieCustomerId,
-        int $mollieSubscriptionId,
+        string $mollieCustomerId,
+        string $mollieSubscriptionId,
         int $subscriptionCarrierId,
         int $orderId
     ): self {

@@ -66,14 +66,14 @@ class SubscriptionCarrierProviderTest extends BaseTestCase
         );
 
         $result = $subscriptionCarrierProvider->get(SubscriptionCarrierProviderData::create(
-            1,
-            2,
+            'test-mollie-customer-id',
+            'test-mollie-subscription-id',
             3,
             4
         ));
 
-        $this->assertEquals(1, $result->getCustomerId());
-        $this->assertEquals(2, $result->getSubscriptionId());
+        $this->assertEquals('test-mollie-customer-id', $result->getCustomerId());
+        $this->assertEquals('test-mollie-subscription-id', $result->getSubscriptionId());
         $this->assertEquals([
             'metadata' => [
                 'secure_key' => SecureKeyUtility::generateReturnKey(
@@ -113,8 +113,8 @@ class SubscriptionCarrierProviderTest extends BaseTestCase
         $this->expectExceptionCode(ExceptionCode::ORDER_FAILED_TO_FIND_ORDER);
 
         $subscriptionCarrierProvider->get(SubscriptionCarrierProviderData::create(
-            1,
-            2,
+            'test-mollie-customer-id',
+            'test-mollie-subscription-id',
             3,
             4
         ));
@@ -152,8 +152,8 @@ class SubscriptionCarrierProviderTest extends BaseTestCase
         $this->expectExceptionCode(ExceptionCode::ORDER_FAILED_TO_FIND_SUBSCRIPTION_PRODUCT);
 
         $subscriptionCarrierProvider->get(SubscriptionCarrierProviderData::create(
-            1,
-            2,
+            'test-mollie-customer-id',
+            'test-mollie-subscription-id',
             3,
             4
         ));
@@ -191,8 +191,8 @@ class SubscriptionCarrierProviderTest extends BaseTestCase
         $this->expectExceptionCode(ExceptionCode::ORDER_FAILED_TO_PROVIDE_SUBSCRIPTION_ORDER_AMOUNT);
 
         $subscriptionCarrierProvider->get(SubscriptionCarrierProviderData::create(
-            1,
-            2,
+            'test-mollie-customer-id',
+            'test-mollie-subscription-id',
             3,
             4
         ));
