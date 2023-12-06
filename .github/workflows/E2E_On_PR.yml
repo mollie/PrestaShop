@@ -24,7 +24,7 @@ jobs:
             test_spec: '**/cypress/e2e/ps1785/**'
             TestRailID: R4954
           - prestashop: 'PS8'
-            make: 'make e2eh8'
+            make: 'make e2eh8 && sleep 1m'
             subdomain: 'demoshop8'
             port: '8142'
             yml: 'docker-compose.8.yml'
