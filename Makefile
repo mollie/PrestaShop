@@ -35,6 +35,8 @@ e2eh8_local:
 	docker-compose -f docker-compose.8.yml ps
 	# waiting for app containers to build up
 	/bin/bash .docker/wait-loader.sh
+	# seeding the customized settings for PS
+	mysql -h 127.0.0.1 -P 9459 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_8.sql
 	# installing module
 	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
 	# uninstalling module
@@ -45,8 +47,6 @@ e2eh8_local:
 	docker exec -i prestashop-mollie-8 sh -c "cd /var/www/html && php  bin/console prestashop:module enable mollie"
 	# chmod all folders
 	docker exec -i prestashop-mollie-8 sh -c "chmod -R 777 /var/www/html"
-	# seeding the customized settings for PS
-	mysql -h 127.0.0.1 -P 9459 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_8.sql
 
 e2eh8:
 	# detaching containers
