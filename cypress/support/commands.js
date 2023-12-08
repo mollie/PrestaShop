@@ -129,9 +129,9 @@ Cypress.Commands.add("OrderRefundingPartialPaymentsAPI", () => {
     cy.get(':nth-child(1) > .column-payment').click()
     cy.scrollTo('bottom')
     // here the Mollie block should exist in Orders BO. Sometimes, the Mollie API is not responding correctly
-    cy.get('body')
+    cy.get('#mollie_order > :nth-child(1)')
       .then(($body) => {
-        if ($body.find('#mollie_order > :nth-child(1)').length) {
+        if ($body.length > 0) {
           // If the element doesn't exist, skip the test
           cy.log('Element not found possibly due to to the distractions from the Mollie API. Skipping the Test')
           this.skip()
