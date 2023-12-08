@@ -129,31 +129,35 @@ Cypress.Commands.add("OrderRefundingPartialPaymentsAPI", () => {
     cy.get(':nth-child(1) > .column-payment').click()
     cy.scrollTo('bottom')
     // here the Mollie block should exist in Orders BO. Sometimes, the Mollie API is not responding correctly
-    cy.get('#mollie_order > :nth-child(1)').should('exist').then(($element) => {
-    }).catch(() => {
-      // If the element doesn't exist, skip the test
-      cy.log('Element does not exist. Skipping the test.')
-      Cypress.runner.stop() // This stops the test and moves to the next one
-    })
-    cy.get('.form-inline > :nth-child(1) > .btn').should('exist')
-    cy.get('.input-group-btn > .btn').should('exist')
-    cy.get('.sc-htpNat > .panel > .card-body > :nth-child(3)').should('exist')
-    cy.get('.card-body > :nth-child(6)').should('exist')
-    cy.get('.card-body > :nth-child(9)').should('exist')
-    cy.get('#mollie_order > :nth-child(1) > :nth-child(1)').should('exist')
-    cy.get('.sc-htpNat > .panel > .card-body').should('exist')
-    cy.get('.sc-bxivhb > .panel > .panel-heading').should('exist')
-    cy.get('.sc-bxivhb > .panel > .card-body').should('exist')
-    //Check partial refunding on Payments API
-    cy.get('.form-inline > :nth-child(2) > .input-group > .form-control').type('1.51',{delay:0})
-    cy.get(':nth-child(2) > .input-group > .input-group-btn > .btn').click()
-    cy.get('.swal-modal').should('exist')
-    cy.get(':nth-child(2) > .swal-button').click()
-    cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
-    cy.get('.form-inline > :nth-child(1) > .btn').click()
-    cy.get('.swal-modal').should('exist')
-    cy.get(':nth-child(2) > .swal-button').click()
-    cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
+    cy.get('body')
+      .then(($body) => {
+        if ($body.find('#mollie_order > :nth-child(1)').length) {
+          // If the element doesn't exist, skip the test
+          cy.log('Element not found possibly due to to the distractions from the Mollie API. Skipping the Test')
+          this.skip()
+        } else {
+          cy.get('#mollie_order > :nth-child(1)').click()
+          cy.get('.form-inline > :nth-child(1) > .btn').should('exist')
+          cy.get('.input-group-btn > .btn').should('exist')
+          cy.get('.sc-htpNat > .panel > .card-body > :nth-child(3)').should('exist')
+          cy.get('.card-body > :nth-child(6)').should('exist')
+          cy.get('.card-body > :nth-child(9)').should('exist')
+          cy.get('#mollie_order > :nth-child(1) > :nth-child(1)').should('exist')
+          cy.get('.sc-htpNat > .panel > .card-body').should('exist')
+          cy.get('.sc-bxivhb > .panel > .panel-heading').should('exist')
+          cy.get('.sc-bxivhb > .panel > .card-body').should('exist')
+          //Check partial refunding on Payments API
+          cy.get('.form-inline > :nth-child(2) > .input-group > .form-control').type('1.51',{delay:0})
+          cy.get(':nth-child(2) > .input-group > .input-group-btn > .btn').click()
+          cy.get('.swal-modal').should('exist')
+          cy.get(':nth-child(2) > .swal-button').click()
+          cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
+          cy.get('.form-inline > :nth-child(1) > .btn').click()
+          cy.get('.swal-modal').should('exist')
+          cy.get(':nth-child(2) > .swal-button').click()
+          cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
+    }
+  })
 })
 Cypress.Commands.add("EnablingModuleMultistore", () => {
   cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
