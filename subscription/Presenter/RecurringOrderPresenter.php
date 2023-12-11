@@ -59,8 +59,9 @@ class RecurringOrderPresenter
      */
     public function present(int $recurringOrderId): array
     {
+        // TODO protections if collection is found
         $recurringOrder = $this->recurringOrderRepository->findOneBy(['id_mol_recurring_order' => $recurringOrderId]);
-        $recurringProduct = $this->recurringOrdersProductRepository->findOneBy(['id_mol_recurring_orders_product' => $recurringOrderId]);
+        $recurringProduct = $this->recurringOrdersProductRepository->findOneBy(['id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product]);
 
         $product = new Product($recurringProduct->id_product, false, $this->language->getDefaultLanguageId());
         $order = new Order($recurringOrder->id_order);
