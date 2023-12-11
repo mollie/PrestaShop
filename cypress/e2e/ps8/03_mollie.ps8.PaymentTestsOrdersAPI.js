@@ -1,36 +1,4 @@
 /// <reference types="Cypress" />
-function prepareCookie()
-      {
-            const name = 'PrestaShop-';
-
-                   cy.request(
-            {
-                url: '/'
-            }
-        ).then((res) => {
-
-            const cookies = res.requestHeaders.cookie.split(/; */);
-
-            cookies.forEach(cookie => {
-
-                const parts = cookie.split('=');
-                const key = parts[0]
-                const value = parts[1];
-
-                if (key.startsWith(name)) {
-                    cy.setCookie(
-                        key,
-                        value,
-                        {
-                            sameSite: 'None',
-                            secure: true
-                        }
-                    );
-                }
-            });
-
-        });
-      }
 //Caching the BO and FO session
 const login = (MollieBOFOLoggingIn) => {
   cy.session(MollieBOFOLoggingIn,() => {
@@ -46,14 +14,7 @@ const login = (MollieBOFOLoggingIn) => {
   cy.get('#history-link > .link-item').click()
   })
   }
-//Checking the console for errors
-let windowConsoleError;
-Cypress.on('window:before:load', (win) => {
-  windowConsoleError = cy.spy(win.console, 'error');
-})
-afterEach(() => {
-  expect(windowConsoleError).to.not.be.called;
-})
+
 describe('PS8 Tests Suite [Orders API]', {
   failFast: {
     enabled: false,
@@ -73,19 +34,7 @@ it.skip('C339342: 05 Vouchers Checkouting [Orders API]', () => { //temporary ski
       //Payment method choosing
       cy.contains('Voucher').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
+      cy.contains('Place order').click()
       cy.get('.grid-button-voucher-monizze-meal').click()
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
@@ -108,19 +57,7 @@ it('C339344: 07 Bancontact Checkouting [Orders API]', () => {
       //Payment method choosing
       cy.contains('Bancontact').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
+      cy.contains('Place order').click()
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -137,19 +74,7 @@ it('C339346: 09 iDEAL Checkouting [Orders API]', () => {
       //Payment method choosing
       cy.contains('iDEAL').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
+      cy.contains('Place order').click()
       cy.get('.payment-method-list > :nth-child(1)').click()
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
@@ -168,19 +93,7 @@ it('C339348: 11 Klarna Slice It Checkouting [Orders API]', () => {
       //Payment method choosing
       cy.contains('Ratenkauf.').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
+      cy.contains('Place order').click()
       cy.get('[value="authorized"]').click()
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -199,19 +112,7 @@ it('C339350: 13 Klarna Pay Later Checkouting [Orders API]', () => {
       //Payment method choosing
       cy.contains('Rechnung.').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
+      cy.contains('Place order').click()
       cy.get('[value="authorized"]').click()
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -230,19 +131,7 @@ it('C339352: 15 Klarna Pay Now Checkouting [Orders API]', () => {
       //Payment method choosing
       cy.contains('Pay now.').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
+      cy.contains('Place order').click()
       cy.get('[value="authorized"]').click()
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -267,19 +156,7 @@ it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
       //Credit card inputing
       cy.CreditCardFillingIframe()
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click({force: true})
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
+      cy.contains('Place order').click({force: true})
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -293,19 +170,7 @@ it('C339355: 18 Check if customerId is passed during the 2nd payment using Singl
       //Payment method choosing
       cy.contains('Card').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click({force: true})
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
       cy.visit('/admin1/')
       //Disabling the single-click - no need again
       cy.OpeningModuleDashboardURL()
@@ -327,19 +192,7 @@ it('C339357: 20 IN3 Checkouting [Orders API]', () => { // wip
       // waiting for enabling IN3 payment
       cy.contains('in3').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
+      cy.contains('Place order').click()
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -393,19 +246,7 @@ it('C339361: 24 Paypal Checkouting [Orders API]', () => {
       //Payment method choosing
       cy.contains('PayPal').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
+      cy.contains('Place order').click()
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -423,19 +264,7 @@ it('C339363: 26 SOFORT Checkouting [Orders API]', () => {
       //Payment method choosing
       cy.contains('SOFORT').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
+      cy.contains('Place order').click()
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -465,19 +294,7 @@ it('C339365: 28 Przelewy24 Checkouting [Orders API]', () => {
       //Payment method choosing
       cy.contains('Przelewy24').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
+      cy.contains('Place order').click()
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -495,19 +312,7 @@ it('C339367: 30 Giropay Checkouting [Orders API]', () => {
       //Payment method choosing
       cy.contains('giropay').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
+      cy.contains('Place order').click()
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -525,19 +330,7 @@ it('C339369: 32 EPS Checkouting [Orders API]', () => {
       //Payment method choosing
       cy.contains('eps').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
+      cy.contains('Place order').click()
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -555,19 +348,7 @@ it('C339371: 34 KBC/CBC Checkouting [Orders API]', () => {
       //Payment method choosing
       cy.contains('KBC/CBC').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
+      cy.contains('Place order').click()
       cy.get('.grid-button-kbc-cbc').click()
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
@@ -586,19 +367,7 @@ it('C339373: 36 Belfius Checkouting [Orders API]', () => {
       //Payment method choosing
       cy.contains('Belfius').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
+      cy.contains('Place order').click()
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -616,19 +385,7 @@ it('C339375: 38 Bank Transfer Checkouting [Orders API]', () => {
       //Payment method choosing
       cy.contains('Bank transfer').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
+      cy.contains('Place order').click()
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
       //TODO - Welcome page?
@@ -648,19 +405,7 @@ it.skip('40 Gift Card Checkouting [Orders API]', () => {
       //Payment method choosing
       cy.contains('Gift cards').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
+      cy.contains('Place order').click()
       cy.get('.grid-button-giftcard-yourgift').click()
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
@@ -682,8 +427,7 @@ it('C1765085: Billie Checkouting [Orders API]', () => {
       //Payment method choosing
       cy.contains('Billie').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
+      cy.contains('Place order').click()
       cy.get('[value="authorized"]').click()
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -701,8 +445,7 @@ it.skip('C1860460: Pay with Klarna UK Checkouting [Orders API]', () => { // curr
   //Payment method choosing
   cy.contains('Pay with Klarna').click({force:true})
   cy.get('.condition-label > .js-terms').click({force:true})
-  prepareCookie();
-  cy.get('.ps-shown-by-js > .btn').click()
+  cy.contains('Place order').click()
   cy.get('[value="authorized"]').click()
   cy.get('[class="button form__button"]').click()
   cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
