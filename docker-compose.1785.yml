@@ -1,14 +1,6 @@
 version: "3.7"
 
 services:
-  node:
-    image: node:latest
-    volumes:
-      - ./:/var/www/html
-    working_dir: /var/www/html
-    environment:
-      PATH: /var/www/html/_dev/node_modules/.bin/:$PATH
-
   mysql:
     #platform: linux/amd64
     container_name: mysql-mollie-1785
