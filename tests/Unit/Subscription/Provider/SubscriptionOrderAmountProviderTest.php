@@ -40,9 +40,10 @@ class SubscriptionOrderAmountProviderTest extends BaseTestCase
             1,
             2,
             3,
-            ['total_price_tax_incl' => 10.00],
+            [],
             4,
-            5
+            5,
+            10.00
         ));
 
         $this->assertEquals([
@@ -69,9 +70,10 @@ class SubscriptionOrderAmountProviderTest extends BaseTestCase
             1,
             2,
             3,
-            ['total_price_tax_incl' => 10.00],
+            [],
             4,
-            5
+            5,
+            10.00
         ));
     }
 
@@ -93,9 +95,10 @@ class SubscriptionOrderAmountProviderTest extends BaseTestCase
             1,
             2,
             3,
-            ['total_price_tax_incl' => 10.00],
+            [],
             4,
-            5
+            5,
+            10.00
         ));
     }
 }

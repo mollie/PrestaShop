@@ -16,6 +16,7 @@ use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\DTO\UpdateRecurringOrderData;
 use Mollie\Subscription\Exception\CouldNotUpdateRecurringOrder;
 use Mollie\Subscription\Exception\MollieSubscriptionException;
+use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Utility\ClockInterface;
 
 if (!defined('_PS_VERSION_')) {
@@ -28,13 +29,17 @@ class UpdateRecurringOrderAction
     private $logger;
     /** @var ClockInterface */
     private $clock;
+    /** @var RecurringOrderRepositoryInterface */
+    private $recurringOrderRepository;
 
     public function __construct(
         PrestaLoggerInterface $logger,
-        ClockInterface $clock
+        ClockInterface $clock,
+        RecurringOrderRepositoryInterface $recurringOrderRepository
     ) {
         $this->logger = $logger;
         $this->clock = $clock;
+        $this->recurringOrderRepository = $recurringOrderRepository;
     }
 
     /**
@@ -45,7 +50,10 @@ class UpdateRecurringOrderAction
         $this->logger->debug(sprintf('%s - Function called', __METHOD__));
 
         try {
-            $recurringOrder = new \MolRecurringOrder($data->getMollieRecurringOrderId());
+            /** @var \MolRecurringOrder $recurringOrder */
+            $recurringOrder = $this->recurringOrderRepository->findOneBy([
+                'id_mol_recurring_orders_product' => $data->getMollieRecurringOrderId(),
+            ]);
 
             /*
              * NOTE: When more properties will be needed to update, pass them up as nullable parameters.
@@ -53,7 +61,7 @@ class UpdateRecurringOrderAction
             $recurringOrder->total_tax_incl = $data->getSubscriptionTotalAmount();
             $recurringOrder->date_update = $this->clock->getCurrentDate();
 
-            $recurringOrder->add();
+            $recurringOrder->update();
         } catch (\Throwable $exception) {
             throw CouldNotUpdateRecurringOrder::unknownError($exception);
         }
