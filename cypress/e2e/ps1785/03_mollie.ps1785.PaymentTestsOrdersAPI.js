@@ -350,7 +350,6 @@ it('C1765085: Billie Checkouting [Orders API]', () => {
       //Payment method choosing
       cy.contains('Rechnungskauf').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
       cy.contains('Place order').click()
       cy.get('[value="authorized"]').click()
       cy.get('[class="button form__button"]').click()
@@ -369,7 +368,6 @@ it.skip('C1860460: Pay with Klarna UK Checkouting [Orders API]', () => { // curr
       //Payment method choosing
       cy.contains('Pay with Klarna').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
-      prepareCookie();
       cy.contains('Place order').click()
       cy.get('[value="authorized"]').click()
       cy.get('[class="button form__button"]').click()
