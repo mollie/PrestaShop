@@ -1,36 +1,4 @@
 /// <reference types="Cypress" />
-function prepareCookie()
-      {
-            const name = 'PrestaShop-';
-
-                   cy.request(
-            {
-                url: '/'
-            }
-        ).then((res) => {
-
-            const cookies = res.requestHeaders.cookie.split(/; */);
-
-            cookies.forEach(cookie => {
-
-                const parts = cookie.split('=');
-                const key = parts[0]
-                const value = parts[1];
-
-                if (key.startsWith(name)) {
-                    cy.setCookie(
-                        key,
-                        value,
-                        {
-                            sameSite: 'None',
-                            secure: true
-                        }
-                    );
-                }
-            });
-
-        });
-      }
 //Caching the BO and FO session
 const login = (MollieBOFOLoggingIn) => {
   cy.session(MollieBOFOLoggingIn,() => {

@@ -94,6 +94,7 @@ jobs:
           export CYPRESS_TESTRAIL_DOMAIN='${{ secrets.TESTRAIL_DOMAIN }}'
           export CYPRESS_TESTRAIL_USERNAME='${{ secrets.TESTRAIL_USERNAME }}'
           export CYPRESS_TESTRAIL_PASSWORD='${{ secrets.TESTRAIL_PASSWORD }}'
+          cypress cache prune
           npm install -D cypress
           npm ci
           npx cypress run --spec "${{ matrix.test_spec }}" --browser chrome
