@@ -41,7 +41,7 @@ it('C339379: 44 Bancontact Checkouting [Payments API]', () => {
     //Payment method choosing
     cy.contains('Bancontact').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
-cy.contains('Place order')
+    cy.contains('Place order').click()
     cy.get('[value="paid"]').click()
     cy.get('[class="button form__button"]').click()
     cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -54,7 +54,7 @@ it('C339381: 46 iDEAL Checkouting [Payments API]', () => {
     //Payment method choosing
     cy.contains('iDEAL').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
-cy.contains('Place order')
+    cy.contains('Place order').click()
     cy.get('.payment-method-list > :nth-child(1)').click()
     cy.get('[value="paid"]').click()
     cy.get('[class="button form__button"]').click()
@@ -70,7 +70,7 @@ it('C339383: 48 Credit Card Checkouting [Payments API]', () => {
     //Credit card inputing
     cy.CreditCardFillingIframe()
     cy.get('.condition-label > .js-terms').click({force:true})
-    cy.contains('Place order')
+    cy.contains('Place order').click()
     cy.get('[value="paid"]').click()
     cy.get('[class="button form__button"]').click()
     cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -114,7 +114,7 @@ it('C339385: 50 Credit Card Guest Checkouting [Payments API]', () => {
     //Credit card inputing
     cy.CreditCardFillingIframe()
     cy.get('.condition-label > .js-terms').click({force:true})
-    cy.contains('Place order')
+    cy.contains('Place order').click()
     cy.get('[value="paid"]').click()
     cy.get('[class="button form__button"]').click()
     cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -162,7 +162,7 @@ it('C339387: 52 Paypal Checkouting [Payments API]', () => {
     //Payment method choosing
     cy.contains('PayPal').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
-cy.contains('Place order')
+    cy.contains('Place order').click()
     cy.get('[value="paid"]').click()
     cy.get('[class="button form__button"]').click()
     cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -182,7 +182,7 @@ it('C339389: 54 SOFORT Checkouting [Payments API]', () => {
     //Payment method choosing
     cy.contains('SOFORT').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
-    cy.contains('Place order')
+    cy.contains('Place order').click()
     cy.get('[value="paid"]').click()
     cy.get('[class="button form__button"]').click()
     cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -198,7 +198,7 @@ it('C339391: 56 Przelewy24 Checkouting [Payments API]', () => {
     //Payment method choosing
     cy.contains('Przelewy24').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
-    cy.contains('Place order')
+    cy.contains('Place order').click()
     cy.get('.input-float > input').type('testing@testing.com')
     cy.get('[class="button form__button"]').click()
     cy.get('[value="paid"]').click()
@@ -213,7 +213,7 @@ it('C339393: 58 Giropay Checkouting [Payments API]', () => {
     //Payment method choosing
     cy.contains('giropay').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
-    cy.contains('Place order')
+    cy.contains('Place order').click()
     cy.get('[value="paid"]').click()
     cy.get('[class="button form__button"]').click()
     cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -226,7 +226,7 @@ it('C339395: 60 EPS Checkouting [Payments API]', () => {
     //Payment method choosing
     cy.contains('eps').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
-    cy.contains('Place order')
+    cy.contains('Place order').click()
     cy.get('[value="paid"]').click()
     cy.get('[class="button form__button"]').click()
     cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -239,7 +239,7 @@ it('C339397: 62 KBC/CBC Checkouting [Payments API]', () => {
     //Payment method choosing
     cy.contains('KBC/CBC').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
-    cy.contains('Place order')
+    cy.contains('Place order').click()
     cy.get('.grid-button-kbc-cbc').click()
     cy.get('[value="paid"]').click()
     cy.get('[class="button form__button"]').click()
@@ -253,7 +253,7 @@ it('C339399: 64 Belfius Checkouting [Payments API]', () => {
     //Payment method choosing
     cy.contains('Belfius').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
-    cy.contains('Place order')
+    cy.contains('Place order').click()
     cy.get('[value="paid"]').click()
     cy.get('[class="button form__button"]').click()
     cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
@@ -272,7 +272,7 @@ it('C339401: 66 Bank Transfer Checkouting [Payments API]', () => {
     //Payment method choosing
     cy.contains('Bank transfer').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
-    cy.contains('Place order')
+    cy.contains('Place order').click()
     cy.get('[value="paid"]').click()
     cy.get('[class="button form__button"]').click()
     cy.contains('Welcome back').should('be.visible')
