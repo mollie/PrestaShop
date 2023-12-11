@@ -97,7 +97,7 @@ jobs:
           npx cypress cache prune
           npm install -D cypress
           npm ci
-          npx cypress run --spec "${{ matrix.test_spec }}" --browser chrome
+          npx cypress run --spec "${{ matrix.test_spec }}"
 
       - name: Archive videos and screenshots
         if: ${{ always() }}
