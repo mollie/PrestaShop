@@ -20,15 +20,13 @@ use Mollie\Adapter\Context;
 use Mollie\Config\Config;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
-use Mollie\Shared\Infrastructure\Repository\CurrencyRepositoryInterface;
 use Mollie\Subscription\DTO\CreateSubscriptionData as SubscriptionDataDTO;
-use Mollie\Subscription\DTO\Object\Amount;
-use Mollie\Subscription\DTO\SubscriptionCarrierDeliveryPriceData;
+use Mollie\Subscription\DTO\SubscriptionOrderAmountProviderData;
 use Mollie\Subscription\Exception\CouldNotCreateSubscriptionData;
 use Mollie\Subscription\Exception\MollieSubscriptionException;
-use Mollie\Subscription\Provider\SubscriptionCarrierDeliveryPriceProvider;
 use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
+use Mollie\Subscription\Provider\SubscriptionOrderAmountProvider;
 use Mollie\Utility\SecureKeyUtility;
 use Order;
 
@@ -44,39 +42,35 @@ class CreateSubscriptionDataFactory
     private $subscriptionInterval;
     /** @var SubscriptionDescriptionProvider */
     private $subscriptionDescription;
-    /** @var CurrencyRepositoryInterface */
-    private $currencyRepository;
     /** @var PaymentMethodRepositoryInterface */
     private $methodRepository;
     /** @var Mollie */
     private $module;
     /** @var Context */
     private $context;
-    /** @var SubscriptionCarrierDeliveryPriceProvider */
-    private $subscriptionCarrierDeliveryPriceProvider;
     /** @var ConfigurationAdapter */
     private $configuration;
+    /** @var SubscriptionOrderAmountProvider */
+    private $subscriptionOrderAmountProvider;
 
     public function __construct(
         MolCustomerRepository $customerRepository,
         SubscriptionIntervalProvider $subscriptionInterval,
         SubscriptionDescriptionProvider $subscriptionDescription,
-        CurrencyRepositoryInterface $currencyRepository,
         PaymentMethodRepositoryInterface $methodRepository,
         Mollie $module,
         Context $context,
-        SubscriptionCarrierDeliveryPriceProvider $subscriptionCarrierDeliveryPriceProvider,
-        ConfigurationAdapter $configuration
+        ConfigurationAdapter $configuration,
+        SubscriptionOrderAmountProvider $subscriptionOrderAmountProvider
     ) {
         $this->customerRepository = $customerRepository;
         $this->subscriptionInterval = $subscriptionInterval;
         $this->subscriptionDescription = $subscriptionDescription;
-        $this->currencyRepository = $currencyRepository;
         $this->methodRepository = $methodRepository;
         $this->module = $module;
         $this->context = $context;
-        $this->subscriptionCarrierDeliveryPriceProvider = $subscriptionCarrierDeliveryPriceProvider;
         $this->configuration = $configuration;
+        $this->subscriptionOrderAmountProvider = $subscriptionOrderAmountProvider;
     }
 
     /**
@@ -110,35 +104,19 @@ class CreateSubscriptionDataFactory
         $subscriptionCarrierId = (int) $this->configuration->get(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID);
 
         try {
-            $deliveryPrice = $this->subscriptionCarrierDeliveryPriceProvider->getPrice(
-                new SubscriptionCarrierDeliveryPriceData(
+            $orderAmount = $this->subscriptionOrderAmountProvider->get(
+                SubscriptionOrderAmountProviderData::create(
                     (int) $order->id_address_delivery,
                     (int) $order->id_cart,
                     (int) $order->id_customer,
                     $subscriptionProduct,
-                    $subscriptionCarrierId
+                    $subscriptionCarrierId,
+                    (int) $order->id_currency
                 )
             );
         } catch (\Throwable $exception) {
-            throw CouldNotCreateSubscriptionData::failedToProvideCarrierDeliveryPrice($exception);
+            throw CouldNotCreateSubscriptionData::failedToProvideSubscriptionOrderAmount($exception);
         }
-
-        $orderTotal = (float) $subscriptionProduct['total_price_tax_incl'] + $deliveryPrice;
-
-        try {
-            /** @var \Currency|null $currency */
-            $currency = $this->currencyRepository->findOneBy([
-                'id_currency' => (int) $order->id_currency,
-            ]);
-        } catch (\Throwable $exception) {
-            throw CouldNotCreateSubscriptionData::unknownError($exception);
-        }
-
-        if (!$currency) {
-            throw CouldNotCreateSubscriptionData::failedToFindCurrency((int) $order->id_currency);
-        }
-
-        $orderAmount = new Amount($orderTotal, $currency->iso_code);
 
         $subscriptionData = new SubscriptionDataDTO(
             $molCustomer->customer_id,

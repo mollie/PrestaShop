@@ -41,23 +41,12 @@ class CouldNotCreateSubscriptionData extends MollieSubscriptionException
         );
     }
 
-    public static function failedToProvideCarrierDeliveryPrice(\Throwable $exception): self
+    public static function failedToProvideSubscriptionOrderAmount(\Throwable $exception): self
     {
         return new self(
-            'Failed to provide carrier delivery price.',
-            ExceptionCode::ORDER_FAILED_TO_PROVIDE_CARRIER_DELIVERY_PRICE,
+            'Failed to provide subscription order amount.',
+            ExceptionCode::ORDER_FAILED_TO_PROVIDE_SUBSCRIPTION_ORDER_AMOUNT,
             $exception
-        );
-    }
-
-    public static function failedToFindCurrency(int $currencyId): self
-    {
-        return new self(
-            sprintf(
-                'Failed to find currency. Currency ID: (%s)',
-                $currencyId
-            ),
-            ExceptionCode::ORDER_FAILED_TO_FIND_CURRENCY
         );
     }
 }
