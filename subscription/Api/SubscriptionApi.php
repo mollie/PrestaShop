@@ -77,7 +77,11 @@ class SubscriptionApi
     public function updateSubscription(UpdateSubscriptionData $updateSubscriptionData): MollieSubscription
     {
         try {
-            return $this->apiClient->subscriptions->update($updateSubscriptionData->getCustomerId(), $updateSubscriptionData->getSubscriptionId(), $updateSubscriptionData->jsonSerialize());
+            return $this->apiClient->subscriptions->update(
+                $updateSubscriptionData->getCustomerId(),
+                $updateSubscriptionData->getSubscriptionId(),
+                $updateSubscriptionData->toArray()
+            );
         } catch (ApiException $e) {
             throw new SubscriptionApiException('Failed to update subscription', SubscriptionApiException::UPDATE_FAILED, $e);
         }
