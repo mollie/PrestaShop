@@ -42,6 +42,7 @@ class ExceptionCode
     public const ORDER_FAILED_TO_SUBSCRIBE_ORDER = 1020;
     public const ORDER_FAILED_TO_CREATE_RECURRING_ORDERS_PRODUCT = 1021;
     public const ORDER_FAILED_TO_CREATE_RECURRING_ORDER = 1022;
+    public const ORDER_FAILED_TO_PROVIDE_SUBSCRIPTION_ORDER_AMOUNT = 1023;
 
     //Cart error codes starts from 2000
 

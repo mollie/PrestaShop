@@ -16,15 +16,14 @@ namespace Mollie\Tests\Unit\Subscription\Factory;
 
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Shared\Infrastructure\Repository\CurrencyRepositoryInterface;
 use Mollie\Subscription\Constants\IntervalConstant;
 use Mollie\Subscription\DTO\CreateSubscriptionData as SubscriptionDataDTO;
 use Mollie\Subscription\DTO\Object\Amount;
 use Mollie\Subscription\DTO\Object\Interval;
 use Mollie\Subscription\Factory\CreateSubscriptionDataFactory;
-use Mollie\Subscription\Provider\SubscriptionCarrierDeliveryPriceProvider;
 use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
+use Mollie\Subscription\Provider\SubscriptionOrderAmountProvider;
 use Mollie\Tests\Unit\BaseTestCase;
 use Mollie\Utility\SecureKeyUtility;
 
@@ -61,15 +60,8 @@ class CreateSubscriptionDataFactoryTest extends BaseTestCase
 
         $this->configuration->method('get')->willReturn(1);
 
-        $subscriptionCarrierDeliveryPriceProvider = $this->createMock(SubscriptionCarrierDeliveryPriceProvider::class);
-        $subscriptionCarrierDeliveryPriceProvider->method('getPrice')->willReturn(10.00);
-
-        /** @var \Currency $currency */
-        $currency = $this->createMock(\Currency::class);
-        $currency->iso_code = 'EUR';
-
-        $currencyRepository = $this->createMock(CurrencyRepositoryInterface::class);
-        $currencyRepository->method('findOneBy')->willReturn($currency);
+        $subscriptionOrderAmountProvider = $this->createMock(SubscriptionOrderAmountProvider::class);
+        $subscriptionOrderAmountProvider->method('get')->willReturn(new Amount($totalAmount, 'EUR'));
 
         $paymentMethodRepositoryMock = $this->createMock(PaymentMethodRepository::class);
         $paymentMethodRepositoryMock->method('getPaymentBy')->willReturn(
@@ -86,12 +78,11 @@ class CreateSubscriptionDataFactoryTest extends BaseTestCase
             $customerRepository,
             $subscriptionIntervalProvider,
             $subscriptionDescriptionProviderMock,
-            $currencyRepository,
             $paymentMethodRepositoryMock,
             $this->module,
             $this->context,
-            $subscriptionCarrierDeliveryPriceProvider,
-            $this->configuration
+            $this->configuration,
+            $subscriptionOrderAmountProvider
         );
 
         $this->customer->email = 'test.gmail.com';
@@ -108,7 +99,7 @@ class CreateSubscriptionDataFactoryTest extends BaseTestCase
 
         $subscriptionProduct = [
             'id_product_attribute' => 1,
-            'total_price_tax_incl' => 19.99,
+            'total_price_tax_incl' => 29.99,
         ];
 
         $subscriptionData = $subscriptionDataFactory->build($order, $subscriptionProduct);
