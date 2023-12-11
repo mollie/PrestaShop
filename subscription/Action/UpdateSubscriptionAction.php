@@ -66,7 +66,8 @@ class UpdateSubscriptionAction
             $data->getMollieCustomerId(),
             $data->getMollieSubscriptionId(),
             null,
-            $metadata
+            $metadata,
+            $data->getOrderAmount()
         );
 
         try {
