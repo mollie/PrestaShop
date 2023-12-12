@@ -12,25 +12,46 @@
 
 namespace Mollie\Tests\Integration\Factory;
 
-class ProductFactory implements FactoryInterface
+use Invertus\Prestashop\Models\Factory\Factory;
+
+class ProductFactory extends Factory
 {
-    public static function create(array $data = [])
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = \Product::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition(): array
     {
-        $product = new \Product(null, false, (int) \Configuration::get('PS_LANG_DEFAULT'));
-        $product->id_tax_rules_group = $data['id_tax_rules_group'] ?? 1;
-        $product->name = $data['name'] ?? 'test-name';
-        $product->description_short = $data['description_short'] ?? 'test-description_short';
-        $product->price = $data['price'] ?? 0;
-        $product->link_rewrite = \Tools::link_rewrite($product->name);
+        $name = $this->faker->text(10);
 
-        $product->save();
+        return [
+            'id_tax_rules_group' => $this->faker->numberBetween(1, 99), // TODO tax rules group factory
+            'name' => $name,
+            'description_short' => $this->faker->text(50),
+            'price' => $this->faker->randomFloat(6, 1000, 10000),
+            'link_rewrite' => \Tools::link_rewrite($name),
+            'out_of_stock' => 1,
+        ];
+    }
 
-        \StockAvailable::setQuantity(
-            (int) $product->id,
-            0,
-            isset($data['quantity']) ? (int) $data['quantity'] : 1
-        );
+    public function configure(): self
+    {
+        return $this->afterCreating(function (\Product $product) {
+            \Product::flushPriceCache();
 
-        return $product;
+            \StockAvailable::setQuantity(
+                (int) $product->id,
+                0,
+                10
+            );
+        });
     }
 }

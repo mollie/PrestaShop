@@ -171,4 +171,14 @@ class BaseTestCase extends TestCase
             \Tab::resetStaticCache();
         }
     }
+
+    /**
+     * @param \ObjectModel[] $objects
+     */
+    protected function removeFactories(array $objects): void
+    {
+        foreach ($objects as $object) {
+            $object->delete();
+        }
+    }
 }
