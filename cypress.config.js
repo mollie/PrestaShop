@@ -1,7 +1,13 @@
 const { defineConfig } = require('cypress')
-import { initPlugin } from "@frsource/cypress-plugin-visual-regression-diff/plugins";
+const { initPlugin } = require("@frsource/cypress-plugin-visual-regression-diff/plugins");
 
 module.exports = defineConfig({
+  env: {
+    pluginVisualRegressionDiffConfig: { threshold: 0.001 },
+    pluginVisualRegressionMaxDiffThreshold: 0.001,
+    pluginVisualRegressionUpdateImages: false,
+    pluginVisualRegressionImagesPath: 'cypress/screenshots',
+  },
   chromeWebSecurity: false,
   experimentalMemoryManagement: true,
   experimentalSourceRewriting: true,
