@@ -91,7 +91,7 @@ class CloneOriginalSubscriptionCartHandler
 
         $cartProducts = $duplicatedCart->getProducts(true);
 
-        if (count($cartProducts) < 1 || count($cartProducts) > 1) {
+        if (count($cartProducts) !== 1) {
             throw CouldNotHandleOriginalSubscriptionCartCloning::subscriptionCartShouldHaveOneProduct((int) $duplicatedCart->id);
         }
 
@@ -131,18 +131,19 @@ class CloneOriginalSubscriptionCartHandler
             throw CouldNotHandleOriginalSubscriptionCartCloning::failedToCreateSpecificPrice($exception, (int) $subscriptionProduct->id_product, (int) $subscriptionProduct->id_product_attribute);
         }
 
-        register_shutdown_function([$this, 'onShutdownRemoveSpecificPrice'], $specificPrice);
+        register_shutdown_function([$this, 'onShutdown'], $specificPrice, $duplicatedCart);
 
         return $duplicatedCart;
     }
 
     /**
-     * On shutdown, we will remove specific price.
+     * On shutdown, we will remove specific price and whole cart object.
      *
      * @throws \Throwable
      */
-    public function onShutdownRemoveSpecificPrice(\SpecificPrice $specificPrice): void
+    public function onShutdown(\SpecificPrice $specificPrice, \Cart $cart): void
     {
         $specificPrice->delete();
+        $cart->delete();
     }
 }

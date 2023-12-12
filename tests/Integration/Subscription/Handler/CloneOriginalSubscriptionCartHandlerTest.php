@@ -122,6 +122,4 @@ class CloneOriginalSubscriptionCartHandlerTest extends BaseTestCase
             0
         ));
     }
-
-
 }
