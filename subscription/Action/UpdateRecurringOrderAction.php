@@ -50,11 +50,19 @@ class UpdateRecurringOrderAction
         $this->logger->debug(sprintf('%s - Function called', __METHOD__));
 
         try {
-            /** @var \MolRecurringOrder $recurringOrder */
+            /** @var ?\MolRecurringOrder $recurringOrder */
             $recurringOrder = $this->recurringOrderRepository->findOneBy([
-                'id_mol_recurring_orders_product' => $data->getMollieRecurringOrderId(),
+                'id_mol_recurring_order' => $data->getMollieRecurringOrderId(),
             ]);
+        } catch (\Throwable $exception) {
+            throw CouldNotUpdateRecurringOrder::unknownError($exception);
+        }
 
+        if (!$recurringOrder) {
+            throw CouldNotUpdateRecurringOrder::failedToFindOrder($data->getMollieRecurringOrderId());
+        }
+
+        try {
             /*
              * NOTE: When more properties will be needed to update, pass them up as nullable parameters.
              */

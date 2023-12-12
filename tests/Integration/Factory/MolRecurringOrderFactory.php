@@ -12,32 +12,41 @@
 
 namespace Mollie\Tests\Integration\Factory;
 
-class MolRecurringOrderFactory implements FactoryInterface
+use Invertus\Prestashop\Models\Factory\Factory;
+
+class MolRecurringOrderFactory extends Factory
 {
-    public static function create(array $data = []): \MolRecurringOrder
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = \MolRecurringOrder::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition(): array
     {
-        $recurringOrder = new \MolRecurringOrder();
-
-        $recurringOrder->id_mol_recurring_orders_product = $data['id_mol_recurring_orders_product'] ?? 1;
-        $recurringOrder->id_order = $data['id_order'] ?? 1;
-        $recurringOrder->id_cart = $data['id_cart'] ?? 1;
-        $recurringOrder->id_currency = $data['id_currency'] ?? 1;
-        $recurringOrder->id_customer = $data['id_currency'] ?? 1;
-        $recurringOrder->id_address_delivery = $data['id_address_delivery'] ?? 1;
-        $recurringOrder->id_address_invoice = $data['id_address_invoice'] ?? 1;
-        $recurringOrder->description = $data['description'] ?? 'test-description';
-        $recurringOrder->status = $data['status'] ?? 'test-status';
-        $recurringOrder->total_tax_incl = $data['total_tax_incl'] ?? 10.00;
-        $recurringOrder->payment_method = $data['payment_method'] ?? 'test-payment-method';
-        $recurringOrder->next_payment = $data['next_payment'] ?? '1990-01-01 12:00:00';
-        $recurringOrder->reminder_at = $data['reminder_at'] ?? '1990-01-01 12:00:00';
-        $recurringOrder->cancelled_at = $data['cancelled_at'] ?? '0000-00-00 00:00:00';
-        $recurringOrder->mollie_subscription_id = $data['mollie_subscription_id'] ?? 'test-mollie-subscription-id';
-        $recurringOrder->mollie_customer_id = $data['mollie_customer_id'] ?? 'test-mollie-customer-id';
-        $recurringOrder->date_update = $data['date_update'] ?? '';
-
-        $recurringOrder->add();
-
-        return $recurringOrder;
+        return [
+            'id_mol_recurring_orders_product' => $this->faker->numberBetween(1, 99999), // TODO recurring order product factory
+            'id_order' => $this->faker->numberBetween(1, 99999), // TODO order factory
+            'id_currency' => $this->faker->numberBetween(1, 99999), // TODO currency factory
+            'id_customer' => $this->faker->numberBetween(1, 99999), // TODO customer factory
+            'id_address_delivery' => $this->faker->numberBetween(1, 99999), // TODO address factory
+            'id_address_invoice' => $this->faker->numberBetween(1, 99999), // TODO address factory
+            'description' => $this->faker->text(20),
+            'status' => $this->faker->text(20),
+            'total_tax_incl' => $this->faker->numberBetween(10, 100),
+            'payment_method' => $this->faker->text(20),
+            'next_payment' => $this->faker->date('Y-m-d H:i:s', '+3 weeks'),
+            'reminder_at' => $this->faker->date('Y-m-d H:i:s', '+3 weeks'),
+            'cancelled_at' => $this->faker->date('Y-m-d H:i:s', '+10 weeks'),
+            'mollie_subscription_id' => $this->faker->text(20),
+            'mollie_customer_id' => $this->faker->text(20),
+            'date_update' => $this->faker->date('Y-m-d H:i:s'),
+        ];
     }
 }
