@@ -18,6 +18,7 @@ use Mollie\Subscription\DTO\SubscriptionCarrierDeliveryPriceData;
 use Mollie\Subscription\DTO\SubscriptionOrderAmountProviderData;
 use Mollie\Subscription\Exception\CouldNotProvideSubscriptionOrderAmount;
 use Mollie\Subscription\Exception\MollieSubscriptionException;
+use Mollie\Utility\NumberUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -45,7 +46,7 @@ class SubscriptionOrderAmountProvider
     {
         try {
             $deliveryPrice = $this->subscriptionCarrierDeliveryPriceProvider->getPrice(
-                new SubscriptionCarrierDeliveryPriceData(
+                SubscriptionCarrierDeliveryPriceData::create(
                     $data->getAddressDeliveryId(),
                     $data->getCartId(),
                     $data->getCustomerId(),
@@ -57,7 +58,10 @@ class SubscriptionOrderAmountProvider
             throw CouldNotProvideSubscriptionOrderAmount::failedToProvideCarrierDeliveryPrice($exception);
         }
 
-        $orderTotal = (float) $data->getSubscriptionProduct()['total_price_tax_incl'] + $deliveryPrice;
+        $orderTotal = NumberUtility::plus(
+            $data->getProductPriceTaxIncl(),
+            $deliveryPrice
+        );
 
         /** @var \Currency|null $currency */
         $currency = $this->currencyRepository->findOneBy([

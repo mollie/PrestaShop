@@ -70,10 +70,12 @@ class RecurringOrdersPresenter
         });
 
         $recurringOrdersPresentData = [];
+
         /** @var MolRecurringOrder $recurringOrder */
         foreach ($recurringOrders as $recurringOrder) {
+            // TODO protections if collection is found
             $recurringProduct = $this->recurringOrdersProductRepository->findOneBy([
-                'id_mol_recurring_orders_product' => $recurringOrder->id,
+                'id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product,
             ]);
 
             $product = new Product($recurringProduct->id_product, false, $this->language->getDefaultLanguageId());

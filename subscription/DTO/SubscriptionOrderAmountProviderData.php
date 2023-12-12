@@ -30,6 +30,8 @@ class SubscriptionOrderAmountProviderData
     private $subscriptionCarrierId;
     /** @var int */
     private $currencyId;
+    /** @var float */
+    private $productPriceTaxIncl;
 
     private function __construct(
         int $addressDeliveryId,
@@ -37,7 +39,8 @@ class SubscriptionOrderAmountProviderData
         int $customerId,
         array $subscriptionProduct,
         int $subscriptionCarrierId,
-        int $currencyId
+        int $currencyId,
+        float $productPriceTaxIncl
     ) {
         $this->addressDeliveryId = $addressDeliveryId;
         $this->cartId = $cartId;
@@ -45,6 +48,7 @@ class SubscriptionOrderAmountProviderData
         $this->subscriptionProduct = $subscriptionProduct;
         $this->subscriptionCarrierId = $subscriptionCarrierId;
         $this->currencyId = $currencyId;
+        $this->productPriceTaxIncl = $productPriceTaxIncl;
     }
 
     /**
@@ -95,13 +99,22 @@ class SubscriptionOrderAmountProviderData
         return $this->currencyId;
     }
 
+    /**
+     * @return float
+     */
+    public function getProductPriceTaxIncl(): float
+    {
+        return $this->productPriceTaxIncl;
+    }
+
     public static function create(
         int $addressDeliveryId,
         int $cartId,
         int $customerId,
         array $subscriptionProduct,
         int $subscriptionCarrierId,
-        int $currencyId
+        int $currencyId,
+        float $productPriceTaxIncl
     ): self {
         return new self(
             $addressDeliveryId,
@@ -109,7 +122,8 @@ class SubscriptionOrderAmountProviderData
             $customerId,
             $subscriptionProduct,
             $subscriptionCarrierId,
-            $currencyId
+            $currencyId,
+            $productPriceTaxIncl
         );
     }
 }

@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Factory;
 
-use Mollie\Subscription\DTO\UpdateSubscriptionData;
+use Mollie\Subscription\Api\Request\UpdateSubscriptionRequest;
 use MolRecurringOrder;
 
 if (!defined('_PS_VERSION_')) {
@@ -23,8 +23,8 @@ if (!defined('_PS_VERSION_')) {
 
 class UpdateSubscriptionDataFactory
 {
-    public function build(MolRecurringOrder $subscription, string $mandateId): UpdateSubscriptionData
+    public function build(MolRecurringOrder $subscription, string $mandateId): UpdateSubscriptionRequest
     {
-        return new UpdateSubscriptionData($subscription->mollie_customer_id, $subscription->mollie_subscription_id, $mandateId);
+        return new UpdateSubscriptionRequest($subscription->mollie_customer_id, $subscription->mollie_subscription_id, $mandateId);
     }
 }
