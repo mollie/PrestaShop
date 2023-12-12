@@ -22,7 +22,7 @@ class CreateSpecificPriceActionTest extends BaseTestCase
     public function testItSuccessfullyCreateSpecificPrice(): void
     {
         /** @var \Product $product */
-        $product = ProductFactory::create();
+        $product = ProductFactory::initialize()->create();
 
         $this->assertDatabaseHasNot(\SpecificPrice::class, [
             'id_product' => (int) $product->id,
