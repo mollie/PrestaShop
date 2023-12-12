@@ -1,4 +1,5 @@
 const { defineConfig } = require('cypress')
+import { initPlugin } from "@frsource/cypress-plugin-visual-regression-diff/plugins";
 
 module.exports = defineConfig({
   chromeWebSecurity: false,
@@ -30,6 +31,7 @@ module.exports = defineConfig({
       require('./cypress/plugins/index.js')(on, config)
       require("cypress-fail-fast/plugin")(on, config);
       require('cypress-terminal-report/src/installLogsPrinter')(on);
+      initPlugin(on, config);
       return config;
     },
     // setupNodeEvents(on, config) {
