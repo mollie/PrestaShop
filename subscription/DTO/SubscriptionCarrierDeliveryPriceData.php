@@ -29,7 +29,7 @@ class SubscriptionCarrierDeliveryPriceData
     /** @var int */
     private $subscriptionCarrierId;
 
-    public function __construct(
+    private function __construct(
         int $deliveryAddressId,
         int $cartId,
         int $customerId,
@@ -81,5 +81,21 @@ class SubscriptionCarrierDeliveryPriceData
     public function getSubscriptionCarrierId(): int
     {
         return $this->subscriptionCarrierId;
+    }
+
+    public static function create(
+        int $deliveryAddressId,
+        int $cartId,
+        int $customerId,
+        array $subscriptionProduct,
+        int $subscriptionCarrierId
+    ): self {
+        return new self(
+            $deliveryAddressId,
+            $cartId,
+            $customerId,
+            $subscriptionProduct,
+            $subscriptionCarrierId
+        );
     }
 }

@@ -111,7 +111,8 @@ class CreateSubscriptionDataFactory
                     (int) $order->id_customer,
                     $subscriptionProduct,
                     $subscriptionCarrierId,
-                    (int) $order->id_currency
+                    (int) $order->id_currency,
+                    (float) $subscriptionProduct['total_price_tax_incl']
                 )
             );
         } catch (\Throwable $exception) {

@@ -10,8 +10,6 @@
  * @codingStandardsIgnoreStart
  */
 
-declare(strict_types=1);
-
 namespace Mollie\Subscription\DTO;
 
 use Mollie\Subscription\DTO\Object\Amount;
@@ -23,50 +21,97 @@ if (!defined('_PS_VERSION_')) {
 class UpdateSubscriptionData
 {
     /** @var string */
-    private $customerId;
+    private $mollieCustomerId;
     /** @var string */
-    private $subscriptionId;
-    /** @var ?string */
-    private $mandateId;
-    /** @var ?array */
-    private $metadata;
-    /** @var ?Amount */
-    private $amount;
+    private $mollieSubscriptionId;
+    /** @var Amount */
+    private $orderAmount;
+    /** @var int */
+    private $customerId;
+    /** @var int */
+    private $cartId;
+    /** @var int */
+    private $subscriptionCarrierId;
 
-    public function __construct(
-        string $customerId,
-        string $subscriptionId,
-        string $mandateId = null,
-        array $metadata = null,
-        Amount $amount = null
+    private function __construct(
+        string $mollieCustomerId,
+        string $mollieSubscriptionId,
+        Amount $orderAmount,
+        int $customerId,
+        int $cartId,
+        int $subscriptionCarrierId
     ) {
+        $this->mollieCustomerId = $mollieCustomerId;
+        $this->mollieSubscriptionId = $mollieSubscriptionId;
+        $this->orderAmount = $orderAmount;
         $this->customerId = $customerId;
-        $this->subscriptionId = $subscriptionId;
-        $this->mandateId = $mandateId;
-        $this->metadata = $metadata;
-        $this->amount = $amount;
+        $this->cartId = $cartId;
+        $this->subscriptionCarrierId = $subscriptionCarrierId;
     }
 
-    public function getCustomerId(): string
+    /**
+     * @return string
+     */
+    public function getMollieCustomerId(): string
+    {
+        return $this->mollieCustomerId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMollieSubscriptionId(): string
+    {
+        return $this->mollieSubscriptionId;
+    }
+
+    /**
+     * @return Amount
+     */
+    public function getOrderAmount(): Amount
+    {
+        return $this->orderAmount;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCustomerId(): int
     {
         return $this->customerId;
     }
 
-    public function getSubscriptionId(): string
+    /**
+     * @return int
+     */
+    public function getCartId(): int
     {
-        return $this->subscriptionId;
+        return $this->cartId;
     }
 
-    public function toArray(): array
+    /**
+     * @return int
+     */
+    public function getSubscriptionCarrierId(): int
     {
-        $data = [
-            'mandateId' => $this->mandateId,
-            'metadata' => $this->metadata,
-            'amount' => $this->amount ? $this->amount->toArray() : null,
-        ];
+        return $this->subscriptionCarrierId;
+    }
 
-        return array_filter($data, static function ($val) {
-            return !empty($val);
-        });
+    public static function create(
+        string $mollieCustomerId,
+        string $mollieSubscriptionId,
+        Amount $orderAmount,
+        int $customerId,
+        int $cartId,
+        int $subscriptionCarrierId
+    ): self {
+        return new self(
+            $mollieCustomerId,
+            $mollieSubscriptionId,
+            $orderAmount,
+            $customerId,
+            $cartId,
+            $subscriptionCarrierId
+        );
     }
 }

@@ -39,6 +39,14 @@ class Amount implements JsonSerializable
         $this->currency = $currency;
     }
 
+    /**
+     * @return float
+     */
+    public function getValue(): float
+    {
+        return $this->value;
+    }
+
     public function toArray(): array
     {
         return [

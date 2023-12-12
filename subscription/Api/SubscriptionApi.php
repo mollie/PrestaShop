@@ -17,10 +17,10 @@ namespace Mollie\Subscription\Api;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
 use Mollie\Api\Resources\Subscription as MollieSubscription;
+use Mollie\Subscription\Api\Request\UpdateSubscriptionRequest;
 use Mollie\Subscription\DTO\CancelSubscriptionData;
 use Mollie\Subscription\DTO\CreateSubscriptionData;
 use Mollie\Subscription\DTO\GetSubscriptionData;
-use Mollie\Subscription\DTO\UpdateSubscriptionData;
 use Mollie\Subscription\Exception\SubscriptionApiException;
 use Mollie\Subscription\Factory\MollieApiFactory;
 
@@ -74,7 +74,7 @@ class SubscriptionApi
         }
     }
 
-    public function updateSubscription(UpdateSubscriptionData $updateSubscriptionData): MollieSubscription
+    public function updateSubscription(UpdateSubscriptionRequest $updateSubscriptionData): MollieSubscription
     {
         try {
             return $this->apiClient->subscriptions->update(

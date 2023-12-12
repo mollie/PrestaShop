@@ -55,7 +55,7 @@ class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
         $subscriptionCarrierDeliveryPriceProvider = $this->getService(SubscriptionCarrierDeliveryPriceProvider::class);
 
         $result = $subscriptionCarrierDeliveryPriceProvider->getPrice(
-            new SubscriptionCarrierDeliveryPriceData(
+            SubscriptionCarrierDeliveryPriceData::create(
                 $address->id,
                 $cart->id,
                 $cart->id_customer,
@@ -113,7 +113,7 @@ class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
         $subscriptionCarrierDeliveryPriceProvider = $this->getService(SubscriptionCarrierDeliveryPriceProvider::class);
 
         $subscriptionCarrierDeliveryPriceProvider->getPrice(
-            new SubscriptionCarrierDeliveryPriceData(
+            SubscriptionCarrierDeliveryPriceData::create(
                 $address->id,
                 $cart->id,
                 $cart->id_customer,
