@@ -1,14 +1,6 @@
 version: "3.7"
 
 services:
-  node:
-    image: node:latest
-    volumes:
-      - ./:/var/www/html
-    working_dir: /var/www/html
-    environment:
-      PATH: /var/www/html/_dev/node_modules/.bin/:$PATH
-
   mysql:
     platform: linux/amd64
     container_name: mysql-mollie-8
@@ -31,12 +23,12 @@ services:
       context: .
       dockerfile: .docker/Dockerfile.8
     environment:
-      PS_INSTALL_AUTO: 0
+      PS_INSTALL_AUTO: 1
       PS_ENABLE_SSL: 1
-      DB_PASSWD: $${DB_PASSWD}
+      DB_PASSWD: $DB_PASSWD
       DB_NAME: prestashop
       DB_SERVER: mysql
-      PS_DOMAIN: demoshop8.ngrok.io:8142
+      PS_DOMAIN: demoshop8.ngrok.io
       PS_FOLDER_INSTALL: install
       PS_FOLDER_ADMIN: admin1
     depends_on:
@@ -46,12 +38,13 @@ services:
     volumes:
       - ./:/var/www/html/modules/mollie
       - ./.docker/.htaccess8:/var/www/html/.htaccess
-      - ./tests/seed/settings8/parameters.php:/var/www/html/app/config/parameters.php
     networks:
       - prestashop_mollie_net_8
     healthcheck:
-      test: "wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1"
-      interval: 10s
+      test: "curl -f localhost:8142"
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   adminer:
     image: adminer
