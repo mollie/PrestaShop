@@ -30,17 +30,18 @@ class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
         $carrier = CarrierFactory::create([
             'price' => 999.00,
         ]);
-        $cart = CartFactory::create([
+
+        $cart = CartFactory::initialize()->create([
             'id_carrier' => $carrier->id,
         ]);
 
-        $targetProduct = ProductFactory::create([
+        $targetProduct = ProductFactory::initialize()->create([
             'quantity' => 10,
         ]);
-        $product1 = ProductFactory::create([
+        $product1 = ProductFactory::initialize()->create([
             'quantity' => 10,
         ]);
-        $product2 = ProductFactory::create([
+        $product2 = ProductFactory::initialize()->create([
             'quantity' => 10,
         ]);
 
@@ -85,17 +86,18 @@ class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
                 $address::getZoneById($address->id),
             ],
         ]);
-        $cart = CartFactory::create([
+
+        $cart = CartFactory::initialize()->create([
             'id_carrier' => $carrier->id,
         ]);
 
-        $targetProduct = ProductFactory::create([
+        $targetProduct = ProductFactory::initialize()->create([
             'quantity' => 10,
         ]);
-        $product1 = ProductFactory::create([
+        $product1 = ProductFactory::initialize()->create([
             'quantity' => 10,
         ]);
-        $product2 = ProductFactory::create([
+        $product2 = ProductFactory::initialize()->create([
             'quantity' => 10,
         ]);
 
@@ -130,15 +132,5 @@ class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
             $product1,
             $product2,
         ]);
-    }
-
-    /**
-     * @param \ObjectModel[] $objects
-     */
-    private function removeFactories(array $objects): void
-    {
-        foreach ($objects as $object) {
-            $object->delete();
-        }
     }
 }
