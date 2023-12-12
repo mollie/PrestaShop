@@ -18,6 +18,15 @@ if (!defined('_PS_VERSION_')) {
 
 class CouldNotHandleRecurringOrder extends MollieSubscriptionException
 {
+    public static function failedToHandleSubscriptionCartCloning(\Throwable $exception): self
+    {
+        return new self(
+            'Failed to handle subscription cart cloning',
+            ExceptionCode::RECURRING_ORDER_FAILED_TO_HANDLE_SUBSCRIPTION_CART_CLONING,
+            $exception
+        );
+    }
+
     public static function failedToMatchSelectedCarrier(
         int $activeSubscriptionCarrierId,
         int $orderSubscriptionCarrierId
@@ -39,10 +48,14 @@ class CouldNotHandleRecurringOrder extends MollieSubscriptionException
         );
     }
 
-    public static function failedToApplySelectedCarrier(): self
+    public static function failedToApplySelectedCarrier(int $expectedCarrierId, int $currentCarrierId): self
     {
         return new self(
-            'Failed to apply selected carrier',
+            sprintf(
+                'Failed to apply selected carrier. Expected carrier ID: (%s). Current carrier ID: (%s)',
+                $expectedCarrierId,
+                $currentCarrierId
+            ),
             ExceptionCode::RECURRING_ORDER_FAILED_TO_APPLY_SELECTED_CARRIER
         );
     }

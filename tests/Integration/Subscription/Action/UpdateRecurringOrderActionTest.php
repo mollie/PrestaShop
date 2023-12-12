@@ -43,8 +43,6 @@ class UpdateRecurringOrderActionTest extends BaseTestCase
             'id_mol_recurring_order' => $recurringOrder->id,
             'total_tax_incl' => 99.99,
         ]);
-
-        $recurringOrder->delete();
     }
 
     public function testItUnsuccessfullyUpdatesRecordFailedToFindRecurringOrder(): void

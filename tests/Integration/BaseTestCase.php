@@ -36,6 +36,10 @@ class BaseTestCase extends TestCase
 
         self::clearCache();
 
+        foreach ($this->truncatableTables() as $table) {
+            $this->truncateTable($table);
+        }
+
         // Some tests might have cleared the configuration
         \Configuration::loadConfiguration();
 
@@ -172,13 +176,57 @@ class BaseTestCase extends TestCase
         }
     }
 
-    /**
-     * @param \ObjectModel[] $objects
-     */
-    protected function removeFactories(array $objects): void
+    private function truncatableTables(): array
     {
-        foreach ($objects as $object) {
-            $object->delete();
-        }
+        return [
+            \Product::$definition['table'],
+
+            \Product::$definition['table'] . '_attribute',
+            \Product::$definition['table'] . '_lang',
+            \Product::$definition['table'] . '_shop',
+
+            \Address::$definition['table'],
+
+            \Customer::$definition['table'],
+            \Customer::$definition['table'] . '_group',
+
+            \RangePrice::$definition['table'],
+
+            'module_carrier',
+
+            \Carrier::$definition['table'],
+            \Carrier::$definition['table'] . '_group',
+            \Carrier::$definition['table'] . '_lang',
+            \Carrier::$definition['table'] . '_shop',
+            \Carrier::$definition['table'] . '_zone',
+            \Carrier::$definition['table'] . '_tax_rules_group_shop',
+
+            \Cart::$definition['table'],
+            \Cart::$definition['table'] . '_product',
+
+            \CartRule::$definition['table'],
+            \CartRule::$definition['table'] . '_lang',
+            \CartRule::$definition['table'] . '_shop',
+
+            \SpecificPrice::$definition['table'],
+            \SpecificPrice::$definition['table'] . '_rule',
+            \SpecificPrice::$definition['table'] . '_priority',
+
+            \MolRecurringOrdersProduct::$definition['table'],
+            \MolRecurringOrder::$definition['table'],
+
+            \Tax::$definition['table'],
+            \Tax::$definition['table'] . '_lang',
+            \TaxRule::$definition['table'],
+
+            \TaxRulesGroup::$definition['table'],
+            \TaxRulesGroup::$definition['table'] . '_shop',
+        ];
+    }
+
+    public function truncateTable(string $table): void
+    {
+        \Db::getInstance()->disableCache();
+        \Db::getInstance()->execute('TRUNCATE TABLE `' . _DB_PREFIX_ . $table . '`');
     }
 }
