@@ -26,24 +26,20 @@ use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\TransactionException;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\CarrierRepositoryInterface;
-use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MailService;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
-use Mollie\Subscription\Action\CreateSpecificPriceAction;
 use Mollie\Subscription\Api\SubscriptionApi;
-use Mollie\Subscription\DTO\CreateSpecificPriceData;
+use Mollie\Subscription\DTO\CloneOriginalSubscriptionCartData;
 use Mollie\Subscription\Exception\CouldNotHandleRecurringOrder;
 use Mollie\Subscription\Factory\GetSubscriptionDataFactory;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
-use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
 use Mollie\Subscription\Utility\ClockInterface;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\SecureKeyUtility;
 use MolRecurringOrder;
-use MolRecurringOrdersProduct;
 use Order;
 
 if (!defined('_PS_VERSION_')) {
@@ -74,16 +70,12 @@ class RecurringOrderHandler
     private $mailService;
     /** @var ConfigurationAdapter */
     private $configuration;
-    /** @var RecurringOrdersProductRepositoryInterface */
-    private $recurringOrdersProductRepository;
     /** @var CarrierRepositoryInterface */
     private $carrierRepository;
     /** @var PrestaLoggerInterface */
     private $logger;
-    /** @var CreateSpecificPriceAction */
-    private $createSpecificPriceAction;
-    /** @var Mollie\Repository\OrderRepositoryInterface */
-    private $orderRepository;
+    /** @var CloneOriginalSubscriptionCartHandler */
+    private $cloneOriginalSubscriptionCartHandler;
 
     public function __construct(
         SubscriptionApi $subscriptionApi,
@@ -97,12 +89,10 @@ class RecurringOrderHandler
         ClockInterface $clock,
         MailService $mailService,
         ConfigurationAdapter $configuration,
-        RecurringOrdersProductRepositoryInterface $recurringOrdersProductRepository,
         CarrierRepositoryInterface $carrierRepository,
         // TODO use subscription logger after it's fixed
         PrestaLoggerInterface $logger,
-        CreateSpecificPriceAction $createSpecificPriceAction,
-        OrderRepositoryInterface $orderRepository
+        CloneOriginalSubscriptionCartHandler $cloneOriginalSubscriptionCartHandler
     ) {
         $this->subscriptionApi = $subscriptionApi;
         $this->subscriptionDataFactory = $subscriptionDataFactory;
@@ -115,11 +105,9 @@ class RecurringOrderHandler
         $this->clock = $clock;
         $this->mailService = $mailService;
         $this->configuration = $configuration;
-        $this->recurringOrdersProductRepository = $recurringOrdersProductRepository;
         $this->carrierRepository = $carrierRepository;
         $this->logger = $logger;
-        $this->createSpecificPriceAction = $createSpecificPriceAction;
-        $this->orderRepository = $orderRepository;
+        $this->cloneOriginalSubscriptionCartHandler = $cloneOriginalSubscriptionCartHandler;
     }
 
     public function handle(string $transactionId): string
@@ -164,60 +152,18 @@ class RecurringOrderHandler
      */
     private function createSubscription(Payment $transaction, MolRecurringOrder $recurringOrder, MollieSubscription $subscription): void
     {
-        $cart = new Cart($recurringOrder->id_cart);
-
-        /** @var array{success: bool, cart: Cart}|bool $newCart */
-        $newCart = $cart->duplicate();
-
-        if (!$newCart || !$newCart['success']) {
-            return;
+        try {
+            $newCart = $this->cloneOriginalSubscriptionCartHandler->run(
+                CloneOriginalSubscriptionCartData::create(
+                    (int) $recurringOrder->id_cart,
+                    (int) $recurringOrder->id_mol_recurring_orders_product,
+                    (int) $recurringOrder->id_address_invoice,
+                    (int) $recurringOrder->id_address_delivery
+                )
+            );
+        } catch (\Throwable $exception) {
+            throw CouldNotHandleRecurringOrder::failedToHandleSubscriptionCartCloning($exception);
         }
-
-        /** @var \Order|null $originalOrder */
-        $originalOrder = $this->orderRepository->findOneBy([
-            'id_order' => $recurringOrder->id_order,
-        ]);
-
-        if (!$originalOrder) {
-            return;
-        }
-
-        /** @var Cart $newCart */
-        $newCart = $newCart['cart'];
-
-        $newCart->id_shop = $originalOrder->id_shop;
-        $newCart->id_shop_group = $originalOrder->id_shop_group;
-
-        $newCart->update();
-
-        /** @var MolRecurringOrdersProduct $subscriptionProduct */
-        $subscriptionProduct = $this->recurringOrdersProductRepository->findOneBy([
-            'id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product,
-        ]);
-
-        $cartProducts = $newCart->getProducts();
-
-        foreach ($cartProducts as $cartProduct) {
-            if (
-                (int) $cartProduct['id_product'] === (int) $subscriptionProduct->id_product &&
-                (int) $cartProduct['id_product_attribute'] === (int) $subscriptionProduct->id_product_attribute
-            ) {
-                continue;
-            }
-
-            $newCart->deleteProduct((int) $cartProduct['id_product'], (int) $cartProduct['id_product_attribute']);
-        }
-
-        /**
-         * NOTE: New order can't have soft deleted delivery address
-         */
-        $newCart = $this->updateSubscriptionOrderAddress(
-            $newCart,
-            (int) $recurringOrder->id_address_invoice,
-            (int) $recurringOrder->id_address_delivery
-        );
-
-        $recurringOrderProduct = new MolRecurringOrdersProduct($recurringOrder->id_mol_recurring_orders_product);
 
         $activeSubscriptionCarrierId = (int) $this->configuration->get(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID);
         $orderSubscriptionCarrierId = (int) ($subscription->metadata->subscription_carrier_id ?? 0);
@@ -243,24 +189,11 @@ class RecurringOrderHandler
 
         $newCart->update();
 
-        $cartCarrier = (int) ($newCart->getDeliveryOption(null, false, false)[$newCart->id_address_delivery] ?? 0);
+        $updatedCartCarrierId = (int) ($newCart->getDeliveryOption(null, false, false)[$newCart->id_address_delivery] ?? 0);
 
-        if ((int) $carrier->id !== $cartCarrier) {
-            throw CouldNotHandleRecurringOrder::failedToApplySelectedCarrier();
+        if ((int) $carrier->id !== $updatedCartCarrierId) {
+            throw CouldNotHandleRecurringOrder::failedToApplySelectedCarrier((int) $carrier->id, $updatedCartCarrierId);
         }
-
-        /**
-         * Creating temporary specific price for recurring order that will be deleted after order is created
-         */
-        $specificPrice = $this->createSpecificPriceAction->run(CreateSpecificPriceData::create(
-            (int) $recurringOrderProduct->id_product,
-            (int) $recurringOrderProduct->id_product_attribute,
-            (float) $recurringOrderProduct->unit_price,
-            (int) $recurringOrder->id_customer,
-            (int) $newCart->id_shop,
-            (int) $newCart->id_shop_group,
-            (int) $recurringOrder->id_currency
-        ));
 
         $paymentMethod = $this->paymentMethodService->getPaymentMethod($transaction);
 
@@ -292,12 +225,8 @@ class RecurringOrderHandler
                 $newCart->secure_key
             );
         } catch (\Throwable $exception) {
-            $specificPrice->delete();
-
             throw $exception;
         }
-
-        $specificPrice->delete();
 
         $orderId = (int) Order::getIdByCartId((int) $newCart->id);
         $order = new Order($orderId);
@@ -339,26 +268,5 @@ class RecurringOrderHandler
         $recurringOrder->update();
 
         $this->mailService->sendSubscriptionCancelWarningEmail($recurringOrderId);
-    }
-
-    private function updateSubscriptionOrderAddress(Cart $cart, int $addressInvoiceId, int $addressDeliveryId): Cart
-    {
-        $cart->id_address_invoice = $addressInvoiceId;
-        $cart->id_address_delivery = $addressDeliveryId;
-
-        $cartProducts = $cart->getProducts();
-
-        foreach ($cartProducts as $cartProduct) {
-            $cart->setProductAddressDelivery(
-                (int) $cartProduct['id_product'],
-                (int) $cartProduct['id_product_attribute'],
-                (int) $cartProduct['id_address_delivery'],
-                $addressDeliveryId
-            );
-        }
-
-        $cart->save();
-
-        return $cart;
     }
 }

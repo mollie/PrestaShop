@@ -66,15 +66,6 @@ class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
         );
 
         $this->assertEquals(999.00, $result);
-
-        $this->removeFactories([
-            $carrier,
-            $address,
-            $cart,
-            $targetProduct,
-            $product1,
-            $product2,
-        ]);
     }
 
     public function testItUnsuccessfullyProvidesCarrierDeliveryPriceCarrierIsOutOfZone(): void
@@ -123,14 +114,5 @@ class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
                 $carrier->id
             )
         );
-
-        $this->removeFactories([
-            $carrier,
-            $address,
-            $cart,
-            $targetProduct,
-            $product1,
-            $product2,
-        ]);
     }
 }

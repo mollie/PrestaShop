@@ -79,7 +79,5 @@ class CreateRecurringOrderActionTest extends BaseTestCase
             'reminder_at' => '2023-09-10 12:00:00',
             'cancelled_at' => '2023-09-11 12:00:00',
         ]);
-
-        $result->delete();
     }
 }
