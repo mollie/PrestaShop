@@ -30,7 +30,7 @@ class CreateRecurringOrdersProductActionTest extends BaseTestCase
         /** @var CreateRecurringOrdersProductAction $createRecurringOrdersProductAction */
         $createRecurringOrdersProductAction = $this->getService(CreateRecurringOrdersProductAction::class);
 
-        $result = $createRecurringOrdersProductAction->run(CreateRecurringOrdersProductData::create(
+        $createRecurringOrdersProductAction->run(CreateRecurringOrdersProductData::create(
             1,
             1,
             1,
@@ -43,7 +43,5 @@ class CreateRecurringOrdersProductActionTest extends BaseTestCase
             'quantity' => 1,
             'unit_price' => 19.99,
         ]);
-
-        $result->delete();
     }
 }

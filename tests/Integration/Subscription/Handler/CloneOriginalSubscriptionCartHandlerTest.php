@@ -71,23 +71,6 @@ class CloneOriginalSubscriptionCartHandlerTest extends BaseTestCase
         $this->assertEquals($subscriptionProduct->getDefaultIdProductAttribute(), $simpleProduct->getDefaultIdProductAttribute());
         $this->assertEquals(3, (int) $newCartProducts[0]['cart_quantity']);
         $this->assertEquals(99.99, (float) $newCartProducts[0]['price_with_reduction_without_tax']);
-
-        $originalCart->delete();
-        $result->delete();
-        $invoiceAddress->delete();
-        $deliveryAddress->delete();
-        $simpleProduct->delete();
-        $subscriptionProduct->delete();
-        $recurringOrderProduct->delete();
-
-        $this->removeFactories([
-            $originalCart,
-            $result,
-            $deliveryAddress,
-            $simpleProduct,
-            $subscriptionProduct,
-            $recurringOrderProduct,
-        ]);
     }
 
     public function testItUnsuccessfullyHandlesTaskNoSubscriptionProductsAvailable(): void
