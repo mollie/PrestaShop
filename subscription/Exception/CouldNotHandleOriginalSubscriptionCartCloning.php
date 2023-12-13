@@ -18,11 +18,11 @@ if (!defined('_PS_VERSION_')) {
 
 class CouldNotHandleOriginalSubscriptionCartCloning extends MollieSubscriptionException
 {
-    public static function failedToRetrieveCart(int $cartId): self
+    public static function failedToFindCart(int $cartId): self
     {
         return new self(
-            sprintf('Failed to retrieve cart. Cart ID: (%s)', $cartId),
-            ExceptionCode::RECURRING_ORDER_FAILED_TO_RETRIEVE_CART
+            sprintf('Failed to find cart. Cart ID: (%s)', $cartId),
+            ExceptionCode::RECURRING_ORDER_FAILED_TO_FIND_CART
         );
     }
 
@@ -34,14 +34,14 @@ class CouldNotHandleOriginalSubscriptionCartCloning extends MollieSubscriptionEx
         );
     }
 
-    public static function failedToRetrieveSubscriptionProduct(int $recurringOrderProduct): self
+    public static function failedToFindRecurringOrderProduct(int $recurringOrderProduct): self
     {
         return new self(
             sprintf(
-                'Failed to retrieve subscription product. Recurring order product ID: (%s)',
+                'Failed to find recurring order product. Recurring order product ID: (%s)',
                 $recurringOrderProduct
             ),
-            ExceptionCode::RECURRING_ORDER_FAILED_TO_RETRIEVE_SUBSCRIPTION_PRODUCT
+            ExceptionCode::RECURRING_ORDER_FAILED_TO_FIND_RECURRING_ORDER_PRODUCT
         );
     }
 
