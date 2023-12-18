@@ -12,6 +12,8 @@
 
 namespace Mollie\Tests\Integration\Subscription\Provider;
 
+use Mollie\Subscription\Exception\CouldNotProvideGeneralSubscriptionMailData;
+use Mollie\Subscription\Exception\ExceptionCode;
 use Mollie\Subscription\Provider\GeneralSubscriptionMailDataProvider;
 use Mollie\Tests\Integration\BaseTestCase;
 use Mollie\Tests\Integration\Factory\CurrencyFactory;
@@ -79,5 +81,104 @@ class GeneralSubscriptionMailDataProviderTest extends BaseTestCase
             'firstName' => (string) $customer->firstname,
             'lastName' => (string) $customer->lastname,
         ], $result->toArray());
+    }
+
+    public function testItUnsuccessfullyProvidesDataFailedToFindRecurringOrder(): void
+    {
+        /** @var GeneralSubscriptionMailDataProvider $generalSubscriptionMailDataProvider */
+        $generalSubscriptionMailDataProvider = $this->getService(GeneralSubscriptionMailDataProvider::class);
+
+        $this->expectException(CouldNotProvideGeneralSubscriptionMailData::class);
+        $this->expectExceptionCode(ExceptionCode::RECURRING_ORDER_FAILED_TO_FIND_RECURRING_ORDER);
+
+        $generalSubscriptionMailDataProvider->run(0);
+    }
+
+    public function testItUnsuccessfullyProvidesDataFailedToFindRecurringOrderProduct(): void
+    {
+        /** @var \MolRecurringOrder $recurringOrder */
+        $recurringOrder = MolRecurringOrderFactory::initialize()->create([
+            'id_mol_recurring_orders_product' => 0,
+        ]);
+
+        /** @var GeneralSubscriptionMailDataProvider $generalSubscriptionMailDataProvider */
+        $generalSubscriptionMailDataProvider = $this->getService(GeneralSubscriptionMailDataProvider::class);
+
+        $this->expectException(CouldNotProvideGeneralSubscriptionMailData::class);
+        $this->expectExceptionCode(ExceptionCode::RECURRING_ORDER_FAILED_TO_FIND_RECURRING_ORDER_PRODUCT);
+
+        $generalSubscriptionMailDataProvider->run((int) $recurringOrder->id);
+    }
+
+    public function testItUnsuccessfullyProvidesDataFailedToFindCustomer(): void
+    {
+        /** @var \MolRecurringOrdersProduct $recurringOrderProduct */
+        $recurringOrderProduct = MolRecurringOrdersProductFactory::initialize()->create();
+
+        /** @var \MolRecurringOrder $recurringOrder */
+        $recurringOrder = MolRecurringOrderFactory::initialize()->create([
+            'id_mol_recurring_orders_product' => $recurringOrderProduct->id,
+            'id_customer' => 0,
+        ]);
+
+        /** @var GeneralSubscriptionMailDataProvider $generalSubscriptionMailDataProvider */
+        $generalSubscriptionMailDataProvider = $this->getService(GeneralSubscriptionMailDataProvider::class);
+
+        $this->expectException(CouldNotProvideGeneralSubscriptionMailData::class);
+        $this->expectExceptionCode(ExceptionCode::RECURRING_ORDER_FAILED_TO_FIND_CUSTOMER);
+
+        $generalSubscriptionMailDataProvider->run((int) $recurringOrder->id);
+    }
+
+    public function testItUnsuccessfullyProvidesDataFailedToFindProduct(): void
+    {
+        /** @var \MolRecurringOrdersProduct $recurringOrderProduct */
+        $recurringOrderProduct = MolRecurringOrdersProductFactory::initialize()->create([
+            'id_product' => 0,
+        ]);
+
+        $customer = CustomerFactory::create();
+
+        /** @var \MolRecurringOrder $recurringOrder */
+        $recurringOrder = MolRecurringOrderFactory::initialize()->create([
+            'id_mol_recurring_orders_product' => $recurringOrderProduct->id,
+            'id_customer' => $customer->id,
+        ]);
+
+        /** @var GeneralSubscriptionMailDataProvider $generalSubscriptionMailDataProvider */
+        $generalSubscriptionMailDataProvider = $this->getService(GeneralSubscriptionMailDataProvider::class);
+
+        $this->expectException(CouldNotProvideGeneralSubscriptionMailData::class);
+        $this->expectExceptionCode(ExceptionCode::RECURRING_ORDER_FAILED_TO_FIND_PRODUCT);
+
+        $generalSubscriptionMailDataProvider->run((int) $recurringOrder->id);
+    }
+
+    public function testItUnsuccessfullyProvidesDataFailedToFindCurrency(): void
+    {
+        /** @var \Product $product */
+        $product = ProductFactory::initialize()->create();
+
+        /** @var \MolRecurringOrdersProduct $recurringOrderProduct */
+        $recurringOrderProduct = MolRecurringOrdersProductFactory::initialize()->create([
+            'id_product' => $product->id,
+        ]);
+
+        $customer = CustomerFactory::create();
+
+        /** @var \MolRecurringOrder $recurringOrder */
+        $recurringOrder = MolRecurringOrderFactory::initialize()->create([
+            'id_mol_recurring_orders_product' => $recurringOrderProduct->id,
+            'id_customer' => $customer->id,
+            'id_currency' => 0,
+        ]);
+
+        /** @var GeneralSubscriptionMailDataProvider $generalSubscriptionMailDataProvider */
+        $generalSubscriptionMailDataProvider = $this->getService(GeneralSubscriptionMailDataProvider::class);
+
+        $this->expectException(CouldNotProvideGeneralSubscriptionMailData::class);
+        $this->expectExceptionCode(ExceptionCode::RECURRING_ORDER_FAILED_TO_FIND_CURRENCY);
+
+        $generalSubscriptionMailDataProvider->run((int) $recurringOrder->id);
     }
 }
