@@ -23,6 +23,7 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\SubscriptionStatus;
 use Mollie\Config\Config;
 use Mollie\Errors\Http\HttpStatusCode;
+use Mollie\Exception\MollieException;
 use Mollie\Exception\TransactionException;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\CarrierRepositoryInterface;
@@ -270,9 +271,19 @@ class RecurringOrderHandler
         }
     }
 
+    /**
+     * @throws \Throwable
+     */
     private function cancelSubscription(int $recurringOrderId): void
     {
-        $recurringOrder = $this->recurringOrderRepository->findOneBy(['id_mol_recurring_order' => $recurringOrderId]);
+        try {
+            /** @var \MolRecurringOrder $recurringOrder */
+            $recurringOrder = $this->recurringOrderRepository->findOrFail([
+                'id_mol_recurring_order' => $recurringOrderId,
+            ]);
+        } catch (\Throwable $exception) {
+            throw MollieException::unknownError($exception);
+        }
 
         $recurringOrder->status = SubscriptionStatus::STATUS_CANCELED;
         $recurringOrder->cancelled_at = $this->clock->getCurrentDate();

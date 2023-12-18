@@ -68,10 +68,14 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
             ]);
         } catch (\Throwable $exception) {
             Tools::redirect($failureRedirectUrl);
+
+            return;
         }
 
         if ((int) $recurringOrder->id_customer !== (int) $this->context->customer->id) {
             Tools::redirect($failureRedirectUrl);
+
+            return;
         }
 
         /** @var PrestaLoggerInterface $logger */
@@ -92,6 +96,8 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
             ]);
 
             Tools::redirect($failureRedirectUrl);
+
+            return;
         }
 
         parent::initContent();

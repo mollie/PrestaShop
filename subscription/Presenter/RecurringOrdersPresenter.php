@@ -86,6 +86,7 @@ class RecurringOrdersPresenter
         /** @var MolRecurringOrder $recurringOrder */
         foreach ($recurringOrders as $recurringOrder) {
             try {
+                /** @var \MolRecurringOrdersProduct $recurringProduct */
                 $recurringProduct = $this->recurringOrdersProductRepository->findOrFail([
                     'id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product,
                 ]);
