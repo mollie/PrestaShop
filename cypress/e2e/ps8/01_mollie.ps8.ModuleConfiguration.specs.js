@@ -83,6 +83,8 @@ it('C339339: Checking the Advanced Settings tab, verifying the Front-end compone
       cy.get('[name="MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID"]').select('Click and collect')
       cy.get('#module_form_submit_btn').click({force:true}) //checking the saving
       cy.get('[class="alert alert-success"]').should('be.visible') //checking if saving returns green alert
+      cy.reload()
+      cy.matchImage(); // let's make a snapshot for visual regression testing later, if UI matches
       //cy.window() will check if there are no Errors in console
 });
 it('C688472: Checking the Subscriptions tab, and console errors', () => {
@@ -101,5 +103,7 @@ it('C688473: Checking the Subscriptions FAQ, and console errors', () => {
       cy.get(':nth-child(4) > .col-lg-12 > .card').should('be.visible')
       cy.get(':nth-child(5) > .col-lg-12 > .card').should('be.visible')
       cy.get(':nth-child(6) > .col-lg-12 > .card').should('be.visible')
+      cy.matchImage(); // let's make a snapshot for visual regression testing later, if UI matches
+
 });
 })

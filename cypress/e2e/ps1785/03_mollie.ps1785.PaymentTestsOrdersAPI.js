@@ -51,6 +51,7 @@ it.skip('C339343: 06 Vouchers Order BO Refunding, Shipping (Paid part only) [Ord
 })
 it('C339344: 07 Bancontact Checkouting [Orders API]', () => {
       cy.navigatingToThePayment()
+      cy.matchImage(); // let's make a snapshot for visual regression testing later, if UI matches
       //Payment method choosing
       cy.contains('Bancontact').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
