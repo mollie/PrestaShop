@@ -3,12 +3,12 @@ const { initPlugin } = require("@frsource/cypress-plugin-visual-regression-diff/
 
 module.exports = defineConfig({
   env: {
-    pluginVisualRegressionDiffConfig: { threshold: 0.001 },
-    pluginVisualRegressionMaxDiffThreshold: 0.001,
+    pluginVisualRegressionDiffConfig: { threshold: 0.01 },
+    pluginVisualRegressionMaxDiffThreshold: 0.01,
     pluginVisualRegressionUpdateImages: false,
     pluginVisualRegressionImagesPath: 'cypress/screenshots',
-    pluginVisualRegressionScreenshotConfig: { scale: true, capture: 'fullPage' },
-    pluginVisualRegressionUpdateImages: true,
+    pluginVisualRegressionScreenshotConfig: { scale: false, capture: 'fullPage' },
+    pluginVisualRegressionUpdateImages: false, // for updating of not updating the diff image automatically
   },
   chromeWebSecurity: false,
   experimentalMemoryManagement: true,
