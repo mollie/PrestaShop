@@ -223,6 +223,8 @@ class BaseTestCase extends TestCase
 
             \TaxRulesGroup::$definition['table'],
             \TaxRulesGroup::$definition['table'] . '_shop',
+
+            \MolOrderPaymentFee::$definition['table'],
         ];
     }
 

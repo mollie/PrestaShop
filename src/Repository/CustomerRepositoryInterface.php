@@ -12,6 +12,8 @@
 
 namespace Mollie\Repository;
 
+use Mollie\Shared\Infrastructure\Repository\ReadOnlyRepositoryInterface;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }

@@ -34,19 +34,14 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Shared\Infrastructure\Repository;
+namespace Mollie\Shared\Core\Shared\Repository;
 
-use Currency;
-use Mollie\Repository\AbstractRepository;
+use Mollie\Shared\Infrastructure\Repository\ReadOnlyRepositoryInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CurrencyRepository extends AbstractRepository implements CurrencyRepositoryInterface
+interface CurrencyRepositoryInterface extends ReadOnlyRepositoryInterface
 {
-    public function __construct()
-    {
-        parent::__construct(Currency::class);
-    }
 }

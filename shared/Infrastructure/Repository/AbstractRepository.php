@@ -10,11 +10,9 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Repository;
+namespace Mollie\Shared\Infrastructure\Repository;
 
-use ObjectModel;
-use PrestaShopCollection;
-use PrestaShopException;
+use Mollie\Shared\Infrastructure\Exception\CouldNotHandleAbstractRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -27,9 +25,6 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
      */
     private $fullyClassifiedClassName;
 
-    /**
-     * @param string|\stdClass $fullyClassifiedClassName
-     */
     public function __construct($fullyClassifiedClassName)
     {
         if (is_object($fullyClassifiedClassName)) {
@@ -37,22 +32,20 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
 
             return;
         }
+
         $this->fullyClassifiedClassName = $fullyClassifiedClassName;
     }
 
-    public function findAll()
+    /** {@inheritdoc} */
+    public function findAll(int $langId = null): \PrestaShopCollection
     {
-        return new PrestaShopCollection($this->fullyClassifiedClassName);
+        return new \PrestaShopCollection($this->fullyClassifiedClassName, $langId);
     }
 
-    /**
-     * @return ObjectModel|null
-     *
-     * @throws PrestaShopException
-     */
-    public function findOneBy(array $keyValueCriteria)
+    /** {@inheritdoc} */
+    public function findOneBy(array $keyValueCriteria, int $langId = null): ?\ObjectModel
     {
-        $psCollection = new PrestaShopCollection($this->fullyClassifiedClassName);
+        $psCollection = new \PrestaShopCollection($this->fullyClassifiedClassName, $langId);
 
         foreach ($keyValueCriteria as $field => $value) {
             $psCollection = $psCollection->where($field, '=', $value);
@@ -64,14 +57,10 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
         return false === $first ? null : $first;
     }
 
-    /**
-     * @return PrestaShopCollection|null
-     *
-     * @throws PrestaShopException
-     */
-    public function findAllBy(array $keyValueCriteria)
+    /** {@inheritdoc} */
+    public function findAllBy(array $keyValueCriteria, int $langId = null): ?\PrestaShopCollection
     {
-        $psCollection = new PrestaShopCollection($this->fullyClassifiedClassName);
+        $psCollection = new \PrestaShopCollection($this->fullyClassifiedClassName, $langId);
 
         foreach ($keyValueCriteria as $field => $value) {
             $psCollection = $psCollection->where($field, '=', $value);
@@ -81,5 +70,21 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
 
         /* @phpstan-ignore-next-line */
         return false === $all ? null : $all;
+    }
+
+    /** {@inheritdoc} */
+    public function findOrFail(array $keyValueCriteria, int $langId = null): \ObjectModel
+    {
+        try {
+            $value = $this->findOneBy($keyValueCriteria, $langId);
+        } catch (\Throwable $exception) {
+            throw CouldNotHandleAbstractRepository::unknownError($exception);
+        }
+
+        if (!$value) {
+            throw CouldNotHandleAbstractRepository::failedToFindRecord($this->fullyClassifiedClassName, $keyValueCriteria);
+        }
+
+        return $value;
     }
 }

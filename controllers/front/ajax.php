@@ -17,7 +17,7 @@ use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Provider\PaymentFeeProviderInterface;
-use Mollie\Shared\Infrastructure\Repository\CurrencyRepositoryInterface;
+use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
 use Mollie\Subscription\Exception\ExceptionCode;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\NumberUtility;

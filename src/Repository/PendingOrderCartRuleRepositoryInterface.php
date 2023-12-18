@@ -12,6 +12,7 @@
 
 namespace Mollie\Repository;
 
+use Mollie\Shared\Infrastructure\Repository\ReadOnlyRepositoryInterface;
 use MolPendingOrderCartRule;
 use Order;
 use OrderCartRule;

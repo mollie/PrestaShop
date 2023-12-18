@@ -12,7 +12,7 @@
 
 namespace Mollie\Subscription\Provider;
 
-use Mollie\Shared\Infrastructure\Repository\CurrencyRepositoryInterface;
+use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
 use Mollie\Subscription\DTO\Object\Amount;
 use Mollie\Subscription\DTO\SubscriptionCarrierDeliveryPriceData;
 use Mollie\Subscription\DTO\SubscriptionOrderAmountProviderData;
