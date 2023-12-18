@@ -15,6 +15,7 @@ namespace Mollie\Tests\Integration\Subscription\Validator;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use Mollie\Tests\Integration\BaseTestCase;
+use Mollie\Tests\Integration\Factory\ProductFactory;
 
 class SubscriptionProductValidatorTest extends BaseTestCase
 {
@@ -22,7 +23,8 @@ class SubscriptionProductValidatorTest extends BaseTestCase
     {
         parent::setUp();
 
-        $product = new \Product(1);
+        /** @var \Product $product */
+        $product = ProductFactory::initialize()->create();
 
         $this->randomAttributeId = 1;
 
@@ -87,7 +89,7 @@ class SubscriptionProductValidatorTest extends BaseTestCase
             ],
             'only random attribute' => [
                 'subscription reference' => '',
-                'has extra attribute' => true,
+                'has extra attribute' => false,
                 'expected result' => false,
             ],
         ];

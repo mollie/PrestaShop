@@ -18,11 +18,11 @@ if (!defined('_PS_VERSION_')) {
 
 class CouldNotUpdateRecurringOrder extends MollieSubscriptionException
 {
-    public static function failedToFindOrder(int $orderId): self
+    public static function failedToFindRecurringOrder(int $recurringOrderId): self
     {
         return new self(
-            sprintf('Failed to find order. Order ID: (%s)', $orderId),
-            ExceptionCode::RECURRING_ORDER_FAILED_TO_FIND_ORDER
+            sprintf('Failed to find recurring order. Recurring order ID: (%s)', $recurringOrderId),
+            ExceptionCode::RECURRING_ORDER_FAILED_TO_FIND_RECURRING_ORDER
         );
     }
 }

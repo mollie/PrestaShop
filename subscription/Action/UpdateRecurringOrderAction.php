@@ -59,7 +59,7 @@ class UpdateRecurringOrderAction
         }
 
         if (!$recurringOrder) {
-            throw CouldNotUpdateRecurringOrder::failedToFindOrder($data->getMollieRecurringOrderId());
+            throw CouldNotUpdateRecurringOrder::failedToFindRecurringOrder($data->getMollieRecurringOrderId());
         }
 
         try {

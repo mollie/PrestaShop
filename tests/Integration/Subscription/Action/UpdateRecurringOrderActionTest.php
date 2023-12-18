@@ -51,7 +51,7 @@ class UpdateRecurringOrderActionTest extends BaseTestCase
         $updateRecurringOrderAction = $this->getService(UpdateRecurringOrderAction::class);
 
         $this->expectException(CouldNotUpdateRecurringOrder::class);
-        $this->expectExceptionCode(ExceptionCode::RECURRING_ORDER_FAILED_TO_FIND_ORDER);
+        $this->expectExceptionCode(ExceptionCode::RECURRING_ORDER_FAILED_TO_FIND_RECURRING_ORDER);
 
         $updateRecurringOrderAction->run(UpdateRecurringOrderData::create(
             0,

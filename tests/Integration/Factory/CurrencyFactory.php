@@ -14,14 +14,14 @@ namespace Mollie\Tests\Integration\Factory;
 
 use Invertus\Prestashop\Models\Factory\Factory;
 
-class MolRecurringOrdersProductFactory extends Factory
+class CurrencyFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = \MolRecurringOrdersProduct::class;
+    protected $model = \Currency::class;
 
     /**
      * Define the model's default state.
@@ -31,13 +31,11 @@ class MolRecurringOrdersProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'id_product' => function () {
-                return ProductFactory::initialize()->create()->id;
-            },
-            'id_product_attribute' => 0, // TODO product factory with combinations
-            'quantity' => $this->faker->numberBetween(1, 9),
-            'unit_price' => $this->faker->randomFloat(2, 10, 99),
-            'date_update' => $this->faker->date('Y-m-d H:i:s'),
+            'iso_code' => $this->faker->currencyCode,
+            'precision' => $this->faker->numberBetween(2, 6),
+            'conversion_rate' => $this->faker->randomFloat(2, 0.5, 1.5),
+            'active' => true,
+            'deleted' => false,
         ];
     }
 }
