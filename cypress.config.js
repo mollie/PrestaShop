@@ -7,8 +7,8 @@ module.exports = defineConfig({
     pluginVisualRegressionMaxDiffThreshold: 0.01,
     pluginVisualRegressionUpdateImages: true, // for updating or not updating the diff image automatically
     pluginVisualRegressionImagesPath: 'cypress/screenshots',
-    pluginVisualRegressionScreenshotConfig: { scale: false, capture: 'fullPage' },
-    pluginVisualRegressionCreateMissingImages: true,
+    pluginVisualRegressionScreenshotConfig: { scale: true, capture: 'fullPage' },
+    pluginVisualRegressionCreateMissingImages: true, // baseline images updating
   },
   chromeWebSecurity: false,
   experimentalMemoryManagement: true,
