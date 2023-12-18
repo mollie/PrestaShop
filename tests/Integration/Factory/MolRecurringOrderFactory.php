@@ -34,7 +34,9 @@ class MolRecurringOrderFactory extends Factory
             'id_mol_recurring_orders_product' => $this->faker->numberBetween(1, 99999), // TODO recurring order product factory
             'id_order' => $this->faker->numberBetween(1, 99999), // TODO order factory
             'id_currency' => $this->faker->numberBetween(1, 99999), // TODO currency factory
-            'id_customer' => $this->faker->numberBetween(1, 99999), // TODO customer factory
+            'id_customer' => function () {
+                return CustomerFactory::create()->id;
+            },
             'id_address_delivery' => $this->faker->numberBetween(1, 99999), // TODO address factory
             'id_address_invoice' => $this->faker->numberBetween(1, 99999), // TODO address factory
             'description' => $this->faker->text(20),

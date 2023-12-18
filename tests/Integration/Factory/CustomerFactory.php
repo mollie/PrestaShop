@@ -24,6 +24,8 @@ class CustomerFactory implements FactoryInterface
         $customer->passwd = $data['passwd'] ?? 'test-passwd';
         $customer->is_guest = $data['is_guest'] ?? false;
         $customer->siret = $data['siret'] ?? 'test-siret';
+        $customer->id_lang = $data['id_lang'] ?? \Context::getContext()->language->id;
+        $customer->id_shop = $data['id_shop'] ?? \Context::getContext()->shop->id;
 
         $customer->save();
 

@@ -63,8 +63,6 @@ class GeneralSubscriptionMailDataProvider
      */
     public function run(int $recurringOrderId): GeneralSubscriptionMailData
     {
-        // TODO test this with feature test
-
         /** @var ?\MolRecurringOrder $recurringOrder */
         $recurringOrder = $this->recurringOrderRepository->findOneBy([
             'id_mol_recurring_order' => $recurringOrderId,
