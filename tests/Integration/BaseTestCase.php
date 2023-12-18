@@ -182,6 +182,8 @@ class BaseTestCase extends TestCase
             \Product::$definition['table'],
 
             \Product::$definition['table'] . '_attribute',
+            \Product::$definition['table'] . '_attribute_combination',
+            \Product::$definition['table'] . '_attribute_shop',
             \Product::$definition['table'] . '_lang',
             \Product::$definition['table'] . '_shop',
 

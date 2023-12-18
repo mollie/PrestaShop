@@ -54,7 +54,7 @@ class CloneOriginalSubscriptionCartHandler
         ]);
 
         if (!$originalCart) {
-            throw CouldNotHandleOriginalSubscriptionCartCloning::failedToRetrieveCart($data->getCartId());
+            throw CouldNotHandleOriginalSubscriptionCartCloning::failedToFindCart($data->getCartId());
         }
 
         /** @var array{success: bool, cart: \Cart}|bool $duplicatedCart */
@@ -73,7 +73,7 @@ class CloneOriginalSubscriptionCartHandler
         ]);
 
         if (!$subscriptionProduct) {
-            throw CouldNotHandleOriginalSubscriptionCartCloning::failedToRetrieveSubscriptionProduct($data->getRecurringOrderProductId());
+            throw CouldNotHandleOriginalSubscriptionCartCloning::failedToFindRecurringOrderProduct($data->getRecurringOrderProductId());
         }
 
         $cartProducts = $duplicatedCart->getProducts();

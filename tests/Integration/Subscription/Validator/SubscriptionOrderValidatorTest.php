@@ -16,6 +16,7 @@ use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use Mollie\Tests\Integration\BaseTestCase;
+use Mollie\Tests\Integration\Factory\ProductFactory;
 
 class SubscriptionOrderValidatorTest extends BaseTestCase
 {
@@ -24,7 +25,9 @@ class SubscriptionOrderValidatorTest extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $product = new \Product(1);
+
+        /** @var \Product $product */
+        $product = ProductFactory::initialize()->create();
 
         $this->randomAttributeId = self::NORMAL_PRODUCT_ATTRIBUTE_ID;
 
