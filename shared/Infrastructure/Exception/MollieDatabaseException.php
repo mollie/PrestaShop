@@ -15,7 +15,7 @@ namespace Mollie\Shared\Infrastructure\Exception;
 use Mollie\Exception\Code\ExceptionCode;
 use Mollie\Exception\MollieException;
 
-class CouldNotHandleAbstractRepository extends MollieException
+class MollieDatabaseException extends MollieException
 {
     public static function failedToFindRecord(string $className, array $keyValues): self
     {

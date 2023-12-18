@@ -44,16 +44,6 @@ interface ReadOnlyRepositoryInterface
      *
      * @throws MollieException
      *
-     * TODO handle method exception with custom methods, not unknownError
-     */
-    public function findAllByOrFail(array $keyValueCriteria, int $langId = null): \PrestaShopCollection;
-
-    /**
-     * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
-     *
-     * @throws MollieException
-     *
-     * TODO handle method exception with custom methods, not unknownError
      */
     public function findOrFail(array $keyValueCriteria, int $langId = null): \ObjectModel;
 }

@@ -23,7 +23,6 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\SubscriptionStatus;
 use Mollie\Config\Config;
 use Mollie\Errors\Http\HttpStatusCode;
-use Mollie\Exception\MollieException;
 use Mollie\Exception\TransactionException;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\CarrierRepositoryInterface;
@@ -118,14 +117,10 @@ class RecurringOrderHandler
     {
         $transaction = $this->mollie->getApiClient()->payments->get($transactionId);
 
-        try {
-            /** @var \MolRecurringOrder $recurringOrder */
-            $recurringOrder = $this->recurringOrderRepository->findOrFail([
-                'mollie_subscription_id' => $transaction->subscriptionId,
-            ]);
-        } catch (\Throwable $exception) {
-            throw TransactionException::unknownError($exception);
-        }
+        /** @var \MolRecurringOrder $recurringOrder */
+        $recurringOrder = $this->recurringOrderRepository->findOrFail([
+            'mollie_subscription_id' => $transaction->subscriptionId,
+        ]);
 
         $subscriptionData = $this->subscriptionDataFactory->build((int) $recurringOrder->id);
         $subscription = $this->subscriptionApi->getSubscription($subscriptionData);
@@ -276,14 +271,10 @@ class RecurringOrderHandler
      */
     private function cancelSubscription(int $recurringOrderId): void
     {
-        try {
-            /** @var \MolRecurringOrder $recurringOrder */
-            $recurringOrder = $this->recurringOrderRepository->findOrFail([
-                'id_mol_recurring_order' => $recurringOrderId,
-            ]);
-        } catch (\Throwable $exception) {
-            throw MollieException::unknownError($exception);
-        }
+        /** @var \MolRecurringOrder $recurringOrder */
+        $recurringOrder = $this->recurringOrderRepository->findOrFail([
+            'id_mol_recurring_order' => $recurringOrderId,
+        ]);
 
         $recurringOrder->status = SubscriptionStatus::STATUS_CANCELED;
         $recurringOrder->cancelled_at = $this->clock->getCurrentDate();

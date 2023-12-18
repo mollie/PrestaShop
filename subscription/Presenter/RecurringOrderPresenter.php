@@ -16,7 +16,6 @@ namespace Mollie\Subscription\Presenter;
 
 use Currency;
 use Mollie\Adapter\Language;
-use Mollie\Exception\MollieException;
 use Mollie\Subscription\Api\MethodApi;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
@@ -60,23 +59,15 @@ class RecurringOrderPresenter
      */
     public function present(int $recurringOrderId): array
     {
-        try {
-            /** @var \MolRecurringOrder $recurringOrder */
-            $recurringOrder = $this->recurringOrderRepository->findOrFail([
-                'id_mol_recurring_order' => $recurringOrderId,
-            ]);
-        } catch (\Throwable $exception) {
-            throw MollieException::unknownError($exception);
-        }
+        /** @var \MolRecurringOrder $recurringOrder */
+        $recurringOrder = $this->recurringOrderRepository->findOrFail([
+            'id_mol_recurring_order' => $recurringOrderId,
+        ]);
 
-        try {
-            /** @var \MolRecurringOrdersProduct $recurringProduct */
-            $recurringProduct = $this->recurringOrdersProductRepository->findOrFail([
-                'id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product,
-            ]);
-        } catch (\Throwable $exception) {
-            throw MollieException::unknownError($exception);
-        }
+        /** @var \MolRecurringOrdersProduct $recurringProduct */
+        $recurringProduct = $this->recurringOrdersProductRepository->findOrFail([
+            'id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product,
+        ]);
 
         $product = new Product($recurringProduct->id_product, false, $this->language->getDefaultLanguageId());
         $order = new Order($recurringOrder->id_order);

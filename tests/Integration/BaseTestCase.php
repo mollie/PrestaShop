@@ -203,9 +203,6 @@ class BaseTestCase extends TestCase
             \Carrier::$definition['table'] . '_zone',
             \Carrier::$definition['table'] . '_tax_rules_group_shop',
 
-            \Cart::$definition['table'],
-            \Cart::$definition['table'] . '_product',
-
             \CartRule::$definition['table'],
             \CartRule::$definition['table'] . '_lang',
             \CartRule::$definition['table'] . '_shop',

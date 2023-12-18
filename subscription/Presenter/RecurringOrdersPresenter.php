@@ -19,7 +19,6 @@ use Mollie\Adapter\Context;
 use Mollie\Adapter\Language;
 use Mollie\Adapter\Link;
 use Mollie\Adapter\ToolsAdapter;
-use Mollie\Exception\MollieException;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
 use Mollie\Utility\NumberUtility;
@@ -66,12 +65,13 @@ class RecurringOrdersPresenter
      */
     public function present(string $molCustomerId): array
     {
-        try {
-            $recurringOrders = $this->recurringOrderRepository->findAllByOrFail([
-                'mollie_customer_id' => $molCustomerId,
-            ]);
-        } catch (\Throwable $exception) {
-            throw MollieException::unknownError($exception);
+        /** @var ?\PrestaShopCollection $recurringOrders */
+        $recurringOrders = $this->recurringOrderRepository->findAllBy([
+            'mollie_customer_id' => $molCustomerId,
+        ]);
+
+        if (!$recurringOrders) {
+            return [];
         }
 
         $recurringOrders = $recurringOrders->getResults();

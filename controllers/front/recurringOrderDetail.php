@@ -67,6 +67,8 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
                 'id_mol_recurring_order' => $recurringOrderId,
             ]);
         } catch (\Throwable $exception) {
+            // TODO add notification about data retrieve failure
+
             Tools::redirect($failureRedirectUrl);
 
             return;

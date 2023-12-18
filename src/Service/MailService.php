@@ -26,6 +26,7 @@ use Mail;
 use Mollie;
 use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Adapter\ToolsAdapter;
+use Mollie\Exception\MollieException;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
 use Mollie\Utility\NumberUtility;
@@ -130,26 +131,20 @@ class MailService
         );
     }
 
+    /**
+     * @throws MollieException
+     */
     public function sendSubscriptionCancelWarningEmail(int $recurringOrderId): void
     {
-        try {
-            /** @var \MolRecurringOrder $recurringOrder */
-            $recurringOrder = $this->recurringOrderRepository->findOrFail([
-                'id_mol_recurring_order' => $recurringOrderId,
-            ]);
-        } catch (\Throwable $exception) {
-            // TODO refactor this with data provider
-            return;
-        }
+        /** @var \MolRecurringOrder $recurringOrder */
+        $recurringOrder = $this->recurringOrderRepository->findOrFail([
+            'id_mol_recurring_order' => $recurringOrderId,
+        ]);
 
-        try {
-            /** @var \MolRecurringOrdersProduct $recurringOrderProduct */
-            $recurringOrderProduct = $this->recurringOrdersProductRepository->findOrFail([
-                'id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product,
-            ]);
-        } catch (\Throwable $exception) {
-            return;
-        }
+        /** @var \MolRecurringOrdersProduct $recurringOrderProduct */
+        $recurringOrderProduct = $this->recurringOrdersProductRepository->findOrFail([
+            'id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product,
+        ]);
 
         $customer = new Customer($recurringOrder->id_customer);
         $product = new Product($recurringOrderProduct->id_product, false, $customer->id_lang);
@@ -173,26 +168,20 @@ class MailService
         );
     }
 
+    /**
+     * @throws MollieException
+     */
     public function sendSubscriptionPaymentFailWarningMail(int $recurringOrderId): void
     {
-        try {
-            /** @var \MolRecurringOrder $recurringOrder */
-            $recurringOrder = $this->recurringOrderRepository->findOrFail([
-                'id_mol_recurring_order' => $recurringOrderId,
-            ]);
-        } catch (\Throwable $exception) {
-            // TODO refactor this with data provider
-            return;
-        }
+        /** @var \MolRecurringOrder $recurringOrder */
+        $recurringOrder = $this->recurringOrderRepository->findOrFail([
+            'id_mol_recurring_order' => $recurringOrderId,
+        ]);
 
-        try {
-            /** @var \MolRecurringOrdersProduct $recurringOrderProduct */
-            $recurringOrderProduct = $this->recurringOrdersProductRepository->findOrFail([
-                'id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product,
-            ]);
-        } catch (\Throwable $exception) {
-            return;
-        }
+        /** @var \MolRecurringOrdersProduct $recurringOrderProduct */
+        $recurringOrderProduct = $this->recurringOrdersProductRepository->findOrFail([
+            'id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product,
+        ]);
 
         $customer = new Customer($recurringOrder->id_customer);
         $product = new Product($recurringOrderProduct->id_product, false, $customer->id_lang);

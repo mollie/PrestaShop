@@ -12,7 +12,7 @@
 
 namespace Mollie\Shared\Infrastructure\Repository;
 
-use Mollie\Shared\Infrastructure\Exception\CouldNotHandleAbstractRepository;
+use Mollie\Shared\Infrastructure\Exception\MollieDatabaseException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -25,14 +25,8 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
      */
     private $fullyClassifiedClassName;
 
-    public function __construct($fullyClassifiedClassName)
+    public function __construct(string $fullyClassifiedClassName)
     {
-        if (is_object($fullyClassifiedClassName)) {
-            $this->fullyClassifiedClassName = get_class($fullyClassifiedClassName);
-
-            return;
-        }
-
         $this->fullyClassifiedClassName = $fullyClassifiedClassName;
     }
 
@@ -73,32 +67,16 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
     }
 
     /** {@inheritdoc} */
-    public function findAllByOrFail(array $keyValueCriteria, int $langId = null): \PrestaShopCollection
-    {
-        try {
-            $records = $this->findAllBy($keyValueCriteria, $langId);
-        } catch (\Throwable $exception) {
-            throw CouldNotHandleAbstractRepository::unknownError($exception);
-        }
-
-        if (!$records) {
-            throw CouldNotHandleAbstractRepository::failedToFindRecord($this->fullyClassifiedClassName, $keyValueCriteria);
-        }
-
-        return $records;
-    }
-
-    /** {@inheritdoc} */
     public function findOrFail(array $keyValueCriteria, int $langId = null): \ObjectModel
     {
         try {
             $value = $this->findOneBy($keyValueCriteria, $langId);
         } catch (\Throwable $exception) {
-            throw CouldNotHandleAbstractRepository::unknownError($exception);
+            throw MollieDatabaseException::unknownError($exception);
         }
 
         if (!$value) {
-            throw CouldNotHandleAbstractRepository::failedToFindRecord($this->fullyClassifiedClassName, $keyValueCriteria);
+            throw MollieDatabaseException::failedToFindRecord($this->fullyClassifiedClassName, $keyValueCriteria);
         }
 
         return $value;
