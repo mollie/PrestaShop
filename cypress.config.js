@@ -5,10 +5,10 @@ module.exports = defineConfig({
   env: {
     pluginVisualRegressionDiffConfig: { threshold: 0.01 },
     pluginVisualRegressionMaxDiffThreshold: 0.01,
-    pluginVisualRegressionUpdateImages: false,
+    pluginVisualRegressionUpdateImages: true, // for updating or not updating the diff image automatically
     pluginVisualRegressionImagesPath: 'cypress/screenshots',
     pluginVisualRegressionScreenshotConfig: { scale: false, capture: 'fullPage' },
-    pluginVisualRegressionUpdateImages: false, // for updating of not updating the diff image automatically
+    pluginVisualRegressionCreateMissingImages: true,
   },
   chromeWebSecurity: false,
   experimentalMemoryManagement: true,

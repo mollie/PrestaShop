@@ -28,7 +28,6 @@ describe('PS8 Visual Regression tests suite', {
     login('MollieBOFOLoggingIn')
 })
 it('PS8 - Testing the visual regression of General Settings page', () => {
-  login('MollieBOFOLoggingIn')
   cy.visit('/admin1/')
   cy.get('.mi-mollie').click({fore:true})
   cy.get('#subtab-AdminMollieModule').click()
