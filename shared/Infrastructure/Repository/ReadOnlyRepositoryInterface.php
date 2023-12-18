@@ -43,7 +43,6 @@ interface ReadOnlyRepositoryInterface
      * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
      *
      * @throws MollieException
-     *
      */
     public function findOrFail(array $keyValueCriteria, int $langId = null): \ObjectModel;
 }
