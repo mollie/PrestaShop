@@ -21,18 +21,21 @@ describe('PS8 Visual Regression tests suite', {
     openMode: 0,
   },
 },() => {
-
-it.only('PS8 - Testing the visual regression of General Settings page', () => {
+  beforeEach(() => {
+    login('MollieBOFOLoggingIn')
+})
+it('PS8 - Testing the visual regression of General Settings page', () => {
   login('MollieBOFOLoggingIn')
   cy.visit('/admin1/')
   cy.get('.mi-mollie').click({fore:true})
   cy.get('#subtab-AdminMollieModule').click()
   cy.matchImage();
 });
-it('PS8 - Testing the visual regression of Advanced Settings page', () => {
+it.only('PS8 - Testing the visual regression of Advanced Settings page', () => {
   cy.visit('/admin1/')
   cy.get('.mi-mollie').click({fore:true})
   cy.get('#subtab-AdminMollieModule').click()
+  cy.contains('Advanced settings').click()
   cy.matchImage();
 });
 it('PS8 - Testing the visual regression of Payments in the Checkout', () => {
