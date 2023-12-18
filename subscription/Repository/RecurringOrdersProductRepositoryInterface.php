@@ -14,10 +14,12 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Repository;
 
+use Mollie\Shared\Infrastructure\Repository\ReadOnlyRepositoryInterface;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-interface RecurringOrdersProductRepositoryInterface
+interface RecurringOrdersProductRepositoryInterface extends ReadOnlyRepositoryInterface
 {
 }

@@ -44,5 +44,12 @@ interface ReadOnlyRepositoryInterface
      *
      * @throws MollieException
      */
+    public function findAllByOrFail(array $keyValueCriteria, int $langId = null): \PrestaShopCollection;
+
+    /**
+     * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
+     *
+     * @throws MollieException
+     */
     public function findOrFail(array $keyValueCriteria, int $langId = null): \ObjectModel;
 }

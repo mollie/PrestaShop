@@ -52,13 +52,18 @@ class SubscriptionPaymentMethodUpdateHandler
         $this->clock = $clock;
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function handle(string $transactionId, string $subscriptionId)
     {
         $molPayment = $this->paymentApi->getPayment($transactionId);
-        $recurringOrder = $this->recurringOrderRepository->findOneBy(['mollie_subscription_id' => $subscriptionId]);
 
-        if (!$recurringOrder) {
-            throw new MollieException('Subscription does not exist.');
+        try {
+            /** @var \MolRecurringOrder $recurringOrder */
+            $recurringOrder = $this->recurringOrderRepository->findOrFail(['mollie_subscription_id' => $subscriptionId]);
+        } catch (\Throwable $exception) {
+            throw MollieException::unknownError($exception);
         }
 
         $subscriptionUpdateData = $this->subscriptionDataFactory->build($recurringOrder, $molPayment->mandateId);

@@ -70,6 +70,7 @@ use Mollie\Repository\CustomerRepositoryInterface;
 use Mollie\Repository\GenderRepository;
 use Mollie\Repository\GenderRepositoryInterface;
 use Mollie\Repository\MolCustomerRepository;
+use Mollie\Repository\MolCustomerRepositoryInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepository;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\OrderRepository;
@@ -161,8 +162,7 @@ final class BaseServiceProvider
         $this->addService($container, PaymentMethodRepositoryInterface::class, $container->get(PaymentMethodRepository::class));
         $this->addService($container, GenderRepositoryInterface::class, $container->get(GenderRepository::class));
         $this->addService($container, CombinationRepositoryInterface::class, $container->get(CombinationRepository::class));
-        $this->addService($container, MolCustomerRepository::class, MolCustomerRepository::class)
-            ->withArgument('MolCustomer');
+        $this->addService($container, MolCustomerRepositoryInterface::class, $container->get(MolCustomerRepository::class));
 
         $this->addService($container, UninstallerInterface::class, $container->get(Mollie\Install\DatabaseTableUninstaller::class));
 

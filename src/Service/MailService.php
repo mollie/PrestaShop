@@ -132,8 +132,25 @@ class MailService
 
     public function sendSubscriptionCancelWarningEmail(int $recurringOrderId): void
     {
-        $recurringOrder = $this->recurringOrderRepository->findOneBy(['id_mol_recurring_order' => $recurringOrderId]);
-        $recurringOrderProduct = $this->recurringOrdersProductRepository->findOneBy(['id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product]);
+        try {
+            /** @var \MolRecurringOrder $recurringOrder */
+            $recurringOrder = $this->recurringOrderRepository->findOrFail([
+                'id_mol_recurring_order' => $recurringOrderId,
+            ]);
+        } catch (\Throwable $exception) {
+            // TODO refactor this with data provider
+            return;
+        }
+
+        try {
+            /** @var \MolRecurringOrdersProduct $recurringOrderProduct */
+            $recurringOrderProduct = $this->recurringOrdersProductRepository->findOrFail([
+                'id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product,
+            ]);
+        } catch (\Throwable $exception) {
+            return;
+        }
+
         $customer = new Customer($recurringOrder->id_customer);
         $product = new Product($recurringOrderProduct->id_product, false, $customer->id_lang);
 
@@ -158,8 +175,25 @@ class MailService
 
     public function sendSubscriptionPaymentFailWarningMail(int $recurringOrderId): void
     {
-        $recurringOrder = $this->recurringOrderRepository->findOneBy(['id_mol_recurring_order' => $recurringOrderId]);
-        $recurringOrderProduct = $this->recurringOrdersProductRepository->findOneBy(['id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product]);
+        try {
+            /** @var \MolRecurringOrder $recurringOrder */
+            $recurringOrder = $this->recurringOrderRepository->findOrFail([
+                'id_mol_recurring_order' => $recurringOrderId,
+            ]);
+        } catch (\Throwable $exception) {
+            // TODO refactor this with data provider
+            return;
+        }
+
+        try {
+            /** @var \MolRecurringOrdersProduct $recurringOrderProduct */
+            $recurringOrderProduct = $this->recurringOrdersProductRepository->findOrFail([
+                'id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product,
+            ]);
+        } catch (\Throwable $exception) {
+            return;
+        }
+
         $customer = new Customer($recurringOrder->id_customer);
         $product = new Product($recurringOrderProduct->id_product, false, $customer->id_lang);
 

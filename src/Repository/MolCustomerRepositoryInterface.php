@@ -12,16 +12,13 @@
 
 namespace Mollie\Repository;
 
-use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
+use Mollie\Shared\Infrastructure\Repository\ReadOnlyRepositoryInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class MolCustomerRepository extends AbstractRepository implements MolCustomerRepositoryInterface
+// TODO replace all direct calls to repository with this interface
+interface MolCustomerRepositoryInterface extends ReadOnlyRepositoryInterface
 {
-    public function __construct()
-    {
-        parent::__construct(\MolCustomer::class);
-    }
 }

@@ -110,10 +110,22 @@ class RecurringOrderHandler
         $this->cloneOriginalSubscriptionCartHandler = $cloneOriginalSubscriptionCartHandler;
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function handle(string $transactionId): string
     {
         $transaction = $this->mollie->getApiClient()->payments->get($transactionId);
-        $recurringOrder = $this->recurringOrderRepository->findOneBy(['mollie_subscription_id' => $transaction->subscriptionId]);
+
+        try {
+            /** @var \MolRecurringOrder $recurringOrder */
+            $recurringOrder = $this->recurringOrderRepository->findOrFail([
+                'mollie_subscription_id' => $transaction->subscriptionId,
+            ]);
+        } catch (\Throwable $exception) {
+            throw TransactionException::unknownError($exception);
+        }
+
         $subscriptionData = $this->subscriptionDataFactory->build((int) $recurringOrder->id);
         $subscription = $this->subscriptionApi->getSubscription($subscriptionData);
 

@@ -73,6 +73,22 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
     }
 
     /** {@inheritdoc} */
+    public function findAllByOrFail(array $keyValueCriteria, int $langId = null): \PrestaShopCollection
+    {
+        try {
+            $records = $this->findAllBy($keyValueCriteria, $langId);
+        } catch (\Throwable $exception) {
+            throw CouldNotHandleAbstractRepository::unknownError($exception);
+        }
+
+        if (!$records) {
+            throw CouldNotHandleAbstractRepository::failedToFindRecord($this->fullyClassifiedClassName, $keyValueCriteria);
+        }
+
+        return $records;
+    }
+
+    /** {@inheritdoc} */
     public function findOrFail(array $keyValueCriteria, int $langId = null): \ObjectModel
     {
         try {

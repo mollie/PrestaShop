@@ -19,6 +19,7 @@ use Mollie\Adapter\Context;
 use Mollie\Adapter\Language;
 use Mollie\Adapter\Link;
 use Mollie\Adapter\ToolsAdapter;
+use Mollie\Exception\MollieException;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
 use Mollie\Utility\NumberUtility;
@@ -60,9 +61,20 @@ class RecurringOrdersPresenter
         $this->context = $context;
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function present(string $molCustomerId): array
     {
-        $recurringOrders = $this->recurringOrderRepository->findAllBy(['mollie_customer_id' => $molCustomerId])->getResults();
+        try {
+            $recurringOrders = $this->recurringOrderRepository->findAllByOrFail([
+                'mollie_customer_id' => $molCustomerId,
+            ]);
+        } catch (\Throwable $exception) {
+            throw MollieException::unknownError($exception);
+        }
+
+        $recurringOrders = $recurringOrders->getResults();
 
         // this part sorts array so that the new ones are at the top
         usort($recurringOrders, function ($a, $b) {
@@ -73,10 +85,15 @@ class RecurringOrdersPresenter
 
         /** @var MolRecurringOrder $recurringOrder */
         foreach ($recurringOrders as $recurringOrder) {
-            // TODO protections if collection is found
-            $recurringProduct = $this->recurringOrdersProductRepository->findOneBy([
-                'id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product,
-            ]);
+            try {
+                $recurringProduct = $this->recurringOrdersProductRepository->findOrFail([
+                    'id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product,
+                ]);
+            } catch (\Throwable $exception) {
+                // TODO log not found data
+
+                continue;
+            }
 
             $product = new Product($recurringProduct->id_product, false, $this->language->getDefaultLanguageId());
 

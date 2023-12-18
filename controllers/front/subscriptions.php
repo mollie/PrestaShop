@@ -10,7 +10,7 @@
  * @codingStandardsIgnoreStart
  */
 
-use Mollie\Repository\MolCustomerRepository;
+use Mollie\Repository\MolCustomerRepositoryInterface;
 use Mollie\Subscription\Presenter\RecurringOrdersPresenter;
 
 /*
@@ -52,40 +52,33 @@ class mollieSubscriptionsModuleFrontController extends ModuleFrontController
      */
     public $display_column_left;
 
-    /**
-     * @throws PrestaShopException
-     */
     public function initContent()
     {
         $this->display_column_right = false;
         $this->display_column_left = false;
-        $context = Context::getContext();
-        if (empty($context->customer->id)) {
+
+        if (empty($this->context->customer->id)) {
             Tools::redirect('index.php');
         }
 
-        /** @var MolCustomerRepository $molCustomerRepository */
-        $molCustomerRepository = $this->module->getService(MolCustomerRepository::class);
+        /** @var MolCustomerRepositoryInterface $molCustomerRepository */
+        $molCustomerRepository = $this->module->getService(MolCustomerRepositoryInterface::class);
 
         /** @var RecurringOrdersPresenter $recurringOrdersPresenter */
         $recurringOrdersPresenter = $this->module->getService(RecurringOrdersPresenter::class);
 
-        $molCustomer = $molCustomerRepository->findOneBy(['email' => $context->customer->email]);
+        try {
+            /** @var \MolCustomer $molCustomer */
+            $molCustomer = $molCustomerRepository->findOrFail([
+                'email' => $this->context->customer->email,
+            ]);
+        } catch (\Throwable $exception) {
+            $this->prepareTemplate();
 
-        $recurringOrdersPresentData = [];
-        if ($molCustomer) {
-            $recurringOrdersPresentData = $recurringOrdersPresenter->present($molCustomer->customer_id);
+            return;
         }
 
-        parent::initContent();
-
-        $this->context->smarty->assign([
-            'recurringOrdersData' => $recurringOrdersPresentData,
-        ]);
-
-        $this->context->smarty->tpl_vars['page']->value['body_classes']['page-customer-account'] = true;
-
-        $this->setTemplate('module:mollie/views/templates/front/subscription/customerSubscriptionsData.tpl');
+        $this->prepareTemplate($recurringOrdersPresenter->present($molCustomer->customer_id));
     }
 
     public function setMedia()
@@ -96,5 +89,18 @@ class mollieSubscriptionsModuleFrontController extends ModuleFrontController
         parent::setMedia();
         $this->context->controller->addJS($js_path . 'front.js');
         $this->context->controller->addCSS($css_path . 'customerPersonalData.css');
+    }
+
+    private function prepareTemplate(array $recurringOrdersPresentData = []): void
+    {
+        parent::initContent();
+
+        $this->context->smarty->assign([
+            'recurringOrdersData' => $recurringOrdersPresentData,
+        ]);
+
+        $this->context->smarty->tpl_vars['page']->value['body_classes']['page-customer-account'] = true;
+
+        $this->setTemplate('module:mollie/views/templates/front/subscription/customerSubscriptionsData.tpl');
     }
 }
