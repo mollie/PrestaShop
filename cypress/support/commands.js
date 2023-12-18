@@ -255,7 +255,7 @@ const login = (MollieBOFOLoggingIn) => {
   }
   login('MollieBOFOLoggingIn')
 })
-Cypress.Commands.add("CachingBOFOPS8", () => {
+Cypress.Commands.add("CachingBOFOPS8", {cacheAcrossSpecs: true}, () => {
   //Caching the BO and FO session
   const login = (MollieBOFOLoggingIn) => {
     cy.session(MollieBOFOLoggingIn,() => {
