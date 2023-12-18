@@ -117,7 +117,7 @@ it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
       cy.get('[class="alert alert-success"]').should('be.visible')
       cy.navigatingToThePaymentPS8()
       //Payment method choosing
-      cy.contains('Card').click({force:true})
+      cy.contains('Karte').click({force:true})
       //Credit card inputing
       cy.CreditCardFillingIframe()
       cy.get('.condition-label > .js-terms').click({force:true})
@@ -129,7 +129,7 @@ it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
 it('C339355: 18 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
       cy.navigatingToThePaymentPS8()
       //Payment method choosing
-      cy.contains('Card').click({force:true})
+      cy.contains('Karte').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
       cy.get('.ps-shown-by-js > .btn').click({force: true})
       cy.visit('/admin1/')
@@ -299,7 +299,7 @@ it('C339374: 37 Belfius Order Shipping, Refunding [Orders API]', () => {
 it('C339375: 38 Bank Transfer Checkouting [Orders API]', () => {
       cy.navigatingToThePaymentPS8()
       //Payment method choosing
-      cy.contains('Bank transfer').click({force:true})
+      cy.contains('Überweisung').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
       cy.contains('Place order').click()
       cy.get('[value="paid"]').click()
