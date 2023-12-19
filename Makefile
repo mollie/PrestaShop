@@ -34,7 +34,7 @@ e2eh8_local:
 	# sees what containers are running
 	docker-compose -f docker-compose.8.yml ps
 	# waiting for app containers to build up
-	/bin/bash .docker/wait-loader.sh
+	/bin/bash .docker/wait-loader.sh 8142
 	# seeding the customized settings for PS
 	mysql -h 127.0.0.1 -P 9459 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_8.sql
 	# installing module
