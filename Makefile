@@ -4,7 +4,7 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 fix-lint:
 	docker-compose run --rm php sh -c "vendor/bin/php-cs-fixer fix --using-cache=no"
 
-#PS1785
+#PS1785 without PS autoinstall, both CI and local
 e2eh1785:
 	# detaching containers
 	docker-compose -f docker-compose.1785.yml up -d --force-recreate
@@ -27,7 +27,7 @@ e2eh1785:
 	# chmod all folders
 	docker exec -i prestashop-mollie-1785 sh -c "chmod -R 777 /var/www/html"
 
-#PS8
+#PS8 for local machine docker build with PS autoinstall
 e2eh8_local:
 	# detaching containers
 	docker-compose -f docker-compose.8.yml up -d --force-recreate
@@ -48,6 +48,7 @@ e2eh8_local:
 	# chmod all folders
 	docker exec -i prestashop-mollie-8 sh -c "chmod -R 777 /var/www/html"
 
+#PS8 for CI build with PS autoinstall
 e2eh8:
 	# detaching containers
 	docker-compose -f docker-compose.8.yml up -d --force-recreate
