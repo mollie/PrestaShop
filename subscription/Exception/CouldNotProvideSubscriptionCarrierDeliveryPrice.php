@@ -18,39 +18,6 @@ if (!defined('_PS_VERSION_')) {
 
 class CouldNotProvideSubscriptionCarrierDeliveryPrice extends MollieSubscriptionException
 {
-    public static function failedToFindSelectedCarrier(int $subscriptionCarrierId): self
-    {
-        return new self(
-            sprintf(
-                'Failed to find selected carrier. Subscription carrier ID: (%s)',
-                $subscriptionCarrierId
-            ),
-            ExceptionCode::ORDER_FAILED_TO_FIND_SELECTED_CARRIER
-        );
-    }
-
-    public static function failedToFindCart(int $cartId): self
-    {
-        return new self(
-            sprintf(
-                'Failed to find cart. Cart ID: (%s)',
-                $cartId
-            ),
-            ExceptionCode::ORDER_FAILED_TO_FIND_CART
-        );
-    }
-
-    public static function failedToFindCustomer(int $customerId): self
-    {
-        return new self(
-            sprintf(
-                'Failed to find customer. Customer ID: (%s)',
-                $customerId
-            ),
-            ExceptionCode::ORDER_FAILED_TO_FIND_CUSTOMER
-        );
-    }
-
     public static function failedToApplySelectedCarrier(int $subscriptionCarrierId): self
     {
         return new self(
@@ -59,28 +26,6 @@ class CouldNotProvideSubscriptionCarrierDeliveryPrice extends MollieSubscription
                 $subscriptionCarrierId
             ),
             ExceptionCode::ORDER_FAILED_TO_APPLY_SELECTED_CARRIER
-        );
-    }
-
-    public static function failedToFindDeliveryAddress(int $deliveryAddressId): self
-    {
-        return new self(
-            sprintf(
-                'Failed to find delivery address. Delivery address ID: (%s)',
-                $deliveryAddressId
-            ),
-            ExceptionCode::ORDER_FAILED_TO_FIND_DELIVERY_ADDRESS
-        );
-    }
-
-    public static function failedToFindDeliveryCountry(int $countryId): self
-    {
-        return new self(
-            sprintf(
-                'Failed to find delivery country. Country ID: (%s)',
-                $countryId
-            ),
-            ExceptionCode::ORDER_FAILED_TO_FIND_DELIVERY_COUNTRY
         );
     }
 

@@ -12,6 +12,7 @@
 
 namespace Mollie\Subscription\Action;
 
+use Mollie\Exception\MollieException;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\DTO\UpdateRecurringOrderData;
 use Mollie\Subscription\Exception\CouldNotUpdateRecurringOrder;
@@ -43,24 +44,16 @@ class UpdateRecurringOrderAction
     }
 
     /**
-     * @throws MollieSubscriptionException
+     * @throws MollieException|MollieSubscriptionException
      */
     public function run(UpdateRecurringOrderData $data): \MolRecurringOrder
     {
         $this->logger->debug(sprintf('%s - Function called', __METHOD__));
 
-        try {
-            /** @var ?\MolRecurringOrder $recurringOrder */
-            $recurringOrder = $this->recurringOrderRepository->findOneBy([
-                'id_mol_recurring_order' => $data->getMollieRecurringOrderId(),
-            ]);
-        } catch (\Throwable $exception) {
-            throw CouldNotUpdateRecurringOrder::unknownError($exception);
-        }
-
-        if (!$recurringOrder) {
-            throw CouldNotUpdateRecurringOrder::failedToFindRecurringOrder($data->getMollieRecurringOrderId());
-        }
+        /** @var \MolRecurringOrder $recurringOrder */
+        $recurringOrder = $this->recurringOrderRepository->findOrFail([
+            'id_mol_recurring_order' => $data->getMollieRecurringOrderId(),
+        ]);
 
         try {
             /*

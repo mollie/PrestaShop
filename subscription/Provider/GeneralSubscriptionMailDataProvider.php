@@ -13,12 +13,11 @@
 namespace Mollie\Subscription\Provider;
 
 use Mollie\Adapter\Context;
+use Mollie\Exception\MollieException;
 use Mollie\Repository\CustomerRepositoryInterface;
 use Mollie\Repository\ProductRepositoryInterface;
 use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
 use Mollie\Subscription\DTO\Mail\GeneralSubscriptionMailData;
-use Mollie\Subscription\Exception\CouldNotProvideGeneralSubscriptionMailData;
-use Mollie\Subscription\Exception\MollieSubscriptionException;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
 use Mollie\Utility\NumberUtility;
@@ -59,56 +58,36 @@ class GeneralSubscriptionMailDataProvider
     }
 
     /**
-     * @throws MollieSubscriptionException
+     * @throws MollieException
      */
     public function run(int $recurringOrderId): GeneralSubscriptionMailData
     {
-        /** @var ?\MolRecurringOrder $recurringOrder */
-        $recurringOrder = $this->recurringOrderRepository->findOneBy([
+        /** @var \MolRecurringOrder $recurringOrder */
+        $recurringOrder = $this->recurringOrderRepository->findOrFail([
             'id_mol_recurring_order' => $recurringOrderId,
         ]);
 
-        if (!$recurringOrder) {
-            throw CouldNotProvideGeneralSubscriptionMailData::failedToFindRecurringOrder($recurringOrderId);
-        }
-
-        /** @var ?\MolRecurringOrdersProduct $recurringOrderProduct */
-        $recurringOrderProduct = $this->recurringOrdersProductRepository->findOneBy([
+        /** @var \MolRecurringOrdersProduct $recurringOrderProduct */
+        $recurringOrderProduct = $this->recurringOrdersProductRepository->findOrFail([
             'id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product,
         ]);
 
-        if (!$recurringOrderProduct) {
-            throw CouldNotProvideGeneralSubscriptionMailData::failedToFindRecurringOrderProduct($recurringOrderId, (int) $recurringOrder->id_mol_recurring_orders_product);
-        }
-
-        /** @var ?\Customer $customer */
-        $customer = $this->customerRepository->findOneBy([
+        /** @var \Customer $customer */
+        $customer = $this->customerRepository->findOrFail([
             'id_customer' => $recurringOrder->id_customer,
         ]);
 
-        if (!$customer) {
-            throw CouldNotProvideGeneralSubscriptionMailData::failedToFindCustomer($recurringOrderId, (int) $recurringOrder->id_customer);
-        }
-
-        /** @var ?\Product $product */
-        $product = $this->productRepository->findOneBy([
+        /** @var \Product $product */
+        $product = $this->productRepository->findOrFail([
             'id_product' => $recurringOrderProduct->id_product,
         ]);
 
-        if (!$product) {
-            throw CouldNotProvideGeneralSubscriptionMailData::failedToFindProduct((int) $recurringOrder->id_mol_recurring_orders_product, (int) $recurringOrderProduct->id_product);
-        }
-
         $productName = is_array($product->name) ? ($product->name[$customer->id_lang] ?? '') : $product->name;
 
-        /** @var ?\Currency $currency */
-        $currency = $this->currencyRepository->findOneBy([
+        /** @var \Currency $currency */
+        $currency = $this->currencyRepository->findOrFail([
             'id_currency' => $recurringOrder->id_currency,
         ]);
-
-        if (!$currency) {
-            throw CouldNotProvideGeneralSubscriptionMailData::failedToFindCurrency($recurringOrderId, (int) $recurringOrder->id_currency);
-        }
 
         $unitPriceTaxExcl = (float) $this->context->formatPrice(
             NumberUtility::toPrecision(

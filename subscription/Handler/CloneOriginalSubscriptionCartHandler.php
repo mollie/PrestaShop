@@ -12,6 +12,7 @@
 
 namespace Mollie\Subscription\Handler;
 
+use Mollie\Exception\MollieException;
 use Mollie\Repository\CartRepositoryInterface;
 use Mollie\Subscription\Action\CreateSpecificPriceAction;
 use Mollie\Subscription\DTO\CloneOriginalSubscriptionCartData;
@@ -45,17 +46,14 @@ class CloneOriginalSubscriptionCartHandler
 
     /**
      * @throws MollieSubscriptionException
+     * @throws MollieException
      */
     public function run(CloneOriginalSubscriptionCartData $data): \Cart
     {
-        /** @var ?\Cart $originalCart */
-        $originalCart = $this->cartRepository->findOneBy([
+        /** @var \Cart $originalCart */
+        $originalCart = $this->cartRepository->findOrFail([
             'id_cart' => $data->getCartId(),
         ]);
-
-        if (!$originalCart) {
-            throw CouldNotHandleOriginalSubscriptionCartCloning::failedToFindCart($data->getCartId());
-        }
 
         /** @var array{success: bool, cart: \Cart}|bool $duplicatedCart */
         $duplicatedCart = $originalCart->duplicate();
@@ -67,14 +65,10 @@ class CloneOriginalSubscriptionCartHandler
         /** @var \Cart $duplicatedCart */
         $duplicatedCart = $duplicatedCart['cart'];
 
-        /** @var ?\MolRecurringOrdersProduct $subscriptionProduct */
-        $subscriptionProduct = $this->recurringOrdersProductRepository->findOneBy([
+        /** @var \MolRecurringOrdersProduct $subscriptionProduct */
+        $subscriptionProduct = $this->recurringOrdersProductRepository->findOrFail([
             'id_mol_recurring_orders_product' => $data->getRecurringOrderProductId(),
         ]);
-
-        if (!$subscriptionProduct) {
-            throw CouldNotHandleOriginalSubscriptionCartCloning::failedToFindRecurringOrderProduct($data->getRecurringOrderProductId());
-        }
 
         $cartProducts = $duplicatedCart->getProducts();
 

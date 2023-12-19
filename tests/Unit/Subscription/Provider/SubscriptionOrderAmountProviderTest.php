@@ -2,6 +2,8 @@
 
 namespace Mollie\Tests\Unit\Subscription\Provider;
 
+use Mollie\Exception\Code\ExceptionCode as GeneralExceptionCode;
+use Mollie\Shared\Infrastructure\Exception\MollieDatabaseException;
 use Mollie\Subscription\DTO\SubscriptionOrderAmountProviderData;
 use Mollie\Subscription\Exception\CouldNotProvideSubscriptionOrderAmount;
 use Mollie\Subscription\Exception\ExceptionCode;
@@ -29,7 +31,7 @@ class SubscriptionOrderAmountProviderTest extends BaseTestCase
 
         $currency->iso_code = 'EUR';
 
-        $this->currencyRepository->expects($this->once())->method('findOneBy')->willReturn($currency);
+        $this->currencyRepository->expects($this->once())->method('findOrFail')->willReturn($currency);
 
         $subscriptionOrderAmountProvider = new SubscriptionOrderAmountProvider(
             $this->subscriptionCarrierDeliveryPriceProvider,
@@ -81,15 +83,16 @@ class SubscriptionOrderAmountProviderTest extends BaseTestCase
     {
         $this->subscriptionCarrierDeliveryPriceProvider->expects($this->once())->method('getPrice')->willReturn(12.34);
 
-        $this->currencyRepository->expects($this->once())->method('findOneBy')->willReturn(null);
+        $this->currencyRepository->expects($this->once())->method('findOrFail')->willThrowException(MollieDatabaseException::failedToFindRecord(\Currency::class, []));
 
         $subscriptionOrderAmountProvider = new SubscriptionOrderAmountProvider(
             $this->subscriptionCarrierDeliveryPriceProvider,
             $this->currencyRepository
         );
 
-        $this->expectException(CouldNotProvideSubscriptionOrderAmount::class);
-        $this->expectExceptionCode(ExceptionCode::ORDER_FAILED_TO_FIND_CURRENCY);
+        $this->expectException(MollieDatabaseException::class);
+        $this->expectExceptionCode(GeneralExceptionCode::INFRASTRUCTURE_FAILED_TO_FIND_RECORD);
+        $this->expectExceptionMessageRegExp('/' . \Currency::class . '/');
 
         $subscriptionOrderAmountProvider->get(SubscriptionOrderAmountProviderData::create(
             1,

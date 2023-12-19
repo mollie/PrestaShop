@@ -26,15 +26,4 @@ class CouldNotProvideSubscriptionOrderAmount extends MollieSubscriptionException
             $exception
         );
     }
-
-    public static function failedToFindCurrency(int $currencyId): self
-    {
-        return new self(
-            sprintf(
-                'Failed to find currency. Currency ID: (%s)',
-                $currencyId
-            ),
-            ExceptionCode::ORDER_FAILED_TO_FIND_CURRENCY
-        );
-    }
 }
