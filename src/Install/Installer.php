@@ -171,6 +171,7 @@ class Installer implements InstallerInterface
             'actionObjectOrderPaymentAddAfter',
             'displayProductAdditionalInfo',
             'displayCustomerAccount',
+            'actionCarrierUpdate',
         ];
     }
 
