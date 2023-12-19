@@ -89,6 +89,7 @@ class GeneralSubscriptionMailDataProvider
             'id_currency' => $recurringOrder->id_currency,
         ]);
 
+        // TODO would be great to get unitPriceTaxIncl
         $unitPriceTaxExcl = (float) $this->context->formatPrice(
             NumberUtility::toPrecision(
                 (float) $recurringOrderProduct->unit_price,
