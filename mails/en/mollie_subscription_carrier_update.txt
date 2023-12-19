@@ -1,7 +1,8 @@
 Hi firstName lastName,
 
+We are emailing you because the following subscription carrier was updated.
 
-We are emailing you because we have retried to process the payment and failed. Your subscription has been cancelled.
+Log in to you account to review updated subscription information.
 
 Reference	Product	Unit price(tax excl.)	Quantity	Total price
 subscription_reference	product_name	unit_price	quantity	total_price
