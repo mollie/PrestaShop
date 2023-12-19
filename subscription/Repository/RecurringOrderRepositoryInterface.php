@@ -22,4 +22,5 @@ if (!defined('_PS_VERSION_')) {
 
 interface RecurringOrderRepositoryInterface extends ReadOnlyRepositoryInterface
 {
+    public function getAllOrdersBasedOnStatuses(array $statuses, int $shopId): array;
 }
