@@ -56,13 +56,28 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
         $recurringOrderId = (int) Tools::getValue('id_mol_recurring_order');
         $recurringOrderId = Validate::isUnsignedId($recurringOrderId) ? $recurringOrderId : false;
 
+        $failureRedirectUrl = Context::getContext()->link->getModuleLink($this->module->name, 'subscriptions', [], true);
+
         /** @var RecurringOrderRepositoryInterface $recurringOrderRepository */
         $recurringOrderRepository = $this->module->getService(RecurringOrderRepositoryInterface::class);
 
-        $recurringOrder = $recurringOrderRepository->findOneBy(['id_mol_recurring_order' => $recurringOrderId]);
+        try {
+            /** @var \MolRecurringOrder $recurringOrder */
+            $recurringOrder = $recurringOrderRepository->findOrFail([
+                'id_mol_recurring_order' => $recurringOrderId,
+            ]);
+        } catch (\Throwable $exception) {
+            // TODO add notification about data retrieve failure
 
-        if (!Validate::isLoadedObject($recurringOrder) || (int) $recurringOrder->id_customer !== (int) $this->context->customer->id) {
-            Tools::redirect(Context::getContext()->link->getModuleLink($this->module->name, 'subscriptions', [], true));
+            Tools::redirect($failureRedirectUrl);
+
+            return;
+        }
+
+        if ((int) $recurringOrder->id_customer !== (int) $this->context->customer->id) {
+            Tools::redirect($failureRedirectUrl);
+
+            return;
         }
 
         /** @var PrestaLoggerInterface $logger */
@@ -82,10 +97,13 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
                 'Exception code' => $exception->getCode(),
             ]);
 
-            Tools::redirect(Context::getContext()->link->getModuleLink($this->module->name, 'subscriptions', [], true));
+            Tools::redirect($failureRedirectUrl);
+
+            return;
         }
 
         parent::initContent();
+
         $this->context->controller->addCSS($this->module->getPathUri() . 'views/css/front/subscription/customer_order_detail.css');
         $this->setTemplate('module:mollie/views/templates/front/subscription/customerRecurringOrderDetail.tpl');
     }

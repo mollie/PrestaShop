@@ -16,7 +16,7 @@ use Mollie\Adapter\Context;
 use Mollie\Api\Types\SubscriptionStatus;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\ProductRepositoryInterface;
-use Mollie\Shared\Infrastructure\Repository\CurrencyRepositoryInterface;
+use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
 use Mollie\Subscription\Exception\CouldNotPresentOrderDetail;
 use Mollie\Subscription\Repository\OrderDetailRepositoryInterface;
 use Mollie\Utility\NumberUtility;

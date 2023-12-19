@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Handler;
 
-use Mollie\Exception\MollieException;
 use Mollie\Subscription\Api\PaymentApi;
 use Mollie\Subscription\Api\SubscriptionApi;
 use Mollie\Subscription\Factory\UpdateSubscriptionDataFactory;
@@ -52,14 +51,15 @@ class SubscriptionPaymentMethodUpdateHandler
         $this->clock = $clock;
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function handle(string $transactionId, string $subscriptionId)
     {
         $molPayment = $this->paymentApi->getPayment($transactionId);
-        $recurringOrder = $this->recurringOrderRepository->findOneBy(['mollie_subscription_id' => $subscriptionId]);
 
-        if (!$recurringOrder) {
-            throw new MollieException('Subscription does not exist.');
-        }
+        /** @var \MolRecurringOrder $recurringOrder */
+        $recurringOrder = $this->recurringOrderRepository->findOrFail(['mollie_subscription_id' => $subscriptionId]);
 
         $subscriptionUpdateData = $this->subscriptionDataFactory->build($recurringOrder, $molPayment->mandateId);
         $newSubscription = $this->subscriptionApi->updateSubscription($subscriptionUpdateData);

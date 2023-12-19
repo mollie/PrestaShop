@@ -14,26 +14,12 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Repository;
 
-use MolRecurringOrdersProduct;
-use PrestaShopCollection;
+use Mollie\Shared\Infrastructure\Repository\ReadOnlyRepositoryInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-interface RecurringOrdersProductRepositoryInterface
+interface RecurringOrdersProductRepositoryInterface extends ReadOnlyRepositoryInterface
 {
-    /**
-     * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
-     *
-     * @return ?MolRecurringOrdersProduct
-     */
-    public function findOneBy(array $keyValueCriteria): ?MolRecurringOrdersProduct;
-
-    /**
-     * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
-     *
-     * @return ?PrestaShopCollection
-     */
-    public function findAllBy(array $keyValueCriteria): ?PrestaShopCollection;
 }

@@ -12,7 +12,7 @@
 
 namespace Mollie\Repository;
 
-use Cart;
+use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -22,6 +22,6 @@ class CartRepository extends AbstractRepository implements CartRepositoryInterfa
 {
     public function __construct()
     {
-        parent::__construct(Cart::class);
+        parent::__construct(\Cart::class);
     }
 }

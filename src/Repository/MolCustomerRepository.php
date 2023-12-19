@@ -12,19 +12,16 @@
 
 namespace Mollie\Repository;
 
-use MolCustomer;
+use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class MolCustomerRepository extends AbstractRepository
+class MolCustomerRepository extends AbstractRepository implements MolCustomerRepositoryInterface
 {
-    public function findOneBy(array $keyValueCriteria): ?MolCustomer
+    public function __construct()
     {
-        /** @var ?MolCustomer $result */
-        $result = parent::findOneBy($keyValueCriteria);
-
-        return $result;
+        parent::__construct(\MolCustomer::class);
     }
 }

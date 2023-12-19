@@ -18,6 +18,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-interface TaxRepositoryInterface extends ReadOnlyRepositoryInterface
+// TODO replace all direct calls to repository with this interface
+interface MolCustomerRepositoryInterface extends ReadOnlyRepositoryInterface
 {
 }
