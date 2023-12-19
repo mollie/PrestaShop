@@ -98,6 +98,8 @@ class SubscriptionController extends AbstractSymfonyController
 
         $formHandler->save($form->getData());
 
+        // TODO implement carrier handler update here or somewhere in inner class
+
         $this->addFlash(
             'success',
             $this->module->l('Options saved successfully.', self::FILE_NAME)
