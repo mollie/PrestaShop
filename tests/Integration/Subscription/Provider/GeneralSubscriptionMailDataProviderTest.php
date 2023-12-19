@@ -12,8 +12,8 @@
 
 namespace Mollie\Tests\Integration\Subscription\Provider;
 
-use Mollie\Subscription\Exception\CouldNotProvideGeneralSubscriptionMailData;
-use Mollie\Subscription\Exception\ExceptionCode;
+use Mollie\Exception\Code\ExceptionCode;
+use Mollie\Shared\Infrastructure\Exception\MollieDatabaseException;
 use Mollie\Subscription\Provider\GeneralSubscriptionMailDataProvider;
 use Mollie\Tests\Integration\BaseTestCase;
 use Mollie\Tests\Integration\Factory\CurrencyFactory;
@@ -88,8 +88,9 @@ class GeneralSubscriptionMailDataProviderTest extends BaseTestCase
         /** @var GeneralSubscriptionMailDataProvider $generalSubscriptionMailDataProvider */
         $generalSubscriptionMailDataProvider = $this->getService(GeneralSubscriptionMailDataProvider::class);
 
-        $this->expectException(CouldNotProvideGeneralSubscriptionMailData::class);
-        $this->expectExceptionCode(ExceptionCode::RECURRING_ORDER_FAILED_TO_FIND_RECURRING_ORDER);
+        $this->expectException(MollieDatabaseException::class);
+        $this->expectExceptionCode(ExceptionCode::INFRASTRUCTURE_FAILED_TO_FIND_RECORD);
+        $this->expectExceptionMessageRegExp('/' . \MolRecurringOrder::class . '/');
 
         $generalSubscriptionMailDataProvider->run(0);
     }
@@ -104,8 +105,9 @@ class GeneralSubscriptionMailDataProviderTest extends BaseTestCase
         /** @var GeneralSubscriptionMailDataProvider $generalSubscriptionMailDataProvider */
         $generalSubscriptionMailDataProvider = $this->getService(GeneralSubscriptionMailDataProvider::class);
 
-        $this->expectException(CouldNotProvideGeneralSubscriptionMailData::class);
-        $this->expectExceptionCode(ExceptionCode::RECURRING_ORDER_FAILED_TO_FIND_RECURRING_ORDER_PRODUCT);
+        $this->expectException(MollieDatabaseException::class);
+        $this->expectExceptionCode(ExceptionCode::INFRASTRUCTURE_FAILED_TO_FIND_RECORD);
+        $this->expectExceptionMessageRegExp('/' . \MolRecurringOrdersProduct::class . '/');
 
         $generalSubscriptionMailDataProvider->run((int) $recurringOrder->id);
     }
@@ -124,8 +126,9 @@ class GeneralSubscriptionMailDataProviderTest extends BaseTestCase
         /** @var GeneralSubscriptionMailDataProvider $generalSubscriptionMailDataProvider */
         $generalSubscriptionMailDataProvider = $this->getService(GeneralSubscriptionMailDataProvider::class);
 
-        $this->expectException(CouldNotProvideGeneralSubscriptionMailData::class);
-        $this->expectExceptionCode(ExceptionCode::RECURRING_ORDER_FAILED_TO_FIND_CUSTOMER);
+        $this->expectException(MollieDatabaseException::class);
+        $this->expectExceptionCode(ExceptionCode::INFRASTRUCTURE_FAILED_TO_FIND_RECORD);
+        $this->expectExceptionMessageRegExp('/' . \Customer::class . '/');
 
         $generalSubscriptionMailDataProvider->run((int) $recurringOrder->id);
     }
@@ -148,8 +151,9 @@ class GeneralSubscriptionMailDataProviderTest extends BaseTestCase
         /** @var GeneralSubscriptionMailDataProvider $generalSubscriptionMailDataProvider */
         $generalSubscriptionMailDataProvider = $this->getService(GeneralSubscriptionMailDataProvider::class);
 
-        $this->expectException(CouldNotProvideGeneralSubscriptionMailData::class);
-        $this->expectExceptionCode(ExceptionCode::RECURRING_ORDER_FAILED_TO_FIND_PRODUCT);
+        $this->expectException(MollieDatabaseException::class);
+        $this->expectExceptionCode(ExceptionCode::INFRASTRUCTURE_FAILED_TO_FIND_RECORD);
+        $this->expectExceptionMessageRegExp('/' . \Product::class . '/');
 
         $generalSubscriptionMailDataProvider->run((int) $recurringOrder->id);
     }
@@ -176,8 +180,9 @@ class GeneralSubscriptionMailDataProviderTest extends BaseTestCase
         /** @var GeneralSubscriptionMailDataProvider $generalSubscriptionMailDataProvider */
         $generalSubscriptionMailDataProvider = $this->getService(GeneralSubscriptionMailDataProvider::class);
 
-        $this->expectException(CouldNotProvideGeneralSubscriptionMailData::class);
-        $this->expectExceptionCode(ExceptionCode::RECURRING_ORDER_FAILED_TO_FIND_CURRENCY);
+        $this->expectException(MollieDatabaseException::class);
+        $this->expectExceptionCode(ExceptionCode::INFRASTRUCTURE_FAILED_TO_FIND_RECORD);
+        $this->expectExceptionMessageRegExp('/' . \Currency::class . '/');
 
         $generalSubscriptionMailDataProvider->run((int) $recurringOrder->id);
     }

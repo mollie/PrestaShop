@@ -12,6 +12,7 @@
 
 namespace Mollie\Subscription\Provider;
 
+use Mollie\Exception\MollieException;
 use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
 use Mollie\Subscription\DTO\Object\Amount;
 use Mollie\Subscription\DTO\SubscriptionCarrierDeliveryPriceData;
@@ -41,6 +42,7 @@ class SubscriptionOrderAmountProvider
 
     /**
      * @throws MollieSubscriptionException
+     * @throws MollieException
      */
     public function get(SubscriptionOrderAmountProviderData $data): Amount
     {
@@ -63,14 +65,10 @@ class SubscriptionOrderAmountProvider
             $deliveryPrice
         );
 
-        /** @var \Currency|null $currency */
-        $currency = $this->currencyRepository->findOneBy([
+        /** @var \Currency $currency */
+        $currency = $this->currencyRepository->findOrFail([
             'id_currency' => $data->getCurrencyId(),
         ]);
-
-        if (!$currency) {
-            throw CouldNotProvideSubscriptionOrderAmount::failedToFindCurrency((int) $data->getCurrencyId());
-        }
 
         return new Amount($orderTotal, $currency->iso_code);
     }

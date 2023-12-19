@@ -12,10 +12,10 @@
 
 namespace Mollie\Tests\Integration\Subscription\Action;
 
+use Mollie\Exception\Code\ExceptionCode;
+use Mollie\Shared\Infrastructure\Exception\MollieDatabaseException;
 use Mollie\Subscription\Action\UpdateRecurringOrderAction;
 use Mollie\Subscription\DTO\UpdateRecurringOrderData;
-use Mollie\Subscription\Exception\CouldNotUpdateRecurringOrder;
-use Mollie\Subscription\Exception\ExceptionCode;
 use Mollie\Tests\Integration\BaseTestCase;
 use Mollie\Tests\Integration\Factory\MolRecurringOrderFactory;
 
@@ -50,8 +50,9 @@ class UpdateRecurringOrderActionTest extends BaseTestCase
         /** @var UpdateRecurringOrderAction $updateRecurringOrderAction */
         $updateRecurringOrderAction = $this->getService(UpdateRecurringOrderAction::class);
 
-        $this->expectException(CouldNotUpdateRecurringOrder::class);
-        $this->expectExceptionCode(ExceptionCode::RECURRING_ORDER_FAILED_TO_FIND_RECURRING_ORDER);
+        $this->expectException(MollieDatabaseException::class);
+        $this->expectExceptionCode(ExceptionCode::INFRASTRUCTURE_FAILED_TO_FIND_RECORD);
+        $this->expectExceptionMessageRegExp('/' . \MolRecurringOrder::class . '/');
 
         $updateRecurringOrderAction->run(UpdateRecurringOrderData::create(
             0,
