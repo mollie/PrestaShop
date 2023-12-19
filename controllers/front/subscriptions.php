@@ -67,18 +67,14 @@ class mollieSubscriptionsModuleFrontController extends ModuleFrontController
         /** @var RecurringOrdersPresenter $recurringOrdersPresenter */
         $recurringOrdersPresenter = $this->module->getService(RecurringOrdersPresenter::class);
 
-        try {
-            /** @var \MolCustomer $molCustomer */
-            $molCustomer = $molCustomerRepository->findOrFail([
-                'email' => $this->context->customer->email,
-            ]);
-        } catch (\Throwable $exception) {
-            $this->prepareTemplate();
+        /** @var ?\MolCustomer $molCustomer */
+        $molCustomer = $molCustomerRepository->findOneBy([
+            'email' => $this->context->customer->email,
+        ]);
 
-            return;
-        }
-
-        $this->prepareTemplate($recurringOrdersPresenter->present($molCustomer->customer_id));
+        $this->prepareTemplate(
+            $molCustomer ? $recurringOrdersPresenter->present($molCustomer->customer_id) : []
+        );
     }
 
     public function setMedia()
