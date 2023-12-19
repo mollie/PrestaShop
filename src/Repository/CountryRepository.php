@@ -14,6 +14,7 @@ namespace Mollie\Repository;
 
 use Country;
 use Db;
+use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;

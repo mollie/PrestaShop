@@ -15,7 +15,7 @@ namespace Mollie\Subscription\Provider;
 use Mollie\Adapter\Context;
 use Mollie\Repository\CustomerRepositoryInterface;
 use Mollie\Repository\ProductRepositoryInterface;
-use Mollie\Shared\Infrastructure\Repository\CurrencyRepositoryInterface;
+use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
 use Mollie\Subscription\DTO\Mail\GeneralSubscriptionMailData;
 use Mollie\Subscription\Exception\CouldNotProvideGeneralSubscriptionMailData;
 use Mollie\Subscription\Exception\MollieSubscriptionException;

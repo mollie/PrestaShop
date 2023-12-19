@@ -36,10 +36,12 @@
 
 namespace Mollie\Repository;
 
+use Mollie\Shared\Infrastructure\Repository\ReadOnlyRepositoryInterface;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-interface GenderRepositoryInterface extends \Mollie\Repository\ReadOnlyRepositoryInterface
+interface GenderRepositoryInterface extends ReadOnlyRepositoryInterface
 {
 }

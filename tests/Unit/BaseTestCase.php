@@ -16,7 +16,7 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Repository\OrderRepositoryInterface;
-use Mollie\Shared\Infrastructure\Repository\CurrencyRepositoryInterface;
+use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
 use PHPUnit\Framework\TestCase;
 
 class BaseTestCase extends TestCase

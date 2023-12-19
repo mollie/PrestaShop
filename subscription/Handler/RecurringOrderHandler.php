@@ -110,10 +110,18 @@ class RecurringOrderHandler
         $this->cloneOriginalSubscriptionCartHandler = $cloneOriginalSubscriptionCartHandler;
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function handle(string $transactionId): string
     {
         $transaction = $this->mollie->getApiClient()->payments->get($transactionId);
-        $recurringOrder = $this->recurringOrderRepository->findOneBy(['mollie_subscription_id' => $transaction->subscriptionId]);
+
+        /** @var \MolRecurringOrder $recurringOrder */
+        $recurringOrder = $this->recurringOrderRepository->findOrFail([
+            'mollie_subscription_id' => $transaction->subscriptionId,
+        ]);
+
         $subscriptionData = $this->subscriptionDataFactory->build((int) $recurringOrder->id);
         $subscription = $this->subscriptionApi->getSubscription($subscriptionData);
 
@@ -258,9 +266,15 @@ class RecurringOrderHandler
         }
     }
 
+    /**
+     * @throws \Throwable
+     */
     private function cancelSubscription(int $recurringOrderId): void
     {
-        $recurringOrder = $this->recurringOrderRepository->findOneBy(['id_mol_recurring_order' => $recurringOrderId]);
+        /** @var \MolRecurringOrder $recurringOrder */
+        $recurringOrder = $this->recurringOrderRepository->findOrFail([
+            'id_mol_recurring_order' => $recurringOrderId,
+        ]);
 
         $recurringOrder->status = SubscriptionStatus::STATUS_CANCELED;
         $recurringOrder->cancelled_at = $this->clock->getCurrentDate();
