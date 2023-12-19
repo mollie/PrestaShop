@@ -27,6 +27,7 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
 use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
+use Mollie\Subscription\Handler\UpdateSubscriptionCarrierHandler;
 use Mollie\Subscription\Install\AttributeInstaller;
 use Mollie\Subscription\Install\DatabaseTableInstaller;
 use Mollie\Subscription\Install\HookInstaller;
@@ -1269,6 +1270,41 @@ class Mollie extends PaymentModule
         $newAddress->save();
 
         $this->addPreventDeleteErrorMessage();
+    }
+
+    public function hookActionCarrierUpdate(array $params): void
+    {
+        $oldCarrierId = $params['id_carrier'] ?? 0;
+        $newCarrier = $params['carrier'] ?? null;
+
+        if (empty($oldCarrierId) || empty($newCarrier)) {
+            return;
+        }
+
+        /** @var UpdateSubscriptionCarrierHandler $subscriptionCarrierUpdateHandler */
+        $subscriptionCarrierUpdateHandler = $this->getService(UpdateSubscriptionCarrierHandler::class);
+
+        /** @var ConfigurationAdapter $configuration */
+        $configuration = $this->getService(ConfigurationAdapter::class);
+
+        /** @var PrestaLoggerInterface $logger */
+        $logger = $this->getService(PrestaLoggerInterface::class);
+
+        if ((int) $oldCarrierId !== (int) $configuration->get(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID)) {
+            return;
+        }
+
+        $failedSubscriptionOrderIdsToUpdate = $subscriptionCarrierUpdateHandler->run((int) $newCarrier->id);
+
+        if (empty($failedSubscriptionOrderIdsToUpdate)) {
+            return;
+        }
+
+        $logger->error('Failed to update subscription carrier for all orders.', [
+            'failed_subscription_order_ids' => json_encode($failedSubscriptionOrderIdsToUpdate),
+        ]);
+
+        // TODO maybe notification redirect with failed orders to update
     }
 
     public function hookActionFrontControllerAfterInit(): void
