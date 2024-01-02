@@ -32,6 +32,7 @@ services:
       dockerfile: .docker/Dockerfile.8
     environment:
       PS_INSTALL_AUTO: 0
+      PS_ENABLE_SSL: 1
       DB_PASSWD: $${DB_PASSWD}
       DB_NAME: prestashop
       DB_SERVER: mysql

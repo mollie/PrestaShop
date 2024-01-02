@@ -7,7 +7,7 @@ use Mollie\Exception\Code\ExceptionCode;
 
 class CouldNotUpdateOrderTotals extends MollieException
 {
-    public static function failedToUpdateOrderTotals(Exception $exception): CouldNotUpdateOrderTotals
+    public static function failedToUpdateOrderTotals(Exception $exception): self
     {
         return new self(
             'Failed to update order totals.',

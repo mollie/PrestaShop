@@ -2,6 +2,14 @@
 
 # Changelog #
 
+## Changes in release 6.0.4 ##
++ New payment method: Billie.
++ Enabled mixed cart for subscription orders. Various products could be coupled with a single subscription product.
++ Overall improvements and bug fixes.
+
+## Changes in release 6.0.3 ##
++ High priority bug fix impacting product add to cart pop-up.
+
 ## Changes in release 6.0.2 ##
 + Decoupled Apple Pay direct feature flag into product and cart separate settings.
 + Overall improvements and bug fixes.

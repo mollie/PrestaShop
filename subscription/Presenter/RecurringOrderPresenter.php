@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mollie\Subscription\Logger;
+namespace Mollie\Subscription\Presenter;
 
 use Currency;
 use Mollie\Adapter\Language;
@@ -23,19 +23,26 @@ class RecurringOrderPresenter
     private $language;
     /** @var MethodApi */
     private $methodApi;
+    /** @var OrderDetailPresenter */
+    private $orderDetailPresenter;
 
     public function __construct(
         RecurringOrderRepositoryInterface $recurringOrderRepository,
         RecurringOrdersProductRepositoryInterface $recurringOrdersProductRepository,
         Language $language,
-        MethodApi $methodApi
+        MethodApi $methodApi,
+        OrderDetailPresenter $orderDetailPresenter
     ) {
         $this->recurringOrderRepository = $recurringOrderRepository;
         $this->recurringOrdersProductRepository = $recurringOrdersProductRepository;
         $this->language = $language;
         $this->methodApi = $methodApi;
+        $this->orderDetailPresenter = $orderDetailPresenter;
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function present(int $recurringOrderId): array
     {
         $recurringOrder = $this->recurringOrderRepository->findOneBy(['id_mol_recurring_order' => $recurringOrderId]);
@@ -57,6 +64,10 @@ class RecurringOrderPresenter
         $recurringOrderData['recurring_product'] = $recurringProduct;
         $recurringOrderData['product'] = $product;
         $recurringOrderData['order'] = (new OrderPresenter())->present($order);
+        $recurringOrderData['order_detail'] = $this->orderDetailPresenter->present(
+            $recurringOrder,
+            $recurringProduct
+        );
         $recurringOrderData['payment_methods'] = $this->methodApi->getMethodsForFirstPayment($this->language->getContextLanguage()->locale, $currency->iso_code);
 
         return $recurringOrderData;

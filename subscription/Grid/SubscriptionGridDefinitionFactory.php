@@ -104,10 +104,10 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                     'sortable' => true,
                 ])
             )
-            ->add((new DataColumn('unit_price'))
-                ->setName($this->module->l('Unit price', self::FILE_NAME))
+            ->add((new DataColumn('total_price'))
+                ->setName($this->module->l('Total price', self::FILE_NAME))
                 ->setOptions([
-                    'field' => 'unit_price',
+                    'field' => 'total_price',
                     'sortable' => true,
                 ])
             )
@@ -220,14 +220,14 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
                 ])
                 ->setAssociatedColumn('status')
             )
-            ->add((new Filter('unit_price', MoneyType::class))
+            ->add((new Filter('total_price', MoneyType::class))
                 ->setTypeOptions([
                     'required' => false,
                     'attr' => [
-                        'placeholder' => $this->module->l('Unit price', self::FILE_NAME),
+                        'placeholder' => $this->module->l('Total price', self::FILE_NAME),
                     ],
                 ])
-                ->setAssociatedColumn('unit_price')
+                ->setAssociatedColumn('total_price')
             )
             ->add((new Filter('iso_code', TextType::class))
                 ->setTypeOptions([

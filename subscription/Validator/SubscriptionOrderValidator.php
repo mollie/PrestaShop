@@ -16,23 +16,20 @@ class SubscriptionOrderValidator
         $this->subscriptionProduct = $subscriptionProduct;
     }
 
-    /** Returns true if cart has subscription products */
+    /** Returns true if cart has subscription product */
     public function validate(Cart $cart): bool
     {
         $products = $cart->getProducts();
-        // only one product can be subscribed at a time
-        if (count($products) !== 1) {
-            return false;
-        }
 
-        // checks if product is subscription product
-        // foreach is not necessary but might need to add more possible products for subscription in later updates
+        $subscriptionProductCount = 0;
+
+        // checks if one of cart products is subscription product
         foreach ($products as $product) {
             if ($this->subscriptionProduct->validate((int) $product['id_product_attribute'])) {
-                return true;
+                ++$subscriptionProductCount;
             }
         }
 
-        return false;
+        return $subscriptionProductCount > 0 && $subscriptionProductCount < 2;
     }
 }

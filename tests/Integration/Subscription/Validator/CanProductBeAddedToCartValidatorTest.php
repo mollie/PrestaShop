@@ -1,9 +1,10 @@
 <?php
 
+namespace Mollie\Tests\Integration\Subscription\Validator;
+
 use Mollie\Adapter\CartAdapter;
 use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Subscription\Config\Config;
-use Mollie\Subscription\Exception\ProductValidationException;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 use Mollie\Subscription\Repository\CombinationRepository;
 use Mollie\Subscription\Repository\ProductCombinationRepository;
@@ -11,14 +12,15 @@ use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use Mollie\Tests\Integration\BaseTestCase;
 
-class SubscriptionCartTest extends BaseTestCase
+class CanProductBeAddedToCartValidatorTest extends BaseTestCase
 {
     private const NORMAL_PRODUCT_ATTRIBUTE_ID = 1;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $product = new Product(1);
+
+        $product = new \Product(1);
 
         $this->randomAttributeId = self::NORMAL_PRODUCT_ATTRIBUTE_ID;
 
@@ -58,7 +60,6 @@ class SubscriptionCartTest extends BaseTestCase
      */
     public function testValidate(string $combinationReference, bool $hasExtraAttribute, array $cartProducts, $expectedResult): void
     {
-        $language = new Language(1);
         $cartAdapterMock = $this->createMock(CartAdapter::class);
 
         $cartProducts = array_map(function (array $product) {
@@ -114,7 +115,7 @@ class SubscriptionCartTest extends BaseTestCase
                         'id_product_attribute' => self::NORMAL_PRODUCT_ATTRIBUTE_ID,
                     ],
                 ],
-                'expected result' => SubscriptionProductValidationException::class,
+                'expected result' => true,
             ],
             'Add subscription product but already have another subscription product in cart' => [
                 'subscription reference' => Config::SUBSCRIPTION_ATTRIBUTE_DAILY,
@@ -134,7 +135,7 @@ class SubscriptionCartTest extends BaseTestCase
                         'id_product_attribute' => Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY,
                     ],
                 ],
-                'expected result' => ProductValidationException::class,
+                'expected result' => true,
             ],
             'Add normal product but already have another normal product in cart' => [
                 'subscription reference' => '',
@@ -159,6 +160,6 @@ class SubscriptionCartTest extends BaseTestCase
             ]) : $this->randomAttributeId;
         }
 
-        return (int) Combination::getIdByReference(1, $reference);
+        return (int) \Combination::getIdByReference(1, $reference);
     }
 }

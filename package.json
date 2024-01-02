@@ -20,11 +20,11 @@
   },
   "homepage": "https://github.com/mollie/PrestaShop#readme",
   "devDependencies": {
-    "cypress": "^12.17.2",
+    "cypress": "^13.3.0",
     "cypress-fail-fast": "^7.0.0",
     "cypress-iframe": "^1.0.1",
-    "cypress-terminal-report": "^5.3.2",
-    "cypress-testrail": "^2.7.1",
+    "cypress-terminal-report": "^5.3.3",
+    "cypress-testrail": "^2.8.1",
     "human-signals": "^3.0.1"
   }
 }

@@ -26,7 +26,6 @@ use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
-use Mollie\Subscription\Exception\ProductValidationException;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
 use Mollie\Subscription\Install\AttributeInstaller;
@@ -82,7 +81,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.0.2';
+        $this->version = '6.0.4';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -177,7 +176,13 @@ class Mollie extends PaymentModule
 
         $subscriptionInstaller = new Installer(
             new DatabaseTableInstaller(),
-            new AttributeInstaller(new NullLogger(), new ConfigurationAdapter(), $this, new LanguageAdapter(), new ProductAttributeAdapter()),
+            new AttributeInstaller(
+                new NullLogger(),
+                $this->getService(ConfigurationAdapter::class),
+                $this,
+                new LanguageAdapter(),
+                new ProductAttributeAdapter()
+            ),
             new HookInstaller($this)
         );
 
@@ -1000,10 +1005,6 @@ class Mollie extends PaymentModule
             $product = $this->makeProductNotOrderable($params['product']);
 
             $params['product'] = $product;
-        } catch (ProductValidationException $e) {
-            $product = $this->makeProductNotOrderable($params['product']);
-
-            $params['product'] = $product;
         }
     }
 
@@ -1253,6 +1254,16 @@ class Mollie extends PaymentModule
     }
 
     public function hookActionFrontControllerAfterInit(): void
+    {
+        $this->frontControllerAfterInit();
+    }
+
+    public function hookActionFrontControllerInitAfter(): void
+    {
+        $this->frontControllerAfterInit();
+    }
+
+    private function frontControllerAfterInit(): void
     {
         if (!$this->context->controller instanceof OrderControllerCore) {
             return;

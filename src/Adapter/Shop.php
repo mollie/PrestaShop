@@ -19,8 +19,8 @@ class Shop
         return \Context::getContext()->shop;
     }
 
-    public function getContext()
+    public function getContext(): int
     {
-        return $this->getShop()->getContext();
+        return (int) $this->getShop()->getContext();
     }
 }

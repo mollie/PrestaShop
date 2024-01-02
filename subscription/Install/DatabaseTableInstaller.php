@@ -13,12 +13,12 @@ final class DatabaseTableInstaller extends AbstractInstaller
         $commands = $this->getCommands();
 
         foreach ($commands as $query) {
-            if (false == Db::getInstance()->execute($query)) {
+            if (!Db::getInstance()->execute($query)) {
                 return false;
             }
         }
 
-        return true;
+        return $this->alterTableCommands();
     }
 
     /**
@@ -45,6 +45,7 @@ final class DatabaseTableInstaller extends AbstractInstaller
 				`mollie_customer_id` VARCHAR(64) NOT NULL,
 				`payment_method` VARCHAR(64) NOT NULL,
 				`id_mol_recurring_orders_product` INT(64) NOT NULL,
+				`total_tax_incl` decimal(20, 6) NOT NULL,
 				`date_add` datetime NOT NULL,
 				`date_update` datetime NOT NULL
 			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
@@ -60,5 +61,40 @@ final class DatabaseTableInstaller extends AbstractInstaller
 			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
         return $sql;
+    }
+
+    private function alterTableCommands(): bool
+    {
+        $query = '
+            SELECT COUNT(*) > 0 AS count
+            FROM information_schema.columns
+            WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND table_name = "' . _DB_PREFIX_ . 'mol_recurring_order" AND column_name = "total_tax_incl";
+        ';
+
+        /* only run if it doesn't exist */
+        if (Db::getInstance()->getValue($query)) {
+            return true;
+        }
+
+        $query = '
+            ALTER TABLE ' . _DB_PREFIX_ . 'mol_recurring_order
+            ADD COLUMN total_tax_incl decimal(20, 6) NOT NULL;
+        ';
+
+        if (!Db::getInstance()->execute($query)) {
+            return false;
+        }
+
+        $query = '
+            UPDATE ' . _DB_PREFIX_ . 'mol_recurring_order ro
+            JOIN ' . _DB_PREFIX_ . 'orders o ON ro.id_order = o.id_order
+            SET ro.total_tax_incl = o.total_paid_tax_incl;
+        ';
+
+        if (!Db::getInstance()->execute($query)) {
+            return false;
+        }
+
+        return true;
     }
 }

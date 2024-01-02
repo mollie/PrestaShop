@@ -6,7 +6,7 @@ use Mollie\Exception\Code\ExceptionCode;
 
 class CouldNotInstallModule extends MollieException
 {
-    public static function failedToInstallOrderState(string $orderStateName, \Exception $exception): CouldNotInstallModule
+    public static function failedToInstallOrderState(string $orderStateName, \Exception $exception): self
     {
         return new self(
             sprintf('Failed to install order state (%s).', $orderStateName),

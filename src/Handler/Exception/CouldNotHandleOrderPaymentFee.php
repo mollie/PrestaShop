@@ -8,7 +8,7 @@ use Throwable;
 
 class CouldNotHandleOrderPaymentFee extends MollieException
 {
-    public static function failedToRetrievePaymentMethod(Throwable $exception): CouldNotHandleOrderPaymentFee
+    public static function failedToRetrievePaymentMethod(Throwable $exception): self
     {
         return new self(
             'Failed to retrieve payment method',
@@ -17,7 +17,7 @@ class CouldNotHandleOrderPaymentFee extends MollieException
         );
     }
 
-    public static function failedToRetrievePaymentFee(Throwable $exception): CouldNotHandleOrderPaymentFee
+    public static function failedToRetrievePaymentFee(Throwable $exception): self
     {
         return new self(
             'Failed to retrieve payment fee',
@@ -26,7 +26,7 @@ class CouldNotHandleOrderPaymentFee extends MollieException
         );
     }
 
-    public static function failedToCreateOrderPaymentFee(Throwable $exception): CouldNotHandleOrderPaymentFee
+    public static function failedToCreateOrderPaymentFee(Throwable $exception): self
     {
         return new self(
             'Failed to create order payment fee',
@@ -35,7 +35,7 @@ class CouldNotHandleOrderPaymentFee extends MollieException
         );
     }
 
-    public static function failedToUpdateOrderTotalWithPaymentFee(Throwable $exception): CouldNotHandleOrderPaymentFee
+    public static function failedToUpdateOrderTotalWithPaymentFee(Throwable $exception): self
     {
         return new self(
             'Failed to update order total with payment fee.',

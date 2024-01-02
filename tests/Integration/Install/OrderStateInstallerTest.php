@@ -86,7 +86,7 @@ class OrderStateInstallerTest extends BaseTestCase
                 'pdfInvoice' => false,
             ],
             [
-                'key' => Config::MOLLIE_STATUS_KLARNA_AUTHORIZED,
+                'key' => Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED,
                 'color' => '#8A2BE2',
                 'sendEmail' => true,
                 'logable' => true,
@@ -97,7 +97,7 @@ class OrderStateInstallerTest extends BaseTestCase
                 'pdfInvoice' => true,
             ],
             [
-                'key' => Config::MOLLIE_STATUS_KLARNA_SHIPPED,
+                'key' => Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED,
                 'color' => '#8A2BE2',
                 'sendEmail' => true,
                 'logable' => true,

@@ -1,15 +1,18 @@
 <?php
 
+namespace Mollie\Tests\Integration\Subscription\Validator;
+
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use Mollie\Tests\Integration\BaseTestCase;
 
-class SubscriptionProductTest extends BaseTestCase
+class SubscriptionProductValidatorTest extends BaseTestCase
 {
     protected function setUp(): void
     {
         parent::setUp();
-        $product = new Product(1);
+
+        $product = new \Product(1);
 
         $this->randomAttributeId = 1;
 
@@ -90,6 +93,6 @@ class SubscriptionProductTest extends BaseTestCase
             ]) : $this->randomAttributeId;
         }
 
-        return (int) Combination::getIdByReference(1, $reference);
+        return (int) \Combination::getIdByReference(1, $reference);
     }
 }

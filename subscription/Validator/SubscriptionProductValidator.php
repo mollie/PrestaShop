@@ -43,6 +43,7 @@ class SubscriptionProductValidator
     {
         $combination = $this->combination->getById($productAttributeId);
         $attributeIds = $this->combinationRepository->getIds((int) $combination->id);
+
         foreach ($attributeIds as $attributeId) {
             if ($this->isSubscriptionAttribute((int) $attributeId['id_attribute'])) {
                 return true;

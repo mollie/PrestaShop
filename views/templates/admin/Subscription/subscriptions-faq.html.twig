@@ -32,11 +32,11 @@
     <div class="col-lg-12">
       <div class="card">
         <h3 class="card-header">
-          <i class="material-icons">info_outline</i> {{ subscriptionCreationTittle }}
+          <i class="material-icons">info_outline</i> {{ subscriptionCreationTittle|escape }}
         </h3>
         <div class="card-block">
           <div class="card-text">
-            <p>{{subscriptionCreation}}</p>
+            <p>{{ subscriptionCreation|escape }}</p>
           </div>
         </div>
       </div>
@@ -47,11 +47,11 @@
     <div class="col-lg-12">
       <div class="card">
         <h3 class="card-header">
-          <i class="material-icons">info_outline</i> {{ importantInformationTittle }}
+          <i class="material-icons">info_outline</i> {{ importantInformationTittle|escape }}
         </h3>
         <div class="card-block">
           <div class="card-text">
-            <p>{{importantInformation}}</p>
+            <p>{{ importantInformation|escape }}</p>
           </div>
         </div>
       </div>
@@ -62,13 +62,14 @@
     <div class="col-lg-12">
       <div class="card">
         <h3 class="card-header">
-          <i class="material-icons">info_outline</i> {{ cartRuleTitle }}
+          <i class="material-icons">info_outline</i> {{ carrierInformationTitle|escape }}
         </h3>
         <div class="card-block">
           <div class="card-text">
-            <p>{{cartRule}}</p>
-            <p>{{cartRule2}}</p>
-            <p>{{cartRule3}}</p>
+            <p>{{ carrierInformation1|escape }}</p>
+            <p>{{ carrierInformation2|escape }}</p>
+            <p>{{ carrierInformation3|escape }}</p>
+            <p>{{ carrierInformation4|escape }}</p>
           </div>
         </div>
       </div>
@@ -79,13 +80,43 @@
     <div class="col-lg-12">
       <div class="card">
         <h3 class="card-header">
-          <i class="material-icons">info_outline</i> {{ subscriptionOrderLogicTitle }}
+          <i class="material-icons">info_outline</i> {{ cartRuleTitle|escape }}
         </h3>
         <div class="card-block">
           <div class="card-text">
-            <p>{{recurringOrderCreation}}</p>
-            <p>{{recurringOrderPrice}}</p>
-            <p>{{recurringOrderAPIChanges}}</p>
+            <p>{{ cartRule1|escape }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <h3 class="card-header">
+          <i class="material-icons">info_outline</i> {{ giftWrappingTitle|escape }}
+        </h3>
+        <div class="card-block">
+          <div class="card-text">
+            <p>{{ giftWrapping1|escape }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <h3 class="card-header">
+          <i class="material-icons">info_outline</i> {{ subscriptionOrderLogicTitle|escape }}
+        </h3>
+        <div class="card-block">
+          <div class="card-text">
+            <p>{{ recurringOrderCreation|escape }}</p>
+            <p>{{ recurringOrderPrice|escape }}</p>
+            <p>{{ recurringOrderAPIChanges|escape }}</p>
           </div>
         </div>
       </div>

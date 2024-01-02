@@ -11,7 +11,7 @@ services:
 
   mysql:
     #platform: linux/amd64
-    container_name: mysql-mollie-1784
+    container_name: mysql-mollie-1785
     image: mysql:5.7
     ports:
       - "9002:3306"
@@ -23,19 +23,19 @@ services:
       test: "mysqladmin ping -h127.0.0.1 -uroot -pprestashop --silent"
       interval: 10s
     networks:
-      - prestashop_mollie_net_1784
+      - prestashop_mollie_net_1785
   prestashop-17:
     #platform: linux/amd64
-    container_name: prestashop-mollie-1784
+    container_name: prestashop-mollie-1785
     build:
       context: .
-      dockerfile: .docker/Dockerfile.1784
+      dockerfile: .docker/Dockerfile.1785
     environment:
       PS_INSTALL_AUTO: 0
       DB_PASSWD: $${DB_PASSWD}
       DB_NAME: prestashop
       DB_SERVER: mysql
-      PS_DOMAIN: demoshop1784.ngrok.io:8002
+      PS_DOMAIN: demoshop1785.ngrok.io:8002
       PS_FOLDER_INSTALL: install
       PS_FOLDER_ADMIN: admin1
     depends_on:
@@ -44,11 +44,11 @@ services:
       - "8002:80"
     volumes:
       - ./:/var/www/html/modules/mollie:cached
-      - ./tests/seed/settings1784/defines.inc.php:/var/www/html/config/defines.inc.php
-      - ./tests/seed/settings1784/parameters.php:/var/www/html/app/config/parameters.php
-      - ./.docker/.htaccess1784:/var/www/html/.htaccess
+      - ./tests/seed/settings1785/defines.inc.php:/var/www/html/config/defines.inc.php
+      - ./tests/seed/settings1785/parameters.php:/var/www/html/app/config/parameters.php
+      - ./.docker/.htaccess1785:/var/www/html/.htaccess
     networks:
-      - prestashop_mollie_net_1784
+      - prestashop_mollie_net_1785
     healthcheck:
       test: "wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1"
       interval: 10s
@@ -59,8 +59,8 @@ services:
     ports:
       - '6969:8080'
     networks:
-      - prestashop_mollie_net_1784
+      - prestashop_mollie_net_1785
 
 networks:
-  prestashop_mollie_net_1784:
-    name: 'prestashop_mollie_net_1784'
+  prestashop_mollie_net_1785:
+    name: 'prestashop_mollie_net_1785'

@@ -6,7 +6,7 @@ namespace Mollie\Subscription\Validator;
 
 use Mollie\Adapter\CartAdapter;
 use Mollie\Adapter\ToolsAdapter;
-use Mollie\Subscription\Exception\ProductValidationException;
+use Mollie\Subscription\Exception\ExceptionCode;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 
 class CanProductBeAddedToCartValidator
@@ -32,12 +32,13 @@ class CanProductBeAddedToCartValidator
 
     /**
      * Validates if product can be added to the cart.
-     * Only 1 subscription product can be in cart and no other products can be added if there are subscription products
-     * For now we only allow one subscription product with any quantities, later might need to add logic to allow more products
+     * Only 1 subscription product can be to the cart
      *
      * @param int $productAttributeId
      *
      * @return bool
+     *
+     * @throws SubscriptionProductValidationException
      */
     public function validate(int $productAttributeId): bool
     {
@@ -49,11 +50,7 @@ class CanProductBeAddedToCartValidator
 
         $isNewSubscriptionProduct = $this->subscriptionProduct->validate($productAttributeId);
 
-        if ($isNewSubscriptionProduct) {
-            return $this->validateIfSubscriptionProductCanBeAdded($productAttributeId);
-        }
-
-        return $this->validateIfProductCanBeAdded();
+        return !$isNewSubscriptionProduct || $this->validateIfSubscriptionProductCanBeAdded($productAttributeId);
     }
 
     /**
@@ -66,39 +63,17 @@ class CanProductBeAddedToCartValidator
     private function validateIfSubscriptionProductCanBeAdded(int $productAttributeId): bool
     {
         $cartProducts = $this->cart->getProducts();
-        $numberOfProductsInCart = count($cartProducts);
-        // we can only have 1 product in cart if its subscription product
-        if ($numberOfProductsInCart > 1) {
-            throw new SubscriptionProductValidationException('Cart has multiple products', SubscriptionProductValidationException::MULTTIPLE_PRODUCTS_IN_CART);
-        }
 
-        // if it's the same product we can add more of the same product
-        if ($numberOfProductsInCart === 1) {
-            $cartProduct = reset($cartProducts);
-
-            $isTheSameProduct = $productAttributeId === (int) $cartProduct['id_product_attribute'];
-
-            if (!$isTheSameProduct) {
-                throw new SubscriptionProductValidationException('Cart has multiple products', SubscriptionProductValidationException::MULTTIPLE_PRODUCTS_IN_CART);
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * @return bool
-     *
-     * @throws ProductValidationException
-     */
-    private function validateIfProductCanBeAdded(): bool
-    {
-        $cartProducts = $this->cart->getProducts();
         foreach ($cartProducts as $cartProduct) {
-            $isSubscriptionProduct = $this->subscriptionProduct->validate((int) $cartProduct['id_product_attribute']);
-            if ($isSubscriptionProduct) {
-                throw new ProductValidationException('Cart has subscription products', ProductValidationException::SUBSCRIPTTION_PRODUCTS_IN_CART);
+            if (!$this->subscriptionProduct->validate((int) $cartProduct['id_product_attribute'])) {
+                continue;
             }
+
+            if ((int) $cartProduct['id_product_attribute'] === $productAttributeId) {
+                continue;
+            }
+
+            throw new SubscriptionProductValidationException('Cart already has subscription product', ExceptionCode::CART_ALREADY_HAS_SUBSCRIPTION_PRODUCT);
         }
 
         return true;

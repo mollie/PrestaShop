@@ -73,7 +73,7 @@ class AttributeInstaller extends AbstractInstaller
      */
     private function createAttributeGroup(array $languages): AttributeGroup
     {
-        $existingAttributeGroup = new AttributeGroup($this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_GROUP));
+        $existingAttributeGroup = new AttributeGroup((int) $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_GROUP));
         if (Validate::isLoadedObject($existingAttributeGroup)) {
             return $existingAttributeGroup;
         }

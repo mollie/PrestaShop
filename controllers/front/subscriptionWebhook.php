@@ -13,6 +13,7 @@
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
+use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\Handler\RecurringOrderHandler;
 
 if (!defined('_PS_VERSION_')) {
@@ -62,9 +63,17 @@ class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieContr
         /** @var ErrorHandler $errorHandler */
         $errorHandler = $this->module->getService(ErrorHandler::class);
 
+        /** @var PrestaLoggerInterface $logger */
+        $logger = $this->module->getService(PrestaLoggerInterface::class);
+
         try {
             $recurringOrderHandler->handle($transactionId);
-        } catch (Exception $exception) {
+        } catch (\Throwable $exception) {
+            $logger->error('Failed to handle recurring order', [
+                'Exception message' => $exception->getMessage(),
+                'Exception code' => $exception->getCode(),
+            ]);
+
             $errorHandler->handle($exception, null, false);
 
             $this->respond('failed', HttpStatusCode::HTTP_BAD_REQUEST);
