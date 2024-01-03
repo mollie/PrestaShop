@@ -4,16 +4,35 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 fix-lint:
 	docker-compose run --rm php sh -c "vendor/bin/php-cs-fixer fix --using-cache=no"
 
-#PS1785 without PS autoinstall, both CI and local
+#PS1785 for local machine docker build with PS autoinstall
+e2eh1785_local:
+	# detaching containers
+	docker-compose -f docker-compose.1785.yml up -d --force-recreate
+	# sees what containers are running
+	docker-compose -f docker-compose.1785.yml ps
+	# waiting for app containers to build up
+	/bin/bash .docker/wait-loader.sh 8002
+	# seeding the customized settings for PS
+	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1785_2.sql
+	# installing module
+	docker exec -i prestashop-mollie-1785 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
+	# uninstalling module
+	docker exec -i prestashop-mollie-1785 sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall mollie"
+	# installing the module again
+	docker exec -i prestashop-mollie-1785 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
+	# enabling the module
+	docker exec -i prestashop-mollie-1785 sh -c "cd /var/www/html && php  bin/console prestashop:module enable mollie"
+	# chmod all folders
+	docker exec -i prestashop-mollie-1785 sh -c "chmod -R 777 /var/www/html"
+
+#PS1785 for CI build with PS autoinstall
 e2eh1785:
 	# detaching containers
 	docker-compose -f docker-compose.1785.yml up -d --force-recreate
 	# sees what containers are running
 	docker-compose -f docker-compose.1785.yml ps
-	# waits for mysql to load
-	/bin/bash .docker/wait-for-container.sh mysql-mollie-1785
-	# configuring your prestashop
-	docker exec -i prestashop-mollie-1785 sh -c "rm -rf /var/www/html/install"
+	# waiting for app containers to build up
+	sleep 90s
 	# configuring base database
 	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1785_2.sql
 	# installing module
