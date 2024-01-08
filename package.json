@@ -25,7 +25,7 @@
     "cypress-fail-fast": "^7.0.3",
     "cypress-iframe": "^1.0.1",
     "cypress-terminal-report": "^5.3.3",
-    "cypress-testrail": "^2.8.2",
+    "cypress-testrail": "^2.9.0",
     "human-signals": "^3.0.1"
   }
 }
