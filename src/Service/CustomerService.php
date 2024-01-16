@@ -18,6 +18,10 @@ use Mollie\Exception\MollieException;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Utility\CustomerUtility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CustomerService
 {
     /**

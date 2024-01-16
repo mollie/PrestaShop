@@ -38,6 +38,10 @@ use Product;
 use State;
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MailService
 {
     const FILE_NAME = 'MailService';
@@ -100,7 +104,6 @@ class MailService
     }
 
     /**
-     * @param Order $order
      * @param int $orderStateId
      *
      * @throws \PrestaShopDatabaseException
@@ -208,7 +211,6 @@ class MailService
     }
 
     /**
-     * @param Order $order
      * @param int $orderStateId
      *
      * @return array<string, mixed>

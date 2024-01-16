@@ -36,6 +36,10 @@
 
 namespace Mollie\Repository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface CurrencyRepositoryInterface extends ReadOnlyRepositoryInterface
 {
 }

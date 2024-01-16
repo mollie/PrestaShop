@@ -12,6 +12,10 @@
 
 namespace Mollie\Exception;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MollieApiException extends \Exception
 {
     const MOLLIE_API_IS_NULL = 1;

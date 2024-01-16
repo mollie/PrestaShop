@@ -34,6 +34,10 @@ use MolPaymentMethod;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ApiService implements ApiServiceInterface
 {
     private $errors = [];
@@ -100,8 +104,6 @@ class ApiService implements ApiServiceInterface
 
     /**
      * Get payment methods to show on the configuration page.
-     *
-     * @param MollieApiClient $api
      *
      * @return array
      *
@@ -399,11 +401,6 @@ class ApiService implements ApiServiceInterface
     }
 
     /**
-     * @param MollieApiClient|null $api
-     * @param string $validationUrl
-     *
-     * @return string
-     *
      * @throws ApiException
      * @throws MollieApiException
      */

@@ -18,6 +18,10 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ShipmentServiceInterface;
 use Order;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ShipmentInformationSender implements ShipmentInformationSenderInterface
 {
     /**
@@ -62,11 +66,6 @@ class ShipmentInformationSender implements ShipmentInformationSenderInterface
         $apiOrder->shipAll($this->shipmentService->getShipmentInformation($order->reference));
     }
 
-    /**
-     * @param ApiOrder $apiOrder
-     *
-     * @return bool
-     */
     private function hasShippableItems(ApiOrder $apiOrder): bool
     {
         $shippableItems = 0;

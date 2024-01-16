@@ -20,6 +20,10 @@ use Mollie\Service\MolliePaymentMailService;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TimeUtility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AdminMollieAjaxController extends ModuleAdminController
 {
     /** @var Mollie */

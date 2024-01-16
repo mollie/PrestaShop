@@ -46,6 +46,10 @@ use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Repository\AddressRepositoryInterface;
 use MolPaymentMethod;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentFeeProvider implements PaymentFeeProviderInterface
 {
     /** @var Context */

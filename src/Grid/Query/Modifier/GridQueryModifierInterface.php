@@ -14,12 +14,14 @@ namespace Mollie\Grid\Query\Modifier;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface GridQueryModifierInterface
 {
     /**
      * Used to modify Grid Query Builder.
-     *
-     * @param QueryBuilder $queryBuilder
      */
     public function modify(QueryBuilder $queryBuilder);
 }

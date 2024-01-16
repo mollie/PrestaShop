@@ -38,6 +38,10 @@ namespace Mollie\Repository;
 
 use Currency;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CurrencyRepository extends AbstractRepository implements CurrencyRepositoryInterface
 {
     public function __construct()

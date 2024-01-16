@@ -12,6 +12,10 @@
 
 namespace Mollie\Config;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /**
  * This class allows to retrieve config data that can be overwritten by a .env file.
  * Otherwise it returns by default from the Config class.

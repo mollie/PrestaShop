@@ -52,6 +52,10 @@ use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
 {
     const FILE_NAME = 'CreditCardPaymentOptionProvider';

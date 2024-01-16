@@ -41,6 +41,10 @@ use Mollie\Config\Config;
 use Mollie\Validator\VoucherValidator;
 use MolPaymentMethod;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class VoucherPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
     /**

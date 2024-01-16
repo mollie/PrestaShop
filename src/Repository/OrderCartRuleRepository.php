@@ -15,6 +15,10 @@ namespace Mollie\Repository;
 use Db;
 use OrderCartRule;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 final class OrderCartRuleRepository extends AbstractRepository implements OrderCartRuleRepositoryInterface
 {
     public function __construct()

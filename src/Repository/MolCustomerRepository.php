@@ -14,6 +14,10 @@ namespace Mollie\Repository;
 
 use MolCustomer;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MolCustomerRepository extends AbstractRepository
 {
     public function findOneBy(array $keyValueCriteria): ?MolCustomer

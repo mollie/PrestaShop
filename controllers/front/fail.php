@@ -12,6 +12,10 @@
 
 use PrestaShop\PrestaShop\Adapter\Order\OrderPresenter;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MollieFailModuleFrontController extends ModuleFrontController
 {
     /**

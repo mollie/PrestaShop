@@ -14,6 +14,10 @@ namespace Mollie\Repository;
 
 use MolOrderPaymentFee;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MolOrderPaymentFeeRepository extends AbstractRepository implements MolOrderPaymentFeeRepositoryInterface
 {
     public function __construct()

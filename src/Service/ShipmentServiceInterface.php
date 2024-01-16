@@ -15,6 +15,10 @@ namespace Mollie\Service;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface ShipmentServiceInterface
 {
     /**

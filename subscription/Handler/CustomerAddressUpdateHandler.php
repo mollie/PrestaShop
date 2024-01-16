@@ -1,9 +1,23 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Subscription\Handler;
 
 use Mollie\Subscription\Utility\ClockInterface;
 use MolRecurringOrder;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class CustomerAddressUpdateHandler
 {
@@ -17,10 +31,6 @@ class CustomerAddressUpdateHandler
 
     /**
      * @param MolRecurringOrder[] $orders
-     * @param int $newAddressId
-     * @param int $oldAddressId
-     *
-     * @return void
      *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException

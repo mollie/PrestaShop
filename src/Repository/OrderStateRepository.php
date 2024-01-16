@@ -15,6 +15,10 @@ namespace Mollie\Repository;
 use Db;
 use Mollie\Config\Config;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderStateRepository
 {
     public function deleteStatuses()

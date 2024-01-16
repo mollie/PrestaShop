@@ -19,6 +19,10 @@ use Country;
 use Customer;
 use Order;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class TextGeneratorUtility
 {
     /**

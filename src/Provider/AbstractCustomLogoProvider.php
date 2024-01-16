@@ -12,6 +12,10 @@
 
 namespace Mollie\Provider;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 abstract class AbstractCustomLogoProvider implements CustomLogoProviderInterface
 {
     /**

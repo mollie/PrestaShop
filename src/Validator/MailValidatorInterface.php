@@ -12,6 +12,10 @@
 
 namespace Mollie\Validator;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface MailValidatorInterface
 {
     /**

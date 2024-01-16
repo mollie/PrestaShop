@@ -15,6 +15,10 @@ namespace Mollie\Factory;
 use Customer;
 use Mollie\Utility\ContextUtility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CustomerFactory
 {
     public function recreateFromRequest($customerId, $customerSecureKey, $context)

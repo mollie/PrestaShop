@@ -16,14 +16,13 @@ use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
 use Mollie\Exception\MollieApiException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface ApiServiceInterface
 {
     /**
-     * @param MollieApiClient|null $api
-     * @param string $validationUrl
-     *
-     * @return string
-     *
      * @throws ApiException
      * @throws MollieApiException
      */

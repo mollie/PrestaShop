@@ -17,6 +17,10 @@ use Mollie\Config\Config;
 use Mollie\DTO\ApplePay\Carrier\Carrier as AppleCarrier;
 use Mollie\Service\OrderPaymentFeeService;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderTotalCollector
 {
     /** @var OrderPaymentFeeService */
@@ -29,7 +33,6 @@ class OrderTotalCollector
 
     /**
      * @param AppleCarrier[] $applePayCarriers
-     * @param Cart $cart
      *
      * @return array|array
      *

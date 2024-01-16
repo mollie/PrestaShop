@@ -1,4 +1,14 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Provider;
 
@@ -6,6 +16,10 @@ use Mollie\Repository\TaxRepositoryInterface;
 use Mollie\Repository\TaxRuleRepositoryInterface;
 use Tax;
 use TaxCalculator;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class TaxCalculatorProvider
 {
@@ -22,13 +36,6 @@ class TaxCalculatorProvider
         $this->taxRepository = $taxRepository;
     }
 
-    /**
-     * @param int $taxRulesGroupId
-     * @param int $countryId
-     * @param int $stateId
-     *
-     * @return TaxCalculator
-     */
     public function getTaxCalculator(int $taxRulesGroupId, int $countryId, int $stateId): TaxCalculator
     {
         $taxRules = $this->taxRuleRepository->getTaxRule(

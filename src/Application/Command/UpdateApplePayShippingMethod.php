@@ -12,6 +12,10 @@
 
 namespace Mollie\Application\Command;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 final class UpdateApplePayShippingMethod
 {
     /**

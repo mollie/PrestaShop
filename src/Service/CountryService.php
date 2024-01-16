@@ -16,6 +16,10 @@ use Context;
 use Country;
 use Mollie;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CountryService
 {
     const FILE_NAME = 'CountryService';
