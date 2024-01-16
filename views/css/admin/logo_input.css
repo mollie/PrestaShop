@@ -1,3 +1,16 @@
+.header-logo {
+  width: 263px;
+  align-content: center;
+  text-align: left;
+  padding: 20px 0;
+}
+
+.header-logo img {
+  max-width:100%;
+  height:auto;
+  margin: 0 auto;
+}
+
 .mollie-input-file {
     width: 0.1px;
     height: 0.1px;
