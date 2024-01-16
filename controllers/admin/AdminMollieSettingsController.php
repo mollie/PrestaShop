@@ -21,6 +21,7 @@ use Mollie\Adapter\ToolsAdapter;
 use Mollie\Builder\Content\BaseInfoBlock;
 use Mollie\Builder\Content\UpdateMessageInfoBlock;
 use Mollie\Config\Config;
+use Mollie\Install\PrestaShopDependenciesInstall;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\ModuleRepository;
 use Mollie\Service\Content\TemplateParserInterface;
@@ -29,7 +30,6 @@ use PrestaShop\Module\PsEventbus\Service\PresenterService;
 use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
-use PrestaShop\PsAccountsInstaller\Installer\Installer as PsAccountsInstaller;
 
 class AdminMollieSettingsController extends ModuleAdminController
 {
@@ -46,6 +46,7 @@ class AdminMollieSettingsController extends ModuleAdminController
 
     public function initContent(): void
     {
+        $this->checkPrestaShopDependenciesHealth();
         $this->setEnvironmentForAccounts();
         $this->setEnvironmentForCloudSync();
 
@@ -191,45 +192,42 @@ class AdminMollieSettingsController extends ModuleAdminController
             $psAccountsPresenter = $accountsFacade->getPsAccountsPresenter();
             $psAccountsService = $accountsFacade->getPsAccountsService();
         } catch (ModuleNotInstalledException $exception) {
-            try {
-                /** @var PsAccountsInstaller $prestashopAccountsInstaller */
-                $prestashopAccountsInstaller = $this->module->getService(PsAccountsInstaller::class);
-
-                if (!$prestashopAccountsInstaller->install()) {
-                    $this->context->controller->errors[] =
-                        $this->module->l('Failed to install Prestashop Accounts module. Please contact support.');
-
-                    return;
-                }
-            } catch (\Throwable $exception) {
-                $logger->error('"PrestaShop Accounts" install failed.', [
-                    'Exception message' => $exception->getMessage(),
-                    'Exception code' => $exception->getCode(),
-                ]);
-
-                $this->context->controller->errors[] =
-                    $this->module->l('Failed to install Prestashop Accounts module. Please contact support.');
-
-                return;
-            }
-
-            $psAccountsPresenter = $accountsFacade->getPsAccountsPresenter();
-            $psAccountsService = $accountsFacade->getPsAccountsService();
-        } catch (\Throwable $exception) {
-            $logger->error('"PrestaShop Accounts" unknown error.', [
+            $logger->error('PrestaShop Accounts is not installed', [
                 'Exception message' => $exception->getMessage(),
                 'Exception code' => $exception->getCode(),
             ]);
 
             $this->context->controller->errors[] =
-                $this->module->l('"PrestaShop Accounts" initialization failed.', self::FILE_NAME);
+                $this->module->l('PrestaShop Accounts is not installed. Please contact support.', self::FILE_NAME);
+
+            return;
+        } catch (\Throwable $exception) {
+            $logger->error('PrestaShop Accounts unknown error.', [
+                'Exception message' => $exception->getMessage(),
+                'Exception code' => $exception->getCode(),
+            ]);
+
+            $this->context->controller->errors[] =
+                $this->module->l('PrestaShop Accounts initialization failed. Please contact support.', self::FILE_NAME);
 
             return;
         }
 
-        Media::addJsDef([
-            'contextPsAccounts' => $psAccountsPresenter->present(),
-        ]);
+        try {
+            Media::addJsDef([
+                'contextPsAccounts' => $psAccountsPresenter->present(),
+            ]);
+        } catch (\Throwable $exception) {
+            $logger->error('PrestaShop Accounts presenter unknown error.', [
+                'Exception message' => $exception->getMessage(),
+                'Exception code' => $exception->getCode(),
+            ]);
+
+            $this->context->controller->errors[] =
+                $this->module->l('PrestaShop Accounts presenter error. Please contact support.', self::FILE_NAME);
+
+            return;
+        }
 
         $this->context->smarty->assign([
             'urlAccountsCdn' => $psAccountsService->getAccountsCdn(),
@@ -238,26 +236,72 @@ class AdminMollieSettingsController extends ModuleAdminController
 
     private function setEnvironmentForCloudSync(): void
     {
-        $moduleManager = ModuleManagerBuilder::getInstance()->build();
+        /** @var PrestaLoggerInterface $logger */
+        $logger = $this->module->getService(PrestaLoggerInterface::class);
 
-        if (!$moduleManager->isInstalled('ps_eventbus')) {
-            return;
+        $moduleManager = ModuleManagerBuilder::getInstance();
+
+        if (!$moduleManager) {
+            $this->context->controller->errors[] =
+                $this->module->l('Failed to get module manager builder instance.', self::FILE_NAME);
         }
+
+        $moduleManager = $moduleManager->build();
 
         /** @var \Ps_eventbus $eventbusModule */
         $eventbusModule = \Module::getInstanceByName('ps_eventbus');
 
-        if (version_compare($eventbusModule->version, '1.9.0', '>=')) {
-            /** @var PresenterService $eventbusPresenterService */
-            $eventbusPresenterService = $eventbusModule->getService(PresenterService::class);
+        if (!version_compare($eventbusModule->version, '1.9.0', '>=')) {
+            try {
+                $moduleManager->upgrade('ps_eventbus');
+            } catch (\Throwable $exception) {
+                $logger->error('Failed to upgrade PrestaShop Event Bus.', [
+                    'Exception message' => $exception->getMessage(),
+                    'Exception code' => $exception->getCode(),
+                ]);
 
-            Media::addJsDef([
-                'contextPsEventbus' => $eventbusPresenterService->expose($this->module, ['orders']),
-            ]);
+                $this->context->controller->errors[] =
+                    $this->module->l('Failed to upgrade PrestaShop Event Bus. Please contact support.', self::FILE_NAME);
+
+                return;
+            }
         }
+
+        /** @var PresenterService $eventbusPresenterService */
+        $eventbusPresenterService = $eventbusModule->getService(PresenterService::class);
+
+        Media::addJsDef([
+            'contextPsEventbus' => $eventbusPresenterService->expose($this->module, ['orders']),
+        ]);
 
         $this->context->smarty->assign([
             'cloudSyncPathCDC' => Config::PRESTASHOP_CLOUDSYNC_CDN,
         ]);
+    }
+
+    private function checkPrestaShopDependenciesHealth(): void
+    {
+        /** @var PrestaShopDependenciesInstall $prestaShopDependenciesInstaller */
+        $prestaShopDependenciesInstaller = $this->module->getService(PrestaShopDependenciesInstall::class);
+
+        /** @var PrestaLoggerInterface $logger */
+        $logger = $this->module->getService(PrestaLoggerInterface::class);
+
+        try {
+            /**
+             * TODO if eventbus is installed in current page load context, error still will be thrown "install eventbus".
+             * After refresh everything is working, but it could be annoying to some merchants.
+             * Not critical error, but improvement would be nice.
+             */
+            $prestaShopDependenciesInstaller->install();
+        } catch (\Throwable $exception) {
+            $logger->error('Failed to install PrestaShop dependencies', [
+                'Exception message' => $exception->getMessage(),
+                'Exception code' => $exception->getCode(),
+            ]);
+
+            $this->context->controller->errors[] =
+                $this->module->l('Failed to install PrestaShop dependencies. Please contact support.', self::FILE_NAME);
+        }
     }
 }
