@@ -20,6 +20,7 @@ use Mollie\Config\Config;
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
+use Mollie\Install\PrestaShopDependenciesInstall;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
@@ -39,9 +40,7 @@ use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Subscription\Verification\HasSubscriptionProductInCart;
 use Mollie\Utility\PsVersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
-use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
-use PrestaShop\PsAccountsInstaller\Installer\Installer as PsAccountsInstaller;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -170,37 +169,21 @@ class Mollie extends PaymentModule
             return false;
         }
 
+        /** @var PrestaShopDependenciesInstall $prestaShopDependenciesInstaller */
+        $prestaShopDependenciesInstaller = $this->getService(PrestaShopDependenciesInstall::class);
+
+        /** @var PrestaLoggerInterface $logger */
+        $logger = $this->getService(PrestaLoggerInterface::class);
+
         try {
-            /** @var PsAccountsInstaller $prestashopAccountsInstaller */
-            $prestashopAccountsInstaller = $this->getService(PsAccountsInstaller::class);
-
-            if (!$prestashopAccountsInstaller->install()) {
-                $this->_errors[] = $this->l('Failed to install Prestashop Accounts module. Please contact support.');
-
-                return false;
-            }
+            $prestaShopDependenciesInstaller->install();
         } catch (\Throwable $exception) {
-            $this->_errors[] = $this->l('Failed to install Prestashop Accounts module. Please contact support.');
+            $logger->error('Failed to install PrestaShop dependencies', [
+                'Exception message' => $exception->getMessage(),
+                'Exception code' => $exception->getCode(),
+            ]);
 
-            return false;
-        }
-
-        $moduleManager = ModuleManagerBuilder::getInstance()->build();
-
-        try {
-            /*
-             * NOTE: install method upgrades the module if there is a newer version
-             */
-            if (
-                $moduleManager->isInstalled('ps_eventbus') &&
-                !$moduleManager->isEnabled('ps_eventbus')
-            ) {
-                $moduleManager->enable('ps_eventbus');
-            }
-
-            $moduleManager->install('ps_eventbus');
-        } catch (Exception $exception) {
-            $this->_errors[] = $this->l('Failed to install/upgrade Prestashop event bus module. Please contact support.');
+            $this->_errors[] = $this->l('Failed to install PrestaShop dependencies. Please contact support.');
 
             return false;
         }
