@@ -52,12 +52,10 @@ e2eh$(VERSION):
 	# chmod all folders
 	docker exec -i prestashop-mollie-$(VERSION) sh -c "chmod -R 777 /var/www/html"
 
-npm-package-install:
-	cd views/assets && npm i && npm run build
-
 open-e2e-tests-locally:
 	npm install -D cypress
 	npm ci
+	export CYPRESS_MOLLIE_TEST_API_KEY=$(MOLLIE_TEST_API_KEY)
 	npx cypress open --config baseUrl=$(baseUrl$(VERSION))
 
 run-e2e-tests-locally:
@@ -76,3 +74,6 @@ upgrading-module-test-1785:
 	git checkout -- .
 	git checkout develop --force
 	docker exec -i prestashop-mollie-1785 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
+
+npm-package-install:
+	cd views/assets && npm i && npm run build
