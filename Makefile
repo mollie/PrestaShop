@@ -1,5 +1,9 @@
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
+# Load environment variables from .env file
+include .env
+export
+
 # target: fix-lint			- Launch php cs fixer
 fix-lint:
 	docker-compose run --rm php sh -c "vendor/bin/php-cs-fixer fix --using-cache=no"
@@ -25,6 +29,7 @@ e2eh$(VERSION)_local:
 	docker exec -i prestashop-mollie-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module enable mollie"
 	# chmod all folders
 	docker exec -i prestashop-mollie-$(VERSION) sh -c "chmod -R 777 /var/www/html"
+	make open-e2e-tests-locally
 
 # For CI build with PS autoinstall
 e2eh$(VERSION):
@@ -49,6 +54,11 @@ e2eh$(VERSION):
 
 npm-package-install:
 	cd views/assets && npm i && npm run build
+
+open-e2e-tests-locally:
+	npm install -D cypress
+	npm ci
+	npx cypress open --config baseUrl=$(baseUrl$(VERSION))
 
 run-e2e-tests-locally:
 	npm install -D cypress
