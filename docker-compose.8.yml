@@ -6,7 +6,7 @@ services:
     container_name: mysql-mollie-8
     image: mysql:5.7
     ports:
-      - "9459:3306"
+      - "9002:3306"
     environment:
       MYSQL_ROOT_PASSWORD: prestashop
       MYSQL_DATABASE: prestashop
@@ -34,14 +34,14 @@ services:
     depends_on:
       - mysql
     ports:
-      - "8142:80"
+      - "8002:80"
     volumes:
       - ./:/var/www/html/modules/mollie
       - ./.docker/.htaccess8:/var/www/html/.htaccess
     networks:
       - prestashop_mollie_net_8
     healthcheck:
-      test: "curl -f localhost:8142"
+      test: "curl -f localhost:8002"
       interval: 5s
       timeout: 5s
       retries: 10
