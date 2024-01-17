@@ -39,6 +39,10 @@ namespace Mollie\Provider\OrderTotal;
 use Exception;
 use Mollie\Adapter\LegacyContext;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderTotalProvider implements OrderTotalProviderInterface
 {
     /**
@@ -52,8 +56,6 @@ class OrderTotalProvider implements OrderTotalProviderInterface
     }
 
     /**
-     * @return float
-     *
      * @throws Exception
      */
     public function getOrderTotal(): float

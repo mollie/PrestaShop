@@ -15,6 +15,10 @@ namespace Mollie\Builder\Content;
 use Mollie;
 use Mollie\Builder\TemplateBuilderInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class LogoInfoBlock implements TemplateBuilderInterface
 {
     /**

@@ -1,4 +1,14 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 declare(strict_types=1);
 
@@ -8,6 +18,10 @@ use Mollie\Adapter\CartAdapter;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Subscription\Exception\ExceptionCode;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class CanProductBeAddedToCartValidator
 {
@@ -34,10 +48,6 @@ class CanProductBeAddedToCartValidator
      * Validates if product can be added to the cart.
      * Only 1 subscription product can be to the cart
      *
-     * @param int $productAttributeId
-     *
-     * @return bool
-     *
      * @throws SubscriptionProductValidationException
      */
     public function validate(int $productAttributeId): bool
@@ -54,10 +64,6 @@ class CanProductBeAddedToCartValidator
     }
 
     /**
-     * @param int $productAttributeId
-     *
-     * @return bool
-     *
      * @throws SubscriptionProductValidationException
      */
     private function validateIfSubscriptionProductCanBeAdded(int $productAttributeId): bool

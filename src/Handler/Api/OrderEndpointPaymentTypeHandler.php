@@ -15,6 +15,10 @@ namespace Mollie\Handler\Api;
 use Mollie\Enum\PaymentTypeEnum;
 use Mollie\Verification\PaymentType\PaymentTypeVerificationInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderEndpointPaymentTypeHandler implements OrderEndpointPaymentTypeHandlerInterface
 {
     /**

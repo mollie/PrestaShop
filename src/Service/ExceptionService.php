@@ -16,6 +16,10 @@ use Mollie;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Exception\ShipmentCannotBeSentException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ExceptionService
 {
     const FILE_NAME = 'ExceptionService';

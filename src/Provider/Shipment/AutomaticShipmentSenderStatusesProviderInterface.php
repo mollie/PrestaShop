@@ -12,6 +12,10 @@
 
 namespace Mollie\Provider\Shipment;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface AutomaticShipmentSenderStatusesProviderInterface
 {
     /**

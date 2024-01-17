@@ -1,11 +1,13 @@
 {**
-* Mollie       https://www.mollie.nl
-*
-* @author      Mollie B.V. <info@mollie.nl>
-* @copyright   Mollie B.V.
-* @link        https://github.com/mollie/PrestaShop
-* @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
-*}
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ *}
 
 <div class="mollie-icon-container" data-id-order="{$idOrder|intval}">
     <img class="resend-payment-mail-mollie" src="{$orderListIcon}" width="26" height="26" data-id-order="{$idOrder|intval}"/>

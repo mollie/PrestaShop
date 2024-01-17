@@ -1,10 +1,24 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 declare(strict_types=1);
 
 namespace Mollie\Subscription\Install;
 
 use Db;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 final class DatabaseTableInstaller extends AbstractInstaller
 {
@@ -21,9 +35,6 @@ final class DatabaseTableInstaller extends AbstractInstaller
         return $this->alterTableCommands();
     }
 
-    /**
-     * @return array
-     */
     private function getCommands(): array
     {
         $sql = [];

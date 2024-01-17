@@ -1,4 +1,14 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 declare(strict_types=1);
 
@@ -11,6 +21,10 @@ use PrestaShop\PrestaShop\Core\Grid\Query\AbstractDoctrineQueryBuilder;
 use PrestaShop\PrestaShop\Core\Grid\Query\DoctrineSearchCriteriaApplicatorInterface;
 use PrestaShop\PrestaShop\Core\Grid\Search\SearchCriteriaInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /**
  * Provides sql for subscription list
  */
@@ -21,11 +35,6 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
      */
     private $searchCriteriaApplicator;
 
-    /**
-     * @param Connection $connection
-     * @param string $dbPrefix
-     * @param DoctrineSearchCriteriaApplicatorInterface $searchCriteriaApplicator
-     */
     public function __construct(
         Connection $connection,
         string $dbPrefix,
@@ -37,10 +46,6 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
 
     /**
      * Get query that searches grid rows.
-     *
-     * @param SearchCriteriaInterface $searchCriteria
-     *
-     * @return QueryBuilder
      */
     public function getSearchQueryBuilder(SearchCriteriaInterface $searchCriteria): QueryBuilder
     {
@@ -60,10 +65,6 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
 
     /**
      * Get query that counts grid rows.
-     *
-     * @param SearchCriteriaInterface $searchCriteria
-     *
-     * @return QueryBuilder
      */
     public function getCountQueryBuilder(SearchCriteriaInterface $searchCriteria): QueryBuilder
     {
@@ -75,8 +76,6 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
 
     /**
      * @param array<string, mixed> $filters
-     *
-     * @return QueryBuilder
      */
     private function getQueryBuilder(array $filters): QueryBuilder
     {
@@ -95,7 +94,6 @@ class SubscriptionGridQueryBuilder extends AbstractDoctrineQueryBuilder
 
     /**
      * @param array<string, mixed> $filters
-     * @param QueryBuilder $qb
      */
     private function applyFilters(array $filters, QueryBuilder $qb): void
     {

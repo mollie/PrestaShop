@@ -1,11 +1,13 @@
 {**
-* Mollie       https://www.mollie.nl
-*
-* @author      Mollie B.V. <info@mollie.nl>
-* @copyright   Mollie B.V.
-* @link        https://github.com/mollie/PrestaShop
-* @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
-*}
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ *}
 {if isset($this_version) && isset($release_version)}
     {assign var ="updateStart" value = '<a href="https://github.com/mollie/PrestaShop/releases" target="_blank">'}
     {assign var ="updateEnd" value = '</a>'}

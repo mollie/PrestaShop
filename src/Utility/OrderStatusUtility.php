@@ -19,6 +19,10 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderStatusUtility
 {
     /**
@@ -56,10 +60,10 @@ class OrderStatusUtility
                 $remainingAmount = $payment->getAmountRemaining();
             }
         }
-        $amountRefunded = $transaction->amountRefunded->value;
-        $amountPayed = $transaction->amountCaptured->value;
-        $isPartiallyRefunded = NumberUtility::isLowerThan($amountRefunded, $amountPayed);
-        $isFullyRefunded = NumberUtility::isEqual($amountRefunded, $amountPayed);
+        $amountRefunded = (float) $transaction->amountRefunded->value;
+        $amountPaid = (float) $transaction->amountCaptured->value;
+        $isPartiallyRefunded = NumberUtility::isLowerThan($amountRefunded, $amountPaid);
+        $isFullyRefunded = NumberUtility::isEqual($amountRefunded, $amountPaid);
 
         if ($isPartiallyRefunded) {
             if ($isVoucher && NumberUtility::isEqual(0, $remainingAmount)) {

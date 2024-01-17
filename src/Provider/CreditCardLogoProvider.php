@@ -19,6 +19,10 @@ use Mollie\Utility\CustomLogoUtility;
 use Mollie\Utility\ImageUtility;
 use MolPaymentMethod;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 final class CreditCardLogoProvider extends AbstractCustomLogoProvider
 {
     /**

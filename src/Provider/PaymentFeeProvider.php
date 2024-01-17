@@ -46,6 +46,10 @@ use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Repository\AddressRepositoryInterface;
 use MolPaymentMethod;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentFeeProvider implements PaymentFeeProviderInterface
 {
     /** @var Context */
@@ -71,7 +75,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
     public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl): PaymentFeeData
     {
         // TODO handle exception on all calls.
-        $surchargeFixedPriceTaxExcl = $paymentMethod->surcharge_fixed_amount_tax_excl;
+        $surchargeFixedPriceTaxExcl = (float) $paymentMethod->surcharge_fixed_amount_tax_excl;
         $surchargePercentage = (float) $paymentMethod->surcharge_percentage;
         $surchargeLimit = (float) $paymentMethod->surcharge_limit;
 
@@ -86,9 +90,9 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
         }
 
         $taxCalculator = $this->taxProvider->getTaxCalculator(
-            $paymentMethod->tax_rules_group_id,
-            $address->id_country,
-            $address->id_state
+            (int) $paymentMethod->tax_rules_group_id,
+            (int) $address->id_country,
+            (int) $address->id_state
         );
 
         $paymentFeeCalculator = new PaymentFeeCalculator($taxCalculator, $this->context);

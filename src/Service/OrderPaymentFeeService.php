@@ -20,6 +20,10 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use MolPaymentMethod;
 use Shop;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderPaymentFeeService
 {
     /**

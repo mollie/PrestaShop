@@ -23,6 +23,10 @@ use Sentry\SentrySdk;
 use Sentry\State\Scope;
 use Sentry\UserDataBag;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /**
  * Handle Error.
  */

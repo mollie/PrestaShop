@@ -14,6 +14,10 @@ namespace Mollie\Provider;
 
 use Address;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 final class PhoneNumberProvider implements PhoneNumberProviderInterface
 {
     public function getFromAddress(Address $address)

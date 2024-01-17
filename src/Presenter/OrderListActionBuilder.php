@@ -15,6 +15,10 @@ namespace Mollie\Presenter;
 use Mollie;
 use Mollie\Adapter\Smarty;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderListActionBuilder
 {
     const FILE_NAME = 'OrderListActionBuilder';

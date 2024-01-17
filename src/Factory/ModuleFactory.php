@@ -15,6 +15,10 @@ namespace Mollie\Factory;
 use Module;
 use Mollie;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ModuleFactory
 {
     public function getModuleVersion(): ?string

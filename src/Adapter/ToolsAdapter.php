@@ -14,6 +14,10 @@ namespace Mollie\Adapter;
 
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ToolsAdapter
 {
     public function strlen($str): string

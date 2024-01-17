@@ -14,6 +14,10 @@ namespace Mollie\Factory;
 
 use Context;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ContextFactory
 {
     public static function getContext(): Context

@@ -12,6 +12,10 @@
 
 namespace Mollie\Utility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ArrayUtility
 {
     public static function getLastElement($array)

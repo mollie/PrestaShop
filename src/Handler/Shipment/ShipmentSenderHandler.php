@@ -20,6 +20,10 @@ use Mollie\Verification\Shipment\ShipmentVerificationInterface;
 use Order;
 use OrderState;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ShipmentSenderHandler implements ShipmentSenderHandlerInterface
 {
     /**

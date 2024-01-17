@@ -36,6 +36,10 @@
 
 namespace Mollie\Tracker;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface TrackerInterface
 {
     /**

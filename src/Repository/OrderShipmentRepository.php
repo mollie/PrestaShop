@@ -15,6 +15,10 @@ namespace Mollie\Repository;
 use Db;
 use DbQuery;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderShipmentRepository
 {
     public function getShipmentInformation($table, $orderId)

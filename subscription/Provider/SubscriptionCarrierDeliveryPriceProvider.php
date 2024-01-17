@@ -1,4 +1,14 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Subscription\Provider;
 
@@ -10,6 +20,10 @@ use Mollie\Repository\CartRepositoryInterface;
 use Mollie\Repository\CountryRepositoryInterface;
 use Mollie\Repository\CustomerRepositoryInterface;
 use Mollie\Subscription\Exception\CouldNotProvideSubscriptionCarrierDeliveryPrice;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class SubscriptionCarrierDeliveryPriceProvider
 {

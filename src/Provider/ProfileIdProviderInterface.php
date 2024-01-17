@@ -14,6 +14,10 @@ namespace Mollie\Provider;
 
 use Mollie\Api\MollieApiClient;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface ProfileIdProviderInterface
 {
     public function getProfileId(MollieApiClient $apiClient): string;

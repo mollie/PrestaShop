@@ -12,10 +12,11 @@
 
 namespace Mollie\Install;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface InstallerInterface
 {
-    /**
-     * @return bool
-     */
-    public function install();
+    public function install(): bool;
 }

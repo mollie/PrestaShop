@@ -1,6 +1,20 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\DTO\Object;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class Payment implements \JsonSerializable
 {
@@ -26,8 +40,6 @@ class Payment implements \JsonSerializable
     }
 
     /**
-     * @param string $cardToken
-     *
      * @maps cardToken
      */
     public function setCardToken(string $cardToken): void
@@ -35,17 +47,12 @@ class Payment implements \JsonSerializable
         $this->cardToken = $cardToken;
     }
 
-    /**
-     * @return string
-     */
     public function getWebhookUrl(): string
     {
         return $this->webhookUrl;
     }
 
     /**
-     * @param string $webhookUrl
-     *
      * @maps webhookUrl
      */
     public function setWebhookUrl(string $webhookUrl): void
@@ -62,8 +69,6 @@ class Payment implements \JsonSerializable
     }
 
     /**
-     * @param string $issuer
-     *
      * @maps issuer
      */
     public function setIssuer(string $issuer): void
@@ -80,8 +85,6 @@ class Payment implements \JsonSerializable
     }
 
     /**
-     * @param string $customerId
-     *
      * @maps customerId
      */
     public function setCustomerId(string $customerId): void
@@ -98,8 +101,6 @@ class Payment implements \JsonSerializable
     }
 
     /**
-     * @param string $applePayPaymentToken
-     *
      * @maps applePayPaymentToken
      */
     public function setApplePayPaymentToken(string $applePayPaymentToken): void

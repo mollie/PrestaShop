@@ -42,6 +42,10 @@ use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\PaymentMetho
 use MolPaymentMethod;
 use PrestaShopLogger;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionValidationInterface
 {
     /**
@@ -56,10 +60,6 @@ class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionVali
 
     /**
      * At least one payment restriction validator is present at all times (BasePaymentRestrictionValidation)
-     *
-     * @param MolPaymentMethod $paymentMethod
-     *
-     * @return bool
      */
     public function isPaymentMethodValid(MolPaymentMethod $paymentMethod): bool
     {

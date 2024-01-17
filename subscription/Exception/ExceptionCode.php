@@ -1,6 +1,20 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Subscription\Exception;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class ExceptionCode
 {
@@ -26,4 +40,5 @@ class ExceptionCode
 
     public const RECURRING_ORDER_FAILED_TO_FIND_SELECTED_CARRIER = 3001;
     public const RECURRING_ORDER_FAILED_TO_APPLY_SELECTED_CARRIER = 3002;
+    public const RECURRING_ORDER_CART_AND_PAID_PRICE_ARE_NOT_EQUAL = 3003;
 }

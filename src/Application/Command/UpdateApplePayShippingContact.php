@@ -14,6 +14,10 @@ namespace Mollie\Application\Command;
 
 use Mollie\DTO\ApplePay\Product;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 final class UpdateApplePayShippingContact
 {
     /**

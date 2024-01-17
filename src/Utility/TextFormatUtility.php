@@ -11,6 +11,10 @@
 
 namespace Mollie\Utility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class TextFormatUtility
 {
     public static function formatNumber($unitPrice, $apiRoundingPrecision, $docPoint = '.', $thousandSep = '')

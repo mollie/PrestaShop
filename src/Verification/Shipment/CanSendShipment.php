@@ -26,6 +26,10 @@ use Order;
 use OrderState;
 use PrestaShopLogger;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CanSendShipment implements ShipmentVerificationInterface
 {
     /**
@@ -96,11 +100,6 @@ class CanSendShipment implements ShipmentVerificationInterface
         return true;
     }
 
-    /**
-     * @param int $orderId
-     *
-     * @return bool
-     */
     private function isRegularPayment(int $orderId): bool
     {
         $payment = $this->paymentMethodRepository->getPaymentBy('order_id', (int) $orderId);
@@ -114,11 +113,6 @@ class CanSendShipment implements ShipmentVerificationInterface
         return (int) $paymentType === PaymentTypeEnum::PAYMENT_TYPE_ORDER;
     }
 
-    /**
-     * @param int $orderStateId
-     *
-     * @return bool
-     */
     private function isAutomaticShipmentAvailable(int $orderStateId): bool
     {
         if (!$this->isAutomaticShipmentInformationSenderEnabled()) {
@@ -132,11 +126,6 @@ class CanSendShipment implements ShipmentVerificationInterface
         return true;
     }
 
-    /**
-     * @param string $orderReference
-     *
-     * @return bool
-     */
     private function hasShipmentInformation(string $orderReference): bool
     {
         try {
@@ -148,19 +137,11 @@ class CanSendShipment implements ShipmentVerificationInterface
         }
     }
 
-    /**
-     * @return bool
-     */
     private function isAutomaticShipmentInformationSenderEnabled(): bool
     {
         return (bool) $this->configurationAdapter->get(Config::MOLLIE_AUTO_SHIP_MAIN);
     }
 
-    /**
-     * @param int $orderStateId
-     *
-     * @return bool
-     */
     private function isOrderStateInAutomaticShipmentSenderOrderStateList(int $orderStateId): bool
     {
         return in_array(

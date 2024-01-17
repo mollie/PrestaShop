@@ -16,6 +16,10 @@ use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
 use Order;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface ShipmentInformationSenderInterface
 {
     /**
