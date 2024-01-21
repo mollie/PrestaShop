@@ -33,6 +33,10 @@ use OrderState;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SettingsSaveService
 {
     const FILE_NAME = 'SettingsSaveService';

@@ -16,6 +16,10 @@ use Mollie;
 use Mollie\Adapter\Customer;
 use Mollie\Utility\SecureKeyUtility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderCallBackValidator
 {
     /**

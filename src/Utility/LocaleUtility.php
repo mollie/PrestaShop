@@ -17,6 +17,10 @@ use Context;
 use Language;
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class LocaleUtility
 {
     /**

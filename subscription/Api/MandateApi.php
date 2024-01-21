@@ -1,4 +1,14 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 declare(strict_types=1);
 
@@ -9,6 +19,10 @@ use Mollie\Api\Resources\BaseResource;
 use Mollie\Api\Resources\Mandate as MandateMollie;
 use Mollie\Subscription\DTO\CreateMandateData;
 use Mollie\Subscription\Factory\MollieApiFactory;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class MandateApi
 {

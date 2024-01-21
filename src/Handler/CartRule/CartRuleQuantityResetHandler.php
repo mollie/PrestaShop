@@ -21,6 +21,10 @@ use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
 use Order;
 use OrderCartRule;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CartRuleQuantityResetHandler implements CartRuleQuantityResetHandlerInterface
 {
     /**
@@ -94,8 +98,6 @@ class CartRuleQuantityResetHandler implements CartRuleQuantityResetHandlerInterf
 
     /**
      * @param int $orderId
-     * @param CartRule $cartRule
-     * @param OrderCartRule $orderCartRule
      *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
@@ -108,8 +110,6 @@ class CartRuleQuantityResetHandler implements CartRuleQuantityResetHandlerInterf
 
     /**
      * @param int $orderId
-     * @param CartRule $cartRule
-     * @param OrderCartRule $orderCartRule
      *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
@@ -122,8 +122,6 @@ class CartRuleQuantityResetHandler implements CartRuleQuantityResetHandlerInterf
     }
 
     /**
-     * @param CartRule $cartRule
-     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */

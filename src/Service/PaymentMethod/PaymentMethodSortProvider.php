@@ -12,6 +12,10 @@
 
 namespace Mollie\Service\PaymentMethod;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 final class PaymentMethodSortProvider implements PaymentMethodSortProviderInterface
 {
     public function getSortedInAscendingWayForCheckout(array $paymentMethods)

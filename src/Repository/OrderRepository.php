@@ -14,6 +14,10 @@ namespace Mollie\Repository;
 
 use Order;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 final class OrderRepository extends AbstractRepository implements OrderRepositoryInterface
 {
     public function __construct()

@@ -16,6 +16,10 @@ use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MollieStatusUtility
 {
     public static function isPaymentFinished($paymentStatus)

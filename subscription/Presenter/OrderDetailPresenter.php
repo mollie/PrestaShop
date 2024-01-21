@@ -1,4 +1,14 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Subscription\Presenter;
 
@@ -10,6 +20,10 @@ use Mollie\Repository\ProductRepositoryInterface;
 use Mollie\Subscription\Exception\CouldNotPresentOrderDetail;
 use Mollie\Subscription\Repository\OrderDetailRepositoryInterface;
 use Mollie\Utility\NumberUtility;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class OrderDetailPresenter
 {

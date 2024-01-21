@@ -14,6 +14,10 @@ namespace Mollie\Service;
 use Context;
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ErrorDisplayService
 {
     public function showCookieError($id)

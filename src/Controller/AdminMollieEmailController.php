@@ -17,6 +17,10 @@ use Mollie\Service\MolliePaymentMailService;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 use Symfony\Component\HttpFoundation\Request;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AdminMollieEmailController extends FrameworkBundleAdminController
 {
     public function sendSecondChanceMessage($orderId, Request $request)

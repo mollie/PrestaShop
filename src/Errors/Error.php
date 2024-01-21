@@ -12,6 +12,10 @@
 
 namespace Mollie\Errors;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class Error implements \JsonSerializable
 {
     /** @var int|null */

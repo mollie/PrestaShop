@@ -14,6 +14,10 @@ namespace Mollie\Grid\Row\AccessibilityChecker;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use PrestaShop\PrestaShop\Core\Grid\Action\Row\AccessibilityChecker\AccessibilityCheckerInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /**
  * Checks if second chance email option can be visible in order list.
  */

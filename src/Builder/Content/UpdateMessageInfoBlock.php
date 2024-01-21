@@ -18,6 +18,10 @@ use Mollie\Builder\TemplateBuilderInterface;
 use Mollie\Provider\UpdateMessageProviderInterface;
 use Mollie\Service\UpgradeNoticeService;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class UpdateMessageInfoBlock implements TemplateBuilderInterface
 {
     /**

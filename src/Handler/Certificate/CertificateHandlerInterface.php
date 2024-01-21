@@ -14,6 +14,10 @@ namespace Mollie\Handler\Certificate;
 
 use Mollie\Handler\Certificate\Exception\CertificationException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface CertificateHandlerInterface
 {
     /**

@@ -14,6 +14,10 @@ namespace Mollie\Utility;
 
 use Mollie\Config\Config;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class RefundUtility
 {
     public static function getRefundLines(array $lines)

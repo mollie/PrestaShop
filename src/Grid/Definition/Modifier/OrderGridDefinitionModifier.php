@@ -19,6 +19,10 @@ use PrestaShop\PrestaShop\Core\Grid\Action\Row\RowActionCollection;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ActionColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderGridDefinitionModifier implements GridDefinitionModifierInterface
 {
     private $module;

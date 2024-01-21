@@ -54,6 +54,10 @@ use PrestaShopDatabaseException;
 use PrestaShopException;
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentMethodService
 {
     /**
@@ -255,7 +259,6 @@ class PaymentMethodService
      * @param string|null $issuer
      * @param int|Cart $cartId
      * @param string $secureKey
-     * @param MolPaymentMethod $molPaymentMethod
      * @param string $orderReference
      * @param string $cardToken
      *
@@ -546,9 +549,6 @@ class PaymentMethodService
         return $methods->getArrayCopy();
     }
 
-    /**
-     * @return MolCustomer|null
-     */
     public function handleCustomerInfo(int $customerId, bool $saveCard, bool $useSavedCard): ?MolCustomer
     {
         $isSingleClickPaymentEnabled = (bool) (int) $this->configurationAdapter->get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);

@@ -14,6 +14,10 @@ namespace Mollie\Utility;
 
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class UrlPathUtility
 {
     /**

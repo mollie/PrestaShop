@@ -19,6 +19,10 @@ use Mollie\Application\Command\RequestApplePayPaymentSession;
 use Mollie\Exception\MollieApiException;
 use Mollie\Service\ApiServiceInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 final class RequestApplePayPaymentSessionHandler
 {
     /**

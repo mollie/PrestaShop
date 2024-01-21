@@ -14,10 +14,13 @@ namespace Mollie\Handler\CartRule;
 
 use Cart;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface CartRuleQuantityChangeHandlerInterface
 {
     /**
-     * @param Cart $cart
      * @param array $cartRules
      */
     public function handle(Cart $cart, $cartRules = []);

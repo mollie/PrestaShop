@@ -17,6 +17,10 @@ use Mollie\Application\Command\UpdateApplePayShippingMethod;
 use Mollie\Config\Config;
 use Mollie\Service\OrderPaymentFeeService;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 final class UpdateApplePayShippingMethodHandler
 {
     /**

@@ -20,6 +20,10 @@ use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
 use MolPendingOrderCartRule;
 use Order;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInterface
 {
     /**
@@ -84,8 +88,6 @@ class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInte
     }
 
     /**
-     * @param Order $order
-     * @param CartRule $cartRule
      * @param MolPendingOrderCartRule $pendingOrderCartRule
      *
      * @throws \PrestaShopDatabaseException
@@ -98,8 +100,6 @@ class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInte
     }
 
     /**
-     * @param CartRule $cartRule
-     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
@@ -109,11 +109,6 @@ class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInte
         $cartRule->update();
     }
 
-    /**
-     * @param Order $order
-     * @param CartRule $cartRule
-     * @param MolPendingOrderCartRule $pendingOrderCartRule
-     */
     private function increaseCustomerUsedCartRuleQuantity(Order $order, CartRule $cartRule, MolPendingOrderCartRule $pendingOrderCartRule)
     {
         $this->pendingOrderCartRuleRepository->usePendingOrderCartRule($order, $pendingOrderCartRule);

@@ -15,6 +15,10 @@ namespace Mollie\Verification\PaymentType;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Provider\PaymentType\PaymentTypeIdentificationProviderInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CanBeRegularPaymentType implements PaymentTypeVerificationInterface
 {
     /**

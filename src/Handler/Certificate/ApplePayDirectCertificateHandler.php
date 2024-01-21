@@ -16,6 +16,10 @@ use Mollie;
 use Mollie\Handler\Certificate\Exception\ApplePayDirectCertificateCreation;
 use Mollie\Utility\FileUtility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ApplePayDirectCertificateHandler implements CertificateHandlerInterface
 {
     const FILE_NAME = 'ApplePayDirectCertificateHandler';

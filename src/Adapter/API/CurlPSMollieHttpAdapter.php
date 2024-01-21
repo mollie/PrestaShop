@@ -18,6 +18,10 @@ use Mollie\Api\Exceptions\CurlConnectTimeoutException;
 use Mollie\Api\HttpAdapter\MollieHttpAdapterInterface;
 use Mollie\Api\MollieApiClient;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
 {
     /**

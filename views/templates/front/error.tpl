@@ -1,11 +1,13 @@
 {**
-* Mollie       https://www.mollie.nl
-*
-* @author      Mollie B.V. <info@mollie.nl>
-* @copyright   Mollie B.V.
-* @link        https://github.com/mollie/PrestaShop
-* @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
-*}
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ *}
 {capture name=path}
   <a href="{$link->getPageLink('order.php', true, null, ['step' => 3])|escape:'htmlall':'UTF-8'}">
     {l s='Payment' mod='mollie'}

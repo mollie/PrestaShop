@@ -18,6 +18,10 @@ use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ApiKeyService
 {
     /**

@@ -11,6 +11,10 @@
 
 namespace Mollie\DTO\ApplePay;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class Order
 {
     /**

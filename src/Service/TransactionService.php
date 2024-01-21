@@ -45,6 +45,10 @@ use PrestaShopDatabaseException;
 use PrestaShopException;
 use PrestaShopLogger;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class TransactionService
 {
     /**

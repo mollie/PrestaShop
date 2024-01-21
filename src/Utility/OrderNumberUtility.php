@@ -12,6 +12,10 @@
 
 namespace Mollie\Utility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderNumberUtility
 {
     const ORDER_NUMBER_PREFIX = 'mol_';

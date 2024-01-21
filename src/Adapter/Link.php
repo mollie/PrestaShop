@@ -14,6 +14,10 @@ namespace Mollie\Adapter;
 
 use Context as PrestashopContext;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class Link
 {
     public function getAdminLink($controller, $withToken = true, $sfRouteParams = [], $params = [])

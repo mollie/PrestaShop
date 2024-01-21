@@ -17,6 +17,10 @@ use Mollie\Api\Types\PaymentMethod;
 use Mollie\Builder\TemplateBuilderInterface;
 use Mollie\Service\IssuerService;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class IdealDropdownInfoBlock implements TemplateBuilderInterface
 {
     /**

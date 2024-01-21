@@ -18,6 +18,10 @@ use Mollie\Api\Resources\Order;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CancelService
 {
     const FILE_NAME = 'CancelService';
