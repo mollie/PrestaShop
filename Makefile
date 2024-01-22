@@ -4,8 +4,14 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 fix-lint:
 	docker-compose run --rm php sh -c "vendor/bin/php-cs-fixer fix --using-cache=no"
 
-# Launch example: make VERSION=1785 e2eh1785_local, make VERSION=8 e2eh8_local etc.
-# Warning: .env must be imported!
+# Launch the PS build and E2E Cypress app automatically. Eexample: make VERSION=1785 e2eh1785_local, make VERSION=8 e2eh8_local etc.
+# Warning: .env with secrets must be imported if you wanna test locally! This checks the .env existence, ignoring if there is no such on your machine.
+
+ifneq ("$(wildcard .env)","")
+    include .env
+    export
+endif
+
 # Local machine docker build with PS autoinstall
 e2eh$(VERSION)_local:
 	# detaching containers
@@ -52,8 +58,7 @@ e2eh$(VERSION):
 open-e2e-tests-locally:
 	npm install -D cypress
 	npm ci
-	export CYPRESS_MOLLIE_TEST_API_KEY=$(MOLLIE_TEST_API_KEY)
-	npx cypress open --config baseUrl=$(baseUrl$(VERSION))
+	npx cypress open --env CYPRESS_MOLLIE_TEST_API_KEY=$(MOLLIE_TEST_API_KEY) --config baseUrl=$(baseUrl$(VERSION))
 
 run-e2e-tests-locally:
 	npm install -D cypress
