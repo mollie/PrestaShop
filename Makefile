@@ -5,6 +5,7 @@ fix-lint:
 	docker-compose run --rm php sh -c "vendor/bin/php-cs-fixer fix --using-cache=no"
 
 # Launch example: make VERSION=1785 e2eh1785_local, make VERSION=8 e2eh8_local etc.
+# Warning: .env must be imported!
 # Local machine docker build with PS autoinstall
 e2eh$(VERSION)_local:
 	# detaching containers
