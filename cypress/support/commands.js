@@ -273,3 +273,8 @@ Cypress.Commands.add("CachingBOFOPS8", {cacheAcrossSpecs: true}, () => {
     }
     login('MollieBOFOLoggingIn')
   })
+  Cypress.Commands.add("selectSubscriptionsCarriersCheck", {cacheAcrossSpecs: true}, () => {
+    cy.get('#form_carrier').select(1)
+    cy.contains('Save').click()
+    cy.contains('Options saved successfully.').should('be.visible') //checking if saving returns green alert
+    })

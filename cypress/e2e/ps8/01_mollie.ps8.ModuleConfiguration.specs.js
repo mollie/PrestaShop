@@ -93,6 +93,7 @@ it('C688472: Checking the Subscriptions tab, and console errors', () => {
       cy.get('#subtab-AdminMollieModule').click()
       cy.get('#subtab-AdminMollieSubscriptionOrders').click()
       cy.get('[id="invertus_mollie_subscription_grid_panel"]').should('be.visible')
+      cy.selectSubscriptionsCarriersCheck() // checking the Subscriptions carriers select and saving
 });
 it('C688473: Checking the Subscriptions FAQ, and console errors', () => {
       cy.visit('/admin1/')
