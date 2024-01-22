@@ -188,7 +188,6 @@ it('C339360: 23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.get('[type="submit"]').first().click({force:true})
       cy.get('[class="alert alert-success"]').should('be.visible')
       cy.visit('/de/index.php?controller=history')
-      cy.get('a').click()
       cy.contains('Reorder').click()
       cy.contains('NL').click()
       //Billing country LT, DE etc.
@@ -342,7 +341,6 @@ it.skip('41 Gift Card Order Shipping, Refunding [Orders API]', () => {
 })
 it('C1765085: Billie Checkouting [Orders API]', () => {
       cy.visit('/de/index.php?controller=history')
-      cy.get('a').click()
       cy.contains('Reorder').click()
       cy.contains('DE').click()
       //Billing country LT, DE etc.
