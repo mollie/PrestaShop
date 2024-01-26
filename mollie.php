@@ -88,7 +88,7 @@ class Mollie extends PaymentModule
         $this->tab = 'payments_gateways';
         $this->version = '6.0.5';
         $this->author = 'Mollie B.V.';
-        $this->need_instance = 1;
+        $this->need_instance = 0;
         $this->bootstrap = true;
         $this->module_key = 'a48b2f8918358bcbe6436414f48d8915';
 
