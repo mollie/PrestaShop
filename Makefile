@@ -58,9 +58,7 @@ e2eh$(VERSION):
 open-e2e-tests-locally:
 	npm install -D cypress
 	npm ci
-	export CYPRESS_MOLLIE_TEST_API_KEY=$(MOLLIE_TEST_API_KEY)
-	export CYPRESS_baseUrl=$(baseUrl$(VERSION))
-	npx cypress open
+	npx cypress open --config baseUrl=$(ENV_baseUrl$(VERSION)) --env MOLLIE_TEST_API_KEY=$(ENV_MOLLIE_TEST_API_KEY)
 
 run-e2e-tests-locally:
 	npm install -D cypress
