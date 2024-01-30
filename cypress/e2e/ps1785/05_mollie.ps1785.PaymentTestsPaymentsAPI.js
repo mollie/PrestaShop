@@ -98,6 +98,7 @@ it('C339385: 50 Credit Card Guest Checkouting [Payments API]', () => {
     cy.get('#field-siret').type('DE123456')
     cy.get('[name="password"]').first().type('123456')
     cy.contains('Customer data privacy').click()
+    cy.contains('I agree').click()
     cy.get('#customer-form > .form-footer > .continue').click()
     cy.reload()
     cy.get(':nth-child(6) > .col-md-6 > .form-control').type('123456',{delay:0})
@@ -119,7 +120,7 @@ it('C339385: 50 Credit Card Guest Checkouting [Payments API]', () => {
     cy.get('[class="button form__button"]').click()
     cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it('C339386: 51 Credit Card Guest Checkouting with not 3DS secure card [Payments API]', () => {
+it('C339386: 51 Credit Card Guest Checkouting with non 3DS secure card [Payments API]', () => {
     cy.clearCookies()
     //Payments API item
     cy.visit('/de/', { headers: {"Accept-Encoding": "gzip, deflate"}})
@@ -139,6 +140,7 @@ it('C339386: 51 Credit Card Guest Checkouting with not 3DS secure card [Payments
     cy.get('#field-siret').type('DE123456')
     cy.get('[name="password"]').first().type('123456')
     cy.contains('Customer data privacy').click()
+    cy.contains('I agree').click()
     cy.get('#customer-form > .form-footer > .continue').click()
     cy.reload()
     cy.get(':nth-child(6) > .col-md-6 > .form-control').type('123456',{delay:0})
@@ -263,7 +265,6 @@ it('C339400: 65 Belfius BO Refunding, Partial Refunding [Payments API]', () => {
 });
 it('C339401: 66 Bank Transfer Checkouting [Payments API]', () => {
     cy.visit('/en/index.php?controller=history')
-    cy.get('a').click()
     cy.contains('Reorder').click()
     cy.contains('NL').click()
     //Billing country LT, DE etc.

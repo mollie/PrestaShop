@@ -77,7 +77,6 @@ Cypress.Commands.add("navigatingToThePaymentPS8", () => {
 })
 Cypress.Commands.add("navigatingToThePayment", () => {
   cy.visit('/de/index.php?controller=history')
-  cy.get('a').click()
   cy.contains('Reorder').click()
   cy.contains('NL').click()
   //Billing country LT, DE etc.
@@ -273,3 +272,8 @@ Cypress.Commands.add("CachingBOFOPS8", {cacheAcrossSpecs: true}, () => {
     }
     login('MollieBOFOLoggingIn')
   })
+Cypress.Commands.add("selectSubscriptionsCarriersCheck", {cacheAcrossSpecs: true}, () => {
+    cy.get('#form_carrier').select(1)
+    cy.contains('Save').click()
+    cy.contains('Options saved successfully.').should('be.visible') //checking if saving returns green alert
+    })
