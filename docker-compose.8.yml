@@ -16,7 +16,7 @@ services:
       interval: 10s
     networks:
       - prestashop_mollie_net_8
-  prestashop-8:
+  prestashop-mollie-8:
     platform: linux/amd64
     container_name: prestashop-mollie-8
     build:
