@@ -21,8 +21,10 @@ e2eh$(VERSION)_local:
 	# waiting for app containers to build up
 	/bin/bash .docker/wait-loader.sh 8002
 	# seeding the customized settings for PS
-	# mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_$(VERSION).sql
+	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_$(VERSION).sql
 	# installing module
+	docker exec -i prestashop-mollie-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
+	# installing module (in case for Addons Marketplace)
 	docker exec -i prestashop-mollie-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
 	# uninstalling module
 	docker exec -i prestashop-mollie-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall mollie"
