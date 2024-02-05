@@ -781,7 +781,7 @@ CREATE TABLE `ps_address` (
   KEY `id_manufacturer` (`id_manufacturer`),
   KEY `id_supplier` (`id_supplier`),
   KEY `id_warehouse` (`id_warehouse`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_address` (`id_address`, `id_country`, `id_state`, `id_customer`, `id_manufacturer`, `id_supplier`, `id_warehouse`, `alias`, `company`, `lastname`, `firstname`, `address1`, `address2`, `postcode`, `city`, `other`, `phone`, `phone_mobile`, `vat_number`, `dni`, `date_add`, `date_upd`, `active`, `deleted`) VALUES
 (1,	17,	0,	1,	0,	0,	0,	'Anonymous',	'Anonymous',	'Anonymous',	'Anonymous',	'Anonymous',	'',	'00000',	'Anonymous',	'',	'0000000000',	'0000000000',	'0000',	'0000',	'2024-02-05 10:58:31',	'2024-02-05 10:58:31',	1,	0),
@@ -790,7 +790,8 @@ INSERT INTO `ps_address` (`id_address`, `id_country`, `id_state`, `id_customer`,
 (4,	21,	35,	0,	1,	0,	0,	'manufacturer',	'Fashion',	'manufacturer',	'manufacturer',	'767 Fifth Ave.',	'',	'10154',	'New York',	'',	'(212) 336-1666',	'',	'',	'',	'2024-02-05 10:58:40',	'2024-02-05 10:58:40',	1,	0),
 (5,	21,	12,	2,	0,	0,	0,	'My address',	'My Company',	'DOE',	'John',	'16, Main street',	'2nd floor',	'33133',	'Miami',	'',	'0102030405',	'',	'',	'',	'2024-02-05 10:58:40',	'2024-02-05 10:58:40',	1,	0),
 (6,	8,	0,	0,	0,	2,	0,	'accessories_supplier',	'Accessories and Co',	'accessories',	'accessories',	'42 Avenue Maréchal Soult',	'',	'64990',	'Bayonne',	'',	'0102030405',	'',	'',	'',	'2024-02-05 10:58:40',	'2024-02-05 10:58:40',	1,	0),
-(7,	1,	0,	3,	0,	0,	0,	'DE',	'TEST COMPANY',	'TEST',	'TEST',	'Egelhofen 22, Germany  Pfaffenhausen,',	'TEST123-312 5555',	'10115',	'Berlin',	'',	'+4937595791802',	'',	'DE123456789',	'',	'2024-02-05 11:04:28',	'2024-02-05 11:04:28',	1,	0);
+(7,	1,	0,	3,	0,	0,	0,	'DE',	'TEST COMPANY',	'TEST',	'TEST',	'Egelhofen 22, Germany  Pfaffenhausen,',	'TEST123-312 5555',	'10115',	'Berlin',	'',	'+4937595791802',	'',	'DE123456789',	'',	'2024-02-05 11:04:28',	'2024-02-05 11:04:28',	1,	0),
+(8,	13,	0,	3,	0,	0,	0,	'NL',	'TEST COMPANY NL',	'TESTNL',	'TESTNL',	'Rijksstraatweg 161',	'TEST123-312',	'1969 LE',	'Heemskerk',	'',	'0251 232 417',	'',	'23423523',	'',	'2024-02-05 12:22:52',	'2024-02-05 12:22:52',	1,	0);
 
 DROP TABLE IF EXISTS `ps_address_format`;
 CREATE TABLE `ps_address_format` (
@@ -2793,7 +2794,7 @@ CREATE TABLE `ps_configuration` (
   KEY `name` (`name`),
   KEY `id_shop` (`id_shop`),
   KEY `id_shop_group` (`id_shop_group`)
-) ENGINE=InnoDB AUTO_INCREMENT=420 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=422 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_configuration` (`id_configuration`, `id_shop_group`, `id_shop`, `name`, `value`, `date_add`, `date_upd`) VALUES
 (1,	NULL,	NULL,	'PS_LANG_DEFAULT',	'1',	'2024-02-05 10:58:30',	'2024-02-05 10:58:30'),
@@ -3058,7 +3059,7 @@ INSERT INTO `ps_configuration` (`id_configuration`, `id_shop_group`, `id_shop`, 
 (260,	NULL,	NULL,	'SEK_MIN_OCCURENCES',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (261,	NULL,	NULL,	'SEK_FILTER_KW',	'',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (262,	NULL,	NULL,	'PS_ALLOW_MOBILE_DEVICE',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
-(263,	NULL,	NULL,	'PS_CUSTOMER_CREATION_EMAIL',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
+(263,	NULL,	NULL,	'PS_CUSTOMER_CREATION_EMAIL',	'1',	'0000-00-00 00:00:00',	'2024-02-05 12:23:38'),
 (264,	NULL,	NULL,	'PS_SMARTY_CONSOLE_KEY',	'SMARTY_DEBUG',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (265,	NULL,	NULL,	'PS_ATTRIBUTE_ANCHOR_SEPARATOR',	'-',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (266,	NULL,	NULL,	'CONF_AVERAGE_PRODUCT_MARGIN',	'40',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
@@ -3070,8 +3071,8 @@ INSERT INTO `ps_configuration` (`id_configuration`, `id_shop_group`, `id_shop`, 
 (272,	NULL,	NULL,	'PS_DETECT_COUNTRY',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (273,	NULL,	NULL,	'PS_ROUND_TYPE',	'2',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (274,	NULL,	NULL,	'PS_LOG_EMAILS',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
-(275,	NULL,	NULL,	'PS_CUSTOMER_OPTIN',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
-(276,	NULL,	NULL,	'PS_CUSTOMER_BIRTHDATE',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
+(275,	NULL,	NULL,	'PS_CUSTOMER_OPTIN',	'1',	'0000-00-00 00:00:00',	'2024-02-05 12:23:38'),
+(276,	NULL,	NULL,	'PS_CUSTOMER_BIRTHDATE',	'1',	'0000-00-00 00:00:00',	'2024-02-05 12:23:38'),
 (277,	NULL,	NULL,	'PS_PACK_STOCK_TYPE',	'0',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (278,	NULL,	NULL,	'PS_LOG_MODULE_PERFS_MODULO',	'0',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (279,	NULL,	NULL,	'PS_DISALLOW_HISTORY_REORDERING',	'0',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
@@ -3205,7 +3206,9 @@ INSERT INTO `ps_configuration` (`id_configuration`, `id_shop_group`, `id_shop`, 
 (416,	NULL,	NULL,	'PS_LAYERED_FILTER_PRICE_ROUNDING',	'1',	'2024-02-05 10:58:41',	'2024-02-05 10:58:41'),
 (417,	NULL,	NULL,	'PS_LAYERED_FILTER_SHOW_OUT_OF_STOCK_LAST',	'0',	'2024-02-05 10:58:41',	'2024-02-05 10:58:41'),
 (418,	NULL,	NULL,	'PS_LAYERED_FILTER_BY_DEFAULT_CATEGORY',	'0',	'2024-02-05 10:58:41',	'2024-02-05 10:58:41'),
-(419,	NULL,	NULL,	'PS_LAYERED_INDEXED',	'1',	'2024-02-05 10:58:41',	'2024-02-05 10:58:41');
+(419,	NULL,	NULL,	'PS_LAYERED_INDEXED',	'1',	'2024-02-05 10:58:41',	'2024-02-05 10:58:41'),
+(420,	NULL,	NULL,	'PS_CART_FOLLOWING',	NULL,	'2024-02-05 12:23:38',	'2024-02-05 12:23:38'),
+(421,	NULL,	NULL,	'PS_B2B_ENABLE',	'1',	'2024-02-05 12:23:38',	'2024-02-05 12:23:38');
 
 DROP TABLE IF EXISTS `ps_configuration_kpi`;
 CREATE TABLE `ps_configuration_kpi` (
@@ -3356,7 +3359,7 @@ CREATE TABLE `ps_connections` (
 
 INSERT INTO `ps_connections` (`id_connections`, `id_shop_group`, `id_shop`, `id_guest`, `id_page`, `ip_address`, `date_add`, `http_referer`) VALUES
 (1,	1,	1,	1,	1,	2130706433,	'2024-02-05 10:58:40',	'https://www.prestashop.com'),
-(2,	1,	1,	3,	1,	1439583191,	'2024-02-05 11:01:25',	''),
+(2,	1,	1,	4,	1,	1439583191,	'2024-02-05 11:01:25',	''),
 (3,	1,	1,	4,	1,	1439583191,	'2024-02-05 11:01:31',	'');
 
 DROP TABLE IF EXISTS `ps_connections_page`;
@@ -4773,7 +4776,7 @@ CREATE TABLE `ps_customer` (
 INSERT INTO `ps_customer` (`id_customer`, `id_shop_group`, `id_shop`, `id_gender`, `id_default_group`, `id_lang`, `id_risk`, `company`, `siret`, `ape`, `firstname`, `lastname`, `email`, `passwd`, `last_passwd_gen`, `birthday`, `newsletter`, `ip_registration_newsletter`, `newsletter_date_add`, `optin`, `website`, `outstanding_allow_amount`, `show_public_prices`, `max_payment_days`, `secure_key`, `note`, `active`, `is_guest`, `deleted`, `date_add`, `date_upd`, `reset_password_token`, `reset_password_validity`) VALUES
 (1,	1,	1,	1,	3,	1,	0,	'',	'',	'',	'Anonymous',	'Anonymous',	'anonymous@psgdpr.com',	'$2y$10$tuCD4JTY2EY3AaItLUjwnu2SqLhnqyzo4LQ4wVCr0NBh2clt8SF3e',	'2024-02-05 04:58:31',	'0000-00-00',	0,	'',	'0000-00-00 00:00:00',	0,	'',	0.000000,	0,	0,	'42cfd67f1fc7ef7dcdcbe2274f639b33',	'',	0,	0,	0,	'2024-02-05 10:58:31',	'2024-02-05 10:58:31',	'',	'0000-00-00 00:00:00'),
 (2,	1,	1,	1,	3,	1,	0,	'',	'',	'',	'John',	'DOE',	'pub@prestashop.com',	'$2y$10$3liftyN6MIoyovxIDJYHAus7l9odH0dWlFm2zn.HUZjbvdHkEMiIu',	'2024-02-05 04:58:40',	'1970-01-15',	1,	'',	'2013-12-13 08:19:15',	1,	'',	0.000000,	0,	0,	'50183e1f9ed7950402611edbb4ac1e2f',	'',	1,	0,	0,	'2024-02-05 10:58:40',	'2024-02-05 10:58:40',	'',	'0000-00-00 00:00:00'),
-(3,	1,	1,	1,	3,	1,	0,	'',	'',	'',	'TEST',	'TEST',	'demo@prestashop.com',	'$2y$10$xUAAyGQxlE0mqPAzkjZRxen7LSWPVHF8Fs5uYHntaxTyaEwgw4eLa',	'2024-02-05 05:01:58',	'0000-00-00',	1,	'',	'2024-02-05 11:01:58',	1,	'',	0.000000,	0,	0,	'52592faef16c33404320eb4d9ec16eaf',	'',	1,	0,	0,	'2024-02-05 11:01:58',	'2024-02-05 11:01:58',	'',	'0000-00-00 00:00:00');
+(3,	1,	1,	1,	3,	1,	0,	'TEST COMPANY',	'61-5203873',	NULL,	'TEST',	'TEST',	'demo@prestashop.com',	'$2y$10$/Bq67GjfZmkr.bagCRWYbusWHbkAs6OdvTck/HBSkek18SuF4S4L2',	'2024-02-05 05:01:58',	'0000-00-00',	1,	NULL,	'2024-02-05 11:01:58',	1,	NULL,	0.000000,	0,	0,	'52592faef16c33404320eb4d9ec16eaf',	NULL,	1,	0,	0,	'2024-02-05 11:01:58',	'2024-02-05 12:24:10',	NULL,	'0000-00-00 00:00:00');
 
 DROP TABLE IF EXISTS `ps_customer_group`;
 CREATE TABLE `ps_customer_group` (
@@ -4823,10 +4826,12 @@ CREATE TABLE `ps_customer_session` (
   `date_add` datetime NOT NULL,
   `date_upd` datetime NOT NULL,
   PRIMARY KEY (`id_customer_session`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_customer_session` (`id_customer_session`, `id_customer`, `token`, `date_add`, `date_upd`) VALUES
-(1,	3,	'805f87bc9aa781effb0adad52b08c1f02489867a',	'2024-02-05 11:01:58',	'2024-02-05 11:05:12');
+(1,	3,	'805f87bc9aa781effb0adad52b08c1f02489867a',	'2024-02-05 11:01:58',	'2024-02-05 11:05:12'),
+(2,	3,	'653c907d1f0bd3d08806a5825515b65e34cb5206',	'2024-02-05 12:21:25',	'2024-02-05 12:24:10'),
+(3,	3,	'c032149af358348b5e3c99d4c57023d8d9b429e3',	'2024-02-05 12:24:10',	'2024-02-05 12:24:15');
 
 DROP TABLE IF EXISTS `ps_customer_thread`;
 CREATE TABLE `ps_customer_thread` (
@@ -5018,10 +5023,10 @@ CREATE TABLE `ps_employee_session` (
   `date_add` datetime NOT NULL,
   `date_upd` datetime NOT NULL,
   PRIMARY KEY (`id_employee_session`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_employee_session` (`id_employee_session`, `id_employee`, `token`, `date_add`, `date_upd`) VALUES
-(1,	1,	'dcd6146c9e4479e1b16caed10c9c34df756712d3',	'2024-02-05 11:03:19',	'2024-02-05 11:05:48');
+(2,	1,	'e1a0e184982efd94f0843420de36267d51ed31c1',	'2024-02-05 12:23:11',	'2024-02-05 12:23:39');
 
 DROP TABLE IF EXISTS `ps_employee_shop`;
 CREATE TABLE `ps_employee_shop` (
@@ -5349,7 +5354,6 @@ CREATE TABLE `ps_guest` (
 INSERT INTO `ps_guest` (`id_guest`, `id_operating_system`, `id_web_browser`, `id_customer`, `javascript`, `screen_resolution_x`, `screen_resolution_y`, `screen_color`, `sun_java`, `adobe_flash`, `adobe_director`, `apple_quicktime`, `real_player`, `windows_media`, `accept_language`, `mobile_theme`) VALUES
 (1,	0,	0,	2,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
 (2,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
-(3,	7,	3,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'en',	0),
 (4,	7,	3,	3,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'en',	0);
 
 DROP TABLE IF EXISTS `ps_homeslider`;
@@ -7510,7 +7514,7 @@ CREATE TABLE `ps_log` (
   `date_add` datetime NOT NULL,
   `date_upd` datetime NOT NULL,
   PRIMARY KEY (`id_log`)
-) ENGINE=InnoDB AUTO_INCREMENT=472 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=473 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_log` (`id_log`, `severity`, `error_code`, `message`, `object_type`, `object_id`, `id_shop`, `id_shop_group`, `id_lang`, `in_all_shops`, `id_employee`, `date_add`, `date_upd`) VALUES
 (1,	1,	0,	'Exporting mail with theme modern for language English (English)',	'',	0,	1,	NULL,	0,	0,	0,	'2024-02-05 10:58:29',	'2024-02-05 10:58:29'),
@@ -7983,7 +7987,8 @@ INSERT INTO `ps_log` (`id_log`, `severity`, `error_code`, `message`, `object_typ
 (468,	1,	0,	'Generate html template referralprogram-voucher at /var/www/html/modules//referralprogram/mails/nl/referralprogram-voucher.html',	'',	0,	1,	NULL,	1,	0,	1,	'2024-02-05 11:03:55',	'2024-02-05 11:03:55'),
 (469,	1,	0,	'Generate txt template referralprogram-voucher at /var/www/html/modules//referralprogram/mails/nl/referralprogram-voucher.txt',	'',	0,	1,	NULL,	1,	0,	1,	'2024-02-05 11:03:55',	'2024-02-05 11:03:55'),
 (470,	3,	0,	'Swift Error: Expected response code 220 but got an empty response',	'SwiftMessage',	0,	1,	NULL,	1,	0,	0,	'2024-02-05 11:05:05',	'2024-02-05 11:05:05'),
-(471,	3,	0,	'Swift Error: Expected response code 220 but got an empty response',	'SwiftMessage',	0,	1,	NULL,	1,	0,	0,	'2024-02-05 11:05:05',	'2024-02-05 11:05:05');
+(471,	3,	0,	'Swift Error: Expected response code 220 but got an empty response',	'SwiftMessage',	0,	1,	NULL,	1,	0,	0,	'2024-02-05 11:05:05',	'2024-02-05 11:05:05'),
+(472,	1,	0,	'Back office connection from 85.206.75.215',	'',	0,	NULL,	NULL,	1,	1,	1,	'2024-02-05 12:23:11',	'2024-02-05 12:23:11');
 
 DROP TABLE IF EXISTS `ps_mail`;
 CREATE TABLE `ps_mail` (
@@ -13385,7 +13390,7 @@ INSERT INTO `ps_tab` (`id_tab`, `id_parent`, `position`, `module`, `class_name`,
 (24,	2,	2,	NULL,	'AdminParentCustomer',	'',	1,	1,	'account_circle',	'Customers',	'Admin.Navigation.Menu'),
 (25,	24,	0,	NULL,	'AdminCustomers',	'',	1,	1,	'',	'Customers',	'Admin.Navigation.Menu'),
 (26,	24,	1,	NULL,	'AdminAddresses',	'',	1,	1,	'',	'Addresses',	'Admin.Navigation.Menu'),
-(27,	24,	2,	NULL,	'AdminOutstanding',	'',	0,	1,	'',	'Outstanding',	'Admin.Navigation.Menu'),
+(27,	24,	2,	NULL,	'AdminOutstanding',	'',	1,	1,	'',	'Outstanding',	'Admin.Navigation.Menu'),
 (28,	2,	3,	NULL,	'AdminParentCustomerThreads',	'',	1,	1,	'chat',	'Customer Service',	'Admin.Navigation.Menu'),
 (29,	28,	0,	NULL,	'AdminCustomerThreads',	'',	1,	1,	'',	'Customer Service',	'Admin.Navigation.Menu'),
 (30,	28,	1,	NULL,	'AdminOrderMessage',	'',	1,	1,	'',	'Order Messages',	'Admin.Navigation.Menu'),
@@ -15139,4 +15144,4 @@ INSERT INTO `ps_zone_shop` (`id_zone`, `id_shop`) VALUES
 (7,	1),
 (8,	1);
 
--- 2024-02-05 10:06:30
+-- 2024-02-05 11:24:32
