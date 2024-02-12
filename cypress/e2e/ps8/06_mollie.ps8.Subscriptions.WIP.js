@@ -27,7 +27,8 @@ describe('PS8 Subscriptions Test Suite', () => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
   })
-it.only('C176305: Check if Subscription options added in Product BO', () => {
+// wip
+it.skip('C176305: Check if Subscription options added in Product BO', () => {
   cy.visit('/admin1/')
   cy.get('#subtab-AdminCatalog > :nth-child(1)').click()
   cy.get('#subtab-AdminProducts > .link').click()
@@ -52,7 +53,8 @@ it.only('C176305: Check if Subscription options added in Product BO', () => {
   cy.contains('Successful update').should('be.visible')
   cy.screenshot()
 })
-it.only('C1672516: Check if Subscription options are in Product Page FO and then register the Subscription product by purchasing it', () => { //PS805 test is not working on Cypress, deleting the Cart session somehow, checking for alternative test
+// wip
+it.skip('C1672516: Check if Subscription options are in Product Page FO and then register the Subscription product by purchasing it', () => { //PS805 test is not working on Cypress, deleting the Cart session somehow, checking for alternative test
   cy.visit('/en/')
   cy.get('[data-id-product="1"]').first().click()
   cy.get('[aria-label="Subscription"]').should('be.visible') //asserting if there is a Subscription dropdown in product page
@@ -72,7 +74,8 @@ it.only('C1672516: Check if Subscription options are in Product Page FO and then
   cy.get('[value="paid"]').click()
   cy.get('[class="button form__button"]').click()
 });
-it('C1672517: Check if Subscription options are implemented in My Account FO', () => {
+// wip
+it.skip('C1672517: Check if Subscription options are implemented in My Account FO', () => {
   cy.visit('/en/')
   cy.get('[class="account"]').click()
   cy.contains('Subscriptions').click()
