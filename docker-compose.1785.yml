@@ -38,7 +38,6 @@ services:
       - "8002:80"
     volumes:
       - ./:/var/www/html/modules/mollie
-      - ./.docker/.htaccess1785:/var/www/html/.htaccess
     networks:
       - prestashop_mollie_net_1785
     healthcheck:
