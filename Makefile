@@ -68,16 +68,16 @@ run-e2e-tests-locally:
 	npx cypress run
 
 # checking the module upgrading - installs older module then installs from master branch
-upgrading-module-test-1785:
+upgrading-module-test-$(VERSION):
 	git fetch
 	git checkout v5.2.0 .
 	composer install
 	# installing 5.2.0 module
-	docker exec -i prestashop-mollie-1785 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
+	docker exec -i prestashop-mollie-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
 	# installing develop branch module
 	git checkout -- .
 	git checkout develop --force
-	docker exec -i prestashop-mollie-1785 sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
+	docker exec -i prestashop-mollie-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install mollie"
 
 npm-package-install:
 	cd views/assets && npm i && npm run build

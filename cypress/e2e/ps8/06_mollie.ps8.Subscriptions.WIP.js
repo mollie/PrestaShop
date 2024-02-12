@@ -51,6 +51,7 @@ it.skip('C176305: Check if Subscription options added in Product BO', () => {
   cy.get('#save-combinations-edition').click()
   cy.get('#product_footer_save').click()
   cy.contains('Successful update').should('be.visible')
+  cy.wait(2000)
   cy.screenshot()
 })
 // wip
