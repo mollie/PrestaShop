@@ -161,7 +161,7 @@ it('C339359: 22 IN3 should not be shown under 5000 EUR [Orders API]', () => {
       cy.visit('/en/index.php?controller=history')
       cy.contains('Reorder').click()
       cy.visit('/en/cart?action=show')
-      cy.get('[class="js-cart-line-product-quantity form-control"]').clear().type('200')
+      cy.get('[class="js-cart-line-product-quantity form-control"]').eq(0).clear().type('250')
       cy.contains('Proceed to checkout').click()
       cy.contains('NL').click()
       //Billing country LT, DE etc.
