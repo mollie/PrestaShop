@@ -26,15 +26,29 @@ describe('PS8 Subscriptions Test Suite', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
       login('MollieBOFOLoggingIn')
+      cy.intercept('GET', '**/*.jpg', { // intercepting the UI with no images, for faster test run
+        statusCode: 200,
+        body: '', // Empty response
+      })
+      cy.intercept('GET', '**/*.png', {
+        statusCode: 200,
+        body: '', // Empty response
+      })
   })
-// wip
-it.skip('C176305: Check if Subscription options added in Product BO', () => {
+it('C176305: Check if Subscription options added in Product BO', () => {
   cy.visit('/admin1/')
   cy.get('#subtab-AdminCatalog > :nth-child(1)').click()
   cy.get('#subtab-AdminProducts > .link').click()
-  cy.get('tbody').find('tr:nth-child(19)').find('a').eq(0).click() // clicks on the product row
+  cy.get('tbody').find('tr:nth-child(12)').find('a').eq(0).click() // clicks on the product ID #8
+  cy.get('.product-type-preview').click()
+  cy.get('.modal-content').within(() => {
+    cy.get('[data-value="combinations"]').click()
+    cy.contains('Change product type').click()
+    cy.wait(1000)
+    cy.contains('Change product type').click()
+  })
   cy.contains('Combinations').click()
-  cy.get('#combination-list-actions > .btn-primary').click()
+  cy.contains('Generate combinations').click()
   cy.contains('Daily').click({force:true})
   cy.contains('None').click({force:true})
   cy.get('.modal-footer > .btn-primary').click()
@@ -54,29 +68,12 @@ it.skip('C176305: Check if Subscription options added in Product BO', () => {
   cy.wait(2000)
   cy.screenshot()
 })
-// wip
-it.skip('C1672516: Check if Subscription options are in Product Page FO and then register the Subscription product by purchasing it', () => { //PS805 test is not working on Cypress, deleting the Cart session somehow, checking for alternative test
+it('C1672516: Check if Subscription options are in Product Page FO', () => { // PS 8.x test is not working on Cypress, deleting the Cart session somehow, checking for alternative test
   cy.visit('/en/')
-  cy.get('[data-id-product="1"]').first().click()
-  cy.get('[aria-label="Subscription"]').should('be.visible') //asserting if there is a Subscription dropdown in product page
-  cy.contains('Add to cart').click()
-  cy.contains('Proceed to checkout').click()
-  cy.visit('/en/cart?action=show') //strangely, session is deleted somehow, but after the visit to the Cart page again, the Cart is with an item again
-  cy.contains('Proceed to checkout').click()
-  cy.contains('DE').click()
-  cy.get('.clearfix > .btn').click()
-  cy.get('#js-delivery > .continue').click()
-  //Payment method choosing
-  cy.contains('Card').click({force:true})
-  //Credit card inputing
-  cy.CreditCardFillingIframe()
-  cy.get('.condition-label > .js-terms').click({force:true})
-  cy.get('.ps-shown-by-js > .btn').click()
-  cy.get('[value="paid"]').click()
-  cy.get('[class="button form__button"]').click()
+  cy.get('[data-id-product="8"]').first().click()
+  cy.get('[aria-label="Subscription"]').should('be.visible') // asserting if there is a Subscription dropdown in product page
 });
-// wip
-it.skip('C1672517: Check if Subscription options are implemented in My Account FO', () => {
+it('C1672517: Check if Subscription options are implemented in My Account FO', () => {
   cy.visit('/en/')
   cy.get('[class="account"]').click()
   cy.contains('Subscriptions').click()
