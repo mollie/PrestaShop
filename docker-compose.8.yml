@@ -16,7 +16,8 @@ services:
       interval: 10s
     networks:
       - prestashop_mollie_net_8
-  prestashop-8:
+
+  prestashop-mollie-8:
     platform: linux/amd64
     container_name: prestashop-mollie-8
     build:
@@ -37,7 +38,6 @@ services:
       - "8002:80"
     volumes:
       - ./:/var/www/html/modules/mollie
-      - ./.docker/.htaccess8:/var/www/html/.htaccess
     networks:
       - prestashop_mollie_net_8
     healthcheck:

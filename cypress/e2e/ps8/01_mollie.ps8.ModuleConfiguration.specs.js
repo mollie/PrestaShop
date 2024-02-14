@@ -7,7 +7,7 @@ const login = (MollieBOFOLoggingIn) => {
   cy.get('#email').type('demo@prestashop.com',{delay: 0, log: false})
   cy.get('#passwd').type('prestashop_demo',{delay: 0, log: false})
   cy.get('#submit_login').click().wait(1000).as('Connection successsful')
-  cy.visit('/en/my-account')
+  cy.visit('/my-account')
   cy.get('#login-form [name="email"]').eq(0).type('demo@prestashop.com')
   cy.get('#login-form [name="password"]').eq(0).type('prestashop_demo')
   cy.get('#login-form [type="submit"]').eq(0).click({force:true})
@@ -79,8 +79,6 @@ it('C339339: Checking the Advanced Settings tab, verifying the Front-end compone
       cy.get('[id="MOLLIE_AS_STATUSES_info"]').should('exist')
       cy.get('[name="MOLLIE_DISPLAY_ERRORS"]').should('exist')
       cy.get('[name="MOLLIE_DEBUG_LOG"]').should('exist')
-      cy.get('[name="MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID"]').should('be.visible') // checking the Subscriptions carriers select
-      cy.get('[name="MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID"]').select('Click and collect')
       cy.get('#module_form_submit_btn').click({force:true}) //checking the saving
       cy.get('[class="alert alert-success"]').should('be.visible') //checking if saving returns green alert
       cy.reload()

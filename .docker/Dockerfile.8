@@ -1,4 +1,4 @@
-FROM prestashop/prestashop:8.1.3
+FROM prestashop/prestashop:8.1.3-apache
 
 RUN cd /usr/local/etc/php/conf.d/ && \
   echo 'memory_limit = 4096M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini
