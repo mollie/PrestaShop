@@ -15,6 +15,7 @@ endif
 
 # Local machine docker build with PS autoinstall
 e2eh$(VERSION)_local:
+	composer install
 	# detaching containers
 	docker-compose -f docker-compose.$(VERSION).yml up -d --force-recreate
 	# sees what containers are running
