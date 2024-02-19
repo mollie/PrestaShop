@@ -1,19 +1,4 @@
 /// <reference types="Cypress" />
-//Caching the BO and FO session
-const login = (MollieBOFOLoggingIn) => {
-  cy.session(MollieBOFOLoggingIn,() => {
-  cy.visit('/admin1/')
-  cy.url().should('contain', 'https').as('Check if HTTPS exists')
-  cy.get('#email').type('demo@prestashop.com',{delay: 0, log: false})
-  cy.get('#passwd').type('prestashop_demo',{delay: 0, log: false})
-  cy.get('#submit_login').click().wait(1000).as('Connection successsful')
-  cy.visit('/en/my-account')
-  cy.get('#login-form [name="email"]').eq(0).type('demo@prestashop.com')
-  cy.get('#login-form [name="password"]').eq(0).type('prestashop_demo')
-  cy.get('#login-form [type="submit"]').eq(0).click({force:true})
-  cy.get('#history-link > .link-item').click()
-  })
-  }
 
 describe('PS8 Tests Suite [Orders API]', {
   failFast: {
@@ -22,7 +7,7 @@ describe('PS8 Tests Suite [Orders API]', {
 }, () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
-      login('MollieBOFOLoggingIn')
+      cy.CachingBOFOPS8()
   })
 it.skip('C339342: 05 Vouchers Checkouting [Orders API]', () => { //temporary skip, possible bug containing PS8 version
       cy.navigatingToThePaymentPS8()
