@@ -276,4 +276,10 @@ Cypress.Commands.add("selectSubscriptionsCarriersCheck", {cacheAcrossSpecs: true
     cy.get('#form_carrier').select(1)
     cy.contains('Save').click()
     cy.contains('Options saved successfully.').should('be.visible') //checking if saving returns green alert
-    })
+  })
+Cypress.Commands.add("CloudSyncUI", {cacheAcrossSpecs: true}, () => {
+    cy.get('prestashop-accounts').should('be.visible')
+    cy.get('[id="prestashop-cloudsync"]').should('be.visible')
+    cy.get('[class="prestashop-accounts-wrapper"]').click(1650, 100)
+    // wip, looking for modal inner interaction
+  })
