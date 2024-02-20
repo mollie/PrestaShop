@@ -20,7 +20,6 @@ use Mollie\Config\Config;
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
-use Mollie\Install\PrestaShopDependenciesInstall;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
@@ -165,25 +164,6 @@ class Mollie extends PaymentModule
 
         if (!parent::install()) {
             $this->_errors[] = $this->l('Unable to install module');
-
-            return false;
-        }
-
-        /** @var PrestaShopDependenciesInstall $prestaShopDependenciesInstaller */
-        $prestaShopDependenciesInstaller = $this->getService(PrestaShopDependenciesInstall::class);
-
-        /** @var PrestaLoggerInterface $logger */
-        $logger = $this->getService(PrestaLoggerInterface::class);
-
-        try {
-            $prestaShopDependenciesInstaller->install();
-        } catch (\Throwable $exception) {
-            $logger->error('Failed to install PrestaShop dependencies', [
-                'Exception message' => $exception->getMessage(),
-                'Exception code' => $exception->getCode(),
-            ]);
-
-            $this->_errors[] = $this->l('Failed to install PrestaShop dependencies. Please contact support.');
 
             return false;
         }
