@@ -16,6 +16,10 @@ use Mollie\DTO\ApplePay\Order;
 use Mollie\DTO\ApplePay\Product;
 use Mollie\DTO\ApplePay\ShippingContent;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ApplePayOrderBuilder
 {
     public function build(array $products, array $shippingContent, array $billingContent): Order

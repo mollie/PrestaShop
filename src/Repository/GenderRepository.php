@@ -36,6 +36,10 @@
 
 namespace Mollie\Repository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class GenderRepository extends AbstractRepository implements GenderRepositoryInterface
 {
     public function __construct()

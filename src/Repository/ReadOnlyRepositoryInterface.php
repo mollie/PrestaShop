@@ -15,6 +15,10 @@ namespace Mollie\Repository;
 use ObjectModel;
 use PrestaShopCollection;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface ReadOnlyRepositoryInterface
 {
     /**

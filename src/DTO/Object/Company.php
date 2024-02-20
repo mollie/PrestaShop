@@ -1,6 +1,20 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\DTO\Object;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class Company implements \JsonSerializable
 {
@@ -9,17 +23,12 @@ class Company implements \JsonSerializable
     /** @var string */
     private $registrationNumber;
 
-    /**
-     * @return string
-     */
     public function getVatNumber(): string
     {
         return $this->vatNumber;
     }
 
     /**
-     * @param string $vatNumber
-     *
      * @maps vatNumber
      */
     public function setVatNumber(string $vatNumber): void
@@ -27,17 +36,12 @@ class Company implements \JsonSerializable
         $this->vatNumber = $vatNumber;
     }
 
-    /**
-     * @return string
-     */
     public function getRegistrationNumber(): string
     {
         return $this->registrationNumber;
     }
 
     /**
-     * @param string $registrationNumber
-     *
      * @maps registrationNumber
      */
     public function setRegistrationNumber(string $registrationNumber): void

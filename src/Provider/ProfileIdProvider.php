@@ -15,6 +15,10 @@ namespace Mollie\Provider;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ProfileIdProvider implements ProfileIdProviderInterface
 {
     public function getProfileId(MollieApiClient $apiClient): string

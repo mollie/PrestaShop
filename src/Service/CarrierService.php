@@ -17,6 +17,10 @@ use Configuration;
 use Context;
 use Mollie\Config\Config;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CarrierService
 {
     /**

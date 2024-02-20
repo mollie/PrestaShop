@@ -12,6 +12,10 @@
 
 namespace Mollie\Errors\Http;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class HttpStatusCode
 {
     const HTTP_CONTINUE = 100;

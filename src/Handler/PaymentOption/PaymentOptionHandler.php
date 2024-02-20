@@ -47,6 +47,10 @@ use Mollie\Provider\PaymentOption\CreditCardSingleClickPaymentOptionProvider;
 use Mollie\Provider\PaymentOption\IdealPaymentOptionProvider;
 use MolPaymentMethod;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentOptionHandler implements PaymentOptionHandlerInterface
 {
     /**
@@ -113,8 +117,6 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
     }
 
     /**
-     * @param MolPaymentMethod $paymentMethod
-     *
      * @return bool
      */
     private function isIdealPaymentMethod(MolPaymentMethod $paymentMethod)
@@ -130,21 +132,11 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
         return true;
     }
 
-    /**
-     * @param MolPaymentMethod $paymentMethod
-     *
-     * @return bool
-     */
     private function isCreditCardPaymentMethod(MolPaymentMethod $paymentMethod): bool
     {
         return PaymentMethod::CREDITCARD === $paymentMethod->getPaymentMethodName();
     }
 
-    /**
-     * @param MolPaymentMethod $paymentMethod
-     *
-     * @return bool
-     */
     private function isBancontactWithQRCodePaymentMethod(MolPaymentMethod $paymentMethod): bool
     {
         $isBancontactMethod = PaymentMethod::BANCONTACT === $paymentMethod->getPaymentMethodName();

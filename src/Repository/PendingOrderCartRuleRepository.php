@@ -17,6 +17,10 @@ use MolPendingOrderCartRule;
 use Order;
 use OrderCartRule;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 final class PendingOrderCartRuleRepository extends AbstractRepository implements PendingOrderCartRuleRepositoryInterface
 {
     public function __construct()

@@ -14,6 +14,10 @@ namespace Mollie\Repository;
 
 use CartRule;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 final class CartRuleRepository extends AbstractRepository implements CartRuleRepositoryInterface
 {
     public function __construct()

@@ -13,6 +13,10 @@
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Provider\ProfileIdProviderInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MolliePayScreenModuleFrontController extends ModuleFrontController
 {
     /** @var Mollie */

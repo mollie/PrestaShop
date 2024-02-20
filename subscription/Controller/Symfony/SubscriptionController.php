@@ -1,4 +1,14 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 declare(strict_types=1);
 
@@ -10,11 +20,17 @@ use Mollie\Subscription\Exception\SubscriptionApiException;
 use Mollie\Subscription\Filters\SubscriptionFilters;
 use Mollie\Subscription\Grid\SubscriptionGridDefinitionFactory;
 use Mollie\Subscription\Handler\SubscriptionCancellationHandler;
+use Mollie\Utility\PsVersionUtility;
+use PrestaShop\PrestaShop\Core\Form\FormHandlerInterface;
 use PrestaShop\PrestaShop\Core\Grid\GridFactoryInterface;
 use PrestaShopBundle\Security\Annotation\AdminSecurity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class SubscriptionController extends AbstractSymfonyController
 {
@@ -23,14 +39,12 @@ class SubscriptionController extends AbstractSymfonyController
     /**
      * @AdminSecurity("is_granted('read', request.get('_legacy_controller'))")
      *
-     * @param SubscriptionFilters $filters
-     *
      * @return Response
      */
     public function indexAction(SubscriptionFilters $filters, Request $request)
     {
         /** @var Shop $shop */
-        $shop = $this->leagueContainer->getService(Shop::class);
+        $shop = $this->module->getService(Shop::class);
 
         if ($shop->getContext() !== \Shop::CONTEXT_SHOP) {
             if (!$this->get('session')->getFlashBag()->has('error')) {
@@ -41,24 +55,61 @@ class SubscriptionController extends AbstractSymfonyController
         }
 
         /** @var GridFactoryInterface $currencyGridFactory */
-        $currencyGridFactory = $this->leagueContainer->getService('subscription_grid_factory');
+        $currencyGridFactory = $this->module->getService('subscription_grid_factory');
         $currencyGrid = $currencyGridFactory->getGrid($filters);
+
+        if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.8.0')) {
+            $formHandler = $this->get('subscription_options_form_handler')->getForm();
+        } else {
+            $formHandler = $this->get('subscription_options_form_handler_deprecated')->getForm();
+        }
 
         return $this->render('@Modules/mollie/views/templates/admin/Subscription/subscriptions-grid.html.twig', [
             'currencyGrid' => $this->presentGrid($currencyGrid),
             'enableSidebar' => true,
-            'help_link' => $this->generateSidebarLink($request->attributes->get('_legacy_controller')),
+            'subscriptionOptionsForm' => $formHandler->createView(),
         ]);
+    }
+
+    /**
+     * @AdminSecurity("is_granted('create', request.get('_legacy_controller'))")
+     */
+    public function submitOptionsAction(Request $request): RedirectResponse
+    {
+        if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.8.0')) {
+            /** @var FormHandlerInterface $formHandler */
+            $formHandler = $this->get('subscription_options_form_handler');
+        } else {
+            /** @var FormHandlerInterface $formHandler */
+            $formHandler = $this->get('subscription_options_form_handler_deprecated');
+        }
+
+        $form = $formHandler->getForm();
+        $form->handleRequest($request);
+
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            $this->addFlash(
+                'error',
+                $this->module->l('Failed to save options. Try again or contact support.', self::FILE_NAME)
+            );
+
+            return $this->redirectToRoute('admin_subscription_index');
+        }
+
+        $formHandler->save($form->getData());
+
+        $this->addFlash(
+            'success',
+            $this->module->l('Options saved successfully.', self::FILE_NAME)
+        );
+
+        return $this->redirectToRoute('admin_subscription_index');
     }
 
     /**
      * Provides filters functionality.
      *
      * @AdminSecurity("is_granted('read', request.get('_legacy_controller'))")
-     *
-     * @param Request $request
-     *
-     * @return RedirectResponse
      */
     public function searchAction(Request $request): RedirectResponse
     {
@@ -74,15 +125,11 @@ class SubscriptionController extends AbstractSymfonyController
 
     /**
      * @AdminSecurity("is_granted('delete', request.get('_legacy_controller'))", redirectRoute="admin_subscription_index")
-     *
-     * @param int $subscriptionId
-     *
-     * @return RedirectResponse
      */
     public function cancelAction(int $subscriptionId): RedirectResponse
     {
         /** @var SubscriptionCancellationHandler $subscriptionCancellationHandler */
-        $subscriptionCancellationHandler = $this->leagueContainer->getService(SubscriptionCancellationHandler::class);
+        $subscriptionCancellationHandler = $this->module->getService(SubscriptionCancellationHandler::class);
 
         try {
             $subscriptionCancellationHandler->handle($subscriptionId);

@@ -18,6 +18,10 @@ use PrestaShopException;
 use Tab;
 use Validate;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MenuLocationUtility
 {
     /**

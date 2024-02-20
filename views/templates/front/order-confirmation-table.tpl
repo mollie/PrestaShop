@@ -3,10 +3,10 @@
  *
  * @author      Mollie B.V. <info@mollie.nl>
  * @copyright   Mollie B.V.
- *
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
  *}
 {extends file='checkout/_partials/order-confirmation-table.tpl'}
 {block name='order_confirmation_table'}

@@ -12,6 +12,10 @@
 
 namespace Mollie\Utility\Decoder;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface DecoderInterface
 {
     /**

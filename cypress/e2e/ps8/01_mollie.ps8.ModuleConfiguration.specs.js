@@ -7,7 +7,7 @@ const login = (MollieBOFOLoggingIn) => {
   cy.get('#email').type('demo@prestashop.com',{delay: 0, log: false})
   cy.get('#passwd').type('prestashop_demo',{delay: 0, log: false})
   cy.get('#submit_login').click().wait(1000).as('Connection successsful')
-  cy.visit('/en/my-account')
+  cy.visit('/my-account')
   cy.get('#login-form [name="email"]').eq(0).type('demo@prestashop.com')
   cy.get('#login-form [name="password"]').eq(0).type('prestashop_demo')
   cy.get('#login-form [type="submit"]').eq(0).click({force:true})
@@ -43,8 +43,10 @@ it('C339305: Connecting test API successsfully', () => {
 it('C339338: Enabling Mollie carriers in Prestashop successfully', () => {
       cy.visit('/admin1/')
       cy.get('[id="subtab-AdminPaymentPreferences"]').find('[href]').eq(0).click({force:true})
-      cy.get('[class="js-multiple-choice-table-select-column"]').eq(6).click()
-      cy.get('[class="btn btn-primary"]').eq(3).click()
+      cy.get('[class="js-multiple-choice-table-select-column"]').each(($element) => { // checks all the checkboxes in the loop, if not checked
+        cy.wrap($element).click()
+      })
+      cy.get('[id="form-carrier-restrictions-save-button"]').click()
 })
 it('C339339: Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
       cy.visit('/admin1/')
@@ -79,6 +81,8 @@ it('C339339: Checking the Advanced Settings tab, verifying the Front-end compone
       cy.get('[name="MOLLIE_DEBUG_LOG"]').should('exist')
       cy.get('#module_form_submit_btn').click({force:true}) //checking the saving
       cy.get('[class="alert alert-success"]').should('be.visible') //checking if saving returns green alert
+      cy.reload()
+      cy.matchImage(); // let's make a snapshot for visual regression testing later, if UI matches
       //cy.window() will check if there are no Errors in console
 });
 it('C688472: Checking the Subscriptions tab, and console errors', () => {
@@ -87,6 +91,7 @@ it('C688472: Checking the Subscriptions tab, and console errors', () => {
       cy.get('#subtab-AdminMollieModule').click()
       cy.get('#subtab-AdminMollieSubscriptionOrders').click()
       cy.get('[id="invertus_mollie_subscription_grid_panel"]').should('be.visible')
+      cy.selectSubscriptionsCarriersCheck() // checking the Subscriptions carriers select and saving
 });
 it('C688473: Checking the Subscriptions FAQ, and console errors', () => {
       cy.visit('/admin1/')
@@ -97,5 +102,7 @@ it('C688473: Checking the Subscriptions FAQ, and console errors', () => {
       cy.get(':nth-child(4) > .col-lg-12 > .card').should('be.visible')
       cy.get(':nth-child(5) > .col-lg-12 > .card').should('be.visible')
       cy.get(':nth-child(6) > .col-lg-12 > .card').should('be.visible')
+      cy.matchImage(); // let's make a snapshot for visual regression testing later, if UI matches
+
 });
 })

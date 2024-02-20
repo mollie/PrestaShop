@@ -12,6 +12,10 @@
 
 namespace Mollie\Service\PaymentMethod;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /**
  * Payment methods are being retrieved both from api and the ones stored in database. The ones that are stored
  * can be dragged in admin so this service can be used to call anywhere and sort payment options accordingly.

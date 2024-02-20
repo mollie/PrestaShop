@@ -33,5 +33,7 @@ it('C339341: 04 Enabling All payments in Module BO [Orders API]', () => {
     cy.ConfOrdersAPI1784()
     cy.get('[type="submit"]').first().click({force:true})
     cy.get('[class="alert alert-success"]').should('be.visible')
+    cy.reload()
+    cy.matchImage(); // let's make a snapshot for visual regression testing later, if UI matches
 })
 })

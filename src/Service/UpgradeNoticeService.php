@@ -15,6 +15,10 @@ namespace Mollie\Service;
 use Mollie\Config\Config;
 use Mollie\Utility\TimeUtility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class UpgradeNoticeService
 {
     /**

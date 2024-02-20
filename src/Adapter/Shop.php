@@ -12,6 +12,10 @@
 
 namespace Mollie\Adapter;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class Shop
 {
     public function getShop(): \Shop

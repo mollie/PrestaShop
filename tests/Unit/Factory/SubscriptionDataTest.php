@@ -1,11 +1,21 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 declare(strict_types=1);
 
 namespace Mollie\Tests\Unit\Factory;
 
 use Mollie;
-use Mollie\Adapter\Link;
+use Mollie\Adapter\Context;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Subscription\Constants\IntervalConstant;
@@ -13,6 +23,7 @@ use Mollie\Subscription\DTO\CreateSubscriptionData as SubscriptionDataDTO;
 use Mollie\Subscription\DTO\Object\Amount;
 use Mollie\Subscription\DTO\Object\Interval;
 use Mollie\Subscription\Factory\CreateSubscriptionDataFactory;
+use Mollie\Subscription\Provider\SubscriptionCarrierDeliveryPriceProvider;
 use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
 use Mollie\Subscription\Repository\CombinationRepository;
@@ -58,6 +69,12 @@ class SubscriptionDataTest extends TestCase
             ]
         );
 
+        $context = $this->createMock(Context::class);
+        $context->expects($this->once())->method('getModuleLink')->willReturn('example-link');
+
+        $subscriptionCarrierDeliveryPriceProvider = $this->createMock(SubscriptionCarrierDeliveryPriceProvider::class);
+        $subscriptionCarrierDeliveryPriceProvider->expects($this->once())->method('getPrice')->willReturn(10.00);
+
         $subscriptionDataFactory = new CreateSubscriptionDataFactory(
             $customerRepositoryMock,
             $subscriptionIntervalProviderMock,
@@ -65,8 +82,9 @@ class SubscriptionDataTest extends TestCase
             $currencyAdapterMock,
             new CombinationRepository(),
             $paymentMethodRepositoryMock,
-            new Link(),
-            new Mollie()
+            new Mollie(),
+            $context,
+            $subscriptionCarrierDeliveryPriceProvider
         );
 
         $customerMock = $this->createMock('Customer');
@@ -95,7 +113,7 @@ class SubscriptionDataTest extends TestCase
     {
         $subscriptionDto = new SubscriptionDataDTO(
             'testCustomerId',
-            new Amount(19.99, 'EUR'),
+            new Amount(29.99, 'EUR'),
             new Interval(1, IntervalConstant::DAY),
             'subscription-' . self::TEST_ORDER_REFERENCE
         );
@@ -113,16 +131,12 @@ class SubscriptionDataTest extends TestCase
             ]
         );
 
-        $link = new Link();
-        $subscriptionDto->setWebhookUrl($link->getModuleLink(
-            'mollie',
-            'subscriptionWebhook'
-        ));
+        $subscriptionDto->setWebhookUrl('example-link');
 
         return [
             'first example' => [
                 'customer id' => 'testCustomerId',
-                'total paid amount' => 19.99,
+                'total paid amount' => 29.99,
                 'description' => 'subscription-' . self::TEST_ORDER_REFERENCE,
                 'expected result' => $subscriptionDto,
             ],

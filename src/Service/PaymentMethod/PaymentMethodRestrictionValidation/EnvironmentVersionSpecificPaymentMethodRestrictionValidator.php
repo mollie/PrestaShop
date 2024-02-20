@@ -40,6 +40,10 @@ use Mollie\Adapter\LegacyContext;
 use Mollie\Repository\MethodCountryRepository;
 use MolPaymentMethod;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /** Validator to check specific cases by environment version for every payment method */
 class EnvironmentVersionSpecificPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {

@@ -15,6 +15,10 @@ namespace Mollie\Utility;
 use Context;
 use Customer;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ContextUtility
 {
     public static function setCustomerToContext(Context $context, Customer $customer)

@@ -1,9 +1,19 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Subscription\Presenter\RecurringOrdersPresenter;
 
-/**
+/*
  * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -21,6 +31,11 @@ use Mollie\Subscription\Presenter\RecurringOrdersPresenter;
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class mollieSubscriptionsModuleFrontController extends ModuleFrontController
 {
     /**

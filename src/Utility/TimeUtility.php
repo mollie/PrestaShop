@@ -14,6 +14,10 @@ namespace Mollie\Utility;
 
 use DateTime;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class TimeUtility
 {
     const HOURS_IN_DAY = 24;

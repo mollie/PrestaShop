@@ -12,6 +12,10 @@
 
 namespace Mollie\Provider;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class EnvironmentVersionProvider implements EnvironmentVersionProviderInterface
 {
     /**

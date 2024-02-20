@@ -12,6 +12,10 @@
 
 namespace Mollie\Utility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SecureKeyUtility
 {
     public static function generateReturnKey($customerId, $cartId, $moduleName)

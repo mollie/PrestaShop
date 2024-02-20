@@ -52,3 +52,9 @@ Cypress.Keyboard.defaults({
   keystrokeDelay: 0,
 })
 import "cypress-fail-fast";
+
+// typescript / ES6
+import "@frsource/cypress-plugin-visual-regression-diff";
+
+// javascript
+require("@frsource/cypress-plugin-visual-regression-diff");

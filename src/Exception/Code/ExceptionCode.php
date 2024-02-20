@@ -1,6 +1,20 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 namespace Mollie\Exception\Code;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class ExceptionCode
 {
@@ -8,6 +22,9 @@ class ExceptionCode
 
     public const INFRASTRUCTURE_FAILED_TO_INSTALL_ORDER_STATE = 1001;
     public const INFRASTRUCTURE_UNKNOWN_ERROR = 1002;
+    public const INFRASTRUCTURE_LOCK_EXISTS = 1003;
+    public const INFRASTRUCTURE_LOCK_ON_ACQUIRE_IS_MISSING = 1004;
+    public const INFRASTRUCTURE_LOCK_ON_RELEASE_IS_MISSING = 1005;
 
     public const FAILED_TO_FIND_CUSTOMER_ADDRESS = 2001;
 

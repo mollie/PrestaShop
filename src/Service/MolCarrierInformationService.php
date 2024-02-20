@@ -18,6 +18,10 @@ use MolCarrierInformation;
 use Mollie\Config\Config;
 use Mollie\Repository\MolCarrierInformationRepository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MolCarrierInformationService
 {
     /**

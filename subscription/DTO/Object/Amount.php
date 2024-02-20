@@ -1,4 +1,14 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 declare(strict_types=1);
 
@@ -6,6 +16,10 @@ namespace Mollie\Subscription\DTO\Object;
 
 use JsonSerializable;
 use Webmozart\Assert\Assert;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class Amount implements JsonSerializable
 {
@@ -17,10 +31,6 @@ class Amount implements JsonSerializable
      */
     private $currency;
 
-    /**
-     * @param float $value
-     * @param string $currency
-     */
     public function __construct(float $value, string $currency)
     {
         Assert::greaterThanEq($value, 0, 'Amount Value cannot be negative');

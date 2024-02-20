@@ -41,9 +41,12 @@
     },
     "config": {
         "platform": {
-          "php": "7.2"
+            "php": "7.2"
         },
-        "prepend-autoloader": false
+        "prepend-autoloader": false,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     },
     "type": "prestashop-module",
     "author": "PrestaShop"

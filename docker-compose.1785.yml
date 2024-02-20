@@ -1,14 +1,6 @@
 version: "3.7"
 
 services:
-  node:
-    image: node:latest
-    volumes:
-      - ./:/var/www/html
-    working_dir: /var/www/html
-    environment:
-      PATH: /var/www/html/_dev/node_modules/.bin/:$PATH
-
   mysql:
     #platform: linux/amd64
     container_name: mysql-mollie-1785
@@ -24,6 +16,7 @@ services:
       interval: 10s
     networks:
       - prestashop_mollie_net_1785
+
   prestashop-17:
     #platform: linux/amd64
     container_name: prestashop-mollie-1785
@@ -31,11 +24,12 @@ services:
       context: .
       dockerfile: .docker/Dockerfile.1785
     environment:
-      PS_INSTALL_AUTO: 0
-      DB_PASSWD: $${DB_PASSWD}
+      PS_INSTALL_AUTO: 1
+      PS_ENABLE_SSL: 1
+      DB_PASSWD: $DB_PASSWD
       DB_NAME: prestashop
       DB_SERVER: mysql
-      PS_DOMAIN: demoshop1785.ngrok.io:8002
+      PS_DOMAIN: demoshop1785.ngrok.io
       PS_FOLDER_INSTALL: install
       PS_FOLDER_ADMIN: admin1
     depends_on:
@@ -43,10 +37,7 @@ services:
     ports:
       - "8002:80"
     volumes:
-      - ./:/var/www/html/modules/mollie:cached
-      - ./tests/seed/settings1785/defines.inc.php:/var/www/html/config/defines.inc.php
-      - ./tests/seed/settings1785/parameters.php:/var/www/html/app/config/parameters.php
-      - ./.docker/.htaccess1785:/var/www/html/.htaccess
+      - ./:/var/www/html/modules/mollie
     networks:
       - prestashop_mollie_net_1785
     healthcheck:

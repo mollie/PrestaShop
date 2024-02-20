@@ -14,6 +14,10 @@ namespace Mollie\Provider;
 
 use MolPaymentMethod;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface CustomLogoProviderInterface
 {
     /**

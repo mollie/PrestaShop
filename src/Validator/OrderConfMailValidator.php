@@ -15,6 +15,10 @@ namespace Mollie\Validator;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderConfMailValidator implements MailValidatorInterface
 {
     /**
