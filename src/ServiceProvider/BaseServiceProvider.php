@@ -17,7 +17,6 @@ namespace Mollie\ServiceProvider;
 use League\Container\Container;
 use Mollie;
 use Mollie\Builder\ApiTestFeedbackBuilder;
-use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandler;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandlerInterface;
@@ -128,8 +127,6 @@ use Mollie\Verification\PaymentType\PaymentTypeVerificationInterface;
 use Mollie\Verification\Shipment\CanSendShipment;
 use Mollie\Verification\Shipment\ShipmentVerificationInterface;
 use PrestaShop\PrestaShop\Core\Grid\Action\Row\AccessibilityChecker\AccessibilityCheckerInterface;
-use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
-use PrestaShop\PsAccountsInstaller\Installer\Installer as PsAccountsInstaller;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -253,12 +250,6 @@ final class BaseServiceProvider
         $this->addService($container, ApiTestFeedbackBuilder::class, ApiTestFeedbackBuilder::class)
             ->withArgument($container->get(ModuleFactory::class)->getModuleVersion() ?? '')
             ->withArgument(ApiKeyService::class);
-
-        $this->addService($container, PsAccountsInstaller::class, PsAccountsInstaller::class)
-            ->withArgument(Config::getPsAccountsVersion());
-
-        $this->addService($container, PsAccounts::class, PsAccounts::class)
-            ->withArgument(PsAccountsInstaller::class);
     }
 
     private function addService(Container $container, $className, $service)

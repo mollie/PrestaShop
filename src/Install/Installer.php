@@ -81,7 +81,7 @@ class Installer implements InstallerInterface
         $this->orderStateInstaller = $orderStateInstaller;
     }
 
-    public function install(): bool
+    public function install()
     {
         $this->segment->setMessage('Mollie installed');
         $this->segment->track();

@@ -18,5 +18,8 @@ if (!defined('_PS_VERSION_')) {
 
 interface InstallerInterface
 {
-    public function install(): bool;
+    /**
+     * @return bool
+     */
+    public function install();
 }
