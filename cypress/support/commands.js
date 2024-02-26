@@ -59,7 +59,7 @@ Cypress.Commands.add("ConfOrdersAPI1784", () => {
   })
 Cypress.Commands.add("ConfPaymentsAPI1784", () => {
 
-      const paymentMethods = ["giropay", "eps", "przelewy24", "kbc", "belfius", "bancontact", "sofort", "creditcard", "ideal", "banktransfer", "paypal", "applepay", "klarna"];
+      const paymentMethods = ["giropay", "eps", "przelewy24", "kbc", "belfius", "bancontact", "creditcard", "ideal", "banktransfer", "paypal", "applepay", "klarna"];
 
       // Iterate through the paymentMethods array using forEach
       paymentMethods.forEach(method => {
@@ -87,14 +87,7 @@ Cypress.Commands.add("OrderRefundingShippingOrdersAPI", () => {
     cy.visit('/admin1/index.php?controller=AdminOrders')
     cy.get(':nth-child(1) > .column-payment').click()
     cy.scrollTo('bottom')
-    //Refunding dropdown in React
-    cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).then(($body) => {
-      if ($body.length > 0) {
-        // If the element doesn't exist, skip the test
-        cy.log('Element not found possibly due to to the distractions from the Mollie API. Skipping the Test')
-        console.log('Element not found possibly due to to the distractions from the Mollie API. Skipping the Test')
-        return
-      } else {
+    // Refunding dropdown in React
         cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).click()
         cy.get('[role="button"]').eq(2).click()
         cy.get('[class="swal-button swal-button--confirm"]').click()
@@ -109,21 +102,13 @@ Cypress.Commands.add("OrderRefundingShippingOrdersAPI", () => {
         cy.get(':nth-child(2) > .swal-button').click()
         cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
         cy.get('[class="alert alert-success"]').should('be.visible')
-      }
-    })
+        // Add more actions as needed
 })
 Cypress.Commands.add("OrderShippingRefundingOrdersAPI", () => {
     cy.visit('/admin1/index.php?controller=AdminOrders')
     cy.get(':nth-child(1) > .column-payment').click()
     cy.scrollTo('bottom')
-    //Shipping button in React
-    cy.get('.btn-group > [title=""]').then(($body) => {
-      if ($body.length > 0) {
-        // If the element doesn't exist, skip the test
-        cy.log('Element not found possibly due to to the distractions from the Mollie API. Skipping the Test')
-        console.log('Element not found possibly due to to the distractions from the Mollie API. Skipping the Test')
-        return
-      } else {
+    // Shipping button in React
         cy.get('.btn-group > [title=""]').eq(0).click()
         cy.get('[class="swal-button swal-button--confirm"]').click()
         cy.get('.swal-modal').should('exist')
@@ -138,8 +123,7 @@ Cypress.Commands.add("OrderShippingRefundingOrdersAPI", () => {
         cy.get('[role="button"]').eq(2).click()
         cy.get('[class="swal-button swal-button--confirm"]').click()
         cy.get('[class="alert alert-success"]').should('be.visible')
-      }
-    })
+        // Add more actions as needed
 })
 Cypress.Commands.add("OrderRefundingPartialPaymentsAPI", () => {
     cy.visit('/admin1/index.php?controller=AdminOrders')
