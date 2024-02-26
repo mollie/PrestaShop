@@ -250,7 +250,7 @@ it('C339401: 66 Bank Transfer Checkouting [Payments API]', () => {
 it.skip('C339402: 67 Bank Transfer BO Refunding, Partial Refunding [Payments API]', () => { // somehow an error in console is thrown, will check why. Temporary skipping, because Mollie block is not loaded properly
     cy.OrderRefundingPartialPaymentsAPI()
 })
-it.skip('C1860462: Pay with Klarna UK Checkouting [Payments API]', () => { // currently not supported for PS, skipping temporary
+it('C1860462: Pay with Klarna UK Checkouting [Payments API]', () => {
   cy.navigatingToThePaymentPS8()
   //Payment method choosing
   cy.contains('Pay with Klarna').click({force:true})
@@ -260,7 +260,7 @@ it.skip('C1860462: Pay with Klarna UK Checkouting [Payments API]', () => { // cu
   cy.get('[class="button form__button"]').click()
   cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it.skip('C1860463: Pay with Klarna UK Order BO Refunding, Partial Refunding [Payments API]', () => {
+it('C1860463: Pay with Klarna UK Order BO Refunding, Partial Refunding [Payments API]', () => {
   cy.OrderRefundingPartialPaymentsAPI()
 })
 })

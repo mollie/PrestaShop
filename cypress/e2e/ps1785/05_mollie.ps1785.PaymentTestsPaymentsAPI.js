@@ -264,10 +264,10 @@ it('C339401: 66 Bank Transfer Checkouting [Payments API]', () => {
     cy.get('[class="button form__button"]').click()
     cy.contains('Welcome back').should('be.visible')
 });
-it('C339402: 67 Bank Transfer BO Refunding, Partial Refunding [Payments API]', () => { // skipping, because refunds, instant partial refunds are not available for this method
+it('C339402: 67 Bank Transfer BO Refunding, Partial Refunding [Payments API]', () => {
     cy.OrderRefundingPartialPaymentsAPI()
 });
-it.skip('C1860462: Pay with Klarna UK Checkouting [Payments API]', () => { // currently not supported for PS, skipping temporary
+it('C1860462: Pay with Klarna UK Checkouting [Payments API]', () => {
   cy.visit('/en/order-history')
   cy.contains('Reorder').click()
   cy.contains('UK').click({force:true})
@@ -282,7 +282,7 @@ it.skip('C1860462: Pay with Klarna UK Checkouting [Payments API]', () => { // cu
   cy.get('[class="button form__button"]').click()
   cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it.skip('C1860463: Pay with Klarna UK Order BO Refunding, Partial Refunding [Payments API]', () => { // currently not supported for PS, skipping temporary
+it('C1860463: Pay with Klarna UK Order BO Refunding, Partial Refunding [Payments API]', () => {
   cy.OrderRefundingPartialPaymentsAPI()
 })
 })
