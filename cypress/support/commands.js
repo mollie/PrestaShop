@@ -42,7 +42,7 @@ import 'cypress-iframe';
 // Cypress.Commands.add("login", (email, password) => { ... })
 Cypress.Commands.add("ConfOrdersAPI1784", () => {
 
-      const paymentMethods = ["giropay", "eps", "przelewy24", "kbc", "voucher", "belfius", "bancontact", "sofort", "creditcard", "ideal", "klarnapaylater", "klarnasliceit","klarnapaynow", "banktransfer", "paypal", "applepay", "in3", "billie", "klarna"];
+      const paymentMethods = ["giropay", "eps", "przelewy24", "kbc", "voucher", "belfius", "bancontact", "creditcard", "ideal", "klarnapaylater", "klarnasliceit","klarnapaynow", "banktransfer", "paypal", "applepay", "in3", "billie", "klarna"];
 
       // Iterate through the paymentMethods array using forEach
       paymentMethods.forEach(method => {
