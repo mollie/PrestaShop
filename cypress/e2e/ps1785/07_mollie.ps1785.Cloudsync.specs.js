@@ -16,7 +16,7 @@ afterEach(function() {
 describe('PS8 Cloudsync tests', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
-      cy.CachingBOFOPS8()
+      cy.CachingBOFOPS1785()
   })
 it('Checking if Cloudsync UI is appearing in the module', () => {
     cy.OpeningModuleDashboardURL()

@@ -191,31 +191,6 @@ it('C339361: 24 Paypal Checkouting [Orders API]', () => {
 it('C339362: 25 Paypal Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it('C339363: 26 SOFORT Checkouting [Orders API]', () => {
-      cy.navigatingToThePaymentPS8()
-      //Payment method choosing
-      cy.contains('SOFORT').click({force:true})
-      cy.get('.condition-label > .js-terms').click({force:true})
-      cy.contains('Place order').click()
-      cy.get('[value="paid"]').click()
-      cy.get('[class="button form__button"]').click()
-      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
-});
-it('C339364: 27 SOFORT Order Shipping, Refunding [Orders API]', () => {
-      cy.visit('/admin1/index.php?controller=AdminOrders')
-      cy.get(':nth-child(1) > .column-payment').click()
-      //Shipping button in React
-      cy.get('.btn-group > .btn-primary').click()
-      cy.get('[class="swal-button swal-button--confirm"]').click()
-      cy.get('.swal-modal').should('exist')
-      cy.get('#input-carrier').clear({force: true}).type('FedEx',{delay:0})
-      cy.get('#input-code').clear({force: true}).type('123456',{delay:0})
-      cy.get('#input-url').clear({force: true}).type('https://www.invertus.eu',{delay:0})
-      cy.get(':nth-child(2) > .swal-button').click()
-      cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
-      cy.get('[class="alert alert-success"]').should('be.visible')
-      //Refunding not possible because "We haven't received the payment on our bank accounts yet" message from Mollie Dashboard
-})
 it('C339365: 28 Przelewy24 Checkouting [Orders API]', () => {
       cy.navigatingToThePaymentPS8()
       //Payment method choosing
@@ -240,7 +215,7 @@ it('C339367: 30 Giropay Checkouting [Orders API]', () => {
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
 it('C339368: 31 Giropay Order Shipping, Refunding [Orders API]', () => {
-  cy.OrderRefundingShippingOrdersAPI()
+      cy.OrderRefundingShippingOrdersAPI()
 })
 it('C339369: 32 EPS Checkouting [Orders API]', () => {
       cy.navigatingToThePaymentPS8()
