@@ -129,14 +129,6 @@ Cypress.Commands.add("OrderRefundingPartialPaymentsAPI", () => {
     cy.visit('/admin1/index.php?controller=AdminOrders')
     cy.get(':nth-child(1) > .column-payment').click()
     cy.scrollTo('bottom')
-    // here the Mollie block should exist in Orders BO. Sometimes, the Mollie API is not responding correctly
-    cy.get('#mollie_order > :nth-child(1)', { timeout: 10000 }).then(($body) => {
-      if ($body.length > 0) {
-        // If the element doesn't exist, skip the test
-        cy.log('Element not found possibly due to to the distractions from the Mollie API. Skipping the Test')
-        console.log('Element not found possibly due to to the distractions from the Mollie API. Skipping the Test')
-        return
-      } else {
         cy.get('#mollie_order > :nth-child(1)').click()
         cy.get('.form-inline > :nth-child(1) > .btn').should('exist')
         cy.get('.input-group-btn > .btn').should('exist')
@@ -157,8 +149,6 @@ Cypress.Commands.add("OrderRefundingPartialPaymentsAPI", () => {
         cy.get('.swal-modal').should('exist')
         cy.get(':nth-child(2) > .swal-button').click()
         cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
-    }
-  })
 })
 Cypress.Commands.add("EnablingModuleMultistore", () => {
   cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
