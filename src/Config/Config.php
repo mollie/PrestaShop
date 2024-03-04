@@ -315,7 +315,7 @@ class Config
         'in3' => 'in3',
         'billie' => 'Billie',
         'twint' => 'TWINT',
-        'blik' => 'BLIK'
+        'blik' => 'BLIK',
     ];
 
     const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
