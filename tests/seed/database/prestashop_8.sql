@@ -2241,13 +2241,15 @@ CREATE TABLE `ps_carrier` (
   PRIMARY KEY (`id_carrier`),
   KEY `deleted` (`deleted`,`active`),
   KEY `reference` (`id_reference`,`deleted`,`active`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_carrier` (`id_carrier`, `id_reference`, `name`, `url`, `active`, `deleted`, `shipping_handling`, `range_behavior`, `is_module`, `is_free`, `shipping_external`, `need_range`, `external_module_name`, `shipping_method`, `position`, `max_width`, `max_height`, `max_depth`, `max_weight`, `grade`) VALUES
-(1,	1,	'Click and collect',	'',	1,	0,	0,	0,	0,	1,	0,	0,	'',	0,	0,	0,	0,	0,	0.000000,	0),
-(2,	2,	'My carrier',	'',	1,	0,	1,	0,	0,	0,	0,	0,	'',	0,	1,	0,	0,	0,	0.000000,	0),
+(1,	1,	'Click and collect',	'',	1,	1,	0,	0,	0,	1,	0,	0,	'',	1,	0,	0,	0,	0,	0.000000,	0),
+(2,	2,	'My carrier',	'',	1,	1,	1,	0,	0,	0,	0,	0,	'',	1,	1,	0,	0,	0,	0.000000,	0),
 (3,	3,	'My cheap carrier',	'',	0,	0,	1,	0,	0,	0,	0,	0,	'',	2,	2,	0,	0,	0,	0.000000,	0),
-(4,	4,	'My light carrier',	'',	0,	0,	1,	0,	0,	0,	0,	0,	'',	1,	3,	0,	0,	0,	0.000000,	0);
+(4,	4,	'My light carrier',	'',	0,	0,	1,	0,	0,	0,	0,	0,	'',	1,	3,	0,	0,	0,	0.000000,	0),
+(5,	1,	'Click and collect',	'',	1,	0,	0,	0,	0,	1,	0,	0,	'',	1,	0,	0,	0,	0,	0.000000,	0),
+(6,	2,	'My carrier',	'',	1,	0,	1,	0,	0,	0,	0,	0,	'',	1,	1,	0,	0,	0,	0.000000,	0);
 
 DROP TABLE IF EXISTS `ps_carrier_group`;
 CREATE TABLE `ps_carrier_group` (
@@ -2268,7 +2270,13 @@ INSERT INTO `ps_carrier_group` (`id_carrier`, `id_group`) VALUES
 (3,	3),
 (4,	1),
 (4,	2),
-(4,	3);
+(4,	3),
+(5,	1),
+(5,	2),
+(5,	3),
+(6,	1),
+(6,	2),
+(6,	3);
 
 DROP TABLE IF EXISTS `ps_carrier_lang`;
 CREATE TABLE `ps_carrier_lang` (
@@ -2284,26 +2292,38 @@ INSERT INTO `ps_carrier_lang` (`id_carrier`, `id_shop`, `id_lang`, `delay`) VALU
 (2,	1,	1,	'Delivery next day!'),
 (3,	1,	1,	'Buy more to pay less!'),
 (4,	1,	1,	'The lighter the cheaper!'),
+(5,	1,	1,	'Pick up in-store'),
+(6,	1,	1,	'Delivery next day!'),
 (1,	1,	2,	'Abholung im Geschäft'),
 (2,	1,	2,	'Lieferung am nächsten Tag!'),
 (3,	1,	2,	'Buy more to pay less!'),
 (4,	1,	2,	'The lighter the cheaper!'),
+(5,	1,	2,	'Abholung im Geschäft'),
+(6,	1,	2,	'Lieferung am nächsten Tag!'),
 (1,	1,	3,	'Afhalen in de winkel'),
 (2,	1,	3,	'De volgende dag in huis!'),
 (3,	1,	3,	'Buy more to pay less!'),
 (4,	1,	3,	'The lighter the cheaper!'),
+(5,	1,	3,	'Afhalen in de winkel'),
+(6,	1,	3,	'De volgende dag in huis!'),
 (1,	1,	4,	'Retrait en magasin'),
 (2,	1,	4,	'Livraison le lendemain !'),
 (3,	1,	4,	'Buy more to pay less!'),
 (4,	1,	4,	'The lighter the cheaper!'),
+(5,	1,	4,	'Retrait en magasin'),
+(6,	1,	4,	'Livraison le lendemain !'),
 (1,	1,	5,	'Ritiro in negozio'),
 (2,	1,	5,	'Consegna il giorno successivo!'),
 (3,	1,	5,	'Buy more to pay less!'),
 (4,	1,	5,	'The lighter the cheaper!'),
+(5,	1,	5,	'Ritiro in negozio'),
+(6,	1,	5,	'Consegna il giorno successivo!'),
 (1,	1,	6,	'Odbiór w sklepie'),
 (2,	1,	6,	'Dostawa następnego dnia!'),
 (3,	1,	6,	'Buy more to pay less!'),
-(4,	1,	6,	'The lighter the cheaper!');
+(4,	1,	6,	'The lighter the cheaper!'),
+(5,	1,	6,	'Odbiór w sklepie'),
+(6,	1,	6,	'Dostawa następnego dnia!');
 
 DROP TABLE IF EXISTS `ps_carrier_shop`;
 CREATE TABLE `ps_carrier_shop` (
@@ -2317,7 +2337,9 @@ INSERT INTO `ps_carrier_shop` (`id_carrier`, `id_shop`) VALUES
 (1,	1),
 (2,	1),
 (3,	1),
-(4,	1);
+(4,	1),
+(5,	1),
+(6,	1);
 
 DROP TABLE IF EXISTS `ps_carrier_tax_rules_group_shop`;
 CREATE TABLE `ps_carrier_tax_rules_group_shop` (
@@ -2331,7 +2353,9 @@ INSERT INTO `ps_carrier_tax_rules_group_shop` (`id_carrier`, `id_tax_rules_group
 (1,	1,	1),
 (2,	1,	1),
 (3,	1,	1),
-(4,	1,	1);
+(4,	1,	1),
+(5,	1,	1),
+(6,	1,	1);
 
 DROP TABLE IF EXISTS `ps_carrier_zone`;
 CREATE TABLE `ps_carrier_zone` (
@@ -2347,7 +2371,23 @@ INSERT INTO `ps_carrier_zone` (`id_carrier`, `id_zone`) VALUES
 (3,	1),
 (3,	2),
 (4,	1),
-(4,	2);
+(4,	2),
+(5,	1),
+(5,	2),
+(5,	3),
+(5,	4),
+(5,	5),
+(5,	6),
+(5,	7),
+(5,	8),
+(6,	1),
+(6,	2),
+(6,	3),
+(6,	4),
+(6,	5),
+(6,	6),
+(6,	7),
+(6,	8);
 
 DROP TABLE IF EXISTS `ps_cart`;
 CREATE TABLE `ps_cart` (
@@ -2947,7 +2987,7 @@ INSERT INTO `ps_configuration` (`id_configuration`, `id_shop_group`, `id_shop`, 
 (1,	NULL,	NULL,	'PS_LANG_DEFAULT',	'1',	'2024-02-05 10:58:30',	'2024-02-05 10:58:30'),
 (2,	NULL,	NULL,	'PS_VERSION_DB',	'8.1.3',	'2024-02-05 10:58:30',	'2024-02-05 10:58:30'),
 (3,	NULL,	NULL,	'PS_INSTALL_VERSION',	'8.1.3',	'2024-02-05 10:58:30',	'2024-02-05 10:58:30'),
-(4,	NULL,	NULL,	'PS_CARRIER_DEFAULT',	'1',	'2024-02-05 10:58:30',	'2024-02-05 10:58:30'),
+(4,	NULL,	NULL,	'PS_CARRIER_DEFAULT',	'5',	'2024-02-05 10:58:30',	'2024-03-04 16:45:37'),
 (5,	NULL,	NULL,	'PS_GROUP_FEATURE_ACTIVE',	'1',	'2024-02-05 10:58:30',	'2024-02-05 10:58:30'),
 (6,	NULL,	NULL,	'PS_CURRENCY_DEFAULT',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (7,	NULL,	NULL,	'PS_COUNTRY_DEFAULT',	'17',	'0000-00-00 00:00:00',	'2024-02-05 10:58:30'),
@@ -3559,7 +3599,7 @@ CREATE TABLE `ps_connections` (
   KEY `id_guest` (`id_guest`),
   KEY `date_add` (`date_add`),
   KEY `id_page` (`id_page`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_connections` (`id_connections`, `id_shop_group`, `id_shop`, `id_guest`, `id_page`, `ip_address`, `date_add`, `http_referer`) VALUES
 (1,	1,	1,	1,	1,	2130706433,	'2024-02-05 10:58:40',	'https://www.prestashop.com'),
@@ -3568,7 +3608,8 @@ INSERT INTO `ps_connections` (`id_connections`, `id_shop_group`, `id_shop`, `id_
 (4,	1,	1,	4,	1,	1490595887,	'2024-03-04 16:07:33',	''),
 (5,	1,	1,	6,	2,	575429230,	'2024-03-04 16:08:24',	''),
 (6,	1,	1,	7,	2,	575457764,	'2024-03-04 16:10:22',	''),
-(7,	1,	1,	4,	3,	1490595887,	'2024-03-04 16:21:52',	'');
+(7,	1,	1,	4,	3,	1490595887,	'2024-03-04 16:21:52',	''),
+(8,	1,	1,	4,	3,	1490595887,	'2024-03-04 16:44:31',	'');
 
 DROP TABLE IF EXISTS `ps_connections_page`;
 CREATE TABLE `ps_connections_page` (
@@ -5787,14 +5828,15 @@ CREATE TABLE `ps_customer_session` (
   `date_add` datetime NOT NULL,
   `date_upd` datetime NOT NULL,
   PRIMARY KEY (`id_customer_session`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_customer_session` (`id_customer_session`, `id_customer`, `token`, `date_add`, `date_upd`) VALUES
 (1,	3,	'805f87bc9aa781effb0adad52b08c1f02489867a',	'2024-02-05 11:01:58',	'2024-02-05 11:05:12'),
 (2,	3,	'653c907d1f0bd3d08806a5825515b65e34cb5206',	'2024-02-05 12:21:25',	'2024-02-05 12:24:10'),
 (3,	3,	'c032149af358348b5e3c99d4c57023d8d9b429e3',	'2024-02-05 12:24:10',	'2024-02-05 12:24:15'),
 (4,	3,	'951f4f01cf21c3e5bd7bf7d5b454f7cb6b163065',	'2024-03-04 16:07:49',	'2024-03-04 16:14:26'),
-(5,	3,	'398bdfd8d18b3250f46290d27abcb2ce348a6ea6',	'2024-03-04 16:21:55',	'2024-03-04 16:23:53');
+(5,	3,	'398bdfd8d18b3250f46290d27abcb2ce348a6ea6',	'2024-03-04 16:21:55',	'2024-03-04 16:23:53'),
+(6,	3,	'ee1512510b40f821e1b369d0679df81888ea7ab0',	'2024-03-04 16:44:34',	'2024-03-04 16:44:43');
 
 DROP TABLE IF EXISTS `ps_customer_thread`;
 CREATE TABLE `ps_customer_thread` (
@@ -5906,7 +5948,7 @@ CREATE TABLE `ps_delivery` (
   KEY `id_carrier` (`id_carrier`,`id_zone`),
   KEY `id_range_price` (`id_range_price`),
   KEY `id_range_weight` (`id_range_weight`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_delivery` (`id_delivery`, `id_shop`, `id_shop_group`, `id_carrier`, `id_range_price`, `id_range_weight`, `id_zone`, `price`) VALUES
 (1,	NULL,	NULL,	2,	0,	1,	1,	5.000000),
@@ -5924,7 +5966,15 @@ INSERT INTO `ps_delivery` (`id_delivery`, `id_shop`, `id_shop_group`, `id_carrie
 (13,	NULL,	NULL,	4,	0,	3,	1,	2.000000),
 (14,	NULL,	NULL,	4,	0,	3,	2,	3.000000),
 (15,	NULL,	NULL,	4,	0,	4,	1,	5.000000),
-(16,	NULL,	NULL,	4,	0,	4,	2,	6.000000);
+(16,	NULL,	NULL,	4,	0,	4,	2,	6.000000),
+(25,	NULL,	NULL,	6,	NULL,	5,	4,	0.000000),
+(26,	NULL,	NULL,	6,	NULL,	5,	3,	0.000000),
+(27,	NULL,	NULL,	6,	NULL,	5,	8,	0.000000),
+(28,	NULL,	NULL,	6,	NULL,	5,	1,	5.000000),
+(29,	NULL,	NULL,	6,	NULL,	5,	7,	0.000000),
+(30,	NULL,	NULL,	6,	NULL,	5,	2,	5.000000),
+(31,	NULL,	NULL,	6,	NULL,	5,	5,	0.000000),
+(32,	NULL,	NULL,	6,	NULL,	5,	6,	0.000000);
 
 DROP TABLE IF EXISTS `ps_emailsubscription`;
 CREATE TABLE `ps_emailsubscription` (
@@ -5989,11 +6039,12 @@ CREATE TABLE `ps_employee_session` (
   `date_add` datetime NOT NULL,
   `date_upd` datetime NOT NULL,
   PRIMARY KEY (`id_employee_session`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_employee_session` (`id_employee_session`, `id_employee`, `token`, `date_add`, `date_upd`) VALUES
 (2,	1,	'e1a0e184982efd94f0843420de36267d51ed31c1',	'2024-02-05 12:23:11',	'2024-02-05 12:23:39'),
-(3,	1,	'341d42f7c0a1bdad3b6aa5bdabc673600d3d011a',	'2024-03-04 16:03:41',	'2024-03-04 16:13:32');
+(3,	1,	'341d42f7c0a1bdad3b6aa5bdabc673600d3d011a',	'2024-03-04 16:03:41',	'2024-03-04 16:13:32'),
+(4,	1,	'7f32486a06f226bb500c866d39a26ae88d7678c1',	'2024-03-04 16:44:57',	'2024-03-04 16:45:56');
 
 DROP TABLE IF EXISTS `ps_employee_shop`;
 CREATE TABLE `ps_employee_shop` (
@@ -6367,7 +6418,7 @@ CREATE TABLE `ps_guest` (
   KEY `id_customer` (`id_customer`),
   KEY `id_operating_system` (`id_operating_system`),
   KEY `id_web_browser` (`id_web_browser`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_guest` (`id_guest`, `id_operating_system`, `id_web_browser`, `id_customer`, `javascript`, `screen_resolution_x`, `screen_resolution_y`, `screen_color`, `sun_java`, `adobe_flash`, `adobe_director`, `apple_quicktime`, `real_player`, `windows_media`, `accept_language`, `mobile_theme`) VALUES
 (1,	0,	0,	2,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
@@ -8627,7 +8678,7 @@ CREATE TABLE `ps_log` (
   `date_add` datetime NOT NULL,
   `date_upd` datetime NOT NULL,
   PRIMARY KEY (`id_log`)
-) ENGINE=InnoDB AUTO_INCREMENT=807 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=808 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_log` (`id_log`, `severity`, `error_code`, `message`, `object_type`, `object_id`, `id_shop`, `id_shop_group`, `id_lang`, `in_all_shops`, `id_employee`, `date_add`, `date_upd`) VALUES
 (1,	1,	0,	'Exporting mail with theme modern for language English (English)',	'',	0,	1,	NULL,	0,	0,	0,	'2024-02-05 10:58:29',	'2024-02-05 10:58:29'),
@@ -9435,7 +9486,8 @@ INSERT INTO `ps_log` (`id_log`, `severity`, `error_code`, `message`, `object_typ
 (803,	1,	0,	'Generate html template referralprogram-invitation at /var/www/html/modules//referralprogram/mails/pl/referralprogram-invitation.html',	'',	0,	1,	NULL,	1,	0,	1,	'2024-03-04 16:07:25',	'2024-03-04 16:07:25'),
 (804,	1,	0,	'Generate txt template referralprogram-invitation at /var/www/html/modules//referralprogram/mails/pl/referralprogram-invitation.txt',	'',	0,	1,	NULL,	1,	0,	1,	'2024-03-04 16:07:25',	'2024-03-04 16:07:25'),
 (805,	1,	0,	'Generate html template referralprogram-voucher at /var/www/html/modules//referralprogram/mails/pl/referralprogram-voucher.html',	'',	0,	1,	NULL,	1,	0,	1,	'2024-03-04 16:07:25',	'2024-03-04 16:07:25'),
-(806,	1,	0,	'Generate txt template referralprogram-voucher at /var/www/html/modules//referralprogram/mails/pl/referralprogram-voucher.txt',	'',	0,	1,	NULL,	1,	0,	1,	'2024-03-04 16:07:25',	'2024-03-04 16:07:25');
+(806,	1,	0,	'Generate txt template referralprogram-voucher at /var/www/html/modules//referralprogram/mails/pl/referralprogram-voucher.txt',	'',	0,	1,	NULL,	1,	0,	1,	'2024-03-04 16:07:25',	'2024-03-04 16:07:25'),
+(807,	1,	0,	'Back office connection from 88.216.176.47',	'',	0,	NULL,	NULL,	1,	1,	1,	'2024-03-04 16:44:57',	'2024-03-04 16:44:57');
 
 DROP TABLE IF EXISTS `ps_mail`;
 CREATE TABLE `ps_mail` (
@@ -13160,13 +13212,14 @@ CREATE TABLE `ps_range_weight` (
   `delimiter2` decimal(20,6) NOT NULL,
   PRIMARY KEY (`id_range_weight`),
   UNIQUE KEY `id_carrier` (`id_carrier`,`delimiter1`,`delimiter2`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_range_weight` (`id_range_weight`, `id_carrier`, `delimiter1`, `delimiter2`) VALUES
 (1,	2,	0.000000,	10000.000000),
 (2,	4,	0.000000,	1.000000),
 (3,	4,	1.000000,	3.000000),
-(4,	4,	3.000000,	10000.000000);
+(4,	4,	3.000000,	10000.000000),
+(5,	6,	0.000000,	10000.000000);
 
 DROP TABLE IF EXISTS `ps_request_sql`;
 CREATE TABLE `ps_request_sql` (
@@ -17745,4 +17798,4 @@ INSERT INTO `ps_zone_shop` (`id_zone`, `id_shop`) VALUES
 (7,	1),
 (8,	1);
 
--- 2024-03-04 15:24:15
+-- 2024-03-04 15:46:12
