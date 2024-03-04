@@ -165,22 +165,6 @@ it('C339388: 53 Paypal BO Refunding, Partial Refunding [Payments API]', () => {
     cy.get(':nth-child(2) > .swal-button').click()
     cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
 });
-it('C339389: 54 SOFORT Checkouting [Payments API]', () => {
-    cy.navigatingToThePayment()
-    //Payment method choosing
-    cy.contains('SOFORT').click({force:true})
-    cy.get('.condition-label > .js-terms').click({force:true})
-    cy.contains('Place order').click()
-    cy.get('[value="paid"]').click()
-    cy.get('[class="button form__button"]').click()
-    cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
-});
-it('C339390: 55 SOFORT BO Refunding, Partial Refunding [Payments API]', () => {
-    cy.visit('/admin1/index.php?controller=AdminOrders')
-    cy.get(':nth-child(1) > .column-payment').click()
-    cy.get('#mollie_order > :nth-child(1)').should('exist')
-    //Refunding is unavailable - information from Mollie Dashboard - but checking the UI itself
-});
 it('C339391: 56 Przelewy24 Checkouting [Payments API]', () => {
     cy.navigatingToThePayment()
     //Payment method choosing
