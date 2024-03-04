@@ -781,7 +781,7 @@ CREATE TABLE `ps_address` (
   KEY `id_manufacturer` (`id_manufacturer`),
   KEY `id_supplier` (`id_supplier`),
   KEY `id_warehouse` (`id_warehouse`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_address` (`id_address`, `id_country`, `id_state`, `id_customer`, `id_manufacturer`, `id_supplier`, `id_warehouse`, `alias`, `company`, `lastname`, `firstname`, `address1`, `address2`, `postcode`, `city`, `other`, `phone`, `phone_mobile`, `vat_number`, `dni`, `date_add`, `date_upd`, `active`, `deleted`) VALUES
 (1,	17,	0,	1,	0,	0,	0,	'Anonymous',	'Anonymous',	'Anonymous',	'Anonymous',	'Anonymous',	'',	'00000',	'Anonymous',	'',	'0000000000',	'0000000000',	'0000',	'0000',	'2024-02-05 10:58:31',	'2024-02-05 10:58:31',	1,	0),
@@ -793,7 +793,8 @@ INSERT INTO `ps_address` (`id_address`, `id_country`, `id_state`, `id_customer`,
 (7,	1,	0,	3,	0,	0,	0,	'DE',	'TEST COMPANY',	'TEST',	'TEST',	'Egelhofen 22, Germany  Pfaffenhausen,',	'TEST123-312 5555',	'10115',	'Berlin',	'',	'+4937595791802',	'',	'DE123456789',	'',	'2024-02-05 11:04:28',	'2024-02-05 11:04:28',	1,	0),
 (8,	13,	0,	3,	0,	0,	0,	'NL',	'TEST COMPANY NL',	'TESTNL',	'TESTNL',	'Rijksstraatweg 161',	'TEST123-312',	'1969 LE',	'Heemskerk',	'',	'0251 232 417',	'',	'23423523',	'',	'2024-02-05 12:22:52',	'2024-02-05 12:22:52',	1,	0),
 (9,	14,	0,	3,	0,	0,	0,	'PL',	'Floyd and Nunez Trading',	'Vincent',	'Byron',	'35 Juranda ze Spychowa ',	'Perspiciatis cumque eveniet recusandae Labore maxime explicabo Sed',	'03-257',	'Warsaw',	'',	'66 327 65 62',	'',	'123456789',	'',	'2024-03-04 16:11:34',	'2024-03-04 16:11:34',	1,	0),
-(10,	19,	0,	3,	0,	0,	0,	'CH',	'Monroe and Swanson Inc',	'Bradshaw',	'Channing',	'87 Oak Parkway',	'Delectus ab similique dolore vel ipsam est voluptates do sit incididunt pariatur Excepturi necessitatibus at aliqua Quaerat ',	'1667',	'Enney',	'',	'026 229 86 34',	'',	'202',	'',	'2024-03-04 16:12:45',	'2024-03-04 16:14:18',	1,	0);
+(10,	19,	0,	3,	0,	0,	0,	'CH',	'Monroe and Swanson Inc',	'Bradshaw',	'Channing',	'87 Oak Parkway',	'Delectus ab similique dolore vel ipsam est voluptates do sit incididunt pariatur Excepturi necessitatibus at aliqua Quaerat ',	'1667',	'Enney',	'',	'026 229 86 34',	'',	'202',	'',	'2024-03-04 16:12:45',	'2024-03-04 16:14:18',	1,	0),
+(11,	17,	0,	3,	0,	0,	0,	'UK',	'Frederick Christensen Traders',	'Miles',	'Shelley',	'91 Milton Extension',	'Doloribus eaque aspernatur vero qui eaque incididunt et molestias accusantium voluptatibus reiciendis aut',	'IV6 1GJ',	'Easter Kinkell',	'',	'079 6984 0999',	'',	'568',	'',	'2024-03-04 16:23:52',	'2024-03-04 16:23:52',	1,	0);
 
 DROP TABLE IF EXISTS `ps_address_format`;
 CREATE TABLE `ps_address_format` (
@@ -1056,7 +1057,7 @@ CREATE TABLE `ps_admin_filter` (
   `filter_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `admin_filter_search_id_idx` (`employee`,`shop`,`controller`,`action`,`filter_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `ps_admin_filter` (`id`, `employee`, `shop`, `controller`, `action`, `filter`, `filter_id`) VALUES
 (1,	1,	1,	'',	'',	'{\"limit\":20,\"orderBy\":\"id_product\",\"sortOrder\":\"desc\",\"filters\":[]}',	'product');
@@ -1069,7 +1070,7 @@ CREATE TABLE `ps_alias` (
   `active` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id_alias`),
   UNIQUE KEY `alias` (`alias`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_alias` (`id_alias`, `alias`, `search`, `active`) VALUES
 (1,	'bloose',	'blouse',	1),
@@ -1117,7 +1118,7 @@ CREATE TABLE `ps_attribute` (
   `position` int(11) NOT NULL,
   PRIMARY KEY (`id_attribute`),
   KEY `attribute_group` (`id_attribute_group`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `ps_attribute` (`id_attribute`, `id_attribute_group`, `color`, `position`) VALUES
 (1,	1,	'',	0),
@@ -1153,7 +1154,7 @@ CREATE TABLE `ps_attribute_group` (
   `group_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `position` int(11) NOT NULL,
   PRIMARY KEY (`id_attribute_group`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `ps_attribute_group` (`id_attribute_group`, `is_color_group`, `group_type`, `position`) VALUES
 (1,	0,	'select',	0),
@@ -1417,7 +1418,7 @@ CREATE TABLE `ps_authorization_role` (
   `slug` varchar(191) NOT NULL,
   PRIMARY KEY (`id_authorization_role`),
   UNIQUE KEY `slug` (`slug`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=777 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_authorization_role` (`id_authorization_role`, `slug`) VALUES
 (469,	'ROLE_MOD_MODULE_BLOCKREASSURANCE_CREATE'),
@@ -2240,7 +2241,7 @@ CREATE TABLE `ps_carrier` (
   PRIMARY KEY (`id_carrier`),
   KEY `deleted` (`deleted`,`active`),
   KEY `reference` (`id_reference`,`deleted`,`active`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_carrier` (`id_carrier`, `id_reference`, `name`, `url`, `active`, `deleted`, `shipping_handling`, `range_behavior`, `is_module`, `is_free`, `shipping_external`, `need_range`, `external_module_name`, `shipping_method`, `position`, `max_width`, `max_height`, `max_depth`, `max_weight`, `grade`) VALUES
 (1,	1,	'Click and collect',	'',	1,	0,	0,	0,	0,	1,	0,	0,	'',	0,	0,	0,	0,	0,	0.000000,	0),
@@ -2381,7 +2382,7 @@ CREATE TABLE `ps_cart` (
   KEY `id_shop_group` (`id_shop_group`),
   KEY `id_shop_2` (`id_shop`,`date_upd`),
   KEY `id_shop` (`id_shop`,`date_add`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_cart` (`id_cart`, `id_shop_group`, `id_shop`, `id_carrier`, `delivery_option`, `id_lang`, `id_address_delivery`, `id_address_invoice`, `id_currency`, `id_customer`, `id_guest`, `secure_key`, `recyclable`, `gift`, `gift_message`, `mobile_theme`, `allow_seperated_package`, `date_add`, `date_upd`, `checkout_session_data`) VALUES
 (1,	1,	1,	2,	'{\"3\":\"2,\"}',	1,	5,	5,	1,	2,	1,	'b44a6d9efd7a0076a0fbce6b15eaf3b1',	0,	0,	'',	0,	0,	'2024-02-05 10:58:40',	'2024-02-05 10:58:40',	NULL),
@@ -2569,7 +2570,7 @@ CREATE TABLE `ps_category` (
   KEY `nright` (`nright`),
   KEY `activenleft` (`active`,`nleft`),
   KEY `activenright` (`active`,`nright`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_category` (`id_category`, `id_parent`, `id_shop_default`, `level_depth`, `nleft`, `nright`, `active`, `date_add`, `date_upd`, `position`, `is_root_category`) VALUES
 (1,	0,	1,	0,	1,	18,	1,	'2024-02-05 10:58:30',	'2024-02-05 10:58:30',	0,	0),
@@ -2784,7 +2785,7 @@ CREATE TABLE `ps_cms` (
   `active` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `indexation` tinyint(1) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`id_cms`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_cms` (`id_cms`, `id_cms_category`, `position`, `active`, `indexation`) VALUES
 (1,	1,	0,	1,	0),
@@ -2804,7 +2805,7 @@ CREATE TABLE `ps_cms_category` (
   `position` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_cms_category`),
   KEY `category_parent` (`id_parent`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_cms_category` (`id_cms_category`, `id_parent`, `level_depth`, `active`, `date_add`, `date_upd`, `position`) VALUES
 (1,	0,	1,	1,	'2024-02-05 10:58:30',	'2024-02-05 10:58:30',	0);
@@ -2838,7 +2839,7 @@ CREATE TABLE `ps_cms_category_shop` (
   `id_shop` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id_cms_category`,`id_shop`),
   KEY `id_shop` (`id_shop`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_cms_category_shop` (`id_cms_category`, `id_shop`) VALUES
 (1,	1);
@@ -2896,7 +2897,7 @@ CREATE TABLE `ps_cms_role` (
   `id_cms` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id_cms_role`,`id_cms`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_cms_role` (`id_cms_role`, `name`, `id_cms`) VALUES
 (1,	'LEGAL_CONDITIONS',	3),
@@ -2940,7 +2941,7 @@ CREATE TABLE `ps_configuration` (
   KEY `name` (`name`),
   KEY `id_shop` (`id_shop`),
   KEY `id_shop_group` (`id_shop_group`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=422 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_configuration` (`id_configuration`, `id_shop_group`, `id_shop`, `name`, `value`, `date_add`, `date_upd`) VALUES
 (1,	NULL,	NULL,	'PS_LANG_DEFAULT',	'1',	'2024-02-05 10:58:30',	'2024-02-05 10:58:30'),
@@ -3369,7 +3370,7 @@ CREATE TABLE `ps_configuration_kpi` (
   KEY `name` (`name`),
   KEY `id_shop` (`id_shop`),
   KEY `id_shop_group` (`id_shop_group`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_configuration_kpi` (`id_configuration_kpi`, `id_shop_group`, `id_shop`, `name`, `value`, `date_add`, `date_upd`) VALUES
 (1,	NULL,	NULL,	'DASHGOALS_TRAFFIC_01_2024',	'600',	'2024-02-05 10:58:38',	'2024-02-05 10:58:38'),
@@ -3558,7 +3559,7 @@ CREATE TABLE `ps_connections` (
   KEY `id_guest` (`id_guest`),
   KEY `date_add` (`date_add`),
   KEY `id_page` (`id_page`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_connections` (`id_connections`, `id_shop_group`, `id_shop`, `id_guest`, `id_page`, `ip_address`, `date_add`, `http_referer`) VALUES
 (1,	1,	1,	1,	1,	2130706433,	'2024-02-05 10:58:40',	'https://www.prestashop.com'),
@@ -3566,7 +3567,8 @@ INSERT INTO `ps_connections` (`id_connections`, `id_shop_group`, `id_shop`, `id_
 (3,	1,	1,	4,	1,	1439583191,	'2024-02-05 11:01:31',	''),
 (4,	1,	1,	4,	1,	1490595887,	'2024-03-04 16:07:33',	''),
 (5,	1,	1,	6,	2,	575429230,	'2024-03-04 16:08:24',	''),
-(6,	1,	1,	7,	2,	575457764,	'2024-03-04 16:10:22',	'');
+(6,	1,	1,	7,	2,	575457764,	'2024-03-04 16:10:22',	''),
+(7,	1,	1,	4,	3,	1490595887,	'2024-03-04 16:21:52',	'');
 
 DROP TABLE IF EXISTS `ps_connections_page`;
 CREATE TABLE `ps_connections_page` (
@@ -3591,7 +3593,7 @@ CREATE TABLE `ps_connections_source` (
   KEY `orderby` (`date_add`),
   KEY `http_referer` (`http_referer`),
   KEY `request_uri` (`request_uri`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_connections_source` (`id_connections_source`, `id_connections`, `http_referer`, `request_uri`, `keywords`, `date_add`) VALUES
 (1,	2,	'',	'demoshop8.ngrok.io/',	'',	'2024-02-05 11:01:25'),
@@ -3606,7 +3608,7 @@ CREATE TABLE `ps_contact` (
   `customer_service` tinyint(1) NOT NULL DEFAULT '0',
   `position` tinyint(2) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_contact`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_contact` (`id_contact`, `email`, `customer_service`, `position`) VALUES
 (1,	'demo@prestashop.com',	1,	0),
@@ -3663,7 +3665,7 @@ CREATE TABLE `ps_country` (
   PRIMARY KEY (`id_country`),
   KEY `country_iso_code` (`iso_code`),
   KEY `country_` (`id_zone`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=242 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_country` (`id_country`, `id_zone`, `id_currency`, `iso_code`, `call_prefix`, `active`, `contains_states`, `need_identification_number`, `need_zip_code`, `zip_code_format`, `display_tax_label`) VALUES
 (1,	1,	0,	'DE',	49,	1,	0,	0,	1,	'NNNNN',	1),
@@ -5629,7 +5631,7 @@ CREATE TABLE `ps_currency` (
   `modified` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_currency`),
   KEY `currency_iso_code` (`iso_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_currency` (`id_currency`, `name`, `iso_code`, `numeric_iso_code`, `precision`, `conversion_rate`, `deleted`, `active`, `unofficial`, `modified`) VALUES
 (1,	'',	'EUR',	'978',	2,	1.000000,	0,	1,	0,	0),
@@ -5730,7 +5732,7 @@ CREATE TABLE `ps_customer` (
   KEY `id_gender` (`id_gender`),
   KEY `id_shop_group` (`id_shop_group`),
   KEY `id_shop` (`id_shop`,`date_add`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_customer` (`id_customer`, `id_shop_group`, `id_shop`, `id_gender`, `id_default_group`, `id_lang`, `id_risk`, `company`, `siret`, `ape`, `firstname`, `lastname`, `email`, `passwd`, `last_passwd_gen`, `birthday`, `newsletter`, `ip_registration_newsletter`, `newsletter_date_add`, `optin`, `website`, `outstanding_allow_amount`, `show_public_prices`, `max_payment_days`, `secure_key`, `note`, `active`, `is_guest`, `deleted`, `date_add`, `date_upd`, `reset_password_token`, `reset_password_validity`) VALUES
 (1,	1,	1,	1,	3,	1,	0,	'',	'',	'',	'Anonymous',	'Anonymous',	'anonymous@psgdpr.com',	'$2y$10$tuCD4JTY2EY3AaItLUjwnu2SqLhnqyzo4LQ4wVCr0NBh2clt8SF3e',	'2024-02-05 04:58:31',	'0000-00-00',	0,	'',	'0000-00-00 00:00:00',	0,	'',	0.000000,	0,	0,	'42cfd67f1fc7ef7dcdcbe2274f639b33',	'',	0,	0,	0,	'2024-02-05 10:58:31',	'2024-02-05 10:58:31',	'',	'0000-00-00 00:00:00'),
@@ -5785,13 +5787,14 @@ CREATE TABLE `ps_customer_session` (
   `date_add` datetime NOT NULL,
   `date_upd` datetime NOT NULL,
   PRIMARY KEY (`id_customer_session`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_customer_session` (`id_customer_session`, `id_customer`, `token`, `date_add`, `date_upd`) VALUES
 (1,	3,	'805f87bc9aa781effb0adad52b08c1f02489867a',	'2024-02-05 11:01:58',	'2024-02-05 11:05:12'),
 (2,	3,	'653c907d1f0bd3d08806a5825515b65e34cb5206',	'2024-02-05 12:21:25',	'2024-02-05 12:24:10'),
 (3,	3,	'c032149af358348b5e3c99d4c57023d8d9b429e3',	'2024-02-05 12:24:10',	'2024-02-05 12:24:15'),
-(4,	3,	'951f4f01cf21c3e5bd7bf7d5b454f7cb6b163065',	'2024-03-04 16:07:49',	'2024-03-04 16:14:26');
+(4,	3,	'951f4f01cf21c3e5bd7bf7d5b454f7cb6b163065',	'2024-03-04 16:07:49',	'2024-03-04 16:14:26'),
+(5,	3,	'398bdfd8d18b3250f46290d27abcb2ce348a6ea6',	'2024-03-04 16:21:55',	'2024-03-04 16:23:53');
 
 DROP TABLE IF EXISTS `ps_customer_thread`;
 CREATE TABLE `ps_customer_thread` (
@@ -5844,7 +5847,7 @@ CREATE TABLE `ps_customization_field` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_customization_field`),
   KEY `id_product` (`id_product`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_customization_field` (`id_customization_field`, `id_product`, `type`, `required`, `is_module`, `is_deleted`) VALUES
 (1,	19,	1,	1,	0,	0);
@@ -5903,7 +5906,7 @@ CREATE TABLE `ps_delivery` (
   KEY `id_carrier` (`id_carrier`,`id_zone`),
   KEY `id_range_price` (`id_range_price`),
   KEY `id_range_weight` (`id_range_weight`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_delivery` (`id_delivery`, `id_shop`, `id_shop_group`, `id_carrier`, `id_range_price`, `id_range_weight`, `id_zone`, `price`) VALUES
 (1,	NULL,	NULL,	2,	0,	1,	1,	5.000000),
@@ -5973,7 +5976,7 @@ CREATE TABLE `ps_employee` (
   KEY `employee_login` (`email`,`passwd`),
   KEY `id_employee_passwd` (`id_employee`,`passwd`),
   KEY `id_profile` (`id_profile`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_employee` (`id_employee`, `id_profile`, `id_lang`, `lastname`, `firstname`, `email`, `passwd`, `last_passwd_gen`, `stats_date_from`, `stats_date_to`, `stats_compare_from`, `stats_compare_to`, `stats_compare_option`, `preselect_date_range`, `bo_color`, `bo_theme`, `bo_css`, `default_tab`, `bo_width`, `bo_menu`, `active`, `optin`, `id_last_order`, `id_last_customer_message`, `id_last_customer`, `last_connection_date`, `reset_password_token`, `reset_password_validity`, `has_enabled_gravatar`) VALUES
 (1,	1,	1,	'Doe',	'John',	'demo@prestashop.com',	'$2y$10$3I5fgyhLUTdFCsl6I7XCXuiauvVQVLRZHldW/RZefCZH3CVTfq.Sy',	'2024-02-05 04:58:31',	'2024-01-05',	'2024-02-05',	'0000-00-00',	'0000-00-00',	1,	NULL,	NULL,	'default',	'theme.css',	1,	0,	1,	1,	NULL,	0,	0,	0,	'2024-03-04',	NULL,	'0000-00-00 00:00:00',	0);
@@ -5986,7 +5989,7 @@ CREATE TABLE `ps_employee_session` (
   `date_add` datetime NOT NULL,
   `date_upd` datetime NOT NULL,
   PRIMARY KEY (`id_employee_session`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_employee_session` (`id_employee_session`, `id_employee`, `token`, `date_add`, `date_upd`) VALUES
 (2,	1,	'e1a0e184982efd94f0843420de36267d51ed31c1',	'2024-02-05 12:23:11',	'2024-02-05 12:23:39'),
@@ -6008,7 +6011,7 @@ CREATE TABLE `ps_feature` (
   `id_feature` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `position` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_feature`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_feature` (`id_feature`, `position`) VALUES
 (1,	0),
@@ -6026,7 +6029,7 @@ CREATE TABLE `ps_feature_flag` (
   `stability` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'beta',
   PRIMARY KEY (`id_feature_flag`),
   UNIQUE KEY `UNIQ_91700F175E237E06` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `ps_feature_flag` (`id_feature_flag`, `name`, `state`, `label_wording`, `label_domain`, `description_wording`, `description_domain`, `stability`) VALUES
 (1,	'product_page_v2',	1,	'New product page',	'Admin.Advparameters.Feature',	'This page benefits from increased performance and includes new features such as a new combination management system.',	'Admin.Advparameters.Help',	'stable'),
@@ -6121,7 +6124,7 @@ CREATE TABLE `ps_feature_value` (
   `custom` tinyint(3) unsigned DEFAULT NULL,
   PRIMARY KEY (`id_feature_value`),
   KEY `feature` (`id_feature`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_feature_value` (`id_feature_value`, `id_feature`, `custom`) VALUES
 (1,	1,	0),
@@ -6217,7 +6220,7 @@ CREATE TABLE `ps_ganalytics` (
   PRIMARY KEY (`id_google_analytics`),
   KEY `id_order` (`id_order`),
   KEY `sent` (`sent`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_ganalytics` (`id_google_analytics`, `id_order`, `id_customer`, `id_shop`, `sent`, `refund_sent`, `date_add`) VALUES
 (1,	6,	0,	1,	0,	NULL,	'2024-02-05 10:05:06');
@@ -6238,7 +6241,7 @@ CREATE TABLE `ps_gender` (
   `id_gender` int(11) NOT NULL AUTO_INCREMENT,
   `type` tinyint(1) NOT NULL,
   PRIMARY KEY (`id_gender`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_gender` (`id_gender`, `type`) VALUES
 (1,	0),
@@ -6276,7 +6279,7 @@ CREATE TABLE `ps_group` (
   `date_add` datetime NOT NULL,
   `date_upd` datetime NOT NULL,
   PRIMARY KEY (`id_group`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_group` (`id_group`, `reduction`, `price_display_method`, `show_prices`, `date_add`, `date_upd`) VALUES
 (1,	0.00,	0,	1,	'2024-02-05 10:58:30',	'2024-02-05 10:58:30'),
@@ -6364,7 +6367,7 @@ CREATE TABLE `ps_guest` (
   KEY `id_customer` (`id_customer`),
   KEY `id_operating_system` (`id_operating_system`),
   KEY `id_web_browser` (`id_web_browser`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_guest` (`id_guest`, `id_operating_system`, `id_web_browser`, `id_customer`, `javascript`, `screen_resolution_x`, `screen_resolution_y`, `screen_color`, `sun_java`, `adobe_flash`, `adobe_director`, `apple_quicktime`, `real_player`, `windows_media`, `accept_language`, `mobile_theme`) VALUES
 (1,	0,	0,	2,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	'',	0),
@@ -6378,7 +6381,7 @@ CREATE TABLE `ps_homeslider` (
   `id_homeslider_slides` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `id_shop` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id_homeslider_slides`,`id_shop`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_homeslider` (`id_homeslider_slides`, `id_shop`) VALUES
 (1,	1),
@@ -6391,7 +6394,7 @@ CREATE TABLE `ps_homeslider_slides` (
   `position` int(10) unsigned NOT NULL DEFAULT '0',
   `active` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_homeslider_slides`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_homeslider_slides` (`id_homeslider_slides`, `position`, `active`) VALUES
 (1,	1,	1),
@@ -6440,7 +6443,7 @@ CREATE TABLE `ps_hook` (
   `position` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id_hook`),
   UNIQUE KEY `hook_name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=949 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_hook` (`id_hook`, `name`, `title`, `description`, `active`, `position`) VALUES
 (1,	'actionValidateOrder',	'New orders',	'',	1,	1),
@@ -7389,7 +7392,7 @@ CREATE TABLE `ps_hook_alias` (
   `name` varchar(191) NOT NULL,
   PRIMARY KEY (`id_hook_alias`),
   UNIQUE KEY `alias` (`alias`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_hook_alias` (`id_hook_alias`, `alias`, `name`) VALUES
 (1,	'newOrder',	'actionValidateOrder'),
@@ -7754,7 +7757,7 @@ CREATE TABLE `ps_image` (
   UNIQUE KEY `id_product_cover` (`id_product`,`cover`),
   UNIQUE KEY `idx_product_image` (`id_image`,`id_product`,`cover`),
   KEY `image_product` (`id_product`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_image` (`id_image`, `id_product`, `position`, `cover`) VALUES
 (1,	1,	1,	1),
@@ -7979,7 +7982,7 @@ CREATE TABLE `ps_image_type` (
   `stores` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id_image_type`),
   KEY `image_type_name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_image_type` (`id_image_type`, `name`, `width`, `height`, `products`, `categories`, `manufacturers`, `suppliers`, `stores`) VALUES
 (1,	'cart_default',	125,	125,	1,	0,	0,	0,	0),
@@ -8004,7 +8007,7 @@ DROP TABLE IF EXISTS `ps_info`;
 CREATE TABLE `ps_info` (
   `id_info` int(10) unsigned NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id_info`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_info` (`id_info`) VALUES
 (1);
@@ -8048,7 +8051,7 @@ CREATE TABLE `ps_lang` (
   `date_format_full` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
   `is_rtl` tinyint(1) NOT NULL,
   PRIMARY KEY (`id_lang`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `ps_lang` (`id_lang`, `name`, `active`, `iso_code`, `language_code`, `locale`, `date_format_lite`, `date_format_full`, `is_rtl`) VALUES
 (1,	'English (English)',	1,	'en',	'en-us',	'en-US',	'm/d/Y',	'm/d/Y H:i:s',	0),
@@ -8089,7 +8092,7 @@ CREATE TABLE `ps_layered_category` (
   PRIMARY KEY (`id_layered_category`),
   KEY `id_category_shop` (`id_category`,`id_shop`,`type`,`id_value`,`position`),
   KEY `id_category` (`id_category`,`type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=170 DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_layered_category` (`id_layered_category`, `id_shop`, `controller`, `id_category`, `id_value`, `type`, `position`, `filter_type`, `filter_show_limit`) VALUES
 (1,	1,	'category',	2,	NULL,	'availability',	1,	0,	0),
@@ -8270,7 +8273,7 @@ CREATE TABLE `ps_layered_filter` (
   `n_categories` int(10) unsigned NOT NULL,
   `date_add` datetime NOT NULL,
   PRIMARY KEY (`id_layered_filter`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_layered_filter` (`id_layered_filter`, `name`, `filters`, `n_categories`, `date_add`) VALUES
 (1,	'My template 2024-02-05',	'a:16:{s:10:\"categories\";a:8:{i:0;i:2;i:1;i:3;i:2;i:4;i:3;i:5;i:4;i:9;i:5;i:6;i:6;i:8;i:7;i:7;}s:11:\"controllers\";a:6:{i:0;s:8:\"category\";i:1;s:12:\"manufacturer\";i:2;s:8:\"supplier\";i:3;s:12:\"new-products\";i:4;s:10:\"best-sales\";i:5;s:11:\"prices-drop\";}s:9:\"shop_list\";a:1:{i:1;i:1;}s:23:\"layered_selection_stock\";a:2:{s:11:\"filter_type\";i:0;s:17:\"filter_show_limit\";i:0;}s:24:\"layered_selection_extras\";a:2:{s:11:\"filter_type\";i:0;s:17:\"filter_show_limit\";i:0;}s:30:\"layered_selection_price_slider\";a:2:{s:11:\"filter_type\";i:0;s:17:\"filter_show_limit\";i:0;}s:31:\"layered_selection_subcategories\";a:2:{s:11:\"filter_type\";i:0;s:17:\"filter_show_limit\";i:0;}s:22:\"layered_selection_ag_1\";a:2:{s:11:\"filter_type\";i:0;s:17:\"filter_show_limit\";i:0;}s:22:\"layered_selection_ag_2\";a:2:{s:11:\"filter_type\";i:0;s:17:\"filter_show_limit\";i:0;}s:24:\"layered_selection_feat_1\";a:2:{s:11:\"filter_type\";i:0;s:17:\"filter_show_limit\";i:0;}s:24:\"layered_selection_feat_2\";a:2:{s:11:\"filter_type\";i:0;s:17:\"filter_show_limit\";i:0;}s:30:\"layered_selection_manufacturer\";a:2:{s:11:\"filter_type\";i:0;s:17:\"filter_show_limit\";i:0;}s:27:\"layered_selection_condition\";a:2:{s:11:\"filter_type\";i:0;s:17:\"filter_show_limit\";i:0;}s:31:\"layered_selection_weight_slider\";a:2:{s:11:\"filter_type\";i:0;s:17:\"filter_show_limit\";i:0;}s:22:\"layered_selection_ag_3\";a:2:{s:11:\"filter_type\";i:0;s:17:\"filter_show_limit\";i:0;}s:22:\"layered_selection_ag_4\";a:2:{s:11:\"filter_type\";i:0;s:17:\"filter_show_limit\";i:0;}}',	8,	'2024-02-05 09:58:41');
@@ -8567,7 +8570,7 @@ CREATE TABLE `ps_link_block` (
   `position` int(10) unsigned NOT NULL DEFAULT '0',
   `content` text,
   PRIMARY KEY (`id_link_block`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_link_block` (`id_link_block`, `id_hook`, `position`, `content`) VALUES
 (1,	45,	0,	'{\"cms\":[false],\"product\":[\"prices-drop\",\"new-products\",\"best-sales\"],\"static\":[false]}'),
@@ -8602,7 +8605,7 @@ CREATE TABLE `ps_link_block_shop` (
   `id_shop` int(10) unsigned NOT NULL,
   `position` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_link_block`,`id_shop`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_link_block_shop` (`id_link_block`, `id_shop`, `position`) VALUES
 (1,	1,	0),
@@ -8624,7 +8627,7 @@ CREATE TABLE `ps_log` (
   `date_add` datetime NOT NULL,
   `date_upd` datetime NOT NULL,
   PRIMARY KEY (`id_log`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=807 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_log` (`id_log`, `severity`, `error_code`, `message`, `object_type`, `object_id`, `id_shop`, `id_shop_group`, `id_lang`, `in_all_shops`, `id_employee`, `date_add`, `date_upd`) VALUES
 (1,	1,	0,	'Exporting mail with theme modern for language English (English)',	'',	0,	1,	NULL,	0,	0,	0,	'2024-02-05 10:58:29',	'2024-02-05 10:58:29'),
@@ -9467,7 +9470,7 @@ CREATE TABLE `ps_manufacturer` (
   `date_upd` datetime NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_manufacturer`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_manufacturer` (`id_manufacturer`, `name`, `date_add`, `date_upd`, `active`) VALUES
 (1,	'Studio Design',	'2024-02-05 10:58:40',	'2024-02-05 10:58:40',	1),
@@ -9555,7 +9558,7 @@ CREATE TABLE `ps_meta` (
   `configurable` tinyint(1) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`id_meta`),
   UNIQUE KEY `page` (`page`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_meta` (`id_meta`, `page`, `configurable`) VALUES
 (1,	'pagenotfound',	1),
@@ -9837,7 +9840,7 @@ CREATE TABLE `ps_module` (
   PRIMARY KEY (`id_module`),
   UNIQUE KEY `name_UNIQUE` (`name`),
   KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_module` (`id_module`, `name`, `active`, `version`) VALUES
 (1,	'ps_linklist',	1,	'6.0.4'),
@@ -11271,7 +11274,7 @@ CREATE TABLE `ps_operating_system` (
   `id_operating_system` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id_operating_system`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_operating_system` (`id_operating_system`, `name`) VALUES
 (1,	'Windows XP'),
@@ -11346,7 +11349,7 @@ CREATE TABLE `ps_orders` (
   KEY `current_state` (`current_state`),
   KEY `id_shop` (`id_shop`),
   KEY `date_add` (`date_add`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_orders` (`id_order`, `reference`, `id_shop_group`, `id_shop`, `id_carrier`, `id_lang`, `id_customer`, `id_cart`, `id_currency`, `id_address_delivery`, `id_address_invoice`, `current_state`, `secure_key`, `payment`, `conversion_rate`, `module`, `recyclable`, `gift`, `gift_message`, `mobile_theme`, `total_discounts`, `total_discounts_tax_incl`, `total_discounts_tax_excl`, `total_paid`, `total_paid_tax_incl`, `total_paid_tax_excl`, `total_paid_real`, `total_products`, `total_products_wt`, `total_shipping`, `total_shipping_tax_incl`, `total_shipping_tax_excl`, `carrier_tax_rate`, `total_wrapping`, `total_wrapping_tax_incl`, `total_wrapping_tax_excl`, `round_mode`, `round_type`, `invoice_number`, `delivery_number`, `invoice_date`, `delivery_date`, `valid`, `date_add`, `date_upd`, `note`) VALUES
 (1,	'XKBKNABJK',	1,	1,	2,	1,	2,	1,	1,	5,	5,	6,	'b44a6d9efd7a0076a0fbce6b15eaf3b1',	'Payment by check',	1.000000,	'ps_checkpayment',	0,	0,	'',	0,	0.000000,	0.000000,	0.000000,	61.800000,	68.200000,	66.800000,	0.000000,	59.800000,	59.800000,	7.000000,	8.400000,	7.000000,	0.000,	0.000000,	0.000000,	0.000000,	0,	0,	0,	0,	'0000-00-00 00:00:00',	'0000-00-00 00:00:00',	0,	'2024-02-05 10:58:40',	'2024-02-05 10:58:40',	'Test'),
@@ -11371,7 +11374,7 @@ CREATE TABLE `ps_order_carrier` (
   KEY `id_order` (`id_order`),
   KEY `id_carrier` (`id_carrier`),
   KEY `id_order_invoice` (`id_order_invoice`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_order_carrier` (`id_order_carrier`, `id_order`, `id_carrier`, `id_order_invoice`, `weight`, `shipping_cost_tax_excl`, `shipping_cost_tax_incl`, `tracking_number`, `date_add`) VALUES
 (1,	1,	2,	0,	0.000000,	7.000000,	8.400000,	'',	'2024-02-05 10:58:40'),
@@ -11455,7 +11458,7 @@ CREATE TABLE `ps_order_detail` (
   KEY `product_attribute_id` (`product_attribute_id`),
   KEY `id_tax_rules_group` (`id_tax_rules_group`),
   KEY `id_order_id_order_detail` (`id_order`,`id_order_detail`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_order_detail` (`id_order_detail`, `id_order`, `id_order_invoice`, `id_warehouse`, `id_shop`, `product_id`, `product_attribute_id`, `id_customization`, `product_name`, `product_quantity`, `product_quantity_in_stock`, `product_quantity_refunded`, `product_quantity_return`, `product_quantity_reinjected`, `product_price`, `reduction_percent`, `reduction_amount`, `reduction_amount_tax_incl`, `reduction_amount_tax_excl`, `group_reduction`, `product_quantity_discount`, `product_ean13`, `product_isbn`, `product_upc`, `product_mpn`, `product_reference`, `product_supplier_reference`, `product_weight`, `id_tax_rules_group`, `tax_computation_method`, `tax_name`, `tax_rate`, `ecotax`, `ecotax_tax_rate`, `discount_quantity_applied`, `download_hash`, `download_nb`, `download_deadline`, `total_price_tax_incl`, `total_price_tax_excl`, `unit_price_tax_incl`, `unit_price_tax_excl`, `total_shipping_price_tax_incl`, `total_shipping_price_tax_excl`, `purchase_supplier_price`, `original_product_price`, `original_wholesale_price`, `total_refunded_tax_excl`, `total_refunded_tax_incl`) VALUES
 (1,	1,	0,	0,	1,	1,	1,	0,	'Hummingbird printed t-shirt - Color : White, Size : S',	1,	1,	0,	0,	0,	23.900000,	0.00,	0.000000,	0.000000,	0.000000,	0.00,	0.000000,	'',	'',	'',	'',	'demo_1',	'',	0.000000,	0,	0,	'',	0.000,	0.000000,	0.000,	0,	'',	0,	'0000-00-00 00:00:00',	23.900000,	23.900000,	23.900000,	23.900000,	0.000000,	0.000000,	0.000000,	23.900000,	5.490000,	0.000000,	0.000000),
@@ -11495,7 +11498,7 @@ CREATE TABLE `ps_order_history` (
   KEY `order_history_order` (`id_order`),
   KEY `id_employee` (`id_employee`),
   KEY `id_order_state` (`id_order_state`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_order_history` (`id_order_history`, `id_employee`, `id_order`, `id_order_state`, `date_add`) VALUES
 (1,	0,	1,	1,	'2024-02-05 10:58:40'),
@@ -11559,7 +11562,7 @@ CREATE TABLE `ps_order_message` (
   `id_order_message` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `date_add` datetime NOT NULL,
   PRIMARY KEY (`id_order_message`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_order_message` (`id_order_message`, `date_add`) VALUES
 (1,	'2024-02-05 10:58:40');
@@ -11631,7 +11634,7 @@ CREATE TABLE `ps_order_return_state` (
   `id_order_return_state` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `color` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`id_order_return_state`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_order_return_state` (`id_order_return_state`, `color`) VALUES
 (1,	'#4169E1'),
@@ -11736,7 +11739,7 @@ CREATE TABLE `ps_order_state` (
   `deleted` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_order_state`),
   KEY `module_name` (`module_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_order_state` (`id_order_state`, `invoice`, `send_email`, `module_name`, `color`, `unremovable`, `hidden`, `logable`, `delivery`, `shipped`, `paid`, `pdf_invoice`, `pdf_delivery`, `deleted`) VALUES
 (1,	0,	1,	'ps_checkpayment',	'#34209E',	1,	0,	0,	0,	0,	0,	0,	0,	0),
@@ -11864,11 +11867,12 @@ CREATE TABLE `ps_page` (
   PRIMARY KEY (`id_page`),
   KEY `id_page_type` (`id_page_type`),
   KEY `id_object` (`id_object`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_page` (`id_page`, `id_page_type`, `id_object`) VALUES
 (1,	1,	NULL),
-(2,	2,	NULL);
+(2,	2,	NULL),
+(3,	3,	NULL);
 
 DROP TABLE IF EXISTS `ps_pagenotfound`;
 CREATE TABLE `ps_pagenotfound` (
@@ -11880,7 +11884,7 @@ CREATE TABLE `ps_pagenotfound` (
   `date_add` datetime NOT NULL,
   PRIMARY KEY (`id_pagenotfound`),
   KEY `date_add` (`date_add`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_pagenotfound` (`id_pagenotfound`, `id_shop`, `id_shop_group`, `request_uri`, `http_referer`, `date_add`) VALUES
 (1,	1,	1,	'/de/module/mollie/webhook',	'',	'2024-03-04 15:08:24'),
@@ -11892,9 +11896,10 @@ CREATE TABLE `ps_page_type` (
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id_page_type`),
   KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_page_type` (`id_page_type`, `name`) VALUES
+(3,	'authentication'),
 (1,	'index'),
 (2,	'webhook');
 
@@ -11976,7 +11981,7 @@ CREATE TABLE `ps_product` (
   KEY `indexed` (`indexed`),
   KEY `date_add` (`date_add`),
   KEY `state` (`state`,`date_upd`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_product` (`id_product`, `id_supplier`, `id_manufacturer`, `id_category_default`, `id_shop_default`, `id_tax_rules_group`, `on_sale`, `online_only`, `ean13`, `isbn`, `upc`, `mpn`, `ecotax`, `quantity`, `minimal_quantity`, `low_stock_threshold`, `low_stock_alert`, `price`, `wholesale_price`, `unity`, `unit_price`, `unit_price_ratio`, `additional_shipping_cost`, `reference`, `supplier_reference`, `location`, `width`, `height`, `depth`, `weight`, `out_of_stock`, `additional_delivery_times`, `quantity_discount`, `customizable`, `uploadable_files`, `text_fields`, `active`, `redirect_type`, `id_type_redirected`, `available_for_order`, `available_date`, `show_condition`, `condition`, `show_price`, `indexed`, `visibility`, `cache_is_pack`, `cache_has_attachments`, `is_virtual`, `cache_default_attribute`, `date_add`, `date_upd`, `advanced_stock_management`, `pack_stock_type`, `state`, `product_type`) VALUES
 (1,	1,	1,	4,	1,	1,	0,	0,	'',	'',	'',	'',	0.000000,	0,	1,	0,	0,	23.900000,	5.490000,	'',	0.000000,	0.000000,	0.000000,	'demo_1',	'',	'',	0.000000,	0.000000,	0.000000,	0.300000,	2,	1,	0,	0,	0,	0,	1,	'301-category',	0,	1,	'0000-00-00',	0,	'new',	1,	1,	'both',	0,	0,	0,	1,	'2024-02-05 10:58:40',	'2024-02-05 10:58:40',	0,	3,	1,	'combinations'),
@@ -12033,7 +12038,7 @@ CREATE TABLE `ps_product_attribute` (
   KEY `reference` (`reference`),
   KEY `supplier_reference` (`supplier_reference`),
   KEY `id_product_id_product_attribute` (`id_product_attribute`,`id_product`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_product_attribute` (`id_product_attribute`, `id_product`, `reference`, `supplier_reference`, `ean13`, `isbn`, `upc`, `mpn`, `wholesale_price`, `price`, `ecotax`, `weight`, `unit_price_impact`, `default_on`, `minimal_quantity`, `low_stock_threshold`, `low_stock_alert`, `available_date`) VALUES
 (1,	1,	'demo_1',	'',	'',	'',	'',	'',	0.000000,	0.000000,	0.000000,	0.000000,	0.000000,	1,	1,	0,	0,	'0000-00-00'),
@@ -12522,7 +12527,7 @@ CREATE TABLE `ps_product_comment_criterion` (
   `id_product_comment_criterion_type` tinyint(1) NOT NULL,
   `active` tinyint(1) NOT NULL,
   PRIMARY KEY (`id_product_comment_criterion`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_product_comment_criterion` (`id_product_comment_criterion`, `id_product_comment_criterion_type`, `active`) VALUES
 (1,	1,	1);
@@ -12845,7 +12850,7 @@ CREATE TABLE `ps_product_supplier` (
   PRIMARY KEY (`id_product_supplier`),
   UNIQUE KEY `id_product` (`id_product`,`id_product_attribute`,`id_supplier`),
   KEY `id_supplier` (`id_supplier`,`id_product`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_product_supplier` (`id_product_supplier`, `id_product`, `id_product_attribute`, `id_supplier`, `product_supplier_reference`, `product_supplier_price_te`, `id_currency`) VALUES
 (1,	6,	0,	2,	'demo_11',	5.490000,	1),
@@ -12937,7 +12942,7 @@ DROP TABLE IF EXISTS `ps_profile`;
 CREATE TABLE `ps_profile` (
   `id_profile` int(10) unsigned NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id_profile`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_profile` (`id_profile`) VALUES
 (1),
@@ -13015,7 +13020,7 @@ CREATE TABLE `ps_psgdpr_log` (
   PRIMARY KEY (`id_gdpr_log`),
   KEY `id_customer` (`id_customer`),
   KEY `idx_id_customer` (`id_customer`,`id_guest`,`client_name`,`id_module`,`date_add`,`date_upd`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_psgdpr_log` (`id_gdpr_log`, `id_customer`, `id_guest`, `client_name`, `id_module`, `request_type`, `date_add`, `date_upd`) VALUES
 (1,	3,	0,	'TEST TEST',	0,	1,	'2024-02-05 11:01:58',	'2024-02-05 11:01:58');
@@ -13032,7 +13037,7 @@ CREATE TABLE `ps_psreassurance` (
   `date_add` datetime NOT NULL,
   `date_upd` datetime DEFAULT NULL,
   PRIMARY KEY (`id_psreassurance`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_psreassurance` (`id_psreassurance`, `icon`, `custom_icon`, `status`, `position`, `type_link`, `id_cms`, `date_add`, `date_upd`) VALUES
 (1,	'//modules/blockreassurance/views/img/reassurance/pack2/security.svg',	NULL,	1,	1,	NULL,	NULL,	'2024-02-05 09:58:31',	NULL),
@@ -13075,7 +13080,7 @@ CREATE TABLE `ps_quick_access` (
   `new_window` tinyint(1) NOT NULL DEFAULT '0',
   `link` varchar(255) NOT NULL,
   PRIMARY KEY (`id_quick_access`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_quick_access` (`id_quick_access`, `new_window`, `link`) VALUES
 (1,	0,	'index.php/sell/orders'),
@@ -13139,7 +13144,7 @@ CREATE TABLE `ps_range_price` (
   `delimiter2` decimal(20,6) NOT NULL,
   PRIMARY KEY (`id_range_price`),
   UNIQUE KEY `id_carrier` (`id_carrier`,`delimiter1`,`delimiter2`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_range_price` (`id_range_price`, `id_carrier`, `delimiter1`, `delimiter2`) VALUES
 (1,	2,	0.000000,	10000.000000),
@@ -13155,7 +13160,7 @@ CREATE TABLE `ps_range_weight` (
   `delimiter2` decimal(20,6) NOT NULL,
   PRIMARY KEY (`id_range_weight`),
   UNIQUE KEY `id_carrier` (`id_carrier`,`delimiter1`,`delimiter2`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_range_weight` (`id_range_weight`, `id_carrier`, `delimiter1`, `delimiter2`) VALUES
 (1,	2,	0.000000,	10000.000000),
@@ -13188,7 +13193,7 @@ CREATE TABLE `ps_risk` (
   `percent` tinyint(3) NOT NULL,
   `color` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`id_risk`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_risk` (`id_risk`, `percent`, `color`) VALUES
 (1,	0,	'#32CD32'),
@@ -13237,7 +13242,7 @@ CREATE TABLE `ps_search_engine` (
   `server` varchar(64) NOT NULL,
   `getvar` varchar(16) NOT NULL,
   PRIMARY KEY (`id_search_engine`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_search_engine` (`id_search_engine`, `server`, `getvar`) VALUES
 (1,	'google',	'q'),
@@ -13963,7 +13968,7 @@ CREATE TABLE `ps_search_word` (
   `word` varchar(30) NOT NULL,
   PRIMARY KEY (`id_word`),
   UNIQUE KEY `id_lang` (`id_lang`,`id_shop`,`word`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=656 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_search_word` (`id_word`, `id_shop`, `id_lang`, `word`) VALUES
 (655,	1,	1,	'---'),
@@ -14197,7 +14202,7 @@ CREATE TABLE `ps_shop` (
   `deleted` tinyint(1) NOT NULL,
   PRIMARY KEY (`id_shop`),
   KEY `IDX_CBDFBB9EF5C9E40` (`id_shop_group`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `ps_shop` (`id_shop`, `id_shop_group`, `name`, `color`, `id_category`, `theme_name`, `active`, `deleted`) VALUES
 (1,	1,	'PrestaShop',	'',	2,	'classic',	1,	0);
@@ -14213,7 +14218,7 @@ CREATE TABLE `ps_shop_group` (
   `active` tinyint(1) NOT NULL,
   `deleted` tinyint(1) NOT NULL,
   PRIMARY KEY (`id_shop_group`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `ps_shop_group` (`id_shop_group`, `name`, `color`, `share_customer`, `share_order`, `share_stock`, `active`, `deleted`) VALUES
 (1,	'Default',	'',	0,	0,	0,	1,	0);
@@ -14230,7 +14235,7 @@ CREATE TABLE `ps_shop_url` (
   `active` tinyint(1) NOT NULL,
   PRIMARY KEY (`id_shop_url`),
   KEY `IDX_279F19DA274A50A0` (`id_shop`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_shop_url` (`id_shop_url`, `id_shop`, `domain`, `domain_ssl`, `physical_uri`, `virtual_uri`, `main`, `active`) VALUES
 (1,	1,	'demoshop8.ngrok.io',	'demoshop8.ngrok.io',	'/',	'',	1,	1);
@@ -14299,7 +14304,7 @@ CREATE TABLE `ps_specific_price` (
   KEY `id_customer` (`id_customer`),
   KEY `from` (`from`),
   KEY `to` (`to`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_specific_price` (`id_specific_price`, `id_specific_price_rule`, `id_cart`, `id_product`, `id_shop`, `id_shop_group`, `id_currency`, `id_country`, `id_group`, `id_customer`, `id_product_attribute`, `price`, `from_quantity`, `reduction`, `reduction_tax`, `reduction_type`, `from`, `to`) VALUES
 (1,	0,	0,	1,	0,	0,	0,	0,	0,	0,	0,	-1.000000,	1,	0.200000,	1,	'percentage',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
@@ -14367,7 +14372,7 @@ CREATE TABLE `ps_state` (
   KEY `id_country` (`id_country`),
   KEY `name` (`name`),
   KEY `id_zone` (`id_zone`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=391 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_state` (`id_state`, `id_country`, `id_zone`, `name`, `iso_code`, `tax_behavior`, `active`) VALUES
 (1,	21,	2,	'AA',	'AA',	0,	1),
@@ -14813,7 +14818,7 @@ CREATE TABLE `ps_stock_available` (
   KEY `id_shop_group` (`id_shop_group`),
   KEY `id_product` (`id_product`),
   KEY `id_product_attribute` (`id_product_attribute`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_stock_available` (`id_stock_available`, `id_product`, `id_product_attribute`, `id_shop`, `id_shop_group`, `quantity`, `physical_quantity`, `reserved_quantity`, `depends_on_stock`, `out_of_stock`, `location`) VALUES
 (1,	1,	0,	1,	0,	2397,	2397,	0,	0,	2,	''),
@@ -14906,7 +14911,7 @@ CREATE TABLE `ps_stock_mvt_reason` (
   `date_upd` datetime NOT NULL,
   `deleted` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_stock_mvt_reason`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_stock_mvt_reason` (`id_stock_mvt_reason`, `sign`, `date_add`, `date_upd`, `deleted`) VALUES
 (1,	1,	'2024-02-05 10:58:30',	'2024-02-05 10:58:30',	0),
@@ -15020,7 +15025,7 @@ CREATE TABLE `ps_store` (
   `date_add` datetime NOT NULL,
   `date_upd` datetime NOT NULL,
   PRIMARY KEY (`id_store`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_store` (`id_store`, `id_country`, `id_state`, `city`, `postcode`, `latitude`, `longitude`, `phone`, `fax`, `email`, `active`, `date_add`, `date_upd`) VALUES
 (1,	21,	12,	'Miami',	'33135',	25.76500500,	-80.24379700,	'',	'',	'',	1,	'2024-02-05 10:58:40',	'2024-02-05 10:58:40'),
@@ -15096,7 +15101,7 @@ CREATE TABLE `ps_supplier` (
   `date_upd` datetime NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_supplier`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_supplier` (`id_supplier`, `name`, `date_add`, `date_upd`, `active`) VALUES
 (1,	'Fashion supplier',	'2024-02-05 10:58:40',	'2024-02-05 10:58:40',	1),
@@ -15243,7 +15248,7 @@ CREATE TABLE `ps_supply_order_state` (
   `enclosed` tinyint(1) NOT NULL DEFAULT '0',
   `color` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`id_supply_order_state`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_supply_order_state` (`id_supply_order_state`, `delivery_note`, `editable`, `receipt_state`, `pending_receipt`, `enclosed`, `color`) VALUES
 (1,	0,	1,	0,	0,	0,	'#faab00'),
@@ -15313,7 +15318,7 @@ CREATE TABLE `ps_tab` (
   `wording` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `wording_domain` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id_tab`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=130 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `ps_tab` (`id_tab`, `id_parent`, `position`, `module`, `class_name`, `route_name`, `active`, `enabled`, `icon`, `wording`, `wording_domain`) VALUES
 (1,	0,	0,	NULL,	'AdminDashboard',	'',	1,	1,	'trending_up',	'Dashboard',	'Admin.Navigation.Menu'),
@@ -16255,7 +16260,7 @@ CREATE TABLE `ps_tax` (
   `active` tinyint(1) unsigned NOT NULL DEFAULT '1',
   `deleted` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_tax`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_tax` (`id_tax`, `rate`, `active`, `deleted`) VALUES
 (1,	19.000,	1,	0),
@@ -16543,7 +16548,7 @@ CREATE TABLE `ps_tax_rule` (
   KEY `id_tax_rules_group` (`id_tax_rules_group`),
   KEY `id_tax` (`id_tax`),
   KEY `category_getproducts` (`id_tax_rules_group`,`id_country`,`id_state`,`zipcode_from`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=379 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_tax_rule` (`id_tax_rule`, `id_tax_rules_group`, `id_country`, `id_state`, `zipcode_from`, `zipcode_to`, `id_tax`, `behavior`, `description`) VALUES
 (1,	1,	3,	0,	'0',	'0',	1,	0,	''),
@@ -16934,7 +16939,7 @@ CREATE TABLE `ps_tax_rules_group` (
   `date_add` datetime NOT NULL,
   `date_upd` datetime NOT NULL,
   PRIMARY KEY (`id_tax_rules_group`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_tax_rules_group` (`id_tax_rules_group`, `name`, `active`, `deleted`, `date_add`, `date_upd`) VALUES
 (1,	'DE Standard Rate (19%)',	1,	0,	'2024-02-05 11:03:40',	'2024-02-05 11:03:40'),
@@ -16985,7 +16990,7 @@ CREATE TABLE `ps_timezone` (
   `id_timezone` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL,
   PRIMARY KEY (`id_timezone`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=560 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_timezone` (`id_timezone`, `name`) VALUES
 (1,	'Africa/Abidjan'),
@@ -17650,7 +17655,7 @@ CREATE TABLE `ps_web_browser` (
   `id_web_browser` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id_web_browser`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_web_browser` (`id_web_browser`, `name`) VALUES
 (1,	'Safari'),
@@ -17678,7 +17683,7 @@ CREATE TABLE `ps_wishlist` (
   `date_upd` datetime NOT NULL,
   `default` int(10) unsigned DEFAULT '0',
   PRIMARY KEY (`id_wishlist`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 INSERT INTO `ps_wishlist` (`id_wishlist`, `id_customer`, `id_shop`, `id_shop_group`, `token`, `name`, `counter`, `date_add`, `date_upd`, `default`) VALUES
 (1,	3,	1,	1,	'452A5D3EBA97403A',	'My wishlist',	NULL,	'2024-02-05 11:01:59',	'2024-02-05 11:01:59',	1);
@@ -17710,7 +17715,7 @@ CREATE TABLE `ps_zone` (
   `name` varchar(64) NOT NULL,
   `active` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id_zone`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_zone` (`id_zone`, `name`, `active`) VALUES
 (1,	'Europe',	1),
@@ -17740,4 +17745,4 @@ INSERT INTO `ps_zone_shop` (`id_zone`, `id_shop`) VALUES
 (7,	1),
 (8,	1);
 
--- 2024-03-04 15:15:20
+-- 2024-03-04 15:24:15
