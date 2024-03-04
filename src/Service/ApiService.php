@@ -19,6 +19,7 @@ use Mollie\Adapter\Shop;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
 use Mollie\Api\Resources\BaseCollection;
+use Mollie\Api\Resources\Method;
 use Mollie\Api\Resources\MethodCollection;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment;
@@ -116,9 +117,16 @@ class ApiService implements ApiServiceInterface
     {
         $notAvailable = [];
         try {
+            /** Requires local param or fails */
             /** @var BaseCollection|MethodCollection $apiMethods */
-            $apiMethods = $api->methods->allActive(['resource' => 'orders', 'include' => 'issuers', 'includeWallets' => 'applepay']);
+            $apiMethods = $api->methods->allAvailable(['locale' => '']);
             $apiMethods = $apiMethods->getArrayCopy();
+            /** @var Method $method */
+            foreach ($apiMethods as $key => $method) {
+                if ($method->status !== 'activated') {
+                    unset($apiMethods[$key]);
+                }
+            }
         } catch (Exception $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);

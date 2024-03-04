@@ -2,11 +2,13 @@
 
 # Changelog #
 
+## Changes in release 6.1.0 ##
++ New payment methods: Twint, Blik.
+
 ## Changes in release 6.0.5 ##
 + Recurring order options are now in "Subscriptions" tab
 + Implemented atomic action protection for Mollie API callbacks
 + Overall improvements and bug fixes
-+ Added PrestaShop CloudSync support
 
 ## Changes in release 6.0.4 ##
 + New payment method: Billie.
