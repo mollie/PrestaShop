@@ -3030,8 +3030,8 @@ INSERT INTO `ps_configuration` (`id_configuration`, `id_shop_group`, `id_shop`, 
 (231,	NULL,	NULL,	'HOMESLIDER_PAUSE',	'7700',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (232,	NULL,	NULL,	'HOMESLIDER_LOOP',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (233,	NULL,	NULL,	'PS_BASE_DISTANCE_UNIT',	'm',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
-(234,	NULL,	NULL,	'PS_SHOP_DOMAIN',	'demoshop8.ngrok.io',	'0000-00-00 00:00:00',	'2024-02-05 10:58:30'),
-(235,	NULL,	NULL,	'PS_SHOP_DOMAIN_SSL',	'demoshop8.ngrok.io',	'0000-00-00 00:00:00',	'2024-02-05 10:58:30'),
+(234,	NULL,	NULL,	'PS_SHOP_DOMAIN',	'demoshop8debug.ngrok.io',	'0000-00-00 00:00:00',	'2024-02-05 10:58:30'),
+(235,	NULL,	NULL,	'PS_SHOP_DOMAIN_SSL',	'demoshop8debug.ngrok.io',	'0000-00-00 00:00:00',	'2024-02-05 10:58:30'),
 (236,	NULL,	NULL,	'PS_SHOP_NAME',	'PrestaShop',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (237,	NULL,	NULL,	'PS_SHOP_EMAIL',	'demo@prestashop.com',	'0000-00-00 00:00:00',	'2024-02-05 10:58:31'),
 (238,	NULL,	NULL,	'PS_MAIL_METHOD',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
@@ -3388,8 +3388,8 @@ CREATE TABLE `ps_connections_source` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_connections_source` (`id_connections_source`, `id_connections`, `http_referer`, `request_uri`, `keywords`, `date_add`) VALUES
-(1,	2,	'',	'demoshop8.ngrok.io/',	'',	'2024-02-05 11:01:25'),
-(2,	3,	'',	'demoshop8.ngrok.io/',	'',	'2024-02-05 11:01:31');
+(1,	2,	'',	'demoshop8debug.ngrok.io/',	'',	'2024-02-05 11:01:25'),
+(2,	3,	'',	'demoshop8debug.ngrok.io/',	'',	'2024-02-05 11:01:31');
 
 DROP TABLE IF EXISTS `ps_contact`;
 CREATE TABLE `ps_contact` (
@@ -12382,7 +12382,7 @@ CREATE TABLE `ps_shop_url` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_shop_url` (`id_shop_url`, `id_shop`, `domain`, `domain_ssl`, `physical_uri`, `virtual_uri`, `main`, `active`) VALUES
-(1,	1,	'demoshop8.ngrok.io',	'demoshop8.ngrok.io',	'/',	'',	1,	1);
+(1,	1,	'demoshop8debug.ngrok.io',	'demoshop8debug.ngrok.io',	'/',	'',	1,	1);
 
 DROP TABLE IF EXISTS `ps_smarty_cache`;
 CREATE TABLE `ps_smarty_cache` (

@@ -4103,8 +4103,8 @@ INSERT INTO `ps_configuration` (`id_configuration`, `id_shop_group`, `id_shop`, 
 (231,	NULL,	NULL,	'HOMESLIDER_PAUSE',	'7700',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (232,	NULL,	NULL,	'HOMESLIDER_LOOP',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (233,	NULL,	NULL,	'PS_BASE_DISTANCE_UNIT',	'm',	'0000-00-00 00:00:00',	'2022-03-23 08:34:58'),
-(234,	NULL,	NULL,	'PS_SHOP_DOMAIN',	'demoshop1785.ngrok.io',	'0000-00-00 00:00:00',	'2022-03-18 13:44:55'),
-(235,	NULL,	NULL,	'PS_SHOP_DOMAIN_SSL',	'demoshop1785.ngrok.io',	'0000-00-00 00:00:00',	'2022-03-18 13:44:55'),
+(234,	NULL,	NULL,	'PS_SHOP_DOMAIN',	'demoshop1785debug.ngrok.io',	'0000-00-00 00:00:00',	'2022-03-18 13:44:55'),
+(235,	NULL,	NULL,	'PS_SHOP_DOMAIN_SSL',	'demoshop1785debug.ngrok.io',	'0000-00-00 00:00:00',	'2022-03-18 13:44:55'),
 (236,	NULL,	NULL,	'PS_SHOP_NAME',	'PS1785',	'0000-00-00 00:00:00',	'2022-03-18 13:44:55'),
 (237,	NULL,	NULL,	'PS_SHOP_EMAIL',	'demo@demo.com',	'0000-00-00 00:00:00',	'2022-03-18 13:44:56'),
 (238,	NULL,	NULL,	'PS_MAIL_METHOD',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
@@ -4820,38 +4820,38 @@ CREATE TABLE `ps_connections_source` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_connections_source` (`id_connections_source`, `id_connections`, `http_referer`, `request_uri`, `keywords`, `date_add`) VALUES
-(1,	5,	'https://demoshop1785.ngrok.io/admin1/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'demoshop1785.ngrok.io/shop2/gb/',	'',	'2022-03-22 08:36:25'),
-(2,	8,	'https://demoshop1785.ngrok.io/admin1/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'demoshop1785.ngrok.io/SHOP2/en/',	'',	'2022-03-22 10:16:01'),
-(3,	43,	'https://demoshop1785.ngrok.io/admin1/index.php/improve/payment/preferences?_token=tZ574aBpKsfXGfPK_ADZztbV5fsBScNAsu1EB4V5Org',	'demoshop1785.ngrok.io/SHOP2/en/',	'',	'2022-03-22 12:45:44'),
-(4,	43,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/en/module/mollie/return?cart_id=32&utm_nooverride=1&rand=1647953895&key=c73350cb18a0408243e4723d1918224e&customerId=3&order_number=mol_326239c7e7921c51647953895',	'',	'2022-03-22 12:58:27'),
-(5,	63,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/de/',	'',	'2022-03-23 07:39:50'),
-(6,	65,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/de/',	'',	'2022-03-23 07:41:05'),
-(7,	67,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/de/',	'',	'2022-03-23 07:41:55'),
-(8,	69,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/de/',	'',	'2022-03-23 07:53:47'),
-(9,	74,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/en/',	'',	'2022-03-23 08:00:30'),
-(10,	84,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/de/',	'',	'2022-03-23 08:10:05'),
-(11,	87,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/en/',	'',	'2022-03-23 08:11:11'),
-(12,	89,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/en/',	'',	'2022-03-23 08:14:28'),
-(13,	43,	'https://demoshop1785.ngrok.io/shop2/gb/',	'demoshop1785.ngrok.io/SHOP2/en/',	'',	'2022-03-23 08:25:24'),
-(14,	105,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/en/',	'',	'2022-03-23 08:38:30'),
-(15,	117,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/de/',	'',	'2022-03-23 15:52:55'),
-(16,	119,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/de/',	'',	'2022-03-23 15:53:53'),
-(17,	121,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/de/',	'',	'2022-03-23 15:54:46'),
-(18,	123,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/de/',	'',	'2022-03-23 15:55:35'),
-(19,	125,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/en/',	'',	'2022-03-23 15:56:35'),
-(20,	131,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/de/',	'',	'2022-03-23 15:58:26'),
-(21,	133,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/en/',	'',	'2022-03-23 15:59:24'),
-(22,	135,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/en/',	'',	'2022-03-23 16:00:20'),
-(23,	97,	'https://demoshop1785.ngrok.io/shop2/gb/',	'demoshop1785.ngrok.io/SHOP2/gb/',	'',	'2022-03-23 16:11:23'),
-(24,	145,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/en/',	'',	'2022-03-23 16:15:12'),
-(25,	164,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/de/module/mollie/return?cart_id=100&utm_nooverride=1&rand=1680689211&key=f2ae1ef7d3756806840ed6182dca7133&customerId=3&order_number=mol_100642d483bd9e8c1680689211',	'',	'2023-04-05 11:07:01'),
-(26,	164,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/de/module/mollie/return?cart_id=101&utm_nooverride=1&rand=1680689270&key=73662c516c54101515251463bd18783e&customerId=3&order_number=mol_101642d4876253f91680689270',	'',	'2023-04-05 11:07:58'),
-(27,	164,	'https://demoshop1785.ngrok.io/',	'demoshop1785.ngrok.io/SHOP2/de/module/mollie/return?cart_id=102&utm_nooverride=1&rand=1680689316&key=8b78539acc38d6297467adad697b2e31&customerId=3&order_number=mol_102642d48a4ac4791680689316',	'',	'2023-04-05 11:08:44'),
-(28,	164,	'https://demoshop1785.ngrok.io/__/',	'demoshop1785.ngrok.io/SHOP2/de/bestellbestatigung?id_cart=102&id_module=80&id_order=30&key=c87361b275fdc73622d49fd9819156e4',	'',	'2023-04-05 11:08:46'),
-(29,	164,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/de/module/mollie/return?cart_id=103&utm_nooverride=1&rand=1680689362&key=19064c071554f3667f69547cd940945f&customerId=3&order_number=mol_103642d48d2707311680689362',	'',	'2023-04-05 11:09:27'),
-(30,	164,	'https://www.mollie.com/',	'demoshop1785.ngrok.io/SHOP2/de/module/mollie/return?cart_id=104&utm_nooverride=1&rand=1680689401&key=2626e82aa1ad127346b09a695618b678&customerId=3&order_number=mol_104642d48f9494bf1680689401',	'',	'2023-04-05 11:10:06'),
-(31,	183,	'https://www.mollie.com/checkout/test-mode?method=creditcard&token=6.yr792c',	'demoshop1785.ngrok.io/de/',	'',	'2023-10-30 09:00:09'),
-(32,	192,	'https://www.mollie.com/checkout/test-mode?method=mistercash&token=6.tnrxfs',	'demoshop1785.ngrok.io/de/module/mollie/return?cart_id=144&utm_nooverride=1&rand=1699266400&key=7d69694ecda9234137aae745cea59f72&customerId=4&order_number=mol_1446548bf608e1e01699266400',	'',	'2023-11-06 10:26:47');
+(1,	5,	'https://demoshop1785debug.ngrok.io/admin1/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'demoshop1785debug.ngrok.io/shop2/gb/',	'',	'2022-03-22 08:36:25'),
+(2,	8,	'https://demoshop1785debug.ngrok.io/admin1/index.php?controller=AdminDashboard&token=c7e722677d24cced4f4c4dcc1d2ae476',	'demoshop1785debug.ngrok.io/SHOP2/en/',	'',	'2022-03-22 10:16:01'),
+(3,	43,	'https://demoshop1785debug.ngrok.io/admin1/index.php/improve/payment/preferences?_token=tZ574aBpKsfXGfPK_ADZztbV5fsBScNAsu1EB4V5Org',	'demoshop1785debug.ngrok.io/SHOP2/en/',	'',	'2022-03-22 12:45:44'),
+(4,	43,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/en/module/mollie/return?cart_id=32&utm_nooverride=1&rand=1647953895&key=c73350cb18a0408243e4723d1918224e&customerId=3&order_number=mol_326239c7e7921c51647953895',	'',	'2022-03-22 12:58:27'),
+(5,	63,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/de/',	'',	'2022-03-23 07:39:50'),
+(6,	65,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/de/',	'',	'2022-03-23 07:41:05'),
+(7,	67,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/de/',	'',	'2022-03-23 07:41:55'),
+(8,	69,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/de/',	'',	'2022-03-23 07:53:47'),
+(9,	74,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/en/',	'',	'2022-03-23 08:00:30'),
+(10,	84,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/de/',	'',	'2022-03-23 08:10:05'),
+(11,	87,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/en/',	'',	'2022-03-23 08:11:11'),
+(12,	89,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/en/',	'',	'2022-03-23 08:14:28'),
+(13,	43,	'https://demoshop1785debug.ngrok.io/shop2/gb/',	'demoshop1785debug.ngrok.io/SHOP2/en/',	'',	'2022-03-23 08:25:24'),
+(14,	105,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/en/',	'',	'2022-03-23 08:38:30'),
+(15,	117,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/de/',	'',	'2022-03-23 15:52:55'),
+(16,	119,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/de/',	'',	'2022-03-23 15:53:53'),
+(17,	121,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/de/',	'',	'2022-03-23 15:54:46'),
+(18,	123,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/de/',	'',	'2022-03-23 15:55:35'),
+(19,	125,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/en/',	'',	'2022-03-23 15:56:35'),
+(20,	131,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/de/',	'',	'2022-03-23 15:58:26'),
+(21,	133,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/en/',	'',	'2022-03-23 15:59:24'),
+(22,	135,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/en/',	'',	'2022-03-23 16:00:20'),
+(23,	97,	'https://demoshop1785debug.ngrok.io/shop2/gb/',	'demoshop1785debug.ngrok.io/SHOP2/gb/',	'',	'2022-03-23 16:11:23'),
+(24,	145,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/en/',	'',	'2022-03-23 16:15:12'),
+(25,	164,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/de/module/mollie/return?cart_id=100&utm_nooverride=1&rand=1680689211&key=f2ae1ef7d3756806840ed6182dca7133&customerId=3&order_number=mol_100642d483bd9e8c1680689211',	'',	'2023-04-05 11:07:01'),
+(26,	164,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/de/module/mollie/return?cart_id=101&utm_nooverride=1&rand=1680689270&key=73662c516c54101515251463bd18783e&customerId=3&order_number=mol_101642d4876253f91680689270',	'',	'2023-04-05 11:07:58'),
+(27,	164,	'https://demoshop1785debug.ngrok.io/',	'demoshop1785debug.ngrok.io/SHOP2/de/module/mollie/return?cart_id=102&utm_nooverride=1&rand=1680689316&key=8b78539acc38d6297467adad697b2e31&customerId=3&order_number=mol_102642d48a4ac4791680689316',	'',	'2023-04-05 11:08:44'),
+(28,	164,	'https://demoshop1785debug.ngrok.io/__/',	'demoshop1785debug.ngrok.io/SHOP2/de/bestellbestatigung?id_cart=102&id_module=80&id_order=30&key=c87361b275fdc73622d49fd9819156e4',	'',	'2023-04-05 11:08:46'),
+(29,	164,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/de/module/mollie/return?cart_id=103&utm_nooverride=1&rand=1680689362&key=19064c071554f3667f69547cd940945f&customerId=3&order_number=mol_103642d48d2707311680689362',	'',	'2023-04-05 11:09:27'),
+(30,	164,	'https://www.mollie.com/',	'demoshop1785debug.ngrok.io/SHOP2/de/module/mollie/return?cart_id=104&utm_nooverride=1&rand=1680689401&key=2626e82aa1ad127346b09a695618b678&customerId=3&order_number=mol_104642d48f9494bf1680689401',	'',	'2023-04-05 11:10:06'),
+(31,	183,	'https://www.mollie.com/checkout/test-mode?method=creditcard&token=6.yr792c',	'demoshop1785debug.ngrok.io/de/',	'',	'2023-10-30 09:00:09'),
+(32,	192,	'https://www.mollie.com/checkout/test-mode?method=mistercash&token=6.tnrxfs',	'demoshop1785debug.ngrok.io/de/module/mollie/return?cart_id=144&utm_nooverride=1&rand=1699266400&key=7d69694ecda9234137aae745cea59f72&customerId=4&order_number=mol_1446548bf608e1e01699266400',	'',	'2023-11-06 10:26:47');
 
 DROP TABLE IF EXISTS `ps_contact`;
 CREATE TABLE `ps_contact` (
@@ -25570,8 +25570,8 @@ CREATE TABLE `ps_shop_url` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_shop_url` (`id_shop_url`, `id_shop`, `domain`, `domain_ssl`, `physical_uri`, `virtual_uri`, `main`, `active`) VALUES
-(1,	1,	'demoshop1785.ngrok.io',	'demoshop1785.ngrok.io',	'/',	'',	1,	1),
-(3,	3,	'demoshop1785.ngrok.io',	'demoshop1785.ngrok.io',	'/',	'SHOP2/',	1,	1);
+(1,	1,	'demoshop1785debug.ngrok.io',	'demoshop1785debug.ngrok.io',	'/',	'',	1,	1),
+(3,	3,	'demoshop1785debug.ngrok.io',	'demoshop1785debug.ngrok.io',	'/',	'SHOP2/',	1,	1);
 
 DROP TABLE IF EXISTS `ps_smarty_cache`;
 CREATE TABLE `ps_smarty_cache` (
