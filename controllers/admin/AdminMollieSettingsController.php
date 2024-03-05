@@ -31,7 +31,7 @@ class AdminMollieSettingsController extends ModuleAdminController
     {
         $mboInstaller = new Prestashop\ModuleLibMboInstaller\DependencyBuilder($this->module);
 
-        if(!$mboInstaller->areDependenciesMet()) {
+        if (!$mboInstaller->areDependenciesMet()) {
             $dependencies = $mboInstaller->handleDependencies();
             $this->context->smarty->assign('dependencies', $dependencies);
 
@@ -68,9 +68,10 @@ class AdminMollieSettingsController extends ModuleAdminController
             if (version_compare($eventbusModule->version, '1.9.0', '>=') && $eventbusModule) {
                 $eventbusPresenterService = $eventbusModule->getService('PrestaShop\Module\PsEventbus\Service\PresenterService');
 
-                $this->context->smarty->assign('urlCloudsync', 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js');                $this->addJs($this->module->getPathUri() . '/views/js/admin/cloudsync.js');
+                $this->context->smarty->assign('urlCloudsync', 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js');
+                $this->addJs($this->module->getPathUri() . '/views/js/admin/cloudsync.js');
                 Media::addJsDef([
-                    'contextPsEventbus' => $eventbusPresenterService->expose($this->module, ['info', 'modules', 'themes'])
+                    'contextPsEventbus' => $eventbusPresenterService->expose($this->module, ['info', 'modules', 'themes']),
                 ]);
             }
         }
