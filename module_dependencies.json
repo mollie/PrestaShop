@@ -1,0 +1,10 @@
+{
+    "dependencies": [
+      {
+        "name" : "ps_accounts"
+      },
+      {
+        "name" : "ps_eventbus"
+      }
+    ]
+}
