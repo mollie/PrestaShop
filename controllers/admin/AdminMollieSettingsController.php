@@ -64,9 +64,9 @@ class AdminMollieSettingsController extends ModuleAdminController
         }
 
         if ($moduleManager->isInstalled('ps_eventbus')) {
-            /** @var Module $eventbusModule */
+            /** @var Ps_eventbus|false $eventbusModule */
             $eventbusModule = \Module::getInstanceByName('ps_eventbus');
-            if (version_compare($eventbusModule->version, '1.9.0', '>=') && $eventbusModule) {
+            if ($eventbusModule && version_compare($eventbusModule->version, '1.9.0', '>=')) {
                 $eventbusPresenterService = $eventbusModule->getService('PrestaShop\Module\PsEventbus\Service\PresenterService');
 
                 $this->context->smarty->assign('urlCloudsync', 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js');
