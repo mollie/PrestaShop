@@ -66,7 +66,8 @@ class AdminMollieSettingsController extends ModuleAdminController
         if ($moduleManager->isInstalled('ps_eventbus')) {
             $eventbusModule = \Module::getInstanceByName('ps_eventbus');
             if ($eventbusModule && version_compare($eventbusModule->version, '1.9.0', '>=')) {
-                /** @phpstan-ignore-line PHPStan does not recognize the event bus odule, so it doesn't know it has getService function */
+                /** PHPStan does not recognize the event bus module, so it doesn't know it has getService function */
+                /** @phpstan-ignore-line */
                 $eventbusPresenterService = $eventbusModule->getService('PrestaShop\Module\PsEventbus\Service\PresenterService');
 
                 $this->context->smarty->assign('urlCloudsync', 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js');
