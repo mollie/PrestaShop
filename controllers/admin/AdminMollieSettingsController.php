@@ -12,10 +12,6 @@
 
 declare(strict_types=1);
 
-use Prestashop\ModuleLibMboInstaller\DependencyBuilder;
-use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
-use PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -33,7 +29,7 @@ class AdminMollieSettingsController extends ModuleAdminController
 
     private function initCloudSyncAndPsAccounts(): void
     {
-        $mboInstaller = new DependencyBuilder($this->module);
+        $mboInstaller = new Prestashop\ModuleLibMboInstaller\DependencyBuilder($this->module);
 
         if(!$mboInstaller->areDependenciesMet()) {
             $dependencies = $mboInstaller->handleDependencies();
@@ -43,12 +39,12 @@ class AdminMollieSettingsController extends ModuleAdminController
         }
 
         $this->context->smarty->assign('module_dir', $this->module->getPathUri());
-        $moduleManager = ModuleManagerBuilder::getInstance()->build();
+        $moduleManager = PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder::getInstance()->build();
 
         try {
             $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
             $accountsService = $accountsFacade->getPsAccountsService();
-        } catch (InstallerException $e) {
+        } catch (PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
             $accountsInstaller = $this->module->getService('Mollie.PsAccountsInstaller');
             $accountsInstaller->install();
             $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
@@ -68,8 +64,8 @@ class AdminMollieSettingsController extends ModuleAdminController
         }
 
         if ($moduleManager->isInstalled('ps_eventbus')) {
-            $eventbusModule =  \Module::getInstanceByName("ps_eventbus");
-            if (version_compare($eventbusModule->version, '1.9.0', '>=')) {
+            $eventbusModule = \Module::getInstanceByName('ps_eventbus');
+            if (version_compare($eventbusModule->version, '1.9.0', '>=') && $eventbusModule) {
                 $eventbusPresenterService = $eventbusModule->getService('PrestaShop\Module\PsEventbus\Service\PresenterService');
 
                 $this->context->smarty->assign('urlCloudsync', 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js');                $this->addJs($this->module->getPathUri() . '/views/js/admin/cloudsync.js');
