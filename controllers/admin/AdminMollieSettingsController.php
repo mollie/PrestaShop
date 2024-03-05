@@ -35,7 +35,7 @@ class AdminMollieSettingsController extends ModuleAdminController
     {
         $mboInstaller = new DependencyBuilder($this->module);
 
-        if( !$mboInstaller->areDependenciesMet() ) {
+        if(!$mboInstaller->areDependenciesMet()) {
             $dependencies = $mboInstaller->handleDependencies();
             $this->context->smarty->assign('dependencies', $dependencies);
 
@@ -63,26 +63,23 @@ class AdminMollieSettingsController extends ModuleAdminController
 
             // Retrieve Account CDN
             $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
-
         } catch (Exception $e) {
             $this->context->controller->errors[] = $e->getMessage();
         }
 
-        if ($moduleManager->isInstalled("ps_eventbus")) {
+        if ($moduleManager->isInstalled('ps_eventbus')) {
             $eventbusModule =  \Module::getInstanceByName("ps_eventbus");
             if (version_compare($eventbusModule->version, '1.9.0', '>=')) {
-
                 $eventbusPresenterService = $eventbusModule->getService('PrestaShop\Module\PsEventbus\Service\PresenterService');
 
-                $this->context->smarty->assign('urlCloudsync', "https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js");
-                $this->addJs($this->module->getPathUri() . '/views/js/admin/cloudsync.js');
+                $this->context->smarty->assign('urlCloudsync', 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js');                $this->addJs($this->module->getPathUri() . '/views/js/admin/cloudsync.js');
                 Media::addJsDef([
                     'contextPsEventbus' => $eventbusPresenterService->expose($this->module, ['info', 'modules', 'themes'])
                 ]);
             }
         }
 
-        $this->content .= $this->context->smarty->fetch($this->module->getLocalPath() .'views/templates/admin/cloudsync.tpl');
+        $this->content .= $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/cloudsync.tpl');
     }
 
     public function postProcess()
