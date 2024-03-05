@@ -8,6 +8,20 @@ services:
     arguments:
       - 'mollie'
 
+  #####################
+  # PS Account
+  Mollie.PsAccountsInstaller:
+    class: 'PrestaShop\PsAccountsInstaller\Installer\Installer'
+    public: true
+    arguments:
+      - "5.0"
+
+  Mollie.PsAccountsFacade:
+    class: 'PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts'
+    public: true
+    arguments:
+      - "@Mollie.PsAccountsInstaller"
+
   Mollie\Subscription\Grid\SubscriptionGridQueryBuilder:
     class: Mollie\Subscription\Grid\SubscriptionGridQueryBuilder
     parent: 'prestashop.core.grid.abstract_query_builder'

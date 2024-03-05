@@ -12,6 +12,10 @@
 
 declare(strict_types=1);
 
+use Prestashop\ModuleLibMboInstaller\DependencyBuilder;
+use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
+use PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -27,8 +31,63 @@ class AdminMollieSettingsController extends ModuleAdminController
         $this->bootstrap = true;
     }
 
+    private function initCloudSyncAndPsAccounts(): void
+    {
+        $mboInstaller = new DependencyBuilder($this->module);
+
+        if( !$mboInstaller->areDependenciesMet() ) {
+            $dependencies = $mboInstaller->handleDependencies();
+            $this->context->smarty->assign('dependencies', $dependencies);
+
+            $this->content .= $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/dependency_builder.tpl');
+        }
+
+        $this->context->smarty->assign('module_dir', $this->module->getPathUri());
+        $moduleManager = ModuleManagerBuilder::getInstance()->build();
+
+        try {
+            $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
+            $accountsService = $accountsFacade->getPsAccountsService();
+        } catch (InstallerException $e) {
+            $accountsInstaller = $this->module->getService('Mollie.PsAccountsInstaller');
+            $accountsInstaller->install();
+            $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
+            $accountsService = $accountsFacade->getPsAccountsService();
+        }
+
+        try {
+            Media::addJsDef([
+                'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()
+                    ->present($this->module->name),
+            ]);
+
+            // Retrieve Account CDN
+            $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
+
+        } catch (Exception $e) {
+            $this->context->controller->errors[] = $e->getMessage();
+        }
+
+        if ($moduleManager->isInstalled("ps_eventbus")) {
+            $eventbusModule =  \Module::getInstanceByName("ps_eventbus");
+            if (version_compare($eventbusModule->version, '1.9.0', '>=')) {
+
+                $eventbusPresenterService = $eventbusModule->getService('PrestaShop\Module\PsEventbus\Service\PresenterService');
+
+                $this->context->smarty->assign('urlCloudsync', "https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js");
+                $this->addJs($this->module->getPathUri() . '/views/js/admin/cloudsync.js');
+                Media::addJsDef([
+                    'contextPsEventbus' => $eventbusPresenterService->expose($this->module, ['info', 'modules', 'themes'])
+                ]);
+            }
+        }
+
+        $this->content .= $this->context->smarty->fetch($this->module->getLocalPath() .'views/templates/admin/cloudsync.tpl');
+    }
+
     public function postProcess()
     {
+        $this->initCloudSyncAndPsAccounts();
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
         $moduleRepository = $this->module->getService(\Mollie\Repository\ModuleRepository::class);
         $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->module->name);

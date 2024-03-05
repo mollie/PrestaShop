@@ -15,7 +15,9 @@
         "webmozart/assert": "^1.11",
         "symfony/http-client": "^4.4",
         "http-interop/http-factory-guzzle": "^1.1",
-        "php-http/message-factory": "^1.1"
+        "php-http/message-factory": "^1.1",
+        "prestashop/prestashop-accounts-installer": "^1.0.4",
+        "prestashop/module-lib-mbo-installer": "^2.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
@@ -41,11 +43,11 @@
     },
     "config": {
         "platform": {
-            "php": "7.2"
+            "php": "7.2.5"
         },
         "prepend-autoloader": false,
         "allow-plugins": {
-            "php-http/discovery": true
+            "php-http/discovery": false
         }
     },
     "type": "prestashop-module",
