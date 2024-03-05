@@ -3,7 +3,8 @@
 # Changelog #
 
 ## Changes in release 6.1.0 ##
-+ New payment methods: Twint, Blik.
++ New payment methods: Twint, Blik and Klarna
++ Added PrestaShop CloudSync support
 
 ## Changes in release 6.0.5 ##
 + Recurring order options are now in "Subscriptions" tab
