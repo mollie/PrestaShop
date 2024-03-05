@@ -266,6 +266,7 @@ class Config
         PaymentMethod::KLARNA_PAY_LATER,
         PaymentMethod::KLARNA_SLICE_IT,
         PaymentMethod::KLARNA_PAY_NOW,
+        PaymentMethod::KLARNA_ONE,
         PaymentMethod::BILLIE,
     ];
 
@@ -273,6 +274,7 @@ class Config
         PaymentMethod::KLARNA_PAY_LATER,
         PaymentMethod::KLARNA_SLICE_IT,
         PaymentMethod::KLARNA_PAY_NOW,
+        PaymentMethod::KLARNA_ONE,
         PaymentMethod::BILLIE,
         self::MOLLIE_VOUCHER_METHOD_ID,
         self::MOLLIE_in3_METHOD_ID,
@@ -314,6 +316,9 @@ class Config
         'klarnapaynow' => 'Klarna Pay now.',
         'in3' => 'in3',
         'billie' => 'Billie',
+        'twint' => 'TWINT',
+        'blik' => 'BLIK',
+        'klarna' => 'Pay with Klarna.',
     ];
 
     const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
