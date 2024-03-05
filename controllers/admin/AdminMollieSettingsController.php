@@ -64,6 +64,7 @@ class AdminMollieSettingsController extends ModuleAdminController
         }
 
         if ($moduleManager->isInstalled('ps_eventbus')) {
+            /** @var Module $eventbusModule */
             $eventbusModule = \Module::getInstanceByName('ps_eventbus');
             if (version_compare($eventbusModule->version, '1.9.0', '>=') && $eventbusModule) {
                 $eventbusPresenterService = $eventbusModule->getService('PrestaShop\Module\PsEventbus\Service\PresenterService');
