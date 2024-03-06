@@ -42,7 +42,7 @@ import 'cypress-iframe';
 // Cypress.Commands.add("login", (email, password) => { ... })
 Cypress.Commands.add("ConfOrdersAPI1784", () => {
 
-      const paymentMethods = ["giropay", "eps", "przelewy24", "kbc", "voucher", "belfius", "bancontact", "sofort", "creditcard", "ideal", "klarnapaylater", "klarnasliceit","klarnapaynow", "banktransfer", "paypal", "applepay", "in3", "billie", "klarna"];
+      const paymentMethods = ["applepay", "ideal", "creditcard", "in3", "klarnapaylater", "klarnapaynow", "klarnasliceit", "paypal", "banktransfer", "giftcard", "bancontact", "eps", "giropay", "przelewy24", "kbc", "belfius", "voucher", "directdebit", "billie", "klarna", "twint"];
 
       // Iterate through the paymentMethods array using forEach
       paymentMethods.forEach(method => {
@@ -59,7 +59,7 @@ Cypress.Commands.add("ConfOrdersAPI1784", () => {
   })
 Cypress.Commands.add("ConfPaymentsAPI1784", () => {
 
-      const paymentMethods = ["giropay", "eps", "przelewy24", "kbc", "belfius", "bancontact", "sofort", "creditcard", "ideal", "banktransfer", "paypal", "applepay", "klarna"];
+      const paymentMethods = ["giropay", "eps", "przelewy24", "kbc", "belfius", "bancontact", "creditcard", "ideal", "banktransfer", "paypal", "applepay"];
 
       // Iterate through the paymentMethods array using forEach
       paymentMethods.forEach(method => {
@@ -87,14 +87,7 @@ Cypress.Commands.add("OrderRefundingShippingOrdersAPI", () => {
     cy.visit('/admin1/index.php?controller=AdminOrders')
     cy.get(':nth-child(1) > .column-payment').click()
     cy.scrollTo('bottom')
-    //Refunding dropdown in React
-    cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).then(($body) => {
-      if ($body.length > 0) {
-        // If the element doesn't exist, skip the test
-        cy.log('Element not found possibly due to to the distractions from the Mollie API. Skipping the Test')
-        console.log('Element not found possibly due to to the distractions from the Mollie API. Skipping the Test')
-        return
-      } else {
+    // Refunding dropdown in React
         cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).click()
         cy.get('[role="button"]').eq(2).click()
         cy.get('[class="swal-button swal-button--confirm"]').click()
@@ -109,21 +102,13 @@ Cypress.Commands.add("OrderRefundingShippingOrdersAPI", () => {
         cy.get(':nth-child(2) > .swal-button').click()
         cy.get('#mollie_order > :nth-child(1) > .alert').contains('Shipment was made successfully!')
         cy.get('[class="alert alert-success"]').should('be.visible')
-      }
-    })
+        // Add more actions as needed
 })
 Cypress.Commands.add("OrderShippingRefundingOrdersAPI", () => {
     cy.visit('/admin1/index.php?controller=AdminOrders')
     cy.get(':nth-child(1) > .column-payment').click()
     cy.scrollTo('bottom')
-    //Shipping button in React
-    cy.get('.btn-group > [title=""]').then(($body) => {
-      if ($body.length > 0) {
-        // If the element doesn't exist, skip the test
-        cy.log('Element not found possibly due to to the distractions from the Mollie API. Skipping the Test')
-        console.log('Element not found possibly due to to the distractions from the Mollie API. Skipping the Test')
-        return
-      } else {
+    // Shipping button in React
         cy.get('.btn-group > [title=""]').eq(0).click()
         cy.get('[class="swal-button swal-button--confirm"]').click()
         cy.get('.swal-modal').should('exist')
@@ -138,21 +123,12 @@ Cypress.Commands.add("OrderShippingRefundingOrdersAPI", () => {
         cy.get('[role="button"]').eq(2).click()
         cy.get('[class="swal-button swal-button--confirm"]').click()
         cy.get('[class="alert alert-success"]').should('be.visible')
-      }
-    })
+        // Add more actions as needed
 })
 Cypress.Commands.add("OrderRefundingPartialPaymentsAPI", () => {
     cy.visit('/admin1/index.php?controller=AdminOrders')
     cy.get(':nth-child(1) > .column-payment').click()
     cy.scrollTo('bottom')
-    // here the Mollie block should exist in Orders BO. Sometimes, the Mollie API is not responding correctly
-    cy.get('#mollie_order > :nth-child(1)', { timeout: 10000 }).then(($body) => {
-      if ($body.length > 0) {
-        // If the element doesn't exist, skip the test
-        cy.log('Element not found possibly due to to the distractions from the Mollie API. Skipping the Test')
-        console.log('Element not found possibly due to to the distractions from the Mollie API. Skipping the Test')
-        return
-      } else {
         cy.get('#mollie_order > :nth-child(1)').click()
         cy.get('.form-inline > :nth-child(1) > .btn').should('exist')
         cy.get('.input-group-btn > .btn').should('exist')
@@ -173,8 +149,6 @@ Cypress.Commands.add("OrderRefundingPartialPaymentsAPI", () => {
         cy.get('.swal-modal').should('exist')
         cy.get(':nth-child(2) > .swal-button').click()
         cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
-    }
-  })
 })
 Cypress.Commands.add("EnablingModuleMultistore", () => {
   cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
@@ -264,7 +238,7 @@ Cypress.Commands.add("CachingBOFOPS8", {cacheAcrossSpecs: true}, () => {
     cy.get('#passwd').type('prestashop_demo',{delay: 0, log: false})
     cy.get('#submit_login').click().wait(1000).as('Connection successsful')
     cy.visit('/en/my-account')
-    cy.get('#login-form [name="email"]').eq(0).type('demo@demo.com')
+    cy.get('#login-form [name="email"]').eq(0).type('demo@prestashop.com')
     cy.get('#login-form [name="password"]').eq(0).type('prestashop_demo')
     cy.get('#login-form [type="submit"]').eq(0).click({force:true})
     cy.get('#history-link > .link-item').click()
@@ -276,4 +250,10 @@ Cypress.Commands.add("selectSubscriptionsCarriersCheck", {cacheAcrossSpecs: true
     cy.get('#form_carrier').select(1)
     cy.contains('Save').click()
     cy.contains('Options saved successfully.').should('be.visible') //checking if saving returns green alert
-    })
+  })
+Cypress.Commands.add("CloudSyncUI", {cacheAcrossSpecs: true}, () => {
+    cy.get('prestashop-accounts').should('be.visible')
+    cy.get('[id="prestashop-cloudsync"]').should('be.visible')
+    cy.get('prestashop-accounts').click(1650, 100)
+    // wip, looking for modal inner interaction
+  })

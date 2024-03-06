@@ -13,16 +13,13 @@ afterEach(() => {
 afterEach(function() {
   if (this.currentTest.state === "failed") failEarly = true
 });
-describe('PS8 Enabling Payments', () => {
+describe('PS8 Cloudsync tests', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
-      cy.CachingBOFOPS8()
+      cy.CachingBOFOPS1785()
   })
-it('C339377: 42 [SWITCH TO PAYMENTS API] Enabling All payments in Module BO [Payments API]', () => {
-    cy.visit('/admin1/')
+it('Checking if Cloudsync UI is appearing in the module', () => {
     cy.OpeningModuleDashboardURL()
-    cy.ConfPaymentsAPI1784()
-    cy.get('[type="submit"]').first().click({force:true})
-    cy.get('[class="alert alert-success"]').should('be.visible')
+    cy.CloudSyncUI()
 })
 })
