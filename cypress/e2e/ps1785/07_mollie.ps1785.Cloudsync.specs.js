@@ -18,7 +18,7 @@ describe('PS8 Cloudsync tests', () => {
       cy.viewport(1920,1080)
       cy.CachingBOFOPS1785()
   })
-it.skip('Checking if Cloudsync UI is appearing in the module', () => { // TODO - temporary skipping on this specific older PS version, possible bug not showing PS17 CloudSync UI
+it('Checking if Cloudsync UI is appearing in the module', () => { // TODO - temporary skipping on this specific older PS version, possible bug not showing PS17 CloudSync UI
     cy.OpeningModuleDashboardURL()
     cy.CloudSyncUI()
 })

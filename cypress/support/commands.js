@@ -254,6 +254,6 @@ Cypress.Commands.add("selectSubscriptionsCarriersCheck", {cacheAcrossSpecs: true
 Cypress.Commands.add("CloudSyncUI", {cacheAcrossSpecs: true}, () => {
     cy.get('prestashop-accounts').should('be.visible')
     cy.get('[id="prestashop-cloudsync"]').should('be.visible')
-    cy.get('[class="prestashop-accounts-wrapper"]').click(1650, 100)
+    cy.get('prestashop-accounts').click(1650, 100)
     // wip, looking for modal inner interaction
   })
