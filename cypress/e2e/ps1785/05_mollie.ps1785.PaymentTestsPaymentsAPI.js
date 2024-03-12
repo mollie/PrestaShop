@@ -271,8 +271,9 @@ it.skip('C1860463: Pay with Klarna UK Order BO Refunding, Partial Refunding [Pay
 })
 // TODO - some reported possible bugs in the workflow, but still continuing on completing the tests...
 it.only('Blik Checkouting [Payments API]', () => {
-  cy.visit('/pl/order-history')
-  cy.contains('Reorder').click()
+  cy.visit('/en/order-history')
+  // switching the currency
+  cy.pause()
   cy.contains('UK').click({force:true})
   //Billing country LT, DE etc.
   cy.get('.clearfix > .btn').click()
@@ -289,7 +290,9 @@ it.only('Blik Order Shipping, Refunding [Payments API]', () => {
   cy.OrderRefundingPartialPaymentsAPI()
 })
 it('TWINT Checkouting [Payments API]', () => {
-  cy.visit('/ch/order-history')
+  cy.visit('/en/order-history')
+  // switching the currency
+  cy.pause()
   cy.contains('Reorder').click()
   cy.contains('UK').click({force:true})
   //Billing country LT, DE etc.

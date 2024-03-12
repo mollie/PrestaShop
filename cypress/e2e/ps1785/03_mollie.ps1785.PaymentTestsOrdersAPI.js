@@ -338,7 +338,8 @@ it('C1860461: Pay with Klarna UK Order Shipping, Refunding [Orders API]', () => 
 })
 // TODO - some reported possible bugs in the workflow, but still continuing on completing the tests...
 it.only('Blik Checkouting [Orders API]', () => {
-  cy.visit('/nl/')
+  cy.visit('/en/order-history')
+    // switching the currency
   cy.pause()
   cy.contains('Reorder').click()
   cy.contains('UK').click({force:true})
@@ -357,7 +358,9 @@ it.only('Blik Order Shipping, Refunding [Orders API]', () => {
   cy.OrderShippingRefundingOrdersAPI()
 })
 it('TWINT Checkouting [Orders API]', () => {
-  cy.visit('/ch/order-history')
+  cy.visit('/en/order-history')
+  // switching the currency
+  cy.pause()
   cy.contains('Reorder').click()
   cy.contains('UK').click({force:true})
   //Billing country LT, DE etc.
