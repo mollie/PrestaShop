@@ -1,0 +1,57 @@
+version: "3.7"
+
+services:
+  mysql:
+    #platform: linux/amd64
+    container_name: mysql-mollie-1725
+    image: mysql:5.7
+    ports:
+      - "9002:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: prestashop
+      MYSQL_DATABASE: prestashop
+    restart: always
+    healthcheck:
+      test: "mysqladmin ping -h127.0.0.1 -uroot -pprestashop --silent"
+      interval: 10s
+    networks:
+      - prestashop_mollie_net_1725
+
+  prestashop-17:
+    #platform: linux/amd64
+    container_name: prestashop-mollie-1725
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile.1725
+    environment:
+      PS_INSTALL_AUTO: 1
+      PS_ENABLE_SSL: 1
+      DB_PASSWD: $DB_PASSWD
+      DB_NAME: prestashop
+      DB_SERVER: mysql
+      PS_DOMAIN: demoshop1725.ngrok.io
+      PS_FOLDER_INSTALL: install
+      PS_FOLDER_ADMIN: admin1
+    depends_on:
+      - mysql
+    ports:
+      - "8002:80"
+    volumes:
+      - ./:/var/www/html/modules/mollie
+    networks:
+      - prestashop_mollie_net_1725
+    healthcheck:
+      test: "wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1"
+      interval: 10s
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - '6969:8080'
+    networks:
+      - prestashop_mollie_net_1725
+
+networks:
+  prestashop_mollie_net_1725:
+    name: 'prestashop_mollie_net_1725'
