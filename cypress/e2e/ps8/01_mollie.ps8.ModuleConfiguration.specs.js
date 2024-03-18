@@ -22,6 +22,11 @@ it('C339305: Connecting test API successsfully', () => {
       cy.visit('/admin1/')
       cy.get('.mi-mollie').click({fore:true})
       cy.get('#subtab-AdminMollieModule').click()
+      cy.get('body')
+      .invoke('text').should('contain','Mollie')
+      .then((text) => {
+      cy.log(text) // Showing and asserting the text that loaded, to ensure the BO is loaded, not crashed with PHP fatals etc.
+      })
       cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click({force:true})
       cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
       cy.get('#module_form_submit_btn').click()
