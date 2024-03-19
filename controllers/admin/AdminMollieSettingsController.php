@@ -36,6 +36,7 @@ class AdminMollieSettingsController extends ModuleAdminController
             $this->context->smarty->assign('dependencies', $dependencies);
 
             $this->content .= $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/dependency_builder.tpl');
+
             return false;
         }
 
@@ -79,6 +80,7 @@ class AdminMollieSettingsController extends ModuleAdminController
         }
 
         $this->content .= $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/cloudsync.tpl');
+
         return true;
     }
 
