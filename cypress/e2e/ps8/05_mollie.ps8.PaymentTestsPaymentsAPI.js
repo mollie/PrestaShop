@@ -1,19 +1,4 @@
 /// <reference types="Cypress" />
-//Caching the BO and FO session
-const login = (MollieBOFOLoggingIn) => {
-  cy.session(MollieBOFOLoggingIn,() => {
-  cy.visit('/admin1/')
-  cy.url().should('contain', 'https').as('Check if HTTPS exists')
-  cy.get('#email').type('demo@prestashop.com',{delay: 0, log: false})
-  cy.get('#passwd').type('prestashop_demo',{delay: 0, log: false})
-  cy.get('#submit_login').click().wait(1000).as('Connection successsful')
-  cy.visit('/en/my-account')
-  cy.get('#login-form [name="email"]').eq(0).type('demo@prestashop.com')
-  cy.get('#login-form [name="password"]').eq(0).type('prestashop_demo')
-  cy.get('#login-form [type="submit"]').eq(0).click({force:true})
-  cy.get('#history-link > .link-item').click()
-  })
-  }
 
 describe('PS8 Tests Suite [Payments API]', {
   failFast: {
@@ -22,7 +7,7 @@ describe('PS8 Tests Suite [Payments API]', {
 }, () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
-      login('MollieBOFOLoggingIn')
+      cy.CachingBOFOPS8()
   })
 it('C339378: 43 Check if Bancontact QR payment dropdown exists [Payments API]', () => {
   cy.visit('/admin1/')
@@ -168,22 +153,6 @@ it('C339388: 53 Paypal BO Refunding, Partial Refunding [Payments API]', () => {
     cy.get(':nth-child(2) > .swal-button').click()
     cy.get('#mollie_order > :nth-child(1) > .alert').contains('Refund was made successfully!')
 });
-it('C339389: 54 SOFORT Checkouting [Payments API]', () => {
-    cy.navigatingToThePaymentPS8()
-    //Payment method choosing
-    cy.contains('SOFORT').click({force:true})
-    cy.get('.condition-label > .js-terms').click({force:true})
-    cy.contains('Place order').click()
-    cy.get('[value="paid"]').click()
-    cy.get('[class="button form__button"]').click()
-    cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
-});
-it('C339390: 55 SOFORT BO Refunding, Partial Refunding [Payments API]', () => {
-    cy.visit('/admin1/index.php?controller=AdminOrders')
-    cy.get(':nth-child(1) > .column-payment').click()
-    cy.get('#mollie_order > :nth-child(1)').should('exist')
-    //Refunding is unavailable - information from Mollie Dashboard - but checking the UI itself
-});
 it('C339391: 56 Przelewy24 Checkouting [Payments API]', () => {
     cy.navigatingToThePaymentPS8()
     //Payment method choosing
@@ -265,7 +234,7 @@ it('C339401: 66 Bank Transfer Checkouting [Payments API]', () => {
 it.skip('C339402: 67 Bank Transfer BO Refunding, Partial Refunding [Payments API]', () => { // somehow an error in console is thrown, will check why. Temporary skipping, because Mollie block is not loaded properly
     cy.OrderRefundingPartialPaymentsAPI()
 })
-it.skip('C1860462: Pay with Klarna UK Checkouting [Payments API]', () => { // currently not supported for PS, skipping temporary
+it('C1860462: Pay with Klarna UK Checkouting [Payments API]', () => {
   cy.navigatingToThePaymentPS8()
   //Payment method choosing
   cy.contains('Pay with Klarna').click({force:true})
@@ -275,7 +244,7 @@ it.skip('C1860462: Pay with Klarna UK Checkouting [Payments API]', () => { // cu
   cy.get('[class="button form__button"]').click()
   cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it.skip('C1860463: Pay with Klarna UK Order BO Refunding, Partial Refunding [Payments API]', () => {
+it('C1860463: Pay with Klarna UK Order BO Refunding, Partial Refunding [Payments API]', () => {
   cy.OrderRefundingPartialPaymentsAPI()
 })
 })

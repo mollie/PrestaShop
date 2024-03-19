@@ -27,8 +27,77 @@ class AdminMollieSettingsController extends ModuleAdminController
         $this->bootstrap = true;
     }
 
+    private function initCloudSyncAndPsAccounts(): bool
+    {
+        $mboInstaller = new Prestashop\ModuleLibMboInstaller\DependencyBuilder($this->module);
+
+        if (!$mboInstaller->areDependenciesMet()) {
+            $dependencies = $mboInstaller->handleDependencies();
+            $this->context->smarty->assign('dependencies', $dependencies);
+
+            $this->content .= $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/dependency_builder.tpl');
+
+            return false;
+        }
+
+        $this->context->smarty->assign('module_dir', $this->module->getPathUri());
+        $moduleManager = PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder::getInstance()->build();
+
+        try {
+            $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
+            $accountsService = $accountsFacade->getPsAccountsService();
+        } catch (PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
+            $accountsInstaller = $this->module->getService('Mollie.PsAccountsInstaller');
+            $accountsInstaller->install();
+            $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
+            $accountsService = $accountsFacade->getPsAccountsService();
+        }
+
+        try {
+            Media::addJsDef([
+                'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()
+                    ->present($this->module->name),
+            ]);
+
+            // Retrieve Account CDN
+            $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
+        } catch (Exception $e) {
+            $this->context->controller->errors[] = $e->getMessage();
+        }
+
+        if ($moduleManager->isInstalled('ps_eventbus')) {
+            $eventbusModule = \Module::getInstanceByName('ps_eventbus');
+            if ($eventbusModule && version_compare($eventbusModule->version, '1.9.0', '>=')) {
+                /** @phpstan-ignore-next-line PHPStan does not recognize the event bus module, so it doesn't know it has getService function */
+                $eventbusPresenterService = $eventbusModule->getService('PrestaShop\Module\PsEventbus\Service\PresenterService');
+
+                $this->context->smarty->assign('urlCloudsync', 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js');
+                $this->addJs($this->module->getPathUri() . '/views/js/admin/cloudsync.js');
+                Media::addJsDef([
+                    'contextPsEventbus' => $eventbusPresenterService->expose($this->module, ['info', 'modules', 'themes']),
+                ]);
+            }
+        }
+
+        $this->content .= $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/cloudsync.tpl');
+
+        return true;
+    }
+
     public function postProcess()
     {
+        /** @var \Mollie\Service\Content\TemplateParserInterface $templateParser */
+        $templateParser = $this->module->getService(\Mollie\Service\Content\TemplateParserInterface::class);
+
+        $this->content = $templateParser->parseTemplate(
+            $this->context->smarty,
+            $this->module->getService(\Mollie\Builder\Content\LogoInfoBlock::class),
+            $this->module->getLocalPath() . 'views/templates/admin/logo.tpl'
+        );
+        $cloudSyncComplete = $this->initCloudSyncAndPsAccounts();
+        if (!$cloudSyncComplete) {
+            return;
+        }
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
         $moduleRepository = $this->module->getService(\Mollie\Repository\ModuleRepository::class);
         $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->module->name);
@@ -46,9 +115,6 @@ class AdminMollieSettingsController extends ModuleAdminController
 
             return;
         }
-
-        /** @var \Mollie\Service\Content\TemplateParserInterface $templateParser */
-        $templateParser = $this->module->getService(\Mollie\Service\Content\TemplateParserInterface::class);
 
         $isSubmitted = (bool) Tools::isSubmit("submit{$this->module->name}");
 
@@ -95,17 +161,11 @@ class AdminMollieSettingsController extends ModuleAdminController
         $this->context->controller->addCSS($this->module->getPathUri() . 'views/css/mollie.css');
         $this->context->controller->addCSS($this->module->getPathUri() . 'views/css/admin/logo_input.css');
 
-        $html = $templateParser->parseTemplate(
-            $this->context->smarty,
-            $this->module->getService(\Mollie\Builder\Content\LogoInfoBlock::class),
-            $this->module->getLocalPath() . 'views/templates/admin/logo.tpl'
-        );
-
         /** @var \Mollie\Builder\Content\UpdateMessageInfoBlock $updateMessageInfoBlock */
         $updateMessageInfoBlock = $this->module->getService(\Mollie\Builder\Content\UpdateMessageInfoBlock::class);
         $updateMessageInfoBlockData = $updateMessageInfoBlock->setAddons(false);
 
-        $html .= $templateParser->parseTemplate(
+        $html = $templateParser->parseTemplate(
             $this->context->smarty,
             $updateMessageInfoBlockData,
             $this->module->getLocalPath() . 'views/templates/admin/updateMessage.tpl'

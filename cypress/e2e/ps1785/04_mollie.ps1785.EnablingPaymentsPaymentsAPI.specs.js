@@ -1,14 +1,5 @@
 /// <reference types="Cypress" />
-//Caching the BO and FO session
-const login = (MollieBOFOLoggingIn) => {
-  cy.session(MollieBOFOLoggingIn,() => {
-  cy.visit('/admin1/')
-  cy.url().should('contain', 'https').as('Check if HTTPS exists')
-  cy.get('#email').type('demo@demo.com',{delay: 0, log: false})
-  cy.get('#passwd').type('demodemo',{delay: 0, log: false})
-  cy.get('#submit_login').click().wait(1000).as('Connection successsful')
-  })
-  }
+
 //Checking the console for errors
 let windowConsoleError;
 Cypress.on('window:before:load', (win) => {
@@ -25,7 +16,7 @@ afterEach(function() {
 describe('PS1785 Enabling Payments', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
-      login('MollieBOFOLoggingIn')
+      cy.CachingBOFOPS1785()
   })
 it('C339377: 42 [SWITCH TO PAYMENTS API] Enabling All payments in Module BO [Payments API]', () => {
   cy.visit('/admin1/')

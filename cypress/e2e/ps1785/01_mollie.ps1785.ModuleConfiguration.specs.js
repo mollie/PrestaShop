@@ -1,19 +1,5 @@
 /// <reference types="Cypress" />
-//Caching the BO and FO session
-const login = (MollieBOFOLoggingIn) => {
-  cy.session(MollieBOFOLoggingIn,() => {
-  cy.visit('/admin1/')
-  cy.url().should('contain', 'https').as('Check if HTTPS exists')
-  cy.get('#email').type('demo@demo.com',{delay: 0, log: false})
-  cy.get('#passwd').type('demodemo',{delay: 0, log: false})
-  cy.get('#submit_login').click().wait(1000).as('Connection successsful')
-  cy.visit('/en/my-account')
-  cy.get('#login-form [name="email"]').eq(0).type('demo@demo.com')
-  cy.get('#login-form [name="password"]').eq(0).type('demodemo')
-  cy.get('#login-form [type="submit"]').eq(0).click({force:true})
-  cy.get('#history-link > .link-item').click()
-  })
-  }
+
 //Checking the console for errors
 let windowConsoleError;
 Cypress.on('window:before:load', (win) => {
@@ -30,7 +16,7 @@ afterEach(function() {
 describe('PS1785 Module initial configuration setup', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
-      login('MollieBOFOLoggingIn')
+      cy.CachingBOFOPS1785()
   })
 it('C339305: 01 Connecting test API successsfully', () => {
       cy.visit('/admin1/')
