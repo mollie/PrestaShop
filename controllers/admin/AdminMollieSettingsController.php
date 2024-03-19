@@ -27,7 +27,7 @@ class AdminMollieSettingsController extends ModuleAdminController
         $this->bootstrap = true;
     }
 
-    private function initCloudSyncAndPsAccounts(): void
+    private function initCloudSyncAndPsAccounts(): bool
     {
         $mboInstaller = new Prestashop\ModuleLibMboInstaller\DependencyBuilder($this->module);
 
@@ -36,6 +36,7 @@ class AdminMollieSettingsController extends ModuleAdminController
             $this->context->smarty->assign('dependencies', $dependencies);
 
             $this->content .= $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/dependency_builder.tpl');
+            return false;
         }
 
         $this->context->smarty->assign('module_dir', $this->module->getPathUri());
@@ -78,11 +79,23 @@ class AdminMollieSettingsController extends ModuleAdminController
         }
 
         $this->content .= $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/cloudsync.tpl');
+        return true;
     }
 
     public function postProcess()
     {
-        $this->initCloudSyncAndPsAccounts();
+        /** @var \Mollie\Service\Content\TemplateParserInterface $templateParser */
+        $templateParser = $this->module->getService(\Mollie\Service\Content\TemplateParserInterface::class);
+
+        $this->content = $templateParser->parseTemplate(
+            $this->context->smarty,
+            $this->module->getService(\Mollie\Builder\Content\LogoInfoBlock::class),
+            $this->module->getLocalPath() . 'views/templates/admin/logo.tpl'
+        );
+        $cloudSyncComplete = $this->initCloudSyncAndPsAccounts();
+        if (!$cloudSyncComplete) {
+            return;
+        }
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
         $moduleRepository = $this->module->getService(\Mollie\Repository\ModuleRepository::class);
         $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->module->name);
@@ -100,9 +113,6 @@ class AdminMollieSettingsController extends ModuleAdminController
 
             return;
         }
-
-        /** @var \Mollie\Service\Content\TemplateParserInterface $templateParser */
-        $templateParser = $this->module->getService(\Mollie\Service\Content\TemplateParserInterface::class);
 
         $isSubmitted = (bool) Tools::isSubmit("submit{$this->module->name}");
 
@@ -149,17 +159,11 @@ class AdminMollieSettingsController extends ModuleAdminController
         $this->context->controller->addCSS($this->module->getPathUri() . 'views/css/mollie.css');
         $this->context->controller->addCSS($this->module->getPathUri() . 'views/css/admin/logo_input.css');
 
-        $html = $templateParser->parseTemplate(
-            $this->context->smarty,
-            $this->module->getService(\Mollie\Builder\Content\LogoInfoBlock::class),
-            $this->module->getLocalPath() . 'views/templates/admin/logo.tpl'
-        );
-
         /** @var \Mollie\Builder\Content\UpdateMessageInfoBlock $updateMessageInfoBlock */
         $updateMessageInfoBlock = $this->module->getService(\Mollie\Builder\Content\UpdateMessageInfoBlock::class);
         $updateMessageInfoBlockData = $updateMessageInfoBlock->setAddons(false);
 
-        $html .= $templateParser->parseTemplate(
+        $html = $templateParser->parseTemplate(
             $this->context->smarty,
             $updateMessageInfoBlockData,
             $this->module->getLocalPath() . 'views/templates/admin/updateMessage.tpl'
