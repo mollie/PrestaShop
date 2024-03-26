@@ -11,7 +11,7 @@
 {extends file='customer/page.tpl'}
 
 {block name='page_title'}
-    {l s='Subscriptons' mod='mollie'}
+    {l s='Subscriptions' mod='mollie'}
 {/block}
 
 
