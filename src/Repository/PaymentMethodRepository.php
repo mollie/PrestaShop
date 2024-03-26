@@ -204,7 +204,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
                 'transaction_id' => pSQL($transactionId),
                 'bank_status' => PaymentStatus::STATUS_OPEN,
                 'order_id' => (int) $orderId,
-                'order_reference' => psql($orderReference),
+                'order_reference' => pSQL($orderReference),
                 'created_at' => ['type' => 'sql', 'value' => 'NOW()'],
             ]
         );
