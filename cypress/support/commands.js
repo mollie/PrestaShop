@@ -261,5 +261,5 @@ Cypress.Commands.add("CloudSyncLink", {cacheAcrossSpecs: true}, () => {
     cy.visit('/admin1/')
     cy.get('.mi-mollie').click({fore:true})
     cy.get('#subtab-AdminMollieModule').click()
-    cy.get('prestashop-accounts')
+    cy.get('prestashop-accounts').shadow().find('[id="associate-shop-button"]').click()
   })
