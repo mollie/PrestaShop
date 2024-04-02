@@ -18,8 +18,12 @@ describe('PS8 Cloudsync tests', () => {
       cy.viewport(1920,1080)
       cy.CachingBOFOPS8()
   })
-it('Checking if Cloudsync UI is appearing in the module', () => {
+it('Checking if the CloudSync UI is appearing in the module', () => {
     cy.OpeningModuleDashboardURL()
     cy.CloudSyncUI()
 })
+it('Checking if the PS Accounts / Popup UI is appearing in the module', () => {
+    cy.OpeningModuleDashboardURL()
+    cy.PsAccountsUI()
+});
 })

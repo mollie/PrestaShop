@@ -252,15 +252,9 @@ Cypress.Commands.add("selectSubscriptionsCarriersCheck", {cacheAcrossSpecs: true
     cy.contains('Options saved successfully.').should('be.visible') //checking if saving returns green alert
   })
 Cypress.Commands.add("CloudSyncUI", {cacheAcrossSpecs: true}, () => {
-    cy.get('prestashop-accounts').should('be.visible')
-    cy.get('[id="prestashop-cloudsync"]').should('be.visible')
-    cy.get('prestashop-accounts').click(1650, 100)
-    // wip, looking for modal inner interaction
+    cy.iframe('[id^="uid_"]').find('button').should('be.visible')
   })
-Cypress.Commands.add("CloudSyncLink", {cacheAcrossSpecs: true}, () => {
-    cy.visit('/admin1/')
-    cy.get('.mi-mollie').click({fore:true})
-    cy.get('#subtab-AdminMollieModule').click()
+Cypress.Commands.add("PsAccountsUI", {cacheAcrossSpecs: true}, () => {
     cy.get('prestashop-accounts').shadow().find('[id="associate-shop-button"]').click()
     // Wait for the popup window to open
     cy.window().then(win => {
