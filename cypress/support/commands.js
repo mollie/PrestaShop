@@ -262,4 +262,11 @@ Cypress.Commands.add("CloudSyncLink", {cacheAcrossSpecs: true}, () => {
     cy.get('.mi-mollie').click({fore:true})
     cy.get('#subtab-AdminMollieModule').click()
     cy.get('prestashop-accounts').shadow().find('[id="associate-shop-button"]').click()
+    // Wait for the popup window to open
+    cy.window().then(win => {
+      // Access the popup window's document
+      const popupDocument = win.document;
+      // Perform actions within the popup window
+      cy.wrap(popupDocument).find('body')
+    });
   })
