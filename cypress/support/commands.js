@@ -257,3 +257,9 @@ Cypress.Commands.add("CloudSyncUI", {cacheAcrossSpecs: true}, () => {
     cy.get('prestashop-accounts').click(1650, 100)
     // wip, looking for modal inner interaction
   })
+Cypress.Commands.add("CloudSyncLink", {cacheAcrossSpecs: true}, () => {
+    cy.visit('/admin1/')
+    cy.get('.mi-mollie').click({fore:true})
+    cy.get('#subtab-AdminMollieModule').click()
+    cy.get('prestashop-accounts')
+  })

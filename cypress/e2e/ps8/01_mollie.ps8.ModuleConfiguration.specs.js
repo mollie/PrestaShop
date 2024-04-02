@@ -95,6 +95,8 @@ it('C688473: Checking the Subscriptions FAQ, and console errors', () => {
       cy.get(':nth-child(5) > .col-lg-12 > .card').should('be.visible')
       cy.get(':nth-child(6) > .col-lg-12 > .card').should('be.visible')
       cy.matchImage(); // let's make a snapshot for visual regression testing later, if UI matches
-
+});
+it.only('Linking the Shop to the PS CloudSync', () => {
+      cy.CloudSyncLink()
 });
 })
