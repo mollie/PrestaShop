@@ -252,9 +252,11 @@ Cypress.Commands.add("selectSubscriptionsCarriersCheck", {cacheAcrossSpecs: true
     cy.contains('Options saved successfully.').should('be.visible') //checking if saving returns green alert
   })
 Cypress.Commands.add("CloudSyncUI", {cacheAcrossSpecs: true}, () => {
+    cy.wait(3000)
     cy.iframe('[id^="uid_"]').find('button').should('be.visible')
   })
 Cypress.Commands.add("PsAccountsUI", {cacheAcrossSpecs: true}, () => {
+    cy.wait(3000)
     cy.get('prestashop-accounts').shadow().find('[id="associate-shop-button"]').click()
     // Wait for the popup window to open
     cy.window().then(win => {
