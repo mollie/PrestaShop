@@ -300,7 +300,7 @@ class Mollie extends PaymentModule
 
         Media::addJsDef([
             'profileId' => $profileIdProvider->getProfileId($apiClient),
-            'isoCode' => $this->context->language->locale,
+            'isoCode' => str_replace('-', '_', $this->context->language->locale),
             'isTestMode' => \Mollie\Config\Config::isTestMode(),
         ]);
         $this->context->controller->registerJavascript(
