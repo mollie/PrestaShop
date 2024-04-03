@@ -19,4 +19,4 @@ $_MODULE['<{mollie}prestashop>mollie_iframe_95b16127e70e8a90220404fb48343182'] =
 $_MODULE['<{mollie}prestashop>mollie_iframe_b2fddfad59392b3dba82cb9809712197'] = 'CVC/CVV';
 $_MODULE['<{mollie}prestashop>mollie_iframe_fc7775bdfa339217149389b7392af83b'] = 'Guardar tarjeta';
 $_MODULE['<{mollie}prestashop>mollie_iframe_ee2b8214cd8479d18e873181505b48ea'] = 'Usar tarjeta guardada';
-$_MODULE['<{mollie}prestashop>mollie_iframe_49753ba0559e716a708373951ea87d1c'] = 'Pagos seguros proporcionados por';
+$_MODULE['<{mollie}prestashop>mollie_iframe_49753ba0559e716a708373951ea87d1c'] = 'Pagos seguros facilitados por';
