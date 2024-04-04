@@ -3,11 +3,12 @@
 # Changelog #
 
 ## Changes in release 6.1.1 ##
-+ Updated translations for 4 Dutch, German, English and French languages
++ Updated translations for Dutch, German, English and French languages
 + Added credit card translations for Italian and Spanish languages
 + Fixed issue where fatal exception was thrown in case of ps accounts version being too low
 + Fixed issue where in case of familyName error from mollie 502 was returned instead of 400
 + Fixed issue with credit card iframe not translating errors
+
 
 ## Changes in release 6.1.0 ##
 + New payment methods: Twint, Blik and Klarna
