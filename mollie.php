@@ -85,7 +85,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.1.0';
+        $this->version = '6.1.1';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -300,7 +300,7 @@ class Mollie extends PaymentModule
 
         Media::addJsDef([
             'profileId' => $profileIdProvider->getProfileId($apiClient),
-            'isoCode' => $this->context->language->locale,
+            'isoCode' => str_replace('-', '_', $this->context->language->locale),
             'isTestMode' => \Mollie\Config\Config::isTestMode(),
         ]);
         $this->context->controller->registerJavascript(

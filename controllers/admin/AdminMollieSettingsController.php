@@ -47,12 +47,17 @@ class AdminMollieSettingsController extends ModuleAdminController
             $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
             $accountsService = $accountsFacade->getPsAccountsService();
         } catch (PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
-            $accountsInstaller = $this->module->getService('Mollie.PsAccountsInstaller');
-            $accountsInstaller->install();
-            $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
-            $accountsService = $accountsFacade->getPsAccountsService();
-        }
+            try {
+                $accountsInstaller = $this->module->getService('Mollie.PsAccountsInstaller');
+                $accountsInstaller->install();
+                $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
+                $accountsService = $accountsFacade->getPsAccountsService();
+            } catch (Exception $e) {
+                $this->context->controller->errors[] = $e->getMessage();
 
+                return false;
+            }
+        }
         try {
             Media::addJsDef([
                 'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()

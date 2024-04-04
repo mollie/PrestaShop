@@ -89,7 +89,7 @@ class UploadTranslationsFromCsvFileConsoleCommand extends Command
 
             return 0;
         }
-        $output->writeln('<info>Product synchronization finished</info>');
+        $output->writeln('<info>Translation synchronization finished</info>');
 
         return 0;
     }
