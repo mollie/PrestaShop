@@ -8,7 +8,7 @@
 + Fixed issue where fatal exception was thrown in case of ps accounts version being too low
 + Fixed issue where in case of familyName error from mollie 502 was returned instead of 400
 + Fixed issue with credit card iframe not translating errors
-
++ (E2E test run)
 
 ## Changes in release 6.1.0 ##
 + New payment methods: Twint, Blik and Klarna
