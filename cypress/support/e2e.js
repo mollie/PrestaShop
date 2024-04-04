@@ -58,3 +58,5 @@ import "@frsource/cypress-plugin-visual-regression-diff";
 
 // javascript
 require("@frsource/cypress-plugin-visual-regression-diff");
+
+import 'cypress-shadow-dom';

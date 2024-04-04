@@ -22,6 +22,12 @@ it('C339305: Connecting test API successsfully', () => {
       cy.visit('/admin1/')
       cy.get('.mi-mollie').click({fore:true})
       cy.get('#subtab-AdminMollieModule').click()
+      cy.get('body')
+      .invoke('text').should('contain','Mollie')
+      .then((text) => {
+      cy.log(text) // Showing and asserting the text that loaded, to ensure the BO is loaded, not crashed with PHP fatals etc.
+      })
+      cy.iframe('[id^="uid_"]').find('button').click() // Cloudsync validation
       cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click({force:true})
       cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
       cy.get('#module_form_submit_btn').click()
@@ -89,6 +95,5 @@ it('C688473: Checking the Subscriptions FAQ, and console errors', () => {
       cy.get(':nth-child(5) > .col-lg-12 > .card').should('be.visible')
       cy.get(':nth-child(6) > .col-lg-12 > .card').should('be.visible')
       cy.matchImage(); // let's make a snapshot for visual regression testing later, if UI matches
-
 });
 })

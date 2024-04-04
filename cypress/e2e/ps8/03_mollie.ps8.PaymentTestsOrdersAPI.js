@@ -132,14 +132,14 @@ it('C339357: 20 IN3 Checkouting [Orders API]', () => { // wip
       cy.navigatingToThePaymentPS8()
       //Payment method choosing
       // waiting for enabling IN3 payment
-      cy.contains('in3').click({force:true})
+      cy.contains('in 3').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
       cy.contains('Place order').click()
       cy.get('[value="paid"]').click()
       cy.get('[class="button form__button"]').click()
       cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 })
-it('C339358: 21 IN3 Order BO Shipping, Refunding [Orders API]', () => { // checking why payment div is not loaded in the Orders for some reason
+it('C339358: 21 IN3 Order BO Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
 it('C339359: 22 IN3 should not be shown under 5000 EUR [Orders API]', () => {
@@ -153,7 +153,7 @@ it('C339359: 22 IN3 should not be shown under 5000 EUR [Orders API]', () => {
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
-      cy.contains('in3').should('not.exist')
+      cy.contains('in 3').should('not.exist')
 })
 it('C339360: 23 IN3 Checking that IN3 logo exists OK [Orders API]', () => {
       cy.visit('/admin1/')

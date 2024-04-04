@@ -42,7 +42,7 @@ import 'cypress-iframe';
 // Cypress.Commands.add("login", (email, password) => { ... })
 Cypress.Commands.add("ConfOrdersAPI1784", () => {
 
-      const paymentMethods = ["applepay", "ideal", "creditcard", "in3", "klarnapaylater", "klarnapaynow", "klarnasliceit", "paypal", "banktransfer", "giftcard", "bancontact", "eps", "giropay", "przelewy24", "kbc", "belfius", "voucher", "directdebit", "billie", "klarna", "twint"];
+      const paymentMethods = ["applepay", "ideal", "creditcard", "in3", "klarnapaylater", "klarnapaynow", "klarnasliceit", "paypal", "banktransfer", "giftcard", "bancontact", "eps", "giropay", "przelewy24", "kbc", "belfius", "voucher", "directdebit", "billie", "klarna", "twint", "blik"];
 
       // Iterate through the paymentMethods array using forEach
       paymentMethods.forEach(method => {
@@ -59,7 +59,7 @@ Cypress.Commands.add("ConfOrdersAPI1784", () => {
   })
 Cypress.Commands.add("ConfPaymentsAPI1784", () => {
 
-      const paymentMethods = ["giropay", "eps", "przelewy24", "kbc", "belfius", "bancontact", "creditcard", "ideal", "banktransfer", "paypal", "applepay"];
+      const paymentMethods = ["giropay", "eps", "przelewy24", "kbc", "belfius", "bancontact", "creditcard", "ideal", "banktransfer", "paypal", "applepay", "twint", "blik"];
 
       // Iterate through the paymentMethods array using forEach
       paymentMethods.forEach(method => {
@@ -252,8 +252,17 @@ Cypress.Commands.add("selectSubscriptionsCarriersCheck", {cacheAcrossSpecs: true
     cy.contains('Options saved successfully.').should('be.visible') //checking if saving returns green alert
   })
 Cypress.Commands.add("CloudSyncUI", {cacheAcrossSpecs: true}, () => {
-    cy.get('prestashop-accounts').should('be.visible')
-    cy.get('[id="prestashop-cloudsync"]').should('be.visible')
-    cy.get('prestashop-accounts').click(1650, 100)
-    // wip, looking for modal inner interaction
+    cy.wait(3000)
+    cy.iframe('[id^="uid_"]').find('button').should('be.visible')
+  })
+Cypress.Commands.add("PsAccountsUI", {cacheAcrossSpecs: true}, () => {
+    cy.wait(3000)
+    cy.get('prestashop-accounts').shadow().find('[id="associate-shop-button"]').click()
+    // Wait for the popup window to open
+    cy.window().then(win => {
+      // Access the popup window's document
+      const popupDocument = win.document;
+      // Perform actions within the popup window
+      cy.wrap(popupDocument).find('body')
+    });
   })
