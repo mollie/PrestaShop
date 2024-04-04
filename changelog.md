@@ -1,6 +1,6 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
-# Changelog 
+# Changelog #
 
 ## Changes in release 6.1.1 ##
 + Updated translations for 4 Dutch, German, English and French languages
