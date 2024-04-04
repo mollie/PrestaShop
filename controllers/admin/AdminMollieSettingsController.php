@@ -54,6 +54,7 @@ class AdminMollieSettingsController extends ModuleAdminController
                 $accountsService = $accountsFacade->getPsAccountsService();
             } catch (Exception $e) {
                 $this->context->controller->errors[] = $e->getMessage();
+
                 return false;
             }
         }
