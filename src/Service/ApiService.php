@@ -119,7 +119,7 @@ class ApiService implements ApiServiceInterface
         try {
             /** Requires local param or fails */
             /** @var BaseCollection|MethodCollection $apiMethods */
-            $apiMethods = $api->methods->allAvailable(['locale' => '']);
+            $apiMethods = $api->methods->allAvailable(['locale' => '', 'include' => 'issuers']);
             $apiMethods = $apiMethods->getArrayCopy();
             /** @var Method $method */
             foreach ($apiMethods as $key => $method) {
