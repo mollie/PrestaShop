@@ -69,7 +69,7 @@ Cypress.Commands.add("ConfPaymentsAPI1784", () => {
 })
 Cypress.Commands.add("navigatingToThePaymentPS8", () => {
     cy.visit('/de/index.php?controller=history')
-    cy.get('Reorder').click()
+    cy.contains('Reorder').click()
     cy.contains('NL').click()
     //Billing country LT, DE etc.
     cy.get('.clearfix > .btn').click()
