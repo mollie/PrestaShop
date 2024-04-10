@@ -27,7 +27,7 @@ class AdminMollieSettingsController extends ModuleAdminController
         $this->bootstrap = true;
     }
 
-    private function initCloudSyncAndPsAccounts(): bool
+    private function initCloudSyncAndPsAccounts(): void
     {
         $mboInstaller = new Prestashop\ModuleLibMboInstaller\DependencyBuilder($this->module);
 
@@ -37,7 +37,7 @@ class AdminMollieSettingsController extends ModuleAdminController
 
             $this->content .= $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/dependency_builder.tpl');
 
-            return false;
+            return;
         }
 
         $this->context->smarty->assign('module_dir', $this->module->getPathUri());
@@ -55,7 +55,7 @@ class AdminMollieSettingsController extends ModuleAdminController
             } catch (Exception $e) {
                 $this->context->controller->errors[] = $e->getMessage();
 
-                return false;
+                return;
             }
         }
         try {
@@ -86,7 +86,7 @@ class AdminMollieSettingsController extends ModuleAdminController
 
         $this->content .= $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/cloudsync.tpl');
 
-        return true;
+        return;
     }
 
     public function postProcess()
@@ -99,10 +99,9 @@ class AdminMollieSettingsController extends ModuleAdminController
             $this->module->getService(\Mollie\Builder\Content\LogoInfoBlock::class),
             $this->module->getLocalPath() . 'views/templates/admin/logo.tpl'
         );
-        $cloudSyncComplete = $this->initCloudSyncAndPsAccounts();
-        if (!$cloudSyncComplete) {
-            return;
-        }
+
+        $this->initCloudSyncAndPsAccounts();
+
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
         $moduleRepository = $this->module->getService(\Mollie\Repository\ModuleRepository::class);
         $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->module->name);
