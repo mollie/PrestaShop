@@ -338,43 +338,43 @@ it('C1860461: Pay with Klarna UK Order Shipping, Refunding [Orders API]', () => 
 })
 // TODO - some reported possible bugs in the workflow, but still continuing on completing the tests...
 it.only('Blik Checkouting [Orders API]', () => {
-  cy.visit('/en/order-history')
-    // switching the currency
-  cy.pause()
-  cy.contains('Reorder').click()
-  cy.contains('UK').click({force:true})
-  //Billing country LT, DE etc.
-  cy.get('.clearfix > .btn').click()
-  cy.get('#js-delivery > .continue').click()
-  //Payment method choosing
-  cy.contains('Blik').click({force:true})
-  cy.get('.condition-label > .js-terms').click({force:true})
-  cy.contains('Place order').click()
-  cy.get('[value="authorized"]').click()
-  cy.get('[class="button form__button"]').click()
-  cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+      cy.visit('/en/order-history')
+        // switching the currency
+      cy.pause()
+      cy.contains('Reorder').click()
+      cy.contains('UK').click({force:true})
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Blik').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      cy.contains('Place order').click()
+      cy.get('[value="authorized"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
 it.only('Blik Order Shipping, Refunding [Orders API]', () => {
-  cy.OrderShippingRefundingOrdersAPI()
+      cy.OrderShippingRefundingOrdersAPI()
 })
 it('TWINT Checkouting [Orders API]', () => {
-  cy.visit('/en/order-history')
-  // switching the currency
-  cy.pause()
-  cy.contains('Reorder').click()
-  cy.contains('UK').click({force:true})
-  //Billing country LT, DE etc.
-  cy.get('.clearfix > .btn').click()
-  cy.get('#js-delivery > .continue').click()
-  //Payment method choosing
-  cy.contains('TWINT').click({force:true})
-  cy.get('.condition-label > .js-terms').click({force:true})
-  cy.contains('Place order').click()
-  cy.get('[value="authorized"]').click()
-  cy.get('[class="button form__button"]').click()
-  cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+      cy.visit('/en/order-history')
+      // switching the currency
+      cy.pause()
+      cy.contains('Reorder').click()
+      cy.contains('UK').click({force:true})
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('TWINT').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      cy.contains('Place order').click()
+      cy.get('[value="authorized"]').click()
+      cy.get('[class="button form__button"]').click()
+      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
 it('TWINT Order Shipping, Refunding [Orders API]', () => {
-  cy.OrderShippingRefundingOrdersAPI()
+      cy.OrderShippingRefundingOrdersAPI()
 })
 })
