@@ -251,22 +251,44 @@ it('C339401: 66 Bank Transfer Checkouting [Payments API]', () => {
 it('C339402: 67 Bank Transfer BO Refunding, Partial Refunding [Payments API]', () => {
     cy.OrderRefundingPartialPaymentsAPI()
 });
-it.skip('C1860462: Pay with Klarna UK Checkouting [Payments API]', () => { // TODO - temporary skip, issue, Orders API is available to Order
+// TODO - some reported possible bugs in the workflow, but still continuing on completing the tests...
+it.only('Blik Checkouting [Payments API]', () => {
   cy.visit('/en/order-history')
+  // switching the currency
+  cy.pause()
+  cy.contains('UK').click({force:true})
+  //Billing country LT, DE etc.
+  cy.get('.clearfix > .btn').click()
+  cy.get('#js-delivery > .continue').click()
+  //Payment method choosing
+  cy.contains('Blik').click({force:true})
+  cy.get('.condition-label > .js-terms').click({force:true})
+  cy.contains('Place order').click()
+  cy.get('[value="authorized"]').click()
+  cy.get('[class="button form__button"]').click()
+  cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it.only('Blik Order Shipping, Refunding [Payments API]', () => {
+  cy.OrderRefundingPartialPaymentsAPI()
+})
+it('TWINT Checkouting [Payments API]', () => {
+  cy.visit('/en/order-history')
+  // switching the currency
+  cy.pause()
   cy.contains('Reorder').click()
   cy.contains('UK').click({force:true})
   //Billing country LT, DE etc.
   cy.get('.clearfix > .btn').click()
   cy.get('#js-delivery > .continue').click()
   //Payment method choosing
-  cy.contains('Pay with Klarna').click({force:true})
+  cy.contains('TWINT').click({force:true})
   cy.get('.condition-label > .js-terms').click({force:true})
-  cy.get('.ps-shown-by-js > .btn').click()
+  cy.contains('Place order').click()
   cy.get('[value="authorized"]').click()
   cy.get('[class="button form__button"]').click()
   cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it.skip('C1860463: Pay with Klarna UK Order BO Refunding, Partial Refunding [Payments API]', () => { // TODO - temporary skip, issue, Orders API is available to Order
+it('TWINT Order Shipping, Refunding [Payments API]', () => {
   cy.OrderRefundingPartialPaymentsAPI()
 })
 })

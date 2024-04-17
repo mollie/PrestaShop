@@ -13,13 +13,17 @@ afterEach(() => {
 afterEach(function() {
   if (this.currentTest.state === "failed") failEarly = true
 });
-describe('PS8 Cloudsync tests', () => {
+describe('PS8 CloudSync tests', () => {
   beforeEach(() => {
       cy.viewport(1920,1080)
       cy.CachingBOFOPS8()
   })
-it('Checking if Cloudsync UI is appearing in the module', () => {
+it('C2885757: Checking if the CloudSync UI is appearing in the module', () => {
     cy.OpeningModuleDashboardURL()
     cy.CloudSyncUI()
 })
+it('C2885758: Checking if the PS Accounts / Popup UI is appearing in the module', () => {
+    cy.OpeningModuleDashboardURL()
+    cy.PsAccountsUI()
+});
 })

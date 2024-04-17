@@ -31,4 +31,6 @@ class OrderCreationException extends \Exception
     const ORDER_RESOURSE_IS_MISSING = 6;
 
     const ORDER_IS_NOT_CREATED = 7;
+
+    const WRONG_FAMILY_NAME = 8;
 }
