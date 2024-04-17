@@ -13,11 +13,10 @@
 namespace Mollie\Service;
 
 use Configuration;
-use Db;
-use DbQuery;
 use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
+use Mollie\Repository\OrderRepository;
 use Mollie\Utility\OrderStatusUtility;
 use Order;
 use OrderDetail;
@@ -38,9 +37,12 @@ class OrderStatusService
      */
     private $mailService;
 
-    public function __construct(MailService $mailService)
+    private $orderRepository;
+
+    public function __construct(MailService $mailService, OrderRepository $orderRepository)
     {
         $this->mailService = $mailService;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -104,15 +106,9 @@ class OrderStatusService
             $useExistingPayment = !$order->hasInvoice();
         }
 
-        $orders = Db::getInstance()->executeS(
-            (new DbQuery())
-                ->select('id_order')
-                ->from('orders')
-                ->where('id_cart = ' . (int) $order->id_cart)
-        );
+        $orders = $this->orderRepository->findAllByCartId($order->id_cart);
         if (count($orders) > 1) {
-            foreach ($orders as $orderData) {
-                $subOrder = new Order($orderData['id_order']);
+            foreach ($orders as $subOrder) {
                 $history = new OrderHistory();
                 $history->id_order = $subOrder->id;
                 $history->changeIdOrderState($statusId, $subOrder->id, $useExistingPayment);

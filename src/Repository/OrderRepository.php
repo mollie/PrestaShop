@@ -36,4 +36,16 @@ final class OrderRepository extends AbstractRepository implements OrderRepositor
     {
         return $this->findOneBy(['id_cart' => (int) $id_cart]);
     }
+
+    /**
+     * @param int $id_cart
+     *
+     * @return \ObjectModel[]|null
+     *
+     * @throws \PrestaShopException
+     */
+    public function findAllByCartId($id_cart)
+    {
+        return $this->findAllBy(['id_cart' => (int) $id_cart]);
+    }
 }
