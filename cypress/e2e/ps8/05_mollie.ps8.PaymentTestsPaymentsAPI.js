@@ -6,13 +6,13 @@ describe('PS8 Tests Suite [Payments API]', {
   },
 }, () => {
   beforeEach(() => {
-      cy.viewport(1920,1080)
-      cy.CachingBOFOPS8()
+    cy.viewport(1920,1080)
+    cy.CachingBOFOPS8()
   })
 it('C339378: 43 Check if Bancontact QR payment dropdown exists [Payments API]', () => {
-  cy.visit('/admin1/')
-  cy.OpeningModuleDashboardURL()
-  cy.get('[name="MOLLIE_BANCONTACT_QR_CODE_ENABLED"]').should('exist')
+    cy.visit('/admin1/')
+    cy.OpeningModuleDashboardURL()
+    cy.get('[name="MOLLIE_BANCONTACT_QR_CODE_ENABLED"]').should('exist')
 })
 it('C339379: 44 Bancontact Checkouting [Payments API]', () => {
     cy.navigatingToThePaymentPS8()
