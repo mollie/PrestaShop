@@ -325,7 +325,7 @@ it('C1860460: Pay with Klarna UK Checkouting [Orders API]', () => {
 it('C1860461: Pay with Klarna UK Order Shipping, Refunding [Orders API]', () => {
       cy.OrderShippingRefundingOrdersAPI()
 })
-it.only('C3006613: Bancomat Checkouting [Orders API]', () => {
+it('C3006613: Bancomat Checkouting [Orders API]', () => {
   cy.visit('/en/order-history')
   cy.contains('Reorder').click()
   cy.contains('DE').click({force:true})
@@ -340,7 +340,7 @@ it.only('C3006613: Bancomat Checkouting [Orders API]', () => {
   cy.get('[class="button form__button"]').click()
   cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
-it.only('C3006614: Bancomat Order Shipping, Refunding [Orders API]', () => {
+it('C3006614: Bancomat Order Shipping, Refunding [Orders API]', () => {
   cy.OrderShippingRefundingOrdersAPI()
 })
 })
