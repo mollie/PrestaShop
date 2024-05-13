@@ -351,7 +351,7 @@ it.only('C3006826: Alma Checkouting [Orders API]', () => {
   cy.get('.clearfix > .btn').click()
   cy.get('#js-delivery > .continue').click()
   //Payment method choosing
-  cy.contains('Bancomat').click({force:true})
+  cy.contains('Alma').click({force:true})
   cy.get('.condition-label > .js-terms').click({force:true})
   cy.contains('Place order').click()
   cy.get('[value="paid"]').click()

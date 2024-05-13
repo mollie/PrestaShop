@@ -252,7 +252,7 @@ it('C3006616: Bancomat BO Refunding, Partial Refunding [Payments API]', () => {
 it.only('C3006826: Alma Checkouting [Payments API]', () => {
   cy.navigatingToThePaymentPS8()
   //Payment method choosing
-  cy.contains('Belfius').click({force:true})
+  cy.contains('Alma').click({force:true})
   cy.get('.condition-label > .js-terms').click({force:true})
   cy.contains('Place order').click()
   cy.get('[value="paid"]').click()

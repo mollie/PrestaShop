@@ -294,7 +294,7 @@ it('TWINT Order Shipping, Refunding [Payments API]', () => {
 it('C3006827: Alma Checkouting [Payments API]', () => {
   cy.navigatingToThePaymentPS8()
   //Payment method choosing
-  cy.contains('Belfius').click({force:true})
+  cy.contains('Alma').click({force:true})
   cy.get('.condition-label > .js-terms').click({force:true})
   cy.contains('Place order').click()
   cy.get('[value="paid"]').click()
