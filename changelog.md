@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.2.0 ##
++ New payment methods: Bancomat and Alma
+
 ## Changes in release 6.1.1 ##
 + Updated translations for Dutch, German, English and French languages
 + Added credit card translations for Italian and Spanish languages
