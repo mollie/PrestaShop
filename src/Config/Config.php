@@ -317,6 +317,8 @@ class Config
         'in3' => 'in3',
         'billie' => 'Billie',
         'twint' => 'TWINT',
+        'bancomat' => 'Bancomat',
+        'alma' => 'Alma',
         'blik' => 'BLIK',
         'klarna' => 'Pay with Klarna.',
     ];
