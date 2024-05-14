@@ -35,8 +35,8 @@ class RecurringOrderRepository extends AbstractRepository implements RecurringOr
             ->select(
                 'mro.id_mol_recurring_order as id, mro.mollie_subscription_id,
                 mro.mollie_customer_id, mro.id_cart,
-                mro.id_mol_recurring_product as id_recurring_product,
-                mro.id_invoice_address, mro.id_delivery_address'
+                mro.id_mol_recurring_orders_product as id_recurring_product,
+                mro.id_address_invoice, mro.id_delivery_address'
             )
             ->from('mol_recurring_order', 'mro')
             ->leftJoin(
