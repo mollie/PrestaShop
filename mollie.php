@@ -1303,8 +1303,6 @@ class Mollie extends PaymentModule
         $logger->error('Failed to update subscription carrier for all orders.', [
             'failed_subscription_order_ids' => json_encode($failedSubscriptionOrderIdsToUpdate),
         ]);
-
-        // TODO maybe notification redirect with failed orders to update
     }
 
     public function hookActionFrontControllerAfterInit(): void
