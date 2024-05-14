@@ -199,7 +199,9 @@
                                     {if !in_array($paymentMethod.id, $input.onlyOrderMethods)}
                                         <option value="payments" {if $methodObj->method === 'payments'} selected {/if}>{l s='Payments API' mod='mollie'}</option>
                                     {/if}
-                                    <option value="orders" {if $methodObj->method === 'orders'} selected {/if}>{l s='Orders API' mod='mollie'}</option>
+                                    {if !in_array($paymentMethod.id, $input.onlyPaymentsMethods)}
+                                      <option value="orders" {if $methodObj->method === 'orders'} selected {/if}>{l s='Orders API' mod='mollie'}</option>
+                                    {/if}
                                 </select>
                                 <p class="help-block">
                                     {$input.methodDescription}

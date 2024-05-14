@@ -280,6 +280,10 @@ class Config
         self::MOLLIE_in3_METHOD_ID,
     ];
 
+    const PAYMENT_API_ONLY_METHODS = [
+        PaymentMethod::ALMA,
+    ];
+
     const ROUTE_RESEND_SECOND_CHANCE_PAYMENT_MESSAGE = 'mollie_module_admin_resend_payment_message';
 
     const PAYMENT_FEE_SKU = 'payment-fee-sku';
