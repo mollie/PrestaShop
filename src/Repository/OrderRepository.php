@@ -40,7 +40,7 @@ final class OrderRepository extends AbstractRepository implements OrderRepositor
     /**
      * @param int $id_cart
      *
-     * @return \ObjectModel[]|null
+     * @return \PrestaShopCollection
      *
      * @throws \PrestaShopException
      */
