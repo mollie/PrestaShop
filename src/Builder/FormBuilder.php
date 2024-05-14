@@ -423,6 +423,7 @@ class FormBuilder
             'taxRulesGroups' => $this->taxRulesGroupRepository->getTaxRulesGroups($this->context->getShopId()),
             'tab' => $generalSettings,
             'onlyOrderMethods' => Config::ORDER_API_ONLY_METHODS,
+            'onlyPaymentsMethods' => Config::PAYMENT_API_ONLY_METHODS,
             'displayErrors' => $this->configuration->get(Config::MOLLIE_DISPLAY_ERRORS),
             'methodDescription' => TagsUtility::ppTags(
                 $this->module->l('[1]Read more[/1] about the differences between Payments and Orders API.', self::FILE_NAME),
