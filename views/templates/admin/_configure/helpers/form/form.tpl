@@ -365,7 +365,7 @@
                                 <input type="text"
                                        name="MOLLIE_METHOD_SURCHARGE_LIMIT_{$paymentMethod.id|escape:'html':'UTF-8'}"
                                        class="fixed-width-xl js-mollie-amount"
-                                       value="{$methodObj->surcharge_limit|escape:'html':'UTF-8'}">
+                                       value="{if $methodObj->surcharge_limit === $paymentMethod.maximumAmount}{else}{$methodObj->surcharge_limit|escape:'html':'UTF-8'}{/if}">
                             </div>
                         </div>
                         <div class="form-group">
