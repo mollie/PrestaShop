@@ -102,7 +102,7 @@ class ErrorHandler
     public function handle(\Throwable $error, ?int $code = null, ?bool $throw = true): void
     {
         // NOTE: The error is not being sent if the error logging is disabled
-        if ((int) !\Configuration::get(Config::MOLLIE_ERROR_LOGGING[\Configuration::get(Config::MOLLIE_ENVIRONMENT) ? 'production' : 'sandbox'] )) {
+        if ((int) !\Configuration::get(Config::MOLLIE_ERROR_LOGGING[\Configuration::get(Config::MOLLIE_ENVIRONMENT) ? 'production' : 'sandbox'])) {
             return;
         }
 
