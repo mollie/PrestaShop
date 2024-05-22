@@ -25,6 +25,7 @@ use Mollie\Subscription\Exception\SubscriptionIntervalException;
 use Mollie\Subscription\Provider\SubscriptionCarrierDeliveryPriceProvider;
 use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
+use Mollie\Subscription\Provider\SubscriptionStartDateProvider;
 use Mollie\Subscription\Repository\CombinationRepository;
 use Mollie\Subscription\Repository\CurrencyRepository as CurrencyAdapter;
 use Mollie\Utility\SecureKeyUtility;
@@ -59,6 +60,8 @@ class CreateSubscriptionDataFactory
     private $context;
     /** @var SubscriptionCarrierDeliveryPriceProvider */
     private $subscriptionCarrierDeliveryPriceProvider;
+    /** @var SubscriptionStartDateProvider */
+    private $subscriptionStartDateProvider;
 
     public function __construct(
         MolCustomerRepository $customerRepository,
@@ -69,7 +72,8 @@ class CreateSubscriptionDataFactory
         PaymentMethodRepositoryInterface $methodRepository,
         Mollie $module,
         Context $context,
-        SubscriptionCarrierDeliveryPriceProvider $subscriptionCarrierDeliveryPriceProvider
+        SubscriptionCarrierDeliveryPriceProvider $subscriptionCarrierDeliveryPriceProvider,
+        SubscriptionStartDateProvider $subscriptionStartDateProvider
     ) {
         $this->customerRepository = $customerRepository;
         $this->subscriptionInterval = $subscriptionInterval;
@@ -80,6 +84,7 @@ class CreateSubscriptionDataFactory
         $this->module = $module;
         $this->context = $context;
         $this->subscriptionCarrierDeliveryPriceProvider = $subscriptionCarrierDeliveryPriceProvider;
+        $this->subscriptionStartDateProvider = $subscriptionStartDateProvider;
     }
 
     /**
@@ -138,6 +143,8 @@ class CreateSubscriptionDataFactory
                 'secure_key' => $key,
             ]
         );
+
+        $subscriptionData->setStartDate($this->subscriptionStartDateProvider->getSubscriptionStartDate($combination));
 
         // todo: check for solution what to do when mandate is missing
         $payment = $this->methodRepository->getPaymentBy('cart_id', $order->id_cart);
