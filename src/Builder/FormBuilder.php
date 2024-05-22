@@ -12,7 +12,6 @@
 
 namespace Mollie\Builder;
 
-use Exception;
 use HelperFormCore as HelperForm;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;

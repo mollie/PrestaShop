@@ -1,3 +1,13 @@
+{**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ *}
 <!-- Modal -->
 <div class="modal fade" id="errorLoggingModal" tabindex="-1" role="dialog" aria-labelledby="errorLoggingModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
