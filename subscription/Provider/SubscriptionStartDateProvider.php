@@ -20,7 +20,6 @@ use DateTime;
 use DateTimeZone;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Subscription\Config\Config;
-use Mollie\Subscription\DTO\Object\Interval;
 use Mollie\Subscription\Exception\SubscriptionIntervalException;
 use Mollie\Subscription\Utility\Clock;
 
@@ -33,18 +32,19 @@ class SubscriptionStartDateProvider
     /** @var ConfigurationAdapter */
     private $configuration;
 
-    public function __construct(ConfigurationAdapter $configuration, Clock $clock)
+    public function __construct(ConfigurationAdapter $configuration)
     {
         $this->configuration = $configuration;
-        $this->clock = $clock;
     }
 
     /**
      * Returns subscription date time
      *
+     * @return string
+     *
      * @throws SubscriptionIntervalException
      */
-    public function getSubscriptionStartDate(Combination $combination): string
+    public function getSubscriptionStartDate(Combination $combination)
     {
         $currentTime = new DateTime('now', new DateTimeZone('UTC'));
 
@@ -68,6 +68,7 @@ class SubscriptionStartDateProvider
 
             // Add the interval to the current time
             $currentTime->add($interval);
+
             return $currentTime->format('Y-m-d');
         }
 
