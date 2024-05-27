@@ -243,6 +243,8 @@ class SettingsSaveService
         $mollieOrderConfirmationSand = $this->tools->getValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION);
         $mollieIFrameEnabled = $this->tools->getValue(Config::MOLLIE_IFRAME[$environment ? 'production' : 'sandbox']);
         $mollieSingleClickPaymentEnabled = $this->tools->getValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT[$environment ? 'production' : 'sandbox']);
+        $mollieErrorLoggingEnabled = $this->tools->getValue(Config::MOLLIE_ERROR_LOGGING[$environment ? 'production' : 'sandbox']);
+
         $mollieImages = $this->tools->getValue(Config::MOLLIE_IMAGES);
         $showResentPayment = $this->tools->getValue(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK);
         $mollieIssuers = $this->tools->getValue(Config::MOLLIE_ISSUERS[$environment ? 'production' : 'sandbox']);
@@ -307,6 +309,7 @@ class SettingsSaveService
             $this->configurationAdapter->updateValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION, $mollieOrderConfirmationSand);
             $this->configurationAdapter->updateValue(Config::MOLLIE_IFRAME, $mollieIFrameEnabled);
             $this->configurationAdapter->updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT, $mollieSingleClickPaymentEnabled);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_ERROR_LOGGING, $mollieErrorLoggingEnabled);
             $this->configurationAdapter->updateValue(Config::MOLLIE_IMAGES, $mollieImages);
             $this->configurationAdapter->updateValue(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK, $showResentPayment);
             $this->configurationAdapter->updateValue(Config::MOLLIE_ISSUERS, $mollieIssuers);
