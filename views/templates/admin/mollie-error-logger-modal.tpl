@@ -28,7 +28,7 @@
                 <p class="h4">{l s='By granting consent, you agree to allow us to collect and analyze this information. Rest assured, all data will be treated in accordance with our privacy policy and will only be used for the purpose of improving our applications performance and stability.' mod='mollie'}</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{l s='Close'}</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{l s='Close' mod='mollie'}</button>
             </div>
         </div>
     </div>
