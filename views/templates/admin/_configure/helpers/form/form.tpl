@@ -199,7 +199,9 @@
                                     {if !in_array($paymentMethod.id, $input.onlyOrderMethods)}
                                         <option value="payments" {if $methodObj->method === 'payments'} selected {/if}>{l s='Payments API' mod='mollie'}</option>
                                     {/if}
-                                    <option value="orders" {if $methodObj->method === 'orders'} selected {/if}>{l s='Orders API' mod='mollie'}</option>
+                                    {if !in_array($paymentMethod.id, $input.onlyPaymentsMethods)}
+                                      <option value="orders" {if $methodObj->method === 'orders'} selected {/if}>{l s='Orders API' mod='mollie'}</option>
+                                    {/if}
                                 </select>
                                 <p class="help-block">
                                     {$input.methodDescription}
@@ -363,7 +365,7 @@
                                 <input type="text"
                                        name="MOLLIE_METHOD_SURCHARGE_LIMIT_{$paymentMethod.id|escape:'html':'UTF-8'}"
                                        class="fixed-width-xl js-mollie-amount"
-                                       value="{$methodObj->surcharge_limit|escape:'html':'UTF-8'}">
+                                       value="{if $methodObj->surcharge_limit === $paymentMethod.maximumAmount}{else}{$methodObj->surcharge_limit|escape:'html':'UTF-8'}{/if}">
                             </div>
                         </div>
                         <div class="form-group">

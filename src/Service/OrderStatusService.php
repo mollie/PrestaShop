@@ -16,6 +16,7 @@ use Configuration;
 use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
+use Mollie\Repository\OrderRepository;
 use Mollie\Utility\OrderStatusUtility;
 use Order;
 use OrderDetail;
@@ -36,9 +37,12 @@ class OrderStatusService
      */
     private $mailService;
 
-    public function __construct(MailService $mailService)
+    private $orderRepository;
+
+    public function __construct(MailService $mailService, OrderRepository $orderRepository)
     {
         $this->mailService = $mailService;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -102,20 +106,41 @@ class OrderStatusService
             $useExistingPayment = !$order->hasInvoice();
         }
 
-        $history = new OrderHistory();
-        $history->id_order = $order->id;
-        $history->changeIdOrderState($statusId, $orderId, $useExistingPayment);
+        $orders = $this->orderRepository->findAllByCartId($order->id_cart);
+        if (count($orders) > 1) {
+            foreach ($orders as $subOrder) {
+                $history = new OrderHistory();
+                $history->id_order = $subOrder->id;
+                $history->changeIdOrderState($statusId, $subOrder->id, $useExistingPayment);
 
-        $status = OrderStatusUtility::transformPaymentStatusToPaid($status, Config::STATUS_PAID_ON_BACKORDER);
+                $status = OrderStatusUtility::transformPaymentStatusToPaid($status, Config::STATUS_PAID_ON_BACKORDER);
 
-        if ($this->checkIfOrderConfNeedsToBeSend($statusId)) {
-            $this->mailService->sendOrderConfMail($order, $statusId);
-        }
+                if ($this->checkIfOrderConfNeedsToBeSend($statusId)) {
+                    $this->mailService->sendOrderConfMail($subOrder, $statusId);
+                }
 
-        if ('0' === Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($status))) {
-            $history->add();
+                if ('0' === Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($status))) {
+                    $history->add();
+                } else {
+                    $history->addWithemail(true, $templateVars);
+                }
+            }
         } else {
-            $history->addWithemail(true, $templateVars);
+            $history = new OrderHistory();
+            $history->id_order = $order->id;
+            $history->changeIdOrderState($statusId, $orderId, $useExistingPayment);
+
+            $status = OrderStatusUtility::transformPaymentStatusToPaid($status, Config::STATUS_PAID_ON_BACKORDER);
+
+            if ($this->checkIfOrderConfNeedsToBeSend($statusId)) {
+                $this->mailService->sendOrderConfMail($order, $statusId);
+            }
+
+            if ('0' === Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($status))) {
+                $history->add();
+            } else {
+                $history->addWithemail(true, $templateVars);
+            }
         }
     }
 

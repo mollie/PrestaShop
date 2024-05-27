@@ -110,6 +110,12 @@ class Config
         'sandbox' => 'MOLLIE_SANDBOX_SINGLE_CLICK_PAYMENT',
         'production' => 'MOLLIE_PRODUCTION_SINGLE_CLICK_PAYMENT',
     ];
+
+    const MOLLIE_ERROR_LOGGING = [
+        'sandbox' => 'MOLLIE_SANDBOX_ERROR_LOGGING',
+        'production' => 'MOLLIE_PRODUCTION_ERROR_LOGGING',
+    ];
+
     const MOLLIE_IMAGES = 'MOLLIE_IMAGES';
     const MOLLIE_SHOW_RESEND_PAYMENT_LINK = 'MOLLIE_SHOW_RESEND_PAYMENT_LINK';
     const MOLLIE_ISSUERS = [
@@ -281,6 +287,10 @@ class Config
         self::MOLLIE_in3_METHOD_ID,
     ];
 
+    const PAYMENT_API_ONLY_METHODS = [
+        PaymentMethod::ALMA,
+    ];
+
     const ROUTE_RESEND_SECOND_CHANCE_PAYMENT_MESSAGE = 'mollie_module_admin_resend_payment_message';
 
     const PAYMENT_FEE_SKU = 'payment-fee-sku';
@@ -318,6 +328,8 @@ class Config
         'in3' => 'in3',
         'billie' => 'Billie',
         'twint' => 'TWINT',
+        'bancomat' => 'Bancomat',
+        'alma' => 'Alma',
         'blik' => 'BLIK',
         'klarna' => 'Pay with Klarna.',
     ];
