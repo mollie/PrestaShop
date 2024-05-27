@@ -21,7 +21,6 @@ use DateTimeZone;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Exception\SubscriptionIntervalException;
-use Mollie\Subscription\Utility\Clock;
 
 if (!defined('_PS_VERSION_')) {
     exit;
