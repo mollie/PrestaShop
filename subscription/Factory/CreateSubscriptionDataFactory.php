@@ -27,6 +27,8 @@ use Mollie\Subscription\Exception\MollieSubscriptionException;
 use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
 use Mollie\Subscription\Provider\SubscriptionOrderAmountProvider;
+use Mollie\Subscription\Provider\SubscriptionStartDateProvider;
+use Mollie\Subscription\Repository\CombinationRepository;
 use Mollie\Utility\SecureKeyUtility;
 use Order;
 
@@ -52,6 +54,10 @@ class CreateSubscriptionDataFactory
     private $configuration;
     /** @var SubscriptionOrderAmountProvider */
     private $subscriptionOrderAmountProvider;
+    /** @var SubscriptionStartDateProvider */
+    private $subscriptionStartDateProvider;
+    /** @var CombinationRepository */
+    private $combination;
 
     public function __construct(
         MolCustomerRepository $customerRepository,
@@ -61,7 +67,9 @@ class CreateSubscriptionDataFactory
         Mollie $module,
         Context $context,
         ConfigurationAdapter $configuration,
-        SubscriptionOrderAmountProvider $subscriptionOrderAmountProvider
+        SubscriptionOrderAmountProvider $subscriptionOrderAmountProvider,
+        SubscriptionStartDateProvider $subscriptionStartDateProvider,
+        CombinationRepository $combination
     ) {
         $this->customerRepository = $customerRepository;
         $this->subscriptionInterval = $subscriptionInterval;
@@ -71,6 +79,8 @@ class CreateSubscriptionDataFactory
         $this->context = $context;
         $this->configuration = $configuration;
         $this->subscriptionOrderAmountProvider = $subscriptionOrderAmountProvider;
+        $this->subscriptionStartDateProvider = $subscriptionStartDateProvider;
+        $this->combination = $combination;
     }
 
     /**
@@ -141,6 +151,9 @@ class CreateSubscriptionDataFactory
             'secure_key' => $secureKey,
             'subscription_carrier_id' => $subscriptionCarrierId,
         ]);
+
+        $combination = $this->combination->getById((int) $subscriptionProduct['id_product_attribute']);
+        $subscriptionData->setStartDate($this->subscriptionStartDateProvider->getSubscriptionStartDate($combination));
 
         // todo: check for solution what to do when mandate is missing
         $payment = $this->methodRepository->getPaymentBy('cart_id', $order->id_cart);

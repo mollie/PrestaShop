@@ -26,4 +26,9 @@ class CombinationRepository extends AbstractRepository implements CombinationRep
     {
         parent::__construct(\Combination::class);
     }
+
+    public function getById(int $id): \Combination
+    {
+        return new \Combination($id);
+    }
 }
