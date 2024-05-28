@@ -168,11 +168,9 @@ final class BaseServiceProvider
         $this->addService($container, UninstallerInterface::class, $container->get(Mollie\Install\DatabaseTableUninstaller::class));
 
         $service = $this->addService($container, InstallerInterface::class, Installer::class);
-        $this->addServiceArgument($service, [
-            $container->get(Mollie\Subscription\Install\DatabaseTableInstaller::class),
-            $container->get(Mollie\Subscription\Install\AttributeInstaller::class),
-            $container->get(Mollie\Subscription\Install\HookInstaller::class),
-        ]);
+        $this->addServiceArgument($service, $container->get(Mollie\Subscription\Install\DatabaseTableInstaller::class));
+        $this->addServiceArgument($service, $container->get(Mollie\Subscription\Install\AttributeInstaller::class));
+        $this->addServiceArgument($service, $container->get(Mollie\Subscription\Install\HookInstaller::class));
 
         $this->addService($container, DecoderInterface::class, JsonDecoder::class);
 
@@ -186,12 +184,9 @@ final class BaseServiceProvider
         $this->addService($container, ShipmentInformationSenderInterface::class, $container->get(ShipmentInformationSender::class));
 
         $service = $this->addService($container, ShipmentSenderHandlerInterface::class, ShipmentSenderHandler::class);
-        $this->addServiceArgument($service,
-            [
-                $container->get(ShipmentVerificationInterface::class),
-                $container->get(ShipmentInformationSenderInterface::class),
-            ]
-        );
+
+        $this->addServiceArgument($service, $container->get(ShipmentVerificationInterface::class));
+        $this->addServiceArgument($service, $container->get(ShipmentInformationSenderInterface::class));
 
         $this->addService($container, AddressRepositoryInterface::class, $container->get(AddressRepository::class));
         $this->addService($container, AddressFormatRepositoryInterface::class, $container->get(AddressFormatRepository::class));
@@ -228,15 +223,17 @@ final class BaseServiceProvider
 
         $this->addService($container, PaymentMethodSortProviderInterface::class, PaymentMethodSortProvider::class);
         $this->addService($container, PhoneNumberProviderInterface::class, PhoneNumberProvider::class);
-        $service = $this->addService($container, PaymentMethodRestrictionValidationInterface::class, PaymentMethodRestrictionValidation::class);
-        $this->addServiceArgument($service, [
-            $container->get(BasePaymentMethodRestrictionValidator::class),
-            $container->get(VoucherPaymentMethodRestrictionValidator::class),
-            $container->get(EnvironmentVersionSpecificPaymentMethodRestrictionValidator::class),
-            $container->get(ApplePayPaymentMethodRestrictionValidator::class),
-            $container->get(AmountPaymentMethodRestrictionValidator::class),
-            $container->get(B2bPaymentMethodRestrictionValidator::class),
-        ]);
+
+        $this->addService($container, PaymentMethodRestrictionValidationInterface::class, function () use ($container) {
+            return new PaymentMethodRestrictionValidation([
+                $container->get(BasePaymentMethodRestrictionValidator::class),
+                $container->get(VoucherPaymentMethodRestrictionValidator::class),
+                $container->get(EnvironmentVersionSpecificPaymentMethodRestrictionValidator::class),
+                $container->get(ApplePayPaymentMethodRestrictionValidator::class),
+                $container->get(AmountPaymentMethodRestrictionValidator::class),
+                $container->get(B2bPaymentMethodRestrictionValidator::class),
+            ]);
+        });
 
         $this->addService($container, CustomLogoProviderInterface::class, $container->get(CreditCardLogoProvider::class));
 
@@ -273,9 +270,9 @@ final class BaseServiceProvider
     private function addServiceArgument($service, $argument)
     {
         if (method_exists($service, 'withArgument')) {
-            $service->withArgument($argument);
+            return $service->withArgument($argument);
         } else {
-            $service->addArgument($argument);
+            return $service->addArgument($argument);
         }
     }
 }
