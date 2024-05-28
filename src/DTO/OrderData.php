@@ -433,7 +433,7 @@ class OrderData implements JsonSerializable
                 'familyName' => $this->cleanUpInput($this->getBillingAddress()->lastname),
                 'email' => $this->cleanUpInput($this->getEmail()),
                 'title' => $this->cleanUpInput($this->getTitle()),
-                'phone' =>$this->cleanUpInput($this->getBillingPhoneNumber()),
+                'phone' => $this->cleanUpInput($this->getBillingPhoneNumber()),
             ],
             'shippingAddress' => [
                 'organizationName' => $this->cleanUpInput($this->getShippingAddress()->company),

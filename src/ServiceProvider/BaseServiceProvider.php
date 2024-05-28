@@ -110,7 +110,6 @@ use Mollie\Subscription\Install\Installer;
 use Mollie\Subscription\Install\InstallerInterface;
 use Mollie\Subscription\Logger\Logger;
 use Mollie\Subscription\Logger\LoggerInterface;
-use Mollie\Subscription\Repository\CombinationRepository;
 use Mollie\Subscription\Repository\OrderDetailRepository;
 use Mollie\Subscription\Repository\OrderDetailRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrderRepository;
@@ -225,7 +224,7 @@ final class BaseServiceProvider
         $this->addService($container, PaymentMethodSortProviderInterface::class, PaymentMethodSortProvider::class);
         $this->addService($container, PhoneNumberProviderInterface::class, PhoneNumberProvider::class);
 
-        $this->addService($container, PaymentMethodRestrictionValidationInterface::class, function() use ($container) {
+        $this->addService($container, PaymentMethodRestrictionValidationInterface::class, function () use ($container) {
             return new PaymentMethodRestrictionValidation([
                 $container->get(BasePaymentMethodRestrictionValidator::class),
                 $container->get(VoucherPaymentMethodRestrictionValidator::class),
