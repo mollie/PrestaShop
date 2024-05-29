@@ -4,6 +4,15 @@
 
 ## Changes in release 6.2.0 ##
 + New payment methods: Bancomat and Alma
++ Apple certificate update
++ Conflicting services fix
++ Bootstrap 5 compatibility improved
++ Sentry error logger consent option added
++ Maximum fee field
++ Back office admin 
++ Multi carrier for subscription orders added
++ Design improvements in BO
++ Improved subscription creation logic
 
 ## Changes in release 6.1.1 ##
 + Updated translations for Dutch, German, English and French languages
