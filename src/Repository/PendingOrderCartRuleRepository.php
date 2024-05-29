@@ -13,6 +13,7 @@
 namespace Mollie\Repository;
 
 use Db;
+use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
 use MolPendingOrderCartRule;
 use Order;
 use OrderCartRule;

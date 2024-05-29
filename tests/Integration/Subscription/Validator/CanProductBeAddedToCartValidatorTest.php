@@ -13,14 +13,19 @@
 namespace Mollie\Tests\Integration\Subscription\Validator;
 
 use Mollie\Adapter\CartAdapter;
-use Mollie\Adapter\ProductAttributeAdapter;
+use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\ToolsAdapter;
+use Mollie\Config\Config as SettingsConfig;
 use Mollie\Subscription\Config\Config;
+use Mollie\Subscription\Exception\ExceptionCode;
 use Mollie\Subscription\Exception\SubscriptionProductValidationException;
-use Mollie\Subscription\Repository\CombinationRepository;
-use Mollie\Subscription\Repository\ProductCombinationRepository;
+use Mollie\Subscription\Provider\SubscriptionProductProvider;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Subscription\Validator\SubscriptionProductValidator;
+use Mollie\Subscription\Validator\SubscriptionSettingsValidator;
 use Mollie\Tests\Integration\BaseTestCase;
+use Mollie\Tests\Integration\Factory\CarrierFactory;
+use Mollie\Tests\Integration\Factory\ProductFactory;
 
 class CanProductBeAddedToCartValidatorTest extends BaseTestCase
 {
@@ -30,7 +35,8 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
     {
         parent::setUp();
 
-        $product = new \Product(1);
+        /** @var \Product $product */
+        $product = ProductFactory::initialize()->create();
 
         $this->randomAttributeId = self::NORMAL_PRODUCT_ATTRIBUTE_ID;
 
@@ -66,9 +72,21 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
     /**
      * @dataProvider productDataProvider
      */
-    public function testValidate(string $combinationReference, bool $hasExtraAttribute, array $cartProducts, $expectedResult): void
-    {
-        $cartAdapterMock = $this->createMock(CartAdapter::class);
+    public function testValidate(
+        string $combinationReference,
+        // TODO in this test and the others that have getCombination with extraAttributes.
+        // Idea was to provide various attributes, but not subscription.
+        // Should modify this to actually provide random (not subscription) attributes.
+        bool $hasExtraAttribute,
+        array $cartProducts,
+        bool $subscriptionEnabled,
+        int $subscriptionCarrierId,
+        bool $expectedResult,
+        string $expectedException,
+        int $expectedExceptionCode
+    ): void {
+        // TODO cart factory
+        $cart = $this->createMock(CartAdapter::class);
 
         $cartProducts = array_map(function (array $product) {
             return [
@@ -76,23 +94,34 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
             ];
         }, $cartProducts);
 
-        $cartAdapterMock->method('getProducts')->willReturn($cartProducts);
+        $cart->method('getProducts')->willReturn($cartProducts);
 
         $combination = $this->getCombination($combinationReference, $hasExtraAttribute);
 
+        /** @var ConfigurationAdapter $configuration */
+        $configuration = $this->getService(ConfigurationAdapter::class);
+
+        /*
+         * NOTE: setUp parent deletes all the DB records so carrier is being deleted as well.
+         */
+        if ($subscriptionCarrierId) {
+            $subscriptionCarrierId = CarrierFactory::create()->id;
+        }
+
+        $configuration->updateValue(SettingsConfig::MOLLIE_SUBSCRIPTION_ENABLED, $subscriptionEnabled);
+        $configuration->updateValue(SettingsConfig::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID, $subscriptionCarrierId);
+
         $subscriptionCartValidator = new CanProductBeAddedToCartValidator(
-            $cartAdapterMock,
-            new SubscriptionProductValidator(
-                $this->configuration,
-                new ProductCombinationRepository(),
-                new CombinationRepository(),
-                new ProductAttributeAdapter()
-            ),
-            $this->getService(\Mollie\Adapter\ToolsAdapter::class)
+            $cart,
+            $this->getService(SubscriptionProductValidator::class),
+            $this->getService(ToolsAdapter::class),
+            $this->getService(SubscriptionSettingsValidator::class),
+            $this->getService(SubscriptionProductProvider::class)
         );
 
-        if ($expectedResult !== true) {
-            $this->expectException($expectedResult);
+        if (!$expectedResult) {
+            $this->expectException($expectedException);
+            $this->expectExceptionCode($expectedExceptionCode);
         }
 
         $canBeAdded = $subscriptionCartValidator->validate($combination);
@@ -102,18 +131,58 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
 
     public function productDataProvider(): array
     {
+        $validCarrier = CarrierFactory::create();
+
         return [
             'One subscription product' => [
                 'subscription reference' => Config::SUBSCRIPTION_ATTRIBUTE_DAILY,
                 'has extra attribute' => false,
                 'cart products' => [],
+                'subscription enabled' => true,
+                'subscription carrier ID' => $validCarrier->id,
                 'expected result' => true,
+                'expected exception' => '',
+                'expected exception code' => 0,
+            ],
+            'One subscription product disabled subscription' => [
+                'subscription reference' => Config::SUBSCRIPTION_ATTRIBUTE_DAILY,
+                'has extra attribute' => false,
+                'cart products' => [],
+                'subscription enabled' => false,
+                'subscription carrier ID' => $validCarrier->id,
+                'expected result' => false,
+                'expected exception' => SubscriptionProductValidationException::class,
+                'expected exception code' => ExceptionCode::CART_INVALID_SUBSCRIPTION_SETTINGS,
+            ],
+            'One subscription product invalid carrier' => [
+                'subscription reference' => Config::SUBSCRIPTION_ATTRIBUTE_DAILY,
+                'has extra attribute' => false,
+                'cart products' => [],
+                'subscription enabled' => true,
+                'subscription carrier ID' => 0,
+                'expected result' => false,
+                'expected exception' => SubscriptionProductValidationException::class,
+                'expected exception code' => ExceptionCode::CART_INVALID_SUBSCRIPTION_SETTINGS,
             ],
             'One normal product' => [
                 'subscription reference' => '',
-                'has extra attribute' => true,
+                'has extra attribute' => false,
                 'cart products' => [],
+                'subscription enabled' => true,
+                'subscription carrier ID' => $validCarrier->id,
                 'expected result' => true,
+                'expected exception' => '',
+                'expected exception code' => 0,
+            ],
+            'One normal product disabled subscription and invalid carrier' => [
+                'subscription reference' => '',
+                'has extra attribute' => false,
+                'cart products' => [],
+                'subscription enabled' => false,
+                'subscription carrier ID' => 0,
+                'expected result' => true,
+                'expected exception' => '',
+                'expected exception code' => 0,
             ],
             'Add subscription product but already have normal product in cart' => [
                 'subscription reference' => Config::SUBSCRIPTION_ATTRIBUTE_DAILY,
@@ -123,7 +192,11 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
                         'id_product_attribute' => self::NORMAL_PRODUCT_ATTRIBUTE_ID,
                     ],
                 ],
+                'subscription enabled' => true,
+                'subscription carrier ID' => $validCarrier->id,
                 'expected result' => true,
+                'expected exception' => '',
+                'expected exception code' => 0,
             ],
             'Add subscription product but already have another subscription product in cart' => [
                 'subscription reference' => Config::SUBSCRIPTION_ATTRIBUTE_DAILY,
@@ -133,27 +206,39 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
                         'id_product_attribute' => Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY,
                     ],
                 ],
-                'expected result' => SubscriptionProductValidationException::class,
+                'subscription enabled' => true,
+                'subscription carrier ID' => $validCarrier->id,
+                'expected result' => false,
+                'expected exception' => SubscriptionProductValidationException::class,
+                'expected exception code' => ExceptionCode::CART_ALREADY_HAS_SUBSCRIPTION_PRODUCT,
             ],
             'Add normal product but already have another subscription product in cart' => [
                 'subscription reference' => '',
-                'has extra attribute' => true,
+                'has extra attribute' => false,
                 'cart products' => [
                     [
                         'id_product_attribute' => Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY,
                     ],
                 ],
+                'subscription enabled' => true,
+                'subscription carrier ID' => $validCarrier->id,
                 'expected result' => true,
+                'expected exception' => '',
+                'expected exception code' => 0,
             ],
             'Add normal product but already have another normal product in cart' => [
                 'subscription reference' => '',
-                'has extra attribute' => true,
+                'has extra attribute' => false,
                 'cart products' => [
                     [
                         'id_product_attribute' => self::NORMAL_PRODUCT_ATTRIBUTE_ID,
                     ],
                 ],
+                'subscription enabled' => true,
+                'subscription carrier ID' => $validCarrier->id,
                 'expected result' => true,
+                'expected exception' => '',
+                'expected exception code' => 0,
             ],
         ];
     }
@@ -161,6 +246,7 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
     private function getCombination(string $combinationReference, bool $hasExtraAttribute): int
     {
         $reference = $this->configuration->get($combinationReference);
+
         if ($hasExtraAttribute) {
             $reference = $reference ? implode('-', [
                 $this->configuration->get($combinationReference),

@@ -22,6 +22,7 @@ if (!defined('_PS_VERSION_')) {
 
 class PrestaLogger implements PrestaLoggerInterface
 {
+    // TODO move this as a shared service for subscriptions and main source
     // TODO refactor whole logger logic and implement leftover methods
 
     /** @var ConfigurationAdapter */
@@ -86,7 +87,9 @@ class PrestaLogger implements PrestaLoggerInterface
 
     public function debug($message, array $context = [])
     {
-        throw new NotImplementedException('not implemented method');
+        // TODO implement single method, which handles logging
+
+        $this->info($message, $context);
     }
 
     public function log($level, $message, array $context = [])

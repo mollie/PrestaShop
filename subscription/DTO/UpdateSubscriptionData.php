@@ -10,48 +10,108 @@
  * @codingStandardsIgnoreStart
  */
 
-declare(strict_types=1);
-
 namespace Mollie\Subscription\DTO;
 
-use JsonSerializable;
+use Mollie\Subscription\DTO\Object\Amount;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class UpdateSubscriptionData implements JsonSerializable
+class UpdateSubscriptionData
 {
     /** @var string */
+    private $mollieCustomerId;
+    /** @var string */
+    private $mollieSubscriptionId;
+    /** @var Amount */
+    private $orderAmount;
+    /** @var int */
     private $customerId;
+    /** @var int */
+    private $cartId;
+    /** @var int */
+    private $subscriptionCarrierId;
 
-    /** @var string */
-    private $subscriptionId;
-
-    /** @var string */
-    private $mandateId;
-
-    public function __construct(string $customerId, string $subscriptionId, string $mandateId)
-    {
+    private function __construct(
+        string $mollieCustomerId,
+        string $mollieSubscriptionId,
+        Amount $orderAmount,
+        int $customerId,
+        int $cartId,
+        int $subscriptionCarrierId
+    ) {
+        $this->mollieCustomerId = $mollieCustomerId;
+        $this->mollieSubscriptionId = $mollieSubscriptionId;
+        $this->orderAmount = $orderAmount;
         $this->customerId = $customerId;
-        $this->subscriptionId = $subscriptionId;
-        $this->mandateId = $mandateId;
+        $this->cartId = $cartId;
+        $this->subscriptionCarrierId = $subscriptionCarrierId;
     }
 
-    public function getCustomerId(): string
+    /**
+     * @return string
+     */
+    public function getMollieCustomerId(): string
+    {
+        return $this->mollieCustomerId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMollieSubscriptionId(): string
+    {
+        return $this->mollieSubscriptionId;
+    }
+
+    /**
+     * @return Amount
+     */
+    public function getOrderAmount(): Amount
+    {
+        return $this->orderAmount;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCustomerId(): int
     {
         return $this->customerId;
     }
 
-    public function getSubscriptionId(): string
+    /**
+     * @return int
+     */
+    public function getCartId(): int
     {
-        return $this->subscriptionId;
+        return $this->cartId;
     }
 
-    public function jsonSerialize(): array
+    /**
+     * @return int
+     */
+    public function getSubscriptionCarrierId(): int
     {
-        return [
-            'mandateId' => $this->mandateId,
-        ];
+        return $this->subscriptionCarrierId;
+    }
+
+    public static function create(
+        string $mollieCustomerId,
+        string $mollieSubscriptionId,
+        Amount $orderAmount,
+        int $customerId,
+        int $cartId,
+        int $subscriptionCarrierId
+    ): self {
+        return new self(
+            $mollieCustomerId,
+            $mollieSubscriptionId,
+            $orderAmount,
+            $customerId,
+            $cartId,
+            $subscriptionCarrierId
+        );
     }
 }

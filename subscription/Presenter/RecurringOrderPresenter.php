@@ -59,8 +59,15 @@ class RecurringOrderPresenter
      */
     public function present(int $recurringOrderId): array
     {
-        $recurringOrder = $this->recurringOrderRepository->findOneBy(['id_mol_recurring_order' => $recurringOrderId]);
-        $recurringProduct = $this->recurringOrdersProductRepository->findOneBy(['id_mol_recurring_orders_product' => $recurringOrderId]);
+        /** @var \MolRecurringOrder $recurringOrder */
+        $recurringOrder = $this->recurringOrderRepository->findOrFail([
+            'id_mol_recurring_order' => $recurringOrderId,
+        ]);
+
+        /** @var \MolRecurringOrdersProduct $recurringProduct */
+        $recurringProduct = $this->recurringOrdersProductRepository->findOrFail([
+            'id_mol_recurring_orders_product' => $recurringOrder->id_mol_recurring_orders_product,
+        ]);
 
         $product = new Product($recurringProduct->id_product, false, $this->language->getDefaultLanguageId());
         $order = new Order($recurringOrder->id_order);

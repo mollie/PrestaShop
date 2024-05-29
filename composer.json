@@ -21,6 +21,7 @@
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
+        "invertus/prestashop-models": "^1.0",
         "prestashop/php-dev-tools": "*",
         "phpunit/phpunit": "~5.7"
     },
@@ -32,7 +33,8 @@
     "autoload": {
         "psr-4": {
             "Mollie\\": "src/",
-            "Mollie\\Subscription\\": "subscription/"
+            "Mollie\\Subscription\\": "subscription/",
+            "Mollie\\Shared\\": "shared/"
         },
         "classmap": [
             "mollie.php",
