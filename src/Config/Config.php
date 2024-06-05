@@ -111,11 +111,6 @@ class Config
         'production' => 'MOLLIE_PRODUCTION_SINGLE_CLICK_PAYMENT',
     ];
 
-    const MOLLIE_ERROR_LOGGING = [
-        'sandbox' => 'MOLLIE_SANDBOX_ERROR_LOGGING',
-        'production' => 'MOLLIE_PRODUCTION_ERROR_LOGGING',
-    ];
-
     const MOLLIE_IMAGES = 'MOLLIE_IMAGES';
     const MOLLIE_SHOW_RESEND_PAYMENT_LINK = 'MOLLIE_SHOW_RESEND_PAYMENT_LINK';
     const MOLLIE_ISSUERS = [

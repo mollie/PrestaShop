@@ -100,8 +100,6 @@ class AdminMollieSettingsController extends ModuleAdminController
             $this->module->getLocalPath() . 'views/templates/admin/logo.tpl'
         );
 
-        $this->content .= $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/mollie-error-logger-modal.tpl') ?: '';
-
         $this->initCloudSyncAndPsAccounts();
 
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */

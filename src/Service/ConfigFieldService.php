@@ -64,7 +64,6 @@ class ConfigFieldService
             Config::MOLLIE_SEND_ORDER_CONFIRMATION => $this->configurationAdapter->get(Config::MOLLIE_SEND_ORDER_CONFIRMATION),
             Config::MOLLIE_IFRAME[(int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT) ? 'production' : 'sandbox'] => $this->configurationAdapter->get(Config::MOLLIE_IFRAME),
             Config::MOLLIE_SINGLE_CLICK_PAYMENT[(int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT) ? 'production' : 'sandbox'] => $this->configurationAdapter->get(Config::MOLLIE_SINGLE_CLICK_PAYMENT),
-            Config::MOLLIE_ERROR_LOGGING[(int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT) ? 'production' : 'sandbox'] => $this->configurationAdapter->get(Config::MOLLIE_ERROR_LOGGING),
 
             Config::MOLLIE_CSS => $this->configurationAdapter->get(Config::MOLLIE_CSS),
             Config::MOLLIE_IMAGES => $this->configurationAdapter->get(Config::MOLLIE_IMAGES),
