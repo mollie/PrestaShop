@@ -7,9 +7,7 @@
 + Apple certificate update
 + Conflicting services fix
 + Bootstrap 5 compatibility improved
-+ Sentry error logger consent option added
 + Maximum fee field
-+ Back office admin 
 + Multi carrier for subscription orders added
 + Design improvements in BO
 + Improved subscription creation logic
