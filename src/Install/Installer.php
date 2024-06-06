@@ -217,7 +217,6 @@ class Installer implements InstallerInterface
 
         $this->configurationAdapter->updateValue(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID, 0);
         $this->configurationAdapter->updateValue(Config::MOLLIE_SUBSCRIPTION_ENABLED, 0);
-        $this->configurationAdapter->updateValue(Config::MOLLIE_ERROR_LOGGING, 0);
     }
 
     public function setDefaultCarrierStatuses()

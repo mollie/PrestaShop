@@ -372,32 +372,6 @@ class FormBuilder
             ],
         ];
 
-        $input[] = [
-            'type' => 'switch',
-            'label' => $this->module->l('Error Logging', self::FILE_NAME),
-            'tab' => $generalSettings,
-            'name' => Config::MOLLIE_ERROR_LOGGING[(int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT) ? 'production' : 'sandbox'],
-            'desc' => TagsUtility::ppTags(
-                $this->module->l('Read more about [1]Error Logging[/1] and how it improves your experience.', self::FILE_NAME),
-                [
-                    $this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_error_logging_info.tpl'),
-                ]
-            ),
-            'is_bool' => true,
-            'values' => [
-                [
-                    'id' => 'active_on',
-                    'value' => true,
-                    'label' => $this->module->l('Enabled', self::FILE_NAME),
-                ],
-                [
-                    'id' => 'active_off',
-                    'value' => false,
-                    'label' => $this->module->l('Disabled', self::FILE_NAME),
-                ],
-            ],
-        ];
-
         $input = array_merge($input, [
                 [
                     'type' => 'select',
