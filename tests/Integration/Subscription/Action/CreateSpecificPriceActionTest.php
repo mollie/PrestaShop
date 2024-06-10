@@ -22,7 +22,7 @@ class CreateSpecificPriceActionTest extends BaseTestCase
     public function testItSuccessfullyCreateSpecificPrice(): void
     {
         /** @var \Product $product */
-        $product = ProductFactory::create();
+        $product = ProductFactory::initialize()->create();
 
         $this->assertDatabaseHasNot(\SpecificPrice::class, [
             'id_product' => (int) $product->id,
@@ -44,7 +44,7 @@ class CreateSpecificPriceActionTest extends BaseTestCase
         /** @var CreateSpecificPriceAction $createSpecificPrice */
         $createSpecificPrice = $this->getService(CreateSpecificPriceAction::class);
 
-        $result = $createSpecificPrice->run(CreateSpecificPriceData::create(
+        $createSpecificPrice->run(CreateSpecificPriceData::create(
             (int) $product->id,
             (int) \Product::getDefaultAttribute($product->id),
             10.00,
@@ -70,8 +70,5 @@ class CreateSpecificPriceActionTest extends BaseTestCase
             'from' => '0000-00-00 00:00:00',
             'to' => '0000-00-00 00:00:00',
         ]);
-
-        $product->delete();
-        $result->delete();
     }
 }

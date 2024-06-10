@@ -14,6 +14,7 @@ namespace Mollie\Subscription\Form\Options;
 
 use Module;
 use PrestaShop\PrestaShop\Core\Form\FormChoiceProviderInterface;
+use PrestaShopBundle\Form\Admin\Type\SwitchType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -45,6 +46,9 @@ class SubscriptionOptionsType extends TranslatorAwareType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('enable_subscriptions', SwitchType::class, [
+                'required' => true,
+            ])
             ->add('carrier', ChoiceType::class, [
                 'required' => true,
                 'choices' => $this->carrierOptionProvider->getChoices(),

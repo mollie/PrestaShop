@@ -54,9 +54,10 @@ class B2bPaymentMethodRestrictionValidatorTest extends BaseTestCase
             'vat_number' => 'vat-number',
         ]);
 
-        $this->contextBuilder->setCart(CartFactory::create());
-        $this->contextBuilder->getContext()->cart->id_address_invoice = $billingAddress->id;
-        $this->contextBuilder->getContext()->cart->id_customer = $customer->id;
+        CartFactory::initialize()->create([
+            'id_customer' => $customer->id,
+            'id_address_invoice' => $billingAddress->id,
+        ]);
 
         /** @var B2bPaymentMethodRestrictionValidator $b2bPaymentMethodRestrictionValidator */
         $b2bPaymentMethodRestrictionValidator = $this->getService(B2bPaymentMethodRestrictionValidator::class);
@@ -91,9 +92,10 @@ class B2bPaymentMethodRestrictionValidatorTest extends BaseTestCase
         $addressFormat->format = 'test-format';
         $addressFormat->save();
 
-        $this->contextBuilder->setCart(CartFactory::create());
-        $this->contextBuilder->getContext()->cart->id_address_invoice = $billingAddress->id;
-        $this->contextBuilder->getContext()->cart->id_customer = $customer->id;
+        CartFactory::initialize()->create([
+            'id_customer' => $customer->id,
+            'id_address_invoice' => $billingAddress->id,
+        ]);
 
         /** @var B2bPaymentMethodRestrictionValidator $b2bPaymentMethodRestrictionValidator */
         $b2bPaymentMethodRestrictionValidator = $this->getService(B2bPaymentMethodRestrictionValidator::class);
@@ -124,9 +126,10 @@ class B2bPaymentMethodRestrictionValidatorTest extends BaseTestCase
             'vat_number' => 'vat-number',
         ]);
 
-        $this->contextBuilder->setCart(CartFactory::create());
-        $this->contextBuilder->getContext()->cart->id_address_invoice = $billingAddress->id;
-        $this->contextBuilder->getContext()->cart->id_customer = $customer->id;
+        CartFactory::initialize()->create([
+            'id_customer' => $customer->id,
+            'id_address_invoice' => $billingAddress->id,
+        ]);
 
         /** @var B2bPaymentMethodRestrictionValidator $b2bPaymentMethodRestrictionValidator */
         $b2bPaymentMethodRestrictionValidator = $this->getService(B2bPaymentMethodRestrictionValidator::class);
@@ -154,11 +157,11 @@ class B2bPaymentMethodRestrictionValidatorTest extends BaseTestCase
             'vat_number' => 'vat-number',
         ]);
 
-        $this->contextBuilder->setCart(CartFactory::create([
+        CartFactory::initialize()->create([
             'id_customer' => $customer->id,
             'id_address_delivery' => $billingAddress->id,
             'id_address_invoice' => $billingAddress->id,
-        ]));
+        ]);
 
         /** @var B2bPaymentMethodRestrictionValidator $b2bPaymentMethodRestrictionValidator */
         $b2bPaymentMethodRestrictionValidator = $this->getService(B2bPaymentMethodRestrictionValidator::class);
@@ -186,11 +189,11 @@ class B2bPaymentMethodRestrictionValidatorTest extends BaseTestCase
             'vat_number' => 'vat-number',
         ]);
 
-        $this->contextBuilder->setCart(CartFactory::create([
+        CartFactory::initialize()->create([
             'id_customer' => $customer->id,
             'id_address_delivery' => $billingAddress->id,
             'id_address_invoice' => $billingAddress->id,
-        ]));
+        ]);
 
         /** @var B2bPaymentMethodRestrictionValidator $b2bPaymentMethodRestrictionValidator */
         $b2bPaymentMethodRestrictionValidator = $this->getService(B2bPaymentMethodRestrictionValidator::class);
@@ -218,11 +221,11 @@ class B2bPaymentMethodRestrictionValidatorTest extends BaseTestCase
             'vat_number' => '',
         ]);
 
-        $this->contextBuilder->setCart(CartFactory::create([
+        CartFactory::initialize()->create([
             'id_customer' => $customer->id,
             'id_address_delivery' => $billingAddress->id,
             'id_address_invoice' => $billingAddress->id,
-        ]));
+        ]);
 
         /** @var B2bPaymentMethodRestrictionValidator $b2bPaymentMethodRestrictionValidator */
         $b2bPaymentMethodRestrictionValidator = $this->getService(B2bPaymentMethodRestrictionValidator::class);
@@ -254,11 +257,11 @@ class B2bPaymentMethodRestrictionValidatorTest extends BaseTestCase
             'vat_number' => 'test-vat-number',
         ]);
 
-        $this->contextBuilder->setCart(CartFactory::create([
+        CartFactory::initialize()->create([
             'id_customer' => $customer->id,
-            'id_address_delivery' => $shippingAddress->id,
+            'id_address_delivery' => $billingAddress->id,
             'id_address_invoice' => $billingAddress->id,
-        ]));
+        ]);
 
         /** @var B2bPaymentMethodRestrictionValidator $b2bPaymentMethodRestrictionValidator */
         $b2bPaymentMethodRestrictionValidator = $this->getService(B2bPaymentMethodRestrictionValidator::class);

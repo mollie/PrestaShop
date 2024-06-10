@@ -13,6 +13,7 @@
 namespace Mollie\Repository;
 
 use Db;
+use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
 use OrderCartRule;
 
 if (!defined('_PS_VERSION_')) {

@@ -13,10 +13,10 @@
 namespace Mollie\Tests\Integration\Subscription\Validator;
 
 use Mollie\Subscription\Config\Config;
-use Mollie\Subscription\Repository\CombinationRepository as CombinationAdapter;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use Mollie\Tests\Integration\BaseTestCase;
+use Mollie\Tests\Integration\Factory\ProductFactory;
 
 class SubscriptionOrderValidatorTest extends BaseTestCase
 {
@@ -25,7 +25,9 @@ class SubscriptionOrderValidatorTest extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $product = new \Product(1);
+
+        /** @var \Product $product */
+        $product = ProductFactory::initialize()->create();
 
         $this->randomAttributeId = self::NORMAL_PRODUCT_ATTRIBUTE_ID;
 
@@ -63,20 +65,16 @@ class SubscriptionOrderValidatorTest extends BaseTestCase
      */
     public function testValidate(array $orderProducts, $expectedResult): void
     {
-        $cartMock = $this->createMock('Cart');
+        $cart = $this->createMock('Cart');
 
         $orderProductsMapped = array_map(function ($product) {
             return $this->getProducts($product);
         }, $orderProducts);
 
-        $cartMock->method('getProducts')->willReturn($orderProductsMapped);
+        $cart->method('getProducts')->willReturn($orderProductsMapped);
 
-        $combinationMock = $this->createMock(CombinationAdapter::class);
-        $combinationMock
-            ->method('getById')
-            ->willReturn(new \Combination(1));
+        $subscriptionProductValidator = $this->createMock(SubscriptionProductValidator::class);
 
-        $subscriptionProductMock = $this->createMock(SubscriptionProductValidator::class);
         $mockedValidation = [
             [(int) $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_NONE), false],
             [(int) $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_DAILY), true],
@@ -84,13 +82,14 @@ class SubscriptionOrderValidatorTest extends BaseTestCase
             [(int) $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY), true],
             [self::NORMAL_PRODUCT_ATTRIBUTE_ID, false],
         ];
-        $subscriptionProductMock->method('validate')->will(
+
+        $subscriptionProductValidator->method('validate')->will(
             $this->returnValueMap($mockedValidation)
         );
 
-        $subscriptionOrderValidator = new SubscriptionOrderValidator($subscriptionProductMock);
+        $subscriptionOrderValidator = new SubscriptionOrderValidator($subscriptionProductValidator);
 
-        $canBeAdded = $subscriptionOrderValidator->validate($cartMock);
+        $canBeAdded = $subscriptionOrderValidator->validate($cart);
 
         $this->assertEquals($expectedResult, $canBeAdded);
     }

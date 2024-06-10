@@ -18,8 +18,8 @@ use AttributeGroup;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\ProductAttributeAdapter;
+use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\Config\Config;
-use Mollie\Subscription\Logger\LoggerInterface;
 use Mollie\Subscription\Repository\LanguageRepository;
 use PrestaShopDatabaseException;
 use PrestaShopException;
@@ -43,14 +43,14 @@ class AttributeInstaller extends AbstractInstaller
     /** @var LanguageRepository */
     private $language;
 
-    /** @var LoggerInterface */
+    /** @var PrestaLoggerInterface */
     private $logger;
 
     /** @var ProductAttributeAdapter */
     private $productAttributeAdapter;
 
     public function __construct(
-        LoggerInterface $logger,
+        PrestaLoggerInterface $logger,
         ConfigurationAdapter $configuration,
         Mollie $module,
         LanguageRepository $language,
