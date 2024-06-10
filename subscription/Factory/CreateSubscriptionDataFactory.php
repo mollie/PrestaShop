@@ -15,18 +15,20 @@ declare(strict_types=1);
 namespace Mollie\Subscription\Factory;
 
 use Mollie;
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
+use Mollie\Config\Config;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Subscription\DTO\CreateSubscriptionData as SubscriptionDataDTO;
-use Mollie\Subscription\DTO\Object\Amount;
-use Mollie\Subscription\Exception\CouldNotProvideSubscriptionCarrierDeliveryPrice;
-use Mollie\Subscription\Exception\SubscriptionIntervalException;
-use Mollie\Subscription\Provider\SubscriptionCarrierDeliveryPriceProvider;
+use Mollie\Subscription\DTO\SubscriptionOrderAmountProviderData;
+use Mollie\Subscription\Exception\CouldNotCreateSubscriptionData;
+use Mollie\Subscription\Exception\MollieSubscriptionException;
 use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
+use Mollie\Subscription\Provider\SubscriptionOrderAmountProvider;
+use Mollie\Subscription\Provider\SubscriptionStartDateProvider;
 use Mollie\Subscription\Repository\CombinationRepository;
-use Mollie\Subscription\Repository\CurrencyRepository as CurrencyAdapter;
 use Mollie\Utility\SecureKeyUtility;
 use Order;
 
@@ -38,83 +40,95 @@ class CreateSubscriptionDataFactory
 {
     /** @var MolCustomerRepository */
     private $customerRepository;
-
     /** @var SubscriptionIntervalProvider */
     private $subscriptionInterval;
-
     /** @var SubscriptionDescriptionProvider */
     private $subscriptionDescription;
-
-    /** @var CurrencyAdapter */
-    private $currencyAdapter;
-
-    /** @var CombinationRepository */
-    private $combination;
-
     /** @var PaymentMethodRepositoryInterface */
     private $methodRepository;
     /** @var Mollie */
     private $module;
     /** @var Context */
     private $context;
-    /** @var SubscriptionCarrierDeliveryPriceProvider */
-    private $subscriptionCarrierDeliveryPriceProvider;
+    /** @var ConfigurationAdapter */
+    private $configuration;
+    /** @var SubscriptionOrderAmountProvider */
+    private $subscriptionOrderAmountProvider;
+    /** @var SubscriptionStartDateProvider */
+    private $subscriptionStartDateProvider;
+    /** @var CombinationRepository */
+    private $combination;
 
     public function __construct(
         MolCustomerRepository $customerRepository,
         SubscriptionIntervalProvider $subscriptionInterval,
         SubscriptionDescriptionProvider $subscriptionDescription,
-        CurrencyAdapter $currencyAdapter,
-        CombinationRepository $combination,
         PaymentMethodRepositoryInterface $methodRepository,
         Mollie $module,
         Context $context,
-        SubscriptionCarrierDeliveryPriceProvider $subscriptionCarrierDeliveryPriceProvider
+        ConfigurationAdapter $configuration,
+        SubscriptionOrderAmountProvider $subscriptionOrderAmountProvider,
+        SubscriptionStartDateProvider $subscriptionStartDateProvider,
+        CombinationRepository $combination
     ) {
         $this->customerRepository = $customerRepository;
         $this->subscriptionInterval = $subscriptionInterval;
         $this->subscriptionDescription = $subscriptionDescription;
-        $this->currencyAdapter = $currencyAdapter;
-        $this->combination = $combination;
         $this->methodRepository = $methodRepository;
         $this->module = $module;
         $this->context = $context;
-        $this->subscriptionCarrierDeliveryPriceProvider = $subscriptionCarrierDeliveryPriceProvider;
+        $this->configuration = $configuration;
+        $this->subscriptionOrderAmountProvider = $subscriptionOrderAmountProvider;
+        $this->subscriptionStartDateProvider = $subscriptionStartDateProvider;
+        $this->combination = $combination;
     }
 
     /**
-     * @throws \PrestaShopException
-     * @throws CouldNotProvideSubscriptionCarrierDeliveryPrice
-     * @throws SubscriptionIntervalException
+     * @throws MollieSubscriptionException
      */
     public function build(Order $order, array $subscriptionProduct): SubscriptionDataDTO
     {
-        $customer = $order->getCustomer();
-        /** @var \MolCustomer $molCustomer */
-        //todo: will need to improve mollie module logic to have shop id or card it so that multishop doesn't break
-        $molCustomer = $this->customerRepository->findOneBy(['email' => $customer->email]);
-
-        $combination = $this->combination->getById((int) $subscriptionProduct['id_product_attribute']);
-        $interval = $this->subscriptionInterval->getSubscriptionInterval($combination);
-
-        $currency = $this->currencyAdapter->getById((int) $order->id_currency);
-        $description = $this->subscriptionDescription->getSubscriptionDescription($order);
+        // TODO modify mol_customer table to hold id_customer (default PS customer ID as it holds id_shop). Then we won't need separate id_shop and id_shop_group column
 
         try {
-            $deliveryPrice = $this->subscriptionCarrierDeliveryPriceProvider->getPrice(
-                (int) $order->id_address_delivery,
-                (int) $order->id_cart,
-                (int) $order->id_customer,
-                $subscriptionProduct
-            );
-        } catch (CouldNotProvideSubscriptionCarrierDeliveryPrice $exception) {
-            // TODO throw generic error when new logger will be implemented
-            throw $exception;
+            /** @var \MolCustomer|null $molCustomer */
+            $molCustomer = $this->customerRepository->findOneBy([
+                'email' => $order->getCustomer()->email,
+            ]);
+        } catch (\Throwable $exception) {
+            throw CouldNotCreateSubscriptionData::unknownError($exception);
         }
 
-        $orderTotal = (float) $subscriptionProduct['total_price_tax_incl'] + $deliveryPrice;
+        if (!$molCustomer) {
+            throw CouldNotCreateSubscriptionData::failedToFindMollieCustomer((string) $order->getCustomer()->email);
+        }
 
-        $orderAmount = new Amount($orderTotal, $currency->iso_code);
+        try {
+            $interval = $this->subscriptionInterval->getSubscriptionInterval((int) $subscriptionProduct['id_product_attribute']);
+        } catch (\Throwable $exception) {
+            throw CouldNotCreateSubscriptionData::failedToRetrieveSubscriptionInterval($exception, (int) $subscriptionProduct['id_product_attribute']);
+        }
+
+        $description = $this->subscriptionDescription->getSubscriptionDescription($order);
+
+        $subscriptionCarrierId = (int) $this->configuration->get(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID);
+
+        try {
+            $orderAmount = $this->subscriptionOrderAmountProvider->get(
+                SubscriptionOrderAmountProviderData::create(
+                    (int) $order->id_address_delivery,
+                    (int) $order->id_cart,
+                    (int) $order->id_customer,
+                    $subscriptionProduct,
+                    $subscriptionCarrierId,
+                    (int) $order->id_currency,
+                    (float) $subscriptionProduct['total_price_tax_incl']
+                )
+            );
+        } catch (\Throwable $exception) {
+            throw CouldNotCreateSubscriptionData::failedToProvideSubscriptionOrderAmount($exception);
+        }
+
         $subscriptionData = new SubscriptionDataDTO(
             $molCustomer->customer_id,
             $orderAmount,
@@ -127,20 +141,23 @@ class CreateSubscriptionDataFactory
             'subscriptionWebhook'
         ));
 
-        $key = SecureKeyUtility::generateReturnKey(
+        $secureKey = SecureKeyUtility::generateReturnKey(
             $order->id_customer,
             $order->id_cart,
             $this->module->name
         );
 
-        $subscriptionData->setMetaData(
-            [
-                'secure_key' => $key,
-            ]
-        );
+        $subscriptionData->setMetaData([
+            'secure_key' => $secureKey,
+            'subscription_carrier_id' => $subscriptionCarrierId,
+        ]);
+
+        $combination = $this->combination->getById((int) $subscriptionProduct['id_product_attribute']);
+        $subscriptionData->setStartDate($this->subscriptionStartDateProvider->getSubscriptionStartDate($combination));
 
         // todo: check for solution what to do when mandate is missing
         $payment = $this->methodRepository->getPaymentBy('cart_id', $order->id_cart);
+
         $subscriptionData->setMandateId($payment['mandate_id']);
 
         return $subscriptionData;

@@ -6,13 +6,13 @@ describe('PS8 Tests Suite [Payments API]', {
   },
 }, () => {
   beforeEach(() => {
-      cy.viewport(1920,1080)
-      cy.CachingBOFOPS8()
+    cy.viewport(1920,1080)
+    cy.CachingBOFOPS8()
   })
 it('C339378: 43 Check if Bancontact QR payment dropdown exists [Payments API]', () => {
-  cy.visit('/admin1/')
-  cy.OpeningModuleDashboardURL()
-  cy.get('[name="MOLLIE_BANCONTACT_QR_CODE_ENABLED"]').should('exist')
+    cy.visit('/admin1/')
+    cy.OpeningModuleDashboardURL()
+    cy.get('[name="MOLLIE_BANCONTACT_QR_CODE_ENABLED"]').should('exist')
 })
 it('C339379: 44 Bancontact Checkouting [Payments API]', () => {
     cy.navigatingToThePaymentPS8()
@@ -235,5 +235,18 @@ it('C339401: 66 Bank Transfer Checkouting [Payments API]', () => {
 });
 it.skip('C339402: 67 Bank Transfer BO Refunding, Partial Refunding [Payments API]', () => { // somehow an error in console is thrown, will check why. Temporary skipping, because Mollie block is not loaded properly
     cy.OrderRefundingPartialPaymentsAPI()
+})
+it('C3006615: Bancomat Checkouting [Payments API]', () => {
+  cy.navigatingToThePaymentPS8()
+  //Payment method choosing
+  cy.contains('Belfius').click({force:true})
+  cy.get('.condition-label > .js-terms').click({force:true})
+  cy.contains('Place order').click()
+  cy.get('[value="paid"]').click()
+  cy.get('[class="button form__button"]').click()
+  cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+});
+it('C3006616: Bancomat BO Refunding, Partial Refunding [Payments API]', () => {
+  cy.OrderRefundingPartialPaymentsAPI()
 })
 })

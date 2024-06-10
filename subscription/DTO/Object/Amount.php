@@ -39,6 +39,23 @@ class Amount implements JsonSerializable
         $this->currency = $currency;
     }
 
+    /**
+     * @return float
+     */
+    public function getValue(): float
+    {
+        return $this->value;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'value' => (string) number_format($this->value, 2, '.', ''),
+            'currency' => $this->currency,
+        ];
+    }
+
+    // TODO jsonSerialize should be only used for json_encode operation. If values needs to be casted to array, use method above.
     public function jsonSerialize(): array
     {
         return [

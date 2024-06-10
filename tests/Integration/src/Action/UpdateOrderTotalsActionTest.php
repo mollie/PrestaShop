@@ -20,6 +20,9 @@ class UpdateOrderTotalsActionTest extends BaseTestCase
 {
     public function testItSuccessfullyUpdatesOrderTotals(): void
     {
+        // TODO order factory
+        $originalOrder = new \Order(1);
+
         /** @var UpdateOrderTotalsAction $updateOrderTotalsAction */
         $updateOrderTotalsAction = $this->getService(UpdateOrderTotalsAction::class);
 
@@ -49,5 +52,7 @@ class UpdateOrderTotalsActionTest extends BaseTestCase
                 'total_paid' => 22.1,
             ]
         );
+
+        $originalOrder->save();
     }
 }

@@ -15,11 +15,15 @@ declare(strict_types=1);
 namespace Mollie\Subscription\Controller\Symfony;
 
 use Exception;
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Shop;
+use Mollie\Config\Config;
+use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\Exception\SubscriptionApiException;
 use Mollie\Subscription\Filters\SubscriptionFilters;
 use Mollie\Subscription\Grid\SubscriptionGridDefinitionFactory;
 use Mollie\Subscription\Handler\SubscriptionCancellationHandler;
+use Mollie\Subscription\Handler\UpdateSubscriptionCarrierHandler;
 use Mollie\Utility\PsVersionUtility;
 use PrestaShop\PrestaShop\Core\Form\FormHandlerInterface;
 use PrestaShop\PrestaShop\Core\Grid\GridFactoryInterface;
@@ -96,6 +100,8 @@ class SubscriptionController extends AbstractSymfonyController
             return $this->redirectToRoute('admin_subscription_index');
         }
 
+        $this->updateSubscriptionCarrier($form->getData()['carrier']);
+
         $formHandler->save($form->getData());
 
         $this->addFlash(
@@ -104,6 +110,34 @@ class SubscriptionController extends AbstractSymfonyController
         );
 
         return $this->redirectToRoute('admin_subscription_index');
+    }
+
+    private function updateSubscriptionCarrier(int $newCarrierId): void
+    {
+        /** @var ConfigurationAdapter $configuration */
+        $configuration = $this->module->getService(ConfigurationAdapter::class);
+        $oldCarrierId = $configuration->get(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID);
+
+        if (empty($oldCarrierId) || empty($newCarrierId)) {
+            $this->addFlash(
+                'error',
+                $this->module->l('Carrier not found', self::FILE_NAME)
+            );
+        }
+
+        /** @var UpdateSubscriptionCarrierHandler $subscriptionCarrierUpdateHandler */
+        $subscriptionCarrierUpdateHandler = $this->module->getService(UpdateSubscriptionCarrierHandler::class);
+
+        /** @var PrestaLoggerInterface $logger */
+        $logger = $this->module->getService(PrestaLoggerInterface::class);
+
+        $failedSubscriptionOrderIdsToUpdate = $subscriptionCarrierUpdateHandler->run($newCarrierId);
+
+        if (!empty($failedSubscriptionOrderIdsToUpdate)) {
+            $logger->error('Failed to update subscription carrier for all orders.', [
+                'failed_subscription_order_ids' => json_encode($failedSubscriptionOrderIdsToUpdate),
+            ]);
+        }
     }
 
     /**

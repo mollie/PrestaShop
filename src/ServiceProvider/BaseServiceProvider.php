@@ -65,13 +65,12 @@ use Mollie\Repository\CartRuleRepository;
 use Mollie\Repository\CartRuleRepositoryInterface;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\CountryRepositoryInterface;
-use Mollie\Repository\CurrencyRepository;
-use Mollie\Repository\CurrencyRepositoryInterface;
 use Mollie\Repository\CustomerRepository;
 use Mollie\Repository\CustomerRepositoryInterface;
 use Mollie\Repository\GenderRepository;
 use Mollie\Repository\GenderRepositoryInterface;
 use Mollie\Repository\MolCustomerRepository;
+use Mollie\Repository\MolCustomerRepositoryInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepository;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\OrderRepository;
@@ -105,11 +104,13 @@ use Mollie\Service\Shipment\ShipmentInformationSender;
 use Mollie\Service\Shipment\ShipmentInformationSenderInterface;
 use Mollie\Service\ShipmentService;
 use Mollie\Service\ShipmentServiceInterface;
+use Mollie\Shared\Core\Shared\Repository\CurrencyRepository;
+use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
 use Mollie\Subscription\Grid\Accessibility\SubscriptionCancelAccessibility;
 use Mollie\Subscription\Install\Installer;
 use Mollie\Subscription\Install\InstallerInterface;
-use Mollie\Subscription\Logger\Logger;
-use Mollie\Subscription\Logger\LoggerInterface;
+use Mollie\Subscription\Repository\CombinationRepository;
+use Mollie\Subscription\Repository\CombinationRepositoryInterface;
 use Mollie\Subscription\Repository\OrderDetailRepository;
 use Mollie\Subscription\Repository\OrderDetailRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrderRepository;
@@ -147,7 +148,6 @@ final class BaseServiceProvider
     public function register(Container $container)
     {
         /* Logger */
-        $this->addService($container, LoggerInterface::class, $container->get(Logger::class));
         $this->addService($container, PrestaLoggerInterface::class, $container->get(PrestaLogger::class));
 
         /* Utility */
@@ -161,17 +161,18 @@ final class BaseServiceProvider
         $this->addService($container, CountryRepositoryInterface::class, $container->get(CountryRepository::class));
         $this->addService($container, PaymentMethodRepositoryInterface::class, $container->get(PaymentMethodRepository::class));
         $this->addService($container, GenderRepositoryInterface::class, $container->get(GenderRepository::class));
-        $this->addService($container, MolCustomerRepository::class, MolCustomerRepository::class)
-            ->withArgument('MolCustomer');
+        $this->addService($container, CombinationRepositoryInterface::class, $container->get(CombinationRepository::class));
+        $this->addService($container, MolCustomerRepositoryInterface::class, $container->get(MolCustomerRepository::class));
+
+        $service = $this->addService($container, MolCustomerRepository::class, MolCustomerRepository::class);
+        $this->addServiceArgument($service, 'MolCustomer');
 
         $this->addService($container, UninstallerInterface::class, $container->get(Mollie\Install\DatabaseTableUninstaller::class));
 
-        $this->addService($container, InstallerInterface::class, Installer::class)
-            ->withArguments([
-                $container->get(Mollie\Subscription\Install\DatabaseTableInstaller::class),
-                $container->get(Mollie\Subscription\Install\AttributeInstaller::class),
-                $container->get(Mollie\Subscription\Install\HookInstaller::class),
-            ]);
+        $service = $this->addService($container, InstallerInterface::class, Installer::class);
+        $this->addServiceArgument($service, $container->get(Mollie\Subscription\Install\DatabaseTableInstaller::class));
+        $this->addServiceArgument($service, $container->get(Mollie\Subscription\Install\AttributeInstaller::class));
+        $this->addServiceArgument($service, $container->get(Mollie\Subscription\Install\HookInstaller::class));
 
         $this->addService($container, DecoderInterface::class, JsonDecoder::class);
 
@@ -183,13 +184,11 @@ final class BaseServiceProvider
         $this->addService($container, OrderEndpointPaymentTypeHandlerInterface::class, $container->get(OrderEndpointPaymentTypeHandler::class));
         $this->addService($container, ShipmentVerificationInterface::class, $container->get(CanSendShipment::class));
         $this->addService($container, ShipmentInformationSenderInterface::class, $container->get(ShipmentInformationSender::class));
-        $this->addService($container, ShipmentSenderHandlerInterface::class, ShipmentSenderHandler::class)
-            ->withArguments(
-                [
-                    $container->get(ShipmentVerificationInterface::class),
-                    $container->get(ShipmentInformationSenderInterface::class),
-                ]
-            );
+
+        $service = $this->addService($container, ShipmentSenderHandlerInterface::class, ShipmentSenderHandler::class);
+
+        $this->addServiceArgument($service, $container->get(ShipmentVerificationInterface::class));
+        $this->addServiceArgument($service, $container->get(ShipmentInformationSenderInterface::class));
 
         $this->addService($container, AddressRepositoryInterface::class, $container->get(AddressRepository::class));
         $this->addService($container, AddressFormatRepositoryInterface::class, $container->get(AddressFormatRepository::class));
@@ -214,10 +213,11 @@ final class BaseServiceProvider
         $this->addService($container, CarrierRepositoryInterface::class, $container->get(CarrierRepository::class));
         $this->addService($container, CartRuleQuantityChangeHandlerInterface::class, $container->get(CartRuleQuantityChangeHandler::class));
 
-        $this->addService($container, RecurringOrderRepositoryInterface::class, RecurringOrderRepository::class)
-            ->withArgument('MolRecurringOrder');
-        $this->addService($container, RecurringOrdersProductRepositoryInterface::class, RecurringOrdersProductRepository::class)
-            ->withArgument('MolRecurringOrdersProduct');
+        $service = $this->addService($container, RecurringOrderRepositoryInterface::class, RecurringOrderRepository::class);
+        $this->addServiceArgument($service, 'MolRecurringOrder');
+
+        $service = $this->addService($container, RecurringOrdersProductRepositoryInterface::class, RecurringOrdersProductRepository::class);
+        $this->addServiceArgument($service, 'MolRecurringOrdersProduct');
 
         $this->addService($container, TemplateParserInterface::class, SmartyTemplateParser::class);
 
@@ -225,8 +225,9 @@ final class BaseServiceProvider
 
         $this->addService($container, PaymentMethodSortProviderInterface::class, PaymentMethodSortProvider::class);
         $this->addService($container, PhoneNumberProviderInterface::class, PhoneNumberProvider::class);
-        $this->addService($container, PaymentMethodRestrictionValidationInterface::class, PaymentMethodRestrictionValidation::class)
-            ->withArgument([
+
+        $this->addService($container, PaymentMethodRestrictionValidationInterface::class, function () use ($container) {
+            return new PaymentMethodRestrictionValidation([
                 $container->get(BasePaymentMethodRestrictionValidator::class),
                 $container->get(VoucherPaymentMethodRestrictionValidator::class),
                 $container->get(EnvironmentVersionSpecificPaymentMethodRestrictionValidator::class),
@@ -234,22 +235,23 @@ final class BaseServiceProvider
                 $container->get(AmountPaymentMethodRestrictionValidator::class),
                 $container->get(B2bPaymentMethodRestrictionValidator::class),
             ]);
+        });
 
         $this->addService($container, CustomLogoProviderInterface::class, $container->get(CreditCardLogoProvider::class));
 
-        $this->addService($container, PaymentMethodPositionHandlerInterface::class, PaymentMethodPositionHandler::class)
-            ->withArgument(PaymentMethodRepositoryInterface::class);
+        $service = $this->addService($container, PaymentMethodPositionHandlerInterface::class, PaymentMethodPositionHandler::class);
+        $this->addServiceArgument($service, PaymentMethodRepositoryInterface::class);
 
-        $this->addService($container, CertificateHandlerInterface::class, ApplePayDirectCertificateHandler::class)
-            ->withArgument(Mollie::class);
+        $service = $this->addService($container, CertificateHandlerInterface::class, ApplePayDirectCertificateHandler::class);
+        $this->addServiceArgument($service, Mollie::class);
 
         $this->addService($container, ProfileIdProviderInterface::class, ProfileIdProvider::class);
 
         $this->addService($container, PaymentOptionHandlerInterface::class, $container->get(PaymentOptionHandler::class));
 
-        $this->addService($container, ApiTestFeedbackBuilder::class, ApiTestFeedbackBuilder::class)
-            ->withArgument($container->get(ModuleFactory::class)->getModuleVersion() ?? '')
-            ->withArgument(ApiKeyService::class);
+        $service = $this->addService($container, ApiTestFeedbackBuilder::class, ApiTestFeedbackBuilder::class);
+        $this->addServiceArgument($service, $container->get(ModuleFactory::class)->getModuleVersion() ?? '');
+        $this->addServiceArgument($service, ApiKeyService::class);
     }
 
     private function addService(Container $container, $className, $service)
@@ -265,5 +267,14 @@ final class BaseServiceProvider
         }
 
         return $service;
+    }
+
+    private function addServiceArgument($service, $argument)
+    {
+        if (method_exists($service, 'withArgument')) {
+            return $service->withArgument($argument);
+        } else {
+            return $service->addArgument($argument);
+        }
     }
 }

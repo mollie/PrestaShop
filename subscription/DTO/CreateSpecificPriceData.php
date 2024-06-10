@@ -33,7 +33,7 @@ class CreateSpecificPriceData
     /** @var int */
     private $currencyId;
 
-    public function __construct(
+    private function __construct(
         int $productId,
         int $productAttributeId,
         float $price,

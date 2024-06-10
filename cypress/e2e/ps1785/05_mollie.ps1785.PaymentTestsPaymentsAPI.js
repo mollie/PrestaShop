@@ -14,13 +14,13 @@ describe('PS1785 Tests Suite [Payments API]', {
   },
 }, () => {
   beforeEach(() => {
-      cy.viewport(1920,1080)
-      cy.CachingBOFOPS1785()
+    cy.viewport(1920,1080)
+    cy.CachingBOFOPS1785()
   })
 it('C339378: 43 Check if Bancontact QR payment dropdown exists [Payments API]', () => {
-  cy.visit('/admin1/')
-  cy.OpeningModuleDashboardURL()
-  cy.get('[name="MOLLIE_BANCONTACT_QR_CODE_ENABLED"]').should('exist')
+    cy.visit('/admin1/')
+    cy.OpeningModuleDashboardURL()
+    cy.get('[name="MOLLIE_BANCONTACT_QR_CODE_ENABLED"]').should('exist')
 })
 it('C339379: 44 Bancontact Checkouting [Payments API]', () => {
     cy.navigatingToThePayment()
@@ -253,42 +253,42 @@ it('C339402: 67 Bank Transfer BO Refunding, Partial Refunding [Payments API]', (
 });
 // TODO - some reported possible bugs in the workflow, but still continuing on completing the tests...
 it.only('Blik Checkouting [Payments API]', () => {
-  cy.visit('/en/order-history')
-  // switching the currency
-  cy.pause()
-  cy.contains('UK').click({force:true})
-  //Billing country LT, DE etc.
-  cy.get('.clearfix > .btn').click()
-  cy.get('#js-delivery > .continue').click()
-  //Payment method choosing
-  cy.contains('Blik').click({force:true})
-  cy.get('.condition-label > .js-terms').click({force:true})
-  cy.contains('Place order').click()
-  cy.get('[value="authorized"]').click()
-  cy.get('[class="button form__button"]').click()
-  cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+    cy.visit('/en/order-history')
+    // switching the currency
+    cy.pause()
+    cy.contains('UK').click({force:true})
+    //Billing country LT, DE etc.
+    cy.get('.clearfix > .btn').click()
+    cy.get('#js-delivery > .continue').click()
+    //Payment method choosing
+    cy.contains('Blik').click({force:true})
+    cy.get('.condition-label > .js-terms').click({force:true})
+    cy.contains('Place order').click()
+    cy.get('[value="authorized"]').click()
+    cy.get('[class="button form__button"]').click()
+    cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
 it.only('Blik Order Shipping, Refunding [Payments API]', () => {
-  cy.OrderRefundingPartialPaymentsAPI()
+    cy.OrderRefundingPartialPaymentsAPI()
 })
 it('TWINT Checkouting [Payments API]', () => {
-  cy.visit('/en/order-history')
-  // switching the currency
-  cy.pause()
-  cy.contains('Reorder').click()
-  cy.contains('UK').click({force:true})
-  //Billing country LT, DE etc.
-  cy.get('.clearfix > .btn').click()
-  cy.get('#js-delivery > .continue').click()
-  //Payment method choosing
-  cy.contains('TWINT').click({force:true})
-  cy.get('.condition-label > .js-terms').click({force:true})
-  cy.contains('Place order').click()
-  cy.get('[value="authorized"]').click()
-  cy.get('[class="button form__button"]').click()
-  cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+    cy.visit('/en/order-history')
+    // switching the currency
+    cy.pause()
+    cy.contains('Reorder').click()
+    cy.contains('UK').click({force:true})
+    //Billing country LT, DE etc.
+    cy.get('.clearfix > .btn').click()
+    cy.get('#js-delivery > .continue').click()
+    //Payment method choosing
+    cy.contains('TWINT').click({force:true})
+    cy.get('.condition-label > .js-terms').click({force:true})
+    cy.contains('Place order').click()
+    cy.get('[value="authorized"]').click()
+    cy.get('[class="button form__button"]').click()
+    cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
 });
 it('TWINT Order Shipping, Refunding [Payments API]', () => {
-  cy.OrderRefundingPartialPaymentsAPI()
+    cy.OrderRefundingPartialPaymentsAPI()
 })
 })

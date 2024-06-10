@@ -28,6 +28,7 @@ it('C339305: Connecting test API successsfully', () => {
       cy.log(text) // Showing and asserting the text that loaded, to ensure the BO is loaded, not crashed with PHP fatals etc.
       })
       cy.iframe('[id^="uid_"]').find('button').click() // Cloudsync validation
+      cy.wait(15000) // Waiting for validation to process until the end
       cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click({force:true})
       cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
       cy.get('#module_form_submit_btn').click()
@@ -41,59 +42,24 @@ it('C339338: Enabling Mollie carriers in Prestashop successfully', () => {
       cy.get('[id="form-carrier-restrictions-save-button"]').click()
 })
 it('C339339: Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
-      cy.visit('/admin1/')
-      cy.get('.mi-mollie').click({fore:true})
-      cy.get('#subtab-AdminMollieModule').click()
+      cy.OpeningModuleDashboardURL()
       cy.get('[href="#advanced_settings"]').click({force:true})
-      cy.get('[id="MOLLIE_PAYMENTSCREEN_LOCALE"]').should('be.visible')
-      cy.get('[id="MOLLIE_SEND_ORDER_CONFIRMATION"]').should('be.visible')
-      cy.get('[id="MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS"]').should('be.visible')
-      cy.get('[class="help-block"]').should('be.visible')
-      cy.get('[id="MOLLIE_STATUS_AWAITING"]').should('be.visible')
-      cy.get('[id="MOLLIE_STATUS_PAID"]').should('be.visible')
-      cy.get('[name="MOLLIE_MAIL_WHEN_PAID"]').should('exist')
-      cy.get('[name="MOLLIE_MAIL_WHEN_COMPLETED"]').should('exist')
-      cy.get('[name="MOLLIE_STATUS_COMPLETED"]').should('exist')
-      cy.get('[name="MOLLIE_MAIL_WHEN_CANCELED"]').should('exist')
-      cy.get('[name="MOLLIE_STATUS_CANCELED"]').should('exist')
-      cy.get('[name="MOLLIE_MAIL_WHEN_EXPIRED"]').should('exist')
-      cy.get('[name="MOLLIE_STATUS_EXPIRED"]').should('exist')
-      cy.get('[name="MOLLIE_MAIL_WHEN_REFUNDED"]').should('exist')
-      cy.get('[name="MOLLIE_STATUS_REFUNDED"]').should('exist')
-      cy.get('[name="MOLLIE_STATUS_OPEN"]').should('exist')
-      cy.get('[name="MOLLIE_MAIL_WHEN_SHIPPING"]').should('exist')
-      cy.get('[name="MOLLIE_STATUS_SHIPPING"]').should('exist')
-      cy.get('[name="MOLLIE_STATUS_PARTIAL_REFUND"]').should('exist')
-      cy.get('[name="MOLLIE_IMAGES"]').should('exist')
-      cy.get('[name="MOLLIE_CSS"]').should('exist')
-      cy.get('[id="MOLLIE_TRACKING_URLS__container"]').should('exist')
-      cy.get('[id="MOLLIE_AS_MAIN_info"]').should('exist')
-      cy.get('[id="MOLLIE_AS_STATUSES_info"]').should('exist')
-      cy.get('[name="MOLLIE_DISPLAY_ERRORS"]').should('exist')
-      cy.get('[name="MOLLIE_DEBUG_LOG"]').should('exist')
-      cy.get('#module_form_submit_btn').click({force:true}) //checking the saving
-      cy.get('[class="alert alert-success"]').should('be.visible') //checking if saving returns green alert
+      cy.advancedSettingsValidation()
       cy.reload()
+      cy.wait(3000)
       cy.matchImage(); // let's make a snapshot for visual regression testing later, if UI matches
-      //cy.window() will check if there are no Errors in console
 });
 it('C688472: Checking the Subscriptions tab, and console errors', () => {
-      cy.visit('/admin1/')
-      cy.get('.mi-mollie').click({fore:true})
-      cy.get('#subtab-AdminMollieModule').click()
+      cy.OpeningModuleDashboardURL()
       cy.get('#subtab-AdminMollieSubscriptionOrders').click()
       cy.get('[id="invertus_mollie_subscription_grid_panel"]').should('be.visible')
       cy.selectSubscriptionsCarriersCheck() // checking the Subscriptions carriers select and saving
 });
 it('C688473: Checking the Subscriptions FAQ, and console errors', () => {
-      cy.visit('/admin1/')
-      cy.get('.mi-mollie').click({fore:true})
-      cy.get('#subtab-AdminMollieModule').click()
+      cy.OpeningModuleDashboardURL()
       cy.get('#subtab-AdminMollieSubscriptionFAQ').click()
-      cy.get(':nth-child(3) > .col-lg-12 > .card').should('be.visible')
-      cy.get(':nth-child(4) > .col-lg-12 > .card').should('be.visible')
-      cy.get(':nth-child(5) > .col-lg-12 > .card').should('be.visible')
-      cy.get(':nth-child(6) > .col-lg-12 > .card').should('be.visible')
+      cy.subscriptionsUiCheck()
+      cy.wait(3000)
       cy.matchImage(); // let's make a snapshot for visual regression testing later, if UI matches
 });
 })

@@ -17,6 +17,7 @@ use Db;
 use DbQuery;
 use Exception;
 use Mollie\Api\Types\PaymentStatus;
+use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
 use MolPaymentMethod;
 use mysqli_result;
 use PDOStatement;
