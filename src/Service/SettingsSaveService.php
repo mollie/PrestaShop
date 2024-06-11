@@ -28,7 +28,6 @@ use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\TagsUtility;
-use MolPaymentMethodIssuer;
 use OrderState;
 use PrestaShopDatabaseException;
 use PrestaShopException;
@@ -183,22 +182,6 @@ class SettingsSaveService
                 } catch (Exception $e) {
                     $errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods', self::FILE_NAME) . ":{$method['id']}";
                     continue;
-                }
-
-                if (!$this->paymentMethodRepository->deletePaymentMethodIssuersByPaymentMethodId($paymentMethod->id)) {
-                    $errors[] = $this->module->l('Something went wrong. Couldn\'t delete old payment methods issuers', self::FILE_NAME) . ":{$method['id']}";
-                    continue;
-                }
-
-                if ($method['issuers']) {
-                    $paymentMethodIssuer = new MolPaymentMethodIssuer();
-                    $paymentMethodIssuer->issuers_json = json_encode($method['issuers']);
-                    $paymentMethodIssuer->id_payment_method = $paymentMethod->id;
-                    try {
-                        $paymentMethodIssuer->add();
-                    } catch (Exception $e) {
-                        $errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods issuer', self::FILE_NAME);
-                    }
                 }
 
                 $countries = $this->tools->getValue(Config::MOLLIE_METHOD_CERTAIN_COUNTRIES . $method['id']);

@@ -70,7 +70,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         $method = Tools::getValue('method');
-        $issuer = Tools::getValue('issuer') ?: null;
 
         $originalAmount = $cart->getOrderTotal(
             true,
@@ -105,7 +104,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $amount,
             Tools::strtoupper($this->context->currency->iso_code),
             $method,
-            $issuer,
             (int) $cart->id,
             $customer->secure_key,
             $paymentMethodObj,

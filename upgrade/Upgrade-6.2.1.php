@@ -18,7 +18,9 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_6_2_1(Mollie $module): bool
 {
-    //todo remove issuers list config
-    //todo remove table with issuers
-    return true;
+    $isTableDeleted = Db::getInstance()->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'mol_payment_method_issuer`');
+    $isSandboxConfigDeleted = Configuration::deleteByName('MOLLIE_SANDBOX_ISSUERS');
+    $isProdConfigDeleted = Configuration::deleteByName('MOLLIE_PRODUCTION_ISSUERS');
+
+    return $isTableDeleted && $isSandboxConfigDeleted && $isProdConfigDeleted;
 }

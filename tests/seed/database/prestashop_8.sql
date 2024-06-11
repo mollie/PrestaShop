@@ -11935,15 +11935,6 @@ CREATE TABLE `ps_mol_payment_method` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `ps_mol_payment_method_issuer`;
-CREATE TABLE `ps_mol_payment_method_issuer` (
-  `id_payment_method_issuer` int(64) NOT NULL AUTO_INCREMENT,
-  `id_payment_method` int(64) NOT NULL,
-  `issuers_json` text NOT NULL,
-  PRIMARY KEY (`id_payment_method_issuer`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
 DROP TABLE IF EXISTS `ps_mol_pending_order_cart`;
 CREATE TABLE `ps_mol_pending_order_cart` (
   `id_mol_pending_order_cart` int(64) NOT NULL AUTO_INCREMENT,
