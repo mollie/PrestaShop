@@ -246,7 +246,6 @@ class SettingsSaveService
 
         $mollieImages = $this->tools->getValue(Config::MOLLIE_IMAGES);
         $showResentPayment = $this->tools->getValue(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK);
-        $mollieIssuers = $this->tools->getValue(Config::MOLLIE_ISSUERS[$environment ? 'production' : 'sandbox']);
         $mollieCss = $this->tools->getValue(Config::MOLLIE_CSS);
 
         if (!isset($mollieCss)) {
@@ -308,7 +307,6 @@ class SettingsSaveService
             $this->configurationAdapter->updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT, $mollieSingleClickPaymentEnabled);
             $this->configurationAdapter->updateValue(Config::MOLLIE_IMAGES, $mollieImages);
             $this->configurationAdapter->updateValue(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK, $showResentPayment);
-            $this->configurationAdapter->updateValue(Config::MOLLIE_ISSUERS, $mollieIssuers);
             $this->configurationAdapter->updateValue(Config::MOLLIE_METHOD_COUNTRIES, (int) $mollieMethodCountriesEnabled);
             $this->configurationAdapter->updateValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY, (int) $mollieMethodCountriesDisplayEnabled);
             $this->configurationAdapter->updateValue(Config::MOLLIE_CSS, $mollieCss);

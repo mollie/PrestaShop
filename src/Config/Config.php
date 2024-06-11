@@ -82,8 +82,6 @@ class Config
     const LOGOS_NORMAL = 'normal';
     const LOGOS_HIDE = 'hide';
 
-    const ISSUERS_ON_CLICK = 'on-click';
-    const ISSUERS_PAYMENT_PAGE = 'payment-page';
     const METHODS_CONFIG = 'MOLLIE_METHODS_CONFIG';
 
     const ENVIRONMENT_TEST = 0;
@@ -113,10 +111,7 @@ class Config
 
     const MOLLIE_IMAGES = 'MOLLIE_IMAGES';
     const MOLLIE_SHOW_RESEND_PAYMENT_LINK = 'MOLLIE_SHOW_RESEND_PAYMENT_LINK';
-    const MOLLIE_ISSUERS = [
-        'sandbox' => 'MOLLIE_SANDBOX_ISSUERS',
-        'production' => 'MOLLIE_PRODUCTION_ISSUERS',
-    ];
+
     const MOLLIE_CSS = 'MOLLIE_CSS';
     const MOLLIE_DEBUG_LOG = 'MOLLIE_DEBUG_LOG';
     const MOLLIE_METHOD_COUNTRIES = 'MOLLIE_METHOD_COUNTRIES';

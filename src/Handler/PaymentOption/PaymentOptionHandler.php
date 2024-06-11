@@ -125,10 +125,6 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
             return false;
         }
 
-        if ($this->configurationAdapter->get(Config::MOLLIE_ISSUERS) !== Config::ISSUERS_ON_CLICK) {
-            return false;
-        }
-
         return true;
     }
 

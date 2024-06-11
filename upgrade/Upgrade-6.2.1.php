@@ -9,19 +9,16 @@
  * @see        https://github.com/mollie/PrestaShop
  */
 
+use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Config\Config;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * @return bool
- *
- * @throws PrestaShopDatabaseException
- * @throws PrestaShopException
- */
-function upgrade_module_2_0_0()
+function upgrade_module_6_2_1(Mollie $module): bool
 {
-    Configuration::deleteByName('MOLLIE_VERSION');
-
+    //todo remove issuers list config
+    //todo remove table with issuers
     return true;
 }
