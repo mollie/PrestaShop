@@ -931,7 +931,6 @@ class Mollie extends PaymentModule
                 $totalPaid,
                 $currency,
                 '',
-                null,
                 $cartId,
                 $customerKey,
                 $paymentMethodObj,
