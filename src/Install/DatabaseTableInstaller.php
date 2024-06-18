@@ -85,12 +85,6 @@ final class DatabaseTableInstaller implements InstallerInterface
 			    `id_shop` INT(64) DEFAULT 1
 			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
-        $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_payment_method_issuer` (
-				`id_payment_method_issuer`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
-				`id_payment_method` INT(64) NOT NULL,
-				`issuers_json` TEXT NOT NULL
-			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
-
         $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_order_payment_fee` (
 				`id_mol_order_payment_fee`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
 				`id_cart` INT(64) NOT NULL,

@@ -75,7 +75,6 @@ class Uninstall
             Config::MOLLIE_SEND_ORDER_CONFIRMATION,
             Config::MOLLIE_IFRAME,
             Config::MOLLIE_IMAGES,
-            Config::MOLLIE_ISSUERS,
             Config::MOLLIE_CSS,
             Config::MOLLIE_DEBUG_LOG,
             Config::MOLLIE_DISPLAY_ERRORS,
