@@ -38,7 +38,6 @@ namespace Mollie\Provider\PaymentOption;
 
 use Mollie;
 use Mollie\Adapter\LegacyContext;
-use Mollie\Builder\Content\PaymentOption\IdealDropdownInfoBlock;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
@@ -82,11 +81,6 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
     private $templateParser;
 
     /**
-     * @var IdealDropdownInfoBlock
-     */
-    private $idealDropdownInfoBlock;
-
-    /**
      * @var LanguageService
      */
     private $languageService;
@@ -99,7 +93,6 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         CreditCardLogoProvider $creditCardLogoProvider,
         PaymentFeeProviderInterface $paymentFeeProvider,
         TemplateParserInterface $templateParser,
-        IdealDropdownInfoBlock $idealDropdownInfoBlock,
         LanguageService $languageService,
         OrderTotalProviderInterface $orderTotalProvider
     ) {
@@ -108,7 +101,6 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         $this->creditCardLogoProvider = $creditCardLogoProvider;
         $this->paymentFeeProvider = $paymentFeeProvider;
         $this->templateParser = $templateParser;
-        $this->idealDropdownInfoBlock = $idealDropdownInfoBlock;
         $this->languageService = $languageService;
         $this->orderTotalProvider = $orderTotalProvider;
     }
@@ -131,19 +123,7 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
             ['method' => $paymentMethod->getPaymentMethodName(), 'rand' => Mollie\Utility\TimeUtility::getCurrentTimeStamp()],
             true
         ));
-        $paymentOption->setInputs([
-            'token' => [
-                'name' => 'issuer',
-                'type' => 'hidden',
-                'value' => '',
-            ],
-        ]);
 
-        $paymentOption->setAdditionalInformation($this->templateParser->parseTemplate(
-            $this->context->getSmarty(),
-            $this->idealDropdownInfoBlock,
-            $this->module->getLocalPath() . 'views/templates/hook/ideal_dropdown.tpl'
-        ));
         $paymentOption->setLogo($this->creditCardLogoProvider->getMethodOptionLogo($paymentMethod));
 
         $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, $this->orderTotalProvider->getOrderTotal());
@@ -151,11 +131,6 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         if ($paymentFeeData->isActive()) {
             $paymentOption->setInputs(
                 [
-                    [
-                        'name' => 'issuer',
-                        'type' => 'hidden',
-                        'value' => '',
-                    ],
                     [
                         'type' => 'hidden',
                         'name' => 'payment-fee-price',

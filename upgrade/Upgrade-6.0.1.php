@@ -24,9 +24,6 @@ function upgrade_module_6_0_1(Mollie $module): bool
     $configuration->updateValue(Config::MOLLIE_IFRAME['production'], Configuration::get('MOLLIE_IFRAME'));
     $configuration->updateValue(Config::MOLLIE_IFRAME['sandbox'], Configuration::get('MOLLIE_IFRAME'));
 
-    $configuration->updateValue(Config::MOLLIE_ISSUERS['production'], Configuration::get('MOLLIE_ISSUERS'));
-    $configuration->updateValue(Config::MOLLIE_ISSUERS['sandbox'], Configuration::get('MOLLIE_ISSUERS'));
-
     $configuration->updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT['production'], Configuration::get('MOLLIE_SINGLE_CLICK_PAYMENT'));
     $configuration->updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT['sandbox'], Configuration::get('MOLLIE_SINGLE_CLICK_PAYMENT'));
 

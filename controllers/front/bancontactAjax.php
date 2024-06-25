@@ -64,7 +64,6 @@ class MollieBancontactAjaxModuleFrontController extends ModuleFrontController
             $cart->getOrderTotal(),
             $currency->iso_code,
             PaymentMethod::BANCONTACT,
-            null,
             $cart->id,
             $cart->secure_key,
             $paymentMethod,

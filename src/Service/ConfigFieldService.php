@@ -68,7 +68,6 @@ class ConfigFieldService
             Config::MOLLIE_CSS => $this->configurationAdapter->get(Config::MOLLIE_CSS),
             Config::MOLLIE_IMAGES => $this->configurationAdapter->get(Config::MOLLIE_IMAGES),
             Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK => $this->configurationAdapter->get(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK),
-            Config::MOLLIE_ISSUERS[(int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT) ? 'production' : 'sandbox'] => $this->configurationAdapter->get(Config::MOLLIE_ISSUERS),
 
             Config::MOLLIE_METHOD_COUNTRIES => $this->configurationAdapter->get(Config::MOLLIE_METHOD_COUNTRIES),
             Config::MOLLIE_METHOD_COUNTRIES_DISPLAY => $this->configurationAdapter->get(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY),

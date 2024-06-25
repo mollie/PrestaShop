@@ -187,7 +187,6 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE, Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE);
         $this->configurationAdapter->updateValue(Config::MOLLIE_IFRAME, true);
         $this->configurationAdapter->updateValue(Config::MOLLIE_IMAGES, Config::LOGOS_NORMAL);
-        $this->configurationAdapter->updateValue(Config::MOLLIE_ISSUERS, Config::ISSUERS_ON_CLICK);
         $this->configurationAdapter->updateValue(Config::MOLLIE_CSS, '');
         $this->configurationAdapter->updateValue(Config::MOLLIE_TRACKING_URLS, '');
         $this->configurationAdapter->updateValue(Config::MOLLIE_DEBUG_LOG, Config::DEBUG_LOG_ERRORS);

@@ -61,11 +61,6 @@ class PaymentData implements JsonSerializable
     /**
      * @var string
      */
-    private $issuer;
-
-    /**
-     * @var string
-     */
     private $cardToken;
 
     /**
@@ -233,22 +228,6 @@ class PaymentData implements JsonSerializable
     /**
      * @return string
      */
-    public function getIssuer()
-    {
-        return $this->issuer;
-    }
-
-    /**
-     * @param string $issuer
-     */
-    public function setIssuer($issuer)
-    {
-        $this->issuer = $issuer;
-    }
-
-    /**
-     * @return string
-     */
     public function getCardToken()
     {
         return $this->cardToken;
@@ -387,7 +366,6 @@ class PaymentData implements JsonSerializable
             'method' => $this->getMethod(),
             'metadata' => $this->getMetadata(),
             'locale' => $this->getLocale(),
-            'issuer' => $this->getIssuer(),
             'cardToken' => $this->getCardToken(),
             'customerId' => $this->getCustomerId(),
             'applePayPaymentToken' => $this->getApplePayToken(),

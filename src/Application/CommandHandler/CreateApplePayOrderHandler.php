@@ -198,7 +198,6 @@ final class CreateApplePayOrderHandler
             $cart->getOrderTotal(true, Cart::BOTH, null, $cart->id_carrier),
             Tools::strtoupper($currency->iso_code),
             Config::APPLEPAY,
-            null,
             (int) $cart->id,
             $cart->secure_key,
             $paymentMethodObj,
