@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.2.2 ##
++ Error handling improvements
+
 ## Changes in release 6.2.1 ##
 + Ideal v2 payment method improvement
 
