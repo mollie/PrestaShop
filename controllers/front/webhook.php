@@ -11,8 +11,10 @@
  */
 
 use Mollie\Adapter\ToolsAdapter;
+use Mollie\Api\Exceptions\ApiException;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Errors\Http\HttpStatusCode;
+use Mollie\Exception\TransactionException;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Logger\PrestaLoggerInterface;
@@ -49,9 +51,6 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
     {
         /** @var PrestaLoggerInterface $logger */
         $logger = $this->module->getService(PrestaLoggerInterface::class);
-
-        /** @var ErrorHandler $errorHandler */
-        $errorHandler = $this->module->getService(ErrorHandler::class);
 
         /** @var ToolsAdapter $tools */
         $tools = $this->module->getService(ToolsAdapter::class);
@@ -95,20 +94,12 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
 
         try {
             $this->executeWebhook($transactionId);
+        } catch (ApiException $exception) {
+            $this->handleException($exception, HttpStatusCode::HTTP_BAD_REQUEST, 'Api request failed');
+        } catch (TransactionException $exception) {
+            $this->handleException($exception, $exception->getCode(), 'Failed to handle transaction');
         } catch (\Throwable $exception) {
-            $logger->error('Failed to handle webhook', [
-                'Exception message' => $exception->getMessage(),
-                'Exception code' => $exception->getCode(),
-            ]);
-
-            $errorHandler->handle($exception, $exception->getCode(), false);
-
-            $this->releaseLock();
-
-            $this->ajaxResponse(JsonResponse::error(
-                $this->module->l('Failed to handle webhook', self::FILE_NAME),
-                $exception->getCode()
-            ));
+            $this->handleException($exception, HttpStatusCode::HTTP_BAD_REQUEST, 'Failed to handle webhook');
         }
 
         $this->releaseLock();
@@ -157,5 +148,26 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         $this->context->customer = new Customer($cart->id_customer);
 
         $this->context->cart = $cart;
+    }
+
+    private function handleException(\Throwable $exception, int $httpStatusCode, string $logMessage): void
+    {
+        /** @var PrestaLoggerInterface $logger */
+        $logger = $this->module->getService(PrestaLoggerInterface::class);
+
+        /** @var ErrorHandler $errorHandler */
+        $errorHandler = $this->module->getService(ErrorHandler::class);
+
+        $logger->error($logMessage, [
+            'Exception message' => $exception->getMessage(),
+            'Exception code' => $httpStatusCode
+        ]);
+
+        $errorHandler->handle($exception, $httpStatusCode, false);
+        $this->releaseLock();
+        $this->ajaxResponse(JsonResponse::error(
+            $this->module->l('Failed to handle webhook', self::FILE_NAME),
+            $httpStatusCode
+        ));
     }
 }
