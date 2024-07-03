@@ -258,7 +258,6 @@ class PaymentMethodService
      * @param float|string $amount
      * @param string $currency
      * @param string $method
-     * @param string|null $issuer
      * @param int|Cart $cartId
      * @param string $secureKey
      * @param string $orderReference
@@ -272,7 +271,6 @@ class PaymentMethodService
         $amount,
         $currency,
         $method,
-        $issuer,
         $cartId,
         $secureKey,
         MolPaymentMethod $molPaymentMethod,
@@ -337,7 +335,6 @@ class PaymentMethodService
             $paymentData->setMethod($molPaymentMethod->id_method);
 
             $paymentData->setDescription($orderReference);
-            $paymentData->setIssuer($issuer);
 
             if (isset($cart->id_address_invoice)) {
                 $billingAddress = new Address((int) $cart->id_address_invoice);
@@ -457,10 +454,6 @@ class PaymentMethodService
                 true
             ));
 
-            if (!empty($issuer)) {
-                $payment->setIssuer($issuer);
-            }
-
             if ($molPaymentMethod->id_method === PaymentMethod::CREDITCARD) {
                 $molCustomer = $this->handleCustomerInfo($cart->id_customer, $saveCard, $useSavedCard);
                 if ($molCustomer && !empty($molCustomer->customer_id)) {
@@ -536,7 +529,6 @@ class PaymentMethodService
         $methods = $this->module->getApiClient()->methods->allActive(
             [
                 'resource' => 'orders',
-                'include' => 'issuers',
                 'includeWallets' => 'applepay',
                 'locale' => $this->context->getLanguageLocale(),
                 'billingCountry' => $country->iso_code,

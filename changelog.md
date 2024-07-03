@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.2.1 ##
++ Ideal v2 payment method improvement
+
 ## Changes in release 6.2.0 ##
 + New payment methods: Bancomat and Alma
 + Apple certificate update
