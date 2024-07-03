@@ -131,7 +131,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         } else {
             $transaction = $this->module->getApiClient()->payments->get($transactionId);
 
-            if ($transaction->orderId && $transaction->status !== 'expired') {
+            if ($transaction->orderId) {
                 $transaction = $this->module->getApiClient()->orders->get($transaction->orderId, ['embed' => 'payments']);
             }
         }

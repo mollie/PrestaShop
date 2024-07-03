@@ -170,9 +170,6 @@ class TransactionService
             return $apiPayment;
         }
 
-        /** @var PrestaLoggerInterface $logger */
-        $logger = $this->module->getService(PrestaLoggerInterface::class);
-        $logger->error($apiPayment->resource);
         switch ($apiPayment->resource) {
             case Config::MOLLIE_API_STATUS_PAYMENT:
                 PrestaShopLogger::addLog(__METHOD__ . ' said: Starting to process PAYMENT transaction.', Config::NOTICE);
@@ -287,8 +284,6 @@ class TransactionService
                         $this->configurationAdapter->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS)
                         === Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_DEFAULT;
 
-
-                    $logger->error($apiPayment->method);
                     if (
                         !$isAuthorizablePaymentInvoiceOnStatusDefault
                         && $apiPayment->status === OrderStatus::STATUS_COMPLETED

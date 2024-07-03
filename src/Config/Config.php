@@ -64,7 +64,7 @@ class Config
         ],
         'mybank' => [],
         'trustly' => ['at', 'de', 'ee', 'es', 'fi', 'lt', 'lv', 'nl'],
-        'riverty' => ['nl','be','de','at'],
+        'riverty' => ['nl', 'be', 'de', 'at'],
         'payconiq' => [],
     ];
 

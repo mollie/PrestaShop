@@ -123,9 +123,6 @@ class ApiService implements ApiServiceInterface
             $apiMethods = $apiMethods->getArrayCopy();
             /** @var Method $method */
             foreach ($apiMethods as $key => $method) {
-                if ($method->status === 'pending-review') { // TODO REMOVE THIS ONCE RIVERTY IS IMPLEMENTED
-                    continue;
-                }
                 if ($method->status !== 'activated') {
                     unset($apiMethods[$key]);
                 }

@@ -92,17 +92,3 @@ prepare-zip:
 	composer dump-autoload --no-dev --optimize --classmap-authoritative
 	cp .github/.htaccess vendor/.htaccess
 	rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile cypress .docker cypress.config.js cypress.env.json docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist
-
-# Define SQL commands
-SQL_COMMANDS := \
-    "UPDATE \`ps_configuration\` SET \`value\` = '1' WHERE \`name\` = 'PS_SSL_ENABLED';" \
-    "UPDATE \`ps_configuration\` SET \`value\` = '1' WHERE \`name\` = 'PS_SSL_ENABLED_EVERYWHERE';" \
-    "UPDATE \`ps_shop_url\` SET \`domain\` = '$(DOMAIN_NAME)' WHERE active = 1;" \
-    "UPDATE \`ps_shop_url\` SET \`domain_ssl\` = '$(DOMAIN_NAME)' WHERE active = 1;"
-
-# Target to change shop URL
-change-shop-url:
-	@echo "Executing SQL commands to change shop URL..."
-	docker exec -i $(DOCKER_CONTAINER_NAME) mysql -u$(MYSQL_USER) -p$(MYSQL_PASSWORD) $(MYSQL_DATABASE) -e "$(SQL_COMMANDS)"
-	@echo "Shop URL updated successfully."
-
