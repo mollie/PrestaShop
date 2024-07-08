@@ -1314,6 +1314,18 @@ class Mollie extends PaymentModule
         $this->frontControllerAfterInit();
     }
 
+
+    /**
+     * Hook used for displaying the return page top where the customer is redirected after payment
+     * Used if content like Google Analytics is being used.
+     *
+     * @return string
+     */
+    public function hookDisplayMollieReturnPageTop(): string
+    {
+        return '';
+    }
+
     private function frontControllerAfterInit(): void
     {
         if (!$this->context->controller instanceof OrderControllerCore) {

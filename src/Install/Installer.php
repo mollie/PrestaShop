@@ -172,6 +172,7 @@ class Installer implements InstallerInterface
             'displayProductAdditionalInfo',
             'displayCustomerAccount',
             'actionCarrierUpdate',
+            'displayMollieReturnPageTop',
         ];
     }
 
