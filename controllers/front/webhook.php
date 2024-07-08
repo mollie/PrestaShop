@@ -150,7 +150,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         $this->context->cart = $cart;
     }
 
-    private function handleException(\Throwable $exception, int $httpStatusCode, string $logMessage): void
+    private function handleException(Throwable $exception, int $httpStatusCode, string $logMessage): void
     {
         /** @var PrestaLoggerInterface $logger */
         $logger = $this->module->getService(PrestaLoggerInterface::class);
@@ -160,7 +160,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
 
         $logger->error($logMessage, [
             'Exception message' => $exception->getMessage(),
-            'Exception code' => $httpStatusCode
+            'Exception code' => $httpStatusCode,
         ]);
 
         $errorHandler->handle($exception, $httpStatusCode, false);
