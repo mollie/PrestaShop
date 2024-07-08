@@ -14,7 +14,6 @@ namespace Mollie\Provider;
 
 use Address;
 use AddressFormat;
-use Country;
 
 if (!defined('_PS_VERSION_')) {
     exit;
