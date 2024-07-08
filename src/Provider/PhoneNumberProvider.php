@@ -13,6 +13,8 @@
 namespace Mollie\Provider;
 
 use Address;
+use AddressFormat;
+use Country;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -53,6 +55,12 @@ final class PhoneNumberProvider implements PhoneNumberProviderInterface
 
     private function getMobileOrPhone(Address $address)
     {
-        return $address->phone_mobile ?: $address->phone;
+        $addressFormat = new AddressFormat((int) $address->id_country);
+
+        if (strpos($addressFormat->format, 'phone_mobile') !== false) {
+            return $address->phone_mobile ?: $address->phone;
+        }
+
+        return $address->phone;
     }
 }
