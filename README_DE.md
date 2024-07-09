@@ -128,11 +128,6 @@ Die Karten tragen ebenfalls das Markenzeichen von Visa.
 
 Dies macht sie zur wichtigsten Zahlungsmethode in Österreich, die bei österreichischen Konsumenten hohe Beliebtheit genießt.
 
-### Giropay
-[Giropay](https://www.mollie.com/de/payments/giropay). Giropay ist eine der beliebtesten Überweisungsmethoden Deutschlands. 
-
-Deutsche Kunden schenken dieser Zahlungsmethode ihr Vertrauen, da sie von über 1.500 Banken landesweit unterstützt wird.
-
 ### Klarna: Rechnung
 [Klarna: Rechnung](https://www.mollie.com/de/payments/klarna-pay-later). Klarna ist eine flexible Zahlungslösung, die Ihren Kunden verschiedene, flexible Zahlungsmöglichkeiten zur Verfügung stellt. 
 
