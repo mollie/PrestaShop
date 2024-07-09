@@ -90,5 +90,4 @@ npm-package-install:
 prepare-zip:
 	composer install --no-dev --optimize-autoloader --classmap-authoritative
 	composer dump-autoload --no-dev --optimize --classmap-authoritative
-	cp .github/.htaccess vendor/.htaccess
-	rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile cypress .docker cypress.config.js cypress.env.json docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist
+	rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile cypress .docker cypress.config.js cypress.env.json docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php
