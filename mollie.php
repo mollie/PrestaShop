@@ -155,6 +155,8 @@ class Mollie extends PaymentModule
      */
     public function install()
     {
+        PrestaShopLogger::addLog('Mollie install started', 1, null, 'Mollie', 1);
+
         if (!$this->isPhpVersionCompliant()) {
             $this->_errors[] = $this->l('You\'re using an outdated PHP version. Upgrade your PHP version to use this module. The Mollie module supports versions PHP 7.2.0 and higher.');
 
@@ -166,15 +168,19 @@ class Mollie extends PaymentModule
 
             return false;
         }
+        PrestaShopLogger::addLog('Mollie prestashop install successful', 1, null, 'Mollie', 1);
 
 //        TODO inject base install and subscription services
         $coreInstaller = $this->getService(Mollie\Install\Installer::class);
+        PrestaShopLogger::addLog('Mollie core install initiated', 1, null, 'Mollie', 1);
 
         if (!$coreInstaller->install()) {
             $this->_errors = array_merge($this->_errors, $coreInstaller->getErrors());
 
             return false;
         }
+
+        PrestaShopLogger::addLog('Mollie core install successful', 1, null, 'Mollie', 1);
 
         $subscriptionInstaller = new Installer(
             new DatabaseTableInstaller(),
@@ -187,6 +193,7 @@ class Mollie extends PaymentModule
             ),
             new HookInstaller($this)
         );
+        PrestaShopLogger::addLog('Mollie subscription installer initiated', 1, null, 'Mollie', 1);
 
         if (!$subscriptionInstaller->install()) {
             $this->_errors = array_merge($this->_errors, $subscriptionInstaller->getErrors());
@@ -194,6 +201,7 @@ class Mollie extends PaymentModule
 
             return false;
         }
+        PrestaShopLogger::addLog('Mollie subscription install successful', 1, null, 'Mollie', 1);
 
         return true;
     }
