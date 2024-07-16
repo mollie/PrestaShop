@@ -112,7 +112,6 @@ class Installer implements InstallerInterface
         try {
             $this->initConfig();
             PrestaShopLogger::addLog('Mollie configurations installed', 1, null, 'Mollie', 1);
-
         } catch (Exception $e) {
             $errorHandler->handle($e, $e->getCode(), false);
             $this->errors[] = $this->module->l('Unable to install config', self::FILE_NAME);
