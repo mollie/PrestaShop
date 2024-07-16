@@ -117,11 +117,6 @@ De kaarten zijn co-branded met Visa.
 
 Dit maakt EPS de belangrijkste betaalmethode voor bankoverboekingen in Oostenrijk en zeer populair bij Oostenrijkse klanten.
 
-### Giropay
-[Giropay](https://www.mollie.com/nl/payments/giropay). Giropay is een populaire bankoverboeking betaalmethode in Duitsland. 
-
-Het maakt gebruik van meer dan 1.500 Duitse banken, waardoor het een vertrouwde betaalmethode is onder Duitse klanten.
-
 ### Klarna: Achteraf betalen
 [Klarna: Achteraf betalen](https://www.mollie.com/nl/payments/klarna-pay-later). Klarna is een flexibele betaaloplossing, waarmee je je klanten diverse mogelijkheden voor uitgestelde betaling biedt. 
 

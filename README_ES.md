@@ -128,11 +128,6 @@ Las tarjetas que comparten marca con Visa.
 
 Esto hace que el EPS sea el principal tipo de pago por transferencia bancaria en Austria y muy popular entre los compradores austriacos.
 
-### Giropay
-[Giropay](https://www.mollie.com/es/payments/giropay). Giropay es un tipo de pago por transferencia bancaria, popular en Alemania.
-
-Utiliza más de 1.500 bancos alemanes, lo que lo convierte en un tipo de pago confiable para los clientes alemanes.
-
 ### Klarna: Pay later
 [Klarna: Pay later](https://www.mollie.com/es/payments/klarna-pay-later). Klarna es una solución de pago flexible que les permite a sus clientes diversas formas de pago flexibles. 
 
