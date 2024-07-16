@@ -4,6 +4,11 @@
 
 ## Changes in release 6.2.2 ##
 + Error handling improvements
++ Mobile phone fix then field is removed
++ Riverty, Trustly, Payconiq payment methods added and GiroPay removed
++ HTTP status
++ Dependencies version bump
++ Improved installation process
 
 ## Changes in release 6.2.1 ##
 + Ideal v2 payment method improvement
