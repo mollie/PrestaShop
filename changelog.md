@@ -1,6 +1,8 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 6.2.3 ##
++ Multi shop improvements with order states
 
 ## Changes in release 6.2.2 ##
 + Error handling improvements

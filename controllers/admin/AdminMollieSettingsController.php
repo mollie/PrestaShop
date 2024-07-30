@@ -100,7 +100,7 @@ class AdminMollieSettingsController extends ModuleAdminController
             $this->module->getLocalPath() . 'views/templates/admin/logo.tpl'
         );
 
-        $this->initCloudSyncAndPsAccounts();
+//        $this->initCloudSyncAndPsAccounts();
 
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
         $moduleRepository = $this->module->getService(\Mollie\Repository\ModuleRepository::class);
