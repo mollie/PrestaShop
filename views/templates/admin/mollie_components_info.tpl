@@ -8,7 +8,7 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  *}
-<a href="https://www.mollie.com/en/news/post/better-checkout-flows-with-mollie-components"
+<a href="https://docs.mollie.com/docs/mollie-components"
    target="_blank"
    rel="noopener noreferrer"
 >

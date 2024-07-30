@@ -28,6 +28,7 @@ use Mollie\Tracker\Segment;
 use Mollie\Utility\MultiLangUtility;
 use OrderState;
 use PrestaShopException;
+use PrestaShopLogger;
 use Tab;
 use Tools;
 use Validate;
@@ -96,8 +97,11 @@ class Installer implements InstallerInterface
             $this->module->registerHook($hook);
         }
 
+        PrestaShopLogger::addLog('Mollie hooks registered successful', 1, null, 'Mollie', 1);
+
         try {
             $this->orderStateInstaller->install();
+            PrestaShopLogger::addLog('Mollie order state install successful', 1, null, 'Mollie', 1);
         } catch (CouldNotInstallModule $e) {
             $errorHandler->handle($e, $e->getCode(), false);
             $this->errors[] = $this->module->l('Unable to install Mollie statuses', self::FILE_NAME);
@@ -107,6 +111,7 @@ class Installer implements InstallerInterface
 
         try {
             $this->initConfig();
+            PrestaShopLogger::addLog('Mollie configurations installed', 1, null, 'Mollie', 1);
         } catch (Exception $e) {
             $errorHandler->handle($e, $e->getCode(), false);
             $this->errors[] = $this->module->l('Unable to install config', self::FILE_NAME);
@@ -115,6 +120,7 @@ class Installer implements InstallerInterface
         }
         try {
             $this->setDefaultCarrierStatuses();
+            PrestaShopLogger::addLog('Mollie default carriers installed', 1, null, 'Mollie', 1);
         } catch (Exception $e) {
             $errorHandler->handle($e, $e->getCode(), false);
             $this->errors[] = $this->module->l('Unable to install default carrier statuses', self::FILE_NAME);
@@ -126,6 +132,7 @@ class Installer implements InstallerInterface
 
         try {
             $this->installVoucherFeatures();
+            PrestaShopLogger::addLog('Mollie voucher features installed', 1, null, 'Mollie', 1);
         } catch (Exception $e) {
             $errorHandler->handle($e, $e->getCode(), false);
             $this->errors[] = $this->module->l('Unable to install voucher attributes', self::FILE_NAME);
@@ -134,6 +141,7 @@ class Installer implements InstallerInterface
         }
 
         $this->copyEmailTemplates();
+        PrestaShopLogger::addLog('Mollie email templates copied', 1, null, 'Mollie', 1);
 
         return $this->databaseTableInstaller->install();
     }
