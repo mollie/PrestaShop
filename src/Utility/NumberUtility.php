@@ -13,7 +13,7 @@
 namespace Mollie\Utility;
 
 use PrestaShop\Decimal\DecimalNumber;
-use PrestaShop\Decimal\Number;
+use PrestaShop\Decimal\Exception\DivisionByZeroException;
 use PrestaShop\Decimal\Operation\Rounding;
 
 if (!defined('_PS_VERSION_')) {
@@ -24,14 +24,21 @@ class NumberUtility
 {
     public const DECIMAL_PRECISION = 2;
     public const FLOAT_PRECISION = 6;
-    private const ROUNDING = Rounding::ROUND_HALF_UP;
+    private const ROUNDING_MODE = Rounding::ROUND_HALF_UP;
 
-    // TODO make all methods consistent: either pass string/float as parameter or cast members to Number/DecimalNumber class beforehand.
-
+    /**
+     * Converts a float number to a specified precision.
+     *
+     * @param float $number
+     * @param int $precision
+     * @param string $roundingMode
+     *
+     * @return float
+     */
     public static function toPrecision(
         float $number,
         int $precision = self::DECIMAL_PRECISION,
-        string $roundingMode = self::ROUNDING
+        string $roundingMode = self::ROUNDING_MODE
     ): float {
         $decimalNumber = self::getNumber($number);
 
@@ -39,142 +46,195 @@ class NumberUtility
     }
 
     /**
-     * Decreases number by its given percentage
-     * E.g 75/1.5 = 50.
+     * Decreases a number by a given percentage.
      *
      * @param float $number
      * @param float $percentage
      *
      * @return float
-     *
-     * @throws \PrestaShop\Decimal\Exception\DivisionByZeroException
+     * @throws DivisionByZeroException
      */
-    public static function decreaseByPercentage($number, $percentage)
+    public static function decreaseByPercentage(float $number, float $percentage): float
     {
-        if (!$percentage || $percentage <= 0) {
+        if ($percentage <= 0) {
             return $number;
         }
-        $numberTransformed = self::getNumber($number);
-        $totalDecrease = self::toPercentageIncrease($percentage);
-        $decrement = (string) $numberTransformed->dividedBy(self::getNumber($totalDecrease));
 
-        return (float) $decrement;
-    }
-
-    public static function increaseByPercentage($number, $percentage)
-    {
-        if (!$percentage || $percentage <= 0) {
-            return $number;
-        }
         $numberTransformed = self::getNumber($number);
         $percentageIncrease = self::toPercentageIncrease($percentage);
-        $percentageIncreaseTransformed = self::getNumber($percentageIncrease);
-        $result = (string) $numberTransformed->times($percentageIncreaseTransformed);
+        $decrement = $numberTransformed->dividedBy(self::getNumber($percentageIncrease));
 
-        return (float) $result;
+        return (float) $decrement->toPrecision(self::DECIMAL_PRECISION, self::ROUNDING_MODE);
     }
 
     /**
-     * E.g 21% will become 1.21.
+     * Increases a number by a given percentage.
+     *
+     * @param float $number
+     * @param float $percentage
+     *
+     * @return float
+     */
+    public static function increaseByPercentage(float $number, float $percentage): float
+    {
+        if ($percentage <= 0) {
+            return $number;
+        }
+
+        $numberTransformed = self::getNumber($number);
+        $percentageIncrease = self::toPercentageIncrease($percentage);
+        $result = $numberTransformed->times(self::getNumber($percentageIncrease));
+
+        return (float) $result->toPrecision(self::DECIMAL_PRECISION, self::ROUNDING_MODE);
+    }
+
+    /**
+     * Converts a percentage to its decimal increase (e.g., 21% becomes 1.21).
      *
      * @param float $percentage
      *
      * @return float
      */
-    public static function toPercentageIncrease($percentage)
+    public static function toPercentageIncrease(float $percentage): float
     {
         $percentageNumber = self::getNumber($percentage);
         $smallerNumber = $percentageNumber->dividedBy(self::getNumber(100));
-        $result = (string) $smallerNumber->plus(self::getNumber(1));
+        $result = $smallerNumber->plus(self::getNumber(1));
 
-        return (float) $result;
+        return (float) $result->toPrecision(self::FLOAT_PRECISION, self::ROUNDING_MODE);
     }
 
+    /**
+     * Multiplies two numbers with precision.
+     *
+     * @param float $target
+     * @param float $factor
+     * @param int $precision
+     * @param string $roundingMode
+     *
+     * @return float
+     */
     public static function times(
         float $target,
         float $factor,
         int $precision = self::FLOAT_PRECISION,
-        string $roundingMode = self::ROUNDING
+        string $roundingMode = self::ROUNDING_MODE
     ): float {
-        $firstNumber = self::getNumber($target);
-        $secondNumber = self::getNumber($factor);
-
-        $result = $firstNumber->times($secondNumber);
+        $result = self::getNumber($target)->times(self::getNumber($factor));
 
         return (float) $result->toPrecision($precision, $roundingMode);
     }
 
+    /**
+     * Divides a number by another with precision.
+     *
+     * @param float $target
+     * @param float $divisor
+     * @param int $precision
+     * @param string $roundingMode
+     *
+     * @return float
+     * @throws DivisionByZeroException
+     */
     public static function divide(
         float $target,
         float $divisor,
         int $precision = self::FLOAT_PRECISION,
-        string $roundingMode = self::ROUNDING
+        string $roundingMode = self::ROUNDING_MODE
     ): float {
-        $firstNumber = self::getNumber($target);
-        $secondNumber = self::getNumber($divisor);
-
-        $result = $firstNumber->dividedBy($secondNumber, $precision);
+        $result = self::getNumber($target)->dividedBy(self::getNumber($divisor), $precision);
 
         return (float) $result->toPrecision($precision, $roundingMode);
     }
 
+    /**
+     * Checks if two numbers are equal.
+     *
+     * @param float $a
+     * @param float $b
+     *
+     * @return bool
+     */
     public static function isEqual(float $a, float $b): bool
     {
-        $firstNumber = self::getNumber($a);
-        $secondNumber = self::getNumber($b);
-
-        return $firstNumber->equals($secondNumber);
-    }
-
-    public static function isLowerThan($a, $b)
-    {
-        $firstNumber = self::getNumber($a);
-        $secondNumber = self::getNumber($b);
-
-        return $firstNumber->isLowerThan($secondNumber);
-    }
-
-    public static function isLowerOrEqualThan($a, $b)
-    {
-        $firstNumber = self::getNumber($a);
-        $secondNumber = self::getNumber($b);
-
-        return $firstNumber->isLowerOrEqualThan($secondNumber);
-    }
-
-    public static function isGreaterThan(float $target, float $comparison): bool
-    {
-        $firstNumber = self::getNumber($target);
-        $secondNumber = self::getNumber($comparison);
-
-        return $firstNumber->isGreaterThan($secondNumber);
-    }
-
-    public static function minus($a, $b)
-    {
-        $firstNumber = self::getNumber($a);
-        $secondNumber = self::getNumber($b);
-
-        return (float) ((string) $firstNumber->minus($secondNumber));
-    }
-
-    public static function plus($a, $b)
-    {
-        $firstNumber = self::getNumber($a);
-        $secondNumber = self::getNumber($b);
-
-        return (float) ((string) $firstNumber->plus($secondNumber));
+        return self::getNumber($a)->equals(self::getNumber($b));
     }
 
     /**
-     * @return Number|DecimalNumber
+     * Checks if one number is lower than another.
+     *
+     * @param float $a
+     * @param float $b
+     *
+     * @return bool
      */
-    private static function getNumber(float $number)
+    public static function isLowerThan(float $a, float $b): bool
     {
-        if (is_subclass_of(Number::class, DecimalNumber::class)) {
-            return new DecimalNumber((string) $number);
-        }
+        return self::getNumber($a)->isLowerThan(self::getNumber($b));
+    }
 
-        return new Number((string) $number);
+    /**
+     * Checks if one number is lower than or equal to another.
+     *
+     * @param float $a
+     * @param float $b
+     *
+     * @return bool
+     */
+    public static function isLowerOrEqualThan(float $a, float $b): bool
+    {
+        return self::getNumber($a)->isLowerOrEqualThan(self::getNumber($b));
+    }
+
+    /**
+     * Checks if one number is greater than another.
+     *
+     * @param float $target
+     * @param float $comparison
+     *
+     * @return bool
+     */
+    public static function isGreaterThan(float $target, float $comparison): bool
+    {
+        return self::getNumber($target)->isGreaterThan(self::getNumber($comparison));
+    }
+
+    /**
+     * Subtracts one number from another.
+     *
+     * @param float $a
+     * @param float $b
+     *
+     * @return float
+     */
+    public static function minus(float $a, float $b): float
+    {
+        return (float) self::getNumber($a)->minus(self::getNumber($b))->toPrecision(self::FLOAT_PRECISION, self::ROUNDING_MODE);
+    }
+
+    /**
+     * Adds two numbers together.
+     *
+     * @param float $a
+     * @param float $b
+     *
+     * @return float
+     */
+    public static function plus(float $a, float $b): float
+    {
+        return (float) self::getNumber($a)->plus(self::getNumber($b))->toPrecision(self::FLOAT_PRECISION, self::ROUNDING_MODE);
+    }
+
+    /**
+     * Creates a Number or DecimalNumber instance from a float.
+     *
+     * @param float $number
+     *
+     * @return DecimalNumber
+     */
+    private static function getNumber(float $number): DecimalNumber
+    {
+        // Assuming DecimalNumber is the preferred class based on the use case.
+        return new DecimalNumber((string) $number);
     }
 }
