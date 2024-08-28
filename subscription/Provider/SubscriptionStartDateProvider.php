@@ -61,16 +61,14 @@ class SubscriptionStartDateProvider
                 case $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_YEARLY):
                     $interval = new DateInterval('P1Y');
                     break;
-                default:
-                    throw new SubscriptionIntervalException(sprintf('No interval exists for this %s attribute', $combination->id));
             }
 
             // Add the interval to the current time
-            $currentTime->add($interval);
-
-            return $currentTime->format('Y-m-d');
+            if ($interval !== null) {
+                $currentTime->add($interval);
+                return $currentTime->format('Y-m-d');
+            }
         }
-
-        throw new SubscriptionIntervalException(sprintf('No interval exists for this %s attribute', $combination->id));
+    throw new SubscriptionIntervalException(sprintf('No interval exists for this %s attribute', $combination->id));
     }
 }
