@@ -12,7 +12,7 @@
 
 namespace Mollie\Repository;
 
-use DusanKasan\Knapsack\Collection;
+use Invertus\Knapsack\Collection;
 use Mollie\Subscription\Exception\NotImplementedException;
 
 if (!defined('_PS_VERSION_')) {

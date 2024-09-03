@@ -24,6 +24,9 @@ if (!defined('_PS_VERSION_')) {
 }
 class AdminMollieLogsController extends ModuleAdminController
 {
+    /** @var Mollie */
+    public $module;
+
     const FILE_NAME = 'AdminMollieLogsController';
 
     const LOG_INFORMATION_TYPE_REQUEST = 'request';
@@ -311,11 +314,11 @@ class AdminMollieLogsController extends ModuleAdminController
      * @param null $controller
      * @param null $method
      *
-     * @return never
+     * @return void
      *
      * @throws \PrestaShopException
      */
-    protected function ajaxResponse($value = null, $controller = null, $method = null)
+    protected function ajaxResponse($value = null, $controller = null, $method = null): void
     {
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);

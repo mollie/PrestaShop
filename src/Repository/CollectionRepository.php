@@ -35,9 +35,9 @@ class CollectionRepository implements ReadOnlyCollectionRepositoryInterface
 
     /**
      * @param array $keyValueCriteria
-     * @param $langId
+     * @param int|null $langId
      *
-     * @return bool|\ObjectModel|null
+     * @return \ObjectModel|null
      *
      * @throws \PrestaShopException
      */

@@ -12,7 +12,7 @@
 
 namespace Mollie\Repository;
 
-use DusanKasan\Knapsack\Collection;
+use Invertus\Knapsack\Collection;
 use Mollie\Logger\Logger;
 use Mollie\Logger\PrestashopLoggerRepositoryInterface;
 use Mollie\Utility\VersionUtility;
