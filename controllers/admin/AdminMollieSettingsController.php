@@ -12,7 +12,6 @@
 
 declare(strict_types=1);
 
-use Mollie\Logger\LoggerInterface;
 use Mollie\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -103,7 +102,6 @@ class AdminMollieSettingsController extends ModuleAdminController
                 'exceptions' => ExceptionUtility::getExceptions(new Exception('Failed to present payment option assets.')),
             ]);
         } catch (PrestaShopException $e) {
-
         }
         /** @var \Mollie\Service\Content\TemplateParserInterface $templateParser */
         $templateParser = $this->module->getService(\Mollie\Service\Content\TemplateParserInterface::class);

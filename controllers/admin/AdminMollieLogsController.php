@@ -10,14 +10,14 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Adapter\Shop;
 use Mollie\Config\Config;
 use Mollie\Logger\LogFormatter;
-use Mollie\Repository\MolLogRepositoryInterface;
-use Mollie\Utility\ExceptionUtility;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
+use Mollie\Repository\MolLogRepositoryInterface;
+use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\VersionUtility;
-use Mollie\Adapter\Shop;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -140,7 +140,7 @@ class AdminMollieLogsController extends ModuleAdminController
 
         Media::addJsDef([
             'mollie' => [
-                'logsUrl' => Context::getContext()->link->getAdminLink(Config::LOGS_MODULE_TAB_CONTROLLER_NAME),
+                'logsUrl' => Context::getContext()->link->getAdminLink(Mollie::ADMIN_MOLLIE_LOGS_CONTROLLER),
             ],
         ]);
 
