@@ -9,9 +9,6 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
-
-use Mollie\Service\EntityManager\EntityManagerInterface;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -24,7 +21,7 @@ class ObjectModelUnitOfWork
 
     private $work = [];
 
-    public function setWork(\ObjectModel $objectModel, string $unitOfWorkType, ?string $specificKey = null): void
+    public function setWork(ObjectModel $objectModel, string $unitOfWorkType, ?string $specificKey = null): void
     {
         $work = [
             'unit_of_work_type' => $unitOfWorkType,

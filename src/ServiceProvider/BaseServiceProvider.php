@@ -91,7 +91,6 @@ use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
 use Mollie\Repository\PrestashopLoggerRepository;
 use Mollie\Repository\ProductRepository;
 use Mollie\Repository\ProductRepositoryInterface;
-use Mollie\Repository\ReadOnlyCollectionRepositoryInterface;
 use Mollie\Repository\TaxRepository;
 use Mollie\Repository\TaxRepositoryInterface;
 use Mollie\Repository\TaxRuleRepository;

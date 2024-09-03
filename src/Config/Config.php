@@ -30,7 +30,6 @@ class Config
     const SENTRY_KEY = 'https://c2c43f02599847d682e0a1fb7843600f@o497594.ingest.sentry.io/5573860';
 
     const SENTRY_ENV = 'MISSING_ENV';
-    const LOGS_MODULE_TAB_CONTROLLER_NAME = 'AdminMollieLogs';
 
     /**
      * Default payment method availability.

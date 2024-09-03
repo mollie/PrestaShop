@@ -12,9 +12,6 @@
 
 namespace Mollie\Utility;
 
-use Configuration;
-use Mollie\Config\Config;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }

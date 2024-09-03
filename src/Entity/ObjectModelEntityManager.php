@@ -33,7 +33,7 @@ class ObjectModelEntityManager implements EntityManagerInterface
      *                                 track of which object model is related to which external_id
      */
     public function persist(
-        \ObjectModel $model,
+        ObjectModel $model,
         string $unitOfWorkType,
         ?string $specificKey = null
     ): EntityManagerInterface {
