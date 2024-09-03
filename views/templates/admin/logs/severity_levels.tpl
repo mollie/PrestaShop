@@ -1,14 +1,15 @@
 {**
- * NOTICE OF LICENSE
+ * Mollie       https://www.mollie.nl
  *
- * @author    Mastercard Inc. www.mastercard.com
- * @copyright Copyright (c) permanent, Mastercard Inc.
- * @license   Apache-2.0
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
- * @see       /LICENSE
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
  *
- * International Registered Trademark & Property of Mastercard Inc.
  *}
+
 
 <div class="panel col-lg-12">
   <h3>

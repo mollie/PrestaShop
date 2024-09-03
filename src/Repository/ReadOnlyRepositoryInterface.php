@@ -12,11 +12,24 @@
 
 namespace Mollie\Repository;
 
+use ObjectModel;
+use PrestaShopCollection;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-interface MolLogRepositoryInterface extends ReadOnlyRepositoryInterface
+interface ReadOnlyRepositoryInterface
 {
-    public function prune(int $daysToKeep): void;
+    /**
+     * @return PrestaShopCollection
+     */
+    public function findAll();
+
+    /**
+     * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
+     *
+     * @return ObjectModel|null
+     */
+    public function findOneBy(array $keyValueCriteria);
 }

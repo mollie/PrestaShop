@@ -1,14 +1,15 @@
 {**
- * NOTICE OF LICENSE
+ * Mollie       https://www.mollie.nl
  *
- * @author    Mastercard Inc. www.mastercard.com
- * @copyright Copyright (c) permanent, Mastercard Inc.
- * @license   Apache-2.0
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
- * @see       /LICENSE
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
  *
- * International Registered Trademark & Property of Mastercard Inc.
  *}
+
 
 {if $log_severity_level == $log_severity_level_informative}
   <span class="badge badge-pill badge-success" style="margin-bottom: 5px">{l s='Informative only' mod='mollie'} ({$log_severity_level|intval})</span>

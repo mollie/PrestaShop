@@ -13,6 +13,7 @@
 namespace Mollie\Repository;
 
 use DusanKasan\Knapsack\Collection;
+use Mollie\Subscription\Exception\NotImplementedException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -37,18 +38,8 @@ class MolLogRepository extends CollectionRepository implements MolLogRepositoryI
             ->realize();
     }
 
-    public function findAll(int $langId = null): \PrestaShopCollection
+    public function findAll()
     {
-        // TODO: Implement findAll() method.
-    }
-
-    public function findAllBy(array $keyValueCriteria, int $langId = null): ?\PrestaShopCollection
-    {
-        // TODO: Implement findAllBy() method.
-    }
-
-    public function findOrFail(array $keyValueCriteria, int $langId = null): \ObjectModel
-    {
-        // TODO: Implement findOrFail() method.
+        throw new NotImplementedException('Find all not implemented');
     }
 }
