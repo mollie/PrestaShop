@@ -155,6 +155,8 @@ class OrderStateInstaller implements InstallerInterface
         $existingStateId = (int) $this->configurationAdapter->get($key);
         $orderState = new OrderState($existingStateId);
 
+        $this->updateStateConfiguration($key, $orderState);
+
         if ((bool) !$orderState->deleted) {
             return;
         }
