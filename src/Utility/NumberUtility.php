@@ -52,6 +52,7 @@ class NumberUtility
      * @param float $percentage
      *
      * @return float
+     *
      * @throws DivisionByZeroException
      */
     public static function decreaseByPercentage(float $number, float $percentage): float
@@ -134,6 +135,7 @@ class NumberUtility
      * @param string $roundingMode
      *
      * @return float
+     *
      * @throws DivisionByZeroException
      */
     public static function divide(
