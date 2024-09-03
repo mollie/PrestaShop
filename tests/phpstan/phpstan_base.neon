@@ -42,7 +42,7 @@ parameters:
     - '#Parameter \#1 \$value of method ControllerCore\:\:ajaxRender\(\) expects null, string\|false given.#'
     - '#Call to function is_subclass_of\(\) with.*will always evaluate to false.#'
     - '#Call to function is_array\(\) with.*will always evaluate to false.#'
-    - '#Property AdminControllerCore\:\:\$_use_found_rows (string) does not accept false.#'
+    - '#Property AdminControllerCore\:\:\$_use_found_rows \(string\) does not accept false.#'
     - '#Access to undefined constant PrestaShopLogger::LOG_SEVERITY_LEVEL_INFORMATIVE.#'
     - '#Access to undefined constant PrestaShopLogger::LOG_SEVERITY_LEVEL_WARNING.#'
     - '#Access to undefined constant PrestaShopLogger::LOG_SEVERITY_LEVEL_ERROR.#'

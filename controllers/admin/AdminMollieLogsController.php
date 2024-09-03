@@ -262,6 +262,7 @@ class AdminMollieLogsController extends ModuleAdminController
 
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
+        $log = null;
 
         try {
             /** @var \MolLog|null $log */

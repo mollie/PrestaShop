@@ -51,6 +51,6 @@ class CollectionRepository implements ReadOnlyCollectionRepositoryInterface
 
         $first = $psCollection->getFirst();
 
-        return false === $first ? null : $first;
+        return $first == false ? null : $first;
     }
 }
