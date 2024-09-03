@@ -1,0 +1,99 @@
+/**
+ * NOTICE OF LICENSE
+ *
+ * @author    Mastercard Inc. www.mastercard.com
+ * @copyright Copyright (c) permanent, Mastercard Inc.
+ * @license   Apache-2.0
+ *
+ * @see       /LICENSE
+ *
+ * International Registered Trademark & Property of Mastercard Inc.
+ */
+
+.button {
+  cursor: pointer;
+}
+
+.log-modal-overlay {
+  transition: opacity 0.2s ease-out;
+  pointer-events: none;
+  background: rgba(15, 23, 42, 0.8);
+  position: fixed;
+  opacity: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  top: 0;
+}
+
+.modal.open .log-modal-overlay {
+  pointer-events: all;
+  opacity: 0.5;
+}
+
+.log-modal-window {
+  position: relative;
+  width: 50%;
+  margin: 10% auto;
+
+  background: #ffffff;
+  border-radius: 0.5em;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  pointer-events: all;
+  text-align: left;
+  max-height: 100vh;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+
+  overflow: auto;
+}
+
+.open {
+  display: block;
+}
+
+.log-modal-title {
+  color: #111827;
+  padding: 3px;
+  border-bottom: solid 1px grey;
+  pointer-events: all;
+  display: flex;
+  justify-content: center;
+  max-height: 10vh;
+}
+
+.log-modal-content {
+  padding: 15px;
+  height: 50vh;
+}
+
+.log-modal-content-spinner {
+  min-height: 50vh;
+}
+
+.log-modal-content-spinner:not(.hidden) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.log-modal-content-spinner::after {
+  content: "";
+  width: 40px;
+  height: 40px;
+  border: 2px solid #f3f3f3;
+  border-top: 3px solid #f25a41;
+  border-radius: 100%;
+  will-change: transform;
+  animation: spin 1s infinite linear
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -12,6 +12,9 @@
 
 declare(strict_types=1);
 
+use Mollie\Logger\LoggerInterface;
+use Mollie\Utility\ExceptionUtility;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -91,6 +94,17 @@ class AdminMollieSettingsController extends ModuleAdminController
 
     public function postProcess()
     {
+        try {
+            /** @var \Mollie\Logger\LoggerInterface $logger */
+            $logger = $this->module->getService(\Mollie\Logger\LoggerInterface::class);
+
+            $logger->error('Failed to present payment option assets.', [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions(new Exception('Failed to present payment option assets.')),
+            ]);
+        } catch (PrestaShopException $e) {
+
+        }
         /** @var \Mollie\Service\Content\TemplateParserInterface $templateParser */
         $templateParser = $this->module->getService(\Mollie\Service\Content\TemplateParserInterface::class);
 
@@ -100,7 +114,7 @@ class AdminMollieSettingsController extends ModuleAdminController
             $this->module->getLocalPath() . 'views/templates/admin/logo.tpl'
         );
 
-//        $this->initCloudSyncAndPsAccounts();
+        $this->initCloudSyncAndPsAccounts();
 
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
         $moduleRepository = $this->module->getService(\Mollie\Repository\ModuleRepository::class);

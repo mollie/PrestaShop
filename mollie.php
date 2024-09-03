@@ -20,6 +20,7 @@ use Mollie\Config\Config;
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
@@ -36,6 +37,7 @@ use Mollie\Subscription\Provider\SubscriptionProductProvider;
 use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
+use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\PsVersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
 use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
@@ -74,6 +76,11 @@ class Mollie extends PaymentModule
     const ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_CONTROLLER = 'AdminMollieSubscriptionOrders';
     const ADMIN_MOLLIE_SUBSCRIPTION_FAQ_PARENT_CONTROLLER = 'AdminMollieSubscriptionFAQParent';
     const ADMIN_MOLLIE_SUBSCRIPTION_FAQ_CONTROLLER = 'AdminMollieSubscriptionFAQ';
+
+    const ADMIN_MOLLIE_LOGS_CONTROLLER = 'AdminMollieLogs';
+
+    const ADMIN_MOLLIE_LOGS_PARENT_CONTROLLER = 'AdminMollieLogsParent';
+
     /** @var LeagueServiceContainerProvider */
     private $containerProvider;
 
@@ -84,7 +91,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.2.2';
+        $this->version = '6.2.3';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -862,6 +869,18 @@ class Mollie extends PaymentModule
             [
                 'name' => $this->l('Subscription FAQ'),
                 'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_FAQ_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
+                'module_tab' => true,
+            ],
+            [
+                'name' => $this->l('Logs'),
+                'class_name' => self::ADMIN_MOLLIE_LOGS_PARENT_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
+                'module_tab' => true,
+            ],
+            [
+                'name' => $this->l('Logs'),
+                'class_name' => self::ADMIN_MOLLIE_LOGS_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
                 'module_tab' => true,
             ],

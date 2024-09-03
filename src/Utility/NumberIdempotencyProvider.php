@@ -10,21 +10,18 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Service\EntityManager;
+namespace Mollie\Utility;
 
-use ObjectModel;
+use Language;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ObjectModelManager implements EntityManagerInterface
+class NumberIdempotencyProvider
 {
-    /**
-     * @throws \PrestaShopException
-     */
-    public function flush(ObjectModel $model)
+    public function getIdempotencyKey(): string
     {
-        $model->save();
+        return (string) mt_rand();
     }
 }

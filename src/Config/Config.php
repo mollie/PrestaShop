@@ -30,6 +30,7 @@ class Config
     const SENTRY_KEY = 'https://c2c43f02599847d682e0a1fb7843600f@o497594.ingest.sentry.io/5573860';
 
     const SENTRY_ENV = 'MISSING_ENV';
+    const LOGS_MODULE_TAB_CONTROLLER_NAME = 'AdminMollieLogs';
 
     /**
      * Default payment method availability.
@@ -329,6 +330,11 @@ class Config
         'payconiq' => 'Payconiq',
         'trustly' => 'Trustly',
     ];
+
+    public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
+    public const LOG_SEVERITY_LEVEL_WARNING = 2;
+    public const LOG_SEVERITY_LEVEL_ERROR = 3;
+    public const LOG_SEVERITY_LEVEL_MAJOR = 4;
 
     const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
 

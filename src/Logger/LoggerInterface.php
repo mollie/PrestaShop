@@ -10,19 +10,8 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Service\EntityManager;
+namespace Mollie\Logger;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-
-interface EntityManagerInterface
+interface LoggerInterface extends \Psr\Log\LoggerInterface
 {
-    /**
-     * @return array<\ObjectModel>
-     *
-     * @throws \PrestaShopException
-     */
-    public function flush(): array;
 }

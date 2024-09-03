@@ -10,19 +10,15 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Service\EntityManager;
+namespace Mollie\Repository;
+
+use Mollie\Shared\Infrastructure\Repository\ReadOnlyRepositoryInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-
-interface EntityManagerInterface
+interface MolLogRepositoryInterface extends ReadOnlyRepositoryInterface
 {
-    /**
-     * @return array<\ObjectModel>
-     *
-     * @throws \PrestaShopException
-     */
-    public function flush(): array;
+    public function prune(int $daysToKeep): void;
 }

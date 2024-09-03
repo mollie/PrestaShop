@@ -10,19 +10,13 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Service\EntityManager;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-
-
-interface EntityManagerInterface
+class AdminMollieLogsParentController extends ModuleAdminController
 {
-    /**
-     * @return array<\ObjectModel>
-     *
-     * @throws \PrestaShopException
-     */
-    public function flush(): array;
+    public function init()
+    {
+        Tools::redirectAdmin($this->context->link->getAdminLink('AdminMollieLogs'));
+    }
 }
