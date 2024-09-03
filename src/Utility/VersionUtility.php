@@ -31,7 +31,7 @@ class VersionUtility
 
     public static function isPsVersionLessThanOrEqualTo($version): int
     {
-        return (int)version_compare(_PS_VERSION_, $version, '<=');
+        return (int) version_compare(_PS_VERSION_, $version, '<=');
     }
 
     public static function isPsVersionEqualTo($version): int

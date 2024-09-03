@@ -310,7 +310,7 @@ class AdminMollieLogsController extends ModuleAdminController
     }
 
     /**
-     * @param null $value
+     * @param string|false|null $value
      * @param null $controller
      * @param null $method
      *
