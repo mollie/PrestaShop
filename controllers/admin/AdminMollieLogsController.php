@@ -10,6 +10,7 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Shop;
 use Mollie\Config\Config;
 use Mollie\Logger\LogFormatter;
@@ -40,6 +41,7 @@ class AdminMollieLogsController extends ModuleAdminController
         $this->className = 'PrestaShopLogger';
         $this->lang = false;
         $this->noLink = true;
+        $this->allow_export = true;
 
         parent::__construct();
 
@@ -96,16 +98,16 @@ class AdminMollieLogsController extends ModuleAdminController
 
         $this->_select .= '
             REPLACE(a.`message`, "' . LogFormatter::MOLLIE_LOG_PREFIX . '", "") as message,
-            kpl.request, kpl.response, kpl.context
+            ml.request, ml.response, ml.context
         ';
 
         $shopIdCheck = '';
 
         if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.8.0')) {
-            $shopIdCheck = ' AND kpl.id_shop = a.id_shop';
+            $shopIdCheck = ' AND ml.id_shop = a.id_shop';
         }
 
-        $this->_join .= ' JOIN ' . _DB_PREFIX_ . 'mol_logs kpl ON (kpl.id_log = a.id_log' . $shopIdCheck . ' AND a.object_type = "' . pSQL(Logger::LOG_OBJECT_TYPE) . '")';
+        $this->_join .= ' JOIN ' . _DB_PREFIX_ . 'mol_logs ml ON (ml.id_log = a.id_log' . $shopIdCheck . ' AND a.object_type = "' . pSQL(Logger::LOG_OBJECT_TYPE) . '")';
         $this->_use_found_rows = false;
         $this->list_no_link = true;
     }
@@ -336,5 +338,104 @@ class AdminMollieLogsController extends ModuleAdminController
         }
 
         exit;
+    }
+
+    public function processExport($textDelimiter = '"')
+    {
+        // clean buffer
+        if (ob_get_level() && ob_get_length() > 0) {
+            ob_clean();
+        }
+
+        header('Content-type: text/csv');
+        header('Content-Type: application/force-download; charset=UTF-8');
+        header('Cache-Control: no-store, no-cache');
+        header('Content-disposition: attachment; filename="' . $this->table . '_' . date('Y-m-d_His') . '.csv"');
+
+        $fd = fopen('php://output', 'wb');
+
+        /** @var  $configuration */
+        $configuration = $this->module->getService(ConfigurationAdapter::class);
+
+        /** @var Context $context */
+        $context = $this->module->getService(Mollie\Adapter\Context::class);
+
+        $storeInfo = [
+            'PrestaShop Version' => _PS_VERSION_,
+            'PHP Version' => phpversion(),
+            'Module Version' => $this->module->version,
+            'MySQL Version' => \DB::getInstance()->getVersion(),
+            'Shop URL' => $context->getShopDomain(),
+            'Shop Name' => $context->getShopName(),
+        ];
+
+        $moduleConfigurations = [
+            'Environment' => $configuration->get(Config::MOLLIE_ENVIRONMENT) ? "Production" : "Sandbox",
+            'Components' => $configuration->get(Config::MOLLIE_IFRAME),
+            'OCP' => $configuration->get(Config::MOLLIE_SINGLE_CLICK_PAYMENT),
+            'Locale Webshop' => $configuration->get(Config::MOLLIE_PAYMENTSCREEN_LOCALE),
+            'Subscriptions enabled' => $configuration->get(Config::MOLLIE_SUBSCRIPTION_ENABLED),
+        ];
+
+        $psSettings = [
+            'Default country' => $configuration->get('PS_COUNTRY_DEFAULT'),
+            'Default currency' => $configuration->get('PS_CURRENCY_DEFAULT'),
+            'Default language' => $configuration->get('PS_LANG_DEFAULT'),
+            'Round mode' => $configuration->get('PS_PRICE_ROUND_MODE'),
+            'Round type' => $configuration->get('PS_ROUND_TYPE'),
+            'Current theme name' => $context->getShopThemeName(),
+            'PHP memory limit' => ini_get('memory_limit'),
+        ];
+
+        $moduleConfigurationsInfo = "**Module configurations:**\n";
+        foreach ($moduleConfigurations as $key => $value) {
+            $moduleConfigurationsInfo .= "- $key: $value\n";
+        }
+
+        $psSettingsInfo = "**Prestashop settings:**\n";
+        foreach ($psSettings as $key => $value) {
+            $psSettingsInfo .= "- $key: $value\n";
+        }
+
+        fputcsv($fd, array_keys($storeInfo), ';', $textDelimiter);
+        fputcsv($fd, $storeInfo, ';', $textDelimiter);
+        fputcsv($fd, [], ';', $textDelimiter);
+
+        fputcsv($fd, [$moduleConfigurationsInfo], ';', $textDelimiter);
+        fputcsv($fd, [$psSettingsInfo], ';', $textDelimiter);
+
+        $query = new \DbQuery();
+
+        $query
+            ->select('ml.id_log, l.severity, l.message, ml.request, ml.response, ml.context, ml.date_add')
+            ->from('mol_logs', 'ml')
+            ->leftJoin('log', 'l', 'ml.id_log = l.id_log')
+            ->orderBy('ml.id_log DESC')
+            ->limit(1000);
+
+        $result = \Db::getInstance()->executeS($query);
+
+        $firstRow = $result[0];
+        foreach ($firstRow as $key => $value) {
+            $headers[] = strtoupper($key);
+        }
+
+        $fd = fopen('php://output', 'wb');
+
+        fputcsv($fd, $headers, ';', $textDelimiter);
+
+        $content = !empty($result) ? $result : [];
+
+        foreach ($content as $row) {
+            $rowValues = [];
+            foreach ($row as $key => $value) {
+                $rowValues[] = $value;
+            }
+
+            fputcsv($fd, $rowValues, ';', $textDelimiter);
+        }
+
+        @fclose($fd);
+        die;
     }
 }
