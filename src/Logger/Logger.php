@@ -72,7 +72,7 @@ class Logger implements LoggerInterface
     public function critical($message, array $context = [])
     {
         $this->log(
-            $this->configuration->getAsInteger( // todo
+            $this->configuration->getAsInteger(
                 'PS_LOGS_BY_EMAIL',
                 $this->context->getShopId()
             ),
@@ -103,7 +103,11 @@ class Logger implements LoggerInterface
 
     public function debug($message, array $context = [])
     {
-        if (!$this->configuration->get(Config::MOLLIE_DEBUG_LOG)) { // todo check for value
+        if ((int) $this->configuration->get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_NONE) {
+            return;
+        }
+
+        if ((int) $this->configuration->get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_ERRORS) {
             return;
         }
 

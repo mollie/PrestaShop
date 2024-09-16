@@ -15,8 +15,11 @@ use Mollie\Controller\AbstractMollieController;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Infrastructure\Response\JsonResponse;
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\Handler\RecurringOrderHandler;
+use Mollie\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -46,8 +49,10 @@ class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieContr
 
     public function initContent()
     {
-        /** @var PrestaLoggerInterface $logger */
-        $logger = $this->module->getService(PrestaLoggerInterface::class);
+        /** @var Logger $logger **/
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
         /** @var ErrorHandler $errorHandler */
         $errorHandler = $this->module->getService(ErrorHandler::class);
@@ -99,8 +104,8 @@ class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieContr
             $recurringOrderHandler->handle($transactionId);
         } catch (\Throwable $exception) {
             $logger->error('Failed to handle recurring order', [
-                'Exception message' => $exception->getMessage(),
-                'Exception code' => $exception->getCode(),
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
             $errorHandler->handle($exception, null, false);
@@ -115,7 +120,7 @@ class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieContr
 
         $this->releaseLock();
 
-        $logger->info(sprintf('%s - Controller action ended', self::FILE_NAME));
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
         $this->ajaxResponse(JsonResponse::success([]));
     }

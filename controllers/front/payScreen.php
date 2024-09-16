@@ -11,6 +11,8 @@
  */
 
 use Mollie\Api\Types\PaymentMethod;
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Provider\ProfileIdProviderInterface;
 
 if (!defined('_PS_VERSION_')) {
@@ -19,11 +21,18 @@ if (!defined('_PS_VERSION_')) {
 
 class MolliePayScreenModuleFrontController extends ModuleFrontController
 {
+    public const FILE_NAME = 'payScreen' ;
+
     /** @var Mollie */
     public $module;
 
     public function postProcess()
     {
+        /** @var Logger $logger **/
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $cardToken = Tools::getValue('mollieCardToken');
         $isSaveCard = (bool) Tools::getValue('mollieSaveCard');
         $useSavedCard = (bool) Tools::getValue('mollieUseSavedCard');
@@ -40,6 +49,8 @@ class MolliePayScreenModuleFrontController extends ModuleFrontController
             ],
             true
         );
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
         Tools::redirect($validateUrl);
     }

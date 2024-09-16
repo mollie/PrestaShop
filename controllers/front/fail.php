@@ -10,6 +10,8 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use PrestaShop\PrestaShop\Adapter\Order\OrderPresenter;
 
 if (!defined('_PS_VERSION_')) {
@@ -18,6 +20,8 @@ if (!defined('_PS_VERSION_')) {
 
 class MollieFailModuleFrontController extends ModuleFrontController
 {
+    public const FILE_NAME = 'fail';
+
     /**
      * ID Order Variable Declaration.
      *
@@ -52,6 +56,11 @@ class MollieFailModuleFrontController extends ModuleFrontController
     {
         parent::init();
 
+        /** @var Logger $logger **/
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $this->id_cart = (int) Tools::getValue('cartId', 0);
 
         $redirectLink = 'index.php?controller=history';
@@ -78,6 +87,8 @@ class MollieFailModuleFrontController extends ModuleFrontController
         }
         /* @phpstan-ignore-next-line */
         $this->order_presenter = new OrderPresenter();
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     public function initContent()

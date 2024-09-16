@@ -15,6 +15,8 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Factory\CustomerFactory;
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\PaymentReturnService;
 use Mollie\Utility\ArrayUtility;
@@ -48,6 +50,11 @@ class MollieReturnModuleFrontController extends AbstractMollieController
      */
     public function initContent()
     {
+        /** @var Logger $logger **/
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $idCart = (int) Tools::getValue('cart_id');
         $key = Tools::getValue('key');
         $orderNumber = Tools::getValue('order_number');
@@ -139,6 +146,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         } else {
             $this->setTemplate('mollie_return.tpl');
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     /**

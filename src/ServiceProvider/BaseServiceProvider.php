@@ -269,6 +269,10 @@ final class BaseServiceProvider
 
         $this->addService($container, PrestashopLoggerRepositoryInterface::class, PrestashopLoggerRepository::class);
         $this->addService($container, MolLogRepositoryInterface::class, MolLogRepository::class);
+        $this->addService($container, LogFormatterInterface::class, LogFormatter::class);
+
+        $service = $this->addService($container, EntityManagerInterface::class, ObjectModelEntityManager::class);
+        $this->addServiceArgument($service, ObjectModelUnitOfWork::class);
 
         $service = $this->addService($container, LoggerInterface::class, Logger::class);
         $this->addServiceArgument($service, LogFormatterInterface::class);
@@ -277,11 +281,6 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, EntityManagerInterface::class);
         $this->addServiceArgument($service, NumberIdempotencyProvider::class);
         $this->addServiceArgument($service, PrestashopLoggerRepositoryInterface::class);
-
-        $this->addService($container, LogFormatterInterface::class, LogFormatter::class);
-
-        $service = $this->addService($container, EntityManagerInterface::class, ObjectModelEntityManager::class);
-        $this->addServiceArgument($service, ObjectModelUnitOfWork::class);
     }
 
     private function addService(Container $container, $className, $service)

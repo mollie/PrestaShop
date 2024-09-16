@@ -12,6 +12,8 @@
 
 declare(strict_types=1);
 
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -45,10 +47,19 @@ class AdminMollieSettingsController extends ModuleAdminController
         $this->context->smarty->assign('module_dir', $this->module->getPathUri());
         $moduleManager = PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder::getInstance()->build();
 
+
+        /** @var Logger $logger **/
+        $logger = $this->module->getService(LoggerInterface::class);
+
         try {
             $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
             $accountsService = $accountsFacade->getPsAccountsService();
         } catch (PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
+            $logger->error('Failed to initiate ps_accounts', [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+
             try {
                 $accountsInstaller = $this->module->getService('Mollie.PsAccountsInstaller');
                 $accountsInstaller->install();
@@ -57,9 +68,15 @@ class AdminMollieSettingsController extends ModuleAdminController
             } catch (Exception $e) {
                 $this->context->controller->errors[] = $e->getMessage();
 
+                $logger->error('Failed to install ps_accounts', [
+                    'context' => [],
+                    'exceptions' => ExceptionUtility::getExceptions($e),
+                ]);
+
                 return;
             }
         }
+
         try {
             Media::addJsDef([
                 'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()
@@ -70,6 +87,11 @@ class AdminMollieSettingsController extends ModuleAdminController
             $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
         } catch (Exception $e) {
             $this->context->controller->errors[] = $e->getMessage();
+
+            $logger->error('Failed to load ps accounts CDN', [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
         }
 
         if ($moduleManager->isInstalled('ps_eventbus')) {
@@ -93,16 +115,6 @@ class AdminMollieSettingsController extends ModuleAdminController
 
     public function postProcess()
     {
-        try {
-            /** @var \Mollie\Logger\LoggerInterface $logger */
-            $logger = $this->module->getService(\Mollie\Logger\LoggerInterface::class);
-
-            $logger->error('Failed to present payment option assets.', [
-                'context' => [],
-                'exceptions' => ExceptionUtility::getExceptions(new Exception('Failed to present payment option assets.')),
-            ]);
-        } catch (PrestaShopException $e) {
-        }
         /** @var \Mollie\Service\Content\TemplateParserInterface $templateParser */
         $templateParser = $this->module->getService(\Mollie\Service\Content\TemplateParserInterface::class);
 
@@ -194,12 +206,21 @@ class AdminMollieSettingsController extends ModuleAdminController
         /** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
         $settingsFormBuilder = $this->module->getService(\Mollie\Builder\FormBuilder::class);
 
+
+        /** @var Logger $logger **/
+        $logger = $this->module->getService(LoggerInterface::class);
+
         try {
             $html .= $settingsFormBuilder->buildSettingsForm();
         } catch (PrestaShopDatabaseException $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);
             $this->context->controller->errors[] = $this->module->l('The database tables are missing. Reset the module.');
+
+            $logger->error('The database tables are missing. Reset the module.', [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
         }
 
         $this->content .= $html;
