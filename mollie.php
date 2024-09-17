@@ -20,6 +20,7 @@ use Mollie\Config\Config;
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
@@ -102,7 +103,7 @@ class Mollie extends PaymentModule
         $this->description = $this->l('Mollie Payments');
 
         $this->loadEnv();
-        ErrorHandler::getInstance($this);
+//        ErrorHandler::getInstance($this);
     }
 
     /**

@@ -17,7 +17,6 @@ use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
-use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\Handler\RecurringOrderHandler;
 use Mollie\Utility\ExceptionUtility;
 
@@ -103,11 +102,6 @@ class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieContr
         try {
             $recurringOrderHandler->handle($transactionId);
         } catch (\Throwable $exception) {
-            $logger->error('Failed to handle recurring order', [
-                'context' => [],
-                'exceptions' => ExceptionUtility::getExceptions($exception),
-            ]);
-
             $errorHandler->handle($exception, null, false);
 
             $this->releaseLock();

@@ -216,11 +216,6 @@ class AdminMollieSettingsController extends ModuleAdminController
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);
             $this->context->controller->errors[] = $this->module->l('The database tables are missing. Reset the module.');
-
-            $logger->error('The database tables are missing. Reset the module.', [
-                'context' => [],
-                'exceptions' => ExceptionUtility::getExceptions($e),
-            ]);
         }
 
         $this->content .= $html;

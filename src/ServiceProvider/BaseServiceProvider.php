@@ -18,6 +18,10 @@ use League\Container\Container;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
+<<<<<<< HEAD
+=======
+use Mollie\Adapter\Shop;
+>>>>>>> 13cbbc95537a7794b4241af3e508f1bb12281781
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandler;
@@ -58,6 +62,7 @@ use Mollie\Provider\ProfileIdProvider;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider;
 use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProviderInterface;
+use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Provider\UpdateMessageProvider;
 use Mollie\Provider\UpdateMessageProviderInterface;
 use Mollie\Repository\AddressFormatRepository;
@@ -98,6 +103,8 @@ use Mollie\Repository\TaxRuleRepositoryInterface;
 use Mollie\Repository\TaxRulesGroupRepository;
 use Mollie\Repository\TaxRulesGroupRepositoryInterface;
 use Mollie\Service\ApiKeyService;
+use Mollie\Service\ApiService;
+use Mollie\Service\ApiServiceInterface;
 use Mollie\Service\Content\SmartyTemplateParser;
 use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\EntityManager\EntityManagerInterface;
@@ -117,6 +124,7 @@ use Mollie\Service\Shipment\ShipmentInformationSender;
 use Mollie\Service\Shipment\ShipmentInformationSenderInterface;
 use Mollie\Service\ShipmentService;
 use Mollie\Service\ShipmentServiceInterface;
+use Mollie\Service\TransactionService;
 use Mollie\Shared\Core\Shared\Repository\CurrencyRepository;
 use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
 use Mollie\Subscription\Grid\Accessibility\SubscriptionCancelAccessibility;
@@ -267,6 +275,7 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, $container->get(ModuleFactory::class)->getModuleVersion() ?? '');
         $this->addServiceArgument($service, ApiKeyService::class);
 
+<<<<<<< HEAD
         $this->addService($container, PrestashopLoggerRepositoryInterface::class, PrestashopLoggerRepository::class);
         $this->addService($container, MolLogRepositoryInterface::class, MolLogRepository::class);
         $this->addService($container, LogFormatterInterface::class, LogFormatter::class);
@@ -281,6 +290,17 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, EntityManagerInterface::class);
         $this->addServiceArgument($service, NumberIdempotencyProvider::class);
         $this->addServiceArgument($service, PrestashopLoggerRepositoryInterface::class);
+=======
+        $service = $this->addService($container, ApiServiceInterface::class, ApiService::class);
+        $this->addServiceArgument($service, PaymentMethodRepository::class);
+        $this->addServiceArgument($service, CountryRepository::class);
+        $this->addServiceArgument($service, PaymentMethodSortProviderInterface::class);
+        $this->addServiceArgument($service, ConfigurationAdapter::class);
+        $this->addServiceArgument($service, TransactionService::class);
+        $this->addServiceArgument($service, Shop::class);
+        $this->addServiceArgument($service, TaxCalculatorProvider::class);
+        $this->addServiceArgument($service, Context::class);
+>>>>>>> 13cbbc95537a7794b4241af3e508f1bb12281781
     }
 
     private function addService(Container $container, $className, $service)

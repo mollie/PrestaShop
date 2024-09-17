@@ -17,6 +17,8 @@ namespace Mollie\Subscription\Install;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\ProductAttributeAdapter;
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\Config\Config;
 use PrestaShopException;
@@ -36,13 +38,13 @@ class AttributeUninstaller extends AbstractUninstaller
     /** @var Mollie */
     private $module;
 
-    /** @var PrestaLoggerInterface */
+    /** @var LoggerInterface */
     private $logger;
     /** @var ProductAttributeAdapter */
     private $productAttributeAdapter;
 
     public function __construct(
-        PrestaLoggerInterface $logger,
+        Logger $logger,
         ConfigurationAdapter $configuration,
         Mollie $module,
         ProductAttributeAdapter $productAttributeAdapter

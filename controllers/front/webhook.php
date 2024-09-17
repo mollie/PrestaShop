@@ -20,7 +20,6 @@ use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
-use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Service\TransactionService;
 use Mollie\Utility\TransactionUtility;
 
@@ -159,16 +158,8 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
 
     private function handleException(Throwable $exception, int $httpStatusCode, string $logMessage): void
     {
-        /** @var Logger $logger */
-        $logger = $this->module->getService(LoggerInterface::class);
-
         /** @var ErrorHandler $errorHandler */
         $errorHandler = $this->module->getService(ErrorHandler::class);
-
-        $logger->error('An error occurred when creating mollie payment', [
-            'context' => [],
-            'exceptions' => ExceptionUtility::getExceptions($exception),
-        ]);
 
         $errorHandler->handle($exception, $httpStatusCode, false);
         $this->releaseLock();

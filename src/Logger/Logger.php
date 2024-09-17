@@ -103,15 +103,9 @@ class Logger implements LoggerInterface
 
     public function debug($message, array $context = [])
     {
-        if ((int) $this->configuration->get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_NONE) {
-            return;
+        if ((int) $this->configuration->get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_ALL) {
+            $this->log(self::SEVERITY_INFO, $message, $context);
         }
-
-        if ((int) $this->configuration->get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_ERRORS) {
-            return;
-        }
-
-        $this->log(self::SEVERITY_INFO, $message, $context);
     }
 
     public function log($level, $message, array $context = [])

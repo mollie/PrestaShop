@@ -17,7 +17,6 @@ use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
-use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\Handler\SubscriptionPaymentMethodUpdateHandler;
 use Mollie\Utility\ExceptionUtility;
 
@@ -115,11 +114,6 @@ class MollieSubscriptionUpdateWebhookModuleFrontController extends AbstractMolli
         try {
             $subscriptionPaymentMethodUpdateHandler->handle($transactionId, $subscriptionId);
         } catch (\Throwable $exception) {
-            $logger->error('Failed to handle subscription update', [
-                'context' => [],
-                'exceptions' => ExceptionUtility::getExceptions($exception),
-            ]);
-
             $errorHandler->handle($exception, null, false);
 
             $this->releaseLock();
