@@ -111,7 +111,7 @@ class ErrorHandler
     public function handle(\Throwable $error, ?int $code = null, ?bool $throw = true): void
     {
         if ((int) Configuration::get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_ERRORS) {
-            /** @var Logger $logger **/
+            /** @var Logger $logger * */
             $logger = $this->module->getService(LoggerInterface::class);
 
             $logger->error($error->getMessage(), [

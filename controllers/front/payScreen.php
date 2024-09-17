@@ -21,14 +21,14 @@ if (!defined('_PS_VERSION_')) {
 
 class MolliePayScreenModuleFrontController extends ModuleFrontController
 {
-    public const FILE_NAME = 'payScreen' ;
+    public const FILE_NAME = 'payScreen';
 
     /** @var Mollie */
     public $module;
 
     public function postProcess()
     {
-        /** @var Logger $logger **/
+        /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
 
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));

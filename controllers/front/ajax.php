@@ -38,7 +38,7 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
 
     public function postProcess(): void
     {
-        /** @var Logger $logger **/
+        /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
 
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
@@ -102,7 +102,7 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         /** @var ConfigurationAdapter $configuration */
         $configuration = $this->module->getService(ConfigurationAdapter::class);
 
-        /** @var Logger $logger **/
+        /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
 
         try {
@@ -208,7 +208,7 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         /** @var CanProductBeAddedToCartValidator $canProductBeAddedToCartValidator */
         $canProductBeAddedToCartValidator = $this->module->getService(CanProductBeAddedToCartValidator::class);
 
-        /** @var Logger $logger **/
+        /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
 
         $product = Tools::getValue('product');

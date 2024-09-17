@@ -47,8 +47,7 @@ class AdminMollieSettingsController extends ModuleAdminController
         $this->context->smarty->assign('module_dir', $this->module->getPathUri());
         $moduleManager = PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder::getInstance()->build();
 
-
-        /** @var Logger $logger **/
+        /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
 
         try {
@@ -206,8 +205,7 @@ class AdminMollieSettingsController extends ModuleAdminController
         /** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
         $settingsFormBuilder = $this->module->getService(\Mollie\Builder\FormBuilder::class);
 
-
-        /** @var Logger $logger **/
+        /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
 
         try {

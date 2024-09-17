@@ -370,7 +370,7 @@ class AdminMollieLogsController extends ModuleAdminController
         ];
 
         $moduleConfigurations = [
-            'Environment' => $configuration->get(Config::MOLLIE_ENVIRONMENT) ? "Production" : "Sandbox",
+            'Environment' => $configuration->get(Config::MOLLIE_ENVIRONMENT) ? 'Production' : 'Sandbox',
             'Components' => $configuration->get(Config::MOLLIE_IFRAME),
             'OCP' => $configuration->get(Config::MOLLIE_SINGLE_CLICK_PAYMENT),
             'Locale Webshop' => $configuration->get(Config::MOLLIE_PAYMENTSCREEN_LOCALE),
@@ -438,6 +438,6 @@ class AdminMollieLogsController extends ModuleAdminController
         }
 
         @fclose($fd);
-        die;
+        exit;
     }
 }

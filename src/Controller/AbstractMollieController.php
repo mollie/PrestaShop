@@ -18,7 +18,6 @@ use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Infrastructure\Response\Response;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
-use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -104,7 +103,7 @@ class AbstractMollieController extends \ModuleFrontControllerCore
 
             if (!$this->lock->acquire()) {
                 $logger->error('Lock resource conflict', [
-                    'context' => []
+                    'context' => [],
                 ]);
 
                 return Response::respond(

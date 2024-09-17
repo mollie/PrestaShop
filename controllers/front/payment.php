@@ -56,7 +56,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     {
         parent::initContent();
 
-        /** @var Logger $logger **/
+        /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
 
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));

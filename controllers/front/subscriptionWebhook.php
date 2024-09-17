@@ -18,7 +18,6 @@ use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Subscription\Handler\RecurringOrderHandler;
-use Mollie\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -48,7 +47,7 @@ class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieContr
 
     public function initContent()
     {
-        /** @var Logger $logger **/
+        /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
 
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));

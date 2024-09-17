@@ -13,7 +13,6 @@
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
-use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\Handler\FreeOrderCreationHandler;
 use Mollie\Subscription\Handler\SubscriptionCancellationHandler;
 use Mollie\Subscription\Presenter\RecurringOrderPresenter;
@@ -40,7 +39,7 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
      */
     public function postProcess()
     {
-        /** @var Logger $logger **/
+        /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
 
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
@@ -63,7 +62,7 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
      */
     public function initContent()
     {
-        /** @var Logger $logger **/
+        /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
 
         $recurringOrderId = (int) Tools::getValue('id_mol_recurring_order');

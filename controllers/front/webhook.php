@@ -10,7 +10,6 @@
  * @codingStandardsIgnoreStart
  */
 
-use Invertus\Faire\Infrastructure\Utility\ExceptionUtility;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Controller\AbstractMollieController;
@@ -51,7 +50,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
 
     public function initContent(): void
     {
-        /** @var Logger $logger **/
+        /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
 
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
@@ -119,7 +118,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         /** @var TransactionService $transactionService */
         $transactionService = $this->module->getService(TransactionService::class);
 
-        /** @var Logger $logger **/
+        /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
 
         if (TransactionUtility::isOrderTransaction($transactionId)) {

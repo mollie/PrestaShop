@@ -19,7 +19,6 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
-use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\Config\Config;
 use PrestaShopException;
 use Psr\Log\LogLevel;
