@@ -52,6 +52,9 @@ class MollieFailModuleFrontController extends ModuleFrontController
      */
     private $order_presenter;
 
+    /** @var Mollie */
+    public $module;
+
     public function init()
     {
         parent::init();

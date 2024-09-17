@@ -18,10 +18,7 @@ use League\Container\Container;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
-<<<<<<< HEAD
-=======
 use Mollie\Adapter\Shop;
->>>>>>> 13cbbc95537a7794b4241af3e508f1bb12281781
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandler;
@@ -275,13 +272,8 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, $container->get(ModuleFactory::class)->getModuleVersion() ?? '');
         $this->addServiceArgument($service, ApiKeyService::class);
 
-<<<<<<< HEAD
         $this->addService($container, PrestashopLoggerRepositoryInterface::class, PrestashopLoggerRepository::class);
         $this->addService($container, MolLogRepositoryInterface::class, MolLogRepository::class);
-        $this->addService($container, LogFormatterInterface::class, LogFormatter::class);
-
-        $service = $this->addService($container, EntityManagerInterface::class, ObjectModelEntityManager::class);
-        $this->addServiceArgument($service, ObjectModelUnitOfWork::class);
 
         $service = $this->addService($container, LoggerInterface::class, Logger::class);
         $this->addServiceArgument($service, LogFormatterInterface::class);
@@ -290,7 +282,9 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, EntityManagerInterface::class);
         $this->addServiceArgument($service, NumberIdempotencyProvider::class);
         $this->addServiceArgument($service, PrestashopLoggerRepositoryInterface::class);
-=======
+
+        $this->addService($container, LogFormatterInterface::class, LogFormatter::class);
+
         $service = $this->addService($container, ApiServiceInterface::class, ApiService::class);
         $this->addServiceArgument($service, PaymentMethodRepository::class);
         $this->addServiceArgument($service, CountryRepository::class);
@@ -300,7 +294,9 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, Shop::class);
         $this->addServiceArgument($service, TaxCalculatorProvider::class);
         $this->addServiceArgument($service, Context::class);
->>>>>>> 13cbbc95537a7794b4241af3e508f1bb12281781
+
+        $service = $this->addService($container, EntityManagerInterface::class, ObjectModelEntityManager::class);
+        $this->addServiceArgument($service, ObjectModelUnitOfWork::class);
     }
 
     private function addService(Container $container, $className, $service)
