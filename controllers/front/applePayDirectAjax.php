@@ -20,6 +20,8 @@ use Mollie\Application\CommandHandler\UpdateApplePayShippingContactHandler;
 use Mollie\Application\CommandHandler\UpdateApplePayShippingMethodHandler;
 use Mollie\Builder\ApplePayDirect\ApplePayOrderBuilder;
 use Mollie\Builder\ApplePayDirect\ApplePayProductBuilder;
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Utility\OrderRecoverUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -28,11 +30,17 @@ if (!defined('_PS_VERSION_')) {
 
 class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontController
 {
+    private const FILE_NAME = 'applePayDirectAjax';
     /** @var Mollie */
     public $module;
 
     public function postProcess()
     {
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $action = Tools::getValue('action');
         switch ($action) {
             case 'mollie_apple_pay_validation':
@@ -50,6 +58,8 @@ class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontControlle
             case 'mollie_apple_pay_get_total_price':
                 $this->getTotalApplePayCartPrice();
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     private function getApplePaySession()

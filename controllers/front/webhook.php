@@ -17,7 +17,8 @@ use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\TransactionException;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Infrastructure\Response\JsonResponse;
-use Mollie\Logger\PrestaLoggerInterface;
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Service\TransactionService;
 use Mollie\Utility\TransactionUtility;
 
@@ -49,13 +50,13 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
 
     public function initContent(): void
     {
-        /** @var PrestaLoggerInterface $logger */
-        $logger = $this->module->getService(PrestaLoggerInterface::class);
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
         /** @var ToolsAdapter $tools */
         $tools = $this->module->getService(ToolsAdapter::class);
-
-        $logger->info(sprintf('%s - Controller called', self::FILE_NAME));
 
         if (!$this->module->getApiClient()) {
             $logger->error(sprintf('Unauthorized in %s', self::FILE_NAME));
@@ -104,7 +105,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
 
         $this->releaseLock();
 
-        $logger->info(sprintf('%s - Controller action ended', self::FILE_NAME));
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
         $this->ajaxResponse(JsonResponse::success([]));
     }
@@ -116,6 +117,9 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
     {
         /** @var TransactionService $transactionService */
         $transactionService = $this->module->getService(TransactionService::class);
+
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
 
         if (TransactionUtility::isOrderTransaction($transactionId)) {
             $transaction = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
@@ -131,6 +135,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
 
         if (!$cartId) {
             // TODO webhook structure will change, no need to create custom exception for one time usage
+            $logger->error(sprintf('Missing Cart ID. Transaction ID: [%s]', $transactionId));
 
             throw new \Exception(sprintf('Missing Cart ID. Transaction ID: [%s]', $transactionId), HttpStatusCode::HTTP_NOT_FOUND);
         }
@@ -152,16 +157,8 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
 
     private function handleException(Throwable $exception, int $httpStatusCode, string $logMessage): void
     {
-        /** @var PrestaLoggerInterface $logger */
-        $logger = $this->module->getService(PrestaLoggerInterface::class);
-
         /** @var ErrorHandler $errorHandler */
         $errorHandler = $this->module->getService(ErrorHandler::class);
-
-        $logger->error($logMessage, [
-            'Exception message' => $exception->getMessage(),
-            'Exception code' => $httpStatusCode,
-        ]);
 
         $errorHandler->handle($exception, $httpStatusCode, false);
         $this->releaseLock();

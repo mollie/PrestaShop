@@ -354,23 +354,23 @@ class AdminMollieLogsController extends ModuleAdminController
 
         $fd = fopen('php://output', 'wb');
 
-        /** @var  $configuration */
+        /** @var ConfigurationAdapter $configuration */
         $configuration = $this->module->getService(ConfigurationAdapter::class);
 
-        /** @var Context $context */
+        /** @var Mollie\Adapter\Context $context */
         $context = $this->module->getService(Mollie\Adapter\Context::class);
 
         $storeInfo = [
             'PrestaShop Version' => _PS_VERSION_,
             'PHP Version' => phpversion(),
             'Module Version' => $this->module->version,
-            'MySQL Version' => \DB::getInstance()->getVersion(),
+            'MySQL Version' => \Db::getInstance()->getVersion(),
             'Shop URL' => $context->getShopDomain(),
             'Shop Name' => $context->getShopName(),
         ];
 
         $moduleConfigurations = [
-            'Environment' => $configuration->get(Config::MOLLIE_ENVIRONMENT) ? "Production" : "Sandbox",
+            'Environment' => $configuration->get(Config::MOLLIE_ENVIRONMENT) ? 'Production' : 'Sandbox',
             'Components' => $configuration->get(Config::MOLLIE_IFRAME),
             'OCP' => $configuration->get(Config::MOLLIE_SINGLE_CLICK_PAYMENT),
             'Locale Webshop' => $configuration->get(Config::MOLLIE_PAYMENTSCREEN_LOCALE),
@@ -416,6 +416,8 @@ class AdminMollieLogsController extends ModuleAdminController
         $result = \Db::getInstance()->executeS($query);
 
         $firstRow = $result[0];
+        $headers = [];
+
         foreach ($firstRow as $key => $value) {
             $headers[] = strtoupper($key);
         }
@@ -436,6 +438,6 @@ class AdminMollieLogsController extends ModuleAdminController
         }
 
         @fclose($fd);
-        die;
+        exit;
     }
 }
