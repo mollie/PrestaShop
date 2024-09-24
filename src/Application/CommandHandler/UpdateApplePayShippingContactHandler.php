@@ -60,7 +60,7 @@ final class UpdateApplePayShippingContactHandler
         $invoiceAddress = $this->createAddress($customer->id, $command);
         $cart = $this->updateCart($customer, $deliveryAddress->id, $invoiceAddress->id, $command->getCartId());
         $this->addProductToCart($cart, $command);
-        $this->updateContext($cart, $customer, $deliveryAddress);
+        $this->updateContext($cart, $customer);
         $country = new Country($deliveryAddress->id_country);
 
         $applePayCarriers = $this->applePayCarriersBuilder->build(Carrier::getCarriersForOrder($country->id_zone), $country->id_zone);
