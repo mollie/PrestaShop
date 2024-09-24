@@ -60,7 +60,7 @@ final class UpdateApplePayShippingContactHandler
         $invoiceAddress = $this->createAddress($customer->id, $command);
         $cart = $this->updateCart($customer, $deliveryAddress->id, $invoiceAddress->id, $command->getCartId());
         $this->addProductToCart($cart, $command);
-
+        $this->updateContext($cart, $customer, $deliveryAddress);
         $country = new Country($deliveryAddress->id_country);
 
         $applePayCarriers = $this->applePayCarriersBuilder->build(Carrier::getCarriersForOrder($country->id_zone), $country->id_zone);
@@ -141,5 +141,12 @@ final class UpdateApplePayShippingContactHandler
             $cart->deleteProduct($product->getProductId(), $product->getProductAttribute());
             $cart->updateQty($product->getWantedQuantity(), $product->getProductId(), $product->getProductAttribute());
         }
+    }
+
+    private function updateContext(Cart $cart, Customer $customer)
+    {
+        $context = \Context::getContext();
+        $context->cart = $cart;
+        \Context::getContext()->updateCustomer($customer);
     }
 }
