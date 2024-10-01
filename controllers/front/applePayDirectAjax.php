@@ -20,8 +20,10 @@ use Mollie\Application\CommandHandler\UpdateApplePayShippingContactHandler;
 use Mollie\Application\CommandHandler\UpdateApplePayShippingMethodHandler;
 use Mollie\Builder\ApplePayDirect\ApplePayOrderBuilder;
 use Mollie\Builder\ApplePayDirect\ApplePayProductBuilder;
+use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
+use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\OrderRecoverUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -101,6 +103,8 @@ class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontControlle
         $handler = $this->module->getService(UpdateApplePayShippingContactHandler::class);
         /** @var ApplePayProductBuilder $productBuilder */
         $productBuilder = $this->module->getService(ApplePayProductBuilder::class);
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
 
         $simplifiedContent = Tools::getValue('simplifiedContact');
         $cartId = (int) Tools::getValue('cartId');
@@ -120,7 +124,23 @@ class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontControlle
             $simplifiedContent['locality'],
             $customerId
         );
-        $result = $handler->handle($command);
+
+        try {
+            $result = $handler->handle($command);
+        } catch (FailedToProvidePaymentFeeException $e) {
+            $logger->error('Failed to find apple pay address.', [
+                'context' => [
+                    'cartId' => $cartId,
+                    'customerId' => $customerId,
+                ],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+
+            $result = [
+                'success' => false,
+                'message' => $this->module->l('Failed to find address. Please try again. CartId ' . $cartId, self::FILE_NAME),
+            ];
+        }
 
         $this->ajaxDie(json_encode($result));
     }

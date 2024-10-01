@@ -193,6 +193,9 @@ $(document).ready(function () {
                             },
                             []
                         );
+                    } else {
+                        console.warn(applePayShippingContactUpdate)
+                        session.abort()
                     }
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
