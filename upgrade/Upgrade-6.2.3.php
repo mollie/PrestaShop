@@ -9,9 +9,6 @@
  * @see        https://github.com/mollie/PrestaShop
  */
 
-use Mollie\Adapter\ConfigurationAdapter;
-use Mollie\Config\Config;
-use Mollie\Install\InstallerInterface;
 use PrestaShop\PrestaShop\Adapter\Module\Tab\ModuleTabRegister;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
