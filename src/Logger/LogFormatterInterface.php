@@ -10,18 +10,14 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Service\EntityManager;
+namespace Mollie\Logger;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-interface EntityManagerInterface
+interface LogFormatterInterface
 {
     /**
-     * @return array<\ObjectModel>
+     * @param string $message - an actual error message
      *
-     * @throws \PrestaShopException
+     * @return string
      */
-    public function flush(): array;
+    public function getMessage(string $message): string;
 }

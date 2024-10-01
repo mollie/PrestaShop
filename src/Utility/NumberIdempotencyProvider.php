@@ -10,18 +10,16 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Service\EntityManager;
+namespace Mollie\Utility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-interface EntityManagerInterface
+class NumberIdempotencyProvider
 {
-    /**
-     * @return array<\ObjectModel>
-     *
-     * @throws \PrestaShopException
-     */
-    public function flush(): array;
+    public function getIdempotencyKey(): string
+    {
+        return (string) mt_rand();
+    }
 }

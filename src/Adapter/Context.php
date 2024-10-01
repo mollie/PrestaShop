@@ -135,6 +135,16 @@ class Context
         return (int) PrestashopContext::getContext()->shop->id_shop_group;
     }
 
+    public function getShopThemeName(): string
+    {
+        return PrestashopContext::getContext()->shop->theme_name;
+    }
+
+    public function getShopName(): string
+    {
+        return PrestashopContext::getContext()->shop->name;
+    }
+
     public function formatPrice(float $price, string $isoCode): string
     {
         $locale = PrestashopContext::getContext()->getCurrentLocale();

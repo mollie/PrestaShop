@@ -16,7 +16,9 @@ use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Infrastructure\Adapter\Lock;
 use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Infrastructure\Response\Response;
-use Mollie\Logger\PrestaLoggerInterface;
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
+use Mollie\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -62,8 +64,8 @@ class AbstractMollieController extends \ModuleFrontControllerCore
 
     protected function ajaxResponse($value, $controller = null, $method = null): void
     {
-        /** @var PrestaLoggerInterface $logger */
-        $logger = $this->module->getService(PrestaLoggerInterface::class);
+        /** @var Logger $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
 
         if ($value instanceof JsonResponse) {
             if ($value->getStatusCode() === JsonResponse::HTTP_INTERNAL_SERVER_ERROR) {
@@ -83,9 +85,8 @@ class AbstractMollieController extends \ModuleFrontControllerCore
             $this->ajaxRender($value, $controller, $method);
         } catch (\Throwable $exception) {
             $logger->error('Could not return ajax response', [
-                'response' => json_encode($value ?: []),
-                'Exception message' => $exception->getMessage(),
-                'Exception code' => $exception->getCode(),
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
         }
 
@@ -94,15 +95,15 @@ class AbstractMollieController extends \ModuleFrontControllerCore
 
     protected function applyLock(string $resource): Response
     {
-        /** @var PrestaLoggerInterface $logger */
-        $logger = $this->module->getService(PrestaLoggerInterface::class);
+        /** @var Logger $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
 
         try {
             $this->lock->create($resource);
 
             if (!$this->lock->acquire()) {
                 $logger->error('Lock resource conflict', [
-                    'resource' => $resource,
+                    'context' => [],
                 ]);
 
                 return Response::respond(
@@ -112,8 +113,8 @@ class AbstractMollieController extends \ModuleFrontControllerCore
             }
         } catch (\Throwable $exception) {
             $logger->error('Failed to lock process', [
-                'Exception message' => $exception->getMessage(),
-                'Exception code' => $exception->getCode(),
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
             return Response::respond(
@@ -130,15 +131,15 @@ class AbstractMollieController extends \ModuleFrontControllerCore
 
     protected function releaseLock(): void
     {
-        /** @var PrestaLoggerInterface $logger */
-        $logger = $this->module->getService(PrestaLoggerInterface::class);
+        /** @var Logger $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
 
         try {
             $this->lock->release();
         } catch (\Throwable $exception) {
             $logger->error('Failed to release process', [
-                'Exception message' => $exception->getMessage(),
-                'Exception code' => $exception->getCode(),
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
         }
     }

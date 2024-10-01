@@ -74,6 +74,17 @@ class ConfigurationAdapter
         \Configuration::deleteByName($this->parseKeyByEnvironment($key));
     }
 
+    public function getAsInteger($id, ?int $shopId = null)
+    {
+        $result = $this->get($id, $shopId);
+
+        if (in_array($result, ['null', 'false', '0', null, false, 0], true)) {
+            return 0;
+        }
+
+        return (int) $result;
+    }
+
     /**
      * @param string|array{production: string, sandbox: string} $key
      */

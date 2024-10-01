@@ -10,21 +10,26 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Service\EntityManager;
+namespace Mollie\Repository;
 
 use ObjectModel;
+use PrestaShopCollection;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ObjectModelManager implements EntityManagerInterface
+interface ReadOnlyRepositoryInterface
 {
     /**
-     * @throws \PrestaShopException
+     * @return PrestaShopCollection
      */
-    public function flush(ObjectModel $model)
-    {
-        $model->save();
-    }
+    public function findAll();
+
+    /**
+     * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
+     *
+     * @return ObjectModel|null
+     */
+    public function findOneBy(array $keyValueCriteria);
 }

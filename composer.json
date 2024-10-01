@@ -2,6 +2,12 @@
     "name": "mollie/prestashop",
     "license": "AFL-3.0",
     "description": "Mollie module for PrestaShop",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/Invertus/Knapsack.git"
+        }
+    ],
     "require": {
         "ext-curl": "*",
         "ext-json": "*",
@@ -17,13 +23,15 @@
         "http-interop/http-factory-guzzle": "^1.1",
         "php-http/message-factory": "^1.1",
         "prestashop/prestashop-accounts-installer": "^1.0.4",
-        "prestashop/module-lib-mbo-installer": "^2.0"
+        "prestashop/module-lib-mbo-installer": "^2.0",
+        "invertus/knapsack": "^10.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
         "invertus/prestashop-models": "^1.0",
         "prestashop/php-dev-tools": "*",
-        "phpunit/phpunit": "~5.7"
+        "phpunit/phpunit": "~5.7",
+        "friendsofphp/php-cs-fixer": "^2.19"
     },
     "autoload-dev": {
         "psr-4": {

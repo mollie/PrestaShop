@@ -138,6 +138,19 @@ final class DatabaseTableInstaller implements InstallerInterface
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
         ';
 
+        $sql[] = '
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_logs` (
+                `id_mollie_log` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                `id_log` INT(11),
+                `id_shop` INT(11),
+                `request` TEXT,
+                `response` TEXT,
+                `context` TEXT,
+                `date_add` DATETIME NOT NULL,
+                INDEX (`id_log`),
+                INDEX (`id_shop`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
+
         return $sql;
     }
 

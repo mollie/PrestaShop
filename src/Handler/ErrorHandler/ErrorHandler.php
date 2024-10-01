@@ -17,6 +17,9 @@ use Mollie;
 use Mollie\Config\Config;
 use Mollie\Config\Env;
 use Mollie\Factory\ModuleFactory;
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
+use Mollie\Utility\ExceptionUtility;
 use Sentry\ClientBuilder;
 use Sentry\ClientInterface;
 use Sentry\SentrySdk;
@@ -39,9 +42,15 @@ class ErrorHandler
 
     /** @var Scope */
     private $exceptionContext;
+    /**
+     * @var Mollie
+     */
+    private $module;
 
     public function __construct(Mollie $module, Env $env = null)
     {
+        $this->module = $module;
+
         /* We need to add this check and make env = null because when upgrading module the old constructor logic is called, and it breaks upgrade */
         if (!$env || !class_exists('Sentry\ClientBuilder')) {
             return;
@@ -101,6 +110,16 @@ class ErrorHandler
      */
     public function handle(\Throwable $error, ?int $code = null, ?bool $throw = true): void
     {
+        if ((int) Configuration::get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_ERRORS) {
+            /** @var Logger $logger * */
+            $logger = $this->module->getService(LoggerInterface::class);
+
+            $logger->error($error->getMessage(), [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($error),
+            ]);
+        }
+
         $this->client->captureException($error, $this->exceptionContext);
 
         if ($code && true === $throw) {

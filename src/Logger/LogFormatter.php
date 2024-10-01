@@ -10,18 +10,18 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Service\EntityManager;
+namespace Mollie\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-interface EntityManagerInterface
+class LogFormatter implements LogFormatterInterface
 {
-    /**
-     * @return array<\ObjectModel>
-     *
-     * @throws \PrestaShopException
-     */
-    public function flush(): array;
+    const MOLLIE_LOG_PREFIX = 'MOLLIE_MODULE_LOG:';
+
+    public function getMessage(string $message): string
+    {
+        return self::MOLLIE_LOG_PREFIX . ' ' . $message;
+    }
 }
