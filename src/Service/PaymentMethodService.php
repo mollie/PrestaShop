@@ -335,6 +335,7 @@ class PaymentMethodService
             $paymentData->setMethod($molPaymentMethod->id_method);
 
             $paymentData->setDescription($orderReference);
+            $paymentData->setEmail($customer->email);
 
             if (isset($cart->id_address_invoice)) {
                 $billingAddress = new Address((int) $cart->id_address_invoice);

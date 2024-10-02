@@ -101,6 +101,11 @@ class PaymentData implements JsonSerializable
      */
     private $subscriptionOrder = false;
 
+    /**
+     * @var string
+     */
+    private $email;
+
     public function __construct(
         Amount $amount,
         $description,
@@ -339,6 +344,22 @@ class PaymentData implements JsonSerializable
         $this->subscriptionOrder = $subscriptionOrder;
     }
 
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    }
+
     public function jsonSerialize()
     {
         $result = [
@@ -347,6 +368,9 @@ class PaymentData implements JsonSerializable
                 'value' => (string) $this->getAmount()->getValue(),
             ],
             'billingAddress' => [
+                'givenName' => $this->cleanUpInput($this->getBillingAddress()->firstname),
+                'familyName' => $this->cleanUpInput($this->getBillingAddress()->lastname),
+                'email' => $this->cleanUpInput($this->getEmail()),
                 'streetAndNumber' => $this->cleanUpInput($this->getBillingAddress()->address1),
                 'streetAdditional' => $this->cleanUpInput($this->getBillingAddress()->address2, null),
                 'city' => $this->cleanUpInput($this->getBillingAddress()->city),
@@ -354,6 +378,9 @@ class PaymentData implements JsonSerializable
                 'country' => $this->cleanUpInput(Country::getIsoById($this->getBillingAddress()->id_country)),
             ],
             'shippingAddress' => [
+                'givenName' => $this->cleanUpInput($this->getBillingAddress()->firstname),
+                'familyName' => $this->cleanUpInput($this->getBillingAddress()->lastname),
+                'email' => $this->cleanUpInput($this->getEmail()),
                 'streetAndNumber' => $this->cleanUpInput($this->getShippingAddress()->address1),
                 'streetAdditional' => $this->cleanUpInput($this->getShippingAddress()->address2, null),
                 'city' => $this->cleanUpInput($this->getShippingAddress()->city),
