@@ -101,6 +101,11 @@ class PaymentData implements JsonSerializable
      */
     private $subscriptionOrder = false;
 
+    /**
+     * @var string
+     */
+    private $email;
+
     public function __construct(
         Amount $amount,
         $description,
