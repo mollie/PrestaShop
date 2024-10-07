@@ -89,7 +89,6 @@ jobs:
           rm -rf .git .github tests .php-cs-fixer.php Makefile cypress* docker-compose*.yml package.json package-lock.json .docker
           mkdir ${{ env.MODULE_NAME }}
           rsync -Rr ./ ./${{ env.MODULE_NAME }}
-          chmod -R 777 ${{ env.MODULE_NAME }}/var/cache
           shopt -s extglob
           rm -r !(${{ env.MODULE_NAME }})
           find . -maxdepth 1 -type f -exec rm "{}" \;
