@@ -86,7 +86,6 @@ jobs:
         run: |
           composer install --no-dev --optimize-autoloader --classmap-authoritative
           composer dump-autoload --no-dev --optimize --classmap-authoritative
-          cp .github/.htaccess vendor/.htaccess
           rm -rf .git .github tests .php-cs-fixer.php Makefile cypress* docker-compose*.yml package.json package-lock.json .docker
           mkdir ${{ env.MODULE_NAME }}
           rsync -Rr ./ ./${{ env.MODULE_NAME }}
