@@ -14,6 +14,7 @@ namespace Mollie\Utility;
 
 use PrestaShop\Decimal\DecimalNumber;
 use PrestaShop\Decimal\Exception\DivisionByZeroException;
+use PrestaShop\Decimal\Number;
 use PrestaShop\Decimal\Operation\Rounding;
 
 if (!defined('_PS_VERSION_')) {
@@ -228,15 +229,18 @@ class NumberUtility
     }
 
     /**
-     * Creates a Number or DecimalNumber instance from a float.
+     * Creates a Number or DecimalNumber instance based on the current environment.
      *
      * @param float $number
      *
-     * @return DecimalNumber
+     * @return DecimalNumber|Number
      */
-    private static function getNumber(float $number): DecimalNumber
+    private static function getNumber(float $number)
     {
-        // Assuming DecimalNumber is the preferred class based on the use case.
-        return new DecimalNumber((string) $number);
+        if (is_subclass_of(Number::class, DecimalNumber::class)) {
+            return new DecimalNumber((string) $number);
+        }
+
+        return new Number((string) $number);
     }
 }
