@@ -54,6 +54,69 @@ class CartLinesService
         $this->context = $context;
     }
 
+    public function buildCartLines(
+        $amount, $paymentFeeData, $currencyIsoCode, $cartSummary, $shippingCost, $cartItems, $psGiftWrapping, $selectedVoucherCategory
+    ) {
+
+        $apiRoundingPrecision = Config::API_ROUNDING_PRECISION;
+        $vatRatePrecision = Config::VAT_RATE_ROUNDING_PRECISION;
+
+        $totalPrice = round($amount, $apiRoundingPrecision);
+        $roundedShippingCost = round($shippingCost, $apiRoundingPrecision);
+        foreach ($cartSummary['discounts'] as $discount) {
+            if ($discount['free_shipping']) {
+                $roundedShippingCost = 0;
+            }
+        }
+
+        $wrappingPrice = $psGiftWrapping ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
+        $totalDiscounts = isset($cartSummary['total_discounts']) ? $cartSummary['total_discounts'] : 0;
+        $remaining = round(
+            CalculationUtility::getCartRemainingPrice((float) $totalPrice, (float) $roundedShippingCost, (float) $wrappingPrice),
+            $apiRoundingPrecision
+        );
+
+        $orderLines = [];
+
+        // Create product lines from cart items
+        $productLinesResult = $this->cartItemsService->createProductLines($cartItems, $cartSummary, $selectedVoucherCategory);
+        $orderLines = $productLinesResult['orderLines'];
+        $remaining += $productLinesResult['remaining'];
+
+        // Add discounts to the order lines
+        //todo move this inside discount service
+        $totalDiscounts = isset($cartSummary['total_discounts']) ? $cartSummary['total_discounts'] : 0;
+        $discountsResult = $this->discountService->addDiscounts($orderLines, $cartSummary['total_discounts']);
+        $orderLines = $discountsResult['orderLines'];
+        $remaining += $discountsResult['remaining'];
+
+        //todo move these both methods inside some kind of utility class
+        // Compensate for order total rounding inaccuracies
+        $orderLines = $this->compositeRoundingInaccuracies($remaining, $apiRoundingPrecision, $orderLines);
+
+        // Fill the order lines with the rest of the data (tax, total amount, etc.)
+        $orderLines = $this->fillProductLinesWithRemainingData($orderLines, $apiRoundingPrecision, $vatRatePrecision);
+
+        // Add shipping costs to the order lines
+        $shippingResult = $this->shippingService->addShippingLine($orderLines, $shippingCost, $cartSummary);
+        $orderLines = $shippingResult['orderLines'];
+        $remaining += $shippingResult['remaining'];
+
+        // Add wrapping costs to the order lines
+        $wrappingResult =  $this->wrappingService->addWrappingLine($orderLines, $cartSummary, $psGiftWrapping);
+        $orderLines = $shippingResult['orderLines'];
+        $remaining += $shippingResult['remaining'];
+
+        // Add payment fees to the order lines
+        $paymentFeeResult = $this->paymentFeeService->addPaymentFee($orderLines, $paymentFeeData);
+        $orderLines = $shippingResult['orderLines'];
+        $remaining += $shippingResult['remaining'];
+
+        return $orderLines;
+        // Finalize and return order lines
+//        return $this->finalizeOrderLines($orderLines, $currencyIsoCode);
+    }
+
     /**
      * @param float $amount
      * @param PaymentFeeData $paymentFeeData
