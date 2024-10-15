@@ -10,6 +10,8 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\MolCustomerRepositoryInterface;
 use Mollie\Subscription\Presenter\RecurringOrdersPresenter;
 
@@ -38,6 +40,8 @@ if (!defined('_PS_VERSION_')) {
 
 class mollieSubscriptionsModuleFrontController extends ModuleFrontController
 {
+    private const FILE_NAME = 'subscriptions';
+
     /**
      * @var Mollie
      */
@@ -54,6 +58,11 @@ class mollieSubscriptionsModuleFrontController extends ModuleFrontController
 
     public function initContent()
     {
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $this->display_column_right = false;
         $this->display_column_left = false;
 
@@ -75,6 +84,8 @@ class mollieSubscriptionsModuleFrontController extends ModuleFrontController
         $this->prepareTemplate(
             $molCustomer ? $recurringOrdersPresenter->present($molCustomer->customer_id) : []
         );
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     public function setMedia()

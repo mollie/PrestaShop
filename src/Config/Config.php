@@ -282,7 +282,6 @@ class Config
     ];
 
     const PAYMENT_API_ONLY_METHODS = [
-        PaymentMethod::ALMA,
     ];
 
     const ROUTE_RESEND_SECOND_CHANCE_PAYMENT_MESSAGE = 'mollie_module_admin_resend_payment_message';
@@ -329,6 +328,11 @@ class Config
         'payconiq' => 'Payconiq',
         'trustly' => 'Trustly',
     ];
+
+    public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
+    public const LOG_SEVERITY_LEVEL_WARNING = 2;
+    public const LOG_SEVERITY_LEVEL_ERROR = 3;
+    public const LOG_SEVERITY_LEVEL_MAJOR = 4;
 
     const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
 

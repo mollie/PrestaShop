@@ -13,11 +13,14 @@
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Handler\Order\OrderCreationHandler;
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
+use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\OrderNumberUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -52,6 +55,12 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
     public function initContent()
     {
         parent::initContent();
+
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         /** @var Cart $cart */
         $cart = $this->context->cart;
         $customer = new Customer($cart->id_customer);
@@ -133,12 +142,22 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             }
             $this->errors[] = $message;
 
+            $logger->error('An error occurred when creating mollie payment', [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+
             return false;
         } catch (PrestaShopException $e) {
             $this->setTemplate('error.tpl');
             $this->errors[] = Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS)
                 ? $e->getMessage() . ' Cart Dump: ' . json_encode($paymentData, JSON_PRETTY_PRINT)
                 : $this->module->l('An error occurred when creating your payment. Contact customer support.', self::FILE_NAME);
+
+            $logger->error('An error occurred when creating payment', [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
 
             return false;
         }
@@ -163,8 +182,15 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $this->setTemplate('error.tpl');
             $this->errors[] = $this->module->l('Failed to save order information.', self::FILE_NAME);
 
+            $logger->error('Failed to save order information.', [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+
             return false;
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
         // Go to payment url
         if (null !== $apiPayment->getCheckoutUrl()) {

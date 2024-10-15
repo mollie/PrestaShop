@@ -15,7 +15,8 @@ use Mollie\Controller\AbstractMollieController;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Infrastructure\Response\JsonResponse;
-use Mollie\Logger\PrestaLoggerInterface;
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Subscription\Handler\SubscriptionPaymentMethodUpdateHandler;
 
 if (!defined('_PS_VERSION_')) {
@@ -46,8 +47,10 @@ class MollieSubscriptionUpdateWebhookModuleFrontController extends AbstractMolli
 
     public function initContent()
     {
-        /** @var PrestaLoggerInterface $logger */
-        $logger = $this->module->getService(PrestaLoggerInterface::class);
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
         /** @var ErrorHandler $errorHandler */
         $errorHandler = $this->module->getService(ErrorHandler::class);
@@ -110,11 +113,6 @@ class MollieSubscriptionUpdateWebhookModuleFrontController extends AbstractMolli
         try {
             $subscriptionPaymentMethodUpdateHandler->handle($transactionId, $subscriptionId);
         } catch (\Throwable $exception) {
-            $logger->error('Failed to handle subscription update', [
-                'Exception message' => $exception->getMessage(),
-                'Exception code' => $exception->getCode(),
-            ]);
-
             $errorHandler->handle($exception, null, false);
 
             $this->releaseLock();
@@ -127,7 +125,7 @@ class MollieSubscriptionUpdateWebhookModuleFrontController extends AbstractMolli
 
         $this->releaseLock();
 
-        $logger->info(sprintf('%s - Controller action ended', self::FILE_NAME));
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
         $this->ajaxResponse(JsonResponse::success([]));
     }
