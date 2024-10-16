@@ -26,6 +26,7 @@ use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
+use Mollie\Subscription\Config\Config as SubscriptionConfig;
 use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
 use Mollie\Subscription\Handler\UpdateSubscriptionCarrierHandler;
 use Mollie\Subscription\Install\AttributeInstaller;
@@ -89,7 +90,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.2.3';
+        $this->version = '6.2.4';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -1402,6 +1403,23 @@ class Mollie extends PaymentModule
 
         if (!in_array('You can\'t remove address associated with subscription', $this->context->controller->errors, true)) {
             $this->context->controller->errors[] = $this->l('You can\'t remove address associated with subscription');
+        }
+    }
+
+    public function hookActionAttributeSave($params): void
+    {
+        if (isset($params['id_attribute']) && (int) $params['id_attribute'] > 0) {
+            $attribute = new ProductAttribute((int) $params['id_attribute']);
+
+            if (Validate::isLoadedObject($attribute)) {
+                /** @var ConfigurationAdapter $configuration */
+                $configuration = $this->getService(ConfigurationAdapter::class);
+
+                if ((int) $attribute->id_attribute_group === (int) $configuration->get(SubscriptionConfig::SUBSCRIPTION_ATTRIBUTE_GROUP)) {
+                    // Add an error message if it's the Mollie group
+                    $this->context->controller->errors[] = $this->l('New attributes are not compatible with Mollie subscription.');
+                }
+            }
         }
     }
 }
