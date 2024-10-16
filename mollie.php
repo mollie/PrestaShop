@@ -26,8 +26,8 @@ use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
-use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
 use Mollie\Subscription\Config\Config as SubscriptionConfig;
+use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
 use Mollie\Subscription\Handler\UpdateSubscriptionCarrierHandler;
 use Mollie\Subscription\Install\AttributeInstaller;
 use Mollie\Subscription\Install\DatabaseTableInstaller;
@@ -1408,14 +1408,14 @@ class Mollie extends PaymentModule
 
     public function hookActionAttributeSave($params): void
     {
-        if (isset($params['id_attribute']) && (int)$params['id_attribute'] > 0) {
-            $attribute = new ProductAttribute((int)$params['id_attribute']);
+        if (isset($params['id_attribute']) && (int) $params['id_attribute'] > 0) {
+            $attribute = new ProductAttribute((int) $params['id_attribute']);
 
             if (Validate::isLoadedObject($attribute)) {
                 /** @var ConfigurationAdapter $configuration */
                 $configuration = $this->getService(ConfigurationAdapter::class);
 
-                if ((int)$attribute->id_attribute_group === (int) $configuration->get(SubscriptionConfig::SUBSCRIPTION_ATTRIBUTE_GROUP)) {
+                if ((int) $attribute->id_attribute_group === (int) $configuration->get(SubscriptionConfig::SUBSCRIPTION_ATTRIBUTE_GROUP)) {
                     // Add an error message if it's the Mollie group
                     $this->context->controller->errors[] = $this->l('New attributes are not compatible with Mollie subscription.');
                 }
