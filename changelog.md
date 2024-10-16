@@ -2,6 +2,9 @@
 
 # Changelog #
 ## Changes in release 6.2.3 ##
++ Subscription attribute editing fix
+
+## Changes in release 6.2.3 ##
 + Multi shop improvements with order states
 + Logging improvements
 + Phone field validation improvements

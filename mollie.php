@@ -1335,11 +1335,6 @@ class Mollie extends PaymentModule
         $this->frontControllerAfterInit();
     }
 
-    public function hookActionObjectAttributeUpdateBefore($params)
-    {
-        $a = $params;
-    }
-
     public function hookActionFrontControllerInitAfter(): void
     {
         $this->frontControllerAfterInit();
