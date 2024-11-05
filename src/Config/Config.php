@@ -67,7 +67,7 @@ class Config
         'satispay' => [
             'at', 'be', 'bg', 'hr', 'cy', 'cz', 'dk', 'ee', 'fi', 'fr', 'de', 'gr', 'hu', 'is', 'ie',
             'it', 'lv', 'lt', 'lu', 'mt', 'nl', 'no', 'pl', 'pt', 'ro', 'sk', 'si', 'es', 'se', 'ch',
-            'li', 'gb', 'tr'
+            'li', 'gb', 'tr',
         ],
         'riverty' => ['nl', 'be', 'de', 'at'],
         'payconiq' => [],
