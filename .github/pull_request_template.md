@@ -1,26 +1,15 @@
-**What was implemented/fixed with this PR?**
+<!-----------------------------------------------------------------------------
+Thank you for contributing to the project!
 
----
+Please take the time to edit the "Answers" rows below with the necessary information.
 
+------------------------------------------------------------------------------>
 
-<br>
-
-**How did I test these changes?**
-
----
-
-
-<br>
-<br>
-
----
-
-[!] Don't forget to include JIRA task number in PR name or branch name. [!]
-
-[!] Don't forget to update *changelog.md* with new changes. [!]
-
-- [ ] Verify if the version is correct.
-- [ ] Update demo environments used for testing.
-- [ ] Ensure changelog contains all changes.
-- [ ] Update documentation if needed.
-- [ ] Test if everything works properly.
+| Questions       | Answers
+|-----------------| -------------------------------------------------------
+| Branch?         | Master/Release
+| Description?    | Please be specific when describing the PR. <br> Every detail helps: versions, browser/server configuration, specific module/theme, etc. Feel free to add more information below this table.
+| Type?           | bug fix / improvement / new feature / refacto
+| How to test?    | Indicate how to verify that this change works as expected.
+| Fixed issue ?   | If none leave blank
+| Sponsor company | Your company or customer's name goes here (if applicable).
