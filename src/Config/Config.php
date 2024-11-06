@@ -59,11 +59,16 @@ class Config
         'cartesbancaires' => ['fr'],
         'directdebit' => [
             'fi', 'at', 'pt', 'be', 'bg', 'es', 'hr', 'cy', 'cz', 'dk', 'ee', 'fr', 'gf', 'de', 'gi', 'gr', 'gp', 'gg', 'hu',
-            'is', 'ie', 'im', 'it', 'je', 'lv', 'li', 'lt', 'lu', 'pt', 'mt', 'mq', 'yt', 'mc', 'nl', 'no', 'pl', 'pt', 're',
-            'ro', 'bl', 'mf', 'pm', 'sm', 'sk', 'sl', 'es', 'se', 'ch', 'gb', 'uk',
+            'is', 'ie', 'im', 'it', 'je', 'lv', 'li', 'lt', 'lu', 'mt', 'mq', 'yt', 'mc', 'nl', 'no', 'pl', 're',
+            'ro', 'bl', 'mf', 'pm', 'sm', 'sk', 'sl', 'se', 'ch', 'gb', 'uk',
         ],
         'mybank' => [],
         'trustly' => ['at', 'de', 'ee', 'es', 'fi', 'lt', 'lv', 'nl'],
+        'satispay' => [
+            'at', 'be', 'bg', 'hr', 'cy', 'cz', 'dk', 'ee', 'fi', 'fr', 'de', 'gr', 'hu', 'is', 'ie',
+            'it', 'lv', 'lt', 'lu', 'mt', 'nl', 'no', 'pl', 'pt', 'ro', 'sk', 'si', 'es', 'se', 'ch',
+            'li', 'gb', 'tr',
+        ],
         'riverty' => ['nl', 'be', 'de', 'at'],
         'payconiq' => [],
     ];
@@ -327,6 +332,7 @@ class Config
         'riverty' => 'Riverty',
         'payconiq' => 'Payconiq',
         'trustly' => 'Trustly',
+        'satispay' => 'Satispay',
     ];
 
     public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
