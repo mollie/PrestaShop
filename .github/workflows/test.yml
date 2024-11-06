@@ -76,11 +76,7 @@ jobs:
     env:
       MODULE_NAME: mollie
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.0
-        with:
-          access_token: ${{ github.token }}
-
+      # todo ask for permissions to add cancel previous workflow action
       - name: checkout
         uses: actions/checkout@v4
         with:
@@ -90,11 +86,9 @@ jobs:
         run: |
           composer install --no-dev --optimize-autoloader --classmap-authoritative
           composer dump-autoload --no-dev --optimize --classmap-authoritative
-          cp .github/.htaccess vendor/.htaccess
           rm -rf .git .github tests .php-cs-fixer.php Makefile cypress* docker-compose*.yml package.json package-lock.json .docker
           mkdir ${{ env.MODULE_NAME }}
           rsync -Rr ./ ./${{ env.MODULE_NAME }}
-          chmod -R 777 ${{ env.MODULE_NAME }}/var/cache
           shopt -s extglob
           rm -r !(${{ env.MODULE_NAME }})
           find . -maxdepth 1 -type f -exec rm "{}" \;
