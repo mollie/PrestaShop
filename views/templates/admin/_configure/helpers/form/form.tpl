@@ -180,8 +180,6 @@
                             </div>
                         {/if}
 
-
-
                         <div class="form-group">
                             <label class="control-label col-lg-3">
                                 {l s='Title' mod='mollie'}
@@ -213,48 +211,6 @@
                                 {/foreach}
                             </div>
                         </div>
-
-                        {*                                    <div class="input-group translatable-field lang-{$language.id_lang}"{if $language.id_lang != $defaultFormLanguage} style="display:none;"{/if}>*}
-                        {*                                        <input type="text"*}
-                        {*                                               name="MOLLIE_METHOD_TITLE_{$paymentMethod.id|escape:'html':'UTF-8'}[{$language.id_lang}]"*}
-                        {*                                               class="fixed-width-xl"*}
-                        {*                                               value="{$methodObj->title[$language.id_lang]|default:''|escape:'html':'UTF-8'}">*}
-                        {*                                    </div>*}
-
-{*                        <div class="form-group">*}
-{*                            <label class="control-label col-lg-3">*}
-{*                                {l s='Title' mod='mollie'}*}
-{*                            </label>*}
-
-{*                            <!-- Wrapper for each language's input field -->*}
-{*                            <div class="col-lg-9">*}
-{*                                {foreach from=$languages item=language}*}
-{*                                    <div class="input-group translatable-field lang-{$language.id_lang}"{if $language.id_lang != $defaultFormLanguage} style="display:none;"{/if}>*}
-{*                                        <input type="text"*}
-{*                                               name="MOLLIE_METHOD_TITLE_{$paymentMethod.id|escape:'html':'UTF-8'}[{$language.id_lang}]"*}
-{*                                               class="fixed-width-xl"*}
-{*                                               value="{$methodObj->title[$language.id_lang]|default:''|escape:'html':'UTF-8'}">*}
-{*                                    </div>*}
-{*                            </div>*}
-
-{*                            <!-- Language dropdown for switching between languages -->*}
-{*                            <div class="col-lg-2">*}
-{*                                <button type="button" class="btn btn-default dropdown-toggle" tabindex="-1" data-toggle="dropdown" id="languageDropdown">*}
-{*                                    {$language.iso_code}  <!-- Default Language ISO code -->*}
-{*                                    <span class="caret"></span>*}
-{*                                </button>*}
-{*                                <ul class="dropdown-menu">*}
-{*                                    {foreach from=$languages item=language}*}
-{*                                        <li>*}
-{*                                            <a href="javascript:hideOtherLanguage({$language.id_lang});" tabindex="-1">{$language.name}</a>*}
-{*                                        </li>*}
-{*                                    {/foreach}*}
-{*                                </ul>*}
-{*                            </div>*}
-{*                        </div>*}
-{*                        {/foreach}*}
-
-
 
                         <div class="form-group">
                             <label class="control-label col-lg-3">
