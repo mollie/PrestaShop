@@ -1,7 +1,6 @@
 name: Cypress E2E Automation [develop branch]
 on:
   pull_request:
-    types: [opened, reopened]
     branches: [develop, develop**, develop-**]
 
 concurrency:
