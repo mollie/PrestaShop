@@ -161,7 +161,6 @@ it('C339391: 56 Przelewy24 Checkouting [Payments API]', () => {
     cy.contains('Przelewy24').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
     cy.contains('Place order').click()
-    cy.get('.input-float > input').type('testing@testing.com')
     cy.get('[value="paid"]').click()
     cy.get('[class="button form__button"]').click()
     cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
