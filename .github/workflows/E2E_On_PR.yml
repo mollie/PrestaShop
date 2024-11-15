@@ -59,7 +59,7 @@ jobs:
         run: |
           ${{ matrix.make }}
 
-      - name: Waiting for Ngrok tunnel
+      - name: Waiting for Ngrok
         run: |
           URL="${{ matrix.url }}"
           TIMEOUT=120
