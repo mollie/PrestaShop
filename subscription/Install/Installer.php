@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Install;
 
+use PrestaShopLogger;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -43,21 +45,30 @@ class Installer extends AbstractInstaller
     {
         if (!$this->databaseInstaller->install()) {
             $this->errors = $this->databaseInstaller->getErrors();
+            PrestaShopLogger::addLog('Mollie subscription databases install failed', 1, null, 'Mollie', 1);
 
             return false;
         }
+
+        PrestaShopLogger::addLog('Mollie subscription databases installed', 1, null, 'Mollie', 1);
 
         if (!$this->attributeInstaller->install()) {
             $this->errors = $this->attributeInstaller->getErrors();
+            PrestaShopLogger::addLog('Mollie subscription attributes install failed', 1, null, 'Mollie', 1);
 
             return false;
         }
+
+        PrestaShopLogger::addLog('Mollie subscription attributes install successful', 1, null, 'Mollie', 1);
 
         if (!$this->hookInstaller->install()) {
             $this->errors = $this->hookInstaller->getErrors();
+            PrestaShopLogger::addLog('Mollie subscription hooks install failed', 1, null, 'Mollie', 1);
 
             return false;
         }
+
+        PrestaShopLogger::addLog('Mollie subscription hooks install successful', 1, null, 'Mollie', 1);
 
         return true;
     }

@@ -74,6 +74,11 @@ class Mollie extends PaymentModule
     const ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_CONTROLLER = 'AdminMollieSubscriptionOrders';
     const ADMIN_MOLLIE_SUBSCRIPTION_FAQ_PARENT_CONTROLLER = 'AdminMollieSubscriptionFAQParent';
     const ADMIN_MOLLIE_SUBSCRIPTION_FAQ_CONTROLLER = 'AdminMollieSubscriptionFAQ';
+
+    const ADMIN_MOLLIE_LOGS_CONTROLLER = 'AdminMollieLogs';
+
+    const ADMIN_MOLLIE_LOGS_PARENT_CONTROLLER = 'AdminMollieLogsParent';
+
     /** @var LeagueServiceContainerProvider */
     private $containerProvider;
 
@@ -84,7 +89,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.2.0';
+        $this->version = '6.2.4';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -155,6 +160,8 @@ class Mollie extends PaymentModule
      */
     public function install()
     {
+        PrestaShopLogger::addLog('Mollie install started', 1, null, 'Mollie', 1);
+
         if (!$this->isPhpVersionCompliant()) {
             $this->_errors[] = $this->l('You\'re using an outdated PHP version. Upgrade your PHP version to use this module. The Mollie module supports versions PHP 7.2.0 and higher.');
 
@@ -166,15 +173,19 @@ class Mollie extends PaymentModule
 
             return false;
         }
+        PrestaShopLogger::addLog('Mollie prestashop install successful', 1, null, 'Mollie', 1);
 
 //        TODO inject base install and subscription services
         $coreInstaller = $this->getService(Mollie\Install\Installer::class);
+        PrestaShopLogger::addLog('Mollie core install initiated', 1, null, 'Mollie', 1);
 
         if (!$coreInstaller->install()) {
             $this->_errors = array_merge($this->_errors, $coreInstaller->getErrors());
 
             return false;
         }
+
+        PrestaShopLogger::addLog('Mollie core install successful', 1, null, 'Mollie', 1);
 
         $subscriptionInstaller = new Installer(
             new DatabaseTableInstaller(),
@@ -187,6 +198,7 @@ class Mollie extends PaymentModule
             ),
             new HookInstaller($this)
         );
+        PrestaShopLogger::addLog('Mollie subscription installer initiated', 1, null, 'Mollie', 1);
 
         if (!$subscriptionInstaller->install()) {
             $this->_errors = array_merge($this->_errors, $subscriptionInstaller->getErrors());
@@ -194,6 +206,7 @@ class Mollie extends PaymentModule
 
             return false;
         }
+        PrestaShopLogger::addLog('Mollie subscription install successful', 1, null, 'Mollie', 1);
 
         return true;
     }
@@ -857,6 +870,18 @@ class Mollie extends PaymentModule
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
                 'module_tab' => true,
             ],
+            [
+                'name' => $this->l('Logs'),
+                'class_name' => self::ADMIN_MOLLIE_LOGS_PARENT_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
+                'module_tab' => true,
+            ],
+            [
+                'name' => $this->l('Logs'),
+                'class_name' => self::ADMIN_MOLLIE_LOGS_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
+                'module_tab' => true,
+            ],
         ];
     }
 
@@ -931,7 +956,6 @@ class Mollie extends PaymentModule
                 $totalPaid,
                 $currency,
                 '',
-                null,
                 $cartId,
                 $customerKey,
                 $paymentMethodObj,

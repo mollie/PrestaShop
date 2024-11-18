@@ -15,6 +15,8 @@ use Mollie\Config\Config;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Exception\RetryOverException;
 use Mollie\Handler\RetryHandlerInterface;
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Utility\OrderNumberUtility;
@@ -26,11 +28,18 @@ if (!defined('_PS_VERSION_')) {
 
 class MollieBancontactAjaxModuleFrontController extends ModuleFrontController
 {
+    private const FILE_NAME = 'bancontactAjax';
+
     /** @var Mollie */
     public $module;
 
     public function postProcess()
     {
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $action = Tools::getValue('action');
         switch ($action) {
             case 'createTransaction':
@@ -39,6 +48,8 @@ class MollieBancontactAjaxModuleFrontController extends ModuleFrontController
             case 'checkForPaidTransaction':
                 $this->checkForPaidTransaction();
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     private function createTransaction()
@@ -64,7 +75,6 @@ class MollieBancontactAjaxModuleFrontController extends ModuleFrontController
             $cart->getOrderTotal(),
             $currency->iso_code,
             PaymentMethod::BANCONTACT,
-            null,
             $cart->id,
             $cart->secure_key,
             $paymentMethod,

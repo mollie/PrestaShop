@@ -39,30 +39,6 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
     }
 
     /**
-     * @param string $paymentMethodId
-     *
-     * @return false|string|null
-     */
-    public function getPaymentMethodIssuersByPaymentMethodId($paymentMethodId)
-    {
-        $sql = 'Select issuers_json FROM `' . _DB_PREFIX_ . 'mol_payment_method_issuer` WHERE id_payment_method = "' . pSQL($paymentMethodId) . '"';
-
-        return Db::getInstance()->getValue($sql);
-    }
-
-    /**
-     * @param string $paymentMethodId
-     *
-     * @return bool
-     */
-    public function deletePaymentMethodIssuersByPaymentMethodId($paymentMethodId)
-    {
-        $sql = 'DELETE FROM `' . _DB_PREFIX_ . 'mol_payment_method_issuer` WHERE id_payment_method = "' . pSQL($paymentMethodId) . '"';
-
-        return Db::getInstance()->execute($sql);
-    }
-
-    /**
      * @param int $environment
      *
      * @return bool

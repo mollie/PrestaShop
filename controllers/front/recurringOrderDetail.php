@@ -11,11 +11,13 @@
  */
 
 use Mollie\Controller\AbstractMollieController;
-use Mollie\Logger\PrestaLoggerInterface;
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Subscription\Handler\FreeOrderCreationHandler;
 use Mollie\Subscription\Handler\SubscriptionCancellationHandler;
 use Mollie\Subscription\Presenter\RecurringOrderPresenter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
+use Mollie\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -37,6 +39,11 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
      */
     public function postProcess()
     {
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         if (Tools::isSubmit('submitUpdatePaymentMethod')) {
             $this->updatePaymentMethod();
         }
@@ -44,6 +51,8 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
         if (Tools::isSubmit('submitCancelSubscriptionMethod')) {
             $this->cancelSubscription();
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     /**
@@ -53,6 +62,9 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
      */
     public function initContent()
     {
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         $recurringOrderId = (int) Tools::getValue('id_mol_recurring_order');
         $recurringOrderId = Validate::isUnsignedId($recurringOrderId) ? $recurringOrderId : false;
 
@@ -67,7 +79,10 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
                 'id_mol_recurring_order' => $recurringOrderId,
             ]);
         } catch (\Throwable $exception) {
-            // TODO add notification about data retrieve failure
+            $logger->error('Data retrieve failure', [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
 
             Tools::redirect($failureRedirectUrl);
 
@@ -80,8 +95,8 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
             return;
         }
 
-        /** @var PrestaLoggerInterface $logger */
-        $logger = $this->module->getService(PrestaLoggerInterface::class);
+        /** @var Logger $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
 
         /** @var RecurringOrderPresenter $recurringOrderPresenter */
         $recurringOrderPresenter = $this->module->getService(RecurringOrderPresenter::class);
@@ -93,8 +108,8 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
             ]);
         } catch (Throwable $exception) {
             $logger->error('Failed to present subscription order', [
-                'Exception message' => $exception->getMessage(),
-                'Exception code' => $exception->getCode(),
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
             Tools::redirect($failureRedirectUrl);

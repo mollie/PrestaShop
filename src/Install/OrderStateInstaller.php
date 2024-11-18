@@ -155,6 +155,8 @@ class OrderStateInstaller implements InstallerInterface
         $existingStateId = (int) $this->configurationAdapter->get($key);
         $orderState = new OrderState($existingStateId);
 
+        $this->updateStateConfiguration($key, $orderState);
+
         if ((bool) !$orderState->deleted) {
             return;
         }
@@ -202,6 +204,9 @@ class OrderStateInstaller implements InstallerInterface
 
     private function updateStateConfiguration(string $key, OrderState $orderState): void
     {
-        $this->configurationAdapter->updateValue($key, (int) $orderState->id);
+        $shops = \Shop::getShops();
+        foreach ($shops as $shop) {
+            $this->configurationAdapter->updateValue($key, (int) $orderState->id, false, null, (int) $shop['id_shop']);
+        }
     }
 }

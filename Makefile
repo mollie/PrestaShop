@@ -3,7 +3,7 @@ module = mollie
 
 # target: fix-lint			- Launch php cs fixer
 fix-lint:
-	docker-compose run --rm php sh -c "vendor/bin/php-cs-fixer fix --using-cache=no"
+	docker compose run --rm php sh -c "vendor/bin/php-cs-fixer fix --using-cache=no"
 
 # Launch the PS build and E2E Cypress app automatically. Eexample: make VERSION=1785 e2eh1785_local, make VERSION=8 e2eh8_local etc.
 # Warning: .env with secrets must be imported if you wanna test locally! This checks the .env existence, ignoring if there is no such on your machine.
@@ -17,9 +17,9 @@ endif
 e2eh$(VERSION)_local:
 	composer install
 	# detaching containers
-	docker-compose -f docker-compose.$(VERSION).yml up -d --force-recreate
+	docker compose -f docker-compose.$(VERSION).yml up -d --force-recreate
 	# sees what containers are running
-	docker-compose -f docker-compose.$(VERSION).yml ps
+	docker compose -f docker-compose.$(VERSION).yml ps
 	make waiting-for-containers-local
 	make seeding-customized-sql
 	make installing-uninstalling-enabling-module
@@ -29,9 +29,9 @@ e2eh$(VERSION)_local:
 # For CI build with PS autoinstall
 e2eh$(VERSION):
 	# detaching containers
-	docker-compose -f docker-compose.$(VERSION).yml up -d --force-recreate
+	docker compose -f docker-compose.$(VERSION).yml up -d --force-recreate
 	# sees what containers are running
-	docker-compose -f docker-compose.$(VERSION).yml ps
+	docker compose -f docker-compose.$(VERSION).yml ps
 	make waiting-for-containers-CI
 	make seeding-customized-sql
 	make installing-uninstalling-enabling-module
@@ -90,9 +90,4 @@ npm-package-install:
 prepare-zip:
 	composer install --no-dev --optimize-autoloader --classmap-authoritative
 	composer dump-autoload --no-dev --optimize --classmap-authoritative
-	cp .github/.htaccess vendor/.htaccess
-	rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile cypress .docker cypress.config.js cypress.env.json docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist
-
-
-
-
+	rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile cypress .docker cypress.config.js cypress.env.json docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php

@@ -61,11 +61,6 @@ class PaymentData implements JsonSerializable
     /**
      * @var string
      */
-    private $issuer;
-
-    /**
-     * @var string
-     */
     private $cardToken;
 
     /**
@@ -105,6 +100,11 @@ class PaymentData implements JsonSerializable
      * @var bool
      */
     private $subscriptionOrder = false;
+
+    /**
+     * @var string
+     */
+    private $email;
 
     public function __construct(
         Amount $amount,
@@ -233,22 +233,6 @@ class PaymentData implements JsonSerializable
     /**
      * @return string
      */
-    public function getIssuer()
-    {
-        return $this->issuer;
-    }
-
-    /**
-     * @param string $issuer
-     */
-    public function setIssuer($issuer)
-    {
-        $this->issuer = $issuer;
-    }
-
-    /**
-     * @return string
-     */
     public function getCardToken()
     {
         return $this->cardToken;
@@ -360,6 +344,22 @@ class PaymentData implements JsonSerializable
         $this->subscriptionOrder = $subscriptionOrder;
     }
 
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    }
+
     public function jsonSerialize()
     {
         $result = [
@@ -368,6 +368,9 @@ class PaymentData implements JsonSerializable
                 'value' => (string) $this->getAmount()->getValue(),
             ],
             'billingAddress' => [
+                'givenName' => $this->cleanUpInput($this->getBillingAddress()->firstname),
+                'familyName' => $this->cleanUpInput($this->getBillingAddress()->lastname),
+                'email' => $this->cleanUpInput($this->getEmail()),
                 'streetAndNumber' => $this->cleanUpInput($this->getBillingAddress()->address1),
                 'streetAdditional' => $this->cleanUpInput($this->getBillingAddress()->address2, null),
                 'city' => $this->cleanUpInput($this->getBillingAddress()->city),
@@ -375,6 +378,9 @@ class PaymentData implements JsonSerializable
                 'country' => $this->cleanUpInput(Country::getIsoById($this->getBillingAddress()->id_country)),
             ],
             'shippingAddress' => [
+                'givenName' => $this->cleanUpInput($this->getBillingAddress()->firstname),
+                'familyName' => $this->cleanUpInput($this->getBillingAddress()->lastname),
+                'email' => $this->cleanUpInput($this->getEmail()),
                 'streetAndNumber' => $this->cleanUpInput($this->getShippingAddress()->address1),
                 'streetAdditional' => $this->cleanUpInput($this->getShippingAddress()->address2, null),
                 'city' => $this->cleanUpInput($this->getShippingAddress()->city),
@@ -387,7 +393,6 @@ class PaymentData implements JsonSerializable
             'method' => $this->getMethod(),
             'metadata' => $this->getMetadata(),
             'locale' => $this->getLocale(),
-            'issuer' => $this->getIssuer(),
             'cardToken' => $this->getCardToken(),
             'customerId' => $this->getCustomerId(),
             'applePayPaymentToken' => $this->getApplePayToken(),

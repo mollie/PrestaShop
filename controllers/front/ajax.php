@@ -16,10 +16,13 @@ use Mollie\Controller\AbstractMollieController;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Infrastructure\Response\JsonResponse;
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
 use Mollie\Subscription\Exception\ExceptionCode;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
+use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\NumberUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -35,6 +38,11 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
 
     public function postProcess(): void
     {
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $action = Tools::getValue('action');
 
         switch ($action) {
@@ -47,6 +55,8 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
             case 'validateProduct':
                 $this->validateProduct();
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     private function getTotalCartPrice(): void
@@ -92,6 +102,9 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         /** @var ConfigurationAdapter $configuration */
         $configuration = $this->module->getService(ConfigurationAdapter::class);
 
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         try {
             $paymentFeeData = $paymentFeeProvider->getPaymentFee($molPaymentMethod, (float) $cart->getOrderTotal());
         } catch (FailedToProvidePaymentFeeException $exception) {
@@ -99,6 +112,11 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
                 'error' => true,
                 'message' => 'Failed to get payment fee data.',
             ];
+
+            $logger->error('Failed to get payment fee data.', [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
 
             $this->returnDefaultOrderSummaryBlock($cart, $errorData);
 
@@ -190,6 +208,9 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         /** @var CanProductBeAddedToCartValidator $canProductBeAddedToCartValidator */
         $canProductBeAddedToCartValidator = $this->module->getService(CanProductBeAddedToCartValidator::class);
 
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         $product = Tools::getValue('product');
 
         try {
@@ -213,6 +234,11 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
                 $this->module->l('Unknown error. Try again or change the attribute to Subscription: none.', self::FILE_NAME),
                 HttpStatusCode::HTTP_BAD_REQUEST
             ));
+
+            $logger->error('Unknown error.', [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
         }
 
         $this->ajaxResponse(JsonResponse::success([]));

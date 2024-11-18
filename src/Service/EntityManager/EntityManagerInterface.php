@@ -12,9 +12,6 @@
 
 namespace Mollie\Service\EntityManager;
 
-use ObjectModel;
-use PrestaShopException;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -22,7 +19,9 @@ if (!defined('_PS_VERSION_')) {
 interface EntityManagerInterface
 {
     /**
-     * @throws PrestaShopException
+     * @return array<\ObjectModel>
+     *
+     * @throws \PrestaShopException
      */
-    public function flush(ObjectModel $model);
+    public function flush(): array;
 }
