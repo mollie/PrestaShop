@@ -116,6 +116,8 @@ class PaymentMethodService
     private $context;
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
+    /** @var PaymentMethodLangService */
+    private $paymentMethodLangService;
 
     public function __construct(
         Mollie $module,
@@ -134,7 +136,8 @@ class PaymentMethodService
         GenderRepositoryInterface $genderRepository,
         PaymentFeeProviderInterface $paymentFeeProvider,
         Context $context,
-        OrderTotalProviderInterface $orderTotalProvider
+        OrderTotalProviderInterface $orderTotalProvider,
+        PaymentMethodLangService $paymentMethodLandService
     ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
@@ -153,6 +156,7 @@ class PaymentMethodService
         $this->paymentFeeProvider = $paymentFeeProvider;
         $this->context = $context;
         $this->orderTotalProvider = $orderTotalProvider;
+        $this->paymentMethodLangService = $paymentMethodLangService;
     }
 
     public function savePaymentMethod($method)
@@ -221,6 +225,10 @@ class PaymentMethodService
         $paymentMethod->max_amount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_AMOUNT . $method['id']);
 
         $paymentMethod->save();
+
+        foreach(Tools::getAllValues() as $idLang => $title) {
+            $this->paymentMethodLangService->savePaymentTitleTranslation($method['id'],  $idLang, $title);
+        }
 
         return $paymentMethod;
     }
