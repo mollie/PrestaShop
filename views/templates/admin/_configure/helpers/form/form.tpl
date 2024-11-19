@@ -191,7 +191,7 @@
                                         <div class="translatable-field lang-{$language.id_lang}" {if $language.id_lang != $defaultFormLanguage}style="display:none"{/if}>
                                         <div class="col-lg-4">
                                     {/if}
-                                    <input type="text"  name="MOLLIE_METHOD_TITLE_{$paymentMethod.id|escape:'html':'UTF-8'}[{$language.id_lang}]" value="{$methodObj->title[$language.id_lang]|default:''|escape:'html':'UTF-8'}>
+                                    <input type="text"  name="MOLLIE_METHOD_TITLE_{$paymentMethod.id|escape:'html':'UTF-8'}[{$language.id_lang}]" value="{$methodObj->title[$language.id_lang]|default:''|escape:'html':'UTF-8'}">
                                     {if $languages|count > 1}
                                         </div>
                                         <div class="col-lg-2">
