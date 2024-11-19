@@ -26,13 +26,13 @@ use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
+use Mollie\Subscription\Config\Config as SubscriptionConfig;
 use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
 use Mollie\Subscription\Handler\UpdateSubscriptionCarrierHandler;
 use Mollie\Subscription\Install\AttributeInstaller;
 use Mollie\Subscription\Install\DatabaseTableInstaller;
 use Mollie\Subscription\Install\HookInstaller;
 use Mollie\Subscription\Install\Installer;
-use Mollie\Subscription\Config\Config as SubscriptionConfig;
 use Mollie\Subscription\Provider\SubscriptionProductProvider;
 use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
@@ -1128,13 +1128,14 @@ class Mollie extends PaymentModule
         $isSubscriptionEnabled = Configuration::get(Config::MOLLIE_SUBSCRIPTION_ENABLED);
 
         $groups = Tools::getValue('group');
-        if (!(bool)$isSubscriptionEnabled || !is_array($groups)) {
+        if (!(bool) $isSubscriptionEnabled || !is_array($groups)) {
             return;
         }
 
         $subscriptionGroup = Configuration::get(SubscriptionConfig::SUBSCRIPTION_ATTRIBUTE_GROUP);
 
-        if (!in_array($subscriptionGroup, $groups, true)) {
+        // Note: groups = ['attribute_group_id => 'attribute_id']
+        if (!array_key_exists($subscriptionGroup, $groups)) {
             return;
         }
 
