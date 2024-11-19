@@ -12,8 +12,7 @@
 
 namespace Mollie\Tests\Integration\Subscription\Provider;
 
-use Mollie\Adapter\ConfigurationAdapter;
-use Mollie\Config\Config;
+use Mollie\Subscription\DTO\SubscriptionCarrierDeliveryPriceData;
 use Mollie\Subscription\Exception\CouldNotProvideSubscriptionCarrierDeliveryPrice;
 use Mollie\Subscription\Exception\ExceptionCode;
 use Mollie\Subscription\Provider\SubscriptionCarrierDeliveryPriceProvider;
@@ -25,48 +24,24 @@ use Mollie\Tests\Integration\Factory\ProductFactory;
 
 class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
 {
-    public function setUp(): void
-    {
-        /** @var ConfigurationAdapter $configuration */
-        $configuration = $this->getService(ConfigurationAdapter::class);
-
-        $this->subscriptionOrderCarrierId = $configuration->get(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID);
-
-        parent::setUp();
-    }
-
-    public function tearDown(): void
-    {
-        /** @var ConfigurationAdapter $configuration */
-        $configuration = $this->getService(ConfigurationAdapter::class);
-
-        $configuration->updateValue(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID, $this->subscriptionOrderCarrierId);
-
-        parent::tearDown();
-    }
-
     public function testItSuccessfullyProvidesCarrierDeliveryPrice(): void
     {
         $address = AddressFactory::create();
         $carrier = CarrierFactory::create([
             'price' => 999.00,
         ]);
-        $cart = CartFactory::create([
+
+        $cart = CartFactory::initialize()->create([
             'id_carrier' => $carrier->id,
         ]);
 
-        /** @var ConfigurationAdapter $configuration */
-        $configuration = $this->getService(ConfigurationAdapter::class);
-
-        $configuration->updateValue(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID, $carrier->id);
-
-        $targetProduct = ProductFactory::create([
+        $targetProduct = ProductFactory::initialize()->create([
             'quantity' => 10,
         ]);
-        $product1 = ProductFactory::create([
+        $product1 = ProductFactory::initialize()->create([
             'quantity' => 10,
         ]);
-        $product2 = ProductFactory::create([
+        $product2 = ProductFactory::initialize()->create([
             'quantity' => 10,
         ]);
 
@@ -81,22 +56,16 @@ class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
         $subscriptionCarrierDeliveryPriceProvider = $this->getService(SubscriptionCarrierDeliveryPriceProvider::class);
 
         $result = $subscriptionCarrierDeliveryPriceProvider->getPrice(
-            $address->id,
-            $cart->id,
-            $cart->id_customer,
-            $targetProductArray
+            SubscriptionCarrierDeliveryPriceData::create(
+                $address->id,
+                $cart->id,
+                $cart->id_customer,
+                $targetProductArray,
+                $carrier->id
+            )
         );
 
         $this->assertEquals(999.00, $result);
-
-        $this->removeFactories([
-            $carrier,
-            $address,
-            $cart,
-            $targetProduct,
-            $product1,
-            $product2,
-        ]);
     }
 
     public function testItUnsuccessfullyProvidesCarrierDeliveryPriceCarrierIsOutOfZone(): void
@@ -108,22 +77,18 @@ class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
                 $address::getZoneById($address->id),
             ],
         ]);
-        $cart = CartFactory::create([
+
+        $cart = CartFactory::initialize()->create([
             'id_carrier' => $carrier->id,
         ]);
 
-        /** @var ConfigurationAdapter $configuration */
-        $configuration = $this->getService(ConfigurationAdapter::class);
-
-        $configuration->updateValue(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID, $carrier->id);
-
-        $targetProduct = ProductFactory::create([
+        $targetProduct = ProductFactory::initialize()->create([
             'quantity' => 10,
         ]);
-        $product1 = ProductFactory::create([
+        $product1 = ProductFactory::initialize()->create([
             'quantity' => 10,
         ]);
-        $product2 = ProductFactory::create([
+        $product2 = ProductFactory::initialize()->create([
             'quantity' => 10,
         ]);
 
@@ -141,29 +106,13 @@ class SubscriptionCarrierDeliveryPriceProviderTest extends BaseTestCase
         $subscriptionCarrierDeliveryPriceProvider = $this->getService(SubscriptionCarrierDeliveryPriceProvider::class);
 
         $subscriptionCarrierDeliveryPriceProvider->getPrice(
-            $address->id,
-            $cart->id,
-            $cart->id_customer,
-            $targetProductArray
+            SubscriptionCarrierDeliveryPriceData::create(
+                $address->id,
+                $cart->id,
+                $cart->id_customer,
+                $targetProductArray,
+                $carrier->id
+            )
         );
-
-        $this->removeFactories([
-            $carrier,
-            $address,
-            $cart,
-            $targetProduct,
-            $product1,
-            $product2,
-        ]);
-    }
-
-    /**
-     * @param \ObjectModel[] $objects
-     */
-    private function removeFactories(array $objects): void
-    {
-        foreach ($objects as $object) {
-            $object->delete();
-        }
     }
 }

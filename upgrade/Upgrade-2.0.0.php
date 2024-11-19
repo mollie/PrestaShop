@@ -22,7 +22,6 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_2_0_0()
 {
     Configuration::deleteByName('MOLLIE_VERSION');
-    Configuration::updateValue('MOLLIE_ISSUERS', 'payment-page');
 
     return true;
 }

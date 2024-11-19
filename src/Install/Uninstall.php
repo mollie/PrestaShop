@@ -75,7 +75,6 @@ class Uninstall
             Config::MOLLIE_SEND_ORDER_CONFIRMATION,
             Config::MOLLIE_IFRAME,
             Config::MOLLIE_IMAGES,
-            Config::MOLLIE_ISSUERS,
             Config::MOLLIE_CSS,
             Config::MOLLIE_DEBUG_LOG,
             Config::MOLLIE_DISPLAY_ERRORS,
@@ -96,6 +95,7 @@ class Uninstall
             Config::METHODS_CONFIG,
             Config::MOLLIE_MAIL_WHEN_COMPLETED,
             Config::MOLLIE_API_KEY_TEST,
+            Config::MOLLIE_SUBSCRIPTION_ENABLED,
             Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID,
         ];
 

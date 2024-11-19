@@ -16,6 +16,9 @@ namespace Mollie\ServiceProvider;
 
 use League\Container\Container;
 use Mollie;
+use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\Context;
+use Mollie\Adapter\Shop;
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandler;
@@ -33,8 +36,13 @@ use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Handler\Shipment\ShipmentSenderHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
 use Mollie\Install\UninstallerInterface;
+use Mollie\Logger\LogFormatter;
+use Mollie\Logger\LogFormatterInterface;
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Logger\PrestaLogger;
 use Mollie\Logger\PrestaLoggerInterface;
+use Mollie\Logger\PrestashopLoggerRepositoryInterface;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\CustomLogoProviderInterface;
 use Mollie\Provider\EnvironmentVersionProvider;
@@ -51,6 +59,7 @@ use Mollie\Provider\ProfileIdProvider;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider;
 use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProviderInterface;
+use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Provider\UpdateMessageProvider;
 use Mollie\Provider\UpdateMessageProviderInterface;
 use Mollie\Repository\AddressFormatRepository;
@@ -65,13 +74,14 @@ use Mollie\Repository\CartRuleRepository;
 use Mollie\Repository\CartRuleRepositoryInterface;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\CountryRepositoryInterface;
-use Mollie\Repository\CurrencyRepository;
-use Mollie\Repository\CurrencyRepositoryInterface;
 use Mollie\Repository\CustomerRepository;
 use Mollie\Repository\CustomerRepositoryInterface;
 use Mollie\Repository\GenderRepository;
 use Mollie\Repository\GenderRepositoryInterface;
 use Mollie\Repository\MolCustomerRepository;
+use Mollie\Repository\MolCustomerRepositoryInterface;
+use Mollie\Repository\MolLogRepository;
+use Mollie\Repository\MolLogRepositoryInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepository;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\OrderRepository;
@@ -80,6 +90,7 @@ use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Repository\PendingOrderCartRuleRepository;
 use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
+use Mollie\Repository\PrestashopLoggerRepository;
 use Mollie\Repository\ProductRepository;
 use Mollie\Repository\ProductRepositoryInterface;
 use Mollie\Repository\TaxRepository;
@@ -89,8 +100,13 @@ use Mollie\Repository\TaxRuleRepositoryInterface;
 use Mollie\Repository\TaxRulesGroupRepository;
 use Mollie\Repository\TaxRulesGroupRepositoryInterface;
 use Mollie\Service\ApiKeyService;
+use Mollie\Service\ApiService;
+use Mollie\Service\ApiServiceInterface;
 use Mollie\Service\Content\SmartyTemplateParser;
 use Mollie\Service\Content\TemplateParserInterface;
+use Mollie\Service\EntityManager\EntityManagerInterface;
+use Mollie\Service\EntityManager\ObjectModelEntityManager;
+use Mollie\Service\EntityManager\ObjectModelUnitOfWork;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\AmountPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
@@ -105,11 +121,14 @@ use Mollie\Service\Shipment\ShipmentInformationSender;
 use Mollie\Service\Shipment\ShipmentInformationSenderInterface;
 use Mollie\Service\ShipmentService;
 use Mollie\Service\ShipmentServiceInterface;
+use Mollie\Service\TransactionService;
+use Mollie\Shared\Core\Shared\Repository\CurrencyRepository;
+use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
 use Mollie\Subscription\Grid\Accessibility\SubscriptionCancelAccessibility;
 use Mollie\Subscription\Install\Installer;
 use Mollie\Subscription\Install\InstallerInterface;
-use Mollie\Subscription\Logger\Logger;
-use Mollie\Subscription\Logger\LoggerInterface;
+use Mollie\Subscription\Repository\CombinationRepository;
+use Mollie\Subscription\Repository\CombinationRepositoryInterface;
 use Mollie\Subscription\Repository\OrderDetailRepository;
 use Mollie\Subscription\Repository\OrderDetailRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrderRepository;
@@ -122,6 +141,7 @@ use Mollie\Subscription\Utility\Clock;
 use Mollie\Subscription\Utility\ClockInterface;
 use Mollie\Utility\Decoder\DecoderInterface;
 use Mollie\Utility\Decoder\JsonDecoder;
+use Mollie\Utility\NumberIdempotencyProvider;
 use Mollie\Verification\PaymentType\CanBeRegularPaymentType;
 use Mollie\Verification\PaymentType\PaymentTypeVerificationInterface;
 use Mollie\Verification\Shipment\CanSendShipment;
@@ -147,7 +167,6 @@ final class BaseServiceProvider
     public function register(Container $container)
     {
         /* Logger */
-        $this->addService($container, LoggerInterface::class, $container->get(Logger::class));
         $this->addService($container, PrestaLoggerInterface::class, $container->get(PrestaLogger::class));
 
         /* Utility */
@@ -161,17 +180,18 @@ final class BaseServiceProvider
         $this->addService($container, CountryRepositoryInterface::class, $container->get(CountryRepository::class));
         $this->addService($container, PaymentMethodRepositoryInterface::class, $container->get(PaymentMethodRepository::class));
         $this->addService($container, GenderRepositoryInterface::class, $container->get(GenderRepository::class));
-        $this->addService($container, MolCustomerRepository::class, MolCustomerRepository::class)
-            ->withArgument('MolCustomer');
+        $this->addService($container, CombinationRepositoryInterface::class, $container->get(CombinationRepository::class));
+        $this->addService($container, MolCustomerRepositoryInterface::class, $container->get(MolCustomerRepository::class));
+
+        $service = $this->addService($container, MolCustomerRepository::class, MolCustomerRepository::class);
+        $this->addServiceArgument($service, 'MolCustomer');
 
         $this->addService($container, UninstallerInterface::class, $container->get(Mollie\Install\DatabaseTableUninstaller::class));
 
-        $this->addService($container, InstallerInterface::class, Installer::class)
-            ->withArguments([
-                $container->get(Mollie\Subscription\Install\DatabaseTableInstaller::class),
-                $container->get(Mollie\Subscription\Install\AttributeInstaller::class),
-                $container->get(Mollie\Subscription\Install\HookInstaller::class),
-            ]);
+        $service = $this->addService($container, InstallerInterface::class, Installer::class);
+        $this->addServiceArgument($service, $container->get(Mollie\Subscription\Install\DatabaseTableInstaller::class));
+        $this->addServiceArgument($service, $container->get(Mollie\Subscription\Install\AttributeInstaller::class));
+        $this->addServiceArgument($service, $container->get(Mollie\Subscription\Install\HookInstaller::class));
 
         $this->addService($container, DecoderInterface::class, JsonDecoder::class);
 
@@ -183,13 +203,11 @@ final class BaseServiceProvider
         $this->addService($container, OrderEndpointPaymentTypeHandlerInterface::class, $container->get(OrderEndpointPaymentTypeHandler::class));
         $this->addService($container, ShipmentVerificationInterface::class, $container->get(CanSendShipment::class));
         $this->addService($container, ShipmentInformationSenderInterface::class, $container->get(ShipmentInformationSender::class));
-        $this->addService($container, ShipmentSenderHandlerInterface::class, ShipmentSenderHandler::class)
-            ->withArguments(
-                [
-                    $container->get(ShipmentVerificationInterface::class),
-                    $container->get(ShipmentInformationSenderInterface::class),
-                ]
-            );
+
+        $service = $this->addService($container, ShipmentSenderHandlerInterface::class, ShipmentSenderHandler::class);
+
+        $this->addServiceArgument($service, $container->get(ShipmentVerificationInterface::class));
+        $this->addServiceArgument($service, $container->get(ShipmentInformationSenderInterface::class));
 
         $this->addService($container, AddressRepositoryInterface::class, $container->get(AddressRepository::class));
         $this->addService($container, AddressFormatRepositoryInterface::class, $container->get(AddressFormatRepository::class));
@@ -214,10 +232,11 @@ final class BaseServiceProvider
         $this->addService($container, CarrierRepositoryInterface::class, $container->get(CarrierRepository::class));
         $this->addService($container, CartRuleQuantityChangeHandlerInterface::class, $container->get(CartRuleQuantityChangeHandler::class));
 
-        $this->addService($container, RecurringOrderRepositoryInterface::class, RecurringOrderRepository::class)
-            ->withArgument('MolRecurringOrder');
-        $this->addService($container, RecurringOrdersProductRepositoryInterface::class, RecurringOrdersProductRepository::class)
-            ->withArgument('MolRecurringOrdersProduct');
+        $service = $this->addService($container, RecurringOrderRepositoryInterface::class, RecurringOrderRepository::class);
+        $this->addServiceArgument($service, 'MolRecurringOrder');
+
+        $service = $this->addService($container, RecurringOrdersProductRepositoryInterface::class, RecurringOrdersProductRepository::class);
+        $this->addServiceArgument($service, 'MolRecurringOrdersProduct');
 
         $this->addService($container, TemplateParserInterface::class, SmartyTemplateParser::class);
 
@@ -225,8 +244,9 @@ final class BaseServiceProvider
 
         $this->addService($container, PaymentMethodSortProviderInterface::class, PaymentMethodSortProvider::class);
         $this->addService($container, PhoneNumberProviderInterface::class, PhoneNumberProvider::class);
-        $this->addService($container, PaymentMethodRestrictionValidationInterface::class, PaymentMethodRestrictionValidation::class)
-            ->withArgument([
+
+        $this->addService($container, PaymentMethodRestrictionValidationInterface::class, function () use ($container) {
+            return new PaymentMethodRestrictionValidation([
                 $container->get(BasePaymentMethodRestrictionValidator::class),
                 $container->get(VoucherPaymentMethodRestrictionValidator::class),
                 $container->get(EnvironmentVersionSpecificPaymentMethodRestrictionValidator::class),
@@ -234,22 +254,49 @@ final class BaseServiceProvider
                 $container->get(AmountPaymentMethodRestrictionValidator::class),
                 $container->get(B2bPaymentMethodRestrictionValidator::class),
             ]);
+        });
 
         $this->addService($container, CustomLogoProviderInterface::class, $container->get(CreditCardLogoProvider::class));
 
-        $this->addService($container, PaymentMethodPositionHandlerInterface::class, PaymentMethodPositionHandler::class)
-            ->withArgument(PaymentMethodRepositoryInterface::class);
+        $service = $this->addService($container, PaymentMethodPositionHandlerInterface::class, PaymentMethodPositionHandler::class);
+        $this->addServiceArgument($service, PaymentMethodRepositoryInterface::class);
 
-        $this->addService($container, CertificateHandlerInterface::class, ApplePayDirectCertificateHandler::class)
-            ->withArgument(Mollie::class);
+        $service = $this->addService($container, CertificateHandlerInterface::class, ApplePayDirectCertificateHandler::class);
+        $this->addServiceArgument($service, Mollie::class);
 
         $this->addService($container, ProfileIdProviderInterface::class, ProfileIdProvider::class);
 
         $this->addService($container, PaymentOptionHandlerInterface::class, $container->get(PaymentOptionHandler::class));
 
-        $this->addService($container, ApiTestFeedbackBuilder::class, ApiTestFeedbackBuilder::class)
-            ->withArgument($container->get(ModuleFactory::class)->getModuleVersion() ?? '')
-            ->withArgument(ApiKeyService::class);
+        $service = $this->addService($container, ApiTestFeedbackBuilder::class, ApiTestFeedbackBuilder::class);
+        $this->addServiceArgument($service, $container->get(ModuleFactory::class)->getModuleVersion() ?? '');
+        $this->addServiceArgument($service, ApiKeyService::class);
+
+        $this->addService($container, PrestashopLoggerRepositoryInterface::class, PrestashopLoggerRepository::class);
+        $this->addService($container, MolLogRepositoryInterface::class, MolLogRepository::class);
+
+        $service = $this->addService($container, LoggerInterface::class, Logger::class);
+        $this->addServiceArgument($service, LogFormatterInterface::class);
+        $this->addServiceArgument($service, ConfigurationAdapter::class);
+        $this->addServiceArgument($service, Context::class);
+        $this->addServiceArgument($service, EntityManagerInterface::class);
+        $this->addServiceArgument($service, NumberIdempotencyProvider::class);
+        $this->addServiceArgument($service, PrestashopLoggerRepositoryInterface::class);
+
+        $this->addService($container, LogFormatterInterface::class, LogFormatter::class);
+
+        $service = $this->addService($container, ApiServiceInterface::class, ApiService::class);
+        $this->addServiceArgument($service, PaymentMethodRepository::class);
+        $this->addServiceArgument($service, CountryRepository::class);
+        $this->addServiceArgument($service, PaymentMethodSortProviderInterface::class);
+        $this->addServiceArgument($service, ConfigurationAdapter::class);
+        $this->addServiceArgument($service, TransactionService::class);
+        $this->addServiceArgument($service, Shop::class);
+        $this->addServiceArgument($service, TaxCalculatorProvider::class);
+        $this->addServiceArgument($service, Context::class);
+
+        $service = $this->addService($container, EntityManagerInterface::class, ObjectModelEntityManager::class);
+        $this->addServiceArgument($service, ObjectModelUnitOfWork::class);
     }
 
     private function addService(Container $container, $className, $service)
@@ -265,5 +312,14 @@ final class BaseServiceProvider
         }
 
         return $service;
+    }
+
+    private function addServiceArgument($service, $argument)
+    {
+        if (method_exists($service, 'withArgument')) {
+            return $service->withArgument($argument);
+        } else {
+            return $service->addArgument($argument);
+        }
     }
 }

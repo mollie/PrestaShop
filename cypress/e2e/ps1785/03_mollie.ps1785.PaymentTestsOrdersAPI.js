@@ -215,19 +215,7 @@ it('C339365: 28 Przelewy24 Checkouting [Orders API]', () => {
 it('C339366: 29 Przelewy24 Order Shipping, Refunding [Orders API]', () => {
       cy.OrderRefundingShippingOrdersAPI()
 })
-it('C339367: 30 Giropay Checkouting [Orders API]', () => {
-      cy.navigatingToThePayment()
-      //Payment method choosing
-      cy.contains('giropay').click({force:true})
-      cy.get('.condition-label > .js-terms').click({force:true})
-      cy.contains('Place order').click()
-      cy.get('[value="paid"]').click()
-      cy.get('[class="button form__button"]').click()
-      cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
-});
-it('C339368: 31 Giropay Order Shipping, Refunding [Orders API]', () => {
-      cy.OrderRefundingShippingOrdersAPI()
-})
+
 it('C339369: 32 EPS Checkouting [Orders API]', () => {
       cy.navigatingToThePayment()
       //Payment method choosing

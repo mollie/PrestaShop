@@ -32,11 +32,4 @@ interface ReadOnlyRepositoryInterface
      * @return ObjectModel|null
      */
     public function findOneBy(array $keyValueCriteria);
-
-    /**
-     * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
-     *
-     * @return PrestaShopCollection|null
-     */
-    public function findAllBy(array $keyValueCriteria);
 }

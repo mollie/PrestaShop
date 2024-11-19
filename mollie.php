@@ -26,17 +26,16 @@ use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
-use Mollie\Subscription\Exception\SubscriptionProductValidationException;
 use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
+use Mollie\Subscription\Handler\UpdateSubscriptionCarrierHandler;
 use Mollie\Subscription\Install\AttributeInstaller;
 use Mollie\Subscription\Install\DatabaseTableInstaller;
 use Mollie\Subscription\Install\HookInstaller;
 use Mollie\Subscription\Install\Installer;
-use Mollie\Subscription\Logger\NullLogger;
+use Mollie\Subscription\Provider\SubscriptionProductProvider;
 use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
-use Mollie\Subscription\Verification\HasSubscriptionProductInCart;
 use Mollie\Utility\PsVersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
 use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
@@ -75,6 +74,11 @@ class Mollie extends PaymentModule
     const ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_CONTROLLER = 'AdminMollieSubscriptionOrders';
     const ADMIN_MOLLIE_SUBSCRIPTION_FAQ_PARENT_CONTROLLER = 'AdminMollieSubscriptionFAQParent';
     const ADMIN_MOLLIE_SUBSCRIPTION_FAQ_CONTROLLER = 'AdminMollieSubscriptionFAQ';
+
+    const ADMIN_MOLLIE_LOGS_CONTROLLER = 'AdminMollieLogs';
+
+    const ADMIN_MOLLIE_LOGS_PARENT_CONTROLLER = 'AdminMollieLogsParent';
+
     /** @var LeagueServiceContainerProvider */
     private $containerProvider;
 
@@ -85,7 +89,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.1.1';
+        $this->version = '6.2.4';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -156,6 +160,8 @@ class Mollie extends PaymentModule
      */
     public function install()
     {
+        PrestaShopLogger::addLog('Mollie install started', 1, null, 'Mollie', 1);
+
         if (!$this->isPhpVersionCompliant()) {
             $this->_errors[] = $this->l('You\'re using an outdated PHP version. Upgrade your PHP version to use this module. The Mollie module supports versions PHP 7.2.0 and higher.');
 
@@ -167,9 +173,11 @@ class Mollie extends PaymentModule
 
             return false;
         }
+        PrestaShopLogger::addLog('Mollie prestashop install successful', 1, null, 'Mollie', 1);
 
 //        TODO inject base install and subscription services
         $coreInstaller = $this->getService(Mollie\Install\Installer::class);
+        PrestaShopLogger::addLog('Mollie core install initiated', 1, null, 'Mollie', 1);
 
         if (!$coreInstaller->install()) {
             $this->_errors = array_merge($this->_errors, $coreInstaller->getErrors());
@@ -177,10 +185,12 @@ class Mollie extends PaymentModule
             return false;
         }
 
+        PrestaShopLogger::addLog('Mollie core install successful', 1, null, 'Mollie', 1);
+
         $subscriptionInstaller = new Installer(
             new DatabaseTableInstaller(),
             new AttributeInstaller(
-                new NullLogger(),
+                $this->getService(PrestaLoggerInterface::class),
                 $this->getService(ConfigurationAdapter::class),
                 $this,
                 new LanguageAdapter(),
@@ -188,6 +198,7 @@ class Mollie extends PaymentModule
             ),
             new HookInstaller($this)
         );
+        PrestaShopLogger::addLog('Mollie subscription installer initiated', 1, null, 'Mollie', 1);
 
         if (!$subscriptionInstaller->install()) {
             $this->_errors = array_merge($this->_errors, $subscriptionInstaller->getErrors());
@@ -195,6 +206,7 @@ class Mollie extends PaymentModule
 
             return false;
         }
+        PrestaShopLogger::addLog('Mollie subscription install successful', 1, null, 'Mollie', 1);
 
         return true;
     }
@@ -858,6 +870,18 @@ class Mollie extends PaymentModule
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
                 'module_tab' => true,
             ],
+            [
+                'name' => $this->l('Logs'),
+                'class_name' => self::ADMIN_MOLLIE_LOGS_PARENT_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
+                'module_tab' => true,
+            ],
+            [
+                'name' => $this->l('Logs'),
+                'class_name' => self::ADMIN_MOLLIE_LOGS_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
+                'module_tab' => true,
+            ],
         ];
     }
 
@@ -932,7 +956,6 @@ class Mollie extends PaymentModule
                 $totalPaid,
                 $currency,
                 '',
-                null,
                 $cartId,
                 $customerKey,
                 $paymentMethodObj,
@@ -1014,14 +1037,14 @@ class Mollie extends PaymentModule
         return '';
     }
 
-    public function hookActionCartUpdateQuantityBefore($params)
+    public function hookActionCartUpdateQuantityBefore($params): void
     {
-        /** @var CanProductBeAddedToCartValidator $cartValidation */
-        $cartValidation = $this->getService(CanProductBeAddedToCartValidator::class);
+        /** @var CanProductBeAddedToCartValidator $canProductBeAddedToCartValidator */
+        $canProductBeAddedToCartValidator = $this->getService(CanProductBeAddedToCartValidator::class);
 
         try {
-            $cartValidation->validate((int) $params['id_product_attribute']);
-        } catch (SubscriptionProductValidationException $e) {
+            $canProductBeAddedToCartValidator->validate((int) $params['id_product_attribute']);
+        } catch (\Throwable $exception) {
             $product = $this->makeProductNotOrderable($params['product']);
 
             $params['product'] = $product;
@@ -1273,6 +1296,39 @@ class Mollie extends PaymentModule
         $this->addPreventDeleteErrorMessage();
     }
 
+    public function hookActionCarrierUpdate(array $params): void
+    {
+        $oldCarrierId = $params['id_carrier'] ?? 0;
+        $newCarrier = $params['carrier'] ?? null;
+
+        if (empty($oldCarrierId) || empty($newCarrier)) {
+            return;
+        }
+
+        /** @var UpdateSubscriptionCarrierHandler $subscriptionCarrierUpdateHandler */
+        $subscriptionCarrierUpdateHandler = $this->getService(UpdateSubscriptionCarrierHandler::class);
+
+        /** @var ConfigurationAdapter $configuration */
+        $configuration = $this->getService(ConfigurationAdapter::class);
+
+        /** @var PrestaLoggerInterface $logger */
+        $logger = $this->getService(PrestaLoggerInterface::class);
+
+        if ((int) $oldCarrierId !== (int) $configuration->get(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID)) {
+            return;
+        }
+
+        $failedSubscriptionOrderIdsToUpdate = $subscriptionCarrierUpdateHandler->run((int) $newCarrier->id);
+
+        if (empty($failedSubscriptionOrderIdsToUpdate)) {
+            return;
+        }
+
+        $logger->error('Failed to update subscription carrier for all orders.', [
+            'failed_subscription_order_ids' => json_encode($failedSubscriptionOrderIdsToUpdate),
+        ]);
+    }
+
     public function hookActionFrontControllerAfterInit(): void
     {
         $this->frontControllerAfterInit();
@@ -1293,15 +1349,19 @@ class Mollie extends PaymentModule
             return;
         }
 
-        /** @var HasSubscriptionProductInCart $hasSubscriptionProductInCart */
-        $hasSubscriptionProductInCart = $this->getService(HasSubscriptionProductInCart::class);
+        if (empty($this->context->cart) || empty($this->context->cart->getProducts())) {
+            return;
+        }
+
+        /** @var SubscriptionProductProvider $subscriptionProductProvider */
+        $subscriptionProductProvider = $this->getService(SubscriptionProductProvider::class);
+
+        if (empty($subscriptionProductProvider->getProduct($this->context->cart->getProducts()))) {
+            return;
+        }
 
         /** @var Link $link */
         $link = $this->getService(Link::class);
-
-        if (!$hasSubscriptionProductInCart->verify()) {
-            return;
-        }
 
         $this->context->controller->warning[] = $this->l('Customer must be logged in to buy subscription item.');
 

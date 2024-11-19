@@ -12,7 +12,7 @@
 
 namespace Mollie\Subscription\Repository;
 
-use Mollie\Repository\ReadOnlyRepositoryInterface;
+use Mollie\Shared\Infrastructure\Repository\ReadOnlyRepositoryInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;

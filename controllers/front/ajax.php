@@ -13,11 +13,16 @@
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Controller\AbstractMollieController;
+use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
+use Mollie\Infrastructure\Response\JsonResponse;
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
-use Mollie\Repository\CurrencyRepositoryInterface;
-use Mollie\Subscription\Exception\SubscriptionProductValidationException;
+use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
+use Mollie\Subscription\Exception\ExceptionCode;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
+use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\NumberUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -33,6 +38,11 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
 
     public function postProcess(): void
     {
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $action = Tools::getValue('action');
 
         switch ($action) {
@@ -45,6 +55,8 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
             case 'validateProduct':
                 $this->validateProduct();
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     private function getTotalCartPrice(): void
@@ -90,6 +102,9 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         /** @var ConfigurationAdapter $configuration */
         $configuration = $this->module->getService(ConfigurationAdapter::class);
 
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         try {
             $paymentFeeData = $paymentFeeProvider->getPaymentFee($molPaymentMethod, (float) $cart->getOrderTotal());
         } catch (FailedToProvidePaymentFeeException $exception) {
@@ -97,6 +112,11 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
                 'error' => true,
                 'message' => 'Failed to get payment fee data.',
             ];
+
+            $logger->error('Failed to get payment fee data.', [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
 
             $this->returnDefaultOrderSummaryBlock($cart, $errorData);
 
@@ -185,30 +205,43 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
 
     private function validateProduct(): void
     {
-        /** @var CanProductBeAddedToCartValidator $cartValidation */
-        $cartValidation = $this->module->getService(CanProductBeAddedToCartValidator::class);
+        /** @var CanProductBeAddedToCartValidator $canProductBeAddedToCartValidator */
+        $canProductBeAddedToCartValidator = $this->module->getService(CanProductBeAddedToCartValidator::class);
+
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
 
         $product = Tools::getValue('product');
 
-        $productCanBeAdded = true;
-        $message = '';
-
         try {
-            $cartValidation->validate((int) $product['id_product_attribute']);
-        } catch (SubscriptionProductValidationException $e) {
-            $productCanBeAdded = false;
-            $message = $this->module->l('Please note: Only one subscription product can be added to the cart at a time.', self::FILE_NAME);
+            $canProductBeAddedToCartValidator->validate((int) ($product['id_product_attribute'] ?? 0));
+        } catch (\Throwable $exception) {
+            if ($exception->getCode() === ExceptionCode::CART_ALREADY_HAS_SUBSCRIPTION_PRODUCT) {
+                $this->ajaxResponse(JsonResponse::error(
+                    $this->module->l('Please note: Only one subscription product can be added to the cart at a time.', self::FILE_NAME),
+                    HttpStatusCode::HTTP_BAD_REQUEST
+                ));
+            }
+
+            if ($exception->getCode() === ExceptionCode::CART_INVALID_SUBSCRIPTION_SETTINGS) {
+                $this->ajaxResponse(JsonResponse::error(
+                    $this->module->l('Subscription service is disabled. Please change the attribute to Subscription: none.', self::FILE_NAME),
+                    HttpStatusCode::HTTP_BAD_REQUEST
+                ));
+            }
+
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Unknown error. Try again or change the attribute to Subscription: none.', self::FILE_NAME),
+                HttpStatusCode::HTTP_BAD_REQUEST
+            ));
+
+            $logger->error('Unknown error.', [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
         }
 
-        $this->ajaxRender(
-            json_encode(
-                [
-                    'success' => true,
-                    'isValid' => $productCanBeAdded,
-                    'message' => $message,
-                ]
-            )
-        );
+        $this->ajaxResponse(JsonResponse::success([]));
     }
 
     private function returnDefaultOrderSummaryBlock(Cart $cart, array $errorData = [], array $presentedCart = null): void

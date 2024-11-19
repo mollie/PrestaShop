@@ -15,6 +15,8 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Factory\CustomerFactory;
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\PaymentReturnService;
 use Mollie\Utility\ArrayUtility;
@@ -48,6 +50,11 @@ class MollieReturnModuleFrontController extends AbstractMollieController
      */
     public function initContent()
     {
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $idCart = (int) Tools::getValue('cart_id');
         $key = Tools::getValue('key');
         $orderNumber = Tools::getValue('order_number');
@@ -100,7 +107,13 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             }
             if (false === $data['mollie_info']) {
                 $data['mollie_info'] = [];
-                $data['msg_details'] = $this->module->l('There is no order with this ID.', self::FILE_NAME);
+                //NOTE: information instead of error as this might occur due to cancellation of the payment
+                $logger->info(sprintf('There is no order with this order number - %s', (string) $orderNumber));
+
+                $data['msg_details'] = $this->module->l('Your payment was not successful. Try again.', self::FILE_NAME);
+                $this->setWarning($data['msg_details']);
+
+                Tools::redirect(Context::getContext()->link->getPageLink('cart', true));
             } elseif (PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
                 && PaymentStatus::STATUS_OPEN === $data['mollie_info']['bank_status']
             ) {
@@ -139,6 +152,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         } else {
             $this->setTemplate('mollie_return.tpl');
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     /**

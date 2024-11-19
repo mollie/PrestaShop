@@ -177,7 +177,9 @@ class PaymentMethodService
         $paymentMethod->surcharge_fixed_amount_tax_excl = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_EXCL . $method['id']);
         $paymentMethod->tax_rules_group_id = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_TAX_RULES_GROUP_ID . $method['id']);
         $paymentMethod->surcharge_percentage = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_PERCENTAGE . $method['id']);
-        $paymentMethod->surcharge_limit = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_LIMIT . $method['id']);
+        $paymentMethod->surcharge_limit = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_LIMIT . $method['id']) === ''
+            ? (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_AMOUNT . $method['id'])
+            : Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_LIMIT . $method['id']);
         $paymentMethod->images_json = json_encode($method['image']);
         $paymentMethod->live_environment = $environment;
         $paymentMethod->id_shop = $shopId;
@@ -256,7 +258,6 @@ class PaymentMethodService
      * @param float|string $amount
      * @param string $currency
      * @param string $method
-     * @param string|null $issuer
      * @param int|Cart $cartId
      * @param string $secureKey
      * @param string $orderReference
@@ -270,7 +271,6 @@ class PaymentMethodService
         $amount,
         $currency,
         $method,
-        $issuer,
         $cartId,
         $secureKey,
         MolPaymentMethod $molPaymentMethod,
@@ -335,7 +335,7 @@ class PaymentMethodService
             $paymentData->setMethod($molPaymentMethod->id_method);
 
             $paymentData->setDescription($orderReference);
-            $paymentData->setIssuer($issuer);
+            $paymentData->setEmail($customer->email);
 
             if (isset($cart->id_address_invoice)) {
                 $billingAddress = new Address((int) $cart->id_address_invoice);
@@ -455,10 +455,6 @@ class PaymentMethodService
                 true
             ));
 
-            if (!empty($issuer)) {
-                $payment->setIssuer($issuer);
-            }
-
             if ($molPaymentMethod->id_method === PaymentMethod::CREDITCARD) {
                 $molCustomer = $this->handleCustomerInfo($cart->id_customer, $saveCard, $useSavedCard);
                 if ($molCustomer && !empty($molCustomer->customer_id)) {
@@ -534,7 +530,6 @@ class PaymentMethodService
         $methods = $this->module->getApiClient()->methods->allActive(
             [
                 'resource' => 'orders',
-                'include' => 'issuers',
                 'includeWallets' => 'applepay',
                 'locale' => $this->context->getLanguageLocale(),
                 'billingCountry' => $country->iso_code,

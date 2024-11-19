@@ -47,7 +47,6 @@ class Config
         'ideal' => ['nl'],
         'bancontact' => ['be'],
         'paypal' => [],
-        'giropay' => ['de'],
         'eps' => ['at'],
         'belfius' => ['be'],
         'inghomepay' => ['be'],
@@ -60,10 +59,19 @@ class Config
         'cartesbancaires' => ['fr'],
         'directdebit' => [
             'fi', 'at', 'pt', 'be', 'bg', 'es', 'hr', 'cy', 'cz', 'dk', 'ee', 'fr', 'gf', 'de', 'gi', 'gr', 'gp', 'gg', 'hu',
-            'is', 'ie', 'im', 'it', 'je', 'lv', 'li', 'lt', 'lu', 'pt', 'mt', 'mq', 'yt', 'mc', 'nl', 'no', 'pl', 'pt', 're',
-            'ro', 'bl', 'mf', 'pm', 'sm', 'sk', 'sl', 'es', 'se', 'ch', 'gb', 'uk',
+            'is', 'ie', 'im', 'it', 'je', 'lv', 'li', 'lt', 'lu', 'mt', 'mq', 'yt', 'mc', 'nl', 'no', 'pl', 're',
+            'ro', 'bl', 'mf', 'pm', 'sm', 'sk', 'sl', 'se', 'ch', 'gb', 'uk',
         ],
         'mybank' => [],
+        'trustly' => ['at', 'de', 'ee', 'es', 'fi', 'lt', 'lv', 'nl'],
+        'satispay' => [
+            'at', 'be', 'bg', 'hr', 'cy', 'cz', 'dk', 'ee', 'fi', 'fr', 'de', 'gr', 'hu', 'is', 'ie',
+            'it', 'lv', 'lt', 'lu', 'mt', 'nl', 'no', 'pl', 'pt', 'ro', 'sk', 'si', 'es', 'se', 'ch',
+            'li', 'gb', 'tr',
+        ],
+        'riverty' => ['nl', 'be', 'de', 'at'],
+        'payconiq' => [],
+        'paybybank' => ['at', 'be', 'cy', 'ee', 'fi', 'fr', 'de', 'gr', 'ie', 'it', 'lv', 'lt', 'lu', 'mt', 'nl', 'pt', 'sk', 'si', 'es', 'uk'],
     ];
 
     const SUPPORTED_PHP_VERSION = '5.6';
@@ -82,8 +90,6 @@ class Config
     const LOGOS_NORMAL = 'normal';
     const LOGOS_HIDE = 'hide';
 
-    const ISSUERS_ON_CLICK = 'on-click';
-    const ISSUERS_PAYMENT_PAGE = 'payment-page';
     const METHODS_CONFIG = 'MOLLIE_METHODS_CONFIG';
 
     const ENVIRONMENT_TEST = 0;
@@ -110,12 +116,10 @@ class Config
         'sandbox' => 'MOLLIE_SANDBOX_SINGLE_CLICK_PAYMENT',
         'production' => 'MOLLIE_PRODUCTION_SINGLE_CLICK_PAYMENT',
     ];
+
     const MOLLIE_IMAGES = 'MOLLIE_IMAGES';
     const MOLLIE_SHOW_RESEND_PAYMENT_LINK = 'MOLLIE_SHOW_RESEND_PAYMENT_LINK';
-    const MOLLIE_ISSUERS = [
-        'sandbox' => 'MOLLIE_SANDBOX_ISSUERS',
-        'production' => 'MOLLIE_PRODUCTION_ISSUERS',
-    ];
+
     const MOLLIE_CSS = 'MOLLIE_CSS';
     const MOLLIE_DEBUG_LOG = 'MOLLIE_DEBUG_LOG';
     const MOLLIE_METHOD_COUNTRIES = 'MOLLIE_METHOD_COUNTRIES';
@@ -162,6 +166,7 @@ class Config
     const MOLLIE_CARRIER_CUSTOM_URL = 'MOLLIE_CARRIER_CUSTOM_URL_';
 
     const MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID = 'MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID';
+    const MOLLIE_SUBSCRIPTION_ENABLED = 'MOLLIE_SUBSCRIPTION_ENABLED';
 
     const MOLLIE_METHOD_ENABLED = 'MOLLIE_METHOD_ENABLED_';
     const MOLLIE_METHOD_TITLE = 'MOLLIE_METHOD_TITLE_';
@@ -243,6 +248,7 @@ class Config
     const MOLLIE_METHOD_ID_APPLE_PAY = 'applepay';
     const MOLLIE_VOUCHER_METHOD_ID = 'voucher';
     const MOLLIE_in3_METHOD_ID = 'in3';
+    const RIVERTY = 'riverty';
 
     const MOLLIE_VOUCHER_CATEGORY_NULL = 'null';
     const MOLLIE_VOUCHER_CATEGORY_MEAL = 'meal';
@@ -278,6 +284,10 @@ class Config
         PaymentMethod::BILLIE,
         self::MOLLIE_VOUCHER_METHOD_ID,
         self::MOLLIE_in3_METHOD_ID,
+        self::RIVERTY,
+    ];
+
+    const PAYMENT_API_ONLY_METHODS = [
     ];
 
     const ROUTE_RESEND_SECOND_CHANCE_PAYMENT_MESSAGE = 'mollie_module_admin_resend_payment_message';
@@ -300,7 +310,6 @@ class Config
         'directdebit' => 'Direct Debit',
         'eps' => 'EPS',
         'giftcard' => 'Giftcard',
-        'giropay' => 'Giropay',
         'ideal' => 'iDEAL',
         'inghomepay' => 'ING Homepay',
         'kbc' => 'KBC',
@@ -317,9 +326,21 @@ class Config
         'in3' => 'in3',
         'billie' => 'Billie',
         'twint' => 'TWINT',
+        'bancomat' => 'Bancomat',
+        'alma' => 'Alma',
         'blik' => 'BLIK',
         'klarna' => 'Pay with Klarna.',
+        'riverty' => 'Riverty',
+        'payconiq' => 'Payconiq',
+        'trustly' => 'Trustly',
+        'satispay' => 'Satispay',
+        'paybybank' => 'Pay by Bank',
     ];
+
+    public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
+    public const LOG_SEVERITY_LEVEL_WARNING = 2;
+    public const LOG_SEVERITY_LEVEL_ERROR = 3;
+    public const LOG_SEVERITY_LEVEL_MAJOR = 4;
 
     const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
 

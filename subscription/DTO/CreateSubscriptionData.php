@@ -105,6 +105,11 @@ class CreateSubscriptionData implements JsonSerializable
         $this->metaData = $metaData;
     }
 
+    public function setStartDate(string $startDate): void
+    {
+        $this->startDate = $startDate;
+    }
+
     public function jsonSerialize(): array
     {
         $json = [];

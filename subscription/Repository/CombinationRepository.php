@@ -14,12 +14,19 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Repository;
 
+use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CombinationRepository
+class CombinationRepository extends AbstractRepository implements CombinationRepositoryInterface
 {
+    public function __construct()
+    {
+        parent::__construct(\Combination::class);
+    }
+
     public function getById(int $id): \Combination
     {
         return new \Combination($id);

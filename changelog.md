@@ -2,6 +2,38 @@
 
 # Changelog #
 
+## Changes in release 6.2.4 ##
++ Workflow improvements
++ Satispay payment method added
++ Pay by Bank payment method added
+
+## Changes in release 6.2.3 ##
++ Multi shop improvements with order states
++ Logging improvements
++ Phone field validation improvements
++ Italian language compatibility
+
+## Changes in release 6.2.2 ##
++ Error handling improvements
++ Mobile phone fix then field is removed
++ Riverty, Trustly, Payconiq payment methods added and GiroPay removed
++ HTTP status
++ Dependencies version bump
++ Improved installation process
+
+## Changes in release 6.2.1 ##
++ Ideal v2 payment method improvement
+
+## Changes in release 6.2.0 ##
++ New payment methods: Bancomat and Alma
++ Apple certificate update
++ Conflicting services fix
++ Bootstrap 5 compatibility improved
++ Maximum fee field
++ Multi carrier for subscription orders added
++ Design improvements in BO
++ Improved subscription creation logic
+
 ## Changes in release 6.1.1 ##
 + Updated translations for Dutch, German, English and French languages
 + Added credit card translations for Italian and Spanish languages

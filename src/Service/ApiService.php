@@ -153,7 +153,6 @@ class ApiService implements ApiServiceInterface
                 'name' => $apiMethod->description,
                 'available' => !in_array($apiMethod->id, $notAvailable),
                 'image' => (array) $apiMethod->image,
-                'issuers' => $apiMethod->issuers,
                 'tipEnableSSL' => $tipEnableSSL,
                 'minimumAmount' => $apiMethod->minimumAmount ? [
                     'value' => NumberUtility::toPrecision(

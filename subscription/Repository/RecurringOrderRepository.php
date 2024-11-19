@@ -14,8 +14,7 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Repository;
 
-use MolRecurringOrder;
-use PrestaShopCollection;
+use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -23,19 +22,32 @@ if (!defined('_PS_VERSION_')) {
 
 class RecurringOrderRepository extends AbstractRepository implements RecurringOrderRepositoryInterface
 {
-    public function findOneBy(array $keyValueCriteria): ?MolRecurringOrder
+    public function __construct()
     {
-        /** @var ?MolRecurringOrder $result */
-        $result = parent::findOneBy($keyValueCriteria);
-
-        return $result;
+        parent::__construct(\MolRecurringOrder::class);
     }
 
-    public function findAllBy(array $keyValueCriteria): ?PrestaShopCollection
+    public function getAllOrdersBasedOnStatuses(array $statuses, int $shopId): array
     {
-        /** @var ?PrestaShopCollection $result */
-        $result = parent::findAllBy($keyValueCriteria);
+        $query = new \DbQuery();
 
-        return $result;
+        $query
+            ->select(
+                'mro.id_mol_recurring_order as id, mro.mollie_subscription_id,
+                mro.mollie_customer_id, mro.id_cart,
+                mro.id_mol_recurring_orders_product as id_recurring_product,
+                mro.id_address_invoice, mro.id_address_delivery'
+            )
+            ->from('mol_recurring_order', 'mro')
+            ->leftJoin(
+                'orders', 'o',
+                'o.id_order = mro.id_order'
+            )
+            ->where('mro.status IN (\'' . implode("','", $statuses) . '\')')
+            ->where('o.id_shop = ' . $shopId);
+
+        $result = \Db::getInstance()->executeS($query);
+
+        return !empty($result) ? $result : [];
     }
 }

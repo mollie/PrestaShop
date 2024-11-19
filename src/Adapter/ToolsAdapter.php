@@ -47,4 +47,9 @@ class ToolsAdapter
     {
         return (bool) Tools::isSubmit($string);
     }
+
+    public function getValueAsInt($value, $defaultValue = 0)
+    {
+        return (int) Tools::getValue($value, $defaultValue);
+    }
 }

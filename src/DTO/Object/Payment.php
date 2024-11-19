@@ -23,8 +23,6 @@ class Payment implements \JsonSerializable
     /** @var string */
     private $webhookUrl;
     /** @var ?string */
-    private $issuer;
-    /** @var ?string */
     private $customerId;
     /** @var ?string */
     private $applePayPaymentToken;
@@ -58,22 +56,6 @@ class Payment implements \JsonSerializable
     public function setWebhookUrl(string $webhookUrl): void
     {
         $this->webhookUrl = $webhookUrl;
-    }
-
-    /**
-     * @return ?string
-     */
-    public function getIssuer(): ?string
-    {
-        return $this->issuer;
-    }
-
-    /**
-     * @maps issuer
-     */
-    public function setIssuer(string $issuer): void
-    {
-        $this->issuer = $issuer;
     }
 
     /**
@@ -131,7 +113,6 @@ class Payment implements \JsonSerializable
         $result = [];
         $result['cardToken'] = $this->getCardToken();
         $result['webhookUrl'] = $this->getWebhookUrl();
-        $result['issuer'] = $this->getIssuer();
         $result['customerId'] = $this->getCustomerId();
         $result['applePayPaymentToken'] = $this->getApplePayPaymentToken();
         $result['company'] = $this->getCompany() ? $this->getCompany()->jsonSerialize() : null;

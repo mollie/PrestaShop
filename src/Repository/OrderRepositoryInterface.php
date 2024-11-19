@@ -12,6 +12,7 @@
 
 namespace Mollie\Repository;
 
+use Mollie\Shared\Infrastructure\Repository\ReadOnlyRepositoryInterface;
 use Order;
 
 if (!defined('_PS_VERSION_')) {

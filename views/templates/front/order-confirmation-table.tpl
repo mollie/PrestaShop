@@ -24,7 +24,7 @@
                 {if is_array($product.customizations) && $product.customizations|count}
                     {foreach from=$product.customizations item="customization"}
                         <div class="customizations">
-                            <a href="#" data-toggle="modal"
+                            <a href="#" data-toggle="modal" data-bs-toggle="modal"
                                data-target="#product-customizations-modal-{$customization.id_customization|intval}">{l s='Product customization' d='Shop.Theme.Catalog'}</a>
                         </div>
                         <div class="modal fade customization-modal"

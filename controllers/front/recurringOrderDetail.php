@@ -11,11 +11,13 @@
  */
 
 use Mollie\Controller\AbstractMollieController;
-use Mollie\Logger\PrestaLoggerInterface;
+use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Subscription\Handler\FreeOrderCreationHandler;
 use Mollie\Subscription\Handler\SubscriptionCancellationHandler;
 use Mollie\Subscription\Presenter\RecurringOrderPresenter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
+use Mollie\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -37,6 +39,11 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
      */
     public function postProcess()
     {
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         if (Tools::isSubmit('submitUpdatePaymentMethod')) {
             $this->updatePaymentMethod();
         }
@@ -44,6 +51,8 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
         if (Tools::isSubmit('submitCancelSubscriptionMethod')) {
             $this->cancelSubscription();
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     /**
@@ -53,20 +62,41 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
      */
     public function initContent()
     {
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         $recurringOrderId = (int) Tools::getValue('id_mol_recurring_order');
         $recurringOrderId = Validate::isUnsignedId($recurringOrderId) ? $recurringOrderId : false;
+
+        $failureRedirectUrl = Context::getContext()->link->getModuleLink($this->module->name, 'subscriptions', [], true);
 
         /** @var RecurringOrderRepositoryInterface $recurringOrderRepository */
         $recurringOrderRepository = $this->module->getService(RecurringOrderRepositoryInterface::class);
 
-        $recurringOrder = $recurringOrderRepository->findOneBy(['id_mol_recurring_order' => $recurringOrderId]);
+        try {
+            /** @var \MolRecurringOrder $recurringOrder */
+            $recurringOrder = $recurringOrderRepository->findOrFail([
+                'id_mol_recurring_order' => $recurringOrderId,
+            ]);
+        } catch (\Throwable $exception) {
+            $logger->error('Data retrieve failure', [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
 
-        if (!Validate::isLoadedObject($recurringOrder) || (int) $recurringOrder->id_customer !== (int) $this->context->customer->id) {
-            Tools::redirect(Context::getContext()->link->getModuleLink($this->module->name, 'subscriptions', [], true));
+            Tools::redirect($failureRedirectUrl);
+
+            return;
         }
 
-        /** @var PrestaLoggerInterface $logger */
-        $logger = $this->module->getService(PrestaLoggerInterface::class);
+        if ((int) $recurringOrder->id_customer !== (int) $this->context->customer->id) {
+            Tools::redirect($failureRedirectUrl);
+
+            return;
+        }
+
+        /** @var Logger $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
 
         /** @var RecurringOrderPresenter $recurringOrderPresenter */
         $recurringOrderPresenter = $this->module->getService(RecurringOrderPresenter::class);
@@ -78,14 +108,17 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
             ]);
         } catch (Throwable $exception) {
             $logger->error('Failed to present subscription order', [
-                'Exception message' => $exception->getMessage(),
-                'Exception code' => $exception->getCode(),
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
-            Tools::redirect(Context::getContext()->link->getModuleLink($this->module->name, 'subscriptions', [], true));
+            Tools::redirect($failureRedirectUrl);
+
+            return;
         }
 
         parent::initContent();
+
         $this->context->controller->addCSS($this->module->getPathUri() . 'views/css/front/subscription/customer_order_detail.css');
         $this->setTemplate('module:mollie/views/templates/front/subscription/customerRecurringOrderDetail.tpl');
     }
