@@ -151,6 +151,15 @@ final class DatabaseTableInstaller implements InstallerInterface
                 INDEX (`id_shop`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
+        $sql[] = '
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_payment_method_lang` (
+                `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                `payment_method` INT(11),
+                `id_lang` INT(11),
+                `id_shop` INT(11),
+                `text` TINYTEXT
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
+
         return $sql;
     }
 

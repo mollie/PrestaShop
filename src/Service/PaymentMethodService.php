@@ -202,7 +202,7 @@ class PaymentMethodService
         // todo add logic to show correct title in order admin order pdf
         // todo add logic to show correct title in order admin order history
         // todo add logic to show correct title in order admin order confirmation email
-        $paymentMethod->title = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_TITLE . $method['id']);
+        $paymentMethod->title = $method['name'];
         $paymentMethod->method = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_API . $method['id']);
         $paymentMethod->description = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_DESCRIPTION . $method['id']);
         $paymentMethod->is_countries_applicable = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_APPLICABLE_COUNTRIES . $method['id']);
