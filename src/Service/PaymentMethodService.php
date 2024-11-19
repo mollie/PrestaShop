@@ -183,7 +183,6 @@ class PaymentMethodService
         // 11 = ""
         // 12 = ""
 
-        // todo next steps is db table like mol_payment_title_lang
         // todo check is it complient with multishop as we might need to save shop id as well
         // todo make get logic to show correct titles.
         // todo prestashop has multilang maybe we can connect this functionality with it
