@@ -20,9 +20,22 @@ if (!defined('_PS_VERSION_')) {
 
 interface MultiLangRepositoryInterface extends ReadOnlyRepositoryInterface
 {
+
+    /**
+     * Gets translated text by language and method id
+     */
     public function getTextByLanguageAndMethod(int $idLanguage, string $idMethod, int $idShop): ?string;
 
+    /**
+     * Gets auto increment ID for specific payment method
+     */
     public function getExistingRecordId(string $idPaymentMethod, int $langId, int $idShop): ?string;
 
+    /**
+     * Gets all translations for a payment method title
+     *
+     * @param string $idMethod
+     * @return array [id_lang => text] for instance: [74 => 'Apelo Pay', 68 => 'Apella Pia']
+     */
     public function getAllTranslationsByMethod(string $idPaymentMethod, int $langId, int $idShop): ?array;
 }
