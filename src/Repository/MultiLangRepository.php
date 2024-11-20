@@ -12,7 +12,9 @@
 
 namespace Mollie\Repository;
 
-class MultiLangRepository
+use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
+
+class MultiLangRepository extends AbstractRepository implements MultiLangRepositoryInterface
 {
     public function getTextByLanguageAndMethod(int $idLanguage, string $idMethod, int $idShop): ?string
     {
