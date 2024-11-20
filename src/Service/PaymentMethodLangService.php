@@ -33,13 +33,13 @@ class PaymentMethodLangService
         $this->context = $context;
     }
 
-    public function savePaymentTitleTranslation(string $idPaymentMethod, int $langId, string $translation)
+    public function savePaymentTitleTranslation(string $idPaymentMethod, int $langId, string $translation, int $idShop)
     {
         if (empty($translation)) {
             return;
         }
 
-        $id = $this->multiLangRepository->getExistingRecordId($idPaymentMethod, $langId) ?: 0;
+        $id = $this->multiLangRepository->getExistingRecordId($idPaymentMethod, $langId, $this->context->getShopId()) ?: 0;
 
         $multiLangObject = new \MolPaymentMethodLang();
         $multiLangObject->id = $id;
