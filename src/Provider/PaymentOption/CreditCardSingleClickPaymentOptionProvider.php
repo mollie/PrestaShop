@@ -46,6 +46,7 @@ use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Service\LanguageService;
+use Mollie\Service\PaymentMethodLangService;
 use Mollie\Utility\CustomerUtility;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
@@ -96,6 +97,8 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
     private $customer;
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
+    /** @var PaymentMethodLangService $multiLangService */
+    private $multiLangService;
 
     public function __construct(
         Mollie $module,
@@ -106,7 +109,8 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         LanguageService $languageService,
         MolCustomerRepository $customerRepository,
         Mollie\Adapter\Customer $customer,
-        ConfigurationAdapter $configurationAdapter
+        ConfigurationAdapter $configurationAdapter,
+        PaymentMethodLangService $multiLangService
     ) {
         $this->module = $module;
         $this->context = $context;
@@ -117,6 +121,7 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         $this->customerRepository = $customerRepository;
         $this->customer = $customer;
         $this->configurationAdapter = $configurationAdapter;
+        $this->multiLangService = $multiLangService;
     }
 
     /**
@@ -127,9 +132,9 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         $paymentOption = new PaymentOption();
 
         $paymentOption->setCallToActionText(
-            $paymentMethod->title ?:
-                $this->languageService->lang($paymentMethod->method_name)
+            $this->multiLangService->trans($paymentMethod->id_method) ?: $paymentMethod->title
         );
+
         $paymentOption->setModuleName($this->module->name);
         $paymentOption->setAction($this->context->getLink()->getModuleLink(
             'mollie',

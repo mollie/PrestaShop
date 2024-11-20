@@ -43,6 +43,7 @@ use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\LanguageService;
+use Mollie\Service\PaymentMethodLangService;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
@@ -86,6 +87,8 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
     private $languageService;
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
+    /** PaymentMethodLangService $multiLangService */
+    private $multiLangService;
 
     public function __construct(
         Mollie $module,
@@ -94,7 +97,8 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         PaymentFeeProviderInterface $paymentFeeProvider,
         TemplateParserInterface $templateParser,
         LanguageService $languageService,
-        OrderTotalProviderInterface $orderTotalProvider
+        OrderTotalProviderInterface $orderTotalProvider,
+        PaymentMethodLangService $multiLangService
     ) {
         $this->module = $module;
         $this->context = $context;
@@ -103,6 +107,7 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         $this->templateParser = $templateParser;
         $this->languageService = $languageService;
         $this->orderTotalProvider = $orderTotalProvider;
+        $this->multiLangService = $multiLangService;
     }
 
     /**
@@ -113,9 +118,9 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         $paymentOption = new PaymentOption();
 
         $paymentOption->setCallToActionText(
-            $paymentMethod->title ?:
-            $this->languageService->lang($paymentMethod->method_name)
+            $this->multiLangService->trans($paymentMethod->id_method) ?? $paymentMethod->title
         );
+
         $paymentOption->setModuleName($this->module->name);
         $paymentOption->setAction($this->context->getLink()->getModuleLink(
             'mollie',

@@ -39,11 +39,19 @@ class PaymentMethodLangService
             return;
         }
 
+        $id = $this->multiLangRepository->getExistingRecordId($idPaymentMethod, $langId) ?: 0;
+
         $multiLangObject = new \MolPaymentMethodLang();
+        $multiLangObject->id = $id;
         $multiLangObject->id_lang = $langId;
         $multiLangObject->id_method = $idPaymentMethod;
         $multiLangObject->id_shop = $this->context->getShopId();
         $multiLangObject->text = $translation;
         $multiLangObject->save();
+    }
+
+    public function trans(string $idMethod)
+    {
+        return $this->multiLangRepository->getTextByLanguageAndMethod($this->context->getLanguageId(), $idMethod);
     }
 }

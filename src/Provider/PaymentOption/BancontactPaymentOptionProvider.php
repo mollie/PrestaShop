@@ -43,6 +43,7 @@ use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Service\LanguageService;
+use Mollie\Service\PaymentMethodLangService;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
@@ -82,13 +83,17 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
 
+    /** @var PaymentMethodLangService $multiLangService */
+    private $multiLangService;
+
     public function __construct(
         Mollie $module,
         LegacyContext $context,
         CreditCardLogoProvider $creditCardLogoProvider,
         PaymentFeeProviderInterface $paymentFeeProvider,
         LanguageService $languageService,
-        OrderTotalProviderInterface $orderTotalProvider
+        OrderTotalProviderInterface $orderTotalProvider,
+        PaymentMethodLangService $multiLangService
     ) {
         $this->module = $module;
         $this->context = $context;
@@ -96,6 +101,7 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
         $this->paymentFeeProvider = $paymentFeeProvider;
         $this->languageService = $languageService;
         $this->orderTotalProvider = $orderTotalProvider;
+        $this->multiLangService = $multiLangService;
     }
 
     /**
@@ -106,9 +112,9 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
         $paymentOption = new PaymentOption();
 
         $paymentOption->setCallToActionText(
-            $paymentMethod->title ?:
-                $this->languageService->lang($paymentMethod->method_name)
+            $this->multiLangService->trans($paymentMethod->id_method) ?: $paymentMethod->title
         );
+
         $paymentOption->setModuleName($this->module->name);
         $paymentOption->setAction($this->context->getLink()->getModuleLink(
             'mollie',

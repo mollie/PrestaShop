@@ -47,6 +47,7 @@ use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Service\LanguageService;
+use Mollie\Service\PaymentMethodLangService;
 use Mollie\Utility\CustomerUtility;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
@@ -99,6 +100,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
     private $customerRepository;
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
+    /** @var PaymentMethodLangService $multiLangService */
 
     public function __construct(
         LegacyContext $context,
@@ -109,7 +111,8 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         Customer $customer,
         MolCustomerRepository $customerRepository,
         Mollie $module,
-        ConfigurationAdapter $configurationAdapter
+        ConfigurationAdapter $configurationAdapter,
+        PaymentMethodLangService $multiLangService
     ) {
         $this->context = $context;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
@@ -120,6 +123,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         $this->customerRepository = $customerRepository;
         $this->module = $module;
         $this->configurationAdapter = $configurationAdapter;
+        $this->multiLangService = $multiLangService;
     }
 
     /**
@@ -128,10 +132,11 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
     public function getPaymentOption(MolPaymentMethod $paymentMethod): PaymentOption
     {
         $paymentOption = new PaymentOption();
+
         $paymentOption->setCallToActionText(
-            $paymentMethod->title ?:
-                $this->languageService->lang($paymentMethod->method_name)
+            $this->multiLangService->trans($paymentMethod->id_method) ?: $paymentMethod->title
         );
+
         $paymentOption->setModuleName($this->module->name);
         $paymentOption->setAction($this->context->getLink()->getModuleLink(
             'mollie',
