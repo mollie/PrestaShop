@@ -39,8 +39,6 @@ class PaymentMethodLangService
             return;
         }
 
-        $id = $this->multiLangRepository->getExistingRecordId($idPaymentMethod, $langId, $this->context->getShopId()) ?: 0;
-
         $obj = $this->multiLangRepository->findOneBy([
             'id_method' => $idPaymentMethod,
             'id_lang' => $langId,
