@@ -34,7 +34,7 @@
                         </td>
                         <td>
                             <div class="icon2"></div>
-                            <a href="https://www.invertus.eu/contacts/"
+                            <a href="https://www.invertus.eu/en/contact/"
                                target="_blank">{l s='Contact Invertus' mod='mollie'}</a>
                         </td>
                     </tr>

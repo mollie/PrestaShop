@@ -50,8 +50,20 @@ class PaymentMethodLangService
         $multiLangObject->save();
     }
 
-    public function trans(string $idMethod)
+    public function trans(string $idMethod): string
     {
         return $this->multiLangRepository->getTextByLanguageAndMethod($this->context->getLanguageId(), $idMethod, $this->context->getShopId());
+    }
+
+
+    /**
+     * Gets all translations for a payment method title
+     *
+     * @param string $idMethod
+     * @return array For instance: [74 => 'Apelo Pay', 68 => 'Apella Pia']
+     */
+    public function getTransList(string $idMethod): array
+    {
+        return $this->multiLangRepository->getAllTranslationsByMethod();
     }
 }
