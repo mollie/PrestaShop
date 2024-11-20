@@ -37,18 +37,6 @@ class MultiLangRepository extends AbstractRepository implements MultiLangReposit
         return \Db::getInstance()->getValue($sql) ?: null;
     }
 
-    public function getExistingRecordId(string $idPaymentMethod, int $langId, int $idShop): ?string
-    {
-        $sql = new \DbQuery();
-        $sql->select('`id`');
-        $sql->from('mol_payment_method_lang');
-        $sql->where('`id_method` = "' . pSQL($idPaymentMethod) . '"');
-        $sql->where('`id_lang` = ' . $langId);
-        $sql->where('`id_shop` = ' . $idShop);
-
-        return \Db::getInstance()->getValue($sql) ?: null;
-    }
-
     public function getAllTranslationsByMethod(string $idPaymentMethod, int $idShop): array
     {
         $sql = new \DbQuery();

@@ -21,7 +21,7 @@ function upgrade_module_6_2_5(Mollie $module): bool
                 `id_method` TINYTEXT,
                 `id_lang` INT(11),
                 `id_shop` INT(11),
-                `text` TINYTEXT,
+                `text` VARCHAR(64) NOT NULL,
                 INDEX (`id_method`)
     ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 

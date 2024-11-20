@@ -41,8 +41,13 @@ class PaymentMethodLangService
 
         $id = $this->multiLangRepository->getExistingRecordId($idPaymentMethod, $langId, $this->context->getShopId()) ?: 0;
 
-        $multiLangObject = new \MolPaymentMethodLang();
-        $multiLangObject->id = $id;
+        $obj = $this->multiLangRepository->findOneBy([
+            'id_method' => $idPaymentMethod,
+            'id_lang' => $langId,
+            'id_shop' => $this->context->getShopId(),
+        ]);
+
+        $multiLangObject = new \MolPaymentMethodLang($obj->id);
         $multiLangObject->id_lang = $langId;
         $multiLangObject->id_method = $idPaymentMethod;
         $multiLangObject->id_shop = $this->context->getShopId();
@@ -65,6 +70,8 @@ class PaymentMethodLangService
     public function getTransList(string $idMethod): array
     {
         $result = $this->multiLangRepository->getAllTranslationsByMethod($idMethod, $this->context->getShopId());
+
+
 
         $mappedArray = [];
         foreach ($result as $value) {
