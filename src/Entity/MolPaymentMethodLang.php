@@ -19,7 +19,7 @@ class MolPaymentMethodLang extends ObjectModel
     /** @var int */
     public $id;
 
-    /** @var int name of the payment method */
+    /** @var string name of the payment method */
     public $id_method;
 
     /** @var int */
@@ -39,8 +39,8 @@ class MolPaymentMethodLang extends ObjectModel
         'primary' => 'id',
         'fields' => [
             'id_method' => [
-                'type' => self::TYPE_INT,
-                'validate' => 'isUnsignedInt',
+                'type' => self::TYPE_STRING,
+                'validate' => 'isString',
                 'required' => true,
             ],
             'id_lang' => [
