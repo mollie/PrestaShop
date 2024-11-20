@@ -14,6 +14,10 @@ namespace Mollie\Repository;
 
 use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MultiLangRepository extends AbstractRepository implements MultiLangRepositoryInterface
 {
     public function __construct()
@@ -53,6 +57,6 @@ class MultiLangRepository extends AbstractRepository implements MultiLangReposit
         $sql->where('`id_method` = "' . pSQL($idPaymentMethod) . '"');
         $sql->where('`id_shop` = ' . $idShop);
 
-        return \Db::getInstance()->executeS($sql);
+        return \Db::getInstance()->executeS($sql) ?? [];
     }
 }
