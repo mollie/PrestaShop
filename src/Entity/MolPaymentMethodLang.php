@@ -42,16 +42,19 @@ class MolPaymentMethodLang extends ObjectModel
                 'type' => self::TYPE_STRING,
                 'validate' => 'isString',
                 'required' => true,
+                'size' => 64,
             ],
             'id_lang' => [
                 'type' => self::TYPE_INT,
                 'validate' => 'isUnsignedInt',
                 'required' => true,
+                'size' => 11,
             ],
             'id_shop' => [
                 'type' => self::TYPE_INT,
                 'validate' => 'isUnsignedInt',
                 'required' => true,
+                'size' => 11,
             ],
             'text' => [
                 'type' => self::TYPE_STRING,
