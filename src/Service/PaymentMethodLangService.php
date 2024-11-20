@@ -52,6 +52,6 @@ class PaymentMethodLangService
 
     public function trans(string $idMethod)
     {
-        return $this->multiLangRepository->getTextByLanguageAndMethod($this->context->getLanguageId(), $idMethod);
+        return $this->multiLangRepository->getTextByLanguageAndMethod($this->context->getLanguageId(), $idMethod, $this->context->getShopId());
     }
 }
