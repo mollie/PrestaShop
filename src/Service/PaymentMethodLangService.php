@@ -35,6 +35,10 @@ class PaymentMethodLangService
 
     public function savePaymentTitleTranslation(string $idPaymentMethod, int $langId, string $translation)
     {
+        if (empty($translation)) {
+            return;
+        }
+
         $multiLangObject = new \MolPaymentMethodLang();
         $multiLangObject->id_lang = $langId;
         $multiLangObject->id_method = $idPaymentMethod;
