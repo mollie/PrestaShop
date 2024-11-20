@@ -194,8 +194,6 @@ class PaymentMethodService
         // todo add logic to show correct title in payment step
 
         // todo check is it relevant
-        // todo add logic to show correct title in order history
-        // todo add logic to show correct title in order details
         // todo add logic to show correct title in order confirmation email
         // todo add logic to show correct title in order invoice
         // todo add logic to show correct title in order pdf
