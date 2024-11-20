@@ -64,7 +64,7 @@ class PaymentMethodLangService
      */
     public function getTransList(string $idMethod): array
     {
-        $result = $this->multiLangRepository->getAllTranslationsByMethod($idMethod, $this->context->getLanguageId(), $this->context->getShopId());
+        $result = $this->multiLangRepository->getAllTranslationsByMethod($idMethod, $this->context->getShopId());
 
         $mappedArray = [];
         foreach ($result as $value) {

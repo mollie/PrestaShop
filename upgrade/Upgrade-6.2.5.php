@@ -25,10 +25,5 @@ function upgrade_module_6_2_5(Mollie $module): bool
                 INDEX (`id_method`)
     ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
-    $isTableCreated = Db::getInstance()->execute($sql);
-    if (!$isTableCreated) {
-        return false; // If the table creation fails, return false
-    }
-
-    return $isTableCreated;
+    return Db::getInstance()->execute($sql);
 }
