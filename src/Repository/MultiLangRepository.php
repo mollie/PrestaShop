@@ -41,10 +41,9 @@ class MultiLangRepository
     public function getAllTranslationsByMethod(string $idPaymentMethod, int $langId, int $idShop): ?array
     {
         $sql = new \DbQuery();
-        $sql->select('`text`');
+        $sql->select('`id_lang`, `text`');
         $sql->from('mol_payment_method_lang');
         $sql->where('`id_method` = "' . pSQL($idPaymentMethod) . '"');
-        $sql->where('`id_lang` = ' . $langId);
         $sql->where('`id_shop` = ' . $idShop);
 
         return \Db::getInstance()->executeS($sql) ?: null;
