@@ -154,7 +154,7 @@ final class DatabaseTableInstaller implements InstallerInterface
         $sql[] = '
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_payment_method_lang` (
                 `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                `id_method` TINYTEXT,
+                `id_method` VARCHAR(64) NOT NULL,
                 `id_lang` INT(11),
                 `id_shop` INT(11),
                 `text` TINYTEXT,
