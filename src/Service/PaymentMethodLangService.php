@@ -69,8 +69,6 @@ class PaymentMethodLangService
     {
         $result = $this->multiLangRepository->getAllTranslationsByMethod($idMethod, $this->context->getShopId());
 
-
-
         $mappedArray = [];
         foreach ($result as $value) {
             $mappedArray[$value['id_lang']] = $value['text'];
