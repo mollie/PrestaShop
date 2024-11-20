@@ -171,38 +171,6 @@ class PaymentMethodService
         $paymentMethod->id_method = $method['id'];
         $paymentMethod->method_name = $method['name'];
         $paymentMethod->enabled = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_ENABLED . $method['id']);
-        //todo logic to save title
-        // data comes likes this {lang_id: title}
-        //result = {string[12]} ["a", "b", "c", "d", "", +7 more]
-        // 1 = "a"
-        // 2 = "b"
-        // 3 = "c"
-        // 4 = "d"
-        // 5 = ""
-        // 6 = ""
-        // 7 = ""
-        // 8 = ""
-        // 9 = ""
-        // 10 = ""
-        // 11 = ""
-        // 12 = ""
-
-        // todo check is it complient with multishop as we might need to save shop id as well
-        // todo make get logic to show correct titles.
-        // todo prestashop has multilang maybe we can connect this functionality with it
-        // todo update method and install method
-        // todo add logic to show correct title in payment step
-
-        // todo check is it relevant
-        // todo add logic to show correct title in order confirmation email
-        // todo add logic to show correct title in order invoice
-        // todo add logic to show correct title in order pdf
-        // todo add logic to show correct title in order admin order list
-        // todo add logic to show correct title in order admin order details
-        // todo add logic to show correct title in order admin order invoice
-        // todo add logic to show correct title in order admin order pdf
-        // todo add logic to show correct title in order admin order history
-        // todo add logic to show correct title in order admin order confirmation email
         $paymentMethod->title = $method['name'];
         $paymentMethod->method = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_API . $method['id']);
         $paymentMethod->description = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_DESCRIPTION . $method['id']);
