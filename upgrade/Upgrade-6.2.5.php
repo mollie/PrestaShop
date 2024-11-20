@@ -9,9 +9,6 @@
  * @see        https://github.com/mollie/PrestaShop
  */
 
-use PrestaShop\PrestaShop\Adapter\Module\Tab\ModuleTabRegister;
-use Symfony\Component\HttpFoundation\ParameterBag;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
