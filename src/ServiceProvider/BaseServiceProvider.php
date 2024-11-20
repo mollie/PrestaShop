@@ -84,6 +84,8 @@ use Mollie\Repository\MolLogRepository;
 use Mollie\Repository\MolLogRepositoryInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepository;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
+use Mollie\Repository\MultiLangRepository;
+use Mollie\Repository\MultiLangRepositoryInterface;
 use Mollie\Repository\OrderRepository;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepository;
@@ -215,6 +217,7 @@ final class BaseServiceProvider
         $this->addService($container, TaxRuleRepositoryInterface::class, $container->get(TaxRuleRepository::class));
         $this->addService($container, TaxRepositoryInterface::class, $container->get(TaxRepository::class));
         $this->addService($container, CartRepositoryInterface::class, $container->get(CartRepository::class));
+        $this->addService($container, MultiLangRepositoryInterface::class, $container->get(MultiLangRepository::class));
 
         $this->addService($container, OrderTotalProviderInterface::class, $container->get(OrderTotalProvider::class));
         $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));

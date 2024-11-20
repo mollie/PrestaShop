@@ -16,6 +16,11 @@ use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
 
 class MultiLangRepository extends AbstractRepository implements MultiLangRepositoryInterface
 {
+    public function __construct()
+    {
+        parent::__construct(\MolPaymentMethodLang::class);
+    }
+
     public function getTextByLanguageAndMethod(int $idLanguage, string $idMethod, int $idShop): ?string
     {
         $sql = new \DbQuery();
