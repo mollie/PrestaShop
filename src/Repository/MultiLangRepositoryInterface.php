@@ -33,5 +33,5 @@ interface MultiLangRepositoryInterface extends ReadOnlyRepositoryInterface
      * @param int $idShop
      * @return array [id_lang => text] for instance: [74 => 'Apelo Pay', 68 => 'Apella Pia']
      */
-    public function getAllTranslationsByMethod(string $idPaymentMethod, int $idShop): ?array;
+    public function getAllTranslationsByMethod(string $idPaymentMethod, int $idShop): array;
 }

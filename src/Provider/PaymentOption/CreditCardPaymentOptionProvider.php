@@ -100,6 +100,8 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
     private $customerRepository;
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
+    /** @var PaymentMethodLangService $multiLangService */
+    private $multiLangService;
 
     public function __construct(
         LegacyContext $context,
@@ -110,7 +112,8 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         Customer $customer,
         MolCustomerRepository $customerRepository,
         Mollie $module,
-        ConfigurationAdapter $configurationAdapter
+        ConfigurationAdapter $configurationAdapter,
+        PaymentMethodLangService $multiLangService
     ) {
         $this->context = $context;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
@@ -121,6 +124,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         $this->customerRepository = $customerRepository;
         $this->module = $module;
         $this->configurationAdapter = $configurationAdapter;
+        $this->multiLangService = $multiLangService;
     }
 
     /**

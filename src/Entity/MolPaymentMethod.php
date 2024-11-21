@@ -31,7 +31,7 @@ class MolPaymentMethod extends ObjectModel
     public $method_name;
 
     /**
-     * @var string
+     * @var string|array
      */
     public $title;
 

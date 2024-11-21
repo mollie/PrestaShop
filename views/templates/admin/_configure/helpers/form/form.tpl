@@ -186,7 +186,7 @@
                                         </div>
                                         <div class="col-lg-2">
                                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                                {$language.iso_code}
+                                                {$language.iso_code|escape:'html':'UTF-8'}
                                                 <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu">
@@ -217,7 +217,7 @@
                                     {/if}
                                 </select>
                                 <p class="help-block">
-                                    {$input.methodDescription}
+                                    {$input.methodDescription|escape:'html':'UTF-8'}
                                 </p>
                             </div>
                         </div>
@@ -393,7 +393,7 @@
                                         {if $paymentMethod.maximumAmount != false } max="{$paymentMethod.maximumAmount.value}" {/if}
                                        value="{if $methodObj->min_amount == 0}{$paymentMethod.minimumAmount.value}{else}{$methodObj->min_amount}{/if}">
                                 <p class="help-block">
-                                    {l s='Default min amount in mollie is: ' mod='mollie'} {$paymentMethod.minimumAmount.value}{$paymentMethod.minimumAmount.currency}
+                                    {l s='Default min amount in mollie is: ' mod='mollie'} {$paymentMethod.minimumAmount.value|escape:'html':'UTF-8'}{$paymentMethod.minimumAmount.currency|escape:'html':'UTF-8'}
                                 </p>
                             </div>
                         </div>
@@ -411,7 +411,7 @@
                                     {if $paymentMethod.maximumAmount == false}
                                         {l s='Default max amount has no limitation' mod='mollie'}
                                     {else}
-                                        {l s='Default max amount in mollie is: ' mod='mollie'}{$paymentMethod.maximumAmount.value}{$paymentMethod.maximumAmount.currency}
+                                        {l s='Default max amount in mollie is: ' mod='mollie'}{$paymentMethod.maximumAmount.value|escape:'html':'UTF-8'}{$paymentMethod.maximumAmount.currency|escape:'html':'UTF-8'}
                                     {/if}
                                 </p>
                             </div>

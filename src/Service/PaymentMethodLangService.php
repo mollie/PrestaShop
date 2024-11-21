@@ -48,7 +48,7 @@ class PaymentMethodLangService
         $multiLangObject = new \MolPaymentMethodLang(isset($obj) ? $obj->id : null);
         $multiLangObject->id_lang = $langId;
         $multiLangObject->id_method = $idPaymentMethod;
-        $multiLangObject->id_shop = $this->context->getShopId();
+        $multiLangObject->id_shop = $idShop;
         $multiLangObject->text = $translation;
         $multiLangObject->save();
     }

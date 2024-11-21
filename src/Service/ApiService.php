@@ -236,7 +236,7 @@ class ApiService implements ApiServiceInterface
                 }
 
                 $methods[$apiMethod['id']] = $apiMethod;
-                $paymentMethod->title = $this->multiLangService->getTransList($apiMethod['id'], $paymentMethod->title);
+                $paymentMethod->title = $this->multiLangService->getTransList($apiMethod['id']);
                 $methods[$apiMethod['id']]['obj'] = $paymentMethod;
 
                 continue;
