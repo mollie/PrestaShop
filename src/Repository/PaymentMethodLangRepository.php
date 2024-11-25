@@ -18,7 +18,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class MultiLangRepository extends AbstractRepository implements MultiLangRepositoryInterface
+class PaymentMethodLangRepository extends AbstractRepository implements PaymentMethodLangRepositoryInterface
 {
     public function __construct()
     {

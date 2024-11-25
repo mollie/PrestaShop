@@ -18,7 +18,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-interface MultiLangRepositoryInterface extends ReadOnlyRepositoryInterface
+interface PaymentMethodLangRepositoryInterface extends ReadOnlyRepositoryInterface
 {
 
     /**

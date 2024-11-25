@@ -13,7 +13,7 @@
 namespace Mollie\Service;
 
 use Mollie\Adapter\Context;
-use Mollie\Repository\MultiLangRepositoryInterface;
+use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -21,13 +21,13 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentMethodLangService
 {
-    /** @var MultiLangRepositoryInterface */
+    /** @var PaymentMethodLangRepositoryInterface */
     private $multiLangRepository;
 
     /** @var Context */
     private $context;
 
-    public function __construct(MultiLangRepositoryInterface $multiLangRepository, Context $context)
+    public function __construct(PaymentMethodLangRepositoryInterface $multiLangRepository, Context $context)
     {
         $this->multiLangRepository = $multiLangRepository;
         $this->context = $context;
