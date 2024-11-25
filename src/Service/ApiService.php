@@ -197,7 +197,6 @@ class ApiService implements ApiServiceInterface
         $methods = [];
         $emptyPaymentMethod = new MolPaymentMethod();
         $emptyPaymentMethod->enabled = false;
-        $emptyPaymentMethod->title = '';
         $emptyPaymentMethod->method = 'payments';
         $emptyPaymentMethod->description = '';
         $emptyPaymentMethod->is_countries_applicable = false;
@@ -236,7 +235,7 @@ class ApiService implements ApiServiceInterface
                 }
 
                 $methods[$apiMethod['id']] = $apiMethod;
-                $paymentMethod->title = $this->multiLangService->getTransList($apiMethod['id']);
+                $paymentMethod->method_name = $this->multiLangService->getTransList($apiMethod['id']);
                 $methods[$apiMethod['id']]['obj'] = $paymentMethod;
 
                 continue;

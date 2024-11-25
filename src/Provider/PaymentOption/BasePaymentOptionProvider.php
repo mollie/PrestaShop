@@ -110,7 +110,7 @@ class BasePaymentOptionProvider implements PaymentOptionProviderInterface
         $paymentOption = new PaymentOption();
 
         $paymentOption->setCallToActionText(
-            $this->multiLangService->trans($paymentMethod->id_method) ?: $paymentMethod->title
+            $this->multiLangService->trans($paymentMethod->id_method) ?: $paymentMethod->method_name
         );
 
         $paymentOption->setModuleName($this->module->name);

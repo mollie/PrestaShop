@@ -76,11 +76,6 @@ class PaymentMethodService
     private $cartLinesService;
 
     /**
-     * @var PaymentsTranslationService
-     */
-    private $paymentsTranslationService;
-
-    /**
      * @var CustomerService
      */
     private $customerService;
@@ -123,7 +118,6 @@ class PaymentMethodService
         Mollie $module,
         PaymentMethodRepositoryInterface $methodRepository,
         CartLinesService $cartLinesService,
-        PaymentsTranslationService $paymentsTranslationService,
         CustomerService $customerService,
         CreditCardLogoProvider $creditCardLogoProvider,
         PaymentMethodSortProviderInterface $paymentMethodSortProvider,
@@ -142,7 +136,6 @@ class PaymentMethodService
         $this->module = $module;
         $this->methodRepository = $methodRepository;
         $this->cartLinesService = $cartLinesService;
-        $this->paymentsTranslationService = $paymentsTranslationService;
         $this->customerService = $customerService;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
@@ -171,7 +164,6 @@ class PaymentMethodService
         $paymentMethod->id_method = $method['id'];
         $paymentMethod->method_name = $method['name'];
         $paymentMethod->enabled = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_ENABLED . $method['id']);
-        $paymentMethod->title = $method['name'];
         $paymentMethod->method = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_API . $method['id']);
         $paymentMethod->description = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_DESCRIPTION . $method['id']);
         $paymentMethod->is_countries_applicable = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_APPLICABLE_COUNTRIES . $method['id']);
@@ -254,7 +246,6 @@ class PaymentMethodService
             }
         }
 
-        $methods = $this->paymentsTranslationService->getTranslatedPaymentMethods($methods);
         $methods = $this->paymentMethodSortProvider->getSortedInAscendingWayForCheckout($methods);
 
         return $methods;
