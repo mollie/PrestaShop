@@ -33,26 +33,6 @@ class PaymentMethodLangService
         $this->context = $context;
     }
 
-    public function savePaymentTitleTranslation(string $idPaymentMethod, int $langId, string $translation, int $idShop)
-    {
-        if (empty($translation)) {
-            return;
-        }
-
-        $paymentMethodLangObject = $this->paymentMethodLangRepository->findOneBy([
-            'id_method' => $idPaymentMethod,
-            'id_lang' => $langId,
-            'id_shop' => $this->context->getShopId(),
-        ]);
-
-        $multiLangObject = new \MolPaymentMethodLang(isset($paymentMethodLangObject) ? $paymentMethodLangObject->id : null);
-        $multiLangObject->id_lang = $langId;
-        $multiLangObject->id_method = $idPaymentMethod;
-        $multiLangObject->id_shop = $idShop;
-        $multiLangObject->text = $translation;
-        $multiLangObject->save();
-    }
-
     public function trans(string $idMethod): ?string
     {
         return $this->paymentMethodLangRepository->getTextByLanguageAndMethod($this->context->getLanguageId(), $idMethod, $this->context->getShopId());

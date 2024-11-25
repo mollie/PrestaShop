@@ -47,4 +47,24 @@ class PaymentMethodLangRepository extends AbstractRepository implements PaymentM
 
         return \Db::getInstance()->executeS($sql) ?? [];
     }
+
+    public function savePaymentTitleTranslation(string $idPaymentMethod, int $langId, string $translation, int $idShop)
+    {
+        if (empty($translation)) {
+            return;
+        }
+
+        $paymentMethodLangObject = $this->findOneBy([
+            'id_method' => $idPaymentMethod,
+            'id_lang' => $langId,
+            'id_shop' => $idShop,
+        ]);
+
+        $multiLangObject = new \MolPaymentMethodLang(isset($paymentMethodLangObject) ? $paymentMethodLangObject->id : null);
+        $multiLangObject->id_lang = $langId;
+        $multiLangObject->id_method = $idPaymentMethod;
+        $multiLangObject->id_shop = $idShop;
+        $multiLangObject->text = $translation;
+        $multiLangObject->save();
+    }
 }

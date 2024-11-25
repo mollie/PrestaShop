@@ -40,6 +40,7 @@ use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Provider\PhoneNumberProviderInterface;
 use Mollie\Repository\GenderRepositoryInterface;
+use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
@@ -111,8 +112,8 @@ class PaymentMethodService
     private $context;
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
-    /** @var PaymentMethodLangService */
-    private $paymentMethodLangService;
+    /** @var PaymentMethodLangRepositoryInterface */
+    private $paymentMethodLangRepository;
 
     public function __construct(
         Mollie $module,
@@ -131,7 +132,7 @@ class PaymentMethodService
         PaymentFeeProviderInterface $paymentFeeProvider,
         Context $context,
         OrderTotalProviderInterface $orderTotalProvider,
-        PaymentMethodLangService $paymentMethodLangService
+        PaymentMethodLangRepositoryInterface $paymentMethodLangRepository
     ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
@@ -149,7 +150,7 @@ class PaymentMethodService
         $this->paymentFeeProvider = $paymentFeeProvider;
         $this->context = $context;
         $this->orderTotalProvider = $orderTotalProvider;
-        $this->paymentMethodLangService = $paymentMethodLangService;
+        $this->paymentMethodLangRepository = $paymentMethodLangRepository;
     }
 
     public function savePaymentMethod($method)
@@ -185,7 +186,7 @@ class PaymentMethodService
         $paymentMethod->save();
 
         foreach(Tools::getValue(Config::MOLLIE_METHOD_TITLE . $method['id']) as $idLang => $title) {
-            $this->paymentMethodLangService->savePaymentTitleTranslation($method['id'], $idLang, $title, $this->context->getShopId());
+            $this->paymentMethodLangRepository->savePaymentTitleTranslation($method['id'], $idLang, $title, $this->context->getShopId());
         }
 
         return $paymentMethod;

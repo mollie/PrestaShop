@@ -34,4 +34,6 @@ interface PaymentMethodLangRepositoryInterface extends ReadOnlyRepositoryInterfa
      * @return array [id_lang => text] for instance: [74 => 'Apelo Pay', 68 => 'Apella Pia']
      */
     public function getAllTranslationsByMethod(string $idPaymentMethod, int $idShop): array;
+
+    public function savePaymentTitleTranslation(string $idPaymentMethod, int $langId, string $translation, int $idShop);
 }
