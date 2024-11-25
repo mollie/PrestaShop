@@ -23,37 +23,40 @@ final class PhoneNumberProvider implements PhoneNumberProviderInterface
 {
     public function getFromAddress(Address $address)
     {
+        // Get the phone number from the address (either mobile or regular)
         $phoneNumber = $this->getMobileOrPhone($address);
 
+        // Clean up the phone number by removing spaces and any '+' symbols
         $phoneNumber = str_replace(' ', '', $phoneNumber);
-        $phoneNumber = str_replace('+', '', $phoneNumber);
 
-        if (empty($phoneNumber) || empty(str_replace(' ', '', $phoneNumber))) {
+        // If the phone number is empty, return null
+        if (empty($phoneNumber)) {
             return null;
         }
 
-        while ('0' === $phoneNumber[0]) {
-            $phoneNumber = substr($phoneNumber, 1);
-
-            if (empty($phoneNumber) && $phoneNumber !== '0') {
-                return null;
+        // If the phone number starts with a '+', validate that it's in E.164 format
+        if ($phoneNumber[0] === '+') {
+            // E.164 format: +<country_code><number> and should be between 3 and 18 digits total
+            if (preg_match("/^\+\d{3,18}$/", $phoneNumber)) {
+                return $phoneNumber; // Return the number if it matches E.164 format
+            } else {
+                return null; // Return null if it doesn't match the expected pattern
             }
         }
 
-        if ('+' !== $phoneNumber[0]) {
-            $phoneNumber = '+' . $phoneNumber;
-        }
-
-        $regex = "/^\+\d{3,18}$/";
-        if (1 == preg_match($regex, $phoneNumber)) {
-            return $phoneNumber;
-        } else {
+        // If the phone number starts with '0' (a local number), it's considered invalid in E.164 format
+        // without a valid country code, so return null
+        if ($phoneNumber[0] === '0') {
             return null;
         }
+
+        // we return null as we can't format them into E.164
+        return null;
     }
 
     private function getMobileOrPhone(Address $address)
     {
+        // Retrieve either the mobile or regular phone number based on the address format
         $addressFormat = new AddressFormat((int) $address->id_country);
 
         if (strpos($addressFormat->format, 'phone_mobile') !== false) {
