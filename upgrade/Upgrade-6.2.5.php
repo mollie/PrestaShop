@@ -36,7 +36,7 @@ function upgrade_module_6_2_5(Mollie $module): bool
         return false;
     }
 
-    $sql = 'ALTER TABLE `mol_payment_method` DROP COLUMN `title`;';
+    $sql = 'ALTER TABLE `' . _DB_PREFIX_ . 'mol_payment_method` DROP COLUMN `title`;';
 
     return Db::getInstance()->execute($sql);
 }
