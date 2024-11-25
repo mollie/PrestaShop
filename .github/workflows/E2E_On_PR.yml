@@ -1,7 +1,6 @@
 name: Cypress E2E Automation [develop branch]
 on:
   pull_request:
-    types: [opened, reopened]
     branches: [develop, develop**, develop-**]
 
 concurrency:
@@ -59,7 +58,7 @@ jobs:
         run: |
           ${{ matrix.make }}
 
-      - name: Waiting for Ngrok tunnel
+      - name: Waiting for Ngrok
         run: |
           URL="${{ matrix.url }}"
           TIMEOUT=120
@@ -102,7 +101,7 @@ jobs:
 
       - name: Archive videos and screenshots
         if: ${{ always() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Cypress_Mollie_videos_screenshots_${{ matrix.prestashop }}
           retention-days: 2

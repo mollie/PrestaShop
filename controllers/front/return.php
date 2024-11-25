@@ -107,7 +107,13 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             }
             if (false === $data['mollie_info']) {
                 $data['mollie_info'] = [];
-                $data['msg_details'] = $this->module->l('There is no order with this ID.', self::FILE_NAME);
+                //NOTE: information instead of error as this might occur due to cancellation of the payment
+                $logger->info(sprintf('There is no order with this order number - %s', (string) $orderNumber));
+
+                $data['msg_details'] = $this->module->l('Your payment was not successful. Try again.', self::FILE_NAME);
+                $this->setWarning($data['msg_details']);
+
+                Tools::redirect(Context::getContext()->link->getPageLink('cart', true));
             } elseif (PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
                 && PaymentStatus::STATUS_OPEN === $data['mollie_info']['bank_status']
             ) {
