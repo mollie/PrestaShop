@@ -186,6 +186,15 @@ final class DatabaseTableInstaller implements InstallerInterface
             return false;
         }
 
+        $query = '
+            ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
+            DROP COLUMN title;
+        ';
+
+        if (!Db::getInstance()->execute($query)) {
+            return false;
+        }
+
         return true;
     }
 }

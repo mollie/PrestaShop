@@ -22,14 +22,14 @@ if (!defined('_PS_VERSION_')) {
 class PaymentMethodLangService
 {
     /** @var PaymentMethodLangRepositoryInterface */
-    private $multiLangRepository;
+    private $paymentMethodLangRepository;
 
     /** @var Context */
     private $context;
 
-    public function __construct(PaymentMethodLangRepositoryInterface $multiLangRepository, Context $context)
+    public function __construct(PaymentMethodLangRepositoryInterface $paymentMethodLangRepository, Context $context)
     {
-        $this->multiLangRepository = $multiLangRepository;
+        $this->paymentMethodLangRepository = $paymentMethodLangRepository;
         $this->context = $context;
     }
 
@@ -39,13 +39,13 @@ class PaymentMethodLangService
             return;
         }
 
-        $obj = $this->multiLangRepository->findOneBy([
+        $paymentMethodLangObject = $this->paymentMethodLangRepository->findOneBy([
             'id_method' => $idPaymentMethod,
             'id_lang' => $langId,
             'id_shop' => $this->context->getShopId(),
         ]);
 
-        $multiLangObject = new \MolPaymentMethodLang(isset($obj) ? $obj->id : null);
+        $multiLangObject = new \MolPaymentMethodLang(isset($paymentMethodLangObject) ? $paymentMethodLangObject->id : null);
         $multiLangObject->id_lang = $langId;
         $multiLangObject->id_method = $idPaymentMethod;
         $multiLangObject->id_shop = $idShop;
@@ -55,7 +55,7 @@ class PaymentMethodLangService
 
     public function trans(string $idMethod): ?string
     {
-        return $this->multiLangRepository->getTextByLanguageAndMethod($this->context->getLanguageId(), $idMethod, $this->context->getShopId());
+        return $this->paymentMethodLangRepository->getTextByLanguageAndMethod($this->context->getLanguageId(), $idMethod, $this->context->getShopId());
     }
 
 
@@ -67,7 +67,7 @@ class PaymentMethodLangService
      */
     public function getTransList(string $idMethod): array
     {
-        $result = $this->multiLangRepository->getAllTranslationsByMethod($idMethod, $this->context->getShopId());
+        $result = $this->paymentMethodLangRepository->getAllTranslationsByMethod($idMethod, $this->context->getShopId());
 
         $mappedArray = [];
         foreach ($result as $value) {
