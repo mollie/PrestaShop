@@ -1,6 +1,12 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+
+## Changes in release 6.2.4 ##
++ Workflow improvements
++ Satispay payment method added
++ Pay by Bank payment method added
+
 ## Changes in release 6.2.3 ##
 + Multi shop improvements with order states
 + Logging improvements
