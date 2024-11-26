@@ -42,8 +42,8 @@ use Mollie\Api\Types\PaymentMethod;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
+use Mollie\Provider\PaymentMethodLangProvider;
 use Mollie\Service\LanguageService;
-use Mollie\Service\PaymentMethodLangService;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
@@ -83,8 +83,8 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
 
-    /** @var PaymentMethodLangService $multiLangService */
-    private $multiLangService;
+    /** @var PaymentMethodLangProvider $paymentMethodLangProvider */
+    private $paymentMethodLangProvider;
 
     public function __construct(
         Mollie $module,
@@ -93,7 +93,7 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
         PaymentFeeProviderInterface $paymentFeeProvider,
         LanguageService $languageService,
         OrderTotalProviderInterface $orderTotalProvider,
-        PaymentMethodLangService $multiLangService
+        PaymentMethodLangProvider $paymentMethodLangProvider
     ) {
         $this->module = $module;
         $this->context = $context;
@@ -101,7 +101,7 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
         $this->paymentFeeProvider = $paymentFeeProvider;
         $this->languageService = $languageService;
         $this->orderTotalProvider = $orderTotalProvider;
-        $this->multiLangService = $multiLangService;
+        $this->paymentMethodLangProvider = $paymentMethodLangProvider;
     }
 
     /**
@@ -112,7 +112,7 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
         $paymentOption = new PaymentOption();
 
         $paymentOption->setCallToActionText(
-            $this->multiLangService->trans($paymentMethod->id_method) ?: $paymentMethod->method_name
+            $this->paymentMethodLangProvider->trans($paymentMethod->id_method) ?: $paymentMethod->method_name
         );
 
         $paymentOption->setModuleName($this->module->name);

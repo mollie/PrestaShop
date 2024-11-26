@@ -26,6 +26,7 @@ use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\PaymentCollection;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieApiException;
+use Mollie\Provider\PaymentMethodLangProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
@@ -81,8 +82,8 @@ class ApiService implements ApiServiceInterface
     private $taxProvider;
     /** @var Context */
     private $context;
-    /** @var PaymentMethodLangService */
-    private $multiLangService;
+    /** @var PaymentMethodLangProvider */
+    private $paymentMethodLangProvider;
 
     public function __construct(
         PaymentMethodRepository $methodRepository,
@@ -93,7 +94,7 @@ class ApiService implements ApiServiceInterface
         Shop $shop,
         TaxCalculatorProvider $taxProvider,
         Context $context,
-        PaymentMethodLangService $multiLangService
+        PaymentMethodLangProvider $paymentMethodLangProvider
     ) {
         $this->countryRepository = $countryRepository;
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
@@ -104,7 +105,7 @@ class ApiService implements ApiServiceInterface
         $this->shop = $shop;
         $this->taxProvider = $taxProvider;
         $this->context = $context;
-        $this->multiLangService = $multiLangService;
+        $this->paymentMethodLangProvider = $paymentMethodLangProvider;
     }
 
     /**
@@ -235,7 +236,7 @@ class ApiService implements ApiServiceInterface
                 }
 
                 $methods[$apiMethod['id']] = $apiMethod;
-                $paymentMethod->method_name = $this->multiLangService->getTransList($apiMethod['id']);
+                $paymentMethod->method_name = $this->paymentMethodLangProvider->getTransList($apiMethod['id']);
                 $methods[$apiMethod['id']]['obj'] = $paymentMethod;
 
                 continue;
