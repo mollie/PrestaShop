@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
-use Mollie\Provider\PaymentMethodTranslationProvider;
 use Mollie\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
