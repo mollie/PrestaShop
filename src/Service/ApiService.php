@@ -29,6 +29,7 @@ use Mollie\Exception\MollieApiException;
 use Mollie\Provider\PaymentMethodTranslationProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\CountryRepository;
+use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\Utility\NumberUtility;
@@ -82,8 +83,8 @@ class ApiService implements ApiServiceInterface
     private $taxProvider;
     /** @var Context */
     private $context;
-    /** @var PaymentMethodTranslationProvider */
-    private $paymentMethodTranslationProvider;
+    /** @var PaymentMethodLangRepositoryInterface */
+    private $paymentMethodLangRepository;
 
     public function __construct(
         PaymentMethodRepository $methodRepository,
@@ -94,7 +95,7 @@ class ApiService implements ApiServiceInterface
         Shop $shop,
         TaxCalculatorProvider $taxProvider,
         Context $context,
-        PaymentMethodTranslationProvider $paymentMethodTranslationProvider
+        PaymentMethodLangRepositoryInterface $paymentMethodLangRepository
     ) {
         $this->countryRepository = $countryRepository;
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
@@ -105,7 +106,7 @@ class ApiService implements ApiServiceInterface
         $this->shop = $shop;
         $this->taxProvider = $taxProvider;
         $this->context = $context;
-        $this->paymentMethodTranslationProvider = $paymentMethodTranslationProvider;
+        $this->paymentMethodLangRepository = $paymentMethodLangRepository;
     }
 
     /**
@@ -235,8 +236,18 @@ class ApiService implements ApiServiceInterface
                     );
                 }
 
+                $result = $this->paymentMethodLangRepository->findAllBy([
+                    'id_method' => $apiMethod['id'],
+                    'id_shop' => $this->context->getShopId()
+                ]);
+
+                $mappedMethodTitles = [];
+                foreach ($result->getResults() as $value) {
+                    $mappedMethodTitles[$value->id_lang] = $value->text;
+                }
+
                 $methods[$apiMethod['id']] = $apiMethod;
-                $paymentMethod->method_name = $this->paymentMethodTranslationProvider->getTransList($apiMethod['id']);
+                $paymentMethod->method_name = $mappedMethodTitles;
                 $methods[$apiMethod['id']]['obj'] = $paymentMethod;
 
                 continue;
