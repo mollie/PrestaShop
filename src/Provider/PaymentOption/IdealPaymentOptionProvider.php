@@ -42,7 +42,6 @@ use Mollie\Adapter\LegacyContext;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
-use Mollie\Provider\PaymentMethodTranslationProvider;
 use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\LanguageService;
@@ -89,8 +88,6 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
     private $languageService;
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
-    /** @var PaymentMethodTranslationProvider $paymentMethodTranslationProvider */
-    private $paymentMethodTranslationProvider;
 
     public function __construct(
         Mollie $module,
@@ -99,8 +96,7 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         PaymentFeeProviderInterface $paymentFeeProvider,
         TemplateParserInterface $templateParser,
         LanguageService $languageService,
-        OrderTotalProviderInterface $orderTotalProvider,
-        PaymentMethodTranslationProvider $paymentMethodTranslationProvider
+        OrderTotalProviderInterface $orderTotalProvider
     ) {
         $this->module = $module;
         $this->context = $context;
@@ -109,7 +105,6 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         $this->templateParser = $templateParser;
         $this->languageService = $languageService;
         $this->orderTotalProvider = $orderTotalProvider;
-        $this->paymentMethodTranslationProvider = $paymentMethodTranslationProvider;
     }
 
     /**

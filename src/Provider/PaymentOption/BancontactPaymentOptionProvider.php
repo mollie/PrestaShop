@@ -43,7 +43,6 @@ use Mollie\Api\Types\PaymentMethod;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
-use Mollie\Provider\PaymentMethodTranslationProvider;
 use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Service\LanguageService;
 use MolPaymentMethod;
@@ -82,11 +81,9 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
      * @var LanguageService
      */
     private $languageService;
+
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
-
-    /** @var PaymentMethodTranslationProvider $paymentMethodTranslationProvider */
-    private $paymentMethodTranslationProvider;
 
     public function __construct(
         Mollie $module,
@@ -94,8 +91,7 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
         CreditCardLogoProvider $creditCardLogoProvider,
         PaymentFeeProviderInterface $paymentFeeProvider,
         LanguageService $languageService,
-        OrderTotalProviderInterface $orderTotalProvider,
-        PaymentMethodTranslationProvider $paymentMethodTranslationProvider
+        OrderTotalProviderInterface $orderTotalProvider
     ) {
         $this->module = $module;
         $this->context = $context;
@@ -103,7 +99,6 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
         $this->paymentFeeProvider = $paymentFeeProvider;
         $this->languageService = $languageService;
         $this->orderTotalProvider = $orderTotalProvider;
-        $this->paymentMethodTranslationProvider = $paymentMethodTranslationProvider;
     }
 
     /**

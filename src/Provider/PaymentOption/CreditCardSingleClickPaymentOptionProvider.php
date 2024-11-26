@@ -45,7 +45,6 @@ use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
-use Mollie\Provider\PaymentMethodTranslationProvider;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Service\LanguageService;
@@ -111,8 +110,7 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         LanguageService $languageService,
         MolCustomerRepository $customerRepository,
         Mollie\Adapter\Customer $customer,
-        ConfigurationAdapter $configurationAdapter,
-        PaymentMethodTranslationProvider $paymentMethodTranslationProvider
+        ConfigurationAdapter $configurationAdapter
     ) {
         $this->module = $module;
         $this->context = $context;
@@ -123,7 +121,6 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         $this->customerRepository = $customerRepository;
         $this->customer = $customer;
         $this->configurationAdapter = $configurationAdapter;
-        $this->paymentMethodTranslationProvider = $paymentMethodTranslationProvider;
     }
 
     /**

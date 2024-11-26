@@ -82,10 +82,9 @@ class BasePaymentOptionProvider implements PaymentOptionProviderInterface
      * @var LanguageService
      */
     private $languageService;
+
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
-    /** @var PaymentMethodTranslationProvider $paymentMethodTranslationProvider */
-    private $paymentMethodTranslationProvider;
 
     public function __construct(
         Mollie $module,
@@ -93,8 +92,7 @@ class BasePaymentOptionProvider implements PaymentOptionProviderInterface
         CreditCardLogoProvider $creditCardLogoProvider,
         PaymentFeeProviderInterface $paymentFeeProvider,
         LanguageService $languageService,
-        OrderTotalProviderInterface $orderTotalProvider,
-        PaymentMethodTranslationProvider $paymentMethodTranslationProvider
+        OrderTotalProviderInterface $orderTotalProvider
     ) {
         $this->module = $module;
         $this->context = $context;
@@ -102,7 +100,6 @@ class BasePaymentOptionProvider implements PaymentOptionProviderInterface
         $this->paymentFeeProvider = $paymentFeeProvider;
         $this->languageService = $languageService;
         $this->orderTotalProvider = $orderTotalProvider;
-        $this->paymentMethodTranslationProvider = $paymentMethodTranslationProvider;
     }
 
     /**
