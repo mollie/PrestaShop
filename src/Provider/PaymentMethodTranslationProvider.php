@@ -35,7 +35,13 @@ class PaymentMethodTranslationProvider
 
     public function trans(string $idMethod): ?string
     {
-        return $this->paymentMethodLangRepository->getTextByLanguageAndMethod($this->context->getLanguageId(), $idMethod, $this->context->getShopId());
+        $result = $this->paymentMethodLangRepository->findOneBy([
+            'id_method' => $idMethod,
+            'id_lang' => $this->context->getLanguageId(),
+            'id_shop' => $this->context->getShopId()
+        ]);
+
+        return $result->text;
     }
 
 
@@ -47,11 +53,14 @@ class PaymentMethodTranslationProvider
      */
     public function getTransList(string $idMethod): array
     {
-        $result = $this->paymentMethodLangRepository->getAllTranslationsByMethod($idMethod, $this->context->getShopId());
+        $result = $this->paymentMethodLangRepository->findAllBy([
+            'id_method' => $idMethod,
+            'id_shop' => $this->context->getShopId()
+        ]);
 
         $mappedArray = [];
-        foreach ($result as $value) {
-            $mappedArray[$value['id_lang']] = $value['text'];
+        foreach ($result->getResults() as $value) {
+            $mappedArray[$value->id_lang] = $value->text;
         }
 
         return $mappedArray;
