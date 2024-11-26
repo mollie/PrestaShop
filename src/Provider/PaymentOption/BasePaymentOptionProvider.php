@@ -82,7 +82,7 @@ class BasePaymentOptionProvider implements PaymentOptionProviderInterface
     private $languageService;
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
-    /** @var PaymentMethodLangService $paymentMethodLangProvider */
+    /** @var PaymentMethodLangProvider $paymentMethodLangProvider */
     private $paymentMethodLangProvider;
 
     public function __construct(
