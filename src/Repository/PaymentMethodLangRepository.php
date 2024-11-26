@@ -25,29 +25,6 @@ class PaymentMethodLangRepository extends AbstractRepository implements PaymentM
         parent::__construct(\MolPaymentMethodLang::class);
     }
 
-    public function getTextByLanguageAndMethod(int $idLanguage, string $idMethod, int $idShop): ?string
-    {
-        $sql = new \DbQuery();
-        $sql->select('`text`');
-        $sql->from('mol_payment_method_lang');
-        $sql->where('`id_method` = "' . pSQL($idMethod) . '"');
-        $sql->where('`id_lang` = ' . $idLanguage);
-        $sql->where('`id_shop` = ' . $idShop);
-
-        return \Db::getInstance()->getValue($sql) ?: null;
-    }
-
-    public function getAllTranslationsByMethod(string $idPaymentMethod, int $idShop): array
-    {
-        $sql = new \DbQuery();
-        $sql->select('`id_lang`, `text`');
-        $sql->from('mol_payment_method_lang');
-        $sql->where('`id_method` = "' . pSQL($idPaymentMethod) . '"');
-        $sql->where('`id_shop` = ' . $idShop);
-
-        return \Db::getInstance()->executeS($sql) ?? [];
-    }
-
     public function savePaymentTitleTranslation(string $idPaymentMethod, int $langId, string $translation, int $idShop)
     {
         if (empty($translation)) {

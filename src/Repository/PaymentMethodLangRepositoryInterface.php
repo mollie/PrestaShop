@@ -20,20 +20,5 @@ if (!defined('_PS_VERSION_')) {
 
 interface PaymentMethodLangRepositoryInterface extends ReadOnlyRepositoryInterface
 {
-
-    /**
-     * Gets translated text by language and method id
-     */
-    public function getTextByLanguageAndMethod(int $idLanguage, string $idMethod, int $idShop): ?string;
-
-    /**
-     * Gets all translations for a payment method title
-     *
-     * @param string $idPaymentMethod
-     * @param int $idShop
-     * @return array [id_lang => text] for instance: [74 => 'Apelo Pay', 68 => 'Apella Pia']
-     */
-    public function getAllTranslationsByMethod(string $idPaymentMethod, int $idShop): array;
-
     public function savePaymentTitleTranslation(string $idPaymentMethod, int $langId, string $translation, int $idShop);
 }
