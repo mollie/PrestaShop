@@ -20,5 +20,5 @@ if (!defined('_PS_VERSION_')) {
 
 interface PaymentMethodLangRepositoryInterface extends ReadOnlyRepositoryInterface
 {
-    public function savePaymentTitleTranslation(string $idPaymentMethod, int $langId, string $translation, int $idShop);
+    public function savePaymentTitleTranslation(string $idPaymentMethod, int $langId, string $translation, int $idShop): bool;
 }
