@@ -36,16 +36,14 @@
 
 namespace Mollie\Provider\PaymentOption;
 
-use KlarnaPayment\Module\Infrastructure\Context\GlobalShopContext;
 use Mollie;
+use Mollie\Adapter\Context;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
-use Mollie\Provider\PaymentMethodTranslationProvider;
 use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Service\LanguageService;
-use Mollie\Service\PaymentMethodLangService;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
@@ -109,16 +107,16 @@ class BasePaymentOptionProvider implements PaymentOptionProviderInterface
     {
         $paymentOption = new PaymentOption();
 
-        /** @var GlobalShopContext $globalShopContext */
-        $globalShopContext = $this->module->getService(GlobalShopContext::class);
+        /** @var Context $shopContext */
+        $shopContext = $this->module->getService(Context::class);
 
         /** @var PaymentMethodLangRepositoryInterface $paymentMethodLangRepository */
         $paymentMethodLangRepository = $this->module->getService(PaymentMethodLangRepositoryInterface::class);
 
         $paymentMethodLangObject = $paymentMethodLangRepository->findOneBy([
             'id_method' => $paymentMethod->id_method,
-            'id_lang' => $globalShopContext->getLanguageId(),
-            'id_shop' => $globalShopContext->getShopId(),
+            'id_lang' => $shopContext->getLanguageId(),
+            'id_shop' => $shopContext->getShopId(),
         ]);
 
         $paymentOption->setCallToActionText(

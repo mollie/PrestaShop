@@ -36,10 +36,10 @@
 
 namespace Mollie\Provider\PaymentOption;
 
-use KlarnaPayment\Module\Infrastructure\Context\GlobalShopContext;
 use MolCustomer;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\Context;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
@@ -98,8 +98,6 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
     private $customer;
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
-    /** @var PaymentMethodTranslationProvider $paymentMethodTranslationProvider */
-    private $paymentMethodTranslationProvider;
 
     public function __construct(
         Mollie $module,
@@ -130,16 +128,16 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
     {
         $paymentOption = new PaymentOption();
 
-        /** @var GlobalShopContext $globalShopContext */
-        $globalShopContext = $this->module->getService(GlobalShopContext::class);
+        /** @var Context $shopContext */
+        $shopContext = $this->module->getService(Context::class);
 
         /** @var PaymentMethodLangRepositoryInterface $paymentMethodLangRepository */
         $paymentMethodLangRepository = $this->module->getService(PaymentMethodLangRepositoryInterface::class);
 
         $paymentMethodLangObject = $paymentMethodLangRepository->findOneBy([
             'id_method' => $paymentMethod->id_method,
-            'id_lang' => $globalShopContext->getLanguageId(),
-            'id_shop' => $globalShopContext->getShopId(),
+            'id_lang' => $shopContext->getLanguageId(),
+            'id_shop' => $shopContext->getShopId(),
         ]);
 
         $paymentOption->setCallToActionText(
