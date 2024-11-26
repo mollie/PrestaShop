@@ -66,7 +66,6 @@ final class DatabaseTableInstaller implements InstallerInterface
 				`id_method`  VARCHAR(64) NOT NULL,
 				`method_name`  VARCHAR(64) NOT NULL,
 				`enabled`       TINYINT(1),
-				`title`      VARCHAR(64),
 				`method` VARCHAR(64),
 				`description` VARCHAR(255),
 				`is_countries_applicable` TINYINT(1),
