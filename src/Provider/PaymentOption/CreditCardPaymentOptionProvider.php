@@ -100,8 +100,8 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
     private $customerRepository;
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
-    /** @var PaymentMethodTranslationProvider $paymentMethodLangProvider */
-    private $paymentMethodLangProvider;
+    /** @var PaymentMethodTranslationProvider $paymentMethodTranslationProvider */
+    private $paymentMethodTranslationProvider;
 
     public function __construct(
         LegacyContext $context,
@@ -113,7 +113,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         MolCustomerRepository $customerRepository,
         Mollie $module,
         ConfigurationAdapter $configurationAdapter,
-        PaymentMethodTranslationProvider $paymentMethodLangProvider
+        PaymentMethodTranslationProvider $paymentMethodTranslationProvider
     ) {
         $this->context = $context;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
@@ -124,7 +124,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         $this->customerRepository = $customerRepository;
         $this->module = $module;
         $this->configurationAdapter = $configurationAdapter;
-        $this->paymentMethodLangProvider = $paymentMethodLangProvider;
+        $this->paymentMethodTranslationProvider = $paymentMethodTranslationProvider;
     }
 
     /**
@@ -135,7 +135,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         $paymentOption = new PaymentOption();
 
         $paymentOption->setCallToActionText(
-            $this->paymentMethodLangProvider->trans($paymentMethod->id_method) ?: $paymentMethod->method_name
+            $this->paymentMethodTranslationProvider->trans($paymentMethod->id_method) ?: $paymentMethod->method_name
         );
 
         $paymentOption->setModuleName($this->module->name);

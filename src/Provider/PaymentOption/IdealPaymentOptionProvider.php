@@ -87,8 +87,8 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
     private $languageService;
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
-    /** @var PaymentMethodTranslationProvider $paymentMethodLangProvider */
-    private $paymentMethodLangProvider;
+    /** @var PaymentMethodTranslationProvider $paymentMethodTranslationProvider */
+    private $paymentMethodTranslationProvider;
 
     public function __construct(
         Mollie $module,
@@ -98,7 +98,7 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         TemplateParserInterface $templateParser,
         LanguageService $languageService,
         OrderTotalProviderInterface $orderTotalProvider,
-        PaymentMethodTranslationProvider $paymentMethodLangProvider
+        PaymentMethodTranslationProvider $paymentMethodTranslationProvider
     ) {
         $this->module = $module;
         $this->context = $context;
@@ -107,7 +107,7 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         $this->templateParser = $templateParser;
         $this->languageService = $languageService;
         $this->orderTotalProvider = $orderTotalProvider;
-        $this->paymentMethodLangProvider = $paymentMethodLangProvider;
+        $this->paymentMethodTranslationProvider = $paymentMethodTranslationProvider;
     }
 
     /**
@@ -118,7 +118,7 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         $paymentOption = new PaymentOption();
 
         $paymentOption->setCallToActionText(
-            $this->paymentMethodLangProvider->trans($paymentMethod->id_method) ?: $paymentMethod->method_name
+            $this->paymentMethodTranslationProvider->trans($paymentMethod->id_method) ?: $paymentMethod->method_name
         );
 
         $paymentOption->setModuleName($this->module->name);

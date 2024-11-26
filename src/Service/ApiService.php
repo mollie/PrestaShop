@@ -83,7 +83,7 @@ class ApiService implements ApiServiceInterface
     /** @var Context */
     private $context;
     /** @var PaymentMethodTranslationProvider */
-    private $paymentMethodLangProvider;
+    private $paymentMethodTranslationProvider;
 
     public function __construct(
         PaymentMethodRepository $methodRepository,
@@ -94,7 +94,7 @@ class ApiService implements ApiServiceInterface
         Shop $shop,
         TaxCalculatorProvider $taxProvider,
         Context $context,
-        PaymentMethodTranslationProvider $paymentMethodLangProvider
+        PaymentMethodTranslationProvider $paymentMethodTranslationProvider
     ) {
         $this->countryRepository = $countryRepository;
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
@@ -105,7 +105,7 @@ class ApiService implements ApiServiceInterface
         $this->shop = $shop;
         $this->taxProvider = $taxProvider;
         $this->context = $context;
-        $this->paymentMethodLangProvider = $paymentMethodLangProvider;
+        $this->paymentMethodTranslationProvider = $paymentMethodTranslationProvider;
     }
 
     /**
@@ -236,7 +236,7 @@ class ApiService implements ApiServiceInterface
                 }
 
                 $methods[$apiMethod['id']] = $apiMethod;
-                $paymentMethod->method_name = $this->paymentMethodLangProvider->getTransList($apiMethod['id']);
+                $paymentMethod->method_name = $this->paymentMethodTranslationProvider->getTransList($apiMethod['id']);
                 $methods[$apiMethod['id']]['obj'] = $paymentMethod;
 
                 continue;
