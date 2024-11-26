@@ -26,7 +26,7 @@ use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\PaymentCollection;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieApiException;
-use Mollie\Provider\PaymentMethodLangProvider;
+use Mollie\Provider\PaymentMethodTranslationProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepository;
@@ -82,7 +82,7 @@ class ApiService implements ApiServiceInterface
     private $taxProvider;
     /** @var Context */
     private $context;
-    /** @var PaymentMethodLangProvider */
+    /** @var PaymentMethodTranslationProvider */
     private $paymentMethodLangProvider;
 
     public function __construct(
@@ -94,7 +94,7 @@ class ApiService implements ApiServiceInterface
         Shop $shop,
         TaxCalculatorProvider $taxProvider,
         Context $context,
-        PaymentMethodLangProvider $paymentMethodLangProvider
+        PaymentMethodTranslationProvider $paymentMethodLangProvider
     ) {
         $this->countryRepository = $countryRepository;
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;

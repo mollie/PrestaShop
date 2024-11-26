@@ -19,7 +19,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class PaymentMethodLangProvider
+class PaymentMethodTranslationProvider
 {
     /** @var PaymentMethodLangRepositoryInterface */
     private $paymentMethodLangRepository;
