@@ -31,7 +31,7 @@ function upgrade_module_6_2_5(Mollie $module): bool
     }
 
     try {
-        deleteAndUpdatePaymentMethodTitles();
+        updatePaymentMethodTitles();
     } catch (Exception $e) {
         return false;
     }
@@ -41,7 +41,7 @@ function upgrade_module_6_2_5(Mollie $module): bool
     return Db::getInstance()->execute($sql);
 }
 
-function deleteAndUpdatePaymentMethodTitles() {
+function updatePaymentMethodTitles() {
     $sql = 'SELECT `id_method`, `title` FROM `' . _DB_PREFIX_ . 'mol_payment_method`';
 
     $methodsList = \Db::getInstance()->executeS($sql);
