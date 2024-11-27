@@ -128,16 +128,16 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
     {
         $paymentOption = new PaymentOption();
 
-        /** @var Context $shopContext */
-        $shopContext = $this->module->getService(Context::class);
+        /** @var Context $context */
+        $context = $this->module->getService(Context::class);
 
         /** @var PaymentMethodLangRepositoryInterface $paymentMethodLangRepository */
         $paymentMethodLangRepository = $this->module->getService(PaymentMethodLangRepositoryInterface::class);
 
         $paymentMethodLangObject = $paymentMethodLangRepository->findOneBy([
             'id_method' => $paymentMethod->id_method,
-            'id_lang' => $shopContext->getLanguageId(),
-            'id_shop' => $shopContext->getShopId(),
+            'id_lang' => $context->getLanguageId(),
+            'id_shop' => $context->getShopId(),
         ]);
 
         $paymentOption->setCallToActionText(
