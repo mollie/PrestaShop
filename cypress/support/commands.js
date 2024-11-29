@@ -59,7 +59,7 @@ Cypress.Commands.add("ConfOrdersAPI1784", () => {
   })
 Cypress.Commands.add("ConfPaymentsAPI1784", () => {
 
-  const paymentMethods = ["giropay", "eps", "przelewy24", "kbc", "belfius", "bancontact", "creditcard", "ideal", "banktransfer", "paypal", "applepay", "twint", "blik", "bancomatpay", "alma"];
+  const paymentMethods = ["eps", "przelewy24", "kbc", "belfius", "bancontact", "creditcard", "ideal", "banktransfer", "paypal", "applepay", "twint", "blik", "bancomatpay", "alma"];
 
   // Iterate through the paymentMethods array using forEach
   paymentMethods.forEach(method => {
