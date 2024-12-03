@@ -23,7 +23,7 @@ use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Repository\LanguageRepository;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use Psr\Log\LogLevel;
+use Mollie\Vendor\Psr\Log\LogLevel;
 use Validate;
 
 if (!defined('_PS_VERSION_')) {
