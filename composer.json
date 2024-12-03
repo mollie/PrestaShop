@@ -41,7 +41,8 @@
         "psr-4": {
             "Mollie\\": "src/",
             "Mollie\\Subscription\\": "subscription/",
-            "Mollie\\Shared\\": "shared/"
+            "Mollie\\Shared\\": "shared/",
+            "Mollie\\Vendor\\Psr\\Container\\": "vendor\/psr\/container\/src\/"
         },
         "classmap": [
             "mollie.php",
