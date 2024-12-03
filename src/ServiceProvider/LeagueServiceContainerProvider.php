@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Mollie\ServiceProvider;
 
-use League\Container\Container;
-use League\Container\ReflectionContainer;
+use Mollie\Vendor\League\Container\Container;
+use Mollie\Vendor\League\Container\ReflectionContainer;
 
 if (!defined('_PS_VERSION_')) {
     exit;
