@@ -42,7 +42,8 @@
             "Mollie\\": "src/",
             "Mollie\\Subscription\\": "subscription/",
             "Mollie\\Shared\\": "shared/",
-            "Mollie\\Vendor\\Psr\\Container\\": "vendor\/psr\/container\/src\/"
+            "Mollie\\Vendor\\Psr\\Container\\": "vendor\/psr\/container\/src\/",
+            "Mollie\\Vendor\\League\\Container\\": "vendor\/league\/container\/src\/"
         },
         "classmap": [
             "mollie.php",

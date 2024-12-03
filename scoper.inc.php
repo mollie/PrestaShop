@@ -26,6 +26,19 @@ return [
                 'vendor-bin',
                 'console',
             ])
+            ->in('vendor/league'),
+        Finder::create()
+            ->files()
+            ->ignoreVCS(true)
+            ->notName('/LICENSE|.*\\.md|.*\\.dist|Makefile|composer\\.json|composer\\.lock/')
+            ->exclude([
+                'test',
+                'test_old',
+                'tests',
+                'Tests',
+                'vendor-bin',
+                'console',
+            ])
             ->in('vendor/psr'),
         Finder::create()->append([
             'composer.json',

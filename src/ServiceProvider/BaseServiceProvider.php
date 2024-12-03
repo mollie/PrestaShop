@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Mollie\ServiceProvider;
 
-use League\Container\Container;
+use Mollie\Vendor\League\Container\Container;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
