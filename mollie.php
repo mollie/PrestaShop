@@ -26,6 +26,7 @@ use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
+use Mollie\Subscription\Config\Config as SubscriptionConfig;
 use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
 use Mollie\Subscription\Handler\UpdateSubscriptionCarrierHandler;
 use Mollie\Subscription\Install\AttributeInstaller;
@@ -1121,6 +1122,20 @@ class Mollie extends PaymentModule
     public function hookActionAjaxDieCartControllerDisplayAjaxUpdateBefore(array $params): void
     {
         if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.7.0')) {
+            return;
+        }
+
+        $isSubscriptionEnabled = Configuration::get(Config::MOLLIE_SUBSCRIPTION_ENABLED);
+
+        $groups = Tools::getValue('group');
+        if (!(bool) $isSubscriptionEnabled || !is_array($groups)) {
+            return;
+        }
+
+        $subscriptionGroup = Configuration::get(SubscriptionConfig::SUBSCRIPTION_ATTRIBUTE_GROUP);
+
+        // Note: groups = ['attribute_group_id => 'attribute_id']
+        if (!array_key_exists($subscriptionGroup, $groups)) {
             return;
         }
 
