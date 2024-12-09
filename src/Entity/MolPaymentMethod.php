@@ -33,11 +33,6 @@ class MolPaymentMethod extends ObjectModel
     /**
      * @var string
      */
-    public $title;
-
-    /**
-     * @var string
-     */
     public $method;
 
     /**
@@ -123,7 +118,6 @@ class MolPaymentMethod extends ObjectModel
             'id_method' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'method_name' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'enabled' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
-            'title' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'method' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'description' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'is_countries_applicable' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
