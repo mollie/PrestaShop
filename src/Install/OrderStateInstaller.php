@@ -206,7 +206,7 @@ class OrderStateInstaller implements InstallerInterface
     {
         $shops = \Shop::getShops();
         foreach ($shops as $shop) {
-            $this->configurationAdapter->updateValue($key, (int) $orderState->id, false, null, (int) $shop['id_shop']);
+            $this->configurationAdapter->updateValue($key, (int) $orderState->id, (int) $shop['id_shop']);
         }
     }
 }
