@@ -19,6 +19,10 @@ use Mollie\Service\EntityManager\EntityManagerInterface;
 use Mollie\Service\EntityManager\ObjectModelUnitOfWork;
 use Mollie\Utility\NumberIdempotencyProvider;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class Logger implements LoggerInterface
 {
     public const FILE_NAME = 'Logger';

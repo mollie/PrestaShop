@@ -66,7 +66,6 @@ final class DatabaseTableInstaller implements InstallerInterface
 				`id_method`  VARCHAR(64) NOT NULL,
 				`method_name`  VARCHAR(64) NOT NULL,
 				`enabled`       TINYINT(1),
-				`title`      VARCHAR(64),
 				`method` VARCHAR(64),
 				`description` VARCHAR(255),
 				`is_countries_applicable` TINYINT(1),
@@ -149,6 +148,16 @@ final class DatabaseTableInstaller implements InstallerInterface
                 `date_add` DATETIME NOT NULL,
                 INDEX (`id_log`),
                 INDEX (`id_shop`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
+
+        $sql[] = '
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_payment_method_lang` (
+                `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                `id_method` VARCHAR(64) NOT NULL,
+                `id_lang` INT(11),
+                `id_shop` INT(11),
+                `text` TINYTEXT,
+                INDEX (`id_method`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
         return $sql;
