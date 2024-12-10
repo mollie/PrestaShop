@@ -107,6 +107,10 @@ class MolPaymentMethod extends ObjectModel
      * @var int
      */
     public $id_shop;
+    /**
+     * @var array
+     */
+    public $titles;
 
     /**
      * @var array

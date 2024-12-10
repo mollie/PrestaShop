@@ -51,6 +51,7 @@ use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Service\LanguageService;
 use Mollie\Utility\CustomerUtility;
 use MolPaymentMethod;
+use MolPaymentMethodLang;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
 
@@ -137,14 +138,15 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         /** @var PaymentMethodLangRepositoryInterface $paymentMethodLangRepository */
         $paymentMethodLangRepository = $this->module->getService(PaymentMethodLangRepositoryInterface::class);
 
-        $paymentMethodLangObject = $paymentMethodLangRepository->findOneBy([
+        /** @var MolPaymentMethodLang $molPaymentMethodLang */
+        $molPaymentMethodLang = $paymentMethodLangRepository->findOneBy([
             'id_method' => $paymentMethod->id_method,
             'id_lang' => $context->getLanguageId(),
             'id_shop' => $context->getShopId(),
         ]);
 
         $paymentOption->setCallToActionText(
-            $paymentMethodLangObject->text ?: $paymentMethod->method_name
+            $molPaymentMethodLang->text ?: $paymentMethod->method_name
         );
 
         $paymentOption->setModuleName($this->module->name);

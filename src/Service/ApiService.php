@@ -26,7 +26,6 @@ use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\PaymentCollection;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieApiException;
-use Mollie\Provider\PaymentMethodTranslationProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodLangRepositoryInterface;
@@ -238,7 +237,7 @@ class ApiService implements ApiServiceInterface
 
                 $result = $this->paymentMethodLangRepository->findAllBy([
                     'id_method' => $apiMethod['id'],
-                    'id_shop' => $this->context->getShopId()
+                    'id_shop' => $this->context->getShopId(),
                 ]);
 
                 $mappedMethodTitles = [];
@@ -246,8 +245,9 @@ class ApiService implements ApiServiceInterface
                     $mappedMethodTitles[$value->id_lang] = $value->text;
                 }
 
+                $paymentMethod->method_name = $apiMethod['name'];
+                $paymentMethod->titles = $mappedMethodTitles;
                 $methods[$apiMethod['id']] = $apiMethod;
-                $paymentMethod->method_name = $mappedMethodTitles;
                 $methods[$apiMethod['id']]['obj'] = $paymentMethod;
 
                 continue;
@@ -255,8 +255,19 @@ class ApiService implements ApiServiceInterface
 
             $defaultPaymentMethod = clone $emptyPaymentMethod;
 
+            $result = $this->paymentMethodLangRepository->findAllBy([
+                'id_method' => $apiMethod['id'],
+                'id_shop' => $this->context->getShopId(),
+            ]);
+
+            $mappedMethodTitles = [];
+            foreach ($result->getResults() as $value) {
+                $mappedMethodTitles[$value->id_lang] = $value->text;
+            }
+
             $defaultPaymentMethod->id_method = $apiMethod['id'];
             $defaultPaymentMethod->method_name = $apiMethod['name'];
+            $defaultPaymentMethod->titles = $mappedMethodTitles;
 
             $methods[$apiMethod['id']] = $apiMethod;
             $methods[$apiMethod['id']]['obj'] = $defaultPaymentMethod;

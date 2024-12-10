@@ -181,7 +181,7 @@
                                         <div class="translatable-field lang-{$language.id_lang|escape:'html':'UTF-8'}" {if $language.id_lang != $defaultFormLanguage}style="display:none"{/if}>
                                         <div class="col-lg-4">
                                     {/if}
-                                    <input type="text" name="MOLLIE_METHOD_TITLE_{$paymentMethod.id|escape:'html':'UTF-8'}[{$language.id_lang}]" value="{$methodObj->method_name[$language.id_lang]|default:$paymentMethod.name|escape:'html':'UTF-8'}">
+                                    <input type="text" name="MOLLIE_METHOD_TITLE_{$paymentMethod.id|escape:'html':'UTF-8'}[{$language.id_lang}]" value="{$methodObj->titles[$language.id_lang]|default:$paymentMethod.name|escape:'html':'UTF-8'}">
                                     {if $languages|count > 1}
                                         </div>
                                         <div class="col-lg-2">
@@ -406,7 +406,7 @@
                                        name="MOLLIE_METHOD_MAX_AMOUNT_{$paymentMethod.id|escape:'html':'UTF-8'}"
                                        class="fixed-width-xl"
                                         {if $paymentMethod.maximumAmount != false } max='{$paymentMethod.maximumAmount.value|escape:'html':'UTF-8'}' {/if}
-                                       value="{if $methodObj->max_amount == 0}{($paymentMethod.maximumAmount|escape:'html':'UTF-8') ? $paymentMethod.maximumAmount.value : ''}{else}{$methodObj->max_amount|escape:'html':'UTF-8'}{/if}">
+                                       value="{if $methodObj->max_amount == 0}{($paymentMethod.maximumAmount) ? $paymentMethod.maximumAmount.value : ''}{else}{$methodObj->max_amount|escape:'html':'UTF-8'}{/if}">
                                 <p class="help-block">
                                     {if $paymentMethod.maximumAmount == false}
                                         {l s='Default max amount has no limitation' mod='mollie'}

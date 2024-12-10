@@ -185,7 +185,7 @@ class PaymentMethodService
 
         $paymentMethod->save();
 
-        foreach(Tools::getValue(Config::MOLLIE_METHOD_TITLE . $method['id']) as $idLang => $title) {
+        foreach (Tools::getValue(Config::MOLLIE_METHOD_TITLE . $method['id']) as $idLang => $title) {
             $this->paymentMethodLangRepository->savePaymentTitleTranslation($method['id'], $idLang, $title, $this->context->getShopId());
         }
 
