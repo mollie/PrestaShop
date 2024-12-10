@@ -15,6 +15,10 @@ namespace Mollie\Shared\Infrastructure\Exception;
 use Mollie\Exception\Code\ExceptionCode;
 use Mollie\Exception\MollieException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class MollieDatabaseException extends MollieException
 {
     public static function failedToFindRecord(string $className, array $keyValues): self

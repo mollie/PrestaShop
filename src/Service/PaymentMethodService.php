@@ -40,6 +40,7 @@ use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Provider\PhoneNumberProviderInterface;
 use Mollie\Repository\GenderRepositoryInterface;
+use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
@@ -74,11 +75,6 @@ class PaymentMethodService
      * @var CartLinesService
      */
     private $cartLinesService;
-
-    /**
-     * @var PaymentsTranslationService
-     */
-    private $paymentsTranslationService;
 
     /**
      * @var CustomerService
@@ -116,12 +112,13 @@ class PaymentMethodService
     private $context;
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
+    /** @var PaymentMethodLangRepositoryInterface */
+    private $paymentMethodLangRepository;
 
     public function __construct(
         Mollie $module,
         PaymentMethodRepositoryInterface $methodRepository,
         CartLinesService $cartLinesService,
-        PaymentsTranslationService $paymentsTranslationService,
         CustomerService $customerService,
         CreditCardLogoProvider $creditCardLogoProvider,
         PaymentMethodSortProviderInterface $paymentMethodSortProvider,
@@ -134,12 +131,12 @@ class PaymentMethodService
         GenderRepositoryInterface $genderRepository,
         PaymentFeeProviderInterface $paymentFeeProvider,
         Context $context,
-        OrderTotalProviderInterface $orderTotalProvider
+        OrderTotalProviderInterface $orderTotalProvider,
+        PaymentMethodLangRepositoryInterface $paymentMethodLangRepository
     ) {
         $this->module = $module;
         $this->methodRepository = $methodRepository;
         $this->cartLinesService = $cartLinesService;
-        $this->paymentsTranslationService = $paymentsTranslationService;
         $this->customerService = $customerService;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
@@ -153,6 +150,7 @@ class PaymentMethodService
         $this->paymentFeeProvider = $paymentFeeProvider;
         $this->context = $context;
         $this->orderTotalProvider = $orderTotalProvider;
+        $this->paymentMethodLangRepository = $paymentMethodLangRepository;
     }
 
     public function savePaymentMethod($method)
@@ -167,7 +165,6 @@ class PaymentMethodService
         $paymentMethod->id_method = $method['id'];
         $paymentMethod->method_name = $method['name'];
         $paymentMethod->enabled = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_ENABLED . $method['id']);
-        $paymentMethod->title = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_TITLE . $method['id']);
         $paymentMethod->method = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_API . $method['id']);
         $paymentMethod->description = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_DESCRIPTION . $method['id']);
         $paymentMethod->is_countries_applicable = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_APPLICABLE_COUNTRIES . $method['id']);
@@ -187,6 +184,10 @@ class PaymentMethodService
         $paymentMethod->max_amount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_AMOUNT . $method['id']);
 
         $paymentMethod->save();
+
+        foreach(Tools::getValue(Config::MOLLIE_METHOD_TITLE . $method['id']) as $idLang => $title) {
+            $this->paymentMethodLangRepository->savePaymentTitleTranslation($method['id'], $idLang, $title, $this->context->getShopId());
+        }
 
         return $paymentMethod;
     }
@@ -246,7 +247,6 @@ class PaymentMethodService
             }
         }
 
-        $methods = $this->paymentsTranslationService->getTranslatedPaymentMethods($methods);
         $methods = $this->paymentMethodSortProvider->getSortedInAscendingWayForCheckout($methods);
 
         return $methods;

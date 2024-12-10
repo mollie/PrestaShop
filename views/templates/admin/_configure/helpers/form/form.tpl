@@ -34,7 +34,7 @@
                         </td>
                         <td>
                             <div class="icon2"></div>
-                            <a href="https://www.invertus.eu/contacts/"
+                            <a href="https://www.invertus.eu/en/contact/"
                                target="_blank">{l s='Contact Invertus' mod='mollie'}</a>
                         </td>
                     </tr>
@@ -50,7 +50,7 @@
                 <li class="payment-method border border-bottom">
                     <input type="hidden"
                            name="payment_option_position[{$paymentMethod.obj->id_method|escape:'html':'UTF-8'}]"
-                           value="{$paymentMethod.obj->position}" class="js-payment-option-position">
+                           value="{$paymentMethod.obj->position|escape:'html':'UTF-8'}" class="js-payment-option-position">
                     <span class="js-sort-handle sort-handle">
           <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
           <a class="text collapsed payment-method__text" data-toggle="collapse"
@@ -72,17 +72,7 @@
                    onclick="togglePaymentMethod(this, '{$paymentMethod.id|escape:'html':'UTF-8'}'); return false;">
                 <i class="icon-check text-success"></i>
               </a>
-
-
-
-
-
-{else}
-
-
-
-
-
+            {else}
                 <a href="#" class="payment-check-link"
                    data-action="activate"
                    onclick="togglePaymentMethod(this, '{$paymentMethod.id|escape:'html':'UTF-8'}'); return false;">
@@ -135,7 +125,7 @@
                                     </label>
                                     <div class="col-lg-9">
                                         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-9 text-center">
-                                            <img src="{$input.applePayButtonBlack}"
+                                            <img src="{$input.applePayButtonBlack|escape:'html':'UTF-8'}"
                                                  style="width: 100%;" alt="Black">
                                             <label>
                                                 <input type="radio" name="MOLLIE_APPLE_PAY_DIRECT_STYLE"
@@ -143,7 +133,7 @@
                                             </label>
                                         </div>
                                         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-9 text-center">
-                                            <img src="{$input.applePayButtonOutline}"
+                                            <img src="{$input.applePayButtonOutline|escape:'html':'UTF-8'}"
                                                  style="width: 100%;" alt="White with Outline">
                                             <label>
                                                 <input type="radio" name="MOLLIE_APPLE_PAY_DIRECT_STYLE"
@@ -151,7 +141,7 @@
                                             </label>
                                         </div>
                                         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-9 text-center">
-                                            <img src="{$input.applePayButtonWhite}"
+                                            <img src="{$input.applePayButtonWhite|escape:'html':'UTF-8'}"
                                                  style="width: 100%;" alt="White">
                                             <label>
                                                 <input type="radio" name="MOLLIE_APPLE_PAY_DIRECT_STYLE"
@@ -174,21 +164,44 @@
                                         <option value="1" {if $input.isBancontactQrCodeEnabled == 1} selected {/if}>{l s='Yes' mod='mollie'}</option>
                                     </select>
                                     <p class="help-block">
-                                        {$input.bancontactQRCodeDescription}
+                                        {$input.bancontactQRCodeDescription|escape:'html':'UTF-8'}
                                     </p>
                                 </div>
                             </div>
                         {/if}
+
                         <div class="form-group">
                             <label class="control-label col-lg-3">
                                 {l s='Title' mod='mollie'}
                             </label>
-                            <div class="col-lg-9">
-                                <input type="text" name="MOLLIE_METHOD_TITLE_{$paymentMethod.id|escape:'html':'UTF-8'}"
-                                       class="fixed-width-xl"
-                                       value="{$methodObj->title|escape:'html':'UTF-8'}">
+                            <div class="col-lg-8">
+                                {foreach from=$languages item=language}
+                                    {if $languages|count > 1}
+                                        <div class="row">
+                                        <div class="translatable-field lang-{$language.id_lang|escape:'html':'UTF-8'}" {if $language.id_lang != $defaultFormLanguage}style="display:none"{/if}>
+                                        <div class="col-lg-4">
+                                    {/if}
+                                    <input type="text" name="MOLLIE_METHOD_TITLE_{$paymentMethod.id|escape:'html':'UTF-8'}[{$language.id_lang}]" value="{$methodObj->method_name[$language.id_lang]|default:$paymentMethod.name|escape:'html':'UTF-8'}">
+                                    {if $languages|count > 1}
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                                {$language.iso_code|escape:'html':'UTF-8'}
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                {foreach from=$languages item=language}
+                                                    <li><a href="javascript:hideOtherLanguage({$language.id_lang|escape:'html':'UTF-8'});" tabindex="-1">{$language.name|escape:'html':'UTF-8'}</a></li>
+                                                {/foreach}
+                                            </ul>
+                                        </div>
+                                        </div>
+                                        </div>
+                                    {/if}
+                                {/foreach}
                             </div>
                         </div>
+
                         <div class="form-group">
                             <label class="control-label col-lg-3">
                                 {l s='Method' mod='mollie'}
@@ -204,7 +217,7 @@
                                     {/if}
                                 </select>
                                 <p class="help-block">
-                                    {$input.methodDescription}
+                                    {$input.methodDescription|escape:'html':'UTF-8'}
                                 </p>
                             </div>
                         </div>
@@ -376,11 +389,11 @@
                                 <input type="text"
                                        name="MOLLIE_METHOD_MIN_AMOUNT_{$paymentMethod.id|escape:'html':'UTF-8'}"
                                        class="fixed-width-xl"
-                                       min="{$paymentMethod.minimumAmount.value}"
-                                        {if $paymentMethod.maximumAmount != false } max="{$paymentMethod.maximumAmount.value}" {/if}
-                                       value="{if $methodObj->min_amount == 0}{$paymentMethod.minimumAmount.value}{else}{$methodObj->min_amount}{/if}">
+                                       min="{$paymentMethod.minimumAmount.value|escape:'html':'UTF-8'}"
+                                        {if $paymentMethod.maximumAmount != false } max="{$paymentMethod.maximumAmount.value|escape:'html':'UTF-8'}" {/if}
+                                       value="{if $methodObj->min_amount == 0}{$paymentMethod.minimumAmount.value|escape:'html':'UTF-8'}{else}{$methodObj->min_amount|escape:'html':'UTF-8'}{/if}">
                                 <p class="help-block">
-                                    {l s='Default min amount in mollie is: ' mod='mollie'} {$paymentMethod.minimumAmount.value}{$paymentMethod.minimumAmount.currency}
+                                    {l s='Default min amount in mollie is: ' mod='mollie'} {$paymentMethod.minimumAmount.value|escape:'html':'UTF-8'}{$paymentMethod.minimumAmount.currency|escape:'html':'UTF-8'}
                                 </p>
                             </div>
                         </div>
@@ -392,13 +405,13 @@
                                 <input type="text"
                                        name="MOLLIE_METHOD_MAX_AMOUNT_{$paymentMethod.id|escape:'html':'UTF-8'}"
                                        class="fixed-width-xl"
-                                        {if $paymentMethod.maximumAmount != false } max='{$paymentMethod.maximumAmount.value}' {/if}
-                                       value="{if $methodObj->max_amount == 0}{($paymentMethod.maximumAmount) ? $paymentMethod.maximumAmount.value : ''}{else}{$methodObj->max_amount}{/if}">
+                                        {if $paymentMethod.maximumAmount != false } max='{$paymentMethod.maximumAmount.value|escape:'html':'UTF-8'}' {/if}
+                                       value="{if $methodObj->max_amount == 0}{($paymentMethod.maximumAmount|escape:'html':'UTF-8') ? $paymentMethod.maximumAmount.value : ''}{else}{$methodObj->max_amount|escape:'html':'UTF-8'}{/if}">
                                 <p class="help-block">
                                     {if $paymentMethod.maximumAmount == false}
                                         {l s='Default max amount has no limitation' mod='mollie'}
                                     {else}
-                                        {l s='Default max amount in mollie is: ' mod='mollie'}{$paymentMethod.maximumAmount.value}{$paymentMethod.maximumAmount.currency}
+                                        {l s='Default max amount in mollie is: ' mod='mollie'}{$paymentMethod.maximumAmount.value|escape:'html':'UTF-8'}{$paymentMethod.maximumAmount.currency|escape:'html':'UTF-8'}
                                     {/if}
                                 </p>
                             </div>
@@ -864,7 +877,7 @@
         </div>
     {elseif $input.type === 'mollie-hidden-input'}
         <div>
-            <input type="hidden" name="{$input.name}" value="{$input.value}">
+            <input type="hidden" name="{$input.name|escape:'html':'UTF-8'}" value="{$input.value|escape:'html':'UTF-8'}">
         </div>
     {else}
         {$smarty.block.parent}
