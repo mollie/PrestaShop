@@ -58,7 +58,7 @@ it('C339347: 10 iDEAL Order BO Shipping, Refunding [Orders API]', () => {
 it('C339348: 11 Klarna Slice It Checkouting [Orders API]', () => {
       cy.navigatingToThePaymentPS8()
       //Payment method choosing
-      cy.contains('Ratenkauf.').click({force:true})
+      cy.contains('Slice it.').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
       cy.contains('Place order').click()
       cy.get('[value="authorized"]').click()
@@ -71,7 +71,7 @@ it('C339349: 12 Klarna Slice It Order BO Shipping, Refunding [Orders API]', () =
 it('C339350: 13 Klarna Pay Later Checkouting [Orders API]', () => {
       cy.navigatingToThePaymentPS8()
       //Payment method choosing
-      cy.contains('Rechnung.').click({force:true})
+      cy.contains('Pay later.').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
       cy.contains('Place order').click()
       cy.get('[value="authorized"]').click()
@@ -115,7 +115,7 @@ it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
 it('C339355: 18 Check if customerId is passed during the 2nd payment using Single Click Payment [Orders API]', () => {
       cy.navigatingToThePaymentPS8()
       //Payment method choosing
-      cy.contains('Karte').click({force:true})
+      cy.contains('Card').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
       cy.get('.ps-shown-by-js > .btn').click({force: true})
       cy.visit('/admin1/')
