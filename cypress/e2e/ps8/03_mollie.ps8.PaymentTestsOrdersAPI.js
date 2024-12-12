@@ -103,7 +103,7 @@ it('C339354: 17 Credit Card Checkouting [Orders API]', () => {
       cy.get('[class="alert alert-success"]').should('be.visible')
       cy.navigatingToThePaymentPS8()
       //Payment method choosing
-      cy.contains('Karte').click({force:true})
+      cy.contains('Card').click({force:true})
       //Credit card inputing
       cy.CreditCardFillingIframe()
       cy.get('.condition-label > .js-terms').click({force:true})
