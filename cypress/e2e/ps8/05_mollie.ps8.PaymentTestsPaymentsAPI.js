@@ -43,7 +43,7 @@ it('C339382: 47 iDEAL Order BO Refunding, Partial Refunding [Payments API]', () 
 it('C339383: 48 Credit Card Checkouting [Payments API]', () => {
     cy.navigatingToThePaymentPS8()
     //Payment method choosing
-    cy.contains('Karte').click({force:true})
+    cy.contains('Card').click({force:true})
     //Credit card inputing
     cy.CreditCardFillingIframe()
     cy.get('.condition-label > .js-terms').click({force:true})
@@ -90,7 +90,7 @@ it.skip('C339385: 50 Credit Card Guest Checkouting [Payments API]', () => { // p
     cy.get(':nth-child(13) > .col-md-6 > .form-control').type('+370 000',{delay:0}).as('telephone')
     cy.get('.form-footer > .continue').click()
     cy.get('#js-delivery > .continue').click()
-    cy.contains('Karte').click({force:true})
+    cy.contains('Card').click({force:true})
     //Credit card inputing
     cy.CreditCardFillingIframe()
     cy.get('.condition-label > .js-terms').click({force:true})
@@ -128,7 +128,7 @@ it.skip('C339386: 51 Credit Card Guest Checkouting with not 3DS secure card [Pay
     cy.get(':nth-child(13) > .col-md-6 > .form-control').type('+370 000',{delay:0}).as('telephone')
     cy.get('.form-footer > .continue').click()
     cy.get('#js-delivery > .continue').click()
-    cy.contains('Karte').click({force:true})
+    cy.contains('Card').click({force:true})
     //Credit card inputing
     cy.NotSecureCreditCardFillingIframe()
     cy.get('.condition-label > .js-terms').click({force:true})
@@ -211,7 +211,7 @@ it('C339400: 65 Belfius BO Refunding, Partial Refunding [Payments API]', () => {
 it('C339401: 66 Bank Transfer Checkouting [Payments API]', () => {
     cy.navigatingToThePaymentPS8()
     //Payment method choosing
-    cy.contains('Überweisung').click({force:true})
+    cy.contains('Bank Transfer').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
     cy.contains('Place order').click()
     cy.get('[value="paid"]').click()

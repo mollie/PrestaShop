@@ -247,7 +247,7 @@ it('C339374: 37 Belfius Order Shipping, Refunding [Orders API]', () => {
 it('C339375: 38 Bank Transfer Checkouting [Orders API]', () => {
       cy.navigatingToThePaymentPS8()
       //Payment method choosing
-      cy.contains('Überweisung').click({force:true})
+      cy.contains('Bank transfer').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
       cy.contains('Place order').click()
       cy.get('[value="paid"]').click()
