@@ -211,7 +211,7 @@ it('C339400: 65 Belfius BO Refunding, Partial Refunding [Payments API]', () => {
 it('C339401: 66 Bank Transfer Checkouting [Payments API]', () => {
     cy.navigatingToThePaymentPS8()
     //Payment method choosing
-    cy.contains('Bank Transfer').click({force:true})
+    cy.contains('Bank transfer').click({force:true})
     cy.get('.condition-label > .js-terms').click({force:true})
     cy.contains('Place order').click()
     cy.get('[value="paid"]').click()
