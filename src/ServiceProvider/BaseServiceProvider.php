@@ -217,7 +217,9 @@ final class BaseServiceProvider
         $this->addService($container, TaxRuleRepositoryInterface::class, $container->get(TaxRuleRepository::class));
         $this->addService($container, TaxRepositoryInterface::class, $container->get(TaxRepository::class));
         $this->addService($container, CartRepositoryInterface::class, $container->get(CartRepository::class));
-        $this->addService($container, PaymentMethodLangRepositoryInterface::class, $container->get(PaymentMethodLangRepository::class));
+
+        $service = $this->addService($container, PaymentMethodLangRepositoryInterface::class, PaymentMethodLangRepository::class);
+        $this->addServiceArgument($service, 'MolPaymentMethodLang');
 
         $this->addService($container, OrderTotalProviderInterface::class, $container->get(OrderTotalProvider::class));
         $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
