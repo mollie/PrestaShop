@@ -21,7 +21,7 @@ use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Repository\LanguageRepository;
-use Mollie\Vendor\Psr\Log\LogLevel;
+use Psr\Log\LogLevel;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use Validate;

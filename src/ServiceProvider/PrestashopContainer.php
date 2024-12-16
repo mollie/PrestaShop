@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Mollie\ServiceProvider;
 
-use Mollie\Vendor\Psr\Container\ContainerInterface as PsrContainerInterface;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

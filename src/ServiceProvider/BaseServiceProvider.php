@@ -143,7 +143,7 @@ use Mollie\Subscription\Utility\ClockInterface;
 use Mollie\Utility\Decoder\DecoderInterface;
 use Mollie\Utility\Decoder\JsonDecoder;
 use Mollie\Utility\NumberIdempotencyProvider;
-use Mollie\Vendor\League\Container\Container;
+use League\Container\Container;
 use Mollie\Verification\PaymentType\CanBeRegularPaymentType;
 use Mollie\Verification\PaymentType\PaymentTypeVerificationInterface;
 use Mollie\Verification\Shipment\CanSendShipment;
