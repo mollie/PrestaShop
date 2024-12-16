@@ -1,14 +1,5 @@
 <?php
-/**
- * Mollie       https://www.mollie.nl
- *
- * @author      Mollie B.V. <info@mollie.nl>
- * @copyright   Mollie B.V.
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
- *
- * @see        https://github.com/mollie/PrestaShop
- * @codingStandardsIgnoreStart
- */
+declare(strict_types=1);
 
 namespace Mollie\Logger;
 
@@ -18,6 +9,7 @@ use Mollie\Config\Config;
 use Mollie\Service\EntityManager\EntityManagerInterface;
 use Mollie\Service\EntityManager\ObjectModelUnitOfWork;
 use Mollie\Utility\NumberIdempotencyProvider;
+use Psr\Log\LoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -56,64 +48,79 @@ class Logger implements LoggerInterface
         $this->prestashopLoggerRepository = $prestashopLoggerRepository;
     }
 
-    public function emergency($message, array $context = [])
-    {
-        $this->log(
-            $this->configuration->getAsInteger(
-                'PS_LOGS_BY_EMAIL',
-                $this->context->getShopId()
-            ),
-            $message,
-            $context
-        );
-    }
-
-    public function alert($message, array $context = [])
-    {
-        $this->log(self::SEVERITY_WARNING, $message, $context);
-    }
-
-    public function critical($message, array $context = [])
-    {
-        $this->log(
-            $this->configuration->getAsInteger(
-                'PS_LOGS_BY_EMAIL',
-                $this->context->getShopId()
-            ),
-            $message,
-            $context
-        );
-    }
-
-    public function error($message, array $context = [])
+    /**
+     * @param string|\Stringable $message
+     */
+    public function emergency($message, array $context = []): void
     {
         $this->log(self::SEVERITY_ERROR, $message, $context);
     }
 
-    public function warning($message, array $context = [])
+    /**
+     * @param string|\Stringable $message
+     */
+    public function alert($message, array $context = []): void
     {
         $this->log(self::SEVERITY_WARNING, $message, $context);
     }
 
-    public function notice($message, array $context = [])
+    /**
+     * @param string|\Stringable $message
+     */
+    public function critical($message, array $context = []): void
+    {
+        $this->log(self::SEVERITY_ERROR, $message, $context);
+    }
+
+    /**
+     * @param string|\Stringable $message
+     */
+    public function error($message, array $context = []): void
+    {
+        $this->log(self::SEVERITY_ERROR, $message, $context);
+    }
+
+    /**
+     * @param string|\Stringable $message
+     */
+    public function warning($message, array $context = []): void
+    {
+        $this->log(self::SEVERITY_WARNING, $message, $context);
+    }
+
+    /**
+     * @param string|\Stringable $message
+     */
+    public function notice($message, array $context = []): void
     {
         $this->log(self::SEVERITY_INFO, $message, $context);
     }
 
-    public function info($message, array $context = [])
+    /**
+     * @param string|\Stringable $message
+     */
+    public function info($message, array $context = []): void
     {
         $this->log(self::SEVERITY_INFO, $message, $context);
     }
 
-    public function debug($message, array $context = [])
+    /**
+     * @param string|\Stringable $message
+     */
+    public function debug($message, array $context = []): void
     {
         if ((int) $this->configuration->get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_ALL) {
             $this->log(self::SEVERITY_INFO, $message, $context);
         }
     }
 
-    public function log($level, $message, array $context = [])
+    /**
+     * @param string|\Stringable $message
+     */
+    public function log($level, $message, array $context = []): void
     {
+        $this->validateMessage($message);
+
         $idempotencyKey = $this->idempotencyProvider->getIdempotencyKey();
 
         \PrestaShopLogger::addLog(
@@ -136,7 +143,7 @@ class Logger implements LoggerInterface
         $this->logContext($logId, $context);
     }
 
-    private function logContext($logId, array $context)
+    private function logContext($logId, array $context): void
     {
         $request = '';
         $response = '';
@@ -162,7 +169,7 @@ class Logger implements LoggerInterface
         $this->entityManager->flush();
     }
 
-    private function getFilledContextWithShopData(array $context = [])
+    private function getFilledContextWithShopData(array $context): array
     {
         $context['context_id_customer'] = $this->context->getCustomerId();
         $context['id_shop'] = $this->context->getShopId();
@@ -170,5 +177,18 @@ class Logger implements LoggerInterface
         $context['id_language'] = $this->context->getLanguageId();
 
         return $context;
+    }
+
+    /**
+     * Validate that the message is a string or Stringable.
+     *
+     * @param mixed $message
+     * @throws \InvalidArgumentException
+     */
+    private function validateMessage($message): void
+    {
+        if (!is_string($message) && !$message instanceof \Stringable) {
+            throw new \InvalidArgumentException('Message must be a string or Stringable.');
+        }
     }
 }

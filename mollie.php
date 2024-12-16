@@ -701,7 +701,7 @@ class Mollie extends PaymentModule
         }
 
         $cart = new Cart($params['cart']->id);
-        $orderId = Order::getOrderByCartId($cart->id);
+        $orderId = Order::getIdByCartId($cart->id);
         $order = new Order($orderId);
 
         if (!Validate::isLoadedObject($order)) {

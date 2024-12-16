@@ -103,7 +103,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             // any paid payments for this cart?
 
             if (false === $data['mollie_info']) {
-                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_id', (int) Order::getOrderByCartId($idCart));
+                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_id', (int) Order::getIdByCartId($idCart));
             }
             if (false === $data['mollie_info']) {
                 $data['mollie_info'] = [];
@@ -220,7 +220,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         }
 
         /* @phpstan-ignore-next-line */
-        $orderId = (int) Order::getOrderByCartId((int) $cart->id);
+        $orderId = (int) Order::getIdByCartId((int) $cart->id);
         /** @phpstan-ignore-line */
         $order = new Order((int) $orderId);
 
