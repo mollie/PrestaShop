@@ -217,7 +217,7 @@
                                     {/if}
                                 </select>
                                 <p class="help-block">
-                                    {$input.methodDescription|escape:'html':'UTF-8'}
+                                    {$input.methodDescription}
                                 </p>
                             </div>
                         </div>
