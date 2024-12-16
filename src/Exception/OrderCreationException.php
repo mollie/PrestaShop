@@ -33,4 +33,6 @@ class OrderCreationException extends \Exception
     const ORDER_IS_NOT_CREATED = 7;
 
     const WRONG_FAMILY_NAME = 8;
+
+    const WRONG_GIVEN_NAME = 9;
 }
