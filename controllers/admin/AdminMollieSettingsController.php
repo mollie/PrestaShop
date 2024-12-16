@@ -117,6 +117,9 @@ class AdminMollieSettingsController extends ModuleAdminController
         /** @var \Mollie\Service\Content\TemplateParserInterface $templateParser */
         $templateParser = $this->module->getService(\Mollie\Service\Content\TemplateParserInterface::class);
 
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         $this->content = $templateParser->parseTemplate(
             $this->context->smarty,
             $this->module->getService(\Mollie\Builder\Content\LogoInfoBlock::class),
@@ -124,11 +127,8 @@ class AdminMollieSettingsController extends ModuleAdminController
         );
 
         try {
-        $this->initCloudSyncAndPsAccounts();
+            $this->initCloudSyncAndPsAccounts();
         } catch (Exception $e) {
-            /** @var Logger $logger * */
-            $logger = $this->module->getService(LoggerInterface::class);
-
             $logger->error('Failed to initiate cloud sync and ps accounts', [
                 'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($e),
