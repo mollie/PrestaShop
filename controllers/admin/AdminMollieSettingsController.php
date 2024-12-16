@@ -123,7 +123,17 @@ class AdminMollieSettingsController extends ModuleAdminController
             $this->module->getLocalPath() . 'views/templates/admin/logo.tpl'
         );
 
+        try {
         $this->initCloudSyncAndPsAccounts();
+        } catch (Exception $e) {
+            /** @var Logger $logger * */
+            $logger = $this->module->getService(LoggerInterface::class);
+
+            $logger->error('Failed to initiate cloud sync and ps accounts', [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+        }
 
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
         $moduleRepository = $this->module->getService(\Mollie\Repository\ModuleRepository::class);
