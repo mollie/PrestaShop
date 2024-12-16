@@ -205,9 +205,6 @@ class AdminMollieSettingsController extends ModuleAdminController
         /** @var \Mollie\Builder\FormBuilder $settingsFormBuilder */
         $settingsFormBuilder = $this->module->getService(\Mollie\Builder\FormBuilder::class);
 
-        /** @var Logger $logger * */
-        $logger = $this->module->getService(LoggerInterface::class);
-
         try {
             $html .= $settingsFormBuilder->buildSettingsForm();
         } catch (PrestaShopDatabaseException $e) {
