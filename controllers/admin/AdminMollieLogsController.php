@@ -327,7 +327,7 @@ class AdminMollieLogsController extends ModuleAdminController
         $logger = $this->module->getService(LoggerInterface::class);
 
         try {
-            $this->ajaxDie($value, $controller, $method);
+            $this->ajaxRender($value, $controller, $method);
         } catch (\Exception $exception) {
             $logger->error('Could not return ajax response', [
                 'context' => [

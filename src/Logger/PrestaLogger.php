@@ -1,14 +1,5 @@
 <?php
-/**
- * Mollie       https://www.mollie.nl
- *
- * @author      Mollie B.V. <info@mollie.nl>
- * @copyright   Mollie B.V.
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
- *
- * @see        https://github.com/mollie/PrestaShop
- * @codingStandardsIgnoreStart
- */
+declare(strict_types=1);
 
 namespace Mollie\Logger;
 
@@ -22,9 +13,6 @@ if (!defined('_PS_VERSION_')) {
 
 class PrestaLogger implements PrestaLoggerInterface
 {
-    // TODO move this as a shared service for subscriptions and main source
-    // TODO refactor whole logger logic and implement leftover methods
-
     /** @var ConfigurationAdapter */
     private $configuration;
 
@@ -33,23 +21,40 @@ class PrestaLogger implements PrestaLoggerInterface
         $this->configuration = $configuration;
     }
 
-    public function emergency($message, array $context = [])
+    /**
+     * @param string|\Stringable $message
+     */
+    public function emergency($message, array $context = []): void
     {
-        throw new NotImplementedException('not implemented method');
+        $this->validateMessage($message);
+        $this->logWithPrestaShop('emergency', $message, $context);
     }
 
-    public function alert($message, array $context = [])
+    /**
+     * @param string|\Stringable $message
+     */
+    public function alert($message, array $context = []): void
     {
-        throw new NotImplementedException('not implemented method');
+        $this->validateMessage($message);
+        $this->logWithPrestaShop('alert', $message, $context);
     }
 
-    public function critical($message, array $context = [])
+    /**
+     * @param string|\Stringable $message
+     */
+    public function critical($message, array $context = []): void
     {
-        throw new NotImplementedException('not implemented method');
+        $this->validateMessage($message);
+        $this->logWithPrestaShop('critical', $message, $context);
     }
 
-    public function error($message, array $context = [])
+    /**
+     * @param string|\Stringable $message
+     */
+    public function error($message, array $context = []): void
     {
+        $this->validateMessage($message);
+
         if ((int) $this->configuration->get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_NONE) {
             return;
         }
@@ -62,18 +67,31 @@ class PrestaLogger implements PrestaLoggerInterface
         );
     }
 
-    public function warning($message, array $context = [])
+    /**
+     * @param string|\Stringable $message
+     */
+    public function warning($message, array $context = []): void
     {
-        throw new NotImplementedException('not implemented method');
+        $this->validateMessage($message);
+        $this->logWithPrestaShop('warning', $message, $context);
     }
 
-    public function notice($message, array $context = [])
+    /**
+     * @param string|\Stringable $message
+     */
+    public function notice($message, array $context = []): void
     {
-        throw new NotImplementedException('not implemented method');
+        $this->validateMessage($message);
+        $this->logWithPrestaShop('notice', $message, $context);
     }
 
-    public function info($message, array $context = [])
+    /**
+     * @param string|\Stringable $message
+     */
+    public function info($message, array $context = []): void
     {
+        $this->validateMessage($message);
+
         if ((int) $this->configuration->get(Config::MOLLIE_DEBUG_LOG) !== Config::DEBUG_LOG_ALL) {
             return;
         }
@@ -85,22 +103,51 @@ class PrestaLogger implements PrestaLoggerInterface
         );
     }
 
-    public function debug($message, array $context = [])
+    /**
+     * @param string|\Stringable $message
+     */
+    public function debug($message, array $context = []): void
     {
-        // TODO implement single method, which handles logging
-
+        $this->validateMessage($message);
         $this->info($message, $context);
     }
 
-    public function log($level, $message, array $context = [])
+    /**
+     * @param string|\Stringable $message
+     */
+    public function log($level, $message, array $context = []): void
     {
+        $this->validateMessage($message);
         throw new NotImplementedException('not implemented method');
     }
 
-    private function getMessageWithContext($message, array $context = [])
+    private function getMessageWithContext(string $message, array $context = []): string
     {
         $content = json_encode($context);
 
         return "{$message} . context: {$content}";
+    }
+
+    /**
+     * Handle logging logic with PrestaShopLogger.
+     *
+     * @param string|\Stringable $message
+     */
+    private function logWithPrestaShop(string $level, $message, array $context): void
+    {
+        throw new NotImplementedException("Method {$level} not implemented.");
+    }
+
+    /**
+     * Validate that the message is a string or Stringable.
+     *
+     * @param mixed $message
+     * @throws \InvalidArgumentException
+     */
+    private function validateMessage($message): void
+    {
+        if (!is_string($message) && !$message instanceof \Stringable) {
+            throw new \InvalidArgumentException('Message must be a string or Stringable.');
+        }
     }
 }

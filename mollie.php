@@ -521,7 +521,7 @@ class Mollie extends PaymentModule
             'errorDisplay' => Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS),
         ]);
 
-        return $this->display(__FILE__, 'order_info.tpl');
+        return $this->display($this->getLocalPath(), 'views/templates/hook/order_info.tpl');
     }
 
     /**
@@ -701,7 +701,7 @@ class Mollie extends PaymentModule
         }
 
         $cart = new Cart($params['cart']->id);
-        $orderId = Order::getOrderByCartId($cart->id);
+        $orderId = Order::getIdByCartId($cart->id);
         $order = new Order($orderId);
 
         if (!Validate::isLoadedObject($order)) {
