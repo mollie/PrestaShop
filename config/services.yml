@@ -102,11 +102,13 @@ services:
     - 'SubscriptionOptions'
 
   Mollie\Subscription\Controller\Symfony\SubscriptionFAQController:
+    class: Mollie\Subscription\Controller\Symfony\SubscriptionFAQController
     public: true
-    autowire: true
     autoconfigure: true
+    autowire: true  # Optional, but useful for dependency injection
 
   Mollie\Subscription\Controller\Symfony\SubscriptionController:
+    class: Mollie\Subscription\Controller\Symfony\SubscriptionController
     public: true
     autowire: true
     autoconfigure: true

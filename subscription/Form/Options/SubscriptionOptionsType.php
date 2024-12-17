@@ -18,7 +18,8 @@ use PrestaShopBundle\Form\Admin\Type\SwitchType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface as NewTranslatorInterface;  // Newer Symfony translator
+use Symfony\Component\Translation\TranslatorInterface as OldTranslatorInterface;  // Older Symfony translator
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -30,9 +31,11 @@ class SubscriptionOptionsType extends TranslatorAwareType
     private $carrierOptionProvider;
     /** @var Module */
     private $module;
+    /** @var NewTranslatorInterface | OldTranslatorInterface */
+    private $translator;
 
     public function __construct(
-        TranslatorInterface $translator,
+        $translator,
         array $locales,
         FormChoiceProviderInterface $carrierOptionProvider,
         Module $module
