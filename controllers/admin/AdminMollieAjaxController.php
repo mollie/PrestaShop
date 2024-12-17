@@ -32,6 +32,9 @@ class AdminMollieAjaxController extends ModuleAdminController
     public function postProcess()
     {
         $action = Tools::getValue('action');
+
+        $this->context->smarty->assign('bootstrap', true);
+
         switch ($action) {
             case 'togglePaymentMethod':
                 $this->togglePaymentMethod();
