@@ -95,14 +95,14 @@ class CartLinesService
      * @throws \PrestaShop\Decimal\Exception\DivisionByZeroException
      */
     public function getCartLines(
-        $amount,
-        $paymentFeeData,
-        $currencyIsoCode,
-        $cartSummary,
-        $shippingCost,
-        $cartItems,
-        $psGiftWrapping,
-        $selectedVoucherCategory
+        float          $amount,
+        PaymentFeeData $paymentFeeData,
+        string         $currencyIsoCode,
+        array          $cartSummary,
+        float          $shippingCost,
+        array          $cartItems,
+        bool           $psGiftWrapping,
+        string $selectedVoucherCategory
     ): array {
         $totalPrice = $this->roundingUtility->round($amount, Config::API_ROUNDING_PRECISION);
         $roundedShippingCost = $this->roundingUtility->round($shippingCost, Config::API_ROUNDING_PRECISION);

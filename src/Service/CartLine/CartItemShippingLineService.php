@@ -37,13 +37,14 @@ class CartItemShippingLineService
     /**
      * @param float $roundedShippingCost
      * @param array $cartSummary
+     * @param array $orderLines
      *
      * @return array
      */
-    public function addShippingLine($roundedShippingCost, $cartSummary, array $orderLines): array
+    public function addShippingLine(float $roundedShippingCost, array $cartSummary, array $orderLines): array
     {
         if ($this->roundingUtility->round($roundedShippingCost, 2) > 0) {
-            $shippingVatRate = round(($cartSummary['total_shipping'] - $cartSummary['total_shipping_tax_exc']) / $cartSummary['total_shipping_tax_exc'] * 100, Config::API_ROUNDING_PRECISION);
+            $shippingVatRate = $this->roundingUtility->round(($cartSummary['total_shipping'] - $cartSummary['total_shipping_tax_exc']) / $cartSummary['total_shipping_tax_exc'] * 100, Config::API_ROUNDING_PRECISION);
 
             $orderLines['shipping'] = [
                 [
