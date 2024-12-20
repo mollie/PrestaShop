@@ -33,7 +33,6 @@ class CartItemShippingLineService
     /**
      * @param float $roundedShippingCost
      * @param array $cartSummary
-     * @param int $apiRoundingPrecision
      *
      * @return array
      */

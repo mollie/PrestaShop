@@ -23,7 +23,6 @@ class CartItemDiscountService
 {
     /**
      * @param float $totalDiscounts
-     * @param int $apiRoundingPrecision
      * @param array $orderLines
      * @param float $remaining
      *

@@ -32,6 +32,14 @@ class CartItemWrappingService
         $this->languageService = $languageService;
     }
 
+    /**
+     * @param float $wrappingPrice
+     * @param array $cartSummary
+     * @param int $vatRatePrecision
+     * @param array $orderLines
+     *
+     * @return array
+     */
     public function addWrappingLine(float $wrappingPrice, array $cartSummary, int $vatRatePrecision, array $orderLines)
     {
         if (round($wrappingPrice, 2) > 0) {

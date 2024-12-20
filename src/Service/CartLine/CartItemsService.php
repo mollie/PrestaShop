@@ -40,7 +40,6 @@ class CartItemsService
     }
 
     /**
-     * @param int $apiRoundingPrecision
      * @param array $giftProducts
      * @param string $selectedVoucherCategory
      * @param float $remaining
