@@ -169,16 +169,16 @@ class CartLinesService
         $orderLines = $this->compositeRoundingInaccuracies($remaining, $apiRoundingPrecision, $orderLines);
 
         // Fill the order lines with the rest of the data (tax, total amount, etc.)
-        $orderLines = $this->fillProductLinesWithRemainingData($orderLines, $apiRoundingPrecision, $vatRatePrecision);
+//        $orderLines = $this->fillProductLinesWithRemainingData($orderLines, $apiRoundingPrecision, $vatRatePrecision);
 
         // Add shipping
 //        $orderLines = $this->addShippingLine($roundedShippingCost, $cartSummary, $apiRoundingPrecision, $orderLines);
 
         // Add wrapping
-        $orderLines = $this->addWrappingLine($wrappingPrice, $cartSummary, $vatRatePrecision, $apiRoundingPrecision, $orderLines);
+//        $orderLines = $this->addWrappingLine($wrappingPrice, $cartSummary, $vatRatePrecision, $apiRoundingPrecision, $orderLines);
 
         // Add fee
-        $orderLines = $this->addPaymentFeeLine($paymentFeeData, $apiRoundingPrecision, $orderLines);
+//        $orderLines = $this->addPaymentFeeLine($paymentFeeData, $apiRoundingPrecision, $orderLines);
 
         // Ungroup all the cart lines, just one level
         $newItems = $this->ungroupLines($orderLines);
@@ -318,33 +318,6 @@ class CartLinesService
                 return $newItem;
             }, $aItem);
         }
-
-        return $orderLines;
-    }
-
-    /**
-     * @param PaymentFeeData $paymentFeeData
-     * @param int $apiRoundingPrecision
-     *
-     * @return array
-     */
-    private function addPaymentFeeLine($paymentFeeData, $apiRoundingPrecision, array $orderLines)
-    {
-        if (!$paymentFeeData->isActive()) {
-            return $orderLines;
-        }
-
-        $orderLines['surcharge'] = [
-            [
-                'name' => $this->languageService->lang('Payment fee'),
-                'sku' => Config::PAYMENT_FEE_SKU,
-                'quantity' => 1,
-                'unitPrice' => round($paymentFeeData->getPaymentFeeTaxIncl(), $apiRoundingPrecision),
-                'totalAmount' => round($paymentFeeData->getPaymentFeeTaxIncl(), $apiRoundingPrecision),
-                'vatAmount' => NumberUtility::minus($paymentFeeData->getPaymentFeeTaxIncl(), $paymentFeeData->getPaymentFeeTaxExcl()),
-                'vatRate' => $paymentFeeData->getTaxRate(),
-            ],
-        ];
 
         return $orderLines;
     }
