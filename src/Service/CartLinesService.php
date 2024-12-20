@@ -24,6 +24,7 @@ use Mollie\Service\CartLine\CartItemWrappingService;
 use mollie\src\Service\CartLine\CartItemPaymentFeeService;
 use mollie\src\Utility\LineUtility;
 use mollie\src\Utility\RoundingUtility;
+use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\CalculationUtility;
 use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\NumberUtility;
@@ -49,6 +50,7 @@ class CartLinesService
     private $cartItemPaymentFeeService;
     private $lineUtility;
     private $roundingUtility;
+    private $arrayUtility;
 
     public function __construct(
         CartItemsService $cartItemsService,
@@ -58,7 +60,8 @@ class CartLinesService
         CartItemProductLinesService $cartItemProductLinesService,
         CartItemPaymentFeeService $cartItemPaymentFeeService,
         LineUtility $lineUtility,
-        RoundingUtility $roundingUtility
+        RoundingUtility $roundingUtility,
+        ArrayUtility $arrayUtility
     )
     {
         $this->cartItemsService = $cartItemsService;
@@ -69,6 +72,7 @@ class CartLinesService
         $this->cartItemPaymentFeeService = $cartItemPaymentFeeService;
         $this->lineUtility = $lineUtility;
         $this->roundingUtility = $roundingUtility;
+        $this->arrayUtility = $arrayUtility;
     }
 
     // new
@@ -137,7 +141,7 @@ class CartLinesService
         // Add payment fees to the order lines
         $orderLines = $this->cartItemPaymentFeeService->addPaymentFeeLine($paymentFeeData, $orderLines);
 
-        $newItems = $this->ungroupLines($orderLines);
+        $newItems = $this->arrayUtility->ungroupLines($orderLines);
 
         return $this->lineUtility->convertToLineArray($newItems, $currencyIsoCode);
     }
@@ -273,20 +277,5 @@ class CartLinesService
         }
 
         return $orderLines;
-    }
-
-    /**
-     * @return array
-     */
-    private function ungroupLines(array $orderLines)
-    {
-        $newItems = [];
-        foreach ($orderLines as &$items) {
-            foreach ($items as &$item) {
-                $newItems[] = $item;
-            }
-        }
-
-        return $newItems;
     }
 }
