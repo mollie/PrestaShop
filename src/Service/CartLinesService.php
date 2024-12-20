@@ -168,25 +168,25 @@ class CartLinesService
 
         $orderLines = [];
         /* Item */
-//        [$orderLines, $remaining] = $this->createProductLines($cartItems, $apiRoundingPrecision, $cartSummary['gift_products'], $orderLines, $selectedVoucherCategory, $remaining);
+        [$orderLines, $remaining] = $this->cartItemsService->createProductLines($cartItems, $cartSummary['gift_products'], $orderLines, $selectedVoucherCategory, $remaining);
 
         // Add discount if applicable
-//        [$orderLines, $remaining] = $this->addDiscountsToProductLines($totalDiscounts, $apiRoundingPrecision, $orderLines, $remaining);
+        [$orderLines, $remaining] = $this->cartItemDiscountService->addDiscountsToProductLines($totalDiscounts, $orderLines, $remaining);
 
         // Compensate for order total rounding inaccuracies
         $orderLines = $this->compositeRoundingInaccuracies($remaining, $apiRoundingPrecision, $orderLines);
 
         // Fill the order lines with the rest of the data (tax, total amount, etc.)
-//        $orderLines = $this->fillProductLinesWithRemainingData($orderLines, $apiRoundingPrecision, $vatRatePrecision);
+        $orderLines = $this->cartItemProductLinesService->fillProductLinesWithRemainingData($orderLines, $vatRatePrecision);
 
         // Add shipping
-//        $orderLines = $this->addShippingLine($roundedShippingCost, $cartSummary, $apiRoundingPrecision, $orderLines);
+        $orderLines = $this->cartItemShippingLineService->addShippingLine($roundedShippingCost, $cartSummary, $orderLines);
 
         // Add wrapping
-//        $orderLines = $this->addWrappingLine($wrappingPrice, $cartSummary, $vatRatePrecision, $apiRoundingPrecision, $orderLines);
+        $orderLines = $this->cartItemWrappingService->addWrappingLine($wrappingPrice, $cartSummary, $vatRatePrecision, $orderLines);
 
         // Add fee
-//        $orderLines = $this->cartItemPaymentFeeService->addPaymentFeeLine($paymentFeeData, $orderLines);
+        $orderLines = $this->cartItemPaymentFeeService->addPaymentFeeLine($paymentFeeData, $orderLines);
 
         // Ungroup all the cart lines, just one level
         $newItems = $this->ungroupLines($orderLines);
