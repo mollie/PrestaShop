@@ -15,7 +15,6 @@ namespace Mollie\Service\CartLine;
 use Mollie\Adapter\Context;
 use Mollie\Config\Config;
 use Mollie\Service\VoucherService;
-use mollie\src\Utility\RoundingUtility;
 use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TextFormatUtility;
@@ -35,14 +34,10 @@ class CartItemsService
      */
     private $voucherService;
 
-    /* @var RoundingUtility */
-    private $roundingUtility;
-
-    public function __construct(Context $context, VoucherService $voucherService, RoundingUtility $roundingUtility)
+    public function __construct(Context $context, VoucherService $voucherService)
     {
         $this->context = $context;
         $this->voucherService = $voucherService;
-        $this->roundingUtility = $roundingUtility;
     }
 
     /**
@@ -56,7 +51,7 @@ class CartItemsService
     {
         foreach ($cartItems as $cartItem) {
             // Get the rounded total w/ tax
-            $roundedTotalWithTax = $this->roundingUtility->round($cartItem['total_wt'], Config::API_ROUNDING_PRECISION);
+            $roundedTotalWithTax = round($cartItem['total_wt'], Config::API_ROUNDING_PRECISION);
 
             // Skip if no qty
             $quantity = (int) $cartItem['cart_quantity'];
@@ -101,7 +96,7 @@ class CartItemsService
                 'sku' => $productHash,
                 'targetVat' => (float) $cartItem['rate'],
                 'quantity' => $quantity,
-                'unitPrice' => $this->roundingUtility->round($cartItem['price_wt'], Config::API_ROUNDING_PRECISION),
+                'unitPrice' => round($cartItem['price_wt'], Config::API_ROUNDING_PRECISION),
                 'totalAmount' => (float) $roundedTotalWithTax,
                 'category' => $this->voucherService->getVoucherCategory($cartItem, $selectedVoucherCategory),
                 'product_url' => $this->context->getProductLink($cartItem['id_product']),
@@ -126,9 +121,9 @@ class CartItemsService
      * @since 3.2.2
      * @since 3.3.3 Omits VAT details
      */
-    public function spreadCartLineGroup($cartLineGroup, $newTotal)
+    public static function spreadCartLineGroup($cartLineGroup, $newTotal)
     {
-        $newTotal = $this->roundingUtility->round($newTotal, Config::API_ROUNDING_PRECISION);
+        $newTotal = round($newTotal, Config::API_ROUNDING_PRECISION);
         $quantity = array_sum(array_column($cartLineGroup, 'quantity'));
         $newCartLineGroup = [];
         $spread = CartPriceUtility::spreadAmountEvenly($newTotal, $quantity);

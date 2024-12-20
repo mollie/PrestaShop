@@ -13,7 +13,6 @@
 namespace Mollie\Service\CartLine;
 
 use Mollie\Config\Config;
-use mollie\src\Utility\RoundingUtility;
 use Mollie\Utility\CalculationUtility;
 use Mollie\Utility\NumberUtility;
 
@@ -23,12 +22,8 @@ if (!defined('_PS_VERSION_')) {
 
 class CartItemProductLinesService
 {
-    /* @var RoundingUtility */
-    private $roundingUtility;
-
-    public function __construct(RoundingUtility $roundingUtility)
+    public function __construct()
     {
-        $this->roundingUtility = $roundingUtility;
     }
 
     /**
@@ -47,7 +42,7 @@ class CartItemProductLinesService
                 $quantity = (int) $line['quantity'];
                 $targetVat = $line['targetVat'];
                 $unitPrice = $line['unitPrice'];
-                $unitPriceNoTax = $this->roundingUtility->round(CalculationUtility::getUnitPriceNoTax(
+                $unitPriceNoTax = round(CalculationUtility::getUnitPriceNoTax(
                     $line['unitPrice'],
                     $targetVat
                 ),
@@ -58,7 +53,7 @@ class CartItemProductLinesService
                 $totalAmount = $line['totalAmount'];
                 $actualVatRate = 0;
                 if ($unitPriceNoTax > 0) {
-                    $actualVatRate = $this->roundingUtility->round(
+                    $actualVatRate = round(
                         $vatAmount = CalculationUtility::getActualVatRate($unitPrice, $unitPriceNoTax, $quantity),
                         $vatRatePrecision
                     );
@@ -73,10 +68,10 @@ class CartItemProductLinesService
                     'name' => $line['name'],
                     'category' => $line['category'],
                     'quantity' => (int) $quantity,
-                    'unitPrice' => $this->roundingUtility->round($unitPrice, $roundingPrecision),
-                    'totalAmount' => $this->roundingUtility->round($totalAmount, $roundingPrecision),
-                    'vatRate' => $this->roundingUtility->round($actualVatRate, $roundingPrecision),
-                    'vatAmount' => $this->roundingUtility->round($vatAmount, $roundingPrecision),
+                    'unitPrice' => round($unitPrice, $roundingPrecision),
+                    'totalAmount' => round($totalAmount, $roundingPrecision),
+                    'vatRate' => round($actualVatRate, $roundingPrecision),
+                    'vatAmount' => round($vatAmount, $roundingPrecision),
                     'product_url' => $line['product_url'] ?? null,
                     'image_url' => $line['image_url'] ?? null,
                 ];

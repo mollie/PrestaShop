@@ -21,14 +21,6 @@ if (!defined('_PS_VERSION_')) {
 
 class RoundingUtility
 {
-    /* @var CartItemsService */
-    private $cartItemsService;
-
-    public function __construct(CartItemsService $cartItemsService)
-    {
-        $this->cartItemsService = $cartItemsService;
-    }
-
     /**
      * @param float $amount
      * @param int $precision
@@ -64,7 +56,7 @@ class RoundingUtility
 
                 // Otherwise spread the cart line again with the updated total
                 //TODO: check why remaining comes -100 when testing and new total becomes different
-                $orderLines[$hash] = $this->cartItemsService->spreadCartLineGroup($items, $totalAmount + $remaining);
+                $orderLines[$hash] = CartItemsService::spreadCartLineGroup($items, $totalAmount + $remaining);
                 break;
             }
         } elseif ($remaining > 0) {
@@ -72,7 +64,7 @@ class RoundingUtility
                 // Grab the line group's total amount
                 $totalAmount = array_sum(array_column($items, 'totalAmount'));
                 // Otherwise spread the cart line again with the updated total
-                $orderLines[$hash] = $this->cartItemsService->spreadCartLineGroup($items, $totalAmount + $remaining);
+                $orderLines[$hash] = CartItemsService::spreadCartLineGroup($items, $totalAmount + $remaining);
                 break;
             }
         }
