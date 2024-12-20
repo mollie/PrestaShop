@@ -134,7 +134,7 @@ class CartItemsService
                 'quantity' => $qty,
                 'unitPrice' => (float) $unitPrice,
                 'totalAmount' => (float) $unitPrice * $qty,
-                'sku' => isset($cartLineGroup[0]['sku']) ? $cartLineGroup[0]['sku'] : '',
+                'sku' => $cartLineGroup[0]['sku'] ?? '',
                 'targetVat' => $cartLineGroup[0]['targetVat'],
                 'category' => $cartLineGroup[0]['category'],
             ];
