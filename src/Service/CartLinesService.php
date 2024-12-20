@@ -111,7 +111,7 @@ class CartLinesService
         $orderLines = $this->compositeRoundingInaccuracies($remaining, $apiRoundingPrecision, $orderLines);
 
         // Fill the order lines with the rest of the data (tax, total amount, etc.)
-        $orderLines = $this->fillProductLinesWithRemainingData($orderLines, $apiRoundingPrecision, $vatRatePrecision);
+        $orderLines = $this->cartItemProductLinesService->fillProductLinesWithRemainingData($orderLines, $vatRatePrecision);
 
         // Add shipping costs to the order lines
         $orderLines = $this->cartItemShippingLineService->addShippingLine($roundedShippingCost, $cartSummary, $orderLines);
@@ -124,7 +124,7 @@ class CartLinesService
 
         $newItems = $this->ungroupLines($orderLines);
 
-        return $this->lineUtility->convertToLineArray($newItems, $currencyIsoCode, $apiRoundingPrecision);
+        return $this->lineUtility->convertToLineArray($newItems, $currencyIsoCode);
     }
 
     /**
