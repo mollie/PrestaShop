@@ -28,10 +28,10 @@ class ArrayUtility
      *
      * @return array
      */
-    public function ungroupLines(array $orderLines)
+    public function ungroupLines(array $lines)
     {
         $newItems = [];
-        foreach ($orderLines as &$items) {
+        foreach ($lines as &$items) {
             foreach ($items as &$item) {
                 $newItems[] = $item;
             }
