@@ -23,6 +23,7 @@ use Mollie\Service\CartLine\CartItemsService;
 use Mollie\Service\CartLine\CartItemWrappingService;
 use mollie\src\Service\CartLine\CartItemPaymentFeeService;
 use mollie\src\Utility\LineUtility;
+use mollie\src\Utility\RoundingUtility;
 use Mollie\Utility\CalculationUtility;
 use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\NumberUtility;
@@ -34,10 +35,6 @@ if (!defined('_PS_VERSION_')) {
 
 class CartLinesService
 {
-    /**
-     * @var LanguageService
-     */
-    private $languageService;
     /**
      * @var CartItemsService
      */
@@ -51,19 +48,19 @@ class CartLinesService
     private $cartItemProductLinesService;
     private $cartItemPaymentFeeService;
     private $lineUtility;
+    private $roundingUtility;
 
     public function __construct(
-        LanguageService $languageService,
         CartItemsService $cartItemsService,
         CartItemDiscountService $cartItemDiscountService,
         CartItemShippingLineService $cartItemShippingLineService,
         CartItemWrappingService $cartItemWrappingService,
         CartItemProductLinesService $cartItemProductLinesService,
         CartItemPaymentFeeService $cartItemPaymentFeeService,
-        LineUtility $lineUtility
+        LineUtility $lineUtility,
+        RoundingUtility $roundingUtility
     )
     {
-        $this->languageService = $languageService;
         $this->cartItemsService = $cartItemsService;
         $this->cartItemDiscountService = $cartItemDiscountService;
         $this->cartItemShippingLineService = $cartItemShippingLineService;
@@ -71,18 +68,35 @@ class CartLinesService
         $this->cartItemProductLinesService = $cartItemProductLinesService;
         $this->cartItemPaymentFeeService = $cartItemPaymentFeeService;
         $this->lineUtility = $lineUtility;
+        $this->roundingUtility = $roundingUtility;
     }
 
     // new
+    /**
+     * @param float $amount
+     * @param PaymentFeeData $paymentFeeData
+     * @param string $currencyIsoCode
+     * @param array $cartSummary
+     * @param float $shippingCost
+     * @param array $cartItems
+     * @param bool $psGiftWrapping
+     * @param string $selectedVoucherCategory
+     *
+     * @return array
+     *
+     * @throws \PrestaShop\Decimal\Exception\DivisionByZeroException
+     */
     public function buildCartLines(
-        $amount, $paymentFeeData, $currencyIsoCode, $cartSummary, $shippingCost, $cartItems, $psGiftWrapping, $selectedVoucherCategory
+        $amount,
+        $paymentFeeData,
+        $currencyIsoCode, $cartSummary,
+        $shippingCost,
+        $cartItems,
+        $psGiftWrapping,
+        $selectedVoucherCategory
     ) {
-
-        $apiRoundingPrecision = Config::API_ROUNDING_PRECISION;
-        $vatRatePrecision = Config::VAT_RATE_ROUNDING_PRECISION;
-
-        $totalPrice = round($amount, $apiRoundingPrecision);
-        $roundedShippingCost = round($shippingCost, $apiRoundingPrecision);
+        $totalPrice = round($amount, Config::API_ROUNDING_PRECISION);
+        $roundedShippingCost = round($shippingCost, Config::API_ROUNDING_PRECISION);
 
         foreach ($cartSummary['discounts'] as $discount) {
             if ($discount['free_shipping']) {
@@ -90,10 +104,10 @@ class CartLinesService
             }
         }
 
-        $wrappingPrice = $psGiftWrapping ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
+        $wrappingPrice = $psGiftWrapping ? round($cartSummary['total_wrapping'], Config::API_ROUNDING_PRECISION) : 0;
         $remaining = round(
             CalculationUtility::getCartRemainingPrice((float) $totalPrice, (float) $roundedShippingCost, (float) $wrappingPrice),
-            $apiRoundingPrecision
+            Config::API_ROUNDING_PRECISION
         );
 
         $orderLines = [];
@@ -108,16 +122,16 @@ class CartLinesService
 
         //todo move these both methods inside some kind of utility class
         // Compensate for order total rounding inaccuracies
-        $orderLines = $this->compositeRoundingInaccuracies($remaining, $apiRoundingPrecision, $orderLines);
+        $orderLines = $this->roundingUtility->compositeRoundingInaccuracies($remaining, $orderLines);
 
         // Fill the order lines with the rest of the data (tax, total amount, etc.)
-        $orderLines = $this->cartItemProductLinesService->fillProductLinesWithRemainingData($orderLines, $vatRatePrecision);
+        $orderLines = $this->cartItemProductLinesService->fillProductLinesWithRemainingData($orderLines, Config::VAT_RATE_ROUNDING_PRECISION);
 
         // Add shipping costs to the order lines
         $orderLines = $this->cartItemShippingLineService->addShippingLine($roundedShippingCost, $cartSummary, $orderLines);
 
         // Add wrapping costs to the order lines
-        $orderLines  =  $this->cartItemWrappingService->addWrappingLine($wrappingPrice, $cartSummary, $vatRatePrecision, $orderLines);
+        $orderLines  =  $this->cartItemWrappingService->addWrappingLine($wrappingPrice, $cartSummary, Config::VAT_RATE_ROUNDING_PRECISION, $orderLines);
 
         // Add payment fees to the order lines
         $orderLines = $this->cartItemPaymentFeeService->addPaymentFeeLine($paymentFeeData, $orderLines);
@@ -180,7 +194,7 @@ class CartLinesService
         [$orderLines, $remaining] = $this->cartItemDiscountService->addDiscountsToProductLines($totalDiscounts, $orderLines, $remaining);
 
         // Compensate for order total rounding inaccuracies
-        $orderLines = $this->compositeRoundingInaccuracies($remaining, $apiRoundingPrecision, $orderLines);
+        $orderLines = $this->roundingUtility->compositeRoundingInaccuracies($remaining, $orderLines);
 
         // Fill the order lines with the rest of the data (tax, total amount, etc.)
         $orderLines = $this->cartItemProductLinesService->fillProductLinesWithRemainingData($orderLines, $vatRatePrecision);
@@ -199,47 +213,6 @@ class CartLinesService
 
         // Convert floats to strings for the Mollie API and add additional info
         return $this->lineUtility->convertToLineArray($newItems, $currencyIsoCode, $apiRoundingPrecision);
-    }
-
-    /**
-     * @param float $remaining
-     * @param int $apiRoundingPrecision
-     * @param array $orderLines
-     *
-     * @return array
-     */
-    private function compositeRoundingInaccuracies($remaining, $apiRoundingPrecision, $orderLines)
-    {
-        $remaining = round($remaining, $apiRoundingPrecision);
-        if ($remaining < 0) {
-            foreach (array_reverse($orderLines) as $hash => $items) {
-                // Grab the line group's total amount
-                $totalAmount = array_sum(array_column($items, 'totalAmount'));
-
-                // Remove when total is lower than remaining
-                if ($totalAmount <= $remaining) {
-                    // The line total is less than remaining, we should remove this line group and continue
-                    $remaining = $remaining - $totalAmount;
-                    unset($items);
-                    continue;
-                }
-
-                // Otherwise spread the cart line again with the updated total
-                //TODO: check why remaining comes -100 when testing and new total becomes different
-                $orderLines[$hash] = static::spreadCartLineGroup($items, $totalAmount + $remaining);
-                break;
-            }
-        } elseif ($remaining > 0) {
-            foreach (array_reverse($orderLines) as $hash => $items) {
-                // Grab the line group's total amount
-                $totalAmount = array_sum(array_column($items, 'totalAmount'));
-                // Otherwise spread the cart line again with the updated total
-                $orderLines[$hash] = CartItemsService::spreadCartLineGroup($items, $totalAmount + $remaining);
-                break;
-            }
-        }
-
-        return $orderLines;
     }
 
     /**
