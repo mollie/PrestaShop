@@ -24,7 +24,6 @@ use mollie\src\Utility\LineUtility;
 use mollie\src\Utility\RoundingUtility;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\CalculationUtility;
-use Mollie\Utility\NumberUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -104,8 +103,7 @@ class CartLinesService
         $cartItems,
         $psGiftWrapping,
         $selectedVoucherCategory
-    ): array
-    {
+    ): array {
         $totalPrice = $this->roundingUtility->round($amount, Config::API_ROUNDING_PRECISION);
         $roundedShippingCost = $this->roundingUtility->round($shippingCost, Config::API_ROUNDING_PRECISION);
 

@@ -24,14 +24,11 @@ if (!defined('_PS_VERSION_')) {
 
 class CartItemPaymentFeeService
 {
-    /**
-     * @var LanguageService
-     */
+    /* @var LanguageService */
     private $languageService;
 
     /* @var RoundingUtility */
     private $roundingUtility;
-
 
     public function __construct(LanguageService $languageService, RoundingUtility $roundingUtility)
     {
