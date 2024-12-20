@@ -22,6 +22,17 @@ if (!defined('_PS_VERSION_')) {
 class RoundingUtility
 {
     /**
+     * @param float $amount
+     * @param int $precision
+     *
+     * @return float
+     */
+    public function round(float $amount, int $precision): float
+    {
+        return round($amount, $precision);
+    }
+
+    /**
      * @param float $remaining
      * @param array $orderLines
      *
@@ -29,7 +40,7 @@ class RoundingUtility
      */
     public function compositeRoundingInaccuracies($remaining, $orderLines)
     {
-        $remaining = round($remaining, CONFIG::API_ROUNDING_PRECISION);
+        $remaining = $this->round($remaining, CONFIG::API_ROUNDING_PRECISION);
         if ($remaining < 0) {
             foreach (array_reverse($orderLines) as $hash => $items) {
                 // Grab the line group's total amount

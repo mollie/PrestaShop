@@ -95,8 +95,8 @@ class CartLinesService
         $psGiftWrapping,
         $selectedVoucherCategory
     ) {
-        $totalPrice = round($amount, Config::API_ROUNDING_PRECISION);
-        $roundedShippingCost = round($shippingCost, Config::API_ROUNDING_PRECISION);
+        $totalPrice = $this->roundingUtility->round($amount, Config::API_ROUNDING_PRECISION);
+        $roundedShippingCost = $this->roundingUtility->round($shippingCost, Config::API_ROUNDING_PRECISION);
 
         foreach ($cartSummary['discounts'] as $discount) {
             if ($discount['free_shipping']) {
@@ -104,8 +104,8 @@ class CartLinesService
             }
         }
 
-        $wrappingPrice = $psGiftWrapping ? round($cartSummary['total_wrapping'], Config::API_ROUNDING_PRECISION) : 0;
-        $remaining = round(
+        $wrappingPrice = $psGiftWrapping ? $this->roundingUtility->round($cartSummary['total_wrapping'], Config::API_ROUNDING_PRECISION) : 0;
+        $remaining = $this->roundingUtility->round(
             CalculationUtility::getCartRemainingPrice((float) $totalPrice, (float) $roundedShippingCost, (float) $wrappingPrice),
             Config::API_ROUNDING_PRECISION
         );
@@ -171,17 +171,17 @@ class CartLinesService
         $apiRoundingPrecision = Config::API_ROUNDING_PRECISION;
         $vatRatePrecision = Config::VAT_RATE_ROUNDING_PRECISION;
 
-        $totalPrice = round($amount, $apiRoundingPrecision);
-        $roundedShippingCost = round($shippingCost, $apiRoundingPrecision);
+        $totalPrice = $this->roundingUtility->round($amount, $apiRoundingPrecision);
+        $roundedShippingCost = $this->roundingUtility->round($shippingCost, $apiRoundingPrecision);
         foreach ($cartSummary['discounts'] as $discount) {
             if ($discount['free_shipping']) {
                 $roundedShippingCost = 0;
             }
         }
 
-        $wrappingPrice = $psGiftWrapping ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
+        $wrappingPrice = $psGiftWrapping ? $this->roundingUtility->round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
         $totalDiscounts = isset($cartSummary['total_discounts']) ? $cartSummary['total_discounts'] : 0;
-        $remaining = round(
+        $remaining = $this->roundingUtility->round(
             CalculationUtility::getCartRemainingPrice((float) $totalPrice, (float) $roundedShippingCost, (float) $wrappingPrice),
             $apiRoundingPrecision
         );
@@ -230,7 +230,7 @@ class CartLinesService
                 $quantity = (int) $line['quantity'];
                 $targetVat = $line['targetVat'];
                 $unitPrice = $line['unitPrice'];
-                $unitPriceNoTax = round(CalculationUtility::getUnitPriceNoTax(
+                $unitPriceNoTax = $this->roundingUtility->round(CalculationUtility::getUnitPriceNoTax(
                     $line['unitPrice'],
                     $targetVat
                 ),
@@ -241,7 +241,7 @@ class CartLinesService
                 $totalAmount = $line['totalAmount'];
                 $actualVatRate = 0;
                 if ($unitPriceNoTax > 0) {
-                    $actualVatRate = round(
+                    $actualVatRate = $this->roundingUtility->round(
                         $vatAmount = CalculationUtility::getActualVatRate($unitPrice, $unitPriceNoTax, $quantity),
                         $vatRatePrecision
                     );
@@ -256,10 +256,10 @@ class CartLinesService
                     'name' => $line['name'],
                     'category' => $line['category'],
                     'quantity' => (int) $quantity,
-                    'unitPrice' => round($unitPrice, $apiRoundingPrecision),
-                    'totalAmount' => round($totalAmount, $apiRoundingPrecision),
-                    'vatRate' => round($actualVatRate, $apiRoundingPrecision),
-                    'vatAmount' => round($vatAmount, $apiRoundingPrecision),
+                    'unitPrice' => $this->roundingUtility->round($unitPrice, $apiRoundingPrecision),
+                    'totalAmount' => $this->roundingUtility->round($totalAmount, $apiRoundingPrecision),
+                    'vatRate' => $this->roundingUtility->round($actualVatRate, $apiRoundingPrecision),
+                    'vatAmount' => $this->roundingUtility->round($vatAmount, $apiRoundingPrecision),
                     'product_url' => $line['product_url'] ?? null,
                     'image_url' => $line['image_url'] ?? null,
                 ];
