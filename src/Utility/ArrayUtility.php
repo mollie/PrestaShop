@@ -24,7 +24,7 @@ class ArrayUtility
     }
 
     /**
-     * @param array $orderLines
+     * @param array $lines
      *
      * @return array
      */

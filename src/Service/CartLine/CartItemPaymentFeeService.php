@@ -15,7 +15,6 @@ namespace mollie\src\Service\CartLine;
 use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Service\LanguageService;
-use Mollie\Utility\CalculationUtility;
 use Mollie\Utility\NumberUtility;
 
 if (!defined('_PS_VERSION_')) {

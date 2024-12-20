@@ -21,15 +21,14 @@ if (!defined('_PS_VERSION_')) {
 
 class CartItemShippingLineService
 {
-    /**
-     * @var LanguageService
-     */
+    /* @var LanguageService */
     private $languageService;
 
     public function __construct(LanguageService $languageService)
     {
         $this->languageService = $languageService;
     }
+
     /**
      * @param float $roundedShippingCost
      * @param array $cartSummary

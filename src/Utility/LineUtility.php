@@ -25,7 +25,7 @@ class LineUtility
 {
     /**
      * @param string $currencyIsoCode
-     * @param int $apiRoundingPrecision
+     * @param string $currencyIsoCode
      *
      * @return array
      */

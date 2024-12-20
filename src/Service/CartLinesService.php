@@ -13,8 +13,6 @@
 namespace Mollie\Service;
 
 use Mollie\Config\Config;
-use Mollie\DTO\Line;
-use Mollie\DTO\Object\Amount;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Service\CartLine\CartItemDiscountService;
 use Mollie\Service\CartLine\CartItemProductLinesService;
@@ -26,9 +24,7 @@ use mollie\src\Utility\LineUtility;
 use mollie\src\Utility\RoundingUtility;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\CalculationUtility;
-use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\NumberUtility;
-use Mollie\Utility\TextFormatUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -36,20 +32,31 @@ if (!defined('_PS_VERSION_')) {
 
 class CartLinesService
 {
-    /**
-     * @var CartItemsService
-     */
+    /* @var CartItemsService */
     private $cartItemsService;
-    /**
-     * @var CartItemDiscountService
-     */
+
+    /* @var CartItemDiscountService */
     private $cartItemDiscountService;
+
+    /* @var CartItemShippingLineService */
     private $cartItemShippingLineService;
+
+    /* @var CartItemWrappingService */
     private $cartItemWrappingService;
+
+    /* @var CartItemProductLinesService */
     private $cartItemProductLinesService;
+
+    /* @var CartItemPaymentFeeService */
     private $cartItemPaymentFeeService;
+
+    /* @var LineUtility */
     private $lineUtility;
+
+    /* @var RoundingUtility */
     private $roundingUtility;
+
+    /* @var ArrayUtility */
     private $arrayUtility;
 
     public function __construct(
@@ -62,8 +69,7 @@ class CartLinesService
         LineUtility $lineUtility,
         RoundingUtility $roundingUtility,
         ArrayUtility $arrayUtility
-    )
-    {
+    ) {
         $this->cartItemsService = $cartItemsService;
         $this->cartItemDiscountService = $cartItemDiscountService;
         $this->cartItemShippingLineService = $cartItemShippingLineService;
@@ -75,7 +81,6 @@ class CartLinesService
         $this->arrayUtility = $arrayUtility;
     }
 
-    // new
     /**
      * @param float $amount
      * @param PaymentFeeData $paymentFeeData
@@ -125,7 +130,6 @@ class CartLinesService
         $totalDiscounts = $cartSummary['total_discounts'] ?? 0;
         list($orderLines, $remainingAmount) = $this->cartItemDiscountService->addDiscountsToProductLines($totalDiscounts, $orderLines, $remainingAmount);
 
-
         // Compensate for order total rounding inaccuracies
         $orderLines = $this->roundingUtility->compositeRoundingInaccuracies($remainingAmount, $orderLines);
 
@@ -160,7 +164,6 @@ class CartLinesService
      *
      * @throws \PrestaShop\Decimal\Exception\DivisionByZeroException
      */
-    // old
     public function getCartLines(
         $amount,
         $paymentFeeData,
@@ -214,7 +217,7 @@ class CartLinesService
         $orderLines = $this->cartItemPaymentFeeService->addPaymentFeeLine($paymentFeeData, $orderLines);
 
         // Ungroup all the cart lines, just one level
-        $newItems = $this->ungroupLines($orderLines);
+        $newItems = $this->arrayUtility->ungroupLines($orderLines);
 
         // Convert floats to strings for the Mollie API and add additional info
         return $this->lineUtility->convertToLineArray($newItems, $currencyIsoCode, $apiRoundingPrecision);
