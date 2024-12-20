@@ -17,9 +17,11 @@ use Mollie\DTO\Line;
 use Mollie\DTO\Object\Amount;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Service\CartLine\CartItemDiscountService;
+use Mollie\Service\CartLine\CartItemProductLinesService;
 use Mollie\Service\CartLine\CartItemShippingLineService;
 use Mollie\Service\CartLine\CartItemsService;
 use Mollie\Service\CartLine\CartItemWrappingService;
+use mollie\src\Service\CartLine\CartItemPaymentFeeService;
 use Mollie\Utility\CalculationUtility;
 use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\NumberUtility;
@@ -45,13 +47,17 @@ class CartLinesService
     private $cartItemDiscountService;
     private $cartItemShippingLineService;
     private $cartItemWrappingService;
+    private $cartItemProductLinesService;
+    private $cartItemPaymentFeeService;
 
     public function __construct(
         LanguageService $languageService,
         CartItemsService $cartItemsService,
         CartItemDiscountService $cartItemDiscountService,
         CartItemShippingLineService $cartItemShippingLineService,
-        CartItemWrappingService $cartItemWrappingService
+        CartItemWrappingService $cartItemWrappingService,
+        CartItemProductLinesService $cartItemProductLinesService,
+        CartItemPaymentFeeService $cartItemPaymentFeeService
     )
     {
         $this->languageService = $languageService;
@@ -59,6 +65,8 @@ class CartLinesService
         $this->cartItemDiscountService = $cartItemDiscountService;
         $this->cartItemShippingLineService = $cartItemShippingLineService;
         $this->cartItemWrappingService = $cartItemWrappingService;
+        $this->cartItemProductLinesService = $cartItemProductLinesService;
+        $this->cartItemPaymentFeeService = $cartItemPaymentFeeService;
     }
 
     public function buildCartLines(
@@ -178,7 +186,7 @@ class CartLinesService
 //        $orderLines = $this->addWrappingLine($wrappingPrice, $cartSummary, $vatRatePrecision, $apiRoundingPrecision, $orderLines);
 
         // Add fee
-//        $orderLines = $this->addPaymentFeeLine($paymentFeeData, $apiRoundingPrecision, $orderLines);
+//        $orderLines = $this->cartItemPaymentFeeService->addPaymentFeeLine($paymentFeeData, $orderLines);
 
         // Ungroup all the cart lines, just one level
         $newItems = $this->ungroupLines($orderLines);

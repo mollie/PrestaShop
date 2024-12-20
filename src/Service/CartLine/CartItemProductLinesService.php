@@ -33,7 +33,7 @@ class CartItemProductLinesService
      *
      * @throws \PrestaShop\Decimal\Exception\DivisionByZeroException
      */
-    private function fillProductLinesWithRemainingData(array $orderLines, $vatRatePrecision)
+    public function fillProductLinesWithRemainingData(array $orderLines, $vatRatePrecision)
     {
         $roundingPrecision = CONFIG::API_ROUNDING_PRECISION;
 

@@ -40,7 +40,7 @@ class CartItemPaymentFeeService
      *
      * @return array
      */
-    private function addPaymentFeeLine($paymentFeeData, array $orderLines)
+    public function addPaymentFeeLine($paymentFeeData, array $orderLines)
     {
         if (!$paymentFeeData->isActive()) {
             return $orderLines;
