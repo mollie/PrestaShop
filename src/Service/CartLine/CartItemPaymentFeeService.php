@@ -15,6 +15,7 @@ namespace mollie\src\Service\CartLine;
 use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Service\LanguageService;
+use mollie\src\Utility\RoundingUtility;
 use Mollie\Utility\NumberUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -28,9 +29,14 @@ class CartItemPaymentFeeService
      */
     private $languageService;
 
-    public function __construct(LanguageService $languageService)
+    /* @var RoundingUtility */
+    private $roundingUtility;
+
+
+    public function __construct(LanguageService $languageService, RoundingUtility $roundingUtility)
     {
         $this->languageService = $languageService;
+        $this->roundingUtility = $roundingUtility;
     }
 
     /**
@@ -50,8 +56,8 @@ class CartItemPaymentFeeService
                 'name' => $this->languageService->lang('Payment fee'),
                 'sku' => Config::PAYMENT_FEE_SKU,
                 'quantity' => 1,
-                'unitPrice' => round($paymentFeeData->getPaymentFeeTaxIncl(), CONFIG::API_ROUNDING_PRECISION),
-                'totalAmount' => round($paymentFeeData->getPaymentFeeTaxIncl(), CONFIG::API_ROUNDING_PRECISION),
+                'unitPrice' => $this->roundingUtility->round($paymentFeeData->getPaymentFeeTaxIncl(), CONFIG::API_ROUNDING_PRECISION),
+                'totalAmount' => $this->roundingUtility->round($paymentFeeData->getPaymentFeeTaxIncl(), CONFIG::API_ROUNDING_PRECISION),
                 'vatAmount' => NumberUtility::minus($paymentFeeData->getPaymentFeeTaxIncl(), $paymentFeeData->getPaymentFeeTaxExcl()),
                 'vatRate' => $paymentFeeData->getTaxRate(),
             ],
