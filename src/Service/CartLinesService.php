@@ -198,42 +198,7 @@ class CartLinesService
         $newItems = $this->ungroupLines($orderLines);
 
         // Convert floats to strings for the Mollie API and add additional info
-        return $this->convertToLineArray($newItems, $currencyIsoCode, $apiRoundingPrecision);
-    }
-
-    /**
-     * Spread the cart line amount evenly.
-     *
-     * Optionally split into multiple lines in case of rounding inaccuracies
-     *
-     * @param array[] $cartLineGroup Cart Line Group WITHOUT VAT details (except target VAT rate)
-     * @param float $newTotal
-     *
-     * @return array[]
-     *
-     * @since 3.2.2
-     * @since 3.3.3 Omits VAT details
-     */
-    public static function spreadCartLineGroup($cartLineGroup, $newTotal)
-    {
-        $apiRoundingPrecision = Config::API_ROUNDING_PRECISION;
-        $newTotal = round($newTotal, $apiRoundingPrecision);
-        $quantity = array_sum(array_column($cartLineGroup, 'quantity'));
-        $newCartLineGroup = [];
-        $spread = CartPriceUtility::spreadAmountEvenly($newTotal, $quantity);
-        foreach ($spread as $unitPrice => $qty) {
-            $newCartLineGroup[] = [
-                'name' => $cartLineGroup[0]['name'],
-                'quantity' => $qty,
-                'unitPrice' => (float) $unitPrice,
-                'totalAmount' => (float) $unitPrice * $qty,
-                'sku' => isset($cartLineGroup[0]['sku']) ? $cartLineGroup[0]['sku'] : '',
-                'targetVat' => $cartLineGroup[0]['targetVat'],
-                'category' => $cartLineGroup[0]['category'],
-            ];
-        }
-
-        return $newCartLineGroup;
+        return $this->lineUtility->convertToLineArray($newItems, $currencyIsoCode, $apiRoundingPrecision);
     }
 
     /**
@@ -269,7 +234,7 @@ class CartLinesService
                 // Grab the line group's total amount
                 $totalAmount = array_sum(array_column($items, 'totalAmount'));
                 // Otherwise spread the cart line again with the updated total
-                $orderLines[$hash] = static::spreadCartLineGroup($items, $totalAmount + $remaining);
+                $orderLines[$hash] = CartItemsService::spreadCartLineGroup($items, $totalAmount + $remaining);
                 break;
             }
         }
