@@ -13,6 +13,7 @@
 namespace Mollie\Service\CartLine;
 
 use Mollie\Config\Config;
+use mollie\src\Utility\RoundingUtility;
 use Mollie\Utility\NumberUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -21,6 +22,14 @@ if (!defined('_PS_VERSION_')) {
 
 class CartItemDiscountService
 {
+    /* @var RoundingUtility */
+    private $roundingUtility;
+
+    public function __construct(RoundingUtility $roundingUtility)
+    {
+        $this->roundingUtility = $roundingUtility;
+    }
+
     /**
      * @param float $totalDiscounts
      * @param array $orderLines
@@ -36,8 +45,8 @@ class CartItemDiscountService
                     'name' => 'Discount',
                     'type' => 'discount',
                     'quantity' => 1,
-                    'unitPrice' => -round($totalDiscounts, Config::API_ROUNDING_PRECISION),
-                    'totalAmount' => -round($totalDiscounts, Config::API_ROUNDING_PRECISION),
+                    'unitPrice' => -$this->roundingUtility->round($totalDiscounts, Config::API_ROUNDING_PRECISION),
+                    'totalAmount' => -$this->roundingUtility->round($totalDiscounts, Config::API_ROUNDING_PRECISION),
                     'targetVat' => 0,
                     'category' => '',
                 ],

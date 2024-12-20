@@ -14,6 +14,7 @@ namespace Mollie\Service\CartLine;
 
 use Mollie\Config\Config;
 use Mollie\Service\LanguageService;
+use mollie\src\Utility\RoundingUtility;
 use Mollie\Utility\CalculationUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -22,14 +23,16 @@ if (!defined('_PS_VERSION_')) {
 
 class CartItemWrappingService
 {
-    /**
-     * @var LanguageService
-     */
+    /* @var LanguageService */
     private $languageService;
 
-    public function __construct(LanguageService $languageService)
+    /* @var RoundingUtility */
+    private $roundingUtility;
+
+    public function __construct(LanguageService $languageService, RoundingUtility $roundingUtility)
     {
         $this->languageService = $languageService;
+        $this->roundingUtility = $roundingUtility;
     }
 
     /**
@@ -42,8 +45,8 @@ class CartItemWrappingService
      */
     public function addWrappingLine(float $wrappingPrice, array $cartSummary, int $vatRatePrecision, array $orderLines): array
     {
-        if (round($wrappingPrice, 2) > 0) {
-            $wrappingVatRate = round(
+        if ($this->roundingUtility->round($wrappingPrice, 2) > 0) {
+            $wrappingVatRate = $this->roundingUtility->round(
                 CalculationUtility::getActualVatRate(
                     $cartSummary['total_wrapping'],
                     $cartSummary['total_wrapping_tax_exc']
@@ -55,9 +58,9 @@ class CartItemWrappingService
                 [
                     'name' => $this->languageService->lang('Gift wrapping'),
                     'quantity' => 1,
-                    'unitPrice' => round($wrappingPrice, Config::API_ROUNDING_PRECISION),
-                    'totalAmount' => round($wrappingPrice, Config::API_ROUNDING_PRECISION),
-                    'vatAmount' => round($wrappingPrice * $wrappingVatRate / ($wrappingVatRate + 100), Config::API_ROUNDING_PRECISION),
+                    'unitPrice' => $this->roundingUtility->round($wrappingPrice, Config::API_ROUNDING_PRECISION),
+                    'totalAmount' => $this->roundingUtility->round($wrappingPrice, Config::API_ROUNDING_PRECISION),
+                    'vatAmount' => $this->roundingUtility->round($wrappingPrice * $wrappingVatRate / ($wrappingVatRate + 100), Config::API_ROUNDING_PRECISION),
                     'vatRate' => $wrappingVatRate,
                 ],
             ];
