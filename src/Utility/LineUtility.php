@@ -29,7 +29,7 @@ class LineUtility
      *
      * @return array
      */
-    public function convertToLineArray(array $newItems, $currencyIsoCode)
+    public function convertToLineArray(array $newItems, $currencyIsoCode): array
     {
         $roundingPrecision = CONFIG::API_ROUNDING_PRECISION;
         foreach ($newItems as $index => $item) {

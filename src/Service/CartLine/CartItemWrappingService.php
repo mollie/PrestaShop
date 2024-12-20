@@ -40,7 +40,7 @@ class CartItemWrappingService
      *
      * @return array
      */
-    public function addWrappingLine(float $wrappingPrice, array $cartSummary, int $vatRatePrecision, array $orderLines)
+    public function addWrappingLine(float $wrappingPrice, array $cartSummary, int $vatRatePrecision, array $orderLines): array
     {
         if (round($wrappingPrice, 2) > 0) {
             $wrappingVatRate = round(

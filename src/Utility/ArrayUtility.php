@@ -28,7 +28,7 @@ class ArrayUtility
      *
      * @return array
      */
-    public function ungroupLines(array $lines)
+    public function ungroupLines(array $lines): array
     {
         $newItems = [];
         foreach ($lines as &$items) {

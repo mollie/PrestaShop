@@ -38,7 +38,7 @@ class RoundingUtility
      *
      * @return array
      */
-    public function compositeRoundingInaccuracies($remaining, $orderLines)
+    public function compositeRoundingInaccuracies($remaining, $orderLines): array
     {
         $remaining = $this->round($remaining, CONFIG::API_ROUNDING_PRECISION);
         if ($remaining < 0) {
