@@ -89,7 +89,8 @@ class CartLinesService
     public function buildCartLines(
         $amount,
         $paymentFeeData,
-        $currencyIsoCode, $cartSummary,
+        $currencyIsoCode,
+        $cartSummary,
         $shippingCost,
         $cartItems,
         $psGiftWrapping,
@@ -105,24 +106,24 @@ class CartLinesService
         }
 
         $wrappingPrice = $psGiftWrapping ? $this->roundingUtility->round($cartSummary['total_wrapping'], Config::API_ROUNDING_PRECISION) : 0;
-        $remaining = $this->roundingUtility->round(
+
+        $remainingAmount = $this->roundingUtility->round(
             CalculationUtility::getCartRemainingPrice((float) $totalPrice, (float) $roundedShippingCost, (float) $wrappingPrice),
             Config::API_ROUNDING_PRECISION
         );
 
         $orderLines = [];
 
-        /* Item */
-        list($orderLines, $remaining) = $this->cartItemsService->createProductLines($cartItems, $cartSummary['gift_products'], $orderLines, $selectedVoucherCategory, $remaining);
+        // Item
+        list($orderLines, $remainingAmount) = $this->cartItemsService->createProductLines($cartItems, $cartSummary['gift_products'], $orderLines, $selectedVoucherCategory, $remainingAmount);
 
         // Add discounts to the order lines
-        $totalDiscounts = isset($cartSummary['total_discounts']) ? $cartSummary['total_discounts'] : 0;
-        list($orderLines, $remaining) = $this->cartItemDiscountService->addDiscountsToProductLines($totalDiscounts, $orderLines, $remaining);
+        $totalDiscounts = $cartSummary['total_discounts'] ?? 0;
+        list($orderLines, $remainingAmount) = $this->cartItemDiscountService->addDiscountsToProductLines($totalDiscounts, $orderLines, $remainingAmount);
 
 
-        //todo move these both methods inside some kind of utility class
         // Compensate for order total rounding inaccuracies
-        $orderLines = $this->roundingUtility->compositeRoundingInaccuracies($remaining, $orderLines);
+        $orderLines = $this->roundingUtility->compositeRoundingInaccuracies($remainingAmount, $orderLines);
 
         // Fill the order lines with the rest of the data (tax, total amount, etc.)
         $orderLines = $this->cartItemProductLinesService->fillProductLinesWithRemainingData($orderLines, Config::VAT_RATE_ROUNDING_PRECISION);
@@ -131,7 +132,7 @@ class CartLinesService
         $orderLines = $this->cartItemShippingLineService->addShippingLine($roundedShippingCost, $cartSummary, $orderLines);
 
         // Add wrapping costs to the order lines
-        $orderLines  =  $this->cartItemWrappingService->addWrappingLine($wrappingPrice, $cartSummary, Config::VAT_RATE_ROUNDING_PRECISION, $orderLines);
+        $orderLines = $this->cartItemWrappingService->addWrappingLine($wrappingPrice, $cartSummary, Config::VAT_RATE_ROUNDING_PRECISION, $orderLines);
 
         // Add payment fees to the order lines
         $orderLines = $this->cartItemPaymentFeeService->addPaymentFeeLine($paymentFeeData, $orderLines);
