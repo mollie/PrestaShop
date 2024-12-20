@@ -51,7 +51,7 @@ class CartItemsService
     {
         foreach ($cartItems as $cartItem) {
             // Get the rounded total w/ tax
-            $roundedTotalWithTax = $this->roundingUtility->round($cartItem['total_wt'], Config::API_ROUNDING_PRECISION);
+            $roundedTotalWithTax = round($cartItem['total_wt'], Config::API_ROUNDING_PRECISION);
 
             // Skip if no qty
             $quantity = (int) $cartItem['cart_quantity'];
@@ -96,7 +96,7 @@ class CartItemsService
                 'sku' => $productHash,
                 'targetVat' => (float) $cartItem['rate'],
                 'quantity' => $quantity,
-                'unitPrice' => $this->roundingUtility->round($cartItem['price_wt'], Config::API_ROUNDING_PRECISION),
+                'unitPrice' => round($cartItem['price_wt'], Config::API_ROUNDING_PRECISION),
                 'totalAmount' => (float) $roundedTotalWithTax,
                 'category' => $this->voucherService->getVoucherCategory($cartItem, $selectedVoucherCategory),
                 'product_url' => $this->context->getProductLink($cartItem['id_product']),
