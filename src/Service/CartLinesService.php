@@ -22,6 +22,7 @@ use Mollie\Service\CartLine\CartItemShippingLineService;
 use Mollie\Service\CartLine\CartItemsService;
 use Mollie\Service\CartLine\CartItemWrappingService;
 use mollie\src\Service\CartLine\CartItemPaymentFeeService;
+use mollie\src\Utility\LineUtility;
 use Mollie\Utility\CalculationUtility;
 use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\NumberUtility;
@@ -49,6 +50,7 @@ class CartLinesService
     private $cartItemWrappingService;
     private $cartItemProductLinesService;
     private $cartItemPaymentFeeService;
+    private $lineUtility;
 
     public function __construct(
         LanguageService $languageService,
@@ -57,7 +59,8 @@ class CartLinesService
         CartItemShippingLineService $cartItemShippingLineService,
         CartItemWrappingService $cartItemWrappingService,
         CartItemProductLinesService $cartItemProductLinesService,
-        CartItemPaymentFeeService $cartItemPaymentFeeService
+        CartItemPaymentFeeService $cartItemPaymentFeeService,
+        LineUtility $lineUtility
     )
     {
         $this->languageService = $languageService;
@@ -67,8 +70,10 @@ class CartLinesService
         $this->cartItemWrappingService = $cartItemWrappingService;
         $this->cartItemProductLinesService = $cartItemProductLinesService;
         $this->cartItemPaymentFeeService = $cartItemPaymentFeeService;
+        $this->lineUtility = $lineUtility;
     }
 
+    // new
     public function buildCartLines(
         $amount, $paymentFeeData, $currencyIsoCode, $cartSummary, $shippingCost, $cartItems, $psGiftWrapping, $selectedVoucherCategory
     ) {
@@ -115,11 +120,11 @@ class CartLinesService
         $orderLines  =  $this->cartItemWrappingService->addWrappingLine($wrappingPrice, $cartSummary, $vatRatePrecision, $orderLines);
 
         // Add payment fees to the order lines
-        $orderLines = $this->paymentFeeService->addPaymentFee($orderLines, $paymentFeeData);
+        $orderLines = $this->cartItemPaymentFeeService->addPaymentFeeLine($paymentFeeData, $orderLines);
 
         $newItems = $this->ungroupLines($orderLines);
 
-        return $this->convertToLineArray($newItems, $currencyIsoCode, $apiRoundingPrecision);
+        return $this->lineUtility->convertToLineArray($newItems, $currencyIsoCode, $apiRoundingPrecision);
     }
 
     /**
@@ -136,6 +141,7 @@ class CartLinesService
      *
      * @throws \PrestaShop\Decimal\Exception\DivisionByZeroException
      */
+    // old
     public function getCartLines(
         $amount,
         $paymentFeeData,
@@ -340,59 +346,6 @@ class CartLinesService
             foreach ($items as &$item) {
                 $newItems[] = $item;
             }
-        }
-
-        return $newItems;
-    }
-
-    /**
-     * @param string $currencyIsoCode
-     * @param int $apiRoundingPrecision
-     *
-     * @return array
-     */
-    private function convertToLineArray(array $newItems, $currencyIsoCode, $apiRoundingPrecision)
-    {
-        foreach ($newItems as $index => $item) {
-            $line = new Line();
-            $line->setName($item['name'] ?: $item['sku']);
-            $line->setQuantity((int) $item['quantity']);
-            $line->setSku(isset($item['sku']) ? $item['sku'] : '');
-
-            $currency = strtoupper(strtolower($currencyIsoCode));
-
-            if (isset($item['discount'])) {
-                $line->setDiscountAmount(new Amount(
-                        $currency,
-                        TextFormatUtility::formatNumber($item['discount'], $apiRoundingPrecision, '.', '')
-                    )
-                );
-            }
-
-            $line->setUnitPrice(new Amount(
-                $currency,
-                TextFormatUtility::formatNumber($item['unitPrice'], $apiRoundingPrecision, '.', '')
-            ));
-
-            $line->setTotalPrice(new Amount(
-                $currency,
-                TextFormatUtility::formatNumber($item['totalAmount'], $apiRoundingPrecision, '.', '')
-            ));
-
-            $line->setVatAmount(new Amount(
-                $currency,
-                TextFormatUtility::formatNumber($item['vatAmount'], $apiRoundingPrecision, '.', '')
-            ));
-
-            if (isset($item['category'])) {
-                $line->setCategory($item['category']);
-            }
-
-            $line->setVatRate(TextFormatUtility::formatNumber($item['vatRate'], $apiRoundingPrecision, '.', ''));
-            $line->setProductUrl($item['product_url'] ?? null);
-            $line->setImageUrl($item['image_url'] ?? null);
-
-            $newItems[$index] = $line;
         }
 
         return $newItems;
