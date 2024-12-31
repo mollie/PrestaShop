@@ -6,84 +6,77 @@ on:
       - '**'
   push:
     branches:
-      - 'main'
+      - 'master'
 
-concurrency:
-  group: ${{ github.event_name }}-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
 jobs:
-  test:
-    name: Run tests
+  php-cs-fixer:
     runs-on: ubuntu-latest
-    env:
-      # Change these values depending on project.
-      ps-module-name: mollie
-      project-workspace-dir: ${{ github.workspace }}/../workspace
-    strategy:
-      matrix:
-        PS: [ 1.7.8-7.1 ]
-        testsuite: [ lint, phpstan, unit, integration ]
-
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.0
-        with:
-          access_token: ${{ github.token }}
-
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2.0.0
 
-      - name: Set Swap Space
-        uses: Invertus/set-swap-space@master
-        with:
-          swap-size-gb: 10
+      - name: Run PHP-CS-Fixer
+        uses: prestashopcorp/github-action-php-cs-fixer@master
 
-      - name: Setup PS module workspace
-        uses: Invertus/setup-ps-module-workspace@1.0.2
-        with:
-          ps-module-name: ${{ env.ps-module-name }}
-          ps-version-dockerhub-tag: ${{ matrix.PS }}
-          project-workspace-dir: ${{ env.project-workspace-dir }}
-          ps-module-workspace-private-key: ${{ secrets.PS_MODULE_WORKSPACE_PRIVATE_KEY }}
-
-      - name: Run PrestaShop
-        run: |
-          (cd ${{ env.project-workspace-dir }} && docker compose up -d)
-
-      - name: Healthcheck
-        run: |
-          timeout 120s sh -c 'until docker ps | grep ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} | grep -q "(healthy)"; do echo "Waiting for container to be healthy..."; sleep 1; done'
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
 
       - name: Cache composer folder
-        uses: actions/cache@v3
+        uses: actions/cache@v1
         with:
-          path: ${{ env.project-workspace-dir }}/prestashop/${{ matrix.PS }}/modules/${{ env.ps-module-name }}/vendor
-          key: ${{ github.sha }}
+          path: ~/.composer/cache
+          key: php-composer-cache
 
-      - name: Module composer install
-        run: (cd ${{ env.project-workspace-dir }} && make module-composer-install)
+      - run: composer i
 
-      - name: Remove conflicting modules
-        run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html && rm -rf modules/ps_checkout"
+      - name: Pull PrestaShop files
+        run: docker run -tid --rm -v ps-volume:/var/www/html -v $PWD/:/var/www/html/modules/mollie --name temp-ps prestashop/prestashop:1.7.8.1-7.4-apache
 
-      - name: Install module
-        run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html && php bin/console prestashop:module install ${{ env.ps-module-name }}"
+      - name: Run PHPunit
+        run: docker exec temp-ps php /var/www/html/modules/mollie/vendor/bin/phpunit -c /var/www/html/modules/mollie/tests/phpunit.xml
+  #        run: docker run --rm --volumes-from temp-ps --workdir=/var/www/html/modules/mollie php ./vendor/bin/phpunit -c ./tests/phpunit.xml -c tests/
 
-      - name: Run ${{ matrix.testsuite }} tests
-        run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html/modules/${{ env.ps-module-name }} && make ci-${{ matrix.testsuite }} ps_version_tag=${{ matrix.PS }}"
+  phpstan:
+    name: PHPStan
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        presta-versions: [ '1.7.6.8', '1.7.7.0', 'nightly-apache' ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+
+      - name: Cache vendor folder
+        uses: actions/cache@v1
+        with:
+          path: vendor
+          key: php-${{ hashFiles('composer.lock') }}
+
+      - name: Cache composer folder
+        uses: actions/cache@v1
+        with:
+          path: ~/.composer/cache
+          key: php-composer-cache
+
+      - run: composer update
+
+      - name: Pull PrestaShop files (Tag ${{ matrix.presta-versions }})
+        run: docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop:${{ matrix.presta-versions }}
+
+      - name: Run PHPStan
+        run: docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module phpstan/phpstan:0.12 analyse --configuration=/web/module/tests/phpstan/phpstan_base.neon --debug --error-format github
 
   prepare-zip:
     name: Prepare module ZIP artifact
     runs-on: ubuntu-latest
     needs: [ test ]
     env:
-      MODULE_NAME: klarnapayment
+      MODULE_NAME: mollie
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.0
-        with:
-          access_token: ${{ github.token }}
-
+      # todo ask for permissions to add cancel previous workflow action
       - name: checkout
         uses: actions/checkout@v4
         with:
@@ -93,11 +86,9 @@ jobs:
         run: |
           composer install --no-dev --optimize-autoloader --classmap-authoritative
           composer dump-autoload --no-dev --optimize --classmap-authoritative
-          cp .github/.htaccess vendor/.htaccess
           rm -rf .git .github tests .php-cs-fixer.php Makefile cypress* docker-compose*.yml package.json package-lock.json .docker
           mkdir ${{ env.MODULE_NAME }}
           rsync -Rr ./ ./${{ env.MODULE_NAME }}
-          chmod -R 777 ${{ env.MODULE_NAME }}/var/cache
           shopt -s extglob
           rm -r !(${{ env.MODULE_NAME }})
           find . -maxdepth 1 -type f -exec rm "{}" \;
