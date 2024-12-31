@@ -37,7 +37,7 @@ jobs:
 
       - name: Run PHPunit
         run: |
-          docker exec -t temp-ps modules/mollie/vendor/bin/phpunit -c modules/mollie/tests/phpunit.xml
+          docker run --rm --volumes-from temp-ps -v $PWD:/var/www/html/modules/mollie -w /var/www/html/modules/mollie php:7.4-cli vendor/bin/phpunit -c tests/phpunit.xml
         shell: bash
 
   phpstan:
