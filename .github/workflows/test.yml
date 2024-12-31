@@ -19,54 +19,64 @@ jobs:
         uses: prestashopcorp/github-action-php-cs-fixer@master
 
   test:
+    name: Run tests
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2.0.0
-
-      - name: Cache composer folder
-        uses: actions/cache@v1
-        with:
-          path: ~/.composer/cache
-          key: php-composer-cache
-
-      - run: composer i
-
-      - name: Pull PrestaShop files
-        run: docker run -tid --rm -v ps-volume:/var/www/html -v $PWD/:/var/www/html/modules/mollie --name temp-ps prestashop/prestashop:1.7.8.1-7.4-apache
-
-      - name: Run PHPunit
-        run: docker exec -i temp-ps bash -c "cd /var/www/html/modules/mollie && composer install && ./vendor/bin/phpunit -c tests/phpunit.xml"
-
-  phpstan:
-    name: PHPStan
-    runs-on: ubuntu-latest
+    env:
+      # Change these values depending on project.
+      ps-module-name: mollie
+      project-workspace-dir: ${{ github.workspace }}/../workspace
     strategy:
       matrix:
-        presta-versions: [ '1.7.6.8', '1.7.7.0', 'nightly-apache' ]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2.0.0
+        PS: [ 1.7.8-7.1 ]
+        testsuite: [ lint, phpstan, unit, integration ]
 
-      - name: Cache vendor folder
-        uses: actions/cache@v1
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.0
         with:
-          path: vendor
-          key: php-${{ hashFiles('composer.lock') }}
+          access_token: ${{ github.token }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set Swap Space
+        uses: Invertus/set-swap-space@master
+        with:
+          swap-size-gb: 10
+
+      - name: Setup PS module workspace
+        uses: Invertus/setup-ps-module-workspace@1.0.2
+        with:
+          ps-module-name: ${{ env.ps-module-name }}
+          ps-version-dockerhub-tag: ${{ matrix.PS }}
+          project-workspace-dir: ${{ env.project-workspace-dir }}
+          ps-module-workspace-private-key: ${{ secrets.PS_MODULE_WORKSPACE_PRIVATE_KEY }}
+
+      - name: Run PrestaShop
+        run: |
+          (cd ${{ env.project-workspace-dir }} && docker compose up -d)
+
+      - name: Healthcheck
+        run: |
+          timeout 120s sh -c 'until docker ps | grep ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} | grep -q "(healthy)"; do echo "Waiting for container to be healthy..."; sleep 1; done'
 
       - name: Cache composer folder
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
-          path: ~/.composer/cache
-          key: php-composer-cache
+          path: ${{ env.project-workspace-dir }}/prestashop/${{ matrix.PS }}/modules/${{ env.ps-module-name }}/vendor
+          key: ${{ github.sha }}
 
-      - run: composer update
+      - name: Module composer install
+        run: (cd ${{ env.project-workspace-dir }} && make module-composer-install)
 
-      - name: Pull PrestaShop files (Tag ${{ matrix.presta-versions }})
-        run: docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop:${{ matrix.presta-versions }}
+      - name: Remove conflicting modules
+        run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html && rm -rf modules/ps_checkout"
 
-      - name: Run PHPStan
-        run: docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module phpstan/phpstan:0.12 analyse --configuration=/web/module/tests/phpstan/phpstan_base.neon --debug --error-format github
+      - name: Install module
+        run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html && php bin/console prestashop:module install ${{ env.ps-module-name }}"
+
+      - name: Run ${{ matrix.testsuite }} tests
+        run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html/modules/${{ env.ps-module-name }} && make ci-${{ matrix.testsuite }} ps_version_tag=${{ matrix.PS }}"
 
   prepare-zip:
     name: Prepare module ZIP artifact
