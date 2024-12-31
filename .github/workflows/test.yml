@@ -20,10 +20,6 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        PS: [ 1.7.8-7.1 ]
-        testsuite: [ lint, phpstan, unit, integration ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
@@ -40,7 +36,7 @@ jobs:
         run: docker run -tid --rm -v ps-volume:/var/www/html -v $PWD/:/var/www/html/modules/mollie --name temp-ps prestashop/prestashop:1.7.8.1-7.4-apache
 
       - name: Run PHPunit
-        run: docker exec -i  }} bash -c "cd /var/www/html && php bin/console prestashop:module install ${{ env.ps-module-name }}"
+        run: docker exec -i temp-ps bash -c "cd /var/www/html && php bin/console prestashop:module install ${{ env.ps-module-name }}"
 
   phpstan:
     name: PHPStan
