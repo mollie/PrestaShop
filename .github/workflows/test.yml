@@ -37,9 +37,7 @@ jobs:
 
       - name: Run PHPunit
         run: |
-#          botsudo/phpunit
           docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module botsudo/phpunit -c tests/phpunit.xml
-        shell: bash
 
   phpstan:
     name: PHPStan
