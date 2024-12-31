@@ -2,8 +2,8 @@
 
 namespace Mollie\Tests\Utility;
 
+use Mollie\Tests\Unit\BaseTestCase;
 use Mollie\Utility\NumberIdempotencyProvider;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Mollie\Utility\NumberIdempotencyProvider

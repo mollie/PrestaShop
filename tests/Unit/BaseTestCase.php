@@ -25,6 +25,7 @@ use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
 use Mollie\Subscription\Provider\SubscriptionOrderAmountProvider;
 use Mollie\Subscription\Provider\SubscriptionStartDateProvider;
 use Mollie\Subscription\Repository\CombinationRepository;
+use Mollie\Utility\TimeUtility;
 use PHPUnit\Framework\TestCase;
 
 class BaseTestCase extends TestCase
@@ -63,6 +64,8 @@ class BaseTestCase extends TestCase
     public $subscriptionStartDateProvider;
     /** @var CombinationRepository */
     public $combinationRepository;
+    /** @var TimeUtility */
+    public $timeUtility;
 
     protected function setUp(): void
     {
@@ -82,6 +85,7 @@ class BaseTestCase extends TestCase
         $this->subscriptionOrderAmountProvider = $this->mock(SubscriptionOrderAmountProvider::class);
         $this->subscriptionStartDateProvider = $this->mock(SubscriptionStartDateProvider::class);
         $this->combinationRepository = $this->mock(CombinationRepository::class);
+        $this->timeUtility = $this->mock(TimeUtility::class);
 
         parent::setUp();
     }
