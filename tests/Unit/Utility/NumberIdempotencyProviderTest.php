@@ -10,7 +10,7 @@ use Mollie\Utility\NumberIdempotencyProvider;
  */
 final class NumberIdempotencyProviderTest extends BaseTestCase
 {
-    public function test_it_generates_different_keys(): void
+    public function testItGeneratesDifferentKeys(): void
     {
         $provider = new NumberIdempotencyProvider();
 
