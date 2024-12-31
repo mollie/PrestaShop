@@ -16,7 +16,7 @@ final class MollieStatusUtilityTest extends TestCase
     /**
      * @dataProvider provide_payment_statuses
      */
-    public function test_it_correctly_identifies_finished_payment_statuses(string $status, bool $expected): void
+    public function testItCorrectlyIdentifiesFinishedPaymentStatuses(string $status, bool $expected): void
     {
         $result = MollieStatusUtility::isPaymentFinished($status);
 
