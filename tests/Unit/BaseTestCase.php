@@ -16,8 +16,15 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\PrestaLoggerInterface;
+use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\OrderRepositoryInterface;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
+use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
+use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
+use Mollie\Subscription\Provider\SubscriptionOrderAmountProvider;
+use Mollie\Subscription\Provider\SubscriptionStartDateProvider;
+use Mollie\Subscription\Repository\CombinationRepository;
 use PHPUnit\Framework\TestCase;
 
 class BaseTestCase extends TestCase
@@ -42,6 +49,20 @@ class BaseTestCase extends TestCase
     public $cart;
     /** @var PrestaLoggerInterface */
     public $logger;
+    /** @var MolCustomerRepository */
+    public $molCustomerRepository;
+    /** @var SubscriptionIntervalProvider */
+    public $subscriptionIntervalProvider;
+    /** @var SubscriptionDescriptionProvider */
+    public $subscriptionDescriptionProvider;
+    /** @var PaymentMethodRepositoryInterface */
+    public $paymentMethodRepository;
+    /** @var SubscriptionOrderAmountProvider */
+    public $subscriptionOrderAmountProvider;
+    /** @var SubscriptionStartDateProvider */
+    public $subscriptionStartDateProvider;
+    /** @var CombinationRepository */
+    public $combinationRepository;
 
     protected function setUp(): void
     {
@@ -54,6 +75,13 @@ class BaseTestCase extends TestCase
         $this->currencyRepository = $this->mock(CurrencyRepositoryInterface::class);
         $this->cart = $this->mock(\Cart::class);
         $this->logger = $this->mock(PrestaLoggerInterface::class);
+        $this->molCustomerRepository = $this->mock(MolCustomerRepository::class);
+        $this->subscriptionIntervalProvider = $this->mock(SubscriptionIntervalProvider::class);
+        $this->subscriptionDescriptionProvider = $this->mock(SubscriptionDescriptionProvider::class);
+        $this->paymentMethodRepository = $this->mock(PaymentMethodRepositoryInterface::class);
+        $this->subscriptionOrderAmountProvider = $this->mock(SubscriptionOrderAmountProvider::class);
+        $this->subscriptionStartDateProvider = $this->mock(SubscriptionStartDateProvider::class);
+        $this->combinationRepository = $this->mock(CombinationRepository::class);
 
         parent::setUp();
     }

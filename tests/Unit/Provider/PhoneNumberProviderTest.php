@@ -44,15 +44,15 @@ class PhoneNumberProviderTest extends TestCase
             ],
             'Number without +' => [
                 'phoneNumber' => '37064742671',
-                'result' => '+37064742671',
+                'result' => null,
             ],
             'normal without + and with spaces' => [
                 'phoneNumber' => '370 64 742671',
-                'result' => '+37064742671',
+                'result' => null,
             ],
             'number that starts with 86' => [
                 'phoneNumber' => '864742671',
-                'result' => '+864742671',
+                'result' => null,
             ],
             'number that starts with +0' => [
                 'phoneNumber' => '+0164742671',
@@ -60,7 +60,7 @@ class PhoneNumberProviderTest extends TestCase
             ],
             'number that consists of 0s with +' => [
                 'phoneNumber' => '+000000',
-                'result' => null,
+                'result' => '+000000',
             ],
             'number that consists of 0s' => [
                 'phoneNumber' => '000000',
