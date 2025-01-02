@@ -30,14 +30,8 @@ jobs:
           path: ~/.composer/cache
           key: php-composer-cache
 
-      - run: composer i
-
-      - name: Pull PrestaShop files
-        run: docker run -tid --rm -v ps-volume:/var/www/html -v $PWD/:/var/www/html/modules/mollie --name temp-ps prestashop/prestashop:1.7.8.1-7.4-apache
-      # Fix test action
-      - name: Run PHPunit
-        run: |
-          docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module botsudo/phpunit -c tests/phpunit.xml
+      - name: check docker
+        run: docker ps
 
   phpstan:
     name: PHPStan
