@@ -91,25 +91,3 @@ prepare-zip:
 	composer install --no-dev --optimize-autoloader --classmap-authoritative
 	composer dump-autoload --no-dev --optimize --classmap-authoritative
 	rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile cypress .docker cypress.config.js cypress.env.json docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php
-
-ci-unit:
-	php vendor/bin/phpunit -c tests/phpunit-unit-ci.xml
-
-ci-integration:
-	php vendor/bin/phpunit -c tests/phpunit-integration-ci.xml
-
-ci-lint:
-	./vendor/bin/php-cs-fixer fix --diff --no-interaction --dry-run
-
-ci-phpstan:
-	# PHPStan version is PHP version-dependent, so we need to install it on the go depending on actual PHP version used by CI.
-	composer require phpstan/phpstan --dev
-	ps_version=$(firstword $(subst -, ,$(ps_version_tag))); \
-	if [ -e tests/phpstan/phpstan-$$ps_version.neon ] ; then \
-		phpstan_config_path=tests/phpstan/phpstan-$$ps_version.neon ; \
-	else \
-		phpstan_config_path=tests/phpstan/phpstan.neon ; \
-	fi; \
-	echo Using PHPStan config: $$phpstan_config_path ; \
-	_PS_ROOT_DIR_=/var/www/html ./vendor/bin/phpstan --configuration=$$phpstan_config_path analyse
-
