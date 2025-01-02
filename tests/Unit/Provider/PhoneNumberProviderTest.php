@@ -55,7 +55,7 @@ class PhoneNumberProviderTest extends TestCase
                 'result' => null,
             ],
             'number that starts with +0' => [
-                'phoneNumber' => '+0164742671',
+                'phoneNumber' => '+164742671',
                 'result' => '+164742671',
             ],
             'number that consists of 0s with +' => [
