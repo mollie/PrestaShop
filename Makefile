@@ -93,6 +93,7 @@ prepare-zip:
 	rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile cypress .docker cypress.config.js cypress.env.json docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php
 
 run-ps-for-tests:
+	composer install
 	docker network create prestashop-net-1.7-7.1-apache
 	docker run -ti --name some-mysql-1.7-7.1-apache --network prestashop-net-1.7-7.1-apache -e MYSQL_ROOT_PASSWORD=admin -e MYSQL_DATABASE=prestashop -p 3307:3306 -d mysql:5.7
 	docker run -ti -v $(ROOT_DIR):/var/www/html/modules/mollie -v $(ROOT_DIR)/.docker/php/php.ini:/usr/local/etc/php/conf.d/custom-php.ini --name some-prestashop-1.7-7.1-apache --network prestashop-net-1.7-7.1-apache -e DB_SERVER=some-mysql-1.7-7.1-apache -e PS_INSTALL_AUTO=1 -e DB_NAME=prestashop -e PS_DOMAIN=localhost:8080 -e PS_FOLDER_ADMIN=admin1 -p 8080:80 -d prestashop/prestashop:1.7-7.1-apache
