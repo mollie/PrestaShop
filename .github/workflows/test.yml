@@ -24,6 +24,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.0.0
 
+      - name: Install composer
+        run: composer i
+
       - name: Cache composer folder
         uses: actions/cache@v1
         with:
@@ -32,7 +35,8 @@ jobs:
 
       - name: Unit tests
         run: |
-          make run-ps-for-tests
+          make start-ps-for-tests
+          make run-ps-unit-tests
 
   phpstan:
     name: PHPStan
