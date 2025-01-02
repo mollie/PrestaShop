@@ -26,17 +26,17 @@ use Mollie\Tests\Unit\BaseTestCase;
 class UpdateSubscriptionCarrierHandlerTest extends BaseTestCase
 {
     /** @var RecurringOrderRepositoryInterface */
-    private $recurringOrderRepository;
+    public $recurringOrderRepository;
     /** @var UpdateSubscriptionAction */
-    private $updateSubscriptionAction;
+    public $updateSubscriptionAction;
     /** @var UpdateRecurringOrderAction */
-    private $updateRecurringOrderAction;
+    public $updateRecurringOrderAction;
     /** @var CloneOriginalSubscriptionCartHandler */
-    private $cloneOriginalSubscriptionCartHandler;
+    public $cloneOriginalSubscriptionCartHandler;
     /** @var SubscriptionOrderAmountProvider */
-    private $subscriptionOrderAmountProvider;
+    public $subscriptionOrderAmountProvider;
     /** @var MailService */
-    private $mailService;
+    public $mailService;
 
     public function setUp(): void
     {
