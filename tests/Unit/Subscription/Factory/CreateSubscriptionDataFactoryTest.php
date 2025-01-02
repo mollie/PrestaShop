@@ -16,7 +16,6 @@ namespace Mollie\Tests\Unit\Subscription\Factory;
 
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodRepository;
-use Mollie\Subscription\Constants\IntervalConstant;
 use Mollie\Subscription\DTO\CreateSubscriptionData as SubscriptionDataDTO;
 use Mollie\Subscription\DTO\Object\Amount;
 use Mollie\Subscription\DTO\Object\Interval;
@@ -25,7 +24,6 @@ use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
 use Mollie\Subscription\Provider\SubscriptionOrderAmountProvider;
 use Mollie\Tests\Unit\BaseTestCase;
-use Mollie\Utility\SecureKeyUtility;
 
 class CreateSubscriptionDataFactoryTest extends BaseTestCase
 {

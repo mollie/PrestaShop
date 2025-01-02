@@ -2,10 +2,10 @@
 
 namespace Mollie\Tests\Utility;
 
-use Mollie\Utility\MollieStatusUtility;
 use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
+use Mollie\Utility\MollieStatusUtility;
 use PHPUnit\Framework\TestCase;
 
 /**
