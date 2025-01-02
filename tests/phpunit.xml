@@ -11,15 +11,8 @@
         <testsuite name="Unit">
             <directory>Unit</directory>
         </testsuite>
-    </testsuites>
-
-    <testsuites>
         <testsuite name="Integration">
-            <directory>Integration</directory>
+          <directory>Integration</directory>
         </testsuite>
     </testsuites>
-    <logging>
-      <log type="junit" target="php://stdout"/>
-      <log type="testdox" target="php://stdout"/>
-    </logging>
 </phpunit>

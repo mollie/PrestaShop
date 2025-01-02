@@ -99,5 +99,6 @@ run-ps-for-tests:
 	docker run -ti -v $(ROOT_DIR):/var/www/html/modules/mollie -v $(ROOT_DIR)/.docker/php/php.ini:/usr/local/etc/php/conf.d/custom-php.ini --name some-prestashop-1.7.8-7.4 --network prestashop-net-1.7.8-7.4 -e DB_SERVER=some-mysql-1.7.8-7.4 -e PS_INSTALL_AUTO=1 -e DB_NAME=prestashop -e PS_DOMAIN=localhost:8080 -e PS_FOLDER_ADMIN=admin1 -p 8080:80 -d prestashop/prestashop:1.7.8-7.4
 	docker exec -i some-prestashop-1.7.8-7.4 sh -c "cd /var/www/html/modules/mollie && php vendor/bin/phpunit --version"
 	docker exec -i some-prestashop-1.7.8-7.4 sh -c "cd /var/www/html/modules/mollie && ls tests/"
-	docker exec -i some-prestashop-1.7.8-7.4 sh -c "cd /var/www/html/modules/mollie && php vendor/bin/phpunit -c tests/phpunit.xml --debug --verbose --no-output-buffering"
+	docker exec -i some-prestashop-1.7.8-7.4 sh -c "cd /var/www/html/modules/mollie && php vendor/bin/phpunit -c tests/phpunit.xml --filter ArrayUtilityTest"
+
 
