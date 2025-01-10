@@ -204,7 +204,9 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         $transactionId = $dbPayment['transaction_id'] ?: Tools::getValue('transaction_id');
 
-        if (!isset($dbPayment) || !\Validate::isLoadedObject($cart = new Cart((int) Tools::getValue('cart_id')))) {
+        $cart = new Cart((int) $dbPayment['cart_id']);
+
+        if (!isset($dbPayment) || !Validate::isLoadedObject($cart)) {
             exit(json_encode([
                 'success' => false,
             ]));
@@ -212,8 +214,9 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         /* @phpstan-ignore-next-line */
         $orderId = (int) Order::getOrderByCartId((int) $cart->id);
+
         /** @phpstan-ignore-line */
-        $order = new Order((int) $orderId);
+        $order = new Order($orderId);
 
         if ((int) $cart->id_customer !== (int) $this->context->customer->id) {
             exit(json_encode([
