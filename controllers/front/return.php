@@ -106,7 +106,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $data['wait'] = true;
             }
 
-            if (PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
+            if (!empty($data['mollie_info']) && PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
                 && PaymentStatus::STATUS_OPEN === $data['mollie_info']['bank_status']
             ) {
                 $data['msg_details'] = $this->module->l('The payment is still being processed. You\'ll be notified when the bank or merchant confirms the payment./merchant.', self::FILE_NAME);
@@ -123,6 +123,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $this->context->smarty->assign($data);
         $this->context->smarty->assign('link', $this->context->link);
 
+        $transactionId = isset($data['mollie_info']['transaction_id']) ? $data['mollie_info']['transaction_id'] : null;
+
         if (!empty($data['wait'])) {
             $this->context->smarty->assign(
                 'checkStatusEndpoint',
@@ -132,7 +134,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                     [
                         'ajax' => 1,
                         'action' => 'getStatus',
-                        'transaction_id' => $data['mollie_info']['transaction_id'],
+                        'transaction_id' => $transactionId,
                         'key' => $key,
                         'cart_id' => $idCart,
                         'order_number' => $orderNumber,
