@@ -199,18 +199,12 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $paymentMethodRepo = $this->module->getService(PaymentMethodRepository::class);
 
         $transactionId = Tools::getValue('transaction_id');
-        $dbPayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transactionId);
+        $dbPayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transactionId)
+            ?: $paymentMethodRepo->getPaymentBy('order_id', Order::getOrderByCartId((int) Tools::getValue('cart_id')));
 
-        if (!$dbPayment) {
-            $dbPayment = $paymentMethodRepo->getPaymentBy('order_id', Order::getOrderByCartId((int) Tools::getValue('cart_id')));
-            $transactionId = $dbPayment['transaction_id'];
-        }
+        $transactionId = $dbPayment['transaction_id'];
 
-        if ($dbPayment['transaction_id']) {
-            $transactionId = $dbPayment['transaction_id'];
-        }
-
-        if (!$dbPayment) {
+        if (!$dbPayment || !isset($dbPayment['transaction_id'])) {
             exit(json_encode([
                 'success' => false,
             ]));
