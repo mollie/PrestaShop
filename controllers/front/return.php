@@ -204,7 +204,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         $transactionId = $dbPayment['transaction_id'] ?: Tools::getValue('transaction_id');
 
-        if (!$dbPayment || !isset($dbPayment['transaction_id'])) {
+        if (!$dbPayment || !isset($transactionId)) {
             exit(json_encode([
                 'success' => false,
             ]));
