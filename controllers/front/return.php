@@ -195,14 +195,14 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     protected function processGetStatus()
     {
         header('Content-Type: application/json;charset=UTF-8');
+
         /** @var PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getService(PaymentMethodRepository::class);
 
-        $transactionId = Tools::getValue('transaction_id');
-        $dbPayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transactionId)
+        $dbPayment = $paymentMethodRepo->getPaymentBy('transaction_id', Tools::getValue('transaction_id'))
             ?: $paymentMethodRepo->getPaymentBy('order_id', Order::getOrderByCartId((int) Tools::getValue('cart_id')));
 
-        $transactionId = $dbPayment['transaction_id'];
+        $transactionId = $dbPayment['transaction_id'] ?: Tools::getValue('transaction_id');
 
         if (!$dbPayment || !isset($dbPayment['transaction_id'])) {
             exit(json_encode([
