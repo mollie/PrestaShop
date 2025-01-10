@@ -103,18 +103,10 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             // any paid payments for this cart?
 
             if (false === $data['mollie_info']) {
-                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_id', (int) Order::getOrderByCartId($idCart));
+                $data['wait'] = true;
             }
-            if (false === $data['mollie_info']) {
-                $data['mollie_info'] = [];
-                //NOTE: information instead of error as this might occur due to cancellation of the payment
-                $logger->info(sprintf('There is no order with this order number - %s', (string) $orderNumber));
 
-                $data['msg_details'] = $this->module->l('Your payment was not successful. Try again.', self::FILE_NAME);
-                $this->setWarning($data['msg_details']);
-
-                Tools::redirect(Context::getContext()->link->getPageLink('cart', true));
-            } elseif (PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
+            if (PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
                 && PaymentStatus::STATUS_OPEN === $data['mollie_info']['bank_status']
             ) {
                 $data['msg_details'] = $this->module->l('The payment is still being processed. You\'ll be notified when the bank or merchant confirms the payment./merchant.', self::FILE_NAME);
@@ -208,6 +200,16 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         $transactionId = Tools::getValue('transaction_id');
         $dbPayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transactionId);
+
+        if (!$dbPayment) {
+            $dbPayment = $paymentMethodRepo->getPaymentBy('order_id', Order::getOrderByCartId((int) Tools::getValue('cart_id')));
+            $transactionId = $dbPayment['transaction_id'];
+        }
+
+        if ($dbPayment['transaction_id']) {
+            $transactionId = $dbPayment['transaction_id'];
+        }
+
         if (!$dbPayment) {
             exit(json_encode([
                 'success' => false,
