@@ -71,7 +71,9 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         /** @var CustomerFactory $customerFactory */
         $customerFactory = $this->module->getService(CustomerFactory::class);
+
         $this->context = $customerFactory->recreateFromRequest($customer->id, $key, $this->context);
+
         if (Tools::getValue('ajax')) {
             $this->processAjax();
             exit;
@@ -90,6 +92,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             // Check if user that's seeing this is the cart-owner
             $cart = new Cart($idCart);
             $data['auth'] = (int) $cart->id_customer === $customer->id;
+
             if ($data['auth']) {
                 if ($transactionId) {
                     $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('transaction_id', (string) $transactionId);
@@ -114,6 +117,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         } else {
             $data['mollie_info'] = [];
             $data['msg_details'] = $this->module->l('You\'re not authorised to see this page.', self::FILE_NAME);
+
             Tools::redirect(Context::getContext()->link->getPageLink('index', true));
         }
 
@@ -139,6 +143,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                     true
                 )
             );
+
             $this->setTemplate('mollie_wait.tpl');
         } else {
             $this->setTemplate('mollie_return.tpl');
@@ -228,6 +233,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         }
 
         $isOrder = TransactionUtility::isOrderTransaction($transactionId);
+
         if ($isOrder) {
             $transaction = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
         } else {
@@ -246,6 +252,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         /** @var PaymentReturnService $paymentReturnService */
         $paymentReturnService = $this->module->getService(PaymentReturnService::class);
+
         switch ($orderStatus) {
             case PaymentStatus::STATUS_OPEN:
             case PaymentStatus::STATUS_PENDING:
@@ -263,6 +270,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             case PaymentStatus::STATUS_PAID:
             case PaymentStatus::STATUS_AUTHORIZED:
                 $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
+
             if ($transaction->resource === Config::MOLLIE_API_STATUS_PAYMENT && $transaction->hasRefunds()) {
                 if (isset($transactionInfo['reason']) && $transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
                     $this->setWarning($wrongAmountMessage);
@@ -278,6 +286,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $response = $paymentReturnService->handleFailedStatus($transaction);
                 break;
             }
+
             $response = $paymentReturnService->handleStatus(
                     $order,
                     $transaction,
