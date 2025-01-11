@@ -80,10 +80,10 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         parent::initContent();
 
         $data = [];
-        $cart = null;
 
         /** @var PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getService(PaymentMethodRepository::class);
+
         if (Tools::getIsset('cart_id')) {
             $idCart = (int) Tools::getValue('cart_id');
 
@@ -100,8 +100,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         }
 
         if (isset($data['auth']) && $data['auth']) {
-            // any paid payments for this cart?
-
             if (false === $data['mollie_info']) {
                 $data['wait'] = true;
             }
@@ -114,7 +112,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $data['wait'] = true;
             }
         } else {
-            // Not allowed? Don't make query but redirect.
             $data['mollie_info'] = [];
             $data['msg_details'] = $this->module->l('You\'re not authorised to see this page.', self::FILE_NAME);
             Tools::redirect(Context::getContext()->link->getPageLink('index', true));
