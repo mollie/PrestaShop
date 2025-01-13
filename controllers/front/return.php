@@ -203,6 +203,16 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         /** @var PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getService(PaymentMethodRepository::class);
 
+        $orderCreated = Order::getOrderByCartId((int) Tools::getValue('cart_id'));
+
+        if (!$orderCreated) {
+            exit(json_encode([
+                'success' => false,
+            ]));
+        }
+
+        unset($orderCreated);
+
         $dbPayment = $paymentMethodRepo->getPaymentBy('transaction_id', Tools::getValue('transaction_id'))
             ?: $paymentMethodRepo->getPaymentBy('order_id', Order::getOrderByCartId((int) Tools::getValue('cart_id')));
 
