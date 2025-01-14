@@ -78,30 +78,53 @@
 <script type="text/javascript">
   (function awaitMolliePaymentStatus() {
     var timeout = 3000;
-    var request = new XMLHttpRequest();
-    // nofilter is needed for url with variables
-    request.open('GET', '{$checkStatusEndpoint|escape:'javascript':'UTF-8' nofilter}', true);
+    var retryLimit = 5;
+    var retryCount = 0;
 
-    request.onload = function() {
-      if (request.status >= 200 && request.status < 400) {
-        try {
-          var data = JSON.parse(request.responseText);
-          if (data.success && Number(data.status) === 2) {
-            window.location.href = data.href;
-            return;
+    function checkPaymentStatus() {
+      var request = new XMLHttpRequest();
+      // nofilter is needed for URL with variables
+      request.open('GET', '{$checkStatusEndpoint|escape:"javascript":"UTF-8" nofilter}', true);
+
+      request.onload = function() {
+        if (request.status >= 200 && request.status < 400) {
+          try {
+            var data = JSON.parse(request.responseText);
+            if (data.success && Number(data.status) === 2) {
+              window.location.href = data.href;
+              return;
+            }
+          } catch (e) {
+            console.error("Error parsing response", e);
           }
-        } catch (e) {
         }
-      }
 
-      setTimeout(awaitMolliePaymentStatus, timeout);
-    };
+        if (retryCount < retryLimit) {
+          retryCount++;
+          console.log(retryCount);
+          setTimeout(checkPaymentStatus, timeout);
+        } else {
+          window.location.href = '/';
+        }
+      };
 
-    request.onerror = function() {
-      setTimeout(awaitMolliePaymentStatus, timeout);
-    };
+      request.onerror = function() {
+        // Retry on error as long as we haven't reached the limit
+        if (retryCount < retryLimit) {
+          retryCount++;
+          console.log(retryCount);
+          setTimeout(checkPaymentStatus, timeout);
+        } else {
+          window.location.href = '/';
+        }
+      };
 
-    request.send();
+      request.send();
+    }
+
+    // Start the request
+    checkPaymentStatus();
   }());
 </script>
+
 
