@@ -19,6 +19,7 @@ use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\PaymentReturnService;
+use Mollie\Service\RepeatOrderLinkFactory;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Validator\OrderCallBackValidator;
@@ -205,9 +206,12 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     {
         header('Content-Type: application/json;charset=UTF-8');
 
+        if (Tools::getValue('failed')) {
+            $this->redirectFailedOrder();
+        }
+
         /** @var PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getService(PaymentMethodRepository::class);
-
 
         $orderId = Order::getOrderByCartId((int) Tools::getValue('cart_id'));
         $dbPayment = $data['mollie_info'] = $orderId !== false ? $paymentMethodRepo->getPaymentBy('order_id', (int) $orderId) : [];
@@ -259,19 +263,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         /** @var PaymentReturnService $paymentReturnService */
         $paymentReturnService = $this->module->getService(PaymentReturnService::class);
-
-        if (Tools::getValue('failed')) {
-            $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
-            if (isset($transactionInfo['reason']) && $transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
-                $this->setWarning($wrongAmountMessage);
-            } else {
-                $this->setWarning($notSuccessfulPaymentMessage);
-            }
-
-            $response = $paymentReturnService->handleFailedStatus($transaction);
-
-            exit(json_encode($response));
-        }
 
         switch ($orderStatus) {
             case PaymentStatus::STATUS_OPEN:
@@ -336,5 +327,20 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $this->warning[] = $message;
 
         $this->context->cookie->__set('mollie_payment_canceled_error', json_encode($this->warning));
+    }
+
+
+    /**
+     * Redirects to the failed order page after 5 tries
+     *
+     * @return void
+     */
+    private function redirectFailedOrder()
+    {
+        /** @var RepeatOrderLinkFactory $orderLinkFactory */
+        $orderLinkFactory = $this->module->getService(RepeatOrderLinkFactory::class);
+        $orderLink = $orderLinkFactory->getLink();
+
+        Tools::redirect($orderLink);
     }
 }

@@ -104,10 +104,8 @@
           console.log(retryCount);
           setTimeout(checkPaymentStatus, timeout);
         } else {
-          // same link just add failed=1 argument to link
-          var url = new URL(window.location.href);
+          var url = new URL('{$checkStatusEndpoint|escape:"javascript":"UTF-8" nofilter}');
           url.searchParams.set('failed', 1);
-          // redirect
           window.location.href = url.href;
         }
       };
@@ -119,7 +117,9 @@
           console.log(retryCount);
           setTimeout(checkPaymentStatus, timeout);
         } else {
-          window.location.href = '/';
+          var url = new URL(window.location.href);
+          url.searchParams.set('failed', 1);
+          window.location.replace(url.href);
         }
       };
 
