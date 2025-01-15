@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.2.6 ##
++ Improved checkout process
+
 ## Changes in release 6.2.5 ##
 + Fixed issue with order status on multishop
 + Phone number validation improvements
