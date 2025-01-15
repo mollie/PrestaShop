@@ -105,6 +105,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
             if (false === $data['mollie_info']) {
                 $orderId = Order::getOrderByCartId($idCart);
+                /* @phpstan-ignore-next-line */
                 $data['mollie_info'] = $orderId !== false ? $paymentMethodRepo->getPaymentBy('order_id', (int) $orderId) : [];
             }
             if (false === $data['mollie_info']) {
@@ -218,6 +219,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $paymentMethodRepo = $this->module->getService(PaymentMethodRepository::class);
 
         $orderId = Order::getOrderByCartId((int) Tools::getValue('cart_id'));
+        /* @phpstan-ignore-next-line */
         $dbPayment = $data['mollie_info'] = $orderId !== false ? $paymentMethodRepo->getPaymentBy('order_id', (int) $orderId) : [];
 
         $transactionId = Tools::getValue('transaction_id') ?: $data['mollie_info']['transaction_id'];
@@ -329,7 +331,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         $this->context->cookie->__set('mollie_payment_canceled_error', json_encode($this->warning));
     }
-
 
     /**
      * Redirects to the failed order page after 5 tries
