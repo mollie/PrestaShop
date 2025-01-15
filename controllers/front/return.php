@@ -209,7 +209,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $notSuccessfulPaymentMessage = $this->module->l('Your payment was not successful. Try again.', self::FILE_NAME);
         $wrongAmountMessage = $this->module->l('The payment failed because the order and payment amounts are different. Try again.', self::FILE_NAME);
 
-
         if (Tools::getValue('failed')) {
             $this->setWarning($notSuccessfulPaymentMessage);
             $this->redirectFailedOrder();
