@@ -28,7 +28,8 @@ jobs:
           find . -maxdepth 1 -type f -exec rm "{}" \;
           cd ${{ env.MODULE_NAME }} && rm -rf ${{ env.MODULE_NAME }}
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          include-hidden-files: true
           name: ${{ env.MODULE_NAME }}
           path: ./
