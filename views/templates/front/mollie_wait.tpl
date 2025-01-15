@@ -76,58 +76,44 @@
   }
 </style>
 <script type="text/javascript">
+  var tries = 0;
+  var maxTries = 5;
+  var timeout = 3000;
+
   (function awaitMolliePaymentStatus() {
-    var timeout = 3000;
-    var retryLimit = 5;
-    var retryCount = 0;
+    if (tries >= maxTries) {
+      var url = new URL('{$checkStatusEndpoint|escape:'javascript':'UTF-8' nofilter}');
+      url.searchParams.set('failed', 1);
+      window.location.href = url.href;
 
-    function checkPaymentStatus() {
-      var request = new XMLHttpRequest();
-      // nofilter is needed for URL with variables
-      request.open('GET', '{$checkStatusEndpoint|escape:"javascript":"UTF-8" nofilter}', true);
-
-      request.onload = function() {
-        if (request.status >= 200 && request.status < 400) {
-          try {
-            var data = JSON.parse(request.responseText);
-            if (data.success && Number(data.status) === 2) {
-              window.location.href = data.href;
-              return;
-            }
-          } catch (e) {
-            console.error("Error parsing response", e);
-          }
-        }
-
-        if (retryCount < retryLimit) {
-          retryCount++;
-          console.log(retryCount);
-          setTimeout(checkPaymentStatus, timeout);
-        } else {
-          var url = new URL('{$checkStatusEndpoint|escape:"javascript":"UTF-8" nofilter}');
-          url.searchParams.set('failed', 1);
-          window.location.href = url.href;
-        }
-      };
-
-      request.onerror = function() {
-        // Retry on error as long as we haven't reached the limit
-        if (retryCount < retryLimit) {
-          retryCount++;
-          console.log(retryCount);
-          setTimeout(checkPaymentStatus, timeout);
-        } else {
-          var url = new URL(window.location.href);
-          url.searchParams.set('failed', 1);
-          window.location.replace(url.href);
-        }
-      };
-
-      request.send();
+      return;
     }
 
-    // Start the request
-    checkPaymentStatus();
+    var request = new XMLHttpRequest();
+
+    request.open('GET', '{$checkStatusEndpoint|escape:'javascript':'UTF-8' nofilter}', true);
+
+    request.onload = function() {
+      if (request.status >= 200 && request.status < 400) {
+        try {
+          var data = JSON.parse(request.responseText);
+          if (data.success && Number(data.status) === 2) {
+            window.location.href = data.href;
+            return;
+          }
+        } catch (e) {
+        }
+      }
+
+      setTimeout(awaitMolliePaymentStatus, timeout);
+    };
+
+    request.onerror = function() {
+      setTimeout(awaitMolliePaymentStatus, timeout);
+    };
+
+    tries++;
+    request.send();
   }());
 </script>
 
