@@ -204,6 +204,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     protected function processGetStatus()
     {
         header('Content-Type: application/json;charset=UTF-8');
+
         /** @var PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getService(PaymentMethodRepository::class);
 
@@ -258,6 +259,11 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         /** @var PaymentReturnService $paymentReturnService */
         $paymentReturnService = $this->module->getService(PaymentReturnService::class);
+
+        if (Tools::getValue('failed')) {
+            $paymentReturnService->handleFailedStatus($transaction);
+        }
+
         switch ($orderStatus) {
             case PaymentStatus::STATUS_OPEN:
             case PaymentStatus::STATUS_PENDING:

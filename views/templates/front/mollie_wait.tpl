@@ -104,7 +104,7 @@
           console.log(retryCount);
           setTimeout(checkPaymentStatus, timeout);
         } else {
-          window.location.href = '/';
+          window.location.href = '{$checkStatusEndpoint|escape:"javascript":"UTF-8" nofilter}&failed=1';
         }
       };
 
