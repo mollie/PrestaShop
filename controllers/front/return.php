@@ -19,7 +19,6 @@ use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\PaymentReturnService;
-use Mollie\Service\RepeatOrderLinkFactory;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Validator\OrderCallBackValidator;
