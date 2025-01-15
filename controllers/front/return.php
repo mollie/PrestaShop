@@ -261,7 +261,16 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $paymentReturnService = $this->module->getService(PaymentReturnService::class);
 
         if (Tools::getValue('failed')) {
-            $paymentReturnService->handleFailedStatus($transaction);
+            $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
+            if (isset($transactionInfo['reason']) && $transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
+                $this->setWarning($wrongAmountMessage);
+            } else {
+                $this->setWarning($notSuccessfulPaymentMessage);
+            }
+
+            $response = $paymentReturnService->handleFailedStatus($transaction);
+
+            exit(json_encode($response));
         }
 
         switch ($orderStatus) {
