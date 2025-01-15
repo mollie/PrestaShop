@@ -211,7 +211,15 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         if (Tools::getValue('failed')) {
             $this->setWarning($notSuccessfulPaymentMessage);
-            $this->redirectFailedOrder();
+
+            Tools::redirect($this->context->link->getPageLink(
+                'cart',
+                null,
+                $this->context->language->id,
+                [
+                    'action' => 'show',
+                ]
+            ));
         }
 
         /** @var PaymentMethodRepository $paymentMethodRepo */
@@ -328,19 +336,5 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $this->warning[] = $message;
 
         $this->context->cookie->__set('mollie_payment_canceled_error', json_encode($this->warning));
-    }
-
-    /**
-     * Redirects to the failed order page after 5 tries
-     *
-     * @return void
-     */
-    private function redirectFailedOrder()
-    {
-        /** @var RepeatOrderLinkFactory $orderLinkFactory */
-        $orderLinkFactory = $this->module->getService(RepeatOrderLinkFactory::class);
-        $orderLink = $orderLinkFactory->getLink();
-
-        Tools::redirect($orderLink);
     }
 }
