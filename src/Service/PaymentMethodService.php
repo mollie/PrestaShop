@@ -451,7 +451,9 @@ class PaymentMethodService
             $payment->setWebhookUrl($this->context->getModuleLink(
                 'mollie',
                 'webhook',
-                [],
+                [
+                    'security_token' => SecureKeyUtility::generateSecurityToken($cart->secure_key)
+                ],
                 true
             ));
 
