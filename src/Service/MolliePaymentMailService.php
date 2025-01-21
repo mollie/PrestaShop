@@ -186,7 +186,7 @@ class MolliePaymentMailService
             'mollie',
             'webhook',
             [
-                'security_token' => SecureKeyUtility::generateSecurityToken($cart->secure_key)
+                'security_token' => SecureKeyUtility::generateSecurityToken($cart->secure_key),
             ],
             true,
             null,

@@ -317,7 +317,7 @@ class PaymentMethodService
             'mollie',
             'webhook',
             [
-                'security_token' => SecureKeyUtility::generateSecurityToken($cart->secure_key)
+                'security_token' => SecureKeyUtility::generateSecurityToken($cart->secure_key),
             ],
             true
         );
@@ -454,7 +454,7 @@ class PaymentMethodService
                 'mollie',
                 'webhook',
                 [
-                    'security_token' => SecureKeyUtility::generateSecurityToken($cart->secure_key)
+                    'security_token' => SecureKeyUtility::generateSecurityToken($cart->secure_key),
                 ],
                 true
             ));
