@@ -21,6 +21,7 @@ use Mollie\Api\MollieApiClient;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Utility\HashUtility;
 use Mollie\Utility\SecureKeyUtility;
 use Mollie\Utility\TransactionUtility;
 use Order;
@@ -186,7 +187,7 @@ class MolliePaymentMailService
             'mollie',
             'webhook',
             [
-                'security_token' => SecureKeyUtility::generateSecurityToken($cart->secure_key),
+                'security_token' => HashUtility::hash($cart->secure_key),
             ],
             true,
             null,
