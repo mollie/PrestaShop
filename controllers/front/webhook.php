@@ -67,7 +67,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             ));
         }
 
-        if (!Tools::getValue('security_token')) {
+        if (!$tools->getValue('security_token')) {
             $logger->debug(sprintf('Missing security token in %s', self::FILE_NAME));
 
             $this->ajaxResponse(JsonResponse::error(
