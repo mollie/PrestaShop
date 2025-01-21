@@ -166,7 +166,6 @@ class TransactionService
         $isGeneratedOrderNumber = strpos($orderDescription, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0;
         $isPaymentFinished = MollieStatusUtility::isPaymentFinished($apiPayment->status);
 
-
         if (!$isPaymentFinished && $isGeneratedOrderNumber) {
             return $apiPayment;
         }
