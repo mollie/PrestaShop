@@ -25,7 +25,7 @@ class SecureKeyUtility
 
     public static function generateSecurityToken(string $data): string
     {
-        return hash('sha256', $data);
+        return HashUtility::hash($data);
     }
 
     //todo: remove it after few releases
