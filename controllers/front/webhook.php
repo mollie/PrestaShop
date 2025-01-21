@@ -90,7 +90,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         $lockResult = $this->applyLock(sprintf(
             '%s-%s',
             self::FILE_NAME,
-            Tools::getValue('security_token')
+            $tools->getValue('security_token')
         ));
 
         if (!$lockResult->isSuccessful()) {
