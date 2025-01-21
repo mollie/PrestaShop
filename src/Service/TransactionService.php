@@ -145,7 +145,7 @@ class TransactionService
         }
 
         /** @var int $orderId */
-        $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
+        $orderId = Order::getIdByCartId((int) $apiPayment->metadata->cart_id);
 
         $cart = new Cart($apiPayment->metadata->cart_id);
 
@@ -165,6 +165,7 @@ class TransactionService
 
         $isGeneratedOrderNumber = strpos($orderDescription, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0;
         $isPaymentFinished = MollieStatusUtility::isPaymentFinished($apiPayment->status);
+
 
         if (!$isPaymentFinished && $isGeneratedOrderNumber) {
             return $apiPayment;
@@ -213,7 +214,7 @@ class TransactionService
                         $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
                     }
 
-                    $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
+                    $orderId = Order::getIdByCartId((int) $apiPayment->metadata->cart_id);
                 }
                 break;
             case Config::MOLLIE_API_STATUS_ORDER:
@@ -295,7 +296,7 @@ class TransactionService
                     }
                 }
 
-                $orderId = Order::getOrderByCartId((int) $apiPayment->metadata->cart_id);
+                $orderId = Order::getIdByCartId((int) $apiPayment->metadata->cart_id);
         }
 
         if (!$orderId) {
@@ -507,7 +508,7 @@ class TransactionService
     {
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('order_reference', $apiPayment->description);
         if ($paymentMethod) {
-            $orderId = Order::getOrderByCartId($paymentMethod['cart_id']);
+            $orderId = Order::getIdByCartId($paymentMethod['cart_id']);
             if (!$orderId) {
                 return;
             }
@@ -523,7 +524,7 @@ class TransactionService
     {
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('order_reference', $apiPayment->orderNumber);
         if ($paymentMethod) {
-            $orderId = Order::getOrderByCartId($paymentMethod['cart_id']);
+            $orderId = Order::getIdByCartId($paymentMethod['cart_id']);
             if (!$orderId) {
                 return;
             }
