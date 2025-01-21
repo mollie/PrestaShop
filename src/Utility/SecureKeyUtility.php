@@ -23,11 +23,6 @@ class SecureKeyUtility
         return HashUtility::hash($customerId . $cartId . $moduleName);
     }
 
-    public static function generateSecurityToken(string $data): string
-    {
-        return HashUtility::hash($data);
-    }
-
     //todo: remove it after few releases
     public static function deprecatedGenerateReturnKey($secureKey, $customerId, $cartId, $moduleName)
     {
