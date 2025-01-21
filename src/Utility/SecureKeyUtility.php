@@ -23,7 +23,7 @@ class SecureKeyUtility
         return HashUtility::hash($customerId . $cartId . $moduleName);
     }
 
-    public static function generateSecurityToken(string $data)
+    public static function generateSecurityToken(string $data): string
     {
         return hash('sha256', $data);
     }
