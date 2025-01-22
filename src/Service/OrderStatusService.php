@@ -85,7 +85,7 @@ class OrderStatusService
             return;
         }
 
-        $order = new Order((int)$orderId);
+        $order = new Order((int) $orderId);
         $orderHistory = $order->getHistory($order->id_lang, $statusId);
 
         if (!empty($orderHistory)) {
