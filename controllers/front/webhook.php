@@ -67,6 +67,15 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             ));
         }
 
+        if (!$tools->getValue('security_token')) {
+            $logger->debug(sprintf('Missing security token in %s', self::FILE_NAME));
+
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Missing security token', self::FILE_NAME),
+                HttpStatusCode::HTTP_BAD_REQUEST
+            ));
+        }
+
         $transactionId = (string) $tools->getValue('id');
 
         if (!$transactionId) {
@@ -81,7 +90,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         $lockResult = $this->applyLock(sprintf(
             '%s-%s',
             self::FILE_NAME,
-            $transactionId
+            $tools->getValue('security_token')
         ));
 
         if (!$lockResult->isSuccessful()) {
