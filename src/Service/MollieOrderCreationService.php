@@ -21,7 +21,6 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
-use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Handler\Exception\OrderExceptionHandler;
