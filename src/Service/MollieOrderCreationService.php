@@ -66,11 +66,9 @@ class MollieOrderCreationService
             try {
                 $apiPayment = $this->createPayment($data, $paymentMethodObj->method);
             } catch (OrderCreationException $e) {
-                $errorHandler = ErrorHandler::getInstance();
-                $errorHandler->handle($e, HttpStatusCode::HTTP_BAD_REQUEST, true);
+                throw new OrderCreationException($e->getMessage());
             } catch (Exception $e) {
-                $errorHandler = ErrorHandler::getInstance();
-                $errorHandler->handle($e, HttpStatusCode::HTTP_INTERNAL_SERVER_ERROR, true);
+                throw new Exception($e->getMessage());
             }
         }
 
