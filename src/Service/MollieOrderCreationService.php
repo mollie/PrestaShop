@@ -65,7 +65,7 @@ class MollieOrderCreationService
             try {
                 $apiPayment = $this->createPayment($data, $paymentMethodObj->method);
             } catch (OrderCreationException $e) {
-                throw new OrderCreationException($e->getMessage());
+                throw $e;
             } catch (Exception $e) {
                 throw $e;
             }
