@@ -67,7 +67,7 @@ class MollieOrderCreationService
             } catch (OrderCreationException $e) {
                 throw new OrderCreationException($e->getMessage());
             } catch (Exception $e) {
-                throw new Exception($e->getMessage());
+                throw $e;
             }
         }
 
