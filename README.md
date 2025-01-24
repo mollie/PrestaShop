@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fframerusercontent.com%2Fimages%2FnZbkYqzNfjeTaOidYm2CXg3vvDA.png&f=1&nofb=1&ipt=8456eef673b516fb0ce19c5c79e2cacc33e92af315ed9e1f8cdae344821406ad&ipo=images" height="128"/>
+  <img src="https://framerusercontent.com/images/nZbkYqzNfjeTaOidYm2CXg3vvDA.png" height="128"/>
 </p>
 <h1 align="center">Mollie for Prestashop</h1>
 
