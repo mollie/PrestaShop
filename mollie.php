@@ -20,6 +20,8 @@ use Mollie\Config\Config;
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
+use Mollie\Install\Uninstall;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
@@ -37,6 +39,7 @@ use Mollie\Subscription\Provider\SubscriptionProductProvider;
 use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
+use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\PsVersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
 use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
@@ -161,7 +164,10 @@ class Mollie extends PaymentModule
      */
     public function install()
     {
-        PrestaShopLogger::addLog('Mollie install started', 1, null, 'Mollie', 1);
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
+
+        $logger->debug('Mollie install started');
 
         if (!$this->isPhpVersionCompliant()) {
             $this->_errors[] = $this->l('You\'re using an outdated PHP version. Upgrade your PHP version to use this module. The Mollie module supports versions PHP 7.2.0 and higher.');
@@ -174,11 +180,14 @@ class Mollie extends PaymentModule
 
             return false;
         }
-        PrestaShopLogger::addLog('Mollie prestashop install successful', 1, null, 'Mollie', 1);
 
-//        TODO inject base install and subscription services
+        $logger->debug('Mollie install successful');
+
+
+        // TODO inject base install and subscription services
         $coreInstaller = $this->getService(Mollie\Install\Installer::class);
-        PrestaShopLogger::addLog('Mollie core install initiated', 1, null, 'Mollie', 1);
+
+        $logger->debug('Mollie core installation started');
 
         if (!$coreInstaller->install()) {
             $this->_errors = array_merge($this->_errors, $coreInstaller->getErrors());
@@ -186,7 +195,7 @@ class Mollie extends PaymentModule
             return false;
         }
 
-        PrestaShopLogger::addLog('Mollie core install successful', 1, null, 'Mollie', 1);
+        $logger->debug('Mollie core installation successful');
 
         $subscriptionInstaller = new Installer(
             new DatabaseTableInstaller(),
@@ -199,7 +208,8 @@ class Mollie extends PaymentModule
             ),
             new HookInstaller($this)
         );
-        PrestaShopLogger::addLog('Mollie subscription installer initiated', 1, null, 'Mollie', 1);
+
+        $logger->debug('Mollie subscription installer initiated');
 
         if (!$subscriptionInstaller->install()) {
             $this->_errors = array_merge($this->_errors, $subscriptionInstaller->getErrors());
@@ -207,7 +217,8 @@ class Mollie extends PaymentModule
 
             return false;
         }
-        PrestaShopLogger::addLog('Mollie subscription install successful', 1, null, 'Mollie', 1);
+
+        $logger->debug('Mollie subscription install successful');
 
         return true;
     }
@@ -217,8 +228,8 @@ class Mollie extends PaymentModule
      */
     public function uninstall()
     {
-        /** @var \Mollie\Install\Uninstall $uninstall */
-        $uninstall = $this->getService(\Mollie\Install\Uninstall::class);
+        /** @var Uninstall $uninstall */
+        $uninstall = $this->getService(Uninstall::class);
 
         if (!$uninstall->uninstall()) {
             $this->_errors[] = $uninstall->getErrors();
@@ -569,7 +580,9 @@ class Mollie extends PaymentModule
             } catch (Exception $exception) {
                 // TODO handle payment fee exception and other exceptions with custom exception throw
 
-                $logger->error($exception->getMessage());
+                $logger->error($exception->getMessage(), [
+                    'exceptions' => ExceptionUtility::getExceptions($exception),
+                ]);
             }
         }
 
@@ -586,12 +599,16 @@ class Mollie extends PaymentModule
     {
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
         $paymentMethodRepo = $this->getService(PaymentMethodRepositoryInterface::class);
+
         $payment = $paymentMethodRepo->getPaymentBy('cart_id', (string) Tools::getValue('id_cart'));
+
         if (!$payment) {
             return '';
         }
+
         $isPaid = \Mollie\Api\Types\PaymentStatus::STATUS_PAID == $payment['bank_status'];
         $isAuthorized = \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED == $payment['bank_status'];
+
         if (($isPaid || $isAuthorized)) {
             $this->context->smarty->assign('okMessage', $this->l('Thank you. We received your payment.'));
 
@@ -640,19 +657,38 @@ class Mollie extends PaymentModule
 
         $order = new Order($params['id_order']);
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
+
         if (!Validate::isLoadedObject($orderStatus)) {
+            $logger->error('Order status not found', [
+                'order_status' => $params['newOrderStatus'],
+                'id_order' => $params['id_order'],
+            ]);
+
             return;
         }
 
         if (!Validate::isLoadedObject($order)) {
+            $logger->error('Order not found', [
+                'id_order' => $params['id_order'],
+            ]);
+
             return;
         }
 
         if ($order->module !== $this->name) {
+            $logger->error('Module name does not match', [
+                'module' => $order->module,
+                'expected_module' => $this->name,
+            ]);
+
             return;
         }
 
         if (!$this->getApiClient()) {
+            $logger->error('API client not found');
+
             return;
         }
 
@@ -660,6 +696,10 @@ class Mollie extends PaymentModule
         $isPaymentInformationAvailable = $this->getService(IsPaymentInformationAvailable::class);
 
         if (!$isPaymentInformationAvailable->verify((int) $order->id)) {
+            $logger->error('Payment information not available', [
+                'id_order' => $order->id,
+            ]);
+
             return;
         }
 
@@ -683,7 +723,9 @@ class Mollie extends PaymentModule
 
             return;
         } catch (ApiException $exception) {
-            $logger->error($exception->getMessage());
+            $logger->error(sprintf('%s - Cannot handle shipment due API failure', __METHOD__), [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
 
             return;
         }
@@ -704,11 +746,23 @@ class Mollie extends PaymentModule
         $orderId = Order::getOrderByCartId($cart->id);
         $order = new Order($orderId);
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
+
         if (!Validate::isLoadedObject($order)) {
+            $logger->error(sprintf('%s - Order not found', __METHOD__), [
+                'id_order' => $orderId,
+            ]);
+
             return true;
         }
 
         if ($order->module !== $this->name) {
+            $logger->error(sprintf('%s - Module name does not match', __METHOD__), [
+                'module' => $order->module,
+                'expected_module' => $this->name,
+            ]);
+
             return true;
         }
 
@@ -933,7 +987,9 @@ class Mollie extends PaymentModule
         if (!isset($this->context->controller) || 'admin' !== $this->context->controller->controller_type) {
             return;
         }
+
         $apiClient = $this->getApiClient();
+
         if (!$apiClient) {
             return;
         }
@@ -952,7 +1008,9 @@ class Mollie extends PaymentModule
 
             /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
             $paymentMethodService = $this->getService(\Mollie\Service\PaymentMethodService::class);
+
             $paymentMethodObj = new MolPaymentMethod();
+
             $paymentData = $paymentMethodService->getPaymentData(
                 $totalPaid,
                 $currency,
@@ -967,6 +1025,7 @@ class Mollie extends PaymentModule
 
             /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
             $paymentMethodRepository = $this->getService(PaymentMethodRepositoryInterface::class);
+
             $paymentMethodRepository->addOpenStatusPayment(
                 $cartId,
                 $orderPayment,
@@ -976,9 +1035,11 @@ class Mollie extends PaymentModule
             );
 
             $sendMolliePaymentMail = Tools::getValue('mollie-email-send');
+
             if ('on' === $sendMolliePaymentMail) {
                 /** @var \Mollie\Service\MolliePaymentMailService $molliePaymentMailService */
                 $molliePaymentMailService = $this->getService(\Mollie\Service\MolliePaymentMailService::class);
+
                 $molliePaymentMailService->sendSecondChanceMail($orderId);
             }
         }
@@ -1035,6 +1096,14 @@ class Mollie extends PaymentModule
             return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
         }
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
+
+        $logger->debug('Unable to show Apple Pay due to PrestaShop version incompatibility', [
+            'ps_version' => _PS_VERSION_,
+            'min_req_version' => '1.7.6.0'
+        ]);
+
         return '';
     }
 
@@ -1081,9 +1150,12 @@ class Mollie extends PaymentModule
     {
         /** @var Mollie $module */
         $module = Module::getInstanceByName('mollie');
+
         /** @var PaymentMethodRepositoryInterface $molliePaymentRepo */
         $molliePaymentRepo = $module->getService(PaymentMethodRepositoryInterface::class);
+
         $molPayment = $molliePaymentRepo->getPaymentBy('cart_id', (string) Cart::getCartIdByOrderId($orderId));
+
         if (\Mollie\Utility\MollieStatusUtility::isPaymentFinished($molPayment['bank_status'])) {
             return false;
         }
@@ -1096,6 +1168,13 @@ class Mollie extends PaymentModule
 
     public function updateApiKey(int $shopId = null): void
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
+
+        $logger->debug('Updating API key', [
+            'shop_id' => $shopId,
+        ]);
+
         $this->setApiKey($shopId);
     }
 
@@ -1112,6 +1191,11 @@ class Mollie extends PaymentModule
             return parent::runUpgradeModule();
         } catch (Error $e) {
             http_response_code(Response::HTTP_INTERNAL_SERVER_ERROR);
+
+            /** @var LoggerInterface $logger */
+            $logger = $this->getService(LoggerInterface::class);
+
+            $logger->info('The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com');
 
             exit(
             $this->l('The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com')
@@ -1151,6 +1235,14 @@ class Mollie extends PaymentModule
 
         http_response_code(Response::HTTP_BAD_REQUEST);
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
+
+        $logger->error('Subscription product validation failed', [
+            'errors' => $errors,
+            'quantity' => $quantity,
+        ]);
+
         exit(json_encode(
             [
                 'hasError' => $hasError,
@@ -1164,8 +1256,13 @@ class Mollie extends PaymentModule
     {
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
         $moduleRepository = $this->getService(\Mollie\Repository\ModuleRepository::class);
+
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
+
         $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->name);
         $needsUpgrade = Tools::version_compare($this->version, $moduleDatabaseVersion, '>');
+
         if ($needsUpgrade) {
             return;
         }
@@ -1182,22 +1279,33 @@ class Mollie extends PaymentModule
         if (!$apiKey) {
             return;
         }
+
         try {
             // TODO handle api key set differently. Throw error and don't let do further actions.
             $this->api = $apiKeyService->setApiKey($apiKey, $this->version, $subscriptionOrder);
         } catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);
-            PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
+
+            $logger->error(sprintf('%s - Incompatible platform exception', __METHOD__), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);
             $this->warning = $this->l('Payment error:') . $e->getMessage();
-            PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $this->warning, Mollie\Config\Config::CRASH);
+
+            $logger->error(sprintf('%s - API exception', __METHOD__), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
         } catch (\Exception $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);
-            PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
+
+            $logger->error(sprintf('%s - General exception', __METHOD__), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
         }
     }
 
@@ -1277,7 +1385,20 @@ class Mollie extends PaymentModule
         /** @var CustomerAddressUpdateHandler $subscriptionShippingAddressUpdateHandler */
         $subscriptionShippingAddressUpdateHandler = $this->getService(CustomerAddressUpdateHandler::class);
 
-        $subscriptionShippingAddressUpdateHandler->handle($orders, $addressId, $addressId);
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(PrestaLoggerInterface::class);
+
+        try {
+            $subscriptionShippingAddressUpdateHandler->handle($orders, $addressId, $addressId);
+        } catch (PrestaShopDatabaseException $e) {
+            $logger->error(sprintf('%s - Database exception', __METHOD__), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+        } catch (PrestaShopException $e) {
+            $logger->error(sprintf('%s - General exception', __METHOD__), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+        }
 
         $this->addPreventDeleteErrorMessage();
     }
