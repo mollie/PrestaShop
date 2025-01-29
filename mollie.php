@@ -185,7 +185,6 @@ class Mollie extends PaymentModule
 
         $logger->debug('Mollie install successful');
 
-
         // TODO inject base install and subscription services
         $coreInstaller = $this->getService(Mollie\Install\Installer::class);
 
@@ -1103,7 +1102,7 @@ class Mollie extends PaymentModule
 
         $logger->debug('Unable to show Apple Pay due to PrestaShop version incompatibility', [
             'ps_version' => _PS_VERSION_,
-            'min_req_version' => '1.7.6.0'
+            'min_req_version' => '1.7.6.0',
         ]);
 
         return '';
@@ -1292,7 +1291,6 @@ class Mollie extends PaymentModule
             $logger->error(sprintf('%s - Incompatible platform exception', __METHOD__), [
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
-
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);

@@ -29,6 +29,9 @@ class UpdateOrderTotalsAction
 {
     const FILE_NAME = 'UpdateOrderTotalsAction';
 
+    /** @var LoggerInterface */
+    public $logger;
+
     /** @var OrderRepositoryInterface */
     private $orderRepository;
 
