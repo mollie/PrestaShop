@@ -13,12 +13,13 @@
 namespace Mollie\Subscription\Form\Options;
 
 use Module;
-use Mollie\Subscription\Factory\SymfonyTranslatorFactory;
 use PrestaShop\PrestaShop\Core\Form\FormChoiceProviderInterface;
 use PrestaShopBundle\Form\Admin\Type\SwitchType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface as NewTranslatorInterface; // Newer Symfony translator
+use Symfony\Component\Translation\TranslatorInterface as OldTranslatorInterface; // Older Symfony translator
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -30,7 +31,7 @@ class SubscriptionOptionsType extends TranslatorAwareType
     private $carrierOptionProvider;
     /** @var Module */
     private $module;
-    /** @var TranslatorInterface */
+    /** @var NewTranslatorInterface | OldTranslatorInterface */
     private $translator;
 
     public function __construct(
@@ -39,7 +40,6 @@ class SubscriptionOptionsType extends TranslatorAwareType
         FormChoiceProviderInterface $carrierOptionProvider,
         Module $module
     ) {
-        $translator = (new SymfonyTranslatorFactory())->create();
         parent::__construct($translator, $locales);
 
         $this->carrierOptionProvider = $carrierOptionProvider;
