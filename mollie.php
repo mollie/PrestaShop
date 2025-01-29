@@ -56,6 +56,8 @@ class Mollie extends PaymentModule
 {
     const DISABLE_CACHE = true;
 
+    const FILE_NAME = 'mollie';
+
     /** @var \Mollie\Api\MollieApiClient|null */
     private $api = null;
 
@@ -580,7 +582,8 @@ class Mollie extends PaymentModule
             } catch (Exception $exception) {
                 // TODO handle payment fee exception and other exceptions with custom exception throw
 
-                $logger->error($exception->getMessage(), [
+                $logger->error(sprintf('%s - Error while handling payment options', self::FILE_NAME), [
+                    'method' => __METHOD__,
                     'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]);
             }
@@ -715,11 +718,10 @@ class Mollie extends PaymentModule
         try {
             $shipmentSenderHandler->handleShipmentSender($this->getApiClient(), $order, $orderStatus);
         } catch (ShipmentCannotBeSentException $exception) {
-            $logger->error($exceptionService->getErrorMessageForException(
-                $exception,
-                [],
-                ['orderReference' => $order->reference]
-            ));
+            $logger->error(sprintf('%s - Cannot handle shipment', self::FILE_NAME), [
+                'method' => __METHOD__,
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
 
             return;
         } catch (ApiException $exception) {

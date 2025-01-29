@@ -32,6 +32,7 @@ use Mollie\Handler\Order\OrderPaymentFeeHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\OrderNumberUtility;
@@ -51,6 +52,7 @@ if (!defined('_PS_VERSION_')) {
 
 class TransactionService
 {
+    const FILE_NAME = 'TransactionService';
     /**
      * @var Mollie
      */
@@ -244,13 +246,15 @@ class TransactionService
                     try {
                         $this->shipmentSenderHandler->handleShipmentSender($this->module->getApiClient(), $order, new \OrderState($order->current_state));
                     } catch (ShipmentCannotBeSentException $exception) {
-                        $this->logger->error($this->exceptionService->getErrorMessageForException(
-                            $exception,
-                            [],
-                            ['orderReference' => $order->reference]
-                        ));
+                        $this->logger->error(sprintf('%s - Shipment cannot be sent', self::FILE_NAME), [
+                            'method' => __METHOD__,
+                            'exceptions' => ExceptionUtility::getExceptions($exception)
+                        ]);
                     } catch (ApiException $exception) {
-                        $this->logger->error($exception->getMessage());
+                        $this->logger->error(sprintf('%s - API exception', self::FILE_NAME), [
+                            'method' => __METHOD__,
+                            'exceptions' => ExceptionUtility::getExceptions($exception)
+                        ]);
                     }
                 } elseif ($apiPayment->amountRefunded) {
                     if (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
