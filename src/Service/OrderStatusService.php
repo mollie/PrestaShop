@@ -84,7 +84,13 @@ class OrderStatusService
         if (0 === (int) $statusId) {
             return;
         }
+
         $order = new Order((int) $orderId);
+        $orderHistory = $order->getHistory($order->id_lang, $statusId);
+
+        if (!empty($orderHistory)) {
+            return;
+        }
 
         if (!Validate::isLoadedObject($order)) {
             return;
