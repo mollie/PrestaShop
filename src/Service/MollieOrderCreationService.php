@@ -21,7 +21,6 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
-use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Handler\Exception\OrderExceptionHandler;
@@ -66,11 +65,9 @@ class MollieOrderCreationService
             try {
                 $apiPayment = $this->createPayment($data, $paymentMethodObj->method);
             } catch (OrderCreationException $e) {
-                $errorHandler = ErrorHandler::getInstance();
-                $errorHandler->handle($e, HttpStatusCode::HTTP_BAD_REQUEST, true);
+                throw $e;
             } catch (Exception $e) {
-                $errorHandler = ErrorHandler::getInstance();
-                $errorHandler->handle($e, HttpStatusCode::HTTP_INTERNAL_SERVER_ERROR, true);
+                throw $e;
             }
         }
 
