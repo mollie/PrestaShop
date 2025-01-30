@@ -18,7 +18,6 @@ use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\ExceptionUtility;
 use Order;
-use PrestaShopLogger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
