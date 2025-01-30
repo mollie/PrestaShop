@@ -25,8 +25,10 @@ use Mollie\Exception\MollieException;
 use Mollie\Handler\Certificate\CertificateHandlerInterface;
 use Mollie\Handler\Certificate\Exception\ApplePayDirectCertificateCreation;
 use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\TagsUtility;
 use OrderState;
 use PrestaShopDatabaseException;
@@ -90,6 +92,8 @@ class SettingsSaveService
     private $context;
     /** @var ToolsAdapter */
     private $tools;
+    /** @var LoggerInterface */
+    private $logger;
 
     public function __construct(
         Mollie $module,
@@ -103,7 +107,8 @@ class SettingsSaveService
         CertificateHandlerInterface $applePayDirectCertificateHandler,
         ConfigurationAdapter $configurationAdapter,
         Context $context,
-        ToolsAdapter $tools
+        ToolsAdapter $tools,
+        LoggerInterface $logger
     ) {
         $this->module = $module;
         $this->countryRepository = $countryRepository;
@@ -117,6 +122,7 @@ class SettingsSaveService
         $this->configurationAdapter = $configurationAdapter;
         $this->context = $context;
         $this->tools = $tools;
+        $this->logger = $logger;
     }
 
     /**
@@ -211,6 +217,10 @@ class SettingsSaveService
             try {
                 $this->applePayDirectCertificateHandler->handle();
             } catch (ApplePayDirectCertificateCreation $e) {
+                $this->logger->error('Grant permissions for the folder or visit ApplePay to see how it can be added manually', [
+                    'exceptions' => ExceptionUtility::getExceptions($e),
+                ]);
+
                 $isApplePayDirectProductEnabled = false;
                 $isApplePayDirectCartEnabled = false;
 

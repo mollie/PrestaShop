@@ -26,6 +26,7 @@ use Mollie\Subscription\DTO\UpdateRecurringOrderData;
 use Mollie\Subscription\DTO\UpdateSubscriptionData;
 use Mollie\Subscription\Provider\SubscriptionOrderAmountProvider;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
+use Mollie\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -126,8 +127,7 @@ class UpdateSubscriptionCarrierHandler
                 $failedSubscriptionOrderIdsToUpdate[] = (string) $recurringOrder['mollie_subscription_id'];
 
                 $this->logger->error('Failed to clone subscription cart.', [
-                    'Exception message' => $exception->getMessage(),
-                    'Exception code' => $exception->getCode(),
+                    'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]);
 
                 continue;
@@ -151,8 +151,7 @@ class UpdateSubscriptionCarrierHandler
                 $failedSubscriptionOrderIdsToUpdate[] = (string) $recurringOrder['mollie_subscription_id'];
 
                 $this->logger->error('Failed to get subscription order amount.', [
-                    'Exception message' => $exception->getMessage(),
-                    'Exception code' => $exception->getCode(),
+                    'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]);
 
                 continue;
@@ -171,8 +170,7 @@ class UpdateSubscriptionCarrierHandler
                 $failedSubscriptionOrderIdsToUpdate[] = (string) $recurringOrder['mollie_subscription_id'];
 
                 $this->logger->error('Failed to update subscription.', [
-                    'Exception message' => $exception->getMessage(),
-                    'Exception code' => $exception->getCode(),
+                    'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]);
 
                 continue;
@@ -187,8 +185,7 @@ class UpdateSubscriptionCarrierHandler
                 $failedSubscriptionOrderIdsToUpdate[] = (string) $recurringOrder['mollie_subscription_id'];
 
                 $this->logger->error('Failed to update recurring order record.', [
-                    'Exception message' => $exception->getMessage(),
-                    'Exception code' => $exception->getCode(),
+                    'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]);
 
                 continue;
@@ -200,8 +197,7 @@ class UpdateSubscriptionCarrierHandler
                 $failedSubscriptionOrderIdsToUpdate[] = (string) $recurringOrder['mollie_subscription_id'];
 
                 $this->logger->error('Failed to send subscription carrier update mail.', [
-                    'Exception message' => $exception->getMessage(),
-                    'Exception code' => $exception->getCode(),
+                    'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]);
 
                 continue;
