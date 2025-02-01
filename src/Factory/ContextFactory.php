@@ -17,7 +17,7 @@ use Context;
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-
+// TODO: Duplicate of Context.php
 class ContextFactory
 {
     public static function getContext(): Context

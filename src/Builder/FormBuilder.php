@@ -38,6 +38,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+// TODO: Refactor
 class FormBuilder
 {
     const FILE_NAME = 'FormBuilder';

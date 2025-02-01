@@ -125,8 +125,10 @@ class MolPaymentMethod extends ObjectModel
             'method' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'description' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'is_countries_applicable' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
+            // TODO: remove if deprecated
             'minimal_order_value' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
             'max_order_value' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
+            // ==========================
             'surcharge' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'surcharge_fixed_amount_tax_excl' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
             'tax_rules_group_id' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],

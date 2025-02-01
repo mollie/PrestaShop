@@ -41,7 +41,16 @@ class OrderTotalCollector
     public function getOrderTotals($applePayCarriers, Cart $cart)
     {
         return array_map(function (AppleCarrier $carrier) use ($cart) {
-            $orderTotal = (float) number_format($cart->getOrderTotal(true, Cart::BOTH, null, $carrier->getCarrierId()), 2, '.', '');
+            $orderTotal = (float) number_format(
+                $cart->getOrderTotal(
+                    true,
+                    Cart::BOTH,
+                    null,
+                    $carrier->getCarrierId()),
+                2,
+                '.',
+                ''
+            );
 
             $paymentFeeData = $this->orderPaymentFeeService->getPaymentFee($orderTotal, Config::APPLEPAY);
 

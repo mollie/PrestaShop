@@ -16,6 +16,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+// TODO: Duplicate of VersionUtility.php
 class PsVersionUtility
 {
     public static function isPsVersionGreaterOrEqualTo(string $psVersion, string $targetVersion)
