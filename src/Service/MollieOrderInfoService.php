@@ -89,7 +89,6 @@ class MollieOrderInfoService
      */
     public function displayMollieOrderInfo($input)
     {
-
         $transactionId = isset($input['transactionId']) ? $input['transactionId'] : $input['order']['id'];
         $transaction = $this->paymentMethodRepository->getPaymentBy('transaction_id', $transactionId);
         $order = new Order($transaction['order_id']);
