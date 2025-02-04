@@ -31,7 +31,7 @@ class SubscriptionOptionsType extends TranslatorAwareType
     private $carrierOptionProvider;
     /** @var Module */
     private $module;
-    /** @var NewTranslatorInterface | OldTranslatorInterface */
+    /** @var NewTranslatorInterface|OldTranslatorInterface */
     private $translator;
 
     public function __construct(
