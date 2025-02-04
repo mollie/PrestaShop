@@ -43,7 +43,7 @@ class AttributeUninstaller extends AbstractUninstaller
     private $productAttributeAdapter;
 
     public function __construct(
-        Logger $logger,
+        LoggerInterface $logger,
         ConfigurationAdapter $configuration,
         Mollie $module,
         ProductAttributeAdapter $productAttributeAdapter
