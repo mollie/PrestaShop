@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Mollie\ServiceProvider;
 
+use League\Container\Container;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
@@ -143,7 +144,6 @@ use Mollie\Subscription\Utility\ClockInterface;
 use Mollie\Utility\Decoder\DecoderInterface;
 use Mollie\Utility\Decoder\JsonDecoder;
 use Mollie\Utility\NumberIdempotencyProvider;
-use League\Container\Container;
 use Mollie\Verification\PaymentType\CanBeRegularPaymentType;
 use Mollie\Verification\PaymentType\PaymentTypeVerificationInterface;
 use Mollie\Verification\Shipment\CanSendShipment;

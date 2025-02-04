@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Mollie\Logger;
@@ -183,6 +184,7 @@ class Logger implements LoggerInterface
      * Validate that the message is a string or Stringable.
      *
      * @param mixed $message
+     *
      * @throws \InvalidArgumentException
      */
     private function validateMessage($message): void

@@ -142,6 +142,7 @@ class PrestaLogger implements PrestaLoggerInterface
      * Validate that the message is a string or Stringable.
      *
      * @param mixed $message
+     *
      * @throws \InvalidArgumentException
      */
     private function validateMessage($message): void
