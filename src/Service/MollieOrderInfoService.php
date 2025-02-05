@@ -153,7 +153,7 @@ class MollieOrderInfoService
             }
         } catch (Exception $e) {
             $this->logger->error(sprintf('%s - Failed to display Mollie order info: %s', self::FILE_NAME, $e->getMessage()), [
-                'exception' => ExceptionUtility::getExceptions($e),
+                'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
 
             return ['success' => false];

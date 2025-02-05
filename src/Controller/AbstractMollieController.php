@@ -69,7 +69,7 @@ class AbstractMollieController extends \ModuleFrontControllerCore
 
         if ($value instanceof JsonResponse) {
             if ($value->getStatusCode() === JsonResponse::HTTP_INTERNAL_SERVER_ERROR) {
-                $logger->error('Failed to return valid response', [
+                $logger->error(sprintf('%s - Failed to return valid response'), [
                     'context' => [
                         'response' => $value->getContent(),
                     ],
@@ -84,7 +84,7 @@ class AbstractMollieController extends \ModuleFrontControllerCore
         try {
             $this->ajaxRender($value, $controller, $method);
         } catch (\Throwable $exception) {
-            $logger->error('Could not return ajax response', [
+            $logger->error(sprintf('%s - Could not return ajax response', self::FILE_NAME), [
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
         }
@@ -101,7 +101,7 @@ class AbstractMollieController extends \ModuleFrontControllerCore
             $this->lock->create($resource);
 
             if (!$this->lock->acquire()) {
-                $logger->error('Lock resource conflict');
+                $logger->error(sprintf('%s - Lock resource conflict', self::FILE_NAME));
 
                 return Response::respond(
                     $this->module->l('Resource conflict', self::FILE_NAME),
@@ -109,7 +109,7 @@ class AbstractMollieController extends \ModuleFrontControllerCore
                 );
             }
         } catch (\Throwable $exception) {
-            $logger->error('Failed to lock process', [
+            $logger->error(sprintf('%s - Failed to lock process', self::FILE_NAME), [
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
@@ -133,7 +133,7 @@ class AbstractMollieController extends \ModuleFrontControllerCore
         try {
             $this->lock->release();
         } catch (\Throwable $exception) {
-            $logger->error('Failed to release process', [
+            $logger->error(sprintf('%s - Failed to release process', self::FILE_NAME), [
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
         }

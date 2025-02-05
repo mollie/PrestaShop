@@ -22,6 +22,8 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminMollieSettingsController extends ModuleAdminController
 {
+    const FILE_NAME = 'AdminMollieSettingsController';
+
     /** @var Mollie */
     public $module;
 
@@ -54,7 +56,7 @@ class AdminMollieSettingsController extends ModuleAdminController
             $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
             $accountsService = $accountsFacade->getPsAccountsService();
         } catch (PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
-            $logger->error('Failed to initiate ps_accounts', [
+            $logger->error(sprintf('%s - Failed to initiate ps_accounts', self::FILE_NAME), [
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
 
@@ -66,7 +68,7 @@ class AdminMollieSettingsController extends ModuleAdminController
             } catch (Exception $e) {
                 $this->context->controller->errors[] = $e->getMessage();
 
-                $logger->error('Failed to install ps_accounts', [
+                $logger->error(sprintf('%s - Failed to install ps_accounts', self::FILE_NAME), [
                     'exceptions' => ExceptionUtility::getExceptions($e),
                 ]);
 
@@ -85,7 +87,7 @@ class AdminMollieSettingsController extends ModuleAdminController
         } catch (Exception $e) {
             $this->context->controller->errors[] = $e->getMessage();
 
-            $logger->error('Failed to load ps accounts CDN', [
+            $logger->error(sprintf('%s - Failed to load ps accounts CDN', self::FILE_NAME), [
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
         }

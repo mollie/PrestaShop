@@ -79,7 +79,7 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
                 'id_mol_recurring_order' => $recurringOrderId,
             ]);
         } catch (\Throwable $exception) {
-            $logger->error('Data retrieve failure', [
+            $logger->error(sprintf('%s - Data retrieve failure', self::FILE_NAME), [
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
@@ -106,7 +106,7 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
                 'token' => Tools::getToken(),
             ]);
         } catch (Throwable $exception) {
-            $logger->error('Failed to present subscription order', [
+            $logger->error(sprintf('%s - Failed to present subscription order', self::FILE_NAME), [
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 

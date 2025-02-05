@@ -84,7 +84,7 @@ class UpdateSubscriptionCarrierHandler
 
         // TODO rethink this. If process failed in any way, maybe merchant would like to repeat it again. We need to track individual orders if they were updated.
         if ($newCarrierId === $activeSubscriptionCarrierId) {
-            $this->logger->debug('Same subscription carrier is saved');
+            $this->logger->debug(sprintf('%s - Same subscription carrier is saved', self::FILE_NAME));
 
             return [];
         }

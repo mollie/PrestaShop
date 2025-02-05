@@ -53,7 +53,7 @@ class CreateOrderPaymentFeeAction
             $molOrderPaymentFee->save();
         } catch (Exception $exception) {
             $this->logger->error(sprintf('%s - Could not create order payment fee', self::FILE_NAME), [
-                'exception' => ExceptionUtility::getExceptions($exception),
+                'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
             throw CouldNotCreateOrderPaymentFee::failedToInsertOrderPaymentFee($exception);

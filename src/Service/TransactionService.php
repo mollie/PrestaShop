@@ -400,9 +400,9 @@ class TransactionService
         }
 
         $this->logger->debug(sprintf('%s - Payment status saved', self::FILE_NAME), [
-            'transactionId' => $transactionId,
+            'transasction_id' => $transactionId,
             'status' => $status,
-            'orderId' => $orderId,
+            'order_id' => $orderId,
         ]);
 
         return $result;
@@ -500,7 +500,7 @@ class TransactionService
     {
         if (!$orderId) {
             $this->logger->debug(sprintf('%s - Order does not exist', self::FILE_NAME), [
-                'orderId' => $orderId,
+                'order_id' => $orderId,
             ]);
 
             throw new TransactionException('Order does not exist', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
@@ -542,9 +542,7 @@ class TransactionService
             $this->orderPaymentFeeHandler->addOrderPaymentFee($orderId, $apiPayment);
             $this->processTransaction($apiPayment);
         } else {
-            $this->logger->debug(sprintf('%s - Transaction is no longer used', self::FILE_NAME), [
-                'transaction' => $apiPayment,
-            ]);
+            $this->logger->debug(sprintf('%s - Transaction is no longer used', self::FILE_NAME));
 
             throw new TransactionException('Transaction is no longer used', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
         }

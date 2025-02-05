@@ -662,7 +662,7 @@ class Mollie extends PaymentModule
         $logger = $this->getService(LoggerInterface::class);
 
         if (!Validate::isLoadedObject($orderStatus)) {
-            $logger->error('Order status not found', [
+            $logger->error(sprintf('%s - Order status not found', self::FILE_NAME), [
                 'order_status' => $params['newOrderStatus'],
                 'id_order' => $params['id_order'],
             ]);
@@ -671,7 +671,7 @@ class Mollie extends PaymentModule
         }
 
         if (!Validate::isLoadedObject($order)) {
-            $logger->error('Order not found', [
+            $logger->error(sprintf('%s - Order not found', self::FILE_NAME), [
                 'id_order' => $params['id_order'],
             ]);
 
@@ -679,7 +679,7 @@ class Mollie extends PaymentModule
         }
 
         if ($order->module !== $this->name) {
-            $logger->error('Module name does not match', [
+            $logger->error(sprintf('%s - Module name does not match', self::FILE_NAME), [
                 'module' => $order->module,
                 'expected_module' => $this->name,
             ]);
@@ -688,7 +688,7 @@ class Mollie extends PaymentModule
         }
 
         if (!$this->getApiClient()) {
-            $logger->error('API client not found');
+            $logger->error(sprintf('%s - API client not found', self::FILE_NAME));
 
             return;
         }
@@ -697,7 +697,7 @@ class Mollie extends PaymentModule
         $isPaymentInformationAvailable = $this->getService(IsPaymentInformationAvailable::class);
 
         if (!$isPaymentInformationAvailable->verify((int) $order->id)) {
-            $logger->error('Payment information not available', [
+            $logger->error(sprintf('%s - Payment information not available', self::FILE_NAME), [
                 'id_order' => $order->id,
             ]);
 
@@ -1170,9 +1170,7 @@ class Mollie extends PaymentModule
         /** @var LoggerInterface $logger */
         $logger = $this->getService(LoggerInterface::class);
 
-        $logger->debug('Updating API key', [
-            'shop_id' => $shopId,
-        ]);
+        $logger->debug('Updating API key');
 
         $this->setApiKey($shopId);
     }
