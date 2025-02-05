@@ -292,7 +292,7 @@ class AdminMollieLogsController extends ModuleAdminController
                 'context' => [
                     'id_log' => $logId,
                     'id_shop' => $shopContext->getShop()->id,
-                ]
+                ],
             ]);
 
             $this->ajaxResponse(json_encode([
