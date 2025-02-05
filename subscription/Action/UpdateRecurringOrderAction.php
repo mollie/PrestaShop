@@ -26,6 +26,7 @@ if (!defined('_PS_VERSION_')) {
 
 class UpdateRecurringOrderAction
 {
+    const FILE_NAME = 'UpdateRecurringOrderAction';
     /** @var PrestaLoggerInterface */
     private $logger;
     /** @var ClockInterface */

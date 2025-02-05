@@ -23,6 +23,7 @@ if (!defined('_PS_VERSION_')) {
 
 class CreateRecurringOrdersProductAction
 {
+    const FILE_NAME = 'CreateRecurringOrdersProductAction';
     /** @var PrestaLoggerInterface */
     private $logger;
 

@@ -27,6 +27,7 @@ if (!defined('_PS_VERSION_')) {
 
 class UpdateSubscriptionAction
 {
+    const FILE_NAME = 'UpdateSubscriptionAction';
     /** @var SubscriptionApi */
     private $subscriptionApi;
     /** @var PrestaLoggerInterface */
