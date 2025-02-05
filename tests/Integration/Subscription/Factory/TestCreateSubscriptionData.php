@@ -19,10 +19,8 @@ use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Constants\IntervalConstant;
 use Mollie\Subscription\DTO\Object\Interval;
 use Mollie\Subscription\Factory\CreateSubscriptionDataFactory;
-use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
 use Mollie\Subscription\Repository\CombinationRepository;
-use Mollie\Subscription\Repository\CurrencyRepository;
 use Mollie\Tests\Integration\BaseTestCase;
 
 class TestCreateSubscriptionData extends BaseTestCase
