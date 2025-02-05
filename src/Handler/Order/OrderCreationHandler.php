@@ -304,7 +304,7 @@ class OrderCreationHandler
         } catch (\Throwable $exception) {
             $this->logger->error(sprintf('%s - Failed to create recurring order', self::FILE_NAME),
                 [
-                    'exceptions' => ExceptionUtility::getExceptions($exception)
+                    'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]
             );
         }
