@@ -38,6 +38,7 @@ namespace Mollie\Service\PaymentMethod;
 
 use Exception;
 use Mollie\Config\Config;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\PaymentMethodRestrictionValidatorInterface;
 use MolPaymentMethod;
 use PrestaShopLogger;
@@ -48,14 +49,22 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionValidationInterface
 {
+    const FILE_NAME = 'PaymentMethodRestrictionValidation';
+
+    /**
+     * @var LoggerInterface
+     */
+    public $logger;
+
     /**
      * @var PaymentMethodRestrictionValidatorInterface[]
      */
     private $paymentRestrictionValidators;
 
-    public function __construct(array $paymentRestrictionValidators)
+    public function __construct(array $paymentRestrictionValidators, LoggerInterface $logger)
     {
         $this->paymentRestrictionValidators = $paymentRestrictionValidators;
+        $this->logger = $logger;
     }
 
     /**
