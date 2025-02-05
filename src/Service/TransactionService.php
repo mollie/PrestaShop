@@ -310,10 +310,7 @@ class TransactionService
         // Store status in database
         $this->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId);
 
-        $this->logger->debug(sprintf('%s - Processed transaction', self::FILE_NAME), [
-            'transaction' => $apiPayment,
-            'order' => $order,
-        ]);
+        $this->logger->debug(sprintf('%s - Processed transaction', self::FILE_NAME));
 
         return $apiPayment;
     }
