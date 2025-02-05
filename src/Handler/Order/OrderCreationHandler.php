@@ -56,6 +56,7 @@ use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Subscription\Handler\SubscriptionCreationHandler;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
+use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TextGeneratorUtility;
 use MolPaymentMethod;
@@ -301,11 +302,9 @@ class OrderCreationHandler
         try {
             $this->recurringOrderCreation->handle($order, $method);
         } catch (\Throwable $exception) {
-            $this->logger->error(
-                'Failed to create recurring order',
+            $this->logger->error(sprintf('%s - Failed to create recurring order', self::FILE_NAME),
                 [
-                    'Exception message' => $exception->getMessage(),
-                    'Exception code' => $exception->getCode(),
+                    'exceptions' => ExceptionUtility::getExceptions($exception)
                 ]
             );
         }
