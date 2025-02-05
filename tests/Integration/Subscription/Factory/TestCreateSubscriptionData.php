@@ -86,14 +86,16 @@ class TestCreateSubscriptionData extends BaseTestCase
 
         /** @var CreateSubscriptionDataFactory $createSubscriptionData */
         $createSubscriptionData = new CreateSubscriptionDataFactory(
-            $customerRepository,
-            $subscriptionIntervalMock,
-            new SubscriptionDescriptionProvider(),
-            new CurrencyRepository(),
-            $combinationRepositoryMock,
-            $paymentMethodMock,
-            $link,
-            new Mollie()
+            $this->molCustomerRepository,
+            $this->subscriptionIntervalProvider,
+            $this->subscriptionDescriptionProvider,
+            $this->paymentMethodRepository,
+            $this->module,
+            $this->context,
+            $this->configuration,
+            $this->subscriptionOrderAmountProvider,
+            $this->subscriptionStartDateProvider,
+            $this->combinationRepository
         );
 
         $customer = $this->createMock('Customer');

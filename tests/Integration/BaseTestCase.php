@@ -15,7 +15,20 @@ namespace Mollie\Tests\Integration;
 use Module;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\Context;
+use Mollie\Factory\ModuleFactory;
+use Mollie\Logger\PrestaLoggerInterface;
+use Mollie\Repository\MolCustomerRepository;
+use Mollie\Repository\OrderRepositoryInterface;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
+use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
+use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
+use Mollie\Subscription\Provider\SubscriptionOrderAmountProvider;
+use Mollie\Subscription\Provider\SubscriptionStartDateProvider;
+use Mollie\Subscription\Repository\CombinationRepository;
 use Mollie\Tests\Integration\Subscription\Tool\ContextBuilder;
+use Mollie\Utility\TimeUtility;
 use PHPUnit\Framework\TestCase;
 use Shop;
 
@@ -48,6 +61,23 @@ class BaseTestCase extends TestCase
         $this->contextBuilder = new ContextBuilder();
         $this->contextBuilder->setDefaults();
         $this->configuration = $this->getService(ConfigurationAdapter::class);
+        $this->module = $this->getService(\Mollie::class);
+        $this->configuration = $this->getService(ConfigurationAdapter::class);
+        $this->context = $this->getService(Context::class);
+        $this->customer = $this->getService(\Customer::class);
+        $this->moduleFactory = $this->getService(ModuleFactory::class);
+        $this->orderRepository = $this->getService(OrderRepositoryInterface::class);
+        $this->currencyRepository = $this->getService(CurrencyRepositoryInterface::class);
+        $this->cart = $this->getService(\Cart::class);
+        $this->logger = $this->getService(PrestaLoggerInterface::class);
+        $this->molCustomerRepository = $this->getService(MolCustomerRepository::class);
+        $this->subscriptionIntervalProvider = $this->getService(SubscriptionIntervalProvider::class);
+        $this->subscriptionDescriptionProvider = $this->getService(SubscriptionDescriptionProvider::class);
+        $this->paymentMethodRepository = $this->getService(PaymentMethodRepositoryInterface::class);
+        $this->subscriptionOrderAmountProvider = $this->getService(SubscriptionOrderAmountProvider::class);
+        $this->subscriptionStartDateProvider = $this->getService(SubscriptionStartDateProvider::class);
+        $this->combinationRepository = $this->getService(CombinationRepository::class);
+        $this->timeUtility = $this->getService(TimeUtility::class);
     }
 
     protected function tearDown()
