@@ -38,7 +38,6 @@ namespace Mollie\Service\PaymentMethod;
 
 use Exception;
 use Mollie\Config\Config;
-use Mollie\Logger\LoggerInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\PaymentMethodRestrictionValidatorInterface;
 use MolPaymentMethod;
 use PrestaShopLogger;
