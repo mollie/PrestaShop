@@ -69,7 +69,7 @@ class AbstractMollieController extends \ModuleFrontControllerCore
 
         if ($value instanceof JsonResponse) {
             if ($value->getStatusCode() === JsonResponse::HTTP_INTERNAL_SERVER_ERROR) {
-                $logger->error(sprintf('%s - Failed to return valid response'), [
+                $logger->error(sprintf('%s - Failed to return valid response', self::FILE_NAME), [
                     'context' => [
                         'response' => $value->getContent(),
                     ],
