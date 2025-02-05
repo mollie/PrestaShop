@@ -24,6 +24,7 @@ if (!defined('_PS_VERSION_')) {
 
 class CreateRecurringOrderAction
 {
+    const FILE_NAME = 'CreateRecurringOrderAction';
     /** @var PrestaLoggerInterface */
     private $logger;
     /** @var ClockInterface */

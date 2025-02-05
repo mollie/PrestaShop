@@ -52,19 +52,13 @@ class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionVali
     const FILE_NAME = 'PaymentMethodRestrictionValidation';
 
     /**
-     * @var LoggerInterface
-     */
-    public $logger;
-
-    /**
      * @var PaymentMethodRestrictionValidatorInterface[]
      */
     private $paymentRestrictionValidators;
 
-    public function __construct(array $paymentRestrictionValidators, LoggerInterface $logger)
+    public function __construct(array $paymentRestrictionValidators)
     {
         $this->paymentRestrictionValidators = $paymentRestrictionValidators;
-        $this->logger = $logger;
     }
 
     /**
