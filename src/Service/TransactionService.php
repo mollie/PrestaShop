@@ -44,7 +44,6 @@ use Order;
 use OrderPayment;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use PrestaShopLogger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -132,7 +131,9 @@ class TransactionService
     {
         if (empty($apiPayment)) {
             if ($this->configurationAdapter->get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
-                PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request without proper transaction ID.', Config::WARNING);
+                $this->logger->error(sprintf('%s - Received webhook request without proper transaction ID', self::FILE_NAME), [
+                    'context' => [],
+                ]);
             }
 
             throw new TransactionException('Transaction failed', HttpStatusCode::HTTP_BAD_REQUEST);
@@ -174,7 +175,9 @@ class TransactionService
 
         switch ($apiPayment->resource) {
             case Config::MOLLIE_API_STATUS_PAYMENT:
-                PrestaShopLogger::addLog(__METHOD__ . ' said: Starting to process PAYMENT transaction.', Config::NOTICE);
+                $this->logger->debug(sprintf('%s - Starting to process PAYMENT transaction', self::FILE_NAME), [
+                    'context' => [],
+                ]);
 
                 $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
 
@@ -219,7 +222,9 @@ class TransactionService
                 }
                 break;
             case Config::MOLLIE_API_STATUS_ORDER:
-                PrestaShopLogger::addLog(__METHOD__ . ' said: Starting to process ORDER transaction.', Config::NOTICE);
+                $this->logger->debug(sprintf('%s - Starting to process ORDER transaction', self::FILE_NAME), [
+                    'context' => [],
+                ]);
 
                 if ($key !== $apiPayment->metadata->secure_key && $deprecatedKey !== $apiPayment->metadata->secure_key) {
                     throw new TransactionException('Security key is incorrect.', HttpStatusCode::HTTP_UNAUTHORIZED);
