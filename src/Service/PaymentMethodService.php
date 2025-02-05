@@ -47,6 +47,7 @@ use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Utility\CustomLogoUtility;
 use Mollie\Utility\EnvironmentUtility;
+use Mollie\Utility\HashUtility;
 use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\SecureKeyUtility;
 use Mollie\Utility\TextFormatUtility;
@@ -316,7 +317,9 @@ class PaymentMethodService
         $webhookUrl = $this->context->getModuleLink(
             'mollie',
             'webhook',
-            [],
+            [
+                'security_token' => HashUtility::hash($cart->secure_key),
+            ],
             true
         );
 
@@ -451,7 +454,9 @@ class PaymentMethodService
             $payment->setWebhookUrl($this->context->getModuleLink(
                 'mollie',
                 'webhook',
-                [],
+                [
+                    'security_token' => HashUtility::hash($cart->secure_key),
+                ],
                 true
             ));
 
