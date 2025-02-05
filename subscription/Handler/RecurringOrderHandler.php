@@ -48,6 +48,8 @@ if (!defined('_PS_VERSION_')) {
 
 class RecurringOrderHandler
 {
+    const FILE_NAME = 'RecurringOrderHandler';
+
     /** @var SubscriptionApi */
     private $subscriptionApi;
     /** @var GetSubscriptionDataFactory */
@@ -212,9 +214,9 @@ class RecurringOrderHandler
 
         if (!NumberUtility::isEqual($cartTotal, $subscriptionPaidTotal)) {
             // TODO when improved logging with context will be implemented, remove this logging
-            $this->logger->error('Paid price is not equal to the order\'s total', [
-                'Paid price' => $subscriptionPaidTotal,
-                'Order price' => $cartTotal,
+            $this->logger->error(sprintf('%s - Paid price is not equal to the order\'s total', self::FILE_NAME), [
+                'subscription_paid_price' => $subscriptionPaidTotal,
+                'cart_total' => $cartTotal,
             ]);
 
             throw CouldNotHandleRecurringOrder::cartAndPaidPriceAreNotEqual();

@@ -24,6 +24,7 @@ if (!defined('_PS_VERSION_')) {
 
 class CreateRecurringOrderAction
 {
+    const FILE_NAME = 'CreateRecurringOrderAction';
     /** @var PrestaLoggerInterface */
     private $logger;
     /** @var ClockInterface */
@@ -42,7 +43,7 @@ class CreateRecurringOrderAction
      */
     public function run(CreateRecurringOrderData $data): \MolRecurringOrder
     {
-        $this->logger->debug(sprintf('%s - Function called', __METHOD__));
+        $this->logger->debug(sprintf('%s - Function called', self::FILE_NAME));
 
         try {
             $recurringOrder = new \MolRecurringOrder();
@@ -71,7 +72,7 @@ class CreateRecurringOrderAction
             throw CouldNotCreateRecurringOrder::unknownError($exception);
         }
 
-        $this->logger->debug(sprintf('%s - Function ended', __METHOD__));
+        $this->logger->debug(sprintf('%s - Function ended', self::FILE_NAME));
 
         return $recurringOrder;
     }
