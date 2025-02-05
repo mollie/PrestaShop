@@ -10,18 +10,15 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Logger;
+namespace Mollie\Repository;
+
+use Mollie\Shared\Infrastructure\Repository\ReadOnlyRepositoryInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-interface LogFormatterInterface
+interface PaymentMethodLangRepositoryInterface extends ReadOnlyRepositoryInterface
 {
-    /**
-     * @param string $message - an actual error message
-     *
-     * @return string
-     */
-    public function getMessage(string $message): string;
+    public function savePaymentTitleTranslation(string $idPaymentMethod, int $langId, string $translation, int $idShop): bool;
 }
