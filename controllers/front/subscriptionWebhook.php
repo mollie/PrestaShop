@@ -61,7 +61,9 @@ class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieContr
         $logger->info(sprintf('%s - Controller called', self::FILE_NAME));
 
         if (!$this->module->getApiClient()) {
-            $logger->error(sprintf('Unauthorized in %s', self::FILE_NAME));
+            $logger->error(sprintf('Unauthorized in %s', self::FILE_NAME), [
+                'context' => [],
+            ]);
 
             $this->ajaxResponse(JsonResponse::error(
                 $this->module->l('Unauthorized', self::FILE_NAME),
@@ -72,7 +74,9 @@ class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieContr
         $transactionId = (string) $tools->getValue('id');
 
         if (!$transactionId) {
-            $logger->error(sprintf('Missing transaction id in %s', self::FILE_NAME));
+            $logger->error(sprintf('Missing transaction id in %s', self::FILE_NAME), [
+                'context' => [],
+            ]);
 
             $this->ajaxResponse(JsonResponse::error(
                 $this->module->l('Missing transaction id', self::FILE_NAME),
@@ -87,7 +91,9 @@ class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieContr
         ));
 
         if (!$lockResult->isSuccessful()) {
-            $logger->error(sprintf('Resource conflict in %s', self::FILE_NAME));
+            $logger->error(sprintf('Resource conflict in %s', self::FILE_NAME), [
+                'context' => [],
+            ]);
 
             $this->ajaxResponse(JsonResponse::error(
                 $this->module->l('Resource conflict', self::FILE_NAME),

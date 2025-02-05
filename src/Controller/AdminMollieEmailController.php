@@ -41,7 +41,7 @@ class AdminMollieEmailController extends FrameworkBundleAdminController
 
         if (empty($response)) {
             $logger->error(sprintf('%s - Empty second change mail', self::FILE_NAME), [
-                'method' => __METHOD__,
+                'context' => [],
             ]);
 
             $this->addFlash(

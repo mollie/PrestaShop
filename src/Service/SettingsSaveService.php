@@ -218,6 +218,7 @@ class SettingsSaveService
                 $this->applePayDirectCertificateHandler->handle();
             } catch (ApplePayDirectCertificateCreation $e) {
                 $this->logger->error('Grant permissions for the folder or visit ApplePay to see how it can be added manually', [
+                    'context' => [],
                     'exceptions' => ExceptionUtility::getExceptions($e),
                 ]);
 

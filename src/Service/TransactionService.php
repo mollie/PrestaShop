@@ -247,12 +247,12 @@ class TransactionService
                         $this->shipmentSenderHandler->handleShipmentSender($this->module->getApiClient(), $order, new \OrderState($order->current_state));
                     } catch (ShipmentCannotBeSentException $exception) {
                         $this->logger->error(sprintf('%s - Shipment cannot be sent', self::FILE_NAME), [
-                            'method' => __METHOD__,
+                            'context' => [],
                             'exceptions' => ExceptionUtility::getExceptions($exception),
                         ]);
                     } catch (ApiException $exception) {
                         $this->logger->error(sprintf('%s - API exception', self::FILE_NAME), [
-                            'method' => __METHOD__,
+                            'context' => [],
                             'exceptions' => ExceptionUtility::getExceptions($exception),
                         ]);
                     }
@@ -314,7 +314,7 @@ class TransactionService
         $this->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId);
 
         $this->logger->debug(sprintf('%s - Processed transaction', self::FILE_NAME), [
-            'method' => __METHOD__,
+            'context' => [],
             'transaction' => $apiPayment,
             'order' => $order,
         ]);
@@ -397,7 +397,7 @@ class TransactionService
             );
         } catch (PrestaShopDatabaseException $e) {
             $this->logger->error(sprintf('%s - Could not save Mollie payment status', self::FILE_NAME), [
-                'method' => __METHOD__,
+                'context' => [],
                 'transactionId' => $transactionId,
                 'status' => $status,
                 'orderId' => $orderId,
@@ -408,7 +408,7 @@ class TransactionService
         }
 
         $this->logger->debug(sprintf('%s - Payment status saved', self::FILE_NAME), [
-            'method' => __METHOD__,
+            'context' => [],
             'transactionId' => $transactionId,
             'status' => $status,
             'orderId' => $orderId,
@@ -509,7 +509,7 @@ class TransactionService
     {
         if (!$orderId) {
             $this->logger->debug(sprintf('%s - Order does not exist', self::FILE_NAME), [
-                'method' => __METHOD__,
+                'context' => [],
                 'orderId' => $orderId,
             ]);
 
@@ -553,7 +553,7 @@ class TransactionService
             $this->processTransaction($apiPayment);
         } else {
             $this->logger->debug(sprintf('%s - Transaction is no longer used', self::FILE_NAME), [
-                'method' => __METHOD__,
+                'context' => [],
                 'transaction' => $apiPayment,
             ]);
 

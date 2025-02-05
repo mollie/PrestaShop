@@ -48,7 +48,7 @@ class UpdateRecurringOrderAction
      */
     public function run(UpdateRecurringOrderData $data): \MolRecurringOrder
     {
-        $this->logger->debug(sprintf('%s - Function called', __METHOD__));
+        $this->logger->debug(sprintf('%s - Function called', self::FILE_NAME));
 
         /** @var \MolRecurringOrder $recurringOrder */
         $recurringOrder = $this->recurringOrderRepository->findOrFail([
@@ -67,7 +67,7 @@ class UpdateRecurringOrderAction
             throw CouldNotUpdateRecurringOrder::unknownError($exception);
         }
 
-        $this->logger->debug(sprintf('%s - Function ended', __METHOD__));
+        $this->logger->debug(sprintf('%s - Function ended', self::FILE_NAME));
 
         return $recurringOrder;
     }

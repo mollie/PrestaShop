@@ -79,7 +79,7 @@ class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionVali
                 }
             } catch (Exception $exception) {
                 PrestaShopLogger::addLog(
-                    sprintf('%s has caught error: %s', __METHOD__, $exception->getMessage()),
+                    sprintf('%s has caught error: %s', self::FILE_NAME, $exception->getMessage()),
                     Config::ERROR,
                     null,
                     null,

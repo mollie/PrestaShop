@@ -61,7 +61,9 @@ class MollieSubscriptionUpdateWebhookModuleFrontController extends AbstractMolli
         $logger->info(sprintf('%s - Controller called', self::FILE_NAME));
 
         if (!$this->module->getApiClient()) {
-            $logger->error(sprintf('Unauthorized in %s', self::FILE_NAME));
+            $logger->error(sprintf('Unauthorized in %s', self::FILE_NAME), [
+                'context' => []
+            ]);
 
             $this->ajaxResponse(JsonResponse::error(
                 $this->module->l('Unauthorized', self::FILE_NAME),
@@ -72,7 +74,9 @@ class MollieSubscriptionUpdateWebhookModuleFrontController extends AbstractMolli
         $transactionId = (string) $tools->getValue('id');
 
         if (!$transactionId) {
-            $logger->error(sprintf('Missing transaction id in %s', self::FILE_NAME));
+            $logger->error(sprintf('Missing transaction id in %s', self::FILE_NAME), [
+                'context' => [],
+            ]);
 
             $this->ajaxResponse(JsonResponse::error(
                 $this->module->l('Missing transaction id', self::FILE_NAME),
@@ -83,7 +87,9 @@ class MollieSubscriptionUpdateWebhookModuleFrontController extends AbstractMolli
         $subscriptionId = (string) $tools->getValue('subscription_id');
 
         if (!$subscriptionId) {
-            $logger->error(sprintf('Missing subscription id in %s', self::FILE_NAME));
+            $logger->error(sprintf('Missing subscription id in %s', self::FILE_NAME), [
+                'context' => [],
+            ]);
 
             $this->ajaxResponse(JsonResponse::error(
                 $this->module->l('Missing subscription id', self::FILE_NAME),
@@ -99,7 +105,9 @@ class MollieSubscriptionUpdateWebhookModuleFrontController extends AbstractMolli
         ));
 
         if (!$lockResult->isSuccessful()) {
-            $logger->error(sprintf('Resource conflict in %s', self::FILE_NAME));
+            $logger->error(sprintf('Resource conflict in %s', self::FILE_NAME), [
+                'context' => [],
+            ]);
 
             $this->ajaxResponse(JsonResponse::error(
                 $this->module->l('Resource conflict', self::FILE_NAME),
