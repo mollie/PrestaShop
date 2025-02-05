@@ -175,9 +175,7 @@ class TransactionService
 
         switch ($apiPayment->resource) {
             case Config::MOLLIE_API_STATUS_PAYMENT:
-                $this->logger->debug(sprintf('%s - Starting to process PAYMENT transaction', self::FILE_NAME), [
-                    'context' => [],
-                ]);
+                $this->logger->debug(sprintf('%s - Starting to process PAYMENT transaction', self::FILE_NAME));
 
                 $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
 
@@ -403,9 +401,6 @@ class TransactionService
         } catch (PrestaShopDatabaseException $e) {
             $this->logger->error(sprintf('%s - Could not save Mollie payment status', self::FILE_NAME), [
                 'context' => [],
-                'transactionId' => $transactionId,
-                'status' => $status,
-                'orderId' => $orderId,
                 'exception' => ExceptionUtility::getExceptions($e),
             ]);
 

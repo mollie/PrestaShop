@@ -34,6 +34,8 @@ if (!defined('_PS_VERSION_')) {
 
 class UpdateSubscriptionCarrierHandler
 {
+    const FILE_NAME = 'UpdateSubscriptionCarrierHandler';
+
     /** @var ConfigurationAdapter */
     private $configuration;
     /** @var RecurringOrderRepositoryInterface */
@@ -126,7 +128,8 @@ class UpdateSubscriptionCarrierHandler
             } catch (\Throwable $exception) {
                 $failedSubscriptionOrderIdsToUpdate[] = (string) $recurringOrder['mollie_subscription_id'];
 
-                $this->logger->error('Failed to clone subscription cart.', [
+                $this->logger->error(sprintf('%s - Failed to clone subscription cart.', self::FILE_NAME), [
+                    'context' => [],
                     'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]);
 
@@ -150,7 +153,8 @@ class UpdateSubscriptionCarrierHandler
             } catch (\Throwable $exception) {
                 $failedSubscriptionOrderIdsToUpdate[] = (string) $recurringOrder['mollie_subscription_id'];
 
-                $this->logger->error('Failed to get subscription order amount.', [
+                $this->logger->error(sprintf('%s - Failed to get subscription order amount.', self::FILE_NAME), [
+                    'context' => [],
                     'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]);
 
@@ -169,7 +173,8 @@ class UpdateSubscriptionCarrierHandler
             } catch (\Throwable $exception) {
                 $failedSubscriptionOrderIdsToUpdate[] = (string) $recurringOrder['mollie_subscription_id'];
 
-                $this->logger->error('Failed to update subscription.', [
+                $this->logger->error(sprintf('%s - Failed to update subscription.', self::FILE_NAME), [
+                    'context' => [],
                     'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]);
 
@@ -184,7 +189,8 @@ class UpdateSubscriptionCarrierHandler
             } catch (\Throwable $exception) {
                 $failedSubscriptionOrderIdsToUpdate[] = (string) $recurringOrder['mollie_subscription_id'];
 
-                $this->logger->error('Failed to update recurring order record.', [
+                $this->logger->error(sprintf('%s - Failed to update recurring order record.', self::FILE_NAME), [
+                    'context' => [],
                     'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]);
 
@@ -196,7 +202,8 @@ class UpdateSubscriptionCarrierHandler
             } catch (\Throwable $exception) {
                 $failedSubscriptionOrderIdsToUpdate[] = (string) $recurringOrder['mollie_subscription_id'];
 
-                $this->logger->error('Failed to send subscription carrier update mail.', [
+                $this->logger->error(sprintf('%s - Failed to send subscription carrier update mail.', self::FILE_NAME), [
+                    'context' => [],
                     'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]);
 

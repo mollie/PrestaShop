@@ -186,6 +186,7 @@ class OrderCreationHandler
             $this->paymentMethodRepository->updatePaymentReason($apiPayment->id, Config::WRONG_AMOUNT_REASON);
 
             $this->logger->error(sprintf('%s - Wrong cart amount while creating order', self::FILE_NAME), [
+                'context' => [],
                 'cart_id' => $cartId,
                 'cart_amount' => $cartPrice,
                 'api_payment_amount' => $apiPayment->amount->value,
@@ -302,8 +303,8 @@ class OrderCreationHandler
         try {
             $this->recurringOrderCreation->handle($order, $method);
         } catch (\Throwable $exception) {
-            $this->logger->error(sprintf('%s - Failed to create recurring order', self::FILE_NAME),
-                [
+            $this->logger->error(sprintf('%s - Failed to create recurring order', self::FILE_NAME), [
+                    'context' => [],
                     'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]
             );
