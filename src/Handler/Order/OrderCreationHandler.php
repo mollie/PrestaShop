@@ -185,10 +185,10 @@ class OrderCreationHandler
             $this->paymentMethodRepository->updatePaymentReason($apiPayment->id, Config::WRONG_AMOUNT_REASON);
 
             $this->logger->error(sprintf('%s - Wrong cart amount while creating order', self::FILE_NAME), [
-                'Cart ID' => $cartId,
-                'Cart amount' => $cartPrice,
-                'Payment amount' => $apiPayment->amount->value,
-                'Price difference' => $priceDifference,
+                'cart_id' => $cartId,
+                'cart_amount' => $cartPrice,
+                'api_payment_amount' => $apiPayment->amount->value,
+                'price_diff' => $priceDifference,
             ]);
 
             throw new \Exception('Wrong cart amount');
