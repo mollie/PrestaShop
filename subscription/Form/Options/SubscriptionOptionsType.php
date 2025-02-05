@@ -31,6 +31,8 @@ class SubscriptionOptionsType extends TranslatorAwareType
     private $carrierOptionProvider;
     /** @var Module */
     private $module;
+
+    /* @phpstan-ignore-next-line */
     /** @var NewTranslatorInterface|OldTranslatorInterface */
     private $translator;
 
