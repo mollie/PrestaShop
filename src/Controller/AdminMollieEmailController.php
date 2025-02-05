@@ -40,9 +40,7 @@ class AdminMollieEmailController extends FrameworkBundleAdminController
         $response = $molliePaymentMailService->sendSecondChanceMail($orderId);
 
         if (empty($response)) {
-            $logger->error(sprintf('%s - Empty second change mail', self::FILE_NAME), [
-                'context' => [],
-            ]);
+            $logger->error(sprintf('%s - Empty second change mail', self::FILE_NAME));
 
             $this->addFlash(
                 'error',

@@ -131,9 +131,7 @@ class TransactionService
     {
         if (empty($apiPayment)) {
             if ($this->configurationAdapter->get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
-                $this->logger->error(sprintf('%s - Received webhook request without proper transaction ID', self::FILE_NAME), [
-                    'context' => [],
-                ]);
+                $this->logger->error(sprintf('%s - Received webhook request without proper transaction ID', self::FILE_NAME));
             }
 
             throw new TransactionException('Transaction failed', HttpStatusCode::HTTP_BAD_REQUEST);
@@ -220,9 +218,7 @@ class TransactionService
                 }
                 break;
             case Config::MOLLIE_API_STATUS_ORDER:
-                $this->logger->debug(sprintf('%s - Starting to process ORDER transaction', self::FILE_NAME), [
-                    'context' => [],
-                ]);
+                $this->logger->debug(sprintf('%s - Starting to process ORDER transaction', self::FILE_NAME));
 
                 if ($key !== $apiPayment->metadata->secure_key && $deprecatedKey !== $apiPayment->metadata->secure_key) {
                     throw new TransactionException('Security key is incorrect.', HttpStatusCode::HTTP_UNAUTHORIZED);
@@ -250,12 +246,10 @@ class TransactionService
                         $this->shipmentSenderHandler->handleShipmentSender($this->module->getApiClient(), $order, new \OrderState($order->current_state));
                     } catch (ShipmentCannotBeSentException $exception) {
                         $this->logger->error(sprintf('%s - Shipment cannot be sent', self::FILE_NAME), [
-                            'context' => [],
                             'exceptions' => ExceptionUtility::getExceptions($exception),
                         ]);
                     } catch (ApiException $exception) {
                         $this->logger->error(sprintf('%s - API exception', self::FILE_NAME), [
-                            'context' => [],
                             'exceptions' => ExceptionUtility::getExceptions($exception),
                         ]);
                     }
@@ -317,7 +311,6 @@ class TransactionService
         $this->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId);
 
         $this->logger->debug(sprintf('%s - Processed transaction', self::FILE_NAME), [
-            'context' => [],
             'transaction' => $apiPayment,
             'order' => $order,
         ]);
@@ -400,7 +393,6 @@ class TransactionService
             );
         } catch (PrestaShopDatabaseException $e) {
             $this->logger->error(sprintf('%s - Could not save Mollie payment status', self::FILE_NAME), [
-                'context' => [],
                 'exception' => ExceptionUtility::getExceptions($e),
             ]);
 
@@ -408,7 +400,6 @@ class TransactionService
         }
 
         $this->logger->debug(sprintf('%s - Payment status saved', self::FILE_NAME), [
-            'context' => [],
             'transactionId' => $transactionId,
             'status' => $status,
             'orderId' => $orderId,
@@ -509,7 +500,6 @@ class TransactionService
     {
         if (!$orderId) {
             $this->logger->debug(sprintf('%s - Order does not exist', self::FILE_NAME), [
-                'context' => [],
                 'orderId' => $orderId,
             ]);
 
@@ -553,7 +543,6 @@ class TransactionService
             $this->processTransaction($apiPayment);
         } else {
             $this->logger->debug(sprintf('%s - Transaction is no longer used', self::FILE_NAME), [
-                'context' => [],
                 'transaction' => $apiPayment,
             ]);
 

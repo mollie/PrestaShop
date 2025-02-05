@@ -55,7 +55,6 @@ class AdminMollieSettingsController extends ModuleAdminController
             $accountsService = $accountsFacade->getPsAccountsService();
         } catch (PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
             $logger->error('Failed to initiate ps_accounts', [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
 
@@ -68,7 +67,6 @@ class AdminMollieSettingsController extends ModuleAdminController
                 $this->context->controller->errors[] = $e->getMessage();
 
                 $logger->error('Failed to install ps_accounts', [
-                    'context' => [],
                     'exceptions' => ExceptionUtility::getExceptions($e),
                 ]);
 
@@ -88,7 +86,6 @@ class AdminMollieSettingsController extends ModuleAdminController
             $this->context->controller->errors[] = $e->getMessage();
 
             $logger->error('Failed to load ps accounts CDN', [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
         }

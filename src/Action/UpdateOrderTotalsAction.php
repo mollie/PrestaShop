@@ -71,7 +71,6 @@ class UpdateOrderTotalsAction
             $order->update();
         } catch (Exception $exception) {
             $this->logger->error(sprintf('%s - Failed to update order totals', self::FILE_NAME), [
-                'context' => [],
                 'exception' => ExceptionUtility::getExceptions($exception),
             ]);
 

@@ -129,7 +129,6 @@ class UpdateSubscriptionCarrierHandler
                 $failedSubscriptionOrderIdsToUpdate[] = (string) $recurringOrder['mollie_subscription_id'];
 
                 $this->logger->error(sprintf('%s - Failed to clone subscription cart.', self::FILE_NAME), [
-                    'context' => [],
                     'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]);
 
@@ -154,7 +153,6 @@ class UpdateSubscriptionCarrierHandler
                 $failedSubscriptionOrderIdsToUpdate[] = (string) $recurringOrder['mollie_subscription_id'];
 
                 $this->logger->error(sprintf('%s - Failed to get subscription order amount.', self::FILE_NAME), [
-                    'context' => [],
                     'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]);
 
@@ -174,7 +172,6 @@ class UpdateSubscriptionCarrierHandler
                 $failedSubscriptionOrderIdsToUpdate[] = (string) $recurringOrder['mollie_subscription_id'];
 
                 $this->logger->error(sprintf('%s - Failed to update subscription.', self::FILE_NAME), [
-                    'context' => [],
                     'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]);
 
@@ -190,7 +187,6 @@ class UpdateSubscriptionCarrierHandler
                 $failedSubscriptionOrderIdsToUpdate[] = (string) $recurringOrder['mollie_subscription_id'];
 
                 $this->logger->error(sprintf('%s - Failed to update recurring order record.', self::FILE_NAME), [
-                    'context' => [],
                     'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]);
 
@@ -203,7 +199,6 @@ class UpdateSubscriptionCarrierHandler
                 $failedSubscriptionOrderIdsToUpdate[] = (string) $recurringOrder['mollie_subscription_id'];
 
                 $this->logger->error(sprintf('%s - Failed to send subscription carrier update mail.', self::FILE_NAME), [
-                    'context' => [],
                     'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]);
 

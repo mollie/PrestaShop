@@ -582,7 +582,6 @@ class Mollie extends PaymentModule
                 // TODO handle payment fee exception and other exceptions with custom exception throw
 
                 $logger->error(sprintf('%s - Error while handling payment options', self::FILE_NAME), [
-                    'context' => [],
                     'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]);
             }
@@ -664,7 +663,6 @@ class Mollie extends PaymentModule
 
         if (!Validate::isLoadedObject($orderStatus)) {
             $logger->error('Order status not found', [
-                'context' => [],
                 'order_status' => $params['newOrderStatus'],
                 'id_order' => $params['id_order'],
             ]);
@@ -674,7 +672,6 @@ class Mollie extends PaymentModule
 
         if (!Validate::isLoadedObject($order)) {
             $logger->error('Order not found', [
-                'context' => [],
                 'id_order' => $params['id_order'],
             ]);
 
@@ -683,7 +680,6 @@ class Mollie extends PaymentModule
 
         if ($order->module !== $this->name) {
             $logger->error('Module name does not match', [
-                'context' => [],
                 'module' => $order->module,
                 'expected_module' => $this->name,
             ]);
@@ -721,14 +717,12 @@ class Mollie extends PaymentModule
             $shipmentSenderHandler->handleShipmentSender($this->getApiClient(), $order, $orderStatus);
         } catch (ShipmentCannotBeSentException $exception) {
             $logger->error(sprintf('%s - Cannot handle shipment', self::FILE_NAME), [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
             return;
         } catch (ApiException $exception) {
             $logger->error(sprintf('%s - Cannot handle shipment due API failure', self::FILE_NAME), [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
@@ -756,7 +750,6 @@ class Mollie extends PaymentModule
 
         if (!Validate::isLoadedObject($order)) {
             $logger->error(sprintf('%s - Order not found', self::FILE_NAME), [
-                'context' => [],
                 'id_order' => $orderId,
             ]);
 

@@ -59,9 +59,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         $tools = $this->module->getService(ToolsAdapter::class);
 
         if (!$this->module->getApiClient()) {
-            $logger->error(sprintf('Unauthorized in %s', self::FILE_NAME), [
-                'context' => [],
-            ]);
+            $logger->error(sprintf('Unauthorized in %s', self::FILE_NAME));
 
             $this->ajaxResponse(JsonResponse::error(
                 $this->module->l('Unauthorized', self::FILE_NAME),
@@ -81,9 +79,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         $transactionId = (string) $tools->getValue('id');
 
         if (!$transactionId) {
-            $logger->error(sprintf('Missing transaction id %s', self::FILE_NAME), [
-                'context' => [],
-            ]);
+            $logger->error(sprintf('Missing transaction id %s', self::FILE_NAME));
 
             $this->ajaxResponse(JsonResponse::error(
                 $this->module->l('Missing transaction id', self::FILE_NAME),
@@ -98,9 +94,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         ));
 
         if (!$lockResult->isSuccessful()) {
-            $logger->error(sprintf('Resource conflict in %s', self::FILE_NAME), [
-                'context' => [],
-            ]);
+            $logger->error(sprintf('Resource conflict in %s', self::FILE_NAME));
 
             $this->ajaxResponse(JsonResponse::error(
                 $this->module->l('Resource conflict', self::FILE_NAME),
@@ -150,9 +144,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
 
         if (!$cartId) {
             // TODO webhook structure will change, no need to create custom exception for one time usage
-            $logger->error(sprintf('Missing Cart ID. Transaction ID: [%s]', $transactionId), [
-                'context' => [],
-            ]);
+            $logger->error(sprintf('Missing Cart ID. Transaction ID: [%s]', $transactionId));
 
             throw new \Exception(sprintf('Missing Cart ID. Transaction ID: [%s]', $transactionId), HttpStatusCode::HTTP_NOT_FOUND);
         }

@@ -127,7 +127,6 @@ class OrderPaymentFeeHandler
             );
         } catch (Exception $exception) {
             $this->logger->error(sprintf('%s - General exception while adding payment fee', self::FILE_NAME), [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
@@ -138,7 +137,6 @@ class OrderPaymentFeeHandler
             $paymentMethod = $this->paymentMethodService->getPaymentMethod($apiPayment);
         } catch (OrderCreationException $exception) {
             $this->logger->error(sprintf('%s - Order creation exception', self::FILE_NAME), [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
@@ -149,7 +147,6 @@ class OrderPaymentFeeHandler
             $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmountWithTax);
         } catch (FailedToProvidePaymentFeeException $exception) {
             $this->logger->error(sprintf('%s - Failed to provide payment fee', self::FILE_NAME), [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
@@ -165,7 +162,6 @@ class OrderPaymentFeeHandler
             ));
         } catch (CouldNotCreateOrderPaymentFee $exception) {
             $this->logger->error(sprintf('%s - Could not create order payment fee', self::FILE_NAME), [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
@@ -184,7 +180,6 @@ class OrderPaymentFeeHandler
             ));
         } catch (CouldNotUpdateOrderTotals $exception) {
             $this->logger->error(sprintf('%s - Could not update order totals', self::FILE_NAME), [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 

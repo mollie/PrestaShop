@@ -80,7 +80,6 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
             ]);
         } catch (\Throwable $exception) {
             $logger->error('Data retrieve failure', [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
@@ -108,7 +107,6 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
             ]);
         } catch (Throwable $exception) {
             $logger->error('Failed to present subscription order', [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 

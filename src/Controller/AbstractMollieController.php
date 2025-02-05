@@ -85,7 +85,6 @@ class AbstractMollieController extends \ModuleFrontControllerCore
             $this->ajaxRender($value, $controller, $method);
         } catch (\Throwable $exception) {
             $logger->error('Could not return ajax response', [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
         }
@@ -102,9 +101,7 @@ class AbstractMollieController extends \ModuleFrontControllerCore
             $this->lock->create($resource);
 
             if (!$this->lock->acquire()) {
-                $logger->error('Lock resource conflict', [
-                    'context' => [],
-                ]);
+                $logger->error('Lock resource conflict');
 
                 return Response::respond(
                     $this->module->l('Resource conflict', self::FILE_NAME),
@@ -113,7 +110,6 @@ class AbstractMollieController extends \ModuleFrontControllerCore
             }
         } catch (\Throwable $exception) {
             $logger->error('Failed to lock process', [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
@@ -138,7 +134,6 @@ class AbstractMollieController extends \ModuleFrontControllerCore
             $this->lock->release();
         } catch (\Throwable $exception) {
             $logger->error('Failed to release process', [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
         }
