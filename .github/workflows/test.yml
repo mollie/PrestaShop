@@ -36,13 +36,7 @@ jobs:
       - name: Unit tests
         run: |
           make start-ps-for-tests
-
-      - name: Setup ssh session
-        uses: lhotari/action-upterm@v1
-        if: ${{ failure() }}
-        with:
-          ## If no one connects after 1 minute, shut down server.
-          wait-timeout-minutes: 5
+          make run-ps-unit-tests
 
   phpstan:
     name: PHPStan
