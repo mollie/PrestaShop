@@ -128,7 +128,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontControlle
         try {
             $result = $handler->handle($command);
         } catch (FailedToProvidePaymentFeeException $e) {
-            $logger->error('Failed to find apple pay address.', [
+            $logger->error(sprintf('%s - Failed to find apple pay address.', self::FILE_NAME), [
                 'context' => [
                     'cartId' => $cartId,
                     'customerId' => $customerId,
