@@ -50,20 +50,6 @@ class BaseTestCase extends TestCase
     public $cart;
     /** @var PrestaLoggerInterface */
     public $logger;
-    /** @var MolCustomerRepository */
-    public $molCustomerRepository;
-    /** @var SubscriptionIntervalProvider */
-    public $subscriptionIntervalProvider;
-    /** @var SubscriptionDescriptionProvider */
-    public $subscriptionDescriptionProvider;
-    /** @var PaymentMethodRepositoryInterface */
-    public $paymentMethodRepository;
-    /** @var SubscriptionOrderAmountProvider */
-    public $subscriptionOrderAmountProvider;
-    /** @var SubscriptionStartDateProvider */
-    public $subscriptionStartDateProvider;
-    /** @var CombinationRepository */
-    public $combinationRepository;
     /** @var TimeUtility */
     public $timeUtility;
 
@@ -78,13 +64,6 @@ class BaseTestCase extends TestCase
         $this->currencyRepository = $this->mock(CurrencyRepositoryInterface::class);
         $this->cart = $this->mock(\Cart::class);
         $this->logger = $this->mock(PrestaLoggerInterface::class);
-        $this->molCustomerRepository = $this->mock(MolCustomerRepository::class);
-        $this->subscriptionIntervalProvider = $this->mock(SubscriptionIntervalProvider::class);
-        $this->subscriptionDescriptionProvider = $this->mock(SubscriptionDescriptionProvider::class);
-        $this->paymentMethodRepository = $this->mock(PaymentMethodRepositoryInterface::class);
-        $this->subscriptionOrderAmountProvider = $this->mock(SubscriptionOrderAmountProvider::class);
-        $this->subscriptionStartDateProvider = $this->mock(SubscriptionStartDateProvider::class);
-        $this->combinationRepository = $this->mock(CombinationRepository::class);
         $this->timeUtility = $this->mock(TimeUtility::class);
 
         parent::setUp();
