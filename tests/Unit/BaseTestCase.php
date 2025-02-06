@@ -16,15 +16,8 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\PrestaLoggerInterface;
-use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\OrderRepositoryInterface;
-use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
-use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
-use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
-use Mollie\Subscription\Provider\SubscriptionOrderAmountProvider;
-use Mollie\Subscription\Provider\SubscriptionStartDateProvider;
-use Mollie\Subscription\Repository\CombinationRepository;
 use Mollie\Utility\TimeUtility;
 use PHPUnit\Framework\TestCase;
 
