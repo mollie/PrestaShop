@@ -27,6 +27,7 @@ if (!defined('_PS_VERSION_')) {
 
 class UpdateSubscriptionAction
 {
+    const FILE_NAME = 'UpdateSubscriptionAction';
     /** @var SubscriptionApi */
     private $subscriptionApi;
     /** @var PrestaLoggerInterface */
@@ -49,7 +50,7 @@ class UpdateSubscriptionAction
      */
     public function run(UpdateSubscriptionData $data): void
     {
-        $this->logger->info(sprintf('%s - Function called', __METHOD__));
+        $this->logger->info(sprintf('%s - Function called', self::FILE_NAME));
 
         $secureKey = SecureKeyUtility::generateReturnKey(
             $data->getCustomerId(),
@@ -76,6 +77,6 @@ class UpdateSubscriptionAction
             throw CouldNotUpdateSubscription::failedToUpdateSubscription($exception, $data->getMollieSubscriptionId());
         }
 
-        $this->logger->info(sprintf('%s - Function ended', __METHOD__));
+        $this->logger->info(sprintf('%s - Function ended', self::FILE_NAME));
     }
 }

@@ -18,7 +18,7 @@ use Context as PrestashopContext;
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-
+// TODO: Duplicate of ContextFactory.php
 class Context
 {
     public function getLanguageId(): int

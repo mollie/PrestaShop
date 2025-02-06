@@ -49,10 +49,12 @@ use Mollie\Exception\CouldNotUpdateOrderTotals;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Handler\Exception\CouldNotHandleOrderPaymentFee;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\CartRepositoryInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Service\PaymentMethodService;
+use Mollie\Utility\ExceptionUtility;
 use Order;
 
 if (!defined('_PS_VERSION_')) {
@@ -61,6 +63,10 @@ if (!defined('_PS_VERSION_')) {
 
 class OrderPaymentFeeHandler
 {
+    const FILE_NAME = 'OrderPaymentFeeHandler';
+
+    /** @var LoggerInterface */
+    public $logger;
     /** @var PaymentMethodService */
     private $paymentMethodService;
     /** @var PaymentFeeProviderInterface */
@@ -80,7 +86,8 @@ class OrderPaymentFeeHandler
         CreateOrderPaymentFeeAction $createOrderPaymentFeeAction,
         UpdateOrderTotalsAction $updateOrderTotalsAction,
         OrderRepositoryInterface $orderRepository,
-        CartRepositoryInterface $cartRepository
+        CartRepositoryInterface $cartRepository,
+        LoggerInterface $logger
     ) {
         $this->paymentMethodService = $paymentMethodService;
         $this->paymentFeeProvider = $paymentFeeProvider;
@@ -88,6 +95,7 @@ class OrderPaymentFeeHandler
         $this->updateOrderTotalsAction = $updateOrderTotalsAction;
         $this->orderRepository = $orderRepository;
         $this->cartRepository = $cartRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -118,18 +126,30 @@ class OrderPaymentFeeHandler
                 Cart::BOTH
             );
         } catch (Exception $exception) {
+            $this->logger->error(sprintf('%s - General exception while adding payment fee', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+
             throw CouldNotHandleOrderPaymentFee::unknownError($exception);
         }
 
         try {
             $paymentMethod = $this->paymentMethodService->getPaymentMethod($apiPayment);
         } catch (OrderCreationException $exception) {
+            $this->logger->error(sprintf('%s - Order creation exception', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+
             throw CouldNotHandleOrderPaymentFee::failedToRetrievePaymentMethod($exception);
         }
 
         try {
             $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmountWithTax);
         } catch (FailedToProvidePaymentFeeException $exception) {
+            $this->logger->error(sprintf('%s - Failed to provide payment fee', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+
             throw CouldNotHandleOrderPaymentFee::failedToRetrievePaymentFee($exception);
         }
 
@@ -141,6 +161,10 @@ class OrderPaymentFeeHandler
                 $paymentFeeData->getPaymentFeeTaxExcl()
             ));
         } catch (CouldNotCreateOrderPaymentFee $exception) {
+            $this->logger->error(sprintf('%s - Could not create order payment fee', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+
             throw CouldNotHandleOrderPaymentFee::failedToCreateOrderPaymentFee($exception);
         }
 
@@ -155,6 +179,10 @@ class OrderPaymentFeeHandler
                 $originalAmountWithoutTax
             ));
         } catch (CouldNotUpdateOrderTotals $exception) {
+            $this->logger->error(sprintf('%s - Could not update order totals', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+
             throw CouldNotHandleOrderPaymentFee::failedToUpdateOrderTotalWithPaymentFee($exception);
         }
     }

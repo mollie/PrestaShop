@@ -114,7 +114,6 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
             ];
 
             $logger->error('Failed to get payment fee data.', [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
@@ -236,7 +235,6 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
             ));
 
             $logger->error('Unknown error.', [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
         }
