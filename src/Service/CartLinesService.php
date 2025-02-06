@@ -93,7 +93,7 @@ class CartLinesService
      *
      * @return array
      *
-     * @throws \PrestaShop\Decimal\Exception\DivisionByZeroException
+     * @throws CouldNotProcessCartLinesException
      */
     public function getCartLines(
         float $amount,
