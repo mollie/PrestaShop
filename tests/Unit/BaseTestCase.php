@@ -55,7 +55,7 @@ class BaseTestCase extends TestCase
         $this->moduleFactory = $this->mock(ModuleFactory::class);
         $this->currencyRepository = $this->mock(CurrencyRepositoryInterface::class);
         $this->cart = $this->mock(\Cart::class);
-        $this->prestashopLogger = $this->mock(PrestaLoggerInterface::class);
+        $this->prestaShopLogger = $this->mock(PrestaLoggerInterface::class);
         $this->timeUtility = $this->mock(TimeUtility::class);
         $this->logger = $this->mock(LoggerInterface::class);
 

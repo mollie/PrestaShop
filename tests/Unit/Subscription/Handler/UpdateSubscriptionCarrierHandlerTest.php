@@ -419,7 +419,7 @@ class UpdateSubscriptionCarrierHandlerTest extends BaseTestCase
             $this->context,
             $this->updateSubscriptionAction,
             $this->updateRecurringOrderAction,
-            $this->prestashopLogger,
+            $this->prestaShopLogger,
             $this->cloneOriginalSubscriptionCartHandler,
             $this->subscriptionOrderAmountProvider,
             $this->mailService
