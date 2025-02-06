@@ -14,6 +14,7 @@ namespace Mollie\Service;
 
 use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
+use Mollie\Exception\CouldNotProcessCartLinesException;
 use Mollie\Service\CartLine\CartItemDiscountService;
 use Mollie\Service\CartLine\CartItemProductLinesService;
 use Mollie\Service\CartLine\CartItemShippingLineService;
@@ -24,6 +25,7 @@ use mollie\src\Utility\LineUtility;
 use mollie\src\Utility\RoundingUtility;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\CalculationUtility;
+use PrestaShop\Decimal\Exception\DivisionByZeroException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -121,31 +123,53 @@ class CartLinesService
         );
 
         $orderLines = [];
-
-        // Item
         list($orderLines, $remainingAmount) = $this->cartItemsService->createProductLines($cartItems, $cartSummary['gift_products'], $orderLines, $selectedVoucherCategory, $remainingAmount);
 
-        // Add discounts to the order lines
         $totalDiscounts = $cartSummary['total_discounts'] ?? 0;
         list($orderLines, $remainingAmount) = $this->cartItemDiscountService->addDiscountsToProductLines($totalDiscounts, $orderLines, $remainingAmount);
 
-        // Compensate for order total rounding inaccuracies
-        $orderLines = $this->roundingUtility->compositeRoundingInaccuracies($remainingAmount, $orderLines);
+        try {
+            $orderLines = $this->roundingUtility->compositeRoundingInaccuracies($remainingAmount, $orderLines);
+        } catch (\Exception $e) {
+            throw CouldNotProcessCartLinesException::failedToRoundAmount($e);
+        }
 
-        // Fill the order lines with the rest of the data (tax, total amount, etc.)
-        $orderLines = $this->cartItemProductLinesService->fillProductLinesWithRemainingData($orderLines, Config::VAT_RATE_ROUNDING_PRECISION);
+        try {
+            $orderLines = $this->cartItemProductLinesService->fillProductLinesWithRemainingData($orderLines, Config::VAT_RATE_ROUNDING_PRECISION);
+        } catch (\Exception $e) {
+            throw CouldNotProcessCartLinesException::failedToFillProductLinesWithRemainingData($e);
+        }
 
-        // Add shipping costs to the order lines
-        $orderLines = $this->cartItemShippingLineService->addShippingLine($roundedShippingCost, $cartSummary, $orderLines);
+        try {
+            $orderLines = $this->cartItemShippingLineService->addShippingLine($roundedShippingCost, $cartSummary, $orderLines);
+        } catch (\Exception $e) {
+            throw CouldNotProcessCartLinesException::failedToAddShippingLine($e);
+        }
 
-        // Add wrapping costs to the order lines
-        $orderLines = $this->cartItemWrappingService->addWrappingLine($wrappingPrice, $cartSummary, Config::VAT_RATE_ROUNDING_PRECISION, $orderLines);
+        try {
+            $orderLines = $this->cartItemWrappingService->addWrappingLine($wrappingPrice, $cartSummary, Config::VAT_RATE_ROUNDING_PRECISION, $orderLines);
+        } catch (\Exception $e) {
+            throw CouldNotProcessCartLinesException::failedToAddWrappingLine($e);
+        }
 
-        // Add payment fees to the order lines
-        $orderLines = $this->cartItemPaymentFeeService->addPaymentFeeLine($paymentFeeData, $orderLines);
+        try {
+            $orderLines = $this->cartItemPaymentFeeService->addPaymentFeeLine($paymentFeeData, $orderLines);
+        } catch (\Exception $e) {
+            throw CouldNotProcessCartLinesException::failedToAddPaymentFee($e);
+        }
 
-        $newItems = $this->arrayUtility->ungroupLines($orderLines);
+        try {
+            $newItems = $this->arrayUtility->ungroupLines($orderLines);
+        } catch (\Exception $e) {
+            throw CouldNotProcessCartLinesException::failedToUngroupLines($e);
+        }
 
-        return $this->lineUtility->convertToLineArray($newItems, $currencyIsoCode);
+        try {
+            $lines = $this->lineUtility->convertToLineArray($newItems, $currencyIsoCode);
+        } catch (\Exception $e) {
+            throw CouldNotProcessCartLinesException::failedConvertToLineArray($e);
+        }
+
+        return $lines;
     }
 }
