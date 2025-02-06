@@ -29,11 +29,11 @@ use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\CartRepositoryInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Service\PaymentMethodService;
+use Mollie\Tests\Unit\BaseTestCase;
 use MolPaymentMethod;
 use Order;
-use PHPUnit\Framework\TestCase;
 
-class OrderPaymentFeeHandlerTest extends TestCase
+class OrderPaymentFeeHandlerTest extends BaseTestCase
 {
     /** @var PaymentMethodService */
     private $paymentMethodService;
@@ -52,12 +52,12 @@ class OrderPaymentFeeHandlerTest extends TestCase
     {
         parent::setUp();
 
-        $this->paymentMethodService = $this->createMock(PaymentMethodService::class);
-        $this->paymentFeeProvider = $this->createMock(PaymentFeeProviderInterface::class);
-        $this->createOrderPaymentFeeAction = $this->createMock(CreateOrderPaymentFeeAction::class);
-        $this->updateOrderTotalsAction = $this->createMock(UpdateOrderTotalsAction::class);
-        $this->orderRepository = $this->createMock(OrderRepositoryInterface::class);
-        $this->cartRepository = $this->createMock(CartRepositoryInterface::class);
+        $this->paymentMethodService = $this->mock(PaymentMethodService::class);
+        $this->paymentFeeProvider = $this->mock(PaymentFeeProviderInterface::class);
+        $this->createOrderPaymentFeeAction = $this->mock(CreateOrderPaymentFeeAction::class);
+        $this->updateOrderTotalsAction = $this->mock(UpdateOrderTotalsAction::class);
+        $this->orderRepository = $this->mock(OrderRepositoryInterface::class);
+        $this->cartRepository = $this->mock(CartRepositoryInterface::class);
     }
 
     public function testItSuccessfullyHandlesOrderPaymentFee(): void

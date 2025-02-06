@@ -35,8 +35,6 @@ class BaseTestCase extends TestCase
     public $customer;
     /** @var ModuleFactory */
     public $moduleFactory;
-    /** @var OrderRepositoryInterface */
-    public $orderRepository;
     /** @var CurrencyRepositoryInterface */
     public $currencyRepository;
     /** @var \Cart */
