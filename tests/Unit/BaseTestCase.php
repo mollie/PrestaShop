@@ -16,7 +16,6 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\PrestaLoggerInterface;
-use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
 use Mollie\Utility\TimeUtility;
 use PHPUnit\Framework\TestCase;
