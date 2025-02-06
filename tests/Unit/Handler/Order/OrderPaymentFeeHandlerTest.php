@@ -92,7 +92,8 @@ class OrderPaymentFeeHandlerTest extends BaseTestCase
             $this->createOrderPaymentFeeAction,
             $this->updateOrderTotalsAction,
             $this->orderRepository,
-            $this->cartRepository
+            $this->cartRepository,
+            $this->logger
         );
 
         /** @var Payment $apiPayment */
@@ -123,7 +124,8 @@ class OrderPaymentFeeHandlerTest extends BaseTestCase
             $this->createOrderPaymentFeeAction,
             $this->updateOrderTotalsAction,
             $this->orderRepository,
-            $this->cartRepository
+            $this->cartRepository,
+            $this->logger
         );
 
         /** @var Payment $apiPayment */
@@ -155,7 +157,8 @@ class OrderPaymentFeeHandlerTest extends BaseTestCase
             $this->createOrderPaymentFeeAction,
             $this->updateOrderTotalsAction,
             $this->orderRepository,
-            $this->cartRepository
+            $this->cartRepository,
+            $this->logger
         );
 
         /** @var Payment $apiPayment */
@@ -191,7 +194,8 @@ class OrderPaymentFeeHandlerTest extends BaseTestCase
             $this->createOrderPaymentFeeAction,
             $this->updateOrderTotalsAction,
             $this->orderRepository,
-            $this->cartRepository
+            $this->cartRepository,
+            $this->logger
         );
 
         /** @var Payment $apiPayment */
@@ -233,7 +237,8 @@ class OrderPaymentFeeHandlerTest extends BaseTestCase
             $this->createOrderPaymentFeeAction,
             $this->updateOrderTotalsAction,
             $this->orderRepository,
-            $this->cartRepository
+            $this->cartRepository,
+            $this->logger
         );
 
         /** @var Payment $apiPayment */
@@ -277,7 +282,8 @@ class OrderPaymentFeeHandlerTest extends BaseTestCase
             $this->createOrderPaymentFeeAction,
             $this->updateOrderTotalsAction,
             $this->orderRepository,
-            $this->cartRepository
+            $this->cartRepository,
+            $this->logger
         );
 
         /** @var Payment $apiPayment */

@@ -15,6 +15,7 @@ namespace Mollie\Tests\Unit;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Factory\ModuleFactory;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
 use Mollie\Utility\TimeUtility;
@@ -38,10 +39,12 @@ class BaseTestCase extends TestCase
     public $currencyRepository;
     /** @var \Cart */
     public $cart;
-    /** @var PrestaLoggerInterface */
-    public $logger;
     /** @var TimeUtility */
     public $timeUtility;
+    /** @var LoggerInterface */
+    public $logger;
+    /** @var PrestaLoggerInterface */
+    public $prestaShopLogger;
 
     protected function setUp(): void
     {
@@ -52,8 +55,9 @@ class BaseTestCase extends TestCase
         $this->moduleFactory = $this->mock(ModuleFactory::class);
         $this->currencyRepository = $this->mock(CurrencyRepositoryInterface::class);
         $this->cart = $this->mock(\Cart::class);
-        $this->logger = $this->mock(PrestaLoggerInterface::class);
+        $this->prestashopLogger = $this->mock(PrestaLoggerInterface::class);
         $this->timeUtility = $this->mock(TimeUtility::class);
+        $this->logger = $this->mock(LoggerInterface::class);
 
         parent::setUp();
     }
