@@ -54,7 +54,6 @@ use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\SecureKeyUtility;
 use Mollie\Utility\TextFormatUtility;
 use MolPaymentMethod;
-use PrestaShop\Decimal\Exception\DivisionByZeroException;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use Tools;
@@ -454,7 +453,7 @@ class PaymentMethodService
                         $cart->getSummaryDetails(),
                         $cart->getTotalShippingCost(null, true),
                         $cart->getProducts(),
-                        (bool)Configuration::get('PS_GIFT_WRAPPING'),
+                        (bool) Configuration::get('PS_GIFT_WRAPPING'),
                         $selectedVoucherCategory
                     )
                 );

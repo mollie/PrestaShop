@@ -74,4 +74,13 @@ class CouldNotProcessCartLinesException extends \Exception
             $e
         );
     }
+
+    public static function failedConvertToLineArray(Exception $e)
+    {
+        return new self(
+            'Failed to convert to line array.',
+            ExceptionCode::SERVICE_FAILED_TO_CONVERT_TO_LINE_ARRAY,
+            $e
+        );
+    }
 }
