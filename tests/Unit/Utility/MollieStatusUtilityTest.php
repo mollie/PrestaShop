@@ -1,6 +1,16 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
-namespace Mollie\Tests\Utility;
+namespace Mollie\Tests\Unit\Utility;
 
 use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
@@ -11,7 +21,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Mollie\Utility\MollieStatusUtility
  */
-final class MollieStatusUtilityTest extends TestCase
+class MollieStatusUtilityTest extends TestCase
 {
     /**
      * @dataProvider provide_payment_statuses
@@ -20,7 +30,7 @@ final class MollieStatusUtilityTest extends TestCase
     {
         $result = MollieStatusUtility::isPaymentFinished($status);
 
-        self::assertSame($expected, $result, sprintf('Status "%s" should return %s.', $status, $expected ? 'true' : 'false'));
+        $this->assertSame($expected, $result, sprintf('Status "%s" should return %s.', $status, $expected ? 'true' : 'false'));
     }
 
     public function provide_payment_statuses(): array

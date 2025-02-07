@@ -10,7 +10,7 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Mollie\Tests\Utility;
+namespace Mollie\Tests\Unit\Utility;
 
 use Mollie\Tests\Unit\BaseTestCase;
 use Mollie\Utility\ArrayUtility;

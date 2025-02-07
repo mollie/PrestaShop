@@ -5,7 +5,6 @@
     <php>
         <env name="KERNEL_CLASS" value="AppKernel" />
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak"/>
-        <ini name="display_errors" value="true"/>
     </php>
     <testsuites>
         <testsuite name="Unit">

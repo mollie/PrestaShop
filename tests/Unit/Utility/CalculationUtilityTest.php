@@ -10,6 +10,8 @@
  * @codingStandardsIgnoreStart
  */
 
+namespace Mollie\Tests\Unit\Utility;
+
 use Mollie\Utility\CalculationUtility;
 use PHPUnit\Framework\TestCase;
 

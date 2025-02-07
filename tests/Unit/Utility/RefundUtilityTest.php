@@ -10,12 +10,12 @@
  * @codingStandardsIgnoreStart
  */
 
-namespace Utility;
+namespace Mollie\Tests\Unit\Utility;
 
+use Mollie\Tests\Unit\BaseTestCase;
 use Mollie\Utility\RefundUtility;
-use PHPUnit\Framework\TestCase;
 
-class RefundUtilityTest extends TestCase
+class RefundUtilityTest extends BaseTestCase
 {
     /**
      * @dataProvider getRefundLinesDataProvider
@@ -27,7 +27,7 @@ class RefundUtilityTest extends TestCase
     {
         $refunds = RefundUtility::getRefundLines($lines);
 
-        self::assertEquals($result, $refunds);
+        $this->assertEquals($result, $refunds);
     }
 
     /**
@@ -41,7 +41,7 @@ class RefundUtilityTest extends TestCase
     {
         $refunds = RefundUtility::isOrderLinesRefundPossible($lines, $availableRefund);
 
-        self::assertEquals($result, $refunds);
+        $this->assertEquals($result, $refunds);
     }
 
     public function getRefundLinesDataProvider()
@@ -325,7 +325,7 @@ class RefundUtilityTest extends TestCase
     {
         $refunds = RefundUtility::getRefundedAmount($paymentRefunds);
 
-        self::assertEquals($result, $refunds);
+        $this->assertEquals($result, $refunds);
     }
 
     public function getRefundedAmountProvider()
@@ -409,7 +409,7 @@ class RefundUtilityTest extends TestCase
     {
         $refundableAmount = RefundUtility::getRefundableAmount($paymentAmount, $refundedAmount);
 
-        self::assertEquals($result, $refundableAmount);
+        $this->assertEquals($result, $refundableAmount);
     }
 
     public function getRefundableAmountProvider()
