@@ -35,31 +35,6 @@ use Order;
 
 class OrderPaymentFeeHandlerTest extends BaseTestCase
 {
-    /** @var PaymentMethodService */
-    private $paymentMethodService;
-    /** @var PaymentFeeProviderInterface */
-    private $paymentFeeProvider;
-    /** @var CreateOrderPaymentFeeAction */
-    private $createOrderPaymentFeeAction;
-    /** @var UpdateOrderTotalsAction */
-    private $updateOrderTotalsAction;
-    /** @var OrderRepositoryInterface */
-    private $orderRepository;
-    /** @var CartRepositoryInterface */
-    private $cartRepository;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->paymentMethodService = $this->mock(PaymentMethodService::class);
-        $this->paymentFeeProvider = $this->mock(PaymentFeeProviderInterface::class);
-        $this->createOrderPaymentFeeAction = $this->mock(CreateOrderPaymentFeeAction::class);
-        $this->updateOrderTotalsAction = $this->mock(UpdateOrderTotalsAction::class);
-        $this->orderRepository = $this->mock(OrderRepositoryInterface::class);
-        $this->cartRepository = $this->mock(CartRepositoryInterface::class);
-    }
-
     public function testItSuccessfullyHandlesOrderPaymentFee(): void
     {
         $order = $this->createMock(Order::class);

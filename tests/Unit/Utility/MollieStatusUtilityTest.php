@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
 class MollieStatusUtilityTest extends TestCase
 {
     /**
-     * @dataProvider provide_payment_statuses
+     * @dataProvider providePaymentStatuses
      */
     public function testItCorrectlyIdentifiesFinishedPaymentStatuses(string $status, bool $expected): void
     {
@@ -33,7 +33,7 @@ class MollieStatusUtilityTest extends TestCase
         $this->assertSame($expected, $result, sprintf('Status "%s" should return %s.', $status, $expected ? 'true' : 'false'));
     }
 
-    public function provide_payment_statuses(): array
+    public function providePaymentStatuses(): array
     {
         return [
             'completed_order_status' => [OrderStatus::STATUS_COMPLETED, true],
