@@ -15,7 +15,9 @@ namespace Mollie\Action;
 use Exception;
 use Mollie\DTO\UpdateOrderTotalsData;
 use Mollie\Exception\CouldNotUpdateOrderTotals;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\OrderRepositoryInterface;
+use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\NumberUtility;
 use Order;
 
@@ -25,12 +27,18 @@ if (!defined('_PS_VERSION_')) {
 
 class UpdateOrderTotalsAction
 {
+    const FILE_NAME = 'UpdateOrderTotalsAction';
+
+    /** @var LoggerInterface */
+    public $logger;
+
     /** @var OrderRepositoryInterface */
     private $orderRepository;
 
-    public function __construct(OrderRepositoryInterface $orderRepository)
+    public function __construct(OrderRepositoryInterface $orderRepository, LoggerInterface $logger)
     {
         $this->orderRepository = $orderRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -62,6 +70,10 @@ class UpdateOrderTotalsAction
 
             $order->update();
         } catch (Exception $exception) {
+            $this->logger->error(sprintf('%s - Failed to update order totals', self::FILE_NAME), [
+                'exception' => ExceptionUtility::getExceptions($exception),
+            ]);
+
             throw CouldNotUpdateOrderTotals::failedToUpdateOrderTotals($exception);
         }
     }

@@ -115,7 +115,6 @@ class ErrorHandler
             $logger = $this->module->getService(LoggerInterface::class);
 
             $logger->error($error->getMessage(), [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($error),
             ]);
         }
