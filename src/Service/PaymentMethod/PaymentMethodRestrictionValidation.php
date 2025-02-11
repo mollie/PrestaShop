@@ -48,6 +48,8 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionValidationInterface
 {
+    const FILE_NAME = 'PaymentMethodRestrictionValidation';
+
     /**
      * @var PaymentMethodRestrictionValidatorInterface[]
      */
@@ -79,7 +81,7 @@ class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionVali
                 }
             } catch (Throwable $exception) {
                 PrestaShopLogger::addLog(
-                    sprintf('%s has caught error: %s', __METHOD__, $exception->getMessage()),
+                    sprintf('%s has caught error: %s', self::FILE_NAME, $exception->getMessage()),
                     Config::ERROR,
                     null,
                     null,

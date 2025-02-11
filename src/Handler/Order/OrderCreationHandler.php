@@ -56,6 +56,7 @@ use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Subscription\Handler\SubscriptionCreationHandler;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
+use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TextGeneratorUtility;
 use MolPaymentMethod;
@@ -66,8 +67,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+// TODO: refactor
 class OrderCreationHandler
 {
+    const FILE_NAME = 'OrderCreationHandler';
     /**
      * @var Mollie
      */
@@ -183,6 +186,13 @@ class OrderCreationHandler
 
             $this->paymentMethodRepository->updatePaymentReason($apiPayment->id, Config::WRONG_AMOUNT_REASON);
 
+            $this->logger->error(sprintf('%s - Wrong cart amount while creating order', self::FILE_NAME), [
+                'cart_id' => $cartId,
+                'cart_amount' => $cartPrice,
+                'api_payment_amount' => $apiPayment->amount->value,
+                'price_diff' => $priceDifference,
+            ]);
+
             throw new \Exception('Wrong cart amount');
         }
 
@@ -293,11 +303,8 @@ class OrderCreationHandler
         try {
             $this->recurringOrderCreation->handle($order, $method);
         } catch (\Throwable $exception) {
-            $this->logger->error(
-                'Failed to create recurring order',
-                [
-                    'Exception message' => $exception->getMessage(),
-                    'Exception code' => $exception->getCode(),
+            $this->logger->error(sprintf('%s - Failed to create recurring order', self::FILE_NAME), [
+                    'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]
             );
         }

@@ -77,7 +77,7 @@
 </style>
 <script type="text/javascript">
   var tries = 0;
-  var maxTries = 5;
+  var maxTries = 10;
   var timeout = 3000;
 
   (function awaitMolliePaymentStatus() {
