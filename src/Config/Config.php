@@ -72,6 +72,7 @@ class Config
         'riverty' => ['nl', 'be', 'de', 'at'],
         'payconiq' => [],
         'paybybank' => ['at', 'be', 'cy', 'ee', 'fi', 'fr', 'de', 'gr', 'ie', 'it', 'lv', 'lt', 'lu', 'mt', 'nl', 'pt', 'sk', 'si', 'es', 'uk'],
+        'multibanco' => ['pt'],
         'mbway' => ['pt'],
     ];
 
@@ -336,6 +337,7 @@ class Config
         'trustly' => 'Trustly',
         'satispay' => 'Satispay',
         'paybybank' => 'Pay by Bank',
+        'multibanco' => 'Multibanco',
         'mbway' => 'MBway',
     ];
 
