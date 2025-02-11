@@ -10,7 +10,6 @@ use Mollie\Config\Config;
 use Mollie\Service\EntityManager\EntityManagerInterface;
 use Mollie\Service\EntityManager\ObjectModelUnitOfWork;
 use Mollie\Utility\NumberIdempotencyProvider;
-use Psr\Log\LoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
