@@ -27,12 +27,19 @@ class SubscriptionFAQController extends AbstractSymfonyController
 {
     private const FILE_NAME = 'SubscriptionFAQController';
 
+    /** @var ContainerInterface $container */
     protected $container;
 
-    public function __construct(ContainerInterface $container, Environment $twig)
-    {
+    /** @var Environment $twig */
+    private $twig;
+
+    public function __construct(
+        ContainerInterface $container,
+        Environment $twig
+    ) {
         $this->container = $container;
         $this->twig = $twig;
+
         parent::__construct();
     }
 
