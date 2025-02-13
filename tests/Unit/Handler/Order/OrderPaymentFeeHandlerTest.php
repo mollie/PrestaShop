@@ -35,6 +35,16 @@ use Order;
 
 class OrderPaymentFeeHandlerTest extends BaseTestCase
 {
+    /** @var UpdateOrderTotalsAction $updateOrderTotalsAction */
+    private $updateOrderTotalsAction;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->updateOrderTotalsAction = $this->mock(UpdateOrderTotalsAction::class);
+    }
+
     public function testItSuccessfullyHandlesOrderPaymentFee(): void
     {
         $order = $this->createMock(Order::class);

@@ -22,7 +22,6 @@ use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\CartRepositoryInterface;
 use Mollie\Repository\OrderRepositoryInterface;
-use Mollie\Service\PaymentMethod\PaymentMethodSortProvider;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
 use Mollie\Utility\TimeUtility;
@@ -34,55 +33,52 @@ class BaseTestCase extends TestCase
 
     /** @var \Mollie */
     public $module;
+    /** @var \Cart */
+    public $cart;
+    /** @var CartRepositoryInterface */
+    public $cartRepository;
     /** @var ConfigurationAdapter */
     public $configuration;
     /** @var Context */
     public $context;
-    /** @var \Customer */
-    public $customer;
-    /** @var ModuleFactory */
-    public $moduleFactory;
-    /** @var CurrencyRepositoryInterface */
-    public $currencyRepository;
-    /** @var \Cart */
-    public $cart;
-    /** @var TimeUtility */
-    public $timeUtility;
-    /** @var LoggerInterface */
-    public $logger;
-    /** @var PrestaLoggerInterface */
-    public $prestaShopLogger;
-    /** @var CartRepositoryInterface */
-    public $cartRepository;
-    /** @var OrderRepositoryInterface */
-    public $orderRepository;
-    /** @var UpdateOrderTotalsAction */
-    public $updateOrderTotalsAction;
     /** @var CreateOrderPaymentFeeAction */
     public $createOrderPaymentFeeAction;
+    /** @var CurrencyRepositoryInterface */
+    public $currencyRepository;
+    /** @var \Customer */
+    public $customer;
+    /** @var LoggerInterface */
+    public $logger;
+    /** @var ModuleFactory */
+    public $moduleFactory;
+    /** @var OrderRepositoryInterface */
+    public $orderRepository;
     /** @var PaymentFeeProviderInterface */
     public $paymentFeeProvider;
     /** @var PaymentMethodService */
     public $paymentMethodService;
+    /** @var PrestaLoggerInterface */
+    public $prestaShopLogger;
+    /** @var TimeUtility */
+    public $timeUtility;
 
     protected function setUp(): void
     {
         $this->module = $this->mock(\Mollie::class);
+        $this->cart = $this->mock(\Cart::class);
+        $this->cartRepository = $this->mock(CartRepositoryInterface::class);
         $this->configuration = $this->mock(ConfigurationAdapter::class);
         $this->context = $this->mock(Context::class);
-        $this->customer = $this->mock(\Customer::class);
-        $this->moduleFactory = $this->mock(ModuleFactory::class);
+        $this->createOrderPaymentFeeAction = $this->mock(CreateOrderPaymentFeeAction::class);
         $this->currencyRepository = $this->mock(CurrencyRepositoryInterface::class);
-        $this->cart = $this->mock(\Cart::class);
+        $this->customer = $this->mock(\Customer::class);
+        $this->logger = $this->mock(LoggerInterface::class);
+        $this->moduleFactory = $this->mock(ModuleFactory::class);
+        $this->orderRepository = $this->mock(OrderRepositoryInterface::class);
+        $this->paymentFeeProvider = $this->mock(PaymentFeeProviderInterface::class);
+        $this->paymentMethodService = $this->mock(PaymentMethodService::class);
         $this->prestaShopLogger = $this->mock(PrestaLoggerInterface::class);
         $this->timeUtility = $this->mock(TimeUtility::class);
-        $this->logger = $this->mock(LoggerInterface::class);
-        $this->paymentMethodService = $this->mock(PaymentMethodService::class);
-        $this->paymentFeeProvider = $this->mock(PaymentFeeProviderInterface::class);
-        $this->createOrderPaymentFeeAction = $this->mock(CreateOrderPaymentFeeAction::class);
-        $this->updateOrderTotalsAction = $this->mock(UpdateOrderTotalsAction::class);
-        $this->orderRepository = $this->mock(OrderRepositoryInterface::class);
-        $this->cartRepository = $this->mock(CartRepositoryInterface::class);
 
         parent::setUp();
     }
