@@ -42,7 +42,11 @@ class SubscriptionController extends AbstractSymfonyController
 {
     private const FILE_NAME = 'SubscriptionController';
 
+    /** @var ContainerInterface */
     protected $container;
+
+    /** @var Environment */
+    private $twig;
 
     public function __construct(ContainerInterface $container, Environment $twig)
     {

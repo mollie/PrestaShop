@@ -36,6 +36,11 @@ class SubscriptionFAQController extends AbstractSymfonyController
         parent::__construct();
     }
 
+    /**
+     * @AdminSecurity("is_granted('read', request.get('_legacy_controller'))")
+     *
+     * @return Response
+     */
     public function indexAction()
     {
         return new Response(
