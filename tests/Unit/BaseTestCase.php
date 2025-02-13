@@ -13,18 +13,15 @@
 namespace Mollie\Tests\Unit;
 
 use Mollie\Action\CreateOrderPaymentFeeAction;
-use Mollie\Action\UpdateOrderTotalsAction;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\LoggerInterface;
-use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\CartRepositoryInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
-use Mollie\Utility\TimeUtility;
 use PHPUnit\Framework\TestCase;
 
 class BaseTestCase extends TestCase
@@ -55,12 +52,6 @@ class BaseTestCase extends TestCase
     public $orderRepository;
     /** @var PaymentFeeProviderInterface */
     public $paymentFeeProvider;
-    /** @var PaymentMethodService */
-    public $paymentMethodService;
-    /** @var PrestaLoggerInterface */
-    public $prestaShopLogger;
-    /** @var TimeUtility */
-    public $timeUtility;
 
     protected function setUp(): void
     {
@@ -76,9 +67,6 @@ class BaseTestCase extends TestCase
         $this->moduleFactory = $this->mock(ModuleFactory::class);
         $this->orderRepository = $this->mock(OrderRepositoryInterface::class);
         $this->paymentFeeProvider = $this->mock(PaymentFeeProviderInterface::class);
-        $this->paymentMethodService = $this->mock(PaymentMethodService::class);
-        $this->prestaShopLogger = $this->mock(PrestaLoggerInterface::class);
-        $this->timeUtility = $this->mock(TimeUtility::class);
 
         parent::setUp();
     }

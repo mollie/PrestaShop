@@ -38,11 +38,15 @@ class OrderPaymentFeeHandlerTest extends BaseTestCase
     /** @var UpdateOrderTotalsAction $updateOrderTotalsAction */
     private $updateOrderTotalsAction;
 
+    /** @var PaymentMethodService $paymentMethodService */
+    private $paymentMethodService;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->updateOrderTotalsAction = $this->mock(UpdateOrderTotalsAction::class);
+        $this->paymentMethodService = $this->mock(PaymentMethodService::class);
     }
 
     public function testItSuccessfullyHandlesOrderPaymentFee(): void

@@ -13,6 +13,7 @@
 namespace Mollie\Tests\Unit\Subscription\Handler;
 
 use Mollie\Exception\MollieException;
+use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Service\MailService;
 use Mollie\Subscription\Action\UpdateRecurringOrderAction;
 use Mollie\Subscription\Action\UpdateSubscriptionAction;
@@ -42,6 +43,8 @@ class UpdateSubscriptionCarrierHandlerTest extends BaseTestCase
 
     /** @var MailService */
     private $mailService;
+    /** @var PrestaLoggerInterface $prestaShopLogger */
+    private $prestaShopLogger;
 
     public function setUp(): void
     {
@@ -53,6 +56,7 @@ class UpdateSubscriptionCarrierHandlerTest extends BaseTestCase
         $this->cloneOriginalSubscriptionCartHandler = $this->mock(CloneOriginalSubscriptionCartHandler::class);
         $this->subscriptionOrderAmountProvider = $this->mock(SubscriptionOrderAmountProvider::class);
         $this->mailService = $this->mock(MailService::class);
+        $this->prestaShopLogger = $this->mock(PrestaLoggerInterface::class);
     }
 
     public function testItSuccessfullyHandles(): void
