@@ -28,9 +28,11 @@ use Mollie\Utility\PsVersionUtility;
 use PrestaShop\PrestaShop\Core\Form\FormHandlerInterface;
 use PrestaShop\PrestaShop\Core\Grid\GridFactoryInterface;
 use PrestaShopBundle\Security\Annotation\AdminSecurity;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Twig\Environment;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -39,6 +41,15 @@ if (!defined('_PS_VERSION_')) {
 class SubscriptionController extends AbstractSymfonyController
 {
     private const FILE_NAME = 'SubscriptionController';
+
+    protected $container;
+
+    public function __construct(ContainerInterface $container, Environment $twig)
+    {
+        $this->container = $container;
+        $this->twig = $twig;
+        parent::__construct();
+    }
 
     /**
      * @AdminSecurity("is_granted('read', request.get('_legacy_controller'))")
@@ -68,11 +79,13 @@ class SubscriptionController extends AbstractSymfonyController
             $formHandler = $this->get('subscription_options_form_handler_deprecated')->getForm();
         }
 
-        return $this->render('@Modules/mollie/views/templates/admin/Subscription/subscriptions-grid.html.twig', [
-            'currencyGrid' => $this->presentGrid($currencyGrid),
-            'enableSidebar' => true,
-            'subscriptionOptionsForm' => $formHandler->createView(),
-        ]);
+        return new Response(
+            $this->twig->render('@Modules/mollie/views/templates/admin/Subscription/subscriptions-grid.html.twig', [
+                'currencyGrid' => $this->presentGrid($currencyGrid),
+                'enableSidebar' => true,
+                'subscriptionOptionsForm' => $formHandler->createView(),
+            ])
+        );
     }
 
     /**
