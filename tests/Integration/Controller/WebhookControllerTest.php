@@ -30,12 +30,42 @@ class WebhookControllerTest extends BaseTestCase
         ]);
     }
 
-    public function testItRespondsBadReqiestWithoutTimeout()
+    /**
+     * @dataProvider webhookDataProvider
+     */
+    public function testWebhookResponse($url, $expectedStatusCode, $expectedResponseBody)
     {
         $result = $this->client->sendRequest(
-            new Request('GET', Context::getContext()->link->getModuleLink('mollie', 'webhook'))
+            new Request('GET', $url)
         );
 
-        $this->assertEquals(400, $result->getStatusCode());
+        $this->assertEquals($expectedStatusCode, $result->getStatusCode());
+        $this->assertEquals($expectedResponseBody, $result->getBody()->getContents());
+    }
+
+    public function webhookDataProvider(): array
+    {
+        return [
+            'Missing security token' => [
+                'url' => Context::getContext()->link->getModuleLink('mollie', 'webhook'),
+                'expectedStatusCode' => 400,
+                'expectedResponseBody' => '{"success":false,"errors":["Missing security token"],"data":[]}',
+            ],
+            'Missing transaction id' => [
+                'url' => Context::getContext()->link->getModuleLink('mollie', 'webhook') . '?' . http_build_query([
+                        'security_token' => 'bad_token_value',
+                    ]),
+                'expectedStatusCode' => 422,
+                'expectedResponseBody' => '{"success":false,"errors":["Missing transaction id"],"data":[]}',
+            ],
+            'Valid response' => [
+                'url' => Context::getContext()->link->getModuleLink('mollie', 'webhook') . '?' . http_build_query([
+                        'security_token' => 'token_value',
+                        'transaction_id' => 'tr_01010101010101'
+                    ]),
+                'expectedStatusCode' => 422,
+                'expectedResponseBody' => '{"success":false,"errors":["Missing transaction id"],"data":[]}',
+            ],
+        ];
     }
 }
