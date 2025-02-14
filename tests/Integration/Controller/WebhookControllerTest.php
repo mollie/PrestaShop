@@ -1,7 +1,4 @@
 <?php
-
-use Mollie\Tests\Integration\BaseTestCase;
-
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -13,18 +10,32 @@ use Mollie\Tests\Integration\BaseTestCase;
  * @codingStandardsIgnoreStart
  */
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+use Mollie\Tests\Integration\BaseTestCase;
+use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
+
 class WebhookControllerTest extends BaseTestCase
 {
+    /** @var Client */
+    private $client;
+
     protected function setUp()
     {
         parent::setUp();
 
-        $this->client = new Client();
+        $this->client = (new ClientFactory())->getClient([
+            'base_uri' => __PS_BASE_URI__,
+            'timeout' => 15,
+        ]);
     }
 
-    public function testItRespondsWithoutTimeout()
+    public function testItRespondsBadReqiestWithoutTimeout()
     {
-        // make a curl client
-        $client = new Client();
+        $result = $this->client->sendRequest(
+            new Request('GET', Context::getContext()->link->getModuleLink('mollie', 'webhook'))
+        );
+
+        $this->assertEquals(400, $result->getStatusCode());
     }
 }
