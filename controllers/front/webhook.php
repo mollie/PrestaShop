@@ -52,10 +52,10 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
     {
         $transactionId = null;
 
-        try {
-            /** @var Logger $logger * */
-            $logger = $this->module->getService(LoggerInterface::class);
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
 
+        try {
             $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
             /** @var ToolsAdapter $tools */
