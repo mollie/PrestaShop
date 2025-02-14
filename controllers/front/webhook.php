@@ -94,8 +94,8 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
                     HttpStatusCode::HTTP_CONFLICT
                 ));
             }
-        } catch (\Throwable $e) {
-            $this->handleException($e, HttpStatusCode::HTTP_INTERNAL_SERVER_ERROR, 'Unexpected error before webhook execution');
+        } catch (\Throwable $exception) {
+            $this->handleException($exception, HttpStatusCode::HTTP_INTERNAL_SERVER_ERROR, 'Unexpected error before webhook execution');
         }
 
         try {
