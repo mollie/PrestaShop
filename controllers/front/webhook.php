@@ -109,7 +109,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         } catch (TransactionException $exception) {
             $this->handleException($exception, $exception->getCode(), 'Failed to handle transaction');
         } catch (\Throwable $exception) {
-            $this->handleException($exception, HttpStatusCode::HTTP_BAD_REQUEST, 'Failed to handle webhook');
+            $this->handleException($exception, HttpStatusCode::HTTP_BAD_REQUEST, $exception->getMessage());
         }
 
         $this->releaseLock();

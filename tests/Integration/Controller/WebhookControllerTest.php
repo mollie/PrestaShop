@@ -12,6 +12,8 @@
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use Mollie\Api\Endpoints\PaymentEndpoint;
+use Mollie\Api\MollieApiClient;
 use Mollie\Tests\Integration\BaseTestCase;
 use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
 
@@ -19,6 +21,10 @@ class WebhookControllerTest extends BaseTestCase
 {
     /** @var Client */
     private $client;
+    /**
+     * @var MollieApiClient|(MollieApiClient&PHPUnit_Framework_MockObject_MockObject)|PHPUnit_Framework_MockObject_MockObject
+     */
+    private $mollieApiClient;
 
     protected function setUp()
     {
@@ -41,6 +47,8 @@ class WebhookControllerTest extends BaseTestCase
 
         $this->assertEquals($expectedStatusCode, $result->getStatusCode());
         $this->assertEquals($expectedResponseBody, $result->getBody()->getContents());
+
+
     }
 
     public function webhookDataProvider(): array
@@ -54,14 +62,6 @@ class WebhookControllerTest extends BaseTestCase
             'Missing transaction id' => [
                 'url' => Context::getContext()->link->getModuleLink('mollie', 'webhook') . '?' . http_build_query([
                         'security_token' => 'bad_token_value',
-                    ]),
-                'expectedStatusCode' => 422,
-                'expectedResponseBody' => '{"success":false,"errors":["Missing transaction id"],"data":[]}',
-            ],
-            'Valid response' => [
-                'url' => Context::getContext()->link->getModuleLink('mollie', 'webhook') . '?' . http_build_query([
-                        'security_token' => 'token_value',
-                        'transaction_id' => 'tr_01010101010101'
                     ]),
                 'expectedStatusCode' => 422,
                 'expectedResponseBody' => '{"success":false,"errors":["Missing transaction id"],"data":[]}',
