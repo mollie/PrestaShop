@@ -12,8 +12,6 @@
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
-use Mollie\Api\Endpoints\PaymentEndpoint;
-use Mollie\Api\MollieApiClient;
 use Mollie\Tests\Integration\BaseTestCase;
 use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
 
@@ -21,10 +19,7 @@ class WebhookControllerTest extends BaseTestCase
 {
     /** @var Client */
     private $client;
-    /**
-     * @var MollieApiClient|(MollieApiClient&PHPUnit_Framework_MockObject_MockObject)|PHPUnit_Framework_MockObject_MockObject
-     */
-    private $mollieApiClient;
+
 
     protected function setUp()
     {
@@ -47,8 +42,6 @@ class WebhookControllerTest extends BaseTestCase
 
         $this->assertEquals($expectedStatusCode, $result->getStatusCode());
         $this->assertEquals($expectedResponseBody, $result->getBody()->getContents());
-
-
     }
 
     public function webhookDataProvider(): array

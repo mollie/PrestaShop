@@ -53,9 +53,12 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         try {
             /** @var Logger $logger * */
             $logger = $this->module->getService(LoggerInterface::class);
+
             $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
             /** @var ToolsAdapter $tools */
             $tools = $this->module->getService(ToolsAdapter::class);
+
             if (!$this->module->getApiClient()) {
                 $logger->error(sprintf('Unauthorized in %s', self::FILE_NAME));
 
@@ -64,6 +67,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
                     HttpStatusCode::HTTP_UNAUTHORIZED
                 ));
             }
+
             if (!$tools->getValue('security_token')) {
                 $logger->debug(sprintf('%s - Missing security token', self::FILE_NAME));
 
@@ -72,7 +76,9 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
                     HttpStatusCode::HTTP_BAD_REQUEST
                 ));
             }
-            $transactionId = (string)$tools->getValue('id');
+
+            $transactionId = (string) $tools->getValue('id');
+
             if (!$transactionId) {
                 $logger->error(sprintf('%s - Missing transaction ID', self::FILE_NAME));
 
@@ -81,11 +87,13 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
                     HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY
                 ));
             }
+
             $lockResult = $this->applyLock(sprintf(
                 '%s-%s',
                 self::FILE_NAME,
                 $tools->getValue('security_token')
             ));
+
             if (!$lockResult->isSuccessful()) {
                 $logger->error(sprintf('%s - Resource conflict', self::FILE_NAME));
 
@@ -167,9 +175,10 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         /** @var ErrorHandler $errorHandler */
         $errorHandler = $this->module->getService(ErrorHandler::class);
 
-
         $errorHandler->handle($exception, $httpStatusCode, false);
+
         $this->releaseLock();
+
         $this->ajaxResponse(JsonResponse::error(
             $this->module->l('Failed to handle webhook', self::FILE_NAME),
             $httpStatusCode
