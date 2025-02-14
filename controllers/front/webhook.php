@@ -50,6 +50,8 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
 
     public function initContent(): void
     {
+        $transactionId = null;
+
         try {
             /** @var Logger $logger * */
             $logger = $this->module->getService(LoggerInterface::class);

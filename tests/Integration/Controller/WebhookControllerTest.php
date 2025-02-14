@@ -20,7 +20,6 @@ class WebhookControllerTest extends BaseTestCase
     /** @var Client */
     private $client;
 
-
     protected function setUp()
     {
         parent::setUp();
