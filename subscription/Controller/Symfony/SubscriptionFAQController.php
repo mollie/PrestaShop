@@ -27,7 +27,7 @@ class SubscriptionFAQController extends AbstractSymfonyController
 {
     private const FILE_NAME = 'SubscriptionFAQController';
 
-    /** @var ContainerInterface $container */
+    /** @var ContainerInterface */
     protected $container;
 
     /** @var Environment */
