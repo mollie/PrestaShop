@@ -30,7 +30,7 @@ class SubscriptionFAQController extends AbstractSymfonyController
     /** @var ContainerInterface $container */
     protected $container;
 
-    /** @var Environment $twig */
+    /** @var Environment */
     private $twig;
 
     public function __construct(
