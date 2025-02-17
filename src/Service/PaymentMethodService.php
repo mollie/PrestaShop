@@ -208,16 +208,17 @@ class PaymentMethodService
      */
     public function getMethodsForCheckout()
     {
-        $apiKey = EnvironmentUtility::getApiKey();
-        if (!$apiKey || $this->module->getApiClient() === null) {
+        if (!EnvironmentUtility::getApiKey()
+            || $this->module->getApiClient() === null
+            || false === Configuration::get(Config::MOLLIE_STATUS_AWAITING)
+        ) {
             return [];
         }
-        /* @phpstan-ignore-next-line */
-        if (false === Configuration::get(Config::MOLLIE_STATUS_AWAITING)) {
-            return [];
-        }
-        $apiEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
-        $methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment, $this->shop->getShop()->id) ?: [];
+
+        $methods = $this->methodRepository->getMethodsForCheckout(
+            Configuration::get(Config::MOLLIE_ENVIRONMENT),
+            $this->shop->getShop()->id
+        ) ?: [];
 
         $isSubscriptionOrder = $this->subscriptionOrder->validate($this->cartAdapter->getCart());
         $sequenceType = $isSubscriptionOrder ? SequenceType::SEQUENCETYPE_FIRST : null;
@@ -238,11 +239,14 @@ class PaymentMethodService
 
             if (!$paymentMethod || !$this->paymentMethodRestrictionValidation->isPaymentMethodValid($paymentMethod)) {
                 unset($methods[$index]);
+
                 continue;
             }
 
             $image = json_decode($method['images_json'], true);
+
             $methods[$index]['image'] = $image;
+
             if (CustomLogoUtility::isCustomLogoEnabled($method['id_method'])) {
                 if ($this->creditCardLogoProvider->logoExists()) {
                     $methods[$index]['image']['custom_logo'] = $this->creditCardLogoProvider->getLogoPathUri();
