@@ -61,7 +61,7 @@ class SubscriptionFAQController extends AbstractSymfonyController
         );
     }
 
-    private function getFAQTexts()
+    private function getFAQTexts(): array
     {
         return [
             'subscriptionCreationTittle' => $this->module->l('Subscription creation', self::FILE_NAME),
