@@ -151,6 +151,14 @@ class Logger implements LoggerInterface
         $this->logContext($logId, $context);
     }
 
+    /**
+     * @param int $logId
+     * @param array $context
+     *
+     * @return void
+     *
+     * @throws \PrestaShopException
+     */
     private function logContext($logId, array $context): void
     {
         $request = '';
@@ -177,6 +185,11 @@ class Logger implements LoggerInterface
         $this->entityManager->flush();
     }
 
+    /**
+     * @param array $context
+     *
+     * @return array
+     */
     private function getFilledContextWithShopData(array $context): array
     {
         $context['context_id_customer'] = $this->context->getCustomerId();
