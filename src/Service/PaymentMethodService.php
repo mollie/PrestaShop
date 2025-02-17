@@ -250,9 +250,7 @@ class PaymentMethodService
             }
         }
 
-        $methods = $this->paymentMethodSortProvider->getSortedInAscendingWayForCheckout($methods);
-
-        return $methods;
+        return $this->paymentMethodSortProvider->getSortedInAscendingWayForCheckout($methods);
     }
 
     /**
