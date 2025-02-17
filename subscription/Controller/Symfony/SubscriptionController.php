@@ -48,10 +48,6 @@ class SubscriptionController extends AbstractSymfonyController
     /** @var ?Environment */
     public $twig;
 
-    /**
-     * @param ?ContainerInterface $container
-     * @param ?Environment $twig
-     */
     public function __construct(
         ?ContainerInterface $container = null,
         ?Environment $twig = null
