@@ -159,7 +159,7 @@ class Logger implements LoggerInterface
      *
      * @throws \PrestaShopException
      */
-    private function logContext($logId, array $context): void
+    private function logContext($logId, array $context = []): void
     {
         $request = '';
         $response = '';
@@ -190,7 +190,7 @@ class Logger implements LoggerInterface
      *
      * @return array
      */
-    private function getFilledContextWithShopData(array $context): array
+    private function getFilledContextWithShopData(array $context = []): array
     {
         $context['context_id_customer'] = $this->context->getCustomerId();
         $context['id_shop'] = $this->context->getShopId();

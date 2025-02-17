@@ -22,6 +22,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+/**
+ * @deprecated use LoggerInterface instead
+ */
 class PrestaLogger implements PrestaLoggerInterface
 {
     /** @var ConfigurationAdapter */
@@ -34,6 +37,8 @@ class PrestaLogger implements PrestaLoggerInterface
 
     /**
      * @param string|\Stringable $message
+     *
+     * @deprecated use LoggerInterface instead
      */
     public function emergency($message, array $context = []): void
     {
@@ -42,6 +47,8 @@ class PrestaLogger implements PrestaLoggerInterface
 
     /**
      * @param string|\Stringable $message
+     *
+     * @deprecated use LoggerInterface instead
      */
     public function alert($message, array $context = []): void
     {
@@ -50,6 +57,8 @@ class PrestaLogger implements PrestaLoggerInterface
 
     /**
      * @param string|\Stringable $message
+     *
+     * @deprecated use LoggerInterface instead
      */
     public function critical($message, array $context = []): void
     {
@@ -58,6 +67,8 @@ class PrestaLogger implements PrestaLoggerInterface
 
     /**
      * @param string|\Stringable $message
+     *
+     * @deprecated use LoggerInterface instead
      */
     public function error($message, array $context = []): void
     {
@@ -75,6 +86,8 @@ class PrestaLogger implements PrestaLoggerInterface
 
     /**
      * @param string|\Stringable $message
+     *
+     * @deprecated use LoggerInterface instead
      */
     public function warning($message, array $context = []): void
     {
@@ -83,6 +96,8 @@ class PrestaLogger implements PrestaLoggerInterface
 
     /**
      * @param string|\Stringable $message
+     *
+     * @deprecated use LoggerInterface instead
      */
     public function notice($message, array $context = []): void
     {
@@ -91,6 +106,8 @@ class PrestaLogger implements PrestaLoggerInterface
 
     /**
      * @param string|\Stringable $message
+     *
+     * @deprecated use LoggerInterface instead
      */
     public function info($message, array $context = []): void
     {
@@ -107,6 +124,8 @@ class PrestaLogger implements PrestaLoggerInterface
 
     /**
      * @param string|\Stringable $message
+     *
+     * @deprecated use LoggerInterface instead
      */
     public function debug($message, array $context = []): void
     {
@@ -115,6 +134,8 @@ class PrestaLogger implements PrestaLoggerInterface
 
     /**
      * @param string|\Stringable $message
+     *
+     * @deprecated use LoggerInterface instead
      */
     public function log($level, $message, array $context = []): void
     {
@@ -132,6 +153,8 @@ class PrestaLogger implements PrestaLoggerInterface
      * Handle logging logic with PrestaShopLogger.
      *
      * @param string|\Stringable $message
+     *
+     * @deprecated use LoggerInterface instead
      */
     private function logWithPrestaShop(string $level, $message, array $context): void
     {
