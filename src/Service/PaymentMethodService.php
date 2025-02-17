@@ -210,7 +210,7 @@ class PaymentMethodService
     {
         if (!EnvironmentUtility::getApiKey()
             || $this->module->getApiClient() === null
-            || false == Configuration::get(Config::MOLLIE_STATUS_AWAITING)
+            || !Configuration::get(Config::MOLLIE_STATUS_AWAITING)
         ) {
             return [];
         }
