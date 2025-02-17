@@ -37,7 +37,6 @@ class PrestaLogger implements PrestaLoggerInterface
      */
     public function emergency($message, array $context = []): void
     {
-        $this->validateMessage($message);
         $this->logWithPrestaShop('emergency', $message, $context);
     }
 
@@ -46,7 +45,6 @@ class PrestaLogger implements PrestaLoggerInterface
      */
     public function alert($message, array $context = []): void
     {
-        $this->validateMessage($message);
         $this->logWithPrestaShop('alert', $message, $context);
     }
 
@@ -55,7 +53,6 @@ class PrestaLogger implements PrestaLoggerInterface
      */
     public function critical($message, array $context = []): void
     {
-        $this->validateMessage($message);
         $this->logWithPrestaShop('critical', $message, $context);
     }
 
@@ -64,8 +61,6 @@ class PrestaLogger implements PrestaLoggerInterface
      */
     public function error($message, array $context = []): void
     {
-        $this->validateMessage($message);
-
         if ((int) $this->configuration->get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_NONE) {
             return;
         }
@@ -83,7 +78,6 @@ class PrestaLogger implements PrestaLoggerInterface
      */
     public function warning($message, array $context = []): void
     {
-        $this->validateMessage($message);
         $this->logWithPrestaShop('warning', $message, $context);
     }
 
@@ -92,7 +86,6 @@ class PrestaLogger implements PrestaLoggerInterface
      */
     public function notice($message, array $context = []): void
     {
-        $this->validateMessage($message);
         $this->logWithPrestaShop('notice', $message, $context);
     }
 
@@ -101,8 +94,6 @@ class PrestaLogger implements PrestaLoggerInterface
      */
     public function info($message, array $context = []): void
     {
-        $this->validateMessage($message);
-
         if ((int) $this->configuration->get(Config::MOLLIE_DEBUG_LOG) !== Config::DEBUG_LOG_ALL) {
             return;
         }
@@ -119,7 +110,6 @@ class PrestaLogger implements PrestaLoggerInterface
      */
     public function debug($message, array $context = []): void
     {
-        $this->validateMessage($message);
         $this->info($message, $context);
     }
 
@@ -128,7 +118,6 @@ class PrestaLogger implements PrestaLoggerInterface
      */
     public function log($level, $message, array $context = []): void
     {
-        $this->validateMessage($message);
         throw new NotImplementedException('not implemented method');
     }
 
@@ -147,19 +136,5 @@ class PrestaLogger implements PrestaLoggerInterface
     private function logWithPrestaShop(string $level, $message, array $context): void
     {
         throw new NotImplementedException("Method {$level} not implemented.");
-    }
-
-    /**
-     * Validate that the message is a string or Stringable.
-     *
-     * @param mixed $message
-     *
-     * @throws \InvalidArgumentException
-     */
-    private function validateMessage($message): void
-    {
-        if (!is_string($message) && !$message instanceof \Stringable) {
-            throw new \InvalidArgumentException('Message must be a string or Stringable.');
-        }
     }
 }
