@@ -18,6 +18,7 @@ use AttributeGroup;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\ProductAttributeAdapter;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Repository\LanguageRepository;
@@ -43,14 +44,14 @@ class AttributeInstaller extends AbstractInstaller
     /** @var LanguageRepository */
     private $language;
 
-    /** @var PrestaLoggerInterface */
+    /** @var LoggerInterface */
     private $logger;
 
     /** @var ProductAttributeAdapter */
     private $productAttributeAdapter;
 
     public function __construct(
-        PrestaLoggerInterface $logger,
+        LoggerInterface $logger,
         ConfigurationAdapter $configuration,
         Mollie $module,
         LanguageRepository $language,
