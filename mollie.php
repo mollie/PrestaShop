@@ -41,7 +41,6 @@ use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\PsVersionUtility;
-use Mollie\Utility\VersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
 use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
 use Symfony\Component\Dotenv\Dotenv;
@@ -202,7 +201,7 @@ class Mollie extends PaymentModule
         $subscriptionInstaller = new Installer(
             new DatabaseTableInstaller(),
             new AttributeInstaller(
-                $this->getService(LoggerInterface::class),
+                $this->getService(PrestaLoggerInterface::class),
                 $this->getService(ConfigurationAdapter::class),
                 $this,
                 new LanguageAdapter(),
