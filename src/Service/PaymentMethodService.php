@@ -230,9 +230,11 @@ class PaymentMethodService
 
         $methods = $this->removeNotSupportedMethods($methods, $mollieMethods);
 
+        $paymentMethods = $this->methodRepository->findAllBy(['id_payment_method' => array_column($methods, 'id_payment_method')]);
+
         foreach ($methods as $index => $method) {
             /** @var MolPaymentMethod|null $paymentMethod */
-            $paymentMethod = $this->methodRepository->findOneBy(['id_payment_method' => (int) $method['id_payment_method']]);
+            $paymentMethod = $paymentMethods[$method['id_payment_method']] ?? null;
 
             if (!$paymentMethod || !$this->paymentMethodRestrictionValidation->isPaymentMethodValid($paymentMethod)) {
                 unset($methods[$index]);
