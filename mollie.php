@@ -184,10 +184,6 @@ class Mollie extends PaymentModule
             return false;
         }
 
-        if (VersionUtility::isPsVersionGreaterOrEqualTo('9.0.0')) {
-            $this->loadPrestaShop9Services();
-        }
-
         $logger->debug('Mollie install successful');
 
         // TODO inject base install and subscription services
@@ -1539,15 +1535,6 @@ class Mollie extends PaymentModule
 
         if (!in_array('You can\'t remove address associated with subscription', $this->context->controller->errors, true)) {
             $this->context->controller->errors[] = $this->l('You can\'t remove address associated with subscription');
-        }
-    }
-
-    private function loadPrestaShop9Services()
-    {
-        $servicesFile = _PS_MODULE_DIR_ . 'mollie/config/services_ps9.yml';
-
-        if (file_exists($servicesFile)) {
-            $this->getContainer()->get('prestashop.core.dependency_injection.container_builder')->import($servicesFile);
         }
     }
 }
