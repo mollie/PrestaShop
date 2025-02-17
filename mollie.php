@@ -41,6 +41,7 @@ use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\PsVersionUtility;
+use Mollie\Utility\VersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
 use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
 use Symfony\Component\Dotenv\Dotenv;
@@ -181,6 +182,10 @@ class Mollie extends PaymentModule
             $this->_errors[] = $this->l('Unable to install module');
 
             return false;
+        }
+
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('9.0.0')) {
+            $this->loadPrestaShop9Services();
         }
 
         $logger->debug('Mollie install successful');
@@ -1534,6 +1539,15 @@ class Mollie extends PaymentModule
 
         if (!in_array('You can\'t remove address associated with subscription', $this->context->controller->errors, true)) {
             $this->context->controller->errors[] = $this->l('You can\'t remove address associated with subscription');
+        }
+    }
+
+    private function loadPrestaShop9Services()
+    {
+        $servicesFile = _PS_MODULE_DIR_ . 'mollie/config/services_ps9.yml';
+
+        if (file_exists($servicesFile)) {
+            $this->getContainer()->get('prestashop.core.dependency_injection.container_builder')->import($servicesFile);
         }
     }
 }
