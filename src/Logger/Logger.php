@@ -129,8 +129,6 @@ class Logger implements LoggerInterface
      */
     public function log($level, $message, array $context = []): void
     {
-        $this->validateMessage($message);
-
         $idempotencyKey = $this->idempotencyProvider->getIdempotencyKey();
 
         \PrestaShopLogger::addLog(
@@ -187,19 +185,5 @@ class Logger implements LoggerInterface
         $context['id_language'] = $this->context->getLanguageId();
 
         return $context;
-    }
-
-    /**
-     * Validate that the message is a string or Stringable.
-     *
-     * @param mixed $message
-     *
-     * @throws \InvalidArgumentException
-     */
-    private function validateMessage($message): void
-    {
-        if (!is_string($message) && !$message instanceof \Stringable) {
-            throw new \InvalidArgumentException('Message must be a string or Stringable.');
-        }
     }
 }
