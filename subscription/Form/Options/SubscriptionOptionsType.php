@@ -32,8 +32,8 @@ class SubscriptionOptionsType extends TranslatorAwareType
     /** @var Module */
     private $module;
 
-    /* @phpstan-ignore-next-lines */
     /** @var NewTranslatorInterface|OldTranslatorInterface */
+    /* @phpstan-ignore-next-lines */
     private $translator;
 
     public function __construct(
