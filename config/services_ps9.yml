@@ -1,0 +1,14 @@
+services:
+  Mollie\Subscription\Controller\Symfony\SubscriptionFAQController:
+    arguments:
+      - '@service_container'  # Inject the service container for PS 9.0
+      - '@twig'
+    tags:
+      - { name: 'controller.service_arguments' }
+
+  Mollie\Subscription\Controller\Symfony\SubscriptionController:
+    arguments:
+      - '@service_container'  # Inject the service container for PS 9.0
+      - '@twig'
+    tags:
+      - { name: 'controller.service_arguments' }

@@ -42,18 +42,20 @@ class SubscriptionController extends AbstractSymfonyController
 {
     private const FILE_NAME = 'SubscriptionController';
 
-    /** @var ContainerInterface */
+    /** @var ?ContainerInterface */
     protected $container;
 
-    /** @var Environment */
+    /** @var ?Environment */
     public $twig;
 
     /**
-     * @param ContainerInterface $container
-     * @param Environment $twig
+     * @param ?ContainerInterface $container
+     * @param ?Environment $twig
      */
-    public function __construct(ContainerInterface $container, Environment $twig)
-    {
+    public function __construct(
+        ?ContainerInterface $container = null,
+        ?Environment $twig = null
+    ) {
         $this->container = $container;
         $this->twig = $twig;
 
@@ -89,7 +91,7 @@ class SubscriptionController extends AbstractSymfonyController
         }
 
         return new Response(
-            $this->twig->render('@Modules/mollie/views/templates/admin/Subscription/subscriptions-grid.html.twig', [
+            $this->renderTwig('@Modules/mollie/views/templates/admin/Subscription/subscriptions-grid.html.twig', [
                 'currencyGrid' => $this->presentGrid($currencyGrid),
                 'enableSidebar' => true,
                 'subscriptionOptionsForm' => $formHandler->createView(),
@@ -214,5 +216,14 @@ class SubscriptionController extends AbstractSymfonyController
         }
 
         return $this->getErrorMessageForException($e, $errors);
+    }
+
+    private function renderTwig($name, $args)
+    {
+        if (!$this->twig) {
+            return $this->render($name, $args);
+        }
+
+        return $this->twig->render($name, $args);
     }
 }
