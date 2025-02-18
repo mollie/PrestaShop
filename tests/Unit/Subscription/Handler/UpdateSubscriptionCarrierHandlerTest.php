@@ -43,7 +43,7 @@ class UpdateSubscriptionCarrierHandlerTest extends BaseTestCase
 
     /** @var MailService */
     private $mailService;
-    /** @var PrestaLoggerInterface $prestaShopLogger */
+    /** @var PrestaLoggerInterface */
     private $prestaShopLogger;
 
     public function setUp(): void

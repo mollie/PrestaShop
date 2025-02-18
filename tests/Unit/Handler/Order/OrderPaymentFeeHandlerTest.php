@@ -42,7 +42,7 @@ class OrderPaymentFeeHandlerTest extends BaseTestCase
     /** @var PaymentMethodService */
     private $paymentMethodService;
 
-    /** @var PaymentFeeProviderInterface  */
+    /** @var PaymentFeeProviderInterface */
     private $paymentFeeProvider;
 
     /** @var OrderRepositoryInterface */
