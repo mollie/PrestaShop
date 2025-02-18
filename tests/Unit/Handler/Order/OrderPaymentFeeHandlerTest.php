@@ -36,25 +36,25 @@ use Order;
 
 class OrderPaymentFeeHandlerTest extends BaseTestCase
 {
-    /** @var UpdateOrderTotalsAction $updateOrderTotalsAction */
+    /** @var UpdateOrderTotalsAction */
     private $updateOrderTotalsAction;
 
-    /** @var PaymentMethodService $paymentMethodService */
+    /** @var PaymentMethodService */
     private $paymentMethodService;
 
-    /** @var PaymentFeeProviderInterface $paymentFeeProvider  */
+    /** @var PaymentFeeProviderInterface  */
     private $paymentFeeProvider;
 
-    /** @var OrderRepositoryInterface $orderRepository */
+    /** @var OrderRepositoryInterface */
     private $orderRepository;
 
     /** @var LoggerInterface */
     private $logger;
 
-    /** @var CreateOrderPaymentFeeAction $createOrderPaymentFeeAction */
+    /** @var CreateOrderPaymentFeeAction */
     private $createOrderPaymentFeeAction;
 
-    /** @var CartRepositoryInterface $cartRepository */
+    /** @var CartRepositoryInterface */
     private $cartRepository;
 
     protected function setUp(): void
