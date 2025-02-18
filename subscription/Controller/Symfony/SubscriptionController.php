@@ -120,7 +120,10 @@ class SubscriptionController extends AbstractSymfonyController
             return $this->redirectToRoute('admin_subscription_index');
         }
 
-        $this->updateSubscriptionCarrier($form->getData()['carrier']);
+        // NOTE: By default getting was throwing silented error
+        $carrier = $form->getData()['carrier'] ?? $form->getData()['subscription_options']['carrier'];
+
+        $this->updateSubscriptionCarrier($carrier);
 
         $formHandler->save($form->getData());
 
