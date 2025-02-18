@@ -12,6 +12,7 @@
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use Mollie\Service\TransactionService;
 use Mollie\Tests\Integration\BaseTestCase;
 use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
 
@@ -19,6 +20,12 @@ class WebhookControllerTest extends BaseTestCase
 {
     /** @var Client */
     private $client;
+
+    /** @var TransactionService */
+    private $transactionService;
+
+    /** @var Mollie */
+    private $module;
 
     protected function setUp()
     {
@@ -33,7 +40,7 @@ class WebhookControllerTest extends BaseTestCase
     /**
      * @dataProvider webhookDataProvider
      */
-    public function testWebhookResponse($url, $expectedStatusCode, $expectedResponseBody)
+    public function testUnsuccessfulWebhookResponse($url, $expectedStatusCode, $expectedResponseBody)
     {
         $result = $this->client->sendRequest(
             new Request('GET', $url)
@@ -46,17 +53,10 @@ class WebhookControllerTest extends BaseTestCase
     public function webhookDataProvider(): array
     {
         return [
-            'Missing security token' => [
-                'url' => Context::getContext()->link->getModuleLink('mollie', 'webhook'),
-                'expectedStatusCode' => 400,
-                'expectedResponseBody' => '{"success":false,"errors":["Missing security token"],"data":[]}',
-            ],
-            'Missing transaction id' => [
-                'url' => Context::getContext()->link->getModuleLink('mollie', 'webhook') . '?' . http_build_query([
-                        'security_token' => 'bad_token_value',
-                    ]),
-                'expectedStatusCode' => 422,
-                'expectedResponseBody' => '{"success":false,"errors":["Missing transaction id"],"data":[]}',
+            'No API Key' => [
+                'url' => \Context::getContext()->link->getModuleLink('mollie', 'webhook'),
+                'expectedStatusCode' => 401,
+                'expectedResponseBody' => '{"success":false,"errors":["Unauthorized"],"data":[]}',
             ],
         ];
     }
