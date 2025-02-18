@@ -3,6 +3,7 @@
 namespace Mollie\Tests\Unit\Subscription\Provider;
 
 use Mollie\Exception\Code\ExceptionCode as GeneralExceptionCode;
+use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
 use Mollie\Shared\Infrastructure\Exception\MollieDatabaseException;
 use Mollie\Subscription\DTO\SubscriptionOrderAmountProviderData;
 use Mollie\Subscription\Exception\CouldNotProvideSubscriptionOrderAmount;
@@ -16,11 +17,15 @@ class SubscriptionOrderAmountProviderTest extends BaseTestCase
     /** @var SubscriptionCarrierDeliveryPriceProvider */
     private $subscriptionCarrierDeliveryPriceProvider;
 
+    /** @var CurrencyRepositoryInterface */
+    private $currencyRepository;
+
     public function setUp(): void
     {
         parent::setUp();
 
         $this->subscriptionCarrierDeliveryPriceProvider = $this->mock(SubscriptionCarrierDeliveryPriceProvider::class);
+        $this->currencyRepository = $this->mock(CurrencyRepositoryInterface::class);
     }
 
     public function testItSuccessfullyProvidesData(): void

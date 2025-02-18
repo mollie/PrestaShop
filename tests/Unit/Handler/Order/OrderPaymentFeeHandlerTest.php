@@ -25,39 +25,49 @@ use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Handler\Exception\CouldNotHandleOrderPaymentFee;
 use Mollie\Handler\Order\OrderPaymentFeeHandler;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\CartRepositoryInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Service\PaymentMethodService;
+use Mollie\Tests\Unit\BaseTestCase;
 use MolPaymentMethod;
 use Order;
-use PHPUnit\Framework\TestCase;
 
-class OrderPaymentFeeHandlerTest extends TestCase
+class OrderPaymentFeeHandlerTest extends BaseTestCase
 {
-    /** @var PaymentMethodService */
-    private $paymentMethodService;
-    /** @var PaymentFeeProviderInterface */
-    private $paymentFeeProvider;
-    /** @var CreateOrderPaymentFeeAction */
-    private $createOrderPaymentFeeAction;
     /** @var UpdateOrderTotalsAction */
     private $updateOrderTotalsAction;
+
+    /** @var PaymentMethodService */
+    private $paymentMethodService;
+
+    /** @var PaymentFeeProviderInterface */
+    private $paymentFeeProvider;
+
     /** @var OrderRepositoryInterface */
     private $orderRepository;
+
+    /** @var LoggerInterface */
+    private $logger;
+
+    /** @var CreateOrderPaymentFeeAction */
+    private $createOrderPaymentFeeAction;
+
     /** @var CartRepositoryInterface */
     private $cartRepository;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->paymentMethodService = $this->createMock(PaymentMethodService::class);
-        $this->paymentFeeProvider = $this->createMock(PaymentFeeProviderInterface::class);
-        $this->createOrderPaymentFeeAction = $this->createMock(CreateOrderPaymentFeeAction::class);
-        $this->updateOrderTotalsAction = $this->createMock(UpdateOrderTotalsAction::class);
-        $this->orderRepository = $this->createMock(OrderRepositoryInterface::class);
-        $this->cartRepository = $this->createMock(CartRepositoryInterface::class);
+        $this->updateOrderTotalsAction = $this->mock(UpdateOrderTotalsAction::class);
+        $this->paymentMethodService = $this->mock(PaymentMethodService::class);
+        $this->paymentFeeProvider = $this->mock(PaymentFeeProviderInterface::class);
+        $this->orderRepository = $this->mock(OrderRepositoryInterface::class);
+        $this->logger = $this->mock(LoggerInterface::class);
+        $this->createOrderPaymentFeeAction = $this->mock(CreateOrderPaymentFeeAction::class);
+        $this->cartRepository = $this->mock(CartRepositoryInterface::class);
     }
 
     public function testItSuccessfullyHandlesOrderPaymentFee(): void
@@ -92,7 +102,8 @@ class OrderPaymentFeeHandlerTest extends TestCase
             $this->createOrderPaymentFeeAction,
             $this->updateOrderTotalsAction,
             $this->orderRepository,
-            $this->cartRepository
+            $this->cartRepository,
+            $this->logger
         );
 
         /** @var Payment $apiPayment */
@@ -123,7 +134,8 @@ class OrderPaymentFeeHandlerTest extends TestCase
             $this->createOrderPaymentFeeAction,
             $this->updateOrderTotalsAction,
             $this->orderRepository,
-            $this->cartRepository
+            $this->cartRepository,
+            $this->logger
         );
 
         /** @var Payment $apiPayment */
@@ -155,7 +167,8 @@ class OrderPaymentFeeHandlerTest extends TestCase
             $this->createOrderPaymentFeeAction,
             $this->updateOrderTotalsAction,
             $this->orderRepository,
-            $this->cartRepository
+            $this->cartRepository,
+            $this->logger
         );
 
         /** @var Payment $apiPayment */
@@ -191,7 +204,8 @@ class OrderPaymentFeeHandlerTest extends TestCase
             $this->createOrderPaymentFeeAction,
             $this->updateOrderTotalsAction,
             $this->orderRepository,
-            $this->cartRepository
+            $this->cartRepository,
+            $this->logger
         );
 
         /** @var Payment $apiPayment */
@@ -233,7 +247,8 @@ class OrderPaymentFeeHandlerTest extends TestCase
             $this->createOrderPaymentFeeAction,
             $this->updateOrderTotalsAction,
             $this->orderRepository,
-            $this->cartRepository
+            $this->cartRepository,
+            $this->logger
         );
 
         /** @var Payment $apiPayment */
@@ -277,7 +292,8 @@ class OrderPaymentFeeHandlerTest extends TestCase
             $this->createOrderPaymentFeeAction,
             $this->updateOrderTotalsAction,
             $this->orderRepository,
-            $this->cartRepository
+            $this->cartRepository,
+            $this->logger
         );
 
         /** @var Payment $apiPayment */
