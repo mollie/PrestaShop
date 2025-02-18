@@ -33,13 +33,8 @@ class ToolsAdapter
 
     public function displayPrice($price, $currency): string
     {
-        if (method_exists(Locale::class, 'formatPrice')) {
-            $locale = Tools::getContextLocale(\Context::getContext());
-
-            return $locale->formatPrice($price, $currency);
-        } else {
-            return Tools::displayPrice($price, $currency);
-        }
+        // TODO replace all displayPrice calls with Locale::formatPrice()
+        return Tools::displayPrice($price, $currency);
     }
 
     public function getValue(string $key, string $defaultValue = null)
