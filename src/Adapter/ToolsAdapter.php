@@ -12,6 +12,7 @@
 
 namespace Mollie\Adapter;
 
+use PrestaShop\PrestaShop\Core\Localization\Locale;
 use Tools;
 
 if (!defined('_PS_VERSION_')) {
@@ -32,8 +33,13 @@ class ToolsAdapter
 
     public function displayPrice($price, $currency): string
     {
-        // TODO replace all displayPrice calls with Locale::formatPrice()
-        return Tools::displayPrice($price, $currency);
+        if (method_exists(Locale::class, 'formatPrice')) {
+            $locale = Tools::getContextLocale(\Context::getContext());
+
+            return $locale->formatPrice($price, $currency);
+        } else {
+            return Tools::displayPrice($price, $currency);
+        }
     }
 
     public function getValue(string $key, string $defaultValue = null)
