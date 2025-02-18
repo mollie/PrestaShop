@@ -19,10 +19,8 @@ use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Constants\IntervalConstant;
 use Mollie\Subscription\DTO\Object\Interval;
 use Mollie\Subscription\Factory\CreateSubscriptionDataFactory;
-use Mollie\Subscription\Provider\SubscriptionDescriptionProvider;
 use Mollie\Subscription\Provider\SubscriptionIntervalProvider;
 use Mollie\Subscription\Repository\CombinationRepository;
-use Mollie\Subscription\Repository\CurrencyRepository;
 use Mollie\Tests\Integration\BaseTestCase;
 
 class TestCreateSubscriptionData extends BaseTestCase
@@ -86,14 +84,16 @@ class TestCreateSubscriptionData extends BaseTestCase
 
         /** @var CreateSubscriptionDataFactory $createSubscriptionData */
         $createSubscriptionData = new CreateSubscriptionDataFactory(
-            $customerRepository,
-            $subscriptionIntervalMock,
-            new SubscriptionDescriptionProvider(),
-            new CurrencyRepository(),
-            $combinationRepositoryMock,
-            $paymentMethodMock,
-            $link,
-            new Mollie()
+            $this->molCustomerRepository,
+            $this->subscriptionIntervalProvider,
+            $this->subscriptionDescriptionProvider,
+            $this->paymentMethodRepository,
+            $this->module,
+            $this->context,
+            $this->configuration,
+            $this->subscriptionOrderAmountProvider,
+            $this->subscriptionStartDateProvider,
+            $this->combinationRepository
         );
 
         $customer = $this->createMock('Customer');
