@@ -17,8 +17,15 @@ if (!defined('_PS_VERSION_')) {
 }
 
 // TODO: Duplicate of VersionUtility.php
+
+/**
+ * @deprecated use VersionUtility instead
+ */
 class PsVersionUtility
 {
+    /**
+     * @deprecated use VersionUtility::isPsVersionGreaterThan() instead
+     */
     public static function isPsVersionGreaterOrEqualTo(string $psVersion, string $targetVersion)
     {
         return version_compare($psVersion, $targetVersion, '>=');
