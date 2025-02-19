@@ -16,6 +16,7 @@ namespace Mollie\Subscription\Install;
 
 use Mollie;
 use Mollie\Utility\PsVersionUtility;
+use Mollie\Utility\VersionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -36,7 +37,7 @@ class HookInstaller extends AbstractInstaller
     {
         $hooks = $this->getHooks();
 
-        if (Mollie\Utility\VersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.7.0')) {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.7.0')) {
             $hooks[] = 'actionFrontControllerInitAfter';
         } else {
             $hooks[] = 'actionFrontControllerAfterInit';

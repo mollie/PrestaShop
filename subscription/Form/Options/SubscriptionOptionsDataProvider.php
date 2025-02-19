@@ -36,7 +36,7 @@ final class SubscriptionOptionsDataProvider implements FormDataProviderInterface
      */
     public function getData(): array
     {
-        if (VersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.8.0')) {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.8.0')) {
             return $this->subscriptionOptionsConfiguration->getConfiguration();
         }
 
@@ -48,7 +48,7 @@ final class SubscriptionOptionsDataProvider implements FormDataProviderInterface
      */
     public function setData(array $data): array
     {
-        if (VersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.8.0')) {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.8.0')) {
             return $this->subscriptionOptionsConfiguration->updateConfiguration($data);
         }
 
