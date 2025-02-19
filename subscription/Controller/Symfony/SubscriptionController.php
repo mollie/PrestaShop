@@ -24,6 +24,7 @@ use Mollie\Subscription\Filters\SubscriptionFilters;
 use Mollie\Subscription\Grid\SubscriptionGridDefinitionFactory;
 use Mollie\Subscription\Handler\SubscriptionCancellationHandler;
 use Mollie\Subscription\Handler\UpdateSubscriptionCarrierHandler;
+use Mollie\Utility\VersionUtility;
 use PrestaShop\PrestaShop\Core\Form\FormHandlerInterface;
 use PrestaShop\PrestaShop\Core\Grid\GridFactoryInterface;
 use PrestaShopBundle\Security\Annotation\AdminSecurity;
@@ -61,7 +62,7 @@ class SubscriptionController extends AbstractSymfonyController
         $currencyGridFactory = $this->module->getService('subscription_grid_factory');
         $currencyGrid = $currencyGridFactory->getGrid($filters);
 
-        if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.8.0')) {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.8.0')) {
             $formHandler = $this->get('subscription_options_form_handler')->getForm();
         } else {
             $formHandler = $this->get('subscription_options_form_handler_deprecated')->getForm();
@@ -79,7 +80,7 @@ class SubscriptionController extends AbstractSymfonyController
      */
     public function submitOptionsAction(Request $request): RedirectResponse
     {
-        if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.8.0')) {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.8.0')) {
             /** @var FormHandlerInterface $formHandler */
             $formHandler = $this->get('subscription_options_form_handler');
         } else {
