@@ -36,7 +36,7 @@ class HookInstaller extends AbstractInstaller
     {
         $hooks = $this->getHooks();
 
-        if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.7.0')) {
+        if (Mollie\Utility\VersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.7.0')) {
             $hooks[] = 'actionFrontControllerInitAfter';
         } else {
             $hooks[] = 'actionFrontControllerAfterInit';
