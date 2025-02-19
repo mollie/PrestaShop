@@ -33,6 +33,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -217,12 +220,20 @@ class SubscriptionController extends AbstractSymfonyController
         return $this->getErrorMessageForException($e, $errors);
     }
 
-    private function renderTwig($name, $args)
+    /**
+     * For PS 9 compatibility
+     *
+     * @param $view
+     * @param $parameters
+     *
+     * @return string|Response
+     */
+    private function renderTwig(string $view, array $parameters)
     {
         if (!$this->twig) {
-            return $this->render($name, $args);
+            return $this->render($view, $parameters);
         }
 
-        return $this->twig->render($name, $args);
+        return $this->twig->render($view, $parameters);
     }
 }
