@@ -11,7 +11,6 @@
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
-use Mollie\Utility\PsVersionUtility;
 use Mollie\Utility\VersionUtility;
 
 if (!defined('_PS_VERSION_')) {
