@@ -220,8 +220,8 @@ class SubscriptionController extends AbstractSymfonyController
     /**
      * For PS 9 compatibility
      *
-     * @param $view
-     * @param $parameters
+     * @param string $view
+     * @param array $parameters
      *
      * @return string|Response
      */
