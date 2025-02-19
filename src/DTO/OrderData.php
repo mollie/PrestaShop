@@ -145,8 +145,10 @@ class OrderData implements JsonSerializable
 
     /**
      * @param Amount $amount
+     *
+     * @return void
      */
-    public function setAmount(Amount $amount)
+    public function setAmount(Amount $amount): void
     {
         $this->amount = $amount;
     }
@@ -161,24 +163,28 @@ class OrderData implements JsonSerializable
 
     /**
      * @param mixed $redirectUrl
+     *
+     * @return void
      */
-    public function setRedirectUrl($redirectUrl)
+    public function setRedirectUrl($redirectUrl): void
     {
         $this->redirectUrl = $redirectUrl;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getWebhookUrl()
+    public function getWebhookUrl(): string
     {
         return $this->webhookUrl;
     }
 
     /**
      * @param mixed $webhookUrl
+     *
+     * @return void
      */
-    public function setWebhookUrl($webhookUrl)
+    public function setWebhookUrl($webhookUrl): void
     {
         $this->webhookUrl = $webhookUrl;
     }
@@ -193,8 +199,10 @@ class OrderData implements JsonSerializable
 
     /**
      * @param string $method
+     *
+     * @return void
      */
-    public function setMethod(string $method)
+    public function setMethod(string $method): void
     {
         $this->method = $method;
     }
@@ -209,8 +217,10 @@ class OrderData implements JsonSerializable
 
     /**
      * @param array $metadata
+     *
+     * @return void
      */
-    public function setMetadata(array $metadata)
+    public function setMetadata(array $metadata): void
     {
         $this->metadata = $metadata;
     }
@@ -225,8 +235,10 @@ class OrderData implements JsonSerializable
 
     /**
      * @param string $locale
+     *
+     * @return void
      */
-    public function setLocale(string $locale)
+    public function setLocale(string $locale): void
     {
         $this->locale = $locale;
     }
@@ -241,8 +253,10 @@ class OrderData implements JsonSerializable
 
     /**
      * @param string $customerId
+     *
+     * @return void
      */
-    public function setCustomerId(string $customerId)
+    public function setCustomerId(string $customerId): void
     {
         $this->customerId = $customerId;
     }
@@ -257,8 +271,10 @@ class OrderData implements JsonSerializable
 
     /**
      * @param Address $billingAddress
+     *
+     * @return void
      */
-    public function setBillingAddress(Address $billingAddress)
+    public function setBillingAddress(Address $billingAddress): void
     {
         $this->billingAddress = $billingAddress;
     }
