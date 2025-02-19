@@ -86,13 +86,11 @@ class SubscriptionController extends AbstractSymfonyController
             $formHandler = $this->get('subscription_options_form_handler_deprecated')->getForm();
         }
 
-        return new Response(
-            $this->renderTwig('@Modules/mollie/views/templates/admin/Subscription/subscriptions-grid.html.twig', [
-                'currencyGrid' => $this->presentGrid($currencyGrid),
-                'enableSidebar' => true,
-                'subscriptionOptionsForm' => $formHandler->createView(),
-            ])
-        );
+        return $this->renderTwig('@Modules/mollie/views/templates/admin/Subscription/subscriptions-grid.html.twig', [
+            'currencyGrid' => $this->presentGrid($currencyGrid),
+            'enableSidebar' => true,
+            'subscriptionOptionsForm' => $formHandler->createView(),
+        ]);
     }
 
     /**
