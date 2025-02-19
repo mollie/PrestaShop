@@ -230,18 +230,17 @@ class PaymentMethodService
 
         $methods = $this->removeNotSupportedMethods($methods, $mollieMethods);
 
-        foreach ($methods as $index => $method) {
-            /** @var MolPaymentMethod|null $paymentMethod */
-            $paymentMethod = $this->methodRepository->findOneBy(['id_payment_method' => (int) $method['id_payment_method']]);
+        $availablePayments = $this->methodRepository->findAllBy(['id_payment_method' => array_column($methods, 'id_payment_method')])->getAll();
 
-            if (!$paymentMethod || !$this->paymentMethodRestrictionValidation->isPaymentMethodValid($paymentMethod)) {
+        foreach ($availablePayments as $index => $method) {
+            if (!$this->paymentMethodRestrictionValidation->isPaymentMethodValid($method)) {
                 unset($methods[$index]);
                 continue;
             }
 
-            $image = json_decode($method['images_json'], true);
+            $image = json_decode($method->images_json, true);
             $methods[$index]['image'] = $image;
-            if (CustomLogoUtility::isCustomLogoEnabled($method['id_method'])) {
+            if (CustomLogoUtility::isCustomLogoEnabled($method->id)) {
                 if ($this->creditCardLogoProvider->logoExists()) {
                     $methods[$index]['image']['custom_logo'] = $this->creditCardLogoProvider->getLogoPathUri();
                 }
