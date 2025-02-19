@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Mollie\Subscription\Install;
 
 use Mollie;
-use Mollie\Utility\PsVersionUtility;
 use Mollie\Utility\VersionUtility;
 
 if (!defined('_PS_VERSION_')) {
