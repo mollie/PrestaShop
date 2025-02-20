@@ -51,14 +51,10 @@ class SubscriptionFAQController extends AbstractSymfonyController
     public function indexAction()
     {
         if (!$this->twig) {
-            return new Response(
-                $this->render('@Modules/mollie/views/templates/admin/Subscription/subscriptions-faq.html.twig', $this->getFAQTexts())
-            );
-        }
+            return $this->render('@Modules/mollie/views/templates/admin/Subscription/subscriptions-faq.html.twig', $this->getFAQTexts());
+        )
 
-        return new Response(
-            $this->twig->render('@Modules/mollie/views/templates/admin/Subscription/subscriptions-faq.html.twig', $this->getFAQTexts())
-        );
+        return $this->twig->render('@Modules/mollie/views/templates/admin/Subscription/subscriptions-faq.html.twig', $this->getFAQTexts());
     }
 
     private function getFAQTexts(): array
