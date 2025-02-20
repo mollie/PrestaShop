@@ -11,7 +11,7 @@
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
-use Mollie\Utility\PsVersionUtility;
+use Mollie\Utility\VersionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -19,7 +19,7 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_6_0_4(Mollie $module): bool
 {
-    if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.7.0')) {
+    if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.7.0')) {
         $module->unregisterHook('actionFrontControllerAfterInit');
         $module->registerHook('actionFrontControllerInitAfter');
     }
