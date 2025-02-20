@@ -18,6 +18,7 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Config\Config;
 use Mollie\Service\EntityManager\EntityManagerInterface;
+use Mollie\Service\EntityManager\ObjectModelEntityManager;
 use Mollie\Service\EntityManager\ObjectModelUnitOfWork;
 use Mollie\Utility\NumberIdempotencyProvider;
 
@@ -41,7 +42,7 @@ class Logger implements LoggerInterface
     private $configuration;
     /** @var Context */
     private $context;
-    /** @var EntityManagerInterface */
+    /** @var ObjectModelEntityManager */
     private $entityManager;
     /** @var NumberIdempotencyProvider */
     private $idempotencyProvider;
@@ -155,7 +156,7 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * @param $level
+     * @param mixed $level
      * @param $message
      * @param array $context
      *
