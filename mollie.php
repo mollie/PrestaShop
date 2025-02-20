@@ -40,7 +40,7 @@ use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\ExceptionUtility;
-use Mollie\Utility\PsVersionUtility;
+use Mollie\Utility\VersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
 use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
 use Symfony\Component\Dotenv\Dotenv;
@@ -185,7 +185,7 @@ class Mollie extends PaymentModule
 
         $logger->debug('Mollie install successful');
 
-        // TODO inject base install and subscription services
+        /** @var \Mollie\Install\Installer $coreInstaller */
         $coreInstaller = $this->getService(Mollie\Install\Installer::class);
 
         $logger->debug('Mollie core installation started');
@@ -313,12 +313,12 @@ class Mollie extends PaymentModule
     public function hookDisplayHeader(array $params)
     {
         if ($this->context->controller->php_self !== 'order') {
-            return;
+            return '';
         }
 
         $apiClient = $this->getApiClient();
         if (!$apiClient) {
-            return;
+            return '';
         }
         /** @var ProfileIdProviderInterface $profileIdProvider */
         $profileIdProvider = $this->getService(ProfileIdProviderInterface::class);
@@ -382,7 +382,7 @@ class Mollie extends PaymentModule
 
             Media::addJsDef([
                 'mollieSubAjaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
-                'isVersionGreaterOrEqualTo177' => PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.7.0'),
+                'isVersionGreaterOrEqualTo177' => VersionUtility::isPsVersionGreaterOrEqualTo('1.7.7.0'),
             ]);
         }
 
@@ -533,7 +533,7 @@ class Mollie extends PaymentModule
             'errorDisplay' => Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS),
         ]);
 
-        return $this->display(__FILE__, 'order_info.tpl');
+        return $this->display($this->getLocalPath(), 'views/templates/hook/order_info.tpl');
     }
 
     /**
@@ -561,8 +561,8 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
         $paymentMethodService = $this->getService(\Mollie\Service\PaymentMethodService::class);
 
-        /** @var PrestaLoggerInterface $logger */
-        $logger = $this->getService(PrestaLoggerInterface::class);
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
 
         $methods = $paymentMethodService->getMethodsForCheckout();
 
@@ -579,8 +579,6 @@ class Mollie extends PaymentModule
             try {
                 $paymentOptions[] = $paymentOptionsHandler->handle($paymentMethod);
             } catch (Exception $exception) {
-                // TODO handle payment fee exception and other exceptions with custom exception throw
-
                 $logger->error(sprintf('%s - Error while handling payment options', self::FILE_NAME), [
                     'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]);
@@ -710,8 +708,8 @@ class Mollie extends PaymentModule
         /** @var ExceptionService $exceptionService */
         $exceptionService = $this->getService(ExceptionService::class);
 
-        /** @var PrestaLoggerInterface $logger */
-        $logger = $this->getService(PrestaLoggerInterface::class);
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
 
         try {
             $shipmentSenderHandler->handleShipmentSender($this->getApiClient(), $order, $orderStatus);
@@ -742,7 +740,7 @@ class Mollie extends PaymentModule
         }
 
         $cart = new Cart($params['cart']->id);
-        $orderId = Order::getOrderByCartId($cart->id);
+        $orderId = Order::getIdByCartId($cart->id);
         $order = new Order($orderId);
 
         /** @var LoggerInterface $logger */
@@ -1077,7 +1075,7 @@ class Mollie extends PaymentModule
 
     public function hookDisplayProductActions($params)
     {
-        if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.6.0')) {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.6.0')) {
             return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
         }
 
@@ -1091,7 +1089,7 @@ class Mollie extends PaymentModule
 
     public function hookDisplayProductAdditionalInfo()
     {
-        if (!PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.6.0')) {
+        if (!VersionUtility::isPsVersionGreaterOrEqualTo('1.7.6.0')) {
             return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
         }
 
@@ -1202,7 +1200,7 @@ class Mollie extends PaymentModule
 
     public function hookActionAjaxDieCartControllerDisplayAjaxUpdateBefore(array $params): void
     {
-        if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.7.0')) {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.7.0')) {
             return;
         }
 
@@ -1278,7 +1276,6 @@ class Mollie extends PaymentModule
         }
 
         try {
-            // TODO handle api key set differently. Throw error and don't let do further actions.
             $this->api = $apiKeyService->setApiKey($apiKey, $this->version, $subscriptionOrder);
         } catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
@@ -1382,7 +1379,7 @@ class Mollie extends PaymentModule
         $subscriptionShippingAddressUpdateHandler = $this->getService(CustomerAddressUpdateHandler::class);
 
         /** @var LoggerInterface $logger */
-        $logger = $this->getService(PrestaLoggerInterface::class);
+        $logger = $this->getService(LoggerInterface::class);
 
         try {
             $subscriptionShippingAddressUpdateHandler->handle($orders, $addressId, $addressId);
@@ -1443,8 +1440,8 @@ class Mollie extends PaymentModule
         /** @var ConfigurationAdapter $configuration */
         $configuration = $this->getService(ConfigurationAdapter::class);
 
-        /** @var PrestaLoggerInterface $logger */
-        $logger = $this->getService(PrestaLoggerInterface::class);
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
 
         if ((int) $oldCarrierId !== (int) $configuration->get(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID)) {
             return;
