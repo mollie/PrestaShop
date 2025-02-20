@@ -66,6 +66,7 @@ class Logger implements LoggerInterface
 
     /**
      * @param string|\Stringable $message
+     * @param array $context
      *
      * @return void
      */
@@ -76,6 +77,7 @@ class Logger implements LoggerInterface
 
     /**
      * @param string|\Stringable $message
+     * @param array $context
      *
      * @return void
      */
@@ -86,6 +88,7 @@ class Logger implements LoggerInterface
 
     /**
      * @param string|\Stringable $message
+     * @param array $context
      *
      * @return void
      */
@@ -96,6 +99,7 @@ class Logger implements LoggerInterface
 
     /**
      * @param string|\Stringable $message
+     * @param array $context
      *
      * @return void
      */
@@ -106,6 +110,7 @@ class Logger implements LoggerInterface
 
     /**
      * @param string|\Stringable $message
+     * @param array $context
      *
      * @return void
      */
@@ -116,6 +121,7 @@ class Logger implements LoggerInterface
 
     /**
      * @param string|\Stringable $message
+     * @param array $context
      *
      * @return void
      */
@@ -126,6 +132,7 @@ class Logger implements LoggerInterface
 
     /**
      * @param string|\Stringable $message
+     * @param array $context
      *
      * @return void
      */
@@ -136,6 +143,7 @@ class Logger implements LoggerInterface
 
     /**
      * @param string|\Stringable $message
+     * @param array $context
      *
      * @return void
      */
