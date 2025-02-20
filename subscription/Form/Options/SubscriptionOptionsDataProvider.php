@@ -12,7 +12,7 @@
 
 namespace Mollie\Subscription\Form\Options;
 
-use Mollie\Utility\PsVersionUtility;
+use Mollie\Utility\VersionUtility;
 use PrestaShop\PrestaShop\Core\Configuration\DataConfigurationInterface;
 use PrestaShop\PrestaShop\Core\Form\FormDataProviderInterface;
 
@@ -36,7 +36,7 @@ final class SubscriptionOptionsDataProvider implements FormDataProviderInterface
      */
     public function getData(): array
     {
-        if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.8.0')) {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.8.0')) {
             return $this->subscriptionOptionsConfiguration->getConfiguration();
         }
 
@@ -48,7 +48,7 @@ final class SubscriptionOptionsDataProvider implements FormDataProviderInterface
      */
     public function setData(array $data): array
     {
-        if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.8.0')) {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.8.0')) {
             return $this->subscriptionOptionsConfiguration->updateConfiguration($data);
         }
 
