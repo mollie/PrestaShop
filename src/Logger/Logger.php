@@ -17,7 +17,6 @@ namespace Mollie\Logger;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Config\Config;
-use Mollie\Service\EntityManager\EntityManagerInterface;
 use Mollie\Service\EntityManager\ObjectModelEntityManager;
 use Mollie\Service\EntityManager\ObjectModelUnitOfWork;
 use Mollie\Utility\NumberIdempotencyProvider;
@@ -53,7 +52,7 @@ class Logger implements LoggerInterface
         LogFormatterInterface $logFormatter,
         ConfigurationAdapter $configuration,
         Context $context,
-        EntityManagerInterface $entityManager,
+        ObjectModelEntityManager $entityManager,
         NumberIdempotencyProvider $idempotencyProvider,
         PrestashopLoggerRepositoryInterface $prestashopLoggerRepository
     ) {
@@ -157,7 +156,7 @@ class Logger implements LoggerInterface
 
     /**
      * @param mixed $level
-     * @param $message
+     * @param string|\Stringable $message
      * @param array $context
      *
      * @return void
@@ -171,7 +170,7 @@ class Logger implements LoggerInterface
             $level,
             null,
             self::LOG_OBJECT_TYPE,
-            $idempotencyKey
+            (int) $idempotencyKey
         );
 
         $logId = $this->prestashopLoggerRepository->getLogIdByObjectId(
