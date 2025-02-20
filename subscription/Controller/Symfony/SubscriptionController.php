@@ -73,7 +73,7 @@ class SubscriptionController extends AbstractSymfonyController
                 $this->addFlash('error', $this->module->l('Select the shop that you want to configure'));
             }
 
-            return $this->render('@PrestaShop/Admin/layout.html.twig');
+            return $this->renderTwig('@PrestaShop/Admin/layout.html.twig');
         }
 
         /** @var GridFactoryInterface $currencyGridFactory */
@@ -221,14 +221,16 @@ class SubscriptionController extends AbstractSymfonyController
      * @param string $view
      * @param array $parameters
      *
-     * @return string|Response
+     * @return Response
      */
-    private function renderTwig(string $view, array $parameters)
+    private function renderTwig(string $view, array $parameters = [])
     {
         if (!$this->twig) {
             return $this->render($view, $parameters);
         }
 
-        return $this->twig->render($view, $parameters);
+        return new Response(
+            $this->twig->render($view, $parameters)
+        );
     }
 }
