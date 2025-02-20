@@ -35,11 +35,17 @@ class Logger implements LoggerInterface
     public const SEVERITY_WARNING = 2;
     public const SEVERITY_ERROR = 3;
 
+    /** @var LogFormatterInterface */
     private $logFormatter;
+    /** @var ConfigurationAdapter */
     private $configuration;
+    /** @var Context */
     private $context;
+    /** @var EntityManagerInterface */
     private $entityManager;
+    /** @var NumberIdempotencyProvider */
     private $idempotencyProvider;
+    /** @var PrestashopLoggerRepositoryInterface */
     private $prestashopLoggerRepository;
 
     public function __construct(
@@ -60,6 +66,8 @@ class Logger implements LoggerInterface
 
     /**
      * @param string|\Stringable $message
+     *
+     * @return void
      */
     public function emergency($message, array $context = []): void
     {
@@ -68,6 +76,8 @@ class Logger implements LoggerInterface
 
     /**
      * @param string|\Stringable $message
+     *
+     * @return void
      */
     public function alert($message, array $context = []): void
     {
@@ -76,6 +86,8 @@ class Logger implements LoggerInterface
 
     /**
      * @param string|\Stringable $message
+     *
+     * @return void
      */
     public function critical($message, array $context = []): void
     {
@@ -84,6 +96,8 @@ class Logger implements LoggerInterface
 
     /**
      * @param string|\Stringable $message
+     *
+     * @return void
      */
     public function error($message, array $context = []): void
     {
@@ -92,6 +106,8 @@ class Logger implements LoggerInterface
 
     /**
      * @param string|\Stringable $message
+     *
+     * @return void
      */
     public function warning($message, array $context = []): void
     {
@@ -100,6 +116,8 @@ class Logger implements LoggerInterface
 
     /**
      * @param string|\Stringable $message
+     *
+     * @return void
      */
     public function notice($message, array $context = []): void
     {
@@ -108,6 +126,8 @@ class Logger implements LoggerInterface
 
     /**
      * @param string|\Stringable $message
+     *
+     * @return void
      */
     public function info($message, array $context = []): void
     {
@@ -116,6 +136,8 @@ class Logger implements LoggerInterface
 
     /**
      * @param string|\Stringable $message
+     *
+     * @return void
      */
     public function debug($message, array $context = []): void
     {
@@ -125,7 +147,11 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * @param string|\Stringable $message
+     * @param $level
+     * @param $message
+     * @param array $context
+     *
+     * @return void
      */
     public function log($level, $message, array $context = []): void
     {
@@ -159,7 +185,7 @@ class Logger implements LoggerInterface
      *
      * @throws \PrestaShopException
      */
-    private function logContext($logId, array $context = []): void
+    private function logContext(int $logId, array $context = []): void
     {
         $request = '';
         $response = '';
