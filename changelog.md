@@ -7,6 +7,7 @@
 + Added MBway payment method
 + Added Multibanco payment method
 + PrestaShop 9 compatibility
++ Fixed error when importing new countries into PrestaShop
 
 ## Changes in release 6.2.6 ##
 + Improved checkout process
