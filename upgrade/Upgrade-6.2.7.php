@@ -17,5 +17,7 @@ function upgrade_module_6_2_7(Mollie $module): bool
 {
     $sql = 'ALTER TABLE `' . _DB_PREFIX_ . 'mol_payment_method_lang` RENAME TO ' . _DB_PREFIX_ . 'mol_payment_method_translations;';
 
+    Tools::clearAllCache();
+
     return Db::getInstance()->execute($sql);
 }
