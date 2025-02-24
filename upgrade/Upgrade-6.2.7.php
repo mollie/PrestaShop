@@ -19,7 +19,9 @@ function upgrade_module_6_2_7(Mollie $module): bool
 
     $result = Db::getInstance()->execute($sql);
 
-    Tools::clearAllCache();
+    if (function_exists('exec')) {
+        exec('cd ../ && composer dumpautoload');
+    }
 
     return $result;
 }
