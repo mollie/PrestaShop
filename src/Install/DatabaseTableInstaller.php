@@ -151,7 +151,7 @@ final class DatabaseTableInstaller implements InstallerInterface
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
         $sql[] = '
-            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_payment_method_lang` (
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_payment_method_translations` (
                 `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 `id_method` VARCHAR(64) NOT NULL,
                 `id_lang` INT(11),
