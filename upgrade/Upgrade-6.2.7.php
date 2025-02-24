@@ -15,12 +15,14 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_6_2_7(Mollie $module): bool
 {
+    $result = true;
+
     $sql = 'ALTER TABLE `' . _DB_PREFIX_ . 'mol_payment_method_lang` RENAME TO ' . _DB_PREFIX_ . 'mol_payment_method_translations;';
 
-    $result = Db::getInstance()->execute($sql);
+    $result &= Db::getInstance()->execute($sql);
 
     if (function_exists('exec')) {
-        exec('cd ../ && composer dumpautoload');
+        $result &= (bool) exec('cd ../ && composer dumpautoload');
     }
 
     return $result;
