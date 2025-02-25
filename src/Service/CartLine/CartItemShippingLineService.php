@@ -14,7 +14,6 @@ namespace Mollie\Service\CartLine;
 
 use Mollie\Config\Config;
 use Mollie\Service\LanguageService;
-use mollie\src\Utility\RoundingUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -25,13 +24,9 @@ class CartItemShippingLineService
     /* @var LanguageService */
     private $languageService;
 
-    /* @var RoundingUtility */
-    private $roundingUtility;
-
-    public function __construct(LanguageService $languageService, RoundingUtility $roundingUtility)
+    public function __construct(LanguageService $languageService)
     {
         $this->languageService = $languageService;
-        $this->roundingUtility = $roundingUtility;
     }
 
     /**
@@ -43,16 +38,16 @@ class CartItemShippingLineService
      */
     public function addShippingLine(float $roundedShippingCost, array $cartSummary, array $orderLines): array
     {
-        if ($this->roundingUtility->round($roundedShippingCost, 2) > 0) {
-            $shippingVatRate = $this->roundingUtility->round(($cartSummary['total_shipping'] - $cartSummary['total_shipping_tax_exc']) / $cartSummary['total_shipping_tax_exc'] * 100, Config::API_ROUNDING_PRECISION);
+        if (round($roundedShippingCost, 2) > 0) {
+            $shippingVatRate = round(($cartSummary['total_shipping'] - $cartSummary['total_shipping_tax_exc']) / $cartSummary['total_shipping_tax_exc'] * 100, Config::API_ROUNDING_PRECISION);
 
             $orderLines['shipping'] = [
                 [
                     'name' => $this->languageService->lang('Shipping'),
                     'quantity' => 1,
-                    'unitPrice' => $this->roundingUtility->round($roundedShippingCost, Config::API_ROUNDING_PRECISION),
-                    'totalAmount' => $this->roundingUtility->round($roundedShippingCost, Config::API_ROUNDING_PRECISION),
-                    'vatAmount' => $this->roundingUtility->round($roundedShippingCost * $shippingVatRate / ($shippingVatRate + 100), Config::API_ROUNDING_PRECISION),
+                    'unitPrice' => round($roundedShippingCost, Config::API_ROUNDING_PRECISION),
+                    'totalAmount' => round($roundedShippingCost, Config::API_ROUNDING_PRECISION),
+                    'vatAmount' => round($roundedShippingCost * $shippingVatRate / ($shippingVatRate + 100), Config::API_ROUNDING_PRECISION),
                     'vatRate' => $shippingVatRate,
                 ],
             ];

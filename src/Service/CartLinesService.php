@@ -105,8 +105,8 @@ class CartLinesService
         bool $psGiftWrapping,
         string $selectedVoucherCategory
     ): array {
-        $totalPrice = $this->roundingUtility->round($amount, Config::API_ROUNDING_PRECISION);
-        $roundedShippingCost = $this->roundingUtility->round($shippingCost, Config::API_ROUNDING_PRECISION);
+        $totalPrice = round($amount, Config::API_ROUNDING_PRECISION);
+        $roundedShippingCost = round($shippingCost, Config::API_ROUNDING_PRECISION);
 
         foreach ($cartSummary['discounts'] as $discount) {
             if ($discount['free_shipping']) {
@@ -114,9 +114,9 @@ class CartLinesService
             }
         }
 
-        $wrappingPrice = $psGiftWrapping ? $this->roundingUtility->round($cartSummary['total_wrapping'], Config::API_ROUNDING_PRECISION) : 0;
+        $wrappingPrice = $psGiftWrapping ? round($cartSummary['total_wrapping'], Config::API_ROUNDING_PRECISION) : 0;
 
-        $remainingAmount = $this->roundingUtility->round(
+        $remainingAmount = round(
             CalculationUtility::getCartRemainingPrice((float) $totalPrice, (float) $roundedShippingCost, (float) $wrappingPrice),
             Config::API_ROUNDING_PRECISION
         );
