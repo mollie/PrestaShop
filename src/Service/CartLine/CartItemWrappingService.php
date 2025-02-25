@@ -23,9 +23,7 @@ if (!defined('_PS_VERSION_')) {
 
 class CartItemWrappingService
 {
-    /**
-     * @var LanguageService
-     */
+    /** @var LanguageService */
     private $languageService;
 
     /* @var RoundingUtility */
