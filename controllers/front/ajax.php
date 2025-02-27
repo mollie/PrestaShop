@@ -243,7 +243,7 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         $this->ajaxResponse(JsonResponse::success([]));
     }
 
-    private function returnDefaultOrderSummaryBlock(Cart $cart, array $errorData = [], CartLazyArray $presentedCart = null): void
+    private function returnDefaultOrderSummaryBlock(Cart $cart, array $errorData = [], object $presentedCart = null): void
     {
         if (!$presentedCart) {
             $presentedCart = $this->cart_presenter->present($cart);
