@@ -24,7 +24,6 @@ use Mollie\Subscription\Exception\ExceptionCode;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\NumberUtility;
-use PrestaShop\PrestaShop\Adapter\Presenter\Cart\CartLazyArray;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -243,7 +242,7 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         $this->ajaxResponse(JsonResponse::success([]));
     }
 
-    private function returnDefaultOrderSummaryBlock(Cart $cart, array $errorData = [], object $presentedCart = null): void
+    private function returnDefaultOrderSummaryBlock(Cart $cart, array $errorData = [], $presentedCart = null): void
     {
         if (!$presentedCart) {
             $presentedCart = $this->cart_presenter->present($cart);
