@@ -22,7 +22,7 @@ class PaymentMethodLangRepository extends AbstractRepository implements PaymentM
 {
     public function __construct()
     {
-        parent::__construct(\MolPaymentMethodLang::class);
+        parent::__construct(\MolPaymentMethodTranslations::class);
     }
 
     public function savePaymentTitleTranslation(string $idPaymentMethod, int $langId, string $translation, int $idShop): bool
@@ -37,7 +37,7 @@ class PaymentMethodLangRepository extends AbstractRepository implements PaymentM
             'id_shop' => $idShop,
         ]);
 
-        $multiLangObject = new \MolPaymentMethodLang($paymentMethodLangObject->id ?? null);
+        $multiLangObject = new \MolPaymentMethodTranslations($paymentMethodLangObject->id ?? null);
         $multiLangObject->id_lang = $langId;
         $multiLangObject->id_method = $idPaymentMethod;
         $multiLangObject->id_shop = $idShop;
