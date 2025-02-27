@@ -566,7 +566,7 @@ class Mollie extends PaymentModule
 
         $methods = $paymentMethodService->getMethodsForCheckout();
 
-        $availablePayments = $paymentMethodRepository->findAllBy(['id_payment_method' => array_column($methods, 'id_payment_method')])->getAll();
+        $availablePayments = $paymentMethodRepository->findAllBy(['id_payment_method' => array_column($methods, 'id_payment_method')])->getResults();
 
         foreach ($availablePayments as $method) {
             try {
