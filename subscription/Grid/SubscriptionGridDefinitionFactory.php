@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Grid;
 
+use Mollie\Factory\ModuleFactory;
 use PrestaShop\PrestaShop\Core\Grid\Action\Row\AccessibilityChecker\AccessibilityCheckerInterface;
 use PrestaShop\PrestaShop\Core\Grid\Action\Row\RowActionCollection;
 use PrestaShop\PrestaShop\Core\Grid\Action\Row\Type\SubmitRowAction;
@@ -46,11 +47,11 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
 
     public function __construct(
         HookDispatcherInterface $hookDispatcher = null,
-        \Mollie $module,
+        ModuleFactory $module,
         AccessibilityCheckerInterface $subscriptionCancelAccessibilityChecker
     ) {
         parent::__construct($hookDispatcher);
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->subscriptionCancelAccessibilityChecker = $subscriptionCancelAccessibilityChecker;
     }
 

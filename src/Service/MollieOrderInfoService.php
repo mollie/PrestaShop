@@ -14,6 +14,7 @@ namespace Mollie\Service;
 
 use Exception;
 use Mollie;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\ExceptionUtility;
@@ -61,7 +62,7 @@ class MollieOrderInfoService
     private $logger;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $module,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         RefundService $refundService,
         ShipService $shipService,
@@ -70,7 +71,7 @@ class MollieOrderInfoService
         ApiService $apiService,
         LoggerInterface $logger
     ) {
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->refundService = $refundService;
         $this->shipService = $shipService;

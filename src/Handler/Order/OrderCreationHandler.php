@@ -49,6 +49,7 @@ use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Exception\OrderCreationException;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
@@ -97,7 +98,7 @@ class OrderCreationHandler
     private $logger;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $module,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentMethodService $paymentMethodService,
         OrderPaymentFeeHandler $orderPaymentFeeHandler,
@@ -107,7 +108,7 @@ class OrderCreationHandler
         PaymentFeeProviderInterface $paymentFeeProvider,
         PrestaLoggerInterface $logger
     ) {
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodService = $paymentMethodService;
         $this->orderPaymentFeeHandler = $orderPaymentFeeHandler;
