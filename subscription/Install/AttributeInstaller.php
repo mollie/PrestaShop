@@ -53,13 +53,13 @@ class AttributeInstaller extends AbstractInstaller
     public function __construct(
         PrestaLoggerInterface $logger,
         ConfigurationAdapter $configuration,
-        ModuleFactory $module,
+        Mollie $module,
         LanguageRepository $language,
         ProductAttributeAdapter $productAttributeAdapter
     ) {
         $this->logger = $logger;
         $this->configuration = $configuration;
-        $this->module = $module->getModule();
+        $this->module = $module;
         $this->language = $language;
         $this->productAttributeAdapter = $productAttributeAdapter;
     }
