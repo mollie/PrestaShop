@@ -18,7 +18,6 @@ use AttributeGroup;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\ProductAttributeAdapter;
-use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Repository\LanguageRepository;
