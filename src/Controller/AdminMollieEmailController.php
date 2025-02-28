@@ -11,8 +11,8 @@
 
 namespace Mollie\Controller;
 
-use Module;
 use Mollie;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Service\MolliePaymentMailService;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
@@ -29,7 +29,7 @@ class AdminMollieEmailController extends FrameworkBundleAdminController
     public function sendSecondChanceMessage($orderId, Request $request)
     {
         /** @var Mollie $mollie */
-        $mollie = Module::getInstanceByName('mollie'); //Unable to get services without mollieContainer.
+        $mollie = (new ModuleFactory())->getModule();
 
         /** @var LoggerInterface $logger */
         $logger = $mollie->getService(LoggerInterface::class);

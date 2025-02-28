@@ -14,10 +14,9 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Factory;
 
-use Module;
 use Mollie;
 use Mollie\Api\MollieApiClient;
-use Mollie\Subscription\Config\Config;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Subscription\Exception\MollieModuleNotFoundException;
 
 if (!defined('_PS_VERSION_')) {
@@ -30,7 +29,7 @@ class MollieApiFactory
     {
         try {
             /** @var Mollie $mollie */
-            $mollie = Module::getInstanceByName(Config::MOLLIE_MODULE_NAME);
+            $mollie = (new ModuleFactory())->getModule();
         } catch (\Exception $e) {
             throw new MollieModuleNotFoundException('Mollie is not installed');
         }
