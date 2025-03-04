@@ -36,12 +36,12 @@
 
 namespace Mollie\Tracker;
 
-use Module;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\Language;
 use Mollie\Adapter\Shop;
 use Mollie\Config\Config;
 use Mollie\Config\Env;
+use Mollie\Factory\ModuleFactory;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -125,7 +125,7 @@ class Segment implements TrackerInterface
         $ip = array_key_exists('REMOTE_ADDR', $_SERVER) === true ? $_SERVER['REMOTE_ADDR'] : '';
         $referer = array_key_exists('HTTP_REFERER', $_SERVER) === true ? $_SERVER['HTTP_REFERER'] : '';
         $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        $module = Module::getInstanceByName('mollie');
+        $module = (new ModuleFactory())->getModule();
 
         \Segment::track([
             'userId' => $userId,

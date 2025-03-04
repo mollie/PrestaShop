@@ -18,6 +18,7 @@ use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
 use Mollie\Config\Config;
 use Mollie\Exception\ShipmentCannotBeSentException;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
 use Mollie\Install\Uninstall;
@@ -1146,7 +1147,7 @@ class Mollie extends PaymentModule
     public static function resendOrderPaymentLink($orderId)
     {
         /** @var Mollie $module */
-        $module = Module::getInstanceByName('mollie');
+        $module = (new ModuleFactory())->getModule();
 
         /** @var PaymentMethodRepositoryInterface $molliePaymentRepo */
         $molliePaymentRepo = $module->getService(PaymentMethodRepositoryInterface::class);
