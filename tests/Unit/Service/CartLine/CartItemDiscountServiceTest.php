@@ -19,23 +19,10 @@ use Mollie\Tests\Unit\BaseTestCase;
 
 class CartItemDiscountServiceTest extends BaseTestCase
 {
-
-    /** @var RoundingUtility */
-    public $roundingUtility;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->roundingUtility = $this->createMock(RoundingUtility::class);
-
-    }
-
-    /**
-     * @dataProvider dataProvider
-     */
+    /** @dataProvider dataProvider */
     public function testItAddsDiscount($totalDiscount, $orderLines, $expected)
     {
-        $cartItemDiscountService = new CartItemDiscountService($this->roundingUtility);
+        $cartItemDiscountService = new CartItemDiscountService();
 
         $orderLinesResult = $cartItemDiscountService->addDiscountsToProductLines(
             15.00,
@@ -44,6 +31,21 @@ class CartItemDiscountServiceTest extends BaseTestCase
         );
 
         $this->assertEquals($orderLinesResult[0]['discount'], $expected);
+
+    }
+
+    /** @dataProvider dataProvider */
+    public function testItDontAddDiscount($totalDiscount, $orderLines, $expected)
+    {
+        $cartItemDiscountService = new CartItemDiscountService();
+
+        $orderLinesResult = $cartItemDiscountService->addDiscountsToProductLines(
+            0.0,
+            $orderLines,
+            0
+        );
+
+        $this->assertEquals($orderLinesResult[0], $orderLines);
 
     }
 
