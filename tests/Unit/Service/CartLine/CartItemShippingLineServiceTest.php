@@ -29,9 +29,25 @@ class CartItemShippingLineServiceTest extends BaseTestCase
         ]);
 
         $result = $cartItemShippingLineService->addShippingLine(10, $cart->getSummaryDetails(), $orderLines);
-        print_r($result);
 
         $this->assertEquals($expected, $result);
+    }
+
+    /** @dataProvider dataProvider */
+    public function testItDontAddDiscount($totalDiscount, $orderLines)
+    {
+        $cartItemShippingLineService = new CartItemShippingLineService($this->languageService);
+
+        $cart = $this->getMockBuilder(\Cart::class) ->setMethods(['getSummaryDetails'])->getMock();
+
+        $cart->method('getSummaryDetails')->willReturn([
+            'total_shipping' => 0,
+            'total_shipping_tax_exc' => 0
+        ]);
+
+        $result = $cartItemShippingLineService->addShippingLine(0, $cart->getSummaryDetails(), $orderLines);
+
+        $this->assertEquals($orderLines, $result);
     }
 
     public function dataProvider()
