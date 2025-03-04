@@ -23,6 +23,7 @@ if (!defined('_PS_VERSION_')) {
 class CartItemProductLinesService
 {
     /**
+     * @param array $orderLines
      * @param int $vatRatePrecision
      *
      * @return array
