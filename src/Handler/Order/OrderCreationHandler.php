@@ -49,6 +49,7 @@ use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Exception\OrderCreationException;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
@@ -56,6 +57,7 @@ use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Subscription\Handler\SubscriptionCreationHandler;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
+use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TextGeneratorUtility;
 use MolPaymentMethod;
@@ -66,8 +68,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+// TODO: refactor
 class OrderCreationHandler
 {
+    const FILE_NAME = 'OrderCreationHandler';
     /**
      * @var Mollie
      */
@@ -94,7 +98,7 @@ class OrderCreationHandler
     private $logger;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $module,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentMethodService $paymentMethodService,
         OrderPaymentFeeHandler $orderPaymentFeeHandler,
@@ -104,7 +108,7 @@ class OrderCreationHandler
         PaymentFeeProviderInterface $paymentFeeProvider,
         PrestaLoggerInterface $logger
     ) {
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodService = $paymentMethodService;
         $this->orderPaymentFeeHandler = $orderPaymentFeeHandler;
@@ -141,7 +145,7 @@ class OrderCreationHandler
 
         $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmount);
 
-        if (Order::getOrderByCartId((int) $cartId)) {
+        if (Order::getIdByCartId((int) $cartId)) {
             return 0;
         }
 
@@ -159,7 +163,7 @@ class OrderCreationHandler
             );
 
             /* @phpstan-ignore-next-line */
-            $orderId = (int) Order::getOrderByCartId((int) $cartId);
+            $orderId = (int) Order::getIdByCartId((int) $cartId);
 
             $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method);
 
@@ -183,6 +187,13 @@ class OrderCreationHandler
 
             $this->paymentMethodRepository->updatePaymentReason($apiPayment->id, Config::WRONG_AMOUNT_REASON);
 
+            $this->logger->error(sprintf('%s - Wrong cart amount while creating order', self::FILE_NAME), [
+                'cart_id' => $cartId,
+                'cart_amount' => $cartPrice,
+                'api_payment_amount' => $apiPayment->amount->value,
+                'price_diff' => $priceDifference,
+            ]);
+
             throw new \Exception('Wrong cart amount');
         }
 
@@ -199,7 +210,7 @@ class OrderCreationHandler
         );
 
         /* @phpstan-ignore-next-line */
-        $orderId = (int) Order::getOrderByCartId((int) $cartId);
+        $orderId = (int) Order::getIdByCartId((int) $cartId);
 
         $this->orderPaymentFeeHandler->addOrderPaymentFee($orderId, $apiPayment);
 
@@ -231,7 +242,7 @@ class OrderCreationHandler
             $cart->secure_key
         );
 
-        $orderId = Order::getOrderByCartId($cart->id);
+        $orderId = Order::getIdByCartId($cart->id);
         $order = new Order($orderId);
 
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
@@ -293,11 +304,8 @@ class OrderCreationHandler
         try {
             $this->recurringOrderCreation->handle($order, $method);
         } catch (\Throwable $exception) {
-            $this->logger->error(
-                'Failed to create recurring order',
-                [
-                    'Exception message' => $exception->getMessage(),
-                    'Exception code' => $exception->getCode(),
+            $this->logger->error(sprintf('%s - Failed to create recurring order', self::FILE_NAME), [
+                    'exceptions' => ExceptionUtility::getExceptions($exception),
                 ]
             );
         }

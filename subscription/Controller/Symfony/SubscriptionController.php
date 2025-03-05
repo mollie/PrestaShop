@@ -24,13 +24,15 @@ use Mollie\Subscription\Filters\SubscriptionFilters;
 use Mollie\Subscription\Grid\SubscriptionGridDefinitionFactory;
 use Mollie\Subscription\Handler\SubscriptionCancellationHandler;
 use Mollie\Subscription\Handler\UpdateSubscriptionCarrierHandler;
-use Mollie\Utility\PsVersionUtility;
+use Mollie\Utility\VersionUtility;
 use PrestaShop\PrestaShop\Core\Form\FormHandlerInterface;
 use PrestaShop\PrestaShop\Core\Grid\GridFactoryInterface;
 use PrestaShopBundle\Security\Annotation\AdminSecurity;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Twig\Environment;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -39,6 +41,22 @@ if (!defined('_PS_VERSION_')) {
 class SubscriptionController extends AbstractSymfonyController
 {
     private const FILE_NAME = 'SubscriptionController';
+
+    /** @var ?ContainerInterface */
+    protected $container;
+
+    /** @var ?Environment */
+    public $twig;
+
+    public function __construct(
+        ?ContainerInterface $container = null,
+        ?Environment $twig = null
+    ) {
+        $this->container = $container;
+        $this->twig = $twig;
+
+        parent::__construct();
+    }
 
     /**
      * @AdminSecurity("is_granted('read', request.get('_legacy_controller'))")
@@ -55,20 +73,20 @@ class SubscriptionController extends AbstractSymfonyController
                 $this->addFlash('error', $this->module->l('Select the shop that you want to configure'));
             }
 
-            return $this->render('@PrestaShop/Admin/layout.html.twig');
+            return $this->renderTwig('@PrestaShop/Admin/layout.html.twig');
         }
 
         /** @var GridFactoryInterface $currencyGridFactory */
         $currencyGridFactory = $this->module->getService('subscription_grid_factory');
         $currencyGrid = $currencyGridFactory->getGrid($filters);
 
-        if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.8.0')) {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.8.0')) {
             $formHandler = $this->get('subscription_options_form_handler')->getForm();
         } else {
             $formHandler = $this->get('subscription_options_form_handler_deprecated')->getForm();
         }
 
-        return $this->render('@Modules/mollie/views/templates/admin/Subscription/subscriptions-grid.html.twig', [
+        return $this->renderTwig('@Modules/mollie/views/templates/admin/Subscription/subscriptions-grid.html.twig', [
             'currencyGrid' => $this->presentGrid($currencyGrid),
             'enableSidebar' => true,
             'subscriptionOptionsForm' => $formHandler->createView(),
@@ -80,7 +98,7 @@ class SubscriptionController extends AbstractSymfonyController
      */
     public function submitOptionsAction(Request $request): RedirectResponse
     {
-        if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.8.0')) {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.8.0')) {
             /** @var FormHandlerInterface $formHandler */
             $formHandler = $this->get('subscription_options_form_handler');
         } else {
@@ -100,7 +118,10 @@ class SubscriptionController extends AbstractSymfonyController
             return $this->redirectToRoute('admin_subscription_index');
         }
 
-        $this->updateSubscriptionCarrier($form->getData()['carrier']);
+        // NOTE: By default getting was throwing silented error
+        $carrier = $form->getData()['carrier'] ?? $form->getData()['subscription_options']['carrier'];
+
+        $this->updateSubscriptionCarrier($carrier);
 
         $formHandler->save($form->getData());
 
@@ -192,5 +213,24 @@ class SubscriptionController extends AbstractSymfonyController
         }
 
         return $this->getErrorMessageForException($e, $errors);
+    }
+
+    /**
+     * For PS 9 compatibility
+     *
+     * @param string $view
+     * @param array $parameters
+     *
+     * @return Response
+     */
+    private function renderTwig(string $view, array $parameters = [])
+    {
+        if (!$this->twig) {
+            return $this->render($view, $parameters);
+        }
+
+        return new Response(
+            $this->twig->render($view, $parameters)
+        );
     }
 }

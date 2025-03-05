@@ -27,11 +27,13 @@ use Mollie\Config\Config;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Exception\TransactionException;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Handler\Order\OrderPaymentFeeHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\OrderNumberUtility;
@@ -43,7 +45,6 @@ use Order;
 use OrderPayment;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use PrestaShopLogger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -51,6 +52,7 @@ if (!defined('_PS_VERSION_')) {
 
 class TransactionService
 {
+    const FILE_NAME = 'TransactionService';
     /**
      * @var Mollie
      */
@@ -87,7 +89,7 @@ class TransactionService
     private $configurationAdapter;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $module,
         OrderStatusService $orderStatusService,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         OrderCreationHandler $orderCreationHandler,
@@ -99,7 +101,7 @@ class TransactionService
         ExceptionService $exceptionService,
         ConfigurationAdapter $configurationAdapter
     ) {
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->orderStatusService = $orderStatusService;
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->orderCreationHandler = $orderCreationHandler;
@@ -130,7 +132,7 @@ class TransactionService
     {
         if (empty($apiPayment)) {
             if ($this->configurationAdapter->get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
-                PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request without proper transaction ID.', Config::WARNING);
+                $this->logger->error(sprintf('%s - Received webhook request without proper transaction ID', self::FILE_NAME));
             }
 
             throw new TransactionException('Transaction failed', HttpStatusCode::HTTP_BAD_REQUEST);
@@ -172,7 +174,7 @@ class TransactionService
 
         switch ($apiPayment->resource) {
             case Config::MOLLIE_API_STATUS_PAYMENT:
-                PrestaShopLogger::addLog(__METHOD__ . ' said: Starting to process PAYMENT transaction.', Config::NOTICE);
+                $this->logger->debug(sprintf('%s - Starting to process PAYMENT transaction', self::FILE_NAME));
 
                 $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
 
@@ -217,7 +219,7 @@ class TransactionService
                 }
                 break;
             case Config::MOLLIE_API_STATUS_ORDER:
-                PrestaShopLogger::addLog(__METHOD__ . ' said: Starting to process ORDER transaction.', Config::NOTICE);
+                $this->logger->debug(sprintf('%s - Starting to process ORDER transaction', self::FILE_NAME));
 
                 if ($key !== $apiPayment->metadata->secure_key && $deprecatedKey !== $apiPayment->metadata->secure_key) {
                     throw new TransactionException('Security key is incorrect.', HttpStatusCode::HTTP_UNAUTHORIZED);
@@ -244,13 +246,13 @@ class TransactionService
                     try {
                         $this->shipmentSenderHandler->handleShipmentSender($this->module->getApiClient(), $order, new \OrderState($order->current_state));
                     } catch (ShipmentCannotBeSentException $exception) {
-                        $this->logger->error($this->exceptionService->getErrorMessageForException(
-                            $exception,
-                            [],
-                            ['orderReference' => $order->reference]
-                        ));
+                        $this->logger->error(sprintf('%s - Shipment cannot be sent', self::FILE_NAME), [
+                            'exceptions' => ExceptionUtility::getExceptions($exception),
+                        ]);
                     } catch (ApiException $exception) {
-                        $this->logger->error($exception->getMessage());
+                        $this->logger->error(sprintf('%s - API exception', self::FILE_NAME), [
+                            'exceptions' => ExceptionUtility::getExceptions($exception),
+                        ]);
                     }
                 } elseif ($apiPayment->amountRefunded) {
                     if (strpos($apiPayment->orderNumber, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
@@ -309,10 +311,7 @@ class TransactionService
         // Store status in database
         $this->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId);
 
-        // Log successful webhook requests in extended log mode only
-        if (Config::DEBUG_LOG_ALL == $this->configurationAdapter->get(Config::MOLLIE_DEBUG_LOG)) {
-            PrestaShopLogger::addLog(__METHOD__ . ' said: Received webhook request for order ' . (int) $orderId . ' / transaction ' . $apiPayment->id, Config::NOTICE);
-        }
+        $this->logger->debug(sprintf('%s - Processed transaction', self::FILE_NAME));
 
         return $apiPayment;
     }
@@ -391,12 +390,18 @@ class TransactionService
                 '`transaction_id` = \'' . pSQL($transactionId) . '\''
             );
         } catch (PrestaShopDatabaseException $e) {
+            $this->logger->error(sprintf('%s - Could not save Mollie payment status', self::FILE_NAME), [
+                'exception' => ExceptionUtility::getExceptions($e),
+            ]);
+
             throw $e;
         }
 
-        if (!$result && $this->configurationAdapter->get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
-            PrestaShopLogger::addLog(__METHOD__ . ' said: Could not save Mollie payment status for transaction "' . $transactionId . '". Reason: ' . Db::getInstance()->getMsgError(), Config::WARNING);
-        }
+        $this->logger->debug(sprintf('%s - Payment status saved', self::FILE_NAME), [
+            'transasction_id' => $transactionId,
+            'status' => $status,
+            'order_id' => $orderId,
+        ]);
 
         return $result;
     }
@@ -492,6 +497,10 @@ class TransactionService
     private function updatePaymentDescription(Payment $apiPayment, int $orderId): Payment
     {
         if (!$orderId) {
+            $this->logger->debug(sprintf('%s - Order does not exist', self::FILE_NAME), [
+                'order_id' => $orderId,
+            ]);
+
             throw new TransactionException('Order does not exist', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
         }
         $environment = (int) $this->configurationAdapter->get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
@@ -531,6 +540,8 @@ class TransactionService
             $this->orderPaymentFeeHandler->addOrderPaymentFee($orderId, $apiPayment);
             $this->processTransaction($apiPayment);
         } else {
+            $this->logger->debug(sprintf('%s - Transaction is no longer used', self::FILE_NAME));
+
             throw new TransactionException('Transaction is no longer used', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
         }
     }

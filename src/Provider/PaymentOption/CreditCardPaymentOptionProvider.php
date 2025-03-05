@@ -43,6 +43,7 @@ use Mollie\Adapter\Context;
 use Mollie\Adapter\Customer;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Config\Config;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
@@ -51,7 +52,6 @@ use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Service\LanguageService;
 use Mollie\Utility\CustomerUtility;
 use MolPaymentMethod;
-use MolPaymentMethodLang;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Tools;
 
@@ -111,7 +111,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         LanguageService $languageService,
         Customer $customer,
         MolCustomerRepository $customerRepository,
-        Mollie $module,
+        ModuleFactory $module,
         ConfigurationAdapter $configurationAdapter
     ) {
         $this->context = $context;
@@ -121,7 +121,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         $this->languageService = $languageService;
         $this->customer = $customer;
         $this->customerRepository = $customerRepository;
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->configurationAdapter = $configurationAdapter;
     }
 
@@ -138,7 +138,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         /** @var PaymentMethodLangRepositoryInterface $paymentMethodLangRepository */
         $paymentMethodLangRepository = $this->module->getService(PaymentMethodLangRepositoryInterface::class);
 
-        /** @var MolPaymentMethodLang $molPaymentMethodLang */
+        /** @var \MolPaymentMethodTranslations $molPaymentMethodLang */
         $molPaymentMethodLang = $paymentMethodLangRepository->findOneBy([
             'id_method' => $paymentMethod->id_method,
             'id_lang' => $context->getLanguageId(),

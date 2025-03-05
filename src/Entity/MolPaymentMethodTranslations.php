@@ -13,7 +13,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class MolPaymentMethodLang extends ObjectModel
+class MolPaymentMethodTranslations extends ObjectModel
 {
     /** @var int */
     public $id;
@@ -34,7 +34,7 @@ class MolPaymentMethodLang extends ObjectModel
      * Definition of the ObjectModel
      */
     public static $definition = [
-        'table' => 'mol_payment_method_lang',
+        'table' => 'mol_payment_method_translations',
         'primary' => 'id',
         'fields' => [
             'id_method' => [

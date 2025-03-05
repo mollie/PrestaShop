@@ -72,6 +72,8 @@ class Config
         'riverty' => ['nl', 'be', 'de', 'at'],
         'payconiq' => [],
         'paybybank' => ['at', 'be', 'cy', 'ee', 'fi', 'fr', 'de', 'gr', 'ie', 'it', 'lv', 'lt', 'lu', 'mt', 'nl', 'pt', 'sk', 'si', 'es', 'uk'],
+        'multibanco' => ['pt'],
+        'mbway' => ['pt'],
     ];
 
     const SUPPORTED_PHP_VERSION = '5.6';
@@ -335,6 +337,8 @@ class Config
         'trustly' => 'Trustly',
         'satispay' => 'Satispay',
         'paybybank' => 'Pay by Bank',
+        'multibanco' => 'Multibanco',
+        'mbway' => 'MBway',
     ];
 
     public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;

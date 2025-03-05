@@ -13,6 +13,7 @@
 namespace Mollie\Tests\Unit\Subscription\Handler;
 
 use Mollie\Exception\MollieException;
+use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Service\MailService;
 use Mollie\Subscription\Action\UpdateRecurringOrderAction;
 use Mollie\Subscription\Action\UpdateSubscriptionAction;
@@ -27,16 +28,23 @@ class UpdateSubscriptionCarrierHandlerTest extends BaseTestCase
 {
     /** @var RecurringOrderRepositoryInterface */
     private $recurringOrderRepository;
+
     /** @var UpdateSubscriptionAction */
     private $updateSubscriptionAction;
+
     /** @var UpdateRecurringOrderAction */
     private $updateRecurringOrderAction;
+
     /** @var CloneOriginalSubscriptionCartHandler */
     private $cloneOriginalSubscriptionCartHandler;
+
     /** @var SubscriptionOrderAmountProvider */
     private $subscriptionOrderAmountProvider;
+
     /** @var MailService */
     private $mailService;
+    /** @var PrestaLoggerInterface */
+    private $prestaShopLogger;
 
     public function setUp(): void
     {
@@ -48,6 +56,7 @@ class UpdateSubscriptionCarrierHandlerTest extends BaseTestCase
         $this->cloneOriginalSubscriptionCartHandler = $this->mock(CloneOriginalSubscriptionCartHandler::class);
         $this->subscriptionOrderAmountProvider = $this->mock(SubscriptionOrderAmountProvider::class);
         $this->mailService = $this->mock(MailService::class);
+        $this->prestaShopLogger = $this->mock(PrestaLoggerInterface::class);
     }
 
     public function testItSuccessfullyHandles(): void
@@ -98,7 +107,7 @@ class UpdateSubscriptionCarrierHandlerTest extends BaseTestCase
             $this->context,
             $this->updateSubscriptionAction,
             $this->updateRecurringOrderAction,
-            $this->logger,
+            $this->prestaShopLogger,
             $this->cloneOriginalSubscriptionCartHandler,
             $this->subscriptionOrderAmountProvider,
             $this->mailService
@@ -134,7 +143,7 @@ class UpdateSubscriptionCarrierHandlerTest extends BaseTestCase
             $this->context,
             $this->updateSubscriptionAction,
             $this->updateRecurringOrderAction,
-            $this->logger,
+            $this->prestaShopLogger,
             $this->cloneOriginalSubscriptionCartHandler,
             $this->subscriptionOrderAmountProvider,
             $this->mailService
@@ -180,7 +189,7 @@ class UpdateSubscriptionCarrierHandlerTest extends BaseTestCase
             $this->context,
             $this->updateSubscriptionAction,
             $this->updateRecurringOrderAction,
-            $this->logger,
+            $this->prestaShopLogger,
             $this->cloneOriginalSubscriptionCartHandler,
             $this->subscriptionOrderAmountProvider,
             $this->mailService
@@ -237,7 +246,7 @@ class UpdateSubscriptionCarrierHandlerTest extends BaseTestCase
             $this->context,
             $this->updateSubscriptionAction,
             $this->updateRecurringOrderAction,
-            $this->logger,
+            $this->prestaShopLogger,
             $this->cloneOriginalSubscriptionCartHandler,
             $this->subscriptionOrderAmountProvider,
             $this->mailService
@@ -296,7 +305,7 @@ class UpdateSubscriptionCarrierHandlerTest extends BaseTestCase
             $this->context,
             $this->updateSubscriptionAction,
             $this->updateRecurringOrderAction,
-            $this->logger,
+            $this->prestaShopLogger,
             $this->cloneOriginalSubscriptionCartHandler,
             $this->subscriptionOrderAmountProvider,
             $this->mailService
@@ -355,7 +364,7 @@ class UpdateSubscriptionCarrierHandlerTest extends BaseTestCase
             $this->context,
             $this->updateSubscriptionAction,
             $this->updateRecurringOrderAction,
-            $this->logger,
+            $this->prestaShopLogger,
             $this->cloneOriginalSubscriptionCartHandler,
             $this->subscriptionOrderAmountProvider,
             $this->mailService
@@ -414,7 +423,7 @@ class UpdateSubscriptionCarrierHandlerTest extends BaseTestCase
             $this->context,
             $this->updateSubscriptionAction,
             $this->updateRecurringOrderAction,
-            $this->logger,
+            $this->prestaShopLogger,
             $this->cloneOriginalSubscriptionCartHandler,
             $this->subscriptionOrderAmountProvider,
             $this->mailService

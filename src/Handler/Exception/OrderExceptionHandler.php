@@ -26,12 +26,15 @@ class OrderExceptionHandler implements ExceptionHandlerInterface
      */
     public function handle(Exception $e)
     {
+        // TODO: refactor use switch statement
         if (strpos($e->getMessage(), 'billingAddress.phone')) {
             return new OrderCreationException($e->getMessage(), OrderCreationException::WRONG_BILLING_PHONE_NUMBER_EXCEPTION);
         } elseif (strpos($e->getMessage(), 'shippingAddress.phone')) {
             return new OrderCreationException($e->getMessage(), OrderCreationException::WRONG_SHIPPING_PHONE_NUMBER_EXCEPTION);
         } elseif (strpos($e->getMessage(), 'billingAddress.familyName')) {
             return new OrderCreationException($e->getMessage(), OrderCreationException::WRONG_FAMILY_NAME);
+        } elseif (strpos($e->getMessage(), 'billingAddress.givenName')) {
+            return new OrderCreationException($e->getMessage(), OrderCreationException::WRONG_GIVEN_NAME);
         } elseif (strpos($e->getMessage(), 'payment.amount')) {
             if (strpos($e->getMessage(), 'minimum')) {
                 throw new OrderCreationException($e->getMessage(), OrderCreationException::ORDER_TOTAL_LOWER_THAN_MINIMUM);

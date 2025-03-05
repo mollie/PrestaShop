@@ -16,6 +16,7 @@ use Cart;
 use CartRule;
 use Context;
 use Mollie;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\CartRule\CartRuleQuantityChangeHandlerInterface;
 use Mollie\Repository\PaymentMethodRepository;
 use Order;
@@ -61,13 +62,13 @@ class PaymentReturnService
     private $cartRuleQuantityChangeHandlerInterface;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $module,
         PaymentMethodRepository $paymentMethodRepository,
         RepeatOrderLinkFactory $orderLinkFactory,
         TransactionService $transactionService,
         CartRuleQuantityChangeHandlerInterface $cartRuleQuantityChangeHandlerInterface
     ) {
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->context = Context::getContext();
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->orderLinkFactory = $orderLinkFactory;
@@ -148,7 +149,7 @@ class PaymentReturnService
     private function getStatusResponse($transaction, $status, $cartId, $cartSecureKey)
     {
         /* @phpstan-ignore-next-line */
-        $orderId = (int) Order::getOrderByCartId((int) $cartId);
+        $orderId = (int) Order::getIdByCartId((int) $cartId);
 
         $successUrl = $this->context->link->getPageLink(
             'order-confirmation',

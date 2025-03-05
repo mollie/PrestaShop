@@ -24,6 +24,7 @@ use Mollie\Config\Config;
 use Mollie\DTO\ApplePay\ShippingContent;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Exception\RetryOverException;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\RetryHandlerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MollieOrderCreationService;
@@ -69,14 +70,14 @@ final class CreateApplePayOrderHandler
         PaymentMethodService $paymentMethodService,
         MollieOrderCreationService $mollieOrderCreationService,
         Link $link,
-        Mollie $module,
+        ModuleFactory $module,
         RetryHandlerInterface $retryHandler
     ) {
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodService = $paymentMethodService;
         $this->mollieOrderCreationService = $mollieOrderCreationService;
         $this->link = $link;
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->retryHandler = $retryHandler;
     }
 
@@ -105,7 +106,7 @@ final class CreateApplePayOrderHandler
 
         // we need to wait for webhook to create the order. That's why we wait here for few seconds and check if order is created
         $proc = function () use ($command) {
-            $orderId = Order::getOrderByCartId($command->getCartId());
+            $orderId = Order::getIdByCartId($command->getCartId());
             /* @phpstan-ignore-next-line */
             if (!$orderId) {
                 throw new OrderCreationException('Order was not created in webhook', OrderCreationException::ORDER_IS_NOT_CREATED);
@@ -146,7 +147,7 @@ final class CreateApplePayOrderHandler
             [
                 'id_cart' => (int) $cart->id,
                 'id_module' => (int) $this->module->id,
-                'id_order' => Order::getOrderByCartId($cart->id),
+                'id_order' => Order::getIdByCartId($cart->id),
                 'key' => $cart->secure_key,
             ]
         );

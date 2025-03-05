@@ -92,5 +92,15 @@ prepare-zip:
 	composer dump-autoload --no-dev --optimize --classmap-authoritative
 	rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile cypress .docker cypress.config.js cypress.env.json docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php
 
+<<<<<<< HEAD
+start-ps-for-tests:
+	docker network create prestashop-net-1.7.8-7.4
+	docker run -ti --name mollie-testing-env-mysql-1.7.8-7.4 --network prestashop-net-1.7.8-7.4 -e MYSQL_ROOT_PASSWORD=admin -e MYSQL_DATABASE=prestashop -p 3307:3306 -d mysql:5.7
+	docker run -ti -v $(ROOT_DIR):/var/www/html/modules/mollie -v $(ROOT_DIR)/.docker/php/php.ini:/usr/local/etc/php/conf.d/custom-php.ini --name mollie-testing-env-prestashop-1.7.8-7.4 --network prestashop-net-1.7.8-7.4 -e DB_SERVER=mollie-testing-env-mysql-1.7.8-7.4 -e PS_INSTALL_AUTO=1 -e DB_NAME=prestashop -e PS_DOMAIN=localhost:8080 -e PS_FOLDER_ADMIN=admin1 -p 8080:80 -d prestashop/prestashop:1.7.8-7.4
+	sleep 10s
+
+run-ps-unit-tests:
+	docker exec -i mollie-testing-env-prestashop-1.7.8-7.4 bash -c "cd /var/www/html/modules/mollie && php vendor/bin/phpunit -c tests/phpunit.xml --testsuite Unit"
+
 create-env:
 	echo "SENTRY_ENV='$(env)'" > .env

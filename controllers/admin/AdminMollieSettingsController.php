@@ -22,6 +22,8 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminMollieSettingsController extends ModuleAdminController
 {
+    const FILE_NAME = 'AdminMollieSettingsController';
+
     /** @var Mollie */
     public $module;
 
@@ -54,8 +56,7 @@ class AdminMollieSettingsController extends ModuleAdminController
             $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
             $accountsService = $accountsFacade->getPsAccountsService();
         } catch (PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
-            $logger->error('Failed to initiate ps_accounts', [
-                'context' => [],
+            $logger->error(sprintf('%s - Failed to initiate ps_accounts', self::FILE_NAME), [
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
 
@@ -67,8 +68,7 @@ class AdminMollieSettingsController extends ModuleAdminController
             } catch (Exception $e) {
                 $this->context->controller->errors[] = $e->getMessage();
 
-                $logger->error('Failed to install ps_accounts', [
-                    'context' => [],
+                $logger->error(sprintf('%s - Failed to install ps_accounts', self::FILE_NAME), [
                     'exceptions' => ExceptionUtility::getExceptions($e),
                 ]);
 
@@ -87,8 +87,7 @@ class AdminMollieSettingsController extends ModuleAdminController
         } catch (Exception $e) {
             $this->context->controller->errors[] = $e->getMessage();
 
-            $logger->error('Failed to load ps accounts CDN', [
-                'context' => [],
+            $logger->error(sprintf('%s - Failed to load ps accounts CDN', self::FILE_NAME), [
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
         }
@@ -117,13 +116,23 @@ class AdminMollieSettingsController extends ModuleAdminController
         /** @var \Mollie\Service\Content\TemplateParserInterface $templateParser */
         $templateParser = $this->module->getService(\Mollie\Service\Content\TemplateParserInterface::class);
 
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         $this->content = $templateParser->parseTemplate(
             $this->context->smarty,
             $this->module->getService(\Mollie\Builder\Content\LogoInfoBlock::class),
             $this->module->getLocalPath() . 'views/templates/admin/logo.tpl'
         );
 
-        $this->initCloudSyncAndPsAccounts();
+        try {
+            $this->initCloudSyncAndPsAccounts();
+        } catch (Exception $e) {
+            $logger->error('Failed to initiate cloud sync and ps accounts', [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+        }
 
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
         $moduleRepository = $this->module->getService(\Mollie\Repository\ModuleRepository::class);
@@ -165,8 +174,8 @@ class AdminMollieSettingsController extends ModuleAdminController
 
         Media::addJsDef([
             'description_message' => addslashes($this->module->l('Enter a description')),
-            'min_amount_message' => addslashes($this->l('You have entered incorrect min amount')),
-            'max_amount_message' => addslashes($this->l('You have entered incorrect max amount')),
+            'min_amount_message' => addslashes($this->module->l('You have entered incorrect min amount')),
+            'max_amount_message' => addslashes($this->module->l('You have entered incorrect max amount')),
 
             'payment_api' => addslashes(Mollie\Config\Config::MOLLIE_PAYMENTS_API),
             'ajaxUrl' => addslashes($this->context->link->getAdminLink('AdminMollieAjax')),

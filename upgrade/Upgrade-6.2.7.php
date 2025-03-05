@@ -7,19 +7,15 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- * @codingStandardsIgnoreStart
  */
-
-namespace Mollie\Utility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class PsVersionUtility
+function upgrade_module_6_2_7(Mollie $module): bool
 {
-    public static function isPsVersionGreaterOrEqualTo(string $psVersion, string $targetVersion)
-    {
-        return version_compare($psVersion, $targetVersion, '>=');
-    }
+    $sql = 'ALTER TABLE `' . _DB_PREFIX_ . 'mol_payment_method_lang` RENAME TO ' . _DB_PREFIX_ . 'mol_payment_method_translations;';
+
+    return Db::getInstance()->execute($sql);
 }

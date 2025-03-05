@@ -273,7 +273,7 @@ class AdminMollieLogsController extends ModuleAdminController
                 'id_shop' => $shopContext->getShop()->id,
             ]);
         } catch (\Exception $exception) {
-            $logger->error('Failed to find log', [
+            $logger->error(sprintf('%s - Failed to find log', self::FILE_NAME), [
                 'context' => [
                     'id_log' => $logId,
                     'id_shop' => $shopContext->getShop()->id,
@@ -288,12 +288,11 @@ class AdminMollieLogsController extends ModuleAdminController
         }
 
         if (!$log) {
-            $logger->error('No log information found.', [
+            $logger->error(sprintf('%s - No log information found.', self::FILE_NAME), [
                 'context' => [
                     'id_log' => $logId,
                     'id_shop' => $shopContext->getShop()->id,
                 ],
-                'exceptions' => [],
             ]);
 
             $this->ajaxResponse(json_encode([
@@ -327,13 +326,13 @@ class AdminMollieLogsController extends ModuleAdminController
         $logger = $this->module->getService(LoggerInterface::class);
 
         try {
-            $this->ajaxDie($value, $controller, $method);
+            $this->ajaxRender($value, $controller, $method);
         } catch (\Exception $exception) {
-            $logger->error('Could not return ajax response', [
+            $logger->error(sprintf('%s - Could not return ajax response', self::FILE_NAME), [
                 'context' => [
                     'response' => json_encode($value ?: []),
-                    'exceptions' => ExceptionUtility::getExceptions($exception),
                 ],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
         }
 
