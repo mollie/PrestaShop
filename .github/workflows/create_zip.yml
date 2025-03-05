@@ -24,11 +24,7 @@ jobs:
 
       - name: Choose environment
         run: |
-          if [ "${{ inputs.environment }}" == "GITHUB" ]; then
-            make create-env env=GITHUB
-          else
-            make create-env env=MARKETPLACE
-          fi
+            make create-env env=${{ inputs.environment }}
 
       - name: Build module ZIP
         run: |
