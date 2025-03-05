@@ -2,14 +2,15 @@ name: Create module ZIP
 
 on:
   workflow_dispatch:
-    environment:
-      description: "Select environment (GITHUB or MARKETPLACE)"
-      required: true
-      default: "GITHUB"
-      type: choice
-      options:
-        - GITHUB
-        - MARKETPLACE
+    inputs:
+      environment:
+        description: "Select environment (GITHUB or MARKETPLACE)"
+        required: true
+        default: "GITHUB"
+        type: choice
+        options:
+          - GITHUB
+          - MARKETPLACE
 jobs:
   prepare-zip:
     name: Prepare module ZIP artifact
