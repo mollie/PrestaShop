@@ -18,5 +18,4 @@ if (!defined('_PS_VERSION_')) {
 
 interface MolLogRepositoryInterface extends ReadOnlyRepositoryInterface
 {
-    public function prune(int $daysToKeep): void;
 }
