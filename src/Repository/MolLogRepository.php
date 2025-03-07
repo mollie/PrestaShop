@@ -25,21 +25,4 @@ class MolLogRepository extends CollectionRepository implements MolLogRepositoryI
     {
         parent::__construct(\MolLog::class);
     }
-
-    public function prune(int $daysToKeep): void
-    {
-        Collection::from(
-            $this->findAllInCollection()
-                ->sqlWhere('DATEDIFF(NOW(),date_add) >= ' . $daysToKeep)
-        )
-            ->each(function (\MolLog $log) {
-                $log->delete();
-            })
-            ->realize();
-    }
-
-    public function findAll()
-    {
-        throw new NotImplementedException('Find all not implemented');
-    }
 }
