@@ -22,11 +22,6 @@ if (!defined('_PS_VERSION_')) {
 interface ReadOnlyRepositoryInterface
 {
     /**
-     * @return PrestaShopCollection
-     */
-    public function findAll();
-
-    /**
      * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
      *
      * @return ObjectModel|null

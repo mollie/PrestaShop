@@ -12,9 +12,6 @@
 
 namespace Mollie\Repository;
 
-use Invertus\Knapsack\Collection;
-use Mollie\Subscription\Exception\NotImplementedException;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
