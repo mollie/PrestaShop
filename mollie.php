@@ -567,18 +567,11 @@ class Mollie extends PaymentModule
 
         $methods = $paymentMethodService->getMethodsForCheckout();
 
-        foreach ($methods as $method) {
-            /** @var MolPaymentMethod|null $paymentMethod */
-            $paymentMethod = $paymentMethodRepository->findOneBy(['id_payment_method' => (int) $method['id_payment_method']]);
+        $availablePayments = $paymentMethodRepository->findAllBy(['id_payment_method' => array_column($methods, 'id_payment_method')])->getResults();
 
-            if (!$paymentMethod) {
-                continue;
-            }
-
-            $paymentMethod->method_name = $method['method_name'];
-
+        foreach ($availablePayments as $method) {
             try {
-                $paymentOptions[] = $paymentOptionsHandler->handle($paymentMethod);
+                $paymentOptions[] = $paymentOptionsHandler->handle($method);
             } catch (Exception $exception) {
                 $logger->error(sprintf('%s - Error while handling payment options', self::FILE_NAME), [
                     'exceptions' => ExceptionUtility::getExceptions($exception),

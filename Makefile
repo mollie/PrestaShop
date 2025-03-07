@@ -92,7 +92,6 @@ prepare-zip:
 	composer dump-autoload --no-dev --optimize --classmap-authoritative
 	rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile cypress .docker cypress.config.js cypress.env.json docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php
 
-<<<<<<< HEAD
 start-ps-for-tests:
 	docker network create prestashop-net-1.7.8-7.4
 	docker run -ti --name mollie-testing-env-mysql-1.7.8-7.4 --network prestashop-net-1.7.8-7.4 -e MYSQL_ROOT_PASSWORD=admin -e MYSQL_DATABASE=prestashop -p 3307:3306 -d mysql:5.7
