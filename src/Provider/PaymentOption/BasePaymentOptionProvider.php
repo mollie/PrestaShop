@@ -39,6 +39,7 @@ namespace Mollie\Provider\PaymentOption;
 use Mollie;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\LegacyContext;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
@@ -85,14 +86,14 @@ class BasePaymentOptionProvider implements PaymentOptionProviderInterface
     private $orderTotalProvider;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $module,
         LegacyContext $context,
         CreditCardLogoProvider $creditCardLogoProvider,
         PaymentFeeProviderInterface $paymentFeeProvider,
         LanguageService $languageService,
         OrderTotalProviderInterface $orderTotalProvider
     ) {
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->context = $context;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
         $this->paymentFeeProvider = $paymentFeeProvider;

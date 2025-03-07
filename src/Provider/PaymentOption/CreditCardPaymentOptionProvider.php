@@ -43,6 +43,7 @@ use Mollie\Adapter\Context;
 use Mollie\Adapter\Customer;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Config\Config;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
@@ -110,7 +111,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         LanguageService $languageService,
         Customer $customer,
         MolCustomerRepository $customerRepository,
-        Mollie $module,
+        ModuleFactory $module,
         ConfigurationAdapter $configurationAdapter
     ) {
         $this->context = $context;
@@ -120,7 +121,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         $this->languageService = $languageService;
         $this->customer = $customer;
         $this->customerRepository = $customerRepository;
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->configurationAdapter = $configurationAdapter;
     }
 

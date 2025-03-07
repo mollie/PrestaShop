@@ -23,6 +23,7 @@ use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CustomLogoProviderInterface;
 use Mollie\Repository\TaxRulesGroupRepositoryInterface;
 use Mollie\Service\ApiService;
@@ -97,7 +98,7 @@ class FormBuilder
     private $context;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $module,
         ApiService $apiService,
         CountryService $countryService,
         ConfigFieldService $configFieldService,
@@ -110,7 +111,7 @@ class FormBuilder
         TaxRulesGroupRepositoryInterface $taxRulesGroupRepository,
         Context $context
     ) {
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->apiService = $apiService;
         $this->countryService = $countryService;
         $this->lang = $lang;

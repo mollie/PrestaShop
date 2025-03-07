@@ -20,6 +20,7 @@ use Mollie;
 use Mollie\Api\MollieApiClient;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Types\PaymentStatus;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Utility\HashUtility;
 use Mollie\Utility\SecureKeyUtility;
@@ -50,11 +51,11 @@ class MolliePaymentMailService
     private $mailService;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $module,
         PaymentMethodRepository $paymentMethodRepository,
         MailService $mailService
     ) {
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->mailService = $mailService;
     }
