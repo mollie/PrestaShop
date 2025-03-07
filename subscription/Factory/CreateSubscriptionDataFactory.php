@@ -18,6 +18,7 @@ use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Config\Config;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Subscription\DTO\CreateSubscriptionData as SubscriptionDataDTO;
@@ -64,7 +65,7 @@ class CreateSubscriptionDataFactory
         SubscriptionIntervalProvider $subscriptionInterval,
         SubscriptionDescriptionProvider $subscriptionDescription,
         PaymentMethodRepositoryInterface $methodRepository,
-        Mollie $module,
+        ModuleFactory $module,
         Context $context,
         ConfigurationAdapter $configuration,
         SubscriptionOrderAmountProvider $subscriptionOrderAmountProvider,
@@ -75,7 +76,7 @@ class CreateSubscriptionDataFactory
         $this->subscriptionInterval = $subscriptionInterval;
         $this->subscriptionDescription = $subscriptionDescription;
         $this->methodRepository = $methodRepository;
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->context = $context;
         $this->configuration = $configuration;
         $this->subscriptionOrderAmountProvider = $subscriptionOrderAmountProvider;

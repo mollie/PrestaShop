@@ -36,6 +36,7 @@ use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Logger\LoggerInterface;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
@@ -125,7 +126,7 @@ class PaymentMethodService
     private $paymentMethodLangRepository;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $module,
         PaymentMethodRepositoryInterface $methodRepository,
         CartLinesService $cartLinesService,
         CustomerService $customerService,
@@ -144,7 +145,7 @@ class PaymentMethodService
         PaymentMethodLangRepositoryInterface $paymentMethodLangRepository,
         LoggerInterface $logger
     ) {
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->methodRepository = $methodRepository;
         $this->cartLinesService = $cartLinesService;
         $this->customerService = $customerService;

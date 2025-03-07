@@ -12,8 +12,8 @@
 
 namespace Mollie\Subscription\Controller\Symfony;
 
-use Module;
 use Mollie;
+use Mollie\Factory\ModuleFactory;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 
 if (!defined('_PS_VERSION_')) {
@@ -31,6 +31,6 @@ abstract class AbstractSymfonyController extends FrameworkBundleAdminController
     public function __construct()
     {
         /* @phpstan-ignore-next-line */
-        $this->module = Module::getInstanceByName('mollie');
+        $this->module = (new ModuleFactory())->getModule();
     }
 }

@@ -6,6 +6,9 @@
 + Switched API keys places to match Mollie Dashboard
 + Added MBway payment method
 + Added Multibanco payment method
++ PrestaShop 9 compatibility
++ Fixed error when importing new countries into PrestaShop
++ Fixed issue with fees not adding up to cart totals
 
 ## Changes in release 6.2.6 ##
 + Improved checkout process

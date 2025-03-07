@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Provider;
 
-use Module;
 use Mollie;
+use Mollie\Factory\ModuleFactory;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -26,7 +26,7 @@ class MollieModuleServiceProvider
     public function get(string $service)
     {
         /** @var Mollie $mollie */
-        $mollie = Module::getInstanceByName('mollie');
+        $mollie = (new ModuleFactory())->getModule();
 
         return $mollie->getService($service);
     }
