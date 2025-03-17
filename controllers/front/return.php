@@ -114,8 +114,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $data['msg_details'] = $this->module->l('Your payment was not successful. Try again.', self::FILE_NAME);
                 $this->setWarning($data['msg_details']);
 
-                Tools::redirect(
-                    Context::getContext()->link->getPageLink(
+                Tools::redirect($this->context->link->getPageLink(
                         'cart',
                         true,
                         [
