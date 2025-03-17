@@ -21,11 +21,11 @@ class CartItemWrappingServiceTest extends BaseTestCase
     {
         $cartItemShippingLineService = new CartItemWrappingService($this->languageService);
 
-        $cart = $this->getMockBuilder(\Cart::class) ->setMethods(['getSummaryDetails'])->getMock();
+        $cart = $this->getMockBuilder(\Cart::class)->setMethods(['getSummaryDetails'])->getMock();
 
         $cart->method('getSummaryDetails')->willReturn([
             'total_wrapping' => 10,
-            'total_wrapping_tax_exc' => 10
+            'total_wrapping_tax_exc' => 10,
         ]);
 
         $result = $cartItemShippingLineService->addWrappingLine(10, $cart->getSummaryDetails(), 2, $orderLines);
@@ -38,11 +38,11 @@ class CartItemWrappingServiceTest extends BaseTestCase
     {
         $cartItemShippingLineService = new CartItemWrappingService($this->languageService);
 
-        $cart = $this->getMockBuilder(\Cart::class) ->setMethods(['getSummaryDetails'])->getMock();
+        $cart = $this->getMockBuilder(\Cart::class)->setMethods(['getSummaryDetails'])->getMock();
 
         $cart->method('getSummaryDetails')->willReturn([
             'total_wrapping' => 0,
-            'total_wrapping_tax_exc' => 0
+            'total_wrapping_tax_exc' => 0,
         ]);
 
         $result = $cartItemShippingLineService->addWrappingLine(0, $cart->getSummaryDetails(), 2, $orderLines);
@@ -87,7 +87,7 @@ class CartItemWrappingServiceTest extends BaseTestCase
                             'unitPrice' => 10.0,
                             'totalAmount' => 10.0,
                             'vatRate' => 0.0,
-                            'vatAmount' => 0.0
+                            'vatAmount' => 0.0,
                         ],
                     ],
                 ],
