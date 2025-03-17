@@ -218,6 +218,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $this->context->language->id,
                 [
                     'action' => 'show',
+                    'checkout' => true
                 ]
             ));
         }
