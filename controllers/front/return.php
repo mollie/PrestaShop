@@ -114,7 +114,16 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $data['msg_details'] = $this->module->l('Your payment was not successful. Try again.', self::FILE_NAME);
                 $this->setWarning($data['msg_details']);
 
-                Tools::redirect(Context::getContext()->link->getPageLink('cart', true));
+                Tools::redirect(
+                    Context::getContext()->link->getPageLink(
+                        'cart',
+                        true,
+                        [
+                            'action' => 'show',
+                            'checkout' => true,
+                        ]
+                    )
+                );
             } elseif (isset($data['mollie_info']['method'])
                 && PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
                 && PaymentStatus::STATUS_OPEN === $data['mollie_info']['bank_status']
@@ -218,7 +227,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $this->context->language->id,
                 [
                     'action' => 'show',
-                    'checkout' => true
+                    'checkout' => true,
                 ]
             ));
         }
