@@ -13,8 +13,6 @@
 namespace Unit\Service\CartLine;
 
 use Mollie\Service\CartLine\CartItemDiscountService;
-use Mollie\Service\CartLine\CartItemsService;
-use mollie\src\Utility\RoundingUtility;
 use Mollie\Tests\Unit\BaseTestCase;
 
 class CartItemDiscountServiceTest extends BaseTestCase
@@ -31,7 +29,6 @@ class CartItemDiscountServiceTest extends BaseTestCase
         );
 
         $this->assertEquals($orderLinesResult[0]['discount'], $expected);
-
     }
 
     /** @dataProvider dataProvider */
@@ -46,7 +43,6 @@ class CartItemDiscountServiceTest extends BaseTestCase
         );
 
         $this->assertEquals($orderLinesResult[0], $orderLines);
-
     }
 
     public function dataProvider()
@@ -77,8 +73,8 @@ class CartItemDiscountServiceTest extends BaseTestCase
                         'targetVat' => 0,
                         'category' => '',
                     ],
-                ]
-            ]
+                ],
+            ],
         ];
     }
 }

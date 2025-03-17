@@ -69,7 +69,7 @@ class CartItemPaymentFeeServiceTest extends BaseTestCase
                         'image_url' => 'https://www.example.com/product.png',
                     ],
                 ],
-            ]
+            ],
         ];
     }
 }

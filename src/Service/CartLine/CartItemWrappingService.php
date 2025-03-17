@@ -14,7 +14,6 @@ namespace Mollie\Service\CartLine;
 
 use Mollie\Config\Config;
 use Mollie\Service\LanguageService;
-use mollie\src\Utility\RoundingUtility;
 use Mollie\Utility\CalculationUtility;
 
 if (!defined('_PS_VERSION_')) {

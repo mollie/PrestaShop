@@ -21,11 +21,11 @@ class CartItemShippingLineServiceTest extends BaseTestCase
     {
         $cartItemShippingLineService = new CartItemShippingLineService($this->languageService);
 
-        $cart = $this->getMockBuilder(\Cart::class) ->setMethods(['getSummaryDetails'])->getMock();
+        $cart = $this->getMockBuilder(\Cart::class)->setMethods(['getSummaryDetails'])->getMock();
 
         $cart->method('getSummaryDetails')->willReturn([
             'total_shipping' => 10,
-            'total_shipping_tax_exc' => 10
+            'total_shipping_tax_exc' => 10,
         ]);
 
         $result = $cartItemShippingLineService->addShippingLine(10, $cart->getSummaryDetails(), $orderLines);
@@ -38,11 +38,11 @@ class CartItemShippingLineServiceTest extends BaseTestCase
     {
         $cartItemShippingLineService = new CartItemShippingLineService($this->languageService);
 
-        $cart = $this->getMockBuilder(\Cart::class) ->setMethods(['getSummaryDetails'])->getMock();
+        $cart = $this->getMockBuilder(\Cart::class)->setMethods(['getSummaryDetails'])->getMock();
 
         $cart->method('getSummaryDetails')->willReturn([
             'total_shipping' => 0,
-            'total_shipping_tax_exc' => 0
+            'total_shipping_tax_exc' => 0,
         ]);
 
         $result = $cartItemShippingLineService->addShippingLine(0, $cart->getSummaryDetails(), $orderLines);
@@ -87,7 +87,7 @@ class CartItemShippingLineServiceTest extends BaseTestCase
                             'unitPrice' => 10.0,
                             'totalAmount' => 10.0,
                             'vatRate' => 0.0,
-                            'vatAmount' => 0.0
+                            'vatAmount' => 0.0,
                         ],
                     ],
                 ],
