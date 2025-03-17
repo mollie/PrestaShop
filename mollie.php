@@ -213,9 +213,15 @@ class Mollie extends PaymentModule
 
         $logger->debug('Mollie subscription installer initiated');
 
-        if (!$subscriptionInstaller->install()) {
-            $this->_errors = array_merge($this->_errors, $subscriptionInstaller->getErrors());
-            parent::uninstall();
+        try {
+            if (!$subscriptionInstaller->install()) {
+                $this->_errors = array_merge($this->_errors, $subscriptionInstaller->getErrors());
+                parent::uninstall();
+
+                return false;
+            }
+        } catch (Exception $e) {
+            $this->_errors = ExceptionUtility::getExceptions($e);
 
             return false;
         }
