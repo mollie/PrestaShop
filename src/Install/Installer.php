@@ -143,7 +143,16 @@ class Installer implements InstallerInterface
         $this->copyEmailTemplates();
         PrestaShopLogger::addLog('Mollie email templates copied', 1, null, 'Mollie', 1);
 
-        return $this->databaseTableInstaller->install();
+        try {
+            $this->databaseTableInstaller->install();
+        } catch (Exception $e) {
+            $errorHandler->handle($e, $e->getCode(), false);
+            $this->errors[] = $this->module->l('Unable to install database tables', self::FILE_NAME);
+
+            return false;
+        }
+
+        return true;
     }
 
     public function installSpecificTabs(): void
