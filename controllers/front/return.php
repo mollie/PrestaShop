@@ -115,13 +115,13 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $this->setWarning($data['msg_details']);
 
                 Tools::redirect($this->context->link->getPageLink(
-                    'cart',
-                    true,
-                    [
-                        'action' => 'show',
-                        'checkout' => true,
-                    ]
-                )
+                        'cart',
+                        true,
+                        [
+                            'action' => 'show',
+                            'checkout' => true,
+                        ]
+                    )
                 );
             } elseif (isset($data['mollie_info']['method'])
                 && PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
