@@ -3,6 +3,9 @@
 # Changelog #
 
 ## Changes in release 6.2.7 ##
++ Minor improvements
+
+## Changes in release 6.2.7 ##
 + Switched API keys places to match Mollie Dashboard
 + Added MBway payment method
 + Added Multibanco payment method
