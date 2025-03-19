@@ -3,6 +3,7 @@
 # Changelog #
 
 ## Changes in release 6.2.7 ##
++ Optimized checkout process
 + Failed payment now redirects to checkout
 
 ## Changes in release 6.2.7 ##
