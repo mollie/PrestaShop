@@ -4,6 +4,7 @@
 
 ## Changes in release 6.2.7 ##
 + Minor improvements
++ Failed payment now redirects to checkout
 
 ## Changes in release 6.2.7 ##
 + Switched API keys places to match Mollie Dashboard
