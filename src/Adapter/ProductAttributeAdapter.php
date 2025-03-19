@@ -29,12 +29,12 @@ class ProductAttributeAdapter
      */
     public function getProductAttribute(?int $id = null, ?int $idLang = null, ?int $idShop = null)
     {
-        if (class_exists('AttributeCore')) {
-            return new \AttributeCore($id, $idLang, $idShop);
-        }
-
         if (class_exists('ProductAttributeCore')) {
             return new \ProductAttributeCore($id, $idLang, $idShop);
+        }
+
+        if (class_exists('AttributeCore')) {
+            return new \AttributeCore($id, $idLang, $idShop);
         }
 
         throw new MollieException('Attribute class was not found');
