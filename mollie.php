@@ -373,7 +373,9 @@ class Mollie extends PaymentModule
 
         $controller = $this->context->controller;
 
-        if ($controller instanceof CartControllerCore) {
+        if ($controller instanceof CartControllerCore
+            || $controller instanceof OrderControllerCore
+        ) {
             $errorDisplayService->showCookieError('mollie_payment_canceled_error');
         }
 
