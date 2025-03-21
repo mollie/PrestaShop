@@ -237,8 +237,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $orderId = (int) Order::getIdByCartId((int) Tools::getValue('cart_id'));
         $dbPayment = $data['mollie_info'] = $orderId != 0 ? $paymentMethodRepo->getPaymentBy('order_id', (int) $orderId) : [];
 
-        $transactionId = Tools::getValue('transaction_id') ?: $data['mollie_info']['transaction_id'];
-
         if (!$dbPayment) {
             exit(json_encode([
                 'success' => false,
@@ -249,6 +247,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 'success' => false,
             ]));
         }
+
+        $transactionId = Tools::getValue('transaction_id') ?: $data['mollie_info']['transaction_id'];
 
         /* @phpstan-ignore-next-line */
         $orderId = (int) Order::getIdByCartId((int) $cart->id);
