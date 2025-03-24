@@ -15,8 +15,6 @@ namespace Mollie\Tests\Unit\Provider;
 use Address;
 use Mollie\Adapter\Context;
 use Mollie\Config\Config;
-use Mollie\Exception\Code\ExceptionCode;
-use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Provider\PaymentFeeProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\AddressRepositoryInterface;
