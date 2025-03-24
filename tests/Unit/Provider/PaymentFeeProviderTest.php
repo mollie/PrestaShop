@@ -216,9 +216,11 @@ class PaymentFeeProviderTest extends TestCase
             $this->taxCalculatorProvider
         );
 
-        $this->expectException(FailedToProvidePaymentFeeException::class);
-        $this->expectExceptionCode(ExceptionCode::FAILED_TO_FIND_CUSTOMER_ADDRESS);
+        $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
 
-        $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
+        $this->assertEquals(0.0, $result->getPaymentFeeTaxIncl());
+        $this->assertEquals(0.0, $result->getPaymentFeeTaxExcl());
+        $this->assertEquals(0.0, $result->getTaxRate());
+        $this->assertEquals(false, $result->isActive());
     }
 }
