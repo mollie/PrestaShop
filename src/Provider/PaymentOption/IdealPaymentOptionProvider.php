@@ -131,13 +131,7 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
 
         $paymentOption->setLogo($this->creditCardLogoProvider->getMethodOptionLogo($paymentMethod));
 
-        try {
-            $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, $this->orderTotalProvider->getOrderTotal());
-        } catch (Mollie\Exception\FailedToProvidePaymentFeeException $e) {
-            $this->logger->debug($e->getMessage(), [
-                'info' => 'This error may be caused by the fact that the customer is a guest and has not yet entered their address.'
-            ]);
-        }
+        $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, $this->orderTotalProvider->getOrderTotal());
 
         if ($paymentFeeData->isActive()) {
             $paymentOption->setInputs(
