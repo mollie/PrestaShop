@@ -1545,6 +1545,8 @@ class Mollie extends PaymentModule
             ');
         }
 
+        $dataToInsert = [];
+
         foreach ($currencies as $currency) {
             $dataToInsert[] = [
                 'id_module' => (int) $this->id,
