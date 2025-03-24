@@ -1539,6 +1539,8 @@ class Mollie extends PaymentModule
     {
         $shops = empty($shops) ? Shop::getShops(true, null, true) : $shops;
 
+        $currencies = [];
+
         foreach ($shops as $s) {
             $currencies = Db::getInstance()->executeS('
                 SELECT `id_currency` FROM `' . _DB_PREFIX_ . 'currency` WHERE `deleted` = 0
