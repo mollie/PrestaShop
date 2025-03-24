@@ -1537,9 +1537,7 @@ class Mollie extends PaymentModule
      */
     public function addCheckboxCurrencyRestrictionsForModule(array $shops = [])
     {
-        if (!$shops) {
-            $shops = Shop::getShops(true, null, true);
-        }
+        $shops = empty($shops) ? Shop::getShops(true, null, true) : $shops;
 
         foreach ($shops as $s) {
             $currencies = Db::getInstance()->executeS('
