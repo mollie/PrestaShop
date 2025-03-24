@@ -83,6 +83,10 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
             'deleted' => 0,
         ]);
 
+        if (!$address || !$address->id) {
+            return new PaymentFeeData(0.00, 0.00, 0.00, false);
+        }
+
         $taxCalculator = $this->taxProvider->getTaxCalculator(
             (int) $paymentMethod->tax_rules_group_id,
             (int) $address->id_country,
