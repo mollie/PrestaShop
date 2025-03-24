@@ -40,7 +40,6 @@ use Mollie;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Factory\ModuleFactory;
-use Mollie\Logger\LoggerInterface;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
@@ -80,9 +79,6 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
 
-    /** @var LoggerInterface */
-    private $logger;
-
     public function __construct(
         ModuleFactory $module,
         LegacyContext $context,
@@ -90,8 +86,7 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         PaymentFeeProviderInterface $paymentFeeProvider,
         TemplateParserInterface $templateParser,
         LanguageService $languageService,
-        OrderTotalProviderInterface $orderTotalProvider,
-        LoggerInterface $logger
+        OrderTotalProviderInterface $orderTotalProvider
     ) {
         $this->module = $module->getModule();
         $this->context = $context;
@@ -100,7 +95,6 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         $this->templateParser = $templateParser;
         $this->languageService = $languageService;
         $this->orderTotalProvider = $orderTotalProvider;
-        $this->logger = $logger;
     }
 
     /**
