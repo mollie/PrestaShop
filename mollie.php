@@ -1549,12 +1549,14 @@ class Mollie extends PaymentModule
 
         $dataToInsert = [];
 
-        foreach ($currencies as $currency) {
-            $dataToInsert[] = [
-                'id_module' => (int) $this->id,
-                'id_shop' => (int) $s,
-                'id_currency' => (int) $currency['id_currency'],
-            ];
+        foreach ($shops as $s) {
+            foreach ($currencies as $currency) {
+                $dataToInsert[] = [
+                    'id_module' => (int)$this->id,
+                    'id_shop' => (int)$s,
+                    'id_currency' => (int)$currency['id_currency'],
+                ];
+            }
         }
 
         return Db::getInstance()->insert(
