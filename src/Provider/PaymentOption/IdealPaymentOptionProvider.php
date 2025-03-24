@@ -40,6 +40,7 @@ use Mollie;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Factory\ModuleFactory;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
@@ -79,6 +80,9 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
 
+    /** @var LoggerInterface */
+    private $logger;
+
     public function __construct(
         ModuleFactory $module,
         LegacyContext $context,
@@ -86,7 +90,8 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         PaymentFeeProviderInterface $paymentFeeProvider,
         TemplateParserInterface $templateParser,
         LanguageService $languageService,
-        OrderTotalProviderInterface $orderTotalProvider
+        OrderTotalProviderInterface $orderTotalProvider,
+        LoggerInterface $logger
     ) {
         $this->module = $module->getModule();
         $this->context = $context;
@@ -95,6 +100,7 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         $this->templateParser = $templateParser;
         $this->languageService = $languageService;
         $this->orderTotalProvider = $orderTotalProvider;
+        $this->logger = $logger;
     }
 
     /**
@@ -131,7 +137,13 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
 
         $paymentOption->setLogo($this->creditCardLogoProvider->getMethodOptionLogo($paymentMethod));
 
-        $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, $this->orderTotalProvider->getOrderTotal());
+        try {
+            $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, $this->orderTotalProvider->getOrderTotal());
+        } catch (Mollie\Exception\FailedToProvidePaymentFeeException $e) {
+            $this->logger->debug($e->getMessage(), [
+                'info' => 'This error may be caused by the fact that the customer is a guest and has not yet entered their address.'
+            ]);
+        }
 
         if ($paymentFeeData->isActive()) {
             $paymentOption->setInputs(
