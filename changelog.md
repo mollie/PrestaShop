@@ -2,6 +2,10 @@
 
 # Changelog #
 
+## Changes in release 8.2.7 ##
++ Fixed issue with failing to find customer address
++ The Trustly payment method in the Mollie admin settings is now clearer
+
 ## Changes in release 6.2.7 ##
 + Minor improvements
 + Failed payment now redirects to checkout

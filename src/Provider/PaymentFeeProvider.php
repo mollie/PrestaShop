@@ -41,8 +41,6 @@ use Mollie\Adapter\Context;
 use Mollie\Calculator\PaymentFeeCalculator;
 use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
-use Mollie\Exception\Code\ExceptionCode;
-use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Repository\AddressRepositoryInterface;
 use MolPaymentMethod;
 
@@ -86,7 +84,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
         ]);
 
         if (!$address || !$address->id) {
-            throw new FailedToProvidePaymentFeeException('Failed to find customer address', ExceptionCode::FAILED_TO_FIND_CUSTOMER_ADDRESS);
+            return new PaymentFeeData(0.00, 0.00, 0.00, false);
         }
 
         $taxCalculator = $this->taxProvider->getTaxCalculator(
