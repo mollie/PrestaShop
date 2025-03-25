@@ -656,7 +656,7 @@ class Mollie extends PaymentModule
         $logger = $this->getService(LoggerInterface::class);
 
         if (!Validate::isLoadedObject($orderStatus)) {
-            $logger->error(sprintf('%s - Order status not found', self::FILE_NAME), [
+            $logger->debug(sprintf('%s - Order status not found', self::FILE_NAME), [
                 'order_status' => $params['newOrderStatus'],
                 'id_order' => $params['id_order'],
             ]);
@@ -665,7 +665,7 @@ class Mollie extends PaymentModule
         }
 
         if (!Validate::isLoadedObject($order)) {
-            $logger->error(sprintf('%s - Order not found', self::FILE_NAME), [
+            $logger->debug(sprintf('%s - Order not found', self::FILE_NAME), [
                 'id_order' => $params['id_order'],
             ]);
 
@@ -673,7 +673,7 @@ class Mollie extends PaymentModule
         }
 
         if ($order->module !== $this->name) {
-            $logger->error(sprintf('%s - Module name does not match', self::FILE_NAME), [
+            $logger->debug(sprintf('%s - Module name does not match', self::FILE_NAME), [
                 'module' => $order->module,
                 'expected_module' => $this->name,
             ]);
@@ -682,7 +682,7 @@ class Mollie extends PaymentModule
         }
 
         if (!$this->getApiClient()) {
-            $logger->error(sprintf('%s - API client not found', self::FILE_NAME));
+            $logger->debug(sprintf('%s - API client not found', self::FILE_NAME));
 
             return;
         }
@@ -743,7 +743,7 @@ class Mollie extends PaymentModule
         $logger = $this->getService(LoggerInterface::class);
 
         if (!Validate::isLoadedObject($order)) {
-            $logger->error(sprintf('%s - Order not found', self::FILE_NAME), [
+            $logger->debug(sprintf('%s - Order not found', self::FILE_NAME), [
                 'id_order' => $orderId,
             ]);
 
@@ -751,7 +751,7 @@ class Mollie extends PaymentModule
         }
 
         if ($order->module !== $this->name) {
-            $logger->error(sprintf('%s - Module name does not match', self::FILE_NAME), [
+            $logger->debug(sprintf('%s - Module name does not match', self::FILE_NAME), [
                 'module' => $order->module,
                 'expected_module' => $this->name,
             ]);
