@@ -691,7 +691,7 @@ class Mollie extends PaymentModule
         $isPaymentInformationAvailable = $this->getService(IsPaymentInformationAvailable::class);
 
         if (!$isPaymentInformationAvailable->verify((int) $order->id)) {
-            $logger->error(sprintf('%s - Payment information not available', self::FILE_NAME), [
+            $logger->debug(sprintf('%s - Payment information not available', self::FILE_NAME), [
                 'id_order' => $order->id,
             ]);
 
