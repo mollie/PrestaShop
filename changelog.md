@@ -2,6 +2,10 @@
 
 # Changelog #
 
+## Changes in release 8.2.7 ##
++ Fixed issue with failing to find customer address
++ Trustly payment method in BO is now clearer
+
 ## Changes in release 6.2.7 ##
 + Minor improvements
 + Failed payment now redirects to checkout
