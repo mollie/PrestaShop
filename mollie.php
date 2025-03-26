@@ -1085,7 +1085,7 @@ class Mollie extends PaymentModule
 
     public function hookDisplayProductAdditionalInfo()
     {
-        if (!VersionUtility::isPsVersionGreaterOrEqualTo('1.7.6.0')) {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.6.0')) {
             return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
         }
 
