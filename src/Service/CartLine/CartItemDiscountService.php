@@ -42,6 +42,7 @@ class CartItemDiscountService
                     'category' => '',
                 ],
             ];
+
             $remaining = NumberUtility::plus($remaining, $totalDiscounts);
         }
 
