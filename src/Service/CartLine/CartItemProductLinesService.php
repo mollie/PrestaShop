@@ -39,23 +39,25 @@ class CartItemProductLinesService
                 $quantity = (int) $line['quantity'];
                 $targetVat = $line['targetVat'];
                 $unitPrice = $line['unitPrice'];
-                $unitPriceNoTax = round(CalculationUtility::getUnitPriceNoTax(
-                    $line['unitPrice'],
-                    $targetVat
-                ),
+
+                $unitPriceNoTax = round(
+                    CalculationUtility::getUnitPriceNoTax($line['unitPrice'], $targetVat),
                     $roundingPrecision
                 );
 
                 // Calculate VAT
                 $totalAmount = $line['totalAmount'];
                 $actualVatRate = 0;
+
                 if ($unitPriceNoTax > 0) {
                     $actualVatRate = round(
-                        $vatAmount = CalculationUtility::getActualVatRate($unitPrice, $unitPriceNoTax, $quantity),
+                        CalculationUtility::getActualVatRate($unitPrice, $unitPriceNoTax, $quantity),
                         $vatRatePrecision
                     );
                 }
+
                 $vatRateWithPercentages = NumberUtility::plus($actualVatRate, 100);
+
                 $vatAmount = NumberUtility::times(
                     $totalAmount,
                     NumberUtility::divide($actualVatRate, $vatRateWithPercentages)
@@ -72,6 +74,7 @@ class CartItemProductLinesService
                     'product_url' => $line['product_url'] ?? null,
                     'image_url' => $line['image_url'] ?? null,
                 ];
+
                 if (isset($line['sku'])) {
                     $newItem['sku'] = $line['sku'];
                 }
