@@ -101,7 +101,7 @@ class AbstractMollieController extends \ModuleFrontControllerCore
             $this->lock->create($resource);
 
             if (!$this->lock->acquire()) {
-                $logger->error(sprintf('%s - Lock resource conflict', self::FILE_NAME));
+                $logger->debug(sprintf('%s - Lock resource conflict', self::FILE_NAME));
 
                 return Response::respond(
                     $this->module->l('Resource conflict', self::FILE_NAME),

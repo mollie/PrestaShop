@@ -15,8 +15,6 @@ namespace Mollie\Tests\Unit\Provider;
 use Address;
 use Mollie\Adapter\Context;
 use Mollie\Config\Config;
-use Mollie\Exception\Code\ExceptionCode;
-use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Provider\PaymentFeeProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\AddressRepositoryInterface;
@@ -216,9 +214,11 @@ class PaymentFeeProviderTest extends TestCase
             $this->taxCalculatorProvider
         );
 
-        $this->expectException(FailedToProvidePaymentFeeException::class);
-        $this->expectExceptionCode(ExceptionCode::FAILED_TO_FIND_CUSTOMER_ADDRESS);
+        $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
 
-        $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
+        $this->assertEquals(0.0, $result->getPaymentFeeTaxIncl());
+        $this->assertEquals(0.0, $result->getPaymentFeeTaxExcl());
+        $this->assertEquals(0.0, $result->getTaxRate());
+        $this->assertEquals(false, $result->isActive());
     }
 }
