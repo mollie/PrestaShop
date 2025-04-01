@@ -42,10 +42,7 @@ class CartItemWrappingService
     {
         if (round($wrappingPrice, 2) > 0) {
             $wrappingVatRate = round(
-                CalculationUtility::getActualVatRate(
-                    $cartSummary['total_wrapping'],
-                    $cartSummary['total_wrapping_tax_exc']
-                ),
+                CalculationUtility::getActualVatRate($cartSummary['total_wrapping'], $cartSummary['total_wrapping_tax_exc']),
                 $vatRatePrecision
             );
 
