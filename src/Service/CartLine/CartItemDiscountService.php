@@ -7,7 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- *
+
  */
 
 namespace Mollie\Service\CartLine;
