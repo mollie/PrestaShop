@@ -104,7 +104,10 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
             if (false === $data['mollie_info']) {
                 $orderId = (int) Order::getIdByCartId($idCart);
-                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_id', $orderId) ?: [];
+
+                if (0 !== $orderId) {
+                    $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_id', $orderId) ?: [];
+                }
             }
             if (false === $data['mollie_info']) {
                 $data['mollie_info'] = [];
