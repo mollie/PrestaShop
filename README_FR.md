@@ -1,5 +1,12 @@
 [Nederlands](README_NL.md) [Deutsch](README_DE.md) [English](README.md) [Español](README_ES.md)
 
+| PrestaShop version | Mollie modul                                                       |
+|------------------|----------------------------------------------------------------------|
+| 1.7.6 - 9.0.0    | [Mollie 6](https://github.com/mollie/PrestaShop/releases)            |
+| 1.7.0 - 1.7.5    | [Mollie 5](https://github.com/mollie/PrestaShop1.7.0-1.7.8/releases) |
+| 1.6.1 - 1.6.1.24 | [Mollie 4](https://github.com/mollie/PrestaShop1.6/releases)         |
+| 1.5              | [Mollie 3](https://addons.prestashop.com)                            |
+
 ![Mollie](https://www.mollie.com/files/Mollie-Logo-Style-Small.png)
 
 # PrestaShop prestataire de paiement [Mollie](https://www.mollie.com/). #
