@@ -115,10 +115,13 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         try {
             $this->executeWebhook($transactionId);
         } catch (ApiException $exception) {
+            $logger->debug(sprintf('%s - Error: %s', self::FILE_NAME, $exception->getMessage()));
             $this->handleException($exception, HttpStatusCode::HTTP_BAD_REQUEST, 'Api request failed');
         } catch (TransactionException $exception) {
+            $logger->debug(sprintf('%s - Error: %s', self::FILE_NAME, $exception->getMessage()));
             $this->handleException($exception, $exception->getCode(), 'Failed to handle transaction');
         } catch (\Throwable $exception) {
+            $logger->debug(sprintf('%s - Error: %s', self::FILE_NAME, $exception->getMessage()));
             $this->handleException($exception, HttpStatusCode::HTTP_BAD_REQUEST, 'Failed to handle webhook');
         }
 
