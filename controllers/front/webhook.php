@@ -141,36 +141,41 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
      */
     protected function executeWebhook(string $transactionId): void
     {
-        /** @var TransactionService $transactionService */
-        $transactionService = $this->module->getService(TransactionService::class);
 
-        /** @var Logger $logger * */
-        $logger = $this->module->getService(LoggerInterface::class);
+        try {
+            /** @var TransactionService $transactionService */
+            $transactionService = $this->module->getService(TransactionService::class);
+            /** @var Logger $logger * */
+            $logger = $this->module->getService(LoggerInterface::class);
+            if (TransactionUtility::isOrderTransaction($transactionId)) {
+                $transaction = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
+            } else {
+                $transaction = $this->module->getApiClient()->payments->get($transactionId);
 
-        if (TransactionUtility::isOrderTransaction($transactionId)) {
-            $transaction = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
-        } else {
-            $transaction = $this->module->getApiClient()->payments->get($transactionId);
-
-            if ($transaction->orderId) {
-                $transaction = $this->module->getApiClient()->orders->get($transaction->orderId, ['embed' => 'payments']);
+                if ($transaction->orderId) {
+                    $transaction = $this->module->getApiClient()->orders->get($transaction->orderId, ['embed' => 'payments']);
+                }
             }
+            $cartId = $transaction->metadata->cart_id ?? 0;
+            if (!$cartId) {
+                // TODO webhook structure will change, no need to create custom exception for one time usage
+                $logger->error(sprintf('%s - Missing Cart ID', self::FILE_NAME), [
+                    'transaction_id' => $transactionId,
+                ]);
+
+                throw new \Exception(sprintf('Missing Cart ID. Transaction ID: [%s]', $transactionId), HttpStatusCode::HTTP_NOT_FOUND);
+            }
+            $this->setContext($cartId);
+            $transactionService->processTransaction($transaction);
+        } catch (ApiException $e) {
+            $logger->debug(sprintf('%s - Error: %s', self::FILE_NAME, $e->getMessage()));
+        } catch (TransactionException $e) {
+            $logger->debug(sprintf('%s - Error: %s', self::FILE_NAME, $e->getMessage()));
+        } catch (PrestaShopDatabaseException $e) {
+            $logger->debug(sprintf('%s - Error: %s', self::FILE_NAME, $e->getMessage()));
+        } catch (PrestaShopException $e) {
+            $logger->debug(sprintf('%s - Error: %s', self::FILE_NAME, $e->getMessage()));
         }
-
-        $cartId = $transaction->metadata->cart_id ?? 0;
-
-        if (!$cartId) {
-            // TODO webhook structure will change, no need to create custom exception for one time usage
-            $logger->error(sprintf('%s - Missing Cart ID', self::FILE_NAME), [
-                'transaction_id' => $transactionId,
-            ]);
-
-            throw new \Exception(sprintf('Missing Cart ID. Transaction ID: [%s]', $transactionId), HttpStatusCode::HTTP_NOT_FOUND);
-        }
-
-        $this->setContext($cartId);
-
-        $transactionService->processTransaction($transaction);
     }
 
     private function setContext(int $cartId): void
