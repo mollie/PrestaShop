@@ -91,11 +91,15 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             ));
         }
 
+        $logger->debug(sprintf('%s - Transaction ID exists: %s', self::FILE_NAME, $transactionId));
+
         $lockResult = $this->applyLock(sprintf(
             '%s-%s',
             self::FILE_NAME,
             $tools->getValue('security_token')
         ));
+
+        $logger->debug(sprintf('%s - lock result: %s', self::FILE_NAME, $lockResult));
 
         if (!$lockResult->isSuccessful()) {
             $logger->error(sprintf('%s - Resource conflict', self::FILE_NAME));
