@@ -110,6 +110,8 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             ));
         }
 
+        $logger->debug(sprintf('%s - Start executeWebhook', self::FILE_NAME));
+
         try {
             $this->executeWebhook($transactionId);
         } catch (ApiException $exception) {
