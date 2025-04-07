@@ -67,6 +67,8 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             ));
         }
 
+        $logger->debug(sprintf('%s - getApiClient success', self::FILE_NAME));
+
         if (!$tools->getValue('security_token')) {
             $logger->debug(sprintf('%s - Missing security token', self::FILE_NAME));
 
@@ -77,6 +79,8 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         }
 
         $transactionId = (string) $tools->getValue('id');
+
+        $logger->debug(sprintf('%s - get ID successful: %s', self::FILE_NAME, $transactionId));
 
         if (!$transactionId) {
             $logger->error(sprintf('%s - Missing transaction ID', self::FILE_NAME));
@@ -112,7 +116,11 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             $this->handleException($exception, HttpStatusCode::HTTP_BAD_REQUEST, 'Failed to handle webhook');
         }
 
+        $logger->debug(sprintf('%s - Webhook executed successfully', self::FILE_NAME));
+
         $this->releaseLock();
+
+        $logger->debug(sprintf('%s - Lock released', self::FILE_NAME));
 
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
