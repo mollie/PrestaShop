@@ -37,20 +37,22 @@ class CartItemShippingLineService
      */
     public function addShippingLine(float $roundedShippingCost, array $cartSummary, array $orderLines): array
     {
-        if (round($roundedShippingCost, 2) > 0) {
-            $shippingVatRate = round(($cartSummary['total_shipping'] - $cartSummary['total_shipping_tax_exc']) / $cartSummary['total_shipping_tax_exc'] * 100, Config::API_ROUNDING_PRECISION);
-
-            $orderLines['shipping'] = [
-                [
-                    'name' => $this->languageService->lang('Shipping'),
-                    'quantity' => 1,
-                    'unitPrice' => round($roundedShippingCost, Config::API_ROUNDING_PRECISION),
-                    'totalAmount' => round($roundedShippingCost, Config::API_ROUNDING_PRECISION),
-                    'vatAmount' => round($roundedShippingCost * $shippingVatRate / ($shippingVatRate + 100), Config::API_ROUNDING_PRECISION),
-                    'vatRate' => $shippingVatRate,
-                ],
-            ];
+        if (round($roundedShippingCost, 2) <= 0) {
+            return $orderLines;
         }
+
+        $shippingVatRate = round(($cartSummary['total_shipping'] - $cartSummary['total_shipping_tax_exc']) / $cartSummary['total_shipping_tax_exc'] * 100, Config::API_ROUNDING_PRECISION);
+
+        $orderLines['shipping'] = [
+            [
+                'name' => $this->languageService->lang('Shipping'),
+                'quantity' => 1,
+                'unitPrice' => round($roundedShippingCost, Config::API_ROUNDING_PRECISION),
+                'totalAmount' => round($roundedShippingCost, Config::API_ROUNDING_PRECISION),
+                'vatAmount' => round($roundedShippingCost * $shippingVatRate / ($shippingVatRate + 100), Config::API_ROUNDING_PRECISION),
+                'vatRate' => $shippingVatRate,
+            ],
+        ];
 
         return $orderLines;
     }
