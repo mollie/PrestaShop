@@ -83,4 +83,22 @@ class CouldNotProcessCartLinesException extends \Exception
             $e
         );
     }
+
+    public static function failedToCreateProductLines(Exception $e)
+    {
+        return new self(
+            'Failed to create product lines.',
+            ExceptionCode::SERVICE_FAILED_TO_CREATE_PRODUCT_LINES,
+            $e
+        );
+    }
+
+    public static function failedToAddDiscountsToProductLines(Exception $e)
+    {
+        return new self(
+            'Failed to add discounts to product lines.',
+            ExceptionCode::SERVICE_FAILED_TO_ADD_DISCOUNTS_TO_PRODUCT_LINES,
+            $e
+        );
+    }
 }

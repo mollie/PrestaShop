@@ -122,10 +122,19 @@ class CartLinesService
         );
 
         $orderLines = [];
-        list($orderLines, $remainingAmount) = $this->cartItemsService->createProductLines($cartItems, $cartSummary['gift_products'], $orderLines, $selectedVoucherCategory, $remainingAmount);
+        try {
+            list($orderLines, $remainingAmount) = $this->cartItemsService->createProductLines($cartItems, $cartSummary['gift_products'], $orderLines, $selectedVoucherCategory, $remainingAmount);
+        } catch (\Exception $e) {
+            throw CouldNotProcessCartLinesException::failedToCreateProductLines($e);
+        }
 
         $totalDiscounts = $cartSummary['total_discounts'] ?? 0;
-        list($orderLines, $remainingAmount) = $this->cartItemDiscountService->addDiscountsToProductLines($totalDiscounts, $orderLines, $remainingAmount);
+
+        try {
+            list($orderLines, $remainingAmount) = $this->cartItemDiscountService->addDiscountsToProductLines($totalDiscounts, $orderLines, $remainingAmount);
+        } catch (\Exception $e) {
+            throw CouldNotProcessCartLinesException::failedToAddDiscountsToProductLines($e);
+        }
 
         try {
             $orderLines = $this->roundingUtility->compositeRoundingInaccuracies($remainingAmount, $orderLines);

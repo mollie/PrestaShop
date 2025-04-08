@@ -446,18 +446,26 @@ class PaymentMethodService
             $selectedVoucherCategory = Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY);
 
             try {
-                $orderData->setLines(
-                    $this->cartLinesService->getCartLines(
-                        $amount,
-                        $paymentFeeData,
-                        $currency->iso_code,
-                        $cart->getSummaryDetails(),
-                        $cart->getTotalShippingCost(null, true),
-                        $cart->getProducts(),
-                        (bool) Configuration::get('PS_GIFT_WRAPPING'),
-                        $selectedVoucherCategory
-                    )
+                $cartLines = $this->cartLinesService->getCartLines(
+                    $amount,
+                    $paymentFeeData,
+                    $currency->iso_code,
+                    $cart->getSummaryDetails(),
+                    $cart->getTotalShippingCost(null, true),
+                    $cart->getProducts(),
+                    (bool)Configuration::get('PS_GIFT_WRAPPING'),
+                    $selectedVoucherCategory
                 );
+            } catch (\Exception $e) {
+                $this->logger->error(sprintf('%s - Unable to get cart lines', self::FILE_NAME), [
+                    'exceptions' => ExceptionUtility::getExceptions($e),
+                ]);
+
+                return $orderData;
+            }
+
+            try {
+                $orderData->setLines($cartLines);
             } catch (\Exception $e) {
                 $this->logger->error(sprintf('%s - Unable to set order lines', self::FILE_NAME), [
                     'exceptions' => ExceptionUtility::getExceptions($e),
