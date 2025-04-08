@@ -323,14 +323,23 @@ class TransactionService
                 $orderId = Order::getIdByCartId((int) $apiPayment->metadata->cart_id);
         }
 
+        $this->logger->debug(sprintf('%s - processTransaction 11', self::FILE_NAME));
+
         if (!$orderId) {
             return 'Order with given transaction was not found';
         }
         $order = new Order($orderId);
 
+        $this->logger->debug(sprintf('%s - processTransaction 12', self::FILE_NAME));
+
         $this->mollieOrderCreationService->updateMolliePaymentReference($apiPayment->id, $order->reference);
 
+        $this->logger->debug(sprintf('%s - processTransaction 13', self::FILE_NAME));
+
         $this->updateTransaction($orderId, $apiPayment);
+
+        $this->logger->debug(sprintf('%s - processTransaction 14', self::FILE_NAME));
+
         // Store status in database
         $this->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId);
 
