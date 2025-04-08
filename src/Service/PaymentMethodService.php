@@ -453,7 +453,7 @@ class PaymentMethodService
                     $cart->getSummaryDetails(),
                     $cart->getTotalShippingCost(null, true),
                     $cart->getProducts(),
-                    (bool)Configuration::get('PS_GIFT_WRAPPING'),
+                    (bool) Configuration::get('PS_GIFT_WRAPPING'),
                     $selectedVoucherCategory
                 );
             } catch (\Exception $e) {
