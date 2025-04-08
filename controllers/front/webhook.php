@@ -176,13 +176,9 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
 
             $this->setContext($cartId);
 
-            if ($this->context->cart->orderExists()) {
-                $logger->error(sprintf('%s - Order already exists', self::FILE_NAME), [
-                    'cart_id' => $cartId,
-                ]);
-
-                throw new \Exception(sprintf('Order already exists. Cart ID: [%s]', $cartId), HttpStatusCode::HTTP_CONFLICT);
-            }
+            $logger->debug(sprintf('%s - Does cart exists: %s', self::FILE_NAME, $this->context->cart->orderExists()), [
+                'cart_id' => $cartId,
+            ]);
 
             $logger->debug(sprintf('%s - executeWebhook 3', self::FILE_NAME));
 
