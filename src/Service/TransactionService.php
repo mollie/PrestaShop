@@ -138,10 +138,6 @@ class TransactionService
             throw new TransactionException('Transaction failed', HttpStatusCode::HTTP_BAD_REQUEST);
         }
 
-        $logger->debug(sprintf('%s - Does cart exists: %s', self::FILE_NAME, (string) $this->context->cart->orderExists()), [
-            'cart_id' => $cartId,
-        ]);
-
         $this->logger->debug(sprintf('%s - processTransaction 1', self::FILE_NAME));
 
         $orderDescription = $apiPayment->description ?? $apiPayment->orderNumber;
@@ -158,10 +154,6 @@ class TransactionService
         if (!$paymentMethod) {
             $this->mollieOrderCreationService->createMolliePayment($apiPayment, (int) $apiPayment->metadata->cart_id, $orderDescription);
         }
-
-        $logger->debug(sprintf('%s - Does cart exists: %s', self::FILE_NAME, (string) $this->context->cart->orderExists()), [
-            'cart_id' => $cartId,
-        ]);
 
         $this->logger->debug(sprintf('%s - processTransaction 4', self::FILE_NAME));
 
