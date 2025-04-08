@@ -176,7 +176,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
 
             $this->setContext($cartId);
 
-            $logger->debug(sprintf('%s - Does cart exists: %s', self::FILE_NAME, $this->context->cart->orderExists()), [
+            $logger->debug(sprintf('%s - Does cart exists: %s', self::FILE_NAME, (string) $this->context->cart->orderExists()), [
                 'cart_id' => $cartId,
             ]);
 
