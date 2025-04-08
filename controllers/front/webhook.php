@@ -157,6 +157,12 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
                 }
             }
             $cartId = $transaction->metadata->cart_id ?? 0;
+
+            $logger->debug(sprintf('%s - executeWebhook 1', self::FILE_NAME), [
+                'transaction_id' => $transactionId,
+                'cart_id' => $cartId,
+            ]);
+
             if (!$cartId) {
                 // TODO webhook structure will change, no need to create custom exception for one time usage
                 $logger->error(sprintf('%s - Missing Cart ID', self::FILE_NAME), [
@@ -165,8 +171,16 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
 
                 throw new \Exception(sprintf('Missing Cart ID. Transaction ID: [%s]', $transactionId), HttpStatusCode::HTTP_NOT_FOUND);
             }
+
+            $logger->debug(sprintf('%s - executeWebhook 2', self::FILE_NAME));
+
             $this->setContext($cartId);
+
+            $logger->debug(sprintf('%s - executeWebhook 3', self::FILE_NAME));
+
             $transactionService->processTransaction($transaction);
+
+            $logger->debug(sprintf('%s - executeWebhook 4', self::FILE_NAME));
         } catch (ApiException $e) {
             $logger->debug(sprintf('%s - Error: %s', self::FILE_NAME, $e->getMessage()));
         } catch (TransactionException $e) {
