@@ -138,24 +138,41 @@ class TransactionService
             throw new TransactionException('Transaction failed', HttpStatusCode::HTTP_BAD_REQUEST);
         }
 
+        $this->logger->debug(sprintf('%s - processTransaction 1', self::FILE_NAME));
+
         $orderDescription = $apiPayment->description ?? $apiPayment->orderNumber;
 
+        $this->logger->debug(sprintf('%s - processTransaction 2', self::FILE_NAME));
+
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
+
+        $this->logger->debug(sprintf('%s - processTransaction 3', self::FILE_NAME), [
+            'transaction_id' => $apiPayment->id,
+            'payment_method' => $paymentMethod,
+        ]);
 
         if (!$paymentMethod) {
             $this->mollieOrderCreationService->createMolliePayment($apiPayment, (int) $apiPayment->metadata->cart_id, $orderDescription);
         }
 
+        $this->logger->debug(sprintf('%s - processTransaction 4', self::FILE_NAME));
+
         /** @var int $orderId */
         $orderId = Order::getIdByCartId((int) $apiPayment->metadata->cart_id);
 
+        $this->logger->debug(sprintf('%s - processTransaction 5', self::FILE_NAME));
+
         $cart = new Cart($apiPayment->metadata->cart_id);
+
+        $this->logger->debug(sprintf('%s - processTransaction 6', self::FILE_NAME));
 
         $key = SecureKeyUtility::generateReturnKey(
             $cart->id_customer,
             $cart->id,
             $this->module->name
         );
+
+        $this->logger->debug(sprintf('%s - processTransaction 7', self::FILE_NAME));
 
         // remove after few releases
         $deprecatedKey = SecureKeyUtility::deprecatedGenerateReturnKey(
@@ -165,12 +182,18 @@ class TransactionService
             $this->module->name
         );
 
+        $this->logger->debug(sprintf('%s - processTransaction 8', self::FILE_NAME));
+
         $isGeneratedOrderNumber = strpos($orderDescription, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0;
         $isPaymentFinished = MollieStatusUtility::isPaymentFinished($apiPayment->status);
+
+        $this->logger->debug(sprintf('%s - processTransaction 9', self::FILE_NAME));
 
         if (!$isPaymentFinished && $isGeneratedOrderNumber) {
             return $apiPayment;
         }
+
+        $this->logger->debug(sprintf('%s - processTransaction 10', self::FILE_NAME));
 
         switch ($apiPayment->resource) {
             case Config::MOLLIE_API_STATUS_PAYMENT:
