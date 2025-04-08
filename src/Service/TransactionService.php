@@ -164,8 +164,8 @@ class TransactionService
 
         $cart = new Cart($apiPayment->metadata->cart_id);
 
-        $logger->debug(sprintf('%s - Does cart X exists: %s', self::FILE_NAME, (string) $cart->orderExists()), [
-            'cart_id' => $cartId,
+        $this->logger->debug(sprintf('%s - Does cart X exists: %s', self::FILE_NAME, (string) $cart->orderExists()), [
+            'cart_id' => $cart->id,
         ]);
 
         $this->logger->debug(sprintf('%s - processTransaction 6', self::FILE_NAME));
@@ -177,6 +177,10 @@ class TransactionService
         );
 
         $this->logger->debug(sprintf('%s - processTransaction 7', self::FILE_NAME));
+
+        $this->logger->debug(sprintf('%s - Does cart X exists: %s', self::FILE_NAME, (string) $cart->orderExists()), [
+            'cart_id' => $cart->id,
+        ]);
 
         // remove after few releases
         $deprecatedKey = SecureKeyUtility::deprecatedGenerateReturnKey(
@@ -232,7 +236,9 @@ class TransactionService
                     $this->orderStatusService->setOrderStatus($orderId, Config::MOLLIE_CHARGEBACK);
                 } else {
                     if (!$orderId && $isPaymentFinished) {
+                        $this->logger->debug(sprintf('%s - Goes to create order', self::FILE_NAME));
                         $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id);
+                        $this->logger->debug(sprintf('%s - order created sucessfully', self::FILE_NAME));
 
                         if (!$orderId) {
                             throw new TransactionException('Order is already created', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
