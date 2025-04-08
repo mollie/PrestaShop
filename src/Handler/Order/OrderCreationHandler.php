@@ -149,6 +149,10 @@ class OrderCreationHandler
             return 0;
         }
 
+        $this->logger->debug('isOrderCreated before validateOrder', [
+            'isOrderExists' => $cart->orderExists()
+        ]);
+
         if (!$paymentFeeData->isActive()) {
             $this->module->validateOrder(
                 (int) $cartId,
