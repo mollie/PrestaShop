@@ -114,7 +114,15 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $data['msg_details'] = $this->module->l('Your payment was not successful. Try again.', self::FILE_NAME);
                 $this->setWarning($data['msg_details']);
 
-                Tools::redirect(Context::getContext()->link->getPageLink('cart', true));
+                Tools::redirect($this->context->link->getPageLink(
+                        'cart',
+                        true,
+                        [
+                            'action' => 'show',
+                            'checkout' => true,
+                        ]
+                    )
+                );
             } elseif (isset($data['mollie_info']['method'])
                 && PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
                 && PaymentStatus::STATUS_OPEN === $data['mollie_info']['bank_status']
@@ -218,6 +226,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $this->context->language->id,
                 [
                     'action' => 'show',
+                    'checkout' => true,
                 ]
             ));
         }
@@ -227,8 +236,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         $orderId = (int) Order::getIdByCartId((int) Tools::getValue('cart_id'));
         $dbPayment = $data['mollie_info'] = $orderId != 0 ? $paymentMethodRepo->getPaymentBy('order_id', (int) $orderId) : [];
-
-        $transactionId = Tools::getValue('transaction_id') ?: $data['mollie_info']['transaction_id'];
 
         if (!$dbPayment) {
             exit(json_encode([
@@ -240,6 +247,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 'success' => false,
             ]));
         }
+
+        $transactionId = Tools::getValue('transaction_id') ?: $data['mollie_info']['transaction_id'];
 
         /* @phpstan-ignore-next-line */
         $orderId = (int) Order::getIdByCartId((int) $cart->id);

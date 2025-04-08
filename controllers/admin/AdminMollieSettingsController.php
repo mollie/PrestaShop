@@ -84,7 +84,7 @@ class AdminMollieSettingsController extends ModuleAdminController
 
             // Retrieve Account CDN
             $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->context->controller->errors[] = $e->getMessage();
 
             $logger->error(sprintf('%s - Failed to load ps accounts CDN', self::FILE_NAME), [

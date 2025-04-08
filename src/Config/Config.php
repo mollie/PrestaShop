@@ -74,6 +74,7 @@ class Config
         'paybybank' => ['at', 'be', 'cy', 'ee', 'fi', 'fr', 'de', 'gr', 'ie', 'it', 'lv', 'lt', 'lu', 'mt', 'nl', 'pt', 'sk', 'si', 'es', 'uk'],
         'multibanco' => ['pt'],
         'mbway' => ['pt'],
+        'swish' => ['se'],
     ];
 
     const SUPPORTED_PHP_VERSION = '5.6';

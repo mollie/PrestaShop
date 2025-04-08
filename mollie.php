@@ -96,7 +96,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.2.7';
+        $this->version = '6.2.8';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -373,7 +373,9 @@ class Mollie extends PaymentModule
 
         $controller = $this->context->controller;
 
-        if ($controller instanceof CartControllerCore) {
+        if ($controller instanceof CartControllerCore
+            || $controller instanceof OrderControllerCore
+        ) {
             $errorDisplayService->showCookieError('mollie_payment_canceled_error');
         }
 
@@ -654,7 +656,7 @@ class Mollie extends PaymentModule
         $logger = $this->getService(LoggerInterface::class);
 
         if (!Validate::isLoadedObject($orderStatus)) {
-            $logger->error(sprintf('%s - Order status not found', self::FILE_NAME), [
+            $logger->debug(sprintf('%s - Order status not found', self::FILE_NAME), [
                 'order_status' => $params['newOrderStatus'],
                 'id_order' => $params['id_order'],
             ]);
@@ -663,7 +665,7 @@ class Mollie extends PaymentModule
         }
 
         if (!Validate::isLoadedObject($order)) {
-            $logger->error(sprintf('%s - Order not found', self::FILE_NAME), [
+            $logger->debug(sprintf('%s - Order not found', self::FILE_NAME), [
                 'id_order' => $params['id_order'],
             ]);
 
@@ -671,7 +673,7 @@ class Mollie extends PaymentModule
         }
 
         if ($order->module !== $this->name) {
-            $logger->error(sprintf('%s - Module name does not match', self::FILE_NAME), [
+            $logger->debug(sprintf('%s - Module name does not match', self::FILE_NAME), [
                 'module' => $order->module,
                 'expected_module' => $this->name,
             ]);
@@ -680,7 +682,7 @@ class Mollie extends PaymentModule
         }
 
         if (!$this->getApiClient()) {
-            $logger->error(sprintf('%s - API client not found', self::FILE_NAME));
+            $logger->debug(sprintf('%s - API client not found', self::FILE_NAME));
 
             return;
         }
@@ -689,7 +691,7 @@ class Mollie extends PaymentModule
         $isPaymentInformationAvailable = $this->getService(IsPaymentInformationAvailable::class);
 
         if (!$isPaymentInformationAvailable->verify((int) $order->id)) {
-            $logger->error(sprintf('%s - Payment information not available', self::FILE_NAME), [
+            $logger->debug(sprintf('%s - Payment information not available', self::FILE_NAME), [
                 'id_order' => $order->id,
             ]);
 
@@ -741,7 +743,7 @@ class Mollie extends PaymentModule
         $logger = $this->getService(LoggerInterface::class);
 
         if (!Validate::isLoadedObject($order)) {
-            $logger->error(sprintf('%s - Order not found', self::FILE_NAME), [
+            $logger->debug(sprintf('%s - Order not found', self::FILE_NAME), [
                 'id_order' => $orderId,
             ]);
 
@@ -749,7 +751,7 @@ class Mollie extends PaymentModule
         }
 
         if ($order->module !== $this->name) {
-            $logger->error(sprintf('%s - Module name does not match', self::FILE_NAME), [
+            $logger->debug(sprintf('%s - Module name does not match', self::FILE_NAME), [
                 'module' => $order->module,
                 'expected_module' => $this->name,
             ]);
@@ -1083,7 +1085,7 @@ class Mollie extends PaymentModule
 
     public function hookDisplayProductAdditionalInfo()
     {
-        if (!VersionUtility::isPsVersionGreaterOrEqualTo('1.7.6.0')) {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.6.0')) {
             return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
         }
 
@@ -1526,5 +1528,142 @@ class Mollie extends PaymentModule
         if (!in_array('You can\'t remove address associated with subscription', $this->context->controller->errors, true)) {
             $this->context->controller->errors[] = $this->l('You can\'t remove address associated with subscription');
         }
+    }
+
+    /**
+     * Add checkbox currency restrictions for a new module.
+     *
+     * @param array $shops
+     *
+     * @return bool
+     */
+    public function addCheckboxCurrencyRestrictionsForModule(array $shops = [])
+    {
+        $shops = empty($shops) ? Shop::getShops(true, null, true) : $shops;
+
+        $currencies = [];
+
+        foreach ($shops as $s) {
+            $currencies = Db::getInstance()->executeS('
+                SELECT `id_currency` FROM `' . _DB_PREFIX_ . 'currency` WHERE `deleted` = 0
+            ');
+        }
+
+        $dataToInsert = [];
+
+        foreach ($shops as $s) {
+            foreach ($currencies as $currency) {
+                $dataToInsert[] = [
+                    'id_module' => (int) $this->id,
+                    'id_shop' => (int) $s,
+                    'id_currency' => (int) $currency['id_currency'],
+                ];
+            }
+        }
+
+        return Db::getInstance()->insert(
+            'module_currency',
+            $dataToInsert,
+            false,
+            true,
+            Db::INSERT_IGNORE
+        );
+    }
+
+    /**
+     * Override method to add "IGNORE" in the SQL Request to prevent duplicate entry and for getting All Carriers installed
+     * Add checkbox carrier restrictions for a new module.
+     *
+     * @see PaymentModuleCore
+     *
+     * @param array $shopsList List of Shop identifier
+     *
+     * @return bool
+     */
+    public function addCheckboxCarrierRestrictionsForModule(array $shopsList = [])
+    {
+        if (false === version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+            return true;
+        }
+
+        $shopsList = empty($shopsList) ? Shop::getShops(true, null, true) : $shopsList;
+        $carriersList = Carrier::getCarriers((int) \Context::getContext()->language->id, false, false, false, null, Carrier::ALL_CARRIERS);
+        $allCarriers = array_column($carriersList, 'id_reference');
+        $dataToInsert = [];
+
+        foreach ($shopsList as $idShop) {
+            foreach ($allCarriers as $idCarrier) {
+                $dataToInsert[] = [
+                    'id_reference' => (int) $idCarrier,
+                    'id_shop' => (int) $idShop,
+                    'id_module' => (int) $this->id,
+                ];
+            }
+        }
+
+        return \Db::getInstance()->insert(
+            'module_carrier',
+            $dataToInsert,
+            false,
+            true,
+            Db::INSERT_IGNORE
+        );
+    }
+
+    /**
+     * Override method to add "IGNORE" in the SQL Request to prevent duplicate entry.
+     * Add checkbox country restrictions for a new module.
+     * Associate with all countries allowed in geolocation management
+     *
+     * @see PaymentModuleCore
+     *
+     * @param array $shopsList List of Shop identifier
+     *
+     * @return bool
+     */
+    public function addCheckboxCountryRestrictionsForModule(array $shopsList = [])
+    {
+        parent::addCheckboxCountryRestrictionsForModule($shopsList);
+        // Then add all countries allowed in geolocation management
+        $db = \Db::getInstance();
+        // Get active shop ids
+        $shopsList = empty($shopsList) ? Shop::getShops(true, null, true) : $shopsList;
+        // Get countries
+        /** @var array $countries */
+        $countries = $db->executeS('SELECT `id_country`, `iso_code` FROM `' . _DB_PREFIX_ . 'country`');
+        $countryIdByIso = [];
+        foreach ($countries as $country) {
+            $countryIdByIso[$country['iso_code']] = $country['id_country'];
+        }
+        $dataToInsert = [];
+
+        foreach ($shopsList as $idShop) {
+            // Get countries allowed in geolocation management for this shop
+            $activeCountries = \Configuration::get(
+                'PS_ALLOWED_COUNTRIES',
+                null,
+                null,
+                (int) $idShop
+            );
+            $explodedCountries = explode(';', $activeCountries);
+
+            foreach ($explodedCountries as $isoCodeCountry) {
+                if (isset($countryIdByIso[$isoCodeCountry])) {
+                    $dataToInsert[] = [
+                        'id_country' => (int) $countryIdByIso[$isoCodeCountry],
+                        'id_shop' => (int) $idShop,
+                        'id_module' => (int) $this->id,
+                    ];
+                }
+            }
+        }
+
+        return $db->insert(
+            'module_country',
+            $dataToInsert,
+            false,
+            true,
+            Db::INSERT_IGNORE
+        );
     }
 }

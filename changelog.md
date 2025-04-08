@@ -2,6 +2,12 @@
 
 # Changelog #
 
+## Changes in release 6.2.8 ##
++ Fixed issue with failing to find customer address in checkout
++ The Trustly payment method in the Mollie admin settings is now clearer
++ New payment method: Swish
++ Minor improvements
+
 ## Changes in release 6.2.7 ##
 + Switched API keys places to match Mollie Dashboard
 + Added MBway payment method
@@ -9,6 +15,7 @@
 + PrestaShop 9 compatibility
 + Fixed error when importing new countries into PrestaShop
 + Fixed issue with fees not adding up to cart totals
++ Failed payment now redirects to checkout
 
 ## Changes in release 6.2.6 ##
 + Improved checkout process

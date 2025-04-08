@@ -153,9 +153,12 @@ class ApiService implements ApiServiceInterface
                 $notAvailable[] = $apiMethod->id;
                 $tipEnableSSL = true;
             }
+
+            $methodName = ($apiMethod->id === 'trustly') ? $apiMethod->description . ' (Trustly)' : $apiMethod->description;
+
             $deferredMethods[] = [
                 'id' => $apiMethod->id,
-                'name' => $apiMethod->description,
+                'name' => $methodName,
                 'available' => !in_array($apiMethod->id, $notAvailable),
                 'image' => (array) $apiMethod->image,
                 'tipEnableSSL' => $tipEnableSSL,
