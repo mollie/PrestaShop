@@ -193,7 +193,9 @@ class TransactionService
             return $apiPayment;
         }
 
-        $this->logger->debug(sprintf('%s - processTransaction 10', self::FILE_NAME));
+        $this->logger->debug(sprintf('%s - processTransaction 10', self::FILE_NAME), [
+            'idCart' => $cart->id,
+        ]);
 
         switch ($apiPayment->resource) {
             case Config::MOLLIE_API_STATUS_PAYMENT:
