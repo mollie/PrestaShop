@@ -71,8 +71,7 @@ class LineUtility
             $line->setVatRate(TextFormatUtility::formatNumber($item['vatRate'], $roundingPrecision, '.', ''));
 
             $line->setProductUrl(
-                (new StringModifier())
-                    ->replaceAccentedChars($item['product_url']) ?? null
+                TextFormatUtility::replaceAccentedChars($item['product_url']) ?? null
             );
 
             $line->setImageUrl($item['image_url'] ?? null);
