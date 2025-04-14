@@ -16,6 +16,7 @@ use Mollie\Config\Config;
 use Mollie\DTO\Line;
 use Mollie\DTO\Object\Amount;
 use Mollie\Utility\TextFormatUtility;
+use PrestaShop\PrestaShop\Core\Util\String\StringModifier;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -68,7 +69,12 @@ class LineUtility
             }
 
             $line->setVatRate(TextFormatUtility::formatNumber($item['vatRate'], $roundingPrecision, '.', ''));
-            $line->setProductUrl($item['product_url'] ?? null);
+
+            $line->setProductUrl(
+                (new StringModifier())
+                    ->replaceAccentedChars($item['product_url']) ?? null
+            );
+
             $line->setImageUrl($item['image_url'] ?? null);
 
             $newItems[$index] = $line;
