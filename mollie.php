@@ -28,7 +28,6 @@ use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
-use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
 use Mollie\Subscription\Config\Config as SubscriptionConfig;
 use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
