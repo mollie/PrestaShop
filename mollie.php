@@ -28,6 +28,7 @@ use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
+use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
 use Mollie\Subscription\Config\Config as SubscriptionConfig;
 use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
@@ -569,11 +570,18 @@ class Mollie extends PaymentModule
 
         $methods = $paymentMethodService->getMethodsForCheckout();
 
-        $availablePayments = $paymentMethodRepository->findAllBy(['id_payment_method' => array_column($methods, 'id_payment_method')])->getResults();
+        foreach ($methods as $method) {
+            /** @var MolPaymentMethod|null $paymentMethod */
+            $paymentMethod = $paymentMethodRepository->findOneBy(['id_payment_method' => (int) $method['id_payment_method']]);
 
-        foreach ($availablePayments as $method) {
+            if (!$paymentMethod) {
+                continue;
+            }
+
+            $paymentMethod->method_name = $method['method_name'];
+
             try {
-                $paymentOptions[] = $paymentOptionsHandler->handle($method);
+                $paymentOptions[] = $paymentOptionsHandler->handle($paymentMethod);
             } catch (Exception $exception) {
                 $logger->error(sprintf('%s - Error while handling payment options', self::FILE_NAME), [
                     'exceptions' => ExceptionUtility::getExceptions($exception),
