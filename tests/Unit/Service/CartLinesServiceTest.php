@@ -139,6 +139,7 @@ class CartLinesServiceTest extends TestCase
                             'features' => [],
                             'link_rewrite' => 'test-link',
                             'id_image' => 'test-image-id',
+                            'product_url' => 'https://google.com'
                         ],
                     1 => [
                             'total_wt' => 100,
@@ -152,6 +153,7 @@ class CartLinesServiceTest extends TestCase
                             'features' => [],
                             'link_rewrite' => 'test-link',
                             'id_image' => 'test-image-id',
+                            'product_url' => 'https://google.com'
                         ],
                 ],
                 'psGiftWrapping' => '1',
@@ -177,7 +179,8 @@ class CartLinesServiceTest extends TestCase
                             ->setTotalPrice(new Amount($currencyIsoCode, '100.00'))
                             ->setVatAmount(new Amount($currencyIsoCode, '17.36'))
                             ->setCategory('')
-                            ->setVatRate('21.00'),
+                            ->setVatRate('21.00')
+                            ->setProductUrl('https://google.com'),
                     1 => (new Line())
                         ->setName($productName_2)
                         ->setQuantity(1)
@@ -187,7 +190,8 @@ class CartLinesServiceTest extends TestCase
                         ->setTotalPrice(new Amount($currencyIsoCode, '0.00'))
                         ->setVatAmount(new Amount($currencyIsoCode, '0.00'))
                         ->setCategory('')
-                        ->setVatRate('0.00'),
+                        ->setVatRate('0.00')
+                        ->setProductUrl('https://google.com'),
                     2 => (new Line())
                             ->setName($productName_2)
                             ->setQuantity(1)
@@ -197,7 +201,8 @@ class CartLinesServiceTest extends TestCase
                             ->setTotalPrice(new Amount($currencyIsoCode, '100.00'))
                             ->setVatAmount(new Amount($currencyIsoCode, '17.36'))
                             ->setCategory('')
-                            ->setVatRate('21.00'),
+                            ->setVatRate('21.00')
+                            ->setProductUrl('https://google.com'),
                     3 => (new Line())
                             ->setName($shipping)
                             ->setQuantity(1)
@@ -207,7 +212,8 @@ class CartLinesServiceTest extends TestCase
                             ->setTotalPrice(new Amount($currencyIsoCode, '4.84'))
                             ->setVatAmount(new Amount($currencyIsoCode, '0.84'))
                             ->setCategory(null)
-                            ->setVatRate('21.00'),
+                            ->setVatRate('21.00')
+                            ->setProductUrl('https://google.com'),
                 ],
             ],
             'one products with a gift' => [
