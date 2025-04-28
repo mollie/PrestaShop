@@ -33,6 +33,12 @@ class TextFormatUtility
      */
     public static function replaceAccentedChars(string $string): string
     {
+        if (!class_exists(Transliterator::class)
+            || !method_exists(Transliterator::class, 'create')
+        ) {
+            return $string;
+        }
+
         $transliterator = Transliterator::create('Any-Latin; Latin-ASCII');
 
         return $transliterator->transliterate($string);
