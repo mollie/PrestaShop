@@ -187,11 +187,12 @@ class PaymentMethodService
 
         $minAmount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MIN_AMOUNT . $method['id']);
         $maxAmount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_AMOUNT . $method['id']);
+
         $paymentMethod->min_amount = $minAmount;
 
-        if ($maxAmount < $minAmount) {
-            throw new MollieException('The maximum amount cannot be lower than the minimum amount.');
-        }
+//        if ($maxAmount < $minAmount) {
+//            throw new MollieException('The maximum amount cannot be lower than the minimum amount.');
+//        }
 
         $paymentMethod->max_amount = $maxAmount;
 
