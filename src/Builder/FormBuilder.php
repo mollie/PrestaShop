@@ -34,6 +34,7 @@ use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\TagsUtility;
 use OrderStateCore as OrderState;
 use ToolsCore as Tools;
+use Group;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -404,6 +405,7 @@ class FormBuilder
             'paymentMethods' => $molliePaymentMethods,
             'countries' => $this->countryService->getActiveCountriesList(),
             'taxRulesGroups' => $this->taxRulesGroupRepository->getTaxRulesGroups($this->context->getShopId()),
+            'customerGroups' => Group::getGroups($this->context->getLanguageId()),
             'tab' => $generalSettings,
             'onlyOrderMethods' => Config::ORDER_API_ONLY_METHODS,
             'onlyPaymentsMethods' => Config::PAYMENT_API_ONLY_METHODS,
@@ -808,5 +810,20 @@ class FormBuilder
         }
 
         return $tabs;
+    }
+
+    private function getCustomerGroups()
+    {
+        $groups = Group::getGroups($this->context->getLanguageId());
+        $customerGroups = [];
+        
+        foreach ($groups as $group) {
+            $customerGroups[] = [
+                'id' => $group['id_group'],
+                'name' => $group['name']
+            ];
+        }
+        
+        return $customerGroups;
     }
 }
