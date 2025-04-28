@@ -202,4 +202,26 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
             throw $e;
         }
     }
+
+    /**
+     * Get customer groups that can use a specific payment method
+     *
+     * @param int $paymentMethodId
+     *
+     * @return array
+     */
+    public function getCustomerGroupsForPaymentMethod($paymentMethodId)
+    {
+        $sql = 'SELECT id_customer_group 
+                FROM ' . _DB_PREFIX_ . 'mol_payment_method_customer_group 
+                WHERE id_payment_method = ' . (int) $paymentMethodId;
+
+        $results = \Db::getInstance()->executeS($sql);
+        
+        if (!$results) {
+            return [];
+        }
+
+        return array_column($results, 'id_customer_group');
+    }
 }
