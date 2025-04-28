@@ -34,6 +34,7 @@ use Mollie\DTO\Object\Company;
 use Mollie\DTO\Object\Payment;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
+use Mollie\Exception\MollieException;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CreditCardLogoProvider;
@@ -53,6 +54,7 @@ use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\SecureKeyUtility;
 use Mollie\Utility\TextFormatUtility;
 use MolPaymentMethod;
+use PrestaShop\PrestaShop\Core\Foundation\IoC\Exception;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use Tools;
@@ -182,8 +184,16 @@ class PaymentMethodService
         $paymentMethod->images_json = json_encode($method['image']);
         $paymentMethod->live_environment = $environment;
         $paymentMethod->id_shop = $shopId;
-        $paymentMethod->min_amount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MIN_AMOUNT . $method['id']);
-        $paymentMethod->max_amount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_AMOUNT . $method['id']);
+
+        $minAmount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MIN_AMOUNT . $method['id']);
+        $maxAmount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_AMOUNT . $method['id']);
+        $paymentMethod->min_amount = $minAmount;
+
+        if ($maxAmount < $minAmount) {
+            throw new MollieException('The maximum amount cannot be lower than the minimum amount.');
+        }
+
+        $paymentMethod->max_amount = $maxAmount;
 
         $paymentMethod->save();
 
