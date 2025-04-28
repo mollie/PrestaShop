@@ -184,18 +184,8 @@ class PaymentMethodService
         $paymentMethod->images_json = json_encode($method['image']);
         $paymentMethod->live_environment = $environment;
         $paymentMethod->id_shop = $shopId;
-
-        $minAmount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MIN_AMOUNT . $method['id']);
-        $maxAmount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_AMOUNT . $method['id']);
-
-        $paymentMethod->min_amount = $minAmount;
-
-//        if ($maxAmount < $minAmount) {
-//            throw new MollieException('The maximum amount cannot be lower than the minimum amount.');
-//        }
-
-        $paymentMethod->max_amount = $maxAmount;
-
+        $paymentMethod->min_amount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MIN_AMOUNT . $method['id']);
+        $paymentMethod->max_amount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_AMOUNT . $method['id']);
         $paymentMethod->save();
 
         foreach (Tools::getValue(Config::MOLLIE_METHOD_TITLE . $method['id']) as $idLang => $title) {
