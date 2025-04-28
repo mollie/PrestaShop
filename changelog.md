@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.2.8.1 ##
++ Fixed payment sorting problem in back office
+
 ## Changes in release 6.2.8 ##
 + Fixed issue with failing to find customer address in checkout
 + The Trustly payment method in the Mollie admin settings is now clearer
