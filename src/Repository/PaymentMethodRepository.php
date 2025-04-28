@@ -204,7 +204,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
     }
 
     /**
-     * Get customer groups that can use a specific payment method
+     * Get customer groups that are restricted to specific payment method
      *
      * @param int $paymentMethodId
      *
@@ -212,9 +212,10 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
      */
     public function getCustomerGroupsForPaymentMethod($paymentMethodId)
     {
-        $sql = 'SELECT id_customer_group 
-                FROM ' . _DB_PREFIX_ . 'mol_payment_method_customer_group 
-                WHERE id_payment_method = ' . (int) $paymentMethodId;
+        $sql = new DbQuery();
+        $sql->select('id_customer_group')
+            ->from('mol_payment_method_customer_group')
+            ->where('id_payment_method = ' . (int) $paymentMethodId);
 
         $results = \Db::getInstance()->executeS($sql);
         
