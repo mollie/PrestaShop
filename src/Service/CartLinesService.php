@@ -505,7 +505,11 @@ class CartLinesService
             }
 
             $line->setVatRate(TextFormatUtility::formatNumber($item['vatRate'], $apiRoundingPrecision, '.', ''));
-            $line->setProductUrl($item['product_url'] ?? null);
+
+            $line->setProductUrl(
+                TextFormatUtility::replaceAccentedChars((string) $item['product_url']) ?? null
+            );
+
             $line->setImageUrl($item['image_url'] ?? null);
 
             $newItems[$index] = $line;
