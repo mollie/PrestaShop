@@ -9,9 +9,6 @@
  * @see        https://github.com/mollie/PrestaShop
  */
 
-use Mollie\Config\Config;
-use Mollie\Install\Installer;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -19,7 +16,7 @@ if (!defined('_PS_VERSION_')) {
 /**
  * @return bool
  */
-function upgrade_module_6_2_9(Mollie $module)
+function upgrade_module_6_2_9()
 {
     $sql = '
         CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_excluded_customer_groups` (

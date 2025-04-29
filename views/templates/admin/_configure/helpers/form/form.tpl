@@ -9,6 +9,7 @@
  * @codingStandardsIgnoreStart
  *}
 {extends file="helpers/form/form.tpl"}
+
 {block name="input"}
     {if $input.type === 'mollie-support'}
         <div data-tab-id="general_settings">

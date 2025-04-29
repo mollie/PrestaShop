@@ -26,5 +26,5 @@ interface CustomerGroupRestrictionHandlerInterface
      *
      * @return void
      */
-    public function saveRestrictions($paymentMethodId, $methodId);
+    public function saveRestrictions(int $paymentMethodId, string $methodId): void;
 }

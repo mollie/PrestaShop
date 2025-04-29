@@ -303,7 +303,14 @@ class ApiService implements ApiServiceInterface
         return $methods;
     }
 
-    private function getExcludedCustomerGroupsForConfig(&$methods)
+    /**
+     * @param array $methods
+     *
+     * @return array
+     *
+     * @throws PrestaShopDatabaseException
+     */
+    private function getExcludedCustomerGroupsForConfig(array &$methods): array
     {
         foreach ($methods as $key => $method) {
             $methods[$key]['excludedCustomerGroups'] = $this->customerRepository->getExcludedCustomerGroupIds($method['obj']->id);

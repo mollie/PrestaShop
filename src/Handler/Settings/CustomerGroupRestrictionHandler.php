@@ -38,7 +38,7 @@ class CustomerGroupRestrictionHandler implements CustomerGroupRestrictionHandler
      *
      * @return void
      */
-    public function saveRestrictions($paymentMethodId, $methodId)
+    public function saveRestrictions(int $paymentMethodId, string $methodId): void
     {
         Db::getInstance()->delete(
             'mol_excluded_customer_groups',
