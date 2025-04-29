@@ -38,7 +38,7 @@ class CustomerGroupPaymentMethodRestrictionValidator implements PaymentMethodRes
     public function isValid(MolPaymentMethod $paymentMethod): bool
     {
         $customer = Context::getContext()->customer;
-        if (!$customer) {
+        if (Validate::isObjectLoaded($customer)) {
             return true;
         }
 
@@ -48,7 +48,7 @@ class CustomerGroupPaymentMethodRestrictionValidator implements PaymentMethodRes
         }
 
         $restrictedGroups = $this->paymentMethodRepository->getCustomerGroupsForPaymentMethod($paymentMethod->id);
-        
+
         if (empty($restrictedGroups)) {
             return true;
         }
@@ -69,4 +69,4 @@ class CustomerGroupPaymentMethodRestrictionValidator implements PaymentMethodRes
     {
         return true;
     }
-} 
+}
