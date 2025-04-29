@@ -40,7 +40,7 @@ class CustomerGroupRestrictionHandler implements CustomerGroupRestrictionHandler
     public function saveRestrictions($paymentMethodId, $methodId)
     {
         Db::getInstance()->delete(
-            'mol_payment_method_restricted_customer_groups',
+            'mol_excluded_customer_groups',
             'id_payment_method = ' . (int) $paymentMethodId
         );
 
@@ -49,7 +49,7 @@ class CustomerGroupRestrictionHandler implements CustomerGroupRestrictionHandler
         if (!empty($selectedGroups)) {
             foreach ($selectedGroups as $groupId) {
                 Db::getInstance()->insert(
-                    'mol_payment_method_restricted_customer_groups',
+                    'mol_excluded_customer_groups',
                     [
                         'id_payment_method' => (int) $paymentMethodId,
                         'id_customer_group' => (int) $groupId,

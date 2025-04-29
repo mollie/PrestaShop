@@ -262,7 +262,7 @@ final class BaseServiceProvider
                 $container->get(ApplePayPaymentMethodRestrictionValidator::class),
                 $container->get(AmountPaymentMethodRestrictionValidator::class),
                 $container->get(B2bPaymentMethodRestrictionValidator::class),
-                $container->get(CustomerGroupPaymentMethodRestrictionValidator::class)
+                $container->get(CustomerGroupPaymentMethodRestrictionValidator::class),
             ]);
         });
 
