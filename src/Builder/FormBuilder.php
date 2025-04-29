@@ -811,19 +811,4 @@ class FormBuilder
 
         return $tabs;
     }
-
-    private function getCustomerGroups()
-    {
-        $groups = Group::getGroups($this->context->getLanguageId());
-        $customerGroups = [];
-        
-        foreach ($groups as $group) {
-            $customerGroups[] = [
-                'id' => $group['id_group'],
-                'name' => $group['name']
-            ];
-        }
-        
-        return $customerGroups;
-    }
 }
