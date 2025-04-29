@@ -22,7 +22,7 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_6_2_9(Mollie $module)
 {
     $sql = '
-        CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_payment_method_restricted_customer_groups` (
+        CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_excluded_customer_groups` (
             `id_payment_method` int(11) NOT NULL,
             `id_customer_group` int(11) NOT NULL,
             PRIMARY KEY (`id_payment_method`, `id_customer_group`),
@@ -31,4 +31,4 @@ function upgrade_module_6_2_9(Mollie $module)
     ';
 
     return Db::getInstance()->execute($sql);
-} 
+}
