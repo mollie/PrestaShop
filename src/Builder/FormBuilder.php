@@ -12,6 +12,7 @@
 
 namespace Mollie\Builder;
 
+use Group;
 use HelperFormCore as HelperForm;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
@@ -34,7 +35,6 @@ use Mollie\Utility\EnvironmentUtility;
 use Mollie\Utility\TagsUtility;
 use OrderStateCore as OrderState;
 use ToolsCore as Tools;
-use Group;
 
 if (!defined('_PS_VERSION_')) {
     exit;

@@ -15,7 +15,6 @@ namespace Mollie\Service;
 use Exception;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
-use Mollie\Adapter\Customer;
 use Mollie\Adapter\Shop;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
@@ -71,7 +70,7 @@ class ApiService implements ApiServiceInterface
      */
     private $environment;
 
-    /*
+    /**
      * @var TransactionService
      */
     private $transactionService;
