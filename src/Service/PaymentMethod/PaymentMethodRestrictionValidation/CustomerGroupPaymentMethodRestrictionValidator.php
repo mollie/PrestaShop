@@ -13,7 +13,8 @@
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
 use Context;
-use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Logger\LoggerInterface;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
 use MolPaymentMethod;
 use Validate;
 
@@ -23,14 +24,20 @@ if (!defined('_PS_VERSION_')) {
 
 class CustomerGroupPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
-    /**
-     * @var PaymentMethodRepository
-     */
+    const FILE_NAME = 'CustomerGroupPaymentMethodRestrictionValidator';
+
+    /** @var PaymentMethodRepositoryInterface */
     private $paymentMethodRepository;
 
-    public function __construct(PaymentMethodRepository $paymentMethodRepository)
-    {
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(
+        PaymentMethodRepositoryInterface $paymentMethodRepository,
+        LoggerInterface $logger
+    ) {
         $this->paymentMethodRepository = $paymentMethodRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -40,11 +47,14 @@ class CustomerGroupPaymentMethodRestrictionValidator implements PaymentMethodRes
     {
         $customer = Context::getContext()->customer;
 
-        if (Validate::isLoadedObject($customer)) {
+        if (!Validate::isLoadedObject($customer)) {
+            $this->logger->debug(sprintf('%s - Customer cannot be loaded', self::FILE_NAME));
+
             return true;
         }
 
         $customerGroups = $customer->getGroups();
+
         if (empty($customerGroups)) {
             return true;
         }
