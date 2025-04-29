@@ -200,7 +200,7 @@ class SettingsSaveService
                 $excludedCountries = $this->tools->getValue(
                     Config::MOLLIE_METHOD_EXCLUDE_CERTAIN_COUNTRIES . $method['id']
                 );
-                $excludedCustomerGroups = $this->tools->getValue('MOLLIE_METHOD_CUSTOMER_GROUPS_' . $method['id']);
+                $excludedCustomerGroups = $this->tools->getValue(Config::MOLLIE_METHOD_CUSTOMER_GROUPS . $method['id']);
 
                 $this->countryRepository->updatePaymentMethodCountries($paymentMethodId, $countries);
                 $this->countryRepository->updatePaymentMethodExcludedCountries($paymentMethodId, $excludedCountries);

@@ -14,6 +14,7 @@ namespace Mollie\Handler\Settings;
 
 use Db;
 use Mollie\Adapter\ToolsAdapter;
+use Mollie\Config\Config;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -44,7 +45,7 @@ class CustomerGroupRestrictionHandler implements CustomerGroupRestrictionHandler
             'id_payment_method = ' . (int) $paymentMethodId
         );
 
-        $selectedGroups = $this->tools->getValue('MOLLIE_METHOD_CUSTOMER_GROUPS_' . $methodId);
+        $selectedGroups = $this->tools->getValue(Config::MOLLIE_METHOD_CUSTOMER_GROUPS . $methodId);
 
         if (!empty($selectedGroups)) {
             foreach ($selectedGroups as $groupId) {
