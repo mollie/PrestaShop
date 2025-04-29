@@ -15,6 +15,7 @@ namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 use Context;
 use Mollie\Repository\PaymentMethodRepository;
 use MolPaymentMethod;
+use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -38,7 +39,8 @@ class CustomerGroupPaymentMethodRestrictionValidator implements PaymentMethodRes
     public function isValid(MolPaymentMethod $paymentMethod): bool
     {
         $customer = Context::getContext()->customer;
-        if (Validate::isObjectLoaded($customer)) {
+
+        if (Validate::isLoadedObject($customer)) {
             return true;
         }
 
