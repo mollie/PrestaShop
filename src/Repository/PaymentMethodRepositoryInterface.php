@@ -35,4 +35,6 @@ interface PaymentMethodRepositoryInterface extends ReadOnlyRepositoryInterface
     public function addOpenStatusPayment($cartId, $orderPayment, $transactionId, $orderId, $orderReference);
 
     public function updatePaymentReason($transactionId, $reason);
+
+    public function getCustomerGroupsForPaymentMethod(int $paymentMethodId);
 }

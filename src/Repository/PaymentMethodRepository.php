@@ -210,12 +210,12 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
      *
      * @return array
      */
-    public function getCustomerGroupsForPaymentMethod($paymentMethodId)
+    public function getCustomerGroupsForPaymentMethod(int $paymentMethodId): array
     {
         $sql = new DbQuery();
         $sql->select('id_customer_group')
             ->from('mol_excluded_customer_groups')
-            ->where('id_payment_method = ' . (int) $paymentMethodId);
+            ->where('id_payment_method = ' . $paymentMethodId);
 
         $results = \Db::getInstance()->executeS($sql);
 
