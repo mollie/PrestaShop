@@ -512,7 +512,7 @@
                                         class="fixed-width-xl chosen mollie-chosen" multiple="multiple">
                                     {foreach $input.customerGroups as $group}
                                         <option value="{$group.id_group|intval}"
-                                                {if isset($paymentMethod.groups) && $group.id_group|in_array:$paymentMethod.groups}selected{/if}>{$group.name|escape:'html':'UTF-8'}</option>
+                                                {if {$group.id_group|in_array:$paymentMethod.excludedCustomerGroups}}selected{/if}>{$group.name|escape:'html':'UTF-8'}</option>
                                     {/foreach}
                                 </select>
                                 <p class="help-block">

@@ -40,4 +40,31 @@ class CustomerRepository extends AbstractRepository implements CustomerRepositor
 
         return $countryIdsArray;
     }
+
+    public function updatePaymentMethodExcludedCustomerGroups($idMethod, $idCustomerGroups)
+    {
+        $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'mol_payment_method_restricted_customer_groups WHERE `id_payment_method` = "' . (int) $idMethod . '"';
+        if (!Db::getInstance()->execute($sql)) {
+            return false;
+        }
+
+        if (false == $idCustomerGroups) {
+            return true;
+        }
+
+        $response = true;
+        foreach ($idCustomerGroups as $idCustomerGroup) {
+            $allCountries = 0;
+            $sql = 'INSERT INTO `' . _DB_PREFIX_ . 'mol_payment_method_restricted_customer_groups` (id_payment_method, id_customer_group)
+                VALUES (';
+
+            $sql .= '"' . pSQL($idMethod) . '", ' . (int) $idCustomerGroup . ')';
+
+            if (!Db::getInstance()->execute($sql)) {
+                $response = false;
+            }
+        }
+
+        return $response;
+    }
 }
