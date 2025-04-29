@@ -36,5 +36,5 @@ interface PaymentMethodRepositoryInterface extends ReadOnlyRepositoryInterface
 
     public function updatePaymentReason($transactionId, $reason);
 
-    public function getCustomerGroupsForPaymentMethod(int $paymentMethodId);
+    public function getCustomerGroupsForPaymentMethod(int $paymentMethodId): array;
 }
