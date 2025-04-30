@@ -49,12 +49,12 @@ class CustomerRepository extends AbstractRepository implements CustomerRepositor
     }
 
     /**
-     * @param int $idMethod
+     * @param string $idMethod
      * @param array|false $idCustomerGroups
      *
      * @return bool
      */
-    public function updatePaymentMethodExcludedCustomerGroups(int $idMethod, $idCustomerGroups)
+    public function updatePaymentMethodExcludedCustomerGroups(string $idMethod, $idCustomerGroups)
     {
         $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'mol_excluded_customer_groups WHERE `id_payment_method` = "' . $idMethod . '"';
         if (!Db::getInstance()->execute($sql)) {
