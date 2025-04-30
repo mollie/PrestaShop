@@ -27,13 +27,13 @@ class CustomerRepository extends AbstractRepository implements CustomerRepositor
     }
 
     /**
-     * @param string $methodId
+     * @param string|null $methodId
      *
      * @return array
      *
      * @throws \PrestaShopDatabaseException
      */
-    public function getExcludedCustomerGroupIds(string $methodId): array
+    public function getExcludedCustomerGroupIds($methodId): array
     {
         $sql = 'SELECT id_customer_group
                     FROM `' . _DB_PREFIX_ . 'mol_excluded_customer_groups`
@@ -49,19 +49,19 @@ class CustomerRepository extends AbstractRepository implements CustomerRepositor
     }
 
     /**
-     * @param string $idMethod
+     * @param string|null $idMethod
      * @param array|false $idCustomerGroups
      *
      * @return bool
      */
-    public function updatePaymentMethodExcludedCustomerGroups(string $idMethod, $idCustomerGroups)
+    public function updatePaymentMethodExcludedCustomerGroups($idMethod, $idCustomerGroups)
     {
         $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'mol_excluded_customer_groups WHERE `id_payment_method` = "' . $idMethod . '"';
         if (!Db::getInstance()->execute($sql)) {
             return false;
         }
 
-        if (false == $idCustomerGroups) {
+        if (!$idCustomerGroups) {
             return true;
         }
 
