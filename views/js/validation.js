@@ -87,6 +87,13 @@ $(document).ready(function () {
             $('.alert.alert-success').hide();
             showErrorMessage(max_amount_message);
         }
+
+      if (parseFloat(maxAmount.val()) < parseFloat(minAmount.val())) {
+        event.preventDefault();
+        maxAmount.addClass('mollie-input-error');
+        $('.alert.alert-success').hide();
+        showErrorMessage('Maximum amount cannot be lower than minimum amount');
+      }
     }
 
     function paymentMethodOnChangeToggle(method) {

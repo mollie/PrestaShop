@@ -188,6 +188,10 @@ class SettingsSaveService
                     $savedPaymentMethods[] = $paymentMethod->id_method;
                 } catch (Exception $e) {
                     $errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods', self::FILE_NAME) . ":{$method['id']}";
+                    $this->logger->error(sprintf('Couldn\'t save your payment method - %s', $method['id']), [
+                        'exception' => ExceptionUtility::getExceptions($e),
+                    ]);
+
                     continue;
                 }
 
