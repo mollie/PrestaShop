@@ -27,34 +27,34 @@ class CustomerRepository extends AbstractRepository implements CustomerRepositor
     }
 
     /**
-     * @param string|null $methodId
+     * @param int|null $methodId
      *
      * @return array
      *
      * @throws \PrestaShopDatabaseException
      */
-    public function getExcludedCustomerGroupIds($methodId): array
+    public function getExcludedCustomerGroupIds(?int $methodId): array
     {
         $sql = 'SELECT id_customer_group
                     FROM `' . _DB_PREFIX_ . 'mol_excluded_customer_groups`
                     WHERE id_payment_method = "' . pSQL($methodId) . '"';
 
-        $countryIds = Db::getInstance()->executeS($sql);
-        $countryIdsArray = [];
-        foreach ($countryIds as $countryId) {
-            $countryIdsArray[] = $countryId['id_customer_group'];
+        $customerGroupsId = Db::getInstance()->executeS($sql);
+        $customerIdsArray = [];
+        foreach ($customerGroupsId as $customerGroupId) {
+            $customerIdsArray[] = $customerGroupId['id_customer_group'];
         }
 
-        return $countryIdsArray;
+        return $customerIdsArray;
     }
 
     /**
-     * @param string|null $idMethod
+     * @param int|null $idMethod
      * @param array|false $idCustomerGroups
      *
      * @return bool
      */
-    public function updatePaymentMethodExcludedCustomerGroups($idMethod, $idCustomerGroups)
+    public function updatePaymentMethodExcludedCustomerGroups(?int $idMethod, $idCustomerGroups)
     {
         $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'mol_excluded_customer_groups WHERE `id_payment_method` = "' . $idMethod . '"';
         if (!Db::getInstance()->execute($sql)) {
