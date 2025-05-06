@@ -8,13 +8,23 @@ describe('PS8 Tests Suite [Orders API]', {
   beforeEach(() => {
       cy.viewport(1920,1080)
       cy.CachingBOFOPS8()
-      cy.intercept('POST', /action=MollieOrderInfo/, (req) => {
-        // Remove ajax=1 from the URL if present
-        const url = new URL(req.url);
-        url.searchParams.delete('ajax');
-        req.url = url.toString();
-        req.continue();
-      });
+      cy.visit('/admin1/index.php?controller=AdminOrders')
+      cy.get(':nth-child(1) > .column-payment').click()
+      cy.scrollTo('bottom')
+      // Debug commands
+      cy.get('body').then($body => {
+        if ($body.find('.btn-group-action > .btn-group > .dropdown-toggle').length > 0) {
+          cy.log('Element exists in DOM')
+          cy.get('.btn-group-action > .btn-group > .dropdown-toggle').then($el => {
+            cy.log('Element visibility:', $el.is(':visible'))
+            cy.log('Element display:', $el.css('display'))
+            cy.log('Element position:', $el.position())
+          })
+        } else {
+          cy.log('Element not found in DOM')
+        }
+      })
+      cy.get('.btn-group-action > .btn-group > .dropdown-toggle').eq(0).click()
   })
 it.skip('C339342: 05 Vouchers Checkouting [Orders API]', () => { //temporary skip, possible bug containing PS8 version
       cy.navigatingToThePaymentPS8()
