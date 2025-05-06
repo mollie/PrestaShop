@@ -37,7 +37,7 @@ class CustomerRepository extends AbstractRepository implements CustomerRepositor
     {
         $sql = 'SELECT id_customer_group
                     FROM `' . _DB_PREFIX_ . 'mol_excluded_customer_groups`
-                    WHERE id_payment_method = "' . pSQL($methodId) . '"';
+                    WHERE id_payment_method = "' . $methodId . '"';
 
         $customerGroupsId = Db::getInstance()->executeS($sql);
         $customerIdsArray = [];
@@ -70,7 +70,7 @@ class CustomerRepository extends AbstractRepository implements CustomerRepositor
             $sql = 'INSERT INTO `' . _DB_PREFIX_ . 'mol_excluded_customer_groups` (id_payment_method, id_customer_group)
                 VALUES (';
 
-            $sql .= '"' . pSQL($idMethod) . '", ' . (int) $idCustomerGroup . ')';
+            $sql .= '"' . $idMethod . '", ' . (int) $idCustomerGroup . ')';
 
             if (!Db::getInstance()->execute($sql)) {
                 $response = false;

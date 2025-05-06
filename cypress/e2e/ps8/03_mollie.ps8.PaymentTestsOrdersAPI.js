@@ -8,6 +8,13 @@ describe('PS8 Tests Suite [Orders API]', {
   beforeEach(() => {
       cy.viewport(1920,1080)
       cy.CachingBOFOPS8()
+      cy.intercept('POST', /action=MollieOrderInfo/, (req) => {
+        // Remove ajax=1 from the URL if present
+        const url = new URL(req.url);
+        url.searchParams.delete('ajax');
+        req.url = url.toString();
+        req.continue();
+      });
   })
 it.skip('C339342: 05 Vouchers Checkouting [Orders API]', () => { //temporary skip, possible bug containing PS8 version
       cy.navigatingToThePaymentPS8()
