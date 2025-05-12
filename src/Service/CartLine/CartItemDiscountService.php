@@ -7,7 +7,6 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service\CartLine;
@@ -23,7 +22,6 @@ class CartItemDiscountService
 {
     /**
      * @param float $totalDiscounts
-     * @param int $apiRoundingPrecision
      * @param array $orderLines
      * @param float $remaining
      *
@@ -43,6 +41,7 @@ class CartItemDiscountService
                     'category' => '',
                 ],
             ];
+
             $remaining = NumberUtility::plus($remaining, $totalDiscounts);
         }
 

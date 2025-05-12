@@ -7,7 +7,6 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service\CartLine;
@@ -22,9 +21,7 @@ if (!defined('_PS_VERSION_')) {
 
 class CartItemWrappingService
 {
-    /**
-     * @var LanguageService
-     */
+    /** @var LanguageService */
     private $languageService;
 
     public function __construct(LanguageService $languageService)
@@ -32,14 +29,19 @@ class CartItemWrappingService
         $this->languageService = $languageService;
     }
 
-    public function addWrappingLine(float $wrappingPrice, array $cartSummary, int $vatRatePrecision, array $orderLines)
+    /**
+     * @param float $wrappingPrice
+     * @param array $cartSummary
+     * @param int $vatRatePrecision
+     * @param array $orderLines
+     *
+     * @return array
+     */
+    public function addWrappingLine(float $wrappingPrice, array $cartSummary, int $vatRatePrecision, array $orderLines): array
     {
         if (round($wrappingPrice, 2) > 0) {
             $wrappingVatRate = round(
-                CalculationUtility::getActualVatRate(
-                    $cartSummary['total_wrapping'],
-                    $cartSummary['total_wrapping_tax_exc']
-                ),
+                CalculationUtility::getActualVatRate($cartSummary['total_wrapping'], $cartSummary['total_wrapping_tax_exc']),
                 $vatRatePrecision
             );
 
