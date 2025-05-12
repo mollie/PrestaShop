@@ -37,10 +37,13 @@
 namespace Mollie\Provider\PaymentOption;
 
 use Mollie;
+use Mollie\Adapter\Context;
 use Mollie\Adapter\LegacyContext;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
+use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\LanguageService;
 use MolPaymentMethod;
@@ -55,40 +58,29 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
 {
     const FILE_NAME = 'IdealPaymentOptionProvider';
 
-    /**
-     * @var Mollie
-     */
+    /** @var Mollie */
     private $module;
 
-    /**
-     * @var LegacyContext
-     */
+    /** @var LegacyContext */
     private $context;
 
-    /**
-     * @var CreditCardLogoProvider
-     */
+    /** @var CreditCardLogoProvider */
     private $creditCardLogoProvider;
 
-    /**
-     * @var PaymentFeeProviderInterface
-     */
+    /** @var PaymentFeeProviderInterface */
     private $paymentFeeProvider;
 
-    /**
-     * @var TemplateParserInterface
-     */
+    /** @var TemplateParserInterface */
     private $templateParser;
 
-    /**
-     * @var LanguageService
-     */
+    /** @var LanguageService */
     private $languageService;
+
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $module,
         LegacyContext $context,
         CreditCardLogoProvider $creditCardLogoProvider,
         PaymentFeeProviderInterface $paymentFeeProvider,
@@ -96,7 +88,7 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         LanguageService $languageService,
         OrderTotalProviderInterface $orderTotalProvider
     ) {
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->context = $context;
         $this->creditCardLogoProvider = $creditCardLogoProvider;
         $this->paymentFeeProvider = $paymentFeeProvider;
@@ -112,10 +104,23 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
     {
         $paymentOption = new PaymentOption();
 
+        /** @var Context $context */
+        $context = $this->module->getService(Context::class);
+
+        /** @var PaymentMethodLangRepositoryInterface $paymentMethodLangRepository */
+        $paymentMethodLangRepository = $this->module->getService(PaymentMethodLangRepositoryInterface::class);
+
+        /** @var \MolPaymentMethodTranslations $molPaymentMethodLang */
+        $molPaymentMethodLang = $paymentMethodLangRepository->findOneBy([
+            'id_method' => $paymentMethod->id_method,
+            'id_lang' => $context->getLanguageId(),
+            'id_shop' => $context->getShopId(),
+        ]);
+
         $paymentOption->setCallToActionText(
-            $paymentMethod->title ?:
-            $this->languageService->lang($paymentMethod->method_name)
+            $molPaymentMethodLang->text ?: $paymentMethod->method_name
         );
+
         $paymentOption->setModuleName($this->module->name);
         $paymentOption->setAction($this->context->getLink()->getModuleLink(
             'mollie',

@@ -143,7 +143,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $this->errors[] = $message;
 
             $logger->error('An error occurred when creating mollie payment', [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
 
@@ -155,7 +154,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                 : $this->module->l('An error occurred when creating your payment. Contact customer support.', self::FILE_NAME);
 
             $logger->error('An error occurred when creating payment', [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
 
@@ -168,7 +166,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
         try {
             if ($method === PaymentMethod::BANKTRANSFER) {
-                $orderId = Order::getOrderByCartId($cart->id);
+                $orderId = Order::getIdByCartId($cart->id);
                 $order = new Order($orderId);
                 $paymentMethodRepository->addOpenStatusPayment(
                     $cart->id,
@@ -183,7 +181,6 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $this->errors[] = $this->module->l('Failed to save order information.', self::FILE_NAME);
 
             $logger->error('Failed to save order information.', [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
 

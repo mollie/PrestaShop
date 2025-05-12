@@ -103,18 +103,28 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             // any paid payments for this cart?
 
             if (false === $data['mollie_info']) {
-                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_id', (int) Order::getOrderByCartId($idCart));
+                $orderId = (int) Order::getIdByCartId($idCart);
+                $data['mollie_info'] = $orderId != 0 ? $paymentMethodRepo->getPaymentBy('order_id', $orderId) : [];
             }
             if (false === $data['mollie_info']) {
                 $data['mollie_info'] = [];
                 //NOTE: information instead of error as this might occur due to cancellation of the payment
-                $logger->info(sprintf('There is no order with this order number - %s', (string) $orderNumber));
+                $logger->debug(sprintf('%s - Unable to find order in first try', self::FILE_NAME));
 
                 $data['msg_details'] = $this->module->l('Your payment was not successful. Try again.', self::FILE_NAME);
                 $this->setWarning($data['msg_details']);
 
-                Tools::redirect(Context::getContext()->link->getPageLink('cart', true));
-            } elseif (PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
+                Tools::redirect($this->context->link->getPageLink(
+                        'cart',
+                        true,
+                        [
+                            'action' => 'show',
+                            'checkout' => true,
+                        ]
+                    )
+                );
+            } elseif (isset($data['mollie_info']['method'])
+                && PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
                 && PaymentStatus::STATUS_OPEN === $data['mollie_info']['bank_status']
             ) {
                 $data['msg_details'] = $this->module->l('The payment is still being processed. You\'ll be notified when the bank or merchant confirms the payment./merchant.', self::FILE_NAME);
@@ -140,7 +150,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                     [
                         'ajax' => 1,
                         'action' => 'getStatus',
-                        'transaction_id' => $data['mollie_info']['transaction_id'],
+                        'transaction_id' => $data['mollie_info']['transaction_id'] ?? null,
                         'key' => $key,
                         'cart_id' => $idCart,
                         'order_number' => $orderNumber,
@@ -203,11 +213,30 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     protected function processGetStatus()
     {
         header('Content-Type: application/json;charset=UTF-8');
+
+        $notSuccessfulPaymentMessage = $this->module->l('Your payment was not successful. Try again.', self::FILE_NAME);
+        $wrongAmountMessage = $this->module->l('The payment failed because the order and payment amounts are different. Try again.', self::FILE_NAME);
+
+        if (Tools::getValue('failed')) {
+            $this->setWarning($notSuccessfulPaymentMessage);
+
+            Tools::redirect($this->context->link->getPageLink(
+                'cart',
+                null,
+                $this->context->language->id,
+                [
+                    'action' => 'show',
+                    'checkout' => true,
+                ]
+            ));
+        }
+
         /** @var PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getService(PaymentMethodRepository::class);
 
-        $transactionId = Tools::getValue('transaction_id');
-        $dbPayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transactionId);
+        $orderId = (int) Order::getIdByCartId((int) Tools::getValue('cart_id'));
+        $dbPayment = $data['mollie_info'] = $orderId != 0 ? $paymentMethodRepo->getPaymentBy('order_id', (int) $orderId) : [];
+
         if (!$dbPayment) {
             exit(json_encode([
                 'success' => false,
@@ -219,8 +248,10 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             ]));
         }
 
+        $transactionId = Tools::getValue('transaction_id') ?: $data['mollie_info']['transaction_id'];
+
         /* @phpstan-ignore-next-line */
-        $orderId = (int) Order::getOrderByCartId((int) $cart->id);
+        $orderId = (int) Order::getIdByCartId((int) $cart->id);
         /** @phpstan-ignore-line */
         $order = new Order((int) $orderId);
 
@@ -248,11 +279,9 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             $orderStatus = $payments->status;
         }
 
-        $notSuccessfulPaymentMessage = $this->module->l('Your payment was not successful. Try again.', self::FILE_NAME);
-        $wrongAmountMessage = $this->module->l('The payment failed because the order and payment amounts are different. Try again.', self::FILE_NAME);
-
         /** @var PaymentReturnService $paymentReturnService */
         $paymentReturnService = $this->module->getService(PaymentReturnService::class);
+
         switch ($orderStatus) {
             case PaymentStatus::STATUS_OPEN:
             case PaymentStatus::STATUS_PENDING:

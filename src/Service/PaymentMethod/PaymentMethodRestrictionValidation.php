@@ -36,11 +36,11 @@
 
 namespace Mollie\Service\PaymentMethod;
 
-use Exception;
 use Mollie\Config\Config;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\PaymentMethodRestrictionValidatorInterface;
 use MolPaymentMethod;
 use PrestaShopLogger;
+use Throwable;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -48,6 +48,8 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionValidationInterface
 {
+    const FILE_NAME = 'PaymentMethodRestrictionValidation';
+
     /**
      * @var PaymentMethodRestrictionValidatorInterface[]
      */
@@ -77,9 +79,9 @@ class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionVali
                         return false;
                     }
                 }
-            } catch (Exception $exception) {
+            } catch (Throwable $exception) {
                 PrestaShopLogger::addLog(
-                    sprintf('%s has caught error: %s', __METHOD__, $exception->getMessage()),
+                    sprintf('%s has caught error: %s', self::FILE_NAME, $exception->getMessage()),
                     Config::ERROR,
                     null,
                     null,

@@ -63,10 +63,6 @@ $(document).ready(function () {
     function validatePaymentMethod() {
         var $paymentMethodForm = $(this).closest('.payment-method');
 
-        var $isPaymentEnabled = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_ENABLED"]');
-        if ($isPaymentEnabled.val() === "0") {
-            return;
-        }
         var $description = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_DESCRIPTION"]');
         if (!/\S/.test($description.val())) {
             event.preventDefault();
@@ -91,6 +87,13 @@ $(document).ready(function () {
             $('.alert.alert-success').hide();
             showErrorMessage(max_amount_message);
         }
+
+      if (parseFloat(maxAmount.val()) < parseFloat(minAmount.val())) {
+        event.preventDefault();
+        maxAmount.addClass('mollie-input-error');
+        $('.alert.alert-success').hide();
+        showErrorMessage('Maximum amount cannot be lower than minimum amount');
+      }
     }
 
     function paymentMethodOnChangeToggle(method) {

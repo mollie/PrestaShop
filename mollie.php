@@ -18,14 +18,18 @@ use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
 use Mollie\Config\Config;
 use Mollie\Exception\ShipmentCannotBeSentException;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
+use Mollie\Install\Uninstall;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
+use Mollie\Subscription\Config\Config as SubscriptionConfig;
 use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
 use Mollie\Subscription\Handler\UpdateSubscriptionCarrierHandler;
 use Mollie\Subscription\Install\AttributeInstaller;
@@ -36,7 +40,8 @@ use Mollie\Subscription\Provider\SubscriptionProductProvider;
 use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
-use Mollie\Utility\PsVersionUtility;
+use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\VersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
 use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
 use Symfony\Component\Dotenv\Dotenv;
@@ -51,6 +56,8 @@ if (!defined('_PS_VERSION_')) {
 class Mollie extends PaymentModule
 {
     const DISABLE_CACHE = true;
+
+    const FILE_NAME = 'mollie';
 
     /** @var \Mollie\Api\MollieApiClient|null */
     private $api = null;
@@ -89,7 +96,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.2.4';
+        $this->version = '6.2.9';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -160,7 +167,10 @@ class Mollie extends PaymentModule
      */
     public function install()
     {
-        PrestaShopLogger::addLog('Mollie install started', 1, null, 'Mollie', 1);
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
+
+        $logger->debug('Mollie install started');
 
         if (!$this->isPhpVersionCompliant()) {
             $this->_errors[] = $this->l('You\'re using an outdated PHP version. Upgrade your PHP version to use this module. The Mollie module supports versions PHP 7.2.0 and higher.');
@@ -173,11 +183,13 @@ class Mollie extends PaymentModule
 
             return false;
         }
-        PrestaShopLogger::addLog('Mollie prestashop install successful', 1, null, 'Mollie', 1);
 
-//        TODO inject base install and subscription services
+        $logger->debug('Mollie install successful');
+
+        /** @var \Mollie\Install\Installer $coreInstaller */
         $coreInstaller = $this->getService(Mollie\Install\Installer::class);
-        PrestaShopLogger::addLog('Mollie core install initiated', 1, null, 'Mollie', 1);
+
+        $logger->debug('Mollie core installation started');
 
         if (!$coreInstaller->install()) {
             $this->_errors = array_merge($this->_errors, $coreInstaller->getErrors());
@@ -185,7 +197,7 @@ class Mollie extends PaymentModule
             return false;
         }
 
-        PrestaShopLogger::addLog('Mollie core install successful', 1, null, 'Mollie', 1);
+        $logger->debug('Mollie core installation successful');
 
         $subscriptionInstaller = new Installer(
             new DatabaseTableInstaller(),
@@ -198,7 +210,8 @@ class Mollie extends PaymentModule
             ),
             new HookInstaller($this)
         );
-        PrestaShopLogger::addLog('Mollie subscription installer initiated', 1, null, 'Mollie', 1);
+
+        $logger->debug('Mollie subscription installer initiated');
 
         if (!$subscriptionInstaller->install()) {
             $this->_errors = array_merge($this->_errors, $subscriptionInstaller->getErrors());
@@ -206,7 +219,8 @@ class Mollie extends PaymentModule
 
             return false;
         }
-        PrestaShopLogger::addLog('Mollie subscription install successful', 1, null, 'Mollie', 1);
+
+        $logger->debug('Mollie subscription install successful');
 
         return true;
     }
@@ -216,8 +230,8 @@ class Mollie extends PaymentModule
      */
     public function uninstall()
     {
-        /** @var \Mollie\Install\Uninstall $uninstall */
-        $uninstall = $this->getService(\Mollie\Install\Uninstall::class);
+        /** @var Uninstall $uninstall */
+        $uninstall = $this->getService(Uninstall::class);
 
         if (!$uninstall->uninstall()) {
             $this->_errors[] = $uninstall->getErrors();
@@ -300,12 +314,12 @@ class Mollie extends PaymentModule
     public function hookDisplayHeader(array $params)
     {
         if ($this->context->controller->php_self !== 'order') {
-            return;
+            return '';
         }
 
         $apiClient = $this->getApiClient();
         if (!$apiClient) {
-            return;
+            return '';
         }
         /** @var ProfileIdProviderInterface $profileIdProvider */
         $profileIdProvider = $this->getService(ProfileIdProviderInterface::class);
@@ -359,7 +373,9 @@ class Mollie extends PaymentModule
 
         $controller = $this->context->controller;
 
-        if ($controller instanceof CartControllerCore) {
+        if ($controller instanceof CartControllerCore
+            || $controller instanceof OrderControllerCore
+        ) {
             $errorDisplayService->showCookieError('mollie_payment_canceled_error');
         }
 
@@ -369,7 +385,7 @@ class Mollie extends PaymentModule
 
             Media::addJsDef([
                 'mollieSubAjaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
-                'isVersionGreaterOrEqualTo177' => PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.7.0'),
+                'isVersionGreaterOrEqualTo177' => VersionUtility::isPsVersionGreaterOrEqualTo('1.7.7.0'),
             ]);
         }
 
@@ -520,7 +536,7 @@ class Mollie extends PaymentModule
             'errorDisplay' => Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS),
         ]);
 
-        return $this->display(__FILE__, 'order_info.tpl');
+        return $this->display($this->getLocalPath(), 'views/templates/hook/order_info.tpl');
     }
 
     /**
@@ -548,8 +564,8 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
         $paymentMethodService = $this->getService(\Mollie\Service\PaymentMethodService::class);
 
-        /** @var PrestaLoggerInterface $logger */
-        $logger = $this->getService(PrestaLoggerInterface::class);
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
 
         $methods = $paymentMethodService->getMethodsForCheckout();
 
@@ -566,9 +582,9 @@ class Mollie extends PaymentModule
             try {
                 $paymentOptions[] = $paymentOptionsHandler->handle($paymentMethod);
             } catch (Exception $exception) {
-                // TODO handle payment fee exception and other exceptions with custom exception throw
-
-                $logger->error($exception->getMessage());
+                $logger->error(sprintf('%s - Error while handling payment options', self::FILE_NAME), [
+                    'exceptions' => ExceptionUtility::getExceptions($exception),
+                ]);
             }
         }
 
@@ -585,12 +601,16 @@ class Mollie extends PaymentModule
     {
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
         $paymentMethodRepo = $this->getService(PaymentMethodRepositoryInterface::class);
+
         $payment = $paymentMethodRepo->getPaymentBy('cart_id', (string) Tools::getValue('id_cart'));
+
         if (!$payment) {
             return '';
         }
+
         $isPaid = \Mollie\Api\Types\PaymentStatus::STATUS_PAID == $payment['bank_status'];
         $isAuthorized = \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED == $payment['bank_status'];
+
         if (($isPaid || $isAuthorized)) {
             $this->context->smarty->assign('okMessage', $this->l('Thank you. We received your payment.'));
 
@@ -639,19 +659,38 @@ class Mollie extends PaymentModule
 
         $order = new Order($params['id_order']);
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
+
         if (!Validate::isLoadedObject($orderStatus)) {
+            $logger->debug(sprintf('%s - Order status not found', self::FILE_NAME), [
+                'order_status' => $params['newOrderStatus'],
+                'id_order' => $params['id_order'],
+            ]);
+
             return;
         }
 
         if (!Validate::isLoadedObject($order)) {
+            $logger->debug(sprintf('%s - Order not found', self::FILE_NAME), [
+                'id_order' => $params['id_order'],
+            ]);
+
             return;
         }
 
         if ($order->module !== $this->name) {
+            $logger->debug(sprintf('%s - Module name does not match', self::FILE_NAME), [
+                'module' => $order->module,
+                'expected_module' => $this->name,
+            ]);
+
             return;
         }
 
         if (!$this->getApiClient()) {
+            $logger->debug(sprintf('%s - API client not found', self::FILE_NAME));
+
             return;
         }
 
@@ -659,6 +698,10 @@ class Mollie extends PaymentModule
         $isPaymentInformationAvailable = $this->getService(IsPaymentInformationAvailable::class);
 
         if (!$isPaymentInformationAvailable->verify((int) $order->id)) {
+            $logger->debug(sprintf('%s - Payment information not available', self::FILE_NAME), [
+                'id_order' => $order->id,
+            ]);
+
             return;
         }
 
@@ -668,21 +711,21 @@ class Mollie extends PaymentModule
         /** @var ExceptionService $exceptionService */
         $exceptionService = $this->getService(ExceptionService::class);
 
-        /** @var PrestaLoggerInterface $logger */
-        $logger = $this->getService(PrestaLoggerInterface::class);
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
 
         try {
             $shipmentSenderHandler->handleShipmentSender($this->getApiClient(), $order, $orderStatus);
         } catch (ShipmentCannotBeSentException $exception) {
-            $logger->error($exceptionService->getErrorMessageForException(
-                $exception,
-                [],
-                ['orderReference' => $order->reference]
-            ));
+            $logger->error(sprintf('%s - Cannot handle shipment', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
 
             return;
         } catch (ApiException $exception) {
-            $logger->error($exception->getMessage());
+            $logger->error(sprintf('%s - Cannot handle shipment due API failure', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
 
             return;
         }
@@ -700,14 +743,26 @@ class Mollie extends PaymentModule
         }
 
         $cart = new Cart($params['cart']->id);
-        $orderId = Order::getOrderByCartId($cart->id);
+        $orderId = Order::getIdByCartId($cart->id);
         $order = new Order($orderId);
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
+
         if (!Validate::isLoadedObject($order)) {
+            $logger->debug(sprintf('%s - Order not found', self::FILE_NAME), [
+                'id_order' => $orderId,
+            ]);
+
             return true;
         }
 
         if ($order->module !== $this->name) {
+            $logger->debug(sprintf('%s - Module name does not match', self::FILE_NAME), [
+                'module' => $order->module,
+                'expected_module' => $this->name,
+            ]);
+
             return true;
         }
 
@@ -932,7 +987,9 @@ class Mollie extends PaymentModule
         if (!isset($this->context->controller) || 'admin' !== $this->context->controller->controller_type) {
             return;
         }
+
         $apiClient = $this->getApiClient();
+
         if (!$apiClient) {
             return;
         }
@@ -951,7 +1008,9 @@ class Mollie extends PaymentModule
 
             /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
             $paymentMethodService = $this->getService(\Mollie\Service\PaymentMethodService::class);
+
             $paymentMethodObj = new MolPaymentMethod();
+
             $paymentData = $paymentMethodService->getPaymentData(
                 $totalPaid,
                 $currency,
@@ -966,6 +1025,7 @@ class Mollie extends PaymentModule
 
             /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
             $paymentMethodRepository = $this->getService(PaymentMethodRepositoryInterface::class);
+
             $paymentMethodRepository->addOpenStatusPayment(
                 $cartId,
                 $orderPayment,
@@ -975,9 +1035,11 @@ class Mollie extends PaymentModule
             );
 
             $sendMolliePaymentMail = Tools::getValue('mollie-email-send');
+
             if ('on' === $sendMolliePaymentMail) {
                 /** @var \Mollie\Service\MolliePaymentMailService $molliePaymentMailService */
                 $molliePaymentMailService = $this->getService(\Mollie\Service\MolliePaymentMailService::class);
+
                 $molliePaymentMailService->sendSecondChanceMail($orderId);
             }
         }
@@ -1016,7 +1078,7 @@ class Mollie extends PaymentModule
 
     public function hookDisplayProductActions($params)
     {
-        if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.6.0')) {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.6.0')) {
             return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
         }
 
@@ -1030,9 +1092,17 @@ class Mollie extends PaymentModule
 
     public function hookDisplayProductAdditionalInfo()
     {
-        if (!PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.6.0')) {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.6.0')) {
             return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
         }
+
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
+
+        $logger->debug('Unable to show Apple Pay due to PrestaShop version incompatibility', [
+            'ps_version' => _PS_VERSION_,
+            'min_req_version' => '1.7.6.0',
+        ]);
 
         return '';
     }
@@ -1079,10 +1149,13 @@ class Mollie extends PaymentModule
     public static function resendOrderPaymentLink($orderId)
     {
         /** @var Mollie $module */
-        $module = Module::getInstanceByName('mollie');
+        $module = (new ModuleFactory())->getModule();
+
         /** @var PaymentMethodRepositoryInterface $molliePaymentRepo */
         $molliePaymentRepo = $module->getService(PaymentMethodRepositoryInterface::class);
+
         $molPayment = $molliePaymentRepo->getPaymentBy('cart_id', (string) Cart::getCartIdByOrderId($orderId));
+
         if (\Mollie\Utility\MollieStatusUtility::isPaymentFinished($molPayment['bank_status'])) {
             return false;
         }
@@ -1095,6 +1168,11 @@ class Mollie extends PaymentModule
 
     public function updateApiKey(int $shopId = null): void
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
+
+        $logger->debug('Updating API key');
+
         $this->setApiKey($shopId);
     }
 
@@ -1112,6 +1190,11 @@ class Mollie extends PaymentModule
         } catch (Error $e) {
             http_response_code(Response::HTTP_INTERNAL_SERVER_ERROR);
 
+            /** @var LoggerInterface $logger */
+            $logger = $this->getService(LoggerInterface::class);
+
+            $logger->info('The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com');
+
             exit(
             $this->l('The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com')
             );
@@ -1120,7 +1203,21 @@ class Mollie extends PaymentModule
 
     public function hookActionAjaxDieCartControllerDisplayAjaxUpdateBefore(array $params): void
     {
-        if (PsVersionUtility::isPsVersionGreaterOrEqualTo(_PS_VERSION_, '1.7.7.0')) {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.7.0')) {
+            return;
+        }
+
+        $isSubscriptionEnabled = Configuration::get(Config::MOLLIE_SUBSCRIPTION_ENABLED);
+
+        $groups = Tools::getValue('group');
+        if (!(bool) $isSubscriptionEnabled || !is_array($groups)) {
+            return;
+        }
+
+        $subscriptionGroup = Configuration::get(SubscriptionConfig::SUBSCRIPTION_ATTRIBUTE_GROUP);
+
+        // Note: groups = ['attribute_group_id => 'attribute_id']
+        if (!array_key_exists($subscriptionGroup, $groups)) {
             return;
         }
 
@@ -1136,6 +1233,14 @@ class Mollie extends PaymentModule
 
         http_response_code(Response::HTTP_BAD_REQUEST);
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
+
+        $logger->error('Subscription product validation failed', [
+            'errors' => $errors,
+            'quantity' => $quantity,
+        ]);
+
         exit(json_encode(
             [
                 'hasError' => $hasError,
@@ -1149,8 +1254,13 @@ class Mollie extends PaymentModule
     {
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
         $moduleRepository = $this->getService(\Mollie\Repository\ModuleRepository::class);
+
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
+
         $moduleDatabaseVersion = $moduleRepository->getModuleDatabaseVersion($this->name);
         $needsUpgrade = Tools::version_compare($this->version, $moduleDatabaseVersion, '>');
+
         if ($needsUpgrade) {
             return;
         }
@@ -1167,22 +1277,31 @@ class Mollie extends PaymentModule
         if (!$apiKey) {
             return;
         }
+
         try {
-            // TODO handle api key set differently. Throw error and don't let do further actions.
             $this->api = $apiKeyService->setApiKey($apiKey, $this->version, $subscriptionOrder);
         } catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);
-            PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
+
+            $logger->error(sprintf('%s - Incompatible platform exception', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
         } catch (\Mollie\Api\Exceptions\ApiException $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);
             $this->warning = $this->l('Payment error:') . $e->getMessage();
-            PrestaShopLogger::addLog(__METHOD__ . ' said: ' . $this->warning, Mollie\Config\Config::CRASH);
+
+            $logger->error(sprintf('%s - API exception', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
         } catch (\Exception $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);
-            PrestaShopLogger::addLog(__METHOD__ . ' - System incompatible: ' . $e->getMessage(), Mollie\Config\Config::CRASH);
+
+            $logger->error(sprintf('%s - General exception', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
         }
     }
 
@@ -1262,7 +1381,20 @@ class Mollie extends PaymentModule
         /** @var CustomerAddressUpdateHandler $subscriptionShippingAddressUpdateHandler */
         $subscriptionShippingAddressUpdateHandler = $this->getService(CustomerAddressUpdateHandler::class);
 
-        $subscriptionShippingAddressUpdateHandler->handle($orders, $addressId, $addressId);
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
+
+        try {
+            $subscriptionShippingAddressUpdateHandler->handle($orders, $addressId, $addressId);
+        } catch (PrestaShopDatabaseException $e) {
+            $logger->error(sprintf('%s - Database exception', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+        } catch (PrestaShopException $e) {
+            $logger->error(sprintf('%s - General exception', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+        }
 
         $this->addPreventDeleteErrorMessage();
     }
@@ -1311,8 +1443,8 @@ class Mollie extends PaymentModule
         /** @var ConfigurationAdapter $configuration */
         $configuration = $this->getService(ConfigurationAdapter::class);
 
-        /** @var PrestaLoggerInterface $logger */
-        $logger = $this->getService(PrestaLoggerInterface::class);
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
 
         if ((int) $oldCarrierId !== (int) $configuration->get(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID)) {
             return;
@@ -1403,5 +1535,142 @@ class Mollie extends PaymentModule
         if (!in_array('You can\'t remove address associated with subscription', $this->context->controller->errors, true)) {
             $this->context->controller->errors[] = $this->l('You can\'t remove address associated with subscription');
         }
+    }
+
+    /**
+     * Add checkbox currency restrictions for a new module.
+     *
+     * @param array $shops
+     *
+     * @return bool
+     */
+    public function addCheckboxCurrencyRestrictionsForModule(array $shops = [])
+    {
+        $shops = empty($shops) ? Shop::getShops(true, null, true) : $shops;
+
+        $currencies = [];
+
+        foreach ($shops as $s) {
+            $currencies = Db::getInstance()->executeS('
+                SELECT `id_currency` FROM `' . _DB_PREFIX_ . 'currency` WHERE `deleted` = 0
+            ');
+        }
+
+        $dataToInsert = [];
+
+        foreach ($shops as $s) {
+            foreach ($currencies as $currency) {
+                $dataToInsert[] = [
+                    'id_module' => (int) $this->id,
+                    'id_shop' => (int) $s,
+                    'id_currency' => (int) $currency['id_currency'],
+                ];
+            }
+        }
+
+        return Db::getInstance()->insert(
+            'module_currency',
+            $dataToInsert,
+            false,
+            true,
+            Db::INSERT_IGNORE
+        );
+    }
+
+    /**
+     * Override method to add "IGNORE" in the SQL Request to prevent duplicate entry and for getting All Carriers installed
+     * Add checkbox carrier restrictions for a new module.
+     *
+     * @see PaymentModuleCore
+     *
+     * @param array $shopsList List of Shop identifier
+     *
+     * @return bool
+     */
+    public function addCheckboxCarrierRestrictionsForModule(array $shopsList = [])
+    {
+        if (false === version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+            return true;
+        }
+
+        $shopsList = empty($shopsList) ? Shop::getShops(true, null, true) : $shopsList;
+        $carriersList = Carrier::getCarriers((int) \Context::getContext()->language->id, false, false, false, null, Carrier::ALL_CARRIERS);
+        $allCarriers = array_column($carriersList, 'id_reference');
+        $dataToInsert = [];
+
+        foreach ($shopsList as $idShop) {
+            foreach ($allCarriers as $idCarrier) {
+                $dataToInsert[] = [
+                    'id_reference' => (int) $idCarrier,
+                    'id_shop' => (int) $idShop,
+                    'id_module' => (int) $this->id,
+                ];
+            }
+        }
+
+        return \Db::getInstance()->insert(
+            'module_carrier',
+            $dataToInsert,
+            false,
+            true,
+            Db::INSERT_IGNORE
+        );
+    }
+
+    /**
+     * Override method to add "IGNORE" in the SQL Request to prevent duplicate entry.
+     * Add checkbox country restrictions for a new module.
+     * Associate with all countries allowed in geolocation management
+     *
+     * @see PaymentModuleCore
+     *
+     * @param array $shopsList List of Shop identifier
+     *
+     * @return bool
+     */
+    public function addCheckboxCountryRestrictionsForModule(array $shopsList = [])
+    {
+        parent::addCheckboxCountryRestrictionsForModule($shopsList);
+        // Then add all countries allowed in geolocation management
+        $db = \Db::getInstance();
+        // Get active shop ids
+        $shopsList = empty($shopsList) ? Shop::getShops(true, null, true) : $shopsList;
+        // Get countries
+        /** @var array $countries */
+        $countries = $db->executeS('SELECT `id_country`, `iso_code` FROM `' . _DB_PREFIX_ . 'country`');
+        $countryIdByIso = [];
+        foreach ($countries as $country) {
+            $countryIdByIso[$country['iso_code']] = $country['id_country'];
+        }
+        $dataToInsert = [];
+
+        foreach ($shopsList as $idShop) {
+            // Get countries allowed in geolocation management for this shop
+            $activeCountries = \Configuration::get(
+                'PS_ALLOWED_COUNTRIES',
+                null,
+                null,
+                (int) $idShop
+            );
+            $explodedCountries = explode(';', $activeCountries);
+
+            foreach ($explodedCountries as $isoCodeCountry) {
+                if (isset($countryIdByIso[$isoCodeCountry])) {
+                    $dataToInsert[] = [
+                        'id_country' => (int) $countryIdByIso[$isoCodeCountry],
+                        'id_shop' => (int) $idShop,
+                        'id_module' => (int) $this->id,
+                    ];
+                }
+            }
+        }
+
+        return $db->insert(
+            'module_country',
+            $dataToInsert,
+            false,
+            true,
+            Db::INSERT_IGNORE
+        );
     }
 }

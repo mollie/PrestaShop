@@ -19,6 +19,7 @@ use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\Shop;
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandler;
@@ -31,6 +32,8 @@ use Mollie\Handler\PaymentOption\PaymentOptionHandler;
 use Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface;
 use Mollie\Handler\RetryHandler;
 use Mollie\Handler\RetryHandlerInterface;
+use Mollie\Handler\Settings\CustomerGroupRestrictionHandler;
+use Mollie\Handler\Settings\CustomerGroupRestrictionHandlerInterface;
 use Mollie\Handler\Settings\PaymentMethodPositionHandler;
 use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Handler\Shipment\ShipmentSenderHandler;
@@ -86,6 +89,8 @@ use Mollie\Repository\MolOrderPaymentFeeRepository;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\OrderRepository;
 use Mollie\Repository\OrderRepositoryInterface;
+use Mollie\Repository\PaymentMethodLangRepository;
+use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Repository\PendingOrderCartRuleRepository;
@@ -112,6 +117,7 @@ use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\AmountPaymen
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\B2bPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator;
+use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\CustomerGroupPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\EnvironmentVersionSpecificPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
@@ -216,6 +222,9 @@ final class BaseServiceProvider
         $this->addService($container, TaxRepositoryInterface::class, $container->get(TaxRepository::class));
         $this->addService($container, CartRepositoryInterface::class, $container->get(CartRepository::class));
 
+        $service = $this->addService($container, PaymentMethodLangRepositoryInterface::class, PaymentMethodLangRepository::class);
+        $this->addServiceArgument($service, 'MolPaymentMethodLang');
+
         $this->addService($container, OrderTotalProviderInterface::class, $container->get(OrderTotalProvider::class));
         $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
 
@@ -253,6 +262,7 @@ final class BaseServiceProvider
                 $container->get(ApplePayPaymentMethodRestrictionValidator::class),
                 $container->get(AmountPaymentMethodRestrictionValidator::class),
                 $container->get(B2bPaymentMethodRestrictionValidator::class),
+                $container->get(CustomerGroupPaymentMethodRestrictionValidator::class),
             ]);
         });
 
@@ -297,6 +307,9 @@ final class BaseServiceProvider
 
         $service = $this->addService($container, EntityManagerInterface::class, ObjectModelEntityManager::class);
         $this->addServiceArgument($service, ObjectModelUnitOfWork::class);
+
+        $service = $this->addService($container, CustomerGroupRestrictionHandlerInterface::class, CustomerGroupRestrictionHandler::class);
+        $this->addServiceArgument($service, ToolsAdapter::class);
     }
 
     private function addService(Container $container, $className, $service)

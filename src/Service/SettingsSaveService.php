@@ -22,11 +22,15 @@ use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Certificate\CertificateHandlerInterface;
 use Mollie\Handler\Certificate\Exception\ApplePayDirectCertificateCreation;
 use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\CountryRepository;
+use Mollie\Repository\CustomerRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\TagsUtility;
 use OrderState;
 use PrestaShopDatabaseException;
@@ -90,9 +94,13 @@ class SettingsSaveService
     private $context;
     /** @var ToolsAdapter */
     private $tools;
+    /** @var LoggerInterface */
+    private $logger;
+    /** @var CustomerRepository */
+    private $customerRepository;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $module,
         CountryRepository $countryRepository,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentMethodService $paymentMethodService,
@@ -103,9 +111,11 @@ class SettingsSaveService
         CertificateHandlerInterface $applePayDirectCertificateHandler,
         ConfigurationAdapter $configurationAdapter,
         Context $context,
-        ToolsAdapter $tools
+        ToolsAdapter $tools,
+        LoggerInterface $logger,
+        CustomerRepository $customerRepository
     ) {
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->countryRepository = $countryRepository;
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodService = $paymentMethodService;
@@ -117,6 +127,8 @@ class SettingsSaveService
         $this->configurationAdapter = $configurationAdapter;
         $this->context = $context;
         $this->tools = $tools;
+        $this->logger = $logger;
+        $this->customerRepository = $customerRepository;
     }
 
     /**
@@ -181,6 +193,10 @@ class SettingsSaveService
                     $savedPaymentMethods[] = $paymentMethod->id_method;
                 } catch (Exception $e) {
                     $errors[] = $this->module->l('Something went wrong. Couldn\'t save your payment methods', self::FILE_NAME) . ":{$method['id']}";
+                    $this->logger->error(sprintf('Couldn\'t save your payment method - %s', $method['id']), [
+                        'exception' => ExceptionUtility::getExceptions($e),
+                    ]);
+
                     continue;
                 }
 
@@ -188,8 +204,11 @@ class SettingsSaveService
                 $excludedCountries = $this->tools->getValue(
                     Config::MOLLIE_METHOD_EXCLUDE_CERTAIN_COUNTRIES . $method['id']
                 );
+                $excludedCustomerGroups = $this->tools->getValue(Config::MOLLIE_METHOD_CUSTOMER_GROUPS . $method['id']);
+
                 $this->countryRepository->updatePaymentMethodCountries($paymentMethodId, $countries);
                 $this->countryRepository->updatePaymentMethodExcludedCountries($paymentMethodId, $excludedCountries);
+                $this->customerRepository->updatePaymentMethodExcludedCustomerGroups($paymentMethodId, $excludedCustomerGroups);
             }
             $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment, $this->context->getShopId());
         }
@@ -211,6 +230,10 @@ class SettingsSaveService
             try {
                 $this->applePayDirectCertificateHandler->handle();
             } catch (ApplePayDirectCertificateCreation $e) {
+                $this->logger->error('Grant permissions for the folder or visit ApplePay to see how it can be added manually', [
+                    'exceptions' => ExceptionUtility::getExceptions($e),
+                ]);
+
                 $isApplePayDirectProductEnabled = false;
                 $isApplePayDirectCartEnabled = false;
 

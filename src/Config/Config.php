@@ -72,6 +72,9 @@ class Config
         'riverty' => ['nl', 'be', 'de', 'at'],
         'payconiq' => [],
         'paybybank' => ['at', 'be', 'cy', 'ee', 'fi', 'fr', 'de', 'gr', 'ie', 'it', 'lv', 'lt', 'lu', 'mt', 'nl', 'pt', 'sk', 'si', 'es', 'uk'],
+        'multibanco' => ['pt'],
+        'mbway' => ['pt'],
+        'swish' => ['se'],
     ];
 
     const SUPPORTED_PHP_VERSION = '5.6';
@@ -335,6 +338,8 @@ class Config
         'trustly' => 'Trustly',
         'satispay' => 'Satispay',
         'paybybank' => 'Pay by Bank',
+        'multibanco' => 'Multibanco',
+        'mbway' => 'MBway',
     ];
 
     public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
@@ -343,6 +348,8 @@ class Config
     public const LOG_SEVERITY_LEVEL_MAJOR = 4;
 
     const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
+
+    const MOLLIE_METHOD_CUSTOMER_GROUPS = 'MOLLIE_METHOD_CUSTOMER_GROUPS_';
 
     // TODO migrate functions below to separate service
     public static function getStatuses()

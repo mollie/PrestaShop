@@ -114,7 +114,6 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
             ];
 
             $logger->error('Failed to get payment fee data.', [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
@@ -236,7 +235,6 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
             ));
 
             $logger->error('Unknown error.', [
-                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
         }
@@ -244,7 +242,7 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         $this->ajaxResponse(JsonResponse::success([]));
     }
 
-    private function returnDefaultOrderSummaryBlock(Cart $cart, array $errorData = [], array $presentedCart = null): void
+    private function returnDefaultOrderSummaryBlock(Cart $cart, array $errorData = [], $presentedCart = null): void
     {
         if (!$presentedCart) {
             $presentedCart = $this->cart_presenter->present($cart);

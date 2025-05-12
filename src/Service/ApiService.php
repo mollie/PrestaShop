@@ -28,6 +28,8 @@ use Mollie\Config\Config;
 use Mollie\Exception\MollieApiException;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\CountryRepository;
+use Mollie\Repository\CustomerRepository;
+use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\Utility\NumberUtility;
@@ -68,7 +70,7 @@ class ApiService implements ApiServiceInterface
      */
     private $environment;
 
-    /*
+    /**
      * @var TransactionService
      */
     private $transactionService;
@@ -81,6 +83,10 @@ class ApiService implements ApiServiceInterface
     private $taxProvider;
     /** @var Context */
     private $context;
+    /** @var PaymentMethodLangRepositoryInterface */
+    private $paymentMethodLangRepository;
+    /** @var CustomerRepository */
+    private $customerRepository;
 
     public function __construct(
         PaymentMethodRepository $methodRepository,
@@ -90,7 +96,9 @@ class ApiService implements ApiServiceInterface
         TransactionService $transactionService,
         Shop $shop,
         TaxCalculatorProvider $taxProvider,
-        Context $context
+        Context $context,
+        PaymentMethodLangRepositoryInterface $paymentMethodLangRepository,
+        CustomerRepository $customerRepository
     ) {
         $this->countryRepository = $countryRepository;
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
@@ -101,6 +109,8 @@ class ApiService implements ApiServiceInterface
         $this->shop = $shop;
         $this->taxProvider = $taxProvider;
         $this->context = $context;
+        $this->paymentMethodLangRepository = $paymentMethodLangRepository;
+        $this->customerRepository = $customerRepository;
     }
 
     /**
@@ -148,9 +158,12 @@ class ApiService implements ApiServiceInterface
                 $notAvailable[] = $apiMethod->id;
                 $tipEnableSSL = true;
             }
+
+            $methodName = ($apiMethod->id === 'trustly') ? $apiMethod->description . ' (Trustly)' : $apiMethod->description;
+
             $deferredMethods[] = [
                 'id' => $apiMethod->id,
-                'name' => $apiMethod->description,
+                'name' => $methodName,
                 'available' => !in_array($apiMethod->id, $notAvailable),
                 'image' => (array) $apiMethod->image,
                 'tipEnableSSL' => $tipEnableSSL,
@@ -181,6 +194,7 @@ class ApiService implements ApiServiceInterface
         $methods = $this->getMethodsObjForConfig($methods);
         $methods = $this->getMethodsCountriesForConfig($methods);
         $methods = $this->getExcludedCountriesForConfig($methods);
+        $methods = $this->getExcludedCustomerGroupsForConfig($methods);
         $methods = $this->paymentMethodSortProvider->getSortedInAscendingWayForConfiguration($methods);
 
         return $methods;
@@ -193,7 +207,6 @@ class ApiService implements ApiServiceInterface
         $methods = [];
         $emptyPaymentMethod = new MolPaymentMethod();
         $emptyPaymentMethod->enabled = false;
-        $emptyPaymentMethod->title = '';
         $emptyPaymentMethod->method = 'payments';
         $emptyPaymentMethod->description = '';
         $emptyPaymentMethod->is_countries_applicable = false;
@@ -231,6 +244,18 @@ class ApiService implements ApiServiceInterface
                     );
                 }
 
+                $result = $this->paymentMethodLangRepository->findAllBy([
+                    'id_method' => $apiMethod['id'],
+                    'id_shop' => $this->context->getShopId(),
+                ]);
+
+                $mappedMethodTitles = [];
+                foreach ($result->getResults() as $value) {
+                    $mappedMethodTitles[$value->id_lang] = $value->text;
+                }
+
+                $paymentMethod->method_name = $apiMethod['name'];
+                $paymentMethod->titles = $mappedMethodTitles;
                 $methods[$apiMethod['id']] = $apiMethod;
                 $methods[$apiMethod['id']]['obj'] = $paymentMethod;
 
@@ -239,8 +264,19 @@ class ApiService implements ApiServiceInterface
 
             $defaultPaymentMethod = clone $emptyPaymentMethod;
 
+            $result = $this->paymentMethodLangRepository->findAllBy([
+                'id_method' => $apiMethod['id'],
+                'id_shop' => $this->context->getShopId(),
+            ]);
+
+            $mappedMethodTitles = [];
+            foreach ($result->getResults() as $value) {
+                $mappedMethodTitles[$value->id_lang] = $value->text;
+            }
+
             $defaultPaymentMethod->id_method = $apiMethod['id'];
             $defaultPaymentMethod->method_name = $apiMethod['name'];
+            $defaultPaymentMethod->titles = $mappedMethodTitles;
 
             $methods[$apiMethod['id']] = $apiMethod;
             $methods[$apiMethod['id']]['obj'] = $defaultPaymentMethod;
@@ -262,6 +298,22 @@ class ApiService implements ApiServiceInterface
     {
         foreach ($methods as $key => $method) {
             $methods[$key]['excludedCountries'] = $this->countryRepository->getExcludedCountryIds($method['obj']->id);
+        }
+
+        return $methods;
+    }
+
+    /**
+     * @param array $methods
+     *
+     * @return array
+     *
+     * @throws PrestaShopDatabaseException
+     */
+    private function getExcludedCustomerGroupsForConfig(array &$methods): array
+    {
+        foreach ($methods as $key => $method) {
+            $methods[$key]['excludedCustomerGroups'] = $this->customerRepository->getExcludedCustomerGroupIds($method['obj']->id);
         }
 
         return $methods;

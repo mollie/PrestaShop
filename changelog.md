@@ -2,6 +2,34 @@
 
 # Changelog #
 
+## Changes in release 6.2.8.1 ##
++ Fixed payment sorting problem in back office
+
+## Changes in release 6.2.8 ##
++ Fixed issue with failing to find customer address in checkout
++ The Trustly payment method in the Mollie admin settings is now clearer
++ New payment method: Swish
++ Minor improvements
+
+## Changes in release 6.2.7 ##
++ Switched API keys places to match Mollie Dashboard
++ Added MBway payment method
++ Added Multibanco payment method
++ PrestaShop 9 compatibility
++ Fixed error when importing new countries into PrestaShop
++ Fixed issue with fees not adding up to cart totals
++ Failed payment now redirects to checkout
+
+## Changes in release 6.2.6 ##
++ Improved checkout process
++ Fixed duplicate order status issue
+
+## Changes in release 6.2.5 ##
++ Fixed issue with order status on multishop
++ Phone number validation improvements
++ Add to cart validation improvements on recurring orders
++ Code base improvements following prestashop standards
+
 ## Changes in release 6.2.4 ##
 + Workflow improvements
 + Satispay payment method added

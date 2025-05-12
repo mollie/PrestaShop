@@ -14,9 +14,11 @@ namespace Mollie\Service;
 
 use Exception;
 use Mollie;
+use Mollie\Factory\ModuleFactory;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Utility\ExceptionUtility;
 use Order;
-use PrestaShopLogger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -24,6 +26,8 @@ if (!defined('_PS_VERSION_')) {
 
 class MollieOrderInfoService
 {
+    const FILE_NAME = 'MollieOrderInfoService';
+
     /**
      * @var PaymentMethodRepositoryInterface
      */
@@ -52,23 +56,29 @@ class MollieOrderInfoService
      * @var ApiService
      */
     private $apiService;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $module,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         RefundService $refundService,
         ShipService $shipService,
         CancelService $cancelService,
         ShipmentServiceInterface $shipmentService,
-        ApiService $apiService
+        ApiService $apiService,
+        LoggerInterface $logger
     ) {
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->refundService = $refundService;
         $this->shipService = $shipService;
         $this->cancelService = $cancelService;
         $this->shipmentService = $shipmentService;
         $this->apiService = $apiService;
+        $this->logger = $logger;
     }
 
     /**
@@ -83,7 +93,9 @@ class MollieOrderInfoService
         $transactionId = isset($input['transactionId']) ? $input['transactionId'] : $input['order']['id'];
         $transaction = $this->paymentMethodRepository->getPaymentBy('transaction_id', $transactionId);
         $order = new Order($transaction['order_id']);
+
         $this->module->updateApiKey((int) $order->id_shop);
+
         if (!$this->module->getApiClient()) {
             return ['success' => false];
         }
@@ -141,7 +153,9 @@ class MollieOrderInfoService
                 }
             }
         } catch (Exception $e) {
-            PrestaShopLogger::addLog("Mollie module error: {$e->getMessage()}");
+            $this->logger->error(sprintf('%s - Failed to display Mollie order info: %s', self::FILE_NAME, $e->getMessage()), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
 
             return ['success' => false];
         }

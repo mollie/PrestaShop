@@ -33,11 +33,6 @@ class MolPaymentMethod extends ObjectModel
     /**
      * @var string
      */
-    public $title;
-
-    /**
-     * @var string
-     */
     public $method;
 
     /**
@@ -112,6 +107,10 @@ class MolPaymentMethod extends ObjectModel
      * @var int
      */
     public $id_shop;
+    /**
+     * @var array
+     */
+    public $titles;
 
     /**
      * @var array
@@ -123,12 +122,13 @@ class MolPaymentMethod extends ObjectModel
             'id_method' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'method_name' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'enabled' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
-            'title' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'method' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'description' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'is_countries_applicable' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
+            // TODO: remove if deprecated
             'minimal_order_value' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
             'max_order_value' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
+            // ==========================
             'surcharge' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'surcharge_fixed_amount_tax_excl' => ['type' => self::TYPE_FLOAT, 'validate' => 'isFloat'],
             'tax_rules_group_id' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],

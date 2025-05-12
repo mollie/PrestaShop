@@ -76,10 +76,21 @@
   }
 </style>
 <script type="text/javascript">
+  var tries = 0;
+  var maxTries = 10;
+  var timeout = 3000;
+
   (function awaitMolliePaymentStatus() {
-    var timeout = 3000;
+    if (tries >= maxTries) {
+      var url = new URL('{$checkStatusEndpoint|escape:'javascript':'UTF-8' nofilter}');
+      url.searchParams.set('failed', 1);
+      window.location.href = url.href;
+
+      return;
+    }
+
     var request = new XMLHttpRequest();
-    // nofilter is needed for url with variables
+
     request.open('GET', '{$checkStatusEndpoint|escape:'javascript':'UTF-8' nofilter}', true);
 
     request.onload = function() {
@@ -101,7 +112,9 @@
       setTimeout(awaitMolliePaymentStatus, timeout);
     };
 
+    tries++;
     request.send();
   }());
 </script>
+
 

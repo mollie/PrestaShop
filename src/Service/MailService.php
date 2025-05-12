@@ -25,6 +25,7 @@ use Mail;
 use Mollie;
 use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Exception\MollieException;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Subscription\Provider\GeneralSubscriptionMailDataProvider;
 use Order;
 use OrderState;
@@ -51,11 +52,11 @@ class MailService
     private $generalSubscriptionMailDataProvider;
 
     public function __construct(
-        Mollie $module,
+        ModuleFactory $module,
         ProductAttributeAdapter $productAttributeAdapter,
         GeneralSubscriptionMailDataProvider $generalSubscriptionMailDataProvider
     ) {
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->context = Context::getContext();
         $this->productAttributeAdapter = $productAttributeAdapter;
         $this->generalSubscriptionMailDataProvider = $generalSubscriptionMailDataProvider;
