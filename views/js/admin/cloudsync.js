@@ -8,7 +8,7 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
-(document).ready(function () {
+$(document).ready(function () {
   window?.psaccountsVue?.init();
 
   // Cloud Sync

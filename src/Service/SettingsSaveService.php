@@ -28,6 +28,7 @@ use Mollie\Handler\Certificate\Exception\ApplePayDirectCertificateCreation;
 use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\CountryRepository;
+use Mollie\Repository\CustomerRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\TagsUtility;
@@ -95,6 +96,8 @@ class SettingsSaveService
     private $tools;
     /** @var LoggerInterface */
     private $logger;
+    /** @var CustomerRepository */
+    private $customerRepository;
 
     public function __construct(
         ModuleFactory $module,
@@ -109,7 +112,8 @@ class SettingsSaveService
         ConfigurationAdapter $configurationAdapter,
         Context $context,
         ToolsAdapter $tools,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        CustomerRepository $customerRepository
     ) {
         $this->module = $module->getModule();
         $this->countryRepository = $countryRepository;
@@ -124,6 +128,7 @@ class SettingsSaveService
         $this->context = $context;
         $this->tools = $tools;
         $this->logger = $logger;
+        $this->customerRepository = $customerRepository;
     }
 
     /**
@@ -199,8 +204,11 @@ class SettingsSaveService
                 $excludedCountries = $this->tools->getValue(
                     Config::MOLLIE_METHOD_EXCLUDE_CERTAIN_COUNTRIES . $method['id']
                 );
+                $excludedCustomerGroups = $this->tools->getValue(Config::MOLLIE_METHOD_CUSTOMER_GROUPS . $method['id']);
+
                 $this->countryRepository->updatePaymentMethodCountries($paymentMethodId, $countries);
                 $this->countryRepository->updatePaymentMethodExcludedCountries($paymentMethodId, $excludedCountries);
+                $this->customerRepository->updatePaymentMethodExcludedCustomerGroups($paymentMethodId, $excludedCustomerGroups);
             }
             $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment, $this->context->getShopId());
         }
