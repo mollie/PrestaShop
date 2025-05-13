@@ -21,6 +21,7 @@ use Mollie\Api\MollieApiClient;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Factory\ModuleFactory;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Utility\HashUtility;
 use Mollie\Utility\SecureKeyUtility;
@@ -183,6 +184,7 @@ class MolliePaymentMailService
                 'secure_key' => $key,
             ],
         ];
+
 
         $paymentData['webhookUrl'] = $context->link->getModuleLink(
             'mollie',
