@@ -12,6 +12,7 @@
 
 namespace Mollie\Builder;
 
+use Group;
 use HelperFormCore as HelperForm;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
@@ -404,6 +405,7 @@ class FormBuilder
             'paymentMethods' => $molliePaymentMethods,
             'countries' => $this->countryService->getActiveCountriesList(),
             'taxRulesGroups' => $this->taxRulesGroupRepository->getTaxRulesGroups($this->context->getShopId()),
+            'customerGroups' => Group::getGroups($this->context->getLanguageId()),
             'tab' => $generalSettings,
             'onlyOrderMethods' => Config::ORDER_API_ONLY_METHODS,
             'onlyPaymentsMethods' => Config::PAYMENT_API_ONLY_METHODS,
