@@ -70,11 +70,15 @@ class LineUtility
 
             $line->setVatRate(TextFormatUtility::formatNumber($item['vatRate'], $roundingPrecision, '.', ''));
 
-            $line->setProductUrl(
-                TextFormatUtility::replaceAccentedChars($item['product_url']) ?? null
-            );
+            if ($item['product_url']) {
+                $line->setProductUrl(
+                    TextFormatUtility::replaceAccentedChars($item['product_url']) ?? null
+                );
+            }
 
-            $line->setImageUrl($item['image_url'] ?? null);
+            if ($item['image_url']) {
+                $line->setImageUrl($item['image_url'] ?? null);
+            }
 
             $newItems[$index] = $line;
         }
