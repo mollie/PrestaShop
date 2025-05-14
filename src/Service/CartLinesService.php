@@ -508,7 +508,7 @@ class CartLinesService
 
             if ($item['product_url']) {
                 $line->setProductUrl(
-                    TextFormatUtility::replaceAccentedChars((string)$item['product_url'])
+                    TextFormatUtility::replaceAccentedChars((string) $item['product_url'])
                 );
             }
 
