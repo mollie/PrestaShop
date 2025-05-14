@@ -14,6 +14,7 @@ namespace Mollie\Tests\Unit;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
+use Mollie\Service\LanguageService;
 use PHPUnit\Framework\TestCase;
 
 class BaseTestCase extends TestCase
@@ -29,11 +30,15 @@ class BaseTestCase extends TestCase
     /** @var Context */
     public $context;
 
+    /** @var LanguageService */
+    public $languageService;
+
     protected function setUp(): void
     {
         $this->cart = $this->mock(\Cart::class);
         $this->configuration = $this->mock(ConfigurationAdapter::class);
         $this->context = $this->mock(Context::class);
+        $this->languageService = $this->mock(LanguageService::class);
 
         parent::setUp();
     }
