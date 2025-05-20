@@ -174,8 +174,14 @@ class OrderCreationHandler
             return $orderId;
         }
 
+        $this->logger->debug('isOrderCreated after validateOrder', [
+            'isOrderExists' => $cart->orderExists()
+        ]);
+
         $cartPrice = NumberUtility::plus($originalAmount, $paymentFeeData->getPaymentFeeTaxIncl());
         $priceDifference = NumberUtility::minus($cartPrice, $apiPayment->amount->value);
+
+        $this->logger->debug('createOrder 1');
 
         if (abs($priceDifference) !== 0.00) {
             if ($apiPayment->resource === Config::MOLLIE_API_STATUS_ORDER) {
@@ -201,6 +207,8 @@ class OrderCreationHandler
             throw new \Exception('Wrong cart amount');
         }
 
+        $this->logger->debug('createOrder 2');
+
         $this->module->validateOrder(
             (int) $cartId,
             (int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
@@ -213,14 +221,22 @@ class OrderCreationHandler
             $cart->secure_key
         );
 
+        $this->logger->debug('createOrder 3');
+
         /* @phpstan-ignore-next-line */
         $orderId = (int) Order::getIdByCartId((int) $cartId);
 
         $this->orderPaymentFeeHandler->addOrderPaymentFee($orderId, $apiPayment);
 
+        $this->logger->debug('createOrder 4');
+
         $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
 
+        $this->logger->debug('createOrder 5');
+
         $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method);
+
+        $this->logger->debug('createOrder 6 before return');
 
         return $orderId;
     }
