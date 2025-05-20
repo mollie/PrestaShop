@@ -18,6 +18,7 @@ use Mollie\Factory\CustomerFactory;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\PaymentReturnService;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\TransactionUtility;
@@ -50,123 +51,182 @@ class MollieReturnModuleFrontController extends AbstractMollieController
      */
     public function initContent()
     {
-        /** @var Logger $logger * */
+        /** @var Logger $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
+        try {
+            $this->validateRequest();
+
+            if (Tools::getValue('ajax')) {
+                $this->processAjax();
+                exit;
+            }
+
+            parent::initContent();
+
+            $returnData = $this->handlePaymentReturn();
+            $this->assignTemplateVariables($returnData);
+
+        } catch (Exception $e) {
+            $logger->error(sprintf('%s - Error: %s', self::FILE_NAME, $e->getMessage()));
+            $this->handleError($e);
+        }
+    }
+
+    private function validateRequest(): void
+    {
         $idCart = (int) Tools::getValue('cart_id');
         $key = Tools::getValue('key');
-        $orderNumber = Tools::getValue('order_number');
-        $transactionId = Tools::getValue('transaction_id');
-        $context = Context::getContext();
-        $customer = $context->customer;
+
+        if (!$idCart) {
+            throw new Exception('Cart ID not found');
+        }
 
         /** @var OrderCallBackValidator $orderCallBackValidator */
         $orderCallBackValidator = $this->module->getService(OrderCallBackValidator::class);
-
         if (!$orderCallBackValidator->validate($key, $idCart)) {
             Tools::redirectLink('index.php');
         }
 
         /** @var CustomerFactory $customerFactory */
         $customerFactory = $this->module->getService(CustomerFactory::class);
-        $this->context = $customerFactory->recreateFromRequest($customer->id, $key, $this->context);
-        if (Tools::getValue('ajax')) {
-            $this->processAjax();
-            exit;
-        }
+        $this->context = $customerFactory->recreateFromRequest(
+            $this->context->customer->id,
+            $key,
+            $this->context
+        );
+    }
 
-        parent::initContent();
+    private function handlePaymentReturn(): array
+    {
+        /** @var Logger $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
 
-        $data = [];
-        $cart = null;
+        $idCart = (int) Tools::getValue('cart_id');
+        $orderNumber = Tools::getValue('order_number');
+        $transactionId = Tools::getValue('transaction_id');
+        $customer = $this->context->customer;
 
-        /** @var PaymentMethodRepository $paymentMethodRepo */
-        $paymentMethodRepo = $this->module->getService(PaymentMethodRepository::class);
-        if (Tools::getIsset('cart_id')) {
-            $idCart = (int) Tools::getValue('cart_id');
-
-            // Check if user that's seeing this is the cart-owner
-            $cart = new Cart($idCart);
-            $data['auth'] = (int) $cart->id_customer === $customer->id;
-            if ($data['auth']) {
-                if ($transactionId) {
-                    $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('transaction_id', (string) $transactionId);
-                } else {
-                    $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_reference', (string) $orderNumber);
-                }
-            }
-        }
-
-        if (isset($data['auth']) && $data['auth']) {
-            // any paid payments for this cart?
-
-            if (false === $data['mollie_info']) {
-                $orderId = (int) Order::getIdByCartId($idCart);
-
-                if (0 !== $orderId) {
-                    $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_id', $orderId) ?: [];
-                }
-            }
-            if (false === $data['mollie_info']) {
-                $data['mollie_info'] = [];
-                //NOTE: information instead of error as this might occur due to cancellation of the payment
-                $logger->debug(sprintf('%s - Unable to find order in first try', self::FILE_NAME));
-
-                $data['msg_details'] = $this->module->l('Your payment was not successful. Try again.', self::FILE_NAME);
-                $this->setWarning($data['msg_details']);
-
-                Tools::redirect($this->context->link->getPageLink(
-                        'cart',
-                        true,
-                        [
-                            'action' => 'show',
-                            'checkout' => true,
-                        ]
-                    )
-                );
-            } elseif (isset($data['mollie_info']['method'])
-                && PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
-                && PaymentStatus::STATUS_OPEN === $data['mollie_info']['bank_status']
-            ) {
-                $data['msg_details'] = $this->module->l('The payment is still being processed. You\'ll be notified when the bank or merchant confirms the payment./merchant.', self::FILE_NAME);
-            } else {
-                $data['wait'] = true;
-            }
-        } else {
-            // Not allowed? Don't make query but redirect.
-            $data['mollie_info'] = [];
-            $data['msg_details'] = $this->module->l('You\'re not authorised to see this page.', self::FILE_NAME);
+        // Validate cart ownership
+        $cart = new Cart($idCart);
+        if ($cart->id_customer != $customer->id) {
+            $logger->error(sprintf(
+                '%s - Unauthorized access attempt. Cart ID: %d, Customer ID: %d',
+                self::FILE_NAME,
+                $idCart,
+                $customer->id
+            ));
+            $this->setWarning($this->module->l('You\'re not authorised to see this page.', self::FILE_NAME));
             Tools::redirect(Context::getContext()->link->getPageLink('index', true));
         }
 
-        $this->context->smarty->assign($data);
-        $this->context->smarty->assign('link', $this->context->link);
+        /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+        $paymentMethodRepo = $this->module->getService(PaymentMethodRepositoryInterface::class);
 
-        if (!empty($data['wait'])) {
-            $this->context->smarty->assign(
-                'checkStatusEndpoint',
-                $this->context->link->getModuleLink(
-                    $this->module->name,
-                    'return',
-                    [
-                        'ajax' => 1,
-                        'action' => 'getStatus',
-                        'transaction_id' => $data['mollie_info']['transaction_id'] ?? null,
-                        'key' => $key,
-                        'cart_id' => $idCart,
-                        'order_number' => $orderNumber,
-                    ],
-                    true
-                )
+        $paymentInformation = $this->findPaymentInformation($paymentMethodRepo, $idCart, $orderNumber, $transactionId);
+
+        if (empty($paymentInformation)) {
+            $logger->error(sprintf(
+                '%s - Payment information not found. Cart ID: %d, Order Number: %s, Transaction ID: %s',
+                self::FILE_NAME,
+                $idCart,
+                $orderNumber,
+                $transactionId
+            ));
+            return [
+                'wait' => true
+            ];
+        }
+
+        return $this->createReturnData($paymentInformation);
+    }
+
+    private function findPaymentInformation(
+        PaymentMethodRepositoryInterface $paymentMethodRepo,
+        int $idCart,
+        string $orderNumber,
+        ?string $transactionId
+    ): array {
+        /** @var Logger $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        if ($transactionId) {
+            $payment = $paymentMethodRepo->getPaymentBy('transaction_id', $transactionId) ?: [];
+            if (empty($payment)) {
+                $logger->error(sprintf(
+                    '%s - Payment not found by transaction ID: %s',
+                    self::FILE_NAME,
+                    $transactionId
+                ));
+            }
+            return $payment;
+        }
+
+        $paymentInfo = $paymentMethodRepo->getPaymentBy('order_reference', $orderNumber);
+        if ($paymentInfo !== false) {
+            return $paymentInfo;
+        }
+
+        $orderId = (int) Order::getIdByCartId($idCart);
+        if ($orderId !== 0) {
+            $payment = $paymentMethodRepo->getPaymentBy('order_id', $orderId) ?: [];
+            if (empty($payment)) {
+                $logger->error(sprintf(
+                    '%s - Payment not found by order ID: %d',
+                    self::FILE_NAME,
+                    $orderId
+                ));
+            }
+            return $payment;
+        }
+
+        $logger->error(sprintf(
+            '%s - No payment found for cart ID: %d, order number: %s',
+            self::FILE_NAME,
+            $idCart,
+            $orderNumber
+        ));
+        return [];
+    }
+
+    private function createReturnData(array $paymentInformation): array
+    {
+        $data = [
+            'msg_details' => '',
+            'wait' => false
+        ];
+
+        if (isset($paymentInformation['method'])
+            && PaymentMethod::BANKTRANSFER === $paymentInformation['method']
+            && PaymentStatus::STATUS_OPEN === $paymentInformation['bank_status']
+        ) {
+            $data['msg_details'] = $this->module->l(
+                'The payment is still being processed. You\'ll be notified when the bank or merchant confirms the payment.',
+                self::FILE_NAME
             );
+        } else {
+            $data['wait'] = true;
+        }
+
+        return $data;
+    }
+
+    private function assignTemplateVariables(array $returnData): void
+    {
+        $this->context->smarty->assign([
+            'msg_details' => $returnData['msg_details'],
+            'wait' => $returnData['wait'],
+            'link' => $this->context->link
+        ]);
+
+        if ($returnData['wait']) {
+            $this->assignWaitTemplateVariables();
             $this->setTemplate('mollie_wait.tpl');
         } else {
             $this->setTemplate('mollie_return.tpl');
         }
-
-        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     /**
@@ -188,6 +248,40 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         /* @phpstan-ignore-next-line */
         parent::setTemplate($template, $params, $locale);
+    }
+
+    private function assignWaitTemplateVariables(): void
+    {
+        $this->context->smarty->assign([
+            'checkStatusEndpoint' => $this->context->link->getModuleLink(
+                $this->module->name,
+                'return',
+                [
+                    'ajax' => 1,
+                    'action' => 'getStatus',
+                    'transaction_id' => Tools::getValue('transaction_id'),
+                    'key' => Tools::getValue('key'),
+                    'cart_id' => Tools::getValue('cart_id'),
+                    'order_number' => Tools::getValue('order_number'),
+                ],
+                true
+            )
+        ]);
+    }
+
+    private function handleError(Exception $e): void
+    {
+        /** @var Logger $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+        $logger->error(sprintf(
+            '%s - Error occurred: %s. Stack trace: %s',
+            self::FILE_NAME,
+            $e->getMessage(),
+            $e->getTraceAsString()
+        ));
+        
+        $this->setWarning($this->module->l('An error occurred while processing your payment.', self::FILE_NAME));
+        Tools::redirect($this->context->link->getPageLink('index', true));
     }
 
     /**
@@ -217,10 +311,14 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     {
         header('Content-Type: application/json;charset=UTF-8');
 
+        /** @var Logger $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         $notSuccessfulPaymentMessage = $this->module->l('Your payment was not successful. Try again.', self::FILE_NAME);
         $wrongAmountMessage = $this->module->l('The payment failed because the order and payment amounts are different. Try again.', self::FILE_NAME);
 
         if (Tools::getValue('failed')) {
+            $logger->error(sprintf('%s - Payment marked as failed by request parameter', self::FILE_NAME));
             $this->setWarning($notSuccessfulPaymentMessage);
 
             Tools::redirect($this->context->link->getPageLink(
@@ -238,20 +336,31 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $paymentMethodRepo = $this->module->getService(PaymentMethodRepository::class);
 
         $orderId = (int) Order::getIdByCartId((int) Tools::getValue('cart_id'));
-        $dbPayment = $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_id', (int) $orderId) ?: [];
+        $dbPayment = $paymentInformation = $paymentMethodRepo->getPaymentBy('order_id', (int) $orderId) ?: [];
 
         if (!$dbPayment) {
-            exit(json_encode([
-                'success' => false,
-            ]));
-        }
-        if (!isset($dbPayment['cart_id']) || !Validate::isLoadedObject($cart = new Cart($dbPayment['cart_id']))) {
+            $logger->error(sprintf(
+                '%s - No payment found for order ID: %d',
+                self::FILE_NAME,
+                $orderId
+            ));
             exit(json_encode([
                 'success' => false,
             ]));
         }
 
-        $transactionId = $data['mollie_info']['transaction_id'] ?: Tools::getValue('transaction_id');
+        if (!isset($dbPayment['cart_id']) || !Validate::isLoadedObject($cart = new Cart($dbPayment['cart_id']))) {
+            $logger->error(sprintf(
+                '%s - Invalid cart ID in payment data: %s',
+                self::FILE_NAME,
+                $dbPayment['cart_id'] ?? 'not set'
+            ));
+            exit(json_encode([
+                'success' => false,
+            ]));
+        }
+
+        $transactionId = $paymentInformation['transaction_id'] ?: Tools::getValue('transaction_id');
 
         /* @phpstan-ignore-next-line */
         $orderId = (int) Order::getIdByCartId((int) $cart->id);
@@ -259,6 +368,12 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $order = new Order((int) $orderId);
 
         if ((int) $cart->id_customer !== (int) $this->context->customer->id) {
+            $logger->error(sprintf(
+                '%s - Cart ownership mismatch. Cart customer: %d, Context customer: %d',
+                self::FILE_NAME,
+                $cart->id_customer,
+                $this->context->customer->id
+            ));
             exit(json_encode([
                 'success' => false,
             ]));
