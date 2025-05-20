@@ -181,7 +181,8 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             ]);
 
             $logger->debug(sprintf('%s - executeWebhook 3', self::FILE_NAME), [
-                'is_obj_transactionService' => is_object($transaction)
+                'is_obj_transactionService' => is_object($transaction),
+                'obj' => json_encode($transaction),
             ]);
 
             ini_set('display_errors', '1');
