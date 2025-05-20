@@ -130,6 +130,7 @@ class TransactionService
      */
     public function processTransaction($apiPayment)
     {
+        $this->logger->debug(sprintf('%s - processTransaction start', self::FILE_NAME));
         if (empty($apiPayment)) {
             if ($this->configurationAdapter->get(Config::MOLLIE_DEBUG_LOG) >= Config::DEBUG_LOG_ERRORS) {
                 $this->logger->error(sprintf('%s - Received webhook request without proper transaction ID', self::FILE_NAME));
