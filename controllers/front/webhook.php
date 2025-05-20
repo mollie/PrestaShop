@@ -193,6 +193,8 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             $logger->debug(sprintf('%s - Error: %s', self::FILE_NAME, $e->getMessage()));
         } catch (PrestaShopException $e) {
             $logger->debug(sprintf('%s - Error: %s', self::FILE_NAME, $e->getMessage()));
+        } catch (Exception $e) {
+            $logger->debug(sprintf('%s - Error: %s', self::FILE_NAME, $e->getMessage()));
         }
     }
 
