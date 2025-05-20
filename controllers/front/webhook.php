@@ -180,7 +180,9 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
                 'cart_id' => $cartId,
             ]);
 
-            $logger->debug(sprintf('%s - executeWebhook 3', self::FILE_NAME));
+            $logger->debug(sprintf('%s - executeWebhook 3', self::FILE_NAME), [
+                'object' => $transactionService
+            ]);
 
             $transactionService->processTransaction($transaction);
 
