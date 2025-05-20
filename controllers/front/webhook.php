@@ -189,7 +189,18 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             ini_set('display_startup_errors', '1');
             error_reporting(E_ALL);
 
-            $transactionService->processTransaction($transaction);
+            try {
+                $logger->debug(sprintf('%s - About to process transaction', self::FILE_NAME));
+                $transactionService->processTransaction($transaction);
+                $logger->debug(sprintf('%s - Successfully processed transaction', self::FILE_NAME));
+            } catch (\Throwable $e) {
+                $logger->error(sprintf('%s - Fatal error in processTransaction: %s', self::FILE_NAME, $e->getMessage()), [
+                    'trace' => $e->getTraceAsString(),
+                    'line' => $e->getLine(),
+                    'file' => $e->getFile()
+                ]);
+                throw $e;
+            }
 
             $logger->debug(sprintf('%s - executeWebhook 4', self::FILE_NAME));
         } catch (ApiException $e) {
