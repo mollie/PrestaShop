@@ -128,6 +128,10 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             $paymentData = $orderCreationHandler->createBankTransferOrder($paymentData, $cart);
         }
 
+        $logger->debug(sprintf('%s - Order creation data', self::FILE_NAME), [
+            'data' => json_encode($paymentData),
+        ]);
+
         try {
             $apiPayment = $mollieOrderCreationService->createMollieOrder($paymentData, $paymentMethodObj);
         } catch (OrderCreationException $e) {
