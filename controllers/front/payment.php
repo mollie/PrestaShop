@@ -11,6 +11,7 @@
  */
 
 use Mollie\Api\Types\PaymentMethod;
+use Mollie\Config\Config;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Logger\Logger;
@@ -122,7 +123,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             Tools::getValue('useSavedCard')
         );
 
-        if ($method === PaymentMethod::BANKTRANSFER) {
+        if ($method === PaymentMethod::BANKTRANSFER || $method === Config::PAY_BY_BANK) {
             /** @var OrderCreationHandler $orderCreationHandler */
             $orderCreationHandler = $this->module->getService(OrderCreationHandler::class);
             $paymentData = $orderCreationHandler->createBankTransferOrder($paymentData, $cart);
@@ -165,7 +166,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         try {
-            if ($method === PaymentMethod::BANKTRANSFER) {
+            if ($method === PaymentMethod::BANKTRANSFER || $method === Config::PAY_BY_BANK) {
                 $orderId = Order::getIdByCartId($cart->id);
                 $order = new Order($orderId);
                 $paymentMethodRepository->addOpenStatusPayment(
