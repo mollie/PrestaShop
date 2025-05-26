@@ -38,6 +38,7 @@ namespace Mollie\Handler\Order;
 
 use Cart;
 use Configuration;
+use Currency;
 use Mollie;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
@@ -255,7 +256,7 @@ class OrderCreationHandler
         $paymentMethodName = $paymentFeeTextService->formatPaymentMethodNameWithFee(
             $paymentMethodName,
             $paymentFeeData->getPaymentFeeTaxIncl(),
-            $paymentData->getAmount()->getCurrency()
+            new Currency($cart->id_currency)
         );
 
         $this->module->validateOrder(
