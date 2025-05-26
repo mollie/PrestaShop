@@ -124,10 +124,10 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                     )
                 );
             } elseif (isset($data['mollie_info']['method'])
-                && PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
+                && (PaymentMethod::BANKTRANSFER === $data['mollie_info']['method'] || $data['mollie_info']['method'] === Config::PAY_BY_BANK)
                 && PaymentStatus::STATUS_OPEN === $data['mollie_info']['bank_status']
             ) {
-                $data['msg_details'] = $this->module->l('The payment is still being processed. You\'ll be notified when the bank or merchant confirms the payment./merchant.', self::FILE_NAME);
+                $data['msg_details'] = $this->module->l('The payment is still being processed. You\'ll be notified when the bank or merchant confirms the payment.', self::FILE_NAME);
             } else {
                 $data['wait'] = true;
             }
