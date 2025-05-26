@@ -68,7 +68,7 @@ class PaymentFeeTextService
         return sprintf(
             '%s (fee incl. %s)',
             $paymentMethodName,
-            $this->tools->displayPrice($feeAmount, $currency)
+            $this->tools->displayPrice($feeAmount)
         );
     }
 }

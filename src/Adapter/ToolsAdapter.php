@@ -30,7 +30,7 @@ class ToolsAdapter
         return Tools::substr($str, $start, $length);
     }
 
-    public function displayPrice($price, $currency): string
+    public function displayPrice($price, $currency = null): string
     {
         // TODO replace all displayPrice calls with Locale::formatPrice()
         return Tools::displayPrice($price, $currency);
