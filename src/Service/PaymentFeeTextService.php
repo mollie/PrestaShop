@@ -36,7 +36,7 @@
 namespace Mollie\Service;
 
 use Context;
-use Tools;
+use Mollie\Adapter\ToolsAdapter;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -44,6 +44,14 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentFeeTextService
 {
+    /** @var ToolsAdapter */
+    private $tools;
+
+    public function __construct(ToolsAdapter $tools)
+    {
+        $this->tools = $tools;
+    }
+
     /**
      * @param string $paymentMethodName
      * @param float $feeAmount
@@ -57,8 +65,10 @@ class PaymentFeeTextService
             return $paymentMethodName;
         }
 
-        $paymentFeeText = sprintf('(fee incl. %s)', Tools::getContextLocale(Context::getContext())->formatPrice($feeAmount, $currency));
-
-        return $paymentMethodName . ' ' . $paymentFeeText;
+        return sprintf(
+            '%s (fee incl. %s)',
+            $paymentMethodName,
+            $this->tools->displayPrice($feeAmount, $currency)
+        );
     }
 }
