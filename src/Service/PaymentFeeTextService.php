@@ -36,6 +36,7 @@
 namespace Mollie\Service;
 
 use Context;
+use Currency;
 use Mollie\Adapter\ToolsAdapter;
 
 if (!defined('_PS_VERSION_')) {
@@ -55,11 +56,11 @@ class PaymentFeeTextService
     /**
      * @param string $paymentMethodName
      * @param float $feeAmount
-     * @param string $currency
+     * @param int|Currency|array|null $currency Current currency (object, id_currency, NULL => context currency)
      *
      * @return string
      */
-    public function formatPaymentMethodNameWithFee(string $paymentMethodName, float $feeAmount, string $currency): string
+    public function formatPaymentMethodNameWithFee(string $paymentMethodName, float $feeAmount, $currency = null): string
     {
         if ($feeAmount <= 0) {
             return $paymentMethodName;
@@ -68,7 +69,7 @@ class PaymentFeeTextService
         return sprintf(
             '%s (fee incl. %s)',
             $paymentMethodName,
-            $this->tools->displayPrice($feeAmount)
+            $this->tools->displayPrice($feeAmount, $currency)
         );
     }
 }

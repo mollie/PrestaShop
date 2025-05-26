@@ -204,7 +204,7 @@ class OrderCreationHandler
         $paymentMethodName = $paymentFeeTextService->formatPaymentMethodNameWithFee(
             $paymentMethod->method_name,
             $paymentFeeData->getPaymentFeeTaxIncl(),
-            $apiPayment->amount->currency
+            new \Currency($cart->id_currency)
         );
 
         $this->module->validateOrder(
