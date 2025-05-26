@@ -13,6 +13,7 @@
 namespace Mollie\Subscription\Form\Options;
 
 use Mollie\Config\Config;
+use Mollie\Subscription\Config\Config as SubscriptionConfig;
 use PrestaShop\PrestaShop\Adapter\Configuration;
 use PrestaShop\PrestaShop\Core\Configuration\DataConfigurationInterface;
 
@@ -40,6 +41,7 @@ final class SubscriptionOptionsConfiguration implements DataConfigurationInterfa
         return [
             'enable_subscriptions' => $this->configuration->getBoolean(Config::MOLLIE_SUBSCRIPTION_ENABLED),
             'carrier' => $this->configuration->getInt(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID),
+            'attribute_group_id' => $this->configuration->getInt(SubscriptionConfig::SUBSCRIPTION_ATTRIBUTE_GROUP)
         ];
     }
 
@@ -62,6 +64,11 @@ final class SubscriptionOptionsConfiguration implements DataConfigurationInterfa
             (int) $configuration['carrier']
         );
 
+        $this->configuration->set(
+            SubscriptionConfig::SUBSCRIPTION_ATTRIBUTE_GROUP,
+            (int) $configuration['attribute_group_id']
+        );
+
         return [];
     }
 
@@ -72,7 +79,8 @@ final class SubscriptionOptionsConfiguration implements DataConfigurationInterfa
     {
         return isset(
             $configuration['enable_subscriptions'],
-            $configuration['carrier']
+            $configuration['carrier'],
+            $configuration['attribute_group_id']
         );
     }
 }

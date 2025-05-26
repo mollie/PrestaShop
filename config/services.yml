@@ -56,6 +56,20 @@ services:
   Mollie\Subscription\Grid\Accessibility\SubscriptionCancelAccessibility:
     class: Mollie\Subscription\Grid\Accessibility\SubscriptionCancelAccessibility
 
+  attribute_group_repository:
+    class: PrestaShopBundle\Entity\Repository\AttributeGroupLangRepository
+    public: false
+    factory: [ '@doctrine.orm.default_entity_manager', getRepository ]
+    arguments:
+      - PrestaShopBundle\Entity\AttributeGroupLang
+
+  attribute_group_options_provider:
+    class: Mollie\Subscription\Form\ChoiceProvider\AttributeGroupOptionsProvider
+    public: true
+    arguments:
+      - '@attribute_group_repository'
+      - '@=service("prestashop.adapter.legacy.context").getLanguage().id'
+
   carrier_options_provider:
     class: Mollie\Subscription\Form\ChoiceProvider\CarrierOptionsProvider
     public: true
@@ -79,6 +93,7 @@ services:
     arguments:
       - '@carrier_options_provider'
       - '@Mollie'
+      - '@attribute_group_options_provider'
     tags:
       - { name: form.type }
 

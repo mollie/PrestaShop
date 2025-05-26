@@ -14,6 +14,7 @@ namespace Mollie\Subscription\Form\Options;
 
 use Module;
 use PrestaShop\PrestaShop\Core\Form\FormChoiceProviderInterface;
+use Mollie\Subscription\Form\ChoiceProvider\AttributeGroupOptionsProvider;
 use PrestaShopBundle\Form\Admin\Type\SwitchType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -32,6 +33,9 @@ class SubscriptionOptionsType extends TranslatorAwareType
     /** @var Module */
     private $module;
 
+    /** @var AttributeGroupOptionsProvider */
+    private $attributeGroupOptionsProvider;
+
     /** @var NewTranslatorInterface|OldTranslatorInterface */
     /* @phpstan-ignore-next-lines */
     private $translator;
@@ -40,11 +44,13 @@ class SubscriptionOptionsType extends TranslatorAwareType
         $translator,
         array $locales,
         FormChoiceProviderInterface $carrierOptionProvider,
-        Module $module
+        Module $module,
+        AttributeGroupOptionsProvider $attributeGroupOptionsProvider
     ) {
         parent::__construct($translator, $locales);
 
         $this->carrierOptionProvider = $carrierOptionProvider;
+        $this->attributeGroupOptionsProvider = $attributeGroupOptionsProvider;
         $this->module = $module;
     }
 
@@ -53,6 +59,11 @@ class SubscriptionOptionsType extends TranslatorAwareType
         $builder
             ->add('enable_subscriptions', SwitchType::class, [
                 'required' => true,
+            ])
+            ->add('attribute_group_id', ChoiceType::class, [
+                'required' => false,
+                'choices' => $this->attributeGroupOptionsProvider->getChoices(),
+                'placeholder' => $this->module->l('Choose your attribute group'),
             ])
             ->add('carrier', ChoiceType::class, [
                 'required' => true,
