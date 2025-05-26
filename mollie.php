@@ -1109,6 +1109,11 @@ class Mollie extends PaymentModule
 
     public function hookActionCartUpdateQuantityBefore($params): void
     {
+        $isSubscriptionEnabled = Configuration::get(Config::MOLLIE_SUBSCRIPTION_ENABLED);
+        if (!(bool) $isSubscriptionEnabled) {
+            return;
+        }
+
         /** @var CanProductBeAddedToCartValidator $canProductBeAddedToCartValidator */
         $canProductBeAddedToCartValidator = $this->getService(CanProductBeAddedToCartValidator::class);
 
