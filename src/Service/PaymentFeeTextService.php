@@ -51,7 +51,7 @@ class PaymentFeeTextService
      *
      * @return string
      */
-    public function getPaymentMethodNameWithFee(string $paymentMethodName, float $feeAmount, string $currency): string
+    public function formatPaymentMethodNameWithFee(string $paymentMethodName, float $feeAmount, string $currency): string
     {
         if ($feeAmount <= 0) {
             return $paymentMethodName;
@@ -61,4 +61,4 @@ class PaymentFeeTextService
 
         return $paymentMethodName . ' ' . $paymentFeeText;
     }
-} 
+}

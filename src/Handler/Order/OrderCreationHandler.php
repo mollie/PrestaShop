@@ -202,7 +202,7 @@ class OrderCreationHandler
         /** @var PaymentFeeTextService $paymentFeeTextService */
         $paymentFeeTextService = $this->module->getService(PaymentFeeTextService::class);
 
-        $paymentMethodName = $paymentFeeTextService->getPaymentMethodNameWithFee(
+        $paymentMethodName = $paymentFeeTextService->formatPaymentMethodNameWithFee(
             $paymentMethod->method_name,
             $paymentFeeData->getPaymentFeeTaxIncl(),
             $apiPayment->amount->currency
@@ -254,7 +254,7 @@ class OrderCreationHandler
         /** @var PaymentFeeTextService $paymentFeeTextService */
         $paymentFeeTextService = $this->module->getService(PaymentFeeTextService::class);
 
-        $paymentMethodName = $paymentFeeTextService->getPaymentMethodNameWithFee(
+        $paymentMethodName = $paymentFeeTextService->formatPaymentMethodNameWithFee(
             $paymentMethodName,
             $paymentFeeData->getPaymentFeeTaxIncl(),
             $paymentData->getAmount()->getCurrency()
