@@ -33,9 +33,11 @@ class ToolsAdapter
     }
 
     /**
-     * @param $price
+     * @param float $price
      * @param int|Currency|array|null $currency Current currency (object, id_currency, NULL => context currency)
+     *
      * @return string
+     *
      * @throws LocalizationException
      */
     public function displayPrice($price, $currency = null): string
