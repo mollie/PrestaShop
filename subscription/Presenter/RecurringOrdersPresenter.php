@@ -102,7 +102,7 @@ class RecurringOrdersPresenter
             $recurringOrderData['recurring_order'] = $recurringOrder;
             $recurringOrderData['details_url'] = $this->link->getModuleLink('mollie', 'recurringOrderDetail', ['id_mol_recurring_order' => $recurringOrder->id]);
             $recurringOrderData['product_name'] = is_array($product->name) ? $product->name[$this->context->getLanguageId()] : $product->name;
-            $recurringOrderData['total_price'] = $this->tools-> displayPrice(NumberUtility::toPrecision((float) $recurringOrder->total_tax_incl, 2), new Currency($recurringOrder->id_currency));
+            $recurringOrderData['total_price'] = $this->tools->displayPrice(NumberUtility::toPrecision((float) $recurringOrder->total_tax_incl, 2), new Currency($recurringOrder->id_currency));
             $recurringOrderData['currency'] = new \Currency($recurringOrder->id_currency);
             $recurringOrdersPresentData[] = $recurringOrderData;
         }
