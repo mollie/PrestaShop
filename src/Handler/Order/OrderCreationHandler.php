@@ -54,6 +54,7 @@ use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderStatusService;
+use Mollie\Service\PaymentFeeTextService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Subscription\Handler\SubscriptionCreationHandler;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
@@ -63,8 +64,6 @@ use Mollie\Utility\TextGeneratorUtility;
 use MolPaymentMethod;
 use Order;
 use PrestaShop\Decimal\Number;
-use Tools;
-use Mollie\Service\PaymentFeeTextService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
