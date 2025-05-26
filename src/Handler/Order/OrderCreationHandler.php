@@ -248,7 +248,6 @@ class OrderCreationHandler
 
         $paymentMethodName = isset(Config::$methods[$paymentData->getMethod()]) ? Config::$methods[$paymentData->getMethod()] : $this->module->name;
 
-        $originalAmount = ;
         $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethodObj, $cart->getOrderTotal());
 
         /** @var PaymentFeeTextService $paymentFeeTextService */
