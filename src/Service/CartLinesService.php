@@ -506,13 +506,13 @@ class CartLinesService
 
             $line->setVatRate(TextFormatUtility::formatNumber($item['vatRate'], $apiRoundingPrecision, '.', ''));
 
-            if ($item['product_url']) {
+            if (isset($item['product_url']) && $item['product_url']) {
                 $line->setProductUrl(
                     TextFormatUtility::replaceAccentedChars((string) $item['product_url'])
                 );
             }
 
-            if ($item['image_url']) {
+            if (isset($item['image_url']) && $item['image_url']) {
                 $line->setImageUrl($item['image_url']);
             }
 

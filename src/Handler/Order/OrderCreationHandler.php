@@ -38,6 +38,7 @@ namespace Mollie\Handler\Order;
 
 use Cart;
 use Configuration;
+use Currency;
 use Mollie;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
@@ -54,6 +55,7 @@ use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderStatusService;
+use Mollie\Service\PaymentFeeTextService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Subscription\Handler\SubscriptionCreationHandler;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
@@ -197,11 +199,20 @@ class OrderCreationHandler
             throw new \Exception('Wrong cart amount');
         }
 
+        /** @var PaymentFeeTextService $paymentFeeTextService */
+        $paymentFeeTextService = $this->module->getService(PaymentFeeTextService::class);
+
+        $paymentMethodName = $paymentFeeTextService->formatPaymentMethodNameWithFee(
+            $paymentMethod->method_name,
+            $paymentFeeData->getPaymentFeeTaxIncl(),
+            new \Currency($cart->id_currency)
+        );
+
         $this->module->validateOrder(
             (int) $cartId,
             (int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
             (float) $apiPayment->amount->value,
-            $paymentMethod->method_name,
+            $paymentMethodName,
             null,
             ['transaction_id' => $apiPayment->id],
             null,
@@ -230,11 +241,29 @@ class OrderCreationHandler
     {
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
         $paymentMethodRepository = $this->module->getService(PaymentMethodRepositoryInterface::class);
+
+        $environment = (int) Configuration::get(Config::MOLLIE_ENVIRONMENT);
+        $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($paymentData->getMethod(), $environment);
+        $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
+
+        $paymentMethodName = isset(Config::$methods[$paymentData->getMethod()]) ? Config::$methods[$paymentData->getMethod()] : $this->module->name;
+
+        $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethodObj, $cart->getOrderTotal());
+
+        /** @var PaymentFeeTextService $paymentFeeTextService */
+        $paymentFeeTextService = $this->module->getService(PaymentFeeTextService::class);
+
+        $paymentMethodName = $paymentFeeTextService->formatPaymentMethodNameWithFee(
+            $paymentMethodName,
+            $paymentFeeData->getPaymentFeeTaxIncl(),
+            new Currency($cart->id_currency)
+        );
+
         $this->module->validateOrder(
             (int) $cart->id,
             (int) Configuration::get(Config::MOLLIE_STATUS_OPEN),
             (float) $paymentData->getAmount()->getValue(),
-            isset(Config::$methods[$paymentData->getMethod()]) ? Config::$methods[$paymentData->getMethod()] : $this->module->name,
+            $paymentMethodName,
             null,
             [],
             null,
