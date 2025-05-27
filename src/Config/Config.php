@@ -252,6 +252,7 @@ class Config
     const MOLLIE_VOUCHER_METHOD_ID = 'voucher';
     const MOLLIE_in3_METHOD_ID = 'in3';
     const RIVERTY = 'riverty';
+    const PAY_BY_BANK = 'paybybank';
 
     const MOLLIE_VOUCHER_CATEGORY_NULL = 'null';
     const MOLLIE_VOUCHER_CATEGORY_MEAL = 'meal';
@@ -348,6 +349,8 @@ class Config
     public const LOG_SEVERITY_LEVEL_MAJOR = 4;
 
     const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
+
+    const MOLLIE_METHOD_CUSTOMER_GROUPS = 'MOLLIE_METHOD_CUSTOMER_GROUPS_';
 
     // TODO migrate functions below to separate service
     public static function getStatuses()
