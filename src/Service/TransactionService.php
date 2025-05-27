@@ -22,8 +22,8 @@ use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\PaymentCollection;
 use Mollie\Api\Types\OrderStatus;
-use Mollie\Api\Types\RefundStatus;
 use Mollie\Api\Types\PaymentStatus;
+use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\ShipmentCannotBeSentException;
@@ -146,7 +146,7 @@ class TransactionService
         if (!$paymentMethod) {
             if (in_array($apiPayment->status, [
                 PaymentStatus::STATUS_PAID,
-                PaymentStatus::STATUS_AUTHORIZED
+                PaymentStatus::STATUS_AUTHORIZED,
             ])) {
                 $this->mollieOrderCreationService->createMolliePayment($apiPayment, (int) $apiPayment->metadata->cart_id, $orderDescription, null, $apiPayment->status);
             }

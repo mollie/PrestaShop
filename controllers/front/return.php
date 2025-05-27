@@ -61,6 +61,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
             if (Tools::getValue('ajax')) {
                 $this->processAjax();
+                
                 exit;
             }
 
@@ -86,6 +87,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         /** @var OrderCallBackValidator $orderCallBackValidator */
         $orderCallBackValidator = $this->module->getService(OrderCallBackValidator::class);
+
         if (!$orderCallBackValidator->validate($key, $idCart)) {
             Tools::redirectLink('index.php');
         }
@@ -119,6 +121,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $customer->id
             ));
             $this->setWarning($this->module->l('You\'re not authorised to see this page.', self::FILE_NAME));
+
             Tools::redirect(Context::getContext()->link->getPageLink('index', true));
         }
 
@@ -136,7 +139,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $transactionId
             ));
             return [
-                'wait' => true
+                'wait' => true,
             ];
         }
 
@@ -161,6 +164,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                     $transactionId
                 ));
             }
+
             return $payment;
         }
 
@@ -179,6 +183,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                     $orderId
                 ));
             }
+
             return $payment;
         }
 
@@ -188,6 +193,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             $idCart,
             $orderNumber
         ));
+
         return [];
     }
 
@@ -195,7 +201,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     {
         $data = [
             'msg_details' => '',
-            'wait' => false
+            'wait' => false,
         ];
 
         if (isset($paymentInformation['method'])
