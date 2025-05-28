@@ -61,15 +61,12 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
             if (Tools::getValue('ajax')) {
                 $this->processAjax();
-                
-                exit;
             }
 
             parent::initContent();
 
             $returnData = $this->handlePaymentReturn();
             $this->assignTemplateVariables($returnData);
-
         } catch (Exception $e) {
             $logger->error(sprintf('%s - Error: %s', self::FILE_NAME, $e->getMessage()));
             $this->handleError($e);
@@ -94,6 +91,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         /** @var CustomerFactory $customerFactory */
         $customerFactory = $this->module->getService(CustomerFactory::class);
+
         $this->context = $customerFactory->recreateFromRequest(
             $this->context->customer->id,
             $key,
@@ -169,6 +167,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         }
 
         $paymentInfo = $paymentMethodRepo->getPaymentBy('order_reference', $orderNumber);
+
         if ($paymentInfo !== false) {
             return $paymentInfo;
         }
@@ -187,13 +186,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             return $payment;
         }
 
-        $logger->error(sprintf(
-            '%s - No payment found for cart ID: %d, order number: %s',
-            self::FILE_NAME,
-            $idCart,
-            $orderNumber
-        ));
-
         return [];
     }
 
@@ -204,7 +196,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             'wait' => false,
         ];
 
-        if (isset($paymentInformation['method'])
+        if (
+            isset($paymentInformation['method'])
             && PaymentMethod::BANKTRANSFER === $paymentInformation['method']
             && PaymentStatus::STATUS_OPEN === $paymentInformation['bank_status']
         ) {
@@ -222,7 +215,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     private function assignTemplateVariables(array $returnData): void
     {
         $this->context->smarty->assign([
-            'msg_details' => $returnData['msg_details'],
+            'msg_details' => $returnData['msg_details'] ?? null,
             'wait' => $returnData['wait'],
             'link' => $this->context->link
         ]);
@@ -285,7 +278,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             $e->getMessage(),
             $e->getTraceAsString()
         ));
-        
+
         $this->setWarning($this->module->l('An error occurred while processing your payment.', self::FILE_NAME));
         Tools::redirect($this->context->link->getPageLink('index', true));
     }
@@ -296,7 +289,11 @@ class MollieReturnModuleFrontController extends AbstractMollieController
      */
     protected function processAjax()
     {
+        $logger = $this->module->getService(LoggerInterface::class);
+
         if (empty($this->context->customer->id)) {
+            $logger->debug(sprintf('%s - Customer ID is empty', self::FILE_NAME));
+
             return;
         }
 
@@ -324,7 +321,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $wrongAmountMessage = $this->module->l('The payment failed because the order and payment amounts are different. Try again.', self::FILE_NAME);
 
         if (Tools::getValue('failed')) {
-            $logger->error(sprintf('%s - Payment marked as failed by request parameter', self::FILE_NAME));
             $this->setWarning($notSuccessfulPaymentMessage);
 
             Tools::redirect($this->context->link->getPageLink(
@@ -342,16 +338,14 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $paymentMethodRepo = $this->module->getService(PaymentMethodRepository::class);
 
         $orderId = (int) Order::getIdByCartId((int) Tools::getValue('cart_id'));
-        $dbPayment = $paymentInformation = $paymentMethodRepo->getPaymentBy('order_id', (int) $orderId) ?: [];
+
+        $dbPayment = $paymentInformation = $orderId != 0 ? $paymentMethodRepo->getPaymentBy('order_id', (int) $orderId)
+            : $paymentMethodRepo->getPaymentBy('cart_id', (int) Tools::getValue('cart_id'));
 
         if (!$dbPayment) {
-            $logger->error(sprintf(
-                '%s - No payment found for order ID: %d',
-                self::FILE_NAME,
-                $orderId
-            ));
             exit(json_encode([
-                'success' => false,
+                'success' => true,
+                'wait' => true,
             ]));
         }
 
@@ -361,6 +355,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 self::FILE_NAME,
                 $dbPayment['cart_id'] ?? 'not set'
             ));
+
             exit(json_encode([
                 'success' => false,
             ]));
@@ -374,12 +369,17 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $order = new Order((int) $orderId);
 
         if ((int) $cart->id_customer !== (int) $this->context->customer->id) {
-            $logger->error(sprintf(
-                '%s - Cart ownership mismatch. Cart customer: %d, Context customer: %d',
-                self::FILE_NAME,
-                $cart->id_customer,
-                $this->context->customer->id
-            ));
+            $logger->error(
+                sprintf(
+                    '%s - Cart ownership mismatch',
+                    self::FILE_NAME
+                ),
+                [
+                    'cart_customer_id' => $cart->id_customer,
+                    'context_customer_id' => $this->context->customer->id
+                ]
+            );
+
             exit(json_encode([
                 'success' => false,
             ]));
@@ -414,6 +414,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                     $response = $paymentReturnService->handleTestPendingStatus();
                     break;
                 }
+
                 $response = $paymentReturnService->handleStatus(
                     $order,
                     $transaction,
@@ -423,22 +424,24 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             case PaymentStatus::STATUS_PAID:
             case PaymentStatus::STATUS_AUTHORIZED:
                 $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
-            if ($transaction->resource === Config::MOLLIE_API_STATUS_PAYMENT && $transaction->hasRefunds()) {
+
+                if ($transaction->resource === Config::MOLLIE_API_STATUS_PAYMENT && $transaction->hasRefunds()) {
+                    if (isset($transactionInfo['reason']) && $transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
+                        $this->setWarning($wrongAmountMessage);
+                    } else {
+                        $this->setWarning($notSuccessfulPaymentMessage);
+                    }
+
+                    $response = $paymentReturnService->handleFailedStatus($transaction);
+                    break;
+                }
+
                 if (isset($transactionInfo['reason']) && $transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
                     $this->setWarning($wrongAmountMessage);
-                } else {
-                    $this->setWarning($notSuccessfulPaymentMessage);
+                    $response = $paymentReturnService->handleFailedStatus($transaction);
+                    break;
                 }
-                $response = $paymentReturnService->handleFailedStatus($transaction);
-                break;
-            }
-
-            if (isset($transactionInfo['reason']) && $transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
-                $this->setWarning($wrongAmountMessage);
-                $response = $paymentReturnService->handleFailedStatus($transaction);
-                break;
-            }
-            $response = $paymentReturnService->handleStatus(
+                $response = $paymentReturnService->handleStatus(
                     $order,
                     $transaction,
                     $paymentReturnService::DONE
