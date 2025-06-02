@@ -27,7 +27,6 @@ $(document).ready(function () {
 
     function updateCartTotal() {
         const $selectedPayment = $('input[name="payment-option"]:checked');
-
         if ($selectedPayment.length === 0) {
             return;
         }
@@ -42,11 +41,9 @@ $(document).ready(function () {
             $paymentMethodId = $nextDiv.next().find('input[name="payment-method-id"]');
         }
 
-        if ($paymentMethodId.length === 0) {
-            return;
+        if ($paymentMethodId.length > 0) {
+            paymentMethodId = $paymentMethodId.val();
         }
-
-        paymentMethodId = $paymentMethodId.val();
 
         $.ajax({
             url: ajaxUrl,
