@@ -18,14 +18,32 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_6_2_9()
 {
-    $sql = '
-        CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_excluded_customer_groups` (
-            `id_payment_method` int(11) NOT NULL,
-            `id_customer_group` int(11) NOT NULL,
-            PRIMARY KEY (`id_payment_method`, `id_customer_group`),
-            KEY `id_customer_group` (`id_customer_group`)
-        ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
-    ';
+    try {
+        $db = Db::getInstance();
 
-    return Db::getInstance()->execute($sql);
+        $sql = '
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_excluded_customer_groups` (
+                `id_payment_method` int(11) NOT NULL,
+                `id_customer_group` int(11) NOT NULL,
+                PRIMARY KEY (`id_payment_method`, `id_customer_group`),
+                KEY `id_customer_group` (`id_customer_group`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
+        ';
+
+        $result = $db->execute($sql);
+
+        if (!$result) {
+            return false;
+        }
+
+        $sql = '
+            ALTER TABLE `' . _DB_PREFIX_ . 'mollie_payments`
+            ADD COLUMN `is_seen` BOOLEAN DEFAULT 0
+            AFTER `bank_status`
+        ';
+
+        return $db->execute($sql);
+    } catch (Throwable $e) {
+        return false;
+    }
 }

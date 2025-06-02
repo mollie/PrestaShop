@@ -225,4 +225,29 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 
         return array_column($results, 'id_customer_group');
     }
+
+    /**
+     * Flag failed payment records with cart ID
+     *
+     * @return bool True if records were updated, false otherwise
+     *
+     * @throws PrestaShopDatabaseException
+     */
+    public function flagOldPaymentRecordsByCartId(int $cartId): bool
+    {
+        if (!$cartId) {
+            $cartId = Context::getContext()->cart->id;
+        }
+
+        $sql = new DbQuery();
+        $sql->select('COUNT(*)')
+            ->from('mollie_payments')
+            ->where('cart_id = ' . (int) $cartId)
+            ->where('bank_status = \'' . pSQL(PaymentStatus::STATUS_FAILED) . '\'')
+            ->where('is_seen IS NULL OR is_seen = 0');
+
+        $count = (int) Db::getInstance()->getValue($sql);
+
+        return $count > 0;
+    }
 }
