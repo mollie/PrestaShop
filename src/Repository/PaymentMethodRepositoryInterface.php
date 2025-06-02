@@ -38,5 +38,5 @@ interface PaymentMethodRepositoryInterface extends ReadOnlyRepositoryInterface
 
     public function getCustomerGroupsForPaymentMethod(int $paymentMethodId): array;
 
-    public function flagOldPaymentRecords(): int;
+    public function flagOldPaymentRecordsByCartId(int $cartId): bool;
 }
