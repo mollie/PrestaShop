@@ -144,12 +144,7 @@ class TransactionService
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
 
         if (!$paymentMethod) {
-            if (in_array($apiPayment->status, [
-                PaymentStatus::STATUS_PAID,
-                PaymentStatus::STATUS_AUTHORIZED,
-            ])) {
-                $this->mollieOrderCreationService->createMolliePayment($apiPayment, (int) $apiPayment->metadata->cart_id, $orderDescription, null, $apiPayment->status);
-            }
+            $this->mollieOrderCreationService->createMolliePayment($apiPayment, (int) $apiPayment->metadata->cart_id, $orderDescription, null, $apiPayment->status);
         }
 
         /** @var int $orderId */
