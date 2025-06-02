@@ -984,6 +984,19 @@ class Mollie extends PaymentModule
 
     public function hookActionValidateOrder($params)
     {
+        try {
+            /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
+            $paymentMethodRepository = $this->getService(PaymentMethodRepositoryInterface::class);
+            $paymentMethodRepository->flagOldPaymentRecordsByCartId($params['cart']->id);
+        } catch (Throwable $e) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->getService(LoggerInterface::class);
+
+            $logger->error(sprintf('%s - Error while flagging old payment records', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($e)
+            ]);
+        }
+
         if (!isset($this->context->controller) || 'admin' !== $this->context->controller->controller_type) {
             return;
         }

@@ -129,13 +129,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $paymentInformation = $this->findPaymentInformation($paymentMethodRepo, $idCart, $orderNumber, $transactionId);
 
         if (empty($paymentInformation)) {
-            $logger->error(sprintf(
-                '%s - Payment information not found. Cart ID: %d, Order Number: %s, Transaction ID: %s',
-                self::FILE_NAME,
-                $idCart,
-                $orderNumber,
-                $transactionId
-            ));
             return [
                 'wait' => true,
             ];
@@ -446,6 +439,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                     $transaction,
                     $paymentReturnService::DONE
                 );
+
+                $paymentMethodRepo->setPaymentAsSeen($transaction->id);
                 break;
             case PaymentStatus::STATUS_EXPIRED:
             case PaymentStatus::STATUS_CANCELED:

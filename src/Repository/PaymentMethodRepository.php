@@ -107,7 +107,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
         try {
             $nonPaidPayment = Db::getInstance()->getRow(
                 sprintf(
-                    'SELECT * FROM `%s` WHERE `%s` = \'%s\' ORDER BY `created_at` DESC',
+                    'SELECT * FROM `%s` WHERE `%s` = \'%s\' AND `is_seen` = 0 ORDER BY `created_at` DESC',
                     _DB_PREFIX_ . 'mollie_payments',
                     bqSQL($column),
                     pSQL($value)
@@ -239,15 +239,25 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
             $cartId = Context::getContext()->cart->id;
         }
 
-        $sql = new DbQuery();
-        $sql->select('COUNT(*)')
-            ->from('mollie_payments')
-            ->where('cart_id = ' . (int) $cartId)
-            ->where('bank_status = \'' . pSQL(PaymentStatus::STATUS_FAILED) . '\'')
-            ->where('is_seen IS NULL OR is_seen = 0');
+        $result = Db::getInstance()->update(
+            'mollie_payments',
+            [
+                'is_seen' => 1,
+            ],
+            'cart_id = ' . (int) $cartId . ' AND bank_status = \'' . pSQL(PaymentStatus::STATUS_FAILED) . '\' AND (is_seen IS NULL OR is_seen = 0)'
+        );
 
-        $count = (int) Db::getInstance()->getValue($sql);
+        return $result > 0;
+    }
 
-        return $count > 0;
+    public function setPaymentAsSeen(string $transactionId)
+    {
+        return Db::getInstance()->update(
+            'mollie_payments',
+            [
+                'is_seen' => 1,
+            ],
+            'transaction_id = ' . (int) $transactionId
+        );
     }
 }
