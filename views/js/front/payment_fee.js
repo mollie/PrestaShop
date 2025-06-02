@@ -26,24 +26,20 @@ $(document).ready(function () {
     }
 
     function updateCartTotal() {
-        const $selectedPayment = $('input[name="payment-option"]:checked');
-        if ($selectedPayment.length === 0) {
+        const selectedPayment = $('input[name="payment-option"]:checked');
+        if (selectedPayment.length === 0) {
             return;
         }
 
-        const $nextDiv = $selectedPayment.closest('.payment-option').parent().next();
+        const nextDiv = selectedPayment.closest('.payment-option').parent().next();
         let paymentMethodId = 0;
-        let $paymentMethodId;
 
-        if ($nextDiv.hasClass('js-payment-option-form')) {
-            $paymentMethodId = $nextDiv.find('input[name="payment-method-id"]');
+        if (nextDiv.hasClass('js-payment-option-form')) {
+            paymentMethodId = nextDiv.find('input[name="payment-method-id"]').val();
         } else {
-            $paymentMethodId = $nextDiv.next().find('input[name="payment-method-id"]');
+            paymentMethodId = nextDiv.next().find('input[name="payment-method-id"]').val();
         }
 
-        if ($paymentMethodId.length > 0) {
-            paymentMethodId = $paymentMethodId.val();
-        }
 
         $.ajax({
             url: ajaxUrl,
