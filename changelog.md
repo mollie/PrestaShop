@@ -5,6 +5,7 @@
 + Pay By Bank creates order with open status
 + Customer group restriction for payment methods
 + Remove unsupported characters in Product URL
++ Payments fees are now visibile in order confirmation page & email
 + Minor improvements
 
 ## Changes in release 6.2.8.1 ##
