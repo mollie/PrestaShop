@@ -17,6 +17,7 @@ label.mollie-input-error {
   opacity: 0;
   height: 0;
   position: absolute;
+  z-index: -1;
 }
 
 .mollie-credit-card-container__show {
