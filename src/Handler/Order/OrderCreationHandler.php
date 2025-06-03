@@ -63,6 +63,7 @@ use Mollie\Utility\TextGeneratorUtility;
 use MolPaymentMethod;
 use Order;
 use PrestaShop\Decimal\Number;
+use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
