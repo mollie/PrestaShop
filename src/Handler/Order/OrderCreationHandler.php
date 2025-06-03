@@ -136,6 +136,12 @@ class OrderCreationHandler
 
         $cart = new Cart($cartId);
 
+        if (!Validate::isLoadedObject($cart)) {
+            $this->logger->error(sprintf('%s - Cart is not loaded', self::FILE_NAME), [
+                'cart_id_api' => $cartId,
+            ]);
+        }
+
         $originalAmount = $cart->getOrderTotal(
             true,
             Cart::BOTH
