@@ -51,6 +51,7 @@ final class DatabaseTableInstaller implements InstallerInterface
 				`reason`          VARCHAR(64),
 				`created_at`      DATETIME     NOT NULL,
 				`updated_at`      DATETIME     DEFAULT NULL,
+                `is_seen`         BOOLEAN      DEFAULT 0,
 				 INDEX (cart_id, order_reference)
 			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
