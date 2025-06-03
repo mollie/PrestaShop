@@ -210,7 +210,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $this->context->smarty->assign([
             'msg_details' => $returnData['msg_details'] ?? null,
             'wait' => $returnData['wait'],
-            'link' => $this->context->link
+            'link' => $this->context->link,
         ]);
 
         if ($returnData['wait']) {
@@ -257,7 +257,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                     'order_number' => Tools::getValue('order_number'),
                 ],
                 true
-            )
+            ),
         ]);
     }
 
@@ -369,7 +369,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 ),
                 [
                     'cart_customer_id' => $cart->id_customer,
-                    'context_customer_id' => $this->context->customer->id
+                    'context_customer_id' => $this->context->customer->id,
                 ]
             );
 

@@ -993,7 +993,7 @@ class Mollie extends PaymentModule
             $logger = $this->getService(LoggerInterface::class);
 
             $logger->error(sprintf('%s - Error while flagging old payment records', self::FILE_NAME), [
-                'exceptions' => ExceptionUtility::getExceptions($e)
+                'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
         }
 

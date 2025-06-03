@@ -22,7 +22,6 @@ use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\PaymentCollection;
 use Mollie\Api\Types\OrderStatus;
-use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
 use Mollie\Errors\Http\HttpStatusCode;
