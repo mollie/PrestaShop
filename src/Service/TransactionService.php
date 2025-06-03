@@ -53,38 +53,37 @@ if (!defined('_PS_VERSION_')) {
 class TransactionService
 {
     const FILE_NAME = 'TransactionService';
-    /**
-     * @var Mollie
-     */
+
+    /** @var Mollie */
     private $module;
 
-    /**
-     * @var OrderStatusService
-     */
+    /** @var OrderStatusService */
     private $orderStatusService;
 
-    /**
-     * @var PaymentMethodRepositoryInterface
-     */
+    /** @var PaymentMethodRepositoryInterface */
     private $paymentMethodRepository;
-    /**
-     * @var OrderCreationHandler
-     */
+
+    /** @var OrderCreationHandler */
     private $orderCreationHandler;
-    /**
-     * @var PaymentMethodService
-     */
+
+    /** @var PaymentMethodService */
     private $paymentMethodService;
+
     /** @var MollieOrderCreationService */
     private $mollieOrderCreationService;
+
     /** @var OrderPaymentFeeHandler */
     private $orderPaymentFeeHandler;
+
     /** @var ShipmentSenderHandlerInterface */
     private $shipmentSenderHandler;
+
     /** @var PrestaLoggerInterface */
     private $logger;
+
     /** @var ExceptionService */
     private $exceptionService;
+
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
 

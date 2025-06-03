@@ -12,6 +12,8 @@
 
 namespace Mollie\Adapter;
 
+use Currency;
+use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 use Tools;
 
 if (!defined('_PS_VERSION_')) {
@@ -30,7 +32,15 @@ class ToolsAdapter
         return Tools::substr($str, $start, $length);
     }
 
-    public function displayPrice($price, $currency): string
+    /**
+     * @param float $price
+     * @param int|Currency|array|null $currency Current currency (object, id_currency, NULL => context currency)
+     *
+     * @return string
+     *
+     * @throws LocalizationException
+     */
+    public function displayPrice($price, $currency = null): string
     {
         // TODO replace all displayPrice calls with Locale::formatPrice()
         return Tools::displayPrice($price, $currency);

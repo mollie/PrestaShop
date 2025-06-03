@@ -503,6 +503,23 @@
                                 </div>
                             </div>
                         {/if}
+                        <div class="form-group">
+                            <label class="control-label col-lg-3">
+                                {l s='Restrict to customer groups:' mod='mollie'}
+                            </label>
+                            <div class="col-lg-9">
+                                <select name="MOLLIE_METHOD_CUSTOMER_GROUPS_{$paymentMethod.id|escape:'html':'UTF-8'}[]"
+                                        class="fixed-width-xl chosen mollie-chosen" multiple="multiple">
+                                    {foreach $input.customerGroups as $group}
+                                        <option value="{$group.id_group|intval}"
+                                                {if {$group.id_group|in_array:$paymentMethod.excludedCustomerGroups}}selected{/if}>{$group.name|escape:'html':'UTF-8'}</option>
+                                    {/foreach}
+                                </select>
+                                <p class="help-block">
+                                    {l s='Select customer groups that will not see this payment method. If no groups are selected, the payment method will be available to all customers.' mod='mollie'}
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </li>
             {/foreach}

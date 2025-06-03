@@ -28,6 +28,7 @@ use Mollie\Config\Config;
 use Mollie\Exception\MollieApiException;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\CountryRepository;
+use Mollie\Repository\CustomerRepository;
 use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
@@ -69,7 +70,7 @@ class ApiService implements ApiServiceInterface
      */
     private $environment;
 
-    /*
+    /**
      * @var TransactionService
      */
     private $transactionService;
@@ -84,6 +85,8 @@ class ApiService implements ApiServiceInterface
     private $context;
     /** @var PaymentMethodLangRepositoryInterface */
     private $paymentMethodLangRepository;
+    /** @var CustomerRepository */
+    private $customerRepository;
 
     public function __construct(
         PaymentMethodRepository $methodRepository,
@@ -94,7 +97,8 @@ class ApiService implements ApiServiceInterface
         Shop $shop,
         TaxCalculatorProvider $taxProvider,
         Context $context,
-        PaymentMethodLangRepositoryInterface $paymentMethodLangRepository
+        PaymentMethodLangRepositoryInterface $paymentMethodLangRepository,
+        CustomerRepository $customerRepository
     ) {
         $this->countryRepository = $countryRepository;
         $this->paymentMethodSortProvider = $paymentMethodSortProvider;
@@ -106,6 +110,7 @@ class ApiService implements ApiServiceInterface
         $this->taxProvider = $taxProvider;
         $this->context = $context;
         $this->paymentMethodLangRepository = $paymentMethodLangRepository;
+        $this->customerRepository = $customerRepository;
     }
 
     /**
@@ -189,6 +194,7 @@ class ApiService implements ApiServiceInterface
         $methods = $this->getMethodsObjForConfig($methods);
         $methods = $this->getMethodsCountriesForConfig($methods);
         $methods = $this->getExcludedCountriesForConfig($methods);
+        $methods = $this->getExcludedCustomerGroupsForConfig($methods);
         $methods = $this->paymentMethodSortProvider->getSortedInAscendingWayForConfiguration($methods);
 
         return $methods;
@@ -292,6 +298,22 @@ class ApiService implements ApiServiceInterface
     {
         foreach ($methods as $key => $method) {
             $methods[$key]['excludedCountries'] = $this->countryRepository->getExcludedCountryIds($method['obj']->id);
+        }
+
+        return $methods;
+    }
+
+    /**
+     * @param array $methods
+     *
+     * @return array
+     *
+     * @throws PrestaShopDatabaseException
+     */
+    private function getExcludedCustomerGroupsForConfig(array &$methods): array
+    {
+        foreach ($methods as $key => $method) {
+            $methods[$key]['excludedCustomerGroups'] = $this->customerRepository->getExcludedCustomerGroupIds($method['obj']->id);
         }
 
         return $methods;

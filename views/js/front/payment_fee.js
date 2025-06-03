@@ -11,6 +11,8 @@
 
 $(document).ready(function () {
     displayPaymentFee();
+    updateCartTotal();
+
     function displayPaymentFee() {
         var paymentFees = $('input[name="payment-fee-price-display"]');
         paymentFees.each(function () {
@@ -23,21 +25,21 @@ $(document).ready(function () {
         });
     }
 
-    $('input[name="payment-option"]').on('change', function () {
-        const $nextDiv = $(this).closest('.payment-option').parent().next();
+    function updateCartTotal() {
+        const selectedPayment = $('input[name="payment-option"]:checked');
+        if (selectedPayment.length === 0) {
+            return;
+        }
 
+        const nextDiv = selectedPayment.closest('.payment-option').parent().next();
         let paymentMethodId = 0;
-        let $paymentMethodId;
 
-        if ($nextDiv.hasClass('js-payment-option-form')) {
-          $paymentMethodId = $nextDiv.find('input[name="payment-method-id"]');
+        if (nextDiv.hasClass('js-payment-option-form')) {
+            paymentMethodId = nextDiv.find('input[name="payment-method-id"]').val();
         } else {
-          $paymentMethodId = $nextDiv.next().find('input[name="payment-method-id"]');
+            paymentMethodId = nextDiv.next().find('input[name="payment-method-id"]').val();
         }
 
-        if ($paymentMethodId.length > 0) {
-          paymentMethodId = $paymentMethodId.val();
-        }
 
         $.ajax({
             url: ajaxUrl,
@@ -51,13 +53,16 @@ $(document).ready(function () {
                 response = jQuery.parseJSON(response);
 
                 if (response.error) {
-                  console.error(response.message);
-
-                  return;
+                    console.error(response.message);
+                    return;
                 }
 
                 $('.card-block.cart-summary-totals').replaceWith(response.cart_summary_totals);
             }
-        })
-    })
+        });
+    }
+
+    $('input[name="payment-option"]').on('change', function () {
+        updateCartTotal();
+    });
 });
