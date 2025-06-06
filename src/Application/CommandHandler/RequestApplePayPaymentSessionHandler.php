@@ -45,18 +45,23 @@ final class RequestApplePayPaymentSessionHandler
 
     public function handle(RequestApplePayPaymentSession $command): array
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         try {
             $response = $this->apiService->requestApplePayPaymentSession($this->module->getApiClient(), $command->getValidationUrl());
         } catch (MollieApiException $e) {
+            $logger->error('Error requesting Apple Pay payment session', [
+                'message' => $e->getMessage(),
+                'exception' => ExceptionUtility::getExceptions($e),
+            ]);
+
             /* Message is only displayed in console */
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
             ];
         } catch (ApiException $e) {
-            /** @var LoggerInterface $logger */
-            $logger = $this->module->getService(LoggerInterface::class);
-            
             $logger->error('Error requesting Apple Pay payment session', [
                 'message' => $e->getMessage(),
                 'exception' => ExceptionUtility::getExceptions($e),
