@@ -19,6 +19,8 @@ use Mollie\Application\Command\RequestApplePayPaymentSession;
 use Mollie\Exception\MollieApiException;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Service\ApiServiceInterface;
+use Mollie\Utility\ExceptionUtility;
+use Mollie\Logger\LoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -52,6 +54,14 @@ final class RequestApplePayPaymentSessionHandler
                 'error' => $e->getMessage(),
             ];
         } catch (ApiException $e) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            
+            $logger->error('Error requesting Apple Pay payment session', [
+                'message' => $e->getMessage(),
+                'exception' => ExceptionUtility::getExceptions($e),
+            ]);
+
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
