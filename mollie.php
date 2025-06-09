@@ -558,6 +558,8 @@ class Mollie extends PaymentModule
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
         $paymentMethodRepository = $this->getService(PaymentMethodRepositoryInterface::class);
 
+        $paymentMethodRepository->flagOldPaymentRecordsByCartId($params['cart']->id);
+
         /** @var \Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface $paymentOptionsHandler */
         $paymentOptionsHandler = $this->getService(\Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface::class);
 
