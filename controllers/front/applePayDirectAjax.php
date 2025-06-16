@@ -79,10 +79,14 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
             (int) $this->context->language->id,
             $cartId
         );
-        $response = $handler->handle($command);
+
+        try {
+            $response = $handler->handle($command);
+        } catch (\Throwable $exception) {
+            $this->ajaxResponse(JsonResponse::error($exception->getMessage()));
+        }
 
         $this->ajaxResponse(JsonResponse::success($response));
-        $this->ajaxRender(json_encode($response));
     }
 
     private function updateShippingMethod()
