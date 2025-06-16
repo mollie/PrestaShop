@@ -21,6 +21,8 @@ use Mollie\Application\CommandHandler\UpdateApplePayShippingMethodHandler;
 use Mollie\Builder\ApplePayDirect\ApplePayOrderBuilder;
 use Mollie\Builder\ApplePayDirect\ApplePayProductBuilder;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
+use Mollie\Controller\AbstractMollieController;
+use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Utility\ExceptionUtility;
@@ -30,7 +32,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontController
+class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieController
 {
     private const FILE_NAME = 'applePayDirectAjax';
     /** @var Mollie */
@@ -79,6 +81,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontControlle
         );
         $response = $handler->handle($command);
 
+        $this->ajaxResponse(JsonResponse::success($response));
         $this->ajaxRender(json_encode($response));
     }
 
@@ -92,9 +95,18 @@ class MollieApplePayDirectAjaxModuleFrontController extends ModuleFrontControlle
             (int) $shippingMethodDetails['identifier'],
             (int) Tools::getValue('cartId')
         );
-        $response = $handler->handle($command);
 
-        $this->ajaxRender(json_encode($response));
+        try {
+            $response = $handler->handle($command);
+        } catch (\Throwable $exception) {
+            $this->ajaxResponse(JsonResponse::error($exception->getMessage()));
+        }
+
+        if ($response['success'] === false) {
+            $this->ajaxResponse(JsonResponse::error($response['error']));
+        }
+
+        $this->ajaxResponse(JsonResponse::success($response));
     }
 
     private function updateAppleShippingContact()
