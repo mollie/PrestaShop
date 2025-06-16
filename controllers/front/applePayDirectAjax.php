@@ -80,6 +80,8 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
             $cartId
         );
 
+        $response = null;
+
         try {
             $response = $handler->handle($command);
         } catch (\Throwable $exception) {
@@ -99,6 +101,8 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
             (int) $shippingMethodDetails['identifier'],
             (int) Tools::getValue('cartId')
         );
+
+        $response = null;
 
         try {
             $response = $handler->handle($command);
