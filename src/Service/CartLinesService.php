@@ -505,8 +505,16 @@ class CartLinesService
             }
 
             $line->setVatRate(TextFormatUtility::formatNumber($item['vatRate'], $apiRoundingPrecision, '.', ''));
-            $line->setProductUrl($item['product_url'] ?? null);
-            $line->setImageUrl($item['image_url'] ?? null);
+
+            if (isset($item['product_url']) && $item['product_url']) {
+                $line->setProductUrl(
+                    TextFormatUtility::replaceAccentedChars((string) $item['product_url'])
+                );
+            }
+
+            if (isset($item['image_url']) && $item['image_url']) {
+                $line->setImageUrl($item['image_url']);
+            }
 
             $newItems[$index] = $line;
         }

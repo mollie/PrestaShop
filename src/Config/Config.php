@@ -350,6 +350,8 @@ class Config
 
     const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
 
+    const MOLLIE_METHOD_CUSTOMER_GROUPS = 'MOLLIE_METHOD_CUSTOMER_GROUPS_';
+
     // TODO migrate functions below to separate service
     public static function getStatuses()
     {
