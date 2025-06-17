@@ -22,7 +22,6 @@ use Mollie\Builder\ApplePayDirect\ApplePayOrderBuilder;
 use Mollie\Builder\ApplePayDirect\ApplePayProductBuilder;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
-use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Utility\ExceptionUtility;
@@ -195,7 +194,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
         $products = $this->getWantedCartProducts($cartId);
         /** @var CreateApplePayOrderHandler $handler */
         $handler = $this->module->getService(CreateApplePayOrderHandler::class);
-        
+
         /** @var ApplePayOrderBuilder $applePayProductBuilder */
         $applePayProductBuilder = $this->module->getService(ApplePayOrderBuilder::class);
 
