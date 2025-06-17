@@ -3,6 +3,7 @@
 # Changelog #
 ## Changes in release 6.3.0 ##
 + Vipps payment method added
++ Apple Pay Direct fixed
 
 ## Changes in release 6.2.9 ##
 + Pay By Bank creates order with open status
