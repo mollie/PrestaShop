@@ -88,7 +88,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
             $this->ajaxResponse(JsonResponse::error($exception->getMessage()));
         }
 
-        $this->ajaxResponse(JsonResponse::success($response));
+        $this->ajaxRender(json_encode($response));
     }
 
     private function updateShippingMethod()
@@ -114,7 +114,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
             $this->ajaxResponse(JsonResponse::error($response['error']));
         }
 
-        $this->ajaxResponse(JsonResponse::success($response));
+        $this->ajaxRender(json_encode($response));
     }
 
     private function updateAppleShippingContact()
