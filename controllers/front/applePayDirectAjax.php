@@ -70,8 +70,12 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
     {
         $cartId = (int) Tools::getValue('cartId');
         $validationUrl = Tools::getValue('validationUrl');
+
         /** @var RequestApplePayPaymentSessionHandler $handler */
         $handler = $this->module->getService(RequestApplePayPaymentSessionHandler::class);
+
+        /** @var Logger $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
 
         $command = new RequestApplePayPaymentSession(
             $validationUrl,
@@ -85,7 +89,15 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
         try {
             $response = $handler->handle($command);
         } catch (\Throwable $exception) {
-            $this->ajaxResponse(JsonResponse::error($exception->getMessage()));
+            $logger->error(sprintf('%s - Failed to get apple pay session.', self::FILE_NAME), [
+                'context' => [
+                    'cartId' => $cartId,
+                    'validationUrl' => $validationUrl,
+                ],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+
+            $this->ajaxRender('Unable to get apple pay session');
         }
 
         $this->ajaxRender(json_encode($response));
@@ -95,6 +107,10 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
     {
         /** @var UpdateApplePayShippingMethodHandler $handler */
         $handler = $this->module->getService(UpdateApplePayShippingMethodHandler::class);
+
+        /** @var Logger $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         $shippingMethodDetails = Tools::getValue('shippingMethod');
 
         $command = new UpdateApplePayShippingMethod(
@@ -107,11 +123,15 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
         try {
             $response = $handler->handle($command);
         } catch (\Throwable $exception) {
-            $this->ajaxResponse(JsonResponse::error($exception->getMessage()));
-        }
+            $logger->error(sprintf('%s - Failed to update shipping method.', self::FILE_NAME), [
+                'context' => [
+                    'shippingMethodId' => $shippingMethodDetails['identifier'],
+                    'cartId' => Tools::getValue('cartId'),
+                ],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
 
-        if ($response['success'] === false) {
-            $this->ajaxResponse(JsonResponse::error($response['error']));
+            $this->ajaxRender('Unable to update shipping method');
         }
 
         $this->ajaxRender(json_encode($response));
@@ -121,8 +141,10 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
     {
         /** @var UpdateApplePayShippingContactHandler $handler */
         $handler = $this->module->getService(UpdateApplePayShippingContactHandler::class);
+
         /** @var ApplePayProductBuilder $productBuilder */
         $productBuilder = $this->module->getService(ApplePayProductBuilder::class);
+
         /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
 
@@ -173,6 +195,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
         $products = $this->getWantedCartProducts($cartId);
         /** @var CreateApplePayOrderHandler $handler */
         $handler = $this->module->getService(CreateApplePayOrderHandler::class);
+        
         /** @var ApplePayOrderBuilder $applePayProductBuilder */
         $applePayProductBuilder = $this->module->getService(ApplePayOrderBuilder::class);
 
