@@ -175,8 +175,12 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
 
-        $logger->error(sprintf('%s - Failed to handle webhook', self::FILE_NAME, $logMessage), [
+        $logger->error(sprintf('%s - Failed to handle webhook', self::FILE_NAME), [
             'exceptions' => ExceptionUtility::getExceptions($exception),
+            'context' => [
+                'httpStatusCode' => $httpStatusCode,
+                'logMessage' => $logMessage,
+            ],
         ]);
 
         $errorHandler->handle($exception, $httpStatusCode, false);
