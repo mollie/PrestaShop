@@ -106,6 +106,11 @@ class PaymentData implements JsonSerializable
      */
     private $email;
 
+    /**
+     * @var Line[]
+     */
+    private $lines = [];
+
     public function __construct(
         Amount $amount,
         $description,
@@ -360,7 +365,23 @@ class PaymentData implements JsonSerializable
         $this->email = $email;
     }
 
-    public function jsonSerialize()
+    /**
+     * @return Line[]
+     */
+    public function getLines(): array
+    {
+        return $this->lines;
+    }
+
+    /**
+     * @param Line[] $lines
+     */
+    public function setLines(array $lines): void
+    {
+        $this->lines = $lines;
+    }
+
+    public function jsonSerialize(): array
     {
         $result = [
             'amount' => [

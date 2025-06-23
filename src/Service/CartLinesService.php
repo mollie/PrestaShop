@@ -70,6 +70,7 @@ class CartLinesService
      */
     public function getCartLines(
         $amount,
+        $description,
         $paymentFeeData,
         $currencyIsoCode,
         $cartSummary,
@@ -216,6 +217,7 @@ class CartLinesService
             // Try to spread this product evenly and account for rounding differences on the order line
             $orderLines[$productHash][] = [
                 'name' => $cartItem['name'],
+                'description' => $cartItem['name'],
                 'sku' => $productHash,
                 'targetVat' => (float) $cartItem['rate'],
                 'quantity' => $quantity,

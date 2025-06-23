@@ -341,6 +341,20 @@ class PaymentMethodService
             $paymentData->setDescription($orderReference);
             $paymentData->setEmail($customer->email);
 
+            $paymentData->setLines(
+                $this->cartLinesService->getCartLines(
+                    $totalAmount,
+                    'default description',
+                    $paymentFeeData,
+                    $currency,
+                    $cart->getSummaryDetails(),
+                    $cart->getTotalShippingCost(null, true),
+                    $cart->getProducts(),
+                    (bool) Configuration::get('PS_GIFT_WRAPPING'),
+                    Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY)
+                )
+            );
+
             if (isset($cart->id_address_invoice)) {
                 $billingAddress = new Address((int) $cart->id_address_invoice);
                 $paymentData->setBillingAddress($billingAddress);
@@ -437,6 +451,7 @@ class PaymentMethodService
             $orderData->setLines(
                 $this->cartLinesService->getCartLines(
                     $amount,
+                    'default description',
                     $paymentFeeData,
                     $currency->iso_code,
                     $cart->getSummaryDetails(),
