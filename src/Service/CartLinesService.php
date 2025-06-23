@@ -197,7 +197,6 @@ class CartLinesService
                     $productHashGift = "{$idProduct}¤{$idProductAttribute}¤{$idCustomization}gift";
                     $orderLines[$productHashGift][] = [
                         'name' => $cartItem['name'],
-                        'description' => $description ?? $cartItem['name'],
                         'sku' => $productHashGift,
                         'targetVat' => (float) $cartItem['rate'],
                         'quantity' => $gift_product['cart_quantity'],
@@ -248,7 +247,6 @@ class CartLinesService
             $orderLines['discount'] = [
                 [
                     'name' => 'Discount',
-                    'description' => 'Discount',
                     'type' => 'discount',
                     'quantity' => 1,
                     'unitPrice' => -round($totalDiscounts, $apiRoundingPrecision),
@@ -378,7 +376,6 @@ class CartLinesService
             $orderLines['shipping'] = [
                 [
                     'name' => $this->languageService->lang('Shipping'),
-                    'description' => $this->languageService->lang('Shipping'),
                     'quantity' => 1,
                     'unitPrice' => round($roundedShippingCost, $apiRoundingPrecision),
                     'totalAmount' => round($roundedShippingCost, $apiRoundingPrecision),
@@ -412,7 +409,6 @@ class CartLinesService
             $orderLines['wrapping'] = [
                 [
                     'name' => $this->languageService->lang('Gift wrapping'),
-                    'description' => $this->languageService->lang('Gift wrapping'),
                     'quantity' => 1,
                     'unitPrice' => round($wrappingPrice, $apiRoundingPrecision),
                     'totalAmount' => round($wrappingPrice, $apiRoundingPrecision),
@@ -440,7 +436,6 @@ class CartLinesService
         $orderLines['surcharge'] = [
             [
                 'name' => $this->languageService->lang('Payment fee'),
-                'description' => $this->languageService->lang('Payment fee'),
                 'sku' => Config::PAYMENT_FEE_SKU,
                 'quantity' => 1,
                 'unitPrice' => round($paymentFeeData->getPaymentFeeTaxIncl(), $apiRoundingPrecision),
@@ -481,7 +476,6 @@ class CartLinesService
             $line->setName($item['name'] ?: $item['sku']);
             $line->setQuantity((int) $item['quantity']);
             $line->setSku(isset($item['sku']) ? $item['sku'] : '');
-            $line->setDescription($item['description'] ?? $item['name'] ?? 'default description');
 
             $currency = strtoupper(strtolower($currencyIsoCode));
 

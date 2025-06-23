@@ -423,10 +423,6 @@ class PaymentData implements JsonSerializable
             $result['sequenceType'] = $this->sequenceType;
         }
 
-        if (!empty($this->getLines())) {
-            $result['lines'] = $this->getLines();
-        }
-
         return $result;
     }
 
