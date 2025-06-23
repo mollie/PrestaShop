@@ -531,10 +531,10 @@ class MailService
      * @param int|null $shopId The shop ID (uses context if null)
      *
      * @return bool Whether the email was sent successfully
-     
+
      * @throws \PrestaShopException
      */
-    public function sendFailedPaymentMail(?Customer $customer = null, ?string $checkoutUrl = null, ?string $orderReference = null, string $reason, ?int $shopId = null): bool
+    public function sendFailedPaymentMail(?Customer $customer = null, ?string $orderReference = null, ?string $checkoutUrl = null): bool
     {
         if (!$customer) {
             $customer = $this->context->customer;
@@ -544,16 +544,16 @@ class MailService
             throw new \PrestaShopException('Invalid customer object provided');
         }
 
-        if (!$shopId) {
-            $shopId = $this->context->shop->id;
-        }
+        $shopId = $this->context->shop->id;
 
-        if ($shopId <= 0) {
+        if (null === $shopId) {
             throw new \PrestaShopException('Invalid shop ID provided');
         }
 
         if (!$orderReference && $this->context->cart) {
+            /** @var Order $order */
             $order = Order::getByCartId($this->context->cart->id);
+
             if (Validate::isLoadedObject($order)) {
                 $orderReference = $order->reference;
             }
@@ -577,7 +577,7 @@ class MailService
         }
 
         if (empty($reason)) {
-            throw new \PrestaShopException('Failure reason cannot be empty');
+            $reason = $this->module->l('Payment failed', self::FILE_NAME);
         }
 
         if (empty($customer->email) || !Validate::isEmail($customer->email)) {
