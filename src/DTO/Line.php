@@ -86,11 +86,6 @@ class Line implements JsonSerializable
     private $category;
 
     /**
-     * @var string|null
-     */
-    private $description = null;
-
-    /**
      * @return string
      */
     public function getType()
@@ -350,29 +345,10 @@ class Line implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param string|null $description
-     */
-    public function setDescription(?string $description): self
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function jsonSerialize(): array
+    public function jsonSerialize()
     {
         return [
             'sku' => $this->getSku(),
-            'description' => $this->getDescription(),
             'name' => $this->getName(),
             'productUrl' => $this->getProductUrl(),
             'imageUrl' => $this->getImageUrl(),
