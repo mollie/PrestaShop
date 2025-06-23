@@ -483,7 +483,10 @@ class CartLinesService
 
             $line->setQuantity((int) $item['quantity']);
             $line->setSku(isset($item['sku']) ? $item['sku'] : '');
-            $line->setDescription($item['description'] ?? $item['name'] ?? 'default description');
+
+            if ($lineType === 'PaymentLine') {
+                $line->setDescription($item['description'] ?? $item['name'] ?? 'default description');
+            }
 
             // Only set metadata for OrderLine, PaymentLine doesn't have metadata property
             if ($lineType === 'OrderLine' && isset($item['metadata'])) {
