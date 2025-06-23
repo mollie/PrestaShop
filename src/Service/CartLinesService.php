@@ -476,22 +476,18 @@ class CartLinesService
             $lineClass = $lineType === 'PaymentLine' ? PaymentLine::class : OrderLine::class;
             $line = new $lineClass();
 
-            // Only set name for OrderLine, PaymentLine doesn't have name property
-            if ($lineType === 'OrderLine') {
-                $line->setName($item['name'] ?: $item['sku']);
+            switch ($lineType) {
+                case 'OrderLine':
+                    $line->setName($item['name'] ?: $item['sku']);
+                    $line->setMetaData($item['metadata'] ?? []);
+                    break;
+                case 'PaymentLine':
+                    $line->setDescription($item['description'] ?? $item['name'] ?? 'default description');
+                    break;
             }
 
             $line->setQuantity((int) $item['quantity']);
             $line->setSku(isset($item['sku']) ? $item['sku'] : '');
-
-            if ($lineType === 'PaymentLine') {
-                $line->setDescription($item['description'] ?? $item['name'] ?? 'default description');
-            }
-
-            // Only set metadata for OrderLine, PaymentLine doesn't have metadata property
-            if ($lineType === 'OrderLine' && isset($item['metadata'])) {
-                $line->setMetaData($item['metadata']);
-            }
 
             $currency = strtoupper(strtolower($currencyIsoCode));
 
