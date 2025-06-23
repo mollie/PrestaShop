@@ -362,6 +362,20 @@ class PaymentMethodService
                 $paymentData->setApplePayToken($applePayToken);
             }
 
+            $paymentData->setLines(
+                $this->cartLinesService->getCartLines(
+                    $totalAmount,
+                    $paymentFeeData,
+                    $currency,
+                    $cart->getSummaryDetails(),
+                    $cart->getTotalShippingCost(null, true),
+                    $cart->getProducts(),
+                    (bool) Configuration::get('PS_GIFT_WRAPPING'),
+                    Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
+                    'PaymentLine'
+                )
+            );
+
             if ($this->subscriptionOrder->validate(new Cart($cartId))) {
                 $paymentData->setSubscriptionOrder(true);
 
@@ -443,7 +457,8 @@ class PaymentMethodService
                     $cart->getTotalShippingCost(null, true),
                     $cart->getProducts(),
                     (bool) Configuration::get('PS_GIFT_WRAPPING'),
-                    $selectedVoucherCategory
+                    $selectedVoucherCategory,
+                    'OrderLine'
                 ));
 
             $payment = new Payment();

@@ -18,7 +18,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class Line implements JsonSerializable
+class PaymentLine implements JsonSerializable
 {
     /**
      * @var string
@@ -33,22 +33,12 @@ class Line implements JsonSerializable
     /**
      * @var string
      */
-    private $name;
-
-    /**
-     * @var string
-     */
     private $productUrl;
 
     /**
      * @var string
      */
     private $imageUrl;
-
-    /**
-     * @var array
-     */
-    private $metaData;
 
     /**
      * @var int
@@ -86,6 +76,11 @@ class Line implements JsonSerializable
     private $category;
 
     /**
+     * @var string|null
+     */
+    private $description = null;
+
+    /**
      * @return string
      */
     public function getType()
@@ -96,7 +91,7 @@ class Line implements JsonSerializable
     /**
      * @param string $type
      *
-     * @return Line
+     * @return PaymentLine
      */
     public function setType($type)
     {
@@ -116,31 +111,11 @@ class Line implements JsonSerializable
     /**
      * @param string $sku
      *
-     * @return Line
+     * @return PaymentLine
      */
     public function setSku($sku)
     {
         $this->sku = $sku;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return Line
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
 
         return $this;
     }
@@ -156,7 +131,7 @@ class Line implements JsonSerializable
     /**
      * @param string $productUrl
      *
-     * @return Line
+     * @return PaymentLine
      */
     public function setProductUrl($productUrl)
     {
@@ -176,31 +151,11 @@ class Line implements JsonSerializable
     /**
      * @param string $imageUrl
      *
-     * @return Line
+     * @return PaymentLine
      */
     public function setImageUrl($imageUrl)
     {
         $this->imageUrl = $imageUrl;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getMetaData()
-    {
-        return $this->metaData;
-    }
-
-    /**
-     * @param array $metaData
-     *
-     * @return Line
-     */
-    public function setMetaData($metaData)
-    {
-        $this->metaData = $metaData;
 
         return $this;
     }
@@ -216,7 +171,7 @@ class Line implements JsonSerializable
     /**
      * @param int $quantity
      *
-     * @return Line
+     * @return PaymentLine
      */
     public function setQuantity($quantity)
     {
@@ -236,7 +191,7 @@ class Line implements JsonSerializable
     /**
      * @param string $vatRate
      *
-     * @return Line
+     * @return PaymentLine
      */
     public function setVatRate($vatRate)
     {
@@ -256,7 +211,7 @@ class Line implements JsonSerializable
     /**
      * @param Amount $unitPrice
      *
-     * @return Line
+     * @return PaymentLine
      */
     public function setUnitPrice($unitPrice)
     {
@@ -276,7 +231,7 @@ class Line implements JsonSerializable
     /**
      * @param Amount $totalPrice
      *
-     * @return Line
+     * @return PaymentLine
      */
     public function setTotalPrice($totalPrice)
     {
@@ -296,7 +251,7 @@ class Line implements JsonSerializable
     /**
      * @param Amount $discountAmount
      *
-     * @return Line
+     * @return PaymentLine
      */
     public function setDiscountAmount($discountAmount)
     {
@@ -316,7 +271,7 @@ class Line implements JsonSerializable
     /**
      * @param Amount $vatAmount
      *
-     * @return Line
+     * @return PaymentLine
      */
     public function setVatAmount($vatAmount)
     {
@@ -336,7 +291,7 @@ class Line implements JsonSerializable
     /**
      * @param string $category
      *
-     * @return Line
+     * @return PaymentLine
      */
     public function setCategory($category)
     {
@@ -345,14 +300,31 @@ class Line implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize()
+    /**
+     * @return string|null
+     */
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string|null $description
+     */
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): array
     {
         return [
             'sku' => $this->getSku(),
-            'name' => $this->getName(),
+            'description' => $this->getDescription(),
             'productUrl' => $this->getProductUrl(),
             'imageUrl' => $this->getImageUrl(),
-            'metadata' => $this->getMetaData(),
             'quantity' => $this->getQuantity(),
             'vatRate' => $this->getVatRate(),
             'category' => $this->getCategory(),
@@ -370,7 +342,10 @@ class Line implements JsonSerializable
                     'value' => $this->getDiscountAmount()->getValue(),
                 ]
                 :
-                [],
+                [
+                    'currency' => $this->getUnitPrice()->getCurrency(),
+                    'value' => '0.00',
+                ],
             'vatAmount' => [
                 'currency' => $this->getVatAmount()->getCurrency(),
                 'value' => $this->getVatAmount()->getValue(),

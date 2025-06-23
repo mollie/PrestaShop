@@ -12,12 +12,12 @@
 
 namespace Mollie\Service;
 
-use Cart;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
-use Mollie\DTO\Line;
 use Mollie\DTO\Object\Amount;
+use Mollie\DTO\OrderLine;
+use Mollie\DTO\PaymentLine;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Utility\CalculationUtility;
 use Mollie\Utility\CartPriceUtility;
@@ -63,6 +63,7 @@ class CartLinesService
      * @param array $cartItems
      * @param bool $psGiftWrapping
      * @param string $selectedVoucherCategory
+     * @param string $lineType
      *
      * @return array
      *
@@ -76,7 +77,8 @@ class CartLinesService
         $shippingCost,
         $cartItems,
         $psGiftWrapping,
-        $selectedVoucherCategory
+        $selectedVoucherCategory,
+        $lineType = 'OrderLine'
     ) {
         // TODO refactor whole service, split order line append into separate services and test them individually at least!!!
 
@@ -124,7 +126,7 @@ class CartLinesService
         $newItems = $this->ungroupLines($orderLines);
 
         // Convert floats to strings for the Mollie API and add additional info
-        return $this->convertToLineArray($newItems, $currencyIsoCode, $apiRoundingPrecision);
+        return $this->convertToLineArray($newItems, $currencyIsoCode, $apiRoundingPrecision, $lineType);
     }
 
     /**
@@ -464,16 +466,29 @@ class CartLinesService
     /**
      * @param string $currencyIsoCode
      * @param int $apiRoundingPrecision
+     * @param string $lineType
      *
      * @return array
      */
-    private function convertToLineArray(array $newItems, $currencyIsoCode, $apiRoundingPrecision)
+    private function convertToLineArray(array $newItems, $currencyIsoCode, $apiRoundingPrecision, $lineType)
     {
         foreach ($newItems as $index => $item) {
-            $line = new Line();
-            $line->setName($item['name'] ?: $item['sku']);
+            $lineClass = $lineType === 'PaymentLine' ? PaymentLine::class : OrderLine::class;
+            $line = new $lineClass();
+
+            // Only set name for OrderLine, PaymentLine doesn't have name property
+            if ($lineType === 'OrderLine') {
+                $line->setName($item['name'] ?: $item['sku']);
+            }
+
             $line->setQuantity((int) $item['quantity']);
             $line->setSku(isset($item['sku']) ? $item['sku'] : '');
+            $line->setDescription($item['description'] ?? $item['name'] ?? 'default description');
+
+            // Only set metadata for OrderLine, PaymentLine doesn't have metadata property
+            if ($lineType === 'OrderLine' && isset($item['metadata'])) {
+                $line->setMetaData($item['metadata']);
+            }
 
             $currency = strtoupper(strtolower($currencyIsoCode));
 

@@ -16,6 +16,7 @@ use Address;
 use Country;
 use JsonSerializable;
 use Mollie\DTO\Object\Amount;
+use Mollie\DTO\Object\PaymentLine;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -105,6 +106,11 @@ class PaymentData implements JsonSerializable
      * @var string
      */
     private $email;
+
+    /**
+     * @var PaymentLine[]
+     */
+    private $lines = [];
 
     public function __construct(
         Amount $amount,
@@ -360,7 +366,23 @@ class PaymentData implements JsonSerializable
         $this->email = $email;
     }
 
-    public function jsonSerialize()
+    /**
+     * @return PaymentLine[]
+     */
+    public function getLines(): array
+    {
+        return $this->lines;
+    }
+
+    /**
+     * @param PaymentLine[] $lines
+     */
+    public function setLines(array $lines): void
+    {
+        $this->lines = $lines;
+    }
+
+    public function jsonSerialize(): array
     {
         $result = [
             'amount' => [
@@ -400,6 +422,10 @@ class PaymentData implements JsonSerializable
 
         if ($this->sequenceType) {
             $result['sequenceType'] = $this->sequenceType;
+        }
+
+        if (!empty($this->getLines())) {
+            $result['lines'] = $this->getLines();
         }
 
         return $result;
