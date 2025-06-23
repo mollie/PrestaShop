@@ -16,9 +16,9 @@ use Mollie\Adapter\Context;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
 use Mollie\DTO\Object\Amount;
+use Mollie\DTO\PaymentFeeData;
 use Mollie\DTO\OrderLine;
 use Mollie\DTO\PaymentLine;
-use Mollie\DTO\PaymentFeeData;
 use Mollie\Utility\CalculationUtility;
 use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\NumberUtility;
@@ -474,7 +474,7 @@ class CartLinesService
     {
         foreach ($newItems as $index => $item) {
             $lineClass = $lineType === 'PaymentLine' ? PaymentLine::class : OrderLine::class;
-            
+
             /** @var OrderLine|PaymentLine $line */
             $line = new $lineClass();
 
