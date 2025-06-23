@@ -282,14 +282,6 @@ class Config
     ];
 
     const ORDER_API_ONLY_METHODS = [
-        // PaymentMethod::KLARNA_PAY_LATER,
-        // PaymentMethod::KLARNA_SLICE_IT,
-        // PaymentMethod::KLARNA_PAY_NOW,
-        // PaymentMethod::KLARNA_ONE,
-        // PaymentMethod::BILLIE,
-        // self::MOLLIE_VOUCHER_METHOD_ID,
-        // self::MOLLIE_in3_METHOD_ID,
-        // self::RIVERTY,
     ];
 
     const PAYMENT_API_ONLY_METHODS = [
