@@ -474,6 +474,8 @@ class CartLinesService
     {
         foreach ($newItems as $index => $item) {
             $lineClass = $lineType === 'PaymentLine' ? PaymentLine::class : OrderLine::class;
+            
+            /** @var OrderLine|PaymentLine $line */
             $line = new $lineClass();
 
             switch ($lineType) {
