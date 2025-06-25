@@ -16,7 +16,6 @@ use Address;
 use Country;
 use JsonSerializable;
 use Mollie\DTO\Object\Amount;
-use Mollie\DTO\PaymentLine;
 
 if (!defined('_PS_VERSION_')) {
     exit;
