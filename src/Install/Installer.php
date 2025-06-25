@@ -215,6 +215,7 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_EXPIRED, true);
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_REFUNDED, true);
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_CHARGEBACK, true);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_FAILED, true);
         $this->configurationAdapter->updateValue(Config::MOLLIE_ACCOUNT_SWITCH, false);
         $this->configurationAdapter->updateValue(Config::MOLLIE_CSS, '');
 

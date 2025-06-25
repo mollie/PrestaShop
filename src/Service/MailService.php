@@ -24,6 +24,7 @@ use Language;
 use Mail;
 use Mollie;
 use Mollie\Adapter\ProductAttributeAdapter;
+use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Subscription\Provider\GeneralSubscriptionMailDataProvider;
@@ -33,6 +34,9 @@ use PDF;
 use Product;
 use State;
 use Tools;
+use Validate;
+use Shop;
+use Mollie\Logger\LoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -518,5 +522,83 @@ class MailService
     private function _getFormatedAddress(Address $the_address, $line_sep, $fields_style = [])
     {
         return AddressFormat::generateAddress($the_address, ['avoid' => []], $line_sep, ' ', $fields_style);
+    }
+
+    /**
+     * Sends a failed payment notification email to the customer
+     *
+     * @param Customer|null $customer The customer to send the email to (uses context if null)
+     * @param string|null $checkoutUrl The URL for the customer to retry payment
+     *
+     * @return bool Whether the email was sent successfully
+
+     * @throws \PrestaShopException
+     */
+    public function sendFailedPaymentMail(?Customer $customer = null, ?string $checkoutUrl = null): bool
+    {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        if (!Configuration::get(Config::MOLLIE_MAIL_WHEN_FAILED)) {
+            $logger->debug(sprintf('%s - Payment failure email is disabled. Not sending email.', self::FILE_NAME));
+
+            return false;
+        }
+
+        /** @var Shop $shop */
+        $shop = $this->context->shop;
+
+        if (!$customer) {
+            $customer = $this->context->customer;
+        }
+
+        if (empty($customer->email) || !Validate::isEmail($customer->email)) {
+            throw new \PrestaShopException('Invalid customer email address');
+        }
+
+        if (!$customer || !Validate::isLoadedObject($customer)) {
+            throw new \PrestaShopException('Invalid customer object provided');
+        }
+
+        if (!Validate::isLoadedObject($shop)) {
+            throw new \PrestaShopException('Invalid shop object provided');
+        }
+
+        if (null === $checkoutUrl) {
+            $checkoutUrl = $this->context->link->getPageLink(
+                'order',
+                true,
+                $this->context->language->id,
+                [
+                    'step' => 3,
+                    'id_cart' => $this->context->cart->id,
+                ]
+            );
+        }
+
+        if (!Validate::isUrl($checkoutUrl)) {
+            throw new \PrestaShopException('Invalid checkout URL provided');
+        }
+
+        return Mail::send(
+            $customer->id_lang,
+            'mollie_payment_failed',
+            Mail::l('Payment Failed'),
+            [
+                '{firstname}' => $customer->firstname,
+                '{lastname}' => $customer->lastname,
+                '{checkout_url}' => $checkoutUrl,
+                '{shop_name}' => Configuration::get('PS_SHOP_NAME'),
+            ],
+            $customer->email,
+            null,
+            null,
+            null,
+            null,
+            null,
+            $this->module->getLocalPath() . 'mails/',
+            false,
+            $shop->id
+        );
     }
 }
