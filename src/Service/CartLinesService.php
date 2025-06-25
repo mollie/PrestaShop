@@ -78,7 +78,7 @@ class CartLinesService
         $cartItems,
         $psGiftWrapping,
         $selectedVoucherCategory,
-        $lineType = 'OrderLine'
+        $lineType
     ) {
         // TODO refactor whole service, split order line append into separate services and test them individually at least!!!
 
