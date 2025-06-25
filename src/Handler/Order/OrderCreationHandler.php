@@ -45,9 +45,8 @@ use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
-use Mollie\DTO\Line;
 use Mollie\DTO\OrderData;
-use Mollie\DTO\PaymentData;
+use Mollie\DTO\OrderLine;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Factory\ModuleFactory;
@@ -301,7 +300,7 @@ class OrderCreationHandler
 
             $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
         } else {
-            /** @var Line $line */
+            /** @var OrderLine $line */
             foreach ($paymentData->getLines() as $line) {
                 if ($line->getSku() === Config::PAYMENT_FEE_SKU) {
                     $paymentFee = $line->getUnitPrice()->getValue();
