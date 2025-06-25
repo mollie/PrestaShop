@@ -86,7 +86,8 @@ class CartLinesServiceTest extends TestCase
             $shippingCost,
             $cartItems,
             $psGiftWrapping,
-            $selectedVoucherCategory
+            $selectedVoucherCategory,
+            'OrderLine'
         );
 
         self::assertEquals($result, $cartLines);
