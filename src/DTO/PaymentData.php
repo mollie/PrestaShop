@@ -112,6 +112,16 @@ class PaymentData implements JsonSerializable
      */
     private $lines = [];
 
+    /**
+     * @var string
+     */
+    private $billingPhoneNumber;
+
+    /**
+     * @var ?string
+     */
+    private $title;
+
     public function __construct(
         Amount $amount,
         $description,
@@ -382,6 +392,42 @@ class PaymentData implements JsonSerializable
         $this->lines = $lines;
     }
 
+    /**
+     * @return string
+     */
+    public function getBillingPhoneNumber()
+    {
+        return $this->billingPhoneNumber;
+    }
+
+    /**
+     * @param string $billingPhoneNumber
+     *
+     * @return self
+     */
+    public function setBillingPhoneNumber($billingPhoneNumber)
+    {
+        $this->billingPhoneNumber = $billingPhoneNumber;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string|null $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+
     public function jsonSerialize(): array
     {
         $result = [
@@ -390,6 +436,7 @@ class PaymentData implements JsonSerializable
                 'value' => (string) $this->getAmount()->getValue(),
             ],
             'billingAddress' => [
+                'organizationName' => $this->cleanUpInput($this->getBillingAddress()->company),
                 'givenName' => $this->cleanUpInput($this->getBillingAddress()->firstname),
                 'familyName' => $this->cleanUpInput($this->getBillingAddress()->lastname),
                 'email' => $this->cleanUpInput($this->getEmail()),
@@ -398,6 +445,8 @@ class PaymentData implements JsonSerializable
                 'city' => $this->cleanUpInput($this->getBillingAddress()->city),
                 'postalCode' => $this->cleanUpInput($this->getBillingAddress()->postcode),
                 'country' => $this->cleanUpInput(Country::getIsoById($this->getBillingAddress()->id_country)),
+                'title' => $this->cleanUpInput($this->getTitle()),
+                'phone' => $this->getBillingPhoneNumber(),
             ],
             'shippingAddress' => [
                 'givenName' => $this->cleanUpInput($this->getBillingAddress()->firstname),
