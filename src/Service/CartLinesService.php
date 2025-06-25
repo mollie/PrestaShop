@@ -157,7 +157,7 @@ class CartLinesService
                 'totalAmount' => (float) $unitPrice * $qty,
                 'sku' => isset($cartLineGroup[0]['sku']) ? $cartLineGroup[0]['sku'] : '',
                 'targetVat' => $cartLineGroup[0]['targetVat'],
-                'category' => $cartLineGroup[0]['category'],
+                'categories' => $cartLineGroup[0]['categories'],
             ];
         }
 
@@ -203,7 +203,7 @@ class CartLinesService
                         'quantity' => $gift_product['cart_quantity'],
                         'unitPrice' => 0,
                         'totalAmount' => 0,
-                        'category' => '',
+                        'categories' => [],
                         'product_url' => $this->context->getProductLink($cartItem['id_product']),
                         'image_url' => $this->context->getImageLink($cartItem['link_rewrite'], $cartItem['id_image']),
                     ];
@@ -223,7 +223,7 @@ class CartLinesService
                 'quantity' => $quantity,
                 'unitPrice' => round($cartItem['price_wt'], $apiRoundingPrecision),
                 'totalAmount' => (float) $roundedTotalWithTax,
-                'category' => $this->voucherService->getVoucherCategory($cartItem, $selectedVoucherCategory),
+                'categories' => $this->voucherService->getVoucherCategory($cartItem, $selectedVoucherCategory),
                 'product_url' => $this->context->getProductLink($cartItem['id_product']),
                 'image_url' => $this->context->getImageLink($cartItem['link_rewrite'], $cartItem['id_image']),
             ];
@@ -252,7 +252,7 @@ class CartLinesService
                     'unitPrice' => -round($totalDiscounts, $apiRoundingPrecision),
                     'totalAmount' => -round($totalDiscounts, $apiRoundingPrecision),
                     'targetVat' => 0,
-                    'category' => '',
+                    'categories' => [],
                 ],
             ];
             $remaining = NumberUtility::plus($remaining, $totalDiscounts);
@@ -341,7 +341,7 @@ class CartLinesService
 
                 $newItem = [
                     'name' => $line['name'],
-                    'category' => $line['category'],
+                    'categories' => $line['categories'],
                     'quantity' => (int) $quantity,
                     'unitPrice' => round($unitPrice, $apiRoundingPrecision),
                     'totalAmount' => round($totalAmount, $apiRoundingPrecision),
@@ -516,8 +516,17 @@ class CartLinesService
                 TextFormatUtility::formatNumber($item['vatAmount'], $apiRoundingPrecision, '.', '')
             ));
 
-            if (isset($item['category'])) {
-                $line->setCategory($item['category']);
+            if (isset($item['categories'])) {
+                switch ($lineType) {
+                    case 'PaymentLine':
+                        $categories = is_array($item['categories']) ? $item['categories'] : [$item['categories']];
+                        $line->setCategories($categories);
+                        break;
+                    case 'OrderLine':
+                        $category = is_array($item['categories']) ? $item['categories'][0] ?? '' : $item['categories'];
+                        $line->setCategory($category);
+                        break;
+                }
             }
 
             $line->setVatRate(TextFormatUtility::formatNumber($item['vatRate'], $apiRoundingPrecision, '.', ''));

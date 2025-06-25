@@ -32,7 +32,7 @@ class VoucherService
         $this->configuration = $configuration;
     }
 
-    public function getVoucherCategory(array $cartItem, $selectedVoucherCategory)
+    public function getVoucherCategory(array $cartItem, $selectedVoucherCategory): array
     {
         switch ($selectedVoucherCategory) {
             case Config::MOLLIE_VOUCHER_CATEGORY_MEAL:
@@ -43,17 +43,17 @@ class VoucherService
                     return $productCategory;
                 }
 
-                return $selectedVoucherCategory;
+                return [$selectedVoucherCategory];
             case Config::MOLLIE_VOUCHER_CATEGORY_NULL:
             default:
                 return $this->getProductCategory($cartItem);
         }
     }
 
-    public function getProductCategory(array $cartItem): string
+    public function getProductCategory(array $cartItem): array
     {
         if (!isset($cartItem['features'])) {
-            return '';
+            return [];
         }
 
         $idFeatureValue = false;
@@ -67,10 +67,11 @@ class VoucherService
         }
 
         if (!$idFeatureValue) {
-            return '';
+            return [];
         }
 
-        return $this->getVoucherCategoryByFeatureValueId($idFeatureValue);
+        $category = $this->getVoucherCategoryByFeatureValueId($idFeatureValue);
+        return $category ? [$category] : [];
     }
 
     private function isVoucherFeature(int $featureId): bool

@@ -71,9 +71,9 @@ class PaymentLine implements JsonSerializable
     private $vatAmount;
 
     /**
-     * @var string
+     * @var array
      */
-    private $category;
+    private $categories;
 
     /**
      * @var string|null
@@ -281,21 +281,21 @@ class PaymentLine implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getCategory()
+    public function getCategories()
     {
-        return $this->category;
+        return $this->categories;
     }
 
     /**
-     * @param string $category
+     * @param array $categories
      *
      * @return PaymentLine
      */
-    public function setCategory($category)
+    public function setCategories($categories)
     {
-        $this->category = $category;
+        $this->categories = $categories;
 
         return $this;
     }
@@ -327,7 +327,7 @@ class PaymentLine implements JsonSerializable
             'imageUrl' => $this->getImageUrl(),
             'quantity' => $this->getQuantity(),
             'vatRate' => $this->getVatRate(),
-            'category' => $this->getCategory(),
+            'categories' => $this->getCategories(),
             'unitPrice' => [
                 'currency' => $this->getUnitPrice()->getCurrency(),
                 'value' => $this->getUnitPrice()->getValue(),
