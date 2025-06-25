@@ -85,7 +85,7 @@ class OrderData implements JsonSerializable
     private $email;
 
     /**
-     * @var Line[]
+     * @var OrderLine[]
      */
     private $lines;
 
@@ -352,7 +352,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @return Line[]
+     * @return OrderLine[]
      */
     public function getLines()
     {
@@ -360,7 +360,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @param Line[] $lines
+     * @param OrderLine[] $lines
      */
     public function setLines($lines)
     {
@@ -410,7 +410,7 @@ class OrderData implements JsonSerializable
         $this->title = $title;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $lines = [];
         foreach ($this->getLines() as $line) {

@@ -15,8 +15,8 @@ namespace Mollie\Tests\Unit\Service;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\ToolsAdapter;
-use Mollie\DTO\Line;
 use Mollie\DTO\Object\Amount;
+use Mollie\DTO\OrderLine;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Service\CartLinesService;
 use Mollie\Service\LanguageService;
@@ -86,7 +86,8 @@ class CartLinesServiceTest extends TestCase
             $shippingCost,
             $cartItems,
             $psGiftWrapping,
-            $selectedVoucherCategory
+            $selectedVoucherCategory,
+            'OrderLine'
         );
 
         self::assertEquals($result, $cartLines);
@@ -168,7 +169,7 @@ class CartLinesServiceTest extends TestCase
                 ],
                 'mocks' => [],
                 'result' => [
-                    0 => (new Line())
+                    0 => (new OrderLine())
                             ->setName($productName_1)
                             ->setQuantity(1)
                             ->setSku('2¤9¤0')
@@ -177,8 +178,9 @@ class CartLinesServiceTest extends TestCase
                             ->setTotalPrice(new Amount($currencyIsoCode, '100.00'))
                             ->setVatAmount(new Amount($currencyIsoCode, '17.36'))
                             ->setCategory('')
-                            ->setVatRate('21.00'),
-                    1 => (new Line())
+                            ->setVatRate('21.00')
+                            ->setMetaData([]),
+                    1 => (new OrderLine())
                         ->setName($productName_2)
                         ->setQuantity(1)
                         ->setSku('1¤9¤0gift')
@@ -187,8 +189,9 @@ class CartLinesServiceTest extends TestCase
                         ->setTotalPrice(new Amount($currencyIsoCode, '0.00'))
                         ->setVatAmount(new Amount($currencyIsoCode, '0.00'))
                         ->setCategory('')
-                        ->setVatRate('0.00'),
-                    2 => (new Line())
+                        ->setVatRate('0.00')
+                        ->setMetaData([]),
+                    2 => (new OrderLine())
                             ->setName($productName_2)
                             ->setQuantity(1)
                             ->setSku('1¤9¤0')
@@ -197,8 +200,9 @@ class CartLinesServiceTest extends TestCase
                             ->setTotalPrice(new Amount($currencyIsoCode, '100.00'))
                             ->setVatAmount(new Amount($currencyIsoCode, '17.36'))
                             ->setCategory('')
-                            ->setVatRate('21.00'),
-                    3 => (new Line())
+                            ->setVatRate('21.00')
+                            ->setMetaData([]),
+                    3 => (new OrderLine())
                             ->setName($shipping)
                             ->setQuantity(1)
                             ->setSku('')
@@ -206,8 +210,9 @@ class CartLinesServiceTest extends TestCase
                             ->setUnitPrice(new Amount($currencyIsoCode, '4.84'))
                             ->setTotalPrice(new Amount($currencyIsoCode, '4.84'))
                             ->setVatAmount(new Amount($currencyIsoCode, '0.84'))
-                            ->setCategory(null)
-                            ->setVatRate('21.00'),
+                            ->setCategory('')
+                            ->setVatRate('21.00')
+                            ->setMetaData([]),
                 ],
             ],
             'one products with a gift' => [
@@ -276,7 +281,7 @@ class CartLinesServiceTest extends TestCase
                 ],
                 'mocks' => [],
                 'result' => [
-                    0 => (new Line())
+                    0 => (new OrderLine())
                             ->setName($productName_1)
                             ->setQuantity(1)
                             ->setSku('1¤9¤0')
@@ -285,8 +290,9 @@ class CartLinesServiceTest extends TestCase
                             ->setTotalPrice(new Amount($currencyIsoCode, '100.00'))
                             ->setVatAmount(new Amount($currencyIsoCode, '17.36'))
                             ->setCategory('')
-                            ->setVatRate('21.00'),
-                    1 => (new Line())
+                            ->setVatRate('21.00')
+                            ->setMetaData([]),
+                    1 => (new OrderLine())
                             ->setName($productName_2)
                             ->setQuantity(1)
                             ->setSku('2¤9¤0gift')
@@ -295,8 +301,9 @@ class CartLinesServiceTest extends TestCase
                             ->setTotalPrice(new Amount($currencyIsoCode, '0.00'))
                             ->setVatAmount(new Amount($currencyIsoCode, '0.00'))
                             ->setCategory('')
-                            ->setVatRate('0.00'),
-                    2 => (new Line())
+                            ->setVatRate('0.00')
+                            ->setMetaData([]),
+                    2 => (new OrderLine())
                             ->setName($shipping)
                             ->setQuantity(1)
                             ->setSku('')
@@ -304,8 +311,9 @@ class CartLinesServiceTest extends TestCase
                             ->setUnitPrice(new Amount($currencyIsoCode, '4.84'))
                             ->setTotalPrice(new Amount($currencyIsoCode, '4.84'))
                             ->setVatAmount(new Amount($currencyIsoCode, '0.84'))
-                            ->setCategory(null)
-                            ->setVatRate('21.00'),
+                            ->setCategory('')
+                            ->setVatRate('21.00')
+                            ->setMetaData([]),
                 ],
             ],
             'product without name' => [
@@ -361,7 +369,7 @@ class CartLinesServiceTest extends TestCase
                 ],
                 'mocks' => [],
                 'result' => [
-                    0 => (new Line())
+                    0 => (new OrderLine())
                             ->setName('2¤9¤0')
                             ->setQuantity(1)
                             ->setSku('2¤9¤0')
@@ -370,8 +378,9 @@ class CartLinesServiceTest extends TestCase
                             ->setTotalPrice(new Amount($currencyIsoCode, '100.00'))
                             ->setVatAmount(new Amount($currencyIsoCode, '17.36'))
                             ->setCategory('')
-                            ->setVatRate('21.00'),
-                    1 => (new Line())
+                            ->setVatRate('21.00')
+                            ->setMetaData([]),
+                    1 => (new OrderLine())
                             ->setName($shipping)
                             ->setQuantity(1)
                             ->setSku('')
@@ -379,8 +388,9 @@ class CartLinesServiceTest extends TestCase
                             ->setUnitPrice(new Amount($currencyIsoCode, '4.84'))
                             ->setTotalPrice(new Amount($currencyIsoCode, '4.84'))
                             ->setVatAmount(new Amount($currencyIsoCode, '0.84'))
-                            ->setCategory(null)
-                            ->setVatRate('21.00'),
+                            ->setCategory('')
+                            ->setVatRate('21.00')
+                            ->setMetaData([]),
                 ],
             ],
             'Cart with discount' => [
@@ -432,7 +442,7 @@ class CartLinesServiceTest extends TestCase
                 ],
                 'mocks' => [],
                 'result' => [
-                    0 => (new Line())
+                    0 => (new OrderLine())
                             ->setName($productName_1)
                             ->setQuantity(1)
                             ->setSku('2¤9¤0')
@@ -440,9 +450,10 @@ class CartLinesServiceTest extends TestCase
                             ->setUnitPrice(new Amount($currencyIsoCode, '100.00'))
                             ->setTotalPrice(new Amount($currencyIsoCode, '100.00'))
                             ->setVatAmount(new Amount($currencyIsoCode, '17.36'))
-                            ->setCategory(null)
-                            ->setVatRate('21.00'),
-                    1 => (new Line())
+                            ->setCategory('')
+                            ->setVatRate('21.00')
+                            ->setMetaData([]),
+                    1 => (new OrderLine())
                             ->setName('Discount')
                             ->setQuantity(1)
                             ->setSku('')
@@ -450,9 +461,10 @@ class CartLinesServiceTest extends TestCase
                             ->setUnitPrice(new Amount($currencyIsoCode, '-6.05'))
                             ->setTotalPrice(new Amount($currencyIsoCode, '-6.05'))
                             ->setVatAmount(new Amount($currencyIsoCode, '0.00'))
-                            ->setCategory(null)
-                            ->setVatRate('0.00'),
-                    2 => (new Line())
+                            ->setCategory('')
+                            ->setVatRate('0.00')
+                            ->setMetaData([]),
+                    2 => (new OrderLine())
                             ->setName($shipping)
                             ->setQuantity(1)
                             ->setSku('')
@@ -460,8 +472,9 @@ class CartLinesServiceTest extends TestCase
                             ->setUnitPrice(new Amount($currencyIsoCode, '4.84'))
                             ->setTotalPrice(new Amount($currencyIsoCode, '4.84'))
                             ->setVatAmount(new Amount($currencyIsoCode, '0.84'))
-                            ->setCategory(null)
-                            ->setVatRate('21.00'),
+                            ->setCategory('')
+                            ->setVatRate('21.00')
+                            ->setMetaData([]),
                 ],
             ],
         ];

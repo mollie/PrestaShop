@@ -341,9 +341,17 @@ class PaymentMethodService
             $paymentData->setDescription($orderReference);
             $paymentData->setEmail($customer->email);
 
+            /** @var \Gender|null $gender */
+            $gender = $this->genderRepository->findOneBy(['id_gender' => $customer->id_gender]);
+
+            if (!empty($gender) && isset($gender->name[$cart->id_lang])) {
+                $paymentData->setTitle((string) $gender->name[$cart->id_lang]);
+            }
+
             if (isset($cart->id_address_invoice)) {
                 $billingAddress = new Address((int) $cart->id_address_invoice);
                 $paymentData->setBillingAddress($billingAddress);
+                $paymentData->setBillingPhoneNumber($this->phoneNumberProvider->getFromAddress($billingAddress));
             }
             if (isset($cart->id_address_delivery)) {
                 $shippingAddress = new Address((int) $cart->id_address_delivery);
@@ -361,6 +369,20 @@ class PaymentMethodService
             if ($molPaymentMethod->id_method === PaymentMethod::APPLEPAY && $applePayToken) {
                 $paymentData->setApplePayToken($applePayToken);
             }
+
+            $paymentData->setLines(
+                $this->cartLinesService->getCartLines(
+                    $totalAmount,
+                    $paymentFeeData,
+                    $currency,
+                    $cart->getSummaryDetails(),
+                    $cart->getTotalShippingCost(null, true),
+                    $cart->getProducts(),
+                    (bool) Configuration::get('PS_GIFT_WRAPPING'),
+                    Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
+                    'PaymentLine'
+                )
+            );
 
             if ($this->subscriptionOrder->validate(new Cart($cartId))) {
                 $paymentData->setSubscriptionOrder(true);
@@ -443,7 +465,8 @@ class PaymentMethodService
                     $cart->getTotalShippingCost(null, true),
                     $cart->getProducts(),
                     (bool) Configuration::get('PS_GIFT_WRAPPING'),
-                    $selectedVoucherCategory
+                    $selectedVoucherCategory,
+                    'OrderLine'
                 ));
 
             $payment = new Payment();
@@ -486,18 +509,12 @@ class PaymentMethodService
 
     private function getLocale($method)
     {
-        // Send webshop locale
-        if ((Mollie\Config\Config::MOLLIE_PAYMENTS_API === $method
-                && Mollie\Config\Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE === Configuration::get(Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE))
-            || Mollie\Config\Config::MOLLIE_ORDERS_API === $method
-        ) {
-            $locale = LocaleUtility::getWebShopLocale();
-            if (preg_match(
-                '/^[a-z]{2}(?:[\-_][A-Z]{2})?$/iu',
-                $locale
-            )) {
-                return $locale;
-            }
+        $locale = LocaleUtility::getWebShopLocale();
+        if (preg_match(
+            '/^[a-z]{2}(?:[\-_][A-Z]{2})?$/iu',
+            $locale
+        )) {
+            return $locale;
         }
     }
 

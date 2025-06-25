@@ -12,13 +12,13 @@
 
 namespace Mollie\Service;
 
-use Cart;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
-use Mollie\DTO\Line;
 use Mollie\DTO\Object\Amount;
+use Mollie\DTO\OrderLine;
 use Mollie\DTO\PaymentFeeData;
+use Mollie\DTO\PaymentLine;
 use Mollie\Utility\CalculationUtility;
 use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\NumberUtility;
@@ -63,6 +63,7 @@ class CartLinesService
      * @param array $cartItems
      * @param bool $psGiftWrapping
      * @param string $selectedVoucherCategory
+     * @param string $lineType
      *
      * @return array
      *
@@ -76,7 +77,8 @@ class CartLinesService
         $shippingCost,
         $cartItems,
         $psGiftWrapping,
-        $selectedVoucherCategory
+        $selectedVoucherCategory,
+        $lineType
     ) {
         // TODO refactor whole service, split order line append into separate services and test them individually at least!!!
 
@@ -124,7 +126,7 @@ class CartLinesService
         $newItems = $this->ungroupLines($orderLines);
 
         // Convert floats to strings for the Mollie API and add additional info
-        return $this->convertToLineArray($newItems, $currencyIsoCode, $apiRoundingPrecision);
+        return $this->convertToLineArray($newItems, $currencyIsoCode, $apiRoundingPrecision, $lineType);
     }
 
     /**
@@ -155,7 +157,7 @@ class CartLinesService
                 'totalAmount' => (float) $unitPrice * $qty,
                 'sku' => isset($cartLineGroup[0]['sku']) ? $cartLineGroup[0]['sku'] : '',
                 'targetVat' => $cartLineGroup[0]['targetVat'],
-                'category' => $cartLineGroup[0]['category'],
+                'categories' => $cartLineGroup[0]['categories'],
             ];
         }
 
@@ -201,7 +203,7 @@ class CartLinesService
                         'quantity' => $gift_product['cart_quantity'],
                         'unitPrice' => 0,
                         'totalAmount' => 0,
-                        'category' => '',
+                        'categories' => [],
                         'product_url' => $this->context->getProductLink($cartItem['id_product']),
                         'image_url' => $this->context->getImageLink($cartItem['link_rewrite'], $cartItem['id_image']),
                     ];
@@ -221,7 +223,7 @@ class CartLinesService
                 'quantity' => $quantity,
                 'unitPrice' => round($cartItem['price_wt'], $apiRoundingPrecision),
                 'totalAmount' => (float) $roundedTotalWithTax,
-                'category' => $this->voucherService->getVoucherCategory($cartItem, $selectedVoucherCategory),
+                'categories' => $this->voucherService->getVoucherCategory($cartItem, $selectedVoucherCategory),
                 'product_url' => $this->context->getProductLink($cartItem['id_product']),
                 'image_url' => $this->context->getImageLink($cartItem['link_rewrite'], $cartItem['id_image']),
             ];
@@ -250,7 +252,7 @@ class CartLinesService
                     'unitPrice' => -round($totalDiscounts, $apiRoundingPrecision),
                     'totalAmount' => -round($totalDiscounts, $apiRoundingPrecision),
                     'targetVat' => 0,
-                    'category' => '',
+                    'categories' => [],
                 ],
             ];
             $remaining = NumberUtility::plus($remaining, $totalDiscounts);
@@ -339,7 +341,7 @@ class CartLinesService
 
                 $newItem = [
                     'name' => $line['name'],
-                    'category' => $line['category'],
+                    'categories' => $line['categories'],
                     'quantity' => (int) $quantity,
                     'unitPrice' => round($unitPrice, $apiRoundingPrecision),
                     'totalAmount' => round($totalAmount, $apiRoundingPrecision),
@@ -464,14 +466,28 @@ class CartLinesService
     /**
      * @param string $currencyIsoCode
      * @param int $apiRoundingPrecision
+     * @param string $lineType
      *
      * @return array
      */
-    private function convertToLineArray(array $newItems, $currencyIsoCode, $apiRoundingPrecision)
+    private function convertToLineArray(array $newItems, $currencyIsoCode, $apiRoundingPrecision, $lineType)
     {
         foreach ($newItems as $index => $item) {
-            $line = new Line();
-            $line->setName($item['name'] ?: $item['sku']);
+            $lineClass = $lineType === 'PaymentLine' ? PaymentLine::class : OrderLine::class;
+
+            /** @var OrderLine|PaymentLine $line */
+            $line = new $lineClass();
+
+            switch ($lineType) {
+                case 'OrderLine':
+                    $line->setName($item['name'] ?: $item['sku']);
+                    $line->setMetaData($item['metadata'] ?? []);
+                    break;
+                case 'PaymentLine':
+                    $line->setDescription($item['description'] ?? $item['name'] ?? 'default description');
+                    break;
+            }
+
             $line->setQuantity((int) $item['quantity']);
             $line->setSku(isset($item['sku']) ? $item['sku'] : '');
 
@@ -500,8 +516,17 @@ class CartLinesService
                 TextFormatUtility::formatNumber($item['vatAmount'], $apiRoundingPrecision, '.', '')
             ));
 
-            if (isset($item['category'])) {
-                $line->setCategory($item['category']);
+            if (isset($item['categories'])) {
+                switch ($lineType) {
+                    case 'PaymentLine':
+                        $categories = is_array($item['categories']) ? $item['categories'] : [$item['categories']];
+                        $line->setCategories($categories);
+                        break;
+                    case 'OrderLine':
+                        $category = is_array($item['categories']) ? $item['categories'][0] ?? '' : $item['categories'];
+                        $line->setCategory($category);
+                        break;
+                }
             }
 
             $line->setVatRate(TextFormatUtility::formatNumber($item['vatRate'], $apiRoundingPrecision, '.', ''));

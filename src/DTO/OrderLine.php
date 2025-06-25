@@ -18,7 +18,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class Line implements JsonSerializable
+class OrderLine implements JsonSerializable
 {
     /**
      * @var string
@@ -96,7 +96,7 @@ class Line implements JsonSerializable
     /**
      * @param string $type
      *
-     * @return Line
+     * @return OrderLine
      */
     public function setType($type)
     {
@@ -116,7 +116,7 @@ class Line implements JsonSerializable
     /**
      * @param string $sku
      *
-     * @return Line
+     * @return OrderLine
      */
     public function setSku($sku)
     {
@@ -136,7 +136,7 @@ class Line implements JsonSerializable
     /**
      * @param string $name
      *
-     * @return Line
+     * @return OrderLine
      */
     public function setName($name)
     {
@@ -156,7 +156,7 @@ class Line implements JsonSerializable
     /**
      * @param string $productUrl
      *
-     * @return Line
+     * @return OrderLine
      */
     public function setProductUrl($productUrl)
     {
@@ -176,7 +176,7 @@ class Line implements JsonSerializable
     /**
      * @param string $imageUrl
      *
-     * @return Line
+     * @return OrderLine
      */
     public function setImageUrl($imageUrl)
     {
@@ -196,7 +196,7 @@ class Line implements JsonSerializable
     /**
      * @param array $metaData
      *
-     * @return Line
+     * @return OrderLine
      */
     public function setMetaData($metaData)
     {
@@ -216,7 +216,7 @@ class Line implements JsonSerializable
     /**
      * @param int $quantity
      *
-     * @return Line
+     * @return OrderLine
      */
     public function setQuantity($quantity)
     {
@@ -236,7 +236,7 @@ class Line implements JsonSerializable
     /**
      * @param string $vatRate
      *
-     * @return Line
+     * @return OrderLine
      */
     public function setVatRate($vatRate)
     {
@@ -256,7 +256,7 @@ class Line implements JsonSerializable
     /**
      * @param Amount $unitPrice
      *
-     * @return Line
+     * @return OrderLine
      */
     public function setUnitPrice($unitPrice)
     {
@@ -276,7 +276,7 @@ class Line implements JsonSerializable
     /**
      * @param Amount $totalPrice
      *
-     * @return Line
+     * @return OrderLine
      */
     public function setTotalPrice($totalPrice)
     {
@@ -296,7 +296,7 @@ class Line implements JsonSerializable
     /**
      * @param Amount $discountAmount
      *
-     * @return Line
+     * @return OrderLine
      */
     public function setDiscountAmount($discountAmount)
     {
@@ -316,7 +316,7 @@ class Line implements JsonSerializable
     /**
      * @param Amount $vatAmount
      *
-     * @return Line
+     * @return OrderLine
      */
     public function setVatAmount($vatAmount)
     {
@@ -336,7 +336,7 @@ class Line implements JsonSerializable
     /**
      * @param string $category
      *
-     * @return Line
+     * @return OrderLine
      */
     public function setCategory($category)
     {
@@ -345,7 +345,7 @@ class Line implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'sku' => $this->getSku(),
