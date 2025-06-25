@@ -223,7 +223,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             /** @var MailService $mailService */
             $mailService = $this->module->getService(MailService::class);
             try {
-                $mailService->sendFailedPaymentMail($this->context->customer, $notSuccessfulPaymentMessage);
+                $mailService->sendFailedPaymentMail($this->context->customer);
             } catch (\Throwable $e) {
                 /** @var Logger $logger */
                 $logger = $this->module->getService(LoggerInterface::class);

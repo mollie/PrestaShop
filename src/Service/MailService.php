@@ -24,6 +24,7 @@ use Language;
 use Mail;
 use Mollie;
 use Mollie\Adapter\ProductAttributeAdapter;
+use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Subscription\Provider\GeneralSubscriptionMailDataProvider;
@@ -34,6 +35,8 @@ use Product;
 use State;
 use Tools;
 use Validate;
+use Shop;
+use Mollie\Logger\LoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -534,54 +537,50 @@ class MailService
 
      * @throws \PrestaShopException
      */
-    public function sendFailedPaymentMail(?Customer $customer = null, ?string $orderReference = null, ?string $checkoutUrl = null): bool
+    public function sendFailedPaymentMail(?Customer $customer = null, ?string $checkoutUrl = null): bool
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        if (!Configuration::get(Config::MOLLIE_MAIL_WHEN_FAILED)) {
+            $logger->debug(sprintf('%s - Payment failure email is disabled. Not sending email.', self::FILE_NAME));
+
+            return false;
+        }
+
+        /** @var Shop $shop */
+        $shop = $this->context->shop;
+
         if (!$customer) {
             $customer = $this->context->customer;
+        }
+
+        if (empty($customer->email) || !Validate::isEmail($customer->email)) {
+            throw new \PrestaShopException('Invalid customer email address');
         }
 
         if (!$customer || !Validate::isLoadedObject($customer)) {
             throw new \PrestaShopException('Invalid customer object provided');
         }
 
-        $shopId = $this->context->shop->id;
-
-        if (null === $shopId) {
-            throw new \PrestaShopException('Invalid shop ID provided');
+        if (!Validate::isLoadedObject($shop)) {
+            throw new \PrestaShopException('Invalid shop object provided');
         }
 
-        if (!$orderReference && $this->context->cart) {
-            /** @var Order $order */
-            $order = Order::getByCartId($this->context->cart->id);
-
-            if (Validate::isLoadedObject($order)) {
-                $orderReference = $order->reference;
-            }
-        }
-
-        if (empty($orderReference)) {
-            throw new \PrestaShopException('Order reference cannot be empty');
-        }
-
-        if (!$checkoutUrl && $this->context->cart) {
+        if (null === $checkoutUrl) {
             $checkoutUrl = $this->context->link->getPageLink(
                 'order',
                 true,
                 $this->context->language->id,
-                ['step' => 3]
+                [
+                    'step' => 3,
+                    'id_cart' => $this->context->cart->id,
+                ]
             );
         }
 
-        if (empty($checkoutUrl) || !Validate::isUrl($checkoutUrl)) {
+        if (!Validate::isUrl($checkoutUrl)) {
             throw new \PrestaShopException('Invalid checkout URL provided');
-        }
-
-        if (empty($reason)) {
-            $reason = $this->module->l('Payment failed', self::FILE_NAME);
-        }
-
-        if (empty($customer->email) || !Validate::isEmail($customer->email)) {
-            throw new \PrestaShopException('Invalid customer email address');
         }
 
         return Mail::send(
@@ -591,9 +590,7 @@ class MailService
             [
                 '{firstname}' => $customer->firstname,
                 '{lastname}' => $customer->lastname,
-                '{order_reference}' => $orderReference,
                 '{checkout_url}' => $checkoutUrl,
-                '{reason}' => $reason,
                 '{shop_name}' => Configuration::get('PS_SHOP_NAME'),
             ],
             $customer->email,
@@ -604,7 +601,7 @@ class MailService
             null,
             $this->module->getLocalPath() . 'mails/',
             false,
-            $shopId
+            $shop->id
         );
     }
 }
