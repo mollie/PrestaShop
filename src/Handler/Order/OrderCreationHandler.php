@@ -47,6 +47,7 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\OrderLine;
+use Mollie\DTO\PaymentData;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Factory\ModuleFactory;

@@ -71,7 +71,7 @@ class VoucherService
         }
 
         $category = $this->getVoucherCategoryByFeatureValueId($idFeatureValue);
-        
+
         return $category ? [$category] : [];
     }
 
