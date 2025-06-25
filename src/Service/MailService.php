@@ -529,9 +529,6 @@ class MailService
      *
      * @param Customer|null $customer The customer to send the email to (uses context if null)
      * @param string|null $checkoutUrl The URL for the customer to retry payment
-     * @param string|null $orderReference The order reference number (uses context if null)
-     * @param string $reason The reason for payment failure
-     * @param int|null $shopId The shop ID (uses context if null)
      *
      * @return bool Whether the email was sent successfully
 
