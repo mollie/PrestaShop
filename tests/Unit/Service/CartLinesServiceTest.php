@@ -18,6 +18,7 @@ use Mollie\Adapter\ToolsAdapter;
 use Mollie\DTO\Object\Amount;
 use Mollie\DTO\OrderLine;
 use Mollie\DTO\PaymentFeeData;
+use Mollie\Enum\LineType;
 use Mollie\Service\CartLinesService;
 use Mollie\Service\LanguageService;
 use Mollie\Service\VoucherService;
@@ -87,7 +88,7 @@ class CartLinesServiceTest extends TestCase
             $cartItems,
             $psGiftWrapping,
             $selectedVoucherCategory,
-            'OrderLine'
+            LineType::ORDER
         );
 
         self::assertEquals($result, $cartLines);

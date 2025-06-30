@@ -55,6 +55,7 @@ use Mollie\Utility\TextFormatUtility;
 use MolPaymentMethod;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+use Mollie\Enum\LineType;
 use Tools;
 
 if (!defined('_PS_VERSION_')) {
@@ -380,7 +381,7 @@ class PaymentMethodService
                     $cart->getProducts(),
                     (bool) Configuration::get('PS_GIFT_WRAPPING'),
                     Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
-                    'PaymentLine'
+                    LineType::PAYMENT
                 )
             );
 
@@ -466,7 +467,7 @@ class PaymentMethodService
                     $cart->getProducts(),
                     (bool) Configuration::get('PS_GIFT_WRAPPING'),
                     $selectedVoucherCategory,
-                    'OrderLine'
+                    LineType::ORDER
                 ));
 
             $payment = new Payment();

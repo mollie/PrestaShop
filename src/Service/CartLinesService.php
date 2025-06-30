@@ -19,6 +19,7 @@ use Mollie\DTO\Object\Amount;
 use Mollie\DTO\OrderLine;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\DTO\PaymentLine;
+use Mollie\Enum\LineType;
 use Mollie\Utility\CalculationUtility;
 use Mollie\Utility\CartPriceUtility;
 use Mollie\Utility\NumberUtility;
@@ -473,17 +474,17 @@ class CartLinesService
     private function convertToLineArray(array $newItems, $currencyIsoCode, $apiRoundingPrecision, $lineType)
     {
         foreach ($newItems as $index => $item) {
-            $lineClass = $lineType === 'PaymentLine' ? PaymentLine::class : OrderLine::class;
+            $lineClass = $lineType === LineType::PAYMENT ? PaymentLine::class : OrderLine::class;
 
             /** @var OrderLine|PaymentLine $line */
             $line = new $lineClass();
 
             switch ($lineType) {
-                case 'OrderLine':
+                case LineType::ORDER:
                     $line->setName($item['name'] ?: $item['sku']);
                     $line->setMetaData($item['metadata'] ?? []);
                     break;
-                case 'PaymentLine':
+                case LineType::PAYMENT:
                     $line->setDescription($item['description'] ?? $item['name'] ?? 'default description');
                     break;
             }
@@ -518,11 +519,11 @@ class CartLinesService
 
             if (isset($item['categories'])) {
                 switch ($lineType) {
-                    case 'PaymentLine':
+                    case LineType::PAYMENT:
                         $categories = is_array($item['categories']) ? $item['categories'] : [$item['categories']];
                         $line->setCategories($categories);
                         break;
-                    case 'OrderLine':
+                    case LineType::ORDER:
                         $category = is_array($item['categories']) ? $item['categories'][0] ?? '' : $item['categories'];
                         $line->setCategory($category);
                         break;
