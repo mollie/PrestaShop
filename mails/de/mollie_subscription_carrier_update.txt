@@ -1,8 +1,0 @@
-Hi firstName lastName,
-
-We are emailing you because the following subscription carrier was updated.
-
-Log in to you account to review updated subscription information.
-
-Reference	Product	Unit price(tax excl.)	Quantity	Total price
-subscription_reference	product_name	unit_price	quantity	total_price
