@@ -136,7 +136,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return Amount
      */
-    public function getAmount()
+    public function getAmount(): ?Amount
     {
         return $this->amount;
     }
@@ -144,7 +144,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param Amount $amount
      */
-    public function setAmount($amount)
+    public function setAmount($amount): void
     {
         $this->amount = $amount;
     }
@@ -152,7 +152,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return mixed
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description ?: ' ';
     }
@@ -160,7 +160,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param mixed $description
      */
-    public function setDescription($description)
+    public function setDescription($description): void
     {
         $this->description = $description;
     }
@@ -168,7 +168,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return mixed
      */
-    public function getRedirectUrl()
+    public function getRedirectUrl(): ?string
     {
         return $this->redirectUrl;
     }
@@ -176,7 +176,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param mixed $redirectUrl
      */
-    public function setRedirectUrl($redirectUrl)
+    public function setRedirectUrl($redirectUrl): void
     {
         $this->redirectUrl = $redirectUrl;
     }
@@ -184,7 +184,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return mixed
      */
-    public function getWebhookUrl()
+    public function getWebhookUrl(): ?string
     {
         return $this->webhookUrl;
     }
@@ -192,7 +192,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param mixed $webhookUrl
      */
-    public function setWebhookUrl($webhookUrl)
+    public function setWebhookUrl($webhookUrl): void
     {
         $this->webhookUrl = $webhookUrl;
     }
@@ -200,7 +200,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return string
      */
-    public function getMethod()
+    public function getMethod(): ?string
     {
         return $this->method;
     }
@@ -208,7 +208,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param string $method
      */
-    public function setMethod($method)
+    public function setMethod($method): void
     {
         $this->method = $method;
     }
@@ -216,7 +216,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return array
      */
-    public function getMetadata()
+    public function getMetadata(): ?array
     {
         return $this->metadata;
     }
@@ -224,7 +224,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param array $metadata
      */
-    public function setMetadata($metadata)
+    public function setMetadata($metadata): void
     {
         $this->metadata = $metadata;
     }
@@ -232,7 +232,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return string
      */
-    public function getLocale()
+    public function getLocale(): ?string
     {
         return $this->locale;
     }
@@ -240,7 +240,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param string $locale
      */
-    public function setLocale($locale)
+    public function setLocale($locale): void
     {
         $this->locale = $locale;
     }
@@ -248,7 +248,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return string
      */
-    public function getCardToken()
+    public function getCardToken(): ?string
     {
         return $this->cardToken;
     }
@@ -256,7 +256,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param string $cardToken
      */
-    public function setCardToken($cardToken)
+    public function setCardToken($cardToken): void
     {
         $this->cardToken = $cardToken;
     }
@@ -264,7 +264,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return string
      */
-    public function getCustomerId()
+    public function getCustomerId(): ?string
     {
         return $this->customerId;
     }
@@ -272,7 +272,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param string $customerId
      */
-    public function setCustomerId($customerId)
+    public function setCustomerId($customerId): void
     {
         $this->customerId = $customerId;
     }
@@ -280,7 +280,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return Address
      */
-    public function getBillingAddress()
+    public function getBillingAddress(): ?Address
     {
         return $this->billingAddress;
     }
@@ -288,7 +288,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param Address $billingAddress
      */
-    public function setBillingAddress($billingAddress)
+    public function setBillingAddress($billingAddress): void
     {
         $this->billingAddress = $billingAddress;
     }
@@ -296,7 +296,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return Address
      */
-    public function getShippingAddress()
+    public function getShippingAddress(): ?Address
     {
         return $this->shippingAddress;
     }
@@ -304,7 +304,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param Address $shippingAddress
      */
-    public function setShippingAddress($shippingAddress)
+    public function setShippingAddress($shippingAddress): void
     {
         $this->shippingAddress = $shippingAddress;
     }
@@ -312,7 +312,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return string|null
      */
-    public function getApplePayToken()
+    public function getApplePayToken(): ?string
     {
         return $this->applePayToken;
     }
@@ -322,7 +322,7 @@ class PaymentData implements JsonSerializable
      *
      * @return $this
      */
-    public function setApplePayToken($applePayToken): PaymentData
+    public function setApplePayToken($applePayToken): self
     {
         $this->applePayToken = $applePayToken;
 
@@ -362,7 +362,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return string
      */
-    public function getEmail()
+    public function getEmail(): ?string
     {
         return $this->email;
     }
@@ -370,7 +370,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param string $email
      */
-    public function setEmail($email)
+    public function setEmail($email): void
     {
         $this->email = $email;
     }
@@ -378,7 +378,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return PaymentLine[]
      */
-    public function getLines(): array
+    public function getLines(): ?array
     {
         return $this->lines;
     }
@@ -386,7 +386,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param PaymentLine[] $lines
      */
-    public function setLines(array $lines): void
+    public function setLines($lines): void
     {
         $this->lines = $lines;
     }
@@ -394,7 +394,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return string
      */
-    public function getBillingPhoneNumber()
+    public function getBillingPhoneNumber(): ?string
     {
         return $this->billingPhoneNumber;
     }
@@ -404,7 +404,7 @@ class PaymentData implements JsonSerializable
      *
      * @return self
      */
-    public function setBillingPhoneNumber($billingPhoneNumber)
+    public function setBillingPhoneNumber($billingPhoneNumber): self
     {
         $this->billingPhoneNumber = $billingPhoneNumber;
 
@@ -414,7 +414,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return string|null
      */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }
@@ -422,7 +422,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param string|null $title
      */
-    public function setTitle($title)
+    public function setTitle($title): void
     {
         $this->title = $title;
     }
@@ -479,7 +479,7 @@ class PaymentData implements JsonSerializable
         return $result;
     }
 
-    private function cleanUpInput($input, $defaultValue = 'N/A')
+    private function cleanUpInput($input, $defaultValue = 'N/A'): ?string
     {
         if (empty($input)) {
             return $defaultValue;
