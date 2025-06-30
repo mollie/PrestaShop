@@ -83,7 +83,7 @@ class PaymentLine implements JsonSerializable
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -93,7 +93,7 @@ class PaymentLine implements JsonSerializable
      *
      * @return PaymentLine
      */
-    public function setType($type)
+    public function setType(string $type): self
     {
         $this->type = $type;
 
@@ -103,7 +103,7 @@ class PaymentLine implements JsonSerializable
     /**
      * @return string
      */
-    public function getSku()
+    public function getSku(): string
     {
         return $this->sku;
     }
@@ -113,7 +113,7 @@ class PaymentLine implements JsonSerializable
      *
      * @return PaymentLine
      */
-    public function setSku($sku)
+    public function setSku(string $sku): self
     {
         $this->sku = $sku;
 
@@ -123,7 +123,7 @@ class PaymentLine implements JsonSerializable
     /**
      * @return string
      */
-    public function getProductUrl()
+    public function getProductUrl(): string
     {
         return $this->productUrl;
     }
@@ -133,7 +133,7 @@ class PaymentLine implements JsonSerializable
      *
      * @return PaymentLine
      */
-    public function setProductUrl($productUrl)
+    public function setProductUrl(string $productUrl): self
     {
         $this->productUrl = $productUrl;
 
@@ -143,7 +143,7 @@ class PaymentLine implements JsonSerializable
     /**
      * @return string
      */
-    public function getImageUrl()
+    public function getImageUrl(): string
     {
         return $this->imageUrl;
     }
@@ -153,7 +153,7 @@ class PaymentLine implements JsonSerializable
      *
      * @return PaymentLine
      */
-    public function setImageUrl($imageUrl)
+    public function setImageUrl(string $imageUrl): self
     {
         $this->imageUrl = $imageUrl;
 
@@ -163,7 +163,7 @@ class PaymentLine implements JsonSerializable
     /**
      * @return int
      */
-    public function getQuantity()
+    public function getQuantity(): int
     {
         return $this->quantity;
     }
@@ -173,7 +173,7 @@ class PaymentLine implements JsonSerializable
      *
      * @return PaymentLine
      */
-    public function setQuantity($quantity)
+    public function setQuantity(int $quantity): self
     {
         $this->quantity = $quantity;
 
@@ -183,7 +183,7 @@ class PaymentLine implements JsonSerializable
     /**
      * @return string
      */
-    public function getVatRate()
+    public function getVatRate(): string
     {
         return $this->vatRate;
     }
@@ -193,7 +193,7 @@ class PaymentLine implements JsonSerializable
      *
      * @return PaymentLine
      */
-    public function setVatRate($vatRate)
+    public function setVatRate(string $vatRate): self
     {
         $this->vatRate = $vatRate;
 
@@ -203,7 +203,7 @@ class PaymentLine implements JsonSerializable
     /**
      * @return Amount
      */
-    public function getUnitPrice()
+    public function getUnitPrice(): Amount
     {
         return $this->unitPrice;
     }
@@ -213,7 +213,7 @@ class PaymentLine implements JsonSerializable
      *
      * @return PaymentLine
      */
-    public function setUnitPrice($unitPrice)
+    public function setUnitPrice(Amount $unitPrice): self
     {
         $this->unitPrice = $unitPrice;
 
@@ -223,7 +223,7 @@ class PaymentLine implements JsonSerializable
     /**
      * @return Amount
      */
-    public function getTotalPrice()
+    public function getTotalPrice(): Amount
     {
         return $this->totalPrice;
     }
@@ -233,7 +233,7 @@ class PaymentLine implements JsonSerializable
      *
      * @return PaymentLine
      */
-    public function setTotalPrice($totalPrice)
+    public function setTotalPrice(Amount $totalPrice): self
     {
         $this->totalPrice = $totalPrice;
 
@@ -243,7 +243,7 @@ class PaymentLine implements JsonSerializable
     /**
      * @return Amount|null
      */
-    public function getDiscountAmount()
+    public function getDiscountAmount(): ?Amount
     {
         return $this->discountAmount;
     }
@@ -253,7 +253,7 @@ class PaymentLine implements JsonSerializable
      *
      * @return PaymentLine
      */
-    public function setDiscountAmount($discountAmount)
+    public function setDiscountAmount(Amount $discountAmount): self
     {
         $this->discountAmount = $discountAmount;
 
@@ -263,7 +263,7 @@ class PaymentLine implements JsonSerializable
     /**
      * @return Amount
      */
-    public function getVatAmount()
+    public function getVatAmount(): Amount
     {
         return $this->vatAmount;
     }
@@ -273,7 +273,7 @@ class PaymentLine implements JsonSerializable
      *
      * @return PaymentLine
      */
-    public function setVatAmount($vatAmount)
+    public function setVatAmount(Amount $vatAmount): self
     {
         $this->vatAmount = $vatAmount;
 
@@ -283,7 +283,7 @@ class PaymentLine implements JsonSerializable
     /**
      * @return array
      */
-    public function getCategories()
+    public function getCategories(): array
     {
         return $this->categories;
     }
@@ -293,7 +293,7 @@ class PaymentLine implements JsonSerializable
      *
      * @return PaymentLine
      */
-    public function setCategories($categories)
+    public function setCategories(array $categories): self
     {
         $this->categories = $categories;
 

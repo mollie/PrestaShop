@@ -88,7 +88,7 @@ class OrderLine implements JsonSerializable
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -98,7 +98,7 @@ class OrderLine implements JsonSerializable
      *
      * @return OrderLine
      */
-    public function setType($type)
+    public function setType(string $type): self
     {
         $this->type = $type;
 
@@ -108,7 +108,7 @@ class OrderLine implements JsonSerializable
     /**
      * @return string
      */
-    public function getSku()
+    public function getSku(): string
     {
         return $this->sku;
     }
@@ -118,7 +118,7 @@ class OrderLine implements JsonSerializable
      *
      * @return OrderLine
      */
-    public function setSku($sku)
+    public function setSku(string $sku): self
     {
         $this->sku = $sku;
 
@@ -128,7 +128,7 @@ class OrderLine implements JsonSerializable
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -138,7 +138,7 @@ class OrderLine implements JsonSerializable
      *
      * @return OrderLine
      */
-    public function setName($name)
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -148,7 +148,7 @@ class OrderLine implements JsonSerializable
     /**
      * @return string
      */
-    public function getProductUrl()
+    public function getProductUrl(): string
     {
         return $this->productUrl;
     }
@@ -158,7 +158,7 @@ class OrderLine implements JsonSerializable
      *
      * @return OrderLine
      */
-    public function setProductUrl($productUrl)
+    public function setProductUrl(string $productUrl): self
     {
         $this->productUrl = $productUrl;
 
@@ -168,7 +168,7 @@ class OrderLine implements JsonSerializable
     /**
      * @return string
      */
-    public function getImageUrl()
+    public function getImageUrl(): string
     {
         return $this->imageUrl;
     }
@@ -178,7 +178,7 @@ class OrderLine implements JsonSerializable
      *
      * @return OrderLine
      */
-    public function setImageUrl($imageUrl)
+    public function setImageUrl(string $imageUrl): self
     {
         $this->imageUrl = $imageUrl;
 
@@ -188,7 +188,7 @@ class OrderLine implements JsonSerializable
     /**
      * @return array
      */
-    public function getMetaData()
+    public function getMetaData(): array
     {
         return $this->metaData;
     }
@@ -198,7 +198,7 @@ class OrderLine implements JsonSerializable
      *
      * @return OrderLine
      */
-    public function setMetaData($metaData)
+    public function setMetaData(array $metaData): self
     {
         $this->metaData = $metaData;
 
@@ -208,7 +208,7 @@ class OrderLine implements JsonSerializable
     /**
      * @return int
      */
-    public function getQuantity()
+    public function getQuantity(): int
     {
         return $this->quantity;
     }
@@ -218,7 +218,7 @@ class OrderLine implements JsonSerializable
      *
      * @return OrderLine
      */
-    public function setQuantity($quantity)
+    public function setQuantity(int $quantity): self
     {
         $this->quantity = $quantity;
 
@@ -228,7 +228,7 @@ class OrderLine implements JsonSerializable
     /**
      * @return string
      */
-    public function getVatRate()
+    public function getVatRate(): string
     {
         return $this->vatRate;
     }
@@ -238,7 +238,7 @@ class OrderLine implements JsonSerializable
      *
      * @return OrderLine
      */
-    public function setVatRate($vatRate)
+    public function setVatRate(string $vatRate): self
     {
         $this->vatRate = $vatRate;
 
@@ -248,7 +248,7 @@ class OrderLine implements JsonSerializable
     /**
      * @return Amount
      */
-    public function getUnitPrice()
+    public function getUnitPrice(): Amount
     {
         return $this->unitPrice;
     }
@@ -258,7 +258,7 @@ class OrderLine implements JsonSerializable
      *
      * @return OrderLine
      */
-    public function setUnitPrice($unitPrice)
+    public function setUnitPrice(Amount $unitPrice): self
     {
         $this->unitPrice = $unitPrice;
 
@@ -268,7 +268,7 @@ class OrderLine implements JsonSerializable
     /**
      * @return Amount
      */
-    public function getTotalPrice()
+    public function getTotalPrice(): Amount
     {
         return $this->totalPrice;
     }
@@ -278,7 +278,7 @@ class OrderLine implements JsonSerializable
      *
      * @return OrderLine
      */
-    public function setTotalPrice($totalPrice)
+    public function setTotalPrice(Amount $totalPrice): self
     {
         $this->totalPrice = $totalPrice;
 
@@ -288,7 +288,7 @@ class OrderLine implements JsonSerializable
     /**
      * @return Amount|null
      */
-    public function getDiscountAmount()
+    public function getDiscountAmount(): ?Amount
     {
         return $this->discountAmount;
     }
@@ -298,7 +298,7 @@ class OrderLine implements JsonSerializable
      *
      * @return OrderLine
      */
-    public function setDiscountAmount($discountAmount)
+    public function setDiscountAmount(Amount $discountAmount): self
     {
         $this->discountAmount = $discountAmount;
 
@@ -308,7 +308,7 @@ class OrderLine implements JsonSerializable
     /**
      * @return Amount
      */
-    public function getVatAmount()
+    public function getVatAmount(): Amount
     {
         return $this->vatAmount;
     }
@@ -318,7 +318,7 @@ class OrderLine implements JsonSerializable
      *
      * @return OrderLine
      */
-    public function setVatAmount($vatAmount)
+    public function setVatAmount(Amount $vatAmount): self
     {
         $this->vatAmount = $vatAmount;
 
@@ -328,7 +328,7 @@ class OrderLine implements JsonSerializable
     /**
      * @return string
      */
-    public function getCategory()
+    public function getCategory(): string
     {
         return $this->category;
     }
@@ -338,7 +338,7 @@ class OrderLine implements JsonSerializable
      *
      * @return OrderLine
      */
-    public function setCategory($category)
+    public function setCategory(string $category): self
     {
         $this->category = $category;
 
