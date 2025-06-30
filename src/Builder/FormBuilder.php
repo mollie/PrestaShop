@@ -622,7 +622,6 @@ class FormBuilder
             ];
         }
 
-        // Add payment failure email setting
         $input[] = [
             'type' => 'switch',
             'label' => $this->module->l('Send email on payment failure', self::FILE_NAME),
