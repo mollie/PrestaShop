@@ -229,7 +229,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $logger = $this->module->getService(LoggerInterface::class);
                 $logger->error(sprintf('%s - Error sending failed payment mail', self::FILE_NAME),
                     [
-                        'exceptions' => ExceptionUtility::getExceptions($e)
+                        'exceptions' => ExceptionUtility::getExceptions($e),
                     ]
                 );
             }
