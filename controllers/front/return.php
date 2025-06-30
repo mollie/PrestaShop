@@ -222,6 +222,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         if (Tools::getValue('failed')) {
             /** @var MailService $mailService */
             $mailService = $this->module->getService(MailService::class);
+
             try {
                 $mailService->sendFailedPaymentMail($this->context->customer);
             } catch (\Throwable $e) {
