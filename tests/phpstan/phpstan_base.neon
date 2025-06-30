@@ -27,7 +27,7 @@ parameters:
     - '#Parameter \#1 \$id of class [a-zA-Z0-9_]+ constructor expects null, mixed given.#'
     - '#Variable \$payment in PHPDoc tag @var does not match assigned variable \$order.#'
     - '#Variable \$payment in PHPDoc tag @var does not match assigned variable \$apiPayment.#'
-    - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array<string, mixed> given.#
+    - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array<string, mixed> given.#'
     - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array<string, string> given.#'
     - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects string, array given.#'
     - '#Parameter \#4 \$templateVars of static method MailCore::send\(\) expects array, string given.#'
