@@ -24,7 +24,8 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_6_3_0($module)
 {
-    Configuration::updateValue(Config::MOLLIE_MAIL_WHEN_FAILED, false);
+    // Add payment failure email configuration
+    Configuration::updateValue(Config::MOLLIE_MAIL_WHEN_FAILED, true);
 
     return true;
 }
