@@ -578,12 +578,12 @@ class MailService
             throw new \PrestaShopException('Invalid checkout URL provided');
         }
 
-        $templateVars = [
+        $templateVars = implode(' ', [
             '{firstname}' => $customer->firstname,
             '{lastname}' => $customer->lastname,
             '{checkout_url}' => $checkoutUrl,
             '{shop_name}' => Configuration::get('PS_SHOP_NAME'),
-        ];
+        ]);
 
         return Mail::send(
             $customer->id_lang,
