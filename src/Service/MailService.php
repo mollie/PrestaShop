@@ -551,15 +551,15 @@ class MailService
         }
 
         if (empty($customer->email) || !\Validate::isEmail($customer->email)) {
-            throw new \PrestaShopException('Invalid customer email address');
+            throw new \PrestaShopException('Failed to load customer email address');
         }
 
         if (!\Validate::isLoadedObject($customer)) {
-            throw new \PrestaShopException('Invalid customer object provided');
+            throw new \PrestaShopException('Failed to load customer object');
         }
 
         if (!\Validate::isLoadedObject($shop)) {
-            throw new \PrestaShopException('Invalid shop object provided');
+            throw new \PrestaShopException('Failed to load shop object');
         }
 
         if (null === $checkoutUrl) {
