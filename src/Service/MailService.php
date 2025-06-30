@@ -585,7 +585,7 @@ class MailService
             '{shop_name}' => Configuration::get('PS_SHOP_NAME'),
         ];
 
-        return Mail::Send(
+        return Mail::send(
             $customer->id_lang,
             'mollie_payment_failed',
             Mail::l('Payment Failed'),
