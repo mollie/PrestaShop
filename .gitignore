@@ -8,6 +8,7 @@ build/
 var/
 config.xml
 mails/
+!mails/en/
 views/img/customLogo/*.jpg
 cypress/videos
 cypress/screenshots
