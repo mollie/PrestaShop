@@ -465,13 +465,14 @@ class CartLinesService
     }
 
     /**
+     * @param array $newItems
      * @param string $currencyIsoCode
      * @param int $apiRoundingPrecision
      * @param string $lineType
      *
      * @return array
      */
-    private function convertToLineArray(array $newItems, $currencyIsoCode, $apiRoundingPrecision, $lineType)
+    private function convertToLineArray(array $newItems, string $currencyIsoCode, int $apiRoundingPrecision, string $lineType): array
     {
         foreach ($newItems as $index => $item) {
             $lineClass = $lineType === LineType::PAYMENT ? PaymentLine::class : OrderLine::class;
