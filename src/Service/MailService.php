@@ -583,9 +583,9 @@ class MailService
             'mollie_payment_failed',
             Mail::l('Payment Failed'),
             [
-                '{firstname}' => $customer->firstname,
-                '{lastname}' => $customer->lastname,
-                '{checkout_url}' => $checkoutUrl,
+                '{firstname}' => (string) $customer->firstname,
+                '{lastname}' => (string) $customer->lastname,
+                '{checkout_url}' => (string) $checkoutUrl,
                 '{shop_name}' => (string) Configuration::get('PS_SHOP_NAME'),
             ],
             $customer->email,
