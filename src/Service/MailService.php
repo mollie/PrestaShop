@@ -34,8 +34,6 @@ use PDF;
 use Product;
 use State;
 use Tools;
-use Validate;
-use Shop;
 use Mollie\Logger\LoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
@@ -552,15 +550,15 @@ class MailService
             $customer = $this->context->customer;
         }
 
-        if (empty($customer->email) || !Validate::isEmail($customer->email)) {
+        if (empty($customer->email) || !\Validate::isEmail($customer->email)) {
             throw new \PrestaShopException('Invalid customer email address');
         }
 
-        if (!$customer || !Validate::isLoadedObject($customer)) {
+        if (!$customer || !\Validate::isLoadedObject($customer)) {
             throw new \PrestaShopException('Invalid customer object provided');
         }
 
-        if (!Validate::isLoadedObject($shop)) {
+        if (!\Validate::isLoadedObject($shop)) {
             throw new \PrestaShopException('Invalid shop object provided');
         }
 
@@ -576,7 +574,7 @@ class MailService
             );
         }
 
-        if (!Validate::isUrl($checkoutUrl)) {
+        if (!\Validate::isUrl($checkoutUrl)) {
             throw new \PrestaShopException('Invalid checkout URL provided');
         }
 
