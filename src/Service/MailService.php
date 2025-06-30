@@ -543,7 +543,7 @@ class MailService
             return false;
         }
 
-        /** @var Shop $shop */
+        /** @var \Shop $shop */
         $shop = $this->context->shop;
 
         if (!$customer) {
@@ -554,7 +554,7 @@ class MailService
             throw new \PrestaShopException('Invalid customer email address');
         }
 
-        if (!$customer || !\Validate::isLoadedObject($customer)) {
+        if (!\Validate::isLoadedObject($customer)) {
             throw new \PrestaShopException('Invalid customer object provided');
         }
 
@@ -586,7 +586,7 @@ class MailService
                 '{firstname}' => $customer->firstname,
                 '{lastname}' => $customer->lastname,
                 '{checkout_url}' => $checkoutUrl,
-                '{shop_name}' => Configuration::get('PS_SHOP_NAME'),
+                '{shop_name}' => (string) Configuration::get('PS_SHOP_NAME'),
             ],
             $customer->email,
             null,
