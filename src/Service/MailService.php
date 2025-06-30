@@ -27,6 +27,7 @@ use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Factory\ModuleFactory;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Subscription\Provider\GeneralSubscriptionMailDataProvider;
 use Order;
 use OrderState;
@@ -34,7 +35,6 @@ use PDF;
 use Product;
 use State;
 use Tools;
-use Mollie\Logger\LoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -529,7 +529,7 @@ class MailService
      * @param string|null $checkoutUrl The URL for the customer to retry payment
      *
      * @return bool Whether the email was sent successfully
-
+     *
      * @throws \PrestaShopException
      */
     public function sendFailedPaymentMail(?Customer $customer = null, ?string $checkoutUrl = null): bool
