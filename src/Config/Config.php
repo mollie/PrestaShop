@@ -299,7 +299,6 @@ class Config
 
     /** @var array */
     public static $methods = [
-        'bancomatpay' => 'Bancomat Pay',
         'banktransfer' => 'Bank',
         'belfius' => 'Belfius',
         'bitcoin' => 'Bitcoin',
@@ -333,7 +332,6 @@ class Config
         'trustly' => 'Trustly',
         'satispay' => 'Satispay',
         'paybybank' => 'Pay by Bank',
-        'przelewy24' => 'Przelewy24',
         'multibanco' => 'Multibanco',
         'mbway' => 'MBway',
         'vippsmobilepay' => 'Vipps',
