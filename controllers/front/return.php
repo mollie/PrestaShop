@@ -228,6 +228,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             } catch (\Throwable $e) {
                 /** @var Logger $logger */
                 $logger = $this->module->getService(LoggerInterface::class);
+
                 $logger->error(sprintf('%s - Error sending failed payment mail', self::FILE_NAME),
                     [
                         'exceptions' => ExceptionUtility::getExceptions($e),
