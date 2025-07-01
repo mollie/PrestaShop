@@ -127,8 +127,8 @@ class OrderData implements JsonSerializable
 
     public function __construct(
         Amount $amount,
-               $redirectUrl,
-               $webhookUrl
+        string $redirectUrl,
+        string $webhookUrl
     ) {
         $this->amount = $amount;
         $this->redirectUrl = $redirectUrl;
@@ -152,7 +152,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @return ?string
+     * @return string
      */
     public function getRedirectUrl()
     {
@@ -160,7 +160,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @param ?string $redirectUrl
+     * @param string $redirectUrl
      */
     public function setRedirectUrl($redirectUrl)
     {
@@ -168,7 +168,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @return ?string
+     * @return string
      */
     public function getWebhookUrl()
     {
@@ -176,9 +176,9 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @param ?string $webhookUrl
+     * @param string $webhookUrl
      */
-    public function setWebhookUrl(?string$webhookUrl)
+    public function setWebhookUrl(string $webhookUrl)
     {
         $this->webhookUrl = $webhookUrl;
     }
