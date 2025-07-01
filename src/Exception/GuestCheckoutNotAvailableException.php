@@ -21,7 +21,7 @@ if (!defined('_PS_VERSION_')) {
 
 class GuestCheckoutNotAvailableException extends MollieException
 {
-    public static function guestCheckoutDisabled(Throwable $exception = null): self
+    public static function guestCheckoutDisabled(?Throwable $exception = null): self
     {
         return new self(
             'Guest checkout is not available.',
