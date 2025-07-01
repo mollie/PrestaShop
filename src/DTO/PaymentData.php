@@ -280,7 +280,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return Address
      */
-    public function getBillingAddress(): ?Address
+    public function getBillingAddress(): Address
     {
         return $this->billingAddress;
     }
@@ -288,7 +288,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param Address $billingAddress
      */
-    public function setBillingAddress($billingAddress): void
+    public function setBillingAddress(Address $billingAddress): void
     {
         $this->billingAddress = $billingAddress;
     }
@@ -296,7 +296,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return Address
      */
-    public function getShippingAddress(): ?Address
+    public function getShippingAddress(): Address
     {
         return $this->shippingAddress;
     }
@@ -304,7 +304,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param Address $shippingAddress
      */
-    public function setShippingAddress($shippingAddress): void
+    public function setShippingAddress(Address $shippingAddress): void
     {
         $this->shippingAddress = $shippingAddress;
     }
@@ -318,15 +318,11 @@ class PaymentData implements JsonSerializable
     }
 
     /**
-     * @param string|null $applePayToken
-     *
-     * @return $this
+     * @param ?string $applePayToken
      */
-    public function setApplePayToken($applePayToken): self
+    public function setApplePayToken(?string $applePayToken): void
     {
         $this->applePayToken = $applePayToken;
-
-        return $this;
     }
 
     public function getShippingStreetAndNumber(): string
@@ -362,7 +358,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return string
      */
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
@@ -370,7 +366,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param string $email
      */
-    public function setEmail($email): void
+    public function setEmail(string $email): void
     {
         $this->email = $email;
     }
@@ -378,7 +374,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return PaymentLine[]
      */
-    public function getLines(): ?array
+    public function getLines(): array
     {
         return $this->lines;
     }
@@ -386,7 +382,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param PaymentLine[] $lines
      */
-    public function setLines($lines): void
+    public function setLines(array $lines): void
     {
         $this->lines = $lines;
     }
