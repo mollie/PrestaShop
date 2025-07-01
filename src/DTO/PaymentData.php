@@ -166,7 +166,7 @@ class PaymentData implements JsonSerializable
     }
 
     /**
-     * @return string|null
+     * @return ?string
      */
     public function getRedirectUrl(): ?string
     {
@@ -174,15 +174,15 @@ class PaymentData implements JsonSerializable
     }
 
     /**
-     * @param mixed $redirectUrl
+     * @param ?string $redirectUrl
      */
-    public function setRedirectUrl($redirectUrl): void
+    public function setRedirectUrl(?string $redirectUrl): void
     {
         $this->redirectUrl = $redirectUrl;
     }
 
     /**
-     * @return string|null
+     * @return ?string
      */
     public function getWebhookUrl(): ?string
     {
@@ -190,9 +190,9 @@ class PaymentData implements JsonSerializable
     }
 
     /**
-     * @param mixed $webhookUrl
+     * @param ?string $webhookUrl
      */
-    public function setWebhookUrl($webhookUrl): void
+    public function setWebhookUrl(?string $webhookUrl): void
     {
         $this->webhookUrl = $webhookUrl;
     }
@@ -208,7 +208,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param string $method
      */
-    public function setMethod($method): void
+    public function setMethod(string $method): void
     {
         $this->method = $method;
     }
@@ -246,7 +246,7 @@ class PaymentData implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getCardToken(): ?string
     {
@@ -310,7 +310,7 @@ class PaymentData implements JsonSerializable
     }
 
     /**
-     * @return string|null
+     * @return ?string
      */
     public function getApplePayToken(): ?string
     {
@@ -325,7 +325,7 @@ class PaymentData implements JsonSerializable
         $this->applePayToken = $applePayToken;
     }
 
-    public function getShippingStreetAndNumber(): string
+    public function getShippingStreetAndNumber(): ?string
     {
         return $this->shippingStreetAndNumber;
     }
