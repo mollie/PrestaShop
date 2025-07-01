@@ -388,7 +388,7 @@ class PaymentData implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getBillingPhoneNumber(): ?string
     {
@@ -396,19 +396,15 @@ class PaymentData implements JsonSerializable
     }
 
     /**
-     * @param string $billingPhoneNumber
-     *
-     * @return self
+     * @param ?string $billingPhoneNumber
      */
-    public function setBillingPhoneNumber($billingPhoneNumber): self
+    public function setBillingPhoneNumber(?string $billingPhoneNumber): void
     {
         $this->billingPhoneNumber = $billingPhoneNumber;
-
-        return $this;
     }
 
     /**
-     * @return string|null
+     * @return ?string
      */
     public function getTitle(): ?string
     {
@@ -416,9 +412,9 @@ class PaymentData implements JsonSerializable
     }
 
     /**
-     * @param string|null $title
+     * @param ?string $title
      */
-    public function setTitle($title): void
+    public function setTitle(?string $title): void
     {
         $this->title = $title;
     }
