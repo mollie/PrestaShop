@@ -262,7 +262,7 @@ class PaymentData implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getCustomerId(): ?string
     {
@@ -270,9 +270,9 @@ class PaymentData implements JsonSerializable
     }
 
     /**
-     * @param string $customerId
+     * @param ?string $customerId
      */
-    public function setCustomerId($customerId): void
+    public function setCustomerId(?string $customerId): void
     {
         $this->customerId = $customerId;
     }
