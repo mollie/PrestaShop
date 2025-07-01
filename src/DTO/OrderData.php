@@ -152,7 +152,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * @return ?string
      */
     public function getRedirectUrl()
     {
@@ -160,7 +160,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @param mixed $redirectUrl
+     * @param ?string $redirectUrl
      */
     public function setRedirectUrl($redirectUrl)
     {
@@ -168,7 +168,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * @return ?string
      */
     public function getWebhookUrl()
     {
@@ -176,9 +176,9 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @param mixed $webhookUrl
+     * @param ?string $webhookUrl
      */
-    public function setWebhookUrl($webhookUrl)
+    public function setWebhookUrl(?string$webhookUrl)
     {
         $this->webhookUrl = $webhookUrl;
     }
@@ -272,7 +272,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * @return ?string
      */
     public function getBillingPhoneNumber()
     {
@@ -280,7 +280,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @param mixed $billingPhoneNumber
+     * @param ?string $billingPhoneNumber
      */
     public function setBillingPhoneNumber($billingPhoneNumber)
     {
@@ -288,7 +288,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * @return ?string
      */
     public function getDeliveryPhoneNumber()
     {
@@ -296,7 +296,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @param mixed $deliveryPhoneNumber
+     * @param ?string $deliveryPhoneNumber
      */
     public function setDeliveryPhoneNumber($deliveryPhoneNumber)
     {
