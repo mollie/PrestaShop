@@ -281,14 +281,10 @@ class OrderData implements JsonSerializable
 
     /**
      * @param mixed $billingPhoneNumber
-     *
-     * @return self
      */
     public function setBillingPhoneNumber($billingPhoneNumber)
     {
         $this->billingPhoneNumber = $billingPhoneNumber;
-
-        return $this;
     }
 
     /**
@@ -301,14 +297,10 @@ class OrderData implements JsonSerializable
 
     /**
      * @param mixed $deliveryPhoneNumber
-     *
-     * @return self
      */
     public function setDeliveryPhoneNumber($deliveryPhoneNumber)
     {
         $this->deliveryPhoneNumber = $deliveryPhoneNumber;
-
-        return $this;
     }
 
     /**
