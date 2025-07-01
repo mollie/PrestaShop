@@ -150,17 +150,17 @@ class PaymentData implements JsonSerializable
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
-        return $this->description ?: ' ';
+        return $this->description;
     }
 
     /**
-     * @param mixed $description
+     * @param string $description
      */
-    public function setDescription($description): void
+    public function setDescription(string $description): void
     {
         $this->description = $description;
     }
@@ -216,7 +216,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return array
      */
-    public function getMetadata(): ?array
+    public function getMetadata(): array
     {
         return $this->metadata;
     }
@@ -224,7 +224,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param array $metadata
      */
-    public function setMetadata($metadata): void
+    public function setMetadata(array $metadata): void
     {
         $this->metadata = $metadata;
     }
@@ -232,7 +232,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return string
      */
-    public function getLocale(): ?string
+    public function getLocale(): string
     {
         return $this->locale;
     }
@@ -240,7 +240,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param string $locale
      */
-    public function setLocale($locale): void
+    public function setLocale(string $locale): void
     {
         $this->locale = $locale;
     }
