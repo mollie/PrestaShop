@@ -150,7 +150,7 @@ class PaymentData implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getDescription(): ?string
     {
@@ -166,7 +166,7 @@ class PaymentData implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getRedirectUrl(): ?string
     {
@@ -182,7 +182,7 @@ class PaymentData implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getWebhookUrl(): ?string
     {

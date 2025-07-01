@@ -34,6 +34,7 @@ use Mollie\DTO\Object\Company;
 use Mollie\DTO\Object\Payment;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
+use Mollie\Enum\LineType;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CreditCardLogoProvider;
@@ -55,7 +56,6 @@ use Mollie\Utility\TextFormatUtility;
 use MolPaymentMethod;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use Mollie\Enum\LineType;
 use Tools;
 
 if (!defined('_PS_VERSION_')) {
