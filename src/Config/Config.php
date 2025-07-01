@@ -75,7 +75,6 @@ class Config
         'multibanco' => ['pt'],
         'mbway' => ['pt'],
         'swish' => ['se'],
-        'vippsmobilepay' => ['no', 'dk', 'fi'],
     ];
 
     const SUPPORTED_PHP_VERSION = '5.6';
@@ -150,6 +149,7 @@ class Config
     const MOLLIE_MAIL_WHEN_EXPIRED = 'MOLLIE_MAIL_WHEN_EXPIRED';
     const MOLLIE_MAIL_WHEN_REFUNDED = 'MOLLIE_MAIL_WHEN_REFUNDED';
     const MOLLIE_MAIL_WHEN_CHARGEBACK = 'MOLLIE_MAIL_WHEN_CHARGEBACK';
+    const MOLLIE_MAIL_WHEN_FAILED = 'MOLLIE_MAIL_WHEN_FAILED';
     // NOTE: const below is needed to check in configuration table if email should be sent. IDE doesn't detect its usage
     const MOLLIE_MAIL_WHEN_PARTIAL_REFUND = 'MOLLIE_MAIL_WHEN_PARTIAL_REFUND';
     const PARTIAL_REFUND_CODE = 'partial_refund';
@@ -334,7 +334,6 @@ class Config
         'paybybank' => 'Pay by Bank',
         'multibanco' => 'Multibanco',
         'mbway' => 'MBway',
-        'vippsmobilepay' => 'Vipps',
     ];
 
     public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;

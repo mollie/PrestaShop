@@ -24,8 +24,10 @@ use Language;
 use Mail;
 use Mollie;
 use Mollie\Adapter\ProductAttributeAdapter;
+use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Factory\ModuleFactory;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Subscription\Provider\GeneralSubscriptionMailDataProvider;
 use Order;
 use OrderState;
@@ -518,5 +520,78 @@ class MailService
     private function _getFormatedAddress(Address $the_address, $line_sep, $fields_style = [])
     {
         return AddressFormat::generateAddress($the_address, ['avoid' => []], $line_sep, ' ', $fields_style);
+    }
+
+    /**
+     * Sends a failed payment notification email to the customer
+     *
+     * @param Customer|null $customer The customer to send the email to (uses context if null)
+     *
+     * @return bool Whether the email was sent successfully
+     *
+     * @throws \PrestaShopException
+     */
+    public function sendFailedPaymentMail(?Customer $customer = null): bool
+    {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        if (!Configuration::get(Config::MOLLIE_MAIL_WHEN_FAILED)) {
+            $logger->debug(sprintf('%s - Payment failure email is disabled. Not sending email.', self::FILE_NAME));
+
+            return false;
+        }
+
+        /** @var \Shop $shop */
+        $shop = $this->context->shop;
+
+        if (!$customer) {
+            $customer = $this->context->customer;
+        }
+
+        if (empty($customer->email) || !\Validate::isEmail($customer->email)) {
+            throw new \PrestaShopException('Failed to load customer email address');
+        }
+
+        if (!\Validate::isLoadedObject($customer)) {
+            throw new \PrestaShopException('Failed to load customer object');
+        }
+
+        if (!\Validate::isLoadedObject($shop)) {
+            throw new \PrestaShopException('Failed to load shop object');
+        }
+
+        $checkoutUrl = $this->context->link->getPageLink(
+            'order',
+            true,
+            $this->context->language->id,
+            [
+                'step' => 3,
+                'id_cart' => $this->context->cart->id,
+            ]
+        );
+
+        $templateVars = [
+            '{firstname}' => $customer->firstname,
+            '{lastname}' => $customer->lastname,
+            '{checkout_url}' => $checkoutUrl,
+            '{shop_name}' => Configuration::get('PS_SHOP_NAME'),
+        ];
+
+        return Mail::send(
+            $customer->id_lang,
+            'mollie_payment_failed',
+            Mail::l('Payment Failed'),
+            $templateVars,
+            $customer->email,
+            null,
+            null,
+            null,
+            null,
+            null,
+            $this->module->getLocalPath() . 'mails/',
+            false,
+            $shop->id
+        );
     }
 }
