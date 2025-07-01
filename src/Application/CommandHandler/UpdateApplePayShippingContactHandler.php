@@ -15,12 +15,14 @@ namespace Mollie\Application\CommandHandler;
 use Address;
 use Carrier;
 use Cart;
+use Configuration;
 use Country;
 use Customer;
 use Mollie\Application\Command\UpdateApplePayShippingContact;
 use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
 use Mollie\Collector\ApplePayDirect\OrderTotalCollector;
 use Mollie\Config\Config;
+use Mollie\Exception\GuestCheckoutNotAvailableException;
 use Mollie\Service\OrderPaymentFeeService;
 use Mollie\Utility\ApplePayDirect\ShippingMethodUtility;
 use Tools;
@@ -112,6 +114,11 @@ final class UpdateApplePayShippingContactHandler
         if ($customerId) {
             return new Customer($customerId);
         }
+
+        if (!Configuration::get('PS_GUEST_CHECKOUT_ENABLED')) {
+            throw GuestCheckoutNotAvailableException::guestCheckoutDisabled();
+        }
+
         $customer = new Customer();
         $customer->is_guest = true;
         $customer->firstname = 'applePay';
