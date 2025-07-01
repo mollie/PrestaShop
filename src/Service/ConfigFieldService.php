@@ -90,6 +90,7 @@ class ConfigFieldService
             Config::MOLLIE_MAIL_WHEN_EXPIRED => $this->configurationAdapter->get(Config::MOLLIE_MAIL_WHEN_EXPIRED),
             Config::MOLLIE_MAIL_WHEN_REFUNDED => $this->configurationAdapter->get(Config::MOLLIE_MAIL_WHEN_REFUNDED),
             Config::MOLLIE_MAIL_WHEN_CHARGEBACK => $this->configurationAdapter->get(Config::MOLLIE_MAIL_WHEN_CHARGEBACK),
+            Config::MOLLIE_MAIL_WHEN_FAILED => $this->configurationAdapter->get(Config::MOLLIE_MAIL_WHEN_FAILED),
             Config::MOLLIE_ACCOUNT_SWITCH => $this->configurationAdapter->get(Config::MOLLIE_ACCOUNT_SWITCH),
 
             Config::MOLLIE_DISPLAY_ERRORS => $this->configurationAdapter->get(Config::MOLLIE_DISPLAY_ERRORS),
