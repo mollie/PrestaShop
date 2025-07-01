@@ -286,7 +286,7 @@ class OrderLine implements JsonSerializable
     }
 
     /**
-     * @return Amount|null
+     * @return ?Amount
      */
     public function getDiscountAmount(): ?Amount
     {
@@ -301,8 +301,6 @@ class OrderLine implements JsonSerializable
     public function setDiscountAmount(Amount $discountAmount): self
     {
         $this->discountAmount = $discountAmount;
-
-        return $this;
     }
 
     /**
