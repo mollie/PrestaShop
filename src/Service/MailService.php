@@ -526,7 +526,6 @@ class MailService
      * Sends a failed payment notification email to the customer
      *
      * @param Customer|null $customer The customer to send the email to (uses context if null)
-     * @param string|null $checkoutUrl The URL for the customer to retry payment
      *
      * @return bool Whether the email was sent successfully
      *
