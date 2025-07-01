@@ -377,7 +377,7 @@ class OrderData implements JsonSerializable
         return $this->consumerDateOfBirth;
     }
 
-    public function setConsumerDateOfBirth(string $consumerDateOfBirth): void
+    public function setConsumerDateOfBirth(?string $consumerDateOfBirth): void
     {
         $this->consumerDateOfBirth = $consumerDateOfBirth;
     }
