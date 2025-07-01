@@ -254,9 +254,9 @@ class PaymentData implements JsonSerializable
     }
 
     /**
-     * @param string $cardToken
+     * @param ?string $cardToken
      */
-    public function setCardToken($cardToken): void
+    public function setCardToken(?string $cardToken): void
     {
         $this->cardToken = $cardToken;
     }
