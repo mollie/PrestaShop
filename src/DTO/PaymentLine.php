@@ -90,14 +90,10 @@ class PaymentLine implements JsonSerializable
 
     /**
      * @param string $type
-     *
-     * @return PaymentLine
      */
-    public function setType(string $type): self
+    public function setType(string $type): void
     {
         $this->type = $type;
-
-        return $this;
     }
 
     /**
@@ -110,14 +106,10 @@ class PaymentLine implements JsonSerializable
 
     /**
      * @param string $sku
-     *
-     * @return PaymentLine
      */
-    public function setSku(string $sku): self
+    public function setSku(string $sku): void
     {
         $this->sku = $sku;
-
-        return $this;
     }
 
     /**
