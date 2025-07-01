@@ -75,6 +75,7 @@ class Config
         'multibanco' => ['pt'],
         'mbway' => ['pt'],
         'swish' => ['se'],
+        'vippsmobilepay' => ['no', 'dk', 'fi'],
     ];
 
     const SUPPORTED_PHP_VERSION = '5.6';
@@ -252,6 +253,7 @@ class Config
     const MOLLIE_VOUCHER_METHOD_ID = 'voucher';
     const MOLLIE_in3_METHOD_ID = 'in3';
     const RIVERTY = 'riverty';
+    const PAY_BY_BANK = 'paybybank';
 
     const MOLLIE_VOUCHER_CATEGORY_NULL = 'null';
     const MOLLIE_VOUCHER_CATEGORY_MEAL = 'meal';
@@ -340,6 +342,7 @@ class Config
         'paybybank' => 'Pay by Bank',
         'multibanco' => 'Multibanco',
         'mbway' => 'MBway',
+        'vippsmobilepay' => 'Vipps',
     ];
 
     public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;

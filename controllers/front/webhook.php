@@ -20,6 +20,7 @@ use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Service\TransactionService;
+use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\TransactionUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -170,6 +171,17 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
     {
         /** @var ErrorHandler $errorHandler */
         $errorHandler = $this->module->getService(ErrorHandler::class);
+
+        /** @var Logger $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->error(sprintf('%s - Failed to handle webhook', self::FILE_NAME), [
+            'exceptions' => ExceptionUtility::getExceptions($exception),
+            'context' => [
+                'httpStatusCode' => $httpStatusCode,
+                'logMessage' => $logMessage,
+            ],
+        ]);
 
         $errorHandler->handle($exception, $httpStatusCode, false);
         $this->releaseLock();

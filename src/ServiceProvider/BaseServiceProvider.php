@@ -304,6 +304,8 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, Shop::class);
         $this->addServiceArgument($service, TaxCalculatorProvider::class);
         $this->addServiceArgument($service, Context::class);
+        $this->addServiceArgument($service, PaymentMethodLangRepositoryInterface::class);
+        $this->addServiceArgument($service, CustomerRepository::class);
 
         $service = $this->addService($container, EntityManagerInterface::class, ObjectModelEntityManager::class);
         $this->addServiceArgument($service, ObjectModelUnitOfWork::class);
