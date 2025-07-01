@@ -532,7 +532,7 @@ class MailService
      *
      * @throws \PrestaShopException
      */
-    public function sendFailedPaymentMail(?Customer $customer = null, ?string $checkoutUrl = null): bool
+    public function sendFailedPaymentMail(?Customer $customer = null): bool
     {
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
@@ -562,21 +562,15 @@ class MailService
             throw new \PrestaShopException('Failed to load shop object');
         }
 
-        if (null === $checkoutUrl) {
-            $checkoutUrl = $this->context->link->getPageLink(
-                'order',
-                true,
-                $this->context->language->id,
-                [
-                    'step' => 3,
-                    'id_cart' => $this->context->cart->id,
-                ]
-            );
-        }
-
-        if (!\Validate::isUrl($checkoutUrl)) {
-            throw new \PrestaShopException('Invalid checkout URL provided');
-        }
+        $checkoutUrl = $this->context->link->getPageLink(
+            'order',
+            true,
+            $this->context->language->id,
+            [
+                'step' => 3,
+                'id_cart' => $this->context->cart->id,
+            ]
+        );
 
         $templateVars = [
             '{firstname}' => $customer->firstname,
