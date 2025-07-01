@@ -123,9 +123,9 @@ class PaymentData implements JsonSerializable
 
     public function __construct(
         Amount $amount,
-        $description,
-        $redirectUrl,
-        $webhookUrl
+        string $description,
+        string $redirectUrl,
+        string $webhookUrl
     ) {
         $this->amount = $amount;
         $this->description = $description;
@@ -136,7 +136,7 @@ class PaymentData implements JsonSerializable
     /**
      * @return Amount
      */
-    public function getAmount(): ?Amount
+    public function getAmount(): Amount
     {
         return $this->amount;
     }
@@ -144,7 +144,7 @@ class PaymentData implements JsonSerializable
     /**
      * @param Amount $amount
      */
-    public function setAmount($amount): void
+    public function setAmount(Amount $amount): void
     {
         $this->amount = $amount;
     }
@@ -166,33 +166,33 @@ class PaymentData implements JsonSerializable
     }
 
     /**
-     * @return ?string
+     * @return string
      */
-    public function getRedirectUrl(): ?string
+    public function getRedirectUrl(): string
     {
         return $this->redirectUrl;
     }
 
     /**
-     * @param ?string $redirectUrl
+     * @param string $redirectUrl
      */
-    public function setRedirectUrl(?string $redirectUrl): void
+    public function setRedirectUrl(string $redirectUrl): void
     {
         $this->redirectUrl = $redirectUrl;
     }
 
     /**
-     * @return ?string
+     * @return string
      */
-    public function getWebhookUrl(): ?string
+    public function getWebhookUrl(): string
     {
         return $this->webhookUrl;
     }
 
     /**
-     * @param ?string $webhookUrl
+     * @param string $webhookUrl
      */
-    public function setWebhookUrl(?string $webhookUrl): void
+    public function setWebhookUrl(string $webhookUrl): void
     {
         $this->webhookUrl = $webhookUrl;
     }
