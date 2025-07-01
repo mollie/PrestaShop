@@ -486,7 +486,7 @@ class CartLinesService
                     $line->setMetaData($item['metadata'] ?? []);
                     break;
                 case LineType::PAYMENT:
-                    $line->setDescription($item['description'] ?? $item['name'] ?? 'default description');
+                    $line->setDescription($item['description'] ?? $item['name'] ?? 'N/A');
                     break;
             }
 
