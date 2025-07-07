@@ -104,17 +104,6 @@ class CanSendShipment implements ShipmentVerificationInterface
         return true;
     }
 
-    private function hasShipmentInformation(string $orderReference): bool
-    {
-        try {
-            return !empty($this->shipmentService->getShipmentInformation($orderReference));
-        } catch (Exception $e) {
-            PrestaShopLogger::addLog($e);
-
-            return false;
-        }
-    }
-
     private function isAutomaticShipmentInformationSenderEnabled(): bool
     {
         return (bool) $this->configurationAdapter->get(Config::MOLLIE_AUTO_SHIP_MAIN);
