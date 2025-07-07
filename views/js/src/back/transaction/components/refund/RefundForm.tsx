@@ -15,7 +15,7 @@ import { updatePayment } from '@transaction/store/actions';
 import { updateWarning } from '@transaction/store/actions';
 import RefundButton from '@transaction/components/refund/RefundButton';
 import PartialRefundButton from '@transaction/components/refund/PartialRefundButton';
-import { refundPayment as refundPaymentAjax } from '@transaction/misc/ajax';
+import { refundPayment as refundPaymentAjax, capturePayment } from '@transaction/misc/ajax';
 import { formatCurrency } from '@shared/tools';
 import { IMollieApiPayment } from '@shared/globals';
 import { SweetAlert } from 'sweetalert/typings/core';
@@ -89,6 +89,50 @@ export default function RefundForm(): ReactElement<{}> {
       }
     }
   }
+
+  async function _capturePayment(): Promise<boolean> {
+    const { default: swal } = await import(/* webpackPrefetch: true, webpackChunkName: "sweetalert" */ 'sweetalert') as never as { default: SweetAlert };
+    const input = await swal({
+      dangerMode: true,
+      icon: 'warning',
+      title: xss(translations.areYouSure),
+      text: xss(translations.areYouSureYouWantToRefund),
+      buttons: {
+        cancel: {
+          text: xss(translations.cancel),
+          visible: true,
+        },
+        confirm: {
+          text: translations.capture,
+        },
+      },
+    });
+    if (input) {
+      try {
+        setLoading(true);
+        const { success = false, payment: newPayment = null } = await capturePayment(transactionId);
+        if (success) {
+          if (newPayment) {
+            dispatch(updateWarning('captured'));
+            dispatch(updatePayment(newPayment));
+            setRefundInput('');
+          }
+        } else {
+          swal({
+            icon: 'error',
+            title: translations.refundFailed,
+            text: translations.unableToCapture,
+          }).then();
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    return true;
+  }
+
   if (legacy) {
     return (
       <>
@@ -140,6 +184,18 @@ export default function RefundForm(): ReactElement<{}> {
         <div className="form-inline">
           <div className="form-group">
             {html}
+            {/* Capture button for Payments API */}
+            {payment.resource === 'payment' && (
+              <button
+                type="button"
+                className="btn btn-default"
+                disabled={loading || parseFloat(payment.settlementAmount.value) <= parseFloat(payment.amountRefunded.value)}
+                onClick={_capturePayment}
+                style={{ marginRight: '10px' }}
+              >
+                <i className="icon icon-credit-card"/> {translations.capture}
+              </button>
+            )}
           </div>
           <div className="form-group">
             <div className="input-group" style={{ minWidth: '100px' }}>

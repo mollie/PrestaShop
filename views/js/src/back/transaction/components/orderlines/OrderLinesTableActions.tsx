@@ -117,11 +117,46 @@ export default function OrderLinesTableActions({line, loading, shipLine, cancelL
         </a>
     );
 
+    const captureButton = legacy ? (
+        <button
+            style={{
+                cursor: line.cancelableQuantity < 1 ? 'not-allowed' : 'pointer',
+                width: '100px',
+                textAlign: 'left',
+                opacity: (loading || line.cancelableQuantity < 1 || line.type === 'discount') ? 0.8 : 1,
+            }}
+            title=""
+            disabled={loading || line.cancelableQuantity < 1 || line.type === 'discount'}
+            onClick={() => captureLine([line])}
+        >
+            <img
+                src="../img/admin/payment.gif"
+                alt={translations.capture}
+                style={{
+                    filter: (loading || line.cancelableQuantity < 1 || line.type === 'discount') ? 'grayscale(100%)' : undefined,
+                    WebkitFilter: (loading || line.cancelableQuantity < 1 || line.type === 'discount') ? 'grayscale(100%)' : undefined,
+                }}
+            /> Capture All
+        </button>
+    ) : (
+        <a
+            style={{
+                cursor: (loading || line.cancelableQuantity < 1 || line.type === 'discount') ? 'not-allowed' : 'pointer',
+                opacity: (loading || line.cancelableQuantity < 1 || line.type === 'discount') ? 0.8 : 1,
+            }}
+            onClick={() => isCancelable() && cancelLine([line])}
+            role="button"
+        >
+            <FontAwesomeIcon icon={!loading ? faTimes : faCircleNotch} spin={loading}/> Capture All
+        </a>
+    );
+
     const buttonGroup = legacy ? (
         <div>
             {shipButton}<br/>
             {refundButton}<br/>
-            {cancelButton}
+            {cancelButton}<br/>
+            {captureButton}
         </div>
     ) : (
         <div className={cx({

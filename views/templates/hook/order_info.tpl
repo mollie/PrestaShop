@@ -86,6 +86,8 @@
                 shipAll: '{l s='Ship all' mod='mollie' js=1}',
                 cancelAll: '{l s='Cancel all' mod='mollie' js=1}',
                 refundAll: '{l s='Refund all' mod='mollie' js=1}',
+                captureAll: '{l s='Capture all' mod='mollie' js=1}',
+                capture: '{l s='Capture' mod='mollie' js=1}',
                 transactionInfo: '{l s='Transaction info' mod='mollie' js=1}',
                 voucherInfo: '{l s='Voucher info' mod='mollie' js=1}',
                 thereAreNoProducts: '{l s='There are no products' mod='mollie' js=1}',

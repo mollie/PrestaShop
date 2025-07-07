@@ -176,3 +176,32 @@ export const shipOrder = async (transactionId: string, orderLines?: Array<IMolli
     return false;
   }
 };
+
+export const capturePayment = async (transactionId: string): Promise<any> => {
+  const [
+    { default: store },
+  ] = await Promise.all([
+    import(/* webpackPrefetch: true, webpackChunkName: "transaction" */ '@transaction/store'),
+  ]);
+  try {
+    const ajaxEndpoint = store.getState().config.ajaxEndpoint;
+
+    const { data } = await axios.post(ajaxEndpoint, {
+      resource: 'payments',
+      action: 'capture',
+      transactionId,
+    });
+    if (!data.success && typeof data.message === 'string') {
+      throw data.detailed ? data.detailed : data.message;
+    }
+
+    return defaults(data, { success: false, payment: null });
+  } catch (e) {
+    if (typeof e === 'string') {
+      throw e;
+    }
+    console.error(e);
+
+    return false;
+  }
+};
