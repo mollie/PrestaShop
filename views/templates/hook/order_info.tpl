@@ -107,6 +107,9 @@
     });
   }());
 </script>
+<script src="{$publicPath}vendors~app.min.js"></script>
+<script src="{$publicPath}app.min.js"></script>
+<script src="{$publicPath}transaction.min.js"></script>
 {foreach $webPackChunks as $webPackChunk}
   <script type="text/javascript" src="{$webPackChunk|escape:'html':'UTF-8'}"></script>
 {/foreach}
