@@ -121,7 +121,12 @@ class MollieOrderInfoService
                             'payment' => $this->apiService->getFilteredApiPayment($this->module->getApiClient(), $transactionId, false),
                         ];
                     case 'capture':
-                        $status = $this->captureService->doPaymentCapture($transactionId);
+                        if (!isset($input['amount']) || empty($input['amount'])) {
+                            // No amount = full capture
+                            $status = $this->captureService->doPaymentCapture($transactionId);
+                        } else {
+                            $status = $this->captureService->doPaymentCapture($transactionId, $input['amount']);
+                        }
 
                         return [
                             'success' => $status['success'],

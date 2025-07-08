@@ -36,13 +36,25 @@ class CaptureService
      * Capture a payment by transaction ID (Payments API)
      *
      * @param string $transactionId
+     * @param float|null $amount
      * @return array
      */
-    public function doPaymentCapture($transactionId)
+    public function doPaymentCapture($transactionId, $amount = null)
     {
         try {
             $payment = $this->module->getApiClient()->payments->get($transactionId);
-            $this->module->getApiClient()->paymentCaptures->createForId($transactionId);
+
+            if ($amount !== null && !empty($amount)) {
+                $captureData = [
+                    'amount' => [
+                        'currency' => $payment->amount->currency,
+                        'value' => number_format($amount, 2, '.', '')
+                    ]
+                ];
+                $this->module->getApiClient()->paymentCaptures->createForId($transactionId, $captureData);
+            } else {
+                $this->module->getApiClient()->paymentCaptures->createForId($transactionId);
+            }
 
             return [
                 'success' => true,
