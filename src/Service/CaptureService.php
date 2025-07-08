@@ -13,6 +13,8 @@
 namespace Mollie\Service;
 
 use Mollie;
+use Mollie\DTO\Object\Amount;
+use Mollie\Utility\TextFormatUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -46,10 +48,10 @@ class CaptureService
 
             if ($amount !== null && !empty($amount)) {
                 $captureData = [
-                    'amount' => [
-                        'currency' => $payment->amount->currency,
-                        'value' => number_format($amount, 2, '.', '')
-                    ]
+                    'amount' => new Amount(
+                        $payment->amount->currency,
+                        TextFormatUtility::formatNumber($amount, 2, '.', '')
+                    ),
                 ];
                 $this->module->getApiClient()->paymentCaptures->createForId($transactionId, $captureData);
             } else {
