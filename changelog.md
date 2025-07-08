@@ -3,7 +3,9 @@
 # Changelog #
 ## Changes in release 6.3.0 ##
 + Vipps payment method added
++ Bizum payment method added
 + Apple Pay Direct fixed
++ Added DK, FI, PL, SE, NO, PT, CZ, SI, HU translations
 
 ## Changes in release 6.2.9 ##
 + Pay By Bank creates order with open status
