@@ -60,6 +60,10 @@ class MollieOrderInfoService
      * @var LoggerInterface
      */
     private $logger;
+    /**
+     * @var CaptureService
+     */
+    private $captureService;
 
     public function __construct(
         ModuleFactory $module,
@@ -69,7 +73,8 @@ class MollieOrderInfoService
         CancelService $cancelService,
         ShipmentServiceInterface $shipmentService,
         ApiService $apiService,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        CaptureService $captureService
     ) {
         $this->module = $module->getModule();
         $this->paymentMethodRepository = $paymentMethodRepository;
@@ -79,6 +84,7 @@ class MollieOrderInfoService
         $this->shipmentService = $shipmentService;
         $this->apiService = $apiService;
         $this->logger = $logger;
+        $this->captureService = $captureService;
     }
 
     /**
@@ -112,6 +118,18 @@ class MollieOrderInfoService
 
                         return [
                             'success' => isset($status['status']) && 'success' === $status['status'],
+                            'payment' => $this->apiService->getFilteredApiPayment($this->module->getApiClient(), $transactionId, false),
+                        ];
+                    case 'capture':
+                        if (!isset($input['amount']) || empty($input['amount'])) {
+                            // No amount = full capture
+                            $status = $this->captureService->doPaymentCapture($transactionId);
+                        } else {
+                            $status = $this->captureService->doPaymentCapture($transactionId, $input['amount']);
+                        }
+
+                        return [
+                            'success' => $status['success'],
                             'payment' => $this->apiService->getFilteredApiPayment($this->module->getApiClient(), $transactionId, false),
                         ];
                     case 'retrieve':

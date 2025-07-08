@@ -1,0 +1,75 @@
+<?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
+
+namespace Mollie\Service;
+
+use Mollie;
+use Mollie\DTO\Object\Amount;
+use Mollie\Utility\TextFormatUtility;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+class CaptureService
+{
+    const FILE_NAME = 'CaptureService';
+
+    /**
+     * @var Mollie
+     */
+    private $module;
+
+    public function __construct(Mollie $module)
+    {
+        $this->module = $module;
+    }
+
+    /**
+     * Capture a payment by transaction ID (Payments API)
+     *
+     * @param string $transactionId
+     * @param float|null $amount
+     *
+     * @return array
+     */
+    public function doPaymentCapture($transactionId, $amount = null)
+    {
+        try {
+            $payment = $this->module->getApiClient()->payments->get($transactionId);
+
+            if ($amount !== null && !empty($amount)) {
+                $captureData = [
+                    'amount' => new Amount(
+                        $payment->amount->currency,
+                        TextFormatUtility::formatNumber($amount, 2, '.', '')
+                    ),
+                ];
+                $this->module->getApiClient()->paymentCaptures->createForId($transactionId, $captureData);
+            } else {
+                $this->module->getApiClient()->paymentCaptures->createForId($transactionId);
+            }
+
+            return [
+                'success' => true,
+                'message' => '',
+                'detailed' => '',
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'success' => false,
+                'message' => $this->module->l('The payment could not be captured!', self::FILE_NAME),
+                'detailed' => $e->getMessage(),
+            ];
+        }
+    }
+}
