@@ -39,6 +39,7 @@ class CaptureService
      *
      * @param string $transactionId
      * @param float|null $amount
+     *
      * @return array
      */
     public function doPaymentCapture($transactionId, $amount = null)

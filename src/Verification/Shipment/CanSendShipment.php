@@ -12,10 +12,8 @@
 
 namespace Mollie\Verification\Shipment;
 
-use Exception;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
-use Mollie\Enum\PaymentTypeEnum;
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandlerInterface;
 use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProviderInterface;
@@ -24,7 +22,6 @@ use Mollie\Service\ShipmentServiceInterface;
 use Mollie\Verification\IsPaymentInformationAvailable;
 use Order;
 use OrderState;
-use PrestaShopLogger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
