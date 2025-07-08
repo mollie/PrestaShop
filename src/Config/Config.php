@@ -75,6 +75,7 @@ class Config
         'multibanco' => ['pt'],
         'mbway' => ['pt'],
         'swish' => ['se'],
+        'bizum' => ['es', 'ad'],
     ];
 
     const SUPPORTED_PHP_VERSION = '5.6';
@@ -252,6 +253,7 @@ class Config
     const MOLLIE_METHOD_ID_APPLE_PAY = 'applepay';
     const MOLLIE_VOUCHER_METHOD_ID = 'voucher';
     const MOLLIE_in3_METHOD_ID = 'in3';
+    const MOLLIE_BIZUM_METHOD_ID = 'bizum';
     const RIVERTY = 'riverty';
     const PAY_BY_BANK = 'paybybank';
 
@@ -342,6 +344,7 @@ class Config
         'paybybank' => 'Pay by Bank',
         'multibanco' => 'Multibanco',
         'mbway' => 'MBway',
+        'bizum' => 'Bizum',
     ];
 
     public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
