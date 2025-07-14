@@ -8,6 +8,7 @@ $_MODULE['<{mollie}prestashop>mollie_6bedf641eb10773a0069acb02fd7f8ac'] = 'You\'
 $_MODULE['<{mollie}prestashop>mollie_46e2d06b80d816b2916f1f27492fbabd'] = 'Unable to install module';
 $_MODULE['<{mollie}prestashop>mollie_f51ae8e015ae0be2c4a8d5b9ee160ac2'] = 'Thank you. We received your payment.';
 $_MODULE['<{mollie}prestashop>mollie_a34a6659bceae779f28185e757abfca5'] = 'AJAX';
+$_MODULE['<{mollie}prestashop>mollie_f4f70727dc34561dfde1a3c529b6205c'] = 'Settings';
 $_MODULE['<{mollie}prestashop>mollie_4ca2c509994c2776d0880357b4e8e5be'] = 'Subscriptions';
 $_MODULE['<{mollie}prestashop>mollie_79b279ae50c49015bbc70cb91ed8e7c7'] = 'Subscription FAQ';
 $_MODULE['<{mollie}prestashop>mollie_b2d37ae1cedf42ff874289b721860af2'] = 'Logs';

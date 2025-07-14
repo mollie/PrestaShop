@@ -468,3 +468,4 @@ $_MODULE['<{mollie}prestashop>formbuilder_5ef0c737746fae2ca90e66c39333f8f6'] = '
 $_MODULE['<{mollie}prestashop>formbuilder_709468af25e91284821d1bdbfdded24c'] = 'Alle';
 $_MODULE['<{mollie}prestashop>formbuilder_de62775a71fc2bf7a13d7530ae24a7ed'] = 'Allgemeine Einstellungen';
 $_MODULE['<{mollie}prestashop>formbuilder_fe4c6a5e7bd6793b37370e4e46daf998'] = 'Erweiterte Einstellungen';
+$_MODULE['<{mollie}prestashop>mollie_f4f70727dc34561dfde1a3c529b6205c'] = 'Einstellungen';

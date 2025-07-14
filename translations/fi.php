@@ -241,7 +241,7 @@ $_MODULE['<{mollie}prestashop>ajax_8faf99e02e4d0ccb4dd933404f87a4ea'] = 'Yhteens
 $_MODULE['<{mollie}prestashop>ajax_f6b587bf6c679ef85d87081927d93836'] = 'Huomaa: Vain yksi tilaustuote voidaan lisätä ostoskoriin kerrallaan.';
 $_MODULE['<{mollie}prestashop>mollie_329d067eb590f966ceeaed2bacf99d8e'] = 'Päivitä Mollie-moduuli';
 $_MODULE['<{mollie}prestashop>mollie_4a0df35e9183f634bdfda31938430cf4'] = 'Valitse kauppa, jonka haluat määrittää';
-$_MODULE['<{mollie}prestashop>mollie_56ce2a4e08c9d84441b90ab4c4b66f84'] = 'Valitse tilauksen tila \"Odottaa maksua\" \"Edistyneet asetukset\" välilehdessä';
+$_MODULE['<{mollie}prestashop>mollie_56ce2a4e08c9d84441b90ab4c4b66f84'] = 'Valitse tilauksen tila "Odottaa maksua" "Edistyneet asetukset" välilehdessä';
 $_MODULE['<{mollie}prestashop>mollie_a50d3d131d9daa7a4bbc3dc0aa71eeec'] = 'Syötä kuvaus';
 $_MODULE['<{mollie}prestashop>mollie_79e5e3c4ae741f839d9fba86491af0bd'] = 'Olet syöttänyt virheellisen minimimäärän';
 $_MODULE['<{mollie}prestashop>mollie_9f828c1c1bfd9a00710a62b9db1ae9f0'] = 'Olet syöttänyt virheellisen maksimimäärän';
@@ -502,3 +502,4 @@ $_MODULE['<{mollie}prestashop>exceptionservice_ae62de3f53551addfecd7dae6bdb1580'
 $_MODULE['<{mollie}prestashop>formbuilder_9170bcfedaabf0c63ac0c83ce5858dc6'] = 'Löydät API-avaimesi [1]Mollie-profiilistasi[/1]';
 $_MODULE['<{mollie}prestashop>formbuilder_27cbc83e6e6efbbb352e1d602da4446b'] = 'Lähetä sähköposti maksun epäonnistuessa';
 $_MODULE['<{mollie}prestashop>formbuilder_a1778dfa6acdb2a1c9bebd99771450dc'] = 'Ota käyttöön sähköposti-ilmoitus asiakkaille, kun heidän maksunsa epäonnistuu.';
+$_MODULE['<{mollie}prestashop>mollie_f4f70727dc34561dfde1a3c529b6205c'] = 'Asetukset';

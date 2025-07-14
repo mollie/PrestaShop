@@ -482,3 +482,4 @@ $_MODULE['<{mollie}prestashop>exceptionservice_ae62de3f53551addfecd7dae6bdb1580'
 $_MODULE['<{mollie}prestashop>formbuilder_edb20605939310f36984f9e5ab452d86'] = 'I pagamenti `%s` non ottengono uno stato';
 $_MODULE['<{mollie}prestashop>formbuilder_27cbc83e6e6efbbb352e1d602da4446b'] = 'Invia email in caso di fallimento del pagamento';
 $_MODULE['<{mollie}prestashop>formbuilder_a1778dfa6acdb2a1c9bebd99771450dc'] = 'Abilita per inviare una notifica email ai clienti quando il loro pagamento fallisce.';
+$_MODULE['<{mollie}prestashop>mollie_f4f70727dc34561dfde1a3c529b6205c'] = 'Impostazioni';

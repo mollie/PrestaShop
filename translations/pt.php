@@ -502,3 +502,4 @@ $_MODULE['<{mollie}prestashop>exceptionservice_ae62de3f53551addfecd7dae6bdb1580'
 $_MODULE['<{mollie}prestashop>formbuilder_9170bcfedaabf0c63ac0c83ce5858dc6'] = 'Pode encontrar a sua chave API no seu [1]Perfil Mollie[/1]';
 $_MODULE['<{mollie}prestashop>formbuilder_27cbc83e6e6efbbb352e1d602da4446b'] = 'Enviar e-mail em caso de falha de pagamento';
 $_MODULE['<{mollie}prestashop>formbuilder_a1778dfa6acdb2a1c9bebd99771450dc'] = 'Ative para enviar uma notificação por e-mail aos clientes quando o pagamento falhar.';
+$_MODULE['<{mollie}prestashop>mollie_f4f70727dc34561dfde1a3c529b6205c'] = 'Definições';
