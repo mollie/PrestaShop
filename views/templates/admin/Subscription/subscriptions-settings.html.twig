@@ -18,8 +18,6 @@
 {% endif %}
 
 {% block subscription_options %}
-  <!-- DEBUG: Translations array exists: {{ translations is defined ? 'YES' : 'NO' }} -->
-  <!-- DEBUG: Translations content: {{ translations|json_encode }} -->
   <div class="row">
     <div class="col">
       {{ form_start(subscriptionOptionsForm, {method: 'POST', action: path('admin_subscription_options_submit'), attr: {id: 'subscription-options'}}) }}
