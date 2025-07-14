@@ -20,6 +20,11 @@ $_MODULE['<{mollie}prestashop>subscriptionoptionstype_d27f3c2977da307854a974ade1
 $_MODULE['<{mollie}prestashop>attributeinstaller_142d1355d40f10a77bb020f57efb2205'] = 'Failed to add attributes';
 $_MODULE['<{mollie}prestashop>attributeuninstaller_90ff30630b1f92f3faab5e841e0743bf'] = 'Failed to delete attributes';
 $_MODULE['<{mollie}prestashop>subscriptioncontroller_4a0df35e9183f634bdfda31938430cf4'] = 'Select the shop that you want to configure';
+$_MODULE['<{mollie}prestashop>subscriptioncontroller_d1bbea751b444e31f82e78f6bd9e1b90'] = 'Subscription options';
+$_MODULE['<{mollie}prestashop>subscriptioncontroller_35fc6198a5a53a3902c1b86fa13750aa'] = 'Enable subscription service';
+$_MODULE['<{mollie}prestashop>subscriptioncontroller_db945599926c5fa3ba85bcf15732eb90'] = 'Toggle this option to enable products to be bought as recurring items.';
+$_MODULE['<{mollie}prestashop>subscriptioncontroller_8caf1bb6bc9343d5e162a7c0ec2a7383'] = 'Carrier to use in subscription orders';
+$_MODULE['<{mollie}prestashop>subscriptioncontroller_7f951258b441f65dcc4e2aa38b10ee85'] = 'WARNING: do not change selection after getting first subscription order.';
 $_MODULE['<{mollie}prestashop>subscriptioncontroller_d397e034dae1adee47e6d4a91df4aa88'] = 'Failed to save options. Try again or contact support.';
 $_MODULE['<{mollie}prestashop>subscriptioncontroller_d52009581ee35883c8d5fb0fb6e87bbf'] = 'Options saved successfully.';
 $_MODULE['<{mollie}prestashop>subscriptioncontroller_6b7c88b7c128f8c430c993211ba24e06'] = 'Carrier not found';
