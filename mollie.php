@@ -899,7 +899,7 @@ class Mollie extends PaymentModule
                 'visible' => false,
             ],
             [
-                'name' => 'Settings',
+                'name' => $this->l('Settings'),
                 'class_name' => self::ADMIN_MOLLIE_SETTINGS_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
             ],
