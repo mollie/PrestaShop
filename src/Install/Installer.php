@@ -24,6 +24,7 @@ use Mollie\Config\Config;
 use Mollie\Exception\CouldNotInstallModule;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
+use Mollie\Presentation\Admin\AdminModuleTabTranslator;
 use Mollie\Tracker\Segment;
 use Mollie\Utility\MultiLangUtility;
 use OrderState;
@@ -67,19 +68,23 @@ class Installer implements InstallerInterface
     private $configurationAdapter;
     /** @var OrderStateInstaller */
     private $orderStateInstaller;
+    /** @var AdminModuleTabTranslator */
+    private $adminModuleTabTranslator;
 
     public function __construct(
         ModuleFactory $moduleFactory,
         DatabaseTableInstaller $databaseTableInstaller,
         Segment $segment,
         ConfigurationAdapter $configurationAdapter,
-        OrderStateInstaller $orderStateInstaller
+        OrderStateInstaller $orderStateInstaller,
+        AdminModuleTabTranslator $adminModuleTabTranslator
     ) {
         $this->module = $moduleFactory->getModule();
         $this->databaseTableInstaller = $databaseTableInstaller;
         $this->segment = $segment;
         $this->configurationAdapter = $configurationAdapter;
         $this->orderStateInstaller = $orderStateInstaller;
+        $this->adminModuleTabTranslator = $adminModuleTabTranslator;
     }
 
     public function install()
@@ -253,8 +258,9 @@ class Installer implements InstallerInterface
         $moduleTab->active = $active;
         $moduleTab->icon = $icon; /** @phpstan-ignore-line */
         $languages = Language::getLanguages(true);
+
         foreach ($languages as $language) {
-            $moduleTab->name[$language['id_lang']] = $name;
+            $moduleTab->name[$language['id_lang']] = $this->getTabName($name, $language['iso_code']);
         }
 
         if (!$moduleTab->save()) {
@@ -319,5 +325,10 @@ class Installer implements InstallerInterface
         }
 
         $this->configurationAdapter->updateValue(Config::MOLLIE_VOUCHER_FEATURE_ID, $feature->id);
+    }
+
+    private function getTabName(string $tabName, string $language): string
+    {
+        return $this->adminModuleTabTranslator->translate($tabName, $language);
     }
 }
