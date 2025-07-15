@@ -47,7 +47,7 @@ class AdminModuleTabTranslator
         if (isset($this->tabTranslations[$tabName]['en'])) {
             return $this->tabTranslations[$tabName]['en'];
         }
-        
+
         return 'Missing';
     }
 }
