@@ -15,6 +15,9 @@ namespace Mollie\Presentation\Admin;
 class AdminModuleTabTranslator
 {
     private $tabTranslations = [
+        'Mollie' => [
+            'en' => 'Mollie',
+        ],
         'Settings' => [
             'en' => 'Settings',
             'fr' => 'Paramètres',
@@ -35,8 +38,16 @@ class AdminModuleTabTranslator
      *
      * @return string|null
      */
-    public function translate(string $tabName, string $language): ?string
+    public function translate(string $tabName, string $language): string
     {
-        return $this->tabTranslations[$tabName][$language] ?? 'Missing';
+        if (isset($this->tabTranslations[$tabName][$language])) {
+            return $this->tabTranslations[$tabName][$language];
+        }
+
+        if (isset($this->tabTranslations[$tabName]['en'])) {
+            return $this->tabTranslations[$tabName]['en'];
+        }
+        
+        return 'Missing';
     }
 }
