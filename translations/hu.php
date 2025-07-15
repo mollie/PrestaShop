@@ -502,3 +502,4 @@ $_MODULE['<{mollie}prestashop>exceptionservice_ae62de3f53551addfecd7dae6bdb1580'
 $_MODULE['<{mollie}prestashop>formbuilder_9170bcfedaabf0c63ac0c83ce5858dc6'] = 'API kulcsát a [1]Mollie Profiljában[/1] találja';
 $_MODULE['<{mollie}prestashop>formbuilder_27cbc83e6e6efbbb352e1d602da4446b'] = 'E-mail küldése fizetési hiba esetén';
 $_MODULE['<{mollie}prestashop>formbuilder_a1778dfa6acdb2a1c9bebd99771450dc'] = 'Engedélyezze az e-mail értesítés küldését az ügyfeleknek, amikor a fizetésük sikertelen.';
+$_MODULE['<{mollie}prestashop>mollie_f4f70727dc34561dfde1a3c529b6205c'] = 'Beállítások';

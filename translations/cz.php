@@ -501,3 +501,4 @@ $_MODULE['<{mollie}prestashop>exceptionservice_ae62de3f53551addfecd7dae6bdb1580'
 $_MODULE['<{mollie}prestashop>formbuilder_9170bcfedaabf0c63ac0c83ce5858dc6'] = 'Svůj API klíč najdete ve svém [1]Mollie profilu[/1]';
 $_MODULE['<{mollie}prestashop>formbuilder_27cbc83e6e6efbbb352e1d602da4446b'] = 'Odeslat e-mail při selhání platby';
 $_MODULE['<{mollie}prestashop>formbuilder_a1778dfa6acdb2a1c9bebd99771450dc'] = 'Povolit odeslání e-mailového oznámení zákazníkům, když jejich platba selže.';
+$_MODULE['<{mollie}prestashop>mollie_f4f70727dc34561dfde1a3c529b6205c'] = 'Nastavení';
