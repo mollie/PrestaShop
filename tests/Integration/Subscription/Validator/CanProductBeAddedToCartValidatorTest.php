@@ -55,6 +55,9 @@ class CanProductBeAddedToCartValidatorTest extends BaseTestCase
                 $this->randomAttributeId,
             ],
             [
+                $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_QUARTERLY),
+            ],
+            [
                 $this->randomAttributeId,
             ],
         ];
