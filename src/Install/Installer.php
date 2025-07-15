@@ -24,7 +24,6 @@ use Mollie\Config\Config;
 use Mollie\Exception\CouldNotInstallModule;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
-use Mollie\Presentation\Admin\AdminModuleTabTranslator;
 use Mollie\Tracker\Segment;
 use Mollie\Utility\MultiLangUtility;
 use OrderState;
@@ -74,15 +73,13 @@ class Installer implements InstallerInterface
         DatabaseTableInstaller $databaseTableInstaller,
         Segment $segment,
         ConfigurationAdapter $configurationAdapter,
-        OrderStateInstaller $orderStateInstaller,
-        AdminModuleTabTranslator $adminModuleTabTranslator
+        OrderStateInstaller $orderStateInstaller
     ) {
         $this->module = $moduleFactory->getModule();
         $this->databaseTableInstaller = $databaseTableInstaller;
         $this->segment = $segment;
         $this->configurationAdapter = $configurationAdapter;
         $this->orderStateInstaller = $orderStateInstaller;
-        $this->adminModuleTabTranslator = $adminModuleTabTranslator;
     }
 
     public function install()
@@ -324,5 +321,4 @@ class Installer implements InstallerInterface
 
         $this->configurationAdapter->updateValue(Config::MOLLIE_VOUCHER_FEATURE_ID, $feature->id);
     }
-
 }
