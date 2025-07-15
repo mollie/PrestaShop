@@ -68,8 +68,6 @@ class Installer implements InstallerInterface
     private $configurationAdapter;
     /** @var OrderStateInstaller */
     private $orderStateInstaller;
-    /** @var AdminModuleTabTranslator */
-    private $adminModuleTabTranslator;
 
     public function __construct(
         ModuleFactory $moduleFactory,
@@ -260,7 +258,7 @@ class Installer implements InstallerInterface
         $languages = Language::getLanguages(true);
 
         foreach ($languages as $language) {
-            $moduleTab->name[$language['id_lang']] = $this->getTabName($name, $language['iso_code']);
+            $moduleTab->name[$language['id_lang']] = $this->module->l($name, false, $language['iso_code']);
         }
 
         if (!$moduleTab->save()) {
@@ -327,8 +325,4 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_VOUCHER_FEATURE_ID, $feature->id);
     }
 
-    private function getTabName(string $tabName, string $language): string
-    {
-        return $this->adminModuleTabTranslator->translate($tabName, $language);
-    }
 }
