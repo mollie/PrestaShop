@@ -43,6 +43,9 @@ class SubscriptionProductValidatorTest extends BaseTestCase
                 $this->randomAttributeId,
             ],
             [
+                $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_QUARTERLY),
+            ],
+            [
                 $this->randomAttributeId,
             ],
         ];
@@ -85,6 +88,11 @@ class SubscriptionProductValidatorTest extends BaseTestCase
             'subscription product monthly and random attribute' => [
                 'subscription reference' => Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY,
                 'has extra attribute' => true,
+                'expected result' => true,
+            ],
+            'subscription product quarterly' => [
+                'subscription reference' => Config::SUBSCRIPTION_ATTRIBUTE_QUARTERLY,
+                'has extra attribute' => false,
                 'expected result' => true,
             ],
             'only random attribute' => [
