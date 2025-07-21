@@ -18,7 +18,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class Line implements JsonSerializable
+class OrderLine implements JsonSerializable
 {
     /**
      * @var string
@@ -88,264 +88,212 @@ class Line implements JsonSerializable
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
     /**
      * @param string $type
-     *
-     * @return Line
      */
-    public function setType($type)
+    public function setType(string $type): void
     {
         $this->type = $type;
-
-        return $this;
     }
 
     /**
      * @return string
      */
-    public function getSku()
+    public function getSku(): string
     {
         return $this->sku;
     }
 
     /**
      * @param string $sku
-     *
-     * @return Line
      */
-    public function setSku($sku)
+    public function setSku(string $sku): void
     {
         $this->sku = $sku;
-
-        return $this;
     }
 
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
      * @param string $name
-     *
-     * @return Line
      */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
-
-        return $this;
     }
 
     /**
      * @return string
      */
-    public function getProductUrl()
+    public function getProductUrl(): string
     {
         return $this->productUrl;
     }
 
     /**
      * @param string $productUrl
-     *
-     * @return Line
      */
-    public function setProductUrl($productUrl)
+    public function setProductUrl(string $productUrl): void
     {
         $this->productUrl = $productUrl;
-
-        return $this;
     }
 
     /**
      * @return string
      */
-    public function getImageUrl()
+    public function getImageUrl(): string
     {
         return $this->imageUrl;
     }
 
     /**
      * @param string $imageUrl
-     *
-     * @return Line
      */
-    public function setImageUrl($imageUrl)
+    public function setImageUrl(string $imageUrl): void
     {
         $this->imageUrl = $imageUrl;
-
-        return $this;
     }
 
     /**
      * @return array
      */
-    public function getMetaData()
+    public function getMetaData(): array
     {
         return $this->metaData;
     }
 
     /**
      * @param array $metaData
-     *
-     * @return Line
      */
-    public function setMetaData($metaData)
+    public function setMetaData(array $metaData): void
     {
         $this->metaData = $metaData;
-
-        return $this;
     }
 
     /**
      * @return int
      */
-    public function getQuantity()
+    public function getQuantity(): int
     {
         return $this->quantity;
     }
 
     /**
      * @param int $quantity
-     *
-     * @return Line
      */
-    public function setQuantity($quantity)
+    public function setQuantity(int $quantity): void
     {
         $this->quantity = $quantity;
-
-        return $this;
     }
 
     /**
      * @return string
      */
-    public function getVatRate()
+    public function getVatRate(): string
     {
         return $this->vatRate;
     }
 
     /**
      * @param string $vatRate
-     *
-     * @return Line
      */
-    public function setVatRate($vatRate)
+    public function setVatRate(string $vatRate): void
     {
         $this->vatRate = $vatRate;
-
-        return $this;
     }
 
     /**
      * @return Amount
      */
-    public function getUnitPrice()
+    public function getUnitPrice(): Amount
     {
         return $this->unitPrice;
     }
 
     /**
      * @param Amount $unitPrice
-     *
-     * @return Line
      */
-    public function setUnitPrice($unitPrice)
+    public function setUnitPrice(Amount $unitPrice): void
     {
         $this->unitPrice = $unitPrice;
-
-        return $this;
     }
 
     /**
      * @return Amount
      */
-    public function getTotalPrice()
+    public function getTotalPrice(): Amount
     {
         return $this->totalPrice;
     }
 
     /**
      * @param Amount $totalPrice
-     *
-     * @return Line
      */
-    public function setTotalPrice($totalPrice)
+    public function setTotalPrice(Amount $totalPrice): void
     {
         $this->totalPrice = $totalPrice;
-
-        return $this;
     }
 
     /**
-     * @return Amount|null
+     * @return ?Amount
      */
-    public function getDiscountAmount()
+    public function getDiscountAmount(): ?Amount
     {
         return $this->discountAmount;
     }
 
     /**
      * @param Amount $discountAmount
-     *
-     * @return Line
      */
-    public function setDiscountAmount($discountAmount)
+    public function setDiscountAmount(Amount $discountAmount): void
     {
         $this->discountAmount = $discountAmount;
-
-        return $this;
     }
 
     /**
      * @return Amount
      */
-    public function getVatAmount()
+    public function getVatAmount(): Amount
     {
         return $this->vatAmount;
     }
 
     /**
      * @param Amount $vatAmount
-     *
-     * @return Line
      */
-    public function setVatAmount($vatAmount)
+    public function setVatAmount(Amount $vatAmount): void
     {
         $this->vatAmount = $vatAmount;
-
-        return $this;
     }
 
     /**
      * @return string
      */
-    public function getCategory()
+    public function getCategory(): string
     {
         return $this->category;
     }
 
     /**
      * @param string $category
-     *
-     * @return Line
      */
-    public function setCategory($category)
+    public function setCategory(string $category): void
     {
         $this->category = $category;
-
-        return $this;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'sku' => $this->getSku(),
