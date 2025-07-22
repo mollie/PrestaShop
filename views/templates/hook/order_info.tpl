@@ -9,12 +9,86 @@
  * @codingStandardsIgnoreStart
  *}
 
-<div class="panel card">
+<div class="panel card mollie-order-info-panel">
   <div class="panel-heading card-header">
-    <img src="{$module_dir|default:''}views/img/mollie_panel_icon.png" width="32" height="32" alt="Mollie logo" style="height: 16px; width: 16px; opacity: 0.8;" />
-    &nbsp;<span>Mollie</span>&nbsp;
+    <img src="{$mollie_logo_path}" width="16" height="16" alt="Mollie logo" style="opacity: 0.8;" />
+    &nbsp;<span>Mollie order - #{$order_reference|escape:'html':'UTF-8'}</span>
+    {* <span class="label label-success pull-right" style="margin-left: 10px;">{l s='Authorized' mod='mollie'}</span> *}
   </div>
   <div class="card-body">
-    <p>Mollie Order Admin Page (Smarty template boilerplate)</p>
+    <div class="form-group">
+      <label>{l s='Applicable to orders paid exclusively through Mollie' mod='mollie'}</label>
+      <div class="radio">
+        <label>
+          <input type="radio" name="refund_type" value="partial" id="mollie-partial-refund" />
+          {l s='Partial refund' mod='mollie'}
+        </label>
+        <span class="help-block">{l s='Refund a custom amount for partial order returns' mod='mollie'}</span>
+      </div>
+      <div class="radio">
+        <label>
+          <input type="radio" name="refund_type" value="full" id="mollie-full-refund" checked />
+          {l s='Full refund' mod='mollie'}
+        </label>
+        <span class="help-block">{l s='Refund a custom amount for partial order returns' mod='mollie'}</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="mollie-refund-amount">{l s='Refund amount (Max: %s)' sprintf=[$max_refund_amount] mod='mollie'}</label>
+      <input type="number" step="0.01" max="{$max_refund_amount}" class="form-control" id="mollie-refund-amount" value="{$max_refund_amount}" />
+    </div>
+    <button type="button" class="btn btn-primary btn-block" id="mollie-initiate-refund">
+      <i class="icon-undo"></i> {l s='Initiate Refund' mod='mollie'}
+    </button>
+    <hr />
+    <table class="table table-bordered table-condensed">
+      <thead>
+        <tr>
+          <th>{l s='Product' mod='mollie'}</th>
+          <th>{l s='Price' mod='mollie'}</th>
+          <th>{l s='Actions' mod='mollie'}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {foreach from=$products item=product}
+          {if isset($product.name)}
+            <tr>
+              <td><strong>1x</strong> {$product.name|escape:'html':'UTF-8'}</td>
+              <td>{$product.price|escape:'html':'UTF-8'}</td>
+              <td>
+                <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-product="{$product.id}">
+                  <i class="icon-truck"></i> {l s='Ship' mod='mollie'}
+                </button>
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-product="{$product.id}">
+                  <i class="icon-undo"></i> {l s='Refund' mod='mollie'}
+                </button>
+              </td>
+            </tr>
+          {/if}
+        {/foreach}
+      </tbody>
+    </table>
+    <button type="button" class="btn btn-default btn-block" id="mollie-ship-all">
+      <i class="icon-truck"></i> {l s='Ship All' mod='mollie'}
+    </button>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="mollieOrderActionModal" tabindex="-1" role="dialog" aria-labelledby="mollieOrderActionModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="mollieOrderActionModalLabel">Confirm Action</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <p id="mollieOrderActionModalText"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{l s='Cancel' mod='mollie'}</button>
+        <button type="button" class="btn btn-primary" id="mollieOrderActionModalConfirm">{l s='Confirm' mod='mollie'}</button>
+      </div>
+    </div>
   </div>
 </div>

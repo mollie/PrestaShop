@@ -487,6 +487,8 @@ class Mollie extends PaymentModule
             if (Tools::isSubmit('addorder') || version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
                 $html .= $this->display($this->getPathUri(), 'views/templates/admin/email_checkbox.tpl');
             }
+
+            $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_info.js');
         }
 
         return $html;
@@ -526,14 +528,24 @@ class Mollie extends PaymentModule
         }
 
         $order = new Order($params['id_order']);
+        $maxRefundAmount = (float) $order->total_paid;
+        $products = array_map(function($product) {
+            return [
+                'id' => $product['id_order_detail'],
+                'name' => $product['product_name'],
+                'price' => $product['total_price_tax_excl'],
+                'quantity' => $product['product_quantity'],
+            ];
+        }, $order->getProducts());
+
         $this->context->smarty->assign([
-            'ajaxEndpoint' => $this->context->link->getAdminLink('AdminModules', true) . '&configure=mollie&ajax=1&action=MollieOrderInfo',
-            'transactionId' => $transaction['transaction_id'],
-            'currencies' => $currencies,
-            'tracking' => $shipmentService->getShipmentInformation($order->reference),
+            'order_reference' => $order->reference,
+            'max_refund_amount' => $maxRefundAmount,
+            'products' => $products,
+            'mollie_logo_path' => $this->getPathUri() . 'views/img/mollie_panel_icon.png',
         ]);
 
-        return $this->display($this->getLocalPath(), 'views/templates/hook/order_info.tpl');
+        return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');
     }
 
     /**
