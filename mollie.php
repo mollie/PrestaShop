@@ -515,6 +515,11 @@ class Mollie extends PaymentModule
         if (empty($transaction)) {
             return false;
         }
+        $mollieTransactionId = isset($transaction['transaction_id']) ? $transaction['transaction_id'] : null;
+        $mollieApiType = null;
+        if ($mollieTransactionId) {
+            $mollieApiType = \Mollie\Utility\TransactionUtility::isOrderTransaction($mollieTransactionId) ? 'orders' : 'payments';
+        }
         $currencies = [];
         foreach (Currency::getCurrencies() as $currency) {
             $currencies[Tools::strtoupper($currency['iso_code'])] = [
@@ -543,6 +548,8 @@ class Mollie extends PaymentModule
             'max_refund_amount' => $maxRefundAmount,
             'products' => $products,
             'mollie_logo_path' => $this->getPathUri() . 'views/img/mollie_panel_icon.png',
+            'mollie_transaction_id' => $mollieTransactionId,
+            'mollie_api_type' => $mollieApiType,
         ]);
 
         return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');

@@ -1,25 +1,22 @@
-$(function() {
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ */
+$(document).ready(function () {
   var actionContext = {};
 
   function showModal(action, productId) {
-    var text = '';
-    switch(action) {
-      case 'refund':
-        text = window.mollieOrderInfoModalTextRefund || 'Are you sure you want to refund this product?';
-        break;
-      case 'ship':
-        text = window.mollieOrderInfoModalTextShip || 'Are you sure you want to ship this product?';
-        break;
-      case 'refund_all':
-        text = window.mollieOrderInfoModalTextRefundAll || 'Are you sure you want to refund the order?';
-        break;
-      case 'ship_all':
-        text = window.mollieOrderInfoModalTextShipAll || 'Are you sure you want to ship all products?';
-        break;
-    }
-    $('#mollieOrderActionModalText').text(text);
     actionContext = { action: action, productId: productId };
-    $('#mollieOrderActionModal').modal('show');
+    if (action === 'refund' || action === 'refund_all') {
+      $('#mollieRefundModal').modal('show');
+    } else if (action === 'ship' || action === 'ship_all') {
+      $('#mollieShipModal').modal('show');
+    }
   }
 
   $('.mollie-refund-btn').on('click', function() {
@@ -40,10 +37,19 @@ $(function() {
     showModal('ship_all', null);
   });
 
-  $('#mollieOrderActionModalConfirm').on('click', function() {
-    // Here you would trigger the actual refund/ship logic, e.g. AJAX call
-    // Use actionContext.action and actionContext.productId
-    $('#mollieOrderActionModal').modal('hide');
-    // Example: window.location.reload();
+  // Refund modal confirm
+  $('#mollieRefundModalConfirm').on('click', function() {
+    $('#mollieRefundModal').modal('hide');
+    // Implement refund logic here, e.g. submit form or AJAX
+    // Example: $('#mollieRefundForm').submit();
+    // Or trigger a custom event for maintainability
+    $(document).trigger('mollie:refund:confirmed', [actionContext]);
+  });
+
+  // Ship modal confirm
+  $('#mollieShipModalConfirm').on('click', function() {
+    $('#mollieShipModal').modal('hide');
+    // Implement ship logic here, e.g. submit form or AJAX
+    $(document).trigger('mollie:ship:confirmed', [actionContext]);
   });
 });
