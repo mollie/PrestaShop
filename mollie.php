@@ -531,9 +531,6 @@ class Mollie extends PaymentModule
             'transactionId' => $transaction['transaction_id'],
             'currencies' => $currencies,
             'tracking' => $shipmentService->getShipmentInformation($order->reference),
-            'publicPath' => __PS_BASE_URI__ . 'modules/' . basename(__FILE__, '.php') . '/views/js/dist/',
-            'webPackChunks' => \Mollie\Utility\UrlPathUtility::getWebpackChunks('app'),
-            'errorDisplay' => Configuration::get(Mollie\Config\Config::MOLLIE_DISPLAY_ERRORS),
         ]);
 
         return $this->display($this->getLocalPath(), 'views/templates/hook/order_info.tpl');
