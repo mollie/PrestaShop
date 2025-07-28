@@ -41,6 +41,7 @@ use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CreditCardLogoProvider;
@@ -100,6 +101,9 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
 
+    /** @var ToolsAdapter */
+    private $tools;
+
     public function __construct(
         ModuleFactory $module,
         LegacyContext $context,
@@ -109,7 +113,8 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         LanguageService $languageService,
         MolCustomerRepository $customerRepository,
         Mollie\Adapter\Customer $customer,
-        ConfigurationAdapter $configurationAdapter
+        ConfigurationAdapter $configurationAdapter,
+        ToolsAdapter $tools
     ) {
         $this->module = $module->getModule();
         $this->context = $context;
@@ -120,6 +125,7 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         $this->customerRepository = $customerRepository;
         $this->customer = $customer;
         $this->configurationAdapter = $configurationAdapter;
+        $this->tools = $tools;
     }
 
     /**
@@ -217,7 +223,7 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
                         'name' => 'payment-fee-price-display',
                         'value' => sprintf(
                             $this->module->l('Payment Fee: %1s', self::FILE_NAME),
-                            Tools::displayPrice($paymentFeeData->getPaymentFeeTaxIncl())
+                            $this->tools->displayPrice($paymentFeeData->getPaymentFeeTaxIncl())
                         ),
                     ],
                     [

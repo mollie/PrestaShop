@@ -39,6 +39,7 @@ namespace Mollie\Provider\PaymentOption;
 use Mollie;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
@@ -85,13 +86,17 @@ class BasePaymentOptionProvider implements PaymentOptionProviderInterface
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
 
+    /** @var ToolsAdapter */
+    private $tools;
+
     public function __construct(
         ModuleFactory $module,
         LegacyContext $context,
         CreditCardLogoProvider $creditCardLogoProvider,
         PaymentFeeProviderInterface $paymentFeeProvider,
         LanguageService $languageService,
-        OrderTotalProviderInterface $orderTotalProvider
+        OrderTotalProviderInterface $orderTotalProvider,
+        ToolsAdapter $tools
     ) {
         $this->module = $module->getModule();
         $this->context = $context;
@@ -99,6 +104,7 @@ class BasePaymentOptionProvider implements PaymentOptionProviderInterface
         $this->paymentFeeProvider = $paymentFeeProvider;
         $this->languageService = $languageService;
         $this->orderTotalProvider = $orderTotalProvider;
+        $this->tools = $tools;
     }
 
     /**
@@ -149,7 +155,7 @@ class BasePaymentOptionProvider implements PaymentOptionProviderInterface
                         'name' => 'payment-fee-price-display',
                         'value' => sprintf(
                             $this->module->l('Payment Fee: %1s', self::FILE_NAME),
-                            Tools::displayPrice($paymentFeeData->getPaymentFeeTaxIncl())
+                            $this->tools->displayPrice($paymentFeeData->getPaymentFeeTaxIncl())
                         ),
                     ],
                     [

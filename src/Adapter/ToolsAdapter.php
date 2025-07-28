@@ -13,6 +13,8 @@
 namespace Mollie\Adapter;
 
 use Currency;
+use Mollie\Utility\VersionUtility;
+use Mollie\Adapter\Context as ContextAdapter;
 use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
 use Tools;
 
@@ -40,10 +42,18 @@ class ToolsAdapter
      *
      * @throws LocalizationException
      */
-    public function displayPrice($price, $currency = null): string
+    public function displayPrice($price, $currency = null, $no_utf8 = false, $context = null): string
     {
-        // TODO replace all displayPrice calls with Locale::formatPrice()
-        return Tools::displayPrice($price, $currency);
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('9.0.0'))
+        {
+            /** @var ContextAdapter $context */
+            $context = $context ?: new ContextAdapter();
+            $currency = $currency ?: $context->getCurrencyIso();
+
+            return $context->formatPrice($price, $currency);
+        }
+
+        return Tools::displayPrice($price, $currency, $no_utf8, $context);
     }
 
     public function getValue(string $key, string $defaultValue = null)
