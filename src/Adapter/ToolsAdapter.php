@@ -42,17 +42,18 @@ class ToolsAdapter
      *
      * @throws LocalizationException
      */
-    public function displayPrice($price, $currency = null, $no_utf8 = false, $context = null): string
+    public function displayPrice($price, $currency = null): string
     {
         if (VersionUtility::isPsVersionGreaterOrEqualTo('9.0.0')) {
-            /** @var ContextAdapter $context */
-            $context = $context ?: new ContextAdapter();
-            $currency = $currency ?: $context->getCurrencyIso();
+            $contextAdapter = new ContextAdapter();
+            $isoCode = $currency && isset($currency->iso_code)
+                ? $currency->iso_code
+                : $contextAdapter->getCurrencyIso();
 
-            return $context->formatPrice($price, $currency);
+            return $contextAdapter->formatPrice($price, $isoCode);
         }
 
-        return Tools::displayPrice($price, $currency, $no_utf8, $context);
+        return Tools::displayPrice($price, $currency);
     }
 
     public function getValue(string $key, string $defaultValue = null)
