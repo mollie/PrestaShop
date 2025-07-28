@@ -53,7 +53,6 @@ use Mollie\Service\LanguageService;
 use Mollie\Utility\CustomerUtility;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;

@@ -48,7 +48,6 @@ use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Service\LanguageService;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
