@@ -25,6 +25,7 @@ use Mail;
 use Mollie;
 use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Config\Config;
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Exception\MollieException;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\LoggerInterface;
@@ -52,16 +53,20 @@ class MailService
     private $productAttributeAdapter;
     /** @var GeneralSubscriptionMailDataProvider */
     private $generalSubscriptionMailDataProvider;
+    /** @var ToolsAdapter */
+    private $tools;
 
     public function __construct(
         ModuleFactory $module,
         ProductAttributeAdapter $productAttributeAdapter,
-        GeneralSubscriptionMailDataProvider $generalSubscriptionMailDataProvider
+        GeneralSubscriptionMailDataProvider $generalSubscriptionMailDataProvider,
+        ToolsAdapter $tools
     ) {
         $this->module = $module->getModule();
         $this->context = Context::getContext();
         $this->productAttributeAdapter = $productAttributeAdapter;
         $this->generalSubscriptionMailDataProvider = $generalSubscriptionMailDataProvider;
+        $this->tools = $tools;
     }
 
     public function sendSecondChanceMail(Customer $customer, $checkoutUrl, $methodName, $shopId)
@@ -219,14 +224,14 @@ class MailService
                 'id_product' => $product['id_product'],
                 'reference' => $product['reference'],
                 'name' => $product['product_name'] . (\Validate::isLoadedObject($attribute) ? ' - ' . $attribute->name : ''),
-                'price' => Tools::displayPrice($product_price * $product['product_quantity'], $this->context->currency, false),
+                'price' => $this->tools->displayPrice($product_price * $product['product_quantity'], $this->context->currency, false),
                 'quantity' => $product['product_quantity'],
                 'customization' => [],
             ];
 
             if (isset($product['price']) && $product['price']) {
-                $product_var_tpl['unit_price'] = Tools::displayPrice($product_price, $this->context->currency, false);
-                $product_var_tpl['unit_price_full'] = Tools::displayPrice($product_price, $this->context->currency, false)
+                $product_var_tpl['unit_price'] = $this->tools->displayPrice($product_price, $this->context->currency, false);
+                $product_var_tpl['unit_price_full'] = $this->tools->displayPrice($product_price, $this->context->currency, false)
                     . ' ' . $product['unity'];
             } else {
                 $product_var_tpl['unit_price'] = $product_var_tpl['unit_price_full'] = '';
@@ -253,7 +258,7 @@ class MailService
                     $product_var_tpl['customization'][] = [
                         'customization_text' => $customization_text,
                         'customization_quantity' => $customization_quantity,
-                        'quantity' => Tools::displayPrice($customization_quantity * $product_price, $this->context->currency, false),
+                        'quantity' => $this->tools->displayPrice($customization_quantity * $product_price, $this->context->currency, false),
                     ];
                 }
             }
@@ -330,12 +335,12 @@ class MailService
             '{products_txt}' => $product_list_txt,
             '{discounts}' => $cart_rules_list_html,
             '{discounts_txt}' => $cart_rules_list_txt,
-            '{total_paid}' => Tools::displayPrice($order->total_paid, $this->context->currency, false),
-            '{total_products}' => Tools::displayPrice(PS_TAX_EXC == Product::getTaxCalculationMethod() ? $order->total_products : $order->total_products_wt, $this->context->currency, false),
-            '{total_discounts}' => Tools::displayPrice($order->total_discounts, $this->context->currency, false),
-            '{total_shipping}' => Tools::displayPrice($order->total_shipping, $this->context->currency, false),
-            '{total_wrapping}' => Tools::displayPrice($order->total_wrapping, $this->context->currency, false),
-            '{total_tax_paid}' => Tools::displayPrice(($order->total_products_wt - $order->total_products) + ($order->total_shipping_tax_incl - $order->total_shipping_tax_excl), $this->context->currency, false),
+            '{total_paid}' => $this->tools->displayPrice($order->total_paid, $this->context->currency, false),
+            '{total_products}' => $this->tools->displayPrice(PS_TAX_EXC == Product::getTaxCalculationMethod() ? $order->total_products : $order->total_products_wt, $this->context->currency, false),
+            '{total_discounts}' => $this->tools->displayPrice($order->total_discounts, $this->context->currency, false),
+            '{total_shipping}' => $this->tools->displayPrice($order->total_shipping, $this->context->currency, false),
+            '{total_wrapping}' => $this->tools->displayPrice($order->total_wrapping, $this->context->currency, false),
+            '{total_tax_paid}' => $this->tools->displayPrice(($order->total_products_wt - $order->total_products) + ($order->total_shipping_tax_incl - $order->total_shipping_tax_excl), $this->context->currency, false),
         ];
     }
 
@@ -419,7 +424,7 @@ class MailService
                     $orderLanguage = new Language((int) $order->id_lang);
 
                     $params = [
-                        '{voucher_amount}' => Tools::displayPrice($voucher->reduction_amount, $this->context->currency, false),
+                        '{voucher_amount}' => $this->tools->displayPrice($voucher->reduction_amount, $this->context->currency, false),
                         '{voucher_num}' => $voucher->code,
                         '{firstname}' => $customer->firstname,
                         '{lastname}' => $customer->lastname,
@@ -464,7 +469,7 @@ class MailService
 
             $cart_rules_list[] = [
                 'voucher_name' => $cart_rule['obj']->name,
-                'voucher_reduction' => (0.00 != $values['tax_incl'] ? '-' : '') . Tools::displayPrice($values['tax_incl'], $this->context->currency, false),
+                'voucher_reduction' => (0.00 != $values['tax_incl'] ? '-' : '') . $this->tools->displayPrice($values['tax_incl'], $this->context->currency, false),
             ];
         }
 
