@@ -10,6 +10,7 @@
  * @codingStandardsIgnoreStart
  */
 
+use Exception;
 use Mollie\Adapter\Context;
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
@@ -53,6 +54,9 @@ class AdminMollieAjaxController extends ModuleAdminController
                 break;
             case 'updateFixedPaymentFeePrice':
                 $this->updateFixedPaymentFeePrice();
+                break;
+            case 'processOrderAction':
+                $this->processOrderAction();
                 break;
             default:
                 break;
@@ -234,5 +238,75 @@ class AdminMollieAjaxController extends ModuleAdminController
                 ),
             ])
         );
+    }
+
+    private function processOrderAction(): void
+    {
+        if (!Tools::isSubmit('ajax') || !Tools::isSubmit('action')) {
+            $this->ajaxRender(
+                json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('Invalid request.'),
+                ])
+            );
+
+            return;
+        }
+
+        $transactionId = Tools::getValue('transactionId');
+        $resource = Tools::getValue('resource');
+        $action = Tools::getValue('action');
+        $amount = Tools::getValue('amount');
+        $orderLines = Tools::getValue('orderLines', []);
+        $tracking = Tools::getValue('tracking');
+        $order = Tools::getValue('order', []);
+
+        if (empty($transactionId) || empty($resource) || empty($action)) {
+            $this->ajaxRender(
+                json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('Missing required parameters.'),
+                ])
+            );
+
+            return;
+        }
+
+        if ($action === 'refund' && (!is_numeric($amount) || $amount <= 0)) {
+            $this->ajaxRender(
+                json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('Invalid refund amount.'),
+                ])
+            );
+
+            return;
+        }
+
+        $input = [
+            'transactionId' => $transactionId,
+            'resource' => $resource,
+            'action' => $action,
+            'amount' => $amount,
+            'orderLines' => $orderLines,
+            'tracking' => $tracking,
+            'order' => $order,
+        ];
+
+        try {
+            /** @var \Mollie\Service\MollieOrderInfoService $orderInfoService */
+            $orderInfoService = $this->module->getService(\Mollie\Service\MollieOrderInfoService::class);
+            $result = $orderInfoService->displayMollieOrderInfo($input);
+
+            $this->ajaxRender(json_encode($result));
+        } catch (Exception $e) {
+            $this->ajaxRender(
+                json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('An error occurred while processing the request.'),
+                    'error' => $e->getMessage(),
+                ])
+            );
+        }
     }
 }

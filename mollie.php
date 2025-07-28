@@ -41,6 +41,7 @@ use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\TransactionUtility;
 use Mollie\Utility\VersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
 use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
@@ -518,7 +519,7 @@ class Mollie extends PaymentModule
         $mollieTransactionId = isset($transaction['transaction_id']) ? $transaction['transaction_id'] : null;
         $mollieApiType = null;
         if ($mollieTransactionId) {
-            $mollieApiType = \Mollie\Utility\TransactionUtility::isOrderTransaction($mollieTransactionId) ? 'orders' : 'payments';
+            $mollieApiType = TransactionUtility::isOrderTransaction($mollieTransactionId) ? 'orders' : 'payments';
         }
         $currencies = [];
         foreach (Currency::getCurrencies() as $currency) {
@@ -551,6 +552,15 @@ class Mollie extends PaymentModule
             'mollie_transaction_id' => $mollieTransactionId,
             'mollie_api_type' => $mollieApiType,
         ]);
+
+        Media::addJsDef([
+            'ajax_url' => $this->context->link->getAdminLink('AdminMollieAjax'),
+            'transaction_id' => $mollieTransactionId,
+            'resource' => $mollieApiType,
+            'order_id' => $params['id_order'],
+        ]);
+
+        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_info.js');
 
         return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');
     }
@@ -636,22 +646,7 @@ class Mollie extends PaymentModule
         return '';
     }
 
-    /**
-     * @return array
-     *
-     * @since 3.3.0
-     */
-    public function displayAjaxMollieOrderInfo()
-    {
-        header('Content-Type: application/json;charset=UTF-8');
 
-        /** @var \Mollie\Service\MollieOrderInfoService $orderInfoService */
-        $orderInfoService = $this->getService(\Mollie\Service\MollieOrderInfoService::class);
-
-        $input = @json_decode(Tools::file_get_contents('php://input'), true);
-
-        return $orderInfoService->displayMollieOrderInfo($input);
-    }
 
     /**
      * actionOrderStatusUpdate hook.
