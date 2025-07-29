@@ -10,13 +10,16 @@
  * @codingStandardsIgnoreStart
  */
 
+use Exception;
 use Mollie\Adapter\Context;
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MolliePaymentMailService;
+use Mollie\Service\RefundService;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TimeUtility;
 
@@ -53,6 +56,9 @@ class AdminMollieAjaxController extends ModuleAdminController
                 break;
             case 'updateFixedPaymentFeePrice':
                 $this->updateFixedPaymentFeePrice();
+                break;
+            case 'refundAll':
+                $this->processRefund();
                 break;
             default:
                 break;
@@ -234,5 +240,57 @@ class AdminMollieAjaxController extends ModuleAdminController
                 ),
             ])
         );
+    }
+
+    private function processRefund(): void
+    {
+        if (!Tools::isSubmit('ajax')) {
+            $this->ajaxRender(
+                json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('Invalid request.'),
+                ])
+            );
+
+            return;
+        }
+
+        $action = Tools::getValue('action');
+        $orderId = (int)Tools::getValue('orderId');
+
+        if ($action === 'refund' && !is_numeric($orderId)) {
+            $this->ajaxRender(
+                json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('Invalid refund amount.'),
+                ])
+            );
+
+            return;
+        }
+
+        try {
+            $order = new Order($orderId);
+
+            /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+            $paymentMethodRepo = $this->module->getService(PaymentMethodRepositoryInterface::class);
+            $transactionId = $paymentMethodRepo->getPaymentBy('order_id', (string) $orderId)['transaction_id'];
+
+            /** @var RefundService $refundService */
+            $refundService = $this->module->getService(RefundService::class);
+            $status = $refundService->doPaymentRefund($transactionId, null, [
+                'order' => $order,
+            ]);
+
+            $this->ajaxRender(json_encode($status));
+        } catch (Exception $e) {
+            $this->ajaxRender(
+                json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('An error occurred while processing the request.'),
+                    'error' => $e->getMessage(),
+                ])
+            );
+        }
     }
 }
