@@ -17,6 +17,7 @@ use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MolliePaymentMailService;
 use Mollie\Service\RefundService;
 use Mollie\Utility\NumberUtility;
@@ -270,11 +271,16 @@ class AdminMollieAjaxController extends ModuleAdminController
 
         try {
             $order = new Order($orderId);
-            $orderLines = $order->getOrderDetailList();
+
+            /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+            $paymentMethodRepo = $this->module->getService(PaymentMethodRepositoryInterface::class);
+            $transactionId = $paymentMethodRepo->getPaymentBy('order_id', (string) $orderId)['transaction_id'];
 
             /** @var RefundService $refundService */
             $refundService = $this->module->getService(RefundService::class);
-            $status = $refundService->doRefundOrderLines($order, $orderLines);
+            $status = $refundService->doPaymentRefund($transactionId, null, [
+                'order' => $order,
+            ]);
 
             $this->ajaxRender(json_encode($status));
         } catch (Exception $e) {
