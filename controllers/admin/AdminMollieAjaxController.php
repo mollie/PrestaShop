@@ -55,7 +55,7 @@ class AdminMollieAjaxController extends ModuleAdminController
             case 'updateFixedPaymentFeePrice':
                 $this->updateFixedPaymentFeePrice();
                 break;
-            case 'processOrderAction':
+            case 'refundAll':
                 $this->processOrderAction();
                 break;
             default:
@@ -242,7 +242,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 
     private function processOrderAction(): void
     {
-        if (!Tools::isSubmit('ajax') || !Tools::isSubmit('action')) {
+        if (!Tools::isSubmit('ajax')) {
             $this->ajaxRender(
                 json_encode([
                     'success' => false,

@@ -457,6 +457,36 @@ class Mollie extends PaymentModule
             }
         }
 
+        if ('AdminOrders' === $currentController && Tools::getValue('id_order')) {
+            $orderId = Tools::getValue('id_order');
+            $order = new Order($orderId);
+
+            if (Validate::isLoadedObject($order) && $order->module === $this->name) {
+                /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+                $paymentMethodRepo = $this->getService(PaymentMethodRepositoryInterface::class);
+
+                $cartId = Cart::getCartIdByOrderId((int) $orderId);
+                $transaction = $paymentMethodRepo->getPaymentBy('cart_id', (string) $cartId);
+
+                if (!empty($transaction)) {
+                    $mollieTransactionId = isset($transaction['transaction_id']) ? $transaction['transaction_id'] : null;
+                    $mollieApiType = null;
+                    if ($mollieTransactionId) {
+                        $mollieApiType = TransactionUtility::isOrderTransaction($mollieTransactionId) ? 'orders' : 'payments';
+                    }
+
+                    Media::addJsDef([
+                        'ajax_url' => $this->context->link->getAdminLink('AdminMollieAjax'),
+                        'transaction_id' => $mollieTransactionId,
+                        'resource' => $mollieApiType,
+                        'order_id' => $orderId,
+                    ]);
+
+                    $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_info.js');
+                }
+            }
+        }
+
         // We are on module configuration page
         if ('AdminMollieSettings' === $currentController) {
             Media::addJsDef([
@@ -489,8 +519,6 @@ class Mollie extends PaymentModule
             if (Tools::isSubmit('addorder') || version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
                 $html .= $this->display($this->getPathUri(), 'views/templates/admin/email_checkbox.tpl');
             }
-
-            $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_info.js');
         }
 
         return $html;
@@ -549,14 +577,6 @@ class Mollie extends PaymentModule
             'mollie_logo_path' => $this->getPathUri() . 'views/img/mollie_panel_icon.png',
             'mollie_transaction_id' => $mollieTransactionId,
             'mollie_api_type' => $mollieApiType,
-        ]);
-
-        /** @var OrderManagementAssetLoaderInterface $orderManagementAssetLoader */
-        $orderManagementAssetLoader = $this->getService(OrderManagementAssetLoaderInterface::class);
-        $orderManagementAssetLoader->register($this->context->controller, [
-            'transaction_id' => $mollieTransactionId,
-            'resource' => $mollieApiType,
-            'order_id' => $params['id_order'],
         ]);
 
         return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');

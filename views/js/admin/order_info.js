@@ -13,8 +13,8 @@ $(document).ready(function () {
   function showModal(action, productId, productAmount) {
     var amount = productAmount || $('#mollie-refund-amount').val();
 
-    if (!transactionId || !resource) {
-      console.error('Missing required config values:', { transactionId, resource });
+    if (!transaction_id || !resource) {
+      console.error('Missing required config values:', { transaction_id, resource });
       showErrorMessage('Configuration error');
       return;
     }
@@ -22,7 +22,7 @@ $(document).ready(function () {
     actionContext = {
       action: action,
       productId: productId,
-      transactionId: transactionId,
+      transactionId: transaction_id,
       resource: resource,
       amount: amount
     };
@@ -58,13 +58,11 @@ $(document).ready(function () {
     showModal('ship_all', null);
   });
 
-  // Refund modal confirm
   $('#mollieRefundModalConfirm').on('click', function() {
     $('#mollieRefundModal').modal('hide');
     processOrderAction(actionContext);
   });
 
-  // Ship modal confirm
   $('#mollieShipModalConfirm').on('click', function() {
     $('#mollieShipModal').modal('hide');
     processOrderAction(actionContext);
@@ -90,14 +88,14 @@ $(document).ready(function () {
       }];
     }
 
-    if (!ajaxUrl) {
+    if (!ajax_url) {
       console.error('AJAX URL not found in config');
       showErrorMessage('AJAX URL not found');
       return;
     }
 
     $.ajax({
-      url: ajaxUrl,
+      url: ajax_url,
       type: 'POST',
       data: data,
       dataType: 'json',
@@ -151,12 +149,10 @@ $(document).ready(function () {
   }
 
   function updatePaymentInfo(payment) {
-    // Update payment information in the UI if needed
     console.log('Payment updated:', payment);
   }
 
   function updateOrderInfo(order) {
-    // Update order information in the UI if needed
     console.log('Order updated:', order);
   }
 });
