@@ -10,38 +10,28 @@
 $(document).ready(function () {
   var actionContext = {};
 
-  // Check if config is available
-  if (typeof mollieOrderInfoConfig === 'undefined') {
-    console.error('Mollie Order Info Config not found');
-    return;
-  }
+  function showModal(action, productId, productAmount) {
+    var amount = productAmount || $('#mollie-refund-amount').val();
 
+    if (!transactionId || !resource) {
+      console.error('Missing required config values:', { transactionId, resource });
+      showErrorMessage('Configuration error');
+      return;
+    }
 
+    actionContext = {
+      action: action,
+      productId: productId,
+      transactionId: transactionId,
+      resource: resource,
+      amount: amount
+    };
 
-    function showModal(action, productId, productAmount) {
-      var transactionId = mollieOrderInfoConfig.transaction_id;
-      var resource = mollieOrderInfoConfig.resource;
-      var amount = productAmount || $('#mollie-refund-amount').val();
-
-      if (!transactionId || !resource) {
-        console.error('Missing required config values:', { transactionId, resource });
-        showErrorMessage('Configuration error');
-        return;
-      }
-
-      actionContext = {
-        action: action,
-        productId: productId,
-        transactionId: transactionId,
-        resource: resource,
-        amount: amount
-      };
-
-      if (action === 'refund' || action === 'refund_all') {
-        $('#mollieRefundModal').modal('show');
-      } else if (action === 'ship' || action === 'ship_all') {
-        $('#mollieShipModal').modal('show');
-      }
+    if (action === 'refund' || action === 'refund_all') {
+      $('#mollieRefundModal').modal('show');
+    } else if (action === 'ship' || action === 'ship_all') {
+      $('#mollieShipModal').modal('show');
+    }
   }
 
   $('.mollie-refund-btn').on('click', function() {
@@ -100,7 +90,6 @@ $(document).ready(function () {
       }];
     }
 
-    var ajaxUrl = mollieOrderInfoConfig.ajax_url;
     if (!ajaxUrl) {
       console.error('AJAX URL not found in config');
       showErrorMessage('AJAX URL not found');

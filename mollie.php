@@ -508,9 +508,6 @@ class Mollie extends PaymentModule
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
         $paymentMethodRepo = $this->getService(PaymentMethodRepositoryInterface::class);
 
-        /** @var \Mollie\Service\ShipmentServiceInterface $shipmentService */
-        $shipmentService = $this->getService(\Mollie\Service\ShipmentService::class);
-
         $cartId = Cart::getCartIdByOrderId((int) $params['id_order']);
         $transaction = $paymentMethodRepo->getPaymentBy('cart_id', (string) $cartId);
         if (empty($transaction)) {
@@ -553,12 +550,18 @@ class Mollie extends PaymentModule
             'mollie_api_type' => $mollieApiType,
         ]);
 
-        Media::addJsDef([
-            'ajax_url' => $this->context->link->getAdminLink('AdminMollieAjax'),
-            'transaction_id' => $mollieTransactionId,
-            'resource' => $mollieApiType,
-            'order_id' => $params['id_order'],
-        ]);
+        // get previous js variables and merge with new ones
+        $previousJsVariables = Media::getJsDef();
+        $newJsVariables = [
+            'mollieOrderInfoConfig' => [
+                'ajax_url' => $this->context->link->getAdminLink('AdminMollieAjax'),
+                'transaction_id' => $mollieTransactionId,
+                'resource' => $mollieApiType,
+                'order_id' => $params['id_order'],
+            ],
+        ];
+
+        Media::addJsDef(array_merge($previousJsVariables, $newJsVariables));
 
         $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_info.js');
 
