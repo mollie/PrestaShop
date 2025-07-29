@@ -47,6 +47,7 @@ use Mollie\Verification\IsPaymentInformationAvailable;
 use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Response;
+use Mollie\Loader\OrderManagementAssetLoaderInterface;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -550,20 +551,13 @@ class Mollie extends PaymentModule
             'mollie_api_type' => $mollieApiType,
         ]);
 
-        // get previous js variables and merge with new ones
-        $previousJsVariables = Media::getJsDef();
-        $newJsVariables = [
-            'mollieOrderInfoConfig' => [
-                'ajax_url' => $this->context->link->getAdminLink('AdminMollieAjax'),
-                'transaction_id' => $mollieTransactionId,
-                'resource' => $mollieApiType,
-                'order_id' => $params['id_order'],
-            ],
-        ];
-
-        Media::addJsDef(array_merge($previousJsVariables, $newJsVariables));
-
-        $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_info.js');
+        /** @var OrderManagementAssetLoaderInterface $orderManagementAssetLoader */
+        $orderManagementAssetLoader = $this->getService(OrderManagementAssetLoaderInterface::class);
+        $orderManagementAssetLoader->register($this->context->controller, [
+            'transaction_id' => $mollieTransactionId,
+            'resource' => $mollieApiType,
+            'order_id' => $params['id_order'],
+        ]);
 
         return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');
     }
