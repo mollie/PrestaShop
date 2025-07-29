@@ -27,9 +27,9 @@ $(document).ready(function () {
       amount: amount
     };
 
-    if (action === 'refund' || action === 'refund_all') {
+    if (action === 'refund' || action === 'refundAll') {
       $('#mollieRefundModal').modal('show');
-    } else if (action === 'ship' || action === 'ship_all') {
+    } else if (action === 'ship' || action === 'shipAll') {
       $('#mollieShipModal').modal('show');
     }
   }
@@ -51,11 +51,11 @@ $(document).ready(function () {
       showErrorMessage('Please enter a valid refund amount');
       return;
     }
-    showModal('refund_all', null);
+    showModal('refundAll', null);
   });
 
   $('#mollie-ship-all').on('click', function() {
-    showModal('ship_all', null);
+    showModal('shipAll', null);
   });
 
   $('#mollieRefundModalConfirm').on('click', function() {
@@ -71,14 +71,8 @@ $(document).ready(function () {
   function processOrderAction(context) {
     var data = {
       ajax: 1,
-      action: 'processOrderAction',
-      transactionId: context.transactionId,
-      resource: context.resource,
       action: context.action,
-      amount: context.amount,
-      orderLines: context.orderLines || [],
-      tracking: context.tracking,
-      order: context.order || {}
+      orderId: order_id,
     };
 
     if (context.productId && (context.action === 'refund' || context.action === 'ship')) {

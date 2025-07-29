@@ -18,6 +18,7 @@ use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\MolliePaymentMailService;
+use Mollie\Service\RefundService;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TimeUtility;
 
@@ -56,7 +57,7 @@ class AdminMollieAjaxController extends ModuleAdminController
                 $this->updateFixedPaymentFeePrice();
                 break;
             case 'refundAll':
-                $this->processOrderAction();
+                $this->processRefund();
                 break;
             default:
                 break;
@@ -240,7 +241,7 @@ class AdminMollieAjaxController extends ModuleAdminController
         );
     }
 
-    private function processOrderAction(): void
+    private function processRefund(): void
     {
         if (!Tools::isSubmit('ajax')) {
             $this->ajaxRender(
@@ -253,26 +254,10 @@ class AdminMollieAjaxController extends ModuleAdminController
             return;
         }
 
-        $transactionId = Tools::getValue('transactionId');
-        $resource = Tools::getValue('resource');
         $action = Tools::getValue('action');
-        $amount = Tools::getValue('amount');
-        $orderLines = Tools::getValue('orderLines', []);
-        $tracking = Tools::getValue('tracking');
-        $order = Tools::getValue('order', []);
+        $orderId = (int)Tools::getValue('orderId');
 
-        if (empty($transactionId) || empty($resource) || empty($action)) {
-            $this->ajaxRender(
-                json_encode([
-                    'success' => false,
-                    'message' => $this->module->l('Missing required parameters.'),
-                ])
-            );
-
-            return;
-        }
-
-        if ($action === 'refund' && (!is_numeric($amount) || $amount <= 0)) {
+        if ($action === 'refund' && !is_numeric($orderId)) {
             $this->ajaxRender(
                 json_encode([
                     'success' => false,
@@ -283,22 +268,15 @@ class AdminMollieAjaxController extends ModuleAdminController
             return;
         }
 
-        $input = [
-            'transactionId' => $transactionId,
-            'resource' => $resource,
-            'action' => $action,
-            'amount' => $amount,
-            'orderLines' => $orderLines,
-            'tracking' => $tracking,
-            'order' => $order,
-        ];
-
         try {
-            /** @var \Mollie\Service\MollieOrderInfoService $orderInfoService */
-            $orderInfoService = $this->module->getService(\Mollie\Service\MollieOrderInfoService::class);
-            $result = $orderInfoService->displayMollieOrderInfo($input);
+            $order = new Order($orderId);
+            $orderLines = $order->getOrderDetailList();
 
-            $this->ajaxRender(json_encode($result));
+            /** @var RefundService $refundService */
+            $refundService = $this->module->getService(RefundService::class);
+            $status = $refundService->doRefundOrderLines($order, $orderLines);
+
+            $this->ajaxRender(json_encode($status));
         } catch (Exception $e) {
             $this->ajaxRender(
                 json_encode([
