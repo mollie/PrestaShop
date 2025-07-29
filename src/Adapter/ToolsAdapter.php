@@ -72,4 +72,13 @@ class ToolsAdapter
     {
         return (int) Tools::getValue($value, $defaultValue);
     }
+
+    public function displayDate($date, $full = false)
+    {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('9.0.0')) {
+            return Tools::displayDate($date, $full);
+        }
+
+        return Tools::displayDate($date, null, $full);
+    }
 }
