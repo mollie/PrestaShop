@@ -4,6 +4,8 @@
 ## Changes in release 6.3.0 ##
 + Apple Pay Direct fixed
 + Added DK, FI, PL, SE, NO, PT, CZ, SI, HU, ES translations
++ Added "Quarterly" subscription option
++ Added feature to send mail on failed payment
 + Fixed minor issues
 
 ## Changes in release 6.2.9 ##
