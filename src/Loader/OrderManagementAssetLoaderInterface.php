@@ -12,7 +12,7 @@
 
 namespace Mollie\Loader;
 
-interface LoaderInterface
+interface OrderManagementAssetLoaderInterface
 {
-    public function register(): void;
+    public function register($controller, $vars = []): void;
 }

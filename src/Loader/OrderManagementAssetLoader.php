@@ -12,22 +12,17 @@
 
 namespace Mollie\Loader;
 
-use Cart;
-use Currency;
-use Media;
-use Mollie;
 use Mollie\Adapter\Link;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
-use Mollie\Utility\TransactionUtility;
-use Order;
-use Tools;
+use Mollie;
+use Media;
 use Context;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class OrderManagementAssetLoader implements LoaderInterface
+class OrderManagementAssetLoader implements OrderManagementAssetLoaderInterface
 {
     const FILE_NAME = 'OrderManagementAssetLoader';
 
@@ -45,45 +40,17 @@ class OrderManagementAssetLoader implements LoaderInterface
         $this->link = $link;
     }
 
-    public function register(): void
+    public function register($controller, $vars = []): void
     {
         Media::addJsDef([
             'mollieOrderInfoConfig' => [
                 'ajax_url' => $this->link->getAdminLink('AdminMollieAjax'),
-                'transaction_id' => $mollieTransactionId,
-                'resource' => $mollieApiType,
-                'order_id' => $orderId,
+                'transaction_id' => $vars['transaction_id'],
+                'resource' => $vars['resource'],
+                'order_id' => $vars['order_id'],
             ],
         ]);
 
-        Context::getContext()->controller->addJS($this->module->getPathUri() . 'views/js/admin/order_info.js');
-    }
-
-    public function loadOrderListAssets(): void
-    {
-        Media::addJsDef([
-            'mollieHookAjaxUrl' => $this->link->getAdminLink('AdminMollieAjax'),
-        ]);
-
-        Context::getContext()->controller->addCSS($this->module->getPathUri() . 'views/css/admin/order-list.css');
-        Context::getContext()->controller->addJS($this->module->getPathUri() . 'views/js/admin/order_list.js');
-
-        if (Tools::isSubmit('addorder') || version_compare(_PS_VERSION_, '1.7.7.0', '>=')) {
-            Media::addJsDef([
-                'molliePendingStatus' => \Configuration::get(\Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
-                'isPsVersion177' => version_compare(_PS_VERSION_, '1.7.7.0', '>='),
-            ]);
-            Context::getContext()->controller->addJS($this->module->getPathUri() . 'views/js/admin/order_add.js');
-        }
-    }
-
-    public function loadOrderGridAssets(): void
-    {
-        Context::getContext()->smarty->assign([
-            'mollieProcessUrl' => $this->link->getAdminLink('AdminModules', true) . '&configure=mollie&ajax=1',
-            'mollieCheckMethods' => \Mollie\Utility\TimeUtility::getCurrentTimeStamp() > ((int) \Configuration::get(\Mollie\Config\Config::MOLLIE_METHODS_LAST_CHECK) + \Mollie\Config\Config::MOLLIE_METHODS_CHECK_INTERVAL),
-        ]);
-
-        Context::getContext()->controller->addJS($this->module->getPathUri() . 'views/js/admin/order_info.js');
+        $controller->addJS($this->module->getPathUri() . 'views/js/admin/order_info.js');
     }
 }
