@@ -26,6 +26,7 @@ use Mollie\Exception\GuestCheckoutNotAvailableException;
 use Mollie\Service\OrderPaymentFeeService;
 use Mollie\Utility\ApplePayDirect\ShippingMethodUtility;
 use Tools;
+use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -57,7 +58,7 @@ final class UpdateApplePayShippingContactHandler
 
     public function handle(UpdateApplePayShippingContact $command): array
     {
-        $customer = $this->createCustomer($command->getCustomerId());
+        $customer = $this->createCustomer($command->getCustomerId(), $command->getCartId());
         $deliveryAddress = $this->createAddress($customer->id, $command);
         $invoiceAddress = $this->createAddress($customer->id, $command);
         $cart = $this->updateCart($customer, $deliveryAddress->id, $invoiceAddress->id, $command->getCartId());
@@ -109,7 +110,7 @@ final class UpdateApplePayShippingContactHandler
         return $address;
     }
 
-    private function createCustomer(int $customerId): Customer
+    private function createCustomer(int $customerId, int $cartId): Customer
     {
         if ($customerId) {
             return new Customer($customerId);
@@ -117,6 +118,15 @@ final class UpdateApplePayShippingContactHandler
 
         if (!Configuration::get('PS_GUEST_CHECKOUT_ENABLED')) {
             throw GuestCheckoutNotAvailableException::guestCheckoutDisabled();
+        }
+
+        $cart = new Cart($cartId);
+
+        if ($cart->id_customer) {
+            $existingCustomer = new Customer($cart->id_customer);
+            if (Validate::isLoadedObject($existingCustomer)) {
+                return $existingCustomer;
+            }
         }
 
         $customer = new Customer();

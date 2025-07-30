@@ -180,12 +180,29 @@ final class CreateApplePayOrderHandler
 
     private function updateCustomer(int $customerId, ShippingContent $shippingContent)
     {
+        $email = $shippingContent->getEmailAddress();
+        $existingCustomerId = \Customer::customerExists($email, true, false);
+
+        $customerId = $this->handleExistingCustomer($customerId, $existingCustomerId);
+
         $customer = new \Customer($customerId);
         $customer->firstname = $shippingContent->getGivenName();
         $customer->lastname = $shippingContent->getFamilyName();
-        $customer->email = $shippingContent->getEmailAddress();
-
+        $customer->email = $email;
         $customer->update();
+    }
+
+    private function handleExistingCustomer(int $customerId, $existingCustomerId): int
+    {
+        if ($existingCustomerId && $existingCustomerId !== $customerId) {
+            $customer = new \Customer($customerId);
+            $customer->deleted = true;
+            $customer->update();
+
+            return (int)$existingCustomerId;
+        }
+
+        return $customerId;
     }
 
     private function createMollieTransaction(Cart $cart, string $cardToken)
