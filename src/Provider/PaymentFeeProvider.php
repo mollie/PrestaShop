@@ -129,7 +129,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
 
     public function getPaymentFeeText(float $paymentFeeTaxIncl): string
     {
-        if (0 === $paymentFeeTaxIncl) {
+        if (0 == $paymentFeeTaxIncl) {
             return '';
         }
 
