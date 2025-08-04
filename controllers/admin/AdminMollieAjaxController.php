@@ -168,18 +168,6 @@ class AdminMollieAjaxController extends ModuleAdminController
 
         $taxRulesGroupId = (int) Tools::getValue('taxRulesGroupId');
 
-        // Allow negative payment fees for discounts
-        if (!isset($paymentFeeTaxIncl) && !isset($paymentFeeTaxExcl)) {
-            $this->ajaxRender(
-                json_encode([
-                    'error' => true,
-                    'message' => $this->module->l('No fee was submitted.'),
-                ])
-            );
-
-            return;
-        }
-
         if ($taxRulesGroupId < 1) {
             $this->ajaxRender(
                 json_encode([
