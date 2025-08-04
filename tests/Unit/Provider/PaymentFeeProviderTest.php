@@ -21,6 +21,8 @@ use Mollie\Repository\AddressRepositoryInterface;
 use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
 use TaxCalculator;
+use Mollie\Factory\ModuleFactory;
+use Mollie;
 
 class PaymentFeeProviderTest extends TestCase
 {
@@ -40,9 +42,9 @@ class PaymentFeeProviderTest extends TestCase
 
     /** @var TaxCalculator */
     private $taxCalculator;
-    /** @var \Mollie\Factory\ModuleFactory */
+    /** @var ModuleFactory */
     private $moduleFactory;
-    /** @var \Mollie */
+    /** @var Mollie */
     private $module;
 
     public function setUp()
@@ -57,8 +59,8 @@ class PaymentFeeProviderTest extends TestCase
         $this->address = $this->createMock(Address::class);
         $this->taxCalculator = $this->createMock(TaxCalculator::class);
 
-        $this->module = $this->createMock(\Mollie::class);
-        $this->moduleFactory = $this->createMock(\Mollie\Factory\ModuleFactory::class);
+        $this->module = $this->createMock(Mollie::class);
+        $this->moduleFactory = $this->createMock(ModuleFactory::class);
         $this->moduleFactory->method('getModule')->willReturn($this->module);
     }
 
