@@ -1,6 +1,13 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+## Changes in release 6.3.0 ##
++ Apple Pay Direct fixed
++ Added DK, FI, PL, SE, NO, PT, CZ, SI, HU, ES translations
++ Added "Quarterly" subscription option
++ Added feature to send mail on failed payment
++ Fixed minor issues
+
 ## Changes in release 6.2.9 ##
 + Pay By Bank creates order with open status
 + Customer group restriction for payment methods
@@ -104,7 +111,7 @@
 
 ## Changes in release 6.0.0 ##
 + Fixed order state duplication on install when single shop instance/ multishop instances were switched during module usage.
-+ Upgraded sentry logger to support PHP 8.0 version. 
++ Upgraded sentry logger to support PHP 8.0 version.
 + Dropped dotenv vendor package from module as it is accessible via symfony PrestaShop package.
 + Added subscriptions
 
@@ -212,7 +219,7 @@
 + Fixed issue where order would get cancelled after payment was successful if customer had created another payment for the same cart.
 + Fixed rounding issue when creating mollie payment and there is -0.01 cent difference.
 + No longer display warnings in configuration page about cache and rounding settings.
-+ Changed order creation logic for payments without fee. Now we add price that was paid and skip awaiting status. 
++ Changed order creation logic for payments without fee. Now we add price that was paid and skip awaiting status.
 
 ## Changes in release 4.4.1 ##
 + Fixed order status change issue where order would change status to completed or shipped.
@@ -236,21 +243,21 @@
 
 # Changelog #
 ## Changes in release 4.3.0 ##
-+ Added PrestaShop multistore compatability - different module configuration settings for each shop configured with multistore. 
++ Added PrestaShop multistore compatability - different module configuration settings for each shop configured with multistore.
 + Added double check for Apple Pay cookie to see if its created - https://github.com/mollie/PrestaShop/issues/324
-+ Fixed custom url for carriers when no tracking number is provided 
-+ Fixed order "Cancel" button functionality in back office  
++ Fixed custom url for carriers when no tracking number is provided
++ Fixed order "Cancel" button functionality in back office
 + Fixed duplicated discount rules issue - https://github.com/mollie/PrestaShop/issues/305
 + Fixed mail alert fix with Klarna order - https://github.com/mollie/PrestaShop/issues/316
 + Fixed payment fee calculations in the checkout - https://github.com/mollie/PrestaShop/issues/332
 
 ## Changes in release 4.2.4 ##
-+ Added optional custom order status for open bank transfer 
++ Added optional custom order status for open bank transfer
 + Added the billing address parameter from Mollie API
 + Added configuration to exclude custom order status creation for Klarna https://github.com/mollie/PrestaShop/issues/296
 + Added general controller for one-page checkout modules https://github.com/mollie/PrestaShop/issues/295
 + Fixed missing currencies in checkout
-+ Fixed compatibility with Guzzle v.5 
++ Fixed compatibility with Guzzle v.5
 + Fixed missing order confirmation page for Klarna payments on PS 1.6
 + Fixed error returned when shop domain is unknown in segment tracker tool
 + Changed “Resend payment link” image and the text in the PS BackOffice
@@ -286,7 +293,7 @@ New features:
 
 Issues fixed:
 + Error when upgrading to 4.2.* version
-+ Error invalid order ID: An order ID should start with 'ord_' when changing order statuses 
++ Error invalid order ID: An order ID should start with 'ord_' when changing order statuses
 + Error mol_country table empty - payment methods were not displayed
 + Slow loading of AdminOrders page
 + Components on 1.6. duplicate step for iDeal and Credit Card

@@ -96,7 +96,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.2.9';
+        $this->version = '6.3.0';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -899,7 +899,7 @@ class Mollie extends PaymentModule
                 'visible' => false,
             ],
             [
-                'name' => 'Settings',
+                'name' => $this->l('Settings'),
                 'class_name' => self::ADMIN_MOLLIE_SETTINGS_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
             ],
