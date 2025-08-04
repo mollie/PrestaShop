@@ -179,11 +179,12 @@ class AdminMollieAjaxController extends ModuleAdminController
             return;
         }
 
-        if ($paymentFeeTaxIncl < 0.00 || $paymentFeeTaxExcl < 0.00) {
+        // Allow negative payment fees for discounts
+        if (empty($paymentFeeTaxIncl) && empty($paymentFeeTaxExcl)) {
             $this->ajaxRender(
                 json_encode([
                     'error' => true,
-                    'message' => $this->module->l('Invalid fee'),
+                    'message' => $this->module->l('No fee was submitted.'),
                 ])
             );
 

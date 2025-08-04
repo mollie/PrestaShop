@@ -136,4 +136,40 @@ class PaymentFeeCalculatorTest extends TestCase
         $this->assertEquals(10.0, $result->getTaxRate());
         $this->assertEquals(true, $result->isActive());
     }
+
+    public function testItHandlesNegativePaymentFees(): void
+    {
+        $this->taxCalculator->method('addTaxes')->willReturn(-11.0);
+        $this->taxCalculator->method('removeTaxes')->willReturn(-10.0);
+        $this->taxCalculator->method('getTotalRate')->willReturn(10.0);
+
+        $this->context->method('getComputingPrecision')->willReturn(2);
+
+        $paymentFeeCalculator = new PaymentFeeCalculator($this->taxCalculator, $this->context);
+
+        $result = $paymentFeeCalculator->calculateFixedFee(-10);
+
+        $this->assertEquals(-11.0, $result->getPaymentFeeTaxIncl());
+        $this->assertEquals(-10.0, $result->getPaymentFeeTaxExcl());
+        $this->assertEquals(10.0, $result->getTaxRate());
+        $this->assertEquals(true, $result->isActive());
+    }
+
+    public function testItHandlesZeroPaymentFees(): void
+    {
+        $this->taxCalculator->method('addTaxes')->willReturn(0.0);
+        $this->taxCalculator->method('removeTaxes')->willReturn(0.0);
+        $this->taxCalculator->method('getTotalRate')->willReturn(10.0);
+
+        $this->context->method('getComputingPrecision')->willReturn(2);
+
+        $paymentFeeCalculator = new PaymentFeeCalculator($this->taxCalculator, $this->context);
+
+        $result = $paymentFeeCalculator->calculateFixedFee(0);
+
+        $this->assertEquals(0.0, $result->getPaymentFeeTaxIncl());
+        $this->assertEquals(0.0, $result->getPaymentFeeTaxExcl());
+        $this->assertEquals(10.0, $result->getTaxRate());
+        $this->assertEquals(false, $result->isActive());
+    }
 }

@@ -125,7 +125,8 @@ class PaymentFeeCalculator
         float $totalFeePriceTaxIncl,
         float $totalFeePriceTaxExcl
     ): PaymentFeeData {
-        $isPaymentFeeActive = $totalFeePriceTaxIncl > 0 && $totalFeePriceTaxExcl > 0;
+        // Allow negative payment fees (discounts) - fee is active if it's not zero
+        $isPaymentFeeActive = $totalFeePriceTaxIncl !== 0.00 && $totalFeePriceTaxExcl !== 0.00;
 
         return new PaymentFeeData(
             NumberUtility::toPrecision($totalFeePriceTaxIncl, $this->context->getComputingPrecision()),
