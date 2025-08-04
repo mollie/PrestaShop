@@ -170,7 +170,7 @@ class SettingsSaveService
             $this->configurationAdapter->updateValue(Config::MOLLIE_ENVIRONMENT, $environment);
 
             try {
-                $api = $this->apiKeyService->setApiKey($apiKey, $this->module->version);
+                $api = $this->apiKeyService->setApiKey($apiKey, $this->module->version, false, $environment);
                 if (null === $api) {
                     throw new MollieException('Failed to connect to mollie API', MollieException::API_CONNECTION_EXCEPTION);
                 }
@@ -280,7 +280,7 @@ class SettingsSaveService
 
         if ($apiKey) {
             try {
-                $api = $this->apiKeyService->setApiKey($apiKey, $this->module->version);
+                $api = $this->apiKeyService->setApiKey($apiKey, $this->module->version, false, $environment);
                 if (null === $api) {
                     throw new MollieException('Failed to connect to mollie API', MollieException::API_CONNECTION_EXCEPTION);
                 }

@@ -1279,7 +1279,7 @@ class Mollie extends PaymentModule
         }
 
         try {
-            $this->api = $apiKeyService->setApiKey($apiKey, $this->version, $subscriptionOrder);
+            $this->api = $apiKeyService->setApiKey($apiKey, $this->version, $subscriptionOrder, $environment);
         } catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);

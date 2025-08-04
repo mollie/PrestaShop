@@ -27,7 +27,7 @@ class ApiKeyService
     /**
      * @throws ApiException
      */
-    public function setApiKey(string $apiKey, string $moduleVersion, bool $subscriptionOrder = false): ?MollieApiClient
+    public function setApiKey(string $apiKey, string $moduleVersion, bool $subscriptionOrder = false, int $environment = 0): ?MollieApiClient
     {
         $api = new MollieApiClient(new CurlPSMollieHttpAdapter());
 
@@ -35,12 +35,12 @@ class ApiKeyService
 
         if ($apiKey) {
             try {
-                $api->setApiKey($apiKey);
+                $api->setApiKey($apiKey, $environment);
             } catch (ApiException $e) {
                 return null;
             }
         } elseif (!empty($context->employee) && Tools::getValue('Mollie_Api_Key')) {
-            $api->setApiKey(Tools::getValue('Mollie_Api_Key'));
+            $api->setApiKey(Tools::getValue('Mollie_Api_Key'), $environment);
         }
 
         if (defined('_TB_VERSION_')) {
