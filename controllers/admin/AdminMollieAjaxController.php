@@ -20,6 +20,7 @@ use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MolliePaymentMailService;
 use Mollie\Service\RefundService;
+use Mollie\Service\ShipService;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TimeUtility;
 
@@ -34,6 +35,10 @@ class AdminMollieAjaxController extends ModuleAdminController
 
     public function postProcess()
     {
+        if (!Tools::isSubmit('ajax')) {
+            return;
+        }
+
         $action = Tools::getValue('action');
 
         $this->context->smarty->assign('bootstrap', true);
@@ -59,6 +64,9 @@ class AdminMollieAjaxController extends ModuleAdminController
                 break;
             case 'refundAll':
                 $this->processRefund();
+                break;
+            case 'shipAll':
+                $this->processShip();
                 break;
             default:
                 break;
@@ -244,30 +252,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 
     private function processRefund(): void
     {
-        if (!Tools::isSubmit('ajax')) {
-            $this->ajaxRender(
-                json_encode([
-                    'success' => false,
-                    'message' => $this->module->l('Invalid request.'),
-                ])
-            );
-
-            return;
-        }
-
-        $action = Tools::getValue('action');
-        $orderId = (int)Tools::getValue('orderId');
-
-        if ($action === 'refund' && !is_numeric($orderId)) {
-            $this->ajaxRender(
-                json_encode([
-                    'success' => false,
-                    'message' => $this->module->l('Invalid refund amount.'),
-                ])
-            );
-
-            return;
-        }
+        $orderId = (int) Tools::getValue('orderId');
 
         try {
             $order = new Order($orderId);
@@ -282,8 +267,37 @@ class AdminMollieAjaxController extends ModuleAdminController
                 'order' => $order,
             ]);
 
+            // TODO: Change order status to refunded
+
             $this->ajaxRender(json_encode($status));
         } catch (Exception $e) {
+            $this->ajaxRender(
+                json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('An error occurred while processing the request.'),
+                    'error' => $e->getMessage(),
+                ])
+            );
+        }
+    }
+
+    private function processShip(): void
+    {
+        $orderId = (int) Tools::getValue('orderId');
+
+        try {
+            $order = new Order($orderId);
+
+            /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+            $paymentMethodRepo = $this->module->getService(PaymentMethodRepositoryInterface::class);
+            $transactionId = $paymentMethodRepo->getPaymentBy('order_id', (string) $orderId)['transaction_id'];
+
+            /** @var ShipService $shipService */
+            $shipService = $this->module->getService(ShipService::class);
+            $status = $shipService->doPaymentShip($transactionId, $order->total_paid);
+
+            // TODO: Change order status to shipped
+        } catch (Throwable $e) {
             $this->ajaxRender(
                 json_encode([
                     'success' => false,

@@ -12,9 +12,11 @@
 
 namespace Mollie\Service;
 
+use Mollie\DTO\Object\Amount;
 use Mollie;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
+use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -75,5 +77,29 @@ class ShipService
             'message' => '',
             'detailed' => '',
         ];
+    }
+
+    public function doPaymentShip(string $transactionId, float $amount)
+    {
+        try {
+            $capture = $this->module->getApiClient()->paymentCaptures->createForId($transactionId, [
+                'amount' => [
+                    'currency' => 'EUR',
+                    'value' => (string) $amount,
+                ],
+            ]);
+
+            return [
+                'success' => true,
+                'message' => $this->module->l('The order could be shipped!', self::FILE_NAME),
+                'detailed' => '',
+            ];
+        } catch (ApiException $e) {
+            return [
+                'success' => false,
+                'message' => $this->module->l('The order could not be shipped!', self::FILE_NAME),
+                'detailed' => $e->getMessage(),
+            ];
+        }
     }
 }
