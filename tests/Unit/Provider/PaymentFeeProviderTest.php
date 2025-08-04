@@ -13,16 +13,16 @@
 namespace Mollie\Tests\Unit\Provider;
 
 use Address;
+use Mollie;
 use Mollie\Adapter\Context;
 use Mollie\Config\Config;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\PaymentFeeProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\AddressRepositoryInterface;
 use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
 use TaxCalculator;
-use Mollie\Factory\ModuleFactory;
-use Mollie;
 
 class PaymentFeeProviderTest extends TestCase
 {
