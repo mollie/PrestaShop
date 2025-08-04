@@ -1,6 +1,10 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+
+## Changes in release 6.4.0 ##
++ Improved API key validation
+
 ## Changes in release 6.3.0 ##
 + Apple Pay Direct fixed
 + Added DK, FI, PL, SE, NO, PT, CZ, SI, HU, ES translations
