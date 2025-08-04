@@ -141,9 +141,9 @@ class BasePaymentOptionProvider implements PaymentOptionProviderInterface
 
         $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, $this->orderTotalProvider->getOrderTotal());
 
-        $paymentFeeText = $paymentFeeData->getPaymentFeeTaxIncl() < 0 ? $this->module->l('Discount: %1s', self::FILE_NAME) : $this->module->l('Payment Fee: %1s', self::FILE_NAME);
-
         if ($paymentFeeData->isActive()) {
+            $paymentFeeText = $this->paymentFeeProvider->getPaymentFeeText($paymentFeeData->getPaymentFeeTaxIncl());
+
             $paymentOption->setInputs(
                 [
                     [
