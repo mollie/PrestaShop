@@ -16,6 +16,8 @@ use Context;
 use Mollie\Adapter\API\CurlPSMollieHttpAdapter;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
+use Mollie\Config\Config;
+use Mollie\Exception\MollieException;
 use Tools;
 
 if (!defined('_PS_VERSION_')) {
@@ -35,7 +37,9 @@ class ApiKeyService
 
         if ($apiKey) {
             try {
-                $api->setApiKey($apiKey, $environment);
+                $this->validateApiKey($apiKey, $environment);
+
+                $api->setApiKey($apiKey);
             } catch (ApiException $e) {
                 return null;
             }
@@ -61,5 +65,16 @@ class ApiKeyService
         $api->addVersionString("MolliePrestaShop/{$moduleVersion}");
 
         return $api;
+    }
+
+    private function validateApiKey(string $apiKey, int $environment): void
+    {
+        $isTestEnv = $environment === Config::ENVIRONMENT_TEST;
+        $isLiveEnv = $environment === Config::ENVIRONMENT_LIVE;
+
+        if (($isTestEnv && !preg_match('/^test_\w{30,}$/', $apiKey)) || ($isLiveEnv && !preg_match('/^live_\w{30,}$/', $apiKey))) {
+            $expectedPrefix = $isTestEnv ? 'test_' : 'live_';
+            throw new MollieException("Invalid API key: '{$apiKey}'. An API key must start with '{$expectedPrefix}'.");
+        }
     }
 }

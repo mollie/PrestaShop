@@ -178,7 +178,7 @@ class SettingsSaveService
                 $errors[] = $e->getMessage();
                 $this->configurationAdapter->updateValue(Config::MOLLIE_API_KEY, null);
 
-                return [$this->module->l('Wrong API Key!', self::FILE_NAME)];
+                return [$this->module->l('Wrong API Key! See logs for more details.', self::FILE_NAME)];
             }
 
             return [];
@@ -288,7 +288,7 @@ class SettingsSaveService
                 $errors[] = $e->getMessage();
                 $this->configurationAdapter->updateValue(Config::MOLLIE_API_KEY, null);
 
-                return [$this->module->l('Wrong API Key!', self::FILE_NAME)];
+                return [$this->module->l('Wrong API Key! See logs for more details.', self::FILE_NAME)];
             }
         }
         try {

@@ -1301,6 +1301,7 @@ class Mollie extends PaymentModule
 
             $logger->error(sprintf('%s - General exception', self::FILE_NAME), [
                 'exceptions' => ExceptionUtility::getExceptions($e),
+                'mode' => $environment === Mollie\Config\Config::ENVIRONMENT_TEST ? 'test' : 'live',
             ]);
         }
     }
