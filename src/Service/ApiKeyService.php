@@ -44,7 +44,7 @@ class ApiKeyService
                 return null;
             }
         } elseif (!empty($context->employee) && Tools::getValue('Mollie_Api_Key')) {
-            $api->setApiKey(Tools::getValue('Mollie_Api_Key'), $environment);
+            $api->setApiKey(Tools::getValue('Mollie_Api_Key'));
         }
 
         if (defined('_TB_VERSION_')) {
