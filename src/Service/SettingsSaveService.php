@@ -265,7 +265,6 @@ class SettingsSaveService
         $mollieErrors = $this->tools->getValue(Config::MOLLIE_DISPLAY_ERRORS);
         $voucherCategory = $this->tools->getValue(Config::MOLLIE_VOUCHER_CATEGORY);
         $applePayDirectStyle = $this->tools->getValue(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE);
-        $isBancontactQrCodeEnabled = $this->tools->getValue(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED);
         $mollieMailWhenFailed = (bool) $this->tools->getValue(Config::MOLLIE_MAIL_WHEN_FAILED);
 
         $mollieShipMain = $this->tools->getValue(Config::MOLLIE_AUTO_SHIP_MAIN);
@@ -298,10 +297,6 @@ class SettingsSaveService
         }
 
         if (empty($errors)) {
-            if ($isBancontactQrCodeEnabled !== false) {
-                $this->configurationAdapter->updateValue(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED, $isBancontactQrCodeEnabled);
-            }
-
             $this->configurationAdapter->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT, $isApplePayDirectProductEnabled);
             $this->configurationAdapter->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_CART, $isApplePayDirectCartEnabled);
             $this->configurationAdapter->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE, $applePayDirectStyle);

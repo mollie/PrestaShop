@@ -423,7 +423,6 @@ class FormBuilder
             'applePayDirectProduct' => (int) $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT),
             'applePayDirectCart' => (int) $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART),
             'applePayDirectStyle' => (int) $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
-            'isBancontactQrCodeEnabled' => (int) $this->configuration->get(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED),
             'isLive' => (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT),
             'bancontactQRCodeDescription' => TagsUtility::ppTags(
                 $this->module->l('Only available with your Live API key and Payments API. [1]Learn more[/1] about QR Codes.', self::FILE_NAME),
