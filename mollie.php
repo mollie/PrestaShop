@@ -481,6 +481,7 @@ class Mollie extends PaymentModule
                         'transaction_id' => $mollieTransactionId,
                         'resource' => $mollieApiType,
                         'order_id' => $orderId,
+                        'orderLines' => $order->getProducts(),
                     ]);
 
                     $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_info.js');

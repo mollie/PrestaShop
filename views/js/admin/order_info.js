@@ -37,7 +37,12 @@ $(document).ready(function () {
   }
 
   function showModal(action, productId, productAmount) {
-    var amount = productAmount || $('#mollie-refund-amount').val();
+    var amount = productAmount;
+
+    // For refund actions, get amount from input field if not provided
+    if ((action === 'refund' || action === 'refundAll') && amount === undefined) {
+      amount = $('#mollie-refund-amount').val();
+    }
 
     if (!transaction_id || !resource) {
       console.error('Missing required config values:', { transaction_id, resource });
@@ -50,7 +55,7 @@ $(document).ready(function () {
       productId: productId,
       transactionId: transaction_id,
       resource: resource,
-      amount: amount
+      amount: amount,
     };
 
     if (action === 'refund' || action === 'refundAll') {
@@ -65,6 +70,7 @@ $(document).ready(function () {
   $('.mollie-refund-btn').on('click', function() {
     var productId = $(this).data('product');
     var amount = $(this).closest('tr').find('td:nth-child(2)').text().replace(/[^0-9.,]/g, '');
+    // For individual product refunds, always use the product amount (partial refund)
     showModal('refund', productId, amount);
   });
 
@@ -121,12 +127,14 @@ $(document).ready(function () {
       ajax: 1,
       action: context.action,
       orderId: order_id,
+      refundAmount: context.amount
     };
 
     if (context.productId && (context.action === 'refund' || context.action === 'ship' || context.action === 'capture')) {
       data.orderLines = [{
         id: context.productId,
-        quantity: 1
+        quantity: 1,
+        refund_amount: $('#mollie-refund-amount').val()
       }];
     }
 
@@ -210,6 +218,9 @@ $(document).ready(function () {
   function updateOrderInfo(order) {
     console.log('Order updated:', order);
   }
+
+  // Initialize refund type radio button state
+  $('input[name="refund_type"]:checked').trigger('change');
 
   checkOrderStatus();
 });

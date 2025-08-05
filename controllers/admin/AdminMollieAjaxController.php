@@ -265,10 +265,17 @@ class AdminMollieAjaxController extends ModuleAdminController
     private function processRefund(): void
     {
         $orderId = (int) Tools::getValue('orderId');
-        $orderLines = Tools::getValue('orderLines');
 
         try {
             $order = new Order($orderId);
+
+            $orderLines = $order->getProducts();
+            $orderLines = array_map(function ($line) {
+                return [
+                    'id' => $line['id_product'],
+                    'quantity' => $line['product_quantity'],
+                ];
+            }, $orderLines);
 
             /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
             $paymentMethodRepo = $this->module->getService(PaymentMethodRepositoryInterface::class);
@@ -276,10 +283,10 @@ class AdminMollieAjaxController extends ModuleAdminController
 
             /** @var RefundService $refundService */
             $refundService = $this->module->getService(RefundService::class);
-            $status = $refundService->doPaymentRefund($transactionId, null, [
-                'order' => $order,
-                'orderLines' => $orderLines,
-            ]);
+            $status = $refundService->doRefundOrderLines([
+                'id' => $transactionId,
+                'availableRefundAmount' => $order->total_paid,
+            ], $orderLines);
 
             $this->ajaxRender(json_encode($status));
         } catch (Exception $e) {

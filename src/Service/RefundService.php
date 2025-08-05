@@ -124,12 +124,12 @@ class RefundService
                 return $this->createErrorResponse('Order is not refundable');
             }
 
-            if ($this->shouldRefundOrderLines($lines, $availableRefund)) {
-                return $this->processOrderLinesRefund($order, $lines, $refundData);
-            } else {
-                return $this->processFullOrderRefund($order, $availableRefund, $refundData);
-            }
+            $order->refundAll();
 
+            return $this->createSuccessResponse(
+                'The product(s) have been refunded!',
+                'Mollie will process the refund for the selected items.'
+            );
         } catch (ApiException $e) {
             return $this->createErrorResponse(
                 'The product(s) could not be refunded!',
@@ -148,26 +148,7 @@ class RefundService
      */
     public function processRefund(string $transactionId, array $refundOptions = [])
     {
-        $amount = $refundOptions['amount'] ?? null;
-        $lines = $refundOptions['lines'] ?? [];
-        $refundData = $refundOptions['refundData'] ?? [];
-
-        try {
-            if ($this->isOrderTransaction($transactionId)) {
-                $orderData = [
-                    'id' => $transactionId,
-                    'availableRefundAmount' => $refundOptions['availableRefundAmount'] ?? null
-                ];
-                return $this->doRefundOrderLines($orderData, $lines, $refundData);
-            } else {
-                return $this->doPaymentRefund($transactionId, $amount, $refundData);
-            }
-        } catch (Exception $e) {
-            return $this->createErrorResponse(
-                'Refund processing failed',
-                $e->getMessage()
-            );
-        }
+        return $this->doRefundOrderLines($refundOptions);
     }
 
     /**
@@ -302,9 +283,9 @@ class RefundService
      * @param array $availableRefund
      * @return bool
      */
-    private function shouldRefundOrderLines(array $lines, array $availableRefund): bool
+    private function shouldRefundOrderLines(array $lines): bool
     {
-        return !empty($lines) && RefundUtility::isOrderLinesRefundPossible($lines, $availableRefund);
+        return !empty($lines);
     }
 
     /**
