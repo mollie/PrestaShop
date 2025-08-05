@@ -152,6 +152,9 @@ use Mollie\Verification\PaymentType\CanBeRegularPaymentType;
 use Mollie\Verification\PaymentType\PaymentTypeVerificationInterface;
 use Mollie\Verification\Shipment\CanSendShipment;
 use Mollie\Verification\Shipment\ShipmentVerificationInterface;
+use Mollie\Loader\OrderManagementAssetLoaderInterface;
+use Mollie\Loader\OrderManagementAssetLoader;
+use Mollie\Adapter\Link;
 use PrestaShop\PrestaShop\Core\Grid\Action\Row\AccessibilityChecker\AccessibilityCheckerInterface;
 
 if (!defined('_PS_VERSION_')) {
@@ -312,6 +315,11 @@ final class BaseServiceProvider
 
         $service = $this->addService($container, CustomerGroupRestrictionHandlerInterface::class, CustomerGroupRestrictionHandler::class);
         $this->addServiceArgument($service, ToolsAdapter::class);
+
+        $service = $this->addService($container, OrderManagementAssetLoaderInterface::class, OrderManagementAssetLoader::class);
+        $this->addServiceArgument($service, Mollie::class);
+        $this->addServiceArgument($service, PaymentMethodRepository::class);
+        $this->addServiceArgument($service, Link::class);
     }
 
     private function addService(Container $container, $className, $service)
