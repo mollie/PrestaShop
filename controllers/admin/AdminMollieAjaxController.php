@@ -22,8 +22,10 @@ use Mollie\Service\MolliePaymentMailService;
 use Mollie\Service\RefundService;
 use Mollie\Service\ShipService;
 use Mollie\Service\CaptureService;
+use Mollie\Service\ApiService;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TimeUtility;
+use Mollie\Utility\TransactionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -74,6 +76,9 @@ class AdminMollieAjaxController extends ModuleAdminController
             case 'captureAll':
             case 'capture':
                 $this->processCapture();
+                break;
+            case 'retrieve':
+                $this->retrieveOrderInfo();
                 break;
             default:
                 break;
@@ -339,6 +344,74 @@ class AdminMollieAjaxController extends ModuleAdminController
                 json_encode([
                     'success' => false,
                     'message' => $this->module->l('An error occurred while processing the request.'),
+                    'error' => $e->getMessage(),
+                ])
+            );
+        }
+    }
+
+    private function retrieveOrderInfo(): void
+    {
+        $orderId = (int) Tools::getValue('orderId');
+
+        try {
+            $order = new Order($orderId);
+
+            /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+            $paymentMethodRepo = $this->module->getService(PaymentMethodRepositoryInterface::class);
+            $transaction = $paymentMethodRepo->getPaymentBy('order_id', (string) $orderId);
+
+            if (!$transaction) {
+                $this->ajaxRender(
+                    json_encode([
+                        'success' => false,
+                        'message' => $this->module->l('No Mollie transaction found for this order.'),
+                    ])
+                );
+                return;
+            }
+
+            $transactionId = $transaction['transaction_id'];
+            $this->module->updateApiKey((int) $order->id_shop);
+
+            if (!$this->module->getApiClient()) {
+                $this->ajaxRender(
+                    json_encode([
+                        'success' => false,
+                        'message' => $this->module->l('Unable to connect to Mollie API.'),
+                    ])
+                );
+                return;
+            }
+
+            /** @var ApiService $apiService */
+            $apiService = $this->module->getService(ApiService::class);
+
+            $mollieApiType = TransactionUtility::isOrderTransaction($transactionId) ? 'orders' : 'payments';
+
+            if ($mollieApiType === 'orders') {
+                $orderInfo = $apiService->getFilteredApiOrder($this->module->getApiClient(), $transactionId);
+                $isShipping = $orderInfo['status'] === 'completed';
+
+                $response = [
+                    'success' => true,
+                    'isShipping' => $isShipping,
+                    'orderStatus' => $orderInfo['status'] ?? null,
+                ];
+            } else {
+                $response = [
+                    'success' => true,
+                    'isShipping' => false,
+                    'orderStatus' => null,
+                ];
+            }
+
+            $this->ajaxRender(json_encode($response));
+        } catch (Exception $e) {
+            $this->ajaxRender(
+                json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('An error occurred while retrieving order information.'),
                     'error' => $e->getMessage(),
                 ])
             );

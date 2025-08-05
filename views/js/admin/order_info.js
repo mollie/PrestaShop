@@ -10,6 +10,32 @@
 $(document).ready(function () {
   var actionContext = {};
 
+  function checkOrderStatus() {
+    if (!ajax_url || !order_id) {
+      return;
+    }
+
+    $.ajax({
+      url: ajax_url,
+      type: 'POST',
+      data: {
+        ajax: 1,
+        action: 'retrieve',
+        orderId: order_id,
+      },
+      dataType: 'json',
+      success: function(response) {
+        if (response.success && response.isShipping) {
+          $('.mollie-ship-btn').prop('disabled', true).addClass('disabled').css('opacity', '0.5');
+          $('#mollie-ship-all').prop('disabled', true).addClass('disabled').css('opacity', '0.5');
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error('Error checking order status:', error);
+      }
+    });
+  }
+
   function showModal(action, productId, productAmount) {
     var amount = productAmount || $('#mollie-refund-amount').val();
 
@@ -69,6 +95,12 @@ $(document).ready(function () {
     showModal('captureAll', null);
   });
 
+  $('#mollieShipModal').on('show.bs.modal', function() {
+    $('#mollie-carrier').val('');
+    $('#mollie-tracking-number').val('');
+    $('#mollie-tracking-url').val('');
+  });
+
   $('#mollieRefundModalConfirm').on('click', function() {
     $('#mollieRefundModal').modal('hide');
     processOrderAction(actionContext);
@@ -98,6 +130,18 @@ $(document).ready(function () {
       }];
     }
 
+    if (context.action === 'ship' || context.action === 'shipAll') {
+      var carrier = $('#mollie-carrier').val().trim();
+      var trackingNumber = $('#mollie-tracking-number').val().trim();
+      var trackingUrl = $('#mollie-tracking-url').val().trim();
+
+      data.tracking = {
+        carrier: carrier || null,
+        tracking_number: trackingNumber || null,
+        tracking_url: trackingUrl || null
+      };
+    }
+
     if (!ajax_url) {
       console.error('AJAX URL not found in config');
       showErrorMessage('AJAX URL not found');
@@ -122,6 +166,7 @@ $(document).ready(function () {
           if (response.order) {
             updateOrderInfo(response.order);
           }
+          checkOrderStatus();
         } else {
           showErrorMessage(response.message || 'An error occurred');
         }
@@ -165,4 +210,6 @@ $(document).ready(function () {
   function updateOrderInfo(order) {
     console.log('Order updated:', order);
   }
+
+  checkOrderStatus();
 });
