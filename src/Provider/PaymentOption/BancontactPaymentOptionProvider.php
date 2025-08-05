@@ -161,6 +161,8 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
         );
 
         if ($paymentFeeData->isActive()) {
+            $paymentFeeText = $this->paymentFeeProvider->getPaymentFeeText($paymentFeeData->getPaymentFeeTaxIncl());
+
             $paymentOption->setInputs(
                 [
                     [
@@ -172,7 +174,7 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
                         'type' => 'hidden',
                         'name' => 'payment-fee-price-display',
                         'value' => sprintf(
-                            $this->module->l('Payment Fee: %1s', self::FILE_NAME),
+                            $paymentFeeText,
                             $this->tools->displayPrice($paymentFeeData->getPaymentFeeTaxIncl())
                         ),
                     ],

@@ -50,4 +50,9 @@ interface PaymentFeeProviderInterface
      * @throws FailedToProvidePaymentFeeException
      */
     public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl): PaymentFeeData;
+
+    /**
+     * Get payment fee text based on the fee amount
+     */
+    public function getPaymentFeeText(float $paymentFeeTaxIncl): string;
 }
