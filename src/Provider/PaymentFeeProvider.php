@@ -37,10 +37,12 @@
 namespace Mollie\Provider;
 
 use Address;
+use Mollie;
 use Mollie\Adapter\Context;
 use Mollie\Calculator\PaymentFeeCalculator;
 use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Repository\AddressRepositoryInterface;
 use MolPaymentMethod;
 
@@ -50,21 +52,27 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentFeeProvider implements PaymentFeeProviderInterface
 {
+    private const FILE_NAME = 'PaymentFeeProvider';
+
     /** @var Context */
     private $context;
     /** @var AddressRepositoryInterface */
     private $addressRepository;
     /** @var TaxCalculatorProvider */
     private $taxProvider;
+    /** @var Mollie */
+    private $module;
 
     public function __construct(
         Context $context,
         AddressRepositoryInterface $addressRepository,
-        TaxCalculatorProvider $taxProvider
+        TaxCalculatorProvider $taxProvider,
+        ModuleFactory $module
     ) {
         $this->context = $context;
         $this->addressRepository = $addressRepository;
         $this->taxProvider = $taxProvider;
+        $this->module = $module->getModule();
     }
 
     /**
@@ -117,5 +125,14 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
         }
 
         return new PaymentFeeData(0.00, 0.00, 0.00, false);
+    }
+
+    public function getPaymentFeeText(float $paymentFeeTaxIncl): string
+    {
+        if (0 == $paymentFeeTaxIncl) {
+            return '';
+        }
+
+        return $paymentFeeTaxIncl < 0 ? $this->module->l('Discount: %1s', self::FILE_NAME) : $this->module->l('Payment Fee: %1s', self::FILE_NAME);
     }
 }
