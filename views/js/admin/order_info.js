@@ -31,6 +31,8 @@ $(document).ready(function () {
       $('#mollieRefundModal').modal('show');
     } else if (action === 'ship' || action === 'shipAll') {
       $('#mollieShipModal').modal('show');
+    } else if (action === 'capture' || action === 'captureAll') {
+      $('#mollieCaptureModal').modal('show');
     }
   }
 
@@ -43,6 +45,11 @@ $(document).ready(function () {
   $('.mollie-ship-btn').on('click', function() {
     var productId = $(this).data('product');
     showModal('ship', productId);
+  });
+
+  $('.mollie-capture-btn').on('click', function() {
+    var productId = $(this).data('product');
+    showModal('capture', productId);
   });
 
   $('#mollie-initiate-refund').on('click', function() {
@@ -58,6 +65,10 @@ $(document).ready(function () {
     showModal('shipAll', null);
   });
 
+  $('#mollie-capture-all').on('click', function() {
+    showModal('captureAll', null);
+  });
+
   $('#mollieRefundModalConfirm').on('click', function() {
     $('#mollieRefundModal').modal('hide');
     processOrderAction(actionContext);
@@ -68,6 +79,11 @@ $(document).ready(function () {
     processOrderAction(actionContext);
   });
 
+  $('#mollieCaptureModalConfirm').on('click', function() {
+    $('#mollieCaptureModal').modal('hide');
+    processOrderAction(actionContext);
+  });
+
   function processOrderAction(context) {
     var data = {
       ajax: 1,
@@ -75,7 +91,7 @@ $(document).ready(function () {
       orderId: order_id,
     };
 
-    if (context.productId && (context.action === 'refund' || context.action === 'ship')) {
+    if (context.productId && (context.action === 'refund' || context.action === 'ship' || context.action === 'capture')) {
       data.orderLines = [{
         id: context.productId,
         quantity: 1

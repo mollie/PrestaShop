@@ -21,6 +21,7 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MolliePaymentMailService;
 use Mollie\Service\RefundService;
 use Mollie\Service\ShipService;
+use Mollie\Service\CaptureService;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TimeUtility;
 
@@ -63,10 +64,16 @@ class AdminMollieAjaxController extends ModuleAdminController
                 $this->updateFixedPaymentFeePrice();
                 break;
             case 'refundAll':
+            case 'refund':
                 $this->processRefund();
                 break;
             case 'shipAll':
+            case 'ship':
                 $this->processShip();
+                break;
+            case 'captureAll':
+            case 'capture':
+                $this->processCapture();
                 break;
             default:
                 break;
@@ -253,6 +260,7 @@ class AdminMollieAjaxController extends ModuleAdminController
     private function processRefund(): void
     {
         $orderId = (int) Tools::getValue('orderId');
+        $orderLines = Tools::getValue('orderLines');
 
         try {
             $order = new Order($orderId);
@@ -265,9 +273,8 @@ class AdminMollieAjaxController extends ModuleAdminController
             $refundService = $this->module->getService(RefundService::class);
             $status = $refundService->doPaymentRefund($transactionId, null, [
                 'order' => $order,
+                'orderLines' => $orderLines,
             ]);
-
-            // TODO: Change order status to refunded
 
             $this->ajaxRender(json_encode($status));
         } catch (Exception $e) {
@@ -284,6 +291,8 @@ class AdminMollieAjaxController extends ModuleAdminController
     private function processShip(): void
     {
         $orderId = (int) Tools::getValue('orderId');
+        $orderLines = Tools::getValue('orderLines') ?: [];
+        $tracking = Tools::getValue('tracking');
 
         try {
             $order = new Order($orderId);
@@ -294,9 +303,37 @@ class AdminMollieAjaxController extends ModuleAdminController
 
             /** @var ShipService $shipService */
             $shipService = $this->module->getService(ShipService::class);
-            $status = $shipService->doPaymentShip($transactionId, $order->total_paid);
+            $status = $shipService->doShipOrderLines($transactionId, $orderLines, $tracking);
 
-            // TODO: Change order status to shipped
+            $this->ajaxRender(json_encode($status));
+        } catch (Throwable $e) {
+            $this->ajaxRender(
+                json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('An error occurred while processing the request.'),
+                    'error' => $e->getMessage(),
+                ])
+            );
+        }
+    }
+
+    private function processCapture(): void
+    {
+        $orderId = (int) Tools::getValue('orderId');
+        $orderLines = Tools::getValue('orderLines');
+
+        try {
+            $order = new Order($orderId);
+
+            /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+            $paymentMethodRepo = $this->module->getService(PaymentMethodRepositoryInterface::class);
+            $transactionId = $paymentMethodRepo->getPaymentBy('order_id', (string) $orderId)['transaction_id'];
+
+            /** @var CaptureService $captureService */
+            $captureService = $this->module->getService(CaptureService::class);
+            $status = $captureService->doPaymentCapture($transactionId, $order->total_paid);
+
+            $this->ajaxRender(json_encode($status));
         } catch (Throwable $e) {
             $this->ajaxRender(
                 json_encode([

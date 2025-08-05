@@ -56,9 +56,15 @@
               <td><strong>1x</strong> {$product.name|escape:'html':'UTF-8'}</td>
               <td>{$product.price|escape:'html':'UTF-8'}</td>
               <td>
-                <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-product="{$product.id}">
-                  <i class="icon-truck"></i> {l s='Ship' mod='mollie'}
-                </button>
+                {if $mollie_api_type == 'orders'}
+                  <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-product="{$product.id}">
+                    <i class="icon-truck"></i> {l s='Ship' mod='mollie'}
+                  </button>
+                {else}
+                  <button type="button" class="btn btn-default btn-xs mollie-capture-btn" data-product="{$product.id}">
+                    <i class="icon-money"></i> {l s='Capture' mod='mollie'}
+                  </button>
+                {/if}
                 <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-product="{$product.id}">
                   <i class="icon-undo"></i> {l s='Refund' mod='mollie'}
                 </button>
@@ -68,11 +74,18 @@
         {/foreach}
       </tbody>
     </table>
-    <button type="button" class="btn btn-default btn-block" id="mollie-ship-all">
-      <i class="icon-truck"></i> {l s='Ship All' mod='mollie'}
-    </button>
+    {if $mollie_api_type == 'orders'}
+      <button type="button" class="btn btn-default btn-block" id="mollie-ship-all">
+        <i class="icon-truck"></i> {l s='Ship All' mod='mollie'}
+      </button>
+    {else}
+      <button type="button" class="btn btn-default btn-block" id="mollie-capture-all">
+        <i class="icon-money"></i> {l s='Capture All' mod='mollie'}
+      </button>
+    {/if}
   </div>
 </div>
 
 {include file="module:mollie/views/templates/hook/partials/modal_refund.tpl"}
 {include file="module:mollie/views/templates/hook/partials/modal_ship.tpl"}
+{include file="module:mollie/views/templates/hook/partials/modal_capture.tpl"}

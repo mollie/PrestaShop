@@ -28,6 +28,7 @@ use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
+use Mollie\Service\ShipmentService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
 use Mollie\Subscription\Config\Config as SubscriptionConfig;
 use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
@@ -537,6 +538,9 @@ class Mollie extends PaymentModule
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
         $paymentMethodRepo = $this->getService(PaymentMethodRepositoryInterface::class);
 
+        /** @var ShipmentService $shipmentService */
+        $shipmentService = $this->getService(ShipmentService::class);
+
         $cartId = Cart::getCartIdByOrderId((int) $params['id_order']);
         $transaction = $paymentMethodRepo->getPaymentBy('cart_id', (string) $cartId);
         if (empty($transaction)) {
@@ -577,6 +581,7 @@ class Mollie extends PaymentModule
             'mollie_logo_path' => $this->getPathUri() . 'views/img/mollie_panel_icon.png',
             'mollie_transaction_id' => $mollieTransactionId,
             'mollie_api_type' => $mollieApiType,
+            'tracking' => $shipmentService->getShipmentInformation($order->reference),
         ]);
 
         return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');
