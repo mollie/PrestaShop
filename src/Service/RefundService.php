@@ -81,14 +81,14 @@ class RefundService
             }
         } catch (ApiException $e) {
             return [
-                'status' => 'fail',
-                'msg_fail' => $this->module->l('The order could not be refunded!', self::FILE_NAME),
-                'msg_details' => $this->module->l('Reason:', self::FILE_NAME) . ' ' . $e->getMessage(),
+                'success' => false,
+                'message' => $this->module->l('The order could not be refunded!', self::FILE_NAME),
+                'error' => $e->getMessage(),
             ];
         }
 
         return [
-            'status' => 'success',
+            'success' => true,
             'msg_success' => $this->module->l('The order has been refunded!', self::FILE_NAME),
             'msg_details' => $this->module->l('Mollie will transfer the amount back to the customer on the next business day.', self::FILE_NAME),
         ];

@@ -10,7 +10,7 @@
  * @codingStandardsIgnoreStart
  */
 
-use Exception;
+use Throwable;
 use Mollie\Adapter\Context;
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
@@ -264,28 +264,17 @@ class AdminMollieAjaxController extends ModuleAdminController
 
     private function processRefund(): void
     {
-        $orderId = (int) Tools::getValue('orderId');
-        $availableRefundAmount = [
-            'currency' => $this->module->getContext()->currency->iso_code,
-            'value' => Tools::getValue('refundAmount'),
-        ];
-
         try {
-            $order = new Order($orderId);
-
-            /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
-            $paymentMethodRepo = $this->module->getService(PaymentMethodRepositoryInterface::class);
-            $transactionId = $paymentMethodRepo->getPaymentBy('order_id', (string) $orderId)['transaction_id'];
+            $transactionId = Tools::getValue('transactionId');
+            $refundAmount = Tools::getValue('refundAmount') ?: null;
 
             /** @var RefundService $refundService */
             $refundService = $this->module->getService(RefundService::class);
-            $status = $refundService->doRefundOrderLines([
-                'id' => $transactionId,
-                'availableRefundAmount' => $availableRefundAmount,
-            ], $order->getProducts());
+
+            $status = $refundService->doPaymentRefund($transactionId, $refundAmount);
 
             $this->ajaxRender(json_encode($status));
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->ajaxRender(
                 json_encode([
                     'success' => false,

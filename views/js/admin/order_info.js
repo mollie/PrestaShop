@@ -127,7 +127,8 @@ $(document).ready(function () {
       ajax: 1,
       action: context.action,
       orderId: order_id,
-      refundAmount: context.amount
+      refundAmount: context.amount,
+      transactionId: context.transactionId,
     };
 
     if (context.productId && (context.action === 'refund' || context.action === 'ship' || context.action === 'capture')) {
