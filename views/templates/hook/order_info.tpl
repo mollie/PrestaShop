@@ -65,7 +65,7 @@
                     <i class="icon-money"></i> {l s='Capture' mod='mollie'}
                   </button>
                 {/if}
-                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-product="{$product.id}">
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-product="{$product.id}" {if $isRefunded}disabled{/if}>
                   <i class="icon-undo"></i> {l s='Refund' mod='mollie'}
                 </button>
               </td>
