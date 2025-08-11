@@ -20,14 +20,14 @@
       <label>{l s='Applicable to orders paid exclusively through Mollie' mod='mollie'}</label>
       <div class="radio">
         <label>
-          <input type="radio" name="refund_type" value="partial" id="mollie-partial-refund" />
+          <input type="radio" name="refund_type" value="partial" id="mollie-partial-refund" {if $isRefunded}disabled{/if} />
           {l s='Partial refund' mod='mollie'}
         </label>
         <span class="help-block">{l s='Refund a custom amount for partial order returns' mod='mollie'}</span>
       </div>
       <div class="radio">
         <label>
-          <input type="radio" name="refund_type" value="full" id="mollie-full-refund" checked />
+          <input type="radio" name="refund_type" value="full" id="mollie-full-refund" checked {if $isRefunded}disabled{/if} />
           {l s='Full refund' mod='mollie'}
         </label>
         <span class="help-block">{l s='Refund a custom amount for partial order returns' mod='mollie'}</span>
@@ -35,9 +35,9 @@
     </div>
     <div class="form-group">
       <label for="mollie-refund-amount">{l s='Refund amount (Max: %s)' sprintf=[$max_refund_amount] mod='mollie'}</label>
-      <input type="number" step="0.01" max="{$max_refund_amount}" class="form-control" id="mollie-refund-amount" value="{$max_refund_amount}" />
+      <input type="number" step="0.01" max="{$max_refund_amount}" class="form-control" id="mollie-refund-amount" value="{$max_refund_amount}" {if $isRefunded}disabled{/if} />
     </div>
-    <button type="button" class="btn btn-primary btn-block" id="mollie-initiate-refund">
+    <button type="button" class="btn btn-primary btn-block" id="mollie-initiate-refund" {if $isRefunded}disabled{/if}>
       <i class="icon-undo"></i> {l s='Initiate Refund' mod='mollie'}
     </button>
     <hr />

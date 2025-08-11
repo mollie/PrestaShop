@@ -142,4 +142,13 @@ class RefundService
             'detailed' => '',
         ];
     }
+
+    public function isRefunded(string $transactionId, float $amount): bool
+    {
+        /** @var Payment $payment */
+        $payment = $this->module->getApiClient()->payments->get($transactionId);
+        $refundedAmount = (float) RefundUtility::getRefundedAmount(iterator_to_array($payment->refunds()));
+
+        return $refundedAmount >= $amount;
+    }
 }

@@ -28,6 +28,7 @@ use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
+use Mollie\Service\RefundService;
 use Mollie\Service\ShipmentService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
 use Mollie\Subscription\Config\Config as SubscriptionConfig;
@@ -542,6 +543,9 @@ class Mollie extends PaymentModule
         /** @var ShipmentService $shipmentService */
         $shipmentService = $this->getService(ShipmentService::class);
 
+        /** @var RefundService $refundService */
+        $refundService = $this->getService(RefundService::class);
+
         $cartId = Cart::getCartIdByOrderId((int) $params['id_order']);
         $transaction = $paymentMethodRepo->getPaymentBy('cart_id', (string) $cartId);
         if (empty($transaction)) {
@@ -583,6 +587,7 @@ class Mollie extends PaymentModule
             'mollie_transaction_id' => $mollieTransactionId,
             'mollie_api_type' => $mollieApiType,
             'tracking' => $shipmentService->getShipmentInformation($order->reference),
+            'isRefunded' => $refundService->isRefunded($mollieTransactionId, $maxRefundAmount),
         ]);
 
         return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');
