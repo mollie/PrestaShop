@@ -145,6 +145,12 @@ class RefundService
 
     public function isRefunded(string $transactionId, float $amount): bool
     {
+        if (TransactionUtility::isOrderTransaction($transactionId)) {
+            $transaction = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
+        } else {
+            $transaction = $this->module->getApiClient()->payments->get($transactionId);
+        }
+
         /** @var Payment $payment */
         $payment = $this->module->getApiClient()->payments->get($transactionId);
         $refundedAmount = (float) RefundUtility::getRefundedAmount(iterator_to_array($payment->refunds()));
