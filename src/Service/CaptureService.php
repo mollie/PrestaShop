@@ -14,6 +14,8 @@ namespace Mollie\Service;
 
 use Mollie;
 use Mollie\Utility\TextFormatUtility;
+use Mollie\Api\Resources\Capture;
+use Mollie\Api\Resources\Payment;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -53,9 +55,9 @@ class CaptureService
                         'value' => TextFormatUtility::formatNumber($amount, 2, '.', ''),
                     ],
                 ];
-                $this->module->getApiClient()->paymentCaptures->createForId($transactionId, $captureData);
+                $capture = $this->module->getApiClient()->paymentCaptures->createForId($transactionId, $captureData);
             } else {
-                $this->module->getApiClient()->paymentCaptures->createForId($transactionId);
+                $capture = $this->module->getApiClient()->paymentCaptures->createForId($transactionId);
             }
 
             return [
@@ -70,5 +72,16 @@ class CaptureService
                 'detailed' => $e->getMessage(),
             ];
         }
+    }
+
+    public function isCaptured(string $transactionId): bool
+    {
+        /** @var Payment $payment */
+        $payment = $this->module->getApiClient()->payments->get($transactionId);
+
+        /** @var Capture $captureAmount */
+        $captureAmount = $payment->captures();
+
+        return (float) $captureAmount->value === (float) $payment->amount->value;
     }
 }

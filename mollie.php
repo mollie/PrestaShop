@@ -49,7 +49,7 @@ use Mollie\Verification\IsPaymentInformationAvailable;
 use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Response;
-use Mollie\Loader\OrderManagementAssetLoaderInterface;
+use Mollie\Service\CaptureService;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -546,6 +546,9 @@ class Mollie extends PaymentModule
         /** @var RefundService $refundService */
         $refundService = $this->getService(RefundService::class);
 
+        /** @var CaptureService $captureService */
+        $captureService = $this->getService(CaptureService::class);
+
         $cartId = Cart::getCartIdByOrderId((int) $params['id_order']);
         $transaction = $paymentMethodRepo->getPaymentBy('cart_id', (string) $cartId);
         if (empty($transaction)) {
@@ -587,7 +590,8 @@ class Mollie extends PaymentModule
             'mollie_transaction_id' => $mollieTransactionId,
             'mollie_api_type' => $mollieApiType,
             'tracking' => $shipmentService->getShipmentInformation($order->reference),
-            'isRefunded' => $refundService->isRefunded($mollieTransactionId, $maxRefundAmount),
+            'isRefunded' => $refundService->isRefunded($mollieTransactionId, (float) $maxRefundAmount),
+            'isCaptured' => $captureService->isCaptured($mollieTransactionId),
         ]);
 
         return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');

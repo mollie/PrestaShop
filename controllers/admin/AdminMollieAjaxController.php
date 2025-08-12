@@ -317,7 +317,6 @@ class AdminMollieAjaxController extends ModuleAdminController
     private function processCapture(): void
     {
         $orderId = (int) Tools::getValue('orderId');
-        $orderLines = Tools::getValue('orderLines');
 
         try {
             $order = new Order($orderId);

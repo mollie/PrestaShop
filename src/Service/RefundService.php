@@ -54,11 +54,12 @@ class RefundService
      * @since 3.3.0 Renamed `doRefund` to `doPaymentRefund`, added `$amount`
      * @since 3.3.2 Omit $orderId
      */
-    public function doPaymentRefund($transactionId, $amount = null)
+    public function doPaymentRefund(string $transactionId, float $amount = null)
     {
         try {
             /** @var Payment $payment */
             $payment = $this->module->getApiClient()->payments->get($transactionId);
+
             if ($amount) {
                 $payment->refund([
                     'amount' => [
