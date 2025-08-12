@@ -79,9 +79,9 @@ class CaptureService
         /** @var Payment $payment */
         $payment = $this->module->getApiClient()->payments->get($transactionId);
 
-        /** @var Capture $captureAmount */
-        $captureAmount = $payment->captures();
+        $status = $payment->status;
+        $amount = $payment->amount;
 
-        return (float) $captureAmount->value === (float) $payment->amount->value;
+        return $status === 'paid' || $amount->value === $amount->settlementAmount->value;
     }
 }

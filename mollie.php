@@ -572,7 +572,7 @@ class Mollie extends PaymentModule
         }
 
         $order = new Order($params['id_order']);
-        $maxRefundAmount = (float) $order->total_paid;
+
         $products = array_map(function($product) {
             return [
                 'id' => $product['id_order_detail'],
@@ -584,13 +584,13 @@ class Mollie extends PaymentModule
 
         $this->context->smarty->assign([
             'order_reference' => $order->reference,
-            'max_refund_amount' => $maxRefundAmount,
+            'max_refund_amount' => (float) $order->total_paid,
             'products' => $products,
             'mollie_logo_path' => $this->getPathUri() . 'views/img/mollie_panel_icon.png',
             'mollie_transaction_id' => $mollieTransactionId,
             'mollie_api_type' => $mollieApiType,
             'tracking' => $shipmentService->getShipmentInformation($order->reference),
-            'isRefunded' => $refundService->isRefunded($mollieTransactionId, (float) $maxRefundAmount),
+            'isRefunded' => $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid),
             'isCaptured' => $captureService->isCaptured($mollieTransactionId),
         ]);
 

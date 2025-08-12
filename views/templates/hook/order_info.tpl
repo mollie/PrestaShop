@@ -61,7 +61,7 @@
                     <i class="icon-truck"></i> {l s='Ship' mod='mollie'}
                   </button>
                 {else}
-                  <button type="button" class="btn btn-default btn-xs mollie-capture-btn" data-product="{$product.id}">
+                  <button type="button" class="btn btn-default btn-xs mollie-capture-btn" data-product="{$product.id}" {if $isRefunded || $isCaptured}disabled{/if}>
                     <i class="icon-money"></i> {l s='Capture' mod='mollie'}
                   </button>
                 {/if}
@@ -79,7 +79,7 @@
         <i class="icon-truck"></i> {l s='Ship All' mod='mollie'}
       </button>
     {else}
-      <button type="button" class="btn btn-default btn-block" id="mollie-capture-all">
+      <button type="button" class="btn btn-default btn-block" id="mollie-capture-all" {if $isCaptured || $isRefunded}disabled{/if}>
         <i class="icon-money"></i> {l s='Capture All' mod='mollie'}
       </button>
     {/if}
