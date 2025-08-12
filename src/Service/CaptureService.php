@@ -14,8 +14,8 @@ namespace Mollie\Service;
 
 use Mollie;
 use Mollie\Utility\TextFormatUtility;
-use Mollie\Api\Resources\Capture;
 use Mollie\Api\Resources\Payment;
+use Mollie\Utility\TransactionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -76,8 +76,9 @@ class CaptureService
 
     public function isCaptured(string $transactionId): bool
     {
-        /** @var Payment $payment */
-        $payment = $this->module->getApiClient()->payments->get($transactionId);
+        $payment = TransactionUtility::isOrderTransaction($transactionId)
+            ? $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments'])
+            : $this->module->getApiClient()->payments->get($transactionId);
 
         $status = $payment->status;
         $amount = $payment->amount;
