@@ -69,19 +69,22 @@ $(document).ready(function () {
 
   $('.mollie-refund-btn').on('click', function() {
     var productId = $(this).data('product');
-    var amount = $(this).closest('tr').find('td:nth-child(2)').text().replace(/[^0-9.,]/g, '');
-    // For individual product refunds, always use the product amount (partial refund)
+    var amount = $(this).data('price');
+
     showModal('refund', productId, amount);
   });
 
   $('.mollie-ship-btn').on('click', function() {
     var productId = $(this).data('product');
+
     showModal('ship', productId);
   });
 
   $('.mollie-capture-btn').on('click', function() {
     var productId = $(this).data('product');
-    showModal('capture', productId);
+    var amount = $(this).data('price');
+
+    showModal('capture', productId, amount);
   });
 
   $('#mollie-initiate-refund').on('click', function() {
@@ -130,6 +133,11 @@ $(document).ready(function () {
       refundAmount: context.amount,
       transactionId: context.transactionId,
     };
+
+    // Add capture amount for capture actions
+    if (context.action === 'capture' || context.action === 'captureAll') {
+      data.captureAmount = context.amount;
+    }
 
     if (context.productId && (context.action === 'refund' || context.action === 'ship' || context.action === 'capture')) {
       data.orderLines = [{

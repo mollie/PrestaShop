@@ -60,24 +60,30 @@ class RefundService
             /** @var Payment $payment */
             $payment = $this->module->getApiClient()->payments->get($transactionId);
 
+            $currency = (string) $payment->amount->currency;
+
             if ($amount) {
+                $refundAmount = TextFormatUtility::formatNumber($amount, 2);
+            } else {
+                $settlementAmount = (float) $payment->settlementAmount->value;
+                $refundedAmount = (float) RefundUtility::getRefundedAmount(iterator_to_array($payment->refunds()));
+                $refundableAmount = RefundUtility::getRefundableAmount($settlementAmount, $refundedAmount);
+
+                if ($refundableAmount <= 0) {
+                    return [
+                        'success' => false,
+                        'message' => $this->module->l('No refundable amount available.', self::FILE_NAME),
+                    ];
+                }
+
+                $refundAmount = TextFormatUtility::formatNumber($refundableAmount, 2);
+            }
+
+            if (isset($refundAmount) && (float) $refundAmount > 0) {
                 $payment->refund([
                     'amount' => [
-                        'currency' => (string) $payment->amount->currency,
-                        'value' => (string) TextFormatUtility::formatNumber($amount, 2),
-                    ],
-                ]);
-            } elseif ((float) $payment->settlementAmount->value - (float) $payment->amountRefunded->value > 0) {
-                $payment->refund([
-                    'amount' => [
-                        'currency' => (string) $payment->amount->currency,
-                        'value' => (string) TextFormatUtility::formatNumber(
-                            RefundUtility::getRefundableAmount(
-                                (float) $payment->settlementAmount->value,
-                                (float) RefundUtility::getRefundedAmount(iterator_to_array($payment->refunds()))
-                            ),
-                            2
-                        ),
+                        'currency' => $currency,
+                        'value' => (string) $refundAmount,
                     ],
                 ]);
             }

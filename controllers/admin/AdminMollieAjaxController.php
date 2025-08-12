@@ -317,6 +317,7 @@ class AdminMollieAjaxController extends ModuleAdminController
     private function processCapture(): void
     {
         $orderId = (int) Tools::getValue('orderId');
+        $captureAmount = Tools::getValue('captureAmount') ?: null;
 
         try {
             $order = new Order($orderId);
@@ -327,7 +328,10 @@ class AdminMollieAjaxController extends ModuleAdminController
 
             /** @var CaptureService $captureService */
             $captureService = $this->module->getService(CaptureService::class);
-            $status = $captureService->doPaymentCapture($transactionId, $order->total_paid);
+
+            // Use provided amount for individual product capture, or full order amount for capture all
+            $amount = $captureAmount ? (float) $captureAmount : $order->total_paid;
+            $status = $captureService->doPaymentCapture($transactionId, $amount);
 
             $this->ajaxRender(json_encode($status));
         } catch (Throwable $e) {
