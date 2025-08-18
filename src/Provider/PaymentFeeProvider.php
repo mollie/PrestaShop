@@ -70,14 +70,16 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
     private $paymentFeeValidator;
     /** @var LoggerInterface */
     private $logger;
-
+    /** @var PaymentFeeCalculator */
+    private $paymentFeeCalculator;
     public function __construct(
         Context $context,
         AddressRepositoryInterface $addressRepository,
         TaxCalculatorProvider $taxProvider,
         ModuleFactory $module,
         PaymentFeeValidator $paymentFeeValidator,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        PaymentFeeCalculator $paymentFeeCalculator
     ) {
         $this->context = $context;
         $this->addressRepository = $addressRepository;
@@ -85,6 +87,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
         $this->module = $module->getModule();
         $this->paymentFeeValidator = $paymentFeeValidator;
         $this->logger = $logger;
+        $this->paymentFeeCalculator = $paymentFeeCalculator;
     }
 
     /**
@@ -109,29 +112,21 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
                 return new PaymentFeeData(0.00, 0.00, 0.00, false);
             }
 
-            $taxCalculator = $this->taxProvider->getTaxCalculator(
-                (int) $paymentMethod->tax_rules_group_id,
-                (int) $address->id_country,
-                (int) $address->id_state
-            );
-
-            $paymentFeeCalculator = new PaymentFeeCalculator($taxCalculator, $this->context);
-
             switch ($paymentMethod->surcharge) {
                 case Config::FEE_FIXED_FEE:
-                    $paymentFeeData = $paymentFeeCalculator->calculateFixedFee(
+                    $paymentFeeData = $this->paymentFeeCalculator->calculateFixedFee(
                         $surchargeFixedPriceTaxExcl
                     );
                     break;
                 case Config::FEE_PERCENTAGE:
-                    $paymentFeeData = $paymentFeeCalculator->calculatePercentageFee(
+                    $paymentFeeData = $this->paymentFeeCalculator->calculatePercentageFee(
                         $totalCartPriceTaxIncl,
                         $surchargePercentage,
                         $surchargeLimit
                     );
                     break;
                 case Config::FEE_FIXED_FEE_AND_PERCENTAGE:
-                    $paymentFeeData = $paymentFeeCalculator->calculatePercentageAndFixedPriceFee(
+                    $paymentFeeData = $this->paymentFeeCalculator->calculatePercentageAndFixedPriceFee(
                         $totalCartPriceTaxIncl,
                         $surchargePercentage,
                         $surchargeFixedPriceTaxExcl,
