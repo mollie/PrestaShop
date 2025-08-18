@@ -103,6 +103,8 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
 
+        $paymentFeeData = null;
+
         try {
             $paymentFeeData = $paymentFeeProvider->getPaymentFee($molPaymentMethod, (float) $cart->getOrderTotal());
         } catch (FailedToProvidePaymentFeeException $exception) {
