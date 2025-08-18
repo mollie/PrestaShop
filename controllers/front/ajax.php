@@ -15,6 +15,8 @@ use Mollie\Adapter\ToolsAdapter;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
+use Mollie\Exception\InvalidPaymentFeePercentageException;
+use Mollie\Exception\PaymentFeeExceedsCartAmountException;
 use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
@@ -114,6 +116,32 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
             ];
 
             $logger->error('Failed to get payment fee data.', [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+
+            $this->returnDefaultOrderSummaryBlock($cart, $errorData);
+
+            exit;
+        } catch (InvalidPaymentFeePercentageException $exception) {
+            $errorData = [
+                'error' => true,
+                'message' => $exception->getMessage(),
+            ];
+
+            $logger->error('Invalid payment fee percentage.', [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+
+            $this->returnDefaultOrderSummaryBlock($cart, $errorData);
+
+            exit;
+        } catch (PaymentFeeExceedsCartAmountException $exception) {
+            $errorData = [
+                'error' => true,
+                'message' => $exception->getMessage(),
+            ];
+
+            $logger->error('Payment fee exceeds cart amount.', [
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 

@@ -20,6 +20,7 @@ use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\PaymentFeeProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\AddressRepositoryInterface;
+use Mollie\Validator\PaymentFeeValidator;
 use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
 use TaxCalculator;
@@ -46,6 +47,8 @@ class PaymentFeeProviderTest extends TestCase
     private $moduleFactory;
     /** @var Mollie */
     private $module;
+    /** @var PaymentFeeValidator */
+    private $paymentFeeValidator;
 
     public function setUp()
     {
@@ -62,6 +65,7 @@ class PaymentFeeProviderTest extends TestCase
         $this->module = $this->createMock(Mollie::class);
         $this->moduleFactory = $this->createMock(ModuleFactory::class);
         $this->moduleFactory->method('getModule')->willReturn($this->module);
+        $this->paymentFeeValidator = $this->createMock(PaymentFeeValidator::class);
     }
 
     public function testItSuccessfullyProvidesFixedPaymentFee(): void
@@ -94,7 +98,8 @@ class PaymentFeeProviderTest extends TestCase
             $this->context,
             $this->addressRepository,
             $this->taxCalculatorProvider,
-            $this->moduleFactory
+            $this->moduleFactory,
+            $this->paymentFeeValidator
         );
 
         $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
@@ -131,7 +136,8 @@ class PaymentFeeProviderTest extends TestCase
             $this->context,
             $this->addressRepository,
             $this->taxCalculatorProvider,
-            $this->moduleFactory
+            $this->moduleFactory,
+            $this->paymentFeeValidator
         );
 
         $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
@@ -169,7 +175,8 @@ class PaymentFeeProviderTest extends TestCase
             $this->context,
             $this->addressRepository,
             $this->taxCalculatorProvider,
-            $this->moduleFactory
+            $this->moduleFactory,
+            $this->paymentFeeValidator
         );
 
         $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
@@ -203,7 +210,8 @@ class PaymentFeeProviderTest extends TestCase
             $this->context,
             $this->addressRepository,
             $this->taxCalculatorProvider,
-            $this->moduleFactory
+            $this->moduleFactory,
+            $this->paymentFeeValidator
         );
 
         $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
@@ -226,7 +234,8 @@ class PaymentFeeProviderTest extends TestCase
             $this->context,
             $this->addressRepository,
             $this->taxCalculatorProvider,
-            $this->moduleFactory
+            $this->moduleFactory,
+            $this->paymentFeeValidator
         );
 
         $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
@@ -247,7 +256,8 @@ class PaymentFeeProviderTest extends TestCase
             $this->context,
             $this->addressRepository,
             $this->taxCalculatorProvider,
-            $this->moduleFactory
+            $this->moduleFactory,
+            $this->paymentFeeValidator
         );
 
         $result = $paymentFeeProvider->getPaymentFeeText(10.0);
@@ -265,7 +275,8 @@ class PaymentFeeProviderTest extends TestCase
             $this->context,
             $this->addressRepository,
             $this->taxCalculatorProvider,
-            $this->moduleFactory
+            $this->moduleFactory,
+            $this->paymentFeeValidator
         );
 
         $result = $paymentFeeProvider->getPaymentFeeText(-5.0);
@@ -284,7 +295,8 @@ class PaymentFeeProviderTest extends TestCase
             $this->context,
             $this->addressRepository,
             $this->taxCalculatorProvider,
-            $this->moduleFactory
+            $this->moduleFactory,
+            $this->paymentFeeValidator
         );
 
         $result = $paymentFeeProvider->getPaymentFeeText(0.0);

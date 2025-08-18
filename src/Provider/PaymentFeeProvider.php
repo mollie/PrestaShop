@@ -44,7 +44,11 @@ use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Repository\AddressRepositoryInterface;
+use Mollie\Utility\ExceptionUtility;
+use Mollie\Validator\PaymentFeeValidator;
+use Mollie\Logger\LoggerInterface;
 use MolPaymentMethod;
+use Throwable;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -62,17 +66,25 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
     private $taxProvider;
     /** @var Mollie */
     private $module;
+    /** @var PaymentFeeValidator */
+    private $paymentFeeValidator;
+    /** @var LoggerInterface */
+    private $logger;
 
     public function __construct(
         Context $context,
         AddressRepositoryInterface $addressRepository,
         TaxCalculatorProvider $taxProvider,
-        ModuleFactory $module
+        ModuleFactory $module,
+        PaymentFeeValidator $paymentFeeValidator,
+        LoggerInterface $logger
     ) {
         $this->context = $context;
         $this->addressRepository = $addressRepository;
         $this->taxProvider = $taxProvider;
         $this->module = $module->getModule();
+        $this->paymentFeeValidator = $paymentFeeValidator;
+        $this->logger = $logger;
     }
 
     /**
@@ -80,51 +92,70 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
      */
     public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl): PaymentFeeData
     {
-        // TODO handle exception on all calls.
-        $surchargeFixedPriceTaxExcl = (float) $paymentMethod->surcharge_fixed_amount_tax_excl;
-        $surchargePercentage = (float) $paymentMethod->surcharge_percentage;
-        $surchargeLimit = (float) $paymentMethod->surcharge_limit;
+        try {
+            $this->paymentFeeValidator->validatePaymentFeePercentage($paymentMethod);
 
-        /** @var Address|null $address */
-        $address = $this->addressRepository->findOneBy([
-            'id_address' => $this->context->getCustomerAddressInvoiceId(),
-            'deleted' => 0,
-        ]);
+            $surchargeFixedPriceTaxExcl = (float) $paymentMethod->surcharge_fixed_amount_tax_excl;
+            $surchargePercentage = (float) $paymentMethod->surcharge_percentage;
+            $surchargeLimit = (float) $paymentMethod->surcharge_limit;
 
-        if (!$address || !$address->id) {
+            /** @var Address|null $address */
+            $address = $this->addressRepository->findOneBy([
+                'id_address' => $this->context->getCustomerAddressInvoiceId(),
+                'deleted' => 0,
+            ]);
+
+            if (!$address || !$address->id) {
+                return new PaymentFeeData(0.00, 0.00, 0.00, false);
+            }
+
+            $taxCalculator = $this->taxProvider->getTaxCalculator(
+                (int) $paymentMethod->tax_rules_group_id,
+                (int) $address->id_country,
+                (int) $address->id_state
+            );
+
+            $paymentFeeCalculator = new PaymentFeeCalculator($taxCalculator, $this->context);
+
+            // TODO it would be good to use Abstract class, which would hold common private methods and then create separate services, which would provide calculated fee.
+            $paymentFeeData = null;
+
+            switch ($paymentMethod->surcharge) {
+                case Config::FEE_FIXED_FEE:
+                    $paymentFeeData = $paymentFeeCalculator->calculateFixedFee(
+                        $surchargeFixedPriceTaxExcl
+                    );
+                    break;
+                case Config::FEE_PERCENTAGE:
+                    $paymentFeeData = $paymentFeeCalculator->calculatePercentageFee(
+                        $totalCartPriceTaxIncl,
+                        $surchargePercentage,
+                        $surchargeLimit
+                    );
+                    break;
+                case Config::FEE_FIXED_FEE_AND_PERCENTAGE:
+                    $paymentFeeData = $paymentFeeCalculator->calculatePercentageAndFixedPriceFee(
+                        $totalCartPriceTaxIncl,
+                        $surchargePercentage,
+                        $surchargeFixedPriceTaxExcl,
+                        $surchargeLimit
+                    );
+                    break;
+                default:
+                    $paymentFeeData = new PaymentFeeData(0.00, 0.00, 0.00, false);
+            }
+
+            $this->paymentFeeValidator->validatePaymentFeeAmount($paymentFeeData, $totalCartPriceTaxIncl);
+
+            return $paymentFeeData;
+        } catch (Throwable $e) {
+            $this->logger->error(sprintf('%s - Error while calculating payment fee', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+
+            // TODO: should we throw an exception?
             return new PaymentFeeData(0.00, 0.00, 0.00, false);
         }
-
-        $taxCalculator = $this->taxProvider->getTaxCalculator(
-            (int) $paymentMethod->tax_rules_group_id,
-            (int) $address->id_country,
-            (int) $address->id_state
-        );
-
-        $paymentFeeCalculator = new PaymentFeeCalculator($taxCalculator, $this->context);
-
-        // TODO it would be good to use Abstract class, which would hold common private methods and then create separate services, which would provide calculated fee.
-        switch ($paymentMethod->surcharge) {
-            case Config::FEE_FIXED_FEE:
-                return $paymentFeeCalculator->calculateFixedFee(
-                    $surchargeFixedPriceTaxExcl
-                );
-            case Config::FEE_PERCENTAGE:
-                return $paymentFeeCalculator->calculatePercentageFee(
-                    $totalCartPriceTaxIncl,
-                    $surchargePercentage,
-                    $surchargeLimit
-                );
-            case Config::FEE_FIXED_FEE_AND_PERCENTAGE:
-                return $paymentFeeCalculator->calculatePercentageAndFixedPriceFee(
-                    $totalCartPriceTaxIncl,
-                    $surchargePercentage,
-                    $surchargeFixedPriceTaxExcl,
-                    $surchargeLimit
-                );
-        }
-
-        return new PaymentFeeData(0.00, 0.00, 0.00, false);
     }
 
     public function getPaymentFeeText(float $paymentFeeTaxIncl): string
