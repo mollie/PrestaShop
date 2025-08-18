@@ -38,7 +38,7 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
     /** @var Mollie */
     public $module;
 
-    public function postProcess(): void
+    public function postProcess()
     {
         /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
@@ -71,23 +71,19 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         $paymentMethodId = (int) $tools->getValue('paymentMethodId');
 
         if (!$paymentMethodId) {
-            $errorData = [
+            $this->returnDefaultOrderSummaryBlock($cart, [
                 'error' => true,
                 'message' => 'Failed to get payment method ID.',
-            ];
-
-            $this->returnDefaultOrderSummaryBlock($cart, $errorData);
+            ]);
         }
 
         $molPaymentMethod = new MolPaymentMethod($paymentMethodId);
 
         if (!$molPaymentMethod->id) {
-            $errorData = [
+            $this->returnDefaultOrderSummaryBlock($cart, [
                 'error' => true,
                 'message' => 'Failed to find payment method.',
-            ];
-
-            $this->returnDefaultOrderSummaryBlock($cart, $errorData);
+            ]);
         }
 
         /** @var CurrencyRepositoryInterface $currencyRepository */
@@ -110,29 +106,28 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         try {
             $paymentFeeData = $paymentFeeProvider->getPaymentFee($molPaymentMethod, (float) $cart->getOrderTotal());
         } catch (FailedToProvidePaymentFeeException $exception) {
-            $errorData = [
-                'error' => true,
-                'message' => 'Failed to get payment fee data.',
-            ];
-
             $logger->error('Failed to get payment fee data.', [
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
-            $this->returnDefaultOrderSummaryBlock($cart, $errorData);
+            $this->returnDefaultOrderSummaryBlock($cart, [
+                'error' => true,
+                'message' => 'Failed to get payment fee data.',
+            ]);
 
             exit;
         } catch (InvalidPaymentFeePercentageException $exception) {
-            $errorData = [
-                'error' => true,
-                'message' => $exception->getMessage(),
-            ];
-
-            $logger->error('Invalid payment fee percentage.', [
+            $logger->debug('Invalid payment fee percentage. Removing payment fee from cart.', [
                 'exceptions' => ExceptionUtility::getExceptions($exception),
+                'payment_fee' => $paymentFeeData->getPaymentFeeTaxIncl(),
+                'cart_amount' => $cart->getOrderTotal(),
+                'id_cart' => $cart->id,
             ]);
 
-            $this->returnDefaultOrderSummaryBlock($cart, $errorData);
+            $this->returnDefaultOrderSummaryBlock($cart, [
+                'error' => true,
+                'message' => $exception->getMessage(),
+            ]);
 
             exit;
         } catch (PaymentFeeExceedsCartAmountException $exception) {
@@ -141,8 +136,11 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
                 'message' => $exception->getMessage(),
             ];
 
-            $logger->error('Payment fee exceeds cart amount.', [
+            $logger->debug('Payment fee exceeds cart amount. Removing payment fee from cart.', [
                 'exceptions' => ExceptionUtility::getExceptions($exception),
+                'payment_fee' => $paymentFeeData->getPaymentFeeTaxIncl(),
+                'cart_amount' => $cart->getOrderTotal(),
+                'id_cart' => $cart->id,
             ]);
 
             $this->returnDefaultOrderSummaryBlock($cart, $errorData);
