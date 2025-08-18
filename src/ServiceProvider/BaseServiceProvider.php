@@ -123,6 +123,7 @@ use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPayme
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProvider;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
+use Mollie\Validator\PaymentFeeValidator;
 use Mollie\Service\Shipment\ShipmentInformationSender;
 use Mollie\Service\Shipment\ShipmentInformationSenderInterface;
 use Mollie\Service\ShipmentService;
@@ -226,7 +227,6 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, 'MolPaymentMethodLang');
 
         $this->addService($container, OrderTotalProviderInterface::class, $container->get(OrderTotalProvider::class));
-        $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
 
         $this->addService($container, EnvironmentVersionProviderInterface::class, $container->get(EnvironmentVersionProvider::class));
 
