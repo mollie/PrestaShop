@@ -33,7 +33,7 @@ class PaymentFeeValidator
 
             $percentage = (float) $paymentMethod->surcharge_percentage;
 
-            if ($percentage < self::MAX_NEGATIVE_PERCENTAGE) {
+            if ($percentage <= self::MAX_NEGATIVE_PERCENTAGE) {
                 throw new InvalidPaymentFeePercentageException(
                     sprintf('Payment fee percentage cannot be less than %d%%. Current value: %.2f%%',
                         self::MAX_NEGATIVE_PERCENTAGE,
@@ -48,7 +48,7 @@ class PaymentFeeValidator
     {
         $paymentFeeAmount = $paymentFeeData->getPaymentFeeTaxIncl();
 
-        if ($paymentFeeAmount < 0 && abs($paymentFeeAmount) > $cartAmount) {
+        if ($paymentFeeAmount < 0 && abs($paymentFeeAmount) >= $cartAmount) {
             throw new PaymentFeeExceedsCartAmountException(
                 sprintf('Negative payment fee amount (%.2f) cannot exceed cart amount (%.2f)',
                     abs($paymentFeeAmount),
