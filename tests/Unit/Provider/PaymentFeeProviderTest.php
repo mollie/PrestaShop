@@ -31,6 +31,7 @@ class PaymentFeeProviderTest extends TestCase
 {
     /** @var Context */
     private $context;
+
     /** @var AddressRepositoryInterface */
     private $addressRepository;
 
@@ -45,16 +46,21 @@ class PaymentFeeProviderTest extends TestCase
 
     /** @var TaxCalculator */
     private $taxCalculator;
+
     /** @var ModuleFactory */
     private $moduleFactory;
     /** @var Mollie */
     private $module;
+
     /** @var PaymentFeeValidator */
     private $paymentFeeValidator;
+
     /** @var LoggerInterface */
     private $logger;
+
     /** @var PaymentFeeCalculator */
     private $paymentFeeCalculator;
+
     public function setUp()
     {
         parent::setUp();
@@ -295,7 +301,9 @@ class PaymentFeeProviderTest extends TestCase
             $this->addressRepository,
             $this->taxCalculatorProvider,
             $this->moduleFactory,
-            $this->paymentFeeValidator
+            $this->paymentFeeValidator,
+            $this->logger,
+            $this->paymentFeeCalculator
         );
 
         $result = $paymentFeeProvider->getPaymentFeeText(-5.0);
