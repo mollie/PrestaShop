@@ -24,6 +24,8 @@ use Mollie\Validator\PaymentFeeValidator;
 use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
 use TaxCalculator;
+use Mollie\Logger\LoggerInterface;
+use Mollie\Calculator\PaymentFeeCalculator;
 
 class PaymentFeeProviderTest extends TestCase
 {
@@ -49,7 +51,10 @@ class PaymentFeeProviderTest extends TestCase
     private $module;
     /** @var PaymentFeeValidator */
     private $paymentFeeValidator;
-
+    /** @var LoggerInterface */
+    private $logger;
+    /** @var PaymentFeeCalculator */
+    private $paymentFeeCalculator;
     public function setUp()
     {
         parent::setUp();
@@ -66,6 +71,8 @@ class PaymentFeeProviderTest extends TestCase
         $this->moduleFactory = $this->createMock(ModuleFactory::class);
         $this->moduleFactory->method('getModule')->willReturn($this->module);
         $this->paymentFeeValidator = $this->createMock(PaymentFeeValidator::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->paymentFeeCalculator = $this->createMock(PaymentFeeCalculator::class);
     }
 
     public function testItSuccessfullyProvidesFixedPaymentFee(): void
@@ -99,7 +106,9 @@ class PaymentFeeProviderTest extends TestCase
             $this->addressRepository,
             $this->taxCalculatorProvider,
             $this->moduleFactory,
-            $this->paymentFeeValidator
+            $this->paymentFeeValidator,
+            $this->logger,
+            $this->paymentFeeCalculator
         );
 
         $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
@@ -137,7 +146,9 @@ class PaymentFeeProviderTest extends TestCase
             $this->addressRepository,
             $this->taxCalculatorProvider,
             $this->moduleFactory,
-            $this->paymentFeeValidator
+            $this->paymentFeeValidator,
+            $this->logger,
+            $this->paymentFeeCalculator
         );
 
         $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
@@ -176,7 +187,9 @@ class PaymentFeeProviderTest extends TestCase
             $this->addressRepository,
             $this->taxCalculatorProvider,
             $this->moduleFactory,
-            $this->paymentFeeValidator
+            $this->paymentFeeValidator,
+            $this->logger,
+            $this->paymentFeeCalculator
         );
 
         $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
@@ -211,7 +224,9 @@ class PaymentFeeProviderTest extends TestCase
             $this->addressRepository,
             $this->taxCalculatorProvider,
             $this->moduleFactory,
-            $this->paymentFeeValidator
+            $this->paymentFeeValidator,
+            $this->logger,
+            $this->paymentFeeCalculator
         );
 
         $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
@@ -235,7 +250,9 @@ class PaymentFeeProviderTest extends TestCase
             $this->addressRepository,
             $this->taxCalculatorProvider,
             $this->moduleFactory,
-            $this->paymentFeeValidator
+            $this->paymentFeeValidator,
+            $this->logger,
+            $this->paymentFeeCalculator
         );
 
         $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
@@ -257,7 +274,9 @@ class PaymentFeeProviderTest extends TestCase
             $this->addressRepository,
             $this->taxCalculatorProvider,
             $this->moduleFactory,
-            $this->paymentFeeValidator
+            $this->paymentFeeValidator,
+            $this->logger,
+            $this->paymentFeeCalculator
         );
 
         $result = $paymentFeeProvider->getPaymentFeeText(10.0);
@@ -296,7 +315,9 @@ class PaymentFeeProviderTest extends TestCase
             $this->addressRepository,
             $this->taxCalculatorProvider,
             $this->moduleFactory,
-            $this->paymentFeeValidator
+            $this->paymentFeeValidator,
+            $this->logger,
+            $this->paymentFeeCalculator
         );
 
         $result = $paymentFeeProvider->getPaymentFeeText(0.0);
