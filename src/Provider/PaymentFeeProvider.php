@@ -60,22 +60,25 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
 
     /** @var Context */
     private $context;
+
     /** @var AddressRepositoryInterface */
     private $addressRepository;
-    /** @var TaxCalculatorProvider */
-    private $taxProvider;
+
     /** @var Mollie */
     private $module;
+
     /** @var PaymentFeeValidator */
     private $paymentFeeValidator;
+
     /** @var LoggerInterface */
     private $logger;
+
     /** @var PaymentFeeCalculator */
     private $paymentFeeCalculator;
+
     public function __construct(
         Context $context,
         AddressRepositoryInterface $addressRepository,
-        TaxCalculatorProvider $taxProvider,
         ModuleFactory $module,
         PaymentFeeValidator $paymentFeeValidator,
         LoggerInterface $logger,
@@ -83,7 +86,6 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
     ) {
         $this->context = $context;
         $this->addressRepository = $addressRepository;
-        $this->taxProvider = $taxProvider;
         $this->module = $module->getModule();
         $this->paymentFeeValidator = $paymentFeeValidator;
         $this->logger = $logger;
