@@ -43,10 +43,10 @@ use Mollie\Calculator\PaymentFeeCalculator;
 use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Factory\ModuleFactory;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\AddressRepositoryInterface;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Validator\PaymentFeeValidator;
-use Mollie\Logger\LoggerInterface;
 use MolPaymentMethod;
 use Throwable;
 
