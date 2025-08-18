@@ -18,6 +18,25 @@ $(document).ready(function () {
         }
     );
 
+    // Add real-time validation for payment fee percentage
+    $(document).on('input', 'input[name^="MOLLIE_METHOD_SURCHARGE_PERCENTAGE"]', function() {
+        var $input = $(this);
+        var value = parseFloat($input.val());
+        var $paymentMethodForm = $input.closest('.payment-method');
+        var $paymentFeeType = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_SURCHARGE_TYPE"]');
+
+        // Only validate if percentage fee is selected
+        if ($paymentFeeType.val() === '2' || $paymentFeeType.val() === '3') {
+            if (!isNaN(value)) {
+                if (value < -99) {
+                    $input.val(-99);
+                } else if (value > 99) {
+                    $input.val(99);
+                }
+            }
+        }
+    });
+
     $('#module_form').on('submit', function () {
         var description = $('#MOLLIE_DESCRIPTION');
         var selectedAPI = $('select[name="MOLLIE_API"]').val();
@@ -94,6 +113,19 @@ $(document).ready(function () {
         $('.alert.alert-success').hide();
         showErrorMessage('Maximum amount cannot be lower than minimum amount');
       }
+
+        var $feePercentage = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_*"]');
+        var $paymentFeeType = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_SURCHARGE_TYPE_*"]');
+
+        if (($paymentFeeType.val() === '2' || $paymentFeeType.val() === '3') && $feePercentage.val() !== '') {
+            var percentageValue = parseFloat($feePercentage.val());
+            if (percentageValue < -99 || percentageValue > 99) {
+                event.preventDefault();
+                $feePercentage.addClass('mollie-input-error');
+                $('.alert.alert-success').hide();
+                showErrorMessage('Payment fee percentage must be between -99 and 99');
+            }
+        }
     }
 
     function paymentMethodOnChangeToggle(method) {
@@ -106,6 +138,19 @@ $(document).ready(function () {
         var $paymentFeeType = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_SURCHARGE_TYPE"]');
         $paymentFeeType.on('change', function () {
                 paymentMethodFeeToggle(method);
+
+                // Validate percentage field when fee type changes
+                var $feePercentage = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_SURCHARGE_PERCENTAGE"]');
+                if (($(this).val() === '2' || $(this).val() === '3') && $feePercentage.val() !== '') {
+                    var value = parseFloat($feePercentage.val());
+                    if (!isNaN(value)) {
+                        if (value < -99) {
+                            $feePercentage.val(-99);
+                        } else if (value > 99) {
+                            $feePercentage.val(99);
+                        }
+                    }
+                }
             }
         );
     }

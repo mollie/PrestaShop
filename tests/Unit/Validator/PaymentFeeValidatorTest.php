@@ -60,7 +60,7 @@ class PaymentFeeValidatorTest extends TestCase
         $paymentMethod->surcharge_percentage = -150;
 
         $this->expectException(InvalidPaymentFeePercentageException::class);
-        $this->expectExceptionMessage('Payment fee percentage cannot be less than -100%. Current value: -150.00%');
+        $this->expectExceptionMessage('Payment fee percentage cannot be less than -99%. Current value: -150.00%');
 
         $this->paymentFeeValidator->validatePaymentFeePercentage($paymentMethod);
     }
@@ -72,7 +72,19 @@ class PaymentFeeValidatorTest extends TestCase
         $paymentMethod->surcharge_percentage = -200;
 
         $this->expectException(InvalidPaymentFeePercentageException::class);
-        $this->expectExceptionMessage('Payment fee percentage cannot be less than -100%. Current value: -200.00%');
+        $this->expectExceptionMessage('Payment fee percentage cannot be less than -99%. Current value: -200.00%');
+
+        $this->paymentFeeValidator->validatePaymentFeePercentage($paymentMethod);
+    }
+
+    public function testItThrowsExceptionForExceedingUpperLimitPercentageFee(): void
+    {
+        $paymentMethod = $this->createMock(MolPaymentMethod::class);
+        $paymentMethod->surcharge = Config::FEE_PERCENTAGE;
+        $paymentMethod->surcharge_percentage = 150;
+
+        $this->expectException(InvalidPaymentFeePercentageException::class);
+        $this->expectExceptionMessage('Payment fee percentage cannot be greater than 99%. Current value: 150.00%');
 
         $this->paymentFeeValidator->validatePaymentFeePercentage($paymentMethod);
     }

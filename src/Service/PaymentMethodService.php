@@ -63,57 +63,54 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentMethodService
 {
-    /**
-     * @var Mollie
-     */
+    /** @var Mollie */
     private $module;
 
-    /**
-     * @var PaymentMethodRepositoryInterface
-     */
+    /** @var PaymentMethodRepositoryInterface */
     private $methodRepository;
 
-    /**
-     * @var CartLinesService
-     */
+    /** @var CartLinesService */
     private $cartLinesService;
 
-    /**
-     * @var CustomerService
-     */
+    /** @var CustomerService */
     private $customerService;
 
-    /**
-     * @var CreditCardLogoProvider
-     */
+    /** @var CreditCardLogoProvider */
     private $creditCardLogoProvider;
 
+    /** @var PaymentMethodSortProviderInterface */
     private $paymentMethodSortProvider;
 
+    /** @var PhoneNumberProviderInterface */
     private $phoneNumberProvider;
 
-    /**
-     * @var PaymentMethodRestrictionValidationInterface
-     */
+    /** @var PaymentMethodRestrictionValidationInterface */
     private $paymentMethodRestrictionValidation;
 
-    /**
-     * @var Shop
-     */
+    /** @var Shop */
     private $shop;
+
     /** @var SubscriptionOrderValidator */
     private $subscriptionOrder;
+
     /** @var CartAdapter */
     private $cartAdapter;
+
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
+
+    /** @var GenderRepositoryInterface */
     private $genderRepository;
+
     /** @var PaymentFeeProviderInterface */
     private $paymentFeeProvider;
+
     /** @var Context */
     private $context;
+
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
+
     /** @var PaymentMethodLangRepositoryInterface */
     private $paymentMethodLangRepository;
 
