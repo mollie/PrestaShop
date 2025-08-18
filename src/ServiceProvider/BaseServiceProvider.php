@@ -227,6 +227,7 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, 'MolPaymentMethodLang');
 
         $this->addService($container, OrderTotalProviderInterface::class, $container->get(OrderTotalProvider::class));
+        $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
 
         $this->addService($container, EnvironmentVersionProviderInterface::class, $container->get(EnvironmentVersionProvider::class));
 
