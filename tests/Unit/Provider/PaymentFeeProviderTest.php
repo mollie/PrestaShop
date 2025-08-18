@@ -26,6 +26,7 @@ use PHPUnit\Framework\TestCase;
 use TaxCalculator;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Calculator\PaymentFeeCalculator;
+use Mollie\DTO\PaymentFeeData;
 
 class PaymentFeeProviderTest extends TestCase
 {
@@ -104,6 +105,10 @@ class PaymentFeeProviderTest extends TestCase
 
         $this->taxCalculatorProvider->method('getTaxCalculator')->willReturn($this->taxCalculator);
 
+        $this->paymentFeeCalculator->method('calculateFixedFee')->willReturn(
+            new PaymentFeeData(11.0, 10.0, 10.0, true)
+        );
+
         $this->context->method('getCustomerAddressInvoiceId')->willReturn(1);
         $this->context->method('getComputingPrecision')->willReturn(2);
 
@@ -143,6 +148,10 @@ class PaymentFeeProviderTest extends TestCase
         $this->taxCalculator->method('getTotalRate')->willReturn(10);
 
         $this->taxCalculatorProvider->method('getTaxCalculator')->willReturn($this->taxCalculator);
+
+        $this->paymentFeeCalculator->method('calculatePercentageFee')->willReturn(
+            new PaymentFeeData(1.0, 0.9, 10.0, true)
+        );
 
         $this->context->method('getCustomerAddressInvoiceId')->willReturn(1);
         $this->context->method('getComputingPrecision')->willReturn(2);
@@ -184,6 +193,10 @@ class PaymentFeeProviderTest extends TestCase
         $this->taxCalculator->method('getTotalRate')->willReturn(10);
 
         $this->taxCalculatorProvider->method('getTaxCalculator')->willReturn($this->taxCalculator);
+
+        $this->paymentFeeCalculator->method('calculatePercentageAndFixedPriceFee')->willReturn(
+            new PaymentFeeData(12.0, 10.8, 10.0, true)
+        );
 
         $this->context->method('getCustomerAddressInvoiceId')->willReturn(1);
         $this->context->method('getComputingPrecision')->willReturn(2);
