@@ -123,7 +123,6 @@ use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPayme
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProvider;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
-use Mollie\Validator\PaymentFeeValidator;
 use Mollie\Service\Shipment\ShipmentInformationSender;
 use Mollie\Service\Shipment\ShipmentInformationSenderInterface;
 use Mollie\Service\ShipmentService;
