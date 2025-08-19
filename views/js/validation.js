@@ -106,19 +106,6 @@ $(document).ready(function () {
         var $paymentFeeType = $paymentMethodForm.find('select[name^="MOLLIE_METHOD_SURCHARGE_TYPE"]');
         $paymentFeeType.on('change', function () {
                 paymentMethodFeeToggle(method);
-
-                // Validate percentage field when fee type changes
-                var $feePercentage = $paymentMethodForm.find('input[name^="MOLLIE_METHOD_SURCHARGE_PERCENTAGE"]');
-                if (($(this).val() === '2' || $(this).val() === '3') && $feePercentage.val() !== '') {
-                    var value = parseFloat($feePercentage.val());
-                    if (!isNaN(value)) {
-                        if (value < -99) {
-                            $feePercentage.val(-99);
-                        } else if (value > 99) {
-                            $feePercentage.val(99);
-                        }
-                    }
-                }
             }
         );
     }
