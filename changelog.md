@@ -6,6 +6,7 @@
 + Improved API key validation
 + Added support for negative payment fees
 + Added Bizum payment method
++ Added support for negative payment fees
 
 ## Changes in release 6.3.0 ##
 + Apple Pay Direct fixed
