@@ -25,6 +25,7 @@ if (!defined('_PS_VERSION_')) {
 class PaymentFeeValidator
 {
     private const MAX_NEGATIVE_PERCENTAGE = -100;
+    private const MAX_POSITIVE_PERCENTAGE = 100;
 
     public function validatePaymentFeePercentage(MolPaymentMethod $paymentMethod): void
     {
@@ -34,6 +35,10 @@ class PaymentFeeValidator
 
             if ($percentage <= self::MAX_NEGATIVE_PERCENTAGE) {
                 throw new InvalidPaymentFeePercentageException(sprintf('Payment fee percentage cannot be less than %d%%. Current value: %.2f%%', self::MAX_NEGATIVE_PERCENTAGE, $percentage));
+            }
+
+            if ($percentage >= self::MAX_POSITIVE_PERCENTAGE) {
+                throw new InvalidPaymentFeePercentageException(sprintf('Payment fee percentage cannot be greater than %d%%. Current value: %.2f%%', self::MAX_POSITIVE_PERCENTAGE, $percentage));
             }
         }
     }
