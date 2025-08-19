@@ -121,9 +121,6 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         } catch (InvalidPaymentFeePercentageException $exception) {
             $logger->debug('Invalid payment fee percentage. Removing payment fee from cart.', [
                 'exceptions' => ExceptionUtility::getExceptions($exception),
-                'payment_fee' => $paymentFeeData->getPaymentFeeTaxIncl(),
-                'cart_amount' => $cart->getOrderTotal(),
-                'id_cart' => $cart->id,
             ]);
 
             $this->returnDefaultOrderSummaryBlock($cart, [
@@ -140,9 +137,6 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
 
             $logger->debug('Payment fee exceeds cart amount. Removing payment fee from cart.', [
                 'exceptions' => ExceptionUtility::getExceptions($exception),
-                'payment_fee' => $paymentFeeData->getPaymentFeeTaxIncl(),
-                'cart_amount' => $cart->getOrderTotal(),
-                'id_cart' => $cart->id,
             ]);
 
             $this->returnDefaultOrderSummaryBlock($cart, $errorData);
