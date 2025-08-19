@@ -15,6 +15,8 @@ use Mollie\Adapter\ToolsAdapter;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
+use Mollie\Exception\InvalidPaymentFeePercentageException;
+use Mollie\Exception\PaymentFeeExceedsCartAmountException;
 use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
@@ -36,7 +38,7 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
     /** @var Mollie */
     public $module;
 
-    public function postProcess(): void
+    public function postProcess()
     {
         /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
@@ -69,23 +71,19 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         $paymentMethodId = (int) $tools->getValue('paymentMethodId');
 
         if (!$paymentMethodId) {
-            $errorData = [
+            $this->returnDefaultOrderSummaryBlock($cart, [
                 'error' => true,
                 'message' => 'Failed to get payment method ID.',
-            ];
-
-            $this->returnDefaultOrderSummaryBlock($cart, $errorData);
+            ]);
         }
 
         $molPaymentMethod = new MolPaymentMethod($paymentMethodId);
 
         if (!$molPaymentMethod->id) {
-            $errorData = [
+            $this->returnDefaultOrderSummaryBlock($cart, [
                 'error' => true,
                 'message' => 'Failed to find payment method.',
-            ];
-
-            $this->returnDefaultOrderSummaryBlock($cart, $errorData);
+            ]);
         }
 
         /** @var CurrencyRepositoryInterface $currencyRepository */
@@ -105,15 +103,39 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
 
+        $paymentFeeData = null;
+
         try {
             $paymentFeeData = $paymentFeeProvider->getPaymentFee($molPaymentMethod, (float) $cart->getOrderTotal());
         } catch (FailedToProvidePaymentFeeException $exception) {
-            $errorData = [
+            $logger->error('Failed to get payment fee data.', [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+
+            $this->returnDefaultOrderSummaryBlock($cart, [
                 'error' => true,
                 'message' => 'Failed to get payment fee data.',
+            ]);
+
+            exit;
+        } catch (InvalidPaymentFeePercentageException $exception) {
+            $logger->debug('Invalid payment fee percentage. Removing payment fee from cart.', [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+
+            $this->returnDefaultOrderSummaryBlock($cart, [
+                'error' => true,
+                'message' => $exception->getMessage(),
+            ]);
+
+            exit;
+        } catch (PaymentFeeExceedsCartAmountException $exception) {
+            $errorData = [
+                'error' => true,
+                'message' => $exception->getMessage(),
             ];
 
-            $logger->error('Failed to get payment fee data.', [
+            $logger->debug('Payment fee exceeds cart amount. Removing payment fee from cart.', [
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
