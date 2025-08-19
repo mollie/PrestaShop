@@ -76,6 +76,7 @@ class Config
         'mbway' => ['pt'],
         'swish' => ['se'],
         'bizum' => ['es', 'ad'],
+        'vippsmobilepay' => ['no', 'dk', 'fi'],
     ];
 
     const SUPPORTED_PHP_VERSION = '5.6';
@@ -344,6 +345,7 @@ class Config
         'multibanco' => 'Multibanco',
         'mbway' => 'MBway',
         'bizum' => 'Bizum',
+        'vippsmobilepay' => 'Vipps',
     ];
 
     public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
