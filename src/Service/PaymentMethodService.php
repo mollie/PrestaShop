@@ -18,6 +18,7 @@ use Configuration;
 use Country;
 use Currency;
 use Customer;
+use Exception;
 use MolCustomer;
 use Mollie;
 use Mollie\Adapter\CartAdapter;
@@ -162,7 +163,7 @@ class PaymentMethodService
             $paymentMethod = new MolPaymentMethod((int) $paymentId);
         }
 
-        $this->validateSurchargePercentage($paymentMethod);
+        $this->validateSurchargePercentage((float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_PERCENTAGE . $method['id']));
 
         $paymentMethod->id_method = $method['id'];
         $paymentMethod->method_name = $method['name'];
@@ -602,11 +603,10 @@ class PaymentMethodService
         );
     }
 
-    private function validateSurchargePercentage(MolPaymentMethod $paymentMethod): void
+    private function validateSurchargePercentage(float $surchargePercentage): void
     {
-        $surchargePercentage = $paymentMethod->surcharge_percentage;
         if ($surchargePercentage <= -100 || $surchargePercentage >= 100) {
-            throw new Exception('Surcharge percentage must be between -100 and 100');
+            throw new Exception(sprintf('Surcharge percentage must be between -100%% and 100%%. Current value: %.2f%%', $surchargePercentage));
         }
     }
 }
