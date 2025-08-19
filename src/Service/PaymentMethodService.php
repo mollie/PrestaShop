@@ -161,6 +161,9 @@ class PaymentMethodService
         if ($paymentId) {
             $paymentMethod = new MolPaymentMethod((int) $paymentId);
         }
+
+        $this->validateSurchargePercentage($paymentMethod);
+
         $paymentMethod->id_method = $method['id'];
         $paymentMethod->method_name = $method['name'];
         $paymentMethod->enabled = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_ENABLED . $method['id']);
@@ -597,5 +600,13 @@ class PaymentMethodService
         return new MolPaymentMethod(
             $this->methodRepository->getPaymentMethodIdByMethodId($transactionMethod, $environment)
         );
+    }
+
+    private function validateSurchargePercentage(MolPaymentMethod $paymentMethod): void
+    {
+        $surchargePercentage = $paymentMethod->surcharge_percentage;
+        if ($surchargePercentage <= -100 || $surchargePercentage >= 100) {
+            throw new Exception('Surcharge percentage must be between -100 and 100');
+        }
     }
 }
