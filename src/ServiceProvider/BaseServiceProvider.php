@@ -117,6 +117,7 @@ use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\AmountPaymen
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\B2bPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator;
+use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BizumPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\CustomerGroupPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\EnvironmentVersionSpecificPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator;
@@ -262,6 +263,7 @@ final class BaseServiceProvider
                 $container->get(AmountPaymentMethodRestrictionValidator::class),
                 $container->get(B2bPaymentMethodRestrictionValidator::class),
                 $container->get(CustomerGroupPaymentMethodRestrictionValidator::class),
+                $container->get(BizumPaymentMethodRestrictionValidator::class),
             ]);
         });
 

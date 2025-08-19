@@ -7,6 +7,7 @@
 + Added support for negative payment fees
 + Added Bizum payment method
 + Added support for negative payment fees
++ Added Vipps payment method
 
 ## Changes in release 6.3.0 ##
 + Apple Pay Direct fixed

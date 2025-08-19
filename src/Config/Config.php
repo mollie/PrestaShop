@@ -76,6 +76,7 @@ class Config
         'mbway' => ['pt'],
         'swish' => ['se'],
         'bizum' => ['es', 'ad'],
+        'vippsmobilepay' => ['no', 'dk', 'fi'],
     ];
 
     const SUPPORTED_PHP_VERSION = '5.6';
@@ -255,6 +256,7 @@ class Config
     const MOLLIE_in3_METHOD_ID = 'in3';
     const RIVERTY = 'riverty';
     const PAY_BY_BANK = 'paybybank';
+    const MOLLIE_METHOD_ID_BIZUM = 'bizum';
 
     const MOLLIE_VOUCHER_CATEGORY_NULL = 'null';
     const MOLLIE_VOUCHER_CATEGORY_MEAL = 'meal';
@@ -303,6 +305,7 @@ class Config
 
     const APPLE_PAY_DIRECT_ORDER_CREATION_MAX_WAIT_RETRIES = 10;
     const BANCONTACT_ORDER_CREATION_MAX_WAIT_RETRIES = 600;
+    const BIZUM_MAX_AMOUNT_EUR = 1000.00;
 
     public const LOCK_TIME_TO_LIVE = 60;
 
@@ -344,6 +347,7 @@ class Config
         'multibanco' => 'Multibanco',
         'mbway' => 'MBway',
         'bizum' => 'Bizum',
+        'vippsmobilepay' => 'Vipps',
     ];
 
     public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
