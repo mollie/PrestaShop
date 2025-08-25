@@ -159,6 +159,6 @@ class RefundService
 
         $refundedAmount = (float) RefundUtility::getRefundedAmount(iterator_to_array($transaction->refunds()));
 
-        return $refundedAmount >= $amount;
+        return $refundedAmount >= $amount || $transaction->amountRefunded->value >= $amount;
     }
 }
