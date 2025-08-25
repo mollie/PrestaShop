@@ -94,6 +94,6 @@ class CaptureService
         $status = $payment->status;
         $amount = $payment->amount;
 
-        return $status === 'paid' || $amount->value === $amount->settlementAmount->value;
+        return $status === 'paid' || $amount->value <= $amount->settlementAmount->value;
     }
 }
