@@ -133,6 +133,8 @@ $(document).ready(function () {
       orderId: order_id,
       refundAmount: context.amount,
       transactionId: context.transactionId,
+      productId: context.productId,
+      
     };
 
     // Add capture amount for capture actions

@@ -49,14 +49,7 @@ class ShipService
             /** @var MollieOrderAlias $payment */
             $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
             $shipment = [
-                'lines' => array_map(function ($line) {
-                    return array_intersect_key(
-                        (array) $line,
-                        array_flip([
-                            'id',
-                            'quantity',
-                        ]));
-                }, $lines),
+                'lines' => $order->lines
             ];
             if ($tracking && !empty($tracking['carrier']) && !empty($tracking['code'])) {
                 $shipment['tracking'] = $tracking;
