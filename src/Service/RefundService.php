@@ -167,38 +167,10 @@ class RefundService
     private function processPartialRefund(MollieOrderAlias $order, float $amount): array
     {
         $order->refund([
-            'amount' => [
-                'currency' => $order->amount->currency,
-                'value' => TextFormatUtility::formatNumber($amount, 2),
-            ],
+            'lines' => RefundUtility::getRefundLines($order->lines),
         ]);
 
         return $this->createSuccessResponse();
-    }
-
-    /**
-     * @param MollieOrderAlias $order
-     * @return array
-     */
-    private function getMollieOrderLines(MollieOrderAlias $order): array
-    {
-        $lines = [];
-        foreach ($order->lines() as $line) {
-            $lines[] = $line;
-        }
-        return $lines;
-    }
-
-    /**
-     * @param array $psLine
-     * @param object $mollieLine
-     * @return bool
-     */
-    private function isMatchingOrderLine(array $psLine, $mollieLine): bool
-    {
-        return isset($mollieLine->metadata) &&
-               isset($mollieLine->metadata->order_detail_id) &&
-               (int) $mollieLine->metadata->order_detail_id === (int) $psLine['id_order_detail'];
     }
 
     /**

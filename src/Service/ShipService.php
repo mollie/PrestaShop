@@ -15,6 +15,7 @@ namespace Mollie\Service;
 use Mollie;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
+use Mollie\Utility\ShipUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -48,13 +49,18 @@ class ShipService
         try {
             /** @var MollieOrderAlias $payment */
             $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
-            $shipment = [
-                'lines' => $order->lines
-            ];
-            if ($tracking && !empty($tracking['carrier']) && !empty($tracking['code'])) {
-                $shipment['tracking'] = $tracking;
+            $lines = $order->lines;
+            $shipmentData = [];
+
+            if (!empty($lines)) {
+                $shipmentData['lines'] = ShipUtility::getShipLines($lines);
             }
-            $order->createShipment($shipment);
+
+            if ($tracking && !empty($tracking['carrier']) && !empty($tracking['code'])) {
+                $shipmentData['tracking'] = $tracking;
+            }
+
+            $order->createShipment($shipmentData);
         } catch (ApiException $e) {
             return [
                 'success' => false,
