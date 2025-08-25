@@ -74,6 +74,13 @@ class CaptureService
         }
     }
 
+    /**
+     * Check if a payment is captured. Only applicable for payments API.
+     *
+     * @param string $transactionId
+     *
+     * @return bool
+     */
     public function isCaptured(string $transactionId): bool
     {
         $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
@@ -81,10 +88,8 @@ class CaptureService
         if ($isOrderTransaction) {
             return false;
         }
-        
-        $payment = TransactionUtility::isOrderTransaction($transactionId)
-            ? $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments'])
-            : $this->module->getApiClient()->payments->get($transactionId);
+
+        $payment = $this->module->getApiClient()->payments->get($transactionId);
 
         $status = $payment->status;
         $amount = $payment->amount;
