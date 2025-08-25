@@ -592,6 +592,7 @@ class Mollie extends PaymentModule
             'tracking' => $shipmentService->getShipmentInformation($order->reference),
             'isRefunded' => $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid),
             'isCaptured' => $captureService->isCaptured($mollieTransactionId),
+            'orderLines' => $order->getProducts(),
         ]);
 
         return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');

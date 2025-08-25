@@ -54,13 +54,18 @@ class RefundService
      * @since 3.3.0 Renamed `doRefund` to `doPaymentRefund`, added `$amount`
      * @since 3.3.2 Omit $orderId
      */
-    public function doPaymentRefund(string $transactionId, float $amount = null)
+    public function doPaymentRefund(string $transactionId, float $amount = null, array $orderLines = [])
     {
         try {
-            /** @var Payment $payment */
-            $payment = $this->module->getApiClient()->payments->get($transactionId);
+            $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
 
-            $currency = (string) $payment->amount->currency;
+            if ($isOrderTransaction) {
+                /** @var MollieOrderAlias $payment */
+                $payment = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
+            } else {
+                /** @var Payment $payment */
+                $payment = $this->module->getApiClient()->payments->get($transactionId);
+            }
 
             if ($amount) {
                 $refundAmount = TextFormatUtility::formatNumber($amount, 2);
@@ -80,12 +85,7 @@ class RefundService
             }
 
             if (isset($refundAmount) && (float) $refundAmount > 0) {
-                $payment->refund([
-                    'amount' => [
-                        'currency' => $currency,
-                        'value' => (string) $refundAmount,
-                    ],
-                ]);
+                $payment->refundAll();
             }
         } catch (ApiException $e) {
             return [
@@ -121,7 +121,7 @@ class RefundService
             $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
             $isOrderLinesRefundPossible = RefundUtility::isOrderLinesRefundPossible($lines, $availableRefund);
             if ($isOrderLinesRefundPossible) {
-                $refund = RefundUtility::getRefundLines($lines);
+                $refund = RefundUtility::getRefundLines($lines, $transactionId);
                 $order->refund($refund);
             } else {
                 /** @var PaymentCollection $orderPayments */

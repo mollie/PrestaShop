@@ -56,6 +56,7 @@ $(document).ready(function () {
       transactionId: transaction_id,
       resource: resource,
       amount: amount,
+      orderLines: typeof orderLines !== 'undefined' ? orderLines : [],
     };
 
     if (action === 'refund' || action === 'refundAll') {
@@ -142,8 +143,7 @@ $(document).ready(function () {
     if (context.productId && (context.action === 'refund' || context.action === 'ship' || context.action === 'capture')) {
       data.orderLines = [{
         id: context.productId,
-        quantity: 1,
-        refund_amount: $('#mollie-refund-amount').val()
+        quantity: 1
       }];
     }
 
@@ -176,7 +176,11 @@ $(document).ready(function () {
       success: function(response) {
         hideLoadingState();
         if (response.success) {
-          showSuccessMessage(response.message || 'Action completed successfully');
+          var successMessage = response.message || response.msg_success || 'Action completed successfully';
+          if (response.detailed || response.msg_details) {
+            successMessage += ' ' + (response.detailed || response.msg_details);
+          }
+          showSuccessMessage(successMessage);
           if (response.payment) {
             updatePaymentInfo(response.payment);
           }
@@ -185,7 +189,7 @@ $(document).ready(function () {
           }
           checkOrderStatus();
         } else {
-          showErrorMessage(response.message || 'An error occurred');
+          showErrorMessage(response.message || response.detailed || 'An error occurred');
         }
       },
       error: function(xhr, status, error) {

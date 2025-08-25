@@ -76,6 +76,12 @@ class CaptureService
 
     public function isCaptured(string $transactionId): bool
     {
+        $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
+
+        if ($isOrderTransaction) {
+            return false;
+        }
+        
         $payment = TransactionUtility::isOrderTransaction($transactionId)
             ? $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments'])
             : $this->module->getApiClient()->payments->get($transactionId);

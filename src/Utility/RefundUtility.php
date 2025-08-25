@@ -24,15 +24,17 @@ class RefundUtility
     {
         $refunds = [];
         foreach ($lines as $line) {
-            $refund = array_intersect_key(
-                (array) $line,
-                array_flip([
-                    'id',
-                    'quantity',
-                ]));
-            $refunds['lines'][] = $refund;
+            $refunds[] = [
+                'id' => $line->id,
+                // 'name' => $line->name,
+                // 'sku' => $line->sku,
+                // 'type' => $line->type,
+                // 'status' => $line->status,
+                // 'metadata' => $line->metadata,
+                // 'isCancelable' => $line->isCancelable,
+                // 'quantity' => $line->quantity,
+            ];
         }
-
         return $refunds;
     }
 
