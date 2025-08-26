@@ -55,7 +55,7 @@ class RefundService
      * @param string $transactionId Transaction/Mollie Order ID
      * @param float|null $amount Amount to refund, refund all if `null`
      * @param array $orderLines Order lines for partial refund
-     * @param int|null $productId Specific product ID for partial refund
+     * @param bool $isPartial Partial refund
      *
      * @return array
      *

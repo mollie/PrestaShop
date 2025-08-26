@@ -51,6 +51,7 @@ use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Response;
 use Mollie\Service\CaptureService;
 use Mollie\Service\ShipService;
+use Mollie\Service\MollieOrderService;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -553,6 +554,9 @@ class Mollie extends PaymentModule
         /** @var CaptureService $captureService */
         $captureService = $this->getService(CaptureService::class);
 
+        /** @var MollieOrderService $mollieOrderService */
+        $mollieOrderService = $this->getService(MollieOrderService::class);
+
         $cartId = Cart::getCartIdByOrderId((int) $params['id_order']);
         $transaction = $paymentMethodRepo->getPaymentBy('cart_id', (string) $cartId);
         if (empty($transaction)) {
@@ -577,14 +581,7 @@ class Mollie extends PaymentModule
 
         $order = new Order($params['id_order']);
 
-        $products = array_map(function($product) {
-            return [
-                'id' => $product['id_order_detail'],
-                'name' => $product['product_name'],
-                'price' => $product['total_price_tax_incl'],
-                'quantity' => $product['product_quantity'],
-            ];
-        }, $order->getProducts());
+        $products = $mollieOrderService->mergeOrderStatusesWithProducts($order->getProducts(), $mollieTransactionId);
 
         $this->context->smarty->assign([
             'order_reference' => $order->reference,
@@ -598,7 +595,6 @@ class Mollie extends PaymentModule
             'isRefunded' => $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid),
             'isCaptured' => $captureService->isCaptured($mollieTransactionId),
             'isShipped' => $shipService->isShipped($mollieTransactionId),
-            'orderLines' => $order->getProducts(),
         ]);
 
         return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');
