@@ -50,6 +50,7 @@ use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Response;
 use Mollie\Service\CaptureService;
+use Mollie\Service\ShipService;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
