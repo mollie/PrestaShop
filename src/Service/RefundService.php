@@ -270,10 +270,8 @@ class RefundService
 
         $refundedAmount = (float) RefundUtility::getRefundedAmount(iterator_to_array($transaction->refunds()));
 
-        if ($isOrderTransaction) {
-            return $refundedAmount >= $amount;
-        } else {
-            return $refundedAmount >= $amount || (float)$transaction->amountRefunded->value >= $amount;
-        }
+        return $isOrderTransaction
+            ? ($refundedAmount >= $amount || (float) $transaction->amountRefunded->value >= $amount)
+            : $refundedAmount >= $amount;
     }
 }
