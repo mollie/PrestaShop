@@ -226,7 +226,6 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, 'MolPaymentMethodLang');
 
         $this->addService($container, OrderTotalProviderInterface::class, $container->get(OrderTotalProvider::class));
-        $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
 
         $this->addService($container, EnvironmentVersionProviderInterface::class, $container->get(EnvironmentVersionProvider::class));
 
@@ -276,11 +275,8 @@ final class BaseServiceProvider
 
         $this->addService($container, ProfileIdProviderInterface::class, ProfileIdProvider::class);
 
-        $this->addService($container, PaymentOptionHandlerInterface::class, $container->get(PaymentOptionHandler::class));
-
-        $service = $this->addService($container, ApiTestFeedbackBuilder::class, ApiTestFeedbackBuilder::class);
-        $this->addServiceArgument($service, $container->get(ModuleFactory::class)->getModuleVersion() ?? '');
-        $this->addServiceArgument($service, ApiKeyService::class);
+        $service = $this->addService($container, EntityManagerInterface::class, ObjectModelEntityManager::class);
+        $this->addServiceArgument($service, ObjectModelUnitOfWork::class);
 
         $this->addService($container, PrestashopLoggerRepositoryInterface::class, PrestashopLoggerRepository::class);
         $this->addService($container, MolLogRepositoryInterface::class, MolLogRepository::class);
@@ -295,6 +291,14 @@ final class BaseServiceProvider
 
         $this->addService($container, LogFormatterInterface::class, LogFormatter::class);
 
+        $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
+
+        $this->addService($container, PaymentOptionHandlerInterface::class, $container->get(PaymentOptionHandler::class));
+
+        $service = $this->addService($container, ApiTestFeedbackBuilder::class, ApiTestFeedbackBuilder::class);
+        $this->addServiceArgument($service, $container->get(ModuleFactory::class)->getModuleVersion() ?? '');
+        $this->addServiceArgument($service, ApiKeyService::class);
+
         $service = $this->addService($container, ApiServiceInterface::class, ApiService::class);
         $this->addServiceArgument($service, PaymentMethodRepository::class);
         $this->addServiceArgument($service, CountryRepository::class);
@@ -306,9 +310,6 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, Context::class);
         $this->addServiceArgument($service, PaymentMethodLangRepositoryInterface::class);
         $this->addServiceArgument($service, CustomerRepository::class);
-
-        $service = $this->addService($container, EntityManagerInterface::class, ObjectModelEntityManager::class);
-        $this->addServiceArgument($service, ObjectModelUnitOfWork::class);
 
         $service = $this->addService($container, CustomerGroupRestrictionHandlerInterface::class, CustomerGroupRestrictionHandler::class);
         $this->addServiceArgument($service, ToolsAdapter::class);

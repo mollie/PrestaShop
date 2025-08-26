@@ -1,11 +1,18 @@
 ![Mollie](https://www.mollie.nl/files/Mollie-Logo-Style-Small.png)
 
 # Changelog #
+
+## Changes in release 6.3.1 ##
++ Improved API key validation
++ Added Bizum payment method
++ Added Vipps payment method
+
 ## Changes in release 6.3.0 ##
-+ Vipps payment method added
-+ Bizum payment method added
 + Apple Pay Direct fixed
 + Added DK, FI, PL, SE, NO, PT, CZ, SI, HU, ES translations
++ Added "Quarterly" subscription option
++ Added feature to send mail on failed payment
++ Fixed minor issues
 
 ## Changes in release 6.2.9 ##
 + Pay By Bank creates order with open status

@@ -58,6 +58,9 @@ class SubscriptionStartDateProvider
                 case $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY):
                     $interval = new DateInterval('P1M');
                     break;
+                case $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_QUARTERLY):
+                    $interval = new DateInterval('P3M');
+                    break;
                 case $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_YEARLY):
                     $interval = new DateInterval('P1Y');
                     break;

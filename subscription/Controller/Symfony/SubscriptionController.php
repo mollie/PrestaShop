@@ -90,6 +90,13 @@ class SubscriptionController extends AbstractSymfonyController
             'currencyGrid' => $this->presentGrid($currencyGrid),
             'enableSidebar' => true,
             'subscriptionOptionsForm' => $formHandler->createView(),
+            'translations' => [
+                'subscription_options' => $this->module->l('Subscription options', self::FILE_NAME),
+                'enable_subscription_service' => $this->module->l('Enable subscription service', self::FILE_NAME),
+                'enable_subscription_service_help' => $this->module->l('Toggle this option to enable products to be bought as recurring items.', self::FILE_NAME),
+                'carrier_warning' => $this->module->l('Carrier to use in subscription orders', self::FILE_NAME),
+                'carrier_warning_text' => $this->module->l('WARNING: do not change selection after getting first subscription order.', self::FILE_NAME),
+            ],
         ]);
     }
 

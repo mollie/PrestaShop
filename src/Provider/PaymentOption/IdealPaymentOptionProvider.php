@@ -39,6 +39,7 @@ namespace Mollie\Provider\PaymentOption;
 use Mollie;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
@@ -48,7 +49,6 @@ use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\LanguageService;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -79,6 +79,9 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
 
+    /** @var ToolsAdapter */
+    private $tools;
+
     public function __construct(
         ModuleFactory $module,
         LegacyContext $context,
@@ -86,7 +89,8 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         PaymentFeeProviderInterface $paymentFeeProvider,
         TemplateParserInterface $templateParser,
         LanguageService $languageService,
-        OrderTotalProviderInterface $orderTotalProvider
+        OrderTotalProviderInterface $orderTotalProvider,
+        ToolsAdapter $tools
     ) {
         $this->module = $module->getModule();
         $this->context = $context;
@@ -95,6 +99,7 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         $this->templateParser = $templateParser;
         $this->languageService = $languageService;
         $this->orderTotalProvider = $orderTotalProvider;
+        $this->tools = $tools;
     }
 
     /**
@@ -134,6 +139,8 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
         $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, $this->orderTotalProvider->getOrderTotal());
 
         if ($paymentFeeData->isActive()) {
+            $paymentFeeText = $this->paymentFeeProvider->getPaymentFeeText($paymentFeeData->getPaymentFeeTaxIncl());
+
             $paymentOption->setInputs(
                 [
                     [
@@ -145,8 +152,8 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
                         'type' => 'hidden',
                         'name' => 'payment-fee-price-display',
                         'value' => sprintf(
-                            $this->module->l('Payment Fee: %1s', self::FILE_NAME),
-                            Tools::displayPrice($paymentFeeData->getPaymentFeeTaxIncl())
+                            $paymentFeeText,
+                            $this->tools->displayPrice($paymentFeeData->getPaymentFeeTaxIncl())
                         ),
                     ],
                     [
