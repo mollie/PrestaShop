@@ -95,13 +95,13 @@ class MollieOrderService
 
         $mollieStatusesMap = [];
 
-        foreach ($mollieOrderStatuses['lines'] as $mollieOrderStatus) {
+        foreach ($mollieOrderStatuses as $mollieOrderStatus) {
             $mollieStatusesMap[$mollieOrderStatus['id']] = $mollieOrderStatus;
         }
 
         return array_map(function($product) use ($mollieStatusesMap) {
             $productData = [
-                'id' => $product['id_order_detail'],
+                'id' => $product['id_product'],
                 'name' => $product['product_name'],
                 'price' => $product['total_price_tax_incl'],
                 'quantity' => $product['product_quantity'],
@@ -110,8 +110,8 @@ class MollieOrderService
                 'isCaptured' => false,
             ];
 
-            if (isset($mollieStatusesMap[$product['id_order_detail']])) {
-                $mollieStatus = $mollieStatusesMap[$product['id_order_detail']];
+            if (isset($mollieStatusesMap[$product['id_product']])) {
+                $mollieStatus = $mollieStatusesMap[$product['id_product']];
                 $productData['isShipped'] = $mollieStatus['isShipped'];
                 $productData['isRefunded'] = $mollieStatus['isRefunded'];
                 $productData['isCaptured'] = $mollieStatus['isCaptured'];
