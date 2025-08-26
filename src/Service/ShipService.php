@@ -50,7 +50,7 @@ class ShipService
         try {
             /** @var MollieOrderAlias $payment */
             $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
-            $lines = $order->lines;
+            $lines = $lines ?: $order->lines;
             $shipmentData = [];
 
             if (!empty($lines)) {
@@ -85,6 +85,6 @@ class ShipService
 
         $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
 
-        return false;
+        return $order->shipments()->count() > 0;
     }
 }
