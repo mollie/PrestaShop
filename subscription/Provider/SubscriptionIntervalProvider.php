@@ -63,6 +63,8 @@ class SubscriptionIntervalProvider
                     return Config::getSubscriptionIntervals()[Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY];
                 case $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY):
                     return Config::getSubscriptionIntervals()[Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY];
+                case $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_QUARTERLY):
+                    return Config::getSubscriptionIntervals()[Config::SUBSCRIPTION_ATTRIBUTE_QUARTERLY];
                 case $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_YEARLY):
                     return Config::getSubscriptionIntervals()[Config::SUBSCRIPTION_ATTRIBUTE_YEARLY];
             }

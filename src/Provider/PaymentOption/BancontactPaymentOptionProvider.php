@@ -39,6 +39,7 @@ namespace Mollie\Provider\PaymentOption;
 use Mollie;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CreditCardLogoProvider;
@@ -48,7 +49,6 @@ use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Service\LanguageService;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -86,13 +86,17 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
 
+    /** @var ToolsAdapter */
+    private $tools;
+
     public function __construct(
         ModuleFactory $module,
         LegacyContext $context,
         CreditCardLogoProvider $creditCardLogoProvider,
         PaymentFeeProviderInterface $paymentFeeProvider,
         LanguageService $languageService,
-        OrderTotalProviderInterface $orderTotalProvider
+        OrderTotalProviderInterface $orderTotalProvider,
+        ToolsAdapter $tools
     ) {
         $this->module = $module->getModule();
         $this->context = $context;
@@ -100,6 +104,7 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
         $this->paymentFeeProvider = $paymentFeeProvider;
         $this->languageService = $languageService;
         $this->orderTotalProvider = $orderTotalProvider;
+        $this->tools = $tools;
     }
 
     /**
@@ -156,6 +161,8 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
         );
 
         if ($paymentFeeData->isActive()) {
+            $paymentFeeText = $this->paymentFeeProvider->getPaymentFeeText($paymentFeeData->getPaymentFeeTaxIncl());
+
             $paymentOption->setInputs(
                 [
                     [
@@ -167,8 +174,8 @@ class BancontactPaymentOptionProvider implements PaymentOptionProviderInterface
                         'type' => 'hidden',
                         'name' => 'payment-fee-price-display',
                         'value' => sprintf(
-                            $this->module->l('Payment Fee: %1s', self::FILE_NAME),
-                            Tools::displayPrice($paymentFeeData->getPaymentFeeTaxIncl())
+                            $paymentFeeText,
+                            $this->tools->displayPrice($paymentFeeData->getPaymentFeeTaxIncl())
                         ),
                     ],
                     [
