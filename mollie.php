@@ -543,6 +543,9 @@ class Mollie extends PaymentModule
         /** @var ShipmentService $shipmentService */
         $shipmentService = $this->getService(ShipmentService::class);
 
+        /** @var ShipService $shipService */
+        $shipService = $this->getService(ShipService::class);
+
         /** @var RefundService $refundService */
         $refundService = $this->getService(RefundService::class);
 
@@ -592,6 +595,7 @@ class Mollie extends PaymentModule
             'tracking' => $shipmentService->getShipmentInformation($order->reference),
             'isRefunded' => $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid),
             'isCaptured' => $captureService->isCaptured($mollieTransactionId),
+            'isShipped' => $shipService->isShipped($mollieTransactionId),
             'orderLines' => $order->getProducts(),
         ]);
 

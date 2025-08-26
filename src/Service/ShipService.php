@@ -75,4 +75,11 @@ class ShipService
             'detailed' => '',
         ];
     }
+
+    public function isShipped(string $transactionId): bool
+    {
+        $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
+
+        return $order->shipments()->count() > 0;
+    }
 }
