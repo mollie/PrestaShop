@@ -252,8 +252,9 @@ class Installer implements InstallerInterface
         $moduleTab->active = $active;
         $moduleTab->icon = $icon; /** @phpstan-ignore-line */
         $languages = Language::getLanguages(true);
+
         foreach ($languages as $language) {
-            $moduleTab->name[$language['id_lang']] = $name;
+            $moduleTab->name[$language['id_lang']] = $this->module->l($name, false, $language['iso_code']);
         }
 
         if (!$moduleTab->save()) {

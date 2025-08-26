@@ -168,28 +168,6 @@ class AdminMollieAjaxController extends ModuleAdminController
 
         $taxRulesGroupId = (int) Tools::getValue('taxRulesGroupId');
 
-        if (empty($paymentFeeTaxIncl) && empty($paymentFeeTaxExcl)) {
-            $this->ajaxRender(
-                json_encode([
-                    'error' => true,
-                    'message' => $this->module->l('No fee was submitted.'),
-                ])
-            );
-
-            return;
-        }
-
-        if ($paymentFeeTaxIncl < 0.00 || $paymentFeeTaxExcl < 0.00) {
-            $this->ajaxRender(
-                json_encode([
-                    'error' => true,
-                    'message' => $this->module->l('Invalid fee'),
-                ])
-            );
-
-            return;
-        }
-
         if ($taxRulesGroupId < 1) {
             $this->ajaxRender(
                 json_encode([
