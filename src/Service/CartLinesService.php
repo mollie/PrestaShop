@@ -250,6 +250,7 @@ class CartLinesService
             $orderLines['discount'] = [
                 [
                     'name' => 'Discount',
+                    'sku' => 'DISCOUNT',
                     'type' => 'discount',
                     'quantity' => 1,
                     'unitPrice' => -round($totalDiscounts, $apiRoundingPrecision),
@@ -345,6 +346,7 @@ class CartLinesService
                 $newItem = [
                     'name' => $line['name'],
                     'categories' => $line['categories'],
+                    'type' => $line['type'] ?? null,
                     'quantity' => (int) $quantity,
                     'unitPrice' => round($unitPrice, $apiRoundingPrecision),
                     'totalAmount' => round($totalAmount, $apiRoundingPrecision),
@@ -494,6 +496,7 @@ class CartLinesService
 
             $line->setQuantity((int) $item['quantity']);
             $line->setSku(isset($item['sku']) ? $item['sku'] : '');
+            $line->setType($item['type'] ?? null);
 
             $currency = strtoupper(strtolower($currencyIsoCode));
 
@@ -535,15 +538,11 @@ class CartLinesService
 
             $line->setVatRate(TextFormatUtility::formatNumber($item['vatRate'], $apiRoundingPrecision, '.', ''));
 
-            if (isset($item['product_url']) && $item['product_url']) {
-                $line->setProductUrl(
-                    TextFormatUtility::replaceAccentedChars((string) $item['product_url'])
-                );
-            }
+            $line->setProductUrl(
+                TextFormatUtility::replaceAccentedChars((string) $item['product_url']) ?: ''
+            );
 
-            if (isset($item['image_url']) && $item['image_url']) {
-                $line->setImageUrl($item['image_url']);
-            }
+            $line->setImageUrl($item['image_url'] ?: '');
 
             $newItems[$index] = $line;
         }

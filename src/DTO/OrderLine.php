@@ -295,7 +295,7 @@ class OrderLine implements JsonSerializable
 
     public function jsonSerialize(): array
     {
-        return [
+        $result = [
             'sku' => $this->getSku(),
             'name' => $this->getName(),
             'productUrl' => $this->getProductUrl(),
@@ -303,7 +303,7 @@ class OrderLine implements JsonSerializable
             'metadata' => $this->getMetaData(),
             'quantity' => $this->getQuantity(),
             'vatRate' => $this->getVatRate(),
-            'category' => $this->getCategory(),
+            'categories' => [],
             'unitPrice' => [
                 'currency' => $this->getUnitPrice()->getCurrency(),
                 'value' => $this->getUnitPrice()->getValue(),
@@ -318,11 +318,20 @@ class OrderLine implements JsonSerializable
                     'value' => $this->getDiscountAmount()->getValue(),
                 ]
                 :
-                [],
+                [
+                    'currency' => $this->getUnitPrice()->getCurrency(),
+                    'value' => '0.00',
+                ],
             'vatAmount' => [
                 'currency' => $this->getVatAmount()->getCurrency(),
                 'value' => $this->getVatAmount()->getValue(),
             ],
         ];
+
+        if ($this->getType()) {
+            $result['type'] = $this->getType();
+        }
+
+        return $result;
     }
 }

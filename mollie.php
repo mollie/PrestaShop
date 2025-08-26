@@ -589,6 +589,7 @@ class Mollie extends PaymentModule
         $this->context->smarty->assign([
             'order_reference' => $order->reference,
             'max_refund_amount' => (float) $order->total_paid,
+            'refunded_amount' => $refundService->getRefundedAmount($mollieTransactionId),
             'products' => $products,
             'mollie_logo_path' => $this->getPathUri() . 'views/img/mollie_panel_icon.png',
             'mollie_transaction_id' => $mollieTransactionId,
