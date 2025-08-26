@@ -327,7 +327,7 @@
                             <div class="col-lg-9">
                               <input type="text"
                                      name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_INCL_{$paymentMethod.id|escape:'html':'UTF-8'}"
-                                     class="fixed-width-xl"
+                                     class="fixed-width-xl js-mollie-amount"
                                      value="{$paymentMethod.surcharge_fixed_amount_tax_incl|escape:'html':'UTF-8'}"
                               >
                             </div>
@@ -339,7 +339,7 @@
                           <div class="col-lg-9">
                             <input type="text"
                                    name="MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_EXCL_{$paymentMethod.id|escape:'html':'UTF-8'}"
-                                   class="fixed-width-xl"
+                                   class="fixed-width-xl js-mollie-amount"
                                    value="{$methodObj->surcharge_fixed_amount_tax_excl|escape:'html':'UTF-8'}"
                             >
                           </div>
@@ -366,7 +366,7 @@
                             <div class="col-lg-9">
                                 <input type="text"
                                        name="MOLLIE_METHOD_SURCHARGE_PERCENTAGE_{$paymentMethod.id|escape:'html':'UTF-8'}"
-                                       class="fixed-width-xl"
+                                       class="fixed-width-xl js-mollie-amount"
                                        value="{$methodObj->surcharge_percentage|escape:'html':'UTF-8'}">
                             </div>
                         </div>
@@ -377,7 +377,7 @@
                             <div class="col-lg-9">
                                 <input type="text"
                                        name="MOLLIE_METHOD_SURCHARGE_LIMIT_{$paymentMethod.id|escape:'html':'UTF-8'}"
-                                       class="fixed-width-xl"
+                                       class="fixed-width-xl js-mollie-amount"
                                        value="{if $methodObj->surcharge_limit === $paymentMethod.maximumAmount}{else}{$methodObj->surcharge_limit|escape:'html':'UTF-8'}{/if}">
                             </div>
                         </div>
