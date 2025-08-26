@@ -13,6 +13,7 @@
 namespace Mollie\Utility;
 
 use Mollie\Config\Config;
+use Product;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -20,21 +21,16 @@ if (!defined('_PS_VERSION_')) {
 
 class RefundUtility
 {
-    public static function getRefundLines(array $lines)
+    public static function getRefundLines(array $lines, ?int $idProduct = null)
     {
         $refunds = [];
+
         foreach ($lines as $line) {
             $refunds[] = [
                 'id' => $line->id,
-                // 'name' => $line->name,
-                // 'sku' => $line->sku,
-                // 'type' => $line->type,
-                // 'status' => $line->status,
-                // 'metadata' => $line->metadata,
-                // 'isCancelable' => $line->isCancelable,
-                // 'quantity' => $line->quantity,
             ];
         }
+
         return $refunds;
     }
 

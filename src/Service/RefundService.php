@@ -67,14 +67,15 @@ class RefundService
      * @since 3.3.2 Omit $orderId
      * @since 3.3.3 Added partial refund support for specific products
      */
-    public function handleRefund(string $transactionId, ?float $amount = null, array $orderLines = [], bool $isPartial = false)
+    public function handleRefund(string $transactionId, ?float $amount = null, array $orderLines = [], ?int $idProduct = null)
     {
         try {
             $payment = $this->getPayment($transactionId);
             $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
+            $isPartial = $idProduct ? true : false;
 
             if ($isPartial && $isOrderTransaction) {
-                $this->processPartialRefund($payment, $amount);
+                $this->processPartialRefund($payment, $amount, $idProduct);
 
                 return $this->createSuccessResponse();
             }
@@ -85,7 +86,7 @@ class RefundService
                 return $this->createErrorResponse('No refundable amount available.', null);
             }
 
-            $this->processRefund($payment, $refundAmount, $isOrderTransaction);
+            $this->processRefund($payment, $refundAmount, $isOrderTransaction, $idProduct);
 
             return $this->createSuccessResponse();
         } catch (ApiException $e) {
@@ -142,7 +143,7 @@ class RefundService
      * @param bool $isOrderTransaction
      * @throws ApiException
      */
-    private function processRefund($payment, string $refundAmount, bool $isOrderTransaction): void
+    private function processRefund($payment, string $refundAmount, bool $isOrderTransaction, int $idProduct): void
     {
         if ($isOrderTransaction) {
             $this->refundOrder($payment, $refundAmount);
@@ -154,6 +155,9 @@ class RefundService
                 'currency' => $payment->amount->currency,
                 'value' => $refundAmount,
             ],
+            'metadata' => [
+                'idProduct' => $idProduct,
+            ],
         ]);
     }
 
@@ -164,10 +168,14 @@ class RefundService
      * @return array
      * @throws ApiException
      */
-    private function processPartialRefund(MollieOrderAlias $order, float $amount): array
+    private function processPartialRefund(MollieOrderAlias $order, float $amount, int $idProduct): array
     {
+        $lines = RefundUtility::getRefundLines($order->lines, $idProduct);
         $order->refund([
-            'lines' => RefundUtility::getRefundLines($order->lines),
+            'lines' => $lines,
+            'metadata' => [
+                'idProduct' => $idProduct,
+            ],
         ]);
 
         return $this->createSuccessResponse();

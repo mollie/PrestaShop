@@ -243,11 +243,10 @@ class AdminMollieAjaxController extends ModuleAdminController
     private function processRefund(): void
     {
         try {
-            // Full refund
             $transactionId = Tools::getValue('transactionId');
             $refundAmount = (float) Tools::getValue('refundAmount') ?: null;
             $idOrder = (int)Tools::getValue('orderId') ?: null;
-            $isPartial = Tools::getValue('productId') ? true : false;
+            $idProduct = (int)Tools::getValue('productId') ?: null;
 
             $order = new Order($idOrder);
             $orderLines = $order->getProducts();
@@ -255,7 +254,7 @@ class AdminMollieAjaxController extends ModuleAdminController
             /** @var RefundService $refundService */
             $refundService = $this->module->getService(RefundService::class);
 
-            $status = $refundService->handleRefund($transactionId, $refundAmount, $orderLines, $isPartial);
+            $status = $refundService->handleRefund($transactionId, $refundAmount, $orderLines, $idProduct);
 
             $this->ajaxRender(json_encode($status));
         } catch (Throwable $e) {

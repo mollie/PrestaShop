@@ -44,75 +44,25 @@ class MollieOrderService
     {
         try {
             $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
-            $orderInfo = ['lines' => []];
+            $mollieOrder = $isOrderTransaction ? $this->mollie->getApiClient()->orders->get($transactionId, ['embed' => 'payments']) : $this->mollie->getApiClient()->payments->get($transactionId);
 
-            if ($isOrderTransaction) {
-                $mollieOrder = $this->mollie->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
-                $shipments = $mollieOrder->shipments();
-                $refunds = $mollieOrder->refunds();
+            $refunds = $mollieOrder->refunds();
+            $refunds = iterator_to_array($refunds);
 
-                foreach ($mollieOrder->lines as $line) {
-                    $isShipped = false;
-                    $isRefunded = false;
-
-                    foreach ($shipments as $shipment) {
-                        if ($shipment->lineId === $line->id) {
-                            $isShipped = true;
-                            break;
-                        }
+            foreach ($mollieOrder->lines as $line) {
+                foreach ($refunds as $refund) {
+                    $productName = Product::getProductName((int) $refund->metadata->idProduct);
+                    if ($productName === $line->description) {
+                        $mollieOrderStatuses[] = [
+                            'id' => $refund->metadata->idProduct,
+                            'name' => $line->description,
+                            'isRefunded' => true,
+                        ];
                     }
-
-                    foreach ($refunds as $refund) {
-                        if ($refund->lineId === $line->id) {
-                            $isRefunded = true;
-                            break;
-                        }
-                    }
-
-                    $orderInfo['lines'][] = [
-                        'id' => $line->id,
-                        'name' => $line->name,
-                        'sku' => $line->sku,
-                        'isShipped' => $isShipped,
-                        'isRefunded' => $isRefunded,
-                        'isCaptured' => false,
-                    ];
-                }
-            } else {
-                $molliePayment = $this->mollie->getApiClient()->payments->get($transactionId);
-                $captures = $molliePayment->captures();
-                $refunds = $molliePayment->refunds();
-
-                foreach ($molliePayment->lines as $line) {
-                    $isCaptured = false;
-                    $isRefunded = false;
-
-                    foreach ($captures as $capture) {
-                        if ($capture->name === $line->name) {
-                            $isCaptured = true;
-                            break;
-                        }
-                    }
-
-                    foreach ($refunds as $refund) {
-                        if ($refund->name === $line->name) {
-                            $isRefunded = true;
-                            break;
-                        }
-                    }
-
-                    $orderInfo['lines'][] = [
-                        'id' => $line->id,
-                        'name' => $line->name,
-                        'sku' => $line->sku,
-                        'isShipped' => false,
-                        'isRefunded' => $isRefunded,
-                        'isCaptured' => $isCaptured,
-                    ];
                 }
             }
 
-            return $orderInfo;
+            return $mollieOrderStatuses;
         } catch (ApiException $e) {
             $this->logger->error(sprintf('%s - Failed to retrieve order info: %s', self::FILE_NAME, $e->getMessage()), [
                 'exceptions' => ExceptionUtility::getExceptions($e),
@@ -131,6 +81,18 @@ class MollieOrderService
     public function mergeOrderStatusesWithProducts(array $products, string $transactionId): array
     {
         $mollieOrderStatuses = $this->getStatusesByTransactionId($transactionId);
+
+        if (empty($mollieOrderStatuses)) {
+            return array_map(function($product) {
+                return [
+                    'id' => $product['id_product'],
+                    'name' => $product['product_name'],
+                    'price' => $product['total_price_tax_incl'],
+                    'quantity' => $product['product_quantity'],
+                ];
+            }, $products);
+        }
+
         $mollieStatusesMap = [];
 
         foreach ($mollieOrderStatuses['lines'] as $mollieOrderStatus) {

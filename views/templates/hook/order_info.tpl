@@ -57,15 +57,15 @@
               <td>{$product.price|escape:'html':'UTF-8'}</td>
               <td>
                 {if $mollie_api_type == 'orders'}
-                  <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product.price}" data-product="{$product.id}" {if $product.isShipped}disabled{/if}>
+                  <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product.price}" data-product="{$product.id}">
                     <i class="icon-truck"></i> {l s='Ship' mod='mollie'}
                   </button>
                 {else}
-                  <button type="button" class="btn btn-default btn-xs mollie-capture-btn" data-price="{$product.price}" data-product="{$product.id}" {if $product.isRefunded || $product.isCaptured}disabled{/if}>
+                  <button type="button" class="btn btn-default btn-xs mollie-capture-btn" data-price="{$product.price}" data-product="{$product.id}" {if $isCaptured}disabled{/if}>
                     <i class="icon-money"></i> {l s='Capture' mod='mollie'}
                   </button>
                 {/if}
-                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product.price}" data-product="{$product.id}" {if $product.isRefunded}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product.price}" data-product="{$product.id}">
                   <i class="icon-undo"></i> {l s='Refund' mod='mollie'}
                 </button>
               </td>
