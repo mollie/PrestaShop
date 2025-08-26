@@ -98,7 +98,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
     public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl): PaymentFeeData
     {
         try {
-            $this->paymentFeeValidator->validatePaymentFeePercentage($paymentMethod);
+            // $this->paymentFeeValidator->validatePaymentFeePercentage($paymentMethod);
 
             $surchargeFixedPriceTaxExcl = (float) $paymentMethod->surcharge_fixed_amount_tax_excl;
             $surchargePercentage = (float) $paymentMethod->surcharge_percentage;
@@ -139,7 +139,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
                     $paymentFeeData = new PaymentFeeData(0.00, 0.00, 0.00, false);
             }
 
-            $this->paymentFeeValidator->validatePaymentFeeAmount($paymentFeeData, $totalCartPriceTaxIncl);
+            // $this->paymentFeeValidator->validatePaymentFeeAmount($paymentFeeData, $totalCartPriceTaxIncl);
 
             return $paymentFeeData;
         } catch (Throwable $e) {
