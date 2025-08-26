@@ -23,21 +23,19 @@
       {{ form_start(subscriptionOptionsForm, {method: 'POST', action: path('admin_subscription_options_submit'), attr: {id: 'subscription-options'}}) }}
       <div class="card">
         <h3 class="card-header">
-          <i class="material-icons">settings</i> {{ 'Subscription options'|trans }}
+          <i class="material-icons">settings</i> {{ translations.subscription_options }}
         </h3>
         <div class="card-block row">
           <div class="card-text px-3">
             <div class="form-group row">
-              {# TODO translations will be enabled only after we will migrate to moden translation system #}
-              {{ ps.label_with_help('Enable subscription service'|trans, 'Toggle this option to enable products to be bought as recurring items.'|trans) }}
+              {{ ps.label_with_help(translations.enable_subscription_service, translations.enable_subscription_service_help) }}
               <div class="col-sm">
                 {{ form_errors(subscriptionOptions.enable_subscriptions) }}
                 {{ form_widget(subscriptionOptions.enable_subscriptions) }}
               </div>
             </div>
             <div class="form-group row">
-              {# TODO translations will be enabled only after we will migrate to moden translation system #}
-              {{ ps.label_with_help('Carrier to use in subscription orders'|trans, 'WARNING: do not change selection after getting first subscription order.'|trans) }}
+              {{ ps.label_with_help(translations.carrier_warning, translations.carrier_warning_text) }}
               <div class="col-sm">
                 {{ form_errors(subscriptionOptions.carrier) }}
                 {{ form_widget(subscriptionOptions.carrier) }}
