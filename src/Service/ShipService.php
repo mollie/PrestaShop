@@ -79,14 +79,12 @@ class ShipService
 
     public function isShipped(string $transactionId): bool
     {
-        $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
-
-        if (!$isOrderTransaction) {
+        if (!TransactionUtility::isOrderTransaction($transactionId)) {
             return false;
         }
 
         $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
 
-        return $order->shipments()->count() > 0 || $order->amountShipped->value > 0;
+        return false;
     }
 }

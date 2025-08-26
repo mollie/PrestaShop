@@ -134,7 +134,7 @@ $(document).ready(function () {
       refundAmount: context.amount,
       transactionId: context.transactionId,
       productId: context.productId,
-      
+
     };
 
     // Add capture amount for capture actions
@@ -145,7 +145,6 @@ $(document).ready(function () {
     if (context.productId && (context.action === 'refund' || context.action === 'ship' || context.action === 'capture')) {
       data.orderLines = [{
         id: context.productId,
-        quantity: 1
       }];
     }
 

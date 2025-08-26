@@ -280,9 +280,12 @@ class RefundService
             : $this->module->getApiClient()->payments->get($transactionId);
 
         $refundedAmount = (float) RefundUtility::getRefundedAmount(iterator_to_array($transaction->refunds()));
+        $refundedAmount2 = $transaction->amountRefunded ? (float) $transaction->amountRefunded->value : null;
 
-        return $isOrderTransaction
-            ? ($refundedAmount >= $amount || (float) $transaction->amountRefunded->value >= $amount)
-            : $refundedAmount >= $amount;
+        if ($refundedAmount2) {
+            return $refundedAmount >= $amount || (float) $transaction->amountRefunded->value >= $amount;
+        }
+
+        return $refundedAmount >= $amount;
     }
 }
