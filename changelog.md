@@ -2,11 +2,9 @@
 
 # Changelog #
 
-## Changes in release 6.4.0 ##
+## Changes in release 6.3.1 ##
 + Improved API key validation
-+ Added support for negative payment fees
 + Added Bizum payment method
-+ Added support for negative payment fees
 + Added Vipps payment method
 
 ## Changes in release 6.3.0 ##

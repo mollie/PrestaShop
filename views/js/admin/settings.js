@@ -10,11 +10,20 @@
  */
 
 $(document).ready(function () {
+    disableCharactersInAmountInput();
     handleDisableForCustomUrl();
     handleRequiredApiKey();
     handleApiKeyVisibility();
     handleApplePayButtonStylesToggle();
     handleApiKeyChanges();
+
+    function disableCharactersInAmountInput() {
+        $('.js-mollie-amount').keypress(function (event) {
+            if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+                event.preventDefault();
+            }
+        });
+    }
 
     function handleDisableForCustomUrl() {
         $('select[name^="MOLLIE_CARRIER_URL_SOURCE"]').on('change', function () {
