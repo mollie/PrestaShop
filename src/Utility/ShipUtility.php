@@ -18,13 +18,17 @@ if (!defined('_PS_VERSION_')) {
 
 class ShipUtility
 {
-    public static function getShipLines(array $lines)
+    public static function getShipLines(array $lines, array $allOrderLines)
     {
         $shipLines = [];
-        foreach ($lines as $line) {
-            $shipLines[] = [
-                'id' => $line->id,
-            ];
+        foreach ($allOrderLines as $orderLine) {
+            foreach ($lines as $line) {
+                if ($orderLine->metadata->idProduct == $line['id']) {
+                    $shipLines[] = [
+                        'id' => $orderLine->id,
+                    ];
+                }
+            }
         }
         return $shipLines;
     }

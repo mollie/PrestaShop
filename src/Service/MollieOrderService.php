@@ -48,15 +48,32 @@ class MollieOrderService
         }
 
         $mollieOrder = $this->mollie->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments']);
+        $shipments = $mollieOrder->shipments();
         $refunds = $mollieOrder->refunds();
 
-        foreach ($products as $product) {
+        foreach ($products as &$product) {
+            $product['isShipped'] = false;
+            $product['isRefunded'] = false;
+
+            foreach ($shipments as $shipment) {
+                foreach ($shipment->lines as $shipmentLine) {
+                    if ($shipmentLine->metadata->idProduct === $product['id']) {
+                        $product['isShipped'] = true;
+                        break 2;
+                    }
+                }
+            }
+
             foreach ($refunds as $refund) {
-                if ($refund->metadata->idProduct === $product['id_product']) {
-                    $product['isRefunded'] = true;
+                foreach ($refund->lines as $refundLine) {
+                    if ($refundLine->metadata->idProduct === $product['id']) {
+                        $product['isRefunded'] = true;
+                        break 2;
+                    }
                 }
             }
         }
+        unset($product);
 
         return $products;
     }

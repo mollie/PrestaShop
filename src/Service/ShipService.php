@@ -54,7 +54,7 @@ class ShipService
             $shipmentData = [];
 
             if (!empty($lines)) {
-                $shipmentData['lines'] = ShipUtility::getShipLines($lines);
+                $shipmentData['lines'] = ShipUtility::getShipLines($lines, $order->lines);
             }
 
             if ($tracking && !empty($tracking['carrier']) && !empty($tracking['code'])) {

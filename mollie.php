@@ -583,7 +583,7 @@ class Mollie extends PaymentModule
 
         $products = array_map(function($product) {
             return [
-                'id' => $product['id_order_detail'],
+                'id' => $product['id_product'],
                 'name' => $product['product_name'],
                 'price' => $product['total_price_tax_incl'],
                 'quantity' => $product['product_quantity'],

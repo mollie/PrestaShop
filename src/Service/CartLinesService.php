@@ -209,6 +209,9 @@ class CartLinesService
                         'categories' => [],
                         'product_url' => $this->context->getProductLink($cartItem['id_product']),
                         'image_url' => $this->context->getImageLink($cartItem['link_rewrite'], $cartItem['id_image']),
+                        'metadata' => [
+                            'idProduct' => $cartItem['id_product'],
+                        ],
                     ];
                     continue;
                 }
@@ -229,6 +232,9 @@ class CartLinesService
                 'categories' => $this->voucherService->getVoucherCategory($cartItem, $selectedVoucherCategory),
                 'product_url' => $this->context->getProductLink($cartItem['id_product']),
                 'image_url' => $this->context->getImageLink($cartItem['link_rewrite'], $cartItem['id_image']),
+                'metadata' => [
+                    'idProduct' => $cartItem['id_product'],
+                ],
             ];
             $remaining -= $roundedTotalWithTax;
         }
@@ -354,6 +360,7 @@ class CartLinesService
                     'vatAmount' => round($vatAmount, $apiRoundingPrecision),
                     'product_url' => $line['product_url'] ?? null,
                     'image_url' => $line['image_url'] ?? null,
+                    'metadata' => $line['metadata'] ?? [],
                 ];
                 if (isset($line['sku'])) {
                     $newItem['sku'] = $line['sku'];
