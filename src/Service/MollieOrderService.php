@@ -49,11 +49,9 @@ class MollieOrderService
 
         $mollieOrder = $this->mollie->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments']);
         $shipments = $mollieOrder->shipments();
-        $refunds = $mollieOrder->refunds();
 
         foreach ($products as &$product) {
             $product['isShipped'] = false;
-            $product['isRefunded'] = false;
 
             foreach ($shipments as $shipment) {
                 foreach ($shipment->lines as $shipmentLine) {
@@ -63,8 +61,28 @@ class MollieOrderService
                     }
                 }
             }
+        }
+        unset($product);
+
+        return $products;
+    }
+
+    public function assignRefundStatus(array $products, string $mollieTransactionId)
+    {
+        $mollieOrder = TransactionUtility::isOrderTransaction($mollieTransactionId)
+            ? $this->mollie->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'refunds'])
+            : $this->mollie->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'refunds']);
+
+        $refunds = $mollieOrder->refunds();
+
+        foreach ($products as &$product) {
+            $product['isRefunded'] = false;
 
             foreach ($refunds as $refund) {
+                if (!$refund->lines) {
+                    continue;
+                }
+
                 foreach ($refund->lines as $refundLine) {
                     if ($refundLine->metadata->idProduct === $product['id']) {
                         $product['isRefunded'] = true;
@@ -77,4 +95,34 @@ class MollieOrderService
 
         return $products;
     }
+
+    public function assignCaptureStatus(array $products, string $mollieTransactionId)
+    {
+        if (!TransactionUtility::isOrderTransaction($mollieTransactionId)) {
+            return $products;
+        }
+
+        $mollieOrder = $this->mollie->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments']);
+        $payments = $mollieOrder->payments();
+
+        foreach ($products as &$product) {
+            $product['isCaptured'] = false;
+
+            foreach ($payments as $payment) {
+                if (isset($payment->captures)) {
+                    foreach ($payment->captures as $capture) {
+                        if (isset($capture->metadata->idProduct) && $capture->metadata->idProduct === $product['id']) {
+                            $product['isCaptured'] = true;
+                            break 2;
+                        }
+                    }
+                }
+            }
+        }
+        unset($product);
+
+        return $products;
+    }
+
+
 }
