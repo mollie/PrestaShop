@@ -141,9 +141,10 @@ class RefundService
      * @param MollieOrderAlias|Payment $payment
      * @param string $refundAmount
      * @param bool $isOrderTransaction
+     * @param int|null $idProduct
      * @throws ApiException
      */
-    private function processRefund($payment, string $refundAmount, bool $isOrderTransaction, int $idProduct): void
+    private function processRefund($payment, string $refundAmount, bool $isOrderTransaction, ?int $idProduct = null): void
     {
         if ($isOrderTransaction) {
             $this->refundOrder($payment, $refundAmount);
