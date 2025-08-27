@@ -112,9 +112,9 @@ class MollieOrderService
 
             if (isset($mollieStatusesMap[$product['id_product']])) {
                 $mollieStatus = $mollieStatusesMap[$product['id_product']];
-                $productData['isShipped'] = $mollieStatus['isShipped'];
+                // $productData['isShipped'] = $mollieStatus['isShipped'];
                 $productData['isRefunded'] = $mollieStatus['isRefunded'];
-                $productData['isCaptured'] = $mollieStatus['isCaptured'];
+                // $productData['isCaptured'] = $mollieStatus['isCaptured'];
             }
 
             return $productData;
