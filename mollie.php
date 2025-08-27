@@ -581,7 +581,16 @@ class Mollie extends PaymentModule
 
         $order = new Order($params['id_order']);
 
-        $products = $mollieOrderService->mergeOrderStatusesWithProducts($order->getProducts(), $mollieTransactionId);
+        $products = array_map(function($product) {
+            return [
+                'id' => $product['id_order_detail'],
+                'name' => $product['product_name'],
+                'price' => $product['total_price_tax_incl'],
+                'quantity' => $product['product_quantity'],
+            ];
+        }, $order->getProducts());
+
+        $products = $mollieOrderService->assignShippingStatus($products, $mollieTransactionId);
 
         $this->context->smarty->assign([
             'order_reference' => $order->reference,
@@ -594,7 +603,6 @@ class Mollie extends PaymentModule
             'tracking' => $shipmentService->getShipmentInformation($order->reference),
             'isRefunded' => $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid),
             'isCaptured' => $captureService->isCaptured($mollieTransactionId),
-            'isShipped' => $shipService->isShipped($mollieTransactionId),
         ]);
 
         return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');

@@ -15,6 +15,7 @@ namespace Mollie\Service;
 use Mollie;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Logger\LoggerInterface;
+use Mollie\Repository\ProductRepository;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\TransactionUtility;
 use Product;
@@ -40,84 +41,23 @@ class MollieOrderService
         $this->logger = $logger;
     }
 
-    public function getStatusesByTransactionId(string $transactionId): array
+    public function assignShippingStatus(array $products, string $mollieTransactionId)
     {
-        try {
-            $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
-            $mollieOrder = $isOrderTransaction ? $this->mollie->getApiClient()->orders->get($transactionId, ['embed' => 'payments']) : $this->mollie->getApiClient()->payments->get($transactionId);
+        if (!TransactionUtility::isOrderTransaction($mollieTransactionId)) {
+            return $products;
+        }
 
-            $refunds = $mollieOrder->refunds();
-            $refunds = iterator_to_array($refunds);
+        $mollieOrder = $this->mollie->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments']);
+        $refunds = $mollieOrder->refunds();
 
-            foreach ($mollieOrder->lines as $line) {
-                foreach ($refunds as $refund) {
-                    $productName = Product::getProductName((int) $refund->metadata->idProduct);
-                    if ($productName === $line->description) {
-                        $mollieOrderStatuses[] = [
-                            'id' => $refund->metadata->idProduct,
-                            'name' => $line->description,
-                            'isRefunded' => true,
-                        ];
-                    }
+        foreach ($products as $product) {
+            foreach ($refunds as $refund) {
+                if ($refund->metadata->idProduct === $product['id_product']) {
+                    $product['isRefunded'] = true;
                 }
             }
-
-            return $mollieOrderStatuses;
-        } catch (ApiException $e) {
-            $this->logger->error(sprintf('%s - Failed to retrieve order info: %s', self::FILE_NAME, $e->getMessage()), [
-                'exceptions' => ExceptionUtility::getExceptions($e),
-            ]);
-
-            return [];
-        } catch (Throwable $e) {
-            $this->logger->error(sprintf('%s - Failed to retrieve order info: %s', self::FILE_NAME, $e->getMessage()), [
-                'exceptions' => ExceptionUtility::getExceptions($e),
-            ]);
-
-            return [];
-        }
-    }
-
-    public function mergeOrderStatusesWithProducts(array $products, string $transactionId): array
-    {
-        $mollieOrderStatuses = $this->getStatusesByTransactionId($transactionId);
-
-        if (empty($mollieOrderStatuses)) {
-            return array_map(function($product) {
-                return [
-                    'id' => $product['id_product'],
-                    'name' => $product['product_name'],
-                    'price' => $product['total_price_tax_incl'],
-                    'quantity' => $product['product_quantity'],
-                ];
-            }, $products);
         }
 
-        $mollieStatusesMap = [];
-
-        foreach ($mollieOrderStatuses as $mollieOrderStatus) {
-            $mollieStatusesMap[$mollieOrderStatus['id']] = $mollieOrderStatus;
-        }
-
-        return array_map(function($product) use ($mollieStatusesMap) {
-            $productData = [
-                'id' => $product['id_product'],
-                'name' => $product['product_name'],
-                'price' => $product['total_price_tax_incl'],
-                'quantity' => $product['product_quantity'],
-                'isShipped' => false,
-                'isRefunded' => false,
-                'isCaptured' => false,
-            ];
-
-            if (isset($mollieStatusesMap[$product['id_product']])) {
-                $mollieStatus = $mollieStatusesMap[$product['id_product']];
-                // $productData['isShipped'] = $mollieStatus['isShipped'];
-                $productData['isRefunded'] = $mollieStatus['isRefunded'];
-                // $productData['isCaptured'] = $mollieStatus['isCaptured'];
-            }
-
-            return $productData;
-        }, $products);
+        return $products;
     }
 }
