@@ -13,13 +13,9 @@
 namespace Mollie\Service;
 
 use Mollie;
-use Mollie\Api\Exceptions\ApiException;
 use Mollie\Logger\LoggerInterface;
-use Mollie\Repository\ProductRepository;
-use Mollie\Utility\ExceptionUtility;
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Utility\TransactionUtility;
-use Product;
-use Throwable;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -29,15 +25,15 @@ class MollieOrderService
 {
     const FILE_NAME = 'MollieOrderService';
 
-    /** @var Mollie $mollie */
-    private $mollie;
+    /** @var Mollie $module */
+    private $module;
 
     /** @var LoggerInterface $logger */
     private $logger;
 
-    public function __construct(Mollie $mollie, LoggerInterface $logger)
+    public function __construct(Mollie $module, LoggerInterface $logger)
     {
-        $this->mollie = $mollie;
+        $this->module = $module;
         $this->logger = $logger;
     }
 
@@ -47,7 +43,7 @@ class MollieOrderService
             return $products;
         }
 
-        $mollieOrder = $this->mollie->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments']);
+        $mollieOrder = $this->module->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments']);
         $shipments = $mollieOrder->shipments();
 
         foreach ($products as &$product) {
@@ -70,8 +66,8 @@ class MollieOrderService
     public function assignRefundStatus(array $products, string $mollieTransactionId)
     {
         $mollieOrder = TransactionUtility::isOrderTransaction($mollieTransactionId)
-            ? $this->mollie->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'refunds'])
-            : $this->mollie->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'refunds']);
+            ? $this->module->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'refunds'])
+            : $this->module->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'refunds']);
 
         $refunds = $mollieOrder->refunds();
 
@@ -102,7 +98,7 @@ class MollieOrderService
             return $products;
         }
 
-        $mollieOrder = $this->mollie->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments']);
+        $mollieOrder = $this->module->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments']);
         $payments = $mollieOrder->payments();
 
         foreach ($products as &$product) {
@@ -124,5 +120,24 @@ class MollieOrderService
         return $products;
     }
 
+    public function assignDiscounts(array $products, array $discounts)
+    {
+        /** @var ToolsAdapter $toolsAdapter */
+        $toolsAdapter = $this->module->getService(ToolsAdapter::class);
 
+        $result = [];
+
+        foreach ($discounts as $discount) {
+            $result[] = [
+                'id' => $discount['id_cart_rule'],
+                'name' => 'Discount',
+                'price' => $toolsAdapter->displayPrice(-$discount['value']),
+                'quantity' => 1,
+            ];
+        }
+
+        $result = array_merge($products, $result);
+
+        return $result;
+    }
 }

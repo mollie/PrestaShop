@@ -581,16 +581,20 @@ class Mollie extends PaymentModule
 
         $order = new Order($params['id_order']);
 
-        $products = array_map(function($product) {
+        /** @var ToolsAdapter $toolsAdapter */
+        $toolsAdapter = $this->getService(ToolsAdapter::class);
+
+        $products = array_map(function($product) use ($toolsAdapter) {
             return [
                 'id' => $product['id_product'],
                 'name' => $product['product_name'],
-                'price' => $product['total_price_tax_incl'],
+                'price' => $toolsAdapter->displayPrice($product['total_price_tax_incl']),
                 'quantity' => $product['product_quantity'],
             ];
         }, $order->getProducts());
 
         $products = $mollieOrderService->assignShippingStatus($products, $mollieTransactionId);
+        $products = $mollieOrderService->assignDiscounts($products, $order->getCartRules());
 
         $this->context->smarty->assign([
             'order_reference' => $order->reference,
