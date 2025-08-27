@@ -51,7 +51,7 @@ class MollieOrderService
 
             foreach ($shipments as $shipment) {
                 foreach ($shipment->lines as $shipmentLine) {
-                    if ($shipmentLine->metadata->idProduct === $product['id']) {
+                    if (!empty($shipmentLine->metadata) && $shipmentLine->metadata->idProduct === $product['id']) {
                         $product['isShipped'] = true;
                         break 2;
                     }
@@ -80,7 +80,7 @@ class MollieOrderService
                 }
 
                 foreach ($refund->lines as $refundLine) {
-                    if ($refundLine->metadata->idProduct === $product['id']) {
+                    if (!empty($refundLine->metadata) && $refundLine->metadata->idProduct === $product['id']) {
                         $product['isRefunded'] = true;
                         break 2;
                     }
@@ -133,6 +133,8 @@ class MollieOrderService
                 'name' => 'Discount',
                 'price' => $toolsAdapter->displayPrice(-$discount['value']),
                 'quantity' => 1,
+                'isRefunded' => false,
+                'isShipped' => false,
             ];
         }
 

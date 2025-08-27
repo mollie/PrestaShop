@@ -56,7 +56,7 @@
               <td><strong>{$product.quantity}x</strong> {$product.name|escape:'html':'UTF-8'}</td>
               <td>{$product.price|escape:'html':'UTF-8'}</td>
               <td>
-              {if $mollie_api_type == 'orders'}
+              {if $mollie_api_type == 'orders' && $product.name != 'Discount'}
                 <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product.price}" data-product="{$product.id}" {if $product.isShipped}disabled{/if}>
                   <i class="icon-truck"></i> {l s='Ship' mod='mollie'}
                 </button>
