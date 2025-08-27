@@ -46,9 +46,7 @@
         <tr>
           <th>{l s='Product' mod='mollie'}</th>
           <th>{l s='Price' mod='mollie'}</th>
-          {if $mollie_api_type == 'orders'}
-            <th>{l s='Actions' mod='mollie'}</th>
-          {/if}
+          <th>{l s='Actions' mod='mollie'}</th>
         </tr>
       </thead>
       <tbody>
@@ -57,13 +55,21 @@
             <tr>
               <td><strong>{$product.quantity}x</strong> {$product.name|escape:'html':'UTF-8'}</td>
               <td>{$product.price|escape:'html':'UTF-8'}</td>
-              {if $mollie_api_type == 'orders'}
               <td>
+              {if $mollie_api_type == 'orders'}
                 <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product.price}" data-product="{$product.id}" {if $product.isShipped}disabled{/if}>
                   <i class="icon-truck"></i> {l s='Ship' mod='mollie'}
                 </button>
-              </td>
               {/if}
+              {if $mollie_api_type == 'payments'}
+                <button type="button" class="btn btn-default btn-xs mollie-capture-btn" data-price="{$product.price}" data-product="{$product.id}" {if $isCaptured}disabled{/if}>
+                  <i class="icon-money"></i> {l s='Capture' mod='mollie'}
+                </button>
+              {/if}
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product.price}" data-product="{$product.id}">
+                  <i class="icon-undo"></i> {l s='Refund' mod='mollie'}
+                </button>
+              </td>
             </tr>
           {/if}
         {/foreach}
