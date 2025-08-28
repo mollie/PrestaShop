@@ -142,4 +142,13 @@ class MollieOrderService
 
         return $result;
     }
+
+    public function getRefundableAmount(string $mollieTransactionId)
+    {
+        $mollieOrder = TransactionUtility::isOrderTransaction($mollieTransactionId)
+            ? $this->module->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])
+            : $this->module->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments']);
+
+        return $mollieOrder->settlementAmount->value;
+    }
 }
