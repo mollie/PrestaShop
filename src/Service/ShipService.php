@@ -17,7 +17,8 @@ use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Utility\ShipUtility;
 use Mollie\Utility\TransactionUtility;
-
+use Mollie\Logger\LoggerInterface;
+use Validate;
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -57,12 +58,29 @@ class ShipService
                 $shipmentData['lines'] = ShipUtility::getShipLines($lines, $order->lines);
             }
 
-            if ($tracking && !empty($tracking['carrier']) && !empty($tracking['code'])) {
-                $shipmentData['tracking'] = $tracking;
+            if ($tracking) {
+                $validationResult = $this->validateTracking($tracking);
+
+                if (!$validationResult['success']) {
+                    return $validationResult;
+                }
+
+                $shipmentData['tracking'] = [
+                    'carrier' => $tracking['carrier'],
+                    'code' => $tracking['code'],
+                    'url' => $tracking['tracking_url'],
+                ];
             }
 
             $order->createShipment($shipmentData);
         } catch (ApiException $e) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+
+            $logger->error(sprintf('%s - Failed to ship order lines', self::FILE_NAME), [
+                'error_message' => $e->getMessage(),
+            ]);
+
             return [
                 'success' => false,
                 'message' => $this->module->l('The product(s) could not be shipped!', self::FILE_NAME),
@@ -86,5 +104,27 @@ class ShipService
         $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
 
         return $order->shipments()->count() > 0;
+    }
+
+    private function validateTracking(array $tracking): array
+    {
+        if (!Validate::isAbsoluteUrl($tracking['tracking_url'])) {
+            return [
+                'success' => false,
+                'message' => $this->module->l('Invalid tracking URL provided', self::FILE_NAME),
+            ];
+        }
+
+        if (!Validate::isString($tracking['carrier']) || !Validate::isString($tracking['code'])) {
+            return [
+                'success' => false,
+                'message' => $this->module->l('Invalid tracking data provided', self::FILE_NAME),
+            ];
+        }
+
+        return [
+            'success' => true,
+            'message' => '',
+        ];
     }
 }

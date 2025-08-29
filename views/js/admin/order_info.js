@@ -155,7 +155,7 @@ $(document).ready(function () {
 
       data.tracking = {
         carrier: carrier || null,
-        tracking_number: trackingNumber || null,
+        code: trackingNumber || null,
         tracking_url: trackingUrl || null
       };
     }
