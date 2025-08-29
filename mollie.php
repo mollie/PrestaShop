@@ -557,60 +557,75 @@ class Mollie extends PaymentModule
         /** @var MollieOrderService $mollieOrderService */
         $mollieOrderService = $this->getService(MollieOrderService::class);
 
-        $transaction = $paymentMethodRepo->getPaymentBy('cart_id', (string) Cart::getCartIdByOrderId((int) $params['id_order']));
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
 
-        if (empty($transaction)) {
+        try {
+            $transaction = $paymentMethodRepo->getPaymentBy('cart_id', (string) Cart::getCartIdByOrderId((int) $params['id_order']));
+
+            if (empty($transaction)) {
+                $logger->error(sprintf('%s - Transaction not found. Cannot render order info.', self::FILE_NAME), [
+                    'id_order' => $params['id_order'],
+                ]);
+
+                return false;
+            }
+
+            $mollieTransactionId = isset($transaction['transaction_id']) ? $transaction['transaction_id'] : null;
+
+            $mollieApiType = null;
+
+            if ($mollieTransactionId) {
+                $mollieApiType = TransactionUtility::isOrderTransaction($mollieTransactionId) ? 'orders' : 'payments';
+            }
+
+            /** @var ToolsAdapter $toolsAdapter */
+            $toolsAdapter = $this->getService(ToolsAdapter::class);
+
+            $order = new Order($params['id_order']);
+
+            $products = array_map(function($product) use ($toolsAdapter) {
+                return [
+                    'id' => $product['id_product'],
+                    'name' => $product['product_name'],
+                    'price' => $product['total_price_tax_incl'],
+                    'price_formatted' => $toolsAdapter->displayPrice($product['total_price_tax_incl']),
+                    'quantity' => $product['product_quantity'],
+                ];
+            }, $order->getProducts());
+
+            $products = $mollieOrderService->assignShippingStatus($products, $mollieTransactionId);
+            $products = $mollieOrderService->assignRefundStatus($products, $mollieTransactionId);
+            $products = $mollieOrderService->assignDiscounts($products, $order->getCartRules());
+
+            $mollieLogoPath = $this->getMollieLogoPath();
+            $refundableAmount = $mollieOrderService->getRefundableAmount($mollieTransactionId);
+            $tracking = $shipmentService->getShipmentInformation($order->reference);
+            $isRefunded = $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid);
+            $isCaptured = $captureService->isCaptured($mollieTransactionId);
+            $isShipped = $shipService->isShipped($products);
+
+            $this->context->smarty->assign([
+                'order_reference' => $order->reference,
+                'refundable_amount' => $refundableAmount,
+                'products' => $products,
+                'mollie_logo_path' => $mollieLogoPath,
+                'mollie_transaction_id' => $mollieTransactionId,
+                'mollie_api_type' => $mollieApiType,
+                'tracking' => $tracking,
+                'isRefunded' => $isRefunded,
+                'isCaptured' => $isCaptured,
+                'isShipped' => $isShipped,
+            ]);
+
+            return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');
+        } catch (\Throwable $e) {
+            $logger->error(sprintf('%s - Error while rendering admin order info', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+
             return false;
         }
-
-        $mollieTransactionId = isset($transaction['transaction_id']) ? $transaction['transaction_id'] : null;
-
-        $mollieApiType = null;
-
-        if ($mollieTransactionId) {
-            $mollieApiType = TransactionUtility::isOrderTransaction($mollieTransactionId) ? 'orders' : 'payments';
-        }
-
-        /** @var ToolsAdapter $toolsAdapter */
-        $toolsAdapter = $this->getService(ToolsAdapter::class);
-
-        $order = new Order($params['id_order']);
-
-        $products = array_map(function($product) use ($toolsAdapter) {
-            return [
-                'id' => $product['id_product'],
-                'name' => $product['product_name'],
-                'price' => $product['total_price_tax_incl'],
-                'price_formatted' => $toolsAdapter->displayPrice($product['total_price_tax_incl']),
-                'quantity' => $product['product_quantity'],
-            ];
-        }, $order->getProducts());
-
-        $products = $mollieOrderService->assignShippingStatus($products, $mollieTransactionId);
-        $products = $mollieOrderService->assignRefundStatus($products, $mollieTransactionId);
-        $products = $mollieOrderService->assignDiscounts($products, $order->getCartRules());
-
-        $mollieLogoPath = $this->getMollieLogoPath();
-        $refundableAmount = $mollieOrderService->getRefundableAmount($mollieTransactionId);
-        $tracking = $shipmentService->getShipmentInformation($order->reference);
-        $isRefunded = $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid);
-        $isCaptured = $captureService->isCaptured($mollieTransactionId);
-        $isShipped = $shipService->isShipped($products);
-
-        $this->context->smarty->assign([
-            'order_reference' => $order->reference,
-            'refundable_amount' => $refundableAmount,
-            'products' => $products,
-            'mollie_logo_path' => $mollieLogoPath,
-            'mollie_transaction_id' => $mollieTransactionId,
-            'mollie_api_type' => $mollieApiType,
-            'tracking' => $tracking,
-            'isRefunded' => $isRefunded,
-            'isCaptured' => $isCaptured,
-            'isShipped' => $isShipped,
-        ]);
-
-        return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');
     }
 
     /**
