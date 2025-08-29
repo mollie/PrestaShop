@@ -28,17 +28,17 @@
           <p>{l s='Please provide shipping information:' mod='mollie'}</p>
 
           <div class="form-group">
-            <label for="mollie-carrier">{l s='Carrier (Optional)' mod='mollie'}</label>
+            <label for="mollie-carrier">{l s='Carrier' mod='mollie'}</label>
             <input type="text" class="form-control" id="mollie-carrier" placeholder="{l s='e.g., DHL, UPS, FedEx' mod='mollie'}">
           </div>
 
           <div class="form-group">
-            <label for="mollie-tracking-number">{l s='Tracking Number (Optional)' mod='mollie'}</label>
+            <label for="mollie-tracking-number">{l s='Tracking Number' mod='mollie'}</label>
             <input type="text" class="form-control" id="mollie-tracking-number" placeholder="{l s='Enter tracking number' mod='mollie'}">
           </div>
 
           <div class="form-group">
-            <label for="mollie-tracking-url">{l s='Tracking URL (Optional)' mod='mollie'}</label>
+            <label for="mollie-tracking-url">{l s='Tracking URL' mod='mollie'}</label>
             <input type="url" class="form-control" id="mollie-tracking-url" placeholder="{l s='https://example.com/track/123456' mod='mollie'}">
           </div>
         </div>
