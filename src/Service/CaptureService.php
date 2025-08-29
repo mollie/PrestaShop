@@ -46,37 +46,100 @@ class CaptureService
     public function handleCapture($transactionId, $amount = null)
     {
         try {
-            $payment = $this->module->getApiClient()->payments->get($transactionId);
+            $payment = $this->getPayment($transactionId);
+            $this->performCapture($transactionId, $payment, $amount);
 
-            if ($amount) {
-                $captureData = [
-                    'amount' => [
-                        'currency' => $payment->amount->currency,
-                        'value' => TextFormatUtility::formatNumber($amount, 2, '.', ''),
-                    ],
-                ];
-                $capture = $this->module->getApiClient()->paymentCaptures->createForId($transactionId, [
-                    'amount' => [
-                        'currency' => $payment->amount->currency,
-                        'value' => TextFormatUtility::formatNumber($amount, 2, '.', ''),
-                    ],
-                ]);
-            } else {
-                $capture = $this->module->getApiClient()->paymentCaptures->createForId($transactionId);
-            }
-
-            return [
-                'success' => true,
-                'message' => '',
-                'detailed' => '',
-            ];
+            return $this->createSuccessResponse();
         } catch (\Throwable $e) {
-            return [
-                'success' => false,
-                'message' => $this->module->l('The payment could not be captured!', self::FILE_NAME),
-                'detailed' => $e->getMessage(),
-            ];
+            return $this->createErrorResponse($e);
         }
+    }
+
+    /**
+     * Get payment from Mollie API
+     *
+     * @param string $transactionId
+     *
+     * @return Payment
+     */
+    private function getPayment(string $transactionId): Payment
+    {
+        return $this->module->getApiClient()->payments->get($transactionId);
+    }
+
+    /**
+     * Perform the actual capture operation
+     *
+     * @param string $transactionId
+     * @param Payment $payment
+     * @param float|null $amount
+     */
+    private function performCapture(string $transactionId, Payment $payment, ?float $amount): void
+    {
+        if ($amount) {
+            $this->capturePartialAmount($transactionId, $payment, $amount);
+        } else {
+            $this->captureFullAmount($transactionId);
+        }
+    }
+
+    /**
+     * Capture a partial amount
+     *
+     * @param string $transactionId
+     * @param Payment $payment
+     * @param float $amount
+     */
+    private function capturePartialAmount(string $transactionId, Payment $payment, float $amount): void
+    {
+        $captureData = [
+            'amount' => [
+                'currency' => $payment->amount->currency,
+                'value' => TextFormatUtility::formatNumber($amount, 2, '.', ''),
+            ],
+        ];
+
+        $this->module->getApiClient()->paymentCaptures->createForId($transactionId, $captureData);
+    }
+
+    /**
+     * Capture the full amount
+     *
+     * @param string $transactionId
+     */
+    private function captureFullAmount(string $transactionId): void
+    {
+        $this->module->getApiClient()->paymentCaptures->createForId($transactionId);
+    }
+
+    /**
+     * Create success response
+     *
+     * @return array
+     */
+    private function createSuccessResponse(): array
+    {
+        return [
+            'success' => true,
+            'message' => '',
+            'detailed' => '',
+        ];
+    }
+
+    /**
+     * Create error response
+     *
+     * @param \Throwable $exception
+     *
+     * @return array
+     */
+    private function createErrorResponse(\Throwable $exception): array
+    {
+        return [
+            'success' => false,
+            'message' => $this->module->l('The payment could not be captured!', self::FILE_NAME),
+            'detailed' => $exception->getMessage(),
+        ];
     }
 
     /**
@@ -94,11 +157,9 @@ class CaptureService
             return false;
         }
 
+        /** @var Payment $payment */
         $payment = $this->module->getApiClient()->payments->get($transactionId);
 
-        $status = $payment->status;
-        $amount = $payment->amount;
-
-        return $amount->value <= $payment->amountCaptured->value;
+        return $payment->isPaid();
     }
 }

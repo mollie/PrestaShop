@@ -580,7 +580,8 @@ class Mollie extends PaymentModule
             return [
                 'id' => $product['id_product'],
                 'name' => $product['product_name'],
-                'price' => $toolsAdapter->displayPrice($product['total_price_tax_incl']),
+                'price' => $product['total_price_tax_incl'],
+                'price_formatted' => $toolsAdapter->displayPrice($product['total_price_tax_incl']),
                 'quantity' => $product['product_quantity'],
             ];
         }, $order->getProducts());

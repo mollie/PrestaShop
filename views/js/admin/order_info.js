@@ -25,9 +25,25 @@ $(document).ready(function () {
       },
       dataType: 'json',
       success: function(response) {
-        if (response.success && response.isShipping) {
-          $('.mollie-ship-btn').prop('disabled', true).addClass('disabled').css('opacity', '0.5');
-          $('#mollie-ship-all').prop('disabled', true).addClass('disabled').css('opacity', '0.5');
+        if (response.success) {
+          // Handle shipping status
+          if (response.isShipping) {
+            $('.mollie-ship-btn').prop('disabled', true).addClass('disabled').css('opacity', '0.5');
+            $('#mollie-ship-all').prop('disabled', true).addClass('disabled').css('opacity', '0.5');
+          }
+
+          // Handle capture status
+          if (response.isCaptured) {
+            $('.mollie-capture-btn').prop('disabled', true).addClass('disabled').css('opacity', '0.5');
+            $('#mollie-capture-all').prop('disabled', true).addClass('disabled').css('opacity', '0.5');
+          }
+
+          // Handle refund status
+          if (response.isRefunded) {
+            $('.mollie-refund-btn').prop('disabled', true).addClass('disabled').css('opacity', '0.5');
+            $('#mollie-initiate-refund').prop('disabled', true).addClass('disabled').css('opacity', '0.5');
+            $('#mollie-refund-amount').prop('disabled', true);
+          }
         }
       },
       error: function(xhr, status, error) {

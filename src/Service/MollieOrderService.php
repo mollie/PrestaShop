@@ -131,7 +131,8 @@ class MollieOrderService
             $result[] = [
                 'id' => $discount['id_cart_rule'],
                 'name' => 'Discount',
-                'price' => $toolsAdapter->displayPrice(-$discount['value']),
+                'price_formatted' => $toolsAdapter->displayPrice(-$discount['value']),
+                'price' => $discount['value'],
                 'quantity' => 1,
                 'isRefunded' => false,
                 'isShipped' => false,

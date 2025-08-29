@@ -368,19 +368,32 @@ class AdminMollieAjaxController extends ModuleAdminController
             $mollieApiType = TransactionUtility::isOrderTransaction($transactionId) ? 'orders' : 'payments';
 
             if ($mollieApiType === 'orders') {
-                $orderInfo = $apiService->getFilteredApiOrder($this->module->getApiClient(), $transactionId);
-                $isShipping = $orderInfo['status'] === 'completed';
+                $orderInfo = $this->module->getApiClient()->orders->get($transactionId);
+                $isShipping = $orderInfo->status === 'completed';
+                $isCaptured = $orderInfo->isPaid();
+                $isRefunded = $orderInfo->amountRefunded->value > 0;
 
                 $response = [
                     'success' => true,
                     'isShipping' => $isShipping,
-                    'orderStatus' => $orderInfo['status'] ?? null,
+                    'isCaptured' => $isCaptured,
+                    'isRefunded' => $isRefunded,
+                    'orderStatus' => $orderInfo->status ?? null,
                 ];
             } else {
+                $paymentInfo = $this->module->getApiClient()->payments->get($transactionId);
+                $isShipping = false;
+                $isCaptured = false;
+
+                $isCaptured = $paymentInfo->isPaid();
+                $isRefunded = $paymentInfo->amountRefunded->value > 0;
+
                 $response = [
                     'success' => true,
-                    'isShipping' => false,
-                    'orderStatus' => null,
+                    'isShipping' => $isShipping,
+                    'isCaptured' => $isCaptured,
+                    'isRefunded' => $isRefunded,
+                    'orderStatus' => $paymentInfo->status ?? null,
                 ];
             }
 

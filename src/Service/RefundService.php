@@ -281,20 +281,17 @@ class RefundService
     }
 
     public function isRefunded(string $transactionId, float $amount): bool
-    {
-        $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
+{
+    $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
 
-        $transaction = $isOrderTransaction
-            ? $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments'])
-            : $this->module->getApiClient()->payments->get($transactionId);
+    $transaction = $isOrderTransaction
+        ? $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments', 'embed' => 'refunds'])
+        : $this->module->getApiClient()->payments->get($transactionId, ['embed' => 'refunds']);
 
-        $refundedAmount = (float) RefundUtility::getRefundedAmount(iterator_to_array($transaction->refunds()));
-        $refundedAmount2 = $transaction->amountRefunded ? (float) $transaction->amountRefunded->value : null;
+    $refundedAmount = $transaction->amountRefunded
+        ? (float) $transaction->amountRefunded->value
+        : RefundUtility::getRefundedAmount(iterator_to_array($transaction->refunds()));
 
-        if ($refundedAmount2) {
-            return $refundedAmount >= $amount || (float) $transaction->amountRefunded->value >= $amount;
-        }
-
-        return $refundedAmount >= $amount;
-    }
+    return $refundedAmount >= $amount;
+}
 }
