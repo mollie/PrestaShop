@@ -314,7 +314,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 
             // Use provided amount for individual product capture, or full order amount for capture all
             $amount = $captureAmount ? (float) $captureAmount : $order->total_paid;
-            $status = $captureService->doPaymentCapture($transactionId, $amount);
+            $status = $captureService->handleCapture($transactionId, $amount);
 
             $this->ajaxRender(json_encode($status));
         } catch (Throwable $e) {

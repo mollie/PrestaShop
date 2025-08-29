@@ -43,19 +43,24 @@ class CaptureService
      *
      * @return array
      */
-    public function doPaymentCapture($transactionId, $amount = null)
+    public function handleCapture($transactionId, $amount = null)
     {
         try {
             $payment = $this->module->getApiClient()->payments->get($transactionId);
 
-            if ($amount !== null && !empty($amount)) {
+            if ($amount) {
                 $captureData = [
                     'amount' => [
                         'currency' => $payment->amount->currency,
                         'value' => TextFormatUtility::formatNumber($amount, 2, '.', ''),
                     ],
                 ];
-                $capture = $this->module->getApiClient()->paymentCaptures->createForId($transactionId, $captureData);
+                $capture = $this->module->getApiClient()->paymentCaptures->createForId($transactionId, [
+                    'amount' => [
+                        'currency' => $payment->amount->currency,
+                        'value' => TextFormatUtility::formatNumber($amount, 2, '.', ''),
+                    ],
+                ]);
             } else {
                 $capture = $this->module->getApiClient()->paymentCaptures->createForId($transactionId);
             }
@@ -94,6 +99,6 @@ class CaptureService
         $status = $payment->status;
         $amount = $payment->amount;
 
-        return $status === 'paid' || $amount->value <= $payment->settlementAmount->value;
+        return $amount->value <= $payment->amountCaptured->value;
     }
 }
