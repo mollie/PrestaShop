@@ -58,7 +58,7 @@ class ShipService
                 $shipmentData['lines'] = ShipUtility::getShipLines($lines, $order->lines);
             }
 
-            if ($tracking) {
+            if ($tracking['carrier'] && $tracking['code'] && $tracking['tracking_url']) {
                 $validationResult = $this->validateTracking($tracking);
 
                 if (!$validationResult['success']) {

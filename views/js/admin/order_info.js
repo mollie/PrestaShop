@@ -106,10 +106,32 @@ $(document).ready(function () {
   });
 
   $('#mollieShipModal').on('show.bs.modal', function() {
+    $('#mollie-skip-shipping-details').prop('checked', false);
     $('#mollie-carrier').val('');
     $('#mollie-tracking-number').val('');
     $('#mollie-tracking-url').val('');
+    toggleShippingDetailsInputs(false);
   });
+
+  $('#mollie-skip-shipping-details').on('change', function() {
+    var isChecked = $(this).is(':checked');
+    toggleShippingDetailsInputs(isChecked);
+  });
+
+  function toggleShippingDetailsInputs(disabled) {
+    $('#mollie-carrier').prop('disabled', disabled);
+    $('#mollie-tracking-number').prop('disabled', disabled);
+    $('#mollie-tracking-url').prop('disabled', disabled);
+
+    if (disabled) {
+      $('#mollie-shipping-details-container').addClass('disabled');
+      $('#mollie-carrier').val('');
+      $('#mollie-tracking-number').val('');
+      $('#mollie-tracking-url').val('');
+    } else {
+      $('#mollie-shipping-details-container').removeClass('disabled');
+    }
+  }
 
   $('#mollieRefundModalConfirm').on('click', function() {
     $('#mollieRefundModal').modal('hide');
@@ -149,15 +171,19 @@ $(document).ready(function () {
     }
 
     if (context.action === 'ship' || context.action === 'shipAll') {
-      var carrier = $('#mollie-carrier').val().trim();
-      var trackingNumber = $('#mollie-tracking-number').val().trim();
-      var trackingUrl = $('#mollie-tracking-url').val().trim();
+      var skipShippingDetails = $('#mollie-skip-shipping-details').is(':checked');
 
-      data.tracking = {
-        carrier: carrier || null,
-        code: trackingNumber || null,
-        tracking_url: trackingUrl || null
-      };
+      if (!skipShippingDetails) {
+        var carrier = $('#mollie-carrier').val().trim();
+        var trackingNumber = $('#mollie-tracking-number').val().trim();
+        var trackingUrl = $('#mollie-tracking-url').val().trim();
+
+        data.tracking = {
+          carrier: carrier || null,
+          code: trackingNumber || null,
+          tracking_url: trackingUrl || null
+        };
+      }
     }
 
     if (!ajax_url) {
