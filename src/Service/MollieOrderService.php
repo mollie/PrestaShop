@@ -16,6 +16,7 @@ use Mollie;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Utility\TransactionUtility;
+use Mollie\Utility\RefundUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -150,19 +151,17 @@ class MollieOrderService
             ? $this->module->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])
             : $this->module->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments']);
 
-        if (TransactionUtility::isOrderTransaction($mollieTransactionId)) {
-            $payments = $mollieOrder->payments();
-            foreach ($payments as $payment) {
-                return $payment->amountRemaining ? $payment->amountRemaining->value : '0.00';
+        if (!TransactionUtility::isOrderTransaction($mollieTransactionId)) {
+            if (isset($mollieOrder->amountRefunded)) {
+                return $mollieOrder->amount->value - $mollieOrder->amountRefunded->value;
             }
-            return '0.00';
+
+            return $mollieOrder->amount->value;
+        } else {
+            $refunds = $mollieOrder->refunds();
+            $refundedAmount = RefundUtility::getRefundedAmount(iterator_to_array($refunds));
+
+            return $mollieOrder->amount->value - $refundedAmount;
         }
-
-        if ($mollieOrder->amountRemaining) {
-            return $mollieOrder->amountRemaining->value;
-        }
-
-        return $mollieOrder->settlementAmount->value;
-
     }
 }
