@@ -596,17 +596,23 @@ class Mollie extends PaymentModule
         $products = $mollieOrderService->assignShippingStatus($products, $mollieTransactionId);
         $products = $mollieOrderService->assignRefundStatus($products, $mollieTransactionId);
         $products = $mollieOrderService->assignDiscounts($products, $order->getCartRules());
+
+        $mollieLogoPath = $this->getMollieLogoPath();
         $refundableAmount = $mollieOrderService->getRefundableAmount($mollieTransactionId);
+        $tracking = $shipmentService->getShipmentInformation($order->reference);
+        $isRefunded = $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid);
+        $isCaptured = $captureService->isCaptured($mollieTransactionId);
+
         $this->context->smarty->assign([
             'order_reference' => $order->reference,
             'refundable_amount' => $refundableAmount,
             'products' => $products,
-            'mollie_logo_path' => $this->getPathUri() . 'views/img/mollie_panel_icon.png',
+            'mollie_logo_path' => $mollieLogoPath,
             'mollie_transaction_id' => $mollieTransactionId,
             'mollie_api_type' => $mollieApiType,
-            'tracking' => $shipmentService->getShipmentInformation($order->reference),
-            'isRefunded' => $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid),
-            'isCaptured' => $captureService->isCaptured($mollieTransactionId),
+            'tracking' => $tracking,
+            'isRefunded' => $isRefunded,
+            'isCaptured' => $isCaptured,
         ]);
 
         return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');
@@ -1731,5 +1737,10 @@ class Mollie extends PaymentModule
             true,
             Db::INSERT_IGNORE
         );
+    }
+
+    private function getMollieLogoPath(): string
+    {
+        return $this->getPathUri() . 'views/img/mollie_panel_icon.png';
     }
 }
