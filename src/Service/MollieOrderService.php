@@ -150,9 +150,13 @@ class MollieOrderService
             : $this->module->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments']);
 
         if (TransactionUtility::isOrderTransaction($mollieTransactionId)) {
-            return $mollieOrder->amount->value;
+            $payments = $mollieOrder->payments();
+            foreach ($payments as $payment) {
+                return $payment->amountRemaining ? $payment->amountRemaining->value : '0.00';
+            }
+            return '0.00';
         }
-        
+
         return $mollieOrder->amountRemaining->value;
 
     }

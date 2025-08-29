@@ -34,10 +34,10 @@
       </div>
     </div>
     <div class="form-group">
-      <label for="mollie-refund-amount">{l s='Refund amount (Max: %s, left: %s)' sprintf=[$max_refund_amount, $max_refund_amount - $refunded_amount] mod='mollie'}</label>
-      <input type="number" step="0.01" max="{$max_refund_amount - $refunded_amount}" class="form-control" id="mollie-refund-amount" value="{$max_refund_amount - $refunded_amount}" {if $isRefunded}disabled{/if} />
+      <label for="mollie-refund-amount">{l s='Refund amount (Refundable: %s)' sprintf=[$refundable_amount] mod='mollie'}</label>
+      <input type="number" step="0.01" max="{$refundable_amount}" class="form-control" id="mollie-refund-amount" value="{$refundable_amount}" {if $isRefunded || $refundable_amount <= 0}disabled{/if} />
     </div>
-    <button type="button" class="btn btn-primary btn-block" id="mollie-initiate-refund" {if $isRefunded || $max_refund_amount - $refunded_amount <= 0}disabled{/if}>
+    <button type="button" class="btn btn-primary btn-block" id="mollie-initiate-refund" {if $isRefunded || $refundable_amount <= 0}disabled{/if}>
       <i class="icon-undo"></i> {l s='Initiate Refund' mod='mollie'}
     </button>
     <hr />
