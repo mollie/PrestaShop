@@ -595,6 +595,7 @@ class Mollie extends PaymentModule
         $tracking = $shipmentService->getShipmentInformation($order->reference);
         $isRefunded = $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid);
         $isCaptured = $captureService->isCaptured($mollieTransactionId);
+        $isShipped = $shipService->isShipped($products);
 
         $this->context->smarty->assign([
             'order_reference' => $order->reference,
@@ -606,6 +607,7 @@ class Mollie extends PaymentModule
             'tracking' => $tracking,
             'isRefunded' => $isRefunded,
             'isCaptured' => $isCaptured,
+            'isShipped' => $isShipped,
         ]);
 
         return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');

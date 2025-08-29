@@ -95,15 +95,15 @@ class ShipService
         ];
     }
 
-    public function isShipped(string $transactionId): bool
+    public function isShipped(array $products): bool
     {
-        if (!TransactionUtility::isOrderTransaction($transactionId)) {
-            return false;
+        foreach ($products as $product) {
+            if (empty($product['isShipped'])) {
+                return false;
+            }
         }
 
-        $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
-
-        return $order->shipments()->count() > 0;
+        return true;
     }
 
     private function validateTracking(array $tracking): array

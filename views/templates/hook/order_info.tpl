@@ -73,7 +73,7 @@
       </tbody>
     </table>
     {if $mollie_api_type == 'orders'}
-      <button type="button" class="btn btn-default btn-block" id="mollie-ship-all">
+      <button type="button" class="btn btn-default btn-block" id="mollie-ship-all" {if $isShipped}disabled{/if}>
         <i class="icon-truck"></i> {l s='Ship All' mod='mollie'}
       </button>
     {else}
