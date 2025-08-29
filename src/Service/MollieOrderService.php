@@ -149,6 +149,11 @@ class MollieOrderService
             ? $this->module->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])
             : $this->module->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments']);
 
-        return $mollieOrder->settlementAmount->value;
+        if (TransactionUtility::isOrderTransaction($mollieTransactionId)) {
+            return $mollieOrder->amount->value;
+        }
+        
+        return $mollieOrder->amountRemaining->value;
+
     }
 }
