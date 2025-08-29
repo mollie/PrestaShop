@@ -557,32 +557,24 @@ class Mollie extends PaymentModule
         /** @var MollieOrderService $mollieOrderService */
         $mollieOrderService = $this->getService(MollieOrderService::class);
 
-        $cartId = Cart::getCartIdByOrderId((int) $params['id_order']);
-        $transaction = $paymentMethodRepo->getPaymentBy('cart_id', (string) $cartId);
+        $transaction = $paymentMethodRepo->getPaymentBy('cart_id', (string) Cart::getCartIdByOrderId((int) $params['id_order']));
+
         if (empty($transaction)) {
             return false;
         }
+
         $mollieTransactionId = isset($transaction['transaction_id']) ? $transaction['transaction_id'] : null;
+
         $mollieApiType = null;
+
         if ($mollieTransactionId) {
             $mollieApiType = TransactionUtility::isOrderTransaction($mollieTransactionId) ? 'orders' : 'payments';
         }
-        $currencies = [];
-        foreach (Currency::getCurrencies() as $currency) {
-            $currencies[Tools::strtoupper($currency['iso_code'])] = [
-                'name' => $currency['name'],
-                'iso_code' => Tools::strtoupper($currency['iso_code']),
-                'sign' => $currency['sign'],
-                'blank' => (bool) isset($currency['blank']) ? $currency['blank'] : true,
-                'format' => (int) $currency['format'],
-                'decimals' => (bool) isset($currency['decimals']) ? $currency['decimals'] : true,
-            ];
-        }
-
-        $order = new Order($params['id_order']);
 
         /** @var ToolsAdapter $toolsAdapter */
         $toolsAdapter = $this->getService(ToolsAdapter::class);
+
+        $order = new Order($params['id_order']);
 
         $products = array_map(function($product) use ($toolsAdapter) {
             return [

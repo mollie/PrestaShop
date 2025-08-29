@@ -157,7 +157,11 @@ class MollieOrderService
             return '0.00';
         }
 
-        return $mollieOrder->amountRemaining->value;
+        if ($mollieOrder->amountRemaining) {
+            return $mollieOrder->amountRemaining->value;
+        }
+
+        return $mollieOrder->settlementAmount->value;
 
     }
 }
