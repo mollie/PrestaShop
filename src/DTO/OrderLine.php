@@ -303,7 +303,7 @@ class OrderLine implements JsonSerializable
             'metadata' => $this->getMetaData(),
             'quantity' => $this->getQuantity(),
             'vatRate' => $this->getVatRate(),
-            'categories' => [],
+            'category' => $this->getCategory(),
             'unitPrice' => [
                 'currency' => $this->getUnitPrice()->getCurrency(),
                 'value' => $this->getUnitPrice()->getValue(),
