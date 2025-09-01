@@ -260,6 +260,7 @@ class Config
     const MOLLIE_VOUCHER_CATEGORY_MEAL = 'meal';
     const MOLLIE_VOUCHER_CATEGORY_GIFT = 'gift';
     const MOLLIE_VOUCHER_CATEGORY_ECO = 'eco';
+    const MOLLIE_VOUCHER_CATEGORY_ALL = 'all';
 
     const MOLLIE_REFUND_STATUS_CANCELED = 'canceled';
 
