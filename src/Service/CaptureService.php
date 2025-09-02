@@ -160,6 +160,36 @@ class CaptureService
         /** @var Payment $payment */
         $payment = $this->module->getApiClient()->payments->get($transactionId);
 
-        return $payment->isPaid();
+        $captures = $payment->captures();
+
+        $capturedAmount = 0;
+
+        foreach ($captures as $capture) {
+            $capturedAmount += $capture->amount->value;
+        }
+
+        return $capturedAmount >= $payment->amount->value;
+    }
+
+    public function getCapturableAmount(string $transactionId): float
+    {
+        $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
+
+        if ($isOrderTransaction) {
+            return 0.0;
+        }
+
+        /** @var Payment $payment */
+        $payment = $this->module->getApiClient()->payments->get($transactionId);
+
+        $captures = $payment->captures();
+
+        $capturedAmount = 0.00;
+
+        foreach ($captures as $capture) {
+            $capturedAmount += $capture->amount->value;
+        }
+
+        return $payment->amount->value - $capturedAmount;
     }
 }

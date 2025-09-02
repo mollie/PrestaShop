@@ -603,11 +603,13 @@ class Mollie extends PaymentModule
             $tracking = $shipmentService->getShipmentInformation($order->reference);
             $isRefunded = $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid);
             $isCaptured = $captureService->isCaptured($mollieTransactionId);
+            $capturableAmount = $captureService->getCapturableAmount($mollieTransactionId);
             $isShipped = $shipService->isShipped($products);
 
             $this->context->smarty->assign([
                 'order_reference' => $order->reference,
                 'refundable_amount' => $refundableAmount,
+                'capturable_amount' => $capturableAmount,
                 'products' => $products,
                 'mollie_logo_path' => $mollieLogoPath,
                 'mollie_transaction_id' => $mollieTransactionId,

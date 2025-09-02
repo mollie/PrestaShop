@@ -11,6 +11,7 @@
  */
 
 use Throwable;
+use MolPaymentMethod;
 use Mollie\Adapter\Context;
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
