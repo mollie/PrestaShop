@@ -12,6 +12,7 @@
 
 namespace Mollie\Service;
 
+use Carrier;
 use Mollie;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Adapter\ToolsAdapter;
@@ -143,6 +144,34 @@ class MollieOrderService
         $result = array_merge($products, $result);
 
         return $result;
+    }
+
+    public function assignShipping(array $products, object $order)
+    {
+        if (!$order || !isset($order->total_shipping) || $order->total_shipping <= 0) {
+            return $products;
+        }
+
+        /** @var ToolsAdapter $toolsAdapter */
+        $toolsAdapter = $this->module->getService(ToolsAdapter::class);
+
+        $carrier = new Carrier($order->id_carrier);
+
+        $shippingItem = [
+            'id' => 'shipping',
+            'name' => 'Shipping',
+            'price' => $order->total_shipping_tax_incl,
+            'price_formatted' => $toolsAdapter->displayPrice($order->total_shipping_tax_incl),
+            'quantity' => 1,
+            'isShipped' => false,
+            'isRefunded' => false,
+            'isCaptured' => false,
+            'type' => 'shipping'
+        ];
+
+        $products[] = $shippingItem;
+
+        return $products;
     }
 
     public function getRefundableAmount(string $mollieTransactionId)

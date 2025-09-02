@@ -595,9 +595,10 @@ class Mollie extends PaymentModule
                 ];
             }, $order->getProducts());
 
-            $products = $mollieOrderService->assignShippingStatus($products, $mollieTransactionId);
-            $products = $mollieOrderService->assignRefundStatus($products, $mollieTransactionId);
             $products = $mollieOrderService->assignDiscounts($products, $order->getCartRules());
+            $products = $mollieOrderService->assignShipping($products, $order);
+            $products = $mollieOrderService->assignRefundStatus($products, $mollieTransactionId);
+            $products = $mollieOrderService->assignShippingStatus($products, $mollieTransactionId);
 
             $mollieLogoPath = $this->getMollieLogoPath();
             $refundableAmount = $mollieOrderService->getRefundableAmount($mollieTransactionId);
