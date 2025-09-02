@@ -488,6 +488,7 @@ class Mollie extends PaymentModule
                     ]);
 
                     $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_info.js');
+                    $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/order_info.css');
                 }
             }
         }

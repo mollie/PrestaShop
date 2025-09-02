@@ -40,13 +40,15 @@
     <button type="button" class="btn btn-primary btn-block" id="mollie-initiate-refund" {if $isRefunded || $refundable_amount <= 0}disabled{/if}>
       <i class="icon-undo"></i> {l s='Initiate Refund' mod='mollie'}
     </button>
-    <div class="form-group">
+    {if $mollie_api_type == 'payments'}
+    <div class="form-group capture-div">
       <label for="mollie-capture-amount">{l s='Capture amount (Capturable: %s)' sprintf=[$capturable_amount] mod='mollie'}</label>
-      <input type="number" step="0.01" max="{$capturable_amount}" class="form-control" id="mollie-capture-amount" value="{$capturable_amount}" {if $isCaptured}disabled{/if} />
+      <input type="number" step="0.01" max="{$capturable_amount}" class="form-control" id="mollie-capture-amount" value="{$capturable_amount}" {if $isCaptured || $capturable_amount <= 0}disabled{/if} />
     </div>
-    <button type="button" class="btn btn-primary btn-block" id="mollie-initiate-capture" {if $isCaptured}disabled{/if}>
+    <button type="button" class="btn btn-primary btn-block" id="mollie-initiate-capture" {if $isCaptured || $capturable_amount <= 0}disabled{/if}>
       <i class="icon-money"></i> {l s='Initiate Capture' mod='mollie'}
     </button>
+    {/if}
     <hr />
     <table class="table table-bordered table-condensed">
       <thead>

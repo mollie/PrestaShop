@@ -182,6 +182,11 @@ class CaptureService
         /** @var Payment $payment */
         $payment = $this->module->getApiClient()->payments->get($transactionId);
 
+        // If payment is already captured
+        if ($payment->status == 'paid' || !isset($payment->_links->captures)) {
+            return 0.0;
+        }
+
         $captures = $payment->captures();
 
         $capturedAmount = 0.00;
