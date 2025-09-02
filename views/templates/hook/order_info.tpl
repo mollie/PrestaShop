@@ -40,6 +40,15 @@
     <button type="button" class="btn btn-primary btn-block" id="mollie-initiate-refund" {if $isRefunded || $refundable_amount <= 0}disabled{/if}>
       <i class="icon-undo"></i> {l s='Initiate Refund' mod='mollie'}
     </button>
+    {if $mollie_api_type == 'payments'}
+    <div class="form-group capture-div">
+      <label for="mollie-capture-amount">{l s='Capture amount (Capturable: %s)' sprintf=[$capturable_amount] mod='mollie'}</label>
+      <input type="number" step="0.01" max="{$capturable_amount}" class="form-control" id="mollie-capture-amount" value="{$capturable_amount}" {if $isCaptured || $capturable_amount <= 0}disabled{/if} />
+    </div>
+    <button type="button" class="btn btn-primary btn-block" id="mollie-initiate-capture" {if $isCaptured || $capturable_amount <= 0}disabled{/if}>
+      <i class="icon-money"></i> {l s='Initiate Capture' mod='mollie'}
+    </button>
+    {/if}
     <hr />
     <table class="table table-bordered table-condensed">
       <thead>
@@ -61,11 +70,6 @@
                   <i class="icon-truck"></i> {l s='Ship' mod='mollie'}
                 </button>
               {/if}
-              {if $mollie_api_type == 'payments' && $product.name != 'Discount'}
-                <button type="button" class="btn btn-default btn-xs mollie-capture-btn" data-price="{$product.price}" data-product="{$product.id}" {if $isCaptured}disabled{/if}>
-                  <i class="icon-money"></i> {l s='Capture' mod='mollie'}
-                </button>
-              {/if}
               </td>
             </tr>
           {/if}
@@ -77,7 +81,7 @@
         <i class="icon-truck"></i> {l s='Ship All' mod='mollie'}
       </button>
     {else}
-      <button type="button" class="btn btn-default btn-block" id="mollie-capture-all" {if $isCaptured || $isRefunded}disabled{/if}>
+      <button type="button" class="btn btn-default btn-block" id="mollie-capture-all" {if $isCaptured || $isRefunded || $capturable_amount <= 0}disabled{/if}>
         <i class="icon-money"></i> {l s='Capture All' mod='mollie'}
       </button>
     {/if}

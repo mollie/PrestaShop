@@ -16,7 +16,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       </div>
       <div class="modal-body">
-        <p>{l s='Are you sure you want to capture this payment?' mod='mollie'}</p>
+        <p id="mollie-capture-modal-message">{l s='Are you sure you want to capture this payment?' mod='mollie'}</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">{l s='Cancel' mod='mollie'}</button>

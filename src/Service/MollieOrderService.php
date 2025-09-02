@@ -12,11 +12,12 @@
 
 namespace Mollie\Service;
 
+use Carrier;
 use Mollie;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Utility\TransactionUtility;
-use Mollie\Utility\RefundUtility;
+use Mollie\Utility\NumberUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -145,23 +146,58 @@ class MollieOrderService
         return $result;
     }
 
+    public function assignShipping(array $products, object $order)
+    {
+        if (!$order || !isset($order->total_shipping) || $order->total_shipping <= 0) {
+            return $products;
+        }
+
+        /** @var ToolsAdapter $toolsAdapter */
+        $toolsAdapter = $this->module->getService(ToolsAdapter::class);
+
+        $carrier = new Carrier($order->id_carrier);
+
+        $shippingItem = [
+            'id' => 'shipping',
+            'name' => 'Shipping',
+            'price' => $order->total_shipping_tax_incl,
+            'price_formatted' => $toolsAdapter->displayPrice($order->total_shipping_tax_incl),
+            'quantity' => 1,
+            'isShipped' => false,
+            'isRefunded' => false,
+            'isCaptured' => false,
+            'type' => 'shipping'
+        ];
+
+        $products[] = $shippingItem;
+
+        return $products;
+    }
+
     public function getRefundableAmount(string $mollieTransactionId)
     {
         $mollieOrder = TransactionUtility::isOrderTransaction($mollieTransactionId)
             ? $this->module->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])
             : $this->module->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments']);
 
-        if (!TransactionUtility::isOrderTransaction($mollieTransactionId)) {
-            if (isset($mollieOrder->amountRefunded)) {
-                return $mollieOrder->amount->value - $mollieOrder->amountRefunded->value;
-            }
+        $refundedAmount = $this->getRefundedAmount($mollieOrder);
 
-            return $mollieOrder->amount->value;
-        } else {
-            $refunds = $mollieOrder->refunds();
-            $refundedAmount = RefundUtility::getRefundedAmount(iterator_to_array($refunds));
+        return NumberUtility::minus($mollieOrder->amount->value, $refundedAmount);
+    }
 
-            return $mollieOrder->amount->value - $refundedAmount;
+    /**
+     * @param Payment|MollieOrderAlias $mollieOrder
+     *
+     * @return float
+     */
+    private function getRefundedAmount(object $mollieOrder): float
+    {
+        $refundedAmount = 0;
+
+        foreach ($mollieOrder->lines as $line) {
+            $refundedAmount += $line->amountRefunded->value;
         }
+
+        return $refundedAmount;
     }
 }

@@ -488,6 +488,7 @@ class Mollie extends PaymentModule
                     ]);
 
                     $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_info.js');
+                    $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/order_info.css');
                 }
             }
         }
@@ -594,20 +595,23 @@ class Mollie extends PaymentModule
                 ];
             }, $order->getProducts());
 
-            $products = $mollieOrderService->assignShippingStatus($products, $mollieTransactionId);
-            $products = $mollieOrderService->assignRefundStatus($products, $mollieTransactionId);
             $products = $mollieOrderService->assignDiscounts($products, $order->getCartRules());
+            $products = $mollieOrderService->assignShipping($products, $order);
+            $products = $mollieOrderService->assignRefundStatus($products, $mollieTransactionId);
+            $products = $mollieOrderService->assignShippingStatus($products, $mollieTransactionId);
 
             $mollieLogoPath = $this->getMollieLogoPath();
             $refundableAmount = $mollieOrderService->getRefundableAmount($mollieTransactionId);
             $tracking = $shipmentService->getShipmentInformation($order->reference);
             $isRefunded = $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid);
             $isCaptured = $captureService->isCaptured($mollieTransactionId);
+            $capturableAmount = $captureService->getCapturableAmount($mollieTransactionId);
             $isShipped = $shipService->isShipped($products);
 
             $this->context->smarty->assign([
                 'order_reference' => $order->reference,
                 'refundable_amount' => $refundableAmount,
+                'capturable_amount' => $capturableAmount,
                 'products' => $products,
                 'mollie_logo_path' => $mollieLogoPath,
                 'mollie_transaction_id' => $mollieTransactionId,

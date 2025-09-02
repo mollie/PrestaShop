@@ -60,6 +60,11 @@ $(document).ready(function () {
       amount = $('#mollie-refund-amount').val();
     }
 
+    // For capture actions, get amount from input field if not provided
+    if ((action === 'capture' || action === 'captureAll') && amount === undefined) {
+      amount = $('#mollie-capture-amount').val();
+    }
+
     if (!transaction_id || !resource) {
       console.error('Missing required config values:', { transaction_id, resource });
       showErrorMessage('Configuration error');
@@ -80,6 +85,12 @@ $(document).ready(function () {
     } else if (action === 'ship' || action === 'shipAll') {
       $('#mollieShipModal').modal('show');
     } else if (action === 'capture' || action === 'captureAll') {
+      // Update modal message based on action type
+      if (action === 'captureAll') {
+        $('#mollie-capture-modal-message').text('Are you sure you want to capture the full order amount?');
+      } else {
+        $('#mollie-capture-modal-message').text('Are you sure you want to capture this payment?');
+      }
       $('#mollieCaptureModal').modal('show');
     }
   }
@@ -113,12 +124,26 @@ $(document).ready(function () {
     showModal('refundAll', null);
   });
 
+  $('#mollie-initiate-capture').on('click', function() {
+    var amount = $('#mollie-capture-amount').val();
+    if (!amount || amount <= 0) {
+      showErrorMessage('Please enter a valid capture amount');
+      return;
+    }
+    showModal('captureAll', null, amount);
+  });
+
   $('#mollie-ship-all').on('click', function() {
     showModal('shipAll', null);
   });
 
   $('#mollie-capture-all').on('click', function() {
-    showModal('captureAll', null);
+    var amount = $('#mollie-capture-amount').val();
+    if (!amount || amount <= 0) {
+      showErrorMessage('Please enter a valid capture amount');
+      return;
+    }
+    showModal('captureAll', null, amount);
   });
 
   $('#mollieShipModal').on('show.bs.modal', function() {
