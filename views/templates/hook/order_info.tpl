@@ -81,7 +81,7 @@
         <i class="icon-truck"></i> {l s='Ship All' mod='mollie'}
       </button>
     {else}
-      <button type="button" class="btn btn-default btn-block" id="mollie-capture-all" {if $isCaptured || $isRefunded}disabled{/if}>
+      <button type="button" class="btn btn-default btn-block" id="mollie-capture-all" {if $isCaptured || $isRefunded || $capturable_amount <= 0}disabled{/if}>
         <i class="icon-money"></i> {l s='Capture All' mod='mollie'}
       </button>
     {/if}
