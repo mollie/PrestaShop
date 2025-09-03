@@ -16,6 +16,7 @@ use Carrier;
 use Mollie;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Adapter\ToolsAdapter;
+use Mollie\Config\Config;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Utility\NumberUtility;
 
@@ -192,12 +193,33 @@ class MollieOrderService
      */
     private function getRefundedAmount(object $mollieOrder): float
     {
-        $refundedAmount = 0;
+        $amountRefunded = 0;
 
-        foreach ($mollieOrder->lines as $line) {
-            $refundedAmount += $line->amountRefunded->value;
+        $paymentType = TransactionUtility::isOrderTransaction($mollieOrder->id) ? Config::MOLLIE_ORDERS_API : Config::MOLLIE_PAYMENTS_API;
+
+        switch ($paymentType) {
+            case Config::MOLLIE_ORDERS_API:
+                $amountRefunded = $this->getOrderRefundedAmount($mollieOrder);
+                break;
+            case Config::MOLLIE_PAYMENTS_API:
+                $amountRefunded = (float) $mollieOrder->amountRefunded->value;
+                break;
+            default:
+                $amountRefunded = 0;
+                break;
         }
 
-        return $refundedAmount;
+        return $amountRefunded;
+    }
+
+    private function getOrderRefundedAmount(object $mollieOrder): float
+    {
+        $amountRefunded = 0;
+
+        foreach ($mollieOrder->lines as $line) {
+            $amountRefunded += $line->amountRefunded->value;
+        }
+
+        return $amountRefunded;
     }
 }
