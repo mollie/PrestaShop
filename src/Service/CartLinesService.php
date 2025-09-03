@@ -202,6 +202,7 @@ class CartLinesService
                     $productHashGift = "{$idProduct}¤{$idProductAttribute}¤{$idCustomization}gift";
                     $orderLines[$productHashGift][] = [
                         'name' => $cartItem['name'],
+                        'type' => 'physical',
                         'sku' => $productHashGift,
                         'targetVat' => (float) $cartItem['rate'],
                         'quantity' => $gift_product['cart_quantity'],
@@ -225,6 +226,7 @@ class CartLinesService
             // Try to spread this product evenly and account for rounding differences on the order line
             $orderLines[$productHash][] = [
                 'name' => $cartItem['name'],
+                'type' => 'physical',
                 'sku' => $productHash,
                 'targetVat' => (float) $cartItem['rate'],
                 'quantity' => $quantity,
@@ -389,6 +391,7 @@ class CartLinesService
             $orderLines['shipping'] = [
                 [
                     'name' => $this->languageService->lang('Shipping'),
+                    'type' => 'shipping_fee',
                     'quantity' => 1,
                     'unitPrice' => round($roundedShippingCost, $apiRoundingPrecision),
                     'totalAmount' => round($roundedShippingCost, $apiRoundingPrecision),
@@ -422,6 +425,7 @@ class CartLinesService
             $orderLines['wrapping'] = [
                 [
                     'name' => $this->languageService->lang('Gift wrapping'),
+                    'type' => 'surcharge',
                     'quantity' => 1,
                     'unitPrice' => round($wrappingPrice, $apiRoundingPrecision),
                     'totalAmount' => round($wrappingPrice, $apiRoundingPrecision),
@@ -450,6 +454,7 @@ class CartLinesService
             [
                 'name' => $this->languageService->lang('Payment fee'),
                 'sku' => Config::PAYMENT_FEE_SKU,
+                'type' => 'surcharge',
                 'quantity' => 1,
                 'unitPrice' => round($paymentFeeData->getPaymentFeeTaxIncl(), $apiRoundingPrecision),
                 'totalAmount' => round($paymentFeeData->getPaymentFeeTaxIncl(), $apiRoundingPrecision),
