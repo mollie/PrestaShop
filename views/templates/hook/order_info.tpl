@@ -70,6 +70,11 @@
                   <i class="icon-truck"></i> {l s='Ship' mod='mollie'}
                 </button>
               {/if}
+              {if $product.name != 'Discount'}
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product.price}" data-product="{$product.id}" {if $product.isRefunded}disabled{/if}>
+                  <i class="icon-ban"></i> {l s='Refund' mod='mollie'}
+                </button>
+              {/if}
               </td>
             </tr>
           {/if}

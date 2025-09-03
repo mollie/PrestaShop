@@ -202,7 +202,7 @@ class MollieOrderService
                 $amountRefunded = $this->getOrderRefundedAmount($mollieOrder);
                 break;
             case Config::MOLLIE_PAYMENTS_API:
-                $amountRefunded = (float) $mollieOrder->amountRefunded->value;
+                $amountRefunded = (float) $mollieOrder->amount->value - (float) $mollieOrder->amountRemaining->value;
                 break;
             default:
                 $amountRefunded = 0;

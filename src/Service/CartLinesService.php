@@ -153,14 +153,15 @@ class CartLinesService
         foreach ($spread as $unitPrice => $qty) {
             $newCartLineGroup[] = [
                 'name' => $cartLineGroup[0]['name'],
+                'type' => $cartLineGroup[0]['type'],
                 'quantity' => $qty,
                 'unitPrice' => (float) $unitPrice,
                 'totalAmount' => (float) $unitPrice * $qty,
                 'sku' => isset($cartLineGroup[0]['sku']) ? $cartLineGroup[0]['sku'] : '',
                 'targetVat' => $cartLineGroup[0]['targetVat'],
                 'categories' => $cartLineGroup[0]['categories'],
-                'product_url' => $cartLineGroup[0]['product_url'],
-                'image_url' => $cartLineGroup[0]['image_url'],
+                'product_url' => isset($cartLineGroup[0]['product_url']) ? $cartLineGroup[0]['product_url'] : '',
+                'image_url' => isset($cartLineGroup[0]['image_url']) ? $cartLineGroup[0]['image_url'] : '',
             ];
         }
 
@@ -502,7 +503,7 @@ class CartLinesService
             }
 
             $line->setQuantity((int) $item['quantity']);
-            $line->setSku(isset($item['sku']) ? $item['sku'] : '');
+            $line->setSku(isset($item['sku']) ? $item['sku'] : $item['name']);
             $line->setType($item['type'] ?? null);
 
             $currency = strtoupper(strtolower($currencyIsoCode));
@@ -545,11 +546,17 @@ class CartLinesService
 
             $line->setVatRate(TextFormatUtility::formatNumber($item['vatRate'], $apiRoundingPrecision, '.', ''));
 
-            $line->setProductUrl(
-                TextFormatUtility::replaceAccentedChars((string) $item['product_url']) ?: ''
-            );
+            if (isset($item['product_url'])) {
+                $line->setProductUrl(
+                    TextFormatUtility::replaceAccentedChars((string) $item['product_url']) ?: ''
+                );
+            }
 
-            $line->setImageUrl($item['image_url'] ?: '');
+            if (isset($item['image_url'])) {
+                $line->setImageUrl(
+                    TextFormatUtility::replaceAccentedChars((string) $item['image_url']) ?: ''
+                );
+            }
 
             $newItems[$index] = $line;
         }
