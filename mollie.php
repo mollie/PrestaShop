@@ -290,8 +290,10 @@ class Mollie extends PaymentModule
         }
 
         $url = $this->context->link->getAdminLink('AdminMollieSettings');
+
         /** @var ToolsAdapter $tools */
         $tools = $this->getService(ToolsAdapter::class);
+
         $tools->redirectAdminSafe($url);
         return '';
     }
