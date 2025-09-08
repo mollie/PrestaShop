@@ -113,9 +113,9 @@ class PaymentLine implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getProductUrl(): string
+    public function getProductUrl(): ?string
     {
         return $this->productUrl;
     }
@@ -129,9 +129,9 @@ class PaymentLine implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getImageUrl(): string
+    public function getImageUrl(): ?string
     {
         return $this->imageUrl;
     }
@@ -241,9 +241,9 @@ class PaymentLine implements JsonSerializable
     }
 
     /**
-     * @return array
+     * @return ?array
      */
-    public function getCategories(): array
+    public function getCategories(): ?array
     {
         return $this->categories;
     }

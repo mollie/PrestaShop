@@ -98,7 +98,7 @@ class ShipService
     public function isShipped(array $products): bool
     {
         foreach ($products as $product) {
-            if (empty($product['isShipped'])) {
+            if (empty($product['isShipped']) && $product['name'] != 'Shipping' && $product['name'] != 'Discount') {
                 return false;
             }
         }
