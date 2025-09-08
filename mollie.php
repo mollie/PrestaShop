@@ -289,7 +289,13 @@ class Mollie extends PaymentModule
             exit(json_encode($this->{'displayAjax' . Tools::ucfirst(Tools::getValue('action'))}()));
         }
 
-        Tools::redirectAdmin($this->context->link->getAdminLink('AdminMollieSettings'));
+        $url = $this->context->link->getAdminLink('AdminMollieSettings');
+
+        /** @var ToolsAdapter $tools */
+        $tools = $this->getService(ToolsAdapter::class);
+
+        $tools->redirectAdminSafe($url);
+        return '';
     }
 
     /**
