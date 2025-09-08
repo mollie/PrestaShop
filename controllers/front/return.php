@@ -68,7 +68,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $orderCallBackValidator = $this->module->getService(OrderCallBackValidator::class);
 
         if (!$orderCallBackValidator->validate($key, $idCart)) {
-            Tools::redirectLink('index.php');
+            Tools::redirect('index.php');
         }
 
         /** @var CustomerFactory $customerFactory */
