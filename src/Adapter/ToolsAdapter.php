@@ -81,4 +81,22 @@ class ToolsAdapter
 
         return Tools::displayDate($date, null, $full);
     }
+
+    /**
+     * Redirects to an admin URL in a way that works with both legacy controllers
+     * (that expose setRedirectAfter) and Symfony/profiler proxy controllers
+     * (which do not implement that method).
+     */
+    public function redirectAdminSafe(string $url): void
+    {
+        $controller = \Context::getContext()->controller ?? null;
+
+        if ($controller && method_exists($controller, 'setRedirectAfter')) {
+            $controller->setRedirectAfter($url);
+            return;
+        }
+
+        header('Location: ' . $url);
+        exit;
+    }
 }
