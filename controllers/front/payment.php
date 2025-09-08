@@ -87,7 +87,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         );
         $amount = $originalAmount;
         if (!$amount) {
-            Tools::redirectLink('index.php');
+            Tools::redirect('index.php');
         }
 
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
