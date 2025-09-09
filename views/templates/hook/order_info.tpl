@@ -23,14 +23,12 @@
           <input type="radio" name="refund_type" value="partial" id="mollie-partial-refund" {if $isRefunded || $refundable_amount <= 0}disabled{/if} />
           {l s='Partial refund' mod='mollie'}
         </label>
-        {* <span class="help-block">{l s='Refund a custom amount for partial order returns' mod='mollie'}</span> *}
       </div>
       <div class="radio">
         <label>
           <input type="radio" name="refund_type" value="full" id="mollie-full-refund" checked {if $isRefunded || $refundable_amount <= 0}disabled{/if} />
           {l s='Full refund' mod='mollie'}
         </label>
-        {* <span class="help-block">{l s='Refund a custom amount for partial order returns' mod='mollie'}</span> *}
       </div>
     </div>
     <div class="form-group">
