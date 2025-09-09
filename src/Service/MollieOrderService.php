@@ -58,6 +58,11 @@ class MollieOrderService
                         $product['isShipped'] = true;
                         break 2;
                     }
+
+                    if ($shipmentLine->name === $product['name']) {
+                        $product['isShipped'] = true;
+                        break 2;
+                    }
                 }
             }
         }
