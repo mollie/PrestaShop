@@ -252,7 +252,4 @@ $(document).ready(function () {
   function updateOrderInfo(order) {
     console.log('Order updated:', order);
   }
-
-  // Initialize refund type radio button state
-  $('input[name="refund_type"]:checked').trigger('change');
 });
