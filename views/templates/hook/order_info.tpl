@@ -20,21 +20,19 @@
       <label>{l s='Applicable to orders paid exclusively through Mollie' mod='mollie'}</label>
       <div class="radio">
         <label>
-          <input type="radio" name="refund_type" value="partial" id="mollie-partial-refund" {if $isRefunded}disabled{/if} />
+          <input type="radio" name="refund_type" value="partial" id="mollie-partial-refund" {if $isRefunded || $refundable_amount <= 0}disabled{/if} />
           {l s='Partial refund' mod='mollie'}
         </label>
-        <span class="help-block">{l s='Refund a custom amount for partial order returns' mod='mollie'}</span>
       </div>
       <div class="radio">
         <label>
-          <input type="radio" name="refund_type" value="full" id="mollie-full-refund" checked {if $isRefunded}disabled{/if} />
+          <input type="radio" name="refund_type" value="full" id="mollie-full-refund" checked {if $isRefunded || $refundable_amount <= 0}disabled{/if} />
           {l s='Full refund' mod='mollie'}
         </label>
-        <span class="help-block">{l s='Refund a custom amount for partial order returns' mod='mollie'}</span>
       </div>
     </div>
     <div class="form-group">
-      <label for="mollie-refund-amount">{l s='Refund amount (Refundable: %s)' sprintf=[$refundable_amount] mod='mollie'}</label>
+      <label for="mollie-refund-amount">{l s='Refund amount (Max: %s)' sprintf=[$refundable_amount] mod='mollie'}</label>
       <input type="number" step="0.01" max="{$refundable_amount}" class="form-control" id="mollie-refund-amount" value="{$refundable_amount}" {if $isRefunded || $refundable_amount <= 0}disabled{/if} />
     </div>
     <button type="button" class="btn btn-primary btn-block" id="mollie-initiate-refund" {if $isRefunded || $refundable_amount <= 0}disabled{/if}>
@@ -60,18 +58,39 @@
       </thead>
       <tbody>
         {foreach from=$products item=product}
-          {if isset($product.name)}
+          {* Orders API *}
+          {if isset($product->name)}
             <tr>
-              <td><strong>{$product.quantity}x</strong> {$product.name|escape:'html':'UTF-8'}</td>
-              <td>{$product.price_formatted|escape:'html':'UTF-8'}</td>
+              <td><strong>{$product->quantity}x</strong> {$product->name|escape:'html':'UTF-8'}</td>
+              <td>{$product->totalAmount->value|escape:'html':'UTF-8'}</td>
               <td>
-              {if $mollie_api_type == 'orders' && $product.name != 'Discount' && $product.name != 'Shipping'}
-                <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product.price}" data-product="{$product.id}" {if $product.isShipped || $product.price > $refundable_amount}disabled{/if}>
+              {if $mollie_api_type == 'orders' && $product->name != 'Discount'}
+                <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product->totalAmount->value}" data-orderline="{$product->id}" {if $isShipped}disabled{/if}>
                   <i class="icon-truck"></i> {l s='Ship' mod='mollie'}
                 </button>
               {/if}
-              {if $product.name != 'Discount' && $product.name != 'Shipping'}
-                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product.price}" data-product="{$product.id}" {if $product.isRefunded || $product.price > $refundable_amount}disabled{/if}>
+              {if $product->name != 'Discount'}
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value}" data-orderline="{$product->id}" {if $product->totalAmount->value > $refundable_amount}disabled{/if}>
+                  <i class="icon-ban"></i> {l s='Refund' mod='mollie'}
+                </button>
+              {/if}
+              </td>
+            </tr>
+          {/if}
+
+          {* Payments API *}
+          {if isset($product->description)}
+            <tr>
+              <td><strong>{$product->quantity}x</strong> {$product->description|escape:'html':'UTF-8'}</td>
+              <td>{$product->totalAmount->value|escape:'html':'UTF-8'}</td>
+              <td>
+              {if $mollie_api_type == 'orders' && $product->description != 'Discount'}
+                <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product->totalAmount->value}" {if $product->totalAmount->value > $refundable_amount}disabled{/if}>
+                  <i class="icon-truck"></i> {l s='Ship' mod='mollie'}
+                </button>
+              {/if}
+              {if $product->description != 'Discount'}
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value}" {if $product->totalAmount->value > $refundable_amount}disabled{/if}>
                   <i class="icon-ban"></i> {l s='Refund' mod='mollie'}
                 </button>
               {/if}

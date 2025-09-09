@@ -10,49 +10,7 @@
 $(document).ready(function () {
   var actionContext = {};
 
-  function checkOrderStatus() {
-    if (!ajax_url || !order_id) {
-      return;
-    }
-
-    $.ajax({
-      url: ajax_url,
-      type: 'POST',
-      data: {
-        ajax: 1,
-        action: 'retrieve',
-        orderId: order_id,
-      },
-      dataType: 'json',
-      success: function(response) {
-        if (response.success) {
-          // Handle shipping status
-          if (response.isShipping) {
-            $('.mollie-ship-btn').prop('disabled', true).addClass('disabled').css('opacity', '0.5');
-            $('#mollie-ship-all').prop('disabled', true).addClass('disabled').css('opacity', '0.5');
-          }
-
-          // Handle capture status
-          if (response.isCaptured) {
-            $('.mollie-capture-btn').prop('disabled', true).addClass('disabled').css('opacity', '0.5');
-            $('#mollie-capture-all').prop('disabled', true).addClass('disabled').css('opacity', '0.5');
-          }
-
-          // Handle refund status
-          if (response.isRefunded) {
-            $('.mollie-refund-btn').prop('disabled', true).addClass('disabled').css('opacity', '0.5');
-            $('#mollie-initiate-refund').prop('disabled', true).addClass('disabled').css('opacity', '0.5');
-            $('#mollie-refund-amount').prop('disabled', true);
-          }
-        }
-      },
-      error: function(xhr, status, error) {
-        console.error('Error checking order status:', error);
-      }
-    });
-  }
-
-  function showModal(action, productId, productAmount) {
+  function showModal(action, productId, productAmount, orderline) {
     var amount = productAmount;
 
     // For refund actions, get amount from input field if not provided
@@ -77,7 +35,7 @@ $(document).ready(function () {
       transactionId: transaction_id,
       resource: resource,
       amount: amount,
-      orderLines: typeof orderLines !== 'undefined' ? orderLines : [],
+      orderline: orderline || null,
     };
 
     if (action === 'refund' || action === 'refundAll') {
@@ -104,8 +62,9 @@ $(document).ready(function () {
 
   $('.mollie-ship-btn').on('click', function() {
     var productId = $(this).data('product');
+    var orderline = $(this).data('orderline');
 
-    showModal('ship', productId);
+    showModal('ship', productId, null, orderline);
   });
 
   $('.mollie-capture-btn').on('click', function() {
@@ -224,6 +183,8 @@ $(document).ready(function () {
           code: trackingNumber || null,
           tracking_url: trackingUrl || null
         };
+
+        data.orderline = actionContext.orderline;
       }
     }
 
@@ -242,7 +203,7 @@ $(document).ready(function () {
         showLoadingState();
       },
       success: function(response) {
-        hideLoadingState();
+        $('#mollie-loading').remove();
         if (response.success) {
           var successMessage = response.message || response.msg_success || 'Action completed successfully';
           if (response.detailed || response.msg_details) {
@@ -255,13 +216,12 @@ $(document).ready(function () {
           if (response.order) {
             updateOrderInfo(response.order);
           }
-          checkOrderStatus();
         } else {
           showErrorMessage(response.message || response.detailed || 'An error occurred');
         }
       },
       error: function(xhr, status, error) {
-        hideLoadingState();
+        $('#mollie-loading').remove();
         showErrorMessage('Network error occurred');
         console.error('AJAX Error:', error);
       }
@@ -270,10 +230,6 @@ $(document).ready(function () {
 
   function showLoadingState() {
     $('body').append('<div id="mollie-loading" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;"><div style="background: white; padding: 20px; border-radius: 5px;">Processing...</div></div>');
-  }
-
-  function hideLoadingState() {
-    $('#mollie-loading').remove();
   }
 
   function showSuccessMessage(message) {
@@ -299,9 +255,4 @@ $(document).ready(function () {
   function updateOrderInfo(order) {
     console.log('Order updated:', order);
   }
-
-  // Initialize refund type radio button state
-  $('input[name="refund_type"]:checked').trigger('change');
-
-  checkOrderStatus();
 });

@@ -585,20 +585,24 @@ class Mollie extends PaymentModule
 
             $order = new Order($params['id_order']);
 
-            $products = array_map(function($product) use ($toolsAdapter) {
-                return [
-                    'id' => $product['id_product'],
-                    'name' => $product['product_name'],
-                    'price' => $product['total_price_tax_incl'],
-                    'price_formatted' => $toolsAdapter->displayPrice($product['total_price_tax_incl']),
-                    'quantity' => $product['product_quantity'],
-                ];
-            }, $order->getProducts());
+            // $products = array_map(function($product) use ($toolsAdapter) {
+            //     return [
+            //         'id' => $product['id_product'],
+            //         'name' => $product['product_name'],
+            //         'price' => $product['total_price_tax_incl'],
+            //         'price_formatted' => $toolsAdapter->displayPrice($product['total_price_tax_incl']),
+            //         'quantity' => $product['product_quantity'],
+            //     ];
+            // }, $order->getProducts());
 
-            $products = $mollieOrderService->assignDiscounts($products, $order->getCartRules());
-            $products = $mollieOrderService->assignShipping($products, $order);
-            $products = $mollieOrderService->assignRefundStatus($products, $mollieTransactionId);
-            $products = $mollieOrderService->assignShippingStatus($products, $mollieTransactionId);
+            $products = TransactionUtility::isOrderTransaction($mollieTransactionId)
+                ? $this->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])->lines
+                : $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments'])->lines;
+
+            // $products = $mollieOrderService->assignDiscounts($products, $order->getCartRules());
+            // $products = $mollieOrderService->assignShipping($products, $order);
+            // $products = $mollieOrderService->assignRefundStatus($products, $mollieTransactionId);
+            // $products = $mollieOrderService->assignShippingStatus($products, $mollieTransactionId);
 
             $mollieLogoPath = $this->getMollieLogoPath();
             $refundableAmount = $mollieOrderService->getRefundableAmount($mollieTransactionId);
@@ -606,7 +610,7 @@ class Mollie extends PaymentModule
             $isRefunded = $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid);
             $isCaptured = $captureService->isCaptured($mollieTransactionId);
             $capturableAmount = $captureService->getCapturableAmount($mollieTransactionId);
-            $isShipped = $shipService->isShipped($products);
+            $isShipped = $shipService->isShipped($mollieTransactionId);
 
             $this->context->smarty->assign([
                 'order_reference' => $order->reference,

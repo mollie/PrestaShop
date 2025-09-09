@@ -26,9 +26,11 @@ class RefundUtility
         $refunds = [];
 
         foreach ($lines as $line) {
+            if ($idProduct == $line->id) {
             $refunds[] = [
-                'id' => $line->id,
-            ];
+                    'id' => $line->id,
+                ];
+            }
         }
 
         return $refunds;

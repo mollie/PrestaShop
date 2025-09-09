@@ -95,15 +95,21 @@ class ShipService
         ];
     }
 
-    public function isShipped(array $products): bool
+    public function isShipped(string $transactionId): bool
     {
+        if (!TransactionUtility::isOrderTransaction($transactionId)) {
+            return false;
+        }
+
+        $products = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments'])->lines;
+
         foreach ($products as $product) {
-            if (empty($product['isShipped']) && $product['name'] != 'Shipping' && $product['name'] != 'Discount') {
-                return false;
+            if ($product->quantity == $product->quantityShipped) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     private function validateTracking(array $tracking): array

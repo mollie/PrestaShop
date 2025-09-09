@@ -58,6 +58,11 @@ class MollieOrderService
                         $product['isShipped'] = true;
                         break 2;
                     }
+
+                    if ($shipmentLine->name === $product['name']) {
+                        $product['isShipped'] = true;
+                        break 2;
+                    }
                 }
             }
         }
@@ -202,7 +207,7 @@ class MollieOrderService
                 $amountRefunded = $this->getOrderRefundedAmount($mollieOrder);
                 break;
             case Config::MOLLIE_PAYMENTS_API:
-                $amountRefunded = (float) $mollieOrder->amount->value - (float) $mollieOrder->amountRemaining->value;
+                $amountRemaining = $this->getPaymentRefundedAmount($mollieOrder);
                 break;
             default:
                 $amountRefunded = 0;
@@ -219,6 +224,14 @@ class MollieOrderService
         foreach ($mollieOrder->lines as $line) {
             $amountRefunded += $line->amountRefunded->value;
         }
+
+        return $amountRefunded;
+    }
+
+    private function getPaymentRefundedAmount(object $mollieOrder): float
+    {
+        $amountRemaining = $mollieOrder->amountRefunded ? (float) $mollieOrder->amountRefunded->value : 0;
+        $amountRefunded = (float) $mollieOrder->amount->value - $amountRemaining;
 
         return $amountRefunded;
     }
