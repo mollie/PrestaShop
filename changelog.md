@@ -6,6 +6,7 @@
 + Improved API key validation
 + Added Bizum payment method
 + Added Vipps payment method
++ Fixed minor issues with PrestaShop 9 compatibility
 
 ## Changes in release 6.3.0 ##
 + Apple Pay Direct fixed
