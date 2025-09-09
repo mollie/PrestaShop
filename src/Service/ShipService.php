@@ -46,16 +46,19 @@ class ShipService
      *
      * @since 3.3.0
      */
-    public function doShipOrderLines($transactionId, $lines = [], $tracking = null)
+    public function doShipOrderLines($transactionId, $orderlineId = null, $tracking = null)
     {
         try {
             /** @var MollieOrderAlias $payment */
             $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
-            $lines = $lines ?: $order->lines;
             $shipmentData = [];
 
-            if (!empty($lines)) {
-                $shipmentData['lines'] = ShipUtility::getShipLines($lines, $order->lines);
+            if (isset($orderlineId)) {
+                $shipmentData['lines'] = [
+                    [
+                        'id' => $orderlineId,
+                    ],
+                ];
             }
 
             if ($tracking['carrier'] && $tracking['code'] && $tracking['tracking_url']) {

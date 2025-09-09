@@ -274,7 +274,7 @@ class AdminMollieAjaxController extends ModuleAdminController
         $orderId = (int) Tools::getValue('orderId');
         $orderLines = Tools::getValue('orderLines') ?: [];
         $tracking = Tools::getValue('tracking');
-        $orderline = Tools::getValue('orderline');
+        $orderlineId = Tools::getValue('orderline');
 
         try {
             $order = new Order($orderId);
@@ -285,7 +285,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 
             /** @var ShipService $shipService */
             $shipService = $this->module->getService(ShipService::class);
-            $status = $shipService->doShipOrderLines($transactionId, $orderLines, $tracking);
+            $status = $shipService->doShipOrderLines($transactionId, $orderlineId, $tracking);
 
             $this->ajaxRender(json_encode($status));
         } catch (Throwable $e) {
