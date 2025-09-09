@@ -159,6 +159,8 @@ class CartLinesService
                 'sku' => isset($cartLineGroup[0]['sku']) ? $cartLineGroup[0]['sku'] : '',
                 'targetVat' => $cartLineGroup[0]['targetVat'],
                 'categories' => $cartLineGroup[0]['categories'],
+                'product_url' => $cartLineGroup[0]['product_url'],
+                'image_url' => $cartLineGroup[0]['image_url'],
             ];
         }
 
