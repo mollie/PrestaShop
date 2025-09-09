@@ -124,7 +124,7 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
                 'status' => false,
             ];
         }
-        $api = $this->apiKeyService->setApiKey($apiKey, $this->moduleVersion);
+        $api = $this->apiKeyService->setApiKey($apiKey, $this->moduleVersion, false, $isTestKey ? 0 : 1);
         if (!$api) {
             return [
                 'status' => false,
