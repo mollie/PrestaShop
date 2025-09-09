@@ -10,7 +10,7 @@
 $(document).ready(function () {
   var actionContext = {};
 
-  function showModal(action, productId, productAmount) {
+  function showModal(action, productId, productAmount, orderline) {
     var amount = productAmount;
 
     // For refund actions, get amount from input field if not provided
@@ -35,7 +35,7 @@ $(document).ready(function () {
       transactionId: transaction_id,
       resource: resource,
       amount: amount,
-      orderLines: typeof orderLines !== 'undefined' ? orderLines : [],
+      orderline: orderline || null,
     };
 
     if (action === 'refund' || action === 'refundAll') {
@@ -62,8 +62,9 @@ $(document).ready(function () {
 
   $('.mollie-ship-btn').on('click', function() {
     var productId = $(this).data('product');
+    var orderline = $(this).data('orderline');
 
-    showModal('ship', productId);
+    showModal('ship', productId, null, orderline);
   });
 
   $('.mollie-capture-btn').on('click', function() {
@@ -182,6 +183,8 @@ $(document).ready(function () {
           code: trackingNumber || null,
           tracking_url: trackingUrl || null
         };
+
+        data.orderline = actionContext.orderline;
       }
     }
 

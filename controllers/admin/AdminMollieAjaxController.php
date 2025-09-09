@@ -274,6 +274,7 @@ class AdminMollieAjaxController extends ModuleAdminController
         $orderId = (int) Tools::getValue('orderId');
         $orderLines = Tools::getValue('orderLines') ?: [];
         $tracking = Tools::getValue('tracking');
+        $orderline = Tools::getValue('orderline');
 
         try {
             $order = new Order($orderId);

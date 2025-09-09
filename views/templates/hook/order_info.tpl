@@ -65,7 +65,7 @@
               <td>{$product->totalAmount->value|escape:'html':'UTF-8'}</td>
               <td>
               {if $mollie_api_type == 'orders' && $product->name != 'Discount'}
-                <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product->totalAmount->value}" data-orderline="{$product->id}" {if $product->totalAmount->value > $refundable_amount}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product->totalAmount->value}" data-orderline="{$product->id}" {if $isShipped}disabled{/if}>
                   <i class="icon-truck"></i> {l s='Ship' mod='mollie'}
                 </button>
               {/if}
