@@ -88,7 +88,7 @@ class VoucherValidatorTest extends TestCase
                 'voucherServiceMocks' => [
                     0 => [
                         'function' => 'getProductCategory',
-                        'return' => true,
+                        'return' => ['meal'],
                         'at' => 0,
                     ],
                 ],
@@ -112,7 +112,7 @@ class VoucherValidatorTest extends TestCase
                 'voucherServiceMocks' => [
                     0 => [
                         'function' => 'getProductCategory',
-                        'return' => false,
+                        'return' => [],
                         'at' => 0,
                     ],
                 ],
