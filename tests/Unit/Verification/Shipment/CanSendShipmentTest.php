@@ -124,12 +124,6 @@ class CanSendShipmentTest extends TestCase
         $this->order->reference = 'test';
         $this->orderState->id = 1;
 
-        $this->shipmentService
-            ->expects($this->any())
-            ->method('getShipmentInformation')
-            ->willReturn($shipmentInformation)
-        ;
-
         foreach ($configuration as $key => $value) {
             $this->configurationAdapter
                 ->expects($this->any())
@@ -143,18 +137,6 @@ class CanSendShipmentTest extends TestCase
             ->expects($this->any())
             ->method('getAutomaticShipmentSenderStatuses')
             ->willReturn($automaticShipmentSenderStatuses)
-        ;
-
-        $this->paymentMethodRepository
-            ->expects($this->any())
-            ->method('getPaymentBy')
-            ->willReturn($paymentInformation)
-        ;
-
-        $this->orderEndpointPaymentTypeHandler
-            ->expects($this->any())
-            ->method('getPaymentTypeFromTransactionId')
-            ->willReturn($paymentType)
         ;
 
         $this->isPaymentInformationAvailable
@@ -296,11 +278,8 @@ class CanSendShipmentTest extends TestCase
                 ],
                 'paymentInformationAvailable' => true,
                 'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_PAYMENT,
-                'exception' => [
-                    'class' => ShipmentCannotBeSentException::class,
-                    'code' => ShipmentCannotBeSentException::PAYMENT_IS_NOT_ORDER,
-                ],
-                'expected' => null,
+                'exception' => [],
+                'expected' => true,
             ],
         ];
     }
