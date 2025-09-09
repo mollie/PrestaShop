@@ -53,7 +53,7 @@ class ShipService
             $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
             $shipmentData = [];
 
-            if (isset($orderlineId)) {
+            if ($orderlineId) {
                 $shipmentData['lines'] = [
                     [
                         'id' => $orderlineId,
@@ -107,12 +107,12 @@ class ShipService
         $products = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments'])->lines;
 
         foreach ($products as $product) {
-            if ($product->quantity == $product->quantityShipped) {
-                return true;
+            if ($product->quantity != $product->quantityShipped) {
+                return false;
             }
         }
 
-        return false;
+        return true;
     }
 
     private function validateTracking(array $tracking): array

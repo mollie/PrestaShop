@@ -19,6 +19,7 @@ use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Utility\NumberUtility;
+use Mollie\Exception\MollieException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -186,9 +187,9 @@ class MollieOrderService
             ? $this->module->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])
             : $this->module->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments']);
 
-        $refundedAmount = $this->getRefundedAmount($mollieOrder);
+        $refundableAmount = $this->getRemainingAmount($mollieOrder);
 
-        return NumberUtility::minus($mollieOrder->amount->value, $refundedAmount);
+        return $refundableAmount;
     }
 
     /**
@@ -196,28 +197,27 @@ class MollieOrderService
      *
      * @return float
      */
-    private function getRefundedAmount(object $mollieOrder): float
+    private function getRemainingAmount(object $mollieOrder): float
     {
-        $amountRefunded = 0;
-
-        $paymentType = TransactionUtility::isOrderTransaction($mollieOrder->id) ? Config::MOLLIE_ORDERS_API : Config::MOLLIE_PAYMENTS_API;
+        $paymentType = TransactionUtility::isOrderTransaction($mollieOrder->id)
+            ? Config::MOLLIE_ORDERS_API
+            : Config::MOLLIE_PAYMENTS_API;
 
         switch ($paymentType) {
             case Config::MOLLIE_ORDERS_API:
-                $amountRefunded = $this->getOrderRefundedAmount($mollieOrder);
+                $amountRemaining = $this->getOrderRemainingAmount($mollieOrder);
                 break;
             case Config::MOLLIE_PAYMENTS_API:
-                $amountRemaining = $this->getPaymentRefundedAmount($mollieOrder);
+                $amountRemaining = $mollieOrder->amountRemaining ? (float) $mollieOrder->amountRemaining->value : (float) $mollieOrder->amount->value;
                 break;
             default:
-                $amountRefunded = 0;
-                break;
+                throw new MollieException('Invalid payment type');
         }
 
-        return $amountRefunded;
+        return $amountRemaining;
     }
 
-    private function getOrderRefundedAmount(object $mollieOrder): float
+    private function getOrderRemainingAmount(object $mollieOrder): float
     {
         $amountRefunded = 0;
 
@@ -225,14 +225,6 @@ class MollieOrderService
             $amountRefunded += $line->amountRefunded->value;
         }
 
-        return $amountRefunded;
-    }
-
-    private function getPaymentRefundedAmount(object $mollieOrder): float
-    {
-        $amountRemaining = $mollieOrder->amountRefunded ? (float) $mollieOrder->amountRefunded->value : 0;
-        $amountRefunded = (float) $mollieOrder->amount->value - $amountRemaining;
-
-        return $amountRefunded;
+        return NumberUtility::minus($mollieOrder->amount->value, $amountRefunded);
     }
 }
