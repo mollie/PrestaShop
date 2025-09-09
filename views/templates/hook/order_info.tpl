@@ -70,7 +70,7 @@
                 </button>
               {/if}
               {if $product->name != 'Discount'}
-                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value}" data-orderline="{$product->id}" {if $product->totalAmount->value > $refundable_amount}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value}" data-orderline="{$product->id}" {if $product->quantityRefunded == $product->quantity}disabled{/if}>
                   <i class="icon-ban"></i> {l s='Refund' mod='mollie'}
                 </button>
               {/if}
