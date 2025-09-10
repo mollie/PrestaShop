@@ -10,8 +10,6 @@ use Mollie\Service\CaptureService;
 use Mollie\Service\ShipService;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Logger\LoggerInterface;
-use Context;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -40,7 +38,7 @@ class AdminMollieOrderController extends ModuleAdminController
         $tools = $this->module->getService(ToolsAdapter::class);
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
-        $cookie = Context::getContext()->cookie;
+        $cookie = \Context::getContext()->cookie;
 
         $orderId = $tools->getValueAsInt('orderId');
         $errors = json_decode($cookie->__get('mollie_order_management_errors'), false) ?: [];
@@ -50,7 +48,7 @@ class AdminMollieOrderController extends ModuleAdminController
                 $amount = (float) $tools->getValue('capture_amount');
                 /** @var CaptureService $captureService */
                 $captureService = $this->module->getService(CaptureService::class);
-                $captureService->doPaymentCapture($orderId, $amount);
+                $captureService->handleCapture($orderId, $amount);
             } catch (\Throwable $exception) {
                 $errors[$orderId] = 'Capture failed. See logs.';
                 $cookie->__set('mollie_order_management_errors', json_encode($errors));
@@ -67,7 +65,7 @@ class AdminMollieOrderController extends ModuleAdminController
                 $amount = (float) $tools->getValue('refund_amount');
                 /** @var RefundService $refundService */
                 $refundService = $this->module->getService(RefundService::class);
-                $refundService->doPaymentRefund($orderId, $amount);
+                $refundService->handleRefund($orderId, $amount);
             } catch (\Throwable $exception) {
                 $errors[$orderId] = 'Refund failed. See logs.';
                 $cookie->__set('mollie_order_management_errors', json_encode($errors));
@@ -83,7 +81,7 @@ class AdminMollieOrderController extends ModuleAdminController
             try {
                 /** @var ShipService $shipService */
                 $shipService = $this->module->getService(ShipService::class);
-                $shipService->doShipOrderLines($orderId);
+                $shipService->handleShip($orderId);
             } catch (\Throwable $exception) {
                 $errors[$orderId] = 'Shipping failed. See logs.';
                 $cookie->__set('mollie_order_management_errors', json_encode($errors));
@@ -100,7 +98,7 @@ class AdminMollieOrderController extends ModuleAdminController
 
     private function redirectToOrderController(string $controller, int $orderId): void
     {
-        $url = Context::getContext()->link->getAdminLink($controller, true, [], ['id_order' => $orderId, 'vieworder' => 1]);
-        Tools::redirectAdmin($url);
+        $url = \Context::getContext()->link->getAdminLink($controller, true, [], ['id_order' => $orderId, 'vieworder' => 1]);
+        \Tools::redirectAdmin($url);
     }
 }

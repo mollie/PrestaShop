@@ -279,7 +279,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 
             /** @var ShipService $shipService */
             $shipService = $this->module->getService(ShipService::class);
-            $status = $shipService->doShipOrderLines($transactionId, $orderlineId, $tracking);
+            $status = $shipService->handleShip($transactionId, $orderlineId, $tracking);
 
             $this->ajaxRender(json_encode($status));
         } catch (\Throwable $e) {

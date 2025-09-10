@@ -46,7 +46,7 @@ class ShipService
      *
      * @since 3.3.0
      */
-    public function doShipOrderLines($transactionId, $orderlineId = null, $tracking = null)
+    public function handleShip($transactionId, $orderlineId = null, $tracking = null)
     {
         try {
             /** @var MollieOrderAlias $payment */
