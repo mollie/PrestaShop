@@ -37,14 +37,14 @@
       <input type="number" step="0.01" max="{$refundable_amount}" class="form-control" id="mollie-refund-amount" value="{$refundable_amount}" {if $isRefunded || $refundable_amount <= 0}disabled{/if} />
     </div>
     <button type="button" class="btn btn-primary btn-block" id="mollie-initiate-refund" {if $isRefunded || $refundable_amount <= 0}disabled{/if}>
-      <i class="icon-undo"></i> {l s='Initiate Refund' mod='mollie'}
+      <i class="material-icons">replay</i> {l s='Initiate Refund' mod='mollie'}
     </button>
     <div class="form-group capture-div">
       <label for="mollie-capture-amount">{l s='Capture amount (Capturable: %s)' sprintf=[$capturable_amount] mod='mollie'}</label>
       <input type="number" step="0.01" max="{$capturable_amount}" class="form-control" id="mollie-capture-amount" value="{$capturable_amount}" {if $isCaptured || $capturable_amount <= 0}disabled{/if} />
     </div>
     <button type="button" class="btn btn-primary btn-block" id="mollie-initiate-capture" {if $isCaptured || $capturable_amount <= 0}disabled{/if}>
-      <i class="icon-money"></i> {l s='Initiate Capture' mod='mollie'}
+      <i class="material-icons">payments</i> {l s='Initiate Capture' mod='mollie'}
     </button>
     <hr />
     {/if}
@@ -66,12 +66,12 @@
               <td>
               {if $mollie_api_type == 'orders' && $product->name != 'Discount'}
                 <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product->totalAmount->value}" data-orderline="{$product->id}" {if $product->quantityShipped == $product->quantity}disabled{/if}>
-                  <i class="icon-truck"></i> {l s='Ship' mod='mollie'}
+                  <i class="material-icons">local_shipping</i> {l s='Ship' mod='mollie'}
                 </button>
               {/if}
               {if $product->name != 'Discount'}
                 <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value}" data-orderline="{$product->id}" {if $product->quantityRefunded == $product->quantity}disabled{/if}>
-                  <i class="icon-ban"></i> {l s='Refund' mod='mollie'}
+                  <i class="material-icons">replay</i> {l s='Refund' mod='mollie'}
                 </button>
               {/if}
               </td>
@@ -86,12 +86,12 @@
               <td>
               {if $mollie_api_type == 'payments' && $product->description != 'Discount'}
                 <button type="button" class="btn btn-default btn-xs mollie-capture-btn" data-price="{$product->totalAmount->value}" {if $isCaptured}disabled{/if}>
-                  <i class="icon-truck"></i> {l s='Capture' mod='mollie'}
+                  <i class="material-icons">payments</i> {l s='Capture' mod='mollie'}
                 </button>
               {/if}
               {if $product->description != 'Discount'}
                 <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value}" {if $product->totalAmount->value > $refundable_amount}disabled{/if}>
-                  <i class="icon-ban"></i> {l s='Refund' mod='mollie'}
+                  <i class="material-icons">replay</i> {l s='Refund' mod='mollie'}
                 </button>
               {/if}
               </td>
@@ -102,12 +102,7 @@
     </table>
     {if $mollie_api_type == 'orders'}
       <button type="button" class="btn btn-default btn-block" id="mollie-ship-all" {if $isShipped}disabled{/if}>
-        <i class="icon-truck"></i> {l s='Ship All' mod='mollie'}
-      </button>
-    {else}
-      <button type="button" class="btn btn-default btn-block" id="mollie-capture-all" {if $isCaptured || $isRefunded || $capturable_amount <= 0}disabled{/if}>
-        <i class="icon-money"></i> {l s='Capture All' mod='mollie'}
-      </button>
+        <i class="material-icons">local_shipping</i> {l s='Ship All' mod='mollie'}
     {/if}
   </div>
 </div>
