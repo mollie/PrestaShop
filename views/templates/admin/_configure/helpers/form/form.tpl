@@ -478,6 +478,9 @@
                                         <option value="eco" {if $input.voucherCategory === 'eco'} selected {/if}>
                                             {l s='eco' mod='mollie'}
                                         </option>
+                                        <option value="all" {if $input.voucherCategory === 'all'} selected {/if}>
+                                            {l s='All' mod='mollie'}
+                                        </option>
                                     </select>
                                     <p class="help-block">
                                         {l s='Select a category to use for all products in your webshop.' mod='mollie'}

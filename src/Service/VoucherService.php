@@ -44,10 +44,39 @@ class VoucherService
                 }
 
                 return [$selectedVoucherCategory];
+            case Config::MOLLIE_VOUCHER_CATEGORY_ALL:
+                $productCategories = $this->getProductCategories($cartItem);
+
+                return $productCategories;
             case Config::MOLLIE_VOUCHER_CATEGORY_NULL:
             default:
                 return $this->getProductCategory($cartItem);
         }
+    }
+
+    public function getProductCategories(array $cartItem): array
+    {
+        if (!isset($cartItem['features'])) {
+            return [];
+        }
+
+        $idFeatureValues = [];
+
+        foreach ($cartItem['features'] as $feature) {
+            if (!$this->isVoucherFeature((int) $feature['id_feature'])) {
+                continue;
+            }
+
+            $idFeatureValues[] = (int) $feature['id_feature_value'];
+        }
+
+        if (empty($idFeatureValues)) {
+            return [];
+        }
+
+        $category = $this->getVoucherCategoriesByFeatureValueIds($idFeatureValues);
+
+        return $category;
     }
 
     public function getProductCategory(array $cartItem): array
@@ -89,5 +118,18 @@ class VoucherService
         }
 
         return '';
+    }
+
+    private function getVoucherCategoriesByFeatureValueIds(array $idFeatureValues): array
+    {
+        $categoryNames = [];
+
+        foreach (Config::MOLLIE_VOUCHER_CATEGORIES as $key => $categoryName) {
+            if (in_array((int) $this->configuration->get(Config::MOLLIE_VOUCHER_FEATURE . $key), $idFeatureValues, true)) {
+                $categoryNames[] = $key;
+            }
+        }
+
+        return $categoryNames;
     }
 }
