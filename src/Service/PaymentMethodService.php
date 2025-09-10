@@ -335,7 +335,11 @@ class PaymentMethodService
         if (Mollie\Config\Config::MOLLIE_ORDERS_API !== $molPaymentMethod->method) {
             $paymentData = new PaymentData($amountObj, $orderReference, $redirectUrl, $webhookUrl);
 
-            // $paymentData->setCaptureMode('manual');
+            if (in_array($molPaymentMethod->id_method, Mollie\Config\Config::MOLLIE_MANUAL_CAPTURE_METHODS)) {
+                $paymentData->setCaptureMode('manual');
+            }
+
+            $paymentData->setCaptureMode('manual');
 
             $paymentData->setMetadata($metaData);
 
