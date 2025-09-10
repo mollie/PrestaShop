@@ -84,6 +84,14 @@ class ShipService
                 'error_message' => $e->getMessage(),
             ]);
 
+            if (strpos($e->getMessage(), 'exceeds the amount') !== false) {
+                return [
+                    'success' => false,
+                    'message' => $this->module->l('The product(s) could not be shipped! The amount exceeds the order amount. Use "Ship All".', self::FILE_NAME),
+                    'detailed' => $e->getMessage(),
+                ];
+            }
+
             return [
                 'success' => false,
                 'message' => $this->module->l('The product(s) could not be shipped!', self::FILE_NAME),
