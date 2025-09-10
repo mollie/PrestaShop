@@ -168,7 +168,7 @@ class CaptureService
             $capturedAmount += $capture->amount->value;
         }
 
-        return $capturedAmount >= $payment->amount->value;
+        return $capturedAmount >= $payment->amount->value || $payment->status == 'paid';
     }
 
     public function getCapturableAmount(string $transactionId): float

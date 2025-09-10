@@ -85,7 +85,7 @@
               <td>{$product->totalAmount->value|escape:'html':'UTF-8'}</td>
               <td>
               {if $mollie_api_type == 'payments' && $product->description != 'Discount'}
-                <button type="button" class="btn btn-default btn-xs mollie-capture-btn" data-price="{$product->totalAmount->value}" {if $product->totalAmount->value > $refundable_amount}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-capture-btn" data-price="{$product->totalAmount->value}" {if $product->totalAmount->value > $refundable_amount || $isCaptured}disabled{/if}>
                   <i class="icon-truck"></i> {l s='Capture' mod='mollie'}
                 </button>
               {/if}
