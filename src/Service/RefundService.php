@@ -54,8 +54,7 @@ class RefundService
     /**
      * @param string $transactionId Transaction/Mollie Order ID
      * @param float|null $amount Amount to refund, refund all if `null`
-     * @param array $orderLines Order lines for partial refund
-     * @param bool $isPartial Partial refund
+     * @param string|null $orderLineId Order line ID for partial refund
      *
      * @return array
      *
@@ -134,7 +133,6 @@ class RefundService
      * @param MollieOrderAlias|Payment $payment
      * @param string $refundAmount
      * @param bool $isOrderTransaction
-     * @param int|null $idProduct
      * @throws ApiException
      */
     private function processRefund($payment, string $refundAmount, bool $isOrderTransaction): void
@@ -154,9 +152,8 @@ class RefundService
 
     /**
      * @param MollieOrderAlias $order
-     * @param array $orderLines
-     * @param int $productId
-     * @return array
+     * @param float $amount
+     * @param string|null $orderLineId
      * @throws ApiException
      */
     private function processPartialRefund(MollieOrderAlias $order, float $amount, ?string $orderLineId = null): void
@@ -269,7 +266,7 @@ class RefundService
     $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
 
     $transaction = $isOrderTransaction
-        ? $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments', 'embed' => 'refunds'])
+        ? $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments,refunds'])
         : $this->module->getApiClient()->payments->get($transactionId, ['embed' => 'refunds']);
 
     $refundedAmount = $transaction->amountRefunded

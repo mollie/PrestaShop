@@ -18,12 +18,18 @@ if (!defined('_PS_VERSION_')) {
 
 class ShipUtility
 {
+    /**
+     * @param array $lines
+     * @param array $allOrderLines
+     * @return array
+     */
     public static function getShipLines(array $lines, $allOrderLines)
     {
         $shipLines = [];
         $lineIds = array_column($lines, 'id');
 
         foreach ($allOrderLines as $orderLine) {
+            /** @var object $orderLine */
             if (!empty($orderLine->metadata) && in_array($orderLine->metadata->idProduct, $lineIds)) {
                 $shipLines[] = [
                     'id' => $orderLine->id,

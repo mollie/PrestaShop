@@ -142,9 +142,9 @@ class OrderLine implements JsonSerializable
     }
 
     /**
-     * @param string $productUrl
+     * @param ?string $productUrl
      */
-    public function setProductUrl(string $productUrl): void
+    public function setProductUrl(?string $productUrl): void
     {
         $this->productUrl = $productUrl;
     }
@@ -160,7 +160,7 @@ class OrderLine implements JsonSerializable
     /**
      * @param ?string $imageUrl
      */
-    public function setImageUrl(string $imageUrl): void
+    public function setImageUrl(?string $imageUrl): void
     {
         $this->imageUrl = $imageUrl;
     }

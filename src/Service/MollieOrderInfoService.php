@@ -111,9 +111,9 @@ class MollieOrderInfoService
                     case 'refund':
                         if (!isset($input['amount']) || empty($input['amount'])) {
                             // No amount = full refund
-                            $status = $this->refundService->doPaymentRefund($transactionId);
+                            $status = $this->refundService->handleRefund($transactionId);
                         } else {
-                            $status = $this->refundService->doPaymentRefund($transactionId, $input['amount']);
+                            $status = $this->refundService->handleRefund($transactionId, $input['amount']);
                         }
 
                         return [
@@ -123,9 +123,9 @@ class MollieOrderInfoService
                     case 'capture':
                         if (!isset($input['amount']) || empty($input['amount'])) {
                             // No amount = full capture
-                            $status = $this->captureService->doPaymentCapture($transactionId);
+                            $status = $this->captureService->handleCapture($transactionId);
                         } else {
-                            $status = $this->captureService->doPaymentCapture($transactionId, $input['amount']);
+                            $status = $this->captureService->handleCapture($transactionId, $input['amount']);
                         }
 
                         return [

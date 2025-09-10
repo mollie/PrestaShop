@@ -153,9 +153,9 @@ class MollieOrderService
         return $result;
     }
 
-    public function assignShipping(array $products, object $order)
+    public function assignShipping(array $products, $order)
     {
-        if (!$order || !isset($order->total_shipping) || $order->total_shipping <= 0) {
+        if (!isset($order->total_shipping) || $order->total_shipping <= 0) {
             return $products;
         }
 
@@ -197,7 +197,7 @@ class MollieOrderService
      *
      * @return float
      */
-    private function getRemainingAmount(object $mollieOrder): float
+    private function getRemainingAmount($mollieOrder): float
     {
         $paymentType = TransactionUtility::isOrderTransaction($mollieOrder->id)
             ? Config::MOLLIE_ORDERS_API
