@@ -339,8 +339,6 @@ class PaymentMethodService
                 $paymentData->setCaptureMode('manual');
             }
 
-            $paymentData->setCaptureMode('manual');
-
             $paymentData->setMetadata($metaData);
 
             $paymentData->setLocale($this->getLocale($molPaymentMethod->method));
