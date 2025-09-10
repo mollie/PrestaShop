@@ -605,11 +605,6 @@ class Mollie extends PaymentModule
                 ? $this->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])->lines
                 : $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments'])->lines;
 
-            // $products = $mollieOrderService->assignDiscounts($products, $order->getCartRules());
-            // $products = $mollieOrderService->assignShipping($products, $order);
-            // $products = $mollieOrderService->assignRefundStatus($products, $mollieTransactionId);
-            // $products = $mollieOrderService->assignShippingStatus($products, $mollieTransactionId);
-
             $mollieLogoPath = $this->getMollieLogoPath();
             $refundableAmount = $mollieOrderService->getRefundableAmount($mollieTransactionId);
             $tracking = $shipmentService->getShipmentInformation($order->reference);
