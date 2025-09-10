@@ -16,7 +16,7 @@
     {* <span class="label label-success pull-right" style="margin-left: 10px;">{l s='Authorized' mod='mollie'}</span> *}
   </div>
   <div class="card-body">
-    <div class="form-group">
+    {* <div class="form-group">
       <label>{l s='Applicable to orders paid exclusively through Mollie' mod='mollie'}</label>
       <div class="radio">
         <label>
@@ -30,7 +30,8 @@
           {l s='Full refund' mod='mollie'}
         </label>
       </div>
-    </div>
+    </div> *}
+    {if $mollie_api_type == 'payments'}
     <div class="form-group">
       <label for="mollie-refund-amount">{l s='Refund amount (Max: %s)' sprintf=[$refundable_amount] mod='mollie'}</label>
       <input type="number" step="0.01" max="{$refundable_amount}" class="form-control" id="mollie-refund-amount" value="{$refundable_amount}" {if $isRefunded || $refundable_amount <= 0}disabled{/if} />
@@ -38,7 +39,6 @@
     <button type="button" class="btn btn-primary btn-block" id="mollie-initiate-refund" {if $isRefunded || $refundable_amount <= 0}disabled{/if}>
       <i class="icon-undo"></i> {l s='Initiate Refund' mod='mollie'}
     </button>
-    {if $mollie_api_type == 'payments'}
     <div class="form-group capture-div">
       <label for="mollie-capture-amount">{l s='Capture amount (Capturable: %s)' sprintf=[$capturable_amount] mod='mollie'}</label>
       <input type="number" step="0.01" max="{$capturable_amount}" class="form-control" id="mollie-capture-amount" value="{$capturable_amount}" {if $isCaptured || $capturable_amount <= 0}disabled{/if} />
@@ -46,8 +46,8 @@
     <button type="button" class="btn btn-primary btn-block" id="mollie-initiate-capture" {if $isCaptured || $capturable_amount <= 0}disabled{/if}>
       <i class="icon-money"></i> {l s='Initiate Capture' mod='mollie'}
     </button>
-    {/if}
     <hr />
+    {/if}
     <table class="table table-bordered table-condensed">
       <thead>
         <tr>
