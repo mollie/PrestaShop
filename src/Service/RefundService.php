@@ -54,39 +54,35 @@ class RefundService
     /**
      * @param string $transactionId Transaction/Mollie Order ID
      * @param float|null $amount Amount to refund, refund all if `null`
-     * @param array $orderLines Order lines for partial refund
-     * @param bool $isPartial Partial refund
+     * @param string|null $orderLineId Order line ID for partial refund
      *
      * @return array
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws ApiException
-     *
-     * @since 3.3.0 Renamed `doRefund` to `doPaymentRefund`, added `$amount`
-     * @since 3.3.2 Omit $orderId
-     * @since 3.3.3 Added partial refund support for specific products
      */
-    public function handleRefund(string $transactionId, ?float $amount = null, array $orderLines = [], ?int $idProduct = null)
+    public function handleRefund(string $transactionId, ?float $amount = null, ?string $orderLineId = null)
     {
         try {
-            $payment = $this->getPayment($transactionId);
-            $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
-            $isPartial = $idProduct ? true : false;
+            $payment = TransactionUtility::isOrderTransaction($transactionId)
+                ? $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments,refunds'])
+                : $this->module->getApiClient()->payments->get($transactionId, ['embed' => 'refunds']);
 
-            if ($isPartial && $isOrderTransaction) {
-                $this->processPartialRefund($payment, $amount, $idProduct);
+            $isPartialRefund = !empty($orderLineId) || $amount !== null;
+
+            if ($isPartialRefund && TransactionUtility::isOrderTransaction($transactionId)) {
+                $payment->refund([
+                    'lines' => [
+                        ['id' => $orderLineId],
+                    ],
+                ]);
 
                 return $this->createSuccessResponse();
             }
 
             $refundAmount = $this->calculateRefundAmount($payment, $amount);
-
             if (!$refundAmount) {
-                return $this->createErrorResponse('No refundable amount available.', null);
+                return $this->createErrorResponse('No refundable amount available.');
             }
 
-            $this->processRefund($payment, $refundAmount, $isOrderTransaction, $idProduct);
+            $this->processRefund($payment, $refundAmount, TransactionUtility::isOrderTransaction($transactionId));
 
             return $this->createSuccessResponse();
         } catch (ApiException $e) {
@@ -94,24 +90,6 @@ class RefundService
         } catch (Throwable $e) {
             return $this->createErrorResponse('Something went wrong while processing the refund.', $e);
         }
-    }
-
-    /**
-     * @param string $transactionId
-     *
-     * @return MollieOrderAlias|Payment
-     *
-     * @throws ApiException
-     */
-    private function getPayment(string $transactionId)
-    {
-        $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
-
-        if ($isOrderTransaction) {
-            return $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
-        }
-
-        return $this->module->getApiClient()->payments->get($transactionId);
     }
 
     /**
@@ -129,11 +107,7 @@ class RefundService
         $refundedAmount = (float) RefundUtility::getRefundedAmount(iterator_to_array($payment->refunds()));
         $refundableAmount = RefundUtility::getRefundableAmount($settlementAmount, $refundedAmount);
 
-        if ($refundableAmount <= 0) {
-            return null;
-        }
-
-        return TextFormatUtility::formatNumber($refundableAmount, 2);
+        return $refundableAmount > 0 ? TextFormatUtility::formatNumber($refundableAmount, 2) : null;
     }
 
 
@@ -141,13 +115,12 @@ class RefundService
      * @param MollieOrderAlias|Payment $payment
      * @param string $refundAmount
      * @param bool $isOrderTransaction
-     * @param int|null $idProduct
      * @throws ApiException
      */
-    private function processRefund($payment, string $refundAmount, bool $isOrderTransaction, ?int $idProduct = null): void
+    private function processRefund($payment, string $refundAmount, bool $isOrderTransaction): void
     {
         if ($isOrderTransaction) {
-            $this->refundOrder($payment, $refundAmount);
+            $payment->refundAll();
             return;
         }
 
@@ -156,30 +129,7 @@ class RefundService
                 'currency' => $payment->amount->currency,
                 'value' => $refundAmount,
             ],
-            'metadata' => [
-                'idProduct' => $idProduct,
-            ],
         ]);
-    }
-
-    /**
-     * @param MollieOrderAlias $order
-     * @param array $orderLines
-     * @param int $productId
-     * @return array
-     * @throws ApiException
-     */
-    private function processPartialRefund(MollieOrderAlias $order, float $amount, int $idProduct): array
-    {
-        $lines = RefundUtility::getRefundLines($order->lines, $idProduct);
-        $order->refund([
-            'lines' => $lines,
-            'metadata' => [
-                'idProduct' => $idProduct,
-            ],
-        ]);
-
-        return $this->createSuccessResponse();
     }
 
     /**
@@ -194,23 +144,13 @@ class RefundService
             'exceptions' => ExceptionUtility::getExceptions($e),
         ]);
 
-        $response = [
+        return [
             'success' => false,
             'message' => $this->module->l($message, self::FILE_NAME),
             'error' => $e ? $e->getMessage() : 'NaN',
         ];
-
-        return $response;
     }
 
-    private function refundOrder(MollieOrderAlias $order, string $refundAmount): void
-    {
-        $order->refundAll();
-    }
-
-    /**
-     * @return array
-     */
     private function createSuccessResponse(): array
     {
         return [
@@ -220,78 +160,16 @@ class RefundService
         ];
     }
 
-    /**
-     * @param array $lines
-     *
-     * @return array
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     *
-     * @since 3.3.0
-     */
-    public function doRefundOrderLines(array $orderData, $lines = [])
-    {
-        $transactionId = $orderData['id'];
-        $availableRefund = $orderData['availableRefundAmount'];
-        try {
-            /** @var MollieOrderAlias $payment */
-            $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
-            $isOrderLinesRefundPossible = RefundUtility::isOrderLinesRefundPossible($lines, $availableRefund);
-            if ($isOrderLinesRefundPossible) {
-                $refund = RefundUtility::getRefundLines($lines, $transactionId);
-                $order->refund($refund);
-            } else {
-                /** @var PaymentCollection $orderPayments */
-                $orderPayments = $order->payments();
-                /** @var \Mollie\Api\Resources\Payment $orderPayment */
-                foreach ($orderPayments as $orderPayment) {
-                    $orderPayment->refund(
-                        [
-                            'amount' => $availableRefund,
-                        ]
-                    );
-                    continue;
-                }
-            }
-        } catch (ApiException $e) {
-            return [
-                'success' => false,
-                'message' => $this->module->l('The product(s) could not be refunded!', self::FILE_NAME),
-                'detailed' => $e->getMessage(),
-            ];
-        }
-
-        return [
-            'success' => true,
-            'message' => '',
-            'detailed' => '',
-        ];
-    }
-
-    public function getRefundedAmount(string $transactionId): float
-    {
-        $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
-
-        $transaction = $isOrderTransaction
-            ? $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments'])
-            : $this->module->getApiClient()->payments->get($transactionId);
-
-        return (float) RefundUtility::getRefundedAmount(iterator_to_array($transaction->refunds()));
-    }
-
     public function isRefunded(string $transactionId, float $amount): bool
-{
-    $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
+    {
+        $transaction = TransactionUtility::isOrderTransaction($transactionId)
+            ? $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments,refunds'])
+            : $this->module->getApiClient()->payments->get($transactionId, ['embed' => 'refunds']);
 
-    $transaction = $isOrderTransaction
-        ? $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments', 'embed' => 'refunds'])
-        : $this->module->getApiClient()->payments->get($transactionId, ['embed' => 'refunds']);
+        $refundedAmount = $transaction->amountRefunded
+            ? (float) $transaction->amountRefunded->value
+            : RefundUtility::getRefundedAmount(iterator_to_array($transaction->refunds()));
 
-    $refundedAmount = $transaction->amountRefunded
-        ? (float) $transaction->amountRefunded->value
-        : RefundUtility::getRefundedAmount(iterator_to_array($transaction->refunds()));
-
-    return $refundedAmount >= $amount;
-}
+        return $refundedAmount >= $amount;
+    }
 }

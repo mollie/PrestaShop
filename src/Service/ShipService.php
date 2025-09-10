@@ -39,23 +39,26 @@ class ShipService
 
     /**
      * @param string $transactionId
-     * @param array $lines
+     * @param string|null $orderlineId
      * @param array|null $tracking
      *
      * @return array
      *
      * @since 3.3.0
      */
-    public function doShipOrderLines($transactionId, $lines = [], $tracking = null)
+    public function handleShip($transactionId, $orderlineId = null, $tracking = null)
     {
         try {
             /** @var MollieOrderAlias $payment */
             $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
-            $lines = $lines ?: $order->lines;
             $shipmentData = [];
 
-            if (!empty($lines)) {
-                $shipmentData['lines'] = ShipUtility::getShipLines($lines, $order->lines);
+            if ($orderlineId) {
+                $shipmentData['lines'] = [
+                    [
+                        'id' => $orderlineId,
+                    ],
+                ];
             }
 
             if ($tracking['carrier'] && $tracking['code'] && $tracking['tracking_url']) {
@@ -81,6 +84,14 @@ class ShipService
                 'error_message' => $e->getMessage(),
             ]);
 
+            if (strpos($e->getMessage(), 'exceeds the amount') !== false) {
+                return [
+                    'success' => false,
+                    'message' => $this->module->l('The product(s) could not be shipped! The amount exceeds the order amount. Use "Ship All".', self::FILE_NAME),
+                    'detailed' => $e->getMessage(),
+                ];
+            }
+
             return [
                 'success' => false,
                 'message' => $this->module->l('The product(s) could not be shipped!', self::FILE_NAME),
@@ -104,12 +115,12 @@ class ShipService
         $products = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments'])->lines;
 
         foreach ($products as $product) {
-            if ($product->quantity == $product->quantityShipped) {
-                return true;
+            if ($product->quantity != $product->quantityShipped) {
+                return false;
             }
         }
 
-        return false;
+        return true;
     }
 
     private function validateTracking(array $tracking): array

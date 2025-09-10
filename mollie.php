@@ -586,36 +586,19 @@ class Mollie extends PaymentModule
                 $mollieApiType = TransactionUtility::isOrderTransaction($mollieTransactionId) ? 'orders' : 'payments';
             }
 
-            /** @var ToolsAdapter $toolsAdapter */
-            $toolsAdapter = $this->getService(ToolsAdapter::class);
-
             $order = new Order($params['id_order']);
-
-            // $products = array_map(function($product) use ($toolsAdapter) {
-            //     return [
-            //         'id' => $product['id_product'],
-            //         'name' => $product['product_name'],
-            //         'price' => $product['total_price_tax_incl'],
-            //         'price_formatted' => $toolsAdapter->displayPrice($product['total_price_tax_incl']),
-            //         'quantity' => $product['product_quantity'],
-            //     ];
-            // }, $order->getProducts());
 
             $products = TransactionUtility::isOrderTransaction($mollieTransactionId)
                 ? $this->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])->lines
                 : $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments'])->lines;
 
-            // $products = $mollieOrderService->assignDiscounts($products, $order->getCartRules());
-            // $products = $mollieOrderService->assignShipping($products, $order);
-            // $products = $mollieOrderService->assignRefundStatus($products, $mollieTransactionId);
-            // $products = $mollieOrderService->assignShippingStatus($products, $mollieTransactionId);
-
             $mollieLogoPath = $this->getMollieLogoPath();
+
             $refundableAmount = $mollieOrderService->getRefundableAmount($mollieTransactionId);
-            $tracking = $shipmentService->getShipmentInformation($order->reference);
+            $capturableAmount = $captureService->getCapturableAmount($mollieTransactionId);
+
             $isRefunded = $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid);
             $isCaptured = $captureService->isCaptured($mollieTransactionId);
-            $capturableAmount = $captureService->getCapturableAmount($mollieTransactionId);
             $isShipped = $shipService->isShipped($mollieTransactionId);
 
             $this->context->smarty->assign([
@@ -626,7 +609,6 @@ class Mollie extends PaymentModule
                 'mollie_logo_path' => $mollieLogoPath,
                 'mollie_transaction_id' => $mollieTransactionId,
                 'mollie_api_type' => $mollieApiType,
-                'tracking' => $tracking,
                 'isRefunded' => $isRefunded,
                 'isCaptured' => $isCaptured,
                 'isShipped' => $isShipped,

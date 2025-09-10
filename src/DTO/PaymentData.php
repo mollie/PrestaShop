@@ -479,7 +479,7 @@ class PaymentData implements JsonSerializable
             'cardToken' => $this->getCardToken(),
             'customerId' => $this->getCustomerId(),
             'applePayPaymentToken' => $this->getApplePayToken(),
-            // 'captureMode' => $this->getCaptureMode(),
+            'captureMode' => $this->getCaptureMode(),
         ];
 
         if ($this->sequenceType) {

@@ -10,8 +10,6 @@
  * @codingStandardsIgnoreStart
  */
 
-use Throwable;
-use MolPaymentMethod;
 use Mollie\Adapter\Context;
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
@@ -246,19 +244,15 @@ class AdminMollieAjaxController extends ModuleAdminController
         try {
             $transactionId = Tools::getValue('transactionId');
             $refundAmount = (float) Tools::getValue('refundAmount') ?: null;
-            $idOrder = (int)Tools::getValue('orderId') ?: null;
-            $idProduct = (int)Tools::getValue('productId') ?: null;
-
-            $order = new Order($idOrder);
-            $orderLines = $order->getProducts();
+            $orderLineId = Tools::getValue('orderline') ?: null;
 
             /** @var RefundService $refundService */
             $refundService = $this->module->getService(RefundService::class);
 
-            $status = $refundService->handleRefund($transactionId, $refundAmount, $orderLines, $idProduct);
+            $status = $refundService->handleRefund($transactionId, $refundAmount, $orderLineId);
 
             $this->ajaxRender(json_encode($status));
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $this->ajaxRender(
                 json_encode([
                     'success' => false,
@@ -274,7 +268,7 @@ class AdminMollieAjaxController extends ModuleAdminController
         $orderId = (int) Tools::getValue('orderId');
         $orderLines = Tools::getValue('orderLines') ?: [];
         $tracking = Tools::getValue('tracking');
-        $orderline = Tools::getValue('orderline');
+        $orderlineId = Tools::getValue('orderline');
 
         try {
             $order = new Order($orderId);
@@ -285,10 +279,10 @@ class AdminMollieAjaxController extends ModuleAdminController
 
             /** @var ShipService $shipService */
             $shipService = $this->module->getService(ShipService::class);
-            $status = $shipService->doShipOrderLines($transactionId, $orderLines, $tracking);
+            $status = $shipService->handleShip($transactionId, $orderlineId, $tracking);
 
             $this->ajaxRender(json_encode($status));
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $this->ajaxRender(
                 json_encode([
                     'success' => false,
@@ -319,7 +313,7 @@ class AdminMollieAjaxController extends ModuleAdminController
             $status = $captureService->handleCapture($transactionId, $amount);
 
             $this->ajaxRender(json_encode($status));
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $this->ajaxRender(
                 json_encode([
                     'success' => false,

@@ -56,8 +56,9 @@ $(document).ready(function () {
   $('.mollie-refund-btn').on('click', function() {
     var productId = $(this).data('product');
     var amount = $(this).data('price');
+    var orderline = $(this).data('orderline');
 
-    showModal('refund', productId, amount);
+    showModal('refund', productId, amount, orderline);
   });
 
   $('.mollie-ship-btn').on('click', function() {
@@ -184,8 +185,11 @@ $(document).ready(function () {
           tracking_url: trackingUrl || null
         };
 
-        data.orderline = actionContext.orderline;
       }
+    }
+
+    if (actionContext.orderline) {
+      data.orderline = actionContext.orderline;
     }
 
     if (!ajax_url) {
