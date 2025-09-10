@@ -348,6 +348,10 @@ class Config
 
     const MOLLIE_METHOD_CUSTOMER_GROUPS = 'MOLLIE_METHOD_CUSTOMER_GROUPS_';
 
+    public const MOLLIE_MANUAL_CAPTURE_METHODS = [
+        self::RIVERTY,
+    ];
+
     // TODO migrate functions below to separate service
     public static function getStatuses()
     {

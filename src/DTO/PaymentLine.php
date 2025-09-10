@@ -81,17 +81,17 @@ class PaymentLine implements JsonSerializable
     private $description = null;
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }
 
     /**
-     * @param string $type
+     * @param ?string $type
      */
-    public function setType(string $type): void
+    public function setType(?string $type): void
     {
         $this->type = $type;
     }
@@ -113,9 +113,9 @@ class PaymentLine implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getProductUrl(): string
+    public function getProductUrl(): ?string
     {
         return $this->productUrl;
     }
@@ -129,9 +129,9 @@ class PaymentLine implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getImageUrl(): string
+    public function getImageUrl(): ?string
     {
         return $this->imageUrl;
     }
@@ -241,9 +241,9 @@ class PaymentLine implements JsonSerializable
     }
 
     /**
-     * @return array
+     * @return ?array
      */
-    public function getCategories(): array
+    public function getCategories(): ?array
     {
         return $this->categories;
     }
@@ -274,7 +274,7 @@ class PaymentLine implements JsonSerializable
 
     public function jsonSerialize(): array
     {
-        return [
+        $result = [
             'sku' => $this->getSku(),
             'description' => $this->getDescription(),
             'productUrl' => $this->getProductUrl(),
@@ -305,5 +305,11 @@ class PaymentLine implements JsonSerializable
                 'value' => $this->getVatAmount()->getValue(),
             ],
         ];
+
+        if ($this->getType()) {
+            $result['type'] = $this->getType();
+        }
+
+        return $result;
     }
 }

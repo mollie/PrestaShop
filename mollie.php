@@ -28,6 +28,8 @@ use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
+use Mollie\Service\RefundService;
+use Mollie\Service\ShipmentService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
 use Mollie\Subscription\Config\Config as SubscriptionConfig;
 use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
@@ -41,11 +43,15 @@ use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\TransactionUtility;
 use Mollie\Utility\VersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
 use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Response;
+use Mollie\Service\CaptureService;
+use Mollie\Service\ShipService;
+use Mollie\Service\MollieOrderService;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -461,6 +467,38 @@ class Mollie extends PaymentModule
             }
         }
 
+        if ('AdminOrders' === $currentController && Tools::getValue('id_order')) {
+            $orderId = Tools::getValue('id_order');
+            $order = new Order($orderId);
+
+            if (Validate::isLoadedObject($order) && $order->module === $this->name) {
+                /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+                $paymentMethodRepo = $this->getService(PaymentMethodRepositoryInterface::class);
+
+                $cartId = Cart::getCartIdByOrderId((int) $orderId);
+                $transaction = $paymentMethodRepo->getPaymentBy('cart_id', (string) $cartId);
+
+                if (!empty($transaction)) {
+                    $mollieTransactionId = isset($transaction['transaction_id']) ? $transaction['transaction_id'] : null;
+                    $mollieApiType = null;
+                    if ($mollieTransactionId) {
+                        $mollieApiType = TransactionUtility::isOrderTransaction($mollieTransactionId) ? 'orders' : 'payments';
+                    }
+
+                    Media::addJsDef([
+                        'ajax_url' => $this->context->link->getAdminLink('AdminMollieAjax'),
+                        'transaction_id' => $mollieTransactionId,
+                        'resource' => $mollieApiType,
+                        'order_id' => $orderId,
+                        'orderLines' => $order->getProducts(),
+                    ]);
+
+                    $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_info.js');
+                    $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/order_info.css');
+                }
+            }
+        }
+
         // We are on module configuration page
         if ('AdminMollieSettings' === $currentController) {
             Media::addJsDef([
@@ -511,35 +549,79 @@ class Mollie extends PaymentModule
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
         $paymentMethodRepo = $this->getService(PaymentMethodRepositoryInterface::class);
 
-        /** @var \Mollie\Service\ShipmentServiceInterface $shipmentService */
-        $shipmentService = $this->getService(\Mollie\Service\ShipmentService::class);
+        /** @var ShipmentService $shipmentService */
+        $shipmentService = $this->getService(ShipmentService::class);
 
-        $cartId = Cart::getCartIdByOrderId((int) $params['id_order']);
-        $transaction = $paymentMethodRepo->getPaymentBy('cart_id', (string) $cartId);
-        if (empty($transaction)) {
+        /** @var ShipService $shipService */
+        $shipService = $this->getService(ShipService::class);
+
+        /** @var RefundService $refundService */
+        $refundService = $this->getService(RefundService::class);
+
+        /** @var CaptureService $captureService */
+        $captureService = $this->getService(CaptureService::class);
+
+        /** @var MollieOrderService $mollieOrderService */
+        $mollieOrderService = $this->getService(MollieOrderService::class);
+
+        /** @var LoggerInterface $logger */
+        $logger = $this->getService(LoggerInterface::class);
+
+        try {
+            $transaction = $paymentMethodRepo->getPaymentBy('cart_id', (string) Cart::getCartIdByOrderId((int) $params['id_order']));
+
+            if (empty($transaction)) {
+                $logger->error(sprintf('%s - Transaction not found. Cannot render order info.', self::FILE_NAME), [
+                    'id_order' => $params['id_order'],
+                ]);
+
+                return false;
+            }
+
+            $mollieTransactionId = isset($transaction['transaction_id']) ? $transaction['transaction_id'] : null;
+
+            $mollieApiType = null;
+
+            if ($mollieTransactionId) {
+                $mollieApiType = TransactionUtility::isOrderTransaction($mollieTransactionId) ? 'orders' : 'payments';
+            }
+
+            $order = new Order($params['id_order']);
+
+            $products = TransactionUtility::isOrderTransaction($mollieTransactionId)
+                ? $this->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])->lines
+                : $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments'])->lines;
+
+            $mollieLogoPath = $this->getMollieLogoPath();
+
+            $refundableAmount = $mollieOrderService->getRefundableAmount($mollieTransactionId);
+            $capturableAmount = $captureService->getCapturableAmount($mollieTransactionId);
+
+            $isRefunded = $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid);
+            $isCaptured = $captureService->isCaptured($mollieTransactionId);
+            $isShipped = $shipService->isShipped($mollieTransactionId);
+
+            $this->context->smarty->assign([
+                'order_reference' => $order->reference,
+                'refundable_amount' => $refundableAmount,
+                'capturable_amount' => $capturableAmount,
+                'products' => $products,
+                'mollie_logo_path' => $mollieLogoPath,
+                'mollie_transaction_id' => $mollieTransactionId,
+                'mollie_api_type' => $mollieApiType,
+                'isRefunded' => $isRefunded,
+                'isCaptured' => $isCaptured,
+                'isShipped' => $isShipped,
+            ]);
+
+            return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');
+        } catch (\Throwable $e) {
+            $logger->error(sprintf('%s - Error while rendering admin order info', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+
             return false;
         }
-        $currencies = [];
-        foreach (Currency::getCurrencies() as $currency) {
-            $currencies[Tools::strtoupper($currency['iso_code'])] = [
-                'name' => $currency['name'],
-                'iso_code' => Tools::strtoupper($currency['iso_code']),
-                'sign' => $currency['sign'],
-                'blank' => (bool) isset($currency['blank']) ? $currency['blank'] : true,
-                'format' => (int) $currency['format'],
-                'decimals' => (bool) isset($currency['decimals']) ? $currency['decimals'] : true,
-            ];
-        }
-
-        $order = new Order($params['id_order']);
-        $this->context->smarty->assign([
-            'ajaxEndpoint' => $this->context->link->getAdminLink('AdminModules', true) . '&configure=mollie&ajax=1&action=MollieOrderInfo',
-            'transactionId' => $transaction['transaction_id'],
-            'currencies' => $currencies,
-            'tracking' => $shipmentService->getShipmentInformation($order->reference),
-        ]);
-
-        return $this->display($this->getLocalPath(), 'views/templates/hook/order_info.tpl');
     }
 
     /**
@@ -623,22 +705,7 @@ class Mollie extends PaymentModule
         return '';
     }
 
-    /**
-     * @return array
-     *
-     * @since 3.3.0
-     */
-    public function displayAjaxMollieOrderInfo()
-    {
-        header('Content-Type: application/json;charset=UTF-8');
 
-        /** @var \Mollie\Service\MollieOrderInfoService $orderInfoService */
-        $orderInfoService = $this->getService(\Mollie\Service\MollieOrderInfoService::class);
-
-        $input = @json_decode(Tools::file_get_contents('php://input'), true);
-
-        return $orderInfoService->displayMollieOrderInfo($input);
-    }
 
     /**
      * actionOrderStatusUpdate hook.
@@ -1676,5 +1743,10 @@ class Mollie extends PaymentModule
             true,
             Db::INSERT_IGNORE
         );
+    }
+
+    private function getMollieLogoPath(): string
+    {
+        return $this->getPathUri() . 'views/img/mollie_panel_icon.png';
     }
 }

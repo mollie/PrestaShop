@@ -121,6 +121,11 @@ class PaymentData implements JsonSerializable
      */
     private $title;
 
+    /**
+     * @var ?string
+     */
+    private $captureMode;
+
     public function __construct(
         Amount $amount,
         string $description,
@@ -419,6 +424,22 @@ class PaymentData implements JsonSerializable
         $this->title = $title;
     }
 
+    /**
+     * @return ?string
+     */
+    public function getCaptureMode(): ?string
+    {
+        return $this->captureMode;
+    }
+
+    /**
+     * @param ?string $captureMode
+     */
+    public function setCaptureMode(?string $captureMode): void
+    {
+        $this->captureMode = $captureMode;
+    }
+
     public function jsonSerialize(): array
     {
         $result = [
@@ -458,6 +479,7 @@ class PaymentData implements JsonSerializable
             'cardToken' => $this->getCardToken(),
             'customerId' => $this->getCustomerId(),
             'applePayPaymentToken' => $this->getApplePayToken(),
+            'captureMode' => $this->getCaptureMode(),
         ];
 
         if ($this->sequenceType) {
