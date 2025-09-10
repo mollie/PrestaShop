@@ -10,8 +10,6 @@
  * @codingStandardsIgnoreStart
  */
 
-use Throwable;
-use MolPaymentMethod;
 use Mollie\Adapter\Context;
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
@@ -254,7 +252,7 @@ class AdminMollieAjaxController extends ModuleAdminController
             $status = $refundService->handleRefund($transactionId, $refundAmount, $orderLineId);
 
             $this->ajaxRender(json_encode($status));
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $this->ajaxRender(
                 json_encode([
                     'success' => false,
@@ -284,7 +282,7 @@ class AdminMollieAjaxController extends ModuleAdminController
             $status = $shipService->doShipOrderLines($transactionId, $orderlineId, $tracking);
 
             $this->ajaxRender(json_encode($status));
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $this->ajaxRender(
                 json_encode([
                     'success' => false,
@@ -315,7 +313,7 @@ class AdminMollieAjaxController extends ModuleAdminController
             $status = $captureService->handleCapture($transactionId, $amount);
 
             $this->ajaxRender(json_encode($status));
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $this->ajaxRender(
                 json_encode([
                     'success' => false,
