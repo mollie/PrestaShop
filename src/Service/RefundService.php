@@ -61,11 +61,13 @@ class RefundService
     public function handleRefund(string $transactionId, ?float $amount = null, ?string $orderLineId = null)
     {
         try {
-            $payment = $this->getPayment($transactionId);
-            $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
+            $payment = TransactionUtility::isOrderTransaction($transactionId)
+                ? $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments,refunds'])
+                : $this->module->getApiClient()->payments->get($transactionId, ['embed' => 'refunds']);
+
             $isPartialRefund = !empty($orderLineId) || $amount !== null;
 
-            if ($isPartialRefund && $isOrderTransaction) {
+            if ($isPartialRefund && TransactionUtility::isOrderTransaction($transactionId)) {
                 $payment->refund([
                     'lines' => [
                         ['id' => $orderLineId],
@@ -80,31 +82,14 @@ class RefundService
                 return $this->createErrorResponse('No refundable amount available.');
             }
 
-            $this->processRefund($payment, $refundAmount, $isOrderTransaction);
+            $this->processRefund($payment, $refundAmount, TransactionUtility::isOrderTransaction($transactionId));
+
             return $this->createSuccessResponse();
         } catch (ApiException $e) {
             return $this->createErrorResponse('The order could not be refunded!', $e);
         } catch (Throwable $e) {
             return $this->createErrorResponse('Something went wrong while processing the refund.', $e);
         }
-    }
-
-    /**
-     * @param string $transactionId
-     *
-     * @return MollieOrderAlias|Payment
-     *
-     * @throws ApiException
-     */
-    private function getPayment(string $transactionId)
-    {
-        $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
-
-        if ($isOrderTransaction) {
-            return $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
-        }
-
-        return $this->module->getApiClient()->payments->get($transactionId);
     }
 
     /**

@@ -21,32 +21,6 @@ if (!defined('_PS_VERSION_')) {
 
 class RefundUtility
 {
-    public static function getRefundLines(array $lines, ?int $idProduct = null)
-    {
-        $refunds = [];
-
-        foreach ($lines as $line) {
-            if ($idProduct == $line->id) {
-            $refunds[] = [
-                    'id' => $line->id,
-                ];
-            }
-        }
-
-        return $refunds;
-    }
-
-    public static function isOrderLinesRefundPossible(array $lines, $availableRefund)
-    {
-        $refundedAmount = 0;
-        foreach ($lines as $line) {
-            $lineRefundAmount = NumberUtility::times($line['unitPrice']['value'], $line['quantity']);
-            $refundedAmount = NumberUtility::plus($refundedAmount, $lineRefundAmount);
-        }
-
-        return NumberUtility::isLowerOrEqualThan($refundedAmount, $availableRefund['value']);
-    }
-
     public static function getRefundedAmount($paymentRefunds)
     {
         $refundAmount = 0;
