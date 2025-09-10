@@ -278,17 +278,17 @@ class OrderLine implements JsonSerializable
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getCategory(): string
+    public function getCategory(): ?string
     {
         return $this->category;
     }
 
     /**
-     * @param string $category
+     * @param ?string $category
      */
-    public function setCategory(string $category): void
+    public function setCategory(?string $category): void
     {
         $this->category = $category;
     }
@@ -303,7 +303,7 @@ class OrderLine implements JsonSerializable
             'metadata' => $this->getMetaData(),
             'quantity' => $this->getQuantity(),
             'vatRate' => $this->getVatRate(),
-            'categories' => [],
+            'category' => $this->getCategory(),
             'unitPrice' => [
                 'currency' => $this->getUnitPrice()->getCurrency(),
                 'value' => $this->getUnitPrice()->getValue(),
