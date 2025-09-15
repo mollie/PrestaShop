@@ -79,7 +79,7 @@ class RefundService
 
             $refundAmount = $this->calculateRefundAmount($payment, $amount);
             if (!$refundAmount) {
-                return $this->createErrorResponse('No refundable amount available.');
+                $refundAmount = $payment->amount->value;
             }
 
             $this->processRefund($payment, $refundAmount, TransactionUtility::isOrderTransaction($transactionId));
