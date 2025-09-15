@@ -141,7 +141,7 @@ class RefundService
     private function createErrorResponse(string $message, ?Throwable $e = null): array
     {
         $this->logger->error(sprintf('%s - Error while processing the refund.', self::FILE_NAME), [
-            'exceptions' => $e ? ExceptionUtility::getExceptions($e) : null,
+            'exceptions' => ExceptionUtility::getExceptions($e),
         ]);
 
         return [
