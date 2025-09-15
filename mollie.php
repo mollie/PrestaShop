@@ -590,6 +590,7 @@ class Mollie extends PaymentModule
 
             $products = TransactionUtility::isOrderTransaction($mollieTransactionId)
                 ? $this->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])->lines
+                /* @phpstan-ignore-next-line */
                 : $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments'])->lines;
 
             $mollieLogoPath = $this->getMollieLogoPath();
