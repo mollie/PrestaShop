@@ -79,7 +79,7 @@ class RefundService
 
             $refundAmount = $this->calculateRefundAmount($payment, $amount);
             if (!$refundAmount) {
-                return $this->createErrorResponse('No refundable amount available.');
+                $refundAmount = $payment->amount->value;
             }
 
             $this->processRefund($payment, $refundAmount, TransactionUtility::isOrderTransaction($transactionId));
@@ -141,7 +141,7 @@ class RefundService
     private function createErrorResponse(string $message, ?Throwable $e = null): array
     {
         $this->logger->error(sprintf('%s - Error while processing the refund.', self::FILE_NAME), [
-            'exceptions' => ExceptionUtility::getExceptions($e),
+            'exceptions' => $e ? ExceptionUtility::getExceptions($e) : null,
         ]);
 
         return [

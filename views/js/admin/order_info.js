@@ -39,6 +39,12 @@ $(document).ready(function () {
     };
 
     if (action === 'refund' || action === 'refundAll') {
+      // Update modal message based on action type
+      if (action === 'refundAll') {
+        $('#mollie-refund-modal-message').text('Are you sure you want to refund the full order amount? This action cannot be undone.');
+      } else {
+        $('#mollie-refund-modal-message').text('Are you sure you want to refund this order? This action cannot be undone.');
+      }
       $('#mollieRefundModal').modal('show');
     } else if (action === 'ship' || action === 'shipAll') {
       $('#mollieShipModal').modal('show');
@@ -81,6 +87,14 @@ $(document).ready(function () {
       showErrorMessage('Please enter a valid refund amount');
       return;
     }
+    showModal('refundAll', null);
+  });
+
+  $('#mollie-refund-all').on('click', function() {
+    showModal('refundAll', null);
+  });
+
+  $('#mollie-refund-all-orders').on('click', function() {
     showModal('refundAll', null);
   });
 
@@ -154,11 +168,18 @@ $(document).ready(function () {
       ajax: 1,
       action: context.action,
       orderId: order_id,
-      refundAmount: context.amount,
       transactionId: context.transactionId,
       productId: context.productId,
 
     };
+
+    // Only add refundAmount for partial refunds, not for refundAll
+    if (context.action === 'refund' && context.amount) {
+      data.refundAmount = context.amount;
+    } else if (context.action === 'refundAll') {
+      // For refundAll, don't pass amount to let the service calculate the full refundable amount
+      data.refundAmount = null;
+    }
 
     // Add capture amount for capture actions
     if (context.action === 'capture' || context.action === 'captureAll') {
