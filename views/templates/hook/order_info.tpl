@@ -13,24 +13,13 @@
   <div class="panel-heading card-header">
     <img src="{$mollie_logo_path}" width="16" height="16" alt="Mollie logo" style="opacity: 0.8;" />
     &nbsp;<span>Mollie order - #{$order_reference|escape:'html':'UTF-8'}</span>
-    {* <span class="label label-success pull-right" style="margin-left: 10px;">{l s='Authorized' mod='mollie'}</span> *}
   </div>
   <div class="card-body">
-    {* <div class="form-group">
-      <label>{l s='Applicable to orders paid exclusively through Mollie' mod='mollie'}</label>
-      <div class="radio">
-        <label>
-          <input type="radio" name="refund_type" value="partial" id="mollie-partial-refund" {if $isRefunded || $refundable_amount <= 0}disabled{/if} />
-          {l s='Partial refund' mod='mollie'}
-        </label>
-      </div>
-      <div class="radio">
-        <label>
-          <input type="radio" name="refund_type" value="full" id="mollie-full-refund" checked {if $isRefunded || $refundable_amount <= 0}disabled{/if} />
-          {l s='Full refund' mod='mollie'}
-        </label>
-      </div>
-    </div> *}
+    {if null == $products}
+    <div class="alert alert-info" role="alert">
+      {l s='No products are available for this order because it was placed before Mollie version 6.4.1. You can still use the refund, capture, or ship actions.' mod='mollie'}
+    </div>
+    {/if}
     {if $mollie_api_type == 'payments'}
     <div class="form-group">
       <label for="mollie-refund-amount">{l s='Refund amount (Max: %s)' sprintf=[$refundable_amount] mod='mollie'}</label>
