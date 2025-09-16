@@ -25,6 +25,7 @@ class ExceptionCode
     public const INFRASTRUCTURE_LOCK_ON_ACQUIRE_IS_MISSING = 1004;
     public const INFRASTRUCTURE_LOCK_ON_RELEASE_IS_MISSING = 1005;
     public const INFRASTRUCTURE_FAILED_TO_FIND_RECORD = 1006;
+    public const INFRASTRUCTURE_GUEST_CHECKOUT_NOT_AVAILABLE = 1007;
 
     //Order error codes starts from 3000
 

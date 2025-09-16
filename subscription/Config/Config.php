@@ -31,6 +31,7 @@ class Config
     public const SUBSCRIPTION_ATTRIBUTE_DAILY = 'SUBSCRIPTION_ATTRIBUTE_DAILY';
     public const SUBSCRIPTION_ATTRIBUTE_WEEKLY = 'SUBSCRIPTION_ATTRIBUTE_WEEKLY';
     public const SUBSCRIPTION_ATTRIBUTE_MONTHLY = 'SUBSCRIPTION_ATTRIBUTE_MONTHLY';
+    public const SUBSCRIPTION_ATTRIBUTE_QUARTERLY = 'SUBSCRIPTION_ATTRIBUTE_QUARTERLY';
     public const SUBSCRIPTION_ATTRIBUTE_YEARLY = 'SUBSCRIPTION_ATTRIBUTE_YEARLY';
 
     public const DESCRIPTION_PREFIX = 'mol';
@@ -47,6 +48,7 @@ class Config
             'Daily' => Config::SUBSCRIPTION_ATTRIBUTE_DAILY,
             'Weekly' => Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY,
             'Monthly' => Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY,
+            'Quarterly' => Config::SUBSCRIPTION_ATTRIBUTE_QUARTERLY,
             'Yearly' => Config::SUBSCRIPTION_ATTRIBUTE_YEARLY,
         ];
     }
@@ -58,11 +60,13 @@ class Config
     {
         $intervalAmount = 1;
         $intervalAmountForYears = 12;
+        $intervalAmountForQuarters = 3;
 
         return [
             Config::SUBSCRIPTION_ATTRIBUTE_DAILY => new Interval($intervalAmount, IntervalConstant::DAY),
             Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY => new Interval($intervalAmount, IntervalConstant::WEEK),
             Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY => new Interval($intervalAmount, IntervalConstant::MONTH),
+            Config::SUBSCRIPTION_ATTRIBUTE_QUARTERLY => new Interval($intervalAmountForQuarters, IntervalConstant::MONTHS),
             Config::SUBSCRIPTION_ATTRIBUTE_YEARLY => new Interval($intervalAmountForYears, IntervalConstant::MONTHS),
         ];
     }

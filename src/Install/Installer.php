@@ -215,6 +215,7 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_EXPIRED, true);
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_REFUNDED, true);
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_CHARGEBACK, true);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_FAILED, false);
         $this->configurationAdapter->updateValue(Config::MOLLIE_ACCOUNT_SWITCH, false);
         $this->configurationAdapter->updateValue(Config::MOLLIE_CSS, '');
 
@@ -252,8 +253,9 @@ class Installer implements InstallerInterface
         $moduleTab->active = $active;
         $moduleTab->icon = $icon; /** @phpstan-ignore-line */
         $languages = Language::getLanguages(true);
+
         foreach ($languages as $language) {
-            $moduleTab->name[$language['id_lang']] = $name;
+            $moduleTab->name[$language['id_lang']] = $this->module->l($name, false, $language['iso_code']);
         }
 
         if (!$moduleTab->save()) {

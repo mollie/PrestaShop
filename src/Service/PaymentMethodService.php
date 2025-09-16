@@ -18,6 +18,7 @@ use Configuration;
 use Country;
 use Currency;
 use Customer;
+use Exception;
 use MolCustomer;
 use Mollie;
 use Mollie\Adapter\CartAdapter;
@@ -66,62 +67,58 @@ if (!defined('_PS_VERSION_')) {
 class PaymentMethodService
 {
     const FILE_NAME = 'PaymentMethodService';
-    /**
-     * @var LoggerInterface
-     */
+    
+    /** @var LoggerInterface */
     private $logger;
 
-    /**
-     * @var Mollie
-     */
+    /** @var Mollie */
     private $module;
 
-    /**
-     * @var PaymentMethodRepositoryInterface
-     */
+    /** @var PaymentMethodRepositoryInterface */
     private $methodRepository;
 
-    /**
-     * @var CartLinesService
-     */
+    /** @var CartLinesService */
     private $cartLinesService;
 
-    /**
-     * @var CustomerService
-     */
+    /** @var CustomerService */
     private $customerService;
 
-    /**
-     * @var CreditCardLogoProvider
-     */
+    /** @var CreditCardLogoProvider */
     private $creditCardLogoProvider;
 
+    /** @var PaymentMethodSortProviderInterface */
     private $paymentMethodSortProvider;
 
+    /** @var PhoneNumberProviderInterface */
     private $phoneNumberProvider;
 
-    /**
-     * @var PaymentMethodRestrictionValidationInterface
-     */
+    /** @var PaymentMethodRestrictionValidationInterface */
     private $paymentMethodRestrictionValidation;
 
-    /**
-     * @var Shop
-     */
+    /** @var Shop */
     private $shop;
+
     /** @var SubscriptionOrderValidator */
     private $subscriptionOrder;
+
     /** @var CartAdapter */
     private $cartAdapter;
+
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
+
+    /** @var GenderRepositoryInterface */
     private $genderRepository;
+
     /** @var PaymentFeeProviderInterface */
     private $paymentFeeProvider;
+
     /** @var Context */
     private $context;
+
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
+
     /** @var PaymentMethodLangRepositoryInterface */
     private $paymentMethodLangRepository;
 
@@ -174,6 +171,9 @@ class PaymentMethodService
         if ($paymentId) {
             $paymentMethod = new MolPaymentMethod((int) $paymentId);
         }
+
+        $this->validateSurchargePercentage((float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_PERCENTAGE . $method['id']));
+
         $paymentMethod->id_method = $method['id'];
         $paymentMethod->method_name = $method['name'];
         $paymentMethod->enabled = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_ENABLED . $method['id']);
@@ -628,5 +628,12 @@ class PaymentMethodService
         return new MolPaymentMethod(
             $this->methodRepository->getPaymentMethodIdByMethodId($transactionMethod, $environment)
         );
+    }
+
+    private function validateSurchargePercentage(float $surchargePercentage): void
+    {
+        if ($surchargePercentage <= -100 || $surchargePercentage >= 100) {
+            throw new Exception(sprintf('Surcharge percentage must be between -100%% and 100%%. Current value: %.2f%%', $surchargePercentage));
+        }
     }
 }

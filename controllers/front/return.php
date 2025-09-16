@@ -18,8 +18,10 @@ use Mollie\Factory\CustomerFactory;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Service\MailService;
 use Mollie\Service\PaymentReturnService;
 use Mollie\Utility\ArrayUtility;
+use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Validator\OrderCallBackValidator;
 
@@ -66,7 +68,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $orderCallBackValidator = $this->module->getService(OrderCallBackValidator::class);
 
         if (!$orderCallBackValidator->validate($key, $idCart)) {
-            Tools::redirectLink('index.php');
+            Tools::redirect('index.php');
         }
 
         /** @var CustomerFactory $customerFactory */
@@ -218,6 +220,20 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $wrongAmountMessage = $this->module->l('The payment failed because the order and payment amounts are different. Try again.', self::FILE_NAME);
 
         if (Tools::getValue('failed')) {
+            /** @var MailService $mailService */
+            $mailService = $this->module->getService(MailService::class);
+
+            try {
+                $mailService->sendFailedPaymentMail($this->context->customer);
+            } catch (\Throwable $e) {
+                /** @var Logger $logger */
+                $logger = $this->module->getService(LoggerInterface::class);
+
+                $logger->error(sprintf('%s - Error sending failed payment mail', self::FILE_NAME), [
+                        'exceptions' => ExceptionUtility::getExceptions($e),
+                ]);
+            }
+
             $this->setWarning($notSuccessfulPaymentMessage);
 
             Tools::redirect($this->context->link->getPageLink(

@@ -621,6 +621,28 @@ class FormBuilder
                 ],
             ];
         }
+
+        $input[] = [
+            'type' => 'switch',
+            'label' => $this->module->l('Send email on payment failure', self::FILE_NAME),
+            'tab' => $advancedSettings,
+            'name' => Config::MOLLIE_MAIL_WHEN_FAILED,
+            'desc' => $this->module->l('Enable to send an email notification to customers when their payment fails.', self::FILE_NAME),
+            'is_bool' => true,
+            'values' => [
+                [
+                    'id' => 'active_on',
+                    'value' => true,
+                    'label' => $this->module->l('Enabled', self::FILE_NAME),
+                ],
+                [
+                    'id' => 'active_off',
+                    'value' => false,
+                    'label' => $this->module->l('Disabled', self::FILE_NAME),
+                ],
+            ],
+        ];
+
         $input = array_merge($input, [
             [
                 'type' => 'mollie-h2',

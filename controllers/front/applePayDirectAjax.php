@@ -179,7 +179,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
 
             $result = [
                 'success' => false,
-                'message' => $this->module->l('Failed to find address. Please try again. CartId ' . $cartId, self::FILE_NAME),
+                'message' => $this->module->l(sprintf('Failed to find address. Please try again. CartId %s', $cartId), self::FILE_NAME),
             ];
         }
 

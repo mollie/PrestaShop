@@ -170,7 +170,7 @@ class SettingsSaveService
             $this->configurationAdapter->updateValue(Config::MOLLIE_ENVIRONMENT, $environment);
 
             try {
-                $api = $this->apiKeyService->setApiKey($apiKey, $this->module->version);
+                $api = $this->apiKeyService->setApiKey($apiKey, $this->module->version, false, $environment);
                 if (null === $api) {
                     throw new MollieException('Failed to connect to mollie API', MollieException::API_CONNECTION_EXCEPTION);
                 }
@@ -178,7 +178,7 @@ class SettingsSaveService
                 $errors[] = $e->getMessage();
                 $this->configurationAdapter->updateValue(Config::MOLLIE_API_KEY, null);
 
-                return [$this->module->l('Wrong API Key!', self::FILE_NAME)];
+                return [$this->module->l('Wrong API Key! See logs for more details.', self::FILE_NAME)];
             }
 
             return [];
@@ -266,6 +266,7 @@ class SettingsSaveService
         $voucherCategory = $this->tools->getValue(Config::MOLLIE_VOUCHER_CATEGORY);
         $applePayDirectStyle = $this->tools->getValue(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE);
         $isBancontactQrCodeEnabled = $this->tools->getValue(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED);
+        $mollieMailWhenFailed = (bool) $this->tools->getValue(Config::MOLLIE_MAIL_WHEN_FAILED);
 
         $mollieShipMain = $this->tools->getValue(Config::MOLLIE_AUTO_SHIP_MAIN);
         if (!isset($mollieErrors)) {
@@ -279,7 +280,7 @@ class SettingsSaveService
 
         if ($apiKey) {
             try {
-                $api = $this->apiKeyService->setApiKey($apiKey, $this->module->version);
+                $api = $this->apiKeyService->setApiKey($apiKey, $this->module->version, false, $environment);
                 if (null === $api) {
                     throw new MollieException('Failed to connect to mollie API', MollieException::API_CONNECTION_EXCEPTION);
                 }
@@ -287,7 +288,7 @@ class SettingsSaveService
                 $errors[] = $e->getMessage();
                 $this->configurationAdapter->updateValue(Config::MOLLIE_API_KEY, null);
 
-                return [$this->module->l('Wrong API Key!', self::FILE_NAME)];
+                return [$this->module->l('Wrong API Key! See logs for more details.', self::FILE_NAME)];
             }
         }
         try {
@@ -320,6 +321,7 @@ class SettingsSaveService
             $this->configurationAdapter->updateValue(Config::MOLLIE_DEBUG_LOG, (int) $mollieLogger);
             $this->configurationAdapter->updateValue(Config::MOLLIE_API, $mollieApi);
             $this->configurationAdapter->updateValue(Config::MOLLIE_VOUCHER_CATEGORY, $voucherCategory);
+            $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_FAILED, $mollieMailWhenFailed);
             $this->configurationAdapter->updateValue(
                 Config::MOLLIE_AUTO_SHIP_STATUSES,
                 json_encode($this->getStatusesValue(Config::MOLLIE_AUTO_SHIP_STATUSES))

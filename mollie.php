@@ -96,7 +96,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.3.0';
+        $this->version = '6.3.1';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -289,7 +289,13 @@ class Mollie extends PaymentModule
             exit(json_encode($this->{'displayAjax' . Tools::ucfirst(Tools::getValue('action'))}()));
         }
 
-        Tools::redirectAdmin($this->context->link->getAdminLink('AdminMollieSettings'));
+        $url = $this->context->link->getAdminLink('AdminMollieSettings');
+
+        /** @var ToolsAdapter $tools */
+        $tools = $this->getService(ToolsAdapter::class);
+
+        $tools->redirectAdminSafe($url);
+        return '';
     }
 
     /**
@@ -899,7 +905,7 @@ class Mollie extends PaymentModule
                 'visible' => false,
             ],
             [
-                'name' => 'Settings',
+                'name' => $this->l('Settings'),
                 'class_name' => self::ADMIN_MOLLIE_SETTINGS_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
             ],
@@ -1279,7 +1285,7 @@ class Mollie extends PaymentModule
         }
 
         try {
-            $this->api = $apiKeyService->setApiKey($apiKey, $this->version, $subscriptionOrder);
+            $this->api = $apiKeyService->setApiKey($apiKey, $this->version, $subscriptionOrder, $environment);
         } catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);
@@ -1301,6 +1307,7 @@ class Mollie extends PaymentModule
 
             $logger->error(sprintf('%s - General exception', self::FILE_NAME), [
                 'exceptions' => ExceptionUtility::getExceptions($e),
+                'mode' => $environment === Mollie\Config\Config::ENVIRONMENT_TEST ? 'test' : 'live',
             ]);
         }
     }
