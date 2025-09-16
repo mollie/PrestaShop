@@ -56,6 +56,14 @@ $(document).ready(function () {
         $('#mollie-capture-modal-message').text('Are you sure you want to capture this payment?');
       }
       $('#mollieCaptureModal').modal('show');
+    } else if (action === 'cancel' || action === 'cancelAll') {
+      // Update modal message based on action type
+      if (action === 'cancelAll') {
+        $('#mollie-cancel-modal-message').text('Are you sure you want to cancel the entire order? This action cannot be undone.');
+      } else {
+        $('#mollie-cancel-modal-message').text('Are you sure you want to cancel this order line? This action cannot be undone.');
+      }
+      $('#mollieCancelModal').modal('show');
     }
   }
 
@@ -79,6 +87,12 @@ $(document).ready(function () {
     var amount = $(this).data('price');
 
     showModal('capture', productId, amount);
+  });
+
+  $('.mollie-cancel-btn').on('click', function() {
+    var orderline = $(this).data('orderline');
+
+    showModal('cancel', null, null, orderline);
   });
 
   $('#mollie-initiate-refund').on('click', function() {
@@ -118,6 +132,10 @@ $(document).ready(function () {
       return;
     }
     showModal('captureAll', null, amount);
+  });
+
+  $('#mollie-cancel-all').on('click', function() {
+    showModal('cancelAll', null);
   });
 
   $('#mollieShipModal').on('show.bs.modal', function() {
@@ -160,6 +178,11 @@ $(document).ready(function () {
 
   $('#mollieCaptureModalConfirm').on('click', function() {
     $('#mollieCaptureModal').modal('hide');
+    processOrderAction(actionContext);
+  });
+
+  $('#mollieCancelModalConfirm').on('click', function() {
+    $('#mollieCancelModal').modal('hide');
     processOrderAction(actionContext);
   });
 
@@ -211,6 +234,11 @@ $(document).ready(function () {
 
     if (actionContext.orderline) {
       data.orderline = actionContext.orderline;
+    }
+
+    // Add cancel-specific data
+    if (context.action === 'cancel' || context.action === 'cancelAll') {
+      // Cancel actions don't need additional data beyond orderline
     }
 
     if (!ajax_url) {
