@@ -17,7 +17,7 @@
   <div class="card-body">
     {if null == $products}
     <div class="alert alert-info" role="alert">
-      {l s='No products available because this order because this order was done before Mollie 6.4.1 version. You still can use refund, capture or ship actions.' mod='mollie'}
+      {l s='No products are available for this order because it was placed before Mollie version 6.4.1. You can still use the refund, capture, or ship actions.' mod='mollie'}
     </div>
     {/if}
     {if $mollie_api_type == 'payments'}
