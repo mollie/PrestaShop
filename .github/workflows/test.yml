@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run PHP-CS-Fixer
+      - name: Run PHP-CS-Fixerq
         uses: prestashopcorp/github-action-php-cs-fixer-new@master
 
   test:
