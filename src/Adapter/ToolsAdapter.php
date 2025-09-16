@@ -93,6 +93,7 @@ class ToolsAdapter
 
         if ($controller && method_exists($controller, 'setRedirectAfter')) {
             $controller->setRedirectAfter($url);
+
             return;
         }
 
