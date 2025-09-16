@@ -15,6 +15,11 @@
     &nbsp;<span>Mollie order - #{$order_reference|escape:'html':'UTF-8'}</span>
   </div>
   <div class="card-body">
+    {if null == $products}
+    <div class="alert alert-info" role="alert">
+      {l s='No products available because this order because this order was done before Mollie 6.4.1 version. You still can use refund, capture or ship actions.' mod='mollie'}
+    </div>
+    {/if}
     {if $mollie_api_type == 'payments'}
     <div class="form-group">
       <label for="mollie-refund-amount">{l s='Refund amount (Max: %s)' sprintf=[$refundable_amount] mod='mollie'}</label>
