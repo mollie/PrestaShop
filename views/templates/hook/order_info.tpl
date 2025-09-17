@@ -57,12 +57,12 @@
                 <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product->totalAmount->value}" data-orderline="{$product->id}" {if $product->quantityShipped == $product->quantity || $product->quantityCanceled == $product->quantity}disabled{/if}>
                   <i class="material-icons">local_shipping</i> {l s='Ship' mod='mollie'}
                 </button>
-                <button type="button" class="btn btn-default btn-xs mollie-cancel-btn" data-orderline="{$product->id}" {if $product->quantityCanceled == $product->quantity}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-cancel-btn" data-orderline="{$product->id}" {if $product->quantityCanceled == $product->quantity || $isShipped}disabled{/if}>
                   <i class="material-icons">cancel</i> {l s='Cancel' mod='mollie'}
                 </button>
               {/if}
               {if $product->name != 'Discount'}
-                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value}" data-orderline="{$product->id}" {if $product->quantityRefunded == $product->quantity}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value}" data-orderline="{$product->id}" {if $product->quantityRefunded == $product->quantity || $isCanceled}disabled{/if}>
                   <i class="material-icons">replay</i> {l s='Refund' mod='mollie'}
                 </button>
               {/if}
@@ -93,13 +93,13 @@
       </tbody>
     </table>
     {if $mollie_api_type == 'orders'}
-      <button type="button" class="btn btn-default btn-block" id="mollie-refund-all-orders" {if $isRefunded || $refundable_amount <= 0}disabled{/if}>
+      <button type="button" class="btn btn-default btn-block" id="mollie-refund-all-orders" {if $isRefunded || $refundable_amount <= 0 || $isCanceled}disabled{/if}>
         <i class="material-icons">replay</i> {l s='Refund all' mod='mollie'}
       </button>
-      <button type="button" class="btn btn-default btn-block" id="mollie-ship-all" {if $isShipped}disabled{/if}>
+      <button type="button" class="btn btn-default btn-block" id="mollie-ship-all" {if $isShipped || $isRefunded || $isCanceled}disabled{/if}>
         <i class="material-icons">local_shipping</i> {l s='Ship All' mod='mollie'}
       </button>
-      <button type="button" class="btn btn-default btn-block" id="mollie-cancel-all" {if $isCanceled}disabled{/if}>
+      <button type="button" class="btn btn-default btn-block" id="mollie-cancel-all" {if $isCanceled || $isRefunded || $isShipped}disabled{/if}>
         <i class="material-icons">cancel</i> {l s='Cancel All' mod='mollie'}
       </button>
     {/if}
