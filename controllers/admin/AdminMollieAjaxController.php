@@ -16,9 +16,16 @@ use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\PaymentMethodRepository;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Service\ApiService;
+use Mollie\Service\CancelService;
+use Mollie\Service\CaptureService;
 use Mollie\Service\MolliePaymentMailService;
+use Mollie\Service\RefundService;
+use Mollie\Service\ShipService;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TimeUtility;
+use Mollie\Utility\TransactionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -31,6 +38,10 @@ class AdminMollieAjaxController extends ModuleAdminController
 
     public function postProcess()
     {
+        if (!Tools::isSubmit('ajax')) {
+            return;
+        }
+
         $action = Tools::getValue('action');
 
         $this->context->smarty->assign('bootstrap', true);
@@ -53,6 +64,25 @@ class AdminMollieAjaxController extends ModuleAdminController
                 break;
             case 'updateFixedPaymentFeePrice':
                 $this->updateFixedPaymentFeePrice();
+                break;
+            case 'refundAll':
+            case 'refund':
+                $this->processRefund();
+                break;
+            case 'shipAll':
+            case 'ship':
+                $this->processShip();
+                break;
+            case 'captureAll':
+            case 'capture':
+                $this->processCapture();
+                break;
+            case 'cancelAll':
+            case 'cancel':
+                $this->processCancel();
+                break;
+            case 'retrieve':
+                $this->retrieveOrderInfo();
                 break;
             default:
                 break;
@@ -212,5 +242,203 @@ class AdminMollieAjaxController extends ModuleAdminController
                 ),
             ])
         );
+    }
+
+    private function processRefund(): void
+    {
+        try {
+            $transactionId = Tools::getValue('transactionId');
+            $refundAmount = (float) Tools::getValue('refundAmount') ?: null;
+            $orderLineId = Tools::getValue('orderline') ?: null;
+
+            /** @var RefundService $refundService */
+            $refundService = $this->module->getService(RefundService::class);
+
+            $status = $refundService->handleRefund($transactionId, $refundAmount, $orderLineId);
+
+            $this->ajaxRender(json_encode($status));
+        } catch (\Throwable $e) {
+            $this->ajaxRender(
+                json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('An error occurred while processing the request.'),
+                    'error' => $e->getMessage(),
+                ])
+            );
+        }
+    }
+
+    private function processShip(): void
+    {
+        $orderId = (int) Tools::getValue('orderId');
+        $orderLines = Tools::getValue('orderLines') ?: [];
+        $tracking = Tools::getValue('tracking');
+        $orderlineId = Tools::getValue('orderline');
+
+        try {
+            $order = new Order($orderId);
+
+            /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+            $paymentMethodRepo = $this->module->getService(PaymentMethodRepositoryInterface::class);
+            $transactionId = $paymentMethodRepo->getPaymentBy('order_id', (string) $orderId)['transaction_id'];
+
+            /** @var ShipService $shipService */
+            $shipService = $this->module->getService(ShipService::class);
+            $status = $shipService->handleShip($transactionId, $orderlineId, $tracking);
+
+            $this->ajaxRender(json_encode($status));
+        } catch (\Throwable $e) {
+            $this->ajaxRender(
+                json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('An error occurred while processing the request.'),
+                    'error' => $e->getMessage(),
+                ])
+            );
+        }
+    }
+
+    private function processCapture(): void
+    {
+        $orderId = (int) Tools::getValue('orderId');
+        $captureAmount = Tools::getValue('captureAmount') ?: null;
+
+        try {
+            $order = new Order($orderId);
+
+            /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+            $paymentMethodRepo = $this->module->getService(PaymentMethodRepositoryInterface::class);
+            $transactionId = $paymentMethodRepo->getPaymentBy('order_id', (string) $orderId)['transaction_id'];
+
+            /** @var CaptureService $captureService */
+            $captureService = $this->module->getService(CaptureService::class);
+
+            // Use provided amount for individual product capture, or full order amount for capture all
+            $amount = $captureAmount ? (float) $captureAmount : $order->total_paid;
+            $status = $captureService->handleCapture($transactionId, $amount);
+
+            $this->ajaxRender(json_encode($status));
+        } catch (\Throwable $e) {
+            $this->ajaxRender(
+                json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('An error occurred while processing the request.'),
+                    'error' => $e->getMessage(),
+                ])
+            );
+        }
+    }
+
+    private function processCancel(): void
+    {
+        $orderId = (int) Tools::getValue('orderId');
+        $orderlineId = Tools::getValue('orderline') ?: null;
+
+        try {
+            $order = new Order($orderId);
+
+            /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+            $paymentMethodRepo = $this->module->getService(PaymentMethodRepositoryInterface::class);
+            $transactionId = $paymentMethodRepo->getPaymentBy('order_id', (string) $orderId)['transaction_id'];
+
+            /** @var CancelService $cancelService */
+            $cancelService = $this->module->getService(CancelService::class);
+            $status = $cancelService->handleCancel($transactionId, $orderlineId);
+
+            $this->ajaxRender(json_encode($status));
+        } catch (\Throwable $e) {
+            $this->ajaxRender(
+                json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('An error occurred while processing the request.'),
+                    'error' => $e->getMessage(),
+                ])
+            );
+        }
+    }
+
+    private function retrieveOrderInfo(): void
+    {
+        $orderId = (int) Tools::getValue('orderId');
+
+        try {
+            $order = new Order($orderId);
+
+            /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+            $paymentMethodRepo = $this->module->getService(PaymentMethodRepositoryInterface::class);
+            $transaction = $paymentMethodRepo->getPaymentBy('order_id', (string) $orderId);
+
+            if (!$transaction) {
+                $this->ajaxRender(
+                    json_encode([
+                        'success' => false,
+                        'message' => $this->module->l('No Mollie transaction found for this order.'),
+                    ])
+                );
+
+                return;
+            }
+
+            $transactionId = $transaction['transaction_id'];
+            $this->module->updateApiKey((int) $order->id_shop);
+
+            if (!$this->module->getApiClient()) {
+                $this->ajaxRender(
+                    json_encode([
+                        'success' => false,
+                        'message' => $this->module->l('Unable to connect to Mollie API.'),
+                    ])
+                );
+
+                return;
+            }
+
+            /** @var ApiService $apiService */
+            $apiService = $this->module->getService(ApiService::class);
+
+            $mollieApiType = TransactionUtility::isOrderTransaction($transactionId) ? 'orders' : 'payments';
+
+            if ($mollieApiType === 'orders') {
+                $orderInfo = $this->module->getApiClient()->orders->get($transactionId);
+                $isShipping = $orderInfo->status === 'completed';
+                $isCaptured = $orderInfo->isPaid();
+                $isRefunded = $orderInfo->amountRefunded->value > 0;
+                $isCanceled = $orderInfo->status === 'canceled';
+
+                $response = [
+                    'success' => true,
+                    'isShipping' => $isShipping,
+                    'isCaptured' => $isCaptured,
+                    'isRefunded' => $isRefunded,
+                    'isCanceled' => $isCanceled,
+                    'orderStatus' => $orderInfo->status ?? null,
+                ];
+            } else {
+                $paymentInfo = $this->module->getApiClient()->payments->get($transactionId);
+                $isShipping = false;
+                $isCaptured = false;
+
+                $isCaptured = $paymentInfo->isPaid();
+                $isRefunded = $paymentInfo->amountRefunded->value > 0;
+
+                $response = [
+                    'success' => true,
+                    'isShipping' => $isShipping,
+                    'isCaptured' => $isCaptured,
+                    'isRefunded' => $isRefunded,
+                    'orderStatus' => $paymentInfo->status ?? null,
+                ];
+            }
+
+            $this->ajaxRender(json_encode($response));
+        } catch (Exception $e) {
+            $this->ajaxRender(
+                json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('An error occurred while retrieving order information.'),
+                    'error' => $e->getMessage(),
+                ])
+            );
+        }
     }
 }

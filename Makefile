@@ -103,3 +103,8 @@ run-ps-unit-tests:
 
 create-env:
 	echo "SENTRY_ENV='$(env)'" > .env
+
+rebuild-js:
+	cd views/js && npm i --legacy-peer-deps
+	cd views/js && npm install html-webpack-plugin@4.5.2 --legacy-peer-deps
+	cd views/js && npm run build

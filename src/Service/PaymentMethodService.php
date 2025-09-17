@@ -335,6 +335,10 @@ class PaymentMethodService
         if (Mollie\Config\Config::MOLLIE_ORDERS_API !== $molPaymentMethod->method) {
             $paymentData = new PaymentData($amountObj, $orderReference, $redirectUrl, $webhookUrl);
 
+            if (in_array($molPaymentMethod->id_method, Mollie\Config\Config::MOLLIE_MANUAL_CAPTURE_METHODS)) {
+                $paymentData->setCaptureMode('manual');
+            }
+
             $paymentData->setMetadata($metaData);
 
             $paymentData->setLocale($this->getLocale($molPaymentMethod->method));
