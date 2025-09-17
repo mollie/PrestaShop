@@ -25,7 +25,7 @@ $(document).ready(function () {
 
     if (!transaction_id || !resource) {
       console.error('Missing required config values:', { transaction_id, resource });
-      showErrorMessage('Configuration error');
+      showErrorMessage(trans.configurationError);
       return;
     }
 
@@ -41,9 +41,9 @@ $(document).ready(function () {
     if (action === 'refund' || action === 'refundAll') {
       // Update modal message based on action type
       if (action === 'refundAll') {
-        $('#mollie-refund-modal-message').text('Are you sure you want to refund the full order amount? This action cannot be undone.');
+        $('#mollie-refund-modal-message').text(trans.refundFullOrderConfirm);
       } else {
-        $('#mollie-refund-modal-message').text('Are you sure you want to refund this order? This action cannot be undone.');
+        $('#mollie-refund-modal-message').text(trans.refundOrderConfirm);
       }
       $('#mollieRefundModal').modal('show');
     } else if (action === 'ship' || action === 'shipAll') {
@@ -51,17 +51,17 @@ $(document).ready(function () {
     } else if (action === 'capture' || action === 'captureAll') {
       // Update modal message based on action type
       if (action === 'captureAll') {
-        $('#mollie-capture-modal-message').text('Are you sure you want to capture the full order amount?');
+        $('#mollie-capture-modal-message').text(trans.captureFullOrderConfirm);
       } else {
-        $('#mollie-capture-modal-message').text('Are you sure you want to capture this payment?');
+        $('#mollie-capture-modal-message').text(trans.capturePaymentConfirm);
       }
       $('#mollieCaptureModal').modal('show');
     } else if (action === 'cancel' || action === 'cancelAll') {
       // Update modal message based on action type
       if (action === 'cancelAll') {
-        $('#mollie-cancel-modal-message').text('Are you sure you want to cancel the entire order? This action cannot be undone.');
+        $('#mollie-cancel-modal-message').text(trans.cancelFullOrderConfirm);
       } else {
-        $('#mollie-cancel-modal-message').text('Are you sure you want to cancel this order line? This action cannot be undone.');
+        $('#mollie-cancel-modal-message').text(trans.cancelOrderLineConfirm);
       }
       $('#mollieCancelModal').modal('show');
     }
@@ -98,7 +98,7 @@ $(document).ready(function () {
   $('#mollie-initiate-refund').on('click', function() {
     var amount = $('#mollie-refund-amount').val();
     if (!amount || amount <= 0) {
-      showErrorMessage('Please enter a valid refund amount');
+      showErrorMessage(trans.validRefundAmountRequired);
       return;
     }
     showModal('refundAll', null);
@@ -115,7 +115,7 @@ $(document).ready(function () {
   $('#mollie-initiate-capture').on('click', function() {
     var amount = $('#mollie-capture-amount').val();
     if (!amount || amount <= 0) {
-      showErrorMessage('Please enter a valid capture amount');
+      showErrorMessage(trans.validCaptureAmountRequired);
       return;
     }
     showModal('captureAll', null, amount);
@@ -128,7 +128,7 @@ $(document).ready(function () {
   $('#mollie-capture-all').on('click', function() {
     var amount = $('#mollie-capture-amount').val();
     if (!amount || amount <= 0) {
-      showErrorMessage('Please enter a valid capture amount');
+      showErrorMessage(trans.validCaptureAmountRequired);
       return;
     }
     showModal('captureAll', null, amount);
@@ -243,7 +243,7 @@ $(document).ready(function () {
 
     if (!ajax_url) {
       console.error('AJAX URL not found in config');
-      showErrorMessage('AJAX URL not found');
+      showErrorMessage(trans.ajaxUrlNotFound);
       return;
     }
 
@@ -258,36 +258,70 @@ $(document).ready(function () {
       success: function(response) {
         $('#mollie-loading').remove();
         if (response.success) {
-          var successMessage = response.message || response.msg_success || 'Action completed successfully';
+          var successMessage = response.message || response.msg_success || trans.actionCompletedSuccessfully;
           if (response.detailed || response.msg_details) {
             successMessage += ' ' + (response.detailed || response.msg_details);
           }
           showSuccessMessage(successMessage);
           if (response.payment) {
-            updatePaymentInfo(response.payment);
+            console.log('Payment updated:', response.payment);
           }
           if (response.order) {
-            updateOrderInfo(response.order);
+            console.log('Order updated:', response.order);
           }
         } else {
-          showErrorMessage(response.message || response.detailed || 'An error occurred');
+          showErrorMessage(response.message || response.detailed || trans.errorOccurred);
         }
       },
       error: function(xhr, status, error) {
         $('#mollie-loading').remove();
-        showErrorMessage('Network error occurred');
+        showErrorMessage(trans.networkErrorOccurred);
         console.error('AJAX Error:', error);
       }
     });
   }
 
   function showLoadingState() {
-    $('body').append('<div id="mollie-loading" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;"><div style="background: white; padding: 20px; border-radius: 5px;">Processing...</div></div>');
+    const overlayId = 'mollie-loading';
+    if ($('#' + overlayId).length) {
+      return;
+    }
+
+    const overlayStyles = [
+      'position: fixed',
+      'top: 0',
+      'left: 0',
+      'width: 100%',
+      'height: 100%',
+      'background: rgba(0,0,0,0.5)',
+      'z-index: 9999',
+      'display: flex',
+      'align-items: center',
+      'justify-content: center'
+    ].join('; ');
+
+    const boxStyles = [
+      'background: white',
+      'padding: 20px',
+      'border-radius: 5px',
+      'font-size: 1.2em',
+      'box-shadow: 0 2px 8px rgba(0,0,0,0.15)'
+    ].join('; ');
+
+    const overlayHtml = `
+      <div id="${overlayId}" style="${overlayStyles}">
+        <div style="${boxStyles}">${trans.processing}</div>
+      </div>
+    `;
+
+    $('body').append(overlayHtml);
   }
 
   function showSuccessMessage(message) {
     var alertHtml = '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + message + '</div>';
+
     $('.mollie-order-info-panel').prepend(alertHtml);
+
     setTimeout(function() {
       $('.alert-success').fadeOut();
     }, 5000);
@@ -295,17 +329,11 @@ $(document).ready(function () {
 
   function showErrorMessage(message) {
     var alertHtml = '<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + message + '</div>';
+
     $('.mollie-order-info-panel').prepend(alertHtml);
+
     setTimeout(function() {
       $('.alert-danger').fadeOut();
     }, 5000);
-  }
-
-  function updatePaymentInfo(payment) {
-    console.log('Payment updated:', payment);
-  }
-
-  function updateOrderInfo(order) {
-    console.log('Order updated:', order);
   }
 });

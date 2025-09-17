@@ -492,6 +492,22 @@ class Mollie extends PaymentModule
                         'resource' => $mollieApiType,
                         'order_id' => $orderId,
                         'orderLines' => $order->getProducts(),
+                        'trans' => [
+                            'processing' => $this->l('Processing...'),
+                            'configurationError' => $this->l('Configuration error'),
+                            'refundFullOrderConfirm' => $this->l('Are you sure you want to refund the full order amount? This action cannot be undone.'),
+                            'refundOrderConfirm' => $this->l('Are you sure you want to refund this order? This action cannot be undone.'),
+                            'captureFullOrderConfirm' => $this->l('Are you sure you want to capture the full order amount?'),
+                            'capturePaymentConfirm' => $this->l('Are you sure you want to capture this payment?'),
+                            'cancelFullOrderConfirm' => $this->l('Are you sure you want to cancel the entire order? This action cannot be undone.'),
+                            'cancelOrderLineConfirm' => $this->l('Are you sure you want to cancel this order line? This action cannot be undone.'),
+                            'validRefundAmountRequired' => $this->l('Please enter a valid refund amount'),
+                            'validCaptureAmountRequired' => $this->l('Please enter a valid capture amount'),
+                            'ajaxUrlNotFound' => $this->l('AJAX URL not found'),
+                            'actionCompletedSuccessfully' => $this->l('Action completed successfully'),
+                            'errorOccurred' => $this->l('An error occurred'),
+                            'networkErrorOccurred' => $this->l('Network error occurred'),
+                        ]
                     ]);
 
                     $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_info.js');
