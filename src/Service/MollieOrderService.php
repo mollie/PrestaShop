@@ -12,11 +12,7 @@
 
 namespace Mollie\Service;
 
-use Carrier;
 use Mollie;
-use Mollie\Logger\LoggerInterface;
-use Mollie\Adapter\ToolsAdapter;
-use Mollie\Config\Config;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Exception\MollieException;
@@ -29,16 +25,12 @@ class MollieOrderService
 {
     const FILE_NAME = 'MollieOrderService';
 
-    /** @var Mollie $module */
+    /** @var Mollie */
     private $module;
 
-    /** @var LoggerInterface $logger */
-    private $logger;
-
-    public function __construct(Mollie $module, LoggerInterface $logger)
+    public function __construct(Mollie $module)
     {
         $this->module = $module;
-        $this->logger = $logger;
     }
 
     public function getRefundableAmount(string $mollieTransactionId): float

@@ -12,11 +12,9 @@
 
 namespace Mollie\Loader;
 
-use Mollie\Adapter\Link;
-use Mollie\Repository\PaymentMethodRepositoryInterface;
-use Mollie;
 use Media;
-use Context;
+use Mollie;
+use Mollie\Adapter\Link;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -27,16 +25,13 @@ class OrderManagementAssetLoader implements OrderManagementAssetLoaderInterface
     const FILE_NAME = 'OrderManagementAssetLoader';
 
     private $module;
-    private $paymentMethodRepository;
     private $link;
 
     public function __construct(
         Mollie $module,
-        PaymentMethodRepositoryInterface $paymentMethodRepository,
         Link $link
     ) {
         $this->module = $module;
-        $this->paymentMethodRepository = $paymentMethodRepository;
         $this->link = $link;
     }
 
