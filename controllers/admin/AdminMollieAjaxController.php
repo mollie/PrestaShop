@@ -17,12 +17,12 @@ use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Service\ApiService;
+use Mollie\Service\CaptureService;
+use Mollie\Service\CancelService;
 use Mollie\Service\MolliePaymentMailService;
 use Mollie\Service\RefundService;
 use Mollie\Service\ShipService;
-use Mollie\Service\CaptureService;
-use Mollie\Service\CancelService;
-use Mollie\Service\ApiService;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TimeUtility;
 use Mollie\Utility\TransactionUtility;
@@ -375,6 +375,7 @@ class AdminMollieAjaxController extends ModuleAdminController
                         'message' => $this->module->l('No Mollie transaction found for this order.'),
                     ])
                 );
+
                 return;
             }
 
@@ -388,6 +389,7 @@ class AdminMollieAjaxController extends ModuleAdminController
                         'message' => $this->module->l('Unable to connect to Mollie API.'),
                     ])
                 );
+
                 return;
             }
 

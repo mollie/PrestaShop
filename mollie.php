@@ -27,9 +27,12 @@ use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
-use Mollie\Service\ExceptionService;
-use Mollie\Service\RefundService;
 use Mollie\Service\CancelService;
+use Mollie\Service\CaptureService;
+use Mollie\Service\ExceptionService;
+use Mollie\Service\MollieOrderService;
+use Mollie\Service\RefundService;
+use Mollie\Service\ShipService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
 use Mollie\Subscription\Config\Config as SubscriptionConfig;
 use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
@@ -49,9 +52,6 @@ use Mollie\Verification\IsPaymentInformationAvailable;
 use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Response;
-use Mollie\Service\CaptureService;
-use Mollie\Service\ShipService;
-use Mollie\Service\MollieOrderService;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -707,8 +707,6 @@ class Mollie extends PaymentModule
 
         return '';
     }
-
-
 
     /**
      * actionOrderStatusUpdate hook.

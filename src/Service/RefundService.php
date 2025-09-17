@@ -103,7 +103,6 @@ class RefundService
         return $refundableAmount > 0 ? TextFormatUtility::formatNumber($refundableAmount, 2) : null;
     }
 
-
     /**
      * @param MollieOrderAlias|Payment $payment
      * @param string $refundAmount
