@@ -260,6 +260,7 @@ class Config
     const MOLLIE_VOUCHER_CATEGORY_MEAL = 'meal';
     const MOLLIE_VOUCHER_CATEGORY_GIFT = 'gift';
     const MOLLIE_VOUCHER_CATEGORY_ECO = 'eco';
+    const MOLLIE_VOUCHER_CATEGORY_ALL = 'all';
 
     const MOLLIE_REFUND_STATUS_CANCELED = 'canceled';
 
@@ -347,6 +348,10 @@ class Config
     const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
 
     const MOLLIE_METHOD_CUSTOMER_GROUPS = 'MOLLIE_METHOD_CUSTOMER_GROUPS_';
+
+    public const MOLLIE_MANUAL_CAPTURE_METHODS = [
+        self::RIVERTY,
+    ];
 
     // TODO migrate functions below to separate service
     public static function getStatuses()

@@ -13,8 +13,9 @@
 namespace Mollie\Service;
 
 use Mollie;
-use Mollie\DTO\Object\Amount;
+use Mollie\Api\Resources\Payment;
 use Mollie\Utility\TextFormatUtility;
+use Mollie\Utility\TransactionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -24,9 +25,7 @@ class CaptureService
 {
     const FILE_NAME = 'CaptureService';
 
-    /**
-     * @var Mollie
-     */
+    /** @var Mollie */
     private $module;
 
     public function __construct(Mollie $module)
@@ -42,34 +41,154 @@ class CaptureService
      *
      * @return array
      */
-    public function doPaymentCapture($transactionId, $amount = null)
+    public function handleCapture($transactionId, $amount = null)
     {
         try {
-            $payment = $this->module->getApiClient()->payments->get($transactionId);
+            $payment = $this->getPayment($transactionId);
+            $this->performCapture($transactionId, $payment, $amount);
 
-            if ($amount !== null && !empty($amount)) {
-                $captureData = [
-                    'amount' => new Amount(
-                        $payment->amount->currency,
-                        TextFormatUtility::formatNumber($amount, 2, '.', '')
-                    ),
-                ];
-                $this->module->getApiClient()->paymentCaptures->createForId($transactionId, $captureData);
-            } else {
-                $this->module->getApiClient()->paymentCaptures->createForId($transactionId);
-            }
-
-            return [
-                'success' => true,
-                'message' => '',
-                'detailed' => '',
-            ];
+            return $this->createSuccessResponse();
         } catch (\Throwable $e) {
-            return [
-                'success' => false,
-                'message' => $this->module->l('The payment could not be captured!', self::FILE_NAME),
-                'detailed' => $e->getMessage(),
-            ];
+            return $this->createErrorResponse($e);
         }
+    }
+
+    /**
+     * Get payment from Mollie API
+     *
+     * @param string $transactionId
+     *
+     * @return Payment
+     */
+    private function getPayment(string $transactionId): Payment
+    {
+        return $this->module->getApiClient()->payments->get($transactionId);
+    }
+
+    /**
+     * Perform the actual capture operation
+     *
+     * @param string $transactionId
+     * @param Payment $payment
+     * @param float|null $amount
+     */
+    private function performCapture(string $transactionId, Payment $payment, ?float $amount): void
+    {
+        if ($amount) {
+            $this->capturePartialAmount($transactionId, $payment, $amount);
+        } else {
+            $this->captureFullAmount($transactionId);
+        }
+    }
+
+    /**
+     * Capture a partial amount
+     *
+     * @param string $transactionId
+     * @param Payment $payment
+     * @param float $amount
+     */
+    private function capturePartialAmount(string $transactionId, Payment $payment, float $amount): void
+    {
+        $captureData = [
+            'amount' => [
+                'currency' => $payment->amount->currency,
+                'value' => TextFormatUtility::formatNumber($amount, 2, '.', ''),
+            ],
+        ];
+
+        $this->module->getApiClient()->paymentCaptures->createForId($transactionId, $captureData);
+    }
+
+    /**
+     * Capture the full amount
+     *
+     * @param string $transactionId
+     */
+    private function captureFullAmount(string $transactionId): void
+    {
+        $this->module->getApiClient()->paymentCaptures->createForId($transactionId);
+    }
+
+    /**
+     * Create success response
+     *
+     * @return array
+     */
+    private function createSuccessResponse(): array
+    {
+        return [
+            'success' => true,
+            'message' => '',
+            'detailed' => '',
+        ];
+    }
+
+    /**
+     * Create error response
+     *
+     * @param \Throwable $exception
+     *
+     * @return array
+     */
+    private function createErrorResponse(\Throwable $exception): array
+    {
+        return [
+            'success' => false,
+            'message' => $this->module->l('The payment could not be captured!', self::FILE_NAME),
+            'detailed' => $exception->getMessage(),
+        ];
+    }
+
+    /**
+     * Check if a payment is captured. Only applicable for payments API.
+     *
+     * @param string $transactionId
+     *
+     * @return bool
+     */
+    public function isCaptured(string $transactionId): bool
+    {
+        $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
+
+        if ($isOrderTransaction) {
+            return false;
+        }
+
+        /** @var Payment $payment */
+        $payment = $this->module->getApiClient()->payments->get($transactionId);
+
+        $captures = $payment->captures();
+
+        $capturedAmount = 0;
+
+        foreach ($captures as $capture) {
+            $capturedAmount += $capture->amount->value;
+        }
+
+        return $capturedAmount >= $payment->amount->value || $payment->status == 'paid';
+    }
+
+    public function getCapturableAmount(string $transactionId): float
+    {
+        if (TransactionUtility::isOrderTransaction($transactionId)) {
+            return 0.0;
+        }
+
+        /** @var Payment $payment */
+        $payment = $this->module->getApiClient()->payments->get($transactionId);
+
+        if ($payment->status === 'paid') {
+            return 0.0;
+        }
+
+        $amount = (float) $payment->amount->value;
+        $capturedAmount = isset($payment->amountCaptured->value)
+            ? (float) $payment->amountCaptured->value
+            : 0.0;
+
+        $capturable = $amount - $capturedAmount;
+
+        return $capturable > 0.0 ? $capturable : 0.0;
     }
 }

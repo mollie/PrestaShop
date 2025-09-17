@@ -153,14 +153,15 @@ class CartLinesService
         foreach ($spread as $unitPrice => $qty) {
             $newCartLineGroup[] = [
                 'name' => $cartLineGroup[0]['name'],
+                'type' => $cartLineGroup[0]['type'],
                 'quantity' => $qty,
                 'unitPrice' => (float) $unitPrice,
                 'totalAmount' => (float) $unitPrice * $qty,
                 'sku' => isset($cartLineGroup[0]['sku']) ? $cartLineGroup[0]['sku'] : '',
                 'targetVat' => $cartLineGroup[0]['targetVat'],
                 'categories' => $cartLineGroup[0]['categories'],
-                'product_url' => $cartLineGroup[0]['product_url'],
-                'image_url' => $cartLineGroup[0]['image_url'],
+                'product_url' => isset($cartLineGroup[0]['product_url']) ? $cartLineGroup[0]['product_url'] : '',
+                'image_url' => isset($cartLineGroup[0]['image_url']) ? $cartLineGroup[0]['image_url'] : '',
             ];
         }
 
@@ -201,6 +202,7 @@ class CartLinesService
                     $productHashGift = "{$idProduct}¤{$idProductAttribute}¤{$idCustomization}gift";
                     $orderLines[$productHashGift][] = [
                         'name' => $cartItem['name'],
+                        'type' => 'physical',
                         'sku' => $productHashGift,
                         'targetVat' => (float) $cartItem['rate'],
                         'quantity' => $gift_product['cart_quantity'],
@@ -209,6 +211,9 @@ class CartLinesService
                         'categories' => [],
                         'product_url' => $this->context->getProductLink($cartItem['id_product']),
                         'image_url' => $this->context->getImageLink($cartItem['link_rewrite'], $cartItem['id_image']),
+                        'metadata' => [
+                            'idProduct' => $cartItem['id_product'],
+                        ],
                     ];
                     continue;
                 }
@@ -221,6 +226,7 @@ class CartLinesService
             // Try to spread this product evenly and account for rounding differences on the order line
             $orderLines[$productHash][] = [
                 'name' => $cartItem['name'],
+                'type' => 'physical',
                 'sku' => $productHash,
                 'targetVat' => (float) $cartItem['rate'],
                 'quantity' => $quantity,
@@ -229,6 +235,9 @@ class CartLinesService
                 'categories' => $this->voucherService->getVoucherCategory($cartItem, $selectedVoucherCategory),
                 'product_url' => $this->context->getProductLink($cartItem['id_product']),
                 'image_url' => $this->context->getImageLink($cartItem['link_rewrite'], $cartItem['id_image']),
+                'metadata' => [
+                    'idProduct' => $cartItem['id_product'],
+                ],
             ];
             $remaining -= $roundedTotalWithTax;
         }
@@ -250,6 +259,7 @@ class CartLinesService
             $orderLines['discount'] = [
                 [
                     'name' => 'Discount',
+                    'sku' => 'DISCOUNT',
                     'type' => 'discount',
                     'quantity' => 1,
                     'unitPrice' => -round($totalDiscounts, $apiRoundingPrecision),
@@ -345,6 +355,7 @@ class CartLinesService
                 $newItem = [
                     'name' => $line['name'],
                     'categories' => $line['categories'],
+                    'type' => $line['type'] ?? null,
                     'quantity' => (int) $quantity,
                     'unitPrice' => round($unitPrice, $apiRoundingPrecision),
                     'totalAmount' => round($totalAmount, $apiRoundingPrecision),
@@ -352,6 +363,7 @@ class CartLinesService
                     'vatAmount' => round($vatAmount, $apiRoundingPrecision),
                     'product_url' => $line['product_url'] ?? null,
                     'image_url' => $line['image_url'] ?? null,
+                    'metadata' => $line['metadata'] ?? [],
                 ];
                 if (isset($line['sku'])) {
                     $newItem['sku'] = $line['sku'];
@@ -379,6 +391,7 @@ class CartLinesService
             $orderLines['shipping'] = [
                 [
                     'name' => $this->languageService->lang('Shipping'),
+                    'type' => 'shipping_fee',
                     'quantity' => 1,
                     'unitPrice' => round($roundedShippingCost, $apiRoundingPrecision),
                     'totalAmount' => round($roundedShippingCost, $apiRoundingPrecision),
@@ -412,6 +425,7 @@ class CartLinesService
             $orderLines['wrapping'] = [
                 [
                     'name' => $this->languageService->lang('Gift wrapping'),
+                    'type' => 'surcharge',
                     'quantity' => 1,
                     'unitPrice' => round($wrappingPrice, $apiRoundingPrecision),
                     'totalAmount' => round($wrappingPrice, $apiRoundingPrecision),
@@ -440,6 +454,7 @@ class CartLinesService
             [
                 'name' => $this->languageService->lang('Payment fee'),
                 'sku' => Config::PAYMENT_FEE_SKU,
+                'type' => 'surcharge',
                 'quantity' => 1,
                 'unitPrice' => round($paymentFeeData->getPaymentFeeTaxIncl(), $apiRoundingPrecision),
                 'totalAmount' => round($paymentFeeData->getPaymentFeeTaxIncl(), $apiRoundingPrecision),
@@ -493,7 +508,8 @@ class CartLinesService
             }
 
             $line->setQuantity((int) $item['quantity']);
-            $line->setSku(isset($item['sku']) ? $item['sku'] : '');
+            $line->setSku(isset($item['sku']) ? $item['sku'] : $item['name']);
+            $line->setType($item['type'] ?? null);
 
             $currency = strtoupper(strtolower($currencyIsoCode));
 
@@ -535,14 +551,16 @@ class CartLinesService
 
             $line->setVatRate(TextFormatUtility::formatNumber($item['vatRate'], $apiRoundingPrecision, '.', ''));
 
-            if (isset($item['product_url']) && $item['product_url']) {
+            if (isset($item['product_url'])) {
                 $line->setProductUrl(
-                    TextFormatUtility::replaceAccentedChars((string) $item['product_url'])
+                    TextFormatUtility::replaceAccentedChars((string) $item['product_url']) ?: ''
                 );
             }
 
-            if (isset($item['image_url']) && $item['image_url']) {
-                $line->setImageUrl($item['image_url']);
+            if (isset($item['image_url'])) {
+                $line->setImageUrl(
+                    TextFormatUtility::replaceAccentedChars((string) $item['image_url']) ?: ''
+                );
             }
 
             $newItems[$index] = $line;
