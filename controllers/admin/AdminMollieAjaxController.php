@@ -21,6 +21,7 @@ use Mollie\Service\MolliePaymentMailService;
 use Mollie\Service\RefundService;
 use Mollie\Service\ShipService;
 use Mollie\Service\CaptureService;
+use Mollie\Service\CancelService;
 use Mollie\Service\ApiService;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TimeUtility;
@@ -75,6 +76,10 @@ class AdminMollieAjaxController extends ModuleAdminController
             case 'captureAll':
             case 'capture':
                 $this->processCapture();
+                break;
+            case 'cancelAll':
+            case 'cancel':
+                $this->processCancel();
                 break;
             case 'retrieve':
                 $this->retrieveOrderInfo();
@@ -324,6 +329,34 @@ class AdminMollieAjaxController extends ModuleAdminController
         }
     }
 
+    private function processCancel(): void
+    {
+        $orderId = (int) Tools::getValue('orderId');
+        $orderlineId = Tools::getValue('orderline') ?: null;
+
+        try {
+            $order = new Order($orderId);
+
+            /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
+            $paymentMethodRepo = $this->module->getService(PaymentMethodRepositoryInterface::class);
+            $transactionId = $paymentMethodRepo->getPaymentBy('order_id', (string) $orderId)['transaction_id'];
+
+            /** @var CancelService $cancelService */
+            $cancelService = $this->module->getService(CancelService::class);
+            $status = $cancelService->handleCancel($transactionId, $orderlineId);
+
+            $this->ajaxRender(json_encode($status));
+        } catch (\Throwable $e) {
+            $this->ajaxRender(
+                json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('An error occurred while processing the request.'),
+                    'error' => $e->getMessage(),
+                ])
+            );
+        }
+    }
+
     private function retrieveOrderInfo(): void
     {
         $orderId = (int) Tools::getValue('orderId');
@@ -368,12 +401,14 @@ class AdminMollieAjaxController extends ModuleAdminController
                 $isShipping = $orderInfo->status === 'completed';
                 $isCaptured = $orderInfo->isPaid();
                 $isRefunded = $orderInfo->amountRefunded->value > 0;
+                $isCanceled = $orderInfo->status === 'canceled';
 
                 $response = [
                     'success' => true,
                     'isShipping' => $isShipping,
                     'isCaptured' => $isCaptured,
                     'isRefunded' => $isRefunded,
+                    'isCanceled' => $isCanceled,
                     'orderStatus' => $orderInfo->status ?? null,
                 ];
             } else {

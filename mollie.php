@@ -29,7 +29,7 @@ use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\RefundService;
-use Mollie\Service\ShipmentService;
+use Mollie\Service\CancelService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
 use Mollie\Subscription\Config\Config as SubscriptionConfig;
 use Mollie\Subscription\Handler\CustomerAddressUpdateHandler;
@@ -549,9 +549,6 @@ class Mollie extends PaymentModule
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
         $paymentMethodRepo = $this->getService(PaymentMethodRepositoryInterface::class);
 
-        /** @var ShipmentService $shipmentService */
-        $shipmentService = $this->getService(ShipmentService::class);
-
         /** @var ShipService $shipService */
         $shipService = $this->getService(ShipService::class);
 
@@ -560,6 +557,9 @@ class Mollie extends PaymentModule
 
         /** @var CaptureService $captureService */
         $captureService = $this->getService(CaptureService::class);
+
+        /** @var CancelService $cancelService */
+        $cancelService = $this->getService(CancelService::class);
 
         /** @var MollieOrderService $mollieOrderService */
         $mollieOrderService = $this->getService(MollieOrderService::class);
@@ -600,6 +600,7 @@ class Mollie extends PaymentModule
             $isRefunded = $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid);
             $isCaptured = $captureService->isCaptured($mollieTransactionId);
             $isShipped = $shipService->isShipped($mollieTransactionId);
+            $isCanceled = $cancelService->isCanceled($mollieTransactionId);
 
             $this->context->smarty->assign([
                 'order_reference' => $order->reference,
@@ -612,6 +613,7 @@ class Mollie extends PaymentModule
                 'isRefunded' => $isRefunded,
                 'isCaptured' => $isCaptured,
                 'isShipped' => $isShipped,
+                'isCanceled' => $isCanceled,
             ]);
 
             return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');
