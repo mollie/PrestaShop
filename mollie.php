@@ -507,7 +507,7 @@ class Mollie extends PaymentModule
                             'actionCompletedSuccessfully' => $this->l('Action completed successfully'),
                             'errorOccurred' => $this->l('An error occurred'),
                             'networkErrorOccurred' => $this->l('Network error occurred'),
-                        ]
+                        ],
                     ]);
 
                     $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/order_info.js');
