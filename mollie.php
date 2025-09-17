@@ -295,6 +295,7 @@ class Mollie extends PaymentModule
         $tools = $this->getService(ToolsAdapter::class);
 
         $tools->redirectAdminSafe($url);
+
         return '';
     }
 
