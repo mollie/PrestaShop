@@ -15,10 +15,10 @@ namespace Mollie\Service;
 use Mollie;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
-use Mollie\Utility\ShipUtility;
-use Mollie\Utility\TransactionUtility;
 use Mollie\Logger\LoggerInterface;
+use Mollie\Utility\TransactionUtility;
 use Validate;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }

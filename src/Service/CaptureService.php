@@ -13,8 +13,8 @@
 namespace Mollie\Service;
 
 use Mollie;
-use Mollie\Utility\TextFormatUtility;
 use Mollie\Api\Resources\Payment;
+use Mollie\Utility\TextFormatUtility;
 use Mollie\Utility\TransactionUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -25,9 +25,7 @@ class CaptureService
 {
     const FILE_NAME = 'CaptureService';
 
-    /**
-     * @var Mollie
-     */
+    /** @var Mollie */
     private $module;
 
     public function __construct(Mollie $module)

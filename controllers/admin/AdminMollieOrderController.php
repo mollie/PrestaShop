@@ -5,11 +5,11 @@
  * Follows PrestaShop module conventions and delegates business logic to services.
  */
 
-use Mollie\Service\RefundService;
-use Mollie\Service\CaptureService;
-use Mollie\Service\ShipService;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Logger\LoggerInterface;
+use Mollie\Service\CaptureService;
+use Mollie\Service\RefundService;
+use Mollie\Service\ShipService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -93,6 +93,7 @@ class AdminMollieOrderController extends ModuleAdminController
         }
 
         $this->redirectToOrderController('AdminOrders', $orderId);
+
         return true;
     }
 

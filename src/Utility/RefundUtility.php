@@ -13,7 +13,6 @@
 namespace Mollie\Utility;
 
 use Mollie\Config\Config;
-use Product;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -21,7 +20,7 @@ if (!defined('_PS_VERSION_')) {
 
 class RefundUtility
 {
-    public static function getRefundedAmount($paymentRefunds)
+    public static function getRefundedAmount(array $paymentRefunds): float
     {
         $refundAmount = 0;
         foreach ($paymentRefunds as $refund) {
@@ -33,7 +32,7 @@ class RefundUtility
         return $refundAmount;
     }
 
-    public static function getRefundableAmount($paymentAmount, $refundedAmount)
+    public static function getRefundableAmount(float $paymentAmount, float $refundedAmount): float
     {
         return NumberUtility::minus((float) $paymentAmount, (float) $refundedAmount);
     }

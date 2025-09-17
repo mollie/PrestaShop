@@ -16,15 +16,11 @@ use Mollie;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment;
-use Mollie\Api\Resources\PaymentCollection;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\RefundUtility;
 use Mollie\Utility\TextFormatUtility;
 use Mollie\Utility\TransactionUtility;
-use Product;
-use PrestaShopDatabaseException;
-use PrestaShopException;
 use Throwable;
 
 if (!defined('_PS_VERSION_')) {
@@ -35,14 +31,10 @@ class RefundService
 {
     const FILE_NAME = 'RefundService';
 
-    /**
-     * @var Mollie
-     */
+    /** @var Mollie */
     private $module;
 
-    /**
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface */
     private $logger;
 
     public function __construct(Mollie $module, LoggerInterface $logger)
@@ -95,6 +87,7 @@ class RefundService
     /**
      * @param MollieOrderAlias|Payment $payment
      * @param float|null $amount
+     *
      * @return string|null
      */
     private function calculateRefundAmount($payment, ?float $amount): ?string
@@ -110,17 +103,18 @@ class RefundService
         return $refundableAmount > 0 ? TextFormatUtility::formatNumber($refundableAmount, 2) : null;
     }
 
-
     /**
      * @param MollieOrderAlias|Payment $payment
      * @param string $refundAmount
      * @param bool $isOrderTransaction
+     *
      * @throws ApiException
      */
     private function processRefund($payment, string $refundAmount, bool $isOrderTransaction): void
     {
         if ($isOrderTransaction) {
             $payment->refundAll();
+
             return;
         }
 
