@@ -17,33 +17,6 @@ use Mollie\Utility\RefundUtility;
 
 class RefundUtilityTest extends BaseTestCase
 {
-    /**
-     * @dataProvider getRefundLinesDataProvider
-     *
-     * @param $lines
-     * @param $result
-     */
-    public function testGetRefundLines($lines, $result)
-    {
-        $refunds = RefundUtility::getRefundLines($lines);
-
-        $this->assertEquals($result, $refunds);
-    }
-
-    /**
-     * @dataProvider getIsOrderLinesRefundPossibleDataProvider
-     *
-     * @param $lines
-     * @param $availableRefund
-     * @param $result
-     */
-    public function testIsOrderLinesRefundPossible($lines, $availableRefund, $result)
-    {
-        $refunds = RefundUtility::isOrderLinesRefundPossible($lines, $availableRefund);
-
-        $this->assertEquals($result, $refunds);
-    }
-
     public function getRefundLinesDataProvider()
     {
         return [

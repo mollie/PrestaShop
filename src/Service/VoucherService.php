@@ -32,7 +32,7 @@ class VoucherService
         $this->configuration = $configuration;
     }
 
-    public function getVoucherCategory(array $cartItem, $selectedVoucherCategory)
+    public function getVoucherCategory(array $cartItem, $selectedVoucherCategory): array
     {
         switch ($selectedVoucherCategory) {
             case Config::MOLLIE_VOUCHER_CATEGORY_MEAL:
@@ -43,17 +43,46 @@ class VoucherService
                     return $productCategory;
                 }
 
-                return $selectedVoucherCategory;
+                return [$selectedVoucherCategory];
+            case Config::MOLLIE_VOUCHER_CATEGORY_ALL:
+                $productCategories = $this->getProductCategories($cartItem);
+
+                return $productCategories;
             case Config::MOLLIE_VOUCHER_CATEGORY_NULL:
             default:
                 return $this->getProductCategory($cartItem);
         }
     }
 
-    public function getProductCategory(array $cartItem): string
+    public function getProductCategories(array $cartItem): array
     {
         if (!isset($cartItem['features'])) {
-            return '';
+            return [];
+        }
+
+        $idFeatureValues = [];
+
+        foreach ($cartItem['features'] as $feature) {
+            if (!$this->isVoucherFeature((int) $feature['id_feature'])) {
+                continue;
+            }
+
+            $idFeatureValues[] = (int) $feature['id_feature_value'];
+        }
+
+        if (empty($idFeatureValues)) {
+            return [];
+        }
+
+        $category = $this->getVoucherCategoriesByFeatureValueIds($idFeatureValues);
+
+        return $category;
+    }
+
+    public function getProductCategory(array $cartItem): array
+    {
+        if (!isset($cartItem['features'])) {
+            return [];
         }
 
         $idFeatureValue = false;
@@ -67,10 +96,12 @@ class VoucherService
         }
 
         if (!$idFeatureValue) {
-            return '';
+            return [];
         }
 
-        return $this->getVoucherCategoryByFeatureValueId($idFeatureValue);
+        $category = $this->getVoucherCategoryByFeatureValueId($idFeatureValue);
+
+        return $category ? [$category] : [];
     }
 
     private function isVoucherFeature(int $featureId): bool
@@ -87,5 +118,18 @@ class VoucherService
         }
 
         return '';
+    }
+
+    private function getVoucherCategoriesByFeatureValueIds(array $idFeatureValues): array
+    {
+        $categoryNames = [];
+
+        foreach (Config::MOLLIE_VOUCHER_CATEGORIES as $key => $categoryName) {
+            if (in_array((int) $this->configuration->get(Config::MOLLIE_VOUCHER_FEATURE . $key), $idFeatureValues, true)) {
+                $categoryNames[] = $key;
+            }
+        }
+
+        return $categoryNames;
     }
 }
