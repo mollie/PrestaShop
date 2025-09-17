@@ -13,9 +13,9 @@
 namespace Mollie\Service;
 
 use Mollie;
-use Mollie\Utility\TransactionUtility;
-use Mollie\Utility\NumberUtility;
 use Mollie\Exception\MollieException;
+use Mollie\Utility\NumberUtility;
+use Mollie\Utility\TransactionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -44,6 +44,7 @@ class MollieOrderService
             foreach ($mollieOrder->lines as $line) {
                 $amountRefunded += $line->amountRefunded->value;
             }
+
             return NumberUtility::minus($mollieOrder->amount->value, $amountRefunded);
         }
 

@@ -36,7 +36,6 @@
 
 namespace Mollie\Handler\PaymentOption;
 
-use Configuration;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
