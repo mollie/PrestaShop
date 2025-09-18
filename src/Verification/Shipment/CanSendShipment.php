@@ -12,10 +12,8 @@
 
 namespace Mollie\Verification\Shipment;
 
-use Exception;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
-use Mollie\Enum\PaymentTypeEnum;
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandlerInterface;
 use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProviderInterface;
@@ -24,7 +22,6 @@ use Mollie\Service\ShipmentServiceInterface;
 use Mollie\Verification\IsPaymentInformationAvailable;
 use Order;
 use OrderState;
-use PrestaShopLogger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -80,11 +77,6 @@ class CanSendShipment implements ShipmentVerificationInterface
      */
     public function verify(Order $order, OrderState $orderState): bool
     {
-        /* todo: doesnt work with no tracking information. Will need to create new validation */
-        //		if (!$this->hasShipmentInformation($order->reference)) {
-        //			throw new ShipmentCannotBeSentException('Shipment information cannot be sent. No shipment information found by order reference', ShipmentCannotBeSentException::NO_SHIPPING_INFORMATION, $order->reference);
-        //		}
-
         if (!$this->isAutomaticShipmentAvailable((int) $orderState->id)) {
             return false;
         }
@@ -93,24 +85,7 @@ class CanSendShipment implements ShipmentVerificationInterface
             throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Missing payment information', ShipmentCannotBeSentException::ORDER_HAS_NO_PAYMENT_INFORMATION, $order->reference);
         }
 
-        if (!$this->isRegularPayment((int) $order->id)) {
-            throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Is regular payment. In order to ship, please use Orders API.', ShipmentCannotBeSentException::PAYMENT_IS_NOT_ORDER, $order->reference);
-        }
-
         return true;
-    }
-
-    private function isRegularPayment(int $orderId): bool
-    {
-        $payment = $this->paymentMethodRepository->getPaymentBy('order_id', (int) $orderId);
-
-        if (empty($payment)) {
-            return false;
-        }
-
-        $paymentType = $this->endpointPaymentTypeHandler->getPaymentTypeFromTransactionId($payment['transaction_id']);
-
-        return (int) $paymentType === PaymentTypeEnum::PAYMENT_TYPE_ORDER;
     }
 
     private function isAutomaticShipmentAvailable(int $orderStateId): bool
@@ -124,17 +99,6 @@ class CanSendShipment implements ShipmentVerificationInterface
         }
 
         return true;
-    }
-
-    private function hasShipmentInformation(string $orderReference): bool
-    {
-        try {
-            return !empty($this->shipmentService->getShipmentInformation($orderReference));
-        } catch (Exception $e) {
-            PrestaShopLogger::addLog($e);
-
-            return false;
-        }
     }
 
     private function isAutomaticShipmentInformationSenderEnabled(): bool

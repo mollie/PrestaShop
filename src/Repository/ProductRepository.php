@@ -12,6 +12,7 @@
 
 namespace Mollie\Repository;
 
+use Context;
 use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -32,7 +33,7 @@ class ProductRepository extends AbstractRepository implements ProductRepositoryI
         return empty($result) ? null : $result;
     }
 
-    public function getCover(int $productId, \Context $context = null): array
+    public function getCover(int $productId, Context $context = null): array
     {
         return \Product::getCover($productId, $context);
     }

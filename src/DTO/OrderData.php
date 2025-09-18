@@ -85,7 +85,7 @@ class OrderData implements JsonSerializable
     private $email;
 
     /**
-     * @var Line[]
+     * @var OrderLine[]
      */
     private $lines;
 
@@ -127,8 +127,8 @@ class OrderData implements JsonSerializable
 
     public function __construct(
         Amount $amount,
-               $redirectUrl,
-               $webhookUrl
+        string $redirectUrl,
+        string $webhookUrl
     ) {
         $this->amount = $amount;
         $this->redirectUrl = $redirectUrl;
@@ -152,7 +152,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getRedirectUrl()
     {
@@ -160,7 +160,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @param mixed $redirectUrl
+     * @param string $redirectUrl
      */
     public function setRedirectUrl($redirectUrl)
     {
@@ -168,7 +168,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getWebhookUrl()
     {
@@ -176,9 +176,9 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @param mixed $webhookUrl
+     * @param string $webhookUrl
      */
-    public function setWebhookUrl($webhookUrl)
+    public function setWebhookUrl(string $webhookUrl)
     {
         $this->webhookUrl = $webhookUrl;
     }
@@ -272,7 +272,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @return mixed
+     * @return ?string
      */
     public function getBillingPhoneNumber()
     {
@@ -280,19 +280,15 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @param mixed $billingPhoneNumber
-     *
-     * @return self
+     * @param ?string $billingPhoneNumber
      */
     public function setBillingPhoneNumber($billingPhoneNumber)
     {
         $this->billingPhoneNumber = $billingPhoneNumber;
-
-        return $this;
     }
 
     /**
-     * @return mixed
+     * @return ?string
      */
     public function getDeliveryPhoneNumber()
     {
@@ -300,15 +296,11 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @param mixed $deliveryPhoneNumber
-     *
-     * @return self
+     * @param ?string $deliveryPhoneNumber
      */
     public function setDeliveryPhoneNumber($deliveryPhoneNumber)
     {
         $this->deliveryPhoneNumber = $deliveryPhoneNumber;
-
-        return $this;
     }
 
     /**
@@ -352,7 +344,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @return Line[]
+     * @return OrderLine[]
      */
     public function getLines()
     {
@@ -360,7 +352,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @param Line[] $lines
+     * @param OrderLine[] $lines
      */
     public function setLines($lines)
     {
@@ -385,7 +377,7 @@ class OrderData implements JsonSerializable
         return $this->consumerDateOfBirth;
     }
 
-    public function setConsumerDateOfBirth(string $consumerDateOfBirth): void
+    public function setConsumerDateOfBirth(?string $consumerDateOfBirth): void
     {
         $this->consumerDateOfBirth = $consumerDateOfBirth;
     }
@@ -410,7 +402,7 @@ class OrderData implements JsonSerializable
         $this->title = $title;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $lines = [];
         foreach ($this->getLines() as $line) {

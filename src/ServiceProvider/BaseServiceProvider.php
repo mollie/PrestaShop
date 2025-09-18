@@ -18,6 +18,7 @@ use League\Container\Container;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
+use Mollie\Adapter\Link;
 use Mollie\Adapter\Shop;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Builder\ApiTestFeedbackBuilder;
@@ -39,6 +40,8 @@ use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Handler\Shipment\ShipmentSenderHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
 use Mollie\Install\UninstallerInterface;
+use Mollie\Loader\OrderManagementAssetLoader;
+use Mollie\Loader\OrderManagementAssetLoaderInterface;
 use Mollie\Logger\LogFormatter;
 use Mollie\Logger\LogFormatterInterface;
 use Mollie\Logger\Logger;
@@ -313,6 +316,11 @@ final class BaseServiceProvider
 
         $service = $this->addService($container, CustomerGroupRestrictionHandlerInterface::class, CustomerGroupRestrictionHandler::class);
         $this->addServiceArgument($service, ToolsAdapter::class);
+
+        $service = $this->addService($container, OrderManagementAssetLoaderInterface::class, OrderManagementAssetLoader::class);
+        $this->addServiceArgument($service, Mollie::class);
+        $this->addServiceArgument($service, PaymentMethodRepository::class);
+        $this->addServiceArgument($service, Link::class);
     }
 
     private function addService(Container $container, $className, $service)

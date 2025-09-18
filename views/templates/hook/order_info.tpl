@@ -8,105 +8,105 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  *}
-<div id="mollie_order" class="test"></div>
-<script type="text/javascript">
-  (function () {
-    window.MollieModule = window.MollieModule || {ldelim}{rdelim};
-    window.MollieModule.urls = window.MollieModule.urls || {ldelim}{rdelim};
-    window.MollieModule.urls.publicPath = '{$publicPath|escape:'javascript':'UTF-8'}';
-    window.MollieModule.debug = {if $errorDisplay}true{else}false{/if};
-  }());
-  (function initTransactionInfo() {
-    if (typeof window.MollieModule === 'undefined'
-            || typeof window.MollieModule.app === 'undefined'
-            || typeof window.MollieModule.app.default === 'undefined'
-            || typeof window.MollieModule.app.default.transactionInfo === 'undefined'
-    ) {
-      return setTimeout(initTransactionInfo, 100);
-    }
 
-    window.MollieModule.app.default.transactionInfo().then(function (fn) {
-      fn.default(
-              "#mollie_order",
-              {
-                ajaxEndpoint: '{$ajaxEndpoint|escape:'javascript':'UTF-8'}',
-                moduleDir: '{$module_dir|escape:'javascript':'UTF-8'}',
-                initialStatus: 'form',
-                transactionId: '{$transactionId|escape:'javascript':'UTF-8'}',
-                legacy: {if version_compare($smarty.const._PS_VERSION_, '1.6.0.0', '<')}true{else}false{/if},
-                tracking: {$tracking|json_encode}
-              },
-              {
-                areYouSure: '{l s='Are you sure?' mod='mollie' js=1}',
-                areYouSureYouWantToRefund: '{l s='Are you sure you want to refund this order?' mod='mollie' js=1}',
-                refund: '{l s='Refund' mod='mollie' js=1}',
-                cancel: '{l s='Cancel' mod='mollie' js=1}',
-                refundOrder:'{l s='Refund order' mod='mollie' js=1}',
-                refundable: '{l s='Refundable' mod='mollie' js=1}',
-                partialRefund: '{l s='Partial refund' mod='mollie' js=1}',
-                invalidAmount: '{l s='Invalid amount' mod='mollie' js=1}',
-                notAValidAmount: '{l s='Enter a valid amount' mod='mollie' js=1}',
-                refundFailed: '{l s='Refund failed' mod='mollie' js=1}',
-                paymentInfo: '{l s='Payment info' mod='mollie' js=1}',
-                transactionId: '{l s='Transaction ID' mod='mollie' js=1}',
-                refundHistory: '{l s='Refund history' mod='mollie' js=1}',
-                thereAreNoRefunds: '{l s='There are no refunds' mod='mollie' js=1}',
-                ID: '{l s='ID' mod='mollie' js=1}',
-                date: '{l s='Date' mod='mollie' js=1}',
-                amount: '{l s='Amount' mod='mollie' js=1}',
-                refunds: '{l s='Refunds' mod='mollie' js=1}',
-                payments: '{l s='Payments' mod='mollie' js=1}',
-                currentAmount: '{l s='Current amount' mod='mollie' js=1}',
-                products: '{l s='Products' mod='mollie' js=1}',
-                status: '{l s='Status' mod='mollie' js=1}',
-                shipped: '{l s='Shipped' mod='mollie' js=1}',
-                canceled: '{l s='Canceled' mod='mollie' js=1}',
-                refunded: '{l s='Refunded' mod='mollie' js=1}',
-                unitPrice: '{l s='Unit price' mod='mollie' js=1}',
-                vatAmount: '{l s='VAT amount' mod='mollie' js=1}',
-                totalAmount: '{l s='Total amount' mod='mollie' js=1}',
-                ship: '{l s='Ship' mod='mollie' js=1}',
-                reviewShipment: '{l s='Review shipment' mod='mollie' js=1}',
-                reviewShipmentProducts: '{l s='Review the products included in the shipment. You can remove items or change the quantity if needed.' mod='mollie' js=1}',
-                reviewRefund: '{l s='Review refund' mod='mollie' js=1}',
-                reviewRefundProducts: '{l s='Review the products included in the refund. You can remove items or change the quantity if needed.' mod='mollie' js=1}',
-                reviewCancel: '{l s='Review cancellation' mod='mollie' js=1}',
-                reviewCancelProducts: '{l s='Review the products included in the cancellation. You can remove items or change the quantity if needed.' mod='mollie' js=1}',
-                OK: '{l s='OK' mod='mollie' js=1}',
-                shipProducts: '{l s='Ship products' mod='mollie' js=1}',
-                trackingDetails: '{l s='Tracking details' mod='mollie' js=1}',
-                addTrackingInfo: '{l s='Add tracking information to record that you shipped products to your customer.' mod='mollie' js=1}',
-                skipTrackingDetails: '{l s='Skip tracking details' mod='mollie' js=1}',
-                optional: '{l s='optional' mod='mollie' js=1}',
-                egFedex: '{l s='E.g. FedEx' mod='mollie' js=1}',
-                thisInfoIsRequired: '{l s='This information is required' mod='mollie' js=1}',
-                trackingCode: '{l s='Tracking code' mod='mollie' js=1}',
-                url: '{l s='URL' mod='mollie' js=1}',
-                carrier: '{l s='Carrier' mod='mollie' js=1}',
-                shipAll: '{l s='Ship all' mod='mollie' js=1}',
-                cancelAll: '{l s='Cancel all' mod='mollie' js=1}',
-                refundAll: '{l s='Refund all' mod='mollie' js=1}',
-                transactionInfo: '{l s='Transaction info' mod='mollie' js=1}',
-                voucherInfo: '{l s='Voucher info' mod='mollie' js=1}',
-                thereAreNoProducts: '{l s='There are no products' mod='mollie' js=1}',
-                anErrorOccurred: '{l s='An error occurred' mod='mollie' js=1}',
-                unableToShip: '{l s='Unable to ship' mod='mollie' js=1}',
-                unableToRefund: '{l s='Unable to refund' mod='mollie' js=1}',
-                unableToCancel: '{l s='Unable to cancel' mod='mollie' js=1}',
-                refundsAreCurrentlyUnavailable: '{l s='Refunds are currently unavailable' mod='mollie' js=1}',
-                refundSuccessMessage: '{l s='Refund was made successfully!' mod='mollie' js=1}',
-                shipmentWarning: '{l s='Shipment was made successfully!' mod='mollie' js=1}',
-                cancelWarning: '{l s='Order was canceled successfully!' mod='mollie' js=1}',
-                method: '{l s='Method' mod='mollie' js=1}',
-                remainderMethod: '{l s='Remainder method' mod='mollie' js=1}',
-                issuer: '{l s='Issuer' mod='mollie' js=1}',
-                refundWarning: '{l s='This order was (partially) paid for with a voucher. You can refund a maximum of %1s.' mod='mollie' js=1}',
-              },
-              {$currencies|json_encode}
-      );
-    });
-  }());
-</script>
-{foreach $webPackChunks as $webPackChunk}
-  <script type="text/javascript" src="{$webPackChunk|escape:'html':'UTF-8'}"></script>
-{/foreach}
+<div class="panel card mollie-order-info-panel">
+  <div class="panel-heading card-header">
+    <img src="{$mollie_logo_path|escape:'html':'UTF-8'}" width="16" height="16" alt="Mollie logo" style="opacity: 0.8;" />
+    &nbsp;<span>Mollie order - #{$order_reference|escape:'html':'UTF-8'}</span>
+  </div>
+  <div class="card-body">
+    {if null == $products}
+    <div class="alert alert-info" role="alert">
+      {l s='No products are available for this order because it was placed before Mollie version 6.4.1. You can still use the refund, capture, or ship actions.' mod='mollie'}
+    </div>
+    {/if}
+    {if $mollie_api_type == 'payments'}
+    <div class="form-group">
+      <label for="mollie-refund-amount">{l s='Refund amount (Max: %s)' sprintf=[$refundable_amount] mod='mollie'}</label>
+      <input type="number" step="0.01" max="{$refundable_amount|escape:'html':'UTF-8'}" class="form-control" id="mollie-refund-amount" value="{$refundable_amount|escape:'html':'UTF-8'}" {if $isRefunded || $refundable_amount <= 0}disabled{/if} />
+    </div>
+    <button type="button" class="btn btn-primary btn-block" id="mollie-initiate-refund" {if $isRefunded || $refundable_amount <= 0}disabled{/if}>
+      <i class="material-icons">replay</i> {l s='Initiate Refund' mod='mollie'}
+    </button>
+    <div class="form-group mt-3">
+      <label for="mollie-capture-amount">{l s='Capture amount (Capturable: %s)' sprintf=[$capturable_amount] mod='mollie'}</label>
+      <input type="number" step="0.01" max="{$capturable_amount|escape:'html':'UTF-8'}" class="form-control" id="mollie-capture-amount" value="{$capturable_amount|escape:'html':'UTF-8'}" {if $isCaptured || $capturable_amount <= 0}disabled{/if} />
+    </div>
+    <button type="button" class="btn btn-primary btn-block" id="mollie-initiate-capture" {if $isCaptured || $capturable_amount <= 0}disabled{/if}>
+      <i class="material-icons">payments</i> {l s='Initiate Capture' mod='mollie'}
+    </button>
+    <hr />
+    {/if}
+    <table class="table table-bordered table-condensed">
+      <thead>
+        <tr>
+          <th>{l s='Product' mod='mollie'}</th>
+          <th>{l s='Price' mod='mollie'}</th>
+          <th>{l s='Actions' mod='mollie'}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {foreach from=$products item=product}
+          {* Orders API *}
+          {if isset($product->name)}
+            <tr>
+              <td><strong>{$product->quantity|escape:'html':'UTF-8'}x</strong> {$product->name|escape:'html':'UTF-8'}</td>
+              <td>{$product->totalAmount->value|escape:'html':'UTF-8'}</td>
+              <td>
+              {if $mollie_api_type == 'orders' && $product->name != 'Discount'}
+                <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" {if $product->quantityShipped == $product->quantity || $product->quantityCanceled == $product->quantity}disabled{/if}>
+                  <i class="material-icons">local_shipping</i> {l s='Ship' mod='mollie'}
+                </button>
+                <button type="button" class="btn btn-default btn-xs mollie-cancel-btn" data-orderline="{$product->id|escape:'html':'UTF-8'}" {if $product->quantityCanceled == $product->quantity || $isShipped}disabled{/if}>
+                  <i class="material-icons">cancel</i> {l s='Cancel' mod='mollie'}
+                </button>
+              {/if}
+              {if $product->name != 'Discount'}
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" {if $product->quantityRefunded == $product->quantity || $isCanceled}disabled{/if}>
+                  <i class="material-icons">replay</i> {l s='Refund' mod='mollie'}
+                </button>
+              {/if}
+              </td>
+            </tr>
+          {/if}
+
+          {* Payments API *}
+          {if isset($product->description)}
+            <tr>
+              <td><strong>{$product->quantity|escape:'html':'UTF-8'}x</strong> {$product->description|escape:'html':'UTF-8'}</td>
+              <td>{$product->totalAmount->value|escape:'html':'UTF-8'}</td>
+              <td>
+              {if $mollie_api_type == 'payments' && $product->description != 'Discount'}
+                <button type="button" class="btn btn-default btn-xs mollie-capture-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" {if $isCaptured}disabled{/if}>
+                  <i class="material-icons">payments</i> {l s='Capture' mod='mollie'}
+                </button>
+              {/if}
+              {if $product->description != 'Discount'}
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" {if $product->totalAmount->value > $refundable_amount}disabled{/if}>
+                  <i class="material-icons">replay</i> {l s='Refund' mod='mollie'}
+                </button>
+              {/if}
+              </td>
+            </tr>
+          {/if}
+        {/foreach}
+      </tbody>
+    </table>
+    {if $mollie_api_type == 'orders'}
+      <button type="button" class="btn btn-default btn-block" id="mollie-refund-all-orders" {if $isRefunded || $refundable_amount <= 0 || $isCanceled}disabled{/if}>
+        <i class="material-icons">replay</i> {l s='Refund all' mod='mollie'}
+      </button>
+      <button type="button" class="btn btn-default btn-block" id="mollie-ship-all" {if $isShipped || $isRefunded || $isCanceled}disabled{/if}>
+        <i class="material-icons">local_shipping</i> {l s='Ship All' mod='mollie'}
+      </button>
+      <button type="button" class="btn btn-default btn-block" id="mollie-cancel-all" {if $isCanceled || $isRefunded || $isShipped}disabled{/if}>
+        <i class="material-icons">cancel</i> {l s='Cancel All' mod='mollie'}
+      </button>
+    {/if}
+  </div>
+</div>
+
+{include file="module:mollie/views/templates/hook/partials/modal_refund.tpl"}
+{include file="module:mollie/views/templates/hook/partials/modal_ship.tpl"}
+{include file="module:mollie/views/templates/hook/partials/modal_capture.tpl"}
+{include file="module:mollie/views/templates/hook/partials/modal_cancel.tpl"}

@@ -166,7 +166,6 @@ class Config
     const MOLLIE_APPLE_PAY_DIRECT_CART = 'MOLLIE_APPLE_PAY_DIRECT_CART';
 
     const MOLLIE_APPLE_PAY_DIRECT_STYLE = 'MOLLIE_APPLE_PAY_DIRECT_STYLE';
-    const MOLLIE_BANCONTACT_QR_CODE_ENABLED = 'MOLLIE_BANCONTACT_QR_CODE_ENABLED';
 
     const MOLLIE_CARRIER_URL_SOURCE = 'MOLLIE_CARRIER_URL_SOURCE_';
     const MOLLIE_CARRIER_CUSTOM_URL = 'MOLLIE_CARRIER_CUSTOM_URL_';
@@ -261,6 +260,7 @@ class Config
     const MOLLIE_VOUCHER_CATEGORY_MEAL = 'meal';
     const MOLLIE_VOUCHER_CATEGORY_GIFT = 'gift';
     const MOLLIE_VOUCHER_CATEGORY_ECO = 'eco';
+    const MOLLIE_VOUCHER_CATEGORY_ALL = 'all';
 
     const MOLLIE_REFUND_STATUS_CANCELED = 'canceled';
 
@@ -284,14 +284,6 @@ class Config
     ];
 
     const ORDER_API_ONLY_METHODS = [
-        PaymentMethod::KLARNA_PAY_LATER,
-        PaymentMethod::KLARNA_SLICE_IT,
-        PaymentMethod::KLARNA_PAY_NOW,
-        PaymentMethod::KLARNA_ONE,
-        PaymentMethod::BILLIE,
-        self::MOLLIE_VOUCHER_METHOD_ID,
-        self::MOLLIE_in3_METHOD_ID,
-        self::RIVERTY,
     ];
 
     const PAYMENT_API_ONLY_METHODS = [
@@ -356,6 +348,10 @@ class Config
     const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
 
     const MOLLIE_METHOD_CUSTOMER_GROUPS = 'MOLLIE_METHOD_CUSTOMER_GROUPS_';
+
+    public const MOLLIE_MANUAL_CAPTURE_METHODS = [
+        self::RIVERTY,
+    ];
 
     // TODO migrate functions below to separate service
     public static function getStatuses()
