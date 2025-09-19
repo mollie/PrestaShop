@@ -513,7 +513,9 @@ class CartLinesService
             }
 
             if (isset($item['image_url']) && $item['image_url']) {
-                $line->setImageUrl($item['image_url']);
+                $line->setImageUrl(
+                    TextFormatUtility::replaceAccentedChars((string) $item['image_url'])
+                );
             }
 
             $newItems[$index] = $line;
