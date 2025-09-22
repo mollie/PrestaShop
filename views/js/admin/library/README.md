@@ -1,27 +1,36 @@
-# Mollie Module React Development
+# Mollie Authentication React Component
 
-React components for Mollie PrestaShop module admin interface.
+Clean React authentication page for Mollie PrestaShop module admin interface.
 
-## Getting Started
+## Structure
 
-```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
 ```
-
-Development server runs at: http://localhost:5173/
+library/
+├── src/pages/authentication/          # Authentication page
+│   ├── index.tsx                      # Entry point
+│   ├── AuthenticationPage.tsx         # Main component
+│   ├── components/                    # Your authentication components
+│   └── services/                      # API service layer
+├── components/ui/                     # Essential UI components only
+│   ├── badge.tsx, button.tsx         # Used components
+│   ├── card.tsx, input.tsx
+│   ├── label.tsx, tabs.tsx
+├── dist/assets/authentication.js      # Built bundle
+└── Build configuration files
+```
 
 ## Commands
 
-- `npm run dev` - Development with hot reload
+- `npm install` - Install dependencies  
 - `npm run build` - Build for production
-- `npm run lint` - Check code quality
+- `npm run dev` - Development server
 
-## Development
+## Usage
 
-1. Create React components in `src/`
-2. Build with `npm run build`
-3. Include built files in Mollie module templates
+1. Add your authentication components to `src/pages/authentication/components/`
+2. Add API service to `src/pages/authentication/services/`
+3. Build with `npm run build`
+4. Include `dist/assets/authentication.js` in your PHP template
+
+
+
