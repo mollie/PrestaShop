@@ -52,6 +52,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
     {
         parent::init();
 
+        //todo use module version after redesign will finish.
         $version = time();
 
         $this->context->controller->addJS($this->module->getPathUri() . 'views/js/admin/library/dist/assets/authorization.js?v=' . $version);

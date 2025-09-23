@@ -15,7 +15,7 @@ const MollieLogo = () => (
     xmlnsXlink="http://www.w3.org/1999/xlink" 
     viewBox="0 0 320 94" 
     xmlSpace="preserve"
-    className="h-10 w-auto text-black"
+    className="h-6 w-auto text-black"
   >
     <style type="text/css">
       {`.st0{fill-rule:evenodd;clip-rule:evenodd;fill:currentColor;}`}
