@@ -22,7 +22,6 @@ use Mollie\Adapter\ToolsAdapter;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
-use Mollie\Exception\MollieException;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Certificate\CertificateHandlerInterface;
 use Mollie\Handler\Certificate\Exception\ApplePayDirectCertificateCreation;

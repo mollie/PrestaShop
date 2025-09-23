@@ -13,10 +13,10 @@
 
 declare(strict_types=1);
 
-use Mollie\Config\Config;
-use Mollie\Builder\ApiTestFeedbackBuilder;
-use Mollie\Adapter\ToolsAdapter;
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Adapter\ToolsAdapter;
+use Mollie\Builder\ApiTestFeedbackBuilder;
+use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 
 if (!defined('_PS_VERSION_')) {
@@ -100,7 +100,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 'connectionFailed' => addslashes($this->module->l('Connection failed. Please check your API key.', self::FILE_NAME)),
                 'failedToLoadSettings' => addslashes($this->module->l('Failed to load current settings', self::FILE_NAME)),
                 'failedToSwitchEnvironment' => addslashes($this->module->l('Failed to switch environment', self::FILE_NAME)),
-            ]
+            ],
         ]);
         $this->content = $this->context->smarty->fetch(
             $this->module->getLocalPath() . 'views/templates/admin/authentication/authentication.tpl'
@@ -134,7 +134,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             default:
                 $this->ajaxRender(json_encode([
                     'success' => false,
-                    'message' => 'Invalid action'
+                    'message' => 'Invalid action',
                 ]));
                 break;
         }
@@ -161,7 +161,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         // Return structured data instead of HTML template (api_test_results.tpl was removed)
         $this->ajaxRender(json_encode([
             'success' => true,
-            'data' => $apiKeysTestInfo
+            'data' => $apiKeysTestInfo,
         ]));
     }
 
@@ -204,13 +204,13 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                     'is_configured' => !empty($testApiKey) || !empty($liveApiKey),
                     'is_connected' => $isConnected,
                     'test_key_valid' => $testKeyValid,
-                    'live_key_valid' => $liveKeyValid
-                ]
+                    'live_key_valid' => $liveKeyValid,
+                ],
             ]));
         } catch (Exception $e) {
             $this->ajaxRender(json_encode([
                 'success' => false,
-                'message' => $this->module->l('Failed to load current settings', self::FILE_NAME)
+                'message' => $this->module->l('Failed to load current settings', self::FILE_NAME),
             ]));
         }
     }
@@ -238,8 +238,9 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             if (!$keyInfo['status']) {
                 $this->ajaxRender(json_encode([
                     'success' => false,
-                    'message' => 'API key validation failed: Key does not exist or is invalid'
+                    'message' => 'API key validation failed: Key does not exist or is invalid',
                 ]));
+
                 return;
             }
 
@@ -247,8 +248,9 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 $expectedPrefix = $isTestKey ? 'test_' : 'live_';
                 $this->ajaxRender(json_encode([
                     'success' => false,
-                    'message' => "API key validation failed: Key must start with '{$expectedPrefix}'"
+                    'message' => "API key validation failed: Key must start with '{$expectedPrefix}'",
                 ]));
+
                 return;
             }
 
@@ -267,18 +269,18 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 'message' => 'API key saved successfully',
                 'data' => [
                     'is_connected' => true,
-                    'methods' => $keyInfo['methods'] ?? []
-                ]
+                    'methods' => $keyInfo['methods'] ?? [],
+                ],
             ]));
         } catch (MollieException $e) {
             $this->ajaxRender(json_encode([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ]));
         } catch (Exception $e) {
             $this->ajaxRender(json_encode([
                 'success' => false,
-                'message' => $this->module->l('Failed to save API key', self::FILE_NAME)
+                'message' => $this->module->l('Failed to save API key', self::FILE_NAME),
             ]));
         }
     }
@@ -328,18 +330,18 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 'data' => [
                     'environment' => $environment,
                     'is_connected' => $isConnected,
-                    'api_key' => $apiKey
-                ]
+                    'api_key' => $apiKey,
+                ],
             ]));
         } catch (MollieException $e) {
             $this->ajaxRender(json_encode([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ]));
         } catch (Exception $e) {
             $this->ajaxRender(json_encode([
                 'success' => false,
-                'message' => $this->module->l('Failed to switch environment', self::FILE_NAME)
+                'message' => $this->module->l('Failed to switch environment', self::FILE_NAME),
             ]));
         }
     }

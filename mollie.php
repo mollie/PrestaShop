@@ -455,7 +455,6 @@ class Mollie extends PaymentModule
     {
         $currentController = Tools::getValue('controller');
 
-
         if ('AdminOrders' === $currentController) {
             Media::addJsDef([
                 'mollieHookAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAjax'),
