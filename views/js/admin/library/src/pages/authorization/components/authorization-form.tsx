@@ -6,6 +6,63 @@ import { Button } from "../../../shared/components/ui/button"
 import { Input } from "../../../shared/components/ui/input"
 import { authApiService } from "../../../services/AuthenticationApiService"
 
+// Mollie Logo Component
+const MollieLogo = () => (
+  <svg 
+    version="1.1" 
+    xmlns="http://www.w3.org/2000/svg" 
+    xmlnsXlink="http://www.w3.org/1999/xlink" 
+    viewBox="0 0 320 94" 
+    xmlSpace="preserve"
+    className="h-10 w-auto text-black"
+  >
+    <style type="text/css">
+      {`.st0{fill-rule:evenodd;clip-rule:evenodd;fill:currentColor;}`}
+    </style>
+    <path 
+      className="st0" 
+      d="M289.3,44.3c6.9,0,13.2,4.5,15.4,11h-30.7C276.1,48.9,282.3,44.3,289.3,44.3z M320,60.9c0-8-3.1-15.6-8.8-21.4
+      c-5.7-5.8-13.3-9-21.3-9h-0.4c-8.3,0.1-16.2,3.4-22.1,9.3c-5.9,5.9-9.2,13.7-9.3,22c-0.1,8.5,3.2,16.5,9.2,22.6
+      c6.1,6.1,14.1,9.5,22.6,9.5h0c11.2,0,21.7-6,27.4-15.6l0.7-1.2l-12.6-6.2l-0.6,1c-3.1,5.2-8.6,8.2-14.7,8.2
+      c-7.7,0-14.4-5.1-16.5-12.5H320V60.9z M241.2,19.8c-5.5,0-9.9-4.4-9.9-9.9c0-5.5,4.4-9.9,9.9-9.9s9.9,4.4,9.9,9.9
+      C251.2,15.3,246.7,19.8,241.2,19.8z M233.6,92.7h15.2V31.8h-15.2V92.7z M204.5,1.3h15.2v91.5h-15.2V1.3z M175.4,92.7h15.2V1.3h-15.2
+      V92.7z M135.3,79c-9.2,0-16.8-7.5-16.8-16.7c0-9.2,7.5-16.7,16.8-16.7s16.8,7.5,16.8,16.7C152.1,71.5,144.6,79,135.3,79z
+      M135.3,30.5c-17.6,0-31.8,14.2-31.8,31.7S117.8,94,135.3,94c17.5,0,31.8-14.2,31.8-31.7S152.9,30.5,135.3,30.5z M70.4,30.6
+      c-0.8-0.1-1.6-0.1-2.4-0.1c-7.7,0-15,3.1-20.2,8.7c-5.2-5.5-12.5-8.7-20.1-8.7C12.4,30.5,0,42.9,0,58v34.7h14.9V58.5
+      c0-6.3,5.2-12.1,11.3-12.7c0.4,0,0.9-0.1,1.3-0.1c6.9,0,12.5,5.6,12.5,12.5v34.6h15.2V58.4c0-6.3,5.2-12.1,11.3-12.7
+      c0.4,0,0.9-0.1,1.3-0.1c6.9,0,12.5,5.6,12.6,12.4v34.7h15.2V58.5c0-7-2.6-13.6-7.2-18.8C83.7,34.4,77.3,31.2,70.4,30.6z"
+    />
+  </svg>
+)
+
+// Skeleton loading components
+const SkeletonModeToggle = () => (
+  <div>
+    <div className="h-4 bg-gray-200 rounded w-12 mb-2 animate-pulse"></div>
+    <div className="flex rounded-lg overflow-hidden border border-gray-200">
+      <div className="flex-1 px-6 py-3 bg-gray-100 animate-pulse"></div>
+      <div className="flex-1 px-6 py-3 bg-gray-50 animate-pulse"></div>
+    </div>
+    <div className="h-3 bg-gray-200 rounded w-48 mt-2 animate-pulse"></div>
+  </div>
+)
+
+const SkeletonApiKeyInput = () => (
+  <div>
+    <div className="flex items-center gap-2 mb-2">
+      <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+    </div>
+    <div className="relative">
+      <div className="h-12 bg-gray-100 border border-gray-200 rounded animate-pulse"></div>
+    </div>
+    <div className="h-3 bg-gray-200 rounded w-56 mt-2 animate-pulse"></div>
+  </div>
+)
+
+const SkeletonConnectButton = () => (
+  <div className="w-full h-12 bg-gray-100 rounded animate-pulse mb-4"></div>
+)
+
 export default function AuthorizationForm() {
   const [mode, setMode] = useState<"live" | "test">("live")
   const [apiKey, setApiKey] = useState("")
@@ -16,6 +73,7 @@ export default function AuthorizationForm() {
   const [liveApiKey, setLiveApiKey] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
   const [justConnected, setJustConnected] = useState(false)
+  const [initialLoading, setInitialLoading] = useState(true)
 
   // Load current settings on component mount
   useEffect(() => {
@@ -37,6 +95,8 @@ export default function AuthorizationForm() {
     } catch (error) {
       console.error('Failed to load settings:', error)
       setErrorMessage("Failed to load current settings")
+    } finally {
+      setInitialLoading(false) // Stop initial loading regardless of success/failure
     }
   }
 
@@ -73,8 +133,9 @@ export default function AuthorizationForm() {
   }
 
   const handleModeChange = async (newMode: "live" | "test") => {
-    setMode(newMode)
-    setApiKey(newMode === "live" ? liveApiKey : testApiKey)
+    // If it's the same mode, do nothing
+    if (newMode === mode) return
+    
     setErrorMessage("")
     setJustConnected(false) // Clear the success message when switching modes
     
@@ -82,7 +143,8 @@ export default function AuthorizationForm() {
       // Call backend to switch environment
       const switchResponse = await authApiService.switchEnvironment(newMode)
       if (switchResponse.success) {
-        // Update connection status based on backend response
+        // Update mode and connection status based on backend response
+        setMode(newMode)
         setIsConnected(switchResponse.data.is_connected || false)
         setApiKey(switchResponse.data.api_key || "")
         
@@ -109,7 +171,9 @@ export default function AuthorizationForm() {
           {/* Left Column - Header */}
           <div className="flex flex-col">
             <div className="mb-16">
-              <h1 className="text-4xl font-medium text-black mb-2">mollie</h1>
+              <div className="mb-4">
+                <MollieLogo />
+              </div>
               <h2 className="text-4xl font-medium text-black mb-4">API Configuration</h2>
               <p className="text-black text-lg font-medium">Select your operational mode and input API keys below.</p>
             </div>
@@ -125,99 +189,119 @@ export default function AuthorizationForm() {
           {/* Right Column - Configuration */}
           <div className="space-y-6">
             {/* Mode Toggle */}
-            <div>
-              <label className="block text-sm font-medium text-black mb-2">Mode</label>
-              <div className="flex rounded-lg overflow-hidden border border-gray-200">
-                <button
-                  onClick={() => handleModeChange("live")}
-                  className={`flex-1 px-6 py-3 text-sm font-medium transition-colors ${
-                    mode === "live" ? "text-white" : "bg-white text-black hover:bg-gray-50"
-                  }`}
-                  style={mode === "live" ? {backgroundColor: 'rgba(0, 64, 255, 1)'} : {}}
-                >
-                  Live
-                </button>
-                <button
-                  onClick={() => handleModeChange("test")}
-                  className={`flex-1 px-6 py-3 text-sm font-medium transition-colors ${
-                    mode === "test" ? "text-white" : "bg-white text-black hover:bg-gray-50"
-                  }`}
-                  style={mode === "test" ? {backgroundColor: 'rgba(0, 64, 255, 1)'} : {}}
-                >
-                  Test
-                </button>
+            {initialLoading ? (
+              <SkeletonModeToggle />
+            ) : (
+              <div>
+                <label className="block text-sm font-medium text-black mb-2">Mode</label>
+                <div className="flex rounded-lg overflow-hidden border border-gray-200">
+                  <button
+                    onClick={() => handleModeChange("live")}
+                    className={`flex-1 px-6 py-3 text-base font-bold transition-colors ${
+                      mode === "live" ? "text-white" : "bg-white text-black hover:bg-gray-50"
+                    }`}
+                    style={mode === "live" ? {backgroundColor: 'rgba(0, 64, 255, 1)'} : {}}
+                  >
+                    Live
+                  </button>
+                  <button
+                    onClick={() => handleModeChange("test")}
+                    className={`flex-1 px-6 py-3 text-base font-bold transition-colors ${
+                      mode === "test" ? "text-white" : "bg-white text-black hover:bg-gray-50"
+                    }`}
+                    style={mode === "test" ? {backgroundColor: 'rgba(0, 64, 255, 1)'} : {}}
+                  >
+                    Test
+                  </button>
+                </div>
+                <p className="text-sm text-black mt-2">Choose operational mode for API.</p>
               </div>
-              <p className="text-sm text-black mt-2">Choose operational mode for API.</p>
-            </div>
+            )}
 
             {/* API Key Input */}
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <label className="text-sm font-medium text-black">
-                  {mode === "live" ? "Live API Key" : "Test API Key"}
-                </label>
-                {isConnected && (
-                  <div className="flex items-center gap-1 text-green-600">
-                    <CheckCircle className="h-4 w-4" />
-                    <span className="text-sm font-medium">Connected</span>
+            {initialLoading ? (
+              <SkeletonApiKeyInput />
+            ) : (
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <label className="text-sm font-medium text-black">
+                    {mode === "live" ? "Live API Key" : "Test API Key"}
+                  </label>
+                  {isConnected && (
+                    <div className="flex items-center gap-1 text-green-600">
+                      <CheckCircle className="h-4 w-4" />
+                      <span className="text-sm font-medium">Connected</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="relative">
+                  <Input
+                    type={showApiKey ? "text" : "password"}
+                    value={apiKey}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApiKey(e.target.value)}
+                    placeholder="Enter your API key here"
+                    className="pr-20 h-12 text-base border-gray-300"
+                  />
+                  {apiKey && (
+                    <button
+                      type="button"
+                      onClick={() => setShowApiKey(!showApiKey)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500 hover:text-gray-700"
+                    >
+                      {showApiKey ? "Hide" : "Show"}
+                    </button>
+                  )}
+                </div>
+
+                <p className="text-sm text-black mt-2">Required for connecting to the {mode} mode.</p>
+              </div>
+            )}
+
+            {/* Connect Button and Actions */}
+            {initialLoading ? (
+              <>
+                <SkeletonConnectButton />
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-4 bg-gray-200 rounded w-48 animate-pulse"></div>
+                </div>
+              </>
+            ) : (
+              <>
+                <Button
+                  onClick={handleConnect}
+                  disabled={!apiKey.trim() || isLoading}
+                  className="w-full h-12 text-base font-medium text-white mb-4 hover:opacity-90"
+                  style={{backgroundColor: 'rgba(0, 64, 255, 1)'}}
+                >
+                  {isLoading ? "Connecting..." : "Connect"}
+                </Button>
+
+                {/* Connection Status - only show after successful connect action */}
+                {justConnected && (
+                  <div className="flex items-center gap-2 mb-4 p-3 bg-green-50 border border-green-200 rounded-md">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <span className="text-green-800 font-medium">Connected successfully!</span>
                   </div>
                 )}
-              </div>
 
-              <div className="relative">
-                <Input
-                  type={showApiKey ? "text" : "password"}
-                  value={apiKey}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApiKey(e.target.value)}
-                  placeholder="Enter your API key here"
-                  className="pr-20 h-12 text-base border-gray-300"
-                />
-                {apiKey && (
-                  <button
-                    type="button"
-                    onClick={() => setShowApiKey(!showApiKey)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500 hover:text-gray-700"
-                  >
-                    {showApiKey ? "Hide" : "Show"}
-                  </button>
+                {/* Error Message */}
+                {errorMessage && (
+                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                    <span className="text-red-800 text-sm">{errorMessage}</span>
+                  </div>
                 )}
-              </div>
 
-              <p className="text-sm text-black mt-2">Required for connecting to the {mode} mode.</p>
-            </div>
-
-            {/* Connect Button */}
-            <Button
-              onClick={handleConnect}
-              disabled={!apiKey.trim() || isLoading}
-              className="w-full h-12 text-base font-medium text-white mb-4 hover:opacity-90"
-              style={{backgroundColor: 'rgba(0, 64, 255, 1)'}}
-            >
-              {isLoading ? "Connecting..." : "Connect"}
-            </Button>
-
-            {/* Connection Status - only show after successful connect action */}
-            {justConnected && (
-              <div className="flex items-center gap-2 mb-4 p-3 bg-green-50 border border-green-200 rounded-md">
-                <CheckCircle className="h-5 w-5 text-green-600" />
-                <span className="text-green-800 font-medium">Connected successfully!</span>
-              </div>
+                {/* API Key Help Link */}
+                <div className="flex items-center gap-2">
+                  <ExternalLink className="h-4 w-4" style={{color: 'rgba(0, 64, 255, 1)'}} />
+                  <a href="#" style={{color: 'rgba(0, 64, 255, 1)'}} className="hover:opacity-80 underline text-sm font-medium">
+                    Where can I find my API key?
+                  </a>
+                </div>
+              </>
             )}
-
-            {/* Error Message */}
-            {errorMessage && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-                <span className="text-red-800 text-sm">{errorMessage}</span>
-              </div>
-            )}
-
-            {/* API Key Help Link */}
-            <div className="flex items-center gap-2">
-              <ExternalLink className="h-4 w-4" style={{color: 'rgba(0, 64, 255, 1)'}} />
-              <a href="#" style={{color: 'rgba(0, 64, 255, 1)'}} className="hover:opacity-80 underline text-sm font-medium">
-                Where can I find my API key?
-              </a>
-            </div>
           </div>
         </div>
 
@@ -228,22 +312,22 @@ export default function AuthorizationForm() {
             <h3 className="text-xl font-medium text-black mb-12 text-center">Need Help?</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <h4 className="font-medium text-black mb-2">Get started</h4>
+              <div className="text-center p-6 border border-gray-200 rounded-lg bg-white hover:shadow-sm transition-shadow">
+                <h4 className="font-medium text-black mb-3">Get started</h4>
                 <a href="#" style={{color: 'rgba(0, 64, 255, 1)'}} className="hover:opacity-80 underline text-sm font-medium">
                   Mollie documentation
                 </a>
               </div>
 
-              <div className="text-center">
-                <h4 className="font-medium text-black mb-2">Payments related questions</h4>
+              <div className="text-center p-6 border border-gray-200 rounded-lg bg-white hover:shadow-sm transition-shadow">
+                <h4 className="font-medium text-black mb-3">Payments related questions</h4>
                 <a href="#" style={{color: 'rgba(0, 64, 255, 1)'}} className="hover:opacity-80 underline text-sm font-medium">
                   Contact Mollie Support
                 </a>
               </div>
 
-              <div className="text-center">
-                <h4 className="font-medium text-black mb-2">Integration questions</h4>
+              <div className="text-center p-6 border border-gray-200 rounded-lg bg-white hover:shadow-sm transition-shadow">
+                <h4 className="font-medium text-black mb-3">Integration questions</h4>
                 <a href="#" style={{color: 'rgba(0, 64, 255, 1)'}} className="hover:opacity-80 underline text-sm font-medium">
                   Contact module developer
                 </a>

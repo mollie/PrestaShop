@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -58,16 +59,90 @@ class Config
         'banktransfer' => [],
         'cartesbancaires' => ['fr'],
         'directdebit' => [
-            'fi', 'at', 'pt', 'be', 'bg', 'es', 'hr', 'cy', 'cz', 'dk', 'ee', 'fr', 'gf', 'de', 'gi', 'gr', 'gp', 'gg', 'hu',
-            'is', 'ie', 'im', 'it', 'je', 'lv', 'li', 'lt', 'lu', 'mt', 'mq', 'yt', 'mc', 'nl', 'no', 'pl', 're',
-            'ro', 'bl', 'mf', 'pm', 'sm', 'sk', 'sl', 'se', 'ch', 'gb', 'uk',
+            'fi',
+            'at',
+            'pt',
+            'be',
+            'bg',
+            'es',
+            'hr',
+            'cy',
+            'cz',
+            'dk',
+            'ee',
+            'fr',
+            'gf',
+            'de',
+            'gi',
+            'gr',
+            'gp',
+            'gg',
+            'hu',
+            'is',
+            'ie',
+            'im',
+            'it',
+            'je',
+            'lv',
+            'li',
+            'lt',
+            'lu',
+            'mt',
+            'mq',
+            'yt',
+            'mc',
+            'nl',
+            'no',
+            'pl',
+            're',
+            'ro',
+            'bl',
+            'mf',
+            'pm',
+            'sm',
+            'sk',
+            'sl',
+            'se',
+            'ch',
+            'gb',
+            'uk',
         ],
         'mybank' => [],
         'trustly' => ['at', 'de', 'ee', 'es', 'fi', 'lt', 'lv', 'nl'],
         'satispay' => [
-            'at', 'be', 'bg', 'hr', 'cy', 'cz', 'dk', 'ee', 'fi', 'fr', 'de', 'gr', 'hu', 'is', 'ie',
-            'it', 'lv', 'lt', 'lu', 'mt', 'nl', 'no', 'pl', 'pt', 'ro', 'sk', 'si', 'es', 'se', 'ch',
-            'li', 'gb', 'tr',
+            'at',
+            'be',
+            'bg',
+            'hr',
+            'cy',
+            'cz',
+            'dk',
+            'ee',
+            'fi',
+            'fr',
+            'de',
+            'gr',
+            'hu',
+            'is',
+            'ie',
+            'it',
+            'lv',
+            'lt',
+            'lu',
+            'mt',
+            'nl',
+            'no',
+            'pl',
+            'pt',
+            'ro',
+            'sk',
+            'si',
+            'es',
+            'se',
+            'ch',
+            'li',
+            'gb',
+            'tr',
         ],
         'riverty' => ['nl', 'be', 'de', 'at'],
         'payconiq' => [],
@@ -108,7 +183,7 @@ class Config
     const MOLLIE_ENVIRONMENT = 'MOLLIE_ENVIRONMENT';
     const MOLLIE_API_KEY = 'MOLLIE_API_KEY';
     const MOLLIE_API_KEY_TEST = 'MOLLIE_API_KEY_TEST';
-    const MOLLIE_API_KEY_TESTING_BUTTON = 'MOLLIE_API_KEY_TESTING_BUTTON';
+    // MOLLIE_API_KEY_TESTING_BUTTON removed - functionality moved to AdminMollieAuthentication
     const MOLLIE_FORM_PAYMENT_OPTION_POSITION = 'payment_option_position';
     const MOLLIE_ACCOUNT_SWITCH = 'MOLLIE_ACCOUNT_SWITCH';
     const MOLLIE_PAYMENTSCREEN_LOCALE = 'MOLLIE_PAYMENTSCREEN_LOCALE';
@@ -283,11 +358,9 @@ class Config
         PaymentMethod::BILLIE,
     ];
 
-    const ORDER_API_ONLY_METHODS = [
-    ];
+    const ORDER_API_ONLY_METHODS = [];
 
-    const PAYMENT_API_ONLY_METHODS = [
-    ];
+    const PAYMENT_API_ONLY_METHODS = [];
 
     const ROUTE_RESEND_SECOND_CHANCE_PAYMENT_MESSAGE = 'mollie_module_admin_resend_payment_message';
 

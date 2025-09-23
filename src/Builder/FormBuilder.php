@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -188,137 +189,8 @@ class FormBuilder
             'value' => 0,
         ];
 
-        if ($isApiKeyProvided) {
-            $input[] = [
-                'type' => 'select',
-                'label' => $this->module->l('Environment', self::FILE_NAME),
-                'tab' => $generalSettings,
-                'name' => Config::MOLLIE_ENVIRONMENT,
-                'options' => [
-                    'query' => [
-                        [
-                            'id' => Config::ENVIRONMENT_TEST,
-                            'name' => $this->module->l('Test', self::FILE_NAME),
-                        ],
-                        [
-                            'id' => Config::ENVIRONMENT_LIVE,
-                            'name' => $this->module->l('Live', self::FILE_NAME),
-                        ],
-                    ],
-                    'id' => 'id',
-                    'name' => 'name',
-                ],
-            ];
-
-            $input[] = [
-                'type' => 'mollie-password',
-                'label' => $this->module->l('API Key Test', self::FILE_NAME),
-                'tab' => $generalSettings,
-                'desc' => TagsUtility::ppTags(
-                    $this->module->l('Go to your [1]Mollie account[/1] to get your API keys. They start with test and live.', self::FILE_NAME),
-                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
-                ),
-                'name' => Config::MOLLIE_API_KEY_TEST,
-                'required' => true,
-                'class' => 'fixed-width-xxl',
-                'form_group_class' => 'js-test-api-group',
-            ];
-
-            $input[] = [
-                'type' => 'mollie-password',
-                'label' => $this->module->l('Live API key', self::FILE_NAME),
-                'tab' => $generalSettings,
-                'name' => Config::MOLLIE_API_KEY,
-                'required' => true,
-                'class' => 'fixed-width-xxl',
-                'form_group_class' => 'js-live-api-group',
-            ];
-
-            $input[] = [
-                'type' => 'mollie-button',
-                'label' => '',
-                'tab' => $generalSettings,
-                'name' => Config::MOLLIE_API_KEY_TESTING_BUTTON,
-                'text' => $this->module->l('Test API key', self::FILE_NAME),
-                'class' => 'js-test-api-keys',
-                'form_group_class' => 'js-api-key-test',
-            ];
-
-            $input[] = [
-                'type' => 'mollie-h3',
-                'tab' => $generalSettings,
-                'name' => '',
-                'title' => '',
-            ];
-        } else {
-            $input[] = [
-                'type' => 'mollie-switch',
-                'label' => $this->module->l('Do you already have a Mollie account?', self::FILE_NAME),
-                'name' => Config::MOLLIE_ACCOUNT_SWITCH,
-                'tab' => $generalSettings,
-                'is_bool' => true,
-                'values' => [
-                    [
-                        'id' => 'active_on',
-                        'value' => true,
-                        'label' => $this->module->l('Enabled', self::FILE_NAME),
-                    ],
-                    [
-                        'id' => 'active_off',
-                        'value' => false,
-                        'label' => $this->module->l('Disabled', self::FILE_NAME),
-                    ],
-                ],
-                'desc' => $this->module->display(
-                    $this->module->getPathUri(), 'views/templates/admin/create_new_account_link.tpl'
-                ),
-            ];
-
-            $input[] = [
-                'type' => 'select',
-                'label' => $this->module->l('Environment', self::FILE_NAME),
-                'tab' => $generalSettings,
-                'name' => Config::MOLLIE_ENVIRONMENT,
-                'options' => [
-                    'query' => [
-                        [
-                            'id' => Config::ENVIRONMENT_TEST,
-                            'name' => $this->module->l('Test', self::FILE_NAME),
-                        ],
-                        [
-                            'id' => Config::ENVIRONMENT_LIVE,
-                            'name' => $this->module->l('Live', self::FILE_NAME),
-                        ],
-                    ],
-                    'id' => 'id',
-                    'name' => 'name',
-                ],
-            ];
-
-            $input[] = [
-                'type' => 'mollie-password',
-                'label' => $this->module->l('API Key Live', self::FILE_NAME),
-                'tab' => $generalSettings,
-                'name' => Config::MOLLIE_API_KEY,
-                'required' => true,
-                'class' => 'fixed-width-xxl',
-                'form_group_class' => 'js-live-api-group',
-            ];
-
-            $input[] = [
-                'type' => 'mollie-password',
-                'label' => $this->module->l('API Key Test', self::FILE_NAME),
-                'tab' => $generalSettings,
-                'desc' => TagsUtility::ppTags(
-                    $this->module->l('You can find your API key in your [1]Mollie Profile[/1]', self::FILE_NAME),
-                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
-                ),
-                'name' => Config::MOLLIE_API_KEY_TEST,
-                'required' => true,
-                'class' => 'fixed-width-xxl',
-                'form_group_class' => 'js-test-api-group',
-            ];
-        }
+        // Authentication is now handled in separate AdminMollieAuthentication tab
+        // No authentication UI needed in settings
 
         if (!$isApiKeyProvided) {
             return $input;
@@ -579,9 +451,11 @@ class FormBuilder
             'title' => $this->module->l('Order statuses', self::FILE_NAME),
         ];
 
-        foreach (array_filter($statuses, function ($status) use ($statusOptions) {
-            return in_array($status['name'], $statusOptions);
-        }) as $status) {
+        foreach (
+            array_filter($statuses, function ($status) use ($statusOptions) {
+                return in_array($status['name'], $statusOptions);
+            }) as $status
+        ) {
             if (!in_array($status['name'], [Config::PARTIAL_REFUND_CODE, Config::MOLLIE_AWAITING_PAYMENT, PaymentStatus::STATUS_OPEN])) {
                 $input[] = [
                     'type' => 'switch',
@@ -750,7 +624,7 @@ class FormBuilder
             $orderStatuses[$i]['name'] = $orderStatuses[$i]['id_order_state'] . ' - ' . $orderStatuses[$i]['name'];
         }
 
-//        AssortUtility::aasort($orderStatuses, 'id_order_state');
+        //        AssortUtility::aasort($orderStatuses, 'id_order_state');
 
         $this->smarty->assign([
             'logs' => $this->link->getAdminLink('AdminLogs'),

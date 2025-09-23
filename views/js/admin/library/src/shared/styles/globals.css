@@ -143,14 +143,18 @@
     padding: 0 !important;
   }
 
-  /* Force button text colors for mode toggle */
-  #mollie-authentication-root button[style*="background-color: rgb(0, 64, 255)"] {
-    color: #ffffff !important;
-  }
+/* Force button text colors and font styling for mode toggle */
+#mollie-authentication-root button[style*="background-color: rgb(0, 64, 255)"] {
+  color: #ffffff !important;
+  font-size: 0.875rem !important;
+  font-weight: 700 !important;
+}
 
-  #mollie-authentication-root button:not([style*="background-color: rgb(0, 64, 255)"]) {
-    color: #000000 !important;
-  }
+#mollie-authentication-root button:not([style*="background-color: rgb(0, 64, 255)"]) {
+  color: #000000 !important;
+  font-size: 0.875rem !important;
+  font-weight: 700 !important;
+}
 
   /* Force specific margin for Need Help heading */
   #mollie-authentication-root h3.text-center {

@@ -37,7 +37,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
     /**
      * Initialize the authentication page
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -55,6 +55,41 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         Media::addJsDef([
             'mollieAuthAjaxUrl' => addslashes($this->context->link->getAdminLink('AdminMollieAuthentication')),
         ]);
+
+        // Add translations for React app
+        Media::addJsDef([
+            'mollieAuthTranslations' => [
+                'mode' => $this->module->l('Mode', self::FILE_NAME),
+                'modeDescription' => $this->module->l('Choose operational mode for API.', self::FILE_NAME),
+                'live' => $this->module->l('Live', self::FILE_NAME),
+                'test' => $this->module->l('Test', self::FILE_NAME),
+                'testApiKey' => $this->module->l('Test API Key', self::FILE_NAME),
+                'liveApiKey' => $this->module->l('Live API Key', self::FILE_NAME),
+                'apiKeyPlaceholder' => $this->module->l('Enter your API key here', self::FILE_NAME),
+                'apiKeyDescription' => $this->module->l('Required for connecting to the %s mode.', self::FILE_NAME),
+                'connect' => $this->module->l('Connect', self::FILE_NAME),
+                'connecting' => $this->module->l('Connecting...', self::FILE_NAME),
+                'connected' => $this->module->l('Connected', self::FILE_NAME),
+                'connectedSuccessfully' => $this->module->l('Connected successfully!', self::FILE_NAME),
+                'show' => $this->module->l('Show', self::FILE_NAME),
+                'hide' => $this->module->l('Hide', self::FILE_NAME),
+                'whereApiKey' => $this->module->l('Where can I find my API key?', self::FILE_NAME),
+                'needHelp' => $this->module->l('Need Help?', self::FILE_NAME),
+                'getStarted' => $this->module->l('Get started', self::FILE_NAME),
+                'mollieDocumentation' => $this->module->l('Mollie documentation', self::FILE_NAME),
+                'paymentsQuestions' => $this->module->l('Payments related questions', self::FILE_NAME),
+                'contactMollieSupport' => $this->module->l('Contact Mollie Support', self::FILE_NAME),
+                'integrationQuestions' => $this->module->l('Integration questions', self::FILE_NAME),
+                'contactModuleDeveloper' => $this->module->l('Contact module developer', self::FILE_NAME),
+                'newToMollie' => $this->module->l('New to Mollie?', self::FILE_NAME),
+                'createAccount' => $this->module->l('Create a Mollie account', self::FILE_NAME),
+                'apiConfiguration' => $this->module->l('API Configuration', self::FILE_NAME),
+                'selectModeDescription' => $this->module->l('Select your operational mode and input API keys below.', self::FILE_NAME),
+                'connectionFailed' => $this->module->l('Connection failed. Please check your API key.', self::FILE_NAME),
+                'failedToLoadSettings' => $this->module->l('Failed to load current settings', self::FILE_NAME),
+                'failedToSwitchEnvironment' => $this->module->l('Failed to switch environment', self::FILE_NAME),
+            ]
+        ]);
         $this->content = $this->context->smarty->fetch(
             $this->module->getLocalPath() . 'views/templates/admin/authentication/authentication.tpl'
         );
@@ -63,7 +98,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
     /**
      * Handle AJAX requests
      */
-    public function displayAjax()
+    public function displayAjax(): void
     {
         if (!Tools::isSubmit('ajax')) {
             return;
@@ -99,7 +134,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
      * @throws PrestaShopException
      * @throws SmartyException
      */
-    private function ajaxTestApiKeys()
+    private function ajaxTestApiKeys(): void
     {
         $testKey = Tools::getValue('testKey');
         $liveKey = Tools::getValue('liveKey');
@@ -111,15 +146,17 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         $apiKeysTestInfo = $apiTestFeedbackBuilder->buildParams();
 
         $this->context->smarty->assign($apiKeysTestInfo);
+        // Return structured data instead of HTML template (api_test_results.tpl was removed)
         $this->ajaxRender(json_encode([
-            'template' => $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/api_test_results.tpl'),
+            'success' => true,
+            'data' => $apiKeysTestInfo
         ]));
     }
 
     /**
      * Get current API key settings
      */
-    private function ajaxGetCurrentSettings()
+    private function ajaxGetCurrentSettings(): void
     {
         try {
             $testApiKey = Configuration::get(Config::MOLLIE_API_KEY_TEST);
@@ -170,7 +207,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
     /**
      * Save API key to configuration
      */
-    private function ajaxSaveApiKey()
+    private function ajaxSaveApiKey(): void
     {
         try {
             $apiKey = Tools::getValue('api_key');
@@ -234,7 +271,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
     /**
      * Switch environment between test and live
      */
-    private function ajaxSwitchEnvironment()
+    private function ajaxSwitchEnvironment(): void
     {
         try {
             $environment = Tools::getValue('environment'); // 'test' or 'live'

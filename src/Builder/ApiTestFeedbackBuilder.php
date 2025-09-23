@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -42,7 +43,7 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
      */
     private $liveKey;
 
-    public function __construct($moduleVersion, ApiKeyService $apiKeyService)
+    public function __construct(string $moduleVersion, ApiKeyService $apiKeyService)
     {
         $this->apiKeyService = $apiKeyService;
         $this->moduleVersion = $moduleVersion;
@@ -51,7 +52,7 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
     /**
      * @return string
      */
-    public function getTestKey()
+    public function getTestKey(): ?string
     {
         return $this->testKey;
     }
@@ -59,7 +60,7 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
     /**
      * @param string $testKey
      */
-    public function setTestKey($testKey)
+    public function setTestKey(string $testKey): void
     {
         $this->testKey = $testKey;
     }
@@ -67,7 +68,7 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
     /**
      * @return string
      */
-    public function getLiveKey()
+    public function getLiveKey(): ?string
     {
         return $this->liveKey;
     }
@@ -75,7 +76,7 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
     /**
      * @param string $liveKey
      */
-    public function setLiveKey($liveKey)
+    public function setLiveKey(string $liveKey): void
     {
         $this->liveKey = $liveKey;
     }
@@ -83,7 +84,7 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
     /**
      * @return array
      */
-    public function buildParams()
+    public function buildParams(): array
     {
         $testKeyInfo = $this->getApiKeyInfo($this->testKey, true);
         $liveKeyInfo = $this->getApiKeyInfo($this->liveKey, false);
@@ -100,7 +101,7 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
      *
      * @return array
      */
-    public function getApiKeysTestResult($testKey, $liveKey)
+    public function getApiKeysTestResult(string $testKey, string $liveKey): array
     {
         $testKeyInfo = $this->getApiKeyInfo($testKey);
         $liveKeyInfo = $this->getApiKeyInfo($liveKey);
@@ -117,7 +118,7 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
      *
      * @return array
      */
-    public function getApiKeyInfo($apiKey, $isTestKey = true)
+    public function getApiKeyInfo(string $apiKey, bool $isTestKey = true): array
     {
         if (!$apiKey) {
             return [
@@ -158,7 +159,7 @@ class ApiTestFeedbackBuilder implements TemplateBuilderInterface
      *
      * @return array
      */
-    private function getPaymentMethodsAsArray($methods)
+    private function getPaymentMethodsAsArray($methods): array
     {
         $methodNameArray = [];
 

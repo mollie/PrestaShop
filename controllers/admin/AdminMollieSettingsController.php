@@ -192,7 +192,7 @@ class AdminMollieSettingsController extends ModuleAdminController
         $this->context->controller->addJS($this->module->getPathUri() . 'views/js/admin/settings.js');
         $this->context->controller->addJS($this->module->getPathUri() . 'views/js/admin/custom_logo.js');
         $this->context->controller->addJS($this->module->getPathUri() . 'views/js/admin/upgrade_notice.js');
-        $this->context->controller->addJS($this->module->getPathUri() . 'views/js/admin/api_key_test.js');
+        // API key test JS removed - functionality moved to AdminMollieAuthentication
         $this->context->controller->addJS($this->module->getPathUri() . 'views/js/admin/init_mollie_account.js');
         $this->context->controller->addCSS($this->module->getPathUri() . 'views/css/mollie.css');
         $this->context->controller->addCSS($this->module->getPathUri() . 'views/css/admin/logo_input.css');
