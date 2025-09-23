@@ -5,6 +5,7 @@ import { ExternalLink, CheckCircle } from "lucide-react"
 import { Button } from "../../../shared/components/ui/button"
 import { Input } from "../../../shared/components/ui/input"
 import { authApiService } from "../../../services/AuthenticationApiService"
+import { useTranslations } from "../../../shared/hooks/use-translations"
 
 // Mollie Logo Component
 const MollieLogo = () => (
@@ -64,6 +65,7 @@ const SkeletonConnectButton = () => (
 )
 
 export default function AuthorizationForm() {
+  const { t } = useTranslations()
   const [mode, setMode] = useState<"live" | "test">("live")
   const [apiKey, setApiKey] = useState("")
   const [isConnected, setIsConnected] = useState(false)
@@ -120,13 +122,13 @@ export default function AuthorizationForm() {
       } else {
         setIsConnected(false)
         setJustConnected(false)
-        setErrorMessage(saveResponse.message || "Failed to save API key")
+        setErrorMessage(saveResponse.message || t('connectionFailed'))
       }
     } catch (error) {
       console.error('Failed to connect:', error)
       setIsConnected(false)
       setJustConnected(false)
-      setErrorMessage("Connection failed. Please check your API key.")
+      setErrorMessage(t('connectionFailed'))
     } finally {
       setIsLoading(false)
     }
@@ -156,11 +158,11 @@ export default function AuthorizationForm() {
         }
       } else {
         console.error('Failed to switch environment:', switchResponse.message)
-        setErrorMessage(switchResponse.message || "Failed to switch environment")
+        setErrorMessage(switchResponse.message || t('failedToSwitchEnvironment'))
       }
     } catch (error) {
       console.error('Failed to switch environment:', error)
-      setErrorMessage("Failed to switch environment")
+      setErrorMessage(t('failedToSwitchEnvironment'))
     }
   }
 
@@ -174,14 +176,14 @@ export default function AuthorizationForm() {
               <div className="mb-4">
                 <MollieLogo />
               </div>
-              <h2 className="text-4xl font-medium text-black mb-4">API Configuration</h2>
-              <p className="text-black text-lg font-medium">Select your operational mode and input API keys below.</p>
+              <h2 className="text-4xl font-medium text-black mb-4">{t('apiConfiguration')}</h2>
+              <p className="text-black text-lg font-medium">{t('selectModeDescription')}</p>
             </div>
 
             <div>
-              <h3 className="text-lg font-medium text-black mb-2">New to Mollie?</h3>
+              <h3 className="text-lg font-medium text-black mb-2">{t('newToMollie')}</h3>
               <a href="#" style={{color: 'rgba(0, 64, 255, 1)'}} className="hover:opacity-80 underline text-base font-medium">
-                Create a Mollie account
+                {t('createAccount')}
               </a>
             </div>
           </div>
@@ -193,7 +195,7 @@ export default function AuthorizationForm() {
               <SkeletonModeToggle />
             ) : (
               <div>
-                <label className="block text-sm font-medium text-black mb-2">Mode</label>
+                <label className="block text-sm font-medium text-black mb-2">{t('mode')}</label>
                 <div className="flex rounded-lg overflow-hidden border border-gray-200">
                   <button
                     onClick={() => handleModeChange("live")}
@@ -202,7 +204,7 @@ export default function AuthorizationForm() {
                     }`}
                     style={mode === "live" ? {backgroundColor: 'rgba(0, 64, 255, 1)'} : {}}
                   >
-                    Live
+                    {t('live')}
                   </button>
                   <button
                     onClick={() => handleModeChange("test")}
@@ -211,10 +213,10 @@ export default function AuthorizationForm() {
                     }`}
                     style={mode === "test" ? {backgroundColor: 'rgba(0, 64, 255, 1)'} : {}}
                   >
-                    Test
+                    {t('test')}
                   </button>
                 </div>
-                <p className="text-sm text-black mt-2">Choose operational mode for API.</p>
+                <p className="text-sm text-black mt-2">{t('modeDescription')}</p>
               </div>
             )}
 
@@ -225,12 +227,12 @@ export default function AuthorizationForm() {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <label className="text-sm font-medium text-black">
-                    {mode === "live" ? "Live API Key" : "Test API Key"}
+                    {mode === "live" ? t('liveApiKey') : t('testApiKey')}
                   </label>
                   {isConnected && (
                     <div className="flex items-center gap-1 text-green-600">
                       <CheckCircle className="h-4 w-4" />
-                      <span className="text-sm font-medium">Connected</span>
+                      <span className="text-sm font-medium">{t('connected')}</span>
                     </div>
                   )}
                 </div>
@@ -240,7 +242,7 @@ export default function AuthorizationForm() {
                     type={showApiKey ? "text" : "password"}
                     value={apiKey}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApiKey(e.target.value)}
-                    placeholder="Enter your API key here"
+                    placeholder={t('apiKeyPlaceholder')}
                     className="pr-20 h-12 text-base border-gray-300"
                   />
                   {apiKey && (
@@ -249,12 +251,12 @@ export default function AuthorizationForm() {
                       onClick={() => setShowApiKey(!showApiKey)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500 hover:text-gray-700"
                     >
-                      {showApiKey ? "Hide" : "Show"}
+                      {showApiKey ? t('hide') : t('show')}
                     </button>
                   )}
                 </div>
 
-                <p className="text-sm text-black mt-2">Required for connecting to the {mode} mode.</p>
+                <p className="text-sm text-black mt-2">{t('apiKeyDescription', mode)}</p>
               </div>
             )}
 
@@ -275,14 +277,14 @@ export default function AuthorizationForm() {
                   className="w-full h-12 text-base font-medium text-white mb-4 hover:opacity-90"
                   style={{backgroundColor: 'rgba(0, 64, 255, 1)'}}
                 >
-                  {isLoading ? "Connecting..." : "Connect"}
+                  {isLoading ? t('connecting') : t('connect')}
                 </Button>
 
                 {/* Connection Status - only show after successful connect action */}
                 {justConnected && (
                   <div className="flex items-center gap-2 mb-4 p-3 bg-green-50 border border-green-200 rounded-md">
                     <CheckCircle className="h-5 w-5 text-green-600" />
-                    <span className="text-green-800 font-medium">Connected successfully!</span>
+                    <span className="text-green-800 font-medium">{t('connectedSuccessfully')}</span>
                   </div>
                 )}
 
@@ -297,7 +299,7 @@ export default function AuthorizationForm() {
                 <div className="flex items-center gap-2">
                   <ExternalLink className="h-4 w-4" style={{color: 'rgba(0, 64, 255, 1)'}} />
                   <a href="#" style={{color: 'rgba(0, 64, 255, 1)'}} className="hover:opacity-80 underline text-sm font-medium">
-                    Where can I find my API key?
+                    {t('whereApiKey')}
                   </a>
                 </div>
               </>
@@ -309,27 +311,27 @@ export default function AuthorizationForm() {
           {/* Need Help Section */}
           <div>
             <div className="border-t border-gray-200 mb-4"></div>
-            <h3 className="text-xl font-medium text-black mb-12 text-center">Need Help?</h3>
+            <h3 className="text-xl font-medium text-black mb-12 text-center">{t('needHelp')}</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center p-6 border border-gray-200 rounded-lg bg-white hover:shadow-sm transition-shadow">
-                <h4 className="font-medium text-black mb-3">Get started</h4>
+                <h4 className="font-medium text-black mb-3">{t('getStarted')}</h4>
                 <a href="#" style={{color: 'rgba(0, 64, 255, 1)'}} className="hover:opacity-80 underline text-sm font-medium">
-                  Mollie documentation
+                  {t('mollieDocumentation')}
                 </a>
               </div>
 
               <div className="text-center p-6 border border-gray-200 rounded-lg bg-white hover:shadow-sm transition-shadow">
-                <h4 className="font-medium text-black mb-3">Payments related questions</h4>
+                <h4 className="font-medium text-black mb-3">{t('paymentsQuestions')}</h4>
                 <a href="#" style={{color: 'rgba(0, 64, 255, 1)'}} className="hover:opacity-80 underline text-sm font-medium">
-                  Contact Mollie Support
+                  {t('contactMollieSupport')}
                 </a>
               </div>
 
               <div className="text-center p-6 border border-gray-200 rounded-lg bg-white hover:shadow-sm transition-shadow">
-                <h4 className="font-medium text-black mb-3">Integration questions</h4>
+                <h4 className="font-medium text-black mb-3">{t('integrationQuestions')}</h4>
                 <a href="#" style={{color: 'rgba(0, 64, 255, 1)'}} className="hover:opacity-80 underline text-sm font-medium">
-                  Contact module developer
+                  {t('contactModuleDeveloper')}
                 </a>
               </div>
             </div>

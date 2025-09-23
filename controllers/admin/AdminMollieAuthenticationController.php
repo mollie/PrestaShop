@@ -15,6 +15,9 @@ declare(strict_types=1);
 
 use Mollie\Config\Config;
 use Mollie\Builder\ApiTestFeedbackBuilder;
+use Mollie\Adapter\ToolsAdapter;
+use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Exception\MollieException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -27,11 +30,19 @@ class AdminMollieAuthenticationController extends ModuleAdminController
     /** @var Mollie */
     public $module;
 
+    /** @var ToolsAdapter */
+    private $tools;
+
+    /** @var ConfigurationAdapter */
+    private $configuration;
+
     public function __construct()
     {
         parent::__construct();
         $this->bootstrap = true;
         $this->context = Context::getContext();
+        $this->tools = $this->module->getService(ToolsAdapter::class);
+        $this->configuration = $this->module->getService(ConfigurationAdapter::class);
     }
 
     /**
@@ -59,35 +70,35 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         // Add translations for React app
         Media::addJsDef([
             'mollieAuthTranslations' => [
-                'mode' => $this->module->l('Mode', self::FILE_NAME),
-                'modeDescription' => $this->module->l('Choose operational mode for API.', self::FILE_NAME),
-                'live' => $this->module->l('Live', self::FILE_NAME),
-                'test' => $this->module->l('Test', self::FILE_NAME),
-                'testApiKey' => $this->module->l('Test API Key', self::FILE_NAME),
-                'liveApiKey' => $this->module->l('Live API Key', self::FILE_NAME),
-                'apiKeyPlaceholder' => $this->module->l('Enter your API key here', self::FILE_NAME),
-                'apiKeyDescription' => $this->module->l('Required for connecting to the %s mode.', self::FILE_NAME),
-                'connect' => $this->module->l('Connect', self::FILE_NAME),
-                'connecting' => $this->module->l('Connecting...', self::FILE_NAME),
-                'connected' => $this->module->l('Connected', self::FILE_NAME),
-                'connectedSuccessfully' => $this->module->l('Connected successfully!', self::FILE_NAME),
-                'show' => $this->module->l('Show', self::FILE_NAME),
-                'hide' => $this->module->l('Hide', self::FILE_NAME),
-                'whereApiKey' => $this->module->l('Where can I find my API key?', self::FILE_NAME),
-                'needHelp' => $this->module->l('Need Help?', self::FILE_NAME),
-                'getStarted' => $this->module->l('Get started', self::FILE_NAME),
-                'mollieDocumentation' => $this->module->l('Mollie documentation', self::FILE_NAME),
-                'paymentsQuestions' => $this->module->l('Payments related questions', self::FILE_NAME),
-                'contactMollieSupport' => $this->module->l('Contact Mollie Support', self::FILE_NAME),
-                'integrationQuestions' => $this->module->l('Integration questions', self::FILE_NAME),
-                'contactModuleDeveloper' => $this->module->l('Contact module developer', self::FILE_NAME),
-                'newToMollie' => $this->module->l('New to Mollie?', self::FILE_NAME),
-                'createAccount' => $this->module->l('Create a Mollie account', self::FILE_NAME),
-                'apiConfiguration' => $this->module->l('API Configuration', self::FILE_NAME),
-                'selectModeDescription' => $this->module->l('Select your operational mode and input API keys below.', self::FILE_NAME),
-                'connectionFailed' => $this->module->l('Connection failed. Please check your API key.', self::FILE_NAME),
-                'failedToLoadSettings' => $this->module->l('Failed to load current settings', self::FILE_NAME),
-                'failedToSwitchEnvironment' => $this->module->l('Failed to switch environment', self::FILE_NAME),
+                'mode' => addslashes($this->module->l('Mode', self::FILE_NAME)),
+                'modeDescription' => addslashes($this->module->l('Choose operational mode for API.', self::FILE_NAME)),
+                'live' => addslashes($this->module->l('Live', self::FILE_NAME)),
+                'test' => addslashes($this->module->l('Test', self::FILE_NAME)),
+                'testApiKey' => addslashes($this->module->l('Test API Key', self::FILE_NAME)),
+                'liveApiKey' => addslashes($this->module->l('Live API Key', self::FILE_NAME)),
+                'apiKeyPlaceholder' => addslashes($this->module->l('Enter your API key here', self::FILE_NAME)),
+                'apiKeyDescription' => addslashes($this->module->l('Required for connecting to the %s mode.', self::FILE_NAME)),
+                'connect' => addslashes($this->module->l('Connect', self::FILE_NAME)),
+                'connecting' => addslashes($this->module->l('Connecting...', self::FILE_NAME)),
+                'connected' => addslashes($this->module->l('Connected', self::FILE_NAME)),
+                'connectedSuccessfully' => addslashes($this->module->l('Connected successfully!', self::FILE_NAME)),
+                'show' => addslashes($this->module->l('Show', self::FILE_NAME)),
+                'hide' => addslashes($this->module->l('Hide', self::FILE_NAME)),
+                'whereApiKey' => addslashes($this->module->l('Where can I find my API key?', self::FILE_NAME)),
+                'needHelp' => addslashes($this->module->l('Need Help?', self::FILE_NAME)),
+                'getStarted' => addslashes($this->module->l('Get started', self::FILE_NAME)),
+                'mollieDocumentation' => addslashes($this->module->l('Mollie documentation', self::FILE_NAME)),
+                'paymentsQuestions' => addslashes($this->module->l('Payments related questions', self::FILE_NAME)),
+                'contactMollieSupport' => addslashes($this->module->l('Contact Mollie Support', self::FILE_NAME)),
+                'integrationQuestions' => addslashes($this->module->l('Integration questions', self::FILE_NAME)),
+                'contactModuleDeveloper' => addslashes($this->module->l('Contact module developer', self::FILE_NAME)),
+                'newToMollie' => addslashes($this->module->l('New to Mollie?', self::FILE_NAME)),
+                'createAccount' => addslashes($this->module->l('Create a Mollie account', self::FILE_NAME)),
+                'apiConfiguration' => addslashes($this->module->l('API Configuration', self::FILE_NAME)),
+                'selectModeDescription' => addslashes($this->module->l('Select your operational mode and input API keys below.', self::FILE_NAME)),
+                'connectionFailed' => addslashes($this->module->l('Connection failed. Please check your API key.', self::FILE_NAME)),
+                'failedToLoadSettings' => addslashes($this->module->l('Failed to load current settings', self::FILE_NAME)),
+                'failedToSwitchEnvironment' => addslashes($this->module->l('Failed to switch environment', self::FILE_NAME)),
             ]
         ]);
         $this->content = $this->context->smarty->fetch(
@@ -100,11 +111,11 @@ class AdminMollieAuthenticationController extends ModuleAdminController
      */
     public function displayAjax(): void
     {
-        if (!Tools::isSubmit('ajax')) {
+        if (!$this->tools->isSubmit('ajax')) {
             return;
         }
 
-        $action = Tools::getValue('action');
+        $action = $this->tools->getValue('action');
 
         switch ($action) {
             case 'testApiKeys':
@@ -136,8 +147,8 @@ class AdminMollieAuthenticationController extends ModuleAdminController
      */
     private function ajaxTestApiKeys(): void
     {
-        $testKey = Tools::getValue('testKey');
-        $liveKey = Tools::getValue('liveKey');
+        $testKey = $this->tools->getValue('testKey');
+        $liveKey = $this->tools->getValue('liveKey');
 
         /** @var ApiTestFeedbackBuilder $apiTestFeedbackBuilder */
         $apiTestFeedbackBuilder = $this->module->getService(ApiTestFeedbackBuilder::class);
@@ -159,9 +170,9 @@ class AdminMollieAuthenticationController extends ModuleAdminController
     private function ajaxGetCurrentSettings(): void
     {
         try {
-            $testApiKey = Configuration::get(Config::MOLLIE_API_KEY_TEST);
-            $liveApiKey = Configuration::get(Config::MOLLIE_API_KEY);
-            $environment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
+            $testApiKey = $this->configuration->get(Config::MOLLIE_API_KEY_TEST);
+            $liveApiKey = $this->configuration->get(Config::MOLLIE_API_KEY);
+            $environment = $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
 
             // Check if current API keys are valid using ApiTestFeedbackBuilder
             /** @var ApiTestFeedbackBuilder $apiTestFeedbackBuilder */
@@ -198,8 +209,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         } catch (Exception $e) {
             $this->ajaxRender(json_encode([
                 'success' => false,
-                'message' => 'Failed to load settings',
-                'error' => $e->getMessage()
+                'message' => $this->module->l('Failed to load current settings', self::FILE_NAME)
             ]));
         }
     }
@@ -210,11 +220,11 @@ class AdminMollieAuthenticationController extends ModuleAdminController
     private function ajaxSaveApiKey(): void
     {
         try {
-            $apiKey = Tools::getValue('api_key');
-            $environment = Tools::getValue('environment'); // 'test' or 'live'
+            $apiKey = $this->tools->getValue('api_key');
+            $environment = $this->tools->getValue('environment'); // 'test' or 'live'
 
             if (!$apiKey || !$environment) {
-                throw new Exception('Missing required parameters');
+                throw new MollieException($this->module->l('Missing required parameters', self::FILE_NAME));
             }
 
             // Validate API key using ApiTestFeedbackBuilder
@@ -245,11 +255,11 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             $configKey = ($environment === 'live') ? Config::MOLLIE_API_KEY : Config::MOLLIE_API_KEY_TEST;
 
             // Save to configuration
-            Configuration::updateValue($configKey, $apiKey);
+            $this->configuration->updateValue($configKey, $apiKey);
 
             // Also update environment setting
             $environmentValue = ($environment === 'live') ? Config::ENVIRONMENT_LIVE : Config::ENVIRONMENT_TEST;
-            Configuration::updateValue(Config::MOLLIE_ENVIRONMENT, $environmentValue);
+            $this->configuration->updateValue(Config::MOLLIE_ENVIRONMENT, $environmentValue);
 
             $this->ajaxRender(json_encode([
                 'success' => true,
@@ -259,11 +269,15 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                     'methods' => $keyInfo['methods'] ?? []
                 ]
             ]));
+        } catch (MollieException $e) {
+            $this->ajaxRender(json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]));
         } catch (Exception $e) {
             $this->ajaxRender(json_encode([
                 'success' => false,
-                'message' => 'Failed to save API key',
-                'error' => $e->getMessage()
+                'message' => $this->module->l('Failed to save API key', self::FILE_NAME)
             ]));
         }
     }
@@ -274,21 +288,21 @@ class AdminMollieAuthenticationController extends ModuleAdminController
     private function ajaxSwitchEnvironment(): void
     {
         try {
-            $environment = Tools::getValue('environment'); // 'test' or 'live'
+            $environment = $this->tools->getValue('environment'); // 'test' or 'live'
 
             if (!$environment || !in_array($environment, ['test', 'live'])) {
-                throw new Exception('Invalid environment parameter. Must be "test" or "live"');
+                throw new MollieException($this->module->l('Invalid environment parameter. Must be "test" or "live"', self::FILE_NAME));
             }
 
             // Convert to configuration value
             $environmentValue = ($environment === 'live') ? Config::ENVIRONMENT_LIVE : Config::ENVIRONMENT_TEST;
 
             // Update environment setting
-            Configuration::updateValue(Config::MOLLIE_ENVIRONMENT, $environmentValue);
+            $this->configuration->updateValue(Config::MOLLIE_ENVIRONMENT, $environmentValue);
 
             // Get the current API keys to determine connection status
-            $testApiKey = Configuration::get(Config::MOLLIE_API_KEY_TEST);
-            $liveApiKey = Configuration::get(Config::MOLLIE_API_KEY);
+            $testApiKey = $this->configuration->get(Config::MOLLIE_API_KEY_TEST);
+            $liveApiKey = $this->configuration->get(Config::MOLLIE_API_KEY);
 
             // Check if the switched environment has a valid API key
             /** @var ApiTestFeedbackBuilder $apiTestFeedbackBuilder */
@@ -316,11 +330,15 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                     'api_key' => $apiKey
                 ]
             ]));
+        } catch (MollieException $e) {
+            $this->ajaxRender(json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]));
         } catch (Exception $e) {
             $this->ajaxRender(json_encode([
                 'success' => false,
-                'message' => 'Failed to switch environment',
-                'error' => $e->getMessage()
+                'message' => $this->module->l('Failed to switch environment', self::FILE_NAME)
             ]));
         }
     }

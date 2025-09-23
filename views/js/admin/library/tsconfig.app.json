@@ -33,6 +33,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "app", "components", "lib", "hooks"],
+  "include": ["src", "app", "components", "lib", "hooks", "src/shared/types"],
   "exclude": ["src/pages/rc", "src/rc"]
 }
