@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -74,7 +75,7 @@ class ApiKeyService
 
         if (($isTestEnv && !preg_match('/^test_\w{30,}$/', $apiKey)) || ($isLiveEnv && !preg_match('/^live_\w{30,}$/', $apiKey))) {
             $expectedPrefix = $isTestEnv ? 'test_' : 'live_';
-            throw new MollieException("Invalid API key: '{$apiKey}'. An API key must start with '{$expectedPrefix}'.");
+            throw new MollieException("Invalid API key format. The API key must start with '{$expectedPrefix}'.");
         }
     }
 }
