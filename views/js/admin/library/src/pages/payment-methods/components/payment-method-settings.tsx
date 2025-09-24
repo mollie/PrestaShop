@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Input } from "../../../shared/components/ui/input"
 import { Label } from "../../../shared/components/ui/label"
 import { Switch } from "../../../shared/components/ui/switch"
@@ -34,13 +34,30 @@ interface MultiSelectProps {
 function RadioSelect({ value, onValueChange, options, placeholder, className }: RadioSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const selectedOption = options.find((opt) => opt.value === value)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isOpen])
 
   return (
-    <div className={cn("relative", className)}>
+    <div ref={dropdownRef} className={cn("relative", className)}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-3 text-sm border border-input bg-background hover:bg-accent hover:text-accent-foreground cursor-pointer rounded-md min-h-[44px]"
+        className="w-full flex items-center justify-between px-4 py-3 text-sm border border-input bg-background hover:bg-gray-100 hover:text-foreground cursor-pointer rounded-md min-h-[44px]"
       >
         <span className={cn(selectedOption ? "text-foreground" : "text-muted-foreground")}>
           {selectedOption?.label || placeholder || "Select option"}
@@ -49,7 +66,7 @@ function RadioSelect({ value, onValueChange, options, placeholder, className }: 
       </button>
 
       {isOpen && (
-        <div className="absolute z-[9999] w-full mt-1 bg-popover border border-border rounded-md shadow-lg animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
+        <div className="absolute z-[99999] w-full mt-1 bg-popover border border-border rounded-md shadow-lg animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
           <div className="p-1">
             {options.map((option) => (
               <button
@@ -59,7 +76,7 @@ function RadioSelect({ value, onValueChange, options, placeholder, className }: 
                   onValueChange(option.value)
                   setIsOpen(false)
                 }}
-                className="w-full flex items-center gap-3 px-3 py-3 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer rounded-sm"
+                className="w-full flex items-center gap-3 px-3 py-3 text-sm hover:bg-gray-100 hover:text-foreground cursor-pointer rounded-sm"
               >
                 <div className="flex items-center justify-center w-4 h-4 shrink-0">
                   <div
@@ -84,6 +101,7 @@ function RadioSelect({ value, onValueChange, options, placeholder, className }: 
 function MultiSelect({ value, onValueChange, options, placeholder, className }: MultiSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const selectedOptions = options.filter((opt) => value.includes(opt.value))
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   const toggleOption = (optionValue: string) => {
     if (value.includes(optionValue)) {
@@ -93,12 +111,28 @@ function MultiSelect({ value, onValueChange, options, placeholder, className }: 
     }
   }
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isOpen])
+
   return (
-    <div className={cn("relative", className)}>
+    <div ref={dropdownRef} className={cn("relative", className)}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-3 text-sm border border-input bg-background hover:bg-accent hover:text-accent-foreground cursor-pointer rounded-md min-h-[44px]"
+        className="w-full flex items-center justify-between px-4 py-3 text-sm border border-input bg-background hover:bg-gray-100 hover:text-foreground cursor-pointer rounded-md min-h-[44px]"
       >
         <span className={cn(selectedOptions.length > 0 ? "text-foreground" : "text-muted-foreground")}>
           {selectedOptions.length > 0 ? `${selectedOptions.length} selected` : placeholder || "Select options"}
@@ -107,14 +141,14 @@ function MultiSelect({ value, onValueChange, options, placeholder, className }: 
       </button>
 
       {isOpen && (
-        <div className="absolute z-[9999] w-full mt-1 bg-popover border border-border rounded-md shadow-lg animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
+        <div className="absolute z-[99999] w-full mt-1 bg-popover border border-border rounded-md shadow-lg animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
           <div className="p-1">
             {options.map((option) => (
               <button
                 key={option.value}
                 type="button"
                 onClick={() => toggleOption(option.value)}
-                className="w-full flex items-center gap-3 px-3 py-3 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer rounded-sm"
+                className="w-full flex items-center gap-3 px-3 py-3 text-sm hover:bg-gray-100 hover:text-foreground cursor-pointer rounded-sm"
               >
                 <div className="flex items-center justify-center w-4 h-4 shrink-0">
                   <div
@@ -148,36 +182,37 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
   const [showRestrictions, setShowRestrictions] = useState(false)
   const [showFees, setShowFees] = useState(false)
   const [showOrderRestrictions, setShowOrderRestrictions] = useState(false)
-  const [selectedCustomerGroups, setSelectedCustomerGroups] = useState<string[]>([])
 
   return (
     <div className="space-y-6">
       {/* Basic Settings */}
-      <div>
-        <h3 className="text-sm font-medium mb-4">Basic settings</h3>
+      <div className="space-y-6">
+        <h3 className="text-sm font-medium">Basic settings</h3>
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-4">
             <div className="space-y-1">
+              <Label className="text-sm font-medium">Activate/Deactivate</Label>
               <div className="flex items-center gap-3">
-                <Label className="text-sm font-medium">Activate/Deactivate</Label>
+                <p className="text-sm text-muted-foreground flex items-center h-6">Enable payment method</p>
                 <Switch
                   checked={method.settings.enabled}
                   onCheckedChange={(enabled: boolean) => onUpdateSettings({ enabled })}
                 />
               </div>
-              <p className="text-sm text-muted-foreground">Enable payment method</p>
             </div>
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-3">
-                <Label className="text-sm font-medium">Use embedded credit card form in the checkout</Label>
-                <Switch
-                  checked={method.settings.mollieComponents}
-                  onCheckedChange={(mollieComponents: boolean) => onUpdateSettings({ mollieComponents })}
-                />
+            {method.type === "card" && (
+              <div className="space-y-1">
+                <Label className="text-base font-semibold">Use embedded credit card form in the checkout</Label>
+                <div className="flex items-center gap-3">
+                  <p className="text-sm text-muted-foreground flex items-center h-6">Enable Mollie Components</p>
+                  <Switch
+                    checked={method.settings.mollieComponents}
+                    onCheckedChange={(mollieComponents: boolean) => onUpdateSettings({ mollieComponents })}
+                  />
+                </div>
               </div>
-              <p className="text-sm text-muted-foreground">Enable Mollie Components</p>
-            </div>
+            )}
           </div>
 
           <div className="space-y-4">
@@ -194,18 +229,20 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
               />
             </div>
 
-            <div className="space-y-1">
-              <div className="flex items-center gap-3">
-                <Label className="text-sm font-medium">
+            {method.type === "card" && (
+              <div className="space-y-1">
+                <Label className="text-base font-semibold">
                   Let customer save their credit card data for future orders
                 </Label>
-                <Switch
-                  checked={method.settings.oneClickPayments}
-                  onCheckedChange={(oneClickPayments: boolean) => onUpdateSettings({ oneClickPayments })}
-                />
+                <div className="flex items-center gap-3">
+                  <p className="text-sm text-muted-foreground flex items-center h-6">Use one-click payments</p>
+                  <Switch
+                    checked={method.settings.oneClickPayments}
+                    onCheckedChange={(oneClickPayments: boolean) => onUpdateSettings({ oneClickPayments })}
+                  />
+                </div>
               </div>
-              <p className="text-sm text-muted-foreground">Use one-click payments</p>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -213,12 +250,12 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
       {/* API Selection and Transaction Description */}
       <div className="grid grid-cols-2 gap-6">
         <div>
-          <h3 className="text-sm font-medium mb-0">API Selection</h3>
+          <div className="text-base font-semibold mb-0">API Selection</div>
           <div className="flex border border-input rounded-md w-full mt-1 overflow-hidden">
             <button
               onClick={() => onUpdateSettings({ apiSelection: "payments" })}
               className={cn(
-                "flex-1 px-4 py-2 text-sm font-medium transition-colors cursor-pointer border-r border-input last:border-r-0",
+                "flex-1 px-4 h-9 text-sm font-medium transition-colors cursor-pointer border-r border-input last:border-r-0 flex items-center justify-center",
                 method.settings.apiSelection === "payments"
                   ? "text-white bg-blue-600"
                   : "text-muted-foreground hover:text-foreground bg-background hover:bg-accent",
@@ -229,7 +266,7 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
             <button
               onClick={() => onUpdateSettings({ apiSelection: "orders" })}
               className={cn(
-                "flex-1 px-4 py-2 text-sm font-medium transition-colors cursor-pointer",
+                "flex-1 px-4 h-9 text-sm font-medium transition-colors cursor-pointer flex items-center justify-center",
                 method.settings.apiSelection === "orders"
                   ? "text-white bg-blue-600"
                   : "text-muted-foreground hover:text-foreground bg-background hover:bg-accent",
@@ -252,7 +289,7 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
         </div>
 
         <div>
-          <Label htmlFor="transaction-description" className="text-sm font-medium">
+          <Label htmlFor="transaction-description" className="text-base font-semibold">
             Transaction Description
           </Label>
           <Input
@@ -284,8 +321,13 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
                 <div>
                   <Label className="text-sm font-medium">Accept payments from</Label>
                   <RadioSelect
-                    value="all"
-                    onValueChange={() => {}}
+                    value={method.settings.paymentRestrictions.acceptFrom}
+                    onValueChange={(value: string) => onUpdateSettings({ 
+                      paymentRestrictions: { 
+                        ...method.settings.paymentRestrictions, 
+                        acceptFrom: value 
+                      } 
+                    })}
                     options={[
                       { value: "all", label: "All countries" },
                       { value: "specific", label: "Specific countries" },
@@ -296,15 +338,23 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
                 </div>
                 <div>
                   <Label className="text-sm font-medium">Exclude payments from specific countries</Label>
-                  <RadioSelect
-                    value="belgium"
-                    onValueChange={() => {}}
+                  <MultiSelect
+                    value={method.settings.paymentRestrictions.excludeCountries}
+                    onValueChange={(value: string[]) => onUpdateSettings({ 
+                      paymentRestrictions: { 
+                        ...method.settings.paymentRestrictions, 
+                        excludeCountries: value 
+                      } 
+                    })}
                     options={[
-                      { value: "belgium", label: "Belgium" },
-                      { value: "us", label: "United States" },
-                      { value: "uk", label: "United Kingdom" },
+                      { value: "BE", label: "Belgium" },
+                      { value: "US", label: "United States" },
+                      { value: "GB", label: "United Kingdom" },
+                      { value: "DE", label: "Germany" },
+                      { value: "FR", label: "France" },
+                      { value: "NL", label: "Netherlands" },
                     ]}
-                    placeholder="Belgium"
+                    placeholder="Select countries to exclude"
                     className="mt-1"
                   />
                 </div>
@@ -312,8 +362,13 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
               <div>
                 <Label className="text-sm font-medium">Exclude Customer Groups</Label>
                 <MultiSelect
-                  value={selectedCustomerGroups}
-                  onValueChange={setSelectedCustomerGroups}
+                  value={method.settings.paymentRestrictions.excludeCustomerGroups}
+                  onValueChange={(value: string[]) => onUpdateSettings({ 
+                    paymentRestrictions: { 
+                      ...method.settings.paymentRestrictions, 
+                      excludeCustomerGroups: value 
+                    } 
+                  })}
                   options={[
                     { value: "guest", label: "Guest" },
                     { value: "group1", label: "Customer Group 1" },
