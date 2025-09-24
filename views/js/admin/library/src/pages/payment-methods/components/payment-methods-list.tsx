@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Info } from "lucide-react"
 import { PaymentMethodTabs } from "./payment-method-tabs"
 import { PaymentMethodsList } from "./payment-methods-list-component"
+import { PaymentMethodsSkeleton } from "./payment-methods-skeleton"
 import { paymentMethodsApiService, type PaymentMethod, type Country, type CustomerGroup } from "../../../services/PaymentMethodsApiService"
 import { usePaymentMethodsTranslations } from "../../../shared/hooks/use-payment-methods-translations"
 
@@ -113,14 +114,7 @@ export default function PaymentMethodsPage() {
   const currentMethods = activeTab === "enabled" ? enabledMethods : disabledMethods
 
   if (isLoading) {
-    return (
-      <div className="max-w-6xl mx-auto p-6 space-y-6">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-semibold text-foreground">{t('paymentMethods')}</h1>
-          <p className="text-sm text-muted-foreground">{t('loadingMethods')}</p>
-        </div>
-      </div>
-    )
+    return <PaymentMethodsSkeleton />
   }
 
   if (errorMessage) {
@@ -163,16 +157,23 @@ export default function PaymentMethodsPage() {
       <PaymentMethodTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* Payment Methods List */}
-      <PaymentMethodsList
-        methods={currentMethods}
-        countries={countries}
-        customerGroups={customerGroups}
-        onToggleExpanded={toggleExpanded}
-        onUpdateSettings={updateMethodSettings}
-        onSaveSettings={saveMethodSettings}
-        onReorder={handleReorder}
-        savingMethodId={savingMethodId || undefined}
-      />
+      {currentMethods.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="text-gray-500 text-lg mb-2">No {activeTab} payment methods</div>
+          <div className="text-gray-400 text-sm">Payment methods will appear here once configured</div>
+        </div>
+      ) : (
+        <PaymentMethodsList
+          methods={currentMethods}
+          countries={countries}
+          customerGroups={customerGroups}
+          onToggleExpanded={toggleExpanded}
+          onUpdateSettings={updateMethodSettings}
+          onSaveSettings={saveMethodSettings}
+          onReorder={handleReorder}
+          savingMethodId={savingMethodId || undefined}
+        />
+      )}
     </div>
   )
 }

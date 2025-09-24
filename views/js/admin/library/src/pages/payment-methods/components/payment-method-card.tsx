@@ -149,14 +149,31 @@ export function PaymentMethodCard({
         {/* Expanded Settings */}
         {method.isExpanded && (
           <div className="mt-6 space-y-6 border-t pt-6 animate-in slide-in-from-top-1 fade-in duration-200 ease-out">
-            <PaymentMethodSettings
-              method={method}
-              countries={countries}
-              customerGroups={customerGroups}
-              onUpdateSettings={onUpdateSettings}
-              onSaveSettings={onSaveSettings}
-              isSaving={isSaving}
-            />
+            {isSaving ? (
+              <div className="space-y-4 animate-pulse">
+                <div className="h-4 bg-gray-200 rounded w-32"></div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div className="h-4 bg-gray-200 rounded w-24"></div>
+                    <div className="h-4 bg-gray-200 rounded w-48"></div>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="h-4 bg-gray-200 rounded w-32"></div>
+                    <div className="h-4 bg-gray-200 rounded w-40"></div>
+                  </div>
+                </div>
+                <div className="h-10 bg-gray-200 rounded w-20 ml-auto"></div>
+              </div>
+            ) : (
+              <PaymentMethodSettings
+                method={method}
+                countries={countries}
+                customerGroups={customerGroups}
+                onUpdateSettings={onUpdateSettings}
+                onSaveSettings={onSaveSettings}
+                isSaving={isSaving}
+              />
+            )}
           </div>
         )}
       </div>
