@@ -85,6 +85,7 @@ class Mollie extends PaymentModule
     const ADMIN_MOLLIE_TAB_CONTROLLER = 'AdminMollieTabParent';
     const ADMIN_MOLLIE_SETTINGS_CONTROLLER = 'AdminMollieSettings';
     const ADMIN_MOLLIE_AUTHENTICATION_CONTROLLER = 'AdminMollieAuthentication';
+    const ADMIN_MOLLIE_PAYMENT_METHODS_CONTROLLER = 'AdminMolliePaymentMethods';
     const ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_PARENT_CONTROLLER = 'AdminMollieSubscriptionOrdersParent';
     const ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_CONTROLLER = 'AdminMollieSubscriptionOrders';
     const ADMIN_MOLLIE_SUBSCRIPTION_FAQ_PARENT_CONTROLLER = 'AdminMollieSubscriptionFAQParent';
@@ -998,6 +999,11 @@ class Mollie extends PaymentModule
             [
                 'name' => $this->l('Authentication'),
                 'class_name' => self::ADMIN_MOLLIE_AUTHENTICATION_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
+            ],
+            [
+                'name' => $this->l('Payment Methods'),
+                'class_name' => self::ADMIN_MOLLIE_PAYMENT_METHODS_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
             ],
             [

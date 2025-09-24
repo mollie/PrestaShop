@@ -156,8 +156,127 @@
   font-weight: 700 !important;
 }
 
+/* Force white text on all blue/primary buttons in authentication page */
+#mollie-authentication-root button.bg-blue-600,
+#mollie-authentication-root button.bg-primary,
+#mollie-authentication-root button[class*="bg-blue"] {
+  color: #ffffff !important;
+}
+
+/* Force white text on buttons with blue background color styles */
+#mollie-authentication-root button[style*="background-color: rgb(37, 99, 235)"],
+#mollie-authentication-root button[style*="background-color: #2563eb"],
+#mollie-authentication-root button[style*="background: rgb(37, 99, 235)"],
+#mollie-authentication-root button[style*="background: #2563eb"] {
+  color: #ffffff !important;
+}
+
   /* Force specific margin for Need Help heading */
   #mollie-authentication-root h3.text-center {
     margin-bottom: 2rem !important;
+  }
+
+  /* Payment Methods Page Overrides */
+  #mollie-payment-methods-root h1,
+  #mollie-payment-methods-root h2,
+  #mollie-payment-methods-root h3,
+  #mollie-payment-methods-root h4,
+  #mollie-payment-methods-root h5,
+  #mollie-payment-methods-root h6 {
+    color: #000000 !important;
+    background: transparent !important;
+    border: none !important;
+    border-bottom: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Force button text colors for payment methods page */
+  #mollie-payment-methods-root button {
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+  }
+
+  /* Ensure proper text colors in payment methods cards */
+  #mollie-payment-methods-root .text-foreground {
+    color: #1f2937 !important;
+  }
+
+  #mollie-payment-methods-root .text-muted-foreground {
+    color: #6b7280 !important;
+  }
+
+  /* Override PrestaShop's default form styles */
+  #mollie-payment-methods-root input,
+  #mollie-payment-methods-root select,
+  #mollie-payment-methods-root textarea {
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.375rem !important;
+    background-color: #ffffff !important;
+    color: #1f2937 !important;
+  }
+
+  #mollie-payment-methods-root input:focus,
+  #mollie-payment-methods-root select:focus,
+  #mollie-payment-methods-root textarea:focus {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+    outline: none !important;
+  }
+
+  /* Switch component overrides */
+  #mollie-payment-methods-root button[role="switch"][aria-checked="true"] {
+    background-color: #2563eb !important; /* Blue when enabled */
+  }
+
+  #mollie-payment-methods-root button[role="switch"][aria-checked="false"] {
+    background-color: #d1d5db !important; /* Visible gray when disabled */
+  }
+
+  /* Ensure switch toggle button colors are correct */
+  #mollie-payment-methods-root button[role="switch"] span {
+    background-color: #ffffff !important;
+  }
+
+  /* Show/Hide settings button overrides */
+  #mollie-payment-methods-root button.text-blue-600 {
+    color: #2563eb !important;
+  }
+
+  #mollie-payment-methods-root button.text-blue-600:hover {
+    color: #1d4ed8 !important;
+  }
+
+  /* Override any PrestaShop button styles that might interfere */
+  #mollie-payment-methods-root button.text-blue-600 svg {
+    color: #2563eb !important;
+  }
+
+  #mollie-payment-methods-root button.text-blue-600:hover svg {
+    color: #1d4ed8 !important;
+  }
+
+  /* Force white text on blue/primary buttons in payment methods page */
+  #mollie-payment-methods-root button.bg-blue-600,
+  #mollie-payment-methods-root button.bg-primary,
+  #mollie-payment-methods-root button[class*="bg-blue"] {
+    color: #ffffff !important;
+  }
+
+  /* Force white text on API selection buttons */
+  #mollie-payment-methods-root button.text-white.bg-blue-600,
+  #mollie-payment-methods-root button[class*="bg-blue-600"] {
+    color: #ffffff !important;
+  }
+
+  /* Force white text on save buttons */
+  #mollie-payment-methods-root button[class*="bg-blue"] {
+    color: #ffffff !important;
+  }
+
+  /* Override any text color classes that might interfere */
+  #mollie-payment-methods-root button.bg-blue-600.text-white,
+  #mollie-payment-methods-root button.bg-blue-600 {
+    color: #ffffff !important;
   }
 }

@@ -43,10 +43,47 @@ export interface MollieAuthTranslations {
   failedToSwitchEnvironment: string;
 }
 
+export interface MolliePaymentMethodsTranslations {
+  paymentMethods: string;
+  configurePaymentMethods: string;
+  enabled: string;
+  disabled: string;
+  methodName: string;
+  title: string;
+  description: string;
+  minAmount: string;
+  maxAmount: string;
+  surchargeFixed: string;
+  surchargePercentage: string;
+  surchargeLimit: string;
+  countries: string;
+  excludedCountries: string;
+  excludedCustomerGroups: string;
+  position: string;
+  save: string;
+  cancel: string;
+  refresh: string;
+  refreshing: string;
+  saveSuccess: string;
+  saveError: string;
+  refreshSuccess: string;
+  refreshError: string;
+  loadingMethods: string;
+  loadingError: string;
+  noMethods: string;
+  apiNotConfigured: string;
+  confirmRefresh: string;
+  environment: string;
+  test: string;
+  live: string;
+}
+
 // Extend global Window interface
 declare global {
   interface Window {
     mollieAuthAjaxUrl: string;
     mollieAuthTranslations: MollieAuthTranslations;
+    molliePaymentMethodsAjaxUrl: string;
+    molliePaymentMethodsTranslations: MolliePaymentMethodsTranslations;
   }
 }

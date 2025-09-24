@@ -55,9 +55,13 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         //todo use module version after redesign will finish.
         $version = time();
 
-        $this->context->controller->addJS($this->module->getPathUri() . 'views/js/admin/library/dist/assets/authorization.js?v=' . $version);
+        // Pass JS URL to template for ES module loading
+        $jsUrl = $this->module->getPathUri() . 'views/js/admin/library/dist/assets/authorization.js?v=' . $version;
+        $this->context->smarty->assign('mollieAuthJsUrl', $jsUrl);
+
+        // Add the shared CSS file
         $this->context->controller->addCSS(
-            $this->module->getPathUri() . 'views/js/admin/library/dist/assets/authorization.css?v=' . $version,
+            $this->module->getPathUri() . 'views/js/admin/library/dist/assets/globals.css?v=' . $version,
             'all',
             null,
             false
