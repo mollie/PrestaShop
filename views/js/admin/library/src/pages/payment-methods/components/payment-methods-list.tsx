@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Info } from "lucide-react"
 import { PaymentMethodTabs } from "./payment-method-tabs"
 import { PaymentMethodsList } from "./payment-methods-list-component"
-import { paymentMethodsApiService, type PaymentMethod } from "../../../services/PaymentMethodsApiService"
+import { paymentMethodsApiService, type PaymentMethod, type Country, type CustomerGroup } from "../../../services/PaymentMethodsApiService"
 import { usePaymentMethodsTranslations } from "../../../shared/hooks/use-payment-methods-translations"
 
 export default function PaymentMethodsPage() {
@@ -12,6 +12,8 @@ export default function PaymentMethodsPage() {
   const [activeTab, setActiveTab] = useState<"enabled" | "disabled">("enabled")
   const [enabledMethods, setEnabledMethods] = useState<PaymentMethod[]>([])
   const [disabledMethods, setDisabledMethods] = useState<PaymentMethod[]>([])
+  const [countries, setCountries] = useState<Country[]>([])
+  const [customerGroups, setCustomerGroups] = useState<CustomerGroup[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
   const [savingMethodId, setSavingMethodId] = useState<string | null>(null)
@@ -35,6 +37,8 @@ export default function PaymentMethodsPage() {
 
         setEnabledMethods(enabled)
         setDisabledMethods(disabled)
+        setCountries(response.data.countries || [])
+        setCustomerGroups(response.data.customerGroups || [])
       } else {
         setErrorMessage(response.message || t('loadingError'))
       }
@@ -112,8 +116,8 @@ export default function PaymentMethodsPage() {
     return (
       <div className="max-w-6xl mx-auto p-6 space-y-6">
         <div className="space-y-2">
-          <h1 className="text-2xl font-semibold text-foreground">Available Payment Methods</h1>
-          <p className="text-sm text-muted-foreground">Loading payment methods...</p>
+          <h1 className="text-2xl font-semibold text-foreground">{t('paymentMethods')}</h1>
+          <p className="text-sm text-muted-foreground">{t('loadingMethods')}</p>
         </div>
       </div>
     )
@@ -123,7 +127,7 @@ export default function PaymentMethodsPage() {
     return (
       <div className="max-w-6xl mx-auto p-6 space-y-6">
         <div className="space-y-2">
-          <h1 className="text-2xl font-semibold text-foreground">Available Payment Methods</h1>
+          <h1 className="text-2xl font-semibold text-foreground">{t('paymentMethods')}</h1>
           <p className="text-sm text-red-600">{errorMessage}</p>
         </div>
       </div>
@@ -134,15 +138,15 @@ export default function PaymentMethodsPage() {
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold text-foreground">Available Payment Methods</h1>
-        <p className="text-sm text-muted-foreground">Expand each method to view and configure settings.</p>
+        <h1 className="text-2xl font-semibold text-foreground">{t('paymentMethods')}</h1>
+        <p className="text-sm text-muted-foreground">{t('configurePaymentMethods')}</p>
       </div>
 
       {/* Info Banner */}
       <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4 flex items-start gap-3">
         <Info className="h-5 w-5 text-cyan-600 mt-0.5 flex-shrink-0" />
         <div className="text-sm text-cyan-800">
-          Here you can see all of the {activeTab === "enabled" ? "enabled" : "disabled"} payment options. To include new
+          Here you can see all of the {activeTab === "enabled" ? t('enabled') : t('disabled')} payment options. To include new
           payment methods go to{" "}
           <a
             href="https://www.mollie.com/dashboard/developers/api-keys"
@@ -161,6 +165,8 @@ export default function PaymentMethodsPage() {
       {/* Payment Methods List */}
       <PaymentMethodsList
         methods={currentMethods}
+        countries={countries}
+        customerGroups={customerGroups}
         onToggleExpanded={toggleExpanded}
         onUpdateSettings={updateMethodSettings}
         onSaveSettings={saveMethodSettings}

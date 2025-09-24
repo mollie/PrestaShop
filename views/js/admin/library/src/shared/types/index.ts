@@ -44,38 +44,84 @@ export interface MollieAuthTranslations {
 }
 
 export interface MolliePaymentMethodsTranslations {
+  // Main page
   paymentMethods: string;
   configurePaymentMethods: string;
   enabled: string;
   disabled: string;
-  methodName: string;
-  title: string;
-  description: string;
-  minAmount: string;
-  maxAmount: string;
-  surchargeFixed: string;
-  surchargePercentage: string;
-  surchargeLimit: string;
-  countries: string;
-  excludedCountries: string;
-  excludedCustomerGroups: string;
-  position: string;
+  enabledPaymentMethods: string;
+  disabledPaymentMethods: string;
+  
+  // Payment method card
+  showSettings: string;
+  hideSettings: string;
+  active: string;
+  inactive: string;
+  
+  // Basic settings
+  basicSettings: string;
+  activateDeactivate: string;
+  enablePaymentMethod: string;
+  useEmbeddedCreditCardForm: string;
+  enableMollieComponents: string;
+  letCustomerSaveCreditCard: string;
+  useOneClickPayments: string;
+  paymentTitle: string;
+  paymentTitlePlaceholder: string;
+  
+  // API Selection
+  apiSelection: string;
+  payments: string;
+  orders: string;
+  transactionDescription: string;
+  transactionDescriptionPlaceholder: string;
+  readMore: string;
+  aboutDifferences: string;
+  
+  // Custom Logo
+  useCustomLogo: string;
+  uploadLogo: string;
+  replaceLogo: string;
+  logoUploadHelp: string;
+  
+  // Apple Pay Settings
+  applePayDirectSettings: string;
+  applePayDirectProductPage: string;
+  enableApplePayProductPages: string;
+  applePayDirectCartPage: string;
+  enableApplePayCartPages: string;
+  applePayDirectButtonStyle: string;
+  applePayButtonBlack: string;
+  applePayButtonOutline: string;
+  applePayButtonWhite: string;
+  
+  // Payment Restrictions
+  paymentRestrictions: string;
+  acceptPaymentsFrom: string;
+  allCountries: string;
+  specificCountries: string;
+  excludePaymentsFromCountries: string;
+  selectCountriesToExclude: string;
+  excludeCustomerGroups: string;
+  selectCustomerGroups: string;
+  guest: string;
+  customerGroup: string;
+  
+  // Payment Fees
+  paymentFees: string;
+  
+  // Order Restrictions
+  orderRestrictions: string;
+  
+  // Actions
   save: string;
-  cancel: string;
-  refresh: string;
-  refreshing: string;
-  saveSuccess: string;
-  saveError: string;
-  refreshSuccess: string;
-  refreshError: string;
+  saving: string;
   loadingMethods: string;
   loadingError: string;
-  noMethods: string;
-  apiNotConfigured: string;
-  confirmRefresh: string;
-  environment: string;
-  test: string;
-  live: string;
+  
+  
+  // Drag and drop
+  dragPaymentOptionsToReorder: string;
 }
 
 // Extend global Window interface

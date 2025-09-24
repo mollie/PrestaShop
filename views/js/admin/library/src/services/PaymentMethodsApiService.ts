@@ -12,6 +12,11 @@ export interface PaymentMethod {
   status: "active" | "inactive"
   isExpanded: boolean
   position: number
+  image?: {
+    size1x: string
+    size2x: string
+    svg: string
+  }
   settings: {
     enabled: boolean
     title: string
@@ -19,6 +24,8 @@ export interface PaymentMethod {
     oneClickPayments: boolean
     transactionDescription: string
     apiSelection: "payments" | "orders"
+    useCustomLogo: boolean
+    customLogoUrl?: string | null
     paymentRestrictions: {
       acceptFrom: string
       excludeCountries: string[]
@@ -36,22 +43,23 @@ export interface PaymentMethod {
       minAmount: string
       maxAmount: string
     }
+    applePaySettings?: {
+      directProduct?: boolean
+      directCart?: boolean
+      buttonStyle?: 0 | 1 | 2 // 0: black, 1: outline, 2: white
+    }
   }
 }
 
-export interface Country {
-  id: number
-  name: string
-}
 
-export interface TaxRulesGroup {
-  value: string
-  label: string
+export interface Country {
+  id: number;
+  name: string;
 }
 
 export interface CustomerGroup {
-  value: string
-  label: string
+  value: string;
+  label: string;
 }
 
 export interface PaymentMethodsResponse {
@@ -60,7 +68,7 @@ export interface PaymentMethodsResponse {
   data?: {
     methods: PaymentMethod[];
     countries: Country[];
-    taxRulesGroups: TaxRulesGroup[];
+    taxRulesGroups: any[];
     customerGroups: CustomerGroup[];
     onlyOrderMethods: string[];
     onlyPaymentsMethods: string[];
@@ -69,22 +77,6 @@ export interface PaymentMethodsResponse {
   };
 }
 
-export interface UpdatePaymentMethodRequest {
-  method_id: string;
-  configuration: {
-    title?: string;
-    description?: string;
-    min_amount?: string;
-    max_amount?: string;
-    surcharge_fixed?: string;
-    surcharge_percentage?: string;
-    surcharge_limit?: string;
-    countries?: string[];
-    excluded_countries?: string[];
-    excluded_customer_groups?: number[];
-    custom_logo?: any;
-  };
-}
 
 /**
  * Payment Methods API Service
@@ -111,55 +103,6 @@ export class PaymentMethodsApiService {
     return response.json();
   }
 
-  /**
-   * Toggle payment method enabled/disabled status
-   */
-  async togglePaymentMethod(methodId: string, enabled: boolean): Promise<PaymentMethodsResponse> {
-    const formData = new FormData();
-    formData.append('ajax', '1');
-    formData.append('action', 'togglePaymentMethod');
-    formData.append('method_id', methodId);
-    formData.append('enabled', enabled.toString());
-
-    const response = await fetch(this.baseUrl, {
-      method: 'POST',
-      body: formData
-    });
-    return response.json();
-  }
-
-  /**
-   * Update payment method configuration
-   */
-  async updatePaymentMethod(request: UpdatePaymentMethodRequest): Promise<PaymentMethodsResponse> {
-    const formData = new FormData();
-    formData.append('ajax', '1');
-    formData.append('action', 'updatePaymentMethod');
-    formData.append('method_id', request.method_id);
-    formData.append('configuration', JSON.stringify(request.configuration));
-
-    const response = await fetch(this.baseUrl, {
-      method: 'POST',
-      body: formData
-    });
-    return response.json();
-  }
-
-  /**
-   * Update payment methods order (drag-drop reordering)
-   */
-  async updateMethodsOrder(methodIds: string[]): Promise<PaymentMethodsResponse> {
-    const formData = new FormData();
-    formData.append('ajax', '1');
-    formData.append('action', 'updateMethodsOrder');
-    formData.append('method_ids', JSON.stringify(methodIds));
-
-    const response = await fetch(this.baseUrl, {
-      method: 'POST',
-      body: formData
-    });
-    return response.json();
-  }
 
   /**
    * Save payment method settings
@@ -178,13 +121,15 @@ export class PaymentMethodsApiService {
     return response.json();
   }
 
+
   /**
-   * Refresh payment methods from Mollie API
+   * Upload custom logo for card payment method
    */
-  async refreshMethods(): Promise<PaymentMethodsResponse> {
+  async uploadCustomLogo(file: File): Promise<{ success: boolean; message: string; logoUrl?: string }> {
     const formData = new FormData();
     formData.append('ajax', '1');
-    formData.append('action', 'refreshMethods');
+    formData.append('action', 'uploadCustomLogo');
+    formData.append('fileToUpload', file);
 
     const response = await fetch(this.baseUrl, {
       method: 'POST',

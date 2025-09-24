@@ -4,12 +4,17 @@ import { useState, useRef, useEffect } from "react"
 import { Input } from "../../../shared/components/ui/input"
 import { Label } from "../../../shared/components/ui/label"
 import { Switch } from "../../../shared/components/ui/switch"
+import { CustomLogoUpload } from "../../../shared/components/ui/custom-logo-upload"
+import { ApplePaySettings } from "../../../shared/components/ui/apple-pay-settings"
 import { ChevronDown } from "lucide-react"
 import { cn } from "../../../shared/lib/utils"
-import type { PaymentMethod } from "../../../services/PaymentMethodsApiService"
+import type { PaymentMethod, Country, CustomerGroup } from "../../../services/PaymentMethodsApiService"
+import { usePaymentMethodsTranslations } from "../../../shared/hooks/use-payment-methods-translations"
 
 interface PaymentMethodSettingsProps {
   method: PaymentMethod
+  countries: Country[]
+  customerGroups: CustomerGroup[]
   onUpdateSettings: (settings: Partial<PaymentMethod["settings"]>) => void
   onSaveSettings: () => void
   isSaving?: boolean
@@ -178,22 +183,24 @@ function MultiSelect({ value, onValueChange, options, placeholder, className }: 
   )
 }
 
-export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings, isSaving = false }: PaymentMethodSettingsProps) {
+export function PaymentMethodSettings({ method, countries, customerGroups, onUpdateSettings, onSaveSettings, isSaving = false }: PaymentMethodSettingsProps) {
+  const { t } = usePaymentMethodsTranslations()
   const [showRestrictions, setShowRestrictions] = useState(false)
   const [showFees, setShowFees] = useState(false)
   const [showOrderRestrictions, setShowOrderRestrictions] = useState(false)
+  const [showApplePay, setShowApplePay] = useState(false)
 
   return (
     <div className="space-y-6">
       {/* Basic Settings */}
       <div className="space-y-6">
-        <h3 className="text-sm font-medium">Basic settings</h3>
+        <h3 className="text-sm font-medium">{t('basicSettings')}</h3>
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-4">
             <div className="space-y-1">
-              <Label className="text-sm font-medium">Activate/Deactivate</Label>
+              <Label className="text-sm font-medium">{t('activateDeactivate')}</Label>
               <div className="flex items-center gap-3">
-                <p className="text-sm text-muted-foreground flex items-center h-6">Enable payment method</p>
+                <p className="text-sm text-muted-foreground flex items-center h-6">{t('enablePaymentMethod')}</p>
                 <Switch
                   checked={method.settings.enabled}
                   onCheckedChange={(enabled: boolean) => onUpdateSettings({ enabled })}
@@ -203,9 +210,9 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
 
             {method.type === "card" && (
               <div className="space-y-1">
-                <Label className="text-base font-semibold">Use embedded credit card form in the checkout</Label>
+                <Label className="text-base font-semibold">{t('useEmbeddedCreditCardForm')}</Label>
                 <div className="flex items-center gap-3">
-                  <p className="text-sm text-muted-foreground flex items-center h-6">Enable Mollie Components</p>
+                  <p className="text-sm text-muted-foreground flex items-center h-6">{t('enableMollieComponents')}</p>
                   <Switch
                     checked={method.settings.mollieComponents}
                     onCheckedChange={(mollieComponents: boolean) => onUpdateSettings({ mollieComponents })}
@@ -218,11 +225,11 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
           <div className="space-y-4">
             <div>
               <Label htmlFor="payment-title" className="text-sm font-medium">
-                Payment Title
+                {t('paymentTitle')}
               </Label>
               <Input
                 id="payment-title"
-                placeholder="Payment Method #1"
+                placeholder={t('paymentTitlePlaceholder')}
                 value={method.settings.title}
                 onChange={(e) => onUpdateSettings({ title: e.target.value })}
                 className="mt-1"
@@ -232,15 +239,26 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
             {method.type === "card" && (
               <div className="space-y-1">
                 <Label className="text-base font-semibold">
-                  Let customer save their credit card data for future orders
+                  {t('letCustomerSaveCreditCard')}
                 </Label>
                 <div className="flex items-center gap-3">
-                  <p className="text-sm text-muted-foreground flex items-center h-6">Use one-click payments</p>
+                  <p className="text-sm text-muted-foreground flex items-center h-6">{t('useOneClickPayments')}</p>
                   <Switch
                     checked={method.settings.oneClickPayments}
                     onCheckedChange={(oneClickPayments: boolean) => onUpdateSettings({ oneClickPayments })}
                   />
                 </div>
+              </div>
+            )}
+
+            {method.type === "card" && (
+              <div className="space-y-1">
+                <CustomLogoUpload
+                  value={method.settings.useCustomLogo}
+                  logoUrl={method.settings.customLogoUrl}
+                  onValueChange={(useCustomLogo: boolean) => onUpdateSettings({ useCustomLogo })}
+                  onLogoChange={(customLogoUrl: string | null) => onUpdateSettings({ customLogoUrl })}
+                />
               </div>
             )}
           </div>
@@ -250,7 +268,7 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
       {/* API Selection and Transaction Description */}
       <div className="grid grid-cols-2 gap-6">
         <div>
-          <div className="text-base font-semibold mb-0">API Selection</div>
+          <div className="text-base font-semibold mb-0">{t('apiSelection')}</div>
           <div className="flex border border-input rounded-md w-full mt-1 overflow-hidden">
             <button
               onClick={() => onUpdateSettings({ apiSelection: "payments" })}
@@ -261,7 +279,7 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
                   : "text-muted-foreground hover:text-foreground bg-background hover:bg-accent",
               )}
             >
-              Payments
+              {t('payments')}
             </button>
             <button
               onClick={() => onUpdateSettings({ apiSelection: "orders" })}
@@ -272,7 +290,7 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
                   : "text-muted-foreground hover:text-foreground bg-background hover:bg-accent",
               )}
             >
-              Orders
+              {t('orders')}
             </button>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
@@ -282,19 +300,19 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
               rel="noopener noreferrer"
               className="text-muted-foreground underline cursor-pointer hover:text-muted-foreground/80"
             >
-              Read more
+              {t('readMore')}
             </a>
-            <span className="text-muted-foreground"> about the differences between Payments and Orders API</span>
+            <span className="text-muted-foreground"> {t('aboutDifferences')}</span>
           </p>
         </div>
 
         <div>
           <Label htmlFor="transaction-description" className="text-base font-semibold">
-            Transaction Description
+            {t('transactionDescription')}
           </Label>
           <Input
             id="transaction-description"
-            placeholder="Enter transaction description"
+            placeholder={t('transactionDescriptionPlaceholder')}
             value={method.settings.transactionDescription}
             onChange={(e) => onUpdateSettings({ transactionDescription: e.target.value })}
             className="mt-1"
@@ -304,13 +322,41 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
 
       {/* Collapsible Sections */}
       <div className="space-y-4">
+        {/* Apple Pay Settings - Only for Apple Pay */}
+        {method.id === "applepay" && method.settings.applePaySettings && (
+          <div className="border rounded-lg overflow-hidden">
+            <button
+              onClick={() => setShowApplePay(!showApplePay)}
+              className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 cursor-pointer transition-colors"
+            >
+              <span className="font-medium">{t('applePayDirectSettings')}</span>
+              <ChevronDown
+                className={cn("h-4 w-4 transition-transform duration-200", showApplePay && "rotate-180")}
+              />
+            </button>
+            {showApplePay && method.settings.applePaySettings && (
+              <div className="p-4 border-t space-y-4 animate-in slide-in-from-top-1 fade-in duration-200 ease-out">
+                <ApplePaySettings
+                  settings={method.settings.applePaySettings}
+                  onUpdateSettings={(applePaySettings) => onUpdateSettings({ 
+                    applePaySettings: {
+                      ...method.settings.applePaySettings,
+                      ...applePaySettings
+                    }
+                  })}
+                />
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Payment Restrictions */}
         <div className="border rounded-lg overflow-hidden">
           <button
             onClick={() => setShowRestrictions(!showRestrictions)}
             className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 cursor-pointer transition-colors"
           >
-            <span className="font-medium">Payment restrictions</span>
+            <span className="font-medium">{t('paymentRestrictions')}</span>
             <ChevronDown
               className={cn("h-4 w-4 transition-transform duration-200", showRestrictions && "rotate-180")}
             />
@@ -319,7 +365,7 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
             <div className="p-4 border-t space-y-4 animate-in slide-in-from-top-1 fade-in duration-200 ease-out">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium">Accept payments from</Label>
+                  <Label className="text-sm font-medium">{t('acceptPaymentsFrom')}</Label>
                   <RadioSelect
                     value={method.settings.paymentRestrictions.acceptFrom}
                     onValueChange={(value: string) => onUpdateSettings({ 
@@ -329,15 +375,15 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
                       } 
                     })}
                     options={[
-                      { value: "all", label: "All countries" },
-                      { value: "specific", label: "Specific countries" },
+                      { value: "all", label: t('allCountries') },
+                      { value: "specific", label: t('specificCountries') },
                     ]}
-                    placeholder="All countries"
+                    placeholder={t('allCountries')}
                     className="mt-1"
                   />
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Exclude payments from specific countries</Label>
+                  <Label className="text-sm font-medium">{t('excludePaymentsFromCountries')}</Label>
                   <MultiSelect
                     value={method.settings.paymentRestrictions.excludeCountries}
                     onValueChange={(value: string[]) => onUpdateSettings({ 
@@ -346,21 +392,17 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
                         excludeCountries: value 
                       } 
                     })}
-                    options={[
-                      { value: "BE", label: "Belgium" },
-                      { value: "US", label: "United States" },
-                      { value: "GB", label: "United Kingdom" },
-                      { value: "DE", label: "Germany" },
-                      { value: "FR", label: "France" },
-                      { value: "NL", label: "Netherlands" },
-                    ]}
-                    placeholder="Select countries to exclude"
+                    options={countries.map(country => ({
+                      value: country.id.toString(),
+                      label: country.name
+                    }))}
+                    placeholder={t('selectCountriesToExclude')}
                     className="mt-1"
                   />
                 </div>
               </div>
               <div>
-                <Label className="text-sm font-medium">Exclude Customer Groups</Label>
+                <Label className="text-sm font-medium">{t('excludeCustomerGroups')}</Label>
                 <MultiSelect
                   value={method.settings.paymentRestrictions.excludeCustomerGroups}
                   onValueChange={(value: string[]) => onUpdateSettings({ 
@@ -369,13 +411,11 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
                       excludeCustomerGroups: value 
                     } 
                   })}
-                  options={[
-                    { value: "guest", label: "Guest" },
-                    { value: "group1", label: "Customer Group 1" },
-                    { value: "group2", label: "Customer Group 2" },
-                    { value: "group3", label: "Customer Group 3" },
-                  ]}
-                  placeholder="Select customer groups"
+                    options={customerGroups.map(group => ({
+                      value: group.value,
+                      label: group.label
+                    }))}
+                  placeholder={t('selectCustomerGroups')}
                   className="mt-1"
                 />
               </div>
@@ -389,7 +429,7 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
             onClick={() => setShowFees(!showFees)}
             className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 cursor-pointer transition-colors"
           >
-            <span className="font-medium">Payment fees</span>
+            <span className="font-medium">{t('paymentFees')}</span>
             <ChevronDown className={cn("h-4 w-4 transition-transform duration-200", showFees && "rotate-180")} />
           </button>
           {showFees && (
@@ -460,7 +500,7 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
             onClick={() => setShowOrderRestrictions(!showOrderRestrictions)}
             className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 cursor-pointer transition-colors"
           >
-            <span className="font-medium">Order restrictions</span>
+            <span className="font-medium">{t('orderRestrictions')}</span>
             <ChevronDown
               className={cn("h-4 w-4 transition-transform duration-200", showOrderRestrictions && "rotate-180")}
             />
@@ -493,7 +533,7 @@ export function PaymentMethodSettings({ method, onUpdateSettings, onSaveSettings
             isSaving && "bg-blue-500"
           )}
         >
-          {isSaving ? "Saving..." : "Save"}
+          {isSaving ? t('saving') : t('save')}
         </button>
       </div>
     </div>

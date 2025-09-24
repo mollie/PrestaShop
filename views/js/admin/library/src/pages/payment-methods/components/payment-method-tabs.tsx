@@ -2,6 +2,7 @@
 
 import { GripVertical, Info } from "lucide-react"
 import { cn } from "../../../shared/lib/utils"
+import { usePaymentMethodsTranslations } from "../../../shared/hooks/use-payment-methods-translations"
 
 interface PaymentMethodTabsProps {
   activeTab: "enabled" | "disabled"
@@ -9,6 +10,8 @@ interface PaymentMethodTabsProps {
 }
 
 export function PaymentMethodTabs({ activeTab, onTabChange }: PaymentMethodTabsProps) {
+  const { t } = usePaymentMethodsTranslations()
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex">
@@ -21,7 +24,7 @@ export function PaymentMethodTabs({ activeTab, onTabChange }: PaymentMethodTabsP
               : "border-transparent text-muted-foreground hover:text-foreground",
           )}
         >
-          Enabled payment methods
+          {t('enabledPaymentMethods')}
         </button>
         <button
           onClick={() => onTabChange("disabled")}
@@ -32,13 +35,13 @@ export function PaymentMethodTabs({ activeTab, onTabChange }: PaymentMethodTabsP
               : "border-transparent text-muted-foreground hover:text-foreground",
           )}
         >
-          Disabled payment methods
+          {t('disabledPaymentMethods')}
         </button>
       </div>
 
       <div className="flex items-center gap-2 text-sm text-blue-600">
         <GripVertical className="h-4 w-4" />
-        <span>Drag payment options to reorder</span>
+        <span>{t('dragPaymentOptionsToReorder')}</span>
         <Info className="h-4 w-4 cursor-pointer hover:text-blue-700" />
       </div>
     </div>

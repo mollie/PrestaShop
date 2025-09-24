@@ -105,36 +105,85 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         // Add translations for React app
         Media::addJsDef([
             'molliePaymentMethodsTranslations' => [
+                // Main page
                 'paymentMethods' => addslashes($this->module->l('Payment Methods', self::FILE_NAME)),
                 'configurePaymentMethods' => addslashes($this->module->l('Configure Payment Methods', self::FILE_NAME)),
                 'enabled' => addslashes($this->module->l('Enabled', self::FILE_NAME)),
                 'disabled' => addslashes($this->module->l('Disabled', self::FILE_NAME)),
-                'methodName' => addslashes($this->module->l('Method Name', self::FILE_NAME)),
-                'title' => addslashes($this->module->l('Title', self::FILE_NAME)),
-                'description' => addslashes($this->module->l('Description', self::FILE_NAME)),
-                'minAmount' => addslashes($this->module->l('Minimum Amount', self::FILE_NAME)),
-                'maxAmount' => addslashes($this->module->l('Maximum Amount', self::FILE_NAME)),
-                'surchargeFixed' => addslashes($this->module->l('Fixed Surcharge', self::FILE_NAME)),
-                'surchargePercentage' => addslashes($this->module->l('Percentage Surcharge', self::FILE_NAME)),
-                'surchargeLimit' => addslashes($this->module->l('Surcharge Limit', self::FILE_NAME)),
-                'countries' => addslashes($this->module->l('Countries', self::FILE_NAME)),
-                'excludedCountries' => addslashes($this->module->l('Excluded Countries', self::FILE_NAME)),
-                'excludedCustomerGroups' => addslashes($this->module->l('Excluded Customer Groups', self::FILE_NAME)),
-                'position' => addslashes($this->module->l('Position', self::FILE_NAME)),
+                'enabledPaymentMethods' => addslashes($this->module->l('Enabled payment methods', self::FILE_NAME)),
+                'disabledPaymentMethods' => addslashes($this->module->l('Disabled payment methods', self::FILE_NAME)),
+
+                // Payment method card
+                'showSettings' => addslashes($this->module->l('Show settings', self::FILE_NAME)),
+                'hideSettings' => addslashes($this->module->l('Hide settings', self::FILE_NAME)),
+                'active' => addslashes($this->module->l('Active', self::FILE_NAME)),
+                'inactive' => addslashes($this->module->l('Inactive', self::FILE_NAME)),
+
+                // Basic settings
+                'basicSettings' => addslashes($this->module->l('Basic settings', self::FILE_NAME)),
+                'activateDeactivate' => addslashes($this->module->l('Activate/Deactivate', self::FILE_NAME)),
+                'enablePaymentMethod' => addslashes($this->module->l('Enable payment method', self::FILE_NAME)),
+                'useEmbeddedCreditCardForm' => addslashes($this->module->l('Use embedded credit card form in the checkout', self::FILE_NAME)),
+                'enableMollieComponents' => addslashes($this->module->l('Enable Mollie Components', self::FILE_NAME)),
+                'letCustomerSaveCreditCard' => addslashes($this->module->l('Let customer save their credit card data for future orders', self::FILE_NAME)),
+                'useOneClickPayments' => addslashes($this->module->l('Use one-click payments', self::FILE_NAME)),
+                'paymentTitle' => addslashes($this->module->l('Payment Title', self::FILE_NAME)),
+                'paymentTitlePlaceholder' => addslashes($this->module->l('Payment Method #1', self::FILE_NAME)),
+
+                // API Selection
+                'apiSelection' => addslashes($this->module->l('API Selection', self::FILE_NAME)),
+                'payments' => addslashes($this->module->l('Payments', self::FILE_NAME)),
+                'orders' => addslashes($this->module->l('Orders', self::FILE_NAME)),
+                'transactionDescription' => addslashes($this->module->l('Transaction Description', self::FILE_NAME)),
+                'transactionDescriptionPlaceholder' => addslashes($this->module->l('Enter transaction description', self::FILE_NAME)),
+                'readMore' => addslashes($this->module->l('Read more', self::FILE_NAME)),
+                'aboutDifferences' => addslashes($this->module->l('about the differences between Payments and Orders API', self::FILE_NAME)),
+
+                // Custom Logo
+                'useCustomLogo' => addslashes($this->module->l('Use custom logo', self::FILE_NAME)),
+                'uploadLogo' => addslashes($this->module->l('Upload Logo', self::FILE_NAME)),
+                'replaceLogo' => addslashes($this->module->l('Replace Logo', self::FILE_NAME)),
+                'logoUploadHelp' => addslashes($this->module->l('Upload a JPG or PNG image. Maximum dimensions: 256x64 pixels. Maximum file size: 2MB.', self::FILE_NAME)),
+
+                // Apple Pay Settings
+                'applePayDirectSettings' => addslashes($this->module->l('Apple Pay Direct settings', self::FILE_NAME)),
+                'applePayDirectProductPage' => addslashes($this->module->l('Apple Pay Direct product page', self::FILE_NAME)),
+                'enableApplePayProductPages' => addslashes($this->module->l('Enable Apple Pay on product pages', self::FILE_NAME)),
+                'applePayDirectCartPage' => addslashes($this->module->l('Apple Pay Direct cart page', self::FILE_NAME)),
+                'enableApplePayCartPages' => addslashes($this->module->l('Enable Apple Pay on cart pages', self::FILE_NAME)),
+                'applePayDirectButtonStyle' => addslashes($this->module->l('Apple Pay Direct button style', self::FILE_NAME)),
+                'applePayButtonBlack' => addslashes($this->module->l('Black', self::FILE_NAME)),
+                'applePayButtonOutline' => addslashes($this->module->l('Outline', self::FILE_NAME)),
+                'applePayButtonWhite' => addslashes($this->module->l('White', self::FILE_NAME)),
+
+                // Payment Restrictions
+                'paymentRestrictions' => addslashes($this->module->l('Payment restrictions', self::FILE_NAME)),
+                'acceptPaymentsFrom' => addslashes($this->module->l('Accept payments from', self::FILE_NAME)),
+                'allCountries' => addslashes($this->module->l('All countries', self::FILE_NAME)),
+                'specificCountries' => addslashes($this->module->l('Specific countries', self::FILE_NAME)),
+                'excludePaymentsFromCountries' => addslashes($this->module->l('Exclude payments from specific countries', self::FILE_NAME)),
+                'selectCountriesToExclude' => addslashes($this->module->l('Select countries to exclude', self::FILE_NAME)),
+                'excludeCustomerGroups' => addslashes($this->module->l('Exclude Customer Groups', self::FILE_NAME)),
+                'selectCustomerGroups' => addslashes($this->module->l('Select customer groups', self::FILE_NAME)),
+                'guest' => addslashes($this->module->l('Guest', self::FILE_NAME)),
+                'customerGroup' => addslashes($this->module->l('Customer Group', self::FILE_NAME)),
+
+                // Payment Fees
+                'paymentFees' => addslashes($this->module->l('Payment fees', self::FILE_NAME)),
+
+                // Order Restrictions
+                'orderRestrictions' => addslashes($this->module->l('Order restrictions', self::FILE_NAME)),
+
+                // Actions
                 'save' => addslashes($this->module->l('Save', self::FILE_NAME)),
-                'cancel' => addslashes($this->module->l('Cancel', self::FILE_NAME)),
-                'refresh' => addslashes($this->module->l('Refresh Methods', self::FILE_NAME)),
-                'saveSuccess' => addslashes($this->module->l('Configuration saved successfully', self::FILE_NAME)),
-                'saveError' => addslashes($this->module->l('Failed to save configuration', self::FILE_NAME)),
-                'refreshSuccess' => addslashes($this->module->l('Payment methods refreshed successfully', self::FILE_NAME)),
-                'refreshError' => addslashes($this->module->l('Failed to refresh payment methods', self::FILE_NAME)),
+                'saving' => addslashes($this->module->l('Saving...', self::FILE_NAME)),
                 'loadingMethods' => addslashes($this->module->l('Loading payment methods...', self::FILE_NAME)),
-                'noMethods' => addslashes($this->module->l('No payment methods available', self::FILE_NAME)),
-                'apiNotConfigured' => addslashes($this->module->l('API not configured. Please configure API keys first.', self::FILE_NAME)),
-                'confirmRefresh' => addslashes($this->module->l('This will sync payment methods with Mollie API. Continue?', self::FILE_NAME)),
-                'environment' => addslashes($this->module->l('Environment', self::FILE_NAME)),
-                'test' => addslashes($this->module->l('Test', self::FILE_NAME)),
-                'live' => addslashes($this->module->l('Live', self::FILE_NAME)),
+                'loadingError' => addslashes($this->module->l('Failed to load payment methods', self::FILE_NAME)),
+
+
+                // Countries todo once we implement this remove these
+                // Drag and drop
+                'dragPaymentOptionsToReorder' => addslashes($this->module->l('Drag payment options to reorder', self::FILE_NAME)),
             ],
         ]);
 
@@ -183,6 +232,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 break;
             case 'refreshMethods':
                 $this->ajaxRefreshMethods();
+                break;
+            case 'uploadCustomLogo':
+                $this->ajaxUploadCustomLogo();
                 break;
             default:
                 $this->ajaxRender(json_encode([
@@ -261,6 +313,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                     'status' => $methodObj->enabled ? 'active' : 'inactive',
                     'isExpanded' => false, // Will be handled by frontend state
                     'position' => (int) ($methodObj->position ?? 0),
+                    'image' => $method['image'] ?? null,
                     'settings' => [
                         'enabled' => (bool) $methodObj->enabled,
                         'title' => $method['name'],
@@ -268,6 +321,8 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                         'oneClickPayments' => false, // Default
                         'transactionDescription' => $methodObj->description ?: 'Order %order_number%',
                         'apiSelection' => $methodObj->method === 'orders' ? 'orders' : 'payments',
+                        'useCustomLogo' => $methodId === 'creditcard' ? (bool) $this->configuration->get(\Mollie\Config\Config::MOLLIE_SHOW_CUSTOM_LOGO) : false,
+                        'customLogoUrl' => $methodId === 'creditcard' ? $this->getCustomLogoUrl() : null,
                         'paymentRestrictions' => [
                             'acceptFrom' => $methodObj->is_countries_applicable ? 'specific' : 'all',
                             'excludeCountries' => $method['excludedCountries'] ?? [],
@@ -285,6 +340,11 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                             'minAmount' => $method['minimumAmount'] ? $method['minimumAmount']['value'] : '0.00',
                             'maxAmount' => $method['maximumAmount'] ? $method['maximumAmount']['value'] : '0.00',
                         ],
+                        'applePaySettings' => $methodId === 'applepay' ? [
+                            'directProduct' => (bool) $this->configuration->get(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT),
+                            'directCart' => (bool) $this->configuration->get(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_CART),
+                            'buttonStyle' => (int) $this->configuration->get(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
+                        ] : null,
                     ],
                 ];
             }
@@ -629,7 +689,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'enabled' => $settings['enabled'] ?? false,
                 'title' => $settings['title'] ?? '',
                 'method_description' => $settings['transactionDescription'] ?? '',
-                'use_custom_logo' => false, // Not implemented in current UI
+                'use_custom_logo' => false,
                 'min_amount' => $settings['orderRestrictions']['minAmount'] ?? '',
                 'max_amount' => $settings['orderRestrictions']['maxAmount'] ?? '',
                 'surcharge_fixed_amount_tax_excl' => $settings['paymentFees']['maxFee'] ?? '',
@@ -641,6 +701,14 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'mollie_components' => $settings['mollieComponents'] ?? false,
                 'single_click_payment' => $settings['oneClickPayments'] ?? false,
             ], $environment);
+
+            // Save Apple Pay specific settings
+            if ($methodId === 'applepay' && isset($settings['applePaySettings'])) {
+                $applePaySettings = $settings['applePaySettings'];
+                $this->configurationAdapter->updateValue(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT, $applePaySettings['directProduct'] ? 1 : 0);
+                $this->configurationAdapter->updateValue(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_CART, $applePaySettings['directCart'] ? 1 : 0);
+                $this->configurationAdapter->updateValue(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_STYLE, $applePaySettings['buttonStyle']);
+            }
 
             if ($result) {
                 $this->ajaxRender(json_encode([
@@ -722,5 +790,103 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
 
         return $customerGroups;
+    }
+
+    /**
+     * Get custom logo URL if it exists
+     */
+    private function getCustomLogoUrl(): ?string
+    {
+        try {
+            /** @var \Mollie\Provider\CreditCardLogoProvider $creditCardLogoProvider */
+            $creditCardLogoProvider = $this->module->getService(\Mollie\Provider\CreditCardLogoProvider::class);
+
+            if ($creditCardLogoProvider->logoExists()) {
+                return $creditCardLogoProvider->getLogoPathUri() . '?' . time();
+            }
+        } catch (Exception $e) {
+            $this->logger->error('Failed to get custom logo URL', [
+                'exception' => ExceptionUtility::getExceptions($e),
+            ]);
+        }
+
+        return null;
+    }
+
+    /**
+     * Upload custom logo for card payment method
+     */
+    private function ajaxUploadCustomLogo(): void
+    {
+        try {
+            /** @var \Mollie\Provider\CreditCardLogoProvider $creditCardLogoProvider */
+            $creditCardLogoProvider = $this->module->getService(\Mollie\Provider\CreditCardLogoProvider::class);
+            $targetFile = $creditCardLogoProvider->getLocalLogoPath();
+            $isUploaded = 1;
+            $imageFileType = pathinfo($targetFile, PATHINFO_EXTENSION);
+            $returnText = '';
+
+            // Check if file was uploaded
+            if (!isset($_FILES['fileToUpload']) || $_FILES['fileToUpload']['error'] !== UPLOAD_ERR_OK) {
+                $this->ajaxRender(json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('No file uploaded or upload error', self::FILE_NAME),
+                ]));
+                return;
+            }
+
+            $uploadedFile = $_FILES['fileToUpload'];
+            $imageFileType = strtolower(pathinfo($uploadedFile['name'], PATHINFO_EXTENSION));
+
+            // Check image format
+            if (!in_array($imageFileType, ['jpg', 'jpeg', 'png'])) {
+                $returnText = $this->module->l('Upload a .jpg or .png file.', self::FILE_NAME);
+                $isUploaded = 0;
+            }
+
+            // Check image dimensions (max 256x64)
+            if ($isUploaded === 1) {
+                $imageInfo = getimagesize($uploadedFile['tmp_name']);
+                if ($imageInfo === false) {
+                    $returnText = $this->module->l('Invalid image file.', self::FILE_NAME);
+                    $isUploaded = 0;
+                } elseif ($imageInfo[0] > 256 || $imageInfo[1] > 64) {
+                    $returnText = $this->module->l('Image dimensions must be maximum 256x64 pixels.', self::FILE_NAME);
+                    $isUploaded = 0;
+                }
+            }
+
+            if ($isUploaded === 1) {
+                // Create directory if it doesn't exist
+                $targetDir = dirname($targetFile);
+                if (!is_dir($targetDir)) {
+                    mkdir($targetDir, 0755, true);
+                }
+
+                // Move uploaded file
+                if (move_uploaded_file($uploadedFile['tmp_name'], $targetFile)) {
+                    $returnText = basename($uploadedFile['name']);
+                    $logoUrl = $creditCardLogoProvider->getLogoPathUri() . '?' . time();
+                } else {
+                    $isUploaded = 0;
+                    $returnText = $this->module->l('Something went wrong when uploading your logo.', self::FILE_NAME);
+                }
+            }
+
+            $this->ajaxRender(json_encode([
+                'success' => $isUploaded === 1,
+                'message' => $returnText,
+                'logoUrl' => $isUploaded === 1 ? $logoUrl : null,
+            ]));
+        } catch (Exception $e) {
+            $this->logger->error('Failed to upload custom logo', [
+                'exception' => ExceptionUtility::getExceptions($e),
+            ]);
+
+            $this->ajaxRender(json_encode([
+                'success' => false,
+                'message' => $this->module->l('Failed to upload custom logo', self::FILE_NAME),
+            ]));
+        }
     }
 }
