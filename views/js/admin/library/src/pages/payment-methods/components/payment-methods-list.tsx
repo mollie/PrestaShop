@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Info } from "lucide-react"
 import { PaymentMethodTabs } from "./payment-method-tabs"
 import { PaymentMethodsList } from "./payment-methods-list-component"
@@ -22,9 +22,9 @@ export default function PaymentMethodsPage() {
   // Load payment methods on component mount
   useEffect(() => {
     loadPaymentMethods()
-  }, [])
+  }, [loadPaymentMethods])
 
-  const loadPaymentMethods = async () => {
+  const loadPaymentMethods = useCallback(async () => {
     try {
       setIsLoading(true)
       setErrorMessage("")
@@ -49,7 +49,7 @@ export default function PaymentMethodsPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [t])
 
   const toggleExpanded = (id: string) => {
     const updateMethods = (methods: PaymentMethod[]) =>

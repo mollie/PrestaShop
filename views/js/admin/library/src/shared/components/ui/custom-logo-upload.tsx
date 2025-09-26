@@ -63,7 +63,7 @@ export function CustomLogoUpload({
         } else {
           setError(result.message)
         }
-      } catch (err) {
+      } catch {
         setError("Failed to upload logo. Please try again.")
       } finally {
         setIsUploading(false)

@@ -180,7 +180,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'loadingMethods' => addslashes($this->module->l('Loading payment methods...', self::FILE_NAME)),
                 'loadingError' => addslashes($this->module->l('Failed to load payment methods', self::FILE_NAME)),
 
-
                 // Countries todo once we implement this remove these
                 // Drag and drop
                 'dragPaymentOptionsToReorder' => addslashes($this->module->l('Drag payment options to reorder', self::FILE_NAME)),
@@ -263,6 +262,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                     'success' => false,
                     'message' => $this->module->l('API not configured. Please configure API keys first.', self::FILE_NAME),
                 ]));
+
                 return;
             }
 
@@ -296,6 +296,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                         'is_connected' => false,
                     ],
                 ]));
+
                 return;
             }
 
@@ -543,7 +544,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                     $paymentMethod = new MolPaymentMethod((int) $paymentMethodId);
                     $paymentMethod->position = $position + 1; // Position starts from 1
                     if ($paymentMethod->save()) {
-                        $updatedCount++;
+                        ++$updatedCount;
                     }
                 }
             }
@@ -594,6 +595,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                     'success' => false,
                     'message' => $this->module->l('API not configured. Please configure API keys first.', self::FILE_NAME),
                 ]));
+
                 return;
             }
 
@@ -620,9 +622,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                     $savedMethodIds[] = $paymentMethod->id_method;
 
                     if ($isNew) {
-                        $newCount++;
+                        ++$newCount;
                     } else {
-                        $updatedCount++;
+                        ++$updatedCount;
                     }
                 } catch (Exception $e) {
                     $this->logger->error('Failed to save payment method during refresh', [
@@ -832,6 +834,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                     'success' => false,
                     'message' => $this->module->l('No file uploaded or upload error', self::FILE_NAME),
                 ]));
+
                 return;
             }
 

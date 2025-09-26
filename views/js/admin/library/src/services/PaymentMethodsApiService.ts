@@ -68,7 +68,7 @@ export interface PaymentMethodsResponse {
   data?: {
     methods: PaymentMethod[];
     countries: Country[];
-    taxRulesGroups: any[];
+    taxRulesGroups: { value: string; label: string }[];
     customerGroups: CustomerGroup[];
     onlyOrderMethods: string[];
     onlyPaymentsMethods: string[];
