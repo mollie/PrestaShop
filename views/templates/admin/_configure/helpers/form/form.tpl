@@ -824,33 +824,7 @@
         </span>
             {/if}
         </div>
-    {elseif $input.type === 'mollie-password'}
-        <div class="input-group fixed-width-lg">
-            <span class="input-group-addon">
-                <i class="icon-key"></i>
-            </span>
-            <input type="password"
-                   id="{if isset($input.id)}{$input.id|intval}{else}{$input.name|escape:'html':'UTF-8'}{/if}"
-                   name="{$input.name|escape:'html':'UTF-8'}"
-                   class="{if isset($input.class)}{$input.class|escape:'html':'UTF-8'}{/if} js-visible-password"
-                   value="{$fields_value[$input.name]|escape:'html':'UTF-8'}"
-                   {if isset($input.autocomplete) && !$input.autocomplete}autocomplete="off"{/if}
-                    {if isset($input.required) && $input.required } required="required" {/if}
-            />
-            <span class="input-group-btn">
-              <button
-                      class="btn"
-                      type="button"
-                      data-action="show-password"
-                      data-text-show="{l s='Show' mod='mollie'}"
-                      data-text-hide="{l s='Hide' mod='mollie'}"
-              >
-                {l s='Show' d='Shop.Theme.Actions' mod='mollie'}
-              </button>
-        </div>
-    {elseif $input.type === 'mollie-button'}
-        <button type="button"
-                class="btn btn-default {if isset($input.class)}{$input.class|escape:'html':'UTF-8'}{/if}">{$input.text|escape:'html':'UTF-8'}</button>
+    {* mollie-password and mollie-button types removed - API key functionality moved to AdminMollieAuthentication *}
     {elseif $input.type === 'mollie-payment-empty-alert'}
         <div data-tab-id="general_settings">
             <div class="alert alert-info">

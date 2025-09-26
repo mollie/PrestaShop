@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -83,6 +84,7 @@ class Mollie extends PaymentModule
     const ADMIN_MOLLIE_AJAX_CONTROLLER = 'AdminMollieAjax';
     const ADMIN_MOLLIE_TAB_CONTROLLER = 'AdminMollieTabParent';
     const ADMIN_MOLLIE_SETTINGS_CONTROLLER = 'AdminMollieSettings';
+    const ADMIN_MOLLIE_AUTHENTICATION_CONTROLLER = 'AdminMollieAuthentication';
     const ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_PARENT_CONTROLLER = 'AdminMollieSubscriptionOrdersParent';
     const ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_CONTROLLER = 'AdminMollieSubscriptionOrders';
     const ADMIN_MOLLIE_SUBSCRIPTION_FAQ_PARENT_CONTROLLER = 'AdminMollieSubscriptionFAQParent';
@@ -386,7 +388,8 @@ class Mollie extends PaymentModule
 
         $controller = $this->context->controller;
 
-        if ($controller instanceof CartControllerCore
+        if (
+            $controller instanceof CartControllerCore
             || $controller instanceof OrderControllerCore
         ) {
             $errorDisplayService->showCookieError('mollie_payment_canceled_error');
@@ -859,7 +862,8 @@ class Mollie extends PaymentModule
         /** @var string $template */
         $template = $params['template'];
 
-        if ('order_conf' === $template ||
+        if (
+            'order_conf' === $template ||
             'account' === $template ||
             'backoffice_order' === $template ||
             'contact_form' === $template ||
@@ -876,7 +880,8 @@ class Mollie extends PaymentModule
             'payment_error' === $template ||
             'outofstock' === $template ||
             'bankwire' === $template ||
-            'refund' === $template) {
+            'refund' === $template
+        ) {
             /** @var MolOrderPaymentFeeRepositoryInterface $molOrderPaymentFeeRepository */
             $molOrderPaymentFeeRepository = $this->getService(MolOrderPaymentFeeRepositoryInterface::class);
 
@@ -991,6 +996,11 @@ class Mollie extends PaymentModule
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
             ],
             [
+                'name' => $this->l('Authentication'),
+                'class_name' => self::ADMIN_MOLLIE_AUTHENTICATION_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
+            ],
+            [
                 'name' => $this->l('Subscriptions'),
                 'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_PARENT_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
@@ -1082,7 +1092,8 @@ class Mollie extends PaymentModule
         }
 
         //NOTE as mollie-email-send is only in manual order creation in backoffice this should work only when mollie payment is chosen.
-        if (!empty(Tools::getValue('mollie-email-send')) &&
+        if (
+            !empty(Tools::getValue('mollie-email-send')) &&
             $params['order']->module === $this->name
         ) {
             $cartId = $params['cart']->id;
@@ -1282,9 +1293,7 @@ class Mollie extends PaymentModule
 
             $logger->info('The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com');
 
-            exit(
-            $this->l('The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com')
-            );
+            exit($this->l('The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com'));
         }
     }
 
