@@ -60,14 +60,6 @@ class B2bPaymentMethodRestrictionValidator implements PaymentMethodRestrictionVa
             return false;
         }
 
-        if (!$this->isIdentificationNumberValid()) {
-            return false;
-        }
-
-        if (!$this->isVatNumberValid()) {
-            return false;
-        }
-
         return true;
     }
 
@@ -77,39 +69,6 @@ class B2bPaymentMethodRestrictionValidator implements PaymentMethodRestrictionVa
     public function supports(MolPaymentMethod $paymentMethod): bool
     {
         return $paymentMethod->getPaymentMethodName() === PaymentMethod::BILLIE;
-    }
-
-    private function isIdentificationNumberValid(): bool
-    {
-        $customerId = $this->context->getCustomerId();
-
-        /** @var \Customer $customer */
-        $customer = $this->customerRepository->findOneBy([
-            'id_customer' => $customerId,
-        ]);
-
-        return !empty($customer->siret);
-    }
-
-    private function isVatNumberValid(): bool
-    {
-        $billingAddressId = $this->context->getInvoiceAddressId();
-
-        /** @var \Address $billingAddress */
-        $billingAddress = $this->addressRepository->findOneBy([
-            'id_address' => (int) $billingAddressId,
-        ]);
-
-        /** @var \AddressFormat $addressFormat */
-        $addressFormat = $this->addressFormatRepository->findOneBy([
-            'id_country' => $billingAddress->id_country,
-        ]);
-
-        if (!str_contains($addressFormat->getFormat($billingAddress->id_country), 'vat_number')) {
-            return true;
-        }
-
-        return !empty($billingAddress->vat_number);
     }
 
     private function isB2bEnabled(): bool
