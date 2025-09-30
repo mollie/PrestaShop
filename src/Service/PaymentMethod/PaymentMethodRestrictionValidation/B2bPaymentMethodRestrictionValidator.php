@@ -26,29 +26,11 @@ if (!defined('_PS_VERSION_')) {
 
 class B2bPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
-    /** @var Context */
-    private $context;
-    /** @var AddressRepositoryInterface */
-    private $addressRepository;
-    /** @var CustomerRepositoryInterface */
-    private $customerRepository;
     /** @var ConfigurationAdapter */
     private $configuration;
-    /** @var AddressFormatRepositoryInterface */
-    private $addressFormatRepository;
 
-    public function __construct(
-        Context $context,
-        AddressRepositoryInterface $addressRepository,
-        CustomerRepositoryInterface $customerRepository,
-        ConfigurationAdapter $configuration,
-        AddressFormatRepositoryInterface $addressFormatRepository
-    ) {
-        $this->context = $context;
-        $this->addressRepository = $addressRepository;
-        $this->customerRepository = $customerRepository;
+    public function __construct(ConfigurationAdapter $configuration) {
         $this->configuration = $configuration;
-        $this->addressFormatRepository = $addressFormatRepository;
     }
 
     /**
