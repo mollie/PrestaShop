@@ -29,7 +29,8 @@ class B2bPaymentMethodRestrictionValidator implements PaymentMethodRestrictionVa
     /** @var ConfigurationAdapter */
     private $configuration;
 
-    public function __construct(ConfigurationAdapter $configuration) {
+    public function __construct(ConfigurationAdapter $configuration)
+    {
         $this->configuration = $configuration;
     }
 
