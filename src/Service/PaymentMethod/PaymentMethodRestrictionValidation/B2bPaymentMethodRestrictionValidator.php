@@ -13,11 +13,7 @@
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
 use Mollie\Adapter\ConfigurationAdapter;
-use Mollie\Adapter\Context;
 use Mollie\Api\Types\PaymentMethod;
-use Mollie\Repository\AddressFormatRepositoryInterface;
-use Mollie\Repository\AddressRepositoryInterface;
-use Mollie\Repository\CustomerRepositoryInterface;
 use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
