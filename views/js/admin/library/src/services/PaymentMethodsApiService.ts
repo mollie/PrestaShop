@@ -150,6 +150,22 @@ export class PaymentMethodsApiService {
   }
 
   /**
+   * Update payment methods order (drag & drop reordering)
+   */
+  async updateMethodsOrder(methodIds: string[]): Promise<PaymentMethodsResponse> {
+    const formData = new FormData();
+    formData.append('ajax', '1');
+    formData.append('action', 'updateMethodsOrder');
+    formData.append('method_ids', JSON.stringify(methodIds));
+
+    const response = await fetch(this.baseUrl, {
+      method: 'POST',
+      body: formData
+    });
+    return response.json();
+  }
+
+  /**
    * Calculate payment fee tax (tax incl/excl conversion)
    * Uses existing AdminMollieAjax endpoint
    */

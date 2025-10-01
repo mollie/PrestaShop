@@ -19,6 +19,7 @@ export default function PaymentMethodsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
   const [savingMethodId, setSavingMethodId] = useState<string | null>(null)
+  const [isReorderingSaving, setIsReorderingSaving] = useState(false)
 
   const loadPaymentMethods = useCallback(async () => {
     try {
@@ -79,11 +80,45 @@ export default function PaymentMethodsPage() {
     }
   }
 
-  const handleReorder = (newMethods: PaymentMethod[]) => {
+  const handleReorder = async (newMethods: PaymentMethod[]) => {
+    // Update UI immediately for better UX
     if (activeTab === "enabled") {
       setEnabledMethods(newMethods)
     } else {
       setDisabledMethods(newMethods)
+    }
+
+    // Save the new order to the backend
+    setIsReorderingSaving(true)
+    try {
+      const methodIds = newMethods.map(method => method.id)
+      const response = await paymentMethodsApiService.updateMethodsOrder(methodIds)
+
+      if (response.success) {
+        // Show success notification
+        setNotification({
+          message: response.message || 'Payment methods order updated successfully!',
+          type: 'success'
+        })
+      } else {
+        // Show error and revert to original order
+        setNotification({
+          message: response.message || 'Failed to update payment methods order',
+          type: 'error'
+        })
+        // Reload methods to restore original order
+        await loadPaymentMethods()
+      }
+    } catch (error) {
+      console.error('Failed to update payment methods order:', error)
+      setNotification({
+        message: 'Failed to update payment methods order',
+        type: 'error'
+      })
+      // Reload methods to restore original order
+      await loadPaymentMethods()
+    } finally {
+      setIsReorderingSaving(false)
     }
   }
 
@@ -225,6 +260,17 @@ export default function PaymentMethodsPage() {
       {/* Tabs */}
       <PaymentMethodTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
+      {/* Reordering indicator */}
+      {isReorderingSaving && (
+        <div className="fixed bottom-6 right-6 z-[9999] bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center gap-3 shadow-lg">
+          <svg className="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span className="text-sm font-medium text-blue-800">Saving new order...</span>
+        </div>
+      )}
+
       {/* Payment Methods List */}
       {currentMethods.length === 0 ? (
         <div className="text-center py-12">
@@ -241,7 +287,7 @@ export default function PaymentMethodsPage() {
           onSaveSettings={saveMethodSettings}
           onReorder={handleReorder}
           savingMethodId={savingMethodId || undefined}
-          isDragEnabled={activeTab === "enabled"}
+          isDragEnabled={activeTab === "enabled" && !isReorderingSaving}
         />
       )}
     </div>

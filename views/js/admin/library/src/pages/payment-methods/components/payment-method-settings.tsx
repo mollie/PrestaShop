@@ -6,8 +6,7 @@ import { Label } from "../../../shared/components/ui/label"
 import { Switch } from "../../../shared/components/ui/switch"
 import { CustomLogoUpload } from "../../../shared/components/ui/custom-logo-upload"
 import { ApplePaySettings } from "../../../shared/components/ui/apple-pay-settings"
-import { Tooltip } from "../../../shared/components/ui/tooltip"
-import { ChevronDown, Info } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 import { cn } from "../../../shared/lib/utils"
 import type { PaymentMethod, Country, CustomerGroup } from "../../../services/PaymentMethodsApiService"
 import { paymentMethodsApiService } from "../../../services/PaymentMethodsApiService"
@@ -343,25 +342,9 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
         </div>
 
         <div>
-          <div className="flex items-center gap-2">
-            <Label htmlFor="transaction-description" className="text-base font-semibold">
-              {t('transactionDescription')}
-            </Label>
-            <Tooltip
-              content={
-                <div>
-                  <p className="mb-2">
-                    Use any of the following variables to create a transaction description for payments that use this method:
-                  </p>
-                  <p className="font-medium">
-                    <b>{'{orderNumber}'}</b>, <b>{'{storeName}'}</b>, <b>{'{countryCode}'}</b>, <b>{'{cart.id}'}</b>, <b>{'{order.reference}'}</b>, <b>{'{customer.firstname}'}</b>, <b>{'{customer.lastname}'}</b>, <b>{'{customer.company}'}</b>
-                  </p>
-                </div>
-              }
-            >
-              <Info className="h-4 w-4 text-muted-foreground cursor-help" />
-            </Tooltip>
-          </div>
+          <Label htmlFor="transaction-description" className="text-base font-semibold">
+            {t('transactionDescription')}
+          </Label>
           <Input
             id="transaction-description"
             placeholder={t('transactionDescriptionPlaceholder')}
@@ -369,6 +352,12 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
             onChange={(e) => onUpdateSettings({ transactionDescription: e.target.value })}
             className="mt-1"
           />
+          <p className="text-xs text-muted-foreground mt-2">
+            Use any of the following variables to create a transaction description for payments that use this method:
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            <b>{'{orderNumber}'}</b>, <b>{'{storeName}'}</b>, <b>{'{countryCode}'}</b>, <b>{'{cart.id}'}</b>, <b>{'{order.reference}'}</b>, <b>{'{customer.firstname}'}</b>, <b>{'{customer.lastname}'}</b>, <b>{'{customer.company}'}</b>
+          </p>
         </div>
       </div>
 
