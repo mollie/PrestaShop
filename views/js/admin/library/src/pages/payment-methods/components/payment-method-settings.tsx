@@ -6,9 +6,11 @@ import { Label } from "../../../shared/components/ui/label"
 import { Switch } from "../../../shared/components/ui/switch"
 import { CustomLogoUpload } from "../../../shared/components/ui/custom-logo-upload"
 import { ApplePaySettings } from "../../../shared/components/ui/apple-pay-settings"
-import { ChevronDown } from "lucide-react"
+import { Tooltip } from "../../../shared/components/ui/tooltip"
+import { ChevronDown, Info } from "lucide-react"
 import { cn } from "../../../shared/lib/utils"
 import type { PaymentMethod, Country, CustomerGroup } from "../../../services/PaymentMethodsApiService"
+import { paymentMethodsApiService } from "../../../services/PaymentMethodsApiService"
 import { usePaymentMethodsTranslations } from "../../../shared/hooks/use-payment-methods-translations"
 
 interface PaymentMethodSettingsProps {
@@ -189,6 +191,40 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
   const [showFees, setShowFees] = useState(false)
   const [showOrderRestrictions, setShowOrderRestrictions] = useState(false)
   const [showApplePay, setShowApplePay] = useState(false)
+  const [isCalculatingTax, setIsCalculatingTax] = useState(false)
+
+  // Tax calculation function - mirrors legacy validation.js:109-142
+  const calculateTax = async (changedField: 'incl' | 'excl' | 'taxGroup') => {
+    const { fixedFeeTaxIncl, fixedFeeTaxExcl, taxGroup } = method.settings.paymentFees;
+
+    // Only calculate if we have values to work with
+    if (!taxGroup || taxGroup === '0') return;
+    if (!fixedFeeTaxIncl && !fixedFeeTaxExcl) return;
+
+    setIsCalculatingTax(true);
+
+    try {
+      const response = await paymentMethodsApiService.calculatePaymentFeeTax(
+        changedField === 'incl' ? fixedFeeTaxIncl : '0',
+        changedField === 'excl' ? fixedFeeTaxExcl : '0',
+        taxGroup
+      );
+
+      if (!response.error && response.paymentFeeTaxIncl && response.paymentFeeTaxExcl) {
+        onUpdateSettings({
+          paymentFees: {
+            ...method.settings.paymentFees,
+            fixedFeeTaxIncl: response.paymentFeeTaxIncl,
+            fixedFeeTaxExcl: response.paymentFeeTaxExcl
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Tax calculation failed:', error);
+    } finally {
+      setIsCalculatingTax(false);
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -298,7 +334,7 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
               href="https://docs.mollie.com/payments/overview"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground underline cursor-pointer hover:text-muted-foreground/80"
+              className="text-muted-foreground underline decoration-1 underline-offset-2 cursor-pointer hover:text-muted-foreground/80"
             >
               {t('readMore')}
             </a>
@@ -307,9 +343,25 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
         </div>
 
         <div>
-          <Label htmlFor="transaction-description" className="text-base font-semibold">
-            {t('transactionDescription')}
-          </Label>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="transaction-description" className="text-base font-semibold">
+              {t('transactionDescription')}
+            </Label>
+            <Tooltip
+              content={
+                <div>
+                  <p className="mb-2">
+                    Use any of the following variables to create a transaction description for payments that use this method:
+                  </p>
+                  <p className="font-medium">
+                    <b>{'{orderNumber}'}</b>, <b>{'{storeName}'}</b>, <b>{'{countryCode}'}</b>, <b>{'{cart.id}'}</b>, <b>{'{order.reference}'}</b>, <b>{'{customer.firstname}'}</b>, <b>{'{customer.lastname}'}</b>, <b>{'{customer.company}'}</b>
+                  </p>
+                </div>
+              }
+            >
+              <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+            </Tooltip>
+          </div>
           <Input
             id="transaction-description"
             placeholder={t('transactionDescriptionPlaceholder')}
@@ -460,103 +512,132 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
           </button>
           {showFees && (
             <div className="p-4 border-t space-y-4 animate-in slide-in-from-top-1 fade-in duration-200 ease-out">
-              <div className="space-y-1">
-                <div className="flex items-center gap-3">
-                  <Label className="text-sm font-medium">Enable/Disable</Label>
-                  <Switch
-                    checked={method.settings.paymentFees.enabled}
-                    onCheckedChange={(enabled: boolean) =>
-                      onUpdateSettings({
-                        paymentFees: { ...method.settings.paymentFees, enabled },
-                      })
-                    }
-                  />
-                </div>
-                <p className="text-xs text-muted-foreground">Enable payment fee</p>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-sm font-medium">{t('paymentFeeType')}</Label>
-                  <RadioSelect
-                    value={method.settings.paymentFees.type}
-                    onValueChange={(type: string) =>
-                      onUpdateSettings({
-                        paymentFees: { ...method.settings.paymentFees, type: type as "none" | "fixed" | "percentage" | "combined" },
-                      })
-                    }
-                    options={[
-                      { value: "none", label: t('noFee') },
-                      { value: "fixed", label: t('fixedFee') },
-                      { value: "percentage", label: t('percentageFee') },
-                      { value: "combined", label: t('combinedFee') },
-                    ]}
-                    placeholder={t('noFee')}
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label className="text-sm font-medium">{t('paymentFeeTaxGroup')}</Label>
-                  <RadioSelect
-                    value={method.settings.paymentFees.taxGroup}
-                    onValueChange={(taxGroup: string) =>
-                      onUpdateSettings({
-                        paymentFees: { ...method.settings.paymentFees, taxGroup },
-                      })
-                    }
-                    options={[
-                      { value: "0", label: "No Tax" },
-                      { value: "1", label: "Standard Tax" },
-                      { value: "2", label: "Reduced Tax" },
-                    ]}
-                    placeholder="No Tax"
-                    className="mt-1"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-sm font-medium">{t('maximumFee')}</Label>
-                  <Input 
-                    type="number" 
-                    placeholder="0.00" 
-                    className="mt-1"
-                    value={method.settings.paymentFees.maxFee}
-                    onChange={(e) =>
-                      onUpdateSettings({
-                        paymentFees: { ...method.settings.paymentFees, maxFee: e.target.value },
-                      })
-                    }
-                  />
-                </div>
-                <div>
-                  <Label className="text-sm font-medium">{t('minimumAmount')}</Label>
-                  <Input 
-                    type="number" 
-                    placeholder="0.00" 
-                    className="mt-1"
-                    value={method.settings.paymentFees.minAmount}
-                    onChange={(e) =>
-                      onUpdateSettings({
-                        paymentFees: { ...method.settings.paymentFees, minAmount: e.target.value },
-                      })
-                    }
-                  />
-                </div>
-              </div>
+              {/* Payment Fee Type */}
               <div>
-                <Label className="text-sm font-medium">{t('maximumAmount')}</Label>
-                <Input 
-                  type="number" 
-                  placeholder="0.00" 
-                  className="mt-1"
-                  value={method.settings.paymentFees.maxAmount}
-                  onChange={(e) =>
+                <Label className="text-sm font-medium">{t('paymentFeeType')}</Label>
+                <RadioSelect
+                  value={method.settings.paymentFees.type}
+                  onValueChange={(type: string) =>
                     onUpdateSettings({
-                      paymentFees: { ...method.settings.paymentFees, maxAmount: e.target.value },
+                      paymentFees: {
+                        ...method.settings.paymentFees,
+                        type: type as "none" | "fixed" | "percentage" | "combined",
+                        enabled: type !== 'none'
+                      },
                     })
                   }
+                  options={[
+                    { value: "none", label: t('noFee') },
+                    { value: "fixed", label: t('fixedFee') },
+                    { value: "percentage", label: t('percentageFee') },
+                    { value: "combined", label: t('combinedFee') },
+                  ]}
+                  placeholder={t('noFee')}
+                  className="mt-1"
                 />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {t('paymentFeeEmailHelp')}
+                </p>
               </div>
+
+              {/* Fixed Fee Fields - Show for: fixed, combined */}
+              {(method.settings.paymentFees.type === 'fixed' || method.settings.paymentFees.type === 'combined') && (
+                <>
+                  <div>
+                    <Label className="text-sm font-medium">{t('fixedFeeTaxIncl')}</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      className="mt-1"
+                      value={method.settings.paymentFees.fixedFeeTaxIncl}
+                      onChange={(e) =>
+                        onUpdateSettings({
+                          paymentFees: { ...method.settings.paymentFees, fixedFeeTaxIncl: e.target.value },
+                        })
+                      }
+                      onBlur={() => calculateTax('incl')}
+                      disabled={isCalculatingTax}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">{t('fixedFeeTaxExcl')}</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      className="mt-1"
+                      value={method.settings.paymentFees.fixedFeeTaxExcl}
+                      onChange={(e) =>
+                        onUpdateSettings({
+                          paymentFees: { ...method.settings.paymentFees, fixedFeeTaxExcl: e.target.value },
+                        })
+                      }
+                      onBlur={() => calculateTax('excl')}
+                      disabled={isCalculatingTax}
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* Tax Rules Group - Show for: fixed, percentage, combined (hide only for 'none') */}
+              {method.settings.paymentFees.type !== 'none' && (
+                <div>
+                  <Label className="text-sm font-medium">{t('taxRulesGroupForFixedFee')}</Label>
+                  <RadioSelect
+                    value={method.settings.paymentFees.taxGroup}
+                    onValueChange={(taxGroup: string) => {
+                      onUpdateSettings({
+                        paymentFees: { ...method.settings.paymentFees, taxGroup },
+                      });
+                      // Recalculate tax when tax group changes (mirrors legacy payment_methods.js:81-107)
+                      setTimeout(() => calculateTax('taxGroup'), 100);
+                    }}
+                    options={window.molliePaymentMethodsConfig?.taxRulesGroups?.map((group: { value: string; label: string }) => ({
+                      value: group.value,
+                      label: group.label
+                    })) || []}
+                    placeholder={t('paymentFeeTaxGroup')}
+                    className="mt-1"
+                  />
+                </div>
+              )}
+
+              {/* Percentage Fields - Show for: percentage, combined */}
+              {(method.settings.paymentFees.type === 'percentage' || method.settings.paymentFees.type === 'combined') && (
+                <>
+                  <div>
+                    <Label className="text-sm font-medium">{t('percentageFeeLabel')}</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      className="mt-1"
+                      value={method.settings.paymentFees.percentageFee}
+                      onChange={(e) =>
+                        onUpdateSettings({
+                          paymentFees: { ...method.settings.paymentFees, percentageFee: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">{t('maximumFee')}</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      className="mt-1"
+                      value={method.settings.paymentFees.maxFeeCap}
+                      onChange={(e) =>
+                        onUpdateSettings({
+                          paymentFees: { ...method.settings.paymentFees, maxFeeCap: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
@@ -576,12 +657,43 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
             <div className="p-4 border-t space-y-4 animate-in slide-in-from-top-1 fade-in duration-200 ease-out">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium">Max Order Amount</Label>
-                  <Input type="number" placeholder="Enter maximum order amount" className="mt-1" />
+                  <Label className="text-sm font-medium">{t('minimumAmount')}</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    placeholder="0.00"
+                    className="mt-1"
+                    value={method.settings.orderRestrictions.minAmount}
+                    onChange={(e) =>
+                      onUpdateSettings({
+                        orderRestrictions: { ...method.settings.orderRestrictions, minAmount: e.target.value },
+                      })
+                    }
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Default min amount in Mollie is: {method.settings.orderRestrictions.minAmount || '0.00'}
+                  </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Min Order Amount</Label>
-                  <Input type="number" placeholder="Enter minimum order amount" className="mt-1" />
+                  <Label className="text-sm font-medium">{t('maximumAmount')}</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    placeholder="0.00"
+                    className="mt-1"
+                    value={method.settings.orderRestrictions.maxAmount}
+                    onChange={(e) =>
+                      onUpdateSettings({
+                        orderRestrictions: { ...method.settings.orderRestrictions, maxAmount: e.target.value },
+                      })
+                    }
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {method.settings.orderRestrictions.maxAmount && method.settings.orderRestrictions.maxAmount !== '0.00'
+                      ? `Default max amount in Mollie is: ${method.settings.orderRestrictions.maxAmount}`
+                      : 'Default max amount has no limitation'
+                    }
+                  </p>
                 </div>
               </div>
             </div>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
-import { Info } from "lucide-react"
+import { Info, CheckCircle, XCircle } from "lucide-react"
 import { PaymentMethodTabs } from "./payment-method-tabs"
 import { PaymentMethodsList } from "./payment-methods-list-component"
 import { PaymentMethodsSkeleton } from "./payment-methods-skeleton"
@@ -11,6 +11,7 @@ import { usePaymentMethodsTranslations } from "../../../shared/hooks/use-payment
 export default function PaymentMethodsPage() {
   const { t } = usePaymentMethodsTranslations()
   const [activeTab, setActiveTab] = useState<"enabled" | "disabled">("enabled")
+  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [enabledMethods, setEnabledMethods] = useState<PaymentMethod[]>([])
   const [disabledMethods, setDisabledMethods] = useState<PaymentMethod[]>([])
   const [countries, setCountries] = useState<Country[]>([])
@@ -94,6 +95,8 @@ export default function PaymentMethodsPage() {
       const method = [...enabledMethods, ...disabledMethods].find(m => m.id === methodId)
       if (!method) {
         console.error('Method not found:', methodId)
+        setNotification({ message: 'Payment method not found', type: 'error' })
+        setSavingMethodId(null)
         return
       }
 
@@ -101,18 +104,52 @@ export default function PaymentMethodsPage() {
       const response = await paymentMethodsApiService.savePaymentMethodSettings(methodId, method.settings)
 
       if (response.success) {
-        // Reload to get fresh data
-        await loadPaymentMethods()
+        // Show success notification FIRST (before any updates)
+        setNotification({ message: response.message || 'Settings saved successfully!', type: 'success' })
+
+        // Reload ONLY the saved payment method data from server to ensure fresh state
+        // This is more efficient than reloading all methods
+        const freshDataResponse = await paymentMethodsApiService.getPaymentMethods()
+
+        if (freshDataResponse.success && freshDataResponse.data) {
+          const freshMethod = freshDataResponse.data.methods.find((m: any) => m.id === methodId)
+
+          if (freshMethod) {
+            // Preserve the expanded state after save
+            freshMethod.isExpanded = true
+
+            // Update only the saved method in the current state
+            if (freshMethod.settings.enabled) {
+              setEnabledMethods(prev => prev.map(m => m.id === methodId ? freshMethod : m))
+              setDisabledMethods(prev => prev.filter(m => m.id !== methodId))
+            } else {
+              setDisabledMethods(prev => prev.map(m => m.id === methodId ? freshMethod : m))
+              setEnabledMethods(prev => prev.filter(m => m.id !== methodId))
+            }
+          }
+        }
       } else {
-        setErrorMessage(response.message || 'Failed to save settings')
+        // Show error but DON'T clear all methods
+        setNotification({ message: response.message || 'Failed to save settings', type: 'error' })
       }
     } catch (error) {
       console.error('Failed to save payment method settings:', error)
-      setErrorMessage('Failed to save settings')
+      // Show error but DON'T clear all methods
+      setNotification({ message: 'Failed to save settings', type: 'error' })
     } finally {
       setSavingMethodId(null)
     }
   }
+
+  // Auto-hide notification after 5 seconds
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [notification])
 
   const currentMethods = activeTab === "enabled" ? enabledMethods : disabledMethods
 
@@ -133,6 +170,35 @@ export default function PaymentMethodsPage() {
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
+      {/* Notification Banner - Fixed position in right corner */}
+      {notification && (
+        <div
+          className={`fixed right-6 top-6 z-[9999] border rounded-lg p-4 flex items-center gap-3 shadow-lg min-w-[320px] max-w-[500px] ${
+            notification.type === 'success'
+              ? 'bg-green-50 border-green-200'
+              : 'bg-red-50 border-red-200'
+          }`}
+          style={{ animation: 'slideInRight 0.3s ease-out' }}
+        >
+          {notification.type === 'success' ? (
+            <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+          ) : (
+            <XCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
+          )}
+          <div className={`text-sm font-medium ${notification.type === 'success' ? 'text-green-800' : 'text-red-800'}`}>
+            {notification.message}
+          </div>
+          <button
+            onClick={() => setNotification(null)}
+            className="ml-auto text-gray-500 hover:text-gray-700"
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="space-y-2">
         <h1 className="text-2xl font-semibold text-foreground">{t('paymentMethods')}</h1>
@@ -175,6 +241,7 @@ export default function PaymentMethodsPage() {
           onSaveSettings={saveMethodSettings}
           onReorder={handleReorder}
           savingMethodId={savingMethodId || undefined}
+          isDragEnabled={activeTab === "enabled"}
         />
       )}
     </div>

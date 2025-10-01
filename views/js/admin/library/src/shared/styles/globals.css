@@ -334,6 +334,17 @@
     z-index: 99999 !important;
   }
 
+  /* Fix tooltip z-index issues - ensure tooltips appear above everything */
+  #mollie-payment-methods-root .group:hover .absolute {
+    z-index: 999999 !important;
+    position: fixed !important;
+  }
+
+  /* Ensure tooltip containers don't clip content */
+  #mollie-payment-methods-root .relative.group {
+    overflow: visible !important;
+  }
+
   /* Fix any parent containers that might clip dropdowns */
   #mollie-payment-methods-root .space-y-4 > div {
     overflow: visible !important;
@@ -348,5 +359,28 @@
   #mollie-payment-methods-root h3 {
     margin-bottom: 1.5rem !important;
     margin-top: 0 !important;
+  }
+
+  /* Notification animations */
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideOutRight {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(100%);
+    }
   }
 }

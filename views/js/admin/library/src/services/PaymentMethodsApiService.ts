@@ -2,6 +2,13 @@
 declare global {
   interface Window {
     molliePaymentMethodsAjaxUrl: string;
+    molliePaymentMethodsConfig?: {
+      countries: Country[];
+      taxRulesGroups: { value: string; label: string }[];
+      customerGroups: CustomerGroup[];
+      onlyOrderMethods: string[];
+      onlyPaymentsMethods: string[];
+    };
   }
 }
 
@@ -36,9 +43,12 @@ export interface PaymentMethod {
       enabled: boolean
       type: "none" | "fixed" | "percentage" | "combined"
       taxGroup: string
-      maxFee: string
-      minAmount: string
-      maxAmount: string
+      // Fixed fee fields
+      fixedFeeTaxIncl: string
+      fixedFeeTaxExcl: string
+      // Percentage fee fields
+      percentageFee: string
+      maxFeeCap: string
     }
     orderRestrictions: {
       minAmount: string
@@ -133,6 +143,32 @@ export class PaymentMethodsApiService {
     formData.append('fileToUpload', file);
 
     const response = await fetch(this.baseUrl, {
+      method: 'POST',
+      body: formData
+    });
+    return response.json();
+  }
+
+  /**
+   * Calculate payment fee tax (tax incl/excl conversion)
+   * Uses existing AdminMollieAjax endpoint
+   */
+  async calculatePaymentFeeTax(
+    paymentFeeTaxIncl: string,
+    paymentFeeTaxExcl: string,
+    taxRulesGroupId: string
+  ): Promise<{ error: boolean; message?: string; paymentFeeTaxIncl?: string; paymentFeeTaxExcl?: string }> {
+    // Use AdminMollieAjax controller endpoint (from legacy system)
+    const ajaxUrl = window.molliePaymentMethodsAjaxUrl.replace('AdminMolliePaymentMethods', 'AdminMollieAjax');
+
+    const formData = new FormData();
+    formData.append('action', 'updateFixedPaymentFeePrice');
+    formData.append('paymentFeeTaxIncl', paymentFeeTaxIncl);
+    formData.append('paymentFeeTaxExcl', paymentFeeTaxExcl);
+    formData.append('taxRulesGroupId', taxRulesGroupId);
+    formData.append('ajax', '1');
+
+    const response = await fetch(ajaxUrl, {
       method: 'POST',
       body: formData
     });

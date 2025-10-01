@@ -116,13 +116,18 @@ export interface MolliePaymentMethodsTranslations {
   enablePaymentFee: string;
   paymentFeeType: string;
   fixedFee: string;
+  fixedFeeTaxIncl: string;
+  fixedFeeTaxExcl: string;
   percentageFee: string;
+  percentageFeeLabel: string;
   combinedFee: string;
   noFee: string;
   paymentFeeTaxGroup: string;
+  taxRulesGroupForFixedFee: string;
   maximumFee: string;
   minimumAmount: string;
   maximumAmount: string;
+  paymentFeeEmailHelp: string;
   
   // Order Restrictions
   orderRestrictions: string;
