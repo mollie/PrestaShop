@@ -363,53 +363,78 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
           </button>
           {showRestrictions && (
             <div className="p-4 border-t space-y-4 animate-in slide-in-from-top-1 fade-in duration-200 ease-out">
-              <div className="grid grid-cols-2 gap-4">
+              {/* Accept payments from dropdown */}
+              <div>
+                <Label className="text-sm font-medium">{t('acceptPaymentsFrom')}</Label>
+                <RadioSelect
+                  value={method.settings.paymentRestrictions.acceptFrom}
+                  onValueChange={(value: string) => onUpdateSettings({
+                    paymentRestrictions: {
+                      ...method.settings.paymentRestrictions,
+                      acceptFrom: value
+                    }
+                  })}
+                  options={[
+                    { value: "all", label: t('allCountries') },
+                    { value: "selected", label: t('selectedCountries') },
+                  ]}
+                  placeholder={t('allCountries')}
+                  className="mt-1"
+                />
+              </div>
+
+              {/* Accept payments from specific countries - only show when "selected" is chosen */}
+              {method.settings.paymentRestrictions.acceptFrom === 'selected' && (
                 <div>
-                  <Label className="text-sm font-medium">{t('acceptPaymentsFrom')}</Label>
-                  <RadioSelect
-                    value={method.settings.paymentRestrictions.acceptFrom}
-                    onValueChange={(value: string) => onUpdateSettings({ 
-                      paymentRestrictions: { 
-                        ...method.settings.paymentRestrictions, 
-                        acceptFrom: value 
-                      } 
-                    })}
-                    options={[
-                      { value: "all", label: t('allCountries') },
-                      { value: "specific", label: t('specificCountries') },
-                    ]}
-                    placeholder={t('allCountries')}
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label className="text-sm font-medium">{t('excludePaymentsFromCountries')}</Label>
+                  <Label className="text-sm font-medium">{t('acceptPaymentsFromSpecificCountries')}</Label>
                   <MultiSelect
-                    value={method.settings.paymentRestrictions.excludeCountries}
-                    onValueChange={(value: string[]) => onUpdateSettings({ 
-                      paymentRestrictions: { 
-                        ...method.settings.paymentRestrictions, 
-                        excludeCountries: value 
-                      } 
+                    value={method.settings.paymentRestrictions.selectedCountries || []}
+                    onValueChange={(value: string[]) => onUpdateSettings({
+                      paymentRestrictions: {
+                        ...method.settings.paymentRestrictions,
+                        selectedCountries: value
+                      }
                     })}
                     options={countries.map(country => ({
                       value: country.id.toString(),
                       label: country.name
                     }))}
-                    placeholder={t('selectCountriesToExclude')}
+                    placeholder={t('selectCountriesAccept')}
                     className="mt-1"
                   />
                 </div>
+              )}
+
+              {/* Exclude payments from specific countries */}
+              <div>
+                <Label className="text-sm font-medium">{t('excludePaymentsFromCountries')}</Label>
+                <MultiSelect
+                  value={method.settings.paymentRestrictions.excludeCountries}
+                  onValueChange={(value: string[]) => onUpdateSettings({
+                    paymentRestrictions: {
+                      ...method.settings.paymentRestrictions,
+                      excludeCountries: value
+                    }
+                  })}
+                  options={countries.map(country => ({
+                    value: country.id.toString(),
+                    label: country.name
+                  }))}
+                  placeholder={t('selectCountriesToExclude')}
+                  className="mt-1"
+                />
               </div>
+
+              {/* Exclude customer groups */}
               <div>
                 <Label className="text-sm font-medium">{t('excludeCustomerGroups')}</Label>
                 <MultiSelect
                   value={method.settings.paymentRestrictions.excludeCustomerGroups}
-                  onValueChange={(value: string[]) => onUpdateSettings({ 
-                    paymentRestrictions: { 
-                      ...method.settings.paymentRestrictions, 
-                      excludeCustomerGroups: value 
-                    } 
+                  onValueChange={(value: string[]) => onUpdateSettings({
+                    paymentRestrictions: {
+                      ...method.settings.paymentRestrictions,
+                      excludeCustomerGroups: value
+                    }
                   })}
                     options={customerGroups.map(group => ({
                       value: group.value,
@@ -418,6 +443,7 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
                   placeholder={t('selectCustomerGroups')}
                   className="mt-1"
                 />
+                <p className="text-xs text-muted-foreground mt-1">{t('customerGroupsHelp')}</p>
               </div>
             </div>
           )}
@@ -450,45 +476,86 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium">Payment fee type</Label>
+                  <Label className="text-sm font-medium">{t('paymentFeeType')}</Label>
                   <RadioSelect
-                    value="fixed"
-                    onValueChange={() => {}}
+                    value={method.settings.paymentFees.type}
+                    onValueChange={(type: string) =>
+                      onUpdateSettings({
+                        paymentFees: { ...method.settings.paymentFees, type: type as "none" | "fixed" | "percentage" | "combined" },
+                      })
+                    }
                     options={[
-                      { value: "fixed", label: "Fixed fee" },
-                      { value: "percentage", label: "Percentage" },
+                      { value: "none", label: t('noFee') },
+                      { value: "fixed", label: t('fixedFee') },
+                      { value: "percentage", label: t('percentageFee') },
+                      { value: "combined", label: t('combinedFee') },
                     ]}
-                    placeholder="Fixed fee"
+                    placeholder={t('noFee')}
                     className="mt-1"
                   />
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Payment fee tax group</Label>
+                  <Label className="text-sm font-medium">{t('paymentFeeTaxGroup')}</Label>
                   <RadioSelect
-                    value="b2c"
-                    onValueChange={() => {}}
+                    value={method.settings.paymentFees.taxGroup}
+                    onValueChange={(taxGroup: string) =>
+                      onUpdateSettings({
+                        paymentFees: { ...method.settings.paymentFees, taxGroup },
+                      })
+                    }
                     options={[
-                      { value: "b2c", label: "B2C" },
-                      { value: "b2b", label: "B2B" },
+                      { value: "0", label: "No Tax" },
+                      { value: "1", label: "Standard Tax" },
+                      { value: "2", label: "Reduced Tax" },
                     ]}
-                    placeholder="B2C"
+                    placeholder="No Tax"
                     className="mt-1"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium">Maximum fee</Label>
-                  <Input type="number" placeholder="50000" className="mt-1" />
+                  <Label className="text-sm font-medium">{t('maximumFee')}</Label>
+                  <Input 
+                    type="number" 
+                    placeholder="0.00" 
+                    className="mt-1"
+                    value={method.settings.paymentFees.maxFee}
+                    onChange={(e) =>
+                      onUpdateSettings({
+                        paymentFees: { ...method.settings.paymentFees, maxFee: e.target.value },
+                      })
+                    }
+                  />
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Minimum amount</Label>
-                  <Input type="number" placeholder="1.5" className="mt-1" />
+                  <Label className="text-sm font-medium">{t('minimumAmount')}</Label>
+                  <Input 
+                    type="number" 
+                    placeholder="0.00" 
+                    className="mt-1"
+                    value={method.settings.paymentFees.minAmount}
+                    onChange={(e) =>
+                      onUpdateSettings({
+                        paymentFees: { ...method.settings.paymentFees, minAmount: e.target.value },
+                      })
+                    }
+                  />
                 </div>
               </div>
               <div>
-                <Label className="text-sm font-medium">Maximum amount</Label>
-                <Input type="number" placeholder="1.8" className="mt-1" />
+                <Label className="text-sm font-medium">{t('maximumAmount')}</Label>
+                <Input 
+                  type="number" 
+                  placeholder="0.00" 
+                  className="mt-1"
+                  value={method.settings.paymentFees.maxAmount}
+                  onChange={(e) =>
+                    onUpdateSettings({
+                      paymentFees: { ...method.settings.paymentFees, maxAmount: e.target.value },
+                    })
+                  }
+                />
               </div>
             </div>
           )}

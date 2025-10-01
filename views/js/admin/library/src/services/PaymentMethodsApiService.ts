@@ -28,12 +28,13 @@ export interface PaymentMethod {
     customLogoUrl?: string | null
     paymentRestrictions: {
       acceptFrom: string
+      selectedCountries?: string[]
       excludeCountries: string[]
       excludeCustomerGroups: string[]
     }
     paymentFees: {
       enabled: boolean
-      type: "fixed" | "percentage"
+      type: "none" | "fixed" | "percentage" | "combined"
       taxGroup: string
       maxFee: string
       minAmount: string

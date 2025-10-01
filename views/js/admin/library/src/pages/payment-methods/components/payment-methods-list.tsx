@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { Info } from "lucide-react"
 import { PaymentMethodTabs } from "./payment-method-tabs"
 import { PaymentMethodsList } from "./payment-methods-list-component"
@@ -18,11 +18,6 @@ export default function PaymentMethodsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
   const [savingMethodId, setSavingMethodId] = useState<string | null>(null)
-
-  // Load payment methods on component mount
-  useEffect(() => {
-    loadPaymentMethods()
-  }, [loadPaymentMethods])
 
   const loadPaymentMethods = useCallback(async () => {
     try {
@@ -50,6 +45,14 @@ export default function PaymentMethodsPage() {
       setIsLoading(false)
     }
   }, [t])
+
+  // Load payment methods on component mount - using ref to break dependency cycle
+  const loadPaymentMethodsRef = useRef(loadPaymentMethods)
+  loadPaymentMethodsRef.current = loadPaymentMethods
+
+  useEffect(() => {
+    loadPaymentMethodsRef.current()
+  }, []) // Empty dependency array - only run once on mount
 
   const toggleExpanded = (id: string) => {
     const updateMethods = (methods: PaymentMethod[]) =>
