@@ -207,8 +207,41 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'saving' => addslashes($this->module->l('Saving...', self::FILE_NAME)),
                 'loadingMethods' => addslashes($this->module->l('Loading payment methods...', self::FILE_NAME)),
                 'loadingError' => addslashes($this->module->l('Failed to load payment methods', self::FILE_NAME)),
+                'saveSettings' => addslashes($this->module->l('Save Settings', self::FILE_NAME)),
 
-                // Countries todo once we implement this remove these
+                // Transaction Description Help
+                'transactionDescriptionHelp' => addslashes($this->module->l('Use any of the following variables to create a transaction description for payments that use this method:', self::FILE_NAME)),
+                'transactionDescriptionVariables' => addslashes($this->module->l('{orderNumber}, {storeName}, {countryCode}, {cart.id}, {order.reference}, {customer.firstname}, {customer.lastname}, {customer.company}', self::FILE_NAME)),
+
+                // Messages
+                'paymentMethodNotFound' => addslashes($this->module->l('Payment method not found', self::FILE_NAME)),
+                'settingsSavedSuccessfully' => addslashes($this->module->l('Settings saved successfully!', self::FILE_NAME)),
+                'failedToSaveSettings' => addslashes($this->module->l('Failed to save settings', self::FILE_NAME)),
+                'paymentMethodsOrderUpdated' => addslashes($this->module->l('Payment methods order updated successfully!', self::FILE_NAME)),
+                'failedToUpdateOrder' => addslashes($this->module->l('Failed to update payment methods order', self::FILE_NAME)),
+                'savingNewOrder' => addslashes($this->module->l('Saving new order...', self::FILE_NAME)),
+                'noPaymentMethods' => addslashes($this->module->l('No payment methods', self::FILE_NAME)),
+                'paymentMethodsWillAppear' => addslashes($this->module->l('Payment methods will appear here once configured', self::FILE_NAME)),
+
+                // Custom Logo Upload
+                'pleaseUploadJpgOrPng' => addslashes($this->module->l('Please upload a JPG or PNG file', self::FILE_NAME)),
+                'fileSizeTooLarge' => addslashes($this->module->l('File size must be less than 2MB', self::FILE_NAME)),
+                'imageDimensionsTooLarge' => addslashes($this->module->l('Image dimensions must be maximum 256x64 pixels', self::FILE_NAME)),
+                'failedToUploadLogo' => addslashes($this->module->l('Failed to upload logo. Please try again.', self::FILE_NAME)),
+                'invalidImageFile' => addslashes($this->module->l('Invalid image file', self::FILE_NAME)),
+                'uploading' => addslashes($this->module->l('Uploading...', self::FILE_NAME)),
+                'customLogoPreview' => addslashes($this->module->l('Custom logo preview', self::FILE_NAME)),
+
+                // Apple Pay Button Descriptions
+                'applePayButtonBlackDesc' => addslashes($this->module->l('Black Apple Pay button', self::FILE_NAME)),
+                'applePayButtonOutlineDesc' => addslashes($this->module->l('White with outline', self::FILE_NAME)),
+                'applePayButtonWhiteDesc' => addslashes($this->module->l('White Apple Pay button', self::FILE_NAME)),
+
+                // Select Placeholders
+                'selectOption' => addslashes($this->module->l('Select option', self::FILE_NAME)),
+                'selectOptions' => addslashes($this->module->l('Select options', self::FILE_NAME)),
+                'itemsSelected' => addslashes($this->module->l('%s selected', self::FILE_NAME)),
+
                 // Drag and drop
                 'dragPaymentOptionsToReorder' => addslashes($this->module->l('Drag payment options to reorder', self::FILE_NAME)),
             ],
@@ -936,6 +969,29 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                     );
                 }
                 error_log('Saved title translation: ' . $settings['title'] . ' for all languages');
+            }
+
+            // Save Card-specific settings (Mollie Components and One-Click Payments)
+            if ($methodId === 'creditcard') {
+                // Mollie Components (iframe) setting
+                if (isset($settings['mollieComponents'])) {
+                    $currentEnv = $environment ? 'production' : 'sandbox';
+                    $configKey = \Mollie\Config\Config::MOLLIE_IFRAME[$currentEnv];
+                    $this->configuration->updateValue($configKey, $settings['mollieComponents'] ? 1 : 0);
+                }
+
+                // One-Click Payments setting
+                if (isset($settings['oneClickPayments'])) {
+                    $currentEnv = $environment ? 'production' : 'sandbox';
+                    $configKey = \Mollie\Config\Config::MOLLIE_SINGLE_CLICK_PAYMENT[$currentEnv];
+                    $this->configuration->updateValue($configKey, $settings['oneClickPayments'] ? 1 : 0);
+                }
+
+                // Custom Logo setting
+                if (isset($settings['useCustomLogo'])) {
+                    $this->configuration->updateValue(\Mollie\Config\Config::MOLLIE_SHOW_CUSTOM_LOGO, $settings['useCustomLogo'] ? 1 : 0);
+                }
+                // Note: customLogoUrl is handled by the upload endpoint, not saved to config
             }
 
             // Save Apple Pay specific settings

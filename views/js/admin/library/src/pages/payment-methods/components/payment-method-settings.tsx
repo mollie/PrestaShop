@@ -66,7 +66,7 @@ function RadioSelect({ value, onValueChange, options, placeholder, className }: 
         className="w-full flex items-center justify-between px-4 py-3 text-sm border border-input bg-background hover:bg-gray-100 hover:text-foreground cursor-pointer rounded-md min-h-[44px]"
       >
         <span className={cn(selectedOption ? "text-foreground" : "text-muted-foreground")}>
-          {selectedOption?.label || placeholder || "Select option"}
+          {selectedOption?.label || placeholder}
         </span>
         <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
       </button>
@@ -141,7 +141,7 @@ function MultiSelect({ value, onValueChange, options, placeholder, className }: 
         className="w-full flex items-center justify-between px-4 py-3 text-sm border border-input bg-background hover:bg-gray-100 hover:text-foreground cursor-pointer rounded-md min-h-[44px]"
       >
         <span className={cn(selectedOptions.length > 0 ? "text-foreground" : "text-muted-foreground")}>
-          {selectedOptions.length > 0 ? `${selectedOptions.length} selected` : placeholder || "Select options"}
+          {selectedOptions.length > 0 ? `${selectedOptions.length} ${placeholder?.includes('selected') ? 'selected' : ''}`.trim() : placeholder}
         </span>
         <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
       </button>
@@ -353,10 +353,10 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
             className="mt-1"
           />
           <p className="text-xs text-muted-foreground mt-2">
-            Use any of the following variables to create a transaction description for payments that use this method:
+            {t('transactionDescriptionHelp')}
           </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            <b>{'{orderNumber}'}</b>, <b>{'{storeName}'}</b>, <b>{'{countryCode}'}</b>, <b>{'{cart.id}'}</b>, <b>{'{order.reference}'}</b>, <b>{'{customer.firstname}'}</b>, <b>{'{customer.lastname}'}</b>, <b>{'{customer.company}'}</b>
+          <p className="text-xs text-muted-foreground mt-1 font-mono">
+            {t('transactionDescriptionVariables')}
           </p>
         </div>
       </div>

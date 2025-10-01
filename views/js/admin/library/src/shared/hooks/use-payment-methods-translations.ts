@@ -17,6 +17,15 @@ export function usePaymentMethodsTranslations() {
   }
 
   /**
+   * Decode HTML entities in a string
+   */
+  const decodeHtmlEntities = (text: string): string => {
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = text;
+    return textarea.value;
+  };
+
+  /**
    * Get translated string with placeholder replacement
    * @param key Translation key
    * @param replacements Optional replacements for placeholders like %s
@@ -28,6 +37,9 @@ export function usePaymentMethodsTranslations() {
     }
 
     let translation = translations[key] || key;
+
+    // Decode HTML entities (e.g., &quot; to ")
+    translation = decodeHtmlEntities(translation);
 
     // Replace placeholders %s with provided replacements
     replacements.forEach((replacement) => {

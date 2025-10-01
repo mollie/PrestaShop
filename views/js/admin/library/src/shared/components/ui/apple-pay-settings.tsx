@@ -37,19 +37,19 @@ export function ApplePaySettings({
       value: 0 as const,
       label: t('applePayButtonBlack'),
       image: "/modules/mollie/views/img/applePayButtons/ApplePay_black_yes.png",
-      description: "Black Apple Pay button"
+      description: t('applePayButtonBlackDesc')
     },
     {
       value: 1 as const,
       label: t('applePayButtonOutline'),
       image: "/modules/mollie/views/img/applePayButtons/ApplePay_outline_yes.png",
-      description: "White with outline"
+      description: t('applePayButtonOutlineDesc')
     },
     {
       value: 2 as const,
       label: t('applePayButtonWhite'),
       image: "/modules/mollie/views/img/applePayButtons/ApplePay_white_yes.png",
-      description: "White Apple Pay button"
+      description: t('applePayButtonWhiteDesc')
     }
   ]
 

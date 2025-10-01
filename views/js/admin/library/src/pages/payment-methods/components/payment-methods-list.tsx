@@ -97,13 +97,13 @@ export default function PaymentMethodsPage() {
       if (response.success) {
         // Show success notification
         setNotification({
-          message: response.message || 'Payment methods order updated successfully!',
+          message: response.message || t('paymentMethodsOrderUpdated'),
           type: 'success'
         })
       } else {
         // Show error and revert to original order
         setNotification({
-          message: response.message || 'Failed to update payment methods order',
+          message: response.message || t('failedToUpdateOrder'),
           type: 'error'
         })
         // Reload methods to restore original order
@@ -112,7 +112,7 @@ export default function PaymentMethodsPage() {
     } catch (error) {
       console.error('Failed to update payment methods order:', error)
       setNotification({
-        message: 'Failed to update payment methods order',
+        message: t('failedToUpdateOrder'),
         type: 'error'
       })
       // Reload methods to restore original order
@@ -130,7 +130,7 @@ export default function PaymentMethodsPage() {
       const method = [...enabledMethods, ...disabledMethods].find(m => m.id === methodId)
       if (!method) {
         console.error('Method not found:', methodId)
-        setNotification({ message: 'Payment method not found', type: 'error' })
+        setNotification({ message: t('paymentMethodNotFound'), type: 'error' })
         setSavingMethodId(null)
         return
       }
@@ -140,7 +140,7 @@ export default function PaymentMethodsPage() {
 
       if (response.success) {
         // Show success notification FIRST (before any updates)
-        setNotification({ message: response.message || 'Settings saved successfully!', type: 'success' })
+        setNotification({ message: response.message || t('settingsSavedSuccessfully'), type: 'success' })
 
         // Reload ONLY the saved payment method data from server to ensure fresh state
         // This is more efficient than reloading all methods
@@ -153,24 +153,46 @@ export default function PaymentMethodsPage() {
             // Preserve the expanded state after save
             freshMethod.isExpanded = true
 
-            // Update only the saved method in the current state
+            // Update method and move between tabs based on enabled status
             if (freshMethod.settings.enabled) {
-              setEnabledMethods(prev => prev.map(m => m.id === methodId ? freshMethod : m))
+              // Method is enabled - move to or update in enabled array
+              setEnabledMethods(prev => {
+                const exists = prev.some(m => m.id === methodId)
+                if (exists) {
+                  // Update existing
+                  return prev.map(m => m.id === methodId ? freshMethod : m)
+                } else {
+                  // Add new (moved from disabled)
+                  return [...prev, freshMethod]
+                }
+              })
+              // Remove from disabled array
               setDisabledMethods(prev => prev.filter(m => m.id !== methodId))
             } else {
-              setDisabledMethods(prev => prev.map(m => m.id === methodId ? freshMethod : m))
+              // Method is disabled - move to or update in disabled array
+              setDisabledMethods(prev => {
+                const exists = prev.some(m => m.id === methodId)
+                if (exists) {
+                  // Update existing
+                  return prev.map(m => m.id === methodId ? freshMethod : m)
+                } else {
+                  // Add new (moved from enabled)
+                  return [...prev, freshMethod]
+                }
+              })
+              // Remove from enabled array
               setEnabledMethods(prev => prev.filter(m => m.id !== methodId))
             }
           }
         }
       } else {
         // Show error but DON'T clear all methods
-        setNotification({ message: response.message || 'Failed to save settings', type: 'error' })
+        setNotification({ message: response.message || t('failedToSaveSettings'), type: 'error' })
       }
     } catch (error) {
       console.error('Failed to save payment method settings:', error)
       // Show error but DON'T clear all methods
-      setNotification({ message: 'Failed to save settings', type: 'error' })
+      setNotification({ message: t('failedToSaveSettings'), type: 'error' })
     } finally {
       setSavingMethodId(null)
     }
@@ -267,15 +289,15 @@ export default function PaymentMethodsPage() {
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <span className="text-sm font-medium text-blue-800">Saving new order...</span>
+          <span className="text-sm font-medium text-blue-800">{t('savingNewOrder')}</span>
         </div>
       )}
 
       {/* Payment Methods List */}
       {currentMethods.length === 0 ? (
         <div className="text-center py-12">
-          <div className="text-gray-500 text-lg mb-2">No {activeTab} payment methods</div>
-          <div className="text-gray-400 text-sm">Payment methods will appear here once configured</div>
+          <div className="text-gray-500 text-lg mb-2">{t('noPaymentMethods')}</div>
+          <div className="text-gray-400 text-sm">{t('paymentMethodsWillAppear')}</div>
         </div>
       ) : (
         <PaymentMethodsList

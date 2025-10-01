@@ -32,13 +32,13 @@ export function CustomLogoUpload({
 
     // Validate file type
     if (!file.type.match(/^image\/(jpeg|jpg|png)$/)) {
-      setError("Please upload a JPG or PNG file")
+      setError(t('pleaseUploadJpgOrPng'))
       return
     }
 
     // Validate file size (max 2MB)
     if (file.size > 2 * 1024 * 1024) {
-      setError("File size must be less than 2MB")
+      setError(t('fileSizeTooLarge'))
       return
     }
 
@@ -46,7 +46,7 @@ export function CustomLogoUpload({
     const img = new Image()
     img.onload = async () => {
       if (img.width > 256 || img.height > 64) {
-        setError("Image dimensions must be maximum 256x64 pixels")
+        setError(t('imageDimensionsTooLarge'))
         return
       }
 
@@ -64,14 +64,14 @@ export function CustomLogoUpload({
           setError(result.message)
         }
       } catch {
-        setError("Failed to upload logo. Please try again.")
+        setError(t('failedToUploadLogo'))
       } finally {
         setIsUploading(false)
       }
     }
 
     img.onerror = () => {
-      setError("Invalid image file")
+      setError(t('invalidImageFile'))
     }
 
     img.src = URL.createObjectURL(file)
@@ -125,7 +125,7 @@ export function CustomLogoUpload({
               <div className="w-16 h-8 border border-gray-200 rounded flex items-center justify-center overflow-hidden">
                 <img
                   src={logoUrl}
-                  alt="Custom logo preview"
+                  alt={t('customLogoPreview')}
                   className="w-full h-full object-contain"
                 />
               </div>
@@ -162,7 +162,7 @@ export function CustomLogoUpload({
               {isUploading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-blue-600" />
-                  Uploading...
+                  {t('uploading')}
                 </>
               ) : (
                 <>

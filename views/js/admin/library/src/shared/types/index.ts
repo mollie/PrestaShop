@@ -137,8 +137,41 @@ export interface MolliePaymentMethodsTranslations {
   saving: string;
   loadingMethods: string;
   loadingError: string;
-  
-  
+  saveSettings: string;
+
+  // Transaction Description Help
+  transactionDescriptionHelp: string;
+  transactionDescriptionVariables: string;
+
+  // Messages
+  paymentMethodNotFound: string;
+  settingsSavedSuccessfully: string;
+  failedToSaveSettings: string;
+  paymentMethodsOrderUpdated: string;
+  failedToUpdateOrder: string;
+  savingNewOrder: string;
+  noPaymentMethods: string;
+  paymentMethodsWillAppear: string;
+
+  // Custom Logo Upload
+  pleaseUploadJpgOrPng: string;
+  fileSizeTooLarge: string;
+  imageDimensionsTooLarge: string;
+  failedToUploadLogo: string;
+  invalidImageFile: string;
+  uploading: string;
+  customLogoPreview: string;
+
+  // Apple Pay Button Descriptions
+  applePayButtonBlackDesc: string;
+  applePayButtonOutlineDesc: string;
+  applePayButtonWhiteDesc: string;
+
+  // Select Placeholders
+  selectOption: string;
+  selectOptions: string;
+  itemsSelected: string;
+
   // Drag and drop
   dragPaymentOptionsToReorder: string;
 }
