@@ -161,6 +161,9 @@ export interface MolliePaymentMethodsTranslations {
   invalidImageFile: string;
   uploading: string;
   customLogoPreview: string;
+  logoUploadedSuccessfully: string;
+  customLogo: string;
+  remove: string;
 
   // Apple Pay Button Descriptions
   applePayButtonBlackDesc: string;

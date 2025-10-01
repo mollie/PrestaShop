@@ -231,6 +231,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'invalidImageFile' => addslashes($this->module->l('Invalid image file', self::FILE_NAME)),
                 'uploading' => addslashes($this->module->l('Uploading...', self::FILE_NAME)),
                 'customLogoPreview' => addslashes($this->module->l('Custom logo preview', self::FILE_NAME)),
+                'logoUploadedSuccessfully' => addslashes($this->module->l('Logo uploaded successfully!', self::FILE_NAME)),
+                'customLogo' => addslashes($this->module->l('Custom Logo', self::FILE_NAME)),
+                'remove' => addslashes($this->module->l('Remove', self::FILE_NAME)),
 
                 // Apple Pay Button Descriptions
                 'applePayButtonBlackDesc' => addslashes($this->module->l('Black Apple Pay button', self::FILE_NAME)),

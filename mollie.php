@@ -520,17 +520,10 @@ class Mollie extends PaymentModule
             }
         }
 
-        // We are on module configuration page
+        // We are on module configuration page (Settings tab only - general settings)
+        // Payment methods are now handled in separate AdminMolliePaymentMethods controller
         if ('AdminMollieSettings' === $currentController) {
-            Media::addJsDef([
-                'paymentMethodTaxRulesGroupIdConfig' => Config::MOLLIE_METHOD_TAX_RULES_GROUP_ID,
-                'paymentMethodSurchargeFixedAmountTaxInclConfig' => Config::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_INCL,
-                'paymentMethodSurchargeFixedAmountTaxExclConfig' => Config::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_EXCL,
-            ]);
-
-            $this->context->controller->addJqueryPlugin('sortable');
-            $this->context->controller->addJS($this->getPathUri() . 'views/js/admin/payment_methods.js');
-            $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin/payment_methods.css');
+            // Old payment methods JS/CSS removed - now handled by AdminMolliePaymentMethodsController with React
         }
     }
 

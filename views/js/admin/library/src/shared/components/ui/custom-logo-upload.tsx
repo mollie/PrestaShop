@@ -24,6 +24,7 @@ export function CustomLogoUpload({
   const { t } = usePaymentMethodsTranslations()
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [uploadSuccess, setUploadSuccess] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,6 +61,9 @@ export function CustomLogoUpload({
         if (result.success) {
           onLogoChange(result.logoUrl || null)
           onValueChange(true)
+          setUploadSuccess(true)
+          // Hide success message after 3 seconds
+          setTimeout(() => setUploadSuccess(false), 3000)
         } else {
           setError(result.message)
         }
@@ -81,6 +85,7 @@ export function CustomLogoUpload({
     onLogoChange(null)
     onValueChange(false)
     setError(null)
+    setUploadSuccess(false)
     if (fileInputRef.current) {
       fileInputRef.current.value = ""
     }
@@ -121,21 +126,37 @@ export function CustomLogoUpload({
         <div className="space-y-3">
           {/* Current Logo Display */}
           {logoUrl && (
-            <div className="flex items-center gap-3">
-              <div className="w-16 h-8 border border-gray-200 rounded flex items-center justify-center overflow-hidden">
-                <img
-                  src={logoUrl}
-                  alt={t('customLogoPreview')}
-                  className="w-full h-full object-contain"
-                />
+            <div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 flex-1">
+                  <div className="relative">
+                    <div className="w-20 h-10 border border-gray-200 rounded flex items-center justify-center overflow-hidden bg-white shadow-sm">
+                      <img
+                        src={logoUrl}
+                        alt={t('customLogoPreview')}
+                        className="w-full h-full object-contain p-1"
+                      />
+                    </div>
+                    {/* Custom badge indicator */}
+                    <div className="absolute -top-1 -right-1 bg-green-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white shadow-sm">
+                      ✓
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-gray-700">{t('customLogo')}</div>
+                    <div className="text-xs text-gray-500">{t('active')}</div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRemoveLogo}
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 border border-red-200 rounded-md transition-colors"
+                  title={t('remove')}
+                >
+                  <X className="h-4 w-4" />
+                  {t('remove')}
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={handleRemoveLogo}
-                className="text-red-600 hover:text-red-700 text-sm"
-              >
-                <X className="h-4 w-4" />
-              </button>
             </div>
           )}
 
@@ -173,10 +194,23 @@ export function CustomLogoUpload({
             </button>
           </div>
 
+          {/* Success Message */}
+          {uploadSuccess && (
+            <div className="text-sm text-green-600 bg-green-50 border border-green-200 rounded-md p-2 flex items-center gap-2">
+              <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span>{t('logoUploadedSuccessfully')}</span>
+            </div>
+          )}
+
           {/* Error Message */}
           {error && (
-            <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md p-2">
-              {error}
+            <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md p-2 flex items-center gap-2">
+              <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+              <span>{error}</span>
             </div>
           )}
 
