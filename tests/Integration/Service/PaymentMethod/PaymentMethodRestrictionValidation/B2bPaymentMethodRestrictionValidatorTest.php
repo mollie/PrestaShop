@@ -16,9 +16,6 @@ use Configuration;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\B2bPaymentMethodRestrictionValidator;
 use Mollie\Tests\Integration\BaseTestCase;
-use Mollie\Tests\Integration\Factory\AddressFactory;
-use Mollie\Tests\Integration\Factory\CartFactory;
-use Mollie\Tests\Integration\Factory\CustomerFactory;
 
 class B2bPaymentMethodRestrictionValidatorTest extends BaseTestCase
 {
