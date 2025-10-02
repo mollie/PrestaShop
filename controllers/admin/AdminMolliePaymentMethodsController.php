@@ -68,9 +68,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
     /** @var LoggerInterface */
     private $logger;
 
-    /** @var \Adapter_TaxCalculatorProvider */
-    private $taxCalculatorProvider;
-
     public function __construct()
     {
         parent::__construct();
@@ -86,7 +83,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         $this->countryRepository = $this->module->getService(CountryRepository::class);
         $this->customerRepository = $this->module->getService(CustomerRepository::class);
         $this->logger = $this->module->getService(LoggerInterface::class);
-        $this->taxCalculatorProvider = new \Adapter_TaxCalculatorProvider();
     }
 
     /**
@@ -276,13 +272,10 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
     public function displayAjax(): void
     {
         if (!$this->tools->isSubmit('ajax')) {
-            error_log('displayAjax: No ajax submit');
-
             return;
         }
 
         $action = $this->tools->getValue('action');
-        error_log('displayAjax: Received action = ' . $action);
 
         switch ($action) {
             case 'getPaymentMethods':
@@ -399,8 +392,8 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                         'settings' => [
                             'enabled' => (bool) (isset($methodObj->enabled) ? $methodObj->enabled : false),
                             'title' => $this->getPaymentMethodTitle($methodId, $method['name'] ?? ''),
-                            'mollieComponents' => true, // Default
-                            'oneClickPayments' => false, // Default
+                            'mollieComponents' => $methodId === 'creditcard' ? $this->getCreditCardMollieComponentsSetting($methodObj) : true,
+                            'oneClickPayments' => $methodId === 'creditcard' ? $this->getCreditCardOneClickSetting($methodObj) : false,
                             'transactionDescription' => (isset($methodObj->description) && $methodObj->description) ? $methodObj->description : '{orderNumber}',
                             'apiSelection' => (isset($methodObj->method) && $methodObj->method === 'orders') ? 'orders' : 'payments',
                             'useCustomLogo' => $methodId === 'creditcard' ? (bool) ($this->configuration->get(\Mollie\Config\Config::MOLLIE_SHOW_CUSTOM_LOGO) ?: 0) : false,
@@ -791,7 +784,10 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 return $translation->text;
             }
         } catch (\Exception $e) {
-            error_log('Error getting payment method title: ' . $e->getMessage());
+            $this->logger->error('Error getting payment method title', [
+                'method_id' => $methodId,
+                'exception' => $e->getMessage(),
+            ]);
         }
 
         // Fallback to API method name
@@ -803,18 +799,11 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
      */
     private function ajaxSavePaymentMethodSettings(): void
     {
-        // Log at the very start to confirm function is called
-        error_log('=== ajaxSavePaymentMethodSettings called ===');
-
         try {
             $methodId = $this->tools->getValue('method_id');
             $settingsJson = $this->tools->getValue('settings');
 
-            error_log('Received method_id: ' . $methodId);
-            error_log('Received settings JSON: ' . $settingsJson);
-
             if (!$methodId || !$settingsJson) {
-                error_log('ERROR: Missing required parameters');
                 throw new MollieException($this->module->l('Missing required parameters', self::FILE_NAME));
             }
 
@@ -916,17 +905,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             }
 
             // Save payment method (this creates the record and populates the ID)
-            error_log('About to save payment method with title: ' . $paymentMethod->method_name);
-            error_log('About to save payment method with description: ' . $paymentMethod->description);
-
             if (!$paymentMethod->save()) {
-                error_log('ERROR: Failed to save payment method');
                 throw new MollieException($this->module->l('Failed to save payment method', self::FILE_NAME));
             }
-
-            error_log('SUCCESS: Payment method saved with ID: ' . $paymentMethod->id);
-            error_log('Saved title: ' . $paymentMethod->method_name);
-            error_log('Saved description: ' . $paymentMethod->description);
 
             // Now handle country/customer group restrictions (requires valid ID from above save)
             if (isset($settings['paymentRestrictions'])) {
@@ -967,23 +948,44 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                         $shopId
                     );
                 }
-                error_log('Saved title translation: ' . $settings['title'] . ' for all languages');
             }
 
             // Save Card-specific settings (Mollie Components and One-Click Payments)
             if ($methodId === 'creditcard') {
+                $currentEnv = $environment ? 'production' : 'sandbox';
+
                 // Mollie Components (iframe) setting
                 if (isset($settings['mollieComponents'])) {
-                    $currentEnv = $environment ? 'production' : 'sandbox';
                     $configKey = \Mollie\Config\Config::MOLLIE_IFRAME[$currentEnv];
-                    $this->configuration->updateValue($configKey, $settings['mollieComponents'] ? 1 : 0);
+                    $value = $settings['mollieComponents'] ? 1 : 0;
+                    $this->configuration->updateValue($configKey, $value);
+
+                    // Verify it was saved
+                    $savedValue = $this->configuration->get($configKey);
+                    $this->logger->info('SAVE mollieComponents', [
+                        'environment' => $currentEnv,
+                        'config_key' => $configKey,
+                        'input' => $settings['mollieComponents'],
+                        'saved_value' => $value,
+                        'read_back' => $savedValue,
+                    ]);
                 }
 
                 // One-Click Payments setting
                 if (isset($settings['oneClickPayments'])) {
-                    $currentEnv = $environment ? 'production' : 'sandbox';
                     $configKey = \Mollie\Config\Config::MOLLIE_SINGLE_CLICK_PAYMENT[$currentEnv];
-                    $this->configuration->updateValue($configKey, $settings['oneClickPayments'] ? 1 : 0);
+                    $value = $settings['oneClickPayments'] ? 1 : 0;
+                    $this->configuration->updateValue($configKey, $value);
+
+                    // Verify it was saved
+                    $savedValue = $this->configuration->get($configKey);
+                    $this->logger->info('SAVE oneClickPayments', [
+                        'environment' => $currentEnv,
+                        'config_key' => $configKey,
+                        'input' => $settings['oneClickPayments'],
+                        'saved_value' => $value,
+                        'read_back' => $savedValue,
+                    ]);
                 }
 
                 // Custom Logo setting
@@ -1212,8 +1214,15 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
 
         try {
-            // Use the same TaxCalculatorProvider as the legacy system
-            $taxCalculator = $this->taxCalculatorProvider->getTaxCalculator($taxRulesGroupId);
+            // Use PrestaShop's tax manager
+            $address = new Address();
+            if (isset($this->context->cart->id_address_delivery)) {
+                $address = new Address((int) $this->context->cart->id_address_delivery);
+            }
+
+            $taxManager = TaxManagerFactory::getManager($address, $taxRulesGroupId);
+            $taxCalculator = $taxManager->getTaxCalculator();
+
             if ($taxCalculator) {
                 $taxIncl = $taxCalculator->addTaxes($taxExcl);
 
@@ -1229,5 +1238,39 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
 
         // Fallback: return tax excl if calculation fails
         return number_format($taxExcl, 2, '.', '');
+    }
+
+    /**
+     * Get credit card Mollie Components setting based on environment
+     *
+     * @param MolPaymentMethod $methodObj Payment method object
+     *
+     * @return bool Mollie Components enabled
+     */
+    private function getCreditCardMollieComponentsSetting($methodObj): bool
+    {
+        $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
+        $currentEnv = $environment ? 'production' : 'sandbox';
+        $configKey = Config::MOLLIE_IFRAME[$currentEnv];
+        $value = (bool) ($this->configuration->get($configKey) ?: 0);
+
+        return $value;
+    }
+
+    /**
+     * Get credit card one-click payment setting based on environment
+     *
+     * @param MolPaymentMethod $methodObj Payment method object
+     *
+     * @return bool One-click payments enabled
+     */
+    private function getCreditCardOneClickSetting($methodObj): bool
+    {
+        $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
+        $currentEnv = $environment ? 'production' : 'sandbox';
+        $configKey = Config::MOLLIE_SINGLE_CLICK_PAYMENT[$currentEnv];
+        $value = (bool) ($this->configuration->get($configKey) ?: 0);
+
+        return $value;
     }
 }
