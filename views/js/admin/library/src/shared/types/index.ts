@@ -179,6 +179,26 @@ export interface MolliePaymentMethodsTranslations {
   dragPaymentOptionsToReorder: string;
 }
 
+export interface MollieAdvancedSettingsTranslations {
+  advancedSettings: string;
+  orderSettings: string;
+  shippingSettings: string;
+  errorDebugging: string;
+  visualSettings: string;
+  orderStatusMapping: string;
+  orderStatusEmails: string;
+  invoiceOption: string;
+  confirmationEmail: string;
+  autoShip: string;
+  debugMode: string;
+  logLevel: string;
+  logoDisplay: string;
+  translateMollie: string;
+  cssPath: string;
+  saveSuccess: string;
+  saveError: string;
+}
+
 // Extend global Window interface
 declare global {
   interface Window {
@@ -186,5 +206,7 @@ declare global {
     mollieAuthTranslations: MollieAuthTranslations;
     molliePaymentMethodsAjaxUrl: string;
     molliePaymentMethodsTranslations: MolliePaymentMethodsTranslations;
+    mollieAdvancedSettingsAjaxUrl: string;
+    mollieAdvancedSettingsTranslations: MollieAdvancedSettingsTranslations;
   }
 }

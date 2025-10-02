@@ -117,6 +117,11 @@ function MultiSelect({ value, onValueChange, options, placeholder, className }: 
     }
   }
 
+  const removeOption = (optionValue: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    onValueChange(value.filter((v) => v !== optionValue))
+  }
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -138,12 +143,29 @@ function MultiSelect({ value, onValueChange, options, placeholder, className }: 
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-3 text-sm border border-input bg-background hover:bg-gray-100 hover:text-foreground cursor-pointer rounded-md min-h-[44px]"
+        className="w-full flex items-center justify-between gap-2 px-4 py-2 text-sm border border-input bg-background hover:bg-gray-100 hover:text-foreground cursor-pointer rounded-md min-h-[44px]"
       >
-        <span className={cn(selectedOptions.length > 0 ? "text-foreground" : "text-muted-foreground")}>
-          {selectedOptions.length > 0 ? `${selectedOptions.length} ${placeholder?.includes('selected') ? 'selected' : ''}`.trim() : placeholder}
-        </span>
-        <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
+        <div className="flex-1 flex items-center min-h-5">
+          {selectedOptions.length > 0 ? (
+            <div className="flex flex-wrap gap-1.5 items-center">
+              {selectedOptions.map((option) => (
+                <span key={option.value} className="inline-flex items-center gap-1.5 px-2 py-1 bg-slate-100 border border-slate-200 rounded text-xs font-medium text-foreground">
+                  {option.label}
+                  <button
+                    type="button"
+                    onClick={(e) => removeOption(option.value, e)}
+                    className="inline-flex items-center justify-center w-4 h-4 rounded hover:bg-slate-200 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          ) : (
+            <span className="text-muted-foreground">{placeholder}</span>
+          )}
+        </div>
+        <ChevronDown className={cn("h-4 w-4 transition-transform shrink-0", isOpen && "rotate-180")} />
       </button>
 
       {isOpen && (

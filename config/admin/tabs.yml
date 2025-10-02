@@ -1,0 +1,29 @@
+tabs:
+  # Sub-tabs within the Mollie configuration page
+  # These appear as tabs at the top of the Settings page
+  - class_name: AdminMollieAuthentication
+    route_name: null
+    name: 'API Configuration'
+    visible: true
+    parent_class_name: AdminMollieModule
+    icon: 'key'
+    wording: 'API Configuration'
+    wording_domain: 'Modules.Mollie.Admin'
+
+  - class_name: AdminMolliePaymentMethods
+    route_name: null
+    name: 'Payment Methods'
+    visible: true
+    parent_class_name: AdminMollieModule
+    icon: 'credit_card'
+    wording: 'Payment Methods'
+    wording_domain: 'Modules.Mollie.Admin'
+
+  - class_name: AdminMollieAdvancedSettings
+    route_name: null
+    name: 'Advanced Settings'
+    visible: true
+    parent_class_name: AdminMollieModule
+    icon: 'settings'
+    wording: 'Advanced Settings'
+    wording_domain: 'Modules.Mollie.Admin'
