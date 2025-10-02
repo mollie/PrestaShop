@@ -13,7 +13,6 @@
 
 namespace Mollie\Builder;
 
-use Group;
 use HelperFormCore as HelperForm;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;

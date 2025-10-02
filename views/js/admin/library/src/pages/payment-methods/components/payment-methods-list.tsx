@@ -147,7 +147,7 @@ export default function PaymentMethodsPage() {
         const freshDataResponse = await paymentMethodsApiService.getPaymentMethods()
 
         if (freshDataResponse.success && freshDataResponse.data) {
-          const freshMethod = freshDataResponse.data.methods.find((m: any) => m.id === methodId)
+          const freshMethod = freshDataResponse.data.methods.find((m: PaymentMethod) => m.id === methodId)
 
           if (freshMethod) {
             // Preserve the expanded state after save
