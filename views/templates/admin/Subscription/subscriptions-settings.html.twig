@@ -22,8 +22,14 @@
     <div class="col">
       {{ form_start(subscriptionOptionsForm, {method: 'POST', action: path('admin_subscription_options_submit'), attr: {id: 'subscription-options'}}) }}
       <div class="card">
-        <h3 class="card-header">
-          <i class="material-icons">settings</i> {{ translations.subscription_options }}
+        <h3 class="card-header d-flex justify-content-between align-items-center">
+          <span>
+            <i class="material-icons">settings</i> {{ translations.subscription_options }}
+          </span>
+          <a href="https://help.prestashop.com" class="btn btn-outline-info btn-sm" target="_blank">
+            <i class="material-icons">help_outline</i>
+            How to configure Mollie subscriptions on Prestashop?
+          </a>
         </h3>
         <div class="card-block row">
           <div class="card-text px-3">
