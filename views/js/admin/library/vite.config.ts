@@ -23,6 +23,8 @@ export default defineConfig({
       input: {
         // Authorization page entry point
         authorization: path.resolve(__dirname, 'src/app/authorization.tsx'),
+        // Payment Methods page entry point
+        'mollie-payment-methods': path.resolve(__dirname, 'src/app/payment-methods.tsx'),
       },
       output: {
         entryFileNames: 'assets/[name].js',
