@@ -33,10 +33,10 @@
         </h3>
         <div class="card-body">
           <div class="form-group row">
-            <div class="col-sm-12 col-lg-2">
+            <div class="col-sm-12 col-lg-3">
               {{ ps.label_with_help(translations.enable_subscription_service, translations.enable_subscription_service_help) }}
             </div>
-            <div class="col-sm-12 col-lg-8">
+            <div class="col-sm-6">
               {{ form_errors(subscriptionOptions.enable_subscriptions) }}
               {{ form_widget(subscriptionOptions.enable_subscriptions) }}
             </div>
@@ -45,7 +45,7 @@
             <div class="col-sm-12">
               {{ ps.label_with_help(translations.carrier_warning, translations.carrier_warning_text) }}
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-12">
               {{ form_errors(subscriptionOptions.carrier) }}
               {{ form_widget(subscriptionOptions.carrier) }}
             </div>
