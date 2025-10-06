@@ -14,7 +14,7 @@ export interface CarrierData {
 
 export interface StatusMapping {
   mollieStatus: string;
-  prestashopStatus: number;
+  prestashopStatus: string;
   configKey: string;
 }
 
@@ -25,7 +25,7 @@ export interface EmailStatus {
 }
 
 export interface OrderStatus {
-  id: number;
+  id: string;
   name: string;
 }
 
@@ -46,7 +46,7 @@ export interface AdvancedSettingsData {
   // Visual Settings
   logoDisplay: string;
   cssPath: string;
-  translateMollie: boolean | string;
+  translateMollie: string;
 
   // Order Status Mapping
   statusMappings: StatusMapping[];

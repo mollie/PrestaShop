@@ -4,6 +4,7 @@ import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import "./advanced-settings.css"
 import { advancedSettingsApiService, type CarrierData, type SaveCarrierData } from "../../services/AdvancedSettingsApiService"
+import { AdvancedSettingsSkeleton } from "./components/advanced-settings-skeleton"
 
 // ChevronDown icon component
 const ChevronDown = ({ className }: { className?: string }) => (
@@ -58,7 +59,7 @@ function RadioSelect({ value, onValueChange, options, placeholder, className }: 
   }, [isOpen])
 
   return (
-    <div ref={dropdownRef} className={cn("relative", className)}>
+    <div ref={dropdownRef} className={cn("relative", isOpen && "dropdown-open", className)}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -141,7 +142,7 @@ function MultiSelect({ value, onValueChange, options, placeholder, className }: 
   }, [isOpen])
 
   return (
-    <div ref={dropdownRef} className={cn("relative", className)}>
+    <div ref={dropdownRef} className={cn("relative", isOpen && "dropdown-open", className)}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -211,15 +212,20 @@ interface CarrierRow {
 }
 
 interface StatusMapping {
-  id: string
   mollieStatus: string
   prestashopStatus: string
+  configKey: string
 }
 
 interface EmailStatus {
-  id: string
   status: string
   enabled: boolean
+  configKey: string
+}
+
+interface OrderStatus {
+  id: string
+  name: string
 }
 
 const AdvancedSettings: React.FC = () => {
@@ -232,14 +238,22 @@ const AdvancedSettings: React.FC = () => {
   const [autoShipStatuses, setAutoShipStatuses] = useState<string[]>(["shipped"])
   const [debugMode, setDebugMode] = useState(true)
   const [logLevel, setLogLevel] = useState("errors")
-  const [logoDisplay, setLogoDisplay] = useState("default")
-  const [translateMollie, setTranslateMollie] = useState(true)
+  const [logoDisplay, setLogoDisplay] = useState("")
+  const [translateMollie, setTranslateMollie] = useState("")
   const [cssPath, setCssPath] = useState("")
 
   const [carriers, setCarriers] = useState<CarrierRow[]>([])
 
   const [statusMappings, setStatusMappings] = useState<StatusMapping[]>([])
   const [emailStatuses, setEmailStatuses] = useState<EmailStatus[]>([])
+  const [orderStatuses, setOrderStatuses] = useState<OrderStatus[]>([])
+
+  // Dropdown options from backend
+  const [invoiceOptions, setInvoiceOptions] = useState<{ id: string; name: string }[]>([])
+  const [confirmationEmailOptions, setConfirmationEmailOptions] = useState<{ id: string; name: string }[]>([])
+  const [logLevelOptions, setLogLevelOptions] = useState<{ id: string; name: string }[]>([])
+  const [logoDisplayOptions, setLogoDisplayOptions] = useState<{ id: string; name: string }[]>([])
+  const [translateMollieOptions, setTranslateMollieOptions] = useState<{ id: string; name: string }[]>([])
 
   const carrierUrlOptions = [
     { value: "do_not_auto_ship", label: "Do not automatically ship" },
@@ -272,9 +286,22 @@ const AdvancedSettings: React.FC = () => {
       if (response.success && response.data) {
         const data = response.data
 
-        // Order Settings
-        setInvoiceOption(data.invoiceOption || "default")
-        setConfirmationEmail(data.confirmationEmail || "paid")
+        // Dropdown options (load first so we can use them for defaults)
+        const invoiceOpts = data.options?.invoiceOptions || []
+        const confirmEmailOpts = data.options?.confirmationEmailOptions || []
+        const logLevelOpts = data.options?.logLevelOptions || []
+        const logoDisplayOpts = data.options?.logoDisplayOptions || []
+        const translateMollieOpts = data.options?.translateMollieOptions || []
+
+        setInvoiceOptions(invoiceOpts)
+        setConfirmationEmailOptions(confirmEmailOpts)
+        setLogLevelOptions(logLevelOpts)
+        setLogoDisplayOptions(logoDisplayOpts)
+        setTranslateMollieOptions(translateMollieOpts)
+
+        // Order Settings - backend already provides defaults and string types
+        setInvoiceOption(data.invoiceOption || invoiceOpts[0]?.id || "")
+        setConfirmationEmail(data.confirmationEmail || confirmEmailOpts[0]?.id || "")
 
         // Shipping Settings
         setAutoShip(data.autoShip || false)
@@ -291,19 +318,21 @@ const AdvancedSettings: React.FC = () => {
 
         // Error Debugging
         setDebugMode(data.debugMode || false)
-        setLogLevel(data.logLevel || "errors")
+        setLogLevel(data.logLevel || logLevelOpts[0]?.id || "")
 
         // Visual Settings
-        setLogoDisplay(data.logoDisplay || "default")
+        setLogoDisplay(data.logoDisplay || logoDisplayOpts[0]?.id || "")
         setCssPath(data.cssPath || "")
-        // Convert backend string value to boolean for UI
-        setTranslateMollie(data.translateMollie === 'send_locale' || data.translateMollie === true)
+        setTranslateMollie(data.translateMollie || translateMollieOpts[0]?.id || "")
 
         // Status Mappings
         setStatusMappings(data.statusMappings || [])
 
         // Email Statuses
         setEmailStatuses(data.emailStatuses || [])
+
+        // Order Statuses for dropdowns
+        setOrderStatuses(data.options?.orderStatuses || [])
       }
     } catch (error) {
       console.error('Failed to load settings:', error)
@@ -334,8 +363,9 @@ const AdvancedSettings: React.FC = () => {
         logLevel,
         logoDisplay,
         cssPath,
-        // Convert boolean to backend string value
-        translateMollie: translateMollie ? 'send_locale' : 'browser_locale',
+        translateMollie,
+        statusMappings,
+        emailStatuses,
       })
 
       if (response.success) {
@@ -356,6 +386,10 @@ const AdvancedSettings: React.FC = () => {
     setEmailStatuses((prev) => prev.map((item) => (item.configKey === configKey ? { ...item, enabled: !item.enabled } : item)))
   }
 
+  const handleStatusMappingChange = (configKey: string, prestashopStatus: string) => {
+    setStatusMappings((prev) => prev.map((item) => (item.configKey === configKey ? { ...item, prestashopStatus } : item)))
+  }
+
   const handleCarrierUrlChange = (id: string, value: string) => {
     setCarriers((prev) => prev.map((carrier) => (carrier.id === id ? { ...carrier, carrierUrl: value } : carrier)))
   }
@@ -365,14 +399,7 @@ const AdvancedSettings: React.FC = () => {
   }
 
   if (loading) {
-    return (
-      <div className="advanced-settings">
-        <div className="settings-header">
-          <h1>Advanced settings</h1>
-          <p className="settings-subtitle">Loading...</p>
-        </div>
-      </div>
-    )
+    return <AdvancedSettingsSkeleton />
   }
 
   return (
@@ -424,11 +451,7 @@ const AdvancedSettings: React.FC = () => {
           <RadioSelect
             value={invoiceOption}
             onValueChange={setInvoiceOption}
-            options={[
-              { value: "default", label: "Default" },
-              { value: "authorized", label: "Authorized" },
-              { value: "shipped", label: "On Shipment" }
-            ]}
+            options={invoiceOptions.map(opt => ({ value: opt.id, label: opt.name }))}
             placeholder="Select option"
           />
         </div>
@@ -458,10 +481,7 @@ const AdvancedSettings: React.FC = () => {
           <RadioSelect
             value={confirmationEmail}
             onValueChange={setConfirmationEmail}
-            options={[
-              { value: "paid", label: "When the order is paid" },
-              { value: "created", label: "When the order is created" }
-            ]}
+            options={confirmationEmailOptions.map(opt => ({ value: opt.id, label: opt.name }))}
             placeholder="Select option"
           />
         </div>
@@ -490,12 +510,7 @@ const AdvancedSettings: React.FC = () => {
           <MultiSelect
             value={autoShipStatuses}
             onValueChange={setAutoShipStatuses}
-            options={[
-              { value: "shipped", label: "Shipped" },
-              { value: "delivered", label: "Delivered" },
-              { value: "processing", label: "Processing" },
-              { value: "completed", label: "Completed" }
-            ]}
+            options={orderStatuses.map(status => ({ value: status.id, label: status.name }))}
             placeholder="Select statuses"
           />
         </div>
@@ -584,18 +599,15 @@ const AdvancedSettings: React.FC = () => {
         <div className="form-group">
           <label className="form-label">Log Level</label>
           <div className="button-group">
-            <button
-              className={`btn-group-item ${logLevel === "errors" ? "active" : ""}`}
-              onClick={() => setLogLevel("errors")}
-            >
-              Errors only
-            </button>
-            <button
-              className={`btn-group-item ${logLevel === "everything" ? "active" : ""}`}
-              onClick={() => setLogLevel("everything")}
-            >
-              Everything
-            </button>
+            {logLevelOptions.map((option) => (
+              <button
+                key={option.id}
+                className={`btn-group-item ${logLevel === option.id ? "active" : ""}`}
+                onClick={() => setLogLevel(option.id)}
+              >
+                {option.name}
+              </button>
+            ))}
           </div>
         </div>
       </section>
@@ -607,31 +619,29 @@ const AdvancedSettings: React.FC = () => {
         <div className="form-group">
           <label className="form-label">Payment Method Logo Display</label>
           <div className="button-group">
-            <button
-              className={`btn-group-item ${logoDisplay === "default" ? "active" : ""}`}
-              onClick={() => setLogoDisplay("default")}
-            >
-              Default
-            </button>
-            <button
-              className={`btn-group-item ${logoDisplay === "big" ? "active" : ""}`}
-              onClick={() => setLogoDisplay("big")}
-            >
-              Big
-            </button>
-            <button
-              className={`btn-group-item ${logoDisplay === "hide" ? "active" : ""}`}
-              onClick={() => setLogoDisplay("hide")}
-            >
-              Hide
-            </button>
+            {logoDisplayOptions.map((option) => (
+              <button
+                key={option.id}
+                className={`btn-group-item ${logoDisplay === option.id ? "active" : ""}`}
+                onClick={() => setLogoDisplay(option.id)}
+              >
+                {option.name}
+              </button>
+            ))}
           </div>
           <div className="checkout-preview">
-            <span>Checkout preview: Card</span>
-            <label className="toggle-switch small">
-              <input type="checkbox" defaultChecked />
-              <span className="toggle-slider"></span>
-            </label>
+            <span>Checkout preview:</span>
+            <div className="checkout-preview-card">
+              <img
+                src={logoDisplay === "big"
+                  ? "https://www.mollie.com/external/icons/payment-methods/creditcard%402x.png"
+                  : "https://www.mollie.com/external/icons/payment-methods/creditcard.png"
+                }
+                alt="Card"
+                className={`payment-card-icon ${logoDisplay === "hide" ? "hidden" : ""}`}
+              />
+              <span className="preview-label">Card</span>
+            </div>
           </div>
         </div>
 
@@ -646,18 +656,14 @@ const AdvancedSettings: React.FC = () => {
           />
         </div>
 
-        <div className="toggle-group">
-          <div className="toggle-content">
-            <div>
-              <div className="toggle-label">Translate Mollie payment page</div>
-              <div className="toggle-description">Use your shop's language in Mollie payment page</div>
-            </div>
-            <label className="toggle-switch">
-              <input type="checkbox" checked={translateMollie} onChange={(e) => setTranslateMollie(e.target.checked)} />
-              <span className="toggle-slider"></span>
-            </label>
-            <span className="toggle-status">{translateMollie ? "Enabled" : "Disabled"}</span>
-          </div>
+        <div className="form-group">
+          <label className="form-label">Use selected locale in webshop</label>
+          <RadioSelect
+            value={translateMollie}
+            onValueChange={setTranslateMollie}
+            options={translateMollieOptions.map(opt => ({ value: opt.id, label: opt.name }))}
+            placeholder="Select option"
+          />
         </div>
       </section>
 
@@ -681,20 +687,21 @@ const AdvancedSettings: React.FC = () => {
 
         <div className="status-mapping-table">
           {statusMappings.map((mapping) => (
-            <div key={mapping.id} className="status-mapping-row">
+            <div key={mapping.configKey} className="status-mapping-row">
               <div className="status-mapping-col">
                 <div className="status-label">{mapping.mollieStatus}</div>
                 <div className="status-sublabel">Mollie Payment Status</div>
               </div>
               <div className="status-mapping-col">
-                <select className="form-select">
-                  <option>Prestashop order status</option>
-                </select>
+                <div className="status-sublabel" style={{ textAlign: 'right' }}>PrestaShop order status</div>
               </div>
               <div className="status-mapping-col">
-                <select className="form-select">
-                  <option>{mapping.prestashopStatus}</option>
-                </select>
+                <RadioSelect
+                  value={mapping.prestashopStatus}
+                  onValueChange={(value) => handleStatusMappingChange(mapping.configKey, value)}
+                  options={orderStatuses.map(status => ({ value: status.id, label: status.name }))}
+                  placeholder="Select status"
+                />
               </div>
             </div>
           ))}
@@ -718,14 +725,14 @@ const AdvancedSettings: React.FC = () => {
 
         <div className="email-status-list">
           {emailStatuses.map((email) => (
-            <div key={email.id} className="email-status-row">
+            <div key={email.configKey} className="email-status-row">
               <div className="email-status-info">
                 <div className="status-label">{email.status}</div>
                 <div className="status-sublabel">Prestashop order status</div>
               </div>
               <div className="email-status-toggle">
                 <label className="toggle-switch">
-                  <input type="checkbox" checked={email.enabled} onChange={() => toggleEmailStatus(email.id)} />
+                  <input type="checkbox" checked={email.enabled} onChange={() => toggleEmailStatus(email.configKey)} />
                   <span className="toggle-slider"></span>
                 </label>
                 <span className="toggle-label-text">Send email on status</span>

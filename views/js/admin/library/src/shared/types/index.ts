@@ -41,6 +41,10 @@ export interface MollieAuthTranslations {
   connectionFailed: string;
   failedToLoadSettings: string;
   failedToSwitchEnvironment: string;
+  switchEnvironment: string;
+  confirmSwitchEnvironment: string;
+  cancel: string;
+  switchTo: string;
 }
 
 export interface MolliePaymentMethodsTranslations {

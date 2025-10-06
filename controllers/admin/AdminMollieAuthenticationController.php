@@ -104,6 +104,10 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 'connectionFailed' => addslashes($this->module->l('Connection failed. Please check your API key.', self::FILE_NAME)),
                 'failedToLoadSettings' => addslashes($this->module->l('Failed to load current settings', self::FILE_NAME)),
                 'failedToSwitchEnvironment' => addslashes($this->module->l('Failed to switch environment', self::FILE_NAME)),
+                'switchEnvironment' => addslashes($this->module->l('Switch Environment', self::FILE_NAME)),
+                'confirmSwitchEnvironment' => addslashes($this->module->l('Are you sure you want to switch to %s environment?', self::FILE_NAME)),
+                'cancel' => addslashes($this->module->l('Cancel', self::FILE_NAME)),
+                'switchTo' => addslashes($this->module->l('Switch to %s', self::FILE_NAME)),
             ],
         ]);
         $this->content = $this->context->smarty->fetch(

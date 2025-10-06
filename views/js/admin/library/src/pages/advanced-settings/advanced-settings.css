@@ -36,6 +36,7 @@
   border-radius: 8px;
   border: 1px solid #e5e7eb;
   padding: 0 20px 20px 20px;
+  overflow: visible;
 }
 
 .section-title {
@@ -225,6 +226,12 @@ h2.section-title {
 
 .relative {
   position: relative;
+  z-index: 100;
+}
+
+/* When dropdown is open, increase z-index to appear above other dropdowns */
+.dropdown-open {
+  z-index: 1000;
 }
 
 /* MultiSelect Component Styles */
@@ -611,15 +618,42 @@ input:checked + .toggle-slider:before {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 12px;
+  margin-top: 16px;
+  padding: 12px 16px;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.checkout-preview-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.payment-card-icon {
+  transition: all 0.2s ease;
+  display: block;
+  height: auto;
+}
+
+.payment-card-icon.hidden {
+  display: none;
+}
+
+.preview-label {
   font-size: 13px;
   color: #6b7280;
+  font-weight: 500;
 }
 
 .status-mapping-table {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  overflow: visible;
 }
 
 .status-mapping-row {
@@ -631,11 +665,13 @@ input:checked + .toggle-slider:before {
   background-color: #ffffff;
   border-radius: 6px;
   border: 1px solid #e5e7eb;
+  overflow: visible;
 }
 
 .status-mapping-col {
   display: flex;
   flex-direction: column;
+  overflow: visible;
 }
 
 .status-label {

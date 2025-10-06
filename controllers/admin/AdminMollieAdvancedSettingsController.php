@@ -158,24 +158,52 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
     private function ajaxGetSettings(): void
     {
         try {
+            // Get raw values from configuration
+            $invoiceOptionRaw = $this->configuration->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS);
+            $confirmationEmailRaw = $this->configuration->get(Config::MOLLIE_SEND_ORDER_CONFIRMATION);
+            $logLevelRaw = $this->configuration->get(Config::MOLLIE_DEBUG_LOG);
+            $logoDisplayRaw = $this->configuration->get(Config::MOLLIE_IMAGES);
+            $translateMollieRaw = $this->configuration->get(Config::MOLLIE_PAYMENTSCREEN_LOCALE);
+
+            // Handle legacy value 'send_locale' (old versions used this instead of 'website_locale')
+            if ($translateMollieRaw === 'send_locale') {
+                $translateMollieRaw = Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE;
+            }
+
             $settings = [
-                // Order Settings
-                'invoiceOption' => $this->configuration->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS),
-                'confirmationEmail' => $this->configuration->get(Config::MOLLIE_SEND_ORDER_CONFIRMATION),
+                // Order Settings - use value if set AND valid, otherwise use default
+                // Always return as string to match option IDs
+                'invoiceOption' => ($invoiceOptionRaw !== false && $invoiceOptionRaw !== '' && $invoiceOptionRaw !== null)
+                    ? (string) $invoiceOptionRaw
+                    : (string) Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_DEFAULT,
+                // confirmationEmail: return DB value as-is, default to "When the order is paid"
+                'confirmationEmail' => ($confirmationEmailRaw !== false && $confirmationEmailRaw !== '' && $confirmationEmailRaw !== null)
+                    ? (string) $confirmationEmailRaw
+                    : (string) Config::ORDER_CONF_MAIL_SEND_ON_PAID,
 
                 // Shipping Settings
                 'autoShip' => (bool) $this->configuration->get(Config::MOLLIE_AUTO_SHIP_MAIN),
-                'autoShipStatuses' => json_decode($this->configuration->get(Config::MOLLIE_AUTO_SHIP_STATUSES) ?: '[]', true),
+                'autoShipStatuses' => array_map('strval', json_decode($this->configuration->get(Config::MOLLIE_AUTO_SHIP_STATUSES) ?: '[]', true)),
                 'carriers' => $this->getCarriersData(),
 
                 // Error Debugging
                 'debugMode' => (bool) $this->configuration->get(Config::MOLLIE_DISPLAY_ERRORS),
-                'logLevel' => $this->configuration->get(Config::MOLLIE_DEBUG_LOG),
+                // logLevel can be 0 (valid), so check for false, null, empty string only
+                // Always return as string to match option IDs
+                'logLevel' => ($logLevelRaw !== false && $logLevelRaw !== '' && $logLevelRaw !== null)
+                    ? (string) $logLevelRaw
+                    : (string) Config::DEBUG_LOG_ERRORS,
 
                 // Visual Settings
-                'logoDisplay' => $this->configuration->get(Config::MOLLIE_IMAGES),
+                // logoDisplay and translateMollie - use value if set, otherwise default
+                // Always return as string to match option IDs
+                'logoDisplay' => ($logoDisplayRaw !== false && $logoDisplayRaw !== '' && $logoDisplayRaw !== null)
+                    ? (string) $logoDisplayRaw
+                    : (string) Config::LOGOS_NORMAL,
                 'cssPath' => $this->configuration->get(Config::MOLLIE_CSS),
-                'translateMollie' => $this->configuration->get(Config::MOLLIE_PAYMENTSCREEN_LOCALE),
+                'translateMollie' => ($translateMollieRaw !== false && $translateMollieRaw !== '' && $translateMollieRaw !== null)
+                    ? (string) $translateMollieRaw
+                    : (string) Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE,
 
                 // Order Status Mapping
                 'statusMappings' => $this->getStatusMappings(),
@@ -329,20 +357,23 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         $statuses = [];
 
         $statusKeys = [
+            Config::MOLLIE_STATUS_AWAITING => 'Awaiting',
             Config::MOLLIE_STATUS_OPEN => 'Open',
             Config::MOLLIE_STATUS_PAID => 'Paid',
             Config::MOLLIE_STATUS_COMPLETED => 'Completed',
             Config::MOLLIE_STATUS_CANCELED => 'Canceled',
             Config::MOLLIE_STATUS_EXPIRED => 'Expired',
             Config::MOLLIE_STATUS_REFUNDED => 'Refunded',
+            Config::MOLLIE_STATUS_PARTIAL_REFUND => 'Partially refunded',
             Config::MOLLIE_STATUS_SHIPPING => 'Shipping',
+            Config::MOLLIE_STATUS_CHARGEBACK => 'Chargeback',
         ];
 
         foreach ($statusKeys as $key => $name) {
             $prestashopStatusId = (int) $this->configuration->get($key);
             $statuses[] = [
                 'mollieStatus' => $name,
-                'prestashopStatus' => $prestashopStatusId,
+                'prestashopStatus' => (string) $prestashopStatusId,
                 'configKey' => $key,
             ];
         }
@@ -375,6 +406,7 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             Config::MOLLIE_MAIL_WHEN_REFUNDED => 'Refunded',
             Config::MOLLIE_MAIL_WHEN_CHARGEBACK => 'Chargeback',
             Config::MOLLIE_MAIL_WHEN_FAILED => 'Failed',
+            Config::MOLLIE_MAIL_WHEN_SHIPPING => 'Shipping',
         ];
 
         $statuses = [];
@@ -411,7 +443,7 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
 
         foreach ($orderStatuses as $status) {
             $result[] = [
-                'id' => $status['id_order_state'],
+                'id' => (string) $status['id_order_state'],
                 'name' => $status['name'],
             ];
         }
@@ -425,9 +457,9 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
     private function getInvoiceOptions(): array
     {
         return [
-            ['id' => Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_DEFAULT, 'name' => 'Default'],
-            ['id' => Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED, 'name' => 'Authorized'],
-            ['id' => Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED, 'name' => 'On Shipment'],
+            ['id' => (string) Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_DEFAULT, 'name' => 'Default'],
+            ['id' => (string) Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED, 'name' => 'Authorized'],
+            ['id' => (string) Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED, 'name' => 'On Shipment'],
         ];
     }
 
@@ -437,8 +469,8 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
     private function getConfirmationEmailOptions(): array
     {
         return [
-            ['id' => Config::ORDER_CONF_MAIL_SEND_ON_PAID, 'name' => 'When the order is paid'],
-            ['id' => Config::ORDER_CONF_MAIL_SEND_ON_NEVER, 'name' => 'Never'],
+            ['id' => (string) Config::ORDER_CONF_MAIL_SEND_ON_PAID, 'name' => 'When the order is paid'],
+            ['id' => (string) Config::ORDER_CONF_MAIL_SEND_ON_NEVER, 'name' => 'Never'],
         ];
     }
 
@@ -448,9 +480,9 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
     private function getLogLevelOptions(): array
     {
         return [
-            ['id' => Config::DEBUG_LOG_NONE, 'name' => 'Nothing'],
-            ['id' => Config::DEBUG_LOG_ERRORS, 'name' => 'Errors only'],
-            ['id' => Config::DEBUG_LOG_ALL, 'name' => 'Everything'],
+            ['id' => (string) Config::DEBUG_LOG_NONE, 'name' => 'Nothing'],
+            ['id' => (string) Config::DEBUG_LOG_ERRORS, 'name' => 'Errors'],
+            ['id' => (string) Config::DEBUG_LOG_ALL, 'name' => 'Everything'],
         ];
     }
 
@@ -460,9 +492,9 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
     private function getLogoDisplayOptions(): array
     {
         return [
-            ['id' => Config::LOGOS_HIDE, 'name' => 'Hide'],
-            ['id' => Config::LOGOS_NORMAL, 'name' => 'Default'],
-            ['id' => Config::LOGOS_BIG, 'name' => 'Big'],
+            ['id' => (string) Config::LOGOS_HIDE, 'name' => 'Hide'],
+            ['id' => (string) Config::LOGOS_NORMAL, 'name' => 'Normal'],
+            ['id' => (string) Config::LOGOS_BIG, 'name' => 'Big'],
         ];
     }
 
@@ -472,8 +504,8 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
     private function getTranslateMollieOptions(): array
     {
         return [
-            ['id' => Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE, 'name' => 'Use browser locale'],
-            ['id' => Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE, 'name' => 'Use webshop locale'],
+            ['id' => (string) Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE, 'name' => 'Use browser locale'],
+            ['id' => (string) Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE, 'name' => 'Use webshop locale'],
         ];
     }
 }
