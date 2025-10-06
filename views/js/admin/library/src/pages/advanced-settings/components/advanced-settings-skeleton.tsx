@@ -1,6 +1,5 @@
 "use client"
 
-// Skeleton loading component for advanced settings page
 const SkeletonInfoBox = () => (
   <div className="info-box animate-pulse">
     <div className="h-5 w-5 bg-gray-200 rounded-full flex-shrink-0"></div>
@@ -82,13 +81,11 @@ const SkeletonEmailStatus = () => (
 export function AdvancedSettingsSkeleton() {
   return (
     <div className="advanced-settings">
-      {/* Header */}
       <div className="settings-header">
         <div className="h-8 bg-gray-200 rounded w-64 mb-2 animate-pulse"></div>
         <div className="h-4 bg-gray-200 rounded w-96 animate-pulse"></div>
       </div>
 
-      {/* Order Settings Section */}
       <section className="settings-section animate-pulse">
         <div className="h-6 bg-gray-200 rounded w-40 mb-6"></div>
 
@@ -105,7 +102,6 @@ export function AdvancedSettingsSkeleton() {
         </div>
       </section>
 
-      {/* Shipping Settings Section */}
       <section className="settings-section">
         <div className="h-6 bg-gray-200 rounded w-48 mb-6 animate-pulse"></div>
 
@@ -125,23 +121,6 @@ export function AdvancedSettingsSkeleton() {
         <SkeletonCarrierTable />
       </section>
 
-      {/* Error Debugging Section */}
-      <section className="settings-section">
-        <div className="h-6 bg-gray-200 rounded w-40 mb-6 animate-pulse"></div>
-
-        <SkeletonToggleGroup />
-
-        <div className="form-group animate-pulse">
-          <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
-          <div className="button-group">
-            {Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="h-10 bg-gray-200 rounded flex-1"></div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Visual Settings Section */}
       <section className="settings-section">
         <div className="h-6 bg-gray-200 rounded w-44 mb-6 animate-pulse"></div>
 
@@ -166,7 +145,6 @@ export function AdvancedSettingsSkeleton() {
         </div>
       </section>
 
-      {/* Order Status Mapping Section */}
       <section className="settings-section">
         <div className="h-6 bg-gray-200 rounded w-52 mb-6 animate-pulse"></div>
 
@@ -175,7 +153,6 @@ export function AdvancedSettingsSkeleton() {
         <SkeletonStatusMapping />
       </section>
 
-      {/* Order Status Emails Section */}
       <section className="settings-section">
         <div className="h-6 bg-gray-200 rounded w-48 mb-6 animate-pulse"></div>
 
@@ -184,7 +161,6 @@ export function AdvancedSettingsSkeleton() {
         <SkeletonEmailStatus />
       </section>
 
-      {/* Save Button */}
       <div className="settings-footer">
         <div className="h-11 bg-gray-200 rounded w-40 animate-pulse"></div>
       </div>

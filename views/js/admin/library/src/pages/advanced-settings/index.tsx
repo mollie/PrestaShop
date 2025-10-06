@@ -6,7 +6,6 @@ import "./advanced-settings.css"
 import { advancedSettingsApiService, type CarrierData, type SaveCarrierData } from "../../services/AdvancedSettingsApiService"
 import { AdvancedSettingsSkeleton } from "./components/advanced-settings-skeleton"
 
-// ChevronDown icon component
 const ChevronDown = ({ className }: { className?: string }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -24,7 +23,6 @@ const ChevronDown = ({ className }: { className?: string }) => (
   </svg>
 )
 
-// Utility function for class names
 function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ")
 }
@@ -236,8 +234,6 @@ const AdvancedSettings: React.FC = () => {
   const [confirmationEmail, setConfirmationEmail] = useState("paid")
   const [autoShip, setAutoShip] = useState(true)
   const [autoShipStatuses, setAutoShipStatuses] = useState<string[]>(["shipped"])
-  const [debugMode, setDebugMode] = useState(true)
-  const [logLevel, setLogLevel] = useState("errors")
   const [logoDisplay, setLogoDisplay] = useState("")
   const [translateMollie, setTranslateMollie] = useState("")
   const [cssPath, setCssPath] = useState("")
@@ -247,11 +243,8 @@ const AdvancedSettings: React.FC = () => {
   const [statusMappings, setStatusMappings] = useState<StatusMapping[]>([])
   const [emailStatuses, setEmailStatuses] = useState<EmailStatus[]>([])
   const [orderStatuses, setOrderStatuses] = useState<OrderStatus[]>([])
-
-  // Dropdown options from backend
   const [invoiceOptions, setInvoiceOptions] = useState<{ id: string; name: string }[]>([])
   const [confirmationEmailOptions, setConfirmationEmailOptions] = useState<{ id: string; name: string }[]>([])
-  const [logLevelOptions, setLogLevelOptions] = useState<{ id: string; name: string }[]>([])
   const [logoDisplayOptions, setLogoDisplayOptions] = useState<{ id: string; name: string }[]>([])
   const [translateMollieOptions, setTranslateMollieOptions] = useState<{ id: string; name: string }[]>([])
 
@@ -263,12 +256,10 @@ const AdvancedSettings: React.FC = () => {
     { value: "module", label: "Module" },
   ]
 
-  // Load settings on mount
   useEffect(() => {
     loadSettings()
   }, [])
 
-  // Auto-hide notification after 5 seconds
   useEffect(() => {
     if (notification) {
       const timer = setTimeout(() => {
@@ -285,29 +276,20 @@ const AdvancedSettings: React.FC = () => {
 
       if (response.success && response.data) {
         const data = response.data
-
-        // Dropdown options (load first so we can use them for defaults)
         const invoiceOpts = data.options?.invoiceOptions || []
         const confirmEmailOpts = data.options?.confirmationEmailOptions || []
-        const logLevelOpts = data.options?.logLevelOptions || []
         const logoDisplayOpts = data.options?.logoDisplayOptions || []
         const translateMollieOpts = data.options?.translateMollieOptions || []
 
         setInvoiceOptions(invoiceOpts)
         setConfirmationEmailOptions(confirmEmailOpts)
-        setLogLevelOptions(logLevelOpts)
         setLogoDisplayOptions(logoDisplayOpts)
         setTranslateMollieOptions(translateMollieOpts)
-
-        // Order Settings - backend already provides defaults and string types
         setInvoiceOption(data.invoiceOption || invoiceOpts[0]?.id || "")
         setConfirmationEmail(data.confirmationEmail || confirmEmailOpts[0]?.id || "")
-
-        // Shipping Settings
         setAutoShip(data.autoShip || false)
         setAutoShipStatuses(data.autoShipStatuses || [])
 
-        // Map carriers data to component format
         const mappedCarriers = data.carriers.map((carrier: CarrierData) => ({
           id: carrier.id,
           name: carrier.name,
@@ -315,23 +297,11 @@ const AdvancedSettings: React.FC = () => {
           emptyInput: carrier.customUrl || "",
         }))
         setCarriers(mappedCarriers)
-
-        // Error Debugging
-        setDebugMode(data.debugMode || false)
-        setLogLevel(data.logLevel || logLevelOpts[0]?.id || "")
-
-        // Visual Settings
         setLogoDisplay(data.logoDisplay || logoDisplayOpts[0]?.id || "")
         setCssPath(data.cssPath || "")
         setTranslateMollie(data.translateMollie || translateMollieOpts[0]?.id || "")
-
-        // Status Mappings
         setStatusMappings(data.statusMappings || [])
-
-        // Email Statuses
         setEmailStatuses(data.emailStatuses || [])
-
-        // Order Statuses for dropdowns
         setOrderStatuses(data.options?.orderStatuses || [])
       }
     } catch (error) {
@@ -345,8 +315,6 @@ const AdvancedSettings: React.FC = () => {
   const saveSettings = async () => {
     try {
       setSaving(true)
-
-      // Map carriers back to API format
       const carriersData: SaveCarrierData[] = carriers.map(carrier => ({
         id: carrier.id,
         urlSource: carrier.carrierUrl,
@@ -359,8 +327,6 @@ const AdvancedSettings: React.FC = () => {
         autoShip,
         autoShipStatuses,
         carriers: carriersData,
-        debugMode,
-        logLevel,
         logoDisplay,
         cssPath,
         translateMollie,
@@ -404,7 +370,6 @@ const AdvancedSettings: React.FC = () => {
 
   return (
     <div className="advanced-settings">
-      {/* Notification */}
       {notification && (
         <div
           className={`fixed right-6 top-6 z-[9999] border rounded-lg p-4 flex items-center gap-3 shadow-lg min-w-[320px] max-w-[500px] ${
@@ -442,7 +407,6 @@ const AdvancedSettings: React.FC = () => {
         <p className="settings-subtitle">Manage your order settings, visual representation and error logging</p>
       </div>
 
-      {/* Order Settings */}
       <section className="settings-section">
         <h2 className="section-title">Order settings</h2>
 
@@ -487,7 +451,6 @@ const AdvancedSettings: React.FC = () => {
         </div>
       </section>
 
-      {/* Shipping Settings */}
       <section className="settings-section">
         <h2 className="section-title">Shipping Settings</h2>
 
@@ -578,41 +541,6 @@ const AdvancedSettings: React.FC = () => {
         </div>
       </section>
 
-      {/* Error Debugging */}
-      <section className="settings-section">
-        <h2 className="section-title">Error Debugging</h2>
-
-        <div className="toggle-group">
-          <div className="toggle-content">
-            <div>
-              <div className="toggle-label">Debug Mode</div>
-              <div className="toggle-description">Enable detailed error logging</div>
-            </div>
-            <label className="toggle-switch">
-              <input type="checkbox" checked={debugMode} onChange={(e) => setDebugMode(e.target.checked)} />
-              <span className="toggle-slider"></span>
-            </label>
-            <span className="toggle-status">{debugMode ? "Enabled" : "Disabled"}</span>
-          </div>
-        </div>
-
-        <div className="form-group">
-          <label className="form-label">Log Level</label>
-          <div className="button-group">
-            {logLevelOptions.map((option) => (
-              <button
-                key={option.id}
-                className={`btn-group-item ${logLevel === option.id ? "active" : ""}`}
-                onClick={() => setLogLevel(option.id)}
-              >
-                {option.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Visual Settings */}
       <section className="settings-section">
         <h2 className="section-title">Visual Settings</h2>
 
@@ -667,7 +595,6 @@ const AdvancedSettings: React.FC = () => {
         </div>
       </section>
 
-      {/* Order Status Mapping */}
       <section className="settings-section">
         <h2 className="section-title">Order Status Mapping</h2>
 
@@ -708,7 +635,6 @@ const AdvancedSettings: React.FC = () => {
         </div>
       </section>
 
-      {/* Order Status Emails */}
       <section className="settings-section">
         <h2 className="section-title">Order Status Emails</h2>
 
@@ -742,7 +668,6 @@ const AdvancedSettings: React.FC = () => {
         </div>
       </section>
 
-      {/* Save Button */}
       <div className="settings-footer">
         <button
           className="btn-save-settings"
