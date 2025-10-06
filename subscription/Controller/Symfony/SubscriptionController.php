@@ -97,6 +97,9 @@ class SubscriptionController extends AbstractSymfonyController
                 'carrier_warning' => $this->module->l('Carrier to use in subscription orders', self::FILE_NAME),
                 'carrier_warning_text' => $this->module->l('WARNING: do not change selection after getting first subscription order.', self::FILE_NAME),
             ],
+            'links' => [
+                'help_url' => 'https://docs.mollie.com/docs/prestashop-manage-subscriptions',
+            ],
         ]);
     }
 
