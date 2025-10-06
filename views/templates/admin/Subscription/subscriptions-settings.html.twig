@@ -27,25 +27,27 @@
             <i class="material-icons">settings</i> {{ translations.subscription_options }}
           </span>
           <a href="https://help.prestashop.com" class="btn btn-outline-info btn-sm" target="_blank">
-            <i class="material-icons">help_outline</i>
+            <i class="material-icons">open_in_new</i>
             How to configure Mollie subscriptions on Prestashop?
           </a>
         </h3>
-        <div class="card-block row">
-          <div class="card-text px-3">
-            <div class="form-group row">
+        <div class="card-body">
+          <div class="form-group row">
+            <div class="col-sm-12 col-lg-4">
               {{ ps.label_with_help(translations.enable_subscription_service, translations.enable_subscription_service_help) }}
-              <div class="col-sm">
-                {{ form_errors(subscriptionOptions.enable_subscriptions) }}
-                {{ form_widget(subscriptionOptions.enable_subscriptions) }}
-              </div>
             </div>
-            <div class="form-group row">
+            <div class="col-sm-12 col-lg-8">
+              {{ form_errors(subscriptionOptions.enable_subscriptions) }}
+              {{ form_widget(subscriptionOptions.enable_subscriptions) }}
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-12 col-lg-4">
               {{ ps.label_with_help(translations.carrier_warning, translations.carrier_warning_text) }}
-              <div class="col-sm">
-                {{ form_errors(subscriptionOptions.carrier) }}
-                {{ form_widget(subscriptionOptions.carrier) }}
-              </div>
+            </div>
+            <div class="col-sm-12 col-lg-8">
+              {{ form_errors(subscriptionOptions.carrier) }}
+              {{ form_widget(subscriptionOptions.carrier) }}
             </div>
           </div>
         </div>
