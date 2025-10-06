@@ -18,7 +18,9 @@ use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Logger\LoggerInterface;
+use Mollie\Repository\CountryRepository;
 use Mollie\Repository\CustomerRepository;
+use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ApiService;
 use Mollie\Service\CountryService;
@@ -48,11 +50,17 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
     /** @var PaymentMethodRepositoryInterface */
     private $paymentMethodRepository;
 
+    /** @var PaymentMethodLangRepositoryInterface */
+    private $paymentMethodLangRepository;
+
     /** @var ApiService */
     private $apiService;
 
     /** @var CountryService */
     private $countryService;
+
+    /** @var CountryRepository */
+    private $countryRepository;
 
     /** @var CustomerRepository */
     private $customerRepository;
@@ -69,8 +77,10 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         $this->configuration = $this->module->getService(ConfigurationAdapter::class);
         $this->paymentMethodService = $this->module->getService(PaymentMethodService::class);
         $this->paymentMethodRepository = $this->module->getService(PaymentMethodRepositoryInterface::class);
+        $this->paymentMethodLangRepository = $this->module->getService(PaymentMethodLangRepositoryInterface::class);
         $this->apiService = $this->module->getService(ApiService::class);
         $this->countryService = $this->module->getService(CountryService::class);
+        $this->countryRepository = $this->module->getService(CountryRepository::class);
         $this->customerRepository = $this->module->getService(CustomerRepository::class);
         $this->logger = $this->module->getService(LoggerInterface::class);
     }
@@ -160,16 +170,34 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'paymentRestrictions' => addslashes($this->module->l('Payment restrictions', self::FILE_NAME)),
                 'acceptPaymentsFrom' => addslashes($this->module->l('Accept payments from', self::FILE_NAME)),
                 'allCountries' => addslashes($this->module->l('All countries', self::FILE_NAME)),
-                'specificCountries' => addslashes($this->module->l('Specific countries', self::FILE_NAME)),
+                'selectedCountries' => addslashes($this->module->l('Selected countries', self::FILE_NAME)),
+                'acceptPaymentsFromSpecificCountries' => addslashes($this->module->l('Accept payments from specific countries', self::FILE_NAME)),
+                'selectCountriesAccept' => addslashes($this->module->l('Select countries to accept payments from', self::FILE_NAME)),
                 'excludePaymentsFromCountries' => addslashes($this->module->l('Exclude payments from specific countries', self::FILE_NAME)),
                 'selectCountriesToExclude' => addslashes($this->module->l('Select countries to exclude', self::FILE_NAME)),
-                'excludeCustomerGroups' => addslashes($this->module->l('Exclude Customer Groups', self::FILE_NAME)),
-                'selectCustomerGroups' => addslashes($this->module->l('Select customer groups', self::FILE_NAME)),
+                'excludeCustomerGroups' => addslashes($this->module->l('Restrict to customer groups', self::FILE_NAME)),
+                'selectCustomerGroups' => addslashes($this->module->l('Select customer groups that will not see this payment method', self::FILE_NAME)),
+                'customerGroupsHelp' => addslashes($this->module->l('If no groups are selected, the payment method will be available to all customers.', self::FILE_NAME)),
                 'guest' => addslashes($this->module->l('Guest', self::FILE_NAME)),
                 'customerGroup' => addslashes($this->module->l('Customer Group', self::FILE_NAME)),
 
                 // Payment Fees
                 'paymentFees' => addslashes($this->module->l('Payment fees', self::FILE_NAME)),
+                'enablePaymentFee' => addslashes($this->module->l('Enable payment fee', self::FILE_NAME)),
+                'paymentFeeType' => addslashes($this->module->l('Payment fee type', self::FILE_NAME)),
+                'fixedFee' => addslashes($this->module->l('Fixed fee', self::FILE_NAME)),
+                'fixedFeeTaxIncl' => addslashes($this->module->l('Fixed fee (tax incl)', self::FILE_NAME)),
+                'fixedFeeTaxExcl' => addslashes($this->module->l('Fixed fee (tax excl)', self::FILE_NAME)),
+                'percentageFee' => addslashes($this->module->l('Percentage', self::FILE_NAME)),
+                'percentageFeeLabel' => addslashes($this->module->l('Percentage fee', self::FILE_NAME)),
+                'combinedFee' => addslashes($this->module->l('Combined payment surcharge limit', self::FILE_NAME)),
+                'noFee' => addslashes($this->module->l('No fee', self::FILE_NAME)),
+                'paymentFeeTaxGroup' => addslashes($this->module->l('Payment fee tax group', self::FILE_NAME)),
+                'taxRulesGroupForFixedFee' => addslashes($this->module->l('Tax rules group for fixed fee', self::FILE_NAME)),
+                'maximumFee' => addslashes($this->module->l('Maximum fee', self::FILE_NAME)),
+                'minimumAmount' => addslashes($this->module->l('Minimum amount', self::FILE_NAME)),
+                'maximumAmount' => addslashes($this->module->l('Maximum amount', self::FILE_NAME)),
+                'paymentFeeEmailHelp' => addslashes($this->module->l('Add "(payment_fee)" in email translations to display it in your email template.', self::FILE_NAME)),
 
                 // Order Restrictions
                 'orderRestrictions' => addslashes($this->module->l('Order restrictions', self::FILE_NAME)),
@@ -179,8 +207,44 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'saving' => addslashes($this->module->l('Saving...', self::FILE_NAME)),
                 'loadingMethods' => addslashes($this->module->l('Loading payment methods...', self::FILE_NAME)),
                 'loadingError' => addslashes($this->module->l('Failed to load payment methods', self::FILE_NAME)),
+                'saveSettings' => addslashes($this->module->l('Save Settings', self::FILE_NAME)),
 
-                // Countries todo once we implement this remove these
+                // Transaction Description Help
+                'transactionDescriptionHelp' => addslashes($this->module->l('Use any of the following variables to create a transaction description for payments that use this method:', self::FILE_NAME)),
+                'transactionDescriptionVariables' => addslashes($this->module->l('{orderNumber}, {storeName}, {countryCode}, {cart.id}, {order.reference}, {customer.firstname}, {customer.lastname}, {customer.company}', self::FILE_NAME)),
+
+                // Messages
+                'paymentMethodNotFound' => addslashes($this->module->l('Payment method not found', self::FILE_NAME)),
+                'settingsSavedSuccessfully' => addslashes($this->module->l('Settings saved successfully!', self::FILE_NAME)),
+                'failedToSaveSettings' => addslashes($this->module->l('Failed to save settings', self::FILE_NAME)),
+                'paymentMethodsOrderUpdated' => addslashes($this->module->l('Payment methods order updated successfully!', self::FILE_NAME)),
+                'failedToUpdateOrder' => addslashes($this->module->l('Failed to update payment methods order', self::FILE_NAME)),
+                'savingNewOrder' => addslashes($this->module->l('Saving new order...', self::FILE_NAME)),
+                'noPaymentMethods' => addslashes($this->module->l('No payment methods', self::FILE_NAME)),
+                'paymentMethodsWillAppear' => addslashes($this->module->l('Payment methods will appear here once configured', self::FILE_NAME)),
+
+                // Custom Logo Upload
+                'pleaseUploadJpgOrPng' => addslashes($this->module->l('Please upload a JPG or PNG file', self::FILE_NAME)),
+                'fileSizeTooLarge' => addslashes($this->module->l('File size must be less than 2MB', self::FILE_NAME)),
+                'imageDimensionsTooLarge' => addslashes($this->module->l('Image dimensions must be maximum 256x64 pixels', self::FILE_NAME)),
+                'failedToUploadLogo' => addslashes($this->module->l('Failed to upload logo. Please try again.', self::FILE_NAME)),
+                'invalidImageFile' => addslashes($this->module->l('Invalid image file', self::FILE_NAME)),
+                'uploading' => addslashes($this->module->l('Uploading...', self::FILE_NAME)),
+                'customLogoPreview' => addslashes($this->module->l('Custom logo preview', self::FILE_NAME)),
+                'logoUploadedSuccessfully' => addslashes($this->module->l('Logo uploaded successfully!', self::FILE_NAME)),
+                'customLogo' => addslashes($this->module->l('Custom Logo', self::FILE_NAME)),
+                'remove' => addslashes($this->module->l('Remove', self::FILE_NAME)),
+
+                // Apple Pay Button Descriptions
+                'applePayButtonBlackDesc' => addslashes($this->module->l('Black Apple Pay button', self::FILE_NAME)),
+                'applePayButtonOutlineDesc' => addslashes($this->module->l('White with outline', self::FILE_NAME)),
+                'applePayButtonWhiteDesc' => addslashes($this->module->l('White Apple Pay button', self::FILE_NAME)),
+
+                // Select Placeholders
+                'selectOption' => addslashes($this->module->l('Select option', self::FILE_NAME)),
+                'selectOptions' => addslashes($this->module->l('Select options', self::FILE_NAME)),
+                'itemsSelected' => addslashes($this->module->l('%s selected', self::FILE_NAME)),
+
                 // Drag and drop
                 'dragPaymentOptionsToReorder' => addslashes($this->module->l('Drag payment options to reorder', self::FILE_NAME)),
             ],
@@ -283,6 +347,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
 
             // If no methods from API, return empty response
             if (empty($apiMethods)) {
+                $this->logger->info('No API methods found from Mollie API');
                 $this->ajaxRender(json_encode([
                     'success' => true,
                     'data' => [
@@ -300,54 +365,80 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 return;
             }
 
+            $this->logger->info('Found ' . count($apiMethods) . ' API methods from Mollie');
+
             // Format API methods for the modern React frontend (same as FormBuilder does)
             $formattedMethods = [];
             foreach ($apiMethods as $method) {
-                $methodId = $method['id'];
-                $methodObj = $method['obj']; // This comes from getMethodsObjForConfig()
+                try {
+                    $methodId = $method['id'];
+                    $methodObj = $method['obj']; // This comes from getMethodsObjForConfig()
 
-                // Convert FormBuilder API method structure to modern frontend format
-                $formattedMethods[] = [
-                    'id' => $methodId,
-                    'name' => $method['name'],
-                    'type' => $methodId === 'creditcard' ? 'card' : 'other',
-                    'status' => $methodObj->enabled ? 'active' : 'inactive',
-                    'isExpanded' => false, // Will be handled by frontend state
-                    'position' => (int) ($methodObj->position ?? 0),
-                    'image' => $method['image'] ?? null,
-                    'settings' => [
-                        'enabled' => (bool) $methodObj->enabled,
-                        'title' => $method['name'],
-                        'mollieComponents' => true, // Default
-                        'oneClickPayments' => false, // Default
-                        'transactionDescription' => $methodObj->description ?: 'Order %order_number%',
-                        'apiSelection' => $methodObj->method === 'orders' ? 'orders' : 'payments',
-                        'useCustomLogo' => $methodId === 'creditcard' ? (bool) $this->configuration->get(\Mollie\Config\Config::MOLLIE_SHOW_CUSTOM_LOGO) : false,
-                        'customLogoUrl' => $methodId === 'creditcard' ? $this->getCustomLogoUrl() : null,
-                        'paymentRestrictions' => [
-                            'acceptFrom' => $methodObj->is_countries_applicable ? 'specific' : 'all',
-                            'excludeCountries' => $method['excludedCountries'] ?? [],
-                            'excludeCustomerGroups' => $method['excludedCustomerGroups'] ?? [],
+                    // Validate method object
+                    if (!$methodObj) {
+                        $this->logger->warning('Method object is null for method: ' . $methodId);
+                        continue;
+                    }
+
+                    // Convert FormBuilder API method structure to modern frontend format
+                    $formattedMethods[] = [
+                        'id' => $methodId,
+                        'name' => $method['name'],
+                        'type' => $methodId === 'creditcard' ? 'card' : 'other',
+                        'status' => (isset($methodObj->enabled) && $methodObj->enabled) ? 'active' : 'inactive',
+                        'isExpanded' => false, // Will be handled by frontend state
+                        'position' => (int) (isset($methodObj->position) ? $methodObj->position : 0),
+                        'image' => $method['image'] ?? null,
+                        'settings' => [
+                            'enabled' => (bool) (isset($methodObj->enabled) ? $methodObj->enabled : false),
+                            'title' => $this->getPaymentMethodTitle($methodId, $method['name'] ?? ''),
+                            'mollieComponents' => $methodId === 'creditcard' ? $this->getCreditCardMollieComponentsSetting($methodObj) : true,
+                            'oneClickPayments' => $methodId === 'creditcard' ? $this->getCreditCardOneClickSetting($methodObj) : false,
+                            'transactionDescription' => (isset($methodObj->description) && $methodObj->description) ? $methodObj->description : '{orderNumber}',
+                            'apiSelection' => (isset($methodObj->method) && $methodObj->method === 'orders') ? 'orders' : 'payments',
+                            'useCustomLogo' => $methodId === 'creditcard' ? (bool) ($this->configuration->get(\Mollie\Config\Config::MOLLIE_SHOW_CUSTOM_LOGO) ?: 0) : false,
+                            'customLogoUrl' => $methodId === 'creditcard' ? $this->getCustomLogoUrl() : null,
+                            'paymentRestrictions' => [
+                                'acceptFrom' => (isset($methodObj->is_countries_applicable) && $methodObj->is_countries_applicable) ? 'selected' : 'all',
+                                'selectedCountries' => $method['countries'] ?? [], // For when acceptFrom = 'selected'
+                                'excludeCountries' => $method['excludedCountries'] ?? [],
+                                'excludeCustomerGroups' => $method['excludedCustomerGroups'] ?? [],
+                            ],
+                            'paymentFees' => [
+                                'enabled' => (int) (isset($methodObj->surcharge) ? $methodObj->surcharge : 0) > 0,
+                                'type' => $this->getPaymentFeeType($methodObj),
+                                'taxGroup' => isset($methodObj->tax_rules_group_id) ? (string) $methodObj->tax_rules_group_id : '0',
+                                // Fixed fee fields - fixedFeeTaxIncl must be calculated as it's not stored in DB
+                                'fixedFeeTaxIncl' => $this->calculateFixedFeeTaxIncl($methodObj),
+                                'fixedFeeTaxExcl' => isset($methodObj->surcharge_fixed_amount_tax_excl) ? $methodObj->surcharge_fixed_amount_tax_excl : '0.00',
+                                // Percentage fee fields
+                                'percentageFee' => isset($methodObj->surcharge_percentage) ? $methodObj->surcharge_percentage : '0.00',
+                                'maxFeeCap' => isset($methodObj->surcharge_limit) ? $methodObj->surcharge_limit : '0.00',
+                            ],
+                            'orderRestrictions' => [
+                                // Load from DB if set, otherwise fallback to Mollie API defaults
+                                'minAmount' => (isset($methodObj->min_amount) && $methodObj->min_amount > 0)
+                                    ? $methodObj->min_amount
+                                    : ($method['minimumAmount'] ? $method['minimumAmount']['value'] : '0.00'),
+                                'maxAmount' => (isset($methodObj->max_amount) && $methodObj->max_amount > 0)
+                                    ? $methodObj->max_amount
+                                    : ($method['maximumAmount'] ? $method['maximumAmount']['value'] : '0.00'),
+                            ],
+                            'applePaySettings' => $methodId === 'applepay' ? [
+                                'directProduct' => (bool) ($this->configuration->get(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT) ?: 0),
+                                'directCart' => (bool) ($this->configuration->get(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_CART) ?: 0),
+                                'buttonStyle' => (int) ($this->configuration->get(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_STYLE) ?: 0),
+                            ] : null,
                         ],
-                        'paymentFees' => [
-                            'enabled' => (float) $methodObj->surcharge_fixed_amount_tax_excl > 0 || (float) $methodObj->surcharge_percentage > 0,
-                            'type' => (float) $methodObj->surcharge_percentage > 0 ? 'percentage' : 'fixed',
-                            'taxGroup' => 'b2c', // Default
-                            'maxFee' => $methodObj->surcharge_limit ?? '0.00',
-                            'minAmount' => $methodObj->surcharge_fixed_amount_tax_excl ?? '0.00',
-                            'maxAmount' => $methodObj->surcharge_percentage ?? '0.00',
-                        ],
-                        'orderRestrictions' => [
-                            'minAmount' => $method['minimumAmount'] ? $method['minimumAmount']['value'] : '0.00',
-                            'maxAmount' => $method['maximumAmount'] ? $method['maximumAmount']['value'] : '0.00',
-                        ],
-                        'applePaySettings' => $methodId === 'applepay' ? [
-                            'directProduct' => (bool) $this->configuration->get(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT),
-                            'directCart' => (bool) $this->configuration->get(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_CART),
-                            'buttonStyle' => (int) $this->configuration->get(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
-                        ] : null,
-                    ],
-                ];
+                    ];
+                } catch (Exception $e) {
+                    $this->logger->error('Error formatting payment method: ' . $methodId, [
+                        'exception' => ExceptionUtility::getExceptions($e),
+                        'method_data' => $method,
+                    ]);
+                    // Skip this method and continue with others
+                    continue;
+                }
             }
 
             // Sort by position
@@ -369,6 +460,13 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                     'is_connected' => !empty($formattedMethods),
                 ],
             ];
+
+            // Response structure is always valid when we reach this point
+
+            $this->logger->info('Sending payment methods response', [
+                'methods_count' => isset($responseData['data']['methods']) ? count($responseData['data']['methods']) : 0,
+                'success' => $responseData['success'],
+            ]);
 
             $this->ajaxRender(json_encode($responseData));
         } catch (Exception $e) {
@@ -408,7 +506,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
 
             // Load and update the payment method
             $paymentMethod = new MolPaymentMethod((int) $paymentMethodId);
-            $paymentMethod->enabled = $enabled;
+            $paymentMethod->enabled = $enabled ? 1 : 0;
             $result = $paymentMethod->save();
 
             if (!$result) {
@@ -666,6 +764,37 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
     }
 
     /**
+     * Get payment method title from translations table or fallback to API name
+     */
+    private function getPaymentMethodTitle(string $methodId, string $defaultName): string
+    {
+        try {
+            $langId = (int) $this->context->language->id;
+            $shopId = $this->context->shop->id;
+
+            // Try to get custom title from translations table
+            $translation = $this->paymentMethodLangRepository->findOneBy([
+                'id_method' => $methodId,
+                'id_lang' => $langId,
+                'id_shop' => $shopId,
+            ]);
+
+            // The field is called 'text' not 'name' in MolPaymentMethodTranslations entity
+            if ($translation && isset($translation->text) && !empty($translation->text)) {
+                return $translation->text;
+            }
+        } catch (\Exception $e) {
+            $this->logger->error('Error getting payment method title', [
+                'method_id' => $methodId,
+                'exception' => $e->getMessage(),
+            ]);
+        }
+
+        // Fallback to API method name
+        return $defaultName;
+    }
+
+    /**
      * Save payment method settings (new individual save functionality)
      */
     private function ajaxSavePaymentMethodSettings(): void
@@ -683,43 +812,201 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 throw new MollieException($this->module->l('Invalid settings format', self::FILE_NAME));
             }
 
-            $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
-
-            // Use PaymentMethodService to save the settings (same as form submission)
-            $result = $this->paymentMethodService->savePaymentMethod([
+            // Debug logging
+            $this->logger->info('Saving payment method settings', [
                 'method_id' => $methodId,
+                'title' => $settings['title'] ?? 'NOT SET',
+                'transactionDescription' => $settings['transactionDescription'] ?? 'NOT SET',
+                'full_settings' => $settings,
+            ]);
+
+            $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
+            $shopId = $this->context->shop->id;
+
+            // Get payment method ID from database (or create new if doesn't exist)
+            $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($methodId, $environment, $shopId);
+
+            // Build form data structure that matches old controller format
+            $formData = [
+                'id' => $methodId,
                 'enabled' => $settings['enabled'] ?? false,
-                'title' => $settings['title'] ?? '',
-                'method_description' => $settings['transactionDescription'] ?? '',
-                'use_custom_logo' => false,
+                'method_name' => $settings['title'] ?? '',
+                'description' => $settings['transactionDescription'] ?? '',
+                'method' => $settings['apiSelection'] ?? 'payments',
                 'min_amount' => $settings['orderRestrictions']['minAmount'] ?? '',
                 'max_amount' => $settings['orderRestrictions']['maxAmount'] ?? '',
-                'surcharge_fixed_amount_tax_excl' => $settings['paymentFees']['maxFee'] ?? '',
-                'surcharge_percentage' => '',
-                'surcharge_limit' => '',
-                'countries[]' => [], // TODO: implement country restrictions
-                'customer_groups_excluded[]' => [], // TODO: implement customer group restrictions
-                'payment_api' => $settings['apiSelection'] ?? 'payments',
-                'mollie_components' => $settings['mollieComponents'] ?? false,
-                'single_click_payment' => $settings['oneClickPayments'] ?? false,
-            ], $environment);
+            ];
+
+            // Debug: Log what we're about to save
+            $this->logger->info('Form data prepared', [
+                'method_name' => $formData['method_name'],
+                'description' => $formData['description'],
+            ]);
+
+            // Load existing payment method or create new one
+            $paymentMethod = new \MolPaymentMethod();
+            if ($paymentMethodId) {
+                $paymentMethod = new \MolPaymentMethod((int) $paymentMethodId);
+            }
+
+            // Update basic fields
+            $paymentMethod->id_method = $methodId;
+            $paymentMethod->method_name = $methodId; // Keep API method ID as method_name (not the custom title)
+            $paymentMethod->enabled = $formData['enabled'] ? 1 : 0;
+            $paymentMethod->method = $formData['method'];
+            $paymentMethod->description = $formData['description'];
+            $paymentMethod->min_amount = (float) $formData['min_amount'];
+            $paymentMethod->max_amount = (float) $formData['max_amount'];
+            $paymentMethod->live_environment = $environment ? 1 : 0;
+            $paymentMethod->id_shop = $shopId;
+
+            // Handle payment fees with proper dynamic fee types
+            if (isset($settings['paymentFees'])) {
+                $paymentFees = $settings['paymentFees'];
+
+                // Determine fee type based on type field from frontend
+                $feeType = 0; // Default: No fee
+                if ($paymentFees['enabled'] && isset($paymentFees['type'])) {
+                    switch ($paymentFees['type']) {
+                        case 'fixed':
+                            $feeType = 1;
+                            break;
+                        case 'percentage':
+                            $feeType = 2;
+                            break;
+                        case 'combined':
+                            $feeType = 3;
+                            break;
+                        default:
+                            $feeType = 0;
+                    }
+                }
+
+                // Validate surcharge percentage if set
+                if ($feeType === 2 || $feeType === 3) {
+                    $surchargePercentage = (float) ($paymentFees['percentageFee'] ?? 0);
+                    if ($surchargePercentage <= -100 || $surchargePercentage >= 100) {
+                        throw new MollieException($this->module->l('Surcharge percentage must be between -100% and 100%', self::FILE_NAME));
+                    }
+                }
+
+                $paymentMethod->surcharge = $feeType;
+                // Note: surcharge_fixed_amount_tax_incl is NOT saved to DB (not a DB field)
+                $paymentMethod->surcharge_fixed_amount_tax_excl = (float) ($paymentFees['fixedFeeTaxExcl'] ?? '0.00');
+                $paymentMethod->surcharge_percentage = (float) ($paymentFees['percentageFee'] ?? '0.00');
+                $paymentMethod->surcharge_limit = (float) ($paymentFees['maxFeeCap'] ?? '0.00');
+                $paymentMethod->tax_rules_group_id = (int) ($paymentFees['taxGroup'] ?? '0');
+            }
+
+            // Handle payment restrictions BEFORE first save (update flag on object)
+            if (isset($settings['paymentRestrictions'])) {
+                $restrictions = $settings['paymentRestrictions'];
+                $paymentMethod->is_countries_applicable = (bool) (($restrictions['acceptFrom'] ?? 'all') === 'selected');
+            }
+
+            // Save payment method (this creates the record and populates the ID)
+            if (!$paymentMethod->save()) {
+                throw new MollieException($this->module->l('Failed to save payment method', self::FILE_NAME));
+            }
+
+            // Now handle country/customer group restrictions (requires valid ID from above save)
+            if (isset($settings['paymentRestrictions'])) {
+                $restrictions = $settings['paymentRestrictions'];
+
+                // Prepare country restrictions
+                $selectedCountries = [];
+                $excludedCountries = [];
+
+                if ($restrictions['acceptFrom'] === 'selected' && isset($restrictions['selectedCountries'])) {
+                    $selectedCountries = $restrictions['selectedCountries'];
+                }
+
+                if (isset($restrictions['excludeCountries'])) {
+                    $excludedCountries = $restrictions['excludeCountries'];
+                }
+
+                // Update country restrictions using same repository methods as old controller
+                // Note: Cast to int because repository methods expect int, not string
+                $this->countryRepository->updatePaymentMethodCountries((int) $paymentMethod->id, $selectedCountries);
+                $this->countryRepository->updatePaymentMethodExcludedCountries((int) $paymentMethod->id, $excludedCountries);
+
+                // Handle customer group restrictions
+                if (isset($restrictions['excludeCustomerGroups'])) {
+                    $this->customerRepository->updatePaymentMethodExcludedCustomerGroups((int) $paymentMethod->id, $restrictions['excludeCustomerGroups']);
+                }
+            }
+
+            // Save custom title translation (same logic as old PaymentMethodService)
+            if (isset($settings['title']) && !empty($settings['title'])) {
+                // Get all languages
+                $languages = \Language::getLanguages(false, $shopId);
+                foreach ($languages as $language) {
+                    $this->paymentMethodLangRepository->savePaymentTitleTranslation(
+                        $methodId,
+                        (int) $language['id_lang'],
+                        $settings['title'],
+                        $shopId
+                    );
+                }
+            }
+
+            // Save Card-specific settings (Mollie Components and One-Click Payments)
+            if ($methodId === 'creditcard') {
+                $currentEnv = $environment ? 'production' : 'sandbox';
+
+                // Mollie Components (iframe) setting
+                if (isset($settings['mollieComponents'])) {
+                    $configKey = \Mollie\Config\Config::MOLLIE_IFRAME[$currentEnv];
+                    $value = $settings['mollieComponents'] ? 1 : 0;
+                    $this->configuration->updateValue($configKey, $value);
+
+                    // Verify it was saved
+                    $savedValue = $this->configuration->get($configKey);
+                    $this->logger->info('SAVE mollieComponents', [
+                        'environment' => $currentEnv,
+                        'config_key' => $configKey,
+                        'input' => $settings['mollieComponents'],
+                        'saved_value' => $value,
+                        'read_back' => $savedValue,
+                    ]);
+                }
+
+                // One-Click Payments setting
+                if (isset($settings['oneClickPayments'])) {
+                    $configKey = \Mollie\Config\Config::MOLLIE_SINGLE_CLICK_PAYMENT[$currentEnv];
+                    $value = $settings['oneClickPayments'] ? 1 : 0;
+                    $this->configuration->updateValue($configKey, $value);
+
+                    // Verify it was saved
+                    $savedValue = $this->configuration->get($configKey);
+                    $this->logger->info('SAVE oneClickPayments', [
+                        'environment' => $currentEnv,
+                        'config_key' => $configKey,
+                        'input' => $settings['oneClickPayments'],
+                        'saved_value' => $value,
+                        'read_back' => $savedValue,
+                    ]);
+                }
+
+                // Custom Logo setting
+                if (isset($settings['useCustomLogo'])) {
+                    $this->configuration->updateValue(\Mollie\Config\Config::MOLLIE_SHOW_CUSTOM_LOGO, $settings['useCustomLogo'] ? 1 : 0);
+                }
+                // Note: customLogoUrl is handled by the upload endpoint, not saved to config
+            }
 
             // Save Apple Pay specific settings
             if ($methodId === 'applepay' && isset($settings['applePaySettings'])) {
                 $applePaySettings = $settings['applePaySettings'];
-                $this->configurationAdapter->updateValue(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT, $applePaySettings['directProduct'] ? 1 : 0);
-                $this->configurationAdapter->updateValue(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_CART, $applePaySettings['directCart'] ? 1 : 0);
-                $this->configurationAdapter->updateValue(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_STYLE, $applePaySettings['buttonStyle']);
+                $this->configuration->updateValue(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT, $applePaySettings['directProduct'] ? 1 : 0);
+                $this->configuration->updateValue(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_CART, $applePaySettings['directCart'] ? 1 : 0);
+                $this->configuration->updateValue(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_STYLE, $applePaySettings['buttonStyle']);
             }
 
-            if ($result) {
-                $this->ajaxRender(json_encode([
-                    'success' => true,
-                    'message' => $this->module->l('Payment method settings saved successfully', self::FILE_NAME),
-                ]));
-            } else {
-                throw new MollieException($this->module->l('Failed to save payment method settings', self::FILE_NAME));
-            }
+            $this->ajaxRender(json_encode([
+                'success' => true,
+                'message' => $this->module->l('Payment method settings saved successfully', self::FILE_NAME),
+            ]));
         } catch (MollieException $e) {
             $this->ajaxRender(json_encode([
                 'success' => false,
@@ -745,14 +1032,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         $taxRulesGroups = [];
 
         try {
-            // Use the TaxRulesGroupRepositoryInterface if available
-            if (method_exists($this, 'taxRulesGroupRepository')) {
-                $groups = $this->taxRulesGroupRepository->getTaxRulesGroups($this->context->shop->id);
-            } else {
-                // Fallback to direct database query
-                $sql = 'SELECT id_tax_rules_group, name FROM ' . _DB_PREFIX_ . 'tax_rules_group WHERE active = 1 AND deleted = 0';
-                $groups = Db::getInstance()->executeS($sql) ?: [];
-            }
+            // Fallback to direct database query since we don't have taxRulesGroupRepository injected
+            $sql = 'SELECT id_tax_rules_group, name FROM ' . _DB_PREFIX_ . 'tax_rules_group WHERE active = 1 AND deleted = 0';
+            $groups = Db::getInstance()->executeS($sql) ?: [];
 
             foreach ($groups as $group) {
                 $taxRulesGroups[] = [
@@ -792,6 +1074,25 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
 
         return $customerGroups;
+    }
+
+    /**
+     * Get payment fee type based on surcharge configuration
+     */
+    private function getPaymentFeeType($methodObj): string
+    {
+        $surcharge = isset($methodObj->surcharge) ? (int) $methodObj->surcharge : 0;
+
+        switch ($surcharge) {
+            case 1:
+                return 'fixed';
+            case 2:
+                return 'percentage';
+            case 3:
+                return 'combined';
+            default:
+                return 'none';
+        }
     }
 
     /**
@@ -859,6 +1160,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 }
             }
 
+            $logoUrl = null;
             if ($isUploaded === 1) {
                 // Create directory if it doesn't exist
                 $targetDir = dirname($targetFile);
@@ -879,7 +1181,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             $this->ajaxRender(json_encode([
                 'success' => $isUploaded === 1,
                 'message' => $returnText,
-                'logoUrl' => $isUploaded === 1 ? $logoUrl : null,
+                'logoUrl' => $logoUrl,
             ]));
         } catch (Exception $e) {
             $this->logger->error('Failed to upload custom logo', [
@@ -891,5 +1193,84 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'message' => $this->module->l('Failed to upload custom logo', self::FILE_NAME),
             ]));
         }
+    }
+
+    /**
+     * Calculate fixed fee tax incl from tax excl + tax rules group
+     * This field is not stored in DB, must be calculated on load
+     */
+    private function calculateFixedFeeTaxIncl($methodObj): string
+    {
+        if (!isset($methodObj->surcharge_fixed_amount_tax_excl) || $methodObj->surcharge_fixed_amount_tax_excl <= 0) {
+            return '0.00';
+        }
+
+        $taxExcl = (float) $methodObj->surcharge_fixed_amount_tax_excl;
+        $taxRulesGroupId = isset($methodObj->tax_rules_group_id) ? (int) $methodObj->tax_rules_group_id : 0;
+
+        // If no tax rules, tax incl = tax excl
+        if (!$taxRulesGroupId) {
+            return number_format($taxExcl, 2, '.', '');
+        }
+
+        try {
+            // Use PrestaShop's tax manager
+            $address = new Address();
+            if (isset($this->context->cart->id_address_delivery)) {
+                $address = new Address((int) $this->context->cart->id_address_delivery);
+            }
+
+            $taxManager = TaxManagerFactory::getManager($address, $taxRulesGroupId);
+            $taxCalculator = $taxManager->getTaxCalculator();
+
+            if ($taxCalculator) {
+                $taxIncl = $taxCalculator->addTaxes($taxExcl);
+
+                return number_format($taxIncl, 2, '.', '');
+            }
+        } catch (Exception $e) {
+            $this->logger->error('Failed to calculate fixed fee tax incl', [
+                'exception' => ExceptionUtility::getExceptions($e),
+                'tax_excl' => $taxExcl,
+                'tax_rules_group_id' => $taxRulesGroupId,
+            ]);
+        }
+
+        // Fallback: return tax excl if calculation fails
+        return number_format($taxExcl, 2, '.', '');
+    }
+
+    /**
+     * Get credit card Mollie Components setting based on environment
+     *
+     * @param MolPaymentMethod $methodObj Payment method object
+     *
+     * @return bool Mollie Components enabled
+     */
+    private function getCreditCardMollieComponentsSetting($methodObj): bool
+    {
+        $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
+        $currentEnv = $environment ? 'production' : 'sandbox';
+        $configKey = Config::MOLLIE_IFRAME[$currentEnv];
+        $value = (bool) ($this->configuration->get($configKey) ?: 0);
+
+        return $value;
+    }
+
+    /**
+     * Get credit card one-click payment setting based on environment
+     *
+     * @param MolPaymentMethod $methodObj Payment method object
+     *
+     * @return bool One-click payments enabled
+     */
+    private function getCreditCardOneClickSetting($methodObj): bool
+    {
+        $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
+        $currentEnv = $environment ? 'production' : 'sandbox';
+        $configKey = Config::MOLLIE_SINGLE_CLICK_PAYMENT[$currentEnv];
+        $value = (bool) ($this->configuration->get($configKey) ?: 0);
+
+        return $value;
     }
 }

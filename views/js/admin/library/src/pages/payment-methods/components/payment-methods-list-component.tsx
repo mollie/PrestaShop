@@ -15,6 +15,7 @@ interface PaymentMethodsListProps {
   onSaveSettings: (id: string) => void
   onReorder: (methods: PaymentMethod[]) => void
   savingMethodId?: string
+  isDragEnabled?: boolean
 }
 
 export function PaymentMethodsList({
@@ -26,12 +27,20 @@ export function PaymentMethodsList({
   onSaveSettings,
   onReorder,
   savingMethodId,
+  isDragEnabled = true,
 }: PaymentMethodsListProps) {
   const [draggedItem, setDraggedItem] = useState<string | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   const [isReordering, setIsReordering] = useState(false)
 
   const handleDragStart = (e: React.DragEvent, methodId: string) => {
+    const method = methods.find(m => m.id === methodId)
+
+    // Prevent drag if disabled or if the method is expanded
+    if (!isDragEnabled || method?.isExpanded) {
+      e.preventDefault()
+      return
+    }
     setDraggedItem(methodId)
     e.dataTransfer.effectAllowed = "move"
     e.dataTransfer.setData("text/html", methodId)
@@ -105,6 +114,7 @@ export function PaymentMethodsList({
             onDrop={(e) => handleDrop(e, index)}
             onDragEnd={handleDragEnd}
             isDragging={draggedItem === method.id}
+            isDragEnabled={isDragEnabled}
             isDragOver={dragOverIndex === index}
             isSaving={savingMethodId === method.id}
           />

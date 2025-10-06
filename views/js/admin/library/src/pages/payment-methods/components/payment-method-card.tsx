@@ -26,6 +26,7 @@ interface PaymentMethodCardProps {
   isDragging: boolean
   isDragOver: boolean
   isSaving?: boolean
+  isDragEnabled?: boolean
 }
 
 export function PaymentMethodCard({
@@ -44,6 +45,7 @@ export function PaymentMethodCard({
   isDragging,
   isDragOver,
   isSaving = false,
+  isDragEnabled = true,
 }: PaymentMethodCardProps) {
   const { t } = usePaymentMethodsTranslations()
   return (
@@ -54,8 +56,9 @@ export function PaymentMethodCard({
         isDragging && "opacity-60 scale-105 shadow-2xl rotate-1 z-50",
         isDragOver && "border-blue-400 bg-blue-50 scale-102 shadow-lg",
         !isDragging && !isDragOver && "hover:border-gray-300",
+        !isDragEnabled && "cursor-default",
       )}
-      draggable
+      draggable={isDragEnabled && !method.isExpanded}
       onDragStart={onDragStart}
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
@@ -135,14 +138,16 @@ export function PaymentMethodCard({
                 </>
               )}
             </button>
-            <GripVertical
-              className={cn(
-                "h-5 w-5 cursor-move transition-all duration-200",
-                isDragging
-                  ? "text-blue-600 animate-pulse scale-110"
-                  : "text-gray-400 hover:text-gray-600 hover:scale-110",
-              )}
-            />
+            {isDragEnabled && !method.isExpanded && (
+              <GripVertical
+                className={cn(
+                  "h-5 w-5 cursor-move transition-all duration-200",
+                  isDragging
+                    ? "text-blue-600 animate-pulse scale-110"
+                    : "text-gray-400 hover:text-gray-600 hover:scale-110",
+                )}
+              />
+            )}
           </div>
         </div>
 

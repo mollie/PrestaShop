@@ -39,11 +39,13 @@ export function PaymentMethodTabs({ activeTab, onTabChange }: PaymentMethodTabsP
         </button>
       </div>
 
-      <div className="flex items-center gap-2 text-sm text-blue-600">
-        <GripVertical className="h-4 w-4" />
-        <span>{t('dragPaymentOptionsToReorder')}</span>
-        <Info className="h-4 w-4 cursor-pointer hover:text-blue-700" />
-      </div>
+      {activeTab === "enabled" && (
+        <div className="flex items-center gap-2 text-sm text-blue-600">
+          <GripVertical className="h-4 w-4" />
+          <span>{t('dragPaymentOptionsToReorder')}</span>
+          <Info className="h-4 w-4 cursor-pointer hover:text-blue-700" />
+        </div>
+      )}
     </div>
   )
 }

@@ -99,16 +99,35 @@ export interface MolliePaymentMethodsTranslations {
   paymentRestrictions: string;
   acceptPaymentsFrom: string;
   allCountries: string;
+  selectedCountries: string;
   specificCountries: string;
+  acceptPaymentsFromSpecificCountries: string;
+  selectCountriesAccept: string;
   excludePaymentsFromCountries: string;
   selectCountriesToExclude: string;
   excludeCustomerGroups: string;
   selectCustomerGroups: string;
+  customerGroupsHelp: string;
   guest: string;
   customerGroup: string;
   
   // Payment Fees
   paymentFees: string;
+  enablePaymentFee: string;
+  paymentFeeType: string;
+  fixedFee: string;
+  fixedFeeTaxIncl: string;
+  fixedFeeTaxExcl: string;
+  percentageFee: string;
+  percentageFeeLabel: string;
+  combinedFee: string;
+  noFee: string;
+  paymentFeeTaxGroup: string;
+  taxRulesGroupForFixedFee: string;
+  maximumFee: string;
+  minimumAmount: string;
+  maximumAmount: string;
+  paymentFeeEmailHelp: string;
   
   // Order Restrictions
   orderRestrictions: string;
@@ -118,8 +137,44 @@ export interface MolliePaymentMethodsTranslations {
   saving: string;
   loadingMethods: string;
   loadingError: string;
-  
-  
+  saveSettings: string;
+
+  // Transaction Description Help
+  transactionDescriptionHelp: string;
+  transactionDescriptionVariables: string;
+
+  // Messages
+  paymentMethodNotFound: string;
+  settingsSavedSuccessfully: string;
+  failedToSaveSettings: string;
+  paymentMethodsOrderUpdated: string;
+  failedToUpdateOrder: string;
+  savingNewOrder: string;
+  noPaymentMethods: string;
+  paymentMethodsWillAppear: string;
+
+  // Custom Logo Upload
+  pleaseUploadJpgOrPng: string;
+  fileSizeTooLarge: string;
+  imageDimensionsTooLarge: string;
+  failedToUploadLogo: string;
+  invalidImageFile: string;
+  uploading: string;
+  customLogoPreview: string;
+  logoUploadedSuccessfully: string;
+  customLogo: string;
+  remove: string;
+
+  // Apple Pay Button Descriptions
+  applePayButtonBlackDesc: string;
+  applePayButtonOutlineDesc: string;
+  applePayButtonWhiteDesc: string;
+
+  // Select Placeholders
+  selectOption: string;
+  selectOptions: string;
+  itemsSelected: string;
+
   // Drag and drop
   dragPaymentOptionsToReorder: string;
 }

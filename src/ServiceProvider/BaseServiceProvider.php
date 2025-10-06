@@ -35,6 +35,8 @@ use Mollie\Handler\RetryHandler;
 use Mollie\Handler\RetryHandlerInterface;
 use Mollie\Handler\Settings\CustomerGroupRestrictionHandler;
 use Mollie\Handler\Settings\CustomerGroupRestrictionHandlerInterface;
+use Mollie\Handler\PaymentMethod\PaymentMethodLogoHandler;
+use Mollie\Handler\PaymentMethod\PaymentMethodSettingsHandler;
 use Mollie\Handler\Settings\PaymentMethodPositionHandler;
 use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Handler\Shipment\ShipmentSenderHandler;
@@ -53,6 +55,7 @@ use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\CustomLogoProviderInterface;
 use Mollie\Provider\EnvironmentVersionProvider;
 use Mollie\Provider\EnvironmentVersionProviderInterface;
+use Mollie\Provider\PaymentMethod\PaymentMethodConfigProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProvider;
 use Mollie\Provider\OrderTotal\OrderTotalProviderInterface;
 use Mollie\Provider\PaymentFeeProvider;
@@ -124,6 +127,7 @@ use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\CustomerGrou
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\EnvironmentVersionSpecificPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
+use Mollie\Service\PaymentMethod\PaymentMethodFormatterService;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProvider;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\Service\Shipment\ShipmentInformationSender;
@@ -272,6 +276,33 @@ final class BaseServiceProvider
 
         $service = $this->addService($container, PaymentMethodPositionHandlerInterface::class, PaymentMethodPositionHandler::class);
         $this->addServiceArgument($service, PaymentMethodRepositoryInterface::class);
+
+        // Payment Method Services
+        $service = $this->addService($container, PaymentMethodConfigProvider::class, PaymentMethodConfigProvider::class);
+        $this->addServiceArgument($service, CountryService::class);
+        $this->addServiceArgument($service, CreditCardLogoProvider::class);
+        $this->addServiceArgument($service, LoggerInterface::class);
+        $this->addServiceArgument($service, \Context::class);
+
+        $service = $this->addService($container, PaymentMethodFormatterService::class, PaymentMethodFormatterService::class);
+        $this->addServiceArgument($service, PaymentMethodLangRepositoryInterface::class);
+        $this->addServiceArgument($service, CountryService::class);
+        $this->addServiceArgument($service, PaymentMethodConfigProvider::class);
+        $this->addServiceArgument($service, ConfigurationAdapter::class);
+        $this->addServiceArgument($service, LoggerInterface::class);
+        $this->addServiceArgument($service, \Context::class);
+
+        $service = $this->addService($container, PaymentMethodSettingsHandler::class, PaymentMethodSettingsHandler::class);
+        $this->addServiceArgument($service, PaymentMethodRepositoryInterface::class);
+        $this->addServiceArgument($service, PaymentMethodLangRepositoryInterface::class);
+        $this->addServiceArgument($service, CountryRepository::class);
+        $this->addServiceArgument($service, CustomerRepository::class);
+        $this->addServiceArgument($service, ConfigurationAdapter::class);
+        $this->addServiceArgument($service, LoggerInterface::class);
+
+        $service = $this->addService($container, PaymentMethodLogoHandler::class, PaymentMethodLogoHandler::class);
+        $this->addServiceArgument($service, CreditCardLogoProvider::class);
+        $this->addServiceArgument($service, LoggerInterface::class);
 
         $service = $this->addService($container, CertificateHandlerInterface::class, ApplePayDirectCertificateHandler::class);
         $this->addServiceArgument($service, Mollie::class);
