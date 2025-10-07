@@ -352,9 +352,9 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_9e984321e77b6a
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_87ab78d85f4f0f5143ed2e549719bc45'] = 'Aucun frais';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_ebdac9ad42b304036f63b5ce9009a883'] = 'Payment fee tax group';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_74dfbb3dcf80ca484183092d1ec4c6fc'] = 'Groupe de règles fiscales pour les frais fixes';
-$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a1eeaac9cc0281aa432a7503fd79c340'] = 'Maximum fee';
-$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_9f6e99bdd4184b83dc478d0ab1b4cbf7'] = 'Minimum amount';
-$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_dcd700acd4c6727dca97f5b414cfb384'] = 'Maximum amount';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a1eeaac9cc0281aa432a7503fd79c340'] = 'Frais maximum';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_9f6e99bdd4184b83dc478d0ab1b4cbf7'] = 'Montant minimum';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_dcd700acd4c6727dca97f5b414cfb384'] = 'Montant maximum';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a11219319fe9b07e73866d600ad2e3ce'] = 'Ajoutez \"(payment_fee)\" dans les traductions d\'e-mail pour l\'afficher dans votre modèle d\'e-mail.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a64602905a89a4a1621e416286a8b3e8'] = 'Restrictions de commande';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_c9cc8cce247e49bae79f15173ce97354'] = 'Enregistrer';

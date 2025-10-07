@@ -349,10 +349,10 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_3e2843c31ec8d6
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_37be07209f53a5d636d5c904ca9ae64c'] = 'Procent';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_e457ab8b899c330b05e1bbe6539a50df'] = 'Procentuell avgift';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_9e984321e77b6a6ce8ef2844df646085'] = 'Kombinerad betalningsavgiftsgräns';
-$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_87ab78d85f4f0f5143ed2e549719bc45'] = 'No fee';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_87ab78d85f4f0f5143ed2e549719bc45'] = 'Ingen avgift';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_ebdac9ad42b304036f63b5ce9009a883'] = 'Skattegrupp för betalningsavgift';
-$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_74dfbb3dcf80ca484183092d1ec4c6fc'] = 'Tax rules group for fixed fee';
-$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a1eeaac9cc0281aa432a7503fd79c340'] = 'Maximum fee';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_74dfbb3dcf80ca484183092d1ec4c6fc'] = 'Skatteregelgrupp för fast avgift';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a1eeaac9cc0281aa432a7503fd79c340'] = 'Maximal avgift';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_9f6e99bdd4184b83dc478d0ab1b4cbf7'] = 'Minimibelopp';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_dcd700acd4c6727dca97f5b414cfb384'] = 'Maximibelopp';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a11219319fe9b07e73866d600ad2e3ce'] = 'Lägg till \"(payment_fee)\" i e-postöversättningar för att visa det i din e-postmall.';
