@@ -89,7 +89,7 @@ $_MODULE['<{mollie}prestashop>settingssaveservice_d0fb18e6788aea02c962decbe15918
 $_MODULE['<{mollie}prestashop>settingssaveservice_1437630a92a84bc747757e3f1022ee04'] = 'Dodelite dovoljenja za mapo ali obiščite [1]ApplePay[/1], da vidite, kako jo lahko dodate ročno';
 $_MODULE['<{mollie}prestashop>settingssaveservice_342886361b594a2909b0e3b6bf9a5408'] = 'Obstajajo težave z vašimi avtoriziranimi statusi plačil, poskusite ponastaviti modul Mollie.';
 $_MODULE['<{mollie}prestashop>settingssaveservice_6ab1adfed768d989b47c908755fe677f'] = 'Konfiguracija je bila shranjena!';
-$_MODULE['<{mollie}prestashop>paymentfeeprovider_a1fa8d7a9942f24895492dcaf7f3e16d'] = 'Discount: %1s';
+$_MODULE['<{mollie}prestashop>paymentfeeprovider_a1fa8d7a9942f24895492dcaf7f3e16d'] = 'Popust: %1s';
 $_MODULE['<{mollie}prestashop>paymentfeeprovider_0b135af05e690cf2fca288a143759716'] = 'Strošek plačila: %1s';
 $_MODULE['<{mollie}prestashop>updatemessageprovider_048ef1905ff33382d7660a68a6199305'] = 'Opozorilo: Ni bilo mogoče pridobiti posodobljene xml datoteke iz githuba.';
 $_MODULE['<{mollie}prestashop>updatemessageprovider_711d42f319398490b32cd0e2f0b8ccb8'] = 'Opozorilo: Datoteka xml posodobitve iz githuba sledi nepričakovanemu formatu.';
@@ -260,7 +260,7 @@ $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_72839c749f786e
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b92bcb00d06a8c048cfc5f27559244cb'] = 'Povezava neuspešna. Prosimo, preverite svoj API ključ.';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_da5e43879a683f59c4710312e4ff89a3'] = 'Nalaganje trenutnih nastavitev ni uspelo';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_33fd87595ba3f31c8e57863b0a1f3951'] = 'Preklapljanje okolja ni uspelo';
-$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_e38bacaba20440245e0aae88f984f78d'] = 'Missing required parameters';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_e38bacaba20440245e0aae88f984f78d'] = 'Manjkajo zahtevani parametri';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b72cdbd76577277b160796264e922ceb'] = 'Shranjevanje API ključa ni uspelo';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b69a3944e63d1f7e85f1a6279b003e7e'] = 'Invalid environment parameter. Must be \"test\" or \"live\"';
 $_MODULE['<{mollie}prestashop>adminmollieajaxcontroller_0753ca16446b5bbb04afc9e00a079415'] = 'Naložite datoteko .jpg ali .png.';

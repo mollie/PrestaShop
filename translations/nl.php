@@ -394,7 +394,7 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_d97c829031cb1c
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_9da7745c0dcaa5fc58259eb76f846435'] = 'Opslaan van betaalmethode mislukt';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_0bed45effd09adcabe87c3f8ed87e56b'] = 'Betaalmethode succesvol bijgewerkt';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a5b04b09cee41cd147d5f1a165dee4eb'] = 'Bijwerken van betaalmethode mislukt';
-$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_e38bacaba20440245e0aae88f984f78d'] = 'Missing required parameters';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_e38bacaba20440245e0aae88f984f78d'] = 'Vereiste parameters ontbreken';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_65807898012041310ed805a64b489536'] = 'Opslaan van betaalmethodeconfiguratie mislukt';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_111b1d588dc453281a682ebda1830aca'] = 'Betaalmethodeconfiguratie succesvol opgeslagen';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_b92bdab71e065a19df2022e2f6d9e3ae'] = 'Opslaan van configuratie mislukt';

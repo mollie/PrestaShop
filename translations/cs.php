@@ -131,7 +131,7 @@ $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_e38bacaba20440
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b72cdbd76577277b160796264e922ceb'] = 'Nepodařilo se uložit API klíč';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b69a3944e63d1f7e85f1a6279b003e7e'] = 'Neplatný parametr prostředí. Musí být "test" nebo "live"';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_af01f8c298aa063d9c7490f00eddd2df'] = 'Platební metody';
-$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_85ea9215bf4fdbc002bb2e4aa0fc9759'] = 'Konfigurovat platební metody';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_85ea9215bf4fdbc002bb2e4aa0fc9759'] = 'Konfigurace platebních metod';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_00d23a76e43b46dae9ec7aa9dcbebb32'] = 'Povoleno';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_b9f5c797ebbf55adccdd8539a65a0241'] = 'Zakázáno';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_5b640a119f4a8811e835e207d07beae3'] = 'Povolené platební metody';
