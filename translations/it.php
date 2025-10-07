@@ -265,11 +265,11 @@ $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_ce1bb9a3bcf21a
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_6879d9cee4ba90f94f8bac2543992979'] = 'Configurazione API';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_72839c749f786e5e5fcf97a77bc0ab2c'] = 'Seleziona la tua modalità operativa e inserisci le chiavi API qui sotto.';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b92bcb00d06a8c048cfc5f27559244cb'] = 'Connessione fallita. Controlla la tua chiave API.';
-$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_da5e43879a683f59c4710312e4ff89a3'] = 'Failed to load current settings';
-$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_33fd87595ba3f31c8e57863b0a1f3951'] = 'Failed to switch environment';
-$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_e38bacaba20440245e0aae88f984f78d'] = 'Missing required parameters';
-$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b72cdbd76577277b160796264e922ceb'] = 'Failed to save API key';
-$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b69a3944e63d1f7e85f1a6279b003e7e'] = 'Invalid environment parameter. Must be \"test\" or \"live\"';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_da5e43879a683f59c4710312e4ff89a3'] = 'Impossibile caricare le impostazioni correnti';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_33fd87595ba3f31c8e57863b0a1f3951'] = 'Impossibile cambiare ambiente';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_e38bacaba20440245e0aae88f984f78d'] = 'Parametri richiesti mancanti';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b72cdbd76577277b160796264e922ceb'] = 'Impossibile salvare la chiave API';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b69a3944e63d1f7e85f1a6279b003e7e'] = 'Parametro ambiente non valido. Deve essere \"test\" o \"live\"';
 $_MODULE['<{mollie}prestashop>adminmollieajaxcontroller_0753ca16446b5bbb04afc9e00a079415'] = 'Carica un file .jpg o .png.';
 $_MODULE['<{mollie}prestashop>adminmollieajaxcontroller_bfe103d948d5f7e7126aa1a13220d79e'] = 'Si è verificato un errore durante il caricamento del tuo logo.';
 $_MODULE['<{mollie}prestashop>adminmollieajaxcontroller_2969822535b8feef4920d105ae37ec6a'] = 'ID gruppo regole fiscali mancante';

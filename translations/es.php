@@ -358,11 +358,11 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_dcd700acd4c672
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a11219319fe9b07e73866d600ad2e3ce'] = 'Añade \"(payment_fee)\" en las traducciones de email para mostrarlo en tu plantilla de correo.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a64602905a89a4a1621e416286a8b3e8'] = 'Restricciones de pedido';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_c9cc8cce247e49bae79f15173ce97354'] = 'Guardar';
-$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_575f5f86d2c7ea113c6710c1037c4465'] = 'Saving...';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_575f5f86d2c7ea113c6710c1037c4465'] = 'Guardando...';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a6f21e1a3fe54c9c2f733a952de0c69d'] = 'Cargando métodos de pago...';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_b4e44531a24fea093a3d1576c4d8d638'] = 'Error al cargar métodos de pago';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_9daf1fb753b42c3cdc8f1d01669cd6d8'] = 'Guardar Configuración';
-$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_049068ab66bb1411469a8399aa624a29'] = 'Use any of the following variables to create a transaction description for payments that use this method:';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_049068ab66bb1411469a8399aa624a29'] = 'Usa cualquiera de las siguientes variables para crear una descripción de transacción para pagos que usen este método:';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_01f3f8c1f1cb174cc53e021b20d8bbc8'] = '{orderNumber}, {storeName}, {countryCode}, {cart.id}, {order.reference}, {customer.firstname}, {customer.lastname}, {customer.company}';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_4f93226452351df805c0a229d96e678e'] = 'Método de pago no encontrado';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_fc724a540ce30b0b634163c922d60bed'] = '¡Configuración guardada exitosamente!';
