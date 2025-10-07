@@ -110,8 +110,7 @@ $_MODULE['<{mollie}prestashop>order_info_51360304ea03557e79bdf5ff9cd2e234'] = 'U
 $_MODULE['<{mollie}prestashop>order_info_4e274e8865560b88192b72e486210cc6'] = 'Denne bestillingen ble (delvis) betalt med en kupong. Du kan maksimalt refundere %1s.';
 $_MODULE['<{mollie}prestashop>qr_done_92816c7248d010591f699db3aaf6287b'] = 'Mollie iDEAL QR';
 $_MODULE['<{mollie}prestashop>qr_done_ebdf0f490b617d7efa3025d3625cec85'] = 'Velkommen tilbake';
-$_MODULE['<{mollie}prestashop>qr_done_c3171108158ad72d80e4f5068d312572'] = 'Betalingen er
-kansellert';
+$_MODULE['<{mollie}prestashop>qr_done_c3171108158ad72d80e4f5068d312572'] = 'Betalingen er kansellert';
 $_MODULE['<{mollie}prestashop>qr_done_47db50323146abe9d975fb6616cefa3b'] = 'Betalingen er fullført. Takk for bestillingen!';
 $_MODULE['<{mollie}prestashop>error_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Betaling';
 $_MODULE['<{mollie}prestashop>error_1e97d97a923eaddd810e056c828e99ea'] = 'Betalingsfeil';
@@ -416,7 +415,6 @@ $_MODULE['<{mollie}prestashop>molliepaymentmailservice_7d4e9f222469e74d17fde11ca
 $_MODULE['<{mollie}prestashop>mailservice_ed13b3693357ebed3751cb71cb639e65'] = 'Ingen leverandør';
 $_MODULE['<{mollie}prestashop>mailservice_fca7e8d1c86db11246e429e40aa10c81'] = 'Ny kupong for bestillingen din %s';
 $_MODULE['<{mollie}prestashop>orderlistactionbuilder_5678cf484b844064515349752b1ccb18'] = 'Du vil sende e-post med betalingslinken på nytt til kunden';
-
 $_MODULE['<{mollie}prestashop>mollie_b2d37ae1cedf42ff874289b721860af2'] = 'Logs';
 $_MODULE['<{mollie}prestashop>subscriptionoptionstype_d27f3c2977da307854a974ade1316962'] = 'Velg din leverandør';
 $_MODULE['<{mollie}prestashop>subscriptioncontroller_4a0df35e9183f634bdfda31938430cf4'] = 'Velg butikken du vil konfigurere';

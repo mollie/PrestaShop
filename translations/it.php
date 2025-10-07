@@ -1,4 +1,14 @@
 <?php
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
 
 global $_MODULE;
 $_MODULE['<{mollie}prestashop>mollie_f9c43173e5db74a01dd11ce73fbbb237'] = 'Link di pagamento';
