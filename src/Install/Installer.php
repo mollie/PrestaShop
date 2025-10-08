@@ -157,6 +157,15 @@ class Installer implements InstallerInterface
             ['AdminMollieAuthentication', 'AdminMollieModule', 'API Configuration', true, ''],
             ['AdminMolliePaymentMethods', 'AdminMollieModule', 'Payment Methods', true, ''],
             ['AdminMollieAdvancedSettings', 'AdminMollieModule', 'Advanced Settings', true, ''],
+            // Subscription management
+            ['AdminMollieSubscriptionOrdersParent', 'AdminMollieModule', 'Subscriptions', true, 'autorenew'],
+            ['AdminMollieSubscriptionOrders', 'AdminMollieSubscriptionOrdersParent', 'Subscription Orders', true, ''],
+            // Subscription FAQ
+            ['AdminMollieSubscriptionFAQParent', 'AdminMollieModule', 'Subscription FAQ', true, 'help'],
+            ['AdminMollieSubscriptionFAQ', 'AdminMollieSubscriptionFAQParent', 'FAQ', true, ''],
+            // Logs
+            ['AdminMollieLogsParent', 'AdminMollieModule', 'Logs', true, 'description'],
+            ['AdminMollieLogs', 'AdminMollieLogsParent', 'View Logs', true, ''],
         ];
 
         foreach ($tabs as $tab) {

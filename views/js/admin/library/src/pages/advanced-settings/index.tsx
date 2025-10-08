@@ -274,6 +274,12 @@ const AdvancedSettings: React.FC = () => {
       setLoading(true)
       const response = await advancedSettingsApiService.getSettings()
 
+      if (!response.success && response.not_configured) {
+        setNotification({ message: response.message || 'API not configured', type: 'error' })
+        setLoading(false)
+        return
+      }
+
       if (response.success && response.data) {
         const data = response.data
         const invoiceOpts = data.options?.invoiceOptions || []

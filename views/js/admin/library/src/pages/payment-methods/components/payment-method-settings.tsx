@@ -214,6 +214,10 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
   const [showApplePay, setShowApplePay] = useState(false)
   const [isCalculatingTax, setIsCalculatingTax] = useState(false)
 
+  // Track last user-edited field to prevent circular updates
+  const lastUserEditedFieldRef = useRef<'incl' | 'excl' | null>(null);
+  const taxCalcTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   // Tax calculation function - mirrors legacy validation.js:109-142
   const calculateTax = async (changedField: 'incl' | 'excl' | 'taxGroup') => {
     const { fixedFeeTaxIncl, fixedFeeTaxExcl, taxGroup } = method.settings.paymentFees;
@@ -225,9 +229,26 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
     setIsCalculatingTax(true);
 
     try {
+      // When tax group changes, use whichever field has a value
+      let taxInclToSend = '0';
+      let taxExclToSend = '0';
+
+      if (changedField === 'taxGroup') {
+        // Use tax excl if it has value, otherwise use tax incl
+        if (fixedFeeTaxExcl && fixedFeeTaxExcl !== '0') {
+          taxExclToSend = fixedFeeTaxExcl;
+        } else if (fixedFeeTaxIncl && fixedFeeTaxIncl !== '0') {
+          taxInclToSend = fixedFeeTaxIncl;
+        }
+      } else {
+        // User edited a specific field
+        taxInclToSend = changedField === 'incl' ? fixedFeeTaxIncl : '0';
+        taxExclToSend = changedField === 'excl' ? fixedFeeTaxExcl : '0';
+      }
+
       const response = await paymentMethodsApiService.calculatePaymentFeeTax(
-        changedField === 'incl' ? fixedFeeTaxIncl : '0',
-        changedField === 'excl' ? fixedFeeTaxExcl : '0',
+        taxInclToSend,
+        taxExclToSend,
         taxGroup
       );
 
@@ -246,6 +267,88 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
       setIsCalculatingTax(false);
     }
   }
+
+  // Auto-select first tax rule group when payment fee type changes from 'none' to a fee type
+  const previousTypeRef = useRef<string | null>(null);
+  const hasInitializedRef = useRef(false);
+
+  useEffect(() => {
+    const { type, taxGroup } = method.settings.paymentFees;
+    const taxRulesGroups = window.molliePaymentMethodsConfig?.taxRulesGroups || [];
+
+    // Skip on initial mount
+    if (!hasInitializedRef.current) {
+      hasInitializedRef.current = true;
+      previousTypeRef.current = type;
+      return;
+    }
+
+    // Only auto-select when transitioning FROM 'none' TO a fee type, and no tax group is set
+    if (previousTypeRef.current === 'none' && type !== 'none' && (!taxGroup || taxGroup === '0') && taxRulesGroups.length > 0) {
+      const firstTaxGroup = taxRulesGroups[0].value;
+      onUpdateSettings({
+        paymentFees: { ...method.settings.paymentFees, taxGroup: firstTaxGroup },
+      });
+    }
+
+    previousTypeRef.current = type;
+  }, [method.settings.paymentFees.type]);
+
+  // Automatic tax calculation when fixedFeeTaxIncl changes
+  useEffect(() => {
+    // Only auto-calculate if this was the last user-edited field
+    if (lastUserEditedFieldRef.current !== 'incl') return;
+
+    const { fixedFeeTaxIncl, taxGroup } = method.settings.paymentFees;
+
+    // Skip if no value or no tax group selected
+    if (!fixedFeeTaxIncl || !taxGroup || taxGroup === '0') return;
+    if (isCalculatingTax) return;
+
+    // Clear any existing timeout
+    if (taxCalcTimeoutRef.current) {
+      clearTimeout(taxCalcTimeoutRef.current);
+    }
+
+    // Debounce: wait 500ms after user stops typing
+    taxCalcTimeoutRef.current = setTimeout(() => {
+      calculateTax('incl');
+    }, 500);
+
+    return () => {
+      if (taxCalcTimeoutRef.current) {
+        clearTimeout(taxCalcTimeoutRef.current);
+      }
+    };
+  }, [method.settings.paymentFees.fixedFeeTaxIncl]);
+
+  // Automatic tax calculation when fixedFeeTaxExcl changes
+  useEffect(() => {
+    // Only auto-calculate if this was the last user-edited field
+    if (lastUserEditedFieldRef.current !== 'excl') return;
+
+    const { fixedFeeTaxExcl, taxGroup } = method.settings.paymentFees;
+
+    // Skip if no value or no tax group selected
+    if (!fixedFeeTaxExcl || !taxGroup || taxGroup === '0') return;
+    if (isCalculatingTax) return;
+
+    // Clear any existing timeout
+    if (taxCalcTimeoutRef.current) {
+      clearTimeout(taxCalcTimeoutRef.current);
+    }
+
+    // Debounce: wait 500ms after user stops typing
+    taxCalcTimeoutRef.current = setTimeout(() => {
+      calculateTax('excl');
+    }, 500);
+
+    return () => {
+      if (taxCalcTimeoutRef.current) {
+        clearTimeout(taxCalcTimeoutRef.current);
+      }
+    };
+  }, [method.settings.paymentFees.fixedFeeTaxExcl]);
 
   return (
     <div className="space-y-6">
@@ -562,11 +665,12 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
                       placeholder="0.00"
                       className="mt-1"
                       value={method.settings.paymentFees.fixedFeeTaxIncl}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        lastUserEditedFieldRef.current = 'incl';
                         onUpdateSettings({
                           paymentFees: { ...method.settings.paymentFees, fixedFeeTaxIncl: e.target.value },
-                        })
-                      }
+                        });
+                      }}
                       onBlur={() => calculateTax('incl')}
                       disabled={isCalculatingTax}
                     />
@@ -579,11 +683,12 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
                       placeholder="0.00"
                       className="mt-1"
                       value={method.settings.paymentFees.fixedFeeTaxExcl}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        lastUserEditedFieldRef.current = 'excl';
                         onUpdateSettings({
                           paymentFees: { ...method.settings.paymentFees, fixedFeeTaxExcl: e.target.value },
-                        })
-                      }
+                        });
+                      }}
                       onBlur={() => calculateTax('excl')}
                       disabled={isCalculatingTax}
                     />
@@ -597,12 +702,36 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
                   <Label className="text-sm font-medium">{t('taxRulesGroupForFixedFee')}</Label>
                   <RadioSelect
                     value={method.settings.paymentFees.taxGroup}
-                    onValueChange={(taxGroup: string) => {
+                    onValueChange={async (taxGroup: string) => {
                       onUpdateSettings({
                         paymentFees: { ...method.settings.paymentFees, taxGroup },
                       });
-                      // Recalculate tax when tax group changes (mirrors legacy payment_methods.js:81-107)
-                      setTimeout(() => calculateTax('taxGroup'), 100);
+
+                      // Recalculate tax incl from tax excl when tax group changes (mirrors legacy payment_methods.js:81-107)
+                      const { fixedFeeTaxExcl } = method.settings.paymentFees;
+
+                      if (fixedFeeTaxExcl && fixedFeeTaxExcl !== '0' && taxGroup && taxGroup !== '0') {
+                        try {
+                          const response = await paymentMethodsApiService.calculatePaymentFeeTax(
+                            '0', // Send 0 for tax incl to force calculation from tax excl
+                            fixedFeeTaxExcl,
+                            taxGroup
+                          );
+
+                          if (!response.error && response.paymentFeeTaxIncl && response.paymentFeeTaxExcl) {
+                            onUpdateSettings({
+                              paymentFees: {
+                                ...method.settings.paymentFees,
+                                taxGroup,
+                                fixedFeeTaxIncl: response.paymentFeeTaxIncl,
+                                fixedFeeTaxExcl: response.paymentFeeTaxExcl
+                              }
+                            });
+                          }
+                        } catch (error) {
+                          console.error('Tax calculation failed:', error);
+                        }
+                      }
                     }}
                     options={window.molliePaymentMethodsConfig?.taxRulesGroups?.map((group: { value: string; label: string }) => ({
                       value: group.value,
@@ -671,40 +800,72 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
                   <Label className="text-sm font-medium">{t('minimumAmount')}</Label>
                   <Input
                     type="number"
+                    min="0"
+                    max={method.settings.orderRestrictions.apiMaxAmount ? parseFloat(method.settings.orderRestrictions.apiMaxAmount) : undefined}
                     step="0.01"
-                    placeholder="0.00"
+                    placeholder={method.settings.orderRestrictions.apiMinAmount || '0.00'}
                     className="mt-1"
-                    value={method.settings.orderRestrictions.minAmount}
-                    onChange={(e) =>
+                    value={method.settings.orderRestrictions.minAmount || ''}
+                    onChange={(e) => {
+                      const value = e.target.value;
+
+                      if (value) {
+                        const numValue = parseFloat(value);
+
+                        // Cannot be negative
+                        if (numValue < 0) return;
+
+                        // Cannot exceed API max
+                        const apiMax = method.settings.orderRestrictions.apiMaxAmount ? parseFloat(method.settings.orderRestrictions.apiMaxAmount) : null;
+                        if (apiMax !== null && numValue > apiMax) return;
+                      }
+
                       onUpdateSettings({
-                        orderRestrictions: { ...method.settings.orderRestrictions, minAmount: e.target.value },
-                      })
-                    }
+                        orderRestrictions: { ...method.settings.orderRestrictions, minAmount: value },
+                      });
+                    }}
                   />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Default min amount in Mollie is: {method.settings.orderRestrictions.minAmount || '0.00'}
-                  </p>
+                  {method.settings.orderRestrictions.apiMinAmount && method.settings.orderRestrictions.apiMinAmount !== '0' && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {t('minOrderAmount')}: {method.settings.orderRestrictions.apiMinAmount}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <Label className="text-sm font-medium">{t('maximumAmount')}</Label>
                   <Input
                     type="number"
+                    min={method.settings.orderRestrictions.apiMinAmount ? parseFloat(method.settings.orderRestrictions.apiMinAmount) : 0}
+                    max={method.settings.orderRestrictions.apiMaxAmount ? parseFloat(method.settings.orderRestrictions.apiMaxAmount) : undefined}
                     step="0.01"
-                    placeholder="0.00"
+                    placeholder={method.settings.orderRestrictions.apiMaxAmount || '0.00'}
                     className="mt-1"
-                    value={method.settings.orderRestrictions.maxAmount}
-                    onChange={(e) =>
+                    value={method.settings.orderRestrictions.maxAmount || ''}
+                    onChange={(e) => {
+                      const value = e.target.value;
+
+                      if (value) {
+                        const numValue = parseFloat(value);
+
+                        // Cannot be less than API min
+                        const apiMin = method.settings.orderRestrictions.apiMinAmount ? parseFloat(method.settings.orderRestrictions.apiMinAmount) : 0;
+                        if (numValue < apiMin) return;
+
+                        // Cannot exceed API max
+                        const apiMax = method.settings.orderRestrictions.apiMaxAmount ? parseFloat(method.settings.orderRestrictions.apiMaxAmount) : null;
+                        if (apiMax !== null && numValue > apiMax) return;
+                      }
+
                       onUpdateSettings({
-                        orderRestrictions: { ...method.settings.orderRestrictions, maxAmount: e.target.value },
-                      })
-                    }
+                        orderRestrictions: { ...method.settings.orderRestrictions, maxAmount: value },
+                      });
+                    }}
                   />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {method.settings.orderRestrictions.maxAmount && method.settings.orderRestrictions.maxAmount !== '0.00'
-                      ? `Default max amount in Mollie is: ${method.settings.orderRestrictions.maxAmount}`
-                      : 'Default max amount has no limitation'
-                    }
-                  </p>
+                  {method.settings.orderRestrictions.apiMaxAmount && method.settings.orderRestrictions.apiMaxAmount !== '0' && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {t('maxOrderAmount')}: {method.settings.orderRestrictions.apiMaxAmount}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

@@ -65,12 +65,16 @@ class AmountPaymentMethodRestrictionValidator implements PaymentMethodRestrictio
 
         $orderTotalAmount = (new Number((string) $this->context->getCurrency()->getConversionRate()))->times(new Number((string) $orderTotal));
 
+        // Use user-configured values if set, otherwise Mollie API handles the filtering
         $minAllowedAmount = new Number((string) $paymentMethod->min_amount);
         $maxAllowedAmount = new Number((string) $paymentMethod->max_amount);
 
-        if ($minAllowedAmount->isGreaterThan($orderTotalAmount)) {
+        // Check minimum amount (if set by user)
+        if ($paymentMethod->min_amount > 0 && $minAllowedAmount->isGreaterThan($orderTotalAmount)) {
             return false;
         }
+
+        // Check maximum amount (if set by user)
         if ($paymentMethod->max_amount > 0 && $maxAllowedAmount->isLowerThan($orderTotalAmount)) {
             return false;
         }

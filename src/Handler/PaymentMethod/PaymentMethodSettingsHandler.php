@@ -22,6 +22,7 @@ use Mollie\Repository\CountryRepository;
 use Mollie\Repository\CustomerRepository;
 use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Service\ApiService;
 use Mollie\Utility\ExceptionUtility;
 use MolPaymentMethod;
 
@@ -49,13 +50,21 @@ class PaymentMethodSettingsHandler
     /** @var LoggerInterface */
     private $logger;
 
+    /** @var ApiService */
+    private $apiService;
+
+    /** @var \Mollie */
+    private $module;
+
     public function __construct(
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentMethodLangRepositoryInterface $paymentMethodLangRepository,
         CountryRepository $countryRepository,
         CustomerRepository $customerRepository,
         ConfigurationAdapter $configuration,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        ApiService $apiService,
+        \Mollie $module
     ) {
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodLangRepository = $paymentMethodLangRepository;
@@ -63,6 +72,8 @@ class PaymentMethodSettingsHandler
         $this->customerRepository = $customerRepository;
         $this->configuration = $configuration;
         $this->logger = $logger;
+        $this->apiService = $apiService;
+        $this->module = $module;
     }
 
     /**
@@ -98,8 +109,12 @@ class PaymentMethodSettingsHandler
             $paymentMethod = new MolPaymentMethod((int) $paymentMethodId);
         }
 
+        // Fetch fresh data from Mollie API (same as old SettingsSaveService behavior)
+        // This ensures images_json and other API data is always up-to-date
+        $apiMethodData = $this->fetchMethodFromApi($methodId);
+
         // Handle basic settings
-        $this->handleBasicSettings($paymentMethod, $methodId, $settings, $environment, $shopId);
+        $this->handleBasicSettings($paymentMethod, $methodId, $settings, $environment, $shopId, $apiMethodData);
 
         // Handle payment fees
         if (isset($settings['paymentFees'])) {
@@ -144,21 +159,36 @@ class PaymentMethodSettingsHandler
      * @param array $settings Settings data
      * @param int $environment Environment
      * @param int $shopId Shop ID
+     * @param array|null $apiMethodData Data from Mollie API
      */
     private function handleBasicSettings(
         MolPaymentMethod $paymentMethod,
         string $methodId,
         array $settings,
         int $environment,
-        int $shopId
+        int $shopId,
+        ?array $apiMethodData = null
     ): void {
         $paymentMethod->id_method = $methodId;
         $paymentMethod->method_name = $methodId;
         $paymentMethod->enabled = ($settings['enabled'] ?? false) ? 1 : 0;
         $paymentMethod->method = $settings['apiSelection'] ?? 'payments';
         $paymentMethod->description = $settings['transactionDescription'] ?? '';
+
+        // Save min/max amounts - user can override API defaults within API limits
+        // Empty values default to 0 and will use API limits in validation
         $paymentMethod->min_amount = (float) ($settings['orderRestrictions']['minAmount'] ?? 0);
         $paymentMethod->max_amount = (float) ($settings['orderRestrictions']['maxAmount'] ?? 0);
+
+        // Save image from API (matching old SettingsSaveService behavior)
+        // This keeps images_json up-to-date with Mollie API
+        if ($apiMethodData && isset($apiMethodData['image'])) {
+            $paymentMethod->images_json = json_encode($apiMethodData['image']);
+        } elseif (!$paymentMethod->images_json) {
+            // If no API data and no existing image, set empty array to avoid NULL
+            $paymentMethod->images_json = json_encode([]);
+        }
+
         $paymentMethod->live_environment = $environment ? 1 : 0;
         $paymentMethod->id_shop = $shopId;
     }
@@ -351,5 +381,56 @@ class PaymentMethodSettingsHandler
             Config::MOLLIE_APPLE_PAY_DIRECT_STYLE,
             $applePaySettings['buttonStyle']
         );
+    }
+
+    /**
+     * Fetch payment method data from Mollie API
+     * Matches old SettingsSaveService behavior - always sync with API on save
+     *
+     * @param string $methodId Payment method ID
+     *
+     * @return array|null Method data from API or null if not found
+     */
+    private function fetchMethodFromApi(string $methodId): ?array
+    {
+        try {
+            $mollieClient = $this->module->getApiClient();
+            if (!$mollieClient) {
+                $this->logger->warning('Cannot fetch payment method from API - client not configured', [
+                    'method_id' => $methodId,
+                ]);
+
+                return null;
+            }
+
+            // Get all methods from Mollie API (same as old SettingsSaveService)
+            $apiMethods = $this->apiService->getMethodsForConfig($mollieClient);
+
+            // Find the specific method we're saving
+            foreach ($apiMethods as $apiMethod) {
+                if ($apiMethod['id'] === $methodId) {
+                    $this->logger->info('Successfully fetched payment method from Mollie API', [
+                        'method_id' => $methodId,
+                        'has_image' => isset($apiMethod['image']),
+                    ]);
+
+                    return $apiMethod;
+                }
+            }
+
+            $this->logger->warning('Payment method not found in Mollie API response', [
+                'method_id' => $methodId,
+                'available_methods' => array_column($apiMethods, 'id'),
+            ]);
+
+            return null;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to fetch payment method from Mollie API', [
+                'method_id' => $methodId,
+                'exception' => ExceptionUtility::getExceptions($e),
+            ]);
+
+            return null;
+        }
     }
 }

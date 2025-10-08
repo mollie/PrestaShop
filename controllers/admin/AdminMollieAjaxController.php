@@ -195,7 +195,6 @@ class AdminMollieAjaxController extends ModuleAdminController
     {
         $paymentFeeTaxIncl = (float) Tools::getValue('paymentFeeTaxIncl');
         $paymentFeeTaxExcl = (float) Tools::getValue('paymentFeeTaxExcl');
-
         $taxRulesGroupId = (int) Tools::getValue('taxRulesGroupId');
 
         if ($taxRulesGroupId < 1) {
@@ -218,14 +217,14 @@ class AdminMollieAjaxController extends ModuleAdminController
         $taxCalculator = $taxCalculatorProvider->getTaxCalculator(
             $taxRulesGroupId,
             $context->getCountryId(),
-            0 // NOTE: there is no default state for back office so setting no state
+            0
         );
 
-        if ($paymentFeeTaxIncl === 0.00) {
+        if ($paymentFeeTaxIncl == 0) {
             $paymentFeeTaxIncl = $taxCalculator->addTaxes($paymentFeeTaxExcl);
         }
 
-        if ($paymentFeeTaxExcl === 0.00) {
+        if ($paymentFeeTaxExcl == 0) {
             $paymentFeeTaxExcl = $taxCalculator->removeTaxes($paymentFeeTaxIncl);
         }
 

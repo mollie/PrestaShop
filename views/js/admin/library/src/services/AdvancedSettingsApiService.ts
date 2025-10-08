@@ -72,6 +72,7 @@ export interface AdvancedSettingsResponse {
   success: boolean;
   message?: string;
   error?: string;
+  not_configured?: boolean;
   data?: AdvancedSettingsData;
 }
 
@@ -79,11 +80,20 @@ export class AdvancedSettingsApiService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = window.mollieAdvancedSettingsAjaxUrl || '';
+    // Force HTTPS if current page is HTTPS (fixes mixed content issues with proxies/ngrok)
+    let url = window.mollieAdvancedSettingsAjaxUrl || '';
+    if (window.location.protocol === 'https:' && url.startsWith('http:')) {
+      url = url.replace('http:', 'https:');
+    }
+    this.baseUrl = url;
   }
 
   async getSettings(): Promise<AdvancedSettingsResponse> {
-    const response = await fetch(`${this.baseUrl}&ajax=1&action=getSettings`, {
+    const url = new URL(this.baseUrl, window.location.origin);
+    url.searchParams.set('ajax', '1');
+    url.searchParams.set('action', 'getSettings');
+
+    const response = await fetch(url.toString(), {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -93,12 +103,14 @@ export class AdvancedSettingsApiService {
   }
 
   async saveSettings(data: SaveAdvancedSettingsData): Promise<AdvancedSettingsResponse> {
+    const url = new URL(this.baseUrl, window.location.origin);
+
     const formData = new FormData();
     formData.append('ajax', '1');
     formData.append('action', 'saveSettings');
     formData.append('data', JSON.stringify(data));
 
-    const response = await fetch(this.baseUrl, {
+    const response = await fetch(url.toString(), {
       method: 'POST',
       body: formData
     });

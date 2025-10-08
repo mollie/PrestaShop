@@ -86,7 +86,7 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
 
         // Add AJAX URL with proper token for React app
         Media::addJsDef([
-            'mollieAdvancedSettingsAjaxUrl' => addslashes($this->context->link->getAdminLink('AdminMollieAdvancedSettings')),
+            'mollieAdvancedSettingsAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAdvancedSettings'),
         ]);
 
         // Add translations for React app
@@ -105,23 +105,23 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
     private function getTranslations(): array
     {
         return [
-            'advancedSettings' => addslashes($this->module->l('Advanced Settings', self::FILE_NAME)),
-            'orderSettings' => addslashes($this->module->l('Order Settings', self::FILE_NAME)),
-            'shippingSettings' => addslashes($this->module->l('Shipping Settings', self::FILE_NAME)),
-            'errorDebugging' => addslashes($this->module->l('Error Debugging', self::FILE_NAME)),
-            'visualSettings' => addslashes($this->module->l('Visual Settings', self::FILE_NAME)),
-            'orderStatusMapping' => addslashes($this->module->l('Order Status Mapping', self::FILE_NAME)),
-            'orderStatusEmails' => addslashes($this->module->l('Order Status Emails', self::FILE_NAME)),
-            'invoiceOption' => addslashes($this->module->l('Select when to create the order invoice', self::FILE_NAME)),
-            'confirmationEmail' => addslashes($this->module->l('Send order confirmation email', self::FILE_NAME)),
-            'autoShip' => addslashes($this->module->l('Automatically ship on marked statuses', self::FILE_NAME)),
-            'debugMode' => addslashes($this->module->l('Display errors', self::FILE_NAME)),
-            'logLevel' => addslashes($this->module->l('Log level', self::FILE_NAME)),
-            'logoDisplay' => addslashes($this->module->l('Payment Method Logo Display', self::FILE_NAME)),
-            'translateMollie' => addslashes($this->module->l('Use selected locale in webshop', self::FILE_NAME)),
-            'cssPath' => addslashes($this->module->l('CSS file', self::FILE_NAME)),
-            'saveSuccess' => addslashes($this->module->l('Settings saved successfully', self::FILE_NAME)),
-            'saveError' => addslashes($this->module->l('Failed to save settings', self::FILE_NAME)),
+            'advancedSettings' => $this->module->l('Advanced Settings', self::FILE_NAME),
+            'orderSettings' => $this->module->l('Order Settings', self::FILE_NAME),
+            'shippingSettings' => $this->module->l('Shipping Settings', self::FILE_NAME),
+            'errorDebugging' => $this->module->l('Error Debugging', self::FILE_NAME),
+            'visualSettings' => $this->module->l('Visual Settings', self::FILE_NAME),
+            'orderStatusMapping' => $this->module->l('Order Status Mapping', self::FILE_NAME),
+            'orderStatusEmails' => $this->module->l('Order Status Emails', self::FILE_NAME),
+            'invoiceOption' => $this->module->l('Select when to create the order invoice', self::FILE_NAME),
+            'confirmationEmail' => $this->module->l('Send order confirmation email', self::FILE_NAME),
+            'autoShip' => $this->module->l('Automatically ship on marked statuses', self::FILE_NAME),
+            'debugMode' => $this->module->l('Display errors', self::FILE_NAME),
+            'logLevel' => $this->module->l('Log level', self::FILE_NAME),
+            'logoDisplay' => $this->module->l('Payment Method Logo Display', self::FILE_NAME),
+            'translateMollie' => $this->module->l('Use selected locale in webshop', self::FILE_NAME),
+            'cssPath' => $this->module->l('CSS file', self::FILE_NAME),
+            'saveSuccess' => $this->module->l('Settings saved successfully', self::FILE_NAME),
+            'saveError' => $this->module->l('Failed to save settings', self::FILE_NAME),
         ];
     }
 
@@ -158,6 +158,23 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
     private function ajaxGetSettings(): void
     {
         try {
+            // Check if API is configured
+            $testApiKey = $this->configuration->get(Config::MOLLIE_API_KEY_TEST);
+            $liveApiKey = $this->configuration->get(Config::MOLLIE_API_KEY);
+            $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
+
+            $currentApiKey = $environment ? $liveApiKey : $testApiKey;
+
+            if (empty($currentApiKey)) {
+                $this->ajaxRender(json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('API not configured. Please configure API keys first.', self::FILE_NAME),
+                    'not_configured' => true,
+                ]));
+
+                return;
+            }
+
             // Get raw values from configuration
             $invoiceOptionRaw = $this->configuration->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS);
             $confirmationEmailRaw = $this->configuration->get(Config::MOLLIE_SEND_ORDER_CONFIRMATION);
