@@ -299,6 +299,8 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, CustomerRepository::class);
         $this->addServiceArgument($service, ConfigurationAdapter::class);
         $this->addServiceArgument($service, LoggerInterface::class);
+        $this->addServiceArgument($service, ApiService::class);
+        $this->addServiceArgument($service, Mollie::class);
 
         $service = $this->addService($container, PaymentMethodLogoHandler::class, PaymentMethodLogoHandler::class);
         $this->addServiceArgument($service, CreditCardLogoProvider::class);

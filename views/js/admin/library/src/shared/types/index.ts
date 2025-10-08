@@ -41,6 +41,10 @@ export interface MollieAuthTranslations {
   connectionFailed: string;
   failedToLoadSettings: string;
   failedToSwitchEnvironment: string;
+  switchEnvironment: string;
+  confirmSwitchEnvironment: string;
+  cancel: string;
+  switchTo: string;
 }
 
 export interface MolliePaymentMethodsTranslations {
@@ -127,8 +131,10 @@ export interface MolliePaymentMethodsTranslations {
   maximumFee: string;
   minimumAmount: string;
   maximumAmount: string;
+  minOrderAmount: string;
+  maxOrderAmount: string;
   paymentFeeEmailHelp: string;
-  
+
   // Order Restrictions
   orderRestrictions: string;
   
@@ -179,6 +185,26 @@ export interface MolliePaymentMethodsTranslations {
   dragPaymentOptionsToReorder: string;
 }
 
+export interface MollieAdvancedSettingsTranslations {
+  advancedSettings: string;
+  orderSettings: string;
+  shippingSettings: string;
+  errorDebugging: string;
+  visualSettings: string;
+  orderStatusMapping: string;
+  orderStatusEmails: string;
+  invoiceOption: string;
+  confirmationEmail: string;
+  autoShip: string;
+  debugMode: string;
+  logLevel: string;
+  logoDisplay: string;
+  translateMollie: string;
+  cssPath: string;
+  saveSuccess: string;
+  saveError: string;
+}
+
 // Extend global Window interface
 declare global {
   interface Window {
@@ -186,5 +212,7 @@ declare global {
     mollieAuthTranslations: MollieAuthTranslations;
     molliePaymentMethodsAjaxUrl: string;
     molliePaymentMethodsTranslations: MolliePaymentMethodsTranslations;
+    mollieAdvancedSettingsAjaxUrl: string;
+    mollieAdvancedSettingsTranslations: MollieAdvancedSettingsTranslations;
   }
 }

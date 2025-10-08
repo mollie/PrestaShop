@@ -2,6 +2,7 @@
 declare global {
   interface Window {
     molliePaymentMethodsAjaxUrl: string;
+    mollieAjaxUrl: string;
     molliePaymentMethodsConfig?: {
       countries: Country[];
       taxRulesGroups: { value: string; label: string }[];
@@ -53,6 +54,8 @@ export interface PaymentMethod {
     orderRestrictions: {
       minAmount: string
       maxAmount: string
+      apiMinAmount: string | null
+      apiMaxAmount: string | null
     }
     applePaySettings?: {
       directProduct?: boolean
@@ -98,14 +101,23 @@ export class PaymentMethodsApiService {
 
   constructor() {
     // Use PrestaShop's generated URL with proper tokens
-    this.baseUrl = window.molliePaymentMethodsAjaxUrl || '';
+    // Force HTTPS if current page is HTTPS (fixes mixed content issues with proxies/ngrok)
+    let url = window.molliePaymentMethodsAjaxUrl || '';
+    if (window.location.protocol === 'https:' && url.startsWith('http:')) {
+      url = url.replace('http:', 'https:');
+    }
+    this.baseUrl = url;
   }
 
   /**
    * Get all payment methods with their configuration
    */
   async getPaymentMethods(): Promise<PaymentMethodsResponse> {
-    const response = await fetch(`${this.baseUrl}&ajax=1&action=getPaymentMethods`, {
+    const url = new URL(this.baseUrl, window.location.origin);
+    url.searchParams.set('ajax', '1');
+    url.searchParams.set('action', 'getPaymentMethods');
+
+    const response = await fetch(url.toString(), {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -119,13 +131,15 @@ export class PaymentMethodsApiService {
    * Save payment method settings
    */
   async savePaymentMethodSettings(methodId: string, settings: PaymentMethod["settings"]): Promise<PaymentMethodsResponse> {
+    const url = new URL(this.baseUrl, window.location.origin);
+
     const formData = new FormData();
     formData.append('ajax', '1');
     formData.append('action', 'savePaymentMethodSettings');
     formData.append('method_id', methodId);
     formData.append('settings', JSON.stringify(settings));
 
-    const response = await fetch(this.baseUrl, {
+    const response = await fetch(url.toString(), {
       method: 'POST',
       body: formData
     });
@@ -137,12 +151,14 @@ export class PaymentMethodsApiService {
    * Upload custom logo for card payment method
    */
   async uploadCustomLogo(file: File): Promise<{ success: boolean; message: string; logoUrl?: string }> {
+    const url = new URL(this.baseUrl, window.location.origin);
+
     const formData = new FormData();
     formData.append('ajax', '1');
     formData.append('action', 'uploadCustomLogo');
     formData.append('fileToUpload', file);
 
-    const response = await fetch(this.baseUrl, {
+    const response = await fetch(url.toString(), {
       method: 'POST',
       body: formData
     });
@@ -153,12 +169,14 @@ export class PaymentMethodsApiService {
    * Update payment methods order (drag & drop reordering)
    */
   async updateMethodsOrder(methodIds: string[]): Promise<PaymentMethodsResponse> {
+    const url = new URL(this.baseUrl, window.location.origin);
+
     const formData = new FormData();
     formData.append('ajax', '1');
     formData.append('action', 'updateMethodsOrder');
     formData.append('method_ids', JSON.stringify(methodIds));
 
-    const response = await fetch(this.baseUrl, {
+    const response = await fetch(url.toString(), {
       method: 'POST',
       body: formData
     });
@@ -174,8 +192,11 @@ export class PaymentMethodsApiService {
     paymentFeeTaxExcl: string,
     taxRulesGroupId: string
   ): Promise<{ error: boolean; message?: string; paymentFeeTaxIncl?: string; paymentFeeTaxExcl?: string }> {
-    // Use AdminMollieAjax controller endpoint (from legacy system)
-    const ajaxUrl = window.molliePaymentMethodsAjaxUrl.replace('AdminMolliePaymentMethods', 'AdminMollieAjax');
+    let ajaxUrl = window.mollieAjaxUrl || '';
+
+    if (window.location.protocol === 'https:' && ajaxUrl.startsWith('http:')) {
+      ajaxUrl = ajaxUrl.replace('http:', 'https:');
+    }
 
     const formData = new FormData();
     formData.append('action', 'updateFixedPaymentFeePrice');
@@ -188,6 +209,7 @@ export class PaymentMethodsApiService {
       method: 'POST',
       body: formData
     });
+
     return response.json();
   }
 }

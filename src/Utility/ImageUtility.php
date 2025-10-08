@@ -22,10 +22,17 @@ class ImageUtility
 {
     public static function setOptionImage($image, $imageConfig)
     {
-        if (Config::LOGOS_NORMAL === $imageConfig) {
-            return $image['svg'];
-        } elseif (Config::LOGOS_BIG === $imageConfig) {
-            return $image['size2x'];
+        // Defensive check: ensure $image is an array
+        if (!is_array($image)) {
+            return null;
         }
+
+        if (Config::LOGOS_NORMAL === $imageConfig) {
+            return $image['svg'] ?? null;
+        } elseif (Config::LOGOS_BIG === $imageConfig) {
+            return $image['size2x'] ?? null;
+        }
+
+        return null;
     }
 }

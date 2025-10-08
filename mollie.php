@@ -105,7 +105,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.4.0';
+        $this->version = '6.4.1';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -298,7 +298,7 @@ class Mollie extends PaymentModule
             exit(json_encode($this->{'displayAjax' . Tools::ucfirst(Tools::getValue('action'))}()));
         }
 
-        $url = $this->context->link->getAdminLink('AdminMollieSettings');
+        $url = $this->context->link->getAdminLink('AdminMollieAuthentication');
 
         /** @var ToolsAdapter $tools */
         $tools = $this->getService(ToolsAdapter::class);

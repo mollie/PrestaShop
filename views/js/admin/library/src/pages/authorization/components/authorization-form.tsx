@@ -76,6 +76,8 @@ export default function AuthorizationForm() {
   const [errorMessage, setErrorMessage] = useState("")
   const [justConnected, setJustConnected] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [pendingMode, setPendingMode] = useState<"live" | "test" | null>(null)
 
   // Load current settings on component mount
   useEffect(() => {
@@ -134,24 +136,33 @@ export default function AuthorizationForm() {
     }
   }
 
-  const handleModeChange = async (newMode: "live" | "test") => {
+  const handleModeChange = (newMode: "live" | "test") => {
     // If it's the same mode, do nothing
     if (newMode === mode) return
-    
+
+    // Show confirmation dialog
+    setPendingMode(newMode)
+    setShowConfirmDialog(true)
+  }
+
+  const confirmModeSwitch = async () => {
+    if (!pendingMode) return
+
+    setShowConfirmDialog(false)
     setErrorMessage("")
     setJustConnected(false) // Clear the success message when switching modes
-    
+
     try {
       // Call backend to switch environment
-      const switchResponse = await authApiService.switchEnvironment(newMode)
+      const switchResponse = await authApiService.switchEnvironment(pendingMode)
       if (switchResponse.success) {
         // Update mode and connection status based on backend response
-        setMode(newMode)
+        setMode(pendingMode)
         setIsConnected(switchResponse.data.is_connected || false)
         setApiKey(switchResponse.data.api_key || "")
-        
+
         // Update the stored keys based on the response
-        if (newMode === "live") {
+        if (pendingMode === "live") {
           setLiveApiKey(switchResponse.data.api_key || liveApiKey)
         } else {
           setTestApiKey(switchResponse.data.api_key || testApiKey)
@@ -163,11 +174,49 @@ export default function AuthorizationForm() {
     } catch (error) {
       console.error('Failed to switch environment:', error)
       setErrorMessage(t('failedToSwitchEnvironment'))
+    } finally {
+      setPendingMode(null)
     }
+  }
+
+  const cancelModeSwitch = () => {
+    setShowConfirmDialog(false)
+    setPendingMode(null)
   }
 
   return (
     <div className="bg-white font-inter">
+      {/* Confirmation Dialog */}
+      {showConfirmDialog && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{backgroundColor: 'rgba(0, 0, 0, 0.4)'}}>
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div className="p-6">
+              <h3 className="text-lg font-semibold text-gray-900" style={{marginBottom: '1rem'}}>
+                {t('switchEnvironment')}
+              </h3>
+              <p className="text-gray-600 text-sm" style={{marginBottom: '2rem'}}>
+                {t('confirmSwitchEnvironment', pendingMode === "live" ? t('live') : t('test'))}
+              </p>
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={cancelModeSwitch}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                >
+                  {t('cancel')}
+                </button>
+                <button
+                  onClick={confirmModeSwitch}
+                  className="px-4 py-2 text-sm font-medium text-white rounded-md hover:opacity-90 transition-opacity"
+                  style={{backgroundColor: 'rgba(0, 64, 255, 1)'}}
+                >
+                  {t('switchTo', pendingMode === "live" ? t('live') : t('test'))}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-6xl mx-auto px-2 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start mb-8">
           {/* Left Column - Header */}

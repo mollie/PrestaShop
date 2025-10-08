@@ -210,13 +210,32 @@ class PaymentMethodFormatterService
      */
     private function formatOrderRestrictions($methodObj, array $method): array
     {
+        // Get Mollie API limits (hard limits from Mollie)
+        $apiMinAmount = null;
+        $apiMaxAmount = null;
+
+        if (!empty($method['minimumAmount']) && is_array($method['minimumAmount']) && isset($method['minimumAmount']['value'])) {
+            $apiMinAmount = $method['minimumAmount']['value'];
+        }
+
+        if (!empty($method['maximumAmount']) && is_array($method['maximumAmount']) && isset($method['maximumAmount']['value'])) {
+            $apiMaxAmount = $method['maximumAmount']['value'];
+        }
+
+        // Get user-configured values from database (can override within API limits)
+        $minAmount = (isset($methodObj->min_amount) && $methodObj->min_amount > 0)
+            ? (string) $methodObj->min_amount
+            : '';
+        $maxAmount = (isset($methodObj->max_amount) && $methodObj->max_amount > 0)
+            ? (string) $methodObj->max_amount
+            : '';
+
         return [
-            'minAmount' => (isset($methodObj->min_amount) && $methodObj->min_amount > 0)
-                ? $methodObj->min_amount
-                : ($method['minimumAmount'] ? $method['minimumAmount']['value'] : '0.00'),
-            'maxAmount' => (isset($methodObj->max_amount) && $methodObj->max_amount > 0)
-                ? $methodObj->max_amount
-                : ($method['maximumAmount'] ? $method['maximumAmount']['value'] : '0.00'),
+            'minAmount' => $minAmount,
+            'maxAmount' => $maxAmount,
+            // Include API limits for validation and display as helper text
+            'apiMinAmount' => $apiMinAmount,
+            'apiMaxAmount' => $apiMaxAmount,
         ];
     }
 
