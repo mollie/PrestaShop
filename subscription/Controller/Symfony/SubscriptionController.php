@@ -96,6 +96,10 @@ class SubscriptionController extends AbstractSymfonyController
                 'enable_subscription_service_help' => $this->module->l('Toggle this option to enable products to be bought as recurring items.', self::FILE_NAME),
                 'carrier_warning' => $this->module->l('Carrier to use in subscription orders', self::FILE_NAME),
                 'carrier_warning_text' => $this->module->l('WARNING: do not change selection after getting first subscription order.', self::FILE_NAME),
+                'subscription_options_help_link_text' => $this->module->l('How to configure Mollie subscriptions on Prestashop?', self::FILE_NAME),
+            ],
+            'links' => [
+                'help_url' => 'https://docs.mollie.com/docs/prestashop-manage-subscriptions',
             ],
         ]);
     }
