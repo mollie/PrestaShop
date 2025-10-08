@@ -172,14 +172,12 @@ class AdminMollieAjaxController extends ModuleAdminController
         $isUploaded = 1;
         $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
         $returnText = '';
-        // Check image format
         if ('jpg' !== $imageFileType && 'png' !== $imageFileType) {
             $returnText = $this->module->l('Upload a .jpg or .png file.');
             $isUploaded = 0;
         }
 
         if (1 === $isUploaded) {
-            //  if everything is ok, try to upload file
             if (move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target_file)) {
                 $returnText = basename($_FILES['fileToUpload']['name']);
             } else {
@@ -312,7 +310,6 @@ class AdminMollieAjaxController extends ModuleAdminController
             /** @var CaptureService $captureService */
             $captureService = $this->module->getService(CaptureService::class);
 
-            // Use provided amount for individual product capture, or full order amount for capture all
             $amount = $captureAmount ? (float) $captureAmount : $order->total_paid;
             $status = $captureService->handleCapture($transactionId, $amount);
 
