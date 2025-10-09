@@ -12,12 +12,10 @@
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-
-class AdminMollieModuleController extends ModuleAdminController
+class AdminMolliePaymentMethodsParentController extends ModuleAdminController
 {
     public function init()
     {
-        // Redirect to API Configuration (first tab)
-        Tools::redirectAdmin($this->context->link->getAdminLink('AdminMollieAuthentication'));
+        Tools::redirectAdmin($this->context->link->getAdminLink('AdminMolliePaymentMethods'));
     }
 }

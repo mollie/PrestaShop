@@ -321,7 +321,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             }
 
             if (empty($apiMethods)) {
-                $this->logger->info('No API methods found from Mollie API');
                 $this->ajaxRender(json_encode([
                     'success' => true,
                     'data' => [
@@ -338,8 +337,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
 
                 return;
             }
-
-            $this->logger->info('Found ' . count($apiMethods) . ' API methods from Mollie');
 
             $formattedMethods = [];
             foreach ($apiMethods as $method) {
@@ -427,11 +424,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                     'is_connected' => !empty($formattedMethods),
                 ],
             ];
-
-            $this->logger->info('Sending payment methods response', [
-                'methods_count' => isset($responseData['data']['methods']) ? count($responseData['data']['methods']) : 0,
-                'success' => $responseData['success'],
-            ]);
 
             $this->ajaxRender(json_encode($responseData));
         } catch (Exception $e) {
