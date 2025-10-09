@@ -180,7 +180,7 @@ class PaymentMethodConfigProvider
         }
 
         $taxExcl = (float) $methodObj->surcharge_fixed_amount_tax_excl;
-        $taxRulesGroupId = isset($methodObj->tax_rules_group_id) ? $methodObj->tax_rules_group_id : 0;
+        $taxRulesGroupId = (string) $methodObj->tax_rules_group_id;
 
         if (!$taxRulesGroupId) {
             return number_format($taxExcl, 2, '.', '');
@@ -196,11 +196,9 @@ class PaymentMethodConfigProvider
             $taxManager = \TaxManagerFactory::getManager($address, $taxRulesGroupId);
             $taxCalculator = $taxManager->getTaxCalculator();
 
-            if ($taxCalculator) {
-                $taxIncl = $taxCalculator->addTaxes($taxExcl);
+            $taxIncl = $taxCalculator->addTaxes($taxExcl);
 
-                return number_format($taxIncl, 2, '.', '');
-            }
+            return number_format($taxIncl, 2, '.', '');
         } catch (\Exception $e) {
             $this->logger->error('Failed to calculate fixed fee tax incl', [
                 'exception' => ExceptionUtility::getExceptions($e),
