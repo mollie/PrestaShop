@@ -396,6 +396,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                                     : '',
                                 'apiMinAmount' => $method['minimumAmount'] ? $method['minimumAmount']['value'] : null,
                                 'apiMaxAmount' => $method['maximumAmount'] ? $method['maximumAmount']['value'] : null,
+                                'currency' => $method['minimumAmount'] ? $method['minimumAmount']['currency'] : ($method['maximumAmount'] ? $method['maximumAmount']['currency'] : null),
                             ],
                             'applePaySettings' => $methodId === 'applepay' ? [
                                 'directProduct' => (bool) ($this->configuration->get(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT) ?: 0),
@@ -849,14 +850,22 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         $taxExcl = (float) $methodObj->surcharge_fixed_amount_tax_excl;
         $taxRulesGroupId = isset($methodObj->tax_rules_group_id) ? $methodObj->tax_rules_group_id : 0;
 
-        if (!$taxRulesGroupId) {
+        if (!$taxRulesGroupId || $taxRulesGroupId == 0) {
+            // No tax group selected = no tax to apply
             return number_format($taxExcl, 2, '.', '');
         }
 
         try {
-            $address = new Address();
-            if (isset($this->context->cart->id_address_delivery)) {
+            // Try to use delivery address from cart if available
+            $address = null;
+            if (isset($this->context->cart->id_address_delivery) && $this->context->cart->id_address_delivery > 0) {
                 $address = new Address((int) $this->context->cart->id_address_delivery);
+            }
+
+            // Fallback to default country if no cart address
+            if (!$address || !$address->id) {
+                $address = new Address();
+                $address->id_country = (int) $this->configuration->get('PS_COUNTRY_DEFAULT');
             }
 
             $taxManager = TaxManagerFactory::getManager($address, $taxRulesGroupId);
@@ -871,9 +880,10 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'tax_excl' => $taxExcl,
                 'tax_rules_group_id' => $taxRulesGroupId,
             ]);
-        }
 
-        return number_format($taxExcl, 2, '.', '');
+            // On error, return tax excl as fallback (better than returning wrong value)
+            return number_format($taxExcl, 2, '.', '');
+        }
     }
 
     private function getCreditCardMollieComponentsSetting($methodObj): bool

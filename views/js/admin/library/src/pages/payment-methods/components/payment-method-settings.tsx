@@ -851,7 +851,7 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
                   />
                   {method.settings.orderRestrictions.apiMinAmount && (
                     <p className="text-xs text-muted-foreground mt-1">
-                      {t('minOrderAmount')}: {method.settings.orderRestrictions.apiMinAmount}
+                      {t('minOrderAmount')}: {method.settings.orderRestrictions.apiMinAmount} {method.settings.orderRestrictions.currency || ''}
                     </p>
                   )}
                 </div>
@@ -887,7 +887,7 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
                   />
                   {method.settings.orderRestrictions.apiMaxAmount && (
                     <p className="text-xs text-muted-foreground mt-1">
-                      {t('maxOrderAmount')}: {method.settings.orderRestrictions.apiMaxAmount}
+                      {t('maxOrderAmount')}: {method.settings.orderRestrictions.apiMaxAmount} {method.settings.orderRestrictions.currency || ''}
                     </p>
                   )}
                 </div>
