@@ -189,7 +189,7 @@ class PaymentMethodSettingsHandler
             $paymentMethod->images_json = json_encode([]);
         }
 
-        $paymentMethod->live_environment = $environment ? 1 : 0;
+        $paymentMethod->live_environment = $environment ? true : false;
         $paymentMethod->id_shop = $shopId;
     }
 
