@@ -90,17 +90,12 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         $this->paymentMethodSettingsHandler = $this->module->getService(PaymentMethodSettingsHandler::class);
     }
 
-    /**
-     * Initialize the payment methods page
-     */
     public function init(): void
     {
         parent::init();
 
-        //todo use module version after redesign will finish.
         $version = time();
 
-        // Add the shared CSS file
         $this->context->controller->addCSS(
             $this->module->getPathUri() . 'views/js/admin/library/dist/assets/globals.css?v=' . $version,
             'all',
@@ -108,20 +103,16 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             false
         );
 
-        // Pass URLs to template for ES module loading
         $jsUrl = $this->module->getPathUri() . 'views/js/admin/library/dist/assets/mollie-payment-methods.js?v=' . $version;
         $this->context->smarty->assign('molliePaymentMethodsJsUrl', $jsUrl);
 
-        // Add AJAX URL with proper token for React app
         Media::addJsDef([
             'molliePaymentMethodsAjaxUrl' => $this->context->link->getAdminLink('AdminMolliePaymentMethods'),
             'mollieAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAjax'),
         ]);
 
-        // Add translations for React app
         Media::addJsDef([
             'molliePaymentMethodsTranslations' => [
-                // Main page
                 'paymentMethods' => $this->module->l('Payment Methods', self::FILE_NAME),
                 'configurePaymentMethods' => $this->module->l('Configure Payment Methods', self::FILE_NAME),
                 'enabled' => $this->module->l('Enabled', self::FILE_NAME),
@@ -129,13 +120,11 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'enabledPaymentMethods' => $this->module->l('Enabled payment methods', self::FILE_NAME),
                 'disabledPaymentMethods' => $this->module->l('Disabled payment methods', self::FILE_NAME),
 
-                // Payment method card
                 'showSettings' => $this->module->l('Show settings', self::FILE_NAME),
                 'hideSettings' => $this->module->l('Hide settings', self::FILE_NAME),
                 'active' => $this->module->l('Active', self::FILE_NAME),
                 'inactive' => $this->module->l('Inactive', self::FILE_NAME),
 
-                // Basic settings
                 'basicSettings' => $this->module->l('Basic settings', self::FILE_NAME),
                 'activateDeactivate' => $this->module->l('Activate/Deactivate', self::FILE_NAME),
                 'enablePaymentMethod' => $this->module->l('Enable payment method', self::FILE_NAME),
@@ -146,7 +135,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'paymentTitle' => $this->module->l('Payment Title', self::FILE_NAME),
                 'paymentTitlePlaceholder' => $this->module->l('Payment Method #1', self::FILE_NAME),
 
-                // API Selection
                 'apiSelection' => $this->module->l('API Selection', self::FILE_NAME),
                 'payments' => $this->module->l('Payments', self::FILE_NAME),
                 'orders' => $this->module->l('Orders', self::FILE_NAME),
@@ -155,13 +143,11 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'readMore' => $this->module->l('Read more', self::FILE_NAME),
                 'aboutDifferences' => $this->module->l('about the differences between Payments and Orders API', self::FILE_NAME),
 
-                // Custom Logo
                 'useCustomLogo' => $this->module->l('Use custom logo', self::FILE_NAME),
                 'uploadLogo' => $this->module->l('Upload Logo', self::FILE_NAME),
                 'replaceLogo' => $this->module->l('Replace Logo', self::FILE_NAME),
                 'logoUploadHelp' => $this->module->l('Upload a JPG or PNG image. Maximum dimensions: 256x64 pixels. Maximum file size: 2MB.', self::FILE_NAME),
 
-                // Apple Pay Settings
                 'applePayDirectSettings' => $this->module->l('Apple Pay Direct settings', self::FILE_NAME),
                 'applePayDirectProductPage' => $this->module->l('Apple Pay Direct product page', self::FILE_NAME),
                 'enableApplePayProductPages' => $this->module->l('Enable Apple Pay on product pages', self::FILE_NAME),
@@ -172,7 +158,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'applePayButtonOutline' => $this->module->l('Outline', self::FILE_NAME),
                 'applePayButtonWhite' => $this->module->l('White', self::FILE_NAME),
 
-                // Payment Restrictions
                 'paymentRestrictions' => $this->module->l('Payment restrictions', self::FILE_NAME),
                 'acceptPaymentsFrom' => $this->module->l('Accept payments from', self::FILE_NAME),
                 'allCountries' => $this->module->l('All countries', self::FILE_NAME),
@@ -187,7 +172,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'guest' => $this->module->l('Guest', self::FILE_NAME),
                 'customerGroup' => $this->module->l('Customer Group', self::FILE_NAME),
 
-                // Payment Fees
                 'paymentFees' => $this->module->l('Payment fees', self::FILE_NAME),
                 'enablePaymentFee' => $this->module->l('Enable payment fee', self::FILE_NAME),
                 'paymentFeeType' => $this->module->l('Payment fee type', self::FILE_NAME),
@@ -207,21 +191,19 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'maxOrderAmount' => $this->module->l('Max order amount', self::FILE_NAME),
                 'paymentFeeEmailHelp' => $this->module->l('Add "(payment_fee)" in email translations to display it in your email template.', self::FILE_NAME),
 
-                // Order Restrictions
                 'orderRestrictions' => $this->module->l('Order restrictions', self::FILE_NAME),
 
-                // Actions
+
                 'save' => $this->module->l('Save', self::FILE_NAME),
                 'saving' => $this->module->l('Saving...', self::FILE_NAME),
                 'loadingMethods' => $this->module->l('Loading payment methods...', self::FILE_NAME),
                 'loadingError' => $this->module->l('Failed to load payment methods', self::FILE_NAME),
                 'saveSettings' => $this->module->l('Save Settings', self::FILE_NAME),
 
-                // Transaction Description Help
                 'transactionDescriptionHelp' => $this->module->l('Use any of the following variables to create a transaction description for payments that use this method:', self::FILE_NAME),
                 'transactionDescriptionVariables' => $this->module->l('{orderNumber}, {storeName}, {countryCode}, {cart.id}, {order.reference}, {customer.firstname}, {customer.lastname}, {customer.company}', self::FILE_NAME),
 
-                // Messages
+
                 'paymentMethodNotFound' => $this->module->l('Payment method not found', self::FILE_NAME),
                 'settingsSavedSuccessfully' => $this->module->l('Settings saved successfully!', self::FILE_NAME),
                 'failedToSaveSettings' => $this->module->l('Failed to save settings', self::FILE_NAME),
@@ -231,7 +213,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'noPaymentMethods' => $this->module->l('No payment methods', self::FILE_NAME),
                 'paymentMethodsWillAppear' => $this->module->l('Payment methods will appear here once configured', self::FILE_NAME),
 
-                // Custom Logo Upload
                 'pleaseUploadJpgOrPng' => $this->module->l('Please upload a JPG or PNG file', self::FILE_NAME),
                 'fileSizeTooLarge' => $this->module->l('File size must be less than 2MB', self::FILE_NAME),
                 'imageDimensionsTooLarge' => $this->module->l('Image dimensions must be maximum 256x64 pixels', self::FILE_NAME),
@@ -243,22 +224,19 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'customLogo' => $this->module->l('Custom Logo', self::FILE_NAME),
                 'remove' => $this->module->l('Remove', self::FILE_NAME),
 
-                // Apple Pay Button Descriptions
                 'applePayButtonBlackDesc' => $this->module->l('Black Apple Pay button', self::FILE_NAME),
                 'applePayButtonOutlineDesc' => $this->module->l('White with outline', self::FILE_NAME),
                 'applePayButtonWhiteDesc' => $this->module->l('White Apple Pay button', self::FILE_NAME),
 
-                // Select Placeholders
+
                 'selectOption' => $this->module->l('Select option', self::FILE_NAME),
                 'selectOptions' => $this->module->l('Select options', self::FILE_NAME),
                 'itemsSelected' => $this->module->l('%s selected', self::FILE_NAME),
 
-                // Drag and drop
                 'dragPaymentOptionsToReorder' => $this->module->l('Drag payment options to reorder', self::FILE_NAME),
             ],
         ]);
 
-        // Add configuration data for select options (same as FormBuilder)
         Media::addJsDef([
             'molliePaymentMethodsConfig' => [
                 'countries' => $this->countryService->getActiveCountriesList(),
@@ -274,9 +252,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         );
     }
 
-    /**
-     * Handle AJAX requests
-     */
     public function displayAjax(): void
     {
         if (!$this->tools->isSubmit('ajax')) {
@@ -313,13 +288,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
     }
 
-    /**
-     * Get all payment methods with their configuration
-     */
     private function ajaxGetPaymentMethods(): void
     {
         try {
-            // Check if API is configured - same logic as authentication page
             $testApiKey = $this->configuration->get(Config::MOLLIE_API_KEY_TEST);
             $liveApiKey = $this->configuration->get(Config::MOLLIE_API_KEY);
             $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
@@ -337,7 +308,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
 
             $shopId = $this->context->shop->id;
 
-            // Get available payment methods from Mollie API (same as FormBuilder does)
             $apiMethods = [];
             try {
                 $mollieClient = $this->module->getApiClient();
@@ -350,9 +320,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 ]);
             }
 
-            // If no methods from API, return empty response
             if (empty($apiMethods)) {
-                $this->logger->info('No API methods found from Mollie API');
                 $this->ajaxRender(json_encode([
                     'success' => true,
                     'data' => [
@@ -370,28 +338,23 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 return;
             }
 
-            $this->logger->info('Found ' . count($apiMethods) . ' API methods from Mollie');
-
-            // Format API methods for the modern React frontend (same as FormBuilder does)
             $formattedMethods = [];
             foreach ($apiMethods as $method) {
                 try {
                     $methodId = $method['id'];
-                    $methodObj = $method['obj']; // This comes from getMethodsObjForConfig()
+                    $methodObj = $method['obj'];
 
-                    // Validate method object
                     if (!$methodObj) {
                         $this->logger->warning('Method object is null for method: ' . $methodId);
                         continue;
                     }
 
-                    // Convert FormBuilder API method structure to modern frontend format
                     $formattedMethods[] = [
                         'id' => $methodId,
                         'name' => $method['name'],
                         'type' => $methodId === 'creditcard' ? 'card' : 'other',
                         'status' => (isset($methodObj->enabled) && $methodObj->enabled) ? 'active' : 'inactive',
-                        'isExpanded' => false, // Will be handled by frontend state
+                        'isExpanded' => false,
                         'position' => (int) (isset($methodObj->position) ? $methodObj->position : 0),
                         'image' => $method['image'] ?? null,
                         'settings' => [
@@ -405,7 +368,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                             'customLogoUrl' => $methodId === 'creditcard' ? $this->getCustomLogoUrl() : null,
                             'paymentRestrictions' => [
                                 'acceptFrom' => (isset($methodObj->is_countries_applicable) && $methodObj->is_countries_applicable) ? 'selected' : 'all',
-                                'selectedCountries' => $method['countries'] ?? [], // For when acceptFrom = 'selected'
+                                'selectedCountries' => $method['countries'] ?? [],
                                 'excludeCountries' => $method['excludedCountries'] ?? [],
                                 'excludeCustomerGroups' => $method['excludedCustomerGroups'] ?? [],
                             ],
@@ -413,22 +376,18 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                                 'enabled' => (int) (isset($methodObj->surcharge) ? $methodObj->surcharge : 0) > 0,
                                 'type' => $this->getPaymentFeeType($methodObj),
                                 'taxGroup' => isset($methodObj->tax_rules_group_id) ? (string) $methodObj->tax_rules_group_id : '0',
-                                // Fixed fee fields - fixedFeeTaxIncl must be calculated as it's not stored in DB
                                 'fixedFeeTaxIncl' => $this->calculateFixedFeeTaxIncl($methodObj),
                                 'fixedFeeTaxExcl' => isset($methodObj->surcharge_fixed_amount_tax_excl) ? $methodObj->surcharge_fixed_amount_tax_excl : '0.00',
-                                // Percentage fee fields
                                 'percentageFee' => isset($methodObj->surcharge_percentage) ? $methodObj->surcharge_percentage : '0.00',
                                 'maxFeeCap' => isset($methodObj->surcharge_limit) ? $methodObj->surcharge_limit : '0.00',
                             ],
                             'orderRestrictions' => [
-                                // User-configured values (can override within API limits)
                                 'minAmount' => (isset($methodObj->min_amount) && $methodObj->min_amount > 0)
                                     ? $methodObj->min_amount
                                     : '',
                                 'maxAmount' => (isset($methodObj->max_amount) && $methodObj->max_amount > 0)
                                     ? $methodObj->max_amount
                                     : '',
-                                // API limits for validation and helper text
                                 'apiMinAmount' => $method['minimumAmount'] ? $method['minimumAmount']['value'] : null,
                                 'apiMaxAmount' => $method['maximumAmount'] ? $method['maximumAmount']['value'] : null,
                             ],
@@ -444,21 +403,18 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                         'exception' => ExceptionUtility::getExceptions($e),
                         'method_data' => $method,
                     ]);
-                    // Skip this method and continue with others
                     continue;
                 }
             }
 
-            // Sort by position
             usort($formattedMethods, function ($a, $b) {
                 return $a['position'] <=> $b['position'];
             });
 
-            // Prepare data structure for modern React frontend
             $responseData = [
                 'success' => true,
                 'data' => [
-                    'methods' => $formattedMethods, // Use 'methods' like original interface
+                    'methods' => $formattedMethods,
                     'countries' => $this->countryService->getActiveCountriesList(),
                     'taxRulesGroups' => $this->getTaxRulesGroups(),
                     'customerGroups' => $this->getCustomerGroups(),
@@ -468,13 +424,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                     'is_connected' => !empty($formattedMethods),
                 ],
             ];
-
-            // Response structure is always valid when we reach this point
-
-            $this->logger->info('Sending payment methods response', [
-                'methods_count' => isset($responseData['data']['methods']) ? count($responseData['data']['methods']) : 0,
-                'success' => $responseData['success'],
-            ]);
 
             $this->ajaxRender(json_encode($responseData));
         } catch (Exception $e) {
@@ -489,9 +438,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
     }
 
-    /**
-     * Toggle payment method enabled/disabled status
-     */
     private function ajaxTogglePaymentMethod(): void
     {
         try {
@@ -505,14 +451,12 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
             $shopId = $this->context->shop->id;
 
-            // Get the payment method by method ID
             $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($methodId, $environment, $shopId);
 
             if (!$paymentMethodId) {
                 throw new MollieException($this->module->l('Payment method not found', self::FILE_NAME));
             }
 
-            // Load and update the payment method
             $paymentMethod = new MolPaymentMethod((int) $paymentMethodId);
             $paymentMethod->enabled = $enabled;
             $result = $paymentMethod->save();
@@ -542,9 +486,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
     }
 
-    /**
-     * Update payment methods order (drag-drop reordering)
-     */
     private function ajaxUpdateMethodsOrder(): void
     {
         try {
@@ -557,14 +498,13 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
             $shopId = $this->context->shop->id;
 
-            // Update each method's position
             $updatedCount = 0;
             foreach ($methodIds as $position => $methodId) {
                 $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($methodId, $environment, $shopId);
 
                 if ($paymentMethodId) {
                     $paymentMethod = new MolPaymentMethod((int) $paymentMethodId);
-                    $paymentMethod->position = $position + 1; // Position starts from 1
+                    $paymentMethod->position = $position + 1;
                     if ($paymentMethod->save()) {
                         ++$updatedCount;
                     }
@@ -599,13 +539,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
     }
 
-    /**
-     * Refresh payment methods from Mollie API
-     */
     private function ajaxRefreshMethods(): void
     {
         try {
-            // Check if API is configured - same logic as authentication page
             $testApiKey = $this->configuration->get(Config::MOLLIE_API_KEY_TEST);
             $liveApiKey = $this->configuration->get(Config::MOLLIE_API_KEY);
             $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
@@ -623,11 +559,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
 
             $shopId = $this->context->shop->id;
 
-            // Get current payment methods from database
             $currentMethods = $this->paymentMethodRepository->getMethodsForCheckout($environment, $shopId) ?: [];
             $currentMethodIds = array_column($currentMethods, 'id_method');
 
-            // Get methods from Mollie API and save them
             $mollieClient = $this->module->getApiClient();
             $apiMethods = $this->apiService->getMethodsForConfig($mollieClient);
 
@@ -657,7 +591,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 }
             }
 
-            // Remove old payment methods that are no longer available
             $removedCount = 0;
             $methodsToRemove = array_diff($currentMethodIds, $savedMethodIds);
             if (!empty($methodsToRemove)) {
@@ -687,23 +620,18 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
     }
 
-    /**
-     * Get payment method title from translations table or fallback to API name
-     */
     private function getPaymentMethodTitle(string $methodId, string $defaultName): string
     {
         try {
             $langId = (int) $this->context->language->id;
             $shopId = $this->context->shop->id;
 
-            // Try to get custom title from translations table
             $translation = $this->paymentMethodLangRepository->findOneBy([
                 'id_method' => $methodId,
                 'id_lang' => $langId,
                 'id_shop' => $shopId,
             ]);
 
-            // The field is called 'text' not 'name' in MolPaymentMethodTranslations entity
             if ($translation && isset($translation->text) && !empty($translation->text)) {
                 return $translation->text;
             }
@@ -714,13 +642,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             ]);
         }
 
-        // Fallback to API method name
         return $defaultName;
     }
 
-    /**
-     * Save payment method settings (new individual save functionality)
-     */
     private function ajaxSavePaymentMethodSettings(): void
     {
         try {
@@ -739,7 +663,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
             $shopId = $this->context->shop->id;
 
-            // Use handler to save all settings
             $this->paymentMethodSettingsHandler->handlePaymentMethodSave($methodId, $settings, $environment, $shopId);
 
             $this->ajaxRender(json_encode([
@@ -763,15 +686,11 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
     }
 
-    /**
-     * Get tax rules groups for select options
-     */
     private function getTaxRulesGroups(): array
     {
         $taxRulesGroups = [];
 
         try {
-            // Fallback to direct database query since we don't have taxRulesGroupRepository injected
             $sql = 'SELECT id_tax_rules_group, name FROM ' . _DB_PREFIX_ . 'tax_rules_group WHERE active = 1 AND deleted = 0';
             $groups = Db::getInstance()->executeS($sql) ?: [];
 
@@ -790,9 +709,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         return $taxRulesGroups;
     }
 
-    /**
-     * Get customer groups for select options
-     */
     private function getCustomerGroups(): array
     {
         $customerGroups = [];
@@ -815,9 +731,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         return $customerGroups;
     }
 
-    /**
-     * Get payment fee type based on surcharge configuration
-     */
     private function getPaymentFeeType($methodObj): string
     {
         $surcharge = isset($methodObj->surcharge) ? (int) $methodObj->surcharge : 0;
@@ -834,13 +747,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
     }
 
-    /**
-     * Get custom logo URL if it exists
-     */
     private function getCustomLogoUrl(): ?string
     {
         try {
-            /** @var \Mollie\Provider\CreditCardLogoProvider $creditCardLogoProvider */
             $creditCardLogoProvider = $this->module->getService(\Mollie\Provider\CreditCardLogoProvider::class);
 
             if ($creditCardLogoProvider->logoExists()) {
@@ -855,20 +764,15 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         return null;
     }
 
-    /**
-     * Upload custom logo for card payment method
-     */
     private function ajaxUploadCustomLogo(): void
     {
         try {
-            /** @var \Mollie\Provider\CreditCardLogoProvider $creditCardLogoProvider */
             $creditCardLogoProvider = $this->module->getService(\Mollie\Provider\CreditCardLogoProvider::class);
             $targetFile = $creditCardLogoProvider->getLocalLogoPath();
             $isUploaded = 1;
             $imageFileType = pathinfo($targetFile, PATHINFO_EXTENSION);
             $returnText = '';
 
-            // Check if file was uploaded
             if (!isset($_FILES['fileToUpload']) || $_FILES['fileToUpload']['error'] !== UPLOAD_ERR_OK) {
                 $this->ajaxRender(json_encode([
                     'success' => false,
@@ -881,13 +785,11 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             $uploadedFile = $_FILES['fileToUpload'];
             $imageFileType = strtolower(pathinfo($uploadedFile['name'], PATHINFO_EXTENSION));
 
-            // Check image format
             if (!in_array($imageFileType, ['jpg', 'jpeg', 'png'])) {
                 $returnText = $this->module->l('Upload a .jpg or .png file.', self::FILE_NAME);
                 $isUploaded = 0;
             }
 
-            // Check image dimensions (max 256x64)
             if ($isUploaded === 1) {
                 $imageInfo = getimagesize($uploadedFile['tmp_name']);
                 if ($imageInfo === false) {
@@ -901,13 +803,11 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
 
             $logoUrl = null;
             if ($isUploaded === 1) {
-                // Create directory if it doesn't exist
                 $targetDir = dirname($targetFile);
                 if (!is_dir($targetDir)) {
                     mkdir($targetDir, 0755, true);
                 }
 
-                // Move uploaded file
                 if (move_uploaded_file($uploadedFile['tmp_name'], $targetFile)) {
                     $returnText = basename($uploadedFile['name']);
                     $logoUrl = $creditCardLogoProvider->getLogoPathUri() . '?' . time();
@@ -934,10 +834,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
     }
 
-    /**
-     * Calculate fixed fee tax incl from tax excl + tax rules group
-     * This field is not stored in DB, must be calculated on load
-     */
     private function calculateFixedFeeTaxIncl($methodObj): string
     {
         if (!isset($methodObj->surcharge_fixed_amount_tax_excl) || $methodObj->surcharge_fixed_amount_tax_excl <= 0) {
@@ -947,13 +843,11 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         $taxExcl = (float) $methodObj->surcharge_fixed_amount_tax_excl;
         $taxRulesGroupId = isset($methodObj->tax_rules_group_id) ? $methodObj->tax_rules_group_id : 0;
 
-        // If no tax rules, tax incl = tax excl
         if (!$taxRulesGroupId) {
             return number_format($taxExcl, 2, '.', '');
         }
 
         try {
-            // Use PrestaShop's tax manager
             $address = new Address();
             if (isset($this->context->cart->id_address_delivery)) {
                 $address = new Address((int) $this->context->cart->id_address_delivery);
@@ -973,17 +867,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             ]);
         }
 
-        // Fallback: return tax excl if calculation fails
         return number_format($taxExcl, 2, '.', '');
     }
 
-    /**
-     * Get credit card Mollie Components setting based on environment
-     *
-     * @param MolPaymentMethod $methodObj Payment method object
-     *
-     * @return bool Mollie Components enabled
-     */
     private function getCreditCardMollieComponentsSetting($methodObj): bool
     {
         $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
@@ -994,13 +880,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         return $value;
     }
 
-    /**
-     * Get credit card one-click payment setting based on environment
-     *
-     * @param MolPaymentMethod $methodObj Payment method object
-     *
-     * @return bool One-click payments enabled
-     */
     private function getCreditCardOneClickSetting($methodObj): bool
     {
         $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);

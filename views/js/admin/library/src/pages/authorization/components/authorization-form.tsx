@@ -305,7 +305,9 @@ export default function AuthorizationForm() {
                   )}
                 </div>
 
-                <p className="text-sm text-black mt-2">{t('apiKeyDescription', mode)}</p>
+                {!isConnected && (
+                  <p className="text-sm text-black mt-2">{t('apiKeyDescription', mode)}</p>
+                )}
               </div>
             )}
 

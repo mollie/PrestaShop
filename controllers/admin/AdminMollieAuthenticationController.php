@@ -45,21 +45,15 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         $this->configuration = $this->module->getService(ConfigurationAdapter::class);
     }
 
-    /**
-     * Initialize the authentication page
-     */
     public function init(): void
     {
         parent::init();
 
-        //todo use module version after redesign will finish.
         $version = time();
 
-        // Pass JS URL to template for ES module loading
         $jsUrl = $this->module->getPathUri() . 'views/js/admin/library/dist/assets/authorization.js?v=' . $version;
         $this->context->smarty->assign('mollieAuthJsUrl', $jsUrl);
 
-        // Add the shared CSS file
         $this->context->controller->addCSS(
             $this->module->getPathUri() . 'views/js/admin/library/dist/assets/globals.css?v=' . $version,
             'all',
@@ -67,12 +61,10 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             false
         );
 
-        // Add AJAX URL with proper token for React app
         Media::addJsDef([
             'mollieAuthAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAuthentication'),
         ]);
 
-        // Add translations for React app
         Media::addJsDef([
             'mollieAuthTranslations' => [
                 'mode' => $this->module->l('Mode', self::FILE_NAME),
@@ -115,9 +107,6 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         );
     }
 
-    /**
-     * Handle AJAX requests
-     */
     public function displayAjax(): void
     {
         if (!$this->tools->isSubmit('ajax')) {
@@ -148,34 +137,23 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         }
     }
 
-    /**
-     * Test API keys - copied from AdminMollieAjaxController::testApiKeys()
-     *
-     * @throws PrestaShopException
-     * @throws SmartyException
-     */
     private function ajaxTestApiKeys(): void
     {
         $testKey = $this->tools->getValue('testKey');
         $liveKey = $this->tools->getValue('liveKey');
 
-        /** @var ApiTestFeedbackBuilder $apiTestFeedbackBuilder */
         $apiTestFeedbackBuilder = $this->module->getService(ApiTestFeedbackBuilder::class);
         $apiTestFeedbackBuilder->setTestKey($testKey);
         $apiTestFeedbackBuilder->setLiveKey($liveKey);
         $apiKeysTestInfo = $apiTestFeedbackBuilder->buildParams();
 
         $this->context->smarty->assign($apiKeysTestInfo);
-        // Return structured data instead of HTML template (api_test_results.tpl was removed)
         $this->ajaxRender(json_encode([
             'success' => true,
             'data' => $apiKeysTestInfo,
         ]));
     }
 
-    /**
-     * Get current API key settings
-     */
     private function ajaxGetCurrentSettings(): void
     {
         try {
@@ -183,8 +161,6 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             $liveApiKey = $this->configuration->get(Config::MOLLIE_API_KEY);
             $environment = $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
 
-            // Check if current API keys are valid using ApiTestFeedbackBuilder
-            /** @var ApiTestFeedbackBuilder $apiTestFeedbackBuilder */
             $apiTestFeedbackBuilder = $this->module->getService(ApiTestFeedbackBuilder::class);
 
             $testKeyValid = false;
@@ -200,7 +176,6 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 $liveKeyValid = $liveKeyInfo['status'] && !$liveKeyInfo['warning'];
             }
 
-            // Determine if connected based on current environment
             $isConnected = $environment ? $liveKeyValid : $testKeyValid;
 
             $this->ajaxRender(json_encode([
@@ -223,21 +198,16 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         }
     }
 
-    /**
-     * Save API key to configuration
-     */
     private function ajaxSaveApiKey(): void
     {
         try {
             $apiKey = $this->tools->getValue('api_key');
-            $environment = $this->tools->getValue('environment'); // 'test' or 'live'
+            $environment = $this->tools->getValue('environment');
 
             if (!$apiKey || !$environment) {
                 throw new MollieException($this->module->l('Missing required parameters', self::FILE_NAME));
             }
 
-            // Validate API key using ApiTestFeedbackBuilder
-            /** @var ApiTestFeedbackBuilder $apiTestFeedbackBuilder */
             $apiTestFeedbackBuilder = $this->module->getService(ApiTestFeedbackBuilder::class);
 
             $isTestKey = ($environment === 'test');
@@ -262,13 +232,10 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 return;
             }
 
-            // Determine configuration key
             $configKey = ($environment === 'live') ? Config::MOLLIE_API_KEY : Config::MOLLIE_API_KEY_TEST;
 
-            // Save to configuration
             $this->configuration->updateValue($configKey, $apiKey);
 
-            // Also update environment setting
             $environmentValue = ($environment === 'live') ? Config::ENVIRONMENT_LIVE : Config::ENVIRONMENT_TEST;
             $this->configuration->updateValue(Config::MOLLIE_ENVIRONMENT, $environmentValue);
 
@@ -293,30 +260,22 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         }
     }
 
-    /**
-     * Switch environment between test and live
-     */
     private function ajaxSwitchEnvironment(): void
     {
         try {
-            $environment = $this->tools->getValue('environment'); // 'test' or 'live'
+            $environment = $this->tools->getValue('environment');
 
             if (!$environment || !in_array($environment, ['test', 'live'])) {
                 throw new MollieException($this->module->l('Invalid environment parameter. Must be "test" or "live"', self::FILE_NAME));
             }
 
-            // Convert to configuration value
             $environmentValue = ($environment === 'live') ? Config::ENVIRONMENT_LIVE : Config::ENVIRONMENT_TEST;
 
-            // Update environment setting
             $this->configuration->updateValue(Config::MOLLIE_ENVIRONMENT, $environmentValue);
 
-            // Get the current API keys to determine connection status
             $testApiKey = $this->configuration->get(Config::MOLLIE_API_KEY_TEST);
             $liveApiKey = $this->configuration->get(Config::MOLLIE_API_KEY);
 
-            // Check if the switched environment has a valid API key
-            /** @var ApiTestFeedbackBuilder $apiTestFeedbackBuilder */
             $apiTestFeedbackBuilder = $this->module->getService(ApiTestFeedbackBuilder::class);
 
             $isConnected = false;

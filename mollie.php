@@ -83,7 +83,6 @@ class Mollie extends PaymentModule
     const ADMIN_MOLLIE_CONTROLLER = 'AdminMollieModule';
     const ADMIN_MOLLIE_AJAX_CONTROLLER = 'AdminMollieAjax';
     const ADMIN_MOLLIE_TAB_CONTROLLER = 'AdminMollieTabParent';
-    const ADMIN_MOLLIE_SETTINGS_CONTROLLER = 'AdminMollieSettings';
     const ADMIN_MOLLIE_AUTHENTICATION_CONTROLLER = 'AdminMollieAuthentication';
     const ADMIN_MOLLIE_PAYMENT_METHODS_CONTROLLER = 'AdminMolliePaymentMethods';
     const ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_PARENT_CONTROLLER = 'AdminMollieSubscriptionOrdersParent';
@@ -967,6 +966,8 @@ class Mollie extends PaymentModule
 
     /**
      * @return array
+     *
+     * Returns tab structure - duplicate pattern for sidebar + horizontal visibility
      */
     public function getTabs()
     {
@@ -984,49 +985,76 @@ class Mollie extends PaymentModule
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
                 'visible' => false,
             ],
+            // API Configuration - sidebar entry (parent)
             [
-                'name' => $this->l('Settings'),
-                'class_name' => self::ADMIN_MOLLIE_SETTINGS_CONTROLLER,
-                'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
+                'name' => $this->l('API Configuration'),
+                'class_name' => 'AdminMollieAuthenticationParent',
+                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
             ],
+            // API Configuration - horizontal tab (child)
             [
-                'name' => $this->l('Authentication'),
+                'name' => $this->l('API Configuration'),
                 'class_name' => self::ADMIN_MOLLIE_AUTHENTICATION_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
             ],
+            // Payment Methods - sidebar entry (parent)
+            [
+                'name' => $this->l('Payment Methods'),
+                'class_name' => 'AdminMolliePaymentMethodsParent',
+                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
+            ],
+            // Payment Methods - horizontal tab (child)
             [
                 'name' => $this->l('Payment Methods'),
                 'class_name' => self::ADMIN_MOLLIE_PAYMENT_METHODS_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
             ],
+            // Advanced Settings - sidebar entry (parent)
+            [
+                'name' => $this->l('Advanced Settings'),
+                'class_name' => 'AdminMollieAdvancedSettingsParent',
+                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
+            ],
+            // Advanced Settings - horizontal tab (child)
+            [
+                'name' => $this->l('Advanced Settings'),
+                'class_name' => 'AdminMollieAdvancedSettings',
+                'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
+            ],
+            // Subscriptions - sidebar entry (parent)
             [
                 'name' => $this->l('Subscriptions'),
                 'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_PARENT_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
             ],
+            // Subscriptions - horizontal tab (child)
             [
                 'name' => $this->l('Subscriptions'),
                 'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
             ],
+            // Subscription FAQ - sidebar entry (parent)
             [
                 'name' => $this->l('Subscription FAQ'),
                 'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_FAQ_PARENT_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
                 'module_tab' => true,
             ],
+            // Subscription FAQ - horizontal tab (child)
             [
                 'name' => $this->l('Subscription FAQ'),
                 'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_FAQ_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
                 'module_tab' => true,
             ],
+            // Logs - sidebar entry (parent)
             [
                 'name' => $this->l('Logs'),
                 'class_name' => self::ADMIN_MOLLIE_LOGS_PARENT_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
                 'module_tab' => true,
             ],
+            // Logs - horizontal tab (child)
             [
                 'name' => $this->l('Logs'),
                 'class_name' => self::ADMIN_MOLLIE_LOGS_CONTROLLER,

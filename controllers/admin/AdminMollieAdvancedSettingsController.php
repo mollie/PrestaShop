@@ -54,17 +54,12 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         $this->carrierInformationService = $this->module->getService(MolCarrierInformationService::class);
     }
 
-    /**
-     * Initialize the advanced settings page
-     */
     public function init(): void
     {
         parent::init();
 
-        //todo use module version after redesign will finish.
         $version = time();
 
-        // Add the shared CSS file
         $this->context->controller->addCSS(
             $this->module->getPathUri() . 'views/js/admin/library/dist/assets/globals.css?v=' . $version,
             'all',
@@ -72,7 +67,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             false
         );
 
-        // Add the component-specific CSS file
         $this->context->controller->addCSS(
             $this->module->getPathUri() . 'views/js/admin/library/dist/assets/mollie-advanced-settings.css?v=' . $version,
             'all',
@@ -80,16 +74,13 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             false
         );
 
-        // Pass URLs to template for ES module loading
         $jsUrl = $this->module->getPathUri() . 'views/js/admin/library/dist/assets/mollie-advanced-settings.js?v=' . $version;
         $this->context->smarty->assign('mollieAdvancedSettingsJsUrl', $jsUrl);
 
-        // Add AJAX URL with proper token for React app
         Media::addJsDef([
             'mollieAdvancedSettingsAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAdvancedSettings'),
         ]);
 
-        // Add translations for React app
         Media::addJsDef([
             'mollieAdvancedSettingsTranslations' => $this->getTranslations(),
         ]);
@@ -99,9 +90,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         );
     }
 
-    /**
-     * Get all translations for React app
-     */
     private function getTranslations(): array
     {
         return [
@@ -125,9 +113,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         ];
     }
 
-    /**
-     * Handle AJAX requests
-     */
     public function displayAjax(): void
     {
         if (!$this->tools->isSubmit('ajax')) {
@@ -152,9 +137,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         }
     }
 
-    /**
-     * Get all advanced settings data
-     */
     private function ajaxGetSettings(): void
     {
         try {
@@ -175,45 +157,33 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
                 return;
             }
 
-            // Get raw values from configuration
             $invoiceOptionRaw = $this->configuration->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS);
             $confirmationEmailRaw = $this->configuration->get(Config::MOLLIE_SEND_ORDER_CONFIRMATION);
             $logLevelRaw = $this->configuration->get(Config::MOLLIE_DEBUG_LOG);
             $logoDisplayRaw = $this->configuration->get(Config::MOLLIE_IMAGES);
             $translateMollieRaw = $this->configuration->get(Config::MOLLIE_PAYMENTSCREEN_LOCALE);
 
-            // Handle legacy value 'send_locale' (old versions used this instead of 'website_locale')
             if ($translateMollieRaw === 'send_locale') {
                 $translateMollieRaw = Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE;
             }
 
             $settings = [
-                // Order Settings - use value if set AND valid, otherwise use default
-                // Always return as string to match option IDs
                 'invoiceOption' => ($invoiceOptionRaw !== false && $invoiceOptionRaw !== '' && $invoiceOptionRaw !== null)
                     ? (string) $invoiceOptionRaw
                     : (string) Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_DEFAULT,
-                // confirmationEmail: return DB value as-is, default to "When the order is paid"
                 'confirmationEmail' => ($confirmationEmailRaw !== false && $confirmationEmailRaw !== '' && $confirmationEmailRaw !== null)
                     ? (string) $confirmationEmailRaw
                     : (string) Config::ORDER_CONF_MAIL_SEND_ON_PAID,
 
-                // Shipping Settings
                 'autoShip' => (bool) $this->configuration->get(Config::MOLLIE_AUTO_SHIP_MAIN),
                 'autoShipStatuses' => array_map('strval', json_decode($this->configuration->get(Config::MOLLIE_AUTO_SHIP_STATUSES) ?: '[]', true)),
                 'carriers' => $this->getCarriersData(),
 
-                // Error Debugging
                 'debugMode' => (bool) $this->configuration->get(Config::MOLLIE_DISPLAY_ERRORS),
-                // logLevel can be 0 (valid), so check for false, null, empty string only
-                // Always return as string to match option IDs
                 'logLevel' => ($logLevelRaw !== false && $logLevelRaw !== '' && $logLevelRaw !== null)
                     ? (string) $logLevelRaw
                     : (string) Config::DEBUG_LOG_ERRORS,
 
-                // Visual Settings
-                // logoDisplay and translateMollie - use value if set, otherwise default
-                // Always return as string to match option IDs
                 'logoDisplay' => ($logoDisplayRaw !== false && $logoDisplayRaw !== '' && $logoDisplayRaw !== null)
                     ? (string) $logoDisplayRaw
                     : (string) Config::LOGOS_NORMAL,
@@ -222,13 +192,10 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
                     ? (string) $translateMollieRaw
                     : (string) Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE,
 
-                // Order Status Mapping
                 'statusMappings' => $this->getStatusMappings(),
 
-                // Order Status Emails
                 'emailStatuses' => $this->getEmailStatuses(),
 
-                // Available options for dropdowns
                 'options' => [
                     'orderStatuses' => $this->getOrderStatuses(),
                     'invoiceOptions' => $this->getInvoiceOptions(),
@@ -252,9 +219,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         }
     }
 
-    /**
-     * Save advanced settings
-     */
     private function ajaxSaveSettings(): void
     {
         try {
@@ -264,7 +228,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
                 throw new Exception('Invalid data');
             }
 
-            // Save Order Settings
             if (isset($data['invoiceOption'])) {
                 $this->configuration->updateValue(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS, $data['invoiceOption']);
             }
@@ -272,7 +235,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
                 $this->configuration->updateValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION, $data['confirmationEmail']);
             }
 
-            // Save Shipping Settings
             if (isset($data['autoShip'])) {
                 $this->configuration->updateValue(Config::MOLLIE_AUTO_SHIP_MAIN, (bool) $data['autoShip']);
             }
@@ -283,7 +245,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
                 $this->saveCarriersData($data['carriers']);
             }
 
-            // Save Error Debugging
             if (isset($data['debugMode'])) {
                 $this->configuration->updateValue(Config::MOLLIE_DISPLAY_ERRORS, (bool) $data['debugMode']);
             }
@@ -291,7 +252,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
                 $this->configuration->updateValue(Config::MOLLIE_DEBUG_LOG, $data['logLevel']);
             }
 
-            // Save Visual Settings
             if (isset($data['logoDisplay'])) {
                 $this->configuration->updateValue(Config::MOLLIE_IMAGES, $data['logoDisplay']);
             }
@@ -302,12 +262,10 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
                 $this->configuration->updateValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE, $data['translateMollie']);
             }
 
-            // Save Order Status Mapping
             if (isset($data['statusMappings'])) {
                 $this->saveStatusMappings($data['statusMappings']);
             }
 
-            // Save Order Status Emails
             if (isset($data['emailStatuses'])) {
                 $this->saveEmailStatuses($data['emailStatuses']);
             }
@@ -325,9 +283,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         }
     }
 
-    /**
-     * Get carriers data with tracking URLs
-     */
     private function getCarriersData(): array
     {
         $carriers = $this->carrierInformationService->getAllCarriersInformation($this->language->getDefaultLanguageId());
@@ -345,9 +300,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         return $result;
     }
 
-    /**
-     * Save carriers data
-     */
     private function saveCarriersData(array $carriers): void
     {
         foreach ($carriers as $carrier) {
@@ -356,7 +308,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
                 $urlSource = $carrier['urlSource'];
                 $customUrl = $carrier['customUrl'] ?? '';
 
-                // Use the service to save carrier information
                 $this->carrierInformationService->saveMolCarrierInfo(
                     $carrierId,
                     $urlSource,
@@ -366,9 +317,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         }
     }
 
-    /**
-     * Get order status mappings (Mollie status → PrestaShop status)
-     */
     private function getStatusMappings(): array
     {
         $statuses = [];
@@ -398,9 +346,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         return $statuses;
     }
 
-    /**
-     * Save status mappings
-     */
     private function saveStatusMappings(array $mappings): void
     {
         foreach ($mappings as $mapping) {
@@ -410,9 +355,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         }
     }
 
-    /**
-     * Get email status settings
-     */
     private function getEmailStatuses(): array
     {
         $emailKeys = [
@@ -438,9 +380,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         return $statuses;
     }
 
-    /**
-     * Save email status settings
-     */
     private function saveEmailStatuses(array $statuses): void
     {
         foreach ($statuses as $status) {
@@ -450,9 +389,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         }
     }
 
-    /**
-     * Get PrestaShop order statuses
-     */
     private function getOrderStatuses(): array
     {
         $orderStatuses = OrderState::getOrderStates($this->language->getDefaultLanguageId());
@@ -468,9 +404,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         return $result;
     }
 
-    /**
-     * Get invoice creation options
-     */
     private function getInvoiceOptions(): array
     {
         return [
@@ -480,9 +413,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         ];
     }
 
-    /**
-     * Get confirmation email options
-     */
     private function getConfirmationEmailOptions(): array
     {
         return [
@@ -491,9 +421,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         ];
     }
 
-    /**
-     * Get log level options
-     */
     private function getLogLevelOptions(): array
     {
         return [
@@ -503,9 +430,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         ];
     }
 
-    /**
-     * Get logo display options
-     */
     private function getLogoDisplayOptions(): array
     {
         return [
@@ -515,9 +439,6 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         ];
     }
 
-    /**
-     * Get translate Mollie options
-     */
     private function getTranslateMollieOptions(): array
     {
         return [

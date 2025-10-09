@@ -115,9 +115,6 @@ class Uninstall
         $tabs = [
             'AdminMollieAjax',
             'AdminMollieModule',
-            'AdminMollieAuthentication',
-            'AdminMolliePaymentMethods',
-            'AdminMollieAdvancedSettings',
         ];
 
         foreach ($tabs as $tab) {
@@ -132,5 +129,7 @@ class Uninstall
                 return false;
             }
         }
+
+        return true;
     }
 }
