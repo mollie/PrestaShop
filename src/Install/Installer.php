@@ -148,46 +148,9 @@ class Installer implements InstallerInterface
 
     public function installSpecificTabs(): void
     {
-        $tabs = [
-            // Parent tab in IMPROVE menu
-            ['AdminMollieModule_MTR', 'IMPROVE', 'Mollie', true, 'mollie'],
-            // Main settings tab (child of parent)
-            ['AdminMollieModule', 'AdminMollieModule_MTR', 'Settings', true, 'mollie'],
-            // Sub-tabs (children of Settings tab) - these appear as tabs within the configuration page
-            ['AdminMollieAuthentication', 'AdminMollieModule', 'API Configuration', true, ''],
-            ['AdminMolliePaymentMethods', 'AdminMollieModule', 'Payment Methods', true, ''],
-            ['AdminMollieAdvancedSettings', 'AdminMollieModule', 'Advanced Settings', true, ''],
-            // Subscription management
-            ['AdminMollieSubscriptionOrdersParent', 'AdminMollieModule', 'Subscriptions', true, 'autorenew'],
-            ['AdminMollieSubscriptionOrders', 'AdminMollieSubscriptionOrdersParent', 'Subscription Orders', true, ''],
-            // Subscription FAQ
-            ['AdminMollieSubscriptionFAQParent', 'AdminMollieModule', 'Subscription FAQ', true, 'help'],
-            ['AdminMollieSubscriptionFAQ', 'AdminMollieSubscriptionFAQParent', 'FAQ', true, ''],
-            // Logs
-            ['AdminMollieLogsParent', 'AdminMollieModule', 'Logs', true, 'description'],
-            ['AdminMollieLogs', 'AdminMollieLogsParent', 'View Logs', true, ''],
-        ];
-
-        foreach ($tabs as $tab) {
-            $result = $this->installTab($tab[0], $tab[1], $tab[2], $tab[3], $tab[4]);
-            if (!$result) {
-                PrestaShopLogger::addLog(
-                    "Mollie: Failed to install tab {$tab[0]}",
-                    3,
-                    null,
-                    'Mollie',
-                    1
-                );
-            } else {
-                PrestaShopLogger::addLog(
-                    "Mollie: Successfully installed/updated tab {$tab[0]}",
-                    1,
-                    null,
-                    'Mollie',
-                    1
-                );
-            }
-        }
+        // Install parent tabs manually - exactly as it was before
+        $this->installTab('AdminMollieModule_MTR', 'IMPROVE', 'Mollie', true, 'mollie');
+        $this->installTab('AdminMollieModule', 'AdminMollieModule_MTR', 'Settings', false);
     }
 
     public function getErrors()

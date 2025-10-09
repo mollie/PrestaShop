@@ -17,25 +17,17 @@ if (!defined('_PS_VERSION_')) {
 
 /**
  * Upgrade to version 6.4.1
- * - Add new admin tabs: Authentication, Payment Methods, Advanced Settings
+ * - Ensure all admin tabs are installed: old subscription tabs and new React-based tabs
  */
 function upgrade_module_6_4_1(Mollie $module): bool
 {
     /** @var Installer $installer */
     $installer = $module->getService(Installer::class);
 
-    // Install new admin tabs for modern React-based interface
-    // These tabs appear within the Settings configuration page as sub-tabs
-    $tabsInstalled = true;
-    $tabsInstalled &= $installer->installTab('AdminMollieAuthentication', 'AdminMollieModule', 'API Configuration', true, '');
-    $tabsInstalled &= $installer->installTab('AdminMolliePaymentMethods', 'AdminMollieModule', 'Payment Methods', true, '');
-    $tabsInstalled &= $installer->installTab('AdminMollieAdvancedSettings', 'AdminMollieModule', 'Advanced Settings', true, '');
+    // Install all tabs to ensure both old and new tabs are present
+    // This handles upgrades from any previous version
+    $installer->installSpecificTabs();
 
-    if (!$tabsInstalled) {
-        PrestaShopLogger::addLog('Mollie upgrade 6.4.1: Failed to install new admin tabs', 3, null, 'Mollie', 1);
-        return false;
-    }
-
-    PrestaShopLogger::addLog('Mollie upgrade 6.4.1: Successfully installed new admin tabs', 1, null, 'Mollie', 1);
+    PrestaShopLogger::addLog('Mollie upgrade 6.4.1: Successfully installed/updated all admin tabs', 1, null, 'Mollie', 1);
     return true;
 }

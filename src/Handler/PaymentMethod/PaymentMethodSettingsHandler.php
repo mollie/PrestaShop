@@ -88,15 +88,6 @@ class PaymentMethodSettingsHandler
      */
     public function handlePaymentMethodSave(string $methodId, array $settings, int $environment, int $shopId): void
     {
-        $this->logger->info('Saving payment method settings', [
-            'method_id' => $methodId,
-            'title' => $settings['title'] ?? 'NOT SET',
-            'transaction_description' => $settings['transactionDescription'] ?? 'NOT SET',
-            'mollieComponents' => $settings['mollieComponents'] ?? 'NOT SET',
-            'oneClickPayments' => $settings['oneClickPayments'] ?? 'NOT SET',
-            'all_settings' => $settings,
-        ]);
-
         // Get or create payment method
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId(
             $methodId,
@@ -332,26 +323,12 @@ class PaymentMethodSettingsHandler
             $configKey = Config::MOLLIE_IFRAME[$currentEnv];
             $value = $settings['mollieComponents'] ? 1 : 0;
             $this->configuration->updateValue($configKey, $value);
-
-            $this->logger->info('Saved Mollie Components setting', [
-                'environment' => $currentEnv,
-                'config_key' => $configKey,
-                'value' => $value,
-                'input_value' => $settings['mollieComponents'],
-            ]);
         }
 
         if (isset($settings['oneClickPayments'])) {
             $configKey = Config::MOLLIE_SINGLE_CLICK_PAYMENT[$currentEnv];
             $value = $settings['oneClickPayments'] ? 1 : 0;
             $this->configuration->updateValue($configKey, $value);
-
-            $this->logger->info('Saved One-Click Payment setting', [
-                'environment' => $currentEnv,
-                'config_key' => $configKey,
-                'value' => $value,
-                'input_value' => $settings['oneClickPayments'],
-            ]);
         }
 
         if (isset($settings['useCustomLogo'])) {
@@ -409,10 +386,6 @@ class PaymentMethodSettingsHandler
             // Find the specific method we're saving
             foreach ($apiMethods as $apiMethod) {
                 if ($apiMethod['id'] === $methodId) {
-                    $this->logger->info('Successfully fetched payment method from Mollie API', [
-                        'method_id' => $methodId,
-                        'has_image' => isset($apiMethod['image']),
-                    ]);
 
                     return $apiMethod;
                 }
