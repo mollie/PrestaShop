@@ -49,6 +49,6 @@ parameters:
     - '#Access to undefined constant PrestaShopLogger::LOG_SEVERITY_LEVEL_WARNING.#'
     - '#Access to undefined constant PrestaShopLogger::LOG_SEVERITY_LEVEL_ERROR.#'
     - '#Access to undefined constant PrestaShopLogger::LOG_SEVERITY_LEVEL_MAJOR.#'
-    - '# The use statement with non-compound name ''OrderState'' has no effect#'
+    - '#The use statement with non-compound name ''OrderState'' has no effect#'
 
   level: 5
