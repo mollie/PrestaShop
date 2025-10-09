@@ -16,6 +16,7 @@ use Mollie;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\TransactionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -62,6 +63,10 @@ class CancelService
     public function isCanceled(string $transactionId): bool
     {
         try {
+            if (false === TransactionUtility::isOrderTransaction($transactionId)) {
+                return false;
+            }
+
             $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
 
             return $order->status === 'canceled';

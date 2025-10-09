@@ -26,7 +26,7 @@ class AssortUtility
      *
      * @since 3.3.0
      */
-    public static function aasort(& $array, $key)
+    public static function aasort(&$array, $key)
     {
         $sorter = [];
         $ret = [];
