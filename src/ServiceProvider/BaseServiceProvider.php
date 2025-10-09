@@ -113,6 +113,7 @@ use Mollie\Repository\TaxRulesGroupRepositoryInterface;
 use Mollie\Service\ApiKeyService;
 use Mollie\Service\ApiService;
 use Mollie\Service\ApiServiceInterface;
+use Mollie\Service\CountryService;
 use Mollie\Service\Content\SmartyTemplateParser;
 use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\EntityManager\EntityManagerInterface;

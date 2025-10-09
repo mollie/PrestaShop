@@ -17,6 +17,7 @@ parameters:
   reportUnmatchedIgnoredErrors: false
   checkMissingIterableValueType: false
   ignoreErrors:
+    - '#The use statement with non-compound name .* has no effect.*AdminMollieAdvancedSettingsController\.php#'
     - '#Parameter \#1 \$id of class MolPaymentMethod constructor expects int\|null, string\|false\|null given.#'
     - '#Parameter \#4 \$ssl of method LinkCore::getModuleLink\(\) expects null, true given.#'
     - '#Class OrderOpcControllerCore not found.#'

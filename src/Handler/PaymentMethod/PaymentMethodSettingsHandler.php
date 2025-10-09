@@ -171,7 +171,7 @@ class PaymentMethodSettingsHandler
     ): void {
         $paymentMethod->id_method = $methodId;
         $paymentMethod->method_name = $methodId;
-        $paymentMethod->enabled = ($settings['enabled'] ?? false) ? 1 : 0;
+        $paymentMethod->enabled = $settings['enabled'];
         $paymentMethod->method = $settings['apiSelection'] ?? 'payments';
         $paymentMethod->description = $settings['transactionDescription'] ?? '';
 
