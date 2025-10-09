@@ -4,7 +4,6 @@ yarn-error.log
 .idea/
 build/
 .codecept.phar
-/translations/
 var/
 config.xml
 mails/

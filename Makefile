@@ -84,9 +84,6 @@ upgrading-module-test-$(VERSION):
 	git checkout develop --force
 	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install $(module)"
 
-npm-package-install:
-	cd views/assets && npm i && npm run build
-
 prepare-zip:
 	composer install --no-dev --optimize-autoloader --classmap-authoritative
 	composer dump-autoload --no-dev --optimize --classmap-authoritative
@@ -104,7 +101,5 @@ run-ps-unit-tests:
 create-env:
 	echo "SENTRY_ENV='$(env)'" > .env
 
-rebuild-js:
-	cd views/js && npm i --legacy-peer-deps
-	cd views/js && npm install html-webpack-plugin@4.5.2 --legacy-peer-deps
-	cd views/js && npm run build
+build-react:
+	cd views/js/admin/library && npm install && npm run build && cd ../../../../..
