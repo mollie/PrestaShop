@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
-import { Info, CheckCircle, XCircle } from "lucide-react"
+import { CheckCircle, XCircle } from "lucide-react"
 import { PaymentMethodTabs } from "./payment-method-tabs"
 import { PaymentMethodsList } from "./payment-methods-list-component"
 import { PaymentMethodsSkeleton } from "./payment-methods-skeleton"
@@ -264,7 +264,6 @@ export default function PaymentMethodsPage() {
 
       {/* Info Banner */}
       <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4 flex items-start gap-3">
-        <Info className="h-5 w-5 text-cyan-600 mt-0.5 flex-shrink-0" />
         <div className="text-sm text-cyan-800">
           Here you can see all of the {activeTab === "enabled" ? t('enabled') : t('disabled')} payment options. To include new
           payment methods go to{" "}

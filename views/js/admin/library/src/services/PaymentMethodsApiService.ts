@@ -57,6 +57,7 @@ export interface PaymentMethod {
       maxAmount: string
       apiMinAmount: string | null
       apiMaxAmount: string | null
+      currency: string | null
     }
     applePaySettings?: {
       directProduct?: boolean
