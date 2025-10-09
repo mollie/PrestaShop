@@ -193,7 +193,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
 
                 'orderRestrictions' => $this->module->l('Order restrictions', self::FILE_NAME),
 
-
                 'save' => $this->module->l('Save', self::FILE_NAME),
                 'saving' => $this->module->l('Saving...', self::FILE_NAME),
                 'loadingMethods' => $this->module->l('Loading payment methods...', self::FILE_NAME),
@@ -202,7 +201,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
 
                 'transactionDescriptionHelp' => $this->module->l('Use any of the following variables to create a transaction description for payments that use this method:', self::FILE_NAME),
                 'transactionDescriptionVariables' => $this->module->l('{orderNumber}, {storeName}, {countryCode}, {cart.id}, {order.reference}, {customer.firstname}, {customer.lastname}, {customer.company}', self::FILE_NAME),
-
 
                 'paymentMethodNotFound' => $this->module->l('Payment method not found', self::FILE_NAME),
                 'settingsSavedSuccessfully' => $this->module->l('Settings saved successfully!', self::FILE_NAME),
@@ -227,7 +225,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'applePayButtonBlackDesc' => $this->module->l('Black Apple Pay button', self::FILE_NAME),
                 'applePayButtonOutlineDesc' => $this->module->l('White with outline', self::FILE_NAME),
                 'applePayButtonWhiteDesc' => $this->module->l('White Apple Pay button', self::FILE_NAME),
-
 
                 'selectOption' => $this->module->l('Select option', self::FILE_NAME),
                 'selectOptions' => $this->module->l('Select options', self::FILE_NAME),
@@ -458,7 +455,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             }
 
             $paymentMethod = new MolPaymentMethod((int) $paymentMethodId);
-            $paymentMethod->enabled = $enabled ? 1 : 0;
+            $paymentMethod->enabled = $enabled;
             $result = $paymentMethod->save();
 
             if (!$result) {
@@ -841,7 +838,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
 
         $taxExcl = (float) $methodObj->surcharge_fixed_amount_tax_excl;
-        $taxRulesGroupId = isset($methodObj->tax_rules_group_id) ? (int) $methodObj->tax_rules_group_id : 0;
+        $taxRulesGroupId = isset($methodObj->tax_rules_group_id) ? $methodObj->tax_rules_group_id : 0;
 
         if (!$taxRulesGroupId) {
             return number_format($taxExcl, 2, '.', '');
@@ -856,11 +853,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             $taxManager = TaxManagerFactory::getManager($address, $taxRulesGroupId);
             $taxCalculator = $taxManager->getTaxCalculator();
 
-            if ($taxCalculator) {
-                $taxIncl = $taxCalculator->addTaxes($taxExcl);
+            $taxIncl = $taxCalculator->addTaxes($taxExcl);
 
-                return number_format($taxIncl, 2, '.', '');
-            }
+            return number_format($taxIncl, 2, '.', '');
         } catch (Exception $e) {
             $this->logger->error('Failed to calculate fixed fee tax incl', [
                 'exception' => ExceptionUtility::getExceptions($e),

@@ -162,7 +162,7 @@ class PaymentMethodSettingsHandler
     ): void {
         $paymentMethod->id_method = $methodId;
         $paymentMethod->method_name = $methodId;
-        $paymentMethod->enabled = ($settings['enabled'] ?? false) ? 1 : 0;
+        $paymentMethod->enabled = $settings['enabled'];
         $paymentMethod->method = $settings['apiSelection'] ?? 'payments';
         $paymentMethod->description = $settings['transactionDescription'] ?? '';
 
@@ -180,7 +180,7 @@ class PaymentMethodSettingsHandler
             $paymentMethod->images_json = json_encode([]);
         }
 
-        $paymentMethod->live_environment = $environment ? 1 : 0;
+        $paymentMethod->live_environment = $environment ? true : false;
         $paymentMethod->id_shop = $shopId;
     }
 
@@ -386,7 +386,6 @@ class PaymentMethodSettingsHandler
             // Find the specific method we're saving
             foreach ($apiMethods as $apiMethod) {
                 if ($apiMethod['id'] === $methodId) {
-
                     return $apiMethod;
                 }
             }

@@ -140,7 +140,7 @@ class SettingsSaveService
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public function saveSettings(& $errors = [])
+    public function saveSettings(&$errors = [])
     {
         // API key management is now handled by AdminMollieAuthentication controller
         // Only save non-authentication related settings here
