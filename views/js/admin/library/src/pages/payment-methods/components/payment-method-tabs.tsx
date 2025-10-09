@@ -1,6 +1,6 @@
 "use client"
 
-import { GripVertical, Info } from "lucide-react"
+import { GripVertical } from "lucide-react"
 import { cn } from "../../../shared/lib/utils"
 import { usePaymentMethodsTranslations } from "../../../shared/hooks/use-payment-methods-translations"
 
@@ -43,7 +43,6 @@ export function PaymentMethodTabs({ activeTab, onTabChange }: PaymentMethodTabsP
         <div className="flex items-center gap-2 text-sm text-blue-600">
           <GripVertical className="h-4 w-4" />
           <span>{t('dragPaymentOptionsToReorder')}</span>
-          <Info className="h-4 w-4 cursor-pointer hover:text-blue-700" />
         </div>
       )}
     </div>

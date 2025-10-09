@@ -124,6 +124,21 @@ export function AdvancedSettingsSkeleton() {
       <section className="settings-section">
         <div className="h-6 bg-gray-200 rounded w-44 mb-6 animate-pulse"></div>
 
+        <SkeletonToggleGroup />
+
+        <div className="form-group mb-4 animate-pulse">
+          <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
+          <div className="button-group mb-4">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="h-10 bg-gray-200 rounded flex-1"></div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="settings-section">
+        <div className="h-6 bg-gray-200 rounded w-44 mb-6 animate-pulse"></div>
+
         <div className="form-group mb-4 animate-pulse">
           <div className="h-4 bg-gray-200 rounded w-64 mb-2"></div>
           <div className="button-group mb-4">

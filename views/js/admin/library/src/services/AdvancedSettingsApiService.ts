@@ -35,6 +35,8 @@ export interface AdvancedSettingsData {
   autoShip: boolean;
   autoShipStatuses: string[];
   carriers: CarrierData[];
+  debugMode: boolean;
+  logLevel: string;
   logoDisplay: string;
   cssPath: string;
   translateMollie: string;
@@ -44,6 +46,7 @@ export interface AdvancedSettingsData {
     orderStatuses: OrderStatus[];
     invoiceOptions: { id: string; name: string }[];
     confirmationEmailOptions: { id: string; name: string }[];
+    logLevelOptions: { id: string; name: string }[];
     logoDisplayOptions: { id: string; name: string }[];
     translateMollieOptions: { id: string; name: string }[];
   };
@@ -61,6 +64,8 @@ export interface SaveAdvancedSettingsData {
   autoShip?: boolean;
   autoShipStatuses?: string[];
   carriers?: SaveCarrierData[];
+  debugMode?: boolean;
+  logLevel?: string;
   logoDisplay?: string;
   cssPath?: string;
   translateMollie?: string;
