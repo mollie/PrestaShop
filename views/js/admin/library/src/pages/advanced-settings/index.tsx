@@ -229,11 +229,14 @@ interface OrderStatus {
 const AdvancedSettings: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [notConfigured, setNotConfigured] = useState(false)
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [invoiceOption, setInvoiceOption] = useState("default")
   const [confirmationEmail, setConfirmationEmail] = useState("paid")
   const [autoShip, setAutoShip] = useState(true)
   const [autoShipStatuses, setAutoShipStatuses] = useState<string[]>(["shipped"])
+  const [debugMode, setDebugMode] = useState(false)
+  const [logLevel, setLogLevel] = useState("")
   const [logoDisplay, setLogoDisplay] = useState("")
   const [translateMollie, setTranslateMollie] = useState("")
   const [cssPath, setCssPath] = useState("")
@@ -245,6 +248,7 @@ const AdvancedSettings: React.FC = () => {
   const [orderStatuses, setOrderStatuses] = useState<OrderStatus[]>([])
   const [invoiceOptions, setInvoiceOptions] = useState<{ id: string; name: string }[]>([])
   const [confirmationEmailOptions, setConfirmationEmailOptions] = useState<{ id: string; name: string }[]>([])
+  const [logLevelOptions, setLogLevelOptions] = useState<{ id: string; name: string }[]>([])
   const [logoDisplayOptions, setLogoDisplayOptions] = useState<{ id: string; name: string }[]>([])
   const [translateMollieOptions, setTranslateMollieOptions] = useState<{ id: string; name: string }[]>([])
 
@@ -272,10 +276,11 @@ const AdvancedSettings: React.FC = () => {
   const loadSettings = async () => {
     try {
       setLoading(true)
+      setNotConfigured(false)
       const response = await advancedSettingsApiService.getSettings()
 
       if (!response.success && response.not_configured) {
-        setNotification({ message: response.message || 'API not configured', type: 'error' })
+        setNotConfigured(true)
         setLoading(false)
         return
       }
@@ -284,17 +289,22 @@ const AdvancedSettings: React.FC = () => {
         const data = response.data
         const invoiceOpts = data.options?.invoiceOptions || []
         const confirmEmailOpts = data.options?.confirmationEmailOptions || []
+        const logLevelOpts = data.options?.logLevelOptions || []
         const logoDisplayOpts = data.options?.logoDisplayOptions || []
         const translateMollieOpts = data.options?.translateMollieOptions || []
 
         setInvoiceOptions(invoiceOpts)
         setConfirmationEmailOptions(confirmEmailOpts)
+        setLogLevelOptions(logLevelOpts)
         setLogoDisplayOptions(logoDisplayOpts)
         setTranslateMollieOptions(translateMollieOpts)
         setInvoiceOption(data.invoiceOption || invoiceOpts[0]?.id || "")
         setConfirmationEmail(data.confirmationEmail || confirmEmailOpts[0]?.id || "")
         setAutoShip(data.autoShip || false)
         setAutoShipStatuses(data.autoShipStatuses || [])
+
+        setDebugMode(data.debugMode || false)
+        setLogLevel(data.logLevel || logLevelOpts[0]?.id || "")
 
         const mappedCarriers = data.carriers.map((carrier: CarrierData) => ({
           id: carrier.id,
@@ -333,6 +343,8 @@ const AdvancedSettings: React.FC = () => {
         autoShip,
         autoShipStatuses,
         carriers: carriersData,
+        debugMode,
+        logLevel,
         logoDisplay,
         cssPath,
         translateMollie,
@@ -372,6 +384,28 @@ const AdvancedSettings: React.FC = () => {
 
   if (loading) {
     return <AdvancedSettingsSkeleton />
+  }
+
+  if (notConfigured) {
+    return (
+      <div className="advanced-settings">
+        <div className="settings-header">
+          <h1>Advanced settings</h1>
+          <p className="settings-subtitle">Manage your order settings, visual representation and error logging</p>
+        </div>
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 flex items-start gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-yellow-600 mt-0.5 flex-shrink-0">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 16v-4"></path>
+            <path d="M12 8h.01"></path>
+          </svg>
+          <div className="text-sm text-yellow-800">
+            <p className="font-medium mb-2">API not configured</p>
+            <p>Please configure your Mollie API keys in the <strong>API Configuration</strong> tab before accessing advanced settings.</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -544,6 +578,39 @@ const AdvancedSettings: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="settings-section">
+        <h2 className="section-title">Error Debugging</h2>
+
+        <div className="toggle-group">
+          <div className="toggle-content">
+            <div>
+              <div className="toggle-label">Debug Mode</div>
+              <div className="toggle-description">Enable detailed error logging</div>
+            </div>
+            <label className="toggle-switch">
+              <input type="checkbox" checked={debugMode} onChange={(e) => setDebugMode(e.target.checked)} />
+              <span className="toggle-slider"></span>
+            </label>
+            <span className="toggle-status">{debugMode ? "Enabled" : "Disabled"}</span>
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Log Level</label>
+          <div className="button-group">
+            {logLevelOptions.map((option) => (
+              <button
+                key={option.id}
+                className={`btn-group-item ${logLevel === option.id ? "active" : ""}`}
+                onClick={() => setLogLevel(option.id)}
+              >
+                {option.name}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 

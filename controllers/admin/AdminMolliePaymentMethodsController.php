@@ -458,7 +458,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             }
 
             $paymentMethod = new MolPaymentMethod((int) $paymentMethodId);
-            $paymentMethod->enabled = $enabled ? 1 : 0;
+            $paymentMethod->enabled = $enabled;
             $result = $paymentMethod->save();
 
             if (!$result) {
