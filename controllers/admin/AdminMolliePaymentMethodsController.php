@@ -962,11 +962,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             $taxManager = TaxManagerFactory::getManager($address, $taxRulesGroupId);
             $taxCalculator = $taxManager->getTaxCalculator();
 
-            if ($taxCalculator) {
-                $taxIncl = $taxCalculator->addTaxes($taxExcl);
+            $taxIncl = $taxCalculator->addTaxes($taxExcl);
 
-                return number_format($taxIncl, 2, '.', '');
-            }
+            return number_format($taxIncl, 2, '.', '');
         } catch (Exception $e) {
             $this->logger->error('Failed to calculate fixed fee tax incl', [
                 'exception' => ExceptionUtility::getExceptions($e),

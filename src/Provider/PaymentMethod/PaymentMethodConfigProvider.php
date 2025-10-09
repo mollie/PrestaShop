@@ -180,7 +180,7 @@ class PaymentMethodConfigProvider
         }
 
         $taxExcl = (float) $methodObj->surcharge_fixed_amount_tax_excl;
-        $taxRulesGroupId = isset($methodObj->tax_rules_group_id) ? (int) $methodObj->tax_rules_group_id : 0;
+        $taxRulesGroupId = isset($methodObj->tax_rules_group_id) ? $methodObj->tax_rules_group_id : 0;
 
         if (!$taxRulesGroupId) {
             return number_format($taxExcl, 2, '.', '');
