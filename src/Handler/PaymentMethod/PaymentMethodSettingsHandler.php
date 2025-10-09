@@ -140,6 +140,10 @@ class PaymentMethodSettingsHandler
         if ($methodId === 'applepay' && isset($settings['applePaySettings'])) {
             $this->handleApplePaySettings($settings['applePaySettings']);
         }
+
+        if ($methodId === 'voucher' && isset($settings['voucherCategory'])) {
+            $this->handleVoucherSettings($settings);
+        }
     }
 
     /**
@@ -357,6 +361,26 @@ class PaymentMethodSettingsHandler
         $this->configuration->updateValue(
             Config::MOLLIE_APPLE_PAY_DIRECT_STYLE,
             $applePaySettings['buttonStyle']
+        );
+    }
+
+    /**
+     * Handle voucher specific settings
+     *
+     * @param array $settings Settings data
+     */
+    private function handleVoucherSettings(array $settings): void
+    {
+        $voucherCategory = $settings['voucherCategory'] ?? 'none';
+
+        // Convert 'none' to the config constant value
+        if ($voucherCategory === 'none') {
+            $voucherCategory = Config::MOLLIE_VOUCHER_CATEGORY_NULL;
+        }
+
+        $this->configuration->updateValue(
+            Config::MOLLIE_VOUCHER_CATEGORY,
+            $voucherCategory
         );
     }
 

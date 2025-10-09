@@ -183,6 +183,15 @@ export interface MolliePaymentMethodsTranslations {
 
   // Drag and drop
   dragPaymentOptionsToReorder: string;
+
+  // Voucher Category
+  voucherCategory: string;
+  voucherCategoryNone: string;
+  voucherCategoryMeal: string;
+  voucherCategoryGift: string;
+  voucherCategoryEco: string;
+  voucherCategoryAll: string;
+  voucherCategoryHelp: string;
 }
 
 export interface MollieAdvancedSettingsTranslations {

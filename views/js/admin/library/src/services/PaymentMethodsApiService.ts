@@ -34,6 +34,7 @@ export interface PaymentMethod {
     apiSelection: "payments" | "orders"
     useCustomLogo: boolean
     customLogoUrl?: string | null
+    voucherCategory?: "none" | "meal" | "gift" | "eco" | "all"
     paymentRestrictions: {
       acceptFrom: string
       selectedCountries?: string[]
