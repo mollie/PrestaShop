@@ -380,6 +380,30 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
                 </div>
               </div>
             )}
+
+            {method.id === "voucher" && (
+              <div>
+                <Label htmlFor="voucher-category" className="text-sm font-medium">
+                  {t('voucherCategory')}
+                </Label>
+                <RadioSelect
+                  value={method.settings.voucherCategory || 'none'}
+                  onValueChange={(voucherCategory: string) => onUpdateSettings({ voucherCategory: voucherCategory as "none" | "meal" | "gift" | "eco" | "all" })}
+                  options={[
+                    { value: "none", label: t('voucherCategoryNone') },
+                    { value: "meal", label: t('voucherCategoryMeal') },
+                    { value: "gift", label: t('voucherCategoryGift') },
+                    { value: "eco", label: t('voucherCategoryEco') },
+                    { value: "all", label: t('voucherCategoryAll') },
+                  ]}
+                  placeholder={t('voucherCategoryNone')}
+                  className="mt-1"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {t('voucherCategoryHelp')}
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="space-y-4">

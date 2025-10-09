@@ -231,6 +231,14 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'itemsSelected' => $this->module->l('%s selected', self::FILE_NAME),
 
                 'dragPaymentOptionsToReorder' => $this->module->l('Drag payment options to reorder', self::FILE_NAME),
+
+                'voucherCategory' => $this->module->l('Category', self::FILE_NAME),
+                'voucherCategoryNone' => $this->module->l('None', self::FILE_NAME),
+                'voucherCategoryMeal' => $this->module->l('Meal', self::FILE_NAME),
+                'voucherCategoryGift' => $this->module->l('Gift', self::FILE_NAME),
+                'voucherCategoryEco' => $this->module->l('Eco', self::FILE_NAME),
+                'voucherCategoryAll' => $this->module->l('All', self::FILE_NAME),
+                'voucherCategoryHelp' => $this->module->l('Select a category to use for all products in your webshop.', self::FILE_NAME),
             ],
         ]);
 
@@ -363,6 +371,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                             'apiSelection' => (isset($methodObj->method) && $methodObj->method === 'orders') ? 'orders' : 'payments',
                             'useCustomLogo' => $methodId === 'creditcard' ? (bool) ($this->configuration->get(\Mollie\Config\Config::MOLLIE_SHOW_CUSTOM_LOGO) ?: 0) : false,
                             'customLogoUrl' => $methodId === 'creditcard' ? $this->getCustomLogoUrl() : null,
+                            'voucherCategory' => $methodId === 'voucher' ? $this->getVoucherCategory() : null,
                             'paymentRestrictions' => [
                                 'acceptFrom' => (isset($methodObj->is_countries_applicable) && $methodObj->is_countries_applicable) ? 'selected' : 'all',
                                 'selectedCountries' => $method['countries'] ?? [],
@@ -885,5 +894,16 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         $value = (bool) ($this->configuration->get($configKey) ?: 0);
 
         return $value;
+    }
+
+    private function getVoucherCategory(): string
+    {
+        $category = $this->configuration->get(Config::MOLLIE_VOUCHER_CATEGORY);
+
+        if (empty($category) || $category === Config::MOLLIE_VOUCHER_CATEGORY_NULL) {
+            return 'none';
+        }
+
+        return $category;
     }
 }
