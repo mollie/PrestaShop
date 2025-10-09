@@ -386,7 +386,6 @@ class PaymentMethodSettingsHandler
             // Find the specific method we're saving
             foreach ($apiMethods as $apiMethod) {
                 if ($apiMethod['id'] === $methodId) {
-
                     return $apiMethod;
                 }
             }
