@@ -286,7 +286,7 @@ class CartLinesService
     {
         $paymentFeeDiff = NumberUtility::minus($paymentFeeData->getPaymentFeeTaxIncl(), $remaining);
 
-        if($paymentFeeData->isActive() && $paymentFeeDiff < 0.1) {
+        if ($paymentFeeData->isActive() && $paymentFeeDiff < 0.1) {
             return $orderLines;
         }
 
