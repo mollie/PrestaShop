@@ -285,7 +285,7 @@ class ApiService implements ApiServiceInterface
         return $methods;
     }
 
-    private function getMethodsCountriesForConfig(& $methods)
+    private function getMethodsCountriesForConfig(&$methods)
     {
         foreach ($methods as $key => $method) {
             $methods[$key]['countries'] = $this->countryRepository->getMethodCountryIds($method['obj']->id);
@@ -294,7 +294,7 @@ class ApiService implements ApiServiceInterface
         return $methods;
     }
 
-    private function getExcludedCountriesForConfig(& $methods)
+    private function getExcludedCountriesForConfig(&$methods)
     {
         foreach ($methods as $key => $method) {
             $methods[$key]['excludedCountries'] = $this->countryRepository->getExcludedCountryIds($method['obj']->id);
@@ -310,7 +310,7 @@ class ApiService implements ApiServiceInterface
      *
      * @throws PrestaShopDatabaseException
      */
-    private function getExcludedCustomerGroupsForConfig(array & $methods): array
+    private function getExcludedCustomerGroupsForConfig(array &$methods): array
     {
         foreach ($methods as $key => $method) {
             $methods[$key]['excludedCustomerGroups'] = $this->customerRepository->getExcludedCustomerGroupIds($method['obj']->id);
