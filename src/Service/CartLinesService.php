@@ -284,7 +284,9 @@ class CartLinesService
      */
     private function compositeRoundingInaccuracies($remaining, $apiRoundingPrecision, $orderLines, $paymentFeeData)
     {
-        if(true === $paymentFeeData->isActive()) {
+        $paymentFeeDiff = NumberUtility::minus($paymentFeeData->getPaymentFeeTaxIncl(), $remaining);
+
+        if($paymentFeeData->isActive() && $paymentFeeDiff < 0.1) {
             return $orderLines;
         }
 
