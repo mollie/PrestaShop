@@ -7,27 +7,61 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
  */
-
-use Mollie\Install\Installer;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * Upgrade to version 6.4.1
- * - Ensure all admin tabs are installed: old subscription tabs and new React-based tabs
- */
 function upgrade_module_6_4_1(Mollie $module): bool
 {
-    /** @var Installer $installer */
-    $installer = $module->getService(Installer::class);
+    try {
+        $installer = $module->getService(\Mollie\Install\Installer::class);
 
-    // Install all tabs to ensure both old and new tabs are present
-    // This handles upgrades from any previous version
-    $installer->installSpecificTabs();
+        $tabsToInstall = [
+            ['class_name' => 'AdminMollieModule_MTR', 'parent' => 'IMPROVE', 'name' => 'Mollie', 'visible' => true, 'icon' => 'mollie'],
+            ['class_name' => 'AdminMollieModule', 'parent' => 'AdminMollieModule_MTR', 'name' => 'Settings', 'visible' => false],
+            ['class_name' => 'AdminMollieAjax', 'parent' => 'AdminMollieModule', 'name' => 'AJAX', 'visible' => false],
+            ['class_name' => 'AdminMollieAuthenticationParent', 'parent' => 'AdminMollieModule_MTR', 'name' => 'API Configuration', 'visible' => true],
+            ['class_name' => 'AdminMollieAuthentication', 'parent' => 'AdminMollieAuthenticationParent', 'name' => 'API Configuration', 'visible' => true],
+            ['class_name' => 'AdminMolliePaymentMethods', 'parent' => 'AdminMollieAuthenticationParent', 'name' => 'Payment Methods', 'visible' => true],
+            ['class_name' => 'AdminMollieAdvancedSettings', 'parent' => 'AdminMollieAuthenticationParent', 'name' => 'Advanced Settings', 'visible' => true],
+            ['class_name' => 'AdminMollieSubscriptionOrders', 'parent' => 'AdminMollieAuthenticationParent', 'name' => 'Subscriptions', 'visible' => true],
+            ['class_name' => 'AdminMollieSubscriptionFAQ', 'parent' => 'AdminMollieAuthenticationParent', 'name' => 'Subscription FAQ', 'visible' => true],
+            ['class_name' => 'AdminMollieLogs', 'parent' => 'AdminMollieAuthenticationParent', 'name' => 'Logs', 'visible' => true],
+            ['class_name' => 'AdminMolliePaymentMethodsParent', 'parent' => 'AdminMollieModule_MTR', 'name' => 'Payment Methods', 'visible' => true],
+            ['class_name' => 'AdminMollieAdvancedSettingsParent', 'parent' => 'AdminMollieModule_MTR', 'name' => 'Advanced Settings', 'visible' => true],
+            ['class_name' => 'AdminMollieSubscriptionOrdersParent', 'parent' => 'AdminMollieModule_MTR', 'name' => 'Subscriptions', 'visible' => true],
+            ['class_name' => 'AdminMollieSubscriptionFAQParent', 'parent' => 'AdminMollieModule_MTR', 'name' => 'Subscription FAQ', 'visible' => true],
+            ['class_name' => 'AdminMollieLogsParent', 'parent' => 'AdminMollieModule_MTR', 'name' => 'Logs', 'visible' => true],
+        ];
 
-    PrestaShopLogger::addLog('Mollie upgrade 6.4.1: Successfully installed/updated all admin tabs', 1, null, 'Mollie', 1);
-    return true;
+        $classNames = array_column($tabsToInstall, 'class_name');
+        $classNames[] = 'AdminMollieTabParent';
+
+        foreach (array_reverse($classNames) as $className) {
+            $tabId = Tab::getIdFromClassName($className);
+            if ($tabId) {
+                $tab = new Tab($tabId);
+                if (Validate::isLoadedObject($tab)) {
+                    $tab->delete();
+                }
+            }
+        }
+
+        foreach ($tabsToInstall as $tabConfig) {
+            $installer->installTab(
+                $tabConfig['class_name'],
+                $tabConfig['parent'],
+                $tabConfig['name'],
+                $tabConfig['visible'],
+                $tabConfig['icon'] ?? ''
+            );
+        }
+
+        return true;
+    } catch (Exception $e) {
+        return false;
+    }
 }
