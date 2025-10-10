@@ -1,25 +1,12 @@
 <?php
-/**
- * Mollie       https://www.mollie.nl
- *
- * @author      Mollie B.V. <info@mollie.nl>
- * @copyright   Mollie B.V.
- * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
- *
- * @see        https://github.com/mollie/PrestaShop
- */
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * Upgrade to version 6.4.1
- * Reinstall admin tabs with correct hierarchy
- */
 function upgrade_module_6_4_1(Mollie $module): bool
 {
     try {
-        /** @var \Mollie\Install\Installer $installer */
         $installer = $module->getService(\Mollie\Install\Installer::class);
 
         $tabsToInstall = [
@@ -65,8 +52,6 @@ function upgrade_module_6_4_1(Mollie $module): bool
 
         return true;
     } catch (Exception $e) {
-        PrestaShopLogger::addLog('Mollie upgrade 6.4.1 error: ' . $e->getMessage(), 3, null, 'Mollie', 1);
-
         return false;
     }
 }
