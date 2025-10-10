@@ -28,7 +28,6 @@ use Mollie\Tracker\Segment;
 use Mollie\Utility\MultiLangUtility;
 use OrderState;
 use PrestaShopException;
-use PrestaShopLogger;
 use Tab;
 use Tools;
 use Validate;
