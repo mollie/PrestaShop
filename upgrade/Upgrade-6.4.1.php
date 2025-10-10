@@ -63,13 +63,6 @@ function upgrade_module_6_4_1(Mollie $module): bool
             );
         }
 
-        Tab::resetStaticCache();
-        Tools::clearSmartyCache();
-
-        if (file_exists(_PS_CACHE_DIR_ . 'class_index.php')) {
-            unlink(_PS_CACHE_DIR_ . 'class_index.php');
-        }
-
         return true;
     } catch (Exception $e) {
         PrestaShopLogger::addLog('Mollie upgrade 6.4.1 error: ' . $e->getMessage(), 3, null, 'Mollie', 1);
