@@ -148,9 +148,15 @@ class Installer implements InstallerInterface
 
     public function installSpecificTabs(): void
     {
-        // Install parent tabs manually - exactly as it was before
+        // Note: During fresh install, PrestaShop's parent::install() automatically calls getTabs()
+        // and installs all tabs defined there. This method is only for additional legacy tabs
+        // that need to be created manually for backward compatibility.
+
+        // Install legacy parent tabs for backward compatibility
         $this->installTab('AdminMollieModule_MTR', 'IMPROVE', 'Mollie', true, 'mollie');
         $this->installTab('AdminMollieModule', 'AdminMollieModule_MTR', 'Settings', false);
+
+        PrestaShopLogger::addLog('Mollie legacy tabs installation completed', 1, null, 'Mollie', 1);
     }
 
     public function getErrors()
