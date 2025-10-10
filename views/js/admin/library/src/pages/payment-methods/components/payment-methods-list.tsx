@@ -219,7 +219,18 @@ export default function PaymentMethodsPage() {
       <div className="max-w-6xl mx-auto p-6 space-y-6">
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold text-foreground">{t('paymentMethods')}</h1>
-          <p className="text-sm text-red-600">{errorMessage}</p>
+          <p className="text-sm text-muted-foreground">{t('configurePaymentMethods')}</p>
+        </div>
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 flex items-start gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-yellow-600 mt-0.5 flex-shrink-0">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 16v-4"></path>
+            <path d="M12 8h.01"></path>
+          </svg>
+          <div className="text-sm text-yellow-800">
+            <p className="font-medium mb-2">API not configured</p>
+            <p>Please configure your Mollie API keys in the <strong>API Configuration</strong> tab before managing payment methods.</p>
+          </div>
         </div>
       </div>
     )

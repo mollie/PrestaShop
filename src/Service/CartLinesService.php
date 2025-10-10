@@ -109,7 +109,7 @@ class CartLinesService
         list($orderLines, $remaining) = $this->addDiscountsToProductLines($totalDiscounts, $apiRoundingPrecision, $orderLines, $remaining);
 
         // Compensate for order total rounding inaccuracies
-        $orderLines = $this->compositeRoundingInaccuracies($remaining, $apiRoundingPrecision, $orderLines);
+        $orderLines = $this->compositeRoundingInaccuracies($remaining, $apiRoundingPrecision, $orderLines, $paymentFeeData);
 
         // Fill the order lines with the rest of the data (tax, total amount, etc.)
         $orderLines = $this->fillProductLinesWithRemainingData($orderLines, $apiRoundingPrecision, $vatRatePrecision);
@@ -278,11 +278,18 @@ class CartLinesService
      * @param float $remaining
      * @param int $apiRoundingPrecision
      * @param array $orderLines
+     * @param PaymentFeeData $paymentFeeData
      *
      * @return array
      */
-    private function compositeRoundingInaccuracies($remaining, $apiRoundingPrecision, $orderLines)
+    private function compositeRoundingInaccuracies($remaining, $apiRoundingPrecision, $orderLines, $paymentFeeData)
     {
+        $paymentFeeDiff = NumberUtility::minus($paymentFeeData->getPaymentFeeTaxIncl(), $remaining);
+
+        if ($paymentFeeData->isActive() && $paymentFeeDiff < 0.1) {
+            return $orderLines;
+        }
+
         $remaining = round($remaining, $apiRoundingPrecision);
         if ($remaining < 0) {
             foreach (array_reverse($orderLines) as $hash => $items) {
