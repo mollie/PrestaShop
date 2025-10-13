@@ -482,7 +482,7 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
               href="https://docs.mollie.com/payments/overview"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground underline decoration-1 underline-offset-2 cursor-pointer hover:text-muted-foreground/80"
+              className="text-blue-600 underline decoration-1 underline-offset-2 cursor-pointer hover:text-blue-700"
             >
               {t('readMore')}
             </a>
@@ -528,7 +528,7 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
               <div className="p-4 border-t space-y-4 animate-in slide-in-from-top-1 fade-in duration-200 ease-out">
                 <ApplePaySettings
                   settings={method.settings.applePaySettings}
-                  onUpdateSettings={(applePaySettings) => onUpdateSettings({ 
+                  onUpdateSettings={(applePaySettings) => onUpdateSettings({
                     applePaySettings: {
                       ...method.settings.applePaySettings,
                       ...applePaySettings
