@@ -1312,6 +1312,8 @@ class Mollie extends PaymentModule
             $segment->track();
 
             return parent::runUpgradeModule();
+        } catch (TypeError $e) {
+            // PrestaShop 9 compatibility
         } catch (Error $e) {
             http_response_code(Response::HTTP_INTERNAL_SERVER_ERROR);
 
