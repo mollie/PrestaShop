@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { ExternalLink, CheckCircle } from "lucide-react"
 import { Button } from "../../../shared/components/ui/button"
 import { Input } from "../../../shared/components/ui/input"
@@ -37,9 +37,29 @@ const MollieLogo = () => (
   </svg>
 )
 
-const PsAccounts = () => (
-  <div id="prestashop-cloudsync"></div>
-)
+const PsAccounts = () => {
+  const renderMboCdcDependencyResolver = (window as any).mboCdcDependencyResolver?.render
+
+  useEffect(() => {
+    if (renderMboCdcDependencyResolver) {
+      const context = {
+        onDependenciesResolved: () => location.reload(),
+        onDependencyResolved: (dependencyData: any) => console.log('Dependency installed', dependencyData), // name, displayName, version
+        onDependencyFailed: (dependencyData: any) => console.log('Failed to install dependency', dependencyData),
+        onDependenciesFailed: () => console.log('There are some errors'),
+      }
+      renderMboCdcDependencyResolver(context, '#cdc-container')
+    }
+  }, [renderMboCdcDependencyResolver])
+
+  return (
+    <>
+      <script src="https://assets.prestashop3.com/dst/mbo/v1/mbo-cdc-dependencies-resolver.umd.js"></script>
+      <div id="cdc-container"></div>
+      {React.createElement('prestashop-accounts')}
+    </>
+  )
+}
 
 // Skeleton loading components
 const SkeletonModeToggle = () => (

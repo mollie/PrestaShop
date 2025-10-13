@@ -18,6 +18,8 @@ use Mollie\Adapter\ToolsAdapter;
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
+use PrestaShop\Module\PsEventbus\Service\PresenterService;
+use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -48,6 +50,8 @@ class AdminMollieAuthenticationController extends ModuleAdminController
     public function init(): void
     {
         parent::init();
+
+        $this->initCloudSync();
 
         $version = time();
 
@@ -311,5 +315,44 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 'message' => $this->module->l('Failed to switch environment', self::FILE_NAME),
             ]));
         }
+    }
+
+    private function initCloudSync()
+    {
+        if (!class_exists('Ps_eventbus') || !class_exists('PrestaShop\Module\PsEventbus\Service\PresenterService')) {
+            return;
+        }
+
+        /** @phpstan-ignore-next-line PHPStan does not recognize the event bus module, so it doesn't know it has getService function */
+        $eventbusModule = \Module::getInstanceByName('ps_eventbus');
+
+        if (!$eventbusModule) {
+            return;
+        }
+
+        /** @phpstan-ignore-next-line PHPStan does not recognize the event bus module, so it doesn't know it has getService function */
+        $eventbusPresenterService = $eventbusModule->getService(PresenterService::class);
+
+        $previousJsDef = isset(\Media::getJsDef()['klarnapayment']) ? \Media::getJsDef()['klarnapayment'] : [];
+
+        \Media::addJsDef([
+            'contextPsEventbus' => $eventbusPresenterService->expose($this->module, [
+                'info',
+                'carts',
+                'currencies',
+                'orders',
+                'products',
+                'images',
+                'stocks',
+                'stores',
+                'modules',
+                'themes',
+            ]),
+            'mollie' => array_merge($previousJsDef, [
+                'url' => [
+                    'cloudSyncPathCDC' => 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js',
+                ],
+            ]),
+        ]);
     }
 }
