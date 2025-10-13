@@ -37,6 +37,10 @@ const MollieLogo = () => (
   </svg>
 )
 
+const PsAccounts = () => (
+  <div id="prestashop-cloudsync"></div>
+)
+
 // Skeleton loading components
 const SkeletonModeToggle = () => (
   <div>
@@ -187,6 +191,7 @@ export default function AuthorizationForm() {
 
   return (
     <div className="bg-white font-inter">
+      <PsAccounts />
       {/* Confirmation Dialog */}
       {showConfirmDialog && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{backgroundColor: 'rgba(0, 0, 0, 0.4)'}}>
