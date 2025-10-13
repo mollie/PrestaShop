@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -12,7 +13,6 @@
 
 namespace Mollie\Builder;
 
-use Group;
 use HelperFormCore as HelperForm;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
@@ -188,137 +188,8 @@ class FormBuilder
             'value' => 0,
         ];
 
-        if ($isApiKeyProvided) {
-            $input[] = [
-                'type' => 'select',
-                'label' => $this->module->l('Environment', self::FILE_NAME),
-                'tab' => $generalSettings,
-                'name' => Config::MOLLIE_ENVIRONMENT,
-                'options' => [
-                    'query' => [
-                        [
-                            'id' => Config::ENVIRONMENT_TEST,
-                            'name' => $this->module->l('Test', self::FILE_NAME),
-                        ],
-                        [
-                            'id' => Config::ENVIRONMENT_LIVE,
-                            'name' => $this->module->l('Live', self::FILE_NAME),
-                        ],
-                    ],
-                    'id' => 'id',
-                    'name' => 'name',
-                ],
-            ];
-
-            $input[] = [
-                'type' => 'mollie-password',
-                'label' => $this->module->l('API Key Test', self::FILE_NAME),
-                'tab' => $generalSettings,
-                'desc' => TagsUtility::ppTags(
-                    $this->module->l('Go to your [1]Mollie account[/1] to get your API keys. They start with test and live.', self::FILE_NAME),
-                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
-                ),
-                'name' => Config::MOLLIE_API_KEY_TEST,
-                'required' => true,
-                'class' => 'fixed-width-xxl',
-                'form_group_class' => 'js-test-api-group',
-            ];
-
-            $input[] = [
-                'type' => 'mollie-password',
-                'label' => $this->module->l('Live API key', self::FILE_NAME),
-                'tab' => $generalSettings,
-                'name' => Config::MOLLIE_API_KEY,
-                'required' => true,
-                'class' => 'fixed-width-xxl',
-                'form_group_class' => 'js-live-api-group',
-            ];
-
-            $input[] = [
-                'type' => 'mollie-button',
-                'label' => '',
-                'tab' => $generalSettings,
-                'name' => Config::MOLLIE_API_KEY_TESTING_BUTTON,
-                'text' => $this->module->l('Test API key', self::FILE_NAME),
-                'class' => 'js-test-api-keys',
-                'form_group_class' => 'js-api-key-test',
-            ];
-
-            $input[] = [
-                'type' => 'mollie-h3',
-                'tab' => $generalSettings,
-                'name' => '',
-                'title' => '',
-            ];
-        } else {
-            $input[] = [
-                'type' => 'mollie-switch',
-                'label' => $this->module->l('Do you already have a Mollie account?', self::FILE_NAME),
-                'name' => Config::MOLLIE_ACCOUNT_SWITCH,
-                'tab' => $generalSettings,
-                'is_bool' => true,
-                'values' => [
-                    [
-                        'id' => 'active_on',
-                        'value' => true,
-                        'label' => $this->module->l('Enabled', self::FILE_NAME),
-                    ],
-                    [
-                        'id' => 'active_off',
-                        'value' => false,
-                        'label' => $this->module->l('Disabled', self::FILE_NAME),
-                    ],
-                ],
-                'desc' => $this->module->display(
-                    $this->module->getPathUri(), 'views/templates/admin/create_new_account_link.tpl'
-                ),
-            ];
-
-            $input[] = [
-                'type' => 'select',
-                'label' => $this->module->l('Environment', self::FILE_NAME),
-                'tab' => $generalSettings,
-                'name' => Config::MOLLIE_ENVIRONMENT,
-                'options' => [
-                    'query' => [
-                        [
-                            'id' => Config::ENVIRONMENT_TEST,
-                            'name' => $this->module->l('Test', self::FILE_NAME),
-                        ],
-                        [
-                            'id' => Config::ENVIRONMENT_LIVE,
-                            'name' => $this->module->l('Live', self::FILE_NAME),
-                        ],
-                    ],
-                    'id' => 'id',
-                    'name' => 'name',
-                ],
-            ];
-
-            $input[] = [
-                'type' => 'mollie-password',
-                'label' => $this->module->l('API Key Live', self::FILE_NAME),
-                'tab' => $generalSettings,
-                'name' => Config::MOLLIE_API_KEY,
-                'required' => true,
-                'class' => 'fixed-width-xxl',
-                'form_group_class' => 'js-live-api-group',
-            ];
-
-            $input[] = [
-                'type' => 'mollie-password',
-                'label' => $this->module->l('API Key Test', self::FILE_NAME),
-                'tab' => $generalSettings,
-                'desc' => TagsUtility::ppTags(
-                    $this->module->l('You can find your API key in your [1]Mollie Profile[/1]', self::FILE_NAME),
-                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/profile.tpl')]
-                ),
-                'name' => Config::MOLLIE_API_KEY_TEST,
-                'required' => true,
-                'class' => 'fixed-width-xxl',
-                'form_group_class' => 'js-test-api-group',
-            ];
-        }
+        // Authentication is now handled in separate AdminMollieAuthentication tab
+        // No authentication UI needed in settings
 
         if (!$isApiKeyProvided) {
             return $input;
@@ -330,111 +201,11 @@ class FormBuilder
             'tab' => $generalSettings,
         ];
 
-        $input[] = [
-            'type' => 'switch',
-            'label' => $this->module->l('Use Mollie Components for credit cards', self::FILE_NAME),
-            'tab' => $generalSettings,
-            'name' => Config::MOLLIE_IFRAME[(int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT) ? 'production' : 'sandbox'],
-            'desc' => TagsUtility::ppTags(
-                $this->module->l('Read more about [1]Mollie Components[/1] and how it improves your conversion.', self::FILE_NAME),
-                [$this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_components_info.tpl')]
-            ),
-            $this->module->l('Read more about Mollie Components and how it improves your conversion', self::FILE_NAME),
-            'is_bool' => true,
-            'values' => [
-                [
-                    'id' => 'active_on',
-                    'value' => true,
-                    'label' => $this->module->l('Enabled', self::FILE_NAME),
-                ],
-                [
-                    'id' => 'active_off',
-                    'value' => false,
-                    'label' => $this->module->l('Disabled', self::FILE_NAME),
-                ],
-            ],
-        ];
+        // Card-specific settings (Mollie Components, One-Click Payments) moved to
+        // AdminMolliePaymentMethodsController - see Credit Card payment method settings
 
-        $input[] = [
-            'type' => 'switch',
-            'label' => $this->module->l('Use one-click payments for credit cards', self::FILE_NAME),
-            'tab' => $generalSettings,
-            'name' => Config::MOLLIE_SINGLE_CLICK_PAYMENT[(int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT) ? 'production' : 'sandbox'],
-            'desc' => TagsUtility::ppTags(
-                $this->module->l('Read more about [1]Single Click Payments[/1] and how it improves your conversion.', self::FILE_NAME),
-                [
-                    $this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_single_click_payment_info.tpl'),
-                ]
-            ),
-            'is_bool' => true,
-            'values' => [
-                [
-                    'id' => 'active_on',
-                    'value' => true,
-                    'label' => $this->module->l('Enabled', self::FILE_NAME),
-                ],
-                [
-                    'id' => 'active_off',
-                    'value' => false,
-                    'label' => $this->module->l('Disabled', self::FILE_NAME),
-                ],
-            ],
-        ];
-
-        $input[] = [
-            'type' => 'mollie-h2',
-            'tab' => $generalSettings,
-            'name' => '',
-            'title' => $this->module->l('Payment methods', self::FILE_NAME),
-        ];
-
-        $molliePaymentMethods = $this->apiService->getMethodsForConfig($this->module->getApiClient());
-
-        if (empty($molliePaymentMethods)) {
-            $input[] = [
-                'type' => 'mollie-payment-empty-alert',
-                'tab' => $generalSettings,
-                'name' => '',
-            ];
-        }
-
-        $dateStamp = Mollie\Utility\TimeUtility::getCurrentTimeStamp();
-        $input[] = [
-            'type' => 'mollie-methods',
-            'name' => Config::METHODS_CONFIG,
-            'paymentMethods' => $molliePaymentMethods,
-            'countries' => $this->countryService->getActiveCountriesList(),
-            'taxRulesGroups' => $this->taxRulesGroupRepository->getTaxRulesGroups($this->context->getShopId()),
-            'customerGroups' => Group::getGroups($this->context->getLanguageId()),
-            'tab' => $generalSettings,
-            'onlyOrderMethods' => Config::ORDER_API_ONLY_METHODS,
-            'onlyPaymentsMethods' => Config::PAYMENT_API_ONLY_METHODS,
-            'displayErrors' => $this->configuration->get(Config::MOLLIE_DISPLAY_ERRORS),
-            'methodDescription' => TagsUtility::ppTags(
-                $this->module->l('[1]Read more[/1] about the differences between Payments and Orders API.', self::FILE_NAME),
-                [
-                    $this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_method_info.tpl'),
-                ]
-            ),
-            'showCustomLogo' => $this->configuration->get(Config::MOLLIE_SHOW_CUSTOM_LOGO),
-            'customLogoUrl' => $this->creditCardLogoProvider->getLogoPathUri() . "?{$dateStamp}",
-            'customLogoExist' => $this->creditCardLogoProvider->logoExists(),
-            'voucherCategory' => $this->configuration->get(Config::MOLLIE_VOUCHER_CATEGORY),
-            'applePayDirectProduct' => (int) $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT),
-            'applePayDirectCart' => (int) $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART),
-            'applePayDirectStyle' => (int) $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
-            'isBancontactQrCodeEnabled' => (int) $this->configuration->get(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED),
-            'isLive' => (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT),
-            'bancontactQRCodeDescription' => TagsUtility::ppTags(
-                $this->module->l('Only available with your Live API key and Payments API. [1]Learn more[/1] about QR Codes.', self::FILE_NAME),
-                [
-                    $this->module->display($this->module->getPathUri(), 'views/templates/admin/mollie_bancontact_qr_code_info.tpl'),
-                ]
-            ),
-            'applePayButtonBlack' => $this->module->getPathUri() . 'views/img/applePayButtons/ApplePay_black_yes.png',
-            'applePayButtonOutline' => $this->module->getPathUri() . 'views/img/applePayButtons/ApplePay_outline_yes.png',
-            'applePayButtonWhite' => $this->module->getPathUri() . 'views/img/applePayButtons/ApplePay_white_yes.png',
-        ];
+        // Payment methods are now handled by separate AdminMolliePaymentMethods controller
+        // with modern React UI - see AdminMolliePaymentMethodsController.php
 
         return $input;
     }
@@ -580,9 +351,11 @@ class FormBuilder
             'title' => $this->module->l('Order statuses', self::FILE_NAME),
         ];
 
-        foreach (array_filter($statuses, function ($status) use ($statusOptions) {
-            return in_array($status['name'], $statusOptions);
-        }) as $status) {
+        foreach (
+            array_filter($statuses, function ($status) use ($statusOptions) {
+                return in_array($status['name'], $statusOptions);
+            }) as $status
+        ) {
             if (!in_array($status['name'], [Config::PARTIAL_REFUND_CODE, Config::MOLLIE_AWAITING_PAYMENT, PaymentStatus::STATUS_OPEN])) {
                 $input[] = [
                     'type' => 'switch',
@@ -751,7 +524,7 @@ class FormBuilder
             $orderStatuses[$i]['name'] = $orderStatuses[$i]['id_order_state'] . ' - ' . $orderStatuses[$i]['name'];
         }
 
-//        AssortUtility::aasort($orderStatuses, 'id_order_state');
+        //        AssortUtility::aasort($orderStatuses, 'id_order_state');
 
         $this->smarty->assign([
             'logs' => $this->link->getAdminLink('AdminLogs'),

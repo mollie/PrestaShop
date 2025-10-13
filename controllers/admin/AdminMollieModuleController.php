@@ -17,6 +17,7 @@ class AdminMollieModuleController extends ModuleAdminController
 {
     public function init()
     {
-        Tools::redirectAdmin($this->context->link->getAdminLink('AdminMollieSettings'));
+        // Redirect to API Configuration (first tab)
+        Tools::redirectAdmin($this->context->link->getAdminLink('AdminMollieAuthentication'));
     }
 }

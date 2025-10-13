@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -21,7 +22,6 @@ use Mollie\Adapter\ToolsAdapter;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
-use Mollie\Exception\MollieException;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Certificate\CertificateHandlerInterface;
 use Mollie\Handler\Certificate\Exception\ApplePayDirectCertificateCreation;
@@ -142,20 +142,10 @@ class SettingsSaveService
      */
     public function saveSettings(&$errors = [])
     {
-        $oldEnvironment = (int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT);
-        $environment = (int) $this->tools->getValue(Config::MOLLIE_ENVIRONMENT);
-        $mollieApiKey = $this->tools->getValue(Config::MOLLIE_API_KEY);
-        $mollieApiKeyTest = $this->tools->getValue(Config::MOLLIE_API_KEY_TEST);
+        // API key management is now handled by AdminMollieAuthentication controller
+        // Only save non-authentication related settings here
+
         $paymentOptionPositions = $this->tools->getValue(Config::MOLLIE_FORM_PAYMENT_OPTION_POSITION);
-
-        $apiKey = Config::ENVIRONMENT_LIVE === (int) $environment ? $mollieApiKey : $mollieApiKeyTest;
-        $isApiKeyIncorrect = 0 !== strpos($apiKey, 'live') && 0 !== strpos($apiKey, 'test');
-
-        if ($isApiKeyIncorrect) {
-            $errors[] = $this->module->l('The API key needs to start with test or live.', self::FILE_NAME);
-
-            return $errors;
-        }
 
         if ($this->tools->getValue(Config::METHODS_CONFIG) && json_decode($this->tools->getValue(Config::METHODS_CONFIG))) {
             $this->configurationAdapter->updateValue(
@@ -164,27 +154,8 @@ class SettingsSaveService
             );
         }
 
-        if ((int) $this->tools->getValue(Config::MOLLIE_ENV_CHANGED) === 1) {
-            $this->configurationAdapter->updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
-            $this->configurationAdapter->updateValue(Config::MOLLIE_API_KEY_TEST, $mollieApiKeyTest);
-            $this->configurationAdapter->updateValue(Config::MOLLIE_ENVIRONMENT, $environment);
-
-            try {
-                $api = $this->apiKeyService->setApiKey($apiKey, $this->module->version, false, $environment);
-                if (null === $api) {
-                    throw new MollieException('Failed to connect to mollie API', MollieException::API_CONNECTION_EXCEPTION);
-                }
-            } catch (Exception $e) {
-                $errors[] = $e->getMessage();
-                $this->configurationAdapter->updateValue(Config::MOLLIE_API_KEY, null);
-
-                return [$this->module->l('Wrong API Key! See logs for more details.', self::FILE_NAME)];
-            }
-
-            return [];
-        }
-
-        if ($oldEnvironment === $environment && $apiKey && $this->module->getApiClient() !== null) {
+        // Only proceed with payment method saving if API is already configured
+        if ($this->module->getApiClient() !== null) {
             $savedPaymentMethods = [];
             foreach ($this->apiService->getMethodsForConfig($this->module->getApiClient()) as $method) {
                 $paymentMethodId = $method['obj']->id;
@@ -210,7 +181,8 @@ class SettingsSaveService
                 $this->countryRepository->updatePaymentMethodExcludedCountries($paymentMethodId, $excludedCountries);
                 $this->customerRepository->updatePaymentMethodExcludedCustomerGroups($paymentMethodId, $excludedCustomerGroups);
             }
-            $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $environment, $this->context->getShopId());
+            $currentEnvironment = (int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT);
+            $this->paymentMethodRepository->deleteOldPaymentMethods($savedPaymentMethods, $currentEnvironment, $this->context->getShopId());
         }
 
         if ($paymentOptionPositions) {
@@ -246,9 +218,10 @@ class SettingsSaveService
         }
 
         $molliePaymentscreenLocale = $this->tools->getValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE);
+        $currentEnvironment = (int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT);
         $mollieOrderConfirmationSand = $this->tools->getValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION);
-        $mollieIFrameEnabled = $this->tools->getValue(Config::MOLLIE_IFRAME[$environment ? 'production' : 'sandbox']);
-        $mollieSingleClickPaymentEnabled = $this->tools->getValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT[$environment ? 'production' : 'sandbox']);
+        $mollieIFrameEnabled = $this->tools->getValue(Config::MOLLIE_IFRAME[$currentEnvironment ? 'production' : 'sandbox']);
+        $mollieSingleClickPaymentEnabled = $this->tools->getValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT[$currentEnvironment ? 'production' : 'sandbox']);
 
         $mollieImages = $this->tools->getValue(Config::MOLLIE_IMAGES);
         $showResentPayment = $this->tools->getValue(Config::MOLLIE_SHOW_RESEND_PAYMENT_LINK);
@@ -265,7 +238,6 @@ class SettingsSaveService
         $mollieErrors = $this->tools->getValue(Config::MOLLIE_DISPLAY_ERRORS);
         $voucherCategory = $this->tools->getValue(Config::MOLLIE_VOUCHER_CATEGORY);
         $applePayDirectStyle = $this->tools->getValue(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE);
-        $isBancontactQrCodeEnabled = $this->tools->getValue(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED);
         $mollieMailWhenFailed = (bool) $this->tools->getValue(Config::MOLLIE_MAIL_WHEN_FAILED);
 
         $mollieShipMain = $this->tools->getValue(Config::MOLLIE_AUTO_SHIP_MAIN);
@@ -275,22 +247,8 @@ class SettingsSaveService
             $mollieErrors = (1 == $mollieErrors);
         }
 
-        $apiKey = Config::ENVIRONMENT_LIVE === (int) $environment ?
-            $mollieApiKey : $mollieApiKeyTest;
-
-        if ($apiKey) {
-            try {
-                $api = $this->apiKeyService->setApiKey($apiKey, $this->module->version, false, $environment);
-                if (null === $api) {
-                    throw new MollieException('Failed to connect to mollie API', MollieException::API_CONNECTION_EXCEPTION);
-                }
-            } catch (Exception $e) {
-                $errors[] = $e->getMessage();
-                $this->configurationAdapter->updateValue(Config::MOLLIE_API_KEY, null);
-
-                return [$this->module->l('Wrong API Key! See logs for more details.', self::FILE_NAME)];
-            }
-        }
+        // API key validation is now handled by AdminMollieAuthentication controller
+        // Settings save only handles non-authentication configurations
         try {
             $this->handleAuthorizablePaymentInvoiceStatus();
         } catch (Exception $e) {
@@ -298,16 +256,10 @@ class SettingsSaveService
         }
 
         if (empty($errors)) {
-            if ($isBancontactQrCodeEnabled !== false) {
-                $this->configurationAdapter->updateValue(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED, $isBancontactQrCodeEnabled);
-            }
-
             $this->configurationAdapter->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT, $isApplePayDirectProductEnabled);
             $this->configurationAdapter->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_CART, $isApplePayDirectCartEnabled);
             $this->configurationAdapter->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE, $applePayDirectStyle);
-            $this->configurationAdapter->updateValue(Config::MOLLIE_API_KEY, $mollieApiKey);
-            $this->configurationAdapter->updateValue(Config::MOLLIE_API_KEY_TEST, $mollieApiKeyTest);
-            $this->configurationAdapter->updateValue(Config::MOLLIE_ENVIRONMENT, $environment);
+            // API key and environment configuration moved to AdminMollieAuthentication controller
             $this->configurationAdapter->updateValue(Config::MOLLIE_PAYMENTSCREEN_LOCALE, $molliePaymentscreenLocale);
             $this->configurationAdapter->updateValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION, $mollieOrderConfirmationSand);
             $this->configurationAdapter->updateValue(Config::MOLLIE_IFRAME, $mollieIFrameEnabled);

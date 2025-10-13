@@ -45,9 +45,9 @@ class VoucherValidator
         }
 
         foreach ($products as $product) {
-            $voucherCategory = $this->voucherService->getProductCategory($product);
+            $voucherCategories = $this->voucherService->getProductCategory($product);
 
-            if ($voucherCategory) {
+            if (!empty($voucherCategories)) {
                 return true;
             }
         }

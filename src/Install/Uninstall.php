@@ -129,5 +129,7 @@ class Uninstall
                 return false;
             }
         }
+
+        return true;
     }
 }

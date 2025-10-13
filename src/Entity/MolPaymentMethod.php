@@ -71,12 +71,12 @@ class MolPaymentMethod extends ObjectModel
     public $tax_rules_group_id;
 
     /**
-     * @var string
+     * @var float
      */
     public $surcharge_percentage;
 
     /**
-     * @var string
+     * @var float
      */
     public $surcharge_limit;
 

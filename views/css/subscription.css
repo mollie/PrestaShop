@@ -1,0 +1,66 @@
+/* Minimal subscription styling to match the image design */
+
+/* Card styling improvements */
+.card {
+  background-color: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.card-header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.card-block {
+  background-color: #ffffff;
+  border-radius: 0 0 8px 8px;
+}
+
+/* Simple ps-switch styling */
+.ps-switch {
+  background-color: #10b981 !important;
+  border-radius: 20px !important;
+}
+
+.ps-switch .slide-button {
+  background-color: white !important;
+  border-radius: 50% !important;
+}
+
+.ps-switch label {
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+/* Form styling improvements */
+.form-control {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.form-control:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Help text styling */
+.help-block {
+  color: #6b7280;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* Button styling */
+.btn-primary {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+}
