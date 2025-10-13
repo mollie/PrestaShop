@@ -6,22 +6,24 @@ import { Button } from "../../../shared/components/ui/button"
 import { Input } from "../../../shared/components/ui/input"
 import { authApiService } from "../../../services/AuthenticationApiService"
 import { useTranslations } from "../../../shared/hooks/use-translations"
+import PSAccounts from "../../../components/ps-accounts/PSAccounts"
+import SimplePSAccounts from "../../../components/ps-accounts/SimplePSAccounts"
 
 // Mollie Logo Component
 const MollieLogo = () => (
-  <svg 
-    version="1.1" 
-    xmlns="http://www.w3.org/2000/svg" 
-    xmlnsXlink="http://www.w3.org/1999/xlink" 
-    viewBox="0 0 320 94" 
+  <svg
+    version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlnsXlink="http://www.w3.org/1999/xlink"
+    viewBox="0 0 320 94"
     xmlSpace="preserve"
     className="h-6 w-auto text-black"
   >
     <style type="text/css">
       {`.st0{fill-rule:evenodd;clip-rule:evenodd;fill:currentColor;}`}
     </style>
-    <path 
-      className="st0" 
+    <path
+      className="st0"
       d="M289.3,44.3c6.9,0,13.2,4.5,15.4,11h-30.7C276.1,48.9,282.3,44.3,289.3,44.3z M320,60.9c0-8-3.1-15.6-8.8-21.4
       c-5.7-5.8-13.3-9-21.3-9h-0.4c-8.3,0.1-16.2,3.4-22.1,9.3c-5.9,5.9-9.2,13.7-9.3,22c-0.1,8.5,3.2,16.5,9.2,22.6
       c6.1,6.1,14.1,9.5,22.6,9.5h0c11.2,0,21.7-6,27.4-15.6l0.7-1.2l-12.6-6.2l-0.6,1c-3.1,5.2-8.6,8.2-14.7,8.2
@@ -78,10 +80,43 @@ export default function AuthorizationForm() {
   const [initialLoading, setInitialLoading] = useState(true)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [pendingMode, setPendingMode] = useState<"live" | "test" | null>(null)
+  
+  // PS Accounts state
+  const [psAccountsConfig, setPsAccountsConfig] = useState<{
+    psAccountsCdnUrl?: string
+    cloudSyncCdnUrl?: string
+  }>({})
 
   // Load current settings on component mount
   useEffect(() => {
     loadCurrentSettings()
+  }, [])
+
+  // Load PS Accounts configuration
+  useEffect(() => {
+    const loadPSAccountsConfig = async () => {
+      try {
+        console.log('Loading PS Accounts config...')
+        const response = await authApiService.getPSAccountsConfig()
+        console.log('PS Accounts config response:', response)
+        if (response.success) {
+          setPsAccountsConfig({
+            psAccountsCdnUrl: response.data.psAccountsCdnUrl,
+            cloudSyncCdnUrl: response.data.cloudSyncCdnUrl
+          })
+          console.log('PS Accounts config set:', {
+            psAccountsCdnUrl: response.data.psAccountsCdnUrl,
+            cloudSyncCdnUrl: response.data.cloudSyncCdnUrl
+          })
+        } else {
+          console.warn('PS Accounts config failed:', response.message)
+        }
+      } catch (error) {
+        console.error('Failed to load PS Accounts config:', error)
+      }
+    }
+
+    loadPSAccountsConfig()
   }, [])
 
   const loadCurrentSettings = async () => {
@@ -109,7 +144,7 @@ export default function AuthorizationForm() {
 
     setIsLoading(true)
     setErrorMessage("")
-    
+
     try {
       const saveResponse = await authApiService.saveApiKey(apiKey, mode)
       if (saveResponse.success) {
@@ -184,6 +219,11 @@ export default function AuthorizationForm() {
     setPendingMode(null)
   }
 
+  const handlePSAccountsOnboardingCompleted = (isCompleted: boolean) => {
+    console.log('PS Accounts onboarding completed:', isCompleted)
+    // You can add additional logic here when onboarding is completed
+  }
+
   return (
     <div className="bg-white font-inter">
       {/* Confirmation Dialog */}
@@ -218,6 +258,20 @@ export default function AuthorizationForm() {
       )}
 
       <div className="max-w-6xl mx-auto px-2 py-8">
+        {/* PS Accounts Integration */}
+        <div className="mb-8">
+          <SimplePSAccounts
+            psAccountsCdnUrl={psAccountsConfig.psAccountsCdnUrl}
+            cloudSyncCdnUrl={psAccountsConfig.cloudSyncCdnUrl}
+            onOnboardingCompleted={handlePSAccountsOnboardingCompleted}
+          />
+          <PSAccounts
+            psAccountsCdnUrl={psAccountsConfig.psAccountsCdnUrl}
+            cloudSyncCdnUrl={psAccountsConfig.cloudSyncCdnUrl}
+            onOnboardingCompleted={handlePSAccountsOnboardingCompleted}
+          />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start mb-8">
           {/* Left Column - Header */}
           <div className="flex flex-col">

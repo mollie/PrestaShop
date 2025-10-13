@@ -1,0 +1,47 @@
+/* PS Accounts Integration Styles */
+.ps-accounts-container {
+  margin-bottom: 2rem;
+}
+
+.ps-accounts-container prestashop-accounts {
+  display: block;
+  width: 100%;
+}
+
+#prestashop-cloudsync {
+  min-height: 50px;
+}
+
+/* Loading state for PS Accounts */
+.ps-accounts-loading {
+  padding: 2rem;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  background-color: #f8fafc;
+}
+
+.ps-accounts-loading .spinner {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid #e2e8f0;
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Error state for PS Accounts */
+.ps-accounts-error {
+  padding: 1rem;
+  border: 1px solid #fecaca;
+  border-radius: 0.5rem;
+  background-color: #fef2f2;
+  color: #dc2626;
+  font-size: 0.875rem;
+}
