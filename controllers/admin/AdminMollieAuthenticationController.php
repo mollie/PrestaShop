@@ -128,9 +128,6 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             case 'switchEnvironment':
                 $this->ajaxSwitchEnvironment();
                 break;
-            case 'getPSAccountsConfig':
-                $this->ajaxGetPSAccountsConfig();
-                break;
             default:
                 $this->ajaxRender(json_encode([
                     'success' => false,
@@ -312,42 +309,6 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             $this->ajaxRender(json_encode([
                 'success' => false,
                 'message' => $this->module->l('Failed to switch environment', self::FILE_NAME),
-            ]));
-        }
-    }
-
-    private function ajaxGetPSAccountsConfig(): void
-    {
-        try {
-            // Check if PS Accounts and CloudSync modules are installed
-            $psAccountsModule = Module::getInstanceByName('ps_accounts');
-            $cloudSyncModule = Module::getInstanceByName('ps_cloudsync');
-
-            $psAccountsCdnUrl = '';
-            $cloudSyncCdnUrl = '';
-
-            // Get PS Accounts CDN URL
-            if ($psAccountsModule && $psAccountsModule->active) {
-                // You might need to adjust these URLs based on your PS Accounts configuration
-                $psAccountsCdnUrl = 'https://unpkg.com/@prestashopcorp/billing-cdc/dist/bundle/ps-accounts.js';
-            }
-
-            // Get CloudSync CDN URL
-            if ($cloudSyncModule && $cloudSyncModule->active) {
-                $cloudSyncCdnUrl = 'https://unpkg.com/@prestashopcorp/cloudsync-cdc/dist/cloudsync-cdc.umd.js';
-            }
-
-            $this->ajaxRender(json_encode([
-                'success' => true,
-                'data' => [
-                    'psAccountsCdnUrl' => $psAccountsCdnUrl,
-                    'cloudSyncCdnUrl' => $cloudSyncCdnUrl,
-                ],
-            ]));
-        } catch (Exception $e) {
-            $this->ajaxRender(json_encode([
-                'success' => false,
-                'message' => $this->module->l('Failed to get PS Accounts configuration', self::FILE_NAME),
             ]));
         }
     }
