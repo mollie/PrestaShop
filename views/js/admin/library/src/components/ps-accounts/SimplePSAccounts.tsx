@@ -1,5 +1,3 @@
-import React from 'react'
-
 interface SimplePSAccountsProps {
   psAccountsCdnUrl?: string
   cloudSyncCdnUrl?: string
@@ -8,8 +6,7 @@ interface SimplePSAccountsProps {
 
 export default function SimplePSAccounts({
   psAccountsCdnUrl,
-  cloudSyncCdnUrl,
-  onOnboardingCompleted
+  cloudSyncCdnUrl
 }: SimplePSAccountsProps) {
   console.log('🚀 SimplePSAccounts rendered!', { psAccountsCdnUrl, cloudSyncCdnUrl })
 
