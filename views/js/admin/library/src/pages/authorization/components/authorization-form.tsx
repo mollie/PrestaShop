@@ -6,8 +6,7 @@ import { Button } from "../../../shared/components/ui/button"
 import { Input } from "../../../shared/components/ui/input"
 import { authApiService } from "../../../services/AuthenticationApiService"
 import { useTranslations } from "../../../shared/hooks/use-translations"
-import PSAccounts from "../../../components/ps-accounts/PSAccounts"
-import SimplePSAccounts from "../../../components/ps-accounts/SimplePSAccounts"
+
 
 // Mollie Logo Component
 const MollieLogo = () => (
@@ -81,42 +80,9 @@ export default function AuthorizationForm() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [pendingMode, setPendingMode] = useState<"live" | "test" | null>(null)
 
-  // PS Accounts state
-  const [psAccountsConfig, setPsAccountsConfig] = useState<{
-    psAccountsCdnUrl?: string
-    cloudSyncCdnUrl?: string
-  }>({})
-
   // Load current settings on component mount
   useEffect(() => {
     loadCurrentSettings()
-  }, [])
-
-  // Load PS Accounts configuration
-  useEffect(() => {
-    const loadPSAccountsConfig = async () => {
-      try {
-        console.log('Loading PS Accounts config...')
-        const response = await authApiService.getPSAccountsConfig()
-        console.log('PS Accounts config response:', response)
-        if (response.success) {
-          setPsAccountsConfig({
-            psAccountsCdnUrl: response.data.psAccountsCdnUrl,
-            cloudSyncCdnUrl: response.data.cloudSyncCdnUrl
-          })
-          console.log('PS Accounts config set:', {
-            psAccountsCdnUrl: response.data.psAccountsCdnUrl,
-            cloudSyncCdnUrl: response.data.cloudSyncCdnUrl
-          })
-        } else {
-          console.warn('PS Accounts config failed:', response.message)
-        }
-      } catch (error) {
-        console.error('Failed to load PS Accounts config:', error)
-      }
-    }
-
-    loadPSAccountsConfig()
   }, [])
 
   const loadCurrentSettings = async () => {
@@ -219,11 +185,6 @@ export default function AuthorizationForm() {
     setPendingMode(null)
   }
 
-  const handlePSAccountsOnboardingCompleted = (isCompleted: boolean) => {
-    console.log('PS Accounts onboarding completed:', isCompleted)
-    // You can add additional logic here when onboarding is completed
-  }
-
   return (
     <div className="bg-white font-inter">
       {/* Confirmation Dialog */}
@@ -258,20 +219,6 @@ export default function AuthorizationForm() {
       )}
 
       <div className="max-w-6xl mx-auto px-2 py-8">
-        {/* PS Accounts Integration */}
-        <div className="mb-8">
-          <SimplePSAccounts
-            psAccountsCdnUrl={psAccountsConfig.psAccountsCdnUrl}
-            cloudSyncCdnUrl={psAccountsConfig.cloudSyncCdnUrl}
-            onOnboardingCompleted={handlePSAccountsOnboardingCompleted}
-          />
-          <PSAccounts
-            psAccountsCdnUrl={psAccountsConfig.psAccountsCdnUrl}
-            cloudSyncCdnUrl={psAccountsConfig.cloudSyncCdnUrl}
-            onOnboardingCompleted={handlePSAccountsOnboardingCompleted}
-          />
-        </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start mb-8">
           {/* Left Column - Header */}
           <div className="flex flex-col">

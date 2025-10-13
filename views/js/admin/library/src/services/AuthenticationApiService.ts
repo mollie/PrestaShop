@@ -94,23 +94,6 @@ export class AuthenticationApiService {
     });
     return response.json();
   }
-
-  /**
-   * Get PS Accounts configuration (CDN URLs)
-   */
-  async getPSAccountsConfig() {
-    const url = new URL(this.baseUrl, window.location.origin);
-    url.searchParams.set('ajax', '1');
-    url.searchParams.set('action', 'getPSAccountsConfig');
-
-    const response = await fetch(url.toString(), {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    return response.json();
-  }
 }
 
 // Export singleton instance
