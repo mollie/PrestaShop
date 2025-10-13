@@ -52,7 +52,7 @@ The system automatically detects installed PS modules and provides the appropria
 // PS Accounts CDN URL
 'https://unpkg.com/@prestashopcorp/billing-cdc/dist/bundle/ps-accounts.js'
 
-// CloudSync CDN URL  
+// CloudSync CDN URL
 'https://unpkg.com/@prestashopcorp/cloudsync-cdc/dist/cloudsync-cdc.umd.js'
 ```
 

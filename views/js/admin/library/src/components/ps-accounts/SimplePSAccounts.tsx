@@ -19,15 +19,15 @@ export default function SimplePSAccounts({
       backgroundColor: '#e8f4f8',
       textAlign: 'center'
     }}>
-      <h2 style={{ 
-        margin: '0 0 1rem 0', 
+      <h2 style={{
+        margin: '0 0 1rem 0',
         color: '#007cba',
         fontSize: '1.5rem',
         fontWeight: 'bold'
       }}>
         🎉 PS Accounts Integration Active!
       </h2>
-      
+
       <div style={{
         backgroundColor: 'white',
         padding: '1rem',
@@ -44,14 +44,14 @@ export default function SimplePSAccounts({
         </p>
       </div>
 
-      <p style={{ 
-        margin: 0, 
-        fontSize: '1rem', 
+      <p style={{
+        margin: 0,
+        fontSize: '1rem',
         color: '#333'
       }}>
         If you can see this, the React integration is working! 🎯
       </p>
-      
+
       {!psAccountsCdnUrl && !cloudSyncCdnUrl && (
         <div style={{
           marginTop: '1rem',

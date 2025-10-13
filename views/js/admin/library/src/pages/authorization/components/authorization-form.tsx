@@ -80,7 +80,7 @@ export default function AuthorizationForm() {
   const [initialLoading, setInitialLoading] = useState(true)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [pendingMode, setPendingMode] = useState<"live" | "test" | null>(null)
-  
+
   // PS Accounts state
   const [psAccountsConfig, setPsAccountsConfig] = useState<{
     psAccountsCdnUrl?: string

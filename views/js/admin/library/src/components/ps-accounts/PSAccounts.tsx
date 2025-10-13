@@ -40,7 +40,7 @@ export default function PSAccounts({
 
   useEffect(() => {
     console.log('PSAccounts useEffect triggered with:', { psAccountsCdnUrl, cloudSyncCdnUrl })
-    
+
     const loadScripts = async () => {
       if (scriptsLoadedRef.current) {
         console.log('Scripts already loaded')
@@ -56,7 +56,7 @@ export default function PSAccounts({
       try {
         setIsLoading(true)
         setError(null)
-        
+
         console.log('Starting to load scripts...')
 
         // Load PS Accounts script
@@ -161,7 +161,7 @@ export default function PSAccounts({
   return (
     <div style={containerStyle}>
       <h3 style={{ margin: '0 0 1rem 0', color: '#007cba' }}>🚀 PS Accounts Integration</h3>
-      
+
       {/* Debug info */}
       <div style={{ padding: '1rem', backgroundColor: '#f0f0f0', border: '1px solid #ccc', marginBottom: '1rem', borderRadius: '4px' }}>
         <h4 style={{ margin: '0 0 0.5rem 0' }}>Debug Info</h4>

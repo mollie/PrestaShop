@@ -322,16 +322,16 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             // Check if PS Accounts and CloudSync modules are installed
             $psAccountsModule = Module::getInstanceByName('ps_accounts');
             $cloudSyncModule = Module::getInstanceByName('ps_cloudsync');
-            
+
             $psAccountsCdnUrl = '';
             $cloudSyncCdnUrl = '';
-            
+
             // Get PS Accounts CDN URL
             if ($psAccountsModule && $psAccountsModule->active) {
                 // You might need to adjust these URLs based on your PS Accounts configuration
                 $psAccountsCdnUrl = 'https://unpkg.com/@prestashopcorp/billing-cdc/dist/bundle/ps-accounts.js';
             }
-            
+
             // Get CloudSync CDN URL
             if ($cloudSyncModule && $cloudSyncModule->active) {
                 $cloudSyncCdnUrl = 'https://unpkg.com/@prestashopcorp/cloudsync-cdc/dist/cloudsync-cdc.umd.js';
