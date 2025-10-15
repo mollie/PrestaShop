@@ -8,18 +8,50 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
-$(document).ready(function () {
-  window?.psaccountsVue?.init();
 
-  // Cloud Sync
-  const cdc = window.cloudSyncSharingConsent;
+// Load Tailwind CSS CDN
+(function() {
+  var tailwindScript = document.createElement('script');
+  tailwindScript.src = 'https://cdn.tailwindcss.com';
+  document.head.appendChild(tailwindScript);
+  console.log('Tailwind CSS CDN loaded');
+})();
 
-  cdc.init('#prestashop-cloudsync');
-  cdc.on('OnboardingCompleted', (isCompleted) => {
-    console.log('OnboardingCompleted', isCompleted);
+// Wait 0.5 seconds and reload globals.css to ensure it's loaded last
+setTimeout(function() {
+  // Find and remove existing globals.css link
+  var existingLink = document.querySelector('link[href*="globals.css"]');
+  if (existingLink) {
+    existingLink.remove();
+  }
 
+  // Create new link element and append to head (loaded last)
+  var newLink = document.createElement('link');
+  newLink.rel = 'stylesheet';
+  newLink.href = '../modules/mollie/views/js/admin/library/dist/assets/globals.css?t=' + new Date().getTime();
+  document.head.appendChild(newLink);
+
+  console.log('globals.css reloaded and moved to end of head');
+}, 500);
+
+(function($) {
+  if (typeof $ === 'undefined') {
+    return;
+  }
+
+  $(document).ready(function () {
+    window?.psaccountsVue?.init();
+
+    // Cloud Sync
+    const cdc = window.cloudSyncSharingConsent;
+
+    cdc.init('#prestashop-cloudsync');
+    cdc.on('OnboardingCompleted', (isCompleted) => {
+      console.log('OnboardingCompleted', isCompleted);
+
+    });
+    cdc.isOnboardingCompleted((isCompleted) => {
+      console.log('Onboarding is already Completed', isCompleted);
+    });
   });
-  cdc.isOnboardingCompleted((isCompleted) => {
-    console.log('Onboarding is already Completed', isCompleted);
-  });
-});
+})(window.jQuery);
