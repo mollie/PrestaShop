@@ -73,7 +73,7 @@ $this->context->smarty->assign('urlCloudsync', 'https://assets.prestashop3.com/e
 
 **Usage:**
 ```tsx
-<PrestaShopIntegration 
+<PrestaShopIntegration
   onAccountLinked={(isLinked) => console.log('Account linked:', isLinked)}
   onCloudSyncCompleted={(isCompleted) => console.log('CloudSync completed:', isCompleted)}
 />

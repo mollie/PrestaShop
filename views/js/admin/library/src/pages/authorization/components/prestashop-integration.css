@@ -1,0 +1,53 @@
+/* Isolate PrestaShop components from affecting the main page design */
+
+.prestashop-integration-wrapper {
+  /* Reset any inherited styles */
+  all: initial;
+  
+  /* Reapply necessary display properties */
+  display: block;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  box-sizing: border-box;
+}
+
+.prestashop-integration-wrapper *,
+.prestashop-integration-wrapper *::before,
+.prestashop-integration-wrapper *::after {
+  box-sizing: border-box;
+}
+
+/* Ensure PrestaShop Account component stays contained */
+.prestashop-account-container {
+  contain: layout style paint; /* CSS containment to prevent style leakage */
+}
+
+.prestashop-account-container * {
+  max-width: 100%;
+}
+
+/* Ensure CloudSync component stays contained */
+.prestashop-cloudsync-container {
+  contain: layout style paint; /* CSS containment to prevent style leakage */
+}
+
+.prestashop-cloudsync-container * {
+  max-width: 100%;
+}
+
+/* Override any absolute positioning from PrestaShop components */
+prestashop-accounts,
+#prestashop-cloudsync {
+  position: relative !important;
+  display: block !important;
+  max-width: 100% !important;
+}
+
+/* Prevent Vue.js components from breaking layout */
+prestashop-accounts > div,
+#prestashop-cloudsync > div {
+  position: relative !important;
+  max-width: 100% !important;
+}

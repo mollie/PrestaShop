@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
+import "./prestashop-integration.css"
 
 // Extend JSX to support custom HTML elements
 declare global {
@@ -35,7 +36,7 @@ export default function PrestaShopIntegration({
   useEffect(() => {
     const urlAccountsCdn = (window as any).urlAccountsCdn
     const urlCloudsync = (window as any).urlCloudsync
-    
+
     setAccountCdnAvailable(!!urlAccountsCdn)
     setCloudSyncCdnAvailable(!!urlCloudsync)
   }, [])
@@ -43,7 +44,7 @@ export default function PrestaShopIntegration({
   // Load PrestaShop Account script
   useEffect(() => {
     const urlAccountsCdn = (window as any).urlAccountsCdn
-    
+
     console.log('PrestaShop Account CDN URL:', urlAccountsCdn)
     console.log('All window vars:', {
       urlAccountsCdn: (window as any).urlAccountsCdn,
@@ -51,7 +52,7 @@ export default function PrestaShopIntegration({
       contextPsAccounts: (window as any).contextPsAccounts,
       contextPsEventbus: (window as any).contextPsEventbus,
     })
-    
+
     if (!urlAccountsCdn) {
       console.warn('PrestaShop Account CDN URL not found - ps_accounts module may not be installed or configured')
       return
@@ -88,9 +89,9 @@ export default function PrestaShopIntegration({
   // Load CloudSync script
   useEffect(() => {
     const urlCloudsync = (window as any).urlCloudsync
-    
+
     console.log('CloudSync CDN URL:', urlCloudsync)
-    
+
     if (!urlCloudsync) {
       console.warn('CloudSync CDN URL not found - ps_eventbus module may not be installed or configured')
       return
@@ -183,12 +184,32 @@ export default function PrestaShopIntegration({
   }, [cloudSyncScriptLoaded, onCloudSyncCompleted])
 
   return (
-    <div className="prestashop-integration-wrapper mb-8">
+    <div 
+      className="prestashop-integration-wrapper" 
+      style={{ 
+        marginBottom: '20px',
+        isolation: 'isolate', // Prevent z-index conflicts
+        position: 'relative',
+      }}
+    >
       {/* Debug Info */}
       {!accountCdnAvailable && !cloudSyncCdnAvailable && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4">
-          <p className="text-yellow-800 text-sm">
-            <strong>Note:</strong> PrestaShop Account and CloudSync modules are not configured. 
+        <div 
+          style={{
+            backgroundColor: '#fef3c7',
+            border: '1px solid #fbbf24',
+            borderRadius: '4px',
+            padding: '12px 16px',
+            marginBottom: '16px',
+          }}
+        >
+          <p style={{ 
+            color: '#92400e', 
+            fontSize: '13px', 
+            margin: 0,
+            lineHeight: '1.5',
+          }}>
+            <strong>Note:</strong> PrestaShop Account and CloudSync modules are not configured.
             Please ensure ps_accounts and ps_eventbus modules are installed and configured.
           </p>
         </div>
@@ -196,14 +217,35 @@ export default function PrestaShopIntegration({
 
       {/* PrestaShop Account Component */}
       {accountCdnAvailable && (
-        <div className="prestashop-account-container mb-6">
+        <div 
+          className="prestashop-account-container"
+          style={{
+            marginBottom: '20px',
+            maxWidth: '100%',
+            overflow: 'hidden', // Prevent component overflow
+            backgroundColor: '#ffffff',
+            borderRadius: '4px',
+            padding: '16px',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+          }}
+        >
           <div dangerouslySetInnerHTML={{ __html: '<prestashop-accounts></prestashop-accounts>' }} />
         </div>
       )}
 
       {/* CloudSync Component */}
       {cloudSyncCdnAvailable && (
-        <div className="prestashop-cloudsync-container">
+        <div 
+          className="prestashop-cloudsync-container"
+          style={{
+            maxWidth: '100%',
+            overflow: 'hidden', // Prevent component overflow
+            backgroundColor: '#ffffff',
+            borderRadius: '4px',
+            padding: '16px',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+          }}
+        >
           <div id="prestashop-cloudsync"></div>
         </div>
       )}
