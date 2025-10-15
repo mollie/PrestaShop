@@ -187,13 +187,10 @@ export default function AuthorizationForm() {
 
   return (
     <div className="bg-white font-inter">
-      {/* PrestaShop Account and CloudSync Integration */}
-      <div className="max-w-6xl mx-auto px-2 py-8">
         <PrestaShopIntegration
           onAccountLinked={(isLinked) => console.log('PrestaShop Account linked:', isLinked)}
           onCloudSyncCompleted={(isCompleted) => console.log('CloudSync completed:', isCompleted)}
         />
-      </div>
 
       {/* Confirmation Dialog */}
       {showConfirmDialog && (
