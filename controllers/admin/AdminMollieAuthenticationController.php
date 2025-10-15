@@ -329,13 +329,16 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
             $accountsService = $accountsFacade->getPsAccountsService();
 
+            $cdnUrl = $accountsService->getAccountsCdn();
+
             // Add PrestaShop Account context to JavaScript
             Media::addJsDef([
                 'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()->present($this->module->name),
+                'urlAccountsCdn' => $cdnUrl,
             ]);
 
             // Add PrestaShop Account CDN URL for Smarty template
-            $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
+            $this->context->smarty->assign('urlAccountsCdn', $cdnUrl);
         } catch (Exception $e) {
             // Log error but don't break the page
             $this->context->controller->errors[] = 'PrestaShop Account initialization failed: ' . $e->getMessage();
@@ -349,6 +352,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
     {
         try {
             $moduleManager = ModuleManagerBuilder::getInstance()->build();
+            $cloudSyncUrl = 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js';
 
             if ($moduleManager->isInstalled('ps_eventbus')) {
                 $eventbusModule = \Module::getInstanceByName('ps_eventbus');
@@ -359,13 +363,11 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                     // Add CloudSync context to JavaScript
                     Media::addJsDef([
                         'contextPsEventbus' => $eventbusPresenterService->expose($this->module, ['info', 'modules', 'themes']),
+                        'urlCloudsync' => $cloudSyncUrl,
                     ]);
 
                     // Add CloudSync CDN URL for Smarty template
-                    $this->context->smarty->assign(
-                        'urlCloudsync',
-                        'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js'
-                    );
+                    $this->context->smarty->assign('urlCloudsync', $cloudSyncUrl);
                 }
             }
         } catch (Exception $e) {
