@@ -26,14 +26,34 @@ export default function PrestaShopIntegration({
 }: PrestaShopIntegrationProps) {
   const [accountScriptLoaded, setAccountScriptLoaded] = useState(false)
   const [cloudSyncScriptLoaded, setCloudSyncScriptLoaded] = useState(false)
+  const [accountCdnAvailable, setAccountCdnAvailable] = useState(false)
+  const [cloudSyncCdnAvailable, setCloudSyncCdnAvailable] = useState(false)
   const accountsInitialized = useRef(false)
   const cloudSyncInitialized = useRef(false)
+
+  // Check if CDN URLs are available
+  useEffect(() => {
+    const urlAccountsCdn = (window as any).urlAccountsCdn
+    const urlCloudsync = (window as any).urlCloudsync
+    
+    setAccountCdnAvailable(!!urlAccountsCdn)
+    setCloudSyncCdnAvailable(!!urlCloudsync)
+  }, [])
 
   // Load PrestaShop Account script
   useEffect(() => {
     const urlAccountsCdn = (window as any).urlAccountsCdn
+    
+    console.log('PrestaShop Account CDN URL:', urlAccountsCdn)
+    console.log('All window vars:', {
+      urlAccountsCdn: (window as any).urlAccountsCdn,
+      urlCloudsync: (window as any).urlCloudsync,
+      contextPsAccounts: (window as any).contextPsAccounts,
+      contextPsEventbus: (window as any).contextPsEventbus,
+    })
+    
     if (!urlAccountsCdn) {
-      console.warn('PrestaShop Account CDN URL not found')
+      console.warn('PrestaShop Account CDN URL not found - ps_accounts module may not be installed or configured')
       return
     }
 
@@ -68,8 +88,11 @@ export default function PrestaShopIntegration({
   // Load CloudSync script
   useEffect(() => {
     const urlCloudsync = (window as any).urlCloudsync
+    
+    console.log('CloudSync CDN URL:', urlCloudsync)
+    
     if (!urlCloudsync) {
-      console.warn('CloudSync CDN URL not found')
+      console.warn('CloudSync CDN URL not found - ps_eventbus module may not be installed or configured')
       return
     }
 
@@ -161,15 +184,29 @@ export default function PrestaShopIntegration({
 
   return (
     <div className="prestashop-integration-wrapper mb-8">
+      {/* Debug Info */}
+      {!accountCdnAvailable && !cloudSyncCdnAvailable && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4">
+          <p className="text-yellow-800 text-sm">
+            <strong>Note:</strong> PrestaShop Account and CloudSync modules are not configured. 
+            Please ensure ps_accounts and ps_eventbus modules are installed and configured.
+          </p>
+        </div>
+      )}
+
       {/* PrestaShop Account Component */}
-      <div className="prestashop-account-container mb-6">
-        <div dangerouslySetInnerHTML={{ __html: '<prestashop-accounts></prestashop-accounts>' }} />
-      </div>
+      {accountCdnAvailable && (
+        <div className="prestashop-account-container mb-6">
+          <div dangerouslySetInnerHTML={{ __html: '<prestashop-accounts></prestashop-accounts>' }} />
+        </div>
+      )}
 
       {/* CloudSync Component */}
-      <div className="prestashop-cloudsync-container">
-        <div id="prestashop-cloudsync"></div>
-      </div>
+      {cloudSyncCdnAvailable && (
+        <div className="prestashop-cloudsync-container">
+          <div id="prestashop-cloudsync"></div>
+        </div>
+      )}
     </div>
   )
 }
