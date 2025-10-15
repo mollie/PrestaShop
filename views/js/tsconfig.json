@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "outDir": "./ignoreme/",
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "module": "esnext",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "jsx": "react",
+    "skipLibCheck": true,
+    "noEmit": false,
+    "pretty": true,
+    "lib": [ "esnext", "dom", "jsx" ],
+    "suppressImplicitAnyIndexErrors": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@carrierconfig/*": ["back/carrierconfig/*"],
+      "@methodconfig/*": ["back/methodconfig/*"],
+      "@transaction/*": ["back/transaction/*"],
+      "@updater/*": ["back/updater/*"],
+      "@banks/*": ["front/banks/*"],
+      "@qrcode/*": ["front/qrcode/*"],
+      "@shared/*": ["shared/*"]
+    }
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

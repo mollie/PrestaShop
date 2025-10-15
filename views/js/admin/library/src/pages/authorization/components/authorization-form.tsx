@@ -6,6 +6,8 @@ import { Button } from "../../../shared/components/ui/button"
 import { Input } from "../../../shared/components/ui/input"
 import { authApiService } from "../../../services/AuthenticationApiService"
 import { useTranslations } from "../../../shared/hooks/use-translations"
+import { PrestaShopAccounts } from "../../../shared/components/prestashop/PrestaShopAccounts"
+import { CloudSyncConsent } from "../../../shared/components/cloudSync/CloudSyncConsent"
 
 
 // Mollie Logo Component
@@ -37,29 +39,24 @@ const MollieLogo = () => (
   </svg>
 )
 
-const PsAccounts = () => {
-  const renderMboCdcDependencyResolver = (window as any).mboCdcDependencyResolver?.render
-
-  useEffect(() => {
-    if (renderMboCdcDependencyResolver) {
-      const context = {
-        onDependenciesResolved: () => location.reload(),
-        onDependencyResolved: (dependencyData: any) => console.log('Dependency installed', dependencyData), // name, displayName, version
-        onDependencyFailed: (dependencyData: any) => console.log('Failed to install dependency', dependencyData),
-        onDependenciesFailed: () => console.log('There are some errors'),
-      }
-      renderMboCdcDependencyResolver(context, '#cdc-container')
-    }
-  }, [renderMboCdcDependencyResolver])
-
+// PrestaShop integrations
+const PrestaShopIntegrations = () => {
   return (
-    <>
-      <script src="https://assets.prestashop3.com/dst/mbo/v1/mbo-cdc-dependencies-resolver.umd.js"></script>
-      <div id="cdc-container"></div>
-      {React.createElement('prestashop-accounts')}
-    </>
+    <div className="prestashop-integrations">
+      {/* PrestaShop Accounts */}
+      <PrestaShopAccounts />
+      
+      {/* CloudSync Component */}
+      <CloudSyncConsent 
+        containerId="cloudsync-root"
+        autoInit={true}
+        onReady={() => console.log('CloudSync ready')}
+        onError={(error) => console.error('CloudSync error:', error)}
+      />
+    </div>
   )
-}
+};
+
 
 // Skeleton loading components
 const SkeletonModeToggle = () => (
@@ -211,7 +208,7 @@ export default function AuthorizationForm() {
 
   return (
     <div className="bg-white font-inter">
-      <PsAccounts />
+      <PrestaShopIntegrations />
       {/* Confirmation Dialog */}
       {showConfirmDialog && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{backgroundColor: 'rgba(0, 0, 0, 0.4)'}}>

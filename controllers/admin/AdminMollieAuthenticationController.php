@@ -52,6 +52,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         parent::init();
 
         $this->initCloudSync();
+        $this->initPrestaShopAccounts();
 
         $version = time();
 
@@ -67,6 +68,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
 
         Media::addJsDef([
             'mollieAuthAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAuthentication'),
+            'cloudSyncUrl' => 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js',
         ]);
 
         Media::addJsDef([
@@ -354,5 +356,49 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 ],
             ]),
         ]);
+    }
+
+    private function initPrestaShopAccounts(): void
+    {
+        try {
+            /** @var PsAccounts $accountsFacade */
+            $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
+            $accountsService = $accountsFacade->getPsAccountsService();
+            
+            // Inject contextPsAccounts for the Vue component
+            Media::addJsDef([
+                'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()->present($this->module->name),
+            ]);
+
+            // Provide the CDN URL for the PrestaShop Accounts script
+            $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
+            
+        } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
+            // Try to install PS Accounts if it's not installed
+            try {
+                $accountsInstaller = $this->module->getService('Mollie.PsAccountsInstaller');
+                $accountsInstaller->install();
+                
+                $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
+                $accountsService = $accountsFacade->getPsAccountsService();
+                
+                Media::addJsDef([
+                    'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()->present($this->module->name),
+                ]);
+                
+                $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
+                
+            } catch (Exception $e) {
+                // If all fails, set empty context to prevent JS errors
+                Media::addJsDef([
+                    'contextPsAccounts' => [],
+                ]);
+            }
+        } catch (Exception $e) {
+            // If all fails, set empty context to prevent JS errors  
+            Media::addJsDef([
+                'contextPsAccounts' => [],
+            ]);
+        }
     }
 }

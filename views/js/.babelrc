@@ -1,0 +1,22 @@
+{
+  "plugins": [
+    "@babel/plugin-syntax-dynamic-import",
+    [
+      "module-resolver",
+      {
+        "root": [
+          "."
+        ],
+        "alias": {
+          "@carrierconfig": "./src/back/carrierconfig",
+          "@methodconfig": "./src/back/methodconfig",
+          "@transaction": "./src/back/transaction",
+          "@updater": "./src/back/updater",
+          "@banks": "./src/front/banks",
+          "@qrcode": "./src/front/qrcode",
+          "@shared": "./src/shared"
+        }
+      }
+    ]
+  ]
+}
