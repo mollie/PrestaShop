@@ -18,6 +18,10 @@ use Mollie\Adapter\ToolsAdapter;
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
+use Mollie\Logger\Logger;
+use Mollie\Utility\ExceptionUtility;
+use Prestashop\ModuleLibMboInstaller\DependencyBuilder;
+use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -25,6 +29,8 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminMollieAuthenticationController extends ModuleAdminController
 {
+    public const PS_CLOUDSYNC_CDC = 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js';
+
     const FILE_NAME = 'AdminMollieAuthenticationController';
 
     /** @var Mollie */
@@ -102,10 +108,183 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 'switchTo' => $this->module->l('Switch to %s', self::FILE_NAME),
             ],
         ]);
-        $this->content = $this->context->smarty->fetch(
+
+        Media::addJsDef([
+            'mollieAuthAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAuthentication'),
+        ]);
+
+
+        try {
+            $this->initCloudSyncAndPsAccounts();
+        } catch (Exception $e) {
+            throw $e;
+//            $logger->error('Failed to initiate cloud sync and ps accounts', [
+//                'context' => [],
+//                'exceptions' => ExceptionUtility::getExceptions($e),
+//            ]);
+        }
+
+        $this->content .= $this->context->smarty->fetch(
             $this->module->getLocalPath() . 'views/templates/admin/authentication/authentication.tpl'
         );
+//        try {
+//            $this->initCloudSyncAndPsAccounts();
+//            $mboInstaller = new DependencyBuilder($this->module);
+//
+//            if (!$mboInstaller->areDependenciesMet()) {
+//                $dependencies = $mboInstaller->handleDependencies();
+//
+//                $this->context->smarty->assign('dependencies', $dependencies);
+//               $template = $this->content .= $this->context->smarty->fetch(
+//                       $this->module->getLocalPath() . 'views/templates/admin/dependency_builder.tpl'
+//               );
+//               $this->content = $template;
+//
+//               return;
+//            }
+//
+//            $this->loadPsAccounts();
+//            $this->loadCloudSync();
+//
+//            $this->content = $this->context->smarty->fetch(
+//                $this->module->getLocalPath() . 'views/templates/admin/cloudsync.tpl'
+//            );
+//
+
+//        } catch (Exception $e) {
+//            throw $e;
+//        }
     }
+    private function initCloudSyncAndPsAccounts(): void
+    {
+        $mboInstaller = new Prestashop\ModuleLibMboInstaller\DependencyBuilder($this->module);
+
+        if (!$mboInstaller->areDependenciesMet()) {
+            $dependencies = $mboInstaller->handleDependencies();
+            $this->context->smarty->assign('dependencies', $dependencies);
+
+            $this->content .= $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/dependency_builder.tpl');
+
+            return;
+        }
+
+        $this->context->smarty->assign('module_dir', $this->module->getPathUri());
+        $moduleManager = PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder::getInstance()->build();
+
+//        /** @var Logger $logger * */
+//        $logger = $this->module->getService(LoggerInterface::class);
+
+        try {
+            $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
+            $accountsService = $accountsFacade->getPsAccountsService();
+        } catch (PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
+//            $logger->error(sprintf('%s - Failed to initiate ps_accounts', self::FILE_NAME), [
+//                'exceptions' => ExceptionUtility::getExceptions($e),
+//            ]);
+
+            try {
+                $accountsInstaller = $this->module->getService('Mollie.PsAccountsInstaller');
+                $accountsInstaller->install();
+                $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
+                $accountsService = $accountsFacade->getPsAccountsService();
+            } catch (Exception $e) {
+                $this->context->controller->errors[] = $e->getMessage();
+
+                $logger->error(sprintf('%s - Failed to install ps_accounts', self::FILE_NAME), [
+                    'exceptions' => ExceptionUtility::getExceptions($e),
+                ]);
+
+                return;
+            }
+        }
+
+        try {
+            Media::addJsDef([
+                'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()
+                    ->present($this->module->name),
+            ]);
+
+            // Retrieve Account CDN
+            $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
+        } catch (\Throwable $e) {
+            $this->context->controller->errors[] = $e->getMessage();
+
+            $logger->error(sprintf('%s - Failed to load ps accounts CDN', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+        }
+
+        if ($moduleManager->isInstalled('ps_eventbus')) {
+            $eventbusModule = \Module::getInstanceByName('ps_eventbus');
+            if ($eventbusModule && version_compare($eventbusModule->version, '1.9.0', '>=')) {
+                /** @phpstan-ignore-next-line PHPStan does not recognize the event bus module, so it doesn't know it has getService function */
+                $eventbusPresenterService = $eventbusModule->getService('PrestaShop\Module\PsEventbus\Service\PresenterService');
+
+                $this->context->smarty->assign('urlCloudsync', 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js');
+                $this->addJs($this->module->getPathUri() . '/views/js/admin/cloudsync.js');
+                Media::addJsDef([
+                    'contextPsEventbus' => $eventbusPresenterService->expose($this->module, ['info', 'modules', 'themes']),
+                ]);
+            }
+        }
+
+        $this->content .= $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/cloudsync.tpl');
+
+        return;
+    }
+
+//    private function loadPsAccounts(): void
+//    {
+//        /** @var PsAccounts $accountsFacade */
+//        $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
+//
+//        $psAccountsPresenter = $accountsFacade->getPsAccountsPresenter();
+//        $psAccountsService = $accountsFacade->getPsAccountsService();
+//
+//        $this->context->smarty->assign('mollie', [
+//            'url' => [
+//                'psAccountsCdnUrl' => $psAccountsService->getAccountsCdn(),
+//            ],
+//        ], true);
+//
+//        $previousJsDef = isset(\Media::getJsDef()['mollie']) ? \Media::getJsDef()['mollie'] : [];
+//
+//        \Media::addJsDef([
+//            'contextPsAccounts' => $psAccountsPresenter->present(),
+//            'mollie' => array_merge($previousJsDef, [
+//                'isPsAccountsLinked' => $psAccountsService->isAccountLinked(),
+//            ]),
+//        ]);
+//    }
+//
+//    private function loadCloudSync(): void
+//    {
+//        if (!class_exists('Ps_eventbus') || !class_exists('PrestaShop\Module\PsEventbus\Service\PresenterService')) {
+//            return;
+//        }
+//
+//        $eventbusModule = \Module::getInstanceByName('ps_eventbus');
+//
+//        if (!$eventbusModule) {
+//            return;
+//        }
+//
+//        /** @phpstan-ignore-next-line PHPStan does not recognize the event bus module, so it doesn't know it has getService function */
+//        $eventbusPresenterService = $eventbusModule->getService(PresenterService::class);
+//
+//        $previousJsDef = isset(\Media::getJsDef()['mollie']) ? \Media::getJsDef()['mollie'] : [];
+//
+//        \Media::addJsDef([
+//            'contextPsEventbus' => $eventbusPresenterService->expose($this->module, [
+//                'info',
+//            ]),
+//            'mollie' => array_merge($previousJsDef, [
+//                'url' => [
+//                    'cloudSyncPathCDC' => self::PS_CLOUDSYNC_CDC,
+//                ],
+//            ]),
+//        ]);
+//    }
 
     public function displayAjax(): void
     {
