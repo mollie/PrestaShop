@@ -364,7 +364,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             /** @var PsAccounts $accountsFacade */
             $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
             $accountsService = $accountsFacade->getPsAccountsService();
-            
+
             // Inject contextPsAccounts for the Vue component
             Media::addJsDef([
                 'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()->present($this->module->name),
@@ -372,22 +372,22 @@ class AdminMollieAuthenticationController extends ModuleAdminController
 
             // Provide the CDN URL for the PrestaShop Accounts script
             $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
-            
+
         } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
             // Try to install PS Accounts if it's not installed
             try {
                 $accountsInstaller = $this->module->getService('Mollie.PsAccountsInstaller');
                 $accountsInstaller->install();
-                
+
                 $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
                 $accountsService = $accountsFacade->getPsAccountsService();
-                
+
                 Media::addJsDef([
                     'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()->present($this->module->name),
                 ]);
-                
+
                 $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
-                
+
             } catch (Exception $e) {
                 // If all fails, set empty context to prevent JS errors
                 Media::addJsDef([
@@ -395,7 +395,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 ]);
             }
         } catch (Exception $e) {
-            // If all fails, set empty context to prevent JS errors  
+            // If all fails, set empty context to prevent JS errors
             Media::addJsDef([
                 'contextPsAccounts' => [],
             ]);
