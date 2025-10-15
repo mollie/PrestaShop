@@ -45,9 +45,9 @@ const PrestaShopIntegrations = () => {
     <div className="prestashop-integrations">
       {/* PrestaShop Accounts */}
       <PrestaShopAccounts />
-      
+
       {/* CloudSync Component */}
-      <CloudSyncConsent 
+      <CloudSyncConsent
         containerId="cloudsync-root"
         autoInit={true}
         onReady={() => console.log('CloudSync ready')}

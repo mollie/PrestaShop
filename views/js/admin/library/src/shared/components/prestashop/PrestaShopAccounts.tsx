@@ -1,17 +1,15 @@
 /**
  * PrestaShop Accounts Integration Component
  * Handles PrestaShop Accounts Vue component integration in React
+ *
+ * Based on PrestaShop Integration Framework documentation:
+ * https://docs.cloud.prestashop.com/9-prestashop-integration-framework/4-prestashop-account/
  */
 
 import React, { useEffect, useRef, useState, useCallback } from 'react'
-import { prestashopConfig } from '../../lib/prestashop-config'
 import { scriptLoader } from '../../lib/script-loader'
 
 interface PrestaShopAccountsProps {
-  /** MBO CDC container ID (default: 'cdc-container') */
-  cdcContainerId?: string
-  /** Additional configuration */
-  config?: Record<string, any>
   /** Callback when accounts is ready */
   onReady?: () => void
   /** Callback for errors */
@@ -32,18 +30,14 @@ interface AccountsState {
 }
 
 export const PrestaShopAccounts: React.FC<PrestaShopAccountsProps> = ({
-  cdcContainerId = 'cdc-container',
   onReady,
   onError,
   className = '',
   style = {},
   autoInit = true
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const cdcContainerRef = useRef<HTMLDivElement>(null)
-  const psAccountsRef = useRef<any>(null)
   const initializationAttempted = useRef<boolean>(false)
-  
+
   const [state, setState] = useState<AccountsState>({
     isLoading: false,
     isReady: false,
@@ -61,8 +55,12 @@ export const PrestaShopAccounts: React.FC<PrestaShopAccountsProps> = ({
     onError?.(error)
   }, [onError, updateState])
 
+  /**
+   * Initialize PrestaShop Accounts according to the official documentation
+   */
   const initializePrestaShopAccounts = useCallback(async () => {
     if (state.isInitialized || state.isLoading || initializationAttempted.current) {
+      console.log('PrestaShop Accounts: skipping initialization (already initialized or in progress)')
       return
     }
 
@@ -70,87 +68,95 @@ export const PrestaShopAccounts: React.FC<PrestaShopAccountsProps> = ({
     updateState({ isLoading: true, error: null })
 
     try {
-      // Use the context already injected by PS Accounts module
       const w = window as any
-      
-      console.log('PrestaShop Accounts context available:', w.contextPsAccounts)
-      
-      // Check if PS Accounts is already available from existing module integration
-      if (w.psaccountsVue) {
-        console.log('psaccountsVue already loaded, initializing directly...')
-      } else {
-        // Load from the accounts UI URL if not already loaded
-        const accountsUrl = w.contextPsAccounts?.accountsUiUrl
-        if (accountsUrl) {
-          console.log('Loading PrestaShop Accounts from accountsUiUrl:', accountsUrl)
-          await scriptLoader.loadScript(`${accountsUrl}/dist/psaccounts-vue.umd.js`, {
-            id: 'prestashop-accounts-script'
-          })
-        } else {
-          // Fallback to standard CDN
-          console.log('Loading PrestaShop Accounts from standard CDN...')
-          await scriptLoader.loadScript('https://unpkg.com/prestashop_accounts_vue_components@5', {
-            id: 'prestashop-accounts-script'
-          })
-        }
+
+      // Check if contextPsAccounts was injected by PHP
+      if (!w.contextPsAccounts) {
+        throw new Error('contextPsAccounts not found. Make sure PrestaShop Accounts module is properly configured in your controller.')
       }
 
-      // Wait a bit for the script to initialize
-      await new Promise(resolve => setTimeout(resolve, 500))
+      console.log('PrestaShop Accounts: contextPsAccounts found', w.contextPsAccounts)
 
-      // The <prestashop-accounts> web component should auto-initialize
-      // when the script loads and the element is in the DOM
-      
-      console.log('PrestaShop Accounts context from PHP:', w.contextPsAccounts)
-      
-      // Check if the web component has initialized
-      if (w.psaccountsVue) {
-        console.log('PrestaShop Accounts (psaccountsVue) available, initializing...')
-        
-        // The web component should automatically pick up the contextPsAccounts
+      // Check if urlAccountsCdn is available (injected via Smarty)
+      const urlAccountsCdn = w.prestashop?.urlAccountsCdn || w.urlAccountsCdn
+
+      if (!urlAccountsCdn) {
+        throw new Error('urlAccountsCdn not found. Make sure it is assigned in your controller.')
+      }
+
+      console.log('PrestaShop Accounts: Loading from CDN:', urlAccountsCdn)
+
+      // Load the PrestaShop Accounts script from the CDN
+      if (!w.psaccountsVue) {
+        await scriptLoader.loadScript(urlAccountsCdn, {
+          id: 'prestashop-accounts-cdn',
+          onLoad: () => {
+            console.log('PrestaShop Accounts: Script loaded successfully')
+          }
+        })
+
+        // Wait for psaccountsVue to be available
+        await waitForPsAccountsVue(5000)
+      }
+
+      // Initialize psaccountsVue
+      if (w.psaccountsVue && typeof w.psaccountsVue.init === 'function') {
+        console.log('PrestaShop Accounts: Calling psaccountsVue.init()')
         w.psaccountsVue.init()
-        
-        console.log('PrestaShop Accounts initialized successfully')
+
+        console.log('PrestaShop Accounts: Initialized successfully')
+
+        updateState({
+          isLoading: false,
+          isReady: true,
+          isInitialized: true
+        })
+
+        onReady?.()
       } else {
-        console.log('psaccountsVue not available yet, web component may initialize automatically')
+        throw new Error('psaccountsVue.init() is not available')
       }
-      
-      // Mark as ready regardless - the web component should handle itself
-      updateState({ 
-        isLoading: false, 
-        isReady: true, 
-        isInitialized: true 
-      })
-      
-      onReady?.()
 
     } catch (error) {
       handleError(error instanceof Error ? error : new Error(String(error)))
+      initializationAttempted.current = false // Allow retry
     }
-  }, []) // Remove dependencies to prevent re-initialization
+  }, [handleError, onReady, state.isInitialized, state.isLoading, updateState])
 
+  /**
+   * Wait for psaccountsVue to be available on window
+   */
+  const waitForPsAccountsVue = (timeout = 5000): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const w = window as any
+      if (w.psaccountsVue) {
+        resolve()
+        return
+      }
 
+      let attempts = 0
+      const maxAttempts = timeout / 100
 
-  const destroyPrestaShopAccounts = useCallback(() => {
-    psAccountsRef.current = null
-    updateState({ 
-      isReady: false, 
-      isInitialized: false 
+      const check = () => {
+        if (w.psaccountsVue) {
+          resolve()
+        } else if (attempts >= maxAttempts) {
+          reject(new Error('PrestaShop Accounts script loaded but psaccountsVue not available'))
+        } else {
+          attempts++
+          setTimeout(check, 100)
+        }
+      }
+
+      check()
     })
-  }, [updateState])
+  }
 
   useEffect(() => {
-    let isMounted = true
-    
-    if (autoInit && isMounted && !state.isInitialized && !state.isLoading) {
+    if (autoInit && !state.isInitialized && !state.isLoading) {
       initializePrestaShopAccounts()
     }
-
-    return () => {
-      isMounted = false
-      destroyPrestaShopAccounts()
-    }
-  }, [autoInit]) // Only depend on autoInit
+  }, [autoInit, initializePrestaShopAccounts, state.isInitialized, state.isLoading])
 
   const containerClasses = `prestashop-accounts-container ${className}`.trim()
 
@@ -162,14 +168,14 @@ export const PrestaShopAccounts: React.FC<PrestaShopAccountsProps> = ({
           <div style={{ marginBottom: '10px' }}>
             Loading PrestaShop Accounts...
           </div>
-          <div 
+          <div
             style={{
               width: '20px',
               height: '20px',
               border: '2px solid #f3f3f3',
               borderTop: '2px solid #0040ff',
               borderRadius: '50%',
-              animation: 'cloudsync-spin 1s linear infinite',
+              animation: 'spin 1s linear infinite',
               margin: '0 auto'
             }}
           />
@@ -178,7 +184,7 @@ export const PrestaShopAccounts: React.FC<PrestaShopAccountsProps> = ({
 
       {/* Error message */}
       {state.error && (
-        <div 
+        <div
           className="ps-accounts-error"
           style={{
             padding: '15px',
@@ -206,67 +212,15 @@ export const PrestaShopAccounts: React.FC<PrestaShopAccountsProps> = ({
         </div>
       )}
 
-      {/* MBO CDC Container */}
+      {/* PrestaShop Accounts Web Component */}
       <div
-        ref={cdcContainerRef}
-        id={cdcContainerId}
-        style={{ marginBottom: '15px' }}
-      />
-
-      {/* PrestaShop Accounts Container */}
-      <div
-        ref={containerRef}
         className={containerClasses}
         style={{
-          minHeight: state.isReady ? 'auto' : '200px',
-          border: '1px dashed #ccc',
-          padding: '15px',
-          backgroundColor: '#f9f9f9',
           ...style
         }}
       >
-        <div style={{ marginBottom: '10px', color: '#666', fontSize: '12px' }}>
-          <strong>✅ PrestaShop Accounts Integration Active</strong><br />
-          Status: {state.isReady ? '🟢 Ready' : state.isLoading ? '🔄 Loading...' : '⭕ Initializing'}
-          {state.error && <div style={{ color: 'red', marginTop: '5px', fontSize: '11px' }}>⚠️ {state.error}</div>}
-        </div>
-        {React.createElement('prestashop-accounts', {
-          style: {
-            display: 'block',
-            minHeight: '100px',
-            border: '1px solid #ddd',
-            backgroundColor: 'white'
-          }
-        })}
+        {React.createElement('prestashop-accounts')}
       </div>
-
-      {/* Debug info */}
-      {prestashopConfig.isDebugMode() && (
-        <div 
-          style={{
-            marginTop: '10px',
-            padding: '10px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '4px',
-            fontSize: '12px'
-          }}
-        >
-          <div><strong>PrestaShop Accounts Debug:</strong></div>
-          <div>Status: {state.isReady ? 'Ready' : 'Not Ready'}</div>
-          <div>Initialized: {state.isInitialized ? 'Yes' : 'No'}</div>
-          <button
-            onClick={initializePrestaShopAccounts}
-            disabled={state.isLoading || state.isInitialized}
-            style={{
-              marginTop: '5px',
-              padding: '5px 10px',
-              fontSize: '11px'
-            }}
-          >
-            Initialize
-          </button>
-        </div>
-      )}
     </div>
   )
 }

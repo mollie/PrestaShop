@@ -46,5 +46,7 @@ declare global {
     mboCdcDependencyResolver?: MboCdcDependencyResolver
     // PS Accounts
     psaccountsVue?: PrestaShopAccountsVue
+    contextPsAccounts?: any
+    urlAccountsCdn?: string
   }
 }

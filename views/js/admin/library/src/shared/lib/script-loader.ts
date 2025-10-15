@@ -32,11 +32,11 @@ class ScriptLoader {
     // Create new loading promise
     const loadPromise = new Promise<void>((resolve, reject) => {
       const script = document.createElement('script')
-      
+
       script.src = src
       script.async = options.async !== false // Default to true
       script.defer = options.defer || false
-      
+
       if (options.id) {
         script.id = options.id
       }
@@ -141,7 +141,7 @@ export class CloudSyncScriptLoader {
 
       // Wait for cloudSyncSharingConsent to be available
       await this.waitForCloudSync()
-      
+
     } catch (error) {
       console.error('Failed to load CloudSync dependencies:', error)
       throw error
@@ -182,7 +182,7 @@ export class CloudSyncScriptLoader {
    */
   static isCloudSyncReady(): boolean {
     const w = window as any
-    return typeof w.cloudSyncSharingConsent === 'object' && 
+    return typeof w.cloudSyncSharingConsent === 'object' &&
            typeof w.cloudSyncSharingConsent.init === 'function'
   }
 }

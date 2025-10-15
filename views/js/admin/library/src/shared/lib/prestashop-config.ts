@@ -45,16 +45,16 @@ export class PrestaShopConfigService {
       // Fallback to general prestashop config
       if (typeof window !== 'undefined' && (window as any).prestashop) {
         const psConfig = (window as any).prestashop
-        
+
         // Map common PrestaShop variables
         if (psConfig.urls?.current_url) {
           this.config.apiUrl = psConfig.urls.current_url
         }
-        
+
         if (psConfig.customer?.email) {
           this.config.customerEmail = psConfig.customer.email
         }
-        
+
         if (psConfig.shop?.id) {
           this.config.shopId = psConfig.shop.id
         }
@@ -66,7 +66,7 @@ export class PrestaShopConfigService {
 
       // Load from any other global variables
       this.loadFromGlobals()
-      
+
     } catch (error) {
       console.warn('Failed to load PrestaShop configuration:', error)
     }
@@ -180,7 +180,7 @@ export class PrestaShopConfigService {
    */
   getApiUrl(): string {
     let apiUrl = this.getString('apiUrl')
-    
+
     if (!apiUrl) {
       // Fallback to current domain
       apiUrl = window.location.origin
@@ -234,7 +234,7 @@ export const safeWindowAccess = (path: string, defaultValue: any = undefined): a
   try {
     const keys = path.split('.')
     let current = window as any
-    
+
     for (const key of keys) {
       if (current && typeof current === 'object' && key in current) {
         current = current[key]
@@ -242,7 +242,7 @@ export const safeWindowAccess = (path: string, defaultValue: any = undefined): a
         return defaultValue
       }
     }
-    
+
     return current
   } catch (error) {
     console.warn(`Failed to access window.${path}:`, error)

@@ -51,7 +51,7 @@ export const CloudSyncConsent: React.FC<CloudSyncProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const cloudSyncRef = useRef<any>(null)
-  
+
   const [state, setState] = useState<CloudSyncState>({
     isLoading: false,
     isReady: false,
@@ -100,10 +100,10 @@ export const CloudSyncConsent: React.FC<CloudSyncProps> = ({
       // Get configuration
       const email = customerEmail || prestashopConfig.getString('customerEmail')
       const shop = shopId || prestashopConfig.getString('shopId')
-      
+
       // Initialize with container selector
       const selector = `#${containerId}`
-      
+
       // Initialize CloudSync
       cdc.init(selector, {
         customerEmail: email,
@@ -126,12 +126,12 @@ export const CloudSyncConsent: React.FC<CloudSyncProps> = ({
         })
       }
 
-      updateState({ 
-        isLoading: false, 
-        isReady: true, 
-        isInitialized: true 
+      updateState({
+        isLoading: false,
+        isReady: true,
+        isInitialized: true
       })
-      
+
       onReady?.()
 
     } catch (error) {
@@ -158,9 +158,9 @@ export const CloudSyncConsent: React.FC<CloudSyncProps> = ({
       try {
         cloudSyncRef.current.destroy()
         cloudSyncRef.current = null
-        updateState({ 
-          isReady: false, 
-          isInitialized: false 
+        updateState({
+          isReady: false,
+          isInitialized: false
         })
       } catch (error) {
         console.warn('Failed to destroy CloudSync:', error)
@@ -210,7 +210,7 @@ export const CloudSyncConsent: React.FC<CloudSyncProps> = ({
           <div style={{ display: 'inline-block', marginBottom: '10px' }}>
             Loading CloudSync...
           </div>
-          <div 
+          <div
             style={{
               width: '20px',
               height: '20px',
@@ -226,7 +226,7 @@ export const CloudSyncConsent: React.FC<CloudSyncProps> = ({
 
       {/* Error message */}
       {state.error && (
-        <div 
+        <div
           className="cloudsync-error"
           style={{
             padding: '15px',
@@ -267,7 +267,7 @@ export const CloudSyncConsent: React.FC<CloudSyncProps> = ({
 
       {/* Manual controls (only in debug mode) */}
       {prestashopConfig.isDebugMode() && (
-        <div 
+        <div
           className="cloudsync-debug-controls"
           style={{
             marginTop: '10px',
@@ -345,14 +345,14 @@ export const useCloudSync = () => {
 
     try {
       await CloudSyncScriptLoader.loadCloudSyncDependencies()
-      
+
       if (!CloudSyncScriptLoader.isCloudSyncReady()) {
         throw new Error('CloudSync not available')
       }
 
       const cdc = (window as any).cloudSyncSharingConsent
       cdc.init(`#${containerId}`, config)
-      
+
       setIsReady(true)
       setIsLoading(false)
     } catch (err) {
