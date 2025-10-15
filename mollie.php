@@ -51,6 +51,7 @@ use Mollie\Utility\TransactionUtility;
 use Mollie\Utility\VersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
 use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
+use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -194,6 +195,12 @@ class Mollie extends PaymentModule
 
         $logger->debug('Mollie install successful');
 
+        // Install and enable ps_eventbus for CloudSync support
+        $this->installPrestaShopEventBus();
+
+        // Install PrestaShop Account
+        $this->installPrestaShopAccounts();
+
         /** @var \Mollie\Install\Installer $coreInstaller */
         $coreInstaller = $this->getService(Mollie\Install\Installer::class);
 
@@ -231,6 +238,44 @@ class Mollie extends PaymentModule
         $logger->debug('Mollie subscription install successful');
 
         return true;
+    }
+
+    /**
+     * Install and enable PrestaShop EventBus module for CloudSync support
+     */
+    private function installPrestaShopEventBus()
+    {
+        try {
+            $moduleManager = ModuleManagerBuilder::getInstance()->build();
+
+            if (!$moduleManager->isInstalled('ps_eventbus')) {
+                $moduleManager->install('ps_eventbus');
+            } elseif (!$moduleManager->isEnabled('ps_eventbus')) {
+                $moduleManager->enable('ps_eventbus');
+                $moduleManager->upgrade('ps_eventbus');
+            } else {
+                $moduleManager->upgrade('ps_eventbus');
+            }
+        } catch (Exception $e) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->getService(LoggerInterface::class);
+            $logger->error('Failed to install PrestaShop EventBus: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Install PrestaShop Accounts module
+     */
+    private function installPrestaShopAccounts()
+    {
+        try {
+            $accountsInstaller = $this->getService('Mollie.PsAccountsInstaller');
+            $accountsInstaller->install();
+        } catch (Exception $e) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->getService(LoggerInterface::class);
+            $logger->error('Failed to install PrestaShop Accounts: ' . $e->getMessage());
+        }
     }
 
     /**

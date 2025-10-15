@@ -18,6 +18,7 @@ use Mollie\Adapter\ToolsAdapter;
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
+use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -60,6 +61,12 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             null,
             false
         );
+
+        // Initialize PrestaShop Account context
+        $this->initializePrestaShopAccount();
+
+        // Initialize CloudSync context
+        $this->initializeCloudSync();
 
         Media::addJsDef([
             'mollieAuthAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAuthentication'),
@@ -310,6 +317,60 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 'success' => false,
                 'message' => $this->module->l('Failed to switch environment', self::FILE_NAME),
             ]));
+        }
+    }
+
+    /**
+     * Initialize PrestaShop Account context and CDN
+     */
+    private function initializePrestaShopAccount(): void
+    {
+        try {
+            $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
+            $accountsService = $accountsFacade->getPsAccountsService();
+
+            // Add PrestaShop Account context to JavaScript
+            Media::addJsDef([
+                'contextPsAccounts' => $accountsFacade->getPsAccountsPresenter()->present($this->module->name),
+            ]);
+
+            // Add PrestaShop Account CDN URL for Smarty template
+            $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
+        } catch (Exception $e) {
+            // Log error but don't break the page
+            $this->context->controller->errors[] = 'PrestaShop Account initialization failed: ' . $e->getMessage();
+        }
+    }
+
+    /**
+     * Initialize CloudSync context and CDN
+     */
+    private function initializeCloudSync(): void
+    {
+        try {
+            $moduleManager = ModuleManagerBuilder::getInstance()->build();
+
+            if ($moduleManager->isInstalled('ps_eventbus')) {
+                $eventbusModule = \Module::getInstanceByName('ps_eventbus');
+
+                if ($eventbusModule && version_compare($eventbusModule->version, '1.9.0', '>=')) {
+                    $eventbusPresenterService = $eventbusModule->getService('PrestaShop\Module\PsEventbus\Service\PresenterService');
+
+                    // Add CloudSync context to JavaScript
+                    Media::addJsDef([
+                        'contextPsEventbus' => $eventbusPresenterService->expose($this->module, ['info', 'modules', 'themes']),
+                    ]);
+
+                    // Add CloudSync CDN URL for Smarty template
+                    $this->context->smarty->assign(
+                        'urlCloudsync',
+                        'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js'
+                    );
+                }
+            }
+        } catch (Exception $e) {
+            // Log error but don't break the page
+            $this->context->controller->errors[] = 'CloudSync initialization failed: ' . $e->getMessage();
         }
     }
 }

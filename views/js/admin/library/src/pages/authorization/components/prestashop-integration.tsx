@@ -1,0 +1,175 @@
+"use client"
+
+import { useEffect, useState, useRef } from "react"
+
+// Extend JSX to support custom HTML elements
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'prestashop-accounts': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>
+    }
+  }
+}
+
+interface PrestaShopIntegrationProps {
+  onAccountLinked?: (isLinked: boolean) => void
+  onCloudSyncCompleted?: (isCompleted: boolean) => void
+}
+
+/**
+ * Component that integrates PrestaShop Account and CloudSync
+ * Loads external scripts and initializes the PrestaShop components
+ */
+export default function PrestaShopIntegration({
+  onAccountLinked,
+  onCloudSyncCompleted,
+}: PrestaShopIntegrationProps) {
+  const [accountScriptLoaded, setAccountScriptLoaded] = useState(false)
+  const [cloudSyncScriptLoaded, setCloudSyncScriptLoaded] = useState(false)
+  const accountsInitialized = useRef(false)
+  const cloudSyncInitialized = useRef(false)
+
+  // Load PrestaShop Account script
+  useEffect(() => {
+    const urlAccountsCdn = (window as any).urlAccountsCdn
+    if (!urlAccountsCdn) {
+      console.warn('PrestaShop Account CDN URL not found')
+      return
+    }
+
+    // Check if script already exists
+    if (document.querySelector(`script[src="${urlAccountsCdn}"]`)) {
+      setAccountScriptLoaded(true)
+      return
+    }
+
+    const script = document.createElement('script')
+    script.src = urlAccountsCdn
+    script.async = true
+    script.onload = () => {
+      console.log('PrestaShop Account script loaded')
+      setAccountScriptLoaded(true)
+    }
+    script.onerror = () => {
+      console.error('Failed to load PrestaShop Account script')
+    }
+
+    document.head.appendChild(script)
+
+    return () => {
+      // Cleanup script if component unmounts
+      const existingScript = document.querySelector(`script[src="${urlAccountsCdn}"]`)
+      if (existingScript && existingScript.parentNode) {
+        existingScript.parentNode.removeChild(existingScript)
+      }
+    }
+  }, [])
+
+  // Load CloudSync script
+  useEffect(() => {
+    const urlCloudsync = (window as any).urlCloudsync
+    if (!urlCloudsync) {
+      console.warn('CloudSync CDN URL not found')
+      return
+    }
+
+    // Check if script already exists
+    if (document.querySelector(`script[src="${urlCloudsync}"]`)) {
+      setCloudSyncScriptLoaded(true)
+      return
+    }
+
+    const script = document.createElement('script')
+    script.src = urlCloudsync
+    script.async = true
+    script.onload = () => {
+      console.log('CloudSync script loaded')
+      setCloudSyncScriptLoaded(true)
+    }
+    script.onerror = () => {
+      console.error('Failed to load CloudSync script')
+    }
+
+    document.head.appendChild(script)
+
+    return () => {
+      // Cleanup script if component unmounts
+      const existingScript = document.querySelector(`script[src="${urlCloudsync}"]`)
+      if (existingScript && existingScript.parentNode) {
+        existingScript.parentNode.removeChild(existingScript)
+      }
+    }
+  }, [])
+
+  // Initialize PrestaShop Account
+  useEffect(() => {
+    if (!accountScriptLoaded || accountsInitialized.current) {
+      return
+    }
+
+    const psaccountsVue = (window as any).psaccountsVue
+    if (!psaccountsVue) {
+      console.warn('psaccountsVue not found on window object')
+      return
+    }
+
+    try {
+      psaccountsVue.init()
+      accountsInitialized.current = true
+      console.log('PrestaShop Account initialized')
+
+      // Check if account is already linked
+      const isLinked = psaccountsVue.isOnboardingCompleted()
+      onAccountLinked?.(isLinked)
+    } catch (error) {
+      console.error('Failed to initialize PrestaShop Account:', error)
+    }
+  }, [accountScriptLoaded, onAccountLinked])
+
+  // Initialize CloudSync
+  useEffect(() => {
+    if (!cloudSyncScriptLoaded || cloudSyncInitialized.current) {
+      return
+    }
+
+    const cdc = (window as any).cloudSyncSharingConsent
+    if (!cdc) {
+      console.warn('cloudSyncSharingConsent not found on window object')
+      return
+    }
+
+    try {
+      cdc.init('#prestashop-cloudsync')
+      cloudSyncInitialized.current = true
+      console.log('CloudSync initialized')
+
+      // Listen for onboarding completion
+      cdc.on('OnboardingCompleted', (isCompleted: boolean) => {
+        console.log('CloudSync OnboardingCompleted:', isCompleted)
+        onCloudSyncCompleted?.(isCompleted)
+      })
+
+      // Check if already completed
+      cdc.isOnboardingCompleted((isCompleted: boolean) => {
+        console.log('CloudSync already completed:', isCompleted)
+        onCloudSyncCompleted?.(isCompleted)
+      })
+    } catch (error) {
+      console.error('Failed to initialize CloudSync:', error)
+    }
+  }, [cloudSyncScriptLoaded, onCloudSyncCompleted])
+
+  return (
+    <div className="prestashop-integration-wrapper mb-8">
+      {/* PrestaShop Account Component */}
+      <div className="prestashop-account-container mb-6">
+        <div dangerouslySetInnerHTML={{ __html: '<prestashop-accounts></prestashop-accounts>' }} />
+      </div>
+
+      {/* CloudSync Component */}
+      <div className="prestashop-cloudsync-container">
+        <div id="prestashop-cloudsync"></div>
+      </div>
+    </div>
+  )
+}

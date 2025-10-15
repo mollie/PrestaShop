@@ -6,6 +6,7 @@ import { Button } from "../../../shared/components/ui/button"
 import { Input } from "../../../shared/components/ui/input"
 import { authApiService } from "../../../services/AuthenticationApiService"
 import { useTranslations } from "../../../shared/hooks/use-translations"
+import PrestaShopIntegration from "./prestashop-integration"
 
 // Mollie Logo Component
 const MollieLogo = () => (
@@ -186,6 +187,14 @@ export default function AuthorizationForm() {
 
   return (
     <div className="bg-white font-inter">
+      {/* PrestaShop Account and CloudSync Integration */}
+      <div className="max-w-6xl mx-auto px-2 py-8">
+        <PrestaShopIntegration 
+          onAccountLinked={(isLinked) => console.log('PrestaShop Account linked:', isLinked)}
+          onCloudSyncCompleted={(isCompleted) => console.log('CloudSync completed:', isCompleted)}
+        />
+      </div>
+
       {/* Confirmation Dialog */}
       {showConfirmDialog && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{backgroundColor: 'rgba(0, 0, 0, 0.4)'}}>
