@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
-import "./prestashop-integration.css"
 
 // Extend JSX to support custom HTML elements
 declare global {
@@ -184,68 +183,17 @@ export default function PrestaShopIntegration({
   }, [cloudSyncScriptLoaded, onCloudSyncCompleted])
 
   return (
-    <div 
-      className="prestashop-integration-wrapper" 
-      style={{ 
-        marginBottom: '20px',
-        isolation: 'isolate', // Prevent z-index conflicts
-        position: 'relative',
-      }}
-    >
-      {/* Debug Info */}
-      {!accountCdnAvailable && !cloudSyncCdnAvailable && (
-        <div 
-          style={{
-            backgroundColor: '#fef3c7',
-            border: '1px solid #fbbf24',
-            borderRadius: '4px',
-            padding: '12px 16px',
-            marginBottom: '16px',
-          }}
-        >
-          <p style={{ 
-            color: '#92400e', 
-            fontSize: '13px', 
-            margin: 0,
-            lineHeight: '1.5',
-          }}>
-            <strong>Note:</strong> PrestaShop Account and CloudSync modules are not configured.
-            Please ensure ps_accounts and ps_eventbus modules are installed and configured.
-          </p>
-        </div>
-      )}
-
+    <div>
       {/* PrestaShop Account Component */}
       {accountCdnAvailable && (
-        <div 
-          className="prestashop-account-container"
-          style={{
-            marginBottom: '20px',
-            maxWidth: '100%',
-            overflow: 'hidden', // Prevent component overflow
-            backgroundColor: '#ffffff',
-            borderRadius: '4px',
-            padding: '16px',
-            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-          }}
-        >
+        <div>
           <div dangerouslySetInnerHTML={{ __html: '<prestashop-accounts></prestashop-accounts>' }} />
         </div>
       )}
 
       {/* CloudSync Component */}
       {cloudSyncCdnAvailable && (
-        <div 
-          className="prestashop-cloudsync-container"
-          style={{
-            maxWidth: '100%',
-            overflow: 'hidden', // Prevent component overflow
-            backgroundColor: '#ffffff',
-            borderRadius: '4px',
-            padding: '16px',
-            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-          }}
-        >
+        <div>
           <div id="prestashop-cloudsync"></div>
         </div>
       )}
