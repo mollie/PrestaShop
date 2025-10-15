@@ -14,7 +14,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_6_4_1(Mollie $module): bool
+function upgrade_module_6_4_0(Mollie $module): bool
 {
     try {
         $installer = $module->getService(\Mollie\Install\Installer::class);
