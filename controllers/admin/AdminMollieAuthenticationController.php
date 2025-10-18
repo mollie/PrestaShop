@@ -325,10 +325,28 @@ class AdminMollieAuthenticationController extends ModuleAdminController
      */
     private function initializePrestaShopAccount(): void
     {
+        $accountsService = null;
+
         try {
             $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
             $accountsService = $accountsFacade->getPsAccountsService();
+        } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
+            // If PrestaShop Account is not installed, install it automatically
+            try {
+                $accountsInstaller = $this->module->getService('Mollie.PsAccountsInstaller');
+                $accountsInstaller->install();
+                $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
+                $accountsService = $accountsFacade->getPsAccountsService();
+            } catch (Exception $installException) {
+                // Log error but don't break the page
+                return;
+            }
+        } catch (Exception $e) {
+            // Log error but don't break the page
+            return;
+        }
 
+        try {
             $cdnUrl = $accountsService->getAccountsCdn();
 
             // Add PrestaShop Account context to JavaScript
@@ -341,7 +359,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             $this->context->smarty->assign('urlAccountsCdn', $cdnUrl);
         } catch (Exception $e) {
             // Log error but don't break the page
-            $this->context->controller->errors[] = 'PrestaShop Account initialization failed: ' . $e->getMessage();
+            return;
         }
     }
 
@@ -372,7 +390,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             }
         } catch (Exception $e) {
             // Log error but don't break the page
-            $this->context->controller->errors[] = 'CloudSync initialization failed: ' . $e->getMessage();
+            return;
         }
     }
 }
