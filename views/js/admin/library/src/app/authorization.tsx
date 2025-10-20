@@ -17,7 +17,7 @@ class MollieAuthorizationElement extends HTMLElement {
     mountPoint.setAttribute('id', 'mollie-authorization-react-root');
     this.root.appendChild(mountPoint);
     // Inject compiled CSS into shadow root
-    fetch('https://marijus-dev.invertusdemo.com/modules/mollie/views/js/admin/library/dist/assets/globals.css?v=1760959843')
+    fetch('https://marijus-dev.invertusdemo.com/modules/mollie/views/js/admin/library/dist/assets/globals.css')
       .then(response => response.text())
       .then(css => {
         const styleTag = document.createElement('style');
