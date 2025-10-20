@@ -182,14 +182,18 @@ export default function PrestaShopIntegration({
     }
   }, [cloudSyncScriptLoaded, onCloudSyncCompleted])
 
+  const accountsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (accountCdnAvailable && accountsRef.current && !accountsRef.current.querySelector('prestashop-accounts')) {
+      const el = document.createElement('prestashop-accounts');
+      accountsRef.current.appendChild(el);
+    }
+  }, [accountCdnAvailable]);
+
   return (
     <div>
       {/* PrestaShop Account Component */}
-      {accountCdnAvailable && (
-        <div>
-          <div dangerouslySetInnerHTML={{ __html: '<prestashop-accounts></prestashop-accounts>' }} />
-        </div>
-      )}
+      {accountCdnAvailable && <div ref={accountsRef} />}
 
       {/* CloudSync Component */}
       {cloudSyncCdnAvailable && (
@@ -198,5 +202,5 @@ export default function PrestaShopIntegration({
         </div>
       )}
     </div>
-  )
+  );
 }
