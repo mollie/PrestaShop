@@ -75,7 +75,7 @@ export function PaymentMethodsList({
         shouldScrollUp = true;
       }
     }
-    let shouldScrollDown = y > windowHeight - SCROLL_MARGIN;
+    const shouldScrollDown = y > windowHeight - SCROLL_MARGIN;
 
     // Start/stop interval for smooth scroll
     if (shouldScrollUp) {
