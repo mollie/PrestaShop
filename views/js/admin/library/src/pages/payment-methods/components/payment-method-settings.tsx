@@ -478,13 +478,14 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
             </button>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
+            {t('paymentsApiRecommended')} {' '}
             <a
               href="https://docs.mollie.com/reference/payments-api"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 underline decoration-1 underline-offset-2 cursor-pointer hover:text-blue-700"
             >
-              {t('readMore')}
+              {t('clickHere')}
             </a>
             <span className="text-muted-foreground"> {t('aboutDifferences')}</span>
           </p>
