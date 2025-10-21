@@ -55,6 +55,9 @@ class AdminMollieAuthenticationController extends ModuleAdminController
     {
         parent::init();
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         $version = time();
 
         $jsUrl = $this->module->getPathUri() . 'views/js/admin/library/dist/assets/authorization.js?v=' . $version;
@@ -117,7 +120,10 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         try {
             $this->initCloudSyncAndPsAccounts();
         } catch (Exception $e) {
-            throw $e;
+            $logger->error('Failed to initiate cloud sync and ps accounts', [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
         }
 
         $this->content .= $this->context->smarty->fetch(
