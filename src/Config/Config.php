@@ -410,7 +410,7 @@ class Config
         'mbway' => 'MBway',
         'bizum' => 'Bizum',
         'vipps' => 'Vipps',
-        'mobilepay' => 'MobilePay',
+        'mobilepay' => 'Mobile Pay',
     ];
 
     public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
