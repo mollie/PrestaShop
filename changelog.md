@@ -2,7 +2,7 @@
 
 # Changelog #
 
-## Changes in release 6.4.1
+## Changes in release 6.4.0
 + Back-office re-design
 + Compatibility with Captures on Payments API
 + Removed Billie payment method validations
