@@ -431,7 +431,7 @@ class Config
     public const PS_EVENTBUS_CONTEXT = [
         'info', 
         'modules', 
-        'themes'
+        'themes',
     ];
 
     // TODO migrate functions below to separate service
