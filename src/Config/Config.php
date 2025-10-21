@@ -429,8 +429,8 @@ class Config
     public const PS_CLOUDSYNC_CDC = 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js';
 
     public const PS_EVENTBUS_CONTEXT = [
-        'info', 
-        'modules', 
+        'info',
+        'modules',
         'themes',
     ];
 
