@@ -12,6 +12,10 @@
 
 namespace Mollie\Loader;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface OrderManagementAssetLoaderInterface
 {
     public function register($controller, $vars = []): void;
