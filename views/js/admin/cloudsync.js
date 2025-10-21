@@ -28,7 +28,7 @@ setTimeout(function() {
   var newLink = document.createElement('link');
   newLink.rel = 'stylesheet';
   // Use module version for cache busting if available, otherwise fall back to timestamp
-  var moduleVersion = (typeof window !== 'undefined' && window.mollieModuleVersion) ? window.mollieModuleVersion : new Date().getTime();
+  var moduleVersion = (typeof window !== 'undefined' && window.mollieVersion) ? window.mollieVersion : new Date().getTime();
   newLink.href = '../modules/mollie/views/js/admin/library/dist/assets/globals.css?v=' + moduleVersion;
   document.head.appendChild(newLink);
 }, 500);
