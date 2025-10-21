@@ -186,7 +186,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 /** @phpstan-ignore-next-line PHPStan does not recognize the event bus module, so it doesn't know it has getService function */
                 $eventbusPresenterService = $eventbusModule->getService('PrestaShop\Module\PsEventbus\Service\PresenterService');
 
-                $this->context->smarty->assign('urlCloudsync', 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js');
+                $this->context->smarty->assign('urlCloudsync', Config::PS_CLOUDSYNC_CDC);
                 $this->addJs($this->module->getPathUri() . '/views/js/admin/cloudsync.js');
                 Media::addJsDef([
                     'contextPsEventbus' => $eventbusPresenterService->expose($this->module, ['info', 'modules', 'themes']),
@@ -198,59 +198,6 @@ class AdminMollieAuthenticationController extends ModuleAdminController
 
         return;
     }
-
-//    private function loadPsAccounts(): void
-//    {
-//        /** @var PsAccounts $accountsFacade */
-//        $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
-//
-//        $psAccountsPresenter = $accountsFacade->getPsAccountsPresenter();
-//        $psAccountsService = $accountsFacade->getPsAccountsService();
-//
-//        $this->context->smarty->assign('mollie', [
-//            'url' => [
-//                'psAccountsCdnUrl' => $psAccountsService->getAccountsCdn(),
-//            ],
-//        ], true);
-//
-//        $previousJsDef = isset(\Media::getJsDef()['mollie']) ? \Media::getJsDef()['mollie'] : [];
-//
-//        \Media::addJsDef([
-//            'contextPsAccounts' => $psAccountsPresenter->present(),
-//            'mollie' => array_merge($previousJsDef, [
-//                'isPsAccountsLinked' => $psAccountsService->isAccountLinked(),
-//            ]),
-//        ]);
-//    }
-//
-//    private function loadCloudSync(): void
-//    {
-//        if (!class_exists('Ps_eventbus') || !class_exists('PrestaShop\Module\PsEventbus\Service\PresenterService')) {
-//            return;
-//        }
-//
-//        $eventbusModule = \Module::getInstanceByName('ps_eventbus');
-//
-//        if (!$eventbusModule) {
-//            return;
-//        }
-//
-//        /** @phpstan-ignore-next-line PHPStan does not recognize the event bus module, so it doesn't know it has getService function */
-//        $eventbusPresenterService = $eventbusModule->getService(PresenterService::class);
-//
-//        $previousJsDef = isset(\Media::getJsDef()['mollie']) ? \Media::getJsDef()['mollie'] : [];
-//
-//        \Media::addJsDef([
-//            'contextPsEventbus' => $eventbusPresenterService->expose($this->module, [
-//                'info',
-//            ]),
-//            'mollie' => array_merge($previousJsDef, [
-//                'url' => [
-//                    'cloudSyncPathCDC' => self::PS_CLOUDSYNC_CDC,
-//                ],
-//            ]),
-//        ]);
-//    }
 
     public function displayAjax(): void
     {

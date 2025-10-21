@@ -426,6 +426,8 @@ class Config
         self::RIVERTY,
     ];
 
+    public const PS_CLOUDSYNC_CDC = 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js';
+
     // TODO migrate functions below to separate service
     public static function getStatuses()
     {
