@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { PaymentMethodCard } from "./payment-method-card"
 import type { PaymentMethod, Country, CustomerGroup } from "../../../services/PaymentMethodsApiService"
 
@@ -32,6 +32,9 @@ export function PaymentMethodsList({
   const [draggedItem, setDraggedItem] = useState<string | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   const [isReordering, setIsReordering] = useState(false)
+  // For smooth auto-scroll
+  const autoScrollInterval = useRef<NodeJS.Timeout | null>(null)
+  const lastDirection = useRef<'up' | 'down' | null>(null)
 
   const handleDragStart = (e: React.DragEvent, methodId: string) => {
     const method = methods.find(m => m.id === methodId)
@@ -46,10 +49,63 @@ export function PaymentMethodsList({
     e.dataTransfer.setData("text/html", methodId)
   }
 
+  // Only highlight drop target on item drag over
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault()
     e.dataTransfer.dropEffect = "move"
     setDragOverIndex(index)
+  }
+
+  // Auto-scroll when dragging near top/bottom of viewport
+  const handleContainerDragOver = (e: React.DragEvent) => {
+  const SCROLL_MARGIN = 200;
+    const SCROLL_SPEED = 32;
+    const y = e.clientY;
+    const windowHeight = window.innerHeight;
+    const scrollingElement = document.scrollingElement || document.documentElement;
+
+    let navUl = document.querySelector('.nav ul');
+    if (!navUl) navUl = document.querySelector('.nav.nav-pills');
+    if (!navUl) navUl = document.querySelector('.nav.nav-tabs');
+    if (!navUl) navUl = document.querySelector('ul.nav');
+    let shouldScrollUp = false;
+    if (navUl) {
+      const navRect = navUl.getBoundingClientRect();
+      if (y < navRect.bottom + SCROLL_MARGIN) {
+        shouldScrollUp = true;
+      }
+    }
+    const shouldScrollDown = y > windowHeight - SCROLL_MARGIN;
+
+    // Start/stop interval for smooth scroll
+    if (shouldScrollUp) {
+      if (lastDirection.current !== 'up') {
+        if (autoScrollInterval.current) clearInterval(autoScrollInterval.current);
+        autoScrollInterval.current = setInterval(() => {
+          scrollingElement.scrollBy({ top: -SCROLL_SPEED, behavior: 'auto' });
+        }, 16);
+        lastDirection.current = 'up';
+      }
+    } else if (shouldScrollDown) {
+      if (lastDirection.current !== 'down') {
+        if (autoScrollInterval.current) clearInterval(autoScrollInterval.current);
+        autoScrollInterval.current = setInterval(() => {
+          scrollingElement.scrollBy({ top: SCROLL_SPEED, behavior: 'auto' });
+        }, 16);
+        lastDirection.current = 'down';
+      }
+    } else {
+      if (autoScrollInterval.current) clearInterval(autoScrollInterval.current);
+      autoScrollInterval.current = null;
+      lastDirection.current = null;
+    }
+  }
+
+  // Stop auto-scroll when drag leaves container
+  const handleContainerDragLeave = () => {
+    if (autoScrollInterval.current) clearInterval(autoScrollInterval.current);
+    autoScrollInterval.current = null;
+    lastDirection.current = null;
   }
 
   const handleDragLeave = () => {
@@ -90,7 +146,7 @@ export function PaymentMethodsList({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" onDragOver={handleContainerDragOver} onDragLeave={handleContainerDragLeave}>
       {methods.map((method, index) => (
         <div
           key={method.id}
