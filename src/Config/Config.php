@@ -409,7 +409,8 @@ class Config
         'multibanco' => 'Multibanco',
         'mbway' => 'MBway',
         'bizum' => 'Bizum',
-        'vippsmobilepay' => 'Vipps',
+        'vipps' => 'Vipps',
+        'mobilepay' => 'Mobile Pay',
     ];
 
     public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
