@@ -11,6 +11,14 @@ import { usePaymentMethodsTranslations } from "../../../shared/hooks/use-payment
 export default function PaymentMethodsPage() {
   const { t } = usePaymentMethodsTranslations()
   const [activeTab, setActiveTab] = useState<"enabled" | "disabled">("enabled")
+
+  // Collapse all methods by default when switching tabs
+  const handleTabChange = (tab: "enabled" | "disabled") => {
+    setActiveTab(tab);
+    setEnabledMethods((prev) => prev.map((m) => ({ ...m, isExpanded: false })));
+    setDisabledMethods((prev) => prev.map((m) => ({ ...m, isExpanded: false })));
+  }
+
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [enabledMethods, setEnabledMethods] = useState<PaymentMethod[]>([])
   const [disabledMethods, setDisabledMethods] = useState<PaymentMethod[]>([])
@@ -290,7 +298,7 @@ export default function PaymentMethodsPage() {
       </div>
 
       {/* Tabs */}
-      <PaymentMethodTabs activeTab={activeTab} onTabChange={setActiveTab} />
+  <PaymentMethodTabs activeTab={activeTab} onTabChange={handleTabChange} />
 
       {/* Reordering indicator */}
       {isReorderingSaving && (
