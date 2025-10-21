@@ -18,7 +18,7 @@ use Mollie\Adapter\ToolsAdapter;
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
-use Mollie\Logger\Logger;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Utility\ExceptionUtility;
 use Prestashop\ModuleLibMboInstaller\DependencyBuilder;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
@@ -118,43 +118,13 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             $this->initCloudSyncAndPsAccounts();
         } catch (Exception $e) {
             throw $e;
-//            $logger->error('Failed to initiate cloud sync and ps accounts', [
-//                'context' => [],
-//                'exceptions' => ExceptionUtility::getExceptions($e),
-//            ]);
         }
 
         $this->content .= $this->context->smarty->fetch(
             $this->module->getLocalPath() . 'views/templates/admin/authentication/authentication.tpl'
         );
-//        try {
-//            $this->initCloudSyncAndPsAccounts();
-//            $mboInstaller = new DependencyBuilder($this->module);
-//
-//            if (!$mboInstaller->areDependenciesMet()) {
-//                $dependencies = $mboInstaller->handleDependencies();
-//
-//                $this->context->smarty->assign('dependencies', $dependencies);
-//               $template = $this->content .= $this->context->smarty->fetch(
-//                       $this->module->getLocalPath() . 'views/templates/admin/dependency_builder.tpl'
-//               );
-//               $this->content = $template;
-//
-//               return;
-//            }
-//
-//            $this->loadPsAccounts();
-//            $this->loadCloudSync();
-//
-//            $this->content = $this->context->smarty->fetch(
-//                $this->module->getLocalPath() . 'views/templates/admin/cloudsync.tpl'
-//            );
-//
-
-//        } catch (Exception $e) {
-//            throw $e;
-//        }
     }
+
     private function initCloudSyncAndPsAccounts(): void
     {
         $mboInstaller = new Prestashop\ModuleLibMboInstaller\DependencyBuilder($this->module);
@@ -171,17 +141,13 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         $this->context->smarty->assign('module_dir', $this->module->getPathUri());
         $moduleManager = PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder::getInstance()->build();
 
-//        /** @var Logger $logger * */
-//        $logger = $this->module->getService(LoggerInterface::class);
+       /** @var LoggerInterface $logger * */
+       $logger = $this->module->getService(LoggerInterface::class);
 
         try {
             $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
             $accountsService = $accountsFacade->getPsAccountsService();
         } catch (PrestaShop\PsAccountsInstaller\Installer\Exception\InstallerException $e) {
-//            $logger->error(sprintf('%s - Failed to initiate ps_accounts', self::FILE_NAME), [
-//                'exceptions' => ExceptionUtility::getExceptions($e),
-//            ]);
-
             try {
                 $accountsInstaller = $this->module->getService('Mollie.PsAccountsInstaller');
                 $accountsInstaller->install();
