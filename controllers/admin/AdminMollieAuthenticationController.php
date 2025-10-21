@@ -20,8 +20,6 @@ use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Utility\ExceptionUtility;
-use Prestashop\ModuleLibMboInstaller\DependencyBuilder;
-use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -116,7 +114,6 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             'mollieAuthAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAuthentication'),
         ]);
 
-
         try {
             $this->initCloudSyncAndPsAccounts();
         } catch (Exception $e) {
@@ -147,8 +144,8 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         $this->context->smarty->assign('module_dir', $this->module->getPathUri());
         $moduleManager = PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder::getInstance()->build();
 
-       /** @var LoggerInterface $logger * */
-       $logger = $this->module->getService(LoggerInterface::class);
+        /** @var LoggerInterface $logger * */
+        $logger = $this->module->getService(LoggerInterface::class);
 
         try {
             $accountsFacade = $this->module->getService('Mollie.PsAccountsFacade');
