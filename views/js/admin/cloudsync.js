@@ -19,7 +19,6 @@
 
 // Wait 0.5 seconds and reload globals.css to ensure it's loaded last
 setTimeout(function() {
-  // Find and remove existing globals.css link
   var existingLink = document.querySelector('link[href*="globals.css"]');
   if (existingLink) {
     existingLink.remove();
@@ -30,8 +29,6 @@ setTimeout(function() {
   newLink.rel = 'stylesheet';
   newLink.href = '../modules/mollie/views/js/admin/library/dist/assets/globals.css?t=' + new Date().getTime();
   document.head.appendChild(newLink);
-
-  console.log('globals.css reloaded and moved to end of head');
 }, 500);
 
 (function($) {
@@ -42,7 +39,6 @@ setTimeout(function() {
   $(document).ready(function () {
     window?.psaccountsVue?.init();
 
-    // Cloud Sync
     const cdc = window.cloudSyncSharingConsent;
 
     cdc.init('#prestashop-cloudsync');
