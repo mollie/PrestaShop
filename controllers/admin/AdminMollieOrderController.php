@@ -10,7 +10,7 @@
  * @codingStandardsIgnoreStart
  */
 
-/**
+/*
  * Admin controller for handling Mollie order actions: refund, capture, ship.
  *
  * Follows PrestaShop module conventions and delegates business logic to services.
