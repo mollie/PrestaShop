@@ -239,6 +239,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'voucherCategoryEco' => $this->module->l('Eco', self::FILE_NAME),
                 'voucherCategoryAll' => $this->module->l('All', self::FILE_NAME),
                 'voucherCategoryHelp' => $this->module->l('Select a category to use for all products in your webshop.', self::FILE_NAME),
+                'klarnaNotice' => $this->module->l('Klarna authorises payments for up to 28 days. To capture funds automatically when an order is shipped, enable “Automatically ship on marked status” in the advanced settings. If no capture occurs within 28 days, the authorisation expires and the payment cannot be collected.', self::FILE_NAME),
             ],
         ]);
 

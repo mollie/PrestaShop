@@ -193,6 +193,7 @@ export interface MolliePaymentMethodsTranslations {
   voucherCategoryEco: string;
   voucherCategoryAll: string;
   voucherCategoryHelp: string;
+  klarnaNotice: string;
 }
 
 export interface MollieAdvancedSettingsTranslations {

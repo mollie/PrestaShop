@@ -516,7 +516,7 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
       {method.id === 'klarna' && (
         <div className="border-l-4 border-yellow-400 bg-yellow-50 p-4 rounded mt-4">
           <p className="text-sm text-yellow-900">
-            Klarna authorises payments for up to 28 days. To capture funds automatically when an order is shipped, enable “Automatically ship on marked status” in the advanced settings. If no capture occurs within 28 days, the authorisation expires and the payment cannot be collected.
+            {t('klarnaNotice')}
           </p>
         </div>
       )}
