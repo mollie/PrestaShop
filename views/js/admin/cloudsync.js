@@ -14,5 +14,4 @@
   var tailwindScript = document.createElement('script');
   tailwindScript.src = 'https://cdn.tailwindcss.com';
   document.head.appendChild(tailwindScript);
-  console.log('Tailwind CSS CDN loaded');
 })();
