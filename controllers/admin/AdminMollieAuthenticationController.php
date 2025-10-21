@@ -108,7 +108,6 @@ class AdminMollieAuthenticationController extends ModuleAdminController
 
         Media::addJsDef([
             'mollieAuthAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAuthentication'),
-            'mollieVersion' => $this->module->version,
         ]);
 
         try {
