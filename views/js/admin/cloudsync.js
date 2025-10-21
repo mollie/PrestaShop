@@ -32,24 +32,3 @@ setTimeout(function() {
   newLink.href = '../modules/mollie/views/js/admin/library/dist/assets/globals.css?v=' + moduleVersion;
   document.head.appendChild(newLink);
 }, 500);
-
-(function($) {
-  if (typeof $ === 'undefined') {
-    return;
-  }
-
-  $(document).ready(function () {
-    window?.psaccountsVue?.init();
-
-    const cdc = window.cloudSyncSharingConsent;
-
-    cdc.init('#prestashop-cloudsync');
-    cdc.on('OnboardingCompleted', (isCompleted) => {
-      console.log('OnboardingCompleted', isCompleted);
-
-    });
-    cdc.isOnboardingCompleted((isCompleted) => {
-      console.log('Onboarding is already Completed', isCompleted);
-    });
-  });
-})(window.jQuery);
