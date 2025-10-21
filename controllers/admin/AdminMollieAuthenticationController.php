@@ -188,7 +188,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 $this->context->smarty->assign('urlCloudsync', Config::PS_CLOUDSYNC_CDC);
                 $this->addJs($this->module->getPathUri() . '/views/js/admin/cloudsync.js');
                 Media::addJsDef([
-                    'contextPsEventbus' => $eventbusPresenterService->expose($this->module, ['info', 'modules', 'themes']),
+                    'contextPsEventbus' => $eventbusPresenterService->expose($this->module, Config::PS_EVENTBUS_CONTEXT),
                 ]);
             }
         }
