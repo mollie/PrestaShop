@@ -27,8 +27,6 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminMollieAuthenticationController extends ModuleAdminController
 {
-    public const PS_CLOUDSYNC_CDC = 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js';
-
     const FILE_NAME = 'AdminMollieAuthenticationController';
 
     /** @var Mollie */
