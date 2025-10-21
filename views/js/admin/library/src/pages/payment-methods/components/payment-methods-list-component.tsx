@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { PaymentMethodCard } from "./payment-method-card"
 import type { PaymentMethod, Country, CustomerGroup } from "../../../services/PaymentMethodsApiService"
 
@@ -103,9 +103,11 @@ export function PaymentMethodsList({
 
   // Stop auto-scroll when drag leaves container
   const handleContainerDragLeave = () => {
-    if (autoScrollInterval.current) clearInterval(autoScrollInterval.current);
-    autoScrollInterval.current = null;
-    lastDirection.current = null;
+    if (autoScrollInterval.current) {
+      clearInterval(autoScrollInterval.current);
+    }
+    autoScrollInterval.current = null
+    lastDirection.current = null
   }
 
   const handleDragLeave = () => {
@@ -122,6 +124,12 @@ export function PaymentMethodsList({
     if (draggedIndex === -1 || draggedIndex === dropIndex) {
       setDraggedItem(null)
       setDragOverIndex(null)
+      // clear any running auto-scroll interval to prevent unexpected scrolling after drop
+      if (autoScrollInterval.current) {
+        clearInterval(autoScrollInterval.current)
+      }
+      autoScrollInterval.current = null
+      lastDirection.current = null
       return
     }
 
@@ -143,7 +151,24 @@ export function PaymentMethodsList({
   const handleDragEnd = () => {
     setDraggedItem(null)
     setDragOverIndex(null)
+    // ensure auto-scroll interval is cleared on drag end
+    if (autoScrollInterval.current) {
+      clearInterval(autoScrollInterval.current)
+    }
+    autoScrollInterval.current = null
+    lastDirection.current = null
   }
+
+  // cleanup on unmount: ensure no interval remains
+  useEffect(() => {
+    return () => {
+      if (autoScrollInterval.current) {
+        clearInterval(autoScrollInterval.current)
+      }
+      autoScrollInterval.current = null
+      lastDirection.current = null
+    }
+  }, [])
 
   return (
     <div className="space-y-4" onDragOver={handleContainerDragOver} onDragLeave={handleContainerDragLeave}>
