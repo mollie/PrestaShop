@@ -512,6 +512,14 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
       </div>
 
       {/* Collapsible Sections */}
+      {/* Klarna informational notice */}
+      {method.id === 'klarna' && (
+        <div className="border-l-4 border-yellow-400 bg-yellow-50 p-4 rounded mt-4">
+          <p className="text-sm text-yellow-900">
+            {t('klarnaNotice')}
+          </p>
+        </div>
+      )}
       <div className="space-y-4">
         {/* Apple Pay Settings - Only for Apple Pay */}
         {method.id === "applepay" && method.settings.applePaySettings && (
