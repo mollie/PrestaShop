@@ -140,8 +140,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'orders' => $this->module->l('Orders', self::FILE_NAME),
                 'transactionDescription' => $this->module->l('Transaction Description', self::FILE_NAME),
                 'transactionDescriptionPlaceholder' => $this->module->l('Enter transaction description', self::FILE_NAME),
-                'readMore' => $this->module->l('Read more', self::FILE_NAME),
-                'aboutDifferences' => $this->module->l('about the differences between Payments and Orders API', self::FILE_NAME),
+                'clickHere' => $this->module->l('Click here', self::FILE_NAME),
+                'paymentsApiRecommended' => $this->module->l('Payments API is the recommended option since Orders API will be deprecated.', self::FILE_NAME),
+                'aboutDifferences' => $this->module->l('to read more about the differences between the Payments and Orders', self::FILE_NAME),
 
                 'useCustomLogo' => $this->module->l('Use custom logo', self::FILE_NAME),
                 'uploadLogo' => $this->module->l('Upload Logo', self::FILE_NAME),
