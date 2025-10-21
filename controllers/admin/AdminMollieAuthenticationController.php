@@ -56,13 +56,11 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
-        $version = time();
-
-        $jsUrl = $this->module->getPathUri() . 'views/js/admin/library/dist/assets/authorization.js?v=' . $version;
+        $jsUrl = $this->module->getPathUri() . 'views/js/admin/library/dist/assets/authorization.js?v=' . $this->module->version;
         $this->context->smarty->assign('mollieAuthJsUrl', $jsUrl);
 
         $this->context->controller->addCSS(
-            $this->module->getPathUri() . 'views/js/admin/library/dist/assets/globals.css?v=' . $version,
+            $this->module->getPathUri() . 'views/js/admin/library/dist/assets/globals.css?v=' . $this->module->version,
             'all',
             null,
             false
@@ -112,6 +110,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
 
         Media::addJsDef([
             'mollieAuthAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAuthentication'),
+            'mollieVersion' => $this->module->version
         ]);
 
         try {
