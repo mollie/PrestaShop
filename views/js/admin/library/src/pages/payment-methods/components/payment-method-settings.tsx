@@ -512,6 +512,14 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
       </div>
 
       {/* Collapsible Sections */}
+      {/* Klarna informational notice */}
+      {method.id === 'klarna' && (
+        <div className="border-l-4 border-yellow-400 bg-yellow-50 p-4 rounded mt-4">
+          <p className="text-sm text-yellow-900">
+            Klarna authorises payments for up to 28 days. To capture funds automatically when an order is shipped, enable “Automatically ship on marked status” in the advanced settings. If no capture occurs within 28 days, the authorisation expires and the payment cannot be collected.
+          </p>
+        </div>
+      )}
       <div className="space-y-4">
         {/* Apple Pay Settings - Only for Apple Pay */}
         {method.id === "applepay" && method.settings.applePaySettings && (
