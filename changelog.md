@@ -7,6 +7,8 @@
 + Compatibility with Captures on Payments API
 + Removed Billie payment method validations
 + Multiple vouchers compatibility
++ New payment method: Vipps (beta)
++ New payment method: MobilePay (beta)
 
 ## Changes in release 6.3.1 ##
 + Improved API key validation
