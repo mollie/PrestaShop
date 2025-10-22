@@ -10,8 +10,8 @@
  */
 
 // Load Tailwind CSS CDN (Fix issue with missing styles Mollie Auth page)
-(function() {
-  var tailwindScript = document.createElement('script');
-  tailwindScript.src = 'https://cdn.tailwindcss.com';
-  document.head.appendChild(tailwindScript);
-})();
+// (function() {
+//   var tailwindScript = document.createElement('script');
+//   tailwindScript.src = 'https://cdn.tailwindcss.com';
+//   document.head.appendChild(tailwindScript);
+// })();
