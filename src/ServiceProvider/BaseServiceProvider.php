@@ -270,8 +270,6 @@ final class BaseServiceProvider
 
         $this->addService($container, CustomLogoProviderInterface::class, $container->get(CreditCardLogoProvider::class));
 
-    // PaymentMethodPositionHandler removed from base services
-
         // Payment Method Services
         $service = $this->addService($container, PaymentMethodConfigProvider::class, PaymentMethodConfigProvider::class);
         $this->addServiceArgument($service, CountryService::class);
