@@ -20,7 +20,6 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\Link;
 use Mollie\Adapter\Shop;
-use Mollie\Adapter\ToolsAdapter;
 use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandler;
@@ -35,10 +34,6 @@ use Mollie\Handler\PaymentOption\PaymentOptionHandler;
 use Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface;
 use Mollie\Handler\RetryHandler;
 use Mollie\Handler\RetryHandlerInterface;
-use Mollie\Handler\Settings\CustomerGroupRestrictionHandler;
-use Mollie\Handler\Settings\CustomerGroupRestrictionHandlerInterface;
-use Mollie\Handler\Settings\PaymentMethodPositionHandler;
-use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Handler\Shipment\ShipmentSenderHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
 use Mollie\Install\UninstallerInterface;
@@ -275,8 +270,7 @@ final class BaseServiceProvider
 
         $this->addService($container, CustomLogoProviderInterface::class, $container->get(CreditCardLogoProvider::class));
 
-        $service = $this->addService($container, PaymentMethodPositionHandlerInterface::class, PaymentMethodPositionHandler::class);
-        $this->addServiceArgument($service, PaymentMethodRepositoryInterface::class);
+    // PaymentMethodPositionHandler removed from base services
 
         // Payment Method Services
         $service = $this->addService($container, PaymentMethodConfigProvider::class, PaymentMethodConfigProvider::class);
@@ -347,9 +341,6 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, Context::class);
         $this->addServiceArgument($service, PaymentMethodLangRepositoryInterface::class);
         $this->addServiceArgument($service, CustomerRepository::class);
-
-        $service = $this->addService($container, CustomerGroupRestrictionHandlerInterface::class, CustomerGroupRestrictionHandler::class);
-        $this->addServiceArgument($service, ToolsAdapter::class);
 
         $service = $this->addService($container, OrderManagementAssetLoaderInterface::class, OrderManagementAssetLoader::class);
         $this->addServiceArgument($service, Mollie::class);
