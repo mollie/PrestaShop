@@ -23,7 +23,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 
-<prestashop-accounts id="ps_accounts"></prestashop-accounts>
+<prestashop-accounts></prestashop-accounts>
 <br>
 <div id="prestashop-cloudsync"></div>
 
