@@ -54,18 +54,12 @@ jobs:
           cd ${{ env.MODULE_NAME }} && rm -rf ${{ env.MODULE_NAME }}
           cd ../ && zip -r ${{ env.MODULE_NAME }}.zip ${{ env.MODULE_NAME }}/
 
-      - name: Update release
-        id: update_release
-        uses: tubone24/update_release@v1.0
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.update_release.outputs.upload_url }}
+          upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./${{ env.MODULE_NAME }}.zip
           asset_name: ${{ env.MODULE_NAME }}.zip
           asset_content_type: application/zip
