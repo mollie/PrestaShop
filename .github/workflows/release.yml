@@ -45,6 +45,8 @@ jobs:
           rm -rf vendor/segmentio/analytics-php/.circleci
           rm -rf vendor/segmentio/analytics-php/.github
 
+          cp .env.dist .env
+
           # Create module directory structure
           mkdir ${{ env.MODULE_NAME }}
           rsync -Rr ./ ./${{ env.MODULE_NAME }}
