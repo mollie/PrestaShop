@@ -37,7 +37,6 @@
   border: 1px solid #e5e7eb;
   padding: 0 20px 20px 20px;
   overflow: visible;
-  /* Ensure dropdowns can overflow properly */
   position: relative;
 }
 
