@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  important: true,
   content: [
     "./src/pages/authentication/**/*.{js,ts,jsx,tsx}",
     "./src/shared/components/**/*.{js,ts,jsx,tsx}",

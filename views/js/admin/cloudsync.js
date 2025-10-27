@@ -8,18 +8,10 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  */
-$(document).ready(function () {
-  window?.psaccountsVue?.init();
 
-  // Cloud Sync
-  const cdc = window.cloudSyncSharingConsent;
-
-  cdc.init('#prestashop-cloudsync');
-  cdc.on('OnboardingCompleted', (isCompleted) => {
-    console.log('OnboardingCompleted', isCompleted);
-
-  });
-  cdc.isOnboardingCompleted((isCompleted) => {
-    console.log('Onboarding is already Completed', isCompleted);
-  });
-});
+// Load Tailwind CSS CDN (Fix issue with missing styles Mollie Auth page)
+(function() {
+  var tailwindScript = document.createElement('script');
+  tailwindScript.src = 'https://cdn.tailwindcss.com';
+  document.head.appendChild(tailwindScript);
+})();

@@ -55,13 +55,13 @@ export interface MolliePaymentMethodsTranslations {
   disabled: string;
   enabledPaymentMethods: string;
   disabledPaymentMethods: string;
-  
+
   // Payment method card
   showSettings: string;
   hideSettings: string;
   active: string;
   inactive: string;
-  
+
   // Basic settings
   basicSettings: string;
   activateDeactivate: string;
@@ -72,22 +72,23 @@ export interface MolliePaymentMethodsTranslations {
   useOneClickPayments: string;
   paymentTitle: string;
   paymentTitlePlaceholder: string;
-  
+
   // API Selection
   apiSelection: string;
   payments: string;
   orders: string;
   transactionDescription: string;
   transactionDescriptionPlaceholder: string;
-  readMore: string;
+  clickHere: string;
+  paymentsApiRecommended: string;
   aboutDifferences: string;
-  
+
   // Custom Logo
   useCustomLogo: string;
   uploadLogo: string;
   replaceLogo: string;
   logoUploadHelp: string;
-  
+
   // Apple Pay Settings
   applePayDirectSettings: string;
   applePayDirectProductPage: string;
@@ -98,7 +99,7 @@ export interface MolliePaymentMethodsTranslations {
   applePayButtonBlack: string;
   applePayButtonOutline: string;
   applePayButtonWhite: string;
-  
+
   // Payment Restrictions
   paymentRestrictions: string;
   acceptPaymentsFrom: string;
@@ -114,7 +115,7 @@ export interface MolliePaymentMethodsTranslations {
   customerGroupsHelp: string;
   guest: string;
   customerGroup: string;
-  
+
   // Payment Fees
   paymentFees: string;
   enablePaymentFee: string;
@@ -137,7 +138,7 @@ export interface MolliePaymentMethodsTranslations {
 
   // Order Restrictions
   orderRestrictions: string;
-  
+
   // Actions
   save: string;
   saving: string;
@@ -192,6 +193,7 @@ export interface MolliePaymentMethodsTranslations {
   voucherCategoryEco: string;
   voucherCategoryAll: string;
   voucherCategoryHelp: string;
+  klarnaNotice: string;
 }
 
 export interface MollieAdvancedSettingsTranslations {

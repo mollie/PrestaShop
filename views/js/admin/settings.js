@@ -15,7 +15,6 @@ $(document).ready(function () {
     handleRequiredApiKey();
     handleApiKeyVisibility();
     handleApplePayButtonStylesToggle();
-    // handleApiKeyChanges() removed - functionality moved to AdminMollieAuthentication
 
     function disableCharactersInAmountInput() {
         $('.js-mollie-amount').keypress(function (event) {
@@ -33,10 +32,6 @@ $(document).ready(function () {
             }
             $(this).closest('tr').find('input').attr('disabled', customUrlDisabled);
         });
-    }
-
-    function handleRequiredApiKey() {
-        // Legacy API key requirement handling removed - functionality moved to AdminMollieAuthentication
     }
 
     // toggleRequiredApiKey function removed - API key functionality moved to AdminMollieAuthentication
@@ -113,13 +108,4 @@ function togglePaymentMethod($button, paymentId) {
             }
         }
     })
-}
-
-// handleApiKeyChanges function removed - API key functionality moved to AdminMollieAuthentication
-function handleApiKeyChanges()
-{
-    // Legacy API key change handling removed - functionality moved to AdminMollieAuthentication controller
-    // $('.js-mollie-save-warning').removeClass('hidden');
-        $('input[name="MOLLIE_ENV_CHANGED"]').val(1);
-    });
 }

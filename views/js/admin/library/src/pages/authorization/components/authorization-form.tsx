@@ -381,7 +381,7 @@ export default function AuthorizationForm() {
 
               <div className="text-center p-6 border border-gray-200 rounded-lg bg-white hover:shadow-sm transition-shadow">
                 <h4 className="font-medium text-black mb-3">{t('integrationQuestions')}</h4>
-                <a href="https://www.invertus.eu/contact" target="_blank" rel="noopener noreferrer" style={{color: 'rgba(0, 64, 255, 1)'}} className="hover:opacity-80 underline text-sm font-medium">
+                <a href="https://addons.prestashop.com/en/contact-us?id_product=40307" target="_blank" rel="noopener noreferrer" style={{color: 'rgba(0, 64, 255, 1)'}} className="hover:opacity-80 underline text-sm font-medium">
                   {t('contactModuleDeveloper')}
                 </a>
               </div>

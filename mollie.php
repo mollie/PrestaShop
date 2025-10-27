@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -104,7 +103,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.4.1';
+        $this->version = '6.4.0';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;

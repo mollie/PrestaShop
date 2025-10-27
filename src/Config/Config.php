@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -410,7 +409,8 @@ class Config
         'multibanco' => 'Multibanco',
         'mbway' => 'MBway',
         'bizum' => 'Bizum',
-        'vippsmobilepay' => 'Vipps',
+        'vipps' => 'Vipps',
+        'mobilepay' => 'Mobile Pay',
     ];
 
     public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
@@ -424,6 +424,14 @@ class Config
 
     public const MOLLIE_MANUAL_CAPTURE_METHODS = [
         self::RIVERTY,
+    ];
+
+    public const PS_CLOUDSYNC_CDC = 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js';
+
+    public const PS_EVENTBUS_CONTEXT = [
+        'info',
+        'modules',
+        'themes',
     ];
 
     // TODO migrate functions below to separate service
