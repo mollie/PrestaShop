@@ -2,6 +2,15 @@
 
 # Changelog #
 
+## Changes in release 6.4.0
++ Back-office re-design
++ Compatibility with Captures on Payments API
++ Removed Billie payment method validations
++ Multiple vouchers compatibility
++ New payment method: Vipps (beta)
++ New payment method: MobilePay (beta)
++ Minor fixes
+
 ## Changes in release 6.3.1 ##
 + Improved API key validation
 + Added Bizum payment method

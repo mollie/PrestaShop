@@ -215,8 +215,8 @@ class ApiService implements ApiServiceInterface
         $emptyPaymentMethod->surcharge = 0;
         $emptyPaymentMethod->surcharge_fixed_amount_tax_excl = 0;
         $emptyPaymentMethod->tax_rules_group_id = 0;
-        $emptyPaymentMethod->surcharge_percentage = '';
-        $emptyPaymentMethod->surcharge_limit = '';
+        $emptyPaymentMethod->surcharge_percentage = 0.0;
+        $emptyPaymentMethod->surcharge_limit = 0.0;
 
         foreach ($apiMethods as $apiMethod) {
             $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($apiMethod['id'], $this->environment);
@@ -488,12 +488,12 @@ class ApiService implements ApiServiceInterface
 
     private function toPrecisionForDecimalNumbers(MolPaymentMethod $paymentMethod): MolPaymentMethod
     {
-        $paymentMethod->surcharge_percentage = (string) NumberUtility::toPrecision(
+        $paymentMethod->surcharge_percentage = NumberUtility::toPrecision(
             (float) $paymentMethod->surcharge_percentage,
             NumberUtility::FLOAT_PRECISION
         );
 
-        $paymentMethod->surcharge_limit = (string) NumberUtility::toPrecision(
+        $paymentMethod->surcharge_limit = NumberUtility::toPrecision(
             (float) $paymentMethod->surcharge_limit,
             NumberUtility::FLOAT_PRECISION
         );
