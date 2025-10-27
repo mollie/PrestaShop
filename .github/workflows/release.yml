@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  release:
+    types: [published, edited, updated]
+
+env:
+  MODULE_NAME: mollie
+
+jobs:
+  build_release:
+    name: Build and Upload Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+
+      - name: Build module
+        run: |
+          # Install Composer dependencies for production
+          composer install --no-dev --optimize-autoloader --classmap-authoritative
+          composer dump-autoload --no-dev --optimize --classmap-authoritative
+
+          # Build React components
+          cd views/js/admin/library
+          npm install
+          npm run build
+          rm -rf node_modules src
+          cd ../../../..
+
+          # Remove development and CI files
+          rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile cypress
+          rm -rf .docker cypress.config.js cypress.env.json docker-compose*.yml .gitignore bin codeception.yml
+          rm -rf package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php
+
+          # Remove unnecessary vendor directories
+          rm -rf vendor/segmentio/analytics-php/.buildscript
+          rm -rf vendor/segmentio/analytics-php/.circleci
+          rm -rf vendor/segmentio/analytics-php/.github
+
+          # Create module directory structure
+          mkdir ${{ env.MODULE_NAME }}
+          rsync -Rr ./ ./${{ env.MODULE_NAME }}
+          shopt -s extglob
+          rm -r !(${{ env.MODULE_NAME }})
+          find . -maxdepth 1 -type f -exec rm "{}" \;
+          cd ${{ env.MODULE_NAME }} && rm -rf ${{ env.MODULE_NAME }}
+          cd ../ && zip -r ${{ env.MODULE_NAME }}.zip ${{ env.MODULE_NAME }}/
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./${{ env.MODULE_NAME }}.zip
+          asset_name: ${{ env.MODULE_NAME }}.zip
+          asset_content_type: application/zip
