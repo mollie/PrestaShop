@@ -36,7 +36,7 @@
 
 namespace Mollie\Provider;
 
-use Address;
+use Configuration;
 use Mollie;
 use Mollie\Adapter\Context;
 use Mollie\Calculator\PaymentFeeCalculator;
@@ -44,7 +44,7 @@ use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\LoggerInterface;
-use Mollie\Repository\AddressRepositoryInterface;
+use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Validator\PaymentFeeValidator;
 use MolPaymentMethod;
@@ -61,9 +61,6 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
     /** @var Context */
     private $context;
 
-    /** @var AddressRepositoryInterface */
-    private $addressRepository;
-
     /** @var Mollie */
     private $module;
 
@@ -73,23 +70,21 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
     /** @var LoggerInterface */
     private $logger;
 
-    /** @var PaymentFeeCalculator */
-    private $paymentFeeCalculator;
+    /** @var TaxCalculatorProvider */
+    private $taxCalculatorProvider;
 
     public function __construct(
         Context $context,
-        AddressRepositoryInterface $addressRepository,
         ModuleFactory $module,
         PaymentFeeValidator $paymentFeeValidator,
         LoggerInterface $logger,
-        PaymentFeeCalculator $paymentFeeCalculator
+        TaxCalculatorProvider $taxCalculatorProvider
     ) {
         $this->context = $context;
-        $this->addressRepository = $addressRepository;
         $this->module = $module->getModule();
         $this->paymentFeeValidator = $paymentFeeValidator;
         $this->logger = $logger;
-        $this->paymentFeeCalculator = $paymentFeeCalculator;
+        $this->taxCalculatorProvider = $taxCalculatorProvider;
     }
 
     /**
@@ -98,37 +93,35 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
     public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl): PaymentFeeData
     {
         try {
-            // $this->paymentFeeValidator->validatePaymentFeePercentage($paymentMethod);
-
             $surchargeFixedPriceTaxExcl = (float) $paymentMethod->surcharge_fixed_amount_tax_excl;
             $surchargePercentage = (float) $paymentMethod->surcharge_percentage;
             $surchargeLimit = (float) $paymentMethod->surcharge_limit;
 
-            /** @var Address|null $address */
-            $address = $this->addressRepository->findOneBy([
-                'id_address' => $this->context->getCustomerAddressInvoiceId(),
-                'deleted' => 0,
-            ]);
+            $defaultCountryId = (int) Configuration::get('PS_COUNTRY_DEFAULT');
 
-            if (!$address || !$address->id) {
-                return new PaymentFeeData(0.00, 0.00, 0.00, false);
-            }
+            $taxCalculator = $this->taxCalculatorProvider->getTaxCalculator(
+                (int) $paymentMethod->tax_rules_group_id,
+                $defaultCountryId,
+                0
+            );
+
+            $paymentFeeCalculator = new PaymentFeeCalculator($taxCalculator, $this->context);
 
             switch ($paymentMethod->surcharge) {
                 case Config::FEE_FIXED_FEE:
-                    $paymentFeeData = $this->paymentFeeCalculator->calculateFixedFee(
+                    $paymentFeeData = $paymentFeeCalculator->calculateFixedFee(
                         $surchargeFixedPriceTaxExcl
                     );
                     break;
                 case Config::FEE_PERCENTAGE:
-                    $paymentFeeData = $this->paymentFeeCalculator->calculatePercentageFee(
+                    $paymentFeeData = $paymentFeeCalculator->calculatePercentageFee(
                         $totalCartPriceTaxIncl,
                         $surchargePercentage,
                         $surchargeLimit
                     );
                     break;
                 case Config::FEE_FIXED_FEE_AND_PERCENTAGE:
-                    $paymentFeeData = $this->paymentFeeCalculator->calculatePercentageAndFixedPriceFee(
+                    $paymentFeeData = $paymentFeeCalculator->calculatePercentageAndFixedPriceFee(
                         $totalCartPriceTaxIncl,
                         $surchargePercentage,
                         $surchargeFixedPriceTaxExcl,
@@ -139,15 +132,12 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
                     $paymentFeeData = new PaymentFeeData(0.00, 0.00, 0.00, false);
             }
 
-            // $this->paymentFeeValidator->validatePaymentFeeAmount($paymentFeeData, $totalCartPriceTaxIncl);
-
             return $paymentFeeData;
         } catch (Throwable $e) {
             $this->logger->error(sprintf('%s - Error while calculating payment fee', self::FILE_NAME), [
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
 
-            // TODO: should we throw an exception?
             return new PaymentFeeData(0.00, 0.00, 0.00, false);
         }
     }
