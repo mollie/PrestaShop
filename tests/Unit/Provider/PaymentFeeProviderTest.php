@@ -12,16 +12,14 @@
 
 namespace Mollie\Tests\Unit\Provider;
 
-use Address;
 use Mollie;
 use Mollie\Adapter\Context;
-use Mollie\Calculator\PaymentFeeCalculator;
 use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Provider\PaymentFeeProvider;
-use Mollie\Repository\AddressRepositoryInterface;
+use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Validator\PaymentFeeValidator;
 use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
@@ -32,14 +30,8 @@ class PaymentFeeProviderTest extends TestCase
     /** @var Context */
     private $context;
 
-    /** @var AddressRepositoryInterface */
-    private $addressRepository;
-
     /** @var MolPaymentMethod */
     private $molPaymentMethod;
-
-    /** @var Address */
-    private $address;
 
     /** @var TaxCalculator */
     private $taxCalculator;
@@ -56,18 +48,15 @@ class PaymentFeeProviderTest extends TestCase
     /** @var LoggerInterface */
     private $logger;
 
-    /** @var PaymentFeeCalculator */
-    private $paymentFeeCalculator;
+    /** @var TaxCalculatorProvider */
+    private $taxCalculatorProvider;
 
     public function setUp()
     {
         parent::setUp();
 
         $this->context = $this->createMock(Context::class);
-        $this->addressRepository = $this->createMock(AddressRepositoryInterface::class);
-
         $this->molPaymentMethod = $this->createMock(MolPaymentMethod::class);
-        $this->address = $this->createMock(Address::class);
         $this->taxCalculator = $this->createMock(TaxCalculator::class);
 
         $this->module = $this->createMock(Mollie::class);
@@ -75,7 +64,7 @@ class PaymentFeeProviderTest extends TestCase
         $this->moduleFactory->method('getModule')->willReturn($this->module);
         $this->paymentFeeValidator = $this->createMock(PaymentFeeValidator::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->paymentFeeCalculator = $this->createMock(PaymentFeeCalculator::class);
+        $this->taxCalculatorProvider = $this->createMock(TaxCalculatorProvider::class);
     }
 
     public function testItSuccessfullyProvidesFixedPaymentFee(): void
@@ -86,33 +75,19 @@ class PaymentFeeProviderTest extends TestCase
         $this->molPaymentMethod->surcharge_fixed_amount_tax_excl = 10;
         $this->molPaymentMethod->tax_rules_group_id = 1;
 
-        $this->address = $this->createMock(Address::class);
-
-        $this->address->id = 1;
-        $this->address->id_country = 1;
-        $this->address->id_state = 0;
-
-        $this->addressRepository->method('findOneBy')->willReturn($this->address);
-
-        $this->taxCalculator = $this->createMock(TaxCalculator::class);
-
         $this->taxCalculator->method('addTaxes')->willReturn(11.0);
         $this->taxCalculator->method('getTotalRate')->willReturn(10);
 
-        $this->paymentFeeCalculator->method('calculateFixedFee')->willReturn(
-            new PaymentFeeData(11.0, 10.0, 10.0, true)
-        );
+        $this->taxCalculatorProvider->method('getTaxCalculator')->willReturn($this->taxCalculator);
 
-        $this->context->method('getCustomerAddressInvoiceId')->willReturn(1);
         $this->context->method('getComputingPrecision')->willReturn(2);
 
         $paymentFeeProvider = new PaymentFeeProvider(
             $this->context,
-            $this->addressRepository,
             $this->moduleFactory,
             $this->paymentFeeValidator,
             $this->logger,
-            $this->paymentFeeCalculator
+            $this->taxCalculatorProvider
         );
 
         $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
@@ -131,29 +106,19 @@ class PaymentFeeProviderTest extends TestCase
         $this->molPaymentMethod->surcharge_fixed_amount_tax_excl = 0;
         $this->molPaymentMethod->tax_rules_group_id = 1;
 
-        $this->address->id = 1;
-        $this->address->id_country = 1;
-        $this->address->id_state = 0;
-
-        $this->addressRepository->method('findOneBy')->willReturn($this->address);
-
         $this->taxCalculator->method('removeTaxes')->willReturn(0.9);
         $this->taxCalculator->method('getTotalRate')->willReturn(10);
 
-        $this->paymentFeeCalculator->method('calculatePercentageFee')->willReturn(
-            new PaymentFeeData(1.0, 0.9, 10.0, true)
-        );
+        $this->taxCalculatorProvider->method('getTaxCalculator')->willReturn($this->taxCalculator);
 
-        $this->context->method('getCustomerAddressInvoiceId')->willReturn(1);
         $this->context->method('getComputingPrecision')->willReturn(2);
 
         $paymentFeeProvider = new PaymentFeeProvider(
             $this->context,
-            $this->addressRepository,
             $this->moduleFactory,
             $this->paymentFeeValidator,
             $this->logger,
-            $this->paymentFeeCalculator
+            $this->taxCalculatorProvider
         );
 
         $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
@@ -172,30 +137,20 @@ class PaymentFeeProviderTest extends TestCase
         $this->molPaymentMethod->surcharge_fixed_amount_tax_excl = 10;
         $this->molPaymentMethod->tax_rules_group_id = 1;
 
-        $this->address->id = 1;
-        $this->address->id_country = 1;
-        $this->address->id_state = 0;
-
-        $this->addressRepository->method('findOneBy')->willReturn($this->address);
-
         $this->taxCalculator->method('addTaxes')->willReturn(11.0);
         $this->taxCalculator->method('removeTaxes')->willReturn(10.8);
         $this->taxCalculator->method('getTotalRate')->willReturn(10);
 
-        $this->paymentFeeCalculator->method('calculatePercentageAndFixedPriceFee')->willReturn(
-            new PaymentFeeData(12.0, 10.8, 10.0, true)
-        );
+        $this->taxCalculatorProvider->method('getTaxCalculator')->willReturn($this->taxCalculator);
 
-        $this->context->method('getCustomerAddressInvoiceId')->willReturn(1);
         $this->context->method('getComputingPrecision')->willReturn(2);
 
         $paymentFeeProvider = new PaymentFeeProvider(
             $this->context,
-            $this->addressRepository,
             $this->moduleFactory,
             $this->paymentFeeValidator,
             $this->logger,
-            $this->paymentFeeCalculator
+            $this->taxCalculatorProvider
         );
 
         $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
@@ -214,47 +169,16 @@ class PaymentFeeProviderTest extends TestCase
         $this->molPaymentMethod->surcharge_fixed_amount_tax_excl = 0;
         $this->molPaymentMethod->tax_rules_group_id = 0;
 
-        $this->address->id = 1;
-        $this->address->id_country = 1;
-        $this->address->id_state = 0;
+        $this->taxCalculatorProvider->method('getTaxCalculator')->willReturn($this->taxCalculator);
 
-        $this->addressRepository->method('findOneBy')->willReturn($this->address);
-
-        $this->context->method('getCustomerAddressInvoiceId')->willReturn(1);
         $this->context->method('getComputingPrecision')->willReturn(2);
 
         $paymentFeeProvider = new PaymentFeeProvider(
             $this->context,
-            $this->addressRepository,
             $this->moduleFactory,
             $this->paymentFeeValidator,
             $this->logger,
-            $this->paymentFeeCalculator
-        );
-
-        $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
-
-        $this->assertEquals(0.0, $result->getPaymentFeeTaxIncl());
-        $this->assertEquals(0.0, $result->getPaymentFeeTaxExcl());
-        $this->assertEquals(0.0, $result->getTaxRate());
-        $this->assertEquals(false, $result->isActive());
-    }
-
-    public function testItUnsuccessfullyProvidesFeeAddressNotFound(): void
-    {
-        $this->molPaymentMethod->surcharge_percentage = 0;
-        $this->molPaymentMethod->surcharge_limit = 0;
-        $this->molPaymentMethod->surcharge_fixed_amount_tax_excl = 0;
-
-        $this->addressRepository->method('findOneBy')->willReturn(null);
-
-        $paymentFeeProvider = new PaymentFeeProvider(
-            $this->context,
-            $this->addressRepository,
-            $this->moduleFactory,
-            $this->paymentFeeValidator,
-            $this->logger,
-            $this->paymentFeeCalculator
+            $this->taxCalculatorProvider
         );
 
         $result = $paymentFeeProvider->getPaymentFee($this->molPaymentMethod, 10);
@@ -273,11 +197,10 @@ class PaymentFeeProviderTest extends TestCase
 
         $paymentFeeProvider = new PaymentFeeProvider(
             $this->context,
-            $this->addressRepository,
             $this->moduleFactory,
             $this->paymentFeeValidator,
             $this->logger,
-            $this->paymentFeeCalculator
+            $this->taxCalculatorProvider
         );
 
         $result = $paymentFeeProvider->getPaymentFeeText(10.0);
@@ -293,11 +216,10 @@ class PaymentFeeProviderTest extends TestCase
 
         $paymentFeeProvider = new PaymentFeeProvider(
             $this->context,
-            $this->addressRepository,
             $this->moduleFactory,
             $this->paymentFeeValidator,
             $this->logger,
-            $this->paymentFeeCalculator
+            $this->taxCalculatorProvider
         );
 
         $result = $paymentFeeProvider->getPaymentFeeText(-5.0);
@@ -313,11 +235,10 @@ class PaymentFeeProviderTest extends TestCase
 
         $paymentFeeProvider = new PaymentFeeProvider(
             $this->context,
-            $this->addressRepository,
             $this->moduleFactory,
             $this->paymentFeeValidator,
             $this->logger,
-            $this->paymentFeeCalculator
+            $this->taxCalculatorProvider
         );
 
         $result = $paymentFeeProvider->getPaymentFeeText(0.0);
