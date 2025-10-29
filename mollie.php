@@ -1386,6 +1386,8 @@ class Mollie extends PaymentModule
         $needsUpgrade = Tools::version_compare($this->version, $moduleDatabaseVersion, '>');
 
         if ($needsUpgrade) {
+            $logger->info('Please upgrade Mollie module');
+
             return;
         }
 

@@ -312,8 +312,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 return;
             }
 
-            $shopId = $this->context->shop->id;
-
             $apiMethods = [];
             try {
                 $mollieClient = $this->module->getApiClient();
@@ -370,7 +368,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                             'oneClickPayments' => $methodId === 'creditcard' ? $this->getCreditCardOneClickSetting($methodObj) : false,
                             'transactionDescription' => (isset($methodObj->description) && $methodObj->description) ? $methodObj->description : '{orderNumber}',
                             'apiSelection' => (isset($methodObj->method) && $methodObj->method === 'orders') ? 'orders' : 'payments',
-                            'useCustomLogo' => $methodId === 'creditcard' ? (bool) ($this->configuration->get(\Mollie\Config\Config::MOLLIE_SHOW_CUSTOM_LOGO) ?: 0) : false,
+                            'useCustomLogo' => $methodId === 'creditcard' ? (bool) ($this->configuration->get(Config::MOLLIE_SHOW_CUSTOM_LOGO) ?: 0) : false,
                             'customLogoUrl' => $methodId === 'creditcard' ? $this->getCustomLogoUrl() : null,
                             'voucherCategory' => $methodId === 'voucher' ? $this->getVoucherCategory() : null,
                             'paymentRestrictions' => [
@@ -400,9 +398,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                                 'currency' => $method['minimumAmount'] ? $method['minimumAmount']['currency'] : ($method['maximumAmount'] ? $method['maximumAmount']['currency'] : null),
                             ],
                             'applePaySettings' => $methodId === 'applepay' ? [
-                                'directProduct' => (bool) ($this->configuration->get(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT) ?: 0),
-                                'directCart' => (bool) ($this->configuration->get(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_CART) ?: 0),
-                                'buttonStyle' => (int) ($this->configuration->get(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_STYLE) ?: 0),
+                                'directProduct' => (bool) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT) ?: 0),
+                                'directCart' => (bool) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART) ?: 0),
+                                'buttonStyle' => (int) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE) ?: 0),
                             ] : null,
                         ],
                     ];
