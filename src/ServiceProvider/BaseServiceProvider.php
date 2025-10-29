@@ -156,6 +156,8 @@ use Mollie\Subscription\Utility\ClockInterface;
 use Mollie\Utility\Decoder\DecoderInterface;
 use Mollie\Utility\Decoder\JsonDecoder;
 use Mollie\Utility\NumberIdempotencyProvider;
+use Mollie\Validator\PaymentFeeValidator;
+use Mollie\Calculator\PaymentFeeCalculator;
 use Mollie\Verification\PaymentType\CanBeRegularPaymentType;
 use Mollie\Verification\PaymentType\PaymentTypeVerificationInterface;
 use Mollie\Verification\Shipment\CanSendShipment;
@@ -327,6 +329,35 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, PrestashopLoggerRepositoryInterface::class);
 
         $this->addService($container, LogFormatterInterface::class, LogFormatter::class);
+
+        // Payment Fee Services
+        $this->addService($container, PaymentFeeValidator::class, PaymentFeeValidator::class);
+
+        $service = $this->addService($container, TaxCalculatorProvider::class, TaxCalculatorProvider::class);
+        $this->addServiceArgument($service, TaxRuleRepositoryInterface::class);
+        $this->addServiceArgument($service, TaxRepositoryInterface::class);
+
+        $this->addService($container, PaymentFeeCalculator::class, function () use ($container) {
+            // Create a default TaxCalculator instance for PaymentFeeCalculator
+            // NOTE: Ideally, the tax calculator should be based on each payment method's
+            // tax_rules_group_id, but PaymentFeeCalculator is a singleton service.
+            // This uses a basic calculator; actual tax handling is done in PaymentFeeProvider
+            // using the address and payment method context.
+            $context = $container->get(Context::class);
+
+            // Create empty TaxCalculator (will be populated based on payment method at runtime)
+            $taxCalculator = new \TaxCalculator([], 0);
+
+            return new PaymentFeeCalculator($taxCalculator, $context);
+        });
+
+        $service = $this->addService($container, PaymentFeeProvider::class, PaymentFeeProvider::class);
+        $this->addServiceArgument($service, Context::class);
+        $this->addServiceArgument($service, AddressRepositoryInterface::class);
+        $this->addServiceArgument($service, ModuleFactory::class);
+        $this->addServiceArgument($service, PaymentFeeValidator::class);
+        $this->addServiceArgument($service, LoggerInterface::class);
+        $this->addServiceArgument($service, PaymentFeeCalculator::class);
 
         $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
 
