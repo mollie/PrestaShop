@@ -34,8 +34,6 @@ function upgrade_module_6_4_1(Mollie $module): bool
         // Define all tabs to install
         $tabsToInstall = [
             ['class_name' => 'AdminMollieModule_MTR', 'parent' => 'IMPROVE', 'name' => 'Mollie', 'active' => true, 'icon' => 'mollie'],
-            ['class_name' => 'AdminMollieModule', 'parent' => 'AdminMollieModule_MTR', 'name' => 'Settings', 'active' => false, 'icon' => ''],
-            ['class_name' => 'AdminMollieSettings', 'parent' => 'AdminMollieModule_MTR', 'name' => 'Settings', 'active' => true, 'icon' => ''],
             ['class_name' => 'AdminMollieAjax', 'parent' => 'AdminMollieModule', 'name' => 'AJAX', 'active' => false, 'icon' => ''],
             ['class_name' => 'AdminMollieAuthenticationParent', 'parent' => 'AdminMollieModule_MTR', 'name' => 'API Configuration', 'active' => true, 'icon' => ''],
             ['class_name' => 'AdminMollieAuthentication', 'parent' => 'AdminMollieAuthenticationParent', 'name' => 'API Configuration', 'active' => true, 'icon' => ''],
