@@ -14,59 +14,24 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * Install or update a tab using only core PrestaShop methods
- *
- * @param string $className
- * @param string|int $parent
- * @param string $name
- * @param bool $active
- * @param string $icon
- * @param string $moduleName
- *
- * @return bool
- */
-function installMollieTab($className, $parent, $name, $active, $icon, $moduleName)
-{
-    $tabId = (int) Tab::getIdFromClassName($className);
-
-    if ($tabId) {
-        $tab = new Tab($tabId);
-    } else {
-        $tab = new Tab();
-        $tab->class_name = $className;
-    }
-
-    $idParent = is_int($parent) ? $parent : (int) Tab::getIdFromClassName($parent);
-
-    $tab->id_parent = $idParent;
-    $tab->module = $moduleName;
-    $tab->active = (bool) $active;
-
-    if (!empty($icon)) {
-        $tab->icon = $icon;
-    }
-
-    $languages = Language::getLanguages(true);
-    foreach ($languages as $language) {
-        $tab->name[$language['id_lang']] = $name;
-    }
-
-    return $tab->save();
-}
-
-/**
- * Upgrade to version 6.4.1
- * Ensures all tabs are properly registered using core PrestaShop methods only
- *
- * @param Mollie $module
- *
- * @return bool
- */
 function upgrade_module_6_4_1(Mollie $module): bool
 {
     try {
-        // Define all tabs that should exist
+        // Get all tabs belonging to mollie module
+        $sql = 'SELECT id_tab FROM ' . _DB_PREFIX_ . 'tab WHERE module = "mollie" ORDER BY id_tab DESC';
+        $mollieTabIds = Db::getInstance()->executeS($sql);
+
+        // Delete all mollie tabs (in reverse order - children first)
+        if (is_array($mollieTabIds)) {
+            foreach ($mollieTabIds as $tabData) {
+                $tab = new Tab((int) $tabData['id_tab']);
+                if (Validate::isLoadedObject($tab)) {
+                    $tab->delete();
+                }
+            }
+        }
+
+        // Define all tabs to install
         $tabsToInstall = [
             ['class_name' => 'AdminMollieModule_MTR', 'parent' => 'IMPROVE', 'name' => 'Mollie', 'active' => true, 'icon' => 'mollie'],
             ['class_name' => 'AdminMollieModule', 'parent' => 'AdminMollieModule_MTR', 'name' => 'Settings', 'active' => false, 'icon' => ''],
@@ -86,31 +51,33 @@ function upgrade_module_6_4_1(Mollie $module): bool
             ['class_name' => 'AdminMollieLogsParent', 'parent' => 'AdminMollieModule_MTR', 'name' => 'Logs', 'active' => true, 'icon' => ''],
         ];
 
-        // Remove old/obsolete tabs
-        $obsoleteTabs = ['AdminMollieTabParent'];
-        foreach ($obsoleteTabs as $className) {
-            $tabId = (int) Tab::getIdFromClassName($className);
-            if ($tabId) {
-                $tab = new Tab($tabId);
-                if (Validate::isLoadedObject($tab)) {
-                    $tab->delete();
-                }
-            }
-        }
-
-        // Install/update all tabs
+        // Install all tabs fresh
         $errors = [];
         foreach ($tabsToInstall as $tabConfig) {
-            $result = installMollieTab(
-                $tabConfig['class_name'],
-                $tabConfig['parent'],
-                $tabConfig['name'],
-                $tabConfig['active'],
-                $tabConfig['icon'],
-                $module->name
-            );
+            $tab = new Tab();
+            $tab->class_name = $tabConfig['class_name'];
 
-            if (!$result) {
+            // Get parent ID
+            if ($tabConfig['parent'] === 'IMPROVE') {
+                $tab->id_parent = (int) Tab::getIdFromClassName('IMPROVE');
+            } else {
+                $tab->id_parent = (int) Tab::getIdFromClassName($tabConfig['parent']);
+            }
+
+            $tab->module = $module->name;
+            $tab->active = (bool) $tabConfig['active'];
+
+            if (!empty($tabConfig['icon'])) {
+                $tab->icon = $tabConfig['icon'];
+            }
+
+            // Set names for all languages
+            $languages = Language::getLanguages(true);
+            foreach ($languages as $language) {
+                $tab->name[$language['id_lang']] = $tabConfig['name'];
+            }
+
+            if (!$tab->save()) {
                 $errors[] = sprintf('Failed to install tab: %s', $tabConfig['class_name']);
                 PrestaShopLogger::addLog(
                     sprintf('Mollie upgrade to 6.4.1: Failed to install tab %s', $tabConfig['class_name']),
@@ -136,7 +103,7 @@ function upgrade_module_6_4_1(Mollie $module): bool
         }
 
         PrestaShopLogger::addLog(
-            'Mollie upgrade to 6.4.1: Tabs reinstalled successfully',
+            'Mollie upgrade to 6.4.1: All tabs removed and reinstalled successfully',
             1,
             null,
             'Module',
