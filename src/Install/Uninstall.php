@@ -113,12 +113,28 @@ class Uninstall
     private function uninstallTabs()
     {
         $tabs = [
+            'AdminMollieLogsParent',
+            'AdminMollieSubscriptionFAQParent',
+            'AdminMollieSubscriptionOrdersParent',
+            'AdminMollieAdvancedSettingsParent',
+            'AdminMolliePaymentMethodsParent',
+            'AdminMollieLogs',
+            'AdminMollieSubscriptionFAQ',
+            'AdminMollieSubscriptionOrders',
+            'AdminMollieAdvancedSettings',
+            'AdminMolliePaymentMethods',
+            'AdminMollieAuthentication',
+            'AdminMollieAuthenticationParent',
             'AdminMollieAjax',
+            'AdminMollieSettings',
             'AdminMollieModule',
+            'AdminMollieModule_MTR',
+            'AdminMollieTabParent',
         ];
 
-        foreach ($tabs as $tab) {
-            $idTab = Tab::getIdFromClassName($tab);
+        // Delete in reverse order to handle parent-child relationships
+        foreach ($tabs as $tabClassName) {
+            $idTab = Tab::getIdFromClassName($tabClassName);
 
             if (!$idTab) {
                 continue;
