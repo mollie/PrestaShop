@@ -15,7 +15,6 @@ namespace Mollie\Tests\Unit\Provider;
 use Mollie;
 use Mollie\Adapter\Context;
 use Mollie\Config\Config;
-use Mollie\DTO\PaymentFeeData;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Provider\PaymentFeeProvider;
