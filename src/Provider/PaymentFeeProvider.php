@@ -44,7 +44,6 @@ use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\LoggerInterface;
-use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Validator\PaymentFeeValidator;
 use MolPaymentMethod;
