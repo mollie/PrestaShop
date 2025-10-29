@@ -12,7 +12,6 @@
 
 use Mollie\Adapter\Context;
 use Mollie\Builder\ApiTestFeedbackBuilder;
-use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\PaymentMethodRepository;
@@ -24,7 +23,6 @@ use Mollie\Service\MolliePaymentMailService;
 use Mollie\Service\RefundService;
 use Mollie\Service\ShipService;
 use Mollie\Utility\NumberUtility;
-use Mollie\Utility\TimeUtility;
 use Mollie\Utility\TransactionUtility;
 
 if (!defined('_PS_VERSION_')) {
