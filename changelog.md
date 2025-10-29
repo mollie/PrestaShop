@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.1
++ Fixed payment fee calculation on checkout page
+
 ## Changes in release 6.4.0
 + Back-office re-design
 + Compatibility with Captures on Payments API

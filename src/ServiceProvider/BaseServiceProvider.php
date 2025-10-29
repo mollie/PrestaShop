@@ -69,8 +69,6 @@ use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider;
 use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProviderInterface;
 use Mollie\Provider\TaxCalculatorProvider;
-use Mollie\Provider\UpdateMessageProvider;
-use Mollie\Provider\UpdateMessageProviderInterface;
 use Mollie\Repository\AddressFormatRepository;
 use Mollie\Repository\AddressFormatRepositoryInterface;
 use Mollie\Repository\AddressRepository;
@@ -255,8 +253,6 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, 'MolRecurringOrdersProduct');
 
         $this->addService($container, TemplateParserInterface::class, SmartyTemplateParser::class);
-
-        $this->addService($container, UpdateMessageProviderInterface::class, $container->get(UpdateMessageProvider::class));
 
         $this->addService($container, PaymentMethodSortProviderInterface::class, PaymentMethodSortProvider::class);
         $this->addService($container, PhoneNumberProviderInterface::class, PhoneNumberProvider::class);
