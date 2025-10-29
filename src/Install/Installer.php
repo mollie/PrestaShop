@@ -142,20 +142,6 @@ class Installer implements InstallerInterface
     {
         $this->installTab('AdminMollieModule_MTR', 'IMPROVE', 'Mollie', true, 'mollie');
         $this->installTab('AdminMollieModule', 'AdminMollieModule_MTR', 'Settings', false);
-        $this->installTab('AdminMollieSettings', 'AdminMollieModule_MTR', 'Settings', true);
-        $this->installTab('AdminMollieAjax', 'AdminMollieModule', 'AJAX', false);
-        $this->installTab('AdminMollieAuthenticationParent', 'AdminMollieModule_MTR', 'API Configuration', true);
-        $this->installTab('AdminMollieAuthentication', 'AdminMollieAuthenticationParent', 'API Configuration', true);
-        $this->installTab('AdminMolliePaymentMethods', 'AdminMollieAuthenticationParent', 'Payment Methods', true);
-        $this->installTab('AdminMollieAdvancedSettings', 'AdminMollieAuthenticationParent', 'Advanced Settings', true);
-        $this->installTab('AdminMollieSubscriptionOrders', 'AdminMollieAuthenticationParent', 'Subscriptions', true);
-        $this->installTab('AdminMollieSubscriptionFAQ', 'AdminMollieAuthenticationParent', 'Subscription FAQ', true);
-        $this->installTab('AdminMollieLogs', 'AdminMollieAuthenticationParent', 'Logs', true);
-        $this->installTab('AdminMolliePaymentMethodsParent', 'AdminMollieModule_MTR', 'Payment Methods', true);
-        $this->installTab('AdminMollieAdvancedSettingsParent', 'AdminMollieModule_MTR', 'Advanced Settings', true);
-        $this->installTab('AdminMollieSubscriptionOrdersParent', 'AdminMollieModule_MTR', 'Subscriptions', true);
-        $this->installTab('AdminMollieSubscriptionFAQParent', 'AdminMollieModule_MTR', 'Subscription FAQ', true);
-        $this->installTab('AdminMollieLogsParent', 'AdminMollieModule_MTR', 'Logs', true);
     }
 
     public function getErrors()
