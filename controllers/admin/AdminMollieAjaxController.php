@@ -159,11 +159,6 @@ class AdminMollieAjaxController extends ModuleAdminController
         ));
     }
 
-    private function closeUpgradeNotice()
-    {
-        Configuration::updateValue(Config::MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE, TimeUtility::getNowTs());
-    }
-
     private function validateLogo()
     {
         /** @var CreditCardLogoProvider $creditCardLogoProvider */
