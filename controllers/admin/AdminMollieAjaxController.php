@@ -56,9 +56,6 @@ class AdminMollieAjaxController extends ModuleAdminController
             case 'testApiKeys':
                 $this->testApiKeys();
                 break;
-            case 'closeUpgradeNotice':
-                $this->closeUpgradeNotice();
-                break;
             case 'validateLogo':
                 $this->validateLogo();
                 break;
