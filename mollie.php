@@ -103,7 +103,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.4.0';
+        $this->version = '6.4.1';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -1300,30 +1300,30 @@ class Mollie extends PaymentModule
         $this->setApiKey($shopId);
     }
 
-    public function runUpgradeModule()
-    {
-        /* if module is upgraded from older versions to new 6+ then vendor changes are not found on first try and we need to ask to try again */
-        try {
-            /** @var Mollie\Tracker\Segment $segment */
-            $segment = $this->getService(Mollie\Tracker\Segment::class);
+    // public function runUpgradeModule()
+    // {
+    //     /* if module is upgraded from older versions to new 6+ then vendor changes are not found on first try and we need to ask to try again */
+    //     try {
+    //         /** @var Mollie\Tracker\Segment $segment */
+    //         $segment = $this->getService(Mollie\Tracker\Segment::class);
 
-            $segment->setMessage('Mollie module upgrade');
-            $segment->track();
+    //         $segment->setMessage('Mollie module upgrade');
+    //         $segment->track();
 
-            return parent::runUpgradeModule();
-        } catch (TypeError $e) {
-            // PrestaShop 9 compatibility
-        } catch (Error $e) {
-            http_response_code(Response::HTTP_INTERNAL_SERVER_ERROR);
+    //         return parent::runUpgradeModule();
+    //     } catch (TypeError $e) {
+    //         // PrestaShop 9 compatibility
+    //     } catch (Error $e) {
+    //         http_response_code(Response::HTTP_INTERNAL_SERVER_ERROR);
 
-            /** @var LoggerInterface $logger */
-            $logger = $this->getService(LoggerInterface::class);
+    //         /** @var LoggerInterface $logger */
+    //         $logger = $this->getService(LoggerInterface::class);
 
-            $logger->info('The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com');
+    //         $logger->info('The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com');
 
-            exit($this->l('The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com'));
-        }
-    }
+    //         exit($this->l('The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com'));
+    //     }
+    // }
 
     public function hookActionAjaxDieCartControllerDisplayAjaxUpdateBefore(array $params): void
     {
