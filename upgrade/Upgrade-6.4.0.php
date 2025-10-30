@@ -17,8 +17,39 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_6_4_0(Mollie $module): bool
 {
     try {
-        $installer = $module->getService(\Mollie\Install\Installer::class);
+        // Helper function to install a tab without dependency injection
+        // This bypasses the service container to avoid dependency issues during upgrade
+        $installTabFunction = function($module, $className, $parent, $name, $active = true, $icon = '') {
+            $tabId = Tab::getIdFromClassName($className);
+            if ($tabId) {
+                $moduleTab = new Tab($tabId);
+            } else {
+                $moduleTab = new Tab();
+                $moduleTab->class_name = $className;
+            }
 
+            $idParent = is_int($parent) ? $parent : Tab::getIdFromClassName($parent);
+
+            if (!$idParent && $parent !== -1 && $parent !== 0) {
+                return false;
+            }
+
+            $moduleTab->id_parent = $idParent;
+            $moduleTab->module = $module->name;
+            $moduleTab->active = $active;
+            if (!empty($icon)) {
+                $moduleTab->icon = $icon;
+            }
+
+            $languages = Language::getLanguages(true);
+            foreach ($languages as $language) {
+                $moduleTab->name[$language['id_lang']] = $module->l($name, false, $language['iso_code']);
+            }
+
+            return $moduleTab->save();
+        };
+
+        // Prepare tabs configuration
         $tabsToInstall = [
             ['class_name' => 'AdminMollieModule_MTR', 'parent' => 'IMPROVE', 'name' => 'Mollie', 'visible' => true, 'icon' => 'mollie'],
             ['class_name' => 'AdminMollieModule', 'parent' => 'AdminMollieModule_MTR', 'name' => 'Settings', 'visible' => false],
@@ -40,6 +71,7 @@ function upgrade_module_6_4_0(Mollie $module): bool
         $classNames = array_column($tabsToInstall, 'class_name');
         $classNames[] = 'AdminMollieTabParent';
 
+        // Delete old tabs
         foreach (array_reverse($classNames) as $className) {
             $tabId = Tab::getIdFromClassName($className);
             if ($tabId) {
@@ -50,8 +82,10 @@ function upgrade_module_6_4_0(Mollie $module): bool
             }
         }
 
+        // Install new tabs
         foreach ($tabsToInstall as $tabConfig) {
-            $installer->installTab(
+            $installTabFunction(
+                $module,
                 $tabConfig['class_name'],
                 $tabConfig['parent'],
                 $tabConfig['name'],
@@ -62,6 +96,15 @@ function upgrade_module_6_4_0(Mollie $module): bool
 
         return true;
     } catch (Exception $e) {
+        PrestaShopLogger::addLog(
+            'Mollie module upgrade to 6.4.0 failed: ' . $e->getMessage(),
+            3,
+            $e->getCode(),
+            'Module',
+            $module->id,
+            true
+        );
+
         return false;
     }
 }
