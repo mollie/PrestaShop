@@ -22,6 +22,7 @@ use Mollie\Adapter\Link;
 use Mollie\Adapter\Shop;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Builder\ApiTestFeedbackBuilder;
+use Mollie\Calculator\PaymentFeeCalculator;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandler;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandlerInterface;
@@ -156,6 +157,7 @@ use Mollie\Subscription\Utility\ClockInterface;
 use Mollie\Utility\Decoder\DecoderInterface;
 use Mollie\Utility\Decoder\JsonDecoder;
 use Mollie\Utility\NumberIdempotencyProvider;
+use Mollie\Validator\PaymentFeeValidator;
 use Mollie\Verification\PaymentType\CanBeRegularPaymentType;
 use Mollie\Verification\PaymentType\PaymentTypeVerificationInterface;
 use Mollie\Verification\Shipment\CanSendShipment;
@@ -327,6 +329,12 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, PrestashopLoggerRepositoryInterface::class);
 
         $this->addService($container, LogFormatterInterface::class, LogFormatter::class);
+
+        // Register PaymentFeeCalculator - required by PaymentFeeProvider
+        $this->addService($container, PaymentFeeCalculator::class, PaymentFeeCalculator::class);
+
+        // Register PaymentFeeValidator - required by PaymentFeeProvider
+        $this->addService($container, PaymentFeeValidator::class, PaymentFeeValidator::class);
 
         $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
 
