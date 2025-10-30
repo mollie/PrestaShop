@@ -330,15 +330,6 @@ final class BaseServiceProvider
 
         $this->addService($container, LogFormatterInterface::class, LogFormatter::class);
 
-        $this->addService($container, PaymentFeeValidator::class, PaymentFeeValidator::class);
-
-        $service = $this->addService($container, PaymentFeeCalculator::class, function () use ($container) {
-            return new PaymentFeeCalculator(
-                new \TaxCalculator([], 0),
-                $container->get(Context::class)
-            );
-        });
-
         $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
 
         $this->addService($container, PaymentOptionHandlerInterface::class, $container->get(PaymentOptionHandler::class));
