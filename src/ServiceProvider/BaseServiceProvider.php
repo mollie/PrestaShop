@@ -330,8 +330,38 @@ final class BaseServiceProvider
 
         $this->addService($container, LogFormatterInterface::class, LogFormatter::class);
 
-        // Register PaymentFeeCalculator - required by PaymentFeeProvider
-        $this->addService($container, PaymentFeeCalculator::class, PaymentFeeCalculator::class);
+        // Register PaymentFeeCalculator with factory - required by PaymentFeeProvider
+        $this->addService($container, PaymentFeeCalculator::class, function () use ($container) {
+            $context = $container->get(Context::class);
+            $taxCalculatorProvider = $container->get(TaxCalculatorProvider::class);
+
+            // Get tax calculator based on default country and current context
+            $psContext = \Context::getContext();
+            $countryId = (int) \Configuration::get('PS_COUNTRY_DEFAULT');
+            $taxRulesGroupId = 0;
+
+            // Try to get tax rules group from cart if available
+            if ($psContext && isset($psContext->cart) && \Validate::isLoadedObject($psContext->cart)) {
+                $carrier = new \Carrier($psContext->cart->id_carrier);
+                if (\Validate::isLoadedObject($carrier)) {
+                    $taxRulesGroupId = (int) $carrier->id_tax_rules_group;
+                }
+            }
+
+            // Fallback to a default tax rules group from configuration if available
+            if (!$taxRulesGroupId) {
+                $taxRulesGroupId = (int) \Configuration::get('PS_TAX_RULES_GROUP');
+            }
+
+            // Create tax calculator
+            if ($taxRulesGroupId > 0) {
+                $taxCalculator = $taxCalculatorProvider->getTaxCalculator($taxRulesGroupId, $countryId, 0);
+            } else {
+                $taxCalculator = new \TaxCalculator([], 0);
+            }
+
+            return new PaymentFeeCalculator($taxCalculator, $context);
+        });
 
         // Register PaymentFeeValidator - required by PaymentFeeProvider
         $this->addService($container, PaymentFeeValidator::class, PaymentFeeValidator::class);
