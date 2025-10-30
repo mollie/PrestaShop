@@ -20,14 +20,52 @@ function upgrade_module_6_4_0(Mollie $module): bool
         VALUES (1, 0, 'DEBUG upgrade_module_6_4_0: Starting upgrade', NOW())");
 
     try {
-        // Step 1: Get installer service
-        Db::getInstance()->execute("INSERT INTO `" . _DB_PREFIX_ . "log` (severity, error_code, message, date_add)
-            VALUES (1, 0, 'DEBUG upgrade_module_6_4_0: Attempting to get Installer service', NOW())");
+        // Helper function to install a tab without dependency injection
+        $installTabFunction = function($module, $className, $parent, $name, $active = true, $icon = '') {
+            // Check if tab already exists
+            $tabId = Tab::getIdFromClassName($className);
+            if ($tabId) {
+                $moduleTab = new Tab($tabId);
+                Db::getInstance()->execute("INSERT INTO `" . _DB_PREFIX_ . "log` (severity, error_code, message, date_add)
+                    VALUES (1, 0, 'DEBUG upgrade_module_6_4_0: Tab already exists, updating className=" . pSQL($className) . "', NOW())");
+            } else {
+                $moduleTab = new Tab();
+                $moduleTab->class_name = $className;
+                Db::getInstance()->execute("INSERT INTO `" . _DB_PREFIX_ . "log` (severity, error_code, message, date_add)
+                    VALUES (1, 0, 'DEBUG upgrade_module_6_4_0: Creating new tab className=" . pSQL($className) . "', NOW())");
+            }
 
-        $installer = $module->getService(\Mollie\Install\Installer::class);
+            $idParent = is_int($parent) ? $parent : Tab::getIdFromClassName($parent);
+
+            if (!$idParent && $parent !== -1 && $parent !== 0) {
+                Db::getInstance()->execute("INSERT INTO `" . _DB_PREFIX_ . "log` (severity, error_code, message, date_add)
+                    VALUES (3, 0, 'ERROR upgrade_module_6_4_0: Parent tab not found for className=" . pSQL($className) . ", parent=" . pSQL($parent) . "', NOW())");
+                return false;
+            }
+
+            $moduleTab->id_parent = $idParent;
+            $moduleTab->module = $module->name;
+            $moduleTab->active = $active;
+            if (!empty($icon)) {
+                $moduleTab->icon = $icon;
+            }
+
+            $languages = Language::getLanguages(true);
+            foreach ($languages as $language) {
+                $moduleTab->name[$language['id_lang']] = $module->l($name, false, $language['iso_code']);
+            }
+
+            if (!$moduleTab->save()) {
+                Db::getInstance()->execute("INSERT INTO `" . _DB_PREFIX_ . "log` (severity, error_code, message, date_add)
+                    VALUES (3, 0, 'ERROR upgrade_module_6_4_0: Failed to save tab className=" . pSQL($className) . "', NOW())");
+                return false;
+            }
+
+            return true;
+        };
 
         Db::getInstance()->execute("INSERT INTO `" . _DB_PREFIX_ . "log` (severity, error_code, message, date_add)
-            VALUES (1, 0, 'DEBUG upgrade_module_6_4_0: Installer service retrieved successfully', NOW())");
+            VALUES (1, 0, 'DEBUG upgrade_module_6_4_0: Helper function created, bypassing service container', NOW())");
 
         // Step 2: Prepare tabs configuration
         $tabsToInstall = [
@@ -89,7 +127,8 @@ function upgrade_module_6_4_0(Mollie $module): bool
                 VALUES (1, 0, 'DEBUG upgrade_module_6_4_0: Installing tab className=" . pSQL($tabConfig['class_name']) . ", parent=" . pSQL($tabConfig['parent']) . "', NOW())");
 
             try {
-                $result = $installer->installTab(
+                $result = $installTabFunction(
+                    $module,
                     $tabConfig['class_name'],
                     $tabConfig['parent'],
                     $tabConfig['name'],
