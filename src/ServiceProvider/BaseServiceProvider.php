@@ -341,9 +341,9 @@ final class BaseServiceProvider
             $taxRulesGroupId = 0;
 
             // Try to get tax rules group from cart if available
-            if ($psContext && isset($psContext->cart) && \Validate::isLoadedObject($psContext->cart)) {
+            if (isset($psContext->cart) && \Validate::isLoadedObject($psContext->cart)) {
                 $carrier = new \Carrier($psContext->cart->id_carrier);
-                if (\Validate::isLoadedObject($carrier)) {
+                if (\Validate::isLoadedObject($carrier) && property_exists($carrier, 'id_tax_rules_group')) {
                     $taxRulesGroupId = (int) $carrier->id_tax_rules_group;
                 }
             }
