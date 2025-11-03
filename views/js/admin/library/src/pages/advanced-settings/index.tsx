@@ -37,8 +37,10 @@ interface RadioSelectProps {
 
 function RadioSelect({ value, onValueChange, options, placeholder, className }: RadioSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const [dropdownPosition, setDropdownPosition] = useState<'bottom' | 'top'>('bottom')
   const selectedOption = options.find((opt) => opt.value === value)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -56,9 +58,24 @@ function RadioSelect({ value, onValueChange, options, placeholder, className }: 
     }
   }, [isOpen])
 
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      const spaceBelow = window.innerHeight - rect.bottom
+      const dropdownHeight = 300 // approximate max height
+
+      if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
+        setDropdownPosition('top')
+      } else {
+        setDropdownPosition('bottom')
+      }
+    }
+  }, [isOpen])
+
   return (
     <div ref={dropdownRef} className={cn("relative", isOpen && "dropdown-open", className)}>
       <button
+        ref={buttonRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="radio-select-button"
@@ -70,7 +87,7 @@ function RadioSelect({ value, onValueChange, options, placeholder, className }: 
       </button>
 
       {isOpen && (
-        <div className="radio-select-dropdown">
+        <div className={cn("radio-select-dropdown", dropdownPosition === 'top' && "radio-select-dropdown-top")}>
           <div className="radio-select-options">
             {options.map((option) => (
               <button
@@ -107,8 +124,10 @@ interface MultiSelectProps {
 
 function MultiSelect({ value, onValueChange, options, placeholder, className }: MultiSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const [dropdownPosition, setDropdownPosition] = useState<'bottom' | 'top'>('bottom')
   const selectedOptions = options.filter((opt) => value.includes(opt.value))
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
 
   const toggleOption = (optionValue: string) => {
     if (value.includes(optionValue)) {
@@ -139,9 +158,24 @@ function MultiSelect({ value, onValueChange, options, placeholder, className }: 
     }
   }, [isOpen])
 
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      const spaceBelow = window.innerHeight - rect.bottom
+      const dropdownHeight = 300 // approximate max height
+
+      if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
+        setDropdownPosition('top')
+      } else {
+        setDropdownPosition('bottom')
+      }
+    }
+  }, [isOpen])
+
   return (
     <div ref={dropdownRef} className={cn("relative", isOpen && "dropdown-open", className)}>
       <button
+        ref={buttonRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="multi-select-button"
@@ -170,7 +204,7 @@ function MultiSelect({ value, onValueChange, options, placeholder, className }: 
       </button>
 
       {isOpen && (
-        <div className="radio-select-dropdown">
+        <div className={cn("radio-select-dropdown", dropdownPosition === 'top' && "radio-select-dropdown-top")}>
           <div className="radio-select-options">
             {options.map((option) => (
               <button
