@@ -103,7 +103,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.4.0';
+        $this->version = '6.4.1';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -1386,6 +1386,8 @@ class Mollie extends PaymentModule
         $needsUpgrade = Tools::version_compare($this->version, $moduleDatabaseVersion, '>');
 
         if ($needsUpgrade) {
+            $logger->info('Please upgrade Mollie module');
+
             return;
         }
 
