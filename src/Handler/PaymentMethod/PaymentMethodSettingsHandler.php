@@ -17,6 +17,8 @@ namespace Mollie\Handler\PaymentMethod;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
+use Mollie\Handler\Certificate\CertificateHandlerInterface;
+use Mollie\Handler\Certificate\Exception\ApplePayDirectCertificateCreation;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\CustomerRepository;
@@ -24,6 +26,7 @@ use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ApiService;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\TagsUtility;
 use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
@@ -56,6 +59,9 @@ class PaymentMethodSettingsHandler
     /** @var \Mollie */
     private $module;
 
+    /** @var CertificateHandlerInterface */
+    private $applePayDirectCertificateHandler;
+
     public function __construct(
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentMethodLangRepositoryInterface $paymentMethodLangRepository,
@@ -64,7 +70,8 @@ class PaymentMethodSettingsHandler
         ConfigurationAdapter $configuration,
         LoggerInterface $logger,
         ApiService $apiService,
-        \Mollie $module
+        \Mollie $module,
+        CertificateHandlerInterface $applePayDirectCertificateHandler
     ) {
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodLangRepository = $paymentMethodLangRepository;
@@ -74,6 +81,7 @@ class PaymentMethodSettingsHandler
         $this->logger = $logger;
         $this->apiService = $apiService;
         $this->module = $module;
+        $this->applePayDirectCertificateHandler = $applePayDirectCertificateHandler;
     }
 
     /**
@@ -347,20 +355,48 @@ class PaymentMethodSettingsHandler
      * Handle Apple Pay specific settings
      *
      * @param array $applePaySettings Apple Pay settings
+     *
+     * @throws MollieException
      */
     private function handleApplePaySettings(array $applePaySettings): void
     {
+        $isApplePayDirectProductEnabled = (bool) ($applePaySettings['directProduct'] ?? false);
+        $isApplePayDirectCartEnabled = (bool) ($applePaySettings['directCart'] ?? false);
+
+        // Handle Apple Pay Direct certificate creation if either product or cart is enabled
+        if ($isApplePayDirectProductEnabled || $isApplePayDirectCartEnabled) {
+            try {
+                $this->applePayDirectCertificateHandler->handle();
+            } catch (ApplePayDirectCertificateCreation $e) {
+                $this->logger->error('Grant permissions for the folder or visit ApplePay to see how it can be added manually', [
+                    'exceptions' => ExceptionUtility::getExceptions($e),
+                ]);
+
+                // Disable Apple Pay Direct features if certificate creation fails
+                $isApplePayDirectProductEnabled = false;
+                $isApplePayDirectCartEnabled = false;
+
+                // Build error message with documentation link
+                $errorMessage = $e->getMessage() . ' ' . TagsUtility::ppTags(
+                    'Grant permissions for the folder or visit [1]ApplePay[/1] to see how it can be added manually',
+                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/applePayDirectDocumentation.tpl')]
+                );
+
+                throw new MollieException($errorMessage);
+            }
+        }
+
         $this->configuration->updateValue(
             Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT,
-            $applePaySettings['directProduct'] ? 1 : 0
+            $isApplePayDirectProductEnabled ? 1 : 0
         );
         $this->configuration->updateValue(
             Config::MOLLIE_APPLE_PAY_DIRECT_CART,
-            $applePaySettings['directCart'] ? 1 : 0
+            $isApplePayDirectCartEnabled ? 1 : 0
         );
         $this->configuration->updateValue(
             Config::MOLLIE_APPLE_PAY_DIRECT_STYLE,
-            $applePaySettings['buttonStyle']
+            $applePaySettings['buttonStyle'] ?? 0
         );
     }
 
