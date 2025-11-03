@@ -290,6 +290,7 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, LoggerInterface::class);
         $this->addServiceArgument($service, ApiService::class);
         $this->addServiceArgument($service, Mollie::class);
+        $this->addServiceArgument($service, ApplePayDirectCertificateHandler::class);
 
         $service = $this->addService($container, PaymentMethodLogoHandler::class, PaymentMethodLogoHandler::class);
         $this->addServiceArgument($service, CreditCardLogoProvider::class);
