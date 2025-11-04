@@ -15,7 +15,6 @@ $(document).ready(function () {
     handleRequiredApiKey();
     handleApiKeyVisibility();
     handleApplePayButtonStylesToggle();
-    handleApiKeyChanges();
 
     function disableCharactersInAmountInput() {
         $('.js-mollie-amount').keypress(function (event) {
@@ -35,22 +34,7 @@ $(document).ready(function () {
         });
     }
 
-    function handleRequiredApiKey() {
-        toggleRequiredApiKey($('select[name^="MOLLIE_ENVIRONMENT"]').val());
-        $('select[name^="MOLLIE_ENVIRONMENT"]').on('change', function () {
-            var selectedEnvironment = $(this).val();
-            toggleRequiredApiKey(selectedEnvironment);
-        });
-    }
-
-    function toggleRequiredApiKey(selectedEnvironment) {
-        var isLive = false;
-        if (selectedEnvironment === "1") {
-            isLive = true;
-        }
-        $('.js-test-api-group').find('label.control-label').toggleClass('required', !isLive);
-        $('.js-live-api-group').find('label.control-label').toggleClass('required', isLive);
-    }
+    // toggleRequiredApiKey function removed - API key functionality moved to AdminMollieAuthentication
 
     function handleApiKeyVisibility() {
         $('button[data-action="show-password"]').on('click', function () {
@@ -124,14 +108,4 @@ function togglePaymentMethod($button, paymentId) {
             }
         }
     })
-}
-
-function handleApiKeyChanges()
-{
-    $('select[name="MOLLIE_ENVIRONMENT"], input[name="MOLLIE_API_KEY_TEST"], input[name="MOLLIE_API_KEY"]').on('change', function () {
-        $('input').not('input[name="MOLLIE_API_KEY_TEST"], input[name="MOLLIE_API_KEY"], input[name="MOLLIE_ENV_CHANGED"], input[name="MOLLIE_ACCOUNT_SWITCH"]').attr('disabled', true);
-        $('select').not('select[name="MOLLIE_ENVIRONMENT"]').attr('disabled', true).trigger("chosen:updated");
-        $('.js-mollie-save-warning').removeClass('hidden');
-        $('input[name="MOLLIE_ENV_CHANGED"]').val(1);
-    });
 }
