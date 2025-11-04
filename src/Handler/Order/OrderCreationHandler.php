@@ -147,25 +147,68 @@ class OrderCreationHandler
 
         $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmount);
 
-        if (Order::getIdByCartId((int) $cartId)) {
+        // Double-check order doesn't exist before creating
+        // This is a critical safeguard against race conditions
+        $existingOrderId = Order::getIdByCartId((int) $cartId);
+        if ($existingOrderId) {
+            $this->logger->warning(sprintf(
+                '%s - Attempted to create duplicate order for cart %d, order %d already exists',
+                self::FILE_NAME,
+                $cartId,
+                $existingOrderId
+            ), [
+                'cart_id' => $cartId,
+                'existing_order_id' => $existingOrderId,
+                'transaction_id' => $apiPayment->id,
+            ]);
+
             return 0;
         }
 
         if (!$paymentFeeData->isActive()) {
-            $this->module->validateOrder(
-                (int) $cartId,
-                $orderStatus,
-                (float) $apiPayment->amount->value,
-                $paymentMethod->method_name,
-                null,
-                ['transaction_id' => $apiPayment->id],
-                null,
-                false,
-                $cart->secure_key
-            );
+            try {
+                $this->module->validateOrder(
+                    (int) $cartId,
+                    $orderStatus,
+                    (float) $apiPayment->amount->value,
+                    $paymentMethod->method_name,
+                    null,
+                    ['transaction_id' => $apiPayment->id],
+                    null,
+                    false,
+                    $cart->secure_key
+                );
+            } catch (\Exception $e) {
+                // validateOrder might throw if cart already has order (race condition)
+                $this->logger->warning(sprintf(
+                    '%s - validateOrder failed, checking if order exists',
+                    self::FILE_NAME
+                ), [
+                    'cart_id' => $cartId,
+                    'exception' => $e->getMessage(),
+                ]);
+
+                // Check if order was created despite exception
+                $orderId = (int) Order::getIdByCartId((int) $cartId);
+                if ($orderId > 0) {
+                    return $orderId;
+                }
+
+                throw $e;
+            }
 
             /* @phpstan-ignore-next-line */
             $orderId = (int) Order::getIdByCartId((int) $cartId);
+
+            if ($orderId === 0) {
+                $this->logger->error(sprintf(
+                    '%s - Order creation failed for cart %d',
+                    self::FILE_NAME,
+                    $cartId
+                ));
+
+                return 0;
+            }
 
             $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method);
 
@@ -208,20 +251,60 @@ class OrderCreationHandler
             new \Currency($cart->id_currency)
         );
 
-        $this->module->validateOrder(
-            (int) $cartId,
-            (int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
-            (float) $apiPayment->amount->value,
-            $paymentMethodName,
-            null,
-            ['transaction_id' => $apiPayment->id],
-            null,
-            false,
-            $cart->secure_key
-        );
+        try {
+            $this->module->validateOrder(
+                (int) $cartId,
+                (int) Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_AWAITING),
+                (float) $apiPayment->amount->value,
+                $paymentMethodName,
+                null,
+                ['transaction_id' => $apiPayment->id],
+                null,
+                false,
+                $cart->secure_key
+            );
+        } catch (\Exception $e) {
+            // validateOrder might throw if cart already has order (race condition)
+            $this->logger->warning(sprintf(
+                '%s - validateOrder failed with payment fee, checking if order exists',
+                self::FILE_NAME
+            ), [
+                'cart_id' => $cartId,
+                'exception' => $e->getMessage(),
+            ]);
+
+            // Check if order was created despite exception
+            $orderId = (int) Order::getIdByCartId((int) $cartId);
+            if ($orderId > 0) {
+                // Order exists, try to add payment fee and set status
+                try {
+                    $this->orderPaymentFeeHandler->addOrderPaymentFee($orderId, $apiPayment);
+                    $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
+                } catch (\Exception $feeException) {
+                    $this->logger->warning('Failed to add payment fee to existing order', [
+                        'order_id' => $orderId,
+                        'exception' => $feeException->getMessage(),
+                    ]);
+                }
+
+                return $orderId;
+            }
+
+            throw $e;
+        }
 
         /* @phpstan-ignore-next-line */
         $orderId = (int) Order::getIdByCartId((int) $cartId);
+
+        if ($orderId === 0) {
+            $this->logger->error(sprintf(
+                '%s - Order creation with payment fee failed for cart %d',
+                self::FILE_NAME,
+                $cartId
+            ));
+
+            return 0;
+        }
 
         $this->orderPaymentFeeHandler->addOrderPaymentFee($orderId, $apiPayment);
 

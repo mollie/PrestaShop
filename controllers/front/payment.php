@@ -19,6 +19,7 @@ use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\MollieOrderCreationService;
+use Mollie\Service\PaymentDeduplicationService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Utility\ExceptionUtility;
@@ -88,6 +89,53 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         $amount = $originalAmount;
         if (!$amount) {
             Tools::redirect('index.php');
+        }
+
+        /** @var PaymentDeduplicationService $deduplicationService */
+        $deduplicationService = $this->module->getService(PaymentDeduplicationService::class);
+
+        // Check if cart already has a pending or completed payment
+        $existingPayment = $deduplicationService->getPendingPaymentForCart((int) $cart->id);
+
+        if ($existingPayment !== false) {
+            $logger->warning(sprintf(
+                '%s - Duplicate payment attempt detected for cart %d',
+                self::FILE_NAME,
+                $cart->id
+            ), [
+                'cart_id' => $cart->id,
+                'existing_transaction_id' => $existingPayment['transaction_id'] ?? null,
+                'existing_status' => $existingPayment['bank_status'] ?? null,
+                'has_order' => $existingPayment['has_order'] ?? false,
+            ]);
+
+            // If cart already has an order, redirect to order confirmation
+            if (!empty($existingPayment['has_order']) && !empty($existingPayment['order_id'])) {
+                $orderId = (int) $existingPayment['order_id'];
+                $order = new Order($orderId);
+
+                Tools::redirect($this->context->link->getPageLink(
+                    'order-confirmation',
+                    true,
+                    null,
+                    [
+                        'id_cart' => (int) $cart->id,
+                        'id_module' => (int) $this->module->id,
+                        'id_order' => $orderId,
+                        'key' => $customer->secure_key,
+                    ]
+                ));
+
+                return;
+            }
+
+            // If payment is still pending, show error message
+            $this->setTemplate('error.tpl');
+            /** @var Mollie\Service\LanguageService $langService */
+            $langService = $this->module->getService(Mollie\Service\LanguageService::class);
+            $this->errors[] = $langService->lang('A payment is already in progress for this order. Please complete or cancel the existing payment before creating a new one.');
+
+            return;
         }
 
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */

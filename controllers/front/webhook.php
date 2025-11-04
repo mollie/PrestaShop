@@ -88,14 +88,33 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             ));
         }
 
+        // First get the cart ID from the transaction to apply cart-based locking
+        $cartId = $this->getCartIdFromTransaction($transactionId);
+
+        if (!$cartId) {
+            $logger->error(sprintf('%s - Could not determine cart ID for transaction', self::FILE_NAME), [
+                'transaction_id' => $transactionId,
+            ]);
+
+            $this->ajaxResponse(JsonResponse::error(
+                $this->module->l('Invalid transaction', self::FILE_NAME),
+                HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY
+            ));
+        }
+
+        // Use cart-based locking to prevent parallel webhook processing for same cart
+        // This fixes the race condition where multiple payments for same cart process simultaneously
         $lockResult = $this->applyLock(sprintf(
-            '%s-%s',
+            '%s-cart-%d',
             self::FILE_NAME,
-            $tools->getValue('security_token')
+            $cartId
         ));
 
         if (!$lockResult->isSuccessful()) {
-            $logger->error(sprintf('%s - Resource conflict', self::FILE_NAME));
+            $logger->error(sprintf('%s - Resource conflict for cart %d', self::FILE_NAME, $cartId), [
+                'cart_id' => $cartId,
+                'transaction_id' => $transactionId,
+            ]);
 
             $this->ajaxResponse(JsonResponse::error(
                 $this->module->l('Resource conflict', self::FILE_NAME),
@@ -155,6 +174,53 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         $this->setContext($cartId);
 
         $transactionService->processTransaction($transaction);
+    }
+
+    /**
+     * Get cart ID from transaction before locking.
+     * This allows us to use cart-based locking instead of transaction-based locking.
+     *
+     * @param string $transactionId
+     *
+     * @return int|null Cart ID or null if not found
+     */
+    private function getCartIdFromTransaction(string $transactionId): ?int
+    {
+        try {
+            // First try to get cart ID from database (fastest)
+            $sql = new DbQuery();
+            $sql->select('cart_id');
+            $sql->from('mollie_payments');
+            $sql->where('transaction_id = "' . pSQL($transactionId) . '"');
+
+            $cartId = (int) Db::getInstance()->getValue($sql);
+
+            if ($cartId > 0) {
+                return $cartId;
+            }
+
+            // If not in database yet, fetch from Mollie API
+            if (TransactionUtility::isOrderTransaction($transactionId)) {
+                $transaction = $this->module->getApiClient()->orders->get($transactionId);
+            } else {
+                $transaction = $this->module->getApiClient()->payments->get($transactionId);
+
+                if ($transaction->orderId) {
+                    $transaction = $this->module->getApiClient()->orders->get($transaction->orderId);
+                }
+            }
+
+            return (int) ($transaction->metadata->cart_id ?? 0);
+        } catch (\Throwable $e) {
+            /** @var Logger $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to get cart ID from transaction', [
+                'transaction_id' => $transactionId,
+                'exception' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
     }
 
     private function setContext(int $cartId): void
