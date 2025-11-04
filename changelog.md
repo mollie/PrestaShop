@@ -4,6 +4,7 @@
 
 ## Changes in release 6.4.1
 + Fixed issues with upgrade
++ Fixed payment fee calculation on checkout page
 
 ## Changes in release 6.4.0
 + Back-office re-design

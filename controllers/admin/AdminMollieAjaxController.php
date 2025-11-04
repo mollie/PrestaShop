@@ -12,7 +12,6 @@
 
 use Mollie\Adapter\Context;
 use Mollie\Builder\ApiTestFeedbackBuilder;
-use Mollie\Config\Config;
 use Mollie\Provider\CreditCardLogoProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\PaymentMethodRepository;
@@ -24,7 +23,6 @@ use Mollie\Service\MolliePaymentMailService;
 use Mollie\Service\RefundService;
 use Mollie\Service\ShipService;
 use Mollie\Utility\NumberUtility;
-use Mollie\Utility\TimeUtility;
 use Mollie\Utility\TransactionUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -55,9 +53,6 @@ class AdminMollieAjaxController extends ModuleAdminController
                 break;
             case 'testApiKeys':
                 $this->testApiKeys();
-                break;
-            case 'closeUpgradeNotice':
-                $this->closeUpgradeNotice();
                 break;
             case 'validateLogo':
                 $this->validateLogo();
@@ -157,11 +152,6 @@ class AdminMollieAjaxController extends ModuleAdminController
                 'template' => $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/api_test_results.tpl'),
             ]
         ));
-    }
-
-    private function closeUpgradeNotice()
-    {
-        Configuration::updateValue(Config::MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE, TimeUtility::getNowTs());
     }
 
     private function validateLogo()
