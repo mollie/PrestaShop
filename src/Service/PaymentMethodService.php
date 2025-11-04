@@ -18,6 +18,7 @@ use Configuration;
 use Country;
 use Currency;
 use Customer;
+use Exception;
 use MolCustomer;
 use Mollie;
 use Mollie\Adapter\CartAdapter;
@@ -34,6 +35,7 @@ use Mollie\DTO\Object\Company;
 use Mollie\DTO\Object\Payment;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\PaymentData;
+use Mollie\Enum\LineType;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CreditCardLogoProvider;
@@ -63,57 +65,54 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentMethodService
 {
-    /**
-     * @var Mollie
-     */
+    /** @var Mollie */
     private $module;
 
-    /**
-     * @var PaymentMethodRepositoryInterface
-     */
+    /** @var PaymentMethodRepositoryInterface */
     private $methodRepository;
 
-    /**
-     * @var CartLinesService
-     */
+    /** @var CartLinesService */
     private $cartLinesService;
 
-    /**
-     * @var CustomerService
-     */
+    /** @var CustomerService */
     private $customerService;
 
-    /**
-     * @var CreditCardLogoProvider
-     */
+    /** @var CreditCardLogoProvider */
     private $creditCardLogoProvider;
 
+    /** @var PaymentMethodSortProviderInterface */
     private $paymentMethodSortProvider;
 
+    /** @var PhoneNumberProviderInterface */
     private $phoneNumberProvider;
 
-    /**
-     * @var PaymentMethodRestrictionValidationInterface
-     */
+    /** @var PaymentMethodRestrictionValidationInterface */
     private $paymentMethodRestrictionValidation;
 
-    /**
-     * @var Shop
-     */
+    /** @var Shop */
     private $shop;
+
     /** @var SubscriptionOrderValidator */
     private $subscriptionOrder;
+
     /** @var CartAdapter */
     private $cartAdapter;
+
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
+
+    /** @var GenderRepositoryInterface */
     private $genderRepository;
+
     /** @var PaymentFeeProviderInterface */
     private $paymentFeeProvider;
+
     /** @var Context */
     private $context;
+
     /** @var OrderTotalProviderInterface */
     private $orderTotalProvider;
+
     /** @var PaymentMethodLangRepositoryInterface */
     private $paymentMethodLangRepository;
 
@@ -164,6 +163,9 @@ class PaymentMethodService
         if ($paymentId) {
             $paymentMethod = new MolPaymentMethod((int) $paymentId);
         }
+
+        $this->validateSurchargePercentage((float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_PERCENTAGE . $method['id']));
+
         $paymentMethod->id_method = $method['id'];
         $paymentMethod->method_name = $method['name'];
         $paymentMethod->enabled = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_ENABLED . $method['id']);
@@ -333,6 +335,10 @@ class PaymentMethodService
         if (Mollie\Config\Config::MOLLIE_ORDERS_API !== $molPaymentMethod->method) {
             $paymentData = new PaymentData($amountObj, $orderReference, $redirectUrl, $webhookUrl);
 
+            if (in_array($molPaymentMethod->id_method, Mollie\Config\Config::MOLLIE_MANUAL_CAPTURE_METHODS)) {
+                $paymentData->setCaptureMode('manual');
+            }
+
             $paymentData->setMetadata($metaData);
 
             $paymentData->setLocale($this->getLocale($molPaymentMethod->method));
@@ -341,9 +347,17 @@ class PaymentMethodService
             $paymentData->setDescription($orderReference);
             $paymentData->setEmail($customer->email);
 
+            /** @var \Gender|null $gender */
+            $gender = $this->genderRepository->findOneBy(['id_gender' => $customer->id_gender]);
+
+            if (!empty($gender) && isset($gender->name[$cart->id_lang])) {
+                $paymentData->setTitle((string) $gender->name[$cart->id_lang]);
+            }
+
             if (isset($cart->id_address_invoice)) {
                 $billingAddress = new Address((int) $cart->id_address_invoice);
                 $paymentData->setBillingAddress($billingAddress);
+                $paymentData->setBillingPhoneNumber($this->phoneNumberProvider->getFromAddress($billingAddress));
             }
             if (isset($cart->id_address_delivery)) {
                 $shippingAddress = new Address((int) $cart->id_address_delivery);
@@ -361,6 +375,20 @@ class PaymentMethodService
             if ($molPaymentMethod->id_method === PaymentMethod::APPLEPAY && $applePayToken) {
                 $paymentData->setApplePayToken($applePayToken);
             }
+
+            $paymentData->setLines(
+                $this->cartLinesService->getCartLines(
+                    $totalAmount,
+                    $paymentFeeData,
+                    $currency,
+                    $cart->getSummaryDetails(),
+                    $cart->getTotalShippingCost(null, true),
+                    $cart->getProducts(),
+                    (bool) Configuration::get('PS_GIFT_WRAPPING'),
+                    Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
+                    LineType::PAYMENT
+                )
+            );
 
             if ($this->subscriptionOrder->validate(new Cart($cartId))) {
                 $paymentData->setSubscriptionOrder(true);
@@ -443,7 +471,8 @@ class PaymentMethodService
                     $cart->getTotalShippingCost(null, true),
                     $cart->getProducts(),
                     (bool) Configuration::get('PS_GIFT_WRAPPING'),
-                    $selectedVoucherCategory
+                    $selectedVoucherCategory,
+                    LineType::ORDER
                 ));
 
             $payment = new Payment();
@@ -486,18 +515,12 @@ class PaymentMethodService
 
     private function getLocale($method)
     {
-        // Send webshop locale
-        if ((Mollie\Config\Config::MOLLIE_PAYMENTS_API === $method
-                && Mollie\Config\Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE === Configuration::get(Mollie\Config\Config::MOLLIE_PAYMENTSCREEN_LOCALE))
-            || Mollie\Config\Config::MOLLIE_ORDERS_API === $method
-        ) {
-            $locale = LocaleUtility::getWebShopLocale();
-            if (preg_match(
-                '/^[a-z]{2}(?:[\-_][A-Z]{2})?$/iu',
-                $locale
-            )) {
-                return $locale;
-            }
+        $locale = LocaleUtility::getWebShopLocale();
+        if (preg_match(
+            '/^[a-z]{2}(?:[\-_][A-Z]{2})?$/iu',
+            $locale
+        )) {
+            return $locale;
         }
     }
 
@@ -600,5 +623,12 @@ class PaymentMethodService
         return new MolPaymentMethod(
             $this->methodRepository->getPaymentMethodIdByMethodId($transactionMethod, $environment)
         );
+    }
+
+    private function validateSurchargePercentage(float $surchargePercentage): void
+    {
+        if ($surchargePercentage <= -100 || $surchargePercentage >= 100) {
+            throw new Exception(sprintf('Surcharge percentage must be between -100%% and 100%%. Current value: %.2f%%', $surchargePercentage));
+        }
     }
 }

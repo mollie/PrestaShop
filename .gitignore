@@ -4,7 +4,6 @@ yarn-error.log
 .idea/
 build/
 .codecept.phar
-/translations/
 var/
 config.xml
 mails/
@@ -17,3 +16,4 @@ vendor
 node_modules
 composer.lock
 ngrok
+.DS_Store

@@ -46,6 +46,9 @@ class SubscriptionOrderValidatorTest extends BaseTestCase
                 $this->randomAttributeId,
             ],
             [
+                $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_QUARTERLY),
+            ],
+            [
                 $this->randomAttributeId,
             ],
         ];
@@ -80,6 +83,7 @@ class SubscriptionOrderValidatorTest extends BaseTestCase
             [(int) $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_DAILY), true],
             [(int) $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_WEEKLY), true],
             [(int) $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_MONTHLY), true],
+            [(int) $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_QUARTERLY), true],
             [self::NORMAL_PRODUCT_ATTRIBUTE_ID, false],
         ];
 

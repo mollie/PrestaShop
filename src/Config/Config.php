@@ -58,16 +58,90 @@ class Config
         'banktransfer' => [],
         'cartesbancaires' => ['fr'],
         'directdebit' => [
-            'fi', 'at', 'pt', 'be', 'bg', 'es', 'hr', 'cy', 'cz', 'dk', 'ee', 'fr', 'gf', 'de', 'gi', 'gr', 'gp', 'gg', 'hu',
-            'is', 'ie', 'im', 'it', 'je', 'lv', 'li', 'lt', 'lu', 'mt', 'mq', 'yt', 'mc', 'nl', 'no', 'pl', 're',
-            'ro', 'bl', 'mf', 'pm', 'sm', 'sk', 'sl', 'se', 'ch', 'gb', 'uk',
+            'fi',
+            'at',
+            'pt',
+            'be',
+            'bg',
+            'es',
+            'hr',
+            'cy',
+            'cz',
+            'dk',
+            'ee',
+            'fr',
+            'gf',
+            'de',
+            'gi',
+            'gr',
+            'gp',
+            'gg',
+            'hu',
+            'is',
+            'ie',
+            'im',
+            'it',
+            'je',
+            'lv',
+            'li',
+            'lt',
+            'lu',
+            'mt',
+            'mq',
+            'yt',
+            'mc',
+            'nl',
+            'no',
+            'pl',
+            're',
+            'ro',
+            'bl',
+            'mf',
+            'pm',
+            'sm',
+            'sk',
+            'sl',
+            'se',
+            'ch',
+            'gb',
+            'uk',
         ],
         'mybank' => [],
         'trustly' => ['at', 'de', 'ee', 'es', 'fi', 'lt', 'lv', 'nl'],
         'satispay' => [
-            'at', 'be', 'bg', 'hr', 'cy', 'cz', 'dk', 'ee', 'fi', 'fr', 'de', 'gr', 'hu', 'is', 'ie',
-            'it', 'lv', 'lt', 'lu', 'mt', 'nl', 'no', 'pl', 'pt', 'ro', 'sk', 'si', 'es', 'se', 'ch',
-            'li', 'gb', 'tr',
+            'at',
+            'be',
+            'bg',
+            'hr',
+            'cy',
+            'cz',
+            'dk',
+            'ee',
+            'fi',
+            'fr',
+            'de',
+            'gr',
+            'hu',
+            'is',
+            'ie',
+            'it',
+            'lv',
+            'lt',
+            'lu',
+            'mt',
+            'nl',
+            'no',
+            'pl',
+            'pt',
+            'ro',
+            'sk',
+            'si',
+            'es',
+            'se',
+            'ch',
+            'li',
+            'gb',
+            'tr',
         ],
         'riverty' => ['nl', 'be', 'de', 'at'],
         'payconiq' => [],
@@ -75,6 +149,8 @@ class Config
         'multibanco' => ['pt'],
         'mbway' => ['pt'],
         'swish' => ['se'],
+        'bizum' => ['es', 'ad'],
+        'vippsmobilepay' => ['no', 'dk', 'fi'],
     ];
 
     const SUPPORTED_PHP_VERSION = '5.6';
@@ -106,7 +182,7 @@ class Config
     const MOLLIE_ENVIRONMENT = 'MOLLIE_ENVIRONMENT';
     const MOLLIE_API_KEY = 'MOLLIE_API_KEY';
     const MOLLIE_API_KEY_TEST = 'MOLLIE_API_KEY_TEST';
-    const MOLLIE_API_KEY_TESTING_BUTTON = 'MOLLIE_API_KEY_TESTING_BUTTON';
+    // MOLLIE_API_KEY_TESTING_BUTTON removed - functionality moved to AdminMollieAuthentication
     const MOLLIE_FORM_PAYMENT_OPTION_POSITION = 'payment_option_position';
     const MOLLIE_ACCOUNT_SWITCH = 'MOLLIE_ACCOUNT_SWITCH';
     const MOLLIE_PAYMENTSCREEN_LOCALE = 'MOLLIE_PAYMENTSCREEN_LOCALE';
@@ -149,6 +225,7 @@ class Config
     const MOLLIE_MAIL_WHEN_EXPIRED = 'MOLLIE_MAIL_WHEN_EXPIRED';
     const MOLLIE_MAIL_WHEN_REFUNDED = 'MOLLIE_MAIL_WHEN_REFUNDED';
     const MOLLIE_MAIL_WHEN_CHARGEBACK = 'MOLLIE_MAIL_WHEN_CHARGEBACK';
+    const MOLLIE_MAIL_WHEN_FAILED = 'MOLLIE_MAIL_WHEN_FAILED';
     // NOTE: const below is needed to check in configuration table if email should be sent. IDE doesn't detect its usage
     const MOLLIE_MAIL_WHEN_PARTIAL_REFUND = 'MOLLIE_MAIL_WHEN_PARTIAL_REFUND';
     const PARTIAL_REFUND_CODE = 'partial_refund';
@@ -163,7 +240,6 @@ class Config
     const MOLLIE_APPLE_PAY_DIRECT_CART = 'MOLLIE_APPLE_PAY_DIRECT_CART';
 
     const MOLLIE_APPLE_PAY_DIRECT_STYLE = 'MOLLIE_APPLE_PAY_DIRECT_STYLE';
-    const MOLLIE_BANCONTACT_QR_CODE_ENABLED = 'MOLLIE_BANCONTACT_QR_CODE_ENABLED';
 
     const MOLLIE_CARRIER_URL_SOURCE = 'MOLLIE_CARRIER_URL_SOURCE_';
     const MOLLIE_CARRIER_CUSTOM_URL = 'MOLLIE_CARRIER_CUSTOM_URL_';
@@ -237,9 +313,6 @@ class Config
 
     const CARTES_BANCAIRES = 'cartesbancaires';
 
-    const MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE = 'MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE';
-    const MODULE_UPGRADE_NOTICE_CLOSE_DURATION = 28;
-
     const MOLLIE_SHOW_CUSTOM_LOGO = 'MOLLIE_SHOW_CUSTOM_LOGO';
 
     const EMAIL_ALERTS_MODULE_NAME = 'ps_emailalerts';
@@ -258,6 +331,7 @@ class Config
     const MOLLIE_VOUCHER_CATEGORY_MEAL = 'meal';
     const MOLLIE_VOUCHER_CATEGORY_GIFT = 'gift';
     const MOLLIE_VOUCHER_CATEGORY_ECO = 'eco';
+    const MOLLIE_VOUCHER_CATEGORY_ALL = 'all';
 
     const MOLLIE_REFUND_STATUS_CANCELED = 'canceled';
 
@@ -280,19 +354,9 @@ class Config
         PaymentMethod::BILLIE,
     ];
 
-    const ORDER_API_ONLY_METHODS = [
-        PaymentMethod::KLARNA_PAY_LATER,
-        PaymentMethod::KLARNA_SLICE_IT,
-        PaymentMethod::KLARNA_PAY_NOW,
-        PaymentMethod::KLARNA_ONE,
-        PaymentMethod::BILLIE,
-        self::MOLLIE_VOUCHER_METHOD_ID,
-        self::MOLLIE_in3_METHOD_ID,
-        self::RIVERTY,
-    ];
+    const ORDER_API_ONLY_METHODS = [];
 
-    const PAYMENT_API_ONLY_METHODS = [
-    ];
+    const PAYMENT_API_ONLY_METHODS = [];
 
     const ROUTE_RESEND_SECOND_CHANCE_PAYMENT_MESSAGE = 'mollie_module_admin_resend_payment_message';
 
@@ -341,6 +405,9 @@ class Config
         'paybybank' => 'Pay by Bank',
         'multibanco' => 'Multibanco',
         'mbway' => 'MBway',
+        'bizum' => 'Bizum',
+        'vipps' => 'Vipps',
+        'mobilepay' => 'Mobile Pay',
     ];
 
     public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
@@ -351,6 +418,18 @@ class Config
     const MOLLIE_BUTTON_ORDER_TOTAL_REFRESH = 'MOLLIE_BUTTON_ORDER_TOTAL_REFRESH';
 
     const MOLLIE_METHOD_CUSTOMER_GROUPS = 'MOLLIE_METHOD_CUSTOMER_GROUPS_';
+
+    public const MOLLIE_MANUAL_CAPTURE_METHODS = [
+        self::RIVERTY,
+    ];
+
+    public const PS_CLOUDSYNC_CDC = 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js';
+
+    public const PS_EVENTBUS_CONTEXT = [
+        'info',
+        'modules',
+        'themes',
+    ];
 
     // TODO migrate functions below to separate service
     public static function getStatuses()

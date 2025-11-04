@@ -3,6 +3,7 @@
     .apple-pay-button {
         display: inline-block;
         -webkit-appearance: -apple-pay-button;
+        cursor: pointer;
     }
 
     .apple-pay-button-black {

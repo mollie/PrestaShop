@@ -41,6 +41,7 @@ use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\LegacyContext;
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Provider\CreditCardLogoProvider;
@@ -52,7 +53,6 @@ use Mollie\Service\LanguageService;
 use Mollie\Utility\CustomerUtility;
 use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -100,6 +100,9 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
 
+    /** @var ToolsAdapter */
+    private $tools;
+
     public function __construct(
         ModuleFactory $module,
         LegacyContext $context,
@@ -109,7 +112,8 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         LanguageService $languageService,
         MolCustomerRepository $customerRepository,
         Mollie\Adapter\Customer $customer,
-        ConfigurationAdapter $configurationAdapter
+        ConfigurationAdapter $configurationAdapter,
+        ToolsAdapter $tools
     ) {
         $this->module = $module->getModule();
         $this->context = $context;
@@ -120,6 +124,7 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         $this->customerRepository = $customerRepository;
         $this->customer = $customer;
         $this->configurationAdapter = $configurationAdapter;
+        $this->tools = $tools;
     }
 
     /**
@@ -205,6 +210,8 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
         $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, $this->orderTotalProvider->getOrderTotal());
 
         if ($paymentFeeData->isActive()) {
+            $paymentFeeText = $this->paymentFeeProvider->getPaymentFeeText($paymentFeeData->getPaymentFeeTaxIncl());
+
             $paymentOption->setInputs(
                 array_merge($paymentOption->getInputs(), [
                     [
@@ -216,8 +223,8 @@ class CreditCardSingleClickPaymentOptionProvider implements PaymentOptionProvide
                         'type' => 'hidden',
                         'name' => 'payment-fee-price-display',
                         'value' => sprintf(
-                            $this->module->l('Payment Fee: %1s', self::FILE_NAME),
-                            Tools::displayPrice($paymentFeeData->getPaymentFeeTaxIncl())
+                            $paymentFeeText,
+                            $this->tools->displayPrice($paymentFeeData->getPaymentFeeTaxIncl())
                         ),
                     ],
                     [

@@ -16,7 +16,31 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run PHP-CS-Fixer
-        uses: prestashopcorp/github-action-php-cs-fixer@master
+        uses: prestashopcorp/github-action-php-cs-fixer-new@master
+
+  eslint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: 'views/js/admin/library/package-lock.json'
+
+      - name: Install dependencies
+        run: |
+          cd views/js/admin/library
+          npm ci
+
+      - name: Run ESLint
+        run: |
+          cd views/js/admin/library
+          npm run lint
 
   test:
     runs-on: ubuntu-latest

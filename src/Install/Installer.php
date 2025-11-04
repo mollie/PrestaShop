@@ -28,7 +28,6 @@ use Mollie\Tracker\Segment;
 use Mollie\Utility\MultiLangUtility;
 use OrderState;
 use PrestaShopException;
-use PrestaShopLogger;
 use Tab;
 use Tools;
 use Validate;
@@ -97,11 +96,8 @@ class Installer implements InstallerInterface
             $this->module->registerHook($hook);
         }
 
-        PrestaShopLogger::addLog('Mollie hooks registered successful', 1, null, 'Mollie', 1);
-
         try {
             $this->orderStateInstaller->install();
-            PrestaShopLogger::addLog('Mollie order state install successful', 1, null, 'Mollie', 1);
         } catch (CouldNotInstallModule $e) {
             $errorHandler->handle($e, $e->getCode(), false);
             $this->errors[] = $this->module->l('Unable to install Mollie statuses', self::FILE_NAME);
@@ -111,7 +107,6 @@ class Installer implements InstallerInterface
 
         try {
             $this->initConfig();
-            PrestaShopLogger::addLog('Mollie configurations installed', 1, null, 'Mollie', 1);
         } catch (Exception $e) {
             $errorHandler->handle($e, $e->getCode(), false);
             $this->errors[] = $this->module->l('Unable to install config', self::FILE_NAME);
@@ -120,7 +115,6 @@ class Installer implements InstallerInterface
         }
         try {
             $this->setDefaultCarrierStatuses();
-            PrestaShopLogger::addLog('Mollie default carriers installed', 1, null, 'Mollie', 1);
         } catch (Exception $e) {
             $errorHandler->handle($e, $e->getCode(), false);
             $this->errors[] = $this->module->l('Unable to install default carrier statuses', self::FILE_NAME);
@@ -132,7 +126,6 @@ class Installer implements InstallerInterface
 
         try {
             $this->installVoucherFeatures();
-            PrestaShopLogger::addLog('Mollie voucher features installed', 1, null, 'Mollie', 1);
         } catch (Exception $e) {
             $errorHandler->handle($e, $e->getCode(), false);
             $this->errors[] = $this->module->l('Unable to install voucher attributes', self::FILE_NAME);
@@ -141,7 +134,6 @@ class Installer implements InstallerInterface
         }
 
         $this->copyEmailTemplates();
-        PrestaShopLogger::addLog('Mollie email templates copied', 1, null, 'Mollie', 1);
 
         return $this->databaseTableInstaller->install();
     }
@@ -149,7 +141,7 @@ class Installer implements InstallerInterface
     public function installSpecificTabs(): void
     {
         $this->installTab('AdminMollieModule_MTR', 'IMPROVE', 'Mollie', true, 'mollie');
-        $this->installTab('AdminMollieModule', 'AdminMollieModule_MTR', 'Settings', true, 'mollie');
+        $this->installTab('AdminMollieModule', 'AdminMollieModule_MTR', 'Settings', false);
     }
 
     public function getErrors()
@@ -215,12 +207,12 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_EXPIRED, true);
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_REFUNDED, true);
         $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_CHARGEBACK, true);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_MAIL_WHEN_FAILED, false);
         $this->configurationAdapter->updateValue(Config::MOLLIE_ACCOUNT_SWITCH, false);
         $this->configurationAdapter->updateValue(Config::MOLLIE_CSS, '');
 
         $this->configurationAdapter->updateValue(Config::MOLLIE_API, Config::MOLLIE_ORDERS_API);
         $this->configurationAdapter->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE, 0);
-        $this->configurationAdapter->updateValue(Config::MOLLIE_BANCONTACT_QR_CODE_ENABLED, 0);
 
         $this->configurationAdapter->updateValue(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID, 0);
         $this->configurationAdapter->updateValue(Config::MOLLIE_SUBSCRIPTION_ENABLED, 0);
@@ -243,17 +235,27 @@ class Installer implements InstallerInterface
 
     public function installTab($className, $parent, $name, $active = true, $icon = '')
     {
+        // Check if tab already exists
+        $tabId = Tab::getIdFromClassName($className);
+        if ($tabId) {
+            // Tab exists, update it
+            $moduleTab = new Tab($tabId);
+        } else {
+            // Create new tab
+            $moduleTab = new Tab();
+            $moduleTab->class_name = $className;
+        }
+
         $idParent = is_int($parent) ? $parent : Tab::getIdFromClassName($parent);
 
-        $moduleTab = new Tab();
-        $moduleTab->class_name = $className;
         $moduleTab->id_parent = $idParent;
         $moduleTab->module = $this->module->name;
         $moduleTab->active = $active;
         $moduleTab->icon = $icon; /** @phpstan-ignore-line */
         $languages = Language::getLanguages(true);
+
         foreach ($languages as $language) {
-            $moduleTab->name[$language['id_lang']] = $name;
+            $moduleTab->name[$language['id_lang']] = $this->module->l($name, false, $language['iso_code']);
         }
 
         if (!$moduleTab->save()) {

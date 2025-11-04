@@ -24,8 +24,11 @@ use Language;
 use Mail;
 use Mollie;
 use Mollie\Adapter\ProductAttributeAdapter;
+use Mollie\Adapter\ToolsAdapter;
+use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Factory\ModuleFactory;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Subscription\Provider\GeneralSubscriptionMailDataProvider;
 use Order;
 use OrderState;
@@ -50,16 +53,20 @@ class MailService
     private $productAttributeAdapter;
     /** @var GeneralSubscriptionMailDataProvider */
     private $generalSubscriptionMailDataProvider;
+    /** @var ToolsAdapter */
+    private $tools;
 
     public function __construct(
         ModuleFactory $module,
         ProductAttributeAdapter $productAttributeAdapter,
-        GeneralSubscriptionMailDataProvider $generalSubscriptionMailDataProvider
+        GeneralSubscriptionMailDataProvider $generalSubscriptionMailDataProvider,
+        ToolsAdapter $tools
     ) {
         $this->module = $module->getModule();
         $this->context = Context::getContext();
         $this->productAttributeAdapter = $productAttributeAdapter;
         $this->generalSubscriptionMailDataProvider = $generalSubscriptionMailDataProvider;
+        $this->tools = $tools;
     }
 
     public function sendSecondChanceMail(Customer $customer, $checkoutUrl, $methodName, $shopId)
@@ -217,14 +224,14 @@ class MailService
                 'id_product' => $product['id_product'],
                 'reference' => $product['reference'],
                 'name' => $product['product_name'] . (\Validate::isLoadedObject($attribute) ? ' - ' . $attribute->name : ''),
-                'price' => Tools::displayPrice($product_price * $product['product_quantity'], $this->context->currency, false),
+                'price' => $this->tools->displayPrice($product_price * $product['product_quantity'], $this->context->currency),
                 'quantity' => $product['product_quantity'],
                 'customization' => [],
             ];
 
             if (isset($product['price']) && $product['price']) {
-                $product_var_tpl['unit_price'] = Tools::displayPrice($product_price, $this->context->currency, false);
-                $product_var_tpl['unit_price_full'] = Tools::displayPrice($product_price, $this->context->currency, false)
+                $product_var_tpl['unit_price'] = $this->tools->displayPrice($product_price, $this->context->currency);
+                $product_var_tpl['unit_price_full'] = $this->tools->displayPrice($product_price, $this->context->currency)
                     . ' ' . $product['unity'];
             } else {
                 $product_var_tpl['unit_price'] = $product_var_tpl['unit_price_full'] = '';
@@ -251,7 +258,7 @@ class MailService
                     $product_var_tpl['customization'][] = [
                         'customization_text' => $customization_text,
                         'customization_quantity' => $customization_quantity,
-                        'quantity' => Tools::displayPrice($customization_quantity * $product_price, $this->context->currency, false),
+                        'quantity' => $this->tools->displayPrice($customization_quantity * $product_price, $this->context->currency),
                     ];
                 }
             }
@@ -321,19 +328,19 @@ class MailService
             '{invoice_phone}' => ($invoice->phone) ? $invoice->phone : $invoice->phone_mobile,
             '{invoice_other}' => $invoice->other,
             '{order_name}' => $order->getUniqReference(),
-            '{date}' => Tools::displayDate(date('Y-m-d H:i:s'), null, true),
+            '{date}' => $this->tools->displayDate(date('Y-m-d H:i:s'), true),
             '{carrier}' => ($virtual_product || !isset($carrier->name)) ? $this->module->l('No carrier', self::FILE_NAME) : $carrier->name,
             '{payment}' => Tools::substr($order->payment, 0, 255),
             '{products}' => $product_list_html,
             '{products_txt}' => $product_list_txt,
             '{discounts}' => $cart_rules_list_html,
             '{discounts_txt}' => $cart_rules_list_txt,
-            '{total_paid}' => Tools::displayPrice($order->total_paid, $this->context->currency, false),
-            '{total_products}' => Tools::displayPrice(PS_TAX_EXC == Product::getTaxCalculationMethod() ? $order->total_products : $order->total_products_wt, $this->context->currency, false),
-            '{total_discounts}' => Tools::displayPrice($order->total_discounts, $this->context->currency, false),
-            '{total_shipping}' => Tools::displayPrice($order->total_shipping, $this->context->currency, false),
-            '{total_wrapping}' => Tools::displayPrice($order->total_wrapping, $this->context->currency, false),
-            '{total_tax_paid}' => Tools::displayPrice(($order->total_products_wt - $order->total_products) + ($order->total_shipping_tax_incl - $order->total_shipping_tax_excl), $this->context->currency, false),
+            '{total_paid}' => $this->tools->displayPrice($order->total_paid, $this->context->currency),
+            '{total_products}' => $this->tools->displayPrice(PS_TAX_EXC == Product::getTaxCalculationMethod() ? $order->total_products : $order->total_products_wt, $this->context->currency),
+            '{total_discounts}' => $this->tools->displayPrice($order->total_discounts, $this->context->currency),
+            '{total_shipping}' => $this->tools->displayPrice($order->total_shipping, $this->context->currency),
+            '{total_wrapping}' => $this->tools->displayPrice($order->total_wrapping, $this->context->currency),
+            '{total_tax_paid}' => $this->tools->displayPrice(($order->total_products_wt - $order->total_products) + ($order->total_shipping_tax_incl - $order->total_shipping_tax_excl), $this->context->currency),
         ];
     }
 
@@ -417,7 +424,7 @@ class MailService
                     $orderLanguage = new Language((int) $order->id_lang);
 
                     $params = [
-                        '{voucher_amount}' => Tools::displayPrice($voucher->reduction_amount, $this->context->currency, false),
+                        '{voucher_amount}' => $this->tools->displayPrice($voucher->reduction_amount, $this->context->currency),
                         '{voucher_num}' => $voucher->code,
                         '{firstname}' => $customer->firstname,
                         '{lastname}' => $customer->lastname,
@@ -462,7 +469,7 @@ class MailService
 
             $cart_rules_list[] = [
                 'voucher_name' => $cart_rule['obj']->name,
-                'voucher_reduction' => (0.00 != $values['tax_incl'] ? '-' : '') . Tools::displayPrice($values['tax_incl'], $this->context->currency, false),
+                'voucher_reduction' => (0.00 != $values['tax_incl'] ? '-' : '') . $this->tools->displayPrice($values['tax_incl'], $this->context->currency),
             ];
         }
 
@@ -518,5 +525,78 @@ class MailService
     private function _getFormatedAddress(Address $the_address, $line_sep, $fields_style = [])
     {
         return AddressFormat::generateAddress($the_address, ['avoid' => []], $line_sep, ' ', $fields_style);
+    }
+
+    /**
+     * Sends a failed payment notification email to the customer
+     *
+     * @param Customer|null $customer The customer to send the email to (uses context if null)
+     *
+     * @return bool Whether the email was sent successfully
+     *
+     * @throws \PrestaShopException
+     */
+    public function sendFailedPaymentMail(?Customer $customer = null): bool
+    {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        if (!Configuration::get(Config::MOLLIE_MAIL_WHEN_FAILED)) {
+            $logger->debug(sprintf('%s - Payment failure email is disabled. Not sending email.', self::FILE_NAME));
+
+            return false;
+        }
+
+        /** @var \Shop $shop */
+        $shop = $this->context->shop;
+
+        if (!$customer) {
+            $customer = $this->context->customer;
+        }
+
+        if (empty($customer->email) || !\Validate::isEmail($customer->email)) {
+            throw new \PrestaShopException('Failed to load customer email address');
+        }
+
+        if (!\Validate::isLoadedObject($customer)) {
+            throw new \PrestaShopException('Failed to load customer object');
+        }
+
+        if (!\Validate::isLoadedObject($shop)) {
+            throw new \PrestaShopException('Failed to load shop object');
+        }
+
+        $checkoutUrl = $this->context->link->getPageLink(
+            'order',
+            true,
+            $this->context->language->id,
+            [
+                'step' => 3,
+                'id_cart' => $this->context->cart->id,
+            ]
+        );
+
+        $templateVars = [
+            '{firstname}' => $customer->firstname,
+            '{lastname}' => $customer->lastname,
+            '{checkout_url}' => $checkoutUrl,
+            '{shop_name}' => Configuration::get('PS_SHOP_NAME'),
+        ];
+
+        return Mail::send(
+            $customer->id_lang,
+            'mollie_payment_failed',
+            Mail::l('Payment Failed'),
+            $templateVars,
+            $customer->email,
+            null,
+            null,
+            null,
+            null,
+            null,
+            $this->module->getLocalPath() . 'mails/',
+            false,
+            $shop->id
+        );
     }
 }

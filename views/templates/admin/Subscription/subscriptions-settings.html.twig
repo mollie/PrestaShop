@@ -22,33 +22,38 @@
     <div class="col">
       {{ form_start(subscriptionOptionsForm, {method: 'POST', action: path('admin_subscription_options_submit'), attr: {id: 'subscription-options'}}) }}
       <div class="card">
-        <h3 class="card-header">
-          <i class="material-icons">settings</i> {{ 'Subscription options'|trans }}
+        <h3 class="card-header d-flex justify-content-between align-items-center">
+          <span>
+            {{ translations.subscription_options }}
+          </span>
+          <a href="{{ links.help_url }}" target="_blank">
+            <i class="material-icons">open_in_new</i>
+            {{ translations.subscription_options_help_link_text}}
+          </a>
         </h3>
-        <div class="card-block row">
-          <div class="card-text px-3">
-            <div class="form-group row">
-              {# TODO translations will be enabled only after we will migrate to moden translation system #}
-              {{ ps.label_with_help('Enable subscription service'|trans, 'Toggle this option to enable products to be bought as recurring items.'|trans) }}
-              <div class="col-sm">
-                {{ form_errors(subscriptionOptions.enable_subscriptions) }}
-                {{ form_widget(subscriptionOptions.enable_subscriptions) }}
-              </div>
+        <div class="card-body px-4">
+          <div class="form-group row">
+            <div class="col-sm-12 col-lg-3">
+              {{ ps.label_with_help(translations.enable_subscription_service, translations.enable_subscription_service_help) }}
             </div>
-            <div class="form-group row">
-              {# TODO translations will be enabled only after we will migrate to moden translation system #}
-              {{ ps.label_with_help('Carrier to use in subscription orders'|trans, 'WARNING: do not change selection after getting first subscription order.'|trans) }}
-              <div class="col-sm">
-                {{ form_errors(subscriptionOptions.carrier) }}
-                {{ form_widget(subscriptionOptions.carrier) }}
-              </div>
+            <div class="col-sm-12">
+              {{ form_errors(subscriptionOptions.enable_subscriptions) }}
+              {{ form_widget(subscriptionOptions.enable_subscriptions) }}
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-12">
+              {{ ps.label_with_help(translations.carrier_warning, translations.carrier_warning_text) }}
+            </div>
+            <div class="col-sm-12">
+              {{ form_errors(subscriptionOptions.carrier) }}
+              {{ form_widget(subscriptionOptions.carrier) }}
             </div>
           </div>
         </div>
         <div class="card-footer">
           <div class="d-flex justify-content-end">
-            <button class="btn btn-primary"
-                    id="save-invoices-options-button">{{ 'Save'|trans({}, 'Admin.Actions') }}</button>
+            <button class="btn btn-primary" id="save-invoices-options-button">{{ 'Save'|trans({}, 'Admin.Actions') }}</button>
           </div>
         </div>
       </div>
