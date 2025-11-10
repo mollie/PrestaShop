@@ -7,10 +7,18 @@ declare global {
       countries: Country[];
       taxRulesGroups: { value: string; label: string }[];
       customerGroups: CustomerGroup[];
+      languages: Language[];
       onlyOrderMethods: string[];
       onlyPaymentsMethods: string[];
     };
   }
+}
+
+export interface Language {
+  id: number
+  name: string
+  iso_code: string
+  is_default: boolean
 }
 
 export interface PaymentMethod {
@@ -27,7 +35,7 @@ export interface PaymentMethod {
   }
   settings: {
     enabled: boolean
-    title: string
+    title: Record<number, string> // Changed from string to Record<languageId, title>
     mollieComponents: boolean
     oneClickPayments: boolean
     transactionDescription: string
@@ -86,6 +94,7 @@ export interface PaymentMethodsResponse {
     countries: Country[];
     taxRulesGroups: { value: string; label: string }[];
     customerGroups: CustomerGroup[];
+    languages: Language[];
     onlyOrderMethods: string[];
     onlyPaymentsMethods: string[];
     environment: 'test' | 'live';

@@ -136,7 +136,7 @@ class PaymentMethodSettingsHandler
         }
 
         // Handle title translations
-        if (isset($settings['title']) && !empty($settings['title'])) {
+        if (isset($settings['title'])) {
             $this->handleTitleTranslations($methodId, $settings['title'], $shopId);
         }
 
@@ -298,20 +298,50 @@ class PaymentMethodSettingsHandler
      * Handle title translations for all languages
      *
      * @param string $methodId Method ID
-     * @param string $title Title text
+     * @param array|string $titles Title translations (array with language IDs as keys or single string for BC)
      * @param int $shopId Shop ID
      */
-    private function handleTitleTranslations(string $methodId, string $title, int $shopId): void
+    private function handleTitleTranslations(string $methodId, $titles, int $shopId): void
     {
         try {
             $languages = \Language::getLanguages(false, $shopId);
-            foreach ($languages as $language) {
-                $this->paymentMethodLangRepository->savePaymentTitleTranslation(
-                    $methodId,
-                    (int) $language['id_lang'],
-                    $title,
-                    $shopId
-                );
+
+            // Backwards compatibility: if $titles is a string, use it for all languages
+            if (is_string($titles)) {
+                foreach ($languages as $language) {
+                    if (!empty($titles)) {
+                        $this->paymentMethodLangRepository->savePaymentTitleTranslation(
+                            $methodId,
+                            (int) $language['id_lang'],
+                            $titles,
+                            $shopId
+                        );
+                    }
+                }
+
+                return;
+            }
+
+            // Handle array of translations per language
+            if (is_array($titles)) {
+                foreach ($languages as $language) {
+                    $langId = (int) $language['id_lang'];
+
+                    // Check if translation exists for this language
+                    if (isset($titles[$langId])) {
+                        $translation = $titles[$langId];
+
+                        // Only save if translation is not empty
+                        if (!empty($translation)) {
+                            $this->paymentMethodLangRepository->savePaymentTitleTranslation(
+                                $methodId,
+                                $langId,
+                                $translation,
+                                $shopId
+                            );
+                        }
+                    }
+                }
             }
         } catch (\Exception $e) {
             $this->logger->error('Failed to save title translations', [
