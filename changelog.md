@@ -3,6 +3,7 @@
 # Changelog #
 
 ## Changes in release 6.4.1
++ Fixed issues with upgrade
 + Fixed payment fee calculation on checkout page
 + Re-added payment method title translations
 
