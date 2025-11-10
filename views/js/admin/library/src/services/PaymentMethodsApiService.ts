@@ -35,7 +35,7 @@ export interface PaymentMethod {
   }
   settings: {
     enabled: boolean
-    title: Record<number, string> // Changed from string to Record<languageId, title>
+    title: Record<number, string>
     mollieComponents: boolean
     oneClickPayments: boolean
     transactionDescription: string
