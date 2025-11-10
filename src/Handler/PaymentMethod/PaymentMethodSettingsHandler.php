@@ -291,43 +291,75 @@ class PaymentMethodSettingsHandler
             $languages = \Language::getLanguages(false, $shopId);
 
             if (is_string($titles)) {
-                foreach ($languages as $language) {
-                    if (!empty($titles)) {
-                        $this->paymentMethodLangRepository->savePaymentTitleTranslation(
-                            $methodId,
-                            (int) $language['id_lang'],
-                            $titles,
-                            $shopId
-                        );
-                    }
-                }
+                $this->saveStringTitleForAllLanguages($methodId, $titles, $languages, $shopId);
 
                 return;
             }
 
             if (is_array($titles)) {
-                foreach ($languages as $language) {
-                    $langId = (int) $language['id_lang'];
-
-                    if (isset($titles[$langId])) {
-                        $translation = $titles[$langId];
-
-                        if (!empty($translation)) {
-                            $this->paymentMethodLangRepository->savePaymentTitleTranslation(
-                                $methodId,
-                                $langId,
-                                $translation,
-                                $shopId
-                            );
-                        }q
-                    }
-                }
+                $this->saveArrayTitlesForLanguages($methodId, $titles, $languages, $shopId);
             }
         } catch (\Exception $e) {
             $this->logger->error('Failed to save title translations', [
                 'method_id' => $methodId,
                 'exception' => ExceptionUtility::getExceptions($e),
             ]);
+        }
+    }
+
+    /**
+     * Save single string title for all languages
+     *
+     * @param string $methodId Method ID
+     * @param string $title Title to save
+     * @param array $languages Available languages
+     * @param int $shopId Shop ID
+     */
+    private function saveStringTitleForAllLanguages(string $methodId, string $title, array $languages, int $shopId): void
+    {
+        if (empty($title)) {
+            return;
+        }
+
+        foreach ($languages as $language) {
+            $this->paymentMethodLangRepository->savePaymentTitleTranslation(
+                $methodId,
+                (int) $language['id_lang'],
+                $title,
+                $shopId
+            );
+        }
+    }
+
+    /**
+     * Save language-specific titles from array
+     *
+     * @param string $methodId Method ID
+     * @param array $titles Titles indexed by language ID
+     * @param array $languages Available languages
+     * @param int $shopId Shop ID
+     */
+    private function saveArrayTitlesForLanguages(string $methodId, array $titles, array $languages, int $shopId): void
+    {
+        foreach ($languages as $language) {
+            $langId = (int) $language['id_lang'];
+
+            if (!isset($titles[$langId])) {
+                continue;
+            }
+
+            $translation = $titles[$langId];
+
+            if (empty($translation)) {
+                continue;
+            }
+
+            $this->paymentMethodLangRepository->savePaymentTitleTranslation(
+                $methodId,
+                $langId,
+                $translation,
+                $shopId
+            );
         }
     }
 
