@@ -91,11 +91,11 @@ export function MultilingualInput({
                       setIsDropdownOpen(false)
                     }}
                     className={cn(
-                      "w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-gray-100 rounded-sm",
-                      activeLanguageId === language.id && "bg-blue-50 text-blue-600"
+                      "w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-gray-100 rounded-sm text-gray-900",
+                      activeLanguageId === language.id && "bg-blue-50 text-blue-600 hover:bg-blue-50"
                     )}
                   >
-                    <span className="font-medium">{language.iso_code.toUpperCase()}</span>
+                    <span className={cn("font-medium", activeLanguageId === language.id && "text-blue-600")}>{language.iso_code.toUpperCase()}</span>
                   </button>
                 ))}
               </div>
