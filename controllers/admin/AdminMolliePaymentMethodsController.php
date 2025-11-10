@@ -755,11 +755,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         return $customerGroups;
     }
 
-    /**
-     * Get all available languages for the shop
-     *
-     * @return array Array of languages with id, name, iso_code, and is_default
-     */
     public function getLanguages(): array
     {
         $languages = [];
