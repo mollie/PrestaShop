@@ -80,7 +80,7 @@ export function MultilingualInput({
           </button>
 
           {isDropdownOpen && (
-            <div className="absolute right-0 z-[99999] mt-1 bg-popover border border-border rounded-md shadow-lg animate-in fade-in slide-in-from-top-1 duration-150 ease-out min-w-[120px]">
+            <div className="absolute right-0 z-[99999] mt-1 bg-popover border border-border rounded-md shadow-lg animate-in fade-in slide-in-from-top-1 duration-150 ease-out w-full">
               <div className="p-1">
                 {languages.map((language) => (
                   <button
