@@ -656,7 +656,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 if ($translation && isset($translation->text) && !empty($translation->text)) {
                     $titles[$langId] = $translation->text;
                 } else {
-                    // Use default name if no translation exists
                     $titles[$langId] = $defaultName;
                 }
             }
