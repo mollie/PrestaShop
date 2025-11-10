@@ -96,9 +96,6 @@ export function MultilingualInput({
                     )}
                   >
                     <span className="font-medium">{language.iso_code.toUpperCase()}</span>
-                    {language.is_default && (
-                      <span className="text-xs text-gray-500 ml-2">(default)</span>
-                    )}
                   </button>
                 ))}
               </div>
