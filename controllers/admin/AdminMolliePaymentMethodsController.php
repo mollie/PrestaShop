@@ -629,39 +629,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
     }
 
     /**
-     * Get payment method title for current language
-     *
-     * @param string $methodId Payment method ID
-     * @param string $defaultName Default name from Mollie API
-     *
-     * @return string Payment method title for current language
-     */
-    private function getPaymentMethodTitle(string $methodId, string $defaultName): string
-    {
-        try {
-            $langId = (int) $this->context->language->id;
-            $shopId = $this->context->shop->id;
-
-            $translation = $this->paymentMethodLangRepository->findOneBy([
-                'id_method' => $methodId,
-                'id_lang' => $langId,
-                'id_shop' => $shopId,
-            ]);
-
-            if ($translation && isset($translation->text) && !empty($translation->text)) {
-                return $translation->text;
-            }
-        } catch (\Exception $e) {
-            $this->logger->error('Error getting payment method title', [
-                'method_id' => $methodId,
-                'exception' => $e->getMessage(),
-            ]);
-        }
-
-        return $defaultName;
-    }
-
-    /**
      * Get payment method titles for all languages
      *
      * @param string $methodId Payment method ID
