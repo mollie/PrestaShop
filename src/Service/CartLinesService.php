@@ -7,23 +7,29 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
- * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use Mollie\Adapter\Context;
-use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
+use Mollie\DTO\PaymentFeeData;
 use Mollie\DTO\Object\Amount;
 use Mollie\DTO\OrderLine;
-use Mollie\DTO\PaymentFeeData;
 use Mollie\DTO\PaymentLine;
+use Mollie\Exception\CouldNotProcessCartLinesException;
+use Mollie\Service\CartLine\CartItemDiscountService;
+use Mollie\Service\CartLine\CartItemProductLinesService;
+use Mollie\Service\CartLine\CartItemShippingLineService;
+use Mollie\Service\CartLine\CartItemsService;
+use Mollie\Service\CartLine\CartItemWrappingService;
+use mollie\src\Service\CartLine\CartItemPaymentFeeService;
+use mollie\src\Utility\LineUtility;
+use mollie\src\Utility\RoundingUtility;
+use Mollie\Utility\ArrayUtility;
+use Mollie\Adapter\Context;
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Enum\LineType;
 use Mollie\Utility\CalculationUtility;
-use Mollie\Utility\CartPriceUtility;
-use Mollie\Utility\NumberUtility;
-use Mollie\Utility\TextFormatUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -31,28 +37,53 @@ if (!defined('_PS_VERSION_')) {
 
 class CartLinesService
 {
-    /**
-     * @var VoucherService
-     */
-    private $voucherService;
+    /* @var CartItemsService */
+    private $cartItemsService;
 
-    /**
-     * @var LanguageService
-     */
-    private $languageService;
+    /* @var CartItemDiscountService */
+    private $cartItemDiscountService;
 
-    /**
-     * @var ToolsAdapter
-     */
-    private $tools;
-    private $context;
+    /* @var CartItemShippingLineService */
+    private $cartItemShippingLineService;
 
-    public function __construct(LanguageService $languageService, VoucherService $voucherService, ToolsAdapter $tools, Context $context)
-    {
-        $this->voucherService = $voucherService;
-        $this->languageService = $languageService;
-        $this->tools = $tools;
-        $this->context = $context;
+    /* @var CartItemWrappingService */
+    private $cartItemWrappingService;
+
+    /* @var CartItemProductLinesService */
+    private $cartItemProductLinesService;
+
+    /* @var CartItemPaymentFeeService */
+    private $cartItemPaymentFeeService;
+
+    /* @var LineUtility */
+    private $lineUtility;
+
+    /* @var RoundingUtility */
+    private $roundingUtility;
+
+    /* @var ArrayUtility */
+    private $arrayUtility;
+
+    public function __construct(
+        CartItemsService $cartItemsService,
+        CartItemDiscountService $cartItemDiscountService,
+        CartItemShippingLineService $cartItemShippingLineService,
+        CartItemWrappingService $cartItemWrappingService,
+        CartItemProductLinesService $cartItemProductLinesService,
+        CartItemPaymentFeeService $cartItemPaymentFeeService,
+        LineUtility $lineUtility,
+        RoundingUtility $roundingUtility,
+        ArrayUtility $arrayUtility
+    ) {
+        $this->cartItemsService = $cartItemsService;
+        $this->cartItemDiscountService = $cartItemDiscountService;
+        $this->cartItemShippingLineService = $cartItemShippingLineService;
+        $this->cartItemWrappingService = $cartItemWrappingService;
+        $this->cartItemProductLinesService = $cartItemProductLinesService;
+        $this->cartItemPaymentFeeService = $cartItemPaymentFeeService;
+        $this->lineUtility = $lineUtility;
+        $this->roundingUtility = $roundingUtility;
+        $this->arrayUtility = $arrayUtility;
     }
 
     /**
@@ -68,9 +99,22 @@ class CartLinesService
      *
      * @return array
      *
-     * @throws \PrestaShop\Decimal\Exception\DivisionByZeroException
+     * @throws CouldNotProcessCartLinesException
      */
     public function getCartLines(
+<<<<<<< HEAD
+        float $amount,
+        PaymentFeeData $paymentFeeData,
+        string $currencyIsoCode,
+        array $cartSummary,
+        float $shippingCost,
+        array $cartItems,
+        bool $psGiftWrapping,
+        string $selectedVoucherCategory
+    ): array {
+        $totalPrice = round($amount, Config::API_ROUNDING_PRECISION);
+        $roundedShippingCost = round($shippingCost, Config::API_ROUNDING_PRECISION);
+=======
         $amount,
         $paymentFeeData,
         $currencyIsoCode,
@@ -82,26 +126,28 @@ class CartLinesService
         $lineType
     ) {
         // TODO refactor whole service, split order line append into separate services and test them individually at least!!!
+>>>>>>> b977487051973766eca407bbb4ec66ddb34229a6
 
-        $apiRoundingPrecision = Config::API_ROUNDING_PRECISION;
-        $vatRatePrecision = Config::VAT_RATE_ROUNDING_PRECISION;
-
-        $totalPrice = round($amount, $apiRoundingPrecision);
-        $roundedShippingCost = round($shippingCost, $apiRoundingPrecision);
         foreach ($cartSummary['discounts'] as $discount) {
             if ($discount['free_shipping']) {
                 $roundedShippingCost = 0;
             }
         }
 
-        $wrappingPrice = $psGiftWrapping ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
-        $totalDiscounts = isset($cartSummary['total_discounts']) ? $cartSummary['total_discounts'] : 0;
-        $remaining = round(
+        $wrappingPrice = $psGiftWrapping ? round($cartSummary['total_wrapping'], Config::API_ROUNDING_PRECISION) : 0;
+
+        $remainingAmount = round(
             CalculationUtility::getCartRemainingPrice((float) $totalPrice, (float) $roundedShippingCost, (float) $wrappingPrice),
-            $apiRoundingPrecision
+            Config::API_ROUNDING_PRECISION
         );
 
         $orderLines = [];
+<<<<<<< HEAD
+        try {
+            list($orderLines, $remainingAmount) = $this->cartItemsService->createProductLines($cartItems, $cartSummary['gift_products'], $orderLines, $selectedVoucherCategory, $remainingAmount);
+        } catch (\Exception $e) {
+            throw CouldNotProcessCartLinesException::failedToCreateProductLines($e);
+=======
         /* Item */
         list($orderLines, $remaining) = $this->createProductLines($cartItems, $apiRoundingPrecision, $cartSummary['gift_products'], $orderLines, $selectedVoucherCategory, $remaining);
 
@@ -163,11 +209,47 @@ class CartLinesService
                 'product_url' => isset($cartLineGroup[0]['product_url']) ? $cartLineGroup[0]['product_url'] : '',
                 'image_url' => isset($cartLineGroup[0]['image_url']) ? $cartLineGroup[0]['image_url'] : '',
             ];
+>>>>>>> b977487051973766eca407bbb4ec66ddb34229a6
         }
 
-        return $newCartLineGroup;
-    }
+        $totalDiscounts = $cartSummary['total_discounts'] ?? 0;
 
+<<<<<<< HEAD
+        try {
+            list($orderLines, $remainingAmount) = $this->cartItemDiscountService->addDiscountsToProductLines($totalDiscounts, $orderLines, $remainingAmount);
+        } catch (\Exception $e) {
+            throw CouldNotProcessCartLinesException::failedToAddDiscountsToProductLines($e);
+        }
+
+        try {
+            $orderLines = $this->roundingUtility->compositeRoundingInaccuracies($remainingAmount, $orderLines);
+        } catch (\Exception $e) {
+            throw CouldNotProcessCartLinesException::failedToRoundAmount($e);
+        }
+
+        try {
+            $orderLines = $this->cartItemProductLinesService->fillProductLinesWithRemainingData($orderLines, Config::VAT_RATE_ROUNDING_PRECISION);
+        } catch (\Exception $e) {
+            throw CouldNotProcessCartLinesException::failedToFillProductLinesWithRemainingData($e);
+        }
+
+        try {
+            $orderLines = $this->cartItemShippingLineService->addShippingLine($roundedShippingCost, $cartSummary, $orderLines);
+        } catch (\Exception $e) {
+            throw CouldNotProcessCartLinesException::failedToAddShippingLine($e);
+        }
+
+        try {
+            $orderLines = $this->cartItemWrappingService->addWrappingLine($wrappingPrice, $cartSummary, Config::VAT_RATE_ROUNDING_PRECISION, $orderLines);
+        } catch (\Exception $e) {
+            throw CouldNotProcessCartLinesException::failedToAddWrappingLine($e);
+        }
+
+        try {
+            $orderLines = $this->cartItemPaymentFeeService->addPaymentFeeLine($paymentFeeData, $orderLines);
+        } catch (\Exception $e) {
+            throw CouldNotProcessCartLinesException::failedToAddPaymentFee($e);
+=======
     /**
      * @param int $apiRoundingPrecision
      * @param array $giftProducts
@@ -440,23 +522,24 @@ class CartLinesService
                     'vatRate' => $wrappingVatRate,
                 ],
             ];
+>>>>>>> b977487051973766eca407bbb4ec66ddb34229a6
         }
 
-        return $orderLines;
-    }
-
-    /**
-     * @param PaymentFeeData $paymentFeeData
-     * @param int $apiRoundingPrecision
-     *
-     * @return array
-     */
-    private function addPaymentFeeLine($paymentFeeData, $apiRoundingPrecision, array $orderLines)
-    {
-        if (!$paymentFeeData->isActive()) {
-            return $orderLines;
+        try {
+            $newItems = $this->arrayUtility->ungroupLines($orderLines);
+        } catch (\Exception $e) {
+            throw CouldNotProcessCartLinesException::failedToUngroupLines($e);
         }
 
+<<<<<<< HEAD
+        try {
+            $lines = $this->lineUtility->convertToLineArray($newItems, $currencyIsoCode);
+        } catch (\Exception $e) {
+            throw CouldNotProcessCartLinesException::failedConvertToLineArray($e);
+        }
+
+        return $lines;
+=======
         $orderLines['surcharge'] = [
             [
                 'name' => $this->languageService->lang('Payment fee'),
@@ -574,5 +657,6 @@ class CartLinesService
         }
 
         return $newItems;
+>>>>>>> b977487051973766eca407bbb4ec66ddb34229a6
     }
 }
