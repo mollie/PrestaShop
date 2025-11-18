@@ -95,10 +95,14 @@ class OrderLine implements JsonSerializable
 
     /**
      * @param ?string $type
+     *
+     * @return $this
      */
-    public function setType(?string $type): void
+    public function setType(?string $type): self
     {
         $this->type = $type;
+
+        return $this;
     }
 
     /**
@@ -111,10 +115,14 @@ class OrderLine implements JsonSerializable
 
     /**
      * @param string $sku
+     *
+     * @return $this
      */
-    public function setSku(string $sku): void
+    public function setSku(string $sku): self
     {
         $this->sku = $sku;
+
+        return $this;
     }
 
     /**
@@ -127,10 +135,14 @@ class OrderLine implements JsonSerializable
 
     /**
      * @param string $name
+     *
+     * @return $this
      */
-    public function setName(string $name): void
+    public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -143,10 +155,14 @@ class OrderLine implements JsonSerializable
 
     /**
      * @param ?string $productUrl
+     *
+     * @return $this
      */
-    public function setProductUrl(?string $productUrl): void
+    public function setProductUrl(?string $productUrl): self
     {
         $this->productUrl = $productUrl;
+
+        return $this;
     }
 
     /**
@@ -159,10 +175,14 @@ class OrderLine implements JsonSerializable
 
     /**
      * @param ?string $imageUrl
+     *
+     * @return $this
      */
-    public function setImageUrl(?string $imageUrl): void
+    public function setImageUrl(?string $imageUrl): self
     {
         $this->imageUrl = $imageUrl;
+
+        return $this;
     }
 
     /**
@@ -175,10 +195,14 @@ class OrderLine implements JsonSerializable
 
     /**
      * @param array $metaData
+     *
+     * @return $this
      */
-    public function setMetaData(array $metaData): void
+    public function setMetaData(array $metaData): self
     {
         $this->metaData = $metaData;
+
+        return $this;
     }
 
     /**
@@ -191,10 +215,14 @@ class OrderLine implements JsonSerializable
 
     /**
      * @param int $quantity
+     *
+     * @return $this
      */
-    public function setQuantity(int $quantity): void
+    public function setQuantity(int $quantity): self
     {
         $this->quantity = $quantity;
+
+        return $this;
     }
 
     /**
@@ -207,10 +235,14 @@ class OrderLine implements JsonSerializable
 
     /**
      * @param string $vatRate
+     *
+     * @return $this
      */
-    public function setVatRate(string $vatRate): void
+    public function setVatRate(string $vatRate): self
     {
         $this->vatRate = $vatRate;
+
+        return $this;
     }
 
     /**
@@ -223,10 +255,14 @@ class OrderLine implements JsonSerializable
 
     /**
      * @param Amount $unitPrice
+     *
+     * @return $this
      */
-    public function setUnitPrice(Amount $unitPrice): void
+    public function setUnitPrice(Amount $unitPrice): self
     {
         $this->unitPrice = $unitPrice;
+
+        return $this;
     }
 
     /**
@@ -239,10 +275,14 @@ class OrderLine implements JsonSerializable
 
     /**
      * @param Amount $totalPrice
+     *
+     * @return $this
      */
-    public function setTotalPrice(Amount $totalPrice): void
+    public function setTotalPrice(Amount $totalPrice): self
     {
         $this->totalPrice = $totalPrice;
+
+        return $this;
     }
 
     /**
@@ -255,10 +295,14 @@ class OrderLine implements JsonSerializable
 
     /**
      * @param Amount $discountAmount
+     *
+     * @return $this
      */
-    public function setDiscountAmount(Amount $discountAmount): void
+    public function setDiscountAmount(Amount $discountAmount): self
     {
         $this->discountAmount = $discountAmount;
+
+        return $this;
     }
 
     /**
@@ -271,10 +315,14 @@ class OrderLine implements JsonSerializable
 
     /**
      * @param Amount $vatAmount
+     *
+     * @return $this
      */
-    public function setVatAmount(Amount $vatAmount): void
+    public function setVatAmount(Amount $vatAmount): self
     {
         $this->vatAmount = $vatAmount;
+
+        return $this;
     }
 
     /**
@@ -287,10 +335,14 @@ class OrderLine implements JsonSerializable
 
     /**
      * @param ?string $category
+     *
+     * @return $this
      */
-    public function setCategory(?string $category): void
+    public function setCategory(?string $category): self
     {
         $this->category = $category;
+
+        return $this;
     }
 
     public function jsonSerialize(): array

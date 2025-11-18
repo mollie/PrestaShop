@@ -78,16 +78,16 @@ class CanSendShipment implements ShipmentVerificationInterface
      */
     public function verify(Order $order, OrderState $orderState): bool
     {
-        if (!$this->isShippingApplicable((int) $order->id)) {
-            return false;
-        }
-
         if (!$this->isAutomaticShipmentAvailable((int) $orderState->id)) {
             return false;
         }
 
         if (!$this->isPaymentInformationAvailable->verify((int) $order->id)) {
             throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Missing payment information', ShipmentCannotBeSentException::ORDER_HAS_NO_PAYMENT_INFORMATION, $order->reference);
+        }
+
+        if (!$this->isShippingApplicable((int) $order->id)) {
+            return false;
         }
 
         return true;
