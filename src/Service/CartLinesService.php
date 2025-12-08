@@ -223,6 +223,8 @@ class CartLinesService
                 continue;
             }
 
+            $roundedTotalWithTax = round($quantity * $cartItem['price_wt'], $apiRoundingPrecision);
+
             // Try to spread this product evenly and account for rounding differences on the order line
             $orderLines[$productHash][] = [
                 'name' => $cartItem['name'],
