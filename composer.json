@@ -57,7 +57,10 @@
         "prepend-autoloader": false,
         "allow-plugins": {
             "php-http/discovery": false
-        }
+        },
+        "audit": {
+            "ignore": ["PKSA-4k7v-pfvw-nqvp"]
+      }
     },
     "type": "prestashop-module",
     "author": "PrestaShop"
