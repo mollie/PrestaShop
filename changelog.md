@@ -5,6 +5,7 @@
 ## Changes in release 6.4.1
 + Fixed payment fee calculation on checkout page
 + Re-added payment method title translations
++ Added pre-translated email templates for FR, DE, ES, NL, IT languages
 
 ## Changes in release 6.4.0
 + Back-office re-design

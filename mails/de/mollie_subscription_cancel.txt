@@ -1,0 +1,9 @@
+Hallo firstName lastName,
+
+
+Wir kontaktieren Sie, weil der folgende Artikel zur Verlängerung anstand und die hinterlegte Zahlungsmethode fehlgeschlagen ist. Bitte melden Sie sich in Ihrem Konto an und aktualisieren Sie die Zahlungsmethode.
+
+Wir werden weiterhin versuchen, Ihre Zahlung zu verarbeiten. Sollte dies jedoch weiterhin fehlschlagen, wird Ihr Abonnement gekündigt.
+
+Referenz	Produkt	Stückpreis (ohne MwSt.)	Menge	Gesamtpreis
+subscription_reference	product_name	unit_price	quantity	total_price
