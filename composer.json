@@ -15,7 +15,6 @@
         "prestashop/decimal": "^1.3",
         "mollie/mollie-api-php": "v2.65.0",
         "segmentio/analytics-php": "^1.5",
-        "sentry/sentry": "3.17.0",
         "league/container": "3.3.3",
         "prestashop/module-lib-service-container": "v2.0",
         "webmozart/assert": "^1.11",

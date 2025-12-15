@@ -27,9 +27,7 @@ class Config
 {
     const SEGMENT_KEY = 'x8qDW8mWIlcY9SXbMhKLoH7xYQ1cSxF2';
 
-    const SENTRY_KEY = 'https://c2c43f02599847d682e0a1fb7843600f@o497594.ingest.sentry.io/5573860';
-
-    const SENTRY_ENV = 'MISSING_ENV';
+    const MODULE_ENV = 'MISSING_ENV';
 
     /**
      * Default payment method availability.
