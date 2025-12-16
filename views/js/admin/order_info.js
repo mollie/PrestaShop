@@ -101,7 +101,7 @@ $(document).ready(function () {
       showErrorMessage(trans.validRefundAmountRequired);
       return;
     }
-    showModal('refundAll', null);
+    showModal('refund', null);
   });
 
   $('#mollie-refund-all').on('click', function() {

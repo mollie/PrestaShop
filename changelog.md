@@ -5,6 +5,7 @@
 ## Changes in release 6.4.1
 + Fixed payment fee calculation on checkout page
 + Re-added payment method title translations
++ Fixed partial refunds incorrectly triggering full refunds
 
 ## Changes in release 6.4.0
 + Back-office re-design

@@ -112,12 +112,6 @@ class RefundService
      */
     private function processRefund($payment, string $refundAmount, bool $isOrderTransaction): void
     {
-        if ($isOrderTransaction) {
-            $payment->refundAll();
-
-            return;
-        }
-
         $payment->refund([
             'amount' => [
                 'currency' => $payment->amount->currency,
