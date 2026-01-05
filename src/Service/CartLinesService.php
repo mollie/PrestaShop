@@ -224,14 +224,15 @@ class CartLinesService
             }
 
             // Try to spread this product evenly and account for rounding differences on the order line
+            $unitPrice = round($cartItem['price_wt'], $apiRoundingPrecision);
             $orderLines[$productHash][] = [
                 'name' => $cartItem['name'],
                 'type' => 'physical',
                 'sku' => $productHash,
                 'targetVat' => (float) $cartItem['rate'],
                 'quantity' => $quantity,
-                'unitPrice' => round($cartItem['price_wt'], $apiRoundingPrecision),
-                'totalAmount' => (float) $roundedTotalWithTax,
+                'unitPrice' => $unitPrice,
+                'totalAmount' => $unitPrice * $quantity,
                 'categories' => $this->voucherService->getVoucherCategory($cartItem, $selectedVoucherCategory),
                 'product_url' => $this->context->getProductLink($cartItem['id_product']),
                 'image_url' => $this->context->getImageLink($cartItem['link_rewrite'], $cartItem['id_image']),
@@ -239,7 +240,7 @@ class CartLinesService
                     'idProduct' => $cartItem['id_product'],
                 ],
             ];
-            $remaining -= $roundedTotalWithTax;
+            $remaining -= ($unitPrice * $quantity);
         }
 
         return [$orderLines, $remaining];

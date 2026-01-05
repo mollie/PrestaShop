@@ -14,6 +14,7 @@ namespace Mollie\Verification\Shipment;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
+use Mollie\Enum\PaymentTypeEnum;
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandlerInterface;
 use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProviderInterface;
@@ -85,6 +86,10 @@ class CanSendShipment implements ShipmentVerificationInterface
             throw new ShipmentCannotBeSentException('Shipment information cannot be sent. Missing payment information', ShipmentCannotBeSentException::ORDER_HAS_NO_PAYMENT_INFORMATION, $order->reference);
         }
 
+        if (!$this->isShippingApplicable((int) $order->id)) {
+            return false;
+        }
+
         return true;
     }
 
@@ -116,5 +121,17 @@ class CanSendShipment implements ShipmentVerificationInterface
             ),
             true
         );
+    }
+
+    private function isShippingApplicable(int $orderId): bool
+    {
+        $payment = $this->paymentMethodRepository->getPaymentBy('order_id', $orderId);
+        $paymentType = $this->endpointPaymentTypeHandler->getPaymentTypeFromTransactionId($payment['transaction_id']);
+
+        if ($paymentType !== PaymentTypeEnum::PAYMENT_TYPE_ORDER) {
+            return false;
+        }
+
+        return true;
     }
 }
