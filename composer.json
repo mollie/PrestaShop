@@ -19,7 +19,7 @@
         "league/container": "3.3.3",
         "prestashop/module-lib-service-container": "v2.0",
         "webmozart/assert": "^1.11",
-        "symfony/http-client": "^4.4",
+        "symfony/http-client": "^4.4.47",
         "http-interop/http-factory-guzzle": "^1.1",
         "php-http/message-factory": "^1.1",
         "prestashop/prestashop-accounts-installer": "^1.0.4",
