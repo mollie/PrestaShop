@@ -1,0 +1,13 @@
+Hallo {firstname} {lastname},
+
+Zahlung fehlgeschlagen
+
+Es tut uns leid, aber Ihre Zahlung konnte nicht erfolgreich verarbeitet werden. Dies könnte an unzureichendem Guthaben, einer abgelaufenen Karte oder anderen zahlungsbezogenen Problemen liegen.
+
+Keine Sorge, Sie können Ihre Zahlung einfach erneut versuchen, indem Sie auf den unten stehenden Link klicken.
+
+Um Ihre Bestellung abzuschließen, [klicken Sie hier, um Ihre Zahlung erneut zu versuchen]({checkout_url}).
+
+Wenn Sie weiterhin Probleme haben, wenden Sie sich bitte an unser Kundenservice-Team.
+
+[{shop_name}]({shop_url})

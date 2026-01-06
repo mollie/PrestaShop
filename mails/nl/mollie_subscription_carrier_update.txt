@@ -1,0 +1,8 @@
+Hallo firstName lastName,
+
+We sturen u deze e-mail omdat de vervoerder van het volgende abonnement is bijgewerkt.
+
+Log in op uw account om de bijgewerkte abonnementsinformatie te bekijken.
+
+Referentie	Product	Eenheidsprijs (excl. btw)	Aantal	Totaalprijs
+subscription_reference	product_name	unit_price	quantity	total_price

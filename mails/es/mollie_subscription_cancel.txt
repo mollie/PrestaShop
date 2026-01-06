@@ -1,0 +1,9 @@
+Hola firstName lastName,
+
+
+Le enviamos este correo porque el siguiente artículo estaba programado para renovarse y el método de pago registrado ha fallado. Por favor, inicie sesión en su cuenta y actualice el método de pago.
+
+Seguiremos intentando procesar su pago, pero si continúa fallando, su suscripción será cancelada.
+
+Referencia	Producto	Precio unitario (sin IVA)	Cantidad	Precio total
+subscription_reference	product_name	unit_price	quantity	total_price
