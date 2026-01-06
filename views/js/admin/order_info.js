@@ -42,6 +42,8 @@ $(document).ready(function () {
       // Update modal message based on action type
       if (action === 'refundAll') {
         $('#mollie-refund-modal-message').text(trans.refundFullOrderConfirm);
+      } else if (amount) {
+        $('#mollie-refund-modal-message').text(trans.refundPartialConfirm.replace('%s', amount));
       } else {
         $('#mollie-refund-modal-message').text(trans.refundOrderConfirm);
       }
@@ -101,7 +103,7 @@ $(document).ready(function () {
       showErrorMessage(trans.validRefundAmountRequired);
       return;
     }
-    showModal('refundAll', null);
+    showModal('refund', null);
   });
 
   $('#mollie-refund-all').on('click', function() {

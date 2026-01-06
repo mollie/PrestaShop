@@ -498,6 +498,7 @@ class Mollie extends PaymentModule
                             'processing' => $this->l('Processing...'),
                             'configurationError' => $this->l('Configuration error'),
                             'refundFullOrderConfirm' => $this->l('Are you sure you want to refund the full order amount? This action cannot be undone.'),
+                            'refundPartialConfirm' => $this->l('Are you sure you want to refund %s? This action cannot be undone.'),
                             'refundOrderConfirm' => $this->l('Are you sure you want to refund this order? This action cannot be undone.'),
                             'captureFullOrderConfirm' => $this->l('Are you sure you want to capture the full order amount?'),
                             'capturePaymentConfirm' => $this->l('Are you sure you want to capture this payment?'),
