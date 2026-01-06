@@ -1,0 +1,13 @@
+Bonjour {firstname} {lastname},
+
+Paiement échoué
+
+Nous sommes désolés, mais votre paiement n'a pas pu être traité avec succès. Cela pourrait être dû à des fonds insuffisants, une carte expirée ou d'autres problèmes liés au paiement.
+
+Ne vous inquiétez pas, vous pouvez facilement réessayer votre paiement en cliquant sur le lien ci-dessous.
+
+Pour finaliser votre commande, [cliquez ici pour réessayer votre paiement]({checkout_url}).
+
+Si vous continuez à rencontrer des problèmes, n'hésitez pas à contacter notre équipe de support client.
+
+[{shop_name}]({shop_url})

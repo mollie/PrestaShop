@@ -1,0 +1,13 @@
+Ciao {firstname} {lastname},
+
+Pagamento fallito
+
+Ci dispiace, ma il pagamento non è stato elaborato correttamente. Ciò potrebbe essere dovuto a fondi insufficienti, una carta scaduta o altri problemi relativi al pagamento.
+
+Non preoccuparti, puoi riprovare facilmente il pagamento cliccando sul link qui sotto.
+
+Per completare il tuo ordine, [clicca qui per riprovare il pagamento]({checkout_url}).
+
+Se continui a riscontrare problemi, non esitare a contattare il nostro team di assistenza clienti.
+
+[{shop_name}]({shop_url})

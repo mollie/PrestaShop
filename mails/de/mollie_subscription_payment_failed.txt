@@ -1,0 +1,7 @@
+Hallo firstName lastName,
+
+
+Wir kontaktieren Sie, weil wir erneut versucht haben, die Zahlung zu verarbeiten, dies aber fehlgeschlagen ist. Ihr Abonnement wurde gekündigt.
+
+Referenz	Produkt	Stückpreis (ohne MwSt.)	Menge	Gesamtpreis
+subscription_reference	product_name	unit_price	quantity	total_price

@@ -1,0 +1,7 @@
+Bonjour firstName lastName,
+
+
+Nous vous envoyons cet e-mail car nous avons réessayé de traiter le paiement et cela a échoué. Votre abonnement a été annulé.
+
+Référence	Produit	Prix unitaire (HT)	Quantité	Prix total
+subscription_reference	product_name	unit_price	quantity	total_price

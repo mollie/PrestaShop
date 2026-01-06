@@ -1,0 +1,7 @@
+Hallo {firstName} {lastName},
+
+Vielen Dank für Ihren Einkauf bei {shop_name}!
+
+Sie können Ihre Bestellung jetzt abschließen, indem Sie auf: [hier]({checkoutUrl}) klicken.
+
+[{shop_name}]({shop_url})

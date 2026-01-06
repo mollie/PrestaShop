@@ -1,0 +1,13 @@
+Hallo {firstname} {lastname},
+
+Betaling mislukt
+
+Het spijt ons, maar uw betaling kon niet succesvol worden verwerkt. Dit kan te wijten zijn aan onvoldoende saldo, een verlopen kaart of andere betalingsgerelateerde problemen.
+
+Geen zorgen, u kunt uw betaling eenvoudig opnieuw proberen door op de onderstaande link te klikken.
+
+Om uw bestelling te voltooien, [klik hier om uw betaling opnieuw te proberen]({checkout_url}).
+
+Als u problemen blijft ondervinden, aarzel dan niet om contact op te nemen met ons klantenserviceteam.
+
+[{shop_name}]({shop_url})

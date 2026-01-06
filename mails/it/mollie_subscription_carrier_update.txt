@@ -1,0 +1,8 @@
+Ciao firstName lastName,
+
+Ti inviamo questa email perché il corriere del seguente abbonamento è stato aggiornato.
+
+Accedi al tuo account per rivedere le informazioni aggiornate sull'abbonamento.
+
+Riferimento	Prodotto	Prezzo unitario (IVA escl.)	Quantità	Prezzo totale
+subscription_reference	product_name	unit_price	quantity	total_price

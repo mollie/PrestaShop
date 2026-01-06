@@ -1,0 +1,8 @@
+Hola firstName lastName,
+
+Le enviamos este correo porque el transportista de la siguiente suscripción ha sido actualizado.
+
+Inicie sesión en su cuenta para revisar la información actualizada de la suscripción.
+
+Referencia	Producto	Precio unitario (sin IVA)	Cantidad	Precio total
+subscription_reference	product_name	unit_price	quantity	total_price
