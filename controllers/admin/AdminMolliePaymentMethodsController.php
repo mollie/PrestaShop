@@ -354,6 +354,11 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                         continue;
                     }
 
+                    // Hide Google Pay from the payment methods list for now
+                    if ($methodId === 'googlepay') {
+                        continue;
+                    }
+
                     $formattedMethods[] = [
                         'id' => $methodId,
                         'name' => $method['name'],
@@ -579,6 +584,12 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
 
             foreach ($apiMethods as $method) {
                 $methodId = $method['id'];
+
+                // Skip Google Pay
+                if ($methodId === 'googlepay') {
+                    continue;
+                }
+
                 $isNew = !in_array($methodId, $currentMethodIds);
 
                 try {
