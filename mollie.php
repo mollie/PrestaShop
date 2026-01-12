@@ -1261,7 +1261,7 @@ class Mollie extends PaymentModule
             'id_customer' => $id_customer,
         ]);
 
-        return $this->display(dirname(__FILE__), '/views/templates/front/subscription/customerAccount.tpl');
+        return $this->display(__FILE__, 'views/templates/front/subscription/customerAccount.tpl');
     }
 
     /**
