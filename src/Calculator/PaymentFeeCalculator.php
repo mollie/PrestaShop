@@ -114,11 +114,11 @@ class PaymentFeeCalculator
         float $totalFeePriceTaxIncl,
         float $surchargeLimit
     ): bool {
-        if (NumberUtility::isGreaterThan($totalFeePriceTaxIncl, $surchargeLimit)) {
-            return true;
+        if (NumberUtility::isLowerOrEqualThan($surchargeLimit, 0)) {
+            return false;
         }
 
-        return false;
+        return NumberUtility::isGreaterThan($totalFeePriceTaxIncl, $surchargeLimit);
     }
 
     private function buildPaymentFee(
