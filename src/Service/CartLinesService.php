@@ -151,9 +151,16 @@ class CartLinesService
         $newCartLineGroup = [];
         $spread = CartPriceUtility::spreadAmountEvenly($newTotal, $quantity);
         foreach ($spread as $unitPrice => $qty) {
+            $lineType = $cartLineGroup[0]['type'];
+
+            // Mollie API rejects negative unitPrice for 'physical' type items. On some rare edge cases it might be negative it is so lets add it to discount as discount allows negative prices
+            if ((float) $unitPrice < 0 && $lineType === 'physical') {
+                $lineType = 'discount';
+            }
+
             $newCartLineGroup[] = [
                 'name' => $cartLineGroup[0]['name'],
-                'type' => $cartLineGroup[0]['type'],
+                'type' => $lineType,
                 'quantity' => $qty,
                 'unitPrice' => (float) $unitPrice,
                 'totalAmount' => (float) $unitPrice * $qty,
