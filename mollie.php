@@ -1300,6 +1300,7 @@ class Mollie extends PaymentModule
 
         $this->setApiKey($shopId);
     }
+
     public function hookActionAjaxDieCartControllerDisplayAjaxUpdateBefore(array $params): void
     {
         if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.7.0')) {
