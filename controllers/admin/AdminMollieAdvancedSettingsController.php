@@ -17,6 +17,7 @@ use Mollie\Adapter\Language;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
 use Mollie\Service\MolCarrierInformationService;
+use OrderState;
 
 if (!defined('_PS_VERSION_')) {
     exit;
