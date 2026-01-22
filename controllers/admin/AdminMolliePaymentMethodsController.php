@@ -312,8 +312,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 return;
             }
 
-            $shopId = $this->context->shop->id;
-
             $apiMethods = [];
             try {
                 $mollieClient = $this->module->getApiClient();
@@ -334,6 +332,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                         'countries' => $this->countryService->getActiveCountriesList(),
                         'taxRulesGroups' => $this->getTaxRulesGroups(),
                         'customerGroups' => $this->getCustomerGroups(),
+                        'languages' => $this->getLanguages(),
                         'onlyOrderMethods' => Config::ORDER_API_ONLY_METHODS,
                         'onlyPaymentsMethods' => Config::PAYMENT_API_ONLY_METHODS,
                         'environment' => $environment ? 'live' : 'test',
@@ -355,6 +354,11 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                         continue;
                     }
 
+                    // Hide Google Pay from the payment methods list for now
+                    if ($methodId === 'googlepay') {
+                        continue;
+                    }
+
                     $formattedMethods[] = [
                         'id' => $methodId,
                         'name' => $method['name'],
@@ -365,12 +369,12 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                         'image' => $method['image'] ?? null,
                         'settings' => [
                             'enabled' => (bool) (isset($methodObj->enabled) ? $methodObj->enabled : false),
-                            'title' => $this->getPaymentMethodTitle($methodId, $method['name'] ?? ''),
+                            'title' => $this->getPaymentMethodTitles($methodId, $method['name'] ?? ''),
                             'mollieComponents' => $methodId === 'creditcard' ? $this->getCreditCardMollieComponentsSetting($methodObj) : true,
                             'oneClickPayments' => $methodId === 'creditcard' ? $this->getCreditCardOneClickSetting($methodObj) : false,
                             'transactionDescription' => (isset($methodObj->description) && $methodObj->description) ? $methodObj->description : '{orderNumber}',
                             'apiSelection' => (isset($methodObj->method) && $methodObj->method === 'orders') ? 'orders' : 'payments',
-                            'useCustomLogo' => $methodId === 'creditcard' ? (bool) ($this->configuration->get(\Mollie\Config\Config::MOLLIE_SHOW_CUSTOM_LOGO) ?: 0) : false,
+                            'useCustomLogo' => $methodId === 'creditcard' ? (bool) ($this->configuration->get(Config::MOLLIE_SHOW_CUSTOM_LOGO) ?: 0) : false,
                             'customLogoUrl' => $methodId === 'creditcard' ? $this->getCustomLogoUrl() : null,
                             'voucherCategory' => $methodId === 'voucher' ? $this->getVoucherCategory() : null,
                             'paymentRestrictions' => [
@@ -400,9 +404,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                                 'currency' => $method['minimumAmount'] ? $method['minimumAmount']['currency'] : ($method['maximumAmount'] ? $method['maximumAmount']['currency'] : null),
                             ],
                             'applePaySettings' => $methodId === 'applepay' ? [
-                                'directProduct' => (bool) ($this->configuration->get(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT) ?: 0),
-                                'directCart' => (bool) ($this->configuration->get(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_CART) ?: 0),
-                                'buttonStyle' => (int) ($this->configuration->get(\Mollie\Config\Config::MOLLIE_APPLE_PAY_DIRECT_STYLE) ?: 0),
+                                'directProduct' => (bool) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT) ?: 0),
+                                'directCart' => (bool) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART) ?: 0),
+                                'buttonStyle' => (int) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE) ?: 0),
                             ] : null,
                         ],
                     ];
@@ -426,6 +430,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                     'countries' => $this->countryService->getActiveCountriesList(),
                     'taxRulesGroups' => $this->getTaxRulesGroups(),
                     'customerGroups' => $this->getCustomerGroups(),
+                    'languages' => $this->getLanguages(),
                     'onlyOrderMethods' => Config::ORDER_API_ONLY_METHODS,
                     'onlyPaymentsMethods' => Config::PAYMENT_API_ONLY_METHODS,
                     'environment' => $environment ? 'live' : 'test',
@@ -579,6 +584,12 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
 
             foreach ($apiMethods as $method) {
                 $methodId = $method['id'];
+
+                // Skip Google Pay
+                if ($methodId === 'googlepay') {
+                    continue;
+                }
+
                 $isNew = !in_array($methodId, $currentMethodIds);
 
                 try {
@@ -628,29 +639,45 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
     }
 
-    private function getPaymentMethodTitle(string $methodId, string $defaultName): string
+    /**
+     * Get payment method titles for all languages
+     *
+     * @param string $methodId Payment method ID
+     * @param string $defaultName Default name from Mollie API
+     *
+     * @return array Payment method titles keyed by language ID
+     */
+    private function getPaymentMethodTitles(string $methodId, string $defaultName): array
     {
+        $titles = [];
+        $shopId = $this->context->shop->id;
+
         try {
-            $langId = (int) $this->context->language->id;
-            $shopId = $this->context->shop->id;
+            $languages = \Language::getLanguages(false, $shopId);
 
-            $translation = $this->paymentMethodLangRepository->findOneBy([
-                'id_method' => $methodId,
-                'id_lang' => $langId,
-                'id_shop' => $shopId,
-            ]);
+            foreach ($languages as $language) {
+                $langId = (int) $language['id_lang'];
 
-            if ($translation && isset($translation->text) && !empty($translation->text)) {
-                return $translation->text;
+                $translation = $this->paymentMethodLangRepository->findOneBy([
+                    'id_method' => $methodId,
+                    'id_lang' => $langId,
+                    'id_shop' => $shopId,
+                ]);
+
+                if ($translation && isset($translation->text) && !empty($translation->text)) {
+                    $titles[$langId] = $translation->text;
+                } else {
+                    $titles[$langId] = $defaultName;
+                }
             }
         } catch (\Exception $e) {
-            $this->logger->error('Error getting payment method title', [
+            $this->logger->error('Error getting payment method titles', [
                 'method_id' => $methodId,
                 'exception' => $e->getMessage(),
             ]);
         }
 
-        return $defaultName;
+        return $titles;
     }
 
     private function ajaxSavePaymentMethodSettings(): void
@@ -737,6 +764,24 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
 
         return $customerGroups;
+    }
+
+    public function getLanguages(): array
+    {
+        $languages = [];
+        $shopId = $this->context->shop->id;
+        $availableLanguages = \Language::getLanguages(false, $shopId);
+
+        foreach ($availableLanguages as $language) {
+            $languages[] = [
+                'id' => (int) $language['id_lang'],
+                'name' => $language['name'],
+                'iso_code' => $language['iso_code'],
+                'is_default' => (bool) ((int) $language['id_lang'] === (int) \Configuration::get('PS_LANG_DEFAULT')),
+            ];
+        }
+
+        return $languages;
     }
 
     private function getPaymentFeeType($methodObj): string

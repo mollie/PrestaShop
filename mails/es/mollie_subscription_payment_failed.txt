@@ -1,0 +1,7 @@
+Hola firstName lastName,
+
+
+Le enviamos este correo porque hemos reintentado procesar el pago y ha fallado. Su suscripción ha sido cancelada.
+
+Referencia	Producto	Precio unitario (sin IVA)	Cantidad	Precio total
+subscription_reference	product_name	unit_price	quantity	total_price

@@ -1,0 +1,9 @@
+Bonjour firstName lastName,
+
+
+Nous vous envoyons cet e-mail car l'article suivant devait être renouvelé et le mode de paiement enregistré a échoué. Veuillez vous connecter à votre compte et mettre à jour le mode de paiement.
+
+Nous continuerons à essayer de traiter votre paiement, mais s'il continue d'échouer, votre abonnement sera annulé.
+
+Référence	Produit	Prix unitaire (HT)	Quantité	Prix total
+subscription_reference	product_name	unit_price	quantity	total_price

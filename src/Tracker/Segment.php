@@ -144,7 +144,7 @@ class Segment implements TrackerInterface
                 'module' => 'mollie',
                 'version' => $module->version,
                 'psVersion' => _PS_VERSION_,
-                'env' => $this->env->get('SENTRY_ENV'),
+                'env' => $this->env->get('MODULE_ENV'),
                 'phpVersion' => PHP_VERSION_ID,
             ], $this->options),
         ]);

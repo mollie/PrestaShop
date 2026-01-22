@@ -4,11 +4,12 @@ import { useState, useRef, useEffect } from "react"
 import { Input } from "../../../shared/components/ui/input"
 import { Label } from "../../../shared/components/ui/label"
 import { Switch } from "../../../shared/components/ui/switch"
+import { MultilingualInput } from "../../../shared/components/ui/multilingual-input"
 import { CustomLogoUpload } from "../../../shared/components/ui/custom-logo-upload"
 import { ApplePaySettings } from "../../../shared/components/ui/apple-pay-settings"
 import { ChevronDown } from "lucide-react"
 import { cn } from "../../../shared/lib/utils"
-import type { PaymentMethod, Country, CustomerGroup } from "../../../services/PaymentMethodsApiService"
+import type { PaymentMethod, Country, CustomerGroup, Language } from "../../../services/PaymentMethodsApiService"
 import { paymentMethodsApiService } from "../../../services/PaymentMethodsApiService"
 import { usePaymentMethodsTranslations } from "../../../shared/hooks/use-payment-methods-translations"
 
@@ -16,6 +17,7 @@ interface PaymentMethodSettingsProps {
   method: PaymentMethod
   countries: Country[]
   customerGroups: CustomerGroup[]
+  languages: Language[]
   onUpdateSettings: (settings: Partial<PaymentMethod["settings"]>) => void
   onSaveSettings: () => void
   isSaving?: boolean
@@ -206,7 +208,7 @@ function MultiSelect({ value, onValueChange, options, placeholder, className }: 
   )
 }
 
-export function PaymentMethodSettings({ method, countries, customerGroups, onUpdateSettings, onSaveSettings, isSaving = false }: PaymentMethodSettingsProps) {
+export function PaymentMethodSettings({ method, countries, customerGroups, languages, onUpdateSettings, onSaveSettings, isSaving = false }: PaymentMethodSettingsProps) {
   const { t } = usePaymentMethodsTranslations()
   const [showRestrictions, setShowRestrictions] = useState(false)
   const [showFees, setShowFees] = useState(false)
@@ -411,11 +413,12 @@ export function PaymentMethodSettings({ method, countries, customerGroups, onUpd
               <Label htmlFor="payment-title" className="text-sm font-medium">
                 {t('paymentTitle')}
               </Label>
-              <Input
+              <MultilingualInput
                 id="payment-title"
                 placeholder={t('paymentTitlePlaceholder')}
                 value={method.settings.title}
-                onChange={(e) => onUpdateSettings({ title: e.target.value })}
+                languages={languages}
+                onChange={(value) => onUpdateSettings({ title: value })}
                 className="mt-1"
               />
             </div>

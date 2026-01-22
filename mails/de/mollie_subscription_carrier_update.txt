@@ -1,0 +1,8 @@
+Hallo firstName lastName,
+
+Wir kontaktieren Sie, weil der Versanddienstleister für folgendes Abonnement aktualisiert wurde.
+
+Melden Sie sich in Ihrem Konto an, um die aktualisierten Abonnementinformationen einzusehen.
+
+Referenz	Produkt	Stückpreis (ohne MwSt.)	Menge	Gesamtpreis
+subscription_reference	product_name	unit_price	quantity	total_price

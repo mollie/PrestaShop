@@ -17,6 +17,8 @@ namespace Mollie\Handler\PaymentMethod;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
+use Mollie\Handler\Certificate\CertificateHandlerInterface;
+use Mollie\Handler\Certificate\Exception\ApplePayDirectCertificateCreation;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\CustomerRepository;
@@ -24,6 +26,7 @@ use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ApiService;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\TagsUtility;
 use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
@@ -56,6 +59,9 @@ class PaymentMethodSettingsHandler
     /** @var \Mollie */
     private $module;
 
+    /** @var CertificateHandlerInterface */
+    private $applePayDirectCertificateHandler;
+
     public function __construct(
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentMethodLangRepositoryInterface $paymentMethodLangRepository,
@@ -64,7 +70,8 @@ class PaymentMethodSettingsHandler
         ConfigurationAdapter $configuration,
         LoggerInterface $logger,
         ApiService $apiService,
-        \Mollie $module
+        \Mollie $module,
+        CertificateHandlerInterface $applePayDirectCertificateHandler
     ) {
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodLangRepository = $paymentMethodLangRepository;
@@ -74,6 +81,7 @@ class PaymentMethodSettingsHandler
         $this->logger = $logger;
         $this->apiService = $apiService;
         $this->module = $module;
+        $this->applePayDirectCertificateHandler = $applePayDirectCertificateHandler;
     }
 
     /**
@@ -88,7 +96,6 @@ class PaymentMethodSettingsHandler
      */
     public function handlePaymentMethodSave(string $methodId, array $settings, int $environment, int $shopId): void
     {
-        // Get or create payment method
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId(
             $methodId,
             $environment,
@@ -100,48 +107,39 @@ class PaymentMethodSettingsHandler
             $paymentMethod = new MolPaymentMethod((int) $paymentMethodId);
         }
 
-        // Fetch fresh data from Mollie API (same as old SettingsSaveService behavior)
-        // This ensures images_json and other API data is always up-to-date
         $apiMethodData = $this->fetchMethodFromApi($methodId);
 
-        // Handle basic settings
         $this->handleBasicSettings($paymentMethod, $methodId, $settings, $environment, $shopId, $apiMethodData);
 
-        // Handle payment fees
         if (isset($settings['paymentFees'])) {
             $this->handlePaymentFees($paymentMethod, $settings['paymentFees']);
         }
 
-        // Handle payment restrictions (before save to set flag)
         if (isset($settings['paymentRestrictions'])) {
             $this->handlePaymentRestrictionsFlag($paymentMethod, $settings['paymentRestrictions']);
         }
 
-        // Save payment method (creates record and populates ID)
         if (!$paymentMethod->save()) {
             throw new MollieException('Failed to save payment method');
         }
 
-        // Handle country and customer group restrictions (requires saved ID)
         if (isset($settings['paymentRestrictions'])) {
             $this->handlePaymentRestrictions($paymentMethod, $settings['paymentRestrictions']);
         }
 
-        // Handle title translations
-        if (isset($settings['title']) && !empty($settings['title'])) {
+        if (isset($settings['title'])) {
             $this->handleTitleTranslations($methodId, $settings['title'], $shopId);
         }
 
-        // Handle method-specific settings
         if ($methodId === 'creditcard') {
             $this->handleCreditCardSettings($settings, $environment);
         }
 
-        if ($methodId === 'applepay' && isset($settings['applePaySettings'])) {
+        if ($methodId === Config::APPLEPAY && isset($settings['applePaySettings'])) {
             $this->handleApplePaySettings($settings['applePaySettings']);
         }
 
-        if ($methodId === 'voucher' && isset($settings['voucherCategory'])) {
+        if ($methodId === Config::MOLLIE_VOUCHER_METHOD_ID && isset($settings['voucherCategory'])) {
             $this->handleVoucherSettings($settings);
         }
     }
@@ -170,17 +168,12 @@ class PaymentMethodSettingsHandler
         $paymentMethod->method = $settings['apiSelection'] ?? 'payments';
         $paymentMethod->description = $settings['transactionDescription'] ?? '';
 
-        // Save min/max amounts - user can override API defaults within API limits
-        // Empty values default to 0 and will use API limits in validation
         $paymentMethod->min_amount = (float) ($settings['orderRestrictions']['minAmount'] ?? 0);
         $paymentMethod->max_amount = (float) ($settings['orderRestrictions']['maxAmount'] ?? 0);
 
-        // Save image from API (matching old SettingsSaveService behavior)
-        // This keeps images_json up-to-date with Mollie API
         if ($apiMethodData && isset($apiMethodData['image'])) {
             $paymentMethod->images_json = json_encode($apiMethodData['image']);
         } elseif (!$paymentMethod->images_json) {
-            // If no API data and no existing image, set empty array to avoid NULL
             $paymentMethod->images_json = json_encode([]);
         }
 
@@ -216,7 +209,6 @@ class PaymentMethodSettingsHandler
             }
         }
 
-        // Validate surcharge percentage
         if ($feeType === 2 || $feeType === 3) {
             $surchargePercentage = (float) ($paymentFees['percentageFee'] ?? 0);
             if ($surchargePercentage <= -100 || $surchargePercentage >= 100) {
@@ -290,26 +282,84 @@ class PaymentMethodSettingsHandler
      * Handle title translations for all languages
      *
      * @param string $methodId Method ID
-     * @param string $title Title text
+     * @param array|string $titles Title translations (array with language IDs as keys or single string for BC)
      * @param int $shopId Shop ID
      */
-    private function handleTitleTranslations(string $methodId, string $title, int $shopId): void
+    private function handleTitleTranslations(string $methodId, $titles, int $shopId): void
     {
         try {
             $languages = \Language::getLanguages(false, $shopId);
-            foreach ($languages as $language) {
-                $this->paymentMethodLangRepository->savePaymentTitleTranslation(
-                    $methodId,
-                    (int) $language['id_lang'],
-                    $title,
-                    $shopId
-                );
+
+            if (is_string($titles)) {
+                $this->saveStringTitleForAllLanguages($methodId, $titles, $languages, $shopId);
+
+                return;
+            }
+
+            if (is_array($titles)) {
+                $this->saveArrayTitlesForLanguages($methodId, $titles, $languages, $shopId);
             }
         } catch (\Exception $e) {
             $this->logger->error('Failed to save title translations', [
                 'method_id' => $methodId,
                 'exception' => ExceptionUtility::getExceptions($e),
             ]);
+        }
+    }
+
+    /**
+     * Save single string title for all languages
+     *
+     * @param string $methodId Method ID
+     * @param string $title Title to save
+     * @param array $languages Available languages
+     * @param int $shopId Shop ID
+     */
+    private function saveStringTitleForAllLanguages(string $methodId, string $title, array $languages, int $shopId): void
+    {
+        if (empty($title)) {
+            return;
+        }
+
+        foreach ($languages as $language) {
+            $this->paymentMethodLangRepository->savePaymentTitleTranslation(
+                $methodId,
+                (int) $language['id_lang'],
+                $title,
+                $shopId
+            );
+        }
+    }
+
+    /**
+     * Save language-specific titles from array
+     *
+     * @param string $methodId Method ID
+     * @param array $titles Titles indexed by language ID
+     * @param array $languages Available languages
+     * @param int $shopId Shop ID
+     */
+    private function saveArrayTitlesForLanguages(string $methodId, array $titles, array $languages, int $shopId): void
+    {
+        foreach ($languages as $language) {
+            $langId = (int) $language['id_lang'];
+
+            if (!isset($titles[$langId])) {
+                continue;
+            }
+
+            $translation = $titles[$langId];
+
+            if (empty($translation)) {
+                continue;
+            }
+
+            $this->paymentMethodLangRepository->savePaymentTitleTranslation(
+                $methodId,
+                $langId,
+                $translation,
+                $shopId
+            );
         }
     }
 
@@ -347,20 +397,48 @@ class PaymentMethodSettingsHandler
      * Handle Apple Pay specific settings
      *
      * @param array $applePaySettings Apple Pay settings
+     *
+     * @throws MollieException
      */
     private function handleApplePaySettings(array $applePaySettings): void
     {
+        $isApplePayDirectProductEnabled = (bool) ($applePaySettings['directProduct'] ?? false);
+        $isApplePayDirectCartEnabled = (bool) ($applePaySettings['directCart'] ?? false);
+
+        // Handle Apple Pay Direct certificate creation if either product or cart is enabled
+        if ($isApplePayDirectProductEnabled || $isApplePayDirectCartEnabled) {
+            try {
+                $this->applePayDirectCertificateHandler->handle();
+            } catch (ApplePayDirectCertificateCreation $e) {
+                $this->logger->error('Grant permissions for the folder or visit ApplePay to see how it can be added manually', [
+                    'exceptions' => ExceptionUtility::getExceptions($e),
+                ]);
+
+                // Disable Apple Pay Direct features if certificate creation fails
+                $isApplePayDirectProductEnabled = false;
+                $isApplePayDirectCartEnabled = false;
+
+                // Build error message with documentation link
+                $errorMessage = $e->getMessage() . ' ' . TagsUtility::ppTags(
+                    'Grant permissions for the folder or visit [1]ApplePay[/1] to see how it can be added manually',
+                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/applePayDirectDocumentation.tpl')]
+                );
+
+                throw new MollieException($errorMessage);
+            }
+        }
+
         $this->configuration->updateValue(
             Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT,
-            $applePaySettings['directProduct'] ? 1 : 0
+            $isApplePayDirectProductEnabled ? 1 : 0
         );
         $this->configuration->updateValue(
             Config::MOLLIE_APPLE_PAY_DIRECT_CART,
-            $applePaySettings['directCart'] ? 1 : 0
+            $isApplePayDirectCartEnabled ? 1 : 0
         );
         $this->configuration->updateValue(
             Config::MOLLIE_APPLE_PAY_DIRECT_STYLE,
-            $applePaySettings['buttonStyle']
+            $applePaySettings['buttonStyle'] ?? 0
         );
     }
 

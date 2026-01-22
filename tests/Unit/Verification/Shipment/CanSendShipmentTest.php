@@ -145,6 +145,22 @@ class CanSendShipmentTest extends TestCase
             ->willReturn($paymentInformationAvailable)
         ;
 
+        if ($paymentInformation && $paymentInformationAvailable) {
+            $this->paymentMethodRepository
+                ->expects($this->any())
+                ->method('getPaymentBy')
+                ->with('order_id', 1)
+                ->willReturn($paymentInformation)
+            ;
+
+            $this->orderEndpointPaymentTypeHandler
+                ->expects($this->any())
+                ->method('getPaymentTypeFromTransactionId')
+                ->with($paymentInformation['transaction_id'])
+                ->willReturn($paymentType)
+            ;
+        }
+
         $canSendShipment = new \Mollie\Verification\Shipment\CanSendShipment(
             $this->configurationAdapter,
             $this->automaticShipmentSenderStatusesProvider,
@@ -176,7 +192,7 @@ class CanSendShipmentTest extends TestCase
                 ],
                 'automaticShipmentSenderStatuses' => [0, 1, 2, 3],
                 'paymentInformation' => [
-                    'transaction_id' => 'test',
+                    'transaction_id' => 'ord_test123',
                 ],
                 'paymentInformationAvailable' => true,
                 'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_ORDER,
@@ -274,12 +290,12 @@ class CanSendShipmentTest extends TestCase
                 ],
                 'automaticShipmentSenderStatuses' => [0, 1, 2, 3],
                 'paymentInformation' => [
-                    'transaction_id' => 'test',
+                    'transaction_id' => 'tr_test123',
                 ],
                 'paymentInformationAvailable' => true,
                 'paymentType' => PaymentTypeEnum::PAYMENT_TYPE_PAYMENT,
                 'exception' => [],
-                'expected' => true,
+                'expected' => false,
             ],
         ];
     }

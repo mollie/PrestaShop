@@ -1,0 +1,7 @@
+Ciao firstName lastName,
+
+
+Ti inviamo questa email perché abbiamo riprovato a elaborare il pagamento ed è fallito. Il tuo abbonamento è stato annullato.
+
+Riferimento	Prodotto	Prezzo unitario (IVA escl.)	Quantità	Prezzo totale
+subscription_reference	product_name	unit_price	quantity	total_price

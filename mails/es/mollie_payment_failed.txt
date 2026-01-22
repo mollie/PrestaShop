@@ -1,0 +1,13 @@
+Hola {firstname} {lastname},
+
+Pago fallido
+
+Lo sentimos, pero su pago no pudo procesarse correctamente. Esto podría deberse a fondos insuficientes, una tarjeta caducada u otros problemas relacionados con el pago.
+
+No se preocupe, puede volver a intentar su pago fácilmente haciendo clic en el enlace a continuación.
+
+Para completar su pedido, [haga clic aquí para reintentar su pago]({checkout_url}).
+
+Si continúa experimentando problemas, no dude en ponerse en contacto con nuestro equipo de atención al cliente.
+
+[{shop_name}]({shop_url})

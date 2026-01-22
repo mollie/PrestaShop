@@ -5,7 +5,7 @@ import { CheckCircle, XCircle } from "lucide-react"
 import { PaymentMethodTabs } from "./payment-method-tabs"
 import { PaymentMethodsList } from "./payment-methods-list-component"
 import { PaymentMethodsSkeleton } from "./payment-methods-skeleton"
-import { paymentMethodsApiService, type PaymentMethod, type Country, type CustomerGroup } from "../../../services/PaymentMethodsApiService"
+import { paymentMethodsApiService, type PaymentMethod, type Country, type CustomerGroup, type Language } from "../../../services/PaymentMethodsApiService"
 import { usePaymentMethodsTranslations } from "../../../shared/hooks/use-payment-methods-translations"
 
 export default function PaymentMethodsPage() {
@@ -24,6 +24,7 @@ export default function PaymentMethodsPage() {
   const [disabledMethods, setDisabledMethods] = useState<PaymentMethod[]>([])
   const [countries, setCountries] = useState<Country[]>([])
   const [customerGroups, setCustomerGroups] = useState<CustomerGroup[]>([])
+  const [languages, setLanguages] = useState<Language[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
   const [savingMethodId, setSavingMethodId] = useState<string | null>(null)
@@ -45,6 +46,7 @@ export default function PaymentMethodsPage() {
         setDisabledMethods(disabled)
         setCountries(response.data.countries || [])
         setCustomerGroups(response.data.customerGroups || [])
+        setLanguages(response.data.languages || [])
       } else {
         setErrorMessage(response.message || t('loadingError'))
       }
@@ -322,6 +324,7 @@ export default function PaymentMethodsPage() {
           methods={currentMethods}
           countries={countries}
           customerGroups={customerGroups}
+          languages={languages}
           onToggleExpanded={toggleExpanded}
           onUpdateSettings={updateMethodSettings}
           onSaveSettings={saveMethodSettings}

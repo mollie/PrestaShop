@@ -7,7 +7,7 @@ import { Badge } from "../../../shared/components/ui/badge"
 import { ChevronDown, ChevronUp, GripVertical, CreditCard } from "lucide-react"
 import { cn } from "../../../shared/lib/utils"
 import { PaymentMethodSettings } from "./payment-method-settings"
-import type { PaymentMethod, Country, CustomerGroup } from "../../../services/PaymentMethodsApiService"
+import type { PaymentMethod, Country, CustomerGroup, Language } from "../../../services/PaymentMethodsApiService"
 import { usePaymentMethodsTranslations } from "../../../shared/hooks/use-payment-methods-translations"
 
 interface PaymentMethodCardProps {
@@ -15,6 +15,7 @@ interface PaymentMethodCardProps {
   index: number
   countries: Country[]
   customerGroups: CustomerGroup[]
+  languages: Language[]
   onToggleExpanded: () => void
   onUpdateSettings: (settings: Partial<PaymentMethod["settings"]>) => void
   onSaveSettings: () => void
@@ -34,6 +35,7 @@ export function PaymentMethodCard({
   index,
   countries,
   customerGroups,
+  languages,
   onToggleExpanded,
   onUpdateSettings,
   onSaveSettings,
@@ -174,6 +176,7 @@ export function PaymentMethodCard({
                 method={method}
                 countries={countries}
                 customerGroups={customerGroups}
+                languages={languages}
                 onUpdateSettings={onUpdateSettings}
                 onSaveSettings={onSaveSettings}
                 isSaving={isSaving}

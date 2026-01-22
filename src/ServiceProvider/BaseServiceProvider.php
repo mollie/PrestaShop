@@ -20,8 +20,8 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\Link;
 use Mollie\Adapter\Shop;
-use Mollie\Adapter\ToolsAdapter;
 use Mollie\Builder\ApiTestFeedbackBuilder;
+use Mollie\Calculator\PaymentFeeCalculator;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandler;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandlerInterface;
@@ -35,10 +35,6 @@ use Mollie\Handler\PaymentOption\PaymentOptionHandler;
 use Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface;
 use Mollie\Handler\RetryHandler;
 use Mollie\Handler\RetryHandlerInterface;
-use Mollie\Handler\Settings\CustomerGroupRestrictionHandler;
-use Mollie\Handler\Settings\CustomerGroupRestrictionHandlerInterface;
-use Mollie\Handler\Settings\PaymentMethodPositionHandler;
-use Mollie\Handler\Settings\PaymentMethodPositionHandlerInterface;
 use Mollie\Handler\Shipment\ShipmentSenderHandler;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
 use Mollie\Install\UninstallerInterface;
@@ -69,8 +65,6 @@ use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider;
 use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProviderInterface;
 use Mollie\Provider\TaxCalculatorProvider;
-use Mollie\Provider\UpdateMessageProvider;
-use Mollie\Provider\UpdateMessageProviderInterface;
 use Mollie\Repository\AddressFormatRepository;
 use Mollie\Repository\AddressFormatRepositoryInterface;
 use Mollie\Repository\AddressRepository;
@@ -156,6 +150,7 @@ use Mollie\Subscription\Utility\ClockInterface;
 use Mollie\Utility\Decoder\DecoderInterface;
 use Mollie\Utility\Decoder\JsonDecoder;
 use Mollie\Utility\NumberIdempotencyProvider;
+use Mollie\Validator\PaymentFeeValidator;
 use Mollie\Verification\PaymentType\CanBeRegularPaymentType;
 use Mollie\Verification\PaymentType\PaymentTypeVerificationInterface;
 use Mollie\Verification\Shipment\CanSendShipment;
@@ -256,8 +251,6 @@ final class BaseServiceProvider
 
         $this->addService($container, TemplateParserInterface::class, SmartyTemplateParser::class);
 
-        $this->addService($container, UpdateMessageProviderInterface::class, $container->get(UpdateMessageProvider::class));
-
         $this->addService($container, PaymentMethodSortProviderInterface::class, PaymentMethodSortProvider::class);
         $this->addService($container, PhoneNumberProviderInterface::class, PhoneNumberProvider::class);
 
@@ -274,9 +267,6 @@ final class BaseServiceProvider
         });
 
         $this->addService($container, CustomLogoProviderInterface::class, $container->get(CreditCardLogoProvider::class));
-
-        $service = $this->addService($container, PaymentMethodPositionHandlerInterface::class, PaymentMethodPositionHandler::class);
-        $this->addServiceArgument($service, PaymentMethodRepositoryInterface::class);
 
         // Payment Method Services
         $service = $this->addService($container, PaymentMethodConfigProvider::class, PaymentMethodConfigProvider::class);
@@ -302,6 +292,7 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, LoggerInterface::class);
         $this->addServiceArgument($service, ApiService::class);
         $this->addServiceArgument($service, Mollie::class);
+        $this->addServiceArgument($service, ApplePayDirectCertificateHandler::class);
 
         $service = $this->addService($container, PaymentMethodLogoHandler::class, PaymentMethodLogoHandler::class);
         $this->addServiceArgument($service, CreditCardLogoProvider::class);
@@ -328,6 +319,42 @@ final class BaseServiceProvider
 
         $this->addService($container, LogFormatterInterface::class, LogFormatter::class);
 
+        // Register PaymentFeeCalculator with factory - required by PaymentFeeProvider
+        $this->addService($container, PaymentFeeCalculator::class, function () use ($container) {
+            $context = $container->get(Context::class);
+            $taxCalculatorProvider = $container->get(TaxCalculatorProvider::class);
+
+            // Get tax calculator based on default country and current context
+            $psContext = \Context::getContext();
+            $countryId = (int) \Configuration::get('PS_COUNTRY_DEFAULT');
+            $taxRulesGroupId = 0;
+
+            // Try to get tax rules group from cart if available
+            if (isset($psContext->cart) && \Validate::isLoadedObject($psContext->cart)) {
+                $carrier = new \Carrier($psContext->cart->id_carrier);
+                if (\Validate::isLoadedObject($carrier) && property_exists($carrier, 'id_tax_rules_group')) {
+                    $taxRulesGroupId = (int) $carrier->id_tax_rules_group;
+                }
+            }
+
+            // Fallback to a default tax rules group from configuration if available
+            if (!$taxRulesGroupId) {
+                $taxRulesGroupId = (int) \Configuration::get('PS_TAX_RULES_GROUP');
+            }
+
+            // Create tax calculator
+            if ($taxRulesGroupId > 0) {
+                $taxCalculator = $taxCalculatorProvider->getTaxCalculator($taxRulesGroupId, $countryId, 0);
+            } else {
+                $taxCalculator = new \TaxCalculator([], 0);
+            }
+
+            return new PaymentFeeCalculator($taxCalculator, $context);
+        });
+
+        // Register PaymentFeeValidator - required by PaymentFeeProvider
+        $this->addService($container, PaymentFeeValidator::class, PaymentFeeValidator::class);
+
         $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
 
         $this->addService($container, PaymentOptionHandlerInterface::class, $container->get(PaymentOptionHandler::class));
@@ -347,9 +374,6 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, Context::class);
         $this->addServiceArgument($service, PaymentMethodLangRepositoryInterface::class);
         $this->addServiceArgument($service, CustomerRepository::class);
-
-        $service = $this->addService($container, CustomerGroupRestrictionHandlerInterface::class, CustomerGroupRestrictionHandler::class);
-        $this->addServiceArgument($service, ToolsAdapter::class);
 
         $service = $this->addService($container, OrderManagementAssetLoaderInterface::class, OrderManagementAssetLoader::class);
         $this->addServiceArgument($service, Mollie::class);

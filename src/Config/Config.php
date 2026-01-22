@@ -27,9 +27,7 @@ class Config
 {
     const SEGMENT_KEY = 'x8qDW8mWIlcY9SXbMhKLoH7xYQ1cSxF2';
 
-    const SENTRY_KEY = 'https://c2c43f02599847d682e0a1fb7843600f@o497594.ingest.sentry.io/5573860';
-
-    const SENTRY_ENV = 'MISSING_ENV';
+    const MODULE_ENV = 'MISSING_ENV';
 
     /**
      * Default payment method availability.
@@ -312,9 +310,6 @@ class Config
     const HIDE_RESENT_LINK = 'hide';
 
     const CARTES_BANCAIRES = 'cartesbancaires';
-
-    const MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE = 'MOLLIE_MODULE_UPGRADE_NOTICE_CLOSE_DATE';
-    const MODULE_UPGRADE_NOTICE_CLOSE_DURATION = 28;
 
     const MOLLIE_SHOW_CUSTOM_LOGO = 'MOLLIE_SHOW_CUSTOM_LOGO';
 
