@@ -1,0 +1,9 @@
+Hallo firstName lastName,
+
+
+We sturen u deze e-mail omdat het volgende artikel moest worden verlengd en de geregistreerde betaalmethode is mislukt. Log in op uw account en werk de betaalmethode bij.
+
+We blijven proberen uw betaling te verwerken, maar als dit blijft mislukken, wordt uw abonnement geannuleerd.
+
+Referentie	Product	Eenheidsprijs (excl. btw)	Aantal	Totaalprijs
+subscription_reference	product_name	unit_price	quantity	total_price

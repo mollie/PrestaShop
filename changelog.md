@@ -3,7 +3,15 @@
 # Changelog #
 
 ## Changes in release 6.4.1
++ Fixed issues with upgrade
 + Fixed payment fee calculation on checkout page
++ Fixed payment fee not displaying when maximum fee is set to 0
++ Re-added payment method title translations
++ Fixed partial refunds incorrectly triggering full refunds
++ Added pre-translated email templates for FR, DE, ES, NL, IT languages
++ Removed unused Sentry error tracking code
++ Fixed errors in logs when changing order statuses of Payments API orders
++ Fixed template path in subscription account hook breaking theme overrides
 
 ## Changes in release 6.4.0
 + Back-office re-design

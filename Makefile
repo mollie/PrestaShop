@@ -99,7 +99,7 @@ run-ps-unit-tests:
 	docker exec -i mollie-testing-env-prestashop-1.7.8-7.4 bash -c "cd /var/www/html/modules/mollie && php vendor/bin/phpunit -c tests/phpunit.xml --testsuite Unit"
 
 create-env:
-	echo "SENTRY_ENV='$(env)'" > .env
+	echo "MODULE_ENV='$(env)'" > .env
 
 build-react:
 	cd views/js/admin/library && npm install && npm run build && cd ../../../../..

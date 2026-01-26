@@ -96,7 +96,6 @@ class PaymentMethodSettingsHandler
      */
     public function handlePaymentMethodSave(string $methodId, array $settings, int $environment, int $shopId): void
     {
-        // Get or create payment method
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId(
             $methodId,
             $environment,
@@ -108,48 +107,39 @@ class PaymentMethodSettingsHandler
             $paymentMethod = new MolPaymentMethod((int) $paymentMethodId);
         }
 
-        // Fetch fresh data from Mollie API (same as old SettingsSaveService behavior)
-        // This ensures images_json and other API data is always up-to-date
         $apiMethodData = $this->fetchMethodFromApi($methodId);
 
-        // Handle basic settings
         $this->handleBasicSettings($paymentMethod, $methodId, $settings, $environment, $shopId, $apiMethodData);
 
-        // Handle payment fees
         if (isset($settings['paymentFees'])) {
             $this->handlePaymentFees($paymentMethod, $settings['paymentFees']);
         }
 
-        // Handle payment restrictions (before save to set flag)
         if (isset($settings['paymentRestrictions'])) {
             $this->handlePaymentRestrictionsFlag($paymentMethod, $settings['paymentRestrictions']);
         }
 
-        // Save payment method (creates record and populates ID)
         if (!$paymentMethod->save()) {
             throw new MollieException('Failed to save payment method');
         }
 
-        // Handle country and customer group restrictions (requires saved ID)
         if (isset($settings['paymentRestrictions'])) {
             $this->handlePaymentRestrictions($paymentMethod, $settings['paymentRestrictions']);
         }
 
-        // Handle title translations
-        if (isset($settings['title']) && !empty($settings['title'])) {
+        if (isset($settings['title'])) {
             $this->handleTitleTranslations($methodId, $settings['title'], $shopId);
         }
 
-        // Handle method-specific settings
         if ($methodId === 'creditcard') {
             $this->handleCreditCardSettings($settings, $environment);
         }
 
-        if ($methodId === 'applepay' && isset($settings['applePaySettings'])) {
+        if ($methodId === Config::APPLEPAY && isset($settings['applePaySettings'])) {
             $this->handleApplePaySettings($settings['applePaySettings']);
         }
 
-        if ($methodId === 'voucher' && isset($settings['voucherCategory'])) {
+        if ($methodId === Config::MOLLIE_VOUCHER_METHOD_ID && isset($settings['voucherCategory'])) {
             $this->handleVoucherSettings($settings);
         }
     }
@@ -178,17 +168,12 @@ class PaymentMethodSettingsHandler
         $paymentMethod->method = $settings['apiSelection'] ?? 'payments';
         $paymentMethod->description = $settings['transactionDescription'] ?? '';
 
-        // Save min/max amounts - user can override API defaults within API limits
-        // Empty values default to 0 and will use API limits in validation
         $paymentMethod->min_amount = (float) ($settings['orderRestrictions']['minAmount'] ?? 0);
         $paymentMethod->max_amount = (float) ($settings['orderRestrictions']['maxAmount'] ?? 0);
 
-        // Save image from API (matching old SettingsSaveService behavior)
-        // This keeps images_json up-to-date with Mollie API
         if ($apiMethodData && isset($apiMethodData['image'])) {
             $paymentMethod->images_json = json_encode($apiMethodData['image']);
         } elseif (!$paymentMethod->images_json) {
-            // If no API data and no existing image, set empty array to avoid NULL
             $paymentMethod->images_json = json_encode([]);
         }
 
@@ -224,7 +209,6 @@ class PaymentMethodSettingsHandler
             }
         }
 
-        // Validate surcharge percentage
         if ($feeType === 2 || $feeType === 3) {
             $surchargePercentage = (float) ($paymentFees['percentageFee'] ?? 0);
             if ($surchargePercentage <= -100 || $surchargePercentage >= 100) {
@@ -298,26 +282,84 @@ class PaymentMethodSettingsHandler
      * Handle title translations for all languages
      *
      * @param string $methodId Method ID
-     * @param string $title Title text
+     * @param array|string $titles Title translations (array with language IDs as keys or single string for BC)
      * @param int $shopId Shop ID
      */
-    private function handleTitleTranslations(string $methodId, string $title, int $shopId): void
+    private function handleTitleTranslations(string $methodId, $titles, int $shopId): void
     {
         try {
             $languages = \Language::getLanguages(false, $shopId);
-            foreach ($languages as $language) {
-                $this->paymentMethodLangRepository->savePaymentTitleTranslation(
-                    $methodId,
-                    (int) $language['id_lang'],
-                    $title,
-                    $shopId
-                );
+
+            if (is_string($titles)) {
+                $this->saveStringTitleForAllLanguages($methodId, $titles, $languages, $shopId);
+
+                return;
+            }
+
+            if (is_array($titles)) {
+                $this->saveArrayTitlesForLanguages($methodId, $titles, $languages, $shopId);
             }
         } catch (\Exception $e) {
             $this->logger->error('Failed to save title translations', [
                 'method_id' => $methodId,
                 'exception' => ExceptionUtility::getExceptions($e),
             ]);
+        }
+    }
+
+    /**
+     * Save single string title for all languages
+     *
+     * @param string $methodId Method ID
+     * @param string $title Title to save
+     * @param array $languages Available languages
+     * @param int $shopId Shop ID
+     */
+    private function saveStringTitleForAllLanguages(string $methodId, string $title, array $languages, int $shopId): void
+    {
+        if (empty($title)) {
+            return;
+        }
+
+        foreach ($languages as $language) {
+            $this->paymentMethodLangRepository->savePaymentTitleTranslation(
+                $methodId,
+                (int) $language['id_lang'],
+                $title,
+                $shopId
+            );
+        }
+    }
+
+    /**
+     * Save language-specific titles from array
+     *
+     * @param string $methodId Method ID
+     * @param array $titles Titles indexed by language ID
+     * @param array $languages Available languages
+     * @param int $shopId Shop ID
+     */
+    private function saveArrayTitlesForLanguages(string $methodId, array $titles, array $languages, int $shopId): void
+    {
+        foreach ($languages as $language) {
+            $langId = (int) $language['id_lang'];
+
+            if (!isset($titles[$langId])) {
+                continue;
+            }
+
+            $translation = $titles[$langId];
+
+            if (empty($translation)) {
+                continue;
+            }
+
+            $this->paymentMethodLangRepository->savePaymentTitleTranslation(
+                $methodId,
+                $langId,
+                $translation,
+                $shopId
+            );
         }
     }
 

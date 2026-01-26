@@ -10,7 +10,6 @@
  * @codingStandardsIgnoreStart
  */
 
-use Configuration;
 use Mollie\Config\Config;
 
 if (!defined('_PS_VERSION_')) {
@@ -24,7 +23,7 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_6_3_0($module)
 {
-    Configuration::updateValue(Config::MOLLIE_MAIL_WHEN_FAILED, false);
+    \Configuration::updateValue(Config::MOLLIE_MAIL_WHEN_FAILED, false);
 
     return true;
 }

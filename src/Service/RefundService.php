@@ -59,6 +59,8 @@ class RefundService
 
             $isPartialRefund = !empty($orderLineId) || $amount !== null;
 
+            $currency = $payment->amount->currency;
+
             if ($isPartialRefund && TransactionUtility::isOrderTransaction($transactionId)) {
                 $payment->refund([
                     'lines' => [
@@ -66,7 +68,7 @@ class RefundService
                     ],
                 ]);
 
-                return $this->createSuccessResponse();
+                return $this->createSuccessResponse(true, null, $currency);
             }
 
             $refundAmount = $this->calculateRefundAmount($payment, $amount);
@@ -74,9 +76,11 @@ class RefundService
                 $refundAmount = $payment->amount->value;
             }
 
+            $isPartial = $amount !== null && (float) $refundAmount < (float) $payment->amount->value;
+
             $this->processRefund($payment, $refundAmount, TransactionUtility::isOrderTransaction($transactionId));
 
-            return $this->createSuccessResponse();
+            return $this->createSuccessResponse($isPartial, $refundAmount, $currency);
         } catch (ApiException $e) {
             return $this->createErrorResponse('The order could not be refunded!', $e);
         } catch (Throwable $e) {
@@ -112,12 +116,6 @@ class RefundService
      */
     private function processRefund($payment, string $refundAmount, bool $isOrderTransaction): void
     {
-        if ($isOrderTransaction) {
-            $payment->refundAll();
-
-            return;
-        }
-
         $payment->refund([
             'amount' => [
                 'currency' => $payment->amount->currency,
@@ -145,11 +143,19 @@ class RefundService
         ];
     }
 
-    private function createSuccessResponse(): array
+    private function createSuccessResponse(bool $isPartial = false, ?string $amount = null, ?string $currency = null): array
     {
+        if ($isPartial) {
+            $message = $amount
+                ? sprintf($this->module->l('Partial refund of %s %s processed successfully.', self::FILE_NAME), $currency, $amount)
+                : $this->module->l('Partial refund processed successfully.', self::FILE_NAME);
+        } else {
+            $message = $this->module->l('Full refund processed successfully.', self::FILE_NAME);
+        }
+
         return [
             'success' => true,
-            'msg_success' => $this->module->l('The order has been refunded!', self::FILE_NAME),
+            'msg_success' => $message,
             'msg_details' => $this->module->l('Mollie will transfer the amount back to the customer on the next business day.', self::FILE_NAME),
         ];
     }

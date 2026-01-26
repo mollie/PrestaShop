@@ -498,6 +498,7 @@ class Mollie extends PaymentModule
                             'processing' => $this->l('Processing...'),
                             'configurationError' => $this->l('Configuration error'),
                             'refundFullOrderConfirm' => $this->l('Are you sure you want to refund the full order amount? This action cannot be undone.'),
+                            'refundPartialConfirm' => $this->l('Are you sure you want to refund %s? This action cannot be undone.'),
                             'refundOrderConfirm' => $this->l('Are you sure you want to refund this order? This action cannot be undone.'),
                             'captureFullOrderConfirm' => $this->l('Are you sure you want to capture the full order amount?'),
                             'capturePaymentConfirm' => $this->l('Are you sure you want to capture this payment?'),
@@ -1275,7 +1276,7 @@ class Mollie extends PaymentModule
             'id_customer' => $id_customer,
         ]);
 
-        return $this->display(dirname(__FILE__), '/views/templates/front/subscription/customerAccount.tpl');
+        return $this->display(__FILE__, 'views/templates/front/subscription/customerAccount.tpl');
     }
 
     /**
@@ -1314,32 +1315,6 @@ class Mollie extends PaymentModule
 
         $this->setApiKey($shopId);
     }
-
-    public function runUpgradeModule()
-    {
-        /* if module is upgraded from older versions to new 6+ then vendor changes are not found on first try and we need to ask to try again */
-        try {
-            /** @var Mollie\Tracker\Segment $segment */
-            $segment = $this->getService(Mollie\Tracker\Segment::class);
-
-            $segment->setMessage('Mollie module upgrade');
-            $segment->track();
-
-            return parent::runUpgradeModule();
-        } catch (TypeError $e) {
-            // PrestaShop 9 compatibility
-        } catch (Error $e) {
-            http_response_code(Response::HTTP_INTERNAL_SERVER_ERROR);
-
-            /** @var LoggerInterface $logger */
-            $logger = $this->getService(LoggerInterface::class);
-
-            $logger->info('The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com');
-
-            exit($this->l('The module upload requires an extra refresh. Please upload the Mollie module ZIP file once again. If you still get this error message after attempting another upload, please contact Mollie support with this screenshot and they will guide through the next steps: info@mollie.com'));
-        }
-    }
-
     public function hookActionAjaxDieCartControllerDisplayAjaxUpdateBefore(array $params): void
     {
         if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.7.0')) {

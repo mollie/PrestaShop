@@ -1,0 +1,7 @@
+Hallo firstName lastName,
+
+
+We sturen u deze e-mail omdat we opnieuw hebben geprobeerd de betaling te verwerken en dit is mislukt. Uw abonnement is geannuleerd.
+
+Referentie	Product	Eenheidsprijs (excl. btw)	Aantal	Totaalprijs
+subscription_reference	product_name	unit_price	quantity	total_price

@@ -1,0 +1,8 @@
+Bonjour firstName lastName,
+
+Nous vous envoyons cet e-mail car le transporteur de l'abonnement suivant a été mis à jour.
+
+Connectez-vous à votre compte pour consulter les informations mises à jour de l'abonnement.
+
+Référence	Produit	Prix unitaire (HT)	Quantité	Prix total
+subscription_reference	product_name	unit_price	quantity	total_price

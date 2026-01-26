@@ -1,0 +1,9 @@
+Ciao firstName lastName,
+
+
+Ti inviamo questa email perché il seguente articolo era programmato per il rinnovo e il metodo di pagamento registrato è fallito. Accedi al tuo account e aggiorna il metodo di pagamento.
+
+Continueremo a provare a elaborare il tuo pagamento, ma se continua a fallire, il tuo abbonamento verrà annullato.
+
+Riferimento	Prodotto	Prezzo unitario (IVA escl.)	Quantità	Prezzo totale
+subscription_reference	product_name	unit_price	quantity	total_price
