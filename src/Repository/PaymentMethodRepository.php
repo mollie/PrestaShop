@@ -107,7 +107,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
         try {
             $nonPaidPayment = Db::getInstance()->getRow(
                 sprintf(
-                    'SELECT * FROM `%s` WHERE `%s` = \'%s\' AND `is_seen` = 0 ORDER BY `created_at` DESC',
+                    'SELECT * FROM `%s` WHERE `%s` = \'%s\' ORDER BY `created_at` DESC',
                     _DB_PREFIX_ . 'mollie_payments',
                     bqSQL($column),
                     pSQL($value)
@@ -118,6 +118,36 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
         }
 
         return $nonPaidPayment;
+    }
+
+    /**
+     * Get the latest unseen payment by column/value.
+     *
+     * This is similar to getPaymentBy but only returns payments that have not been marked as seen.
+     *
+     * @param string     $column
+     * @param string|int $value
+     *
+     * @return array|bool|object|null
+     *
+     * @throws PrestaShopDatabaseException
+     */
+    public function getUnseenPaymentBy($column, $value)
+    {
+        try {
+            $unseenPayment = Db::getInstance()->getRow(
+                sprintf(
+                    'SELECT * FROM `%s` WHERE `%s` = \'%s\' AND (`is_seen` = 0 OR `is_seen` IS NULL) ORDER BY `created_at` DESC',
+                    _DB_PREFIX_ . 'mollie_payments',
+                    bqSQL($column),
+                    pSQL($value)
+                )
+            );
+        } catch (PrestaShopDatabaseException $e) {
+            throw $e;
+        }
+
+        return $unseenPayment;
     }
 
     /**
@@ -229,6 +259,8 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
     /**
      * Flag failed payment records with cart ID
      *
+     * @param int $cartId
+     *
      * @return bool True if records were updated, false otherwise
      *
      * @throws PrestaShopDatabaseException
@@ -236,7 +268,11 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
     public function flagOldPaymentRecordsByCartId(int $cartId): bool
     {
         if (!$cartId) {
-            $cartId = Context::getContext()->cart->id;
+            $context = Context::getContext();
+            if (!isset($context->cart) || !$context->cart->id) {
+                return false;
+            }
+            $cartId = (int) $context->cart->id;
         }
 
         $result = Db::getInstance()->update(
@@ -250,14 +286,23 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
         return $result > 0;
     }
 
-    public function setPaymentAsSeen(string $transactionId)
+    /**
+     * Mark a payment record as seen by transaction ID
+     *
+     * @param string $transactionId
+     *
+     * @return bool
+     *
+     * @throws PrestaShopDatabaseException
+     */
+    public function setPaymentAsSeen(string $transactionId): bool
     {
         return Db::getInstance()->update(
             'mollie_payments',
             [
                 'is_seen' => 1,
             ],
-            'transaction_id = ' . (int) $transactionId
+            '`transaction_id` = \'' . pSQL($transactionId) . '\''
         );
     }
 }

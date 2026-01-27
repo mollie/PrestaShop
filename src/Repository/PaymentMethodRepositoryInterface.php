@@ -26,6 +26,8 @@ interface PaymentMethodRepositoryInterface extends ReadOnlyRepositoryInterface
 
     public function getPaymentBy($column, $value);
 
+    public function getUnseenPaymentBy($column, $value);
+
     public function getMethodsForCheckout($environment, $shopId);
 
     public function updateTransactionId($oldTransactionId, $newTransactionId);
@@ -39,4 +41,6 @@ interface PaymentMethodRepositoryInterface extends ReadOnlyRepositoryInterface
     public function getCustomerGroupsForPaymentMethod(int $paymentMethodId): array;
 
     public function flagOldPaymentRecordsByCartId(int $cartId): bool;
+
+    public function setPaymentAsSeen(string $transactionId): bool;
 }

@@ -161,7 +161,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             return $payment;
         }
 
-        $paymentInfo = $paymentMethodRepo->getPaymentBy('order_reference', $orderNumber);
+        $paymentInfo = $paymentMethodRepo->getUnseenPaymentBy('order_reference', $orderNumber);
 
         if ($paymentInfo !== false) {
             return $paymentInfo;
@@ -169,7 +169,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         $orderId = (int) Order::getIdByCartId($idCart);
         if ($orderId !== 0) {
-            $payment = $paymentMethodRepo->getPaymentBy('order_id', $orderId) ?: [];
+            $payment = $paymentMethodRepo->getUnseenPaymentBy('order_id', $orderId) ?: [];
             if (empty($payment)) {
                 $logger->error(sprintf(
                     '%s - Payment not found by order ID: %d',
@@ -348,8 +348,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         $orderId = (int) Order::getIdByCartId((int) Tools::getValue('cart_id'));
 
-        $dbPayment = $paymentInformation = $orderId != 0 ? $paymentMethodRepo->getPaymentBy('order_id', (int) $orderId)
-            : $paymentMethodRepo->getPaymentBy('cart_id', (int) Tools::getValue('cart_id'));
+        $dbPayment = $paymentInformation = $orderId != 0 ? $paymentMethodRepo->getUnseenPaymentBy('order_id', (int) $orderId)
+            : $paymentMethodRepo->getUnseenPaymentBy('cart_id', (int) Tools::getValue('cart_id'));
 
         if (!$dbPayment) {
             exit(json_encode([
