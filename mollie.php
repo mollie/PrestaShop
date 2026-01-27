@@ -103,7 +103,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.4.1';
+        $this->version = '6.4.2';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -658,6 +658,8 @@ class Mollie extends PaymentModule
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
         $paymentMethodRepository = $this->getService(PaymentMethodRepositoryInterface::class);
 
+        $paymentMethodRepository->flagOldPaymentRecordsByCartId($params['cart']->id);
+
         /** @var \Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface $paymentOptionsHandler */
         $paymentOptionsHandler = $this->getService(\Mollie\Handler\PaymentOption\PaymentOptionHandlerInterface::class);
 
@@ -1108,6 +1110,19 @@ class Mollie extends PaymentModule
 
     public function hookActionValidateOrder($params)
     {
+        try {
+            /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
+            $paymentMethodRepository = $this->getService(PaymentMethodRepositoryInterface::class);
+            $paymentMethodRepository->flagOldPaymentRecordsByCartId($params['cart']->id);
+        } catch (Throwable $e) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->getService(LoggerInterface::class);
+
+            $logger->error(sprintf('%s - Error while flagging old payment records', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+        }
+
         if (!isset($this->context->controller) || 'admin' !== $this->context->controller->controller_type) {
             return;
         }
