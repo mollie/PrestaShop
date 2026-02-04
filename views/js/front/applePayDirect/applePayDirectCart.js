@@ -23,14 +23,15 @@ $(document).ready(function () {
     createAppleButton(applePayMethodElement, buttonStyle)
 
     $( document ).ajaxComplete(function( event, request, settings) {
-        var method = getUrlParam('action', settings.url)
-
-        if (method === 'refresh') {
+        setTimeout(function() {
             applePayMethodElement = document.querySelector(
                 '#mollie-applepay-direct-button',
             )
-            createAppleButton(applePayMethodElement, buttonStyle)
-        }
+
+            if (applePayMethodElement && !document.querySelector('#mollie_applepay_button')) {
+                createAppleButton(applePayMethodElement, buttonStyle)
+            }
+        }, 100);
     });
 
 
