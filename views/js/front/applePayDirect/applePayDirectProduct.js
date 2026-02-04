@@ -43,7 +43,7 @@ $(document).ready(function () {
         const subtotal = product.quantity_wanted * product.price_amount;
         var supportedApplePaySessionVersion = 3;
         const session = new ApplePaySession(supportedApplePaySessionVersion, createRequest(countryCode, currencyCode, totalLabel, subtotal))
-        var cartId;
+        var applePayCartId = cartId;
         session.begin()
         session.onvalidatemerchant = (applePayValidateMerchantEvent) => {
             jQuery.ajax({
@@ -51,12 +51,13 @@ $(document).ready(function () {
                 method: 'POST',
                 data: {
                     action: 'mollie_apple_pay_validation',
-                    validationUrl: applePayValidateMerchantEvent.validationURL
+                    validationUrl: applePayValidateMerchantEvent.validationURL,
+                    cartId: applePayCartId
                 },
                 success: (merchantSession) => {
                     merchantSession = JSON.parse(merchantSession);
                     if (merchantSession.success === true) {
-                        cartId = merchantSession.cartId
+                        applePayCartId = merchantSession.cartId
                         session.completeMerchantValidation(JSON.parse(merchantSession.data))
                     } else {
                         console.warn(merchantSession.error)
@@ -89,7 +90,7 @@ $(document).ready(function () {
                     shippingContact: ApplePayPayment.payment.shippingContact,
                     billingContact: ApplePayPayment.payment.billingContact,
                     token: ApplePayPayment.payment.token,
-                    cartId: cartId,
+                    cartId: applePayCartId,
                 },
                 success: (authorizationResult) => {
                     let result = JSON.parse(authorizationResult)
@@ -118,7 +119,7 @@ $(document).ready(function () {
                     action: 'mollie_apple_pay_update_shipping_method',
                     shippingMethod: event.shippingMethod,
                     simplifiedContact: updatedContactInfo,
-                    cartId: cartId
+                    cartId: applePayCartId
                 },
                 success: (applePayShippingMethodUpdate) => {
                     let response = JSON.parse(applePayShippingMethodUpdate)
@@ -161,7 +162,7 @@ $(document).ready(function () {
                     postalCode: event.shippingContact.postalCode,
                     simplifiedContact: event.shippingContact,
                     products: products,
-                    cartId: cartId,
+                    cartId: applePayCartId,
                     customerId: customerId
                 },
                 success: (applePayShippingContactUpdate) => {
