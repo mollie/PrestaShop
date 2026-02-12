@@ -205,7 +205,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
                     $psOrderReference = $psOrder->reference ?? 'N/A';
                 }
             } catch (\Throwable $e) {
-                // silently ignore — we are already in error handling
+                // silently ignore - we are already in error handling
             }
         }
 

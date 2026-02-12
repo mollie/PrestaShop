@@ -603,9 +603,6 @@ class TransactionService
         return $apiPayment->hasChargebacks();
     }
 
-    /**
-     * @param Payment|MollieOrderAlias $apiPayment
-     */
     private function logOrderAlreadyCreated($apiPayment): void
     {
         /** @var \Mollie\Logger\LoggerInterface $moduleLogger */
