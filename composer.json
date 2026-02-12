@@ -55,6 +55,9 @@
         "prepend-autoloader": false,
         "allow-plugins": {
             "php-http/discovery": false
+        },
+        "audit": {
+            "block-insecure": false
         }
     },
     "type": "prestashop-module",
