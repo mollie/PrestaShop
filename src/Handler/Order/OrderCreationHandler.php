@@ -148,6 +148,37 @@ class OrderCreationHandler
         $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmount);
 
         if (Order::getIdByCartId((int) $cartId)) {
+            $existingOrderId = (int) Order::getIdByCartId((int) $cartId);
+            $existingOrder = new Order($existingOrderId);
+
+            /** @var \Mollie\Logger\LoggerInterface $moduleLogger */
+            $moduleLogger = $this->module->getService(\Mollie\Logger\LoggerInterface::class);
+
+            $moduleLogger->error(sprintf('%s - Order already exists for cart, skipping creation', self::FILE_NAME), [
+                'context' => [
+                    'transaction_id' => $apiPayment->id,
+                    'mollie_status' => $apiPayment->status,
+                    'mollie_method' => $apiPayment->method ?? 'N/A',
+                    'mollie_amount' => $apiPayment->amount->value ?? 'N/A',
+                    'mollie_currency' => $apiPayment->amount->currency ?? 'N/A',
+                    'mollie_created_at' => $apiPayment->createdAt ?? 'N/A',
+                    'mollie_paid_at' => $apiPayment->paidAt ?? 'N/A',
+                    'mollie_mode' => $apiPayment->mode ?? 'N/A',
+                    'resource_type' => $apiPayment->resource ?? 'N/A',
+                    'cart_id' => $cartId,
+                    'cart_total' => $originalAmount,
+                    'existing_order_id' => $existingOrderId,
+                    'existing_order_reference' => $existingOrder->reference ?? 'N/A',
+                    'existing_order_current_state' => (int) ($existingOrder->current_state ?? 0),
+                    'existing_order_date_add' => $existingOrder->date_add ?? 'N/A',
+                    'existing_order_total_paid' => $existingOrder->total_paid ?? 'N/A',
+                    'existing_order_payment' => $existingOrder->payment ?? 'N/A',
+                    'is_authorizable_payment' => $isAuthorizablePayment,
+                    'order_status_intended' => $orderStatus,
+                    'timestamp' => date('Y-m-d H:i:s'),
+                ],
+            ]);
+
             return 0;
         }
 
