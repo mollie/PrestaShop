@@ -55,6 +55,9 @@
         "prepend-autoloader": false,
         "allow-plugins": {
             "php-http/discovery": false
+        },
+        "audit": {
+            "ignored": ["PKSA-23gr-8qht-p93v"]
         }
     },
     "type": "prestashop-module",
