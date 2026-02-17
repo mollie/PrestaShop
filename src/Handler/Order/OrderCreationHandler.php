@@ -53,6 +53,7 @@ use Mollie\Exception\OrderCreationException;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
+use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentFeeTextService;
@@ -98,6 +99,8 @@ class OrderCreationHandler
     private $paymentFeeProvider;
     /** @var PrestaLoggerInterface */
     private $logger;
+    /** @var OrderRepositoryInterface */
+    private $orderRepository;
 
     public function __construct(
         ModuleFactory $module,
@@ -108,7 +111,8 @@ class OrderCreationHandler
         SubscriptionCreationHandler $recurringOrderCreation,
         SubscriptionOrderValidator $subscriptionOrder,
         PaymentFeeProviderInterface $paymentFeeProvider,
-        PrestaLoggerInterface $logger
+        PrestaLoggerInterface $logger,
+        OrderRepositoryInterface $orderRepository
     ) {
         $this->module = $module->getModule();
         $this->paymentMethodRepository = $paymentMethodRepository;
@@ -119,6 +123,7 @@ class OrderCreationHandler
         $this->subscriptionOrder = $subscriptionOrder;
         $this->paymentFeeProvider = $paymentFeeProvider;
         $this->logger = $logger;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -195,8 +200,7 @@ class OrderCreationHandler
                 $cart->secure_key
             );
 
-            /* @phpstan-ignore-next-line */
-            $orderId = (int) Order::getIdByCartId((int) $cartId);
+            $orderId = $this->orderRepository->getOrderIdByCartId((int) $cartId);
 
             $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method);
 
@@ -251,8 +255,7 @@ class OrderCreationHandler
             $cart->secure_key
         );
 
-        /* @phpstan-ignore-next-line */
-        $orderId = (int) Order::getIdByCartId((int) $cartId);
+        $orderId = $this->orderRepository->getOrderIdByCartId((int) $cartId);
 
         $this->orderPaymentFeeHandler->addOrderPaymentFee($orderId, $apiPayment);
 
@@ -302,7 +305,7 @@ class OrderCreationHandler
             $cart->secure_key
         );
 
-        $orderId = Order::getIdByCartId($cart->id);
+        $orderId = $this->orderRepository->getOrderIdByCartId((int) $cart->id);
         $order = new Order($orderId);
 
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
