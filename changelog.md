@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.2
++ Disabled Google Pay payment method in database on upgrade for merchants who previously had it enabled
+
 ## Changes in release 6.4.1
 + Fixed issues with upgrade
 + Fixed payment fee calculation on checkout page
