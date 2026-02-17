@@ -57,7 +57,7 @@
             "php-http/discovery": false
         },
         "audit": {
-            "ignored": ["PKSA-23gr-8qht-p93v"]
+            "block-insecure": false
         }
     },
     "type": "prestashop-module",
