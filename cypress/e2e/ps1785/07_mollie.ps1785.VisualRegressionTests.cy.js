@@ -13,22 +13,17 @@ describe('PS1785 Visual Regression tests suite', {
     cy.CachingBOFOPS1785()
 })
 it('PS1785 - Testing the visual regression of General Settings page', () => {
-  cy.visit('/admin1/')
-  cy.get('.mi-mollie').click({fore:true})
-  cy.get('#subtab-AdminMollieModule').click()
+  cy.OpeningModuleDashboardURL()
   cy.matchImage();
 });
 it('PS1785 - Testing the visual regression of Advanced Settings page', () => {
-  cy.visit('/admin1/')
-  cy.get('.mi-mollie').click({fore:true})
-  cy.get('#subtab-AdminMollieModule').click()
-  cy.contains('Advanced settings').click()
+  cy.OpeningModuleDashboardURL()
+  cy.get('#subtab-AdminMollieAdvancedSettingsParent a').first().click({force:true})
+  cy.get('#mollie-advanced-settings-root', {timeout: 30000}).should('be.visible')
   cy.matchImage();
 });
 it('PS1785 - Testing the visual regression of Subscriptions FAQ', () => {
-  cy.visit('/admin1/')
-  cy.get('.mi-mollie').click({fore:true})
-  cy.get('#subtab-AdminMollieModule').click()
+  cy.OpeningModuleDashboardURL()
   cy.get('#subtab-AdminMollieSubscriptionFAQ').click()
   cy.matchImage();
 });

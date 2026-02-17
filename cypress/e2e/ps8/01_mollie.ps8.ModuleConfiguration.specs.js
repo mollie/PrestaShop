@@ -19,19 +19,23 @@ describe('PS8 Module initial configuration setup', () => {
       cy.CachingBOFOPS8()
   })
 it('C339305: Connecting test API successsfully', () => {
-      cy.visit('/admin1/')
-      cy.get('.mi-mollie').click({fore:true})
-      cy.get('#subtab-AdminMollieModule').click()
+      cy.OpeningModuleDashboardURL()
       cy.get('body')
       .invoke('text').should('contain','Mollie')
       .then((text) => {
-      cy.log(text) // Showing and asserting the text that loaded, to ensure the BO is loaded, not crashed with PHP fatals etc.
+      cy.log(text)
       })
-      cy.iframe('[id^="uid_"]').find('button').click() // Cloudsync validation
-      cy.wait(15000) // Waiting for validation to process until the end
-      cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click({force:true})
-      cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
-      cy.get('#module_form_submit_btn').click()
+      cy.get('body').then(($body) => {
+        if ($body.find('#cdc-container button').length > 0) {
+          cy.get('#cdc-container button').click() // Authorize and continue - dependency resolver
+          cy.wait(15000)
+          cy.OpeningModuleDashboardURL()
+        }
+      })
+      cy.get('#mollie-authentication-root', {timeout: 30000}).should('be.visible')
+      cy.get('#mollie-authentication-root input[placeholder]', {timeout: 10000}).clear({force:true}).type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
+      cy.get('#mollie-authentication-root').contains('Connect').click()
+      cy.get('#mollie-authentication-root', {timeout: 15000}).should('contain', 'Connected')
 })
 it('C339338: Enabling Mollie carriers in Prestashop successfully', () => {
       cy.visit('/admin1/')
@@ -43,7 +47,7 @@ it('C339338: Enabling Mollie carriers in Prestashop successfully', () => {
 })
 it('C339339: Checking the Advanced Settings tab, verifying the Front-end components, Saving the form, checking if there are no Errors in Console', () => {
       cy.OpeningModuleDashboardURL()
-      cy.get('[href="#advanced_settings"]').click({force:true})
+      cy.get('#subtab-AdminMollieAdvancedSettingsParent a').first().click({force:true})
       cy.advancedSettingsValidation()
       cy.reload()
       cy.wait(3000)
