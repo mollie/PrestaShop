@@ -54,6 +54,9 @@ jobs:
           npm update
           npx browserslist@latest --update-db
 
+      - name: Build React admin UI
+        run: make build-react
+
       - name: ${{ matrix.prestashop }} installing / Module Install and Uninstall testing
         run: |
           ${{ matrix.make }}

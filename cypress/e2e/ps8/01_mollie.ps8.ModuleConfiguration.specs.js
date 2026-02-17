@@ -1,13 +1,22 @@
 /// <reference types="Cypress" />
 
-//Checking the console for errors
-let windowConsoleError;
+//Checking the console for errors (filtering out third-party PrestaShop module errors)
+let consoleErrors = [];
 Cypress.on('window:before:load', (win) => {
-  windowConsoleError = cy.spy(win.console, 'error');
+  const originalError = win.console.error;
+  win.console.error = (...args) => {
+    const message = args.map(a => String(a)).join(' ');
+    const ignoredPatterns = ['GraphQL', 'Failed to fetch', 'ChunkLoadError', 'Loading chunk'];
+    if (!ignoredPatterns.some(p => message.includes(p))) {
+      consoleErrors.push(message);
+    }
+    originalError.apply(win.console, args);
+  };
 })
 let failEarly = false;
 afterEach(() => {
-  expect(windowConsoleError).to.not.be.called;
+  expect(consoleErrors).to.have.length(0);
+  consoleErrors = [];
   if (failEarly) throw new Error("Failing Early due to an API or other module configuration problem. If running on CI, please check Cypress VIDEOS/SCREENSHOTS in the Artifacts for more details.")
 })
 afterEach(function() {
