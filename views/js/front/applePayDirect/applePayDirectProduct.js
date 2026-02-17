@@ -20,6 +20,13 @@ $(document).ready(function () {
 
     let buttonStyle = getApplePayButtonStyle();
     createAppleButton(applePayMethodElement, buttonStyle)
+    toggleApplePayVisibility()
+
+    if (typeof prestashop !== 'undefined') {
+        prestashop.on('updatedProduct', function () {
+            toggleApplePayVisibility()
+        });
+    }
 
     let updatedContactInfo = []
     let selectedShippingMethod = []
@@ -278,4 +285,28 @@ function createAppleButton(ApplePayButtonElement, buttonStyle) {
     button.classList.add('apple-pay-button')
     button.classList.add(buttonStyle)
     ApplePayButtonElement.appendChild(button)
+}
+
+function toggleApplePayVisibility() {
+    var container = document.querySelector('#mollie-applepay-direct-button');
+    if (!container) {
+        return;
+    }
+    if (!isAddToCartAvailable()) {
+        container.style.display = 'none';
+        return;
+    }
+    container.style.display = '';
+}
+
+function isAddToCartAvailable() {
+    var addToCartButton = document.querySelector('.add-to-cart[data-button-action="add-to-cart"]');
+    if (addToCartButton && addToCartButton.disabled) {
+        return false;
+    }
+    var unavailableIndicator = document.querySelector('#product-availability .product-unavailable');
+    if (unavailableIndicator) {
+        return false;
+    }
+    return true;
 }

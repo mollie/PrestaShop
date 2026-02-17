@@ -21,6 +21,7 @@ $(document).ready(function () {
 
     let buttonStyle = getApplePayButtonStyle();
     createAppleButton(applePayMethodElement, buttonStyle)
+    toggleApplePayVisibility()
 
     $( document ).ajaxComplete(function( event, request, settings) {
         var method = getUrlParam('action', settings.url)
@@ -30,8 +31,15 @@ $(document).ready(function () {
                 '#mollie-applepay-direct-button',
             )
             createAppleButton(applePayMethodElement, buttonStyle)
+            toggleApplePayVisibility()
         }
     });
+
+    if (typeof prestashop !== 'undefined') {
+        prestashop.on('updatedCart', function () {
+            toggleApplePayVisibility()
+        });
+    }
 
 
     let updatedContactInfo = []
@@ -274,4 +282,28 @@ function createAppleButton(ApplePayButtonElement, buttonStyle) {
     button.classList.add('apple-pay-button')
     button.classList.add(buttonStyle)
     ApplePayButtonElement.appendChild(button)
+}
+
+function toggleApplePayVisibility() {
+    var container = document.querySelector('#mollie-applepay-direct-button');
+    if (!container) {
+        return;
+    }
+    if (!isCheckoutAvailable()) {
+        container.style.display = 'none';
+        return;
+    }
+    container.style.display = '';
+}
+
+function isCheckoutAvailable() {
+    var cartActions = document.querySelector('.cart-detailed-actions');
+    if (cartActions && cartActions.querySelector('button[disabled]')) {
+        return false;
+    }
+    var cartError = document.querySelector('.checkout.cart-detailed-actions .disabled, #notifications article.alert-danger');
+    if (cartError) {
+        return false;
+    }
+    return true;
 }
