@@ -54,6 +54,7 @@ use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentFeeTextService;
 use Mollie\Service\PaymentMethodService;
@@ -98,6 +99,8 @@ class OrderCreationHandler
     private $paymentFeeProvider;
     /** @var PrestaLoggerInterface */
     private $logger;
+    /** @var MollieOrderCreationService */
+    private $mollieOrderCreationService;
 
     public function __construct(
         ModuleFactory $module,
@@ -108,7 +111,8 @@ class OrderCreationHandler
         SubscriptionCreationHandler $recurringOrderCreation,
         SubscriptionOrderValidator $subscriptionOrder,
         PaymentFeeProviderInterface $paymentFeeProvider,
-        PrestaLoggerInterface $logger
+        PrestaLoggerInterface $logger,
+        MollieOrderCreationService $mollieOrderCreationService
     ) {
         $this->module = $module->getModule();
         $this->paymentMethodRepository = $paymentMethodRepository;
@@ -119,6 +123,7 @@ class OrderCreationHandler
         $this->subscriptionOrder = $subscriptionOrder;
         $this->paymentFeeProvider = $paymentFeeProvider;
         $this->logger = $logger;
+        $this->mollieOrderCreationService = $mollieOrderCreationService;
     }
 
     /**
@@ -320,6 +325,66 @@ class OrderCreationHandler
         $order->update();
 
         return $paymentData;
+    }
+
+    /**
+     * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
+     */
+    public function createPendingOrder($apiPayment, int $cartId): int
+    {
+        $orderId = (int) Order::getIdByCartId($cartId);
+        if ($orderId) {
+            return $orderId;
+        }
+
+        $paymentMethod = $this->paymentMethodService->getPaymentMethod($apiPayment);
+        $cart = new Cart($cartId);
+
+        $this->module->validateOrder(
+            $cartId,
+            (int) Configuration::get(Config::MOLLIE_STATUS_AWAITING),
+            (float) $apiPayment->amount->value,
+            $paymentMethod->method_name,
+            null,
+            ['transaction_id' => $apiPayment->id],
+            null,
+            false,
+            $cart->secure_key
+        );
+
+        $orderId = (int) Order::getIdByCartId($cartId);
+        if (!$orderId) {
+            return 0;
+        }
+
+        $order = new Order($orderId);
+        $environment = (int) Configuration::get(Config::MOLLIE_ENVIRONMENT);
+        $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
+        $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
+
+        if ($apiPayment->resource === Config::MOLLIE_API_STATUS_PAYMENT) {
+            $apiPayment->description = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
+            $apiPayment->update();
+        } else {
+            $orderNumber = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
+            $apiPayment->orderNumber = $orderNumber;
+            $payments = $apiPayment->payments();
+            foreach ($payments as $payment) {
+                $payment->description = 'Order ' . $orderNumber;
+                $payment->update();
+            }
+            $apiPayment->update();
+        }
+
+        $this->paymentMethodRepository->savePaymentStatus(
+            $apiPayment->id,
+            $apiPayment->status,
+            $orderId,
+            $apiPayment->method
+        );
+        $this->mollieOrderCreationService->updateMolliePaymentReference($apiPayment->id, $order->reference);
+
+        return $orderId;
     }
 
     private function createRecurringOrderEntity(Order $order, string $method): void
