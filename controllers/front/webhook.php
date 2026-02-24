@@ -144,7 +144,6 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         $cartId = $transaction->metadata->cart_id ?? 0;
 
         if (!$cartId) {
-            // TODO webhook structure will change, no need to create custom exception for one time usage
             $logger->error(sprintf('%s - Missing Cart ID', self::FILE_NAME), [
                 'transaction_id' => $transactionId,
             ]);

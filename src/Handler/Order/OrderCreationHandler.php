@@ -151,12 +151,29 @@ class OrderCreationHandler
             return 0;
         }
 
+        $paymentMethodName = $paymentMethod->method_name;
+
+        if (empty($paymentMethodName)) {
+            $actualMethod = $apiPayment->details->wallet ?? $apiPayment->method;
+
+            if (
+                isset(Config::$methods[$actualMethod]) &&
+                Config::$methods[$actualMethod] === 'Apple Pay'
+            ) {
+                $paymentMethodName = $this->module->l('Credit Card (Apple Pay)');
+            } else {
+                $paymentMethodName =
+                    Config::$methods[$actualMethod]
+                    ?? $this->module->l('Credit Card');
+            }
+        }
+
         if (!$paymentFeeData->isActive()) {
             $this->module->validateOrder(
                 (int) $cartId,
                 $orderStatus,
                 (float) $apiPayment->amount->value,
-                $paymentMethod->method_name,
+                $paymentMethodName,
                 null,
                 ['transaction_id' => $apiPayment->id],
                 null,
@@ -167,7 +184,7 @@ class OrderCreationHandler
             /* @phpstan-ignore-next-line */
             $orderId = (int) Order::getIdByCartId((int) $cartId);
 
-            $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method);
+            $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method ?: $apiPayment->method);
 
             return $orderId;
         }
@@ -203,7 +220,7 @@ class OrderCreationHandler
         $paymentFeeTextService = $this->module->getService(PaymentFeeTextService::class);
 
         $paymentMethodName = $paymentFeeTextService->formatPaymentMethodNameWithFee(
-            $paymentMethod->method_name,
+            $paymentMethodName,
             $paymentFeeData->getPaymentFeeTaxIncl(),
             new \Currency($cart->id_currency)
         );
@@ -227,7 +244,7 @@ class OrderCreationHandler
 
         $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
 
-        $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method);
+        $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method ?: $apiPayment->method);
 
         return $orderId;
     }
