@@ -23,24 +23,20 @@ $(document).ready(function () {
     createAppleButton(applePayMethodElement, buttonStyle)
     toggleApplePayVisibility()
 
-    $( document ).ajaxComplete(function( event, request, settings) {
-        var method = getUrlParam('action', settings.url)
-
-        if (method === 'refresh') {
-            applePayMethodElement = document.querySelector(
-                '#mollie-applepay-direct-button',
-            )
-            createAppleButton(applePayMethodElement, buttonStyle)
-            toggleApplePayVisibility()
-        }
-    });
-
     if (typeof prestashop !== 'undefined') {
         prestashop.on('updatedCart', function () {
+            var container = document.querySelector('#mollie-applepay-direct-button');
+            if (!container) {
+                return;
+            }
+
+            if (!container.querySelector('#mollie_applepay_button')) {
+                createAppleButton(container, buttonStyle);
+            }
+
             toggleApplePayVisibility()
         });
     }
-
 
     let updatedContactInfo = []
     let selectedShippingMethod = []
@@ -289,21 +285,34 @@ function toggleApplePayVisibility() {
     if (!container) {
         return;
     }
-    if (!isCheckoutAvailable()) {
+
+    if (!isCartCheckoutAvailable()) {
         container.style.display = 'none';
-        return;
+    } else {
+        container.style.display = '';
     }
-    container.style.display = '';
 }
 
-function isCheckoutAvailable() {
-    var cartActions = document.querySelector('.cart-detailed-actions');
-    if (cartActions && cartActions.querySelector('button[disabled]')) {
+function isCartCheckoutAvailable() {
+    if (typeof prestashop === 'undefined' || !prestashop.cart) {
+        return true;
+    }
+
+    var cart = prestashop.cart;
+
+    if (!cart.products || cart.products.length === 0) {
         return false;
     }
-    var cartError = document.querySelector('.checkout.cart-detailed-actions .disabled, #notifications article.alert-danger');
-    if (cartError) {
+
+    if (cart.minimalPurchaseRequired && cart.minimalPurchaseRequired.length > 0) {
         return false;
     }
+
+    for (var i = 0; i < cart.products.length; i++) {
+        if (cart.products[i].availability === 'unavailable') {
+            return false;
+        }
+    }
+
     return true;
 }
