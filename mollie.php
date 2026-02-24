@@ -601,6 +601,10 @@ class Mollie extends PaymentModule
 
             $order = new Order($params['id_order']);
 
+            if (!$order->hasBeenPaid()) {
+                return false;
+            }
+
             $products = TransactionUtility::isOrderTransaction($mollieTransactionId)
                 ? $this->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])->lines
                 : $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments'])->lines; // @phpstan-ignore-line
