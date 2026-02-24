@@ -157,11 +157,12 @@ class OrderCreationHandler
 
         $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmount);
 
-        if (Order::getIdByCartId((int) $cartId)) {
+        $existingOrderId = (int) Order::getIdByCartId((int) $cartId);
+        if ($existingOrderId) {
             $this->logger->error(sprintf('%s - Order already exists for cart, skipping creation', self::FILE_NAME), [
                 'transaction_id' => $apiPayment->id,
                 'cart_id' => $cartId,
-                'existing_order_id' => (int) Order::getIdByCartId((int) $cartId),
+                'existing_order_id' => $existingOrderId,
                 'mollie_status' => $apiPayment->status,
             ]);
 
@@ -379,7 +380,7 @@ class OrderCreationHandler
             $cart->secure_key
         );
 
-        $orderId = (int) Order::getIdByCartId($cartId);
+        $orderId = $this->orderRepository->getOrderIdByCartId($cartId);
         if (!$orderId) {
             return 0;
         }
