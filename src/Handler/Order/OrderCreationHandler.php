@@ -53,6 +53,7 @@ use Mollie\Exception\OrderCreationException;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
+use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\OrderStatusService;
@@ -99,6 +100,8 @@ class OrderCreationHandler
     private $paymentFeeProvider;
     /** @var PrestaLoggerInterface */
     private $logger;
+    /** @var OrderRepositoryInterface */
+    private $orderRepository;
     /** @var MollieOrderCreationService */
     private $mollieOrderCreationService;
 
@@ -112,6 +115,7 @@ class OrderCreationHandler
         SubscriptionOrderValidator $subscriptionOrder,
         PaymentFeeProviderInterface $paymentFeeProvider,
         PrestaLoggerInterface $logger,
+        OrderRepositoryInterface $orderRepository,
         MollieOrderCreationService $mollieOrderCreationService
     ) {
         $this->module = $module->getModule();
@@ -123,6 +127,7 @@ class OrderCreationHandler
         $this->subscriptionOrder = $subscriptionOrder;
         $this->paymentFeeProvider = $paymentFeeProvider;
         $this->logger = $logger;
+        $this->orderRepository = $orderRepository;
         $this->mollieOrderCreationService = $mollieOrderCreationService;
     }
 
@@ -152,7 +157,15 @@ class OrderCreationHandler
 
         $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmount);
 
-        if (Order::getIdByCartId((int) $cartId)) {
+        $existingOrderId = (int) Order::getIdByCartId((int) $cartId);
+        if ($existingOrderId) {
+            $this->logger->error(sprintf('%s - Order already exists for cart, skipping creation', self::FILE_NAME), [
+                'transaction_id' => $apiPayment->id,
+                'cart_id' => $cartId,
+                'existing_order_id' => $existingOrderId,
+                'mollie_status' => $apiPayment->status,
+            ]);
+
             return 0;
         }
 
@@ -186,8 +199,7 @@ class OrderCreationHandler
                 $cart->secure_key
             );
 
-            /* @phpstan-ignore-next-line */
-            $orderId = (int) Order::getIdByCartId((int) $cartId);
+            $orderId = $this->orderRepository->getOrderIdByCartId((int) $cartId);
 
             $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method ?: $apiPayment->method);
 
@@ -242,8 +254,7 @@ class OrderCreationHandler
             $cart->secure_key
         );
 
-        /* @phpstan-ignore-next-line */
-        $orderId = (int) Order::getIdByCartId((int) $cartId);
+        $orderId = $this->orderRepository->getOrderIdByCartId((int) $cartId);
 
         $this->orderPaymentFeeHandler->addOrderPaymentFee($orderId, $apiPayment);
 
@@ -293,7 +304,7 @@ class OrderCreationHandler
             $cart->secure_key
         );
 
-        $orderId = Order::getIdByCartId($cart->id);
+        $orderId = $this->orderRepository->getOrderIdByCartId((int) $cart->id);
         $order = new Order($orderId);
 
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
@@ -369,7 +380,7 @@ class OrderCreationHandler
             $cart->secure_key
         );
 
-        $orderId = (int) Order::getIdByCartId($cartId);
+        $orderId = $this->orderRepository->getOrderIdByCartId($cartId);
         if (!$orderId) {
             return 0;
         }

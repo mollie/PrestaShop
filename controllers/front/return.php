@@ -296,9 +296,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         $transactionId = Tools::getValue('transaction_id') ?: $data['mollie_info']['transaction_id'];
 
-        /* @phpstan-ignore-next-line */
-        $orderId = (int) Order::getIdByCartId((int) $cart->id);
-        /** @phpstan-ignore-line */
         $order = new Order((int) $orderId);
 
         if ((int) $cart->id_customer !== (int) $this->context->customer->id) {
