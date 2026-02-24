@@ -20,6 +20,22 @@ $(document).ready(function () {
 
     let buttonStyle = getApplePayButtonStyle();
     createAppleButton(applePayMethodElement, buttonStyle)
+    toggleApplePayVisibility()
+
+    if (typeof prestashop !== 'undefined') {
+        prestashop.on('updatedProduct', function () {
+            var container = document.querySelector('#mollie-applepay-direct-button');
+            if (!container) {
+                return;
+            }
+
+            if (!container.querySelector('#mollie_applepay_button')) {
+                createAppleButton(container, buttonStyle);
+            }
+
+            toggleApplePayVisibility()
+        });
+    }
 
     let updatedContactInfo = []
     let selectedShippingMethod = []
@@ -36,15 +52,14 @@ $(document).ready(function () {
                 'id_product': productDetails.id_product,
                 'id_product_attribute': productDetails.id_product_attribute,
                 'id_customization': productDetails.id_customization,
-                'quantity_wanted': parseInt(productDetails.quantity_wanted) || 1,
+                'quantity_wanted': productDetails.quantity_wanted,
                 'price_amount': productDetails.price_amount
             }
 
         const subtotal = product.quantity_wanted * product.price_amount;
         var supportedApplePaySessionVersion = 3;
         const session = new ApplePaySession(supportedApplePaySessionVersion, createRequest(countryCode, currencyCode, totalLabel, subtotal))
-        var applePayCartId = 0;
-        var productAddedToCart = false;
+        var cartId;
         session.begin()
         session.onvalidatemerchant = (applePayValidateMerchantEvent) => {
             jQuery.ajax({
@@ -52,13 +67,12 @@ $(document).ready(function () {
                 method: 'POST',
                 data: {
                     action: 'mollie_apple_pay_validation',
-                    validationUrl: applePayValidateMerchantEvent.validationURL,
-                    cartId: applePayCartId
+                    validationUrl: applePayValidateMerchantEvent.validationURL
                 },
                 success: (merchantSession) => {
                     merchantSession = JSON.parse(merchantSession);
                     if (merchantSession.success === true) {
-                        applePayCartId = merchantSession.cartId
+                        cartId = merchantSession.cartId
                         session.completeMerchantValidation(JSON.parse(merchantSession.data))
                     } else {
                         console.warn(merchantSession.error)
@@ -71,22 +85,6 @@ $(document).ready(function () {
                 },
             })
         }
-        session.oncancel = function () {
-            if (!productAddedToCart) {
-                return;
-            }
-
-            jQuery.ajax({
-                url: ajaxUrl,
-                method: 'POST',
-                data: {
-                    action: 'mollie_apple_pay_remove_from_cart',
-                    cartId: applePayCartId,
-                    id_product: product.id_product,
-                    id_product_attribute: product.id_product_attribute
-                }
-            })
-        }
         session.onpaymentauthorized = (ApplePayPayment) => {
             const productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
             const products = [
@@ -94,7 +92,7 @@ $(document).ready(function () {
                     'id_product': productDetails.id_product,
                     'id_product_attribute': productDetails.id_product_attribute,
                     'id_customization': productDetails.id_customization,
-                    'quantity_wanted': parseInt(productDetails.quantity_wanted) || 1,
+                    'quantity_wanted': productDetails.quantity_wanted,
                 }
             ]
 
@@ -107,7 +105,7 @@ $(document).ready(function () {
                     shippingContact: ApplePayPayment.payment.shippingContact,
                     billingContact: ApplePayPayment.payment.billingContact,
                     token: ApplePayPayment.payment.token,
-                    cartId: applePayCartId,
+                    cartId: cartId,
                 },
                 success: (authorizationResult) => {
                     let result = JSON.parse(authorizationResult)
@@ -136,7 +134,7 @@ $(document).ready(function () {
                     action: 'mollie_apple_pay_update_shipping_method',
                     shippingMethod: event.shippingMethod,
                     simplifiedContact: updatedContactInfo,
-                    cartId: applePayCartId
+                    cartId: cartId
                 },
                 success: (applePayShippingMethodUpdate) => {
                     let response = JSON.parse(applePayShippingMethodUpdate)
@@ -166,7 +164,7 @@ $(document).ready(function () {
                     'id_product': productDetails.id_product,
                     'id_product_attribute': productDetails.id_product_attribute,
                     'id_customization': productDetails.id_customization,
-                    'quantity_wanted': parseInt(productDetails.quantity_wanted) || 1,
+                    'quantity_wanted': productDetails.quantity_wanted,
                 }
             ]
 
@@ -179,14 +177,13 @@ $(document).ready(function () {
                     postalCode: event.shippingContact.postalCode,
                     simplifiedContact: event.shippingContact,
                     products: products,
-                    cartId: applePayCartId,
+                    cartId: cartId,
                     customerId: customerId
                 },
                 success: (applePayShippingContactUpdate) => {
                     applePayShippingContactUpdate = JSON.parse(applePayShippingContactUpdate)
                     let response = applePayShippingContactUpdate.data
                     if (applePayShippingContactUpdate.success === true) {
-                        productAddedToCart = true;
                         if (response.totals.length > 0) {
                             var firstTotal = response.totals[0];
                             session.completeShippingContactSelection(
@@ -297,4 +294,36 @@ function createAppleButton(ApplePayButtonElement, buttonStyle) {
     button.classList.add('apple-pay-button')
     button.classList.add(buttonStyle)
     ApplePayButtonElement.appendChild(button)
+}
+
+function toggleApplePayVisibility() {
+    var container = document.querySelector('#mollie-applepay-direct-button');
+    if (!container) {
+        return;
+    }
+
+    if (!isProductAvailable()) {
+        container.style.display = 'none';
+    } else {
+        container.style.display = '';
+    }
+}
+
+function isProductAvailable() {
+    var productDetailsEl = document.getElementById('product-details');
+    if (!productDetailsEl || !productDetailsEl.dataset.product) {
+        return true;
+    }
+
+    try {
+        var productData = JSON.parse(productDetailsEl.dataset.product);
+
+        if (productData.availability === 'unavailable') {
+            return false;
+        }
+
+        return true;
+    } catch (e) {
+        return true;
+    }
 }

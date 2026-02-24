@@ -21,19 +21,22 @@ $(document).ready(function () {
 
     let buttonStyle = getApplePayButtonStyle();
     createAppleButton(applePayMethodElement, buttonStyle)
+    toggleApplePayVisibility()
 
-    $( document ).ajaxComplete(function( event, request, settings) {
-        setTimeout(function() {
-            applePayMethodElement = document.querySelector(
-                '#mollie-applepay-direct-button',
-            )
-
-            if (applePayMethodElement && !document.querySelector('#mollie_applepay_button')) {
-                createAppleButton(applePayMethodElement, buttonStyle)
+    if (typeof prestashop !== 'undefined') {
+        prestashop.on('updatedCart', function () {
+            var container = document.querySelector('#mollie-applepay-direct-button');
+            if (!container) {
+                return;
             }
-        }, 100);
-    });
 
+            if (!container.querySelector('#mollie_applepay_button')) {
+                createAppleButton(container, buttonStyle);
+            }
+
+            toggleApplePayVisibility()
+        });
+    }
 
     let updatedContactInfo = []
     let selectedShippingMethod = []
@@ -275,4 +278,41 @@ function createAppleButton(ApplePayButtonElement, buttonStyle) {
     button.classList.add('apple-pay-button')
     button.classList.add(buttonStyle)
     ApplePayButtonElement.appendChild(button)
+}
+
+function toggleApplePayVisibility() {
+    var container = document.querySelector('#mollie-applepay-direct-button');
+    if (!container) {
+        return;
+    }
+
+    if (!isCartCheckoutAvailable()) {
+        container.style.display = 'none';
+    } else {
+        container.style.display = '';
+    }
+}
+
+function isCartCheckoutAvailable() {
+    if (typeof prestashop === 'undefined' || !prestashop.cart) {
+        return true;
+    }
+
+    var cart = prestashop.cart;
+
+    if (!cart.products || cart.products.length === 0) {
+        return false;
+    }
+
+    if (cart.minimalPurchaseRequired && cart.minimalPurchaseRequired.length > 0) {
+        return false;
+    }
+
+    for (var i = 0; i < cart.products.length; i++) {
+        if (cart.products[i].availability === 'unavailable') {
+            return false;
+        }
+    }
+
+    return true;
 }
