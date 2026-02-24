@@ -889,7 +889,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
 
     private function calculateFixedFeeTaxIncl($methodObj): string
     {
-        if (!isset($methodObj->surcharge_fixed_amount_tax_excl) || $methodObj->surcharge_fixed_amount_tax_excl <= 0) {
+        if (!isset($methodObj->surcharge_fixed_amount_tax_excl) || (float) $methodObj->surcharge_fixed_amount_tax_excl == 0) {
             return '0.00';
         }
 
