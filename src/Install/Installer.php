@@ -142,13 +142,6 @@ class Installer implements InstallerInterface
     {
         $this->installTab('AdminMollieModule_MTR', 'IMPROVE', 'Mollie', true, 'mollie');
         $this->installTab('AdminMollieModule', 'AdminMollieModule_MTR', 'Settings', false);
-        $this->installTab('AdminMollieAuthenticationParent', 'AdminMollieModule_MTR', 'API Configuration', true);
-        $this->installTab('AdminMollieAuthentication', 'AdminMollieAuthenticationParent', 'API Configuration', true);
-        $this->installTab('AdminMolliePaymentMethods', 'AdminMollieAuthenticationParent', 'Payment Methods', true);
-        $this->installTab('AdminMollieAdvancedSettings', 'AdminMollieAuthenticationParent', 'Advanced Settings', true);
-        $this->installTab('AdminMollieSubscriptionOrders', 'AdminMollieAuthenticationParent', 'Subscriptions', true);
-        $this->installTab('AdminMollieSubscriptionFAQ', 'AdminMollieAuthenticationParent', 'Subscription FAQ', true);
-        $this->installTab('AdminMollieLogs', 'AdminMollieAuthenticationParent', 'Logs', true);
     }
 
     public function getErrors()
