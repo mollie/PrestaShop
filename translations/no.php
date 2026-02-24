@@ -502,3 +502,5 @@ $_MODULE['<{mollie}prestashop>formbuilder_9170bcfedaabf0c63ac0c83ce5858dc6'] = '
 $_MODULE['<{mollie}prestashop>formbuilder_27cbc83e6e6efbbb352e1d602da4446b'] = 'Send e-post ved betalingsfeil';
 $_MODULE['<{mollie}prestashop>formbuilder_a1778dfa6acdb2a1c9bebd99771450dc'] = 'Aktiver for å sende en e-postvarsling til kunder når betalingen deres mislykkes.';
 $_MODULE['<{mollie}prestashop>mollie_f4f70727dc34561dfde1a3c529b6205c'] = 'Innstillinger';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_425f5c920457ba660cef129625f9f87b'] = 'Når aktivert, vil en Apple Pay-knapp vises på individuelle produktsider. Kunder kan bruke den til å kjøpe det spesifikke produktet umiddelbart med Apple Pay, uten å gå gjennom handlekurven eller kassen. Kun produktet som vises for øyeblikket, vil bli kjøpt.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_84b08751d6f1c19265dd3568fb9809c9'] = 'Når aktivert, vil en Apple Pay-knapp vises på handlekurvsiden. Kunder kan bruke den til å betale for alle varer i handlekurven på en gang med Apple Pay, og hoppe over den vanlige betalingsprosessen.';
