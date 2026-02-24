@@ -36,14 +36,15 @@ $(document).ready(function () {
                 'id_product': productDetails.id_product,
                 'id_product_attribute': productDetails.id_product_attribute,
                 'id_customization': productDetails.id_customization,
-                'quantity_wanted': productDetails.quantity_wanted,
+                'quantity_wanted': parseInt(productDetails.quantity_wanted) || 1,
                 'price_amount': productDetails.price_amount
             }
 
         const subtotal = product.quantity_wanted * product.price_amount;
         var supportedApplePaySessionVersion = 3;
         const session = new ApplePaySession(supportedApplePaySessionVersion, createRequest(countryCode, currencyCode, totalLabel, subtotal))
-        var cartId;
+        var applePayCartId = 0;
+        var productAddedToCart = false;
         session.begin()
         session.onvalidatemerchant = (applePayValidateMerchantEvent) => {
             jQuery.ajax({
@@ -51,12 +52,13 @@ $(document).ready(function () {
                 method: 'POST',
                 data: {
                     action: 'mollie_apple_pay_validation',
-                    validationUrl: applePayValidateMerchantEvent.validationURL
+                    validationUrl: applePayValidateMerchantEvent.validationURL,
+                    cartId: applePayCartId
                 },
                 success: (merchantSession) => {
                     merchantSession = JSON.parse(merchantSession);
                     if (merchantSession.success === true) {
-                        cartId = merchantSession.cartId
+                        applePayCartId = merchantSession.cartId
                         session.completeMerchantValidation(JSON.parse(merchantSession.data))
                     } else {
                         console.warn(merchantSession.error)
@@ -69,6 +71,22 @@ $(document).ready(function () {
                 },
             })
         }
+        session.oncancel = function () {
+            if (!productAddedToCart) {
+                return;
+            }
+
+            jQuery.ajax({
+                url: ajaxUrl,
+                method: 'POST',
+                data: {
+                    action: 'mollie_apple_pay_remove_from_cart',
+                    cartId: applePayCartId,
+                    id_product: product.id_product,
+                    id_product_attribute: product.id_product_attribute
+                }
+            })
+        }
         session.onpaymentauthorized = (ApplePayPayment) => {
             const productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
             const products = [
@@ -76,7 +94,7 @@ $(document).ready(function () {
                     'id_product': productDetails.id_product,
                     'id_product_attribute': productDetails.id_product_attribute,
                     'id_customization': productDetails.id_customization,
-                    'quantity_wanted': productDetails.quantity_wanted,
+                    'quantity_wanted': parseInt(productDetails.quantity_wanted) || 1,
                 }
             ]
 
@@ -89,7 +107,7 @@ $(document).ready(function () {
                     shippingContact: ApplePayPayment.payment.shippingContact,
                     billingContact: ApplePayPayment.payment.billingContact,
                     token: ApplePayPayment.payment.token,
-                    cartId: cartId,
+                    cartId: applePayCartId,
                 },
                 success: (authorizationResult) => {
                     let result = JSON.parse(authorizationResult)
@@ -118,7 +136,7 @@ $(document).ready(function () {
                     action: 'mollie_apple_pay_update_shipping_method',
                     shippingMethod: event.shippingMethod,
                     simplifiedContact: updatedContactInfo,
-                    cartId: cartId
+                    cartId: applePayCartId
                 },
                 success: (applePayShippingMethodUpdate) => {
                     let response = JSON.parse(applePayShippingMethodUpdate)
@@ -148,7 +166,7 @@ $(document).ready(function () {
                     'id_product': productDetails.id_product,
                     'id_product_attribute': productDetails.id_product_attribute,
                     'id_customization': productDetails.id_customization,
-                    'quantity_wanted': productDetails.quantity_wanted,
+                    'quantity_wanted': parseInt(productDetails.quantity_wanted) || 1,
                 }
             ]
 
@@ -161,13 +179,14 @@ $(document).ready(function () {
                     postalCode: event.shippingContact.postalCode,
                     simplifiedContact: event.shippingContact,
                     products: products,
-                    cartId: cartId,
+                    cartId: applePayCartId,
                     customerId: customerId
                 },
                 success: (applePayShippingContactUpdate) => {
                     applePayShippingContactUpdate = JSON.parse(applePayShippingContactUpdate)
                     let response = applePayShippingContactUpdate.data
                     if (applePayShippingContactUpdate.success === true) {
+                        productAddedToCart = true;
                         if (response.totals.length > 0) {
                             var firstTotal = response.totals[0];
                             session.completeShippingContactSelection(
