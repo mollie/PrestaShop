@@ -211,27 +211,7 @@ class TransactionService
                         $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id);
 
                         if (!$orderId) {
-                            $this->logOrderAlreadyCreated($apiPayment);
-
-                            $existingPsOrderId = (int) Order::getIdByCartId((int) $apiPayment->metadata->cart_id);
-
-                            throw new TransactionException(
-                                sprintf(
-                                    'Order is already created. transaction_id: %s, cart_id: %s, existing_order_id: %s, mollie_status: %s, resource: %s, method: %s, amount: %s %s, mollie_created_at: %s, mollie_paid_at: %s, timestamp: %s',
-                                    $apiPayment->id,
-                                    $apiPayment->metadata->cart_id ?? 'N/A',
-                                    $existingPsOrderId ?: 'none',
-                                    $apiPayment->status,
-                                    $apiPayment->resource,
-                                    $apiPayment->method ?? 'N/A',
-                                    $apiPayment->amount->value ?? 'N/A',
-                                    $apiPayment->amount->currency ?? 'N/A',
-                                    $apiPayment->createdAt ?? 'N/A',
-                                    $apiPayment->paidAt ?? 'N/A',
-                                    date('Y-m-d H:i:s')
-                                ),
-                                HttpStatusCode::HTTP_METHOD_NOT_ALLOWED
-                            );
+                            throw new TransactionException('Order is already created', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
                         }
                         $this->updatePaymentDescription($apiPayment, $orderId);
                     } elseif (strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
@@ -259,27 +239,7 @@ class TransactionService
                     $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id, $isAuthorizablePayment);
 
                     if (!$orderId) {
-                        $this->logOrderAlreadyCreated($apiPayment);
-
-                        $existingPsOrderId = (int) Order::getIdByCartId((int) $apiPayment->metadata->cart_id);
-
-                        throw new TransactionException(
-                            sprintf(
-                                'Order is already created. transaction_id: %s, cart_id: %s, existing_order_id: %s, mollie_status: %s, resource: %s, method: %s, amount: %s %s, mollie_created_at: %s, mollie_paid_at: %s, timestamp: %s',
-                                $apiPayment->id,
-                                $apiPayment->metadata->cart_id ?? 'N/A',
-                                $existingPsOrderId ?: 'none',
-                                $apiPayment->status,
-                                $apiPayment->resource,
-                                $apiPayment->method ?? 'N/A',
-                                $apiPayment->amount->value ?? 'N/A',
-                                $apiPayment->amount->currency ?? 'N/A',
-                                $apiPayment->createdAt ?? 'N/A',
-                                $apiPayment->paidAt ?? 'N/A',
-                                date('Y-m-d H:i:s')
-                            ),
-                            HttpStatusCode::HTTP_METHOD_NOT_ALLOWED
-                        );
+                        throw new TransactionException('Order is already created', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
                     }
 
                     $apiPayment = $this->updateOrderDescription($apiPayment, $orderId);
@@ -607,52 +567,5 @@ class TransactionService
     private function paymentHasChargedBacks(Payment $apiPayment): bool
     {
         return $apiPayment->hasChargebacks();
-    }
-
-    private function logOrderAlreadyCreated($apiPayment): void
-    {
-        /** @var \Mollie\Logger\LoggerInterface $moduleLogger */
-        $moduleLogger = $this->module->getService(\Mollie\Logger\LoggerInterface::class);
-
-        try {
-            $existingOrderId = (int) Order::getIdByCartId((int) $apiPayment->metadata->cart_id);
-            $existingOrder = new Order($existingOrderId);
-            $paymentMethodRecord = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
-
-            $moduleLogger->error(sprintf('%s - Order is already created', self::FILE_NAME), [
-                'context' => [
-                    'transaction_id' => $apiPayment->id,
-                    'resource_type' => $apiPayment->resource,
-                    'mollie_status' => $apiPayment->status,
-                    'mollie_method' => $apiPayment->method ?? 'N/A',
-                    'mollie_amount' => $apiPayment->amount->value ?? 'N/A',
-                    'mollie_currency' => $apiPayment->amount->currency ?? 'N/A',
-                    'mollie_created_at' => $apiPayment->createdAt ?? 'N/A',
-                    'mollie_paid_at' => $apiPayment->paidAt ?? 'N/A',
-                    'mollie_mode' => $apiPayment->mode ?? 'N/A',
-                    'cart_id' => (int) $apiPayment->metadata->cart_id,
-                    'secure_key_from_metadata' => !empty($apiPayment->metadata->secure_key) ? 'present' : 'missing',
-                    'existing_order_id' => $existingOrderId,
-                    'existing_order_reference' => $existingOrder->reference ?? 'N/A',
-                    'existing_order_current_state' => (int) ($existingOrder->current_state ?? 0),
-                    'existing_order_date_add' => $existingOrder->date_add ?? 'N/A',
-                    'existing_order_total_paid' => $existingOrder->total_paid ?? 'N/A',
-                    'db_record_bank_status' => $paymentMethodRecord['bank_status'] ?? 'not_found',
-                    'db_record_order_id' => $paymentMethodRecord['order_id'] ?? 'not_found',
-                    'db_record_created_at' => $paymentMethodRecord['created_at'] ?? 'not_found',
-                    'db_record_updated_at' => $paymentMethodRecord['updated_at'] ?? 'not_found',
-                    'timestamp' => date('Y-m-d H:i:s'),
-                ],
-            ]);
-        } catch (\Throwable $e) {
-            $moduleLogger->error(sprintf('%s - Order is already created (failed to gather context)', self::FILE_NAME), [
-                'context' => [
-                    'transaction_id' => $apiPayment->id ?? 'N/A',
-                    'cart_id' => $apiPayment->metadata->cart_id ?? 'N/A',
-                    'context_error' => $e->getMessage(),
-                    'timestamp' => date('Y-m-d H:i:s'),
-                ],
-            ]);
-        }
     }
 }

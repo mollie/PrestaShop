@@ -53,3 +53,17 @@
 #mollie-applepay-direct-button {
     padding: 5px;
 }
+
+/* Hummingbird theme (PS9) - product page */
+.product__add-to-cart #mollie-applepay-direct-button .apple-pay-button {
+    clip-path: inset(0 round 4px);
+}
+
+/* Hummingbird theme (PS9) - cart page */
+.cart-detailed__actions #mollie-applepay-direct-button {
+    margin-top: 0.5rem;
+}
+
+.cart-detailed__actions #mollie-applepay-direct-button .apple-pay-button {
+    clip-path: inset(0 round 4px);
+}

@@ -19,7 +19,6 @@ use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
-use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\TransactionService;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\TransactionUtility;
@@ -145,7 +144,6 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         $cartId = $transaction->metadata->cart_id ?? 0;
 
         if (!$cartId) {
-            // TODO webhook structure will change, no need to create custom exception for one time usage
             $logger->error(sprintf('%s - Missing Cart ID', self::FILE_NAME), [
                 'transaction_id' => $transactionId,
             ]);
@@ -176,56 +174,12 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
 
-        $cartId = 0;
-        $orderId = 0;
-        $molliePayment = null;
-        $psOrderCurrentState = 'no_order';
-        $psOrderDateAdd = 'no_order';
-        $psOrderReference = 'no_order';
-
-        if ($transactionId) {
-            try {
-                /** @var PaymentMethodRepository $paymentMethodRepo */
-                $paymentMethodRepo = $this->module->getService(PaymentMethodRepository::class);
-                $molliePayment = $paymentMethodRepo->getPaymentBy('transaction_id', $transactionId);
-
-                if ($molliePayment) {
-                    $cartId = (int) ($molliePayment['cart_id'] ?? 0);
-                    $orderId = (int) ($molliePayment['order_id'] ?? 0);
-                }
-
-                if (!$orderId && $cartId) {
-                    $orderId = (int) Order::getIdByCartId($cartId);
-                }
-
-                if ($orderId) {
-                    $psOrder = new Order($orderId);
-                    $psOrderCurrentState = (int) $psOrder->current_state;
-                    $psOrderDateAdd = $psOrder->date_add ?? 'N/A';
-                    $psOrderReference = $psOrder->reference ?? 'N/A';
-                }
-            } catch (\Throwable $e) {
-                // silently ignore - we are already in error handling
-            }
-        }
-
         $logger->error(sprintf('%s - Failed to handle webhook', self::FILE_NAME), [
             'exceptions' => ExceptionUtility::getExceptions($exception),
             'context' => [
                 'transaction_id' => $transactionId,
-                'cart_id' => $cartId,
-                'order_id' => $orderId,
-                'mollie_payment_bank_status' => $molliePayment['bank_status'] ?? 'not_found',
-                'mollie_payment_method' => $molliePayment['method'] ?? 'not_found',
-                'mollie_payment_created_at' => $molliePayment['created_at'] ?? 'not_found',
-                'mollie_payment_updated_at' => $molliePayment['updated_at'] ?? 'not_found',
-                'mollie_payment_order_reference' => $molliePayment['order_reference'] ?? 'not_found',
-                'ps_order_current_state' => $psOrderCurrentState,
-                'ps_order_date_add' => $psOrderDateAdd,
-                'ps_order_reference' => $psOrderReference,
                 'httpStatusCode' => $httpStatusCode,
                 'logMessage' => $logMessage,
-                'timestamp' => date('Y-m-d H:i:s'),
             ],
         ]);
 

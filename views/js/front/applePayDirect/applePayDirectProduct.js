@@ -20,6 +20,22 @@ $(document).ready(function () {
 
     let buttonStyle = getApplePayButtonStyle();
     createAppleButton(applePayMethodElement, buttonStyle)
+    toggleApplePayVisibility()
+
+    if (typeof prestashop !== 'undefined') {
+        prestashop.on('updatedProduct', function () {
+            var container = document.querySelector('#mollie-applepay-direct-button');
+            if (!container) {
+                return;
+            }
+
+            if (!container.querySelector('#mollie_applepay_button')) {
+                createAppleButton(container, buttonStyle);
+            }
+
+            toggleApplePayVisibility()
+        });
+    }
 
     let updatedContactInfo = []
     let selectedShippingMethod = []
@@ -278,4 +294,36 @@ function createAppleButton(ApplePayButtonElement, buttonStyle) {
     button.classList.add('apple-pay-button')
     button.classList.add(buttonStyle)
     ApplePayButtonElement.appendChild(button)
+}
+
+function toggleApplePayVisibility() {
+    var container = document.querySelector('#mollie-applepay-direct-button');
+    if (!container) {
+        return;
+    }
+
+    if (!isProductAvailable()) {
+        container.style.display = 'none';
+    } else {
+        container.style.display = '';
+    }
+}
+
+function isProductAvailable() {
+    var productDetailsEl = document.getElementById('product-details');
+    if (!productDetailsEl || !productDetailsEl.dataset.product) {
+        return true;
+    }
+
+    try {
+        var productData = JSON.parse(productDetailsEl.dataset.product);
+
+        if (productData.availability === 'unavailable') {
+            return false;
+        }
+
+        return true;
+    } catch (e) {
+        return true;
+    }
 }

@@ -93,8 +93,10 @@ export interface MolliePaymentMethodsTranslations {
   applePayDirectSettings: string;
   applePayDirectProductPage: string;
   enableApplePayProductPages: string;
+  applePayDirectProductPageInfo: string;
   applePayDirectCartPage: string;
   enableApplePayCartPages: string;
+  applePayDirectCartPageInfo: string;
   applePayDirectButtonStyle: string;
   applePayButtonBlack: string;
   applePayButtonOutline: string;

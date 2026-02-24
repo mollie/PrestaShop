@@ -553,3 +553,5 @@ $_MODULE['<{mollie}prestashop>form_93cba07454f06a4a960172bbd6e2a435'] = 'Da';
 $_MODULE['<{mollie}prestashop>form_bafd7322c6e97d25b6299b5d6fe8920b'] = 'Ne';
 $_MODULE['<{mollie}prestashop>form_218fb15ca7f2db8aa36080323a038828'] = 'Ta možnost ni potrebna za izbrani API';
 $_MODULE['<{mollie}prestashop>form_20d053df791cc72594d141b24276597f'] = 'Pomaknite se navzdol in shranite spremembe, ki ste jih izvedli v svojem okolju ali API ključih, preden konfigurirate svoje načine plačila.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_425f5c920457ba660cef129625f9f87b'] = 'Ko je omogočeno, se na posameznih straneh izdelkov prikaže gumb Apple Pay. Kupci ga lahko uporabijo za takojšnji nakup določenega izdelka z Apple Pay, brez prehoda skozi košarico ali blagajno. Kupljen bo samo izdelek, ki si ga trenutno ogledujete.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_84b08751d6f1c19265dd3568fb9809c9'] = 'Ko je omogočeno, se na strani košarice prikaže gumb Apple Pay. Kupci ga lahko uporabijo za plačilo vseh izdelkov v košarici naenkrat z Apple Pay, pri čemer preskočijo običajni postopek blagajne.';

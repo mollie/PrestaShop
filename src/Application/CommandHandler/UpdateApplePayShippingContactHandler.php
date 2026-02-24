@@ -62,6 +62,7 @@ final class UpdateApplePayShippingContactHandler
         $invoiceAddress = $this->createAddress($customer->id, $command);
         $cart = $this->updateCart($customer, $deliveryAddress->id, $invoiceAddress->id, $command->getCartId());
         $this->addProductToCart($cart, $command);
+        $cart = new Cart($cart->id);
         $this->updateContext($cart, $customer);
         $country = new Country($deliveryAddress->id_country);
 
@@ -146,7 +147,8 @@ final class UpdateApplePayShippingContactHandler
     {
         foreach ($command->getProducts() as $product) {
             $cart->deleteProduct($product->getProductId(), $product->getProductAttribute());
-            $cart->updateQty($product->getWantedQuantity(), $product->getProductId(), $product->getProductAttribute());
+            $quantity = max($product->getWantedQuantity(), 1);
+            $cart->updateQty($quantity, $product->getProductId(), $product->getProductAttribute());
         }
     }
 
