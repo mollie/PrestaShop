@@ -113,7 +113,9 @@ $(document).ready(function () {
                     if (result.success === true) {
                         redirectionUrl = result.successUrl;
                         session.completePayment(result.responseToApple)
-                        window.location.href = redirectionUrl
+                        setTimeout(function () {
+                            window.location.href = redirectionUrl
+                        }, 500)
                     } else {
                         result.errors = createAppleErrors(result.errors)
                         session.completePayment(result)
