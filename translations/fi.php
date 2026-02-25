@@ -553,3 +553,5 @@ $_MODULE['<{mollie}prestashop>form_93cba07454f06a4a960172bbd6e2a435'] = 'Kyllä'
 $_MODULE['<{mollie}prestashop>form_bafd7322c6e97d25b6299b5d6fe8920b'] = 'Ei';
 $_MODULE['<{mollie}prestashop>form_218fb15ca7f2db8aa36080323a038828'] = 'Tätä vaihtoehtoa ei vaadita valitulle API:lle';
 $_MODULE['<{mollie}prestashop>form_20d053df791cc72594d141b24276597f'] = 'Selaa sivua alaspäin ja tallenna ympäristöösi tai API-avaimiisi tekemäsi muutokset ennen maksutapojen määrittämistä.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_425f5c920457ba660cef129625f9f87b'] = 'Kun tämä on käytössä, Apple Pay -painike näkyy yksittäisillä tuotesivuilla. Asiakkaat voivat käyttää sitä ostaakseen kyseisen tuotteen välittömästi Apple Paylla ilman ostoskorin tai kassan kautta kulkemista. Vain parhaillaan katseltava tuote ostetaan.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_84b08751d6f1c19265dd3568fb9809c9'] = 'Kun tämä on käytössä, Apple Pay -painike näkyy ostoskorisivulla. Asiakkaat voivat käyttää sitä maksaakseen kaikki ostoskorin tuotteet kerralla Apple Paylla ohittaen tavallisen kassaprosessin.';

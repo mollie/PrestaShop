@@ -2,6 +2,14 @@
 
 # Changelog #
 
+## Changes in release 6.4.2
++ Multiple Apple Pay Direct improvements and stability fixes
++ Added pending payment status handling
++ Fixed negative surcharge amounts
++ Disabled Google Pay on module upgrade
++ Improved error logging
++ Minor fixes
+
 ## Changes in release 6.4.1
 + Fixed issues with upgrade
 + Fixed payment fee calculation on checkout page

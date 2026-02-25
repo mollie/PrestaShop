@@ -60,6 +60,9 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
                 // no break
             case 'mollie_apple_pay_get_total_price':
                 $this->getTotalApplePayCartPrice();
+                // no break
+            case 'mollie_apple_pay_remove_from_cart':
+                $this->removeProductFromCart();
         }
 
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
@@ -138,6 +141,9 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
 
     private function updateAppleShippingContact()
     {
+        $originalCartId = (int) $this->context->cookie->id_cart;
+        $originalCustomerId = (int) $this->context->cookie->id_customer;
+
         /** @var UpdateApplePayShippingContactHandler $handler */
         $handler = $this->module->getService(UpdateApplePayShippingContactHandler::class);
 
@@ -182,6 +188,10 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
                 'message' => $this->module->l(sprintf('Failed to find address. Please try again. CartId %s', $cartId), self::FILE_NAME),
             ];
         }
+
+        $this->context->cart = new Cart($originalCartId);
+        $this->context->cookie->id_cart = $originalCartId;
+        $this->context->cookie->id_customer = $originalCustomerId;
 
         $this->ajaxRender(json_encode($result));
     }
@@ -228,6 +238,18 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
                 'total' => $cart->getOrderTotal(),
             ]
         ));
+    }
+
+    private function removeProductFromCart()
+    {
+        $cartId = (int) Tools::getValue('cartId');
+        $productId = (int) Tools::getValue('id_product');
+        $productAttributeId = (int) Tools::getValue('id_product_attribute');
+
+        $cart = new Cart($cartId);
+        $cart->deleteProduct($productId, $productAttributeId);
+
+        $this->ajaxRender(json_encode(['success' => true]));
     }
 
     private function getWantedCartProducts(int $cartId)

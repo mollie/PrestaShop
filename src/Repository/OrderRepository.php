@@ -12,6 +12,7 @@
 
 namespace Mollie\Repository;
 
+use Db;
 use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
 use Order;
 
@@ -48,5 +49,16 @@ final class OrderRepository extends AbstractRepository implements OrderRepositor
     public function findAllByCartId($id_cart)
     {
         return $this->findAllBy(['id_cart' => (int) $id_cart]);
+    }
+
+    public function getOrderIdByCartId(int $cartId): int
+    {
+        $sql = 'SELECT `id_order`
+            FROM `' . _DB_PREFIX_ . 'orders`
+            WHERE `id_cart` = ' . (int) $cartId;
+
+        $result = Db::getInstance()->getValue($sql, false);
+
+        return !empty($result) ? (int) $result : 0;
     }
 }

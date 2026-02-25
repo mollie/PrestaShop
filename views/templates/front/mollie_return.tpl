@@ -8,7 +8,7 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  *}
-<h2>{l s='Welcome back' mod='mollie'}</h2>
+<h2>{if isset($msg_title)}{$msg_title|escape:'htmlall':'UTF-8'}{else}{l s='Welcome back' mod='mollie'}{/if}</h2>
 <p>{$msg_details|escape:'htmlall':'UTF-8'}</p>
 <a class="btn btn-default" href="{$link->getPageLink('index', true)|escape:'htmlall':'UTF-8'}">
   <i class="icon icon-chevron-left"></i> {l s='Continue shopping' mod='mollie'}
