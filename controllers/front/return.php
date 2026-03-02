@@ -23,6 +23,7 @@ use Mollie\Service\PaymentReturnService;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\TransactionUtility;
+use Mollie\Handler\Order\OrderPendingStatusHandler;
 use Mollie\Validator\OrderCallBackValidator;
 
 if (!defined('_PS_VERSION_')) {
@@ -130,6 +131,35 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 && PaymentStatus::STATUS_OPEN === $data['mollie_info']['bank_status']
             ) {
                 $data['msg_details'] = $this->module->l('The payment is still being processed. You\'ll be notified when the bank or merchant confirms the payment.', self::FILE_NAME);
+            } elseif (
+                isset($data['mollie_info']['bank_status'])
+                && in_array($data['mollie_info']['bank_status'], [PaymentStatus::STATUS_OPEN, PaymentStatus::STATUS_PENDING], true)
+            ) {
+                /** @var OrderPendingStatusHandler $pendingStatusHandler */
+                $pendingStatusHandler = $this->module->getService(OrderPendingStatusHandler::class);
+                $pendingAction = $pendingStatusHandler->handle($data['mollie_info']['transaction_id'], $idCart);
+
+                switch ($pendingAction) {
+                    case OrderPendingStatusHandler::ACTION_PENDING:
+                        $data['msg_title'] = $this->module->l('Your order has been received', self::FILE_NAME);
+                        $data['msg_details'] = $this->module->l('Your payment is currently being processed. You will receive a confirmation once the payment is complete. You can check the status of your order in your account.', self::FILE_NAME);
+                        break;
+                    case OrderPendingStatusHandler::ACTION_FAILED:
+                        $this->setWarning($this->module->l('Your payment was not successful. Try again.', self::FILE_NAME));
+                        Tools::redirect($this->context->link->getPageLink(
+                            'cart',
+                            null,
+                            $this->context->language->id,
+                            [
+                                'action' => 'show',
+                                'checkout' => true,
+                            ]
+                        ));
+                        break;
+                    default:
+                        $data['wait'] = true;
+                        break;
+                }
             } else {
                 $data['wait'] = true;
             }
@@ -266,9 +296,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
         $transactionId = Tools::getValue('transaction_id') ?: $data['mollie_info']['transaction_id'];
 
-        /* @phpstan-ignore-next-line */
-        $orderId = (int) Order::getIdByCartId((int) $cart->id);
-        /** @phpstan-ignore-line */
         $order = new Order((int) $orderId);
 
         if ((int) $cart->id_customer !== (int) $this->context->customer->id) {

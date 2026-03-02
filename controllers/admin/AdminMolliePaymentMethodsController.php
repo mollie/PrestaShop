@@ -151,8 +151,10 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'applePayDirectSettings' => $this->module->l('Apple Pay Direct settings', self::FILE_NAME),
                 'applePayDirectProductPage' => $this->module->l('Apple Pay Direct product page', self::FILE_NAME),
                 'enableApplePayProductPages' => $this->module->l('Enable Apple Pay on product pages', self::FILE_NAME),
+                'applePayDirectProductPageInfo' => $this->module->l('When enabled, an Apple Pay button will appear on individual product pages. Customers can use it to buy that specific product instantly with Apple Pay, without going through the cart or checkout. Only the product currently being viewed will be purchased.', self::FILE_NAME),
                 'applePayDirectCartPage' => $this->module->l('Apple Pay Direct cart page', self::FILE_NAME),
                 'enableApplePayCartPages' => $this->module->l('Enable Apple Pay on cart pages', self::FILE_NAME),
+                'applePayDirectCartPageInfo' => $this->module->l('When enabled, an Apple Pay button will appear on the cart page. Customers can use it to pay for all items in their cart at once with Apple Pay, skipping the regular checkout process.', self::FILE_NAME),
                 'applePayDirectButtonStyle' => $this->module->l('Apple Pay Direct button style', self::FILE_NAME),
                 'applePayButtonBlack' => $this->module->l('Black', self::FILE_NAME),
                 'applePayButtonOutline' => $this->module->l('Outline', self::FILE_NAME),
@@ -889,7 +891,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
 
     private function calculateFixedFeeTaxIncl($methodObj): string
     {
-        if (!isset($methodObj->surcharge_fixed_amount_tax_excl) || $methodObj->surcharge_fixed_amount_tax_excl <= 0) {
+        if (!isset($methodObj->surcharge_fixed_amount_tax_excl) || (float) $methodObj->surcharge_fixed_amount_tax_excl == 0) {
             return '0.00';
         }
 

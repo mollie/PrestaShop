@@ -30,6 +30,7 @@ use Mollie\Exception\TransactionException;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Handler\Order\OrderPaymentFeeHandler;
+use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
@@ -87,6 +88,9 @@ class TransactionService
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
 
+    /** @var OrderRepositoryInterface */
+    private $orderRepository;
+
     public function __construct(
         ModuleFactory $module,
         OrderStatusService $orderStatusService,
@@ -98,7 +102,8 @@ class TransactionService
         ShipmentSenderHandlerInterface $shipmentSenderHandler,
         PrestaLoggerInterface $logger,
         ExceptionService $exceptionService,
-        ConfigurationAdapter $configurationAdapter
+        ConfigurationAdapter $configurationAdapter,
+        OrderRepositoryInterface $orderRepository
     ) {
         $this->module = $module->getModule();
         $this->orderStatusService = $orderStatusService;
@@ -111,6 +116,7 @@ class TransactionService
         $this->logger = $logger;
         $this->exceptionService = $exceptionService;
         $this->configurationAdapter = $configurationAdapter;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -214,7 +220,7 @@ class TransactionService
                         $this->orderStatusService->setOrderStatus($orderId, $apiPayment->status);
                     }
 
-                    $orderId = Order::getIdByCartId((int) $apiPayment->metadata->cart_id);
+                    $orderId = $this->orderRepository->getOrderIdByCartId((int) $apiPayment->metadata->cart_id);
                 }
                 break;
             case Config::MOLLIE_API_STATUS_ORDER:
@@ -296,7 +302,7 @@ class TransactionService
                     }
                 }
 
-                $orderId = Order::getIdByCartId((int) $apiPayment->metadata->cart_id);
+                $orderId = $this->orderRepository->getOrderIdByCartId((int) $apiPayment->metadata->cart_id);
         }
 
         if (!$orderId) {

@@ -68,6 +68,10 @@ class UpdateOrderTotalsAction
 
             $order->total_paid = $updateOrderTotalsData->getTransactionAmount();
 
+            if (empty($order->payment)) {
+                $order->payment = 'Credit Card';
+            }
+
             $order->update();
         } catch (Exception $exception) {
             $this->logger->error(sprintf('%s - Failed to update order totals', self::FILE_NAME), [

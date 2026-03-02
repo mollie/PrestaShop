@@ -103,7 +103,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.4.1';
+        $this->version = '6.4.2';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -600,6 +600,10 @@ class Mollie extends PaymentModule
             }
 
             $order = new Order($params['id_order']);
+
+            if (!$order->hasBeenPaid()) {
+                return false;
+            }
 
             $products = TransactionUtility::isOrderTransaction($mollieTransactionId)
                 ? $this->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])->lines

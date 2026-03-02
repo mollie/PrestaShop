@@ -106,11 +106,11 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         try {
             $this->executeWebhook($transactionId);
         } catch (ApiException $exception) {
-            $this->handleException($exception, HttpStatusCode::HTTP_BAD_REQUEST, 'Api request failed');
+            $this->handleException($exception, HttpStatusCode::HTTP_BAD_REQUEST, 'Api request failed', $transactionId);
         } catch (TransactionException $exception) {
-            $this->handleException($exception, $exception->getCode(), 'Failed to handle transaction');
+            $this->handleException($exception, $exception->getCode(), 'Failed to handle transaction', $transactionId);
         } catch (\Throwable $exception) {
-            $this->handleException($exception, HttpStatusCode::HTTP_BAD_REQUEST, 'Failed to handle webhook');
+            $this->handleException($exception, HttpStatusCode::HTTP_BAD_REQUEST, 'Failed to handle webhook', $transactionId);
         }
 
         $this->releaseLock();
@@ -144,7 +144,6 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         $cartId = $transaction->metadata->cart_id ?? 0;
 
         if (!$cartId) {
-            // TODO webhook structure will change, no need to create custom exception for one time usage
             $logger->error(sprintf('%s - Missing Cart ID', self::FILE_NAME), [
                 'transaction_id' => $transactionId,
             ]);
@@ -167,7 +166,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         $this->context->cart = $cart;
     }
 
-    private function handleException(Throwable $exception, int $httpStatusCode, string $logMessage): void
+    private function handleException(Throwable $exception, int $httpStatusCode, string $logMessage, string $transactionId = ''): void
     {
         /** @var ErrorHandler $errorHandler */
         $errorHandler = $this->module->getService(ErrorHandler::class);
@@ -178,6 +177,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         $logger->error(sprintf('%s - Failed to handle webhook', self::FILE_NAME), [
             'exceptions' => ExceptionUtility::getExceptions($exception),
             'context' => [
+                'transaction_id' => $transactionId,
                 'httpStatusCode' => $httpStatusCode,
                 'logMessage' => $logMessage,
             ],

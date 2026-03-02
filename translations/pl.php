@@ -553,3 +553,5 @@ $_MODULE['<{mollie}prestashop>form_93cba07454f06a4a960172bbd6e2a435'] = 'Tak';
 $_MODULE['<{mollie}prestashop>form_bafd7322c6e97d25b6299b5d6fe8920b'] = 'Nie';
 $_MODULE['<{mollie}prestashop>form_218fb15ca7f2db8aa36080323a038828'] = 'Ta opcja nie jest wymagana dla wybranego API';
 $_MODULE['<{mollie}prestashop>form_20d053df791cc72594d141b24276597f'] = 'Przewiń w dół i zapisz zmiany, które wprowadziłeś w swoim środowisku lub kluczach API przed skonfigurowaniem metod płatności.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_425f5c920457ba660cef129625f9f87b'] = 'Po włączeniu na stronach poszczególnych produktów pojawi się przycisk Apple Pay. Klienci mogą go użyć, aby natychmiast kupić dany produkt za pomocą Apple Pay, bez przechodzenia przez koszyk ani proces płatności. Zakupiony zostanie tylko aktualnie przeglądany produkt.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_84b08751d6f1c19265dd3568fb9809c9'] = 'Po włączeniu na stronie koszyka pojawi się przycisk Apple Pay. Klienci mogą go użyć, aby zapłacić za wszystkie produkty w koszyku jednocześnie za pomocą Apple Pay, pomijając standardowy proces płatności.';

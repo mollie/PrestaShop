@@ -29,4 +29,11 @@ interface OrderRepositoryInterface extends ReadOnlyRepositoryInterface
      * @throws \PrestaShopException
      */
     public function findOneByCartId($id_cart);
+
+    /**
+     * @param int $cartId
+     *
+     * @return int
+     */
+    public function getOrderIdByCartId(int $cartId): int;
 }

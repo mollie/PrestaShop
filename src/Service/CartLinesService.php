@@ -458,14 +458,17 @@ class CartLinesService
             return $orderLines;
         }
 
+        $feeAmount = round($paymentFeeData->getPaymentFeeTaxIncl(), $apiRoundingPrecision);
+        $lineType = $feeAmount < 0 ? 'discount' : 'surcharge';
+
         $orderLines['surcharge'] = [
             [
                 'name' => $this->languageService->lang('Payment fee'),
                 'sku' => Config::PAYMENT_FEE_SKU,
-                'type' => 'surcharge',
+                'type' => $lineType,
                 'quantity' => 1,
-                'unitPrice' => round($paymentFeeData->getPaymentFeeTaxIncl(), $apiRoundingPrecision),
-                'totalAmount' => round($paymentFeeData->getPaymentFeeTaxIncl(), $apiRoundingPrecision),
+                'unitPrice' => $feeAmount,
+                'totalAmount' => $feeAmount,
                 'vatAmount' => NumberUtility::minus($paymentFeeData->getPaymentFeeTaxIncl(), $paymentFeeData->getPaymentFeeTaxExcl()),
                 'vatRate' => $paymentFeeData->getTaxRate(),
             ],

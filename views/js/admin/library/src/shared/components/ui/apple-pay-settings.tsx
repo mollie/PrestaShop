@@ -55,28 +55,24 @@ export function ApplePaySettings({
 
   return (
     <div className={cn("space-y-6", className)}>
-      {/* Direct Product Page */}
-      <div className="space-y-1">
-        <Label className="text-sm font-medium">{t('applePayDirectProductPage')}</Label>
-        <div className="flex items-center gap-3">
-          <p className="text-sm text-muted-foreground flex items-center h-6">{t('enableApplePayProductPages')}</p>
-          <Switch
-            checked={directProduct}
-            onCheckedChange={(directProduct: boolean) => onUpdateSettings({ directProduct })}
-          />
-        </div>
-      </div>
+      <div className="grid grid-cols-[auto_auto_1fr] items-center gap-x-3 gap-y-1">
+        {/* Direct Product Page */}
+        <Label className="text-sm font-medium col-span-3">{t('applePayDirectProductPage')}</Label>
+        <p className="text-sm text-muted-foreground">{t('enableApplePayProductPages')}</p>
+        <Switch
+          checked={directProduct}
+          onCheckedChange={(directProduct: boolean) => onUpdateSettings({ directProduct })}
+        />
+        <p className="text-xs text-gray-400 leading-relaxed">{t('applePayDirectProductPageInfo')}</p>
 
-      {/* Direct Cart Page */}
-      <div className="space-y-1">
-        <Label className="text-sm font-medium">{t('applePayDirectCartPage')}</Label>
-        <div className="flex items-center gap-3">
-          <p className="text-sm text-muted-foreground flex items-center h-6">{t('enableApplePayCartPages')}</p>
-          <Switch
-            checked={directCart}
-            onCheckedChange={(directCart: boolean) => onUpdateSettings({ directCart })}
-          />
-        </div>
+        {/* Direct Cart Page */}
+        <Label className="text-sm font-medium col-span-3 mt-4">{t('applePayDirectCartPage')}</Label>
+        <p className="text-sm text-muted-foreground">{t('enableApplePayCartPages')}</p>
+        <Switch
+          checked={directCart}
+          onCheckedChange={(directCart: boolean) => onUpdateSettings({ directCart })}
+        />
+        <p className="text-xs text-gray-400 leading-relaxed">{t('applePayDirectCartPageInfo')}</p>
       </div>
 
       {/* Button Style - only show if at least one direct option is enabled */}

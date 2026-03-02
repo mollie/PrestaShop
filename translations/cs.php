@@ -553,3 +553,5 @@ $_MODULE['<{mollie}prestashop>formbuilder_5ef0c737746fae2ca90e66c39333f8f6'] = '
 $_MODULE['<{mollie}prestashop>formbuilder_709468af25e91284821d1bdbfdded24c'] = 'Všechno';
 $_MODULE['<{mollie}prestashop>formbuilder_de62775a71fc2bf7a13d7530ae24a7ed'] = 'Obecná nastavení';
 $_MODULE['<{mollie}prestashop>formbuilder_fe4c6a5e7bd6793b37370e4e46daf998'] = 'Pokročilá nastavení';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_425f5c920457ba660cef129625f9f87b'] = 'Když je tato možnost povolena, na stránkách jednotlivých produktů se zobrazí tlačítko Apple Pay. Zákazníci jej mohou použít k okamžitému nákupu daného produktu pomocí Apple Pay bez nutnosti procházet košíkem nebo pokladnou. Zakoupen bude pouze aktuálně zobrazovaný produkt.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_84b08751d6f1c19265dd3568fb9809c9'] = 'Když je tato možnost povolena, na stránce košíku se zobrazí tlačítko Apple Pay. Zákazníci jej mohou použít k zaplacení všech položek v košíku najednou pomocí Apple Pay a přeskočit tak běžný proces pokladny.';
