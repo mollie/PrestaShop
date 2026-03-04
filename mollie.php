@@ -31,6 +31,7 @@ use Mollie\Service\CancelService;
 use Mollie\Service\CaptureService;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\MollieOrderService;
+use Mollie\Service\PrestashopModuleTracking;
 use Mollie\Service\RefundService;
 use Mollie\Service\ShipService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
@@ -229,6 +230,15 @@ class Mollie extends PaymentModule
 
         $logger->debug('Mollie subscription install successful');
 
+        PrestashopModuleTracking::track(
+            Config::SEGMENT_KEY,
+            $this,
+            'Module Installed',
+            [
+                'install_method' => 'manual',
+            ]
+        );
+
         return true;
     }
 
@@ -257,7 +267,30 @@ class Mollie extends PaymentModule
             return false;
         }
 
-        return parent::enable($force_all);
+        $result = parent::enable($force_all);
+
+        if ($result) {
+            PrestashopModuleTracking::track(
+                Config::SEGMENT_KEY,
+                $this,
+                'Module Enabled',
+                []
+            );
+        }
+
+        return $result;
+    }
+
+    public function disable($force_all = false)
+    {
+        PrestashopModuleTracking::track(
+            Config::SEGMENT_KEY,
+            $this,
+            'Module Disabled',
+            []
+        );
+
+        return parent::disable($force_all);
     }
 
     /**

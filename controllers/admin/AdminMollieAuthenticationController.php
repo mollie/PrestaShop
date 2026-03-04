@@ -18,6 +18,7 @@ use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Logger\LoggerInterface;
+use Mollie\Service\PrestashopModuleTracking;
 use Mollie\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -328,6 +329,17 @@ class AdminMollieAuthenticationController extends ModuleAdminController
 
             $environmentValue = ($environment === 'live') ? Config::ENVIRONMENT_LIVE : Config::ENVIRONMENT_TEST;
             $this->configuration->updateValue(Config::MOLLIE_ENVIRONMENT, $environmentValue);
+
+            PrestashopModuleTracking::track(
+                Config::SEGMENT_KEY,
+                $this->module,
+                'Module Configured',
+                [
+                    'environment' => $environment,
+                    'has_test_key' => !empty($this->configuration->get(Config::MOLLIE_API_KEY_TEST)),
+                    'has_live_key' => !empty($this->configuration->get(Config::MOLLIE_API_KEY)),
+                ]
+            );
 
             $this->ajaxRender(json_encode([
                 'success' => true,

@@ -45,7 +45,11 @@ jobs:
           rm -rf vendor/segmentio/analytics-php/.circleci
           rm -rf vendor/segmentio/analytics-php/.github
 
-          cp .env.dist .env
+          # Create .env with Segment API key for production tracking
+          cat > .env << 'EOF'
+          MODULE_ENV='GITHUB'
+          SEGMENT_API_KEY='${{ secrets.SEGMENT_API_KEY }}'
+          EOF
 
           # Create module directory structure
           mkdir ${{ env.MODULE_NAME }}
