@@ -3,6 +3,9 @@
 # Changelog #
 
 ## Changes in release 6.4.2
++ Redirect fix for bank transfer payment method
+
+## Changes in release 6.4.2
 + Multiple Apple Pay Direct improvements and stability fixes
 + Added pending payment status handling
 + Fixed negative surcharge amounts
