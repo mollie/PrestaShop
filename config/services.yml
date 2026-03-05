@@ -56,6 +56,9 @@ services:
   Mollie\Subscription\Grid\Accessibility\SubscriptionCancelAccessibility:
     class: Mollie\Subscription\Grid\Accessibility\SubscriptionCancelAccessibility
 
+  Mollie\Subscription\Provider\SubscriptionAvailabilityProvider:
+    class: Mollie\Subscription\Provider\SubscriptionAvailabilityProvider
+
   carrier_options_provider:
     class: Mollie\Subscription\Form\ChoiceProvider\CarrierOptionsProvider
     public: true
