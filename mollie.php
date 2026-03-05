@@ -559,6 +559,15 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayAdminOrder($params)
     {
+        if (!isset($params['id_order'])) {
+            return false;
+        }
+
+        $order = new Order((int) $params['id_order']);
+        if ($order->module !== $this->name) {
+            return false;
+        }
+
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
         $paymentMethodRepo = $this->getService(PaymentMethodRepositoryInterface::class);
 
