@@ -1255,17 +1255,38 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayCustomerAccount()
     {
-        $context = Context::getContext();
-        $id_customer = $context->customer->id;
+        try {
+            $context = Context::getContext();
 
-        $url = Context::getContext()->link->getModuleLink($this->name, 'subscriptions', [], true);
+            if (empty($context->customer->email)) {
+                return '';
+            }
 
-        $this->context->smarty->assign([
-            'front_controller' => $url,
-            'id_customer' => $id_customer,
-        ]);
+            /** @var \Mollie\Subscription\Provider\SubscriptionAvailabilityProvider $subscriptionAvailabilityProvider */
+            $subscriptionAvailabilityProvider = $this->getService(\Mollie\Subscription\Provider\SubscriptionAvailabilityProvider::class);
 
-        return $this->display(__FILE__, 'views/templates/front/subscription/customerAccount.tpl');
+            if (!$subscriptionAvailabilityProvider->isAvailableForCustomer($context->customer->email)) {
+                return '';
+            }
+
+            $url = Context::getContext()->link->getModuleLink($this->name, 'subscriptions', [], true);
+
+            $this->context->smarty->assign([
+                'front_controller' => $url,
+                'id_customer' => $context->customer->id,
+            ]);
+
+            return $this->display(__FILE__, 'views/templates/front/subscription/customerAccount.tpl');
+        } catch (\Throwable $exception) {
+            /** @var \Mollie\Logger\LoggerInterface $logger */
+            $logger = $this->getService(\Mollie\Logger\LoggerInterface::class);
+            $logger->error('Mollie - Error in hookDisplayCustomerAccount', [
+                'exceptions' => \Mollie\Utility\ExceptionUtility::getExceptions($exception),
+            ]);
+
+            // Fail safely - don't show the tab if there's an error
+            return '';
+        }
     }
 
     /**
