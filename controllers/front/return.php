@@ -103,8 +103,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         }
 
         if (isset($data['auth']) && $data['auth']) {
-            // any paid payments for this cart?
-
             if (false === $data['mollie_info']) {
                 $orderId = (int) Order::getIdByCartId($idCart);
                 $data['mollie_info'] = $orderId != 0 ? $paymentMethodRepo->getPaymentBy('order_id', $orderId) : [];
@@ -280,8 +278,13 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         /** @var PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getService(PaymentMethodRepository::class);
 
-        $orderId = (int) Order::getIdByCartId((int) Tools::getValue('cart_id'));
+        $cartId = (int) Tools::getValue('cart_id');
+        $orderId = (int) Order::getIdByCartId($cartId);
         $dbPayment = $data['mollie_info'] = $orderId != 0 ? $paymentMethodRepo->getPaymentBy('order_id', (int) $orderId) : [];
+
+        if (!$dbPayment && $orderId) {
+            $dbPayment = $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('cart_id', $cartId);
+        }
 
         if (!$dbPayment) {
             exit(json_encode([
