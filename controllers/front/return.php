@@ -109,6 +109,8 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             }
             if (false === $data['mollie_info']) {
                 $data['mollie_info'] = [];
+                //NOTE: information instead of error as this might occur due to cancellation of the payment
+                $logger->debug(sprintf('%s - Unable to find order in first try', self::FILE_NAME));
 
                 $data['msg_details'] = $this->module->l('Your payment was not successful. Try again.', self::FILE_NAME);
                 $this->setWarning($data['msg_details']);
