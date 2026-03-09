@@ -103,16 +103,12 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         }
 
         if (isset($data['auth']) && $data['auth']) {
-            // any paid payments for this cart?
-
             if (false === $data['mollie_info']) {
                 $orderId = (int) Order::getIdByCartId($idCart);
                 $data['mollie_info'] = $orderId != 0 ? $paymentMethodRepo->getPaymentBy('order_id', $orderId) : [];
             }
             if (false === $data['mollie_info']) {
                 $data['mollie_info'] = [];
-                //NOTE: information instead of error as this might occur due to cancellation of the payment
-                $logger->debug(sprintf('%s - Unable to find order in first try', self::FILE_NAME));
 
                 $data['msg_details'] = $this->module->l('Your payment was not successful. Try again.', self::FILE_NAME);
                 $this->setWarning($data['msg_details']);
@@ -280,8 +276,13 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         /** @var PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getService(PaymentMethodRepository::class);
 
-        $orderId = (int) Order::getIdByCartId((int) Tools::getValue('cart_id'));
+        $cartId = (int) Tools::getValue('cart_id');
+        $orderId = (int) Order::getIdByCartId($cartId);
         $dbPayment = $data['mollie_info'] = $orderId != 0 ? $paymentMethodRepo->getPaymentBy('order_id', (int) $orderId) : [];
+
+        if (!$dbPayment && $orderId) {
+            $dbPayment = $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('cart_id', $cartId);
+        }
 
         if (!$dbPayment) {
             exit(json_encode([
