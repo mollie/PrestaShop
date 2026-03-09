@@ -107,6 +107,9 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $orderId = (int) Order::getIdByCartId($idCart);
                 $data['mollie_info'] = $orderId != 0 ? $paymentMethodRepo->getPaymentBy('order_id', $orderId) : [];
             }
+            if (false === $data['mollie_info'] || empty($data['mollie_info'])) {
+                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('cart_id', $idCart);
+            }
             if (false === $data['mollie_info']) {
                 $data['mollie_info'] = [];
                 //NOTE: information instead of error as this might occur due to cancellation of the payment
