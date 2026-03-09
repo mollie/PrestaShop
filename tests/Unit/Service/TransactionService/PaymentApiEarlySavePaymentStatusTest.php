@@ -41,6 +41,16 @@ class PaymentApiEarlySavePaymentStatusTest extends TestCase
         Db::getInstance()->execute('START TRANSACTION');
 
         $this->insertMolliePayment(self::TRANSACTION_ID, self::CART_ID, 0, 'mol_test123');
+
+        // Verify the insert worked before continuing
+        $inserted = $this->getPaymentByTransactionId(self::TRANSACTION_ID);
+        if (empty($inserted)) {
+            throw new \RuntimeException(
+                'Test setup failed: could not insert initial payment record. ' .
+                'Transaction ID: ' . self::TRANSACTION_ID . ', ' .
+                'DB Error: ' . Db::getInstance()->getMsgError()
+            );
+        }
     }
 
     protected function tearDown(): void
@@ -154,10 +164,12 @@ class PaymentApiEarlySavePaymentStatusTest extends TestCase
         $this->simulateSavePaymentStatus(self::TRANSACTION_ID, PaymentStatus::STATUS_PAID, self::ORDER_ID);
 
         $afterFirstCall = $this->getPaymentByTransactionId(self::TRANSACTION_ID);
+        $this->assertNotEmpty($afterFirstCall, 'First call should create/update payment record');
 
         $this->simulateSavePaymentStatus(self::TRANSACTION_ID, PaymentStatus::STATUS_PAID, self::ORDER_ID);
 
         $afterSecondCall = $this->getPaymentByTransactionId(self::TRANSACTION_ID);
+        $this->assertNotEmpty($afterSecondCall, 'Second call should return same payment record');
 
         $this->assertEquals((int) $afterFirstCall['order_id'], (int) $afterSecondCall['order_id']);
         $this->assertEquals($afterFirstCall['bank_status'], $afterSecondCall['bank_status']);
@@ -167,7 +179,7 @@ class PaymentApiEarlySavePaymentStatusTest extends TestCase
 
     private function insertMolliePayment(string $transactionId, int $cartId, int $orderId, string $orderReference): void
     {
-        Db::getInstance()->insert('mollie_payments', [
+        $result = Db::getInstance()->insert('mollie_payments', [
             'cart_id' => $cartId,
             'order_id' => $orderId,
             'method' => 'ideal',
@@ -176,6 +188,12 @@ class PaymentApiEarlySavePaymentStatusTest extends TestCase
             'bank_status' => PaymentStatus::STATUS_OPEN,
             'created_at' => date('Y-m-d H:i:s'),
         ]);
+
+        if (!$result) {
+            throw new \RuntimeException(
+                'Failed to insert test payment data. DB Error: ' . Db::getInstance()->getMsgError()
+            );
+        }
     }
 
     /**
@@ -186,7 +204,7 @@ class PaymentApiEarlySavePaymentStatusTest extends TestCase
      */
     private function simulateSavePaymentStatus(string $transactionId, string $status, int $orderId): void
     {
-        Db::getInstance()->update(
+        $result = Db::getInstance()->update(
             'mollie_payments',
             [
                 'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
@@ -195,6 +213,12 @@ class PaymentApiEarlySavePaymentStatusTest extends TestCase
             ],
             '`transaction_id` = \'' . pSQL($transactionId) . '\''
         );
+
+        if (!$result) {
+            throw new \RuntimeException(
+                'Failed to update payment status. DB Error: ' . Db::getInstance()->getMsgError()
+            );
+        }
     }
 
     /**
@@ -204,7 +228,7 @@ class PaymentApiEarlySavePaymentStatusTest extends TestCase
      */
     private function simulateUpdateMolliePaymentReference(string $transactionId, string $newReference): void
     {
-        Db::getInstance()->update(
+        $result = Db::getInstance()->update(
             'mollie_payments',
             [
                 'order_reference' => pSQL($newReference),
@@ -212,6 +236,12 @@ class PaymentApiEarlySavePaymentStatusTest extends TestCase
             ],
             'transaction_id = "' . pSQL($transactionId) . '"'
         );
+
+        if (!$result) {
+            throw new \RuntimeException(
+                'Failed to update payment reference. DB Error: ' . Db::getInstance()->getMsgError()
+            );
+        }
     }
 
     /**
