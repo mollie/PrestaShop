@@ -478,6 +478,7 @@ class OrderData implements JsonSerializable
             return $defaultValue;
         }
         $input = ltrim($input);
+        $input = str_replace('&', 'and', $input);
 
         return substr($input, 0, 100);
     }
