@@ -15,6 +15,7 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Factory\CustomerFactory;
+use Mollie\Handler\Order\OrderPendingStatusHandler;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepository;
@@ -23,7 +24,6 @@ use Mollie\Service\PaymentReturnService;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\TransactionUtility;
-use Mollie\Handler\Order\OrderPendingStatusHandler;
 use Mollie\Validator\OrderCallBackValidator;
 
 if (!defined('_PS_VERSION_')) {
@@ -103,11 +103,12 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         }
 
         if (isset($data['auth']) && $data['auth']) {
-            // any paid payments for this cart?
-
             if (false === $data['mollie_info']) {
                 $orderId = (int) Order::getIdByCartId($idCart);
                 $data['mollie_info'] = $orderId != 0 ? $paymentMethodRepo->getPaymentBy('order_id', $orderId) : [];
+            }
+            if (false === $data['mollie_info'] || empty($data['mollie_info'])) {
+                $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('cart_id', $idCart);
             }
             if (false === $data['mollie_info']) {
                 $data['mollie_info'] = [];
@@ -130,7 +131,19 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 && (PaymentMethod::BANKTRANSFER === $data['mollie_info']['method'] || $data['mollie_info']['method'] === Config::PAY_BY_BANK)
                 && PaymentStatus::STATUS_OPEN === $data['mollie_info']['bank_status']
             ) {
-                $data['msg_details'] = $this->module->l('The payment is still being processed. You\'ll be notified when the bank or merchant confirms the payment.', self::FILE_NAME);
+                $orderId = (int) Order::getIdByCartId($idCart);
+                Tools::redirect($this->context->link->getPageLink(
+                        'order-confirmation',
+                        true,
+                        null,
+                        [
+                            'id_cart' => (int) $idCart,
+                            'id_module' => (int) $this->module->id,
+                            'id_order' => $orderId,
+                            'key' => $cart->secure_key,
+                        ]
+                    )
+                );
             } elseif (
                 isset($data['mollie_info']['bank_status'])
                 && in_array($data['mollie_info']['bank_status'], [PaymentStatus::STATUS_OPEN, PaymentStatus::STATUS_PENDING], true)
@@ -280,8 +293,13 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         /** @var PaymentMethodRepository $paymentMethodRepo */
         $paymentMethodRepo = $this->module->getService(PaymentMethodRepository::class);
 
-        $orderId = (int) Order::getIdByCartId((int) Tools::getValue('cart_id'));
+        $cartId = (int) Tools::getValue('cart_id');
+        $orderId = (int) Order::getIdByCartId($cartId);
         $dbPayment = $data['mollie_info'] = $orderId != 0 ? $paymentMethodRepo->getPaymentBy('order_id', (int) $orderId) : [];
+
+        if (!$dbPayment && $orderId) {
+            $dbPayment = $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('cart_id', $cartId);
+        }
 
         if (!$dbPayment) {
             exit(json_encode([
