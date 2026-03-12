@@ -162,8 +162,12 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
 
         $this->context->currency = new Currency($cart->id_currency);
         $this->context->customer = new Customer($cart->id_customer);
-
         $this->context->cart = $cart;
+
+        $deliveryAddress = new Address($cart->id_address_delivery);
+        if (Validate::isLoadedObject($deliveryAddress) && $deliveryAddress->id_country) {
+            $this->context->country = new Country($deliveryAddress->id_country, $this->context->language->id);
+        }
     }
 
     private function handleException(Throwable $exception, int $httpStatusCode, string $logMessage, string $transactionId = ''): void
