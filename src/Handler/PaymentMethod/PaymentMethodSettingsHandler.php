@@ -142,6 +142,10 @@ class PaymentMethodSettingsHandler
         if ($methodId === Config::MOLLIE_VOUCHER_METHOD_ID && isset($settings['voucherCategory'])) {
             $this->handleVoucherSettings($settings);
         }
+
+        if ($methodId === 'banktransfer' && isset($settings['bankTransferDueDays'])) {
+            $this->handleBankTransferSettings($settings);
+        }
     }
 
     /**
@@ -460,6 +464,23 @@ class PaymentMethodSettingsHandler
             Config::MOLLIE_VOUCHER_CATEGORY,
             $voucherCategory
         );
+    }
+
+    /**
+     * Handle bank transfer specific settings
+     *
+     * @param array $settings Settings data
+     */
+    private function handleBankTransferSettings(array $settings): void
+    {
+        $dueDays = (int) $settings['bankTransferDueDays'];
+
+        if ($dueDays >= 1 && $dueDays <= 90) {
+            $this->configuration->updateValue(
+                Config::MOLLIE_BANKTRANSFER_DUE_DAYS,
+                $dueDays
+            );
+        }
     }
 
     /**

@@ -195,6 +195,8 @@ export interface MolliePaymentMethodsTranslations {
   voucherCategoryEco: string;
   voucherCategoryAll: string;
   voucherCategoryHelp: string;
+  bankTransferDueDays: string;
+  bankTransferDueDaysHelp: string;
   klarnaNotice: string;
 }
 

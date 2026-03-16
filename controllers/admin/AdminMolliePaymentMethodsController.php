@@ -241,6 +241,8 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'voucherCategoryEco' => $this->module->l('Eco', self::FILE_NAME),
                 'voucherCategoryAll' => $this->module->l('All', self::FILE_NAME),
                 'voucherCategoryHelp' => $this->module->l('Select a category to use for all products in your webshop.', self::FILE_NAME),
+                'bankTransferDueDays' => $this->module->l('Bank transfer due date (days)', self::FILE_NAME),
+                'bankTransferDueDaysHelp' => $this->module->l('Number of days customers have to complete bank transfer payment (default: 14, range: 1-90)', self::FILE_NAME),
                 'klarnaNotice' => $this->module->l('Klarna authorises payments for up to 28 days. To capture funds automatically when an order is shipped, enable “Automatically ship on marked status” in the advanced settings. If no capture occurs within 28 days, the authorisation expires and the payment cannot be collected.', self::FILE_NAME),
             ],
         ]);
@@ -410,6 +412,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                                 'directCart' => (bool) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART) ?: 0),
                                 'buttonStyle' => (int) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE) ?: 0),
                             ] : null,
+                            'bankTransferDueDays' => $methodId === 'banktransfer'
+                                ? (string) ($this->configuration->get(Config::MOLLIE_BANKTRANSFER_DUE_DAYS) ?: Config::MOLLIE_BANKTRANSFER_DUE_DAYS_DEFAULT)
+                                : null,
                         ],
                     ];
                 } catch (Exception $e) {

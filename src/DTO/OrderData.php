@@ -125,6 +125,9 @@ class OrderData implements JsonSerializable
     /** @var ?string */
     private $title;
 
+    /** @var ?string */
+    private $expiresAt;
+
     public function __construct(
         Amount $amount,
         string $redirectUrl,
@@ -402,6 +405,18 @@ class OrderData implements JsonSerializable
         $this->title = $title;
     }
 
+    public function getExpiresAt(): ?string
+    {
+        return $this->expiresAt;
+    }
+
+    public function setExpiresAt(?string $expiresAt): self
+    {
+        $this->expiresAt = $expiresAt;
+
+        return $this;
+    }
+
     public function jsonSerialize(): array
     {
         $lines = [];
@@ -449,6 +464,7 @@ class OrderData implements JsonSerializable
             'lines' => $lines,
             'payment' => $this->getPayment()->jsonSerialize(),
             'consumerDateOfBirth' => $this->getConsumerDateOfBirth(),
+            'expiresAt' => $this->getExpiresAt(),
         ];
 
         if ($this->billingPhoneNumber) {

@@ -406,6 +406,27 @@ export function PaymentMethodSettings({ method, countries, customerGroups, langu
                 </p>
               </div>
             )}
+
+            {method.id === "banktransfer" && (
+              <div>
+                <Label htmlFor="bank-transfer-due-days" className="text-sm font-medium">
+                  {t('bankTransferDueDays')}
+                </Label>
+                <Input
+                  id="bank-transfer-due-days"
+                  type="number"
+                  min={1}
+                  max={90}
+                  placeholder="14"
+                  className="mt-1"
+                  value={method.settings.bankTransferDueDays || '14'}
+                  onChange={(e) => onUpdateSettings({ bankTransferDueDays: e.target.value })}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {t('bankTransferDueDaysHelp')}
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="space-y-4">
