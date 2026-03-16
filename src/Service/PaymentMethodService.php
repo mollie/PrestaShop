@@ -517,7 +517,7 @@ class PaymentMethodService
 
             $orderData->setPayment($payment);
 
-            $expiresAt = $this->paymentExpiryCalculator->calculateExpiresAt($molPaymentMethod->id_method);
+            $expiresAt = $this->paymentExpiryCalculator->calculateDueDate($molPaymentMethod->id_method);
             if ($expiresAt) {
                 $orderData->setExpiresAt($expiresAt);
             }

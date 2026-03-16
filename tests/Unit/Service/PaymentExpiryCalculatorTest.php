@@ -56,29 +56,9 @@ class PaymentExpiryCalculatorTest extends TestCase
         $this->assertEquals($expectedDate->format('Y-m-d'), $result);
     }
 
-    public function testCalculatesExpiresAtForBankTransfer(): void
-    {
-        $this->configurationMock
-            ->method('get')
-            ->with(Config::MOLLIE_BANKTRANSFER_DUE_DAYS)
-            ->willReturn('7');
-
-        $result = $this->calculator->calculateExpiresAt(PaymentMethod::BANKTRANSFER);
-
-        $this->assertNotNull($result);
-        $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/', $result);
-
-        $expectedDate = new \DateTime();
-        $expectedDate->modify('+7 days');
-        $actualDate = new \DateTime($result);
-
-        $this->assertEquals($expectedDate->format('Y-m-d'), $actualDate->format('Y-m-d'));
-    }
-
     public function testReturnsNullForNonBankTransfer(): void
     {
         $this->assertNull($this->calculator->calculateDueDate(PaymentMethod::CREDITCARD));
-        $this->assertNull($this->calculator->calculateExpiresAt(PaymentMethod::CREDITCARD));
     }
 
     public function testUsesDefaultWhenConfiguredValueIsNull(): void
@@ -89,7 +69,6 @@ class PaymentExpiryCalculatorTest extends TestCase
             ->willReturn(null);
 
         $result = $this->calculator->calculateDueDate(PaymentMethod::BANKTRANSFER);
-        $this->assertNotNull($result);
 
         $expectedDate = new \DateTime();
         $expectedDate->modify('+14 days');
@@ -148,20 +127,5 @@ class PaymentExpiryCalculatorTest extends TestCase
                 "Failed for {$days} days"
             );
         }
-    }
-
-    public function testDueDateAndExpiresAtUseDifferentFormats(): void
-    {
-        $this->configurationMock
-            ->method('get')
-            ->with(Config::MOLLIE_BANKTRANSFER_DUE_DAYS)
-            ->willReturn('7');
-
-        $dueDate = $this->calculator->calculateDueDate(PaymentMethod::BANKTRANSFER);
-        $expiresAt = $this->calculator->calculateExpiresAt(PaymentMethod::BANKTRANSFER);
-
-        $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}$/', $dueDate);
-        $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/', $expiresAt);
-        $this->assertEquals($dueDate, (new \DateTime($expiresAt))->format('Y-m-d'));
     }
 }

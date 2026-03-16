@@ -31,8 +31,7 @@ class PaymentExpiryCalculator
     }
 
     /**
-     * Calculate due date for bank transfer payments (Payments API).
-     * Returns date-only format as required by Mollie API dueDate field.
+     * Calculate due date for bank transfer payments.
      *
      * @param string $methodId Mollie payment method ID
      *
@@ -47,24 +46,6 @@ class PaymentExpiryCalculator
         }
 
         return $dueDateTime->format('Y-m-d');
-    }
-
-    /**
-     * Calculate expiry datetime for bank transfer payments (Orders API).
-     *
-     * @param string $methodId Mollie payment method ID
-     *
-     * @return ?string ISO 8601 datetime or null if not applicable
-     */
-    public function calculateExpiresAt(string $methodId): ?string
-    {
-        $dueDateTime = $this->getDueDateTime($methodId);
-
-        if (!$dueDateTime) {
-            return null;
-        }
-
-        return $dueDateTime->format('c');
     }
 
     /**
