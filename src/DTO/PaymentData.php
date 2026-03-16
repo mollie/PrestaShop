@@ -461,8 +461,8 @@ class PaymentData implements JsonSerializable
                 'phone' => $this->getBillingPhoneNumber(),
             ],
             'shippingAddress' => [
-                'givenName' => $this->cleanUpInput($this->getBillingAddress()->firstname),
-                'familyName' => $this->cleanUpInput($this->getBillingAddress()->lastname),
+                'givenName' => $this->cleanUpInput($this->getShippingAddress()->firstname),
+                'familyName' => $this->cleanUpInput($this->getShippingAddress()->lastname),
                 'email' => $this->cleanUpInput($this->getEmail()),
                 'streetAndNumber' => $this->cleanUpInput($this->getShippingAddress()->address1),
                 'streetAdditional' => $this->cleanUpInput($this->getShippingAddress()->address2, null),
