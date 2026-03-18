@@ -88,6 +88,23 @@ final class CreateApplePayOrderHandler
         $this->updateCardInfo($cart->id_address_invoice, $command->getOrder()->getBillingContent());
         $this->updateCustomer($cart->id_customer, $command->getOrder()->getShippingContent());
 
+        $shippingCountryId = Country::getByIso($command->getOrder()->getShippingContent()->getCountryCode());
+        $shippingCountry = new Country($shippingCountryId);
+
+        if (!$shippingCountryId || !$shippingCountry->active) {
+            return [
+                'success' => false,
+                'status' => 'STATUS_FAILURE',
+                'errors' => [
+                    [
+                        'code' => 'shippingContactInvalid',
+                        'contactField' => 'countryCode',
+                        'message' => $this->module->l('Delivery to this country is not available.', self::FILE_NAME),
+                    ],
+                ],
+            ];
+        }
+
         try {
             $apiPayment = $this->createMollieTransaction($cart, $command->getCardToken());
         } catch (\Exception $e) {
