@@ -361,16 +361,16 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         $statuses = [];
 
         $statusKeys = [
-            Config::MOLLIE_STATUS_AWAITING => 'Awaiting',
-            Config::MOLLIE_STATUS_OPEN => 'Open',
-            Config::MOLLIE_STATUS_PAID => 'Paid',
-            Config::MOLLIE_STATUS_COMPLETED => 'Completed',
-            Config::MOLLIE_STATUS_CANCELED => 'Canceled',
-            Config::MOLLIE_STATUS_EXPIRED => 'Expired',
-            Config::MOLLIE_STATUS_REFUNDED => 'Refunded',
-            Config::MOLLIE_STATUS_PARTIAL_REFUND => 'Partially refunded',
-            Config::MOLLIE_STATUS_SHIPPING => 'Shipping',
-            Config::MOLLIE_STATUS_CHARGEBACK => 'Chargeback',
+            Config::MOLLIE_STATUS_AWAITING => $this->module->l('Awaiting', self::FILE_NAME),
+            Config::MOLLIE_STATUS_OPEN => $this->module->l('Open', self::FILE_NAME),
+            Config::MOLLIE_STATUS_PAID => $this->module->l('Paid', self::FILE_NAME),
+            Config::MOLLIE_STATUS_COMPLETED => $this->module->l('Completed', self::FILE_NAME),
+            Config::MOLLIE_STATUS_CANCELED => $this->module->l('Canceled', self::FILE_NAME),
+            Config::MOLLIE_STATUS_EXPIRED => $this->module->l('Expired', self::FILE_NAME),
+            Config::MOLLIE_STATUS_REFUNDED => $this->module->l('Refunded', self::FILE_NAME),
+            Config::MOLLIE_STATUS_PARTIAL_REFUND => $this->module->l('Partially refunded', self::FILE_NAME),
+            Config::MOLLIE_STATUS_SHIPPING => $this->module->l('Shipping', self::FILE_NAME),
+            Config::MOLLIE_STATUS_CHARGEBACK => $this->module->l('Chargeback', self::FILE_NAME),
         ];
 
         foreach ($statusKeys as $key => $name) {
@@ -397,14 +397,14 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
     private function getEmailStatuses(): array
     {
         $emailKeys = [
-            Config::MOLLIE_MAIL_WHEN_PAID => 'Paid',
-            Config::MOLLIE_MAIL_WHEN_COMPLETED => 'Completed',
-            Config::MOLLIE_MAIL_WHEN_CANCELED => 'Canceled',
-            Config::MOLLIE_MAIL_WHEN_EXPIRED => 'Expired',
-            Config::MOLLIE_MAIL_WHEN_REFUNDED => 'Refunded',
-            Config::MOLLIE_MAIL_WHEN_CHARGEBACK => 'Chargeback',
-            Config::MOLLIE_MAIL_WHEN_FAILED => 'Failed',
-            Config::MOLLIE_MAIL_WHEN_SHIPPING => 'Shipping',
+            Config::MOLLIE_MAIL_WHEN_PAID => $this->module->l('Paid', self::FILE_NAME),
+            Config::MOLLIE_MAIL_WHEN_COMPLETED => $this->module->l('Completed', self::FILE_NAME),
+            Config::MOLLIE_MAIL_WHEN_CANCELED => $this->module->l('Canceled', self::FILE_NAME),
+            Config::MOLLIE_MAIL_WHEN_EXPIRED => $this->module->l('Expired', self::FILE_NAME),
+            Config::MOLLIE_MAIL_WHEN_REFUNDED => $this->module->l('Refunded', self::FILE_NAME),
+            Config::MOLLIE_MAIL_WHEN_CHARGEBACK => $this->module->l('Chargeback', self::FILE_NAME),
+            Config::MOLLIE_MAIL_WHEN_FAILED => $this->module->l('Failed', self::FILE_NAME),
+            Config::MOLLIE_MAIL_WHEN_SHIPPING => $this->module->l('Shipping', self::FILE_NAME),
         ];
 
         $statuses = [];
@@ -430,7 +430,7 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
 
     private function getOrderStatuses(): array
     {
-        $orderStatuses = OrderState::getOrderStates($this->language->getDefaultLanguageId());
+        $orderStatuses = OrderState::getOrderStates($this->context->language->id);
         $result = [];
 
         foreach ($orderStatuses as $status) {
@@ -446,43 +446,43 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
     private function getInvoiceOptions(): array
     {
         return [
-            ['id' => (string) Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_DEFAULT, 'name' => 'Default'],
-            ['id' => (string) Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED, 'name' => 'Authorized'],
-            ['id' => (string) Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED, 'name' => 'On Shipment'],
+            ['id' => (string) Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_DEFAULT, 'name' => $this->module->l('Default', self::FILE_NAME)],
+            ['id' => (string) Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED, 'name' => $this->module->l('Authorized', self::FILE_NAME)],
+            ['id' => (string) Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_SHIPPED, 'name' => $this->module->l('On Shipment', self::FILE_NAME)],
         ];
     }
 
     private function getConfirmationEmailOptions(): array
     {
         return [
-            ['id' => (string) Config::ORDER_CONF_MAIL_SEND_ON_PAID, 'name' => 'When the order is paid'],
-            ['id' => (string) Config::ORDER_CONF_MAIL_SEND_ON_NEVER, 'name' => 'Never'],
+            ['id' => (string) Config::ORDER_CONF_MAIL_SEND_ON_PAID, 'name' => $this->module->l('When the order is paid', self::FILE_NAME)],
+            ['id' => (string) Config::ORDER_CONF_MAIL_SEND_ON_NEVER, 'name' => $this->module->l('Never', self::FILE_NAME)],
         ];
     }
 
     private function getLogLevelOptions(): array
     {
         return [
-            ['id' => (string) Config::DEBUG_LOG_NONE, 'name' => 'Nothing'],
-            ['id' => (string) Config::DEBUG_LOG_ERRORS, 'name' => 'Errors'],
-            ['id' => (string) Config::DEBUG_LOG_ALL, 'name' => 'Everything'],
+            ['id' => (string) Config::DEBUG_LOG_NONE, 'name' => $this->module->l('Nothing', self::FILE_NAME)],
+            ['id' => (string) Config::DEBUG_LOG_ERRORS, 'name' => $this->module->l('Errors', self::FILE_NAME)],
+            ['id' => (string) Config::DEBUG_LOG_ALL, 'name' => $this->module->l('Everything', self::FILE_NAME)],
         ];
     }
 
     private function getLogoDisplayOptions(): array
     {
         return [
-            ['id' => (string) Config::LOGOS_HIDE, 'name' => 'Hide'],
-            ['id' => (string) Config::LOGOS_NORMAL, 'name' => 'Normal'],
-            ['id' => (string) Config::LOGOS_BIG, 'name' => 'Big'],
+            ['id' => (string) Config::LOGOS_HIDE, 'name' => $this->module->l('Hide', self::FILE_NAME)],
+            ['id' => (string) Config::LOGOS_NORMAL, 'name' => $this->module->l('Normal', self::FILE_NAME)],
+            ['id' => (string) Config::LOGOS_BIG, 'name' => $this->module->l('Big', self::FILE_NAME)],
         ];
     }
 
     private function getTranslateMollieOptions(): array
     {
         return [
-            ['id' => (string) Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE, 'name' => 'Use browser locale'],
-            ['id' => (string) Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE, 'name' => 'Use webshop locale'],
+            ['id' => (string) Config::PAYMENTSCREEN_LOCALE_BROWSER_LOCALE, 'name' => $this->module->l('Use browser locale', self::FILE_NAME)],
+            ['id' => (string) Config::PAYMENTSCREEN_LOCALE_SEND_WEBSITE_LOCALE, 'name' => $this->module->l('Use webshop locale', self::FILE_NAME)],
         ];
     }
 }
