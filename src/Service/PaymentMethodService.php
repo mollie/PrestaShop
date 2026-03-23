@@ -342,7 +342,9 @@ class PaymentMethodService
             $paymentData->setMetadata($metaData);
 
             $paymentData->setLocale($this->getLocale($molPaymentMethod->method));
-            $paymentData->setMethod($molPaymentMethod->id_method);
+            if (!empty($molPaymentMethod->id_method)) {
+                $paymentData->setMethod($molPaymentMethod->id_method);
+            }
 
             $paymentData->setDescription($orderReference);
             $paymentData->setEmail($customer->email);
@@ -453,7 +455,9 @@ class PaymentMethodService
                 $orderData->setTitle((string) $gender->name[$cart->id_lang]);
             }
 
-            $orderData->setMethod($molPaymentMethod->id_method);
+            if (!empty($molPaymentMethod->id_method)) {
+                $orderData->setMethod($molPaymentMethod->id_method);
+            }
             $orderData->setMetadata($metaData);
 
             if (!empty($customer->birthday) && $customer->birthday !== '0000-00-00') {
