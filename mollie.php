@@ -991,81 +991,107 @@ class Mollie extends PaymentModule
             ],
             // API Configuration - sidebar entry (parent)
             [
-                'name' => $this->l('API Configuration'),
+                'name' => $this->getTabTranslations('API Configuration'),
                 'class_name' => 'AdminMollieAuthenticationParent',
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
             ],
             // API Configuration - horizontal tab (child)
             [
-                'name' => $this->l('API Configuration'),
+                'name' => $this->getTabTranslations('API Configuration'),
                 'class_name' => self::ADMIN_MOLLIE_AUTHENTICATION_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
             ],
             // Payment Methods - sidebar entry (parent)
             [
-                'name' => $this->l('Payment Methods'),
+                'name' => $this->getTabTranslations('Payment Methods'),
                 'class_name' => 'AdminMolliePaymentMethodsParent',
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
             ],
             // Payment Methods - horizontal tab (child)
             [
-                'name' => $this->l('Payment Methods'),
+                'name' => $this->getTabTranslations('Payment Methods'),
                 'class_name' => self::ADMIN_MOLLIE_PAYMENT_METHODS_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
             ],
             // Advanced Settings - sidebar entry (parent)
             [
-                'name' => $this->l('Advanced Settings'),
+                'name' => $this->getTabTranslations('Advanced Settings'),
                 'class_name' => 'AdminMollieAdvancedSettingsParent',
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
             ],
             // Advanced Settings - horizontal tab (child)
             [
-                'name' => $this->l('Advanced Settings'),
+                'name' => $this->getTabTranslations('Advanced Settings'),
                 'class_name' => 'AdminMollieAdvancedSettings',
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
             ],
             // Subscriptions - sidebar entry (parent)
             [
-                'name' => $this->l('Subscriptions'),
+                'name' => $this->getTabTranslations('Subscriptions'),
                 'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_PARENT_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
             ],
             // Subscriptions - horizontal tab (child)
             [
-                'name' => $this->l('Subscriptions'),
+                'name' => $this->getTabTranslations('Subscriptions'),
                 'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
             ],
             // Subscription FAQ - sidebar entry (parent)
             [
-                'name' => $this->l('Subscription FAQ'),
+                'name' => $this->getTabTranslations('Subscription FAQ'),
                 'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_FAQ_PARENT_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
                 'module_tab' => true,
             ],
             // Subscription FAQ - horizontal tab (child)
             [
-                'name' => $this->l('Subscription FAQ'),
+                'name' => $this->getTabTranslations('Subscription FAQ'),
                 'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_FAQ_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
                 'module_tab' => true,
             ],
             // Logs - sidebar entry (parent)
             [
-                'name' => $this->l('Logs'),
+                'name' => $this->getTabTranslations('Logs'),
                 'class_name' => self::ADMIN_MOLLIE_LOGS_PARENT_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
                 'module_tab' => true,
             ],
             // Logs - horizontal tab (child)
             [
-                'name' => $this->l('Logs'),
+                'name' => $this->getTabTranslations('Logs'),
                 'class_name' => self::ADMIN_MOLLIE_LOGS_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
                 'module_tab' => true,
             ],
         ];
+    }
+
+    /**
+     * Returns tab name translations for all installed languages.
+     * PrestaShop uses this array (keyed by ISO code) to set ps_tab_lang entries.
+     *
+     * @param string $englishName
+     *
+     * @return array
+     */
+    private function getTabTranslations($englishName)
+    {
+        $translations = [];
+
+        foreach (Language::getLanguages(false) as $language) {
+            $translations[$language['iso_code']] = Translate::getModuleTranslation(
+                $this,
+                $englishName,
+                $this->name,
+                null,
+                false,
+                $language['locale']
+            );
+        }
+
+        return $translations;
     }
 
     public function hookActionAdminOrdersListingFieldsModifier($params)
