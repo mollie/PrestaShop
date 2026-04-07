@@ -417,7 +417,7 @@ class PaymentMethodSettingsHandler
                 $this->configuration->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT, 0);
                 $this->configuration->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_CART, 0);
 
-                throw new MollieException($e->getMessage());
+                throw new MollieException($this->module->l('Apple Pay Direct could not be enabled due to a certificate issue. Check the module logs for details.', 'PaymentMethodSettingsHandler'));
             }
         }
 
