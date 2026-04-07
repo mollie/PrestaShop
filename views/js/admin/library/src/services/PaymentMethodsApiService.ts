@@ -159,6 +159,23 @@ export class PaymentMethodsApiService {
 
 
   /**
+   * Check if Apple Pay domain association file has a conflict with another provider
+   */
+  async checkApplePayCertificate(): Promise<{ success: boolean; conflict: boolean; message?: string }> {
+    const url = new URL(this.baseUrl, window.location.origin);
+
+    const formData = new FormData();
+    formData.append('ajax', '1');
+    formData.append('action', 'checkApplePayCertificate');
+
+    const response = await fetch(url.toString(), {
+      method: 'POST',
+      body: formData
+    });
+    return response.json();
+  }
+
+  /**
    * Upload custom logo for card payment method
    */
   async uploadCustomLogo(file: File): Promise<{ success: boolean; message: string; logoUrl?: string }> {

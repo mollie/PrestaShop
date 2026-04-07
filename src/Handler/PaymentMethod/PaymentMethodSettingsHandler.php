@@ -410,21 +410,14 @@ class PaymentMethodSettingsHandler
             try {
                 $this->applePayDirectCertificateHandler->handle();
             } catch (ApplePayDirectCertificateCreation $e) {
-                $this->logger->error('Grant permissions for the folder or visit ApplePay to see how it can be added manually', [
+                $this->logger->error('Apple Pay Direct certificate issue', [
                     'exceptions' => ExceptionUtility::getExceptions($e),
                 ]);
 
-                // Disable Apple Pay Direct features if certificate creation fails
-                $isApplePayDirectProductEnabled = false;
-                $isApplePayDirectCartEnabled = false;
+                $this->configuration->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT, 0);
+                $this->configuration->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_CART, 0);
 
-                // Build error message with documentation link
-                $errorMessage = $e->getMessage() . ' ' . TagsUtility::ppTags(
-                    'Grant permissions for the folder or visit [1]ApplePay[/1] to see how it can be added manually',
-                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/applePayDirectDocumentation.tpl')]
-                );
-
-                throw new MollieException($errorMessage);
+                throw new MollieException($e->getMessage());
             }
         }
 

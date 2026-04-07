@@ -101,6 +101,8 @@ export interface MolliePaymentMethodsTranslations {
   applePayButtonBlack: string;
   applePayButtonOutline: string;
   applePayButtonWhite: string;
+  applePayDirectCertificateConflict: string;
+  ignore: string;
 
   // Payment Restrictions
   paymentRestrictions: string;
