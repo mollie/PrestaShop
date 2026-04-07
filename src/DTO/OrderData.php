@@ -17,6 +17,7 @@ use Country;
 use JsonSerializable;
 use Mollie\DTO\Object\Amount;
 use Mollie\DTO\Object\Payment;
+use Mollie\Utility\MollieApiInputSanitizer;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -470,54 +471,6 @@ class OrderData implements JsonSerializable
 
     private function cleanUpInput($input, $defaultValue = 'N/A')
     {
-        if (empty($input)) {
-            return $defaultValue;
-        }
-
-        if (ctype_space($input)) {
-            return $defaultValue;
-        }
-        $input = ltrim($input);
-        $input = $this->normalizeTypographicCharacters($input);
-
-        return substr($input, 0, 100);
-    }
-
-    /**
-     * Normalizes typographic Unicode characters to ASCII equivalents and strips
-     * any remaining characters not accepted by the Mollie API.
-     *
-     * @param string $input
-     *
-     * @return string
-     */
-    private function normalizeTypographicCharacters($input)
-    {
-        $input = str_replace(
-            ["\u{2018}", "\u{2019}", "\u{201A}", "\u{2039}", "\u{203A}"],
-            "'",
-            $input
-        );
-        $input = str_replace(
-            ["\u{201C}", "\u{201D}", "\u{201E}", "\u{00AB}", "\u{00BB}"],
-            '"',
-            $input
-        );
-        $input = str_replace(
-            ["\u{2010}", "\u{2011}", "\u{2013}", "\u{2014}", "\u{2212}"],
-            '-',
-            $input
-        );
-        $input = str_replace(
-            ["\u{00A0}", "\u{2003}", "\u{2009}"],
-            ' ',
-            $input
-        );
-        $input = str_replace('&', 'and', $input);
-        $input = str_replace("\u{2026}", '...', $input);
-
-        $input = preg_replace('/[^\p{L}\p{N}\s\-\'\"\.,:;\/\(\)\+\#@!?]/u', '', $input);
-
-        return $input;
+        return MollieApiInputSanitizer::sanitize($input, $defaultValue);
     }
 }
