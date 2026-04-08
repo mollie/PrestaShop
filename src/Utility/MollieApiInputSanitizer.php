@@ -46,8 +46,8 @@ class MollieApiInputSanitizer
     }
 
     /**
-     * Normalizes typographic Unicode characters to ASCII equivalents and strips
-     * any remaining characters not accepted by the Mollie API.
+     * Normalizes typographic Unicode characters to their ASCII equivalents
+     * for Mollie API compatibility (Klarna, in3, etc.).
      *
      * @param string $input
      *
@@ -61,8 +61,8 @@ class MollieApiInputSanitizer
             $input
         );
         $input = str_replace(
-            ["\u{201C}", "\u{201D}", "\u{201E}", "\u{00AB}", "\u{00BB}"],
-            '"',
+            ["\u{201C}", "\u{201D}", "\u{201E}", "\u{00AB}", "\u{00BB}", '"'],
+            '',
             $input
         );
         $input = str_replace(
@@ -78,8 +78,43 @@ class MollieApiInputSanitizer
         $input = str_replace('&', 'and', $input);
         $input = str_replace("\u{2026}", '...', $input);
 
-        $input = preg_replace('/[^\p{L}\p{N}\s\-\'\"\.,:;\/\(\)\+\#@!?]/u', '', $input);
-
         return $input;
+    }
+
+    /**
+     * Sanitizes an email for Mollie API by punycode-encoding IDN domains.
+     *
+     * @param string|null $email
+     *
+     * @return string|null
+     */
+    public static function sanitizeEmail($email)
+    {
+        if ($email === null) {
+            return null;
+        }
+
+        $email = trim($email);
+
+        if ($email === '') {
+            return null;
+        }
+
+        $atPos = strrpos($email, '@');
+        if ($atPos === false) {
+            return $email;
+        }
+
+        $local = substr($email, 0, $atPos);
+        $domain = substr($email, $atPos + 1);
+
+        if (function_exists('idn_to_ascii') && preg_match('/[^\x20-\x7E]/', $domain)) {
+            $ascii = idn_to_ascii($domain, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+            if ($ascii !== false) {
+                $domain = $ascii;
+            }
+        }
+
+        return $local . '@' . $domain;
     }
 }
