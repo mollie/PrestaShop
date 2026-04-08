@@ -62,15 +62,15 @@
               <td>{$product->quantityRefunded|escape:'html':'UTF-8'}</td>
               <td>
               {if $mollie_api_type == 'orders' && $product->type != 'discount'}
-                <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$product->shippableQuantity|escape:'html':'UTF-8'}" {if $product->shippableQuantity < 1}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$product->shippableQuantity|escape:'html':'UTF-8'}" {if !$product->shippableQuantity || $product->shippableQuantity <= 0}disabled{/if}>
                   <i class="material-icons">local_shipping</i> {l s='Ship' mod='mollie'}
                 </button>
-                <button type="button" class="btn btn-default btn-xs mollie-cancel-btn" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$product->cancelableQuantity|escape:'html':'UTF-8'}" {if $product->cancelableQuantity < 1}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-cancel-btn" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$product->cancelableQuantity|escape:'html':'UTF-8'}" {if !$product->cancelableQuantity || $product->cancelableQuantity <= 0}disabled{/if}>
                   <i class="material-icons">cancel</i> {l s='Cancel' mod='mollie'}
                 </button>
               {/if}
               {if $product->type != 'discount'}
-                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$product->refundableQuantity|escape:'html':'UTF-8'}" {if $product->refundableQuantity < 1}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$product->refundableQuantity|escape:'html':'UTF-8'}" {if !$product->refundableQuantity || $product->refundableQuantity <= 0}disabled{/if}>
                   <i class="material-icons">replay</i> {l s='Refund' mod='mollie'}
                 </button>
               {/if}
