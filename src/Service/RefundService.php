@@ -50,7 +50,7 @@ class RefundService
      *
      * @return array
      */
-    public function handleRefund(string $transactionId, ?float $amount = null, ?string $orderLineId = null, $quantity = null)
+    public function handleRefund(string $transactionId, ?float $amount = null, ?string $orderLineId = null, ?int $quantity = null)
     {
         try {
             $payment = TransactionUtility::isOrderTransaction($transactionId)

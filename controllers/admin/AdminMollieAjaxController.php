@@ -237,7 +237,10 @@ class AdminMollieAjaxController extends ModuleAdminController
             $transactionId = Tools::getValue('transactionId');
             $refundAmount = (float) Tools::getValue('refundAmount') ?: null;
             $orderLineId = Tools::getValue('orderline') ?: null;
-            $quantity = Tools::getValue('quantity') ?: null;
+            $quantity = Tools::getValue('quantity') ? (int) Tools::getValue('quantity') : null;
+            if ($quantity !== null && $quantity < 1) {
+                $quantity = null;
+            }
 
             /** @var RefundService $refundService */
             $refundService = $this->module->getService(RefundService::class);
@@ -262,7 +265,10 @@ class AdminMollieAjaxController extends ModuleAdminController
         $orderLines = Tools::getValue('orderLines') ?: [];
         $tracking = Tools::getValue('tracking');
         $orderlineId = Tools::getValue('orderline');
-        $quantity = Tools::getValue('quantity') ?: null;
+        $quantity = Tools::getValue('quantity') ? (int) Tools::getValue('quantity') : null;
+        if ($quantity !== null && $quantity < 1) {
+            $quantity = null;
+        }
 
         try {
             $order = new Order($orderId);
@@ -321,7 +327,10 @@ class AdminMollieAjaxController extends ModuleAdminController
     {
         $orderId = (int) Tools::getValue('orderId');
         $orderlineId = Tools::getValue('orderline') ?: null;
-        $quantity = Tools::getValue('quantity') ?: null;
+        $quantity = Tools::getValue('quantity') ? (int) Tools::getValue('quantity') : null;
+        if ($quantity !== null && $quantity < 1) {
+            $quantity = null;
+        }
 
         try {
             $order = new Order($orderId);

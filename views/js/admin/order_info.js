@@ -19,14 +19,14 @@ $(document).ready(function () {
       for (var i = 1; i <= maxQuantity; i++) {
         $select.append('<option value="' + i + '">' + i + 'x</option>');
       }
-      $select.val(maxQuantity);
+      $select.val(1);
       $group.show();
     } else {
       $group.hide();
     }
   }
 
-  function showModal(action, productId, productAmount, orderline, availableQuantity, productName) {
+  function showModal(action, productId, productAmount, orderline, availableQuantity) {
     var amount = productAmount;
 
     // For refund actions, get amount from input field if not provided
@@ -53,7 +53,6 @@ $(document).ready(function () {
       amount: amount,
       orderline: orderline || null,
       availableQuantity: availableQuantity || null,
-      productName: productName || null,
     };
 
     if (action === 'refund' || action === 'refundAll') {
@@ -99,18 +98,16 @@ $(document).ready(function () {
     var amount = $(this).data('price');
     var orderline = $(this).data('orderline');
     var availableQuantity = $(this).data('available-quantity');
-    var productName = $(this).data('product-name');
 
-    showModal('refund', productId, amount, orderline, availableQuantity, productName);
+    showModal('refund', productId, amount, orderline, availableQuantity);
   });
 
   $('.mollie-ship-btn').on('click', function() {
     var productId = $(this).data('product');
     var orderline = $(this).data('orderline');
     var availableQuantity = $(this).data('available-quantity');
-    var productName = $(this).data('product-name');
 
-    showModal('ship', productId, null, orderline, availableQuantity, productName);
+    showModal('ship', productId, null, orderline, availableQuantity);
   });
 
   $('.mollie-capture-btn').on('click', function() {
@@ -123,9 +120,8 @@ $(document).ready(function () {
   $('.mollie-cancel-btn').on('click', function() {
     var orderline = $(this).data('orderline');
     var availableQuantity = $(this).data('available-quantity');
-    var productName = $(this).data('product-name');
 
-    showModal('cancel', null, null, orderline, availableQuantity, productName);
+    showModal('cancel', null, null, orderline, availableQuantity);
   });
 
   $('#mollie-initiate-refund').on('click', function() {
