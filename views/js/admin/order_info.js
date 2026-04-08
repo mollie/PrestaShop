@@ -10,7 +10,23 @@
 $(document).ready(function () {
   var actionContext = {};
 
-  function showModal(action, productId, productAmount, orderline) {
+  function populateQuantitySelector(selectId, groupId, maxQuantity) {
+    var $select = $(selectId);
+    var $group = $(groupId);
+    $select.empty();
+
+    if (maxQuantity && maxQuantity > 1) {
+      for (var i = 1; i <= maxQuantity; i++) {
+        $select.append('<option value="' + i + '">' + i + 'x</option>');
+      }
+      $select.val(maxQuantity);
+      $group.show();
+    } else {
+      $group.hide();
+    }
+  }
+
+  function showModal(action, productId, productAmount, orderline, availableQuantity, productName) {
     var amount = productAmount;
 
     // For refund actions, get amount from input field if not provided
@@ -36,6 +52,8 @@ $(document).ready(function () {
       resource: resource,
       amount: amount,
       orderline: orderline || null,
+      availableQuantity: availableQuantity || null,
+      productName: productName || null,
     };
 
     if (action === 'refund' || action === 'refundAll') {
@@ -47,8 +65,14 @@ $(document).ready(function () {
       } else {
         $('#mollie-refund-modal-message').text(trans.refundOrderConfirm);
       }
+      if (orderline) {
+        populateQuantitySelector('#mollie-refund-quantity', '#mollie-refund-quantity-group', availableQuantity);
+      } else {
+        $('#mollie-refund-quantity-group').hide();
+      }
       $('#mollieRefundModal').modal('show');
     } else if (action === 'ship' || action === 'shipAll') {
+      populateQuantitySelector('#mollie-ship-quantity', '#mollie-ship-quantity-group', availableQuantity);
       $('#mollieShipModal').modal('show');
     } else if (action === 'capture' || action === 'captureAll') {
       // Update modal message based on action type
@@ -65,6 +89,7 @@ $(document).ready(function () {
       } else {
         $('#mollie-cancel-modal-message').text(trans.cancelOrderLineConfirm);
       }
+      populateQuantitySelector('#mollie-cancel-quantity', '#mollie-cancel-quantity-group', availableQuantity);
       $('#mollieCancelModal').modal('show');
     }
   }
@@ -73,15 +98,19 @@ $(document).ready(function () {
     var productId = $(this).data('product');
     var amount = $(this).data('price');
     var orderline = $(this).data('orderline');
+    var availableQuantity = $(this).data('available-quantity');
+    var productName = $(this).data('product-name');
 
-    showModal('refund', productId, amount, orderline);
+    showModal('refund', productId, amount, orderline, availableQuantity, productName);
   });
 
   $('.mollie-ship-btn').on('click', function() {
     var productId = $(this).data('product');
     var orderline = $(this).data('orderline');
+    var availableQuantity = $(this).data('available-quantity');
+    var productName = $(this).data('product-name');
 
-    showModal('ship', productId, null, orderline);
+    showModal('ship', productId, null, orderline, availableQuantity, productName);
   });
 
   $('.mollie-capture-btn').on('click', function() {
@@ -93,8 +122,10 @@ $(document).ready(function () {
 
   $('.mollie-cancel-btn').on('click', function() {
     var orderline = $(this).data('orderline');
+    var availableQuantity = $(this).data('available-quantity');
+    var productName = $(this).data('product-name');
 
-    showModal('cancel', null, null, orderline);
+    showModal('cancel', null, null, orderline, availableQuantity, productName);
   });
 
   $('#mollie-initiate-refund').on('click', function() {
@@ -236,11 +267,12 @@ $(document).ready(function () {
 
     if (actionContext.orderline) {
       data.orderline = actionContext.orderline;
-    }
 
-    // Add cancel-specific data
-    if (context.action === 'cancel' || context.action === 'cancelAll') {
-      // Cancel actions don't need additional data beyond orderline
+      var quantitySelectId = '#mollie-' + context.action + '-quantity';
+      var selectedQuantity = $(quantitySelectId).val();
+      if (selectedQuantity) {
+        data.quantity = parseInt(selectedQuantity, 10);
+      }
     }
 
     if (!ajax_url) {
