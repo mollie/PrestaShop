@@ -61,16 +61,22 @@ class RefundService
 
             $currency = $payment->amount->currency;
 
-            if ($isPartialRefund && TransactionUtility::isOrderTransaction($transactionId)) {
-                $lineData = ['id' => $orderLineId];
-                if ($quantity) {
-                    $lineData['quantity'] = (int) $quantity;
-                }
-                $payment->refund([
-                    'lines' => [$lineData],
-                ]);
+            if (TransactionUtility::isOrderTransaction($transactionId)) {
+                if ($orderLineId) {
+                    $lineData = ['id' => $orderLineId];
+                    if ($quantity) {
+                        $lineData['quantity'] = (int) $quantity;
+                    }
+                    $payment->refund([
+                        'lines' => [$lineData],
+                    ]);
 
-                return $this->createSuccessResponse(true, null, $currency);
+                    return $this->createSuccessResponse(true, null, $currency);
+                }
+
+                $payment->refundAll();
+
+                return $this->createSuccessResponse(false, null, $currency);
             }
 
             $refundAmount = $this->calculateRefundAmount($payment, $amount);
@@ -80,7 +86,7 @@ class RefundService
 
             $isPartial = $amount !== null && (float) $refundAmount < (float) $payment->amount->value;
 
-            $this->processRefund($payment, $refundAmount, TransactionUtility::isOrderTransaction($transactionId));
+            $this->processRefund($payment, $refundAmount, false);
 
             return $this->createSuccessResponse($isPartial, $refundAmount, $currency);
         } catch (ApiException $e) {
