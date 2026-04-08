@@ -619,11 +619,30 @@ class Mollie extends PaymentModule
             $isShipped = $shipService->isShipped($mollieTransactionId);
             $isCanceled = $cancelService->isCanceled($mollieTransactionId);
 
+            $lineActions = [];
+            if ($mollieApiType === 'orders' && $products) {
+                foreach ($products as $line) {
+                    $isNonActionable = in_array($line->type, ['discount'], true);
+                    $isNonShippable = in_array($line->type, ['discount', 'shipping_fee', 'surcharge'], true);
+                    $fullyRefunded = (int) $line->quantityRefunded >= (int) $line->quantity;
+
+                    $lineActions[$line->id] = [
+                        'canShip' => !$isNonShippable && (int) $line->shippableQuantity > 0 && !$fullyRefunded,
+                        'canCancel' => !$isNonActionable && (int) $line->cancelableQuantity > 0 && !$fullyRefunded,
+                        'canRefund' => !$isNonActionable && (int) $line->refundableQuantity > 0,
+                        'shippableQuantity' => (int) $line->shippableQuantity,
+                        'cancelableQuantity' => (int) $line->cancelableQuantity,
+                        'refundableQuantity' => (int) $line->refundableQuantity,
+                    ];
+                }
+            }
+
             $this->context->smarty->assign([
                 'order_reference' => $order->reference,
                 'refundable_amount' => $refundableAmount,
                 'capturable_amount' => $capturableAmount,
                 'products' => $products,
+                'lineActions' => $lineActions,
                 'mollie_logo_path' => $mollieLogoPath,
                 'mollie_transaction_id' => $mollieTransactionId,
                 'mollie_api_type' => $mollieApiType,
