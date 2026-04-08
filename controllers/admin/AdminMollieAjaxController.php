@@ -237,11 +237,12 @@ class AdminMollieAjaxController extends ModuleAdminController
             $transactionId = Tools::getValue('transactionId');
             $refundAmount = (float) Tools::getValue('refundAmount') ?: null;
             $orderLineId = Tools::getValue('orderline') ?: null;
+            $quantity = Tools::getValue('quantity') ?: null;
 
             /** @var RefundService $refundService */
             $refundService = $this->module->getService(RefundService::class);
 
-            $status = $refundService->handleRefund($transactionId, $refundAmount, $orderLineId);
+            $status = $refundService->handleRefund($transactionId, $refundAmount, $orderLineId, $quantity);
 
             $this->ajaxRender(json_encode($status));
         } catch (\Throwable $e) {
@@ -261,6 +262,7 @@ class AdminMollieAjaxController extends ModuleAdminController
         $orderLines = Tools::getValue('orderLines') ?: [];
         $tracking = Tools::getValue('tracking');
         $orderlineId = Tools::getValue('orderline');
+        $quantity = Tools::getValue('quantity') ?: null;
 
         try {
             $order = new Order($orderId);
@@ -271,7 +273,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 
             /** @var ShipService $shipService */
             $shipService = $this->module->getService(ShipService::class);
-            $status = $shipService->handleShip($transactionId, $orderlineId, $tracking);
+            $status = $shipService->handleShip($transactionId, $orderlineId, $tracking, $quantity);
 
             $this->ajaxRender(json_encode($status));
         } catch (\Throwable $e) {
@@ -319,6 +321,7 @@ class AdminMollieAjaxController extends ModuleAdminController
     {
         $orderId = (int) Tools::getValue('orderId');
         $orderlineId = Tools::getValue('orderline') ?: null;
+        $quantity = Tools::getValue('quantity') ?: null;
 
         try {
             $order = new Order($orderId);
@@ -329,7 +332,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 
             /** @var CancelService $cancelService */
             $cancelService = $this->module->getService(CancelService::class);
-            $status = $cancelService->handleCancel($transactionId, $orderlineId);
+            $status = $cancelService->handleCancel($transactionId, $orderlineId, $quantity);
 
             $this->ajaxRender(json_encode($status));
         } catch (\Throwable $e) {
