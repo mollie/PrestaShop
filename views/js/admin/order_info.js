@@ -293,12 +293,9 @@ $(document).ready(function () {
             successMessage += ' ' + (response.detailed || response.msg_details);
           }
           showSuccessMessage(successMessage);
-          if (response.payment) {
-            console.log('Payment updated:', response.payment);
-          }
-          if (response.order) {
-            console.log('Order updated:', response.order);
-          }
+          setTimeout(function() {
+            location.reload();
+          }, 1500);
         } else {
           showErrorMessage(response.message || response.detailed || trans.errorOccurred);
         }

@@ -42,6 +42,11 @@
         <tr>
           <th>{l s='Product' mod='mollie'}</th>
           <th>{l s='Price' mod='mollie'}</th>
+          {if $mollie_api_type == 'orders'}
+          <th>{l s='Shipped' mod='mollie'}</th>
+          <th>{l s='Canceled' mod='mollie'}</th>
+          <th>{l s='Refunded' mod='mollie'}</th>
+          {/if}
           <th>{l s='Actions' mod='mollie'}</th>
         </tr>
       </thead>
@@ -52,6 +57,9 @@
             <tr>
               <td><strong>{$product->quantity|escape:'html':'UTF-8'}x</strong> {$product->name|escape:'html':'UTF-8'}</td>
               <td>{$product->totalAmount->value|escape:'html':'UTF-8'}</td>
+              <td>{$product->quantityShipped|escape:'html':'UTF-8'}</td>
+              <td>{$product->quantityCanceled|escape:'html':'UTF-8'}</td>
+              <td>{$product->quantityRefunded|escape:'html':'UTF-8'}</td>
               <td>
               {if $mollie_api_type == 'orders' && $product->name != 'Discount'}
                 <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$product->shippableQuantity|escape:'html':'UTF-8'}" {if $product->quantityShipped == $product->quantity || $product->quantityCanceled == $product->quantity}disabled{/if}>
