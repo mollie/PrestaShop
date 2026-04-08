@@ -50,7 +50,7 @@ class RefundService
      *
      * @return array
      */
-    public function handleRefund(string $transactionId, ?float $amount = null, ?string $orderLineId = null)
+    public function handleRefund(string $transactionId, ?float $amount = null, ?string $orderLineId = null, $quantity = null)
     {
         try {
             $payment = TransactionUtility::isOrderTransaction($transactionId)
@@ -62,10 +62,12 @@ class RefundService
             $currency = $payment->amount->currency;
 
             if ($isPartialRefund && TransactionUtility::isOrderTransaction($transactionId)) {
+                $lineData = ['id' => $orderLineId];
+                if ($quantity) {
+                    $lineData['quantity'] = (int) $quantity;
+                }
                 $payment->refund([
-                    'lines' => [
-                        ['id' => $orderLineId],
-                    ],
+                    'lines' => [$lineData],
                 ]);
 
                 return $this->createSuccessResponse(true, null, $currency);

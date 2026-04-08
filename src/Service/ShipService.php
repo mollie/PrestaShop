@@ -46,7 +46,7 @@ class ShipService
      *
      * @since 3.3.0
      */
-    public function handleShip($transactionId, $orderlineId = null, $tracking = null)
+    public function handleShip($transactionId, $orderlineId = null, $tracking = null, $quantity = null)
     {
         try {
             /** @var MollieOrderAlias $payment */
@@ -54,11 +54,11 @@ class ShipService
             $shipmentData = [];
 
             if ($orderlineId) {
-                $shipmentData['lines'] = [
-                    [
-                        'id' => $orderlineId,
-                    ],
-                ];
+                $lineData = ['id' => $orderlineId];
+                if ($quantity) {
+                    $lineData['quantity'] = (int) $quantity;
+                }
+                $shipmentData['lines'] = [$lineData];
             }
 
             if ($tracking['carrier'] && $tracking['code'] && $tracking['tracking_url']) {
