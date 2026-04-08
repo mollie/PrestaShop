@@ -104,10 +104,10 @@
       <button type="button" class="btn btn-default btn-block" id="mollie-refund-all-orders" {if $isRefunded || $refundable_amount <= 0 || $isCanceled}disabled{/if}>
         <i class="material-icons">replay</i> {l s='Refund all' mod='mollie'}
       </button>
-      <button type="button" class="btn btn-default btn-block" id="mollie-ship-all" {if $isShipped || $isRefunded || $isCanceled}disabled{/if}>
+      <button type="button" class="btn btn-default btn-block" id="mollie-ship-all" {if $isShipped || $isRefunded || $isCanceled || $refundable_amount <= 0}disabled{/if}>
         <i class="material-icons">local_shipping</i> {l s='Ship All' mod='mollie'}
       </button>
-      <button type="button" class="btn btn-default btn-block" id="mollie-cancel-all" {if $isCanceled || $isRefunded || $isShipped}disabled{/if}>
+      <button type="button" class="btn btn-default btn-block" id="mollie-cancel-all" {if $isCanceled || $isRefunded || $isShipped || $refundable_amount <= 0}disabled{/if}>
         <i class="material-icons">cancel</i> {l s='Cancel All' mod='mollie'}
       </button>
     {/if}
