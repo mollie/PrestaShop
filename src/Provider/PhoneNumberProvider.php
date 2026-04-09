@@ -34,7 +34,7 @@ final class PhoneNumberProvider implements PhoneNumberProviderInterface
         // If the phone number starts with a '+', validate that it's in E.164 format
         if ($phoneNumber[0] === '+') {
             // E.164 format: +<country_code><number> and should be between 3 and 18 digits total
-            if (preg_match("/^\+\d{3,18}$/", $phoneNumber)) {
+            if (preg_match("/^\+[1-9]\d{2,17}$/", $phoneNumber)) {
                 return $phoneNumber; // Return the number if it matches E.164 format
             } else {
                 return null;
