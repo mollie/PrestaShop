@@ -20,6 +20,7 @@ use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\MailService;
+use Mollie\Service\PayByBankCancellationService;
 use Mollie\Service\PaymentReturnService;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\ExceptionUtility;
@@ -128,22 +129,38 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                     )
                 );
             } elseif (isset($data['mollie_info']['method'])
-                && (PaymentMethod::BANKTRANSFER === $data['mollie_info']['method'] || $data['mollie_info']['method'] === Config::PAY_BY_BANK)
+                && PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
                 && PaymentStatus::STATUS_OPEN === $data['mollie_info']['bank_status']
             ) {
-                $orderId = (int) Order::getIdByCartId($idCart);
-                Tools::redirect($this->context->link->getPageLink(
-                        'order-confirmation',
+                $this->redirectToOrderConfirmation($idCart, $cart);
+            } elseif (isset($data['mollie_info']['method'])
+                && $data['mollie_info']['method'] === Config::PAY_BY_BANK
+            ) {
+                /** @var PayByBankCancellationService $payByBankService */
+                $payByBankService = $this->module->getService(PayByBankCancellationService::class);
+                $transactionId = $data['mollie_info']['transaction_id'];
+                $dbStatus = $data['mollie_info']['bank_status'];
+
+                $statusToCheck = $dbStatus;
+
+                if (in_array($dbStatus, [PaymentStatus::STATUS_OPEN, PaymentStatus::STATUS_PENDING], true)) {
+                    $statusToCheck = $payByBankService->getActualMollieStatus($transactionId);
+                }
+
+                if ($payByBankService->shouldCancelPayment($statusToCheck)) {
+                    $payByBankService->cancelOrderAndRestoreCart($idCart, $transactionId, $payByBankService->resolveCancelStatus($statusToCheck));
+                    $this->setWarning($this->module->l('Your payment was not successful. Please try again.', self::FILE_NAME));
+                    Tools::redirect($this->context->link->getPageLink(
+                        'order',
                         true,
-                        null,
+                        $this->context->language->id,
                         [
-                            'id_cart' => (int) $idCart,
-                            'id_module' => (int) $this->module->id,
-                            'id_order' => $orderId,
-                            'key' => $cart->secure_key,
+                            'step' => 'payment',
                         ]
-                    )
-                );
+                    ));
+                }
+
+                $this->redirectToOrderConfirmation($idCart, $cart);
             } elseif (
                 isset($data['mollie_info']['bank_status'])
                 && in_array($data['mollie_info']['bank_status'], [PaymentStatus::STATUS_OPEN, PaymentStatus::STATUS_PENDING], true)
@@ -406,5 +423,22 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $this->warning[] = $message;
 
         $this->context->cookie->__set('mollie_payment_canceled_error', json_encode($this->warning));
+    }
+
+    private function redirectToOrderConfirmation($idCart, Cart $cart)
+    {
+        $orderId = (int) Order::getIdByCartId($idCart);
+        Tools::redirect($this->context->link->getPageLink(
+                'order-confirmation',
+                true,
+                null,
+                [
+                    'id_cart' => (int) $idCart,
+                    'id_module' => (int) $this->module->id,
+                    'id_order' => $orderId,
+                    'key' => $cart->secure_key,
+                ]
+            )
+        );
     }
 }
