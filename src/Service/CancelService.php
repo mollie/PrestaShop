@@ -35,13 +35,17 @@ class CancelService
         $this->logger = $this->module->getService(LoggerInterface::class);
     }
 
-    public function handleCancel($transactionId, $orderlineId = null)
+    public function handleCancel($transactionId, $orderlineId = null, $quantity = null)
     {
         try {
             $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
 
             if ($orderlineId) {
-                $order->cancelLines(['lines' => [['id' => $orderlineId]]]);
+                $lineData = ['id' => $orderlineId];
+                if ($quantity) {
+                    $lineData['quantity'] = (int) $quantity;
+                }
+                $order->cancelLines(['lines' => [$lineData]]);
                 $message = $this->module->l('Order line has been canceled successfully.');
             } else {
                 $order->cancel();

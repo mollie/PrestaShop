@@ -26,7 +26,6 @@ use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ApiService;
 use Mollie\Utility\ExceptionUtility;
-use Mollie\Utility\TagsUtility;
 use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
@@ -410,21 +409,14 @@ class PaymentMethodSettingsHandler
             try {
                 $this->applePayDirectCertificateHandler->handle();
             } catch (ApplePayDirectCertificateCreation $e) {
-                $this->logger->error('Grant permissions for the folder or visit ApplePay to see how it can be added manually', [
+                $this->logger->error('Apple Pay Direct certificate issue', [
                     'exceptions' => ExceptionUtility::getExceptions($e),
                 ]);
 
-                // Disable Apple Pay Direct features if certificate creation fails
-                $isApplePayDirectProductEnabled = false;
-                $isApplePayDirectCartEnabled = false;
+                $this->configuration->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT, 0);
+                $this->configuration->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_CART, 0);
 
-                // Build error message with documentation link
-                $errorMessage = $e->getMessage() . ' ' . TagsUtility::ppTags(
-                    'Grant permissions for the folder or visit [1]ApplePay[/1] to see how it can be added manually',
-                    [$this->module->display($this->module->getPathUri(), 'views/templates/admin/applePayDirectDocumentation.tpl')]
-                );
-
-                throw new MollieException($errorMessage);
+                throw new MollieException($this->module->l('Apple Pay Direct could not be enabled due to a certificate issue. Check the module logs for details.', 'PaymentMethodSettingsHandler'));
             }
         }
 

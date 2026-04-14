@@ -27,6 +27,8 @@ use Mollie\Handler\Api\OrderEndpointPaymentTypeHandler;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandlerInterface;
 use Mollie\Handler\CartRule\CartRuleQuantityChangeHandler;
 use Mollie\Handler\CartRule\CartRuleQuantityChangeHandlerInterface;
+use Mollie\Handler\CartRule\CartRuleQuantityResetHandler;
+use Mollie\Handler\CartRule\CartRuleQuantityResetHandlerInterface;
 use Mollie\Handler\Certificate\ApplePayDirectCertificateHandler;
 use Mollie\Handler\Certificate\CertificateHandlerInterface;
 use Mollie\Handler\PaymentMethod\PaymentMethodLogoHandler;
@@ -87,6 +89,8 @@ use Mollie\Repository\MolLogRepository;
 use Mollie\Repository\MolLogRepositoryInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepository;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
+use Mollie\Repository\OrderCartRuleRepository;
+use Mollie\Repository\OrderCartRuleRepositoryInterface;
 use Mollie\Repository\OrderRepository;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodLangRepository;
@@ -235,6 +239,7 @@ final class BaseServiceProvider
         $this->addService($container, AccessibilityCheckerInterface::class, $container->get(SubscriptionCancelAccessibility::class));
 
         $this->addService($container, PendingOrderCartRuleRepositoryInterface::class, $container->get(PendingOrderCartRuleRepository::class));
+        $this->addService($container, OrderCartRuleRepositoryInterface::class, $container->get(OrderCartRuleRepository::class));
         $this->addService($container, CartRuleRepositoryInterface::class, $container->get(CartRuleRepository::class));
         $this->addService($container, OrderRepositoryInterface::class, $container->get(OrderRepository::class));
         $this->addService($container, CurrencyRepositoryInterface::class, $container->get(CurrencyRepository::class));
@@ -242,6 +247,7 @@ final class BaseServiceProvider
         $this->addService($container, MolOrderPaymentFeeRepositoryInterface::class, $container->get(MolOrderPaymentFeeRepository::class));
         $this->addService($container, CarrierRepositoryInterface::class, $container->get(CarrierRepository::class));
         $this->addService($container, CartRuleQuantityChangeHandlerInterface::class, $container->get(CartRuleQuantityChangeHandler::class));
+        $this->addService($container, CartRuleQuantityResetHandlerInterface::class, $container->get(CartRuleQuantityResetHandler::class));
 
         $service = $this->addService($container, RecurringOrderRepositoryInterface::class, RecurringOrderRepository::class);
         $this->addServiceArgument($service, 'MolRecurringOrder');
