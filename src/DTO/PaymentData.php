@@ -127,6 +127,9 @@ class PaymentData implements JsonSerializable
      */
     private $captureMode;
 
+    /** @var ?string */
+    private $dueDate;
+
     public function __construct(
         Amount $amount,
         string $description,
@@ -441,6 +444,18 @@ class PaymentData implements JsonSerializable
         $this->captureMode = $captureMode;
     }
 
+    public function getDueDate(): ?string
+    {
+        return $this->dueDate;
+    }
+
+    public function setDueDate(?string $dueDate): self
+    {
+        $this->dueDate = $dueDate;
+
+        return $this;
+    }
+
     public function jsonSerialize(): array
     {
         $result = [
@@ -482,6 +497,10 @@ class PaymentData implements JsonSerializable
             'applePayPaymentToken' => $this->getApplePayToken(),
             'captureMode' => $this->getCaptureMode(),
         ];
+
+        if ($this->dueDate) {
+            $result['dueDate'] = $this->dueDate;
+        }
 
         if ($this->sequenceType) {
             $result['sequenceType'] = $this->sequenceType;

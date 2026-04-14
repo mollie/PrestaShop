@@ -98,6 +98,7 @@ class Uninstall
             Config::MOLLIE_API_KEY_TEST,
             Config::MOLLIE_SUBSCRIPTION_ENABLED,
             Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID,
+            Config::MOLLIE_BANKTRANSFER_DUE_DAYS,
         ];
 
         $this->deleteConfigurations($configurations);
