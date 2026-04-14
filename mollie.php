@@ -721,6 +721,37 @@ class Mollie extends PaymentModule
             return '';
         }
 
+        if ($payment['method'] === Config::PAY_BY_BANK
+            && in_array($payment['bank_status'], [\Mollie\Api\Types\PaymentStatus::STATUS_OPEN, \Mollie\Api\Types\PaymentStatus::STATUS_PENDING], true)
+        ) {
+            /** @var \Mollie\Service\PayByBankCancellationService $payByBankService */
+            $payByBankService = $this->getService(\Mollie\Service\PayByBankCancellationService::class);
+            $mollieStatus = $payByBankService->getActualMollieStatus($payment['transaction_id']);
+
+            if ($payByBankService->shouldCancelPayment($mollieStatus)) {
+                $payByBankService->cancelOrderAndRestoreCart(
+                    (int) $payment['cart_id'],
+                    $payment['transaction_id'],
+                    $payByBankService->resolveCancelStatus($mollieStatus)
+                );
+
+                $this->context->cookie->__set('mollie_payment_canceled_error', json_encode([
+                    $this->l('Your payment was not successful. Please try again.'),
+                ]));
+
+                Tools::redirect($this->context->link->getPageLink(
+                    'order',
+                    true,
+                    $this->context->language->id,
+                    [
+                        'step' => 'payment',
+                    ]
+                ));
+
+                return '';
+            }
+        }
+
         $isPaid = \Mollie\Api\Types\PaymentStatus::STATUS_PAID == $payment['bank_status'];
         $isAuthorized = \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED == $payment['bank_status'];
 
@@ -1615,6 +1646,8 @@ class Mollie extends PaymentModule
         }
 
         if ($this->context->customer->isLogged()) {
+            $this->handlePayByBankBrowserBack();
+
             return;
         }
 
@@ -1635,6 +1668,23 @@ class Mollie extends PaymentModule
         $this->context->controller->warning[] = $this->l('Customer must be logged in to buy subscription item.');
 
         $this->context->controller->redirectWithNotifications($link->getPageLink('authentication'));
+    }
+
+    private function handlePayByBankBrowserBack(): void
+    {
+        if (!empty($this->context->cart) && $this->context->cart->nbProducts() > 0) {
+            return;
+        }
+
+        try {
+            /** @var \Mollie\Service\PayByBankCancellationService $payByBankService */
+            $payByBankService = $this->getService(\Mollie\Service\PayByBankCancellationService::class);
+            $payByBankService->handleAbandonedPayment((int) $this->context->customer->id);
+        } catch (\Exception $e) {
+            /** @var \Mollie\Logger\LoggerInterface $logger */
+            $logger = $this->getService(\Mollie\Logger\LoggerInterface::class);
+            $logger->error('Failed to handle Pay by Bank browser back: ' . $e->getMessage());
+        }
     }
 
     private function getRecurringOrdersByCustomerAddress(int $customerId, int $oldAddressId): array
