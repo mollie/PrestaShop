@@ -65,10 +65,7 @@ class ApplePayDirectCertificateHandler implements CertificateHandlerInterface
         $existingFilePath = $this->serverRoot . self::APPLE_PAY_CERTIFICATE_FOLDER . self::APPLE_PAY_CERTIFICATE_PS_FILE;
         if (FileUtility::fileExists($existingFilePath)) {
             if ($this->hasConflict()) {
-                throw new ApplePayDirectCertificateCreation(
-                    $this->mollie->l('Apple Pay domain association file does not belong to Mollie. Please verify your domain configuration.', self::FILE_NAME),
-                    ApplePayDirectCertificateCreation::FILE_CONFLICT_EXCEPTION
-                );
+                throw new ApplePayDirectCertificateCreation($this->mollie->l('Apple Pay domain association file does not belong to Mollie. Please verify your domain configuration.', self::FILE_NAME), ApplePayDirectCertificateCreation::FILE_CONFLICT_EXCEPTION);
             }
 
             return;

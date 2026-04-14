@@ -49,7 +49,7 @@ class CartPriceUtility
         $difference = new Number((string) $difference);
         $decreaseNumber = new Number('0.01');
         // Keep going until there's no longer a difference
-        while ($difference->isGreaterThanZero()) {
+        while (self::isNumberGreaterThanZero($difference)) {
             // Go for a new pass if there's still a difference after the current one
             $index = $index > 0 ? $index : $qty;
             $difference = $difference->minus($decreaseNumber);
@@ -63,5 +63,19 @@ class CartPriceUtility
 
         // Group the amounts and return the unit prices at the indices, with the quantities as values
         return array_count_values(array_map('strval', $spreadTotals));
+    }
+
+    /**
+     * @param Number $number
+     *
+     * @return bool
+     */
+    private static function isNumberGreaterThanZero(Number $number)
+    {
+        if (method_exists($number, 'isGreaterThanZero')) {
+            return $number->isGreaterThanZero();
+        }
+
+        return $number->isPositive() && !$number->equalsZero();
     }
 }

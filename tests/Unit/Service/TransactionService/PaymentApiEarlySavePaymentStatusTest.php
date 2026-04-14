@@ -45,11 +45,7 @@ class PaymentApiEarlySavePaymentStatusTest extends TestCase
         // Verify the insert worked before continuing
         $inserted = $this->getPaymentByTransactionId(self::TRANSACTION_ID);
         if (empty($inserted)) {
-            throw new \RuntimeException(
-                'Test setup failed: could not insert initial payment record. ' .
-                'Transaction ID: ' . self::TRANSACTION_ID . ', ' .
-                'DB Error: ' . Db::getInstance()->getMsgError()
-            );
+            throw new \RuntimeException('Test setup failed: could not insert initial payment record. ' . 'Transaction ID: ' . self::TRANSACTION_ID . ', ' . 'DB Error: ' . Db::getInstance()->getMsgError());
         }
     }
 
@@ -190,9 +186,7 @@ class PaymentApiEarlySavePaymentStatusTest extends TestCase
         ]);
 
         if (!$result) {
-            throw new \RuntimeException(
-                'Failed to insert test payment data. DB Error: ' . Db::getInstance()->getMsgError()
-            );
+            throw new \RuntimeException('Failed to insert test payment data. DB Error: ' . Db::getInstance()->getMsgError());
         }
     }
 
@@ -215,9 +209,7 @@ class PaymentApiEarlySavePaymentStatusTest extends TestCase
         );
 
         if (!$result) {
-            throw new \RuntimeException(
-                'Failed to update payment status. DB Error: ' . Db::getInstance()->getMsgError()
-            );
+            throw new \RuntimeException('Failed to update payment status. DB Error: ' . Db::getInstance()->getMsgError());
         }
     }
 
@@ -238,9 +230,7 @@ class PaymentApiEarlySavePaymentStatusTest extends TestCase
         );
 
         if (!$result) {
-            throw new \RuntimeException(
-                'Failed to update payment reference. DB Error: ' . Db::getInstance()->getMsgError()
-            );
+            throw new \RuntimeException('Failed to update payment reference. DB Error: ' . Db::getInstance()->getMsgError());
         }
     }
 
