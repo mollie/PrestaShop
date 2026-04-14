@@ -31,7 +31,7 @@ class PayByBankCancellationServiceTest extends TestCase
             ->getMock();
 
         $logger = $this->createMock(\Mollie\Logger\LoggerInterface::class);
-        $reflection = new \ReflectionClass($this->service);
+        $reflection = new \ReflectionClass(PayByBankCancellationService::class);
         $loggerProperty = $reflection->getProperty('logger');
         $loggerProperty->setAccessible(true);
         $loggerProperty->setValue($this->service, $logger);
