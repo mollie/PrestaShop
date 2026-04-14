@@ -204,6 +204,38 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
     }
 
     /**
+     * @param int $customerId
+     * @param string $method
+     * @param array $statuses
+     *
+     * @return array|false
+     */
+    public function getLatestPaymentByCustomerAndMethod($customerId, $method, array $statuses, $maxAgeMinutes = 60)
+    {
+        $statusList = implode("','", array_map('pSQL', $statuses));
+
+        $sql = sprintf(
+            'SELECT mp.* FROM `%smollie_payments` mp
+            INNER JOIN `%sorders` o ON o.id_order = mp.order_id
+            WHERE o.id_customer = %d
+            AND mp.method = \'%s\'
+            AND mp.bank_status IN (\'%s\')
+            AND mp.created_at > DATE_SUB(NOW(), INTERVAL %d MINUTE)
+            ORDER BY mp.created_at DESC',
+            _DB_PREFIX_,
+            _DB_PREFIX_,
+            (int) $customerId,
+            pSQL($method),
+            $statusList,
+            (int) $maxAgeMinutes
+        );
+
+        $result = Db::getInstance()->getRow($sql);
+
+        return $result ?: false;
+    }
+
+    /**
      * Get customer groups that are restricted to specific payment method
      *
      * @param int $paymentMethodId
