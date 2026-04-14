@@ -146,6 +146,24 @@ $(document).ready(function () {
     $('#mollie-tracking-number').val('');
     $('#mollie-tracking-url').val('');
     toggleShippingDetailsInputs(false);
+
+    $.ajax({
+      url: ajax_url,
+      type: 'POST',
+      data: {
+        ajax: 1,
+        action: 'getShipmentInfo',
+        orderId: order_id,
+      },
+      dataType: 'json',
+      success: function(response) {
+        if (response.success && response.tracking) {
+          $('#mollie-carrier').val(response.tracking.carrier || '');
+          $('#mollie-tracking-number').val(response.tracking.code || '');
+          $('#mollie-tracking-url').val(response.tracking.url || '');
+        }
+      },
+    });
   });
 
   $('#mollie-skip-shipping-details').on('change', function() {

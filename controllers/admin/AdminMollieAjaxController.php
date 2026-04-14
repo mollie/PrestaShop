@@ -21,6 +21,7 @@ use Mollie\Service\CancelService;
 use Mollie\Service\CaptureService;
 use Mollie\Service\MolliePaymentMailService;
 use Mollie\Service\RefundService;
+use Mollie\Service\ShipmentServiceInterface;
 use Mollie\Service\ShipService;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TransactionUtility;
@@ -78,6 +79,9 @@ class AdminMollieAjaxController extends ModuleAdminController
                 break;
             case 'retrieve':
                 $this->retrieveOrderInfo();
+                break;
+            case 'getShipmentInfo':
+                $this->getShipmentInfo();
                 break;
             default:
                 break;
@@ -282,6 +286,38 @@ class AdminMollieAjaxController extends ModuleAdminController
                     'error' => $e->getMessage(),
                 ])
             );
+        }
+    }
+
+    private function getShipmentInfo(): void
+    {
+        $orderId = (int) Tools::getValue('orderId');
+
+        try {
+            $order = new Order($orderId);
+
+            if (!Validate::isLoadedObject($order)) {
+                $this->ajaxRender(json_encode(['success' => false]));
+
+                return;
+            }
+
+            /** @var ShipmentServiceInterface $shipmentService */
+            $shipmentService = $this->module->getService(ShipmentServiceInterface::class);
+            $shipmentInfo = $shipmentService->getShipmentInformation($order->reference);
+
+            if (!empty($shipmentInfo['tracking'])) {
+                $this->ajaxRender(json_encode([
+                    'success' => true,
+                    'tracking' => $shipmentInfo['tracking'],
+                ]));
+
+                return;
+            }
+
+            $this->ajaxRender(json_encode(['success' => true, 'tracking' => null]));
+        } catch (\Throwable $e) {
+            $this->ajaxRender(json_encode(['success' => false]));
         }
     }
 
