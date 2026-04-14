@@ -29,6 +29,12 @@ class PayByBankCancellationServiceTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(['getActualMollieStatus', 'cancelOrderAndRestoreCart', 'findPendingPayByBankPayment'])
             ->getMock();
+
+        $logger = $this->createMock(\Mollie\Logger\LoggerInterface::class);
+        $reflection = new \ReflectionClass($this->service);
+        $loggerProperty = $reflection->getProperty('logger');
+        $loggerProperty->setAccessible(true);
+        $loggerProperty->setValue($this->service, $logger);
     }
 
     /**
