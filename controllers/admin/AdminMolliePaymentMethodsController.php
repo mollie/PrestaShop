@@ -242,6 +242,11 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'voucherCategoryAll' => $this->module->l('All', self::FILE_NAME),
                 'voucherCategoryHelp' => $this->module->l('Select a category to use for all products in your webshop.', self::FILE_NAME),
                 'klarnaNotice' => $this->module->l('Klarna authorises payments for up to 28 days. To capture funds automatically when an order is shipped, enable “Automatically ship on marked status” in the advanced settings. If no capture occurs within 28 days, the authorisation expires and the payment cannot be collected.', self::FILE_NAME),
+
+                'apiNotConfigured' => $this->module->l('API not configured', self::FILE_NAME),
+                'apiNotConfiguredMessage' => $this->module->l('Please configure your Mollie API keys in the API Configuration tab before managing payment methods.', self::FILE_NAME),
+                'infoBannerText' => $this->module->l('Here you can see all of the %s payment options. To include new payment methods go to', self::FILE_NAME),
+                'mollieDashboard' => $this->module->l('Mollie dashboard', self::FILE_NAME),
             ],
         ]);
 
