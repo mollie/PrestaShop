@@ -16,6 +16,7 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
+use Mollie\Handler\Certificate\ApplePayDirectCertificateHandler;
 use Mollie\Handler\PaymentMethod\PaymentMethodSettingsHandler;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\CountryRepository;
@@ -71,6 +72,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
     /** @var PaymentMethodSettingsHandler */
     private $paymentMethodSettingsHandler;
 
+    /** @var ApplePayDirectCertificateHandler */
+    private $applePayDirectCertificateHandler;
+
     public function __construct()
     {
         parent::__construct();
@@ -87,6 +91,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         $this->customerRepository = $this->module->getService(CustomerRepository::class);
         $this->logger = $this->module->getService(LoggerInterface::class);
         $this->paymentMethodSettingsHandler = $this->module->getService(PaymentMethodSettingsHandler::class);
+        $this->applePayDirectCertificateHandler = $this->module->getService(ApplePayDirectCertificateHandler::class);
     }
 
     public function init(): void
@@ -291,6 +296,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 break;
             case 'uploadCustomLogo':
                 $this->ajaxUploadCustomLogo();
+                break;
+            case 'checkApplePayCertificate':
+                $this->ajaxCheckApplePayCertificate();
                 break;
             default:
                 $this->ajaxRender(json_encode([
@@ -968,5 +976,21 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
 
         return $category;
+    }
+
+    private function ajaxCheckApplePayCertificate(): void
+    {
+        $hasConflict = $this->applePayDirectCertificateHandler->hasConflict();
+
+        $result = [
+            'success' => true,
+            'conflict' => $hasConflict,
+        ];
+
+        if ($hasConflict) {
+            $result['message'] = $this->module->l('Apple Pay domain association file does not belong to Mollie. Please verify your domain configuration.', self::FILE_NAME);
+        }
+
+        $this->ajaxRender(json_encode($result));
     }
 }
