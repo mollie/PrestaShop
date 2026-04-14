@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react"
 import "./advanced-settings.css"
 import { advancedSettingsApiService, type CarrierData, type SaveCarrierData } from "../../services/AdvancedSettingsApiService"
 import { AdvancedSettingsSkeleton } from "./components/advanced-settings-skeleton"
+import { useAdvancedSettingsTranslations } from "../../shared/hooks/use-advanced-settings-translations"
 
 const ChevronDown = ({ className }: { className?: string }) => (
   <svg
@@ -261,6 +262,7 @@ interface OrderStatus {
 }
 
 const AdvancedSettings: React.FC = () => {
+  const { t } = useAdvancedSettingsTranslations()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [notConfigured, setNotConfigured] = useState(false)
@@ -287,11 +289,11 @@ const AdvancedSettings: React.FC = () => {
   const [translateMollieOptions, setTranslateMollieOptions] = useState<{ id: string; name: string }[]>([])
 
   const carrierUrlOptions = [
-    { value: "do_not_auto_ship", label: "Do not automatically ship" },
-    { value: "no_tracking_info", label: "No tracking information" },
-    { value: "carrier_url", label: "Carrier URL" },
-    { value: "custom_url", label: "Custom URL" },
-    { value: "module", label: "Module" },
+    { value: "do_not_auto_ship", label: t('doNotAutoShip') },
+    { value: "no_tracking_info", label: t('noTrackingInfo') },
+    { value: "carrier_url", label: t('carrierUrl') },
+    { value: "custom_url", label: t('customUrl') },
+    { value: "module", label: t('module') },
   ]
 
   useEffect(() => {
@@ -356,7 +358,7 @@ const AdvancedSettings: React.FC = () => {
       }
     } catch (error) {
       console.error('Failed to load settings:', error)
-      setNotification({ message: 'Failed to load settings', type: 'error' })
+      setNotification({ message: t('loadError'), type: 'error' })
     } finally {
       setLoading(false)
     }
@@ -387,13 +389,13 @@ const AdvancedSettings: React.FC = () => {
       })
 
       if (response.success) {
-        setNotification({ message: 'Settings saved successfully', type: 'success' })
+        setNotification({ message: t('saveSuccess'), type: 'success' })
       } else {
-        setNotification({ message: response.message || 'Failed to save settings', type: 'error' })
+        setNotification({ message: response.message || t('saveError'), type: 'error' })
       }
     } catch (error) {
       console.error('Failed to save settings:', error)
-      setNotification({ message: 'Failed to save settings', type: 'error' })
+      setNotification({ message: t('saveError'), type: 'error' })
     } finally {
       setSaving(false)
     }
@@ -424,8 +426,8 @@ const AdvancedSettings: React.FC = () => {
     return (
       <div className="advanced-settings">
         <div className="settings-header">
-          <h1>Advanced settings</h1>
-          <p className="settings-subtitle">Manage your order settings, visual representation and error logging</p>
+          <h1>{t('advancedSettings')}</h1>
+          <p className="settings-subtitle">{t('subtitle')}</p>
         </div>
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 flex items-start gap-3">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-yellow-600 mt-0.5 flex-shrink-0">
@@ -434,8 +436,8 @@ const AdvancedSettings: React.FC = () => {
             <path d="M12 8h.01"></path>
           </svg>
           <div className="text-sm text-yellow-800">
-            <p className="font-medium mb-2">API not configured</p>
-            <p>Please configure your Mollie API keys in the <strong>API Configuration</strong> tab before accessing advanced settings.</p>
+            <p className="font-medium mb-2">{t('apiNotConfigured')}</p>
+            <p>{t('apiNotConfiguredMessage')}</p>
           </div>
         </div>
       </div>
@@ -477,20 +479,20 @@ const AdvancedSettings: React.FC = () => {
       )}
 
       <div className="settings-header">
-        <h1>Advanced settings</h1>
-        <p className="settings-subtitle">Manage your order settings, visual representation and error logging</p>
+        <h1>{t('advancedSettings')}</h1>
+        <p className="settings-subtitle">{t('subtitle')}</p>
       </div>
 
       <section className="settings-section">
-        <h2 className="section-title">Order settings</h2>
+        <h2 className="section-title">{t('orderSettings')}</h2>
 
         <div className="form-group">
-          <label className="form-label">Select when to create the order invoice</label>
+          <label className="form-label">{t('invoiceOption')}</label>
           <RadioSelect
             value={invoiceOption}
             onValueChange={setInvoiceOption}
             options={invoiceOptions.map(opt => ({ value: opt.id, label: opt.name }))}
-            placeholder="Select option"
+            placeholder={t('selectOption')}
           />
         </div>
 
@@ -501,59 +503,52 @@ const AdvancedSettings: React.FC = () => {
             <path d="M12 8h.01"></path>
           </svg>
           <div className="info-content">
-            <p>
-              <strong>Default:</strong> The invoice is created based on Order settings {">"} Statuses. There is no
-              custom status created.
-            </p>
-            <p>
-              <strong>Authorized:</strong> Create a full invoice when the order is authorized. Custom status is created.
-            </p>
-            <p>
-              <strong>On Shipment:</strong> Create a full invoice when the order is shipped. Custom status is created.
-            </p>
+            <p>{t('invoiceDefaultExplanation')}</p>
+            <p>{t('invoiceAuthorizedExplanation')}</p>
+            <p>{t('invoiceShipmentExplanation')}</p>
           </div>
         </div>
 
         <div className="form-group">
-          <label className="form-label">Send order confirmation email</label>
+          <label className="form-label">{t('confirmationEmail')}</label>
           <RadioSelect
             value={confirmationEmail}
             onValueChange={setConfirmationEmail}
             options={confirmationEmailOptions.map(opt => ({ value: opt.id, label: opt.name }))}
-            placeholder="Select option"
+            placeholder={t('selectOption')}
           />
         </div>
       </section>
 
       <section className="settings-section">
-        <h2 className="section-title">Shipping Settings</h2>
+        <h2 className="section-title">{t('shippingSettings')}</h2>
 
         <div className="toggle-group">
           <div className="toggle-content">
             <div>
-              <div className="toggle-label">Automatically Ship on Marked Statuses</div>
-              <div className="toggle-description">Enable automatic shipping for selected statuses</div>
+              <div className="toggle-label">{t('autoShipLabel')}</div>
+              <div className="toggle-description">{t('autoShipDescription')}</div>
             </div>
             <label className="toggle-switch">
               <input type="checkbox" checked={autoShip} onChange={(e) => setAutoShip(e.target.checked)} />
               <span className="toggle-slider"></span>
             </label>
-            <span className="toggle-status">{autoShip ? "Enabled" : "Disabled"}</span>
+            <span className="toggle-status">{autoShip ? t('enabled') : t('disabled')}</span>
           </div>
         </div>
 
         <div className="form-group">
-          <label className="form-label">Automatically ship when one of these statuses is reached</label>
+          <label className="form-label">{t('autoShipStatusesLabel')}</label>
           <MultiSelect
             value={autoShipStatuses}
             onValueChange={setAutoShipStatuses}
             options={orderStatuses.map(status => ({ value: status.id, label: status.name }))}
-            placeholder="Select statuses"
+            placeholder={t('selectStatuses')}
           />
         </div>
 
         <div className="form-group">
-          <label className="form-label">Send shipment information to Mollie</label>
+          <label className="form-label">{t('sendShipmentInfo')}</label>
         </div>
 
         <div className="info-box">
@@ -563,26 +558,26 @@ const AdvancedSettings: React.FC = () => {
             <path d="M12 8h.01"></path>
           </svg>
           <div className="info-content">
-            <p>Configure the shipment information to send to Mollie.</p>
-            <p>You can use the following variables for the carrier URLs:</p>
+            <p>{t('shipmentConfigInfo')}</p>
+            <p>{t('carrierVariablesInfo')}</p>
             <ul>
               <li>
-                <strong>%shipping_number%</strong> - Shipping number
+                <strong>%shipping_number%</strong> - {t('shippingNumber')}
               </li>
               <li>
-                <strong>%track.trace_code%</strong> - Tracking code
+                <strong>%track.trace_code%</strong> - {t('trackingCode')}
               </li>
               <li>
-                <strong>%mollie.postal.code%</strong> - Billing postcode
+                <strong>%mollie.postal.code%</strong> - {t('billingPostcode')}
               </li>
               <li>
-                <strong>%delivery.country_iso%</strong> - Shipping country code
+                <strong>%delivery.country_iso%</strong> - {t('shippingCountryCode')}
               </li>
               <li>
-                <strong>%delivery.postal.code%</strong> - Shipping postcode
+                <strong>%delivery.postal.code%</strong> - {t('shippingPostcode')}
               </li>
               <li>
-                <strong>%lang_iso%</strong> - 2-letter language code
+                <strong>%lang_iso%</strong> - {t('languageCode')}
               </li>
             </ul>
           </div>
@@ -597,7 +592,7 @@ const AdvancedSettings: React.FC = () => {
                   value={carrier.carrierUrl}
                   onValueChange={(value) => handleCarrierUrlChange(carrier.id, value)}
                   options={carrierUrlOptions}
-                  placeholder="Select option"
+                  placeholder={t('selectOption')}
                 />
               </div>
               <div className="carrier-col carrier-input">
@@ -616,24 +611,24 @@ const AdvancedSettings: React.FC = () => {
       </section>
 
       <section className="settings-section">
-        <h2 className="section-title">Error Debugging</h2>
+        <h2 className="section-title">{t('errorDebugging')}</h2>
 
         <div className="toggle-group">
           <div className="toggle-content">
             <div>
-              <div className="toggle-label">Debug Mode</div>
-              <div className="toggle-description">Enable detailed error logging</div>
+              <div className="toggle-label">{t('debugModeLabel')}</div>
+              <div className="toggle-description">{t('debugModeDescription')}</div>
             </div>
             <label className="toggle-switch">
               <input type="checkbox" checked={debugMode} onChange={(e) => setDebugMode(e.target.checked)} />
               <span className="toggle-slider"></span>
             </label>
-            <span className="toggle-status">{debugMode ? "Enabled" : "Disabled"}</span>
+            <span className="toggle-status">{debugMode ? t('enabled') : t('disabled')}</span>
           </div>
         </div>
 
         <div className="form-group">
-          <label className="form-label">Log Level</label>
+          <label className="form-label">{t('logLevelLabel')}</label>
           <div className="button-group">
             {logLevelOptions.map((option) => (
               <button
@@ -649,10 +644,10 @@ const AdvancedSettings: React.FC = () => {
       </section>
 
       <section className="settings-section">
-        <h2 className="section-title">Visual Settings</h2>
+        <h2 className="section-title">{t('visualSettings')}</h2>
 
         <div className="form-group">
-          <label className="form-label">Payment Method Logo Display</label>
+          <label className="form-label">{t('logoDisplay')}</label>
           <div className="button-group">
             {logoDisplayOptions.map((option) => (
               <button
@@ -665,7 +660,7 @@ const AdvancedSettings: React.FC = () => {
             ))}
           </div>
           <div className="checkout-preview">
-            <span>Checkout preview:</span>
+            <span>{t('checkoutPreview')}</span>
             <div className="checkout-preview-card">
               <img
                 src={logoDisplay === "big"
@@ -681,7 +676,7 @@ const AdvancedSettings: React.FC = () => {
         </div>
 
         <div className="form-group">
-          <label className="form-label">Custom CSS File Path</label>
+          <label className="form-label">{t('customCssPath')}</label>
           <input
             type="text"
             className="form-input"
@@ -692,18 +687,18 @@ const AdvancedSettings: React.FC = () => {
         </div>
 
         <div className="form-group">
-          <label className="form-label">Use selected locale in webshop</label>
+          <label className="form-label">{t('translateMollie')}</label>
           <RadioSelect
             value={translateMollie}
             onValueChange={setTranslateMollie}
             options={translateMollieOptions.map(opt => ({ value: opt.id, label: opt.name }))}
-            placeholder="Select option"
+            placeholder={t('selectOption')}
           />
         </div>
       </section>
 
       <section className="settings-section">
-        <h2 className="section-title">Order Status Mapping</h2>
+        <h2 className="section-title">{t('orderStatusMapping')}</h2>
 
         <div className="info-box">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="info-icon">
@@ -712,10 +707,7 @@ const AdvancedSettings: React.FC = () => {
             <path d="M12 8h.01"></path>
           </svg>
           <div className="info-content">
-            <p>
-              From the dropdown select a PrestaShop order status that will be set when the respective Mollie payment
-              status is triggered.
-            </p>
+            <p>{t('statusMappingInfo')}</p>
           </div>
         </div>
 
@@ -724,17 +716,17 @@ const AdvancedSettings: React.FC = () => {
             <div key={mapping.configKey} className="status-mapping-row">
               <div className="status-mapping-col">
                 <div className="status-label">{mapping.mollieStatus}</div>
-                <div className="status-sublabel">Mollie Payment Status</div>
+                <div className="status-sublabel">{t('molliePaymentStatus')}</div>
               </div>
               <div className="status-mapping-col">
-                <div className="status-sublabel" style={{ textAlign: 'right' }}>PrestaShop order status</div>
+                <div className="status-sublabel" style={{ textAlign: 'right' }}>{t('prestashopOrderStatus')}</div>
               </div>
               <div className="status-mapping-col">
                 <RadioSelect
                   value={mapping.prestashopStatus}
                   onValueChange={(value) => handleStatusMappingChange(mapping.configKey, value)}
                   options={orderStatuses.map(status => ({ value: status.id, label: status.name }))}
-                  placeholder="Select status"
+                  placeholder={t('selectStatus')}
                 />
               </div>
             </div>
@@ -743,7 +735,7 @@ const AdvancedSettings: React.FC = () => {
       </section>
 
       <section className="settings-section">
-        <h2 className="section-title">Order Status Emails</h2>
+        <h2 className="section-title">{t('orderStatusEmails')}</h2>
 
         <div className="info-box">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="info-icon">
@@ -752,7 +744,7 @@ const AdvancedSettings: React.FC = () => {
             <path d="M12 8h.01"></path>
           </svg>
           <div className="info-content">
-            <p>If enabled, customers will receive an email when the order status changes</p>
+            <p>{t('emailStatusInfo')}</p>
           </div>
         </div>
 
@@ -761,14 +753,14 @@ const AdvancedSettings: React.FC = () => {
             <div key={email.configKey} className="email-status-row">
               <div className="email-status-info">
                 <div className="status-label">{email.status}</div>
-                <div className="status-sublabel">Prestashop order status</div>
+                <div className="status-sublabel">{t('prestashopOrderStatus')}</div>
               </div>
               <div className="email-status-toggle">
                 <label className="toggle-switch">
                   <input type="checkbox" checked={email.enabled} onChange={() => toggleEmailStatus(email.configKey)} />
                   <span className="toggle-slider"></span>
                 </label>
-                <span className="toggle-label-text">Send email on status</span>
+                <span className="toggle-label-text">{t('sendEmailOnStatus')}</span>
               </div>
             </div>
           ))}
@@ -781,7 +773,7 @@ const AdvancedSettings: React.FC = () => {
           onClick={saveSettings}
           disabled={saving}
         >
-          {saving ? 'Saving...' : 'Save Settings'}
+          {saving ? t('saving') : t('saveSettings')}
         </button>
       </div>
     </div>

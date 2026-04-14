@@ -101,6 +101,8 @@ export interface MolliePaymentMethodsTranslations {
   applePayButtonBlack: string;
   applePayButtonOutline: string;
   applePayButtonWhite: string;
+  applePayDirectCertificateConflict: string;
+  ignore: string;
 
   // Payment Restrictions
   paymentRestrictions: string;
@@ -196,10 +198,17 @@ export interface MolliePaymentMethodsTranslations {
   voucherCategoryAll: string;
   voucherCategoryHelp: string;
   klarnaNotice: string;
+
+  // Info banner
+  apiNotConfigured: string;
+  apiNotConfiguredMessage: string;
+  infoBannerText: string;
+  mollieDashboard: string;
 }
 
 export interface MollieAdvancedSettingsTranslations {
   advancedSettings: string;
+  subtitle: string;
   orderSettings: string;
   shippingSettings: string;
   errorDebugging: string;
@@ -216,6 +225,46 @@ export interface MollieAdvancedSettingsTranslations {
   cssPath: string;
   saveSuccess: string;
   saveError: string;
+  apiNotConfigured: string;
+  apiNotConfiguredMessage: string;
+  selectOption: string;
+  selectStatuses: string;
+  enabled: string;
+  disabled: string;
+  invoiceDefaultExplanation: string;
+  invoiceAuthorizedExplanation: string;
+  invoiceShipmentExplanation: string;
+  autoShipLabel: string;
+  autoShipDescription: string;
+  autoShipStatusesLabel: string;
+  sendShipmentInfo: string;
+  shipmentConfigInfo: string;
+  carrierVariablesInfo: string;
+  shippingNumber: string;
+  trackingCode: string;
+  billingPostcode: string;
+  shippingCountryCode: string;
+  shippingPostcode: string;
+  languageCode: string;
+  doNotAutoShip: string;
+  noTrackingInfo: string;
+  carrierUrl: string;
+  customUrl: string;
+  module: string;
+  debugModeLabel: string;
+  debugModeDescription: string;
+  logLevelLabel: string;
+  checkoutPreview: string;
+  customCssPath: string;
+  statusMappingInfo: string;
+  molliePaymentStatus: string;
+  prestashopOrderStatus: string;
+  selectStatus: string;
+  emailStatusInfo: string;
+  sendEmailOnStatus: string;
+  saving: string;
+  saveSettings: string;
+  loadError: string;
 }
 
 // Extend global Window interface
