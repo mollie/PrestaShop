@@ -35,7 +35,7 @@ class CartPriceUtilityTest extends TestCase
 
         // Verify total quantity
         $actualQty = array_sum($result);
-        self::assertEquals($qty, $actualQty, "Total quantity should match. Got spread: " . json_encode($result));
+        self::assertEquals($qty, $actualQty, 'Total quantity should match. Got spread: ' . json_encode($result));
 
         // Verify sum matches amount
         $actualSum = 0;
@@ -51,7 +51,7 @@ class CartPriceUtilityTest extends TestCase
         if (count($prices) > 1) {
             $minPrice = min(array_map('floatval', $prices));
             $maxPrice = max(array_map('floatval', $prices));
-            self::assertLessThanOrEqual(0.01, $maxPrice - $minPrice, 'Unit prices should differ by at most 0.01');
+            self::assertLessThanOrEqual(0.01, round($maxPrice - $minPrice, 2), 'Unit prices should differ by at most 0.01');
         }
     }
 
@@ -156,7 +156,7 @@ class CartPriceUtilityTest extends TestCase
         self::assertEquals(
             $expectedAmount,
             $totalOfLines,
-            "Mollie validation: sum of (unitPrice * qty) per line must equal order amount. " .
+            'Mollie validation: sum of (unitPrice * qty) per line must equal order amount. ' .
             "Expected $expectedAmount, got $totalOfLines. Spread: " . json_encode($result)
         );
     }

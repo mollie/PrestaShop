@@ -104,7 +104,8 @@ class SubscriptionAvailabilityProvider
                 return false;
             }
 
-            $recurringOrders = $this->recurringOrderRepository->findBy([
+            /** @var \MolCustomer $molCustomer */
+            $recurringOrders = $this->recurringOrderRepository->findAllBy([
                 'mol_customer_id' => $molCustomer->customer_id,
             ]);
 

@@ -26,7 +26,6 @@ use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ApiService;
 use Mollie\Utility\ExceptionUtility;
-use Mollie\Utility\TagsUtility;
 use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
