@@ -2,6 +2,11 @@
 
 # Changelog #
 
+## Changes in release 6.4.3
++ Implement segment for module actions
++ Improve front office subscription tab handling
++ Improve admin order page module logic loading
+
 ## Changes in release 6.4.2
 + Multiple Apple Pay Direct improvements and stability fixes
 + Added pending payment status handling
