@@ -103,7 +103,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.4.2';
+        $this->version = '6.4.3';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -559,6 +559,15 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayAdminOrder($params)
     {
+        if (!isset($params['id_order'])) {
+            return false;
+        }
+
+        $order = new Order((int) $params['id_order']);
+        if ($order->module !== $this->name) {
+            return false;
+        }
+
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
         $paymentMethodRepo = $this->getService(PaymentMethodRepositoryInterface::class);
 
@@ -619,11 +628,30 @@ class Mollie extends PaymentModule
             $isShipped = $shipService->isShipped($mollieTransactionId);
             $isCanceled = $cancelService->isCanceled($mollieTransactionId);
 
+            $lineActions = [];
+            if ($mollieApiType === 'orders' && $products) {
+                foreach ($products as $line) {
+                    $isNonActionable = in_array($line->type, ['discount'], true);
+                    $isNonShippable = in_array($line->type, ['discount', 'shipping_fee', 'surcharge'], true);
+                    $fullyRefunded = (int) $line->quantityRefunded >= (int) $line->quantity;
+
+                    $lineActions[$line->id] = [
+                        'canShip' => !$isNonShippable && (int) $line->shippableQuantity > 0 && !$fullyRefunded,
+                        'canCancel' => !$isNonActionable && (int) $line->cancelableQuantity > 0 && !$fullyRefunded,
+                        'canRefund' => !$isNonActionable && (int) $line->refundableQuantity > 0,
+                        'shippableQuantity' => (int) $line->shippableQuantity,
+                        'cancelableQuantity' => (int) $line->cancelableQuantity,
+                        'refundableQuantity' => (int) $line->refundableQuantity,
+                    ];
+                }
+            }
+
             $this->context->smarty->assign([
                 'order_reference' => $order->reference,
                 'refundable_amount' => $refundableAmount,
                 'capturable_amount' => $capturableAmount,
                 'products' => $products,
+                'lineActions' => $lineActions,
                 'mollie_logo_path' => $mollieLogoPath,
                 'mollie_transaction_id' => $mollieTransactionId,
                 'mollie_api_type' => $mollieApiType,
@@ -710,6 +738,37 @@ class Mollie extends PaymentModule
 
         if (!$payment) {
             return '';
+        }
+
+        if ($payment['method'] === Config::PAY_BY_BANK
+            && in_array($payment['bank_status'], [\Mollie\Api\Types\PaymentStatus::STATUS_OPEN, \Mollie\Api\Types\PaymentStatus::STATUS_PENDING], true)
+        ) {
+            /** @var \Mollie\Service\PayByBankCancellationService $payByBankService */
+            $payByBankService = $this->getService(\Mollie\Service\PayByBankCancellationService::class);
+            $mollieStatus = $payByBankService->getActualMollieStatus($payment['transaction_id']);
+
+            if ($payByBankService->shouldCancelPayment($mollieStatus)) {
+                $payByBankService->cancelOrderAndRestoreCart(
+                    (int) $payment['cart_id'],
+                    $payment['transaction_id'],
+                    $payByBankService->resolveCancelStatus($mollieStatus)
+                );
+
+                $this->context->cookie->__set('mollie_payment_canceled_error', json_encode([
+                    $this->l('Your payment was not successful. Please try again.'),
+                ]));
+
+                Tools::redirect($this->context->link->getPageLink(
+                    'order',
+                    true,
+                    $this->context->language->id,
+                    [
+                        'step' => 'payment',
+                    ]
+                ));
+
+                return '';
+            }
         }
 
         $isPaid = \Mollie\Api\Types\PaymentStatus::STATUS_PAID == $payment['bank_status'];
@@ -991,81 +1050,107 @@ class Mollie extends PaymentModule
             ],
             // API Configuration - sidebar entry (parent)
             [
-                'name' => $this->l('API Configuration'),
+                'name' => $this->getTabTranslations('API Configuration'),
                 'class_name' => 'AdminMollieAuthenticationParent',
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
             ],
             // API Configuration - horizontal tab (child)
             [
-                'name' => $this->l('API Configuration'),
+                'name' => $this->getTabTranslations('API Configuration'),
                 'class_name' => self::ADMIN_MOLLIE_AUTHENTICATION_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
             ],
             // Payment Methods - sidebar entry (parent)
             [
-                'name' => $this->l('Payment Methods'),
+                'name' => $this->getTabTranslations('Payment Methods'),
                 'class_name' => 'AdminMolliePaymentMethodsParent',
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
             ],
             // Payment Methods - horizontal tab (child)
             [
-                'name' => $this->l('Payment Methods'),
+                'name' => $this->getTabTranslations('Payment Methods'),
                 'class_name' => self::ADMIN_MOLLIE_PAYMENT_METHODS_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
             ],
             // Advanced Settings - sidebar entry (parent)
             [
-                'name' => $this->l('Advanced Settings'),
+                'name' => $this->getTabTranslations('Advanced Settings'),
                 'class_name' => 'AdminMollieAdvancedSettingsParent',
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
             ],
             // Advanced Settings - horizontal tab (child)
             [
-                'name' => $this->l('Advanced Settings'),
+                'name' => $this->getTabTranslations('Advanced Settings'),
                 'class_name' => 'AdminMollieAdvancedSettings',
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
             ],
             // Subscriptions - sidebar entry (parent)
             [
-                'name' => $this->l('Subscriptions'),
+                'name' => $this->getTabTranslations('Subscriptions'),
                 'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_PARENT_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
             ],
             // Subscriptions - horizontal tab (child)
             [
-                'name' => $this->l('Subscriptions'),
+                'name' => $this->getTabTranslations('Subscriptions'),
                 'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
             ],
             // Subscription FAQ - sidebar entry (parent)
             [
-                'name' => $this->l('Subscription FAQ'),
+                'name' => $this->getTabTranslations('Subscription FAQ'),
                 'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_FAQ_PARENT_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
                 'module_tab' => true,
             ],
             // Subscription FAQ - horizontal tab (child)
             [
-                'name' => $this->l('Subscription FAQ'),
+                'name' => $this->getTabTranslations('Subscription FAQ'),
                 'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_FAQ_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
                 'module_tab' => true,
             ],
             // Logs - sidebar entry (parent)
             [
-                'name' => $this->l('Logs'),
+                'name' => $this->getTabTranslations('Logs'),
                 'class_name' => self::ADMIN_MOLLIE_LOGS_PARENT_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
                 'module_tab' => true,
             ],
             // Logs - horizontal tab (child)
             [
-                'name' => $this->l('Logs'),
+                'name' => $this->getTabTranslations('Logs'),
                 'class_name' => self::ADMIN_MOLLIE_LOGS_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
                 'module_tab' => true,
             ],
         ];
+    }
+
+    /**
+     * Returns tab name translations for all installed languages.
+     * PrestaShop uses this array (keyed by ISO code) to set ps_tab_lang entries.
+     *
+     * @param string $englishName
+     *
+     * @return array
+     */
+    private function getTabTranslations($englishName)
+    {
+        $translations = [];
+
+        foreach (Language::getLanguages(false) as $language) {
+            $translations[$language['iso_code']] = Translate::getModuleTranslation(
+                $this,
+                $englishName,
+                $this->name,
+                null,
+                false,
+                $language['locale']
+            );
+        }
+
+        return $translations;
     }
 
     public function hookActionAdminOrdersListingFieldsModifier($params)
@@ -1255,17 +1340,38 @@ class Mollie extends PaymentModule
      */
     public function hookDisplayCustomerAccount()
     {
-        $context = Context::getContext();
-        $id_customer = $context->customer->id;
+        try {
+            $context = Context::getContext();
 
-        $url = Context::getContext()->link->getModuleLink($this->name, 'subscriptions', [], true);
+            if (empty($context->customer->email)) {
+                return '';
+            }
 
-        $this->context->smarty->assign([
-            'front_controller' => $url,
-            'id_customer' => $id_customer,
-        ]);
+            /** @var \Mollie\Subscription\Provider\SubscriptionAvailabilityProvider $subscriptionAvailabilityProvider */
+            $subscriptionAvailabilityProvider = $this->getService(\Mollie\Subscription\Provider\SubscriptionAvailabilityProvider::class);
 
-        return $this->display(__FILE__, 'views/templates/front/subscription/customerAccount.tpl');
+            if (!$subscriptionAvailabilityProvider->isAvailableForCustomer($context->customer->email)) {
+                return '';
+            }
+
+            $url = Context::getContext()->link->getModuleLink($this->name, 'subscriptions', [], true);
+
+            $this->context->smarty->assign([
+                'front_controller' => $url,
+                'id_customer' => $context->customer->id,
+            ]);
+
+            return $this->display(__FILE__, 'views/templates/front/subscription/customerAccount.tpl');
+        } catch (\Throwable $exception) {
+            /** @var \Mollie\Logger\LoggerInterface $logger */
+            $logger = $this->getService(\Mollie\Logger\LoggerInterface::class);
+            $logger->error('Mollie - Error in hookDisplayCustomerAccount', [
+                'exceptions' => \Mollie\Utility\ExceptionUtility::getExceptions($exception),
+            ]);
+
+            // Fail safely - don't show the tab if there's an error
+            return '';
+        }
     }
 
     /**
@@ -1585,6 +1691,8 @@ class Mollie extends PaymentModule
         }
 
         if ($this->context->customer->isLogged()) {
+            $this->handlePayByBankBrowserBack();
+
             return;
         }
 
@@ -1605,6 +1713,23 @@ class Mollie extends PaymentModule
         $this->context->controller->warning[] = $this->l('Customer must be logged in to buy subscription item.');
 
         $this->context->controller->redirectWithNotifications($link->getPageLink('authentication'));
+    }
+
+    private function handlePayByBankBrowserBack(): void
+    {
+        if (!empty($this->context->cart) && $this->context->cart->nbProducts() > 0) {
+            return;
+        }
+
+        try {
+            /** @var \Mollie\Service\PayByBankCancellationService $payByBankService */
+            $payByBankService = $this->getService(\Mollie\Service\PayByBankCancellationService::class);
+            $payByBankService->handleAbandonedPayment((int) $this->context->customer->id);
+        } catch (\Exception $e) {
+            /** @var \Mollie\Logger\LoggerInterface $logger */
+            $logger = $this->getService(\Mollie\Logger\LoggerInterface::class);
+            $logger->error('Failed to handle Pay by Bank browser back: ' . $e->getMessage());
+        }
     }
 
     private function getRecurringOrdersByCustomerAddress(int $customerId, int $oldAddressId): array

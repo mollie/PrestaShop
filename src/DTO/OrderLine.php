@@ -298,7 +298,7 @@ class OrderLine implements JsonSerializable
      *
      * @return $this
      */
-    public function setDiscountAmount(Amount $discountAmount): self
+    public function setDiscountAmount(?Amount $discountAmount): self
     {
         $this->discountAmount = $discountAmount;
 

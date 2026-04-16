@@ -30,9 +30,9 @@ use Mollie\Exception\TransactionException;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Handler\Order\OrderPaymentFeeHandler;
-use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Handler\Shipment\ShipmentSenderHandlerInterface;
 use Mollie\Logger\PrestaLoggerInterface;
+use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\MollieStatusUtility;
@@ -213,7 +213,16 @@ class TransactionService
                         if (!$orderId) {
                             throw new TransactionException('Order is already created', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
                         }
-                        $this->updatePaymentDescription($apiPayment, $orderId);
+
+                        $this->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId);
+
+                        try {
+                            $this->updatePaymentDescription($apiPayment, $orderId);
+                        } catch (\Throwable $exception) {
+                            $this->logger->error(sprintf('%s - Failed to update payment description', self::FILE_NAME), [
+                                'exceptions' => ExceptionUtility::getExceptions($exception),
+                            ]);
+                        }
                     } elseif (strpos($apiPayment->description, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0) {
                         $this->handlePaymentDescription($apiPayment);
                     } elseif ($orderId) {
@@ -242,9 +251,15 @@ class TransactionService
                         throw new TransactionException('Order is already created', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
                     }
 
-                    $apiPayment = $this->updateOrderDescription($apiPayment, $orderId);
-
                     $this->savePaymentStatus($apiPayment->id, $apiPayment->status, $orderId);
+
+                    try {
+                        $apiPayment = $this->updateOrderDescription($apiPayment, $orderId);
+                    } catch (\Throwable $exception) {
+                        $this->logger->error(sprintf('%s - Failed to update order description', self::FILE_NAME), [
+                            'exceptions' => ExceptionUtility::getExceptions($exception),
+                        ]);
+                    }
 
                     $order = new Order($orderId);
 
