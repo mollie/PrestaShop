@@ -105,6 +105,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Configure production tracking
+        run: |
+          cat > .env << 'EOF'
+          MODULE_ENV='GITHUB'
+          SEGMENT_API_KEY='${{ secrets.SEGMENT_API_KEY }}'
+          EOF
+
       - name: Build module ZIP
         run: |
           composer install --no-dev --optimize-autoloader --classmap-authoritative

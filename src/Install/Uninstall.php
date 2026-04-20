@@ -14,6 +14,8 @@ namespace Mollie\Install;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
+use Mollie\Factory\ModuleFactory;
+use Mollie\Service\PrestashopModuleTracking;
 use Mollie\Tracker\Segment;
 use Tab;
 
@@ -50,13 +52,20 @@ class Uninstall
 
     public function uninstall()
     {
-        $this->segment->setMessage('Mollie uninstall');
-        $this->segment->track();
+        try {
+            $module = (new ModuleFactory())->getModule();
+            PrestashopModuleTracking::track(
+                Config::SEGMENT_KEY,
+                $module,
+                'Module Uninstalled',
+                []
+            );
+        } catch (\Throwable $e) {
+            // Don't fail uninstall if ModuleFactory fails
+        }
 
         $this->deleteConfig();
-
         $this->uninstallTabs();
-
         $this->databaseUninstaller->uninstall();
 
         return true;

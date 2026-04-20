@@ -119,3 +119,7 @@ services:
       - '@twig'
     tags:
       - { name: 'controller.service_arguments' }
+
+  mollie.ps_accounts_facade:
+    alias: Mollie.PsAccountsFacade
+    public: true
