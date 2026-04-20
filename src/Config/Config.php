@@ -356,6 +356,18 @@ class Config
 
     const PAYMENT_API_ONLY_METHODS = [];
 
+    const MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS = [
+        'creditcard',
+        'klarna',
+        'klarnapaylater',
+        'klarnasliceit',
+        'klarnapaynow',
+        'klarnaone',
+    ];
+
+    const MOLLIE_METHOD_AUTO_CAPTURE_ENABLED = 'MOLLIE_METHOD_AUTO_CAPTURE_ENABLED_';
+    const MOLLIE_METHOD_AUTO_CAPTURE_STATUSES = 'MOLLIE_METHOD_AUTO_CAPTURE_STATUSES_';
+
     const ROUTE_RESEND_SECOND_CHANCE_PAYMENT_MESSAGE = 'mollie_module_admin_resend_payment_message';
 
     const PAYMENT_FEE_SKU = 'payment-fee-sku';

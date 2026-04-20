@@ -81,7 +81,8 @@ final class DatabaseTableInstaller implements InstallerInterface
 				`max_amount` decimal(20,6),
 				`live_environment` TINYINT(1),
 				`position` INT(10),
-			    `id_shop` INT(64) DEFAULT 1
+			    `id_shop` INT(64) DEFAULT 1,
+			    `is_manual_capture` TINYINT(1) DEFAULT 0
 			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
         $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_order_payment_fee` (

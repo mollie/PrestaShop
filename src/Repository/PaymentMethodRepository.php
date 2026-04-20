@@ -73,6 +73,19 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
         return Db::getInstance()->getValue($sql);
     }
 
+    public function isManualCapture(string $methodId, int $environment, ?int $shopId = null): bool
+    {
+        if (!$shopId) {
+            $shopId = Context::getContext()->shop->id;
+        }
+
+        $sql = 'SELECT is_manual_capture FROM `' . _DB_PREFIX_ . 'mol_payment_method`
+        WHERE id_method = "' . pSQL($methodId) . '" AND live_environment = "' . (int) $environment . '"
+        AND id_shop = ' . (int) $shopId;
+
+        return (bool) Db::getInstance()->getValue($sql);
+    }
+
     /**
      * @todo create const for table keys
      *

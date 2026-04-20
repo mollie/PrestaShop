@@ -41,11 +41,15 @@ class CaptureService
      *
      * @return array
      */
-    public function handleCapture($transactionId, $amount = null)
+    public function handleCapture($transactionId, $amount = null, $orderId = null)
     {
         try {
             $payment = $this->getPayment($transactionId);
             $this->performCapture($transactionId, $payment, $amount);
+
+            if ($orderId) {
+                $this->updateOrderStatusToPaid((int) $orderId);
+            }
 
             return $this->createSuccessResponse();
         } catch (\Throwable $e) {
@@ -133,11 +137,52 @@ class CaptureService
      */
     private function createErrorResponse(\Throwable $exception): array
     {
+        $message = $this->module->l('The payment could not be captured!', self::FILE_NAME);
+
+        if (strpos($exception->getMessage(), 'expired') !== false
+            || strpos($exception->getMessage(), 'not authorized') !== false
+        ) {
+            $message = $this->module->l(
+                'Payment authorization has expired. This payment can no longer be captured.',
+                self::FILE_NAME
+            );
+        }
+
         return [
             'success' => false,
-            'message' => $this->module->l('The payment could not be captured!', self::FILE_NAME),
+            'message' => $message,
             'detailed' => $exception->getMessage(),
         ];
+    }
+
+    private function updateOrderStatusToPaid(int $orderId): void
+    {
+        try {
+            $paidStatusId = (int) \Configuration::get(Mollie\Config\Config::MOLLIE_STATUS_PAID);
+
+            if (!$paidStatusId) {
+                return;
+            }
+
+            $order = new \Order($orderId);
+
+            if (!\Validate::isLoadedObject($order)) {
+                return;
+            }
+
+            if ((int) $order->current_state === $paidStatusId) {
+                return;
+            }
+
+            $history = new \OrderHistory();
+            $history->id_order = $orderId;
+            $history->changeIdOrderState($paidStatusId, $orderId, true);
+            $history->add();
+        } catch (\Throwable $e) {
+            /** @var \Mollie\Logger\LoggerInterface $logger */
+            $logger = $this->module->getService(\Mollie\Logger\LoggerInterface::class);
+            $logger->error(sprintf('%s - Failed to update order status to paid for order %d: %s', self::FILE_NAME, $orderId, $e->getMessage()));
+        }
     }
 
     /**

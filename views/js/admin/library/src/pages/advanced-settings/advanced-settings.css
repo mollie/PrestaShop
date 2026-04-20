@@ -234,6 +234,21 @@ h2.section-title {
   font-size: 14px;
 }
 
+.radio-select-search {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background-color: #ffffff;
+  outline: none;
+}
+
+.radio-select-search:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
 .relative {
   position: relative;
   z-index: 100;

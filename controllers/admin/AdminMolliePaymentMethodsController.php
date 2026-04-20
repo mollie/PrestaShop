@@ -252,6 +252,16 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'apiNotConfiguredMessage' => $this->module->l('Please configure your Mollie API keys in the API Configuration tab before managing payment methods.', self::FILE_NAME),
                 'infoBannerText' => $this->module->l('Here you can see all of the %s payment options. To include new payment methods go to', self::FILE_NAME),
                 'mollieDashboard' => $this->module->l('Mollie dashboard', self::FILE_NAME),
+
+                'captureMode' => $this->module->l('Capture mode', self::FILE_NAME),
+                'automatic' => $this->module->l('Automatic', self::FILE_NAME),
+                'manual' => $this->module->l('Manual', self::FILE_NAME),
+                'captureModeAutomatic' => $this->module->l('Payment is captured immediately at checkout.', self::FILE_NAME),
+                'captureModeManual' => $this->module->l('Payment stays authorized until you capture from the order page or via auto-capture below.', self::FILE_NAME),
+                'autoCaptureOnStatus' => $this->module->l('Auto-capture on status change', self::FILE_NAME),
+                'autoCaptureStatuses' => $this->module->l('Trigger on statuses', self::FILE_NAME),
+                'autoCaptureInfo' => $this->module->l('When the order reaches one of these statuses, the authorized payment will be captured automatically. You can always capture manually from the order page.', self::FILE_NAME),
+                'selectStatuses' => $this->module->l('Select statuses', self::FILE_NAME),
             ],
         ]);
 
@@ -262,6 +272,8 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'customerGroups' => $this->getCustomerGroups(),
                 'onlyOrderMethods' => Config::ORDER_API_ONLY_METHODS,
                 'onlyPaymentsMethods' => Config::PAYMENT_API_ONLY_METHODS,
+                'orderStatuses' => $this->getOrderStatuses(),
+                'manualCaptureEligibleMethods' => Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS,
             ],
         ]);
 
@@ -422,6 +434,12 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                                 'directProduct' => (bool) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT) ?: 0),
                                 'directCart' => (bool) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART) ?: 0),
                                 'buttonStyle' => (int) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE) ?: 0),
+                            ] : null,
+                            'captureMode' => !empty($methodObj->is_manual_capture) ? 'manual' : 'automatic',
+                            'isManualCaptureEligible' => in_array($methodId, Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS),
+                            'autoCapture' => in_array($methodId, Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS) ? [
+                                'enabled' => (bool) $this->configuration->get(Config::MOLLIE_METHOD_AUTO_CAPTURE_ENABLED . $methodId),
+                                'statuses' => json_decode($this->configuration->get(Config::MOLLIE_METHOD_AUTO_CAPTURE_STATUSES . $methodId) ?: '[]', true),
                             ] : null,
                         ],
                     ];
@@ -757,6 +775,21 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
 
         return $taxRulesGroups;
+    }
+
+    private function getOrderStatuses(): array
+    {
+        $orderStatuses = OrderState::getOrderStates($this->context->language->id);
+        $result = [];
+
+        foreach ($orderStatuses as $status) {
+            $result[] = [
+                'id' => (string) $status['id_order_state'],
+                'name' => $status['name'],
+            ];
+        }
+
+        return $result;
     }
 
     private function getCustomerGroups(): array

@@ -141,6 +141,8 @@ class PaymentMethodSettingsHandler
         if ($methodId === Config::MOLLIE_VOUCHER_METHOD_ID && isset($settings['voucherCategory'])) {
             $this->handleVoucherSettings($settings);
         }
+
+        $this->handleCaptureSettings($methodId, $settings);
     }
 
     /**
@@ -178,6 +180,10 @@ class PaymentMethodSettingsHandler
 
         $paymentMethod->live_environment = $environment ? true : false;
         $paymentMethod->id_shop = $shopId;
+
+        if (in_array($methodId, Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS)) {
+            $paymentMethod->is_manual_capture = ($settings['captureMode'] ?? 'automatic') === 'manual';
+        }
     }
 
     /**
@@ -498,5 +504,28 @@ class PaymentMethodSettingsHandler
 
             return null;
         }
+    }
+
+    private function handleCaptureSettings(string $methodId, array $settings): void
+    {
+        if (!in_array($methodId, Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS)) {
+            return;
+        }
+
+        if (!isset($settings['autoCapture'])) {
+            return;
+        }
+
+        $autoCapture = $settings['autoCapture'];
+
+        $this->configuration->updateValue(
+            Config::MOLLIE_METHOD_AUTO_CAPTURE_ENABLED . $methodId,
+            (int) ($autoCapture['enabled'] ?? false)
+        );
+
+        $this->configuration->updateValue(
+            Config::MOLLIE_METHOD_AUTO_CAPTURE_STATUSES . $methodId,
+            json_encode($autoCapture['statuses'] ?? [])
+        );
     }
 }

@@ -610,7 +610,8 @@ class Mollie extends PaymentModule
 
             $order = new Order($params['id_order']);
 
-            if (!$order->hasBeenPaid()) {
+            $isAuthorized = isset($transaction['bank_status']) && $transaction['bank_status'] === 'authorized';
+            if (!$order->hasBeenPaid() && !$isAuthorized) {
                 return false;
             }
 
@@ -874,6 +875,19 @@ class Mollie extends PaymentModule
             ]);
 
             return;
+        }
+
+        try {
+            /** @var \Mollie\Service\AutoCaptureService $autoCaptureService */
+            $autoCaptureService = $this->getService(\Mollie\Service\AutoCaptureService::class);
+            $autoCaptureService->handleAutoCaptureOnStatusChange(
+                (int) $order->id,
+                (int) $orderStatus->id
+            );
+        } catch (\Throwable $exception) {
+            $logger->error(sprintf('%s - Auto-capture failed', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
         }
     }
 
