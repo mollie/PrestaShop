@@ -90,12 +90,12 @@
               <td>{$product->totalAmount->value|escape:'html':'UTF-8'}</td>
               <td>
               {if $mollie_api_type == 'payments' && $product->description != 'Discount'}
-                <button type="button" class="btn btn-default btn-xs mollie-capture-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" {if $isCaptured}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-capture-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" {if !$product->mollieCanCapture}disabled{/if}>
                   <i class="material-icons">payments</i> {l s='Capture' mod='mollie'}
                 </button>
               {/if}
               {if $product->description != 'Discount'}
-                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" {if $product->totalAmount->value > $refundable_amount}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" {if ($mollie_api_type == 'payments' && !$product->mollieCanRefund) || ($mollie_api_type != 'payments' && $product->totalAmount->value > $refundable_amount)}disabled{/if}>
                   <i class="material-icons">replay</i> {l s='Refund' mod='mollie'}
                 </button>
               {/if}

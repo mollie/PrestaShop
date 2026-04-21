@@ -236,4 +236,28 @@ class CaptureService
 
         return $capturable > 0.0 ? $capturable : 0.0;
     }
+
+    /**
+     * Return the list of captured amounts for a Payments-API transaction.
+     * Used to match captures back to order lines so per-line Capture buttons
+     * can be disabled once their matching amount has already been captured.
+     *
+     * @return float[]
+     */
+    public function getCapturedAmounts(string $transactionId): array
+    {
+        if (TransactionUtility::isOrderTransaction($transactionId)) {
+            return [];
+        }
+
+        /** @var Payment $payment */
+        $payment = $this->module->getApiClient()->payments->get($transactionId);
+
+        $amounts = [];
+        foreach ($payment->captures() as $capture) {
+            $amounts[] = (float) $capture->amount->value;
+        }
+
+        return $amounts;
+    }
 }

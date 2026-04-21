@@ -629,6 +629,36 @@ class Mollie extends PaymentModule
             $isShipped = $shipService->isShipped($mollieTransactionId);
             $isCanceled = $cancelService->isCanceled($mollieTransactionId);
 
+            if ($mollieApiType === 'payments' && $products) {
+                $captureAmounts = $captureService->getCapturedAmounts($mollieTransactionId);
+                $refundAmounts = $refundService->getRefundedAmounts($mollieTransactionId);
+                foreach ($products as $line) {
+                    $line->mollieLineCaptured = false;
+                    $line->mollieLineRefunded = false;
+                    $lineTotal = (float) $line->totalAmount->value;
+                    foreach ($captureAmounts as $capIdx => $capAmount) {
+                        if (abs($capAmount - $lineTotal) < 0.005) {
+                            $line->mollieLineCaptured = true;
+                            unset($captureAmounts[$capIdx]);
+                            break;
+                        }
+                    }
+                    foreach ($refundAmounts as $refIdx => $refAmount) {
+                        if (abs($refAmount - $lineTotal) < 0.005) {
+                            $line->mollieLineRefunded = true;
+                            unset($refundAmounts[$refIdx]);
+                            break;
+                        }
+                    }
+                    $line->mollieCanCapture = !$isCaptured
+                        && !$line->mollieLineCaptured
+                        && $lineTotal <= ((float) $capturableAmount + 0.005);
+                    $line->mollieCanRefund = $line->mollieLineCaptured
+                        && !$line->mollieLineRefunded
+                        && $lineTotal <= ((float) $refundableAmount + 0.005);
+                }
+            }
+
             $lineActions = [];
             if ($mollieApiType === 'orders' && $products) {
                 foreach ($products as $line) {
