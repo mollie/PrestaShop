@@ -87,6 +87,17 @@ class AutoCaptureService
             return;
         }
 
+        if ($this->captureService->isCaptured($transactionId)) {
+            $this->logger->debug(sprintf(
+                '%s - Skipping auto-capture for payment %s on order %d: already captured',
+                self::FILE_NAME,
+                $transactionId,
+                $orderId
+            ));
+
+            return;
+        }
+
         $this->logger->debug(sprintf(
             '%s - Auto-capturing payment %s for order %d on status change to %d',
             self::FILE_NAME,
