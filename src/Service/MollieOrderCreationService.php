@@ -61,6 +61,8 @@ class MollieOrderCreationService
             if ($data instanceof OrderData) {
                 $data->setDeliveryPhoneNumber(null);
                 $data->setBillingPhoneNumber(null);
+            } elseif ($data instanceof PaymentData) {
+                $data->setBillingPhoneNumber(null);
             }
             try {
                 $apiPayment = $this->createPayment($data, $paymentMethodObj->method);

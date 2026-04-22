@@ -294,27 +294,30 @@ class CartLinesService
         $remaining = round($remaining, $apiRoundingPrecision);
         if ($remaining < 0) {
             foreach (array_reverse($orderLines) as $hash => $items) {
-                // Grab the line group's total amount
-                $totalAmount = array_sum(array_column($items, 'totalAmount'));
-
-                // Remove when total is lower than remaining
-                if ($totalAmount <= $remaining) {
-                    // The line total is less than remaining, we should remove this line group and continue
-                    $remaining = $remaining - $totalAmount;
-                    unset($items);
+                $lineType = isset($items[0]['type']) ? $items[0]['type'] : '';
+                if ($lineType !== 'physical' && $lineType !== 'digital') {
                     continue;
                 }
 
-                // Otherwise spread the cart line again with the updated total
-                //TODO: check why remaining comes -100 when testing and new total becomes different
+                $totalAmount = array_sum(array_column($items, 'totalAmount'));
+
+                if ($totalAmount <= $remaining) {
+                    $remaining = $remaining - $totalAmount;
+                    unset($orderLines[$hash]);
+                    continue;
+                }
+
                 $orderLines[$hash] = static::spreadCartLineGroup($items, $totalAmount + $remaining);
                 break;
             }
         } elseif ($remaining > 0) {
             foreach (array_reverse($orderLines) as $hash => $items) {
-                // Grab the line group's total amount
+                $lineType = isset($items[0]['type']) ? $items[0]['type'] : '';
+                if ($lineType !== 'physical' && $lineType !== 'digital') {
+                    continue;
+                }
+
                 $totalAmount = array_sum(array_column($items, 'totalAmount'));
-                // Otherwise spread the cart line again with the updated total
                 $orderLines[$hash] = static::spreadCartLineGroup($items, $totalAmount + $remaining);
                 break;
             }

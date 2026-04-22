@@ -42,6 +42,11 @@
         <tr>
           <th>{l s='Product' mod='mollie'}</th>
           <th>{l s='Price' mod='mollie'}</th>
+          {if $mollie_api_type == 'orders'}
+          <th>{l s='Shipped' mod='mollie'}</th>
+          <th>{l s='Canceled' mod='mollie'}</th>
+          <th>{l s='Refunded' mod='mollie'}</th>
+          {/if}
           <th>{l s='Actions' mod='mollie'}</th>
         </tr>
       </thead>
@@ -52,19 +57,27 @@
             <tr>
               <td><strong>{$product->quantity|escape:'html':'UTF-8'}x</strong> {$product->name|escape:'html':'UTF-8'}</td>
               <td>{$product->totalAmount->value|escape:'html':'UTF-8'}</td>
+              <td>{$product->quantityShipped|escape:'html':'UTF-8'}</td>
+              <td>{$product->quantityCanceled|escape:'html':'UTF-8'}</td>
+              <td>{$product->quantityRefunded|escape:'html':'UTF-8'}</td>
               <td>
-              {if $mollie_api_type == 'orders' && $product->name != 'Discount'}
-                <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" {if $product->quantityShipped == $product->quantity || $product->quantityCanceled == $product->quantity}disabled{/if}>
+              {if $mollie_api_type == 'orders' && isset($lineActions[$product->id])}
+                {assign var="actions" value=$lineActions[$product->id]}
+                {if $actions.canShip || $actions.shippableQuantity > 0}
+                <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$actions.shippableQuantity}" {if !$actions.canShip}disabled{/if}>
                   <i class="material-icons">local_shipping</i> {l s='Ship' mod='mollie'}
                 </button>
-                <button type="button" class="btn btn-default btn-xs mollie-cancel-btn" data-orderline="{$product->id|escape:'html':'UTF-8'}" {if $product->quantityCanceled == $product->quantity || $isShipped}disabled{/if}>
+                {/if}
+                {if $actions.canCancel || $actions.cancelableQuantity > 0}
+                <button type="button" class="btn btn-default btn-xs mollie-cancel-btn" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$actions.cancelableQuantity}" {if !$actions.canCancel}disabled{/if}>
                   <i class="material-icons">cancel</i> {l s='Cancel' mod='mollie'}
                 </button>
-              {/if}
-              {if $product->name != 'Discount'}
-                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" {if $product->quantityRefunded == $product->quantity || $isCanceled}disabled{/if}>
+                {/if}
+                {if $actions.canRefund || $actions.refundableQuantity > 0}
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$actions.refundableQuantity}" {if !$actions.canRefund}disabled{/if}>
                   <i class="material-icons">replay</i> {l s='Refund' mod='mollie'}
                 </button>
+                {/if}
               {/if}
               </td>
             </tr>
@@ -77,12 +90,12 @@
               <td>{$product->totalAmount->value|escape:'html':'UTF-8'}</td>
               <td>
               {if $mollie_api_type == 'payments' && $product->description != 'Discount'}
-                <button type="button" class="btn btn-default btn-xs mollie-capture-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" {if $isCaptured}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-capture-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" {if !$product->mollieCanCapture}disabled{/if}>
                   <i class="material-icons">payments</i> {l s='Capture' mod='mollie'}
                 </button>
               {/if}
               {if $product->description != 'Discount'}
-                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" {if $product->totalAmount->value > $refundable_amount}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" {if ($mollie_api_type == 'payments' && !$product->mollieCanRefund) || ($mollie_api_type != 'payments' && $product->totalAmount->value > $refundable_amount)}disabled{/if}>
                   <i class="material-icons">replay</i> {l s='Refund' mod='mollie'}
                 </button>
               {/if}
@@ -96,10 +109,10 @@
       <button type="button" class="btn btn-default btn-block" id="mollie-refund-all-orders" {if $isRefunded || $refundable_amount <= 0 || $isCanceled}disabled{/if}>
         <i class="material-icons">replay</i> {l s='Refund all' mod='mollie'}
       </button>
-      <button type="button" class="btn btn-default btn-block" id="mollie-ship-all" {if $isShipped || $isRefunded || $isCanceled}disabled{/if}>
+      <button type="button" class="btn btn-default btn-block" id="mollie-ship-all" {if $isShipped || $isRefunded || $isCanceled || $refundable_amount <= 0}disabled{/if}>
         <i class="material-icons">local_shipping</i> {l s='Ship All' mod='mollie'}
       </button>
-      <button type="button" class="btn btn-default btn-block" id="mollie-cancel-all" {if $isCanceled || $isRefunded || $isShipped}disabled{/if}>
+      <button type="button" class="btn btn-default btn-block" id="mollie-cancel-all" {if $isCanceled || $isRefunded || $isShipped || $refundable_amount <= 0}disabled{/if}>
         <i class="material-icons">cancel</i> {l s='Cancel All' mod='mollie'}
       </button>
     {/if}
