@@ -84,6 +84,13 @@ final class CreateApplePayOrderHandler
     public function handle(CreateApplePayOrder $command): array
     {
         $cart = new Cart($command->getCartId());
+
+        if ($cart->id_address_delivery == $cart->id_address_invoice) {
+            $invoiceAddress = $this->duplicateAddress($cart->id_address_invoice);
+            $cart->id_address_invoice = $invoiceAddress->id;
+            $cart->update();
+        }
+
         $this->updateCardInfo($cart->id_address_delivery, $command->getOrder()->getShippingContent());
         $this->updateCardInfo($cart->id_address_invoice, $command->getOrder()->getBillingContent());
         $this->updateCustomer($cart->id_customer, $command->getOrder()->getShippingContent());
@@ -227,6 +234,25 @@ final class CreateApplePayOrderHandler
         );
 
         return $this->mollieOrderCreationService->createMollieApplePayDirectOrder($paymentData, $paymentMethodObj);
+    }
+
+    private function duplicateAddress(int $addressId): Address
+    {
+        $original = new Address($addressId);
+        $copy = new Address();
+        $copy->id_customer = $original->id_customer;
+        $copy->alias = $original->alias;
+        $copy->firstname = $original->firstname;
+        $copy->lastname = $original->lastname;
+        $copy->address1 = $original->address1;
+        $copy->address2 = $original->address2;
+        $copy->city = $original->city;
+        $copy->postcode = $original->postcode;
+        $copy->id_country = $original->id_country;
+        $copy->country = $original->country;
+        $copy->add();
+
+        return $copy;
     }
 
     private function deleteAddress(int $addressId)
