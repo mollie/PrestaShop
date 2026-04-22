@@ -610,7 +610,8 @@ class Mollie extends PaymentModule
 
             $order = new Order($params['id_order']);
 
-            if (!$order->hasBeenPaid()) {
+            $isAuthorized = isset($transaction['bank_status']) && $transaction['bank_status'] === 'authorized';
+            if (!$order->hasBeenPaid() && !$isAuthorized) {
                 return false;
             }
 
@@ -627,6 +628,48 @@ class Mollie extends PaymentModule
             $isCaptured = $captureService->isCaptured($mollieTransactionId);
             $isShipped = $shipService->isShipped($mollieTransactionId);
             $isCanceled = $cancelService->isCanceled($mollieTransactionId);
+
+            if ($mollieApiType === 'payments' && $products) {
+                $hasDiscount = false;
+                foreach ($products as $line) {
+                    if ((isset($line->description) && $line->description === 'Discount')
+                        || (float) $line->totalAmount->value < 0
+                    ) {
+                        $hasDiscount = true;
+                        break;
+                    }
+                }
+
+                $captureAmounts = $captureService->getCapturedAmounts($mollieTransactionId);
+                $refundAmounts = $refundService->getRefundedAmounts($mollieTransactionId);
+                foreach ($products as $line) {
+                    $line->mollieLineCaptured = false;
+                    $line->mollieLineRefunded = false;
+                    $lineTotal = (float) $line->totalAmount->value;
+                    foreach ($captureAmounts as $capIdx => $capAmount) {
+                        if (abs($capAmount - $lineTotal) < 0.005) {
+                            $line->mollieLineCaptured = true;
+                            unset($captureAmounts[$capIdx]);
+                            break;
+                        }
+                    }
+                    foreach ($refundAmounts as $refIdx => $refAmount) {
+                        if (abs($refAmount - $lineTotal) < 0.005) {
+                            $line->mollieLineRefunded = true;
+                            unset($refundAmounts[$refIdx]);
+                            break;
+                        }
+                    }
+                    $line->mollieCanCapture = !$isCaptured
+                        && !$hasDiscount
+                        && !$line->mollieLineCaptured
+                        && $lineTotal <= ((float) $capturableAmount + 0.005);
+                    $line->mollieCanRefund = !$hasDiscount
+                        && $line->mollieLineCaptured
+                        && !$line->mollieLineRefunded
+                        && $lineTotal <= ((float) $refundableAmount + 0.005);
+                }
+            }
 
             $lineActions = [];
             if ($mollieApiType === 'orders' && $products) {
@@ -874,6 +917,19 @@ class Mollie extends PaymentModule
             ]);
 
             return;
+        }
+
+        try {
+            /** @var \Mollie\Service\AutoCaptureService $autoCaptureService */
+            $autoCaptureService = $this->getService(\Mollie\Service\AutoCaptureService::class);
+            $autoCaptureService->handleAutoCaptureOnStatusChange(
+                (int) $order->id,
+                (int) $orderStatus->id
+            );
+        } catch (\Throwable $exception) {
+            $logger->error(sprintf('%s - Auto-capture failed', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
         }
     }
 

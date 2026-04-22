@@ -111,6 +111,8 @@ use Mollie\Repository\TaxRulesGroupRepositoryInterface;
 use Mollie\Service\ApiKeyService;
 use Mollie\Service\ApiService;
 use Mollie\Service\ApiServiceInterface;
+use Mollie\Service\AutoCaptureService;
+use Mollie\Service\CaptureService;
 use Mollie\Service\Content\SmartyTemplateParser;
 use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\CountryService;
@@ -299,6 +301,12 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, ApiService::class);
         $this->addServiceArgument($service, Mollie::class);
         $this->addServiceArgument($service, ApplePayDirectCertificateHandler::class);
+
+        $service = $this->addService($container, AutoCaptureService::class, AutoCaptureService::class);
+        $this->addServiceArgument($service, CaptureService::class);
+        $this->addServiceArgument($service, PaymentMethodRepositoryInterface::class);
+        $this->addServiceArgument($service, ConfigurationAdapter::class);
+        $this->addServiceArgument($service, LoggerInterface::class);
 
         $service = $this->addService($container, PaymentMethodLogoHandler::class, PaymentMethodLogoHandler::class);
         $this->addServiceArgument($service, CreditCardLogoProvider::class);

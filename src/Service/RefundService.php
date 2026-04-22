@@ -180,4 +180,27 @@ class RefundService
 
         return $refundedAmount >= $amount;
     }
+
+    /**
+     * Return the list of refunded amounts for a Payments-API transaction.
+     * Used to match refunds back to order lines so per-line Refund buttons
+     * can be disabled once their matching amount has already been refunded.
+     *
+     * @return float[]
+     */
+    public function getRefundedAmounts(string $transactionId): array
+    {
+        if (TransactionUtility::isOrderTransaction($transactionId)) {
+            return [];
+        }
+
+        $payment = $this->module->getApiClient()->payments->get($transactionId, ['embed' => 'refunds']);
+
+        $amounts = [];
+        foreach ($payment->refunds() as $refund) {
+            $amounts[] = (float) $refund->amount->value;
+        }
+
+        return $amounts;
+    }
 }

@@ -337,6 +337,11 @@ class PaymentMethodService
 
             if (in_array($molPaymentMethod->id_method, Mollie\Config\Config::MOLLIE_MANUAL_CAPTURE_METHODS)) {
                 $paymentData->setCaptureMode('manual');
+            } elseif (in_array($molPaymentMethod->id_method, Mollie\Config\Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS)) {
+                $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+                if ($this->methodRepository->isManualCapture($molPaymentMethod->id_method, $environment)) {
+                    $paymentData->setCaptureMode('manual');
+                }
             }
 
             $paymentData->setMetadata($metaData);

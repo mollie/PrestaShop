@@ -345,7 +345,7 @@ class AdminMollieAjaxController extends ModuleAdminController
             $captureService = $this->module->getService(CaptureService::class);
 
             $amount = $captureAmount ? (float) $captureAmount : $order->total_paid;
-            $status = $captureService->handleCapture($transactionId, $amount);
+            $status = $captureService->handleCapture($transactionId, $amount, $orderId);
 
             $this->ajaxRender(json_encode($status));
         } catch (\Throwable $e) {
