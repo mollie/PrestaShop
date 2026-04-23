@@ -44,8 +44,12 @@ class CaptureService
     public function handleCapture($transactionId, $amount = null, $orderId = null)
     {
         try {
-            $payment = $this->getPayment($transactionId);
-            $this->performCapture($transactionId, $payment, $amount);
+            if (TransactionUtility::isOrderTransaction($transactionId)) {
+                $this->captureOrderTransaction($transactionId);
+            } else {
+                $payment = $this->getPayment($transactionId);
+                $this->performCapture($transactionId, $payment, $amount);
+            }
 
             if ($orderId) {
                 $this->updateOrderStatusToPaid((int) $orderId);
@@ -55,6 +59,27 @@ class CaptureService
         } catch (\Throwable $e) {
             return $this->createErrorResponse($e);
         }
+    }
+
+    /**
+     * Capture an Orders API transaction by shipping all lines
+     *
+     * @param string $transactionId
+     */
+    private function captureOrderTransaction(string $transactionId): void
+    {
+        $apiOrder = $this->module->getApiClient()->orders->get($transactionId);
+
+        $shippableItems = 0;
+        foreach ($apiOrder->lines as $line) {
+            $shippableItems += $line->shippableQuantity;
+        }
+
+        if ($shippableItems === 0) {
+            return;
+        }
+
+        $apiOrder->shipAll();
     }
 
     /**
@@ -194,10 +219,8 @@ class CaptureService
      */
     public function isCaptured(string $transactionId): bool
     {
-        $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
-
-        if ($isOrderTransaction) {
-            return false;
+        if (TransactionUtility::isOrderTransaction($transactionId)) {
+            return $this->isOrderTransactionCaptured($transactionId);
         }
 
         /** @var Payment $payment */
@@ -212,6 +235,18 @@ class CaptureService
         }
 
         return $capturedAmount >= $payment->amount->value || $payment->status == 'paid';
+    }
+
+    private function isOrderTransactionCaptured(string $transactionId): bool
+    {
+        $apiOrder = $this->module->getApiClient()->orders->get($transactionId);
+
+        $shippableItems = 0;
+        foreach ($apiOrder->lines as $line) {
+            $shippableItems += $line->shippableQuantity;
+        }
+
+        return $shippableItems === 0;
     }
 
     public function getCapturableAmount(string $transactionId): float
