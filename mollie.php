@@ -610,8 +610,8 @@ class Mollie extends PaymentModule
 
             $order = new Order($params['id_order']);
 
-            $isAuthorized = isset($transaction['bank_status']) && $transaction['bank_status'] === 'authorized';
-            if (!$order->hasBeenPaid() && !$isAuthorized) {
+            $bankStatus = isset($transaction['bank_status']) ? $transaction['bank_status'] : null;
+            if (in_array($bankStatus, ['created', 'pending', 'expired', 'failed', 'open'], true)) {
                 return false;
             }
 
@@ -689,6 +689,27 @@ class Mollie extends PaymentModule
                 }
             }
 
+            $canShipAny = false;
+            $canCancelAny = false;
+            $canRefundAny = false;
+            if ($mollieApiType === 'orders' && empty($lineActions)) {
+                $canShipAny = !$isShipped && !$isCanceled;
+                $canCancelAny = !$isCanceled && !$isShipped;
+                $canRefundAny = !$isRefunded && !$isCanceled && $refundableAmount > 0;
+            } else {
+                foreach ($lineActions as $actions) {
+                    if ($actions['canShip']) {
+                        $canShipAny = true;
+                    }
+                    if ($actions['canCancel']) {
+                        $canCancelAny = true;
+                    }
+                    if ($actions['canRefund']) {
+                        $canRefundAny = true;
+                    }
+                }
+            }
+
             $this->context->smarty->assign([
                 'order_reference' => $order->reference,
                 'refundable_amount' => $refundableAmount,
@@ -702,6 +723,9 @@ class Mollie extends PaymentModule
                 'isCaptured' => $isCaptured,
                 'isShipped' => $isShipped,
                 'isCanceled' => $isCanceled,
+                'canShipAny' => $canShipAny,
+                'canCancelAny' => $canCancelAny,
+                'canRefundAny' => $canRefundAny,
             ]);
 
             return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');
