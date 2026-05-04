@@ -105,7 +105,7 @@ class Config
             'uk',
         ],
         'mybank' => [],
-        'trustly' => ['at', 'de', 'ee', 'es', 'fi', 'lt', 'lv', 'nl'],
+        'trustly' => [],
         'satispay' => [
             'at',
             'be',
