@@ -20,6 +20,7 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\PaymentMethodService;
+use Mollie\Service\PaymentMethodTitleProvider;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\OrderNumberUtility;
@@ -177,6 +178,14 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                     $order->reference
                 );
 
+                /** @var PaymentMethodTitleProvider $paymentMethodTitleProvider */
+                $paymentMethodTitleProvider = $this->module->getService(PaymentMethodTitleProvider::class);
+                $paymentMethodLabel = $paymentMethodTitleProvider->getTitle(
+                    (string) $apiPayment->method,
+                    (int) $cart->id_lang,
+                    (int) $cart->id_shop
+                );
+
                 $orderPayments = $order->getOrderPayments();
                 if (!empty($orderPayments)) {
                     foreach ($orderPayments as $orderPayment) {
@@ -184,14 +193,14 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                             continue;
                         }
                         $orderPayment->transaction_id = $apiPayment->id;
-                        $orderPayment->payment_method = $apiPayment->method;
+                        $orderPayment->payment_method = $paymentMethodLabel;
                         $orderPayment->update();
                     }
                 } else {
                     $orderPayment = new OrderPayment();
                     $orderPayment->order_reference = $order->reference;
                     $orderPayment->amount = $apiPayment->amount->value;
-                    $orderPayment->payment_method = $apiPayment->method;
+                    $orderPayment->payment_method = $paymentMethodLabel;
                     $orderPayment->transaction_id = $apiPayment->id;
                     $orderPayment->id_currency = (int) $cart->id_currency;
                     $orderPayment->add();

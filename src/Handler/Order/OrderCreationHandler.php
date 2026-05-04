@@ -59,6 +59,7 @@ use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentFeeTextService;
 use Mollie\Service\PaymentMethodService;
+use Mollie\Service\PaymentMethodTitleProvider;
 use Mollie\Subscription\Handler\SubscriptionCreationHandler;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Utility\ExceptionUtility;
@@ -104,6 +105,8 @@ class OrderCreationHandler
     private $orderRepository;
     /** @var MollieOrderCreationService */
     private $mollieOrderCreationService;
+    /** @var PaymentMethodTitleProvider */
+    private $paymentMethodTitleProvider;
 
     public function __construct(
         ModuleFactory $module,
@@ -116,7 +119,8 @@ class OrderCreationHandler
         PaymentFeeProviderInterface $paymentFeeProvider,
         PrestaLoggerInterface $logger,
         OrderRepositoryInterface $orderRepository,
-        MollieOrderCreationService $mollieOrderCreationService
+        MollieOrderCreationService $mollieOrderCreationService,
+        PaymentMethodTitleProvider $paymentMethodTitleProvider
     ) {
         $this->module = $module->getModule();
         $this->paymentMethodRepository = $paymentMethodRepository;
@@ -129,6 +133,7 @@ class OrderCreationHandler
         $this->logger = $logger;
         $this->orderRepository = $orderRepository;
         $this->mollieOrderCreationService = $mollieOrderCreationService;
+        $this->paymentMethodTitleProvider = $paymentMethodTitleProvider;
     }
 
     /**
@@ -172,21 +177,25 @@ class OrderCreationHandler
             return 0;
         }
 
-        $paymentMethodName = $paymentMethod->method_name;
+        $actualMethod = $apiPayment->details->wallet ?? $apiPayment->method;
+        $applePayWalletOnCreditCard = empty($paymentMethod->method_name)
+            && isset(Config::$methods[$actualMethod])
+            && Config::$methods[$actualMethod] === 'Apple Pay';
 
-        if (empty($paymentMethodName)) {
-            $actualMethod = $apiPayment->details->wallet ?? $apiPayment->method;
+        if ($applePayWalletOnCreditCard) {
+            $paymentMethodName = $this->paymentMethodTitleProvider->sanitize(
+                $this->module->l('Credit Card (Apple Pay)')
+            );
+        } else {
+            $resolveMethodId = !empty($paymentMethod->id_method)
+                ? (string) $paymentMethod->id_method
+                : (string) $actualMethod;
 
-            if (
-                isset(Config::$methods[$actualMethod]) &&
-                Config::$methods[$actualMethod] === 'Apple Pay'
-            ) {
-                $paymentMethodName = $this->module->l('Credit Card (Apple Pay)');
-            } else {
-                $paymentMethodName =
-                    Config::$methods[$actualMethod]
-                    ?? $this->module->l('Credit Card');
-            }
+            $paymentMethodName = $this->paymentMethodTitleProvider->getTitle(
+                $resolveMethodId,
+                (int) $cart->id_lang,
+                (int) $cart->id_shop
+            );
         }
 
         if (!$paymentFeeData->isActive()) {
@@ -282,7 +291,11 @@ class OrderCreationHandler
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($paymentData->getMethod(), $environment);
         $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
 
-        $paymentMethodName = isset(Config::$methods[$paymentData->getMethod()]) ? Config::$methods[$paymentData->getMethod()] : $this->module->name;
+        $paymentMethodName = $this->paymentMethodTitleProvider->getTitle(
+            (string) $paymentData->getMethod(),
+            (int) $cart->id_lang,
+            (int) $cart->id_shop
+        );
 
         $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethodObj, $cart->getOrderTotal());
 
@@ -371,11 +384,21 @@ class OrderCreationHandler
         $paymentMethod = $this->paymentMethodService->getPaymentMethod($apiPayment);
         $cart = new Cart($cartId);
 
+        $resolveMethodId = !empty($paymentMethod->id_method)
+            ? (string) $paymentMethod->id_method
+            : (string) $apiPayment->method;
+
+        $paymentMethodName = $this->paymentMethodTitleProvider->getTitle(
+            $resolveMethodId,
+            (int) $cart->id_lang,
+            (int) $cart->id_shop
+        );
+
         $this->module->validateOrder(
             $cartId,
             (int) Configuration::get(Config::MOLLIE_STATUS_AWAITING),
             (float) $apiPayment->amount->value,
-            $paymentMethod->method_name,
+            $paymentMethodName,
             null,
             ['transaction_id' => $apiPayment->id],
             null,

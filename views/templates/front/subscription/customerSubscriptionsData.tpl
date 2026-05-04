@@ -36,7 +36,7 @@
                 <tr>
                     <th scope="row">{$recurringOrder.recurring_order->id}</th>
                     <td>{$recurringOrder.recurring_order->status}</td>
-                    <td>{$recurringOrder.recurring_order->payment_method}</td>
+                    <td>{if isset($recurringOrder.payment_method_label) && $recurringOrder.payment_method_label}{$recurringOrder.payment_method_label}{else}{$recurringOrder.recurring_order->payment_method}{/if}</td>
                     <td>{$recurringOrder.product_name}</td>
                     <td>{$recurringOrder.total_price}</td>
                     <td>{$recurringOrder.recurring_order->date_add}</td>

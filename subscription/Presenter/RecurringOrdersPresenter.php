@@ -19,6 +19,7 @@ use Mollie\Adapter\Context;
 use Mollie\Adapter\Language;
 use Mollie\Adapter\Link;
 use Mollie\Adapter\ToolsAdapter;
+use Mollie\Service\PaymentMethodTitleProvider;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
 use Mollie\Utility\NumberUtility;
@@ -43,6 +44,8 @@ class RecurringOrdersPresenter
     private $tools;
     /** @var Context */
     private $context;
+    /** @var PaymentMethodTitleProvider */
+    private $paymentMethodTitleProvider;
 
     public function __construct(
         RecurringOrderRepositoryInterface $recurringOrderRepository,
@@ -50,7 +53,8 @@ class RecurringOrdersPresenter
         Link $link,
         Language $language,
         ToolsAdapter $tools,
-        Context $context
+        Context $context,
+        PaymentMethodTitleProvider $paymentMethodTitleProvider
     ) {
         $this->recurringOrderRepository = $recurringOrderRepository;
         $this->link = $link;
@@ -58,6 +62,7 @@ class RecurringOrdersPresenter
         $this->language = $language;
         $this->tools = $tools;
         $this->context = $context;
+        $this->paymentMethodTitleProvider = $paymentMethodTitleProvider;
     }
 
     /**
@@ -104,6 +109,11 @@ class RecurringOrdersPresenter
             $recurringOrderData['product_name'] = is_array($product->name) ? $product->name[$this->context->getLanguageId()] : $product->name;
             $recurringOrderData['total_price'] = $this->tools->displayPrice(NumberUtility::toPrecision((float) $recurringOrder->total_tax_incl, 2), new Currency($recurringOrder->id_currency));
             $recurringOrderData['currency'] = new \Currency($recurringOrder->id_currency);
+            $recurringOrderData['payment_method_label'] = $this->paymentMethodTitleProvider->getTitle(
+                (string) $recurringOrder->payment_method,
+                (int) $this->context->getLanguageId(),
+                (int) $this->context->getShopId()
+            );
             $recurringOrdersPresentData[] = $recurringOrderData;
         }
 

@@ -31,6 +31,7 @@ use Mollie\Service\MailService;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
+use Mollie\Service\PaymentMethodTitleProvider;
 use Mollie\Subscription\Api\SubscriptionApi;
 use Mollie\Subscription\DTO\CloneOriginalSubscriptionCartData;
 use Mollie\Subscription\Exception\CouldNotHandleRecurringOrder;
@@ -78,6 +79,8 @@ class RecurringOrderHandler
     private $logger;
     /** @var CloneOriginalSubscriptionCartHandler */
     private $cloneOriginalSubscriptionCartHandler;
+    /** @var PaymentMethodTitleProvider */
+    private $paymentMethodTitleProvider;
 
     public function __construct(
         SubscriptionApi $subscriptionApi,
@@ -94,7 +97,8 @@ class RecurringOrderHandler
         CarrierRepositoryInterface $carrierRepository,
         // TODO use subscription logger after it's fixed
         PrestaLoggerInterface $logger,
-        CloneOriginalSubscriptionCartHandler $cloneOriginalSubscriptionCartHandler
+        CloneOriginalSubscriptionCartHandler $cloneOriginalSubscriptionCartHandler,
+        PaymentMethodTitleProvider $paymentMethodTitleProvider
     ) {
         $this->subscriptionApi = $subscriptionApi;
         $this->subscriptionDataFactory = $subscriptionDataFactory;
@@ -110,6 +114,7 @@ class RecurringOrderHandler
         $this->carrierRepository = $carrierRepository;
         $this->logger = $logger;
         $this->cloneOriginalSubscriptionCartHandler = $cloneOriginalSubscriptionCartHandler;
+        $this->paymentMethodTitleProvider = $paymentMethodTitleProvider;
     }
 
     /**
@@ -207,7 +212,15 @@ class RecurringOrderHandler
 
         $paymentMethod = $this->paymentMethodService->getPaymentMethod($transaction);
 
-        $methodName = $paymentMethod->method_name ?: Config::$methods[$transaction->method];
+        $resolveMethodId = !empty($paymentMethod->id_method)
+            ? (string) $paymentMethod->id_method
+            : (string) $transaction->method;
+
+        $methodName = $this->paymentMethodTitleProvider->getTitle(
+            $resolveMethodId,
+            (int) $newCart->id_lang,
+            (int) $newCart->id_shop
+        );
 
         $subscriptionPaidTotal = (float) $subscription->amount->value;
         $cartTotal = (float) $newCart->getOrderTotal(true, Cart::BOTH);

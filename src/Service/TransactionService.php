@@ -91,6 +91,9 @@ class TransactionService
     /** @var OrderRepositoryInterface */
     private $orderRepository;
 
+    /** @var PaymentMethodTitleProvider */
+    private $paymentMethodTitleProvider;
+
     public function __construct(
         ModuleFactory $module,
         OrderStatusService $orderStatusService,
@@ -103,7 +106,8 @@ class TransactionService
         PrestaLoggerInterface $logger,
         ExceptionService $exceptionService,
         ConfigurationAdapter $configurationAdapter,
-        OrderRepositoryInterface $orderRepository
+        OrderRepositoryInterface $orderRepository,
+        PaymentMethodTitleProvider $paymentMethodTitleProvider
     ) {
         $this->module = $module->getModule();
         $this->orderStatusService = $orderStatusService;
@@ -117,6 +121,7 @@ class TransactionService
         $this->exceptionService = $exceptionService;
         $this->configurationAdapter = $configurationAdapter;
         $this->orderRepository = $orderRepository;
+        $this->paymentMethodTitleProvider = $paymentMethodTitleProvider;
     }
 
     /**
@@ -337,7 +342,7 @@ class TransactionService
         return $apiPayment;
     }
 
-    public function updateOrderTransaction($transactionId, $orderReference)
+    public function updateOrderTransaction($transactionId, $orderReference, ?Order $order = null)
     {
         $transactionInfos = [];
         $isOrder = TransactionUtility::isOrderTransaction($transactionId);
@@ -359,7 +364,7 @@ class TransactionService
             $transactionInfos = $this->getPaymentTransactionInfo($transaction, $transactionInfos);
         }
 
-        $this->updateOrderPayments($transactionInfos, $orderReference);
+        $this->updateOrderPayments($transactionInfos, $orderReference, $order);
     }
 
     /**
@@ -374,15 +379,25 @@ class TransactionService
         $paymentMethod = $this->paymentMethodService->getPaymentMethod($transaction);
         $order = new Order($orderId);
         if (!$order->getOrderPayments()) {
-            $this->updateOrderTransaction($transaction->id, $order->reference);
+            $this->updateOrderTransaction($transaction->id, $order->reference, $order);
         } else {
+            $resolveMethodId = !empty($paymentMethod->id_method)
+                ? (string) $paymentMethod->id_method
+                : (string) $transaction->method;
+
+            $paymentMethodLabel = $this->paymentMethodTitleProvider->getTitle(
+                $resolveMethodId,
+                (int) $order->id_lang,
+                (int) $order->id_shop
+            );
+
             /** @var OrderPayment $orderPayment */
             foreach ($order->getOrderPayments() as $orderPayment) {
                 if ($orderPayment->transaction_id) {
                     continue;
                 }
                 $orderPayment->transaction_id = $transaction->id;
-                $orderPayment->payment_method = $paymentMethod->method_name;
+                $orderPayment->payment_method = $paymentMethodLabel;
                 $orderPayment->update();
             }
         }
@@ -482,13 +497,20 @@ class TransactionService
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    private function updateOrderPayments(array $transactionInfos, $orderReference)
+    private function updateOrderPayments(array $transactionInfos, $orderReference, ?Order $order = null)
     {
+        $idLang = $order ? (int) $order->id_lang : (int) \Configuration::get('PS_LANG_DEFAULT');
+        $idShop = $order ? (int) $order->id_shop : (int) \Configuration::get('PS_SHOP_DEFAULT');
+
         foreach ($transactionInfos as $transactionInfo) {
             $orderPayment = new OrderPayment();
             $orderPayment->order_reference = $orderReference;
             $orderPayment->amount = $transactionInfo['amount'];
-            $orderPayment->payment_method = $transactionInfo['paymentName'];
+            $orderPayment->payment_method = $this->paymentMethodTitleProvider->getTitle(
+                (string) $transactionInfo['paymentName'],
+                $idLang,
+                $idShop
+            );
             $orderPayment->transaction_id = $transactionInfo['transactionId'];
             $orderPayment->id_currency = Currency::getIdByIsoCode($transactionInfo['currency']);
 

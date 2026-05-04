@@ -1342,7 +1342,14 @@ class Mollie extends PaymentModule
             return;
         }
 
-        $orderPayment->payment_method = Config::$methods[$mollieOrder['method']];
+        /** @var \Mollie\Service\PaymentMethodTitleProvider $paymentMethodTitleProvider */
+        $paymentMethodTitleProvider = $this->getService(\Mollie\Service\PaymentMethodTitleProvider::class);
+
+        $orderPayment->payment_method = $paymentMethodTitleProvider->getTitle(
+            (string) $mollieOrder['method'],
+            (int) $order->id_lang,
+            (int) $order->id_shop
+        );
         $orderPayment->update();
     }
 

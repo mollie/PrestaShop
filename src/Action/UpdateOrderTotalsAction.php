@@ -17,6 +17,7 @@ use Mollie\DTO\UpdateOrderTotalsData;
 use Mollie\Exception\CouldNotUpdateOrderTotals;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\OrderRepositoryInterface;
+use Mollie\Service\PaymentMethodTitleProvider;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\NumberUtility;
 use Order;
@@ -35,10 +36,17 @@ class UpdateOrderTotalsAction
     /** @var OrderRepositoryInterface */
     private $orderRepository;
 
-    public function __construct(OrderRepositoryInterface $orderRepository, LoggerInterface $logger)
-    {
+    /** @var PaymentMethodTitleProvider */
+    private $paymentMethodTitleProvider;
+
+    public function __construct(
+        OrderRepositoryInterface $orderRepository,
+        LoggerInterface $logger,
+        PaymentMethodTitleProvider $paymentMethodTitleProvider
+    ) {
         $this->orderRepository = $orderRepository;
         $this->logger = $logger;
+        $this->paymentMethodTitleProvider = $paymentMethodTitleProvider;
     }
 
     /**
@@ -69,7 +77,11 @@ class UpdateOrderTotalsAction
             $order->total_paid = $updateOrderTotalsData->getTransactionAmount();
 
             if (empty($order->payment)) {
-                $order->payment = 'Credit Card';
+                $order->payment = $this->paymentMethodTitleProvider->getTitle(
+                    'creditcard',
+                    (int) $order->id_lang,
+                    (int) $order->id_shop
+                );
             }
 
             $order->update();
