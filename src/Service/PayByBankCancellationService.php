@@ -180,5 +180,4 @@ class PayByBankCancellationService
             $this->logger->info(sprintf('Cart restored for canceled Pay by Bank payment, new cart %d', $newCart->id));
         }
     }
-
 }

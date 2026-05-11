@@ -11,7 +11,6 @@
  */
 
 use Mollie\Api\Types\PaymentMethod;
-use Mollie\Config\Config;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Logger\Logger;

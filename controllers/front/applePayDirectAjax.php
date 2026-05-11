@@ -269,5 +269,4 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
 
         return $products;
     }
-
 }
