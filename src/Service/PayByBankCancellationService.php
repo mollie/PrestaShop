@@ -181,48 +181,4 @@ class PayByBankCancellationService
         }
     }
 
-    /**
-     * @param int $customerId
-     *
-     * @return array|false
-     */
-    public function findPendingPayByBankPayment($customerId)
-    {
-        return $this->paymentMethodRepository->getLatestPaymentByCustomerAndMethod(
-            $customerId,
-            Config::PAY_BY_BANK,
-            [PaymentStatus::STATUS_OPEN, PaymentStatus::STATUS_PENDING]
-        );
-    }
-
-    /**
-     * @param int $customerId
-     *
-     * @return void
-     */
-    public function handleAbandonedPayment($customerId)
-    {
-        $pendingPayment = $this->findPendingPayByBankPayment($customerId);
-
-        if (!$pendingPayment) {
-            return;
-        }
-
-        $transactionId = $pendingPayment['transaction_id'];
-        $mollieStatus = $this->getActualMollieStatus($transactionId);
-
-        if (empty($mollieStatus)) {
-            $this->logger->warning(sprintf('Pay by Bank: could not resolve Mollie status for transaction %s, skipping', $transactionId));
-
-            return;
-        }
-
-        if ($this->shouldCancelPayment($mollieStatus)) {
-            $this->cancelOrderAndRestoreCart(
-                (int) $pendingPayment['cart_id'],
-                $transactionId,
-                $this->resolveCancelStatus($mollieStatus)
-            );
-        }
-    }
 }
