@@ -215,6 +215,15 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
+        /** @var \Mollie\Service\SegmentTracker $segmentTracker */
+        $segmentTracker = $this->module->getService(\Mollie\Service\SegmentTracker::class);
+        $segmentTracker->trackFirstPaymentCreated(
+            $method,
+            $paymentMethodObj->method_name,
+            $paymentMethodObj->method,
+            Tools::strtoupper($this->context->currency->iso_code)
+        );
+
         // Go to payment url
         if (null !== $apiPayment->getCheckoutUrl()) {
             Tools::redirect($apiPayment->getCheckoutUrl());

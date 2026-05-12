@@ -144,7 +144,7 @@ class Mollie extends PaymentModule
 
     private function loadEnv()
     {
-        if (!class_exists('\Dotenv\Dotenv')) {
+        if (!class_exists('\Symfony\Component\Dotenv\Dotenv')) {
             return;
         }
 
@@ -229,6 +229,15 @@ class Mollie extends PaymentModule
 
         $logger->debug('Mollie subscription install successful');
 
+        /** @var ConfigurationAdapter $configuration */
+        $configuration = $this->getService(ConfigurationAdapter::class);
+        $configuration->updateValue(Config::MOLLIE_SEGMENT_INSTALL_TIMESTAMP, time());
+        $configuration->updateValue(Config::MOLLIE_SEGMENT_INSTALLED_VERSION, $this->version);
+
+        /** @var \Mollie\Service\SegmentTracker $segmentTracker */
+        $segmentTracker = $this->getService(\Mollie\Service\SegmentTracker::class);
+        $segmentTracker->trackModuleInstalled('manual');
+
         return true;
     }
 
@@ -257,7 +266,37 @@ class Mollie extends PaymentModule
             return false;
         }
 
-        return parent::enable($force_all);
+        $result = parent::enable($force_all);
+
+        if ($result) {
+            /** @var ConfigurationAdapter $configuration */
+            $configuration = $this->getService(ConfigurationAdapter::class);
+            /** @var \Mollie\Service\SegmentTracker $segmentTracker */
+            $segmentTracker = $this->getService(\Mollie\Service\SegmentTracker::class);
+
+            $storedVersion = $configuration->get(Config::MOLLIE_SEGMENT_INSTALLED_VERSION);
+            if ($storedVersion && $storedVersion !== $this->version) {
+                $segmentTracker->trackModuleUpgraded($storedVersion);
+            }
+            $configuration->updateValue(Config::MOLLIE_SEGMENT_INSTALLED_VERSION, $this->version);
+
+            $segmentTracker->trackModuleEnabled();
+        }
+
+        return $result;
+    }
+
+    public function disable($force_all = false)
+    {
+        $result = parent::disable($force_all);
+
+        if ($result) {
+            /** @var \Mollie\Service\SegmentTracker $segmentTracker */
+            $segmentTracker = $this->getService(\Mollie\Service\SegmentTracker::class);
+            $segmentTracker->trackModuleDisabled();
+        }
+
+        return $result;
     }
 
     /**
@@ -892,6 +931,28 @@ class Mollie extends PaymentModule
             ]);
 
             return;
+        }
+
+        $paidStatusId = (int) Configuration::get(Config::MOLLIE_STATUS_PAID);
+        $authorizedStatusId = (int) Configuration::get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED);
+
+        if ((int) $orderStatus->id === $paidStatusId || (int) $orderStatus->id === $authorizedStatusId) {
+            /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
+            $paymentMethodRepository = $this->getService(PaymentMethodRepositoryInterface::class);
+            $molliePayment = $paymentMethodRepository->getPaymentBy('cart_id', (int) $order->id_cart);
+
+            $methodId = is_array($molliePayment) ? ($molliePayment['method'] ?? '') : '';
+            $transactionId = is_array($molliePayment) ? ($molliePayment['transaction_id'] ?? '') : '';
+            $apiType = !empty($transactionId) && strpos($transactionId, 'ord_') === 0 ? 'orders' : 'payments';
+            $currency = Currency::getCurrencyInstance((int) $order->id_currency)->iso_code ?? '';
+
+            $environment = (int) Configuration::get(Config::MOLLIE_ENVIRONMENT);
+            $pmId = $paymentMethodRepository->getPaymentMethodIdByMethodId($methodId, $environment);
+            $methodName = $pmId ? (new MolPaymentMethod((int) $pmId))->method_name ?: $methodId : $methodId;
+
+            /** @var \Mollie\Service\SegmentTracker $segmentTracker */
+            $segmentTracker = $this->getService(\Mollie\Service\SegmentTracker::class);
+            $segmentTracker->trackFirstPaymentCompleted($methodId, $methodName, $apiType, $currency);
         }
 
         /** @var ShipmentSenderHandlerInterface $shipmentSenderHandler */

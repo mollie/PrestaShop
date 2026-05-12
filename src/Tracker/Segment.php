@@ -39,7 +39,6 @@ namespace Mollie\Tracker;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\Language;
 use Mollie\Adapter\Shop;
-use Mollie\Config\Config;
 use Mollie\Config\Env;
 use Mollie\Factory\ModuleFactory;
 
@@ -90,7 +89,7 @@ class Segment implements TrackerInterface
      */
     private function init()
     {
-        \Segment::init(Config::SEGMENT_KEY);
+        \Segment::init($_ENV['SEGMENT_API_KEY'] ?? '');
     }
 
     /**

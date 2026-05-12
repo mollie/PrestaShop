@@ -503,12 +503,20 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 throw new MollieException($this->module->l('Payment method not found', self::FILE_NAME));
             }
 
+            $preEnableCount = $enabled ? $this->paymentMethodRepository->countEnabledMethods($environment, (int) $shopId) : 0;
+
             $paymentMethod = new MolPaymentMethod((int) $paymentMethodId);
             $paymentMethod->enabled = $enabled;
             $result = $paymentMethod->save();
 
             if (!$result) {
                 throw new MollieException($this->module->l('Failed to save payment method', self::FILE_NAME));
+            }
+
+            if ($enabled) {
+                /** @var \Mollie\Service\SegmentTracker $segmentTracker */
+                $segmentTracker = $this->module->getService(\Mollie\Service\SegmentTracker::class);
+                $segmentTracker->trackPaymentMethodEnabled($paymentMethod, $preEnableCount);
             }
 
             $this->ajaxRender(json_encode([
@@ -732,6 +740,17 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             $shopId = $this->context->shop->id;
 
             $this->paymentMethodSettingsHandler->handlePaymentMethodSave($methodId, $settings, $environment, $shopId);
+
+            $restrictions = $settings['paymentRestrictions'] ?? [];
+            $hasCountryRestrictions = ($restrictions['acceptFrom'] ?? 'all') === 'selected'
+                || !empty($restrictions['excludeCountries']);
+
+            $savedPaymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($methodId, $environment, $shopId);
+            if ($savedPaymentMethodId) {
+                /** @var \Mollie\Service\SegmentTracker $segmentTracker */
+                $segmentTracker = $this->module->getService(\Mollie\Service\SegmentTracker::class);
+                $segmentTracker->trackPaymentMethodConfigured(new MolPaymentMethod((int) $savedPaymentMethodId), $hasCountryRestrictions);
+            }
 
             $this->ajaxRender(json_encode([
                 'success' => true,

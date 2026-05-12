@@ -329,6 +329,13 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             $environmentValue = ($environment === 'live') ? Config::ENVIRONMENT_LIVE : Config::ENVIRONMENT_TEST;
             $this->configuration->updateValue(Config::MOLLIE_ENVIRONMENT, $environmentValue);
 
+            /** @var \Mollie\Service\SegmentTracker $segmentTracker */
+            $segmentTracker = $this->module->getService(\Mollie\Service\SegmentTracker::class);
+            $segmentTracker->trackApiKeySaved(
+                !empty($this->configuration->get(Config::MOLLIE_API_KEY_TEST)),
+                !empty($this->configuration->get(Config::MOLLIE_API_KEY))
+            );
+
             $this->ajaxRender(json_encode([
                 'success' => true,
                 'message' => 'API key saved successfully',
