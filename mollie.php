@@ -32,6 +32,7 @@ use Mollie\Service\CaptureService;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\MollieOrderService;
 use Mollie\Service\RefundService;
+use Mollie\Service\SegmentOrderStatusHandler;
 use Mollie\Service\ShipService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
 use Mollie\Subscription\Config\Config as SubscriptionConfig;
@@ -937,22 +938,9 @@ class Mollie extends PaymentModule
         $authorizedStatusId = (int) Configuration::get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED);
 
         if ((int) $orderStatus->id === $paidStatusId || (int) $orderStatus->id === $authorizedStatusId) {
-            /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
-            $paymentMethodRepository = $this->getService(PaymentMethodRepositoryInterface::class);
-            $molliePayment = $paymentMethodRepository->getPaymentBy('cart_id', (int) $order->id_cart);
-
-            $methodId = is_array($molliePayment) ? ($molliePayment['method'] ?? '') : '';
-            $transactionId = is_array($molliePayment) ? ($molliePayment['transaction_id'] ?? '') : '';
-            $apiType = !empty($transactionId) && strpos($transactionId, 'ord_') === 0 ? 'orders' : 'payments';
-            $currency = Currency::getCurrencyInstance((int) $order->id_currency)->iso_code ?? '';
-
-            $environment = (int) Configuration::get(Config::MOLLIE_ENVIRONMENT);
-            $pmId = $paymentMethodRepository->getPaymentMethodIdByMethodId($methodId, $environment);
-            $methodName = $pmId ? (new MolPaymentMethod((int) $pmId))->method_name ?: $methodId : $methodId;
-
-            /** @var \Mollie\Service\SegmentTracker $segmentTracker */
-            $segmentTracker = $this->getService(\Mollie\Service\SegmentTracker::class);
-            $segmentTracker->trackFirstPaymentCompleted($methodId, $methodName, $apiType, $currency);
+            /** @var SegmentOrderStatusHandler $segmentOrderStatusHandler */
+            $segmentOrderStatusHandler = $this->getService(SegmentOrderStatusHandler::class);
+            $segmentOrderStatusHandler->trackFirstPaymentCompleted($order);
         }
 
         /** @var ShipmentSenderHandlerInterface $shipmentSenderHandler */

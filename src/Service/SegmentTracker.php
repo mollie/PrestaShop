@@ -18,7 +18,6 @@ use MolPaymentMethod;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
-use Mollie\Logger\SegmentLogger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -54,8 +53,7 @@ class SegmentTracker
                 'install_method' => $installMethod,
             ];
 
-            $result = PrestashopModuleTracking::track($this->apiKey, $this->module, 'Module Installed', $properties);
-            SegmentLogger::log('Module Installed', $properties, $result);
+            PrestashopModuleTracking::track($this->apiKey, $this->module, 'Module Installed', $properties);
         } catch (\Throwable $e) {
         }
     }
@@ -70,8 +68,7 @@ class SegmentTracker
                 'enabled_methods_count' => $this->dataProvider->getEnabledMethodsCount(),
             ];
 
-            $result = PrestashopModuleTracking::track($this->apiKey, $this->module, 'Module Uninstalled', $properties);
-            SegmentLogger::log('Module Uninstalled', $properties, $result);
+            PrestashopModuleTracking::track($this->apiKey, $this->module, 'Module Uninstalled', $properties);
         } catch (\Throwable $e) {
         }
     }
@@ -83,8 +80,7 @@ class SegmentTracker
                 'environment' => $this->dataProvider->getEnvironmentLabel(),
             ];
 
-            $result = PrestashopModuleTracking::track($this->apiKey, $this->module, 'Module Enabled', $properties);
-            SegmentLogger::log('Module Enabled', $properties, $result);
+            PrestashopModuleTracking::track($this->apiKey, $this->module, 'Module Enabled', $properties);
         } catch (\Throwable $e) {
         }
     }
@@ -97,8 +93,7 @@ class SegmentTracker
                 'enabled_methods_count' => $this->dataProvider->getEnabledMethodsCount(),
             ];
 
-            $result = PrestashopModuleTracking::track($this->apiKey, $this->module, 'Module Disabled', $properties);
-            SegmentLogger::log('Module Disabled', $properties, $result);
+            PrestashopModuleTracking::track($this->apiKey, $this->module, 'Module Disabled', $properties);
         } catch (\Throwable $e) {
         }
     }
@@ -112,8 +107,7 @@ class SegmentTracker
                 'enabled_methods_count' => $this->dataProvider->getEnabledMethodsCount(),
             ];
 
-            $result = PrestashopModuleTracking::track($this->apiKey, $this->module, 'Module Upgraded', $properties);
-            SegmentLogger::log('Module Upgraded', $properties, $result);
+            PrestashopModuleTracking::track($this->apiKey, $this->module, 'Module Upgraded', $properties);
         } catch (\Throwable $e) {
         }
     }
@@ -134,8 +128,7 @@ class SegmentTracker
                 'is_first_connection' => $isFirstConnection,
             ];
 
-            $result = PrestashopModuleTracking::track($this->apiKey, $this->module, 'API Key Saved', $properties);
-            SegmentLogger::log('API Key Saved', $properties, $result);
+            PrestashopModuleTracking::track($this->apiKey, $this->module, 'API Key Saved', $properties);
         } catch (\Throwable $e) {
         }
     }
@@ -151,8 +144,7 @@ class SegmentTracker
                 'total_enabled_count' => $this->dataProvider->getEnabledMethodsCount(),
             ];
 
-            $result = PrestashopModuleTracking::track($this->apiKey, $this->module, 'Payment Method Enabled', $properties);
-            SegmentLogger::log('Payment Method Enabled', $properties, $result);
+            PrestashopModuleTracking::track($this->apiKey, $this->module, 'Payment Method Enabled', $properties);
         } catch (\Throwable $e) {
         }
     }
@@ -171,8 +163,7 @@ class SegmentTracker
                 'has_min_max_amount' => $paymentMethod->min_amount > 0 || $paymentMethod->max_amount > 0,
             ];
 
-            $result = PrestashopModuleTracking::track($this->apiKey, $this->module, 'Payment Method Configured', $properties);
-            SegmentLogger::log('Payment Method Configured', $properties, $result);
+            PrestashopModuleTracking::track($this->apiKey, $this->module, 'Payment Method Configured', $properties);
         } catch (\Throwable $e) {
         }
     }
@@ -196,8 +187,7 @@ class SegmentTracker
                 'enabled_methods_count' => $this->dataProvider->getEnabledMethodsCount(),
             ];
 
-            $result = PrestashopModuleTracking::track($this->apiKey, $this->module, 'First Payment Created', $properties);
-            SegmentLogger::log('First Payment Created', $properties, $result);
+            PrestashopModuleTracking::track($this->apiKey, $this->module, 'First Payment Created', $properties);
         } catch (\Throwable $e) {
         }
     }
@@ -224,8 +214,7 @@ class SegmentTracker
                 'seconds_to_complete' => $secondsToComplete,
             ];
 
-            $result = PrestashopModuleTracking::track($this->apiKey, $this->module, 'First Payment Completed', $properties);
-            SegmentLogger::log('First Payment Completed', $properties, $result);
+            PrestashopModuleTracking::track($this->apiKey, $this->module, 'First Payment Completed', $properties);
         } catch (\Throwable $e) {
         }
     }
