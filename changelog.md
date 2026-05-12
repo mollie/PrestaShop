@@ -3,6 +3,7 @@
 # Changelog #
 
 ## Changes in release 6.4.3
++ Fixed refund confirmation modal amount to reflect selected quantity for multi-unit order lines
 + Fixed Payment API race condition causing false "payment failed" errors
 + Fixed rounding distribution for whole-number differences in order line amounts
 + Fixed Apple Pay Direct payment when country is not active in shop

@@ -74,7 +74,7 @@
                 </button>
                 {/if}
                 {if $actions.canRefund || $actions.refundableQuantity > 0}
-                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$actions.refundableQuantity}" {if !$actions.canRefund}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" data-unit-price="{$product->unitPrice->value|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$actions.refundableQuantity}" {if !$actions.canRefund}disabled{/if}>
                   <i class="material-icons">replay</i> {l s='Refund' mod='mollie'}
                 </button>
                 {/if}
