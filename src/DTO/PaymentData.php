@@ -16,6 +16,7 @@ use Address;
 use Country;
 use JsonSerializable;
 use Mollie\DTO\Object\Amount;
+use Mollie\Utility\MollieApiInputSanitizer;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -451,7 +452,7 @@ class PaymentData implements JsonSerializable
                 'organizationName' => $this->cleanUpInput($this->getBillingAddress()->company),
                 'givenName' => $this->cleanUpInput($this->getBillingAddress()->firstname),
                 'familyName' => $this->cleanUpInput($this->getBillingAddress()->lastname),
-                'email' => $this->cleanUpInput($this->getEmail()),
+                'email' => MollieApiInputSanitizer::sanitizeEmail($this->getEmail()),
                 'streetAndNumber' => $this->cleanUpInput($this->getBillingAddress()->address1),
                 'streetAdditional' => $this->cleanUpInput($this->getBillingAddress()->address2, null),
                 'city' => $this->cleanUpInput($this->getBillingAddress()->city),
@@ -461,9 +462,9 @@ class PaymentData implements JsonSerializable
                 'phone' => $this->getBillingPhoneNumber(),
             ],
             'shippingAddress' => [
-                'givenName' => $this->cleanUpInput($this->getBillingAddress()->firstname),
-                'familyName' => $this->cleanUpInput($this->getBillingAddress()->lastname),
-                'email' => $this->cleanUpInput($this->getEmail()),
+                'givenName' => $this->cleanUpInput($this->getShippingAddress()->firstname),
+                'familyName' => $this->cleanUpInput($this->getShippingAddress()->lastname),
+                'email' => MollieApiInputSanitizer::sanitizeEmail($this->getEmail()),
                 'streetAndNumber' => $this->cleanUpInput($this->getShippingAddress()->address1),
                 'streetAdditional' => $this->cleanUpInput($this->getShippingAddress()->address2, null),
                 'city' => $this->cleanUpInput($this->getShippingAddress()->city),
@@ -495,15 +496,6 @@ class PaymentData implements JsonSerializable
 
     private function cleanUpInput($input, $defaultValue = 'N/A'): ?string
     {
-        if (empty($input)) {
-            return $defaultValue;
-        }
-
-        if (ctype_space($input)) {
-            return $defaultValue;
-        }
-        $input = ltrim($input);
-
-        return substr($input, 0, 100);
+        return MollieApiInputSanitizer::sanitize($input, $defaultValue);
     }
 }

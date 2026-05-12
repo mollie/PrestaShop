@@ -10,6 +10,8 @@ declare global {
       languages: Language[];
       onlyOrderMethods: string[];
       onlyPaymentsMethods: string[];
+      orderStatuses: { id: string; name: string }[];
+      manualCaptureEligibleMethods: string[];
     };
   }
 }
@@ -72,6 +74,12 @@ export interface PaymentMethod {
       directCart?: boolean
       buttonStyle?: 0 | 1 | 2 // 0: black, 1: outline, 2: white
     }
+    captureMode?: 'automatic' | 'manual'
+    isManualCaptureEligible?: boolean
+    autoCapture?: {
+      enabled: boolean
+      statuses: string[]
+    } | null
   }
 }
 
@@ -157,6 +165,23 @@ export class PaymentMethodsApiService {
     return response.json();
   }
 
+
+  /**
+   * Check if Apple Pay domain association file has a conflict with another provider
+   */
+  async checkApplePayCertificate(): Promise<{ success: boolean; conflict: boolean; message?: string }> {
+    const url = new URL(this.baseUrl, window.location.origin);
+
+    const formData = new FormData();
+    formData.append('ajax', '1');
+    formData.append('action', 'checkApplePayCertificate');
+
+    const response = await fetch(url.toString(), {
+      method: 'POST',
+      body: formData
+    });
+    return response.json();
+  }
 
   /**
    * Upload custom logo for card payment method

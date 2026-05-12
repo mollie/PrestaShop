@@ -17,6 +17,7 @@ use Country;
 use JsonSerializable;
 use Mollie\DTO\Object\Amount;
 use Mollie\DTO\Object\Payment;
+use Mollie\Utility\MollieApiInputSanitizer;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -423,7 +424,7 @@ class OrderData implements JsonSerializable
                 'country' => $this->cleanUpInput(Country::getIsoById($this->getBillingAddress()->id_country)),
                 'givenName' => $this->cleanUpInput($this->getBillingAddress()->firstname),
                 'familyName' => $this->cleanUpInput($this->getBillingAddress()->lastname),
-                'email' => $this->cleanUpInput($this->getEmail()),
+                'email' => MollieApiInputSanitizer::sanitizeEmail($this->getEmail()),
                 'title' => $this->cleanUpInput($this->getTitle()),
                 'phone' => $this->getBillingPhoneNumber(),
             ],
@@ -436,7 +437,7 @@ class OrderData implements JsonSerializable
                 'country' => $this->cleanUpInput(Country::getIsoById($this->getShippingAddress()->id_country)),
                 'givenName' => $this->cleanUpInput($this->getShippingAddress()->firstname),
                 'familyName' => $this->cleanUpInput($this->getShippingAddress()->lastname),
-                'email' => $this->cleanUpInput($this->getEmail()),
+                'email' => MollieApiInputSanitizer::sanitizeEmail($this->getEmail()),
                 'title' => $this->cleanUpInput($this->getTitle()),
                 'phone' => $this->getDeliveryPhoneNumber(),
             ],
@@ -470,15 +471,6 @@ class OrderData implements JsonSerializable
 
     private function cleanUpInput($input, $defaultValue = 'N/A')
     {
-        if (empty($input)) {
-            return $defaultValue;
-        }
-
-        if (ctype_space($input)) {
-            return $defaultValue;
-        }
-        $input = ltrim($input);
-
-        return substr($input, 0, 100);
+        return MollieApiInputSanitizer::sanitize($input, $defaultValue);
     }
 }

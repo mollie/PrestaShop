@@ -21,6 +21,7 @@ use Mollie\Service\CancelService;
 use Mollie\Service\CaptureService;
 use Mollie\Service\MolliePaymentMailService;
 use Mollie\Service\RefundService;
+use Mollie\Service\ShipmentServiceInterface;
 use Mollie\Service\ShipService;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TransactionUtility;
@@ -78,6 +79,9 @@ class AdminMollieAjaxController extends ModuleAdminController
                 break;
             case 'retrieve':
                 $this->retrieveOrderInfo();
+                break;
+            case 'getShipmentInfo':
+                $this->getShipmentInfo();
                 break;
             default:
                 break;
@@ -237,11 +241,15 @@ class AdminMollieAjaxController extends ModuleAdminController
             $transactionId = Tools::getValue('transactionId');
             $refundAmount = (float) Tools::getValue('refundAmount') ?: null;
             $orderLineId = Tools::getValue('orderline') ?: null;
+            $quantity = Tools::getValue('quantity') ? (int) Tools::getValue('quantity') : null;
+            if ($quantity !== null && $quantity < 1) {
+                $quantity = null;
+            }
 
             /** @var RefundService $refundService */
             $refundService = $this->module->getService(RefundService::class);
 
-            $status = $refundService->handleRefund($transactionId, $refundAmount, $orderLineId);
+            $status = $refundService->handleRefund($transactionId, $refundAmount, $orderLineId, $quantity);
 
             $this->ajaxRender(json_encode($status));
         } catch (\Throwable $e) {
@@ -261,6 +269,10 @@ class AdminMollieAjaxController extends ModuleAdminController
         $orderLines = Tools::getValue('orderLines') ?: [];
         $tracking = Tools::getValue('tracking');
         $orderlineId = Tools::getValue('orderline');
+        $quantity = Tools::getValue('quantity') ? (int) Tools::getValue('quantity') : null;
+        if ($quantity !== null && $quantity < 1) {
+            $quantity = null;
+        }
 
         try {
             $order = new Order($orderId);
@@ -271,7 +283,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 
             /** @var ShipService $shipService */
             $shipService = $this->module->getService(ShipService::class);
-            $status = $shipService->handleShip($transactionId, $orderlineId, $tracking);
+            $status = $shipService->handleShip($transactionId, $orderlineId, $tracking, $quantity);
 
             $this->ajaxRender(json_encode($status));
         } catch (\Throwable $e) {
@@ -282,6 +294,38 @@ class AdminMollieAjaxController extends ModuleAdminController
                     'error' => $e->getMessage(),
                 ])
             );
+        }
+    }
+
+    private function getShipmentInfo(): void
+    {
+        $orderId = (int) Tools::getValue('orderId');
+
+        try {
+            $order = new Order($orderId);
+
+            if (!Validate::isLoadedObject($order)) {
+                $this->ajaxRender(json_encode(['success' => false]));
+
+                return;
+            }
+
+            /** @var ShipmentServiceInterface $shipmentService */
+            $shipmentService = $this->module->getService(ShipmentServiceInterface::class);
+            $shipmentInfo = $shipmentService->getShipmentInformation($order->reference);
+
+            if (!empty($shipmentInfo['tracking'])) {
+                $this->ajaxRender(json_encode([
+                    'success' => true,
+                    'tracking' => $shipmentInfo['tracking'],
+                ]));
+
+                return;
+            }
+
+            $this->ajaxRender(json_encode(['success' => true, 'tracking' => null]));
+        } catch (\Throwable $e) {
+            $this->ajaxRender(json_encode(['success' => false]));
         }
     }
 
@@ -301,7 +345,7 @@ class AdminMollieAjaxController extends ModuleAdminController
             $captureService = $this->module->getService(CaptureService::class);
 
             $amount = $captureAmount ? (float) $captureAmount : $order->total_paid;
-            $status = $captureService->handleCapture($transactionId, $amount);
+            $status = $captureService->handleCapture($transactionId, $amount, $orderId);
 
             $this->ajaxRender(json_encode($status));
         } catch (\Throwable $e) {
@@ -319,6 +363,10 @@ class AdminMollieAjaxController extends ModuleAdminController
     {
         $orderId = (int) Tools::getValue('orderId');
         $orderlineId = Tools::getValue('orderline') ?: null;
+        $quantity = Tools::getValue('quantity') ? (int) Tools::getValue('quantity') : null;
+        if ($quantity !== null && $quantity < 1) {
+            $quantity = null;
+        }
 
         try {
             $order = new Order($orderId);
@@ -329,7 +377,7 @@ class AdminMollieAjaxController extends ModuleAdminController
 
             /** @var CancelService $cancelService */
             $cancelService = $this->module->getService(CancelService::class);
-            $status = $cancelService->handleCancel($transactionId, $orderlineId);
+            $status = $cancelService->handleCancel($transactionId, $orderlineId, $quantity);
 
             $this->ajaxRender(json_encode($status));
         } catch (\Throwable $e) {

@@ -238,8 +238,8 @@ export default function PaymentMethodsPage() {
             <path d="M12 8h.01"></path>
           </svg>
           <div className="text-sm text-yellow-800">
-            <p className="font-medium mb-2">API not configured</p>
-            <p>Please configure your Mollie API keys in the <strong>API Configuration</strong> tab before managing payment methods.</p>
+            <p className="font-medium mb-2">{t('apiNotConfigured')}</p>
+            <p>{t('apiNotConfiguredMessage')}</p>
           </div>
         </div>
       </div>
@@ -286,15 +286,14 @@ export default function PaymentMethodsPage() {
       {/* Info Banner */}
       <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4 flex items-start gap-3">
         <div className="text-sm text-cyan-800">
-          Here you can see all of the {activeTab === "enabled" ? t('enabled') : t('disabled')} payment options. To include new
-          payment methods go to{" "}
+          {t('infoBannerText', activeTab === "enabled" ? t('enabled') : t('disabled'))}{" "}
           <a
             href="https://www.mollie.com/dashboard/developers/api-keys"
             target="_blank"
             rel="noopener noreferrer"
             className="font-medium cursor-pointer hover:underline text-cyan-700 hover:text-cyan-900"
           >
-            Mollie dashboard
+            {t('mollieDashboard')}
           </a>
         </div>
       </div>

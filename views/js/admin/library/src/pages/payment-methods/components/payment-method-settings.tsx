@@ -108,8 +108,14 @@ function RadioSelect({ value, onValueChange, options, placeholder, className }: 
 
 function MultiSelect({ value, onValueChange, options, placeholder, className }: MultiSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const [search, setSearch] = useState("")
   const selectedOptions = options.filter((opt) => value.includes(opt.value))
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  const filteredOptions = search
+    ? options.filter((opt) => opt.label.toLowerCase().includes(search.toLowerCase()))
+    : options
 
   const toggleOption = (optionValue: string) => {
     if (value.includes(optionValue)) {
@@ -128,11 +134,13 @@ function MultiSelect({ value, onValueChange, options, placeholder, className }: 
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false)
+        setSearch("")
       }
     }
 
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside)
+      setTimeout(() => searchInputRef.current?.focus(), 50)
     }
 
     return () => {
@@ -172,35 +180,49 @@ function MultiSelect({ value, onValueChange, options, placeholder, className }: 
 
       {isOpen && (
         <div className="absolute z-[99999] w-full mt-1 bg-popover border border-border rounded-md shadow-lg animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
-          <div className="p-1">
-            {options.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => toggleOption(option.value)}
-                className="w-full flex items-center gap-3 px-3 py-3 text-sm hover:bg-gray-100 hover:text-foreground cursor-pointer rounded-sm"
-              >
-                <div className="flex items-center justify-center w-4 h-4 shrink-0">
-                  <div
-                    className={cn(
-                      "w-4 h-4 rounded-sm border-2 flex items-center justify-center transition-colors",
-                      value.includes(option.value) ? "border-blue-600 bg-blue-600" : "border-input",
-                    )}
-                  >
-                    {value.includes(option.value) && (
-                      <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
+          <div className="p-2 border-b border-border">
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search..."
+              className="w-full px-3 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div className="p-1 max-h-[240px] overflow-y-auto">
+            {filteredOptions.length === 0 ? (
+              <div className="px-3 py-3 text-sm text-muted-foreground text-center">No results found</div>
+            ) : (
+              filteredOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => toggleOption(option.value)}
+                  className="w-full flex items-center gap-3 px-3 py-3 text-sm hover:bg-gray-100 hover:text-foreground cursor-pointer rounded-sm"
+                >
+                  <div className="flex items-center justify-center w-4 h-4 shrink-0">
+                    <div
+                      className={cn(
+                        "w-4 h-4 rounded-sm border-2 flex items-center justify-center transition-colors",
+                        value.includes(option.value) ? "border-blue-600 bg-blue-600" : "border-input",
+                      )}
+                    >
+                      {value.includes(option.value) && (
+                        <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                    </div>
                   </div>
-                </div>
-                <span className="flex-1 text-left text-sm">{option.label}</span>
-              </button>
-            ))}
+                  <span className="flex-1 text-left text-sm">{option.label}</span>
+                </button>
+              ))
+            )}
           </div>
         </div>
       )}
@@ -514,9 +536,91 @@ export function PaymentMethodSettings({ method, countries, customerGroups, langu
         </div>
       </div>
 
+      {/* Capture Mode - only for eligible methods using Payments API */}
+      {method.settings.isManualCaptureEligible && method.settings.apiSelection === 'payments' && (
+        <div className="space-y-4">
+          <div>
+            <div className="text-base font-semibold mb-0">{t('captureMode')}</div>
+            <div className="flex border border-input rounded-md w-full mt-1 overflow-hidden">
+              <button
+                onClick={() => onUpdateSettings({ captureMode: 'automatic' })}
+                className={cn(
+                  "flex-1 px-4 h-9 text-sm font-medium transition-colors cursor-pointer border-r border-input last:border-r-0 flex items-center justify-center",
+                  (method.settings.captureMode ?? 'automatic') === 'automatic'
+                    ? "text-white bg-blue-600"
+                    : "text-muted-foreground hover:text-foreground bg-background hover:bg-accent",
+                )}
+              >
+                {t('automatic')}
+              </button>
+              <button
+                onClick={() => onUpdateSettings({ captureMode: 'manual' })}
+                className={cn(
+                  "flex-1 px-4 h-9 text-sm font-medium transition-colors cursor-pointer flex items-center justify-center",
+                  method.settings.captureMode === 'manual'
+                    ? "text-white bg-blue-600"
+                    : "text-muted-foreground hover:text-foreground bg-background hover:bg-accent",
+                )}
+              >
+                {t('manual')}
+              </button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              {method.settings.captureMode === 'manual' ? t('captureModeManual') : t('captureModeAutomatic')}
+            </p>
+          </div>
+
+          {/* Auto-capture settings - only when manual mode */}
+          {method.settings.captureMode === 'manual' && (
+            <div className="border rounded-lg p-4 space-y-4 bg-gray-50/50 animate-in slide-in-from-top-1 fade-in duration-200 ease-out">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-sm font-medium">{t('autoCaptureOnStatus')}</Label>
+                </div>
+                <Switch
+                  checked={method.settings.autoCapture?.enabled ?? false}
+                  onCheckedChange={(enabled: boolean) => onUpdateSettings({
+                    autoCapture: {
+                      ...method.settings.autoCapture,
+                      enabled,
+                      statuses: method.settings.autoCapture?.statuses ?? [],
+                    }
+                  })}
+                />
+              </div>
+
+              {method.settings.autoCapture?.enabled && (
+                <div className="animate-in slide-in-from-top-1 fade-in duration-200 ease-out">
+                  <Label className="text-sm font-medium">{t('autoCaptureStatuses')}</Label>
+                  <MultiSelect
+                    value={method.settings.autoCapture?.statuses ?? []}
+                    onValueChange={(statuses: string[]) => onUpdateSettings({
+                      autoCapture: {
+                        ...method.settings.autoCapture,
+                        enabled: method.settings.autoCapture?.enabled ?? false,
+                        statuses,
+                      }
+                    })}
+                    options={(window.molliePaymentMethodsConfig?.orderStatuses ?? []).map((status) => ({
+                      value: status.id,
+                      label: status.name,
+                    }))}
+                    placeholder={t('selectStatuses')}
+                    className="mt-1"
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {t('autoCaptureInfo')}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Collapsible Sections */}
-      {/* Klarna informational notice */}
-      {method.id === 'klarna' && (
+      {/* Klarna informational notice - only shown for non-capture-eligible Klarna or when using Orders API */}
+      {method.id === 'klarna' && !method.settings.isManualCaptureEligible && (
         <div className="border-l-4 border-yellow-400 bg-yellow-50 p-4 rounded mt-4">
           <p className="text-sm text-yellow-900">
             {t('klarnaNotice')}

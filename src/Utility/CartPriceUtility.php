@@ -49,7 +49,7 @@ class CartPriceUtility
         $difference = new Number((string) $difference);
         $decreaseNumber = new Number('0.01');
         // Keep going until there's no longer a difference
-        while ($difference->getPrecision() > 0) {
+        while (method_exists($difference, 'isGreaterThanZero') ? $difference->isGreaterThanZero() : $difference->getPrecision() > 0) {
             // Go for a new pass if there's still a difference after the current one
             $index = $index > 0 ? $index : $qty;
             $difference = $difference->minus($decreaseNumber);

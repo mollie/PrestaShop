@@ -50,7 +50,7 @@ class RefundService
      *
      * @return array
      */
-    public function handleRefund(string $transactionId, ?float $amount = null, ?string $orderLineId = null)
+    public function handleRefund(string $transactionId, ?float $amount = null, ?string $orderLineId = null, ?int $quantity = null)
     {
         try {
             $payment = TransactionUtility::isOrderTransaction($transactionId)
@@ -61,14 +61,22 @@ class RefundService
 
             $currency = $payment->amount->currency;
 
-            if ($isPartialRefund && TransactionUtility::isOrderTransaction($transactionId)) {
-                $payment->refund([
-                    'lines' => [
-                        ['id' => $orderLineId],
-                    ],
-                ]);
+            if (TransactionUtility::isOrderTransaction($transactionId)) {
+                if ($orderLineId) {
+                    $lineData = ['id' => $orderLineId];
+                    if ($quantity) {
+                        $lineData['quantity'] = (int) $quantity;
+                    }
+                    $payment->refund([
+                        'lines' => [$lineData],
+                    ]);
 
-                return $this->createSuccessResponse(true, null, $currency);
+                    return $this->createSuccessResponse(true, null, $currency);
+                }
+
+                $payment->refundAll();
+
+                return $this->createSuccessResponse(false, null, $currency);
             }
 
             $refundAmount = $this->calculateRefundAmount($payment, $amount);
@@ -78,7 +86,7 @@ class RefundService
 
             $isPartial = $amount !== null && (float) $refundAmount < (float) $payment->amount->value;
 
-            $this->processRefund($payment, $refundAmount, TransactionUtility::isOrderTransaction($transactionId));
+            $this->processRefund($payment, $refundAmount, false);
 
             return $this->createSuccessResponse($isPartial, $refundAmount, $currency);
         } catch (ApiException $e) {
@@ -171,5 +179,28 @@ class RefundService
             : RefundUtility::getRefundedAmount(iterator_to_array($transaction->refunds()));
 
         return $refundedAmount >= $amount;
+    }
+
+    /**
+     * Return the list of refunded amounts for a Payments-API transaction.
+     * Used to match refunds back to order lines so per-line Refund buttons
+     * can be disabled once their matching amount has already been refunded.
+     *
+     * @return float[]
+     */
+    public function getRefundedAmounts(string $transactionId): array
+    {
+        if (TransactionUtility::isOrderTransaction($transactionId)) {
+            return [];
+        }
+
+        $payment = $this->module->getApiClient()->payments->get($transactionId, ['embed' => 'refunds']);
+
+        $amounts = [];
+        foreach ($payment->refunds() as $refund) {
+            $amounts[] = (float) $refund->amount->value;
+        }
+
+        return $amounts;
     }
 }

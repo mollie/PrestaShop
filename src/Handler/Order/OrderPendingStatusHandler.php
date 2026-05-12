@@ -63,9 +63,6 @@ class OrderPendingStatusHandler
     public function handle(string $transactionId, int $cartId): string
     {
         $existingOrderId = (int) Order::getIdByCartId($cartId);
-        if ($existingOrderId) {
-            return self::ACTION_PENDING;
-        }
 
         $isOrder = TransactionUtility::isOrderTransaction($transactionId);
         if ($isOrder) {
@@ -84,12 +81,15 @@ class OrderPendingStatusHandler
             'transaction_id' => $transactionId,
             'mollie_status' => $paymentStatus,
             'cart_id' => $cartId,
+            'order_exists' => $existingOrderId > 0,
         ]);
 
         switch ($paymentStatus) {
             case PaymentStatus::STATUS_OPEN:
             case PaymentStatus::STATUS_PENDING:
-                $this->createPendingOrder($transaction, $cartId);
+                if (!$existingOrderId) {
+                    $this->createPendingOrder($transaction, $cartId);
+                }
 
                 return self::ACTION_PENDING;
 

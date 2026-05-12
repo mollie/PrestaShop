@@ -48,21 +48,22 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
         switch ($action) {
             case 'mollie_apple_pay_validation':
                 $this->getApplePaySession();
-                // no break
+                break;
             case 'mollie_apple_pay_update_shipping_contact':
                 $this->updateAppleShippingContact();
-                // no break
+                break;
             case 'mollie_apple_pay_update_shipping_method':
                 $this->updateShippingMethod();
-                // no break
+                break;
             case 'mollie_apple_pay_create_order':
                 $this->createApplePayOrder();
-                // no break
+                break;
             case 'mollie_apple_pay_get_total_price':
                 $this->getTotalApplePayCartPrice();
-                // no break
+                break;
             case 'mollie_apple_pay_remove_from_cart':
                 $this->removeProductFromCart();
+                break;
         }
 
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
@@ -268,4 +269,5 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
 
         return $products;
     }
+
 }
