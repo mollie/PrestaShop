@@ -625,7 +625,7 @@ class Mollie extends PaymentModule
 
             $isRefunded = $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid);
             $isCaptured = $captureService->isCaptured($mollieTransactionId);
-            $isShipped = $shipService->isShipped($mollieTransactionId);
+            $isShipped = $shipService->isShipped($mollieTransactionId, $products);
             $isCanceled = $cancelService->isCanceled($mollieTransactionId);
 
             $lineActions = [];
@@ -646,6 +646,12 @@ class Mollie extends PaymentModule
                 }
             }
 
+            $isAuthorizablePayment = isset($transaction['method'])
+                && in_array($transaction['method'], Config::AUTHORIZABLE_PAYMENTS, true);
+            $hasAnyShipment = $mollieApiType === 'orders'
+                ? $shipService->hasAnyShipment($mollieTransactionId, $products)
+                : false;
+
             $this->context->smarty->assign([
                 'order_reference' => $order->reference,
                 'refundable_amount' => $refundableAmount,
@@ -659,6 +665,8 @@ class Mollie extends PaymentModule
                 'isCaptured' => $isCaptured,
                 'isShipped' => $isShipped,
                 'isCanceled' => $isCanceled,
+                'isAuthorizablePayment' => $isAuthorizablePayment,
+                'hasAnyShipment' => $hasAnyShipment,
             ]);
 
             return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');
