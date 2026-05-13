@@ -56,18 +56,35 @@ $(document).ready(function () {
     };
 
     if (action === 'refund' || action === 'refundAll') {
-      // Update modal message based on action type
-      if (action === 'refundAll') {
-        $('#mollie-refund-modal-message').text(trans.refundFullOrderConfirm);
-      } else if (amount) {
-        $('#mollie-refund-modal-message').text(trans.refundPartialConfirm.replace('%s', amount));
-      } else {
+      var unitPrice = parseFloat(productAmount);
+      actionContext.unitPrice = isNaN(unitPrice) ? null : unitPrice;
+
+      function updateRefundMessage(qty) {
+        if (action === 'refundAll') {
+          $('#mollie-refund-modal-message').text(trans.refundFullOrderConfirm);
+          return;
+        }
+        if (actionContext.unitPrice !== null && orderline) {
+          var total = (actionContext.unitPrice * qty).toFixed(2);
+          $('#mollie-refund-modal-message').text(trans.refundPartialConfirm.replace('%s', total));
+          return;
+        }
+        if (amount) {
+          $('#mollie-refund-modal-message').text(trans.refundPartialConfirm.replace('%s', amount));
+          return;
+        }
         $('#mollie-refund-modal-message').text(trans.refundOrderConfirm);
       }
+
       if (orderline) {
         populateQuantitySelector('#mollie-refund-quantity', '#mollie-refund-quantity-group', availableQuantity);
+        updateRefundMessage(parseInt($('#mollie-refund-quantity').val(), 10) || 1);
+        $('#mollie-refund-quantity').off('change.mollieRefund').on('change.mollieRefund', function() {
+          updateRefundMessage(parseInt($(this).val(), 10) || 1);
+        });
       } else {
         $('#mollie-refund-quantity-group').hide();
+        updateRefundMessage(1);
       }
       $('#mollieRefundModal').modal('show');
     } else if (action === 'ship' || action === 'shipAll') {
