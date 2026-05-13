@@ -150,10 +150,12 @@ class RefundService
         $order = new \Order($orderId);
         $unitPrice = null;
         $availableQty = 0;
+        $productName = null;
         foreach ($order->getProducts() as $product) {
             if ((int) $product['id_order_detail'] === $idOrderDetail) {
                 $unitPrice = (float) $product['unit_price_tax_incl'];
                 $availableQty = (int) $product['product_quantity'];
+                $productName = (string) $product['product_name'];
                 break;
             }
         }
@@ -170,7 +172,7 @@ class RefundService
                 'currency' => $payment->amount->currency,
                 'value' => $refundAmount,
             ],
-            'description' => sprintf('Order #%d — line %d × %d', $orderId, $idOrderDetail, $quantity),
+            'description' => sprintf('Order %s — %d× %s', $order->reference, $quantity, $productName),
             'metadata' => [
                 'id_order_detail' => $idOrderDetail,
                 'quantity' => $quantity,
