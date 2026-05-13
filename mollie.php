@@ -614,9 +614,11 @@ class Mollie extends PaymentModule
                 return false;
             }
 
-            $products = TransactionUtility::isOrderTransaction($mollieTransactionId)
-                ? $this->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])->lines
-                : $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments'])->lines; // @phpstan-ignore-line
+            if (TransactionUtility::isOrderTransaction($mollieTransactionId)) {
+                $products = $this->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])->lines;
+            } else {
+                $products = $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments'])->lines; // @phpstan-ignore-line
+            }
 
             $mollieLogoPath = $this->getMollieLogoPath();
 
@@ -642,6 +644,46 @@ class Mollie extends PaymentModule
                         'shippableQuantity' => (int) $line->shippableQuantity,
                         'cancelableQuantity' => (int) $line->cancelableQuantity,
                         'refundableQuantity' => (int) $line->refundableQuantity,
+                    ];
+                }
+            }
+
+            if ($mollieApiType === 'payments') {
+                $paymentApi = $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'refunds']);
+                $refundedByDetail = [];
+                foreach ($paymentApi->refunds() as $refund) {
+                    $meta = $refund->metadata;
+                    if (is_string($meta)) {
+                        $meta = json_decode($meta);
+                    }
+                    if (is_object($meta) && isset($meta->id_order_detail)) {
+                        $detailId = (int) $meta->id_order_detail;
+                        $qty = isset($meta->quantity) ? (int) $meta->quantity : 0;
+                        $refundedByDetail[$detailId] = ($refundedByDetail[$detailId] ?? 0) + $qty;
+                    }
+                }
+
+                $products = [];
+                foreach ($order->getProducts() as $psProduct) {
+                    $detailId = (int) $psProduct['id_order_detail'];
+                    $qty = (int) $psProduct['product_quantity'];
+                    $unitPrice = (float) $psProduct['unit_price_tax_incl'];
+                    $refundedQty = (int) ($refundedByDetail[$detailId] ?? 0);
+                    $remainingQty = max(0, $qty - $refundedQty);
+
+                    $row = new stdClass();
+                    $row->id = $detailId;
+                    $row->description = (string) $psProduct['product_name'];
+                    $row->quantity = $qty;
+                    $row->quantityRefunded = $refundedQty;
+                    $row->totalAmount = (object) ['value' => number_format($unitPrice * $qty, 2, '.', '')];
+                    $row->unitPrice = number_format($unitPrice, 2, '.', '');
+                    $products[] = $row;
+
+                    $lineActions[$detailId] = [
+                        'canRefund' => !$isRefunded && $remainingQty > 0 && $refundableAmount > 0,
+                        'refundableQuantity' => $remainingQty,
+                        'unitPrice' => $unitPrice,
                     ];
                 }
             }

@@ -47,6 +47,9 @@
           <th>{l s='Canceled' mod='mollie'}</th>
           <th>{l s='Refunded' mod='mollie'}</th>
           {/if}
+          {if $mollie_api_type == 'payments'}
+          <th>{l s='Refunded' mod='mollie'}</th>
+          {/if}
           <th>{l s='Actions' mod='mollie'}</th>
         </tr>
       </thead>
@@ -84,22 +87,28 @@
           {/if}
 
           {* Payments API *}
-          {if isset($product->description)}
+          {if isset($product->description) && $mollie_api_type == 'payments'}
+            {assign var="paymentsActions" value=$lineActions[$product->id]}
             <tr>
               <td><strong>{$product->quantity|escape:'html':'UTF-8'}x</strong> {$product->description|escape:'html':'UTF-8'}</td>
               <td>{$product->totalAmount->value|escape:'html':'UTF-8'}</td>
+              <td>{$product->quantityRefunded|escape:'html':'UTF-8'}</td>
               <td>
-              {if $mollie_api_type == 'payments' && $product->description != 'Discount'}
+              {if $product->description != 'Discount'}
                 <button type="button" class="btn btn-default btn-xs mollie-capture-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" {if $isCaptured}disabled{/if}>
                   <i class="material-icons">payments</i> {l s='Capture' mod='mollie'}
                 </button>
-              {/if}
-              {if $product->description != 'Discount'}
-                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" {if $product->totalAmount->value > $refundable_amount}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->unitPrice|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$paymentsActions.refundableQuantity}" {if !$paymentsActions.canRefund}disabled{/if}>
                   <i class="material-icons">replay</i> {l s='Refund' mod='mollie'}
                 </button>
               {/if}
               </td>
+            </tr>
+          {elseif isset($product->description)}
+            <tr>
+              <td><strong>{$product->quantity|escape:'html':'UTF-8'}x</strong> {$product->description|escape:'html':'UTF-8'}</td>
+              <td>{$product->totalAmount->value|escape:'html':'UTF-8'}</td>
+              <td></td>
             </tr>
           {/if}
         {/foreach}

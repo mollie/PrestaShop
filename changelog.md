@@ -3,6 +3,8 @@
 # Changelog #
 
 ## Changes in release 6.4.3
++ Fixed Payments API per-line Refund button not updating after a successful refund
++ Surfaced a clearer message when Mollie rejects a refund as a duplicate of a recent one
 + Fixed Payment API race condition causing false "payment failed" errors
 + Fixed rounding distribution for whole-number differences in order line amounts
 + Fixed Apple Pay Direct payment when country is not active in shop
