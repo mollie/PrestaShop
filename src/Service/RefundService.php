@@ -50,7 +50,7 @@ class RefundService
      *
      * @return array
      */
-    public function handleRefund(string $transactionId, ?float $amount = null, ?string $orderLineId = null, ?int $quantity = null, ?int $orderId = null)
+    public function handleRefund(string $transactionId, ?float $amount = null, ?string $orderLineId = null, ?int $quantity = null, ?int $orderId = null, ?string $refundType = null)
     {
         try {
             $payment = TransactionUtility::isOrderTransaction($transactionId)
@@ -60,6 +60,12 @@ class RefundService
             $isPartialRefund = !empty($orderLineId) || $amount !== null;
 
             $currency = $payment->amount->currency;
+
+            if ($refundType === 'shipping' && $orderId && $amount !== null) {
+                $refundAmount = $this->refundShipping($payment, (float) $amount, $orderId);
+
+                return $this->createSuccessResponse(true, $refundAmount, $currency);
+            }
 
             if (TransactionUtility::isOrderTransaction($transactionId)) {
                 if ($orderLineId) {
@@ -143,6 +149,26 @@ class RefundService
                 'value' => $refundAmount,
             ],
         ]);
+    }
+
+    private function refundShipping(Payment $payment, float $amount, int $orderId): string
+    {
+        $order = new \Order($orderId);
+        $refundAmount = TextFormatUtility::formatNumber($amount, 2);
+
+        $payment->refund([
+            'amount' => [
+                'currency' => $payment->amount->currency,
+                'value' => $refundAmount,
+            ],
+            'description' => sprintf('Order %s — shipping', $order->reference),
+            'metadata' => [
+                'refund_type' => 'shipping',
+                'id_order' => $orderId,
+            ],
+        ]);
+
+        return $refundAmount;
     }
 
     private function refundPaymentLine(Payment $payment, int $idOrderDetail, int $orderId, int $quantity): string

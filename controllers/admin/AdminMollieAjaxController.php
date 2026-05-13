@@ -243,6 +243,7 @@ class AdminMollieAjaxController extends ModuleAdminController
             $orderLineId = Tools::getValue('orderline') ?: null;
             $orderId = (int) Tools::getValue('orderId') ?: null;
             $quantity = Tools::getValue('quantity') ? (int) Tools::getValue('quantity') : null;
+            $refundType = Tools::getValue('refundType') ?: null;
             if ($quantity !== null && $quantity < 1) {
                 $quantity = null;
             }
@@ -250,7 +251,7 @@ class AdminMollieAjaxController extends ModuleAdminController
             /** @var RefundService $refundService */
             $refundService = $this->module->getService(RefundService::class);
 
-            $status = $refundService->handleRefund($transactionId, $refundAmount, $orderLineId, $quantity, $orderId);
+            $status = $refundService->handleRefund($transactionId, $refundAmount, $orderLineId, $quantity, $orderId, $refundType);
 
             $this->ajaxRender(json_encode($status));
         } catch (\Throwable $e) {

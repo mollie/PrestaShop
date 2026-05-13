@@ -648,6 +648,8 @@ class Mollie extends PaymentModule
                 }
             }
 
+            $shippingAmount = 0.0;
+            $shippingRefunded = false;
             if ($mollieApiType === 'payments') {
                 $paymentApi = $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'refunds']);
                 $refundedByDetail = [];
@@ -661,7 +663,11 @@ class Mollie extends PaymentModule
                         $qty = isset($meta->quantity) ? (int) $meta->quantity : 0;
                         $refundedByDetail[$detailId] = ($refundedByDetail[$detailId] ?? 0) + $qty;
                     }
+                    if (is_object($meta) && isset($meta->refund_type) && $meta->refund_type === 'shipping') {
+                        $shippingRefunded = true;
+                    }
                 }
+                $shippingAmount = (float) $order->total_shipping_tax_incl;
 
                 $products = [];
                 foreach ($order->getProducts() as $psProduct) {
@@ -701,6 +707,8 @@ class Mollie extends PaymentModule
                 'isCaptured' => $isCaptured,
                 'isShipped' => $isShipped,
                 'isCanceled' => $isCanceled,
+                'shipping_amount' => number_format($shippingAmount, 2, '.', ''),
+                'shipping_refunded' => $shippingRefunded,
             ]);
 
             return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');

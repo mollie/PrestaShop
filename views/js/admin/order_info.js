@@ -119,6 +119,19 @@ $(document).ready(function () {
     showModal('refund', productId, amount, orderline, availableQuantity);
   });
 
+  $('.mollie-refund-shipping-btn').on('click', function() {
+    var amount = $(this).data('price');
+    actionContext = {
+      action: 'refundShipping',
+      transactionId: transaction_id,
+      resource: resource,
+      amount: amount,
+    };
+    $('#mollie-refund-modal-message').text(trans.refundPartialConfirm.replace('%s', amount));
+    $('#mollie-refund-quantity-group').hide();
+    $('#mollieRefundModal').modal('show');
+  });
+
   $('.mollie-ship-btn').on('click', function() {
     var productId = $(this).data('product');
     var orderline = $(this).data('orderline');
@@ -266,6 +279,10 @@ $(document).ready(function () {
     } else if (context.action === 'refundAll') {
       // For refundAll, don't pass amount to let the service calculate the full refundable amount
       data.refundAmount = null;
+    } else if (context.action === 'refundShipping') {
+      data.refundAmount = context.amount;
+      data.refundType = 'shipping';
+      data.action = 'refund';
     }
 
     // Add capture amount for capture actions

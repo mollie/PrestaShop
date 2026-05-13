@@ -104,6 +104,18 @@
               {/if}
               </td>
             </tr>
+            {if $product@last && $shipping_amount > 0}
+            <tr>
+              <td><strong>{l s='Shipping' mod='mollie'}</strong></td>
+              <td>{$shipping_amount|escape:'html':'UTF-8'}</td>
+              <td>{if $shipping_refunded}{$shipping_amount|escape:'html':'UTF-8'}{else}0{/if}</td>
+              <td>
+                <button type="button" class="btn btn-default btn-xs mollie-refund-shipping-btn" data-price="{$shipping_amount|escape:'html':'UTF-8'}" {if $shipping_refunded || $isRefunded}disabled{/if}>
+                  <i class="material-icons">replay</i> {l s='Refund' mod='mollie'}
+                </button>
+              </td>
+            </tr>
+            {/if}
           {elseif isset($product->description)}
             <tr>
               <td><strong>{$product->quantity|escape:'html':'UTF-8'}x</strong> {$product->description|escape:'html':'UTF-8'}</td>
