@@ -48,7 +48,7 @@ class PaymentExpiryCalculatorTest extends TestCase
         $result = $this->calculator->calculateDueDate(PaymentMethod::BANKTRANSFER);
 
         $this->assertNotNull($result);
-        $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}$/', $result);
+        $this->assertRegExp('/^\d{4}-\d{2}-\d{2}$/', $result);
 
         $expectedDate = new \DateTime();
         $expectedDate->modify('+7 days');

@@ -15,6 +15,7 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Factory\CustomerFactory;
+use Mollie\Handler\Order\OrderPendingStatusHandler;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepository;
@@ -23,7 +24,6 @@ use Mollie\Service\PaymentReturnService;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\TransactionUtility;
-use Mollie\Handler\Order\OrderPendingStatusHandler;
 use Mollie\Validator\OrderCallBackValidator;
 
 if (!defined('_PS_VERSION_')) {
