@@ -14,8 +14,8 @@ namespace Mollie\Controller;
 use Mollie;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\LoggerInterface;
-use Mollie\Service\MolliePaymentMailService;
 use Mollie\PsCompat\AdminBaseController;
+use Mollie\Service\MolliePaymentMailService;
 use Symfony\Component\HttpFoundation\Request;
 
 if (!defined('_PS_VERSION_')) {
