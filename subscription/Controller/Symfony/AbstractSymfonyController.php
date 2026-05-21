@@ -14,7 +14,7 @@ namespace Mollie\Subscription\Controller\Symfony;
 
 use Mollie;
 use Mollie\Factory\ModuleFactory;
-use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
+use Mollie\PsCompat\AdminBaseController;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -23,7 +23,7 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Class AbstractAdminController - an abstraction for all admin module controllers
  */
-abstract class AbstractSymfonyController extends FrameworkBundleAdminController
+abstract class AbstractSymfonyController extends AdminBaseController
 {
     /** @var Mollie */
     protected $module;
@@ -32,5 +32,20 @@ abstract class AbstractSymfonyController extends FrameworkBundleAdminController
     {
         /* @phpstan-ignore-next-line */
         $this->module = (new ModuleFactory())->getModule();
+    }
+
+    /**
+     * Backward-compatible service locator. PrestaShopAdminController removed
+     * the FrameworkBundleAdminController::get() bridge, so subclasses that
+     * still rely on `$this->get(...)` resolve through the injected service
+     * container (passed as the first constructor argument in subclasses).
+     */
+    protected function get(string $id): object
+    {
+        if (isset($this->container) && $this->container->has($id)) {
+            return $this->container->get($id);
+        }
+
+        return $this->module->getService($id);
     }
 }
