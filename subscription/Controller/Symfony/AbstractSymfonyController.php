@@ -35,12 +35,12 @@ abstract class AbstractSymfonyController extends AdminBaseController
     }
 
     /**
-     * Backward-compatible service locator. PrestaShopAdminController removed
-     * the FrameworkBundleAdminController::get() bridge, so subclasses that
-     * still rely on `$this->get(...)` resolve through the injected service
-     * container (passed as the first constructor argument in subclasses).
+     * Signature mirrors FrameworkBundleAdminController::get() (public, untyped)
+     * for LSP compatibility on PS 8. On PS 9 the bridge was removed, so we
+     * resolve through the injected container or fall back to the module's
+     * service locator.
      */
-    protected function get(string $id): object
+    public function get($id)
     {
         if (isset($this->container) && $this->container->has($id)) {
             return $this->container->get($id);
