@@ -15,12 +15,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
+/*
  * Stub for composer's classmap scanner. The real symbol is created via
  * class_alias below so the parent resolves to whichever base admin
  * controller exists in the current PrestaShop version.
- *
- * @phpstan-ignore-next-line
  */
 if (false) { // @phpstan-ignore-line
     class AdminBaseController
