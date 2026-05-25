@@ -118,6 +118,10 @@ class PaymentMethodSettingsHandler
             $this->handlePaymentRestrictionsFlag($paymentMethod, $settings['paymentRestrictions']);
         }
 
+        if (!$paymentMethod->id) {
+            $paymentMethod->position = $this->paymentMethodRepository->getMaxPosition($environment, $shopId) + 1;
+        }
+
         if (!$paymentMethod->save()) {
             throw new MollieException('Failed to save payment method');
         }

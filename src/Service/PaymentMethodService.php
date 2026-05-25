@@ -187,8 +187,7 @@ class PaymentMethodService
         $paymentMethod->min_amount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MIN_AMOUNT . $method['id']);
         $paymentMethod->max_amount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_AMOUNT . $method['id']);
 
-        // PIPRES-755: assign next position when missing so admin and checkout order match. Preserves custom order (positions >= 1).
-        if (empty($paymentMethod->position)) {
+        if (!$paymentMethod->id) {
             $paymentMethod->position = $this->methodRepository->getMaxPosition($environment, $shopId) + 1;
         }
 
