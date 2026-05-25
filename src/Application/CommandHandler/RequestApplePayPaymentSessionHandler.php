@@ -13,11 +13,15 @@
 namespace Mollie\Application\CommandHandler;
 
 use Cart;
+use Configuration;
 use Mollie;
 use Mollie\Api\Exceptions\ApiException;
+use Mollie\Api\MollieApiClient;
 use Mollie\Application\Command\RequestApplePayPaymentSession;
+use Mollie\Config\Config;
 use Mollie\Exception\MollieApiException;
 use Mollie\Factory\ModuleFactory;
+use Mollie\Service\ApiKeyService;
 use Mollie\Service\ApiServiceInterface;
 
 if (!defined('_PS_VERSION_')) {
@@ -34,17 +38,22 @@ final class RequestApplePayPaymentSessionHandler
      * @var ApiServiceInterface
      */
     private $apiService;
+    /**
+     * @var ApiKeyService
+     */
+    private $apiKeyService;
 
-    public function __construct(ModuleFactory $module, ApiServiceInterface $apiService)
+    public function __construct(ModuleFactory $module, ApiServiceInterface $apiService, ApiKeyService $apiKeyService)
     {
         $this->module = $module->getModule();
         $this->apiService = $apiService;
+        $this->apiKeyService = $apiKeyService;
     }
 
     public function handle(RequestApplePayPaymentSession $command): array
     {
         try {
-            $response = $this->apiService->requestApplePayPaymentSession($this->module->getApiClient(), $command->getValidationUrl());
+            $response = $this->apiService->requestApplePayPaymentSession($this->getApplePaySessionApiClient(), $command->getValidationUrl());
         } catch (MollieApiException $e) {
             /* Message is only displayed in console */
             return [
@@ -68,6 +77,26 @@ final class RequestApplePayPaymentSessionHandler
             'data' => $response,
             'cartId' => $cartId,
         ];
+    }
+
+    private function getApplePaySessionApiClient(): ?MollieApiClient
+    {
+        if (!Config::isTestMode()) {
+            return $this->module->getApiClient();
+        }
+
+        $liveApiKey = Configuration::get(Config::MOLLIE_API_KEY);
+
+        if (!$liveApiKey) {
+            return $this->module->getApiClient();
+        }
+
+        return $this->apiKeyService->setApiKey(
+            $liveApiKey,
+            $this->module->version,
+            false,
+            Config::ENVIRONMENT_LIVE
+        );
     }
 
     private function createEmptyCart(int $currencyId, int $langId): int
