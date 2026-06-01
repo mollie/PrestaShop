@@ -21,7 +21,7 @@
         "http-interop/http-factory-guzzle": "^1.1",
         "php-http/message-factory": "^1.1",
         "prestashop/prestashop-accounts-installer": "^1.0.4",
-        "prestashop/module-lib-mbo-installer": "^2.0",
+        "prestashop/module-lib-mbo-installer": "^3.0",
         "invertus/knapsack": "^10.0"
     },
     "require-dev": {
