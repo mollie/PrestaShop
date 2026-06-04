@@ -2,6 +2,11 @@
 
 # Changelog #
 
+## Changes in release 6.4.4
++ Fixed Apple Pay not displaying at checkout on PrestaShop 9
++ Fixed Apple Pay Direct button on the product page in the Hummingbird theme
++ Added diagnostic logging when a payment method is hidden by a restriction
+
 ## Changes in release 6.4.3
 + Fixed Payment API race condition causing false "payment failed" errors
 + Fixed rounding distribution for whole-number differences in order line amounts
