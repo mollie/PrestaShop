@@ -14,9 +14,7 @@ namespace Mollie\Install;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
-use Mollie\Factory\ModuleFactory;
 use Mollie\Service\SegmentTracker;
-use Mollie\Tracker\Segment;
 use Tab;
 
 if (!defined('_PS_VERSION_')) {
@@ -34,22 +32,16 @@ class Uninstall
      * @var UninstallerInterface
      */
     private $databaseUninstaller;
-    /**
-     * @var Segment
-     */
-    private $segment;
     private $configurationAdapter;
     /** @var SegmentTracker */
     private $segmentTracker;
 
     public function __construct(
         UninstallerInterface $databaseUninstaller,
-        Segment $segment,
         ConfigurationAdapter $configurationAdapter,
         SegmentTracker $segmentTracker
     ) {
         $this->databaseUninstaller = $databaseUninstaller;
-        $this->segment = $segment;
         $this->configurationAdapter = $configurationAdapter;
         $this->segmentTracker = $segmentTracker;
     }
@@ -60,9 +52,6 @@ class Uninstall
             $this->segmentTracker->trackModuleUninstalled();
         } catch (\Throwable $e) {
         }
-
-        $this->segment->setMessage('Mollie uninstall');
-        $this->segment->track();
 
         $this->deleteConfig();
         $this->uninstallTabs();

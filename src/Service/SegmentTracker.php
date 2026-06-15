@@ -14,10 +14,10 @@ declare(strict_types=1);
 
 namespace Mollie\Service;
 
-use MolPaymentMethod;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
+use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -112,7 +112,7 @@ class SegmentTracker
         }
     }
 
-    public function trackApiKeySaved(bool $hasTestKey, bool $hasLiveKey): void
+    public function trackModuleConfigured(bool $hasTestKey, bool $hasLiveKey): void
     {
         try {
             $isFirstConnection = !$this->configuration->get(Config::MOLLIE_SEGMENT_EVER_CONNECTED);
@@ -128,7 +128,7 @@ class SegmentTracker
                 'is_first_connection' => $isFirstConnection,
             ];
 
-            PrestashopModuleTracking::track($this->apiKey, $this->module, 'API Key Saved', $properties);
+            PrestashopModuleTracking::track($this->apiKey, $this->module, 'Module Configured', $properties);
         } catch (\Throwable $e) {
         }
     }

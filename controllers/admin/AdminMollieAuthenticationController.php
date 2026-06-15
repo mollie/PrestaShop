@@ -331,7 +331,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
 
             /** @var \Mollie\Service\SegmentTracker $segmentTracker */
             $segmentTracker = $this->module->getService(\Mollie\Service\SegmentTracker::class);
-            $segmentTracker->trackApiKeySaved(
+            $segmentTracker->trackModuleConfigured(
                 !empty($this->configuration->get(Config::MOLLIE_API_KEY_TEST)),
                 !empty($this->configuration->get(Config::MOLLIE_API_KEY))
             );
