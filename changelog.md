@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.4
++ Fixed VAT amount calculation on high-value order lines causing Mollie API 422 errors
+
 ## Changes in release 6.4.3
 + Fixed Payment API race condition causing false "payment failed" errors
 + Fixed rounding distribution for whole-number differences in order line amounts
