@@ -187,6 +187,10 @@ class PaymentMethodService
         $paymentMethod->min_amount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MIN_AMOUNT . $method['id']);
         $paymentMethod->max_amount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_AMOUNT . $method['id']);
 
+        if (!$paymentMethod->id) {
+            $paymentMethod->position = $this->methodRepository->getMaxPosition($environment, $shopId) + 1;
+        }
+
         $paymentMethod->save();
 
         foreach (Tools::getValue(Config::MOLLIE_METHOD_TITLE . $method['id']) as $idLang => $title) {
