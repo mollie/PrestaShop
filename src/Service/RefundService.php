@@ -108,9 +108,7 @@ class RefundService
             return TextFormatUtility::formatNumber($amount, 2);
         }
 
-        $settlementAmount = (float) $payment->settlementAmount->value;
-        $refundedAmount = (float) RefundUtility::getRefundedAmount(iterator_to_array($payment->refunds()));
-        $refundableAmount = RefundUtility::getRefundableAmount($settlementAmount, $refundedAmount);
+        $refundableAmount = $payment->getAmountRemaining();
 
         return $refundableAmount > 0 ? TextFormatUtility::formatNumber($refundableAmount, 2) : null;
     }

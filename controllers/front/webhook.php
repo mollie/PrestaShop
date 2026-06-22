@@ -95,7 +95,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         ));
 
         if (!$lockResult->isSuccessful()) {
-            $logger->error(sprintf('%s - Resource conflict', self::FILE_NAME));
+            $logger->info(sprintf('%s - Resource conflict', self::FILE_NAME));
 
             $this->ajaxResponse(JsonResponse::error(
                 $this->module->l('Resource conflict', self::FILE_NAME),
