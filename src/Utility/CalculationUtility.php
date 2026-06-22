@@ -63,4 +63,22 @@ class CalculationUtility
 
         return NumberUtility::times($vatPriceDividedByTotalPriceNoTax, 100);
     }
+
+    /**
+     * Calculates the VAT amount contained in a tax-inclusive total for a given VAT rate.
+     *
+     * @param float $totalAmount tax-inclusive total
+     * @param float $vatRate VAT rate as a percentage (e.g. 19 for 19%)
+     * @param int $precision
+     *
+     * @return float
+     */
+    public static function getVatAmount($totalAmount, $vatRate, $precision = NumberUtility::DECIMAL_PRECISION)
+    {
+        if ($vatRate <= 0) {
+            return 0.0;
+        }
+
+        return round($totalAmount * $vatRate / ($vatRate + 100), $precision);
+    }
 }
