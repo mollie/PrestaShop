@@ -1771,8 +1771,6 @@ class Mollie extends PaymentModule
         }
 
         if ($this->context->customer->isLogged()) {
-            $this->handlePayByBankBrowserBack();
-
             return;
         }
 
@@ -1793,23 +1791,6 @@ class Mollie extends PaymentModule
         $this->context->controller->warning[] = $this->l('Customer must be logged in to buy subscription item.');
 
         $this->context->controller->redirectWithNotifications($link->getPageLink('authentication'));
-    }
-
-    private function handlePayByBankBrowserBack(): void
-    {
-        if (!empty($this->context->cart) && $this->context->cart->nbProducts() > 0) {
-            return;
-        }
-
-        try {
-            /** @var \Mollie\Service\PayByBankCancellationService $payByBankService */
-            $payByBankService = $this->getService(\Mollie\Service\PayByBankCancellationService::class);
-            $payByBankService->handleAbandonedPayment((int) $this->context->customer->id);
-        } catch (\Exception $e) {
-            /** @var \Mollie\Logger\LoggerInterface $logger */
-            $logger = $this->getService(\Mollie\Logger\LoggerInterface::class);
-            $logger->error('Failed to handle Pay by Bank browser back: ' . $e->getMessage());
-        }
     }
 
     private function getRecurringOrdersByCustomerAddress(int $customerId, int $oldAddressId): array
