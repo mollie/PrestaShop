@@ -22,4 +22,5 @@ class CertificationException extends Exception
 {
     const FILE_COPY_EXCEPTON = 0;
     const DIR_CREATION_EXCEPTON = 1;
+    const FILE_CONFLICT_EXCEPTION = 2;
 }

@@ -60,7 +60,7 @@ class PhoneNumberProviderTest extends TestCase
             ],
             'number that consists of 0s with +' => [
                 'phoneNumber' => '+000000',
-                'result' => '+000000',
+                'result' => null,
             ],
             'number that consists of 0s' => [
                 'phoneNumber' => '000000',

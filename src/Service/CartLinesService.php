@@ -294,27 +294,30 @@ class CartLinesService
         $remaining = round($remaining, $apiRoundingPrecision);
         if ($remaining < 0) {
             foreach (array_reverse($orderLines) as $hash => $items) {
-                // Grab the line group's total amount
-                $totalAmount = array_sum(array_column($items, 'totalAmount'));
-
-                // Remove when total is lower than remaining
-                if ($totalAmount <= $remaining) {
-                    // The line total is less than remaining, we should remove this line group and continue
-                    $remaining = $remaining - $totalAmount;
-                    unset($items);
+                $lineType = isset($items[0]['type']) ? $items[0]['type'] : '';
+                if ($lineType !== 'physical' && $lineType !== 'digital') {
                     continue;
                 }
 
-                // Otherwise spread the cart line again with the updated total
-                //TODO: check why remaining comes -100 when testing and new total becomes different
+                $totalAmount = array_sum(array_column($items, 'totalAmount'));
+
+                if ($totalAmount <= $remaining) {
+                    $remaining = $remaining - $totalAmount;
+                    unset($orderLines[$hash]);
+                    continue;
+                }
+
                 $orderLines[$hash] = static::spreadCartLineGroup($items, $totalAmount + $remaining);
                 break;
             }
         } elseif ($remaining > 0) {
             foreach (array_reverse($orderLines) as $hash => $items) {
-                // Grab the line group's total amount
+                $lineType = isset($items[0]['type']) ? $items[0]['type'] : '';
+                if ($lineType !== 'physical' && $lineType !== 'digital') {
+                    continue;
+                }
+
                 $totalAmount = array_sum(array_column($items, 'totalAmount'));
-                // Otherwise spread the cart line again with the updated total
                 $orderLines[$hash] = static::spreadCartLineGroup($items, $totalAmount + $remaining);
                 break;
             }
@@ -350,15 +353,15 @@ class CartLinesService
                 $actualVatRate = 0;
                 if ($unitPriceNoTax > 0) {
                     $actualVatRate = round(
-                        $vatAmount = CalculationUtility::getActualVatRate($unitPrice, $unitPriceNoTax, $quantity),
+                        CalculationUtility::getActualVatRate($unitPrice, $unitPriceNoTax, $quantity),
                         $vatRatePrecision
                     );
                 }
-                $vatRateWithPercentages = NumberUtility::plus($actualVatRate, 100);
-                $vatAmount = NumberUtility::times(
-                    $totalAmount,
-                    NumberUtility::divide($actualVatRate, $vatRateWithPercentages)
-                );
+
+                // Compute the VAT amount from the total amount and the VAT rate we send, matching
+                // Mollie's own server-side validation. See CalculationUtility::getVatAmount() and PIPRES-781.
+                $vatRate = round($actualVatRate, $apiRoundingPrecision);
+                $vatAmount = CalculationUtility::getVatAmount($totalAmount, $vatRate, $apiRoundingPrecision);
 
                 $newItem = [
                     'name' => $line['name'],
@@ -367,8 +370,8 @@ class CartLinesService
                     'quantity' => (int) $quantity,
                     'unitPrice' => round($unitPrice, $apiRoundingPrecision),
                     'totalAmount' => round($totalAmount, $apiRoundingPrecision),
-                    'vatRate' => round($actualVatRate, $apiRoundingPrecision),
-                    'vatAmount' => round($vatAmount, $apiRoundingPrecision),
+                    'vatRate' => $vatRate,
+                    'vatAmount' => $vatAmount,
                     'product_url' => $line['product_url'] ?? null,
                     'image_url' => $line['image_url'] ?? null,
                     'metadata' => $line['metadata'] ?? [],

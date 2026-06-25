@@ -171,47 +171,57 @@ class CartLinesServiceTest extends TestCase
                 'mocks' => [],
                 'result' => [
                     0 => (new OrderLine())
+                            ->setType('physical')
                             ->setName($productName_1)
                             ->setQuantity(1)
                             ->setSku('2¤9¤0')
                             ->setDiscountAmount(null)
+                            ->setProductUrl('')
+                            ->setImageUrl('')
                             ->setUnitPrice(new Amount($currencyIsoCode, '100.00'))
                             ->setTotalPrice(new Amount($currencyIsoCode, '100.00'))
                             ->setVatAmount(new Amount($currencyIsoCode, '17.36'))
                             ->setCategory('')
                             ->setVatRate('21.00')
-                            ->setMetaData([]),
+                            ->setMetaData(['idProduct' => '2']),
                     1 => (new OrderLine())
+                        ->setType('physical')
                         ->setName($productName_2)
                         ->setQuantity(1)
                         ->setSku('1¤9¤0gift')
                         ->setDiscountAmount(null)
+                        ->setProductUrl('')
+                        ->setImageUrl('')
                         ->setUnitPrice(new Amount($currencyIsoCode, '0.00'))
                         ->setTotalPrice(new Amount($currencyIsoCode, '0.00'))
                         ->setVatAmount(new Amount($currencyIsoCode, '0.00'))
                         ->setCategory('')
                         ->setVatRate('0.00')
-                        ->setMetaData([]),
+                        ->setMetaData(['idProduct' => '1']),
                     2 => (new OrderLine())
+                            ->setType('physical')
                             ->setName($productName_2)
                             ->setQuantity(1)
                             ->setSku('1¤9¤0')
                             ->setDiscountAmount(null)
+                            ->setProductUrl('')
+                            ->setImageUrl('')
                             ->setUnitPrice(new Amount($currencyIsoCode, '100.00'))
                             ->setTotalPrice(new Amount($currencyIsoCode, '100.00'))
                             ->setVatAmount(new Amount($currencyIsoCode, '17.36'))
                             ->setCategory('')
                             ->setVatRate('21.00')
-                            ->setMetaData([]),
+                            ->setMetaData(['idProduct' => '1']),
                     3 => (new OrderLine())
+                            ->setType('shipping_fee')
                             ->setName($shipping)
                             ->setQuantity(1)
-                            ->setSku('')
+                            ->setSku($shipping)
                             ->setDiscountAmount(null)
                             ->setUnitPrice(new Amount($currencyIsoCode, '4.84'))
                             ->setTotalPrice(new Amount($currencyIsoCode, '4.84'))
                             ->setVatAmount(new Amount($currencyIsoCode, '0.84'))
-                            ->setCategory('')
+                            ->setCategory(null)
                             ->setVatRate('21.00')
                             ->setMetaData([]),
                 ],
@@ -283,36 +293,43 @@ class CartLinesServiceTest extends TestCase
                 'mocks' => [],
                 'result' => [
                     0 => (new OrderLine())
+                            ->setType('physical')
                             ->setName($productName_1)
                             ->setQuantity(1)
                             ->setSku('1¤9¤0')
                             ->setDiscountAmount(null)
+                            ->setProductUrl('')
+                            ->setImageUrl('')
                             ->setUnitPrice(new Amount($currencyIsoCode, '100.00'))
                             ->setTotalPrice(new Amount($currencyIsoCode, '100.00'))
                             ->setVatAmount(new Amount($currencyIsoCode, '17.36'))
                             ->setCategory('')
                             ->setVatRate('21.00')
-                            ->setMetaData([]),
+                            ->setMetaData(['idProduct' => '1']),
                     1 => (new OrderLine())
+                            ->setType('physical')
                             ->setName($productName_2)
                             ->setQuantity(1)
                             ->setSku('2¤9¤0gift')
                             ->setDiscountAmount(null)
+                            ->setProductUrl('')
+                            ->setImageUrl('')
                             ->setUnitPrice(new Amount($currencyIsoCode, '0.00'))
                             ->setTotalPrice(new Amount($currencyIsoCode, '0.00'))
                             ->setVatAmount(new Amount($currencyIsoCode, '0.00'))
                             ->setCategory('')
                             ->setVatRate('0.00')
-                            ->setMetaData([]),
+                            ->setMetaData(['idProduct' => '2']),
                     2 => (new OrderLine())
+                            ->setType('shipping_fee')
                             ->setName($shipping)
                             ->setQuantity(1)
-                            ->setSku('')
+                            ->setSku($shipping)
                             ->setDiscountAmount(null)
                             ->setUnitPrice(new Amount($currencyIsoCode, '4.84'))
                             ->setTotalPrice(new Amount($currencyIsoCode, '4.84'))
                             ->setVatAmount(new Amount($currencyIsoCode, '0.84'))
-                            ->setCategory('')
+                            ->setCategory(null)
                             ->setVatRate('21.00')
                             ->setMetaData([]),
                 ],
@@ -371,25 +388,29 @@ class CartLinesServiceTest extends TestCase
                 'mocks' => [],
                 'result' => [
                     0 => (new OrderLine())
+                            ->setType('physical')
                             ->setName('2¤9¤0')
                             ->setQuantity(1)
                             ->setSku('2¤9¤0')
                             ->setDiscountAmount(null)
+                            ->setProductUrl('')
+                            ->setImageUrl('')
                             ->setUnitPrice(new Amount($currencyIsoCode, '100.00'))
                             ->setTotalPrice(new Amount($currencyIsoCode, '100.00'))
                             ->setVatAmount(new Amount($currencyIsoCode, '17.36'))
                             ->setCategory('')
                             ->setVatRate('21.00')
-                            ->setMetaData([]),
+                            ->setMetaData(['idProduct' => '2']),
                     1 => (new OrderLine())
+                            ->setType('shipping_fee')
                             ->setName($shipping)
                             ->setQuantity(1)
-                            ->setSku('')
+                            ->setSku($shipping)
                             ->setDiscountAmount(null)
                             ->setUnitPrice(new Amount($currencyIsoCode, '4.84'))
                             ->setTotalPrice(new Amount($currencyIsoCode, '4.84'))
                             ->setVatAmount(new Amount($currencyIsoCode, '0.84'))
-                            ->setCategory('')
+                            ->setCategory(null)
                             ->setVatRate('21.00')
                             ->setMetaData([]),
                 ],
@@ -444,20 +465,24 @@ class CartLinesServiceTest extends TestCase
                 'mocks' => [],
                 'result' => [
                     0 => (new OrderLine())
+                            ->setType('physical')
                             ->setName($productName_1)
                             ->setQuantity(1)
                             ->setSku('2¤9¤0')
                             ->setDiscountAmount(null)
+                            ->setProductUrl('')
+                            ->setImageUrl('')
                             ->setUnitPrice(new Amount($currencyIsoCode, '100.00'))
                             ->setTotalPrice(new Amount($currencyIsoCode, '100.00'))
                             ->setVatAmount(new Amount($currencyIsoCode, '17.36'))
                             ->setCategory('')
                             ->setVatRate('21.00')
-                            ->setMetaData([]),
+                            ->setMetaData(['idProduct' => '2']),
                     1 => (new OrderLine())
+                            ->setType('discount')
                             ->setName('Discount')
                             ->setQuantity(1)
-                            ->setSku('')
+                            ->setSku('DISCOUNT')
                             ->setDiscountAmount(null)
                             ->setUnitPrice(new Amount($currencyIsoCode, '-6.05'))
                             ->setTotalPrice(new Amount($currencyIsoCode, '-6.05'))
@@ -466,16 +491,75 @@ class CartLinesServiceTest extends TestCase
                             ->setVatRate('0.00')
                             ->setMetaData([]),
                     2 => (new OrderLine())
+                            ->setType('shipping_fee')
                             ->setName($shipping)
                             ->setQuantity(1)
-                            ->setSku('')
+                            ->setSku($shipping)
                             ->setDiscountAmount(null)
                             ->setUnitPrice(new Amount($currencyIsoCode, '4.84'))
                             ->setTotalPrice(new Amount($currencyIsoCode, '4.84'))
                             ->setVatAmount(new Amount($currencyIsoCode, '0.84'))
-                            ->setCategory('')
+                            ->setCategory(null)
                             ->setVatRate('21.00')
                             ->setMetaData([]),
+                ],
+            ],
+            'high value product line keeps Mollie-compatible vatAmount (PIPRES-781)' => [
+                'amount' => 12865.50,
+                'paymentFee' => new PaymentFeeData(0.00, 0.00, 0.00, false),
+                'currencyIsoCode' => $currencyIsoCode,
+                'cartSummary' => [
+                    'gift_products' => [
+                        ],
+                    'discounts' => [
+                        ],
+                    'total_wrapping' => 0,
+                    'total_wrapping_tax_exc' => 0,
+                    'total_shipping' => 0,
+                    'total_shipping_tax_exc' => 0,
+                    'total_products_wt' => 12865.50,
+                    'total_products' => 10811.34,
+                    'total_price' => 12865.50,
+                    'free_ship' => false,
+                ],
+                0,
+                'cartItems' => [
+                    0 => [
+                            'total_wt' => 12865.50,
+                            'cart_quantity' => '1',
+                            'price_wt' => 12865.50,
+                            'id_product' => '24',
+                            'name' => 'VAT Repro High Value',
+                            'rate' => 19,
+                            'id_product_attribute' => '0',
+                            'id_customization' => null,
+                            'features' => [],
+                            'link_rewrite' => 'test-link',
+                            'id_image' => 'test-image-id',
+                        ],
+                ],
+                'psGiftWrapping' => false,
+                'selectedVoucherCategory' => 'null',
+                'translationMocks' => [
+                ],
+                'toolsMocks' => [
+                ],
+                'mocks' => [],
+                'result' => [
+                    0 => (new OrderLine())
+                            ->setType('physical')
+                            ->setName('VAT Repro High Value')
+                            ->setQuantity(1)
+                            ->setSku('24¤0¤0')
+                            ->setDiscountAmount(null)
+                            ->setProductUrl('')
+                            ->setImageUrl('')
+                            ->setUnitPrice(new Amount($currencyIsoCode, '12865.50'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '12865.50'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '2054.16'))
+                            ->setCategory('')
+                            ->setVatRate('19.00')
+                            ->setMetaData(['idProduct' => '24']),
                 ],
             ],
         ];

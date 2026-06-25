@@ -17,10 +17,10 @@ use Mollie\Api\Types\PaymentStatus;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Infrastructure\Adapter\Lock;
 use Mollie\Logger\PrestaLoggerInterface;
+use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\TransactionUtility;
-use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -30,8 +30,16 @@ class OrderPendingStatusHandler
 {
     const FILE_NAME = 'OrderPendingStatusHandler';
 
-    const ACTION_PENDING = 'pending';
+    /** Customer returned while Mollie payment is still open — no order created, redirect to payment step. */
+    const ACTION_OPEN = 'open';
+
+    /** Payment is pending processing — pending PS order created, redirect to order confirmation. */
+    const ACTION_CONFIRM = 'confirm';
+
+    /** Payment is paid/authorized — show wait spinner until webhook creates/updates order. */
     const ACTION_POLL = 'poll';
+
+    /** Payment failed/expired/canceled — redirect customer to cart. */
     const ACTION_FAILED = 'failed';
 
     /** @var Mollie */
@@ -42,30 +50,31 @@ class OrderPendingStatusHandler
     private $lock;
     /** @var PrestaLoggerInterface */
     private $logger;
+    /** @var OrderRepositoryInterface */
+    private $orderRepository;
 
     public function __construct(
         ModuleFactory $moduleFactory,
         OrderCreationHandler $orderCreationHandler,
         Lock $lock,
-        PrestaLoggerInterface $logger
+        PrestaLoggerInterface $logger,
+        OrderRepositoryInterface $orderRepository
     ) {
         $this->module = $moduleFactory->getModule();
         $this->orderCreationHandler = $orderCreationHandler;
         $this->lock = $lock;
         $this->logger = $logger;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
-     * Checks current Mollie payment status and creates a PrestaShop order if still pending.
+     * Checks live Mollie status for a payment that arrived at return.php with open/pending DB status.
      *
-     * @return string One of ACTION_PENDING, ACTION_POLL, ACTION_FAILED
+     * @return string One of ACTION_OPEN, ACTION_CONFIRM, ACTION_POLL, ACTION_FAILED
      */
     public function handle(string $transactionId, int $cartId): string
     {
-        $existingOrderId = (int) Order::getIdByCartId($cartId);
-        if ($existingOrderId) {
-            return self::ACTION_PENDING;
-        }
+        $existingOrderId = $this->orderRepository->getOrderIdByCartId($cartId);
 
         $isOrder = TransactionUtility::isOrderTransaction($transactionId);
         if ($isOrder) {
@@ -84,14 +93,19 @@ class OrderPendingStatusHandler
             'transaction_id' => $transactionId,
             'mollie_status' => $paymentStatus,
             'cart_id' => $cartId,
+            'order_exists' => $existingOrderId > 0,
         ]);
 
         switch ($paymentStatus) {
             case PaymentStatus::STATUS_OPEN:
-            case PaymentStatus::STATUS_PENDING:
-                $this->createPendingOrder($transaction, $cartId);
+                return self::ACTION_OPEN;
 
-                return self::ACTION_PENDING;
+            case PaymentStatus::STATUS_PENDING:
+                if (!$existingOrderId) {
+                    $this->createPendingOrder($transaction, $cartId);
+                }
+
+                return self::ACTION_CONFIRM;
 
             case PaymentStatus::STATUS_PAID:
             case PaymentStatus::STATUS_AUTHORIZED:

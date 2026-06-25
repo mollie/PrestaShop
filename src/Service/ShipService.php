@@ -46,7 +46,7 @@ class ShipService
      *
      * @since 3.3.0
      */
-    public function handleShip($transactionId, $orderlineId = null, $tracking = null)
+    public function handleShip($transactionId, $orderlineId = null, $tracking = null, $quantity = null)
     {
         try {
             /** @var MollieOrderAlias $payment */
@@ -54,25 +54,30 @@ class ShipService
             $shipmentData = [];
 
             if ($orderlineId) {
-                $shipmentData['lines'] = [
-                    [
-                        'id' => $orderlineId,
-                    ],
-                ];
+                $lineData = ['id' => $orderlineId];
+                if ($quantity) {
+                    $lineData['quantity'] = (int) $quantity;
+                }
+                $shipmentData['lines'] = [$lineData];
             }
 
-            if ($tracking['carrier'] && $tracking['code'] && $tracking['tracking_url']) {
+            if (!empty($tracking['carrier']) && !empty($tracking['code'])) {
                 $validationResult = $this->validateTracking($tracking);
 
                 if (!$validationResult['success']) {
                     return $validationResult;
                 }
 
-                $shipmentData['tracking'] = [
+                $trackingData = [
                     'carrier' => $tracking['carrier'],
                     'code' => $tracking['code'],
-                    'url' => $tracking['tracking_url'],
                 ];
+
+                if (!empty($tracking['tracking_url'])) {
+                    $trackingData['url'] = $tracking['tracking_url'];
+                }
+
+                $shipmentData['tracking'] = $trackingData;
             }
 
             $order->createShipment($shipmentData);
@@ -106,16 +111,16 @@ class ShipService
         ];
     }
 
-    public function isShipped(string $transactionId): bool
+    public function isShipped(string $transactionId, ?iterable $lines = null): bool
     {
         if (!TransactionUtility::isOrderTransaction($transactionId)) {
             return false;
         }
 
-        $products = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments'])->lines;
+        $lines = $lines ?? $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments'])->lines;
 
-        foreach ($products as $product) {
-            if ($product->quantity != $product->quantityShipped) {
+        foreach ($lines as $line) {
+            if ($line->quantity != $line->quantityShipped) {
                 return false;
             }
         }
@@ -123,9 +128,26 @@ class ShipService
         return true;
     }
 
+    public function hasAnyShipment(string $transactionId, ?iterable $lines = null): bool
+    {
+        if (!TransactionUtility::isOrderTransaction($transactionId)) {
+            return false;
+        }
+
+        $lines = $lines ?? $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments'])->lines;
+
+        foreach ($lines as $line) {
+            if ((int) $line->quantityShipped > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private function validateTracking(array $tracking): array
     {
-        if (!Validate::isAbsoluteUrl($tracking['tracking_url'])) {
+        if (!empty($tracking['tracking_url']) && !Validate::isAbsoluteUrl($tracking['tracking_url'])) {
             return [
                 'success' => false,
                 'message' => $this->module->l('Invalid tracking URL provided', self::FILE_NAME),

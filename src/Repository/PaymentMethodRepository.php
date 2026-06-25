@@ -73,6 +73,19 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
         return Db::getInstance()->getValue($sql);
     }
 
+    public function isManualCapture(string $methodId, int $environment, ?int $shopId = null): bool
+    {
+        if (!$shopId) {
+            $shopId = Context::getContext()->shop->id;
+        }
+
+        $sql = 'SELECT is_manual_capture FROM `' . _DB_PREFIX_ . 'mol_payment_method`
+        WHERE id_method = "' . pSQL($methodId) . '" AND live_environment = "' . (int) $environment . '"
+        AND id_shop = ' . (int) $shopId;
+
+        return (bool) Db::getInstance()->getValue($sql);
+    }
+
     /**
      * @todo create const for table keys
      *
@@ -134,6 +147,17 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
         $sql->where('id_shop = ' . (int) $shopId);
 
         return Db::getInstance()->executeS($sql);
+    }
+
+    public function getMaxPosition($environment, $shopId): int
+    {
+        $sql = new DbQuery();
+        $sql->select('MAX(position)');
+        $sql->from('mol_payment_method');
+        $sql->where('live_environment = ' . (int) $environment);
+        $sql->where('id_shop = ' . (int) $shopId);
+
+        return (int) Db::getInstance()->getValue($sql, false);
     }
 
     /**

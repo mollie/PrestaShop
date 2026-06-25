@@ -11,7 +11,6 @@
  */
 
 use Mollie\Api\Types\PaymentMethod;
-use Mollie\Config\Config;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Logger\Logger;
@@ -123,7 +122,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             Tools::getValue('useSavedCard')
         );
 
-        if ($method === PaymentMethod::BANKTRANSFER || $method === Config::PAY_BY_BANK) {
+        if ($method === PaymentMethod::BANKTRANSFER) {
             /** @var OrderCreationHandler $orderCreationHandler */
             $orderCreationHandler = $this->module->getService(OrderCreationHandler::class);
             $paymentData = $orderCreationHandler->createBankTransferOrder($paymentData, $cart);
@@ -166,7 +165,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         try {
-            if ($method === PaymentMethod::BANKTRANSFER || $method === Config::PAY_BY_BANK) {
+            if ($method === PaymentMethod::BANKTRANSFER) {
                 $orderId = Order::getIdByCartId($cart->id);
                 $order = new Order($orderId);
                 $paymentMethodRepository->addOpenStatusPayment(
@@ -176,6 +175,26 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                     $order->id,
                     $order->reference
                 );
+
+                $orderPayments = $order->getOrderPayments();
+                if (!empty($orderPayments)) {
+                    foreach ($orderPayments as $orderPayment) {
+                        if ($orderPayment->transaction_id) {
+                            continue;
+                        }
+                        $orderPayment->transaction_id = $apiPayment->id;
+                        $orderPayment->payment_method = $apiPayment->method;
+                        $orderPayment->update();
+                    }
+                } else {
+                    $orderPayment = new OrderPayment();
+                    $orderPayment->order_reference = $order->reference;
+                    $orderPayment->amount = $apiPayment->amount->value;
+                    $orderPayment->payment_method = $apiPayment->method;
+                    $orderPayment->transaction_id = $apiPayment->id;
+                    $orderPayment->id_currency = (int) $cart->id_currency;
+                    $orderPayment->add();
+                }
             } else {
                 $existingPayment = $paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
                 if (!$existingPayment) {

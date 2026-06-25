@@ -107,6 +107,12 @@ class MolPaymentMethod extends ObjectModel
      * @var int
      */
     public $id_shop;
+
+    /**
+     * @var bool
+     */
+    public $is_manual_capture;
+
     /**
      * @var array
      */
@@ -140,6 +146,7 @@ class MolPaymentMethod extends ObjectModel
             'live_environment' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
             'position' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'id_shop' => ['type' => self::TYPE_INT, 'validate' => 'isUnsignedInt'],
+            'is_manual_capture' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
         ],
     ];
 

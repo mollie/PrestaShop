@@ -41,12 +41,33 @@ class ApplePayDirectCertificateHandler implements CertificateHandlerInterface
     }
 
     /**
+     * Checks if an existing domain association file belongs to another provider.
+     *
+     * @return bool true if the file exists and does not belong to Mollie
+     */
+    public function hasConflict()
+    {
+        $existingFilePath = $this->serverRoot . self::APPLE_PAY_CERTIFICATE_FOLDER . self::APPLE_PAY_CERTIFICATE_PS_FILE;
+
+        if (!FileUtility::fileExists($existingFilePath)) {
+            return false;
+        }
+
+        return file_get_contents($existingFilePath) !== file_get_contents(self::APPLE_PAY_CERTIFICATE_FILE_LOCATION);
+    }
+
+    /**
      * @throws ApplePayDirectCertificateCreation
      */
     public function handle()
     {
         /* Checks if certificate already exists in prestashop */
-        if (FileUtility::fileExists($this->serverRoot . self::APPLE_PAY_CERTIFICATE_FOLDER . self::APPLE_PAY_CERTIFICATE_PS_FILE)) {
+        $existingFilePath = $this->serverRoot . self::APPLE_PAY_CERTIFICATE_FOLDER . self::APPLE_PAY_CERTIFICATE_PS_FILE;
+        if (FileUtility::fileExists($existingFilePath)) {
+            if ($this->hasConflict()) {
+                throw new ApplePayDirectCertificateCreation($this->mollie->l('Apple Pay domain association file does not belong to Mollie. Please verify your domain configuration.', self::FILE_NAME), ApplePayDirectCertificateCreation::FILE_CONFLICT_EXCEPTION);
+            }
+
             return;
         }
 

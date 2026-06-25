@@ -17,6 +17,10 @@
       </div>
       <div class="modal-body">
         <p id="mollie-refund-modal-message">{l s='Are you sure you want to refund this order? This action cannot be undone.' mod='mollie'}</p>
+        <div class="form-group" id="mollie-refund-quantity-group" style="display:none;">
+          <label for="mollie-refund-quantity">{l s='Quantity to refund' mod='mollie'}</label>
+          <select class="form-control" id="mollie-refund-quantity"></select>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">{l s='Cancel' mod='mollie'}</button>

@@ -2,6 +2,34 @@
 
 # Changelog #
 
+## Changes in release 6.4.4
++ Fixed Apple Pay not displaying at checkout on PrestaShop 9
++ Fixed Apple Pay Direct button on the product page in the Hummingbird theme
++ Added diagnostic logging when a payment method is hidden by a restriction
+
+## Changes in release 6.4.3
++ Fixed Payments API per-line Refund button not updating after a successful refund
++ Surfaced a clearer message when Mollie rejects a refund as a duplicate of a recent one
++ Fixed refund confirmation modal amount to reflect selected quantity for multi-unit order lines
++ Fixed Payment API race condition causing false "payment failed" errors
++ Fixed rounding distribution for whole-number differences in order line amounts
++ Fixed Apple Pay Direct payment when country is not active in shop
++ Fixed geolocation and webhook handling with inactive country
++ Fixed back office order creation on failed description update
++ Fixed Pay by Bank cancellation with cart restoration
++ Fixed Pay by Bank transaction ID update on open bank status
++ Normalized typographic Unicode characters in address fields to prevent Mollie API 422 errors
++ Added Apple Pay domain association check with settings banner
++ Added phone number validation for invalid E.164 formats
++ Added email sanitization for unsupported characters
++ Added Croatian and Lithuanian translations
++ Improved admin order page rendering
++ Improved front office subscription tab handling
++ Improved company name validation by replacing special characters
++ Redirected bank transfer to order confirmation instead of custom page
++ Hid "Refund All" button for Klarna and other authorizable Orders API payments until at least one line is shipped
++ Fixed payment method ordering mismatch between admin panel and checkout page
+
 ## Changes in release 6.4.2
 + Multiple Apple Pay Direct improvements and stability fixes
 + Added pending payment status handling

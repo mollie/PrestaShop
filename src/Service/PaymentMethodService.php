@@ -192,6 +192,10 @@ class PaymentMethodService
         $paymentMethod->min_amount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MIN_AMOUNT . $method['id']);
         $paymentMethod->max_amount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_AMOUNT . $method['id']);
 
+        if (!$paymentMethod->id) {
+            $paymentMethod->position = $this->methodRepository->getMaxPosition($environment, $shopId) + 1;
+        }
+
         $paymentMethod->save();
 
         foreach (Tools::getValue(Config::MOLLIE_METHOD_TITLE . $method['id']) as $idLang => $title) {
@@ -342,12 +346,19 @@ class PaymentMethodService
 
             if (in_array($molPaymentMethod->id_method, Mollie\Config\Config::MOLLIE_MANUAL_CAPTURE_METHODS)) {
                 $paymentData->setCaptureMode('manual');
+            } elseif (in_array($molPaymentMethod->id_method, Mollie\Config\Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS)) {
+                $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+                if ($this->methodRepository->isManualCapture($molPaymentMethod->id_method, $environment)) {
+                    $paymentData->setCaptureMode('manual');
+                }
             }
 
             $paymentData->setMetadata($metaData);
 
             $paymentData->setLocale($this->getLocale($molPaymentMethod->method));
-            $paymentData->setMethod($molPaymentMethod->id_method);
+            if (!empty($molPaymentMethod->id_method)) {
+                $paymentData->setMethod($molPaymentMethod->id_method);
+            }
 
             $paymentData->setDescription($orderReference);
             $paymentData->setEmail($customer->email);
@@ -463,7 +474,9 @@ class PaymentMethodService
                 $orderData->setTitle((string) $gender->name[$cart->id_lang]);
             }
 
-            $orderData->setMethod($molPaymentMethod->id_method);
+            if (!empty($molPaymentMethod->id_method)) {
+                $orderData->setMethod($molPaymentMethod->id_method);
+            }
             $orderData->setMetadata($metaData);
 
             if (!empty($customer->birthday) && $customer->birthday !== '0000-00-00') {

@@ -14,6 +14,8 @@ use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\MolCustomerRepositoryInterface;
 use Mollie\Subscription\Presenter\RecurringOrdersPresenter;
+use Mollie\Subscription\Provider\SubscriptionAvailabilityProvider;
+use Mollie\Utility\ExceptionUtility;
 
 /*
  * 2007-2020 PrestaShop and Contributors
@@ -70,22 +72,41 @@ class mollieSubscriptionsModuleFrontController extends ModuleFrontController
             Tools::redirect('index.php');
         }
 
-        /** @var MolCustomerRepositoryInterface $molCustomerRepository */
-        $molCustomerRepository = $this->module->getService(MolCustomerRepositoryInterface::class);
+        try {
+            /** @var SubscriptionAvailabilityProvider $subscriptionAvailabilityProvider */
+            $subscriptionAvailabilityProvider = $this->module->getService(SubscriptionAvailabilityProvider::class);
 
-        /** @var RecurringOrdersPresenter $recurringOrdersPresenter */
-        $recurringOrdersPresenter = $this->module->getService(RecurringOrdersPresenter::class);
+            if (!$subscriptionAvailabilityProvider->isAvailableForCustomer($this->context->customer->email)) {
+                $logger->debug(sprintf('%s - Subscriptions not available for customer', self::FILE_NAME));
+                $this->prepareTemplate([]);
 
-        /** @var ?\MolCustomer $molCustomer */
-        $molCustomer = $molCustomerRepository->findOneBy([
-            'email' => $this->context->customer->email,
-        ]);
+                return;
+            }
 
-        $this->prepareTemplate(
-            $molCustomer ? $recurringOrdersPresenter->present($molCustomer->customer_id) : []
-        );
+            /** @var MolCustomerRepositoryInterface $molCustomerRepository */
+            $molCustomerRepository = $this->module->getService(MolCustomerRepositoryInterface::class);
 
-        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+            /** @var RecurringOrdersPresenter $recurringOrdersPresenter */
+            $recurringOrdersPresenter = $this->module->getService(RecurringOrdersPresenter::class);
+
+            /** @var ?\MolCustomer $molCustomer */
+            $molCustomer = $molCustomerRepository->findOneBy([
+                'email' => $this->context->customer->email,
+            ]);
+
+            $this->prepareTemplate(
+                $molCustomer ? $recurringOrdersPresenter->present($molCustomer->customer_id) : []
+            );
+
+            $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+        } catch (\Throwable $exception) {
+            $logger->error(sprintf('%s - Error in subscriptions controller', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+
+            // Fail safely - show empty template if there's an error
+            $this->prepareTemplate([]);
+        }
     }
 
     public function setMedia()
