@@ -26,7 +26,7 @@ $(document).ready(function () {
     }
   }
 
-  function showModal(action, productId, productAmount, orderline, availableQuantity) {
+  function showModal(action, productId, productAmount, orderline, availableQuantity, unitPrice) {
     var amount = productAmount;
 
     // For refund actions, get amount from input field if not provided
@@ -53,6 +53,7 @@ $(document).ready(function () {
       amount: amount,
       orderline: orderline || null,
       availableQuantity: availableQuantity || null,
+      unitPrice: unitPrice ? parseFloat(unitPrice) : null,
     };
 
     if (action === 'refund' || action === 'refundAll') {
@@ -78,10 +79,7 @@ $(document).ready(function () {
 
       if (orderline) {
         populateQuantitySelector('#mollie-refund-quantity', '#mollie-refund-quantity-group', availableQuantity);
-        updateRefundMessage(parseInt($('#mollie-refund-quantity').val(), 10) || 1);
-        $('#mollie-refund-quantity').off('change.mollieRefund').on('change.mollieRefund', function() {
-          updateRefundMessage(parseInt($(this).val(), 10) || 1);
-        });
+        $('#mollie-refund-quantity').trigger('change');
       } else {
         $('#mollie-refund-quantity-group').hide();
         updateRefundMessage(1);
@@ -115,8 +113,19 @@ $(document).ready(function () {
     var amount = $(this).data('price');
     var orderline = $(this).data('orderline');
     var availableQuantity = $(this).data('available-quantity');
+    var unitPrice = $(this).data('unit-price');
 
-    showModal('refund', productId, amount, orderline, availableQuantity);
+    showModal('refund', productId, amount, orderline, availableQuantity, unitPrice);
+  });
+
+  $('#mollie-refund-quantity').on('change', function() {
+    if (actionContext.action !== 'refund' || !actionContext.unitPrice) {
+      return;
+    }
+    var quantity = parseInt($(this).val(), 10) || 1;
+    var newAmount = (actionContext.unitPrice * quantity).toFixed(2);
+    actionContext.amount = newAmount;
+    $('#mollie-refund-modal-message').text(trans.refundPartialConfirm.replace('%s', newAmount));
   });
 
   $('.mollie-refund-shipping-btn').on('click', function() {

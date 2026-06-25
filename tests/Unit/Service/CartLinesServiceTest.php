@@ -504,6 +504,64 @@ class CartLinesServiceTest extends TestCase
                             ->setMetaData([]),
                 ],
             ],
+            'high value product line keeps Mollie-compatible vatAmount (PIPRES-781)' => [
+                'amount' => 12865.50,
+                'paymentFee' => new PaymentFeeData(0.00, 0.00, 0.00, false),
+                'currencyIsoCode' => $currencyIsoCode,
+                'cartSummary' => [
+                    'gift_products' => [
+                        ],
+                    'discounts' => [
+                        ],
+                    'total_wrapping' => 0,
+                    'total_wrapping_tax_exc' => 0,
+                    'total_shipping' => 0,
+                    'total_shipping_tax_exc' => 0,
+                    'total_products_wt' => 12865.50,
+                    'total_products' => 10811.34,
+                    'total_price' => 12865.50,
+                    'free_ship' => false,
+                ],
+                0,
+                'cartItems' => [
+                    0 => [
+                            'total_wt' => 12865.50,
+                            'cart_quantity' => '1',
+                            'price_wt' => 12865.50,
+                            'id_product' => '24',
+                            'name' => 'VAT Repro High Value',
+                            'rate' => 19,
+                            'id_product_attribute' => '0',
+                            'id_customization' => null,
+                            'features' => [],
+                            'link_rewrite' => 'test-link',
+                            'id_image' => 'test-image-id',
+                        ],
+                ],
+                'psGiftWrapping' => false,
+                'selectedVoucherCategory' => 'null',
+                'translationMocks' => [
+                ],
+                'toolsMocks' => [
+                ],
+                'mocks' => [],
+                'result' => [
+                    0 => (new OrderLine())
+                            ->setType('physical')
+                            ->setName('VAT Repro High Value')
+                            ->setQuantity(1)
+                            ->setSku('24¤0¤0')
+                            ->setDiscountAmount(null)
+                            ->setProductUrl('')
+                            ->setImageUrl('')
+                            ->setUnitPrice(new Amount($currencyIsoCode, '12865.50'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '12865.50'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '2054.16'))
+                            ->setCategory('')
+                            ->setVatRate('19.00')
+                            ->setMetaData(['idProduct' => '24']),
+                ],
+            ],
         ];
     }
 }

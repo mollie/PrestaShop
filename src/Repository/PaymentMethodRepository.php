@@ -149,6 +149,17 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
         return Db::getInstance()->executeS($sql);
     }
 
+    public function getMaxPosition($environment, $shopId): int
+    {
+        $sql = new DbQuery();
+        $sql->select('MAX(position)');
+        $sql->from('mol_payment_method');
+        $sql->where('live_environment = ' . (int) $environment);
+        $sql->where('id_shop = ' . (int) $shopId);
+
+        return (int) Db::getInstance()->getValue($sql, false);
+    }
+
     /**
      * @param string $oldTransactionId
      * @param string $newTransactionId
