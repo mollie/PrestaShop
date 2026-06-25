@@ -10,6 +10,8 @@ declare global {
       languages: Language[];
       onlyOrderMethods: string[];
       onlyPaymentsMethods: string[];
+      orderStatuses: { id: string; name: string }[];
+      manualCaptureEligibleMethods: string[];
     };
   }
 }
@@ -72,6 +74,12 @@ export interface PaymentMethod {
       directCart?: boolean
       buttonStyle?: 0 | 1 | 2 // 0: black, 1: outline, 2: white
     }
+    captureMode?: 'automatic' | 'manual'
+    isManualCaptureEligible?: boolean
+    autoCapture?: {
+      enabled: boolean
+      statuses: string[]
+    } | null
   }
 }
 
