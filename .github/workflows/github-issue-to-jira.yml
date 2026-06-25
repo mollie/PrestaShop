@@ -1,0 +1,101 @@
+name: Create Jira ticket from GitHub Issue
+on:
+  issues:
+    types: [opened]
+permissions:
+  contents: read
+  issues: write
+jobs:
+  create-jira-ticket:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set issue type
+        id: type
+        env:
+          LABELS: ${{ toJson(github.event.issue.labels.*.name) }}
+        run: |
+          if echo "$LABELS" | grep -qi "bug"; then
+            echo "ISSUE_TYPE=Bug" >> "$GITHUB_OUTPUT"
+          elif echo "$LABELS" | grep -qiE "enhancement|feature"; then
+            echo "ISSUE_TYPE=New Feature" >> "$GITHUB_OUTPUT"
+          else
+            echo "ISSUE_TYPE=Ticket" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Create Jira issue
+        id: create
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_TYPE: ${{ steps.type.outputs.ISSUE_TYPE }}
+        run: |
+          JSON=$(jq -n \
+            --arg title "$ISSUE_TITLE" \
+            --arg url "$ISSUE_URL" \
+            --arg body "$ISSUE_BODY" \
+            --arg type "$ISSUE_TYPE" \
+            '{
+              fields: {
+                project: {key: "PIPRES"},
+                summary: $title,
+                description: {
+                  type: "doc",
+                  version: 1,
+                  content: [{
+                    type: "paragraph",
+                    content: [{
+                      type: "text",
+                      text: ("GitHub Issue: " + $url + "\n" + $body)
+                    }]
+                  }]
+                },
+                issuetype: {name: $type},
+                assignee: {accountId: "712020:cb6e4ce8-62e8-4077-8737-220e32cf93fd"},
+                labels: ["github-issue", "prestashop"]
+              }
+            }')
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -u "${{ secrets.JIRA_USERNAME }}:${{ secrets.JIRA_API_TOKEN }}" \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -d "$JSON" \
+            "https://api.atlassian.com/ex/jira/c6d7ab52-daef-4ab7-9923-177bbb70dbc8/rest/api/3/issue")
+          HTTP_CODE=$(printf '%s' "$RESPONSE" | tail -n1)
+          BODY=$(printf '%s' "$RESPONSE" | sed '$d')
+          echo "HTTP $HTTP_CODE"
+          echo "$BODY"
+          if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
+            echo "::error::Jira issue creation failed (HTTP $HTTP_CODE)"
+            exit 1
+          fi
+          JIRA_KEY=$(printf '%s' "$BODY" | jq -r '.key // empty')
+          echo "JIRA_KEY=$JIRA_KEY" >> "$GITHUB_OUTPUT"
+      - name: Transition Jira issue
+        if: steps.create.outputs.JIRA_KEY != ''
+        continue-on-error: true
+        env:
+          JIRA_KEY: ${{ steps.create.outputs.JIRA_KEY }}
+        run: |
+          curl -s -o /dev/null -w "transition HTTP %{http_code}\n" \
+            -u "${{ secrets.JIRA_USERNAME }}:${{ secrets.JIRA_API_TOKEN }}" \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -d '{"transition": {"id": "21"}}' \
+            "https://api.atlassian.com/ex/jira/c6d7ab52-daef-4ab7-9923-177bbb70dbc8/rest/api/3/issue/${JIRA_KEY}/transitions"
+      - name: Comment Jira link on GitHub issue
+        if: steps.create.outputs.JIRA_KEY != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: 'Jira ticket created: [${{ steps.create.outputs.JIRA_KEY }}](https://mollie.atlassian.net/browse/${{ steps.create.outputs.JIRA_KEY }})'
+            })
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['jira-created']
+            })
