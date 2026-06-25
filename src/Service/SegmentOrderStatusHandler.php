@@ -15,10 +15,10 @@ declare(strict_types=1);
 namespace Mollie\Service;
 
 use Currency;
-use MolPaymentMethod;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use MolPaymentMethod;
 use Order;
 
 if (!defined('_PS_VERSION_')) {
