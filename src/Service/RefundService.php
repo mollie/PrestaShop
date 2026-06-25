@@ -108,9 +108,7 @@ class RefundService
             return TextFormatUtility::formatNumber($amount, 2);
         }
 
-        $settlementAmount = (float) $payment->settlementAmount->value;
-        $refundedAmount = (float) RefundUtility::getRefundedAmount(iterator_to_array($payment->refunds()));
-        $refundableAmount = RefundUtility::getRefundableAmount($settlementAmount, $refundedAmount);
+        $refundableAmount = $payment->getAmountRemaining();
 
         return $refundableAmount > 0 ? TextFormatUtility::formatNumber($refundableAmount, 2) : null;
     }
@@ -179,5 +177,28 @@ class RefundService
             : RefundUtility::getRefundedAmount(iterator_to_array($transaction->refunds()));
 
         return $refundedAmount >= $amount;
+    }
+
+    /**
+     * Return the list of refunded amounts for a Payments-API transaction.
+     * Used to match refunds back to order lines so per-line Refund buttons
+     * can be disabled once their matching amount has already been refunded.
+     *
+     * @return float[]
+     */
+    public function getRefundedAmounts(string $transactionId): array
+    {
+        if (TransactionUtility::isOrderTransaction($transactionId)) {
+            return [];
+        }
+
+        $payment = $this->module->getApiClient()->payments->get($transactionId, ['embed' => 'refunds']);
+
+        $amounts = [];
+        foreach ($payment->refunds() as $refund) {
+            $amounts[] = (float) $refund->amount->value;
+        }
+
+        return $amounts;
     }
 }

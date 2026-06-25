@@ -204,6 +204,17 @@ export interface MolliePaymentMethodsTranslations {
   apiNotConfiguredMessage: string;
   infoBannerText: string;
   mollieDashboard: string;
+
+  // Capture Mode
+  captureMode: string;
+  automatic: string;
+  manual: string;
+  captureModeAutomatic: string;
+  captureModeManual: string;
+  autoCaptureOnStatus: string;
+  autoCaptureStatuses: string;
+  autoCaptureInfo: string;
+  selectStatuses: string;
 }
 
 export interface MollieAdvancedSettingsTranslations {

@@ -28,6 +28,8 @@ interface PaymentMethodRepositoryInterface extends ReadOnlyRepositoryInterface
 
     public function getMethodsForCheckout($environment, $shopId);
 
+    public function getMaxPosition($environment, $shopId): int;
+
     public function updateTransactionId($oldTransactionId, $newTransactionId);
 
     public function savePaymentStatus($transactionId, $status, $orderId, $paymentMethod);
@@ -38,5 +40,5 @@ interface PaymentMethodRepositoryInterface extends ReadOnlyRepositoryInterface
 
     public function getCustomerGroupsForPaymentMethod(int $paymentMethodId): array;
 
-    public function getLatestPaymentByCustomerAndMethod($customerId, $method, array $statuses);
+    public function isManualCapture(string $methodId, int $environment, ?int $shopId = null): bool;
 }

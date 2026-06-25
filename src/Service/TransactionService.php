@@ -208,7 +208,8 @@ class TransactionService
                     $this->orderStatusService->setOrderStatus($orderId, Config::MOLLIE_CHARGEBACK);
                 } else {
                     if (!$orderId && $isPaymentFinished) {
-                        $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id);
+                        $isManualCapturePayment = $this->isManualCapturePayment($apiPayment);
+                        $orderId = $this->orderCreationHandler->createOrder($apiPayment, $cart->id, $isManualCapturePayment);
 
                         if (!$orderId) {
                             throw new TransactionException('Order is already created', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
@@ -535,6 +536,11 @@ class TransactionService
     private function handlePaymentDescription(Payment $apiPayment)
     {
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('order_reference', $apiPayment->description);
+
+        if (!$paymentMethod) {
+            $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
+        }
+
         if ($paymentMethod) {
             $orderId = Order::getIdByCartId($paymentMethod['cart_id']);
             if (!$orderId) {
@@ -551,6 +557,11 @@ class TransactionService
     private function handleOrderDescription(MollieOrderAlias $apiPayment)
     {
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('order_reference', $apiPayment->orderNumber);
+
+        if (!$paymentMethod) {
+            $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
+        }
+
         if ($paymentMethod) {
             $orderId = Order::getIdByCartId($paymentMethod['cart_id']);
             if (!$orderId) {
@@ -582,5 +593,20 @@ class TransactionService
     private function paymentHasChargedBacks(Payment $apiPayment): bool
     {
         return $apiPayment->hasChargebacks();
+    }
+
+    private function isManualCapturePayment($apiPayment): bool
+    {
+        if ($apiPayment->status !== \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED) {
+            return false;
+        }
+
+        if (!in_array($apiPayment->method, Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS)) {
+            return false;
+        }
+
+        $environment = (int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT);
+
+        return $this->paymentMethodRepository->isManualCapture($apiPayment->method, $environment);
     }
 }
