@@ -6,6 +6,8 @@
 + Fixed VAT amount calculation on high-value order lines causing Mollie API 422 errors
 
 ## Changes in release 6.4.3
++ Fixed Payments API per-line Refund button not updating after a successful refund
++ Surfaced a clearer message when Mollie rejects a refund as a duplicate of a recent one
 + Fixed refund confirmation modal amount to reflect selected quantity for multi-unit order lines
 + Fixed Payment API race condition causing false "payment failed" errors
 + Fixed rounding distribution for whole-number differences in order line amounts

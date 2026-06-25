@@ -615,9 +615,11 @@ class Mollie extends PaymentModule
                 return false;
             }
 
-            $products = TransactionUtility::isOrderTransaction($mollieTransactionId)
-                ? $this->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])->lines
-                : $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments'])->lines; // @phpstan-ignore-line
+            if (TransactionUtility::isOrderTransaction($mollieTransactionId)) {
+                $products = $this->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])->lines;
+            } else {
+                $products = $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments'])->lines; // @phpstan-ignore-line
+            }
 
             $mollieLogoPath = $this->getMollieLogoPath();
 
@@ -689,6 +691,52 @@ class Mollie extends PaymentModule
                 }
             }
 
+            $shippingAmount = 0.0;
+            $shippingRefunded = false;
+            if ($mollieApiType === 'payments') {
+                $paymentApi = $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'refunds']);
+                $refundedByDetail = [];
+                foreach ($paymentApi->refunds() as $refund) {
+                    $meta = $refund->metadata;
+                    if (is_string($meta)) {
+                        $meta = json_decode($meta);
+                    }
+                    if (is_object($meta) && isset($meta->id_order_detail)) {
+                        $detailId = (int) $meta->id_order_detail;
+                        $qty = isset($meta->quantity) ? (int) $meta->quantity : 0;
+                        $refundedByDetail[$detailId] = ($refundedByDetail[$detailId] ?? 0) + $qty;
+                    }
+                    if (is_object($meta) && isset($meta->refund_type) && $meta->refund_type === 'shipping') {
+                        $shippingRefunded = true;
+                    }
+                }
+                $shippingAmount = (float) $order->total_shipping_tax_incl;
+
+                $products = [];
+                foreach ($order->getProducts() as $psProduct) {
+                    $detailId = (int) $psProduct['id_order_detail'];
+                    $qty = (int) $psProduct['product_quantity'];
+                    $unitPrice = (float) $psProduct['unit_price_tax_incl'];
+                    $refundedQty = (int) ($refundedByDetail[$detailId] ?? 0);
+                    $remainingQty = max(0, $qty - $refundedQty);
+
+                    $row = new stdClass();
+                    $row->id = $detailId;
+                    $row->description = (string) $psProduct['product_name'];
+                    $row->quantity = $qty;
+                    $row->quantityRefunded = $refundedQty;
+                    $row->totalAmount = (object) ['value' => number_format($unitPrice * $qty, 2, '.', '')];
+                    $row->unitPrice = number_format($unitPrice, 2, '.', '');
+                    $products[] = $row;
+
+                    $lineActions[$detailId] = [
+                        'canRefund' => !$isRefunded && $remainingQty > 0 && $refundableAmount > 0,
+                        'refundableQuantity' => $remainingQty,
+                        'unitPrice' => $unitPrice,
+                    ];
+                }
+            }
+
             $canShipAny = false;
             $canCancelAny = false;
             $canRefundAny = false;
@@ -698,13 +746,13 @@ class Mollie extends PaymentModule
                 $canRefundAny = !$isRefunded && !$isCanceled && $refundableAmount > 0;
             } else {
                 foreach ($lineActions as $actions) {
-                    if ($actions['canShip']) {
+                    if (!empty($actions['canShip'])) {
                         $canShipAny = true;
                     }
-                    if ($actions['canCancel']) {
+                    if (!empty($actions['canCancel'])) {
                         $canCancelAny = true;
                     }
-                    if ($actions['canRefund']) {
+                    if (!empty($actions['canRefund'])) {
                         $canRefundAny = true;
                     }
                 }
@@ -723,6 +771,8 @@ class Mollie extends PaymentModule
                 'isCaptured' => $isCaptured,
                 'isShipped' => $isShipped,
                 'isCanceled' => $isCanceled,
+                'shipping_amount' => number_format($shippingAmount, 2, '.', ''),
+                'shipping_refunded' => $shippingRefunded,
                 'canShipAny' => $canShipAny,
                 'canCancelAny' => $canCancelAny,
                 'canRefundAny' => $canRefundAny,

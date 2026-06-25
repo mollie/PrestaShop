@@ -57,19 +57,32 @@ $(document).ready(function () {
     };
 
     if (action === 'refund' || action === 'refundAll') {
-      // Update modal message based on action type
-      if (action === 'refundAll') {
-        $('#mollie-refund-modal-message').text(trans.refundFullOrderConfirm);
-      } else if (amount) {
-        $('#mollie-refund-modal-message').text(trans.refundPartialConfirm.replace('%s', amount));
-      } else {
+      var unitPrice = parseFloat(productAmount);
+      actionContext.unitPrice = isNaN(unitPrice) ? null : unitPrice;
+
+      function updateRefundMessage(qty) {
+        if (action === 'refundAll') {
+          $('#mollie-refund-modal-message').text(trans.refundFullOrderConfirm);
+          return;
+        }
+        if (actionContext.unitPrice !== null && orderline) {
+          var total = (actionContext.unitPrice * qty).toFixed(2);
+          $('#mollie-refund-modal-message').text(trans.refundPartialConfirm.replace('%s', total));
+          return;
+        }
+        if (amount) {
+          $('#mollie-refund-modal-message').text(trans.refundPartialConfirm.replace('%s', amount));
+          return;
+        }
         $('#mollie-refund-modal-message').text(trans.refundOrderConfirm);
       }
+
       if (orderline) {
         populateQuantitySelector('#mollie-refund-quantity', '#mollie-refund-quantity-group', availableQuantity);
         $('#mollie-refund-quantity').trigger('change');
       } else {
         $('#mollie-refund-quantity-group').hide();
+        updateRefundMessage(1);
       }
       $('#mollieRefundModal').modal('show');
     } else if (action === 'ship' || action === 'shipAll') {
@@ -113,6 +126,19 @@ $(document).ready(function () {
     var newAmount = (actionContext.unitPrice * quantity).toFixed(2);
     actionContext.amount = newAmount;
     $('#mollie-refund-modal-message').text(trans.refundPartialConfirm.replace('%s', newAmount));
+  });
+
+  $('.mollie-refund-shipping-btn').on('click', function() {
+    var amount = $(this).data('price');
+    actionContext = {
+      action: 'refundShipping',
+      transactionId: transaction_id,
+      resource: resource,
+      amount: amount,
+    };
+    $('#mollie-refund-modal-message').text(trans.refundPartialConfirm.replace('%s', amount));
+    $('#mollie-refund-quantity-group').hide();
+    $('#mollieRefundModal').modal('show');
   });
 
   $('.mollie-ship-btn').on('click', function() {
@@ -262,6 +288,10 @@ $(document).ready(function () {
     } else if (context.action === 'refundAll') {
       // For refundAll, don't pass amount to let the service calculate the full refundable amount
       data.refundAmount = null;
+    } else if (context.action === 'refundShipping') {
+      data.refundAmount = context.amount;
+      data.refundType = 'shipping';
+      data.action = 'refund';
     }
 
     // Add capture amount for capture actions
