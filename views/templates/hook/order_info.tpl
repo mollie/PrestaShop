@@ -67,17 +67,17 @@
               {if $mollie_api_type == 'orders' && isset($lineActions[$product->id])}
                 {assign var="actions" value=$lineActions[$product->id]}
                 {if $actions.canShip || $actions.shippableQuantity > 0}
-                <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$actions.shippableQuantity}" {if !$actions.canShip}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-ship-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$actions.shippableQuantity|escape:'html':'UTF-8'}" {if !$actions.canShip}disabled{/if}>
                   <i class="material-icons">local_shipping</i> {l s='Ship' mod='mollie'}
                 </button>
                 {/if}
                 {if $actions.canCancel || $actions.cancelableQuantity > 0}
-                <button type="button" class="btn btn-default btn-xs mollie-cancel-btn" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$actions.cancelableQuantity}" {if !$actions.canCancel}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-cancel-btn" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$actions.cancelableQuantity|escape:'html':'UTF-8'}" {if !$actions.canCancel}disabled{/if}>
                   <i class="material-icons">cancel</i> {l s='Cancel' mod='mollie'}
                 </button>
                 {/if}
                 {if $actions.canRefund || $actions.refundableQuantity > 0}
-                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" data-unit-price="{$product->unitPrice->value|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$actions.refundableQuantity}" {if !$actions.canRefund}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" data-unit-price="{$product->unitPrice->value|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$actions.refundableQuantity|escape:'html':'UTF-8'}" {if !$actions.canRefund}disabled{/if}>
                   <i class="material-icons">replay</i> {l s='Refund' mod='mollie'}
                 </button>
                 {/if}
