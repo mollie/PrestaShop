@@ -27,6 +27,7 @@
 + Improved front office subscription tab handling
 + Improved company name validation by replacing special characters
 + Redirected bank transfer to order confirmation instead of custom page
++ Hid "Refund All" button for Klarna and other authorizable Orders API payments until at least one line is shipped
 + Fixed payment method ordering mismatch between admin panel and checkout page
 
 ## Changes in release 6.4.2

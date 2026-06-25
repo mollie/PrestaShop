@@ -629,7 +629,7 @@ class Mollie extends PaymentModule
 
             $isRefunded = $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid);
             $isCaptured = $captureService->isCaptured($mollieTransactionId);
-            $isShipped = $shipService->isShipped($mollieTransactionId);
+            $isShipped = $shipService->isShipped($mollieTransactionId, $products);
             $isCanceled = $cancelService->isCanceled($mollieTransactionId);
 
             if ($mollieApiType === 'payments' && $products) {
@@ -691,6 +691,12 @@ class Mollie extends PaymentModule
                     ];
                 }
             }
+
+            $isAuthorizablePayment = isset($transaction['method'])
+                && in_array($transaction['method'], Config::AUTHORIZABLE_PAYMENTS, true);
+            $hasAnyShipment = $mollieApiType === 'orders'
+                ? $shipService->hasAnyShipment($mollieTransactionId, $products)
+                : false;
 
             $shippingAmount = 0.0;
             $shippingRefunded = false;
@@ -772,6 +778,8 @@ class Mollie extends PaymentModule
                 'isCaptured' => $isCaptured,
                 'isShipped' => $isShipped,
                 'isCanceled' => $isCanceled,
+                'isAuthorizablePayment' => $isAuthorizablePayment,
+                'hasAnyShipment' => $hasAnyShipment,
                 'shipping_amount' => number_format($shippingAmount, 2, '.', ''),
                 'shipping_refunded' => $shippingRefunded,
                 'canShipAny' => $canShipAny,

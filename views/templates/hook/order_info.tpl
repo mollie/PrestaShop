@@ -127,9 +127,12 @@
       </tbody>
     </table>
     {if $mollie_api_type == 'orders'}
-      <button type="button" class="btn btn-default btn-block" id="mollie-refund-all-orders" {if !$canRefundAny}disabled{/if}>
+      <button type="button" class="btn btn-default btn-block" id="mollie-refund-all-orders" {if !$canRefundAny || ($isAuthorizablePayment && !$hasAnyShipment)}disabled{/if}>
         <i class="material-icons">replay</i> {l s='Refund all' mod='mollie'}
       </button>
+      {if $isAuthorizablePayment && !$hasAnyShipment}
+        <p class="help-block mt-1">{l s='Refund is available after the order has been shipped (fully or partially).' mod='mollie'}</p>
+      {/if}
       <button type="button" class="btn btn-default btn-block" id="mollie-ship-all" {if !$canShipAny}disabled{/if}>
         <i class="material-icons">local_shipping</i> {l s='Ship All' mod='mollie'}
       </button>
