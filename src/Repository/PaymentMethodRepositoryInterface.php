@@ -40,5 +40,9 @@ interface PaymentMethodRepositoryInterface extends ReadOnlyRepositoryInterface
 
     public function getCustomerGroupsForPaymentMethod(int $paymentMethodId): array;
 
+    public function countEnabledMethods(int $environment, int $shopId): int;
+
+    public function hasAnySuccessfulPayment(): bool;
+
     public function isManualCapture(string $methodId, int $environment, ?int $shopId = null): bool;
 }

@@ -249,4 +249,26 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 
         return array_column($results, 'id_customer_group');
     }
+
+    public function countEnabledMethods(int $environment, int $shopId): int
+    {
+        $result = Db::getInstance()->getValue(
+            'SELECT COUNT(*) FROM `' . _DB_PREFIX_ . 'mol_payment_method`
+            WHERE `live_environment` = ' . (int) $environment . '
+            AND `id_shop` = ' . (int) $shopId . '
+            AND `enabled` = 1'
+        );
+
+        return (int) $result;
+    }
+
+    public function hasAnySuccessfulPayment(): bool
+    {
+        $result = Db::getInstance()->getValue(
+            'SELECT 1 FROM `' . _DB_PREFIX_ . 'mollie_payments`
+            WHERE `bank_status` IN (\'paid\', \'authorized\')'
+        );
+
+        return (bool) $result;
+    }
 }

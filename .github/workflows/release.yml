@@ -52,6 +52,7 @@ jobs:
           rm -rf vendor/segmentio/analytics-php/.github
 
           cp .env.dist .env
+          echo "SEGMENT_API_KEY='${{ secrets.SEGMENT_API_KEY }}'" >> .env
 
           # Create module directory structure
           mkdir ${{ env.MODULE_NAME }}

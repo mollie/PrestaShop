@@ -24,7 +24,6 @@ use Mollie\Config\Config;
 use Mollie\Exception\CouldNotInstallModule;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
-use Mollie\Tracker\Segment;
 use Mollie\Utility\MultiLangUtility;
 use OrderState;
 use PrestaShopException;
@@ -56,11 +55,6 @@ class Installer implements InstallerInterface
     private $databaseTableInstaller;
 
     /**
-     * @var Segment
-     */
-    private $segment;
-
-    /**
      * @var ConfigurationAdapter
      */
     private $configurationAdapter;
@@ -70,22 +64,17 @@ class Installer implements InstallerInterface
     public function __construct(
         ModuleFactory $moduleFactory,
         DatabaseTableInstaller $databaseTableInstaller,
-        Segment $segment,
         ConfigurationAdapter $configurationAdapter,
         OrderStateInstaller $orderStateInstaller
     ) {
         $this->module = $moduleFactory->getModule();
         $this->databaseTableInstaller = $databaseTableInstaller;
-        $this->segment = $segment;
         $this->configurationAdapter = $configurationAdapter;
         $this->orderStateInstaller = $orderStateInstaller;
     }
 
     public function install()
     {
-        $this->segment->setMessage('Mollie installed');
-        $this->segment->track();
-
         $errorHandler = ErrorHandler::getInstance();
 
         foreach (self::getHooks() as $hook) {

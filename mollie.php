@@ -32,6 +32,7 @@ use Mollie\Service\CaptureService;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\MollieOrderService;
 use Mollie\Service\RefundService;
+use Mollie\Service\SegmentOrderStatusHandler;
 use Mollie\Service\ShipService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
 use Mollie\Subscription\Config\Config as SubscriptionConfig;
@@ -144,7 +145,7 @@ class Mollie extends PaymentModule
 
     private function loadEnv()
     {
-        if (!class_exists('\Dotenv\Dotenv')) {
+        if (!class_exists('\Symfony\Component\Dotenv\Dotenv')) {
             return;
         }
 
@@ -229,6 +230,15 @@ class Mollie extends PaymentModule
 
         $logger->debug('Mollie subscription install successful');
 
+        /** @var ConfigurationAdapter $configuration */
+        $configuration = $this->getService(ConfigurationAdapter::class);
+        $configuration->updateValue(Config::MOLLIE_SEGMENT_INSTALL_TIMESTAMP, time());
+        $configuration->updateValue(Config::MOLLIE_SEGMENT_INSTALLED_VERSION, $this->version);
+
+        /** @var \Mollie\Service\SegmentTracker $segmentTracker */
+        $segmentTracker = $this->getService(\Mollie\Service\SegmentTracker::class);
+        $segmentTracker->trackModuleInstalled('manual');
+
         return true;
     }
 
@@ -257,7 +267,37 @@ class Mollie extends PaymentModule
             return false;
         }
 
-        return parent::enable($force_all);
+        $result = parent::enable($force_all);
+
+        if ($result) {
+            /** @var ConfigurationAdapter $configuration */
+            $configuration = $this->getService(ConfigurationAdapter::class);
+            /** @var \Mollie\Service\SegmentTracker $segmentTracker */
+            $segmentTracker = $this->getService(\Mollie\Service\SegmentTracker::class);
+
+            $storedVersion = $configuration->get(Config::MOLLIE_SEGMENT_INSTALLED_VERSION);
+            if ($storedVersion && $storedVersion !== $this->version) {
+                $segmentTracker->trackModuleUpgraded($storedVersion);
+            }
+            $configuration->updateValue(Config::MOLLIE_SEGMENT_INSTALLED_VERSION, $this->version);
+
+            $segmentTracker->trackModuleEnabled();
+        }
+
+        return $result;
+    }
+
+    public function disable($force_all = false)
+    {
+        $result = parent::disable($force_all);
+
+        if ($result) {
+            /** @var \Mollie\Service\SegmentTracker $segmentTracker */
+            $segmentTracker = $this->getService(\Mollie\Service\SegmentTracker::class);
+            $segmentTracker->trackModuleDisabled();
+        }
+
+        return $result;
     }
 
     /**
@@ -975,6 +1015,15 @@ class Mollie extends PaymentModule
             ]);
 
             return;
+        }
+
+        $paidStatusId = (int) Configuration::get(Config::MOLLIE_STATUS_PAID);
+        $authorizedStatusId = (int) Configuration::get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED);
+
+        if ((int) $orderStatus->id === $paidStatusId || (int) $orderStatus->id === $authorizedStatusId) {
+            /** @var SegmentOrderStatusHandler $segmentOrderStatusHandler */
+            $segmentOrderStatusHandler = $this->getService(SegmentOrderStatusHandler::class);
+            $segmentOrderStatusHandler->trackFirstPaymentCompleted($order);
         }
 
         /** @var ShipmentSenderHandlerInterface $shipmentSenderHandler */
