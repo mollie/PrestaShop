@@ -74,6 +74,7 @@ export interface PaymentMethod {
       directCart?: boolean
       buttonStyle?: 0 | 1 | 2 // 0: black, 1: outline, 2: white
     }
+    bankTransferDueDays?: string
     captureMode?: 'automatic' | 'manual'
     isManualCaptureEligible?: boolean
     autoCapture?: {
