@@ -3,7 +3,9 @@
 # Changelog #
 
 ## Changes in release 6.4.4
-+ Fixed VAT amount calculation on high-value order lines causing Mollie API 422 errors
++ Fixed Apple Pay not displaying at checkout on PrestaShop 9
++ Fixed Apple Pay Direct button on the product page in the Hummingbird theme
++ Added diagnostic logging when a payment method is hidden by a restriction
 
 ## Changes in release 6.4.3
 + Fixed Payments API per-line Refund button not updating after a successful refund

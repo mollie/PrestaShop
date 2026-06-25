@@ -359,7 +359,8 @@ class Mollie extends PaymentModule
         ]);
         $this->context->controller->addJS("{$this->_path}views/js/front/mollie_error_handle.js");
         $this->context->controller->addCSS("{$this->_path}views/css/mollie_iframe.css");
-        if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+        $sslConfigKey = VersionUtility::isPsVersionGreaterOrEqualTo('9.0.0') ? 'PS_SSL_ENABLED' : 'PS_SSL_ENABLED_EVERYWHERE';
+        if (Configuration::get($sslConfigKey)) {
             $this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
         }
         $this->context->smarty->assign([
