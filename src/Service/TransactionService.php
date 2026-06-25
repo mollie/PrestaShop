@@ -536,6 +536,11 @@ class TransactionService
     private function handlePaymentDescription(Payment $apiPayment)
     {
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('order_reference', $apiPayment->description);
+
+        if (!$paymentMethod) {
+            $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
+        }
+
         if ($paymentMethod) {
             $orderId = Order::getIdByCartId($paymentMethod['cart_id']);
             if (!$orderId) {
@@ -552,6 +557,11 @@ class TransactionService
     private function handleOrderDescription(MollieOrderAlias $apiPayment)
     {
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('order_reference', $apiPayment->orderNumber);
+
+        if (!$paymentMethod) {
+            $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
+        }
+
         if ($paymentMethod) {
             $orderId = Order::getIdByCartId($paymentMethod['cart_id']);
             if (!$orderId) {

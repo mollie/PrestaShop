@@ -8,6 +8,9 @@
 + Added diagnostic logging when a payment method is hidden by a restriction
 
 ## Changes in release 6.4.3
++ Fixed Payments API per-line Refund button not updating after a successful refund
++ Surfaced a clearer message when Mollie rejects a refund as a duplicate of a recent one
++ Fixed refund confirmation modal amount to reflect selected quantity for multi-unit order lines
 + Fixed Payment API race condition causing false "payment failed" errors
 + Fixed rounding distribution for whole-number differences in order line amounts
 + Fixed Apple Pay Direct payment when country is not active in shop
@@ -24,6 +27,7 @@
 + Improved front office subscription tab handling
 + Improved company name validation by replacing special characters
 + Redirected bank transfer to order confirmation instead of custom page
++ Fixed payment method ordering mismatch between admin panel and checkout page
 
 ## Changes in release 6.4.2
 + Multiple Apple Pay Direct improvements and stability fixes
