@@ -50,7 +50,7 @@ class RefundService
      *
      * @return array
      */
-    public function handleRefund(string $transactionId, ?float $amount = null, ?string $orderLineId = null, ?int $quantity = null)
+    public function handleRefund(string $transactionId, ?float $amount = null, ?string $orderLineId = null, ?int $quantity = null, ?int $orderId = null, ?string $refundType = null)
     {
         try {
             $payment = TransactionUtility::isOrderTransaction($transactionId)
@@ -60,6 +60,12 @@ class RefundService
             $isPartialRefund = !empty($orderLineId) || $amount !== null;
 
             $currency = $payment->amount->currency;
+
+            if ($refundType === 'shipping' && $orderId && $amount !== null) {
+                $refundAmount = $this->refundShipping($payment, (float) $amount, $orderId);
+
+                return $this->createSuccessResponse(true, $refundAmount, $currency);
+            }
 
             if (TransactionUtility::isOrderTransaction($transactionId)) {
                 if ($orderLineId) {
@@ -79,6 +85,12 @@ class RefundService
                 return $this->createSuccessResponse(false, null, $currency);
             }
 
+            if ($orderLineId && $orderId) {
+                $refundAmount = $this->refundPaymentLine($payment, (int) $orderLineId, $orderId, $quantity ?: 1);
+
+                return $this->createSuccessResponse(true, $refundAmount, $currency);
+            }
+
             $refundAmount = $this->calculateRefundAmount($payment, $amount);
             if (!$refundAmount) {
                 $refundAmount = $payment->amount->value;
@@ -90,6 +102,13 @@ class RefundService
 
             return $this->createSuccessResponse($isPartial, $refundAmount, $currency);
         } catch (ApiException $e) {
+            if ($e->getCode() === 409 && stripos($e->getMessage(), 'duplicate refund') !== false) {
+                return $this->createErrorResponse(
+                    'A matching refund was just processed on this payment. Please wait a minute and try again.',
+                    $e
+                );
+            }
+
             return $this->createErrorResponse('The order could not be refunded!', $e);
         } catch (Throwable $e) {
             return $this->createErrorResponse('Something went wrong while processing the refund.', $e);
@@ -108,9 +127,7 @@ class RefundService
             return TextFormatUtility::formatNumber($amount, 2);
         }
 
-        $settlementAmount = (float) $payment->settlementAmount->value;
-        $refundedAmount = (float) RefundUtility::getRefundedAmount(iterator_to_array($payment->refunds()));
-        $refundableAmount = RefundUtility::getRefundableAmount($settlementAmount, $refundedAmount);
+        $refundableAmount = $payment->getAmountRemaining();
 
         return $refundableAmount > 0 ? TextFormatUtility::formatNumber($refundableAmount, 2) : null;
     }
@@ -130,6 +147,64 @@ class RefundService
                 'value' => $refundAmount,
             ],
         ]);
+    }
+
+    private function refundShipping(Payment $payment, float $amount, int $orderId): string
+    {
+        $order = new \Order($orderId);
+        $refundAmount = TextFormatUtility::formatNumber($amount, 2);
+
+        $payment->refund([
+            'amount' => [
+                'currency' => $payment->amount->currency,
+                'value' => $refundAmount,
+            ],
+            'description' => sprintf('Order %s — shipping', $order->reference),
+            'metadata' => [
+                'refund_type' => 'shipping',
+                'id_order' => $orderId,
+            ],
+        ]);
+
+        return $refundAmount;
+    }
+
+    private function refundPaymentLine(Payment $payment, int $idOrderDetail, int $orderId, int $quantity): string
+    {
+        $order = new \Order($orderId);
+        $unitPrice = null;
+        $availableQty = 0;
+        $productName = null;
+        foreach ($order->getProducts() as $product) {
+            if ((int) $product['id_order_detail'] === $idOrderDetail) {
+                $unitPrice = (float) $product['unit_price_tax_incl'];
+                $availableQty = (int) $product['product_quantity'];
+                $productName = (string) $product['product_name'];
+                break;
+            }
+        }
+
+        if ($unitPrice === null) {
+            throw new \RuntimeException(sprintf('Order detail %d not found on order %d', $idOrderDetail, $orderId));
+        }
+
+        $quantity = max(1, min($quantity, $availableQty));
+        $refundAmount = TextFormatUtility::formatNumber($unitPrice * $quantity, 2);
+
+        $payment->refund([
+            'amount' => [
+                'currency' => $payment->amount->currency,
+                'value' => $refundAmount,
+            ],
+            'description' => sprintf('Order %s — %d× %s', $order->reference, $quantity, $productName),
+            'metadata' => [
+                'id_order_detail' => $idOrderDetail,
+                'quantity' => $quantity,
+                'id_order' => $orderId,
+            ],
+        ]);
+
+        return $refundAmount;
     }
 
     /**

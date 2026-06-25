@@ -62,6 +62,21 @@ class CalculationUtilityTest extends TestCase
         $this->assertEquals($result, $vatRate);
     }
 
+    /**
+     * @dataProvider vatAmountDataProvider
+     *
+     * @param $totalAmount
+     * @param $vatRate
+     * @param $precision
+     * @param $result
+     */
+    public function testGetVatAmount($totalAmount, $vatRate, $precision, $result)
+    {
+        $vatAmount = CalculationUtility::getVatAmount($totalAmount, $vatRate, $precision);
+
+        $this->assertSame($result, $vatAmount);
+    }
+
     public function remainingPriceDataProvider()
     {
         return [
@@ -103,6 +118,36 @@ class CalculationUtilityTest extends TestCase
                     'unitPrice' => 1234,
                     'targetVat' => 24,
                     'result' => 995.16,
+                ],
+        ];
+    }
+
+    public function vatAmountDataProvider()
+    {
+        return [
+            'standard rate small amount' => [
+                    'totalAmount' => 100.0,
+                    'vatRate' => 21.0,
+                    'precision' => 2,
+                    'result' => 17.36,
+                ],
+            'high value line (PIPRES-781)' => [
+                    'totalAmount' => 12865.50,
+                    'vatRate' => 19.0,
+                    'precision' => 2,
+                    'result' => 2054.16,
+                ],
+            'high value line from Mollie 422 log' => [
+                    'totalAmount' => 17671.79,
+                    'vatRate' => 19.0,
+                    'precision' => 2,
+                    'result' => 2821.55,
+                ],
+            'zero rate returns zero' => [
+                    'totalAmount' => 100.0,
+                    'vatRate' => 0.0,
+                    'precision' => 2,
+                    'result' => 0.0,
                 ],
         ];
     }
