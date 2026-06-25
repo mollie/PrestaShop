@@ -33,6 +33,7 @@ use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\Utility\NumberUtility;
+use Mollie\Utility\VersionUtility;
 use MolPaymentMethod;
 use PrestaShopDatabaseException;
 use PrestaShopException;
@@ -151,7 +152,8 @@ class ApiService implements ApiServiceInterface
 
         $methods = [];
         $deferredMethods = [];
-        $isSSLEnabled = $this->configurationAdapter->get('PS_SSL_ENABLED_EVERYWHERE');
+        $sslConfigKey = VersionUtility::isPsVersionGreaterOrEqualTo('9.0.0') ? 'PS_SSL_ENABLED' : 'PS_SSL_ENABLED_EVERYWHERE';
+        $isSSLEnabled = $this->configurationAdapter->get($sslConfigKey);
         foreach ($apiMethods as $apiMethod) {
             $tipEnableSSL = false;
             if (Config::APPLEPAY === $apiMethod->id && !$isSSLEnabled) {
