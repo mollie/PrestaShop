@@ -104,6 +104,7 @@ final class UpdateApplePayShippingContactHandler
                 $address->country = $command->getCountry();
                 $address->city = $command->getLocality();
                 $address->id_customer = $customerId;
+                $address->deleted = true;
                 $address->update();
 
                 return $address;
@@ -120,6 +121,8 @@ final class UpdateApplePayShippingContactHandler
         $address->id_country = Country::getByIso($command->getCountryCode());
         $address->country = $command->getCountry();
         $address->city = $command->getLocality();
+        // Soft-deleted on purpose: this is a temporary Apple Pay sheet address. Keeping it deleted hides it from the customer's address book if the payment is abandoned; real data is written on order creation.
+        $address->deleted = true;
         $address->add();
 
         return $address;
@@ -145,6 +148,8 @@ final class UpdateApplePayShippingContactHandler
         $customer->lastname = 'applePay';
         $customer->email = 'applepay-' . (int) $cart->id . '@mollie.com';
         $customer->passwd = Tools::hash(microtime());
+        // Soft-deleted on purpose: hides this throwaway guest from the Customers list if the payment is abandoned; it is restored on order creation.
+        $customer->deleted = true;
         $customer->add();
 
         return $customer;

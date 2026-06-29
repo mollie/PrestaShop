@@ -246,10 +246,12 @@ function createRequest(countryCode, currencyCode, totalLabel, subtotal) {
         merchantCapabilities: ['supports3DS'],
         shippingType: 'shipping',
         requiredBillingContactFields: [
+            'name',
             'postalAddress',
             'email'
         ],
         requiredShippingContactFields: [
+            'name',
             'postalAddress',
             'email'
         ],

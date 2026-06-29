@@ -8,6 +8,8 @@
 + Added Bulgarian translations
 + Fixed Apple Pay not displaying at checkout on PrestaShop 9
 + Fixed Apple Pay Direct button on the product page in the Hummingbird theme
++ Fixed Apple Pay Direct creating fictitious "ApplePay" placeholder addresses and guest records on customer accounts
++ Prevented Apple Pay Direct from overwriting a registered customer's saved name and email
 + Fixed Payments API per-line Refund button not updating after a successful refund
 + Surfaced a clearer message when Mollie rejects a refund as a duplicate of a recent one
 + Fixed refund confirmation modal amount to reflect selected quantity for multi-unit order lines
