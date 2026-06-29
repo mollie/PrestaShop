@@ -123,3 +123,20 @@
 {include file="module:mollie/views/templates/hook/partials/modal_ship.tpl"}
 {include file="module:mollie/views/templates/hook/partials/modal_capture.tpl"}
 {include file="module:mollie/views/templates/hook/partials/modal_cancel.tpl"}
+
+{* Define the globals expected by order_info.js and load the script inline. Required on the
+   PS 1.7.7+ Symfony order page, where hookActionAdminControllerSetMedia does not enqueue these
+   assets (its 'controller'/'id_order' GET-parameter guard is never satisfied on a Symfony route). *}
+{if isset($mollie_order_info_config)}
+<script type="text/javascript">
+  (function () {
+    var cfg = {$mollie_order_info_config nofilter};
+    window.ajax_url = cfg.ajax_url;
+    window.transaction_id = cfg.transaction_id;
+    window.resource = cfg.resource;
+    window.order_id = cfg.order_id;
+    window.trans = cfg.trans;
+  })();
+</script>
+<script type="text/javascript" src="{$mollie_order_info_js|escape:'html':'UTF-8'}"></script>
+{/if}

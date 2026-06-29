@@ -8,6 +8,11 @@
  * @see        https://github.com/mollie/PrestaShop
  */
 $(document).ready(function () {
+  // Idempotency guard: the script may be enqueued both by the media pipeline (legacy pages)
+  // and inline from the template (Symfony order page); bind the handlers only once.
+  if (window.mollieOrderInfoInitialized) { return; }
+  window.mollieOrderInfoInitialized = true;
+
   var actionContext = {};
 
   function populateQuantitySelector(selectId, groupId, maxQuantity) {
