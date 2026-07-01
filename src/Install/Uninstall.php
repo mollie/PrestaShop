@@ -14,7 +14,7 @@ namespace Mollie\Install;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
-use Mollie\Tracker\Segment;
+use Mollie\Service\SegmentTracker;
 use Tab;
 
 if (!defined('_PS_VERSION_')) {
@@ -32,31 +32,29 @@ class Uninstall
      * @var UninstallerInterface
      */
     private $databaseUninstaller;
-    /**
-     * @var Segment
-     */
-    private $segment;
     private $configurationAdapter;
+    /** @var SegmentTracker */
+    private $segmentTracker;
 
     public function __construct(
         UninstallerInterface $databaseUninstaller,
-        Segment $segment,
-        ConfigurationAdapter $configurationAdapter
+        ConfigurationAdapter $configurationAdapter,
+        SegmentTracker $segmentTracker
     ) {
         $this->databaseUninstaller = $databaseUninstaller;
-        $this->segment = $segment;
         $this->configurationAdapter = $configurationAdapter;
+        $this->segmentTracker = $segmentTracker;
     }
 
     public function uninstall()
     {
-        $this->segment->setMessage('Mollie uninstall');
-        $this->segment->track();
+        try {
+            $this->segmentTracker->trackModuleUninstalled();
+        } catch (\Throwable $e) {
+        }
 
         $this->deleteConfig();
-
         $this->uninstallTabs();
-
         $this->databaseUninstaller->uninstall();
 
         return true;
@@ -98,6 +96,7 @@ class Uninstall
             Config::MOLLIE_API_KEY_TEST,
             Config::MOLLIE_SUBSCRIPTION_ENABLED,
             Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID,
+            Config::MOLLIE_BANKTRANSFER_DUE_DAYS,
         ];
 
         $this->deleteConfigurations($configurations);

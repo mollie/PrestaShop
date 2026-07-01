@@ -10,7 +10,7 @@
  *}
 <div>
     <span>
-        {$updateMessage}
+        {$updateMessage|escape:'html':'UTF-8'}
     </span>
 </div>
 

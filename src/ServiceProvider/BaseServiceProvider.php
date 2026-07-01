@@ -111,6 +111,8 @@ use Mollie\Repository\TaxRulesGroupRepositoryInterface;
 use Mollie\Service\ApiKeyService;
 use Mollie\Service\ApiService;
 use Mollie\Service\ApiServiceInterface;
+use Mollie\Service\AutoCaptureService;
+use Mollie\Service\CaptureService;
 use Mollie\Service\Content\SmartyTemplateParser;
 use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\CountryService;
@@ -129,6 +131,9 @@ use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPayme
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProvider;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
+use Mollie\Service\SegmentDataProvider;
+use Mollie\Service\SegmentOrderStatusHandler;
+use Mollie\Service\SegmentTracker;
 use Mollie\Service\Shipment\ShipmentInformationSender;
 use Mollie\Service\Shipment\ShipmentInformationSenderInterface;
 use Mollie\Service\ShipmentService;
@@ -242,6 +247,9 @@ final class BaseServiceProvider
         $this->addService($container, OrderCartRuleRepositoryInterface::class, $container->get(OrderCartRuleRepository::class));
         $this->addService($container, CartRuleRepositoryInterface::class, $container->get(CartRuleRepository::class));
         $this->addService($container, OrderRepositoryInterface::class, $container->get(OrderRepository::class));
+        $this->addService($container, SegmentDataProvider::class, $container->get(SegmentDataProvider::class));
+        $this->addService($container, SegmentTracker::class, $container->get(SegmentTracker::class));
+        $this->addService($container, SegmentOrderStatusHandler::class, $container->get(SegmentOrderStatusHandler::class));
         $this->addService($container, CurrencyRepositoryInterface::class, $container->get(CurrencyRepository::class));
         $this->addService($container, CustomerRepositoryInterface::class, $container->get(CustomerRepository::class));
         $this->addService($container, MolOrderPaymentFeeRepositoryInterface::class, $container->get(MolOrderPaymentFeeRepository::class));
@@ -299,6 +307,12 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, ApiService::class);
         $this->addServiceArgument($service, Mollie::class);
         $this->addServiceArgument($service, ApplePayDirectCertificateHandler::class);
+
+        $service = $this->addService($container, AutoCaptureService::class, AutoCaptureService::class);
+        $this->addServiceArgument($service, CaptureService::class);
+        $this->addServiceArgument($service, PaymentMethodRepositoryInterface::class);
+        $this->addServiceArgument($service, ConfigurationAdapter::class);
+        $this->addServiceArgument($service, LoggerInterface::class);
 
         $service = $this->addService($container, PaymentMethodLogoHandler::class, PaymentMethodLogoHandler::class);
         $this->addServiceArgument($service, CreditCardLogoProvider::class);

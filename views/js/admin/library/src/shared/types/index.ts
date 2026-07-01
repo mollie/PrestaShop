@@ -197,6 +197,8 @@ export interface MolliePaymentMethodsTranslations {
   voucherCategoryEco: string;
   voucherCategoryAll: string;
   voucherCategoryHelp: string;
+  bankTransferDueDays: string;
+  bankTransferDueDaysHelp: string;
   klarnaNotice: string;
 
   // Info banner
@@ -204,6 +206,17 @@ export interface MolliePaymentMethodsTranslations {
   apiNotConfiguredMessage: string;
   infoBannerText: string;
   mollieDashboard: string;
+
+  // Capture Mode
+  captureMode: string;
+  automatic: string;
+  manual: string;
+  captureModeAutomatic: string;
+  captureModeManual: string;
+  autoCaptureOnStatus: string;
+  autoCaptureStatuses: string;
+  autoCaptureInfo: string;
+  selectStatuses: string;
 }
 
 export interface MollieAdvancedSettingsTranslations {

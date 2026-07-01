@@ -111,21 +111,38 @@ class ShipService
         ];
     }
 
-    public function isShipped(string $transactionId): bool
+    public function isShipped(string $transactionId, ?iterable $lines = null): bool
     {
         if (!TransactionUtility::isOrderTransaction($transactionId)) {
             return false;
         }
 
-        $products = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments'])->lines;
+        $lines = $lines ?? $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments'])->lines;
 
-        foreach ($products as $product) {
-            if ($product->quantity != $product->quantityShipped) {
+        foreach ($lines as $line) {
+            if ($line->quantity != $line->quantityShipped) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    public function hasAnyShipment(string $transactionId, ?iterable $lines = null): bool
+    {
+        if (!TransactionUtility::isOrderTransaction($transactionId)) {
+            return false;
+        }
+
+        $lines = $lines ?? $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments'])->lines;
+
+        foreach ($lines as $line) {
+            if ((int) $line->quantityShipped > 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function validateTracking(array $tracking): array

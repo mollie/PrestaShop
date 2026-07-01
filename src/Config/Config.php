@@ -25,7 +25,11 @@ if (!defined('_PS_VERSION_')) {
 
 class Config
 {
-    const SEGMENT_KEY = 'x8qDW8mWIlcY9SXbMhKLoH7xYQ1cSxF2';
+    const MOLLIE_SEGMENT_INSTALL_TIMESTAMP = 'MOLLIE_SEGMENT_INSTALL_TIMESTAMP';
+    const MOLLIE_SEGMENT_INSTALLED_VERSION = 'MOLLIE_SEGMENT_INSTALLED_VERSION';
+    const MOLLIE_SEGMENT_EVER_CONNECTED = 'MOLLIE_SEGMENT_EVER_CONNECTED';
+    const MOLLIE_SEGMENT_FIRST_PAYMENT_CREATED = 'MOLLIE_SEGMENT_FIRST_PAYMENT_CREATED';
+    const MOLLIE_SEGMENT_FIRST_PAYMENT_DONE = 'MOLLIE_SEGMENT_FIRST_PAYMENT_DONE';
 
     const MODULE_ENV = 'MISSING_ENV';
 
@@ -105,7 +109,7 @@ class Config
             'uk',
         ],
         'mybank' => [],
-        'trustly' => ['at', 'de', 'ee', 'es', 'fi', 'lt', 'lv', 'nl'],
+        'trustly' => [],
         'satispay' => [
             'at',
             'be',
@@ -263,6 +267,9 @@ class Config
     const MOLLIE_METHOD_MIN_AMOUNT = 'MOLLIE_METHOD_MIN_AMOUNT_';
     const MOLLIE_METHOD_MAX_AMOUNT = 'MOLLIE_METHOD_MAX_AMOUNT_';
 
+    const MOLLIE_BANKTRANSFER_DUE_DAYS = 'MOLLIE_BANKTRANSFER_DUE_DAYS';
+    const MOLLIE_BANKTRANSFER_DUE_DAYS_DEFAULT = 14;
+
     const MOLLIE_CARRIER_NO_TRACKING_INFO = 'no_tracking_info';
     const MOLLIE_CARRIER_MODULE = 'module';
     const MOLLIE_CARRIER_CARRIER = 'carrier_url';
@@ -355,6 +362,14 @@ class Config
     const ORDER_API_ONLY_METHODS = [];
 
     const PAYMENT_API_ONLY_METHODS = [];
+
+    const MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS = [
+        'creditcard',
+        'klarna',
+    ];
+
+    const MOLLIE_METHOD_AUTO_CAPTURE_ENABLED = 'MOLLIE_METHOD_AUTO_CAPTURE_ENABLED_';
+    const MOLLIE_METHOD_AUTO_CAPTURE_STATUSES = 'MOLLIE_METHOD_AUTO_CAPTURE_STATUSES_';
 
     const ROUTE_RESEND_SECOND_CHANCE_PAYMENT_MESSAGE = 'mollie_module_admin_resend_payment_message';
 

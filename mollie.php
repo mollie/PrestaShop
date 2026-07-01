@@ -32,6 +32,7 @@ use Mollie\Service\CaptureService;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\MollieOrderService;
 use Mollie\Service\RefundService;
+use Mollie\Service\SegmentOrderStatusHandler;
 use Mollie\Service\ShipService;
 use Mollie\ServiceProvider\LeagueServiceContainerProvider;
 use Mollie\Subscription\Config\Config as SubscriptionConfig;
@@ -103,7 +104,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.4.3';
+        $this->version = '6.4.4';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -144,7 +145,7 @@ class Mollie extends PaymentModule
 
     private function loadEnv()
     {
-        if (!class_exists('\Dotenv\Dotenv')) {
+        if (!class_exists('\Symfony\Component\Dotenv\Dotenv')) {
             return;
         }
 
@@ -229,6 +230,15 @@ class Mollie extends PaymentModule
 
         $logger->debug('Mollie subscription install successful');
 
+        /** @var ConfigurationAdapter $configuration */
+        $configuration = $this->getService(ConfigurationAdapter::class);
+        $configuration->updateValue(Config::MOLLIE_SEGMENT_INSTALL_TIMESTAMP, time());
+        $configuration->updateValue(Config::MOLLIE_SEGMENT_INSTALLED_VERSION, $this->version);
+
+        /** @var \Mollie\Service\SegmentTracker $segmentTracker */
+        $segmentTracker = $this->getService(\Mollie\Service\SegmentTracker::class);
+        $segmentTracker->trackModuleInstalled('manual');
+
         return true;
     }
 
@@ -257,7 +267,37 @@ class Mollie extends PaymentModule
             return false;
         }
 
-        return parent::enable($force_all);
+        $result = parent::enable($force_all);
+
+        if ($result) {
+            /** @var ConfigurationAdapter $configuration */
+            $configuration = $this->getService(ConfigurationAdapter::class);
+            /** @var \Mollie\Service\SegmentTracker $segmentTracker */
+            $segmentTracker = $this->getService(\Mollie\Service\SegmentTracker::class);
+
+            $storedVersion = $configuration->get(Config::MOLLIE_SEGMENT_INSTALLED_VERSION);
+            if ($storedVersion && $storedVersion !== $this->version) {
+                $segmentTracker->trackModuleUpgraded($storedVersion);
+            }
+            $configuration->updateValue(Config::MOLLIE_SEGMENT_INSTALLED_VERSION, $this->version);
+
+            $segmentTracker->trackModuleEnabled();
+        }
+
+        return $result;
+    }
+
+    public function disable($force_all = false)
+    {
+        $result = parent::disable($force_all);
+
+        if ($result) {
+            /** @var \Mollie\Service\SegmentTracker $segmentTracker */
+            $segmentTracker = $this->getService(\Mollie\Service\SegmentTracker::class);
+            $segmentTracker->trackModuleDisabled();
+        }
+
+        return $result;
     }
 
     /**
@@ -359,7 +399,8 @@ class Mollie extends PaymentModule
         ]);
         $this->context->controller->addJS("{$this->_path}views/js/front/mollie_error_handle.js");
         $this->context->controller->addCSS("{$this->_path}views/css/mollie_iframe.css");
-        if (Configuration::get('PS_SSL_ENABLED_EVERYWHERE')) {
+        $sslConfigKey = VersionUtility::isPsVersionGreaterOrEqualTo('9.0.0') ? 'PS_SSL_ENABLED' : 'PS_SSL_ENABLED_EVERYWHERE';
+        if (Configuration::get($sslConfigKey)) {
             $this->context->controller->addJS($this->getPathUri() . 'views/js/apple_payment.js');
         }
         $this->context->smarty->assign([
@@ -610,13 +651,16 @@ class Mollie extends PaymentModule
 
             $order = new Order($params['id_order']);
 
-            if (!$order->hasBeenPaid()) {
+            $bankStatus = isset($transaction['bank_status']) ? $transaction['bank_status'] : null;
+            if (in_array($bankStatus, ['created', 'pending', 'expired', 'failed', 'open'], true)) {
                 return false;
             }
 
-            $products = TransactionUtility::isOrderTransaction($mollieTransactionId)
-                ? $this->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])->lines
-                : $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments'])->lines; // @phpstan-ignore-line
+            if (TransactionUtility::isOrderTransaction($mollieTransactionId)) {
+                $products = $this->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])->lines;
+            } else {
+                $products = $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments'])->lines; // @phpstan-ignore-line
+            }
 
             $mollieLogoPath = $this->getMollieLogoPath();
 
@@ -625,8 +669,50 @@ class Mollie extends PaymentModule
 
             $isRefunded = $refundService->isRefunded($mollieTransactionId, (float) $order->total_paid);
             $isCaptured = $captureService->isCaptured($mollieTransactionId);
-            $isShipped = $shipService->isShipped($mollieTransactionId);
+            $isShipped = $shipService->isShipped($mollieTransactionId, $products);
             $isCanceled = $cancelService->isCanceled($mollieTransactionId);
+
+            if ($mollieApiType === 'payments' && $products) {
+                $hasDiscount = false;
+                foreach ($products as $line) {
+                    if ((isset($line->description) && $line->description === 'Discount')
+                        || (float) $line->totalAmount->value < 0
+                    ) {
+                        $hasDiscount = true;
+                        break;
+                    }
+                }
+
+                $captureAmounts = $captureService->getCapturedAmounts($mollieTransactionId);
+                $refundAmounts = $refundService->getRefundedAmounts($mollieTransactionId);
+                foreach ($products as $line) {
+                    $line->mollieLineCaptured = false;
+                    $line->mollieLineRefunded = false;
+                    $lineTotal = (float) $line->totalAmount->value;
+                    foreach ($captureAmounts as $capIdx => $capAmount) {
+                        if (abs($capAmount - $lineTotal) < 0.005) {
+                            $line->mollieLineCaptured = true;
+                            unset($captureAmounts[$capIdx]);
+                            break;
+                        }
+                    }
+                    foreach ($refundAmounts as $refIdx => $refAmount) {
+                        if (abs($refAmount - $lineTotal) < 0.005) {
+                            $line->mollieLineRefunded = true;
+                            unset($refundAmounts[$refIdx]);
+                            break;
+                        }
+                    }
+                    $line->mollieCanCapture = !$isCaptured
+                        && !$hasDiscount
+                        && !$line->mollieLineCaptured
+                        && $lineTotal <= ((float) $capturableAmount + 0.005);
+                    $line->mollieCanRefund = !$hasDiscount
+                        && $line->mollieLineCaptured
+                        && !$line->mollieLineRefunded
+                        && $lineTotal <= ((float) $refundableAmount + 0.005);
+                }
+            }
 
             $lineActions = [];
             if ($mollieApiType === 'orders' && $products) {
@@ -646,6 +732,79 @@ class Mollie extends PaymentModule
                 }
             }
 
+            $isAuthorizablePayment = isset($transaction['method'])
+                && in_array($transaction['method'], Config::AUTHORIZABLE_PAYMENTS, true);
+            $hasAnyShipment = $mollieApiType === 'orders'
+                ? $shipService->hasAnyShipment($mollieTransactionId, $products)
+                : false;
+
+            $shippingAmount = 0.0;
+            $shippingRefunded = false;
+            if ($mollieApiType === 'payments') {
+                $paymentApi = $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'refunds']);
+                $refundedByDetail = [];
+                foreach ($paymentApi->refunds() as $refund) {
+                    $meta = $refund->metadata;
+                    if (is_string($meta)) {
+                        $meta = json_decode($meta);
+                    }
+                    if (is_object($meta) && isset($meta->id_order_detail)) {
+                        $detailId = (int) $meta->id_order_detail;
+                        $qty = isset($meta->quantity) ? (int) $meta->quantity : 0;
+                        $refundedByDetail[$detailId] = ($refundedByDetail[$detailId] ?? 0) + $qty;
+                    }
+                    if (is_object($meta) && isset($meta->refund_type) && $meta->refund_type === 'shipping') {
+                        $shippingRefunded = true;
+                    }
+                }
+                $shippingAmount = (float) $order->total_shipping_tax_incl;
+
+                $products = [];
+                foreach ($order->getProducts() as $psProduct) {
+                    $detailId = (int) $psProduct['id_order_detail'];
+                    $qty = (int) $psProduct['product_quantity'];
+                    $unitPrice = (float) $psProduct['unit_price_tax_incl'];
+                    $refundedQty = (int) ($refundedByDetail[$detailId] ?? 0);
+                    $remainingQty = max(0, $qty - $refundedQty);
+
+                    $row = new stdClass();
+                    $row->id = $detailId;
+                    $row->description = (string) $psProduct['product_name'];
+                    $row->quantity = $qty;
+                    $row->quantityRefunded = $refundedQty;
+                    $row->totalAmount = (object) ['value' => number_format($unitPrice * $qty, 2, '.', '')];
+                    $row->unitPrice = number_format($unitPrice, 2, '.', '');
+                    $products[] = $row;
+
+                    $lineActions[$detailId] = [
+                        'canRefund' => !$isRefunded && $remainingQty > 0 && $refundableAmount > 0,
+                        'refundableQuantity' => $remainingQty,
+                        'unitPrice' => $unitPrice,
+                    ];
+                }
+            }
+
+            $canShipAny = false;
+            $canCancelAny = false;
+            $canRefundAny = false;
+            if ($mollieApiType === 'orders' && empty($lineActions)) {
+                $canShipAny = !$isShipped && !$isCanceled;
+                $canCancelAny = !$isCanceled && !$isShipped;
+                $canRefundAny = !$isRefunded && !$isCanceled && $refundableAmount > 0;
+            } else {
+                foreach ($lineActions as $actions) {
+                    if (!empty($actions['canShip'])) {
+                        $canShipAny = true;
+                    }
+                    if (!empty($actions['canCancel'])) {
+                        $canCancelAny = true;
+                    }
+                    if (!empty($actions['canRefund'])) {
+                        $canRefundAny = true;
+                    }
+                }
+            }
+
             $this->context->smarty->assign([
                 'order_reference' => $order->reference,
                 'refundable_amount' => $refundableAmount,
@@ -659,6 +818,13 @@ class Mollie extends PaymentModule
                 'isCaptured' => $isCaptured,
                 'isShipped' => $isShipped,
                 'isCanceled' => $isCanceled,
+                'isAuthorizablePayment' => $isAuthorizablePayment,
+                'hasAnyShipment' => $hasAnyShipment,
+                'shipping_amount' => number_format($shippingAmount, 2, '.', ''),
+                'shipping_refunded' => $shippingRefunded,
+                'canShipAny' => $canShipAny,
+                'canCancelAny' => $canCancelAny,
+                'canRefundAny' => $canRefundAny,
             ]);
 
             return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');
@@ -851,6 +1017,15 @@ class Mollie extends PaymentModule
             return;
         }
 
+        $paidStatusId = (int) Configuration::get(Config::MOLLIE_STATUS_PAID);
+        $authorizedStatusId = (int) Configuration::get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED);
+
+        if ((int) $orderStatus->id === $paidStatusId || (int) $orderStatus->id === $authorizedStatusId) {
+            /** @var SegmentOrderStatusHandler $segmentOrderStatusHandler */
+            $segmentOrderStatusHandler = $this->getService(SegmentOrderStatusHandler::class);
+            $segmentOrderStatusHandler->trackFirstPaymentCompleted($order);
+        }
+
         /** @var ShipmentSenderHandlerInterface $shipmentSenderHandler */
         $shipmentSenderHandler = $this->getService(ShipmentSenderHandlerInterface::class);
 
@@ -874,6 +1049,19 @@ class Mollie extends PaymentModule
             ]);
 
             return;
+        }
+
+        try {
+            /** @var \Mollie\Service\AutoCaptureService $autoCaptureService */
+            $autoCaptureService = $this->getService(\Mollie\Service\AutoCaptureService::class);
+            $autoCaptureService->handleAutoCaptureOnStatusChange(
+                (int) $order->id,
+                (int) $orderStatus->id
+            );
+        } catch (\Throwable $exception) {
+            $logger->error(sprintf('%s - Auto-capture failed', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
         }
     }
 
@@ -1691,8 +1879,6 @@ class Mollie extends PaymentModule
         }
 
         if ($this->context->customer->isLogged()) {
-            $this->handlePayByBankBrowserBack();
-
             return;
         }
 
@@ -1713,23 +1899,6 @@ class Mollie extends PaymentModule
         $this->context->controller->warning[] = $this->l('Customer must be logged in to buy subscription item.');
 
         $this->context->controller->redirectWithNotifications($link->getPageLink('authentication'));
-    }
-
-    private function handlePayByBankBrowserBack(): void
-    {
-        if (!empty($this->context->cart) && $this->context->cart->nbProducts() > 0) {
-            return;
-        }
-
-        try {
-            /** @var \Mollie\Service\PayByBankCancellationService $payByBankService */
-            $payByBankService = $this->getService(\Mollie\Service\PayByBankCancellationService::class);
-            $payByBankService->handleAbandonedPayment((int) $this->context->customer->id);
-        } catch (\Exception $e) {
-            /** @var \Mollie\Logger\LoggerInterface $logger */
-            $logger = $this->getService(\Mollie\Logger\LoggerInterface::class);
-            $logger->error('Failed to handle Pay by Bank browser back: ' . $e->getMessage());
-        }
     }
 
     private function getRecurringOrdersByCustomerAddress(int $customerId, int $oldAddressId): array

@@ -34,14 +34,14 @@
             <tbody>
             {foreach from=$recurringOrdersData item=recurringOrder}
                 <tr>
-                    <th scope="row">{$recurringOrder.recurring_order->id}</th>
-                    <td>{$recurringOrder.recurring_order->status}</td>
-                    <td>{$recurringOrder.recurring_order->payment_method}</td>
-                    <td>{$recurringOrder.product_name}</td>
-                    <td>{$recurringOrder.total_price}</td>
-                    <td>{$recurringOrder.recurring_order->date_add}</td>
+                    <th scope="row">{$recurringOrder.recurring_order->id|escape:'html':'UTF-8'}</th>
+                    <td>{$recurringOrder.recurring_order->status|escape:'html':'UTF-8'}</td>
+                    <td>{$recurringOrder.recurring_order->payment_method|escape:'html':'UTF-8'}</td>
+                    <td>{$recurringOrder.product_name|escape:'html':'UTF-8'}</td>
+                    <td>{$recurringOrder.total_price|escape:'html':'UTF-8'}</td>
+                    <td>{$recurringOrder.recurring_order->date_add|escape:'html':'UTF-8'}</td>
                     <td class="text-sm-center order-actions">
-                        <a href="{$recurringOrder.details_url}" data-link-action="view-order-details">
+                        <a href="{$recurringOrder.details_url|escape:'html':'UTF-8'}" data-link-action="view-order-details">
                             {l s='Details' d='Shop.Theme.Customeraccount'}
                         </a>
                     </td>
