@@ -52,6 +52,8 @@ jobs:
           rm -rf vendor/segmentio/analytics-php/.github
 
           cp .env.dist .env
+          # Replace the placeholder from .env.dist with the real key (avoid a duplicate SEGMENT_API_KEY line)
+          sed -i "/^SEGMENT_API_KEY=/d" .env
           echo "SEGMENT_API_KEY='${{ secrets.SEGMENT_API_KEY }}'" >> .env
 
           # Create module directory structure
