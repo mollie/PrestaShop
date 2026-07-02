@@ -246,6 +246,8 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'voucherCategoryEco' => $this->module->l('Eco', self::FILE_NAME),
                 'voucherCategoryAll' => $this->module->l('All', self::FILE_NAME),
                 'voucherCategoryHelp' => $this->module->l('Select a category to use for all products in your webshop.', self::FILE_NAME),
+                'bankTransferDueDays' => $this->module->l('Bank transfer due date (days)', self::FILE_NAME),
+                'bankTransferDueDaysHelp' => $this->module->l('Number of days customers have to complete bank transfer payment (default: 14, range: 1-90)', self::FILE_NAME),
                 'klarnaNotice' => $this->module->l('Klarna authorises payments for up to 28 days. To capture funds automatically when an order is shipped, enable “Automatically ship on marked status” in the advanced settings. If no capture occurs within 28 days, the authorisation expires and the payment cannot be collected.', self::FILE_NAME),
 
                 'apiNotConfigured' => $this->module->l('API not configured', self::FILE_NAME),
@@ -435,6 +437,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                                 'directCart' => (bool) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART) ?: 0),
                                 'buttonStyle' => (int) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE) ?: 0),
                             ] : null,
+                            'bankTransferDueDays' => $methodId === 'banktransfer'
+                                ? (string) ($this->configuration->get(Config::MOLLIE_BANKTRANSFER_DUE_DAYS) ?: Config::MOLLIE_BANKTRANSFER_DUE_DAYS_DEFAULT)
+                                : null,
                             'captureMode' => !empty($methodObj->is_manual_capture) ? 'manual' : 'automatic',
                             'isManualCaptureEligible' => in_array($methodId, Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS),
                             'autoCapture' => in_array($methodId, Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS) ? [
@@ -503,12 +508,20 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 throw new MollieException($this->module->l('Payment method not found', self::FILE_NAME));
             }
 
+            $preEnableCount = $enabled ? $this->paymentMethodRepository->countEnabledMethods($environment, (int) $shopId) : 0;
+
             $paymentMethod = new MolPaymentMethod((int) $paymentMethodId);
             $paymentMethod->enabled = $enabled;
             $result = $paymentMethod->save();
 
             if (!$result) {
                 throw new MollieException($this->module->l('Failed to save payment method', self::FILE_NAME));
+            }
+
+            if ($enabled) {
+                /** @var \Mollie\Service\SegmentTracker $segmentTracker */
+                $segmentTracker = $this->module->getService(\Mollie\Service\SegmentTracker::class);
+                $segmentTracker->trackPaymentMethodEnabled($paymentMethod, $preEnableCount);
             }
 
             $this->ajaxRender(json_encode([
@@ -732,6 +745,17 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             $shopId = $this->context->shop->id;
 
             $this->paymentMethodSettingsHandler->handlePaymentMethodSave($methodId, $settings, $environment, $shopId);
+
+            $restrictions = $settings['paymentRestrictions'] ?? [];
+            $hasCountryRestrictions = ($restrictions['acceptFrom'] ?? 'all') === 'selected'
+                || !empty($restrictions['excludeCountries']);
+
+            $savedPaymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($methodId, $environment, $shopId);
+            if ($savedPaymentMethodId) {
+                /** @var \Mollie\Service\SegmentTracker $segmentTracker */
+                $segmentTracker = $this->module->getService(\Mollie\Service\SegmentTracker::class);
+                $segmentTracker->trackPaymentMethodConfigured(new MolPaymentMethod((int) $savedPaymentMethodId), $hasCountryRestrictions);
+            }
 
             $this->ajaxRender(json_encode([
                 'success' => true,

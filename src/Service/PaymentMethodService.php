@@ -116,6 +116,9 @@ class PaymentMethodService
     /** @var PaymentMethodLangRepositoryInterface */
     private $paymentMethodLangRepository;
 
+    /** @var PaymentExpiryCalculator */
+    private $paymentExpiryCalculator;
+
     public function __construct(
         ModuleFactory $module,
         PaymentMethodRepositoryInterface $methodRepository,
@@ -133,7 +136,8 @@ class PaymentMethodService
         PaymentFeeProviderInterface $paymentFeeProvider,
         Context $context,
         OrderTotalProviderInterface $orderTotalProvider,
-        PaymentMethodLangRepositoryInterface $paymentMethodLangRepository
+        PaymentMethodLangRepositoryInterface $paymentMethodLangRepository,
+        PaymentExpiryCalculator $paymentExpiryCalculator
     ) {
         $this->module = $module->getModule();
         $this->methodRepository = $methodRepository;
@@ -152,6 +156,7 @@ class PaymentMethodService
         $this->context = $context;
         $this->orderTotalProvider = $orderTotalProvider;
         $this->paymentMethodLangRepository = $paymentMethodLangRepository;
+        $this->paymentExpiryCalculator = $paymentExpiryCalculator;
     }
 
     public function savePaymentMethod($method)
@@ -186,6 +191,10 @@ class PaymentMethodService
         $paymentMethod->id_shop = $shopId;
         $paymentMethod->min_amount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MIN_AMOUNT . $method['id']);
         $paymentMethod->max_amount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_AMOUNT . $method['id']);
+
+        if (!$paymentMethod->id) {
+            $paymentMethod->position = $this->methodRepository->getMaxPosition($environment, $shopId) + 1;
+        }
 
         $paymentMethod->save();
 
@@ -377,6 +386,11 @@ class PaymentMethodService
 
             if (PaymentMethod::BANKTRANSFER === $method) {
                 $paymentData->setLocale(LocaleUtility::getWebShopLocale());
+
+                $dueDate = $this->paymentExpiryCalculator->calculateDueDate($molPaymentMethod->id_method);
+                if ($dueDate) {
+                    $paymentData->setDueDate($dueDate);
+                }
             }
 
             if ($molPaymentMethod->id_method === PaymentMethod::APPLEPAY && $applePayToken) {
@@ -515,6 +529,11 @@ class PaymentMethodService
             }
 
             $orderData->setPayment($payment);
+
+            $expiresAt = $this->paymentExpiryCalculator->calculateDueDate($molPaymentMethod->id_method);
+            if ($expiresAt) {
+                $orderData->setExpiresAt($expiresAt);
+            }
 
             return $orderData;
         }
