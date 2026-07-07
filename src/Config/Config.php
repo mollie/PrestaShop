@@ -153,6 +153,7 @@ class Config
         'swish' => ['se'],
         'bizum' => ['es', 'ad'],
         'vippsmobilepay' => ['no', 'dk', 'fi'],
+        'wero' => ['de', 'be', 'fr', 'lu'],
     ];
 
     const SUPPORTED_PHP_VERSION = '5.6';
@@ -421,6 +422,7 @@ class Config
         'bizum' => 'Bizum',
         'vipps' => 'Vipps',
         'mobilepay' => 'Mobile Pay',
+        'wero' => 'Wero',
     ];
 
     public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
