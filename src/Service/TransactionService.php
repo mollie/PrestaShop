@@ -46,6 +46,7 @@ use Order;
 use OrderPayment;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -385,6 +386,31 @@ class TransactionService
                 $orderPayment->update();
             }
         }
+
+        $this->updateOrderTotalPaidReal(new Order($orderId));
+    }
+
+    private function updateOrderTotalPaidReal(Order $order): void
+    {
+        if (!Validate::isLoadedObject($order)) {
+            return;
+        }
+
+        $totalPaidReal = 0.0;
+        /** @var OrderPayment $orderPayment */
+        foreach ($order->getOrderPaymentCollection() as $orderPayment) {
+            if ((int) $orderPayment->id_currency !== (int) $order->id_currency) {
+                continue;
+            }
+            $totalPaidReal += (float) $orderPayment->amount;
+        }
+
+        if ((float) $order->total_paid_real === $totalPaidReal) {
+            return;
+        }
+
+        $order->total_paid_real = $totalPaidReal;
+        $order->update();
     }
 
     /**

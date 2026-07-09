@@ -3,6 +3,7 @@
 # Changelog #
 
 ## Changes in release 6.4.3
++ Fixed total_paid_real staying 0 on bank transfer orders after the payment is completed
 + Fixed Payment API race condition causing false "payment failed" errors
 + Fixed rounding distribution for whole-number differences in order line amounts
 + Fixed Apple Pay Direct payment when country is not active in shop
