@@ -3,6 +3,7 @@
 # Changelog #
 
 ## Changes in release 6.4.4
++ Fixed total_paid_real staying 0 on bank transfer orders after the payment is completed
 + Added bank transfer due date configuration
 + Added Segment analytics tracking for module and payment events
 + Added Bulgarian translations
