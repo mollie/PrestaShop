@@ -412,6 +412,8 @@ $_MODULE['<{mollie}prestashop>molliepaymentmailservice_7d4e9f222469e74d17fde11ca
 $_MODULE['<{mollie}prestashop>mailservice_ed13b3693357ebed3751cb71cb639e65'] = 'Kandjat ei ole';
 $_MODULE['<{mollie}prestashop>mailservice_fca7e8d1c86db11246e429e40aa10c81'] = 'Uus kinkekaart sinu tellimusele %s';
 $_MODULE['<{mollie}prestashop>orderlistactionbuilder_5678cf484b844064515349752b1ccb18'] = 'Sa saadad kliendile uuesti e-maili makselingi saatmiseks';
+$_MODULE['<{mollie}prestashop>ordergriddefinitionmodifier_5678cf484b844064515349752b1ccb18'] = 'Sa saadad kliendile uuesti e-maili makselingi saatmiseks';
+$_MODULE['<{mollie}prestashop>ordergriddefinitionmodifier_74873b96b26fbcac6af3154c5dea0656'] = 'Saada makselink uuesti';
 
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_9ffc3ccc968a96d902af963c6d7b4e97'] = 'Täpsemad seaded';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_d72eaa592e6b1b6f30787d67a70422b7'] = 'Tellimuse seaded';
