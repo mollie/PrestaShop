@@ -22,6 +22,7 @@
 + Improved order description update logic and adjusted resource logging
 + Added diagnostic logging when a payment method is hidden by a restriction
 + Resolved PrestaShop Validator findings (errors, licenses, security)
++ Fixed subscription authorization so customers can only cancel or change the payment method of their own subscriptions
 
 ## Changes in release 6.4.3
 + Fixed Payment API race condition causing false "payment failed" errors
