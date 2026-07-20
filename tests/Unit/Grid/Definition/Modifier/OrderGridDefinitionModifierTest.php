@@ -13,69 +13,115 @@
 namespace Grid\Definition\Modifier;
 
 use Mollie;
+use Mollie\Grid\Action\Type\SecondChanceRowAction;
 use Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
-use PrestaShop\PrestaShop\Core\Grid\Action\Row\RowActionInterface;
-use PrestaShop\PrestaShop\Core\Grid\Column\ColumnCollection;
-use PrestaShop\PrestaShop\Core\Grid\Column\ColumnInterface;
-use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\DataColumn;
+use PrestaShop\PrestaShop\Core\Grid\Action\Row\RowActionCollection;
+use PrestaShop\PrestaShop\Core\Grid\Column\ColumnCollectionInterface;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ActionColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
 
+/**
+ * Regression for PIPRES-802: the order-list "Resend payment link" column header and the
+ * resend-action tooltip always rendered in English. The grid modifier translated them with the
+ * Symfony translator under the "Modules.mollie" domain, for which the module ships no catalog, so
+ * every language fell back to the English source string. The fix routes both strings through the
+ * module's legacy translator (Mollie::l), which is backed by the shipped translations/<locale>.php
+ * catalogs, and adds the two missing keys to every shipped locale.
+ */
 class OrderGridDefinitionModifierTest extends TestCase
 {
+    const TRANSLATION_SOURCE = 'OrderGridDefinitionModifier';
+    const HEADER = 'Resend payment link';
+    const TOOLTIP = 'You will resend email with payment link to the customer';
+
     /**
-     * Regression for PIPRES-802: the column header and the resend tooltip must be
-     * resolved through the module's legacy translator (Mollie::l), which is backed by
-     * the shipped translations/<locale>.php catalogs, so they follow the back-office
-     * language. Before the fix they used the Symfony translator with the "Modules.mollie"
-     * domain, which ships no catalog and therefore always fell back to English.
+     * The shipped catalogs must contain the exact keys that Mollie::l() looks up for this modifier,
+     * so the header and tooltip follow the back-office language instead of falling back to English.
+     * Pure PHP, no PrestaShop dependency, so it runs on every supported version.
+     */
+    public function testShippedCatalogsTranslateTheResendColumnStrings()
+    {
+        $prefix = '<{mollie}prestashop>' . strtolower(self::TRANSLATION_SOURCE) . '_';
+        $headerKey = $prefix . md5(self::HEADER);
+        $tooltipKey = $prefix . md5(self::TOOLTIP);
+        $translationsDir = dirname(__DIR__, 5) . '/translations';
+
+        foreach (['en', 'nl', 'fr'] as $iso) {
+            $_MODULE = [];
+            include $translationsDir . '/' . $iso . '.php';
+
+            $this->assertArrayHasKey($headerKey, $_MODULE, sprintf('Missing header translation in %s.php', $iso));
+            $this->assertArrayHasKey($tooltipKey, $_MODULE, sprintf('Missing tooltip translation in %s.php', $iso));
+            $this->assertNotSame('', trim((string) $_MODULE[$headerKey]));
+
+            if ('en' !== $iso) {
+                $this->assertNotSame(
+                    self::HEADER,
+                    $_MODULE[$headerKey],
+                    sprintf('Header in %s.php should be localized, not the English source string', $iso)
+                );
+            }
+        }
+    }
+
+    /**
+     * The modifier must build the column header and the resend tooltip via the module's legacy
+     * translator (Mollie::l) with this modifier's own source, not the Symfony translator. Skips when
+     * the PrestaShop grid classes the modifier instantiates are not autoloadable in the running test
+     * environment, so it can only run-and-assert or skip - never error on a missing core class.
      */
     public function testItTranslatesColumnAndTooltipThroughTheModuleTranslator()
     {
+        foreach ([
+            ColumnCollectionInterface::class,
+            GridDefinitionInterface::class,
+            ActionColumn::class,
+            RowActionCollection::class,
+            SecondChanceRowAction::class,
+        ] as $class) {
+            if (!class_exists($class) && !interface_exists($class)) {
+                $this->markTestSkipped(sprintf('PrestaShop grid dependency %s is not available here.', $class));
+            }
+        }
+
         /** @var Mollie $module */
         $module = $this->createMock(Mollie::class);
         $module->method('l')->willReturnCallback(function ($string, $source) {
             // Both strings must be scoped to this modifier's own translation source.
-            Assert::assertSame('OrderGridDefinitionModifier', $source);
+            Assert::assertSame(self::TRANSLATION_SOURCE, $source);
 
             return 'translated:' . $string;
         });
 
-        $columns = new ColumnCollection();
-        $columns->add(new DataColumn('date_add'));
+        $capturedColumn = null;
+        $columns = $this->createMock(ColumnCollectionInterface::class);
+        $columns->method('addBefore')->willReturnCallback(function ($id, $column) use (&$capturedColumn) {
+            Assert::assertSame('date_add', $id);
+            $capturedColumn = $column;
+
+            return null;
+        });
 
         $gridDefinition = $this->createMock(GridDefinitionInterface::class);
         $gridDefinition->method('getColumns')->willReturn($columns);
 
         (new OrderGridDefinitionModifier($module))->modify($gridDefinition);
 
-        $secondChance = null;
-        /** @var ColumnInterface $column */
-        foreach ($columns as $column) {
-            if ('second_chance' === $column->getId()) {
-                $secondChance = $column;
-                break;
-            }
-        }
+        $this->assertNotNull($capturedColumn, 'The second_chance column should be added before date_add.');
+        $this->assertSame('translated:' . self::HEADER, $capturedColumn->getName());
 
-        $this->assertNotNull($secondChance, 'The second_chance column should be added to the grid.');
-        $this->assertSame('translated:Resend payment link', $secondChance->getName());
-
-        $options = $secondChance->getOptions();
+        $options = $capturedColumn->getOptions();
         $this->assertArrayHasKey('actions', $options);
 
         $resendAction = null;
-        /** @var RowActionInterface $action */
         foreach ($options['actions'] as $action) {
             $resendAction = $action;
             break;
         }
 
         $this->assertNotNull($resendAction, 'The resend row action should be present.');
-        $this->assertSame(
-            'translated:You will resend email with payment link to the customer',
-            $resendAction->getName()
-        );
+        $this->assertSame('translated:' . self::TOOLTIP, $resendAction->getName());
     }
 }
