@@ -2,8 +2,10 @@
 
 # Changelog #
 
-## Changes in release 6.4.4
+## Changes in release 6.4.5
 + Fixed "On backorder (paid)" status not being set when a product is ordered at exactly 0 stock, including instant-payment methods such as iDEAL and cards
+
+## Changes in release 6.4.4
 + Added bank transfer due date configuration
 + Added Segment analytics tracking for module and payment events
 + Added Bulgarian translations
