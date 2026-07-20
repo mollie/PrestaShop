@@ -149,6 +149,7 @@ class Config
         'swish' => ['se'],
         'bizum' => ['es', 'ad'],
         'vippsmobilepay' => ['no', 'dk', 'fi'],
+        'billink' => ['nl', 'be', 'de'],
     ];
 
     const SUPPORTED_PHP_VERSION = '5.6';
@@ -323,6 +324,7 @@ class Config
     const MOLLIE_VOUCHER_METHOD_ID = 'voucher';
     const MOLLIE_in3_METHOD_ID = 'in3';
     const RIVERTY = 'riverty';
+    const BILLINK = 'billink';
     const PAY_BY_BANK = 'paybybank';
 
     const MOLLIE_VOUCHER_CATEGORY_NULL = 'null';
@@ -406,6 +408,7 @@ class Config
         'bizum' => 'Bizum',
         'vipps' => 'Vipps',
         'mobilepay' => 'Mobile Pay',
+        'billink' => 'Billink',
     ];
 
     public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
@@ -419,6 +422,7 @@ class Config
 
     public const MOLLIE_MANUAL_CAPTURE_METHODS = [
         self::RIVERTY,
+        self::BILLINK,
     ];
 
     public const PS_CLOUDSYNC_CDC = 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js';
