@@ -128,6 +128,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'hideSettings' => $this->module->l('Hide settings', self::FILE_NAME),
                 'active' => $this->module->l('Active', self::FILE_NAME),
                 'inactive' => $this->module->l('Inactive', self::FILE_NAME),
+                'notYetSupported' => $this->module->l('Not yet supported', self::FILE_NAME),
 
                 'basicSettings' => $this->module->l('Basic settings', self::FILE_NAME),
                 'activateDeactivate' => $this->module->l('Activate/Deactivate', self::FILE_NAME),
@@ -377,6 +378,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 try {
                     $methodId = $method['id'];
                     $methodObj = $method['obj'];
+                    // A method Mollie returns that this module has no handler for yet.
+                    // It is shown but locked ("Not yet supported") and can never be active.
+                    $isSupported = isset($method['supported']) ? (bool) $method['supported'] : Config::isMethodSupported($methodId);
 
                     if (!$methodObj) {
                         $this->logger->warning('Method object is null for method: ' . $methodId);
@@ -391,13 +395,14 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                     $formattedMethods[] = [
                         'id' => $methodId,
                         'name' => $method['name'],
+                        'supported' => $isSupported,
                         'type' => $methodId === 'creditcard' ? 'card' : 'other',
-                        'status' => (isset($methodObj->enabled) && $methodObj->enabled) ? 'active' : 'inactive',
+                        'status' => ($isSupported && isset($methodObj->enabled) && $methodObj->enabled) ? 'active' : 'inactive',
                         'isExpanded' => false,
                         'position' => (int) (isset($methodObj->position) ? $methodObj->position : 0),
                         'image' => $method['image'] ?? null,
                         'settings' => [
-                            'enabled' => (bool) (isset($methodObj->enabled) ? $methodObj->enabled : false),
+                            'enabled' => $isSupported && (bool) (isset($methodObj->enabled) ? $methodObj->enabled : false),
                             'title' => $this->getPaymentMethodTitles($methodId, $method['name'] ?? ''),
                             'mollieComponents' => $methodId === 'creditcard' ? $this->getCreditCardMollieComponentsSetting($methodObj) : true,
                             'oneClickPayments' => $methodId === 'creditcard' ? $this->getCreditCardOneClickSetting($methodObj) : false,
@@ -497,6 +502,11 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
 
             if (!$methodId) {
                 throw new MollieException($this->module->l('Missing method ID', self::FILE_NAME));
+            }
+
+            // Never let an unsupported method be enabled; disabling one is always allowed.
+            if ($enabled && !Config::isMethodSupported($methodId)) {
+                throw new MollieException($this->module->l('This payment method is not yet supported and cannot be enabled.', self::FILE_NAME));
             }
 
             $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
