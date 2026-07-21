@@ -25,6 +25,7 @@ use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ApiService;
 use Mollie\Service\CountryService;
+use Mollie\Service\MultistoreSettingsContextGuard;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Utility\ExceptionUtility;
 
@@ -75,6 +76,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
     /** @var ApplePayDirectCertificateHandler */
     private $applePayDirectCertificateHandler;
 
+    /** @var MultistoreSettingsContextGuard */
+    private $multistoreSettingsContextGuard;
+
     public function __construct()
     {
         parent::__construct();
@@ -92,6 +96,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         $this->logger = $this->module->getService(LoggerInterface::class);
         $this->paymentMethodSettingsHandler = $this->module->getService(PaymentMethodSettingsHandler::class);
         $this->applePayDirectCertificateHandler = $this->module->getService(ApplePayDirectCertificateHandler::class);
+        $this->multistoreSettingsContextGuard = $this->module->getService(MultistoreSettingsContextGuard::class);
     }
 
     public function init(): void
@@ -264,6 +269,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'autoCaptureStatuses' => $this->module->l('Trigger on statuses', self::FILE_NAME),
                 'autoCaptureInfo' => $this->module->l('When the order reaches one of these statuses, the authorized payment will be captured automatically. You can always capture manually from the order page.', self::FILE_NAME),
                 'selectStatuses' => $this->module->l('Select statuses', self::FILE_NAME),
+
+                'multistoreRestrictedTitle' => $this->module->l('Select a specific shop', self::FILE_NAME),
+                'multistoreRestrictedMessage' => $this->module->l('Mollie payment methods are saved per shop. To manage them, switch from "All stores" to a single shop using the shop selector at the top of the page.', self::FILE_NAME),
             ],
         ]);
 
@@ -276,6 +284,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'onlyPaymentsMethods' => Config::PAYMENT_API_ONLY_METHODS,
                 'orderStatuses' => $this->getOrderStatuses(),
                 'manualCaptureEligibleMethods' => Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS,
+                'multistoreRestricted' => !$this->multistoreSettingsContextGuard->canEditSettings(),
             ],
         ]);
 
@@ -291,6 +300,23 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
 
         $action = $this->tools->getValue('action');
+
+        $settingsMutatingActions = [
+            'togglePaymentMethod',
+            'savePaymentMethodSettings',
+            'updateMethodsOrder',
+            'refreshMethods',
+            'uploadCustomLogo',
+        ];
+
+        if (in_array($action, $settingsMutatingActions, true) && !$this->multistoreSettingsContextGuard->canEditSettings()) {
+            $this->ajaxRender(json_encode([
+                'success' => false,
+                'message' => $this->module->l('Select a specific shop before changing Mollie settings. Payment methods are saved per shop and cannot be edited for "All stores" or a shop group.', self::FILE_NAME),
+            ]));
+
+            return;
+        }
 
         switch ($action) {
             case 'getPaymentMethods':

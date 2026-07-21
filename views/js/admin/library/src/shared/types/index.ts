@@ -45,6 +45,8 @@ export interface MollieAuthTranslations {
   confirmSwitchEnvironment: string;
   cancel: string;
   switchTo: string;
+  multistoreRestrictedTitle: string;
+  multistoreRestrictedMessage: string;
 }
 
 export interface MolliePaymentMethodsTranslations {
@@ -217,6 +219,10 @@ export interface MolliePaymentMethodsTranslations {
   autoCaptureStatuses: string;
   autoCaptureInfo: string;
   selectStatuses: string;
+
+  // Multi-store restriction
+  multistoreRestrictedTitle: string;
+  multistoreRestrictedMessage: string;
 }
 
 export interface MollieAdvancedSettingsTranslations {
@@ -278,6 +284,8 @@ export interface MollieAdvancedSettingsTranslations {
   saving: string;
   saveSettings: string;
   loadError: string;
+  multistoreRestrictedTitle: string;
+  multistoreRestrictedMessage: string;
 }
 
 // Extend global Window interface
@@ -285,9 +293,11 @@ declare global {
   interface Window {
     mollieAuthAjaxUrl: string;
     mollieAuthTranslations: MollieAuthTranslations;
+    mollieAuthConfig?: { multistoreRestricted?: boolean };
     molliePaymentMethodsAjaxUrl: string;
     molliePaymentMethodsTranslations: MolliePaymentMethodsTranslations;
     mollieAdvancedSettingsAjaxUrl: string;
     mollieAdvancedSettingsTranslations: MollieAdvancedSettingsTranslations;
+    mollieAdvancedSettingsConfig?: { multistoreRestricted?: boolean };
   }
 }

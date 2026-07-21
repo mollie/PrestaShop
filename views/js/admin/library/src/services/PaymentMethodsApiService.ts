@@ -12,6 +12,7 @@ declare global {
       onlyPaymentsMethods: string[];
       orderStatuses: { id: string; name: string }[];
       manualCaptureEligibleMethods: string[];
+      multistoreRestricted?: boolean;
     };
   }
 }
