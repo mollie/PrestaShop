@@ -11,6 +11,8 @@ interface PaymentMethodsListProps {
   countries: Country[]
   customerGroups: CustomerGroup[]
   languages: Language[]
+  onlyPaymentsMethods: string[]
+  onlyOrderMethods: string[]
   onToggleExpanded: (id: string) => void
   onUpdateSettings: (id: string, settings: Partial<PaymentMethod["settings"]>) => void
   onSaveSettings: (id: string) => void
@@ -24,6 +26,8 @@ export function PaymentMethodsList({
   countries,
   customerGroups,
   languages,
+  onlyPaymentsMethods,
+  onlyOrderMethods,
   onToggleExpanded,
   onUpdateSettings,
   onSaveSettings,
@@ -189,6 +193,8 @@ export function PaymentMethodsList({
             countries={countries}
             customerGroups={customerGroups}
             languages={languages}
+            onlyPaymentsMethods={onlyPaymentsMethods}
+            onlyOrderMethods={onlyOrderMethods}
             onToggleExpanded={() => onToggleExpanded(method.id)}
             onUpdateSettings={(settings) => onUpdateSettings(method.id, settings)}
             onSaveSettings={() => onSaveSettings(method.id)}

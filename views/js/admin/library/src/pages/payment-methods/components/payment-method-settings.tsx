@@ -18,6 +18,8 @@ interface PaymentMethodSettingsProps {
   countries: Country[]
   customerGroups: CustomerGroup[]
   languages: Language[]
+  onlyPaymentsMethods: string[]
+  onlyOrderMethods: string[]
   onUpdateSettings: (settings: Partial<PaymentMethod["settings"]>) => void
   onSaveSettings: () => void
   isSaving?: boolean
@@ -208,8 +210,11 @@ function MultiSelect({ value, onValueChange, options, placeholder, className }: 
   )
 }
 
-export function PaymentMethodSettings({ method, countries, customerGroups, languages, onUpdateSettings, onSaveSettings, isSaving = false }: PaymentMethodSettingsProps) {
+export function PaymentMethodSettings({ method, countries, customerGroups, languages, onlyPaymentsMethods, onlyOrderMethods, onUpdateSettings, onSaveSettings, isSaving = false }: PaymentMethodSettingsProps) {
   const { t } = usePaymentMethodsTranslations()
+
+  const forcePaymentsApi = onlyPaymentsMethods.includes(method.id)
+  const forceOrdersApi = onlyOrderMethods.includes(method.id)
   const [showRestrictions, setShowRestrictions] = useState(false)
   const [showFees, setShowFees] = useState(false)
   const [showOrderRestrictions, setShowOrderRestrictions] = useState(false)
@@ -457,41 +462,47 @@ export function PaymentMethodSettings({ method, countries, customerGroups, langu
         <div>
           <div className="text-base font-semibold mb-0">{t('apiSelection')}</div>
           <div className="flex border border-input rounded-md w-full mt-1 overflow-hidden">
-            <button
-              onClick={() => onUpdateSettings({ apiSelection: "payments" })}
-              className={cn(
-                "flex-1 px-4 h-9 text-sm font-medium transition-colors cursor-pointer border-r border-input last:border-r-0 flex items-center justify-center",
-                method.settings.apiSelection === "payments"
-                  ? "text-white bg-blue-600"
-                  : "text-muted-foreground hover:text-foreground bg-background hover:bg-accent",
-              )}
-            >
-              {t('payments')}
-            </button>
-            <button
-              onClick={() => onUpdateSettings({ apiSelection: "orders" })}
-              className={cn(
-                "flex-1 px-4 h-9 text-sm font-medium transition-colors cursor-pointer flex items-center justify-center",
-                method.settings.apiSelection === "orders"
-                  ? "text-white bg-blue-600"
-                  : "text-muted-foreground hover:text-foreground bg-background hover:bg-accent",
-              )}
-            >
-              {t('orders')}
-            </button>
+            {!forceOrdersApi && (
+              <button
+                onClick={() => onUpdateSettings({ apiSelection: "payments" })}
+                className={cn(
+                  "flex-1 px-4 h-9 text-sm font-medium transition-colors cursor-pointer border-r border-input last:border-r-0 flex items-center justify-center",
+                  method.settings.apiSelection === "payments"
+                    ? "text-white bg-blue-600"
+                    : "text-muted-foreground hover:text-foreground bg-background hover:bg-accent",
+                )}
+              >
+                {t('payments')}
+              </button>
+            )}
+            {!forcePaymentsApi && (
+              <button
+                onClick={() => onUpdateSettings({ apiSelection: "orders" })}
+                className={cn(
+                  "flex-1 px-4 h-9 text-sm font-medium transition-colors cursor-pointer flex items-center justify-center",
+                  method.settings.apiSelection === "orders"
+                    ? "text-white bg-blue-600"
+                    : "text-muted-foreground hover:text-foreground bg-background hover:bg-accent",
+                )}
+              >
+                {t('orders')}
+              </button>
+            )}
           </div>
-          <p className="text-xs text-muted-foreground mt-2">
-            {t('paymentsApiRecommended')} {' '}
-            <a
-              href="https://docs.mollie.com/reference/payments-api"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 underline decoration-1 underline-offset-2 cursor-pointer hover:text-blue-700"
-            >
-              {t('clickHere')}
-            </a>
-            <span className="text-muted-foreground"> {t('aboutDifferences')}</span>
-          </p>
+          {!forcePaymentsApi && !forceOrdersApi && (
+            <p className="text-xs text-muted-foreground mt-2">
+              {t('paymentsApiRecommended')} {' '}
+              <a
+                href="https://docs.mollie.com/reference/payments-api"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 underline decoration-1 underline-offset-2 cursor-pointer hover:text-blue-700"
+              >
+                {t('clickHere')}
+              </a>
+              <span className="text-muted-foreground"> {t('aboutDifferences')}</span>
+            </p>
+          )}
         </div>
 
         <div>

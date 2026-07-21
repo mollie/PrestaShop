@@ -25,6 +25,8 @@ export default function PaymentMethodsPage() {
   const [countries, setCountries] = useState<Country[]>([])
   const [customerGroups, setCustomerGroups] = useState<CustomerGroup[]>([])
   const [languages, setLanguages] = useState<Language[]>([])
+  const [onlyPaymentsMethods, setOnlyPaymentsMethods] = useState<string[]>([])
+  const [onlyOrderMethods, setOnlyOrderMethods] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
   const [savingMethodId, setSavingMethodId] = useState<string | null>(null)
@@ -47,6 +49,8 @@ export default function PaymentMethodsPage() {
         setCountries(response.data.countries || [])
         setCustomerGroups(response.data.customerGroups || [])
         setLanguages(response.data.languages || [])
+        setOnlyPaymentsMethods(response.data.onlyPaymentsMethods || [])
+        setOnlyOrderMethods(response.data.onlyOrderMethods || [])
       } else {
         setErrorMessage(response.message || t('loadingError'))
       }
@@ -324,6 +328,8 @@ export default function PaymentMethodsPage() {
           countries={countries}
           customerGroups={customerGroups}
           languages={languages}
+          onlyPaymentsMethods={onlyPaymentsMethods}
+          onlyOrderMethods={onlyOrderMethods}
           onToggleExpanded={toggleExpanded}
           onUpdateSettings={updateMethodSettings}
           onSaveSettings={saveMethodSettings}
