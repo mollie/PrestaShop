@@ -1474,7 +1474,7 @@ class Mollie extends PaymentModule
             return;
         }
 
-        $orderPayment->payment_method = Config::$methods[$mollieOrder['method']];
+        $orderPayment->payment_method = Config::$methods[$mollieOrder['method']] ?? $mollieOrder['method'];
         $orderPayment->update();
     }
 

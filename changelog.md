@@ -2,6 +2,11 @@
 
 # Changelog #
 
+## Changes in release 6.4.5
++ Fixed Bancomat Pay entry in the payment method name list using a wrong identifier
++ Added missing Przelewy24 and Swish entries to the payment method name list
++ Fixed order payment record creation for payment methods missing from the name list
+
 ## Changes in release 6.4.4
 + Added bank transfer due date configuration
 + Added Segment analytics tracking for module and payment events
