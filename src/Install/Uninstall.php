@@ -97,6 +97,7 @@ class Uninstall
             Config::MOLLIE_SUBSCRIPTION_ENABLED,
             Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID,
             Config::MOLLIE_BANKTRANSFER_DUE_DAYS,
+            Config::MOLLIE_APPLE_PAY_DIRECT_EXCLUDED_CARRIERS,
         ];
 
         $this->deleteConfigurations($configurations);

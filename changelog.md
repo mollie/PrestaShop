@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.5
++ Added shipping method exclusion list for Apple Pay Direct
+
 ## Changes in release 6.4.4
 + Added bank transfer due date configuration
 + Added Segment analytics tracking for module and payment events

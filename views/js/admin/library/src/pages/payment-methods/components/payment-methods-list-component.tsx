@@ -4,11 +4,12 @@ import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
 import { PaymentMethodCard } from "./payment-method-card"
-import type { PaymentMethod, Country, CustomerGroup, Language } from "../../../services/PaymentMethodsApiService"
+import type { PaymentMethod, Country, Carrier, CustomerGroup, Language } from "../../../services/PaymentMethodsApiService"
 
 interface PaymentMethodsListProps {
   methods: PaymentMethod[]
   countries: Country[]
+  carriers: Carrier[]
   customerGroups: CustomerGroup[]
   languages: Language[]
   onToggleExpanded: (id: string) => void
@@ -22,6 +23,7 @@ interface PaymentMethodsListProps {
 export function PaymentMethodsList({
   methods,
   countries,
+  carriers,
   customerGroups,
   languages,
   onToggleExpanded,
@@ -187,6 +189,7 @@ export function PaymentMethodsList({
             method={method}
             index={index + 1}
             countries={countries}
+            carriers={carriers}
             customerGroups={customerGroups}
             languages={languages}
             onToggleExpanded={() => onToggleExpanded(method.id)}

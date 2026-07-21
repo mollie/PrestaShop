@@ -102,6 +102,10 @@ export interface MolliePaymentMethodsTranslations {
   applePayButtonOutline: string;
   applePayButtonWhite: string;
   applePayDirectCertificateConflict: string;
+  applePayExcludedCarriers: string;
+  selectCarriersToExclude: string;
+  applePayExcludedCarriersHelp: string;
+  applePayAllCarriersExcludedWarning: string;
   ignore: string;
 
   // Payment Restrictions
