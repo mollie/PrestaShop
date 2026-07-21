@@ -407,7 +407,7 @@ class Config
         'in3' => 'in3',
         'billie' => 'Billie',
         'twint' => 'TWINT',
-        'bancomat' => 'Bancomat',
+        'bancomatpay' => 'Bancomat Pay',
         'alma' => 'Alma',
         'blik' => 'BLIK',
         'klarna' => 'Pay with Klarna.',
