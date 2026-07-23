@@ -52,7 +52,7 @@ class PrestashopLoggerRepository extends CollectionRepository implements Prestas
     {
         Collection::from(
             $this->findAllInCollection()
-                ->sqlWhere('DATEDIFF(NOW(),date_add) >= ' . $daysToKeep)
+                ->sqlWhere('DATEDIFF(NOW(),date_add) >= ' . (int) $daysToKeep)
                 ->where('object_type', '=', Logger::LOG_OBJECT_TYPE)
         )
             ->each(function (\PrestaShopLogger $log) {

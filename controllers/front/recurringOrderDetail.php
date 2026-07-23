@@ -124,7 +124,7 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
     private function updatePaymentMethod(): void
     {
         $newMethod = Tools::getValue('payment_method');
-        $recurringOrderId = Tools::getValue('recurring_order_id');
+        $recurringOrderId = (int) Tools::getValue('recurring_order_id');
 
         if (!$this->validateToken()) {
             $this->errors[] = $this->module->l('Error: token invalid.', self::FILE_NAME);
@@ -138,7 +138,7 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
             return;
         }
 
-        if (!$recurringOrderId) {
+        if (!$recurringOrderId || !$this->customerOwnsRecurringOrder($recurringOrderId)) {
             $this->errors[] = $this->module->l('Failed to get recurring order.', self::FILE_NAME);
 
             return;
@@ -153,7 +153,7 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
 
     private function cancelSubscription(): void
     {
-        $recurringOrderId = Tools::getValue('recurring_order_id');
+        $recurringOrderId = (int) Tools::getValue('recurring_order_id');
 
         if (!$this->validateToken()) {
             $this->errors[] = $this->module->l('Error: token invalid.', self::FILE_NAME);
@@ -161,7 +161,7 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
             return;
         }
 
-        if (!$recurringOrderId) {
+        if (!$recurringOrderId || !$this->customerOwnsRecurringOrder($recurringOrderId)) {
             $this->errors[] = $this->module->l('Failed to get recurring order.', self::FILE_NAME);
 
             return;
@@ -172,6 +172,32 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
 
         $subscriptionCancellationHandler->handle($recurringOrderId);
         $this->success[] = $this->module->l('Successfully canceled subscription.', self::FILE_NAME);
+    }
+
+    /**
+     * Ensures the recurring order targeted by a state-changing action belongs to the
+     * logged-in customer. Without this an authenticated customer could cancel or change
+     * the payment method of another customer's subscription by guessing its id (IDOR).
+     */
+    private function customerOwnsRecurringOrder(int $recurringOrderId): bool
+    {
+        if (!$this->context->customer->id) {
+            return false;
+        }
+
+        /** @var RecurringOrderRepositoryInterface $recurringOrderRepository */
+        $recurringOrderRepository = $this->module->getService(RecurringOrderRepositoryInterface::class);
+
+        /** @var \MolRecurringOrder|null $recurringOrder */
+        $recurringOrder = $recurringOrderRepository->findOneBy([
+            'id_mol_recurring_order' => $recurringOrderId,
+        ]);
+
+        if (!$recurringOrder) {
+            return false;
+        }
+
+        return (int) $recurringOrder->id_customer === (int) $this->context->customer->id;
     }
 
     private function validateToken(): bool

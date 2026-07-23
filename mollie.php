@@ -1909,7 +1909,7 @@ class Mollie extends PaymentModule
         return $recurringOrderRepository
             ->findAll()
             ->where('id_customer', '=', $customerId)
-            ->sqlWhere('id_address_delivery = ' . $oldAddressId . ' OR id_address_invoice = ' . $oldAddressId)
+            ->sqlWhere('id_address_delivery = ' . (int) $oldAddressId . ' OR id_address_invoice = ' . (int) $oldAddressId)
             ->sqlWhere('status = "' . pSQL('active') . '"')
             ->getResults();
     }

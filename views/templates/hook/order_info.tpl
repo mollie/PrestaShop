@@ -98,7 +98,7 @@
                 <button type="button" class="btn btn-default btn-xs mollie-capture-btn" data-price="{$product->totalAmount->value|escape:'html':'UTF-8'}" {if $isCaptured}disabled{/if}>
                   <i class="material-icons">payments</i> {l s='Capture' mod='mollie'}
                 </button>
-                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->unitPrice|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$paymentsActions.refundableQuantity}" {if !$paymentsActions.canRefund}disabled{/if}>
+                <button type="button" class="btn btn-default btn-xs mollie-refund-btn" data-price="{$product->unitPrice|escape:'html':'UTF-8'}" data-orderline="{$product->id|escape:'html':'UTF-8'}" data-available-quantity="{$paymentsActions.refundableQuantity|escape:'html':'UTF-8'}" {if !$paymentsActions.canRefund}disabled{/if}>
                   <i class="material-icons">replay</i> {l s='Refund' mod='mollie'}
                 </button>
               {/if}

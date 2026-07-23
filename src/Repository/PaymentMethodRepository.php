@@ -143,7 +143,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
         $sql = new DbQuery();
         $sql->select('*');
         $sql->from('mol_payment_method');
-        $sql->where('live_environment = ' . pSQL($environment));
+        $sql->where('live_environment = ' . (int) $environment);
         $sql->where('id_shop = ' . (int) $shopId);
 
         return Db::getInstance()->executeS($sql);
@@ -239,7 +239,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
         $sql = new DbQuery();
         $sql->select('id_customer_group')
             ->from('mol_excluded_customer_groups')
-            ->where('id_payment_method = ' . $paymentMethodId);
+            ->where('id_payment_method = ' . (int) $paymentMethodId);
 
         $results = \Db::getInstance()->executeS($sql);
 
