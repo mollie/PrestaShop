@@ -12,4 +12,4 @@
 <div id="mollie-payment-methods-root"></div>
 
 {* Load ES module JavaScript *}
-<script type="module" src="{$molliePaymentMethodsJsUrl}"></script>
+<script type="module" src="{$molliePaymentMethodsJsUrl|escape:'html':'UTF-8'}"></script>

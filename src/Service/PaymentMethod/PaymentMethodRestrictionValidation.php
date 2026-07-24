@@ -76,6 +76,20 @@ class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionVali
                     $success = $paymentRestrictionValidator->isValid($paymentMethod);
 
                     if (!$success) {
+                        PrestaShopLogger::addLog(
+                            sprintf(
+                                '%s: payment method "%s" was hidden by %s',
+                                self::FILE_NAME,
+                                $paymentMethod->getPaymentMethodName(),
+                                get_class($paymentRestrictionValidator)
+                            ),
+                            Config::WARNING,
+                            null,
+                            null,
+                            null,
+                            true
+                        );
+
                         return false;
                     }
                 }

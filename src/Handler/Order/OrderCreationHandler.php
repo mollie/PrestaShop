@@ -142,9 +142,12 @@ class OrderCreationHandler
      */
     public function createOrder($apiPayment, int $cartId, bool $isAuthorizablePayment = false): int
     {
-        $orderStatus = $isAuthorizablePayment ?
-            (int) Config::getStatuses()[PaymentStatus::STATUS_AUTHORIZED] :
-            (int) Config::getStatuses()[PaymentStatus::STATUS_PAID];
+        if ($isAuthorizablePayment) {
+            $orderStatus = (int) \Configuration::get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED)
+                ?: (int) Config::getStatuses()[PaymentStatus::STATUS_AUTHORIZED];
+        } else {
+            $orderStatus = (int) Config::getStatuses()[PaymentStatus::STATUS_PAID];
+        }
 
         $cart = new Cart($cartId);
 

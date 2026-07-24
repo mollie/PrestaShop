@@ -2,6 +2,27 @@
 
 # Changelog #
 
+## Changes in release 6.4.4
++ Added bank transfer due date configuration
++ Added Segment analytics tracking for module and payment events
++ Added Bulgarian translations
++ Fixed Apple Pay not displaying at checkout on PrestaShop 9
++ Fixed Apple Pay Direct button on the product page in the Hummingbird theme
++ Fixed Payments API per-line Refund button not updating after a successful refund
++ Surfaced a clearer message when Mollie rejects a refund as a duplicate of a recent one
++ Fixed refund confirmation modal amount to reflect selected quantity for multi-unit order lines
++ Fixed payment method ordering mismatch between admin panel and checkout page
++ Fixed VAT amount being off by 1–2 cents on high-value order lines causing Mollie API 422 errors
++ Hid "Refund All" button for Klarna and other authorizable Orders API payments until at least one line is shipped
++ Disabled bulk Refund / Ship / Cancel buttons based on order state on the admin order page
++ Allowed shipping orders created on the Orders API while using the Payments API
++ Removed the Trustly payment method
++ Removed the settlement amount from order details
++ Unified the payment return flow
++ Improved order description update logic and adjusted resource logging
++ Added diagnostic logging when a payment method is hidden by a restriction
++ Resolved PrestaShop Validator findings (errors, licenses, security)
+
 ## Changes in release 6.4.3
 + Fixed Payment API race condition causing false "payment failed" errors
 + Fixed rounding distribution for whole-number differences in order line amounts

@@ -38,7 +38,10 @@ namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Types\PaymentMethod;
+use Mollie\Config\Config;
+use Mollie\Utility\VersionUtility;
 use MolPaymentMethod;
+use PrestaShopLogger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -46,6 +49,8 @@ if (!defined('_PS_VERSION_')) {
 
 class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
+    const FILE_NAME = 'ApplePayPaymentMethodRestrictionValidator';
+
     /**
      * @var ConfigurationAdapter
      */
@@ -62,14 +67,30 @@ class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrict
     public function isValid(MolPaymentMethod $paymentMethod): bool
     {
         if (!$this->isSslEnabledEverywhere()) {
+            $this->logHidden(sprintf('store SSL is not enabled (%s)', $this->getSslConfigKey()));
+
             return false;
         }
 
         if (!$this->isPaymentMethodInCookie()) {
+            $this->logHidden('isApplePayMethod cookie is missing (device is not an Apple Pay capable browser)');
+
             return false;
         }
 
         return true;
+    }
+
+    private function logHidden(string $reason): void
+    {
+        PrestaShopLogger::addLog(
+            sprintf('%s: Apple Pay hidden because %s', self::FILE_NAME, $reason),
+            Config::WARNING,
+            null,
+            null,
+            null,
+            true
+        );
     }
 
     /**
@@ -82,7 +103,16 @@ class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrict
 
     private function isSslEnabledEverywhere(): bool
     {
-        return (bool) $this->configurationAdapter->get('PS_SSL_ENABLED_EVERYWHERE');
+        return (bool) $this->configurationAdapter->get($this->getSslConfigKey());
+    }
+
+    private function getSslConfigKey(): string
+    {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('9.0.0')) {
+            return 'PS_SSL_ENABLED';
+        }
+
+        return 'PS_SSL_ENABLED_EVERYWHERE';
     }
 
     private function isPaymentMethodInCookie(): bool

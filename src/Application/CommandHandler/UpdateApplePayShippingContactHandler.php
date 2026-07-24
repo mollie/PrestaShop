@@ -57,10 +57,11 @@ final class UpdateApplePayShippingContactHandler
 
     public function handle(UpdateApplePayShippingContact $command): array
     {
-        $customer = $this->createCustomer($command->getCustomerId());
-        $deliveryAddress = $this->createAddress($customer->id, $command);
-        $invoiceAddress = $this->createAddress($customer->id, $command);
-        $cart = $this->updateCart($customer, $deliveryAddress->id, $invoiceAddress->id, $command->getCartId());
+        $cart = new Cart($command->getCartId());
+        $customer = $this->getOrCreateCustomer($command->getCustomerId(), $cart);
+        $deliveryAddress = $this->getOrCreateAddress($cart->id_address_delivery, $customer->id, $command);
+        $invoiceAddress = $this->getOrCreateAddress($cart->id_address_invoice, $customer->id, $command);
+        $this->updateCart($cart, $customer, $deliveryAddress->id, $invoiceAddress->id);
         $this->addProductToCart($cart, $command);
         $cart = new Cart($cart->id);
         $this->updateContext($cart, $customer);
@@ -93,8 +94,22 @@ final class UpdateApplePayShippingContactHandler
         ];
     }
 
-    private function createAddress(int $customerId, UpdateApplePayShippingContact $command): Address
+    private function getOrCreateAddress(int $existingAddressId, int $customerId, UpdateApplePayShippingContact $command): Address
     {
+        if ($existingAddressId) {
+            $address = new Address($existingAddressId);
+            if ($address->id && $address->alias === 'applePay') {
+                $address->postcode = $command->getPostalCode();
+                $address->id_country = Country::getByIso($command->getCountryCode());
+                $address->country = $command->getCountry();
+                $address->city = $command->getLocality();
+                $address->id_customer = $customerId;
+                $address->update();
+
+                return $address;
+            }
+        }
+
         $address = new Address();
         $address->address1 = 'ApplePay';
         $address->lastname = 'ApplePay';
@@ -110,10 +125,14 @@ final class UpdateApplePayShippingContactHandler
         return $address;
     }
 
-    private function createCustomer(int $customerId): Customer
+    private function getOrCreateCustomer(int $customerId, Cart $cart): Customer
     {
         if ($customerId) {
             return new Customer($customerId);
+        }
+
+        if ($cart->id_customer) {
+            return new Customer($cart->id_customer);
         }
 
         if (!Configuration::get('PS_GUEST_CHECKOUT_ENABLED')) {
@@ -124,23 +143,20 @@ final class UpdateApplePayShippingContactHandler
         $customer->is_guest = true;
         $customer->firstname = 'applePay';
         $customer->lastname = 'applePay';
-        $customer->email = 'applePay@mollie.com';
+        $customer->email = 'applepay-' . (int) $cart->id . '@mollie.com';
         $customer->passwd = Tools::hash(microtime());
         $customer->add();
 
         return $customer;
     }
 
-    private function updateCart(Customer $customer, int $deliveryAddressId, int $invoiceAddressId, int $cartId): cart
+    private function updateCart(Cart $cart, Customer $customer, int $deliveryAddressId, int $invoiceAddressId): void
     {
-        $cart = new Cart($cartId);
         $cart->secure_key = $customer->secure_key;
         $cart->id_address_delivery = $deliveryAddressId;
         $cart->id_address_invoice = $invoiceAddressId;
         $cart->id_customer = $customer->id;
         $cart->update();
-
-        return $cart;
     }
 
     private function addProductToCart(Cart $cart, UpdateApplePayShippingContact $command)

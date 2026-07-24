@@ -39,6 +39,12 @@ jobs:
           rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile cypress
           rm -rf .docker cypress.config.js cypress.env.json docker-compose*.yml .gitignore bin codeception.yml
           rm -rf package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php
+          rm -f views/assets/webpack.config.js
+          rm -rf views/js/admin/library/node_modules views/js/admin/library/src
+          rm -f views/js/admin/library/package.json views/js/admin/library/package-lock.json
+          rm -f views/js/admin/library/tsconfig.json views/js/admin/library/tsconfig.app.json views/js/admin/library/tsconfig.node.json
+          rm -f views/js/admin/library/vite.config.ts views/js/admin/library/eslint.config.js
+          rm -f views/js/admin/library/postcss.config.js views/js/admin/library/tailwind.config.js views/js/admin/library/README.md
 
           # Remove unnecessary vendor directories
           rm -rf vendor/segmentio/analytics-php/.buildscript
@@ -46,6 +52,9 @@ jobs:
           rm -rf vendor/segmentio/analytics-php/.github
 
           cp .env.dist .env
+          # Replace the placeholder from .env.dist with the real key (avoid a duplicate SEGMENT_API_KEY line)
+          sed -i "/^SEGMENT_API_KEY=/d" .env
+          echo "SEGMENT_API_KEY='${{ secrets.SEGMENT_API_KEY }}'" >> .env
 
           # Create module directory structure
           mkdir ${{ env.MODULE_NAME }}

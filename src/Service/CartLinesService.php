@@ -353,15 +353,15 @@ class CartLinesService
                 $actualVatRate = 0;
                 if ($unitPriceNoTax > 0) {
                     $actualVatRate = round(
-                        $vatAmount = CalculationUtility::getActualVatRate($unitPrice, $unitPriceNoTax, $quantity),
+                        CalculationUtility::getActualVatRate($unitPrice, $unitPriceNoTax, $quantity),
                         $vatRatePrecision
                     );
                 }
-                $vatRateWithPercentages = NumberUtility::plus($actualVatRate, 100);
-                $vatAmount = NumberUtility::times(
-                    $totalAmount,
-                    NumberUtility::divide($actualVatRate, $vatRateWithPercentages)
-                );
+
+                // Compute the VAT amount from the total amount and the VAT rate we send, matching
+                // Mollie's own server-side validation. See CalculationUtility::getVatAmount() and PIPRES-781.
+                $vatRate = round($actualVatRate, $apiRoundingPrecision);
+                $vatAmount = CalculationUtility::getVatAmount($totalAmount, $vatRate, $apiRoundingPrecision);
 
                 $newItem = [
                     'name' => $line['name'],
@@ -370,8 +370,8 @@ class CartLinesService
                     'quantity' => (int) $quantity,
                     'unitPrice' => round($unitPrice, $apiRoundingPrecision),
                     'totalAmount' => round($totalAmount, $apiRoundingPrecision),
-                    'vatRate' => round($actualVatRate, $apiRoundingPrecision),
-                    'vatAmount' => round($vatAmount, $apiRoundingPrecision),
+                    'vatRate' => $vatRate,
+                    'vatAmount' => $vatAmount,
                     'product_url' => $line['product_url'] ?? null,
                     'image_url' => $line['image_url'] ?? null,
                     'metadata' => $line['metadata'] ?? [],
