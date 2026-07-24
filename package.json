@@ -21,7 +21,7 @@
   "homepage": "https://github.com/mollie/PrestaShop#readme",
   "devDependencies": {
     "@cypress/vue": "^6.0.0",
-    "@frsource/cypress-plugin-visual-regression-diff": "^3.3.10",
+    "@frsource/cypress-plugin-visual-regression-diff": "^4.1.1",
     "cypress": "^13.8.1",
     "cypress-fail-fast": "^7.0.3",
     "cypress-iframe": "^1.0.1",
