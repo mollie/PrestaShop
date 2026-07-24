@@ -13,7 +13,9 @@
 namespace Mollie\Grid\Definition\Modifier;
 
 use Mollie;
+use Mollie\Config\Config;
 use Mollie\Grid\Action\Type\SecondChanceRowAction;
+use Mollie\Grid\Action\Type\ViewInMollieRowAction;
 use Mollie\Grid\Row\AccessibilityChecker\SecondChanceAccessibilityChecker;
 use PrestaShop\PrestaShop\Core\Grid\Action\Row\RowActionCollection;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ActionColumn;
@@ -54,6 +56,28 @@ class OrderGridDefinitionModifier implements GridDefinitionModifierInterface
                                 'accessibility_checker' => $this->module->getService(
                                     SecondChanceAccessibilityChecker::class
                                 ),
+                            ])
+                        ),
+                ])
+            );
+
+        $gridDefinition->getColumns()
+            ->addBefore('date_add', (new ActionColumn('mollie_view_in_dashboard'))
+                ->setName($translator->trans('Mollie', [], 'Modules.mollie'))
+                ->setOptions([
+                    'actions' => (new RowActionCollection())
+                        ->add((new ViewInMollieRowAction('view_in_mollie'))
+                            ->setName($translator->trans('View in Mollie', [], 'Modules.mollie'))
+                            ->setIcon('open_in_new')
+                            ->setOptions([
+                                'route' => Config::ROUTE_VIEW_IN_MOLLIE_DASHBOARD,
+                                'route_param_field' => 'transaction_id',
+                                'route_param_name' => 'transactionId',
+                                'target' => '_blank',
+                                'use_inline_display' => true,
+                                'accessibility_checker' => static function (array $record) {
+                                    return !empty($record['transaction_id']);
+                                },
                             ])
                         ),
                 ])

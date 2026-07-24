@@ -372,6 +372,7 @@ class Config
     const MOLLIE_METHOD_AUTO_CAPTURE_STATUSES = 'MOLLIE_METHOD_AUTO_CAPTURE_STATUSES_';
 
     const ROUTE_RESEND_SECOND_CHANCE_PAYMENT_MESSAGE = 'mollie_module_admin_resend_payment_message';
+    const ROUTE_VIEW_IN_MOLLIE_DASHBOARD = 'mollie_module_admin_view_in_dashboard';
 
     const PAYMENT_FEE_SKU = 'payment-fee-sku';
     const WRONG_AMOUNT_REASON = 'wrong amount';

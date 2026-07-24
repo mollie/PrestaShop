@@ -3,6 +3,7 @@
 # Changelog #
 
 ## Changes in release 6.4.4
++ Added a "View in Mollie" link on the order page and in the Orders list to open a payment directly in the Mollie dashboard
 + Added bank transfer due date configuration
 + Added Segment analytics tracking for module and payment events
 + Added Bulgarian translations
