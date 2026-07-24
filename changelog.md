@@ -22,6 +22,7 @@
 + Improved order description update logic and adjusted resource logging
 + Added diagnostic logging when a payment method is hidden by a restriction
 + Resolved PrestaShop Validator findings (errors, licenses, security)
++ Fixed Apple Pay Direct authorization so cart operations only affect the caller's own session cart
 
 ## Changes in release 6.4.3
 + Fixed Payment API race condition causing false "payment failed" errors
