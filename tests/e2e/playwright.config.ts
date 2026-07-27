@@ -1,4 +1,4 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: '.',
@@ -19,6 +19,19 @@ export default defineConfig({
   projects: [
     { name: 'bo-auth', testMatch: /bo-auth\.setup\.ts/ },
     { name: 'cfg-orders', testMatch: /cfg-orders\.setup\.ts/, dependencies: ['bo-auth'] },
-    { name: 'smoke', testMatch: /smoke\.spec\.ts/ },
+    {
+      name: 'admin',
+      testDir: './specs/admin',
+      testIgnore: /mobile-checkout\.spec\.ts/,
+      dependencies: ['bo-auth'],
+    },
+    {
+      name: 'mobile',
+      testMatch: /mobile-checkout\.spec\.ts/,
+      dependencies: ['bo-auth', 'cfg-orders'],
+      // iPhone 13 defaults to WebKit; only Chromium is installed in CI, and it
+      // supports the same mobile emulation.
+      use: { ...devices['iPhone 13'], browserName: 'chromium' },
+    },
   ],
 });

@@ -15,6 +15,33 @@ export const FO_PASSWORD = 'prestashop_demo';
 /** Pre-seeded worker customers: `e2e-worker-0` … `e2e-worker-9`. */
 export const WORKER_CUSTOMER_COUNT = 10;
 
+/**
+ * Console noise that is expected in this environment and must not fail a test.
+ * Anything not listed here is treated as a regression.
+ */
+const ALLOWED_CONSOLE_ERRORS = [
+  /ChunkLoadError/,
+  /Loading chunk/,
+  /Failed to fetch.*segment/i,
+];
+
+/**
+ * Genuine third parties only. The module's own AJAX
+ * (AdminMollieAjaxController and friends) is never mocked or blocked — and
+ * neither is api.mollie.com.
+ */
+const THIRD_PARTY_BLOCKLIST = [
+  /segment\.(io|com)/,
+  /addons\.prestashop\.com/,
+  /cloudsync[^/]*\.prestashop\.com/,
+  /(api-)?accounts\.prestashop\.com/,
+];
+
+type TestFixtures = {
+  assertNoConsoleErrors: void;
+  blockThirdParties: void;
+};
+
 type WorkerFixtures = {
   foCustomer: { email: string; password: string };
   /**
@@ -26,8 +53,7 @@ type WorkerFixtures = {
   authStorageState: string;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- no test-scoped fixtures yet
-export const test = base.extend<{}, WorkerFixtures>({
+export const test = base.extend<TestFixtures, WorkerFixtures>({
   foCustomer: [
     async ({}, use, workerInfo) => {
       const index = workerInfo.parallelIndex % WORKER_CUSTOMER_COUNT;
@@ -69,6 +95,56 @@ export const test = base.extend<{}, WorkerFixtures>({
   storageState: async ({ authStorageState }, use) => {
     await use(authStorageState);
   },
+
+  blockThirdParties: [
+    async ({ page }, use) => {
+      for (const pattern of THIRD_PARTY_BLOCKLIST) {
+        // Stubbed rather than aborted: an aborted analytics beacon makes the page
+        // log "Failed to fetch", which the console guard would then report as a
+        // regression we caused ourselves. The stub is shaped per resource type so
+        // callers can still parse the response.
+        await page.route(pattern, (route) => {
+          switch (route.request().resourceType()) {
+            case 'script':
+              return route.fulfill({ status: 200, contentType: 'application/javascript', body: '' });
+            case 'document':
+              return route.fulfill({ status: 200, contentType: 'text/html', body: '<!doctype html><title>blocked</title>' });
+            case 'image':
+              return route.fulfill({ status: 200, contentType: 'image/gif', body: '' });
+            default:
+              return route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+          }
+        });
+      }
+      await use();
+    },
+    { auto: true },
+  ],
+
+  assertNoConsoleErrors: [
+    async ({ page }, use) => {
+      const errors: string[] = [];
+
+      page.on('console', (msg) => {
+        if (msg.type() !== 'error') return;
+        const text = msg.text();
+        if (ALLOWED_CONSOLE_ERRORS.some((p) => p.test(text))) return;
+        // A failed asset fetch is only interesting when it is one of the
+        // module's own assets; the seeded shop's theme and third-party modules
+        // reference a few images that never resolve.
+        if (/Failed to load resource/.test(text) && !/mollie/i.test(msg.location().url)) return;
+        errors.push(text);
+      });
+
+      // An uncaught exception is always a regression, never expected noise.
+      page.on('pageerror', (error) => errors.push(`pageerror: ${error.message}`));
+
+      await use();
+
+      expect(errors, `Unexpected console errors:\n${errors.join('\n')}`).toHaveLength(0);
+    },
+    { auto: true },
+  ],
 });
 
 export { expect };
