@@ -71,7 +71,9 @@ set-shop-domain:
 		UPDATE ps_shop_url SET domain='$(HOST)', domain_ssl='$(HOST)'; \
 		UPDATE ps_configuration SET value='$(HOST)' WHERE name IN ('PS_SHOP_DOMAIN','PS_SHOP_DOMAIN_SSL'); \
 		UPDATE ps_configuration SET value='$(SSL)' WHERE name IN ('PS_SSL_ENABLED','PS_SSL_ENABLED_EVERYWHERE');"
-	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && rm -rf var/cache/*" || true
+	# The cache is cleared as root, so hand `var` back to the web user afterwards
+	# or PrestaShop cannot rebuild it and every page 500s.
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && rm -rf var/cache/* && chmod -R 777 var" || true
 
 open-e2e-tests-locally:
 	npm install -D cypress
