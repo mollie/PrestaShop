@@ -24,7 +24,8 @@ e2eh$(VERSION)_local:
 	make seeding-customized-sql
 	make installing-uninstalling-enabling-module
 	make chmod-app
-	make open-e2e-tests-locally
+	make set-shop-domain HOST=localhost:8002 SSL=0
+	@echo "Shop ready on http://localhost:8002 — run 'make e2e-tests-locally' or 'make e2e-tests-ui'."
 
 # For CI build with PS autoinstall
 e2eh$(VERSION):
@@ -75,15 +76,17 @@ set-shop-domain:
 	# or PrestaShop cannot rebuild it and every page 500s.
 	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && rm -rf var/cache/* && chmod -R 777 var" || true
 
-open-e2e-tests-locally:
-	npm install -D cypress
+# target: e2e-tests-locally	- Run the Playwright suite against a shop already started by e2eh<VERSION>_local.
+e2e-tests-locally:
 	npm ci
-	npx cypress open --config baseUrl=$(ENV_baseUrl$(VERSION)) --env MOLLIE_TEST_API_KEY='$(ENV_MOLLIE_TEST_API_KEY)'
+	npx playwright install chromium
+	cd tests/e2e && npx playwright test
 
-run-e2e-tests-locally:
-	npm install -D cypress
+# target: e2e-tests-ui		- Same suite in Playwright's interactive UI mode.
+e2e-tests-ui:
 	npm ci
-	npx cypress run
+	npx playwright install chromium
+	cd tests/e2e && npx playwright test --ui
 
 # checking the module upgrading - installs older module then installs from master branch
 upgrading-module-test-$(VERSION):
@@ -100,7 +103,7 @@ upgrading-module-test-$(VERSION):
 prepare-zip:
 	composer install --no-dev --optimize-autoloader --classmap-authoritative
 	composer dump-autoload --no-dev --optimize --classmap-authoritative
-	rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile cypress .docker cypress.config.js cypress.env.json docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php views/assets/webpack.config.js
+	rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php views/assets/webpack.config.js
 	rm -rf views/js/admin/library/node_modules views/js/admin/library/src views/js/admin/library/package.json views/js/admin/library/package-lock.json views/js/admin/library/tsconfig.json views/js/admin/library/tsconfig.app.json views/js/admin/library/tsconfig.node.json views/js/admin/library/vite.config.ts views/js/admin/library/eslint.config.js views/js/admin/library/postcss.config.js views/js/admin/library/tailwind.config.js views/js/admin/library/README.md
 
 start-ps-for-tests:
