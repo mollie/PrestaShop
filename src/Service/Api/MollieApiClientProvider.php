@@ -15,11 +15,13 @@ declare(strict_types=1);
 namespace Mollie\Service\Api;
 
 use Mollie\Adapter\ConfigurationAdapter;
+use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
 use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ApiKeyService;
+use Mollie\Utility\TransactionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -65,23 +67,124 @@ class MollieApiClientProvider
     }
 
     /**
-     * Build the API client to use for an existing transaction. Resolves the
-     * shop that owns the payment (multistore) and uses that shop's key, instead
-     * of relying on whatever shop happens to be the current context. Falls back
-     * to the current shop when the transaction cannot be located.
+     * Build the API client to use for an existing transaction.
+     *
+     * Tries, in order, the candidate keys most likely to own the payment and
+     * returns the first one that can actually access the transaction on Mollie:
+     *   1. the key whose stored reference matches the order (its original key),
+     *   2. the key currently configured on the order's shop,
+     *   3. the manually-entered fallback key.
+     *
+     * This keeps refunds/captures/webhooks working in multistore and after a key
+     * migration, where the shop's current key may no longer own older orders.
+     * When no candidate can be verified (e.g. transaction not found on any key),
+     * the first usable client is returned so behaviour degrades to the previous
+     * single-key attempt rather than failing to build a client at all.
      */
     public function getForTransaction(string $transactionId, bool $subscriptionOrder = false): ?MollieApiClient
     {
-        return $this->getForShop($this->resolveShopIdForTransaction($transactionId), $subscriptionOrder);
+        $payment = $this->paymentMethodRepository->getPaymentBy('transaction_id', $transactionId);
+        $payment = is_array($payment) ? $payment : [];
+
+        $shopId = $this->resolveShopIdFromPayment($payment);
+        $storedRef = !empty($payment['api_key_ref']) ? (string) $payment['api_key_ref'] : null;
+
+        $candidateKeys = $this->buildCandidateKeys($shopId, $storedRef);
+
+        if (empty($candidateKeys)) {
+            return $this->getForShop($shopId, $subscriptionOrder);
+        }
+
+        $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
+        $firstUsableClient = null;
+
+        foreach ($candidateKeys as $apiKey) {
+            $client = $this->getForApiKey($apiKey, $subscriptionOrder);
+
+            if (!$client) {
+                continue;
+            }
+
+            if (null === $firstUsableClient) {
+                $firstUsableClient = $client;
+            }
+
+            if ($this->clientCanAccessTransaction($client, $transactionId, $isOrderTransaction)) {
+                return $client;
+            }
+        }
+
+        return $firstUsableClient;
     }
 
     /**
-     * Find which shop created a transaction, via its stored payment row.
+     * Ordered, de-duplicated list of API keys to try for a transaction: the key
+     * matching the order's stored reference first (its original key), then the
+     * order shop's current key, then the manually-entered fallback key.
+     *
+     * @return string[]
      */
-    private function resolveShopIdForTransaction(string $transactionId): ?int
+    private function buildCandidateKeys(?int $shopId, ?string $storedRef): array
     {
-        $payment = $this->paymentMethodRepository->getPaymentBy('transaction_id', $transactionId);
+        $keys = [];
 
+        foreach ([$this->resolveApiKeyForShop($shopId), $this->getConfiguredFallbackApiKey($shopId)] as $key) {
+            if ($key && !in_array($key, $keys, true)) {
+                $keys[] = $key;
+            }
+        }
+
+        if ($storedRef) {
+            usort($keys, function (string $a, string $b) use ($storedRef): int {
+                $aMatches = $this->getApiKeyReference($a) === $storedRef ? 0 : 1;
+                $bMatches = $this->getApiKeyReference($b) === $storedRef ? 0 : 1;
+
+                return $aMatches <=> $bMatches;
+            });
+        }
+
+        return $keys;
+    }
+
+    /**
+     * Whether a client can fetch the given transaction (i.e. its key owns it).
+     */
+    private function clientCanAccessTransaction(MollieApiClient $client, string $transactionId, bool $isOrderTransaction): bool
+    {
+        try {
+            if ($isOrderTransaction) {
+                $client->orders->get($transactionId);
+            } else {
+                $client->payments->get($transactionId);
+            }
+
+            return true;
+        } catch (ApiException $e) {
+            return false;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    /**
+     * The manually-entered fallback key for the current environment, or null.
+     */
+    public function getConfiguredFallbackApiKey(?int $shopId = null): ?string
+    {
+        $keyConfig = $this->isLiveEnvironment()
+            ? Config::MOLLIE_API_KEY_FALLBACK
+            : Config::MOLLIE_API_KEY_FALLBACK_TEST;
+
+        $key = $this->configuration->get($keyConfig, $shopId);
+
+        return $key ?: null;
+    }
+
+    /**
+     * Find which shop created a transaction, from its stored payment row.
+     */
+    private function resolveShopIdFromPayment(array $payment): ?int
+    {
         if (empty($payment)) {
             return null;
         }

@@ -184,6 +184,10 @@ class Config
     const MOLLIE_ENVIRONMENT = 'MOLLIE_ENVIRONMENT';
     const MOLLIE_API_KEY = 'MOLLIE_API_KEY';
     const MOLLIE_API_KEY_TEST = 'MOLLIE_API_KEY_TEST';
+    // Optional manually-entered fallback keys, tried when neither the order's
+    // stored key nor the shop's current key can access a transaction.
+    const MOLLIE_API_KEY_FALLBACK = 'MOLLIE_API_KEY_FALLBACK';
+    const MOLLIE_API_KEY_FALLBACK_TEST = 'MOLLIE_API_KEY_FALLBACK_TEST';
     // MOLLIE_API_KEY_TESTING_BUTTON removed - functionality moved to AdminMollieAuthentication
     const MOLLIE_FORM_PAYMENT_OPTION_POSITION = 'payment_option_position';
     const MOLLIE_ACCOUNT_SWITCH = 'MOLLIE_ACCOUNT_SWITCH';
