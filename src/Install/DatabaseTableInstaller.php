@@ -46,6 +46,7 @@ final class DatabaseTableInstaller implements InstallerInterface
 				`order_id`        INT(64),
 				`order_reference` VARCHAR(191),
 				`mandate_id`      VARCHAR(64),
+				`api_key_ref`     VARCHAR(32),
 				`method`          VARCHAR(128) NOT NULL,
 				`bank_status`     VARCHAR(64)  NOT NULL,
 				`reason`          VARCHAR(64),

@@ -195,20 +195,23 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
         }
     }
 
-    public function addOpenStatusPayment($cartId, $orderPayment, $transactionId, $orderId, $orderReference)
+    public function addOpenStatusPayment($cartId, $orderPayment, $transactionId, $orderId, $orderReference, $apiKeyRef = null)
     {
-        return Db::getInstance()->insert(
-            'mollie_payments',
-            [
-                'cart_id' => (int) $cartId,
-                'method' => pSQL($orderPayment),
-                'transaction_id' => pSQL($transactionId),
-                'bank_status' => PaymentStatus::STATUS_OPEN,
-                'order_id' => (int) $orderId,
-                'order_reference' => pSQL($orderReference),
-                'created_at' => ['type' => 'sql', 'value' => 'NOW()'],
-            ]
-        );
+        $data = [
+            'cart_id' => (int) $cartId,
+            'method' => pSQL($orderPayment),
+            'transaction_id' => pSQL($transactionId),
+            'bank_status' => PaymentStatus::STATUS_OPEN,
+            'order_id' => (int) $orderId,
+            'order_reference' => pSQL($orderReference),
+            'created_at' => ['type' => 'sql', 'value' => 'NOW()'],
+        ];
+
+        if ($apiKeyRef) {
+            $data['api_key_ref'] = pSQL($apiKeyRef);
+        }
+
+        return Db::getInstance()->insert('mollie_payments', $data);
     }
 
     public function updatePaymentReason($transactionId, $reason)

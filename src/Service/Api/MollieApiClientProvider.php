@@ -153,6 +153,31 @@ class MollieApiClientProvider
         );
     }
 
+    /**
+     * A stable, non-reversible reference for an API key. Stored against an order
+     * so we can later tell which of the known keys (order shop, current shop,
+     * configured fallback) created it, without ever persisting the secret itself.
+     */
+    public function getApiKeyReference(string $apiKey): string
+    {
+        return substr(hash('sha256', $apiKey), 0, 16);
+    }
+
+    /**
+     * The reference of the key currently configured on the given shop, or null
+     * when no key is configured.
+     */
+    public function resolveApiKeyRefForShop(?int $shopId = null): ?string
+    {
+        $apiKey = $this->resolveApiKeyForShop($shopId);
+
+        if (!$apiKey) {
+            return null;
+        }
+
+        return $this->getApiKeyReference($apiKey);
+    }
+
     private function getEnvironment(): int
     {
         return (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);

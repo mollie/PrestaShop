@@ -104,7 +104,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.4.4';
+        $this->version = '6.5.0';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -1446,12 +1446,17 @@ class Mollie extends PaymentModule
             /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
             $paymentMethodRepository = $this->getService(PaymentMethodRepositoryInterface::class);
 
+            /** @var \Mollie\Service\Api\MollieApiClientProvider $clientProvider */
+            $clientProvider = $this->getService(\Mollie\Service\Api\MollieApiClientProvider::class);
+            $apiKeyRef = $clientProvider->resolveApiKeyRefForShop((int) $params['order']->id_shop);
+
             $paymentMethodRepository->addOpenStatusPayment(
                 $cartId,
                 $orderPayment,
                 $newPayment->id,
                 $orderId,
-                $orderReference
+                $orderReference,
+                $apiKeyRef
             );
 
             $sendMolliePaymentMail = Tools::getValue('mollie-email-send');
