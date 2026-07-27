@@ -18,6 +18,7 @@ export default defineConfig({
   },
   projects: [
     { name: 'bo-auth', testMatch: /bo-auth\.setup\.ts/ },
+    { name: 'cfg-orders', testMatch: /cfg-orders\.setup\.ts/, dependencies: ['bo-auth'] },
     { name: 'smoke', testMatch: /smoke\.spec\.ts/ },
   ],
 });
