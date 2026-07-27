@@ -18,10 +18,17 @@ jobs:
         include:
           - prestashop: PS8
             version: 8
+            bo_email: demo@prestashop.com
+            bo_password: prestashop_demo
           - prestashop: PS1785
             version: 1785
+            bo_email: demo@demo.com
+            bo_password: demodemo
     env:
       DB_PASSWD: prestashop
+      # The PS8 seed ships demo@prestashop.com; the PS1785 seed ships demo@demo.com.
+      E2E_BO_EMAIL: ${{ matrix.bo_email }}
+      E2E_BO_PASSWORD: ${{ matrix.bo_password }}
     steps:
       - uses: actions/checkout@v4
       - name: Install composer deps
@@ -62,12 +69,19 @@ jobs:
             version: 8
             hostname: ps8-checkout.invertusdemo.com
             tunnel_token_secret: CF_TUNNEL_TOKEN_PS8_CHECKOUT
+            bo_email: demo@prestashop.com
+            bo_password: prestashop_demo
           - prestashop: PS1785
             version: 1785
             hostname: ps1785-checkout.invertusdemo.com
             tunnel_token_secret: CF_TUNNEL_TOKEN_PS1785_CHECKOUT
+            bo_email: demo@demo.com
+            bo_password: demodemo
     env:
       DB_PASSWD: prestashop
+      # The PS8 seed ships demo@prestashop.com; the PS1785 seed ships demo@demo.com.
+      E2E_BO_EMAIL: ${{ matrix.bo_email }}
+      E2E_BO_PASSWORD: ${{ matrix.bo_password }}
     steps:
       - uses: actions/checkout@v4
       - name: Install composer deps
