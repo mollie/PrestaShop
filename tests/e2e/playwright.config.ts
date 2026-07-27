@@ -35,6 +35,14 @@ export default defineConfig({
       testDir: './specs/checkout',
       dependencies: ['cfg-orders'],
     },
+    // Depends on checkout-orders, not just cfg-orders: the Orders-API checkouts
+    // must finish before the per-method API assignment is rewritten under them.
+    { name: 'cfg-payments', testMatch: /cfg-payments\.setup\.ts/, dependencies: ['checkout-orders'] },
+    {
+      name: 'checkout-payments',
+      testDir: './specs/checkout',
+      dependencies: ['cfg-payments'],
+    },
     {
       name: 'mobile',
       testMatch: /mobile-checkout\.spec\.ts/,
