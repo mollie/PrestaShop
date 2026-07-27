@@ -43,6 +43,8 @@ class CaptureService
      */
     public function handleCapture($transactionId, $amount = null, $orderId = null)
     {
+        $this->module->setApiClientForTransaction($transactionId);
+
         try {
             if (TransactionUtility::isOrderTransaction($transactionId)) {
                 $this->captureOrderTransaction($transactionId);

@@ -69,6 +69,8 @@ class PayByBankCancellationService
      */
     public function getActualMollieStatus($transactionId)
     {
+        $this->module->setApiClientForTransaction($transactionId);
+
         try {
             $isOrder = TransactionUtility::isOrderTransaction($transactionId);
 

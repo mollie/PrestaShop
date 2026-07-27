@@ -18,6 +18,7 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\MollieApiClient;
 use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
+use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ApiKeyService;
 
 if (!defined('_PS_VERSION_')) {
@@ -45,17 +46,61 @@ class MollieApiClientProvider
     /** @var ModuleFactory */
     private $moduleFactory;
 
+    /** @var PaymentMethodRepositoryInterface */
+    private $paymentMethodRepository;
+
     /** @var array<string, MollieApiClient|null> clients cached per API key */
     private $clientCache = [];
 
     public function __construct(
         ConfigurationAdapter $configuration,
         ApiKeyService $apiKeyService,
-        ModuleFactory $moduleFactory
+        ModuleFactory $moduleFactory,
+        PaymentMethodRepositoryInterface $paymentMethodRepository
     ) {
         $this->configuration = $configuration;
         $this->apiKeyService = $apiKeyService;
         $this->moduleFactory = $moduleFactory;
+        $this->paymentMethodRepository = $paymentMethodRepository;
+    }
+
+    /**
+     * Build the API client to use for an existing transaction. Resolves the
+     * shop that owns the payment (multistore) and uses that shop's key, instead
+     * of relying on whatever shop happens to be the current context. Falls back
+     * to the current shop when the transaction cannot be located.
+     */
+    public function getForTransaction(string $transactionId, bool $subscriptionOrder = false): ?MollieApiClient
+    {
+        return $this->getForShop($this->resolveShopIdForTransaction($transactionId), $subscriptionOrder);
+    }
+
+    /**
+     * Find which shop created a transaction, via its stored payment row.
+     */
+    private function resolveShopIdForTransaction(string $transactionId): ?int
+    {
+        $payment = $this->paymentMethodRepository->getPaymentBy('transaction_id', $transactionId);
+
+        if (empty($payment)) {
+            return null;
+        }
+
+        if (!empty($payment['order_id'])) {
+            $order = new \Order((int) $payment['order_id']);
+            if (\Validate::isLoadedObject($order)) {
+                return (int) $order->id_shop;
+            }
+        }
+
+        if (!empty($payment['cart_id'])) {
+            $cart = new \Cart((int) $payment['cart_id']);
+            if (\Validate::isLoadedObject($cart)) {
+                return (int) $cart->id_shop;
+            }
+        }
+
+        return null;
     }
 
     /**

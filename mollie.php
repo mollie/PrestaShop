@@ -143,6 +143,24 @@ class Mollie extends PaymentModule
         return $this->api;
     }
 
+    /**
+     * Point the API client at the key that owns a given transaction's payment
+     * (the shop that created it). Used before acting on existing orders so that,
+     * in a multistore setup, refunds/captures/shipments use the correct key
+     * instead of whatever shop is the current context.
+     */
+    public function setApiClientForTransaction(string $transactionId, bool $subscriptionOrder = false): void
+    {
+        /** @var \Mollie\Service\Api\MollieApiClientProvider $clientProvider */
+        $clientProvider = $this->getService(\Mollie\Service\Api\MollieApiClientProvider::class);
+
+        $client = $clientProvider->getForTransaction($transactionId, $subscriptionOrder);
+
+        if ($client) {
+            $this->api = $client;
+        }
+    }
+
     private function loadEnv()
     {
         if (!class_exists('\Symfony\Component\Dotenv\Dotenv')) {

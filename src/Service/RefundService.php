@@ -52,6 +52,8 @@ class RefundService
      */
     public function handleRefund(string $transactionId, ?float $amount = null, ?string $orderLineId = null, ?int $quantity = null, ?int $orderId = null, ?string $refundType = null)
     {
+        $this->module->setApiClientForTransaction($transactionId);
+
         try {
             $payment = TransactionUtility::isOrderTransaction($transactionId)
                 ? $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments,refunds'])
