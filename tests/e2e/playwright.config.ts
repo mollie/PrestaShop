@@ -17,6 +17,7 @@ export default defineConfig({
     ignoreHTTPSErrors: true,
   },
   projects: [
+    { name: 'bo-auth', testMatch: /bo-auth\.setup\.ts/ },
     { name: 'smoke', testMatch: /smoke\.spec\.ts/ },
   ],
 });
