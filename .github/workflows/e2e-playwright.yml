@@ -1,0 +1,142 @@
+name: Playwright E2E
+on:
+  pull_request:
+    branches: [develop, develop**, develop-**]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Everything that can run against a plain localhost shop: admin UI, webhook
+  # guards, mobile viewport. No public hostname needed.
+  local:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - prestashop: PS8
+            version: 8
+          - prestashop: PS1785
+            version: 1785
+    env:
+      DB_PASSWD: prestashop
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install composer deps
+        run: composer i
+      - name: Install npm deps
+        run: npm ci
+      - name: Build React admin UI
+        run: make build-react
+      - name: Start shop
+        run: make VERSION=${{ matrix.version }} e2eh${{ matrix.version }}
+      - name: Rewrite shop domain to localhost
+        run: make VERSION=${{ matrix.version }} set-shop-domain HOST=localhost:8002 SSL=0
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: Run admin + webhook + mobile projects
+        working-directory: tests/e2e
+        run: npx playwright test --project=admin --project=webhook --project=mobile
+        env:
+          E2E_BASE_URL: http://localhost:8002
+          MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+      - name: Upload blob report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-report-local-${{ matrix.prestashop }}
+          path: tests/e2e/blob-report
+          retention-days: 7
+
+  # Checkout needs a publicly reachable hostname so Mollie can redirect back and
+  # deliver webhooks, hence the Cloudflare named tunnel.
+  checkout:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - prestashop: PS8
+            version: 8
+            hostname: ps8-checkout.invertusdemo.com
+            tunnel_token_secret: CF_TUNNEL_TOKEN_PS8_CHECKOUT
+          - prestashop: PS1785
+            version: 1785
+            hostname: ps1785-checkout.invertusdemo.com
+            tunnel_token_secret: CF_TUNNEL_TOKEN_PS1785_CHECKOUT
+    env:
+      DB_PASSWD: prestashop
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install composer deps
+        run: composer i
+      - name: Install npm deps
+        run: npm ci
+      - name: Build React admin UI
+        run: make build-react
+      - name: Start shop
+        run: make VERSION=${{ matrix.version }} e2eh${{ matrix.version }}
+      - name: Install cloudflared
+        run: |
+          wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+          chmod +x cloudflared-linux-amd64
+          sudo mv cloudflared-linux-amd64 /usr/local/bin/cloudflared
+      - name: Start named tunnel
+        run: |
+          cloudflared tunnel --no-autoupdate run --token ${{ secrets[matrix.tunnel_token_secret] }} &
+          sleep 5
+      - name: Rewrite shop domain to the tunnel hostname
+        run: make VERSION=${{ matrix.version }} set-shop-domain HOST=${{ matrix.hostname }}
+      - name: Wait for the tunnel to serve the shop
+        run: |
+          for i in $(seq 1 20); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "https://${{ matrix.hostname }}/")
+            if [ "$code" = "200" ] || [ "$code" = "302" ]; then echo ok; exit 0; fi
+            sleep 5
+          done
+          echo "Tunnel never came up" && exit 1
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: Run Orders API checkout phase
+        working-directory: tests/e2e
+        run: npx playwright test --project=checkout-orders
+        env:
+          E2E_CHECKOUT_API: orders
+          E2E_BASE_URL: https://${{ matrix.hostname }}
+          MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+      - name: Run Payments API checkout phase
+        working-directory: tests/e2e
+        run: npx playwright test --project=cfg-payments --project=checkout-payments
+        env:
+          E2E_CHECKOUT_API: payments
+          E2E_BASE_URL: https://${{ matrix.hostname }}
+          MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+      - name: Upload blob report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-report-checkout-${{ matrix.prestashop }}
+          path: tests/e2e/blob-report
+          retention-days: 7
+
+  merge-reports:
+    if: always()
+    needs: [local, checkout]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: all-blob-reports
+          pattern: blob-report-*
+      - run: npm ci
+      - name: Merge into one HTML report
+        working-directory: tests/e2e
+        run: npx playwright merge-reports --reporter html ../../all-blob-reports
+      - uses: actions/upload-artifact@v4
+        with:
+          name: playwright-html-report
+          path: tests/e2e/playwright-report
+          retention-days: 14
