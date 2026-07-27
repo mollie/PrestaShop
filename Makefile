@@ -39,7 +39,7 @@ e2eh$(VERSION):
 
 waiting-for-containers-CI:
 	# waiting for app containers to build up
-	sleep 90s
+	/bin/bash .docker/wait-for-shop.sh 8002 150
 
 waiting-for-containers-local:
 	# waiting for app containers to build up
@@ -61,6 +61,17 @@ installing-uninstalling-enabling-module:
 chmod-app:
 	# chmod all folders
 	docker exec -i prestashop-$(module)-$(VERSION) sh -c "chmod -R 777 /var/www/html"
+
+# target: set-shop-domain	- Point the shop at HOST, replacing the domain baked into the SQL seed.
+# Example (plain http, no TLS in front):  make set-shop-domain VERSION=8 HOST=localhost:8002 SSL=0
+# Example (behind a Cloudflare tunnel):   make set-shop-domain VERSION=8 HOST=ps8-checkout.invertusdemo.com
+SSL ?= 1
+set-shop-domain:
+	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -uroot -pprestashop prestashop -e " \
+		UPDATE ps_shop_url SET domain='$(HOST)', domain_ssl='$(HOST)'; \
+		UPDATE ps_configuration SET value='$(HOST)' WHERE name IN ('PS_SHOP_DOMAIN','PS_SHOP_DOMAIN_SSL'); \
+		UPDATE ps_configuration SET value='$(SSL)' WHERE name IN ('PS_SSL_ENABLED','PS_SSL_ENABLED_EVERYWHERE');"
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && rm -rf var/cache/*" || true
 
 open-e2e-tests-locally:
 	npm install -D cypress
