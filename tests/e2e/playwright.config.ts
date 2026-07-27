@@ -28,6 +28,13 @@ export default defineConfig({
     // No dependencies: needs neither a BO session nor module configuration, it
     // only exercises the front controller's own guard clauses.
     { name: 'webhook', testDir: './specs/webhook' },
+    // testDir, not testMatch: /checkout\.spec\.ts/ would also match
+    // specs/admin/mobile-checkout.spec.ts.
+    {
+      name: 'checkout-orders',
+      testDir: './specs/checkout',
+      dependencies: ['cfg-orders'],
+    },
     {
       name: 'mobile',
       testMatch: /mobile-checkout\.spec\.ts/,
