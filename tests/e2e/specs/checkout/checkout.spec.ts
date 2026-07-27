@@ -2,6 +2,7 @@ import { test, expect } from '../../fixtures/base';
 import { CheckoutPage } from '../../pages/front/checkout-page';
 import { HostedCheckoutPage } from '../../pages/mollie/hosted-checkout-page';
 import { AdminOrderPage } from '../../pages/admin/admin-order-page';
+import { OrderHistoryPage } from '../../pages/front/order-history-page';
 import { paymentMethods } from '../../data/payment-methods';
 import { envValue, isPubliclyReachableBaseUrl } from '../../helpers/env';
 
@@ -58,6 +59,17 @@ test.describe(`checkout — ${api} API`, () => {
       await checkout.acceptTerms();
       await checkout.placeOrder();
 
+      // An asynchronous method has no outcome to pick and never returns a paid
+      // confirmation: Mollie shows transfer instructions and the payment stays
+      // open. There is consequently nothing to ship or refund, so what is
+      // asserted is that the payment was created and the shop recorded an order.
+      if (method.shape === 'async') {
+        expect(page.url()).toMatch(/mollie\.com/);
+        const history = new OrderHistoryPage(page);
+        await expect.poll(() => history.hasAnyOrder(), { timeout: 30_000 }).toBe(true);
+        return;
+      }
+
       const hosted = new HostedCheckoutPage(page);
       await hosted.chooseOutcome(method.shape === 'authorize' ? 'authorized' : 'paid');
       await checkout.expectConfirmation();
@@ -69,7 +81,7 @@ test.describe(`checkout — ${api} API`, () => {
       await bo.refund();
     });
 
-    test(`${method.id}: failed outcome is surfaced`, async ({ page }) => {
+    test(`${method.id}: failed outcome preserves the cart`, async ({ page }) => {
       test.fixme(!!method.fixme, method.fixme);
       requiresPublicHost();
       test.skip(method.shape === 'async', 'async methods have no immediate outcome to fail');
@@ -88,9 +100,15 @@ test.describe(`checkout — ${api} API`, () => {
 
       const hosted = new HostedCheckoutPage(page);
       await hosted.chooseOutcome('failed');
-      await expect(
-        page.getByText(/payment.*(failed|declined|unsuccessful|cancell?ed)/i).first()
-      ).toBeVisible({ timeout: 20_000 });
+
+      // The module does not show an error page: it returns the customer to the
+      // payment step so they can retry, with the cart still intact. Asserting a
+      // "payment failed" message would assert behaviour the module never had.
+      await expect(page.locator('#checkout-payment-step')).toBeVisible({ timeout: 30_000 });
+      await expect(page.locator('#content-hook_order_confirmation')).toHaveCount(0);
+
+      await page.goto('/en/cart?action=show');
+      await expect(page.locator('.cart-item')).not.toHaveCount(0);
     });
   }
 

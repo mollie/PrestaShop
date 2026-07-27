@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test';
+import { getOrderReferenceById } from '../../helpers/orders';
 
 /**
  * The seeded worker customers each carry one address per alias below, so the
@@ -77,16 +78,52 @@ export class CheckoutPage {
   async selectMethod(label: string | RegExp) {
     const option = this.paymentOption(label);
     await option.locator('input[type="radio"]').first().check();
+    // Selecting an option makes the theme re-render the confirmation block, so
+    // wait for the submit button to come back before touching anything else.
+    await this.confirmButton().waitFor({ state: 'visible', timeout: 20_000 });
   }
 
   async acceptTerms() {
-    await this.page.locator('.condition-label > .js-terms').click({ force: true });
+    // check(), not click(force), so the checkbox is verified as actually ticked —
+    // the submit button stays disabled otherwise.
+    await this.page.locator('.condition-label > .js-terms').check({ force: true });
   }
 
+  confirmButton() {
+    return this.page.locator('#payment-confirmation button[type="submit"]').first();
+  }
+
+  /**
+   * Submits the order and waits until the browser has actually left the
+   * checkout step — for a Mollie method that means Mollie's own hosted page,
+   * which lives on another origin.
+   */
   async placeOrder() {
-    const button = this.page.locator('#payment-confirmation button[type="submit"]').first();
+    const button = this.confirmButton();
     await button.waitFor({ state: 'visible' });
+    // Both conditions matter. Before the theme's JS initialises, the button
+    // already carries the `disabled` CLASS but not yet the disabled ATTRIBUTE,
+    // so checking `disabled` alone passes instantly and the click lands on a
+    // button that is not wired up yet — the order is silently never submitted.
+    // Once the theme is ready and a method plus the terms box are set, neither
+    // the attribute nor the class is present.
+    await this.page.waitForFunction(
+      () => {
+        const b = document.querySelector<HTMLButtonElement>('#payment-confirmation button[type="submit"]');
+        return !!b && !b.disabled && !b.classList.contains('disabled');
+      },
+      undefined,
+      { timeout: 30_000 }
+    );
     await button.click();
+    // waitUntil: 'commit', not the default 'load'. Submitting hands off to a
+    // module controller that immediately 302s on to Mollie, so that URL matches
+    // the predicate but never fires a load event — waiting for 'load' hangs
+    // until timeout even though the browser does reach Mollie.
+    await this.page.waitForURL((url) => !url.pathname.replace(/\/$/, '').endsWith('/order'), {
+      timeout: 60_000,
+      waitUntil: 'commit',
+    });
   }
 
   async expectConfirmation() {
@@ -95,13 +132,28 @@ export class CheckoutPage {
       .waitFor({ timeout: 30_000 });
   }
 
+  /**
+   * A PrestaShop order reference is nine random uppercase letters — and so is
+   * the word CONFIRMED on the confirmation page, which is exactly what a text
+   * scrape picks up. The confirmation URL carries `id_order`, so resolve the
+   * reference from that instead of guessing at the copy.
+   */
   async getOrderReference(): Promise<string> {
     const url = new URL(this.page.url());
-    const ref = url.searchParams.get('order_number') || url.searchParams.get('reference');
-    if (ref) return ref;
+    const direct = url.searchParams.get('order_number') || url.searchParams.get('reference');
+    if (direct) return direct;
+
+    const idOrder = url.searchParams.get('id_order');
+    if (idOrder) {
+      const reference = getOrderReferenceById(idOrder);
+      if (reference) return reference;
+    }
+
+    // Last resort: the confirmation block labels the reference explicitly.
     const text = await this.page.locator('#content-hook_order_confirmation').innerText();
-    const match = text.match(/([A-Z0-9]{8,})/);
-    if (!match) throw new Error('Could not extract order reference from confirmation page');
-    return match[1];
+    const labelled = text.match(/reference[^A-Z]*([A-Z]{9})/i);
+    if (labelled) return labelled[1];
+
+    throw new Error(`Could not determine order reference from ${this.page.url()}`);
   }
 }

@@ -1,6 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 import { envValueOr } from './helpers/env';
 
+/** Checkout traverses the tunnel and Mollie's hosted pages; 30s is not enough. */
+const CHECKOUT_TIMEOUT = 120_000;
+
 export default defineConfig({
   testDir: '.',
   timeout: 30_000,
@@ -35,6 +38,9 @@ export default defineConfig({
       name: 'checkout-orders',
       testDir: './specs/checkout',
       dependencies: ['cfg-orders'],
+      // A checkout hop goes shop -> Cloudflare tunnel -> Mollie -> back, which
+      // does not fit the 30s default.
+      timeout: CHECKOUT_TIMEOUT,
     },
     // Depends on checkout-orders, not just cfg-orders: the Orders-API checkouts
     // must finish before the per-method API assignment is rewritten under them.
@@ -43,6 +49,7 @@ export default defineConfig({
       name: 'checkout-payments',
       testDir: './specs/checkout',
       dependencies: ['cfg-payments'],
+      timeout: CHECKOUT_TIMEOUT,
     },
     {
       name: 'mobile',
