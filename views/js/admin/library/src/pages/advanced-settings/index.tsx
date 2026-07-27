@@ -497,6 +497,7 @@ const AdvancedSettings: React.FC = () => {
     <div className="advanced-settings">
       {notification && (
         <div
+          data-testid="advanced-settings-notification"
           className={`fixed right-6 top-6 z-[9999] border rounded-lg p-4 flex items-center gap-3 shadow-lg min-w-[320px] max-w-[500px] ${
             notification.type === 'success'
               ? 'bg-green-50 border-green-200'
@@ -818,6 +819,7 @@ const AdvancedSettings: React.FC = () => {
 
       <div className="settings-footer">
         <button
+          data-testid="advanced-settings-save"
           className="btn-save-settings"
           onClick={saveSettings}
           disabled={saving}
