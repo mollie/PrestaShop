@@ -1,4 +1,4 @@
-import { runSql } from './db';
+import { runSql, querySingleValue } from './db';
 
 function quote(value: string): string {
   return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
@@ -22,6 +22,19 @@ function upsertConfig(name: string, value: string): void {
 
 export function setGlobalConfig(key: string, value: string): void {
   upsertConfig(key, value);
+}
+
+export function getGlobalConfig(key: string): string | null {
+  return querySingleValue(`SELECT value FROM ps_configuration WHERE name = '${quote(key)}' LIMIT 1`);
+}
+
+/**
+ * Whether the module has an API key stored at all. Every webhook call is
+ * rejected with 401 before any other guard runs when it does not
+ * (`controllers/front/webhook.php` checks `getApiClient()` first).
+ */
+export function hasApiKeyConfigured(): boolean {
+  return Boolean(getGlobalConfig('MOLLIE_API_KEY_TEST') || getGlobalConfig('MOLLIE_API_KEY'));
 }
 
 export function setMethodConfig(

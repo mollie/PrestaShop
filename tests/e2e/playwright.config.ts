@@ -25,6 +25,9 @@ export default defineConfig({
       testIgnore: /mobile-checkout\.spec\.ts/,
       dependencies: ['bo-auth'],
     },
+    // No dependencies: needs neither a BO session nor module configuration, it
+    // only exercises the front controller's own guard clauses.
+    { name: 'webhook', testDir: './specs/webhook' },
     {
       name: 'mobile',
       testMatch: /mobile-checkout\.spec\.ts/,
