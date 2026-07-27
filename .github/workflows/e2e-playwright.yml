@@ -61,6 +61,13 @@ jobs:
   # deliver webhooks, hence the Cloudflare named tunnel.
   checkout:
     runs-on: ubuntu-latest
+    # Each matrix entry drives ONE named tunnel. Two PRs running at once would
+    # attach a second connector to the same tunnel and Cloudflare would split
+    # requests between the two runners, so serialise per tunnel rather than
+    # cancelling another PR's run.
+    concurrency:
+      group: e2e-tunnel-${{ matrix.prestashop }}
+      cancel-in-progress: false
     strategy:
       fail-fast: false
       matrix:
