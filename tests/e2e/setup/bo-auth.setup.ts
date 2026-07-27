@@ -1,7 +1,8 @@
 import { test as setup, expect } from '@playwright/test';
+import { envValueOr } from '../helpers/env';
 
-const email = process.env.E2E_BO_EMAIL || 'demo@prestashop.com';
-const password = process.env.E2E_BO_PASSWORD || 'prestashop_demo';
+const email = envValueOr('E2E_BO_EMAIL', 'demo@prestashop.com');
+const password = envValueOr('E2E_BO_PASSWORD', 'prestashop_demo');
 const authFile = '.auth/bo.json';
 
 setup('authenticate as BO admin', async ({ page }) => {

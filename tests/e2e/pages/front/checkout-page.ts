@@ -63,8 +63,20 @@ export class CheckoutPage {
     await this.page.locator('#checkout-payment-step').waitFor({ timeout: 20_000 });
   }
 
+  /** The payment option a label belongs to, whether or not it is selected. */
+  paymentOption(label: string | RegExp) {
+    return this.page.locator('.payment-option').filter({ hasText: label }).first();
+  }
+
+  /**
+   * Checks the option's radio rather than clicking its label text. The theme
+   * enables "Place order" from the radio's change event, so a forced click on a
+   * matching text node leaves the button disabled and the order is never
+   * submitted.
+   */
   async selectMethod(label: string | RegExp) {
-    await this.page.getByText(label).click({ force: true });
+    const option = this.paymentOption(label);
+    await option.locator('input[type="radio"]').first().check();
   }
 
   async acceptTerms() {
@@ -72,7 +84,9 @@ export class CheckoutPage {
   }
 
   async placeOrder() {
-    await this.page.getByText('Place order').click();
+    const button = this.page.locator('#payment-confirmation button[type="submit"]').first();
+    await button.waitFor({ state: 'visible' });
+    await button.click();
   }
 
   async expectConfirmation() {

@@ -1,7 +1,8 @@
 import { execFileSync } from 'node:child_process';
+import { envValueOr } from './env';
 
-const HOST = process.env.E2E_DB_HOST || '127.0.0.1';
-const PORT = process.env.E2E_DB_PORT || '9002';
+const HOST = envValueOr('E2E_DB_HOST', '127.0.0.1');
+const PORT = envValueOr('E2E_DB_PORT', '9002');
 
 function mysqlArgs(sql: string, extra: string[] = []): string[] {
   return [

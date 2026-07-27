@@ -16,6 +16,19 @@ export class AdvancedSettingsPage {
     await this.page.locator('#mollie-advanced-settings-root').waitFor({ timeout: 30_000 });
   }
 
+  /**
+   * The form body arrives from an `action=getSettings` AJAX call after the React
+   * root mounts, so callers must wait for it rather than probing immediately.
+   * Returns false when it never renders (module has no API key connected).
+   */
+  async waitForForm(timeout = 20_000): Promise<boolean> {
+    return this.page
+      .getByTestId('advanced-settings-save')
+      .waitFor({ state: 'visible', timeout })
+      .then(() => true)
+      .catch(() => false);
+  }
+
   async save() {
     await this.page.getByTestId('advanced-settings-save').click();
   }

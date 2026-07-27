@@ -5,9 +5,9 @@ test('advanced settings page renders its sections and saves', async ({ page }) =
   const settings = new AdvancedSettingsPage(page);
   await settings.goto();
 
-  const save = page.getByTestId('advanced-settings-save');
   // The settings form is only rendered once the module has a connected API key.
-  test.skip((await save.count()) === 0, 'settings form not rendered — module has no API key connected');
+  const rendered = await settings.waitForForm();
+  test.skip(!rendered, 'settings form not rendered — module has no API key connected');
 
   await expect(page.getByRole('heading', { name: /order/i }).first()).toBeVisible();
   await expect(page.getByRole('heading', { name: /shipping/i }).first()).toBeVisible();
