@@ -1,9 +1,14 @@
 import { test, expect } from '../../fixtures/base';
 import { AuthorizationPage } from '../../pages/admin/authorization-page';
 
+/** Mollie keys are `test_`/`live_` followed by at least 30 word characters. */
+const MOLLIE_KEY = /^(test|live)_\w{30,}$/;
+
 test('connects a test-mode API key successfully', async ({ page }) => {
   const apiKey = process.env.MOLLIE_TEST_API_KEY;
-  test.skip(!apiKey, 'MOLLIE_TEST_API_KEY is not set');
+  // Shape-checked, not just truthy: a shell or .env quoting slip otherwise
+  // reaches here as a non-empty string and fails as if the module were broken.
+  test.skip(!apiKey || !MOLLIE_KEY.test(apiKey), 'MOLLIE_TEST_API_KEY is not set to a valid Mollie key');
 
   const auth = new AuthorizationPage(page);
   await auth.goto();

@@ -10,10 +10,19 @@ import { paymentMethods } from '../../data/payment-methods';
  * invocation and `E2E_CHECKOUT_API=payments` for `checkout-payments`. The two
  * run as separate `npx playwright test` invocations in the same CI job.
  */
-const api = (process.env.E2E_CHECKOUT_API as 'orders' | 'payments') || 'orders';
+const apiFromEnv = process.env.E2E_CHECKOUT_API as 'orders' | 'payments' | undefined;
+const api = apiFromEnv ?? 'orders';
 const methodsForThisPhase = paymentMethods.filter((m) => m.apis.includes(api));
 
 test.describe(`checkout — ${api} API`, () => {
+  // Without it, checkout-payments would silently re-run the Orders-API set.
+  test.skip(
+    !apiFromEnv,
+    'E2E_CHECKOUT_API is unset: run the phases as separate invocations, ' +
+      'E2E_CHECKOUT_API=orders --project=checkout-orders then ' +
+      'E2E_CHECKOUT_API=payments --project=checkout-payments'
+  );
+
   for (const method of methodsForThisPhase) {
     test(`${method.id}: paid outcome + BO ship/refund`, async ({ page }) => {
       test.fixme(!!method.fixme, method.fixme);

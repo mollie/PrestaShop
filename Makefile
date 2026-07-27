@@ -77,10 +77,14 @@ set-shop-domain:
 	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && rm -rf var/cache/* && chmod -R 777 var" || true
 
 # target: e2e-tests-locally	- Run the Playwright suite against a shop already started by e2eh<VERSION>_local.
+# The two checkout phases are separate invocations, exactly as CI runs them: they
+# rewrite the same per-method API assignment and so must not overlap.
 e2e-tests-locally:
 	npm ci
 	npx playwright install chromium
-	cd tests/e2e && npx playwright test
+	cd tests/e2e && npx playwright test --project=admin --project=webhook --project=mobile
+	cd tests/e2e && E2E_CHECKOUT_API=orders npx playwright test --project=checkout-orders
+	cd tests/e2e && E2E_CHECKOUT_API=payments npx playwright test --project=cfg-payments --project=checkout-payments
 
 # target: e2e-tests-ui		- Same suite in Playwright's interactive UI mode.
 e2e-tests-ui:
