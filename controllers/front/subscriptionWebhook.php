@@ -97,7 +97,7 @@ class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieContr
 
         // Point the client at the key that owns this transaction's order (with
         // fallback) so subscription webhooks resolve correctly in multistore.
-        $this->module->setApiClientForTransaction($transactionId);
+        $this->module->setApiClientForTransaction($transactionId, true);
 
         /** @var RecurringOrderHandler $recurringOrderHandler */
         $recurringOrderHandler = $this->module->getService(RecurringOrderHandler::class);

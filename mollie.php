@@ -154,7 +154,21 @@ class Mollie extends PaymentModule
         /** @var \Mollie\Service\Api\MollieApiClientProvider $clientProvider */
         $clientProvider = $this->getService(\Mollie\Service\Api\MollieApiClientProvider::class);
 
-        $client = $clientProvider->getForTransaction($transactionId, $subscriptionOrder);
+        try {
+            $client = $clientProvider->getForTransaction($transactionId, $subscriptionOrder);
+        } catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
+            // Mirror setApiKey(): keep whatever client is already set and let the
+            // caller proceed rather than surfacing a fatal from client creation.
+            $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
+            $errorHandler->handle($e, $e->getCode(), false);
+
+            return;
+        } catch (\Exception $e) {
+            $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
+            $errorHandler->handle($e, $e->getCode(), false);
+
+            return;
+        }
 
         if ($client) {
             $this->api = $client;

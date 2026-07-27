@@ -69,14 +69,20 @@ class MollieApiClientProvider
     /**
      * Build the API client to use for an existing transaction.
      *
-     * Tries, in order, the candidate keys most likely to own the payment and
-     * returns the first one that can actually access the transaction on Mollie:
-     *   1. the key whose stored reference matches the order (its original key),
-     *   2. the key currently configured on the order's shop,
-     *   3. the manually-entered fallback key.
+     * Considers the keys that are currently configured and could own the
+     * payment - the order shop's key and the manually-entered fallback key -
+     * and returns the first one that can actually access the transaction on
+     * Mollie. When the order carries a stored key reference, the configured key
+     * whose fingerprint matches it is tried first (it is the key that created
+     * the order, so it is the most likely to succeed and avoids a wasted probe).
      *
-     * This keeps refunds/captures/webhooks working in multistore and after a key
-     * migration, where the shop's current key may no longer own older orders.
+     * Note: the stored reference is a one-way fingerprint, so it cannot recover
+     * a key that is no longer configured anywhere. Recovering access to orders
+     * created with a rotated/removed key therefore requires that key to be
+     * present as the shop key or the fallback key. This keeps refunds/captures/
+     * webhooks working in multistore and after a key migration, as long as the
+     * owning key is still configured in one of those slots.
+     *
      * When no candidate can be verified (e.g. transaction not found on any key),
      * the first usable client is returned so behaviour degrades to the previous
      * single-key attempt rather than failing to build a client at all.
@@ -93,6 +99,12 @@ class MollieApiClientProvider
 
         if (empty($candidateKeys)) {
             return $this->getForShop($shopId, $subscriptionOrder);
+        }
+
+        // With a single candidate there is no choice to make: return it directly
+        // and skip the verification round-trip (the common single-store case).
+        if (1 === count($candidateKeys)) {
+            return $this->getForApiKey($candidateKeys[0], $subscriptionOrder);
         }
 
         $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
