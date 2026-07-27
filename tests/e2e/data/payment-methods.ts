@@ -29,7 +29,19 @@ export type MethodDef = {
 export const paymentMethods: MethodDef[] = [
   { id: 'bancontact', label: /bancontact/i, apis: ['orders'], shape: 'redirect', billingCountry: 'NL' },
   { id: 'ideal', label: /ideal/i, apis: ['payments'], shape: 'issuer-list', billingCountry: 'NL' },
-  { id: 'creditcard', label: /card/i, apis: ['payments'], shape: 'card-components', billingCountry: 'NL' },
+  {
+    id: 'creditcard',
+    label: /card/i,
+    apis: ['payments'],
+    shape: 'card-components',
+    billingCountry: 'NL',
+    fixme:
+      'Mollie Components is on in sandbox (MOLLIE_SANDBOX_IFRAME=1), so the card ' +
+      'fields render inline in four Mollie iframes on the shop\'s own payment step ' +
+      'rather than on a hosted page. Submitting with them empty is blocked ' +
+      'client-side, so this needs a test card typed into those iframes — a ' +
+      'different flow from every other method here.',
+  },
   { id: 'klarnapaylater', label: /pay later/i, apis: ['orders'], shape: 'authorize', billingCountry: 'NL' },
   { id: 'billie', label: /billie/i, apis: ['orders'], shape: 'authorize', billingCountry: 'DE' },
   { id: 'banktransfer', label: /bank transfer/i, apis: ['orders'], shape: 'async', billingCountry: 'NL' },

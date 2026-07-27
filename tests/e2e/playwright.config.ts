@@ -42,9 +42,14 @@ export default defineConfig({
       // does not fit the 30s default.
       timeout: CHECKOUT_TIMEOUT,
     },
-    // Depends on checkout-orders, not just cfg-orders: the Orders-API checkouts
-    // must finish before the per-method API assignment is rewritten under them.
-    { name: 'cfg-payments', testMatch: /cfg-payments\.setup\.ts/, dependencies: ['checkout-orders'] },
+    // Deliberately NOT dependent on checkout-orders. Making it so re-runs the
+    // whole checkout-orders project inside the payments invocation — and because
+    // E2E_CHECKOUT_API is then 'payments', it runs the payments method set twice,
+    // the second time labelled as the orders phase. Phase ordering is enforced by
+    // running the two invocations in sequence (see the CI workflow and the
+    // e2e-tests-locally target), which is also what keeps the shared per-method
+    // API assignment from being rewritten mid-phase.
+    { name: 'cfg-payments', testMatch: /cfg-payments\.setup\.ts/, dependencies: ['bo-auth'] },
     {
       name: 'checkout-payments',
       testDir: './specs/checkout',
