@@ -20,6 +20,12 @@ export interface MollieAuthTranslations {
   liveApiKey: string;
   apiKeyPlaceholder: string;
   apiKeyDescription: string;
+  fallbackApiKey: string;
+  fallbackApiKeyPlaceholder: string;
+  fallbackApiKeyDescription: string;
+  saveFallbackKey: string;
+  fallbackKeySaved: string;
+  fallbackKeyCleared: string;
   connect: string;
   connecting: string;
   connected: string;

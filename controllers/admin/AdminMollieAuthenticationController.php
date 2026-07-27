@@ -77,6 +77,12 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 'liveApiKey' => $this->module->l('Live API Key', self::FILE_NAME),
                 'apiKeyPlaceholder' => $this->module->l('Enter your API key here', self::FILE_NAME),
                 'apiKeyDescription' => $this->module->l('Required for connecting to the %s mode.', self::FILE_NAME),
+                'fallbackApiKey' => $this->module->l('Fallback API Key (optional)', self::FILE_NAME),
+                'fallbackApiKeyPlaceholder' => $this->module->l('Enter a fallback API key', self::FILE_NAME),
+                'fallbackApiKeyDescription' => $this->module->l('Used for existing orders when neither the order\'s original key nor the current key can access them (e.g. after rotating keys or migrating to per-store keys). Leave empty to disable.', self::FILE_NAME),
+                'saveFallbackKey' => $this->module->l('Save fallback key', self::FILE_NAME),
+                'fallbackKeySaved' => $this->module->l('Fallback key saved', self::FILE_NAME),
+                'fallbackKeyCleared' => $this->module->l('Fallback key removed', self::FILE_NAME),
                 'connect' => $this->module->l('Connect', self::FILE_NAME),
                 'connecting' => $this->module->l('Connecting...', self::FILE_NAME),
                 'connected' => $this->module->l('Connected', self::FILE_NAME),
@@ -215,6 +221,9 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             case 'saveApiKey':
                 $this->ajaxSaveApiKey();
                 break;
+            case 'saveFallbackApiKey':
+                $this->ajaxSaveFallbackApiKey();
+                break;
             case 'switchEnvironment':
                 $this->ajaxSwitchEnvironment();
                 break;
@@ -273,6 +282,8 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 'data' => [
                     'test_api_key' => $testApiKey ?: '',
                     'live_api_key' => $liveApiKey ?: '',
+                    'test_fallback_api_key' => $this->configuration->get(Config::MOLLIE_API_KEY_FALLBACK_TEST) ?: '',
+                    'live_fallback_api_key' => $this->configuration->get(Config::MOLLIE_API_KEY_FALLBACK) ?: '',
                     'environment' => $environment ? 'live' : 'test',
                     'is_configured' => !empty($testApiKey) || !empty($liveApiKey),
                     'is_connected' => $isConnected,
@@ -343,6 +354,76 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                     'is_connected' => true,
                     'methods' => $keyInfo['methods'] ?? [],
                 ],
+            ]));
+        } catch (MollieException $e) {
+            $this->ajaxRender(json_encode([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]));
+        } catch (Exception $e) {
+            $this->ajaxRender(json_encode([
+                'success' => false,
+                'message' => $this->module->l('Failed to save API key', self::FILE_NAME),
+            ]));
+        }
+    }
+
+    private function ajaxSaveFallbackApiKey(): void
+    {
+        try {
+            $apiKey = trim((string) $this->tools->getValue('api_key'));
+            $environment = $this->tools->getValue('environment');
+
+            if (!$environment) {
+                throw new MollieException($this->module->l('Missing required parameters', self::FILE_NAME));
+            }
+
+            $configKey = ($environment === 'live')
+                ? Config::MOLLIE_API_KEY_FALLBACK
+                : Config::MOLLIE_API_KEY_FALLBACK_TEST;
+
+            // Empty value clears the fallback key.
+            if ('' === $apiKey) {
+                $this->configuration->updateValue($configKey, '');
+
+                $this->ajaxRender(json_encode([
+                    'success' => true,
+                    'message' => $this->module->l('Fallback key removed', self::FILE_NAME),
+                    'data' => ['cleared' => true],
+                ]));
+
+                return;
+            }
+
+            $isTestKey = ($environment === 'test');
+            $apiTestFeedbackBuilder = $this->module->getService(ApiTestFeedbackBuilder::class);
+            $keyInfo = $apiTestFeedbackBuilder->getApiKeyInfo($apiKey, $isTestKey);
+
+            if (!$keyInfo['status']) {
+                $this->ajaxRender(json_encode([
+                    'success' => false,
+                    'message' => 'API key validation failed: Key does not exist or is invalid',
+                ]));
+
+                return;
+            }
+
+            if ($keyInfo['warning']) {
+                $expectedPrefix = $isTestKey ? 'test_' : 'live_';
+                $this->ajaxRender(json_encode([
+                    'success' => false,
+                    'message' => "API key validation failed: Key must start with '{$expectedPrefix}'",
+                ]));
+
+                return;
+            }
+
+            $this->configuration->updateValue($configKey, $apiKey);
+
+            $this->ajaxRender(json_encode([
+                'success' => true,
+                'message' => $this->module->l('Fallback key saved', self::FILE_NAME),
+                'data' => ['cleared' => false],
             ]));
         } catch (MollieException $e) {
             $this->ajaxRender(json_encode([
