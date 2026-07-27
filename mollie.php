@@ -1665,21 +1665,15 @@ class Mollie extends PaymentModule
             return;
         }
 
-        /** @var \Mollie\Service\ApiKeyService $apiKeyService */
-        $apiKeyService = $this->getService(\Mollie\Service\ApiKeyService::class);
+        /** @var \Mollie\Service\Api\MollieApiClientProvider $clientProvider */
+        $clientProvider = $this->getService(\Mollie\Service\Api\MollieApiClientProvider::class);
 
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
-        $apiKeyConfig = \Mollie\Config\Config::ENVIRONMENT_LIVE === (int) $environment ?
-            Mollie\Config\Config::MOLLIE_API_KEY : Mollie\Config\Config::MOLLIE_API_KEY_TEST;
-
-        $apiKey = Configuration::get($apiKeyConfig, null, null, $shopId);
-
-        if (!$apiKey) {
-            return;
-        }
 
         try {
-            $this->api = $apiKeyService->setApiKey($apiKey, $this->version, $subscriptionOrder, $environment);
+            // Key selection is centralised in the provider (multistore per-shop
+            // resolution today; per-order key + fallback added in later steps).
+            $this->api = $clientProvider->getForShop($shopId, $subscriptionOrder);
         } catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);
