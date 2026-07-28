@@ -402,7 +402,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             if (!$keyInfo['status']) {
                 $this->ajaxRender(json_encode([
                     'success' => false,
-                    'message' => 'API key validation failed: Key does not exist or is invalid',
+                    'message' => $this->module->l('API key validation failed: Key does not exist or is invalid', self::FILE_NAME),
                 ]));
 
                 return;
@@ -412,7 +412,10 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 $expectedPrefix = $isTestKey ? 'test_' : 'live_';
                 $this->ajaxRender(json_encode([
                     'success' => false,
-                    'message' => "API key validation failed: Key must start with '{$expectedPrefix}'",
+                    'message' => sprintf(
+                        $this->module->l('API key validation failed: Key must start with \'%s\'', self::FILE_NAME),
+                        $expectedPrefix
+                    ),
                 ]));
 
                 return;

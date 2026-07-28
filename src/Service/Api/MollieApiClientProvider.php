@@ -107,6 +107,15 @@ class MollieApiClientProvider
             return $this->getForApiKey($candidateKeys[0], $subscriptionOrder);
         }
 
+        // If the order carries a stored key reference and the top candidate's
+        // fingerprint matches it, that key created the order: trust it and skip
+        // the verification round-trip (buildCandidateKeys puts the matching key
+        // first). Only fall through to probing when the owning key is unknown
+        // (no stored ref, e.g. legacy orders) or no longer configured.
+        if (null !== $storedRef && $this->getApiKeyReference($candidateKeys[0]) === $storedRef) {
+            return $this->getForApiKey($candidateKeys[0], $subscriptionOrder);
+        }
+
         $isOrderTransaction = TransactionUtility::isOrderTransaction($transactionId);
         $firstUsableClient = null;
 
@@ -146,13 +155,21 @@ class MollieApiClientProvider
             }
         }
 
-        if ($storedRef) {
-            usort($keys, function (string $a, string $b) use ($storedRef): int {
-                $aMatches = $this->getApiKeyReference($a) === $storedRef ? 0 : 1;
-                $bMatches = $this->getApiKeyReference($b) === $storedRef ? 0 : 1;
-
-                return $aMatches <=> $bMatches;
-            });
+        // Put the key whose fingerprint matches the order's stored reference
+        // first. A partition (not usort) keeps this deterministic and preserves
+        // the shop-key-before-fallback order among the rest - PHP < 8.0 sort is
+        // not stable, so an equal-comparator usort could otherwise reorder them.
+        if (null !== $storedRef) {
+            $matching = [];
+            $rest = [];
+            foreach ($keys as $key) {
+                if ($this->getApiKeyReference($key) === $storedRef) {
+                    $matching[] = $key;
+                } else {
+                    $rest[] = $key;
+                }
+            }
+            $keys = array_merge($matching, $rest);
         }
 
         return $keys;
