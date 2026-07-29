@@ -282,8 +282,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 'data' => [
                     'test_api_key' => $testApiKey ?: '',
                     'live_api_key' => $liveApiKey ?: '',
-                    'test_fallback_api_key' => $this->configuration->get(Config::MOLLIE_API_KEY_FALLBACK_TEST) ?: '',
-                    'live_fallback_api_key' => $this->configuration->get(Config::MOLLIE_API_KEY_FALLBACK) ?: '',
+                    'fallback_api_key' => $this->configuration->get(Config::MOLLIE_API_KEY_FALLBACK) ?: '',
                     'environment' => $environment ? 'live' : 'test',
                     'is_configured' => !empty($testApiKey) || !empty($liveApiKey),
                     'is_connected' => $isConnected,
@@ -372,19 +371,11 @@ class AdminMollieAuthenticationController extends ModuleAdminController
     {
         try {
             $apiKey = trim((string) $this->tools->getValue('api_key'));
-            $environment = $this->tools->getValue('environment');
 
-            if (!$environment) {
-                throw new MollieException($this->module->l('Missing required parameters', self::FILE_NAME));
-            }
-
-            $configKey = ($environment === 'live')
-                ? Config::MOLLIE_API_KEY_FALLBACK
-                : Config::MOLLIE_API_KEY_FALLBACK_TEST;
-
-            // Empty value clears the fallback key.
+            // A single fallback key is stored regardless of environment - whichever
+            // key is entered is used. Empty value clears it.
             if ('' === $apiKey) {
-                $this->configuration->updateValue($configKey, '');
+                $this->configuration->updateValue(Config::MOLLIE_API_KEY_FALLBACK, '');
 
                 $this->ajaxRender(json_encode([
                     'success' => true,
@@ -395,7 +386,8 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 return;
             }
 
-            $isTestKey = ($environment === 'test');
+            // Validate the key against its own prefix (test_ / live_), not the shop environment.
+            $isTestKey = 0 === strpos($apiKey, 'test_');
             $apiTestFeedbackBuilder = $this->module->getService(ApiTestFeedbackBuilder::class);
             $keyInfo = $apiTestFeedbackBuilder->getApiKeyInfo($apiKey, $isTestKey);
 
@@ -421,7 +413,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 return;
             }
 
-            $this->configuration->updateValue($configKey, $apiKey);
+            $this->configuration->updateValue(Config::MOLLIE_API_KEY_FALLBACK, $apiKey);
 
             $this->ajaxRender(json_encode([
                 'success' => true,

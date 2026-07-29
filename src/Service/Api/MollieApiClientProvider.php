@@ -196,15 +196,12 @@ class MollieApiClientProvider
     }
 
     /**
-     * The manually-entered fallback key for the current environment, or null.
+     * The manually-entered fallback key, or null. A single key is used
+     * regardless of environment - whichever key is entered is used.
      */
     public function getConfiguredFallbackApiKey(?int $shopId = null): ?string
     {
-        $keyConfig = $this->isLiveEnvironment()
-            ? Config::MOLLIE_API_KEY_FALLBACK
-            : Config::MOLLIE_API_KEY_FALLBACK_TEST;
-
-        $key = $this->configuration->get($keyConfig, $shopId);
+        $key = $this->configuration->get(Config::MOLLIE_API_KEY_FALLBACK, $shopId);
 
         return $key ?: null;
     }

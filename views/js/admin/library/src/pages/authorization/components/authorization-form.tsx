@@ -78,8 +78,6 @@ export default function AuthorizationForm() {
   const [initialLoading, setInitialLoading] = useState(true)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [pendingMode, setPendingMode] = useState<"live" | "test" | null>(null)
-  const [testFallbackApiKey, setTestFallbackApiKey] = useState("")
-  const [liveFallbackApiKey, setLiveFallbackApiKey] = useState("")
   const [fallbackApiKey, setFallbackApiKey] = useState("")
   const [showFallbackKey, setShowFallbackKey] = useState(false)
   const [isSavingFallback, setIsSavingFallback] = useState(false)
@@ -99,9 +97,7 @@ export default function AuthorizationForm() {
         setLiveApiKey(response.data.live_api_key || "")
         setMode(response.data.environment as "live" | "test")
         setApiKey(response.data.environment === "live" ? response.data.live_api_key : response.data.test_api_key)
-        setTestFallbackApiKey(response.data.test_fallback_api_key || "")
-        setLiveFallbackApiKey(response.data.live_fallback_api_key || "")
-        setFallbackApiKey(response.data.environment === "live" ? (response.data.live_fallback_api_key || "") : (response.data.test_fallback_api_key || ""))
+        setFallbackApiKey(response.data.fallback_api_key || "")
         setIsConnected(response.data.is_connected || false)
         setErrorMessage("")
         setFallbackMessage("")
@@ -154,14 +150,9 @@ export default function AuthorizationForm() {
     setFallbackError("")
 
     try {
-      const response = await authApiService.saveFallbackApiKey(fallbackApiKey.trim(), mode)
+      const response = await authApiService.saveFallbackApiKey(fallbackApiKey.trim())
       if (response.success) {
         const savedKey = fallbackApiKey.trim()
-        if (mode === "live") {
-          setLiveFallbackApiKey(savedKey)
-        } else {
-          setTestFallbackApiKey(savedKey)
-        }
         setFallbackMessage(savedKey ? t('fallbackKeySaved') : t('fallbackKeyCleared'))
       } else {
         setFallbackError(response.message || t('connectionFailed'))
@@ -198,7 +189,7 @@ export default function AuthorizationForm() {
         setMode(pendingMode)
         setIsConnected(switchResponse.data.is_connected || false)
         setApiKey(switchResponse.data.api_key || "")
-        setFallbackApiKey(pendingMode === "live" ? liveFallbackApiKey : testFallbackApiKey)
+        // Fallback key is a single value independent of environment; leave it as-is.
         setFallbackMessage("")
         setFallbackError("")
 
