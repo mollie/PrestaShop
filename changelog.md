@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.5
++ Fixed inconsistent payment method label on orders, card payments showed the internal method id instead of the payment method name
+
 ## Changes in release 6.4.4
 + Added bank transfer due date configuration
 + Added Segment analytics tracking for module and payment events

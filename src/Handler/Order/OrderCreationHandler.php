@@ -172,22 +172,7 @@ class OrderCreationHandler
             return 0;
         }
 
-        $paymentMethodName = $paymentMethod->method_name;
-
-        if (empty($paymentMethodName)) {
-            $actualMethod = $apiPayment->details->wallet ?? $apiPayment->method;
-
-            if (
-                isset(Config::$methods[$actualMethod]) &&
-                Config::$methods[$actualMethod] === 'Apple Pay'
-            ) {
-                $paymentMethodName = $this->module->l('Credit Card (Apple Pay)');
-            } else {
-                $paymentMethodName =
-                    Config::$methods[$actualMethod]
-                    ?? $this->module->l('Credit Card');
-            }
-        }
+        $paymentMethodName = $this->getPaymentMethodName($paymentMethod, $apiPayment);
 
         if (!$paymentFeeData->isActive()) {
             $this->module->validateOrder(
@@ -269,6 +254,33 @@ class OrderCreationHandler
     }
 
     /**
+     * Resolves the label stored in the order. Wallet payments (Google Pay) have no
+     * configurable method of their own, so their name is taken from the underlying
+     * Mollie method to keep it consistent with a regular payment of that method.
+     *
+     * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
+     */
+    private function getPaymentMethodName(MolPaymentMethod $paymentMethod, $apiPayment): string
+    {
+        if (!empty($paymentMethod->method_name)) {
+            return (string) $paymentMethod->method_name;
+        }
+
+        $environment = (int) Configuration::get(Config::MOLLIE_ENVIRONMENT);
+        $underlyingMethod = new MolPaymentMethod(
+            (int) $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment)
+        );
+
+        if (!empty($underlyingMethod->method_name)) {
+            return (string) $underlyingMethod->method_name;
+        }
+
+        $actualMethod = $apiPayment->details->wallet ?? $apiPayment->method;
+
+        return Config::$methods[$actualMethod] ?? (string) $apiPayment->method;
+    }
+
+    /**
      * @param PaymentData|OrderData $paymentData
      *
      * @return OrderData|PaymentData
@@ -282,7 +294,8 @@ class OrderCreationHandler
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($paymentData->getMethod(), $environment);
         $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
 
-        $paymentMethodName = isset(Config::$methods[$paymentData->getMethod()]) ? Config::$methods[$paymentData->getMethod()] : $this->module->name;
+        $paymentMethodName = $paymentMethodObj->method_name
+            ?: (Config::$methods[$paymentData->getMethod()] ?? $this->module->name);
 
         $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethodObj, $cart->getOrderTotal());
 
@@ -375,7 +388,7 @@ class OrderCreationHandler
             $cartId,
             (int) Configuration::get(Config::MOLLIE_STATUS_AWAITING),
             (float) $apiPayment->amount->value,
-            $paymentMethod->method_name,
+            $this->getPaymentMethodName($paymentMethod, $apiPayment),
             null,
             ['transaction_id' => $apiPayment->id],
             null,

@@ -382,7 +382,8 @@ class TransactionService
                     continue;
                 }
                 $orderPayment->transaction_id = $transaction->id;
-                $orderPayment->payment_method = $paymentMethod->method_name;
+                // wallet payments have no method of their own, keep the label set on order creation
+                $orderPayment->payment_method = $paymentMethod->method_name ?: $orderPayment->payment_method;
                 $orderPayment->update();
             }
         }
