@@ -12,6 +12,7 @@
 
 namespace Mollie\Service;
 
+use Cart;
 use Db;
 use Exception;
 use Mollie;
@@ -24,8 +25,10 @@ use Mollie\DTO\PaymentData;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Handler\Exception\OrderExceptionHandler;
+use Mollie\Service\Api\MollieApiClientProvider;
 use MolPaymentMethod;
 use PrestaShopException;
+use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -42,10 +45,16 @@ class MollieOrderCreationService
      */
     private $module;
 
-    public function __construct(OrderExceptionHandler $exceptionHandler, Mollie $module)
+    /**
+     * @var MollieApiClientProvider
+     */
+    private $apiClientProvider;
+
+    public function __construct(OrderExceptionHandler $exceptionHandler, Mollie $module, MollieApiClientProvider $apiClientProvider)
     {
         $this->exceptionHandler = $exceptionHandler;
         $this->module = $module;
+        $this->apiClientProvider = $apiClientProvider;
     }
 
     /**
@@ -113,19 +122,40 @@ class MollieOrderCreationService
             $mandateId = $apiPayment->mandateId;
         }
 
-        Db::getInstance()->insert(
-            'mollie_payments',
-            [
-                'cart_id' => (int) $cartId,
-                'order_id' => (int) $orderId,
-                'method' => pSQL($apiPayment->method),
-                'transaction_id' => pSQL($apiPayment->id),
-                'order_reference' => pSQL($orderReference),
-                'bank_status' => $status,
-                'mandate_id' => $mandateId,
-                'created_at' => ['type' => 'sql', 'value' => 'NOW()'],
-            ]
-        );
+        $data = [
+            'cart_id' => (int) $cartId,
+            'order_id' => (int) $orderId,
+            'method' => pSQL($apiPayment->method),
+            'transaction_id' => pSQL($apiPayment->id),
+            'order_reference' => pSQL($orderReference),
+            'bank_status' => $status,
+            'mandate_id' => $mandateId,
+            'created_at' => ['type' => 'sql', 'value' => 'NOW()'],
+        ];
+
+        $apiKeyRef = $this->resolveApiKeyRefForCart((int) $cartId);
+        if ($apiKeyRef) {
+            $data['api_key_ref'] = pSQL($apiKeyRef);
+        }
+
+        Db::getInstance()->insert('mollie_payments', $data);
+    }
+
+    /**
+     * Reference of the API key that created a cart's payment. Resolved from the
+     * cart's own shop so it stays correct even when the order is created outside
+     * that shop's context (e.g. subscription renewals).
+     */
+    private function resolveApiKeyRefForCart(int $cartId): ?string
+    {
+        $shopId = null;
+
+        $cart = new Cart($cartId);
+        if (Validate::isLoadedObject($cart)) {
+            $shopId = (int) $cart->id_shop;
+        }
+
+        return $this->apiClientProvider->resolveApiKeyRefForShop($shopId);
     }
 
     public function updateMolliePaymentReference(string $transactionId, string $orderReference)

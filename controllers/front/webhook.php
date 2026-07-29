@@ -131,6 +131,11 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         /** @var Logger $logger * */
         $logger = $this->module->getService(LoggerInterface::class);
 
+        // Point the API client at the key that owns this transaction's order
+        // (its shop's key, with fallback) so webhooks keep working in multistore
+        // and after key migrations, regardless of which shop's context is current.
+        $this->module->setApiClientForTransaction($transactionId);
+
         if (TransactionUtility::isOrderTransaction($transactionId)) {
             $transaction = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
         } else {
@@ -159,6 +164,14 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
     private function setContext(int $cartId): void
     {
         $cart = new Cart($cartId);
+
+        // Align the shop context with the cart's shop so that, in multistore,
+        // per-shop configuration (order statuses, keys, etc.) resolves against
+        // the shop that owns the order rather than the default shop.
+        if (Validate::isLoadedObject($cart) && $cart->id_shop) {
+            Shop::setContext(Shop::CONTEXT_SHOP, (int) $cart->id_shop);
+            $this->context->shop = new Shop((int) $cart->id_shop);
+        }
 
         $this->context->currency = new Currency($cart->id_currency);
         $this->context->customer = new Customer($cart->id_customer);

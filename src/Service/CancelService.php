@@ -37,6 +37,8 @@ class CancelService
 
     public function handleCancel($transactionId, $orderlineId = null, $quantity = null)
     {
+        $this->module->setApiClientForTransaction($transactionId);
+
         try {
             $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
 

@@ -59,6 +59,24 @@ export class AuthenticationApiService {
   }
 
   /**
+   * Save (or clear, when empty) the manually-entered fallback API key
+   */
+  async saveFallbackApiKey(apiKey: string) {
+    const url = new URL(this.baseUrl, window.location.origin);
+
+    const formData = new FormData();
+    formData.append('ajax', '1');
+    formData.append('action', 'saveFallbackApiKey');
+    formData.append('api_key', apiKey);
+
+    const response = await fetch(url.toString(), {
+      method: 'POST',
+      body: formData
+    });
+    return response.json();
+  }
+
+  /**
    * Switch environment between test and live
    */
   async switchEnvironment(environment: string) {

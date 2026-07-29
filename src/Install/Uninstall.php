@@ -69,6 +69,7 @@ class Uninstall
     {
         $configurations = [
             Config::MOLLIE_API_KEY,
+            Config::MOLLIE_API_KEY_FALLBACK,
             Config::MOLLIE_PAYMENTSCREEN_LOCALE,
             Config::MOLLIE_SEND_ORDER_CONFIRMATION,
             Config::MOLLIE_IFRAME,

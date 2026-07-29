@@ -78,6 +78,11 @@ export default function AuthorizationForm() {
   const [initialLoading, setInitialLoading] = useState(true)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [pendingMode, setPendingMode] = useState<"live" | "test" | null>(null)
+  const [fallbackApiKey, setFallbackApiKey] = useState("")
+  const [showFallbackKey, setShowFallbackKey] = useState(false)
+  const [isSavingFallback, setIsSavingFallback] = useState(false)
+  const [fallbackMessage, setFallbackMessage] = useState("")
+  const [fallbackError, setFallbackError] = useState("")
 
   // Load current settings on component mount
   useEffect(() => {
@@ -92,8 +97,11 @@ export default function AuthorizationForm() {
         setLiveApiKey(response.data.live_api_key || "")
         setMode(response.data.environment as "live" | "test")
         setApiKey(response.data.environment === "live" ? response.data.live_api_key : response.data.test_api_key)
+        setFallbackApiKey(response.data.fallback_api_key || "")
         setIsConnected(response.data.is_connected || false)
         setErrorMessage("")
+        setFallbackMessage("")
+        setFallbackError("")
         setJustConnected(false) // Reset the "just connected" state on load
       }
     } catch (error) {
@@ -136,6 +144,27 @@ export default function AuthorizationForm() {
     }
   }
 
+  const handleSaveFallback = async () => {
+    setIsSavingFallback(true)
+    setFallbackMessage("")
+    setFallbackError("")
+
+    try {
+      const response = await authApiService.saveFallbackApiKey(fallbackApiKey.trim())
+      if (response.success) {
+        const savedKey = fallbackApiKey.trim()
+        setFallbackMessage(savedKey ? t('fallbackKeySaved') : t('fallbackKeyCleared'))
+      } else {
+        setFallbackError(response.message || t('connectionFailed'))
+      }
+    } catch (error) {
+      console.error('Failed to save fallback key:', error)
+      setFallbackError(t('connectionFailed'))
+    } finally {
+      setIsSavingFallback(false)
+    }
+  }
+
   const handleModeChange = (newMode: "live" | "test") => {
     // If it's the same mode, do nothing
     if (newMode === mode) return
@@ -160,6 +189,9 @@ export default function AuthorizationForm() {
         setMode(pendingMode)
         setIsConnected(switchResponse.data.is_connected || false)
         setApiKey(switchResponse.data.api_key || "")
+        // Fallback key is a single value independent of environment; leave it as-is.
+        setFallbackMessage("")
+        setFallbackError("")
 
         // Update the stored keys based on the response
         if (pendingMode === "live") {
@@ -307,6 +339,62 @@ export default function AuthorizationForm() {
 
                 {!isConnected && (
                   <p className="text-sm text-black mt-2">{t('apiKeyDescription', mode)}</p>
+                )}
+              </div>
+            )}
+
+            {/* Fallback API Key Input */}
+            {initialLoading ? (
+              <SkeletonApiKeyInput />
+            ) : (
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <label className="text-sm font-medium text-black">
+                    {t('fallbackApiKey')}
+                  </label>
+                </div>
+
+                <div className="relative">
+                  <Input
+                    type={showFallbackKey ? "text" : "password"}
+                    value={fallbackApiKey}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFallbackApiKey(e.target.value)}
+                    placeholder={t('fallbackApiKeyPlaceholder')}
+                    className="pr-20 h-12 text-base border-gray-300"
+                  />
+                  {fallbackApiKey && (
+                    <button
+                      type="button"
+                      onClick={() => setShowFallbackKey(!showFallbackKey)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500 hover:text-gray-700"
+                    >
+                      {showFallbackKey ? t('hide') : t('show')}
+                    </button>
+                  )}
+                </div>
+
+                <p className="text-sm text-black mt-2">{t('fallbackApiKeyDescription')}</p>
+
+                <Button
+                  onClick={handleSaveFallback}
+                  disabled={isSavingFallback}
+                  className="mt-3 h-10 text-sm font-medium text-white hover:opacity-90"
+                  style={{backgroundColor: 'rgba(0, 64, 255, 1)'}}
+                >
+                  {isSavingFallback ? t('connecting') : t('saveFallbackKey')}
+                </Button>
+
+                {fallbackMessage && (
+                  <div className="mt-3 flex items-center gap-2 text-green-700">
+                    <CheckCircle className="h-4 w-4" />
+                    <span className="text-sm font-medium">{fallbackMessage}</span>
+                  </div>
+                )}
+
+                {fallbackError && (
+                  <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-md">
+                    <span className="text-red-800 text-sm">{fallbackError}</span>
+                  </div>
                 )}
               </div>
             )}

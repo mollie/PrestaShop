@@ -104,7 +104,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.4.4';
+        $this->version = '6.5.0';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -141,6 +141,38 @@ class Mollie extends PaymentModule
         }
 
         return $this->api;
+    }
+
+    /**
+     * Point the API client at the key that owns a given transaction's payment
+     * (the shop that created it). Used before acting on existing orders so that,
+     * in a multistore setup, refunds/captures/shipments use the correct key
+     * instead of whatever shop is the current context.
+     */
+    public function setApiClientForTransaction(string $transactionId, bool $subscriptionOrder = false): void
+    {
+        /** @var \Mollie\Service\Api\MollieApiClientProvider $clientProvider */
+        $clientProvider = $this->getService(\Mollie\Service\Api\MollieApiClientProvider::class);
+
+        try {
+            $client = $clientProvider->getForTransaction($transactionId, $subscriptionOrder);
+        } catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
+            // Mirror setApiKey(): keep whatever client is already set and let the
+            // caller proceed rather than surfacing a fatal from client creation.
+            $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
+            $errorHandler->handle($e, $e->getCode(), false);
+
+            return;
+        } catch (\Exception $e) {
+            $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
+            $errorHandler->handle($e, $e->getCode(), false);
+
+            return;
+        }
+
+        if ($client) {
+            $this->api = $client;
+        }
     }
 
     private function loadEnv()
@@ -1428,12 +1460,17 @@ class Mollie extends PaymentModule
             /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
             $paymentMethodRepository = $this->getService(PaymentMethodRepositoryInterface::class);
 
+            /** @var \Mollie\Service\Api\MollieApiClientProvider $clientProvider */
+            $clientProvider = $this->getService(\Mollie\Service\Api\MollieApiClientProvider::class);
+            $apiKeyRef = $clientProvider->resolveApiKeyRefForShop((int) $params['order']->id_shop);
+
             $paymentMethodRepository->addOpenStatusPayment(
                 $cartId,
                 $orderPayment,
                 $newPayment->id,
                 $orderId,
-                $orderReference
+                $orderReference,
+                $apiKeyRef
             );
 
             $sendMolliePaymentMail = Tools::getValue('mollie-email-send');
@@ -1665,21 +1702,15 @@ class Mollie extends PaymentModule
             return;
         }
 
-        /** @var \Mollie\Service\ApiKeyService $apiKeyService */
-        $apiKeyService = $this->getService(\Mollie\Service\ApiKeyService::class);
+        /** @var \Mollie\Service\Api\MollieApiClientProvider $clientProvider */
+        $clientProvider = $this->getService(\Mollie\Service\Api\MollieApiClientProvider::class);
 
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
-        $apiKeyConfig = \Mollie\Config\Config::ENVIRONMENT_LIVE === (int) $environment ?
-            Mollie\Config\Config::MOLLIE_API_KEY : Mollie\Config\Config::MOLLIE_API_KEY_TEST;
-
-        $apiKey = Configuration::get($apiKeyConfig, null, null, $shopId);
-
-        if (!$apiKey) {
-            return;
-        }
 
         try {
-            $this->api = $apiKeyService->setApiKey($apiKey, $this->version, $subscriptionOrder, $environment);
+            // Key selection is centralised in the provider (multistore per-shop
+            // resolution today; per-order key + fallback added in later steps).
+            $this->api = $clientProvider->getForShop($shopId, $subscriptionOrder);
         } catch (\Mollie\Api\Exceptions\IncompatiblePlatform $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);

@@ -319,6 +319,10 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             $_GET['module'] = $this->module->name;
         }
 
+        // Use the key that owns this transaction's order (its shop's key, with
+        // fallback) so the lookup succeeds in multistore and after key migrations.
+        $this->module->setApiClientForTransaction($transactionId);
+
         $isOrder = TransactionUtility::isOrderTransaction($transactionId);
         if ($isOrder) {
             $transaction = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);

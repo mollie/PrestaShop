@@ -168,12 +168,18 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             if ($method === PaymentMethod::BANKTRANSFER) {
                 $orderId = Order::getIdByCartId($cart->id);
                 $order = new Order($orderId);
+
+                /** @var \Mollie\Service\Api\MollieApiClientProvider $clientProvider */
+                $clientProvider = $this->module->getService(\Mollie\Service\Api\MollieApiClientProvider::class);
+                $apiKeyRef = $clientProvider->resolveApiKeyRefForShop((int) $order->id_shop);
+
                 $paymentMethodRepository->addOpenStatusPayment(
                     $cart->id,
                     $apiPayment->method,
                     $apiPayment->id,
                     $order->id,
-                    $order->reference
+                    $order->reference,
+                    $apiKeyRef
                 );
 
                 $orderPayments = $order->getOrderPayments();

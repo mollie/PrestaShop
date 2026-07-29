@@ -48,6 +48,8 @@ class ShipService
      */
     public function handleShip($transactionId, $orderlineId = null, $tracking = null, $quantity = null)
     {
+        $this->module->setApiClientForTransaction($transactionId);
+
         try {
             /** @var MollieOrderAlias $payment */
             $order = $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments']);
