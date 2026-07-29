@@ -421,6 +421,19 @@ class Config
         'bizum' => 'Bizum',
         'vipps' => 'Vipps',
         'mobilepay' => 'Mobile Pay',
+        'googlepay' => 'Google Pay',
+        'wero' => 'Wero',
+    ];
+
+    /**
+     * Wallets are not methods that can be enabled on their own, they are reported by Mollie on
+     * the payment that settled them. Brand names, so they are not translated.
+     *
+     * @var array
+     */
+    public static $wallets = [
+        'applepay' => 'Apple Pay',
+        'googlepay' => 'Google Pay',
     ];
 
     public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;

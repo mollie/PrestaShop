@@ -172,7 +172,7 @@ class OrderCreationHandler
             return 0;
         }
 
-        $paymentMethodName = $this->getPaymentMethodName($paymentMethod, $apiPayment);
+        $paymentMethodName = $this->paymentMethodService->getPaymentMethodName($paymentMethod, $apiPayment);
 
         if (!$paymentFeeData->isActive()) {
             $this->module->validateOrder(
@@ -251,33 +251,6 @@ class OrderCreationHandler
         $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method ?: $apiPayment->method);
 
         return $orderId;
-    }
-
-    /**
-     * Resolves the label stored in the order. Wallet payments (Google Pay) have no
-     * configurable method of their own, so their name is taken from the underlying
-     * Mollie method to keep it consistent with a regular payment of that method.
-     *
-     * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
-     */
-    private function getPaymentMethodName(MolPaymentMethod $paymentMethod, $apiPayment): string
-    {
-        if (!empty($paymentMethod->method_name)) {
-            return (string) $paymentMethod->method_name;
-        }
-
-        $environment = (int) Configuration::get(Config::MOLLIE_ENVIRONMENT);
-        $underlyingMethod = new MolPaymentMethod(
-            (int) $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment)
-        );
-
-        if (!empty($underlyingMethod->method_name)) {
-            return (string) $underlyingMethod->method_name;
-        }
-
-        $actualMethod = $apiPayment->details->wallet ?? $apiPayment->method;
-
-        return Config::$methods[$actualMethod] ?? (string) $apiPayment->method;
     }
 
     /**
@@ -388,7 +361,7 @@ class OrderCreationHandler
             $cartId,
             (int) Configuration::get(Config::MOLLIE_STATUS_AWAITING),
             (float) $apiPayment->amount->value,
-            $this->getPaymentMethodName($paymentMethod, $apiPayment),
+            $this->paymentMethodService->getPaymentMethodName($paymentMethod, $apiPayment),
             null,
             ['transaction_id' => $apiPayment->id],
             null,

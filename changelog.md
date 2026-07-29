@@ -4,6 +4,7 @@
 
 ## Changes in release 6.4.5
 + Fixed inconsistent payment method label on orders, card payments showed the internal method id instead of the payment method name
++ Wallet payments are now labelled with the method that settled them and the wallet used, for example "Card (Apple Pay)"
 
 ## Changes in release 6.4.4
 + Added bank transfer due date configuration

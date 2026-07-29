@@ -107,7 +107,10 @@ function mollie_6_4_5_get_method_names($apiKeyService, string $moduleVersion, in
     $names = [];
 
     foreach ($api->methods->allAvailable(['locale' => '']) as $apiMethod) {
-        $names[$apiMethod->id] = $apiMethod->description;
+        // Trustly shares its description with Pay by Bank, the admin panel labels it the same way.
+        $names[$apiMethod->id] = 'trustly' === $apiMethod->id
+            ? $apiMethod->description . ' (Trustly)'
+            : $apiMethod->description;
     }
 
     return $names;
