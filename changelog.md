@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.5
++ Fixed payment method restriction diagnostics filling up the PrestaShop log table on every checkout page render
+
 ## Changes in release 6.4.4
 + Added bank transfer due date configuration
 + Added Segment analytics tracking for module and payment events
