@@ -32,8 +32,9 @@ class ConfigTest extends BaseTestCase
             'supported: ideal' => ['ideal', true],
             'supported: paypal' => ['paypal', true],
             'supported: klarna' => ['klarna', true],
+            'supported: billink' => ['billink', true],
             // A method Mollie may return that the module has no handler for yet.
-            'unsupported new method: billink' => ['billink', false],
+            'unsupported new method: pointofsale' => ['pointofsale', false],
             'unknown garbage id' => ['not-a-real-method', false],
             'empty id' => ['', false],
         ];
