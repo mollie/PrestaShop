@@ -250,7 +250,25 @@ class PaymentMethodFormatterService
             'directProduct' => (bool) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT) ?: 0),
             'directCart' => (bool) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART) ?: 0),
             'buttonStyle' => (int) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE) ?: 0),
+            'excludedCarriers' => $this->getExcludedCarriers(),
         ];
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getExcludedCarriers(): array
+    {
+        $excludedCarriers = json_decode(
+            $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_EXCLUDED_CARRIERS) ?: '[]',
+            true
+        );
+
+        if (!is_array($excludedCarriers)) {
+            return [];
+        }
+
+        return array_map('strval', $excludedCarriers);
     }
 
     /**

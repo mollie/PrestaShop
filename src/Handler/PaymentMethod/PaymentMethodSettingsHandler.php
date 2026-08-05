@@ -95,6 +95,12 @@ class PaymentMethodSettingsHandler
      */
     public function handlePaymentMethodSave(string $methodId, array $settings, int $environment, int $shopId): void
     {
+        // Methods the module has no handler for cannot be configured or enabled,
+        // even if a crafted request reaches this path (the UI switch is disabled).
+        if (!Config::isMethodSupported($methodId)) {
+            throw new MollieException('This payment method is not yet supported and cannot be configured.');
+        }
+
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId(
             $methodId,
             $environment,
@@ -445,6 +451,10 @@ class PaymentMethodSettingsHandler
         $this->configuration->updateValue(
             Config::MOLLIE_APPLE_PAY_DIRECT_STYLE,
             $applePaySettings['buttonStyle'] ?? 0
+        );
+        $this->configuration->updateValue(
+            Config::MOLLIE_APPLE_PAY_DIRECT_EXCLUDED_CARRIERS,
+            json_encode(array_values(array_map('intval', $applePaySettings['excludedCarriers'] ?? [])))
         );
     }
 

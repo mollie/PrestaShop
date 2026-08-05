@@ -172,20 +172,43 @@ class OrderStatusService
 
     private function isOrderBackOrder($orderId)
     {
+        if (!Configuration::get('PS_STOCK_MANAGEMENT')) {
+            return false;
+        }
+
         $order = new Order($orderId);
         $orderDetails = $order->getOrderDetailList();
-        /** @var OrderDetail $detail */
         foreach ($orderDetails as $detail) {
             $orderDetail = new OrderDetail($detail['id_order_detail']);
-            if (
-                Configuration::get('PS_STOCK_MANAGEMENT') &&
-                ($orderDetail->getStockState() || $orderDetail->product_quantity_in_stock < 0)
-            ) {
+            if (self::isBackOrder(
+                (bool) $orderDetail->getStockState(),
+                (int) $orderDetail->product_quantity_in_stock,
+                (int) $orderDetail->product_quantity
+            )) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Decide whether an ordered product line is on backorder.
+     *
+     * The in-stock quantity is compared against the ordered quantity, not just
+     * checked for a negative value. That catches the case where a product starts
+     * at exactly 0 stock: the ordered quantity still exceeds what is available,
+     * so the line is on backorder even though the stock never goes negative.
+     *
+     * @param bool $stockState out-of-stock flag from the order detail
+     * @param int $quantityInStock quantity available when the order was placed
+     * @param int $quantityOrdered quantity the customer ordered
+     *
+     * @return bool
+     */
+    public static function isBackOrder($stockState, $quantityInStock, $quantityOrdered)
+    {
+        return $stockState || $quantityInStock < $quantityOrdered;
     }
 
     private function isStatusPaid($statusId)
