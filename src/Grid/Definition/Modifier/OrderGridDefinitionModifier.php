@@ -37,15 +37,13 @@ class OrderGridDefinitionModifier implements GridDefinitionModifierInterface
      */
     public function modify(GridDefinitionInterface $gridDefinition)
     {
-        $translator = $this->module->getTranslator();
-
         $gridDefinition->getColumns()
             ->addBefore('date_add', (new ActionColumn('second_chance'))
-                ->setName($translator->trans('Resend payment link', [], 'Modules.mollie'))
+                ->setName($this->module->l('Resend payment link', 'OrderGridDefinitionModifier'))
                 ->setOptions([
                     'actions' => (new RowActionCollection())
                         ->add((new SecondChanceRowAction('transaction_id'))
-                            ->setName($translator->trans('You will resend email with payment link to the customer', [], 'Modules.mollie'))
+                            ->setName($this->module->l('You will resend email with payment link to the customer', 'OrderGridDefinitionModifier'))
                             ->setOptions([
                                 'route' => Mollie\Config\Config::ROUTE_RESEND_SECOND_CHANCE_PAYMENT_MESSAGE,
                                 'route_param_field' => 'id_order',

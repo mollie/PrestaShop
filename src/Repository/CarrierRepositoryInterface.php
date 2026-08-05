@@ -21,4 +21,6 @@ if (!defined('_PS_VERSION_')) {
 interface CarrierRepositoryInterface extends ReadOnlyRepositoryInterface
 {
     public function getCarriersForOrder(int $id_zone, array $groups = null, \Cart $cart = null, &$error = []): array;
+
+    public function getActiveCarriers(int $langId): array;
 }
