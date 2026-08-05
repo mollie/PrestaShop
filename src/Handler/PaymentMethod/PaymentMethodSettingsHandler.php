@@ -452,6 +452,10 @@ class PaymentMethodSettingsHandler
             Config::MOLLIE_APPLE_PAY_DIRECT_STYLE,
             $applePaySettings['buttonStyle'] ?? 0
         );
+        $this->configuration->updateValue(
+            Config::MOLLIE_APPLE_PAY_DIRECT_EXCLUDED_CARRIERS,
+            json_encode(array_values(array_map('intval', $applePaySettings['excludedCarriers'] ?? [])))
+        );
     }
 
     /**

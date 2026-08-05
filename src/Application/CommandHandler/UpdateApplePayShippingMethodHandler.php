@@ -12,8 +12,10 @@
 
 namespace Mollie\Application\CommandHandler;
 
+use Carrier;
 use Cart;
 use Mollie\Application\Command\UpdateApplePayShippingMethod;
+use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
 use Mollie\Config\Config;
 use Mollie\Service\OrderPaymentFeeService;
 
@@ -28,13 +30,33 @@ final class UpdateApplePayShippingMethodHandler
      */
     private $orderPaymentFeeService;
 
-    public function __construct(OrderPaymentFeeService $orderPaymentFeeService)
-    {
+    /**
+     * @var ApplePayCarriersBuilder
+     */
+    private $applePayCarriersBuilder;
+
+    public function __construct(
+        OrderPaymentFeeService $orderPaymentFeeService,
+        ApplePayCarriersBuilder $applePayCarriersBuilder
+    ) {
         $this->orderPaymentFeeService = $orderPaymentFeeService;
+        $this->applePayCarriersBuilder = $applePayCarriersBuilder;
     }
 
     public function handle(UpdateApplePayShippingMethod $command): array
     {
+        $carrier = new Carrier($command->getCarrierId());
+
+        if (in_array(
+            (int) $carrier->id_reference,
+            $this->applePayCarriersBuilder->getExcludedCarrierReferences(),
+            true
+        )) {
+            return [
+                'success' => false,
+            ];
+        }
+
         $cart = new Cart($command->getCartId());
 
         $cart->id_carrier = $command->getCarrierId();

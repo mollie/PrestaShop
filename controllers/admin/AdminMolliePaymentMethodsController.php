@@ -19,6 +19,7 @@ use Mollie\Exception\MollieException;
 use Mollie\Handler\Certificate\ApplePayDirectCertificateHandler;
 use Mollie\Handler\PaymentMethod\PaymentMethodSettingsHandler;
 use Mollie\Logger\LoggerInterface;
+use Mollie\Repository\CarrierRepositoryInterface;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\CustomerRepository;
 use Mollie\Repository\PaymentMethodLangRepositoryInterface;
@@ -170,6 +171,10 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'applePayButtonBlack' => $this->module->l('Black', self::FILE_NAME),
                 'applePayButtonOutline' => $this->module->l('Outline', self::FILE_NAME),
                 'applePayButtonWhite' => $this->module->l('White', self::FILE_NAME),
+                'applePayExcludedCarriers' => $this->module->l('Exclude shipping methods from Apple Pay', self::FILE_NAME),
+                'selectCarriersToExclude' => $this->module->l('Select shipping methods', self::FILE_NAME),
+                'applePayExcludedCarriersHelp' => $this->module->l('Selected shipping methods will not be offered inside the Apple Pay payment sheet. Use this for carriers that require extra steps, like relay point selection. They stay available in the regular checkout.', self::FILE_NAME),
+                'applePayAllCarriersExcludedWarning' => $this->module->l('All shipping methods are excluded. Customers will not be able to complete Apple Pay Direct orders that require shipping.', self::FILE_NAME),
 
                 'paymentRestrictions' => $this->module->l('Payment restrictions', self::FILE_NAME),
                 'acceptPaymentsFrom' => $this->module->l('Accept payments from', self::FILE_NAME),
@@ -467,6 +472,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                                 'directProduct' => (bool) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT) ?: 0),
                                 'directCart' => (bool) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART) ?: 0),
                                 'buttonStyle' => (int) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE) ?: 0),
+                                'excludedCarriers' => $this->getExcludedCarriersForResponse(),
                             ] : null,
                             'bankTransferDueDays' => $methodId === 'banktransfer'
                                 ? (string) ($this->configuration->get(Config::MOLLIE_BANKTRANSFER_DUE_DAYS) ?: Config::MOLLIE_BANKTRANSFER_DUE_DAYS_DEFAULT)
@@ -497,6 +503,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'data' => [
                     'methods' => $formattedMethods,
                     'countries' => $this->countryService->getActiveCountriesList(),
+                    'carriers' => $this->getCarriersForResponse(),
                     'taxRulesGroups' => $this->getTaxRulesGroups(),
                     'customerGroups' => $this->getCustomerGroups(),
                     'languages' => $this->getLanguages(),
@@ -872,6 +879,43 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
 
         return $customerGroups;
+    }
+
+    private function getCarriersForResponse(): array
+    {
+        $carriers = [];
+
+        try {
+            /** @var CarrierRepositoryInterface $carrierRepository */
+            $carrierRepository = $this->module->getService(CarrierRepositoryInterface::class);
+
+            foreach ($carrierRepository->getActiveCarriers($this->context->language->id) as $carrier) {
+                $carriers[] = [
+                    'value' => (string) $carrier['id_reference'],
+                    'label' => $carrier['name'],
+                ];
+            }
+        } catch (Exception $e) {
+            $this->logger->error('Failed to get carriers', [
+                'exception' => ExceptionUtility::getExceptions($e),
+            ]);
+        }
+
+        return $carriers;
+    }
+
+    private function getExcludedCarriersForResponse(): array
+    {
+        $excludedCarriers = json_decode(
+            $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_EXCLUDED_CARRIERS) ?: '[]',
+            true
+        );
+
+        if (!is_array($excludedCarriers)) {
+            return [];
+        }
+
+        return array_map('strval', $excludedCarriers);
     }
 
     public function getLanguages(): array

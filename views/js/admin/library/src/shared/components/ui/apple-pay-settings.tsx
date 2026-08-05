@@ -4,24 +4,29 @@ import { useEffect, useState } from "react"
 import { AlertCircle } from "lucide-react"
 import { Label } from "./label"
 import { Switch } from "./switch"
+import { MultiSelect } from "./multi-select"
 import { cn } from "../../lib/utils"
 import { usePaymentMethodsTranslations } from "../../hooks/use-payment-methods-translations"
 import { paymentMethodsApiService } from "../../../services/PaymentMethodsApiService"
+import type { Carrier } from "../../../services/PaymentMethodsApiService"
 
 interface ApplePayDirectSettings {
   directProduct?: boolean
   directCart?: boolean
   buttonStyle?: 0 | 1 | 2
+  excludedCarriers?: string[]
 }
 
 interface ApplePaySettingsProps {
   settings: ApplePayDirectSettings
+  carriers?: Carrier[]
   onUpdateSettings: (settings: ApplePayDirectSettings) => void
   className?: string
 }
 
 export function ApplePaySettings({
   settings,
+  carriers = [],
   onUpdateSettings,
   className
 }: ApplePaySettingsProps) {
@@ -32,6 +37,7 @@ export function ApplePaySettings({
   const directProduct = settings.directProduct ?? false
   const directCart = settings.directCart ?? false
   const buttonStyle = settings.buttonStyle ?? 0
+  const excludedCarriers = settings.excludedCarriers ?? []
 
   useEffect(() => {
     paymentMethodsApiService.checkApplePayCertificate()
@@ -156,6 +162,28 @@ export function ApplePaySettings({
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Excluded shipping methods - only show if at least one direct option is enabled */}
+      {(directProduct || directCart) && (
+        <div className="space-y-3">
+          <Label className="text-sm font-medium">{t('applePayExcludedCarriers')}</Label>
+          <MultiSelect
+            value={excludedCarriers}
+            onValueChange={(excludedCarriers: string[]) => onUpdateSettings({ excludedCarriers })}
+            options={carriers}
+            placeholder={t('selectCarriersToExclude')}
+          />
+          <p className="text-xs text-gray-400 leading-relaxed">{t('applePayExcludedCarriersHelp')}</p>
+          {carriers.length > 0 && carriers.every((carrier) => excludedCarriers.includes(carrier.value)) && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+              <div className="flex-1 text-sm text-amber-800">
+                {t('applePayAllCarriersExcludedWarning')}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
