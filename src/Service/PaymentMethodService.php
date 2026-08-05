@@ -27,6 +27,8 @@ use Mollie\Adapter\Context;
 use Mollie\Adapter\Shop;
 use Mollie\Api\Resources\BaseCollection;
 use Mollie\Api\Resources\MethodCollection;
+use Mollie\Api\Resources\Order as MollieOrderAlias;
+use Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Api\Types\SequenceType;
 use Mollie\Config\Config;
