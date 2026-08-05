@@ -16,6 +16,8 @@ interface PaymentMethodCardProps {
   countries: Country[]
   customerGroups: CustomerGroup[]
   languages: Language[]
+  onlyPaymentsMethods: string[]
+  onlyOrderMethods: string[]
   onToggleExpanded: () => void
   onUpdateSettings: (settings: Partial<PaymentMethod["settings"]>) => void
   onSaveSettings: () => void
@@ -36,6 +38,8 @@ export function PaymentMethodCard({
   countries,
   customerGroups,
   languages,
+  onlyPaymentsMethods,
+  onlyOrderMethods,
   onToggleExpanded,
   onUpdateSettings,
   onSaveSettings,
@@ -177,6 +181,8 @@ export function PaymentMethodCard({
                 countries={countries}
                 customerGroups={customerGroups}
                 languages={languages}
+                onlyPaymentsMethods={onlyPaymentsMethods}
+                onlyOrderMethods={onlyOrderMethods}
                 onUpdateSettings={onUpdateSettings}
                 onSaveSettings={onSaveSettings}
                 isSaving={isSaving}
