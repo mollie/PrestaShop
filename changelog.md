@@ -3,6 +3,8 @@
 # Changelog #
 
 ## Changes in release 6.4.4
++ Hardened the payment webhook by validating the security token before processing a transaction
++ Hardened the subscription payment method update webhook by validating the secure key before applying changes
 + Added bank transfer due date configuration
 + Added Segment analytics tracking for module and payment events
 + Added Bulgarian translations
@@ -23,6 +25,7 @@
 + Added diagnostic logging when a payment method is hidden by a restriction
 + Resolved PrestaShop Validator findings (errors, licenses, security)
 + Fixed Apple Pay Direct authorization so cart operations only affect the caller's own session cart
++ Fixed subscription authorization so customers can only cancel or change the payment method of their own subscriptions
 
 ## Changes in release 6.4.3
 + Fixed Payment API race condition causing false "payment failed" errors
