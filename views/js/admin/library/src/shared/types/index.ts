@@ -61,6 +61,7 @@ export interface MolliePaymentMethodsTranslations {
   hideSettings: string;
   active: string;
   inactive: string;
+  notYetSupported: string;
 
   // Basic settings
   basicSettings: string;

@@ -565,6 +565,11 @@ class PaymentMethodService
     private function removeNotSupportedMethods($methods, $mollieMethods)
     {
         foreach ($methods as $key => $method) {
+            // A persisted method the module no longer/never supported must not reach checkout.
+            if (!Config::isMethodSupported($method['id_method'])) {
+                unset($methods[$key]);
+                continue;
+            }
             $valid = false;
             foreach ($mollieMethods as $mollieMethod) {
                 if ($method['id_method'] === $mollieMethod->id) {
