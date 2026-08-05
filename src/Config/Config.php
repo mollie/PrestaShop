@@ -154,6 +154,7 @@ class Config
         'bizum' => ['es', 'ad'],
         'vippsmobilepay' => ['no', 'dk', 'fi'],
         'billink' => ['nl', 'be', 'de'],
+        'wero' => ['de', 'be', 'fr', 'lu'],
     ];
 
     const SUPPORTED_PHP_VERSION = '5.6';
@@ -412,7 +413,7 @@ class Config
         'in3' => 'in3',
         'billie' => 'Billie',
         'twint' => 'TWINT',
-        'bancomat' => 'Bancomat',
+        'bancomatpay' => 'Bancomat Pay',
         'alma' => 'Alma',
         'blik' => 'BLIK',
         'klarna' => 'Pay with Klarna.',
@@ -427,7 +428,23 @@ class Config
         'vipps' => 'Vipps',
         'mobilepay' => 'Mobile Pay',
         'billink' => 'Billink',
+        'wero' => 'Wero',
     ];
+
+    /**
+     * Whether the module has a handler for this Mollie payment method.
+     *
+     * Mollie exposes new methods through the API as soon as a merchant activates
+     * them on their dashboard. A method the module has not been updated to handle
+     * would fail at checkout, so `self::$methods` is the authoritative allow-list
+     * of methods the module actually supports.
+     *
+     * @param string $methodId Mollie method id, e.g. "creditcard", "ideal"
+     */
+    public static function isMethodSupported($methodId): bool
+    {
+        return isset(self::$methods[$methodId]);
+    }
 
     public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
     public const LOG_SEVERITY_LEVEL_WARNING = 2;

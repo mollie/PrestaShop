@@ -95,6 +95,12 @@ class PaymentMethodSettingsHandler
      */
     public function handlePaymentMethodSave(string $methodId, array $settings, int $environment, int $shopId): void
     {
+        // Methods the module has no handler for cannot be configured or enabled,
+        // even if a crafted request reaches this path (the UI switch is disabled).
+        if (!Config::isMethodSupported($methodId)) {
+            throw new MollieException('This payment method is not yet supported and cannot be configured.');
+        }
+
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId(
             $methodId,
             $environment,

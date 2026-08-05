@@ -12,6 +12,7 @@ declare global {
       onlyPaymentsMethods: string[];
       orderStatuses: { id: string; name: string }[];
       manualCaptureEligibleMethods: string[];
+      multistoreRestricted?: boolean;
     };
   }
 }
@@ -26,6 +27,8 @@ export interface Language {
 export interface PaymentMethod {
   id: string
   name: string
+  /** Whether the module has a handler for this method. Unsupported methods are shown locked. */
+  supported: boolean
   type: "card" | "other"
   status: "active" | "inactive"
   isExpanded: boolean

@@ -36,10 +36,9 @@
 
 namespace Mollie\Service\PaymentMethod;
 
-use Mollie\Config\Config;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\PaymentMethodRestrictionValidatorInterface;
 use MolPaymentMethod;
-use PrestaShopLogger;
 use Throwable;
 
 if (!defined('_PS_VERSION_')) {
@@ -55,9 +54,15 @@ class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionVali
      */
     private $paymentRestrictionValidators;
 
-    public function __construct(array $paymentRestrictionValidators)
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(array $paymentRestrictionValidators, LoggerInterface $logger)
     {
         $this->paymentRestrictionValidators = $paymentRestrictionValidators;
+        $this->logger = $logger;
     }
 
     /**
@@ -76,31 +81,21 @@ class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionVali
                     $success = $paymentRestrictionValidator->isValid($paymentMethod);
 
                     if (!$success) {
-                        PrestaShopLogger::addLog(
+                        $this->logger->debug(
                             sprintf(
                                 '%s: payment method "%s" was hidden by %s',
                                 self::FILE_NAME,
                                 $paymentMethod->getPaymentMethodName(),
                                 get_class($paymentRestrictionValidator)
-                            ),
-                            Config::WARNING,
-                            null,
-                            null,
-                            null,
-                            true
+                            )
                         );
 
                         return false;
                     }
                 }
             } catch (Throwable $exception) {
-                PrestaShopLogger::addLog(
-                    sprintf('%s has caught error: %s', self::FILE_NAME, $exception->getMessage()),
-                    Config::ERROR,
-                    null,
-                    null,
-                    null,
-                    true
+                $this->logger->error(
+                    sprintf('%s has caught error: %s', self::FILE_NAME, $exception->getMessage())
                 );
 
                 return false;

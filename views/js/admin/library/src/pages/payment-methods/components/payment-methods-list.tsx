@@ -7,6 +7,7 @@ import { PaymentMethodsList } from "./payment-methods-list-component"
 import { PaymentMethodsSkeleton } from "./payment-methods-skeleton"
 import { paymentMethodsApiService, type PaymentMethod, type Country, type Carrier, type CustomerGroup, type Language } from "../../../services/PaymentMethodsApiService"
 import { usePaymentMethodsTranslations } from "../../../shared/hooks/use-payment-methods-translations"
+import { MultistoreRestrictionNotice } from "../../../shared/components/ui/multistore-restriction-notice"
 
 export default function PaymentMethodsPage() {
   const { t } = usePaymentMethodsTranslations()
@@ -225,6 +226,15 @@ export default function PaymentMethodsPage() {
   }, [notification])
 
   const currentMethods = activeTab === "enabled" ? enabledMethods : disabledMethods
+
+  if (window.molliePaymentMethodsConfig?.multistoreRestricted) {
+    return (
+      <MultistoreRestrictionNotice
+        title={t('multistoreRestrictedTitle')}
+        message={t('multistoreRestrictedMessage')}
+      />
+    )
+  }
 
   if (isLoading) {
     return <PaymentMethodsSkeleton />

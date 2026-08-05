@@ -262,6 +262,7 @@ export function PaymentMethodSettings({ method, countries, carriers, customerGro
                 <p className="text-sm text-muted-foreground flex items-center h-6">{t('enablePaymentMethod')}</p>
                 <Switch
                   checked={method.settings.enabled}
+                  disabled={!method.supported}
                   onCheckedChange={(enabled: boolean) => onUpdateSettings({ enabled })}
                 />
               </div>

@@ -113,39 +113,51 @@ export function PaymentMethodCard({
                 </div>
               </div>
               <span className="font-medium">{method.name}</span>
-              <Badge
-                variant={method.status === "active" ? "default" : "destructive"}
-                className={cn(
-                  "text-xs transition-all duration-200",
-                  method.status === "active"
-                    ? "bg-green-100 text-green-800 hover:bg-green-100"
-                    : "bg-red-100 text-red-800 hover:bg-red-100",
-                )}
-              >
-                {method.status === "active" ? t('active') : t('inactive')}
-              </Badge>
+              {method.supported ? (
+                <Badge
+                  variant={method.status === "active" ? "default" : "destructive"}
+                  className={cn(
+                    "text-xs transition-all duration-200",
+                    method.status === "active"
+                      ? "bg-green-100 text-green-800 hover:bg-green-100"
+                      : "bg-red-100 text-red-800 hover:bg-red-100",
+                  )}
+                >
+                  {method.status === "active" ? t('active') : t('inactive')}
+                </Badge>
+              ) : (
+                <Badge
+                  variant="secondary"
+                  className="text-xs bg-amber-100 text-amber-800 hover:bg-amber-100"
+                >
+                  {t('notYetSupported')}
+                </Badge>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={onToggleExpanded}
-              className={cn(
-                "flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 cursor-pointer",
-                "transition-all duration-200 hover:scale-105 active:scale-95",
-              )}
-            >
-              {method.isExpanded ? (
-                <>
-                  <ChevronUp className="h-4 w-4 transition-transform duration-200" />
-                  {t('hideSettings')}
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="h-4 w-4 transition-transform duration-200" />
-                  {t('showSettings')}
-                </>
-              )}
-            </button>
+            {/* Unsupported methods have no settings to configure, so no toggle is shown. */}
+            {method.supported && (
+              <button
+                onClick={onToggleExpanded}
+                className={cn(
+                  "flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 cursor-pointer",
+                  "transition-all duration-200 hover:scale-105 active:scale-95",
+                )}
+              >
+                {method.isExpanded ? (
+                  <>
+                    <ChevronUp className="h-4 w-4 transition-transform duration-200" />
+                    {t('hideSettings')}
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="h-4 w-4 transition-transform duration-200" />
+                    {t('showSettings')}
+                  </>
+                )}
+              </button>
+            )}
             {isDragEnabled && !method.isExpanded && (
               <GripVertical
                 className={cn(

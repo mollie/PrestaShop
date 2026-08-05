@@ -6,6 +6,7 @@ import { Button } from "../../../shared/components/ui/button"
 import { Input } from "../../../shared/components/ui/input"
 import { authApiService } from "../../../services/AuthenticationApiService"
 import { useTranslations } from "../../../shared/hooks/use-translations"
+import { MultistoreRestrictionNotice } from "../../../shared/components/ui/multistore-restriction-notice"
 
 // Mollie Logo Component
 const MollieLogo = () => (
@@ -182,6 +183,15 @@ export default function AuthorizationForm() {
   const cancelModeSwitch = () => {
     setShowConfirmDialog(false)
     setPendingMode(null)
+  }
+
+  if (window.mollieAuthConfig?.multistoreRestricted) {
+    return (
+      <MultistoreRestrictionNotice
+        title={t('multistoreRestrictedTitle')}
+        message={t('multistoreRestrictedMessage')}
+      />
+    )
   }
 
   return (
