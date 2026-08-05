@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.5
++ Fixed payment method restriction diagnostics filling up the PrestaShop log table on every checkout page render
+
 ## Changes in release 6.4.4
 + Hardened the payment webhook by validating the security token before processing a transaction
 + Hardened the subscription payment method update webhook by validating the secure key before applying changes

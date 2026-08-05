@@ -268,6 +268,10 @@ final class BaseServiceProvider
         $this->addService($container, PaymentMethodSortProviderInterface::class, PaymentMethodSortProvider::class);
         $this->addService($container, PhoneNumberProviderInterface::class, PhoneNumberProvider::class);
 
+        $service = $this->addService($container, ApplePayPaymentMethodRestrictionValidator::class, ApplePayPaymentMethodRestrictionValidator::class);
+        $this->addServiceArgument($service, ConfigurationAdapter::class);
+        $this->addServiceArgument($service, LoggerInterface::class);
+
         $this->addService($container, PaymentMethodRestrictionValidationInterface::class, function () use ($container) {
             return new PaymentMethodRestrictionValidation([
                 $container->get(BasePaymentMethodRestrictionValidator::class),
@@ -277,7 +281,7 @@ final class BaseServiceProvider
                 $container->get(AmountPaymentMethodRestrictionValidator::class),
                 $container->get(B2bPaymentMethodRestrictionValidator::class),
                 $container->get(CustomerGroupPaymentMethodRestrictionValidator::class),
-            ]);
+            ], $container->get(LoggerInterface::class));
         });
 
         $this->addService($container, CustomLogoProviderInterface::class, $container->get(CreditCardLogoProvider::class));
