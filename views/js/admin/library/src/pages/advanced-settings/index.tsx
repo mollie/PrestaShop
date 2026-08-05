@@ -38,20 +38,28 @@ interface RadioSelectProps {
 
 function RadioSelect({ value, onValueChange, options, placeholder, className }: RadioSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const [search, setSearch] = useState("")
   const [dropdownPosition, setDropdownPosition] = useState<'bottom' | 'top'>('bottom')
   const selectedOption = options.find((opt) => opt.value === value)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  const filteredOptions = search
+    ? options.filter((opt) => opt.label.toLowerCase().includes(search.toLowerCase()))
+    : options
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false)
+        setSearch("")
       }
     }
 
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside)
+      setTimeout(() => searchInputRef.current?.focus(), 50)
     }
 
     return () => {
@@ -63,7 +71,7 @@ function RadioSelect({ value, onValueChange, options, placeholder, className }: 
     if (isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect()
       const spaceBelow = window.innerHeight - rect.bottom
-      const dropdownHeight = 300 // approximate max height
+      const dropdownHeight = 300
 
       if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
         setDropdownPosition('top')
@@ -89,25 +97,42 @@ function RadioSelect({ value, onValueChange, options, placeholder, className }: 
 
       {isOpen && (
         <div className={cn("radio-select-dropdown", dropdownPosition === 'top' && "radio-select-dropdown-top")}>
-          <div className="radio-select-options">
-            {options.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => {
-                  onValueChange(option.value)
-                  setIsOpen(false)
-                }}
-                className="radio-select-option"
-              >
-                <div className="radio-select-radio-container">
-                  <div className={value === option.value ? "radio-select-radio-checked" : "radio-select-radio-unchecked"}>
-                    {value === option.value && <div className="radio-select-radio-dot" />}
+          {options.length > 5 && (
+            <div style={{ padding: '8px 8px 4px' }}>
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search..."
+                className="radio-select-search"
+              />
+            </div>
+          )}
+          <div className="radio-select-options" style={{ maxHeight: '240px', overflowY: 'auto' }}>
+            {filteredOptions.length === 0 ? (
+              <div className="radio-select-option" style={{ justifyContent: 'center', color: '#999' }}>No results found</div>
+            ) : (
+              filteredOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => {
+                    onValueChange(option.value)
+                    setIsOpen(false)
+                    setSearch("")
+                  }}
+                  className="radio-select-option"
+                >
+                  <div className="radio-select-radio-container">
+                    <div className={value === option.value ? "radio-select-radio-checked" : "radio-select-radio-unchecked"}>
+                      {value === option.value && <div className="radio-select-radio-dot" />}
+                    </div>
                   </div>
-                </div>
-                <span className="radio-select-option-label">{option.label}</span>
-              </button>
-            ))}
+                  <span className="radio-select-option-label">{option.label}</span>
+                </button>
+              ))
+            )}
           </div>
         </div>
       )}
@@ -125,10 +150,16 @@ interface MultiSelectProps {
 
 function MultiSelect({ value, onValueChange, options, placeholder, className }: MultiSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const [search, setSearch] = useState("")
   const [dropdownPosition, setDropdownPosition] = useState<'bottom' | 'top'>('bottom')
   const selectedOptions = options.filter((opt) => value.includes(opt.value))
   const dropdownRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  const filteredOptions = search
+    ? options.filter((opt) => opt.label.toLowerCase().includes(search.toLowerCase()))
+    : options
 
   const toggleOption = (optionValue: string) => {
     if (value.includes(optionValue)) {
@@ -147,11 +178,13 @@ function MultiSelect({ value, onValueChange, options, placeholder, className }: 
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false)
+        setSearch("")
       }
     }
 
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside)
+      setTimeout(() => searchInputRef.current?.focus(), 50)
     }
 
     return () => {
@@ -163,7 +196,7 @@ function MultiSelect({ value, onValueChange, options, placeholder, className }: 
     if (isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect()
       const spaceBelow = window.innerHeight - rect.bottom
-      const dropdownHeight = 300 // approximate max height
+      const dropdownHeight = 300
 
       if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
         setDropdownPosition('top')
@@ -206,13 +239,28 @@ function MultiSelect({ value, onValueChange, options, placeholder, className }: 
 
       {isOpen && (
         <div className={cn("radio-select-dropdown", dropdownPosition === 'top' && "radio-select-dropdown-top")}>
-          <div className="radio-select-options">
-            {options.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => toggleOption(option.value)}
-                className="radio-select-option"
+          {options.length > 5 && (
+            <div style={{ padding: '8px 8px 4px' }}>
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search..."
+                className="radio-select-search"
+              />
+            </div>
+          )}
+          <div className="radio-select-options" style={{ maxHeight: '240px', overflowY: 'auto' }}>
+            {filteredOptions.length === 0 ? (
+              <div className="radio-select-option" style={{ justifyContent: 'center', color: '#999' }}>No results found</div>
+            ) : (
+              filteredOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => toggleOption(option.value)}
+                  className="radio-select-option"
               >
                 <div className="multi-select-checkbox-container">
                   <div className={value.includes(option.value) ? "multi-select-checkbox-checked" : "multi-select-checkbox-unchecked"}>
@@ -229,7 +277,8 @@ function MultiSelect({ value, onValueChange, options, placeholder, className }: 
                 </div>
                 <span className="radio-select-option-label">{option.label}</span>
               </button>
-            ))}
+              ))
+            )}
           </div>
         </div>
       )}

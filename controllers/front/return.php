@@ -20,7 +20,6 @@ use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\MailService;
-use Mollie\Service\PayByBankCancellationService;
 use Mollie\Service\PaymentReturnService;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\ExceptionUtility;
@@ -133,34 +132,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 && PaymentStatus::STATUS_OPEN === $data['mollie_info']['bank_status']
             ) {
                 $this->redirectToOrderConfirmation($idCart, $cart);
-            } elseif (isset($data['mollie_info']['method'])
-                && $data['mollie_info']['method'] === Config::PAY_BY_BANK
-            ) {
-                /** @var PayByBankCancellationService $payByBankService */
-                $payByBankService = $this->module->getService(PayByBankCancellationService::class);
-                $transactionId = $data['mollie_info']['transaction_id'];
-                $dbStatus = $data['mollie_info']['bank_status'];
-
-                $statusToCheck = $dbStatus;
-
-                if (in_array($dbStatus, [PaymentStatus::STATUS_OPEN, PaymentStatus::STATUS_PENDING], true)) {
-                    $statusToCheck = $payByBankService->getActualMollieStatus($transactionId);
-                }
-
-                if ($payByBankService->shouldCancelPayment($statusToCheck)) {
-                    $payByBankService->cancelOrderAndRestoreCart($idCart, $transactionId, $payByBankService->resolveCancelStatus($statusToCheck));
-                    $this->setWarning($this->module->l('Your payment was not successful. Please try again.', self::FILE_NAME));
-                    Tools::redirect($this->context->link->getPageLink(
-                        'order',
-                        true,
-                        $this->context->language->id,
-                        [
-                            'step' => 'payment',
-                        ]
-                    ));
-                }
-
-                $this->redirectToOrderConfirmation($idCart, $cart);
             } elseif (
                 isset($data['mollie_info']['bank_status'])
                 && in_array($data['mollie_info']['bank_status'], [PaymentStatus::STATUS_OPEN, PaymentStatus::STATUS_PENDING], true)
@@ -170,9 +141,17 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $pendingAction = $pendingStatusHandler->handle($data['mollie_info']['transaction_id'], $idCart);
 
                 switch ($pendingAction) {
-                    case OrderPendingStatusHandler::ACTION_PENDING:
-                        $data['msg_title'] = $this->module->l('Your order has been received', self::FILE_NAME);
-                        $data['msg_details'] = $this->module->l('Your payment is currently being processed. You will receive a confirmation once the payment is complete. You can check the status of your order in your account.', self::FILE_NAME);
+                    case OrderPendingStatusHandler::ACTION_OPEN:
+                        $this->setWarning($this->module->l('Your payment was not completed. Please try again.', self::FILE_NAME));
+                        Tools::redirect($this->context->link->getPageLink(
+                            'order',
+                            true,
+                            $this->context->language->id,
+                            ['step' => 'payment']
+                        ));
+                        break;
+                    case OrderPendingStatusHandler::ACTION_CONFIRM:
+                        $this->redirectToOrderConfirmation($idCart, $cart);
                         break;
                     case OrderPendingStatusHandler::ACTION_FAILED:
                         $this->setWarning($this->module->l('Your payment was not successful. Try again.', self::FILE_NAME));
@@ -180,10 +159,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                             'cart',
                             null,
                             $this->context->language->id,
-                            [
-                                'action' => 'show',
-                                'checkout' => true,
-                            ]
+                            ['action' => 'show', 'checkout' => true]
                         ));
                         break;
                     default:

@@ -21,9 +21,11 @@ use Mollie\Application\CommandHandler\UpdateApplePayShippingMethodHandler;
 use Mollie\Builder\ApplePayDirect\ApplePayOrderBuilder;
 use Mollie\Builder\ApplePayDirect\ApplePayProductBuilder;
 use Mollie\Controller\AbstractMollieController;
+use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
+use Mollie\Utility\ApplePayDirect\CartOwnershipUtility;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\OrderRecoverUtility;
 
@@ -34,6 +36,13 @@ if (!defined('_PS_VERSION_')) {
 class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieController
 {
     private const FILE_NAME = 'applePayDirectAjax';
+
+    /**
+     * Session cookie key holding the cart id the Apple Pay Direct flow is authorized to
+     * operate on. Bound server-side in getApplePaySession(); verified on every other action.
+     */
+    private const APPLE_PAY_CART_ID_COOKIE = 'mollie_apple_pay_cart_id';
+
     /** @var Mollie */
     public $module;
 
@@ -48,21 +57,22 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
         switch ($action) {
             case 'mollie_apple_pay_validation':
                 $this->getApplePaySession();
-                // no break
+                break;
             case 'mollie_apple_pay_update_shipping_contact':
                 $this->updateAppleShippingContact();
-                // no break
+                break;
             case 'mollie_apple_pay_update_shipping_method':
                 $this->updateShippingMethod();
-                // no break
+                break;
             case 'mollie_apple_pay_create_order':
                 $this->createApplePayOrder();
-                // no break
+                break;
             case 'mollie_apple_pay_get_total_price':
                 $this->getTotalApplePayCartPrice();
-                // no break
+                break;
             case 'mollie_apple_pay_remove_from_cart':
                 $this->removeProductFromCart();
+                break;
         }
 
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
@@ -70,8 +80,12 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
 
     private function getApplePaySession()
     {
-        $cartId = (int) Tools::getValue('cartId');
         $validationUrl = Tools::getValue('validationUrl');
+
+        $cartId = CartOwnershipUtility::resolveReusableCartId(
+            (int) Tools::getValue('cartId'),
+            (int) $this->context->cart->id
+        );
 
         /** @var RequestApplePayPaymentSessionHandler $handler */
         $handler = $this->module->getService(RequestApplePayPaymentSessionHandler::class);
@@ -102,11 +116,23 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
             $this->ajaxRender('Unable to get apple pay session');
         }
 
+        // Bind the authorized cart id (session cart or freshly minted cart) to this session
+        // so every subsequent Apple Pay Direct action can verify ownership.
+        if (is_array($response) && !empty($response['success']) && !empty($response['cartId'])) {
+            $this->bindCartToSession((int) $response['cartId']);
+        }
+
         $this->ajaxRender(json_encode($response));
     }
 
     private function updateShippingMethod()
     {
+        if (!$this->isCartBoundToSession((int) Tools::getValue('cartId'))) {
+            $this->denyUnboundCart();
+
+            return;
+        }
+
         /** @var UpdateApplePayShippingMethodHandler $handler */
         $handler = $this->module->getService(UpdateApplePayShippingMethodHandler::class);
 
@@ -141,6 +167,12 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
 
     private function updateAppleShippingContact()
     {
+        if (!$this->isCartBoundToSession((int) Tools::getValue('cartId'))) {
+            $this->denyUnboundCart();
+
+            return;
+        }
+
         $originalCartId = (int) $this->context->cookie->id_cart;
         $originalCustomerId = (int) $this->context->cookie->id_customer;
 
@@ -199,6 +231,13 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
     private function createApplePayOrder()
     {
         $cartId = (int) Tools::getValue('cartId');
+
+        if (!$this->isCartBoundToSession($cartId)) {
+            $this->denyUnboundCart();
+
+            return;
+        }
+
         $cart = new Cart($cartId);
 
         $products = $this->getWantedCartProducts($cartId);
@@ -230,7 +269,14 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
 
     private function getTotalApplePayCartPrice()
     {
-        $cartId = Tools::getValue('cartId');
+        $cartId = (int) Tools::getValue('cartId');
+
+        if (!$this->isCartBoundToSession($cartId)) {
+            $this->denyUnboundCart();
+
+            return;
+        }
+
         $cart = new Cart($cartId);
 
         $this->ajaxRender(json_encode(
@@ -243,6 +289,13 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
     private function removeProductFromCart()
     {
         $cartId = (int) Tools::getValue('cartId');
+
+        if (!$this->isCartBoundToSession($cartId)) {
+            $this->denyUnboundCart();
+
+            return;
+        }
+
         $productId = (int) Tools::getValue('id_product');
         $productAttributeId = (int) Tools::getValue('id_product_attribute');
 
@@ -250,6 +303,41 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
         $cart->deleteProduct($productId, $productAttributeId);
 
         $this->ajaxRender(json_encode(['success' => true]));
+    }
+
+    private function isCartBoundToSession(int $cartId): bool
+    {
+        return CartOwnershipUtility::isCartAuthorized(
+            $cartId,
+            (int) $this->context->cart->id,
+            (int) $this->context->cookie->{self::APPLE_PAY_CART_ID_COOKIE}
+        );
+    }
+
+    private function bindCartToSession(int $cartId): void
+    {
+        $this->context->cookie->{self::APPLE_PAY_CART_ID_COOKIE} = $cartId;
+        // Persist now: ajaxRender() outputs the body, after which cookie headers can no longer be sent.
+        $this->context->cookie->write();
+    }
+
+    private function denyUnboundCart(): void
+    {
+        /** @var Logger $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->error(sprintf('%s - Rejected cart operation not bound to the session', self::FILE_NAME), [
+            'context' => [
+                'cartId' => (int) Tools::getValue('cartId'),
+                'action' => Tools::getValue('action'),
+            ],
+        ]);
+
+        $this->respond(
+            'error',
+            HttpStatusCode::HTTP_FORBIDDEN,
+            $this->module->l('You are not allowed to perform this action on this cart.', self::FILE_NAME)
+        );
     }
 
     private function getWantedCartProducts(int $cartId)

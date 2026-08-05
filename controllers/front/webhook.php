@@ -21,6 +21,7 @@ use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Service\TransactionService;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\HashUtility;
 use Mollie\Utility\TransactionUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -95,7 +96,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
         ));
 
         if (!$lockResult->isSuccessful()) {
-            $logger->error(sprintf('%s - Resource conflict', self::FILE_NAME));
+            $logger->info(sprintf('%s - Resource conflict', self::FILE_NAME));
 
             $this->ajaxResponse(JsonResponse::error(
                 $this->module->l('Resource conflict', self::FILE_NAME),
@@ -149,6 +150,30 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             ]);
 
             throw new \Exception(sprintf('Missing Cart ID. Transaction ID: [%s]', $transactionId), HttpStatusCode::HTTP_NOT_FOUND);
+        }
+
+        $cart = new Cart((int) $cartId);
+
+        if (!Validate::isLoadedObject($cart)) {
+            $logger->error(sprintf('%s - Cart not found', self::FILE_NAME), [
+                'transaction_id' => $transactionId,
+                'cart_id' => $cartId,
+            ]);
+
+            throw new TransactionException(sprintf('Cart not found. Transaction ID: [%s]', $transactionId), HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        /** @var ToolsAdapter $tools */
+        $tools = $this->module->getService(ToolsAdapter::class);
+
+        $expectedToken = HashUtility::hash($cart->secure_key);
+
+        if (!hash_equals($expectedToken, (string) $tools->getValue('security_token'))) {
+            $logger->error(sprintf('%s - Invalid security token', self::FILE_NAME), [
+                'transaction_id' => $transactionId,
+            ]);
+
+            throw new TransactionException('Invalid security token.', HttpStatusCode::HTTP_UNAUTHORIZED);
         }
 
         $this->setContext($cartId);

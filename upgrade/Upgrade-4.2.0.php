@@ -24,12 +24,6 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_4_2_0($module)
 {
-    /** @var Mollie\Tracker\Segment $segment */
-    $segment = $module->getService(Mollie\Tracker\Segment::class);
-
-    $segment->setMessage('Mollie upgrade 4.2.0');
-    $segment->track();
-
     /** @var OrderStateInstaller $orderStateInstaller */
     $orderStateInstaller = $module->getService(OrderStateInstaller::class);
 

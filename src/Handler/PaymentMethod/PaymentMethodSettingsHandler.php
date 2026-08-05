@@ -118,6 +118,10 @@ class PaymentMethodSettingsHandler
             $this->handlePaymentRestrictionsFlag($paymentMethod, $settings['paymentRestrictions']);
         }
 
+        if (!$paymentMethod->id) {
+            $paymentMethod->position = $this->paymentMethodRepository->getMaxPosition($environment, $shopId) + 1;
+        }
+
         if (!$paymentMethod->save()) {
             throw new MollieException('Failed to save payment method');
         }
@@ -141,6 +145,12 @@ class PaymentMethodSettingsHandler
         if ($methodId === Config::MOLLIE_VOUCHER_METHOD_ID && isset($settings['voucherCategory'])) {
             $this->handleVoucherSettings($settings);
         }
+
+        if ($methodId === 'banktransfer' && isset($settings['bankTransferDueDays'])) {
+            $this->handleBankTransferSettings($settings);
+        }
+
+        $this->handleCaptureSettings($methodId, $settings);
     }
 
     /**
@@ -178,6 +188,10 @@ class PaymentMethodSettingsHandler
 
         $paymentMethod->live_environment = $environment ? true : false;
         $paymentMethod->id_shop = $shopId;
+
+        if (in_array($methodId, Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS)) {
+            $paymentMethod->is_manual_capture = ($settings['captureMode'] ?? 'automatic') === 'manual';
+        }
     }
 
     /**
@@ -455,6 +469,23 @@ class PaymentMethodSettingsHandler
     }
 
     /**
+     * Handle bank transfer specific settings
+     *
+     * @param array $settings Settings data
+     */
+    private function handleBankTransferSettings(array $settings): void
+    {
+        $dueDays = (int) $settings['bankTransferDueDays'];
+
+        if ($dueDays >= 1 && $dueDays <= 90) {
+            $this->configuration->updateValue(
+                Config::MOLLIE_BANKTRANSFER_DUE_DAYS,
+                $dueDays
+            );
+        }
+    }
+
+    /**
      * Fetch payment method data from Mollie API
      * Matches old SettingsSaveService behavior - always sync with API on save
      *
@@ -498,5 +529,28 @@ class PaymentMethodSettingsHandler
 
             return null;
         }
+    }
+
+    private function handleCaptureSettings(string $methodId, array $settings): void
+    {
+        if (!in_array($methodId, Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS)) {
+            return;
+        }
+
+        if (!isset($settings['autoCapture'])) {
+            return;
+        }
+
+        $autoCapture = $settings['autoCapture'];
+
+        $this->configuration->updateValue(
+            Config::MOLLIE_METHOD_AUTO_CAPTURE_ENABLED . $methodId,
+            (int) ($autoCapture['enabled'] ?? false)
+        );
+
+        $this->configuration->updateValue(
+            Config::MOLLIE_METHOD_AUTO_CAPTURE_STATUSES . $methodId,
+            json_encode($autoCapture['statuses'] ?? [])
+        );
     }
 }

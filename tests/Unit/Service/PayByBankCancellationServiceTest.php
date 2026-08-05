@@ -18,25 +18,6 @@ use PHPUnit\Framework\TestCase;
 
 class PayByBankCancellationServiceTest extends TestCase
 {
-    /** @var PayByBankCancellationService */
-    private $service;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->service = $this->getMockBuilder(PayByBankCancellationService::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getActualMollieStatus', 'cancelOrderAndRestoreCart', 'findPendingPayByBankPayment'])
-            ->getMock();
-
-        $logger = $this->createMock(\Mollie\Logger\LoggerInterface::class);
-        $reflection = new \ReflectionClass(PayByBankCancellationService::class);
-        $loggerProperty = $reflection->getProperty('logger');
-        $loggerProperty->setAccessible(true);
-        $loggerProperty->setValue($this->service, $logger);
-    }
-
     /**
      * @dataProvider shouldCancelPaymentDataProvider
      *
@@ -150,137 +131,11 @@ class PayByBankCancellationServiceTest extends TestCase
         ];
     }
 
-    public function testHandleAbandonedPaymentNoPendingPayment()
-    {
-        $this->service->method('findPendingPayByBankPayment')
-            ->with(42)
-            ->willReturn(false);
-
-        $this->service->expects($this->never())
-            ->method('getActualMollieStatus');
-
-        $this->service->expects($this->never())
-            ->method('cancelOrderAndRestoreCart');
-
-        $this->service->handleAbandonedPayment(42);
-    }
-
-    public function testHandleAbandonedPaymentTerminalFailureCancelsOrder()
-    {
-        $this->service->method('findPendingPayByBankPayment')
-            ->willReturn([
-                'cart_id' => '100',
-                'transaction_id' => 'tr_test123',
-            ]);
-
-        $this->service->method('getActualMollieStatus')
-            ->with('tr_test123')
-            ->willReturn(PaymentStatus::STATUS_CANCELED);
-
-        $this->service->expects($this->once())
-            ->method('cancelOrderAndRestoreCart')
-            ->with(100, 'tr_test123', PaymentStatus::STATUS_CANCELED);
-
-        $this->service->handleAbandonedPayment(42);
-    }
-
-    public function testHandleAbandonedPaymentOpenStatusCancelsWithCanceledStatus()
-    {
-        $this->service->method('findPendingPayByBankPayment')
-            ->willReturn([
-                'cart_id' => '100',
-                'transaction_id' => 'tr_test123',
-            ]);
-
-        $this->service->method('getActualMollieStatus')
-            ->with('tr_test123')
-            ->willReturn(PaymentStatus::STATUS_OPEN);
-
-        $this->service->expects($this->once())
-            ->method('cancelOrderAndRestoreCart')
-            ->with(100, 'tr_test123', PaymentStatus::STATUS_CANCELED);
-
-        $this->service->handleAbandonedPayment(42);
-    }
-
-    public function testHandleAbandonedPaymentPendingStatusDoesNotCancel()
-    {
-        $this->service->method('findPendingPayByBankPayment')
-            ->willReturn([
-                'cart_id' => '100',
-                'transaction_id' => 'tr_test123',
-            ]);
-
-        $this->service->method('getActualMollieStatus')
-            ->with('tr_test123')
-            ->willReturn(PaymentStatus::STATUS_PENDING);
-
-        $this->service->expects($this->never())
-            ->method('cancelOrderAndRestoreCart');
-
-        $this->service->handleAbandonedPayment(42);
-    }
-
-    public function testHandleAbandonedPaymentPaidStatusDoesNotCancel()
-    {
-        $this->service->method('findPendingPayByBankPayment')
-            ->willReturn([
-                'cart_id' => '100',
-                'transaction_id' => 'tr_test123',
-            ]);
-
-        $this->service->method('getActualMollieStatus')
-            ->with('tr_test123')
-            ->willReturn(PaymentStatus::STATUS_PAID);
-
-        $this->service->expects($this->never())
-            ->method('cancelOrderAndRestoreCart');
-
-        $this->service->handleAbandonedPayment(42);
-    }
-
-    public function testHandleAbandonedPaymentApiErrorDoesNotCancel()
-    {
-        $this->service->method('findPendingPayByBankPayment')
-            ->willReturn([
-                'cart_id' => '100',
-                'transaction_id' => 'tr_test123',
-            ]);
-
-        $this->service->method('getActualMollieStatus')
-            ->with('tr_test123')
-            ->willReturn('');
-
-        $this->service->expects($this->never())
-            ->method('cancelOrderAndRestoreCart');
-
-        $this->service->handleAbandonedPayment(42);
-    }
-
-    public function testHandleAbandonedPaymentExpiredStatusCancelsOrder()
-    {
-        $this->service->method('findPendingPayByBankPayment')
-            ->willReturn([
-                'cart_id' => '200',
-                'transaction_id' => 'tr_expired',
-            ]);
-
-        $this->service->method('getActualMollieStatus')
-            ->with('tr_expired')
-            ->willReturn(PaymentStatus::STATUS_EXPIRED);
-
-        $this->service->expects($this->once())
-            ->method('cancelOrderAndRestoreCart')
-            ->with(200, 'tr_expired', PaymentStatus::STATUS_EXPIRED);
-
-        $this->service->handleAbandonedPayment(42);
-    }
-
     private function createRealServiceForPureMethods()
     {
         return $this->getMockBuilder(PayByBankCancellationService::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getActualMollieStatus', 'cancelOrderAndRestoreCart', 'findPendingPayByBankPayment'])
+            ->setMethods(['getActualMollieStatus', 'cancelOrderAndRestoreCart'])
             ->getMock();
     }
 }

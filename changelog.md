@@ -2,6 +2,37 @@
 
 # Changelog #
 
+## Changes in release 6.4.5
++ Fixed "On backorder (paid)" status not being set when a product is ordered at exactly 0 stock, including instant-payment methods such as iDEAL and cards
++ Fixed payment method restriction diagnostics filling up the PrestaShop log table on every checkout page render
+
+## Changes in release 6.4.4
++ Hardened the payment webhook by validating the security token before processing a transaction
++ Hardened the subscription payment method update webhook by validating the secure key before applying changes
++ Added bank transfer due date configuration
++ Added Segment analytics tracking for module and payment events
++ Added Bulgarian translations
++ Fixed Apple Pay not displaying at checkout on PrestaShop 9
++ Fixed Apple Pay Direct button on the product page in the Hummingbird theme
++ Fixed Apple Pay Direct creating fictitious "ApplePay" placeholder addresses and guest records on customer accounts
++ Prevented Apple Pay Direct from overwriting a registered customer's saved name and email
++ Fixed Payments API per-line Refund button not updating after a successful refund
++ Surfaced a clearer message when Mollie rejects a refund as a duplicate of a recent one
++ Fixed refund confirmation modal amount to reflect selected quantity for multi-unit order lines
++ Fixed payment method ordering mismatch between admin panel and checkout page
++ Fixed VAT amount being off by 1–2 cents on high-value order lines causing Mollie API 422 errors
++ Hid "Refund All" button for Klarna and other authorizable Orders API payments until at least one line is shipped
++ Disabled bulk Refund / Ship / Cancel buttons based on order state on the admin order page
++ Allowed shipping orders created on the Orders API while using the Payments API
++ Removed the Trustly payment method
++ Removed the settlement amount from order details
++ Unified the payment return flow
++ Improved order description update logic and adjusted resource logging
++ Added diagnostic logging when a payment method is hidden by a restriction
++ Resolved PrestaShop Validator findings (errors, licenses, security)
++ Fixed Apple Pay Direct authorization so cart operations only affect the caller's own session cart
++ Fixed subscription authorization so customers can only cancel or change the payment method of their own subscriptions
+
 ## Changes in release 6.4.3
 + Fixed Payment API race condition causing false "payment failed" errors
 + Fixed rounding distribution for whole-number differences in order line amounts

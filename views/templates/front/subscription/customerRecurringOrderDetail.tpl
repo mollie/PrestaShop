@@ -70,7 +70,7 @@
                             <div class="col-md-5">
                                 <select name="payment_method" class="form-control form-control-select">
                                     {foreach from=$recurringOrderData.payment_methods item=method}
-                                        <option value="{$method->id}" {if $method->id === $recurringOrderData.recurring_order->payment_method} selected {/if}>{$method->description}</option>
+                                        <option value="{$method->id|escape:'html':'UTF-8'}" {if $method->id === $recurringOrderData.recurring_order->payment_method} selected {/if}>{$method->description|escape:'html':'UTF-8'}</option>
                                     {/foreach}
                                 </select>
                             </div>
@@ -78,8 +78,8 @@
                     </section>
                     <footer class="form-footer text-sm-center">
                         <input type="hidden" name="recurring_order_id"
-                               value="{$recurringOrderData.recurring_order->id}">
-                        <input type="hidden" name="token" value="{$token}">
+                               value="{$recurringOrderData.recurring_order->id|escape:'html':'UTF-8'}">
+                        <input type="hidden" name="token" value="{$token|escape:'html':'UTF-8'}">
                         <button type="submit" name="submitUpdatePaymentMethod"
                                 class="btn btn-primary form-control-submit">
                             {l s='Update' mod='mollie'}
@@ -97,8 +97,8 @@
                     </header>
                     <footer class="form-footer text-sm-center">
                         <input type="hidden" name="recurring_order_id"
-                               value="{$recurringOrderData.recurring_order->id}">
-                        <input type="hidden" name="token" value="{$token}">
+                               value="{$recurringOrderData.recurring_order->id|escape:'html':'UTF-8'}">
+                        <input type="hidden" name="token" value="{$token|escape:'html':'UTF-8'}">
                         <button type="submit" name="submitCancelSubscriptionMethod"
                                 class="btn btn-primary form-control-submit">
                             {l s='Cancel' mod='mollie'}

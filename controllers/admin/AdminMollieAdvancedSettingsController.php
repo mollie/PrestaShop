@@ -363,6 +363,7 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         $statusKeys = [
             Config::MOLLIE_STATUS_AWAITING => $this->module->l('Awaiting', self::FILE_NAME),
             Config::MOLLIE_STATUS_OPEN => $this->module->l('Open', self::FILE_NAME),
+            Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED => $this->module->l('Authorized', self::FILE_NAME),
             Config::MOLLIE_STATUS_PAID => $this->module->l('Paid', self::FILE_NAME),
             Config::MOLLIE_STATUS_COMPLETED => $this->module->l('Completed', self::FILE_NAME),
             Config::MOLLIE_STATUS_CANCELED => $this->module->l('Canceled', self::FILE_NAME),

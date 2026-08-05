@@ -142,9 +142,12 @@ class OrderCreationHandler
      */
     public function createOrder($apiPayment, int $cartId, bool $isAuthorizablePayment = false): int
     {
-        $orderStatus = $isAuthorizablePayment ?
-            (int) Config::getStatuses()[PaymentStatus::STATUS_AUTHORIZED] :
-            (int) Config::getStatuses()[PaymentStatus::STATUS_PAID];
+        if ($isAuthorizablePayment) {
+            $orderStatus = (int) \Configuration::get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED)
+                ?: (int) Config::getStatuses()[PaymentStatus::STATUS_AUTHORIZED];
+        } else {
+            $orderStatus = (int) Config::getStatuses()[PaymentStatus::STATUS_PAID];
+        }
 
         $cart = new Cart($cartId);
 
@@ -187,9 +190,13 @@ class OrderCreationHandler
         }
 
         if (!$paymentFeeData->isActive()) {
+            // Paid orders are created in the "awaiting" state and then moved to paid through the
+            // status service, so a stock-0 backorder is transformed to "On backorder (paid)".
+            // Authorizable payments keep their integer status: an authorized (uncaptured) order
+            // must not be turned into a paid status.
             $this->module->validateOrder(
                 (int) $cartId,
-                $orderStatus,
+                $isAuthorizablePayment ? $orderStatus : (int) Configuration::get(Config::MOLLIE_STATUS_AWAITING),
                 (float) $apiPayment->amount->value,
                 $paymentMethodName,
                 null,
@@ -200,6 +207,10 @@ class OrderCreationHandler
             );
 
             $orderId = $this->orderRepository->getOrderIdByCartId((int) $cartId);
+
+            if (!$isAuthorizablePayment) {
+                $this->orderStatusService->setOrderStatus($orderId, PaymentStatus::STATUS_PAID);
+            }
 
             $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method ?: $apiPayment->method);
 
@@ -258,7 +269,12 @@ class OrderCreationHandler
 
         $this->orderPaymentFeeHandler->addOrderPaymentFee($orderId, $apiPayment);
 
-        $this->orderStatusService->setOrderStatus($orderId, $orderStatus);
+        // Same backorder-aware transition as the no-fee branch: pass the paid status as a string so
+        // the status service can move a stock-0 backorder to "On backorder (paid)".
+        $this->orderStatusService->setOrderStatus(
+            $orderId,
+            $isAuthorizablePayment ? $orderStatus : PaymentStatus::STATUS_PAID
+        );
 
         $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method ?: $apiPayment->method);
 

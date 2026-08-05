@@ -11,7 +11,6 @@
  */
 
 use Mollie\Api\Types\PaymentMethod;
-use Mollie\Config\Config;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Handler\Order\OrderCreationHandler;
 use Mollie\Logger\Logger;
@@ -123,7 +122,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
             Tools::getValue('useSavedCard')
         );
 
-        if ($method === PaymentMethod::BANKTRANSFER || $method === Config::PAY_BY_BANK) {
+        if ($method === PaymentMethod::BANKTRANSFER) {
             /** @var OrderCreationHandler $orderCreationHandler */
             $orderCreationHandler = $this->module->getService(OrderCreationHandler::class);
             $paymentData = $orderCreationHandler->createBankTransferOrder($paymentData, $cart);
@@ -166,7 +165,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         try {
-            if ($method === PaymentMethod::BANKTRANSFER || $method === Config::PAY_BY_BANK) {
+            if ($method === PaymentMethod::BANKTRANSFER) {
                 $orderId = Order::getIdByCartId($cart->id);
                 $order = new Order($orderId);
                 $paymentMethodRepository->addOpenStatusPayment(
@@ -214,6 +213,15 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
         }
 
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
+        /** @var \Mollie\Service\SegmentTracker $segmentTracker */
+        $segmentTracker = $this->module->getService(\Mollie\Service\SegmentTracker::class);
+        $segmentTracker->trackFirstPaymentCreated(
+            $method,
+            $paymentMethodObj->method_name,
+            $paymentMethodObj->method,
+            Tools::strtoupper($this->context->currency->iso_code)
+        );
 
         // Go to payment url
         if (null !== $apiPayment->getCheckoutUrl()) {

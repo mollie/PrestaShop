@@ -46,7 +46,7 @@ $(document).ready(function () {
     })
 
     let applePaySession = () => {
-        const productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
+        const productDetails = JSON.parse(getMollieProductDetailsElement().dataset.product);
         const product =
             {
                 'id_product': productDetails.id_product,
@@ -86,7 +86,7 @@ $(document).ready(function () {
             })
         }
         session.onpaymentauthorized = (ApplePayPayment) => {
-            const productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
+            const productDetails = JSON.parse(getMollieProductDetailsElement().dataset.product);
             const products = [
                 {
                     'id_product': productDetails.id_product,
@@ -160,7 +160,7 @@ $(document).ready(function () {
             })
         }
         session.onshippingcontactselected = function (event) {
-            const productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
+            const productDetails = JSON.parse(getMollieProductDetailsElement().dataset.product);
             const products = [
                 {
                     'id_product': productDetails.id_product,
@@ -246,10 +246,12 @@ function createRequest(countryCode, currencyCode, totalLabel, subtotal) {
         merchantCapabilities: ['supports3DS'],
         shippingType: 'shipping',
         requiredBillingContactFields: [
+            'name',
             'postalAddress',
             'email'
         ],
         requiredShippingContactFields: [
+            'name',
             'postalAddress',
             'email'
         ],
@@ -311,8 +313,12 @@ function toggleApplePayVisibility() {
     }
 }
 
+function getMollieProductDetailsElement() {
+    return document.getElementById('product-details') || document.querySelector('.js-product-details');
+}
+
 function isProductAvailable() {
-    var productDetailsEl = document.getElementById('product-details');
+    var productDetailsEl = getMollieProductDetailsElement();
     if (!productDetailsEl || !productDetailsEl.dataset.product) {
         return true;
     }

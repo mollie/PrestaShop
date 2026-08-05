@@ -14,15 +14,15 @@ namespace Mollie\Controller;
 use Mollie;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\LoggerInterface;
+use Mollie\PsCompat\AdminBaseController;
 use Mollie\Service\MolliePaymentMailService;
-use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 use Symfony\Component\HttpFoundation\Request;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AdminMollieEmailController extends FrameworkBundleAdminController
+class AdminMollieEmailController extends AdminBaseController
 {
     const FILE_NAME = 'AdminMollieEmailController';
 
@@ -44,7 +44,7 @@ class AdminMollieEmailController extends FrameworkBundleAdminController
 
             $this->addFlash(
                 'error',
-                $this->trans('Unexpected error occurred', 'Module.mollie')
+                $mollie->l('Unexpected error occurred', self::FILE_NAME)
             );
         } else {
             $this->addFlash(

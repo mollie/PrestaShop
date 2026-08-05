@@ -38,6 +38,8 @@ namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Types\PaymentMethod;
+use Mollie\Logger\LoggerInterface;
+use Mollie\Utility\VersionUtility;
 use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
@@ -46,14 +48,22 @@ if (!defined('_PS_VERSION_')) {
 
 class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
+    const FILE_NAME = 'ApplePayPaymentMethodRestrictionValidator';
+
     /**
      * @var ConfigurationAdapter
      */
     private $configurationAdapter;
 
-    public function __construct(ConfigurationAdapter $configurationAdapter)
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(ConfigurationAdapter $configurationAdapter, LoggerInterface $logger)
     {
         $this->configurationAdapter = $configurationAdapter;
+        $this->logger = $logger;
     }
 
     /**
@@ -62,14 +72,25 @@ class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrict
     public function isValid(MolPaymentMethod $paymentMethod): bool
     {
         if (!$this->isSslEnabledEverywhere()) {
+            $this->logHidden(sprintf('store SSL is not enabled (%s)', $this->getSslConfigKey()));
+
             return false;
         }
 
         if (!$this->isPaymentMethodInCookie()) {
+            $this->logHidden('isApplePayMethod cookie is missing (device is not an Apple Pay capable browser)');
+
             return false;
         }
 
         return true;
+    }
+
+    private function logHidden(string $reason): void
+    {
+        $this->logger->debug(
+            sprintf('%s: Apple Pay hidden because %s', self::FILE_NAME, $reason)
+        );
     }
 
     /**
@@ -82,7 +103,16 @@ class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrict
 
     private function isSslEnabledEverywhere(): bool
     {
-        return (bool) $this->configurationAdapter->get('PS_SSL_ENABLED_EVERYWHERE');
+        return (bool) $this->configurationAdapter->get($this->getSslConfigKey());
+    }
+
+    private function getSslConfigKey(): string
+    {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('9.0.0')) {
+            return 'PS_SSL_ENABLED';
+        }
+
+        return 'PS_SSL_ENABLED_EVERYWHERE';
     }
 
     private function isPaymentMethodInCookie(): bool
