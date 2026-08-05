@@ -13,6 +13,11 @@
   <div class="panel-heading card-header">
     <img src="{$mollie_logo_path|escape:'html':'UTF-8'}" width="16" height="16" alt="Mollie logo" style="opacity: 0.8;" />
     &nbsp;<span>Mollie order - #{$order_reference|escape:'html':'UTF-8'}</span>
+    {if $mollie_dashboard_url}
+      <a href="{$mollie_dashboard_url|escape:'html':'UTF-8'}" class="btn btn-outline-secondary btn-sm float-right" target="_blank" rel="noopener noreferrer">
+        <i class="material-icons">open_in_new</i>&nbsp;{l s='View in Mollie' mod='mollie'}
+      </a>
+    {/if}
   </div>
   <div class="card-body">
     {if null == $products}

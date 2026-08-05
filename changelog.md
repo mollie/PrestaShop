@@ -8,8 +8,7 @@
 + Fixed payment method restriction diagnostics filling up the PrestaShop log table on every checkout page render
 
 ## Changes in release 6.4.4
-+ Hardened the payment webhook by validating the security token before processing a transaction
-+ Hardened the subscription payment method update webhook by validating the secure key before applying changes
++ Added a "View in Mollie" link on the order page and in the Orders list to open a payment directly in the Mollie dashboard
 + Added bank transfer due date configuration
 + Added Segment analytics tracking for module and payment events
 + Added Bulgarian translations
