@@ -3,6 +3,7 @@
 # Changelog #
 
 ## Changes in release 6.4.5
++ Fixed "On backorder (paid)" status not being set when a product is ordered at exactly 0 stock, including instant-payment methods such as iDEAL and cards
 + Fixed payment method restriction diagnostics filling up the PrestaShop log table on every checkout page render
 
 ## Changes in release 6.4.4

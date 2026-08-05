@@ -21,7 +21,9 @@ class CustomerFactory implements FactoryInterface
         $customer->firstname = $data['first_name'] ?? 'test-first-name';
         $customer->lastname = $data['last_name'] ?? 'test-last-name';
         $customer->email = $data['email'] ?? 'test-email@email.com';
-        $customer->passwd = $data['passwd'] ?? 'test-passwd';
+        // Hash the password so the customer validates on PrestaShop 8+, where a plain
+        // string is rejected by Customer::$passwd validation.
+        $customer->passwd = \Tools::hash($data['passwd'] ?? 'test-passwd');
         $customer->is_guest = $data['is_guest'] ?? false;
         $customer->siret = $data['siret'] ?? 'test-siret';
         $customer->id_lang = $data['id_lang'] ?? \Context::getContext()->language->id;
