@@ -61,11 +61,11 @@ class OrderGridDefinitionModifier implements GridDefinitionModifierInterface
 
         $gridDefinition->getColumns()
             ->addBefore('date_add', (new ActionColumn('mollie_view_in_dashboard'))
-                ->setName($translator->trans('Mollie', [], 'Modules.mollie'))
+                ->setName($this->module->l('Mollie', 'OrderGridDefinitionModifier'))
                 ->setOptions([
                     'actions' => (new RowActionCollection())
                         ->add((new ViewInMollieRowAction('view_in_mollie'))
-                            ->setName($translator->trans('View in Mollie', [], 'Modules.mollie'))
+                            ->setName($this->module->l('View in Mollie', 'OrderGridDefinitionModifier'))
                             ->setIcon('open_in_new')
                             ->setOptions([
                                 'route' => Config::ROUTE_VIEW_IN_MOLLIE_DASHBOARD,
