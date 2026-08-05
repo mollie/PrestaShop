@@ -17,6 +17,7 @@ use Mollie\Adapter\Language;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
 use Mollie\Service\MolCarrierInformationService;
+use Mollie\Service\MultistoreSettingsContextGuard;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -41,6 +42,9 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
     /** @var MolCarrierInformationService */
     private $carrierInformationService;
 
+    /** @var MultistoreSettingsContextGuard */
+    private $multistoreSettingsContextGuard;
+
     public function __construct()
     {
         parent::__construct();
@@ -50,6 +54,7 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         $this->configuration = $this->module->getService(ConfigurationAdapter::class);
         $this->language = $this->module->getService(Language::class);
         $this->carrierInformationService = $this->module->getService(MolCarrierInformationService::class);
+        $this->multistoreSettingsContextGuard = $this->module->getService(MultistoreSettingsContextGuard::class);
     }
 
     public function init(): void
@@ -81,6 +86,12 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
 
         Media::addJsDef([
             'mollieAdvancedSettingsTranslations' => $this->getTranslations(),
+        ]);
+
+        Media::addJsDef([
+            'mollieAdvancedSettingsConfig' => [
+                'multistoreRestricted' => !$this->multistoreSettingsContextGuard->canEditSettings(),
+            ],
         ]);
 
         $this->content = $this->context->smarty->fetch(
@@ -149,6 +160,8 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             'saving' => $this->module->l('Saving...', self::FILE_NAME),
             'saveSettings' => $this->module->l('Save Settings', self::FILE_NAME),
             'loadError' => $this->module->l('Failed to load settings', self::FILE_NAME),
+            'multistoreRestrictedTitle' => $this->module->l('Select a specific shop', self::FILE_NAME),
+            'multistoreRestrictedMessage' => $this->module->l('Mollie advanced settings are saved per shop. To manage them, switch from "All stores" to a single shop using the shop selector at the top of the page.', self::FILE_NAME),
         ];
     }
 
@@ -159,6 +172,15 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         }
 
         $action = $this->tools->getValue('action');
+
+        if ('saveSettings' === $action && !$this->multistoreSettingsContextGuard->canEditSettings()) {
+            $this->ajaxRender(json_encode([
+                'success' => false,
+                'message' => $this->module->l('Select a specific shop before changing Mollie settings. Advanced settings are saved per shop and cannot be edited for "All stores" or a shop group.', self::FILE_NAME),
+            ]));
+
+            return;
+        }
 
         switch ($action) {
             case 'getSettings':

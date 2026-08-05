@@ -7,13 +7,14 @@ import { Badge } from "../../../shared/components/ui/badge"
 import { ChevronDown, ChevronUp, GripVertical, CreditCard } from "lucide-react"
 import { cn } from "../../../shared/lib/utils"
 import { PaymentMethodSettings } from "./payment-method-settings"
-import type { PaymentMethod, Country, CustomerGroup, Language } from "../../../services/PaymentMethodsApiService"
+import type { PaymentMethod, Country, Carrier, CustomerGroup, Language } from "../../../services/PaymentMethodsApiService"
 import { usePaymentMethodsTranslations } from "../../../shared/hooks/use-payment-methods-translations"
 
 interface PaymentMethodCardProps {
   method: PaymentMethod
   index: number
   countries: Country[]
+  carriers: Carrier[]
   customerGroups: CustomerGroup[]
   languages: Language[]
   onlyPaymentsMethods: string[]
@@ -36,6 +37,7 @@ export function PaymentMethodCard({
   method,
   index,
   countries,
+  carriers,
   customerGroups,
   languages,
   onlyPaymentsMethods,
@@ -191,6 +193,7 @@ export function PaymentMethodCard({
               <PaymentMethodSettings
                 method={method}
                 countries={countries}
+                carriers={carriers}
                 customerGroups={customerGroups}
                 languages={languages}
                 onlyPaymentsMethods={onlyPaymentsMethods}

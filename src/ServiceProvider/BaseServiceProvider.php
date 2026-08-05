@@ -119,6 +119,7 @@ use Mollie\Service\CountryService;
 use Mollie\Service\EntityManager\EntityManagerInterface;
 use Mollie\Service\EntityManager\ObjectModelEntityManager;
 use Mollie\Service\EntityManager\ObjectModelUnitOfWork;
+use Mollie\Service\MultistoreSettingsContextGuard;
 use Mollie\Service\PaymentMethod\PaymentMethodFormatterService;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\AmountPaymentMethodRestrictionValidator;
@@ -285,6 +286,9 @@ final class BaseServiceProvider
         });
 
         $this->addService($container, CustomLogoProviderInterface::class, $container->get(CreditCardLogoProvider::class));
+
+        $service = $this->addService($container, MultistoreSettingsContextGuard::class, MultistoreSettingsContextGuard::class);
+        $this->addServiceArgument($service, Shop::class);
 
         // Payment Method Services
         $service = $this->addService($container, PaymentMethodConfigProvider::class, PaymentMethodConfigProvider::class);

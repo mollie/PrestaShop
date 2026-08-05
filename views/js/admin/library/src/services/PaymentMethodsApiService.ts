@@ -12,6 +12,7 @@ declare global {
       onlyPaymentsMethods: string[];
       orderStatuses: { id: string; name: string }[];
       manualCaptureEligibleMethods: string[];
+      multistoreRestricted?: boolean;
     };
   }
 }
@@ -75,6 +76,7 @@ export interface PaymentMethod {
       directProduct?: boolean
       directCart?: boolean
       buttonStyle?: 0 | 1 | 2 // 0: black, 1: outline, 2: white
+      excludedCarriers?: string[]
     }
     bankTransferDueDays?: string
     captureMode?: 'automatic' | 'manual'
@@ -92,6 +94,11 @@ export interface Country {
   name: string;
 }
 
+export interface Carrier {
+  value: string;
+  label: string;
+}
+
 export interface CustomerGroup {
   value: string;
   label: string;
@@ -103,6 +110,7 @@ export interface PaymentMethodsResponse {
   data?: {
     methods: PaymentMethod[];
     countries: Country[];
+    carriers: Carrier[];
     taxRulesGroups: { value: string; label: string }[];
     customerGroups: CustomerGroup[];
     languages: Language[];
