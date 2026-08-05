@@ -3,6 +3,8 @@
 # Changelog #
 
 ## Changes in release 6.4.4
++ Hardened the payment webhook by validating the security token before processing a transaction
++ Hardened the subscription payment method update webhook by validating the secure key before applying changes
 + Added bank transfer due date configuration
 + Added Segment analytics tracking for module and payment events
 + Added Bulgarian translations
