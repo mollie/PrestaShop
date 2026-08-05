@@ -205,10 +205,16 @@ final class CreateApplePayOrderHandler
     private function updateCustomer(int $customerId, ShippingContent $shippingContent)
     {
         $customer = new \Customer($customerId);
+
+        // Never overwrite a registered customer's account details with the Apple Pay contact; only the throwaway guest created for this flow is filled in and restored from its temporary soft-deleted state.
+        if (!$customer->is_guest) {
+            return;
+        }
+
         $customer->firstname = $shippingContent->getGivenName();
         $customer->lastname = $shippingContent->getFamilyName();
         $customer->email = $shippingContent->getEmailAddress();
-
+        $customer->deleted = false;
         $customer->update();
     }
 
@@ -250,6 +256,7 @@ final class CreateApplePayOrderHandler
         $copy->postcode = $original->postcode;
         $copy->id_country = $original->id_country;
         $copy->country = $original->country;
+        $copy->deleted = $original->deleted;
         $copy->add();
 
         return $copy;

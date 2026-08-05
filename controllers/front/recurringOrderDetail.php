@@ -144,6 +144,12 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
             return;
         }
 
+        if (!$this->customerOwnsRecurringOrder($recurringOrderId)) {
+            $this->errors[] = $this->module->l('You do not have permission to modify this subscription.', self::FILE_NAME);
+
+            return;
+        }
+
         /** @var FreeOrderCreationHandler $freeOrderCreationHandler */
         $freeOrderCreationHandler = $this->module->getService(FreeOrderCreationHandler::class);
         $checkoutUrl = $freeOrderCreationHandler->handle($recurringOrderId, $newMethod);
@@ -167,11 +173,44 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
             return;
         }
 
+        if (!$this->customerOwnsRecurringOrder($recurringOrderId)) {
+            $this->errors[] = $this->module->l('You do not have permission to modify this subscription.', self::FILE_NAME);
+
+            return;
+        }
+
         /** @var SubscriptionCancellationHandler $subscriptionCancellationHandler */
         $subscriptionCancellationHandler = $this->module->getService(SubscriptionCancellationHandler::class);
 
         $subscriptionCancellationHandler->handle($recurringOrderId);
         $this->success[] = $this->module->l('Successfully canceled subscription.', self::FILE_NAME);
+    }
+
+    private function customerOwnsRecurringOrder($recurringOrderId): bool
+    {
+        $recurringOrderId = (int) $recurringOrderId;
+
+        if (!Validate::isUnsignedId($recurringOrderId)) {
+            return false;
+        }
+
+        if (!Validate::isLoadedObject($this->context->customer)) {
+            return false;
+        }
+
+        /** @var RecurringOrderRepositoryInterface $recurringOrderRepository */
+        $recurringOrderRepository = $this->module->getService(RecurringOrderRepositoryInterface::class);
+
+        /** @var \MolRecurringOrder|null $recurringOrder */
+        $recurringOrder = $recurringOrderRepository->findOneBy([
+            'id_mol_recurring_order' => $recurringOrderId,
+        ]);
+
+        if (!$recurringOrder) {
+            return false;
+        }
+
+        return (int) $recurringOrder->id_customer === (int) $this->context->customer->id;
     }
 
     private function validateToken(): bool
