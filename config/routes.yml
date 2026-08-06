@@ -6,6 +6,14 @@ mollie_module_admin_resend_payment_message:
     requirements:
         orderId: "^[0-9]*"
 
+mollie_module_admin_view_in_dashboard:
+    path: /mollie/transaction/{transactionId}/view-in-dashboard
+    methods: [GET]
+    defaults:
+        _controller: 'Mollie\Controller\AdminMollieViewInDashboardController::viewInDashboard'
+    requirements:
+        transactionId: "[A-Za-z0-9_]+"
+
 admin_subscription_index:
     path: admin-subscription
     methods: GET

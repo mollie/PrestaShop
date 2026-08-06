@@ -11,6 +11,7 @@
  */
 
 use Mollie\Config\Config;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
 use Mollie\Tests\Unit\Tools\UnitTestCase;
 
@@ -24,7 +25,8 @@ class ApplePayPaymentRestrictionValidationTest extends UnitTestCase
         $_COOKIE['isApplePayMethod'] = $isApple;
 
         $applePayValidation = new ApplePayPaymentMethodRestrictionValidator(
-            $configurationAdapter
+            $configurationAdapter,
+            $this->createMock(LoggerInterface::class)
         );
 
         $isValid = $applePayValidation->isValid(
@@ -69,7 +71,8 @@ class ApplePayPaymentRestrictionValidationTest extends UnitTestCase
         $applePayValidation = new ApplePayPaymentMethodRestrictionValidator(
             $this->mockConfigurationAdapter([
                 'PS_SSL_ENABLED_EVERYWHERE' => true,
-            ])
+            ]),
+            $this->createMock(LoggerInterface::class)
         );
 
         $this->assertEquals($expectedResult, $applePayValidation->supports($paymentName));

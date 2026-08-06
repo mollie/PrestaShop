@@ -3,14 +3,20 @@
 # Changelog #
 
 ## Changes in release 6.4.5
++ Added shipping method exclusion list for Apple Pay Direct
++ Fixed "On backorder (paid)" status not being set when a product is ordered at exactly 0 stock, including instant-payment methods such as iDEAL and cards
++ Fixed payment method restriction diagnostics filling up the PrestaShop log table on every checkout page render
 + Fixed total_paid_real staying 0 on bank transfer orders after the payment is completed
 
 ## Changes in release 6.4.4
++ Added a "View in Mollie" link on the order page and in the Orders list to open a payment directly in the Mollie dashboard
 + Added bank transfer due date configuration
 + Added Segment analytics tracking for module and payment events
 + Added Bulgarian translations
 + Fixed Apple Pay not displaying at checkout on PrestaShop 9
 + Fixed Apple Pay Direct button on the product page in the Hummingbird theme
++ Fixed Apple Pay Direct creating fictitious "ApplePay" placeholder addresses and guest records on customer accounts
++ Prevented Apple Pay Direct from overwriting a registered customer's saved name and email
 + Fixed Payments API per-line Refund button not updating after a successful refund
 + Surfaced a clearer message when Mollie rejects a refund as a duplicate of a recent one
 + Fixed refund confirmation modal amount to reflect selected quantity for multi-unit order lines
@@ -25,6 +31,8 @@
 + Improved order description update logic and adjusted resource logging
 + Added diagnostic logging when a payment method is hidden by a restriction
 + Resolved PrestaShop Validator findings (errors, licenses, security)
++ Fixed Apple Pay Direct authorization so cart operations only affect the caller's own session cart
++ Fixed subscription authorization so customers can only cancel or change the payment method of their own subscriptions
 
 ## Changes in release 6.4.3
 + Fixed Payment API race condition causing false "payment failed" errors
@@ -43,6 +51,7 @@
 + Improved front office subscription tab handling
 + Improved company name validation by replacing special characters
 + Redirected bank transfer to order confirmation instead of custom page
++ Added Billink payment method
 
 ## Changes in release 6.4.2
 + Multiple Apple Pay Direct improvements and stability fixes
