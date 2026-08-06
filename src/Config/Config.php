@@ -153,6 +153,8 @@ class Config
         'swish' => ['se'],
         'bizum' => ['es', 'ad'],
         'vippsmobilepay' => ['no', 'dk', 'fi'],
+        'billink' => ['nl', 'be', 'de'],
+        'wero' => ['de', 'be', 'fr', 'lu'],
     ];
 
     const SUPPORTED_PHP_VERSION = '5.6';
@@ -242,6 +244,7 @@ class Config
     const MOLLIE_APPLE_PAY_DIRECT_CART = 'MOLLIE_APPLE_PAY_DIRECT_CART';
 
     const MOLLIE_APPLE_PAY_DIRECT_STYLE = 'MOLLIE_APPLE_PAY_DIRECT_STYLE';
+    const MOLLIE_APPLE_PAY_DIRECT_EXCLUDED_CARRIERS = 'MOLLIE_APPLE_PAY_DIRECT_EXCLUDED_CARRIERS';
 
     const MOLLIE_CARRIER_URL_SOURCE = 'MOLLIE_CARRIER_URL_SOURCE_';
     const MOLLIE_CARRIER_CUSTOM_URL = 'MOLLIE_CARRIER_CUSTOM_URL_';
@@ -330,6 +333,7 @@ class Config
     const MOLLIE_VOUCHER_METHOD_ID = 'voucher';
     const MOLLIE_in3_METHOD_ID = 'in3';
     const RIVERTY = 'riverty';
+    const BILLINK = 'billink';
     const PAY_BY_BANK = 'paybybank';
 
     const MOLLIE_VOUCHER_CATEGORY_NULL = 'null';
@@ -361,7 +365,9 @@ class Config
 
     const ORDER_API_ONLY_METHODS = [];
 
-    const PAYMENT_API_ONLY_METHODS = [];
+    const PAYMENT_API_ONLY_METHODS = [
+        self::BILLINK,
+    ];
 
     const MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS = [
         'creditcard',
@@ -372,6 +378,7 @@ class Config
     const MOLLIE_METHOD_AUTO_CAPTURE_STATUSES = 'MOLLIE_METHOD_AUTO_CAPTURE_STATUSES_';
 
     const ROUTE_RESEND_SECOND_CHANCE_PAYMENT_MESSAGE = 'mollie_module_admin_resend_payment_message';
+    const ROUTE_VIEW_IN_MOLLIE_DASHBOARD = 'mollie_module_admin_view_in_dashboard';
 
     const PAYMENT_FEE_SKU = 'payment-fee-sku';
     const WRONG_AMOUNT_REASON = 'wrong amount';
@@ -423,7 +430,24 @@ class Config
         'bizum' => 'Bizum',
         'vipps' => 'Vipps',
         'mobilepay' => 'Mobile Pay',
+        'billink' => 'Billink',
+        'wero' => 'Wero',
     ];
+
+    /**
+     * Whether the module has a handler for this Mollie payment method.
+     *
+     * Mollie exposes new methods through the API as soon as a merchant activates
+     * them on their dashboard. A method the module has not been updated to handle
+     * would fail at checkout, so `self::$methods` is the authoritative allow-list
+     * of methods the module actually supports.
+     *
+     * @param string $methodId Mollie method id, e.g. "creditcard", "ideal"
+     */
+    public static function isMethodSupported($methodId): bool
+    {
+        return isset(self::$methods[$methodId]);
+    }
 
     public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
     public const LOG_SEVERITY_LEVEL_WARNING = 2;
@@ -436,6 +460,7 @@ class Config
 
     public const MOLLIE_MANUAL_CAPTURE_METHODS = [
         self::RIVERTY,
+        self::BILLINK,
     ];
 
     public const PS_CLOUDSYNC_CDC = 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js';

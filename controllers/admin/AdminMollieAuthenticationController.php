@@ -18,6 +18,7 @@ use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Logger\LoggerInterface;
+use Mollie\Service\MultistoreSettingsContextGuard;
 use Mollie\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -37,6 +38,9 @@ class AdminMollieAuthenticationController extends ModuleAdminController
     /** @var ConfigurationAdapter */
     private $configuration;
 
+    /** @var MultistoreSettingsContextGuard */
+    private $multistoreSettingsContextGuard;
+
     public function __construct()
     {
         parent::__construct();
@@ -44,6 +48,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         $this->context = Context::getContext();
         $this->tools = $this->module->getService(ToolsAdapter::class);
         $this->configuration = $this->module->getService(ConfigurationAdapter::class);
+        $this->multistoreSettingsContextGuard = $this->module->getService(MultistoreSettingsContextGuard::class);
     }
 
     public function init(): void
@@ -102,11 +107,16 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 'confirmSwitchEnvironment' => $this->module->l('Are you sure you want to switch to %s environment?', self::FILE_NAME),
                 'cancel' => $this->module->l('Cancel', self::FILE_NAME),
                 'switchTo' => $this->module->l('Switch to %s', self::FILE_NAME),
+                'multistoreRestrictedTitle' => $this->module->l('Select a specific shop', self::FILE_NAME),
+                'multistoreRestrictedMessage' => $this->module->l('Mollie API keys are saved per shop. To configure them, switch from "All stores" to a single shop using the shop selector at the top of the page.', self::FILE_NAME),
             ],
         ]);
 
         Media::addJsDef([
             'mollieAuthAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAuthentication'),
+            'mollieAuthConfig' => [
+                'multistoreRestricted' => !$this->multistoreSettingsContextGuard->canEditSettings(),
+            ],
         ]);
 
         try {
@@ -204,6 +214,17 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         }
 
         $action = $this->tools->getValue('action');
+
+        $settingsMutatingActions = ['saveApiKey', 'switchEnvironment'];
+
+        if (in_array($action, $settingsMutatingActions, true) && !$this->multistoreSettingsContextGuard->canEditSettings()) {
+            $this->ajaxRender(json_encode([
+                'success' => false,
+                'message' => $this->module->l('Select a specific shop before changing Mollie settings. API keys are saved per shop and cannot be edited for "All stores" or a shop group.', self::FILE_NAME),
+            ]));
+
+            return;
+        }
 
         switch ($action) {
             case 'testApiKeys':
