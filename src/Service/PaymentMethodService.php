@@ -398,8 +398,11 @@ class PaymentMethodService
             }
 
             $paymentData->setLines(
+                // Pass the pre-fee amount; the fee is appended as its own line in getCartLines().
+                // Passing the fee-inclusive total left the rounding residual uncompensated (PIPRES-794).
+                // Mirrors the Orders API path below.
                 $this->cartLinesService->getCartLines(
-                    $totalAmount,
+                    $amount,
                     $paymentFeeData,
                     $currency,
                     $cart->getSummaryDetails(),
