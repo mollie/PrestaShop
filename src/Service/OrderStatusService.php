@@ -124,7 +124,7 @@ class OrderStatusService
             return;
         }
 
-        if ($matchesCurrentState && !$currentStateApplied) {
+        if ($matchesCurrentState) {
             $this->logger->error(sprintf('%s - Completing interrupted status transition', self::FILE_NAME), [
                 'order_id' => (int) $order->id,
                 'status_id' => (int) $statusId,
@@ -266,7 +266,7 @@ class OrderStatusService
 
             if (!$order->invoice_number && $invoice->number) {
                 $order->invoice_number = (int) $invoice->number;
-                $order->invoice_date = $invoice->date_add;
+                $order->invoice_date = (string) $invoice->date_add;
                 $order->update();
             }
         }
