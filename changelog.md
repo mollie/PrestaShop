@@ -6,6 +6,8 @@
 + Added shipping method exclusion list for Apple Pay Direct
 + Fixed "On backorder (paid)" status not being set when a product is ordered at exactly 0 stock, including instant-payment methods such as iDEAL and cards
 + Fixed payment method restriction diagnostics filling up the PrestaShop log table on every checkout page render
++ Fixed order status webhook leaving orders half-updated (empty invoice, missing paid status) when a database deadlock or lock timeout interrupted the transition; the transition now runs atomically and retries transient database errors
++ Fixed webhook retries silently skipping orders whose previous status transition was interrupted; the module now detects and completes the interrupted transition, including relinking the invoice
 
 ## Changes in release 6.4.4
 + Added a "View in Mollie" link on the order page and in the Orders list to open a payment directly in the Mollie dashboard
