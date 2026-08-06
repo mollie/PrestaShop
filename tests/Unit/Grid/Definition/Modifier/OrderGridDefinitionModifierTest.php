@@ -14,6 +14,7 @@ namespace Grid\Definition\Modifier;
 
 use Mollie;
 use Mollie\Grid\Action\Type\SecondChanceRowAction;
+use Mollie\Grid\Action\Type\ViewInMollieRowAction;
 use Mollie\Grid\Definition\Modifier\OrderGridDefinitionModifier;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
@@ -80,6 +81,7 @@ class OrderGridDefinitionModifierTest extends TestCase
             ActionColumn::class,
             RowActionCollection::class,
             SecondChanceRowAction::class,
+            ViewInMollieRowAction::class,
         ] as $class) {
             if (!class_exists($class) && !interface_exists($class)) {
                 $this->markTestSkipped(sprintf('PrestaShop grid dependency %s is not available here.', $class));
@@ -95,11 +97,11 @@ class OrderGridDefinitionModifierTest extends TestCase
             return 'translated:' . $string;
         });
 
-        $capturedColumn = null;
+        $capturedColumns = [];
         $columns = $this->createMock(ColumnCollectionInterface::class);
-        $columns->method('addBefore')->willReturnCallback(function ($id, $column) use (&$capturedColumn) {
+        $columns->method('addBefore')->willReturnCallback(function ($id, $column) use (&$capturedColumns) {
             Assert::assertSame('date_add', $id);
-            $capturedColumn = $column;
+            $capturedColumns[$column->getId()] = $column;
 
             return null;
         });
@@ -109,19 +111,32 @@ class OrderGridDefinitionModifierTest extends TestCase
 
         (new OrderGridDefinitionModifier($module))->modify($gridDefinition);
 
-        $this->assertNotNull($capturedColumn, 'The second_chance column should be added before date_add.');
-        $this->assertSame('translated:' . self::HEADER, $capturedColumn->getName());
+        $this->assertArrayHasKey('second_chance', $capturedColumns, 'The second_chance column should be added before date_add.');
+        $secondChanceColumn = $capturedColumns['second_chance'];
+        $this->assertSame('translated:' . self::HEADER, $secondChanceColumn->getName());
 
-        $options = $capturedColumn->getOptions();
+        $options = $secondChanceColumn->getOptions();
         $this->assertArrayHasKey('actions', $options);
 
-        $resendAction = null;
-        foreach ($options['actions'] as $action) {
-            $resendAction = $action;
-            break;
-        }
-
+        $resendAction = $this->firstAction($options['actions']);
         $this->assertNotNull($resendAction, 'The resend row action should be present.');
         $this->assertSame('translated:' . self::TOOLTIP, $resendAction->getName());
+
+        $this->assertArrayHasKey('mollie_view_in_dashboard', $capturedColumns, 'The View in Mollie column should be added before date_add.');
+        $viewInMollieColumn = $capturedColumns['mollie_view_in_dashboard'];
+        $this->assertSame('translated:Mollie', $viewInMollieColumn->getName());
+
+        $viewAction = $this->firstAction($viewInMollieColumn->getOptions()['actions']);
+        $this->assertNotNull($viewAction, 'The View in Mollie row action should be present.');
+        $this->assertSame('translated:View in Mollie', $viewAction->getName());
+    }
+
+    private function firstAction($actions)
+    {
+        foreach ($actions as $action) {
+            return $action;
+        }
+
+        return null;
     }
 }

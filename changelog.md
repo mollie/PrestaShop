@@ -8,10 +8,10 @@
 + Added shipping method exclusion list for Apple Pay Direct
 + Fixed "On backorder (paid)" status not being set when a product is ordered at exactly 0 stock, including instant-payment methods such as iDEAL and cards
 + Fixed payment method restriction diagnostics filling up the PrestaShop log table on every checkout page render
++ Fixed total_paid_real staying 0 on bank transfer orders after the payment is completed
 
 ## Changes in release 6.4.4
-+ Hardened the payment webhook by validating the security token before processing a transaction
-+ Hardened the subscription payment method update webhook by validating the secure key before applying changes
++ Added a "View in Mollie" link on the order page and in the Orders list to open a payment directly in the Mollie dashboard
 + Added bank transfer due date configuration
 + Added Segment analytics tracking for module and payment events
 + Added Bulgarian translations
@@ -24,6 +24,7 @@
 + Fixed refund confirmation modal amount to reflect selected quantity for multi-unit order lines
 + Fixed payment method ordering mismatch between admin panel and checkout page
 + Fixed VAT amount being off by 1–2 cents on high-value order lines causing Mollie API 422 errors
++ Fixed credit card payments failing with a Mollie API 422 amount error when a payment surcharge is active and prices are rounded per line
 + Hid "Refund All" button for Klarna and other authorizable Orders API payments until at least one line is shipped
 + Disabled bulk Refund / Ship / Cancel buttons based on order state on the admin order page
 + Allowed shipping orders created on the Orders API while using the Payments API

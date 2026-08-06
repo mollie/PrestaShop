@@ -37,7 +37,7 @@ class CustomerRepository extends AbstractRepository implements CustomerRepositor
     {
         $sql = 'SELECT id_customer_group
                     FROM `' . _DB_PREFIX_ . 'mol_excluded_customer_groups`
-                    WHERE id_payment_method = "' . $methodId . '"';
+                    WHERE id_payment_method = "' . (int) $methodId . '"';
 
         $customerGroupsId = Db::getInstance()->executeS($sql);
         $customerIdsArray = [];
@@ -56,7 +56,7 @@ class CustomerRepository extends AbstractRepository implements CustomerRepositor
      */
     public function updatePaymentMethodExcludedCustomerGroups(?int $idMethod, $idCustomerGroups)
     {
-        $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'mol_excluded_customer_groups WHERE `id_payment_method` = "' . $idMethod . '"';
+        $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'mol_excluded_customer_groups WHERE `id_payment_method` = "' . (int) $idMethod . '"';
         if (!Db::getInstance()->execute($sql)) {
             return false;
         }
@@ -70,7 +70,7 @@ class CustomerRepository extends AbstractRepository implements CustomerRepositor
             $sql = 'INSERT INTO `' . _DB_PREFIX_ . 'mol_excluded_customer_groups` (id_payment_method, id_customer_group)
                 VALUES (';
 
-            $sql .= '"' . $idMethod . '", ' . (int) $idCustomerGroup . ')';
+            $sql .= '"' . (int) $idMethod . '", ' . (int) $idCustomerGroup . ')';
 
             if (!Db::getInstance()->execute($sql)) {
                 $response = false;
