@@ -178,7 +178,7 @@ class PaymentMethodSettingsHandler
         ?array $apiMethodData = null
     ): void {
         $paymentMethod->id_method = $methodId;
-        $paymentMethod->method_name = $methodId;
+        $paymentMethod->method_name = $this->resolveMethodName($paymentMethod, $methodId, $apiMethodData);
         $paymentMethod->enabled = (bool) ($settings['enabled'] ?? false);
         $paymentMethod->method = $settings['apiSelection'] ?? 'payments';
         $paymentMethod->description = $settings['transactionDescription'] ?? '';
@@ -198,6 +198,26 @@ class PaymentMethodSettingsHandler
         if (in_array($methodId, Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS)) {
             $paymentMethod->is_manual_capture = ($settings['captureMode'] ?? 'automatic') === 'manual';
         }
+    }
+
+    /**
+     * The stored name ends up as the payment label on the order, so it has to be Mollie's
+     * own method name. The already stored name and the static list are only used when the
+     * API cannot be reached during the save, to avoid storing the raw method id.
+     *
+     * @param array|null $apiMethodData Data from Mollie API
+     */
+    private function resolveMethodName(MolPaymentMethod $paymentMethod, string $methodId, ?array $apiMethodData): string
+    {
+        if (!empty($apiMethodData['name'])) {
+            return (string) $apiMethodData['name'];
+        }
+
+        if (!empty($paymentMethod->method_name)) {
+            return (string) $paymentMethod->method_name;
+        }
+
+        return Config::$methods[$methodId] ?? $methodId;
     }
 
     /**

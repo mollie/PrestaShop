@@ -383,7 +383,7 @@ class TransactionService
                     continue;
                 }
                 $orderPayment->transaction_id = $transaction->id;
-                $orderPayment->payment_method = $paymentMethod->method_name;
+                $orderPayment->payment_method = $this->paymentMethodService->getPaymentMethodName($paymentMethod, $transaction);
                 $orderPayment->update();
             }
         }
@@ -477,7 +477,7 @@ class TransactionService
     {
         if ($payment->details->remainderMethod) {
             $transactionInfos[] = [
-                'paymentName' => $payment->details->remainderMethod,
+                'paymentName' => $this->paymentMethodService->getMethodName($payment->details->remainderMethod),
                 'amount' => $payment->details->remainderAmount->value,
                 'currency' => $payment->details->remainderAmount->currency,
                 'transactionId' => $payment->id,
@@ -493,7 +493,10 @@ class TransactionService
     private function getPaymentTransactionInfo(Payment $payment, array $transactionInfos)
     {
         $transactionInfos[] = [
-            'paymentName' => $payment->method,
+            'paymentName' => $this->paymentMethodService->getPaymentMethodName(
+                $this->paymentMethodService->getPaymentMethod($payment),
+                $payment
+            ),
             'amount' => $payment->amount->value,
             'currency' => $payment->amount->currency,
             'transactionId' => $payment->id,

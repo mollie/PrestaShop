@@ -104,7 +104,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.4.4';
+        $this->version = '6.4.5';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -1482,7 +1482,11 @@ class Mollie extends PaymentModule
             return;
         }
 
-        $orderPayment->payment_method = Config::$methods[$mollieOrder['method']] ?? $mollieOrder['method'];
+        /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
+        $paymentMethodService = $this->getService(\Mollie\Service\PaymentMethodService::class);
+
+        // The order label is already resolved, including the wallet a card payment was settled with.
+        $orderPayment->payment_method = $order->payment ?: $paymentMethodService->getMethodName($mollieOrder['method']);
         $orderPayment->update();
     }
 

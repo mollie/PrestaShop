@@ -172,22 +172,7 @@ class OrderCreationHandler
             return 0;
         }
 
-        $paymentMethodName = $paymentMethod->method_name;
-
-        if (empty($paymentMethodName)) {
-            $actualMethod = $apiPayment->details->wallet ?? $apiPayment->method;
-
-            if (
-                isset(Config::$methods[$actualMethod]) &&
-                Config::$methods[$actualMethod] === 'Apple Pay'
-            ) {
-                $paymentMethodName = $this->module->l('Credit Card (Apple Pay)');
-            } else {
-                $paymentMethodName =
-                    Config::$methods[$actualMethod]
-                    ?? $this->module->l('Credit Card');
-            }
-        }
+        $paymentMethodName = $this->paymentMethodService->getPaymentMethodName($paymentMethod, $apiPayment);
 
         if (!$paymentFeeData->isActive()) {
             // Paid orders are created in the "awaiting" state and then moved to paid through the
@@ -295,7 +280,8 @@ class OrderCreationHandler
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($paymentData->getMethod(), $environment);
         $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
 
-        $paymentMethodName = isset(Config::$methods[$paymentData->getMethod()]) ? Config::$methods[$paymentData->getMethod()] : $this->module->name;
+        $paymentMethodName = $paymentMethodObj->method_name
+            ?: (Config::$methods[$paymentData->getMethod()] ?? $this->module->name);
 
         $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethodObj, $cart->getOrderTotal());
 
@@ -388,7 +374,7 @@ class OrderCreationHandler
             $cartId,
             (int) Configuration::get(Config::MOLLIE_STATUS_AWAITING),
             (float) $apiPayment->amount->value,
-            $paymentMethod->method_name,
+            $this->paymentMethodService->getPaymentMethodName($paymentMethod, $apiPayment),
             null,
             ['transaction_id' => $apiPayment->id],
             null,
