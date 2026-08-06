@@ -19,12 +19,14 @@ use Mollie\Exception\MollieException;
 use Mollie\Handler\Certificate\ApplePayDirectCertificateHandler;
 use Mollie\Handler\PaymentMethod\PaymentMethodSettingsHandler;
 use Mollie\Logger\LoggerInterface;
+use Mollie\Repository\CarrierRepositoryInterface;
 use Mollie\Repository\CountryRepository;
 use Mollie\Repository\CustomerRepository;
 use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ApiService;
 use Mollie\Service\CountryService;
+use Mollie\Service\MultistoreSettingsContextGuard;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Utility\ExceptionUtility;
 
@@ -75,6 +77,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
     /** @var ApplePayDirectCertificateHandler */
     private $applePayDirectCertificateHandler;
 
+    /** @var MultistoreSettingsContextGuard */
+    private $multistoreSettingsContextGuard;
+
     public function __construct()
     {
         parent::__construct();
@@ -92,6 +97,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         $this->logger = $this->module->getService(LoggerInterface::class);
         $this->paymentMethodSettingsHandler = $this->module->getService(PaymentMethodSettingsHandler::class);
         $this->applePayDirectCertificateHandler = $this->module->getService(ApplePayDirectCertificateHandler::class);
+        $this->multistoreSettingsContextGuard = $this->module->getService(MultistoreSettingsContextGuard::class);
     }
 
     public function init(): void
@@ -128,6 +134,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'hideSettings' => $this->module->l('Hide settings', self::FILE_NAME),
                 'active' => $this->module->l('Active', self::FILE_NAME),
                 'inactive' => $this->module->l('Inactive', self::FILE_NAME),
+                'notYetSupported' => $this->module->l('Not yet supported', self::FILE_NAME),
 
                 'basicSettings' => $this->module->l('Basic settings', self::FILE_NAME),
                 'activateDeactivate' => $this->module->l('Activate/Deactivate', self::FILE_NAME),
@@ -164,6 +171,10 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'applePayButtonBlack' => $this->module->l('Black', self::FILE_NAME),
                 'applePayButtonOutline' => $this->module->l('Outline', self::FILE_NAME),
                 'applePayButtonWhite' => $this->module->l('White', self::FILE_NAME),
+                'applePayExcludedCarriers' => $this->module->l('Exclude shipping methods from Apple Pay', self::FILE_NAME),
+                'selectCarriersToExclude' => $this->module->l('Select shipping methods', self::FILE_NAME),
+                'applePayExcludedCarriersHelp' => $this->module->l('Selected shipping methods will not be offered inside the Apple Pay payment sheet. Use this for carriers that require extra steps, like relay point selection. They stay available in the regular checkout.', self::FILE_NAME),
+                'applePayAllCarriersExcludedWarning' => $this->module->l('All shipping methods are excluded. Customers will not be able to complete Apple Pay Direct orders that require shipping.', self::FILE_NAME),
 
                 'paymentRestrictions' => $this->module->l('Payment restrictions', self::FILE_NAME),
                 'acceptPaymentsFrom' => $this->module->l('Accept payments from', self::FILE_NAME),
@@ -264,6 +275,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'autoCaptureStatuses' => $this->module->l('Trigger on statuses', self::FILE_NAME),
                 'autoCaptureInfo' => $this->module->l('When the order reaches one of these statuses, the authorized payment will be captured automatically. You can always capture manually from the order page.', self::FILE_NAME),
                 'selectStatuses' => $this->module->l('Select statuses', self::FILE_NAME),
+
+                'multistoreRestrictedTitle' => $this->module->l('Select a specific shop', self::FILE_NAME),
+                'multistoreRestrictedMessage' => $this->module->l('Mollie payment methods are saved per shop. To manage them, switch from "All stores" to a single shop using the shop selector at the top of the page.', self::FILE_NAME),
             ],
         ]);
 
@@ -276,6 +290,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'onlyPaymentsMethods' => Config::PAYMENT_API_ONLY_METHODS,
                 'orderStatuses' => $this->getOrderStatuses(),
                 'manualCaptureEligibleMethods' => Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS,
+                'multistoreRestricted' => !$this->multistoreSettingsContextGuard->canEditSettings(),
             ],
         ]);
 
@@ -291,6 +306,23 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
 
         $action = $this->tools->getValue('action');
+
+        $settingsMutatingActions = [
+            'togglePaymentMethod',
+            'savePaymentMethodSettings',
+            'updateMethodsOrder',
+            'refreshMethods',
+            'uploadCustomLogo',
+        ];
+
+        if (in_array($action, $settingsMutatingActions, true) && !$this->multistoreSettingsContextGuard->canEditSettings()) {
+            $this->ajaxRender(json_encode([
+                'success' => false,
+                'message' => $this->module->l('Select a specific shop before changing Mollie settings. Payment methods are saved per shop and cannot be edited for "All stores" or a shop group.', self::FILE_NAME),
+            ]));
+
+            return;
+        }
 
         switch ($action) {
             case 'getPaymentMethods':
@@ -377,6 +409,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 try {
                     $methodId = $method['id'];
                     $methodObj = $method['obj'];
+                    // A method Mollie returns that this module has no handler for yet.
+                    // It is shown but locked ("Not yet supported") and can never be active.
+                    $isSupported = isset($method['supported']) ? (bool) $method['supported'] : Config::isMethodSupported($methodId);
 
                     if (!$methodObj) {
                         $this->logger->warning('Method object is null for method: ' . $methodId);
@@ -391,13 +426,14 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                     $formattedMethods[] = [
                         'id' => $methodId,
                         'name' => $method['name'],
+                        'supported' => $isSupported,
                         'type' => $methodId === 'creditcard' ? 'card' : 'other',
-                        'status' => (isset($methodObj->enabled) && $methodObj->enabled) ? 'active' : 'inactive',
+                        'status' => ($isSupported && isset($methodObj->enabled) && $methodObj->enabled) ? 'active' : 'inactive',
                         'isExpanded' => false,
                         'position' => (int) (isset($methodObj->position) ? $methodObj->position : 0),
                         'image' => $method['image'] ?? null,
                         'settings' => [
-                            'enabled' => (bool) (isset($methodObj->enabled) ? $methodObj->enabled : false),
+                            'enabled' => $isSupported && (bool) (isset($methodObj->enabled) ? $methodObj->enabled : false),
                             'title' => $this->getPaymentMethodTitles($methodId, $method['name'] ?? ''),
                             'mollieComponents' => $methodId === 'creditcard' ? $this->getCreditCardMollieComponentsSetting($methodObj) : true,
                             'oneClickPayments' => $methodId === 'creditcard' ? $this->getCreditCardOneClickSetting($methodObj) : false,
@@ -436,6 +472,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                                 'directProduct' => (bool) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT) ?: 0),
                                 'directCart' => (bool) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART) ?: 0),
                                 'buttonStyle' => (int) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE) ?: 0),
+                                'excludedCarriers' => $this->getExcludedCarriersForResponse(),
                             ] : null,
                             'bankTransferDueDays' => $methodId === 'banktransfer'
                                 ? (string) ($this->configuration->get(Config::MOLLIE_BANKTRANSFER_DUE_DAYS) ?: Config::MOLLIE_BANKTRANSFER_DUE_DAYS_DEFAULT)
@@ -466,6 +503,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'data' => [
                     'methods' => $formattedMethods,
                     'countries' => $this->countryService->getActiveCountriesList(),
+                    'carriers' => $this->getCarriersForResponse(),
                     'taxRulesGroups' => $this->getTaxRulesGroups(),
                     'customerGroups' => $this->getCustomerGroups(),
                     'languages' => $this->getLanguages(),
@@ -497,6 +535,11 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
 
             if (!$methodId) {
                 throw new MollieException($this->module->l('Missing method ID', self::FILE_NAME));
+            }
+
+            // Never let an unsupported method be enabled; disabling one is always allowed.
+            if ($enabled && !Config::isMethodSupported($methodId)) {
+                throw new MollieException($this->module->l('This payment method is not yet supported and cannot be enabled.', self::FILE_NAME));
             }
 
             $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
@@ -836,6 +879,43 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
 
         return $customerGroups;
+    }
+
+    private function getCarriersForResponse(): array
+    {
+        $carriers = [];
+
+        try {
+            /** @var CarrierRepositoryInterface $carrierRepository */
+            $carrierRepository = $this->module->getService(CarrierRepositoryInterface::class);
+
+            foreach ($carrierRepository->getActiveCarriers($this->context->language->id) as $carrier) {
+                $carriers[] = [
+                    'value' => (string) $carrier['id_reference'],
+                    'label' => $carrier['name'],
+                ];
+            }
+        } catch (Exception $e) {
+            $this->logger->error('Failed to get carriers', [
+                'exception' => ExceptionUtility::getExceptions($e),
+            ]);
+        }
+
+        return $carriers;
+    }
+
+    private function getExcludedCarriersForResponse(): array
+    {
+        $excludedCarriers = json_decode(
+            $this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_EXCLUDED_CARRIERS) ?: '[]',
+            true
+        );
+
+        if (!is_array($excludedCarriers)) {
+            return [];
+        }
+
+        return array_map('strval', $excludedCarriers);
     }
 
     public function getLanguages(): array

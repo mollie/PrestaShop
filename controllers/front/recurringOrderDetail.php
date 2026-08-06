@@ -124,7 +124,7 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
     private function updatePaymentMethod(): void
     {
         $newMethod = Tools::getValue('payment_method');
-        $recurringOrderId = (int) Tools::getValue('recurring_order_id');
+        $recurringOrderId = Tools::getValue('recurring_order_id');
 
         if (!$this->validateToken()) {
             $this->errors[] = $this->module->l('Error: token invalid.', self::FILE_NAME);
@@ -138,8 +138,14 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
             return;
         }
 
-        if (!$recurringOrderId || !$this->customerOwnsRecurringOrder($recurringOrderId)) {
+        if (!$recurringOrderId) {
             $this->errors[] = $this->module->l('Failed to get recurring order.', self::FILE_NAME);
+
+            return;
+        }
+
+        if (!$this->customerOwnsRecurringOrder($recurringOrderId)) {
+            $this->errors[] = $this->module->l('You do not have permission to modify this subscription.', self::FILE_NAME);
 
             return;
         }
@@ -153,7 +159,7 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
 
     private function cancelSubscription(): void
     {
-        $recurringOrderId = (int) Tools::getValue('recurring_order_id');
+        $recurringOrderId = Tools::getValue('recurring_order_id');
 
         if (!$this->validateToken()) {
             $this->errors[] = $this->module->l('Error: token invalid.', self::FILE_NAME);
@@ -161,8 +167,14 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
             return;
         }
 
-        if (!$recurringOrderId || !$this->customerOwnsRecurringOrder($recurringOrderId)) {
+        if (!$recurringOrderId) {
             $this->errors[] = $this->module->l('Failed to get recurring order.', self::FILE_NAME);
+
+            return;
+        }
+
+        if (!$this->customerOwnsRecurringOrder($recurringOrderId)) {
+            $this->errors[] = $this->module->l('You do not have permission to modify this subscription.', self::FILE_NAME);
 
             return;
         }
@@ -174,14 +186,15 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
         $this->success[] = $this->module->l('Successfully canceled subscription.', self::FILE_NAME);
     }
 
-    /**
-     * Ensures the recurring order targeted by a state-changing action belongs to the
-     * logged-in customer. Without this an authenticated customer could cancel or change
-     * the payment method of another customer's subscription by guessing its id (IDOR).
-     */
-    private function customerOwnsRecurringOrder(int $recurringOrderId): bool
+    private function customerOwnsRecurringOrder($recurringOrderId): bool
     {
-        if (!$this->context->customer->id) {
+        $recurringOrderId = (int) $recurringOrderId;
+
+        if (!Validate::isUnsignedId($recurringOrderId)) {
+            return false;
+        }
+
+        if (!Validate::isLoadedObject($this->context->customer)) {
             return false;
         }
 

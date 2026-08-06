@@ -657,10 +657,17 @@ class Mollie extends PaymentModule
             }
 
             if (TransactionUtility::isOrderTransaction($mollieTransactionId)) {
-                $products = $this->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])->lines;
+                $mollieApiResource = $this->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments']);
             } else {
-                $products = $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments'])->lines; // @phpstan-ignore-line
+                $mollieApiResource = $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments']); // @phpstan-ignore-line
             }
+            $products = $mollieApiResource->lines;
+
+            // Deep link to this exact payment/order in the Mollie dashboard, taken straight from the
+            // API response so it always points at the correct organization and environment.
+            $mollieDashboardUrl = isset($mollieApiResource->_links->dashboard->href)
+                ? $mollieApiResource->_links->dashboard->href
+                : null;
 
             $mollieLogoPath = $this->getMollieLogoPath();
 
@@ -814,6 +821,7 @@ class Mollie extends PaymentModule
                 'mollie_logo_path' => $mollieLogoPath,
                 'mollie_transaction_id' => $mollieTransactionId,
                 'mollie_api_type' => $mollieApiType,
+                'mollie_dashboard_url' => $mollieDashboardUrl,
                 'isRefunded' => $isRefunded,
                 'isCaptured' => $isCaptured,
                 'isShipped' => $isShipped,

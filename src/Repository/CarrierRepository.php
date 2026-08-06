@@ -29,4 +29,9 @@ class CarrierRepository extends AbstractRepository implements CarrierRepositoryI
     {
         return \Carrier::getCarriersForOrder($id_zone, $groups, $cart, $error);
     }
+
+    public function getActiveCarriers(int $langId): array
+    {
+        return \Carrier::getCarriers($langId, true, false, false, null, \Carrier::ALL_CARRIERS);
+    }
 }

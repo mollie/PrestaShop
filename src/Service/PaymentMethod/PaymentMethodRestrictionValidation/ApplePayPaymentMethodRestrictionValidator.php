@@ -38,10 +38,9 @@ namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Types\PaymentMethod;
-use Mollie\Config\Config;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Utility\VersionUtility;
 use MolPaymentMethod;
-use PrestaShopLogger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -56,9 +55,15 @@ class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrict
      */
     private $configurationAdapter;
 
-    public function __construct(ConfigurationAdapter $configurationAdapter)
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(ConfigurationAdapter $configurationAdapter, LoggerInterface $logger)
     {
         $this->configurationAdapter = $configurationAdapter;
+        $this->logger = $logger;
     }
 
     /**
@@ -83,13 +88,8 @@ class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrict
 
     private function logHidden(string $reason): void
     {
-        PrestaShopLogger::addLog(
-            sprintf('%s: Apple Pay hidden because %s', self::FILE_NAME, $reason),
-            Config::WARNING,
-            null,
-            null,
-            null,
-            true
+        $this->logger->debug(
+            sprintf('%s: Apple Pay hidden because %s', self::FILE_NAME, $reason)
         );
     }
 
