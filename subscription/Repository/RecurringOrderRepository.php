@@ -43,8 +43,8 @@ class RecurringOrderRepository extends AbstractRepository implements RecurringOr
                 'orders', 'o',
                 'o.id_order = mro.id_order'
             )
-            ->where('mro.status IN (\'' . implode("','", $statuses) . '\')')
-            ->where('o.id_shop = ' . $shopId);
+            ->where('mro.status IN (\'' . implode("','", array_map('pSQL', $statuses)) . '\')')
+            ->where('o.id_shop = ' . (int) $shopId);
 
         $result = \Db::getInstance()->executeS($query);
 

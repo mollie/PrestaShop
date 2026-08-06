@@ -26,7 +26,7 @@ class AttributeRepository
         $sql = new DbQuery();
         $sql->select('`id_attribute`');
         $sql->from('product_attribute_combination');
-        $sql->where('`id_product_attribute` = "' . pSQL($attrCombinationId) . '" AND id_attribute = ' . pSQL($attributeId));
+        $sql->where('`id_product_attribute` = "' . pSQL($attrCombinationId) . '" AND id_attribute = ' . (int) $attributeId);
 
         return (bool) Db::getInstance()->getValue($sql);
     }
