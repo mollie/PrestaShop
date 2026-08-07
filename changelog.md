@@ -10,6 +10,7 @@
 + Fixed "On backorder (paid)" status not being set when a product is ordered at exactly 0 stock, including instant-payment methods such as iDEAL and cards
 + Fixed payment method restriction diagnostics filling up the PrestaShop log table on every checkout page render
 + Fixed total_paid_real staying 0 on bank transfer orders after the payment is completed
++ Fixed free shipping vouchers causing a Mollie API 422 amount error at checkout, and wrong order line amounts when no payment fee is configured
 
 ## Changes in release 6.4.4
 + Added a "View in Mollie" link on the order page and in the Orders list to open a payment directly in the Mollie dashboard
