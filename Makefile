@@ -44,7 +44,11 @@ waiting-for-containers-CI:
 
 waiting-for-containers-local:
 	# waiting for app containers to build up
-	/bin/bash .docker/wait-loader.sh 8002
+	# Same check as CI. The old wait-loader.sh printed "Failed: Docker container
+	# host did not return a 302" and still exited 0, so a cold start marched on
+	# into seeding against a MySQL that was not up yet and e2eh<VERSION>_local
+	# died there every time.
+	/bin/bash .docker/wait-for-shop.sh 8002 300
 
 seeding-customized-sql:
 	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_$(VERSION).sql
@@ -75,6 +79,27 @@ set-shop-domain:
 	# The cache is cleared as root, so hand `var` back to the web user afterwards
 	# or PrestaShop cannot rebuild it and every page 500s.
 	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && rm -rf var/cache/* && chmod -R 777 var" || true
+
+# target: trust-forwarded-proto	- Teach Apache that `X-Forwarded-Proto: https` means HTTPS.
+# Cloudflare terminates TLS and forwards plain HTTP to the container. Without
+# this the shop is configured for https (set-shop-domain with SSL=1) but PHP
+# sees http, so PrestaShop keeps redirecting to its own canonical https URL and
+# either loops or lands on /security/compromised. Run it after set-shop-domain
+# whenever something else terminates TLS in front of the shop.
+trust-forwarded-proto:
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "echo 'SetEnvIf X-Forwarded-Proto \"https\" HTTPS=on' > /etc/apache2/conf-enabled/zz-forwarded-https.conf && service apache2 reload"
+
+# target: tunnel			- Expose the local shop through a Cloudflare named tunnel (foreground).
+# Needed for the checkout specs: Mollie rejects an unreachable webhookUrl, so no
+# checkout can complete against localhost. Put CF_TUNNEL_TOKEN in .env, then in
+# one terminal `make tunnel`, and in another:
+#   make VERSION=8 set-shop-domain HOST=ps8-checkout.invertusdemo.com
+#   make VERSION=8 trust-forwarded-proto
+#   cd tests/e2e && E2E_BASE_URL=https://ps8-checkout.invertusdemo.com \
+#     E2E_CHECKOUT_API=orders npx playwright test --project=checkout-orders
+tunnel:
+	@test -n "$(CF_TUNNEL_TOKEN)" || (echo "CF_TUNNEL_TOKEN is not set (put it in .env)"; exit 1)
+	cloudflared tunnel --no-autoupdate run --token $(CF_TUNNEL_TOKEN)
 
 # target: e2e-tests-locally	- Run the Playwright suite against a shop already started by e2eh<VERSION>_local.
 # The two checkout phases are separate invocations, exactly as CI runs them: they
