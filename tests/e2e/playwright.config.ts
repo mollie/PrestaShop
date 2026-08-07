@@ -22,16 +22,34 @@ export default defineConfig({
   },
   projects: [
     { name: 'bo-auth', testMatch: /bo-auth\.setup\.ts/ },
-    { name: 'cfg-orders', testMatch: /cfg-orders\.setup\.ts/, dependencies: ['bo-auth'] },
+    // Connects the module's test API key before anything that depends on the
+    // module having one. Without it a shop straight out of `e2eh<VERSION>_local`
+    // has MOLLIE_API_KEY_TEST NULL, and every method-dependent test skips
+    // itself — a green run that exercised nothing.
+    {
+      name: 'mollie-connect',
+      testMatch: /connect\.setup\.ts/,
+      dependencies: ['bo-auth'],
+      // Explicit, because this setup imports the bare Playwright `test` rather
+      // than `fixtures/base` — so it does not inherit the storage-state override
+      // that gives every spec its BO session, and would otherwise open the
+      // module's configure page as an anonymous visitor and time out on the
+      // login screen. Written by the `bo-auth` project above.
+      use: { storageState: '.auth/bo.json' },
+    },
+    { name: 'cfg-orders', testMatch: /cfg-orders\.setup\.ts/, dependencies: ['mollie-connect'] },
     {
       name: 'admin',
       testDir: './specs/admin',
       testIgnore: /mobile-checkout\.spec\.ts/,
-      dependencies: ['bo-auth'],
+      dependencies: ['mollie-connect'],
     },
-    // No dependencies: needs neither a BO session nor module configuration, it
-    // only exercises the front controller's own guard clauses.
-    { name: 'webhook', testDir: './specs/webhook' },
+    // Needs no BO session of its own — it only exercises the front controller's
+    // guard clauses — but it DOES need the shop's connected/disconnected state to
+    // be settled, because which guard is reachable depends on it. Without this
+    // dependency the spec raced `mollie-connect` and asserted 401 against a shop
+    // that had just been connected.
+    { name: 'webhook', testDir: './specs/webhook', dependencies: ['mollie-connect'] },
     // testDir, not testMatch: /checkout\.spec\.ts/ would also match
     // specs/admin/mobile-checkout.spec.ts.
     {
@@ -49,7 +67,7 @@ export default defineConfig({
     // running the two invocations in sequence (see the CI workflow and the
     // e2e-tests-locally target), which is also what keeps the shared per-method
     // API assignment from being rewritten mid-phase.
-    { name: 'cfg-payments', testMatch: /cfg-payments\.setup\.ts/, dependencies: ['bo-auth'] },
+    { name: 'cfg-payments', testMatch: /cfg-payments\.setup\.ts/, dependencies: ['mollie-connect'] },
     {
       name: 'checkout-payments',
       testDir: './specs/checkout',
@@ -59,7 +77,7 @@ export default defineConfig({
     {
       name: 'mobile',
       testMatch: /mobile-checkout\.spec\.ts/,
-      dependencies: ['bo-auth', 'cfg-orders'],
+      dependencies: ['mollie-connect', 'cfg-orders'],
       // iPhone 13 defaults to WebKit; only Chromium is installed in CI, and it
       // supports the same mobile emulation.
       use: { ...devices['iPhone 13'], browserName: 'chromium' },

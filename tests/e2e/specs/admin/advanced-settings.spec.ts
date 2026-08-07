@@ -1,5 +1,6 @@
 import { test, expect } from '../../fixtures/base';
 import { AdvancedSettingsPage } from '../../pages/admin/advanced-settings-page';
+import { skipIfDisconnected } from '../../helpers/module-state';
 
 test('advanced settings page renders its sections and saves', async ({ page }) => {
   const settings = new AdvancedSettingsPage(page);
@@ -7,7 +8,7 @@ test('advanced settings page renders its sections and saves', async ({ page }) =
 
   // The settings form is only rendered once the module has a connected API key.
   const rendered = await settings.waitForForm();
-  test.skip(!rendered, 'settings form not rendered — module has no API key connected');
+  skipIfDisconnected(!rendered, 'the advanced settings form did not render');
 
   await expect(page.getByRole('heading', { name: /order/i }).first()).toBeVisible();
   await expect(page.getByRole('heading', { name: /shipping/i }).first()).toBeVisible();

@@ -5,6 +5,7 @@ import { AdminOrderPage } from '../../pages/admin/admin-order-page';
 import { OrderHistoryPage } from '../../pages/front/order-history-page';
 import { paymentMethods } from '../../data/payment-methods';
 import { envValue, isPubliclyReachableBaseUrl } from '../../helpers/env';
+import { skipIfDisconnected } from '../../helpers/module-state';
 
 /**
  * Which API this run exercises comes from the job environment, not from a
@@ -228,7 +229,7 @@ test.describe(`checkout — ${api} API`, () => {
       if (await checkout.paymentOption(method.label).count()) offered.push(method.id);
     }
 
-    test.skip(offered.length === 0, 'no Mollie methods offered — module has no API key connected');
+    skipIfDisconnected(offered.length === 0, 'no Mollie method is offered at the payment step');
 
     // Not every registry entry is assertable: availability also depends on what
     // the Mollie test profile enables for this cart's country and amount. What

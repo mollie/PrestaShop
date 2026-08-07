@@ -1,6 +1,7 @@
 import { test, expect } from '../../fixtures/base';
 import { CheckoutPage } from '../../pages/front/checkout-page';
 import { paymentMethods } from '../../data/payment-methods';
+import { skipIfDisconnected } from '../../helpers/module-state';
 
 test('checkout payment step renders on a mobile viewport', async ({ page }) => {
   const checkout = new CheckoutPage(page);
@@ -16,6 +17,6 @@ test('an Orders-API method is offered on a mobile viewport', async ({ page }) =>
   const checkout = new CheckoutPage(page);
   await checkout.start(method!.billingCountry);
   const option = page.getByText(method!.label);
-  test.skip((await option.count()) === 0, 'Mollie methods absent — module has no API key connected');
+  skipIfDisconnected((await option.count()) === 0, 'no Mollie method is offered at the payment step');
   await expect(option.first()).toBeVisible();
 });
