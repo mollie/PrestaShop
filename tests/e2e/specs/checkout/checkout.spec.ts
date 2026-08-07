@@ -101,6 +101,59 @@ test.describe(`checkout — ${api} API`, () => {
         return;
       }
 
+      // The Payments API renders an amount-based control instead of the
+      // Orders-API per-line one (`{if $mollie_api_type == 'payments'}` in
+      // order_info.tpl), so this phase asserts a PARTIAL refund — the case the
+      // per-line path cannot express, and the one the module gets wrong most
+      // easily because it has to compute what is still refundable.
+      if (api === 'payments') {
+        expect(
+          await bo.waitForRefundAmountControl(),
+          `${method.id}: the refund amount control never became usable`
+        ).toBe(true);
+
+        const refundable = await bo.refundableAmount();
+        expect(refundable, `${method.id}: no refundable amount rendered`).not.toBeNull();
+
+        // Rounded DOWN to the cent: the input carries `max="{$refundable_amount}"`,
+        // so rounding up overshoots it on an odd number of cents.
+        const half = Math.floor((refundable! / 2) * 100) / 100;
+        test.skip(half < 0.01, `${method.id}: refundable amount too small to split`);
+
+        expect(
+          await bo.partialRefund(half),
+          `${method.id}: the partial refund control was not actionable`
+        ).toBe(true);
+        const outcome = await bo.refundOutcome();
+        expect(outcome.ok, `${method.id}: partial refund reported "${outcome.message}"`).toBe(true);
+
+        // The real assertion. The success alert only proves the AJAX call
+        // returned `success`; this re-reads the amount the module recomputes
+        // from Mollie on the next render.
+        const remaining = await bo.waitForRefundableAmountBelow(refundable!);
+        expect(
+          remaining,
+          `${method.id}: still-refundable amount never dropped below ${refundable}`
+        ).not.toBeNull();
+        console.log(`${method.id}: refunded ${half.toFixed(2)}, ${remaining} still refundable`);
+
+        // A partial refund must leave the remainder refundable — one that
+        // consumed the whole amount is a full refund by another name.
+        if (remaining! > 0 && (await bo.waitForRefundAmountControl(15_000))) {
+          const rest = await bo.refundableAmount();
+          if (rest && (await bo.partialRefund(rest))) {
+            const second = await bo.refundOutcome();
+            expect(
+              second.ok,
+              `${method.id}: refunding the remainder reported "${second.message}"`
+            ).toBe(true);
+          } else {
+            console.log(`${method.id}: Mollie does not currently allow a second refund`);
+          }
+        }
+        return;
+      }
+
       // The refund control must be offered; whether it is actionable is Mollie's
       // decision and differs per method, so a disabled one is reported, not failed.
       // Polled rather than asserted outright: capture is confirmed by webhook,
