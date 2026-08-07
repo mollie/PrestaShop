@@ -180,7 +180,10 @@ class PaymentMethodSettingsHandler
         $paymentMethod->id_method = $methodId;
         $paymentMethod->method_name = $this->resolveMethodName($paymentMethod, $methodId, $apiMethodData);
         $paymentMethod->enabled = (bool) ($settings['enabled'] ?? false);
-        $paymentMethod->method = $settings['apiSelection'] ?? 'payments';
+        $paymentMethod->method = $this->resolveApiSelection(
+            $methodId,
+            (string) ($settings['apiSelection'] ?? Config::MOLLIE_PAYMENTS_API)
+        );
         $paymentMethod->description = $settings['transactionDescription'] ?? '';
 
         $paymentMethod->min_amount = (float) ($settings['orderRestrictions']['minAmount'] ?? 0);
@@ -198,6 +201,19 @@ class PaymentMethodSettingsHandler
         if (in_array($methodId, Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS)) {
             $paymentMethod->is_manual_capture = ($settings['captureMode'] ?? 'automatic') === 'manual';
         }
+    }
+
+    /**
+     * Methods that Mollie only supports on the Payments API are locked to it. The UI already
+     * hides the Orders button, this keeps a stale or crafted selection from being stored.
+     */
+    private function resolveApiSelection(string $methodId, string $apiSelection): string
+    {
+        if (in_array($methodId, Config::PAYMENT_API_ONLY_METHODS, true)) {
+            return Config::MOLLIE_PAYMENTS_API;
+        }
+
+        return $apiSelection;
     }
 
     /**

@@ -335,6 +335,7 @@ class Config
     const RIVERTY = 'riverty';
     const BILLINK = 'billink';
     const PAY_BY_BANK = 'paybybank';
+    const WERO = 'wero';
 
     const MOLLIE_VOUCHER_CATEGORY_NULL = 'null';
     const MOLLIE_VOUCHER_CATEGORY_MEAL = 'meal';
@@ -367,6 +368,7 @@ class Config
 
     const PAYMENT_API_ONLY_METHODS = [
         self::BILLINK,
+        self::WERO,
     ];
 
     const MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS = [
