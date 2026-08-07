@@ -49,7 +49,7 @@ test.describe(`checkout — ${api} API`, () => {
 
       const checkout = new CheckoutPage(page);
       await checkout.start(method.billingCountry, {
-        quantity: method.minAmount ? 250 : 1,
+        minTotal: method.minAmount,
       });
 
       const option = page.getByText(method.label);
@@ -81,17 +81,34 @@ test.describe(`checkout — ${api} API`, () => {
       // Shipping is an Orders-API concept: order_info.tpl renders
       // .mollie-ship-btn only under `$mollie_api_type == 'orders'`. The Payments
       // API has no shipment to report, but both APIs can refund.
+      let shipped = true;
       if (api === 'orders') {
         await expect(bo.shipButton().first()).toBeVisible();
-        const shipped = await bo.ship('FedEx', '123456', 'https://www.invertus.eu');
+        shipped = await bo.ship('FedEx', '123456', 'https://www.invertus.eu');
         if (!shipped) {
           console.log(`${method.id}: order not shippable at Mollie yet`);
         }
       }
 
+      // An authorize-shape payment is only captured once the shipment goes
+      // through. Until then Mollie holds an authorization with nothing to
+      // refund, and the module correctly renders no refund control at all —
+      // the order sits in "Authorized"/"Awaiting". Demanding the control here
+      // would assert behaviour the module does not have, and it is the same
+      // judgement the ship step above already makes.
+      if (!shipped) {
+        console.log(`${method.id}: not captured, so no refund control is offered`);
+        return;
+      }
+
       // The refund control must be offered; whether it is actionable is Mollie's
       // decision and differs per method, so a disabled one is reported, not failed.
-      await expect(bo.refundButton().first()).toBeVisible();
+      // Polled rather than asserted outright: capture is confirmed by webhook,
+      // so the control appears a few seconds after the shipment call returns.
+      expect(
+        await bo.waitForRefundControl(),
+        `${method.id}: the refund control never appeared on the order view`
+      ).toBe(true);
       const refunded = await bo.refund();
       if (!refunded) {
         console.log(`${method.id}: refund not currently permitted by Mollie`);
@@ -105,7 +122,7 @@ test.describe(`checkout — ${api} API`, () => {
 
       const checkout = new CheckoutPage(page);
       await checkout.start(method.billingCountry, {
-        quantity: method.minAmount ? 250 : 1,
+        minTotal: method.minAmount,
       });
 
       const option = page.getByText(method.label);
@@ -135,9 +152,15 @@ test.describe(`checkout — ${api} API`, () => {
     test.skip(!in3, 'in3 is not in the registry');
 
     const checkout = new CheckoutPage(page);
-    // A single unit is far below in3's minimum order value.
-    await checkout.start(in3!.billingCountry, { quantity: 1 });
-    await expect(page.getByText(in3!.label)).toHaveCount(0);
+    // One unit of the cheapest catalogue product, so the cart is under in3's
+    // minimum on both seeds. The default product costs EUR 120 on PS1785 — a
+    // single unit of it already clears the minimum and made this test assert
+    // the opposite of what it claims.
+    await checkout.start(in3!.billingCountry, { quantity: 1, productId: 'cheapest' });
+    // Scoped to the payment options, like every other assertion here: a bare
+    // getByText(/in 3/i) also matches incidental copy elsewhere on the page
+    // (it does on PS1785) and fails a test that is about method availability.
+    await expect(checkout.paymentOption(in3!.label)).toHaveCount(0);
   });
 
   test('every enabled method for this phase renders at the payment step', async ({ page }) => {

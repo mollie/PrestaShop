@@ -10,6 +10,18 @@ export type BillingCountry = 'NL' | 'DE' | 'UK' | 'PL' | 'CH';
 /** Any product in the seeded catalogue works; #1 is the Hummingbird t-shirt. */
 const DEFAULT_PRODUCT_ID = 1;
 
+/**
+ * The cheapest SHIPPABLE product in the seeded catalogue, for carts that must
+ * land BELOW a method's minimum order value. #1 costs EUR 120 on the PS1785
+ * seed, so a single unit of it already clears in3's minimum and cannot express
+ * "too small" on that version.
+ *
+ * Must not be virtual: PrestaShop drops the whole delivery step for a virtual
+ * cart, and the checkout walk then waits forever on `#checkout-delivery-step`.
+ * #12 is EUR 9 but virtual, which is exactly that trap.
+ */
+const CHEAPEST_PRODUCT_ID = 8;
+
 export class CheckoutPage {
   constructor(private page: Page) {}
 
@@ -18,13 +30,56 @@ export class CheckoutPage {
    * worker's cart still holds, adds a product, then walks the address and
    * shipping steps. Deliberately does NOT reorder a previous order — a
    * worker customer has no order history to reorder from.
+   *
+   * Pass `minTotal` rather than a fixed `quantity` whenever the cart has to
+   * clear a payment method's minimum: unit prices differ between the PS8 and
+   * PS1785 seeds, so any hard-coded quantity lands on a different total per
+   * version.
    */
-  async start(billingCountry: BillingCountry, options: { quantity?: number } = {}) {
+  async start(
+    billingCountry: BillingCountry,
+    options: { quantity?: number; minTotal?: number; productId?: number | 'cheapest' } = {}
+  ) {
+    const productId =
+      options.productId === 'cheapest'
+        ? CHEAPEST_PRODUCT_ID
+        : options.productId ?? DEFAULT_PRODUCT_ID;
     await this.emptyCart();
-    await this.addProduct(options.quantity ?? 1);
+
+    let quantity = options.quantity ?? 1;
+    if (options.minTotal !== undefined) {
+      const unit = await this.unitPrice(productId);
+      quantity = Math.max(1, Math.ceil(options.minTotal / unit));
+    }
+
+    await this.addProduct(quantity, productId);
     await this.page.goto('/en/order');
     await this.chooseAddress(billingCountry);
     await this.confirmShipping();
+  }
+
+  /**
+   * Tax-inclusive unit price as the theme advertises it. Each of these carries
+   * the raw number in a `content` attribute, so this never parses a
+   * currency-formatted, locale-dependent string. More than one selector because
+   * the PS8 and PS1785 themes do not agree: PS1785 renders no `[itemprop]` on
+   * the price at all.
+   */
+  private async unitPrice(productId: number = DEFAULT_PRODUCT_ID): Promise<number> {
+    await this.page.goto(`/en/index.php?id_product=${productId}&controller=product`);
+
+    const sources = [
+      '.current-price-value',
+      'meta[property="product:price:amount"]',
+      '[itemprop="price"]',
+    ];
+    for (const selector of sources) {
+      const el = this.page.locator(selector).first();
+      if ((await el.count()) === 0) continue;
+      const price = Number(await el.getAttribute('content'));
+      if (Number.isFinite(price) && price > 0) return price;
+    }
+    throw new Error(`Could not read a unit price for product ${productId}`);
   }
 
   async emptyCart() {
@@ -47,8 +102,52 @@ export class CheckoutPage {
     await this.page.locator('#blockcart-modal, .cart-content').first().waitFor({ timeout: 20_000 });
   }
 
+  /**
+   * Re-opens the addresses step when the checkout has already moved past it.
+   *
+   * PrestaShop's one-page checkout goes straight to the payment step whenever
+   * the cart already carries an address and a carrier. The earlier steps
+   * collapse to `-complete` with `display: none` content, so their radios stay
+   * in the DOM but are invisible and `check()` fails with a bare "Element is
+   * not visible" that says nothing about the real cause. A worker that has
+   * already run one checkout hits this on its next test, which is why it
+   * surfaced on the one method that switches billing country rather than
+   * looking like the general ordering problem it is.
+   */
+  private async openStep(stepId: string, revealed: string) {
+    const step = this.page.locator(stepId);
+    await step.waitFor({ timeout: 20_000 });
+
+    const target = step.locator(revealed).first();
+
+    // Retried rather than clicked once: the theme re-renders the step list over
+    // AJAX, so an opener click can land while the node is being replaced and be
+    // lost. Each pass re-reads the state instead of trusting the first look.
+    for (let attempt = 0; attempt < 4; attempt++) {
+      if (await target.isVisible().catch(() => false)) return;
+
+      const classes = (await step.getAttribute('class')) ?? '';
+      // Only a step the checkout has already reached can be opened by clicking.
+      // One that is not current *yet* opens on its own, and clicking its title
+      // does nothing while the content stays hidden.
+      if (!classes.includes('-current') && /-complete|-clickable|-reachable/.test(classes)) {
+        // `.step-edit` is the theme's own re-open control; the title is
+        // clickable too once the step is `-clickable`, so fall back to it.
+        const edit = step.locator('.step-edit').first();
+        const opener =
+          (await edit.count()) > 0 ? edit : step.locator('.step-title').first();
+        await opener.click({ force: true }).catch(() => {});
+      }
+
+      await target.waitFor({ state: 'visible', timeout: 5_000 }).catch(() => {});
+    }
+
+    await target.waitFor({ state: 'visible', timeout: 10_000 });
+  }
+
   /** Picks the delivery (and, by default, invoice) address by its alias. */
   async chooseAddress(alias: BillingCountry) {
+    await this.openStep('#checkout-addresses-step', 'article input[type="radio"]');
     const block = this.page
       .locator('#checkout-addresses-step article')
       .filter({ has: this.page.locator('.address-alias', { hasText: new RegExp(`^${alias}$`) }) })
@@ -60,6 +159,10 @@ export class CheckoutPage {
   }
 
   async confirmShipping() {
+    // Same collapse as the addresses step: a cart that already has a carrier
+    // sends the checkout straight to payment, leaving this step `-complete`
+    // with its Continue button present but hidden.
+    await this.openStep('#checkout-delivery-step', '#js-delivery .continue');
     await this.page.locator('#js-delivery > .continue').click();
     await this.page.locator('#checkout-payment-step').waitFor({ timeout: 20_000 });
   }

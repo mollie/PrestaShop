@@ -21,7 +21,14 @@ export type MethodDef = {
   apis: ReadonlyArray<'orders' | 'payments'>;
   shape: CheckoutShape;
   billingCountry: 'NL' | 'DE' | 'UK';
+  /**
+   * Mollie's own order-value window for the method, in EUR, as reported by
+   * `GET /v2/methods?amount[value]=…`. A cart outside it is simply not offered
+   * the method, so the checkout specs size the cart from `minAmount` and the
+   * availability spec asserts the method disappears below it.
+   */
   minAmount?: number;
+  maxAmount?: number;
   /** Set when the method cannot be exercised; the test is skipped, not deleted. */
   fixme?: string;
 };
@@ -42,10 +49,26 @@ export const paymentMethods: MethodDef[] = [
       'client-side, so this needs a test card typed into those iframes — a ' +
       'different flow from every other method here.',
   },
-  { id: 'klarnapaylater', label: /pay later/i, apis: ['orders'], shape: 'authorize', billingCountry: 'NL' },
+  // `klarnapaylater` (with `klarnapaynow`/`klarnasliceit`) is the legacy split
+  // Mollie has since consolidated into one `klarna` method — the test profile
+  // returns `klarna` and never `klarnapaylater`, so the old ID matched nothing
+  // and both its tests skipped themselves as "not offered" on every run.
+  { id: 'klarna', label: /klarna/i, apis: ['orders'], shape: 'authorize', billingCountry: 'NL' },
   { id: 'billie', label: /billie/i, apis: ['orders'], shape: 'authorize', billingCountry: 'DE' },
   { id: 'banktransfer', label: /bank transfer/i, apis: ['orders'], shape: 'async', billingCountry: 'NL' },
-  { id: 'in3', label: /in 3/i, apis: ['orders'], shape: 'redirect', billingCountry: 'NL', minAmount: 5000 },
+  // Verified against the test profile: in3 is offered at EUR 50 and EUR 250 but
+  // not at EUR 20 or EUR 6000. The 5000 previously recorded as `minAmount` is
+  // the method's maximum, which sized every in3 cart far ABOVE the window and
+  // left both in3 checkout tests permanently skipped as "not offered".
+  {
+    id: 'in3',
+    label: /in 3/i,
+    apis: ['orders'],
+    shape: 'redirect',
+    billingCountry: 'NL',
+    minAmount: 50,
+    maxAmount: 5000,
+  },
   { id: 'paypal', label: /paypal/i, apis: ['payments'], shape: 'redirect', billingCountry: 'NL' },
   { id: 'eps', label: /eps/i, apis: ['payments'], shape: 'redirect', billingCountry: 'NL' },
   { id: 'kbc', label: /kbc\/cbc/i, apis: ['payments'], shape: 'issuer-list', billingCountry: 'NL' },

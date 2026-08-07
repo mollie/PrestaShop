@@ -98,6 +98,32 @@ export class AdminOrderPage {
   }
 
   /**
+   * Waits for the refund control to show up, reloading as it goes.
+   *
+   * The Mollie panel is server-rendered and only offers a refund once Mollie
+   * reports the payment as captured. That confirmation arrives by webhook,
+   * seconds after the shipment call returns, so the control routinely lags the
+   * redirect back into the BO. A plain `expect(...).toBeVisible()` on the
+   * default 5s budget catches it only when the webhook happens to be quick,
+   * which is why the same method passed and failed across consecutive runs.
+   */
+  async waitForRefundControl(timeoutMs = 45_000): Promise<boolean> {
+    const deadline = Date.now() + timeoutMs;
+    const visible = () =>
+      this.refundButton()
+        .first()
+        .isVisible()
+        .catch(() => false);
+
+    while (Date.now() < deadline) {
+      if (await visible()) return true;
+      await this.page.waitForTimeout(3_000);
+      await this.page.reload().catch(() => {});
+    }
+    return visible();
+  }
+
+  /**
    * Refunds the order, or reports that Mollie does not currently allow it.
    *
    * order_info.tpl renders the button `disabled` when `!canRefund`, and clicking
