@@ -15,6 +15,7 @@ namespace Mollie\Tests\Unit\Service;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\ToolsAdapter;
+use Mollie\Config\Config;
 use Mollie\DTO\Object\Amount;
 use Mollie\DTO\OrderLine;
 use Mollie\DTO\PaymentFeeData;
@@ -100,6 +101,7 @@ class CartLinesServiceTest extends TestCase
         $productName_2 = 'Hummingbird printed t-shirt';
         $productName_3 = 'The best is yet to come\' Framed poster';
         $shipping = 'Shipping';
+        $paymentFee = 'Payment fee';
         $giftWrapping = 'Gift wrapping';
         $currencyIsoCode = 'EUR';
 
@@ -501,6 +503,120 @@ class CartLinesServiceTest extends TestCase
                             ->setVatAmount(new Amount($currencyIsoCode, '0.84'))
                             ->setCategory(null)
                             ->setVatRate('21.00')
+                            ->setMetaData([]),
+                ],
+            ],
+            'free shipping voucher keeps the lines summing to the amount (PIPRES-795)' => [
+                'amount' => 14.28,
+                'paymentFee' => new PaymentFeeData(0.60, 0.50, 20.00, true),
+                'currencyIsoCode' => $currencyIsoCode,
+                'cartSummary' => [
+                    'gift_products' => [
+                        ],
+                    'discounts' => [
+                            0 => [
+                                'name' => 'Free shipping test',
+                                'free_shipping' => '1',
+                                'value_real' => 8.40,
+                                'value_tax_exc' => 8.40,
+                            ],
+                        ],
+                    'total_wrapping' => 0,
+                    'total_wrapping_tax_exc' => 0,
+                    'total_shipping' => 8.40,
+                    'total_shipping_tax_exc' => 8.40,
+                    'total_products_wt' => 14.28,
+                    'total_products' => 11.90,
+                    'total_price' => 14.28,
+                    'free_ship' => true,
+                    'total_discounts' => 8.40,
+                ],
+                8.40,
+                'cartItems' => [
+                    0 => [
+                            'total_wt' => 14.28,
+                            'cart_quantity' => '1',
+                            'price_wt' => 14.28,
+                            'id_product' => '6',
+                            'name' => $productName_3,
+                            'rate' => 20,
+                            'id_product_attribute' => '0',
+                            'id_customization' => null,
+                            'features' => [],
+                            'link_rewrite' => 'test-link',
+                            'id_image' => 'test-image-id',
+                        ],
+                ],
+                'psGiftWrapping' => false,
+                'selectedVoucherCategory' => 'null',
+                'translationMocks' => [
+                    0 => [
+                        'function' => 'lang',
+                        'expects' => $shipping,
+                        'return' => $shipping,
+                        'at' => 0,
+                    ],
+                    1 => [
+                        'function' => 'lang',
+                        'expects' => $paymentFee,
+                        'return' => $paymentFee,
+                        'at' => 1,
+                    ],
+                ],
+                'toolsMocks' => [
+                ],
+                'mocks' => [],
+                // 14.28 - 8.40 + 8.40 + 0.60 = 14.88, which is the amount plus the payment fee.
+                'result' => [
+                    0 => (new OrderLine())
+                            ->setType('physical')
+                            ->setName($productName_3)
+                            ->setQuantity(1)
+                            ->setSku('6¤0¤0')
+                            ->setDiscountAmount(null)
+                            ->setProductUrl('')
+                            ->setImageUrl('')
+                            ->setUnitPrice(new Amount($currencyIsoCode, '14.28'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '14.28'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '2.38'))
+                            ->setCategory('')
+                            ->setVatRate('20.00')
+                            ->setMetaData(['idProduct' => '6']),
+                    1 => (new OrderLine())
+                            ->setType('discount')
+                            ->setName('Discount')
+                            ->setQuantity(1)
+                            ->setSku('DISCOUNT')
+                            ->setDiscountAmount(null)
+                            ->setUnitPrice(new Amount($currencyIsoCode, '-8.40'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '-8.40'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '0.00'))
+                            ->setCategory('')
+                            ->setVatRate('0.00')
+                            ->setMetaData([]),
+                    2 => (new OrderLine())
+                            ->setType('shipping_fee')
+                            ->setName($shipping)
+                            ->setQuantity(1)
+                            ->setSku($shipping)
+                            ->setDiscountAmount(null)
+                            ->setUnitPrice(new Amount($currencyIsoCode, '8.40'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '8.40'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '0.00'))
+                            ->setCategory(null)
+                            ->setVatRate('0.00')
+                            ->setMetaData([]),
+                    3 => (new OrderLine())
+                            ->setType('surcharge')
+                            ->setName($paymentFee)
+                            ->setQuantity(1)
+                            ->setSku(Config::PAYMENT_FEE_SKU)
+                            ->setDiscountAmount(null)
+                            ->setUnitPrice(new Amount($currencyIsoCode, '0.60'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '0.60'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '0.10'))
+                            ->setCategory(null)
+                            ->setVatRate('20.00')
                             ->setMetaData([]),
                 ],
             ],
