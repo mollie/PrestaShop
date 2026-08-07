@@ -31,6 +31,10 @@ jobs:
       E2E_BO_PASSWORD: ${{ matrix.bo_password }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
       - name: Install composer deps
         run: composer i
       - name: Install npm deps
@@ -43,6 +47,18 @@ jobs:
         run: make VERSION=${{ matrix.version }} set-shop-domain HOST=localhost:8002 SSL=0
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
+      # Must be its own invocation, before the one below. The webhook guards for
+      # 400/422/409 and the advanced-settings save all require a connected API
+      # key, and inside a single run they execute in parallel with the
+      # authorization spec that connects it — so they lose the race and skip
+      # themselves. That is three of the four webhook assertions silently absent
+      # from a green job. The checkout job connects up front for the same reason.
+      - name: Connect the module to Mollie
+        working-directory: tests/e2e
+        run: npx playwright test --project=admin authorization
+        env:
+          E2E_BASE_URL: http://localhost:8002
+          MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
       - name: Run admin + webhook + mobile projects
         working-directory: tests/e2e
         run: npx playwright test --project=admin --project=webhook --project=mobile
@@ -75,12 +91,14 @@ jobs:
           - prestashop: PS8
             version: 8
             hostname: ps8-checkout.invertusdemo.com
+            hostname_var: MOLLIE_CI_HOSTNAME_PS8
             tunnel_token_secret: CF_TUNNEL_TOKEN_PS8_CHECKOUT
             bo_email: demo@prestashop.com
             bo_password: prestashop_demo
           - prestashop: PS1785
             version: 1785
             hostname: ps1785-checkout.invertusdemo.com
+            hostname_var: MOLLIE_CI_HOSTNAME_PS1785
             tunnel_token_secret: CF_TUNNEL_TOKEN_PS1785_CHECKOUT
             bo_email: demo@demo.com
             bo_password: demodemo
@@ -89,8 +107,16 @@ jobs:
       # The PS8 seed ships demo@prestashop.com; the PS1785 seed ships demo@demo.com.
       E2E_BO_EMAIL: ${{ matrix.bo_email }}
       E2E_BO_PASSWORD: ${{ matrix.bo_password }}
+      # A repo variable wins, so the tunnel can be repointed without editing this
+      # file; the matrix value is the checked-in default. The tunnel's
+      # public-hostname route must map this name to http://localhost:8002.
+      TUNNEL_HOSTNAME: ${{ vars[matrix.hostname_var] || matrix.hostname }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
       - name: Install composer deps
         run: composer i
       - name: Install npm deps
@@ -101,45 +127,82 @@ jobs:
         run: make VERSION=${{ matrix.version }} e2eh${{ matrix.version }}
       - name: Install cloudflared
         run: |
-          wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
-          chmod +x cloudflared-linux-amd64
-          sudo mv cloudflared-linux-amd64 /usr/local/bin/cloudflared
-      - name: Start named tunnel
+          curl -sSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 \
+            -o /usr/local/bin/cloudflared
+          sudo chmod +x /usr/local/bin/cloudflared
+          cloudflared --version
+      - name: Start Cloudflare named tunnel
         run: |
-          cloudflared tunnel --no-autoupdate run --token ${{ secrets[matrix.tunnel_token_secret] }} &
-          sleep 5
-      - name: Rewrite shop domain to the tunnel hostname
-        run: make VERSION=${{ matrix.version }} set-shop-domain HOST=${{ matrix.hostname }}
-      - name: Wait for the tunnel to serve the shop
+          if [ -z "${{ secrets[matrix.tunnel_token_secret] }}" ]; then
+            echo "::error::${{ matrix.tunnel_token_secret }} is not set — see docs/e2e-ci-setup.md"
+            exit 1
+          fi
+          # nohup + own logfile: with a bare `&` the connector writes to the
+          # step's pipe, which is closed once the step ends, so there is nothing
+          # left to read when the tunnel fails to register.
+          nohup cloudflared tunnel --no-autoupdate run \
+            --token ${{ secrets[matrix.tunnel_token_secret] }} > cloudflared.log 2>&1 &
+          echo "Started cloudflared, waiting for the connector to register..."
+          sleep 10
+          cat cloudflared.log || true
+      - name: Point the shop at the tunnel hostname
         run: |
-          for i in $(seq 1 20); do
-            code=$(curl -s -o /dev/null -w '%{http_code}' "https://${{ matrix.hostname }}/")
-            if [ "$code" = "200" ] || [ "$code" = "302" ]; then echo ok; exit 0; fi
+          make VERSION=${{ matrix.version }} set-shop-domain HOST="$TUNNEL_HOSTNAME"
+          make VERSION=${{ matrix.version }} trust-forwarded-proto
+      - name: Wait for the shop to answer over the tunnel
+        run: |
+          for i in $(seq 1 60); do
+            code=$(curl -sk -o /dev/null -w '%{http_code}' "https://$TUNNEL_HOSTNAME/index.php" || true)
+            echo "attempt $i -> HTTP $code"
+            case "$code" in 200|301|302) echo "Tunnel reachable."; exit 0;; esac
             sleep 5
           done
-          echo "Tunnel never came up" && exit 1
+          echo "Shop not reachable over the tunnel within 300s."
+          cat cloudflared.log || true
+          exit 1
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
+      # The seed ships no Mollie API key, and nothing in the checkout chain
+      # writes one. Without this the module offers no payment methods and every
+      # checkout test skips itself as "not offered at the payment step" — a green
+      # job that tested nothing. Connecting through the real UI (the module's own
+      # AJAX, never mocked) is also what makes Mollie sync the method list.
+      - name: Connect the module to Mollie
+        working-directory: tests/e2e
+        run: npx playwright test --project=admin authorization
+        env:
+          E2E_BASE_URL: https://${{ env.TUNNEL_HOSTNAME }}
+          MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
       - name: Run Orders API checkout phase
         working-directory: tests/e2e
         run: npx playwright test --project=checkout-orders
         env:
           E2E_CHECKOUT_API: orders
-          E2E_BASE_URL: https://${{ matrix.hostname }}
+          E2E_BASE_URL: https://${{ env.TUNNEL_HOSTNAME }}
           MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
       - name: Run Payments API checkout phase
         working-directory: tests/e2e
         run: npx playwright test --project=cfg-payments --project=checkout-payments
         env:
           E2E_CHECKOUT_API: payments
-          E2E_BASE_URL: https://${{ matrix.hostname }}
+          E2E_BASE_URL: https://${{ env.TUNNEL_HOSTNAME }}
           MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+      - name: Stop Cloudflare tunnel
+        if: always()
+        run: pkill -f cloudflared || true
       - name: Upload blob report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: blob-report-checkout-${{ matrix.prestashop }}
           path: tests/e2e/blob-report
+          retention-days: 7
+      - name: Upload tunnel log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudflared-log-${{ matrix.prestashop }}
+          path: cloudflared.log
           retention-days: 7
 
   merge-reports:
@@ -148,6 +211,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
       - uses: actions/download-artifact@v4
         with:
           path: all-blob-reports
