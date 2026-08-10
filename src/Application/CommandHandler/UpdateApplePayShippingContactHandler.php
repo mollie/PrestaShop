@@ -177,6 +177,32 @@ final class UpdateApplePayShippingContactHandler
     {
         $context = \Context::getContext();
         $context->cart = $cart;
-        \Context::getContext()->updateCustomer($customer);
+
+        $deliveryAddressId = (int) $cart->id_address_delivery;
+        $invoiceAddressId = (int) $cart->id_address_invoice;
+
+        $context->updateCustomer($customer);
+
+        $this->restoreCartAddresses($cart, $deliveryAddressId, $invoiceAddressId);
+    }
+
+    /**
+     * Context::updateCustomer() reassigns both cart addresses to Address::getFirstCustomerAddressId(),
+     * which ignores soft-deleted rows and therefore never returns the temporary Apple Pay address:
+     * 0 for the throwaway guest, the customer's oldest saved address for a logged-in shopper.
+     * Put back the addresses the Apple Pay sheet is being quoted against.
+     */
+    private function restoreCartAddresses(Cart $cart, int $deliveryAddressId, int $invoiceAddressId): void
+    {
+        if ((int) $cart->id_address_delivery === $deliveryAddressId && (int) $cart->id_address_invoice === $invoiceAddressId) {
+            return;
+        }
+
+        // Remaps ps_cart_product rows away from the address the core call just forced onto the cart.
+        $cart->updateAddressId((int) $cart->id_address_delivery, $deliveryAddressId);
+
+        $cart->id_address_delivery = $deliveryAddressId;
+        $cart->id_address_invoice = $invoiceAddressId;
+        $cart->update();
     }
 }
