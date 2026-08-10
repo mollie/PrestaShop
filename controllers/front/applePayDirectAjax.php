@@ -247,16 +247,45 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
         /** @var ApplePayOrderBuilder $applePayProductBuilder */
         $applePayProductBuilder = $this->module->getService(ApplePayOrderBuilder::class);
 
-        $shippingContent = Tools::getValue('shippingContact');
-        $billingContent = Tools::getValue('billingContact');
-        $applePayOrderBuilder = $applePayProductBuilder->build($products, $shippingContent, $billingContent);
+        /** @var Logger $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
 
-        $command = new CreateApplePayOrder(
-            $cartId,
-            $applePayOrderBuilder,
-            json_encode(Tools::getValue('token'))
-        );
-        $response = $handler->handle($command);
+        try {
+            $shippingContent = Tools::getValue('shippingContact');
+            $billingContent = Tools::getValue('billingContact');
+            $applePayOrderBuilder = $applePayProductBuilder->build($products, $shippingContent, $billingContent);
+
+            $command = new CreateApplePayOrder(
+                $cartId,
+                $applePayOrderBuilder,
+                json_encode(Tools::getValue('token'))
+            );
+            $response = $handler->handle($command);
+        } catch (\Throwable $exception) {
+            $logger->error(sprintf('%s - Failed to create apple pay order.', self::FILE_NAME), [
+                'context' => [
+                    'cartId' => $cartId,
+                ],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+
+            // Apple Pay only understands a JSON payload here. Letting the exception escape returns an
+            // HTML error page, which the sheet reports to the shopper as an opaque parsing failure.
+            $this->ajaxRender(json_encode([
+                'success' => false,
+                'status' => 'STATUS_FAILURE',
+                'errors' => [
+                    [
+                        'code' => 'unknown',
+                        'contactField' => null,
+                        'message' => $this->module->l('Failed to create the order. Please try again.', self::FILE_NAME),
+                    ],
+                ],
+            ]));
+
+            return;
+        }
+
         if (!$response['success']) {
             $this->ajaxRender(json_encode($response));
         }
