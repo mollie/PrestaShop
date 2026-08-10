@@ -4,6 +4,7 @@
 
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API
++ New payment method: Billink, available on the Payments API for consumer purchases up to 2,500.00 EUR
 + Fixed inconsistent payment method label on orders, card payments showed the internal method id instead of the payment method name
 + Wallet payments are now labelled with the method that settled them and the wallet used, for example "Card (Apple Pay)"
 + Added shipping method exclusion list for Apple Pay Direct
@@ -57,7 +58,6 @@
 + Improved front office subscription tab handling
 + Improved company name validation by replacing special characters
 + Redirected bank transfer to order confirmation instead of custom page
-+ Added Billink payment method
 
 ## Changes in release 6.4.2
 + Multiple Apple Pay Direct improvements and stability fixes
