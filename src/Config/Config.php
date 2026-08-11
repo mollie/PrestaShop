@@ -477,6 +477,11 @@ class Config
         self::BILLINK,
     ];
 
+    /* Mollie advertises the 10000.00 B2B ceiling in the methods endpoint, consumer orders are capped at 2500.00 */
+    public const BILLINK_B2C_MAXIMUM_AMOUNT = 2500.00;
+
+    public const BILLINK_CURRENCY = 'EUR';
+
     public const PS_CLOUDSYNC_CDC = 'https://assets.prestashop3.com/ext/cloudsync-merchant-sync-consent/latest/cloudsync-cdc.js';
 
     public const PS_EVENTBUS_CONTEXT = [
