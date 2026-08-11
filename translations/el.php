@@ -43,6 +43,7 @@ $_MODULE['<{mollie}prestashop>qr_code_fc258b840545ee1ec431efe82bd4dcbd'] = 'Συ
 $_MODULE['<{mollie}prestashop>qr_code_ea4788705e6873b424c65e91c2846b19'] = 'Ακύρωση';
 $_MODULE['<{mollie}prestashop>payment_334721e5f1ee825da687fcaede010724'] = 'Χρέωση Πληρωμής:';
 $_MODULE['<{mollie}prestashop>mollie_awaiting_order_status_error_56ce2a4e08c9d84441b90ab4c4b66f84'] = 'Επιλέξτε μια κατάσταση παραγγελίας για \"Κατάσταση για Πληρωμές σε αναμονή\" στην καρτέλα \"Προχωρημένες ρυθμίσεις\"';
+$_MODULE['<{mollie}prestashop>order_info_37d847d86227ba49e594d80112c74afa'] = 'Προβολή στο Mollie';
 $_MODULE['<{mollie}prestashop>order_info_729a51874fe901b092899e9e8b31c97a'] = 'Είστε σίγουρος;';
 $_MODULE['<{mollie}prestashop>order_info_ccaf4ee393d094ecde7f21b15fdf8f1f'] = 'Είστε σίγουρος ότι θέλετε να λάβετε επιστροφή χρημάτων για αυτήν την παραγγελία;';
 $_MODULE['<{mollie}prestashop>order_info_76f0ed934de85cc7131910b32ede7714'] = 'Επιστροφή χρημάτων';
@@ -412,6 +413,7 @@ $_MODULE['<{mollie}prestashop>molliepaymentmailservice_7d4e9f222469e74d17fde11ca
 $_MODULE['<{mollie}prestashop>mailservice_ed13b3693357ebed3751cb71cb639e65'] = 'Δεν υπάρχει μεταφορέας';
 $_MODULE['<{mollie}prestashop>mailservice_fca7e8d1c86db11246e429e40aa10c81'] = 'Νέο κουπόνι για την παραγγελία σας %s';
 $_MODULE['<{mollie}prestashop>orderlistactionbuilder_5678cf484b844064515349752b1ccb18'] = 'Θα ξαναστείλετε email με τον σύνδεσμο πληρωμής στον πελάτη';
+$_MODULE['<{mollie}prestashop>ordergriddefinitionmodifier_37d847d86227ba49e594d80112c74afa'] = 'Προβολή στο Mollie';
 $_MODULE['<{mollie}prestashop>ordergriddefinitionmodifier_5678cf484b844064515349752b1ccb18'] = 'Θα ξαναστείλετε email με τον σύνδεσμο πληρωμής στον πελάτη';
 $_MODULE['<{mollie}prestashop>ordergriddefinitionmodifier_74873b96b26fbcac6af3154c5dea0656'] = 'Επαναποστολή συνδέσμου πληρωμής';
 

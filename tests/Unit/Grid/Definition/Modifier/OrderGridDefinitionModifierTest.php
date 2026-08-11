@@ -36,6 +36,7 @@ class OrderGridDefinitionModifierTest extends TestCase
     const TRANSLATION_SOURCE = 'OrderGridDefinitionModifier';
     const HEADER = 'Resend payment link';
     const TOOLTIP = 'You will resend email with payment link to the customer';
+    const VIEW_IN_MOLLIE = 'View in Mollie';
 
     /**
      * The shipped catalogs must contain the exact keys that Mollie::l() looks up for this modifier,
@@ -65,6 +66,55 @@ class OrderGridDefinitionModifierTest extends TestCase
                 );
             }
         }
+    }
+
+    /**
+     * Regression for PIPRES-810: the "View in Mollie" label (PIPRES-786) shipped in English only, so
+     * every non-English back office showed the source string on the Orders list and the order page.
+     * The label is looked up from two sources - the order_info template and this grid modifier - so
+     * both keys must exist, and must agree, in every shipped catalog.
+     */
+    public function testShippedCatalogsTranslateTheViewInMollieLabel()
+    {
+        $hash = md5(self::VIEW_IN_MOLLIE);
+        $templateKey = '<{mollie}prestashop>order_info_' . $hash;
+        $gridKey = '<{mollie}prestashop>' . strtolower(self::TRANSLATION_SOURCE) . '_' . $hash;
+        $translationsDir = dirname(__DIR__, 5) . '/translations';
+
+        $catalogs = glob($translationsDir . '/*.php');
+        $this->assertNotEmpty($catalogs, 'No shipped translation catalogs were found.');
+
+        $checked = 0;
+        foreach ($catalogs as $catalog) {
+            $iso = basename($catalog, '.php');
+            if ('index' === $iso) {
+                continue;
+            }
+
+            ++$checked;
+            $_MODULE = [];
+            include $catalog;
+
+            $this->assertArrayHasKey($templateKey, $_MODULE, sprintf('Missing order page translation in %s.php', $iso));
+            $this->assertArrayHasKey($gridKey, $_MODULE, sprintf('Missing Orders list translation in %s.php', $iso));
+            $this->assertNotSame('', trim((string) $_MODULE[$templateKey]), sprintf('Empty order page translation in %s.php', $iso));
+            $this->assertSame(
+                $_MODULE[$templateKey],
+                $_MODULE[$gridKey],
+                sprintf('The order page and Orders list labels must match in %s.php', $iso)
+            );
+
+            if ('en' !== $iso) {
+                $this->assertNotSame(
+                    self::VIEW_IN_MOLLIE,
+                    $_MODULE[$gridKey],
+                    sprintf('Label in %s.php should be localized, not the English source string', $iso)
+                );
+            }
+        }
+
+        // Guards against the glob silently matching nothing but index.php.
+        $this->assertGreaterThan(1, $checked, 'Expected the shipped locale catalogs to be checked.');
     }
 
     /**
