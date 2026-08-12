@@ -62,12 +62,21 @@ jobs:
         env:
           E2E_BASE_URL: http://localhost:8002
           MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+          # Every playwright invocation needs its own PLAYWRIGHT_BLOB_OUTPUT_FILE,
+          # unique across the whole workflow. Two reasons: (1) without it the blob
+          # reporter wipes the blob-report dir before writing, so within a job only
+          # the LAST invocation's report survives to the upload; (2) the default
+          # name is derived from the CLI args only, so the PS8 and PS1785 matrix
+          # legs produce identical filenames that overwrite each other when the
+          # merge job flattens all artifacts into one directory.
+          PLAYWRIGHT_BLOB_OUTPUT_FILE: blob-report/connect-local-${{ matrix.prestashop }}.zip
       - name: Run admin + webhook + mobile projects
         working-directory: tests/e2e
         run: npx playwright test --project=admin --project=webhook --project=mobile
         env:
           E2E_BASE_URL: http://localhost:8002
           MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+          PLAYWRIGHT_BLOB_OUTPUT_FILE: blob-report/local-${{ matrix.prestashop }}.zip
       - name: Upload blob report
         if: always()
         uses: actions/upload-artifact@v4
@@ -179,6 +188,8 @@ jobs:
         env:
           E2E_BASE_URL: https://${{ env.TUNNEL_HOSTNAME }}
           MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+          # Unique per invocation and per matrix leg — see the local job for why.
+          PLAYWRIGHT_BLOB_OUTPUT_FILE: blob-report/connect-checkout-${{ matrix.prestashop }}.zip
       - name: Run Orders API checkout phase
         working-directory: tests/e2e
         run: npx playwright test --project=checkout-orders
@@ -186,6 +197,7 @@ jobs:
           E2E_CHECKOUT_API: orders
           E2E_BASE_URL: https://${{ env.TUNNEL_HOSTNAME }}
           MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+          PLAYWRIGHT_BLOB_OUTPUT_FILE: blob-report/orders-${{ matrix.prestashop }}.zip
       - name: Run Payments API checkout phase
         working-directory: tests/e2e
         run: npx playwright test --project=cfg-payments --project=checkout-payments
@@ -193,6 +205,7 @@ jobs:
           E2E_CHECKOUT_API: payments
           E2E_BASE_URL: https://${{ env.TUNNEL_HOSTNAME }}
           MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+          PLAYWRIGHT_BLOB_OUTPUT_FILE: blob-report/payments-${{ matrix.prestashop }}.zip
       - name: Stop Cloudflare tunnel
         if: always()
         run: pkill -f cloudflared || true
@@ -225,6 +238,11 @@ jobs:
         with:
           path: all-blob-reports
           pattern: blob-report-*
+          # merge-reports does a non-recursive scan for *.zip; without this each
+          # artifact lands in its own subdirectory and the merge finds nothing.
+          # Flattening is safe because PLAYWRIGHT_BLOB_OUTPUT_FILE gives every
+          # zip a workflow-unique name.
+          merge-multiple: true
       # No artifacts means every test job died before running Playwright —
       # nothing to merge, and download-artifact does not even create the
       # directory, so the merge command would crash with a confusing error.
