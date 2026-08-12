@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { test, expect } from '../../fixtures/base';
 import { CheckoutPage } from '../../pages/front/checkout-page';
 import { HostedCheckoutPage } from '../../pages/mollie/hosted-checkout-page';
@@ -7,6 +8,7 @@ import { OrderHistoryPage } from '../../pages/front/order-history-page';
 import { paymentMethods } from '../../data/payment-methods';
 import { envValue, isPubliclyReachableBaseUrl } from '../../helpers/env';
 import { skipIfDisconnected } from '../../helpers/module-state';
+import { querySingleValue } from '../../helpers/db';
 
 /**
  * Which API this run exercises comes from the job environment, not from a
@@ -33,6 +35,38 @@ function requiresPublicHost(): void {
       'webhookUrl, so no checkout can complete. Run this phase against the ' +
       'Cloudflare tunnel hostname.'
   );
+}
+
+const WEBHOOK_PATH = '/index.php?fc=module&module=mollie&controller=webhook';
+
+/** Recorded in the report rather than the runner's stdout, so it survives the merge. */
+function note(description: string): void {
+  test.info().annotations.push({ type: 'note', description });
+}
+
+/**
+ * Where the module lands the customer after a non-paid outcome differs by
+ * state (payment step for a failure, a wait/return page for a cancellation),
+ * and the hop back is a redirect chain just like `placeOrder`'s hop out — so
+ * this polls the committed URL until it has left Mollie's origin rather than
+ * binding to any single navigation.
+ */
+async function waitUntilBackOnShop(page: Page, timeoutMs = 90_000): Promise<void> {
+  const onMollie = () => {
+    try {
+      return new URL(page.url()).hostname.endsWith('mollie.com');
+    } catch {
+      return true;
+    }
+  };
+  const deadline = Date.now() + timeoutMs;
+  while (onMollie()) {
+    if (Date.now() > deadline) {
+      throw new Error(`still on ${page.url()} ${timeoutMs}ms after choosing the outcome`);
+    }
+    await page.waitForTimeout(250);
+  }
+  await page.waitForLoadState('domcontentloaded').catch(() => {});
 }
 
 test.describe(`checkout — ${api} API`, () => {
@@ -95,7 +129,7 @@ test.describe(`checkout — ${api} API`, () => {
         await expect(bo.shipButton().first()).toBeVisible();
         shipped = await bo.ship('FedEx', '123456', 'https://www.invertus.eu');
         if (!shipped) {
-          console.log(`${method.id}: order not shippable at Mollie yet`);
+          note(`${method.id}: order not shippable at Mollie yet`);
         }
       }
 
@@ -106,7 +140,7 @@ test.describe(`checkout — ${api} API`, () => {
       // would assert behaviour the module does not have, and it is the same
       // judgement the ship step above already makes.
       if (!shipped) {
-        console.log(`${method.id}: not captured, so no refund control is offered`);
+        note(`${method.id}: not captured, so no refund control is offered`);
         return;
       }
 
@@ -152,7 +186,7 @@ test.describe(`checkout — ${api} API`, () => {
           remaining,
           `${method.id}: still-refundable amount never dropped below ${refundable}`
         ).not.toBeNull();
-        console.log(`${method.id}: refunded ${half.toFixed(2)}, ${remaining} still refundable`);
+        note(`${method.id}: refunded ${half.toFixed(2)}, ${remaining} still refundable`);
 
         // A partial refund must leave the remainder refundable — one that
         // consumed the whole amount is a full refund by another name.
@@ -166,7 +200,7 @@ test.describe(`checkout — ${api} API`, () => {
               `${method.id}: refunding the remainder reported "${second.message}"`
             ).toBe(true);
           } else {
-            console.log(`${method.id}: Mollie does not currently allow a second refund`);
+            note(`${method.id}: Mollie does not currently allow a second refund`);
           }
         }
         return;
@@ -182,7 +216,7 @@ test.describe(`checkout — ${api} API`, () => {
       ).toBe(true);
       const refunded = await bo.refund();
       if (!refunded) {
-        console.log(`${method.id}: refund not currently permitted by Mollie`);
+        note(`${method.id}: refund not currently permitted by Mollie`);
       }
     });
 
@@ -220,6 +254,128 @@ test.describe(`checkout — ${api} API`, () => {
     });
   }
 
+  /**
+   * One representative plain-redirect method carries the outcomes the
+   * per-method loop does not: canceled and expired. Risk-based like the
+   * registry itself — the module's return handling branches on the payment
+   * state, not on the method, so one method per phase exercises the branch.
+   */
+  const negativeOutcomeMethod = methodsForThisPhase.find(
+    (m) => m.shape === 'redirect' && !m.fixme && !m.minAmount
+  );
+
+  for (const outcome of ['canceled', 'expired'] as const) {
+    test(`${negativeOutcomeMethod?.id ?? 'redirect method'}: ${outcome} outcome leaves no order confirmation and preserves the cart`, async ({
+      page,
+    }) => {
+      test.skip(!negativeOutcomeMethod, 'no plain redirect-shape method is configured for this phase');
+      requiresPublicHost();
+
+      const method = negativeOutcomeMethod!;
+      const checkout = new CheckoutPage(page);
+      await checkout.start(method.billingCountry);
+
+      const option = checkout.paymentOption(method.label, method.notLabel);
+      test.skip((await option.count()) === 0, `${method.id} is not offered at the payment step`);
+
+      await checkout.selectMethod(method.label, method.notLabel);
+      await checkout.acceptTerms();
+      await checkout.placeOrder();
+
+      const hosted = new HostedCheckoutPage(page);
+      test.skip(
+        !(await hosted.outcomeAvailable(outcome)),
+        `Mollie's sandbox offers no "${outcome}" outcome for ${method.id}`
+      );
+      await hosted.chooseOutcome(outcome);
+
+      // An expired payment never redirects — the sandbox states "the customer
+      // won't return to your website" — so there is no landing page to
+      // inspect. For every other outcome the landing page differs by state;
+      // the invariant does not: no order may be confirmed.
+      if (outcome !== 'expired') {
+        await waitUntilBackOnShop(page);
+        await expect(page.locator('#content-hook_order_confirmation')).toHaveCount(0);
+      }
+
+      // Navigate back the way an abandoning customer would and assert the
+      // cart survived, so the purchase can be retried.
+      await page.goto('/en/cart?action=show');
+      await expect(page.locator('.cart-item')).not.toHaveCount(0);
+    });
+  }
+
+  /**
+   * The deep webhook guard: `webhook.php` compares the caller's
+   * `security_token` against a hash of the cart's `secure_key` and refuses a
+   * mismatch with 401 — but only once a real transaction exists for the token
+   * to be forged against, which is why this lives here and not in
+   * `specs/webhook/`. This is the guard that stops an attacker who knows a
+   * transaction id from driving order state.
+   */
+  test('a webhook replay with a forged token is rejected and changes nothing', async ({
+    page,
+    request,
+  }) => {
+    test.skip(!negativeOutcomeMethod, 'no plain redirect-shape method is configured for this phase');
+    requiresPublicHost();
+
+    const method = negativeOutcomeMethod!;
+    const checkout = new CheckoutPage(page);
+    await checkout.start(method.billingCountry);
+
+    const option = checkout.paymentOption(method.label, method.notLabel);
+    test.skip((await option.count()) === 0, `${method.id} is not offered at the payment step`);
+
+    await checkout.selectMethod(method.label, method.notLabel);
+    await checkout.acceptTerms();
+    await checkout.placeOrder();
+
+    const hosted = new HostedCheckoutPage(page);
+    await hosted.chooseOutcome('paid');
+    await checkout.expectConfirmation();
+
+    // A PrestaShop reference is uppercase alphanumeric; anything else must not
+    // reach the SQL below.
+    const reference = await checkout.getOrderReference();
+    expect(reference).toMatch(/^[A-Z0-9]{6,12}$/);
+
+    // Polled: while the payment is open the module keeps its own `mol_…`
+    // placeholder in `order_reference` and only writes the PrestaShop
+    // reference when the paid webhook lands — seconds AFTER the confirmation
+    // page has already rendered, so a single read here races the webhook.
+    let transactionId: string | null = null;
+    await expect
+      .poll(
+        () => {
+          transactionId = querySingleValue(
+            `SELECT transaction_id FROM ps_mollie_payments WHERE order_reference = '${reference}' ORDER BY created_at DESC LIMIT 1`
+          );
+          return transactionId;
+        },
+        { timeout: 30_000, message: `no mollie_payments row appeared for order ${reference}` }
+      )
+      .not.toBeNull();
+    expect(transactionId).toMatch(/^(tr|ord)_[\w]+$/);
+
+    const statusBefore = querySingleValue(
+      `SELECT bank_status FROM ps_mollie_payments WHERE transaction_id = '${transactionId}'`
+    );
+
+    const res = await request.post(WEBHOOK_PATH, {
+      form: {
+        security_token: `forged-${test.info().workerIndex}-${test.info().repeatEachIndex}`,
+        id: transactionId!,
+      },
+    });
+    expect(res.status(), 'a forged security_token must be refused as unauthorized').toBe(401);
+
+    const statusAfter = querySingleValue(
+      `SELECT bank_status FROM ps_mollie_payments WHERE transaction_id = '${transactionId}'`
+    );
+    expect(statusAfter, 'the forged call must not have moved the payment record').toBe(statusBefore);
+  });
+
   test('in3 is hidden below its minimum order value', async ({ page }) => {
     test.skip(api !== 'orders', 'in3 is only configured on the orders phase');
     const in3 = paymentMethods.find((m) => m.id === 'in3');
@@ -234,6 +390,18 @@ test.describe(`checkout — ${api} API`, () => {
     // Scoped to the payment options, like every other assertion here: a bare
     // getByText(/in 3/i) also matches incidental copy elsewhere on the page
     // (it does on PS1785) and fails a test that is about method availability.
+    await expect(checkout.paymentOption(in3!.label)).toHaveCount(0);
+  });
+
+  test('in3 is hidden above its maximum order value', async ({ page }) => {
+    test.skip(api !== 'orders', 'in3 is only configured on the orders phase');
+    const in3 = paymentMethods.find((m) => m.id === 'in3');
+    test.skip(!in3?.maxAmount, 'in3 carries no maximum order value in the registry');
+
+    const checkout = new CheckoutPage(page);
+    // Mirrors the below-minimum test: `minTotal` sizes the cart from the live
+    // unit price, so the total clears the window's top edge on both seeds.
+    await checkout.start(in3!.billingCountry, { minTotal: in3!.maxAmount! + 1 });
     await expect(checkout.paymentOption(in3!.label)).toHaveCount(0);
   });
 
@@ -262,6 +430,6 @@ test.describe(`checkout — ${api} API`, () => {
     for (const method of foreign) {
       await expect(checkout.paymentOption(method.label, method.notLabel)).toHaveCount(0);
     }
-    console.log(`offered on the ${api} phase: ${offered.join(', ')}`);
+    note(`offered on the ${api} phase: ${offered.join(', ')}`);
   });
 });

@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
-import { envValueOr } from './helpers/env';
+import { envValueOr, isPubliclyReachableBaseUrl } from './helpers/env';
 
 /** Checkout traverses the tunnel and Mollie's hosted pages; 30s is not enough. */
 const CHECKOUT_TIMEOUT = 120_000;
@@ -22,7 +22,10 @@ export default defineConfig({
     baseURL: envValueOr('E2E_BASE_URL', 'http://localhost:8002'),
     trace: 'on-first-retry',
     video: 'retain-on-failure',
-    ignoreHTTPSErrors: true,
+    // Only a local shop is allowed a broken certificate. The CI tunnel and
+    // Mollie's hosted pages carry real ones, and there a TLS error is a
+    // finding the suite must surface, not noise to swallow.
+    ignoreHTTPSErrors: !isPubliclyReachableBaseUrl(),
   },
   projects: [
     { name: 'bo-auth', testMatch: /bo-auth\.setup\.ts/ },

@@ -1,5 +1,6 @@
 import { test as base, expect } from '@playwright/test';
 import path from 'node:path';
+import { isPubliclyReachableBaseUrl } from '../helpers/env';
 
 /** Written by the `bo-auth` setup project. */
 export const BO_AUTH_FILE = '.auth/bo.json';
@@ -74,7 +75,8 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
       const context = await browser.newContext({
         storageState: BO_AUTH_FILE,
         baseURL,
-        ignoreHTTPSErrors: true,
+        // Same rule as the config: only a local shop may present a broken cert.
+        ignoreHTTPSErrors: !isPubliclyReachableBaseUrl(),
       });
       const page = await context.newPage();
 

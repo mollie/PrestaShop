@@ -141,22 +141,35 @@ jobs:
       - name: Start shop
         run: make VERSION=${{ matrix.version }} e2eh${{ matrix.version }}
       - name: Install cloudflared
+        # Pinned + checksum-verified: this binary runs inside a job that holds
+        # the Mollie API key and the tunnel token, so "whatever `latest`
+        # resolves to today" is not an acceptable provenance. When bumping the
+        # version, take the new digest from the release's asset list
+        # (https://api.github.com/repos/cloudflare/cloudflared/releases).
+        env:
+          CLOUDFLARED_VERSION: "2026.7.3"
+          CLOUDFLARED_SHA256: "9d71c677db00134c1bd4144b7783486b654ad281b1ea62b4972098d19f770f17"
         run: |
-          curl -sSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 \
+          curl -sSL "https://github.com/cloudflare/cloudflared/releases/download/${CLOUDFLARED_VERSION}/cloudflared-linux-amd64" \
             -o /usr/local/bin/cloudflared
+          echo "${CLOUDFLARED_SHA256}  /usr/local/bin/cloudflared" | sha256sum --check
           sudo chmod +x /usr/local/bin/cloudflared
           cloudflared --version
       - name: Start Cloudflare named tunnel
+        # The token travels as TUNNEL_TOKEN (which cloudflared reads natively)
+        # rather than as a --token argument, where it would sit in the
+        # runner's process list for the lifetime of the connector.
+        env:
+          TUNNEL_TOKEN: ${{ secrets[matrix.tunnel_token_secret] }}
         run: |
-          if [ -z "${{ secrets[matrix.tunnel_token_secret] }}" ]; then
+          if [ -z "$TUNNEL_TOKEN" ]; then
             echo "::error::${{ matrix.tunnel_token_secret }} is not set — see docs/e2e-ci-setup.md"
             exit 1
           fi
           # nohup + own logfile: with a bare `&` the connector writes to the
           # step's pipe, which is closed once the step ends, so there is nothing
           # left to read when the tunnel fails to register.
-          nohup cloudflared tunnel --no-autoupdate run \
-            --token ${{ secrets[matrix.tunnel_token_secret] }} > cloudflared.log 2>&1 &
+          nohup cloudflared tunnel --no-autoupdate run > cloudflared.log 2>&1 &
           echo "Started cloudflared, waiting for the connector to register..."
           sleep 10
           cat cloudflared.log || true

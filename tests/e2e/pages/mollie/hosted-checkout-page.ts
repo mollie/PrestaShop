@@ -32,6 +32,17 @@ export class HostedCheckoutPage {
     }
   }
 
+  /**
+   * Whether the sandbox offers this outcome for the current method — the
+   * picker's option set is Mollie's to change, so a missing one is a skip for
+   * the caller, not a failure.
+   */
+  async outcomeAvailable(outcome: Outcome): Promise<boolean> {
+    await this.selectIssuerIfPresent();
+    await this.outcomeControl('paid').first().waitFor({ timeout: 30_000 }).catch(() => {});
+    return (await this.outcomeControl(outcome).count()) > 0;
+  }
+
   async chooseOutcome(outcome: Outcome) {
     await this.selectIssuerIfPresent();
 

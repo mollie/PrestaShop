@@ -5,6 +5,17 @@ function quote(value: string): string {
 }
 
 /**
+ * Method ids come from the registry today, so this never fires — it exists so
+ * that a future caller passing page-derived text into the SQL below gets a
+ * loud error instead of a quietly interpolated string.
+ */
+function assertMethodIdShape(methodId: string): void {
+  if (!/^[a-z0-9_-]+$/i.test(methodId)) {
+    throw new Error(`refusing to use unsafe method id in SQL: ${JSON.stringify(methodId)}`);
+  }
+}
+
+/**
  * `ps_configuration.name` only carries a NON-UNIQUE index, so
  * `INSERT ... ON DUPLICATE KEY UPDATE` never fires for it and would append a
  * duplicate row on every call. Delete-then-insert is idempotent and also
@@ -61,6 +72,7 @@ export function setMethodConfig(
   methodId: string,
   cfg: { enabled?: boolean; api?: 'orders' | 'payments'; environment?: number; shopId?: number }
 ): void {
+  assertMethodIdShape(methodId);
   const id = quote(methodId);
   const environment = cfg.environment ?? ENVIRONMENT_TEST;
   const shopId = cfg.shopId ?? DEFAULT_SHOP_ID;

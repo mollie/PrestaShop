@@ -16,7 +16,9 @@ test('an Orders-API method is offered on a mobile viewport', async ({ page }) =>
 
   const checkout = new CheckoutPage(page);
   await checkout.start(method!.billingCountry);
-  const option = page.getByText(method!.label);
+  // Scoped to the payment options like every other availability assertion — a
+  // bare getByText also matches incidental page copy and ignores `notLabel`.
+  const option = checkout.paymentOption(method!.label, method!.notLabel);
   skipIfDisconnected((await option.count()) === 0, 'no Mollie method is offered at the payment step');
-  await expect(option.first()).toBeVisible();
+  await expect(option).toBeVisible();
 });

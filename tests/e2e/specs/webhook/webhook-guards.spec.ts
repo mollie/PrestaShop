@@ -52,6 +52,31 @@ test.describe('module with an API key', () => {
     expect(res.status()).toBe(422);
   });
 
+  // Past the shallow guards the controller asks Mollie for the transaction, so
+  // an id that exists nowhere surfaces as an ApiException — which must come
+  // back as a 400, not bubble up as a 500.
+  test('a well-formed but unknown transaction id is rejected with 400', async ({ request }) => {
+    requireApiKey(true);
+    const res = await request.post(WEBHOOK_PATH, {
+      form: { security_token: `unknown-${test.info().workerIndex}`, id: 'tr_aaaaaaaaaa' },
+    });
+    expect(res.status()).toBe(400);
+    expect((await res.json()).success).toBe(false);
+  });
+
+  // The webhook is an unauthenticated endpoint, so its error path must not
+  // echo attacker-controlled input back into the response.
+  test('a malformed transaction id is rejected without reflecting the input', async ({ request }) => {
+    requireApiKey(true);
+    const payload = '<script>alert(1)</script>';
+    const res = await request.post(WEBHOOK_PATH, {
+      form: { security_token: `malformed-${test.info().workerIndex}`, id: payload },
+    });
+    expect(res.status()).toBeGreaterThanOrEqual(400);
+    expect(res.status()).toBeLessThan(500);
+    expect(await res.text()).not.toContain(payload);
+  });
+
   // Timing-sensitive by nature: the two requests must genuinely overlap for the
   // lock to conflict. Deliberately not retried — a retry would mask a real
   // regression in the locking itself.

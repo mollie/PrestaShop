@@ -1,10 +1,7 @@
 import { test as setup, expect } from '@playwright/test';
 import { AuthorizationPage } from '../pages/admin/authorization-page';
 import { hasApiKeyConfigured } from '../helpers/config';
-import { envValue } from '../helpers/env';
-
-/** Mollie keys are `test_`/`live_` followed by at least 30 word characters. */
-const MOLLIE_KEY = /^(test|live)_\w{30,}$/;
+import { envTestApiKey } from '../helpers/mollie-key';
 
 /**
  * Connects the module's test API key, so no later project has to discover for
@@ -20,14 +17,12 @@ const MOLLIE_KEY = /^(test|live)_\w{30,}$/;
  * DB read on a warm shop.
  */
 setup('connect the Mollie test API key', async ({ page }) => {
-  const apiKey = envValue('MOLLIE_TEST_API_KEY');
+  const apiKey = envTestApiKey();
 
   if (hasApiKeyConfigured()) return;
 
-  // Shape-checked, not just truthy: a shell or .env quoting slip otherwise
-  // reaches here as a non-empty string and fails as if the module were broken.
   setup.skip(
-    !apiKey || !MOLLIE_KEY.test(apiKey),
+    !apiKey,
     'MOLLIE_TEST_API_KEY is not set to a valid Mollie key: the module stays ' +
       'unconnected and every method-dependent test will skip itself'
   );
