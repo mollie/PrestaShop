@@ -35,12 +35,34 @@ export class MollieComponentsForm {
 
     for (const [container, inputId, value] of fields) {
       const input = this.page.frameLocator(`${container} iframe`).locator(inputId);
-      await input.click();
-      // Typed key by key, not fill(): the components mask/format as you type
-      // (spaces in the card number, the / in the expiry) and validate on real
-      // input events — a programmatic value assignment leaves them "empty" as
-      // far as tokenisation is concerned.
-      await input.pressSequentially(value, { delay: 30 });
+      // Punctuation-insensitive: the components reformat as you type (spaces in
+      // the card number, the / in the expiry), so only letters and digits count.
+      const normalize = (s: string) => s.replace(/[^a-z0-9]/gi, '');
+
+      for (let attempt = 1; ; attempt++) {
+        await input.click();
+        // Typed key by key, not fill(): the components mask/format as you type
+        // and validate on real input events — a programmatic value assignment
+        // leaves them "empty" as far as tokenisation is concerned.
+        await input.pressSequentially(value, { delay: 30 });
+
+        // The component attaches its key handlers asynchronously after the
+        // iframe mounts, and a keystroke that lands before then is silently
+        // dropped — seen in CI as "Card number is too short" with exactly the
+        // leading digit missing. Read back what actually arrived and retype
+        // until the field holds the full value.
+        if (normalize(await input.inputValue()) === normalize(value)) break;
+        if (attempt >= 3) {
+          throw new Error(
+            `${container} ${inputId}: typed "${value}" but the field holds ` +
+              `"${await input.inputValue()}" after ${attempt} attempts`
+          );
+        }
+        // Cleared with key events for the same reason the value is typed:
+        // the mask only tracks real keyboard input.
+        await input.press('ControlOrMeta+a');
+        await input.press('Backspace');
+      }
     }
     // Blur the last field so its validation runs before the form submits.
     await this.page.locator('#payment-confirmation').click({ position: { x: 1, y: 1 } }).catch(() => {});

@@ -133,8 +133,16 @@ test.describe(`checkout — ${api} API`, () => {
           await bo.partialRefund(half),
           `${method.id}: the partial refund control was not actionable`
         ).toBe(true);
+        // `ok === null` (no alert seen) is not a failure: the success alert
+        // lives only ~1.5s before order_info.js reloads the page, so a slow CI
+        // poll can miss it. Whether the refund landed is decided by the
+        // still-refundable re-read below either way; only an explicit error
+        // alert fails here.
         const outcome = await bo.refundOutcome();
-        expect(outcome.ok, `${method.id}: partial refund reported "${outcome.message}"`).toBe(true);
+        expect(
+          outcome.ok !== false,
+          `${method.id}: partial refund reported "${outcome.message}"`
+        ).toBe(true);
 
         // The real assertion. The success alert only proves the AJAX call
         // returned `success`; this re-reads the amount the module recomputes
@@ -151,9 +159,10 @@ test.describe(`checkout — ${api} API`, () => {
         if (remaining! > 0 && (await bo.waitForRefundAmountControl(15_000))) {
           const rest = await bo.refundableAmount();
           if (rest && (await bo.partialRefund(rest))) {
+            // Same contract as the first refund: a missed alert is inconclusive.
             const second = await bo.refundOutcome();
             expect(
-              second.ok,
+              second.ok !== false,
               `${method.id}: refunding the remainder reported "${second.message}"`
             ).toBe(true);
           } else {

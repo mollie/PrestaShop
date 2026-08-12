@@ -40,6 +40,7 @@ const THIRD_PARTY_BLOCKLIST = [
 type TestFixtures = {
   assertNoConsoleErrors: void;
   blockThirdParties: void;
+  screenshotOnSuccess: void;
 };
 
 type WorkerFixtures = {
@@ -117,6 +118,30 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
         });
       }
       await use();
+    },
+    { auto: true },
+  ],
+
+  /**
+   * Failures already leave a video and an error-context snapshot behind;
+   * a PASSED test leaves nothing, so a reviewer cannot see what "passed"
+   * actually looked like. This attaches the final page state to every
+   * passing test in the report (`screenshot: 'on'` in the config would do
+   * the same but also duplicate the failure artifacts).
+   */
+  screenshotOnSuccess: [
+    async ({ page }, use, testInfo) => {
+      await use();
+
+      if (testInfo.status !== 'passed') return;
+      // Best-effort: a page that is already closed (or wedged mid-navigation)
+      // must not fail a test that has passed on its merits.
+      try {
+        const shot = await page.screenshot({ fullPage: true, timeout: 10_000 });
+        await testInfo.attach('passed-final-state', { body: shot, contentType: 'image/png' });
+      } catch {
+        // no screenshot is better than a teardown failure
+      }
     },
     { auto: true },
   ],

@@ -251,14 +251,31 @@ export class CheckoutPage {
       { timeout: 30_000 }
     );
     await button.click();
-    // waitUntil: 'commit', not the default 'load'. Submitting hands off to a
-    // module controller that immediately 302s on to Mollie, so that URL matches
-    // the predicate but never fires a load event — waiting for 'load' hangs
-    // until timeout even though the browser does reach Mollie.
-    await this.page.waitForURL((url) => !url.pathname.replace(/\/$/, '').endsWith('/order'), {
-      timeout: 60_000,
-      waitUntil: 'commit',
-    });
+    // Polled from page.url() rather than page.waitForURL. Submitting hands off
+    // to a module controller that immediately 302s on to Mollie, and with card
+    // components the module JS additionally cancels the first submit, tokenises,
+    // and resubmits (views/js/front/mollie_iframe.js) — so the click starts
+    // navigations that are legitimately abandoned along the way. waitForURL
+    // binds to one navigation and surfaces such a cancelled hop as
+    // net::ERR_ABORTED ("maybe frame was detached?") even though the browser
+    // lands on Mollie fine; reading the committed URL is indifferent to how
+    // many navigations were started and dropped on the way there. (A load-event
+    // wait has the same problem in the other direction: the 302 chain never
+    // fires one here.)
+    const stillOnOrderStep = () => {
+      try {
+        return new URL(this.page.url()).pathname.replace(/\/$/, '').endsWith('/order');
+      } catch {
+        return true;
+      }
+    };
+    const deadline = Date.now() + 60_000;
+    while (stillOnOrderStep()) {
+      if (Date.now() > deadline) {
+        throw new Error(`placeOrder: still on ${this.page.url()} 60s after submitting`);
+      }
+      await this.page.waitForTimeout(250);
+    }
   }
 
   async expectConfirmation() {

@@ -246,9 +246,11 @@ export class AdminOrderPage {
    *
    * Both branches render synchronously in the `$.ajax` handlers, so this is not
    * a race — but the success branch also schedules `location.reload()` 1.5s
-   * later, which is why the alert is read rather than asserted on afterwards.
+   * later, so the alert can be gone before a slow CI poll ever sees it. A
+   * missed alert is therefore INCONCLUSIVE (`ok: null`), not a failure: whether
+   * the refund actually landed is what `waitForRefundableAmountBelow` decides.
    */
-  async refundOutcome(timeoutMs = 30_000): Promise<{ ok: boolean; message: string }> {
+  async refundOutcome(timeoutMs = 30_000): Promise<{ ok: boolean | null; message: string }> {
     const panel = this.page.locator('.mollie-order-info-panel');
     const success = panel.locator('.alert-success').first();
     const failure = panel.locator('.alert-danger').first();
@@ -263,7 +265,7 @@ export class AdminOrderPage {
       }
       await this.page.waitForTimeout(250);
     }
-    return { ok: false, message: 'no refund alert appeared within the timeout' };
+    return { ok: null, message: 'no refund alert appeared within the timeout' };
   }
 
   /**
