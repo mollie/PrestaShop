@@ -11,6 +11,9 @@ jobs:
   # Everything that can run against a plain localhost shop: admin UI, webhook
   # guards, mobile viewport. No public hostname needed.
   local:
+    # Without an explicit name GitHub appends every matrix value to the job
+    # title, which would print the BO credentials in the Actions UI.
+    name: local (${{ matrix.prestashop }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -76,6 +79,9 @@ jobs:
   # Checkout needs a publicly reachable hostname so Mollie can redirect back and
   # deliver webhooks, hence the Cloudflare named tunnel.
   checkout:
+    # Without an explicit name GitHub appends every matrix value to the job
+    # title, which would print the BO credentials in the Actions UI.
+    name: checkout (${{ matrix.prestashop }})
     runs-on: ubuntu-latest
     # Each matrix entry drives ONE named tunnel. Two PRs running at once would
     # attach a second connector to the same tunnel and Cloudflare would split
