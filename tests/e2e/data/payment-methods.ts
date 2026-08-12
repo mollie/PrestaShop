@@ -107,7 +107,9 @@ export const paymentMethods: MethodDef[] = [
   // "iDEAL | Wero" also matches /wero/i, hence the notLabel.
   { id: 'wero', label: /wero/i, notLabel: /ideal/i, apis: ['orders'], shape: 'redirect', billingCountry: 'NL' },
   { id: 'bancomatpay', label: /bancomat pay/i, apis: ['orders'], shape: 'redirect', billingCountry: 'NL' },
-  { id: 'paybybank', label: /pay by bank/i, apis: ['payments'], shape: 'redirect', billingCountry: 'NL' },
+  // PrestaShop's native ps_wirepayment option is titled "Pay by bank wire" and
+  // also matches /pay by bank/i, hence the notLabel.
+  { id: 'paybybank', label: /pay by bank/i, notLabel: /wire/i, apis: ['payments'], shape: 'redirect', billingCountry: 'NL' },
   // BNPL like klarna/billie: authorized at checkout, captured on shipment.
   { id: 'riverty', label: /riverty/i, apis: ['orders'], shape: 'authorize', billingCountry: 'NL', minAmount: 5 },
   { id: 'satispay', label: /satispay/i, apis: ['payments'], shape: 'redirect', billingCountry: 'NL' },
