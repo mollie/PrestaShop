@@ -46,7 +46,12 @@ export default defineConfig({
       name: 'admin',
       testDir: './specs/admin',
       testIgnore: /mobile-checkout\.spec\.ts/,
-      dependencies: ['mollie-connect'],
+      // cfg-orders is not a data dependency, it is an ordering constraint:
+      // it wipes and rewrites every ps_mol_payment_method row, and the local
+      // CI job runs it (as mobile's dependency) in the same invocation as
+      // this project. Without the ordering it can fire mid-flight through
+      // method-toggle.spec and re-enable the method the spec just disabled.
+      dependencies: ['mollie-connect', 'cfg-orders'],
     },
     // Needs no BO session of its own — it only exercises the front controller's
     // guard clauses — but it DOES need the shop's connected/disconnected state to

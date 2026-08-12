@@ -1,6 +1,7 @@
 import { test, expect } from '../../fixtures/base';
 import { CheckoutPage } from '../../pages/front/checkout-page';
 import { HostedCheckoutPage } from '../../pages/mollie/hosted-checkout-page';
+import { MollieComponentsForm } from '../../pages/mollie/components-form';
 import { AdminOrderPage } from '../../pages/admin/admin-order-page';
 import { OrderHistoryPage } from '../../pages/front/order-history-page';
 import { paymentMethods } from '../../data/payment-methods';
@@ -53,10 +54,17 @@ test.describe(`checkout — ${api} API`, () => {
         minTotal: method.minAmount,
       });
 
-      const option = page.getByText(method.label);
+      // Scoped to the payment options rather than a bare getByText: labels
+      // like "iDEAL | Wero" or incidental page copy would otherwise match.
+      const option = checkout.paymentOption(method.label, method.notLabel);
       test.skip((await option.count()) === 0, `${method.id} is not offered at the payment step`);
 
-      await checkout.selectMethod(method.label);
+      await checkout.selectMethod(method.label, method.notLabel);
+      // Mollie Components (inline card fields): tokenisation refuses an empty
+      // form client-side, so the test card goes in before the order is placed.
+      if (method.shape === 'card-components') {
+        await new MollieComponentsForm(page).fill(method.id);
+      }
       await checkout.acceptTerms();
       await checkout.placeOrder();
 
@@ -179,10 +187,13 @@ test.describe(`checkout — ${api} API`, () => {
         minTotal: method.minAmount,
       });
 
-      const option = page.getByText(method.label);
+      const option = checkout.paymentOption(method.label, method.notLabel);
       test.skip((await option.count()) === 0, `${method.id} is not offered at the payment step`);
 
-      await checkout.selectMethod(method.label);
+      await checkout.selectMethod(method.label, method.notLabel);
+      if (method.shape === 'card-components') {
+        await new MollieComponentsForm(page).fill(method.id);
+      }
       await checkout.acceptTerms();
       await checkout.placeOrder();
 
@@ -226,7 +237,7 @@ test.describe(`checkout — ${api} API`, () => {
     );
     const offered = [];
     for (const method of candidates) {
-      if (await checkout.paymentOption(method.label).count()) offered.push(method.id);
+      if (await checkout.paymentOption(method.label, method.notLabel).count()) offered.push(method.id);
     }
 
     skipIfDisconnected(offered.length === 0, 'no Mollie method is offered at the payment step');
@@ -240,7 +251,7 @@ test.describe(`checkout — ${api} API`, () => {
       (m) => m.apis.includes(otherPhase) && !m.apis.includes(api) && !m.fixme
     );
     for (const method of foreign) {
-      await expect(checkout.paymentOption(method.label)).toHaveCount(0);
+      await expect(checkout.paymentOption(method.label, method.notLabel)).toHaveCount(0);
     }
     console.log(`offered on the ${api} phase: ${offered.join(', ')}`);
   });

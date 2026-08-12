@@ -167,9 +167,15 @@ export class CheckoutPage {
     await this.page.locator('#checkout-payment-step').waitFor({ timeout: 20_000 });
   }
 
-  /** The payment option a label belongs to, whether or not it is selected. */
-  paymentOption(label: string | RegExp) {
-    return this.page.locator('.payment-option').filter({ hasText: label }).first();
+  /**
+   * The payment option a label belongs to, whether or not it is selected.
+   * `notLabel` excludes options whose text also matches `label` — Mollie's
+   * "iDEAL | Wero" renaming makes /wero/i ambiguous otherwise.
+   */
+  paymentOption(label: string | RegExp, notLabel?: RegExp) {
+    let options = this.page.locator('.payment-option').filter({ hasText: label });
+    if (notLabel) options = options.filter({ hasNotText: notLabel });
+    return options.first();
   }
 
   /**
@@ -203,9 +209,9 @@ export class CheckoutPage {
    * matching text node leaves the button disabled and the order is never
    * submitted.
    */
-  async selectMethod(label: string | RegExp) {
+  async selectMethod(label: string | RegExp, notLabel?: RegExp) {
     await this.waitForPaymentStepReady();
-    const option = this.paymentOption(label);
+    const option = this.paymentOption(label, notLabel);
     await option.locator('input[type="radio"]').first().check();
     // Selecting an option makes the theme re-render the confirmation block, so
     // wait for the submit button to come back before touching anything else.

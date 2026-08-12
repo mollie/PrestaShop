@@ -18,9 +18,14 @@ export type CheckoutShape =
 export type MethodDef = {
   id: string;
   label: RegExp;
+  /**
+   * Excludes options whose label also matches `label` — needed since Mollie
+   * renamed iDEAL to "iDEAL | Wero", which any /wero/i matcher also hits.
+   */
+  notLabel?: RegExp;
   apis: ReadonlyArray<'orders' | 'payments'>;
   shape: CheckoutShape;
-  billingCountry: 'NL' | 'DE' | 'UK';
+  billingCountry: 'NL' | 'DE' | 'UK' | 'PL' | 'CH';
   /**
    * Mollie's own order-value window for the method, in EUR, as reported by
    * `GET /v2/methods?amount[value]=…`. A cart outside it is simply not offered
@@ -36,18 +41,18 @@ export type MethodDef = {
 export const paymentMethods: MethodDef[] = [
   { id: 'bancontact', label: /bancontact/i, apis: ['orders'], shape: 'redirect', billingCountry: 'NL' },
   { id: 'ideal', label: /ideal/i, apis: ['payments'], shape: 'issuer-list', billingCountry: 'NL' },
+  // Mollie Components is on in sandbox (MOLLIE_SANDBOX_IFRAME=1), so the card
+  // fields render inline in four Mollie iframes on the shop's own payment
+  // step. checkout.spec.ts types a test card into them (MollieComponentsForm)
+  // before placing the order; the module then tokenises client-side and
+  // resubmits (views/js/front/mollie_iframe.js).
   {
     id: 'creditcard',
     label: /card/i,
+    notLabel: /saved|gift/i,
     apis: ['payments'],
     shape: 'card-components',
     billingCountry: 'NL',
-    fixme:
-      'Mollie Components is on in sandbox (MOLLIE_SANDBOX_IFRAME=1), so the card ' +
-      'fields render inline in four Mollie iframes on the shop\'s own payment step ' +
-      'rather than on a hosted page. Submitting with them empty is blocked ' +
-      'client-side, so this needs a test card typed into those iframes — a ' +
-      'different flow from every other method here.',
   },
   // `klarnapaylater` (with `klarnapaynow`/`klarnasliceit`) is the legacy split
   // Mollie has since consolidated into one `klarna` method — the test profile
@@ -88,4 +93,27 @@ export const paymentMethods: MethodDef[] = [
     billingCountry: 'NL',
     fixme: "Mollie's test account auto-disables this method",
   },
+
+  // --- Coverage sweep (PIPRES-804): every remaining method the test profile
+  // offers in EUR for a seeded billing country (NL/DE/UK/PL/CH), verified via
+  // GET /v2/methods?billingCountry=… against the CI profile. Not listed
+  // because not testable: alma + bizum (never offered for these countries),
+  // twint + blik (CHF/PLN only — the shop sells in EUR), applepay + googlepay
+  // (need a wallet-capable browser), swish (SEK), directdebit (recurring
+  // only). API assignment alternates to keep the two phase invocations
+  // balanced; all of these are plain hosted-page redirects unless noted.
+  { id: 'przelewy24', label: /przelewy24/i, apis: ['payments'], shape: 'redirect', billingCountry: 'PL' },
+  { id: 'belfius', label: /belfius/i, apis: ['payments'], shape: 'redirect', billingCountry: 'NL' },
+  // "iDEAL | Wero" also matches /wero/i, hence the notLabel.
+  { id: 'wero', label: /wero/i, notLabel: /ideal/i, apis: ['orders'], shape: 'redirect', billingCountry: 'NL' },
+  { id: 'bancomatpay', label: /bancomat pay/i, apis: ['orders'], shape: 'redirect', billingCountry: 'NL' },
+  { id: 'paybybank', label: /pay by bank/i, apis: ['payments'], shape: 'redirect', billingCountry: 'NL' },
+  // BNPL like klarna/billie: authorized at checkout, captured on shipment.
+  { id: 'riverty', label: /riverty/i, apis: ['orders'], shape: 'authorize', billingCountry: 'NL', minAmount: 5 },
+  { id: 'satispay', label: /satispay/i, apis: ['payments'], shape: 'redirect', billingCountry: 'NL' },
+  { id: 'mbway', label: /mb way/i, apis: ['payments'], shape: 'redirect', billingCountry: 'NL' },
+  { id: 'multibanco', label: /multibanco/i, apis: ['orders'], shape: 'redirect', billingCountry: 'NL' },
+  { id: 'vipps', label: /vipps/i, apis: ['orders'], shape: 'redirect', billingCountry: 'NL' },
+  { id: 'mobilepay', label: /mobilepay/i, apis: ['payments'], shape: 'redirect', billingCountry: 'NL' },
+  { id: 'billink', label: /billink/i, apis: ['orders'], shape: 'redirect', billingCountry: 'NL' },
 ];

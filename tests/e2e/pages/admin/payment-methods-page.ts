@@ -64,4 +64,48 @@ export class PaymentMethodsPage {
     // "inactive" also contains "active", so the negative has to be checked first.
     return !label.includes('inactive') && label.includes('active');
   }
+
+  /**
+   * Drives the method's enable switch through the real settings form and
+   * saves — the path `PaymentMethodService::savePaymentMethod` owns. This is
+   * deliberately NOT the SQL shortcut the cfg-* setups use: those bypass the
+   * form entirely, so nothing else in the suite would notice the save flow
+   * breaking.
+   *
+   * Returns once the module's AJAX reports success AND the card's status
+   * badge reflects the new state (the UI refetches after saving, so the badge
+   * is the signal that the round-trip is complete).
+   */
+  async setEnabledViaForm(methodId: string, enabled: boolean) {
+    const card = await this.revealCard(methodId);
+    await card.waitFor({ state: 'visible', timeout: 10_000 });
+
+    // Expand the settings panel if it is not open yet.
+    const enabledSwitch = this.page.getByTestId(`payment-method-${methodId}-enabled-switch`);
+    if (!(await enabledSwitch.isVisible().catch(() => false))) {
+      await this.toggleSettings(methodId);
+      await enabledSwitch.waitFor({ timeout: 10_000 });
+    }
+
+    if ((await enabledSwitch.getAttribute('aria-checked')) !== String(enabled)) {
+      await enabledSwitch.click();
+    }
+
+    const saveResponse = this.page.waitForResponse(
+      (r) =>
+        r.request().method() === 'POST' &&
+        (r.request().postData() ?? '').includes('savePaymentMethodSettings'),
+      { timeout: 30_000 }
+    );
+    await this.page.getByTestId(`payment-method-${methodId}-save`).click();
+    const body = await (await saveResponse).json();
+    if (!body.success) {
+      throw new Error(`saving ${methodId} reported failure: ${JSON.stringify(body)}`);
+    }
+    // No UI assertion here on purpose: the success response proves the server
+    // persisted, and after saving the UI refetches, moves the card to the
+    // other tab and floats a toast over the tab buttons — waiting on any of
+    // that is what a caller's own next navigation does more reliably. The
+    // observable effect belongs to the caller (e.g. the FO payment step).
+  }
 }
