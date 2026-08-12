@@ -11,8 +11,12 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
+  // outputDir is explicit because the default resolves against the nearest
+  // package.json — the repo root, not this directory — and CI uploads
+  // tests/e2e/blob-report. Without it every upload finds no files and the
+  // merge job has nothing to merge.
   reporter: process.env.CI
-    ? [['blob'], ['github']]
+    ? [['blob', { outputDir: 'blob-report' }], ['github']]
     : [['html', { open: 'never' }]],
   use: {
     baseURL: envValueOr('E2E_BASE_URL', 'http://localhost:8002'),

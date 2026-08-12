@@ -173,12 +173,38 @@ export class CheckoutPage {
   }
 
   /**
+   * The theme wires the whole payment step from $(document).ready: one
+   * delegated change handler on <body> enables "Place order" when a method
+   * radio plus every terms checkbox are set. `#checkout-payment-step` becomes
+   * visible while the document is still parsing — before theme.js has run —
+   * so a click that lands in that window fires a change event no handler
+   * receives, and nothing ever re-evaluates the button. PS1785 loses that
+   * race on every run; PS8 happens to win it. Waiting for the element is
+   * therefore not enough: wait until the delegated handler exists (or the
+   * load event has passed, by which point every ready callback has run).
+   */
+  private async waitForPaymentStepReady() {
+    await this.page.waitForFunction(
+      () => {
+        if (document.readyState === 'complete') return true;
+        const $ = (window as any).jQuery;
+        const events = $ && $._data && $._data(document.body, 'events');
+        const change: Array<{ selector?: string }> | undefined = events && events.change;
+        return !!change && change.some((h) => (h.selector ?? '').includes('payment-option'));
+      },
+      undefined,
+      { timeout: 20_000 }
+    );
+  }
+
+  /**
    * Checks the option's radio rather than clicking its label text. The theme
    * enables "Place order" from the radio's change event, so a forced click on a
    * matching text node leaves the button disabled and the order is never
    * submitted.
    */
   async selectMethod(label: string | RegExp) {
+    await this.waitForPaymentStepReady();
     const option = this.paymentOption(label);
     await option.locator('input[type="radio"]').first().check();
     // Selecting an option makes the theme re-render the confirmation block, so

@@ -225,11 +225,30 @@ jobs:
         with:
           path: all-blob-reports
           pattern: blob-report-*
+      # No artifacts means every test job died before running Playwright —
+      # nothing to merge, and download-artifact does not even create the
+      # directory, so the merge command would crash with a confusing error.
+      - name: Check for blob reports
+        id: blobs
+        run: |
+          if [ -d all-blob-reports ] && [ -n "$(ls -A all-blob-reports)" ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::No blob reports were uploaded — every test job failed before running Playwright. See those jobs for the real failure."
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
       - run: npm ci
+        if: steps.blobs.outputs.found == 'true'
       - name: Merge into one HTML report
+        if: steps.blobs.outputs.found == 'true'
         working-directory: tests/e2e
         run: npx playwright merge-reports --reporter html ../../all-blob-reports
+        env:
+          # Same package.json-walk as the blob reporter: without this the merged
+          # report lands at the repo root while the upload reads tests/e2e/.
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report
       - uses: actions/upload-artifact@v4
+        if: steps.blobs.outputs.found == 'true'
         with:
           name: playwright-html-report
           path: tests/e2e/playwright-report
