@@ -119,12 +119,14 @@ use Mollie\Service\CountryService;
 use Mollie\Service\EntityManager\EntityManagerInterface;
 use Mollie\Service\EntityManager\ObjectModelEntityManager;
 use Mollie\Service\EntityManager\ObjectModelUnitOfWork;
+use Mollie\Service\MultistoreSettingsContextGuard;
 use Mollie\Service\PaymentMethod\PaymentMethodFormatterService;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\AmountPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\B2bPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BasePaymentMethodRestrictionValidator;
+use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\BillinkPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\CustomerGroupPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\EnvironmentVersionSpecificPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\VoucherPaymentMethodRestrictionValidator;
@@ -268,6 +270,10 @@ final class BaseServiceProvider
         $this->addService($container, PaymentMethodSortProviderInterface::class, PaymentMethodSortProvider::class);
         $this->addService($container, PhoneNumberProviderInterface::class, PhoneNumberProvider::class);
 
+        $service = $this->addService($container, ApplePayPaymentMethodRestrictionValidator::class, ApplePayPaymentMethodRestrictionValidator::class);
+        $this->addServiceArgument($service, ConfigurationAdapter::class);
+        $this->addServiceArgument($service, LoggerInterface::class);
+
         $this->addService($container, PaymentMethodRestrictionValidationInterface::class, function () use ($container) {
             return new PaymentMethodRestrictionValidation([
                 $container->get(BasePaymentMethodRestrictionValidator::class),
@@ -276,11 +282,15 @@ final class BaseServiceProvider
                 $container->get(ApplePayPaymentMethodRestrictionValidator::class),
                 $container->get(AmountPaymentMethodRestrictionValidator::class),
                 $container->get(B2bPaymentMethodRestrictionValidator::class),
+                $container->get(BillinkPaymentMethodRestrictionValidator::class),
                 $container->get(CustomerGroupPaymentMethodRestrictionValidator::class),
-            ]);
+            ], $container->get(LoggerInterface::class));
         });
 
         $this->addService($container, CustomLogoProviderInterface::class, $container->get(CreditCardLogoProvider::class));
+
+        $service = $this->addService($container, MultistoreSettingsContextGuard::class, MultistoreSettingsContextGuard::class);
+        $this->addServiceArgument($service, Shop::class);
 
         // Payment Method Services
         $service = $this->addService($container, PaymentMethodConfigProvider::class, PaymentMethodConfigProvider::class);

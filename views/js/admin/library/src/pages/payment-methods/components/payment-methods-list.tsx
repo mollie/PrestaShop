@@ -5,8 +5,9 @@ import { CheckCircle, XCircle } from "lucide-react"
 import { PaymentMethodTabs } from "./payment-method-tabs"
 import { PaymentMethodsList } from "./payment-methods-list-component"
 import { PaymentMethodsSkeleton } from "./payment-methods-skeleton"
-import { paymentMethodsApiService, type PaymentMethod, type Country, type CustomerGroup, type Language } from "../../../services/PaymentMethodsApiService"
+import { paymentMethodsApiService, type PaymentMethod, type Country, type Carrier, type CustomerGroup, type Language } from "../../../services/PaymentMethodsApiService"
 import { usePaymentMethodsTranslations } from "../../../shared/hooks/use-payment-methods-translations"
+import { MultistoreRestrictionNotice } from "../../../shared/components/ui/multistore-restriction-notice"
 
 export default function PaymentMethodsPage() {
   const { t } = usePaymentMethodsTranslations()
@@ -23,8 +24,11 @@ export default function PaymentMethodsPage() {
   const [enabledMethods, setEnabledMethods] = useState<PaymentMethod[]>([])
   const [disabledMethods, setDisabledMethods] = useState<PaymentMethod[]>([])
   const [countries, setCountries] = useState<Country[]>([])
+  const [carriers, setCarriers] = useState<Carrier[]>([])
   const [customerGroups, setCustomerGroups] = useState<CustomerGroup[]>([])
   const [languages, setLanguages] = useState<Language[]>([])
+  const [onlyPaymentsMethods, setOnlyPaymentsMethods] = useState<string[]>([])
+  const [onlyOrderMethods, setOnlyOrderMethods] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
   const [savingMethodId, setSavingMethodId] = useState<string | null>(null)
@@ -45,8 +49,11 @@ export default function PaymentMethodsPage() {
         setEnabledMethods(enabled)
         setDisabledMethods(disabled)
         setCountries(response.data.countries || [])
+        setCarriers(response.data.carriers || [])
         setCustomerGroups(response.data.customerGroups || [])
         setLanguages(response.data.languages || [])
+        setOnlyPaymentsMethods(response.data.onlyPaymentsMethods || [])
+        setOnlyOrderMethods(response.data.onlyOrderMethods || [])
       } else {
         setErrorMessage(response.message || t('loadingError'))
       }
@@ -220,6 +227,15 @@ export default function PaymentMethodsPage() {
 
   const currentMethods = activeTab === "enabled" ? enabledMethods : disabledMethods
 
+  if (window.molliePaymentMethodsConfig?.multistoreRestricted) {
+    return (
+      <MultistoreRestrictionNotice
+        title={t('multistoreRestrictedTitle')}
+        message={t('multistoreRestrictedMessage')}
+      />
+    )
+  }
+
   if (isLoading) {
     return <PaymentMethodsSkeleton />
   }
@@ -322,8 +338,11 @@ export default function PaymentMethodsPage() {
         <PaymentMethodsList
           methods={currentMethods}
           countries={countries}
+          carriers={carriers}
           customerGroups={customerGroups}
           languages={languages}
+          onlyPaymentsMethods={onlyPaymentsMethods}
+          onlyOrderMethods={onlyOrderMethods}
           onToggleExpanded={toggleExpanded}
           onUpdateSettings={updateMethodSettings}
           onSaveSettings={saveMethodSettings}

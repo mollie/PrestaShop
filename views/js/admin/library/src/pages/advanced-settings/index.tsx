@@ -6,6 +6,7 @@ import "./advanced-settings.css"
 import { advancedSettingsApiService, type CarrierData, type SaveCarrierData } from "../../services/AdvancedSettingsApiService"
 import { AdvancedSettingsSkeleton } from "./components/advanced-settings-skeleton"
 import { useAdvancedSettingsTranslations } from "../../shared/hooks/use-advanced-settings-translations"
+import { MultistoreRestrictionNotice } from "../../shared/components/ui/multistore-restriction-notice"
 
 const ChevronDown = ({ className }: { className?: string }) => (
   <svg
@@ -465,6 +466,15 @@ const AdvancedSettings: React.FC = () => {
 
   const handleEmptyInputChange = (id: string, value: string) => {
     setCarriers((prev) => prev.map((carrier) => (carrier.id === id ? { ...carrier, emptyInput: value } : carrier)))
+  }
+
+  if (window.mollieAdvancedSettingsConfig?.multistoreRestricted) {
+    return (
+      <MultistoreRestrictionNotice
+        title={t('multistoreRestrictedTitle')}
+        message={t('multistoreRestrictedMessage')}
+      />
+    )
   }
 
   if (loading) {

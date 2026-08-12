@@ -1,0 +1,43 @@
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ */
+
+/* PIPRES-789: compact, constrained refund/capture panel (Payments API). */
+.mollie-order-info-panel .mollie-amount-actions {
+    margin-bottom: 5px;
+}
+
+.mollie-order-info-panel .mollie-amount-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 420px;
+}
+
+.mollie-order-info-panel .mollie-amount-control .form-control {
+    max-width: 160px;
+}
+
+.mollie-order-info-panel .mollie-amount-control .btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+/* Bulk actions (Orders API): a compact toolbar instead of stacked full-width buttons. */
+.mollie-order-info-panel .mollie-bulk-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.mollie-order-info-panel .btn .material-icons {
+    font-size: 16px;
+    line-height: 1;
+    vertical-align: text-bottom;
+}

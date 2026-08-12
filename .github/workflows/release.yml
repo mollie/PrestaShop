@@ -56,6 +56,9 @@ jobs:
           sed -i "/^SEGMENT_API_KEY=/d" .env
           echo "SEGMENT_API_KEY='${{ secrets.SEGMENT_API_KEY }}'" >> .env
 
+          # PrestaShop security requirement: every shipped directory must contain an index.php
+          find . -type d ! -path './.git' ! -path './.git/*' | while read -r dir; do [ -f "$dir/index.php" ] || cp index.php "$dir/index.php"; done
+
           # Create module directory structure
           mkdir ${{ env.MODULE_NAME }}
           rsync -Rr ./ ./${{ env.MODULE_NAME }}

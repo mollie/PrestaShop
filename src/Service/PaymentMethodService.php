@@ -27,6 +27,8 @@ use Mollie\Adapter\Context;
 use Mollie\Adapter\Shop;
 use Mollie\Api\Resources\BaseCollection;
 use Mollie\Api\Resources\MethodCollection;
+use Mollie\Api\Resources\Order as MollieOrderAlias;
+use Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Api\Types\SequenceType;
 use Mollie\Config\Config;
@@ -118,6 +120,9 @@ class PaymentMethodService
 
     /** @var PaymentExpiryCalculator */
     private $paymentExpiryCalculator;
+
+    /** @var array<string, string|null> wallet per transaction id */
+    private $wallets = [];
 
     public function __construct(
         ModuleFactory $module,
@@ -398,8 +403,11 @@ class PaymentMethodService
             }
 
             $paymentData->setLines(
+                // Pass the pre-fee amount; the fee is appended as its own line in getCartLines().
+                // Passing the fee-inclusive total left the rounding residual uncompensated (PIPRES-794).
+                // Mirrors the Orders API path below.
                 $this->cartLinesService->getCartLines(
-                    $totalAmount,
+                    $amount,
                     $paymentFeeData,
                     $currency,
                     $cart->getSummaryDetails(),
@@ -560,6 +568,11 @@ class PaymentMethodService
     private function removeNotSupportedMethods($methods, $mollieMethods)
     {
         foreach ($methods as $key => $method) {
+            // A persisted method the module no longer/never supported must not reach checkout.
+            if (!Config::isMethodSupported($method['id_method'])) {
+                unset($methods[$key]);
+                continue;
+            }
             $valid = false;
             foreach ($mollieMethods as $mollieMethod) {
                 if ($method['id_method'] === $mollieMethod->id) {
@@ -626,31 +639,87 @@ class PaymentMethodService
 
     public function getPaymentMethod($apiPayment): MolPaymentMethod
     {
-        $transactionMethod = $apiPayment->method;
+        $transactionMethod = $this->getWallet($apiPayment) ?: $apiPayment->method;
+
+        $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+
+        return new MolPaymentMethod(
+            $this->methodRepository->getPaymentMethodIdByMethodId($transactionMethod, $environment)
+        );
+    }
+
+    /**
+     * Mollie reports the wallet on the payment itself, and for the Orders API on its payments,
+     * so the result is cached to keep the order resource from being fetched more than once.
+     *
+     * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
+     */
+    public function getWallet($apiPayment): ?string
+    {
+        if (array_key_exists($apiPayment->id, $this->wallets)) {
+            return $this->wallets[$apiPayment->id];
+        }
+
+        $wallet = null;
 
         switch ($apiPayment->resource) {
             case Config::MOLLIE_API_STATUS_PAYMENT:
-                if (!isset($apiPayment->details->wallet)) {
-                    break;
-                }
-                $transactionMethod = $apiPayment->details->wallet;
+                $wallet = $apiPayment->details->wallet ?? null;
                 break;
             case Config::MOLLIE_API_STATUS_ORDER:
                 foreach ($apiPayment->payments() as $payment) {
                     if (!isset($payment->details->wallet)) {
                         continue;
                     }
-                    $transactionMethod = $payment->details->wallet;
+                    $wallet = $payment->details->wallet;
                 }
                 break;
             default:
                 throw new OrderCreationException('Missing order resource information', OrderCreationException::ORDER_RESOURSE_IS_MISSING);
         }
-        $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 
-        return new MolPaymentMethod(
-            $this->methodRepository->getPaymentMethodIdByMethodId($transactionMethod, $environment)
+        return $this->wallets[$apiPayment->id] = $wallet ? (string) $wallet : null;
+    }
+
+    /**
+     * Resolves the label stored on the order and its payment. A wallet has no method of its own
+     * to configure, so it is labelled through the method that settled it, for example
+     * "Card (Apple Pay)", which keeps it recognisable as a card payment.
+     *
+     * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
+     */
+    public function getPaymentMethodName(MolPaymentMethod $paymentMethod, $apiPayment): string
+    {
+        $wallet = $this->getWallet($apiPayment);
+
+        if ($wallet && $wallet !== $apiPayment->method) {
+            return sprintf(
+                '%s (%s)',
+                $this->getMethodName($apiPayment->method),
+                Config::$wallets[$wallet] ?? $this->getMethodName($wallet)
+            );
+        }
+
+        if (!empty($paymentMethod->method_name)) {
+            return (string) $paymentMethod->method_name;
+        }
+
+        return $this->getMethodName($apiPayment->method);
+    }
+
+    /**
+     * Mollie's own method name is preferred, the static list is only a fallback for methods
+     * that were never saved, so that a raw method id is never shown to the merchant.
+     */
+    public function getMethodName(string $methodId): string
+    {
+        $environment = (int) Configuration::get(Config::MOLLIE_ENVIRONMENT);
+
+        $paymentMethod = new MolPaymentMethod(
+            (int) $this->methodRepository->getPaymentMethodIdByMethodId($methodId, $environment)
         );
+
+        return $paymentMethod->method_name ?: (Config::$methods[$methodId] ?? $methodId);
     }
 
     private function validateSurchargePercentage(float $surchargePercentage): void

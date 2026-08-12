@@ -81,6 +81,19 @@ class LegacyContext
         return $invoiceAddress->id_country;
     }
 
+    public function getInvoiceCompany()
+    {
+        $cart = $this->getCart();
+
+        if (!$cart || !$cart->id_address_invoice) {
+            return '';
+        }
+
+        $invoiceAddress = new \Address((int) $cart->id_address_invoice);
+
+        return (string) $invoiceAddress->company;
+    }
+
     public function getCurrency()
     {
         return $this->getContext()->currency;

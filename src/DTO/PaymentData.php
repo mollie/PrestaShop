@@ -15,6 +15,7 @@ namespace Mollie\DTO;
 use Address;
 use Country;
 use JsonSerializable;
+use Mollie\Config\Config;
 use Mollie\DTO\Object\Amount;
 use Mollie\Utility\MollieApiInputSanitizer;
 
@@ -464,7 +465,7 @@ class PaymentData implements JsonSerializable
                 'value' => (string) $this->getAmount()->getValue(),
             ],
             'billingAddress' => [
-                'organizationName' => $this->cleanUpInput($this->getBillingAddress()->company),
+                'organizationName' => $this->getOrganizationName(),
                 'givenName' => $this->cleanUpInput($this->getBillingAddress()->firstname),
                 'familyName' => $this->cleanUpInput($this->getBillingAddress()->lastname),
                 'email' => MollieApiInputSanitizer::sanitizeEmail($this->getEmail()),
@@ -516,5 +517,18 @@ class PaymentData implements JsonSerializable
     private function cleanUpInput($input, $defaultValue = 'N/A'): ?string
     {
         return MollieApiInputSanitizer::sanitize($input, $defaultValue);
+    }
+
+    /**
+     * Billink treats any organization name as a B2B order and then rejects the request,
+     * so the placeholder must be omitted for a consumer purchase.
+     */
+    private function getOrganizationName(): ?string
+    {
+        if (Config::BILLINK === $this->getMethod()) {
+            return $this->cleanUpInput($this->getBillingAddress()->company, null);
+        }
+
+        return $this->cleanUpInput($this->getBillingAddress()->company);
     }
 }
