@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.6
++ Apple Pay now works in Chrome, Edge and Firefox on desktop via Apple's iOS 18 QR code flow, using Apple's official Apple Pay JS SDK
+
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API
 + New payment method: Billink, available on the Payments API for consumer purchases up to 2,500.00 EUR
