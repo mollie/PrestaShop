@@ -1,4 +1,4 @@
-import { runSql, querySingleValue } from './db';
+import { runSql, querySingleValue, querySingleValueRaw } from './db';
 
 function quote(value: string): string {
   return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
@@ -39,6 +39,24 @@ export function getGlobalConfig(key: string): string | null {
   return querySingleValue(`SELECT value FROM ps_configuration WHERE name = '${quote(key)}' LIMIT 1`);
 }
 
+export function deleteGlobalConfig(key: string): void {
+  runSql(`DELETE FROM ps_configuration WHERE name = '${quote(key)}'`);
+}
+
+/**
+ * Puts a configuration key back exactly as it was found, including the case
+ * where it did not exist at all — `MOLLIE_SANDBOX_SINGLE_CLICK_PAYMENT` is
+ * absent from a fresh install rather than set to 0, and writing a 0 in its
+ * place would leave the shop in a state the module never produces.
+ */
+export function restoreGlobalConfig(key: string, previous: string | null): void {
+  if (previous === null) {
+    deleteGlobalConfig(key);
+    return;
+  }
+  setGlobalConfig(key, previous);
+}
+
 /**
  * Whether the module has an API key stored at all. Every webhook call is
  * rejected with 401 before any other guard runs when it does not
@@ -54,6 +72,54 @@ export const DEFAULT_SHOP_ID = 1;
 
 export function isTestEnvironment(): boolean {
   return (getGlobalConfig('MOLLIE_ENVIRONMENT') ?? String(ENVIRONMENT_TEST)) === String(ENVIRONMENT_TEST);
+}
+
+/**
+ * `Config::MOLLIE_SINGLE_CLICK_PAYMENT` is not one key but a pair keyed on the
+ * environment (`src/Config/Config.php`), and the module reads the one that
+ * matches `MOLLIE_ENVIRONMENT`. Writing the sandbox key on a live-mode shop
+ * would set a value nothing reads.
+ */
+export function singleClickConfigKey(): string {
+  return isTestEnvironment()
+    ? 'MOLLIE_SANDBOX_SINGLE_CLICK_PAYMENT'
+    : 'MOLLIE_PRODUCTION_SINGLE_CLICK_PAYMENT';
+}
+
+/** Config::MOLLIE_IMAGES and its three documented values. */
+export const IMAGES_KEY = 'MOLLIE_IMAGES';
+export const LOGOS_HIDE = 'hide';
+export const LOGOS_NORMAL = 'normal';
+export const LOGOS_BIG = 'big';
+
+/** Subscription\Config::MOLLIE_SUBSCRIPTION_ENABLED — gates the FO account tab. */
+export const SUBSCRIPTIONS_ENABLED_KEY = 'MOLLIE_SUBSCRIPTION_ENABLED';
+
+/**
+ * Whether the method row carries the image set the module copies off Mollie's
+ * method list when it is saved. Rows written by the cfg-* setups carry `[]`,
+ * because those bypass the form; a logo can only be asserted once the method
+ * has been saved through `PaymentMethodService::savePaymentMethod`.
+ */
+export function methodImages(methodId: string, environment = ENVIRONMENT_TEST, shopId = DEFAULT_SHOP_ID): string | null {
+  assertMethodIdShape(methodId);
+  // Raw: the column holds JSON whose slashes PHP escaped, and `--batch` would
+  // escape those escapes (see querySingleValueRaw).
+  return querySingleValueRaw(
+    `SELECT images_json FROM ps_mol_payment_method ` +
+    `WHERE id_method = '${quote(methodId)}' AND live_environment = ${environment} AND id_shop = ${shopId} LIMIT 1`
+  );
+}
+
+/** Whether the module considers the method enabled, read straight off its row. */
+export function isMethodEnabled(methodId: string, environment = ENVIRONMENT_TEST, shopId = DEFAULT_SHOP_ID): boolean {
+  assertMethodIdShape(methodId);
+  return (
+    querySingleValue(
+      `SELECT enabled FROM ps_mol_payment_method ` +
+      `WHERE id_method = '${quote(methodId)}' AND live_environment = ${environment} AND id_shop = ${shopId} LIMIT 1`
+    ) === '1'
+  );
 }
 
 /**

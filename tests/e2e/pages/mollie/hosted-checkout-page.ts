@@ -43,6 +43,52 @@ export class HostedCheckoutPage {
     return (await this.outcomeControl(outcome).count()) > 0;
   }
 
+  /** Whether the browser is still on one of Mollie's own pages. */
+  private onMollie(): boolean {
+    try {
+      return new URL(this.page.url()).hostname.endsWith('mollie.com');
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Picks the outcome only if the sandbox asks for one, and reports which
+   * happened.
+   *
+   * Not every payment reaches the outcome picker: a card that is not enrolled
+   * for 3-D Secure, and a payment created against a saved customer, are
+   * completed by the sandbox on the spot and the browser is already on its way
+   * back to the shop. Waiting for `[value="paid"]` in those cases times out on a
+   * payment that in fact succeeded — which is precisely what the Cypress
+   * non-3DS case encoded by expecting the confirmation page directly.
+   */
+  async chooseOutcomeIfOffered(outcome: Outcome, timeout = 30_000): Promise<boolean> {
+    const deadline = Date.now() + timeout;
+    let sawIssuerList = false;
+
+    while (Date.now() < deadline) {
+      // Left Mollie without ever being asked: the sandbox settled it itself.
+      if (!this.onMollie()) return false;
+
+      if ((await this.outcomeControl(outcome).count()) > 0) {
+        await this.chooseOutcome(outcome);
+        return true;
+      }
+
+      // An issuer list stands between the payment and the outcome picker; click
+      // once, then keep waiting for the picker it leads to.
+      if (!sawIssuerList && (await this.issuerButtons().count()) > 0) {
+        sawIssuerList = true;
+        await this.issuerButtons().first().click().catch(() => {});
+      }
+
+      await this.page.waitForTimeout(500);
+    }
+
+    return false;
+  }
+
   async chooseOutcome(outcome: Outcome) {
     await this.selectIssuerIfPresent();
 

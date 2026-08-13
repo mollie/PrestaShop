@@ -86,6 +86,36 @@ export default defineConfig({
       dependencies: ['cfg-payments'],
       timeout: CHECKOUT_TIMEOUT,
     },
+    // The config-mutating project from the migration design: everything that
+    // rewrites global shop configuration and therefore cannot share a shop with
+    // a parallel reader — MOLLIE_IMAGES, the subscription feature flag, and the
+    // whole method set being enabled through the BO form.
+    //
+    // MUST be invoked on its own with `--workers=1` (see the Makefile and the CI
+    // workflow). `fullyParallel: false` serialises the tests inside each file,
+    // but Playwright has no per-project worker cap, so two of these FILES would
+    // still be handed to different workers in a shared invocation — and they
+    // conflict with each other by design, not just with other projects.
+    {
+      name: 'config',
+      testDir: './specs/config',
+      dependencies: ['mollie-connect', 'cfg-orders'],
+      fullyParallel: false,
+      // A BO save round-trip plus a checkout walk; individual tests raise this
+      // further where they do several.
+      timeout: CHECKOUT_TIMEOUT,
+    },
+    // The other half of the config-mutating work: the cases that also have to
+    // complete a real card payment, so they only do anything against a publicly
+    // reachable host. Split from `config` so the local CI job does not carry
+    // three tests that can only skip themselves there.
+    {
+      name: 'checkout-config',
+      testDir: './specs/checkout-config',
+      dependencies: ['mollie-connect'],
+      fullyParallel: false,
+      timeout: CHECKOUT_TIMEOUT,
+    },
     {
       name: 'mobile',
       testMatch: /mobile-checkout\.spec\.ts/,

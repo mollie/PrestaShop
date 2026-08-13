@@ -108,8 +108,15 @@ e2e-tests-locally:
 	npm ci
 	npx playwright install chromium
 	cd tests/e2e && npx playwright test --project=admin --project=webhook --project=mobile
+	# Its own invocation with --workers=1: these rewrite global config and the
+	# whole method set, so they must not overlap each other or the projects above.
+	cd tests/e2e && npx playwright test --project=config --workers=1
 	cd tests/e2e && E2E_CHECKOUT_API=orders npx playwright test --project=checkout-orders
 	cd tests/e2e && E2E_CHECKOUT_API=payments npx playwright test --project=cfg-payments --project=checkout-payments
+	# Guest card checkout and single-click. Completing a payment needs a publicly
+	# reachable E2E_BASE_URL (see `make tunnel`); against localhost the paid cases
+	# skip themselves and the payment-step assertions still run.
+	cd tests/e2e && npx playwright test --project=checkout-config --workers=1
 
 # target: e2e-tests-ui		- Same suite in Playwright's interactive UI mode.
 e2e-tests-ui:

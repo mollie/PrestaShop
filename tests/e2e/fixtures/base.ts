@@ -1,4 +1,4 @@
-import { test as base, expect } from '@playwright/test';
+import { test as base, expect, type Page } from '@playwright/test';
 import path from 'node:path';
 import { isPubliclyReachableBaseUrl } from '../helpers/env';
 
@@ -42,7 +42,61 @@ type TestFixtures = {
   assertNoConsoleErrors: void;
   blockThirdParties: void;
   screenshotOnSuccess: void;
+  /**
+   * A page with no session at all — neither the BO cookie nor a front-office
+   * login. `page` cannot express this: its storage state is overridden below to
+   * the worker's dual BO+FO session, and `test.use({ storageState })` does not
+   * reach a fixture override. Carries the same third-party stubbing and console
+   * guard as `page`.
+   */
+  guestPage: Page;
 };
+
+/**
+ * Stubs the third parties in THIRD_PARTY_BLOCKLIST. Shared by the `page` fixture
+ * (via blockThirdParties) and by `guestPage`, which builds its own context.
+ */
+async function stubThirdParties(page: Page): Promise<void> {
+  for (const pattern of THIRD_PARTY_BLOCKLIST) {
+    // Stubbed rather than aborted: an aborted analytics beacon makes the page
+    // log "Failed to fetch", which the console guard would then report as a
+    // regression we caused ourselves. The stub is shaped per resource type so
+    // callers can still parse the response.
+    await page.route(pattern, (route) => {
+      switch (route.request().resourceType()) {
+        case 'script':
+          return route.fulfill({ status: 200, contentType: 'application/javascript', body: '' });
+        case 'document':
+          return route.fulfill({ status: 200, contentType: 'text/html', body: '<!doctype html><title>blocked</title>' });
+        case 'image':
+          return route.fulfill({ status: 200, contentType: 'image/gif', body: '' });
+        default:
+          return route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+      }
+    });
+  }
+}
+
+/** Collects the console errors that ALLOWED_CONSOLE_ERRORS does not excuse. */
+function watchConsoleErrors(page: Page): string[] {
+  const errors: string[] = [];
+
+  page.on('console', (msg) => {
+    if (msg.type() !== 'error') return;
+    const text = msg.text();
+    if (ALLOWED_CONSOLE_ERRORS.some((p) => p.test(text))) return;
+    // A failed asset fetch is only interesting when it is one of the
+    // module's own assets; the seeded shop's theme and third-party modules
+    // reference a few images that never resolve.
+    if (/Failed to load resource/.test(text) && !/mollie/i.test(msg.location().url)) return;
+    errors.push(text);
+  });
+
+  // An uncaught exception is always a regression, never expected noise.
+  page.on('pageerror', (error) => errors.push(`pageerror: ${error.message}`));
+
+  return errors;
+}
 
 type WorkerFixtures = {
   foCustomer: { email: string; password: string };
@@ -101,28 +155,39 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
 
   blockThirdParties: [
     async ({ page }, use) => {
-      for (const pattern of THIRD_PARTY_BLOCKLIST) {
-        // Stubbed rather than aborted: an aborted analytics beacon makes the page
-        // log "Failed to fetch", which the console guard would then report as a
-        // regression we caused ourselves. The stub is shaped per resource type so
-        // callers can still parse the response.
-        await page.route(pattern, (route) => {
-          switch (route.request().resourceType()) {
-            case 'script':
-              return route.fulfill({ status: 200, contentType: 'application/javascript', body: '' });
-            case 'document':
-              return route.fulfill({ status: 200, contentType: 'text/html', body: '<!doctype html><title>blocked</title>' });
-            case 'image':
-              return route.fulfill({ status: 200, contentType: 'image/gif', body: '' });
-            default:
-              return route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
-          }
-        });
-      }
+      await stubThirdParties(page);
       await use();
     },
     { auto: true },
   ],
+
+  guestPage: async ({ browser }, use, testInfo) => {
+    const context = await browser.newContext({
+      baseURL: testInfo.project.use.baseURL,
+      // Same rule as the config: only a local shop may present a broken cert.
+      ignoreHTTPSErrors: !isPubliclyReachableBaseUrl(),
+      // Explicitly empty, and not merely omitted: `browser.newContext()` inside
+      // a test inherits the project's context options, so leaving this out hands
+      // the "guest" the worker's BO+FO session — the checkout then skips the
+      // personal-information step entirely and the test silently exercises a
+      // logged-in customer instead.
+      storageState: { cookies: [], origins: [] },
+    });
+    const page = await context.newPage();
+    await stubThirdParties(page);
+    const errors = watchConsoleErrors(page);
+
+    await use(page);
+
+    // Asserted before the context closes, and only when the test itself passed:
+    // a failing test already has its own message, and adding a console
+    // complaint on top of it hides the real one.
+    const consoleErrors = [...errors];
+    await context.close();
+    if (testInfo.status === testInfo.expectedStatus) {
+      expect(consoleErrors, `Unexpected console errors:\n${consoleErrors.join('\n')}`).toHaveLength(0);
+    }
+  },
 
   /**
    * Failures already leave a video and an error-context snapshot behind;
@@ -150,21 +215,7 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
 
   assertNoConsoleErrors: [
     async ({ page }, use) => {
-      const errors: string[] = [];
-
-      page.on('console', (msg) => {
-        if (msg.type() !== 'error') return;
-        const text = msg.text();
-        if (ALLOWED_CONSOLE_ERRORS.some((p) => p.test(text))) return;
-        // A failed asset fetch is only interesting when it is one of the
-        // module's own assets; the seeded shop's theme and third-party modules
-        // reference a few images that never resolve.
-        if (/Failed to load resource/.test(text) && !/mollie/i.test(msg.location().url)) return;
-        errors.push(text);
-      });
-
-      // An uncaught exception is always a regression, never expected noise.
-      page.on('pageerror', (error) => errors.push(`pageerror: ${error.message}`));
+      const errors = watchConsoleErrors(page);
 
       await use();
 

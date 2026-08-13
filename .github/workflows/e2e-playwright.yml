@@ -77,6 +77,17 @@ jobs:
           E2E_BASE_URL: http://localhost:8002
           MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
           PLAYWRIGHT_BLOB_OUTPUT_FILE: blob-report/local-${{ matrix.prestashop }}.zip
+      # Separate invocation, and --workers=1: this project rewrites global shop
+      # configuration (MOLLIE_IMAGES, the subscription flag) and enables every
+      # method through the BO form, so it must not run alongside the projects
+      # above — nor spread its own files across workers.
+      - name: Run config-mutating project
+        working-directory: tests/e2e
+        run: npx playwright test --project=config --workers=1
+        env:
+          E2E_BASE_URL: http://localhost:8002
+          MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+          PLAYWRIGHT_BLOB_OUTPUT_FILE: blob-report/config-${{ matrix.prestashop }}.zip
       - name: Upload blob report
         if: always()
         uses: actions/upload-artifact@v4
@@ -219,6 +230,16 @@ jobs:
           E2E_BASE_URL: https://${{ env.TUNNEL_HOSTNAME }}
           MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
           PLAYWRIGHT_BLOB_OUTPUT_FILE: blob-report/payments-${{ matrix.prestashop }}.zip
+      # Guest card checkout and single-click payments. They belong to the tunnel
+      # job because both complete a real card payment, and to their own
+      # invocation with --workers=1 because both rewrite global config.
+      - name: Run config-mutating checkout project
+        working-directory: tests/e2e
+        run: npx playwright test --project=checkout-config --workers=1
+        env:
+          E2E_BASE_URL: https://${{ env.TUNNEL_HOSTNAME }}
+          MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+          PLAYWRIGHT_BLOB_OUTPUT_FILE: blob-report/checkout-config-${{ matrix.prestashop }}.zip
       - name: Stop Cloudflare tunnel
         if: always()
         run: pkill -f cloudflared || true

@@ -28,6 +28,30 @@ export class PaymentMethodsPage {
   }
 
   /**
+   * How many method cards the current tab holds. Lets a caller tell "the module
+   * lists nothing at all" (a connection problem, worth failing over) apart from
+   * "Mollie's test profile does not offer this one method" (a skip): the two look
+   * identical through a single card's locator.
+   */
+  async cardCount(timeout = 15_000): Promise<number> {
+    await this.page
+      .locator('[data-testid^="payment-method-"]')
+      .first()
+      .waitFor({ state: 'attached', timeout })
+      .catch(() => {});
+    // Excludes the per-card controls, whose test ids share the same prefix.
+    return this.page
+      .locator('[data-testid^="payment-method-"]')
+      .evaluateAll(
+        (els) =>
+          els.filter((el) => {
+            const id = el.getAttribute('data-testid') ?? '';
+            return !/-(toggle|status|save|enabled-switch)$/.test(id);
+          }).length
+      );
+  }
+
+  /**
    * Brings a method's card into view without assuming which tab holds it —
    * whether it sits under Enabled or Disabled depends on global config that the
    * cfg-* setup projects own, so a hardcoded tab makes these tests

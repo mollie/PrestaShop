@@ -14,6 +14,27 @@ const TEST_CARD = {
 };
 
 /**
+ * The two cards the Cypress suite distinguished: a Mastercard enrolled for 3-D
+ * Secure and a Visa that is not. In test mode neither is charged and the outcome
+ * is still chosen on Mollie's sandbox page, so what these actually cover is that
+ * the module tokenises and completes a payment for either scheme — not a real
+ * 3-D Secure challenge, which Mollie's test mode does not present.
+ */
+export const CARD_3DS = {
+  holder: 'T. TESTER',
+  number: '5555555555554444',
+  expiry: '12/30',
+  cvc: '222',
+};
+
+export const CARD_NON_3DS = {
+  holder: 'T. TESTER',
+  number: '4242424242424242',
+  expiry: '12/30',
+  cvc: '222',
+};
+
+/**
  * The inline card form Mollie Components renders at the shop's own payment
  * step (sandbox has MOLLIE_SANDBOX_IFRAME on): four iframes, one field each,
  * mounted into the module's `#<field>-<methodId>` containers
