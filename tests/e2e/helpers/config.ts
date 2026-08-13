@@ -1,5 +1,9 @@
 import { runSql, querySingleValue, querySingleValueRaw } from './db';
 
+/** Config::ENVIRONMENT_TEST / ENVIRONMENT_LIVE. */
+export const ENVIRONMENT_TEST = 0;
+export const DEFAULT_SHOP_ID = 1;
+
 function quote(value: string): string {
   return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 }
@@ -35,8 +39,27 @@ export function setGlobalConfig(key: string, value: string): void {
   upsertConfig(key, value);
 }
 
-export function getGlobalConfig(key: string): string | null {
-  return querySingleValue(`SELECT value FROM ps_configuration WHERE name = '${quote(key)}' LIMIT 1`);
+/**
+ * Reads a configuration value the way the module reads it.
+ *
+ * `ps_configuration` holds one row per shop context, and `Configuration::get`
+ * resolves the shop-specific row first, then the shop group's, then the global
+ * one — so a bare `LIMIT 1` can return a value the module never sees. The PS1785
+ * seed is exactly that case: it ships shop-scoped `SUBSCRIPTION_ATTRIBUTE_GROUP`
+ * rows pointing at an older attribute group, while a fresh module install writes
+ * a global row pointing at the group it just created. Whichever row MySQL
+ * happened to return first then decided whether a test looked at the group the
+ * module uses or an orphaned one.
+ */
+export function getGlobalConfig(key: string, shopId = DEFAULT_SHOP_ID): string | null {
+  return querySingleValue(
+    `SELECT value FROM ps_configuration WHERE name = '${quote(key)}' ` +
+    `ORDER BY CASE ` +
+    `  WHEN id_shop = ${Number(shopId)} THEN 0 ` +
+    `  WHEN id_shop IS NULL AND id_shop_group IS NOT NULL THEN 1 ` +
+    `  WHEN id_shop IS NULL AND id_shop_group IS NULL THEN 2 ` +
+    `  ELSE 3 END, id_configuration DESC LIMIT 1`
+  );
 }
 
 export function deleteGlobalConfig(key: string): void {
@@ -65,10 +88,6 @@ export function restoreGlobalConfig(key: string, previous: string | null): void 
 export function hasApiKeyConfigured(): boolean {
   return Boolean(getGlobalConfig('MOLLIE_API_KEY_TEST') || getGlobalConfig('MOLLIE_API_KEY'));
 }
-
-/** Config::ENVIRONMENT_TEST / ENVIRONMENT_LIVE. */
-export const ENVIRONMENT_TEST = 0;
-export const DEFAULT_SHOP_ID = 1;
 
 export function isTestEnvironment(): boolean {
   return (getGlobalConfig('MOLLIE_ENVIRONMENT') ?? String(ENVIRONMENT_TEST)) === String(ENVIRONMENT_TEST);

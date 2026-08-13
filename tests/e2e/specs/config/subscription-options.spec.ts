@@ -14,6 +14,7 @@ import {
   subscriptionAttributeNames,
   subscriptionCombinationCount,
 } from '../../helpers/subscription';
+import { hasProductPageV2, prestashopVersion } from '../../helpers/shop';
 
 /**
  * The three Cypress subscription cases the Playwright suite had no equivalent
@@ -53,7 +54,28 @@ test.afterAll(() => {
   restoreGlobalConfig(SUBSCRIPTIONS_ENABLED_KEY, previousSubscriptionsEnabled);
 });
 
+/**
+ * The product-page half runs on PrestaShop 8's product editor only.
+ *
+ * 1.7.8 has no product-type switch and keeps combinations behind the Quantities
+ * step's tokenfield, so this is a different UI rather than a different selector —
+ * and the module code under test is identical on both, which is why the PS8 leg
+ * is where it is asserted. Gated on the shop's version, deliberately not on
+ * "is the badge there": a missing badge on a PS8 shop must still fail.
+ *
+ * (The Cypress suite never covered this on 1.7.8 either — all three of its
+ * PS1785 subscription cases were permanently skipped.)
+ */
+function requiresProductPageV2(): void {
+  test.skip(
+    !hasProductPageV2(),
+    `PrestaShop ${prestashopVersion()} serves the legacy product editor, whose ` +
+      'combinations UI differs entirely from the PS8 one this spec drives'
+  );
+}
+
 test('the module offers its subscription attributes in the product BO', async ({ page }) => {
+  requiresProductPageV2();
   // Two saves of the product plus a combination generation.
   test.setTimeout(240_000);
 
@@ -123,6 +145,8 @@ test('the module offers its subscription attributes in the product BO', async ({
 });
 
 test('the subscription dropdown is offered on the FO product page', async ({ page }) => {
+  // Depends on the combinations the test above generates, so it shares its gate.
+  requiresProductPageV2();
   const ids = subscriptionAttributeIds();
   test.skip(
     subscriptionCombinationCount(PRODUCT_ID, ids.group!) === 0,

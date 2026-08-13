@@ -4,7 +4,59 @@ export type Outcome = 'paid' | 'failed' | 'canceled' | 'expired' | 'authorized';
 
 /** Mollie's sandbox pages, shown instead of a real bank/card flow. */
 export class HostedCheckoutPage {
-  constructor(private page: Page) {}
+  /**
+   * Failures Mollie's own host returned, newest last.
+   *
+   * Worth recording because the symptom is otherwise unreadable: when Mollie
+   * answers the hosted checkout with 403 — its bot protection throttling a CI
+   * runner's IP — the page renders without its own stylesheet and jQuery, so the
+   * outcome picker never appears and every test in the phase fails with
+   * `waiting for locator('[value="paid"]')`. That looks like a module or spec
+   * problem and is neither. A whole CI investigation went into finding this out
+   * once; the message now says it.
+   */
+  private upstreamFailures: string[] = [];
+
+  constructor(private page: Page) {
+    page.on('response', (response) => {
+      if (response.status() < 400) return;
+      const url = response.url();
+      let host: string;
+      try {
+        host = new URL(url).hostname;
+      } catch {
+        return; // data:/blob: and friends carry no host to attribute this to
+      }
+      if (!/(^|\.)mollie\.com$/.test(host)) return;
+      this.upstreamFailures.push(`${response.status()} ${url}`);
+    });
+  }
+
+  /**
+   * Explains a missing control in terms of what Mollie's host did, so a run
+   * throttled upstream is not read as a regression in the module.
+   */
+  private async describeMollieFailure(waitingFor: string): Promise<string> {
+    const lines = [
+      `Mollie's hosted page never offered ${waitingFor}.`,
+      `Current URL: ${this.page.url()}`,
+    ];
+
+    if (this.upstreamFailures.length > 0) {
+      // Deduplicated: one throttled page load produces the same status for the
+      // document and each of its assets.
+      const unique = [...new Set(this.upstreamFailures.map((f) => f.split(' ')[0]))];
+      lines.push(
+        `Mollie answered ${this.upstreamFailures.length} request(s) with ${unique.join('/')} — ` +
+          'when that includes the /checkout/ document or its assets, Mollie is refusing this ' +
+          'client (its bot protection throttles CI runner IPs) and the page cannot render its ' +
+          'outcome picker. That is upstream, not the module.'
+      );
+      lines.push(...this.upstreamFailures.slice(-5).map((f) => `  ${f}`));
+    }
+
+    return lines.join('\n');
+  }
 
   private outcomeControl(outcome: Outcome) {
     return this.page.locator(`[value="${outcome}"]`);
@@ -93,7 +145,11 @@ export class HostedCheckoutPage {
     await this.selectIssuerIfPresent();
 
     const control = this.outcomeControl(outcome);
-    await control.waitFor({ timeout: 30_000 });
+    try {
+      await control.waitFor({ timeout: 30_000 });
+    } catch (error) {
+      throw new Error(await this.describeMollieFailure(`[value="${outcome}"]`), { cause: error });
+    }
     await control.click();
     await this.page.locator('.button.form__button').click();
   }

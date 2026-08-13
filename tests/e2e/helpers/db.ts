@@ -49,6 +49,19 @@ export function querySingleValueRaw(sql: string): string | null {
   return readSingleValue(sql, ['--batch', '--raw', '--skip-column-names']);
 }
 
+/** Every row's first column, in the order the query returned them. */
+export function queryColumn(sql: string): string[] {
+  const out = execFileSync('mysql', mysqlArgs(sql, ['--batch', '--skip-column-names']), {
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'ignore'],
+    env: mysqlEnv(),
+  });
+  return out
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line !== '' && line !== 'NULL');
+}
+
 function readSingleValue(sql: string, flags: string[]): string | null {
   const out = execFileSync('mysql', mysqlArgs(sql, flags), {
     encoding: 'utf8',

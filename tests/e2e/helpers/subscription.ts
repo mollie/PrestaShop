@@ -1,4 +1,4 @@
-import { querySingleValue } from './db';
+import { queryColumn, querySingleValue } from './db';
 import { getGlobalConfig } from './config';
 
 /**
@@ -47,9 +47,28 @@ export function subscriptionAttributeIds(): SubscriptionAttributeIds {
   };
 }
 
-/** The attribute name the module gives each option, as it appears in the BO. */
-export function subscriptionAttributeNames(): string[] {
-  return ['None', 'Daily', 'Weekly', 'Monthly', 'Quarterly', 'Yearly'];
+/**
+ * The names of the subscription options the module's configuration actually
+ * points at, read from `ps_attribute_lang`.
+ *
+ * Not a fixed list of six: the module has gained options over time (Quarterly is
+ * newer than the rest), and a seeded shop can carry an older attribute group
+ * whose shop-scoped configuration rows shadow the freshly installed one — the
+ * PS1785 seed does exactly that and offers five. Asserting a hardcoded list
+ * there would report a seed artefact as a module defect.
+ */
+export function subscriptionAttributeNames(langId = 1): string[] {
+  const ids = Object.entries(subscriptionAttributeIds())
+    .filter(([key, id]) => key !== 'group' && id !== null)
+    .map(([, id]) => Number(id));
+
+  if (ids.length === 0) return [];
+
+  const rows = queryColumn(
+    `SELECT name FROM ps_attribute_lang ` +
+    `WHERE id_lang = ${Number(langId)} AND id_attribute IN (${ids.join(', ')}) ORDER BY id_attribute`
+  );
+  return rows;
 }
 
 /** `ps_product.product_type` — 'standard' until the BO switches it. */
