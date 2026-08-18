@@ -88,15 +88,19 @@ final class RequestApplePayPaymentSessionHandler
         $liveApiKey = Configuration::get(Config::MOLLIE_API_KEY);
 
         if (!$liveApiKey) {
-            return $this->module->getApiClient();
+            throw new MollieApiException('Apple Pay requires a live API key for session validation even in test mode. Add your live API key in the module\'s Configuration tab.', MollieApiException::APPLE_PAY_LIVE_KEY_REQUIRED);
         }
 
-        return $this->apiKeyService->setApiKey(
-            $liveApiKey,
-            $this->module->version,
-            false,
-            Config::ENVIRONMENT_LIVE
-        );
+        try {
+            return $this->apiKeyService->setApiKey(
+                $liveApiKey,
+                $this->module->version,
+                false,
+                Config::ENVIRONMENT_LIVE
+            );
+        } catch (\Exception $e) {
+            throw new MollieApiException('Apple Pay session validation failed because the configured live API key is invalid.', MollieApiException::APPLE_PAY_LIVE_KEY_REQUIRED);
+        }
     }
 
     private function createEmptyCart(int $currencyId, int $langId): int
