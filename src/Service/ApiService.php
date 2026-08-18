@@ -167,6 +167,7 @@ class ApiService implements ApiServiceInterface
                 'id' => $apiMethod->id,
                 'name' => $methodName,
                 'available' => !in_array($apiMethod->id, $notAvailable),
+                'supported' => Config::isMethodSupported($apiMethod->id),
                 'image' => (array) $apiMethod->image,
                 'tipEnableSSL' => $tipEnableSSL,
                 'minimumAmount' => $apiMethod->minimumAmount ? [

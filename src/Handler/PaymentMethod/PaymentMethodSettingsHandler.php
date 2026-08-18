@@ -95,6 +95,12 @@ class PaymentMethodSettingsHandler
      */
     public function handlePaymentMethodSave(string $methodId, array $settings, int $environment, int $shopId): void
     {
+        // Methods the module has no handler for cannot be configured or enabled,
+        // even if a crafted request reaches this path (the UI switch is disabled).
+        if (!Config::isMethodSupported($methodId)) {
+            throw new MollieException('This payment method is not yet supported and cannot be configured.');
+        }
+
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId(
             $methodId,
             $environment,
@@ -172,9 +178,12 @@ class PaymentMethodSettingsHandler
         ?array $apiMethodData = null
     ): void {
         $paymentMethod->id_method = $methodId;
-        $paymentMethod->method_name = $methodId;
+        $paymentMethod->method_name = $this->resolveMethodName($paymentMethod, $methodId, $apiMethodData);
         $paymentMethod->enabled = (bool) ($settings['enabled'] ?? false);
-        $paymentMethod->method = $settings['apiSelection'] ?? 'payments';
+        $paymentMethod->method = $this->resolveApiSelection(
+            $methodId,
+            (string) ($settings['apiSelection'] ?? Config::MOLLIE_PAYMENTS_API)
+        );
         $paymentMethod->description = $settings['transactionDescription'] ?? '';
 
         $paymentMethod->min_amount = (float) ($settings['orderRestrictions']['minAmount'] ?? 0);
@@ -192,6 +201,39 @@ class PaymentMethodSettingsHandler
         if (in_array($methodId, Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS)) {
             $paymentMethod->is_manual_capture = ($settings['captureMode'] ?? 'automatic') === 'manual';
         }
+    }
+
+    /**
+     * Methods that Mollie only supports on the Payments API are locked to it. The UI already
+     * hides the Orders button, this keeps a stale or crafted selection from being stored.
+     */
+    private function resolveApiSelection(string $methodId, string $apiSelection): string
+    {
+        if (in_array($methodId, Config::PAYMENT_API_ONLY_METHODS, true)) {
+            return Config::MOLLIE_PAYMENTS_API;
+        }
+
+        return $apiSelection;
+    }
+
+    /**
+     * The stored name ends up as the payment label on the order, so it has to be Mollie's
+     * own method name. The already stored name and the static list are only used when the
+     * API cannot be reached during the save, to avoid storing the raw method id.
+     *
+     * @param array|null $apiMethodData Data from Mollie API
+     */
+    private function resolveMethodName(MolPaymentMethod $paymentMethod, string $methodId, ?array $apiMethodData): string
+    {
+        if (!empty($apiMethodData['name'])) {
+            return (string) $apiMethodData['name'];
+        }
+
+        if (!empty($paymentMethod->method_name)) {
+            return (string) $paymentMethod->method_name;
+        }
+
+        return Config::$methods[$methodId] ?? $methodId;
     }
 
     /**
@@ -445,6 +487,10 @@ class PaymentMethodSettingsHandler
         $this->configuration->updateValue(
             Config::MOLLIE_APPLE_PAY_DIRECT_STYLE,
             $applePaySettings['buttonStyle'] ?? 0
+        );
+        $this->configuration->updateValue(
+            Config::MOLLIE_APPLE_PAY_DIRECT_EXCLUDED_CARRIERS,
+            json_encode(array_values(array_map('intval', $applePaySettings['excludedCarriers'] ?? [])))
         );
     }
 

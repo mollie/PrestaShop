@@ -104,6 +104,7 @@ final class UpdateApplePayShippingContactHandler
                 $address->country = $command->getCountry();
                 $address->city = $command->getLocality();
                 $address->id_customer = $customerId;
+                $address->deleted = true;
                 $address->update();
 
                 return $address;
@@ -120,6 +121,8 @@ final class UpdateApplePayShippingContactHandler
         $address->id_country = Country::getByIso($command->getCountryCode());
         $address->country = $command->getCountry();
         $address->city = $command->getLocality();
+        // Soft-deleted on purpose: this is a temporary Apple Pay sheet address. Keeping it deleted hides it from the customer's address book if the payment is abandoned; real data is written on order creation.
+        $address->deleted = true;
         $address->add();
 
         return $address;
@@ -145,6 +148,8 @@ final class UpdateApplePayShippingContactHandler
         $customer->lastname = 'applePay';
         $customer->email = 'applepay-' . (int) $cart->id . '@mollie.com';
         $customer->passwd = Tools::hash(microtime());
+        // Soft-deleted on purpose: hides this throwaway guest from the Customers list if the payment is abandoned; it is restored on order creation.
+        $customer->deleted = true;
         $customer->add();
 
         return $customer;
@@ -172,6 +177,32 @@ final class UpdateApplePayShippingContactHandler
     {
         $context = \Context::getContext();
         $context->cart = $cart;
-        \Context::getContext()->updateCustomer($customer);
+
+        $deliveryAddressId = (int) $cart->id_address_delivery;
+        $invoiceAddressId = (int) $cart->id_address_invoice;
+
+        $context->updateCustomer($customer);
+
+        $this->restoreCartAddresses($cart, $deliveryAddressId, $invoiceAddressId);
+    }
+
+    /**
+     * Context::updateCustomer() reassigns both cart addresses to Address::getFirstCustomerAddressId(),
+     * which ignores soft-deleted rows and therefore never returns the temporary Apple Pay address:
+     * 0 for the throwaway guest, the customer's oldest saved address for a logged-in shopper.
+     * Put back the addresses the Apple Pay sheet is being quoted against.
+     */
+    private function restoreCartAddresses(Cart $cart, int $deliveryAddressId, int $invoiceAddressId): void
+    {
+        if ((int) $cart->id_address_delivery === $deliveryAddressId && (int) $cart->id_address_invoice === $invoiceAddressId) {
+            return;
+        }
+
+        // Remaps ps_cart_product rows away from the address the core call just forced onto the cart.
+        $cart->updateAddressId((int) $cart->id_address_delivery, $deliveryAddressId);
+
+        $cart->id_address_delivery = $deliveryAddressId;
+        $cart->id_address_invoice = $invoiceAddressId;
+        $cart->update();
     }
 }

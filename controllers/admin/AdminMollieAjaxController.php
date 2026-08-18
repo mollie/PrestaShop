@@ -164,11 +164,30 @@ class AdminMollieAjaxController extends ModuleAdminController
         $creditCardLogoProvider = $this->module->getService(CreditCardLogoProvider::class);
         $target_file = $creditCardLogoProvider->getLocalLogoPath();
         $isUploaded = 1;
-        $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
         $returnText = '';
-        if ('jpg' !== $imageFileType && 'png' !== $imageFileType) {
+
+        if (!isset($_FILES['fileToUpload']) || UPLOAD_ERR_OK !== $_FILES['fileToUpload']['error']) {
+            echo json_encode(['status' => 0, 'message' => $this->module->l('No file uploaded or upload error.')]);
+
+            return;
+        }
+
+        // Validate the uploaded file, not the fixed destination path.
+        $imageFileType = strtolower(pathinfo($_FILES['fileToUpload']['name'], PATHINFO_EXTENSION));
+        if (!in_array($imageFileType, ['jpg', 'jpeg', 'png'], true)) {
             $returnText = $this->module->l('Upload a .jpg or .png file.');
             $isUploaded = 0;
+        }
+
+        if (1 === $isUploaded) {
+            $imageInfo = getimagesize($_FILES['fileToUpload']['tmp_name']);
+            if (false === $imageInfo) {
+                $returnText = $this->module->l('Invalid image file.');
+                $isUploaded = 0;
+            } elseif ($imageInfo[0] > 256 || $imageInfo[1] > 64) {
+                $returnText = $this->module->l('Image dimensions must be maximum 256x64 pixels.');
+                $isUploaded = 0;
+            }
         }
 
         if (1 === $isUploaded) {

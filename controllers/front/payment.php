@@ -183,14 +183,14 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                             continue;
                         }
                         $orderPayment->transaction_id = $apiPayment->id;
-                        $orderPayment->payment_method = $apiPayment->method;
+                        $orderPayment->payment_method = $transactionService->getPaymentMethodName($paymentMethodObj, $apiPayment);
                         $orderPayment->update();
                     }
                 } else {
                     $orderPayment = new OrderPayment();
                     $orderPayment->order_reference = $order->reference;
                     $orderPayment->amount = $apiPayment->amount->value;
-                    $orderPayment->payment_method = $apiPayment->method;
+                    $orderPayment->payment_method = $transactionService->getPaymentMethodName($paymentMethodObj, $apiPayment);
                     $orderPayment->transaction_id = $apiPayment->id;
                     $orderPayment->id_currency = (int) $cart->id_currency;
                     $orderPayment->add();

@@ -2,6 +2,31 @@
 
 # Changelog #
 
+## Changes in release 6.4.5
++ New payment method: Wero, available on the Payments API
++ New payment method: Billink, available on the Payments API for consumer purchases up to 2,500.00 EUR
++ Payment methods the module does not support are now flagged as unsupported in the back office and can no longer be enabled or reach checkout
++ Fixed inconsistent payment method label on orders, card payments showed the internal method id instead of the payment method name
++ Fixed the payment method name stored on order payment records for Bancomat Pay, Przelewy24 and Swish
++ Wallet payments are now labelled with the method that settled them and the wallet used, for example "Card (Apple Pay)"
++ Added shipping method exclusion list for Apple Pay Direct
++ Blocked Mollie settings edits while the back office is set to "All stores" or a shop group, the settings are stored per shop and now require a single shop to be selected
++ Fixed "On backorder (paid)" status not being set when a product is ordered at exactly 0 stock, including instant-payment methods such as iDEAL and cards
++ Fixed payment method restriction diagnostics filling up the PrestaShop log table on every checkout page render
++ Fixed total_paid_real staying 0 on bank transfer orders after the payment is completed
++ Fixed free shipping vouchers causing a Mollie API 422 amount error at checkout, and wrong order line amounts when no payment fee is configured
++ Fixed credit card payments failing with a Mollie API 422 amount error when a payment surcharge is active and prices are rounded per line
++ Fixed Apple Pay Direct failing to complete guest payments, the shipping address selected in the Apple Pay sheet was dropped from the cart before the order was created
++ Fixed Apple Pay Direct creating fictitious "ApplePay" placeholder addresses and guest records on customer accounts
++ Prevented Apple Pay Direct from overwriting a registered customer's saved name and email
++ Fixed Apple Pay Direct authorization so cart operations only affect the caller's own session cart
++ Fixed subscription authorization so customers can only cancel or change the payment method of their own subscriptions
++ Hardened the module against the PrestaShop security requirements
++ Redesigned the refund and capture panel on the back office order page
++ Added a "View in Mollie" link on the order page and in the Orders list to open a payment directly in the Mollie dashboard
++ Translated the "View in Mollie" link into all supported back office languages
++ Added the missing back office and checkout translations across all supported languages
+
 ## Changes in release 6.4.4
 + Added bank transfer due date configuration
 + Added Segment analytics tracking for module and payment events

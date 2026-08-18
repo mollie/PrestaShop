@@ -104,7 +104,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.4.4';
+        $this->version = '6.4.5';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -657,10 +657,17 @@ class Mollie extends PaymentModule
             }
 
             if (TransactionUtility::isOrderTransaction($mollieTransactionId)) {
-                $products = $this->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments'])->lines;
+                $mollieApiResource = $this->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments']);
             } else {
-                $products = $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments'])->lines; // @phpstan-ignore-line
+                $mollieApiResource = $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments']); // @phpstan-ignore-line
             }
+            $products = $mollieApiResource->lines;
+
+            // Deep link to this exact payment/order in the Mollie dashboard, taken straight from the
+            // API response so it always points at the correct organization and environment.
+            $mollieDashboardUrl = isset($mollieApiResource->_links->dashboard->href)
+                ? $mollieApiResource->_links->dashboard->href
+                : null;
 
             $mollieLogoPath = $this->getMollieLogoPath();
 
@@ -814,6 +821,7 @@ class Mollie extends PaymentModule
                 'mollie_logo_path' => $mollieLogoPath,
                 'mollie_transaction_id' => $mollieTransactionId,
                 'mollie_api_type' => $mollieApiType,
+                'mollie_dashboard_url' => $mollieDashboardUrl,
                 'isRefunded' => $isRefunded,
                 'isCaptured' => $isCaptured,
                 'isShipped' => $isShipped,
@@ -1474,7 +1482,11 @@ class Mollie extends PaymentModule
             return;
         }
 
-        $orderPayment->payment_method = Config::$methods[$mollieOrder['method']];
+        /** @var \Mollie\Service\PaymentMethodService $paymentMethodService */
+        $paymentMethodService = $this->getService(\Mollie\Service\PaymentMethodService::class);
+
+        // The order label is already resolved, including the wallet a card payment was settled with.
+        $orderPayment->payment_method = $order->payment ?: $paymentMethodService->getMethodName($mollieOrder['method']);
         $orderPayment->update();
     }
 
@@ -1909,7 +1921,7 @@ class Mollie extends PaymentModule
         return $recurringOrderRepository
             ->findAll()
             ->where('id_customer', '=', $customerId)
-            ->sqlWhere('id_address_delivery = ' . $oldAddressId . ' OR id_address_invoice = ' . $oldAddressId)
+            ->sqlWhere('id_address_delivery = ' . (int) $oldAddressId . ' OR id_address_invoice = ' . (int) $oldAddressId)
             ->sqlWhere('status = "' . pSQL('active') . '"')
             ->getResults();
     }

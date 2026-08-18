@@ -46,6 +46,7 @@ use Order;
 use OrderPayment;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -382,10 +383,35 @@ class TransactionService
                     continue;
                 }
                 $orderPayment->transaction_id = $transaction->id;
-                $orderPayment->payment_method = $paymentMethod->method_name;
+                $orderPayment->payment_method = $this->paymentMethodService->getPaymentMethodName($paymentMethod, $transaction);
                 $orderPayment->update();
             }
         }
+
+        $this->updateOrderTotalPaidReal(new Order($orderId));
+    }
+
+    private function updateOrderTotalPaidReal(Order $order): void
+    {
+        if (!Validate::isLoadedObject($order)) {
+            return;
+        }
+
+        $totalPaidReal = 0.0;
+        /** @var OrderPayment $orderPayment */
+        foreach ($order->getOrderPaymentCollection() as $orderPayment) {
+            if ((int) $orderPayment->id_currency !== (int) $order->id_currency) {
+                continue;
+            }
+            $totalPaidReal += (float) $orderPayment->amount;
+        }
+
+        if ((float) $order->total_paid_real === $totalPaidReal) {
+            return;
+        }
+
+        $order->total_paid_real = $totalPaidReal;
+        $order->update();
     }
 
     /**
@@ -451,7 +477,7 @@ class TransactionService
     {
         if ($payment->details->remainderMethod) {
             $transactionInfos[] = [
-                'paymentName' => $payment->details->remainderMethod,
+                'paymentName' => $this->paymentMethodService->getMethodName($payment->details->remainderMethod),
                 'amount' => $payment->details->remainderAmount->value,
                 'currency' => $payment->details->remainderAmount->currency,
                 'transactionId' => $payment->id,
@@ -467,7 +493,10 @@ class TransactionService
     private function getPaymentTransactionInfo(Payment $payment, array $transactionInfos)
     {
         $transactionInfos[] = [
-            'paymentName' => $payment->method,
+            'paymentName' => $this->paymentMethodService->getPaymentMethodName(
+                $this->paymentMethodService->getPaymentMethod($payment),
+                $payment
+            ),
             'amount' => $payment->amount->value,
             'currency' => $payment->amount->currency,
             'transactionId' => $payment->id,
