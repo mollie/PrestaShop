@@ -51,6 +51,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
      */
     private const APPLE_PAY_DELIVERY_ADDRESS_COOKIE = 'mollie_apple_pay_address_delivery';
     private const APPLE_PAY_INVOICE_ADDRESS_COOKIE = 'mollie_apple_pay_address_invoice';
+    private const APPLE_PAY_ADDRESS_CART_COOKIE = 'mollie_apple_pay_address_cart';
 
     /** @var Mollie */
     public $module;
@@ -240,6 +241,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
 
         $updatedCart = new Cart($cartId);
         $this->bindCartAddressesToSession(
+            $cartId,
             (int) $updatedCart->id_address_delivery,
             (int) $updatedCart->id_address_invoice
         );
@@ -356,6 +358,9 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
         $productAttributeId = (int) Tools::getValue('id_product_attribute');
 
         $cart = new Cart($cartId);
+
+        $this->restoreWipedCartAddresses($cart);
+
         $cart->deleteProduct($productId, $productAttributeId);
 
         $this->ajaxRender(json_encode(['success' => true]));
@@ -377,12 +382,13 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
         $this->context->cookie->write();
     }
 
-    private function bindCartAddressesToSession(int $deliveryAddressId, int $invoiceAddressId): void
+    private function bindCartAddressesToSession(int $cartId, int $deliveryAddressId, int $invoiceAddressId): void
     {
-        if (!$deliveryAddressId || !$invoiceAddressId) {
+        if (!$cartId || !$deliveryAddressId || !$invoiceAddressId) {
             return;
         }
 
+        $this->context->cookie->{self::APPLE_PAY_ADDRESS_CART_COOKIE} = $cartId;
         $this->context->cookie->{self::APPLE_PAY_DELIVERY_ADDRESS_COOKIE} = $deliveryAddressId;
         $this->context->cookie->{self::APPLE_PAY_INVOICE_ADDRESS_COOKIE} = $invoiceAddressId;
         // Persist now: ajaxRender() outputs the body, after which cookie headers can no longer be sent.
@@ -391,6 +397,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
 
     private function unbindCartAddressesFromSession(): void
     {
+        $this->context->cookie->{self::APPLE_PAY_ADDRESS_CART_COOKIE} = 0;
         $this->context->cookie->{self::APPLE_PAY_DELIVERY_ADDRESS_COOKIE} = 0;
         $this->context->cookie->{self::APPLE_PAY_INVOICE_ADDRESS_COOKIE} = 0;
         $this->context->cookie->write();
@@ -404,6 +411,10 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
     private function restoreWipedCartAddresses(Cart $cart): void
     {
         if (!$cart->id || ((int) $cart->id_address_delivery && (int) $cart->id_address_invoice)) {
+            return;
+        }
+
+        if ((int) $this->context->cookie->{self::APPLE_PAY_ADDRESS_CART_COOKIE} !== (int) $cart->id) {
             return;
         }
 
@@ -423,7 +434,9 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
 
     /**
      * Only a temporary Apple Pay address belonging to the cart's own customer may be
-     * restored; anything else coming out of the cookie is treated as tampering.
+     * restored; anything else coming out of the cookie is treated as tampering. An
+     * address already attached to a placed order is refused too, otherwise a later
+     * sheet session would rewrite that order's address in place.
      */
     private function isRestorableApplePayAddress(int $addressId, int $cartCustomerId): bool
     {
@@ -435,7 +448,8 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
 
         return (int) $address->id === $addressId
             && $address->alias === 'applePay'
-            && (int) $address->id_customer === $cartCustomerId;
+            && (int) $address->id_customer === $cartCustomerId
+            && !$address->isUsed();
     }
 
     private function denyUnboundCart(): void
