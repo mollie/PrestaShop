@@ -13,6 +13,8 @@
 + Fixed total_paid_real staying 0 on bank transfer orders after the payment is completed
 + Fixed free shipping vouchers causing a Mollie API 422 amount error at checkout, and wrong order line amounts when no payment fee is configured
 + Fixed Apple Pay Direct failing to complete guest payments, the shipping address selected in the Apple Pay sheet was dropped from the cart before the order was created
++ Apple Pay Direct now works in test mode, the merchant session is validated with the live API key and the settings warn when it is missing
++ Fixed Apple Pay Direct payments failing when the shopper already had a shopping cart, PrestaShop detached the temporary Apple Pay addresses from the cart on every request
 + Translated the "View in Mollie" link into all supported back office languages
 
 ## Changes in release 6.4.4
