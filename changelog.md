@@ -13,6 +13,7 @@
 + Fixed total_paid_real staying 0 on bank transfer orders after the payment is completed
 + Fixed free shipping vouchers causing a Mollie API 422 amount error at checkout, and wrong order line amounts when no payment fee is configured
 + Fixed Apple Pay Direct failing to complete guest payments, the shipping address selected in the Apple Pay sheet was dropped from the cart before the order was created
++ Translated the "View in Mollie" link into all supported back office languages
 
 ## Changes in release 6.4.4
 + Added a "View in Mollie" link on the order page and in the Orders list to open a payment directly in the Mollie dashboard
