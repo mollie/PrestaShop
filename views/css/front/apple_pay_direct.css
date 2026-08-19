@@ -62,6 +62,12 @@ apple-pay-button {
     padding: 5px;
 }
 
+/* classic theme keeps this row nowrap, so a tight fit crushes the quantity
+   spinner instead of moving the whole button to the next line */
+.product-quantity {
+    flex-wrap: wrap;
+}
+
 /* Hummingbird theme (PS9) - product page */
 .product__add-to-cart #mollie-applepay-direct-button .apple-pay-button,
 .product__add-to-cart #mollie-applepay-direct-button apple-pay-button {
