@@ -462,9 +462,7 @@ class Mollie extends PaymentModule
 
         $canDisplayInProductPage = $controller instanceof ProductControllerCore && $isApplePayDirectProductEnabled;
         $canDisplayInCartPage = $controller instanceof CartControllerCore && $isApplePayDirectCartEnabled;
-        $isOrderPage = $controller instanceof OrderControllerCore;
-
-        if ($isOrderPage || $canDisplayInProductPage || $canDisplayInCartPage) {
+        if ($canDisplayInProductPage || $canDisplayInCartPage) {
             $this->context->controller->registerJavascript(
                 'mollie-apple-pay-sdk',
                 'https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js',
