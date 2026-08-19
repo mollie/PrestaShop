@@ -40,13 +40,18 @@ class OrderTotalCollector
      */
     public function getOrderTotals($applePayCarriers, Cart $cart)
     {
-        return array_map(function (AppleCarrier $carrier) use ($cart) {
+        $originalDeliveryOption = $cart->delivery_option;
+
+        // Apple Pay addresses are soft-deleted, which fails Customer::customerHasAddress inside
+        // getPackageShippingCost, so explicit-carrier totals price shipping against the
+        // default-country zone; pricing through the cart's delivery option resolves the real zone
+        $totals = array_map(function (AppleCarrier $carrier) use ($cart) {
+            $cart->setDeliveryOption([
+                $cart->id_address_delivery => $carrier->getCarrierId() . ',',
+            ]);
+
             $orderTotal = (float) number_format(
-                $cart->getOrderTotal(
-                    true,
-                    Cart::BOTH,
-                    null,
-                    $carrier->getCarrierId()),
+                $cart->getOrderTotal(true, Cart::BOTH),
                 2,
                 '.',
                 ''
@@ -63,5 +68,9 @@ class OrderTotalCollector
                 'amountWithoutFee' => $orderTotal,
             ];
         }, $applePayCarriers);
+
+        $cart->delivery_option = $originalDeliveryOption;
+
+        return $totals;
     }
 }

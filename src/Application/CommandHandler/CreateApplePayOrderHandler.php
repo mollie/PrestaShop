@@ -226,7 +226,7 @@ final class CreateApplePayOrderHandler
         $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
 
         $paymentData = $this->paymentMethodService->getPaymentData(
-            $cart->getOrderTotal(true, Cart::BOTH, null, $cart->id_carrier),
+            $cart->getOrderTotal(true, Cart::BOTH),
             Tools::strtoupper($currency->iso_code),
             Config::APPLEPAY,
             (int) $cart->id,
