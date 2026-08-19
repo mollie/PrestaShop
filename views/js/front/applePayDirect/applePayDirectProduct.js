@@ -10,11 +10,14 @@
  */
 
 $(document).ready(function () {
+    whenApplePaySessionAvailable(initApplePayDirect)
+})
+
+function initApplePayDirect() {
     const applePayMethodElement = document.querySelector(
         '#mollie-applepay-direct-button',
     )
-    const canShowButton = applePayMethodElement && (window.ApplePaySession && ApplePaySession.canMakePayments())
-    if (!canShowButton) {
+    if (!applePayMethodElement) {
         return;
     }
 
@@ -221,7 +224,31 @@ $(document).ready(function () {
             })
         }
     }
-});
+}
+
+function whenApplePaySessionAvailable(onAvailable) {
+    if (canUseApplePaySession()) {
+        onAvailable()
+
+        return
+    }
+
+    if (!window.customElements) {
+        return
+    }
+
+    // insurance: 1.latest is a rolling URL; if Apple ever moves the ApplePaySession
+    // polyfill behind the SDK's dynamic import, re-check once the module lands
+    customElements.whenDefined('apple-pay-button').then(function () {
+        if (canUseApplePaySession()) {
+            onAvailable()
+        }
+    })
+}
+
+function canUseApplePaySession() {
+    return !!(window.ApplePaySession && window.ApplePaySession.canMakePayments())
+}
 
 function getApplePayButtonStyle() {
     switch (parseInt(applePayButtonStyle)) {

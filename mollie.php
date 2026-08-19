@@ -468,7 +468,7 @@ class Mollie extends PaymentModule
             $this->context->controller->registerJavascript(
                 'mollie-apple-pay-sdk',
                 'https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js',
-                ['server' => 'remote', 'position' => 'head', 'priority' => 10]
+                ['server' => 'remote', 'position' => 'head', 'priority' => 10, 'attributes' => 'defer']
             );
         }
 
