@@ -57,7 +57,7 @@ function initApplePayDirect() {
                 'price_amount': productDetails.price_amount
             }
 
-        const subtotal = product.quantity_wanted * product.price_amount;
+        const subtotal = (product.quantity_wanted * product.price_amount).toFixed(2);
         var supportedApplePaySessionVersion = 3;
         const session = new ApplePaySession(supportedApplePaySessionVersion, createRequest(countryCode, currencyCode, totalLabel, subtotal))
         var cartId;

@@ -32,7 +32,7 @@ class ShippingMethodUtility
     {
         return array_map(function (AppleCarrier $carrier) use ($cart) {
             return [
-                'identifier' => $carrier->getCarrierId(),
+                'identifier' => (string) $carrier->getCarrierId(),
                 'label' => $carrier->getName(),
                 'amount' => number_format($cart->getOrderTotal(true, Cart::ONLY_SHIPPING, null, $carrier->getCarrierId()), 2, '.', ''),
                 'detail' => $carrier->getDelay(),

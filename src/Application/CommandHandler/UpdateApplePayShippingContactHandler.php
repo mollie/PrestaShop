@@ -86,7 +86,7 @@ final class UpdateApplePayShippingContactHandler
                 'totals' => $totals,
                 'paymentFee' => [
                     'label' => 'Payment fee',
-                    'amount' => $paymentFee,
+                    'amount' => number_format($paymentFee, 2, '.', ''),
                     'type' => 'final',
                 ],
             ],

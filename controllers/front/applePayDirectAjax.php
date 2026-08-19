@@ -310,7 +310,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
 
         $this->ajaxRender(json_encode(
             [
-                'total' => $cart->getOrderTotal(),
+                'total' => number_format($cart->getOrderTotal(), 2, '.', ''),
             ]
         ));
     }

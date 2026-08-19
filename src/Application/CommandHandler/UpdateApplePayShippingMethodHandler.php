@@ -75,7 +75,7 @@ final class UpdateApplePayShippingMethodHandler
         return [
            'success' => true,
            'data' => [// TODO use calculator
-               'amount' => $orderTotal + $paymentFee,
+               'amount' => number_format($orderTotal + $paymentFee, 2, '.', ''),
            ],
        ];
     }

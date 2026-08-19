@@ -59,7 +59,7 @@ class OrderTotalCollector
             return [
                 'type' => 'final',
                 'label' => $carrier->getName(),
-                'amount' => $orderTotal + $paymentFee,
+                'amount' => number_format($orderTotal + $paymentFee, 2, '.', ''),
                 'amountWithoutFee' => $orderTotal,
             ];
         }, $applePayCarriers);
