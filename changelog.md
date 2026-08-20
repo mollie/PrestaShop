@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.6
++ Fixed reordering payment methods by dragging: the list now scrolls when the cursor reaches the top of the page, scrolls faster the closer the cursor is to the edge, and no longer discards the new order when the mouse is released while the page is still scrolling
+
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API
 + New payment method: Billink, available on the Payments API for consumer purchases up to 2,500.00 EUR

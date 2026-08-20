@@ -24,7 +24,6 @@ interface PaymentMethodCardProps {
   onSaveSettings: () => void
   onDragStart: (e: React.DragEvent) => void
   onDragOver: (e: React.DragEvent) => void
-  onDragLeave: () => void
   onDrop: (e: React.DragEvent) => void
   onDragEnd: () => void
   isDragging: boolean
@@ -47,7 +46,6 @@ export function PaymentMethodCard({
   onSaveSettings,
   onDragStart,
   onDragOver,
-  onDragLeave,
   onDrop,
   onDragEnd,
   isDragging,
@@ -69,7 +67,6 @@ export function PaymentMethodCard({
       draggable={isDragEnabled && !method.isExpanded}
       onDragStart={onDragStart}
       onDragOver={onDragOver}
-      onDragLeave={onDragLeave}
       onDrop={onDrop}
       onDragEnd={onDragEnd}
     >
