@@ -46,7 +46,9 @@ class OrderTotalCollector
         // getPackageShippingCost, so explicit-carrier totals price shipping against the
         // default-country zone; pricing through the cart's delivery option resolves the real zone
         $totals = array_map(function (AppleCarrier $carrier) use ($cart) {
-            $cart->setDeliveryOption([
+            // raw assignment on purpose: Cart::setDeliveryOption() fires CartRule::autoRemoveFromCart(),
+            // which deletes vouchers from the shopper's real cart while this loop is only quoting
+            $cart->delivery_option = json_encode([
                 $cart->id_address_delivery => $carrier->getCarrierId() . ',',
             ]);
 

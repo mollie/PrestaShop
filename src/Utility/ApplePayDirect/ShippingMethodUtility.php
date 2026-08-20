@@ -35,7 +35,9 @@ class ShippingMethodUtility
         // same zone-fallback workaround as OrderTotalCollector: soft-deleted Apple Pay addresses
         // make explicit-carrier totals price shipping against the default-country zone
         $shippingMethods = array_map(function (AppleCarrier $carrier) use ($cart) {
-            $cart->setDeliveryOption([
+            // raw assignment on purpose: Cart::setDeliveryOption() fires CartRule::autoRemoveFromCart(),
+            // which deletes vouchers from the shopper's real cart while this loop is only quoting
+            $cart->delivery_option = json_encode([
                 $cart->id_address_delivery => $carrier->getCarrierId() . ',',
             ]);
 
