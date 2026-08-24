@@ -2,6 +2,11 @@
 
 # Changelog #
 
+## Changes in release 6.4.6
++ Added a Payment overview page listing the payment attempts that never became an order, with the customer, method, status, reason and a link to the payment in the Mollie dashboard
++ Failed, cancelled and expired payments are now recorded with their real status and failure reason instead of staying on "open" forever
++ Customers whose payment fails are now returned to the shop immediately with a clear message, instead of waiting on a spinner and receiving a failed payment email
+
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API
 + New payment method: Billink, available on the Payments API for consumer purchases up to 2,500.00 EUR
