@@ -152,6 +152,10 @@ class AdminMolliePaymentOverviewController extends ModuleAdminController
      * processFilter() has already run by this point, so _filter is final. It renders the alias
      * unquoted, as `cu`.`lastname` with a bare alias, hence the fragment matched below.
      *
+     * AdminControllerCore::$_filter is a SQL fragment at runtime, but its docblock declares it
+     * array on 1.7.6 and 1.7.7 and string from 1.7.8 on. The array cast reads correctly under
+     * both, since casting a string yields a single element array.
+     *
      * @param int $idLang
      * @param string|null $orderBy
      * @param string|null $orderWay
@@ -161,7 +165,7 @@ class AdminMolliePaymentOverviewController extends ModuleAdminController
      */
     public function getList($idLang, $orderBy = null, $orderWay = null, $start = 0, $limit = null, $idLangShop = false): void
     {
-        if (false !== strpos((string) $this->_filter, 'cu.`lastname`')) {
+        if (false !== strpos(implode(' ', (array) $this->_filter), 'cu.`lastname`')) {
             $this->_join .= '
                 LEFT JOIN `' . _DB_PREFIX_ . 'cart` c ON (c.`id_cart` = a.`cart_id`)
                 LEFT JOIN `' . _DB_PREFIX_ . 'customer` cu ON (cu.`id_customer` = c.`id_customer`)
