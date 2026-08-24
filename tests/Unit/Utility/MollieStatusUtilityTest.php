@@ -33,6 +33,35 @@ class MollieStatusUtilityTest extends TestCase
         $this->assertSame($expected, $result, sprintf('Status "%s" should return %s.', $status, $expected ? 'true' : 'false'));
     }
 
+    /**
+     * @dataProvider provideFailureStatuses
+     */
+    public function testItCorrectlyIdentifiesFailedPaymentStatuses(string $status, bool $expected): void
+    {
+        $result = MollieStatusUtility::isPaymentFailed($status);
+
+        $this->assertSame($expected, $result, sprintf('Status "%s" should return %s.', $status, $expected ? 'true' : 'false'));
+    }
+
+    public function provideFailureStatuses(): array
+    {
+        return [
+            'failed_payment_status' => [PaymentStatus::STATUS_FAILED, true],
+            'canceled_payment_status' => [PaymentStatus::STATUS_CANCELED, true],
+            'expired_payment_status' => [PaymentStatus::STATUS_EXPIRED, true],
+            'canceled_order_status' => [OrderStatus::STATUS_CANCELED, true],
+            'expired_order_status' => [OrderStatus::STATUS_EXPIRED, true],
+            'open_payment_status' => [PaymentStatus::STATUS_OPEN, false],
+            'pending_payment_status' => [PaymentStatus::STATUS_PENDING, false],
+            'created_order_status' => [OrderStatus::STATUS_CREATED, false],
+            'paid_payment_status' => [PaymentStatus::STATUS_PAID, false],
+            'authorized_payment_status' => [PaymentStatus::STATUS_AUTHORIZED, false],
+            'completed_order_status' => [OrderStatus::STATUS_COMPLETED, false],
+            'empty_status' => ['', false],
+            'unknown_status' => ['unknown_status', false],
+        ];
+    }
+
     public function providePaymentStatuses(): array
     {
         return [
