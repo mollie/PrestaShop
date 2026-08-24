@@ -257,6 +257,7 @@ export default function AuthorizationForm() {
                 <label className="block text-sm font-medium text-black mb-2">{t('mode')}</label>
                 <div className="flex rounded-lg overflow-hidden border border-gray-200">
                   <button
+                    data-testid="mollie-mode-live"
                     onClick={() => handleModeChange("live")}
                     className={`flex-1 px-6 py-3 text-base font-bold transition-colors ${
                       mode === "live" ? "text-white" : "bg-white text-black hover:bg-gray-50"
@@ -266,6 +267,7 @@ export default function AuthorizationForm() {
                     {t('live')}
                   </button>
                   <button
+                    data-testid="mollie-mode-test"
                     onClick={() => handleModeChange("test")}
                     className={`flex-1 px-6 py-3 text-base font-bold transition-colors ${
                       mode === "test" ? "text-white" : "bg-white text-black hover:bg-gray-50"
@@ -289,7 +291,7 @@ export default function AuthorizationForm() {
                     {mode === "live" ? t('liveApiKey') : t('testApiKey')}
                   </label>
                   {isConnected && (
-                    <div className="flex items-center gap-1 text-green-600">
+                    <div data-testid="mollie-connection-status" className="flex items-center gap-1 text-green-600">
                       <CheckCircle className="h-4 w-4" />
                       <span className="text-sm font-medium">{t('connected')}</span>
                     </div>
@@ -298,6 +300,7 @@ export default function AuthorizationForm() {
 
                 <div className="relative">
                   <Input
+                    data-testid="mollie-api-key-input"
                     type={showApiKey ? "text" : "password"}
                     value={apiKey}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApiKey(e.target.value)}
@@ -333,6 +336,7 @@ export default function AuthorizationForm() {
             ) : (
               <>
                 <Button
+                  data-testid="mollie-connect-button"
                   onClick={handleConnect}
                   disabled={!apiKey.trim() || isLoading}
                   className="w-full h-12 text-base font-medium text-white mb-4 hover:opacity-90"

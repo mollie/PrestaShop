@@ -34,7 +34,7 @@ jobs:
           cd views/js/admin/library && npm install && npm run build
           rm -rf node_modules src
           cd ../../../..
-          rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile cypress .docker cypress.config.js cypress.env.json docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php
+          rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile .docker docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php
           # PrestaShop security requirement: every shipped directory must contain an index.php
           find . -type d ! -path './.git' ! -path './.git/*' | while read -r dir; do [ -f "$dir/index.php" ] || cp index.php "$dir/index.php"; done
           mkdir ${{ env.MODULE_NAME }}
