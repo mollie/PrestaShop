@@ -15,6 +15,13 @@ jobs:
             port: '8002'
             yml: 'docker-compose.1785.yml'
             ModuleUpgradeTest: 'make VERSION=1785 upgrading-module-test-1785'
+    env:
+      # docker-compose.1785.yml hands this to the PrestaShop container as the
+      # password PS_INSTALL_AUTO uses to reach MySQL, whose root password is
+      # prestashop. Locally the Makefile picks it up from .env; CI has no .env,
+      # so without this the auto-install cannot authenticate, Apache never
+      # starts and the shop stays unreachable on 8002.
+      DB_PASSWD: prestashop
     steps:
       - name: Checkout
         uses: actions/checkout@v4
