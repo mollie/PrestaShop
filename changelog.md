@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.6
++ Fixed back office menu entries and Mollie settings tab names appearing in the wrong language after installing or upgrading the module
+
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API
 + New payment method: Billink, available on the Payments API for consumer purchases up to 2,500.00 EUR
