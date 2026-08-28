@@ -20,4 +20,11 @@ if (!defined('_PS_VERSION_')) {
 
 interface CountryRepositoryInterface extends ReadOnlyRepositoryInterface
 {
+    public function getMethodCountryIds($methodId);
+
+    public function updatePaymentMethodCountries($idMethod, $idCountries);
+
+    public function getExcludedCountryIds($methodId);
+
+    public function updatePaymentMethodExcludedCountries($idMethod, $idCountries);
 }
