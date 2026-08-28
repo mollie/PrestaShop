@@ -144,6 +144,12 @@ $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5af9a8daf851bd
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_e38bacaba20440245e0aae88f984f78d'] = 'Trūksta privalomų parametrų';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b72cdbd76577277b160796264e922ceb'] = 'Nepavyko išsaugoti API rakto';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b69a3944e63d1f7e85f1a6279b003e7e'] = 'Neteisingas aplinkos parametras. Turi būti \"test\" arba \"live\"';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5fe660b4753d891ac8422a859856c305'] = 'Test režimas leidžia išbandyti mokėjimo būdus be tikrų mokėjimų. Kai būsite pasirengę pereiti į Live, galėsite pasiimti šią konfigūraciją su savimi ir nekonfigūruoti visko iš naujo.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9deb0e31315dc2eb99c6a49144162fdd'] = 'Kopijuoti mano Test mokėjimo būdų nustatymus į Live';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_acb5fc9a8582c7f72b21941b8b963c72'] = 'Jūsų Test nustatymai bus nukopijuoti, kai tik prijungsite savo Live API raktą.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_f35405ac878e248331afede242b88867'] = 'Test nustatymai nukopijuoti į Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_2198f7d9e076106be0f204b3d289f787'] = 'Nepavyko nukopijuoti Test nustatymų į Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9ce89fb204d84278e52c0915dd5377f0'] = 'Prieš kopijuojant Test nustatymus reikalingas galiojantis Live API raktas.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_af01f8c298aa063d9c7490f00eddd2df'] = 'Mokėjimo metodai';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_85ea9215bf4fdbc002bb2e4aa0fc9759'] = 'Konfigūruoti mokėjimo metodus';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_00d23a76e43b46dae9ec7aa9dcbebb32'] = 'Įjungta';

@@ -144,6 +144,12 @@ $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5af9a8daf851bd
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_e38bacaba20440245e0aae88f984f78d'] = 'Hiányzó szükséges paraméterek';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b72cdbd76577277b160796264e922ceb'] = 'Nem sikerült menteni az API kulcsot';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b69a3944e63d1f7e85f1a6279b003e7e'] = 'Érvénytelen környezeti paraméter. \"teszt\" vagy \"élő\" kell, hogy legyen';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5fe660b4753d891ac8422a859856c305'] = 'A Test módban valós fizetés nélkül próbálhatja ki a fizetési módokat. Amikor készen áll az élesítésre, magával viheti ezt a beállítást ahelyett, hogy mindent újra beállítana.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9deb0e31315dc2eb99c6a49144162fdd'] = 'A Test fizetésimód-beállításaim másolása Live környezetbe';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_acb5fc9a8582c7f72b21941b8b963c72'] = 'A Test beállításai azonnal átmásolódnak, amint csatlakoztatja a Live API kulcsát.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_f35405ac878e248331afede242b88867'] = 'A Test beállítások át lettek másolva a Live környezetbe.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_2198f7d9e076106be0f204b3d289f787'] = 'Nem sikerült átmásolni a Test beállításokat a Live környezetbe.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9ce89fb204d84278e52c0915dd5377f0'] = 'A Test beállítások másolásához érvényes Live API kulcs szükséges.';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_d7c8c85bf79bbe1b7188497c32c3b0ca'] = 'Sikertelen';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_7a1920d61156abc05a60135aefe8bc67'] = 'Alapértelmezett';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_ee5fe2ff13c5411f5014ffe2fc4f6702'] = 'Szállításkor';

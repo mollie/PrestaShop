@@ -144,6 +144,12 @@ $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5af9a8daf851bd
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_e38bacaba20440245e0aae88f984f78d'] = 'Липсват задължителни параметри';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b72cdbd76577277b160796264e922ceb'] = 'Неуспешно запазване на API ключ';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b69a3944e63d1f7e85f1a6279b003e7e'] = 'Невалиден параметър за среда. Трябва да бъде \"test\" или \"live\"';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5fe660b4753d891ac8422a859856c305'] = 'Test режимът ви позволява да изпробвате методите си на плащане без реални плащания. Когато сте готови да преминете на живо, можете да пренесете тази настройка със себе си, вместо да конфигурирате всичко отново.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9deb0e31315dc2eb99c6a49144162fdd'] = 'Копирай моите Test настройки на методите на плащане в Live';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_acb5fc9a8582c7f72b21941b8b963c72'] = 'Вашите Test настройки ще бъдат копирани веднага щом свържете своя Live API ключ.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_f35405ac878e248331afede242b88867'] = 'Test настройките са копирани в Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_2198f7d9e076106be0f204b3d289f787'] = 'Неуспешно копиране на Test настройките в Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9ce89fb204d84278e52c0915dd5377f0'] = 'Необходим е валиден Live API ключ, преди Test настройките да могат да бъдат копирани.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_af01f8c298aa063d9c7490f00eddd2df'] = 'Методи на плащане';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_85ea9215bf4fdbc002bb2e4aa0fc9759'] = 'Конфигуриране на методи на плащане';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_00d23a76e43b46dae9ec7aa9dcbebb32'] = 'Включено';
