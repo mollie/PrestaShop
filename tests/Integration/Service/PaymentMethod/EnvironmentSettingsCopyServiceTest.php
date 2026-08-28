@@ -60,6 +60,7 @@ class EnvironmentSettingsCopyServiceTest extends BaseTestCase
         }
 
         \Configuration::deleteByName(Config::MOLLIE_API_KEY);
+        \Configuration::deleteByName(Config::MOLLIE_API_KEY_TEST);
         \Configuration::deleteByName(Config::MOLLIE_IFRAME['sandbox']);
         \Configuration::deleteByName(Config::MOLLIE_IFRAME['production']);
         \Configuration::deleteByName(Config::MOLLIE_SINGLE_CLICK_PAYMENT['sandbox']);
@@ -130,6 +131,17 @@ class EnvironmentSettingsCopyServiceTest extends BaseTestCase
 
         $siblingRow = new MolPaymentMethod($siblingShopTestId);
         $this->assertSame($this->shopId + 1, (int) $siblingRow->id_shop);
+    }
+
+    public function testCopyLeavesApiKeysUntouched(): void
+    {
+        $this->configuration->updateValue(Config::MOLLIE_API_KEY_TEST, 'test_dummykey', $this->shopId);
+        $this->seedPaymentMethod('ideal', Config::ENVIRONMENT_TEST, $this->shopId, 1, ['enabled' => true]);
+
+        $this->buildService(['ideal'])->copy($this->shopId);
+
+        $this->assertSame('live_dummykey', $this->configuration->get(Config::MOLLIE_API_KEY, $this->shopId));
+        $this->assertSame('test_dummykey', $this->configuration->get(Config::MOLLIE_API_KEY_TEST, $this->shopId));
     }
 
     public function testCopyTransfersEnvironmentPairedConfigs(): void
