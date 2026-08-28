@@ -108,5 +108,4 @@ class EnvironmentSettingsCopyServiceTest extends TestCase
             $this->createMock(LoggerInterface::class)
         );
     }
-
 }

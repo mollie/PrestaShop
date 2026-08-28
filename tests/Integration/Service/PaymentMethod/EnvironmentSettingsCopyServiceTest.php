@@ -12,6 +12,7 @@
 
 namespace Mollie\Tests\Integration\Service\PaymentMethod;
 
+use Module;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Endpoints\MethodEndpoint;
 use Mollie\Api\MollieApiClient;
@@ -24,7 +25,6 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ApiKeyService;
 use Mollie\Service\PaymentMethod\EnvironmentSettingsCopyService;
 use Mollie\Tests\Integration\BaseTestCase;
-use Module;
 use MolPaymentMethod;
 
 class EnvironmentSettingsCopyServiceTest extends BaseTestCase
