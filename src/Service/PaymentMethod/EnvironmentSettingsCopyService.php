@@ -100,7 +100,10 @@ class EnvironmentSettingsCopyService
             }
 
             $this->mirrorTestOrder($shopId, $copiedMethodIds);
-            $this->copyEnvironmentPairedConfigs($shopId);
+
+            if ($copiedMethodIds) {
+                $this->copyEnvironmentPairedConfigs($shopId);
+            }
 
             $db->execute('COMMIT');
         } catch (\Exception $e) {
