@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.6
++ Fixed the employee permission checkboxes for the Mollie back office menu never staying checked, which made it impossible to give a non-SuperAdmin profile access to the Mollie menu
+
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API
 + New payment method: Billink, available on the Payments API for consumer purchases up to 2,500.00 EUR
