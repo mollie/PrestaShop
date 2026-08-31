@@ -113,6 +113,13 @@ class EnvironmentSettingsCopyService
             throw $e;
         }
 
+        $this->logger->info(sprintf('%s - Copied test settings to live', self::FILE_NAME), [
+            'copied_count' => count($copiedMethodIds),
+            'copied' => $copiedMethodIds,
+            'skipped_count' => count($plan['skipped']),
+            'skipped' => $plan['skipped'],
+        ]);
+
         return [
             'liveKeyMissing' => false,
             'copied' => $copiedMethodIds,
