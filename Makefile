@@ -1,10 +1,11 @@
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 module = mollie
 
-# The commit under test, captured at parse time because upgrading-module-test
-# checks out v5.2.0 and has to come back here afterwards. CI leaves a detached
-# HEAD, so there is not always a branch name to return to.
+# Both captured at parse time, before upgrading-module-test checks out v5.2.0:
+# the commit to come back to (CI leaves a detached HEAD, so there is not always a
+# branch name) and the version the shop must report once the upgrade has run.
 HEAD_REF := $(shell git rev-parse HEAD)
+MODULE_VERSION := $(shell sed -n "s/.*this->version = '\([0-9.]*\)'.*/\1/p" mollie.php | head -1)
 
 # target: fix-lint			- Launch php cs fixer
 fix-lint:
@@ -129,25 +130,45 @@ e2e-tests-ui:
 	npx playwright install chromium
 	cd tests/e2e && npx playwright test --ui
 
-# checking the module upgrading - installs older module then installs the commit under test
+# checking the module upgrading - installs v5.2.0 then upgrades to the commit under test
 upgrading-module-test-$(VERSION):
 	git fetch --tags --force
+	# e2eh$(VERSION) leaves the module installed at the current version, and
+	# `module install` on an installed module is a no-op that still exits 0. Without
+	# this the shop never goes back to 5.2.0 and the upgrade leg has nothing to
+	# upgrade - the job goes green having tested nothing. Uninstall while the
+	# current code is still checked out, so it matches the schema it created.
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall $(module)"
 	# A real checkout of the tag, not `git checkout v5.2.0 .`. The partial form
 	# restores the tag's files but never deletes files added after it, so
 	# config/services.yml survived and kept declaring
 	# Mollie\Subscription\...\SubscriptionFAQController while composer rebuilt the
 	# autoloader from v5.2.0's composer.json, which has no such namespace. The
-	# module install then died compiling the Symfony container.
+	# install then died compiling the Symfony container.
 	git checkout --detach --force v5.2.0
 	composer install
 	# installing 5.2.0 module
 	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install $(module)"
-	# installing the module under test. HEAD_REF, not develop: checking out develop
-	# made the upgrade leg assert against develop and never see the PR's code.
+	$(MAKE) VERSION=$(VERSION) assert-module-version EXPECTED=5.2.0
+	# the module under test - HEAD_REF, not develop, or the upgrade leg asserts
+	# against develop and never sees the commit being tested
 	git checkout --detach --force $(HEAD_REF)
-	# the autoloader is still v5.2.0's at this point, so rebuild it before install
+	# the autoloader is still v5.2.0's at this point
 	composer install
-	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install $(module)"
+	# upgrade, not install: `install` on an installed module never runs upgrade/*.php
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module upgrade $(module)"
+	$(MAKE) VERSION=$(VERSION) assert-module-version EXPECTED=$(MODULE_VERSION)
+
+# asserts the shop really records the module version we expect. PrestaShop reports
+# success for no-op installs, so without this the upgrade leg cannot fail.
+assert-module-version:
+	@installed=$$(mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop -N -B \
+		-e "SELECT version FROM ps_module WHERE name = '$(module)'" prestashop 2>/dev/null); \
+	if [ "$$installed" != "$(EXPECTED)" ]; then \
+		echo "FAIL: expected the shop to report module version $(EXPECTED), got '$$installed'"; \
+		exit 1; \
+	fi; \
+	echo "OK: shop reports module version $$installed"
 
 prepare-zip:
 	composer install --no-dev --optimize-autoloader --classmap-authoritative
