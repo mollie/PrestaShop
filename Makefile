@@ -6,6 +6,7 @@ module = mollie
 # branch name) and the version the shop must report once the upgrade has run.
 HEAD_REF := $(shell git rev-parse HEAD)
 MODULE_VERSION := $(shell sed -n "s/.*this->version = '\([0-9.]*\)'.*/\1/p" mollie.php | head -1)
+LOCK_BACKUP := $(ROOT_DIR)/../composer.lock.upgrading-module-test
 
 # target: fix-lint			- Launch php cs fixer
 fix-lint:
@@ -145,6 +146,11 @@ upgrading-module-test-$(VERSION):
 	# Mollie\Subscription\...\SubscriptionFAQController while composer rebuilt the
 	# autoloader from v5.2.0's composer.json, which has no such namespace. The
 	# install then died compiling the Symfony container.
+	# The branch gitignores composer.lock but v5.2.0 tracks one, so the tag checkout
+	# overwrites the lock `composer update` just produced and the checkout back to the
+	# branch deletes it. Without it the second composer install silently turns into a
+	# full update against github.com. Keep the head's lock aside instead.
+	cp composer.lock $(LOCK_BACKUP)
 	git checkout --detach --force v5.2.0
 	composer install
 	# installing 5.2.0 module
@@ -154,6 +160,7 @@ upgrading-module-test-$(VERSION):
 	# against develop and never sees the commit being tested
 	git checkout --detach --force $(HEAD_REF)
 	# the autoloader is still v5.2.0's at this point
+	mv $(LOCK_BACKUP) composer.lock
 	composer install
 	# Not `bin/console prestashop:module upgrade`: that pulls the released module from
 	# the Addons marketplace over the bind mount and upgrades that instead of the

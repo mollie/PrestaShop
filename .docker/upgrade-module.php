@@ -24,6 +24,12 @@ if ($moduleName === '') {
 
 require_once __DIR__ . '/../../../config/config.inc.php';
 
+// Same bootstrap as bin/console. Upgrade files reach for Symfony services such as
+// prestashop.adapter.module.tab.register, and SymfonyContainer::getInstance() only
+// hands one back when the global $kernel is booted.
+$kernel = new AppKernel(getenv('SYMFONY_ENV') ?: 'dev', false);
+$kernel->boot();
+
 $context = Context::getContext();
 
 if (!$context->employee) {
