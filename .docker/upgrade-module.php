@@ -68,7 +68,20 @@ if (!Module::initUpgradeModule($module)) {
     exit(1);
 }
 
-$upgrade = $module->runUpgradeModule();
+try {
+    $upgrade = $module->runUpgradeModule();
+} catch (Throwable $exception) {
+    fwrite(STDERR, sprintf(
+        "Upgrading %s from %s threw %s: %s\n  in %s line %d\n",
+        $moduleName,
+        $registeredVersion,
+        get_class($exception),
+        $exception->getMessage(),
+        $exception->getFile(),
+        $exception->getLine()
+    ));
+    exit(1);
+}
 
 foreach ($module->getErrors() as $error) {
     fwrite(STDERR, strip_tags($error) . "\n");
