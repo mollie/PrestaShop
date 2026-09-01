@@ -71,10 +71,12 @@ class MailService
 
     public function sendSecondChanceMail(Customer $customer, $checkoutUrl, $methodName, $shopId)
     {
+        $customerLanguage = new Language((int) $customer->id_lang);
+
         Mail::send(
             $customer->id_lang,
             'mollie_payment',
-            Mail::l('Order payment'),
+            $this->module->l('Order payment', self::FILE_NAME, $customerLanguage->locale),
             [
                 '{checkoutUrl}' => $checkoutUrl,
                 '{firstName}' => $customer->firstname,
@@ -104,11 +106,12 @@ class MailService
         $data = $this->getOrderConfData($order, $orderStateId);
         $fileAttachment = $this->getFileAttachment($orderStateId, $order);
         $customer = $order->getCustomer();
+        $orderLanguage = new Language((int) $order->id_lang);
 
         Mail::Send(
             (int) $order->id_lang,
             'order_conf',
-            Mail::l('Order confirmation', (int) $order->id_lang),
+            $this->context->getTranslatorFromLocale($orderLanguage->locale)->trans('Order confirmation', [], 'Emails.Subject'),
             $data,
             $customer->email,
 
@@ -126,11 +129,12 @@ class MailService
     public function sendSubscriptionCancelWarningEmail(int $recurringOrderId): void
     {
         $data = $this->generalSubscriptionMailDataProvider->run($recurringOrderId);
+        $subscriptionLanguage = new Language($data->getLangId());
 
         Mail::Send(
             $data->getLangId(),
             'mollie_subscription_cancel',
-            sprintf(Mail::l('Your payment for the subscription of %s failed', $data->getLangId()), $data->getProductName()),
+            sprintf($this->module->l('Your payment for the subscription of %s failed', self::FILE_NAME, $subscriptionLanguage->locale), $data->getProductName()),
             $data->toArray(),
             $data->getCustomerEmail(),
             implode(' ', [$data->getFirstName(), $data->getLastName()]),
@@ -150,11 +154,12 @@ class MailService
     public function sendSubscriptionPaymentFailWarningMail(int $recurringOrderId): void
     {
         $data = $this->generalSubscriptionMailDataProvider->run($recurringOrderId);
+        $subscriptionLanguage = new Language($data->getLangId());
 
         Mail::Send(
             $data->getLangId(),
             'mollie_subscription_payment_failed',
-            sprintf(Mail::l('Your subscription for %s cancelled', $data->getLangId()), $data->getProductName()),
+            sprintf($this->module->l('Your subscription for %s cancelled', self::FILE_NAME, $subscriptionLanguage->locale), $data->getProductName()),
             $data->toArray(),
             $data->getCustomerEmail(),
             implode(' ', [$data->getFirstName(), $data->getLastName()]),
@@ -174,11 +179,12 @@ class MailService
     public function sendSubscriptionCarrierUpdateMail(int $recurringOrderId): bool
     {
         $data = $this->generalSubscriptionMailDataProvider->run($recurringOrderId);
+        $subscriptionLanguage = new Language($data->getLangId());
 
         $result = Mail::Send(
             $data->getLangId(),
             'mollie_subscription_carrier_update',
-            sprintf(Mail::l('Your subscription for %s carrier was updated', $data->getLangId()), $data->getProductName()),
+            sprintf($this->module->l('Your subscription for %s carrier was updated', self::FILE_NAME, $subscriptionLanguage->locale), $data->getProductName()),
             $data->toArray(),
             $data->getCustomerEmail(),
             implode(' ', [$data->getFirstName(), $data->getLastName()]),
