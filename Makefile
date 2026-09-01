@@ -1,6 +1,11 @@
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 module = mollie
 
+# The commit under test, captured at parse time because upgrading-module-test
+# checks out v5.2.0 and has to come back here afterwards. CI leaves a detached
+# HEAD, so there is not always a branch name to return to.
+HEAD_REF := $(shell git rev-parse HEAD)
+
 # target: fix-lint			- Launch php cs fixer
 fix-lint:
 	docker compose run --rm php sh -c "vendor/bin/php-cs-fixer fix --using-cache=no"
@@ -124,16 +129,24 @@ e2e-tests-ui:
 	npx playwright install chromium
 	cd tests/e2e && npx playwright test --ui
 
-# checking the module upgrading - installs older module then installs from master branch
+# checking the module upgrading - installs older module then installs the commit under test
 upgrading-module-test-$(VERSION):
-	git fetch
-	git checkout v5.2.0 .
+	git fetch --tags --force
+	# A real checkout of the tag, not `git checkout v5.2.0 .`. The partial form
+	# restores the tag's files but never deletes files added after it, so
+	# config/services.yml survived and kept declaring
+	# Mollie\Subscription\...\SubscriptionFAQController while composer rebuilt the
+	# autoloader from v5.2.0's composer.json, which has no such namespace. The
+	# module install then died compiling the Symfony container.
+	git checkout --detach --force v5.2.0
 	composer install
 	# installing 5.2.0 module
 	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install $(module)"
-	# installing develop branch module
-	git checkout -- .
-	git checkout develop --force
+	# installing the module under test. HEAD_REF, not develop: checking out develop
+	# made the upgrade leg assert against develop and never see the PR's code.
+	git checkout --detach --force $(HEAD_REF)
+	# the autoloader is still v5.2.0's at this point, so rebuild it before install
+	composer install
 	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install $(module)"
 
 prepare-zip:
