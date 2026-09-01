@@ -49,9 +49,14 @@ function upgrade_module_6_4_6($module)
             return true;
         }
 
+        $newTabId = (int) Tab::getIdFromClassName($newClassName);
+
         // A renamed tab already exists, so the legacy one is a leftover from an earlier install.
-        // Tab::delete() drops its role slugs as well.
-        if ((int) Tab::getIdFromClassName($newClassName)) {
+        // Tab::delete() drops its role slugs as well, but it never touches children, so they have
+        // to be moved first or the whole Mollie menu is left pointing at a deleted row.
+        if ($newTabId) {
+            mollieMoveTabChildren($legacyTabId, $newTabId);
+
             $legacyTab->delete();
             Tab::resetStaticCache();
 
@@ -81,6 +86,30 @@ function upgrade_module_6_4_6($module)
 
         return false;
     }
+}
+
+/**
+ * @param int $legacyTabId
+ * @param int $newTabId
+ *
+ * @return void
+ */
+function mollieMoveTabChildren($legacyTabId, $newTabId)
+{
+    Db::getInstance()->update(
+        'tab',
+        ['id_parent' => (int) $newTabId],
+        '`id_parent` = ' . (int) $legacyTabId
+    );
+
+    $newTab = new Tab((int) $newTabId);
+
+    if (!Validate::isLoadedObject($newTab)) {
+        return;
+    }
+
+    // The moved rows keep the positions they held under the legacy root, so they can collide.
+    $newTab->cleanPositions((int) $newTabId);
 }
 
 /**
