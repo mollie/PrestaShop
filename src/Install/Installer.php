@@ -131,12 +131,20 @@ class Installer implements InstallerInterface
         return $this->databaseTableInstaller->install();
     }
 
+    /**
+     * Installs every tab getTabs() declares, so core's ModuleTabRegister has nothing left to
+     * register. Its duplicateParentIfAlone() otherwise clones the first childless parent into a
+     * "<class name>_MTR" dummy tab, and PrestaShop cannot read permission slugs back for class
+     * names containing an underscore (see Upgrade-6.4.6.php).
+     */
     public function installSpecificTabs(): void
     {
         $this->deleteLegacyRootTab();
 
         $this->installTab('AdminMollieModuleMTR', 'IMPROVE', 'Mollie', true, 'mollie');
         $this->installTab('AdminMollieModule', 'AdminMollieModuleMTR', 'Settings', false);
+        $this->installTab('AdminMollieAjax', 'AdminMollieModuleMTR', 'AJAX', false);
+        $this->installTab('AdminMollieTabParent', 'AdminMollieModuleMTR', 'parent', false);
         $this->installTab('AdminMollieAuthenticationParent', 'AdminMollieModuleMTR', 'API Configuration', true);
         $this->installTab('AdminMollieAuthentication', 'AdminMollieAuthenticationParent', 'API Configuration', true);
         $this->installTab('AdminMolliePaymentMethods', 'AdminMollieAuthenticationParent', 'Payment Methods', true);
@@ -144,6 +152,11 @@ class Installer implements InstallerInterface
         $this->installTab('AdminMollieSubscriptionOrders', 'AdminMollieAuthenticationParent', 'Subscriptions', true);
         $this->installTab('AdminMollieSubscriptionFAQ', 'AdminMollieAuthenticationParent', 'Subscription FAQ', true);
         $this->installTab('AdminMollieLogs', 'AdminMollieAuthenticationParent', 'Logs', true);
+        $this->installTab('AdminMolliePaymentMethodsParent', 'AdminMollieModuleMTR', 'Payment Methods', true);
+        $this->installTab('AdminMollieAdvancedSettingsParent', 'AdminMollieModuleMTR', 'Advanced Settings', true);
+        $this->installTab('AdminMollieSubscriptionOrdersParent', 'AdminMollieModuleMTR', 'Subscriptions', true);
+        $this->installTab('AdminMollieSubscriptionFAQParent', 'AdminMollieModuleMTR', 'Subscription FAQ', true);
+        $this->installTab('AdminMollieLogsParent', 'AdminMollieModuleMTR', 'Logs', true);
     }
 
     public function getErrors()
