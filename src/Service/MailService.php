@@ -111,7 +111,7 @@ class MailService
         Mail::Send(
             (int) $order->id_lang,
             'order_conf',
-            $this->context->getTranslator()->trans('Order confirmation', [], 'Emails.Subject', $orderLanguage->locale),
+            $this->context->getTranslatorFromLocale($orderLanguage->locale)->trans('Order confirmation', [], 'Emails.Subject'),
             $data,
             $customer->email,
 
