@@ -152,6 +152,12 @@ upgrading-module-test-$(VERSION):
 	# head's aside: the tag needs its own resolve (league/container 2.5.0 against the
 	# branch's 3.3.3, among others) and the head must not inherit the result.
 	cp composer.lock $(LOCK_BACKUP)
+	# Installing the module inside the container writes into the bind-mounted checkout
+	# as root - PrestaShop generates a mails/<iso> folder per installed language - and
+	# the runner cannot replace those files afterwards, so the checkout dies on
+	# "unable to unlink old 'mails/de/index.php': Permission denied". Docker Desktop
+	# remaps the bind mount to the host user and hides this locally.
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "chmod -R 777 /var/www/html/modules/$(module)"
 	git checkout --detach --force $(BASE_TAG)
 	rm -f composer.lock
 	# The tag's require-dev pins roave/security-advisories dev-latest, which always
@@ -174,6 +180,7 @@ upgrading-module-test-$(VERSION):
 	$(call assert_module_version,$(patsubst v%,%,$(BASE_TAG)))
 	# the module under test - HEAD_REF, not develop, or the upgrade leg asserts
 	# against develop and never sees the commit being tested
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "chmod -R 777 /var/www/html/modules/$(module)"
 	git checkout --detach --force $(HEAD_REF)
 	# the autoloader is still the tag's at this point
 	mv $(LOCK_BACKUP) composer.lock
