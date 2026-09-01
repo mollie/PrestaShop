@@ -155,8 +155,10 @@ upgrading-module-test-$(VERSION):
 	git checkout --detach --force $(HEAD_REF)
 	# the autoloader is still v5.2.0's at this point
 	composer install
-	# upgrade, not install: `install` on an installed module never runs upgrade/*.php
-	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module upgrade $(module)"
+	# Not `bin/console prestashop:module upgrade`: that pulls the released module from
+	# the Addons marketplace over the bind mount and upgrades that instead of the
+	# commit under test. .docker/upgrade-module.php runs the local upgrade/*.php files.
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  modules/$(module)/.docker/upgrade-module.php $(module)"
 	$(call assert_module_version,$(MODULE_VERSION))
 
 # Asserts the shop really records the version we expect. PrestaShop reports success
