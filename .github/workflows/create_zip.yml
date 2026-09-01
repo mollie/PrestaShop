@@ -35,6 +35,13 @@ jobs:
           rm -rf node_modules src
           cd ../../../..
           rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile .docker docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php
+          # Keep this list in sync with release.yml, the validator flags build configs that ship
+          rm -f views/assets/webpack.config.js
+          rm -f views/js/admin/library/package.json views/js/admin/library/package-lock.json
+          rm -f views/js/admin/library/tsconfig.json views/js/admin/library/tsconfig.app.json views/js/admin/library/tsconfig.node.json
+          rm -f views/js/admin/library/vite.config.ts views/js/admin/library/eslint.config.js
+          rm -f views/js/admin/library/postcss.config.js views/js/admin/library/tailwind.config.js views/js/admin/library/README.md
+          rm -rf vendor/segmentio/analytics-php/.buildscript vendor/segmentio/analytics-php/.circleci vendor/segmentio/analytics-php/.github
           # PrestaShop security requirement: every shipped directory must contain an index.php
           find . -type d ! -path './.git' ! -path './.git/*' | while read -r dir; do [ -f "$dir/index.php" ] || cp index.php "$dir/index.php"; done
           mkdir ${{ env.MODULE_NAME }}
