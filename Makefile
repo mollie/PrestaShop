@@ -161,6 +161,13 @@ upgrading-module-test-$(VERSION):
 	# package outright: it is an install-time guard and the shop only needs the runtime
 	# set. The checkout back to HEAD_REF undoes the composer.json edit.
 	composer remove --dev roave/security-advisories --no-update --no-interaction
+	# Composer 2.9 refuses to load any package covered by a security advisory, and a
+	# release this old is full of them - symfony/http-client ^4.4 and guzzlehttp/psr7
+	# 1.x among its runtime requirements - so the resolve dies on the runner while it
+	# still succeeds on an older composer. Turn the policy off for the tag: this
+	# checkout exists only to be upgraded away from inside a throwaway container, and
+	# the head's own dependencies are resolved separately and still audited.
+	php -r '$$f = "composer.json"; $$j = json_decode(file_get_contents($$f), true); $$j["config"]["policy"]["advisories"]["block"] = false; file_put_contents($$f, json_encode($$j, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));'
 	composer update --no-dev
 	# installing $(BASE_TAG) module
 	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install $(module)"
