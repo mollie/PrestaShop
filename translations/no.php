@@ -144,6 +144,12 @@ $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5af9a8daf851bd
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_e38bacaba20440245e0aae88f984f78d'] = 'Manglende påkrevde parametere';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b72cdbd76577277b160796264e922ceb'] = 'Kunne ikke lagre API-nøkkel';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b69a3944e63d1f7e85f1a6279b003e7e'] = 'Ugyldig miljøparameter. Må være \"test\" eller \"live\"';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5fe660b4753d891ac8422a859856c305'] = 'Test-modus lar deg prøve betalingsmetodene dine uten ekte betalinger. Når du er klar til å gå live, kan du ta med deg oppsettet i stedet for å konfigurere alt på nytt.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9deb0e31315dc2eb99c6a49144162fdd'] = 'Kopier mine Test-innstillinger for betalingsmetoder til Live';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_acb5fc9a8582c7f72b21941b8b963c72'] = 'Test-innstillingene dine kopieres så snart du kobler til Live API-nøkkelen din.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_f35405ac878e248331afede242b88867'] = 'Test-innstillinger kopiert til Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_2198f7d9e076106be0f204b3d289f787'] = 'Kunne ikke kopiere Test-innstillinger til Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9ce89fb204d84278e52c0915dd5377f0'] = 'En gyldig Live API-nøkkel kreves før Test-innstillinger kan kopieres.';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_d7c8c85bf79bbe1b7188497c32c3b0ca'] = 'Mislykket';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_7a1920d61156abc05a60135aefe8bc67'] = 'Standard';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_ee5fe2ff13c5411f5014ffe2fc4f6702'] = 'Ved forsendelse';

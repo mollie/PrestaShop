@@ -144,6 +144,12 @@ $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5af9a8daf851bd
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_e38bacaba20440245e0aae88f984f78d'] = 'Faltan parámetros requeridos';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b72cdbd76577277b160796264e922ceb'] = 'Error al guardar clave API';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b69a3944e63d1f7e85f1a6279b003e7e'] = 'Parámetro de entorno inválido. Debe ser \"test\" o \"live\"';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5fe660b4753d891ac8422a859856c305'] = 'El modo Test le permite probar sus métodos de pago sin cobros reales. Cuando esté listo para pasar a Live, puede llevarse esa configuración en lugar de volver a crearla.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9deb0e31315dc2eb99c6a49144162fdd'] = 'Copiar mi configuración de métodos de pago de Test a Live';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_acb5fc9a8582c7f72b21941b8b963c72'] = 'Su configuración de Test se copiará en cuanto conecte su clave API Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_f35405ac878e248331afede242b88867'] = 'Configuración de Test copiada a Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_2198f7d9e076106be0f204b3d289f787'] = 'No se pudo copiar la configuración de Test a Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9ce89fb204d84278e52c0915dd5377f0'] = 'Se requiere una clave API Live válida antes de poder copiar la configuración de Test.';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_d7c8c85bf79bbe1b7188497c32c3b0ca'] = 'Fallido';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_7a1920d61156abc05a60135aefe8bc67'] = 'Predeterminado';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_ee5fe2ff13c5411f5014ffe2fc4f6702'] = 'Al enviar';

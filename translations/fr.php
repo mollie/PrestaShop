@@ -144,6 +144,12 @@ $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5af9a8daf851bd
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_e38bacaba20440245e0aae88f984f78d'] = 'Paramètres requis manquants';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b72cdbd76577277b160796264e922ceb'] = 'Échec de la sauvegarde de la clé API';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b69a3944e63d1f7e85f1a6279b003e7e'] = 'Paramètre d\'environnement invalide. Doit être « test » ou « live »';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5fe660b4753d891ac8422a859856c305'] = 'Le mode Test vous permet d\'essayer vos moyens de paiement sans paiement réel. Quand vous êtes prêt à passer en Live, vous pouvez emporter cette configuration au lieu de tout reparamétrer.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9deb0e31315dc2eb99c6a49144162fdd'] = 'Copier mes réglages de moyens de paiement Test vers Live';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_acb5fc9a8582c7f72b21941b8b963c72'] = 'Vos réglages Test seront copiés dès que vous connecterez votre clé API Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_f35405ac878e248331afede242b88867'] = 'Réglages Test copiés vers Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_2198f7d9e076106be0f204b3d289f787'] = 'Échec de la copie des paramètres Test vers Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9ce89fb204d84278e52c0915dd5377f0'] = 'Une clé API Live valide est requise avant de pouvoir copier les paramètres Test.';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_d7c8c85bf79bbe1b7188497c32c3b0ca'] = 'Échoué';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_7a1920d61156abc05a60135aefe8bc67'] = 'Par défaut';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_ee5fe2ff13c5411f5014ffe2fc4f6702'] = 'À l\'expédition';

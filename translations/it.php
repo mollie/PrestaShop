@@ -144,6 +144,12 @@ $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5af9a8daf851bd
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_e38bacaba20440245e0aae88f984f78d'] = 'Parametri richiesti mancanti';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b72cdbd76577277b160796264e922ceb'] = 'Impossibile salvare la chiave API';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b69a3944e63d1f7e85f1a6279b003e7e'] = 'Parametro ambiente non valido. Deve essere \"test\" o \"live\"';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5fe660b4753d891ac8422a859856c305'] = 'La modalità Test ti permette di provare i tuoi metodi di pagamento senza pagamenti reali. Quando sei pronto a passare a Live, puoi portare con te quella configurazione invece di rifare tutto.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9deb0e31315dc2eb99c6a49144162fdd'] = 'Copia le mie impostazioni dei metodi di pagamento da Test a Live';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_acb5fc9a8582c7f72b21941b8b963c72'] = 'Le tue impostazioni Test verranno copiate non appena colleghi la tua chiave API Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_f35405ac878e248331afede242b88867'] = 'Impostazioni Test copiate in Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_2198f7d9e076106be0f204b3d289f787'] = 'Copia delle impostazioni Test su Live non riuscita.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9ce89fb204d84278e52c0915dd5377f0'] = 'È necessaria una chiave API Live valida prima di poter copiare le impostazioni Test.';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_d7c8c85bf79bbe1b7188497c32c3b0ca'] = 'Fallito';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_7a1920d61156abc05a60135aefe8bc67'] = 'Predefinito';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_ee5fe2ff13c5411f5014ffe2fc4f6702'] = 'Alla spedizione';

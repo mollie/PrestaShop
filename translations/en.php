@@ -144,6 +144,12 @@ $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5af9a8daf851bd
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_e38bacaba20440245e0aae88f984f78d'] = 'Missing required parameters';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b72cdbd76577277b160796264e922ceb'] = 'Failed to save API key';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_b69a3944e63d1f7e85f1a6279b003e7e'] = 'Invalid environment parameter. Must be \"test\" or \"live\"';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5fe660b4753d891ac8422a859856c305'] = 'Test mode lets you try out your payment methods without taking real payments. When you are ready to go live, you can bring that setup with you instead of configuring everything again.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9deb0e31315dc2eb99c6a49144162fdd'] = 'Copy my Test payment method settings to Live';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_acb5fc9a8582c7f72b21941b8b963c72'] = 'Your Test settings will be copied as soon as you connect your Live API key.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_f35405ac878e248331afede242b88867'] = 'Test settings copied to Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_2198f7d9e076106be0f204b3d289f787'] = 'Failed to copy Test settings to Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9ce89fb204d84278e52c0915dd5377f0'] = 'A valid Live API key is required before Test settings can be copied.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_af01f8c298aa063d9c7490f00eddd2df'] = 'Payment Methods';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_85ea9215bf4fdbc002bb2e4aa0fc9759'] = 'Configure Payment Methods';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_00d23a76e43b46dae9ec7aa9dcbebb32'] = 'Enabled';

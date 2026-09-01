@@ -20,4 +20,7 @@ if (!defined('_PS_VERSION_')) {
 
 interface CustomerRepositoryInterface extends ReadOnlyRepositoryInterface
 {
+    public function getExcludedCustomerGroupIds(?int $methodId): array;
+
+    public function updatePaymentMethodExcludedCustomerGroups(?int $idMethod, $idCustomerGroups);
 }

@@ -65,6 +65,12 @@ const SkeletonConnectButton = () => (
   <div className="w-full h-12 bg-gray-100 rounded animate-pulse mb-4"></div>
 )
 
+// Tailwind emits its utilities in @layer utilities, and the unlayered back office stylesheet beats any
+// layered rule, so margins on elements it also styles (p, button) have to be set inline to survive
+const bannerSpacing = {marginTop: '1rem', marginBottom: '1rem'}
+const hintSpacing = {marginTop: '0.5rem'}
+const helpLinkSpacing = {marginTop: '1rem'}
+
 export default function AuthorizationForm() {
   const { t } = useTranslations()
   const [mode, setMode] = useState<"live" | "test">("live")
@@ -79,6 +85,10 @@ export default function AuthorizationForm() {
   const [initialLoading, setInitialLoading] = useState(true)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [pendingMode, setPendingMode] = useState<"live" | "test" | null>(null)
+  const [copyTestSettings, setCopyTestSettings] = useState(false)
+  const [copyOnNextConnect, setCopyOnNextConnect] = useState(false)
+  const [copySuccessMessage, setCopySuccessMessage] = useState("")
+  const [copyErrorMessage, setCopyErrorMessage] = useState("")
 
   // Load current settings on component mount
   useEffect(() => {
@@ -122,6 +132,11 @@ export default function AuthorizationForm() {
           setTestApiKey(apiKey)
         }
         setErrorMessage("")
+
+        if (mode === "live" && copyOnNextConnect) {
+          setCopyOnNextConnect(false)
+          await copyTestSettingsToLive()
+        }
       } else {
         setIsConnected(false)
         setJustConnected(false)
@@ -143,14 +158,20 @@ export default function AuthorizationForm() {
 
     // Show confirmation dialog
     setPendingMode(newMode)
+    setCopyTestSettings(false)
     setShowConfirmDialog(true)
   }
 
   const confirmModeSwitch = async () => {
-    if (!pendingMode) return
+    if (!pendingMode) return false
+
+    const shouldCopy = pendingMode === "live" && copyTestSettings
 
     setShowConfirmDialog(false)
     setErrorMessage("")
+    setCopySuccessMessage("")
+    setCopyErrorMessage("")
+    setCopyOnNextConnect(false)
     setJustConnected(false) // Clear the success message when switching modes
 
     try {
@@ -163,26 +184,60 @@ export default function AuthorizationForm() {
         setApiKey(switchResponse.data.api_key || "")
 
         // Update the stored keys based on the response
+        const switchedApiKey = switchResponse.data.api_key || ""
+
         if (pendingMode === "live") {
-          setLiveApiKey(switchResponse.data.api_key || liveApiKey)
+          setLiveApiKey(switchedApiKey || liveApiKey)
         } else {
-          setTestApiKey(switchResponse.data.api_key || testApiKey)
+          setTestApiKey(switchedApiKey || testApiKey)
         }
-      } else {
-        console.error('Failed to switch environment:', switchResponse.message)
-        setErrorMessage(switchResponse.message || t('failedToSwitchEnvironment'))
+
+        if (shouldCopy) {
+          // Without a Live key the copy cannot run yet, so it waits for the merchant to connect one
+          if (switchedApiKey || liveApiKey) {
+            await copyTestSettingsToLive()
+          } else {
+            setCopyOnNextConnect(true)
+          }
+        }
+
+        return true
       }
+
+      console.error('Failed to switch environment:', switchResponse.message)
+      setErrorMessage(switchResponse.message || t('failedToSwitchEnvironment'))
     } catch (error) {
       console.error('Failed to switch environment:', error)
       setErrorMessage(t('failedToSwitchEnvironment'))
     } finally {
       setPendingMode(null)
     }
+
+    return false
   }
 
   const cancelModeSwitch = () => {
     setShowConfirmDialog(false)
     setPendingMode(null)
+  }
+
+  const copyTestSettingsToLive = async () => {
+    setCopySuccessMessage("")
+    setCopyErrorMessage("")
+
+    try {
+      const response = await authApiService.copyTestSettingsToLive()
+      if (response.success) {
+        setCopySuccessMessage(t('copyTestToLiveSuccess'))
+
+        return
+      }
+
+      setCopyErrorMessage(response.message || t('copyTestToLiveError'))
+    } catch (error) {
+      console.error('Failed to copy test settings to live:', error)
+      setCopyErrorMessage(t('copyTestToLiveError'))
+    }
   }
 
   if (window.mollieAuthConfig?.multistoreRestricted) {
@@ -204,10 +259,25 @@ export default function AuthorizationForm() {
               <h3 className="text-lg font-semibold text-gray-900" style={{marginBottom: '1rem'}}>
                 {t('switchEnvironment')}
               </h3>
-              <p className="text-gray-600 text-sm" style={{marginBottom: '2rem'}}>
+              <p className="text-gray-600 text-sm" style={{marginBottom: pendingMode === "live" ? '1rem' : '2rem'}}>
                 {t('confirmSwitchEnvironment', pendingMode === "live" ? t('live') : t('test'))}
               </p>
-              <div className="flex gap-3 justify-end">
+              {pendingMode === "live" && (
+                <label
+                  className="text-sm text-gray-800 cursor-pointer"
+                  style={{display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '2rem', fontWeight: 400}}
+                >
+                  <input
+                    data-testid="mollie-copy-test-settings-checkbox"
+                    type="checkbox"
+                    checked={copyTestSettings}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCopyTestSettings(e.target.checked)}
+                    style={{margin: 0, flexShrink: 0}}
+                  />
+                  <span>{t('copyTestToLiveOption')}</span>
+                </label>
+              )}
+              <div className="flex gap-3 justify-end flex-wrap">
                 <button
                   onClick={cancelModeSwitch}
                   className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
@@ -215,6 +285,7 @@ export default function AuthorizationForm() {
                   {t('cancel')}
                 </button>
                 <button
+                  data-testid="mollie-switch-confirm-button"
                   onClick={confirmModeSwitch}
                   className="px-4 py-2 text-sm font-medium text-white rounded-md hover:opacity-90 transition-opacity"
                   style={{backgroundColor: 'rgba(0, 64, 255, 1)'}}
@@ -277,7 +348,10 @@ export default function AuthorizationForm() {
                     {t('test')}
                   </button>
                 </div>
-                <p className="text-sm text-black mt-2">{t('modeDescription')}</p>
+                <p className="text-sm text-black" style={hintSpacing}>{t('modeDescription')}</p>
+                {mode === "test" && (
+                  <p className="text-sm text-gray-600" style={hintSpacing}>{t('testModeHint')}</p>
+                )}
               </div>
             )}
 
@@ -319,7 +393,13 @@ export default function AuthorizationForm() {
                 </div>
 
                 {!isConnected && (
-                  <p className="text-sm text-black mt-2">{t('apiKeyDescription', mode)}</p>
+                  <p className="text-sm text-black" style={hintSpacing}>{t('apiKeyDescription', mode)}</p>
+                )}
+
+                {copyOnNextConnect && (
+                  <p data-testid="mollie-copy-pending" className="text-sm text-gray-600" style={hintSpacing}>
+                    {t('copyTestToLivePending')}
+                  </p>
                 )}
               </div>
             )}
@@ -347,7 +427,7 @@ export default function AuthorizationForm() {
 
                 {/* Connection Status - only show after successful connect action */}
                 {justConnected && (
-                  <div className="flex items-center gap-2 mb-4 p-3 bg-green-50 border border-green-200 rounded-md">
+                  <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-md" style={bannerSpacing}>
                     <CheckCircle className="h-5 w-5 text-green-600" />
                     <span className="text-green-800 font-medium">{t('connectedSuccessfully')}</span>
                   </div>
@@ -355,13 +435,27 @@ export default function AuthorizationForm() {
 
                 {/* Error Message */}
                 {errorMessage && (
-                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-md" style={bannerSpacing}>
                     <span className="text-red-800 text-sm">{errorMessage}</span>
                   </div>
                 )}
 
+                {/* Copy Test settings to Live result */}
+                {copySuccessMessage && (
+                  <div data-testid="mollie-copy-success" className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-md" style={bannerSpacing}>
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <span className="text-green-800 text-sm font-medium">{copySuccessMessage}</span>
+                  </div>
+                )}
+
+                {copyErrorMessage && (
+                  <div data-testid="mollie-copy-error" className="p-3 bg-red-50 border border-red-200 rounded-md" style={bannerSpacing}>
+                    <span className="text-red-800 text-sm">{copyErrorMessage}</span>
+                  </div>
+                )}
+
                 {/* API Key Help Link */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2" style={helpLinkSpacing}>
                   <ExternalLink className="h-4 w-4" style={{color: 'rgba(0, 64, 255, 1)'}} />
                   <a href="https://my.mollie.com/dashboard" target="_blank" rel="noopener noreferrer" style={{color: 'rgba(0, 64, 255, 1)'}} className="hover:opacity-80 underline text-sm font-medium">
                     {t('whereApiKey')}
