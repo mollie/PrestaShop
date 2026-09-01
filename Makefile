@@ -149,7 +149,7 @@ upgrading-module-test-$(VERSION):
 	composer install
 	# installing 5.2.0 module
 	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install $(module)"
-	$(MAKE) VERSION=$(VERSION) assert-module-version EXPECTED=5.2.0
+	$(call assert_module_version,5.2.0)
 	# the module under test - HEAD_REF, not develop, or the upgrade leg asserts
 	# against develop and never sees the commit being tested
 	git checkout --detach --force $(HEAD_REF)
@@ -157,18 +157,21 @@ upgrading-module-test-$(VERSION):
 	composer install
 	# upgrade, not install: `install` on an installed module never runs upgrade/*.php
 	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module upgrade $(module)"
-	$(MAKE) VERSION=$(VERSION) assert-module-version EXPECTED=$(MODULE_VERSION)
+	$(call assert_module_version,$(MODULE_VERSION))
 
-# asserts the shop really records the module version we expect. PrestaShop reports
-# success for no-op installs, so without this the upgrade leg cannot fail.
-assert-module-version:
+# Asserts the shop really records the version we expect. PrestaShop reports success
+# for no-op installs, so without this the legs above cannot fail. Has to be a canned
+# recipe, not a target: the tag checkout replaces this Makefile on disk with v5.2.0's,
+# so a $(MAKE) recursion would look for a target that does not exist there.
+define assert_module_version
 	@installed=$$(mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop -N -B \
 		-e "SELECT version FROM ps_module WHERE name = '$(module)'" prestashop 2>/dev/null); \
-	if [ "$$installed" != "$(EXPECTED)" ]; then \
-		echo "FAIL: expected the shop to report module version $(EXPECTED), got '$$installed'"; \
+	if [ "$$installed" != "$(1)" ]; then \
+		echo "FAIL: expected the shop to report module version $(1), got '$$installed'"; \
 		exit 1; \
 	fi; \
 	echo "OK: shop reports module version $$installed"
+endef
 
 prepare-zip:
 	composer install --no-dev --optimize-autoloader --classmap-authoritative
