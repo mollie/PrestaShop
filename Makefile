@@ -1,16 +1,6 @@
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 module = mollie
 
-# Both captured at parse time, before upgrading-module-test checks out v5.2.0:
-# the commit to come back to (CI leaves a detached HEAD, so there is not always a
-# branch name) and the version the shop must report once the upgrade has run.
-HEAD_REF := $(shell git rev-parse HEAD)
-MODULE_VERSION := $(shell sed -n "s/.*this->version = '\([0-9.]*\)'.*/\1/p" mollie.php | head -1)
-LOCK_BACKUP := $(ROOT_DIR)/../composer.lock.upgrading-module-test
-# The oldest release in the supported window: Mollie's compatibility table pairs
-# PS 1.7.6 - 9.0.0 with Mollie 6, and there is no v6.0.0 tag, only betas.
-BASE_TAG := v6.0.1
-
 # target: fix-lint			- Launch php cs fixer
 fix-lint:
 	docker compose run --rm php sh -c "vendor/bin/php-cs-fixer fix --using-cache=no"
@@ -134,76 +124,11 @@ e2e-tests-ui:
 	npx playwright install chromium
 	cd tests/e2e && npx playwright test --ui
 
-# checking the module upgrading - installs $(BASE_TAG) then upgrades to the commit under test
+# target: upgrading-module-test-$(VERSION)	- Upgrade the oldest supported release to the commit under test, in the shop from e2eh$(VERSION).
+# The recipe lives in a script because it needs state across steps, a failure trap
+# that puts the working tree back, and a checkout that replaces this Makefile.
 upgrading-module-test-$(VERSION):
-	git fetch --tags --force
-	# e2eh$(VERSION) leaves the module installed at the current version, and
-	# `module install` on an installed module is a no-op that still exits 0. Without
-	# this the shop never goes back to $(BASE_TAG) and the upgrade leg has nothing to
-	# upgrade - the job goes green having tested nothing. Uninstall while the
-	# current code is still checked out, so it matches the schema it created.
-	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall $(module)"
-	# A real checkout of the tag, not `git checkout $(BASE_TAG) .`. The partial form
-	# restores the tag's files but never deletes files added after it, so everything
-	# the branch added since - shared/, config/services.yml entries - stayed behind
-	# and got compiled against an autoloader composer had just rebuilt from the tag's
-	# composer.json, which knows nothing about them.
-	# composer.lock is gitignored on the branch and untracked in the tag, so keep the
-	# head's aside: the tag needs its own resolve (league/container 2.5.0 against the
-	# branch's 3.3.3, among others) and the head must not inherit the result.
-	cp composer.lock $(LOCK_BACKUP)
-	# Installing the module inside the container writes into the bind-mounted checkout
-	# as root - PrestaShop generates a mails/<iso> folder per installed language - and
-	# the runner cannot replace those files afterwards, so the checkout dies on
-	# "unable to unlink old 'mails/de/index.php': Permission denied". Docker Desktop
-	# remaps the bind mount to the host user and hides this locally.
-	docker exec -i prestashop-$(module)-$(VERSION) sh -c "chmod -R 777 /var/www/html/modules/$(module)"
-	git checkout --detach --force $(BASE_TAG)
-	rm -f composer.lock
-	# The tag's require-dev pins roave/security-advisories dev-latest, which always
-	# resolves to today's advisory list and by now conflicts with every guzzlehttp/psr7
-	# the tag's runtime constraints allow, so a release this old can no longer be
-	# resolved. --no-dev is not enough, composer still solves require-dev. Drop the
-	# package outright: it is an install-time guard and the shop only needs the runtime
-	# set. The checkout back to HEAD_REF undoes the composer.json edit.
-	composer remove --dev roave/security-advisories --no-update --no-interaction
-	# Composer 2.9 refuses to load any package covered by a security advisory, and a
-	# release this old is full of them - symfony/http-client ^4.4 and guzzlehttp/psr7
-	# 1.x among its runtime requirements - so the resolve dies on the runner while it
-	# still succeeds on an older composer. Turn the policy off for the tag: this
-	# checkout exists only to be upgraded away from inside a throwaway container, and
-	# the head's own dependencies are resolved separately and still audited.
-	php -r '$$f = "composer.json"; $$j = json_decode(file_get_contents($$f), true); $$j["config"]["policy"]["advisories"]["block"] = false; file_put_contents($$f, json_encode($$j, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));'
-	composer update --no-dev
-	# installing $(BASE_TAG) module
-	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install $(module)"
-	$(call assert_module_version,$(patsubst v%,%,$(BASE_TAG)))
-	# the module under test - HEAD_REF, not develop, or the upgrade leg asserts
-	# against develop and never sees the commit being tested
-	docker exec -i prestashop-$(module)-$(VERSION) sh -c "chmod -R 777 /var/www/html/modules/$(module)"
-	git checkout --detach --force $(HEAD_REF)
-	# the autoloader is still the tag's at this point
-	mv $(LOCK_BACKUP) composer.lock
-	composer install
-	# Not `bin/console prestashop:module upgrade`: that pulls the released module from
-	# the Addons marketplace over the bind mount and upgrades that instead of the
-	# commit under test. .docker/upgrade-module.php runs the local upgrade/*.php files.
-	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  modules/$(module)/.docker/upgrade-module.php $(module)"
-	$(call assert_module_version,$(MODULE_VERSION))
-
-# Asserts the shop really records the version we expect. PrestaShop reports success
-# for no-op installs, so without this the legs above cannot fail. Has to be a canned
-# recipe, not a target: the tag checkout replaces this Makefile on disk with v5.2.0's,
-# so a $(MAKE) recursion would look for a target that does not exist there.
-define assert_module_version
-	@installed=$$(mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop -N -B \
-		-e "SELECT version FROM ps_module WHERE name = '$(module)'" prestashop 2>/dev/null); \
-	if [ "$$installed" != "$(1)" ]; then \
-		echo "FAIL: expected the shop to report module version $(1), got '$$installed'"; \
-		exit 1; \
-	fi; \
-	echo "OK: shop reports module version $$installed"
-endef
+	/bin/bash .docker/upgrading-module-test.sh $(module) $(VERSION)
 
 prepare-zip:
 	composer install --no-dev --optimize-autoloader --classmap-authoritative
