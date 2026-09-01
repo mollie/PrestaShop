@@ -7,6 +7,9 @@ module = mollie
 HEAD_REF := $(shell git rev-parse HEAD)
 MODULE_VERSION := $(shell sed -n "s/.*this->version = '\([0-9.]*\)'.*/\1/p" mollie.php | head -1)
 LOCK_BACKUP := $(ROOT_DIR)/../composer.lock.upgrading-module-test
+# The oldest release in the supported window: Mollie's compatibility table pairs
+# PS 1.7.6 - 9.0.0 with Mollie 6, and there is no v6.0.0 tag, only betas.
+BASE_TAG := v6.0.1
 
 # target: fix-lint			- Launch php cs fixer
 fix-lint:
@@ -131,35 +134,41 @@ e2e-tests-ui:
 	npx playwright install chromium
 	cd tests/e2e && npx playwright test --ui
 
-# checking the module upgrading - installs v5.2.0 then upgrades to the commit under test
+# checking the module upgrading - installs $(BASE_TAG) then upgrades to the commit under test
 upgrading-module-test-$(VERSION):
 	git fetch --tags --force
 	# e2eh$(VERSION) leaves the module installed at the current version, and
 	# `module install` on an installed module is a no-op that still exits 0. Without
-	# this the shop never goes back to 5.2.0 and the upgrade leg has nothing to
+	# this the shop never goes back to $(BASE_TAG) and the upgrade leg has nothing to
 	# upgrade - the job goes green having tested nothing. Uninstall while the
 	# current code is still checked out, so it matches the schema it created.
 	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall $(module)"
-	# A real checkout of the tag, not `git checkout v5.2.0 .`. The partial form
-	# restores the tag's files but never deletes files added after it, so
-	# config/services.yml survived and kept declaring
-	# Mollie\Subscription\...\SubscriptionFAQController while composer rebuilt the
-	# autoloader from v5.2.0's composer.json, which has no such namespace. The
-	# install then died compiling the Symfony container.
-	# The branch gitignores composer.lock but v5.2.0 tracks one, so the tag checkout
-	# overwrites the lock `composer update` just produced and the checkout back to the
-	# branch deletes it. Without it the second composer install silently turns into a
-	# full update against github.com. Keep the head's lock aside instead.
+	# A real checkout of the tag, not `git checkout $(BASE_TAG) .`. The partial form
+	# restores the tag's files but never deletes files added after it, so everything
+	# the branch added since - shared/, config/services.yml entries - stayed behind
+	# and got compiled against an autoloader composer had just rebuilt from the tag's
+	# composer.json, which knows nothing about them.
+	# composer.lock is gitignored on the branch and untracked in the tag, so keep the
+	# head's aside: the tag needs its own resolve (league/container 2.5.0 against the
+	# branch's 3.3.3, among others) and the head must not inherit the result.
 	cp composer.lock $(LOCK_BACKUP)
-	git checkout --detach --force v5.2.0
-	composer install
-	# installing 5.2.0 module
+	git checkout --detach --force $(BASE_TAG)
+	rm -f composer.lock
+	# The tag's require-dev pins roave/security-advisories dev-latest, which always
+	# resolves to today's advisory list and by now conflicts with every guzzlehttp/psr7
+	# the tag's runtime constraints allow, so a release this old can no longer be
+	# resolved. --no-dev is not enough, composer still solves require-dev. Drop the
+	# package outright: it is an install-time guard and the shop only needs the runtime
+	# set. The checkout back to HEAD_REF undoes the composer.json edit.
+	composer remove --dev roave/security-advisories --no-update --no-interaction
+	composer update --no-dev
+	# installing $(BASE_TAG) module
 	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install $(module)"
-	$(call assert_module_version,5.2.0)
+	$(call assert_module_version,$(patsubst v%,%,$(BASE_TAG)))
 	# the module under test - HEAD_REF, not develop, or the upgrade leg asserts
 	# against develop and never sees the commit being tested
 	git checkout --detach --force $(HEAD_REF)
-	# the autoloader is still v5.2.0's at this point
+	# the autoloader is still the tag's at this point
 	mv $(LOCK_BACKUP) composer.lock
 	composer install
 	# Not `bin/console prestashop:module upgrade`: that pulls the released module from

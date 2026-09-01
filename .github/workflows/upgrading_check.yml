@@ -1,4 +1,4 @@
-name: Module upgrade / downgrade testing (last version > v.5.2.0 > `develop` version)
+name: Module upgrade / downgrade testing (oldest supported release v6.0.1 > `develop` version)
 on:
   pull_request:
     types: [opened, reopened]
@@ -22,6 +22,10 @@ jobs:
       # so without this the auto-install cannot authenticate, Apache never
       # starts and the shop stays unreachable on 8002.
       DB_PASSWD: prestashop
+      # The job resolves dependencies twice, once for the head and once for the tag,
+      # and anonymous requests share the runner's rate limit. Without a token composer
+      # gives up with "Could not authenticate against github.com".
+      COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
