@@ -39,6 +39,10 @@ class Installer implements InstallerInterface
 {
     const FILE_NAME = 'Installer';
 
+    /** Root menu tab class name used before 6.4.6, replaced because PrestaShop cannot resolve
+     * permission slugs for class names containing an underscore. */
+    const LEGACY_ROOT_TAB_CLASS_NAME = 'AdminMollieModule_MTR';
+
     /**
      * @var array
      */
@@ -127,17 +131,32 @@ class Installer implements InstallerInterface
         return $this->databaseTableInstaller->install();
     }
 
+    /**
+     * Installs every tab getTabs() declares, so core's ModuleTabRegister has nothing left to
+     * register. Its duplicateParentIfAlone() otherwise clones the first childless parent into a
+     * "<class name>_MTR" dummy tab, and PrestaShop cannot read permission slugs back for class
+     * names containing an underscore (see Upgrade-6.4.6.php).
+     */
     public function installSpecificTabs(): void
     {
-        $this->installTab('AdminMollieModule_MTR', 'IMPROVE', 'Mollie', true, 'mollie');
-        $this->installTab('AdminMollieModule', 'AdminMollieModule_MTR', 'Settings', false);
-        $this->installTab('AdminMollieAuthenticationParent', 'AdminMollieModule_MTR', 'API Configuration', true);
+        $this->deleteLegacyRootTab();
+
+        $this->installTab('AdminMollieModuleMTR', 'IMPROVE', 'Mollie', true, 'mollie');
+        $this->installTab('AdminMollieModule', 'AdminMollieModuleMTR', 'Settings', false);
+        $this->installTab('AdminMollieAjax', 'AdminMollieModuleMTR', 'AJAX', false);
+        $this->installTab('AdminMollieTabParent', 'AdminMollieModuleMTR', 'parent', false);
+        $this->installTab('AdminMollieAuthenticationParent', 'AdminMollieModuleMTR', 'API Configuration', true);
         $this->installTab('AdminMollieAuthentication', 'AdminMollieAuthenticationParent', 'API Configuration', true);
         $this->installTab('AdminMolliePaymentMethods', 'AdminMollieAuthenticationParent', 'Payment Methods', true);
         $this->installTab('AdminMollieAdvancedSettings', 'AdminMollieAuthenticationParent', 'Advanced Settings', true);
         $this->installTab('AdminMollieSubscriptionOrders', 'AdminMollieAuthenticationParent', 'Subscriptions', true);
         $this->installTab('AdminMollieSubscriptionFAQ', 'AdminMollieAuthenticationParent', 'Subscription FAQ', true);
         $this->installTab('AdminMollieLogs', 'AdminMollieAuthenticationParent', 'Logs', true);
+        $this->installTab('AdminMolliePaymentMethodsParent', 'AdminMollieModuleMTR', 'Payment Methods', true);
+        $this->installTab('AdminMollieAdvancedSettingsParent', 'AdminMollieModuleMTR', 'Advanced Settings', true);
+        $this->installTab('AdminMollieSubscriptionOrdersParent', 'AdminMollieModuleMTR', 'Subscriptions', true);
+        $this->installTab('AdminMollieSubscriptionFAQParent', 'AdminMollieModuleMTR', 'Subscription FAQ', true);
+        $this->installTab('AdminMollieLogsParent', 'AdminMollieModuleMTR', 'Logs', true);
     }
 
     public function getErrors()
@@ -227,6 +246,28 @@ class Installer implements InstallerInterface
         }
         $defaultStatuses = array_map('intval', array_column($defaultStatuses, OrderState::$definition['primary']));
         $this->configurationAdapter->updateValue(Config::MOLLIE_AUTO_SHIP_STATUSES, json_encode($defaultStatuses));
+    }
+
+    /**
+     * Uninstalling the module leaves the root menu tab behind, so a shop that had a version older
+     * than 6.4.6 installed still holds the AdminMollieModule_MTR tab. Installing on top of it would
+     * add a second root tab and leave the old one as an empty "Mollie" menu entry.
+     */
+    private function deleteLegacyRootTab(): void
+    {
+        $legacyTabId = (int) Tab::getIdFromClassName(self::LEGACY_ROOT_TAB_CLASS_NAME);
+
+        if (!$legacyTabId) {
+            return;
+        }
+
+        $legacyTab = new Tab($legacyTabId);
+
+        if (!Validate::isLoadedObject($legacyTab)) {
+            return;
+        }
+
+        $legacyTab->delete();
     }
 
     public function installTab($className, $parent, $name, $active = true, $icon = '')
