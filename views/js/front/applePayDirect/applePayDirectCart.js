@@ -134,7 +134,7 @@ function initApplePayDirect() {
                         ApplePaySession.STATUS_SUCCESS,
                         {
                             'amount': response.data.amount,
-                            'label': ' mollie'
+                            'label': totalLabel
                         },
                         []
                     )
@@ -172,7 +172,7 @@ function initApplePayDirect() {
                             ApplePaySession.STATUS_SUCCESS,
                             response.shipping_methods,
                             {
-                                'label': firstTotal.label,
+                                'label': totalLabel,
                                 'amount': firstTotal.amount
                             },
                             [
