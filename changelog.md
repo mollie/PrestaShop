@@ -2,6 +2,10 @@
 
 # Changelog #
 
+## Changes in release 6.4.6
++ Fixed Apple Pay Direct accepting delivery addresses no carrier can ship to, the payment sheet now rejects the address instead of showing "No carriers" with a 0.00 total
++ Fixed Apple Pay Direct sheet naming the merchant "mollie" instead of the shop name once a shipping method was selected
+
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API
 + New payment method: Billink, available on the Payments API for consumer purchases up to 2,500.00 EUR

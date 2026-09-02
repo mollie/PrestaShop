@@ -23,6 +23,7 @@ use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
 use Mollie\Collector\ApplePayDirect\OrderTotalCollector;
 use Mollie\Config\Config;
 use Mollie\Exception\GuestCheckoutNotAvailableException;
+use Mollie\Factory\ModuleFactory;
 use Mollie\Service\OrderPaymentFeeService;
 use Mollie\Utility\ApplePayDirect\ShippingMethodUtility;
 use Tools;
@@ -33,6 +34,8 @@ if (!defined('_PS_VERSION_')) {
 
 final class UpdateApplePayShippingContactHandler
 {
+    const FILE_NAME = 'UpdateApplePayShippingContactHandler';
+
     /**
      * @var ApplePayCarriersBuilder
      */
@@ -44,15 +47,19 @@ final class UpdateApplePayShippingContactHandler
     private $orderPaymentFeeService;
     /** @var OrderTotalCollector */
     private $orderTotalCollector;
+    /** @var \Mollie */
+    private $module;
 
     public function __construct(
         ApplePayCarriersBuilder $applePayCarriersBuilder,
         OrderPaymentFeeService $orderPaymentFeeService,
-        OrderTotalCollector $orderTotalCollector
+        OrderTotalCollector $orderTotalCollector,
+        ModuleFactory $module
     ) {
         $this->applePayCarriersBuilder = $applePayCarriersBuilder;
         $this->orderPaymentFeeService = $orderPaymentFeeService;
         $this->orderTotalCollector = $orderTotalCollector;
+        $this->module = $module->getModule();
     }
 
     public function handle(UpdateApplePayShippingContact $command): array
@@ -72,13 +79,12 @@ final class UpdateApplePayShippingContactHandler
         $shippingMethods = ShippingMethodUtility::collectShippingMethodData($applePayCarriers, $cart);
         $totals = $this->orderTotalCollector->getOrderTotals($applePayCarriers, $cart);
 
-        $paymentFee = 0;
-
-        if ($totals) {
-            $paymentFeeData = $this->orderPaymentFeeService->getPaymentFee($totals[0]['amountWithoutFee'], Config::APPLEPAY);
-
-            $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
+        if (!$totals) {
+            return $this->buildUnshippableAddressResponse($cart);
         }
+
+        $paymentFeeData = $this->orderPaymentFeeService->getPaymentFee($totals[0]['amountWithoutFee'], Config::APPLEPAY);
+        $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
 
         return [
             'data' => [
@@ -91,6 +97,34 @@ final class UpdateApplePayShippingContactHandler
                 ],
             ],
             'success' => true,
+        ];
+    }
+
+    /**
+     * No carrier can deliver this cart to the selected zone. The sheet must reject the contact
+     * (Apple keeps the Pay button blocked while an addressUnserviceable error is present) and
+     * the update dictionary requires a total, so the shipping-less cart total is returned for it.
+     */
+    private function buildUnshippableAddressResponse(Cart $cart): array
+    {
+        return [
+            'success' => false,
+            'data' => [
+                'shipping_methods' => [],
+                'totals' => [],
+                'fallbackTotal' => [
+                    'type' => 'final',
+                    'label' => Configuration::get('PS_SHOP_NAME'),
+                    'amount' => number_format((float) $cart->getOrderTotal(true, Cart::BOTH_WITHOUT_SHIPPING), 2, '.', ''),
+                ],
+            ],
+            'errors' => [
+                [
+                    'code' => 'addressUnserviceable',
+                    'contactField' => 'postalAddress',
+                    'message' => $this->module->l('Delivery to this address is not available. Please select a different delivery address.', self::FILE_NAME),
+                ],
+            ],
         ];
     }
 
