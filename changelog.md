@@ -4,6 +4,7 @@
 
 ## Changes in release 6.4.4.1
 + Fixed Apple Pay Direct accepting delivery addresses no carrier can ship to, the payment sheet now rejects the address instead of showing "No carriers" with a 0.00 total
++ Fixed Apple Pay Direct sheet naming the merchant "mollie" instead of the shop name once a shipping method was selected
 
 ## Changes in release 6.4.4
 + Added bank transfer due date configuration
