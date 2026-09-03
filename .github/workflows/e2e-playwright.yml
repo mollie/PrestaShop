@@ -1,0 +1,307 @@
+name: Playwright E2E
+on:
+  pull_request:
+    branches: [develop, develop**, develop-**]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Everything that can run against a plain localhost shop: admin UI, webhook
+  # guards, mobile viewport. No public hostname needed.
+  local:
+    # Without an explicit name GitHub appends every matrix value to the job
+    # title, which would print the BO credentials in the Actions UI.
+    name: local (${{ matrix.prestashop }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - prestashop: PS8
+            version: 8
+            bo_email: demo@prestashop.com
+            bo_password: prestashop_demo
+          - prestashop: PS1785
+            version: 1785
+            bo_email: demo@demo.com
+            bo_password: demodemo
+    env:
+      DB_PASSWD: prestashop
+      # The PS8 seed ships demo@prestashop.com; the PS1785 seed ships demo@demo.com.
+      E2E_BO_EMAIL: ${{ matrix.bo_email }}
+      E2E_BO_PASSWORD: ${{ matrix.bo_password }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install composer deps
+        run: composer i
+      - name: Install npm deps
+        run: npm ci
+      - name: Build React admin UI
+        run: make build-react
+      - name: Start shop
+        run: make VERSION=${{ matrix.version }} e2eh${{ matrix.version }}
+      - name: Rewrite shop domain to localhost
+        run: make VERSION=${{ matrix.version }} set-shop-domain HOST=localhost:8002 SSL=0
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      # Must be its own invocation, before the one below. The webhook guards for
+      # 400/422/409 and the advanced-settings save all require a connected API
+      # key, and inside a single run they execute in parallel with the
+      # authorization spec that connects it — so they lose the race and skip
+      # themselves. That is three of the four webhook assertions silently absent
+      # from a green job. The checkout job connects up front for the same reason.
+      - name: Connect the module to Mollie
+        working-directory: tests/e2e
+        run: npx playwright test --project=admin authorization
+        env:
+          E2E_BASE_URL: http://localhost:8002
+          MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+          # Every playwright invocation needs its own PLAYWRIGHT_BLOB_OUTPUT_FILE,
+          # unique across the whole workflow. Two reasons: (1) without it the blob
+          # reporter wipes the blob-report dir before writing, so within a job only
+          # the LAST invocation's report survives to the upload; (2) the default
+          # name is derived from the CLI args only, so the PS8 and PS1785 matrix
+          # legs produce identical filenames that overwrite each other when the
+          # merge job flattens all artifacts into one directory.
+          PLAYWRIGHT_BLOB_OUTPUT_FILE: blob-report/connect-local-${{ matrix.prestashop }}.zip
+      - name: Run admin + webhook + mobile projects
+        working-directory: tests/e2e
+        run: npx playwright test --project=admin --project=webhook --project=mobile
+        env:
+          E2E_BASE_URL: http://localhost:8002
+          MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+          PLAYWRIGHT_BLOB_OUTPUT_FILE: blob-report/local-${{ matrix.prestashop }}.zip
+      # Separate invocation, and --workers=1: this project rewrites global shop
+      # configuration (MOLLIE_IMAGES, the subscription flag) and enables every
+      # method through the BO form, so it must not run alongside the projects
+      # above — nor spread its own files across workers.
+      - name: Run config-mutating project
+        working-directory: tests/e2e
+        run: npx playwright test --project=config --workers=1
+        env:
+          E2E_BASE_URL: http://localhost:8002
+          MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+          PLAYWRIGHT_BLOB_OUTPUT_FILE: blob-report/config-${{ matrix.prestashop }}.zip
+      - name: Upload blob report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-report-local-${{ matrix.prestashop }}
+          path: tests/e2e/blob-report
+          retention-days: 7
+
+  # Checkout needs a publicly reachable hostname so Mollie can redirect back and
+  # deliver webhooks, hence the Cloudflare named tunnel.
+  checkout:
+    # Without an explicit name GitHub appends every matrix value to the job
+    # title, which would print the BO credentials in the Actions UI.
+    name: checkout (${{ matrix.prestashop }})
+    runs-on: ubuntu-latest
+    # Each matrix entry drives ONE named tunnel. Two PRs running at once would
+    # attach a second connector to the same tunnel and Cloudflare would split
+    # requests between the two runners, so serialise per tunnel rather than
+    # cancelling another PR's run.
+    concurrency:
+      group: e2e-tunnel-${{ matrix.prestashop }}
+      cancel-in-progress: false
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - prestashop: PS8
+            version: 8
+            hostname: ps8-checkout.invertusdemo.com
+            hostname_var: MOLLIE_CI_HOSTNAME_PS8
+            tunnel_token_secret: CF_TUNNEL_TOKEN_PS8_CHECKOUT
+            bo_email: demo@prestashop.com
+            bo_password: prestashop_demo
+          - prestashop: PS1785
+            version: 1785
+            hostname: ps1785-checkout.invertusdemo.com
+            hostname_var: MOLLIE_CI_HOSTNAME_PS1785
+            tunnel_token_secret: CF_TUNNEL_TOKEN_PS1785_CHECKOUT
+            bo_email: demo@demo.com
+            bo_password: demodemo
+    env:
+      DB_PASSWD: prestashop
+      # The PS8 seed ships demo@prestashop.com; the PS1785 seed ships demo@demo.com.
+      E2E_BO_EMAIL: ${{ matrix.bo_email }}
+      E2E_BO_PASSWORD: ${{ matrix.bo_password }}
+      # A repo variable wins, so the tunnel can be repointed without editing this
+      # file; the matrix value is the checked-in default. The tunnel's
+      # public-hostname route must map this name to http://localhost:8002.
+      TUNNEL_HOSTNAME: ${{ vars[matrix.hostname_var] || matrix.hostname }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install composer deps
+        run: composer i
+      - name: Install npm deps
+        run: npm ci
+      - name: Build React admin UI
+        run: make build-react
+      - name: Start shop
+        run: make VERSION=${{ matrix.version }} e2eh${{ matrix.version }}
+      - name: Install cloudflared
+        # Pinned + checksum-verified: this binary runs inside a job that holds
+        # the Mollie API key and the tunnel token, so "whatever `latest`
+        # resolves to today" is not an acceptable provenance. When bumping the
+        # version, take the new digest from the release's asset list
+        # (https://api.github.com/repos/cloudflare/cloudflared/releases).
+        env:
+          CLOUDFLARED_VERSION: "2026.7.3"
+          CLOUDFLARED_SHA256: "9d71c677db00134c1bd4144b7783486b654ad281b1ea62b4972098d19f770f17"
+        run: |
+          curl -sSL "https://github.com/cloudflare/cloudflared/releases/download/${CLOUDFLARED_VERSION}/cloudflared-linux-amd64" \
+            -o /usr/local/bin/cloudflared
+          echo "${CLOUDFLARED_SHA256}  /usr/local/bin/cloudflared" | sha256sum --check
+          sudo chmod +x /usr/local/bin/cloudflared
+          cloudflared --version
+      - name: Start Cloudflare named tunnel
+        # The token travels as TUNNEL_TOKEN (which cloudflared reads natively)
+        # rather than as a --token argument, where it would sit in the
+        # runner's process list for the lifetime of the connector.
+        env:
+          TUNNEL_TOKEN: ${{ secrets[matrix.tunnel_token_secret] }}
+        run: |
+          if [ -z "$TUNNEL_TOKEN" ]; then
+            echo "::error::${{ matrix.tunnel_token_secret }} is not set — see docs/e2e-ci-setup.md"
+            exit 1
+          fi
+          # nohup + own logfile: with a bare `&` the connector writes to the
+          # step's pipe, which is closed once the step ends, so there is nothing
+          # left to read when the tunnel fails to register.
+          nohup cloudflared tunnel --no-autoupdate run > cloudflared.log 2>&1 &
+          echo "Started cloudflared, waiting for the connector to register..."
+          sleep 10
+          cat cloudflared.log || true
+      - name: Point the shop at the tunnel hostname
+        run: |
+          make VERSION=${{ matrix.version }} set-shop-domain HOST="$TUNNEL_HOSTNAME"
+          make VERSION=${{ matrix.version }} trust-forwarded-proto
+      - name: Wait for the shop to answer over the tunnel
+        run: |
+          for i in $(seq 1 60); do
+            code=$(curl -sk -o /dev/null -w '%{http_code}' "https://$TUNNEL_HOSTNAME/index.php" || true)
+            echo "attempt $i -> HTTP $code"
+            case "$code" in 200|301|302) echo "Tunnel reachable."; exit 0;; esac
+            sleep 5
+          done
+          echo "Shop not reachable over the tunnel within 300s."
+          cat cloudflared.log || true
+          exit 1
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      # The seed ships no Mollie API key, and nothing in the checkout chain
+      # writes one. Without this the module offers no payment methods and every
+      # checkout test skips itself as "not offered at the payment step" — a green
+      # job that tested nothing. Connecting through the real UI (the module's own
+      # AJAX, never mocked) is also what makes Mollie sync the method list.
+      - name: Connect the module to Mollie
+        working-directory: tests/e2e
+        run: npx playwright test --project=admin authorization
+        env:
+          E2E_BASE_URL: https://${{ env.TUNNEL_HOSTNAME }}
+          MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+          # Unique per invocation and per matrix leg — see the local job for why.
+          PLAYWRIGHT_BLOB_OUTPUT_FILE: blob-report/connect-checkout-${{ matrix.prestashop }}.zip
+      - name: Run Orders API checkout phase
+        working-directory: tests/e2e
+        run: npx playwright test --project=checkout-orders
+        env:
+          E2E_CHECKOUT_API: orders
+          E2E_BASE_URL: https://${{ env.TUNNEL_HOSTNAME }}
+          MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+          PLAYWRIGHT_BLOB_OUTPUT_FILE: blob-report/orders-${{ matrix.prestashop }}.zip
+      - name: Run Payments API checkout phase
+        working-directory: tests/e2e
+        run: npx playwright test --project=cfg-payments --project=checkout-payments
+        env:
+          E2E_CHECKOUT_API: payments
+          E2E_BASE_URL: https://${{ env.TUNNEL_HOSTNAME }}
+          MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+          PLAYWRIGHT_BLOB_OUTPUT_FILE: blob-report/payments-${{ matrix.prestashop }}.zip
+      # Guest card checkout and single-click payments. They belong to the tunnel
+      # job because both complete a real card payment, and to their own
+      # invocation with --workers=1 because both rewrite global config.
+      - name: Run config-mutating checkout project
+        working-directory: tests/e2e
+        run: npx playwright test --project=checkout-config --workers=1
+        env:
+          E2E_BASE_URL: https://${{ env.TUNNEL_HOSTNAME }}
+          MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}
+          PLAYWRIGHT_BLOB_OUTPUT_FILE: blob-report/checkout-config-${{ matrix.prestashop }}.zip
+      - name: Stop Cloudflare tunnel
+        if: always()
+        run: pkill -f cloudflared || true
+      - name: Upload blob report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-report-checkout-${{ matrix.prestashop }}
+          path: tests/e2e/blob-report
+          retention-days: 7
+      - name: Upload tunnel log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudflared-log-${{ matrix.prestashop }}
+          path: cloudflared.log
+          retention-days: 7
+
+  merge-reports:
+    if: always()
+    needs: [local, checkout]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/download-artifact@v4
+        with:
+          path: all-blob-reports
+          pattern: blob-report-*
+          # merge-reports does a non-recursive scan for *.zip; without this each
+          # artifact lands in its own subdirectory and the merge finds nothing.
+          # Flattening is safe because PLAYWRIGHT_BLOB_OUTPUT_FILE gives every
+          # zip a workflow-unique name.
+          merge-multiple: true
+      # No artifacts means every test job died before running Playwright —
+      # nothing to merge, and download-artifact does not even create the
+      # directory, so the merge command would crash with a confusing error.
+      - name: Check for blob reports
+        id: blobs
+        run: |
+          if [ -d all-blob-reports ] && [ -n "$(ls -A all-blob-reports)" ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::No blob reports were uploaded — every test job failed before running Playwright. See those jobs for the real failure."
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+      - run: npm ci
+        if: steps.blobs.outputs.found == 'true'
+      - name: Merge into one HTML report
+        if: steps.blobs.outputs.found == 'true'
+        working-directory: tests/e2e
+        run: npx playwright merge-reports --reporter html ../../all-blob-reports
+        env:
+          # Same package.json-walk as the blob reporter: without this the merged
+          # report lands at the repo root while the upload reads tests/e2e/.
+          PLAYWRIGHT_HTML_OUTPUT_DIR: playwright-report
+      - uses: actions/upload-artifact@v4
+        if: steps.blobs.outputs.found == 'true'
+        with:
+          name: playwright-html-report
+          path: tests/e2e/playwright-report
+          retention-days: 14
