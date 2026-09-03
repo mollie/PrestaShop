@@ -3,7 +3,7 @@
 # Changelog #
 
 ## Changes in release 6.4.6
-+ Fixed a fatal error when upgrading the module from a version older than 5.3.0
++ Fixed back office menu entries and Mollie settings tab names appearing in the wrong language after installing or upgrading the module
 
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API

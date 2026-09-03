@@ -47,6 +47,7 @@ use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\TabTranslationUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Utility\VersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
@@ -104,7 +105,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.4.5';
+        $this->version = '6.4.6';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -1333,20 +1334,7 @@ class Mollie extends PaymentModule
      */
     private function getTabTranslations($englishName)
     {
-        $translations = [];
-
-        foreach (Language::getLanguages(false) as $language) {
-            $translations[$language['iso_code']] = Translate::getModuleTranslation(
-                $this,
-                $englishName,
-                $this->name,
-                null,
-                false,
-                $language['locale']
-            );
-        }
-
-        return $translations;
+        return TabTranslationUtility::getTabNames($this, $englishName);
     }
 
     public function hookActionAdminOrdersListingFieldsModifier($params)
