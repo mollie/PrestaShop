@@ -1,8 +1,12 @@
-name: Module upgrade / downgrade testing (last version > v.5.2.0 > `develop` version)
+name: Module upgrade / downgrade testing (oldest supported release v6.0.1 > `develop` version)
 on:
   pull_request:
-    types: [opened, reopened]
     branches: [develop, develop**, develop-**]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   Module-upgrading-check:
     runs-on: ubuntu-latest
@@ -15,6 +19,13 @@ jobs:
             port: '8002'
             yml: 'docker-compose.1785.yml'
             ModuleUpgradeTest: 'make VERSION=1785 upgrading-module-test-1785'
+    env:
+      # MySQL's root password, which PS_INSTALL_AUTO needs to reach it. Locally the
+      # Makefile reads it from .env; CI has none, so without this nothing installs.
+      DB_PASSWD: prestashop
+      # The job resolves dependencies twice and anonymous requests share the runner's
+      # GitHub rate limit.
+      COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
