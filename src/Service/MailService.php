@@ -219,11 +219,10 @@ class MailService
 
             $product_price = PS_TAX_EXC == Product::getTaxCalculationMethod() ? Tools::ps_round($price, 2) : $price_wt;
 
-            $attribute = $this->productAttributeAdapter->getProductAttribute((int) $product['product_attribute_id'], $this->context->language->id);
             $product_var_tpl = [
                 'id_product' => $product['id_product'],
                 'reference' => $product['reference'],
-                'name' => $product['product_name'] . (\Validate::isLoadedObject($attribute) ? ' - ' . $attribute->name : ''),
+                'name' => $product['product_name'],
                 'price' => $this->tools->displayPrice($product_price * $product['product_quantity'], $this->context->currency),
                 'quantity' => $product['product_quantity'],
                 'customization' => [],
