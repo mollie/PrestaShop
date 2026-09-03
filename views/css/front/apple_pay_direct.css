@@ -50,12 +50,27 @@
     }
 }
 
+apple-pay-button {
+    --apple-pay-button-width: 200px;
+    --apple-pay-button-height: 32px;
+    --apple-pay-button-border-radius: 5px;
+    --apple-pay-button-padding: 0px;
+    display: inline-block;
+}
+
 #mollie-applepay-direct-button {
     padding: 5px;
 }
 
+/* classic theme keeps this row nowrap, so a tight fit crushes the quantity
+   spinner instead of moving the whole button to the next line */
+.product-quantity {
+    flex-wrap: wrap;
+}
+
 /* Hummingbird theme (PS9) - product page */
-.product__add-to-cart #mollie-applepay-direct-button .apple-pay-button {
+.product__add-to-cart #mollie-applepay-direct-button .apple-pay-button,
+.product__add-to-cart #mollie-applepay-direct-button apple-pay-button {
     clip-path: inset(0 round 4px);
 }
 
@@ -64,6 +79,7 @@
     margin-top: 0.5rem;
 }
 
-.cart-detailed__actions #mollie-applepay-direct-button .apple-pay-button {
+.cart-detailed__actions #mollie-applepay-direct-button .apple-pay-button,
+.cart-detailed__actions #mollie-applepay-direct-button apple-pay-button {
     clip-path: inset(0 round 4px);
 }

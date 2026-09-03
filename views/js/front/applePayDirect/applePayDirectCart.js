@@ -10,17 +10,23 @@
  */
 
 $(document).ready(function () {
+    whenApplePaySessionAvailable(initApplePayDirect)
+})
+
+function initApplePayDirect() {
     var applePayMethodElement = document.querySelector(
         '#mollie-applepay-direct-button',
     )
 
-    const canShowButton = applePayMethodElement && (window.ApplePaySession && ApplePaySession.canMakePayments())
-    if (!canShowButton) {
+    if (!applePayMethodElement) {
         return;
     }
 
     let buttonStyle = getApplePayButtonStyle();
-    createAppleButton(applePayMethodElement, buttonStyle)
+    const startApplePaySession = function () {
+        applePaySession();
+    }
+    createAppleButton(applePayMethodElement, buttonStyle, startApplePaySession)
     toggleApplePayVisibility()
 
     if (typeof prestashop !== 'undefined') {
@@ -31,7 +37,7 @@ $(document).ready(function () {
             }
 
             if (!container.querySelector('#mollie_applepay_button')) {
-                createAppleButton(container, buttonStyle);
+                createAppleButton(container, buttonStyle, startApplePaySession);
             }
 
             toggleApplePayVisibility()
@@ -41,11 +47,6 @@ $(document).ready(function () {
     let updatedContactInfo = []
     let selectedShippingMethod = []
     let cartSubTotal = 0;
-
-    $(document).on('click', '#mollie_applepay_button', function(e) {
-        e.preventDefault();
-        applePaySession();
-    })
 
     let applePaySession = () => {
         getCartSubTotal();
@@ -207,7 +208,31 @@ $(document).ready(function () {
             },
         })
     }
-});
+}
+
+function whenApplePaySessionAvailable(onAvailable) {
+    if (canUseApplePaySession()) {
+        onAvailable()
+
+        return
+    }
+
+    if (!window.customElements) {
+        return
+    }
+
+    // insurance: 1.latest is a rolling URL; if Apple ever moves the ApplePaySession
+    // polyfill behind the SDK's dynamic import, re-check once the module lands
+    customElements.whenDefined('apple-pay-button').then(function () {
+        if (canUseApplePaySession()) {
+            onAvailable()
+        }
+    })
+}
+
+function canUseApplePaySession() {
+    return !!(window.ApplePaySession && window.ApplePaySession.canMakePayments())
+}
 
 function getApplePayButtonStyle() {
     switch (parseInt(applePayButtonStyle)) {
@@ -276,12 +301,64 @@ function getUrlParam(sParam, string) {
     }
 }
 
-function createAppleButton(ApplePayButtonElement, buttonStyle) {
+function createAppleButton(ApplePayButtonElement, buttonStyle, onClick) {
+    if (!window.customElements) {
+        ApplePayButtonElement.appendChild(createLegacyAppleButton(buttonStyle, onClick))
+
+        return
+    }
+
+    const button = document.createElement('apple-pay-button')
+    button.setAttribute('id', 'mollie_applepay_button')
+    button.setAttribute('buttonstyle', getApplePaySdkButtonStyle())
+    button.setAttribute('type', 'plain')
+    if (typeof applePayLocale !== 'undefined') {
+        button.setAttribute('locale', applePayLocale)
+    }
+    bindAppleButtonClick(button, onClick)
+    ApplePayButtonElement.appendChild(button)
+
+    // the SDK registers apple-pay-button asynchronously; swap to the legacy button if it never arrives
+    const legacyButtonTimeout = setTimeout(function () {
+        if (customElements.get('apple-pay-button')) {
+            return
+        }
+
+        button.replaceWith(createLegacyAppleButton(buttonStyle, onClick))
+    }, 3000)
+
+    customElements.whenDefined('apple-pay-button').then(function () {
+        clearTimeout(legacyButtonTimeout)
+    })
+}
+
+function createLegacyAppleButton(buttonStyle, onClick) {
     const button = document.createElement('button')
     button.setAttribute('id', 'mollie_applepay_button')
     button.classList.add('apple-pay-button')
     button.classList.add(buttonStyle)
-    ApplePayButtonElement.appendChild(button)
+    bindAppleButtonClick(button, onClick)
+
+    return button
+}
+
+// the SDK button swallows click propagation, so delegated handlers never fire - bind on the element itself
+function bindAppleButtonClick(button, onClick) {
+    button.addEventListener('click', function (e) {
+        e.preventDefault()
+        onClick()
+    })
+}
+
+function getApplePaySdkButtonStyle() {
+    switch (parseInt(applePayButtonStyle)) {
+        case 1:
+            return 'white-outline';
+        case 2:
+            return 'white';
+        default:
+            return 'black';
+    }
 }
 
 function toggleApplePayVisibility() {

@@ -3,7 +3,9 @@
 # Changelog #
 
 ## Changes in release 6.4.6
-+ Fixed a fatal error when upgrading the module from a version older than 5.3.0
++ Apple Pay now works in Chrome, Edge and Firefox on desktop via Apple's iOS 18 QR code flow, using Apple's official Apple Pay JS SDK
++ Fixed Apple Pay Direct quoting shipping prices from the shop default country's zone instead of the customer's delivery zone
++ Fixed the product page quantity selector getting squeezed by the Apple Pay Direct button on narrow screens; the button now wraps onto its own line
 
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API

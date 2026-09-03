@@ -462,6 +462,13 @@ class Mollie extends PaymentModule
 
         $canDisplayInProductPage = $controller instanceof ProductControllerCore && $isApplePayDirectProductEnabled;
         $canDisplayInCartPage = $controller instanceof CartControllerCore && $isApplePayDirectCartEnabled;
+        if ($canDisplayInProductPage || $canDisplayInCartPage) {
+            $this->context->controller->registerJavascript(
+                'mollie-apple-pay-sdk',
+                'https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js',
+                ['server' => 'remote', 'position' => 'head', 'priority' => 10, 'attributes' => 'defer']
+            );
+        }
 
         if (!$canDisplayInProductPage && !$canDisplayInCartPage) {
             return;
@@ -475,6 +482,7 @@ class Mollie extends PaymentModule
             'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'applePayDirectAjax'),
             'cartId' => $this->context->cart->id,
             'applePayButtonStyle' => (int) $configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
+            'applePayLocale' => $this->context->language->locale,
         ]);
 
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
