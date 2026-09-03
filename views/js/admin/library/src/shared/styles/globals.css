@@ -275,21 +275,22 @@
     color: #1d4ed8 !important;
   }
 
-  /* Force white text on blue/primary buttons in payment methods page */
+  /* Force white text on blue/primary buttons in payment methods page.
+     Match exact classes only: a [class*="bg-blue"] substring also matches
+     variant prefixes such as hover:bg-blue-50, which would paint a button's
+     text white even when it has no blue background. */
   #mollie-payment-methods-root button.bg-blue-600,
-  #mollie-payment-methods-root button.bg-primary,
-  #mollie-payment-methods-root button[class*="bg-blue"] {
+  #mollie-payment-methods-root button.bg-primary {
     color: #ffffff !important;
   }
 
   /* Force white text on API selection buttons */
-  #mollie-payment-methods-root button.text-white.bg-blue-600,
-  #mollie-payment-methods-root button[class*="bg-blue-600"] {
+  #mollie-payment-methods-root button.text-white.bg-blue-600 {
     color: #ffffff !important;
   }
 
   /* Force white text on save buttons */
-  #mollie-payment-methods-root button[class*="bg-blue"] {
+  #mollie-payment-methods-root button.bg-blue-600 {
     color: #ffffff !important;
   }
 
