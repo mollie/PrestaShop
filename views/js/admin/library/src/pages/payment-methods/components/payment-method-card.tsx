@@ -148,7 +148,7 @@ export function PaymentMethodCard({
                   "flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 cursor-pointer",
                   // nothing here scales: scaling rasterised glyphs blurs them, so the hover
                   // cue is a shadow on a padded box instead
-                  "rounded-md px-2 py-1 transition duration-200 hover:shadow-sm",
+                  "rounded-md px-2 py-1 transition duration-200 hover:shadow-md",
                 )}
               >
                 {method.isExpanded ? (
