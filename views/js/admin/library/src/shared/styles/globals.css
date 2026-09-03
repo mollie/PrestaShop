@@ -1,4 +1,13 @@
-@import "tailwindcss";
+/* Tailwind's default entrypoint wraps everything in cascade layers. Unlayered
+ * CSS outranks layered CSS regardless of specificity, so other modules that
+ * ship an unlayered global reset (PrestaShop 9.2 bundles ps_ask_ai, which
+ * resets padding and border-color on *) would override our utilities.
+ * Importing the parts ourselves keeps theme and preflight layered (so our
+ * reset stays polite) while emitting utilities unlayered, where they compete
+ * on specificity and a class beats *. */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
 @import "tw-animate-css";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -116,10 +125,20 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* Unlayered and scoped on purpose. Tailwind's default border-color for elements
+ * that set a border width but no colour comes from a `*` rule. Inside @layer base
+ * that rule loses to any other module's unlayered `*` reset - PrestaShop 9.2's
+ * ps_ask_ai sets `border-color: currentcolor` on `*` - which turns every such
+ * border into the element's text colour (e.g. the settings panel divider renders
+ * near-black instead of light grey). Scoping to our own wrapper gives specificity
+ * (0,1,0), which beats a bare `*` while staying confined to our UI.
+ * The scope prefix is written out here so the PostCSS scoping plugin leaves it be. */
+.mollie-admin-app,
+.mollie-admin-app * {
+  @apply border-border outline-ring/50;
+}
+
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
   body {
     @apply bg-background text-foreground;
   }
