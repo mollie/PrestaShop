@@ -33014,3 +33014,91 @@ INSERT INTO `ps_zone_shop` (`id_zone`, `id_shop`) VALUES
 (8,	3);
 
 -- 2024-03-12 17:11:40
+
+-- ---------------------------------------------------------------------------
+-- Playwright E2E: one pre-seeded front-office customer per test worker, so
+-- parallel workers never share a cart. Selected by parallelIndex in
+-- tests/e2e/fixtures/base.ts. Password for every row: prestashop_demo
+-- (same hash as the demo@prestashop.com row above).
+-- ---------------------------------------------------------------------------
+
+DELETE FROM `ps_customer` WHERE `id_customer` IN (101, 102, 103, 104, 105, 106, 107, 108, 109, 110);
+DELETE FROM `ps_customer_group` WHERE `id_customer` IN (101, 102, 103, 104, 105, 106, 107, 108, 109, 110);
+DELETE FROM `ps_address` WHERE `id_customer` IN (101, 102, 103, 104, 105, 106, 107, 108, 109, 110);
+
+INSERT INTO `ps_customer` (`id_customer`, `id_shop_group`, `id_shop`, `id_gender`, `id_default_group`, `id_lang`, `id_risk`, `company`, `siret`, `ape`, `firstname`, `lastname`, `email`, `passwd`, `last_passwd_gen`, `birthday`, `newsletter`, `ip_registration_newsletter`, `newsletter_date_add`, `optin`, `website`, `outstanding_allow_amount`, `show_public_prices`, `max_payment_days`, `secure_key`, `note`, `active`, `is_guest`, `deleted`, `date_add`, `date_upd`, `reset_password_token`, `reset_password_validity`) VALUES
+(101,	1,	1,	1,	3,	1,	0,	'PLAYWRIGHT WORKER',	'',	NULL,	'Playwright',	'Worker',	'e2e-worker-0@mollie-test.invertus.eu',	'$2y$10$/Bq67GjfZmkr.bagCRWYbusWHbkAs6OdvTck/HBSkek18SuF4S4L2',	'2026-07-27 00:00:00',	'0000-00-00',	0,	NULL,	'0000-00-00 00:00:00',	0,	NULL,	0.000000,	0,	0,	'00000000000000000000000000000000',	NULL,	1,	0,	0,	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	NULL,	'0000-00-00 00:00:00'),
+(102,	1,	1,	1,	3,	1,	0,	'PLAYWRIGHT WORKER',	'',	NULL,	'Playwright',	'Worker',	'e2e-worker-1@mollie-test.invertus.eu',	'$2y$10$/Bq67GjfZmkr.bagCRWYbusWHbkAs6OdvTck/HBSkek18SuF4S4L2',	'2026-07-27 00:00:00',	'0000-00-00',	0,	NULL,	'0000-00-00 00:00:00',	0,	NULL,	0.000000,	0,	0,	'00000000000000000000000000000001',	NULL,	1,	0,	0,	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	NULL,	'0000-00-00 00:00:00'),
+(103,	1,	1,	1,	3,	1,	0,	'PLAYWRIGHT WORKER',	'',	NULL,	'Playwright',	'Worker',	'e2e-worker-2@mollie-test.invertus.eu',	'$2y$10$/Bq67GjfZmkr.bagCRWYbusWHbkAs6OdvTck/HBSkek18SuF4S4L2',	'2026-07-27 00:00:00',	'0000-00-00',	0,	NULL,	'0000-00-00 00:00:00',	0,	NULL,	0.000000,	0,	0,	'00000000000000000000000000000002',	NULL,	1,	0,	0,	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	NULL,	'0000-00-00 00:00:00'),
+(104,	1,	1,	1,	3,	1,	0,	'PLAYWRIGHT WORKER',	'',	NULL,	'Playwright',	'Worker',	'e2e-worker-3@mollie-test.invertus.eu',	'$2y$10$/Bq67GjfZmkr.bagCRWYbusWHbkAs6OdvTck/HBSkek18SuF4S4L2',	'2026-07-27 00:00:00',	'0000-00-00',	0,	NULL,	'0000-00-00 00:00:00',	0,	NULL,	0.000000,	0,	0,	'00000000000000000000000000000003',	NULL,	1,	0,	0,	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	NULL,	'0000-00-00 00:00:00'),
+(105,	1,	1,	1,	3,	1,	0,	'PLAYWRIGHT WORKER',	'',	NULL,	'Playwright',	'Worker',	'e2e-worker-4@mollie-test.invertus.eu',	'$2y$10$/Bq67GjfZmkr.bagCRWYbusWHbkAs6OdvTck/HBSkek18SuF4S4L2',	'2026-07-27 00:00:00',	'0000-00-00',	0,	NULL,	'0000-00-00 00:00:00',	0,	NULL,	0.000000,	0,	0,	'00000000000000000000000000000004',	NULL,	1,	0,	0,	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	NULL,	'0000-00-00 00:00:00'),
+(106,	1,	1,	1,	3,	1,	0,	'PLAYWRIGHT WORKER',	'',	NULL,	'Playwright',	'Worker',	'e2e-worker-5@mollie-test.invertus.eu',	'$2y$10$/Bq67GjfZmkr.bagCRWYbusWHbkAs6OdvTck/HBSkek18SuF4S4L2',	'2026-07-27 00:00:00',	'0000-00-00',	0,	NULL,	'0000-00-00 00:00:00',	0,	NULL,	0.000000,	0,	0,	'00000000000000000000000000000005',	NULL,	1,	0,	0,	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	NULL,	'0000-00-00 00:00:00'),
+(107,	1,	1,	1,	3,	1,	0,	'PLAYWRIGHT WORKER',	'',	NULL,	'Playwright',	'Worker',	'e2e-worker-6@mollie-test.invertus.eu',	'$2y$10$/Bq67GjfZmkr.bagCRWYbusWHbkAs6OdvTck/HBSkek18SuF4S4L2',	'2026-07-27 00:00:00',	'0000-00-00',	0,	NULL,	'0000-00-00 00:00:00',	0,	NULL,	0.000000,	0,	0,	'00000000000000000000000000000006',	NULL,	1,	0,	0,	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	NULL,	'0000-00-00 00:00:00'),
+(108,	1,	1,	1,	3,	1,	0,	'PLAYWRIGHT WORKER',	'',	NULL,	'Playwright',	'Worker',	'e2e-worker-7@mollie-test.invertus.eu',	'$2y$10$/Bq67GjfZmkr.bagCRWYbusWHbkAs6OdvTck/HBSkek18SuF4S4L2',	'2026-07-27 00:00:00',	'0000-00-00',	0,	NULL,	'0000-00-00 00:00:00',	0,	NULL,	0.000000,	0,	0,	'00000000000000000000000000000007',	NULL,	1,	0,	0,	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	NULL,	'0000-00-00 00:00:00'),
+(109,	1,	1,	1,	3,	1,	0,	'PLAYWRIGHT WORKER',	'',	NULL,	'Playwright',	'Worker',	'e2e-worker-8@mollie-test.invertus.eu',	'$2y$10$/Bq67GjfZmkr.bagCRWYbusWHbkAs6OdvTck/HBSkek18SuF4S4L2',	'2026-07-27 00:00:00',	'0000-00-00',	0,	NULL,	'0000-00-00 00:00:00',	0,	NULL,	0.000000,	0,	0,	'00000000000000000000000000000008',	NULL,	1,	0,	0,	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	NULL,	'0000-00-00 00:00:00'),
+(110,	1,	1,	1,	3,	1,	0,	'PLAYWRIGHT WORKER',	'',	NULL,	'Playwright',	'Worker',	'e2e-worker-9@mollie-test.invertus.eu',	'$2y$10$/Bq67GjfZmkr.bagCRWYbusWHbkAs6OdvTck/HBSkek18SuF4S4L2',	'2026-07-27 00:00:00',	'0000-00-00',	0,	NULL,	'0000-00-00 00:00:00',	0,	NULL,	0.000000,	0,	0,	'00000000000000000000000000000009',	NULL,	1,	0,	0,	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	NULL,	'0000-00-00 00:00:00');
+
+INSERT INTO `ps_customer_group` (`id_customer`, `id_group`) VALUES
+(101,	3),
+(102,	3),
+(103,	3),
+(104,	3),
+(105,	3),
+(106,	3),
+(107,	3),
+(108,	3),
+(109,	3),
+(110,	3);
+
+INSERT INTO `ps_address` (`id_address`, `id_country`, `id_state`, `id_customer`, `id_manufacturer`, `id_supplier`, `id_warehouse`, `alias`, `company`, `lastname`, `firstname`, `address1`, `address2`, `postcode`, `city`, `other`, `phone`, `phone_mobile`, `vat_number`, `dni`, `date_add`, `date_upd`, `active`, `deleted`) VALUES
+(101,	1,	0,	101,	0,	0,	0,	'DE',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Egelhofen 22',	'',	'10115',	'Berlin',	'',	'+4937595791802',	'',	'DE123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(102,	13,	0,	101,	0,	0,	0,	'NL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Rijksstraatweg 161',	'',	'1969 LE',	'Heemskerk',	'',	'0251 232 417',	'',	'23423523',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(103,	14,	0,	101,	0,	0,	0,	'PL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'35 Juranda ze Spychowa',	'',	'03-257',	'Warsaw',	'',	'66 327 65 62',	'',	'123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(104,	19,	0,	101,	0,	0,	0,	'CH',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'87 Oak Parkway',	'',	'1667',	'Enney',	'',	'026 229 86 34',	'',	'202',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(105,	17,	0,	101,	0,	0,	0,	'UK',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'91 Milton Extension',	'',	'IV6 1GJ',	'Easter Kinkell',	'',	'079 6984 0999',	'',	'568',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(106,	1,	0,	102,	0,	0,	0,	'DE',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Egelhofen 22',	'',	'10115',	'Berlin',	'',	'+4937595791802',	'',	'DE123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(107,	13,	0,	102,	0,	0,	0,	'NL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Rijksstraatweg 161',	'',	'1969 LE',	'Heemskerk',	'',	'0251 232 417',	'',	'23423523',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(108,	14,	0,	102,	0,	0,	0,	'PL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'35 Juranda ze Spychowa',	'',	'03-257',	'Warsaw',	'',	'66 327 65 62',	'',	'123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(109,	19,	0,	102,	0,	0,	0,	'CH',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'87 Oak Parkway',	'',	'1667',	'Enney',	'',	'026 229 86 34',	'',	'202',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(110,	17,	0,	102,	0,	0,	0,	'UK',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'91 Milton Extension',	'',	'IV6 1GJ',	'Easter Kinkell',	'',	'079 6984 0999',	'',	'568',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(111,	1,	0,	103,	0,	0,	0,	'DE',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Egelhofen 22',	'',	'10115',	'Berlin',	'',	'+4937595791802',	'',	'DE123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(112,	13,	0,	103,	0,	0,	0,	'NL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Rijksstraatweg 161',	'',	'1969 LE',	'Heemskerk',	'',	'0251 232 417',	'',	'23423523',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(113,	14,	0,	103,	0,	0,	0,	'PL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'35 Juranda ze Spychowa',	'',	'03-257',	'Warsaw',	'',	'66 327 65 62',	'',	'123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(114,	19,	0,	103,	0,	0,	0,	'CH',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'87 Oak Parkway',	'',	'1667',	'Enney',	'',	'026 229 86 34',	'',	'202',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(115,	17,	0,	103,	0,	0,	0,	'UK',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'91 Milton Extension',	'',	'IV6 1GJ',	'Easter Kinkell',	'',	'079 6984 0999',	'',	'568',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(116,	1,	0,	104,	0,	0,	0,	'DE',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Egelhofen 22',	'',	'10115',	'Berlin',	'',	'+4937595791802',	'',	'DE123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(117,	13,	0,	104,	0,	0,	0,	'NL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Rijksstraatweg 161',	'',	'1969 LE',	'Heemskerk',	'',	'0251 232 417',	'',	'23423523',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(118,	14,	0,	104,	0,	0,	0,	'PL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'35 Juranda ze Spychowa',	'',	'03-257',	'Warsaw',	'',	'66 327 65 62',	'',	'123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(119,	19,	0,	104,	0,	0,	0,	'CH',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'87 Oak Parkway',	'',	'1667',	'Enney',	'',	'026 229 86 34',	'',	'202',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(120,	17,	0,	104,	0,	0,	0,	'UK',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'91 Milton Extension',	'',	'IV6 1GJ',	'Easter Kinkell',	'',	'079 6984 0999',	'',	'568',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(121,	1,	0,	105,	0,	0,	0,	'DE',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Egelhofen 22',	'',	'10115',	'Berlin',	'',	'+4937595791802',	'',	'DE123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(122,	13,	0,	105,	0,	0,	0,	'NL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Rijksstraatweg 161',	'',	'1969 LE',	'Heemskerk',	'',	'0251 232 417',	'',	'23423523',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(123,	14,	0,	105,	0,	0,	0,	'PL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'35 Juranda ze Spychowa',	'',	'03-257',	'Warsaw',	'',	'66 327 65 62',	'',	'123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(124,	19,	0,	105,	0,	0,	0,	'CH',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'87 Oak Parkway',	'',	'1667',	'Enney',	'',	'026 229 86 34',	'',	'202',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(125,	17,	0,	105,	0,	0,	0,	'UK',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'91 Milton Extension',	'',	'IV6 1GJ',	'Easter Kinkell',	'',	'079 6984 0999',	'',	'568',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(126,	1,	0,	106,	0,	0,	0,	'DE',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Egelhofen 22',	'',	'10115',	'Berlin',	'',	'+4937595791802',	'',	'DE123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(127,	13,	0,	106,	0,	0,	0,	'NL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Rijksstraatweg 161',	'',	'1969 LE',	'Heemskerk',	'',	'0251 232 417',	'',	'23423523',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(128,	14,	0,	106,	0,	0,	0,	'PL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'35 Juranda ze Spychowa',	'',	'03-257',	'Warsaw',	'',	'66 327 65 62',	'',	'123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(129,	19,	0,	106,	0,	0,	0,	'CH',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'87 Oak Parkway',	'',	'1667',	'Enney',	'',	'026 229 86 34',	'',	'202',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(130,	17,	0,	106,	0,	0,	0,	'UK',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'91 Milton Extension',	'',	'IV6 1GJ',	'Easter Kinkell',	'',	'079 6984 0999',	'',	'568',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(131,	1,	0,	107,	0,	0,	0,	'DE',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Egelhofen 22',	'',	'10115',	'Berlin',	'',	'+4937595791802',	'',	'DE123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(132,	13,	0,	107,	0,	0,	0,	'NL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Rijksstraatweg 161',	'',	'1969 LE',	'Heemskerk',	'',	'0251 232 417',	'',	'23423523',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(133,	14,	0,	107,	0,	0,	0,	'PL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'35 Juranda ze Spychowa',	'',	'03-257',	'Warsaw',	'',	'66 327 65 62',	'',	'123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(134,	19,	0,	107,	0,	0,	0,	'CH',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'87 Oak Parkway',	'',	'1667',	'Enney',	'',	'026 229 86 34',	'',	'202',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(135,	17,	0,	107,	0,	0,	0,	'UK',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'91 Milton Extension',	'',	'IV6 1GJ',	'Easter Kinkell',	'',	'079 6984 0999',	'',	'568',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(136,	1,	0,	108,	0,	0,	0,	'DE',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Egelhofen 22',	'',	'10115',	'Berlin',	'',	'+4937595791802',	'',	'DE123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(137,	13,	0,	108,	0,	0,	0,	'NL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Rijksstraatweg 161',	'',	'1969 LE',	'Heemskerk',	'',	'0251 232 417',	'',	'23423523',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(138,	14,	0,	108,	0,	0,	0,	'PL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'35 Juranda ze Spychowa',	'',	'03-257',	'Warsaw',	'',	'66 327 65 62',	'',	'123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(139,	19,	0,	108,	0,	0,	0,	'CH',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'87 Oak Parkway',	'',	'1667',	'Enney',	'',	'026 229 86 34',	'',	'202',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(140,	17,	0,	108,	0,	0,	0,	'UK',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'91 Milton Extension',	'',	'IV6 1GJ',	'Easter Kinkell',	'',	'079 6984 0999',	'',	'568',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(141,	1,	0,	109,	0,	0,	0,	'DE',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Egelhofen 22',	'',	'10115',	'Berlin',	'',	'+4937595791802',	'',	'DE123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(142,	13,	0,	109,	0,	0,	0,	'NL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Rijksstraatweg 161',	'',	'1969 LE',	'Heemskerk',	'',	'0251 232 417',	'',	'23423523',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(143,	14,	0,	109,	0,	0,	0,	'PL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'35 Juranda ze Spychowa',	'',	'03-257',	'Warsaw',	'',	'66 327 65 62',	'',	'123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(144,	19,	0,	109,	0,	0,	0,	'CH',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'87 Oak Parkway',	'',	'1667',	'Enney',	'',	'026 229 86 34',	'',	'202',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(145,	17,	0,	109,	0,	0,	0,	'UK',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'91 Milton Extension',	'',	'IV6 1GJ',	'Easter Kinkell',	'',	'079 6984 0999',	'',	'568',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(146,	1,	0,	110,	0,	0,	0,	'DE',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Egelhofen 22',	'',	'10115',	'Berlin',	'',	'+4937595791802',	'',	'DE123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(147,	13,	0,	110,	0,	0,	0,	'NL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'Rijksstraatweg 161',	'',	'1969 LE',	'Heemskerk',	'',	'0251 232 417',	'',	'23423523',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(148,	14,	0,	110,	0,	0,	0,	'PL',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'35 Juranda ze Spychowa',	'',	'03-257',	'Warsaw',	'',	'66 327 65 62',	'',	'123456789',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(149,	19,	0,	110,	0,	0,	0,	'CH',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'87 Oak Parkway',	'',	'1667',	'Enney',	'',	'026 229 86 34',	'',	'202',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0),
+(150,	17,	0,	110,	0,	0,	0,	'UK',	'PLAYWRIGHT WORKER',	'Worker',	'Playwright',	'91 Milton Extension',	'',	'IV6 1GJ',	'Easter Kinkell',	'',	'079 6984 0999',	'',	'568',	'',	'2026-07-27 00:00:00',	'2026-07-27 00:00:00',	1,	0);
+

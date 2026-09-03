@@ -58,6 +58,7 @@ export function PaymentMethodCard({
   const { t } = usePaymentMethodsTranslations()
   return (
     <Card
+      data-testid={`payment-method-${method.id}`}
       className={cn(
         "border border-gray-200 transition-all duration-300 ease-in-out transform-gpu",
         "hover:shadow-md hover:-translate-y-0.5",
@@ -115,6 +116,7 @@ export function PaymentMethodCard({
               <span className="font-medium">{method.name}</span>
               {method.supported ? (
                 <Badge
+                  data-testid={`payment-method-${method.id}-status`}
                   variant={method.status === "active" ? "default" : "destructive"}
                   className={cn(
                     "text-xs transition-all duration-200",
@@ -127,6 +129,7 @@ export function PaymentMethodCard({
                 </Badge>
               ) : (
                 <Badge
+                  data-testid={`payment-method-${method.id}-status`}
                   variant="secondary"
                   className="text-xs bg-amber-100 text-amber-800 hover:bg-amber-100"
                 >
@@ -139,6 +142,7 @@ export function PaymentMethodCard({
             {/* Unsupported methods have no settings to configure, so no toggle is shown. */}
             {method.supported && (
               <button
+                data-testid={`payment-method-${method.id}-toggle`}
                 onClick={onToggleExpanded}
                 className={cn(
                   "flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 cursor-pointer",
