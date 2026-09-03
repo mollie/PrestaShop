@@ -29,6 +29,7 @@ export default function PaymentMethodsPage() {
   const [languages, setLanguages] = useState<Language[]>([])
   const [onlyPaymentsMethods, setOnlyPaymentsMethods] = useState<string[]>([])
   const [onlyOrderMethods, setOnlyOrderMethods] = useState<string[]>([])
+  const [showApplePayLiveKeyWarning, setShowApplePayLiveKeyWarning] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
   const [savingMethodId, setSavingMethodId] = useState<string | null>(null)
@@ -54,6 +55,7 @@ export default function PaymentMethodsPage() {
         setLanguages(response.data.languages || [])
         setOnlyPaymentsMethods(response.data.onlyPaymentsMethods || [])
         setOnlyOrderMethods(response.data.onlyOrderMethods || [])
+        setShowApplePayLiveKeyWarning(response.data.environment === 'test' && !response.data.hasLiveApiKey)
       } else {
         setErrorMessage(response.message || t('loadingError'))
       }
@@ -339,6 +341,7 @@ export default function PaymentMethodsPage() {
           methods={currentMethods}
           countries={countries}
           carriers={carriers}
+          showApplePayLiveKeyWarning={showApplePayLiveKeyWarning}
           customerGroups={customerGroups}
           languages={languages}
           onlyPaymentsMethods={onlyPaymentsMethods}

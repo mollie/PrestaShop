@@ -20,13 +20,8 @@
 + Fixed free shipping vouchers causing a Mollie API 422 amount error at checkout, and wrong order line amounts when no payment fee is configured
 + Fixed credit card payments failing with a Mollie API 422 amount error when a payment surcharge is active and prices are rounded per line
 + Fixed Apple Pay Direct failing to complete guest payments, the shipping address selected in the Apple Pay sheet was dropped from the cart before the order was created
-+ Fixed Apple Pay Direct creating fictitious "ApplePay" placeholder addresses and guest records on customer accounts
-+ Prevented Apple Pay Direct from overwriting a registered customer's saved name and email
-+ Fixed Apple Pay Direct authorization so cart operations only affect the caller's own session cart
-+ Fixed subscription authorization so customers can only cancel or change the payment method of their own subscriptions
-+ Hardened the module against the PrestaShop security requirements
-+ Redesigned the refund and capture panel on the back office order page
-+ Added a "View in Mollie" link on the order page and in the Orders list to open a payment directly in the Mollie dashboard
++ Apple Pay Direct now works in test mode, the merchant session is validated with the live API key and the settings warn when it is missing
++ Fixed Apple Pay Direct payments failing when the shopper already had a shopping cart, PrestaShop detached the temporary Apple Pay addresses from the cart on every request
 + Translated the "View in Mollie" link into all supported back office languages
 + Added the missing back office and checkout translations across all supported languages
 

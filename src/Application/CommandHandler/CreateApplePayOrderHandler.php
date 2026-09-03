@@ -85,6 +85,24 @@ final class CreateApplePayOrderHandler
     {
         $cart = new Cart($command->getCartId());
 
+        // Core wipes soft-deleted address ids off the session cart on request init; the ajax
+        // controller restores them from the session, so hitting zero here means the sheet's
+        // addresses are unrecoverable and duplicating address 0 would throw a validation error.
+        // The JS error mapper only renders messages that carry a contactField.
+        if (!(int) $cart->id_address_delivery || !(int) $cart->id_address_invoice) {
+            return [
+                'success' => false,
+                'status' => 'STATUS_FAILURE',
+                'errors' => [
+                    [
+                        'code' => 'shippingContactInvalid',
+                        'contactField' => 'postalAddress',
+                        'message' => $this->module->l('Failed to load the delivery address. Please close the payment window and try again.', self::FILE_NAME),
+                    ],
+                ],
+            ];
+        }
+
         if ($cart->id_address_delivery == $cart->id_address_invoice) {
             $invoiceAddress = $this->duplicateAddress($cart->id_address_invoice);
             $cart->id_address_invoice = $invoiceAddress->id;
