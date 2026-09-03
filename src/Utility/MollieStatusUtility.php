@@ -36,4 +36,25 @@ class MollieStatusUtility
                 return false;
         }
     }
+
+    /**
+     * Terminal failure statuses. Shared by both APIs: canceled and expired are
+     * string-identical between PaymentStatus and OrderStatus, and failed only exists
+     * on the Payments API.
+     *
+     * @param string $paymentStatus
+     *
+     * @return bool
+     */
+    public static function isPaymentFailed($paymentStatus)
+    {
+        switch ($paymentStatus) {
+            case PaymentStatus::STATUS_FAILED:
+            case PaymentStatus::STATUS_CANCELED:
+            case PaymentStatus::STATUS_EXPIRED:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

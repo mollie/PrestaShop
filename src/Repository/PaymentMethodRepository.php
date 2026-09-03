@@ -211,6 +211,47 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
         );
     }
 
+    /**
+     * Records the terminal status of a payment attempt that never produced a PrestaShop
+     * order. Deliberately does not write order_id: OrderGridQueryModifier joins on
+     * mol.order_id > 0, so zeroing it would drop the transaction id from the order grid.
+     *
+     * The reason is left untouched when empty so an existing reason is never blanked,
+     * and a paid or authorized row is never downgraded by an out of order webhook.
+     *
+     * Returns whether the row was actually changed. Db::update() only reports that the
+     * statement ran, so the affected row count is the only signal that distinguishes a
+     * write from a guarded or unknown transaction id.
+     */
+    public function updateAttemptStatus(string $transactionId, string $status, string $reason = ''): bool
+    {
+        $data = [
+            'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
+            'bank_status' => pSQL($status),
+        ];
+
+        if ('' !== $reason) {
+            $data['reason'] = pSQL($reason);
+        }
+
+        $updated = Db::getInstance()->update(
+            'mollie_payments',
+            $data,
+            sprintf(
+                '`transaction_id` = \'%s\' AND `bank_status` NOT IN (\'%s\', \'%s\')',
+                pSQL($transactionId),
+                PaymentStatus::STATUS_PAID,
+                PaymentStatus::STATUS_AUTHORIZED
+            )
+        );
+
+        if (!$updated) {
+            return false;
+        }
+
+        return Db::getInstance()->Affected_Rows() > 0;
+    }
+
     public function updatePaymentReason($transactionId, $reason)
     {
         try {

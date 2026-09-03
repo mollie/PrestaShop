@@ -94,6 +94,10 @@ class Mollie extends PaymentModule
 
     const ADMIN_MOLLIE_LOGS_PARENT_CONTROLLER = 'AdminMollieLogsParent';
 
+    const ADMIN_MOLLIE_PAYMENT_OVERVIEW_CONTROLLER = 'AdminMolliePaymentOverview';
+
+    const ADMIN_MOLLIE_PAYMENT_OVERVIEW_PARENT_CONTROLLER = 'AdminMolliePaymentOverviewParent';
+
     /** @var LeagueServiceContainerProvider */
     private $containerProvider;
 
@@ -104,7 +108,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.4.5';
+        $this->version = '6.4.6';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -1317,6 +1321,20 @@ class Mollie extends PaymentModule
             [
                 'name' => $this->getTabTranslations('Logs'),
                 'class_name' => self::ADMIN_MOLLIE_LOGS_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
+                'module_tab' => true,
+            ],
+            // Payment overview - sidebar entry (parent)
+            [
+                'name' => $this->getTabTranslations('Payment overview'),
+                'class_name' => self::ADMIN_MOLLIE_PAYMENT_OVERVIEW_PARENT_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
+                'module_tab' => true,
+            ],
+            // Payment overview - horizontal tab (child)
+            [
+                'name' => $this->getTabTranslations('Payment overview'),
+                'class_name' => self::ADMIN_MOLLIE_PAYMENT_OVERVIEW_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
                 'module_tab' => true,
             ],
