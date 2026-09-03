@@ -125,8 +125,7 @@ e2e-tests-ui:
 	cd tests/e2e && npx playwright test --ui
 
 # target: upgrading-module-test-$(VERSION)	- Upgrade the oldest supported release to the commit under test, in the shop from e2eh$(VERSION).
-# The recipe lives in a script because it needs state across steps, a failure trap
-# that puts the working tree back, and a checkout that replaces this Makefile.
+# A script, not a recipe: it needs a failure trap and a checkout that replaces this file.
 upgrading-module-test-$(VERSION):
 	/bin/bash .docker/upgrading-module-test.sh $(module) $(VERSION)
 

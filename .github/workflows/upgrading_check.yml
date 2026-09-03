@@ -20,15 +20,11 @@ jobs:
             yml: 'docker-compose.1785.yml'
             ModuleUpgradeTest: 'make VERSION=1785 upgrading-module-test-1785'
     env:
-      # docker-compose.1785.yml hands this to the PrestaShop container as the
-      # password PS_INSTALL_AUTO uses to reach MySQL, whose root password is
-      # prestashop. Locally the Makefile picks it up from .env; CI has no .env,
-      # so without this the auto-install cannot authenticate, Apache never
-      # starts and the shop stays unreachable on 8002.
+      # MySQL's root password, which PS_INSTALL_AUTO needs to reach it. Locally the
+      # Makefile reads it from .env; CI has none, so without this nothing installs.
       DB_PASSWD: prestashop
-      # The job resolves dependencies twice, once for the head and once for the tag,
-      # and anonymous requests share the runner's rate limit. Without a token composer
-      # gives up with "Could not authenticate against github.com".
+      # The job resolves dependencies twice and anonymous requests share the runner's
+      # GitHub rate limit.
       COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
     steps:
       - name: Checkout
