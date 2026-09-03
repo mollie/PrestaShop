@@ -3,7 +3,7 @@
 # Changelog #
 
 ## Changes in release 6.4.6
-+ Fixed a fatal error when upgrading the module from a version older than 5.3.0
++ Fixed reordering payment methods by dragging: the list now scrolls when the cursor reaches the top of the page, scrolls faster the closer the cursor is to the edge, and no longer discards the new order when the mouse is released while the page is still scrolling
 
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API
