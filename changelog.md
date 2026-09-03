@@ -2,36 +2,40 @@
 
 # Changelog #
 
+## Changes in release 6.4.6
++ Fixed a fatal error when upgrading the module from a version older than 5.3.0
+
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API
 + New payment method: Billink, available on the Payments API for consumer purchases up to 2,500.00 EUR
++ Payment methods the module does not support are now flagged as unsupported in the back office and can no longer be enabled or reach checkout
 + Fixed inconsistent payment method label on orders, card payments showed the internal method id instead of the payment method name
++ Fixed the payment method name stored on order payment records for Bancomat Pay, Przelewy24 and Swish
 + Wallet payments are now labelled with the method that settled them and the wallet used, for example "Card (Apple Pay)"
 + Added shipping method exclusion list for Apple Pay Direct
++ Blocked Mollie settings edits while the back office is set to "All stores" or a shop group, the settings are stored per shop and now require a single shop to be selected
 + Fixed "On backorder (paid)" status not being set when a product is ordered at exactly 0 stock, including instant-payment methods such as iDEAL and cards
 + Fixed payment method restriction diagnostics filling up the PrestaShop log table on every checkout page render
 + Fixed total_paid_real staying 0 on bank transfer orders after the payment is completed
 + Fixed free shipping vouchers causing a Mollie API 422 amount error at checkout, and wrong order line amounts when no payment fee is configured
++ Fixed credit card payments failing with a Mollie API 422 amount error when a payment surcharge is active and prices are rounded per line
 + Fixed Apple Pay Direct failing to complete guest payments, the shipping address selected in the Apple Pay sheet was dropped from the cart before the order was created
 + Apple Pay Direct now works in test mode, the merchant session is validated with the live API key and the settings warn when it is missing
 + Fixed Apple Pay Direct payments failing when the shopper already had a shopping cart, PrestaShop detached the temporary Apple Pay addresses from the cart on every request
 + Translated the "View in Mollie" link into all supported back office languages
++ Added the missing back office and checkout translations across all supported languages
 
 ## Changes in release 6.4.4
-+ Added a "View in Mollie" link on the order page and in the Orders list to open a payment directly in the Mollie dashboard
 + Added bank transfer due date configuration
 + Added Segment analytics tracking for module and payment events
 + Added Bulgarian translations
 + Fixed Apple Pay not displaying at checkout on PrestaShop 9
 + Fixed Apple Pay Direct button on the product page in the Hummingbird theme
-+ Fixed Apple Pay Direct creating fictitious "ApplePay" placeholder addresses and guest records on customer accounts
-+ Prevented Apple Pay Direct from overwriting a registered customer's saved name and email
 + Fixed Payments API per-line Refund button not updating after a successful refund
 + Surfaced a clearer message when Mollie rejects a refund as a duplicate of a recent one
 + Fixed refund confirmation modal amount to reflect selected quantity for multi-unit order lines
 + Fixed payment method ordering mismatch between admin panel and checkout page
 + Fixed VAT amount being off by 1–2 cents on high-value order lines causing Mollie API 422 errors
-+ Fixed credit card payments failing with a Mollie API 422 amount error when a payment surcharge is active and prices are rounded per line
 + Hid "Refund All" button for Klarna and other authorizable Orders API payments until at least one line is shipped
 + Disabled bulk Refund / Ship / Cancel buttons based on order state on the admin order page
 + Allowed shipping orders created on the Orders API while using the Payments API
@@ -41,8 +45,6 @@
 + Improved order description update logic and adjusted resource logging
 + Added diagnostic logging when a payment method is hidden by a restriction
 + Resolved PrestaShop Validator findings (errors, licenses, security)
-+ Fixed Apple Pay Direct authorization so cart operations only affect the caller's own session cart
-+ Fixed subscription authorization so customers can only cancel or change the payment method of their own subscriptions
 
 ## Changes in release 6.4.3
 + Fixed Payment API race condition causing false "payment failed" errors

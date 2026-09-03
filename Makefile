@@ -24,7 +24,8 @@ e2eh$(VERSION)_local:
 	make seeding-customized-sql
 	make installing-uninstalling-enabling-module
 	make chmod-app
-	make open-e2e-tests-locally
+	make set-shop-domain HOST=localhost:8002 SSL=0
+	@echo "Shop ready on http://localhost:8002 — run 'make e2e-tests-locally' or 'make e2e-tests-ui'."
 
 # For CI build with PS autoinstall
 e2eh$(VERSION):
@@ -39,11 +40,15 @@ e2eh$(VERSION):
 
 waiting-for-containers-CI:
 	# waiting for app containers to build up
-	sleep 90s
+	/bin/bash .docker/wait-for-shop.sh 8002 150
 
 waiting-for-containers-local:
 	# waiting for app containers to build up
-	/bin/bash .docker/wait-loader.sh 8002
+	# Same check as CI. The old wait-loader.sh printed "Failed: Docker container
+	# host did not return a 302" and still exited 0, so a cold start marched on
+	# into seeding against a MySQL that was not up yet and e2eh<VERSION>_local
+	# died there every time.
+	/bin/bash .docker/wait-for-shop.sh 8002 300
 
 seeding-customized-sql:
 	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_$(VERSION).sql
@@ -62,32 +67,72 @@ chmod-app:
 	# chmod all folders
 	docker exec -i prestashop-$(module)-$(VERSION) sh -c "chmod -R 777 /var/www/html"
 
-open-e2e-tests-locally:
-	npm install -D cypress
-	npm ci
-	npx cypress open --config baseUrl=$(ENV_baseUrl$(VERSION)) --env MOLLIE_TEST_API_KEY='$(ENV_MOLLIE_TEST_API_KEY)'
+# target: set-shop-domain	- Point the shop at HOST, replacing the domain baked into the SQL seed.
+# Example (plain http, no TLS in front):  make set-shop-domain VERSION=8 HOST=localhost:8002 SSL=0
+# Example (behind a Cloudflare tunnel):   make set-shop-domain VERSION=8 HOST=ps8-checkout.invertusdemo.com
+SSL ?= 1
+set-shop-domain:
+	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -uroot -pprestashop prestashop -e " \
+		UPDATE ps_shop_url SET domain='$(HOST)', domain_ssl='$(HOST)'; \
+		UPDATE ps_configuration SET value='$(HOST)' WHERE name IN ('PS_SHOP_DOMAIN','PS_SHOP_DOMAIN_SSL'); \
+		UPDATE ps_configuration SET value='$(SSL)' WHERE name IN ('PS_SSL_ENABLED','PS_SSL_ENABLED_EVERYWHERE');"
+	# The cache is cleared as root, so hand `var` back to the web user afterwards
+	# or PrestaShop cannot rebuild it and every page 500s.
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && rm -rf var/cache/* && chmod -R 777 var" || true
 
-run-e2e-tests-locally:
-	npm install -D cypress
-	npm ci
-	npx cypress run
+# target: trust-forwarded-proto	- Teach Apache that `X-Forwarded-Proto: https` means HTTPS.
+# Cloudflare terminates TLS and forwards plain HTTP to the container. Without
+# this the shop is configured for https (set-shop-domain with SSL=1) but PHP
+# sees http, so PrestaShop keeps redirecting to its own canonical https URL and
+# either loops or lands on /security/compromised. Run it after set-shop-domain
+# whenever something else terminates TLS in front of the shop.
+trust-forwarded-proto:
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "echo 'SetEnvIf X-Forwarded-Proto \"https\" HTTPS=on' > /etc/apache2/conf-enabled/zz-forwarded-https.conf && service apache2 reload"
 
-# checking the module upgrading - installs older module then installs from master branch
+# target: tunnel			- Expose the local shop through a Cloudflare named tunnel (foreground).
+# Needed for the checkout specs: Mollie rejects an unreachable webhookUrl, so no
+# checkout can complete against localhost. Put CF_TUNNEL_TOKEN in .env, then in
+# one terminal `make tunnel`, and in another:
+#   make VERSION=8 set-shop-domain HOST=ps8-checkout.invertusdemo.com
+#   make VERSION=8 trust-forwarded-proto
+#   cd tests/e2e && E2E_BASE_URL=https://ps8-checkout.invertusdemo.com \
+#     E2E_CHECKOUT_API=orders npx playwright test --project=checkout-orders
+tunnel:
+	@test -n "$(CF_TUNNEL_TOKEN)" || (echo "CF_TUNNEL_TOKEN is not set (put it in .env)"; exit 1)
+	cloudflared tunnel --no-autoupdate run --token $(CF_TUNNEL_TOKEN)
+
+# target: e2e-tests-locally	- Run the Playwright suite against a shop already started by e2eh<VERSION>_local.
+# The two checkout phases are separate invocations, exactly as CI runs them: they
+# rewrite the same per-method API assignment and so must not overlap.
+e2e-tests-locally:
+	npm ci
+	npx playwright install chromium
+	cd tests/e2e && npx playwright test --project=admin --project=webhook --project=mobile
+	# Its own invocation with --workers=1: these rewrite global config and the
+	# whole method set, so they must not overlap each other or the projects above.
+	cd tests/e2e && npx playwright test --project=config --workers=1
+	cd tests/e2e && E2E_CHECKOUT_API=orders npx playwright test --project=checkout-orders
+	cd tests/e2e && E2E_CHECKOUT_API=payments npx playwright test --project=cfg-payments --project=checkout-payments
+	# Guest card checkout and single-click. Completing a payment needs a publicly
+	# reachable E2E_BASE_URL (see `make tunnel`); against localhost the paid cases
+	# skip themselves and the payment-step assertions still run.
+	cd tests/e2e && npx playwright test --project=checkout-config --workers=1
+
+# target: e2e-tests-ui		- Same suite in Playwright's interactive UI mode.
+e2e-tests-ui:
+	npm ci
+	npx playwright install chromium
+	cd tests/e2e && npx playwright test --ui
+
+# target: upgrading-module-test-$(VERSION)	- Upgrade the oldest supported release to the commit under test, in the shop from e2eh$(VERSION).
+# A script, not a recipe: it needs a failure trap and a checkout that replaces this file.
 upgrading-module-test-$(VERSION):
-	git fetch
-	git checkout v5.2.0 .
-	composer install
-	# installing 5.2.0 module
-	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install $(module)"
-	# installing develop branch module
-	git checkout -- .
-	git checkout develop --force
-	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install $(module)"
+	/bin/bash .docker/upgrading-module-test.sh $(module) $(VERSION)
 
 prepare-zip:
 	composer install --no-dev --optimize-autoloader --classmap-authoritative
 	composer dump-autoload --no-dev --optimize --classmap-authoritative
-	rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile cypress .docker cypress.config.js cypress.env.json docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php views/assets/webpack.config.js
+	rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php views/assets/webpack.config.js
 	rm -rf views/js/admin/library/node_modules views/js/admin/library/src views/js/admin/library/package.json views/js/admin/library/package-lock.json views/js/admin/library/tsconfig.json views/js/admin/library/tsconfig.app.json views/js/admin/library/tsconfig.node.json views/js/admin/library/vite.config.ts views/js/admin/library/eslint.config.js views/js/admin/library/postcss.config.js views/js/admin/library/tailwind.config.js views/js/admin/library/README.md
 	# PrestaShop security requirement: every shipped directory must contain an index.php
 	find . -type d ! -path './.git' ! -path './.git/*' | while read -r dir; do [ -f "$$dir/index.php" ] || cp index.php "$$dir/index.php"; done
