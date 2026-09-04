@@ -146,8 +146,7 @@ export function PaymentMethodCard({
                 onClick={onToggleExpanded}
                 className={cn(
                   "flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 cursor-pointer",
-                  // nothing here scales: scaling rasterised glyphs blurs them, so the hover
-                  // cue is a light background tint on the padded box
+                  // scaled glyphs blur, so the hover cue is a background tint instead
                   "rounded-md px-2 py-1 transition duration-200 hover:bg-blue-50",
                 )}
               >
