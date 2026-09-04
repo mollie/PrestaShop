@@ -146,7 +146,8 @@ export function PaymentMethodCard({
                 onClick={onToggleExpanded}
                 className={cn(
                   "flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 cursor-pointer",
-                  "transition-all duration-200 hover:scale-105 active:scale-95",
+                  // scaled glyphs blur, so the hover cue is a background tint instead
+                  "rounded-md px-2 py-1 transition duration-200 hover:bg-blue-50",
                 )}
               >
                 {method.isExpanded ? (
@@ -172,6 +173,8 @@ export function PaymentMethodCard({
                 )}
               />
             )}
+            {/* holds the drag handle's width while expanded so the toggle stays put */}
+            {isDragEnabled && method.isExpanded && <div className="h-5 w-5" aria-hidden="true" />}
           </div>
         </div>
 

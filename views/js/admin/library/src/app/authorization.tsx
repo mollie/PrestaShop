@@ -6,7 +6,7 @@ import '../shared/styles/globals.css'
 // Mount the authorization component to PrestaShop
 function AuthorizationApp() {
   return (
-    <div className="mollie-authorization-app">
+    <div className="mollie-admin-app mollie-authorization-app">
       <AuthorizationPage />
     </div>
   )
