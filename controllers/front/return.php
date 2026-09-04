@@ -16,6 +16,7 @@ use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Factory\CustomerFactory;
 use Mollie\Handler\Order\OrderPendingStatusHandler;
+use Mollie\Handler\Order\ReturnOrderCreationHandler;
 use Mollie\Logger\Logger;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepository;
@@ -256,6 +257,12 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $wrongAmountMessage = $this->module->l('The payment failed because the order and payment amounts are different. Try again.', self::FILE_NAME);
 
         if (Tools::getValue('failed')) {
+            // The poll budget ran out. If Mollie took the money, the order is only late -
+            // saying it failed would invite the customer to pay a second time.
+            if ($this->isPaymentCaptured(Tools::getValue('transaction_id'))) {
+                $this->redirectAfterLateOrder((int) Tools::getValue('cart_id'));
+            }
+
             /** @var MailService $mailService */
             $mailService = $this->module->getService(MailService::class);
 
@@ -290,7 +297,9 @@ class MollieReturnModuleFrontController extends AbstractMollieController
         $orderId = (int) Order::getIdByCartId($cartId);
         $dbPayment = $data['mollie_info'] = $orderId != 0 ? $paymentMethodRepo->getPaymentBy('order_id', (int) $orderId) : [];
 
-        if (!$dbPayment && $orderId) {
+        if (!$dbPayment) {
+            // Until the order exists this is the only lookup that can find the payment,
+            // and that is exactly the window the wait page polls in.
             $dbPayment = $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('cart_id', $cartId);
         }
 
@@ -333,6 +342,21 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             $orderStatus = $payments->status;
         }
 
+        $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
+        $isWrongAmount = isset($transactionInfo['reason']) && $transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON;
+        $hasRefunds = $transaction->resource === Config::MOLLIE_API_STATUS_PAYMENT && $transaction->hasRefunds();
+
+        // Mollie holds the money but the webhook has not landed yet. Create the order here
+        // instead of leaving the customer waiting on an asynchronous callback. Refunded and
+        // wrong-amount payments are left alone - creating those is what refunded them.
+        if (!$orderId && !$hasRefunds && !$isWrongAmount && $this->isCapturedStatus($orderStatus)) {
+            /** @var ReturnOrderCreationHandler $returnOrderCreationHandler */
+            $returnOrderCreationHandler = $this->module->getService(ReturnOrderCreationHandler::class);
+
+            $orderId = $returnOrderCreationHandler->handle($transaction, (int) $cart->id);
+            $order = new Order($orderId);
+        }
+
         /** @var PaymentReturnService $paymentReturnService */
         $paymentReturnService = $this->module->getService(PaymentReturnService::class);
 
@@ -344,6 +368,9 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                     $response = $paymentReturnService->handleTestPendingStatus();
                     break;
                 }
+                if (!Validate::isLoadedObject($order)) {
+                    $this->keepWaiting();
+                }
                 $response = $paymentReturnService->handleStatus(
                     $order,
                     $transaction,
@@ -352,23 +379,22 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 break;
             case PaymentStatus::STATUS_PAID:
             case PaymentStatus::STATUS_AUTHORIZED:
-                $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
-            if ($transaction->resource === Config::MOLLIE_API_STATUS_PAYMENT && $transaction->hasRefunds()) {
-                if (isset($transactionInfo['reason']) && $transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
-                    $this->setWarning($wrongAmountMessage);
-                } else {
-                    $this->setWarning($notSuccessfulPaymentMessage);
+                if ($hasRefunds) {
+                    $this->setWarning($isWrongAmount ? $wrongAmountMessage : $notSuccessfulPaymentMessage);
+                    $response = $paymentReturnService->handleFailedStatus($transaction);
+                    break;
                 }
-                $response = $paymentReturnService->handleFailedStatus($transaction);
-                break;
-            }
 
-            if (isset($transactionInfo['reason']) && $transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
-                $this->setWarning($wrongAmountMessage);
-                $response = $paymentReturnService->handleFailedStatus($transaction);
-                break;
-            }
-            $response = $paymentReturnService->handleStatus(
+                if ($isWrongAmount) {
+                    $this->setWarning($wrongAmountMessage);
+                    $response = $paymentReturnService->handleFailedStatus($transaction);
+                    break;
+                }
+
+                if (!Validate::isLoadedObject($order)) {
+                    $this->keepWaiting();
+                }
+                $response = $paymentReturnService->handleStatus(
                     $order,
                     $transaction,
                     $paymentReturnService::DONE
@@ -377,12 +403,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             case PaymentStatus::STATUS_EXPIRED:
             case PaymentStatus::STATUS_CANCELED:
             case PaymentStatus::STATUS_FAILED:
-                $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
-                if (isset($transactionInfo['reason']) && $transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
-                    $this->setWarning($wrongAmountMessage);
-                } else {
-                    $this->setWarning($notSuccessfulPaymentMessage);
-                }
+                $this->setWarning($isWrongAmount ? $wrongAmountMessage : $notSuccessfulPaymentMessage);
 
                 $response = $paymentReturnService->handleFailedStatus($transaction);
                 break;
@@ -416,5 +437,93 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 ]
             )
         );
+    }
+
+    /**
+     * The wait page only navigates on a done status, so an unsuccessful response
+     * leaves the spinner polling instead of confirming an order that is not there.
+     */
+    private function keepWaiting()
+    {
+        exit(json_encode([
+            'success' => false,
+        ]));
+    }
+
+    /**
+     * @param string $orderStatus
+     *
+     * @return bool Whether Mollie is holding the money for this status
+     */
+    private function isCapturedStatus($orderStatus)
+    {
+        return in_array($orderStatus, [PaymentStatus::STATUS_PAID, PaymentStatus::STATUS_AUTHORIZED], true);
+    }
+
+    /**
+     * @param string|null $transactionId
+     *
+     * @return bool
+     */
+    private function isPaymentCaptured($transactionId)
+    {
+        if (!$transactionId) {
+            return false;
+        }
+
+        try {
+            $transaction = TransactionUtility::isOrderTransaction($transactionId)
+                ? $this->module->getApiClient()->orders->get($transactionId, ['embed' => 'payments'])
+                : $this->module->getApiClient()->payments->get($transactionId);
+
+            $orderStatus = $transaction->status;
+
+            if ('order' === $transaction->resource) {
+                $orderStatus = ArrayUtility::getLastElement($transaction->_embedded->payments)->status;
+            }
+        } catch (\Throwable $e) {
+            /** @var Logger $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+
+            $logger->error(sprintf('%s - Could not verify payment status', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+                'transaction_id' => $transactionId,
+            ]);
+
+            return false;
+        }
+
+        return $this->isCapturedStatus($orderStatus);
+    }
+
+    /**
+     * Money arrived, order did not - yet. Confirm it if it has appeared in the
+     * meantime, otherwise send the customer somewhere the order will show up.
+     */
+    private function redirectAfterLateOrder($idCart)
+    {
+        /** @var Logger $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->error(sprintf('%s - Payment captured but order is still missing', self::FILE_NAME), [
+            'cart_id' => $idCart,
+        ]);
+
+        $cart = new Cart($idCart);
+
+        if (Validate::isLoadedObject($cart) && Order::getIdByCartId($idCart)) {
+            $this->redirectToOrderConfirmation($idCart, $cart);
+        }
+
+        $this->setWarning($this->module->l('We received your payment. Your order is still being completed and will appear shortly.', self::FILE_NAME));
+
+        // Order history is behind a login, which a guest does not have.
+        $page = $this->context->customer->is_guest ? 'guest-tracking' : 'history';
+
+        Tools::redirect($this->context->link->getPageLink(
+            $page,
+            true,
+            $this->context->language->id
+        ));
     }
 }

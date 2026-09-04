@@ -431,6 +431,9 @@ class Mollie extends PaymentModule
         if (
             $controller instanceof CartControllerCore
             || $controller instanceof OrderControllerCore
+            // A captured payment whose order is late sends the customer to one of these,
+            // so the message explaining that has to be readable there too.
+            || (isset($controller->php_self) && in_array($controller->php_self, ['history', 'guest-tracking'], true))
         ) {
             $errorDisplayService->showCookieError('mollie_payment_canceled_error');
         }
