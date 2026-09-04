@@ -19,12 +19,6 @@ class TextFormatUtilityTest extends TestCase
 {
     /**
      * @dataProvider formatNumberDataProvider
-     *
-     * @param $unitPrice
-     * @param $apiRoundingPrecision
-     * @param $docPoint
-     * @param $thousandSep
-     * @param $result
      */
     public function testFormatNumber($unitPrice, $apiRoundingPrecision, $docPoint, $thousandSep, $result)
     {
@@ -34,11 +28,9 @@ class TextFormatUtilityTest extends TestCase
     }
 
     /**
-     * A cart product with no customisation has a null id_customization, so the
-     * product line builder hands null straight to formatNumber(). PHP 8.1
-     * deprecates passing null to number_format() and PHP 9 makes it a
-     * TypeError, which would break the payment step, so the null must never
-     * reach number_format().
+     * A cart product with no customisation has a null id_customization, which the
+     * product line builder passes straight to formatNumber(): PHP 8.1 deprecates
+     * that and PHP 9 makes it a TypeError.
      */
     public function testFormatNumberEmitsNoDeprecationForNull()
     {
