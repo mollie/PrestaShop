@@ -24,6 +24,7 @@ use Mollie\Service\MailService;
 use Mollie\Service\PaymentReturnService;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\HashUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Validator\OrderCallBackValidator;
 
@@ -353,7 +354,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             /** @var ReturnOrderCreationHandler $returnOrderCreationHandler */
             $returnOrderCreationHandler = $this->module->getService(ReturnOrderCreationHandler::class);
 
-            $orderId = $returnOrderCreationHandler->handle($transaction, (int) $cart->id);
+            $orderId = $returnOrderCreationHandler->handle($transaction, (int) $cart->id, HashUtility::hash($cart->secure_key));
             $order = new Order($orderId);
         }
 

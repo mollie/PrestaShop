@@ -17,6 +17,7 @@ use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Service\TransactionService;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\LockUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -24,8 +25,7 @@ if (!defined('_PS_VERSION_')) {
 
 /**
  * Creates the PrestaShop order for an already paid Mollie transaction when the
- * customer gets back before the webhook has been processed. Runs the same
- * webhook path so both routes cannot drift apart.
+ * customer gets back before the webhook has been processed.
  */
 class ReturnOrderCreationHandler
 {
@@ -57,10 +57,11 @@ class ReturnOrderCreationHandler
 
     /**
      * @param \Mollie\Api\Resources\Order|\Mollie\Api\Resources\Payment $transaction
+     * @param string $securityToken md5 hash of the cart secure key, as the webhook receives it
      *
      * @return int Order id, or 0 while the order still does not exist
      */
-    public function handle($transaction, int $cartId): int
+    public function handle($transaction, int $cartId, string $securityToken): int
     {
         $orderId = $this->orderRepository->getOrderIdByCartId($cartId);
 
@@ -69,7 +70,7 @@ class ReturnOrderCreationHandler
         }
 
         try {
-            $this->lock->create(sprintf('return-order-%d', $cartId));
+            $this->lock->create(LockUtility::orderCreation($securityToken));
 
             if (!$this->lock->acquire()) {
                 // The webhook or a parallel poll is creating it; report whatever exists now.

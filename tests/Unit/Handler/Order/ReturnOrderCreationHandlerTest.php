@@ -23,6 +23,7 @@ use Mollie\Tests\Unit\BaseTestCase;
 class ReturnOrderCreationHandlerTest extends BaseTestCase
 {
     private const CART_ID = 75352;
+    private const SECURITY_TOKEN = '2a4f6c';
 
     /** @var TransactionService */
     private $transactionService;
@@ -57,7 +58,7 @@ class ReturnOrderCreationHandlerTest extends BaseTestCase
         $this->lock->expects($this->never())->method('create');
         $this->transactionService->expects($this->never())->method('processTransaction');
 
-        $this->assertSame(21342, $this->handler()->handle($this->transaction, self::CART_ID));
+        $this->assertSame(21342, $this->handler()->handle($this->transaction, self::CART_ID, self::SECURITY_TOKEN));
     }
 
     public function testItCreatesTheOrderWhenTheWebhookHasNotDoneItYet(): void
@@ -73,7 +74,17 @@ class ReturnOrderCreationHandlerTest extends BaseTestCase
             ->method('processTransaction')
             ->with($this->transaction);
 
-        $this->assertSame(21343, $this->handler()->handle($this->transaction, self::CART_ID));
+        $this->assertSame(21343, $this->handler()->handle($this->transaction, self::CART_ID, self::SECURITY_TOKEN));
+    }
+
+    public function testItLocksTheResourceTheWebhookLocks(): void
+    {
+        $this->orderRepository->method('getOrderIdByCartId')->willReturnOnConsecutiveCalls(0, 21344);
+
+        $this->lock->expects($this->once())->method('create')->with('webhook-' . self::SECURITY_TOKEN);
+        $this->lock->method('acquire')->willReturn(true);
+
+        $this->handler()->handle($this->transaction, self::CART_ID, self::SECURITY_TOKEN);
     }
 
     public function testItLeavesCreationToTheRequestHoldingTheLock(): void
@@ -84,7 +95,7 @@ class ReturnOrderCreationHandlerTest extends BaseTestCase
 
         $this->transactionService->expects($this->never())->method('processTransaction');
 
-        $this->assertSame(0, $this->handler()->handle($this->transaction, self::CART_ID));
+        $this->assertSame(0, $this->handler()->handle($this->transaction, self::CART_ID, self::SECURITY_TOKEN));
     }
 
     public function testItReportsNoOrderWhenCreationFails(): void
@@ -99,7 +110,7 @@ class ReturnOrderCreationHandlerTest extends BaseTestCase
 
         $this->logger->expects($this->once())->method('error');
 
-        $this->assertSame(0, $this->handler()->handle($this->transaction, self::CART_ID));
+        $this->assertSame(0, $this->handler()->handle($this->transaction, self::CART_ID, self::SECURITY_TOKEN));
     }
 
     public function testItReportsNoOrderWhenTheLockCannotBeCreated(): void
@@ -113,7 +124,7 @@ class ReturnOrderCreationHandlerTest extends BaseTestCase
         $this->transactionService->expects($this->never())->method('processTransaction');
         $this->logger->expects($this->once())->method('error');
 
-        $this->assertSame(0, $this->handler()->handle($this->transaction, self::CART_ID));
+        $this->assertSame(0, $this->handler()->handle($this->transaction, self::CART_ID, self::SECURITY_TOKEN));
     }
 
     private function handler(): ReturnOrderCreationHandler
