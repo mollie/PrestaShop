@@ -68,6 +68,7 @@ class Carrier implements JsonSerializable
         return $this->amount;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return [

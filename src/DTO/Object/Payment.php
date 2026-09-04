@@ -108,6 +108,7 @@ class Payment implements \JsonSerializable
         $this->company = $company;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $result = [];
