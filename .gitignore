@@ -17,3 +17,7 @@ node_modules
 composer.lock
 ngrok
 .DS_Store
+test-results/
+playwright-report/
+blob-report/
+.auth/

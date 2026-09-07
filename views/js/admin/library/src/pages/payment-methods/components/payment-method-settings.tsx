@@ -262,6 +262,7 @@ export function PaymentMethodSettings({ method, countries, carriers, showApplePa
               <div className="flex items-center gap-3">
                 <p className="text-sm text-muted-foreground flex items-center h-6">{t('enablePaymentMethod')}</p>
                 <Switch
+                  data-testid={`payment-method-${method.id}-enabled-switch`}
                   checked={method.settings.enabled}
                   disabled={!method.supported}
                   onCheckedChange={(enabled: boolean) => onUpdateSettings({ enabled })}
@@ -922,6 +923,7 @@ export function PaymentMethodSettings({ method, countries, carriers, showApplePa
       {/* Save Button */}
       <div className="flex justify-end pt-6 border-t">
         <button
+          data-testid={`payment-method-${method.id}-save`}
           onClick={onSaveSettings}
           disabled={isSaving}
           className={cn(
