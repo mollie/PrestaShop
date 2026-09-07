@@ -124,17 +124,10 @@ e2e-tests-ui:
 	npx playwright install chromium
 	cd tests/e2e && npx playwright test --ui
 
-# checking the module upgrading - installs older module then installs from master branch
+# target: upgrading-module-test-$(VERSION)	- Upgrade the oldest supported release to the commit under test, in the shop from e2eh$(VERSION).
+# A script, not a recipe: it needs a failure trap and a checkout that replaces this file.
 upgrading-module-test-$(VERSION):
-	git fetch
-	git checkout v5.2.0 .
-	composer install
-	# installing 5.2.0 module
-	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install $(module)"
-	# installing develop branch module
-	git checkout -- .
-	git checkout develop --force
-	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install $(module)"
+	/bin/bash .docker/upgrading-module-test.sh $(module) $(VERSION)
 
 prepare-zip:
 	composer install --no-dev --optimize-autoloader --classmap-authoritative
