@@ -218,7 +218,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'saveSettings' => $this->module->l('Save Settings', self::FILE_NAME),
 
                 'transactionDescriptionHelp' => $this->module->l('Use any of the following variables to create a transaction description for payments that use this method:', self::FILE_NAME),
-                'transactionDescriptionVariables' => $this->module->l('{orderNumber}, {storeName}, {countryCode}, {cart.id}, {order.reference}, {customer.firstname}, {customer.lastname}, {customer.company}', self::FILE_NAME),
+                'transactionDescriptionVariables' => $this->module->l('{orderNumber}, {storeName}, {countryCode}, {cart.id}, {order.id}, {order.reference}, {customer.firstname}, {customer.lastname}, {customer.company}', self::FILE_NAME),
 
                 'paymentMethodNotFound' => $this->module->l('Payment method not found', self::FILE_NAME),
                 'settingsSavedSuccessfully' => $this->module->l('Settings saved successfully!', self::FILE_NAME),

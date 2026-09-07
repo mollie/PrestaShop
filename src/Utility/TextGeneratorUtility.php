@@ -55,6 +55,7 @@ class TextGeneratorUtility
         $filters = [
             '%' => $cart->id,
             '{cart.id}' => $cart->id,
+            '{order.id}' => $order->id,
             '{order.reference}' => $order->reference,
             '{customer.firstname}' => null === $buyer ? '' : $buyer->firstname,
             '{customer.lastname}' => null === $buyer ? '' : $buyer->lastname,
