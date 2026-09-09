@@ -49,8 +49,7 @@ class Company implements \JsonSerializable
         $this->registrationNumber = $registrationNumber;
     }
 
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $json = [];
         $json['vatNumber'] = $this->getVatNumber();

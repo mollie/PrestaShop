@@ -40,8 +40,7 @@ class Error implements \JsonSerializable
         return $this->message;
     }
 
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $json = [];
         $json['code'] = $this->code;
