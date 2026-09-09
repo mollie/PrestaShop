@@ -161,6 +161,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'logoUploadHelp' => $this->module->l('Upload a JPG or PNG image. Maximum dimensions: 256x64 pixels. Maximum file size: 2MB.', self::FILE_NAME),
 
                 'applePayDirectSettings' => $this->module->l('Apple Pay Direct settings', self::FILE_NAME),
+                'applePayTestModeLiveKeyMissing' => $this->module->l('Apple Pay requires a live API key even in test mode. Add it in the Configuration tab, test payments are never charged.', self::FILE_NAME),
                 'applePayDirectProductPage' => $this->module->l('Apple Pay Direct product page', self::FILE_NAME),
                 'enableApplePayProductPages' => $this->module->l('Enable Apple Pay on product pages', self::FILE_NAME),
                 'applePayDirectProductPageInfo' => $this->module->l('When enabled, an Apple Pay button will appear on individual product pages. Customers can use it to buy that specific product instantly with Apple Pay, without going through the cart or checkout. Only the product currently being viewed will be purchased.', self::FILE_NAME),
@@ -397,6 +398,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                         'onlyOrderMethods' => Config::ORDER_API_ONLY_METHODS,
                         'onlyPaymentsMethods' => Config::PAYMENT_API_ONLY_METHODS,
                         'environment' => $environment ? 'live' : 'test',
+                        'hasLiveApiKey' => !empty($liveApiKey),
                         'is_connected' => false,
                     ],
                 ]));
@@ -510,6 +512,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                     'onlyOrderMethods' => Config::ORDER_API_ONLY_METHODS,
                     'onlyPaymentsMethods' => Config::PAYMENT_API_ONLY_METHODS,
                     'environment' => $environment ? 'live' : 'test',
+                    'hasLiveApiKey' => !empty($liveApiKey),
                     'is_connected' => !empty($formattedMethods),
                 ],
             ];

@@ -99,6 +99,7 @@ export interface MolliePaymentMethodsTranslations {
 
   // Apple Pay Settings
   applePayDirectSettings: string;
+  applePayTestModeLiveKeyMissing: string;
   applePayDirectProductPage: string;
   enableApplePayProductPages: string;
   applePayDirectProductPageInfo: string;
