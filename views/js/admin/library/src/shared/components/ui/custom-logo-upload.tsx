@@ -3,6 +3,7 @@
 import React, { useState, useRef } from "react"
 import { Upload, X } from "lucide-react"
 import { cn } from "../../lib/utils"
+import { Switch } from "./switch"
 import { paymentMethodsApiService } from "../../../services/PaymentMethodsApiService"
 import { usePaymentMethodsTranslations } from "../../hooks/use-payment-methods-translations"
 
@@ -103,22 +104,7 @@ export function CustomLogoUpload({
       {/* Toggle Switch */}
       <div className="flex items-center gap-3">
         <label className="text-sm font-medium">{t('useCustomLogo')}</label>
-        <button
-          type="button"
-          onClick={() => handleToggleCustomLogo(!value)}
-          className={cn(
-            "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-            "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
-            value ? "bg-blue-600" : "bg-gray-300"
-          )}
-        >
-          <span
-            className={cn(
-              "inline-block h-5 w-5 transform rounded-full bg-white transition-transform",
-              value ? "translate-x-5" : "translate-x-0"
-            )}
-          />
-        </button>
+        <Switch checked={value} onCheckedChange={handleToggleCustomLogo} />
       </div>
 
       {/* Upload Section */}
