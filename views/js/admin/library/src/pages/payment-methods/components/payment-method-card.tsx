@@ -15,6 +15,7 @@ interface PaymentMethodCardProps {
   index: number
   countries: Country[]
   carriers: Carrier[]
+  showApplePayLiveKeyWarning?: boolean
   customerGroups: CustomerGroup[]
   languages: Language[]
   onlyPaymentsMethods: string[]
@@ -38,6 +39,7 @@ export function PaymentMethodCard({
   index,
   countries,
   carriers,
+  showApplePayLiveKeyWarning = false,
   customerGroups,
   languages,
   onlyPaymentsMethods,
@@ -198,6 +200,7 @@ export function PaymentMethodCard({
                 method={method}
                 countries={countries}
                 carriers={carriers}
+                showApplePayLiveKeyWarning={showApplePayLiveKeyWarning}
                 customerGroups={customerGroups}
                 languages={languages}
                 onlyPaymentsMethods={onlyPaymentsMethods}
