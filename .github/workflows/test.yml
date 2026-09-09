@@ -15,8 +15,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          coverage: none
+
+      - name: Install PHP-CS-Fixer
+        run: |
+          mkdir -p "$RUNNER_TEMP/cs"
+          composer require --no-interaction --no-progress --working-dir="$RUNNER_TEMP/cs" \
+            prestashop/php-dev-tools:v5 friendsofphp/php-cs-fixer:v2.19.3
+
       - name: Run PHP-CS-Fixer
-        uses: prestashopcorp/github-action-php-cs-fixer-new@master
+        run: |
+          "$RUNNER_TEMP/cs/vendor/bin/php-cs-fixer" fix . \
+            --path-mode=intersection --dry-run --diff --using-cache=no --diff-format udiff
 
   eslint:
     name: ESLint
