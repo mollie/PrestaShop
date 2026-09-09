@@ -480,12 +480,25 @@ class Mollie extends PaymentModule
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
 
         if ($controller instanceof ProductControllerCore) {
-            $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirect/applePayDirectProduct.js');
+            $this->registerApplePayDirectScript('mollie-apple-pay-direct-product', 'views/js/front/applePayDirect/applePayDirectProduct.js');
         }
 
         if ($controller instanceof CartControllerCore) {
-            $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirect/applePayDirectCart.js');
+            $this->registerApplePayDirectScript('mollie-apple-pay-direct-cart', 'views/js/front/applePayDirect/applePayDirectCart.js');
         }
+    }
+
+    /**
+     * Registered as a remote URI so a cache buster can be appended, otherwise CDN and browser
+     * caches keep serving the previous script against an upgraded ajax contract.
+     */
+    private function registerApplePayDirectScript(string $id, string $relativePath): void
+    {
+        $this->context->controller->registerJavascript(
+            $id,
+            $this->getPathUri() . $relativePath . '?v=' . (int) filemtime($this->getLocalPath() . $relativePath),
+            ['server' => 'remote', 'position' => 'bottom', 'priority' => 80]
+        );
     }
 
     /**

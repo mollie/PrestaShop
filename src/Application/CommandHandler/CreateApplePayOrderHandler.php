@@ -130,6 +130,23 @@ final class CreateApplePayOrderHandler
             ];
         }
 
+        // The carrier is only written when the sheet fires shippingmethodselected, which never
+        // happens for an address with no shipping methods, so an unset carrier here means the
+        // shopper authorized an unshippable address.
+        if (!(int) $cart->id_carrier) {
+            return [
+                'success' => false,
+                'status' => 'STATUS_FAILURE',
+                'errors' => [
+                    [
+                        'code' => 'addressUnserviceable',
+                        'contactField' => 'postalAddress',
+                        'message' => $this->module->l('Delivery to this address is not available. Please select a different delivery address.', self::FILE_NAME),
+                    ],
+                ],
+            ];
+        }
+
         try {
             $apiPayment = $this->createMollieTransaction($cart, $command->getCardToken());
         } catch (\Exception $e) {
