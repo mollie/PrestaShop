@@ -18,6 +18,7 @@ interface PaymentMethodSettingsProps {
   method: PaymentMethod
   countries: Country[]
   carriers: Carrier[]
+  showApplePayLiveKeyWarning?: boolean
   customerGroups: CustomerGroup[]
   languages: Language[]
   onlyPaymentsMethods: string[]
@@ -102,7 +103,7 @@ function RadioSelect({ value, onValueChange, options, placeholder, className }: 
   )
 }
 
-export function PaymentMethodSettings({ method, countries, carriers, customerGroups, languages, onlyPaymentsMethods, onlyOrderMethods, onUpdateSettings, onSaveSettings, isSaving = false }: PaymentMethodSettingsProps) {
+export function PaymentMethodSettings({ method, countries, carriers, showApplePayLiveKeyWarning = false, customerGroups, languages, onlyPaymentsMethods, onlyOrderMethods, onUpdateSettings, onSaveSettings, isSaving = false }: PaymentMethodSettingsProps) {
   const { t } = usePaymentMethodsTranslations()
 
   const forcePaymentsApi = onlyPaymentsMethods.includes(method.id)
@@ -534,10 +535,10 @@ export function PaymentMethodSettings({ method, countries, carriers, customerGro
       <div className="space-y-4">
         {/* Apple Pay Settings - Only for Apple Pay */}
         {method.id === "applepay" && method.settings.applePaySettings && (
-          <div className="border rounded-lg overflow-hidden">
+          <div className="border rounded-lg overflow-hidden transition-shadow hover:shadow-sm">
             <button
               onClick={() => setShowApplePay(!showApplePay)}
-              className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 cursor-pointer transition-colors"
+              className="w-full flex items-center justify-between p-4 text-left cursor-pointer"
             >
               <span className="font-medium">{t('applePayDirectSettings')}</span>
               <ChevronDown
@@ -549,6 +550,7 @@ export function PaymentMethodSettings({ method, countries, carriers, customerGro
                 <ApplePaySettings
                   settings={method.settings.applePaySettings}
                   carriers={carriers}
+                  showLiveKeyWarning={showApplePayLiveKeyWarning}
                   onUpdateSettings={(applePaySettings) => onUpdateSettings({
                     applePaySettings: {
                       ...method.settings.applePaySettings,
@@ -562,10 +564,10 @@ export function PaymentMethodSettings({ method, countries, carriers, customerGro
         )}
 
         {/* Payment Restrictions */}
-        <div className="border rounded-lg overflow-hidden">
+        <div className="border rounded-lg overflow-hidden transition-shadow hover:shadow-sm">
           <button
             onClick={() => setShowRestrictions(!showRestrictions)}
-            className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 cursor-pointer transition-colors"
+            className="w-full flex items-center justify-between p-4 text-left cursor-pointer"
           >
             <span className="font-medium">{t('paymentRestrictions')}</span>
             <ChevronDown
@@ -661,10 +663,10 @@ export function PaymentMethodSettings({ method, countries, carriers, customerGro
         </div>
 
         {/* Payment Fees */}
-        <div className="border rounded-lg overflow-hidden">
+        <div className="border rounded-lg overflow-hidden transition-shadow hover:shadow-sm">
           <button
             onClick={() => setShowFees(!showFees)}
-            className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 cursor-pointer transition-colors"
+            className="w-full flex items-center justify-between p-4 text-left cursor-pointer"
           >
             <span className="font-medium">{t('paymentFees')}</span>
             <ChevronDown className={cn("h-4 w-4 transition-transform duration-200", showFees && "rotate-180")} />
@@ -828,10 +830,10 @@ export function PaymentMethodSettings({ method, countries, carriers, customerGro
         </div>
 
         {/* Order Restrictions */}
-        <div className="border rounded-lg overflow-hidden">
+        <div className="border rounded-lg overflow-hidden transition-shadow hover:shadow-sm">
           <button
             onClick={() => setShowOrderRestrictions(!showOrderRestrictions)}
-            className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 cursor-pointer transition-colors"
+            className="w-full flex items-center justify-between p-4 text-left cursor-pointer"
           >
             <span className="font-medium">{t('orderRestrictions')}</span>
             <ChevronDown
