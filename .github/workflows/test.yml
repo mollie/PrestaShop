@@ -15,21 +15,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4'
-          coverage: none
-
       - name: Install PHP-CS-Fixer
         run: |
           mkdir -p "$RUNNER_TEMP/cs"
-          composer require --no-interaction --no-progress --working-dir="$RUNNER_TEMP/cs" \
+          echo '{"config":{"platform":{"php":"7.4"}}}' > "$RUNNER_TEMP/cs/composer.json"
+          docker run --rm -v "$RUNNER_TEMP/cs":/cs --workdir=/cs composer:2.2 \
+            require --no-interaction --no-progress \
             prestashop/php-dev-tools:v5 friendsofphp/php-cs-fixer:v2.19.3
 
       - name: Run PHP-CS-Fixer
         run: |
-          "$RUNNER_TEMP/cs/vendor/bin/php-cs-fixer" fix . \
+          docker run --rm -v "$PWD":/code -v "$RUNNER_TEMP/cs":/cs --workdir=/code php:7.4-cli \
+            php /cs/vendor/bin/php-cs-fixer fix . \
             --path-mode=intersection --dry-run --diff --using-cache=no --diff-format udiff
 
   eslint:
