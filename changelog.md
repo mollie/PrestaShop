@@ -3,6 +3,9 @@
 # Changelog #
 
 ## Changes in release 6.4.6
++ Added a Payment overview page listing the payment attempts that never became an order, with the customer, method, status, reason and a link to the payment in the Mollie dashboard
++ Failed, cancelled and expired payments are now recorded with their real status and failure reason instead of staying on "open" forever
++ Customers whose payment fails are now returned to the shop immediately with a clear message, instead of waiting on a spinner and receiving a failed payment email
 + Fixed the order confirmation email subject being sent in English instead of the language of the order
 
 ## Changes in release 6.4.5
