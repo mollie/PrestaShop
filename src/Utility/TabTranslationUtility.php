@@ -46,6 +46,8 @@ class TabTranslationUtility
         'AdminMollieSubscriptionFAQ' => 'Subscription FAQ',
         'AdminMollieLogsParent' => 'Logs',
         'AdminMollieLogs' => 'Logs',
+        'AdminMolliePaymentOverviewParent' => 'Payment overview',
+        'AdminMolliePaymentOverview' => 'Payment overview',
     ];
 
     /** @var array<string, array<string, string>> */
