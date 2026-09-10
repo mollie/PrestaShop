@@ -7,6 +7,7 @@
 + Failed, cancelled and expired payments are now recorded with their real status and failure reason instead of staying on "open" forever
 + Customers whose payment fails are now returned to the shop immediately with a clear message, instead of waiting on a spinner and receiving a failed payment email
 + Fixed the order detail Mollie panel showing English labels in Latvian and Romanian back offices, the refund, capture, ship and cancel controls and their confirmation dialogs are now translated
++ Fixed back office menu entries and Mollie settings tab names appearing in the wrong language after installing or upgrading the module
 + Fixed the order confirmation email subject being sent in English instead of the language of the order
 
 ## Changes in release 6.4.5

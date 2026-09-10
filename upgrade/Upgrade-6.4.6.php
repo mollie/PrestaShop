@@ -42,16 +42,15 @@ function upgrade_module_6_4_6($module)
             $moduleTab->active = true;
 
             foreach (Language::getLanguages(false) as $language) {
-                $translatedName = Translate::getModuleTranslation(
+                // Translate::getModuleTranslation() merges every language file into one flat
+                // global keyed without a language dimension, so a language the module ships no
+                // translations/<iso>.php for returns the strings of whichever language was
+                // merged before it. The utility reads each file in isolation instead.
+                $moduleTab->name[$language['id_lang']] = \Mollie\Utility\TabTranslationUtility::getTabName(
                     $module,
                     $name,
-                    $module->name,
-                    null,
-                    false,
-                    $language['locale']
+                    $language['iso_code']
                 );
-
-                $moduleTab->name[$language['id_lang']] = $translatedName ?: $name;
             }
 
             return (bool) $moduleTab->save();
@@ -93,6 +92,13 @@ function upgrade_module_6_4_6($module)
         $installTabFunction($module, 'AdminMolliePaymentOverview', 'AdminMollieAuthenticationParent', 'Payment overview');
 
         $addIndexesFunction();
+
+        // Earlier installs and upgrades persisted tab names in the wrong language: languages
+        // without a translations/<iso>.php file inherited the strings of whichever language
+        // PrestaShop merged before them, and the install path wrote the installing employee's
+        // language everywhere. Those rows are only rewritten when a tab is created or updated,
+        // so shops that already upgraded need an explicit repair.
+        \Mollie\Utility\TabTranslationUtility::repairTabNames($module);
 
         return true;
     } catch (Exception $e) {
