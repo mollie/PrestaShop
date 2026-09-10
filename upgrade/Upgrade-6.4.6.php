@@ -15,18 +15,6 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Renames the root menu tab from AdminMollieModule_MTR to AdminMollieModuleMTR.
- *
- * PrestaShop stores tab permissions as ROLE_MOD_TAB_<UPPERCASE CLASS NAME>_<ACTION> and reads them
- * back with the regex /ROLE_MOD_[A-Z]+_(?P<classname>[A-Z][A-Z0-9]*)_[A-Z]+/, which cannot hold an
- * underscore. ROLE_MOD_TAB_ADMINMOLLIEMODULE_MTR_READ was therefore parsed as class name
- * ADMINMOLLIEMODULE plus action MTR, so the permission landed on the hidden Settings tab and the
- * Mollie menu row always read back as denied.
- *
- * Tab::initAccess() only runs when a tab is created, so renaming the tab is not enough: the
- * existing role slugs have to be renamed too. Renaming them in place keeps their
- * id_authorization_role, which keeps the permissions merchants already granted.
- *
  * @param Mollie $module
  *
  * @return bool
@@ -34,44 +22,89 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_6_4_6($module)
 {
     try {
-        $legacyClassName = 'AdminMollieModule_MTR';
-        $newClassName = 'AdminMollieModuleMTR';
+        // Bypasses the service container, which is not reliably available during an upgrade.
+        $installTabFunction = function ($module, $className, $parent, $name) {
+            $tabId = (int) Tab::getIdFromClassName($className);
+            $moduleTab = $tabId ? new Tab($tabId) : new Tab();
 
-        $legacyTabId = (int) Tab::getIdFromClassName($legacyClassName);
+            if (!$tabId) {
+                $moduleTab->class_name = $className;
+            }
 
-        if (!$legacyTabId) {
-            return true;
-        }
+            $idParent = (int) Tab::getIdFromClassName($parent);
 
-        $legacyTab = new Tab($legacyTabId);
+            if (!$idParent) {
+                return false;
+            }
 
-        if (!Validate::isLoadedObject($legacyTab)) {
-            return true;
-        }
+            $moduleTab->id_parent = $idParent;
+            $moduleTab->module = $module->name;
+            $moduleTab->active = true;
 
-        $newTabId = (int) Tab::getIdFromClassName($newClassName);
+            foreach (Language::getLanguages(false) as $language) {
+                // Translate::getModuleTranslation() merges every language file into one flat
+                // global keyed without a language dimension, so a language the module ships no
+                // translations/<iso>.php for returns the strings of whichever language was
+                // merged before it. The utility reads each file in isolation instead.
+                $moduleTab->name[$language['id_lang']] = \Mollie\Utility\TabTranslationUtility::getTabName(
+                    $module,
+                    $name,
+                    $language['iso_code']
+                );
+            }
 
-        // A renamed tab already exists, so the legacy one is a leftover from an earlier install.
-        // Tab::delete() drops its role slugs as well, but it never touches children, so they have
-        // to be moved first or the whole Mollie menu is left pointing at a deleted row.
-        if ($newTabId) {
-            mollieMoveTabChildren($legacyTabId, $newTabId);
+            return (bool) $moduleTab->save();
+        };
 
-            $legacyTab->delete();
-            Tab::resetStaticCache();
+        // The payment overview needs both index shapes and uses one or the other depending on
+        // the filter. Without them the list full scans a table that survives uninstall and is
+        // never pruned. created_at alone lets the default view walk the index backwards and stop
+        // at the page size, while bank_status first turns a status filter into a range instead of
+        // a full index walk with a row lookup per entry. ADD INDEX is an online DDL on MySQL 5.6
+        // and MariaDB 10.0 upwards, so it does not block writes on a large shop.
+        $addIndexesFunction = function () {
+            $indexes = [
+                'mollie_payments_status_created' => '`bank_status`, `created_at`',
+                'mollie_payments_created_at' => '`created_at`',
+            ];
 
-            return true;
-        }
+            foreach ($indexes as $name => $columns) {
+                $exists = Db::getInstance()->getValue('
+                    SELECT COUNT(*) > 0
+                    FROM information_schema.statistics
+                    WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '"
+                        AND TABLE_NAME = "' . _DB_PREFIX_ . 'mollie_payments"
+                        AND INDEX_NAME = "' . pSQL($name) . '";
+                ');
 
-        $legacyTab->class_name = $newClassName;
+                if ($exists) {
+                    continue;
+                }
 
-        if (!$legacyTab->save()) {
+                Db::getInstance()->execute('
+                    ALTER TABLE `' . _DB_PREFIX_ . 'mollie_payments`
+                    ADD INDEX `' . bqSQL($name) . '` (' . $columns . ');
+                ');
+            }
+        };
+
+        // Has to run before any tab is installed below: those resolve their parent by class name
+        // and the root tab is called AdminMollieModuleMTR from this version onwards.
+        if (!mollieRenameRootTab('AdminMollieModule_MTR', 'AdminMollieModuleMTR')) {
             return false;
         }
 
-        Tab::resetStaticCache();
+        $installTabFunction($module, 'AdminMolliePaymentOverviewParent', 'AdminMollieModuleMTR', 'Payment overview');
+        $installTabFunction($module, 'AdminMolliePaymentOverview', 'AdminMollieAuthenticationParent', 'Payment overview');
 
-        mollieRenameTabRoleSlugs($legacyClassName, $newClassName);
+        $addIndexesFunction();
+
+        // Earlier installs and upgrades persisted tab names in the wrong language: languages
+        // without a translations/<iso>.php file inherited the strings of whichever language
+        // PrestaShop merged before them, and the install path wrote the installing employee's
+        // language everywhere. Those rows are only rewritten when a tab is created or updated,
+        // so shops that already upgraded need an explicit repair.
+        \Mollie\Utility\TabTranslationUtility::repairTabNames($module);
 
         return true;
     } catch (Exception $e) {
@@ -86,6 +119,65 @@ function upgrade_module_6_4_6($module)
 
         return false;
     }
+}
+
+/**
+ * Renames the root menu tab from AdminMollieModule_MTR to AdminMollieModuleMTR.
+ *
+ * PrestaShop stores tab permissions as ROLE_MOD_TAB_<UPPERCASE CLASS NAME>_<ACTION> and reads them
+ * back with the regex /ROLE_MOD_[A-Z]+_(?P<classname>[A-Z][A-Z0-9]*)_[A-Z]+/, which cannot hold an
+ * underscore. ROLE_MOD_TAB_ADMINMOLLIEMODULE_MTR_READ was therefore parsed as class name
+ * ADMINMOLLIEMODULE plus action MTR, so the permission landed on the hidden Settings tab and the
+ * Mollie menu row always read back as denied.
+ *
+ * Tab::initAccess() only runs when a tab is created, so renaming the tab is not enough: the
+ * existing role slugs have to be renamed too. Renaming them in place keeps their
+ * id_authorization_role, which keeps the permissions merchants already granted.
+ *
+ * @param string $legacyClassName
+ * @param string $newClassName
+ *
+ * @return bool
+ */
+function mollieRenameRootTab($legacyClassName, $newClassName)
+{
+    $legacyTabId = (int) Tab::getIdFromClassName($legacyClassName);
+
+    if (!$legacyTabId) {
+        return true;
+    }
+
+    $legacyTab = new Tab($legacyTabId);
+
+    if (!Validate::isLoadedObject($legacyTab)) {
+        return true;
+    }
+
+    $newTabId = (int) Tab::getIdFromClassName($newClassName);
+
+    // A renamed tab already exists, so the legacy one is a leftover from an earlier install.
+    // Tab::delete() drops its role slugs as well, but it never touches children, so they have
+    // to be moved first or the whole Mollie menu is left pointing at a deleted row.
+    if ($newTabId) {
+        mollieMoveTabChildren($legacyTabId, $newTabId);
+
+        $legacyTab->delete();
+        Tab::resetStaticCache();
+
+        return true;
+    }
+
+    $legacyTab->class_name = $newClassName;
+
+    if (!$legacyTab->save()) {
+        return false;
+    }
+
+    Tab::resetStaticCache();
+
+    mollieRenameTabRoleSlugs($legacyClassName, $newClassName);
+
+    return true;
 }
 
 /**

@@ -47,6 +47,7 @@ use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\TabTranslationUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Utility\VersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
@@ -93,6 +94,10 @@ class Mollie extends PaymentModule
     const ADMIN_MOLLIE_LOGS_CONTROLLER = 'AdminMollieLogs';
 
     const ADMIN_MOLLIE_LOGS_PARENT_CONTROLLER = 'AdminMollieLogsParent';
+
+    const ADMIN_MOLLIE_PAYMENT_OVERVIEW_CONTROLLER = 'AdminMolliePaymentOverview';
+
+    const ADMIN_MOLLIE_PAYMENT_OVERVIEW_PARENT_CONTROLLER = 'AdminMolliePaymentOverviewParent';
 
     /** @var LeagueServiceContainerProvider */
     private $containerProvider;
@@ -1320,6 +1325,20 @@ class Mollie extends PaymentModule
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
                 'module_tab' => true,
             ],
+            // Payment overview - sidebar entry (parent)
+            [
+                'name' => $this->getTabTranslations('Payment overview'),
+                'class_name' => self::ADMIN_MOLLIE_PAYMENT_OVERVIEW_PARENT_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
+                'module_tab' => true,
+            ],
+            // Payment overview - horizontal tab (child)
+            [
+                'name' => $this->getTabTranslations('Payment overview'),
+                'class_name' => self::ADMIN_MOLLIE_PAYMENT_OVERVIEW_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
+                'module_tab' => true,
+            ],
         ];
     }
 
@@ -1333,20 +1352,7 @@ class Mollie extends PaymentModule
      */
     private function getTabTranslations($englishName)
     {
-        $translations = [];
-
-        foreach (Language::getLanguages(false) as $language) {
-            $translations[$language['iso_code']] = Translate::getModuleTranslation(
-                $this,
-                $englishName,
-                $this->name,
-                null,
-                false,
-                $language['locale']
-            );
-        }
-
-        return $translations;
+        return TabTranslationUtility::getTabNames($this, $englishName);
     }
 
     public function hookActionAdminOrdersListingFieldsModifier($params)

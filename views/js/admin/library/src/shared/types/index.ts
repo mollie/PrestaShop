@@ -47,6 +47,11 @@ export interface MollieAuthTranslations {
   switchTo: string;
   multistoreRestrictedTitle: string;
   multistoreRestrictedMessage: string;
+  testModeHint: string;
+  copyTestToLiveOption: string;
+  copyTestToLivePending: string;
+  copyTestToLiveSuccess: string;
+  copyTestToLiveError: string;
 }
 
 export interface MolliePaymentMethodsTranslations {
