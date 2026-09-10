@@ -138,6 +138,7 @@ class Installer implements InstallerInterface
         $this->installTab('AdminMollieSubscriptionOrders', 'AdminMollieAuthenticationParent', 'Subscriptions', true);
         $this->installTab('AdminMollieSubscriptionFAQ', 'AdminMollieAuthenticationParent', 'Subscription FAQ', true);
         $this->installTab('AdminMollieLogs', 'AdminMollieAuthenticationParent', 'Logs', true);
+        $this->installTab('AdminMolliePaymentOverview', 'AdminMollieAuthenticationParent', 'Payment overview', true);
     }
 
     public function getErrors()
