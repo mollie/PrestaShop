@@ -22,6 +22,7 @@ use Mollie\Logger\LoggerInterface;
 use Mollie\Service\TransactionService;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\HashUtility;
+use Mollie\Utility\LockUtility;
 use Mollie\Utility\TransactionUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -89,11 +90,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             ));
         }
 
-        $lockResult = $this->applyLock(sprintf(
-            '%s-%s',
-            self::FILE_NAME,
-            $tools->getValue('security_token')
-        ));
+        $lockResult = $this->applyLock(LockUtility::orderCreation((string) $tools->getValue('security_token')));
 
         if (!$lockResult->isSuccessful()) {
             $logger->info(sprintf('%s - Resource conflict', self::FILE_NAME));
