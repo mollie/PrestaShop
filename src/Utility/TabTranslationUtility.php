@@ -32,7 +32,7 @@ class TabTranslationUtility
 {
     /** Every Mollie tab, so a repair can rewrite names persisted in the wrong language. */
     const TAB_NAMES = [
-        'AdminMollieModule_MTR' => 'Mollie',
+        'AdminMollieModuleMTR' => 'Mollie',
         'AdminMollieModule' => 'Settings',
         'AdminMollieAuthenticationParent' => 'API Configuration',
         'AdminMollieAuthentication' => 'API Configuration',

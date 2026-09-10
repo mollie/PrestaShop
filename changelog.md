@@ -10,6 +10,7 @@
 + Fixed the order detail Mollie panel showing English labels in Latvian and Romanian back offices, the refund, capture, ship and cancel controls and their confirmation dialogs are now translated
 + Fixed back office menu entries and Mollie settings tab names appearing in the wrong language after installing or upgrading the module
 + Fixed the order confirmation email subject being sent in English instead of the language of the order
++ Fixed the employee permission checkboxes for the Mollie menu, granting View access to a profile now sticks and gives that profile access to the Mollie back office pages
 
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API
