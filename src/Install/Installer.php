@@ -25,6 +25,7 @@ use Mollie\Exception\CouldNotInstallModule;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Utility\MultiLangUtility;
+use Mollie\Utility\TabTranslationUtility;
 use OrderState;
 use PrestaShopException;
 use Tab;
@@ -138,6 +139,7 @@ class Installer implements InstallerInterface
         $this->installTab('AdminMollieSubscriptionOrders', 'AdminMollieAuthenticationParent', 'Subscriptions', true);
         $this->installTab('AdminMollieSubscriptionFAQ', 'AdminMollieAuthenticationParent', 'Subscription FAQ', true);
         $this->installTab('AdminMollieLogs', 'AdminMollieAuthenticationParent', 'Logs', true);
+        $this->installTab('AdminMolliePaymentOverview', 'AdminMollieAuthenticationParent', 'Payment overview', true);
     }
 
     public function getErrors()
@@ -251,7 +253,7 @@ class Installer implements InstallerInterface
         $languages = Language::getLanguages(true);
 
         foreach ($languages as $language) {
-            $moduleTab->name[$language['id_lang']] = $this->module->l($name, false, $language['iso_code']);
+            $moduleTab->name[$language['id_lang']] = TabTranslationUtility::getTabName($this->module, $name, $language['iso_code']);
         }
 
         if (!$moduleTab->save()) {
