@@ -3,6 +3,9 @@
 # Changelog #
 
 ## Changes in release 6.4.6
++ Apple Pay now works in Chrome, Edge and Firefox on desktop via Apple's iOS 18 QR code flow, using Apple's official Apple Pay JS SDK
++ Fixed Apple Pay Direct quoting shipping prices from the shop default country's zone instead of the customer's delivery zone
++ Fixed the product page quantity selector getting squeezed by the Apple Pay Direct button on narrow screens; the button now wraps onto its own line
 + When switching from Test to Live, the API settings page now offers to copy the Test payment method configuration, restrictions, and ordering to Live, so it does not have to be set up again
 + Added a Payment overview page listing the payment attempts that never became an order, with the customer, method, status, reason and a link to the payment in the Mollie dashboard
 + Failed, cancelled and expired payments are now recorded with their real status and failure reason instead of staying on "open" forever
