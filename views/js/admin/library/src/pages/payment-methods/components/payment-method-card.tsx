@@ -15,6 +15,7 @@ interface PaymentMethodCardProps {
   index: number
   countries: Country[]
   carriers: Carrier[]
+  showApplePayLiveKeyWarning?: boolean
   customerGroups: CustomerGroup[]
   languages: Language[]
   onlyPaymentsMethods: string[]
@@ -24,7 +25,6 @@ interface PaymentMethodCardProps {
   onSaveSettings: () => void
   onDragStart: (e: React.DragEvent) => void
   onDragOver: (e: React.DragEvent) => void
-  onDragLeave: () => void
   onDrop: (e: React.DragEvent) => void
   onDragEnd: () => void
   isDragging: boolean
@@ -38,6 +38,7 @@ export function PaymentMethodCard({
   index,
   countries,
   carriers,
+  showApplePayLiveKeyWarning = false,
   customerGroups,
   languages,
   onlyPaymentsMethods,
@@ -47,7 +48,6 @@ export function PaymentMethodCard({
   onSaveSettings,
   onDragStart,
   onDragOver,
-  onDragLeave,
   onDrop,
   onDragEnd,
   isDragging,
@@ -70,7 +70,6 @@ export function PaymentMethodCard({
       draggable={isDragEnabled && !method.isExpanded}
       onDragStart={onDragStart}
       onDragOver={onDragOver}
-      onDragLeave={onDragLeave}
       onDrop={onDrop}
       onDragEnd={onDragEnd}
     >
@@ -146,7 +145,8 @@ export function PaymentMethodCard({
                 onClick={onToggleExpanded}
                 className={cn(
                   "flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 cursor-pointer",
-                  "transition-all duration-200 hover:scale-105 active:scale-95",
+                  // scaled glyphs blur, so the hover cue is a background tint instead
+                  "rounded-md px-2 py-1 transition duration-200 hover:bg-blue-50",
                 )}
               >
                 {method.isExpanded ? (
@@ -172,6 +172,8 @@ export function PaymentMethodCard({
                 )}
               />
             )}
+            {/* holds the drag handle's width while expanded so the toggle stays put */}
+            {isDragEnabled && method.isExpanded && <div className="h-5 w-5" aria-hidden="true" />}
           </div>
         </div>
 
@@ -198,6 +200,7 @@ export function PaymentMethodCard({
                 method={method}
                 countries={countries}
                 carriers={carriers}
+                showApplePayLiveKeyWarning={showApplePayLiveKeyWarning}
                 customerGroups={customerGroups}
                 languages={languages}
                 onlyPaymentsMethods={onlyPaymentsMethods}

@@ -120,6 +120,7 @@ use Mollie\Service\EntityManager\EntityManagerInterface;
 use Mollie\Service\EntityManager\ObjectModelEntityManager;
 use Mollie\Service\EntityManager\ObjectModelUnitOfWork;
 use Mollie\Service\MultistoreSettingsContextGuard;
+use Mollie\Service\PaymentMethod\EnvironmentSettingsCopyService;
 use Mollie\Service\PaymentMethod\PaymentMethodFormatterService;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\AmountPaymentMethodRestrictionValidator;
@@ -317,6 +318,15 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, ApiService::class);
         $this->addServiceArgument($service, Mollie::class);
         $this->addServiceArgument($service, ApplePayDirectCertificateHandler::class);
+
+        $service = $this->addService($container, EnvironmentSettingsCopyService::class, EnvironmentSettingsCopyService::class);
+        $this->addServiceArgument($service, PaymentMethodRepositoryInterface::class);
+        $this->addServiceArgument($service, CustomerRepositoryInterface::class);
+        $this->addServiceArgument($service, CountryRepositoryInterface::class);
+        $this->addServiceArgument($service, ApiKeyService::class);
+        $this->addServiceArgument($service, ConfigurationAdapter::class);
+        $this->addServiceArgument($service, Mollie::class);
+        $this->addServiceArgument($service, LoggerInterface::class);
 
         $service = $this->addService($container, AutoCaptureService::class, AutoCaptureService::class);
         $this->addServiceArgument($service, CaptureService::class);
