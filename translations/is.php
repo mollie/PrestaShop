@@ -677,6 +677,12 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a9855e60f28404
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_cbf2b6688253670a9fc7b2add8e09172'] = 'Mollie stjórnborð';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_955ad3298db330b5ee880c2c9e6f23a0'] = 'Live';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_0cbc6611f5540bd0809a388dc95a615b'] = 'Test';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5fe660b4753d891ac8422a859856c305'] = 'Test-hamur gerir þér kleift að prófa greiðslumátana þína án raunverulegra greiðslna. Þegar þú ert tilbúin að fara í loftið geturðu tekið uppsetninguna með þér í stað þess að stilla allt upp á nýtt.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9deb0e31315dc2eb99c6a49144162fdd'] = 'Afrita Test-stillingar greiðslumáta yfir í Live';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_acb5fc9a8582c7f72b21941b8b963c72'] = 'Test-stillingarnar þínar verða afritaðar um leið og þú tengir Live API lykilinn þinn.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_f35405ac878e248331afede242b88867'] = 'Test-stillingar afritaðar yfir í Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_2198f7d9e076106be0f204b3d289f787'] = 'Ekki tókst að afrita Test stillingar yfir á Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9ce89fb204d84278e52c0915dd5377f0'] = 'Gildur Live API lykill er nauðsynlegur áður en hægt er að afrita Test stillingar.';
 $_MODULE['<{mollie}prestashop>mollie_6879d9cee4ba90f94f8bac2543992979'] = 'API stillingar';
 $_MODULE['<{mollie}prestashop>mollie_9ffc3ccc968a96d902af963c6d7b4e97'] = 'Ítarlegar stillingar';
 $_MODULE['<{mollie}prestashop>mollie_256a377dcc4af527d530ef4a1b86ad56'] = 'Þú ert að nota úrelta PHP útgáfu. Uppfærðu PHP útgáfuna þína til að nota þessa einingu. Mollie einingin styður PHP útgáfur 7.2.0 og hærri.';

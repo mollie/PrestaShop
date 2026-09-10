@@ -676,6 +676,12 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a9855e60f28404
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_cbf2b6688253670a9fc7b2add8e09172'] = 'Mollie vadības panelis';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_955ad3298db330b5ee880c2c9e6f23a0'] = 'Live';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_0cbc6611f5540bd0809a388dc95a615b'] = 'Test';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5fe660b4753d891ac8422a859856c305'] = 'Test režīms ļauj izmēģināt maksājumu metodes bez īstiem maksājumiem. Kad būsiet gatavs pāriet uz Live, varēsiet paņemt šo iestatījumu līdzi, nevis konfigurēt visu no jauna.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9deb0e31315dc2eb99c6a49144162fdd'] = 'Kopēt manus Test maksājumu metožu iestatījumus uz Live';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_acb5fc9a8582c7f72b21941b8b963c72'] = 'Jūsu Test iestatījumi tiks nokopēti, tiklīdz pievienosiet savu Live API atslēgu.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_f35405ac878e248331afede242b88867'] = 'Test iestatījumi nokopēti uz Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_2198f7d9e076106be0f204b3d289f787'] = 'Neizdevās nokopēt Test iestatījumus uz Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9ce89fb204d84278e52c0915dd5377f0'] = 'Pirms Test iestatījumu kopēšanas ir nepieciešama derīga Live API atslēga.';
 $_MODULE['<{mollie}prestashop>mollie_6879d9cee4ba90f94f8bac2543992979'] = 'API konfigurācija';
 $_MODULE['<{mollie}prestashop>mollie_9ffc3ccc968a96d902af963c6d7b4e97'] = 'Papildu iestatījumi';
 $_MODULE['<{mollie}prestashop>mollie_256a377dcc4af527d530ef4a1b86ad56'] = 'Jūs izmantojat novecojušu PHP versiju. Atjauniniet savu PHP versiju, lai izmantotu šo moduli. Mollie modulis atbalsta PHP versijas 7.2.0 un jaunākas.';

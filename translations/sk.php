@@ -678,6 +678,12 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a9855e60f28404
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_cbf2b6688253670a9fc7b2add8e09172'] = 'Mollie dashboard';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_955ad3298db330b5ee880c2c9e6f23a0'] = 'Live';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_0cbc6611f5540bd0809a388dc95a615b'] = 'Test';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5fe660b4753d891ac8422a859856c305'] = 'Režim Test vám umožní vyskúšať platobné metódy bez skutočných platieb. Keď budete pripravení prejsť na Live, môžete si toto nastavenie vziať so sebou namiesto opätovného konfigurovania.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9deb0e31315dc2eb99c6a49144162fdd'] = 'Skopírovať moje nastavenia platobných metód z Test do Live';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_acb5fc9a8582c7f72b21941b8b963c72'] = 'Vaše nastavenia Test sa skopírujú hneď, ako pripojíte svoj Live API kľúč.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_f35405ac878e248331afede242b88867'] = 'Nastavenia Test boli skopírované do Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_2198f7d9e076106be0f204b3d289f787'] = 'Nepodarilo sa skopírovať nastavenia Test do Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9ce89fb204d84278e52c0915dd5377f0'] = 'Pred kopírovaním nastavení Test je potrebný platný Live API kľúč.';
 $_MODULE['<{mollie}prestashop>mollie_6879d9cee4ba90f94f8bac2543992979'] = 'Konfigurácia API';
 $_MODULE['<{mollie}prestashop>mollie_9ffc3ccc968a96d902af963c6d7b4e97'] = 'Rozšírené nastavenia';
 $_MODULE['<{mollie}prestashop>mollie_256a377dcc4af527d530ef4a1b86ad56'] = 'Používate zastaranú verziu PHP. Aktualizujte svoju verziu PHP, aby ste mohli tento modul používať. Modul Mollie podporuje verzie PHP 7.2.0 a vyššie.';

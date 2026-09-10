@@ -676,6 +676,12 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a9855e60f28404
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_cbf2b6688253670a9fc7b2add8e09172'] = 'Πίνακας ελέγχου Mollie';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_955ad3298db330b5ee880c2c9e6f23a0'] = 'Live';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_0cbc6611f5540bd0809a388dc95a615b'] = 'Test';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5fe660b4753d891ac8422a859856c305'] = 'Η λειτουργία Test σάς επιτρέπει να δοκιμάσετε τις μεθόδους πληρωμής σας χωρίς πραγματικές πληρωμές. Όταν είστε έτοιμοι να μεταβείτε σε Live, μπορείτε να πάρετε μαζί σας αυτή τη ρύθμιση αντί να τα διαμορφώσετε όλα ξανά.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9deb0e31315dc2eb99c6a49144162fdd'] = 'Αντιγραφή των ρυθμίσεων μεθόδων πληρωμής Test στο Live';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_acb5fc9a8582c7f72b21941b8b963c72'] = 'Οι ρυθμίσεις σας Test θα αντιγραφούν μόλις συνδέσετε το Live API κλειδί σας.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_f35405ac878e248331afede242b88867'] = 'Οι ρυθμίσεις Test αντιγράφηκαν στο Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_2198f7d9e076106be0f204b3d289f787'] = 'Η αντιγραφή των ρυθμίσεων Test στο Live απέτυχε.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9ce89fb204d84278e52c0915dd5377f0'] = 'Απαιτείται έγκυρο κλειδί API Live πριν από την αντιγραφή των ρυθμίσεων Test.';
 $_MODULE['<{mollie}prestashop>mollie_6879d9cee4ba90f94f8bac2543992979'] = 'Ρύθμιση API';
 $_MODULE['<{mollie}prestashop>mollie_9ffc3ccc968a96d902af963c6d7b4e97'] = 'Προηγμένες ρυθμίσεις';
 $_MODULE['<{mollie}prestashop>mollie_256a377dcc4af527d530ef4a1b86ad56'] = 'Χρησιμοποιείτε μια παρωχημένη έκδοση PHP. Αναβαθμίστε την έκδοση PHP σας για να χρησιμοποιήσετε αυτό το module. Το module Mollie υποστηρίζει εκδόσεις PHP 7.2.0 και νεότερες.';

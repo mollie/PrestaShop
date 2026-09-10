@@ -677,6 +677,12 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a9855e60f28404
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_cbf2b6688253670a9fc7b2add8e09172'] = 'Panoul de control Mollie';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_955ad3298db330b5ee880c2c9e6f23a0'] = 'Live';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_0cbc6611f5540bd0809a388dc95a615b'] = 'Test';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_5fe660b4753d891ac8422a859856c305'] = 'Modul Test vă permite să încercați metodele de plată fără plăți reale. Când sunteți gata să treceți la Live, puteți lua acea configurație cu dumneavoastră în loc să configurați totul din nou.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9deb0e31315dc2eb99c6a49144162fdd'] = 'Copiază setările mele pentru metodele de plată din Test în Live';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_acb5fc9a8582c7f72b21941b8b963c72'] = 'Setările dumneavoastră Test vor fi copiate imediat ce conectați cheia API Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_f35405ac878e248331afede242b88867'] = 'Setările Test au fost copiate în Live.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_2198f7d9e076106be0f204b3d289f787'] = 'Copierea setărilor Test în Live a eșuat.';
+$_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9ce89fb204d84278e52c0915dd5377f0'] = 'Este necesară o cheie API Live validă înainte de a copia setările Test.';
 $_MODULE['<{mollie}prestashop>mollie_6879d9cee4ba90f94f8bac2543992979'] = 'Configurare API';
 $_MODULE['<{mollie}prestashop>mollie_9ffc3ccc968a96d902af963c6d7b4e97'] = 'Setări avansate';
 $_MODULE['<{mollie}prestashop>mollie_256a377dcc4af527d530ef4a1b86ad56'] = 'Utilizați o versiune PHP învechită. Actualizați versiunea PHP pentru a folosi acest modul. Modulul Mollie acceptă versiunile PHP 7.2.0 și mai noi.';
