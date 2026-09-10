@@ -6,6 +6,14 @@
 + Apple Pay now works in Chrome, Edge and Firefox on desktop via Apple's iOS 18 QR code flow, using Apple's official Apple Pay JS SDK
 + Fixed Apple Pay Direct quoting shipping prices from the shop default country's zone instead of the customer's delivery zone
 + Fixed the product page quantity selector getting squeezed by the Apple Pay Direct button on narrow screens; the button now wraps onto its own line
++ When switching from Test to Live, the API settings page now offers to copy the Test payment method configuration, restrictions, and ordering to Live, so it does not have to be set up again
++ Added a Payment overview page listing the payment attempts that never became an order, with the customer, method, status, reason and a link to the payment in the Mollie dashboard
++ Failed, cancelled and expired payments are now recorded with their real status and failure reason instead of staying on "open" forever
++ Customers whose payment fails are now returned to the shop immediately with a clear message, instead of waiting on a spinner and receiving a failed payment email
++ Fixed the order detail Mollie panel showing English labels in Latvian and Romanian back offices, the refund, capture, ship and cancel controls and their confirmation dialogs are now translated
++ Fixed back office menu entries and Mollie settings tab names appearing in the wrong language after installing or upgrading the module
++ Fixed the order confirmation email subject being sent in English instead of the language of the order
++ Fixed the employee permission checkboxes for the Mollie menu, granting View access to a profile now sticks and gives that profile access to the Mollie back office pages
 
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API
