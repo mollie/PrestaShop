@@ -9,13 +9,20 @@
 + Apple Pay Direct now works in test mode, the merchant session is validated with the live API key and the settings warn when it is missing
 + Fixed Apple Pay Direct payments failing when the shopper already had a shopping cart, PrestaShop detached the temporary Apple Pay addresses from the cart on every request
 + When switching from Test to Live, the API settings page now offers to copy the Test payment method configuration, restrictions, and ordering to Live, so it does not have to be set up again
++ Added an {order.id} placeholder to the payment description, so the numeric PrestaShop order ID can be shown on the payment in Mollie
 + Added a Payment overview page listing the payment attempts that never became an order, with the customer, method, status, reason and a link to the payment in the Mollie dashboard
 + Failed, cancelled and expired payments are now recorded with their real status and failure reason instead of staying on "open" forever
 + Customers whose payment fails are now returned to the shop immediately with a clear message, instead of waiting on a spinner and receiving a failed payment email
++ The payment methods list now scrolls on its own while a method is being dragged, so the list can be reordered without dropping the method to scroll
++ Fixed the credit card fields not loading at checkout on the Hummingbird theme, which left card payments impossible to complete
 + Fixed the order detail Mollie panel showing English labels in Latvian and Romanian back offices, the refund, capture, ship and cancel controls and their confirmation dialogs are now translated
 + Fixed back office menu entries and Mollie settings tab names appearing in the wrong language after installing or upgrading the module
 + Fixed the order confirmation email subject being sent in English instead of the language of the order
++ Fixed the Mollie order confirmation email appending a wrong attribute to product names
 + Fixed the employee permission checkboxes for the Mollie menu, granting View access to a profile now sticks and gives that profile access to the Mollie back office pages
++ Fixed the module's back office styles and other modules' styles overriding each other, the Mollie admin pages now scope their own utility classes
++ Fixed PHP deprecation notices raised on PHP 8.1 and newer while a payment is being created
++ Fixed a fatal error when upgrading the module from a version older than 5.3.0
 
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API
