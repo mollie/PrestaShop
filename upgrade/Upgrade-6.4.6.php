@@ -21,6 +21,13 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_6_4_6($module)
 {
+    // A back office zip upload instantiates the module before it replaces the files, so the
+    // autoloader registered in this request is still the installed version's. Release builds are
+    // dumped with --classmap-authoritative, which drops the PSR-4 fallback, and mollie.php loads
+    // vendor/autoload.php through require_once on a path that is already included, so the new
+    // autoloader never registers. Classes this version adds have to be loaded by path.
+    require_once __DIR__ . '/../src/Utility/TabTranslationUtility.php';
+
     try {
         // Bypasses the service container, which is not reliably available during an upgrade.
         $installTabFunction = function ($module, $className, $parent, $name) {
@@ -107,7 +114,9 @@ function upgrade_module_6_4_6($module)
         \Mollie\Utility\TabTranslationUtility::repairTabNames($module);
 
         return true;
-    } catch (Exception $e) {
+    } catch (Throwable $e) {
+        // Not Exception: a class the stale autoloader cannot resolve throws ClassNotFoundError,
+        // which extends Error, so the merchant would only see a blank upload failure.
         PrestaShopLogger::addLog(
             'Mollie module upgrade to 6.4.6 failed: ' . $e->getMessage(),
             3,
