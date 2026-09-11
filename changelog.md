@@ -3,17 +3,21 @@
 # Changelog #
 
 ## Changes in release 6.4.6
-+ Apple Pay now works in Chrome, Edge and Firefox on desktop via Apple's iOS 18 QR code flow, using Apple's official Apple Pay JS SDK
-+ Fixed Apple Pay Direct quoting shipping prices from the shop default country's zone instead of the customer's delivery zone
-+ Fixed the product page quantity selector getting squeezed by the Apple Pay Direct button on narrow screens; the button now wraps onto its own line
-+ When switching from Test to Live, the API settings page now offers to copy the Test payment method configuration, restrictions, and ordering to Live, so it does not have to be set up again
-+ Added a Payment overview page listing the payment attempts that never became an order, with the customer, method, status, reason and a link to the payment in the Mollie dashboard
-+ Failed, cancelled and expired payments are now recorded with their real status and failure reason instead of staying on "open" forever
-+ Customers whose payment fails are now returned to the shop immediately with a clear message, instead of waiting on a spinner and receiving a failed payment email
-+ Fixed the order detail Mollie panel showing English labels in Latvian and Romanian back offices, the refund, capture, ship and cancel controls and their confirmation dialogs are now translated
-+ Fixed back office menu entries and Mollie settings tab names appearing in the wrong language after installing or upgrading the module
-+ Fixed the order confirmation email subject being sent in English instead of the language of the order
-+ Fixed the employee permission checkboxes for the Mollie menu, granting View access to a profile now sticks and gives that profile access to the Mollie back office pages
++ Apple Pay now works on desktop in Chrome, Edge and Firefox through Apple's QR code flow, and Apple Pay Direct prices shipping per delivery zone
++ Apple Pay Direct now works in test mode, with a warning when the live API key it needs is missing
++ Added a Payment overview page for failed, cancelled and expired payments, and customers whose payment fails now return to the shop immediately
++ Test payment method settings can now be copied to Live when switching the API key
++ Added an {order.id} placeholder to the payment description for the numeric PrestaShop order ID
++ The payment methods list now scrolls automatically while a method is being dragged
++ Fixed credit card fields not loading at checkout on the Hummingbird theme
++ Translated the order page Mollie panel into Latvian and Romanian
++ Fixed back office menu and settings tab names appearing in the wrong language after an upgrade
++ Fixed the order confirmation email subject being sent in English instead of the order's language
++ Fixed the Mollie order confirmation email appending a wrong attribute to product names
++ Fixed granting a profile View access to the Mollie menu not being saved
++ Fixed the module's back office styles conflicting with other modules' styles
++ Fixed PHP deprecation notices on PHP 8.1 and newer when creating a payment
++ Fixed a fatal error when upgrading the module from a version older than 5.3.0
 
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API
@@ -30,8 +34,13 @@
 + Fixed free shipping vouchers causing a Mollie API 422 amount error at checkout, and wrong order line amounts when no payment fee is configured
 + Fixed credit card payments failing with a Mollie API 422 amount error when a payment surcharge is active and prices are rounded per line
 + Fixed Apple Pay Direct failing to complete guest payments, the shipping address selected in the Apple Pay sheet was dropped from the cart before the order was created
-+ Apple Pay Direct now works in test mode, the merchant session is validated with the live API key and the settings warn when it is missing
-+ Fixed Apple Pay Direct payments failing when the shopper already had a shopping cart, PrestaShop detached the temporary Apple Pay addresses from the cart on every request
++ Fixed Apple Pay Direct creating fictitious "ApplePay" placeholder addresses and guest records on customer accounts
++ Prevented Apple Pay Direct from overwriting a registered customer's saved name and email
++ Fixed Apple Pay Direct authorization so cart operations only affect the caller's own session cart
++ Fixed subscription authorization so customers can only cancel or change the payment method of their own subscriptions
++ Hardened the module against the PrestaShop security requirements
++ Redesigned the refund and capture panel on the back office order page
++ Added a "View in Mollie" link on the order page and in the Orders list to open a payment directly in the Mollie dashboard
 + Translated the "View in Mollie" link into all supported back office languages
 + Added the missing back office and checkout translations across all supported languages
 
