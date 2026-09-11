@@ -3,16 +3,11 @@
 # Changelog #
 
 ## Changes in release 6.4.6
-+ Apple Pay now works in Chrome, Edge and Firefox on desktop via Apple's iOS 18 QR code flow, using Apple's official Apple Pay JS SDK
-+ Fixed Apple Pay Direct quoting shipping prices from the shop default country's zone instead of the customer's delivery zone
-+ Fixed the product page quantity selector getting squeezed by the Apple Pay Direct button on narrow screens; the button now wraps onto its own line
-+ Apple Pay Direct now works in test mode, the merchant session is validated with the live API key and the settings warn when it is missing
-+ Fixed Apple Pay Direct payments failing when the shopper already had a shopping cart, PrestaShop detached the temporary Apple Pay addresses from the cart on every request
++ Apple Pay now works in Chrome, Edge and Firefox on desktop via Apple's iOS 18 QR code flow, using Apple's official Apple Pay JS SDK, and Apple Pay Direct now prices shipping from the customer's delivery zone and no longer squeezes the product page quantity selector
++ Apple Pay Direct now works in test mode, the merchant session is validated with the live API key, the settings warn when it is missing, and payments no longer fail when the shopper already had a shopping cart
++ Added a Payment overview page listing the payment attempts that never became an order, failed, cancelled and expired payments are now recorded with their real status and reason, and customers whose payment fails are returned to the shop immediately with a clear message instead of waiting on a spinner
 + When switching from Test to Live, the API settings page now offers to copy the Test payment method configuration, restrictions, and ordering to Live, so it does not have to be set up again
 + Added an {order.id} placeholder to the payment description, so the numeric PrestaShop order ID can be shown on the payment in Mollie
-+ Added a Payment overview page listing the payment attempts that never became an order, with the customer, method, status, reason and a link to the payment in the Mollie dashboard
-+ Failed, cancelled and expired payments are now recorded with their real status and failure reason instead of staying on "open" forever
-+ Customers whose payment fails are now returned to the shop immediately with a clear message, instead of waiting on a spinner and receiving a failed payment email
 + The payment methods list now scrolls on its own while a method is being dragged, so the list can be reordered without dropping the method to scroll
 + Fixed the credit card fields not loading at checkout on the Hummingbird theme, which left card payments impossible to complete
 + Fixed the order detail Mollie panel showing English labels in Latvian and Romanian back offices, the refund, capture, ship and cancel controls and their confirmation dialogs are now translated
