@@ -6,6 +6,7 @@ interface SwitchProps {
   onCheckedChange?: (checked: boolean) => void
   disabled?: boolean
   className?: string
+  "data-testid"?: string
 }
 
 const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(

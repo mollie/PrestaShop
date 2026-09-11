@@ -10,7 +10,7 @@
  */
 
 use Mollie\Config\Config;
-use Mollie\Install\Installer;
+use Mollie\Install\OrderStateInstaller;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -24,10 +24,10 @@ function upgrade_module_5_3_0(Mollie $module)
     Configuration::deleteByName('MOLLIE_PROFILE_ID');
     Configuration::updateValue(Config::MOLLIE_MAIL_WHEN_CHARGEBACK, true);
 
-    /** @var Installer $installer */
-    $installer = $module->getService(Installer::class);
+    /** @var OrderStateInstaller $orderStateInstaller */
+    $orderStateInstaller = $module->getService(OrderStateInstaller::class);
 
-    $installer->createChargedbackState();
+    $orderStateInstaller->install();
 
     return true;
 }

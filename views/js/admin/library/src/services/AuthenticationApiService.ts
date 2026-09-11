@@ -77,6 +77,23 @@ export class AuthenticationApiService {
   }
 
   /**
+   * Copy Test payment method settings to the Live environment
+   */
+  async copyTestSettingsToLive() {
+    const url = new URL(this.baseUrl, window.location.origin);
+
+    const formData = new FormData();
+    formData.append('ajax', '1');
+    formData.append('action', 'copyTestSettingsToLive');
+
+    const response = await fetch(url.toString(), {
+      method: 'POST',
+      body: formData
+    });
+    return response.json();
+  }
+
+  /**
    * Test API keys (both test and live)
    */
   async testApiKeys(testKey: string, liveKey: string) {

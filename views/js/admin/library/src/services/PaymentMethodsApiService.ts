@@ -117,6 +117,7 @@ export interface PaymentMethodsResponse {
     onlyOrderMethods: string[];
     onlyPaymentsMethods: string[];
     environment: 'test' | 'live';
+    hasLiveApiKey: boolean;
     is_connected: boolean;
   };
 }
