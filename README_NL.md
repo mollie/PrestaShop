@@ -4,7 +4,7 @@
 
 | PrestaShop version | Mollie module                                                      |
 |------------------|----------------------------------------------------------------------|
-| 1.7.6 - 9.0.0    | [Mollie 6](https://github.com/mollie/PrestaShop/releases)            |
+| 1.7.6 en hoger   | [Mollie 6](https://github.com/mollie/PrestaShop/releases)            |
 | 1.7.0 - 1.7.5    | [Mollie 5](https://github.com/mollie/PrestaShop1.7.0-1.7.8/releases) |
 | 1.6.1 - 1.6.1.24 | [Mollie 4](https://github.com/mollie/PrestaShop1.6/releases)         |
 | 1.5              | [Mollie 3](https://addons.prestashop.com/en/payment-card-wallet/40307-mollie-payments.html)                            |
@@ -110,9 +110,6 @@ KBC richt zich op Vlaanderen en CBC op Wallonië.
 
 ### Belfius Pay Button
 [Belfius](https://www.mollie.com/nl/payments/belfius) is een van de grootste banken van België. Met de Belfius Pay Button voorziet de bank haar klanten van een eigen betaaloplossing.
-
-### CartaSi
-[CartaSi](https://www.mollie.com/nl/payments/cartasi) is een van de meest gebruikte betaalmethoden in Italië. Er zijn ruim 13 miljoen CartaSi-creditcards in circulatie en het is een van de meest gebruikte betaalmethoden in Italië. 
 
 ### Cartes Bancaires
 [Cartes Bancaires](https://www.mollie.com/nl/payments/cartes-bancaires) zijn de meest gebruikte creditcards in Frankrijk, met meer dan 64 miljoen kaarten in circulatie. 
