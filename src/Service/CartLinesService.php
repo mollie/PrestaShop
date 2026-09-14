@@ -60,7 +60,6 @@ class CartLinesService
      * @param PaymentFeeData $paymentFeeData
      * @param string $currencyIsoCode
      * @param array $cartSummary
-     * @param float $shippingCost
      * @param array $cartItems
      * @param bool $psGiftWrapping
      * @param string $selectedVoucherCategory
@@ -75,7 +74,6 @@ class CartLinesService
         $paymentFeeData,
         $currencyIsoCode,
         $cartSummary,
-        $shippingCost,
         $cartItems,
         $psGiftWrapping,
         $selectedVoucherCategory,
@@ -87,10 +85,10 @@ class CartLinesService
         $vatRatePrecision = Config::VAT_RATE_ROUNDING_PRECISION;
 
         $totalPrice = round($amount, $apiRoundingPrecision);
-        // A free-shipping cart rule is already carried by total_discounts, which is emitted as its
-        // own discount line below. Zeroing the shipping line as well subtracted the same amount
-        // twice and the lines no longer summed to the payment amount (PIPRES-795).
-        $roundedShippingCost = round($shippingCost, $apiRoundingPrecision);
+        // Bill what the cart charges, not what the carrier costs. A free shipping rule without
+        // a code zeroes the summary shipping and leaves the carrier cost untouched, so the two
+        // disagree and only this one matches the amount the customer pays.
+        $roundedShippingCost = round($cartSummary['total_shipping'], $apiRoundingPrecision);
 
         $wrappingPrice = $psGiftWrapping ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
         $totalDiscounts = isset($cartSummary['total_discounts']) ? $cartSummary['total_discounts'] : 0;
