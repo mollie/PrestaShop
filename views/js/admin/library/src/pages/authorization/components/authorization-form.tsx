@@ -106,10 +106,13 @@ export default function AuthorizationForm() {
         setIsConnected(response.data.is_connected || false)
         setErrorMessage("")
         setJustConnected(false) // Reset the "just connected" state on load
+      } else {
+        // A failure body arrives as HTTP 200, so the catch below never sees it
+        setErrorMessage(response.message || t('failedToLoadSettings'))
       }
     } catch (error) {
       console.error('Failed to load settings:', error)
-      setErrorMessage("Failed to load current settings")
+      setErrorMessage(t('failedToLoadSettings'))
     } finally {
       setInitialLoading(false) // Stop initial loading regardless of success/failure
     }
