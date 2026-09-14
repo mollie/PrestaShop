@@ -34,7 +34,6 @@ class CartLinesServiceTest extends TestCase
      * @param $paymentFee
      * @param $currencyIsoCode
      * @param $cartSummary
-     * @param $shippingCost
      * @param $cartItems
      * @param $psGiftWrapping
      * @param $selectedVoucherCategory
@@ -48,7 +47,6 @@ class CartLinesServiceTest extends TestCase
         $paymentFee,
         $currencyIsoCode,
         $cartSummary,
-        $shippingCost,
         $cartItems,
         $psGiftWrapping,
         $selectedVoucherCategory,
@@ -85,7 +83,6 @@ class CartLinesServiceTest extends TestCase
             $paymentFee,
             $currencyIsoCode,
             $cartSummary,
-            $shippingCost,
             $cartItems,
             $psGiftWrapping,
             $selectedVoucherCategory,
@@ -129,7 +126,6 @@ class CartLinesServiceTest extends TestCase
                     'total_price' => 104.84,
                     'free_ship' => false,
                 ],
-                4.84,
                 'cartItems' => [
                     0 => [
                             'total_wt' => 100,
@@ -251,7 +247,6 @@ class CartLinesServiceTest extends TestCase
                     'total_price' => 104.84,
                     'free_ship' => false,
                 ],
-                4.84,
                 'cartItems' => [
                     0 => [
                             'total_wt' => 100,
@@ -359,7 +354,6 @@ class CartLinesServiceTest extends TestCase
                     'total_price' => 104.84,
                     'free_ship' => false,
                 ],
-                4.84,
                 'cartItems' => [
                     0 => [
                             'total_wt' => 100,
@@ -436,7 +430,6 @@ class CartLinesServiceTest extends TestCase
                     'free_ship' => false,
                     'total_discounts' => 6.05,
                 ],
-                4.84,
                 'cartItems' => [
                     0 => [
                             'total_wt' => 100,
@@ -531,7 +524,6 @@ class CartLinesServiceTest extends TestCase
                     'free_ship' => true,
                     'total_discounts' => 8.40,
                 ],
-                8.40,
                 'cartItems' => [
                     0 => [
                             'total_wt' => 14.28,
@@ -620,6 +612,71 @@ class CartLinesServiceTest extends TestCase
                             ->setMetaData([]),
                 ],
             ],
+            'automatic free shipping rule bills no shipping' => [
+                'amount' => 14.28,
+                'paymentFee' => new PaymentFeeData(0.0, 0.0, 0.0, false),
+                'currencyIsoCode' => $currencyIsoCode,
+                'cartSummary' => [
+                    'gift_products' => [
+                        ],
+                    'discounts' => [
+                            0 => [
+                                'name' => 'Free shipping test',
+                                'free_shipping' => '1',
+                                'value_real' => 0.0,
+                                'value_tax_exc' => 0.0,
+                            ],
+                        ],
+                    'total_wrapping' => 0,
+                    'total_wrapping_tax_exc' => 0,
+                    'total_shipping' => 0,
+                    'total_shipping_tax_exc' => 0,
+                    'total_products_wt' => 14.28,
+                    'total_products' => 11.90,
+                    'total_price' => 14.28,
+                    'free_ship' => true,
+                    'total_discounts' => 0,
+                ],
+                'cartItems' => [
+                    0 => [
+                            'total_wt' => 14.28,
+                            'cart_quantity' => '1',
+                            'price_wt' => 14.28,
+                            'id_product' => '6',
+                            'name' => $productName_3,
+                            'rate' => 20,
+                            'id_product_attribute' => '0',
+                            'id_customization' => null,
+                            'features' => [],
+                            'link_rewrite' => 'test-link',
+                            'id_image' => 'test-image-id',
+                        ],
+                ],
+                'psGiftWrapping' => false,
+                'selectedVoucherCategory' => 'null',
+                'translationMocks' => [
+                ],
+                'toolsMocks' => [
+                ],
+                'mocks' => [],
+                // The customer pays for the product only, so the product line is the whole amount.
+                'result' => [
+                    0 => (new OrderLine())
+                            ->setType('physical')
+                            ->setName($productName_3)
+                            ->setQuantity(1)
+                            ->setSku('6¤0¤0')
+                            ->setDiscountAmount(null)
+                            ->setProductUrl('')
+                            ->setImageUrl('')
+                            ->setUnitPrice(new Amount($currencyIsoCode, '14.28'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '14.28'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '2.38'))
+                            ->setCategory('')
+                            ->setVatRate('20.00')
+                            ->setMetaData(['idProduct' => '6']),
+                ],
+            ],
             'high value product line keeps Mollie-compatible vatAmount (PIPRES-781)' => [
                 'amount' => 12865.50,
                 'paymentFee' => new PaymentFeeData(0.00, 0.00, 0.00, false),
@@ -638,7 +695,6 @@ class CartLinesServiceTest extends TestCase
                     'total_price' => 12865.50,
                     'free_ship' => false,
                 ],
-                0,
                 'cartItems' => [
                     0 => [
                             'total_wt' => 12865.50,
