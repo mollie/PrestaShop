@@ -393,7 +393,14 @@ class CartLinesService
     private function addShippingLine($roundedShippingCost, $cartSummary, $apiRoundingPrecision, array $orderLines)
     {
         if (round($roundedShippingCost, 2) > 0) {
-            $shippingVatRate = round(($cartSummary['total_shipping'] - $cartSummary['total_shipping_tax_exc']) / $cartSummary['total_shipping_tax_exc'] * 100, $apiRoundingPrecision);
+            $shippingTaxExcl = (float) $cartSummary['total_shipping_tax_exc'];
+            // A charged shipping line with no tax base means no VAT to report. Dividing by it
+            // is fatal on PHP 8.
+            $shippingVatRate = 0.0;
+
+            if ($shippingTaxExcl > 0) {
+                $shippingVatRate = round(($cartSummary['total_shipping'] - $shippingTaxExcl) / $shippingTaxExcl * 100, $apiRoundingPrecision);
+            }
 
             $orderLines['shipping'] = [
                 [
