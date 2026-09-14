@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.7
++ Fixed checkout failing when an automatic free shipping cart rule applies to a paid carrier
+
 ## Changes in release 6.4.6
 + Apple Pay now works on desktop in Chrome, Edge and Firefox through Apple's QR code flow, and Apple Pay Direct prices shipping per delivery zone
 + Apple Pay Direct now works in test mode, with a warning when the live API key it needs is missing
@@ -18,7 +21,6 @@
 + Fixed the module's back office styles conflicting with other modules' styles
 + Fixed PHP deprecation notices on PHP 8.1 and newer when creating a payment
 + Fixed a fatal error when upgrading the module from a version older than 5.3.0
-+ Fixed checkout failing when an automatic free shipping cart rule applies to a paid carrier
 
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API
