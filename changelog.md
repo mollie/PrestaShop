@@ -4,6 +4,7 @@
 
 ## Changes in release 6.4.7
 + Fixed switching between Test and Live modes changing the mode even when the stored API key was rejected, which removed Mollie from the checkout while the back office still showed the previous mode
++ Fixed the API Configuration page showing an empty API key field after an upgrade, when a stored key fails the current format check
 
 ## Changes in release 6.4.6
 + Apple Pay now works on desktop in Chrome, Edge and Firefox through Apple's QR code flow, and Apple Pay Direct prices shipping per delivery zone
