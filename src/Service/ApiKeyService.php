@@ -40,7 +40,7 @@ class ApiKeyService
                 $this->validateApiKey($apiKey, $environment);
 
                 $api->setApiKey($apiKey);
-            } catch (ApiException $e) {
+            } catch (ApiException | MollieException $e) {
                 return null;
             }
         } elseif (!empty($context->employee) && Tools::getValue('Mollie_Api_Key')) {
