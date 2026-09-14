@@ -677,6 +677,82 @@ class CartLinesServiceTest extends TestCase
                             ->setMetaData(['idProduct' => '6']),
                 ],
             ],
+            'shipping with a zero tax base bills no vat' => [
+                'amount' => 22.68,
+                'paymentFee' => new PaymentFeeData(0.0, 0.0, 0.0, false),
+                'currencyIsoCode' => $currencyIsoCode,
+                'cartSummary' => [
+                    'gift_products' => [
+                        ],
+                    'discounts' => [
+                        ],
+                    'total_wrapping' => 0,
+                    'total_wrapping_tax_exc' => 0,
+                    'total_shipping' => 8.40,
+                    'total_shipping_tax_exc' => 0,
+                    'total_products_wt' => 14.28,
+                    'total_products' => 11.90,
+                    'total_price' => 22.68,
+                    'free_ship' => false,
+                    'total_discounts' => 0,
+                ],
+                'cartItems' => [
+                    0 => [
+                            'total_wt' => 14.28,
+                            'cart_quantity' => '1',
+                            'price_wt' => 14.28,
+                            'id_product' => '6',
+                            'name' => $productName_3,
+                            'rate' => 20,
+                            'id_product_attribute' => '0',
+                            'id_customization' => null,
+                            'features' => [],
+                            'link_rewrite' => 'test-link',
+                            'id_image' => 'test-image-id',
+                        ],
+                ],
+                'psGiftWrapping' => false,
+                'selectedVoucherCategory' => 'null',
+                'translationMocks' => [
+                    0 => [
+                        'function' => 'lang',
+                        'expects' => $shipping,
+                        'return' => $shipping,
+                        'at' => 0,
+                    ],
+                ],
+                'toolsMocks' => [
+                ],
+                'mocks' => [],
+                'result' => [
+                    0 => (new OrderLine())
+                            ->setType('physical')
+                            ->setName($productName_3)
+                            ->setQuantity(1)
+                            ->setSku('6¤0¤0')
+                            ->setDiscountAmount(null)
+                            ->setProductUrl('')
+                            ->setImageUrl('')
+                            ->setUnitPrice(new Amount($currencyIsoCode, '14.28'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '14.28'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '2.38'))
+                            ->setCategory('')
+                            ->setVatRate('20.00')
+                            ->setMetaData(['idProduct' => '6']),
+                    1 => (new OrderLine())
+                            ->setType('shipping_fee')
+                            ->setName($shipping)
+                            ->setQuantity(1)
+                            ->setSku($shipping)
+                            ->setDiscountAmount(null)
+                            ->setUnitPrice(new Amount($currencyIsoCode, '8.40'))
+                            ->setTotalPrice(new Amount($currencyIsoCode, '8.40'))
+                            ->setVatAmount(new Amount($currencyIsoCode, '0.00'))
+                            ->setCategory(null)
+                            ->setVatRate('0.00')
+                            ->setMetaData([]),
+                ],
+            ],
             'high value product line keeps Mollie-compatible vatAmount (PIPRES-781)' => [
                 'amount' => 12865.50,
                 'paymentFee' => new PaymentFeeData(0.00, 0.00, 0.00, false),
