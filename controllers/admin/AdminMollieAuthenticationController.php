@@ -314,45 +314,52 @@ class AdminMollieAuthenticationController extends ModuleAdminController
 
     private function ajaxGetCurrentSettings(): void
     {
+        $testApiKey = $this->configuration->get(Config::MOLLIE_API_KEY_TEST);
+        $liveApiKey = $this->configuration->get(Config::MOLLIE_API_KEY);
+        $environment = $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
+
+        $testKeyValid = $this->isStoredApiKeyUsable($testApiKey, true);
+        $liveKeyValid = $this->isStoredApiKeyUsable($liveApiKey, false);
+
+        $this->ajaxRender(json_encode([
+            'success' => true,
+            'data' => [
+                'test_api_key' => $testApiKey ?: '',
+                'live_api_key' => $liveApiKey ?: '',
+                'environment' => $environment ? 'live' : 'test',
+                'is_configured' => !empty($testApiKey) || !empty($liveApiKey),
+                'is_connected' => $environment ? $liveKeyValid : $testKeyValid,
+                'test_key_valid' => $testKeyValid,
+                'live_key_valid' => $liveKeyValid,
+            ],
+        ]));
+    }
+
+    /**
+     * Judges each stored key on its own so that one the current format check rejects cannot
+     * stop the page from rendering the other, which is the only way a merchant can replace it.
+     *
+     * @param string|null $apiKey
+     */
+    private function isStoredApiKeyUsable($apiKey, bool $isTestKey): bool
+    {
+        if (!$apiKey) {
+            return false;
+        }
+
         try {
-            $testApiKey = $this->configuration->get(Config::MOLLIE_API_KEY_TEST);
-            $liveApiKey = $this->configuration->get(Config::MOLLIE_API_KEY);
-            $environment = $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
-
             $apiTestFeedbackBuilder = $this->module->getService(ApiTestFeedbackBuilder::class);
+            $keyInfo = $apiTestFeedbackBuilder->getApiKeyInfo($apiKey, $isTestKey);
 
-            $testKeyValid = false;
-            $liveKeyValid = false;
-
-            if ($testApiKey) {
-                $testKeyInfo = $apiTestFeedbackBuilder->getApiKeyInfo($testApiKey, true);
-                $testKeyValid = $testKeyInfo['status'] && !$testKeyInfo['warning'];
-            }
-
-            if ($liveApiKey) {
-                $liveKeyInfo = $apiTestFeedbackBuilder->getApiKeyInfo($liveApiKey, false);
-                $liveKeyValid = $liveKeyInfo['status'] && !$liveKeyInfo['warning'];
-            }
-
-            $isConnected = $environment ? $liveKeyValid : $testKeyValid;
-
-            $this->ajaxRender(json_encode([
-                'success' => true,
-                'data' => [
-                    'test_api_key' => $testApiKey ?: '',
-                    'live_api_key' => $liveApiKey ?: '',
-                    'environment' => $environment ? 'live' : 'test',
-                    'is_configured' => !empty($testApiKey) || !empty($liveApiKey),
-                    'is_connected' => $isConnected,
-                    'test_key_valid' => $testKeyValid,
-                    'live_key_valid' => $liveKeyValid,
-                ],
-            ]));
+            return !empty($keyInfo['status']) && empty($keyInfo['warning']);
         } catch (Exception $e) {
-            $this->ajaxRender(json_encode([
-                'success' => false,
-                'message' => $this->module->l('Failed to load current settings', self::FILE_NAME),
-            ]));
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error(sprintf('%s - Could not validate the stored %s API key', self::FILE_NAME, $isTestKey ? 'test' : 'live'), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+
+            return false;
         }
     }
 
