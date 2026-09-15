@@ -123,6 +123,13 @@ jobs:
           fetch-depth: 0
 
       - name: Build module ZIP
+        env:
+          # invertus/knapsack is a vcs repository, so composer resolves it through the GitHub API.
+          # Unauthenticated, that API is rate limited per runner IP, and composer's GitHub driver
+          # answers a rate limit by falling back to cloning git@github.com over SSH - which the
+          # runner has no key for. The job then fails with "Permission denied (publickey)" on a
+          # public repository, intermittently, depending on who else shares the runner's IP.
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         run: |
           composer install --no-dev --optimize-autoloader --classmap-authoritative
           composer dump-autoload --no-dev --optimize --classmap-authoritative
