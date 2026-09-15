@@ -18,6 +18,7 @@
 + Fixed the module's back office styles conflicting with other modules' styles
 + Fixed PHP deprecation notices on PHP 8.1 and newer when creating a payment
 + Fixed a fatal error when upgrading the module from a version older than 5.3.0
++ Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
 
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API
