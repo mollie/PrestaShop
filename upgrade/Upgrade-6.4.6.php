@@ -27,6 +27,11 @@ function upgrade_module_6_4_6($module)
     // vendor/autoload.php through require_once on a path that is already included, so the new
     // autoloader never registers. Classes this version adds have to be loaded by path.
     require_once __DIR__ . '/../src/Utility/TabTranslationUtility.php';
+    require_once __DIR__ . '/../src/Utility/HookRegistrationUtility.php';
+    // Installer is only read for its hook list, but the interface it implements has to resolve
+    // first or the class declaration itself fails under the stale autoloader.
+    require_once __DIR__ . '/../src/Install/InstallerInterface.php';
+    require_once __DIR__ . '/../src/Install/Installer.php';
 
     try {
         // Bypasses the service container, which is not reliably available during an upgrade.
@@ -106,6 +111,8 @@ function upgrade_module_6_4_6($module)
 
         $addIndexesFunction();
 
+        mollieRegisterMissingHooks($module);
+
         // Earlier installs and upgrades persisted tab names in the wrong language: languages
         // without a translations/<iso>.php file inherited the strings of whichever language
         // PrestaShop merged before them, and the install path wrote the installing employee's
@@ -127,6 +134,32 @@ function upgrade_module_6_4_6($module)
         );
 
         return false;
+    }
+}
+
+/**
+ * Registers every hook a clean install would register but this shop does not have.
+ *
+ * Hooks are only registered by the installer, so a shop that installed an older version never
+ * picks up a hook added to the list afterwards - displayBackOfficeHeader among them, which
+ * renders the payment email checkbox on the manual order screen. That screen's JavaScript keeps
+ * loading through a hook the shop does have, so the feature reads as half working, not absent.
+ *
+ * Hook::registerHook already skips a hook the shop holds, per shop, so this is safe to re-run.
+ *
+ * @param Mollie $module
+ *
+ * @return void
+ */
+function mollieRegisterMissingHooks($module)
+{
+    $hooks = \Mollie\Utility\HookRegistrationUtility::installableHooks(
+        \Mollie\Install\Installer::getHooks(),
+        _PS_VERSION_
+    );
+
+    foreach ($hooks as $hook) {
+        $module->registerHook($hook);
     }
 }
 

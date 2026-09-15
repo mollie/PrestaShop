@@ -15,8 +15,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Installed here rather than through prestashopcorp/github-action-php-cs-fixer-new, a Docker
+      # action built FROM php:7.3. That base is Debian 11 "bullseye", whose LTS ended 2026-08-31,
+      # so its security packages have left the mirror and the action's own apt-get install now
+      # 404s while the image builds. The job died before reaching any of our files, on every
+      # branch, and nothing we release can fix an image we do not control.
+      # Versions match composer.lock so CI applies the same rules as `make fix-lint`.
+      - name: Install PHP-CS-Fixer
+        run: |
+          mkdir -p "$RUNNER_TEMP/cs"
+          echo '{"config":{"platform":{"php":"7.4"}}}' > "$RUNNER_TEMP/cs/composer.json"
+          docker run --rm -v "$RUNNER_TEMP/cs":/cs --workdir=/cs composer:2.2 \
+            require --no-interaction --no-progress \
+            prestashop/php-dev-tools:v5 friendsofphp/php-cs-fixer:v2.19.3
+
       - name: Run PHP-CS-Fixer
-        uses: prestashopcorp/github-action-php-cs-fixer-new@master
+        run: |
+          docker run --rm -v "$PWD":/code -v "$RUNNER_TEMP/cs":/cs --workdir=/code php:7.4-cli \
+            php /cs/vendor/bin/php-cs-fixer fix . \
+            --path-mode=intersection --dry-run --diff --using-cache=no --diff-format udiff
 
   eslint:
     name: ESLint
@@ -106,6 +123,13 @@ jobs:
           fetch-depth: 0
 
       - name: Build module ZIP
+        env:
+          # invertus/knapsack is a vcs repository, so composer resolves it through the GitHub API.
+          # Unauthenticated, that API is rate limited per runner IP, and composer's GitHub driver
+          # answers a rate limit by falling back to cloning git@github.com over SSH - which the
+          # runner has no key for. The job then fails with "Permission denied (publickey)" on a
+          # public repository, intermittently, depending on who else shares the runner's IP.
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         run: |
           composer install --no-dev --optimize-autoloader --classmap-authoritative
           composer dump-autoload --no-dev --optimize --classmap-authoritative
