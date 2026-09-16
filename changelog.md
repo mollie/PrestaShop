@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.6
++ The cart page's "Total (tax incl.)" now follows the Apple Pay Direct sheet as the shopper switches delivery option
+
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API
 + New payment method: Billink, available on the Payments API for consumer purchases up to 2,500.00 EUR

@@ -53,6 +53,9 @@ $(document).ready(function () {
         var supportedApplePaySessionVersion = 3;
         const session = new ApplePaySession(supportedApplePaySessionVersion, createRequest(countryCode, currencyCode, totalLabel, cartSubTotal))
         session.begin()
+        session.oncancel = () => {
+            restoreCartTotal()
+        }
         session.onvalidatemerchant = (applePayValidateMerchantEvent) => {
             jQuery.ajax({
                 url: ajaxUrl,
@@ -125,6 +128,7 @@ $(document).ready(function () {
                     if (response.success === false) {
                         response.errors = createAppleErrors(response.errors)
                     }
+                    showCartTotal(response.data && response.data.amount)
                     session.completeShippingMethodSelection(
                         ApplePaySession.STATUS_SUCCESS,
                         {
@@ -159,6 +163,7 @@ $(document).ready(function () {
                     if (applePayShippingContactUpdate.success === true) {
                         if (response.totals.length > 0) {
                             var firstTotal = response.totals[0];
+                            showCartTotal(firstTotal.amount)
                             session.completeShippingContactSelection(
                                 ApplePaySession.STATUS_SUCCESS,
                                 response.shipping_methods,
@@ -208,6 +213,48 @@ $(document).ready(function () {
         })
     }
 });
+
+/**
+ * Keeps the cart page's "Total (tax incl.)" in step with the Apple Pay sheet, which re-totals
+ * every time the shopper picks a different delivery option. The page itself is not re-rendered
+ * while the sheet is open, so without this it keeps showing the total from page load.
+ */
+function showCartTotal(amount) {
+    var target = document.querySelector('.cart-summary-line.cart-total .value')
+    var value = parseFloat(amount)
+
+    if (!target || isNaN(value)) {
+        return
+    }
+
+    if (typeof target.dataset.mollieOriginalTotal === 'undefined') {
+        target.dataset.mollieOriginalTotal = target.textContent
+    }
+
+    target.textContent = formatCartPrice(value)
+}
+
+function restoreCartTotal() {
+    var target = document.querySelector('.cart-summary-line.cart-total .value')
+
+    if (!target || typeof target.dataset.mollieOriginalTotal === 'undefined') {
+        return
+    }
+
+    target.textContent = target.dataset.mollieOriginalTotal
+    delete target.dataset.mollieOriginalTotal
+}
+
+function formatCartPrice(amount) {
+    try {
+        return new Intl.NumberFormat(prestashop.language.locale, {
+            style: 'currency',
+            currency: prestashop.currency.iso_code,
+        }).format(amount)
+    } catch (e) {
+        return amount.toFixed(2)
+    }
+}
 
 function getApplePayButtonStyle() {
     switch (parseInt(applePayButtonStyle)) {
