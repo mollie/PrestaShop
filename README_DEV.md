@@ -2,9 +2,15 @@
 
 ## Module production build
 
-After each pull request you can download module production build artifacts
+A production build of the module is uploaded as a workflow artifact every time a pull request is closed.
 
 ## PHP-CS-FIXER
 
-Its being applied automatically after each commit but if you want to run them locally the recommended way would be:
-`make fl`
+The `php-cs-fixer` job runs in CI on every pull request. There is no local git hook, so nothing is
+reformatted for you on commit. To fix the coding style before pushing, run:
+`make fix-lint`
+
+## React admin library
+
+The back office React apps live in `views/js/admin/library`. Rebuild the compiled bundles with:
+`make build-react`

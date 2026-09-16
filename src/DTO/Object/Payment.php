@@ -108,7 +108,7 @@ class Payment implements \JsonSerializable
         $this->company = $company;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $result = [];
         $result['cardToken'] = $this->getCardToken();

@@ -1,4 +1,8 @@
-@import "tailwindcss";
+/* Imported in parts so utilities land unlayered, where they can outrank another
+ * module's unlayered global reset; theme and preflight stay layered. See postcss.config.js. */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
 @import "tw-animate-css";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -116,10 +120,15 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* Unlayered and scoped on purpose: inside @layer base this loses to another module's
+ * unlayered `*` reset, which renders every unstyled border in the text colour.
+ * The scope prefix is written out so the PostCSS plugin leaves it be. */
+.mollie-admin-app,
+.mollie-admin-app * {
+  @apply border-border outline-ring/50;
+}
+
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
   body {
     @apply bg-background text-foreground;
   }
@@ -256,27 +265,10 @@
     color: #1d4ed8 !important;
   }
 
-  /* Force white text on blue/primary buttons in payment methods page */
+  /* Match exact classes only: a [class*="bg-blue"] substring also matches variant
+     prefixes such as hover:bg-blue-50, painting text white with no blue background. */
   #mollie-payment-methods-root button.bg-blue-600,
-  #mollie-payment-methods-root button.bg-primary,
-  #mollie-payment-methods-root button[class*="bg-blue"] {
-    color: #ffffff !important;
-  }
-
-  /* Force white text on API selection buttons */
-  #mollie-payment-methods-root button.text-white.bg-blue-600,
-  #mollie-payment-methods-root button[class*="bg-blue-600"] {
-    color: #ffffff !important;
-  }
-
-  /* Force white text on save buttons */
-  #mollie-payment-methods-root button[class*="bg-blue"] {
-    color: #ffffff !important;
-  }
-
-  /* Override any text color classes that might interfere */
-  #mollie-payment-methods-root button.bg-blue-600.text-white,
-  #mollie-payment-methods-root button.bg-blue-600 {
+  #mollie-payment-methods-root button.bg-primary {
     color: #ffffff !important;
   }
 

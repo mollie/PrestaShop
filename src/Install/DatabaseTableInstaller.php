@@ -51,7 +51,9 @@ final class DatabaseTableInstaller implements InstallerInterface
 				`reason`          VARCHAR(64),
 				`created_at`      DATETIME     NOT NULL,
 				`updated_at`      DATETIME     DEFAULT NULL,
-				 INDEX (cart_id, order_reference)
+				 INDEX (cart_id, order_reference),
+				 INDEX `mollie_payments_status_created` (bank_status, created_at),
+				 INDEX `mollie_payments_created_at` (created_at)
 			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
         $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_country` (
@@ -173,28 +175,85 @@ final class DatabaseTableInstaller implements InstallerInterface
         return $sql;
     }
 
+    /**
+     * Independent guarded blocks, one per schema change. They must stay independent: an early
+     * return here would silently skip everything appended after it on an existing install, which
+     * is what CREATE TABLE IF NOT EXISTS already fails to cover.
+     */
     private function alterTableCommands(): bool
     {
-        $query = '
-            SELECT COUNT(*) > 0 AS count
-            FROM information_schema.columns
-            WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND table_name = "' . _DB_PREFIX_ . 'mollie_payments" AND column_name = "mandate_id";
-        ';
-
-        /* only run if it doesn't exist */
-        if (Db::getInstance()->getValue($query)) {
-            return true;
-        }
-
-        $query = '
-            ALTER TABLE ' . _DB_PREFIX_ . 'mollie_payments
-            ADD COLUMN mandate_id VARCHAR(64);
-        ';
-
-        if (!Db::getInstance()->execute($query)) {
+        if (!$this->addMandateIdColumn()) {
             return false;
         }
 
+        return $this->addPaymentOverviewIndexes();
+    }
+
+    private function addMandateIdColumn(): bool
+    {
+        if ($this->columnExists('mollie_payments', 'mandate_id')) {
+            return true;
+        }
+
+        return (bool) Db::getInstance()->execute('
+            ALTER TABLE `' . _DB_PREFIX_ . 'mollie_payments`
+            ADD COLUMN `mandate_id` VARCHAR(64);
+        ');
+    }
+
+    /**
+     * Backs the payment overview list. It needs both shapes and uses one or the other depending
+     * on the filter: created_at alone lets the default view walk the index backwards and stop at
+     * the page size, while bank_status first is what turns a status filter into a range instead
+     * of a 500k row index walk with a row lookup per entry.
+     *
+     * ADD INDEX is an online DDL on MySQL 5.6 and MariaDB 10.0 upwards, so it does not block
+     * writes on a shop with a large history.
+     */
+    private function addPaymentOverviewIndexes(): bool
+    {
+        $indexes = [
+            'mollie_payments_status_created' => '`bank_status`, `created_at`',
+            'mollie_payments_created_at' => '`created_at`',
+        ];
+
+        foreach ($indexes as $name => $columns) {
+            if ($this->indexExists('mollie_payments', $name)) {
+                continue;
+            }
+
+            $added = Db::getInstance()->execute('
+                ALTER TABLE `' . _DB_PREFIX_ . 'mollie_payments`
+                ADD INDEX `' . bqSQL($name) . '` (' . $columns . ');
+            ');
+
+            if (!$added) {
+                return false;
+            }
+        }
+
         return true;
+    }
+
+    private function columnExists(string $table, string $column): bool
+    {
+        return (bool) Db::getInstance()->getValue('
+            SELECT COUNT(*) > 0
+            FROM information_schema.columns
+            WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '"
+                AND TABLE_NAME = "' . _DB_PREFIX_ . pSQL($table) . '"
+                AND COLUMN_NAME = "' . pSQL($column) . '";
+        ');
+    }
+
+    private function indexExists(string $table, string $index): bool
+    {
+        return (bool) Db::getInstance()->getValue('
+            SELECT COUNT(*) > 0
+            FROM information_schema.statistics
+            WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '"
+                AND TABLE_NAME = "' . _DB_PREFIX_ . pSQL($table) . '"
+                AND INDEX_NAME = "' . pSQL($index) . '";
+        ');
     }
 }

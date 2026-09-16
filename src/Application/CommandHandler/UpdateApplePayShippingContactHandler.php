@@ -69,6 +69,18 @@ final class UpdateApplePayShippingContactHandler
 
         $applePayCarriers = $this->applePayCarriersBuilder->build(Carrier::getCarriersForOrder($country->id_zone), $country->id_zone);
 
+        // the sheet preselects the first listed method without firing onshippingmethodselected,
+        // so the cart must already carry it or the authorized total diverges from the charged one
+        $firstCarrier = $applePayCarriers[0] ?? null;
+
+        if ($firstCarrier) {
+            $cart->id_carrier = $firstCarrier->getCarrierId();
+            $cart->setDeliveryOption([
+                $cart->id_address_delivery => $firstCarrier->getCarrierId() . ',',
+            ]);
+            $cart->update();
+        }
+
         $shippingMethods = ShippingMethodUtility::collectShippingMethodData($applePayCarriers, $cart);
         $totals = $this->orderTotalCollector->getOrderTotals($applePayCarriers, $cart);
 
@@ -86,7 +98,7 @@ final class UpdateApplePayShippingContactHandler
                 'totals' => $totals,
                 'paymentFee' => [
                     'label' => 'Payment fee',
-                    'amount' => $paymentFee,
+                    'amount' => number_format($paymentFee, 2, '.', ''),
                     'type' => 'final',
                 ],
             ],

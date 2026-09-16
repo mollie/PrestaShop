@@ -19,6 +19,7 @@ use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Service\MultistoreSettingsContextGuard;
+use Mollie\Service\PaymentMethod\EnvironmentSettingsCopyService;
 use Mollie\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -109,6 +110,11 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 'switchTo' => $this->module->l('Switch to %s', self::FILE_NAME),
                 'multistoreRestrictedTitle' => $this->module->l('Select a specific shop', self::FILE_NAME),
                 'multistoreRestrictedMessage' => $this->module->l('Mollie API keys are saved per shop. To configure them, switch from "All stores" to a single shop using the shop selector at the top of the page.', self::FILE_NAME),
+                'testModeHint' => $this->module->l('Test mode lets you try out your payment methods without taking real payments. When you are ready to go live, you can bring that setup with you instead of configuring everything again.', self::FILE_NAME),
+                'copyTestToLiveOption' => $this->module->l('Copy my Test payment method settings to Live', self::FILE_NAME),
+                'copyTestToLivePending' => $this->module->l('Your Test settings will be copied as soon as you connect your Live API key.', self::FILE_NAME),
+                'copyTestToLiveSuccess' => $this->module->l('Test settings copied to Live.', self::FILE_NAME),
+                'copyTestToLiveError' => $this->module->l('Failed to copy Test settings to Live.', self::FILE_NAME),
             ],
         ]);
 
@@ -215,7 +221,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
 
         $action = $this->tools->getValue('action');
 
-        $settingsMutatingActions = ['saveApiKey', 'switchEnvironment'];
+        $settingsMutatingActions = ['saveApiKey', 'switchEnvironment', 'copyTestSettingsToLive'];
 
         if (in_array($action, $settingsMutatingActions, true) && !$this->multistoreSettingsContextGuard->canEditSettings()) {
             $this->ajaxRender(json_encode([
@@ -239,12 +245,53 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             case 'switchEnvironment':
                 $this->ajaxSwitchEnvironment();
                 break;
+            case 'copyTestSettingsToLive':
+                $this->ajaxCopyTestSettingsToLive();
+                break;
             default:
                 $this->ajaxRender(json_encode([
                     'success' => false,
                     'message' => 'Invalid action',
                 ]));
                 break;
+        }
+    }
+
+    private function ajaxCopyTestSettingsToLive(): void
+    {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        try {
+            /** @var EnvironmentSettingsCopyService $environmentSettingsCopyService */
+            $environmentSettingsCopyService = $this->module->getService(EnvironmentSettingsCopyService::class);
+
+            $result = $environmentSettingsCopyService->copy((int) $this->context->shop->id);
+
+            if ($result['liveKeyMissing']) {
+                $this->ajaxRender(json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('A valid Live API key is required before Test settings can be copied.', self::FILE_NAME),
+                ]));
+
+                return;
+            }
+
+            $this->ajaxRender(json_encode([
+                'success' => true,
+                'data' => [
+                    'copied' => $result['copied'],
+                ],
+            ]));
+        } catch (Exception $e) {
+            $logger->error(sprintf('%s - Failed to copy test settings to live', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+
+            $this->ajaxRender(json_encode([
+                'success' => false,
+                'message' => $this->module->l('Failed to copy Test settings to Live.', self::FILE_NAME),
+            ]));
         }
     }
 

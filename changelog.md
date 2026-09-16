@@ -3,6 +3,21 @@
 # Changelog #
 
 ## Changes in release 6.4.6
++ Apple Pay now works on desktop in Chrome, Edge and Firefox through Apple's QR code flow, and Apple Pay Direct prices shipping per delivery zone
++ Apple Pay Direct now works in test mode, with a warning when the live API key it needs is missing
++ Added a Payment overview page for failed, cancelled and expired payments, and customers whose payment fails now return to the shop immediately
++ Test payment method settings can now be copied to Live when switching the API key
++ Added an {order.id} placeholder to the payment description for the numeric PrestaShop order ID
++ The payment methods list now scrolls automatically while a method is being dragged
++ Fixed credit card fields not loading at checkout on the Hummingbird theme
++ Translated the order page Mollie panel into Latvian and Romanian
++ Fixed back office menu and settings tab names appearing in the wrong language after an upgrade
++ Fixed the order confirmation email subject being sent in English instead of the order's language
++ Fixed the Mollie order confirmation email appending a wrong attribute to product names
++ Fixed granting a profile View access to the Mollie menu not being saved
++ Fixed the module's back office styles conflicting with other modules' styles
++ Fixed PHP deprecation notices on PHP 8.1 and newer when creating a payment
++ Fixed a fatal error when upgrading the module from a version older than 5.3.0
 + The cart page's "Total (tax incl.)" now follows the Apple Pay Direct sheet as the shopper switches delivery option
 
 ## Changes in release 6.4.5

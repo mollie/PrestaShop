@@ -7,7 +7,7 @@
 
 | PrestaShop version | Mollie module                                                       |
 |------------------|---------------------------------------------------------------------|
-| 1.7.6 - 9.0.0    | [Mollie 6](https://github.com/mollie/PrestaShop/releases)           |
+| 1.7.6 and later  | [Mollie 6](https://github.com/mollie/PrestaShop/releases)           |
 | 1.7.0 - 1.7.5    | [Mollie 5](https://github.com/mollie/PrestaShop1.7.0-1.7.8/releases) |
 | 1.6.1 - 1.6.1.24 | [Mollie 4](https://github.com/mollie/PrestaShop1.6/releases)        |
 | 1.5              | [Mollie 3](https://addons.prestashop.com/en/payment-card-wallet/40307-mollie-payments.html)     |
@@ -18,10 +18,8 @@ Receive payments from European customers with ease. Mollie provides payment meth
 
 Choose the best payment provider available for your online PrestaShop store. Create your merchant account at [Mollie.com](https://www.mollie.com/). 
 
-Mollie supports the following payment methods: iDEAL, Credit card, Bancontact, SOFORT Banking, ING Home’Pay, Bank transfers, PayPal, KBC / CBC Payment Button, Belfius, CartaSi, Cartes Bancaires, EPS, Klarna: Pay later, Klarna: Slice it
+Mollie supports the following payment methods: iDEAL, Credit card, Bancontact, SOFORT Banking, ING Home’Pay, Bank transfers, PayPal, KBC / CBC Payment Button, Belfius, Cartes Bancaires, EPS, Klarna: Pay later, Klarna: Slice it
 
-[![Build Status](https://travis-ci.org/mollie/PrestaShop.svg?branch=master)](https://travis-ci.org/mollie/PrestaShop)
-[![Greenkeeper badge](https://badges.greenkeeper.io/mollie/PrestaShop.svg)](https://greenkeeper.io/)
 [![Release badge](https://img.shields.io/github/release/mollie/PrestaShop.svg)](https://github.com/mollie/PrestaShop/releases/latest)
 
 ## Installation PrestaShop 1.7 ##

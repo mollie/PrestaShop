@@ -38,6 +38,8 @@ interface PaymentMethodRepositoryInterface extends ReadOnlyRepositoryInterface
 
     public function updatePaymentReason($transactionId, $reason);
 
+    public function updateAttemptStatus(string $transactionId, string $status, string $reason = ''): bool;
+
     public function getCustomerGroupsForPaymentMethod(int $paymentMethodId): array;
 
     public function countEnabledMethods(int $environment, int $shopId): int;

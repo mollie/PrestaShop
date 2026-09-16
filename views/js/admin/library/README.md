@@ -1,36 +1,45 @@
-# Mollie Authentication React Component
+# Mollie admin React apps
 
-Clean React authentication page for Mollie PrestaShop module admin interface.
+React front ends for the Mollie PrestaShop module back office pages.
 
 ## Structure
 
 ```
 library/
-├── src/pages/authentication/          # Authentication page
-│   ├── index.tsx                      # Entry point
-│   ├── AuthenticationPage.tsx         # Main component
-│   ├── components/                    # Your authentication components
-│   └── services/                      # API service layer
-├── components/ui/                     # Essential UI components only
-│   ├── badge.tsx, button.tsx         # Used components
-│   ├── card.tsx, input.tsx
-│   ├── label.tsx, tabs.tsx
-├── dist/assets/authentication.js      # Built bundle
-└── Build configuration files
+├── src/app/                           # Vite entry points, one per back office page
+│   ├── authorization.tsx
+│   ├── payment-methods.tsx
+│   └── advanced-settings.tsx
+├── src/pages/                         # Page implementations
+│   ├── authorization/
+│   ├── payment-methods/
+│   └── advanced-settings/
+├── src/services/                      # API service layer
+│   ├── AuthenticationApiService.ts
+│   ├── PaymentMethodsApiService.ts
+│   └── AdvancedSettingsApiService.ts
+├── src/shared/                        # Shared UI components, hooks, types and styles
+└── dist/assets/                       # Build output, git ignored
+    ├── authorization.js
+    ├── mollie-payment-methods.js
+    └── mollie-advanced-settings.js
 ```
 
 ## Commands
 
-- `npm install` - Install dependencies  
-- `npm run build` - Build for production
+- `npm install` - Install dependencies
 - `npm run dev` - Development server
+- `npm run build` - Type check and build for production
+- `npm run lint` - Run ESLint
 
-## Usage
+From the module root, `make build-react` installs and builds in one step.
 
-1. Add your authentication components to `src/pages/authentication/components/`
-2. Add API service to `src/pages/authentication/services/`
-3. Build with `npm run build`
-4. Include `dist/assets/authentication.js` in your PHP template
+## Notes
 
-
-
+- `dist/` is git ignored. The release workflow builds it, and a local environment only picks up a
+  source change after `make build-react`.
+- The admin controllers register the bundles from `views/js/admin/library/dist/assets/`, so the
+  built file names are part of the contract and must match the Vite entry names.
+- All page styles are scoped to `.mollie-admin-app` by `postcss.config.js` so they cannot leak into
+  the PrestaShop back office theme or other modules.
+- `src/` and the build configuration are stripped from the release ZIP; only `dist/` ships.
