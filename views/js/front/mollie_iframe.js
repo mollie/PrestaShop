@@ -10,10 +10,7 @@
  */
 
 $(document).ready(function () {
-    var $mollieContainers = $('.mollie-iframe-container');
-    if (!$mollieContainers.length) {
-        return;
-    }
+    var $mollieContainers = $();
 
     // Hummingbird renames the wrapper, and a custom theme may carry only the plain class.
     var additionalInformationSelector = '.js-additional-information, .additional-information';
@@ -40,8 +37,6 @@ $(document).ready(function () {
       $additionalInformation.removeClass('mollie-credit-card-container__show')
     }
 
-    overridePrestaShopsAdditionalInformationHideFunctionality($mollieContainers)
-
     // if credit card is somehow preselected its hidden content will be displayed
     var isMollieCreditCardPreselected = function ($iframeContainer) {
       var $additionalInformation = $iframeContainer.closest(additionalInformationSelector)
@@ -57,10 +52,6 @@ $(document).ready(function () {
       return $paymentOption.is(':checked')
     }
 
-    if (isMollieCreditCardPreselected($mollieContainers)) {
-      showAdditionalInformation($mollieContainers.closest(additionalInformationSelector))
-    }
-
     var options = {
         styles: {
             base: {
@@ -70,11 +61,11 @@ $(document).ready(function () {
             }
         }
     };
-    var mollie = Mollie(profileId, {locale: isoCode, testMode: isTestMode});
-    var cardHolder = mollie.createComponent('cardHolder', options);
-    var cardNumber = mollie.createComponent('cardNumber', options);
-    var expiryDate = mollie.createComponent('expiryDate', options);
-    var verificationCode = mollie.createComponent('verificationCode', options);
+    var mollie;
+    var cardHolder;
+    var cardNumber;
+    var expiryDate;
+    var verificationCode;
 
     var cardHolderInput;
     var carNumberInput;
@@ -88,7 +79,53 @@ $(document).ready(function () {
         'verification-code': 3
     };
     var fieldErrors = {};
-    mountMollieComponents();
+    var isCreatingToken = false;
+
+    initMollieCardFields();
+
+    // The one-page checkout renders the payment list after the page has loaded and replaces it
+    // on every address, carrier or cart change, so the fields have to be mounted again each time.
+    if (window.prestashop && typeof window.prestashop.on === 'function') {
+        $.each(['opcPaymentMethodsUpdated', 'opcPaymentMethodsRefreshed'], function (index, eventName) {
+            window.prestashop.on(eventName, function () {
+                initMollieCardFields();
+            });
+        });
+    }
+
+    function initMollieCardFields() {
+        $mollieContainers = $('.mollie-iframe-container');
+        if (!$mollieContainers.length) {
+            return;
+        }
+
+        // A refresh that left the fields in place must not remount them - that would drop
+        // whatever the shopper has already typed into the card inputs.
+        if (hasMountedCardFields()) {
+            return;
+        }
+
+        overridePrestaShopsAdditionalInformationHideFunctionality($mollieContainers)
+
+        if (isMollieCreditCardPreselected($mollieContainers)) {
+          showAdditionalInformation($mollieContainers.closest(additionalInformationSelector))
+        }
+
+        // createToken() requires every component ever created on the instance to be mounted, so
+        // the same four are reused and remounted rather than created again per rebuild.
+        if (!mollie) {
+            mollie = Mollie(profileId, {locale: isoCode, testMode: isTestMode});
+            cardHolder = mollie.createComponent('cardHolder', options);
+            cardNumber = mollie.createComponent('cardNumber', options);
+            expiryDate = mollie.createComponent('expiryDate', options);
+            verificationCode = mollie.createComponent('verificationCode', options);
+        } else {
+            unmountMollieComponents();
+        }
+
+        fieldErrors = {};
+        mountMollieComponents();
+    }
 
     $(document).on('change', 'input[data-module-name="mollie"]', function () {
         var paymentOption = $(this).attr('id');
@@ -98,13 +135,12 @@ $(document).ready(function () {
         showAdditionalInformation($additionalInformation)
 
         var methodId = $additionalInformation.find('input[name="mollie-method-id"]').val();
-        if (methodId !== 'creditcard') {
+        // Remounting fields that are already live races the component handshake and can leave
+        // one of them blank, so only rebuild them when they are actually missing.
+        if (methodId !== 'creditcard' || !mollie || hasMountedCardFields()) {
             return;
         }
-        cardHolderInput.unmount();
-        carNumberInput.unmount();
-        expiryDateInput.unmount();
-        verificationCodeInput.unmount();
+        unmountMollieComponents();
         fieldErrors = {};
         handleErrors();
         $('.mollie-input').removeClass('is-invalid');
@@ -131,8 +167,16 @@ $(document).ready(function () {
         verificationCodeInput = mountMollieField(this, '#verification-code', methodId, verificationCode, 'verification-code');
 
         var $mollieCardToken = $('input[name="mollieCardToken"]');
+        var $paymentForm = $mollieCardToken.closest('form');
+
+        // A refreshed payment list can hand back the same form node, so only bind it once.
+        if ($paymentForm.data('mollieSubmitBound')) {
+            return;
+        }
+        $paymentForm.data('mollieSubmitBound', true);
+
         var isResubmit = false;
-        $mollieCardToken.closest('form').on('submit', function (event) {
+        $paymentForm.on('submit', function (event) {
             var $form = $(this);
             var useSavedCardCheckbox = $('input[name="mollie-use-saved-card"]');
             if (isResubmit || useSavedCardCheckbox.is(':checked')) {
@@ -156,6 +200,69 @@ $(document).ready(function () {
             $('#payment-confirmation').find('button[type=submit]').prop("disabled", false);
         });
     }
+
+    function hasMountedCardFields() {
+        var $fields = $('.mollie-input');
+
+        return $fields.length > 0 && $fields.find('iframe').length >= $fields.length;
+    }
+
+    function unmountMollieComponents() {
+        $.each([cardHolder, cardNumber, expiryDate, verificationCode], function (index, component) {
+            if (!component) {
+                return;
+            }
+            try {
+                component.unmount();
+            } catch (error) {
+                // the field it was mounted into is already gone
+            }
+        });
+    }
+
+    function isMollieCreditCardSelected() {
+        var $selected = $('input[name="payment-option"][data-module-name="mollie"]:checked');
+        if (!$selected.length) {
+            return false;
+        }
+
+        var $additionalInformation = $('#' + $selected.attr('id') + '-additional-information');
+
+        return $additionalInformation.find('input[name="mollie-method-id"]').val() === 'creditcard';
+    }
+
+    // The one-page checkout submits the payment form through HTMLFormElement.prototype.submit(),
+    // which fires no submit event, so the token has to be created before its own handler runs.
+    // Capturing on the document guarantees that; the click is replayed once the token is in.
+    document.addEventListener('click', function (event) {
+        var $payButton = $(event.target).closest('#opc-pay-button');
+
+        if (!$payButton.length || !mollie || isCreatingToken) {
+            return;
+        }
+
+        if (!isMollieCreditCardSelected() || $('input[name="mollie-use-saved-card"]').is(':checked')) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        mollie.createToken().then(function (token) {
+            if (token.error) {
+                var $mollieAlert = $('.js-mollie-alert');
+                $mollieAlert.closest('article').show();
+                $mollieAlert.text(token.error.message);
+                return;
+            }
+
+            $('input[name="mollieCardToken"]').val(token.token);
+
+            isCreatingToken = true;
+            $payButton[0].click();
+            isCreatingToken = false;
+        });
+    }, true);
 
     function mountMollieField(mollieContainer, holderId, methodId, inputHolder, methodName) {
         var invalidClass = 'is-invalid';
