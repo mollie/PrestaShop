@@ -684,7 +684,9 @@ $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_f35405ac878e24
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_2198f7d9e076106be0f204b3d289f787'] = 'Ekki tókst að afrita Test stillingar yfir á Live.';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9ce89fb204d84278e52c0915dd5377f0'] = 'Gildur Live API lykill er nauðsynlegur áður en hægt er að afrita Test stillingar.';
 $_MODULE['<{mollie}prestashop>mollie_6879d9cee4ba90f94f8bac2543992979'] = 'API stillingar';
+$_MODULE['<{mollie}prestashop>mollie_af01f8c298aa063d9c7490f00eddd2df'] = 'Greiðslumátar';
 $_MODULE['<{mollie}prestashop>mollie_9ffc3ccc968a96d902af963c6d7b4e97'] = 'Ítarlegar stillingar';
+$_MODULE['<{mollie}prestashop>mollie_b2d37ae1cedf42ff874289b721860af2'] = 'Annálar';
 $_MODULE['<{mollie}prestashop>mollie_256a377dcc4af527d530ef4a1b86ad56'] = 'Þú ert að nota úrelta PHP útgáfu. Uppfærðu PHP útgáfuna þína til að nota þessa einingu. Mollie einingin styður PHP útgáfur 7.2.0 og hærri.';
 $_MODULE['<{mollie}prestashop>mollie_368aadb5943efe2a745f5a058a12d4d4'] = 'Þú getur ekki fjarlægt heimilisfang sem er tengt áskrift';
 $_MODULE['<{mollie}prestashop>mollie_c47c45eb119ed6b6fe3ffa4499d43d52'] = 'Greiðslan þín tókst ekki. Vinsamlegast reyndu aftur.';

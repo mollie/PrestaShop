@@ -12,6 +12,7 @@
 + Fixed credit card fields not loading at checkout on the Hummingbird theme
 + Translated the order page Mollie panel into Latvian and Romanian
 + Fixed back office menu and settings tab names appearing in the wrong language after an upgrade
++ Fixed the back office Payment Methods and Logs tab names staying in English for Greek, Estonian, Icelandic, Latvian, Romanian and Slovak
 + Fixed the order confirmation email subject being sent in English instead of the order's language
 + Fixed the Mollie order confirmation email appending a wrong attribute to product names
 + Fixed granting a profile View access to the Mollie menu not being saved

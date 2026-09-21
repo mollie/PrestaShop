@@ -683,7 +683,9 @@ $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_f35405ac878e24
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_2198f7d9e076106be0f204b3d289f787'] = 'Neizdevās nokopēt Test iestatījumus uz Live.';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9ce89fb204d84278e52c0915dd5377f0'] = 'Pirms Test iestatījumu kopēšanas ir nepieciešama derīga Live API atslēga.';
 $_MODULE['<{mollie}prestashop>mollie_6879d9cee4ba90f94f8bac2543992979'] = 'API konfigurācija';
+$_MODULE['<{mollie}prestashop>mollie_af01f8c298aa063d9c7490f00eddd2df'] = 'Maksājumu metodes';
 $_MODULE['<{mollie}prestashop>mollie_9ffc3ccc968a96d902af963c6d7b4e97'] = 'Papildu iestatījumi';
+$_MODULE['<{mollie}prestashop>mollie_b2d37ae1cedf42ff874289b721860af2'] = 'Žurnāli';
 $_MODULE['<{mollie}prestashop>mollie_256a377dcc4af527d530ef4a1b86ad56'] = 'Jūs izmantojat novecojušu PHP versiju. Atjauniniet savu PHP versiju, lai izmantotu šo moduli. Mollie modulis atbalsta PHP versijas 7.2.0 un jaunākas.';
 $_MODULE['<{mollie}prestashop>mollie_368aadb5943efe2a745f5a058a12d4d4'] = 'Nevar noņemt adresi, kas saistīta ar abonementu';
 $_MODULE['<{mollie}prestashop>mollie_c47c45eb119ed6b6fe3ffa4499d43d52'] = 'Jūsu maksājums nebija veiksmīgs. Lūdzu, mēģiniet vēlreiz.';
