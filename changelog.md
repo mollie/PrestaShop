@@ -10,6 +10,7 @@
 + Added an {order.id} placeholder to the payment description for the numeric PrestaShop order ID
 + The payment methods list now scrolls automatically while a method is being dragged
 + Fixed credit card fields not loading at checkout on the Hummingbird theme
++ Fixed credit card fields not loading on the one-page checkout, and card payments there falling back to the Mollie hosted page instead of using the entered card details
 + Translated the order page Mollie panel into Latvian and Romanian
 + Fixed back office menu and settings tab names appearing in the wrong language after an upgrade
 + Fixed the back office Payment Methods and Logs tab names staying in English for Greek, Estonian, Icelandic, Latvian, Romanian and Slovak
