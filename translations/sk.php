@@ -685,7 +685,9 @@ $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_f35405ac878e24
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_2198f7d9e076106be0f204b3d289f787'] = 'Nepodarilo sa skopírovať nastavenia Test do Live.';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9ce89fb204d84278e52c0915dd5377f0'] = 'Pred kopírovaním nastavení Test je potrebný platný Live API kľúč.';
 $_MODULE['<{mollie}prestashop>mollie_6879d9cee4ba90f94f8bac2543992979'] = 'Konfigurácia API';
+$_MODULE['<{mollie}prestashop>mollie_af01f8c298aa063d9c7490f00eddd2df'] = 'Platobné metódy';
 $_MODULE['<{mollie}prestashop>mollie_9ffc3ccc968a96d902af963c6d7b4e97'] = 'Rozšírené nastavenia';
+$_MODULE['<{mollie}prestashop>mollie_b2d37ae1cedf42ff874289b721860af2'] = 'Záznamy';
 $_MODULE['<{mollie}prestashop>mollie_256a377dcc4af527d530ef4a1b86ad56'] = 'Používate zastaranú verziu PHP. Aktualizujte svoju verziu PHP, aby ste mohli tento modul používať. Modul Mollie podporuje verzie PHP 7.2.0 a vyššie.';
 $_MODULE['<{mollie}prestashop>mollie_368aadb5943efe2a745f5a058a12d4d4'] = 'Nemôžete odstrániť adresu priradenú k predplatnému';
 $_MODULE['<{mollie}prestashop>mollie_c47c45eb119ed6b6fe3ffa4499d43d52'] = 'Vaša platba nebola úspešná. Skúste to znova.';

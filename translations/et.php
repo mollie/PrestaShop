@@ -683,7 +683,9 @@ $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_f35405ac878e24
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_2198f7d9e076106be0f204b3d289f787'] = 'Test seadete kopeerimine Live keskkonda ebaõnnestus.';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9ce89fb204d84278e52c0915dd5377f0'] = 'Enne Test seadete kopeerimist on vaja kehtivat Live API võtit.';
 $_MODULE['<{mollie}prestashop>mollie_6879d9cee4ba90f94f8bac2543992979'] = 'API seadistamine';
+$_MODULE['<{mollie}prestashop>mollie_af01f8c298aa063d9c7490f00eddd2df'] = 'Makseviisid';
 $_MODULE['<{mollie}prestashop>mollie_9ffc3ccc968a96d902af963c6d7b4e97'] = 'Täpsemad seaded';
+$_MODULE['<{mollie}prestashop>mollie_b2d37ae1cedf42ff874289b721860af2'] = 'Logid';
 $_MODULE['<{mollie}prestashop>mollie_256a377dcc4af527d530ef4a1b86ad56'] = 'Kasutate aegunud PHP versiooni. Uuendage oma PHP versiooni, et seda moodulit kasutada. Mollie moodul toetab PHP versioone 7.2.0 ja uuemaid.';
 $_MODULE['<{mollie}prestashop>mollie_368aadb5943efe2a745f5a058a12d4d4'] = 'Te ei saa eemaldada tellimusega seotud aadressi';
 $_MODULE['<{mollie}prestashop>mollie_c47c45eb119ed6b6fe3ffa4499d43d52'] = 'Teie makse ebaõnnestus. Palun proovige uuesti.';

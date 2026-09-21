@@ -102,14 +102,11 @@ function initApplePayDirect() {
                             window.location.href = redirectionUrl
                         }, 500)
                     } else {
-                        result.errors = createAppleErrors(result.errors)
-                        session.completePayment(result)
+                        session.completePayment(buildPaymentFailure(result))
                     }
                 },
                 error: (jqXHR) => {
-                    let result = JSON.parse(jqXHR.responseText)
-                    result.errors = createAppleErrors(result.errors)
-                    session.completePayment(result)
+                    session.completePayment(buildPaymentFailure(parseJsonSafely(jqXHR.responseText)))
                 },
             })
         }
@@ -351,6 +348,23 @@ function createAppleErrors(errors) {
     }
 
     return errorList
+}
+
+// Apple only accepts a numeric status here. The server sends the string 'STATUS_FAILURE', which
+// WebKit reads as STATUS_SUCCESS, so the sheet closed as if paid and the error list was dropped.
+function buildPaymentFailure(result) {
+    return {
+        status: ApplePaySession.STATUS_FAILURE,
+        errors: createAppleErrors((result && result.errors) || [])
+    }
+}
+
+function parseJsonSafely(payload) {
+    try {
+        return JSON.parse(payload)
+    } catch (e) {
+        return {}
+    }
 }
 
 function getUrlParam(sParam, string) {
