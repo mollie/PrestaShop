@@ -1,7 +1,7 @@
 name: Module upgrade / downgrade testing (oldest supported release v6.0.1 > `develop` version)
 on:
   pull_request:
-    branches: [develop, develop**, develop-**]
+    branches: [develop, develop**, develop-**, release-**, master]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
