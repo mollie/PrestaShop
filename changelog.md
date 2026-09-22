@@ -12,12 +12,16 @@
 + Fixed credit card fields not loading at checkout on the Hummingbird theme
 + Translated the order page Mollie panel into Latvian and Romanian
 + Fixed back office menu and settings tab names appearing in the wrong language after an upgrade
++ Fixed the back office Payment Methods and Logs tab names staying in English for Greek, Estonian, Icelandic, Latvian, Romanian and Slovak
 + Fixed the order confirmation email subject being sent in English instead of the order's language
 + Fixed the Mollie order confirmation email appending a wrong attribute to product names
 + Fixed granting a profile View access to the Mollie menu not being saved
 + Fixed the module's back office styles conflicting with other modules' styles
 + Fixed PHP deprecation notices on PHP 8.1 and newer when creating a payment
 + Fixed a fatal error when upgrading the module from a version older than 5.3.0
++ The cart page's "Shipping" and "Total (tax incl.)" lines now follow the Apple Pay Direct sheet as the shopper switches delivery option
++ Fixed the Apple Pay Direct sheet closing with no message when a payment was refused, shoppers now see the reason and can pick another address
++ Apple Pay Direct refusals are now recorded in the Mollie log with the delivery country and the reason
 
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API

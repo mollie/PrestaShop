@@ -684,7 +684,9 @@ $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_f35405ac878e24
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_2198f7d9e076106be0f204b3d289f787'] = 'Copierea setărilor Test în Live a eșuat.';
 $_MODULE['<{mollie}prestashop>adminmollieauthenticationcontroller_9ce89fb204d84278e52c0915dd5377f0'] = 'Este necesară o cheie API Live validă înainte de a copia setările Test.';
 $_MODULE['<{mollie}prestashop>mollie_6879d9cee4ba90f94f8bac2543992979'] = 'Configurare API';
+$_MODULE['<{mollie}prestashop>mollie_af01f8c298aa063d9c7490f00eddd2df'] = 'Metode de plată';
 $_MODULE['<{mollie}prestashop>mollie_9ffc3ccc968a96d902af963c6d7b4e97'] = 'Setări avansate';
+$_MODULE['<{mollie}prestashop>mollie_b2d37ae1cedf42ff874289b721860af2'] = 'Jurnale';
 $_MODULE['<{mollie}prestashop>mollie_256a377dcc4af527d530ef4a1b86ad56'] = 'Utilizați o versiune PHP învechită. Actualizați versiunea PHP pentru a folosi acest modul. Modulul Mollie acceptă versiunile PHP 7.2.0 și mai noi.';
 $_MODULE['<{mollie}prestashop>mollie_368aadb5943efe2a745f5a058a12d4d4'] = 'Nu puteți elimina o adresă asociată unui abonament';
 $_MODULE['<{mollie}prestashop>mollie_c47c45eb119ed6b6fe3ffa4499d43d52'] = 'Plata dvs. nu a fost efectuată cu succes. Vă rugăm să încercați din nou.';

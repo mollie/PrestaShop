@@ -39,7 +39,7 @@ jobs:
           rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile
           rm -rf .docker docker-compose*.yml .gitignore bin codeception.yml
           rm -rf package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php
-          rm -f views/assets/webpack.config.js
+          rm -f views/js/subscription/webpack.config.js views/js/subscription/package.json views/js/subscription/package-lock.json
           rm -rf views/js/admin/library/node_modules views/js/admin/library/src
           rm -f views/js/admin/library/package.json views/js/admin/library/package-lock.json
           rm -f views/js/admin/library/tsconfig.json views/js/admin/library/tsconfig.app.json views/js/admin/library/tsconfig.node.json
