@@ -19,6 +19,7 @@
 + Fixed the module's back office styles conflicting with other modules' styles
 + Fixed PHP deprecation notices on PHP 8.1 and newer when creating a payment
 + Fixed a fatal error when upgrading the module from a version older than 5.3.0
++ The cart page's "Shipping" and "Total (tax incl.)" lines now follow the Apple Pay Direct sheet as the shopper switches delivery option
 + Fixed the Apple Pay Direct sheet closing with no message when a payment was refused, shoppers now see the reason and can pick another address
 + Apple Pay Direct refusals are now recorded in the Mollie log with the delivery country and the reason
 
