@@ -23,6 +23,7 @@ use Mollie\Service\MailService;
 use Mollie\Service\PaymentReturnService;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Validator\OrderCallBackValidator;
 
@@ -127,6 +128,21 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                         ]
                     )
                 );
+            } elseif (
+                isset($data['mollie_info']['bank_status'])
+                && MollieStatusUtility::isPaymentFailed($data['mollie_info']['bank_status'])
+                && 0 === (int) ($data['mollie_info']['order_id'] ?? 0)
+            ) {
+                // A terminal attempt that never produced an order. The outcome cannot change,
+                // so redirect straight away instead of polling for a status that will never move.
+                $this->setWarning($this->module->l('Your payment was not successful. Try again.', self::FILE_NAME));
+
+                Tools::redirect($this->context->link->getPageLink(
+                    'cart',
+                    null,
+                    $this->context->language->id,
+                    ['action' => 'show', 'checkout' => true]
+                ));
             } elseif (isset($data['mollie_info']['method'])
                 && PaymentMethod::BANKTRANSFER === $data['mollie_info']['method']
                 && PaymentStatus::STATUS_OPEN === $data['mollie_info']['bank_status']

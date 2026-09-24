@@ -47,6 +47,7 @@ use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\TabTranslationUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Utility\VersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
@@ -94,6 +95,10 @@ class Mollie extends PaymentModule
 
     const ADMIN_MOLLIE_LOGS_PARENT_CONTROLLER = 'AdminMollieLogsParent';
 
+    const ADMIN_MOLLIE_PAYMENT_OVERVIEW_CONTROLLER = 'AdminMolliePaymentOverview';
+
+    const ADMIN_MOLLIE_PAYMENT_OVERVIEW_PARENT_CONTROLLER = 'AdminMolliePaymentOverviewParent';
+
     /** @var LeagueServiceContainerProvider */
     private $containerProvider;
 
@@ -104,7 +109,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.4.5';
+        $this->version = '6.4.6';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -462,6 +467,13 @@ class Mollie extends PaymentModule
 
         $canDisplayInProductPage = $controller instanceof ProductControllerCore && $isApplePayDirectProductEnabled;
         $canDisplayInCartPage = $controller instanceof CartControllerCore && $isApplePayDirectCartEnabled;
+        if ($canDisplayInProductPage || $canDisplayInCartPage) {
+            $this->context->controller->registerJavascript(
+                'mollie-apple-pay-sdk',
+                'https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js',
+                ['server' => 'remote', 'position' => 'head', 'priority' => 10, 'attributes' => 'defer']
+            );
+        }
 
         if (!$canDisplayInProductPage && !$canDisplayInCartPage) {
             return;
@@ -475,17 +487,31 @@ class Mollie extends PaymentModule
             'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'applePayDirectAjax'),
             'cartId' => $this->context->cart->id,
             'applePayButtonStyle' => (int) $configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
+            'applePayLocale' => $this->context->language->locale,
         ]);
 
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
 
         if ($controller instanceof ProductControllerCore) {
-            $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirect/applePayDirectProduct.js');
+            $this->registerApplePayDirectScript('mollie-apple-pay-direct-product', 'views/js/front/applePayDirect/applePayDirectProduct.js');
         }
 
         if ($controller instanceof CartControllerCore) {
-            $this->context->controller->addJS($this->getPathUri() . 'views/js/front/applePayDirect/applePayDirectCart.js');
+            $this->registerApplePayDirectScript('mollie-apple-pay-direct-cart', 'views/js/front/applePayDirect/applePayDirectCart.js');
         }
+    }
+
+    /**
+     * Registered as a remote URI so a cache buster can be appended, otherwise CDN and browser
+     * caches keep serving the previous script against an upgraded ajax contract.
+     */
+    private function registerApplePayDirectScript(string $id, string $relativePath): void
+    {
+        $this->context->controller->registerJavascript(
+            $id,
+            $this->getPathUri() . $relativePath . '?v=' . (int) filemtime($this->getLocalPath() . $relativePath),
+            ['server' => 'remote', 'position' => 'bottom', 'priority' => 80]
+        );
     }
 
     /**
@@ -1320,6 +1346,20 @@ class Mollie extends PaymentModule
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
                 'module_tab' => true,
             ],
+            // Payment overview - sidebar entry (parent)
+            [
+                'name' => $this->getTabTranslations('Payment overview'),
+                'class_name' => self::ADMIN_MOLLIE_PAYMENT_OVERVIEW_PARENT_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
+                'module_tab' => true,
+            ],
+            // Payment overview - horizontal tab (child)
+            [
+                'name' => $this->getTabTranslations('Payment overview'),
+                'class_name' => self::ADMIN_MOLLIE_PAYMENT_OVERVIEW_CONTROLLER,
+                'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
+                'module_tab' => true,
+            ],
         ];
     }
 
@@ -1333,20 +1373,7 @@ class Mollie extends PaymentModule
      */
     private function getTabTranslations($englishName)
     {
-        $translations = [];
-
-        foreach (Language::getLanguages(false) as $language) {
-            $translations[$language['iso_code']] = Translate::getModuleTranslation(
-                $this,
-                $englishName,
-                $this->name,
-                null,
-                false,
-                $language['locale']
-            );
-        }
-
-        return $translations;
+        return TabTranslationUtility::getTabNames($this, $englishName);
     }
 
     public function hookActionAdminOrdersListingFieldsModifier($params)

@@ -34,9 +34,9 @@ jobs:
           cd views/js/admin/library && npm install && npm run build
           rm -rf node_modules src
           cd ../../../..
-          rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile cypress .docker cypress.config.js cypress.env.json docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php
+          rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile .docker docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php
           # Keep this list in sync with release.yml, the validator flags build configs that ship
-          rm -f views/assets/webpack.config.js
+          rm -f views/js/subscription/webpack.config.js views/js/subscription/package.json views/js/subscription/package-lock.json
           rm -f views/js/admin/library/package.json views/js/admin/library/package-lock.json
           rm -f views/js/admin/library/tsconfig.json views/js/admin/library/tsconfig.app.json views/js/admin/library/tsconfig.node.json
           rm -f views/js/admin/library/vite.config.ts views/js/admin/library/eslint.config.js

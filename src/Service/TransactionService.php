@@ -22,6 +22,7 @@ use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\PaymentCollection;
 use Mollie\Api\Types\OrderStatus;
+use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
 use Mollie\Config\Config;
 use Mollie\Errors\Http\HttpStatusCode;
@@ -38,6 +39,7 @@ use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\OrderNumberUtility;
+use Mollie\Utility\PaymentAttemptUtility;
 use Mollie\Utility\SecureKeyUtility;
 use Mollie\Utility\TextGeneratorUtility;
 use Mollie\Utility\TransactionUtility;
@@ -149,7 +151,13 @@ class TransactionService
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
 
         if (!$paymentMethod) {
-            $this->mollieOrderCreationService->createMolliePayment($apiPayment, (int) $apiPayment->metadata->cart_id, $orderDescription);
+            $this->mollieOrderCreationService->createMolliePayment(
+                $apiPayment,
+                (int) $apiPayment->metadata->cart_id,
+                $orderDescription,
+                null,
+                PaymentAttemptUtility::resolveFinalStatus($apiPayment) ?? PaymentStatus::STATUS_OPEN
+            );
         }
 
         /** @var int $orderId */
@@ -171,10 +179,16 @@ class TransactionService
             $this->module->name
         );
 
+        if ($key !== $apiPayment->metadata->secure_key && $deprecatedKey !== $apiPayment->metadata->secure_key) {
+            throw new TransactionException('Security key is incorrect.', HttpStatusCode::HTTP_UNAUTHORIZED);
+        }
+
         $isGeneratedOrderNumber = strpos($orderDescription, OrderNumberUtility::ORDER_NUMBER_PREFIX) === 0;
         $isPaymentFinished = MollieStatusUtility::isPaymentFinished($apiPayment->status);
 
         if (!$isPaymentFinished && $isGeneratedOrderNumber) {
+            $this->persistFailedAttempt($apiPayment, (int) $orderId);
+
             return $apiPayment;
         }
 
@@ -188,9 +202,6 @@ class TransactionService
                     $this->mollieOrderCreationService->addTransactionMandate($apiPayment->id, $apiPayment->mandateId);
                 }
 
-                if ($key !== $apiPayment->metadata->secure_key && $deprecatedKey !== $apiPayment->metadata->secure_key) {
-                    throw new TransactionException('Security key is incorrect.', HttpStatusCode::HTTP_UNAUTHORIZED);
-                }
                 if (!$apiPayment->metadata->cart_id) {
                     throw new TransactionException('Cart id is missing in transaction metadata', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY);
                 }
@@ -237,9 +248,6 @@ class TransactionService
             case Config::MOLLIE_API_STATUS_ORDER:
                 $this->logger->debug(sprintf('%s - Starting to process ORDER transaction', self::FILE_NAME));
 
-                if ($key !== $apiPayment->metadata->secure_key && $deprecatedKey !== $apiPayment->metadata->secure_key) {
-                    throw new TransactionException('Security key is incorrect.', HttpStatusCode::HTTP_UNAUTHORIZED);
-                }
                 if (!$apiPayment->metadata->cart_id) {
                     throw new TransactionException('Cart id is missing in transaction metadata', HttpStatusCode::HTTP_UNPROCESSABLE_ENTITY);
                 }
@@ -323,6 +331,8 @@ class TransactionService
         }
 
         if (!$orderId) {
+            $this->persistFailedAttempt($apiPayment, 0);
+
             return 'Order with given transaction was not found';
         }
         $order = new Order($orderId);
@@ -412,6 +422,47 @@ class TransactionService
 
         $order->total_paid_real = $totalPaidReal;
         $order->update();
+    }
+
+    /**
+     * Records the terminal status of an attempt that produced no PrestaShop order, so the
+     * merchant can see the failure in the back office instead of a row frozen at "open".
+     *
+     * Never rethrows: a 500 on the webhook makes Mollie retry it.
+     *
+     * @param Payment|MollieOrderAlias $apiPayment
+     * @param int $orderId
+     *
+     * @return void
+     */
+    private function persistFailedAttempt($apiPayment, $orderId)
+    {
+        if ($orderId) {
+            return;
+        }
+
+        try {
+            $status = PaymentAttemptUtility::resolveFinalStatus($apiPayment);
+
+            if (null === $status) {
+                return;
+            }
+
+            $this->paymentMethodRepository->updateAttemptStatus(
+                (string) $apiPayment->id,
+                $status,
+                PaymentAttemptUtility::resolveFailureReason($apiPayment)
+            );
+
+            $this->logger->debug(sprintf('%s - Recorded failed payment attempt', self::FILE_NAME), [
+                'transaction_id' => $apiPayment->id,
+                'status' => $status,
+            ]);
+        } catch (\Throwable $exception) {
+            $this->logger->error(sprintf('%s - Failed to record failed payment attempt', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+        }
     }
 
     /**

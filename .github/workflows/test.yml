@@ -15,8 +15,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Cache composer folder
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: php-composer-cache
+
+      - name: Install composer
+        run: composer i
+
+      # php-cs-fixer 2.19 refuses to run above PHP 8.0, and the runner ships a
+      # newer PHP, so the fixer runs in a 7.4 container against the repo vendor.
       - name: Run PHP-CS-Fixer
-        uses: prestashopcorp/github-action-php-cs-fixer-new@master
+        run: |
+          docker run --rm -v $PWD:/app -w /app php:7.4-cli \
+            php vendor/bin/php-cs-fixer fix /app --path-mode=intersection \
+            --dry-run --diff --using-cache=no --diff-format udiff
 
   eslint:
     name: ESLint
@@ -109,7 +123,7 @@ jobs:
         run: |
           composer install --no-dev --optimize-autoloader --classmap-authoritative
           composer dump-autoload --no-dev --optimize --classmap-authoritative
-          rm -rf .git .github tests .php-cs-fixer.php Makefile cypress* docker-compose*.yml package.json package-lock.json .docker
+          rm -rf .git .github tests .php-cs-fixer.php Makefile docker-compose*.yml package.json package-lock.json .docker
           mkdir ${{ env.MODULE_NAME }}
           rsync -Rr ./ ./${{ env.MODULE_NAME }}
           shopt -s extglob

@@ -19,4 +19,5 @@ if (!defined('_PS_VERSION_')) {
 class MollieApiException extends \Exception
 {
     const MOLLIE_API_IS_NULL = 1;
+    const APPLE_PAY_LIVE_KEY_REQUIRED = 2;
 }

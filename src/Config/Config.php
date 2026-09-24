@@ -273,6 +273,13 @@ class Config
     const MOLLIE_BANKTRANSFER_DUE_DAYS = 'MOLLIE_BANKTRANSFER_DUE_DAYS';
     const MOLLIE_BANKTRANSFER_DUE_DAYS_DEFAULT = 14;
 
+    /**
+     * How long an attempt may sit at open or pending before the payment overview treats it as
+     * abandoned. Only applies to attempts with no order, so a legitimately slow bank transfer
+     * is never caught by it.
+     */
+    const MOLLIE_PAYMENT_OVERVIEW_STUCK_GRACE_HOURS = 24;
+
     const MOLLIE_CARRIER_NO_TRACKING_INFO = 'no_tracking_info';
     const MOLLIE_CARRIER_MODULE = 'module';
     const MOLLIE_CARRIER_CARRIER = 'carrier_url';
