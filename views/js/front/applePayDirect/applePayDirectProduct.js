@@ -146,7 +146,7 @@ function initApplePayDirect() {
                         ApplePaySession.STATUS_SUCCESS,
                         {
                             'amount': response.data.amount,
-                            'label': ' mollie'
+                            'label': totalLabel
                         },
                         []
                     )
@@ -183,36 +183,36 @@ function initApplePayDirect() {
                 success: (applePayShippingContactUpdate) => {
                     applePayShippingContactUpdate = JSON.parse(applePayShippingContactUpdate)
                     let response = applePayShippingContactUpdate.data
-                    if (applePayShippingContactUpdate.success === true) {
-                        if (response.totals.length > 0) {
-                            var firstTotal = response.totals[0];
-                            session.completeShippingContactSelection(
-                                ApplePaySession.STATUS_SUCCESS,
-                                response.shipping_methods,
-                                {
-                                    'label': firstTotal.label,
-                                    'amount': firstTotal.amount
-                                },
-                                [
-                                    response.paymentFee
-                                ]
-                            );
-
-                            return;
-                        }
-
+                    if (applePayShippingContactUpdate.success === true && response.totals.length > 0) {
+                        var firstTotal = response.totals[0];
                         session.completeShippingContactSelection(
-                            ApplePaySession.STATUS_FAILURE,
-                            [],
+                            ApplePaySession.STATUS_SUCCESS,
+                            response.shipping_methods,
                             {
-                                label: "No carriers", amount: "0"
+                                'label': totalLabel,
+                                'amount': firstTotal.amount
                             },
-                            []
+                            [
+                                response.paymentFee
+                            ]
                         );
-                    } else {
+
+                        return;
+                    }
+
+                    if (!response || !response.fallbackTotal) {
                         console.warn(applePayShippingContactUpdate)
                         session.abort()
+
+                        return;
                     }
+
+                    session.completeShippingContactSelection({
+                        errors: createAppleErrors(applePayShippingContactUpdate.errors || []),
+                        newShippingMethods: [],
+                        newTotal: response.fallbackTotal,
+                        newLineItems: []
+                    });
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
                     console.warn(textStatus, errorThrown)
