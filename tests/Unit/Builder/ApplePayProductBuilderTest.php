@@ -33,20 +33,20 @@ class ApplePayProductBuilderTest extends TestCase
     public function testBuildMapsShippingPhoneNumber()
     {
         $contact = [
-            'addressLines' => ['Žemaičių gatvė 36'],
+            'addressLines' => ['Teststraße 1'],
             'administrativeArea' => '',
-            'country' => 'Lithuania',
-            'countryCode' => 'LT',
-            'familyName' => 'Gudauskis',
-            'givenName' => 'Marius',
-            'locality' => 'Kaunas',
-            'postalCode' => '44174',
+            'country' => 'Germany',
+            'countryCode' => 'DE',
+            'familyName' => 'Doe',
+            'givenName' => 'John',
+            'locality' => 'Berlin',
+            'postalCode' => '10115',
         ];
 
         $builder = new ApplePayOrderBuilder();
-        $order = $builder->build([], $contact + ['phoneNumber' => '+370 612 34567'], $contact);
+        $order = $builder->build([], $contact + ['phoneNumber' => '+49 30 1234567'], $contact);
 
-        $this->assertSame('+370 612 34567', $order->getShippingContent()->getPhoneNumber());
+        $this->assertSame('+49 30 1234567', $order->getShippingContent()->getPhoneNumber());
         $this->assertSame('', $order->getBillingContent()->getPhoneNumber());
     }
 
@@ -64,34 +64,34 @@ class ApplePayProductBuilderTest extends TestCase
                 ],
                 'shippingContact' => [
                     'addressLines' => [
-                        0 => 'Žemaičių gatvė 36',
+                        0 => 'Teststraße 1',
                     ],
                     'administrativeArea' => '',
-                    'country' => 'Lithuania',
-                    'countryCode' => 'LT',
-                    'emailAddress' => 'marius.gudauskis@invertus.eu',
-                    'familyName' => 'Gudauskis',
-                    'givenName' => 'Marius',
-                    'locality' => 'Kaunas',
+                    'country' => 'Germany',
+                    'countryCode' => 'DE',
+                    'emailAddress' => 'john.doe@example.com',
+                    'familyName' => 'Doe',
+                    'givenName' => 'John',
+                    'locality' => 'Berlin',
                     'phoneticFamilyName' => '',
                     'phoneticGivenName' => '',
-                    'postalCode' => '44174',
+                    'postalCode' => '10115',
                     'subAdministrativeArea' => '',
                     'subLocality' => '',
                 ],
                 'billingContact' => [
                     'addressLines' => [
-                        0 => 'Žemaičių gatvė 36',
+                        0 => 'Teststraße 1',
                     ],
                     'administrativeArea' => '',
-                    'country' => 'Lithuania',
-                    'countryCode' => 'LT',
-                    'familyName' => 'Gudauskis',
-                    'givenName' => 'Marius',
-                    'locality' => 'Kaunas',
+                    'country' => 'Germany',
+                    'countryCode' => 'DE',
+                    'familyName' => 'Doe',
+                    'givenName' => 'John',
+                    'locality' => 'Berlin',
                     'phoneticFamilyName' => '',
                     'phoneticGivenName' => '',
-                    'postalCode' => '44174',
+                    'postalCode' => '10115',
                     'subAdministrativeArea' => '',
                     'subLocality' => '',
                 ],
