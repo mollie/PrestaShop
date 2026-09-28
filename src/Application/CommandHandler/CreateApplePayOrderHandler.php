@@ -109,8 +109,11 @@ final class CreateApplePayOrderHandler
             $cart->update();
         }
 
-        $this->updateCardInfo($cart->id_address_delivery, $command->getOrder()->getShippingContent());
-        $this->updateCardInfo($cart->id_address_invoice, $command->getOrder()->getBillingContent());
+        // Apple Pay returns the phone number on the shipping contact only
+        $phoneNumber = $command->getOrder()->getShippingContent()->getPhoneNumber();
+
+        $this->updateCardInfo($cart->id_address_delivery, $command->getOrder()->getShippingContent(), $phoneNumber);
+        $this->updateCardInfo($cart->id_address_invoice, $command->getOrder()->getBillingContent(), $phoneNumber);
         $this->updateCustomer($cart->id_customer, $command->getOrder()->getShippingContent());
 
         $shippingCountryId = Country::getByIso($command->getOrder()->getShippingContent()->getCountryCode());
@@ -218,7 +221,7 @@ final class CreateApplePayOrderHandler
         ];
     }
 
-    private function updateCardInfo(int $addressId, ShippingContent $shippingContent)
+    private function updateCardInfo(int $addressId, ShippingContent $shippingContent, string $phoneNumber)
     {
         $address = new Address($addressId);
         $address->firstname = $shippingContent->getGivenName();
@@ -232,6 +235,12 @@ final class CreateApplePayOrderHandler
         }
         if (isset($shippingContent->getAddressLines()[1])) {
             $address->address2 = $shippingContent->getAddressLines()[1];
+        }
+        if ($phoneNumber !== '' && $address->validateField('phone', $phoneNumber) === true) {
+            $address->phone = $phoneNumber;
+        }
+        if ($phoneNumber !== '' && $address->validateField('phone_mobile', $phoneNumber) === true) {
+            $address->phone_mobile = $phoneNumber;
         }
 
         $address->update();

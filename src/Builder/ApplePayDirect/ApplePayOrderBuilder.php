@@ -56,7 +56,8 @@ class ApplePayOrderBuilder
             $params['givenName'],
             $params['locality'],
             $params['postalCode'],
-            $params['emailAddress'] ?? ''
+            $params['emailAddress'] ?? '',
+            $params['phoneNumber'] ?? ''
         );
     }
 }

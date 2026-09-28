@@ -53,6 +53,10 @@ class ShippingContent
      * @var string
      */
     private $postalCode;
+    /**
+     * @var string
+     */
+    private $phoneNumber;
 
     public function __construct(
         array $addressLines,
@@ -63,7 +67,8 @@ class ShippingContent
         string $givenName,
         string $locality,
         string $postalCode,
-        string $emailAddress = ''
+        string $emailAddress = '',
+        string $phoneNumber = ''
     ) {
         $this->addressLines = $addressLines;
         $this->administrativeArea = $administrativeArea;
@@ -74,6 +79,7 @@ class ShippingContent
         $this->givenName = $givenName;
         $this->locality = $locality;
         $this->postalCode = $postalCode;
+        $this->phoneNumber = $phoneNumber;
     }
 
     public function getAddressLines(): array
@@ -119,5 +125,10 @@ class ShippingContent
     public function getPostalCode(): string
     {
         return $this->postalCode;
+    }
+
+    public function getPhoneNumber(): string
+    {
+        return $this->phoneNumber;
     }
 }
