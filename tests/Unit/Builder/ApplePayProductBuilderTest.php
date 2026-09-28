@@ -30,6 +30,26 @@ class ApplePayProductBuilderTest extends TestCase
         $this->assertObjectHasAttribute('billingContent', $applePayProduct);
     }
 
+    public function testBuildMapsShippingPhoneNumber()
+    {
+        $contact = [
+            'addressLines' => ['Žemaičių gatvė 36'],
+            'administrativeArea' => '',
+            'country' => 'Lithuania',
+            'countryCode' => 'LT',
+            'familyName' => 'Gudauskis',
+            'givenName' => 'Marius',
+            'locality' => 'Kaunas',
+            'postalCode' => '44174',
+        ];
+
+        $builder = new ApplePayOrderBuilder();
+        $order = $builder->build([], $contact + ['phoneNumber' => '+370 612 34567'], $contact);
+
+        $this->assertSame('+370 612 34567', $order->getShippingContent()->getPhoneNumber());
+        $this->assertSame('', $order->getBillingContent()->getPhoneNumber());
+    }
+
     public function getTestProductData()
     {
         return [
