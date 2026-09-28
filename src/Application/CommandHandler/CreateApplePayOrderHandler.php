@@ -33,6 +33,7 @@ use Mollie\Utility\OrderNumberUtility;
 use MolPaymentMethod;
 use Order;
 use Tools;
+use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -109,8 +110,11 @@ final class CreateApplePayOrderHandler
             $cart->update();
         }
 
-        $this->updateCardInfo($cart->id_address_delivery, $command->getOrder()->getShippingContent());
-        $this->updateCardInfo($cart->id_address_invoice, $command->getOrder()->getBillingContent());
+        // Apple Pay returns the phone number on the shipping contact only
+        $phoneNumber = $command->getOrder()->getShippingContent()->getPhoneNumber();
+
+        $this->updateCardInfo($cart->id_address_delivery, $command->getOrder()->getShippingContent(), $phoneNumber);
+        $this->updateCardInfo($cart->id_address_invoice, $command->getOrder()->getBillingContent(), $phoneNumber);
         $this->updateCustomer($cart->id_customer, $command->getOrder()->getShippingContent());
 
         $shippingCountryId = Country::getByIso($command->getOrder()->getShippingContent()->getCountryCode());
@@ -218,7 +222,7 @@ final class CreateApplePayOrderHandler
         ];
     }
 
-    private function updateCardInfo(int $addressId, ShippingContent $shippingContent)
+    private function updateCardInfo(int $addressId, ShippingContent $shippingContent, string $phoneNumber)
     {
         $address = new Address($addressId);
         $address->firstname = $shippingContent->getGivenName();
@@ -233,8 +237,21 @@ final class CreateApplePayOrderHandler
         if (isset($shippingContent->getAddressLines()[1])) {
             $address->address2 = $shippingContent->getAddressLines()[1];
         }
+        if ($this->isValidPhoneNumber($phoneNumber)) {
+            $address->phone = $phoneNumber;
+            $address->phone_mobile = $phoneNumber;
+        }
 
         $address->update();
+    }
+
+    private function isValidPhoneNumber(string $phoneNumber): bool
+    {
+        $maxLength = Address::$definition['fields']['phone']['size'];
+
+        return $phoneNumber !== ''
+            && Validate::isPhoneNumber($phoneNumber)
+            && Tools::strlen($phoneNumber) <= $maxLength;
     }
 
     private function updateCustomer(int $customerId, ShippingContent $shippingContent)
