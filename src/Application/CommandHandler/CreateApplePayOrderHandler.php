@@ -33,7 +33,6 @@ use Mollie\Utility\OrderNumberUtility;
 use MolPaymentMethod;
 use Order;
 use Tools;
-use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -237,21 +236,14 @@ final class CreateApplePayOrderHandler
         if (isset($shippingContent->getAddressLines()[1])) {
             $address->address2 = $shippingContent->getAddressLines()[1];
         }
-        if ($this->isValidPhoneNumber($phoneNumber)) {
+        if ($phoneNumber !== '' && $address->validateField('phone', $phoneNumber) === true) {
             $address->phone = $phoneNumber;
+        }
+        if ($phoneNumber !== '' && $address->validateField('phone_mobile', $phoneNumber) === true) {
             $address->phone_mobile = $phoneNumber;
         }
 
         $address->update();
-    }
-
-    private function isValidPhoneNumber(string $phoneNumber): bool
-    {
-        $maxLength = Address::$definition['fields']['phone']['size'];
-
-        return $phoneNumber !== ''
-            && Validate::isPhoneNumber($phoneNumber)
-            && Tools::strlen($phoneNumber) <= $maxLength;
     }
 
     private function updateCustomer(int $customerId, ShippingContent $shippingContent)
