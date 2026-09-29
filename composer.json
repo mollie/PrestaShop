@@ -2,6 +2,9 @@
     "name": "mollie/prestashop",
     "license": "AFL-3.0",
     "description": "Mollie module for PrestaShop",
+    "extra": {
+        "installer-name": "mollie"
+    },
     "repositories": [
         {
             "type": "vcs",
