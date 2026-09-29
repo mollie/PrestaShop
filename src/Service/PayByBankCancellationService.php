@@ -23,6 +23,7 @@ use Mollie\Handler\CartRule\CartRuleQuantityResetHandlerInterface;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Utility\ArrayUtility;
+use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\TransactionUtility;
 use Order;
 
@@ -96,7 +97,7 @@ class PayByBankCancellationService
      */
     public function isTerminalFailure($status)
     {
-        return in_array($status, self::TERMINAL_FAILURE_STATUSES, true);
+        return MollieStatusUtility::isPaymentFailed($status);
     }
 
     /**

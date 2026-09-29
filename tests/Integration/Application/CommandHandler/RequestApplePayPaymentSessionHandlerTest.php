@@ -12,6 +12,7 @@
 
 use Mollie\Application\Command\RequestApplePayPaymentSession;
 use Mollie\Application\CommandHandler\RequestApplePayPaymentSessionHandler;
+use Mollie\Service\ApiKeyService;
 use Mollie\Tests\Integration\BaseTestCase;
 use Mollie\Tests\Mocks\Service\ApiServiceMock;
 
@@ -25,7 +26,7 @@ class RequestApplePayPaymentSessionHandlerTest extends BaseTestCase
         /** @var Mollie $mollie */
         $mollie = Module::getInstanceByName('mollie');
         $apiServiceMock = new ApiServiceMock();
-        $handler = new RequestApplePayPaymentSessionHandler($mollie, $apiServiceMock);
+        $handler = new RequestApplePayPaymentSessionHandler($mollie, $apiServiceMock, new ApiKeyService());
         $result = $handler->handle($command);
 
         $this->assertArrayHasKey('cartId', $result);

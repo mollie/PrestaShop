@@ -10,17 +10,23 @@
  */
 
 $(document).ready(function () {
+    whenApplePaySessionAvailable(initApplePayDirect)
+})
+
+function initApplePayDirect() {
     var applePayMethodElement = document.querySelector(
         '#mollie-applepay-direct-button',
     )
 
-    const canShowButton = applePayMethodElement && (window.ApplePaySession && ApplePaySession.canMakePayments())
-    if (!canShowButton) {
+    if (!applePayMethodElement) {
         return;
     }
 
     let buttonStyle = getApplePayButtonStyle();
-    createAppleButton(applePayMethodElement, buttonStyle)
+    const startApplePaySession = function () {
+        applePaySession();
+    }
+    createAppleButton(applePayMethodElement, buttonStyle, startApplePaySession)
     toggleApplePayVisibility()
 
     if (typeof prestashop !== 'undefined') {
@@ -31,7 +37,7 @@ $(document).ready(function () {
             }
 
             if (!container.querySelector('#mollie_applepay_button')) {
-                createAppleButton(container, buttonStyle);
+                createAppleButton(container, buttonStyle, startApplePaySession);
             }
 
             toggleApplePayVisibility()
@@ -42,17 +48,15 @@ $(document).ready(function () {
     let selectedShippingMethod = []
     let cartSubTotal = 0;
 
-    $(document).on('click', '#mollie_applepay_button', function(e) {
-        e.preventDefault();
-        applePaySession();
-    })
-
     let applePaySession = () => {
         getCartSubTotal();
         //todo: constant
         var supportedApplePaySessionVersion = 3;
         const session = new ApplePaySession(supportedApplePaySessionVersion, createRequest(countryCode, currencyCode, totalLabel, cartSubTotal))
         session.begin()
+        session.oncancel = () => {
+            restoreCartTotals()
+        }
         session.onvalidatemerchant = (applePayValidateMerchantEvent) => {
             jQuery.ajax({
                 url: ajaxUrl,
@@ -98,14 +102,11 @@ $(document).ready(function () {
                             window.location.href = redirectionUrl
                         }, 500)
                     } else {
-                        result.errors = createAppleErrors(result.errors)
-                        session.completePayment(result)
+                        session.completePayment(buildPaymentFailure(result))
                     }
                 },
                 error: (jqXHR) => {
-                    let result = JSON.parse(jqXHR.responseText)
-                    result.errors = createAppleErrors(result.errors)
-                    session.completePayment(result)
+                    session.completePayment(buildPaymentFailure(parseJsonSafely(jqXHR.responseText)))
                 },
             })
         }
@@ -125,11 +126,15 @@ $(document).ready(function () {
                     if (response.success === false) {
                         response.errors = createAppleErrors(response.errors)
                     }
+                    showCartTotals(
+                        response.data && response.data.amount,
+                        event.shippingMethod && event.shippingMethod.amount
+                    )
                     session.completeShippingMethodSelection(
                         ApplePaySession.STATUS_SUCCESS,
                         {
                             'amount': response.data.amount,
-                            'label': ' mollie'
+                            'label': totalLabel
                         },
                         []
                     )
@@ -156,33 +161,41 @@ $(document).ready(function () {
                 success: (applePayShippingContactUpdate) => {
                     applePayShippingContactUpdate = JSON.parse(applePayShippingContactUpdate)
                     let response = applePayShippingContactUpdate.data
-                    if (applePayShippingContactUpdate.success === true) {
-                        if (response.totals.length > 0) {
-                            var firstTotal = response.totals[0];
-                            session.completeShippingContactSelection(
-                                ApplePaySession.STATUS_SUCCESS,
-                                response.shipping_methods,
-                                {
-                                    'label': firstTotal.label,
-                                    'amount': firstTotal.amount
-                                },
-                                [
-                                    response.paymentFee
-                                ]
-                            );
-
-                            return;
-                        }
-
+                    if (applePayShippingContactUpdate.success === true && response.totals.length > 0) {
+                        var firstTotal = response.totals[0];
+                        var firstShippingMethod = response.shipping_methods[0]
+                        showCartTotals(
+                            firstTotal.amount,
+                            firstShippingMethod && firstShippingMethod.amount
+                        )
                         session.completeShippingContactSelection(
-                            ApplePaySession.STATUS_FAILURE,
-                            [],
+                            ApplePaySession.STATUS_SUCCESS,
+                            response.shipping_methods,
                             {
-                                label: "No carriers", amount: "0"
+                                'label': totalLabel,
+                                'amount': firstTotal.amount
                             },
-                            []
+                            [
+                                response.paymentFee
+                            ]
                         );
+
+                        return;
                     }
+
+                    if (!response || !response.fallbackTotal) {
+                        console.warn(applePayShippingContactUpdate)
+                        session.abort()
+
+                        return;
+                    }
+
+                    session.completeShippingContactSelection({
+                        errors: createAppleErrors(applePayShippingContactUpdate.errors || []),
+                        newShippingMethods: [],
+                        newTotal: response.fallbackTotal,
+                        newLineItems: []
+                    });
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
                     console.warn(textStatus, errorThrown)
@@ -207,7 +220,86 @@ $(document).ready(function () {
             },
         })
     }
-});
+}
+
+function whenApplePaySessionAvailable(onAvailable) {
+    if (canUseApplePaySession()) {
+        onAvailable()
+
+        return
+    }
+
+    if (!window.customElements) {
+        return
+    }
+
+    // insurance: 1.latest is a rolling URL; if Apple ever moves the ApplePaySession
+    // polyfill behind the SDK's dynamic import, re-check once the module lands
+    customElements.whenDefined('apple-pay-button').then(function () {
+        if (canUseApplePaySession()) {
+            onAvailable()
+        }
+    })
+}
+
+function canUseApplePaySession() {
+    return !!(window.ApplePaySession && window.ApplePaySession.canMakePayments())
+}
+
+var CART_SUMMARY_SELECTORS = {
+    total: '.cart-summary-line.cart-total .value',
+    shipping: '#cart-subtotal-shipping .value',
+}
+
+/**
+ * Keeps the cart page's "Shipping" and "Total (tax incl.)" lines in step with the Apple Pay
+ * sheet, which re-totals every time the shopper picks a different delivery option. The page
+ * itself is not re-rendered while the sheet is open, so without this both lines keep showing
+ * the figures from page load.
+ */
+function showCartTotals(total, shipping) {
+    overrideCartSummaryLine(CART_SUMMARY_SELECTORS.total, total)
+    overrideCartSummaryLine(CART_SUMMARY_SELECTORS.shipping, shipping)
+}
+
+function overrideCartSummaryLine(selector, amount) {
+    var target = document.querySelector(selector)
+    var value = parseFloat(amount)
+
+    if (!target || isNaN(value)) {
+        return
+    }
+
+    if (typeof target.dataset.mollieOriginalValue === 'undefined') {
+        target.dataset.mollieOriginalValue = target.textContent
+    }
+
+    target.textContent = formatCartPrice(value)
+}
+
+function restoreCartTotals() {
+    Object.keys(CART_SUMMARY_SELECTORS).forEach(function (line) {
+        var target = document.querySelector(CART_SUMMARY_SELECTORS[line])
+
+        if (!target || typeof target.dataset.mollieOriginalValue === 'undefined') {
+            return
+        }
+
+        target.textContent = target.dataset.mollieOriginalValue
+        delete target.dataset.mollieOriginalValue
+    })
+}
+
+function formatCartPrice(amount) {
+    try {
+        return new Intl.NumberFormat(prestashop.language.locale, {
+            style: 'currency',
+            currency: prestashop.currency.iso_code,
+        }).format(amount)
+    } catch (e) {
+        return amount.toFixed(2)
+    }
+}
 
 function getApplePayButtonStyle() {
     switch (parseInt(applePayButtonStyle)) {
@@ -261,6 +353,23 @@ function createAppleErrors(errors) {
     return errorList
 }
 
+// Apple only accepts a numeric status here. The server sends the string 'STATUS_FAILURE', which
+// WebKit reads as STATUS_SUCCESS, so the sheet closed as if paid and the error list was dropped.
+function buildPaymentFailure(result) {
+    return {
+        status: ApplePaySession.STATUS_FAILURE,
+        errors: createAppleErrors((result && result.errors) || [])
+    }
+}
+
+function parseJsonSafely(payload) {
+    try {
+        return JSON.parse(payload)
+    } catch (e) {
+        return {}
+    }
+}
+
 function getUrlParam(sParam, string) {
     var sPageURL = decodeURIComponent(string),
         sURLVariables = sPageURL.split('&'),
@@ -276,12 +385,64 @@ function getUrlParam(sParam, string) {
     }
 }
 
-function createAppleButton(ApplePayButtonElement, buttonStyle) {
+function createAppleButton(ApplePayButtonElement, buttonStyle, onClick) {
+    if (!window.customElements) {
+        ApplePayButtonElement.appendChild(createLegacyAppleButton(buttonStyle, onClick))
+
+        return
+    }
+
+    const button = document.createElement('apple-pay-button')
+    button.setAttribute('id', 'mollie_applepay_button')
+    button.setAttribute('buttonstyle', getApplePaySdkButtonStyle())
+    button.setAttribute('type', 'plain')
+    if (typeof applePayLocale !== 'undefined') {
+        button.setAttribute('locale', applePayLocale)
+    }
+    bindAppleButtonClick(button, onClick)
+    ApplePayButtonElement.appendChild(button)
+
+    // the SDK registers apple-pay-button asynchronously; swap to the legacy button if it never arrives
+    const legacyButtonTimeout = setTimeout(function () {
+        if (customElements.get('apple-pay-button')) {
+            return
+        }
+
+        button.replaceWith(createLegacyAppleButton(buttonStyle, onClick))
+    }, 3000)
+
+    customElements.whenDefined('apple-pay-button').then(function () {
+        clearTimeout(legacyButtonTimeout)
+    })
+}
+
+function createLegacyAppleButton(buttonStyle, onClick) {
     const button = document.createElement('button')
     button.setAttribute('id', 'mollie_applepay_button')
     button.classList.add('apple-pay-button')
     button.classList.add(buttonStyle)
-    ApplePayButtonElement.appendChild(button)
+    bindAppleButtonClick(button, onClick)
+
+    return button
+}
+
+// the SDK button swallows click propagation, so delegated handlers never fire - bind on the element itself
+function bindAppleButtonClick(button, onClick) {
+    button.addEventListener('click', function (e) {
+        e.preventDefault()
+        onClick()
+    })
+}
+
+function getApplePaySdkButtonStyle() {
+    switch (parseInt(applePayButtonStyle)) {
+        case 1:
+            return 'white-outline';
+        case 2:
+            return 'white';
+        default:
+            return 'black';
+    }
 }
 
 function toggleApplePayVisibility() {

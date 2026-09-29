@@ -30,13 +30,27 @@ class ShippingMethodUtility
      */
     public static function collectShippingMethodData(array $carriers, Cart $cart)
     {
-        return array_map(function (AppleCarrier $carrier) use ($cart) {
+        $originalDeliveryOption = $cart->delivery_option;
+
+        // same zone-fallback workaround as OrderTotalCollector: soft-deleted Apple Pay addresses
+        // make explicit-carrier totals price shipping against the default-country zone
+        $shippingMethods = array_map(function (AppleCarrier $carrier) use ($cart) {
+            // raw assignment on purpose: Cart::setDeliveryOption() fires CartRule::autoRemoveFromCart(),
+            // which deletes vouchers from the shopper's real cart while this loop is only quoting
+            $cart->delivery_option = json_encode([
+                $cart->id_address_delivery => $carrier->getCarrierId() . ',',
+            ]);
+
             return [
-                'identifier' => $carrier->getCarrierId(),
+                'identifier' => (string) $carrier->getCarrierId(),
                 'label' => $carrier->getName(),
-                'amount' => number_format($cart->getOrderTotal(true, Cart::ONLY_SHIPPING, null, $carrier->getCarrierId()), 2, '.', ''),
+                'amount' => number_format($cart->getOrderTotal(true, Cart::ONLY_SHIPPING), 2, '.', ''),
                 'detail' => $carrier->getDelay(),
             ];
         }, $carriers);
+
+        $cart->delivery_option = $originalDeliveryOption;
+
+        return $shippingMethods;
     }
 }

@@ -47,6 +47,11 @@ export interface MollieAuthTranslations {
   switchTo: string;
   multistoreRestrictedTitle: string;
   multistoreRestrictedMessage: string;
+  testModeHint: string;
+  copyTestToLiveOption: string;
+  copyTestToLivePending: string;
+  copyTestToLiveSuccess: string;
+  copyTestToLiveError: string;
 }
 
 export interface MolliePaymentMethodsTranslations {
@@ -94,6 +99,7 @@ export interface MolliePaymentMethodsTranslations {
 
   // Apple Pay Settings
   applePayDirectSettings: string;
+  applePayTestModeLiveKeyMissing: string;
   applePayDirectProductPage: string;
   enableApplePayProductPages: string;
   applePayDirectProductPageInfo: string;

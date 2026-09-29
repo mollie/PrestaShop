@@ -6,7 +6,7 @@ import '../shared/styles/globals.css'
 // Mount the advanced settings component to PrestaShop
 function AdvancedSettingsApp() {
   return (
-    <div id="mollie-advanced-settings-app" className="mollie-advanced-settings-app">
+    <div id="mollie-advanced-settings-app" className="mollie-admin-app mollie-advanced-settings-app">
       <AdvancedSettingsPage />
     </div>
   )

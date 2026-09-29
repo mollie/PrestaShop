@@ -66,7 +66,7 @@ final class UpdateApplePayShippingMethodHandler
 
         $cart->update();
 
-        $orderTotal = (float) $cart->getOrderTotal(true, Cart::BOTH, null, $command->getCarrierId());
+        $orderTotal = (float) $cart->getOrderTotal(true, Cart::BOTH);
 
         $paymentFeeData = $this->orderPaymentFeeService->getPaymentFee($orderTotal, Config::APPLEPAY);
 
@@ -75,7 +75,7 @@ final class UpdateApplePayShippingMethodHandler
         return [
            'success' => true,
            'data' => [// TODO use calculator
-               'amount' => $orderTotal + $paymentFee,
+               'amount' => number_format($orderTotal + $paymentFee, 2, '.', ''),
            ],
        ];
     }
