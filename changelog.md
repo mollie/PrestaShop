@@ -2,6 +2,10 @@
 
 # Changelog #
 
+## Changes in release 6.4.7
++ Fixed discounts being added to the order a second time, and voucher stock used twice, when the order confirmation email is sent after payment
++ The Mollie panel on the order page now lists the order's discounts for Payments API orders
+
 ## Changes in release 6.4.6
 + Apple Pay now works on desktop in Chrome, Edge and Firefox through Apple's QR code flow, and Apple Pay Direct prices shipping per delivery zone
 + Apple Pay Direct now works in test mode, with a warning when the live API key it needs is missing

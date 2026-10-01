@@ -773,6 +773,7 @@ class Mollie extends PaymentModule
 
             $shippingAmount = 0.0;
             $shippingRefunded = false;
+            $discounts = [];
             if ($mollieApiType === 'payments') {
                 $paymentApi = $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'refunds']);
                 $refundedByDetail = [];
@@ -815,6 +816,17 @@ class Mollie extends PaymentModule
                         'unitPrice' => $unitPrice,
                     ];
                 }
+
+                foreach ($order->getCartRules() as $orderCartRule) {
+                    if ((float) $orderCartRule['value'] <= 0) {
+                        continue;
+                    }
+
+                    $discounts[] = [
+                        'name' => (string) $orderCartRule['name'],
+                        'amount' => number_format(-(float) $orderCartRule['value'], 2, '.', ''),
+                    ];
+                }
             }
 
             $canShipAny = false;
@@ -855,6 +867,7 @@ class Mollie extends PaymentModule
                 'isAuthorizablePayment' => $isAuthorizablePayment,
                 'hasAnyShipment' => $hasAnyShipment,
                 'shipping_amount' => number_format($shippingAmount, 2, '.', ''),
+                'discounts' => $discounts,
                 'shipping_refunded' => $shippingRefunded,
                 'canShipAny' => $canShipAny,
                 'canCancelAny' => $canCancelAny,
