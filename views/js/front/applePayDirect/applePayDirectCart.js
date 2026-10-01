@@ -136,7 +136,7 @@ function initApplePayDirect() {
                             'amount': response.data.amount,
                             'label': totalLabel
                         },
-                        []
+                        response.data.lineItems || []
                     )
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
@@ -175,9 +175,7 @@ function initApplePayDirect() {
                                 'label': totalLabel,
                                 'amount': firstTotal.amount
                             },
-                            [
-                                response.paymentFee
-                            ]
+                            firstTotal.lineItems || []
                         );
 
                         return;

@@ -16,6 +16,7 @@ use Carrier;
 use Cart;
 use Mollie\Application\Command\UpdateApplePayShippingMethod;
 use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
+use Mollie\Builder\ApplePayDirect\ApplePayLineItemsBuilder;
 use Mollie\Config\Config;
 use Mollie\Service\OrderPaymentFeeService;
 
@@ -35,12 +36,19 @@ final class UpdateApplePayShippingMethodHandler
      */
     private $applePayCarriersBuilder;
 
+    /**
+     * @var ApplePayLineItemsBuilder
+     */
+    private $lineItemsBuilder;
+
     public function __construct(
         OrderPaymentFeeService $orderPaymentFeeService,
-        ApplePayCarriersBuilder $applePayCarriersBuilder
+        ApplePayCarriersBuilder $applePayCarriersBuilder,
+        ApplePayLineItemsBuilder $lineItemsBuilder
     ) {
         $this->orderPaymentFeeService = $orderPaymentFeeService;
         $this->applePayCarriersBuilder = $applePayCarriersBuilder;
+        $this->lineItemsBuilder = $lineItemsBuilder;
     }
 
     public function handle(UpdateApplePayShippingMethod $command): array
@@ -66,7 +74,7 @@ final class UpdateApplePayShippingMethodHandler
 
         $cart->update();
 
-        $orderTotal = (float) $cart->getOrderTotal(true, Cart::BOTH);
+        $orderTotal = (float) number_format($cart->getOrderTotal(true, Cart::BOTH), 2, '.', '');
 
         $paymentFeeData = $this->orderPaymentFeeService->getPaymentFee($orderTotal, Config::APPLEPAY);
 
@@ -76,6 +84,7 @@ final class UpdateApplePayShippingMethodHandler
            'success' => true,
            'data' => [// TODO use calculator
                'amount' => number_format($orderTotal + $paymentFee, 2, '.', ''),
+               'lineItems' => $this->lineItemsBuilder->build($cart, $orderTotal, $paymentFee),
            ],
        ];
     }

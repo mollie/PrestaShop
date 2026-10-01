@@ -13,6 +13,7 @@
 namespace Mollie\Application\CommandHandler;
 
 use Address;
+use Cache;
 use Carrier;
 use Cart;
 use Configuration;
@@ -21,10 +22,8 @@ use Customer;
 use Mollie\Application\Command\UpdateApplePayShippingContact;
 use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
 use Mollie\Collector\ApplePayDirect\OrderTotalCollector;
-use Mollie\Config\Config;
 use Mollie\Exception\GuestCheckoutNotAvailableException;
 use Mollie\Factory\ModuleFactory;
-use Mollie\Service\OrderPaymentFeeService;
 use Mollie\Utility\ApplePayDirect\ShippingMethodUtility;
 use Tools;
 
@@ -41,10 +40,6 @@ final class UpdateApplePayShippingContactHandler
      */
     private $applePayCarriersBuilder;
 
-    /**
-     * @var OrderPaymentFeeService
-     */
-    private $orderPaymentFeeService;
     /** @var OrderTotalCollector */
     private $orderTotalCollector;
     /** @var \Mollie */
@@ -52,12 +47,10 @@ final class UpdateApplePayShippingContactHandler
 
     public function __construct(
         ApplePayCarriersBuilder $applePayCarriersBuilder,
-        OrderPaymentFeeService $orderPaymentFeeService,
         OrderTotalCollector $orderTotalCollector,
         ModuleFactory $module
     ) {
         $this->applePayCarriersBuilder = $applePayCarriersBuilder;
-        $this->orderPaymentFeeService = $orderPaymentFeeService;
         $this->orderTotalCollector = $orderTotalCollector;
         $this->module = $module->getModule();
     }
@@ -95,18 +88,10 @@ final class UpdateApplePayShippingContactHandler
             return $this->buildUnshippableAddressResponse($cart);
         }
 
-        $paymentFeeData = $this->orderPaymentFeeService->getPaymentFee($totals[0]['amountWithoutFee'], Config::APPLEPAY);
-        $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
-
         return [
             'data' => [
                 'shipping_methods' => $shippingMethods,
                 'totals' => $totals,
-                'paymentFee' => [
-                    'label' => 'Payment fee',
-                    'amount' => number_format($paymentFee, 2, '.', ''),
-                    'type' => 'final',
-                ],
             ],
             'success' => true,
         ];
@@ -152,6 +137,11 @@ final class UpdateApplePayShippingContactHandler
                 $address->id_customer = $customerId;
                 $address->deleted = true;
                 $address->update();
+
+                // FrontController::init() already priced the cart against this address id, and
+                // Address::update() leaves that per-request entry behind, so the quote below would
+                // apply the previous country's VAT and shipping tax
+                Cache::clean('Address::initialize_' . (int) $address->id);
 
                 return $address;
             }
@@ -213,8 +203,16 @@ final class UpdateApplePayShippingContactHandler
     private function addProductToCart(Cart $cart, UpdateApplePayShippingContact $command)
     {
         foreach ($command->getProducts() as $product) {
-            $cart->deleteProduct($product->getProductId(), $product->getProductAttribute());
             $quantity = max($product->getWantedQuantity(), 1);
+            $inCart = $cart->getProductQuantity($product->getProductId(), $product->getProductAttribute());
+
+            // deleteProduct() runs CartRule::autoRemoveFromCart() on the emptied cart, which drops
+            // vouchers the shopper entered by code, so a cart already holding the line is left alone
+            if ((int) ($inCart['quantity'] ?? 0) === $quantity) {
+                continue;
+            }
+
+            $cart->deleteProduct($product->getProductId(), $product->getProductAttribute());
             $cart->updateQty($quantity, $product->getProductId(), $product->getProductAttribute());
         }
     }
