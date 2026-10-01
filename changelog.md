@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.7
++ Fixed the Apple Pay Direct sheet keeping the previous country's VAT and shipping tax after the shopper changed the delivery address to another country
+
 ## Changes in release 6.4.6
 + Apple Pay now works on desktop in Chrome, Edge and Firefox through Apple's QR code flow, and Apple Pay Direct prices shipping per delivery zone
 + Apple Pay Direct now works in test mode, with a warning when the live API key it needs is missing
