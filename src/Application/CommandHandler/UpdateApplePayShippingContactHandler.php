@@ -219,8 +219,16 @@ final class UpdateApplePayShippingContactHandler
     private function addProductToCart(Cart $cart, UpdateApplePayShippingContact $command)
     {
         foreach ($command->getProducts() as $product) {
-            $cart->deleteProduct($product->getProductId(), $product->getProductAttribute());
             $quantity = max($product->getWantedQuantity(), 1);
+            $inCart = $cart->getProductQuantity($product->getProductId(), $product->getProductAttribute());
+
+            // deleteProduct() runs CartRule::autoRemoveFromCart() on the emptied cart, which drops
+            // vouchers the shopper entered by code, so a cart already holding the line is left alone
+            if ((int) ($inCart['quantity'] ?? 0) === $quantity) {
+                continue;
+            }
+
+            $cart->deleteProduct($product->getProductId(), $product->getProductAttribute());
             $cart->updateQty($quantity, $product->getProductId(), $product->getProductAttribute());
         }
     }
