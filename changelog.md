@@ -3,6 +3,7 @@
 # Changelog #
 
 ## Changes in release 6.4.7
++ The Apple Pay Direct sheet now lists products, discount, VAT, shipping and payment fee above the total, so the amount no longer looks different from the product page
 + Fixed the Apple Pay Direct sheet keeping the previous country's VAT and shipping tax after the shopper changed the delivery address to another country
 
 ## Changes in release 6.4.6

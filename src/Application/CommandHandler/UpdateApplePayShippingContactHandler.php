@@ -22,10 +22,8 @@ use Customer;
 use Mollie\Application\Command\UpdateApplePayShippingContact;
 use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
 use Mollie\Collector\ApplePayDirect\OrderTotalCollector;
-use Mollie\Config\Config;
 use Mollie\Exception\GuestCheckoutNotAvailableException;
 use Mollie\Factory\ModuleFactory;
-use Mollie\Service\OrderPaymentFeeService;
 use Mollie\Utility\ApplePayDirect\ShippingMethodUtility;
 use Tools;
 
@@ -42,10 +40,6 @@ final class UpdateApplePayShippingContactHandler
      */
     private $applePayCarriersBuilder;
 
-    /**
-     * @var OrderPaymentFeeService
-     */
-    private $orderPaymentFeeService;
     /** @var OrderTotalCollector */
     private $orderTotalCollector;
     /** @var \Mollie */
@@ -53,12 +47,10 @@ final class UpdateApplePayShippingContactHandler
 
     public function __construct(
         ApplePayCarriersBuilder $applePayCarriersBuilder,
-        OrderPaymentFeeService $orderPaymentFeeService,
         OrderTotalCollector $orderTotalCollector,
         ModuleFactory $module
     ) {
         $this->applePayCarriersBuilder = $applePayCarriersBuilder;
-        $this->orderPaymentFeeService = $orderPaymentFeeService;
         $this->orderTotalCollector = $orderTotalCollector;
         $this->module = $module->getModule();
     }
@@ -96,18 +88,10 @@ final class UpdateApplePayShippingContactHandler
             return $this->buildUnshippableAddressResponse($cart);
         }
 
-        $paymentFeeData = $this->orderPaymentFeeService->getPaymentFee($totals[0]['amountWithoutFee'], Config::APPLEPAY);
-        $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
-
         return [
             'data' => [
                 'shipping_methods' => $shippingMethods,
                 'totals' => $totals,
-                'paymentFee' => [
-                    'label' => 'Payment fee',
-                    'amount' => number_format($paymentFee, 2, '.', ''),
-                    'type' => 'final',
-                ],
             ],
             'success' => true,
         ];
