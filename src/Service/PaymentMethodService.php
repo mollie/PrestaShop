@@ -601,7 +601,7 @@ class PaymentMethodService
             [
                 'resource' => 'orders',
                 'includeWallets' => 'applepay',
-                'locale' => $this->context->getLanguageLocale(),
+                'locale' => LocaleUtility::getWebShopLocale(),
                 'billingCountry' => $country->iso_code,
                 'amount' => [
                     'value' => (string) TextFormatUtility::formatNumber($cartAmount, 2),
