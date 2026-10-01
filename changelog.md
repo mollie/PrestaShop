@@ -3,8 +3,9 @@
 # Changelog #
 
 ## Changes in release 6.4.7
-+ The Apple Pay Direct sheet now lists products, discount, VAT, shipping and payment fee above the total, so the amount no longer looks different from the product page
++ The Apple Pay Direct sheet now lists products, discount, VAT, shipping, gift wrapping and payment fee above the total, so the amount no longer looks different from the product page
 + Fixed the Apple Pay Direct sheet keeping the previous country's VAT and shipping tax after the shopper changed the delivery address to another country
++ Fixed Apple Pay Direct on the cart page removing the shopper's voucher code and charging the full price
 
 ## Changes in release 6.4.6
 + Apple Pay now works on desktop in Chrome, Edge and Firefox through Apple's QR code flow, and Apple Pay Direct prices shipping per delivery zone
