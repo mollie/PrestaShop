@@ -102,7 +102,7 @@ class MailService
      */
     public function sendOrderConfMail(Order $order, $orderStateId)
     {
-        $data = $this->getOrderConfData($order, $orderStateId);
+        $data = $this->getOrderConfData($order);
         $fileAttachment = $this->getFileAttachment($orderStateId, $order);
         $customer = $order->getCustomer();
         $orderLanguage = new Language((int) $order->id_lang);
@@ -200,15 +200,13 @@ class MailService
     }
 
     /**
-     * @param int $orderStateId
-     *
      * @return array<string, mixed>
      *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
      */
-    private function getOrderConfData(Order $order, $orderStateId)
+    private function getOrderConfData(Order $order)
     {
         $virtual_product = true;
         $carrier = new Carrier($order->id_carrier);
@@ -286,7 +284,7 @@ class MailService
             $product_list_html = $this->getEmailTemplateContent('order_conf_product_list.tpl', Mail::TYPE_HTML, $product_var_tpl_list);
         }
 
-        $cart_rules_list = $this->getCartRuleList($order);
+        $cart_rules_list = $this->getCartRuleList($order, PS_TAX_EXC == Product::getTaxCalculationMethod());
         $cart_rules_list_txt = '';
         $cart_rules_list_html = '';
         if (count($cart_rules_list) > 0) {
@@ -348,14 +346,18 @@ class MailService
         ];
     }
 
-    private function getCartRuleList(Order $order)
+    /**
+     * @param bool $isTaxExcluded
+     */
+    private function getCartRuleList(Order $order, $isTaxExcluded)
     {
         $cartRulesList = [];
+        $valueKey = $isTaxExcluded ? 'value_tax_excl' : 'value';
 
         foreach ($order->getCartRules() as $orderCartRule) {
             $cartRulesList[] = [
                 'voucher_name' => $orderCartRule['name'],
-                'voucher_reduction' => (0.00 != $orderCartRule['value'] ? '-' : '') . $this->tools->displayPrice($orderCartRule['value'], $this->context->currency),
+                'voucher_reduction' => (0.00 != $orderCartRule['value'] ? '-' : '') . $this->tools->displayPrice($orderCartRule[$valueKey], $this->context->currency),
             ];
         }
 

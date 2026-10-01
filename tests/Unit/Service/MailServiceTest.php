@@ -24,7 +24,7 @@ class MailServiceTest extends BaseTestCase
     /**
      * @dataProvider cartRuleListProvider
      */
-    public function testCartRuleListIsBuiltFromOrderCartRulesWithoutChangingTheOrder(array $orderCartRules, array $expected)
+    public function testCartRuleListIsBuiltFromOrderCartRulesWithoutChangingTheOrder(array $orderCartRules, $isTaxExcluded, array $expected)
     {
         $order = $this->mock(\Order::class);
         $order->method('getCartRules')->willReturn($orderCartRules);
@@ -45,7 +45,7 @@ class MailServiceTest extends BaseTestCase
         $method = new \ReflectionMethod(MailService::class, 'getCartRuleList');
         $method->setAccessible(true);
 
-        $this->assertSame($expected, $method->invoke($mailService, $order));
+        $this->assertSame($expected, $method->invoke($mailService, $order, $isTaxExcluded));
     }
 
     public function cartRuleListProvider()
@@ -56,6 +56,7 @@ class MailServiceTest extends BaseTestCase
                     ['id_cart_rule' => 9, 'name' => 'Cadeau offert', 'value' => '22.944000', 'value_tax_excl' => '19.120000', 'id_order_invoice' => 13],
                     ['id_cart_rule' => 10, 'name' => 'Bon de bienvenue', 'value' => '5.000000', 'value_tax_excl' => '4.166667', 'id_order_invoice' => 13],
                 ],
+                false,
                 [
                     ['voucher_name' => 'Cadeau offert', 'voucher_reduction' => '-€22.94'],
                     ['voucher_name' => 'Bon de bienvenue', 'voucher_reduction' => '-€5.00'],
@@ -65,12 +66,25 @@ class MailServiceTest extends BaseTestCase
                 [
                     ['id_cart_rule' => 3, 'name' => 'Free shipping', 'value' => '0.000000', 'value_tax_excl' => '0.000000', 'id_order_invoice' => 0],
                 ],
+                false,
                 [
                     ['voucher_name' => 'Free shipping', 'voucher_reduction' => '€0.00'],
                 ],
             ],
+            'tax excluded customer group gets tax excluded amounts' => [
+                [
+                    ['id_cart_rule' => 9, 'name' => 'Cadeau offert', 'value' => '22.944000', 'value_tax_excl' => '19.120000', 'id_order_invoice' => 13],
+                    ['id_cart_rule' => 10, 'name' => 'Bon de bienvenue', 'value' => '5.000000', 'value_tax_excl' => '4.166667', 'id_order_invoice' => 13],
+                ],
+                true,
+                [
+                    ['voucher_name' => 'Cadeau offert', 'voucher_reduction' => '-€19.12'],
+                    ['voucher_name' => 'Bon de bienvenue', 'voucher_reduction' => '-€4.17'],
+                ],
+            ],
             'order without cart rules gives an empty list' => [
                 [],
+                false,
                 [],
             ],
         ];
