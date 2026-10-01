@@ -41,6 +41,7 @@ class LocaleUtility
             'pt',
             'it',
             'no',
+            'nn',
             'sv',
             'fi',
             'da',
@@ -136,5 +137,22 @@ class LocaleUtility
         }
 
         return "{$langIso}_{$countryIso}";
+    }
+
+    /**
+     * Apple supports far more button languages than Mollie, so the shop locale is kept
+     * and only PrestaShop's Norwegian codes are mapped to Apple's nb-NO.
+     *
+     * @return string
+     */
+    public static function getApplePayLocale()
+    {
+        $language = Context::getContext()->language;
+
+        if (in_array(Tools::strtolower($language->iso_code), ['no', 'nn'], true)) {
+            return 'nb-NO';
+        }
+
+        return (string) $language->locale;
     }
 }
