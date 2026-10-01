@@ -2,6 +2,10 @@
 
 # Changelog #
 
+## Changes in release 6.4.7
++ Fixed Mollie payment methods not showing at checkout when the shop language is Norwegian, Chinese, Serbian or another language Mollie does not support
++ Credit card field messages and the Apple Pay Direct button now follow the shop language for Norwegian shops instead of falling back to English
+
 ## Changes in release 6.4.6
 + Apple Pay now works on desktop in Chrome, Edge and Firefox through Apple's QR code flow, and Apple Pay Direct prices shipping per delivery zone
 + Apple Pay Direct now works in test mode, with a warning when the live API key it needs is missing
