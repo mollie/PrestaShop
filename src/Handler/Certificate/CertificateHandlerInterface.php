@@ -24,4 +24,9 @@ interface CertificateHandlerInterface
      * @throws CertificationException
      */
     public function handle();
+
+    /**
+     * @throws CertificationException
+     */
+    public function refresh();
 }
