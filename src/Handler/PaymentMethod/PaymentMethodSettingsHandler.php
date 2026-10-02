@@ -474,6 +474,15 @@ class PaymentMethodSettingsHandler
 
                 throw new MollieException($this->module->l('Apple Pay Direct could not be enabled due to a certificate issue. Check the module logs for details.', 'PaymentMethodSettingsHandler'));
             }
+
+            // The outdated Mollie file still verifies the domain, so a failed update must not disable Apple Pay Direct.
+            try {
+                $this->applePayDirectCertificateHandler->refresh();
+            } catch (\Throwable $e) {
+                $this->logger->warning('Apple Pay Direct certificate could not be updated', [
+                    'exceptions' => ExceptionUtility::getExceptions($e),
+                ]);
+            }
         }
 
         $this->configuration->updateValue(

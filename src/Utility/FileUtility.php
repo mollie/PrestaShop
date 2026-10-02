@@ -33,6 +33,16 @@ class FileUtility
         return copy($from, $to);
     }
 
+    public static function moveFile(string $from, string $to): bool
+    {
+        return rename($from, $to);
+    }
+
+    public static function deleteFile(string $file): bool
+    {
+        return unlink($file);
+    }
+
     public static function createDir(string $dir): bool
     {
         if (is_dir($dir)) {
