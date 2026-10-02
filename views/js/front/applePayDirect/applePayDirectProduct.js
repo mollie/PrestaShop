@@ -71,7 +71,7 @@ function initApplePayDirect() {
                     validationUrl: applePayValidateMerchantEvent.validationURL
                 },
                 success: (merchantSession) => {
-                    merchantSession = JSON.parse(merchantSession);
+                    merchantSession = parseJsonSafely(merchantSession);
                     if (merchantSession.success === true) {
                         cartId = merchantSession.cartId
                         session.completeMerchantValidation(JSON.parse(merchantSession.data))
