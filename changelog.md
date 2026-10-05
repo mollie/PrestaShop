@@ -3,6 +3,7 @@
 # Changelog #
 
 ## Changes in release 6.4.6
++ Apple Pay Direct now assigns each order to the shopper completing the payment
 + Apple Pay now works on desktop in Chrome, Edge and Firefox through Apple's QR code flow, and Apple Pay Direct prices shipping per delivery zone
 + Apple Pay Direct now works in test mode, with a warning when the live API key it needs is missing
 + Added a Payment overview page for failed, cancelled and expired payments, and customers whose payment fails now return to the shop immediately
