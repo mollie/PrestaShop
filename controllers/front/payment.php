@@ -193,6 +193,7 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
                     $orderPayment->payment_method = $transactionService->getPaymentMethodName($paymentMethodObj, $apiPayment);
                     $orderPayment->transaction_id = $apiPayment->id;
                     $orderPayment->id_currency = (int) $cart->id_currency;
+                    $orderPayment->conversion_rate = $order->conversion_rate;
                     $orderPayment->add();
                 }
             } else {
