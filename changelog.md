@@ -24,6 +24,7 @@
 + Apple Pay Direct refusals are now recorded in the Mollie log with the delivery country and the reason
 + Fixed Apple Pay Direct accepting delivery addresses no carrier can ship to, the payment sheet now rejects the address instead of showing "No carriers" with a 0.00 total
 + Fixed Apple Pay Direct sheet naming the merchant "mollie" instead of the shop name once a shipping method was selected
++ Fixed Klarna and Billie orders on the Orders API resending customer addresses when the shop's order reference is attached, which Klarna could refuse
 
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API
