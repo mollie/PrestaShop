@@ -14,6 +14,7 @@ use Mollie\Controller\AbstractMollieController;
 use Mollie\DTO\Express\ExpressSubmitCheck;
 use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Logger\LoggerInterface;
+use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Service\ExpressComponent\ExpressComponentAvailabilityService;
 use Mollie\Service\ExpressComponent\ExpressSessionService;
 use Mollie\Utility\ExceptionUtility;
@@ -35,6 +36,7 @@ class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieCont
     const ACTION_VALIDATE_CART = 'mollie_express_validate_cart';
 
     const ERROR_NOT_AVAILABLE = 'not_available';
+    const ERROR_ORDER_EXISTS = 'order_exists';
     const ERROR_FORBIDDEN = 'forbidden';
     const ERROR_API = 'api_error';
 
@@ -57,6 +59,13 @@ class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieCont
 
         if (!$availability->isAvailable($this->context->cart)) {
             $this->ajaxResponse(JsonResponse::error(self::ERROR_NOT_AVAILABLE, JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
+        }
+
+        /** @var OrderRepositoryInterface $orderRepository */
+        $orderRepository = $this->module->getService(OrderRepositoryInterface::class);
+
+        if ($orderRepository->getOrderIdByCartId((int) $this->context->cart->id) > 0) {
+            $this->ajaxResponse(JsonResponse::error(self::ERROR_ORDER_EXISTS, JsonResponse::HTTP_CONFLICT));
         }
 
         $lockResult = $this->applyLock(sprintf('%s-%d', self::FILE_NAME, (int) $this->context->cart->id));

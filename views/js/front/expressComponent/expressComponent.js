@@ -170,8 +170,11 @@
         body: body.toString()
       }).then(function (response) {
         return response.json().then(function (json) {
-          if (!response.ok || !json || json.error) {
-            throw new Error((json && json.error) ? JSON.stringify(json.error) : 'HTTP ' + response.status);
+          // JsonResponse::error() answers {success:false, errors:[...], data:[]}.
+          if (!response.ok || !json || json.success === false) {
+            var errors = json && json.errors ? JSON.stringify(json.errors) : 'HTTP ' + response.status;
+
+            throw new Error(errors);
           }
 
           return json.data || json;

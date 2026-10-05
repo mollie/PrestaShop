@@ -69,14 +69,14 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
             exit;
         }
 
-        if (Tools::getValue('failed')) {
-            $this->handleWaitTimeout($cart, $key);
-        }
-
         $orderId = (int) Order::getIdByCartId($cartId);
 
         if ($orderId) {
             $this->redirectToOrderConfirmation($cart, $orderId);
+        }
+
+        if (Tools::getValue('failed')) {
+            $this->handleWaitTimeout($cart, $key);
         }
 
         if ($this->hasFailedPaymentWithoutOrder($cartId)) {
