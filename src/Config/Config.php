@@ -246,6 +246,16 @@ class Config
     const MOLLIE_APPLE_PAY_DIRECT_STYLE = 'MOLLIE_APPLE_PAY_DIRECT_STYLE';
     const MOLLIE_APPLE_PAY_DIRECT_EXCLUDED_CARRIERS = 'MOLLIE_APPLE_PAY_DIRECT_EXCLUDED_CARRIERS';
 
+    const MOLLIE_EXPRESS_COMPONENT_ENABLED = 'MOLLIE_EXPRESS_COMPONENT_ENABLED';
+    const MOLLIE_EXPRESS_COMPONENT_APPLEPAY = 'MOLLIE_EXPRESS_COMPONENT_APPLEPAY';
+    const MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY = 'MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY';
+    const MOLLIE_EXPRESS_COMPONENT_PAYPAL = 'MOLLIE_EXPRESS_COMPONENT_PAYPAL';
+    // A Checkout Session lives about 15 minutes at Mollie; reuse one for a little less than that.
+    const EXPRESS_SESSION_REUSE_MAX_AGE_SECONDS = 780;
+    const EXPRESS_METADATA_FLAG = 'express_component';
+    // Compatibility mode exposes Mollie.js v2 as `Mollie2`, next to the v1 `Mollie` the card iframe uses.
+    const MOLLIE_JS_V2_URL = 'https://js.mollie.com/v2/mollie.js?compatible';
+
     const MOLLIE_CARRIER_URL_SOURCE = 'MOLLIE_CARRIER_URL_SOURCE_';
     const MOLLIE_CARRIER_CUSTOM_URL = 'MOLLIE_CARRIER_CUSTOM_URL_';
 
