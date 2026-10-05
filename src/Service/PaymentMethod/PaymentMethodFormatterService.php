@@ -251,6 +251,7 @@ class PaymentMethodFormatterService
             'directCart' => (bool) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART) ?: 0),
             'buttonStyle' => (int) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE) ?: 0),
             'excludedCarriers' => $this->getExcludedCarriers(),
+            'disabledByExpress' => (bool) (int) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED),
         ];
     }
 

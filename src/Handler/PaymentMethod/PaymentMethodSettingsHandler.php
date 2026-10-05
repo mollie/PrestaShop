@@ -460,6 +460,17 @@ class PaymentMethodSettingsHandler
         $isApplePayDirectProductEnabled = (bool) ($applePaySettings['directProduct'] ?? false);
         $isApplePayDirectCartEnabled = (bool) ($applePaySettings['directCart'] ?? false);
 
+        // The Express Component replaces the Direct buttons; the BO disables these switches, this
+        // keeps a stale or hand-made request from turning them back on.
+        if ((int) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED)) {
+            if ($isApplePayDirectProductEnabled || $isApplePayDirectCartEnabled) {
+                $this->logger->info('Apple Pay Direct settings ignored while the Express Component is enabled');
+            }
+
+            $isApplePayDirectProductEnabled = false;
+            $isApplePayDirectCartEnabled = false;
+        }
+
         // Handle Apple Pay Direct certificate creation if either product or cart is enabled
         if ($isApplePayDirectProductEnabled || $isApplePayDirectCartEnabled) {
             try {
