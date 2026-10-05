@@ -94,6 +94,9 @@ class TransactionService
     /** @var OrderRepositoryInterface */
     private $orderRepository;
 
+    /** @var MollieOrderNumberService */
+    private $mollieOrderNumberService;
+
     public function __construct(
         ModuleFactory $module,
         OrderStatusService $orderStatusService,
@@ -106,7 +109,8 @@ class TransactionService
         PrestaLoggerInterface $logger,
         ExceptionService $exceptionService,
         ConfigurationAdapter $configurationAdapter,
-        OrderRepositoryInterface $orderRepository
+        OrderRepositoryInterface $orderRepository,
+        MollieOrderNumberService $mollieOrderNumberService
     ) {
         $this->module = $module->getModule();
         $this->orderStatusService = $orderStatusService;
@@ -120,6 +124,7 @@ class TransactionService
         $this->exceptionService = $exceptionService;
         $this->configurationAdapter = $configurationAdapter;
         $this->orderRepository = $orderRepository;
+        $this->mollieOrderNumberService = $mollieOrderNumberService;
     }
 
     /**
@@ -582,15 +587,7 @@ class TransactionService
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
         $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
         $orderNumber = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
-        $apiPayment->orderNumber = $orderNumber;
-        $payments = $apiPayment->payments();
-
-        /** @var Payment $payment */
-        foreach ($payments as $payment) {
-            $payment->description = 'Order ' . $orderNumber;
-            $payment->update();
-        }
-        $apiPayment->update();
+        $this->mollieOrderNumberService->assign($this->module->getApiClient(), $apiPayment, $orderNumber);
 
         return $apiPayment;
     }
