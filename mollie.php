@@ -30,6 +30,7 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\CancelService;
 use Mollie\Service\CaptureService;
 use Mollie\Service\ExceptionService;
+use Mollie\Service\ExpressComponent\ExpressComponentAvailabilityService;
 use Mollie\Service\MollieOrderService;
 use Mollie\Service\RefundService;
 use Mollie\Service\SegmentOrderStatusHandler;
@@ -48,6 +49,7 @@ use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\TabTranslationUtility;
+use Mollie\Utility\TextFormatUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Utility\VersionUtility;
 use Mollie\Verification\IsPaymentInformationAvailable;
@@ -414,7 +416,77 @@ class Mollie extends PaymentModule
 
         $this->context->controller->addJS("{$this->_path}views/js/front/payment_fee.js");
 
+        /** @var ExpressComponentAvailabilityService $expressAvailability */
+        $expressAvailability = $this->getService(ExpressComponentAvailabilityService::class);
+
+        if ($expressAvailability->isAvailable($this->context->cart)) {
+            $this->registerExpressComponentAssets($expressAvailability);
+        }
+
         return $this->display(__FILE__, 'views/templates/front/custom_css.tpl');
+    }
+
+    /**
+     * Mollie.js v2 is loaded in compatibility mode (`Mollie2`) because the card iframe above
+     * already owns the v1 `Mollie` global on this page.
+     */
+    private function registerExpressComponentAssets(ExpressComponentAvailabilityService $expressAvailability): void
+    {
+        $this->context->controller->registerJavascript(
+            'mollie_js_v2',
+            Config::MOLLIE_JS_V2_URL,
+            ['server' => 'remote', 'position' => 'bottom', 'priority' => 151]
+        );
+        $this->registerVersionedScript('mollie-express-component', 'views/js/front/expressComponent/expressComponent.js', 160);
+        $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/express_component.css');
+
+        Media::addJsDef([
+            'mollieExpressComponent' => [
+                'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'expressComponentAjax', [], true),
+                'createSessionAction' => MollieExpressComponentAjaxModuleFrontController::ACTION_CREATE_SESSION,
+                'validateCartAction' => MollieExpressComponentAjaxModuleFrontController::ACTION_VALIDATE_CART,
+                'locale' => $this->context->language->locale,
+                'amount' => TextFormatUtility::formatNumber($this->context->cart->getOrderTotal(true, Cart::BOTH), Config::API_ROUNDING_PRECISION),
+                'currency' => $this->context->currency->iso_code,
+                'buttons' => $expressAvailability->getButtonVisibility(),
+                'tokenTtlSeconds' => Config::EXPRESS_SESSION_REUSE_MAX_AGE_SECONDS,
+                'debug' => (bool) Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
+                'i18n' => [
+                    'acceptTerms' => $this->l('Please accept the terms and conditions before paying.'),
+                    'unavailable' => $this->l('Express checkout is temporarily unavailable. Please choose a payment method below.'),
+                    'cartChanged' => $this->l('Your cart total changed. Please try the express payment again.'),
+                ],
+            ],
+        ]);
+    }
+
+    public function hookDisplayPaymentTop(array $params)
+    {
+        if ($this->context->controller->php_self !== 'order') {
+            return '';
+        }
+
+        /** @var ExpressComponentAvailabilityService $expressAvailability */
+        $expressAvailability = $this->getService(ExpressComponentAvailabilityService::class);
+
+        if (!$expressAvailability->isAvailable($this->context->cart)) {
+            return '';
+        }
+
+        $this->context->smarty->assign([
+            'mollieExpressAmount' => TextFormatUtility::formatNumber($this->context->cart->getOrderTotal(true, Cart::BOTH), Config::API_ROUNDING_PRECISION),
+            'mollieExpressCurrency' => $this->context->currency->iso_code,
+        ]);
+
+        return $this->display(__FILE__, 'views/templates/hook/express_component.tpl');
+    }
+
+    private function isExpressComponentEnabled(): bool
+    {
+        /** @var ExpressComponentAvailabilityService $expressAvailability */
+        $expressAvailability = $this->getService(ExpressComponentAvailabilityService::class);
+
+        return $expressAvailability->isEnabled();
     }
 
     /**
@@ -448,6 +520,11 @@ class Mollie extends PaymentModule
                 'mollieSubAjaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
                 'isVersionGreaterOrEqualTo177' => VersionUtility::isPsVersionGreaterOrEqualTo('1.7.7.0'),
             ]);
+        }
+
+        // The Express Component replaces the Apple Pay Direct buttons while it is enabled.
+        if ($this->isExpressComponentEnabled()) {
+            return;
         }
 
         /** @var ?MolPaymentMethod $paymentMethod */
@@ -493,11 +570,11 @@ class Mollie extends PaymentModule
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
 
         if ($controller instanceof ProductControllerCore) {
-            $this->registerApplePayDirectScript('mollie-apple-pay-direct-product', 'views/js/front/applePayDirect/applePayDirectProduct.js');
+            $this->registerVersionedScript('mollie-apple-pay-direct-product', 'views/js/front/applePayDirect/applePayDirectProduct.js');
         }
 
         if ($controller instanceof CartControllerCore) {
-            $this->registerApplePayDirectScript('mollie-apple-pay-direct-cart', 'views/js/front/applePayDirect/applePayDirectCart.js');
+            $this->registerVersionedScript('mollie-apple-pay-direct-cart', 'views/js/front/applePayDirect/applePayDirectCart.js');
         }
     }
 
@@ -505,12 +582,12 @@ class Mollie extends PaymentModule
      * Registered as a remote URI so a cache buster can be appended, otherwise CDN and browser
      * caches keep serving the previous script against an upgraded ajax contract.
      */
-    private function registerApplePayDirectScript(string $id, string $relativePath): void
+    private function registerVersionedScript(string $id, string $relativePath, int $priority = 80): void
     {
         $this->context->controller->registerJavascript(
             $id,
             $this->getPathUri() . $relativePath . '?v=' . (int) filemtime($this->getLocalPath() . $relativePath),
-            ['server' => 'remote', 'position' => 'bottom', 'priority' => 80]
+            ['server' => 'remote', 'position' => 'bottom', 'priority' => $priority]
         );
     }
 
@@ -1519,6 +1596,10 @@ class Mollie extends PaymentModule
 
     public function hookDisplayProductActions($params)
     {
+        if ($this->isExpressComponentEnabled()) {
+            return '';
+        }
+
         if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.6.0')) {
             return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
         }
@@ -1528,11 +1609,19 @@ class Mollie extends PaymentModule
 
     public function hookDisplayExpressCheckout($params)
     {
+        if ($this->isExpressComponentEnabled()) {
+            return '';
+        }
+
         return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
     }
 
     public function hookDisplayProductAdditionalInfo()
     {
+        if ($this->isExpressComponentEnabled()) {
+            return '';
+        }
+
         if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.6.0')) {
             return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
         }

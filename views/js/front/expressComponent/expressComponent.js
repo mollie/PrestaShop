@@ -1,0 +1,403 @@
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
+
+/**
+ * Mounts the Mollie Express Component (Apple Pay, Google Pay, PayPal) on the checkout payment
+ * step. A Checkout Session is bound to one cart total, so the component is re-created whenever
+ * the total it was mounted for no longer matches the one rendered on the page.
+ *
+ * Pure helpers are exported for the Node test runner; everything that touches the DOM lives in
+ * init() and only runs in a browser.
+ */
+(function (root, factory) {
+  var helpers = factory();
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = helpers;
+  }
+
+  if (root) {
+    root.MollieExpressHelpers = helpers;
+  }
+
+  if (typeof document !== 'undefined') {
+    helpers.init(root);
+  }
+})(typeof window !== 'undefined' ? window : (typeof globalThis !== 'undefined' ? globalThis : undefined), function () {
+  'use strict';
+
+  var CURRENT_STEP_CLASS = 'js-current-step';
+  var MOUNTED_ATTRIBUTE = 'data-mollie-mounted';
+  var REFRESH_MARGIN_SECONDS = 180;
+  var RECHECK_DEBOUNCE_MS = 250;
+
+  function buildButtonOptions(buttons) {
+    var source = buttons || {};
+
+    return {
+      buttons: {
+        applepay: { visibility: source.applepay === 'hidden' ? 'hidden' : 'automatic' },
+        googlepay: { visibility: source.googlepay === 'hidden' ? 'hidden' : 'automatic' },
+        paypal: { visibility: source.paypal === 'automatic' ? 'automatic' : 'hidden' }
+      }
+    };
+  }
+
+  function normalizeAmount(value) {
+    if (value === null || value === undefined) {
+      return null;
+    }
+
+    var parsed = parseFloat(String(value).replace(',', '.'));
+
+    if (isNaN(parsed)) {
+      return null;
+    }
+
+    return parsed.toFixed(2);
+  }
+
+  function shouldRecreate(state, nextAmount) {
+    if (!state || state.pending) {
+      return false;
+    }
+
+    var amount = normalizeAmount(nextAmount);
+
+    if (amount === null) {
+      return false;
+    }
+
+    return amount !== state.mountedAmount;
+  }
+
+  function isPaymentStepCurrent(classList) {
+    if (!classList) {
+      return true;
+    }
+
+    return classList.contains(CURRENT_STEP_CLASS);
+  }
+
+  function allRequiredConditionsAccepted(checkboxes) {
+    for (var i = 0; i < checkboxes.length; i++) {
+      if (!checkboxes[i].checked) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  function init(root) {
+    var config = root.mollieExpressComponent;
+
+    if (!config) {
+      return;
+    }
+
+    var state = {
+      phase: 'idle',
+      pending: false,
+      mountedAmount: null,
+      checkout: null,
+      component: null,
+      refreshTimer: null,
+      wrapper: null
+    };
+
+    function log(message, data) {
+      if (config.debug && root.console && root.console.warn) {
+        root.console.warn('[Mollie Express] ' + message, data || '');
+      }
+    }
+
+    function wrapper() {
+      return document.getElementById('mollie-express-component');
+    }
+
+    function mountNode() {
+      var node = wrapper();
+
+      return node ? node.querySelector('.mollie-express-component__mount') : null;
+    }
+
+    function showError(message) {
+      var node = wrapper();
+
+      if (!node) {
+        return;
+      }
+
+      var error = node.querySelector('.mollie-express-component__error');
+
+      if (error) {
+        error.textContent = message;
+        error.hidden = false;
+      }
+    }
+
+    function hideError() {
+      var node = wrapper();
+      var error = node ? node.querySelector('.mollie-express-component__error') : null;
+
+      if (error) {
+        error.hidden = true;
+      }
+    }
+
+    function post(action, data) {
+      var body = new URLSearchParams();
+      body.set('action', action);
+      body.set('ajax', '1');
+
+      Object.keys(data || {}).forEach(function (key) {
+        body.set(key, data[key]);
+      });
+
+      return fetch(config.ajaxUrl, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: body.toString()
+      }).then(function (response) {
+        return response.json().then(function (json) {
+          if (!response.ok || !json || json.error) {
+            throw new Error((json && json.error) ? JSON.stringify(json.error) : 'HTTP ' + response.status);
+          }
+
+          return json.data || json;
+        });
+      });
+    }
+
+    function pageAmount() {
+      var node = wrapper();
+
+      return normalizeAmount(node && node.getAttribute('data-amount')) || normalizeAmount(config.amount);
+    }
+
+    function teardown() {
+      if (state.refreshTimer) {
+        root.clearTimeout(state.refreshTimer);
+        state.refreshTimer = null;
+      }
+
+      var component = state.component;
+      state.component = null;
+      state.checkout = null;
+
+      if (!component) {
+        return Promise.resolve();
+      }
+
+      return Promise.resolve(component.unmount()).catch(function () {});
+    }
+
+    function onSubmit(event) {
+      event.defer();
+      hideError();
+
+      var checkboxes = document.querySelectorAll('#conditions-to-approve input[type="checkbox"][required]');
+
+      if (!allRequiredConditionsAccepted(checkboxes)) {
+        showError(config.i18n.acceptTerms);
+        event.reject();
+
+        return;
+      }
+
+      if (!config.validateCartAction) {
+        event.resolve();
+
+        return;
+      }
+
+      post(config.validateCartAction, {}).then(function (result) {
+        if (result && result.ok) {
+          event.resolve();
+
+          return;
+        }
+
+        event.reject();
+        showError(config.i18n.cartChanged);
+
+        if (result && result.clientAccessToken) {
+          state.mountedAmount = null;
+          recreate();
+        }
+      }).catch(function (error) {
+        // A failing validator must never block a payment the shopper already authorised.
+        log('submit check failed, continuing', error);
+        event.resolve();
+      });
+    }
+
+    function scheduleRefresh() {
+      var ttl = parseInt(config.tokenTtlSeconds, 10) || 900;
+      var delay = Math.max(ttl - REFRESH_MARGIN_SECONDS, 60) * 1000;
+
+      state.refreshTimer = root.setTimeout(function () {
+        state.refreshTimer = null;
+
+        if (document.visibilityState !== 'visible') {
+          document.addEventListener('visibilitychange', function onVisible() {
+            document.removeEventListener('visibilitychange', onVisible);
+            state.mountedAmount = null;
+            recreate();
+          });
+
+          return;
+        }
+
+        state.mountedAmount = null;
+        recreate();
+      }, delay);
+    }
+
+    function recreate() {
+      var node = wrapper();
+      var target = mountNode();
+
+      if (!node || !target || state.pending) {
+        return;
+      }
+
+      if (!root.Mollie2 || typeof root.Mollie2.Checkout !== 'function') {
+        log('Mollie.js v2 is not loaded');
+        state.phase = 'unavailable';
+
+        return;
+      }
+
+      state.pending = true;
+      state.phase = 'creating';
+
+      post(config.createSessionAction, {}).then(function (session) {
+        return teardown().then(function () {
+          target.innerHTML = '';
+
+          var checkout = root.Mollie2.Checkout(session.clientAccessToken, { locale: config.locale });
+          checkout.on('submit', onSubmit);
+
+          var component = checkout.create('express-component', buildButtonOptions(session.buttons || config.buttons));
+
+          return Promise.resolve(component.mount(target)).then(function () {
+            state.checkout = checkout;
+            state.component = component;
+            state.mountedAmount = normalizeAmount(session.amount && session.amount.value) || pageAmount();
+            state.phase = 'mounted';
+            node.hidden = false;
+            node.setAttribute(MOUNTED_ATTRIBUTE, '1');
+            hideError();
+            scheduleRefresh();
+          });
+        });
+      }).catch(function (error) {
+        log('express component unavailable', error);
+        state.phase = 'unavailable';
+        state.mountedAmount = null;
+
+        if (node) {
+          node.hidden = true;
+        }
+      }).then(function () {
+        state.pending = false;
+      });
+    }
+
+    function maybeRecreate() {
+      var step = document.getElementById('checkout-payment-step');
+
+      if (!isPaymentStepCurrent(step ? step.classList : null)) {
+        return;
+      }
+
+      var node = wrapper();
+
+      if (!node) {
+        return;
+      }
+
+      if (!node.hasAttribute(MOUNTED_ATTRIBUTE) || shouldRecreate(state, node.getAttribute('data-amount'))) {
+        recreate();
+      }
+    }
+
+    var debounceTimer = null;
+
+    function debouncedRecheck() {
+      if (debounceTimer) {
+        root.clearTimeout(debounceTimer);
+      }
+
+      debounceTimer = root.setTimeout(function () {
+        debounceTimer = null;
+        maybeRecreate();
+      }, RECHECK_DEBOUNCE_MS);
+    }
+
+    function observe() {
+      var step = document.getElementById('checkout-payment-step');
+
+      if (step && root.MutationObserver) {
+        new root.MutationObserver(debouncedRecheck).observe(step, { attributes: true, attributeFilter: ['class'] });
+      }
+
+      // One page checkout modules replace the payment list through AJAX; the mount div comes back unmounted.
+      if (root.MutationObserver) {
+        new root.MutationObserver(function (mutations) {
+          for (var i = 0; i < mutations.length; i++) {
+            if (mutations[i].addedNodes.length) {
+              debouncedRecheck();
+
+              return;
+            }
+          }
+        }).observe(document.body, { childList: true, subtree: true });
+      }
+
+      if (root.prestashop && typeof root.prestashop.on === 'function') {
+        root.prestashop.on('updatedCart', debouncedRecheck);
+        root.prestashop.on('updatedDeliveryForm', debouncedRecheck);
+      }
+
+      root.addEventListener('pagehide', function () {
+        teardown();
+      });
+    }
+
+    function start() {
+      if (!wrapper()) {
+        return;
+      }
+
+      observe();
+      maybeRecreate();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start);
+    } else {
+      start();
+    }
+  }
+
+  return {
+    buildButtonOptions: buildButtonOptions,
+    normalizeAmount: normalizeAmount,
+    shouldRecreate: shouldRecreate,
+    isPaymentStepCurrent: isPaymentStepCurrent,
+    allRequiredConditionsAccepted: allRequiredConditionsAccepted,
+    init: init
+  };
+});

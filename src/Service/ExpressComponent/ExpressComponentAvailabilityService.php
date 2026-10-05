@@ -103,6 +103,19 @@ class ExpressComponentAvailabilityService
     /** The cart on the payment step has everything a session needs: customer, addresses, carrier, total. */
     public function isAvailable(\Cart $cart): bool
     {
+        $available = $this->checkCart($cart);
+
+        if (!$available) {
+            $this->logger->debug(sprintf('%s - Express Component not shown: %s', self::FILE_NAME, $this->unavailableReason), [
+                'cart_id' => (int) $cart->id,
+            ]);
+        }
+
+        return $available;
+    }
+
+    private function checkCart(\Cart $cart): bool
+    {
         if (!$this->isEnabled()) {
             return false;
         }
@@ -171,8 +184,6 @@ class ExpressComponentAvailabilityService
     private function unavailable(string $reason): bool
     {
         $this->unavailableReason = $reason;
-
-        $this->logger->debug(sprintf('%s - Express Component not shown: %s', self::FILE_NAME, $reason));
 
         return false;
     }
