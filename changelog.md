@@ -4,6 +4,7 @@
 
 ## Changes in release 6.4.7
 + Updated the Apple Pay domain verification file, shops that serve the previous Mollie file get the new one when the module is upgraded from the back office or the Apple Pay settings are saved
++ Fixed PHP deprecation notices filling the error log on every page load on PHP 8.4 and 8.5, and made the module ready to load on PHP 9
 
 ## Changes in release 6.4.6
 + Apple Pay now works on desktop in Chrome, Edge and Firefox through Apple's QR code flow, and Apple Pay Direct prices shipping per delivery zone

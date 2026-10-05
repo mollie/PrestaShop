@@ -12,7 +12,6 @@
 
 namespace Mollie\Repository;
 
-use Invertus\Knapsack\Collection;
 use Mollie\Logger\Logger;
 use Mollie\Logger\PrestashopLoggerRepositoryInterface;
 use Mollie\Utility\VersionUtility;
@@ -50,14 +49,13 @@ class PrestashopLoggerRepository extends CollectionRepository implements Prestas
 
     public function prune(int $daysToKeep): void
     {
-        Collection::from(
-            $this->findAllInCollection()
-                ->sqlWhere('DATEDIFF(NOW(),date_add) >= ' . (int) $daysToKeep)
-                ->where('object_type', '=', Logger::LOG_OBJECT_TYPE)
-        )
-            ->each(function (\PrestaShopLogger $log) {
-                $log->delete();
-            })
-            ->realize();
+        $logs = $this->findAllInCollection()
+            ->sqlWhere('DATEDIFF(NOW(),date_add) >= ' . (int) $daysToKeep)
+            ->where('object_type', '=', Logger::LOG_OBJECT_TYPE);
+
+        /** @var \PrestaShopLogger $log */
+        foreach ($logs as $log) {
+            $log->delete();
+        }
     }
 }
