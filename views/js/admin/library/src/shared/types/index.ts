@@ -234,6 +234,21 @@ export interface MolliePaymentMethodsTranslations {
   // Multi-store restriction
   multistoreRestrictedTitle: string;
   multistoreRestrictedMessage: string;
+
+  // Express Component
+  expressComponentSettings: string;
+  expressComponentEnable: string;
+  expressComponentEnableInfo: string;
+  expressComponentButtons: string;
+  expressComponentApplePay: string;
+  expressComponentGooglePay: string;
+  expressComponentPayPal: string;
+  expressComponentLiveOnly: string;
+  expressComponentApplePayDomainFile: string;
+  expressComponentDisablesDirect: string;
+  expressComponentSave: string;
+  expressComponentSaved: string;
+  applePayDirectDisabledByExpress: string;
 }
 
 export interface MollieAdvancedSettingsTranslations {

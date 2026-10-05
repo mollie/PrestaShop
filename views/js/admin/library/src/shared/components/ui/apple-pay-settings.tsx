@@ -21,6 +21,7 @@ interface ApplePaySettingsProps {
   settings: ApplePayDirectSettings
   carriers?: Carrier[]
   showLiveKeyWarning?: boolean
+  disabledByExpress?: boolean
   onUpdateSettings: (settings: ApplePayDirectSettings) => void
   className?: string
 }
@@ -29,6 +30,7 @@ export function ApplePaySettings({
   settings,
   carriers = [],
   showLiveKeyWarning = false,
+  disabledByExpress = false,
   onUpdateSettings,
   className
 }: ApplePaySettingsProps) {
@@ -51,7 +53,7 @@ export function ApplePaySettings({
       .catch(() => {})
   }, [])
 
-  const isDisabled = !!certificateConflict && !isDismissed
+  const isDisabled = (!!certificateConflict && !isDismissed) || disabledByExpress
 
   const buttonStyles = [
     {
@@ -120,6 +122,10 @@ export function ApplePaySettings({
           disabled={isDisabled}
         />
         <p className="text-xs text-gray-400 leading-relaxed">{t('applePayDirectCartPageInfo')}</p>
+
+        {disabledByExpress && (
+          <p className="text-xs text-muted-foreground leading-relaxed col-span-3 mt-2">{t('applePayDirectDisabledByExpress')}</p>
+        )}
       </div>
 
       {/* Button Style - only show if at least one direct option is enabled */}

@@ -19,6 +19,7 @@ interface PaymentMethodSettingsProps {
   countries: Country[]
   carriers: Carrier[]
   showApplePayLiveKeyWarning?: boolean
+  expressEnabled?: boolean
   customerGroups: CustomerGroup[]
   languages: Language[]
   onlyPaymentsMethods: string[]
@@ -103,7 +104,7 @@ function RadioSelect({ value, onValueChange, options, placeholder, className }: 
   )
 }
 
-export function PaymentMethodSettings({ method, countries, carriers, showApplePayLiveKeyWarning = false, customerGroups, languages, onlyPaymentsMethods, onlyOrderMethods, onUpdateSettings, onSaveSettings, isSaving = false }: PaymentMethodSettingsProps) {
+export function PaymentMethodSettings({ method, countries, carriers, showApplePayLiveKeyWarning = false, expressEnabled = false, customerGroups, languages, onlyPaymentsMethods, onlyOrderMethods, onUpdateSettings, onSaveSettings, isSaving = false }: PaymentMethodSettingsProps) {
   const { t } = usePaymentMethodsTranslations()
 
   const forcePaymentsApi = onlyPaymentsMethods.includes(method.id)
@@ -551,6 +552,7 @@ export function PaymentMethodSettings({ method, countries, carriers, showApplePa
                   settings={method.settings.applePaySettings}
                   carriers={carriers}
                   showLiveKeyWarning={showApplePayLiveKeyWarning}
+                  disabledByExpress={expressEnabled || !!method.settings.applePaySettings.disabledByExpress}
                   onUpdateSettings={(applePaySettings) => onUpdateSettings({
                     applePaySettings: {
                       ...method.settings.applePaySettings,

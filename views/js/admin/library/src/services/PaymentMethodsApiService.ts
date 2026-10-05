@@ -77,6 +77,7 @@ export interface PaymentMethod {
       directCart?: boolean
       buttonStyle?: 0 | 1 | 2 // 0: black, 1: outline, 2: white
       excludedCarriers?: string[]
+      disabledByExpress?: boolean
     }
     bankTransferDueDays?: string
     captureMode?: 'automatic' | 'manual'
@@ -104,6 +105,22 @@ export interface CustomerGroup {
   label: string;
 }
 
+export interface ExpressComponentSettings {
+  enabled: boolean;
+  applepay: boolean;
+  googlepay: boolean;
+  paypal: boolean;
+}
+
+export interface ExpressComponentSettingsResponse {
+  success: boolean;
+  message?: string;
+  data?: {
+    expressComponent: ExpressComponentSettings;
+    warning: string | null;
+  };
+}
+
 export interface PaymentMethodsResponse {
   success: boolean;
   message?: string;
@@ -119,6 +136,7 @@ export interface PaymentMethodsResponse {
     environment: 'test' | 'live';
     hasLiveApiKey: boolean;
     is_connected: boolean;
+    expressComponent?: ExpressComponentSettings;
   };
 }
 
@@ -168,6 +186,25 @@ export class PaymentMethodsApiService {
     formData.append('ajax', '1');
     formData.append('action', 'savePaymentMethodSettings');
     formData.append('method_id', methodId);
+    formData.append('settings', JSON.stringify(settings));
+
+    const response = await fetch(url.toString(), {
+      method: 'POST',
+      body: formData
+    });
+    return response.json();
+  }
+
+
+  /**
+   * Save Express Component settings (master switch + button toggles)
+   */
+  async saveExpressComponentSettings(settings: ExpressComponentSettings): Promise<ExpressComponentSettingsResponse> {
+    const url = new URL(this.baseUrl, window.location.origin);
+
+    const formData = new FormData();
+    formData.append('ajax', '1');
+    formData.append('action', 'saveExpressComponentSettings');
     formData.append('settings', JSON.stringify(settings));
 
     const response = await fetch(url.toString(), {
