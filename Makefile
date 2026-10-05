@@ -5,6 +5,13 @@ module = mollie
 fix-lint:
 	docker compose run --rm php sh -c "vendor/bin/php-cs-fixer fix --using-cache=no"
 
+# target: lint-php85		- Fail on PHP 8.5 compile-time deprecations in shipped code (module + production vendor).
+# PHP 9 turns these into compile errors, so one hit in mollie.php stops the whole module loading.
+lint-php85:
+	{ git ls-files -- '*.php' ':!tests/**'; for p in $$(composer show --no-dev --name-only); do find vendor/$$p -name '*.php' ! -path '*/tests/*' ! -path '*/Tests/*'; done; } \
+		| docker run --rm -i -v $(ROOT_DIR):/app -w /app php:8.5-cli \
+			sh -c '! xargs php -d error_reporting=E_ALL -d display_errors=stderr -l 2>&1 | grep "Deprecated:"'
+
 # Launch the PS build and E2E Cypress app automatically. Eexample: make VERSION=1785 e2eh1785_local, make VERSION=8 e2eh8_local etc.
 # Warning: .env with secrets must be imported if you wanna test locally! This checks the .env existence, ignoring if there is no such on your machine.
 
