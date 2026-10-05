@@ -42,6 +42,11 @@ class MolExpressSessionRepository extends AbstractRepository implements MolExpre
         return $session ?: null;
     }
 
+    public function persist(\MolExpressSession $session): void
+    {
+        $session->save();
+    }
+
     public function deleteByCartId(int $cartId): void
     {
         \Db::getInstance()->delete('mol_express_session', 'id_cart = ' . (int) $cartId);

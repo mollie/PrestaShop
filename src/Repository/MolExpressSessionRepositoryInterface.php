@@ -22,5 +22,7 @@ interface MolExpressSessionRepositoryInterface extends ReadOnlyRepositoryInterfa
 {
     public function findLatestByCartId(int $cartId): ?\MolExpressSession;
 
+    public function persist(\MolExpressSession $session): void;
+
     public function deleteByCartId(int $cartId): void;
 }
