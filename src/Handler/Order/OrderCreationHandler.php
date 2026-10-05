@@ -48,6 +48,7 @@ use Mollie\Config\Config;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\OrderLine;
 use Mollie\DTO\PaymentData;
+use Mollie\DTO\PaymentFeeData;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Factory\ModuleFactory;
@@ -62,6 +63,7 @@ use Mollie\Service\PaymentMethodService;
 use Mollie\Subscription\Handler\SubscriptionCreationHandler;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\ExpressPaymentUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TextGeneratorUtility;
 use MolPaymentMethod;
@@ -158,7 +160,13 @@ class OrderCreationHandler
 
         $paymentMethod = $this->paymentMethodService->getPaymentMethod($apiPayment);
 
-        $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmount);
+        $isExpressPayment = ExpressPaymentUtility::isExpressPayment($apiPayment);
+
+        // The Express Component picks the method inside Mollie's sheet, so no per-method fee was
+        // quoted to the shopper and none may be charged, even when the matching method row has one.
+        $paymentFeeData = $isExpressPayment
+            ? new PaymentFeeData(0.00, 0.00, 0.00, false)
+            : $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmount);
 
         $existingOrderId = (int) Order::getIdByCartId((int) $cartId);
         if ($existingOrderId) {
@@ -170,6 +178,12 @@ class OrderCreationHandler
             ]);
 
             return 0;
+        }
+
+        // A session is bound to one total. If the cart moved after the session was created and the
+        // submit check did not catch it, the shopper paid a total this cart no longer has.
+        if ($isExpressPayment && !NumberUtility::isEqual((float) $originalAmount, (float) $apiPayment->amount->value)) {
+            $this->refundWrongAmount($apiPayment, $cartId, (float) $originalAmount);
         }
 
         $paymentMethodName = $this->paymentMethodService->getPaymentMethodName($paymentMethod, $apiPayment);
@@ -206,27 +220,7 @@ class OrderCreationHandler
         $priceDifference = NumberUtility::minus($cartPrice, $apiPayment->amount->value);
 
         if (abs($priceDifference) !== 0.00) {
-            if ($apiPayment->resource === Config::MOLLIE_API_STATUS_ORDER) {
-                $apiPayment->refundAll();
-            } else {
-                $apiPayment->refund([
-                    'amount' => [
-                        'currency' => (string) $apiPayment->amount->currency,
-                        'value' => $apiPayment->amount->value,
-                    ],
-                ]);
-            }
-
-            $this->paymentMethodRepository->updatePaymentReason($apiPayment->id, Config::WRONG_AMOUNT_REASON);
-
-            $this->logger->error(sprintf('%s - Wrong cart amount while creating order', self::FILE_NAME), [
-                'cart_id' => $cartId,
-                'cart_amount' => $cartPrice,
-                'api_payment_amount' => $apiPayment->amount->value,
-                'price_diff' => $priceDifference,
-            ]);
-
-            throw new \Exception('Wrong cart amount');
+            $this->refundWrongAmount($apiPayment, $cartId, $cartPrice);
         }
 
         /** @var PaymentFeeTextService $paymentFeeTextService */
@@ -415,6 +409,39 @@ class OrderCreationHandler
         $this->mollieOrderCreationService->updateMolliePaymentReference($apiPayment->id, $order->reference);
 
         return $orderId;
+    }
+
+    /**
+     * The shopper paid a total the cart no longer has. Give the money back and leave a reason the
+     * return page can show, then stop: no order may be created for a mismatched payment.
+     *
+     * @param MolliePaymentAlias|MollieOrderAlias $apiPayment
+     *
+     * @throws \Exception
+     */
+    private function refundWrongAmount($apiPayment, int $cartId, float $cartPrice): void
+    {
+        if ($apiPayment->resource === Config::MOLLIE_API_STATUS_ORDER) {
+            $apiPayment->refundAll();
+        } else {
+            $apiPayment->refund([
+                'amount' => [
+                    'currency' => (string) $apiPayment->amount->currency,
+                    'value' => $apiPayment->amount->value,
+                ],
+            ]);
+        }
+
+        $this->paymentMethodRepository->updatePaymentReason($apiPayment->id, Config::WRONG_AMOUNT_REASON);
+
+        $this->logger->error(sprintf('%s - Wrong cart amount while creating order', self::FILE_NAME), [
+            'cart_id' => $cartId,
+            'cart_amount' => $cartPrice,
+            'api_payment_amount' => $apiPayment->amount->value,
+            'price_diff' => NumberUtility::minus($cartPrice, (float) $apiPayment->amount->value),
+        ]);
+
+        throw new \Exception('Wrong cart amount');
     }
 
     private function createRecurringOrderEntity(Order $order, string $method): void
