@@ -1,0 +1,24 @@
+diff -ruN a/src/Installer/Installer.php b/src/Installer/Installer.php
+--- a/src/Installer/Installer.php
++++ b/src/Installer/Installer.php
+@@ -35,7 +35,7 @@
+      * @param string $psAccountsVersion
+      * @param \Link|null $link
+      */
+-    public function __construct($psAccountsVersion, \Link $link = null)
++    public function __construct($psAccountsVersion, ?\Link $link = null)
+     {
+         $this->moduleVersion = $psAccountsVersion;
+ 
+diff -ruN a/src/Installer/Presenter/InstallerPresenter.php b/src/Installer/Presenter/InstallerPresenter.php
+--- a/src/Installer/Presenter/InstallerPresenter.php
++++ b/src/Installer/Presenter/InstallerPresenter.php
+@@ -22,7 +22,7 @@
+      * @param Installer $installer
+      * @param \Context|null $context
+      */
+-    public function __construct(Installer $installer, \Context $context = null)
++    public function __construct(Installer $installer, ?\Context $context = null)
+     {
+         $this->installer = $installer;
+ 

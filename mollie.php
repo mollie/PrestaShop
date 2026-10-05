@@ -139,7 +139,7 @@ class Mollie extends PaymentModule
         return $this->containerProvider->getService($serviceName);
     }
 
-    public function getApiClient(int $shopId = null, bool $subscriptionOrder = false): ?MollieApiClient
+    public function getApiClient(?int $shopId = null, bool $subscriptionOrder = false): ?MollieApiClient
     {
         if (!$this->api) {
             $this->setApiKey($shopId, $subscriptionOrder);
@@ -1628,7 +1628,7 @@ class Mollie extends PaymentModule
         return $orderListActionBuilder->buildOrderPaymentResendButton($orderId);
     }
 
-    public function updateApiKey(int $shopId = null): void
+    public function updateApiKey(?int $shopId = null): void
     {
         /** @var LoggerInterface $logger */
         $logger = $this->getService(LoggerInterface::class);
@@ -1687,7 +1687,7 @@ class Mollie extends PaymentModule
         ));
     }
 
-    private function setApiKey(int $shopId = null, bool $subscriptionOrder = false): void
+    private function setApiKey(?int $shopId = null, bool $subscriptionOrder = false): void
     {
         /** @var \Mollie\Repository\ModuleRepository $moduleRepository */
         $moduleRepository = $this->getService(\Mollie\Repository\ModuleRepository::class);

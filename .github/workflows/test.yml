@@ -76,6 +76,25 @@ jobs:
           make start-ps-for-tests
           make run-ps-unit-tests
 
+  php85-deprecations:
+    name: PHP 8.5 deprecations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache composer folder
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: php-composer-cache
+
+      - name: Install production dependencies
+        run: composer install --no-dev
+
+      - name: Lint shipped code on PHP 8.5
+        run: make lint-php85
+
   phpstan:
     name: PHPStan
     runs-on: ubuntu-latest
@@ -123,7 +142,7 @@ jobs:
         run: |
           composer install --no-dev --optimize-autoloader --classmap-authoritative
           composer dump-autoload --no-dev --optimize --classmap-authoritative
-          rm -rf .git .github tests .php-cs-fixer.php Makefile docker-compose*.yml package.json package-lock.json .docker
+          rm -rf .git .github tests .php-cs-fixer.php Makefile patches docker-compose*.yml package.json package-lock.json .docker
           mkdir ${{ env.MODULE_NAME }}
           rsync -Rr ./ ./${{ env.MODULE_NAME }}
           shopt -s extglob
