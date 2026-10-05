@@ -57,7 +57,7 @@ class ErrorHandler
         }
     }
 
-    public static function getInstance(Mollie $module = null): ErrorHandler
+    public static function getInstance(?Mollie $module = null): ErrorHandler
     {
         if (!$module) {
             $module = (new ModuleFactory())->getModule();

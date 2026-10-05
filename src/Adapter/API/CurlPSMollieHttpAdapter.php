@@ -136,7 +136,11 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
         }
 
         $statusCode = curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
-        curl_close($curl);
+
+        // No-op since PHP 8.0 and deprecated in 8.5, but still frees the handle on 7.x.
+        if (PHP_VERSION_ID < 80000) {
+            curl_close($curl);
+        }
 
         return $this->parseResponseBody($response, $statusCode, $httpBody);
     }

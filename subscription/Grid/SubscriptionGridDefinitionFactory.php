@@ -45,7 +45,7 @@ class SubscriptionGridDefinitionFactory extends AbstractGridDefinitionFactory
     private $subscriptionCancelAccessibilityChecker;
 
     public function __construct(
-        HookDispatcherInterface $hookDispatcher = null,
+        ?HookDispatcherInterface $hookDispatcher,
         \Mollie $module,
         AccessibilityCheckerInterface $subscriptionCancelAccessibilityChecker
     ) {
