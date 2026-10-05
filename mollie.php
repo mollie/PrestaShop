@@ -453,7 +453,6 @@ class Mollie extends PaymentModule
                 'debug' => (bool) Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
                 'i18n' => [
                     'acceptTerms' => $this->l('Please accept the terms and conditions before paying.'),
-                    'unavailable' => $this->l('Express checkout is temporarily unavailable. Please choose a payment method below.'),
                     'cartChanged' => $this->l('Your cart total changed. Please try the express payment again.'),
                 ],
             ],
@@ -481,12 +480,13 @@ class Mollie extends PaymentModule
         return $this->display(__FILE__, 'views/templates/hook/express_component.tpl');
     }
 
+    /** Apple Pay Direct steps aside on the merchant's switch, not on whether the component can render. */
     private function isExpressComponentEnabled(): bool
     {
         /** @var ExpressComponentAvailabilityService $expressAvailability */
         $expressAvailability = $this->getService(ExpressComponentAvailabilityService::class);
 
-        return $expressAvailability->isEnabled();
+        return $expressAvailability->isSwitchedOn();
     }
 
     /**

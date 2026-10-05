@@ -538,6 +538,7 @@ export function PaymentMethodSettings({ method, countries, carriers, showApplePa
         {method.id === "applepay" && method.settings.applePaySettings && (
           <div className="border rounded-lg overflow-hidden transition-shadow hover:shadow-sm">
             <button
+              data-testid="payment-method-applepay-direct-settings-toggle"
               onClick={() => setShowApplePay(!showApplePay)}
               className="w-full flex items-center justify-between p-4 text-left cursor-pointer"
             >

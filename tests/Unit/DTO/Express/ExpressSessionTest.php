@@ -57,7 +57,7 @@ class ExpressSessionTest extends BaseTestCase
     /**
      * @dataProvider openStatusProvider
      */
-    public function testOnlyOpenAndCreatedCountAsOpen(string $status, bool $expected): void
+    public function testOnlyPayableStatusesCountAsOpen(string $status, bool $expected): void
     {
         $session = new ExpressSession('sess_1', '', $status, '1.00', 'EUR', '');
 
@@ -69,7 +69,7 @@ class ExpressSessionTest extends BaseTestCase
         return [
             'open' => ['open', true],
             'created' => ['created', true],
-            'ready_for_processing' => ['ready_for_processing', false],
+            'ready_for_processing' => ['ready_for_processing', true],
             'completed' => ['completed', false],
             'expired' => ['expired', false],
             'failed' => ['failed', false],

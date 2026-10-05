@@ -64,22 +64,24 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
             Tools::redirect('index.php');
         }
 
-        if (Tools::getValue('ajax')) {
-            $this->processGetStatus($cart);
-            exit;
-        }
-
         $orderId = (int) Order::getIdByCartId($cartId);
 
         if ($orderId) {
             $this->redirectToOrderConfirmation($cart, $orderId);
         }
 
+        // The wait template gives up by reloading the status endpoint with failed=1, so this
+        // must come before the ajax branch or the shopper lands on raw JSON.
         if (Tools::getValue('failed')) {
             $this->handleWaitTimeout($cart, $key);
         }
 
-        if ($this->hasFailedPaymentWithoutOrder($cartId)) {
+        if (Tools::getValue('ajax')) {
+            $this->processGetStatus($cart);
+            exit;
+        }
+
+        if ($this->hasFailedPaymentWithoutOrder($cart)) {
             $this->redirectToPaymentStep($this->module->l('Your payment was not successful. Try again.', self::FILE_NAME));
         }
 
@@ -120,7 +122,7 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
             ]));
         }
 
-        if ($this->hasFailedPaymentWithoutOrder((int) $cart->id)) {
+        if ($this->hasFailedPaymentWithoutOrder($cart)) {
             $this->setWarning($this->module->l('Your payment was not successful. Try again.', self::FILE_NAME));
 
             exit(json_encode([
@@ -189,17 +191,36 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
         }
     }
 
-    private function hasFailedPaymentWithoutOrder(int $cartId): bool
+    /**
+     * Only a failed attempt made for the current express session counts. The newest
+     * mollie_payments row of the cart may be an older attempt by another method, cancelled
+     * before the shopper turned to the express component.
+     */
+    private function hasFailedPaymentWithoutOrder(Cart $cart): bool
     {
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepository */
         $paymentMethodRepository = $this->module->getService(PaymentMethodRepositoryInterface::class);
 
-        $payment = $paymentMethodRepository->getPaymentBy('cart_id', $cartId);
+        $payment = $paymentMethodRepository->getPaymentBy('cart_id', (int) $cart->id);
 
-        return is_array($payment)
-            && isset($payment['bank_status'])
-            && MollieStatusUtility::isPaymentFailed($payment['bank_status'])
-            && 0 === (int) ($payment['order_id'] ?? 0);
+        if (!is_array($payment) || !isset($payment['bank_status'])) {
+            return false;
+        }
+
+        if (!MollieStatusUtility::isPaymentFailed($payment['bank_status']) || (int) ($payment['order_id'] ?? 0) > 0) {
+            return false;
+        }
+
+        /** @var ExpressSessionService $sessionService */
+        $sessionService = $this->module->getService(ExpressSessionService::class);
+
+        $stored = $sessionService->findStoredSession($cart);
+
+        if (!$stored || empty($payment['created_at'])) {
+            return false;
+        }
+
+        return strtotime((string) $payment['created_at']) >= strtotime((string) $stored->created_at);
     }
 
     private function redirectToOrderConfirmation(Cart $cart, int $orderId): void

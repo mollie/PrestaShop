@@ -329,6 +329,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             'updateMethodsOrder',
             'refreshMethods',
             'uploadCustomLogo',
+            'saveExpressComponentSettings',
         ];
 
         if (in_array($action, $settingsMutatingActions, true) && !$this->multistoreSettingsContextGuard->canEditSettings()) {

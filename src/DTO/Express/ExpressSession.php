@@ -26,6 +26,7 @@ class ExpressSession
 {
     const STATUS_OPEN = 'open';
     const STATUS_CREATED = 'created';
+    const STATUS_READY_FOR_PROCESSING = 'ready_for_processing';
     const STATUS_COMPLETED = 'completed';
     const STATUS_EXPIRED = 'expired';
     const STATUS_FAILED = 'failed';
@@ -103,9 +104,13 @@ class ExpressSession
         return $this->createdAt;
     }
 
+    /**
+     * A session the shopper can still pay through, including one Mollie is processing right now:
+     * replacing that one would drop the row of the session actually being paid.
+     */
     public function isOpen(): bool
     {
-        return in_array($this->status, [self::STATUS_OPEN, self::STATUS_CREATED], true);
+        return in_array($this->status, [self::STATUS_OPEN, self::STATUS_CREATED, self::STATUS_READY_FOR_PROCESSING], true);
     }
 
     public function isCompleted(): bool

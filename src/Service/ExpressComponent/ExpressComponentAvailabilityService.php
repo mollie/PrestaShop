@@ -59,6 +59,8 @@ class ExpressComponentAvailabilityService
     private $logger;
     /** @var string */
     private $unavailableReason = '';
+    /** @var array<int, bool> hookDisplayHeader and hookDisplayPaymentTop ask for the same cart in one request */
+    private $cartAvailability = [];
 
     public function __construct(
         ConfigurationAdapter $configuration,
@@ -76,10 +78,19 @@ class ExpressComponentAvailabilityService
         $this->logger = $logger;
     }
 
+    /**
+     * The merchant's switch alone. This is what retires the Apple Pay Direct buttons, in the
+     * back office and on the shop alike, whether or not the component itself can render yet.
+     */
+    public function isSwitchedOn(): bool
+    {
+        return (bool) (int) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED);
+    }
+
     /** The merchant switched the component on and the shop can talk to Mollie in live mode. */
     public function isEnabled(): bool
     {
-        if (!(int) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED)) {
+        if (!$this->isSwitchedOn()) {
             return $this->unavailable('disabled in settings');
         }
 
@@ -103,15 +114,21 @@ class ExpressComponentAvailabilityService
     /** The cart on the payment step has everything a session needs: customer, addresses, carrier, total. */
     public function isAvailable(\Cart $cart): bool
     {
+        $cartId = (int) $cart->id;
+
+        if (isset($this->cartAvailability[$cartId])) {
+            return $this->cartAvailability[$cartId];
+        }
+
         $available = $this->checkCart($cart);
 
         if (!$available) {
             $this->logger->debug(sprintf('%s - Express Component not shown: %s', self::FILE_NAME, $this->unavailableReason), [
-                'cart_id' => (int) $cart->id,
+                'cart_id' => $cartId,
             ]);
         }
 
-        return $available;
+        return $this->cartAvailability[$cartId] = $available;
     }
 
     private function checkCart(\Cart $cart): bool

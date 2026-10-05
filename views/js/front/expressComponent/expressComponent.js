@@ -108,6 +108,7 @@
       phase: 'idle',
       pending: false,
       mountedAmount: null,
+      failedAmount: null,
       checkout: null,
       component: null,
       refreshTimer: null,
@@ -170,11 +171,13 @@
         body: body.toString()
       }).then(function (response) {
         return response.json().then(function (json) {
-          // JsonResponse::error() answers {success:false, errors:[...], data:[]}.
+          // JsonResponse::error() answers {success:false, errors:[...], data:[]}. A reply the
+          // module wrote is a decision; anything else (login page, 5xx) is a transport failure.
           if (!response.ok || !json || json.success === false) {
-            var errors = json && json.errors ? JSON.stringify(json.errors) : 'HTTP ' + response.status;
+            var error = new Error(json && json.errors ? JSON.stringify(json.errors) : 'HTTP ' + response.status);
+            error.rejected = !!(json && json.success === false);
 
-            throw new Error(errors);
+            throw error;
           }
 
           return json.data || json;
@@ -239,7 +242,16 @@
           recreate();
         }
       }).catch(function (error) {
-        // A failing validator must never block a payment the shopper already authorised.
+        // The module said no (order exists, cart not ready): stop the payment. A transport
+        // failure must not block a payment the shopper already authorised.
+        if (error && error.rejected) {
+          log('submit refused by the shop', error);
+          showError(config.i18n.cartChanged);
+          event.reject();
+
+          return;
+        }
+
         log('submit check failed, continuing', error);
         event.resolve();
       });
@@ -309,6 +321,8 @@
         log('express component unavailable', error);
         state.phase = 'unavailable';
         state.mountedAmount = null;
+        // Remember the total this failed for, so DOM churn does not retry until the cart changes.
+        state.failedAmount = pageAmount();
 
         if (node) {
           node.hidden = true;
@@ -331,7 +345,13 @@
         return;
       }
 
-      if (!node.hasAttribute(MOUNTED_ATTRIBUTE) || shouldRecreate(state, node.getAttribute('data-amount'))) {
+      var amount = normalizeAmount(node.getAttribute('data-amount'));
+
+      if (state.phase === 'unavailable' && amount === state.failedAmount) {
+        return;
+      }
+
+      if (!node.hasAttribute(MOUNTED_ATTRIBUTE) || shouldRecreate(state, amount)) {
         recreate();
       }
     }
@@ -390,9 +410,11 @@
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', start);
-    } else {
-      start();
+
+      return;
     }
+
+    start();
   }
 
   return {

@@ -421,16 +421,7 @@ class OrderCreationHandler
      */
     private function refundWrongAmount($apiPayment, int $cartId, float $cartPrice): void
     {
-        if ($apiPayment->resource === Config::MOLLIE_API_STATUS_ORDER) {
-            $apiPayment->refundAll();
-        } else {
-            $apiPayment->refund([
-                'amount' => [
-                    'currency' => (string) $apiPayment->amount->currency,
-                    'value' => $apiPayment->amount->value,
-                ],
-            ]);
-        }
+        $this->refundInFull($apiPayment);
 
         $this->paymentMethodRepository->updatePaymentReason($apiPayment->id, Config::WRONG_AMOUNT_REASON);
 
@@ -442,6 +433,25 @@ class OrderCreationHandler
         ]);
 
         throw new \Exception('Wrong cart amount');
+    }
+
+    /**
+     * @param MolliePaymentAlias|MollieOrderAlias $apiPayment
+     */
+    private function refundInFull($apiPayment): void
+    {
+        if ($apiPayment->resource === Config::MOLLIE_API_STATUS_ORDER) {
+            $apiPayment->refundAll();
+
+            return;
+        }
+
+        $apiPayment->refund([
+            'amount' => [
+                'currency' => (string) $apiPayment->amount->currency,
+                'value' => $apiPayment->amount->value,
+            ],
+        ]);
     }
 
     private function createRecurringOrderEntity(Order $order, string $method): void

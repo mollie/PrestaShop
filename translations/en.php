@@ -623,7 +623,6 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_d89f851f054189
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_59a5caafce6ad678de1d159bf73fde11'] = 'Express Component settings saved';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_94c11f464d108bab501f8c48f448784f'] = 'Failed to save Express Component settings';
 $_MODULE['<{mollie}prestashop>mollie_ec566aafc165a4e2e1772d3e5294997d'] = 'Please accept the terms and conditions before paying.';
-$_MODULE['<{mollie}prestashop>mollie_01018b7b8f954ac9c6a2e4528c77839d'] = 'Express checkout is temporarily unavailable. Please choose a payment method below.';
 $_MODULE['<{mollie}prestashop>mollie_93644d210d883d747765831aeeeee890'] = 'Your cart total changed. Please try the express payment again.';
 $_MODULE['<{mollie}prestashop>express_component_fcdc4481e052b34e2671b72e1a266720'] = 'Express checkout';
 $_MODULE['<{mollie}prestashop>express_component_cae23b4bd8aa136e2e32811bbd67eac2'] = 'or pay with';

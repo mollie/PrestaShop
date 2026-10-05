@@ -82,6 +82,16 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
         $this->assertTrue($this->service()->isEnabled());
     }
 
+    public function testTheSwitchAloneIsOnEvenWhenTheComponentCannotRender(): void
+    {
+        $this->config[Config::MOLLIE_ENVIRONMENT] = (string) Config::ENVIRONMENT_TEST;
+
+        $service = $this->service();
+
+        $this->assertTrue($service->isSwitchedOn());
+        $this->assertFalse($service->isEnabled());
+    }
+
     /**
      * @dataProvider disabledConfigProvider
      */

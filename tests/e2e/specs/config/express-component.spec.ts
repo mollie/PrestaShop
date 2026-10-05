@@ -66,6 +66,8 @@ test('the back office card saves its switches and locks Apple Pay Direct', async
   const appleCard = await methods.revealCard('applepay', 5_000);
   test.skip((await appleCard.count()) === 0, 'applepay is not offered by the Mollie test profile');
   await methods.toggleSettings('applepay');
+  // The Direct block is collapsed inside the method settings.
+  await page.getByTestId('payment-method-applepay-direct-settings-toggle').click();
   await expect(page.getByTestId('payment-method-applepay-direct-product-switch')).toBeDisabled();
   await expect(page.getByTestId('payment-method-applepay-direct-cart-switch')).toBeDisabled();
 
@@ -76,6 +78,7 @@ test('the back office card saves its switches and locks Apple Pay Direct', async
   await page.reload();
   await methods.revealCard('applepay', 5_000);
   await methods.toggleSettings('applepay');
+  await page.getByTestId('payment-method-applepay-direct-settings-toggle').click();
   await expect(page.getByTestId('payment-method-applepay-direct-product-switch')).toBeEnabled();
 });
 
@@ -95,15 +98,20 @@ test('a test-mode shop renders no express component on the payment step', async 
 test('the Apple Pay Direct cart button is gone while the component is enabled', async ({ page }) => {
   test.setTimeout(90_000);
   setMethodConfig('applepay', { enabled: true, api: 'payments' });
-  setGlobalConfig('MOLLIE_APPLE_PAY_DIRECT_CART', '1');
+  setGlobalConfig('MOLLIE_APPLE_PAY_DIRECT_CART', '0');
   setGlobalConfig('MOLLIE_EXPRESS_COMPONENT_ENABLED', '0');
 
   const checkout = new CheckoutPage(page);
   await checkout.emptyCart();
   await checkout.addProduct(1);
 
-  await page.goto('/en/cart?action=show');
-  await expect(page.locator('#mollie-applepay-direct-button')).toHaveCount(1);
+  // Direct is switched on only now, and the "present" case is read over plain
+  // HTTP: the Direct script itself throws "insecure document" page errors on a
+  // non-TLS shop, which the base fixture would count against this test. The
+  // markup is what the PHP gate controls.
+  setGlobalConfig('MOLLIE_APPLE_PAY_DIRECT_CART', '1');
+  const withDirect = await (await page.request.get('/en/cart?action=show')).text();
+  expect(withDirect).toContain('id="mollie-applepay-direct-button"');
 
   setGlobalConfig('MOLLIE_EXPRESS_COMPONENT_ENABLED', '1');
   await page.goto('/en/cart?action=show');
