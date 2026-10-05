@@ -1,0 +1,68 @@
+diff -ruN a/lib/Segment/Consumer/ForkCurl.php b/lib/Segment/Consumer/ForkCurl.php
+--- a/lib/Segment/Consumer/ForkCurl.php
++++ b/lib/Segment/Consumer/ForkCurl.php
+@@ -44,7 +44,7 @@
+     $path = "/v1/batch";
+     $url = $protocol . $host . $path;
+ 
+-    $cmd = "curl -u ${secret}: -X POST -H 'Content-Type: application/json'";
++    $cmd = "curl -u {$secret}: -X POST -H 'Content-Type: application/json'";
+     
+     $tmpfname = "";
+     if ($this->compress_request) {
+@@ -79,7 +79,7 @@
+     $library = $messages[0]['context']['library'];
+     $libName = $library['name'];
+     $libVersion = $library['version'];
+-    $cmd.= " -H 'User-Agent: ${libName}/${libVersion}'";
++    $cmd.= " -H 'User-Agent: {$libName}/{$libVersion}'";
+ 
+     if (!$this->debug()) {
+       $cmd .= " > /dev/null 2>&1 &";
+diff -ruN a/lib/Segment/Consumer/LibCurl.php b/lib/Segment/Consumer/LibCurl.php
+--- a/lib/Segment/Consumer/LibCurl.php
++++ b/lib/Segment/Consumer/LibCurl.php
+@@ -69,7 +69,7 @@
+       $library = $messages[0]['context']['library'];
+       $libName = $library['name'];
+       $libVersion = $library['version'];
+-      $header[] = "User-Agent: ${libName}/${libVersion}";
++      $header[] = "User-Agent: {$libName}/{$libVersion}";
+ 
+       curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+       curl_setopt($ch, CURLOPT_URL, $url);
+@@ -87,7 +87,9 @@
+       $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+ 
+       //close connection
+-      curl_close($ch);
++      if (PHP_VERSION_ID < 80000) {
++        curl_close($ch);
++      }
+ 
+       $elapsed_time = microtime(true) - $start_time;
+ 
+diff -ruN a/lib/Segment/Consumer/Socket.php b/lib/Segment/Consumer/Socket.php
+--- a/lib/Segment/Consumer/Socket.php
++++ b/lib/Segment/Consumer/Socket.php
+@@ -179,7 +179,7 @@
+     $library = $content_json['batch'][0]['context']['library'];
+     $libName = $library['name'];
+     $libVersion = $library['version'];
+-    $req.= "User-Agent: ${libName}/${libVersion}\r\n";
++    $req.= "User-Agent: {$libName}/{$libVersion}\r\n";
+ 
+     // Compress content if compress_request is true
+     if ($this->compress_request) {
+diff -ruN a/lib/Segment.php b/lib/Segment.php
+--- a/lib/Segment.php
++++ b/lib/Segment.php
+@@ -109,7 +109,7 @@
+   public static function validate($message, $type){
+     $userId = (array_key_exists('userId', $message) && strlen((string) $message['userId']) > 0);
+     $anonId = !empty($message['anonymousId']);
+-    self::assert($userId || $anonId, "Segment::${type}() requires userId or anonymousId");
++    self::assert($userId || $anonId, "Segment::{$type}() requires userId or anonymousId");
+   }
+ 
+   /**

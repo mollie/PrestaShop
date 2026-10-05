@@ -20,6 +20,7 @@ jobs:
                   rm -rf .git
                   rm -rf .github
                   rm -rf tests
+                  rm -rf patches
                   rm -rf .docker
                   rm -rf vendor/segmentio/analytics-php/.buildscript
                   rm -rf vendor/segmentio/analytics-php/.circleci
