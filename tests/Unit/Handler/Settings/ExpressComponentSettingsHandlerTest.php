@@ -51,7 +51,7 @@ class ExpressComponentSettingsHandlerTest extends BaseTestCase
         );
     }
 
-    public function testEnablingStoresTheFlagsAndTurnsApplePayDirectOff(): void
+    public function testEnablingStoresTheFlagsAndLeavesApplePayDirectAlone(): void
     {
         $this->stored[Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT] = 1;
         $this->stored[Config::MOLLIE_APPLE_PAY_DIRECT_CART] = 1;
@@ -62,20 +62,18 @@ class ExpressComponentSettingsHandlerTest extends BaseTestCase
 
         $this->assertSame(['enabled' => true, 'applepay' => true, 'googlepay' => false, 'paypal' => true], $result['expressComponent']);
         $this->assertNull($result['warning']);
-        $this->assertSame(0, $this->stored[Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT]);
-        $this->assertSame(0, $this->stored[Config::MOLLIE_APPLE_PAY_DIRECT_CART]);
+        $this->assertSame(1, $this->stored[Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT]);
+        $this->assertSame(1, $this->stored[Config::MOLLIE_APPLE_PAY_DIRECT_CART]);
         $this->assertTrue($this->handler->isEnabled());
     }
 
-    public function testDisablingLeavesApplePayDirectAlone(): void
+    public function testDisablingSkipsTheDomainFile(): void
     {
-        $this->stored[Config::MOLLIE_APPLE_PAY_DIRECT_CART] = 1;
         $this->certificateHandler->expects($this->never())->method('handle');
 
         $result = $this->handler->handle(['enabled' => false, 'applepay' => true]);
 
         $this->assertFalse($result['expressComponent']['enabled']);
-        $this->assertSame(1, $this->stored[Config::MOLLIE_APPLE_PAY_DIRECT_CART]);
         $this->assertFalse($this->handler->isEnabled());
     }
 

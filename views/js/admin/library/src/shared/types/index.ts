@@ -245,10 +245,9 @@ export interface MolliePaymentMethodsTranslations {
   expressComponentPayPal: string;
   expressComponentLiveOnly: string;
   expressComponentApplePayDomainFile: string;
-  expressComponentDisablesDirect: string;
+  expressComponentMethodsNote: string;
   expressComponentSave: string;
   expressComponentSaved: string;
-  applePayDirectDisabledByExpress: string;
 }
 
 export interface MollieAdvancedSettingsTranslations {

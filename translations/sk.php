@@ -755,7 +755,6 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentoverviewcontroller_88183b946cc5f
 $_MODULE['<{mollie}prestashop>payment_order_link_6adf97f83acf6453d4a6a4b1070f3754'] = 'Žiadna';
 $_MODULE['<{mollie}prestashop>payment_overview_intro_77c4099b0378647f74e893d817f57961'] = 'Tieto pokusy o platbu sa nikdy nestali objednávkou. Nič tu nevyžaduje zásah: zoznam slúži na to, aby ste zákazníkovi mohli odpovedať, čo sa stalo s jeho platbou, bez otvárania Mollie dashboardu.';
 $_MODULE['<{mollie}prestashop>payment_overview_intro_475dd2e25e699acabe315cc300aacca7'] = 'Pokusy, ktoré po %d hodinách stále čakajú, sa zobrazujú ako opustené.';
-$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_3cdf32fa35c5ffbe3f0fc2a489feaf5a'] = 'Turned off while the Express Component is enabled. The component shows Apple Pay on the checkout payment step instead.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_743ca42132c45c46482f15b3d18f53d3'] = 'Express Component';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_feb95b2318a0879e27998c69cc465c0b'] = 'Show express payment buttons on the checkout payment step';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_113b9c5db3b21d8ffef26bfda6ec79c6'] = 'Mollie renders Apple Pay, Google Pay and PayPal buttons above the payment method list. Shoppers pay in one tap without leaving the checkout. The Mollie profile must have the Components beta enabled and the wallets activated.';
@@ -765,7 +764,6 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a69a8e250d7465
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_ad69e733ebae8d264bccaa38d68830e8'] = 'PayPal';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_bd7f97a89cc3e8b3fbd5f35dadccb6d7'] = 'The Express Component is in beta and works only with a live API key in live mode. It stays hidden in test mode.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_602c4123e4413c2f882cbdf2fdc6a42c'] = 'Apple Pay requires the domain verification file at /.well-known/apple-developer-merchantid-domain-association. The module places it when you save with Apple Pay enabled. Register the domain in your Mollie Dashboard as well.';
-$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_5dc6b129d4e769b9c6d834b65e68db3e'] = 'While the Express Component is enabled, the Apple Pay Direct buttons on product and cart pages are turned off. Express payments carry no payment surcharge.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_d89f851f054189f117b3513ac45d5ff5'] = 'Save Express Component settings';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_59a5caafce6ad678de1d159bf73fde11'] = 'Express Component settings saved';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_94c11f464d108bab501f8c48f448784f'] = 'Failed to save Express Component settings';
@@ -777,3 +775,4 @@ $_MODULE['<{mollie}prestashop>expressreturn_4eb09eb8686ff437b3d31cd5aa2f5bbf'] =
 $_MODULE['<{mollie}prestashop>expressreturn_e0ca12c94cf233be442a36daf294be98'] = 'We have not received the payment confirmation yet. If you were charged, your order will appear once the confirmation arrives.';
 $_MODULE['<{mollie}prestashop>expresscomponentajax_dbfd87145ffce60928d0790df013993d'] = 'Resource conflict';
 $_MODULE['<{mollie}prestashop>expresscomponentsettingshandler_3bc32c90ea96d4cbe451933b1e29cab3'] = 'The Apple Pay domain verification file could not be placed. Apple Pay will not show in the Express Component until the file is served at /.well-known/apple-developer-merchantid-domain-association. Check the module logs.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_71fb35098d3fe36a7d2b4acb48312bfb'] = 'A button is shown only when its Mollie payment method (Apple Pay, Credit card for Google Pay, PayPal) is enabled for the active environment. Express payments carry no payment surcharge. Apple Pay Direct on product and cart pages keeps its own settings.';

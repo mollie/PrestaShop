@@ -7,9 +7,9 @@ import { skipIfDisconnected } from '../../helpers/module-state';
 /**
  * The Express Component is live-only (the Sessions API beta has no test mode), so what a
  * test-key shop can prove is the gating around it: the back office card persists its
- * switches and locks the Apple Pay Direct ones, the payment step stays free of the mount
- * div and of console errors while the setting is on in test mode, and the Apple Pay Direct
- * button leaves the cart page while the component is enabled.
+ * switches without touching the Apple Pay Direct ones, the payment step stays free of the
+ * mount div and of console errors while the setting is on in test mode, and the Apple Pay
+ * Direct cart button is unaffected by the component.
  *
  * Serial: every test here rewrites global configuration.
  */
@@ -39,7 +39,7 @@ test.afterAll(() => {
   }
 });
 
-test('the back office card saves its switches and locks Apple Pay Direct', async ({ page }) => {
+test('the back office card saves its switches and leaves Apple Pay Direct alone', async ({ page }) => {
   test.setTimeout(90_000);
   setGlobalConfig('MOLLIE_EXPRESS_COMPONENT_ENABLED', '0');
   setMethodConfig('applepay', { enabled: true, api: 'payments' });
@@ -63,23 +63,18 @@ test('the back office card saves its switches and locks Apple Pay Direct', async
   await page.reload();
   await expect(page.getByTestId('express-component-enabled-switch')).toHaveAttribute('aria-checked', 'true');
 
+  // Apple Pay Direct keeps its own switches: enabling the component must not lock them.
   const appleCard = await methods.revealCard('applepay', 5_000);
   test.skip((await appleCard.count()) === 0, 'applepay is not offered by the Mollie test profile');
   await methods.toggleSettings('applepay');
   // The Direct block is collapsed inside the method settings.
   await page.getByTestId('payment-method-applepay-direct-settings-toggle').click();
-  await expect(page.getByTestId('payment-method-applepay-direct-product-switch')).toBeDisabled();
-  await expect(page.getByTestId('payment-method-applepay-direct-cart-switch')).toBeDisabled();
+  await expect(page.getByTestId('payment-method-applepay-direct-product-switch')).toBeEnabled();
+  await expect(page.getByTestId('payment-method-applepay-direct-cart-switch')).toBeEnabled();
 
   await page.getByTestId('express-component-enabled-switch').click();
   await page.getByTestId('express-component-save').click();
   await expect.poll(() => getGlobalConfig('MOLLIE_EXPRESS_COMPONENT_ENABLED'), { timeout: 15_000 }).toBe('0');
-
-  await page.reload();
-  await methods.revealCard('applepay', 5_000);
-  await methods.toggleSettings('applepay');
-  await page.getByTestId('payment-method-applepay-direct-settings-toggle').click();
-  await expect(page.getByTestId('payment-method-applepay-direct-product-switch')).toBeEnabled();
 });
 
 test('a test-mode shop renders no express component on the payment step', async ({ page }) => {
@@ -95,7 +90,7 @@ test('a test-mode shop renders no express component on the payment step', async 
   // assertion that the script was never served to a test-mode shop.
 });
 
-test('the Apple Pay Direct cart button is gone while the component is enabled', async ({ page }) => {
+test('the Apple Pay Direct cart button stays while the component is enabled', async ({ page }) => {
   test.setTimeout(90_000);
   setMethodConfig('applepay', { enabled: true, api: 'payments' });
   setGlobalConfig('MOLLIE_APPLE_PAY_DIRECT_CART', '0');
@@ -114,6 +109,6 @@ test('the Apple Pay Direct cart button is gone while the component is enabled', 
   expect(withDirect).toContain('id="mollie-applepay-direct-button"');
 
   setGlobalConfig('MOLLIE_EXPRESS_COMPONENT_ENABLED', '1');
-  await page.goto('/en/cart?action=show');
-  await expect(page.locator('#mollie-applepay-direct-button')).toHaveCount(0);
+  const withBoth = await (await page.request.get('/en/cart?action=show')).text();
+  expect(withBoth).toContain('id="mollie-applepay-direct-button"');
 });

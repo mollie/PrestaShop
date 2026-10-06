@@ -60,7 +60,6 @@ export default function PaymentMethodsPage() {
   const [showApplePayLiveKeyWarning, setShowApplePayLiveKeyWarning] = useState(false)
   const [showExpressLiveOnlyWarning, setShowExpressLiveOnlyWarning] = useState(false)
   const [expressComponent, setExpressComponent] = useState<ExpressComponentSettingsValues | null>(null)
-  const [savedExpressEnabled, setSavedExpressEnabled] = useState(false)
   const [isExpressSaving, setIsExpressSaving] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
@@ -101,7 +100,6 @@ export default function PaymentMethodsPage() {
         setShowApplePayLiveKeyWarning(response.data.environment === 'test' && !response.data.hasLiveApiKey)
         setShowExpressLiveOnlyWarning(response.data.environment === 'test' || !response.data.hasLiveApiKey)
         setExpressComponent(response.data.expressComponent ?? null)
-        setSavedExpressEnabled(response.data.expressComponent?.enabled ?? false)
       } else {
         setErrorMessage(response.message || t('loadingError'))
       }
@@ -267,18 +265,6 @@ export default function PaymentMethodsPage() {
     setExpressComponent((prev) => (prev ? { ...prev, ...update } : prev))
   }
 
-  const applyApplePayDisabledByExpress = (disabledByExpress: boolean) => {
-    const updateMethods = (methods: PaymentMethod[]) =>
-      methods.map((method) =>
-        method.id === 'applepay' && method.settings.applePaySettings
-          ? { ...method, settings: { ...method.settings, applePaySettings: { ...method.settings.applePaySettings, disabledByExpress } } }
-          : method,
-      )
-
-    setEnabledMethods(updateMethods)
-    setDisabledMethods(updateMethods)
-  }
-
   const saveExpressSettings = async () => {
     if (!expressComponent) {
       return
@@ -299,8 +285,6 @@ export default function PaymentMethodsPage() {
       }
 
       setExpressComponent(response.data.expressComponent)
-      setSavedExpressEnabled(response.data.expressComponent.enabled)
-      applyApplePayDisabledByExpress(response.data.expressComponent.enabled)
     } catch (error) {
       console.error('Failed to save express component settings:', error)
       showNotification({ message: t('failedToSaveSettings'), type: 'error' })
@@ -432,7 +416,6 @@ export default function PaymentMethodsPage() {
           countries={countries}
           carriers={carriers}
           showApplePayLiveKeyWarning={showApplePayLiveKeyWarning}
-          expressEnabled={savedExpressEnabled}
           customerGroups={customerGroups}
           languages={languages}
           onlyPaymentsMethods={onlyPaymentsMethods}

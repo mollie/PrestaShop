@@ -480,15 +480,6 @@ class Mollie extends PaymentModule
         return $this->display(__FILE__, 'views/templates/hook/express_component.tpl');
     }
 
-    /** Apple Pay Direct steps aside on the merchant's switch, not on whether the component can render. */
-    private function isExpressComponentEnabled(): bool
-    {
-        /** @var ExpressComponentAvailabilityService $expressAvailability */
-        $expressAvailability = $this->getService(ExpressComponentAvailabilityService::class);
-
-        return $expressAvailability->isSwitchedOn();
-    }
-
     /**
      * @throws PrestaShopException
      */
@@ -520,11 +511,6 @@ class Mollie extends PaymentModule
                 'mollieSubAjaxUrl' => $this->context->link->getModuleLink('mollie', 'ajax'),
                 'isVersionGreaterOrEqualTo177' => VersionUtility::isPsVersionGreaterOrEqualTo('1.7.7.0'),
             ]);
-        }
-
-        // The Express Component replaces the Apple Pay Direct buttons while it is enabled.
-        if ($this->isExpressComponentEnabled()) {
-            return;
         }
 
         /** @var ?MolPaymentMethod $paymentMethod */
@@ -1596,10 +1582,6 @@ class Mollie extends PaymentModule
 
     public function hookDisplayProductActions($params)
     {
-        if ($this->isExpressComponentEnabled()) {
-            return '';
-        }
-
         if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.6.0')) {
             return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
         }
@@ -1609,19 +1591,11 @@ class Mollie extends PaymentModule
 
     public function hookDisplayExpressCheckout($params)
     {
-        if ($this->isExpressComponentEnabled()) {
-            return '';
-        }
-
         return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
     }
 
     public function hookDisplayProductAdditionalInfo()
     {
-        if ($this->isExpressComponentEnabled()) {
-            return '';
-        }
-
         if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.6.0')) {
             return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
         }

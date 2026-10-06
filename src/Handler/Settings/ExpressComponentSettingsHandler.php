@@ -23,9 +23,8 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Saves the Express Component settings. Enabling the component turns the Apple Pay Direct
- * buttons off: the component replaces them, and two Apple Pay buttons on one shop would
- * confuse shoppers.
+ * Saves the Express Component settings. Apple Pay Direct keeps its own switches: the two
+ * features live on different pages (product and cart versus the payment step).
  */
 class ExpressComponentSettingsHandler
 {
@@ -73,13 +72,8 @@ class ExpressComponentSettingsHandler
 
         $warning = null;
 
-        if ($values['enabled']) {
-            $this->configuration->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT, 0);
-            $this->configuration->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_CART, 0);
-
-            if ($values['applepay']) {
-                $warning = $this->placeApplePayDomainFile();
-            }
+        if ($values['enabled'] && $values['applepay']) {
+            $warning = $this->placeApplePayDomainFile();
         }
 
         return [

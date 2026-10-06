@@ -78,19 +78,10 @@ class ExpressComponentAvailabilityService
         $this->logger = $logger;
     }
 
-    /**
-     * The merchant's switch alone. This is what retires the Apple Pay Direct buttons, in the
-     * back office and on the shop alike, whether or not the component itself can render yet.
-     */
-    public function isSwitchedOn(): bool
-    {
-        return (bool) (int) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED);
-    }
-
     /** The merchant switched the component on and the shop can talk to Mollie in live mode. */
     public function isEnabled(): bool
     {
-        if (!$this->isSwitchedOn()) {
+        if (!(int) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED)) {
             return $this->unavailable('disabled in settings');
         }
 

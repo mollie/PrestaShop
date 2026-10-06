@@ -245,7 +245,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'applePayButtonBlackDesc' => $this->module->l('Black Apple Pay button', self::FILE_NAME),
                 'applePayButtonOutlineDesc' => $this->module->l('White with outline', self::FILE_NAME),
                 'applePayButtonWhiteDesc' => $this->module->l('White Apple Pay button', self::FILE_NAME),
-                'applePayDirectDisabledByExpress' => $this->module->l('Turned off while the Express Component is enabled. The component shows Apple Pay on the checkout payment step instead.', self::FILE_NAME),
 
                 'expressComponentSettings' => $this->module->l('Express Component', self::FILE_NAME),
                 'expressComponentEnable' => $this->module->l('Show express payment buttons on the checkout payment step', self::FILE_NAME),
@@ -256,7 +255,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'expressComponentPayPal' => $this->module->l('PayPal', self::FILE_NAME),
                 'expressComponentLiveOnly' => $this->module->l('The Express Component is in beta and works only with a live API key in live mode. It stays hidden in test mode.', self::FILE_NAME),
                 'expressComponentApplePayDomainFile' => $this->module->l('Apple Pay requires the domain verification file at /.well-known/apple-developer-merchantid-domain-association. The module places it when you save with Apple Pay enabled. Register the domain in your Mollie Dashboard as well.', self::FILE_NAME),
-                'expressComponentDisablesDirect' => $this->module->l('While the Express Component is enabled, the Apple Pay Direct buttons on product and cart pages are turned off. Express payments carry no payment surcharge.', self::FILE_NAME),
+                'expressComponentMethodsNote' => $this->module->l('A button is shown only when its Mollie payment method (Apple Pay, Credit card for Google Pay, PayPal) is enabled for the active environment. Express payments carry no payment surcharge. Apple Pay Direct on product and cart pages keeps its own settings.', self::FILE_NAME),
                 'expressComponentSave' => $this->module->l('Save Express Component settings', self::FILE_NAME),
                 'expressComponentSaved' => $this->module->l('Express Component settings saved', self::FILE_NAME),
 
@@ -497,7 +496,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                                 'directCart' => (bool) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART) ?: 0),
                                 'buttonStyle' => (int) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE) ?: 0),
                                 'excludedCarriers' => $this->getExcludedCarriersForResponse(),
-                                'disabledByExpress' => $expressComponentSettingsHandler->isEnabled(),
                             ] : null,
                             'bankTransferDueDays' => $methodId === 'banktransfer'
                                 ? (string) ($this->configuration->get(Config::MOLLIE_BANKTRANSFER_DUE_DAYS) ?: Config::MOLLIE_BANKTRANSFER_DUE_DAYS_DEFAULT)

@@ -84,7 +84,7 @@ export function ExpressComponentSettings({
 
         <div className="space-y-2">
           <p className="text-xs text-gray-400 leading-relaxed">{t('expressComponentApplePayDomainFile')}</p>
-          <p className="text-xs text-gray-400 leading-relaxed">{t('expressComponentDisablesDirect')}</p>
+          <p className="text-xs text-gray-400 leading-relaxed">{t('expressComponentMethodsNote')}</p>
         </div>
 
         <div className="flex justify-end pt-4 border-t">
