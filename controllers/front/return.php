@@ -96,16 +96,15 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             $data['auth'] = (int) $cart->id_customer === $customer->id;
             if ($data['auth']) {
                 if ($transactionId) {
-                    $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('transaction_id', (string) $transactionId);
+                    $data['mollie_info'] = $paymentMethodRepo->getPaymentByTransactionIdForCart((string) $transactionId, $idCart);
                 } else {
                     $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_reference', (string) $orderNumber);
-                }
 
-                if (is_array($data['mollie_info'])
-                    && isset($data['mollie_info']['cart_id'])
-                    && (int) $data['mollie_info']['cart_id'] !== $idCart
-                ) {
-                    $data['mollie_info'] = false;
+                    if (is_array($data['mollie_info'])
+                        && (int) ($data['mollie_info']['cart_id'] ?? 0) !== $idCart
+                    ) {
+                        $data['mollie_info'] = false;
+                    }
                 }
             }
         }

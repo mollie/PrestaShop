@@ -66,6 +66,19 @@ class PaymentMethodRepositoryCartBindingTest extends BaseTestCase
         $this->assertFalse($payment);
     }
 
+    /**
+     * The cart_id column is nullable. A row with a null cart belongs to no cart, so it must
+     * never resolve for a shopper's cart. The controller relies on this to fail closed.
+     */
+    public function testItRejectsATransactionWithNoCart()
+    {
+        $this->insertPaymentWithNullCart(self::OWNED_TRANSACTION);
+
+        $payment = $this->paymentMethodRepository->getPaymentByTransactionIdForCart(self::OWNED_TRANSACTION, self::OWNED_CART);
+
+        $this->assertFalse($payment);
+    }
+
     private function insertPayment($transactionId, $cartId)
     {
         Db::getInstance()->delete('mollie_payments', '`transaction_id` = \'' . pSQL($transactionId) . '\'');
@@ -80,5 +93,15 @@ class PaymentMethodRepositoryCartBindingTest extends BaseTestCase
             'reason' => '',
             'created_at' => ['type' => 'sql', 'value' => 'NOW()'],
         ]);
+    }
+
+    private function insertPaymentWithNullCart($transactionId)
+    {
+        Db::getInstance()->delete('mollie_payments', '`transaction_id` = \'' . pSQL($transactionId) . '\'');
+
+        Db::getInstance()->execute(
+            'INSERT INTO `' . _DB_PREFIX_ . 'mollie_payments` (`transaction_id`, `cart_id`, `order_id`, `order_reference`, `method`, `bank_status`, `reason`, `created_at`)'
+            . ' VALUES (\'' . pSQL($transactionId) . '\', NULL, 0, \'mol_pipres850\', \'creditcard\', \'' . pSQL(PaymentStatus::STATUS_OPEN) . '\', \'\', NOW())'
+        );
     }
 }
