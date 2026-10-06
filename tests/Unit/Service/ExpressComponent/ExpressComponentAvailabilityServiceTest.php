@@ -68,6 +68,7 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
         $this->cart->id_address_invoice = 4;
         $this->cart->id_carrier = 2;
         $this->cart->method('getOrderTotal')->willReturn(59.9);
+        $this->cart->method('getDeliveryOption')->willReturn([4 => '2,']);
     }
 
     private function service(): ExpressComponentAvailabilityService
@@ -144,6 +145,23 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
 
         $this->assertFalse($service->isAvailable($this->cart));
         $this->assertSame('cart has no carrier', $service->getUnavailableReason());
+    }
+
+    public function testACartNoCarrierCanShipIsNotAvailable(): void
+    {
+        $cart = $this->mock(\Cart::class);
+        $cart->id = 8;
+        $cart->id_customer = 3;
+        $cart->id_address_delivery = 9;
+        $cart->id_address_invoice = 9;
+        $cart->id_carrier = 2;
+        $cart->method('getDeliveryOption')->willReturn([]);
+        $cart->method('getOrderTotal')->willReturn(59.9);
+
+        $service = $this->service();
+
+        $this->assertFalse($service->isAvailable($cart));
+        $this->assertSame('no carrier serves the delivery address', $service->getUnavailableReason());
     }
 
     public function testASubscriptionCartIsNotAvailable(): void

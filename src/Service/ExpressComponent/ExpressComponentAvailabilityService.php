@@ -145,6 +145,12 @@ class ExpressComponentAvailabilityService
             return $this->unavailable('cart has no carrier');
         }
 
+        // id_carrier survives an address change; the delivery option does not when no carrier
+        // serves the new address, and the shop cannot turn such a cart into an order.
+        if (!$cart->getDeliveryOption(null, false, false)) {
+            return $this->unavailable('no carrier serves the delivery address');
+        }
+
         if ($this->subscriptionOrderValidator->validate($cart)) {
             return $this->unavailable('cart contains a subscription product');
         }
