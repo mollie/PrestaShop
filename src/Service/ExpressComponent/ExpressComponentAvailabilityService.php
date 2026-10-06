@@ -159,7 +159,29 @@ class ExpressComponentAvailabilityService
             return $this->unavailable('cart total is zero');
         }
 
+        if ($this->isBelowMinimumPurchase($cart)) {
+            return $this->unavailable('cart is below the minimum purchase total');
+        }
+
         return true;
+    }
+
+    /**
+     * PrestaShop enforces the minimum purchase total in ModuleFrontController::initContent() for
+     * the regular payment controller only; the session and the webhook never pass through it.
+     */
+    private function isBelowMinimumPurchase(\Cart $cart): bool
+    {
+        $minimum = (float) $this->configuration->get('PS_PURCHASE_MINIMUM');
+
+        if ($minimum <= 0) {
+            return false;
+        }
+
+        $minimalPurchase = \Tools::convertPrice($minimum, new \Currency((int) $cart->id_currency));
+        \Hook::exec('overrideMinimalPurchasePrice', ['minimalPurchase' => &$minimalPurchase]);
+
+        return $cart->getOrderTotal(false, \Cart::ONLY_PRODUCTS) < $minimalPurchase;
     }
 
     public function getUnavailableReason(): string

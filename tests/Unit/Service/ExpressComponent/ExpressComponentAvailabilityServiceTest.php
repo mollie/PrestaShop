@@ -164,6 +164,17 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
         $this->assertSame('no carrier serves the delivery address', $service->getUnavailableReason());
     }
 
+    public function testACartBelowTheMinimumPurchaseTotalIsNotAvailable(): void
+    {
+        $this->config['PS_PURCHASE_MINIMUM'] = '500';
+        $this->cart->id_currency = 1;
+
+        $service = $this->service();
+
+        $this->assertFalse($service->isAvailable($this->cart));
+        $this->assertSame('cart is below the minimum purchase total', $service->getUnavailableReason());
+    }
+
     public function testASubscriptionCartIsNotAvailable(): void
     {
         $this->subscriptionOrderValidator->method('validate')->willReturn(true);
