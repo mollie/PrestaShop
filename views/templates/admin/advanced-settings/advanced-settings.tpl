@@ -12,4 +12,6 @@
 <div id="mollie-advanced-settings-root"></div>
 
 {* Load React app as ES module *}
+{if $mollieAdvancedSettingsJsUrl}
 <script type="module" src="{$mollieAdvancedSettingsJsUrl|escape:'htmlall':'UTF-8'}"></script>
+{/if}

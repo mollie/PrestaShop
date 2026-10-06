@@ -19,6 +19,62 @@ Vite writes the scripts to `views/js/admin/library/dist/assets/` and the stylesh
 `views/css/admin/library/`. PrestaShop expects stylesheets under `/views/css`, so a plugin in
 `vite.config.ts` moves them there. Both directories are git ignored and built in CI.
 
+## Installing with Composer
+
+The module is not published on Packagist, so the shop's `composer.json` needs a repository entry
+first. There are two options.
+
+### Release ZIP (recommended)
+
+The release ZIP is the same package merchants upload. It already contains the libraries and the
+compiled back office screens, so nothing has to be built. Replace `X.Y.Z` with the latest release
+on the GitHub releases page. Add this to the shop's `composer.json`:
+
+```json
+"repositories": [
+    {
+        "type": "package",
+        "package": {
+            "name": "mollie/prestashop",
+            "version": "X.Y.Z",
+            "type": "prestashop-module",
+            "extra": { "installer-name": "mollie" },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/mollie/PrestaShop/releases/download/vX.Y.Z/mollie.zip"
+            }
+        }
+    }
+]
+```
+
+Then run `composer require mollie/prestashop:X.Y.Z`. Change both version numbers to upgrade.
+
+### Repository source
+
+The repository has no compiled back office screens, so you build them yourself after every
+install or update. Until then the Mollie settings pages show an error. This route needs release
+6.4.7 or later. Add the repository:
+
+```json
+"repositories": [
+    {
+        "type": "vcs",
+        "url": "https://github.com/mollie/PrestaShop"
+    }
+]
+```
+
+Then install and build (needs Node.js):
+
+```
+composer require mollie/prestashop:X.Y.Z -w
+cd modules/mollie/views/js/admin/library && npm ci && npm run build
+```
+
+`-w` lets Composer update the module's own dependencies that the shop already locks, such as
+`php-http/message-factory`. It leaves the shop's other packages alone.
+
 ## PrestaShop Addons validator
 
 Findings below were reviewed against the 6.4.6 package and deliberately left alone. Check this list

@@ -12,4 +12,6 @@
 <div id="mollie-payment-methods-root"></div>
 
 {* Load ES module JavaScript *}
+{if $molliePaymentMethodsJsUrl}
 <script type="module" src="{$molliePaymentMethodsJsUrl|escape:'html':'UTF-8'}"></script>
+{/if}
