@@ -9,13 +9,11 @@ import { cn } from "../../lib/utils"
 import { usePaymentMethodsTranslations } from "../../hooks/use-payment-methods-translations"
 import type { ExpressComponentSettings as ExpressComponentSettingsValues } from "../../../services/PaymentMethodsApiService"
 
-type ExpressButtonKey = "applepay" | "googlepay" | "paypal"
-
 interface ExpressComponentSettingsProps {
   settings: ExpressComponentSettingsValues
   showLiveKeyWarning?: boolean
   isSaving?: boolean
-  onUpdateSettings: (settings: Partial<ExpressComponentSettingsValues>) => void
+  onUpdateSettings: (settings: Pick<ExpressComponentSettingsValues, "enabled">) => void
   onSave: () => void
   className?: string
 }
@@ -29,14 +27,6 @@ export function ExpressComponentSettings({
   className
 }: ExpressComponentSettingsProps) {
   const { t } = usePaymentMethodsTranslations()
-
-  const buttonsDisabled = !settings.enabled
-
-  const buttons: { key: ExpressButtonKey; label: string }[] = [
-    { key: "applepay", label: t('expressComponentApplePay') },
-    { key: "googlepay", label: t('expressComponentGooglePay') },
-    { key: "paypal", label: t('expressComponentPayPal') },
-  ]
 
   return (
     <Card data-testid="express-component-card" className={cn("border border-gray-200", className)}>
@@ -62,23 +52,6 @@ export function ExpressComponentSettings({
               checked={settings.enabled}
               onCheckedChange={(enabled: boolean) => onUpdateSettings({ enabled })}
             />
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          <Label className={cn("text-sm font-medium", buttonsDisabled && "opacity-50")}>{t('expressComponentButtons')}</Label>
-          <div className="space-y-2">
-            {buttons.map((button) => (
-              <div key={button.key} className="flex items-center gap-3">
-                <p className={cn("text-sm text-muted-foreground flex items-center h-6 min-w-[8rem]", buttonsDisabled && "opacity-50")}>{button.label}</p>
-                <Switch
-                  data-testid={`express-component-${button.key}-switch`}
-                  checked={settings[button.key]}
-                  disabled={buttonsDisabled}
-                  onCheckedChange={(checked: boolean) => onUpdateSettings({ [button.key]: checked })}
-                />
-              </div>
-            ))}
           </div>
         </div>
 

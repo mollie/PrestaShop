@@ -51,27 +51,28 @@ class ExpressComponentSettingsHandlerTest extends BaseTestCase
         );
     }
 
-    public function testEnablingStoresTheFlagsAndLeavesApplePayDirectAlone(): void
+    public function testEnablingStoresOnlyTheMasterSwitch(): void
     {
-        $this->stored[Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT] = 1;
+        $this->stored[Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY] = 1;
+        $this->stored[Config::MOLLIE_EXPRESS_COMPONENT_PAYPAL] = 0;
         $this->stored[Config::MOLLIE_APPLE_PAY_DIRECT_CART] = 1;
         $this->certificateHandler->expects($this->once())->method('handle');
         $this->certificateHandler->expects($this->once())->method('refresh');
 
-        $result = $this->handler->handle(['enabled' => true, 'applepay' => true, 'googlepay' => false, 'paypal' => '1']);
+        $result = $this->handler->handle(['enabled' => true, 'paypal' => true]);
 
-        $this->assertSame(['enabled' => true, 'applepay' => true, 'googlepay' => false, 'paypal' => true], $result['expressComponent']);
+        $this->assertSame(['enabled' => true, 'applepay' => true, 'googlepay' => false, 'paypal' => false], $result['expressComponent']);
         $this->assertNull($result['warning']);
-        $this->assertSame(1, $this->stored[Config::MOLLIE_APPLE_PAY_DIRECT_PRODUCT]);
         $this->assertSame(1, $this->stored[Config::MOLLIE_APPLE_PAY_DIRECT_CART]);
         $this->assertTrue($this->handler->isEnabled());
     }
 
     public function testDisablingSkipsTheDomainFile(): void
     {
+        $this->stored[Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY] = 1;
         $this->certificateHandler->expects($this->never())->method('handle');
 
-        $result = $this->handler->handle(['enabled' => false, 'applepay' => true]);
+        $result = $this->handler->handle(['enabled' => false]);
 
         $this->assertFalse($result['expressComponent']['enabled']);
         $this->assertFalse($this->handler->isEnabled());
@@ -79,21 +80,22 @@ class ExpressComponentSettingsHandlerTest extends BaseTestCase
 
     public function testADomainFileFailureKeepsTheComponentEnabledWithAWarning(): void
     {
+        $this->stored[Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY] = 1;
         $this->certificateHandler->method('handle')->willThrowException(new \RuntimeException('not writable'));
 
-        $result = $this->handler->handle(['enabled' => true, 'applepay' => true]);
+        $result = $this->handler->handle(['enabled' => true]);
 
         $this->assertTrue($result['expressComponent']['enabled']);
-        $this->assertTrue($result['expressComponent']['applepay']);
         $this->assertNotNull($result['warning']);
         $this->assertSame(1, $this->stored[Config::MOLLIE_EXPRESS_COMPONENT_ENABLED]);
     }
 
-    public function testApplePayOffSkipsTheDomainFile(): void
+    public function testApplePayButtonOffSkipsTheDomainFile(): void
     {
+        $this->stored[Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY] = 0;
         $this->certificateHandler->expects($this->never())->method('handle');
 
-        $result = $this->handler->handle(['enabled' => true, 'applepay' => false, 'googlepay' => true]);
+        $result = $this->handler->handle(['enabled' => true]);
 
         $this->assertNull($result['warning']);
         $this->assertFalse($result['expressComponent']['applepay']);

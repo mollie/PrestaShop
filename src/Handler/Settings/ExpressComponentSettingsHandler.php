@@ -23,8 +23,8 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Saves the Express Component settings. Apple Pay Direct keeps its own switches: the two
- * features live on different pages (product and cart versus the payment step).
+ * Saves the Express Component master switch. The per-wallet buttons are saved from each
+ * method's own card (PaymentMethodSettingsHandler); Apple Pay Direct keeps its own switches.
  */
 class ExpressComponentSettingsHandler
 {
@@ -63,16 +63,14 @@ class ExpressComponentSettingsHandler
      */
     public function handle(array $settings): array
     {
-        $values = [];
-
-        foreach (self::FLAGS as $key => $configKey) {
-            $values[$key] = (bool) ($settings[$key] ?? false);
-            $this->configuration->updateValue($configKey, $values[$key] ? 1 : 0);
-        }
+        $enabled = (bool) ($settings['enabled'] ?? false);
+        $this->configuration->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED, $enabled ? 1 : 0);
 
         $warning = null;
 
-        if ($values['enabled'] && $values['applepay']) {
+        // The per-wallet buttons are saved from each method's own card; only the Apple Pay
+        // domain file needs placing here, in case that button was switched on before the component.
+        if ($enabled && (int) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY)) {
             $warning = $this->placeApplePayDomainFile();
         }
 

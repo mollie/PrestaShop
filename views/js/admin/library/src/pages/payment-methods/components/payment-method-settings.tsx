@@ -103,11 +103,16 @@ function RadioSelect({ value, onValueChange, options, placeholder, className }: 
   )
 }
 
+const EXPRESS_BUTTON_METHODS = ["applepay", "creditcard", "paypal"]
+
 export function PaymentMethodSettings({ method, countries, carriers, showApplePayLiveKeyWarning = false, customerGroups, languages, onlyPaymentsMethods, onlyOrderMethods, onUpdateSettings, onSaveSettings, isSaving = false }: PaymentMethodSettingsProps) {
   const { t } = usePaymentMethodsTranslations()
 
   const forcePaymentsApi = onlyPaymentsMethods.includes(method.id)
   const forceOrdersApi = onlyOrderMethods.includes(method.id)
+  const showExpressButton = EXPRESS_BUTTON_METHODS.includes(method.id)
+  const expressButtonLabel = method.id === "creditcard" ? t('expressButtonCheckoutGooglePay') : t('expressButtonCheckout')
+  const expressButtonInfo = method.id === "creditcard" ? t('expressButtonCheckoutGooglePayInfo') : t('expressButtonCheckoutInfo')
   const [showRestrictions, setShowRestrictions] = useState(false)
   const [showFees, setShowFees] = useState(false)
   const [showOrderRestrictions, setShowOrderRestrictions] = useState(false)
@@ -533,6 +538,21 @@ export function PaymentMethodSettings({ method, countries, carriers, showApplePa
         </div>
       )}
       <div className="space-y-4">
+        {/* Express checkout button - Apple Pay, Card (Google Pay) and PayPal only */}
+        {showExpressButton && (
+          <div className="border rounded-lg overflow-hidden transition-shadow hover:shadow-sm">
+            <div className="p-4 grid grid-cols-[auto_auto_1fr] items-center gap-x-3 gap-y-1">
+              <Label className="text-sm font-medium col-span-3">{expressButtonLabel}</Label>
+              <p className="text-sm text-muted-foreground">{expressButtonInfo}</p>
+              <Switch
+                data-testid={`payment-method-${method.id}-express-switch`}
+                checked={method.settings.expressButton ?? false}
+                onCheckedChange={(expressButton: boolean) => onUpdateSettings({ expressButton })}
+              />
+            </div>
+          </div>
+        )}
+
         {/* Apple Pay Settings - Only for Apple Pay */}
         {method.id === "applepay" && method.settings.applePaySettings && (
           <div className="border rounded-lg overflow-hidden transition-shadow hover:shadow-sm">

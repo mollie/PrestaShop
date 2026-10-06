@@ -249,10 +249,10 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'expressComponentSettings' => $this->module->l('Express Component', self::FILE_NAME),
                 'expressComponentEnable' => $this->module->l('Show express payment buttons on the checkout payment step', self::FILE_NAME),
                 'expressComponentEnableInfo' => $this->module->l('Mollie renders Apple Pay, Google Pay and PayPal buttons above the payment method list. Shoppers pay in one tap without leaving the checkout. The Mollie profile must have the Components beta enabled and the wallets activated.', self::FILE_NAME),
-                'expressComponentButtons' => $this->module->l('Buttons', self::FILE_NAME),
-                'expressComponentApplePay' => $this->module->l('Apple Pay', self::FILE_NAME),
-                'expressComponentGooglePay' => $this->module->l('Google Pay', self::FILE_NAME),
-                'expressComponentPayPal' => $this->module->l('PayPal', self::FILE_NAME),
+                'expressButtonCheckout' => $this->module->l('Express button on the checkout payment step', self::FILE_NAME),
+                'expressButtonCheckoutInfo' => $this->module->l('Shows this wallet as a one-tap button above the payment method list, rendered by the Mollie Express Component. Needs the Express Component switch at the top of this page. While it is on, the regular option of this method is hidden from the list.', self::FILE_NAME),
+                'expressButtonCheckoutGooglePay' => $this->module->l('Google Pay express button on the checkout payment step', self::FILE_NAME),
+                'expressButtonCheckoutGooglePayInfo' => $this->module->l('Shows Google Pay as a one-tap button above the payment method list, rendered by the Mollie Express Component. Google Pay payments are card payments, so this method must be enabled. Needs the Express Component switch at the top of this page.', self::FILE_NAME),
                 'expressComponentLiveOnly' => $this->module->l('The Express Component is in beta and works only with a live API key in live mode. It stays hidden in test mode.', self::FILE_NAME),
                 'expressComponentApplePayDomainFile' => $this->module->l('Apple Pay requires the domain verification file at /.well-known/apple-developer-merchantid-domain-association. The module places it when you save with Apple Pay enabled. Register the domain in your Mollie Dashboard as well.', self::FILE_NAME),
                 'expressComponentMethodsNote' => $this->module->l('A button is shown only when its Mollie payment method (Apple Pay, Credit card for Google Pay, PayPal) is enabled for the active environment. Express payments carry no payment surcharge. Apple Pay Direct on product and cart pages keeps its own settings.', self::FILE_NAME),
@@ -497,6 +497,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                                 'buttonStyle' => (int) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE) ?: 0),
                                 'excludedCarriers' => $this->getExcludedCarriersForResponse(),
                             ] : null,
+                            'expressButton' => isset(Config::EXPRESS_BUTTON_FLAGS[$methodId])
+                                ? (bool) (int) $this->configuration->get(Config::EXPRESS_BUTTON_FLAGS[$methodId])
+                                : null,
                             'bankTransferDueDays' => $methodId === 'banktransfer'
                                 ? (string) ($this->configuration->get(Config::MOLLIE_BANKTRANSFER_DUE_DAYS) ?: Config::MOLLIE_BANKTRANSFER_DUE_DAYS_DEFAULT)
                                 : null,

@@ -239,15 +239,15 @@ export interface MolliePaymentMethodsTranslations {
   expressComponentSettings: string;
   expressComponentEnable: string;
   expressComponentEnableInfo: string;
-  expressComponentButtons: string;
-  expressComponentApplePay: string;
-  expressComponentGooglePay: string;
-  expressComponentPayPal: string;
   expressComponentLiveOnly: string;
   expressComponentApplePayDomainFile: string;
   expressComponentMethodsNote: string;
   expressComponentSave: string;
   expressComponentSaved: string;
+  expressButtonCheckout: string;
+  expressButtonCheckoutInfo: string;
+  expressButtonCheckoutGooglePay: string;
+  expressButtonCheckoutGooglePayInfo: string;
 }
 
 export interface MollieAdvancedSettingsTranslations {

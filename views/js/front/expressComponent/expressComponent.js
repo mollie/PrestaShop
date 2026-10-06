@@ -187,6 +187,28 @@
       });
     }
 
+    // The regular options of methods that have an express button carry a marker. They stay
+    // hidden while the component shows and come back whenever it cannot.
+    function coveredOptions() {
+      return Array.prototype.map.call(document.querySelectorAll('.mollie-express-covered'), function (marker) {
+        return marker.closest('[id$="-container"]') || marker.parentElement;
+      }).filter(Boolean);
+    }
+
+    function hideCoveredOptions() {
+      coveredOptions().forEach(function (option) {
+        option.classList.remove('mollie-express-fallback');
+        option.style.display = 'none';
+      });
+    }
+
+    function revealCoveredOptions() {
+      coveredOptions().forEach(function (option) {
+        option.classList.add('mollie-express-fallback');
+        option.style.display = '';
+      });
+    }
+
     function pageAmount() {
       var node = wrapper();
 
@@ -319,6 +341,7 @@
       if (!root.Mollie2 || typeof root.Mollie2.Checkout !== 'function') {
         log('Mollie.js v2 is not loaded');
         state.phase = 'unavailable';
+        revealCoveredOptions();
 
         return;
       }
@@ -352,7 +375,12 @@
 
               if (!hasButtons) {
                 log('no wallet button available in this browser');
+                revealCoveredOptions();
+
+                return;
               }
+
+              hideCoveredOptions();
             });
           });
         });
@@ -366,6 +394,8 @@
         if (node) {
           node.hidden = true;
         }
+
+        revealCoveredOptions();
       }).then(function () {
         state.pending = false;
       });
@@ -440,9 +470,13 @@
 
     function start() {
       if (!wrapper()) {
+        // No mount point on this theme: the regular options must stay available.
+        revealCoveredOptions();
+
         return;
       }
 
+      hideCoveredOptions();
       observe();
       maybeRecreate();
     }

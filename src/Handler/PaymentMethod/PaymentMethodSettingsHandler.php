@@ -144,6 +144,10 @@ class PaymentMethodSettingsHandler
             $this->handleCreditCardSettings($settings, $environment);
         }
 
+        if (isset($settings['expressButton'], Config::EXPRESS_BUTTON_FLAGS[$methodId])) {
+            $this->handleExpressButton($methodId, (bool) $settings['expressButton']);
+        }
+
         if ($methodId === Config::APPLEPAY && isset($settings['applePaySettings'])) {
             $this->handleApplePaySettings($settings['applePaySettings']);
         }
@@ -445,6 +449,29 @@ class PaymentMethodSettingsHandler
                 Config::MOLLIE_SHOW_CUSTOM_LOGO,
                 $settings['useCustomLogo'] ? 1 : 0
             );
+        }
+    }
+
+    /**
+     * The express button of a wallet lives in that wallet's own card. Apple Pay in the component
+     * verifies the domain with the same association file as Apple Pay Direct; a failure to place
+     * it is logged, not fatal, since the file may already be served.
+     */
+    private function handleExpressButton(string $methodId, bool $enabled): void
+    {
+        $this->configuration->updateValue(Config::EXPRESS_BUTTON_FLAGS[$methodId], $enabled ? 1 : 0);
+
+        if ($methodId !== 'applepay' || !$enabled) {
+            return;
+        }
+
+        try {
+            $this->applePayDirectCertificateHandler->handle();
+            $this->applePayDirectCertificateHandler->refresh();
+        } catch (\Throwable $e) {
+            $this->logger->warning('Apple Pay domain association file could not be placed for the express button', [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
         }
     }
 

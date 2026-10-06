@@ -36,9 +36,12 @@
 
 namespace Mollie\Handler\PaymentOption;
 
+use Mollie\Adapter\CartAdapter;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Config\Config;
+use Mollie\Service\ExpressComponent\ExpressComponentAvailabilityService;
+use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Mollie\Provider\PaymentOption\BancontactPaymentOptionProvider;
 use Mollie\Provider\PaymentOption\BasePaymentOptionProvider;
 use Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider;
@@ -75,6 +78,10 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
     private $bancontactPaymentOptionProvider;
     /** @var ConfigurationAdapter */
     private $configurationAdapter;
+    /** @var ExpressComponentAvailabilityService */
+    private $expressAvailability;
+    /** @var CartAdapter */
+    private $cartAdapter;
 
     public function __construct(
         BasePaymentOptionProvider $basePaymentOptionProvider,
@@ -82,7 +89,9 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
         CreditCardSingleClickPaymentOptionProvider $cardSingleClickPaymentOptionProvider,
         IdealPaymentOptionProvider $idealPaymentOptionProvider,
         BancontactPaymentOptionProvider $bancontactPaymentOptionProvider,
-        ConfigurationAdapter $configurationAdapter
+        ConfigurationAdapter $configurationAdapter,
+        ExpressComponentAvailabilityService $expressAvailability,
+        CartAdapter $cartAdapter
     ) {
         $this->basePaymentOptionProvider = $basePaymentOptionProvider;
         $this->creditCardPaymentOptionProvider = $creditCardPaymentOptionProvider;
@@ -90,12 +99,55 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
         $this->cardSingleClickPaymentOptionProvider = $cardSingleClickPaymentOptionProvider;
         $this->bancontactPaymentOptionProvider = $bancontactPaymentOptionProvider;
         $this->configurationAdapter = $configurationAdapter;
+        $this->expressAvailability = $expressAvailability;
+        $this->cartAdapter = $cartAdapter;
     }
 
     /**
      * {@inheritDoc}
      */
     public function handle(MolPaymentMethod $paymentMethod)
+    {
+        $paymentOption = $this->resolve($paymentMethod);
+
+        if ($this->isCoveredByExpressButton($paymentMethod)) {
+            $this->markCoveredByExpressButton($paymentOption, $paymentMethod);
+        }
+
+        return $paymentOption;
+    }
+
+    /**
+     * A wallet with its express button on would be listed twice on the payment step. The regular
+     * option gets a marker that hides it; expressComponent.js reveals it again whenever Mollie
+     * could not render the button, so the method is never lost.
+     */
+    private function isCoveredByExpressButton(MolPaymentMethod $paymentMethod): bool
+    {
+        $methodId = $paymentMethod->getPaymentMethodName();
+
+        if (!in_array($methodId, Config::EXPRESS_COVERED_METHODS, true)) {
+            return false;
+        }
+
+        if (!(int) $this->configurationAdapter->get(Config::EXPRESS_BUTTON_FLAGS[$methodId])) {
+            return false;
+        }
+
+        return $this->expressAvailability->isAvailable($this->cartAdapter->getCart());
+    }
+
+    private function markCoveredByExpressButton(PaymentOption $paymentOption, MolPaymentMethod $paymentMethod): void
+    {
+        $marker = sprintf(
+            '<span class="mollie-express-covered" data-mollie-express-method="%s" hidden></span>',
+            htmlspecialchars($paymentMethod->getPaymentMethodName(), ENT_QUOTES, 'UTF-8')
+        );
+
+        $paymentOption->setAdditionalInformation((string) $paymentOption->getAdditionalInformation() . $marker);
+    }
+
+    private function resolve(MolPaymentMethod $paymentMethod): PaymentOption
     {
         if ($this->isIdealPaymentMethod($paymentMethod)) {
             return $this->idealPaymentOptionProvider->getPaymentOption($paymentMethod);

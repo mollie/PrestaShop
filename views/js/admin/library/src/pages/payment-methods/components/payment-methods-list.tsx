@@ -272,7 +272,7 @@ export default function PaymentMethodsPage() {
 
     try {
       setIsExpressSaving(true)
-      const response = await paymentMethodsApiService.saveExpressComponentSettings(expressComponent)
+      const response = await paymentMethodsApiService.saveExpressComponentSettings({ enabled: expressComponent.enabled })
 
       if (!response.success || !response.data) {
         showNotification({ message: response.message || t('failedToSaveSettings'), type: 'error' })

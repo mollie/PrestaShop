@@ -85,6 +85,7 @@ export interface PaymentMethod {
       enabled: boolean
       statuses: string[]
     } | null
+    expressButton?: boolean
   }
 }
 
@@ -196,9 +197,9 @@ export class PaymentMethodsApiService {
 
 
   /**
-   * Save Express Component settings (master switch + button toggles)
+   * Save the Express Component master switch; per-button toggles live in each method's settings
    */
-  async saveExpressComponentSettings(settings: ExpressComponentSettings): Promise<ExpressComponentSettingsResponse> {
+  async saveExpressComponentSettings(settings: Pick<ExpressComponentSettings, 'enabled'>): Promise<ExpressComponentSettingsResponse> {
     const url = new URL(this.baseUrl, window.location.origin);
 
     const formData = new FormData();
