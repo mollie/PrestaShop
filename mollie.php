@@ -419,7 +419,9 @@ class Mollie extends PaymentModule
         /** @var ExpressComponentAvailabilityService $expressAvailability */
         $expressAvailability = $this->getService(ExpressComponentAvailabilityService::class);
 
-        if ($expressAvailability->isAvailable($this->context->cart)) {
+        // Enabled, not available: a one page checkout completes the cart without reloading, so
+        // the script has to be on the page before the carrier is chosen and ask again later.
+        if ($expressAvailability->isEnabled()) {
             $this->registerExpressComponentAssets($expressAvailability);
         }
 
@@ -468,7 +470,9 @@ class Mollie extends PaymentModule
         /** @var ExpressComponentAvailabilityService $expressAvailability */
         $expressAvailability = $this->getService(ExpressComponentAvailabilityService::class);
 
-        if (!$expressAvailability->isAvailable($this->context->cart)) {
+        // The mount point is rendered hidden whenever the component is enabled; the script decides
+        // when the cart is ready. A one page checkout never reloads between the steps.
+        if (!$expressAvailability->isEnabled()) {
             return '';
         }
 

@@ -89,6 +89,19 @@
     return classList.contains(CURRENT_STEP_CLASS);
   }
 
+  // One page checkouts change the total without reloading; core's updatedCart event carries the
+  // presented cart, and PrestaShop mirrors it on `prestashop.cart`.
+  function amountFromCartEvent(event, fallbackCart) {
+    var cart = (event && event.resp && event.resp.cart) || fallbackCart;
+    var total = cart && cart.totals && cart.totals.total;
+
+    if (!total) {
+      return null;
+    }
+
+    return normalizeAmount(total.amount !== undefined ? total.amount : total.value);
+  }
+
   function allRequiredConditionsAccepted(checkboxes) {
     for (var i = 0; i < checkboxes.length; i++) {
       if (!checkboxes[i].checked) {
@@ -430,7 +443,31 @@
 
       if (!node.hasAttribute(MOUNTED_ATTRIBUTE) || shouldRecreate(state, amount)) {
         recreate();
+
+        return;
       }
+
+      // The list may have been re-rendered (one page checkout): hide the covered options again.
+      if (state.phase === 'mounted' && !node.hidden) {
+        hideCoveredOptions();
+      }
+    }
+
+    function onCartUpdated(event) {
+      var node = wrapper();
+      var amount = amountFromCartEvent(event, root.prestashop && root.prestashop.cart);
+
+      if (node && amount !== null) {
+        node.setAttribute('data-amount', amount);
+      }
+
+      debouncedRecheck();
+    }
+
+    // The carrier changed: a cart the shop refused as not ready may be complete now.
+    function onDeliveryChanged() {
+      state.failedAmount = null;
+      debouncedRecheck();
     }
 
     var debounceTimer = null;
@@ -467,8 +504,13 @@
       }
 
       if (root.prestashop && typeof root.prestashop.on === 'function') {
-        root.prestashop.on('updatedCart', debouncedRecheck);
-        root.prestashop.on('updatedDeliveryForm', debouncedRecheck);
+        root.prestashop.on('updatedCart', onCartUpdated);
+        root.prestashop.on('updatedDeliveryForm', onDeliveryChanged);
+        // ps_onepagecheckout events: carrier chosen, payment list re-rendered.
+        root.prestashop.on('opcCarrierSelected', onDeliveryChanged);
+        root.prestashop.on('opcCarriersUpdated', onDeliveryChanged);
+        root.prestashop.on('opcPaymentMethodsUpdated', debouncedRecheck);
+        root.prestashop.on('opcPaymentMethodsRefreshed', debouncedRecheck);
       }
 
       root.addEventListener('pagehide', function () {
@@ -503,6 +545,7 @@
     normalizeAmount: normalizeAmount,
     shouldRecreate: shouldRecreate,
     isPaymentStepCurrent: isPaymentStepCurrent,
+    amountFromCartEvent: amountFromCartEvent,
     allRequiredConditionsAccepted: allRequiredConditionsAccepted,
     init: init
   };

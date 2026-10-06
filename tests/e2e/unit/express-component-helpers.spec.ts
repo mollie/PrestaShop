@@ -67,6 +67,13 @@ test.describe('express component helpers', () => {
     expect(helpers.isPaymentStepCurrent(null)).toBe(true);
   });
 
+  test('amountFromCartEvent reads the presented cart total from the event or the global cart', () => {
+    expect(helpers.amountFromCartEvent({ resp: { cart: { totals: { total: { amount: 34.8, value: '€34.80' } } } } }, null)).toBe('34.80');
+    expect(helpers.amountFromCartEvent({ resp: {} }, { totals: { total: { value: '43.2' } } })).toBe('43.20');
+    expect(helpers.amountFromCartEvent({}, null)).toBeNull();
+    expect(helpers.amountFromCartEvent(null, { totals: {} })).toBeNull();
+  });
+
   test('allRequiredConditionsAccepted needs every box ticked', () => {
     expect(helpers.allRequiredConditionsAccepted([])).toBe(true);
     expect(helpers.allRequiredConditionsAccepted([{ checked: true }, { checked: true }])).toBe(true);
