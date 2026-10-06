@@ -18,6 +18,7 @@ use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 
 if (!defined('_PS_VERSION_')) {
@@ -51,6 +52,8 @@ class ExpressComponentAvailabilityService
     private $context;
     /** @var PaymentMethodRepositoryInterface */
     private $paymentMethodRepository;
+    /** @var PaymentMethodRestrictionValidationInterface */
+    private $restrictionValidation;
     /** @var SubscriptionOrderValidator */
     private $subscriptionOrderValidator;
     /** @var ModuleFactory */
@@ -66,6 +69,7 @@ class ExpressComponentAvailabilityService
         ConfigurationAdapter $configuration,
         Context $context,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
+        PaymentMethodRestrictionValidationInterface $restrictionValidation,
         SubscriptionOrderValidator $subscriptionOrderValidator,
         ModuleFactory $moduleFactory,
         PrestaLoggerInterface $logger
@@ -73,6 +77,7 @@ class ExpressComponentAvailabilityService
         $this->configuration = $configuration;
         $this->context = $context;
         $this->paymentMethodRepository = $paymentMethodRepository;
+        $this->restrictionValidation = $restrictionValidation;
         $this->subscriptionOrderValidator = $subscriptionOrderValidator;
         $this->moduleFactory = $moduleFactory;
         $this->logger = $logger;
@@ -167,7 +172,7 @@ class ExpressComponentAvailabilityService
 
         foreach (self::BUTTONS as $button => list($flag, $methodId)) {
             $visible = (bool) (int) $this->configuration->get($flag)
-                && $this->isMethodEnabled($methodId, $environment, $shopId);
+                && $this->isMethodOffered($methodId, $environment, $shopId);
 
             $visibility[$button] = $visible ? self::VISIBILITY_AUTOMATIC : self::VISIBILITY_HIDDEN;
         }
@@ -175,7 +180,12 @@ class ExpressComponentAvailabilityService
         return $visibility;
     }
 
-    private function isMethodEnabled(string $methodId, int $environment, int $shopId): bool
+    /**
+     * The button follows the method it settles through: the row must be enabled and pass the
+     * same restrictions as the regular option (amount, customer group, country, vouchers), so a
+     * wallet the merchant restricted is not offered through the back door of the express strip.
+     */
+    private function isMethodOffered(string $methodId, int $environment, int $shopId): bool
     {
         $paymentMethodId = (int) $this->paymentMethodRepository->getPaymentMethodIdByMethodId($methodId, $environment, $shopId);
 
@@ -186,7 +196,9 @@ class ExpressComponentAvailabilityService
         /** @var \MolPaymentMethod|null $paymentMethod */
         $paymentMethod = $this->paymentMethodRepository->findOneBy(['id_payment_method' => $paymentMethodId]);
 
-        return $paymentMethod && (bool) $paymentMethod->enabled;
+        return $paymentMethod
+            && (bool) $paymentMethod->enabled
+            && $this->restrictionValidation->isPaymentMethodValid($paymentMethod);
     }
 
     private function unavailable(string $reason): bool

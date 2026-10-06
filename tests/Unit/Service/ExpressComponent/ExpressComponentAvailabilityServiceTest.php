@@ -18,6 +18,7 @@ use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExpressComponent\ExpressComponentAvailabilityService;
+use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Tests\Unit\BaseTestCase;
 
@@ -29,6 +30,8 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
     private $subscriptionOrderValidator;
     /** @var ModuleFactory|\PHPUnit\Framework\MockObject\MockObject */
     private $moduleFactory;
+    /** @var PaymentMethodRestrictionValidationInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $restrictionValidation;
     /** @var array<string, mixed> */
     private $config;
 
@@ -39,6 +42,8 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
         $this->paymentMethodRepository = $this->mock(PaymentMethodRepositoryInterface::class);
         $this->subscriptionOrderValidator = $this->mock(SubscriptionOrderValidator::class);
         $this->moduleFactory = $this->mock(ModuleFactory::class);
+        $this->restrictionValidation = $this->mock(PaymentMethodRestrictionValidationInterface::class);
+        $this->restrictionValidation->method('isPaymentMethodValid')->willReturn(true);
 
         $module = $this->mock(\Mollie::class);
         $module->method('getApiClient')->willReturn($this->mock(MollieApiClient::class));
@@ -71,6 +76,7 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
             $this->configuration,
             $this->context,
             $this->paymentMethodRepository,
+            $this->restrictionValidation,
             $this->subscriptionOrderValidator,
             $this->moduleFactory,
             $this->mock(PrestaLoggerInterface::class)
@@ -113,6 +119,7 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
             $this->configuration,
             $this->context,
             $this->paymentMethodRepository,
+            $this->restrictionValidation,
             $this->subscriptionOrderValidator,
             $moduleFactory,
             $this->mock(PrestaLoggerInterface::class)
@@ -180,5 +187,33 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
 
         $this->assertSame('hidden', $visibility['applepay']);
         $this->assertSame('hidden', $visibility['googlepay']);
+    }
+
+    public function testAMethodTheShopRestrictsHidesItsButton(): void
+    {
+        $enabledMethod = new \MolPaymentMethod();
+        $enabledMethod->enabled = 1;
+
+        $this->paymentMethodRepository->method('getPaymentMethodIdByMethodId')->willReturn(11);
+        $this->paymentMethodRepository->method('findOneBy')->willReturn($enabledMethod);
+
+        $restrictionValidation = $this->mock(PaymentMethodRestrictionValidationInterface::class);
+        $restrictionValidation->method('isPaymentMethodValid')->willReturn(false);
+
+        $service = new ExpressComponentAvailabilityService(
+            $this->configuration,
+            $this->context,
+            $this->paymentMethodRepository,
+            $restrictionValidation,
+            $this->subscriptionOrderValidator,
+            $this->moduleFactory,
+            $this->mock(PrestaLoggerInterface::class)
+        );
+
+        $this->assertSame([
+            'applepay' => 'hidden',
+            'googlepay' => 'hidden',
+            'paypal' => 'hidden',
+        ], $service->getButtonVisibility());
     }
 }
