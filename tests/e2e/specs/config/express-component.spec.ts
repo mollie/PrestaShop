@@ -39,33 +39,21 @@ test.afterAll(() => {
   }
 });
 
-test('the back office card saves its switches and leaves Apple Pay Direct alone', async ({ page }) => {
+test('the wallet card saves its express switch and leaves Apple Pay Direct alone', async ({ page }) => {
   test.setTimeout(90_000);
-  setGlobalConfig('MOLLIE_EXPRESS_COMPONENT_ENABLED', '0');
+  // The master switch lives under Advanced Settings; the method card only shows a hint when it is off.
+  setGlobalConfig('MOLLIE_EXPRESS_COMPONENT_ENABLED', '1');
   setMethodConfig('applepay', { enabled: true, api: 'payments' });
 
   const methods = new PaymentMethodsPage(page);
   await methods.goto();
   skipIfDisconnected((await methods.cardCount()) === 0, 'the Mollie method list is empty');
 
-  const card = page.getByTestId('express-component-card');
-  await expect(card).toBeVisible();
-
-  const enabledSwitch = page.getByTestId('express-component-enabled-switch');
-  await expect(enabledSwitch).toHaveAttribute('aria-checked', 'false');
-  await enabledSwitch.click();
-  await page.getByTestId('express-component-save').click();
-
-  await expect.poll(() => getGlobalConfig('MOLLIE_EXPRESS_COMPONENT_ENABLED'), { timeout: 15_000 }).toBe('1');
-
-  await page.reload();
-  await expect(page.getByTestId('express-component-enabled-switch')).toHaveAttribute('aria-checked', 'true');
-
-  // The wallet's express button lives in its own card, next to Apple Pay Direct, which stays untouched.
   const appleCard = await methods.revealCard('applepay', 5_000);
   test.skip((await appleCard.count()) === 0, 'applepay is not offered by the Mollie test profile');
   await methods.toggleSettings('applepay');
   const applePayExpress = page.getByTestId('payment-method-applepay-express-switch');
+  await expect(applePayExpress).toBeVisible();
   const wasOn = (await applePayExpress.getAttribute('aria-checked')) === 'true';
   await applePayExpress.click();
   await page.getByTestId('payment-method-applepay-save').click();
@@ -74,10 +62,6 @@ test('the back office card saves its switches and leaves Apple Pay Direct alone'
   await page.getByTestId('payment-method-applepay-direct-settings-toggle').click();
   await expect(page.getByTestId('payment-method-applepay-direct-product-switch')).toBeEnabled();
   await expect(page.getByTestId('payment-method-applepay-direct-cart-switch')).toBeEnabled();
-
-  await page.getByTestId('express-component-enabled-switch').click();
-  await page.getByTestId('express-component-save').click();
-  await expect.poll(() => getGlobalConfig('MOLLIE_EXPRESS_COMPONENT_ENABLED'), { timeout: 15_000 }).toBe('0');
 });
 
 test('a test-mode shop renders no express component on the payment step', async ({ page }) => {

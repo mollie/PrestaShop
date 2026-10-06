@@ -18,7 +18,6 @@ use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Handler\Certificate\ApplePayDirectCertificateHandler;
 use Mollie\Handler\PaymentMethod\PaymentMethodSettingsHandler;
-use Mollie\Handler\Settings\ExpressComponentSettingsHandler;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\CarrierRepositoryInterface;
 use Mollie\Repository\CountryRepository;
@@ -246,18 +245,12 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'applePayButtonOutlineDesc' => $this->module->l('White with outline', self::FILE_NAME),
                 'applePayButtonWhiteDesc' => $this->module->l('White Apple Pay button', self::FILE_NAME),
 
-                'expressComponentSettings' => $this->module->l('Express Component', self::FILE_NAME),
-                'expressComponentEnable' => $this->module->l('Show express payment buttons on the checkout payment step', self::FILE_NAME),
-                'expressComponentEnableInfo' => $this->module->l('Mollie renders Apple Pay, Google Pay and PayPal buttons above the payment method list. Shoppers pay in one tap without leaving the checkout. The Mollie profile must have the Components beta enabled and the wallets activated.', self::FILE_NAME),
+                'expressButtonMasterOff' => $this->module->l('The Mollie Express Component is switched off. Turn it on under Advanced Settings for this button to show.', self::FILE_NAME),
+                'expressButtonApplePayDomainFile' => $this->module->l('Apple Pay needs the domain verification file at /.well-known/apple-developer-merchantid-domain-association. The module places it when you save with this switch on. Register the domain in your Mollie Dashboard as well.', self::FILE_NAME),
                 'expressButtonCheckout' => $this->module->l('Express button on the checkout payment step', self::FILE_NAME),
                 'expressButtonCheckoutInfo' => $this->module->l('Shows this wallet as a one-tap button above the payment method list, rendered by the Mollie Express Component. Needs the Express Component switch at the top of this page. While it is on, the regular option of this method is hidden from the list.', self::FILE_NAME),
                 'expressButtonCheckoutGooglePay' => $this->module->l('Google Pay express button on the checkout payment step', self::FILE_NAME),
                 'expressButtonCheckoutGooglePayInfo' => $this->module->l('Shows Google Pay as a one-tap button above the payment method list, rendered by the Mollie Express Component. Google Pay payments are card payments, so this method must be enabled. Needs the Express Component switch at the top of this page.', self::FILE_NAME),
-                'expressComponentLiveOnly' => $this->module->l('The Express Component is in beta and works only with a live API key in live mode. It stays hidden in test mode.', self::FILE_NAME),
-                'expressComponentApplePayDomainFile' => $this->module->l('Apple Pay requires the domain verification file at /.well-known/apple-developer-merchantid-domain-association. The module places it when you save with Apple Pay enabled. Register the domain in your Mollie Dashboard as well.', self::FILE_NAME),
-                'expressComponentMethodsNote' => $this->module->l('A button is shown only when its Mollie payment method (Apple Pay, Credit card for Google Pay, PayPal) is enabled for the active environment. Express payments carry no payment surcharge. Apple Pay Direct on product and cart pages keeps its own settings.', self::FILE_NAME),
-                'expressComponentSave' => $this->module->l('Save Express Component settings', self::FILE_NAME),
-                'expressComponentSaved' => $this->module->l('Express Component settings saved', self::FILE_NAME),
 
                 'selectOption' => $this->module->l('Select option', self::FILE_NAME),
                 'selectOptions' => $this->module->l('Select options', self::FILE_NAME),
@@ -328,7 +321,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             'updateMethodsOrder',
             'refreshMethods',
             'uploadCustomLogo',
-            'saveExpressComponentSettings',
         ];
 
         if (in_array($action, $settingsMutatingActions, true) && !$this->multistoreSettingsContextGuard->canEditSettings()) {
@@ -362,9 +354,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             case 'checkApplePayCertificate':
                 $this->ajaxCheckApplePayCertificate();
                 break;
-            case 'saveExpressComponentSettings':
-                $this->ajaxSaveExpressComponentSettings();
-                break;
             default:
                 $this->ajaxRender(json_encode([
                     'success' => false,
@@ -380,9 +369,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             $testApiKey = $this->configuration->get(Config::MOLLIE_API_KEY_TEST);
             $liveApiKey = $this->configuration->get(Config::MOLLIE_API_KEY);
             $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
-
-            /** @var ExpressComponentSettingsHandler $expressComponentSettingsHandler */
-            $expressComponentSettingsHandler = $this->module->getService(ExpressComponentSettingsHandler::class);
 
             $currentApiKey = $environment ? $liveApiKey : $testApiKey;
 
@@ -537,7 +523,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                     'onlyPaymentsMethods' => Config::PAYMENT_API_ONLY_METHODS,
                     'environment' => $environment ? 'live' : 'test',
                     'hasLiveApiKey' => !empty($liveApiKey),
-                    'expressComponent' => $expressComponentSettingsHandler->getSettings(),
+                    'expressComponentEnabled' => (bool) (int) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED),
                     'is_connected' => !empty($formattedMethods),
                 ],
             ];
@@ -845,42 +831,6 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             $this->ajaxRender(json_encode([
                 'success' => false,
                 'message' => $this->module->l('Failed to save payment method settings', self::FILE_NAME),
-            ]));
-        }
-    }
-
-    private function ajaxSaveExpressComponentSettings(): void
-    {
-        try {
-            $settings = json_decode((string) $this->tools->getValue('settings'), true);
-
-            if (!is_array($settings)) {
-                throw new MollieException($this->module->l('Invalid settings format', self::FILE_NAME));
-            }
-
-            /** @var ExpressComponentSettingsHandler $handler */
-            $handler = $this->module->getService(ExpressComponentSettingsHandler::class);
-
-            $result = $handler->handle($settings);
-
-            $this->ajaxRender(json_encode([
-                'success' => true,
-                'message' => $this->module->l('Express Component settings saved', self::FILE_NAME),
-                'data' => $result,
-            ]));
-        } catch (MollieException $e) {
-            $this->ajaxRender(json_encode([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ]));
-        } catch (Exception $e) {
-            $this->logger->error('Failed to save Express Component settings', [
-                'exception' => ExceptionUtility::getExceptions($e),
-            ]);
-
-            $this->ajaxRender(json_encode([
-                'success' => false,
-                'message' => $this->module->l('Failed to save Express Component settings', self::FILE_NAME),
             ]));
         }
     }

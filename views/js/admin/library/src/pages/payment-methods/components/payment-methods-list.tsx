@@ -5,10 +5,9 @@ import { CheckCircle, XCircle, AlertTriangle } from "lucide-react"
 import { PaymentMethodTabs } from "./payment-method-tabs"
 import { PaymentMethodsList } from "./payment-methods-list-component"
 import { PaymentMethodsSkeleton } from "./payment-methods-skeleton"
-import { paymentMethodsApiService, type PaymentMethod, type Country, type Carrier, type CustomerGroup, type Language, type ExpressComponentSettings as ExpressComponentSettingsValues } from "../../../services/PaymentMethodsApiService"
+import { paymentMethodsApiService, type PaymentMethod, type Country, type Carrier, type CustomerGroup, type Language } from "../../../services/PaymentMethodsApiService"
 import { usePaymentMethodsTranslations } from "../../../shared/hooks/use-payment-methods-translations"
 import { MultistoreRestrictionNotice } from "../../../shared/components/ui/multistore-restriction-notice"
-import { ExpressComponentSettings } from "../../../shared/components/ui/express-component-settings"
 
 type NotificationType = 'success' | 'error' | 'warning'
 
@@ -58,9 +57,7 @@ export default function PaymentMethodsPage() {
   const [onlyPaymentsMethods, setOnlyPaymentsMethods] = useState<string[]>([])
   const [onlyOrderMethods, setOnlyOrderMethods] = useState<string[]>([])
   const [showApplePayLiveKeyWarning, setShowApplePayLiveKeyWarning] = useState(false)
-  const [showExpressLiveOnlyWarning, setShowExpressLiveOnlyWarning] = useState(false)
-  const [expressComponent, setExpressComponent] = useState<ExpressComponentSettingsValues | null>(null)
-  const [isExpressSaving, setIsExpressSaving] = useState(false)
+  const [expressComponentEnabled, setExpressComponentEnabled] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
   const [savingMethodId, setSavingMethodId] = useState<string | null>(null)
@@ -98,8 +95,7 @@ export default function PaymentMethodsPage() {
         setOnlyPaymentsMethods(response.data.onlyPaymentsMethods || [])
         setOnlyOrderMethods(response.data.onlyOrderMethods || [])
         setShowApplePayLiveKeyWarning(response.data.environment === 'test' && !response.data.hasLiveApiKey)
-        setShowExpressLiveOnlyWarning(response.data.environment === 'test' || !response.data.hasLiveApiKey)
-        setExpressComponent(response.data.expressComponent ?? null)
+        setExpressComponentEnabled(response.data.expressComponentEnabled ?? false)
       } else {
         setErrorMessage(response.message || t('loadingError'))
       }
@@ -261,38 +257,6 @@ export default function PaymentMethodsPage() {
     }
   }
 
-  const updateExpressSettings = (update: Partial<ExpressComponentSettingsValues>) => {
-    setExpressComponent((prev) => (prev ? { ...prev, ...update } : prev))
-  }
-
-  const saveExpressSettings = async () => {
-    if (!expressComponent) {
-      return
-    }
-
-    try {
-      setIsExpressSaving(true)
-      const response = await paymentMethodsApiService.saveExpressComponentSettings({ enabled: expressComponent.enabled })
-
-      if (!response.success || !response.data) {
-        showNotification({ message: response.message || t('failedToSaveSettings'), type: 'error' })
-        return
-      }
-
-      showNotification({ message: response.message || t('expressComponentSaved'), type: 'success' })
-      if (response.data.warning) {
-        showNotification({ message: response.data.warning, type: 'warning' })
-      }
-
-      setExpressComponent(response.data.expressComponent)
-    } catch (error) {
-      console.error('Failed to save express component settings:', error)
-      showNotification({ message: t('failedToSaveSettings'), type: 'error' })
-    } finally {
-      setIsExpressSaving(false)
-    }
-  }
-
   const currentMethods = activeTab === "enabled" ? enabledMethods : disabledMethods
 
   if (window.molliePaymentMethodsConfig?.multistoreRestricted) {
@@ -379,17 +343,6 @@ export default function PaymentMethodsPage() {
         </div>
       </div>
 
-      {/* Express Component */}
-      {expressComponent && (
-        <ExpressComponentSettings
-          settings={expressComponent}
-          showLiveKeyWarning={showExpressLiveOnlyWarning}
-          isSaving={isExpressSaving}
-          onUpdateSettings={updateExpressSettings}
-          onSave={saveExpressSettings}
-        />
-      )}
-
       {/* Tabs */}
       <PaymentMethodTabs activeTab={activeTab} onTabChange={handleTabChange} />
 
@@ -416,6 +369,7 @@ export default function PaymentMethodsPage() {
           countries={countries}
           carriers={carriers}
           showApplePayLiveKeyWarning={showApplePayLiveKeyWarning}
+          expressComponentEnabled={expressComponentEnabled}
           customerGroups={customerGroups}
           languages={languages}
           onlyPaymentsMethods={onlyPaymentsMethods}

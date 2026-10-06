@@ -236,14 +236,8 @@ export interface MolliePaymentMethodsTranslations {
   multistoreRestrictedMessage: string;
 
   // Express Component
-  expressComponentSettings: string;
-  expressComponentEnable: string;
-  expressComponentEnableInfo: string;
-  expressComponentLiveOnly: string;
-  expressComponentApplePayDomainFile: string;
-  expressComponentMethodsNote: string;
-  expressComponentSave: string;
-  expressComponentSaved: string;
+  expressButtonMasterOff: string;
+  expressButtonApplePayDomainFile: string;
   expressButtonCheckout: string;
   expressButtonCheckoutInfo: string;
   expressButtonCheckoutGooglePay: string;
@@ -257,6 +251,10 @@ export interface MollieAdvancedSettingsTranslations {
   shippingSettings: string;
   errorDebugging: string;
   visualSettings: string;
+  expressCheckout: string;
+  expressCheckoutEnable: string;
+  expressCheckoutInfo: string;
+  expressCheckoutLiveOnly: string;
   orderStatusMapping: string;
   orderStatusEmails: string;
   invoiceOption: string;

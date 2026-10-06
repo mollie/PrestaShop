@@ -108,6 +108,10 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             'shippingSettings' => $this->module->l('Shipping Settings', self::FILE_NAME),
             'errorDebugging' => $this->module->l('Error Debugging', self::FILE_NAME),
             'visualSettings' => $this->module->l('Visual Settings', self::FILE_NAME),
+            'expressCheckout' => $this->module->l('Express checkout (beta)', self::FILE_NAME),
+            'expressCheckoutEnable' => $this->module->l('Mollie Express Component', self::FILE_NAME),
+            'expressCheckoutInfo' => $this->module->l('Mollie renders one-tap Apple Pay, Google Pay and PayPal buttons above the payment method list on the checkout payment step. Choose which wallets get a button in their cards on the Payment Methods page. Express payments carry no payment surcharge.', self::FILE_NAME),
+            'expressCheckoutLiveOnly' => $this->module->l('The Express Component is in beta and works only with a live API key in live mode. It stays hidden in test mode.', self::FILE_NAME),
             'orderStatusMapping' => $this->module->l('Order Status Mapping', self::FILE_NAME),
             'orderStatusEmails' => $this->module->l('Order Status Emails', self::FILE_NAME),
             'invoiceOption' => $this->module->l('Select when to create the order invoice', self::FILE_NAME),
@@ -240,6 +244,10 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
                 'autoShipStatuses' => array_map('strval', json_decode($this->configuration->get(Config::MOLLIE_AUTO_SHIP_STATUSES) ?: '[]', true)),
                 'carriers' => $this->getCarriersData(),
 
+                'expressComponent' => (bool) (int) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED),
+                'expressLiveReady' => Config::ENVIRONMENT_LIVE === (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT)
+                    && 0 === strpos((string) $this->configuration->get(Config::MOLLIE_API_KEY), 'live'),
+
                 'debugMode' => (bool) $this->configuration->get(Config::MOLLIE_DISPLAY_ERRORS),
                 'logLevel' => ($logLevelRaw !== false && $logLevelRaw !== '' && $logLevelRaw !== null)
                     ? (string) $logLevelRaw
@@ -304,6 +312,10 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             }
             if (isset($data['carriers'])) {
                 $this->saveCarriersData($data['carriers']);
+            }
+
+            if (isset($data['expressComponent'])) {
+                $this->configuration->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED, (bool) $data['expressComponent']);
             }
 
             if (isset($data['debugMode'])) {

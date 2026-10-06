@@ -105,22 +105,6 @@ export interface CustomerGroup {
   label: string;
 }
 
-export interface ExpressComponentSettings {
-  enabled: boolean;
-  applepay: boolean;
-  googlepay: boolean;
-  paypal: boolean;
-}
-
-export interface ExpressComponentSettingsResponse {
-  success: boolean;
-  message?: string;
-  data?: {
-    expressComponent: ExpressComponentSettings;
-    warning: string | null;
-  };
-}
-
 export interface PaymentMethodsResponse {
   success: boolean;
   message?: string;
@@ -136,7 +120,7 @@ export interface PaymentMethodsResponse {
     environment: 'test' | 'live';
     hasLiveApiKey: boolean;
     is_connected: boolean;
-    expressComponent?: ExpressComponentSettings;
+    expressComponentEnabled: boolean;
   };
 }
 
@@ -186,25 +170,6 @@ export class PaymentMethodsApiService {
     formData.append('ajax', '1');
     formData.append('action', 'savePaymentMethodSettings');
     formData.append('method_id', methodId);
-    formData.append('settings', JSON.stringify(settings));
-
-    const response = await fetch(url.toString(), {
-      method: 'POST',
-      body: formData
-    });
-    return response.json();
-  }
-
-
-  /**
-   * Save the Express Component master switch; per-button toggles live in each method's settings
-   */
-  async saveExpressComponentSettings(settings: Pick<ExpressComponentSettings, 'enabled'>): Promise<ExpressComponentSettingsResponse> {
-    const url = new URL(this.baseUrl, window.location.origin);
-
-    const formData = new FormData();
-    formData.append('ajax', '1');
-    formData.append('action', 'saveExpressComponentSettings');
     formData.append('settings', JSON.stringify(settings));
 
     const response = await fetch(url.toString(), {
