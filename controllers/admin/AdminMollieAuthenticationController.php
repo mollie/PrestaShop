@@ -62,6 +62,10 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         $jsUrl = $this->module->getPathUri() . 'views/js/admin/library/dist/assets/authorization.js?v=' . $this->module->version;
         $this->context->smarty->assign('mollieAuthJsUrl', $jsUrl);
 
+        if (!file_exists($this->module->getLocalPath() . 'views/js/admin/library/dist/assets/authorization.js')) {
+            $this->errors[] = $this->module->l('This page cannot be displayed because the module files are incomplete. Reinstall the module from the official release ZIP.', self::FILE_NAME);
+        }
+
         $this->context->controller->addCSS(
             $this->module->getPathUri() . 'views/css/admin/library/globals.css?v=' . $this->module->version,
             'all',

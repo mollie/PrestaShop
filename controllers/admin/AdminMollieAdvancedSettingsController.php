@@ -80,6 +80,10 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         $jsUrl = $this->module->getPathUri() . 'views/js/admin/library/dist/assets/mollie-advanced-settings.js?v=' . $version;
         $this->context->smarty->assign('mollieAdvancedSettingsJsUrl', $jsUrl);
 
+        if (!file_exists($this->module->getLocalPath() . 'views/js/admin/library/dist/assets/mollie-advanced-settings.js')) {
+            $this->errors[] = $this->module->l('This page cannot be displayed because the module files are incomplete. Reinstall the module from the official release ZIP.', self::FILE_NAME);
+        }
+
         Media::addJsDef([
             'mollieAdvancedSettingsAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAdvancedSettings'),
         ]);

@@ -116,6 +116,10 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         $jsUrl = $this->module->getPathUri() . 'views/js/admin/library/dist/assets/mollie-payment-methods.js?v=' . $version;
         $this->context->smarty->assign('molliePaymentMethodsJsUrl', $jsUrl);
 
+        if (!file_exists($this->module->getLocalPath() . 'views/js/admin/library/dist/assets/mollie-payment-methods.js')) {
+            $this->errors[] = $this->module->l('This page cannot be displayed because the module files are incomplete. Reinstall the module from the official release ZIP.', self::FILE_NAME);
+        }
+
         Media::addJsDef([
             'molliePaymentMethodsAjaxUrl' => $this->context->link->getAdminLink('AdminMolliePaymentMethods'),
             'mollieAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAjax'),
