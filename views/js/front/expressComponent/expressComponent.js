@@ -38,6 +38,8 @@
   var MOUNTED_ATTRIBUTE = 'data-mollie-mounted';
   var REFRESH_MARGIN_SECONDS = 180;
   var RECHECK_DEBOUNCE_MS = 250;
+  var BUTTON_WAIT_ATTEMPTS = 15;
+  var BUTTON_WAIT_INTERVAL_MS = 400;
 
   function buildButtonOptions(buttons) {
     var source = buttons || {};
@@ -257,6 +259,33 @@
       });
     }
 
+    function waitForButtons(target) {
+      return new Promise(function (resolve) {
+        var attempts = 0;
+
+        (function check() {
+          var rendered = target.querySelector('iframe, button, [role="button"]');
+          var sized = target.getBoundingClientRect().height > 0 && target.children.length > 0;
+
+          if (rendered || sized) {
+            resolve(true);
+
+            return;
+          }
+
+          attempts += 1;
+
+          if (attempts >= BUTTON_WAIT_ATTEMPTS) {
+            resolve(false);
+
+            return;
+          }
+
+          root.setTimeout(check, BUTTON_WAIT_INTERVAL_MS);
+        })();
+      });
+    }
+
     function scheduleRefresh() {
       var ttl = parseInt(config.tokenTtlSeconds, 10) || 900;
       var delay = Math.max(ttl - REFRESH_MARGIN_SECONDS, 60) * 1000;
@@ -311,10 +340,20 @@
             state.component = component;
             state.mountedAmount = normalizeAmount(session.amount && session.amount.value) || pageAmount();
             state.phase = 'mounted';
-            node.hidden = false;
             node.setAttribute(MOUNTED_ATTRIBUTE, '1');
             hideError();
             scheduleRefresh();
+
+            // mount() resolves even when this browser gets no wallet button at all (Chrome
+            // without Google Pay, no Apple Pay, PayPal hidden). Reveal the block only once Mollie
+            // has put something into it, so the shopper never sees an empty "Express checkout".
+            return waitForButtons(target).then(function (hasButtons) {
+              node.hidden = !hasButtons;
+
+              if (!hasButtons) {
+                log('no wallet button available in this browser');
+              }
+            });
           });
         });
       }).catch(function (error) {
