@@ -256,8 +256,6 @@ class Config
         'creditcard' => self::MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY,
         'paypal' => self::MOLLIE_EXPRESS_COMPONENT_PAYPAL,
     ];
-    /** Methods whose regular checkout option duplicates their express button and is hidden while it is on. */
-    const EXPRESS_COVERED_METHODS = ['applepay', 'paypal'];
     // A Checkout Session lives about 15 minutes at Mollie; reuse one for a little less than that.
     const EXPRESS_SESSION_REUSE_MAX_AGE_SECONDS = 780;
     const EXPRESS_METADATA_FLAG = 'express_component';

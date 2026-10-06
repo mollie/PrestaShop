@@ -89,17 +89,57 @@
     return classList.contains(CURRENT_STEP_CLASS);
   }
 
-  // One page checkouts change the total without reloading; core's updatedCart event carries the
-  // presented cart, and PrestaShop mirrors it on `prestashop.cart`.
+  // One page checkouts change the total without reloading. Core's updatedCart event carries the
+  // presented cart under `resp.cart`; ps_onepagecheckout answers its carrier and address calls
+  // with the presenter's `totals` directly, under `resp` (updatedDeliveryForm) or `response`
+  // (its own opc* events). PrestaShop mirrors the latest cart on `prestashop.cart`.
   function amountFromCartEvent(event, fallbackCart) {
-    var cart = (event && event.resp && event.resp.cart) || fallbackCart;
-    var total = cart && cart.totals && cart.totals.total;
+    var candidates = [
+      event && event.resp && event.resp.cart,
+      event && event.resp,
+      event && event.response,
+      fallbackCart
+    ];
 
-    if (!total) {
+    for (var i = 0; i < candidates.length; i++) {
+      var total = candidates[i] && candidates[i].totals && candidates[i].totals.total;
+
+      if (total) {
+        return normalizeAmount(total.amount !== undefined ? total.amount : total.value);
+      }
+    }
+
+    return null;
+  }
+
+  // Express buttons whose regular checkout option would list the same wallet twice. Google Pay
+  // has no option of its own (it rides on the card method), so the card option always stays.
+  var COVERED_BUTTONS = { applepay: 'applepay', paypal: 'paypal' };
+
+  function coveredMethods(buttons) {
+    var source = buttons || {};
+
+    return Object.keys(COVERED_BUTTONS).filter(function (button) {
+      return source[button] === 'automatic';
+    }).map(function (button) {
+      return COVERED_BUTTONS[button];
+    });
+  }
+
+  // Every Mollie option submits to module/mollie/payment?method=<id> (or the non-rewritten
+  // index.php form of it), whatever markup the theme or a one page checkout wraps around it.
+  function methodFromPaymentAction(action) {
+    var url = String(action || '');
+    var isMolliePayment = /\/module\/mollie\/payment(\?|$)/.test(url)
+      || (/[?&]module=mollie(&|$)/.test(url) && /[?&]controller=payment(&|$)/.test(url));
+
+    if (!isMolliePayment) {
       return null;
     }
 
-    return normalizeAmount(total.amount !== undefined ? total.amount : total.value);
+    var match = /[?&]method=([a-z0-9_]+)/i.exec(url);
+
+    return match ? match[1].toLowerCase() : null;
   }
 
   function allRequiredConditionsAccepted(checkboxes) {
@@ -200,19 +240,38 @@
       });
     }
 
-    // The regular options of methods that have an express button carry a marker. They stay
-    // hidden while the component shows and come back whenever it cannot.
-    // PrestaShop renders the marker inside "#payment-option-N-additional-information", a sibling
-    // of the option row "#payment-option-N-container", so the row is found by id, not by ancestry.
-    function coveredOptions() {
-      return Array.prototype.map.call(document.querySelectorAll('.mollie-express-covered'), function (marker) {
-        var block = marker.closest('[id$="-additional-information"]');
+    // The regular options of wallets that have an express button stay hidden while the component
+    // shows and come back whenever it cannot. The option is found through its submit form: Classic
+    // renders "#pay-with-payment-option-N-form" as a sibling of the row "#payment-option-N-container",
+    // Hummingbird and the one page checkout module nest it inside the row, so the row is resolved
+    // by id first and by ancestry as a fallback.
+    function optionRowForForm(form) {
+      var holder = form.closest('[id^="pay-with-payment-option-"]');
 
-        if (!block) {
+      if (holder) {
+        var row = document.getElementById(holder.id.replace('pay-with-', '').replace(/-form$/, '-container'));
+
+        if (row) {
+          return row;
+        }
+      }
+
+      return form.closest('.payment-option');
+    }
+
+    function coveredOptions() {
+      var methods = coveredMethods(config.buttons);
+
+      if (!methods.length) {
+        return [];
+      }
+
+      return Array.prototype.map.call(document.querySelectorAll('form[action]'), function (form) {
+        if (methods.indexOf(methodFromPaymentAction(form.getAttribute('action'))) === -1) {
           return null;
         }
 
-        return document.getElementById(block.id.replace('-additional-information', '-container'));
+        return optionRowForForm(form);
       }).filter(Boolean);
     }
 
@@ -464,10 +523,11 @@
       debouncedRecheck();
     }
 
-    // The carrier changed: a cart the shop refused as not ready may be complete now.
-    function onDeliveryChanged() {
+    // The carrier changed: a cart the shop refused as not ready may be complete now, and the
+    // total most likely moved.
+    function onDeliveryChanged(event) {
       state.failedAmount = null;
-      debouncedRecheck();
+      onCartUpdated(event);
     }
 
     var debounceTimer = null;
@@ -546,6 +606,8 @@
     shouldRecreate: shouldRecreate,
     isPaymentStepCurrent: isPaymentStepCurrent,
     amountFromCartEvent: amountFromCartEvent,
+    coveredMethods: coveredMethods,
+    methodFromPaymentAction: methodFromPaymentAction,
     allRequiredConditionsAccepted: allRequiredConditionsAccepted,
     init: init
   };
