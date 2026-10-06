@@ -51,16 +51,6 @@
   background: #fff;
 }
 
-/* A method with an express button is not listed twice: its regular option carries a marker
-   and is hidden until expressComponent.js reveals it when no button could be rendered. */
-.payment-options [id$="-container"]:has(.mollie-express-covered) {
-  display: none;
-}
-
-.payment-options [id$="-container"].mollie-express-fallback {
-  display: block;
-}
-
 /* Hummingbird wraps step bodies in .step__content with its own padding. */
 .step__content .mollie-express-component {
   margin-top: 0.5rem;

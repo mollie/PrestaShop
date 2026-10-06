@@ -189,9 +189,17 @@
 
     // The regular options of methods that have an express button carry a marker. They stay
     // hidden while the component shows and come back whenever it cannot.
+    // PrestaShop renders the marker inside "#payment-option-N-additional-information", a sibling
+    // of the option row "#payment-option-N-container", so the row is found by id, not by ancestry.
     function coveredOptions() {
       return Array.prototype.map.call(document.querySelectorAll('.mollie-express-covered'), function (marker) {
-        return marker.closest('[id$="-container"]') || marker.parentElement;
+        var block = marker.closest('[id$="-additional-information"]');
+
+        if (!block) {
+          return null;
+        }
+
+        return document.getElementById(block.id.replace('-additional-information', '-container'));
       }).filter(Boolean);
     }
 
