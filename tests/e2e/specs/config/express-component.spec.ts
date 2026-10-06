@@ -41,8 +41,9 @@ test.afterAll(() => {
 
 test('the wallet card saves its express switch and leaves Apple Pay Direct alone', async ({ page }) => {
   test.setTimeout(90_000);
-  // The master switch lives under Advanced Settings; the method card only shows a hint when it is off.
-  setGlobalConfig('MOLLIE_EXPRESS_COMPONENT_ENABLED', '1');
+  // The master switch lives under Advanced Settings; while it is off the wallet switch is
+  // shown but disabled, with a hint saying where to turn the feature on.
+  setGlobalConfig('MOLLIE_EXPRESS_COMPONENT_ENABLED', '0');
   setMethodConfig('applepay', { enabled: true, api: 'payments' });
 
   const methods = new PaymentMethodsPage(page);
@@ -54,6 +55,13 @@ test('the wallet card saves its express switch and leaves Apple Pay Direct alone
   await methods.toggleSettings('applepay');
   const applePayExpress = page.getByTestId('payment-method-applepay-express-switch');
   await expect(applePayExpress).toBeVisible();
+  await expect(applePayExpress).toBeDisabled();
+
+  setGlobalConfig('MOLLIE_EXPRESS_COMPONENT_ENABLED', '1');
+  await page.reload();
+  await methods.revealCard('applepay', 5_000);
+  await methods.toggleSettings('applepay');
+  await expect(applePayExpress).toBeEnabled();
   const wasOn = (await applePayExpress.getAttribute('aria-checked')) === 'true';
   await applePayExpress.click();
   await page.getByTestId('payment-method-applepay-save').click();

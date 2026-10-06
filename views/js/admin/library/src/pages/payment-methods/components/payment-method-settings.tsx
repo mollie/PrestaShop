@@ -543,11 +543,12 @@ export function PaymentMethodSettings({ method, countries, carriers, showApplePa
         {showExpressButton && (
           <div className="border rounded-lg overflow-hidden transition-shadow hover:shadow-sm">
             <div className="p-4 grid grid-cols-[auto_auto_1fr] items-center gap-x-3 gap-y-1">
-              <Label className="text-sm font-medium col-span-3">{expressButtonLabel}</Label>
-              <p className="text-sm text-muted-foreground">{expressButtonInfo}</p>
+              <Label className={cn("text-sm font-medium col-span-3", !expressComponentEnabled && "opacity-50")}>{expressButtonLabel}</Label>
+              <p className={cn("text-sm text-muted-foreground", !expressComponentEnabled && "opacity-50")}>{expressButtonInfo}</p>
               <Switch
                 data-testid={`payment-method-${method.id}-express-switch`}
                 checked={method.settings.expressButton ?? false}
+                disabled={!expressComponentEnabled}
                 onCheckedChange={(expressButton: boolean) => onUpdateSettings({ expressButton })}
               />
               {!expressComponentEnabled && (
