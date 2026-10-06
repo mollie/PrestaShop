@@ -27,8 +27,8 @@ first. There are two options.
 ### Release ZIP (recommended)
 
 The release ZIP is the same package merchants upload. It already contains the libraries and the
-compiled back office screens, so nothing has to be built. Add this to the shop's `composer.json`
-and run `composer require mollie/prestashop:6.4.7`:
+compiled back office screens, so nothing has to be built. Replace `X.Y.Z` with the latest release
+on the GitHub releases page. Add this to the shop's `composer.json`:
 
 ```json
 "repositories": [
@@ -36,24 +36,25 @@ and run `composer require mollie/prestashop:6.4.7`:
         "type": "package",
         "package": {
             "name": "mollie/prestashop",
-            "version": "6.4.7",
+            "version": "X.Y.Z",
             "type": "prestashop-module",
             "extra": { "installer-name": "mollie" },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/mollie/PrestaShop/releases/download/v6.4.7/mollie.zip"
+                "url": "https://github.com/mollie/PrestaShop/releases/download/vX.Y.Z/mollie.zip"
             }
         }
     }
 ]
 ```
 
-Change both version numbers to upgrade.
+Then run `composer require mollie/prestashop:X.Y.Z`. Change both version numbers to upgrade.
 
 ### Repository source
 
 The repository has no compiled back office screens, so you build them yourself after every
-install or update. Until then the Mollie settings pages show an error. Add the repository:
+install or update. Until then the Mollie settings pages show an error. This route needs release
+6.4.7 or later. Add the repository:
 
 ```json
 "repositories": [
@@ -67,11 +68,12 @@ install or update. Until then the Mollie settings pages show an error. Add the r
 Then install and build (needs Node.js):
 
 ```
-composer require mollie/prestashop:6.4.7 -W
+composer require mollie/prestashop:X.Y.Z -w
 cd modules/mollie/views/js/admin/library && npm ci && npm run build
 ```
 
-`-W` lets Composer update `php-http/message-factory`, which PrestaShop locks to an older version.
+`-w` lets Composer update the module's own dependencies that the shop already locks, such as
+`php-http/message-factory`. It leaves the shop's other packages alone.
 
 ## PrestaShop Addons validator
 

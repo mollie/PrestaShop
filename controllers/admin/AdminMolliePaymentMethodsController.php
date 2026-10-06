@@ -106,18 +106,21 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
 
         $version = time();
 
-        $this->context->controller->addCSS(
-            $this->module->getPathUri() . 'views/css/admin/library/globals.css?v=' . $version,
-            'all',
-            null,
-            false
-        );
+        $jsPath = 'views/js/admin/library/dist/assets/mollie-payment-methods.js';
+        $isBuilt = file_exists($this->module->getLocalPath() . $jsPath);
+        $this->context->smarty->assign('molliePaymentMethodsJsUrl', $isBuilt ? $this->module->getPathUri() . $jsPath . '?v=' . $version : '');
 
-        $jsUrl = $this->module->getPathUri() . 'views/js/admin/library/dist/assets/mollie-payment-methods.js?v=' . $version;
-        $this->context->smarty->assign('molliePaymentMethodsJsUrl', $jsUrl);
+        if (!$isBuilt) {
+            $this->errors[] = $this->module->l('This page cannot be displayed because its compiled files are missing. Reinstall the module from the official release ZIP, or build the files as described in README_DEV.md.', self::FILE_NAME);
+        }
 
-        if (!file_exists($this->module->getLocalPath() . 'views/js/admin/library/dist/assets/mollie-payment-methods.js')) {
-            $this->errors[] = $this->module->l('This page cannot be displayed because the module files are incomplete. Reinstall the module from the official release ZIP.', self::FILE_NAME);
+        if ($isBuilt) {
+            $this->context->controller->addCSS(
+                $this->module->getPathUri() . 'views/css/admin/library/globals.css?v=' . $version,
+                'all',
+                null,
+                false
+            );
         }
 
         Media::addJsDef([
