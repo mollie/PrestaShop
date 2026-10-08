@@ -2,6 +2,11 @@
 
 # Changelog #
 
+## Changes in release 6.4.6.1
++ Fixed Apple Pay Direct orders being created without a phone number, the phone from the customer's Apple Wallet is now saved on the delivery and invoice address
++ Fixed the Apple Pay Direct sheet keeping the previous country's VAT and shipping tax after the shopper changed the delivery address to another country
++ Fixed Apple Pay Direct on the cart page removing the shopper's voucher code and charging the full price
+
 ## Changes in release 6.4.6
 + Apple Pay now works on desktop in Chrome, Edge and Firefox through Apple's QR code flow, and Apple Pay Direct prices shipping per delivery zone
 + Apple Pay Direct now works in test mode, with a warning when the live API key it needs is missing
