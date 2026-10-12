@@ -33,8 +33,10 @@ class ProductRepository extends AbstractRepository implements ProductRepositoryI
         return empty($result) ? null : $result;
     }
 
-    public function getCover(int $productId, Context $context = null): array
+    public function getCover(int $productId, Context $context = null): ?array
     {
-        return \Product::getCover($productId, $context);
+        $result = \Product::getCover($productId, $context);
+
+        return empty($result) ? null : $result;
     }
 }

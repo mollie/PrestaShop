@@ -110,7 +110,7 @@ class OrderDetailPresenter
 
         $result['name'] = $orderDetail->product_name;
         $result['link'] = $this->context->getProductLink($product);
-        $result['img'] = $this->context->getImageLink($linkRewrite, (string) $image['id_image']);
+        $result['img'] = $image ? $this->context->getImageLink($linkRewrite, (string) $image['id_image']) : '';
         $result['quantity'] = $orderDetail->product_quantity;
         $result['unit_price'] = $this->context->formatPrice(
             NumberUtility::toPrecision(
