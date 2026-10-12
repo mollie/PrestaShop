@@ -697,7 +697,15 @@ class Mollie extends PaymentModule
             if ($mollieApiType === 'payments') {
                 /** @var PaymentHistoryBuilder $paymentHistoryBuilder */
                 $paymentHistoryBuilder = $this->getService(PaymentHistoryBuilder::class);
-                $paymentHistory = $paymentHistoryBuilder->build($mollieApiResource);
+                // Mollie drops authorizedAt after capture, fall back to the oldest authorized order state
+                $authorizedAtFallback = null;
+                $authorizedStateId = (int) Configuration::get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED);
+                foreach ($order->getHistory($this->context->language->id) as $historyRow) {
+                    if ((int) $historyRow['id_order_state'] === $authorizedStateId) {
+                        $authorizedAtFallback = $historyRow['date_add'];
+                    }
+                }
+                $paymentHistory = $paymentHistoryBuilder->build($mollieApiResource, $authorizedAtFallback);
                 $paymentStatus = isset($mollieApiResource->status) ? (string) $mollieApiResource->status : null;
                 // The DB bank_status lags behind until the webhook lands, the API status is the truth
                 if ($paymentStatus !== null) {

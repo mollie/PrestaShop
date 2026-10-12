@@ -105,6 +105,7 @@ class PaymentHistoryBuilderTest extends BaseTestCase
             ['refunded', 'refunded', 'captured', 'paid', 'created'],
             array_column($events, 'type')
         );
+        $this->assertNotContains('authorized', array_column($events, 'type'));
         $this->assertSame('pending', $events[0]['status']);
         $this->assertSame('re_second', $events[0]['reference']);
         $this->assertSame('5.00', $events[0]['amount']);
@@ -120,6 +121,38 @@ class PaymentHistoryBuilderTest extends BaseTestCase
         $this->assertSame(
             [['label' => 'settlement_amount', 'value' => 'EUR 98.50']],
             $events[3]['details']
+        );
+    }
+
+    public function testCapturedPaymentFallsBackToOrderHistoryForAuthorizedDate(): void
+    {
+        $payment = (object) [
+            'createdAt' => '2026-10-12T06:42:00+00:00',
+            'paidAt' => '2026-10-12T07:00:05+00:00',
+            'captureMode' => 'manual',
+            'amount' => $this->amount('100.00'),
+            '_embedded' => (object) [
+                'captures' => [
+                    (object) [
+                        'id' => 'cpt_one',
+                        'amount' => $this->amount('100.00'),
+                        'createdAt' => '2026-10-12T07:00:00+00:00',
+                        'status' => 'succeeded',
+                    ],
+                ],
+            ],
+        ];
+
+        $events = $this->builder->build($payment, '2026-10-12 08:42:50');
+
+        $this->assertSame(
+            ['paid', 'captured', 'authorized', 'created'],
+            array_column($events, 'type')
+        );
+        $this->assertSame('2026-10-12 08:42:50', $events[2]['sort_date']);
+        $this->assertSame(
+            [['label' => 'capture_mode', 'value' => 'manual']],
+            $events[2]['details']
         );
     }
 

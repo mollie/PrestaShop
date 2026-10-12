@@ -47,14 +47,15 @@ class PaymentHistoryBuilder
 
     /**
      * @param \Mollie\Api\Resources\Payment|\stdClass $payment
+     * @param string|null $authorizedAtFallback PrestaShop order history date, used when Mollie no longer returns authorizedAt after capture
      *
      * @return array list of events, newest first
      */
-    public function build($payment): array
+    public function build($payment, $authorizedAtFallback = null): array
     {
         $events = [];
 
-        $this->addPaymentEvents($events, $payment);
+        $this->addPaymentEvents($events, $payment, $authorizedAtFallback);
         $this->addCaptureEvents($events, $this->getEmbedded($payment, 'captures'));
         $this->addRefundEvents($events, $this->getEmbedded($payment, 'refunds'));
         $this->addChargebackEvents($events, $this->getEmbedded($payment, 'chargebacks'));
@@ -72,7 +73,7 @@ class PaymentHistoryBuilder
         return $events;
     }
 
-    private function addPaymentEvents(array &$events, $payment)
+    private function addPaymentEvents(array &$events, $payment, $authorizedAtFallback)
     {
         $amount = $this->getField($payment, 'amount');
 
@@ -85,7 +86,11 @@ class PaymentHistoryBuilder
         $authorizedDetails = [];
         $this->addDetail($authorizedDetails, 'capture_before', $this->formatDate($this->getField($payment, 'captureBefore'), false));
         $this->addDetail($authorizedDetails, 'capture_mode', $this->getField($payment, 'captureMode'));
-        $this->addEvent($events, 'authorized', $this->getField($payment, 'authorizedAt'), $amount, null, null, $authorizedDetails);
+        $authorizedAt = $this->getField($payment, 'authorizedAt');
+        if ((!is_string($authorizedAt) || $authorizedAt === '') && is_string($authorizedAtFallback) && $authorizedAtFallback !== '') {
+            $authorizedAt = $authorizedAtFallback;
+        }
+        $this->addEvent($events, 'authorized', $authorizedAt, $amount, null, null, $authorizedDetails);
 
         $paidDetails = [];
         $this->addDetail($paidDetails, 'settlement_amount', $this->formatAmount($this->getField($payment, 'settlementAmount')));
