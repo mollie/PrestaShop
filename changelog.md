@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.6.2
++ Fixed checkout failing with a blank page, and Apple Pay Direct failing to create the order, when a free shipping cart rule without a code or a back office free shipping applies to a paid carrier
+
 ## Changes in release 6.4.6.1
 + Fixed Apple Pay Direct orders being created without a phone number, the phone from the customer's Apple Wallet is now saved on the delivery and invoice address
 + Fixed the Apple Pay Direct sheet keeping the previous country's VAT and shipping tax after the shopper changed the delivery address to another country
