@@ -41,3 +41,269 @@
     line-height: 1;
     vertical-align: text-bottom;
 }
+
+/* PIPRES-823: payment history timeline, status colours follow the Mollie Dashboard pills. */
+.mollie-order-info-panel {
+    --mollie-status-paid: #1e681d;
+    --mollie-status-paid-bg: #ebf7ea;
+    --mollie-status-authorized: #8b6900;
+    --mollie-status-authorized-bg: #fff2d4;
+    --mollie-status-open: #8b6900;
+    --mollie-status-open-bg: #fff2d4;
+    --mollie-status-pending: #8b6900;
+    --mollie-status-pending-bg: #fff2d4;
+    --mollie-status-canceled: #383633;
+    --mollie-status-canceled-bg: #f5f2f0;
+    --mollie-status-expired: #383633;
+    --mollie-status-expired-bg: #f5f2f0;
+    --mollie-status-failed: #99001c;
+    --mollie-status-failed-bg: #ffe6ea;
+    --mollie-status-refunded: #0033cc;
+    --mollie-status-refunded-bg: #ccd9ff;
+    --mollie-status-neutral: #383633;
+    --mollie-status-neutral-bg: #f5f2f0;
+}
+
+.mollie-order-info-panel .mollie-status {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.6;
+    border-radius: 10px;
+    padding: 1px 8px;
+    color: var(--mollie-status-neutral);
+    background: var(--mollie-status-neutral-bg);
+    white-space: nowrap;
+}
+
+.mollie-order-info-panel .mollie-status--paid,
+.mollie-order-info-panel .mollie-status--succeeded {
+    color: var(--mollie-status-paid);
+    background: var(--mollie-status-paid-bg);
+}
+
+.mollie-order-info-panel .mollie-status--authorized {
+    color: var(--mollie-status-authorized);
+    background: var(--mollie-status-authorized-bg);
+}
+
+.mollie-order-info-panel .mollie-status--open {
+    color: var(--mollie-status-open);
+    background: var(--mollie-status-open-bg);
+}
+
+.mollie-order-info-panel .mollie-status--pending,
+.mollie-order-info-panel .mollie-status--queued,
+.mollie-order-info-panel .mollie-status--processing {
+    color: var(--mollie-status-pending);
+    background: var(--mollie-status-pending-bg);
+}
+
+.mollie-order-info-panel .mollie-status--canceled {
+    color: var(--mollie-status-canceled);
+    background: var(--mollie-status-canceled-bg);
+}
+
+.mollie-order-info-panel .mollie-status--expired {
+    color: var(--mollie-status-expired);
+    background: var(--mollie-status-expired-bg);
+}
+
+.mollie-order-info-panel .mollie-status--failed {
+    color: var(--mollie-status-failed);
+    background: var(--mollie-status-failed-bg);
+}
+
+.mollie-order-info-panel .mollie-status--refunded {
+    color: var(--mollie-status-refunded);
+    background: var(--mollie-status-refunded-bg);
+}
+
+.mollie-order-info-panel .mollie-payment-history__summary,
+.mollie-order-info-panel .mollie-timeline__row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    list-style: none;
+}
+
+.mollie-order-info-panel .mollie-payment-history__summary::-webkit-details-marker,
+.mollie-order-info-panel .mollie-timeline__row::-webkit-details-marker {
+    display: none;
+}
+
+.mollie-order-info-panel .mollie-payment-history__summary {
+    margin-bottom: 8px;
+}
+
+.mollie-order-info-panel .mollie-payment-history__icon {
+    font-size: 18px;
+}
+
+.mollie-order-info-panel .mollie-payment-history__title {
+    font-weight: 600;
+}
+
+.mollie-order-info-panel .mollie-payment-history__count {
+    color: #6c757d;
+    font-size: 12px;
+}
+
+.mollie-order-info-panel .mollie-payment-history__chevron,
+.mollie-order-info-panel .mollie-timeline__chevron {
+    transition: transform .15s;
+}
+
+.mollie-order-info-panel .mollie-payment-history__chevron {
+    margin-left: auto;
+}
+
+.mollie-order-info-panel .mollie-timeline__chevron {
+    font-size: 18px;
+    color: #6c757d;
+}
+
+.mollie-order-info-panel details:not([open]) > summary .mollie-payment-history__chevron {
+    transform: rotate(180deg);
+}
+
+.mollie-order-info-panel details[open] > summary .mollie-timeline__chevron {
+    transform: rotate(180deg);
+}
+
+.mollie-order-info-panel .mollie-timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.mollie-order-info-panel .mollie-timeline::before {
+    content: "";
+    position: absolute;
+    top: 20px;
+    bottom: 20px;
+    left: 11px;
+    width: 2px;
+    background: #e5e8ec;
+}
+
+.mollie-order-info-panel .mollie-timeline__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f2f4;
+}
+
+.mollie-order-info-panel .mollie-timeline__item:last-child {
+    border-bottom: 0;
+}
+
+.mollie-order-info-panel .mollie-timeline__disc {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--mollie-status-neutral);
+    color: #fff;
+}
+
+.mollie-order-info-panel .mollie-timeline__icon {
+    font-size: 16px;
+    line-height: 1;
+}
+
+.mollie-order-info-panel .mollie-timeline__event {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.mollie-order-info-panel .mollie-timeline__row {
+    flex-wrap: wrap;
+    min-height: 24px;
+}
+
+.mollie-order-info-panel .mollie-timeline__label {
+    font-weight: 600;
+}
+
+.mollie-order-info-panel .mollie-timeline__date {
+    color: #6c757d;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.mollie-order-info-panel .mollie-timeline__meta {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mollie-order-info-panel .mollie-timeline__amount {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.mollie-order-info-panel .mollie-timeline__amount--negative {
+    color: var(--mollie-status-failed);
+}
+
+.mollie-order-info-panel .mollie-timeline__item--authorized .mollie-timeline__disc {
+    background: var(--mollie-status-authorized);
+}
+
+.mollie-order-info-panel .mollie-timeline__item--paid .mollie-timeline__disc,
+.mollie-order-info-panel .mollie-timeline__item--captured .mollie-timeline__disc {
+    background: var(--mollie-status-paid);
+}
+
+.mollie-order-info-panel .mollie-timeline__item--refunded .mollie-timeline__disc {
+    background: var(--mollie-status-refunded);
+}
+
+.mollie-order-info-panel .mollie-timeline__item--chargeback .mollie-timeline__disc,
+.mollie-order-info-panel .mollie-timeline__item--failed .mollie-timeline__disc {
+    background: var(--mollie-status-failed);
+}
+
+.mollie-order-info-panel .mollie-timeline__details {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 2px 12px;
+    margin: 6px 0 2px;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border: 1px solid #eef0f2;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.mollie-order-info-panel .mollie-timeline__details dt {
+    color: #6c757d;
+    font-weight: normal;
+}
+
+.mollie-order-info-panel .mollie-timeline__details dd {
+    margin: 0;
+}
+
+.mollie-order-info-panel .mollie-timeline__details code {
+    color: inherit;
+    background: var(--mollie-status-neutral-bg);
+    padding: 1px 4px;
+    border-radius: 3px;
+}
+
+.mollie-order-info-panel .mollie-timeline__empty {
+    color: #6c757d;
+    margin: 0 0 8px 0;
+}
