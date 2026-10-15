@@ -133,8 +133,31 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
     public function testACompleteCartIsAvailable(): void
     {
         $this->subscriptionOrderValidator->method('validate')->willReturn(false);
+        $this->offerEveryMethod();
 
         $this->assertTrue($this->service()->isAvailable($this->cart));
+    }
+
+    public function testACartWithEveryButtonSwitchedOffIsNotAvailable(): void
+    {
+        $this->subscriptionOrderValidator->method('validate')->willReturn(false);
+        $this->offerEveryMethod();
+        $this->config[Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY] = '0';
+        $this->config[Config::MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY] = '0';
+
+        $service = $this->service();
+
+        $this->assertFalse($service->isAvailable($this->cart));
+        $this->assertSame('no express button is offered for this cart', $service->getUnavailableReason());
+    }
+
+    private function offerEveryMethod(): void
+    {
+        $enabledMethod = new \MolPaymentMethod();
+        $enabledMethod->enabled = true;
+
+        $this->paymentMethodRepository->method('getPaymentMethodIdByMethodId')->willReturn(11);
+        $this->paymentMethodRepository->method('findOneBy')->willReturn($enabledMethod);
     }
 
     public function testACartWithoutACarrierIsNotAvailable(): void

@@ -163,6 +163,12 @@ class ExpressComponentAvailabilityService
             return $this->unavailable('cart is below the minimum purchase total');
         }
 
+        // Mollie mounts its iframe even when every button is hidden, so the shopper would see an
+        // empty "Express checkout" block.
+        if (!in_array(self::VISIBILITY_AUTOMATIC, $this->getButtonVisibility(), true)) {
+            return $this->unavailable('no express button is offered for this cart');
+        }
+
         return true;
     }
 
