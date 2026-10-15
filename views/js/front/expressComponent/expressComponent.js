@@ -66,6 +66,12 @@
   var OPC_ADDRESS_FIELDS = ['id_country', 'id_state', 'postcode', 'city', 'address1', 'address2', 'firstname', 'lastname', 'company', 'vat_number', 'phone'];
   var BUSY_RETRY_MS = 800;
   var REQUIRED_TERMS_SELECTOR = '#conditions-to-approve input[type="checkbox"][required]';
+  // Mollie.js shows its payment popups (3-D Secure, wallet fallbacks) full screen at
+  // z-index var(--mc-z-index-modal, 1000), some of them outside the component's mount point.
+  // Themes keep sticky headers and checkout columns above 1000 (Hummingbird uses 1020 and 1021),
+  // which then stay on top of the popup. Only Mollie reads this variable, so it is set on the
+  // document from here, where a stale combined theme stylesheet cannot drop it.
+  var POPUP_Z_INDEX = '100000';
   var BUSY_RETRY_ATTEMPTS = 5;
 
   function buildButtonOptions(buttons) {
@@ -733,6 +739,7 @@
         return;
       }
 
+      document.documentElement.style.setProperty('--mc-z-index-modal', POPUP_Z_INDEX);
       hideCoveredOptions();
       updateTermsLock();
       observe();
