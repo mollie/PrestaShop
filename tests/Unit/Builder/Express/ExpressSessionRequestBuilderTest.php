@@ -56,7 +56,6 @@ class ExpressSessionRequestBuilderTest extends BaseTestCase
         $this->cart->secure_key = 'cart-secure-key';
         $this->cart->method('getOrderTotal')->willReturn(59.9);
         $this->cart->method('getSummaryDetails')->willReturn(['total_wrapping' => 0]);
-        $this->cart->method('getTotalShippingCost')->willReturn(4.99);
         $this->cart->method('getProducts')->willReturn([]);
 
         $this->builder = new ExpressSessionRequestBuilder(
@@ -106,7 +105,6 @@ class ExpressSessionRequestBuilderTest extends BaseTestCase
                 }),
                 'EUR',
                 ['total_wrapping' => 0],
-                4.99,
                 [],
                 true,
                 'meal',

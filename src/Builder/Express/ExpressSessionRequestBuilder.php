@@ -104,7 +104,6 @@ class ExpressSessionRequestBuilder
             new PaymentFeeData(0.00, 0.00, 0.00, false),
             $currencyIso,
             $cart->getSummaryDetails(),
-            $cart->getTotalShippingCost(null, true),
             $cart->getProducts(),
             (bool) $this->configuration->get('PS_GIFT_WRAPPING'),
             (string) $this->configuration->get(Config::MOLLIE_VOUCHER_CATEGORY),
