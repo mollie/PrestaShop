@@ -415,7 +415,8 @@ class PaymentMethodService
                     $cart->getProducts(),
                     (bool) Configuration::get('PS_GIFT_WRAPPING'),
                     Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
-                    LineType::PAYMENT
+                    LineType::PAYMENT,
+                    $cart->getTotalShippingCost(null, false)
                 )
             );
 
@@ -503,7 +504,8 @@ class PaymentMethodService
                     $cart->getProducts(),
                     (bool) Configuration::get('PS_GIFT_WRAPPING'),
                     $selectedVoucherCategory,
-                    LineType::ORDER
+                    LineType::ORDER,
+                    $cart->getTotalShippingCost(null, false)
                 ));
 
             $payment = new Payment();

@@ -65,6 +65,7 @@ class CartLinesService
      * @param bool $psGiftWrapping
      * @param string $selectedVoucherCategory
      * @param string $lineType
+     * @param float|null $shippingCostTaxExcl the same shipping cost as $shippingCost, without tax
      *
      * @return array
      *
@@ -79,7 +80,8 @@ class CartLinesService
         $cartItems,
         $psGiftWrapping,
         $selectedVoucherCategory,
-        $lineType
+        $lineType,
+        $shippingCostTaxExcl = null
     ) {
         // TODO refactor whole service, split order line append into separate services and test them individually at least!!!
 
@@ -113,7 +115,7 @@ class CartLinesService
         $orderLines = $this->fillProductLinesWithRemainingData($orderLines, $apiRoundingPrecision, $vatRatePrecision);
 
         // Add shipping
-        $orderLines = $this->addShippingLine($roundedShippingCost, $cartSummary, $apiRoundingPrecision, $orderLines);
+        $orderLines = $this->addShippingLine($roundedShippingCost, $this->getShippingVatRate($shippingCost, $shippingCostTaxExcl, $cartSummary, $apiRoundingPrecision), $apiRoundingPrecision, $orderLines);
 
         // Add wrapping
         $orderLines = $this->addWrappingLine($wrappingPrice, $cartSummary, $vatRatePrecision, $apiRoundingPrecision, $orderLines);
@@ -386,17 +388,41 @@ class CartLinesService
     }
 
     /**
-     * @param float $roundedShippingCost
+     * The shipping line carries the carrier cost even when a free-shipping cart rule waives it, but
+     * an automatic free-shipping rule zeroes the summary's shipping totals. The rate must come from
+     * the same cost as the line, or the summary pair divides by zero.
+     *
+     * @param float $shippingCostTaxIncl
+     * @param float|null $shippingCostTaxExcl
      * @param array $cartSummary
+     * @param int $apiRoundingPrecision
+     *
+     * @return float
+     */
+    private function getShippingVatRate($shippingCostTaxIncl, $shippingCostTaxExcl, $cartSummary, $apiRoundingPrecision)
+    {
+        if (null === $shippingCostTaxExcl) {
+            $shippingCostTaxIncl = $cartSummary['total_shipping'];
+            $shippingCostTaxExcl = $cartSummary['total_shipping_tax_exc'];
+        }
+
+        if ((float) $shippingCostTaxExcl <= 0) {
+            return 0.0;
+        }
+
+        return round(((float) $shippingCostTaxIncl - (float) $shippingCostTaxExcl) / (float) $shippingCostTaxExcl * 100, $apiRoundingPrecision);
+    }
+
+    /**
+     * @param float $roundedShippingCost
+     * @param float $shippingVatRate
      * @param int $apiRoundingPrecision
      *
      * @return array
      */
-    private function addShippingLine($roundedShippingCost, $cartSummary, $apiRoundingPrecision, array $orderLines)
+    private function addShippingLine($roundedShippingCost, $shippingVatRate, $apiRoundingPrecision, array $orderLines)
     {
         if (round($roundedShippingCost, 2) > 0) {
-            $shippingVatRate = round(($cartSummary['total_shipping'] - $cartSummary['total_shipping_tax_exc']) / $cartSummary['total_shipping_tax_exc'] * 100, $apiRoundingPrecision);
-
             $orderLines['shipping'] = [
                 [
                     'name' => $this->languageService->lang('Shipping'),
