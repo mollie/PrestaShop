@@ -15,6 +15,7 @@ use Mollie\DTO\Express\ExpressSubmitCheck;
 use Mollie\Infrastructure\Response\JsonResponse;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\OrderRepositoryInterface;
+use Mollie\Service\ExpressComponent\ExpressCartCarrierService;
 use Mollie\Service\ExpressComponent\ExpressComponentAvailabilityService;
 use Mollie\Service\ExpressComponent\ExpressSessionService;
 use Mollie\Utility\ExceptionUtility;
@@ -53,6 +54,10 @@ class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieCont
         if (!$this->isCartOwnedByVisitor()) {
             $this->ajaxResponse(JsonResponse::error(self::ERROR_FORBIDDEN, JsonResponse::HTTP_FORBIDDEN));
         }
+
+        /** @var ExpressCartCarrierService $cartCarrierService */
+        $cartCarrierService = $this->module->getService(ExpressCartCarrierService::class);
+        $cartCarrierService->restoreCarrierChoice($this->context->cart);
 
         /** @var ExpressComponentAvailabilityService $availability */
         $availability = $this->module->getService(ExpressComponentAvailabilityService::class);
