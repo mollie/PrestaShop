@@ -654,6 +654,12 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_bedde121550539
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_053b1215936e60069f2e47848845916b'] = 'Google Pay express button on the checkout payment step';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_6584a54c68371d0eb52b347de190199e'] = 'Zobrazí Google Pay jako tlačítko pro platbu jedním klepnutím v horní části pokladny. Nejprve zapněte Mollie Express Component v sekci [1]Pokročilá nastavení[/1]. Google Pay využívá platby kartou, proto ponechte tuto metodu zapnutou.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_95c949d02bfa03cefad254385eac7d7d'] = 'Mollie Express Component je vypnutá. Aby se toto tlačítko zobrazilo, zapněte ji v sekci [1]Pokročilá nastavení[/1].';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_da0b3991aeecbd69850aab09cb2688f2'] = 'Novinka: Express checkout (beta).';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_af9011e0368e44ea8acac6ed30bbd20d'] = 'Apple Pay, Google Pay a PayPal jedním klepnutím v horní části pokladny. Požádejte Mollie o aktivaci a pak funkci zapněte.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_756afe30c6e6df0fe6757d19e0a19a08'] = 'Zapnout';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_c8a59e7135a20b362f9c768b09454fdb'] = 'Zavřít';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_82b42e286db6dd9fcc69cd88157ef0f6'] = 'Novinka: Express checkout';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_1a31804ef0d9f385324fb8c9b3a55495'] = 'Novinka: Google Pay express';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_eb4c6f94efd55bbd1876df96448e2c60'] = 'Express checkout (beta)';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0b06e7a6a8fdd7ebb1538faf7582aab8'] = 'Mollie Express Component';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0122b5b00af3de8e066e55c4d5afea6f'] = 'Zobrazte Apple Pay, Google Pay a PayPal jako tlačítka pro rychlou platbu v horní části pokladny, aby zákazníci mohli zaplatit jedním klepnutím. Na stránce Platební metody vyberte, která tlačítka se zobrazí.';

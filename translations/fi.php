@@ -654,6 +654,12 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_bedde121550539
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_053b1215936e60069f2e47848845916b'] = 'Google Pay express button on the checkout payment step';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_6584a54c68371d0eb52b347de190199e'] = 'Näyttää Google Payn yhden napautuksen painikkeena kassan yläosassa. Ota ensin Mollie Express Component käyttöön kohdassa [1]Lisäasetukset[/1]. Google Pay käyttää korttimaksuja, joten pidä tämä maksutapa käytössä.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_95c949d02bfa03cefad254385eac7d7d'] = 'Mollie Express Component on poistettu käytöstä. Ota se käyttöön kohdassa [1]Lisäasetukset[/1], jotta tämä painike näkyy.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_da0b3991aeecbd69850aab09cb2688f2'] = 'Uutta: Express checkout (beta).';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_af9011e0368e44ea8acac6ed30bbd20d'] = 'Apple Pay, Google Pay ja PayPal yhdellä napautuksella kassan yläosassa. Pyydä Mollieta aktivoimaan se ja ota se sitten käyttöön.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_756afe30c6e6df0fe6757d19e0a19a08'] = 'Ota käyttöön';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_c8a59e7135a20b362f9c768b09454fdb'] = 'Sulje';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_82b42e286db6dd9fcc69cd88157ef0f6'] = 'Uutta: Express checkout';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_1a31804ef0d9f385324fb8c9b3a55495'] = 'Uutta: Google Pay express';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_eb4c6f94efd55bbd1876df96448e2c60'] = 'Express checkout (beta)';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0b06e7a6a8fdd7ebb1538faf7582aab8'] = 'Mollie Express Component';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0122b5b00af3de8e066e55c4d5afea6f'] = 'Näytä Apple Pay, Google Pay ja PayPal pikamaksupainikkeina kassan yläosassa, jotta asiakkaat voivat maksaa yhdellä napautuksella. Valitse näytettävät painikkeet Maksutavat-sivulla.';

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
-import { CheckCircle, XCircle, AlertTriangle } from "lucide-react"
+import { CheckCircle, XCircle, AlertTriangle, Zap, X } from "lucide-react"
 import { PaymentMethodTabs } from "./payment-method-tabs"
 import { PaymentMethodsList } from "./payment-methods-list-component"
 import { PaymentMethodsSkeleton } from "./payment-methods-skeleton"
@@ -58,6 +58,7 @@ export default function PaymentMethodsPage() {
   const [onlyOrderMethods, setOnlyOrderMethods] = useState<string[]>([])
   const [showApplePayLiveKeyWarning, setShowApplePayLiveKeyWarning] = useState(false)
   const [expressComponentEnabled, setExpressComponentEnabled] = useState(false)
+  const [showExpressPromo, setShowExpressPromo] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
   const [savingMethodId, setSavingMethodId] = useState<string | null>(null)
@@ -96,6 +97,9 @@ export default function PaymentMethodsPage() {
         setOnlyOrderMethods(response.data.onlyOrderMethods || [])
         setShowApplePayLiveKeyWarning(response.data.environment === 'test' && !response.data.hasLiveApiKey)
         setExpressComponentEnabled(response.data.expressComponentEnabled ?? false)
+        setShowExpressPromo(
+          response.data.environment === 'live' && !response.data.expressComponentEnabled && !response.data.expressPromoDismissed
+        )
       } else {
         setErrorMessage(response.message || t('loadingError'))
       }
@@ -114,6 +118,13 @@ export default function PaymentMethodsPage() {
   useEffect(() => {
     loadPaymentMethodsRef.current()
   }, []) // Empty dependency array - only run once on mount
+
+  const dismissExpressPromo = () => {
+    setShowExpressPromo(false)
+    paymentMethodsApiService.dismissExpressPromo().catch((error) => {
+      console.error('Failed to dismiss the Express checkout banner:', error)
+    })
+  }
 
   const toggleExpanded = (id: string) => {
     const updateMethods = (methods: PaymentMethod[]) =>
@@ -342,6 +353,30 @@ export default function PaymentMethodsPage() {
           </a>
         </div>
       </div>
+
+      {showExpressPromo && (
+        <div data-testid="express-promo-banner" className="bg-blue-50 border border-blue-200 rounded-lg py-2 pl-4 pr-2 flex items-center gap-3">
+          <Zap className="h-5 w-5 text-blue-700 flex-shrink-0" aria-hidden="true" />
+          <p className="flex-1 m-0 text-sm text-gray-800">
+            <strong className="font-semibold text-gray-900">{t('expressPromoTitle')}</strong> {t('expressPromoText')}
+          </p>
+          <a
+            href={window.mollieAdvancedSettingsUrl}
+            className="flex-shrink-0 inline-flex items-center h-9 px-4 rounded-md bg-blue-700 text-sm font-semibold text-white hover:bg-blue-800 hover:text-white"
+            style={{ textDecoration: 'none' }}
+          >
+            {t('expressPromoButton')}
+          </a>
+          <button
+            type="button"
+            onClick={dismissExpressPromo}
+            aria-label={t('expressPromoDismiss')}
+            className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md text-gray-600 hover:bg-blue-100 hover:text-gray-900"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
 
       {/* Tabs */}
       <PaymentMethodTabs activeTab={activeTab} onTabChange={handleTabChange} />

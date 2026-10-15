@@ -241,6 +241,12 @@ export interface MolliePaymentMethodsTranslations {
   expressButtonCheckoutInfo: string;
   expressButtonCheckoutGooglePay: string;
   expressButtonCheckoutGooglePayInfo: string;
+  expressPromoTitle: string;
+  expressPromoText: string;
+  expressPromoButton: string;
+  expressPromoDismiss: string;
+  expressBadge: string;
+  expressBadgeGooglePay: string;
 }
 
 export interface MollieAdvancedSettingsTranslations {

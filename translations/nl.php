@@ -654,6 +654,12 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_bedde121550539
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_053b1215936e60069f2e47848845916b'] = 'Google Pay express button on the checkout payment step';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_6584a54c68371d0eb52b347de190199e'] = 'Toont Google Pay als knop om met één tik te betalen bovenaan de checkout. Zet eerst de Mollie Express Component aan onder [1]Geavanceerde instellingen[/1]. Google Pay werkt via kaartbetalingen, dus laat deze betaalmethode ingeschakeld.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_95c949d02bfa03cefad254385eac7d7d'] = 'De Mollie Express Component staat uit. Zet deze aan onder [1]Geavanceerde instellingen[/1] om deze knop te tonen.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_da0b3991aeecbd69850aab09cb2688f2'] = 'Nieuw: Express checkout (beta).';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_af9011e0368e44ea8acac6ed30bbd20d'] = 'Apple Pay, Google Pay en PayPal met één tik bovenaan de checkout. Vraag Mollie om het te activeren en zet het daarna aan.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_756afe30c6e6df0fe6757d19e0a19a08'] = 'Zet het aan';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_c8a59e7135a20b362f9c768b09454fdb'] = 'Sluiten';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_82b42e286db6dd9fcc69cd88157ef0f6'] = 'Nieuw: Express checkout';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_1a31804ef0d9f385324fb8c9b3a55495'] = 'Nieuw: Google Pay express';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_eb4c6f94efd55bbd1876df96448e2c60'] = 'Express checkout (beta)';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0b06e7a6a8fdd7ebb1538faf7582aab8'] = 'Mollie Express Component';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0122b5b00af3de8e066e55c4d5afea6f'] = 'Toon Apple Pay, Google Pay en PayPal als snelbetaalknoppen bovenaan de checkout, zodat klanten met één tik kunnen betalen. Kies op de pagina Betaalmethoden welke knoppen worden getoond.';

@@ -654,6 +654,12 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_bedde121550539
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_053b1215936e60069f2e47848845916b'] = 'Google Pay express button on the checkout payment step';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_6584a54c68371d0eb52b347de190199e'] = 'Muestra Google Pay como un botón de un solo toque en la parte superior del proceso de pago. Primero active Mollie Express Component en [1]Configuración avanzada[/1]. Google Pay funciona con pagos con tarjeta, así que mantenga este método activado.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_95c949d02bfa03cefad254385eac7d7d'] = 'Mollie Express Component está desactivado. Actívelo en [1]Configuración avanzada[/1] para que se muestre este botón.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_da0b3991aeecbd69850aab09cb2688f2'] = 'Novedad: Express checkout (beta).';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_af9011e0368e44ea8acac6ed30bbd20d'] = 'Apple Pay, Google Pay y PayPal con un solo toque en la parte superior del checkout. Pida a Mollie que lo habilite y después actívelo.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_756afe30c6e6df0fe6757d19e0a19a08'] = 'Activar';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_c8a59e7135a20b362f9c768b09454fdb'] = 'Cerrar';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_82b42e286db6dd9fcc69cd88157ef0f6'] = 'Novedad: Express checkout';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_1a31804ef0d9f385324fb8c9b3a55495'] = 'Novedad: Google Pay express';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_eb4c6f94efd55bbd1876df96448e2c60'] = 'Express checkout (beta)';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0b06e7a6a8fdd7ebb1538faf7582aab8'] = 'Mollie Express Component';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0122b5b00af3de8e066e55c4d5afea6f'] = 'Muestra Apple Pay, Google Pay y PayPal como botones de pago rápido en la parte superior del checkout, para que los clientes paguen con un solo toque. Elige qué botones aparecen en la página Métodos de pago.';

@@ -654,6 +654,12 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_bedde121550539
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_053b1215936e60069f2e47848845916b'] = 'Google Pay express button on the checkout payment step';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_6584a54c68371d0eb52b347de190199e'] = 'A Google Pay szolgáltatást egyérintéses gombként jeleníti meg a pénztár tetején. Először kapcsolja be a Mollie Express Component funkciót a [1]Speciális beállítások[/1] alatt. A Google Pay kártyás fizetéssel működik, ezért hagyja bekapcsolva ezt a fizetési módot.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_95c949d02bfa03cefad254385eac7d7d'] = 'A Mollie Express Component ki van kapcsolva. Kapcsolja be a [1]Speciális beállítások[/1] alatt, hogy ez a gomb megjelenjen.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_da0b3991aeecbd69850aab09cb2688f2'] = 'Újdonság: Express checkout (beta).';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_af9011e0368e44ea8acac6ed30bbd20d'] = 'Apple Pay, Google Pay és PayPal egyetlen érintéssel a pénztár tetején. Kérje a Mollie-t az aktiválásra, majd kapcsolja be.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_756afe30c6e6df0fe6757d19e0a19a08'] = 'Bekapcsolás';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_c8a59e7135a20b362f9c768b09454fdb'] = 'Bezárás';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_82b42e286db6dd9fcc69cd88157ef0f6'] = 'Újdonság: Express checkout';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_1a31804ef0d9f385324fb8c9b3a55495'] = 'Újdonság: Google Pay express';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_eb4c6f94efd55bbd1876df96448e2c60'] = 'Express checkout (beta)';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0b06e7a6a8fdd7ebb1538faf7582aab8'] = 'Mollie Express Component';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0122b5b00af3de8e066e55c4d5afea6f'] = 'Jelenítse meg az Apple Pay, a Google Pay és a PayPal gyorsfizetési gombjait a pénztár tetején, így a vásárlók egyetlen érintéssel fizethetnek. A megjelenő gombokat a Fizetési módok oldalon választhatja ki.';
