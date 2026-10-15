@@ -170,6 +170,23 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
         $this->assertSame('cart has no carrier', $service->getUnavailableReason());
     }
 
+    public function testAVirtualCartWithoutACarrierIsAvailable(): void
+    {
+        $cart = $this->mock(\Cart::class);
+        $cart->id = 9;
+        $cart->id_customer = 3;
+        $cart->id_address_delivery = 4;
+        $cart->id_address_invoice = 4;
+        $cart->id_carrier = 0;
+        $cart->method('isVirtualCart')->willReturn(true);
+        $cart->method('getDeliveryOption')->willReturn([]);
+        $cart->method('getOrderTotal')->willReturn(10.8);
+        $this->subscriptionOrderValidator->method('validate')->willReturn(false);
+        $this->offerEveryMethod();
+
+        $this->assertTrue($this->service()->isAvailable($cart));
+    }
+
     public function testACartNoCarrierCanShipIsNotAvailable(): void
     {
         $cart = $this->mock(\Cart::class);

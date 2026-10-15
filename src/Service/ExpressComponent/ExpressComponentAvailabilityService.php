@@ -141,13 +141,16 @@ class ExpressComponentAvailabilityService
             return $this->unavailable('cart has no addresses');
         }
 
-        if (!(int) $cart->id_carrier) {
+        // Downloads and other virtual products ship nothing, so such a cart never gets a carrier.
+        $isVirtualCart = (bool) $cart->isVirtualCart();
+
+        if (!$isVirtualCart && !(int) $cart->id_carrier) {
             return $this->unavailable('cart has no carrier');
         }
 
         // id_carrier survives an address change; the delivery option does not when no carrier
         // serves the new address, and the shop cannot turn such a cart into an order.
-        if (!$cart->getDeliveryOption(null, false, false)) {
+        if (!$isVirtualCart && !$cart->getDeliveryOption(null, false, false)) {
             return $this->unavailable('no carrier serves the delivery address');
         }
 
