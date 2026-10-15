@@ -16,6 +16,7 @@
      data-currency="{$mollieExpressCurrency|escape:'html':'UTF-8'}"
      hidden>
   <p class="mollie-express-component__title">{l s='Express checkout' mod='mollie'}</p>
+  <p class="mollie-express-component__terms" hidden>{l s='Accept the terms of service below to use express checkout.' mod='mollie'}</p>
   <div class="mollie-express-component__mount"></div>
   <p class="mollie-express-component__error" hidden></p>
   <p class="mollie-express-component__divider"><span>{l s='or pay with' mod='mollie'}</span></p>

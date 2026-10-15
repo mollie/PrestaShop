@@ -65,6 +65,7 @@
   var OPC_BUSY_MAX_MS = 5000;
   var OPC_ADDRESS_FIELDS = ['id_country', 'id_state', 'postcode', 'city', 'address1', 'address2', 'firstname', 'lastname', 'company', 'vat_number', 'phone'];
   var BUSY_RETRY_MS = 800;
+  var REQUIRED_TERMS_SELECTOR = '#conditions-to-approve input[type="checkbox"][required]';
   var BUSY_RETRY_ATTEMPTS = 5;
 
   function buildButtonOptions(buttons) {
@@ -358,6 +359,39 @@
       markOpcBusy();
     }
 
+    // A wallet sheet cannot be stopped from opening, and refusing the payment after the shopper
+    // approved it in the sheet looks like a failed payment. The buttons stay locked instead until
+    // the required terms are ticked, like PrestaShop's own payment button.
+    function updateTermsLock() {
+      var node = wrapper();
+
+      if (!node) {
+        return;
+      }
+
+      var locked = !allRequiredConditionsAccepted(document.querySelectorAll(REQUIRED_TERMS_SELECTOR));
+      var hint = node.querySelector('.mollie-express-component__terms');
+      var mount = mountNode();
+
+      node.classList.toggle('is-locked', locked);
+
+      if (hint) {
+        hint.hidden = !locked;
+      }
+
+      if (mount) {
+        mount.toggleAttribute('inert', locked);
+      }
+    }
+
+    function onTermsChange(event) {
+      var target = event.target;
+
+      if (target && target.matches && target.matches(REQUIRED_TERMS_SELECTOR)) {
+        updateTermsLock();
+      }
+    }
+
     function isCartBusyError(error) {
       return !!(error && error.rejected && String(error.message).indexOf('cart_busy') !== -1);
     }
@@ -577,6 +611,9 @@
         return;
       }
 
+      // One page checkouts re-render the payment section, mount point and terms included.
+      updateTermsLock();
+
       if (isOpcBusy()) {
         return;
       }
@@ -681,6 +718,7 @@
 
       document.addEventListener('input', onAddressInput, true);
       document.addEventListener('change', onAddressInput, true);
+      document.addEventListener('change', onTermsChange, true);
 
       root.addEventListener('pagehide', function () {
         teardown();
@@ -696,6 +734,7 @@
       }
 
       hideCoveredOptions();
+      updateTermsLock();
       observe();
       maybeRecreate();
     }
