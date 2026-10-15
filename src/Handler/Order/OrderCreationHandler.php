@@ -56,6 +56,7 @@ use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Service\ExpressComponent\ExpressCartCarrierService;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentFeeTextService;
@@ -106,6 +107,8 @@ class OrderCreationHandler
     private $orderRepository;
     /** @var MollieOrderCreationService */
     private $mollieOrderCreationService;
+    /** @var ExpressCartCarrierService */
+    private $expressCartCarrierService;
 
     public function __construct(
         ModuleFactory $module,
@@ -118,7 +121,8 @@ class OrderCreationHandler
         PaymentFeeProviderInterface $paymentFeeProvider,
         PrestaLoggerInterface $logger,
         OrderRepositoryInterface $orderRepository,
-        MollieOrderCreationService $mollieOrderCreationService
+        MollieOrderCreationService $mollieOrderCreationService,
+        ExpressCartCarrierService $expressCartCarrierService
     ) {
         $this->module = $module->getModule();
         $this->paymentMethodRepository = $paymentMethodRepository;
@@ -131,6 +135,7 @@ class OrderCreationHandler
         $this->logger = $logger;
         $this->orderRepository = $orderRepository;
         $this->mollieOrderCreationService = $mollieOrderCreationService;
+        $this->expressCartCarrierService = $expressCartCarrierService;
     }
 
     /**
@@ -153,14 +158,20 @@ class OrderCreationHandler
 
         $cart = new Cart($cartId);
 
+        $isExpressPayment = ExpressPaymentUtility::isExpressPayment($apiPayment);
+
+        // A one page checkout save can land between the session and this webhook and leave the
+        // shopper's carrier choice under its temporary address again.
+        if ($isExpressPayment) {
+            $this->expressCartCarrierService->restoreCarrierChoice($cart);
+        }
+
         $originalAmount = $cart->getOrderTotal(
             true,
             Cart::BOTH
         );
 
         $paymentMethod = $this->paymentMethodService->getPaymentMethod($apiPayment);
-
-        $isExpressPayment = ExpressPaymentUtility::isExpressPayment($apiPayment);
 
         // The Express Component picks the method inside Mollie's sheet, so no per-method fee was
         // quoted to the shopper and none may be charged, even when the matching method row has one.

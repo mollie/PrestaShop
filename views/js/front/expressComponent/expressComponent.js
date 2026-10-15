@@ -40,6 +40,32 @@
   var RECHECK_DEBOUNCE_MS = 250;
   var BUTTON_WAIT_ATTEMPTS = 15;
   var BUTTON_WAIT_INTERVAL_MS = 400;
+  // ps_onepagecheckout rewrites the cart over several requests (temporary addresses, carrier,
+  // address autosave) and announces when it starts and when it is done. A session asked for in
+  // between reads a half-written cart: a wrong total, or an address deleted mid-request.
+  var OPC_BUSY_EVENTS = [
+    'opcCarrierSelectionLoading',
+    'opcCarriersLoading',
+    'opcPaymentMethodsLoading',
+    'opcDeliveryCountryChanging',
+    'opcBillingCountryChanging',
+    'opcAddressesLoading',
+    'opcCartSummaryBeforeUpdate',
+    'updatedOpcAddressForm'
+  ];
+  var OPC_SETTLED_EVENTS = [
+    'opcPaymentMethodsUpdated',
+    'opcPaymentMethodsRefreshed',
+    'opcPaymentMethodsFailed',
+    'opcCarriersAwaiting',
+    'opcCarriersFailed',
+    'opcAddressPersistInconclusive',
+    'opcAddressPersistFailed'
+  ];
+  var OPC_BUSY_MAX_MS = 5000;
+  var OPC_ADDRESS_FIELDS = ['id_country', 'id_state', 'postcode', 'city', 'address1', 'address2', 'firstname', 'lastname', 'company', 'vat_number', 'phone'];
+  var BUSY_RETRY_MS = 800;
+  var BUSY_RETRY_ATTEMPTS = 5;
 
   function buildButtonOptions(buttons) {
     var source = buttons || {};
@@ -167,7 +193,10 @@
       checkout: null,
       component: null,
       refreshTimer: null,
-      wrapper: null
+      wrapper: null,
+      opcBusyUntil: 0,
+      hiddenWhileBusy: false,
+      busyRetries: 0
     };
 
     function log(message, data) {
@@ -287,6 +316,50 @@
         option.classList.add('mollie-express-fallback');
         option.style.display = '';
       });
+    }
+
+    function isOnePageCheckout() {
+      return !!document.querySelector('.js-opc-payment-section');
+    }
+
+    function isOpcBusy() {
+      return Date.now() < state.opcBusyUntil;
+    }
+
+    // While the cart is rewritten the strip hides: a click now would pay for the previous cart or
+    // for an address that is not saved yet.
+    function markOpcBusy() {
+      var node = wrapper();
+
+      state.opcBusyUntil = Date.now() + OPC_BUSY_MAX_MS;
+
+      if (node && node.hasAttribute(MOUNTED_ATTRIBUTE) && !node.hidden) {
+        node.hidden = true;
+        state.hiddenWhileBusy = true;
+        revealCoveredOptions();
+      }
+
+      root.setTimeout(debouncedRecheck, OPC_BUSY_MAX_MS + 50);
+    }
+
+    function markOpcSettled() {
+      state.opcBusyUntil = 0;
+      state.failedAmount = null;
+      debouncedRecheck();
+    }
+
+    function onAddressInput(event) {
+      var target = event.target;
+
+      if (!target || OPC_ADDRESS_FIELDS.indexOf(target.name) === -1 || !isOnePageCheckout()) {
+        return;
+      }
+
+      markOpcBusy();
+    }
+
+    function isCartBusyError(error) {
+      return !!(error && error.rejected && String(error.message).indexOf('cart_busy') !== -1);
     }
 
     function pageAmount() {
@@ -451,6 +524,8 @@
             // without Google Pay, no Apple Pay, PayPal hidden). Reveal the block only once Mollie
             // has put something into it, so the shopper never sees an empty "Express checkout".
             return waitForButtons(target).then(function (hasButtons) {
+              state.busyRetries = 0;
+              state.hiddenWhileBusy = false;
               node.hidden = !hasButtons;
 
               if (!hasButtons) {
@@ -465,6 +540,14 @@
           });
         });
       }).catch(function (error) {
+        if (isCartBusyError(error) && state.busyRetries < BUSY_RETRY_ATTEMPTS) {
+          state.busyRetries += 1;
+          log('cart is being updated, retrying', state.busyRetries);
+          root.setTimeout(maybeRecreate, BUSY_RETRY_MS);
+
+          return;
+        }
+
         log('express component unavailable', error);
         state.phase = 'unavailable';
         state.mountedAmount = null;
@@ -494,6 +577,10 @@
         return;
       }
 
+      if (isOpcBusy()) {
+        return;
+      }
+
       var amount = normalizeAmount(node.getAttribute('data-amount'));
 
       if (state.phase === 'unavailable' && amount === state.failedAmount) {
@@ -504,6 +591,11 @@
         recreate();
 
         return;
+      }
+
+      if (state.phase === 'mounted' && state.hiddenWhileBusy) {
+        state.hiddenWhileBusy = false;
+        node.hidden = false;
       }
 
       // The list may have been re-rendered (one page checkout): hide the covered options again.
@@ -518,6 +610,13 @@
 
       if (node && amount !== null) {
         node.setAttribute('data-amount', amount);
+      }
+
+      // ps_onepagecheckout follows a cart change with its own carrier and payment reloads.
+      if (isOnePageCheckout()) {
+        markOpcBusy();
+
+        return;
       }
 
       debouncedRecheck();
@@ -571,7 +670,17 @@
         root.prestashop.on('opcCarriersUpdated', onDeliveryChanged);
         root.prestashop.on('opcPaymentMethodsUpdated', debouncedRecheck);
         root.prestashop.on('opcPaymentMethodsRefreshed', debouncedRecheck);
+
+        OPC_BUSY_EVENTS.forEach(function (name) {
+          root.prestashop.on(name, markOpcBusy);
+        });
+        OPC_SETTLED_EVENTS.forEach(function (name) {
+          root.prestashop.on(name, markOpcSettled);
+        });
       }
+
+      document.addEventListener('input', onAddressInput, true);
+      document.addEventListener('change', onAddressInput, true);
 
       root.addEventListener('pagehide', function () {
         teardown();

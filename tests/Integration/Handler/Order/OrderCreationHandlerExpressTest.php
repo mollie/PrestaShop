@@ -22,6 +22,7 @@ use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Service\ExpressComponent\ExpressCartCarrierService;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
@@ -75,7 +76,8 @@ class OrderCreationHandlerExpressTest extends BaseTestCase
             $this->paymentFeeProvider,
             $this->mock(PrestaLoggerInterface::class),
             $orderRepository,
-            $this->mock(MollieOrderCreationService::class)
+            $this->mock(MollieOrderCreationService::class),
+            $this->mock(ExpressCartCarrierService::class)
         );
     }
 

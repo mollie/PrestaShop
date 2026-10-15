@@ -19,7 +19,7 @@ use Mollie\Tests\Unit\BaseTestCase;
 class ExpressCartCarrierServiceTest extends BaseTestCase
 {
     /** @var int[] */
-    private $existingAddressIds = [9];
+    private $realAddressIds = [9];
 
     protected function setUp(): void
     {
@@ -31,26 +31,29 @@ class ExpressCartCarrierServiceTest extends BaseTestCase
 
     private function service(): ExpressCartCarrierService
     {
-        $existingAddressIds = $this->existingAddressIds;
-
-        return new class($this->mock(PrestaLoggerInterface::class), $existingAddressIds) extends ExpressCartCarrierService {
+        return new class($this->mock(PrestaLoggerInterface::class), $this->realAddressIds) extends ExpressCartCarrierService {
             /** @var int[] */
-            private $existing;
+            private $realAddressIds;
 
-            public function __construct(PrestaLoggerInterface $logger, array $existing)
+            public function __construct(PrestaLoggerInterface $logger, array $realAddressIds)
             {
                 parent::__construct($logger);
-                $this->existing = $existing;
+                $this->realAddressIds = $realAddressIds;
             }
 
-            protected function addressExists(int $addressId): bool
+            protected function isLeftoverAddress(int $addressId): bool
             {
-                return in_array($addressId, $this->existing, true);
+                return !in_array($addressId, $this->realAddressIds, true);
+            }
+
+            protected function isTemporaryAddress(int $addressId): bool
+            {
+                return !in_array($addressId, $this->realAddressIds, true);
             }
         };
     }
 
-    public function testAChoiceUnderADeletedAddressMovesToTheDeliveryAddress(): void
+    public function testAChoiceUnderALeftoverAddressMovesToTheDeliveryAddress(): void
     {
         $this->cart->delivery_option = json_encode([34 => '2,']);
 
@@ -63,10 +66,10 @@ class ExpressCartCarrierServiceTest extends BaseTestCase
     /**
      * @dataProvider untouchedDeliveryOptionProvider
      */
-    public function testTheCartIsLeftAloneOtherwise($deliveryOption, array $existingAddressIds): void
+    public function testTheCartIsLeftAloneOtherwise($deliveryOption, array $realAddressIds): void
     {
         $this->cart->delivery_option = $deliveryOption;
-        $this->existingAddressIds = $existingAddressIds;
+        $this->realAddressIds = $realAddressIds;
 
         $this->cart->expects($this->never())->method('setDeliveryOption');
         $this->cart->expects($this->never())->method('save');
@@ -78,10 +81,22 @@ class ExpressCartCarrierServiceTest extends BaseTestCase
     {
         return [
             'choice already on the delivery address' => [json_encode([9 => '2,']), [9]],
-            'choice under another address that still exists' => [json_encode([12 => '2,']), [9, 12]],
+            'choice under another real address' => [json_encode([12 => '2,']), [9, 12]],
             'no choice stored' => ['', [9]],
             'multi-address shipping' => [json_encode([34 => '2,', 35 => '1,']), [9]],
         ];
+    }
+
+    public function testACartOnATemporaryAddressIsBeingRewritten(): void
+    {
+        $this->cart->id_address_delivery = 88;
+
+        $this->assertTrue($this->service()->isCartBeingRewritten($this->cart));
+    }
+
+    public function testACartOnItsRealAddressIsNotBeingRewritten(): void
+    {
+        $this->assertFalse($this->service()->isCartBeingRewritten($this->cart));
     }
 
     public function testACartWithoutADeliveryAddressIsLeftAlone(): void

@@ -40,6 +40,7 @@ class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieCont
     const ERROR_ORDER_EXISTS = 'order_exists';
     const ERROR_FORBIDDEN = 'forbidden';
     const ERROR_API = 'api_error';
+    const ERROR_CART_BUSY = 'cart_busy';
 
     /** @var bool */
     public $ssl = true;
@@ -57,12 +58,28 @@ class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieCont
 
         /** @var ExpressCartCarrierService $cartCarrierService */
         $cartCarrierService = $this->module->getService(ExpressCartCarrierService::class);
-        $cartCarrierService->restoreCarrierChoice($this->context->cart);
 
         /** @var ExpressComponentAvailabilityService $availability */
         $availability = $this->module->getService(ExpressComponentAvailabilityService::class);
 
-        if (!$availability->isAvailable($this->context->cart)) {
+        // A one page checkout request may be rewriting this cart right now; the script asks again.
+        if ($cartCarrierService->isCartBeingRewritten($this->context->cart)) {
+            $this->ajaxResponse(JsonResponse::error(self::ERROR_CART_BUSY, JsonResponse::HTTP_CONFLICT));
+        }
+
+        try {
+            $cartCarrierService->restoreCarrierChoice($this->context->cart);
+            $isAvailable = $availability->isAvailable($this->context->cart);
+        } catch (\PrestaShopException $exception) {
+            // The temporary address this request loaded was deleted underneath it.
+            $logger->debug(sprintf('%s - Cart changed while it was read', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+
+            $this->ajaxResponse(JsonResponse::error(self::ERROR_CART_BUSY, JsonResponse::HTTP_CONFLICT));
+        }
+
+        if (!$isAvailable) {
             $this->ajaxResponse(JsonResponse::error(self::ERROR_NOT_AVAILABLE, JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
         }
 
