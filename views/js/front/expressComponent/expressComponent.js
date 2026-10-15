@@ -386,7 +386,12 @@
       }
 
       if (mount) {
+        // Styled from here: a combined theme stylesheet keeps its file name, so browsers can keep a
+        // cached copy without the module's rules.
         mount.toggleAttribute('inert', locked);
+        mount.style.opacity = locked ? '0.45' : '';
+        mount.style.filter = locked ? 'grayscale(1)' : '';
+        mount.style.cursor = locked ? 'not-allowed' : '';
       }
     }
 

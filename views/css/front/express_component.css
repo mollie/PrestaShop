@@ -29,18 +29,6 @@
   font-size: 0.875rem;
 }
 
-/* Mollie's component has no disabled state, so the buttons are locked from the outside until the
-   shop's required terms are ticked, as PrestaShop does for its own payment button. */
-.mollie-express-component.is-locked .mollie-express-component__mount {
-  opacity: 0.45;
-  filter: grayscale(1);
-  cursor: not-allowed;
-}
-
-.mollie-express-component.is-locked .mollie-express-component__mount iframe {
-  pointer-events: none;
-}
-
 .mollie-express-component__error {
   margin: 0.5rem 0 0;
   color: #a94442;
