@@ -119,6 +119,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         Media::addJsDef([
             'molliePaymentMethodsAjaxUrl' => $this->context->link->getAdminLink('AdminMolliePaymentMethods'),
             'mollieAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAjax'),
+            'mollieAdvancedSettingsUrl' => $this->context->link->getAdminLink('AdminMollieAdvancedSettings'),
         ]);
 
         Media::addJsDef([
@@ -245,12 +246,11 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'applePayButtonOutlineDesc' => $this->module->l('White with outline', self::FILE_NAME),
                 'applePayButtonWhiteDesc' => $this->module->l('White Apple Pay button', self::FILE_NAME),
 
-                'expressButtonMasterOff' => $this->module->l('The Mollie Express Component is switched off. Turn it on under Advanced Settings for this button to show.', self::FILE_NAME),
-                'expressButtonApplePayDomainFile' => $this->module->l('Apple Pay needs the domain verification file at /.well-known/apple-developer-merchantid-domain-association. The module places it when you save with this switch on. Register the domain in your Mollie Dashboard as well.', self::FILE_NAME),
+                'expressButtonMasterOff' => $this->module->l('The Mollie Express Component is switched off. Turn it on under [1]Advanced Settings[/1] for this button to show.', self::FILE_NAME),
                 'expressButtonCheckout' => $this->module->l('Express button on the checkout payment step', self::FILE_NAME),
-                'expressButtonCheckoutInfo' => $this->module->l('Shows this wallet as a one-tap button above the payment method list, rendered by the Mollie Express Component. Needs the Express Component switch at the top of this page. While it is on, the regular option of this method is hidden from the list.', self::FILE_NAME),
+                'expressButtonCheckoutInfo' => $this->module->l('Shows this wallet as a one-tap button at the top of checkout. Turn on the Mollie Express Component under [1]Advanced Settings[/1] first. While the button is on, this method is hidden from the regular payment list.', self::FILE_NAME),
                 'expressButtonCheckoutGooglePay' => $this->module->l('Google Pay express button on the checkout payment step', self::FILE_NAME),
-                'expressButtonCheckoutGooglePayInfo' => $this->module->l('Shows Google Pay as a one-tap button above the payment method list, rendered by the Mollie Express Component. Google Pay payments are card payments, so this method must be enabled. Needs the Express Component switch at the top of this page.', self::FILE_NAME),
+                'expressButtonCheckoutGooglePayInfo' => $this->module->l('Shows Google Pay as a one-tap button at the top of checkout. Turn on the Mollie Express Component under [1]Advanced Settings[/1] first. Google Pay runs on card payments, so keep this method enabled.', self::FILE_NAME),
 
                 'selectOption' => $this->module->l('Select option', self::FILE_NAME),
                 'selectOptions' => $this->module->l('Select options', self::FILE_NAME),

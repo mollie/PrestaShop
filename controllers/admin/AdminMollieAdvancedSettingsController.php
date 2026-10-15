@@ -110,7 +110,7 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             'visualSettings' => $this->module->l('Visual Settings', self::FILE_NAME),
             'expressCheckout' => $this->module->l('Express checkout (beta)', self::FILE_NAME),
             'expressCheckoutEnable' => $this->module->l('Mollie Express Component', self::FILE_NAME),
-            'expressCheckoutInfo' => $this->module->l('Mollie renders one-tap Apple Pay, Google Pay and PayPal buttons above the payment method list on the checkout payment step. Choose which wallets get a button in their cards on the Payment Methods page. Mollie fixes the order of the buttons (Apple Pay, Google Pay, PayPal); the order of the payment method list does not apply to them. Express payments carry no payment surcharge.', self::FILE_NAME),
+            'expressCheckoutInfo' => $this->module->l('Show Apple Pay, Google Pay and PayPal as quick-pay buttons at the top of checkout, so customers can pay in one tap. Choose which buttons appear on the Payment Methods page.', self::FILE_NAME),
             'expressCheckoutLiveOnly' => $this->module->l('The Express Component is in beta and works only with a live API key in live mode. It stays hidden in test mode.', self::FILE_NAME),
             'orderStatusMapping' => $this->module->l('Order Status Mapping', self::FILE_NAME),
             'orderStatusEmails' => $this->module->l('Order Status Emails', self::FILE_NAME),

@@ -237,7 +237,6 @@ export interface MolliePaymentMethodsTranslations {
 
   // Express Component
   expressButtonMasterOff: string;
-  expressButtonApplePayDomainFile: string;
   expressButtonCheckout: string;
   expressButtonCheckoutInfo: string;
   expressButtonCheckoutGooglePay: string;
@@ -319,6 +318,7 @@ declare global {
     mollieAuthConfig?: { multistoreRestricted?: boolean };
     molliePaymentMethodsAjaxUrl: string;
     molliePaymentMethodsTranslations: MolliePaymentMethodsTranslations;
+    mollieAdvancedSettingsUrl?: string;
     mollieAdvancedSettingsAjaxUrl: string;
     mollieAdvancedSettingsTranslations: MollieAdvancedSettingsTranslations;
     mollieAdvancedSettingsConfig?: { multistoreRestricted?: boolean };

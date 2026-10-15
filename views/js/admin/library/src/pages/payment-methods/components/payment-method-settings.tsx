@@ -14,6 +14,13 @@ import type { PaymentMethod, Country, Carrier, CustomerGroup, Language } from ".
 import { paymentMethodsApiService } from "../../../services/PaymentMethodsApiService"
 import { usePaymentMethodsTranslations } from "../../../shared/hooks/use-payment-methods-translations"
 
+const withAdvancedSettingsLink = (text: string) =>
+  text.split(/\[1\](.*?)\[\/1\]/).map((part, index) =>
+    index % 2 === 1
+      ? <a key={index} href={window.mollieAdvancedSettingsUrl} className="underline hover:opacity-80" style={{ color: 'rgba(0, 64, 255, 1)' }}>{part}</a>
+      : part
+  )
+
 interface PaymentMethodSettingsProps {
   method: PaymentMethod
   countries: Country[]
@@ -544,7 +551,7 @@ export function PaymentMethodSettings({ method, countries, carriers, showApplePa
           <div className="border rounded-lg overflow-hidden transition-shadow hover:shadow-sm">
             <div className="p-4 grid grid-cols-[auto_auto_1fr] items-center gap-x-3 gap-y-1">
               <Label className={cn("text-sm font-medium col-span-3", !expressComponentEnabled && "opacity-50")}>{expressButtonLabel}</Label>
-              <p className={cn("text-sm text-muted-foreground", !expressComponentEnabled && "opacity-50")}>{expressButtonInfo}</p>
+              <p className={cn("text-sm text-muted-foreground", !expressComponentEnabled && "opacity-50")}>{withAdvancedSettingsLink(expressButtonInfo)}</p>
               <Switch
                 data-testid={`payment-method-${method.id}-express-switch`}
                 checked={method.settings.expressButton ?? false}
@@ -552,10 +559,7 @@ export function PaymentMethodSettings({ method, countries, carriers, showApplePa
                 onCheckedChange={(expressButton: boolean) => onUpdateSettings({ expressButton })}
               />
               {!expressComponentEnabled && (
-                <p className="text-xs text-gray-400 col-span-3">{t('expressButtonMasterOff')}</p>
-              )}
-              {method.id === "applepay" && (
-                <p className="text-xs text-gray-400 col-span-3">{t('expressButtonApplePayDomainFile')}</p>
+                <p className="text-xs text-gray-400 col-span-3">{withAdvancedSettingsLink(t('expressButtonMasterOff'))}</p>
               )}
             </div>
           </div>
