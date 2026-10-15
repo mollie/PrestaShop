@@ -108,8 +108,7 @@ class ExpressSessionRequestBuilder
             $cart->getProducts(),
             (bool) $this->configuration->get('PS_GIFT_WRAPPING'),
             (string) $this->configuration->get(Config::MOLLIE_VOUCHER_CATEGORY),
-            LineType::PAYMENT,
-            $cart->getTotalShippingCost(null, false)
+            LineType::PAYMENT
         );
 
         return new ExpressSessionRequest(
