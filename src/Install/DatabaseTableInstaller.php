@@ -135,6 +135,7 @@ final class DatabaseTableInstaller implements InstallerInterface
                 `session_id` VARCHAR(64) NOT NULL,
                 `amount` decimal(20,6) NOT NULL,
                 `currency_iso` VARCHAR(3) NOT NULL,
+                `webhook_token` VARCHAR(32) NOT NULL DEFAULT \'\',
                 `status` VARCHAR(32) NOT NULL DEFAULT \'open\',
                 `created_at` DATETIME NOT NULL,
                 `updated_at` DATETIME NOT NULL,

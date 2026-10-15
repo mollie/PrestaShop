@@ -24,6 +24,7 @@ class ExpressSubmitCheck implements \JsonSerializable
     const REASON_ORDER_EXISTS = 'order_exists';
     const REASON_CART_NOT_READY = 'cart_not_ready';
     const REASON_AMOUNT_CHANGED = 'amount_changed';
+    const REASON_CART_OWNER_CHANGED = 'cart_owner_changed';
 
     /** @var bool */
     private $ok;

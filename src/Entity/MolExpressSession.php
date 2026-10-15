@@ -20,6 +20,7 @@ class MolExpressSession extends ObjectModel
     public $session_id;
     public $amount;
     public $currency_iso;
+    public $webhook_token;
     public $status;
     public $created_at;
     public $updated_at;
@@ -33,6 +34,7 @@ class MolExpressSession extends ObjectModel
             'session_id' => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName', 'required' => true, 'size' => 64],
             'amount' => ['type' => self::TYPE_FLOAT, 'validate' => 'isPrice', 'required' => true],
             'currency_iso' => ['type' => self::TYPE_STRING, 'validate' => 'isLanguageIsoCode', 'required' => true, 'size' => 3],
+            'webhook_token' => ['type' => self::TYPE_STRING, 'validate' => 'isMd5', 'size' => 32],
             'status' => ['type' => self::TYPE_STRING, 'validate' => 'isGenericName', 'size' => 32],
             'created_at' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
             'updated_at' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],

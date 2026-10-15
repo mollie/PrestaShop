@@ -24,6 +24,7 @@ use Mollie\Service\ExpressComponent\ExpressComponentAvailabilityService;
 use Mollie\Service\ExpressComponent\ExpressSessionService;
 use Mollie\Subscription\Utility\ClockInterface;
 use Mollie\Tests\Unit\BaseTestCase;
+use Mollie\Utility\HashUtility;
 
 class ExpressSessionServiceTest extends BaseTestCase
 {
@@ -64,6 +65,7 @@ class ExpressSessionServiceTest extends BaseTestCase
         $this->context->method('getShopId')->willReturn(1);
 
         $this->cart->id = 7;
+        $this->cart->secure_key = 'customer_secure_key';
         $this->cart->method('getOrderTotal')->willReturn(59.9);
 
         $this->service = new ExpressSessionService(
@@ -85,6 +87,7 @@ class ExpressSessionServiceTest extends BaseTestCase
         $row->session_id = 'sess_stored';
         $row->amount = $amount;
         $row->currency_iso = $currency;
+        $row->webhook_token = HashUtility::hash('customer_secure_key');
         $row->status = 'open';
         $row->created_at = $createdAt;
 
@@ -217,6 +220,42 @@ class ExpressSessionServiceTest extends BaseTestCase
         $this->sessionApi->expects($this->never())->method('create');
 
         $this->assertTrue($this->service->validateBeforeSubmit($this->cart)->isOk());
+    }
+
+    public function testASessionBuiltBeforeTheCartChangedOwnerIsNotReused(): void
+    {
+        $guestSession = $this->storedSession();
+        $guestSession->webhook_token = HashUtility::hash('guest_secure_key');
+        $this->sessionRepository->method('findLatestByCartId')->willReturn($guestSession);
+        $this->sessionApi->expects($this->never())->method('get');
+        $this->sessionApi->expects($this->once())->method('create')->willReturn($this->remoteSession('sess_new', 'open'));
+
+        $this->assertSame('sess_new', $this->service->getOrCreateSession($this->cart)->getId());
+    }
+
+    public function testSubmitIsRejectedWithAFreshTokenWhenTheCartChangedOwner(): void
+    {
+        $guestSession = $this->storedSession();
+        $guestSession->webhook_token = HashUtility::hash('guest_secure_key');
+        $this->sessionRepository->method('findLatestByCartId')->willReturn($guestSession);
+        $this->sessionApi->method('create')->willReturn($this->remoteSession('sess_new', 'open'));
+
+        $check = $this->service->validateBeforeSubmit($this->cart);
+
+        $this->assertFalse($check->isOk());
+        $this->assertSame(ExpressSubmitCheck::REASON_CART_OWNER_CHANGED, $check->getReason());
+        $this->assertSame('token_sess_new', $check->getClientAccessToken());
+    }
+
+    public function testANewSessionStoresTheWebhookTokenOfTheCart(): void
+    {
+        $this->sessionRepository->method('findLatestByCartId')->willReturn(null);
+        $this->sessionApi->method('create')->willReturn($this->remoteSession('sess_new', 'open'));
+        $this->sessionRepository->expects($this->once())->method('persist')->with($this->callback(static function (\MolExpressSession $row) {
+            return HashUtility::hash('customer_secure_key') === $row->webhook_token;
+        }));
+
+        $this->service->getOrCreateSession($this->cart);
     }
 
     public function testSubmitIsRejectedWithAFreshTokenWhenTheAmountChanged(): void

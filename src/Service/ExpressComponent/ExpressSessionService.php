@@ -23,6 +23,7 @@ use Mollie\Repository\MolExpressSessionRepositoryInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Subscription\Utility\ClockInterface;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\HashUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TextFormatUtility;
 
@@ -82,7 +83,7 @@ class ExpressSessionService
         $currency = \Tools::strtoupper($this->context->getCurrencyIso());
         $stored = $this->sessionRepository->findLatestByCartId((int) $cart->id);
 
-        if ($stored && $this->isReusable($stored, $amount, $currency, (int) $cart->id)) {
+        if ($stored && $this->isReusable($stored, $amount, $currency, $cart)) {
             $session = $this->loadOpenSession($stored);
 
             if ($session) {
@@ -125,6 +126,12 @@ class ExpressSessionService
 
         $stored = $this->sessionRepository->findLatestByCartId((int) $cart->id);
 
+        if ($stored && !$this->isBuiltForCartOwner($stored, $cart)) {
+            $session = $this->getOrCreateSession($cart);
+
+            return ExpressSubmitCheck::rejected(ExpressSubmitCheck::REASON_CART_OWNER_CHANGED, $session->getClientAccessToken());
+        }
+
         if ($stored && NumberUtility::isEqual((float) $stored->amount, (float) $this->getCartAmount($cart))) {
             return ExpressSubmitCheck::ok();
         }
@@ -134,9 +141,13 @@ class ExpressSessionService
         return ExpressSubmitCheck::rejected(ExpressSubmitCheck::REASON_AMOUNT_CHANGED, $session->getClientAccessToken());
     }
 
-    private function isReusable(\MolExpressSession $stored, string $amount, string $currency, int $cartId): bool
+    private function isReusable(\MolExpressSession $stored, string $amount, string $currency, \Cart $cart): bool
     {
         if (!NumberUtility::isEqual((float) $stored->amount, (float) $amount)) {
+            return false;
+        }
+
+        if (!$this->isBuiltForCartOwner($stored, $cart)) {
             return false;
         }
 
@@ -150,7 +161,22 @@ class ExpressSessionService
             return false;
         }
 
-        return 0 === $this->orderRepository->getOrderIdByCartId($cartId);
+        return 0 === $this->orderRepository->getOrderIdByCartId((int) $cart->id);
+    }
+
+    /**
+     * The webhook URL carries a token of the cart's secure_key. Logging in moves a guest cart to the
+     * customer and changes that key, so a session built before then would send its webhook with a
+     * token the shop refuses: the shopper pays and no order is created.
+     */
+    private function isBuiltForCartOwner(\MolExpressSession $stored, \Cart $cart): bool
+    {
+        return hash_equals($this->getWebhookToken($cart), (string) $stored->webhook_token);
+    }
+
+    private function getWebhookToken(\Cart $cart): string
+    {
+        return HashUtility::hash((string) $cart->secure_key);
     }
 
     private function loadOpenSession(\MolExpressSession $stored): ?ExpressSession
@@ -183,6 +209,7 @@ class ExpressSessionService
         $row->session_id = $session->getId();
         $row->amount = (float) $amount;
         $row->currency_iso = $currency;
+        $row->webhook_token = $this->getWebhookToken($cart);
         $row->status = $session->getStatus() ?: ExpressSession::STATUS_OPEN;
         $row->created_at = $now;
         $row->updated_at = $now;
