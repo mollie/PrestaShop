@@ -480,6 +480,12 @@ class Mollie extends PaymentModule
         $this->context->smarty->assign([
             'mollieExpressAmount' => TextFormatUtility::formatNumber($this->context->cart->getOrderTotal(true, Cart::BOTH), Config::API_ROUNDING_PRECISION),
             'mollieExpressCurrency' => $this->context->currency->iso_code,
+            // A cart that can already have a session gets the block with a placeholder from the
+            // first paint, so the buttons replace it in place instead of pushing the list down.
+            'mollieExpressExpected' => $expressAvailability->isAvailable($this->context->cart),
+            // Shown from the first paint when the shop asks for its terms; the script hides it
+            // once they are ticked, so the strip does not grow when the script starts.
+            'mollieExpressTermsRequired' => (bool) Configuration::get('PS_CONDITIONS'),
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/express_component.tpl');

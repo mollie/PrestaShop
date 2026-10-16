@@ -323,6 +323,24 @@
       }
     }
 
+    // The server renders a placeholder when it expects buttons; it stays until Mollie has drawn
+    // them (or the component turned out unavailable), so the strip never jumps.
+    function endPlaceholder() {
+      var node = wrapper();
+      var placeholder = node ? node.querySelector('.mollie-express-component__placeholder') : null;
+      var mount = mountNode();
+
+      if (placeholder) {
+        placeholder.parentNode.removeChild(placeholder);
+      }
+
+      if (mount) {
+        mount.style.height = '';
+        mount.style.minHeight = '';
+        mount.style.overflow = '';
+      }
+    }
+
     function isCartBusyError(error) {
       return !!(error && error.rejected && String(error.message).indexOf('cart_busy') !== -1);
     }
@@ -459,6 +477,8 @@
       if (!root.Mollie2 || typeof root.Mollie2.Checkout !== 'function') {
         log('Mollie.js v2 is not loaded');
         state.phase = 'unavailable';
+        endPlaceholder();
+        node.hidden = true;
 
         return;
       }
@@ -490,6 +510,7 @@
             return waitForButtons(target).then(function (hasButtons) {
               state.busyRetries = 0;
               state.hiddenWhileBusy = false;
+              endPlaceholder();
               node.hidden = !hasButtons;
 
               if (!hasButtons) {
@@ -512,6 +533,7 @@
         state.mountedAmount = null;
         // Remember the total this failed for, so DOM churn does not retry until the cart changes.
         state.failedAmount = pageAmount();
+        endPlaceholder();
 
         if (node) {
           node.hidden = true;
