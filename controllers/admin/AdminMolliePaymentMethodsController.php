@@ -248,7 +248,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
 
                 'expressButtonMasterOff' => $this->module->l('The Mollie Express Component is switched off. Turn it on under [1]Advanced Settings[/1] for this button to show.', self::FILE_NAME),
                 'expressButtonCheckout' => $this->module->l('Express button on the checkout payment step', self::FILE_NAME),
-                'expressButtonCheckoutInfo' => $this->module->l('Shows this wallet as a one-tap button at the top of checkout. Turn on the Mollie Express Component under [1]Advanced Settings[/1] first. While the button is on, this method is hidden from the regular payment list.', self::FILE_NAME),
+                'expressButtonCheckoutInfo' => $this->module->l('Shows this wallet as a one-tap button at the top of checkout. Turn on the Mollie Express Component under [1]Advanced Settings[/1] first.', self::FILE_NAME),
                 'expressButtonCheckoutGooglePay' => $this->module->l('Google Pay express button on the checkout payment step', self::FILE_NAME),
                 'expressPromoTitle' => $this->module->l('New: Express checkout (beta).', self::FILE_NAME),
                 'expressPromoText' => $this->module->l('One-tap Apple Pay, Google Pay and PayPal at the top of checkout. Ask Mollie to activate it, then switch it on.', self::FILE_NAME),

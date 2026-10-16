@@ -18,6 +18,7 @@ use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 
@@ -230,9 +231,13 @@ class ExpressComponentAvailabilityService
         /** @var \MolPaymentMethod|null $paymentMethod */
         $paymentMethod = $this->paymentMethodRepository->findOneBy(['id_payment_method' => $paymentMethodId]);
 
+        // Whether this device can pay with Apple Pay is Mollie's call (visibility "automatic"), as
+        // in Mollie's other plugins. The regular option keeps its isApplePayMethod cookie check.
+        $skippedValidators = 'applepay' === $methodId ? [ApplePayPaymentMethodRestrictionValidator::class] : [];
+
         return $paymentMethod
             && (bool) $paymentMethod->enabled
-            && $this->restrictionValidation->isPaymentMethodValid($paymentMethod);
+            && $this->restrictionValidation->isPaymentMethodValid($paymentMethod, $skippedValidators);
     }
 
     private function unavailable(string $reason): bool

@@ -18,6 +18,7 @@ use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExpressComponent\ExpressComponentAvailabilityService;
+use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Tests\Unit\BaseTestCase;
@@ -184,6 +185,40 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
         $this->offerEveryMethod();
 
         $this->assertTrue($this->service()->isAvailable($cart));
+    }
+
+    public function testOnlyTheApplePayButtonLeavesTheDeviceCheckToMollie(): void
+    {
+        $enabledMethod = new \MolPaymentMethod();
+        $enabledMethod->enabled = true;
+        $this->paymentMethodRepository->method('getPaymentMethodIdByMethodId')->willReturnMap([
+            ['applepay', Config::ENVIRONMENT_LIVE, 1, 11],
+            ['creditcard', Config::ENVIRONMENT_LIVE, 1, 12],
+            ['paypal', Config::ENVIRONMENT_LIVE, 1, 13],
+        ]);
+        $this->paymentMethodRepository->method('findOneBy')->willReturn($enabledMethod);
+        $this->config[Config::MOLLIE_EXPRESS_COMPONENT_PAYPAL] = '1';
+
+        $skippedPerCall = [];
+        $restrictionValidation = $this->mock(PaymentMethodRestrictionValidationInterface::class);
+        $restrictionValidation->method('isPaymentMethodValid')->willReturnCallback(static function ($method, array $skipped = []) use (&$skippedPerCall) {
+            $skippedPerCall[] = $skipped;
+
+            return true;
+        });
+
+        $service = new ExpressComponentAvailabilityService(
+            $this->configuration,
+            $this->context,
+            $this->paymentMethodRepository,
+            $restrictionValidation,
+            $this->subscriptionOrderValidator,
+            $this->moduleFactory,
+            $this->mock(PrestaLoggerInterface::class)
+        );
+
+        $this->assertSame(['applepay' => 'automatic', 'googlepay' => 'automatic', 'paypal' => 'automatic'], $service->getButtonVisibility());
+        $this->assertSame([[ApplePayPaymentMethodRestrictionValidator::class], [], []], $skippedPerCall);
     }
 
     public function testACartNoCarrierCanShipIsNotAvailable(): void

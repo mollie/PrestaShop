@@ -76,24 +76,6 @@ test.describe('express component helpers', () => {
     expect(helpers.amountFromCartEvent(null, { totals: {} })).toBeNull();
   });
 
-  test('coveredMethods lists the wallets whose button shows and never the card option', () => {
-    expect(helpers.coveredMethods({ applepay: 'automatic', googlepay: 'automatic', paypal: 'automatic' })).toEqual(['applepay', 'paypal']);
-    expect(helpers.coveredMethods({ applepay: 'automatic', googlepay: 'automatic', paypal: 'hidden' })).toEqual(['applepay']);
-    expect(helpers.coveredMethods({ applepay: 'hidden', googlepay: 'automatic', paypal: 'hidden' })).toEqual([]);
-    expect(helpers.coveredMethods(undefined)).toEqual([]);
-  });
-
-  test('methodFromPaymentAction reads the method from a Mollie payment form action', () => {
-    expect(helpers.methodFromPaymentAction('https://shop.test/module/mollie/payment?method=applepay&rand=1')).toBe('applepay');
-    expect(helpers.methodFromPaymentAction('https://shop.test/en/module/mollie/payment?method=PayPal')).toBe('paypal');
-    expect(helpers.methodFromPaymentAction('https://shop.test/index.php?fc=module&module=mollie&controller=payment&method=paypal&rand=1')).toBe('paypal');
-    expect(helpers.methodFromPaymentAction('https://shop.test/module/mollie/payment?rand=1')).toBeNull();
-    expect(helpers.methodFromPaymentAction('https://shop.test/module/ps_checkout/payment?method=applepay')).toBeNull();
-    expect(helpers.methodFromPaymentAction('https://shop.test/index.php?fc=module&module=mollie&controller=applePayDirectAjax&method=applepay')).toBeNull();
-    expect(helpers.methodFromPaymentAction('')).toBeNull();
-    expect(helpers.methodFromPaymentAction(null)).toBeNull();
-  });
-
   test('allRequiredConditionsAccepted needs every box ticked', () => {
     expect(helpers.allRequiredConditionsAccepted([])).toBe(true);
     expect(helpers.allRequiredConditionsAccepted([{ checked: true }, { checked: true }])).toBe(true);

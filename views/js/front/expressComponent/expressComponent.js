@@ -145,36 +145,6 @@
     return null;
   }
 
-  // Express buttons whose regular checkout option would list the same wallet twice. Google Pay
-  // has no option of its own (it rides on the card method), so the card option always stays.
-  var COVERED_BUTTONS = { applepay: 'applepay', paypal: 'paypal' };
-
-  function coveredMethods(buttons) {
-    var source = buttons || {};
-
-    return Object.keys(COVERED_BUTTONS).filter(function (button) {
-      return source[button] === 'automatic';
-    }).map(function (button) {
-      return COVERED_BUTTONS[button];
-    });
-  }
-
-  // Every Mollie option submits to module/mollie/payment?method=<id> (or the non-rewritten
-  // index.php form of it), whatever markup the theme or a one page checkout wraps around it.
-  function methodFromPaymentAction(action) {
-    var url = String(action || '');
-    var isMolliePayment = /\/module\/mollie\/payment(\?|$)/.test(url)
-      || (/[?&]module=mollie(&|$)/.test(url) && /[?&]controller=payment(&|$)/.test(url));
-
-    if (!isMolliePayment) {
-      return null;
-    }
-
-    var match = /[?&]method=([a-z0-9_]+)/i.exec(url);
-
-    return match ? match[1].toLowerCase() : null;
-  }
-
   function allRequiredConditionsAccepted(checkboxes) {
     for (var i = 0; i < checkboxes.length; i++) {
       if (!checkboxes[i].checked) {
@@ -276,55 +246,6 @@
       });
     }
 
-    // The regular options of wallets that have an express button stay hidden while the component
-    // shows and come back whenever it cannot. The option is found through its submit form: Classic
-    // renders "#pay-with-payment-option-N-form" as a sibling of the row "#payment-option-N-container",
-    // Hummingbird and the one page checkout module nest it inside the row, so the row is resolved
-    // by id first and by ancestry as a fallback.
-    function optionRowForForm(form) {
-      var holder = form.closest('[id^="pay-with-payment-option-"]');
-
-      if (holder) {
-        var row = document.getElementById(holder.id.replace('pay-with-', '').replace(/-form$/, '-container'));
-
-        if (row) {
-          return row;
-        }
-      }
-
-      return form.closest('.payment-option');
-    }
-
-    function coveredOptions() {
-      var methods = coveredMethods(config.buttons);
-
-      if (!methods.length) {
-        return [];
-      }
-
-      return Array.prototype.map.call(document.querySelectorAll('form[action]'), function (form) {
-        if (methods.indexOf(methodFromPaymentAction(form.getAttribute('action'))) === -1) {
-          return null;
-        }
-
-        return optionRowForForm(form);
-      }).filter(Boolean);
-    }
-
-    function hideCoveredOptions() {
-      coveredOptions().forEach(function (option) {
-        option.classList.remove('mollie-express-fallback');
-        option.style.display = 'none';
-      });
-    }
-
-    function revealCoveredOptions() {
-      coveredOptions().forEach(function (option) {
-        option.classList.add('mollie-express-fallback');
-        option.style.display = '';
-      });
-    }
-
     function isOnePageCheckout() {
       return !!document.querySelector('.js-opc-payment-section');
     }
@@ -343,7 +264,6 @@
       if (node && node.hasAttribute(MOUNTED_ATTRIBUTE) && !node.hidden) {
         node.hidden = true;
         state.hiddenWhileBusy = true;
-        revealCoveredOptions();
       }
 
       root.setTimeout(debouncedRecheck, OPC_BUSY_MAX_MS + 50);
@@ -539,7 +459,6 @@
       if (!root.Mollie2 || typeof root.Mollie2.Checkout !== 'function') {
         log('Mollie.js v2 is not loaded');
         state.phase = 'unavailable';
-        revealCoveredOptions();
 
         return;
       }
@@ -575,12 +494,7 @@
 
               if (!hasButtons) {
                 log('no wallet button available in this browser');
-                revealCoveredOptions();
-
-                return;
               }
-
-              hideCoveredOptions();
             });
           });
         });
@@ -602,8 +516,6 @@
         if (node) {
           node.hidden = true;
         }
-
-        revealCoveredOptions();
       }).then(function () {
         state.pending = false;
       });
@@ -644,11 +556,6 @@
       if (state.phase === 'mounted' && state.hiddenWhileBusy) {
         state.hiddenWhileBusy = false;
         node.hidden = false;
-      }
-
-      // The list may have been re-rendered (one page checkout): hide the covered options again.
-      if (state.phase === 'mounted' && !node.hidden) {
-        hideCoveredOptions();
       }
     }
 
@@ -738,14 +645,10 @@
 
     function start() {
       if (!wrapper()) {
-        // No mount point on this theme: the regular options must stay available.
-        revealCoveredOptions();
-
         return;
       }
 
       document.documentElement.style.setProperty('--mc-z-index-modal', POPUP_Z_INDEX);
-      hideCoveredOptions();
       updateTermsLock();
       observe();
       maybeRecreate();
@@ -766,8 +669,6 @@
     shouldRecreate: shouldRecreate,
     isPaymentStepCurrent: isPaymentStepCurrent,
     amountFromCartEvent: amountFromCartEvent,
-    coveredMethods: coveredMethods,
-    methodFromPaymentAction: methodFromPaymentAction,
     allRequiredConditionsAccepted: allRequiredConditionsAccepted,
     init: init
   };
