@@ -162,6 +162,7 @@ use Mollie\Subscription\Utility\ClockInterface;
 use Mollie\Utility\Decoder\DecoderInterface;
 use Mollie\Utility\Decoder\JsonDecoder;
 use Mollie\Utility\NumberIdempotencyProvider;
+use Mollie\Validator\PaymentAmountValidator;
 use Mollie\Validator\PaymentFeeValidator;
 use Mollie\Verification\PaymentType\CanBeRegularPaymentType;
 use Mollie\Verification\PaymentType\PaymentTypeVerificationInterface;
@@ -394,6 +395,8 @@ final class BaseServiceProvider
 
         // Register PaymentFeeValidator - required by PaymentFeeProvider
         $this->addService($container, PaymentFeeValidator::class, PaymentFeeValidator::class);
+
+        $this->addService($container, PaymentAmountValidator::class, PaymentAmountValidator::class);
 
         $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
 

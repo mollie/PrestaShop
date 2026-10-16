@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.6.1
++ Improved payment validation when creating orders
+
 ## Changes in release 6.4.6
 + Apple Pay now works on desktop in Chrome, Edge and Firefox through Apple's QR code flow, and Apple Pay Direct prices shipping per delivery zone
 + Apple Pay Direct now works in test mode, with a warning when the live API key it needs is missing
