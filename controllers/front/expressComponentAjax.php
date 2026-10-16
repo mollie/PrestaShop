@@ -67,6 +67,8 @@ class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieCont
             $this->ajaxResponse(JsonResponse::error(self::ERROR_CART_BUSY, JsonResponse::HTTP_CONFLICT));
         }
 
+        $isAvailable = false;
+
         try {
             $cartCarrierService->restoreCarrierChoice($this->context->cart);
             $isAvailable = $availability->isAvailable($this->context->cart);
