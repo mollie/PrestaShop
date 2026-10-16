@@ -16,8 +16,11 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Language;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
+use Mollie\Handler\Certificate\ApplePayDirectCertificateHandler;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Service\MolCarrierInformationService;
 use Mollie\Service\MultistoreSettingsContextGuard;
+use Mollie\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -288,6 +291,32 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         }
     }
 
+    /**
+     * The Apple Pay express button is on by default, but its domain file is only written when the
+     * Apple Pay card is saved. A merchant who never used Apple Pay Direct would turn the component
+     * on and never see the Apple Pay button.
+     */
+    private function placeApplePayDomainFile(): void
+    {
+        if (!(bool) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY)) {
+            return;
+        }
+
+        try {
+            /** @var ApplePayDirectCertificateHandler $certificateHandler */
+            $certificateHandler = $this->module->getService(ApplePayDirectCertificateHandler::class);
+            $certificateHandler->handle();
+            $certificateHandler->refresh();
+        } catch (\Throwable $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+
+            $logger->warning('Apple Pay domain association file could not be placed when the express component was switched on', [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+        }
+    }
+
     private function ajaxSaveSettings(): void
     {
         try {
@@ -315,7 +344,12 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             }
 
             if (isset($data['expressComponent'])) {
+                $wasExpressEnabled = (bool) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED);
                 $this->configuration->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED, (bool) $data['expressComponent']);
+
+                if (!$wasExpressEnabled && (bool) $data['expressComponent']) {
+                    $this->placeApplePayDomainFile();
+                }
             }
 
             if (isset($data['debugMode'])) {
