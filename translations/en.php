@@ -610,6 +610,7 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a9855e60f28404
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_cbf2b6688253670a9fc7b2add8e09172'] = 'Mollie dashboard';
 $_MODULE['<{mollie}prestashop>mollie_ec566aafc165a4e2e1772d3e5294997d'] = 'Please accept the terms and conditions before paying.';
 $_MODULE['<{mollie}prestashop>mollie_93644d210d883d747765831aeeeee890'] = 'Your cart total changed. Please try the express payment again.';
+$_MODULE['<{mollie}prestashop>mollie_97069da657c0022b78cd998ce438f75d'] = 'The previous payment was not completed. Please choose an express button again.';
 $_MODULE['<{mollie}prestashop>express_component_fcdc4481e052b34e2671b72e1a266720'] = 'Express checkout';
 $_MODULE['<{mollie}prestashop>express_component_cae23b4bd8aa136e2e32811bbd67eac2'] = 'or pay with';
 $_MODULE['<{mollie}prestashop>express_component_5eb799a0b18ea75802f2b3d960d9f577'] = 'Accept the terms of service below to use express checkout.';

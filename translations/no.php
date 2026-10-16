@@ -643,6 +643,7 @@ $_MODULE['<{mollie}prestashop>modal_ship_03a1c16d4054ebcf6ff88e19a612ae80'] = 'A
 $_MODULE['<{mollie}prestashop>modal_cancel_292f3463c1b27f10ce0cca5122e3d732'] = 'Antall som skal kanselleres';
 $_MODULE['<{mollie}prestashop>mollie_ec566aafc165a4e2e1772d3e5294997d'] = 'Please accept the terms and conditions before paying.';
 $_MODULE['<{mollie}prestashop>mollie_93644d210d883d747765831aeeeee890'] = 'Your cart total changed. Please try the express payment again.';
+$_MODULE['<{mollie}prestashop>mollie_97069da657c0022b78cd998ce438f75d'] = 'Den forrige betalingen ble ikke fullført. Velg en ekspressknapp på nytt.';
 $_MODULE['<{mollie}prestashop>express_component_fcdc4481e052b34e2671b72e1a266720'] = 'Express checkout';
 $_MODULE['<{mollie}prestashop>express_component_cae23b4bd8aa136e2e32811bbd67eac2'] = 'or pay with';
 $_MODULE['<{mollie}prestashop>express_component_5eb799a0b18ea75802f2b3d960d9f577'] = 'Godta vilkårene nedenfor for å bruke ekspressutsjekk.';

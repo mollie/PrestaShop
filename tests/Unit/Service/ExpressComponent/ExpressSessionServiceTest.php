@@ -258,6 +258,42 @@ class ExpressSessionServiceTest extends BaseTestCase
         $this->service->getOrCreateSession($this->cart);
     }
 
+    public function testAnAcceptedSubmitMarksThePaymentAsStarted(): void
+    {
+        $this->sessionRepository->method('findLatestByCartId')->willReturn($this->storedSession());
+        $this->sessionRepository->expects($this->once())->method('persist')->with($this->callback(static function (\MolExpressSession $row) {
+            return ExpressSessionService::STATUS_PAYMENT_STARTED === $row->status;
+        }));
+
+        $this->assertTrue($this->service->validateBeforeSubmit($this->cart)->isOk());
+    }
+
+    public function testARetryAfterAStartedPaymentGetsANewSession(): void
+    {
+        $started = $this->storedSession();
+        $started->status = ExpressSessionService::STATUS_PAYMENT_STARTED;
+        $this->sessionRepository->method('findLatestByCartId')->willReturn($started);
+        $this->sessionApi->expects($this->never())->method('get');
+        $this->sessionApi->expects($this->once())->method('create')->willReturn($this->remoteSession('sess_new', 'open'));
+
+        $check = $this->service->validateBeforeSubmit($this->cart);
+
+        $this->assertFalse($check->isOk());
+        $this->assertSame(ExpressSubmitCheck::REASON_PAYMENT_STARTED, $check->getReason());
+        $this->assertSame('token_sess_new', $check->getClientAccessToken());
+    }
+
+    public function testASessionWithAStartedPaymentIsNotReusedOnReload(): void
+    {
+        $started = $this->storedSession();
+        $started->status = ExpressSessionService::STATUS_PAYMENT_STARTED;
+        $this->sessionRepository->method('findLatestByCartId')->willReturn($started);
+        $this->sessionApi->expects($this->never())->method('get');
+        $this->sessionApi->expects($this->once())->method('create')->willReturn($this->remoteSession('sess_new', 'open'));
+
+        $this->assertSame('sess_new', $this->service->getOrCreateSession($this->cart)->getId());
+    }
+
     public function testSubmitIsRejectedWithAFreshTokenWhenTheAmountChanged(): void
     {
         $this->sessionRepository->method('findLatestByCartId')->willReturn($this->storedSession(49.9));

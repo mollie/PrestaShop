@@ -456,6 +456,7 @@ class Mollie extends PaymentModule
                 'i18n' => [
                     'acceptTerms' => $this->l('Please accept the terms and conditions before paying.'),
                     'cartChanged' => $this->l('Your cart total changed. Please try the express payment again.'),
+                    'retryPayment' => $this->l('The previous payment was not completed. Please choose an express button again.'),
                 ],
             ],
         ]);

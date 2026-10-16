@@ -457,7 +457,7 @@
         }
 
         event.reject();
-        showError(config.i18n.cartChanged);
+        showError(result && result.reason === 'payment_started' ? config.i18n.retryPayment : config.i18n.cartChanged);
 
         if (result && result.clientAccessToken) {
           state.mountedAmount = null;

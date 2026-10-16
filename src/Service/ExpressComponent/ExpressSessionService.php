@@ -39,6 +39,8 @@ if (!defined('_PS_VERSION_')) {
 class ExpressSessionService
 {
     const FILE_NAME = 'ExpressSessionService';
+    /** Stored once the submit check let a payment through; Mollie allows one payment per session. */
+    const STATUS_PAYMENT_STARTED = 'payment_started';
 
     /** @var ExpressSessionRequestBuilder */
     private $requestBuilder;
@@ -77,13 +79,16 @@ class ExpressSessionService
         $this->logger = $logger;
     }
 
-    public function getOrCreateSession(\Cart $cart): ExpressSession
+    /**
+     * @param bool $forceNew skip the stored session, e.g. one that already carries a payment
+     */
+    public function getOrCreateSession(\Cart $cart, bool $forceNew = false): ExpressSession
     {
         $amount = $this->getCartAmount($cart);
         $currency = \Tools::strtoupper($this->context->getCurrencyIso());
         $stored = $this->sessionRepository->findLatestByCartId((int) $cart->id);
 
-        if ($stored && $this->isReusable($stored, $amount, $currency, $cart)) {
+        if (!$forceNew && $stored && $this->isReusable($stored, $amount, $currency, $cart)) {
             $session = $this->loadOpenSession($stored);
 
             if ($session) {
@@ -132,7 +137,20 @@ class ExpressSessionService
             return ExpressSubmitCheck::rejected(ExpressSubmitCheck::REASON_CART_OWNER_CHANGED, $session->getClientAccessToken());
         }
 
+        // A shopper still on the checkout after a payment was started on this session abandoned
+        // it (3-D Secure cancelled or failed). Mollie keeps that payment open and refuses another
+        // one on the same session, so the retry gets a new session before any payment exists.
+        if ($stored && self::STATUS_PAYMENT_STARTED === (string) $stored->status) {
+            $session = $this->getOrCreateSession($cart, true);
+
+            return ExpressSubmitCheck::rejected(ExpressSubmitCheck::REASON_PAYMENT_STARTED, $session->getClientAccessToken());
+        }
+
         if ($stored && NumberUtility::isEqual((float) $stored->amount, (float) $this->getCartAmount($cart))) {
+            $stored->status = self::STATUS_PAYMENT_STARTED;
+            $stored->updated_at = $this->clock->getCurrentDate();
+            $this->sessionRepository->persist($stored);
+
             return ExpressSubmitCheck::ok();
         }
 
@@ -148,6 +166,10 @@ class ExpressSessionService
         }
 
         if (!$this->isBuiltForCartOwner($stored, $cart)) {
+            return false;
+        }
+
+        if (self::STATUS_PAYMENT_STARTED === (string) $stored->status) {
             return false;
         }
 
