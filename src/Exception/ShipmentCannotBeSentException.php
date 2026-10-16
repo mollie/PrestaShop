@@ -29,7 +29,7 @@ class ShipmentCannotBeSentException extends Exception
      */
     private $orderReference;
 
-    public function __construct($message, $code, $orderId, Exception $previous = null)
+    public function __construct($message, $code, $orderId, ?Exception $previous = null)
     {
         $this->orderReference = $orderId;
 

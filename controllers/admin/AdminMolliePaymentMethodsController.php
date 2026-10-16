@@ -119,6 +119,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         Media::addJsDef([
             'molliePaymentMethodsAjaxUrl' => $this->context->link->getAdminLink('AdminMolliePaymentMethods'),
             'mollieAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAjax'),
+            'mollieAdvancedSettingsUrl' => $this->context->link->getAdminLink('AdminMollieAdvancedSettings'),
         ]);
 
         Media::addJsDef([
@@ -245,6 +246,18 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'applePayButtonOutlineDesc' => $this->module->l('White with outline', self::FILE_NAME),
                 'applePayButtonWhiteDesc' => $this->module->l('White Apple Pay button', self::FILE_NAME),
 
+                'expressButtonMasterOff' => $this->module->l('The Mollie Express Component is switched off. Turn it on under [1]Advanced Settings[/1] for this button to show.', self::FILE_NAME),
+                'expressButtonCheckout' => $this->module->l('Express button on the checkout payment step', self::FILE_NAME),
+                'expressButtonCheckoutInfo' => $this->module->l('Shows this wallet as a one-tap button at the top of checkout. Turn on the Mollie Express Component under [1]Advanced Settings[/1] first.', self::FILE_NAME),
+                'expressButtonCheckoutGooglePay' => $this->module->l('Google Pay express button on the checkout payment step', self::FILE_NAME),
+                'expressPromoTitle' => $this->module->l('New: Express checkout (beta).', self::FILE_NAME),
+                'expressPromoText' => $this->module->l('One-tap Apple Pay, Google Pay and PayPal at the top of checkout. Ask Mollie to activate it, then switch it on.', self::FILE_NAME),
+                'expressPromoButton' => $this->module->l('Turn it on', self::FILE_NAME),
+                'expressPromoDismiss' => $this->module->l('Dismiss', self::FILE_NAME),
+                'expressBadge' => $this->module->l('New: Express checkout', self::FILE_NAME),
+                'expressBadgeGooglePay' => $this->module->l('New: Google Pay express', self::FILE_NAME),
+                'expressButtonCheckoutGooglePayInfo' => $this->module->l('Shows Google Pay as a one-tap button at the top of checkout. Turn on the Mollie Express Component under [1]Advanced Settings[/1] first. Google Pay runs on card payments, so keep this method enabled.', self::FILE_NAME),
+
                 'selectOption' => $this->module->l('Select option', self::FILE_NAME),
                 'selectOptions' => $this->module->l('Select options', self::FILE_NAME),
                 'itemsSelected' => $this->module->l('%s selected', self::FILE_NAME),
@@ -314,6 +327,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             'updateMethodsOrder',
             'refreshMethods',
             'uploadCustomLogo',
+            'dismissExpressPromo',
         ];
 
         if (in_array($action, $settingsMutatingActions, true) && !$this->multistoreSettingsContextGuard->canEditSettings()) {
@@ -346,6 +360,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 break;
             case 'checkApplePayCertificate':
                 $this->ajaxCheckApplePayCertificate();
+                break;
+            case 'dismissExpressPromo':
+                $this->ajaxDismissExpressPromo();
                 break;
             default:
                 $this->ajaxRender(json_encode([
@@ -476,6 +493,9 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                                 'buttonStyle' => (int) ($this->configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE) ?: 0),
                                 'excludedCarriers' => $this->getExcludedCarriersForResponse(),
                             ] : null,
+                            'expressButton' => isset(Config::EXPRESS_BUTTON_FLAGS[$methodId])
+                                ? (bool) (int) $this->configuration->get(Config::EXPRESS_BUTTON_FLAGS[$methodId])
+                                : null,
                             'bankTransferDueDays' => $methodId === 'banktransfer'
                                 ? (string) ($this->configuration->get(Config::MOLLIE_BANKTRANSFER_DUE_DAYS) ?: Config::MOLLIE_BANKTRANSFER_DUE_DAYS_DEFAULT)
                                 : null,
@@ -513,6 +533,8 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                     'onlyPaymentsMethods' => Config::PAYMENT_API_ONLY_METHODS,
                     'environment' => $environment ? 'live' : 'test',
                     'hasLiveApiKey' => !empty($liveApiKey),
+                    'expressComponentEnabled' => (bool) (int) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED),
+                    'expressPromoDismissed' => (bool) (int) $this->configuration->get(Config::MOLLIE_EXPRESS_PROMO_DISMISSED),
                     'is_connected' => !empty($formattedMethods),
                 ],
             ];
@@ -1132,5 +1154,12 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         }
 
         $this->ajaxRender(json_encode($result));
+    }
+
+    private function ajaxDismissExpressPromo(): void
+    {
+        $this->configuration->updateValue(Config::MOLLIE_EXPRESS_PROMO_DISMISSED, 1);
+
+        $this->ajaxRender(json_encode(['success' => true]));
     }
 }

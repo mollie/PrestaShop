@@ -128,6 +128,22 @@ final class DatabaseTableInstaller implements InstallerInterface
         ';
 
         $sql[] = '
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_express_session` (
+                `id_mol_express_session` INT(64) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                `id_cart` INT(64) NOT NULL,
+                `id_shop` INT(64) NOT NULL,
+                `session_id` VARCHAR(64) NOT NULL,
+                `amount` decimal(20,6) NOT NULL,
+                `currency_iso` VARCHAR(3) NOT NULL,
+                `webhook_token` VARCHAR(32) NOT NULL DEFAULT \'\',
+                `status` VARCHAR(32) NOT NULL DEFAULT \'open\',
+                `created_at` DATETIME NOT NULL,
+                `updated_at` DATETIME NOT NULL,
+                INDEX `idx_mol_express_session_cart` (`id_cart`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;
+        ';
+
+        $sql[] = '
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_pending_order_cart_rule` (
                 `id_mol_pending_order_cart_rule` INT(64) NOT NULL PRIMARY KEY AUTO_INCREMENT,
                 `id_order` VARCHAR(64) NOT NULL,

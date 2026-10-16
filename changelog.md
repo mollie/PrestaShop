@@ -2,6 +2,12 @@
 
 # Changelog #
 
+## Changes in release 6.4.7
++ New: Mollie Express Component, one-tap Apple Pay, Google Pay and PayPal buttons on the checkout payment step, switched on under Advanced Settings with a button switch per wallet on the Payment Methods page (live mode only)
++ Updated the Apple Pay domain verification file, shops that serve the previous Mollie file get the new one when the module is upgraded from the back office or the Apple Pay settings are saved
++ Fixed PHP deprecation notices filling the error log on every page load on PHP 8.4 and 8.5, and made the module ready to load on PHP 9
++ Fixed checkout failing when an automatic free shipping cart rule applies to a paid carrier
+
 ## Changes in release 6.4.6
 + Apple Pay now works on desktop in Chrome, Edge and Firefox through Apple's QR code flow, and Apple Pay Direct prices shipping per delivery zone
 + Apple Pay Direct now works in test mode, with a warning when the live API key it needs is missing

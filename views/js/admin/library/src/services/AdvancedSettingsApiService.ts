@@ -40,6 +40,8 @@ export interface AdvancedSettingsData {
   logoDisplay: string;
   cssPath: string;
   translateMollie: string;
+  expressComponent: boolean;
+  expressLiveReady: boolean;
   statusMappings: StatusMapping[];
   emailStatuses: EmailStatus[];
   options: {
@@ -69,6 +71,7 @@ export interface SaveAdvancedSettingsData {
   logoDisplay?: string;
   cssPath?: string;
   translateMollie?: string;
+  expressComponent?: boolean;
   statusMappings?: StatusMapping[];
   emailStatuses?: EmailStatus[];
 }
