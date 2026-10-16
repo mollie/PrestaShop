@@ -144,12 +144,9 @@ class ExpressComponentAvailabilityService
         // Downloads and other virtual products ship nothing, so such a cart never gets a carrier.
         $isVirtualCart = (bool) $cart->isVirtualCart();
 
-        if (!$isVirtualCart && !(int) $cart->id_carrier) {
-            return $this->unavailable('cart has no carrier');
-        }
-
-        // id_carrier survives an address change; the delivery option does not when no carrier
-        // serves the new address, and the shop cannot turn such a cart into an order.
+        // PrestaShop falls back to its default carrier when the cart holds no choice yet (the page
+        // shows it and the order gets it), so only a cart no carrier can serve is refused. A stale
+        // id_carrier is no proof either: it survives an address no carrier serves.
         if (!$isVirtualCart && !$cart->getDeliveryOption(null, false, false)) {
             return $this->unavailable('no carrier serves the delivery address');
         }

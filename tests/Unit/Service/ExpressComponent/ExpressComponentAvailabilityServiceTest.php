@@ -160,14 +160,13 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
         $this->paymentMethodRepository->method('findOneBy')->willReturn($enabledMethod);
     }
 
-    public function testACartWithoutACarrierIsNotAvailable(): void
+    public function testACartWithoutAStoredCarrierUsesTheShopsDefault(): void
     {
         $this->cart->id_carrier = 0;
+        $this->subscriptionOrderValidator->method('validate')->willReturn(false);
+        $this->offerEveryMethod();
 
-        $service = $this->service();
-
-        $this->assertFalse($service->isAvailable($this->cart));
-        $this->assertSame('cart has no carrier', $service->getUnavailableReason());
+        $this->assertTrue($this->service()->isAvailable($this->cart));
     }
 
     public function testAVirtualCartWithoutACarrierIsAvailable(): void
