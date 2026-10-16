@@ -66,7 +66,9 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
 
         $orderId = (int) Order::getIdByCartId($cartId);
 
-        if ($orderId) {
+        // A status poll must get JSON even once the order exists: the wait template cannot read a
+        // redirect, kept polling and only reached the confirmation page after its last round.
+        if ($orderId && (!Tools::getValue('ajax') || Tools::getValue('failed'))) {
             $this->redirectToOrderConfirmation($cart, $orderId);
         }
 
