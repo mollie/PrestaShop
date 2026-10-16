@@ -43,6 +43,8 @@ class ExpressSession
     private $amountCurrency;
     /** @var string */
     private $createdAt;
+    /** @var string */
+    private $description;
 
     public function __construct(
         string $id,
@@ -50,7 +52,8 @@ class ExpressSession
         string $status,
         string $amountValue,
         string $amountCurrency,
-        string $createdAt
+        string $createdAt,
+        string $description = ''
     ) {
         $this->id = $id;
         $this->clientAccessToken = $clientAccessToken;
@@ -58,6 +61,7 @@ class ExpressSession
         $this->amountValue = $amountValue;
         $this->amountCurrency = $amountCurrency;
         $this->createdAt = $createdAt;
+        $this->description = $description;
     }
 
     public static function fromResource(Session $session): self
@@ -70,7 +74,8 @@ class ExpressSession
             (string) ($session->status ?? ''),
             (string) ($amount->value ?? ''),
             (string) ($amount->currency ?? ''),
-            (string) ($session->createdAt ?? '')
+            (string) ($session->createdAt ?? ''),
+            (string) ($session->description ?? '')
         );
     }
 
@@ -102,6 +107,15 @@ class ExpressSession
     public function getCreatedAt(): string
     {
         return $this->createdAt;
+    }
+
+    /**
+     * The payment created through this session carries it as its description, and so does its
+     * mollie_payments row (order_reference) until an order exists.
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
     }
 
     /**

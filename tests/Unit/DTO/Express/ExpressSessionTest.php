@@ -40,6 +40,17 @@ class ExpressSessionTest extends BaseTestCase
         $this->assertFalse($session->isCompleted());
     }
 
+    public function testItReadsTheDescriptionThePaymentWillCarry(): void
+    {
+        $resource = new Session($this->mock(MollieApiClient::class));
+        $resource->id = 'sess_123';
+        $resource->status = 'open';
+        $resource->description = 'mol_42abc';
+
+        $this->assertSame('mol_42abc', ExpressSession::fromResource($resource)->getDescription());
+        $this->assertSame('', (new ExpressSession('sess_1', '', 'open', '1.00', 'EUR', ''))->getDescription());
+    }
+
     public function testItToleratesAResourceWithoutOptionalFields(): void
     {
         $resource = new Session($this->mock(MollieApiClient::class));

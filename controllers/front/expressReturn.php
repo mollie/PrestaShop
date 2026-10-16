@@ -196,7 +196,10 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
     /**
      * Only a failed attempt made for the current express session counts. The newest
      * mollie_payments row of the cart may be an older attempt by another method, cancelled
-     * before the shopper turned to the express component.
+     * before the shopper turned to the express component. The payment carries the session's
+     * description as its order reference, so the two are matched by that, not by time: the row
+     * is stamped by the database clock and the session by PHP's, and on many shops those differ
+     * by the time zone offset.
      */
     private function hasFailedPaymentWithoutOrder(Cart $cart): bool
     {
@@ -218,11 +221,28 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
 
         $stored = $sessionService->findStoredSession($cart);
 
-        if (!$stored || empty($payment['created_at'])) {
+        if (!$stored || empty($payment['order_reference'])) {
             return false;
         }
 
-        return strtotime((string) $payment['created_at']) >= strtotime((string) $stored->created_at);
+        try {
+            /** @var MollieSessionApiAdapterInterface $sessionApi */
+            $sessionApi = $this->module->getService(MollieSessionApiAdapterInterface::class);
+
+            $description = $sessionApi->get((string) $stored->session_id)->getDescription();
+        } catch (\Throwable $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+
+            $logger->warning(sprintf('%s - Could not read the express session to match a failed payment', self::FILE_NAME), [
+                'cart_id' => (int) $cart->id,
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+
+            return false;
+        }
+
+        return '' !== $description && hash_equals($description, (string) $payment['order_reference']);
     }
 
     private function redirectToOrderConfirmation(Cart $cart, int $orderId): void
