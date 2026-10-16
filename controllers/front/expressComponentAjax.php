@@ -148,7 +148,7 @@ class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieCont
         $sessionService = $this->module->getService(ExpressSessionService::class);
 
         /** @var ExpressSubmitCheck $check */
-        $check = $sessionService->validateBeforeSubmit($this->context->cart);
+        $check = $sessionService->validateBeforeSubmit($this->context->cart, (string) Tools::getValue('sessionId'));
 
         return JsonResponse::success($check->jsonSerialize());
     }

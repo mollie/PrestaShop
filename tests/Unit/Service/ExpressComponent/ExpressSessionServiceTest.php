@@ -294,6 +294,44 @@ class ExpressSessionServiceTest extends BaseTestCase
         $this->assertSame('sess_new', $this->service->getOrCreateSession($this->cart)->getId());
     }
 
+    public function testSubmitIsAcceptedForTheSessionTheBrowserMounted(): void
+    {
+        $this->sessionRepository->method('findLatestByCartId')->willReturn($this->storedSession());
+        $this->sessionApi->expects($this->never())->method('create');
+
+        $this->assertTrue($this->service->validateBeforeSubmit($this->cart, 'sess_stored')->isOk());
+    }
+
+    public function testSubmitFromATabStillShowingAReplacedSessionIsRejected(): void
+    {
+        $this->sessionRepository->method('findLatestByCartId')->willReturn($this->storedSession());
+        $this->sessionApi->method('get')->willReturn($this->remoteSession('sess_stored', 'open'));
+        $this->sessionApi->expects($this->never())->method('create');
+        $writtenStatuses = [];
+        $this->sessionRepository->method('persist')->willReturnCallback(static function (\MolExpressSession $row) use (&$writtenStatuses) {
+            $writtenStatuses[] = $row->status;
+        });
+
+        $check = $this->service->validateBeforeSubmit($this->cart, 'sess_replaced');
+
+        $this->assertNotContains(ExpressSessionService::STATUS_PAYMENT_STARTED, $writtenStatuses);
+        $this->assertFalse($check->isOk());
+        $this->assertSame(ExpressSubmitCheck::REASON_SESSION_CHANGED, $check->getReason());
+        $this->assertSame('token_sess_stored', $check->getClientAccessToken());
+    }
+
+    public function testSubmitIsRejectedWhenTheCartCurrencyChanged(): void
+    {
+        $this->sessionRepository->method('findLatestByCartId')->willReturn($this->storedSession(59.9, '2026-10-05 11:50:00', 'USD'));
+        $this->sessionApi->expects($this->once())->method('create')->willReturn($this->remoteSession('sess_new', 'open'));
+
+        $check = $this->service->validateBeforeSubmit($this->cart, 'sess_stored');
+
+        $this->assertFalse($check->isOk());
+        $this->assertSame(ExpressSubmitCheck::REASON_AMOUNT_CHANGED, $check->getReason());
+        $this->assertSame('token_sess_new', $check->getClientAccessToken());
+    }
+
     public function testSubmitIsRejectedWithAFreshTokenWhenTheAmountChanged(): void
     {
         $this->sessionRepository->method('findLatestByCartId')->willReturn($this->storedSession(49.9));

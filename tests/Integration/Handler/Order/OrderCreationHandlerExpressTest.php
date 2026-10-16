@@ -88,7 +88,7 @@ class OrderCreationHandlerExpressTest extends BaseTestCase
             ->getMock();
     }
 
-    private function payment(string $amount, bool $express): Payment
+    private function payment(string $amount, bool $express, string $currency = ''): Payment
     {
         /** @var Payment|\PHPUnit\Framework\MockObject\MockObject $payment */
         $payment = $this->mock(Payment::class);
@@ -96,7 +96,7 @@ class OrderCreationHandlerExpressTest extends BaseTestCase
         $payment->status = 'paid';
         $payment->method = 'paypal';
         $payment->resource = 'payment';
-        $payment->amount = (object) ['currency' => 'EUR', 'value' => $amount];
+        $payment->amount = (object) ['currency' => $currency ?: $this->cartCurrencyIso(), 'value' => $amount];
         $payment->metadata = (object) array_filter([
             'cart_id' => self::EMPTY_CART_ID,
             Config::EXPRESS_METADATA_FLAG => $express ? 1 : 0,
@@ -121,9 +121,29 @@ class OrderCreationHandlerExpressTest extends BaseTestCase
         $payment = $this->payment('10.00', true);
 
         $payment->expects($this->once())->method('refund')->with([
-            'amount' => ['currency' => 'EUR', 'value' => '10.00'],
+            'amount' => ['currency' => $this->cartCurrencyIso(), 'value' => '10.00'],
         ]);
         $this->paymentMethodRepository->expects($this->once())->method('updatePaymentReason')->with('tr_express', Config::WRONG_AMOUNT_REASON);
+        $this->module->expects($this->never())->method('validateOrder');
+
+        $this->expectExceptionMessage('Wrong cart amount');
+
+        $this->handler->createOrder($payment, self::EMPTY_CART_ID);
+    }
+
+    private function cartCurrencyIso(): string
+    {
+        return (string) (new \Currency((int) (new \Cart(self::EMPTY_CART_ID))->id_currency))->iso_code;
+    }
+
+    public function testAnExpressPaymentInAnotherCurrencyIsRefundedEvenWhenTheNumberMatches()
+    {
+        $otherCurrency = 'JPY' === $this->cartCurrencyIso() ? 'CHF' : 'JPY';
+        $payment = $this->payment('0.00', true, $otherCurrency);
+
+        $payment->expects($this->once())->method('refund')->with([
+            'amount' => ['currency' => $otherCurrency, 'value' => '0.00'],
+        ]);
         $this->module->expects($this->never())->method('validateOrder');
 
         $this->expectExceptionMessage('Wrong cart amount');

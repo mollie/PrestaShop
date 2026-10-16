@@ -166,6 +166,7 @@
       phase: 'idle',
       pending: false,
       mountedAmount: null,
+      mountedSessionId: null,
       failedAmount: null,
       checkout: null,
       component: null,
@@ -387,7 +388,7 @@
         return;
       }
 
-      post(config.validateCartAction, {}).then(function (result) {
+      post(config.validateCartAction, { sessionId: state.mountedSessionId || '' }).then(function (result) {
         if (result && result.ok) {
           event.resolve();
 
@@ -499,6 +500,7 @@
             state.checkout = checkout;
             state.component = component;
             state.mountedAmount = normalizeAmount(session.amount && session.amount.value) || pageAmount();
+            state.mountedSessionId = session.sessionId || null;
             state.phase = 'mounted';
             node.setAttribute(MOUNTED_ATTRIBUTE, '1');
             hideError();

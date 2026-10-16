@@ -118,8 +118,11 @@ class ExpressSessionService
     /**
      * Called from the component's `submit` event, right before Mollie creates the payment: the
      * last moment the shop can refuse a session whose amount no longer matches the cart.
+     *
+     * @param string $mountedSessionId the session the browser is paying through; empty from a
+     *                                 script cached before it sent one
      */
-    public function validateBeforeSubmit(\Cart $cart): ExpressSubmitCheck
+    public function validateBeforeSubmit(\Cart $cart, string $mountedSessionId = ''): ExpressSubmitCheck
     {
         if ($this->orderRepository->getOrderIdByCartId((int) $cart->id) > 0) {
             return ExpressSubmitCheck::rejected(ExpressSubmitCheck::REASON_ORDER_EXISTS);
@@ -146,7 +149,18 @@ class ExpressSessionService
             return ExpressSubmitCheck::rejected(ExpressSubmitCheck::REASON_PAYMENT_STARTED, $session->getClientAccessToken());
         }
 
-        if ($stored && NumberUtility::isEqual((float) $stored->amount, (float) $this->getCartAmount($cart))) {
+        // Another tab replaced the session this page still shows. Every check below reads the stored
+        // row, so passing them would approve a payment on a session the shop no longer tracks,
+        // possibly one whose webhook token the shop now refuses.
+        if ($stored && '' !== $mountedSessionId && !hash_equals((string) $stored->session_id, $mountedSessionId)) {
+            $session = $this->getOrCreateSession($cart);
+
+            return ExpressSubmitCheck::rejected(ExpressSubmitCheck::REASON_SESSION_CHANGED, $session->getClientAccessToken());
+        }
+
+        $isSameCurrency = $stored && \Tools::strtoupper((string) $stored->currency_iso) === \Tools::strtoupper($this->context->getCurrencyIso());
+
+        if ($isSameCurrency && NumberUtility::isEqual((float) $stored->amount, (float) $this->getCartAmount($cart))) {
             $stored->status = self::STATUS_PAYMENT_STARTED;
             $stored->updated_at = $this->clock->getCurrentDate();
             $this->sessionRepository->persist($stored);

@@ -191,9 +191,13 @@ class OrderCreationHandler
             return 0;
         }
 
-        // A session is bound to one total. If the cart moved after the session was created and the
-        // submit check did not catch it, the shopper paid a total this cart no longer has.
-        if ($isExpressPayment && !NumberUtility::isEqual((float) $originalAmount, (float) $apiPayment->amount->value)) {
+        // A session is bound to one total in one currency. If the cart moved after the session was
+        // created and the submit check did not catch it, the shopper paid a total this cart no
+        // longer has. The same number in another currency is not the same total.
+        if ($isExpressPayment && (
+            !NumberUtility::isEqual((float) $originalAmount, (float) $apiPayment->amount->value)
+            || !$this->isCartCurrency($cart, (string) $apiPayment->amount->currency)
+        )) {
             $this->refundWrongAmount($apiPayment, $cartId, (float) $originalAmount);
         }
 
@@ -444,6 +448,13 @@ class OrderCreationHandler
         ]);
 
         throw new \Exception('Wrong cart amount');
+    }
+
+    private function isCartCurrency(Cart $cart, string $currencyIso): bool
+    {
+        $currency = new Currency((int) $cart->id_currency);
+
+        return \Tools::strtoupper((string) $currency->iso_code) === \Tools::strtoupper($currencyIso);
     }
 
     /**
