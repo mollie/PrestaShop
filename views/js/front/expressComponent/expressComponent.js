@@ -135,7 +135,9 @@
     ];
 
     for (var i = 0; i < candidates.length; i++) {
-      var total = candidates[i] && candidates[i].totals && candidates[i].totals.total;
+      var totals = candidates[i] && candidates[i].totals;
+      // `total` follows the customer group's tax display; the session is always tax included.
+      var total = totals && (totals.total_including_tax || totals.total);
 
       if (total) {
         return normalizeAmount(total.amount !== undefined ? total.amount : total.value);

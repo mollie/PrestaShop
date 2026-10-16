@@ -76,6 +76,13 @@ test.describe('express component helpers', () => {
     expect(helpers.amountFromCartEvent(null, { totals: {} })).toBeNull();
   });
 
+  test('amountFromCartEvent uses the tax included total when the shop shows prices tax excluded', () => {
+    const totals = { total: { amount: 100, value: '€100.00' }, total_including_tax: { amount: 121, value: '€121.00' } };
+
+    expect(helpers.amountFromCartEvent({ response: { totals } }, null)).toBe('121.00');
+    expect(helpers.amountFromCartEvent({ resp: { cart: { totals } } }, null)).toBe('121.00');
+  });
+
   test('allRequiredConditionsAccepted needs every box ticked', () => {
     expect(helpers.allRequiredConditionsAccepted([])).toBe(true);
     expect(helpers.allRequiredConditionsAccepted([{ checked: true }, { checked: true }])).toBe(true);
