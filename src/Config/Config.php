@@ -257,7 +257,8 @@ class Config
         'creditcard' => self::MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY,
         'paypal' => self::MOLLIE_EXPRESS_COMPONENT_PAYPAL,
     ];
-    // A Checkout Session lives about 15 minutes at Mollie; reuse one for a little less than that.
+    // Mollie's API reports no session lifetime (its browser endpoint showed 28 days), so a session
+    // is reused for a short while only; the script refreshes its token on the same interval.
     const EXPRESS_SESSION_REUSE_MAX_AGE_SECONDS = 780;
     const EXPRESS_METADATA_FLAG = 'express_component';
     // Compatibility mode exposes Mollie.js v2 as `Mollie2`, next to the v1 `Mollie` the card iframe uses.
