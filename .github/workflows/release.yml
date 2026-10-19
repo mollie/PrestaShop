@@ -2,7 +2,7 @@ name: Release
 
 on:
   release:
-    types: [published, edited, updated]
+    types: [published]
 
 env:
   MODULE_NAME: mollie
@@ -10,6 +10,7 @@ env:
 jobs:
   build_release:
     name: Build and Upload Release
+    if: ${{ !startsWith(github.event.release.body, 'Withdrawn') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
