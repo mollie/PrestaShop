@@ -48,6 +48,7 @@ use Mollie\Config\Config;
 use Mollie\DTO\OrderData;
 use Mollie\DTO\OrderLine;
 use Mollie\DTO\PaymentData;
+use Mollie\DTO\PaymentFeeData;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Factory\ModuleFactory;
@@ -62,8 +63,8 @@ use Mollie\Service\PaymentMethodService;
 use Mollie\Subscription\Handler\SubscriptionCreationHandler;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Utility\ExceptionUtility;
-use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TextGeneratorUtility;
+use Mollie\Validator\PaymentAmountValidator;
 use MolPaymentMethod;
 use Order;
 use PrestaShop\Decimal\Number;
@@ -104,6 +105,8 @@ class OrderCreationHandler
     private $orderRepository;
     /** @var MollieOrderCreationService */
     private $mollieOrderCreationService;
+    /** @var PaymentAmountValidator */
+    private $paymentAmountValidator;
 
     public function __construct(
         ModuleFactory $module,
@@ -116,7 +119,8 @@ class OrderCreationHandler
         PaymentFeeProviderInterface $paymentFeeProvider,
         PrestaLoggerInterface $logger,
         OrderRepositoryInterface $orderRepository,
-        MollieOrderCreationService $mollieOrderCreationService
+        MollieOrderCreationService $mollieOrderCreationService,
+        PaymentAmountValidator $paymentAmountValidator
     ) {
         $this->module = $module->getModule();
         $this->paymentMethodRepository = $paymentMethodRepository;
@@ -129,6 +133,7 @@ class OrderCreationHandler
         $this->logger = $logger;
         $this->orderRepository = $orderRepository;
         $this->mollieOrderCreationService = $mollieOrderCreationService;
+        $this->paymentAmountValidator = $paymentAmountValidator;
     }
 
     /**
@@ -174,6 +179,12 @@ class OrderCreationHandler
 
         $paymentMethodName = $this->paymentMethodService->getPaymentMethodName($paymentMethod, $apiPayment);
 
+        $currency = new Currency($cart->id_currency);
+
+        if (!$this->paymentAmountValidator->validate((float) $originalAmount, (string) $currency->iso_code, $paymentFeeData, $apiPayment)) {
+            return $this->createPaymentErrorOrder($apiPayment, $cart, $paymentMethodName, (float) $originalAmount, $paymentFeeData);
+        }
+
         if (!$paymentFeeData->isActive()) {
             // Paid orders are created in the "awaiting" state and then moved to paid through the
             // status service, so a stock-0 backorder is transformed to "On backorder (paid)".
@@ -200,33 +211,6 @@ class OrderCreationHandler
             $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method ?: $apiPayment->method);
 
             return $orderId;
-        }
-
-        $cartPrice = NumberUtility::plus($originalAmount, $paymentFeeData->getPaymentFeeTaxIncl());
-        $priceDifference = NumberUtility::minus($cartPrice, $apiPayment->amount->value);
-
-        if (abs($priceDifference) !== 0.00) {
-            if ($apiPayment->resource === Config::MOLLIE_API_STATUS_ORDER) {
-                $apiPayment->refundAll();
-            } else {
-                $apiPayment->refund([
-                    'amount' => [
-                        'currency' => (string) $apiPayment->amount->currency,
-                        'value' => $apiPayment->amount->value,
-                    ],
-                ]);
-            }
-
-            $this->paymentMethodRepository->updatePaymentReason($apiPayment->id, Config::WRONG_AMOUNT_REASON);
-
-            $this->logger->error(sprintf('%s - Wrong cart amount while creating order', self::FILE_NAME), [
-                'cart_id' => $cartId,
-                'cart_amount' => $cartPrice,
-                'api_payment_amount' => $apiPayment->amount->value,
-                'price_diff' => $priceDifference,
-            ]);
-
-            throw new \Exception('Wrong cart amount');
         }
 
         /** @var PaymentFeeTextService $paymentFeeTextService */
@@ -262,6 +246,42 @@ class OrderCreationHandler
         );
 
         $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method ?: $apiPayment->method);
+
+        return $orderId;
+    }
+
+    /**
+     * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
+     */
+    private function createPaymentErrorOrder($apiPayment, Cart $cart, string $paymentMethodName, float $cartTotal, PaymentFeeData $paymentFeeData): int
+    {
+        $this->logger->error(sprintf('%s - Wrong cart amount while creating order', self::FILE_NAME), [
+            'transaction_id' => $apiPayment->id,
+            'cart_id' => $cart->id,
+            'cart_amount' => $cartTotal,
+            'payment_fee' => $paymentFeeData->isActive() ? $paymentFeeData->getPaymentFeeTaxIncl() : 0,
+            'api_payment_amount' => $apiPayment->amount->value,
+            'api_payment_currency' => $apiPayment->amount->currency,
+        ]);
+
+        $this->paymentMethodRepository->updatePaymentReason($apiPayment->id, Config::WRONG_AMOUNT_REASON);
+
+        $this->module->validateOrder(
+            (int) $cart->id,
+            (int) Configuration::get('PS_OS_ERROR'),
+            (float) $apiPayment->amount->value,
+            $paymentMethodName,
+            null,
+            ['transaction_id' => $apiPayment->id],
+            null,
+            false,
+            $cart->secure_key
+        );
+
+        $orderId = $this->orderRepository->getOrderIdByCartId((int) $cart->id);
+
+        $order = new Order($orderId);
+        $order->addOrderPayment((float) $apiPayment->amount->value, $paymentMethodName, $apiPayment->id);
 
         return $orderId;
     }
