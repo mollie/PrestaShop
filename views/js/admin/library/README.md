@@ -19,11 +19,14 @@ library/
 │   ├── PaymentMethodsApiService.ts
 │   └── AdvancedSettingsApiService.ts
 ├── src/shared/                        # Shared UI components, hooks, types and styles
-└── dist/assets/                       # Build output, git ignored
+└── dist/assets/                       # JS build output, git ignored
     ├── authorization.js
     ├── mollie-payment-methods.js
     └── mollie-advanced-settings.js
 ```
+
+Stylesheets are written to `views/css/admin/library/` instead, also git ignored. PrestaShop expects
+stylesheets under `/views/css`, so a Vite plugin in `vite.config.ts` moves them out of `dist/`.
 
 ## Commands
 
@@ -38,8 +41,9 @@ From the module root, `make build-react` installs and builds in one step.
 
 - `dist/` is git ignored. The release workflow builds it, and a local environment only picks up a
   source change after `make build-react`.
-- The admin controllers register the bundles from `views/js/admin/library/dist/assets/`, so the
-  built file names are part of the contract and must match the Vite entry names.
+- The admin controllers register the scripts from `views/js/admin/library/dist/assets/` and the
+  stylesheets from `views/css/admin/library/`, so the built file names are part of the contract and
+  must match the Vite entry names.
 - All page styles are scoped to `.mollie-admin-app` by `postcss.config.js` so they cannot leak into
   the PrestaShop back office theme or other modules.
 - `src/` and the build configuration are stripped from the release ZIP; only `dist/` ships.

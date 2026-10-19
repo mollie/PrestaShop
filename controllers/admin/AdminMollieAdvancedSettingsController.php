@@ -64,14 +64,14 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         $version = time();
 
         $this->context->controller->addCSS(
-            $this->module->getPathUri() . 'views/js/admin/library/dist/assets/globals.css?v=' . $version,
+            $this->module->getPathUri() . 'views/css/admin/library/globals.css?v=' . $version,
             'all',
             null,
             false
         );
 
         $this->context->controller->addCSS(
-            $this->module->getPathUri() . 'views/js/admin/library/dist/assets/mollie-advanced-settings.css?v=' . $version,
+            $this->module->getPathUri() . 'views/css/admin/library/mollie-advanced-settings.css?v=' . $version,
             'all',
             null,
             false

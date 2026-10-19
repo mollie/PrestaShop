@@ -63,7 +63,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         $this->context->smarty->assign('mollieAuthJsUrl', $jsUrl);
 
         $this->context->controller->addCSS(
-            $this->module->getPathUri() . 'views/js/admin/library/dist/assets/globals.css?v=' . $this->module->version,
+            $this->module->getPathUri() . 'views/css/admin/library/globals.css?v=' . $this->module->version,
             'all',
             null,
             false

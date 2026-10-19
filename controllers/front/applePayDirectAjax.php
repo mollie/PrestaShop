@@ -310,6 +310,17 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
         }
 
         if (!$response['success']) {
+            $error = $response['errors'][0] ?? [];
+            $logger->error(sprintf('%s - Apple Pay order rejected.', self::FILE_NAME), [
+                'context' => [
+                    'cartId' => $cartId,
+                    'shippingCountry' => $command->getOrder()->getShippingContent()->getCountryCode(),
+                    'code' => $error['code'] ?? 'unknown',
+                    'contactField' => $error['contactField'] ?? null,
+                    'reason' => $error['message'] ?? '',
+                ],
+            ]);
+
             $this->ajaxRender(json_encode($response));
         }
 
