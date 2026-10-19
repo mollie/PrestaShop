@@ -150,6 +150,14 @@ class TransactionService
 
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
 
+        if ($paymentMethod && ($paymentMethod['reason'] ?? null) === Config::WRONG_AMOUNT_REASON) {
+            $this->logger->debug(sprintf('%s - Payment flagged with a wrong amount, webhook ignored', self::FILE_NAME), [
+                'transaction_id' => $apiPayment->id,
+            ]);
+
+            return $apiPayment;
+        }
+
         if (!$paymentMethod) {
             $this->mollieOrderCreationService->createMolliePayment(
                 $apiPayment,
