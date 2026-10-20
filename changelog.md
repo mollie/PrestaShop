@@ -3,6 +3,10 @@
 # Changelog #
 
 ## Changes in release 6.4.7
++ Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
+
+## Changes in release 6.4.6.1
++ Improved payment validation when creating orders
 + Apple Pay Direct session validation failures are now recorded in the Mollie log with the reason, for example a missing or invalid live API key, and the browser only shows the reason when Debug mode is on
 
 ## Changes in release 6.4.6
