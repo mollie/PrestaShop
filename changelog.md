@@ -20,6 +20,8 @@
 + Fixed card payments made with Apple Pay on the Mollie payment page being refunded automatically when Apple Pay and Card have different payment fees
 + The module can now be installed with Composer, and the settings pages explain when module files are missing instead of staying blank
 + Fixed the payment fee not being shown at checkout on the Hummingbird theme and the one page checkout, the fee now appears next to the method and in the order total
++ Added a Mollie payment history timeline to the order page for Payments API orders, including pending, open, expired and failed payments
++ The order page now fetches a Payments API payment from Mollie once instead of up to three times
 
 ## Changes in release 6.4.6
 + Apple Pay Direct now assigns each order to the shopper completing the payment
