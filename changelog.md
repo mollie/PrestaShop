@@ -3,6 +3,7 @@
 # Changelog #
 
 ## Changes in release 6.4.7
++ Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
 + Fixed checkout failing when an automatic free shipping cart rule applies to a paid carrier
 
 ## Changes in release 6.4.6.1
