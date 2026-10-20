@@ -5,6 +5,7 @@
 ## Changes in release 6.4.7
 + Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
 + Fixed switching between Test and Live modes changing the mode even when the stored API key was rejected, which removed Mollie from the checkout while the back office still showed the previous mode
++ Fixed the API Configuration page showing an empty API key field after an upgrade, when a stored key fails the current format check
 
 ## Changes in release 6.4.6.1
 + Improved payment validation when creating orders
