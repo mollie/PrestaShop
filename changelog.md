@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.7
++ Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
+
 ## Changes in release 6.4.6.1
 + Improved payment validation when creating orders
 
@@ -27,7 +30,6 @@
 + Apple Pay Direct refusals are now recorded in the Mollie log with the delivery country and the reason
 + Fixed Apple Pay Direct accepting delivery addresses no carrier can ship to, the payment sheet now rejects the address instead of showing "No carriers" with a 0.00 total
 + Fixed Apple Pay Direct sheet naming the merchant "mollie" instead of the shop name once a shipping method was selected
-+ Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
 
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API

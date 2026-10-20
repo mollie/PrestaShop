@@ -24,7 +24,6 @@ use Mollie\Config\Config;
 use Mollie\Exception\CouldNotInstallModule;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
-use Mollie\Utility\HookRegistrationUtility;
 use Mollie\Utility\MultiLangUtility;
 use Mollie\Utility\TabTranslationUtility;
 use OrderState;
@@ -83,7 +82,11 @@ class Installer implements InstallerInterface
     {
         $errorHandler = ErrorHandler::getInstance();
 
-        foreach (HookRegistrationUtility::installableHooks(self::getHooks(), _PS_VERSION_) as $hook) {
+        foreach (self::getHooks() as $hook) {
+            if (version_compare(_PS_VERSION_, '1.7.0.0', '>=') && 'displayPaymentEU' === $hook) {
+                continue;
+            }
+
             $this->module->registerHook($hook);
         }
 
