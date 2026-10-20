@@ -12,6 +12,7 @@
 
 namespace Mollie\Builder;
 
+use Currency;
 use Mollie\Adapter\ToolsAdapter;
 
 if (!defined('_PS_VERSION_')) {
@@ -245,7 +246,8 @@ class PaymentHistoryBuilder
 
         $currencyObject = null;
         if ($currency !== null) {
-            $currencyObject = (object) ['iso_code' => $currency];
+            $currencyObject = new Currency();
+            $currencyObject->iso_code = (string) $currency;
         }
 
         $formatted = (string) $this->tools->displayPrice((float) $value, $currencyObject);
