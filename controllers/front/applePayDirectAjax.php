@@ -201,7 +201,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
 
         $simplifiedContent = Tools::getValue('simplifiedContact');
         $cartId = (int) Tools::getValue('cartId');
-        $customerId = (int) Tools::getValue('customerId');
+        $customerId = (int) $this->context->customer->id;
         if (Tools::getIsset('products')) {
             $products = Tools::getValue('products');
         } else {
