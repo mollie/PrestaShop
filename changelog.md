@@ -22,6 +22,7 @@
 + Added a Mollie payment history timeline to the order page for Payments API orders, including pending, open, expired and failed payments
 + The order page now fetches a Payments API payment from Mollie once instead of up to three times
 + Fixed checkout failing when an automatic free shipping cart rule applies to a paid carrier
++ Fixed PHP deprecation notices filling the error log on every page load on PHP 8.4 and 8.5, and made the module ready to load on PHP 9
 
 ## Changes in release 6.4.6.1
 + Improved payment validation when creating orders
