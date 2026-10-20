@@ -3,6 +3,10 @@
 # Changelog #
 
 ## Changes in release 6.4.7
++ Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
+
+## Changes in release 6.4.6.1
++ Improved payment validation when creating orders
 + Fixed Mollie payment methods not showing at checkout when the shop language is Norwegian, Chinese, Serbian or another language Mollie does not support
 + Credit card field messages and the Apple Pay Direct button now follow the shop language for Norwegian shops instead of falling back to English
 
