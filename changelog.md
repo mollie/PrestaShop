@@ -4,12 +4,22 @@
 
 ## Changes in release 6.4.7
 + Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
++ Fixed switching between Test and Live modes changing the mode even when the stored API key was rejected, which removed Mollie from the checkout while the back office still showed the previous mode
 
 ## Changes in release 6.4.6.1
 + Improved payment validation when creating orders
++ Fixed the Apple Pay Direct sheet keeping the previous country's VAT and shipping tax after the shopper changed the delivery address to another country
++ The Apple Pay Direct sheet now lists products, discount, VAT, shipping, gift wrapping and payment fee above the total, so the amount no longer looks different from the product page
++ Fixed Apple Pay Direct on the cart page removing the shopper's voucher code and charging the full price
++ Fixed Mollie payment methods not showing at checkout when the shop language is Norwegian, Chinese, Serbian or another language Mollie does not support
++ Credit card field messages and the Apple Pay Direct button now follow the shop language for Norwegian shops instead of falling back to English
++ Apple Pay Direct session validation failures are now recorded in the Mollie log with the reason, for example a missing or invalid live API key, and the browser only shows the reason when Debug mode is on
++ Fixed discounts being added to the order a second time, and voucher stock used twice, when the order confirmation email is sent after payment
++ The Mollie panel on the order page now lists the order's discounts for Payments API orders
 + Fixed card payments made with Apple Pay on the Mollie payment page being refunded automatically when Apple Pay and Card have different payment fees
 
 ## Changes in release 6.4.6
++ Apple Pay Direct now assigns each order to the shopper completing the payment
 + Apple Pay now works on desktop in Chrome, Edge and Firefox through Apple's QR code flow, and Apple Pay Direct prices shipping per delivery zone
 + Apple Pay Direct now works in test mode, with a warning when the live API key it needs is missing
 + Added a Payment overview page for failed, cancelled and expired payments, and customers whose payment fails now return to the shop immediately
@@ -31,6 +41,7 @@
 + Apple Pay Direct refusals are now recorded in the Mollie log with the delivery country and the reason
 + Fixed Apple Pay Direct accepting delivery addresses no carrier can ship to, the payment sheet now rejects the address instead of showing "No carriers" with a 0.00 total
 + Fixed Apple Pay Direct sheet naming the merchant "mollie" instead of the shop name once a shipping method was selected
++ Fixed Apple Pay Direct orders being created without a phone number, the phone from the customer's Apple Wallet is now saved on the delivery and invoice address
 
 ## Changes in release 6.4.5
 + New payment method: Wero, available on the Payments API

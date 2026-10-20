@@ -111,6 +111,14 @@
               <td>{$shipping_amount|escape:'html':'UTF-8'}</td>
             </tr>
             {/if}
+            {if $product@last}
+              {foreach from=$discounts item=discount}
+                <tr>
+                  <td><strong>{l s='Discount' mod='mollie'}</strong> {$discount.name|escape:'html':'UTF-8'}</td>
+                  <td>{$discount.amount|escape:'html':'UTF-8'}</td>
+                </tr>
+              {/foreach}
+            {/if}
           {elseif isset($product->description)}
             <tr>
               <td><strong>{$product->quantity|escape:'html':'UTF-8'}x</strong> {$product->description|escape:'html':'UTF-8'}</td>
