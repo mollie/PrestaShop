@@ -347,14 +347,21 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             return false;
         }
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         try {
             $apiTestFeedbackBuilder = $this->module->getService(ApiTestFeedbackBuilder::class);
             $keyInfo = $apiTestFeedbackBuilder->getApiKeyInfo($apiKey, $isTestKey);
 
-            return !empty($keyInfo['status']) && empty($keyInfo['warning']);
+            $isUsable = !empty($keyInfo['status']) && empty($keyInfo['warning']);
+
+            if (!$isUsable) {
+                $logger->warning(sprintf('%s - The stored %s API key was not accepted', self::FILE_NAME, $isTestKey ? 'test' : 'live'));
+            }
+
+            return $isUsable;
         } catch (Exception $e) {
-            /** @var LoggerInterface $logger */
-            $logger = $this->module->getService(LoggerInterface::class);
             $logger->error(sprintf('%s - Could not validate the stored %s API key', self::FILE_NAME, $isTestKey ? 'test' : 'live'), [
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
@@ -446,19 +453,23 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             $testApiKey = $this->configuration->get(Config::MOLLIE_API_KEY_TEST);
             $liveApiKey = $this->configuration->get(Config::MOLLIE_API_KEY);
 
-            $apiTestFeedbackBuilder = $this->module->getService(ApiTestFeedbackBuilder::class);
+            $apiKey = (string) (($environment === 'live') ? $liveApiKey : $testApiKey);
+            $isConnected = $this->isStoredApiKeyUsable($apiKey, $environment === 'test');
 
-            $isConnected = false;
-            $apiKey = '';
+            // The stored key would take Mollie out of the checkout, so the mode stays as it is.
+            // The form still opens the tab, and Connect saves a working key together with the mode.
+            if ($apiKey && !$isConnected) {
+                $this->ajaxRender(json_encode([
+                    'success' => false,
+                    'code' => 'stored_key_rejected',
+                    'message' => $this->module->l('The stored API key for this mode is not accepted. Enter a new key and connect to switch.', self::FILE_NAME),
+                    'data' => [
+                        'environment' => $environment,
+                        'api_key' => $apiKey,
+                    ],
+                ]));
 
-            if ($environment === 'live' && $liveApiKey) {
-                $keyInfo = $apiTestFeedbackBuilder->getApiKeyInfo($liveApiKey, false);
-                $isConnected = $keyInfo['status'] && !$keyInfo['warning'];
-                $apiKey = $liveApiKey;
-            } elseif ($environment === 'test' && $testApiKey) {
-                $keyInfo = $apiTestFeedbackBuilder->getApiKeyInfo($testApiKey, true);
-                $isConnected = $keyInfo['status'] && !$keyInfo['warning'];
-                $apiKey = $testApiKey;
+                return;
             }
 
             $this->configuration->updateValue(Config::MOLLIE_ENVIRONMENT, $environmentValue);

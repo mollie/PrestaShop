@@ -211,6 +211,18 @@ export default function AuthorizationForm() {
         return true
       }
 
+      // The stored key is not accepted, so the shop keeps its mode. The tab still opens so the
+      // merchant can replace the key, and Connect saves the new key together with the mode.
+      if (switchResponse.code === 'stored_key_rejected') {
+        setMode(pendingMode)
+        setIsConnected(false)
+        setApiKey(switchResponse.data?.api_key || "")
+        setCopyOnNextConnect(shouldCopy)
+        setErrorMessage(switchResponse.message || t('failedToSwitchEnvironment'))
+
+        return false
+      }
+
       console.error('Failed to switch environment:', switchResponse.message)
       setErrorMessage(switchResponse.message || t('failedToSwitchEnvironment'))
     } catch (error) {
