@@ -16,6 +16,7 @@
 + Apple Pay Direct session validation failures are now recorded in the Mollie log with the reason, for example a missing or invalid live API key, and the browser only shows the reason when Debug mode is on
 + Fixed discounts being added to the order a second time, and voucher stock used twice, when the order confirmation email is sent after payment
 + The Mollie panel on the order page now lists the order's discounts for Payments API orders
++ Fixed card payments made with Apple Pay on the Mollie payment page being refunded automatically when Apple Pay and Card have different payment fees
 
 ## Changes in release 6.4.6
 + Apple Pay Direct now assigns each order to the shopper completing the payment
