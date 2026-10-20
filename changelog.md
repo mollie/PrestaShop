@@ -3,6 +3,10 @@
 # Changelog #
 
 ## Changes in release 6.4.7
++ Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
+
+## Changes in release 6.4.6.1
++ Improved payment validation when creating orders
 + Added a Mollie payment history timeline to the order page for Payments API orders, including pending, open, expired and failed payments
 + The order page now fetches a Payments API payment from Mollie once instead of up to three times
 
