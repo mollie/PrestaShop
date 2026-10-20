@@ -148,10 +148,7 @@ class PayByBankCancellationServiceTest extends TestCase
         $order->id = 5;
         $order->module = $orderModule;
 
-        $payment = [
-            'transaction_id' => 'tr_paybybank',
-            'order_id' => (string) $paymentOrderId,
-        ];
+        $payment = ['order_id' => (string) $paymentOrderId];
 
         self::assertSame($expected, $this->createService()->belongsToOrder($payment, $order));
     }

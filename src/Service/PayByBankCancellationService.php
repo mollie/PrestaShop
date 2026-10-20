@@ -121,9 +121,6 @@ class PayByBankCancellationService
     }
 
     /**
-     * A cart can hold an abandoned Pay by Bank attempt and still be paid later by another
-     * payment, so only the order created for this exact transaction may be canceled.
-     *
      * @param array $payment
      * @param Order $order
      *
@@ -136,24 +133,21 @@ class PayByBankCancellationService
 
     /**
      * @param int $cartId
+     * @param Order $order
      * @param string $transactionId
      * @param string $mollieStatus
      *
      * @return void
      */
-    public function cancelOrderAndRestoreCart($cartId, $transactionId, $mollieStatus)
+    public function cancelOrderAndRestoreCart($cartId, Order $order, $transactionId, $mollieStatus)
     {
         $context = Context::getContext();
-        $orderId = (int) Order::getIdByCartId($cartId);
+        $orderId = (int) $order->id;
         $canceledStateId = (int) Configuration::get(Config::MOLLIE_STATUS_CANCELED);
 
-        if ($orderId) {
-            $order = new Order($orderId);
-
-            if ((int) $order->current_state !== $canceledStateId) {
-                $order->setCurrentState($canceledStateId);
-                $this->logger->info(sprintf('Pay by Bank payment canceled, order %d set to canceled', $orderId));
-            }
+        if ((int) $order->current_state !== $canceledStateId) {
+            $order->setCurrentState($canceledStateId);
+            $this->logger->info(sprintf('Pay by Bank payment canceled, order %d set to canceled', $orderId));
         }
 
         $this->paymentMethodRepository->savePaymentStatus(

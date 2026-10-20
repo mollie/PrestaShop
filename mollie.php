@@ -948,7 +948,7 @@ class Mollie extends PaymentModule
             /** @var \Mollie\Service\PayByBankCancellationService $payByBankService */
             $payByBankService = $this->getService(\Mollie\Service\PayByBankCancellationService::class);
 
-            $order = isset($params['order']) ? $params['order'] : null;
+            $order = $params['order'] ?? null;
 
             if (!$order instanceof Order || !$payByBankService->belongsToOrder($payment, $order)) {
                 return '';
@@ -959,6 +959,7 @@ class Mollie extends PaymentModule
             if ($payByBankService->shouldCancelPayment($mollieStatus)) {
                 $payByBankService->cancelOrderAndRestoreCart(
                     (int) $payment['cart_id'],
+                    $order,
                     $payment['transaction_id'],
                     $payByBankService->resolveCancelStatus($mollieStatus)
                 );
