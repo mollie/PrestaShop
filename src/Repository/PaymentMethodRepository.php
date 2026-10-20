@@ -134,6 +134,36 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
     }
 
     /**
+     * Resolve a stored payment by its transaction reference, but only when that payment
+     * belongs to the given cart. The return page uses this so a reference from another
+     * cart cannot be attached to a cart the shopper happens to own.
+     *
+     * @param string $transactionId
+     * @param int $cartId
+     *
+     * @return array|false
+     *
+     * @throws PrestaShopDatabaseException
+     */
+    public function getPaymentByTransactionIdForCart($transactionId, $cartId)
+    {
+        $payment = Db::getInstance()->getRow(
+            sprintf(
+                'SELECT * FROM `%s` WHERE `transaction_id` = \'%s\' AND `cart_id` = %d',
+                _DB_PREFIX_ . 'mollie_payments',
+                pSQL($transactionId),
+                (int) $cartId
+            )
+        );
+
+        if (!$payment) {
+            return false;
+        }
+
+        return $payment;
+    }
+
+    /**
      * @return array|false|mysqli_result|PDOStatement|resource|null
      *
      * @throws PrestaShopDatabaseException

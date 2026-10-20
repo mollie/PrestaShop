@@ -436,8 +436,6 @@ class AdminMollieAuthenticationController extends ModuleAdminController
 
             $environmentValue = ($environment === 'live') ? Config::ENVIRONMENT_LIVE : Config::ENVIRONMENT_TEST;
 
-            $this->configuration->updateValue(Config::MOLLIE_ENVIRONMENT, $environmentValue);
-
             $testApiKey = $this->configuration->get(Config::MOLLIE_API_KEY_TEST);
             $liveApiKey = $this->configuration->get(Config::MOLLIE_API_KEY);
 
@@ -455,6 +453,8 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 $isConnected = $keyInfo['status'] && !$keyInfo['warning'];
                 $apiKey = $testApiKey;
             }
+
+            $this->configuration->updateValue(Config::MOLLIE_ENVIRONMENT, $environmentValue);
 
             $this->ajaxRender(json_encode([
                 'success' => true,
