@@ -3,6 +3,10 @@
 # Changelog #
 
 ## Changes in release 6.4.7
++ Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
+
+## Changes in release 6.4.6.1
++ Improved payment validation when creating orders
 + The Apple Pay Direct sheet now lists products, discount, VAT, shipping, gift wrapping and payment fee above the total, so the amount no longer looks different from the product page
 + Fixed the Apple Pay Direct sheet keeping the previous country's VAT and shipping tax after the shopper changed the delivery address to another country
 + Fixed Apple Pay Direct on the cart page removing the shopper's voucher code and charging the full price
