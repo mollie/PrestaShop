@@ -9,6 +9,8 @@
 ## Changes in release 6.4.6.1
 + Improved payment validation when creating orders
 + Fixed the Apple Pay Direct sheet keeping the previous country's VAT and shipping tax after the shopper changed the delivery address to another country
++ The Apple Pay Direct sheet now lists products, discount, VAT, shipping, gift wrapping and payment fee above the total, so the amount no longer looks different from the product page
++ Fixed Apple Pay Direct on the cart page removing the shopper's voucher code and charging the full price
 
 ## Changes in release 6.4.6
 + Apple Pay Direct now assigns each order to the shopper completing the payment
