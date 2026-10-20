@@ -57,6 +57,7 @@ use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MollieOrderCreationService;
+use Mollie\Service\MollieOrderNumberService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentFeeTextService;
 use Mollie\Service\PaymentMethodService;
@@ -107,6 +108,8 @@ class OrderCreationHandler
     private $mollieOrderCreationService;
     /** @var PaymentAmountValidator */
     private $paymentAmountValidator;
+    /** @var MollieOrderNumberService */
+    private $mollieOrderNumberService;
 
     public function __construct(
         ModuleFactory $module,
@@ -120,7 +123,8 @@ class OrderCreationHandler
         PrestaLoggerInterface $logger,
         OrderRepositoryInterface $orderRepository,
         MollieOrderCreationService $mollieOrderCreationService,
-        PaymentAmountValidator $paymentAmountValidator
+        PaymentAmountValidator $paymentAmountValidator,
+        MollieOrderNumberService $mollieOrderNumberService
     ) {
         $this->module = $module->getModule();
         $this->paymentMethodRepository = $paymentMethodRepository;
@@ -134,6 +138,7 @@ class OrderCreationHandler
         $this->orderRepository = $orderRepository;
         $this->mollieOrderCreationService = $mollieOrderCreationService;
         $this->paymentAmountValidator = $paymentAmountValidator;
+        $this->mollieOrderNumberService = $mollieOrderNumberService;
     }
 
     /**
@@ -417,13 +422,7 @@ class OrderCreationHandler
             $apiPayment->update();
         } else {
             $orderNumber = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
-            $apiPayment->orderNumber = $orderNumber;
-            $payments = $apiPayment->payments();
-            foreach ($payments as $payment) {
-                $payment->description = 'Order ' . $orderNumber;
-                $payment->update();
-            }
-            $apiPayment->update();
+            $this->mollieOrderNumberService->assign($this->module->getApiClient(), $apiPayment, $orderNumber);
         }
 
         $this->paymentMethodRepository->savePaymentStatus(
