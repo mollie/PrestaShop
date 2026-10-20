@@ -361,7 +361,7 @@ class TransactionService
         return $apiPayment;
     }
 
-    public function updateOrderTransaction($transactionId, $orderReference)
+    public function updateOrderTransaction($transactionId, Order $order)
     {
         $transactionInfos = [];
         $isOrder = TransactionUtility::isOrderTransaction($transactionId);
@@ -383,7 +383,7 @@ class TransactionService
             $transactionInfos = $this->getPaymentTransactionInfo($transaction, $transactionInfos);
         }
 
-        $this->updateOrderPayments($transactionInfos, $orderReference);
+        $this->updateOrderPayments($transactionInfos, $order);
     }
 
     /**
@@ -398,7 +398,7 @@ class TransactionService
         $paymentMethod = $this->paymentMethodService->getPaymentMethod($transaction);
         $order = new Order($orderId);
         if (!$order->getOrderPayments()) {
-            $this->updateOrderTransaction($transaction->id, $order->reference);
+            $this->updateOrderTransaction($transaction->id, $order);
         } else {
             /** @var OrderPayment $orderPayment */
             foreach ($order->getOrderPayments() as $orderPayment) {
@@ -570,23 +570,27 @@ class TransactionService
     }
 
     /**
-     * @param string $orderReference
-     *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    private function updateOrderPayments(array $transactionInfos, $orderReference)
+    private function updateOrderPayments(array $transactionInfos, Order $order)
     {
         foreach ($transactionInfos as $transactionInfo) {
-            $orderPayment = new OrderPayment();
-            $orderPayment->order_reference = $orderReference;
-            $orderPayment->amount = $transactionInfo['amount'];
-            $orderPayment->payment_method = $transactionInfo['paymentName'];
-            $orderPayment->transaction_id = $transactionInfo['transactionId'];
-            $orderPayment->id_currency = Currency::getIdByIsoCode($transactionInfo['currency']);
-
-            $orderPayment->add();
+            self::buildOrderPayment($transactionInfo, $order)->add();
         }
+    }
+
+    public static function buildOrderPayment(array $transactionInfo, Order $order): OrderPayment
+    {
+        $orderPayment = new OrderPayment();
+        $orderPayment->order_reference = $order->reference;
+        $orderPayment->amount = $transactionInfo['amount'];
+        $orderPayment->payment_method = $transactionInfo['paymentName'];
+        $orderPayment->transaction_id = $transactionInfo['transactionId'];
+        $orderPayment->id_currency = Currency::getIdByIsoCode($transactionInfo['currency']);
+        $orderPayment->conversion_rate = $order->conversion_rate;
+
+        return $orderPayment;
     }
 
     private function updateOrderDescription($apiPayment, int $orderId)
