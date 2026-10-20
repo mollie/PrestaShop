@@ -1,10 +1,34 @@
 import { defineConfig } from 'vite'
+import type { Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
+import fs from 'fs'
 import path from 'path'
+
+// PrestaShop expects stylesheets under /views/css. Vite emits them beside the JS
+// entries, so move them out of the bundle and into their own directory there.
+const stylesheetOutputDir = path.resolve(__dirname, '../../../css/admin/library')
+
+function emitStylesheetsToViewsCss(): Plugin {
+  return {
+    name: 'mollie-stylesheets-to-views-css',
+    generateBundle(_options, bundle) {
+      for (const [fileName, output] of Object.entries(bundle)) {
+        if (output.type !== 'asset' || !fileName.endsWith('.css')) {
+          continue
+        }
+
+        fs.mkdirSync(stylesheetOutputDir, { recursive: true })
+        fs.writeFileSync(path.join(stylesheetOutputDir, path.basename(fileName)), output.source)
+
+        delete bundle[fileName]
+      }
+    },
+  }
+}
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), emitStylesheetsToViewsCss()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),

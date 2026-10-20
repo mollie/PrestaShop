@@ -54,6 +54,9 @@ function initApplePayDirect() {
         var supportedApplePaySessionVersion = 3;
         const session = new ApplePaySession(supportedApplePaySessionVersion, createRequest(countryCode, currencyCode, totalLabel, cartSubTotal))
         session.begin()
+        session.oncancel = () => {
+            restoreCartTotals()
+        }
         session.onvalidatemerchant = (applePayValidateMerchantEvent) => {
             jQuery.ajax({
                 url: ajaxUrl,
@@ -99,14 +102,11 @@ function initApplePayDirect() {
                             window.location.href = redirectionUrl
                         }, 500)
                     } else {
-                        result.errors = createAppleErrors(result.errors)
-                        session.completePayment(result)
+                        session.completePayment(buildPaymentFailure(result))
                     }
                 },
                 error: (jqXHR) => {
-                    let result = JSON.parse(jqXHR.responseText)
-                    result.errors = createAppleErrors(result.errors)
-                    session.completePayment(result)
+                    session.completePayment(buildPaymentFailure(parseJsonSafely(jqXHR.responseText)))
                 },
             })
         }
@@ -126,11 +126,15 @@ function initApplePayDirect() {
                     if (response.success === false) {
                         response.errors = createAppleErrors(response.errors)
                     }
+                    showCartTotals(
+                        response.data && response.data.amount,
+                        event.shippingMethod && event.shippingMethod.amount
+                    )
                     session.completeShippingMethodSelection(
                         ApplePaySession.STATUS_SUCCESS,
                         {
                             'amount': response.data.amount,
-                            'label': ' mollie'
+                            'label': totalLabel
                         },
                         []
                     )
@@ -157,33 +161,41 @@ function initApplePayDirect() {
                 success: (applePayShippingContactUpdate) => {
                     applePayShippingContactUpdate = JSON.parse(applePayShippingContactUpdate)
                     let response = applePayShippingContactUpdate.data
-                    if (applePayShippingContactUpdate.success === true) {
-                        if (response.totals.length > 0) {
-                            var firstTotal = response.totals[0];
-                            session.completeShippingContactSelection(
-                                ApplePaySession.STATUS_SUCCESS,
-                                response.shipping_methods,
-                                {
-                                    'label': firstTotal.label,
-                                    'amount': firstTotal.amount
-                                },
-                                [
-                                    response.paymentFee
-                                ]
-                            );
-
-                            return;
-                        }
-
+                    if (applePayShippingContactUpdate.success === true && response.totals.length > 0) {
+                        var firstTotal = response.totals[0];
+                        var firstShippingMethod = response.shipping_methods[0]
+                        showCartTotals(
+                            firstTotal.amount,
+                            firstShippingMethod && firstShippingMethod.amount
+                        )
                         session.completeShippingContactSelection(
-                            ApplePaySession.STATUS_FAILURE,
-                            [],
+                            ApplePaySession.STATUS_SUCCESS,
+                            response.shipping_methods,
                             {
-                                label: "No carriers", amount: "0"
+                                'label': totalLabel,
+                                'amount': firstTotal.amount
                             },
-                            []
+                            [
+                                response.paymentFee
+                            ]
                         );
+
+                        return;
                     }
+
+                    if (!response || !response.fallbackTotal) {
+                        console.warn(applePayShippingContactUpdate)
+                        session.abort()
+
+                        return;
+                    }
+
+                    session.completeShippingContactSelection({
+                        errors: createAppleErrors(applePayShippingContactUpdate.errors || []),
+                        newShippingMethods: [],
+                        newTotal: response.fallbackTotal,
+                        newLineItems: []
+                    });
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
                     console.warn(textStatus, errorThrown)
@@ -232,6 +244,61 @@ function whenApplePaySessionAvailable(onAvailable) {
 
 function canUseApplePaySession() {
     return !!(window.ApplePaySession && window.ApplePaySession.canMakePayments())
+}
+
+var CART_SUMMARY_SELECTORS = {
+    total: '.cart-summary-line.cart-total .value',
+    shipping: '#cart-subtotal-shipping .value',
+}
+
+/**
+ * Keeps the cart page's "Shipping" and "Total (tax incl.)" lines in step with the Apple Pay
+ * sheet, which re-totals every time the shopper picks a different delivery option. The page
+ * itself is not re-rendered while the sheet is open, so without this both lines keep showing
+ * the figures from page load.
+ */
+function showCartTotals(total, shipping) {
+    overrideCartSummaryLine(CART_SUMMARY_SELECTORS.total, total)
+    overrideCartSummaryLine(CART_SUMMARY_SELECTORS.shipping, shipping)
+}
+
+function overrideCartSummaryLine(selector, amount) {
+    var target = document.querySelector(selector)
+    var value = parseFloat(amount)
+
+    if (!target || isNaN(value)) {
+        return
+    }
+
+    if (typeof target.dataset.mollieOriginalValue === 'undefined') {
+        target.dataset.mollieOriginalValue = target.textContent
+    }
+
+    target.textContent = formatCartPrice(value)
+}
+
+function restoreCartTotals() {
+    Object.keys(CART_SUMMARY_SELECTORS).forEach(function (line) {
+        var target = document.querySelector(CART_SUMMARY_SELECTORS[line])
+
+        if (!target || typeof target.dataset.mollieOriginalValue === 'undefined') {
+            return
+        }
+
+        target.textContent = target.dataset.mollieOriginalValue
+        delete target.dataset.mollieOriginalValue
+    })
+}
+
+function formatCartPrice(amount) {
+    try {
+        return new Intl.NumberFormat(prestashop.language.locale, {
+            style: 'currency',
+            currency: prestashop.currency.iso_code,
+        }).format(amount)
+    } catch (e) {
+        return amount.toFixed(2)
+    }
 }
 
 function getApplePayButtonStyle() {
@@ -284,6 +351,23 @@ function createAppleErrors(errors) {
     }
 
     return errorList
+}
+
+// Apple only accepts a numeric status here. The server sends the string 'STATUS_FAILURE', which
+// WebKit reads as STATUS_SUCCESS, so the sheet closed as if paid and the error list was dropped.
+function buildPaymentFailure(result) {
+    return {
+        status: ApplePaySession.STATUS_FAILURE,
+        errors: createAppleErrors((result && result.errors) || [])
+    }
+}
+
+function parseJsonSafely(payload) {
+    try {
+        return JSON.parse(payload)
+    } catch (e) {
+        return {}
+    }
 }
 
 function getUrlParam(sParam, string) {
