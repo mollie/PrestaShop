@@ -1082,12 +1082,14 @@ class Mollie extends PaymentModule
     }
 
     /**
+     * @param array{order?: Order} $params
+     *
      * @return string
      *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public function hookDisplayOrderConfirmation()
+    public function hookDisplayOrderConfirmation(array $params = [])
     {
         /** @var PaymentMethodRepositoryInterface $paymentMethodRepo */
         $paymentMethodRepo = $this->getService(PaymentMethodRepositoryInterface::class);
@@ -1103,11 +1105,19 @@ class Mollie extends PaymentModule
         ) {
             /** @var \Mollie\Service\PayByBankCancellationService $payByBankService */
             $payByBankService = $this->getService(\Mollie\Service\PayByBankCancellationService::class);
+
+            $order = $params['order'] ?? null;
+
+            if (!$order instanceof Order || !$payByBankService->belongsToOrder($payment, $order)) {
+                return '';
+            }
+
             $mollieStatus = $payByBankService->getActualMollieStatus($payment['transaction_id']);
 
             if ($payByBankService->shouldCancelPayment($mollieStatus)) {
                 $payByBankService->cancelOrderAndRestoreCart(
                     (int) $payment['cart_id'],
+                    $order,
                     $payment['transaction_id'],
                     $payByBankService->resolveCancelStatus($mollieStatus)
                 );
