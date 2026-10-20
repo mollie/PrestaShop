@@ -3,6 +3,10 @@
 # Changelog #
 
 ## Changes in release 6.4.7
++ Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
+
+## Changes in release 6.4.6.1
++ Improved payment validation when creating orders
 + Fixed the payment fee not being shown at checkout on the Hummingbird theme and the one page checkout, the fee now appears next to the method and in the order total
 
 ## Changes in release 6.4.6
