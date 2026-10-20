@@ -23,26 +23,26 @@ interface ReadOnlyRepositoryInterface
     /**
      * @throws \PrestaShopException
      */
-    public function findAll(int $langId = null): \PrestaShopCollection;
+    public function findAll(?int $langId = null): \PrestaShopCollection;
 
     /**
      * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
      *
      * @throws \PrestaShopException
      */
-    public function findOneBy(array $keyValueCriteria, int $langId = null): ?\ObjectModel;
+    public function findOneBy(array $keyValueCriteria, ?int $langId = null): ?\ObjectModel;
 
     /**
      * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
      *
      * @throws \PrestaShopException
      */
-    public function findAllBy(array $keyValueCriteria, int $langId = null): ?\PrestaShopCollection;
+    public function findAllBy(array $keyValueCriteria, ?int $langId = null): ?\PrestaShopCollection;
 
     /**
      * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
      *
      * @throws MollieException
      */
-    public function findOrFail(array $keyValueCriteria, int $langId = null): \ObjectModel;
+    public function findOrFail(array $keyValueCriteria, ?int $langId = null): \ObjectModel;
 }
