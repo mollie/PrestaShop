@@ -114,7 +114,7 @@ tunnel:
 e2e-tests-locally:
 	npm ci
 	npx playwright install chromium
-	cd tests/e2e && npx playwright test --project=admin --project=webhook --project=mobile
+	cd tests/e2e && npx playwright test --project=unit --project=admin --project=webhook --project=mobile
 	# Its own invocation with --workers=1: these rewrite global config and the
 	# whole method set, so they must not overlap each other or the projects above.
 	cd tests/e2e && npx playwright test --project=config --workers=1

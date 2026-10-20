@@ -1,0 +1,63 @@
+/**
+ * Mollie       https://www.mollie.nl
+ *
+ * @author      Mollie B.V. <info@mollie.nl>
+ * @copyright   Mollie B.V.
+ * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
+ *
+ * @see        https://github.com/mollie/PrestaShop
+ * @codingStandardsIgnoreStart
+ */
+
+.mollie-express-component {
+  margin: 0 0 1.25rem;
+}
+
+.mollie-express-component__title {
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+}
+
+.mollie-express-component__mount {
+  width: 100%;
+  min-height: 48px;
+}
+
+.mollie-express-component__terms {
+  margin: 0 0 0.5rem;
+  color: #7a7a7a;
+  font-size: 0.875rem;
+}
+
+.mollie-express-component__error {
+  margin: 0.5rem 0 0;
+  color: #a94442;
+}
+
+.mollie-express-component__divider {
+  position: relative;
+  margin: 1rem 0 0;
+  text-align: center;
+  color: #7a7a7a;
+  font-size: 0.875rem;
+}
+
+.mollie-express-component__divider::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 1px solid #e5e5e5;
+}
+
+.mollie-express-component__divider span {
+  position: relative;
+  padding: 0 0.75rem;
+  background: #fff;
+}
+
+/* Hummingbird wraps step bodies in .step__content with its own padding. */
+.step__content .mollie-express-component {
+  margin-top: 0.5rem;
+}

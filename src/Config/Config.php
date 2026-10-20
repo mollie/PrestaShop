@@ -246,6 +246,24 @@ class Config
     const MOLLIE_APPLE_PAY_DIRECT_STYLE = 'MOLLIE_APPLE_PAY_DIRECT_STYLE';
     const MOLLIE_APPLE_PAY_DIRECT_EXCLUDED_CARRIERS = 'MOLLIE_APPLE_PAY_DIRECT_EXCLUDED_CARRIERS';
 
+    const MOLLIE_EXPRESS_COMPONENT_ENABLED = 'MOLLIE_EXPRESS_COMPONENT_ENABLED';
+    const MOLLIE_EXPRESS_COMPONENT_APPLEPAY = 'MOLLIE_EXPRESS_COMPONENT_APPLEPAY';
+    const MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY = 'MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY';
+    const MOLLIE_EXPRESS_COMPONENT_PAYPAL = 'MOLLIE_EXPRESS_COMPONENT_PAYPAL';
+    const MOLLIE_EXPRESS_PROMO_DISMISSED = 'MOLLIE_EXPRESS_PROMO_DISMISSED';
+    /** Mollie method id => the express button flag that method's settings card controls (Google Pay rides on cards). */
+    const EXPRESS_BUTTON_FLAGS = [
+        'applepay' => self::MOLLIE_EXPRESS_COMPONENT_APPLEPAY,
+        'creditcard' => self::MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY,
+        'paypal' => self::MOLLIE_EXPRESS_COMPONENT_PAYPAL,
+    ];
+    // Mollie's API reports no session lifetime (its browser endpoint showed 28 days), so a session
+    // is reused for a short while only; the script refreshes its token on the same interval.
+    const EXPRESS_SESSION_REUSE_MAX_AGE_SECONDS = 780;
+    const EXPRESS_METADATA_FLAG = 'express_component';
+    // Compatibility mode exposes Mollie.js v2 as `Mollie2`, next to the v1 `Mollie` the card iframe uses.
+    const MOLLIE_JS_V2_URL = 'https://js.mollie.com/v2/mollie.js?compatible';
+
     const MOLLIE_CARRIER_URL_SOURCE = 'MOLLIE_CARRIER_URL_SOURCE_';
     const MOLLIE_CARRIER_CUSTOM_URL = 'MOLLIE_CARRIER_CUSTOM_URL_';
 

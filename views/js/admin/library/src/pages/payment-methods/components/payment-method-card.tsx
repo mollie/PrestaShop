@@ -4,7 +4,7 @@ import type React from "react"
 
 import { Card } from "../../../shared/components/ui/card"
 import { Badge } from "../../../shared/components/ui/badge"
-import { ChevronDown, ChevronUp, GripVertical, CreditCard } from "lucide-react"
+import { ChevronDown, ChevronUp, GripVertical, CreditCard, Sparkles } from "lucide-react"
 import { cn } from "../../../shared/lib/utils"
 import { PaymentMethodSettings } from "./payment-method-settings"
 import type { PaymentMethod, Country, Carrier, CustomerGroup, Language } from "../../../services/PaymentMethodsApiService"
@@ -16,6 +16,7 @@ interface PaymentMethodCardProps {
   countries: Country[]
   carriers: Carrier[]
   showApplePayLiveKeyWarning?: boolean
+  expressComponentEnabled?: boolean
   customerGroups: CustomerGroup[]
   languages: Language[]
   onlyPaymentsMethods: string[]
@@ -39,6 +40,7 @@ export function PaymentMethodCard({
   countries,
   carriers,
   showApplePayLiveKeyWarning = false,
+  expressComponentEnabled = false,
   customerGroups,
   languages,
   onlyPaymentsMethods,
@@ -56,6 +58,9 @@ export function PaymentMethodCard({
   isDragEnabled = true,
 }: PaymentMethodCardProps) {
   const { t } = usePaymentMethodsTranslations()
+  const showExpressBadge = method.status === "active"
+    && typeof method.settings.expressButton === "boolean"
+    && !(expressComponentEnabled && method.settings.expressButton)
   return (
     <Card
       data-testid={`payment-method-${method.id}`}
@@ -135,6 +140,16 @@ export function PaymentMethodCard({
                   {t('notYetSupported')}
                 </Badge>
               )}
+              {showExpressBadge && (
+                <Badge
+                  data-testid={`payment-method-${method.id}-express-badge`}
+                  variant="secondary"
+                  className="text-xs gap-1 bg-blue-50 text-blue-800 border border-blue-200 hover:bg-blue-50"
+                >
+                  <Sparkles className="h-3 w-3" aria-hidden="true" />
+                  {method.id === "creditcard" ? t('expressBadgeGooglePay') : t('expressBadge')}
+                </Badge>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -201,6 +216,7 @@ export function PaymentMethodCard({
                 countries={countries}
                 carriers={carriers}
                 showApplePayLiveKeyWarning={showApplePayLiveKeyWarning}
+                expressComponentEnabled={expressComponentEnabled}
                 customerGroups={customerGroups}
                 languages={languages}
                 onlyPaymentsMethods={onlyPaymentsMethods}
