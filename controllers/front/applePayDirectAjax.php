@@ -20,6 +20,7 @@ use Mollie\Application\CommandHandler\UpdateApplePayShippingContactHandler;
 use Mollie\Application\CommandHandler\UpdateApplePayShippingMethodHandler;
 use Mollie\Builder\ApplePayDirect\ApplePayOrderBuilder;
 use Mollie\Builder\ApplePayDirect\ApplePayProductBuilder;
+use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
@@ -123,7 +124,24 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
-            $this->ajaxRender('Unable to get apple pay session');
+            $this->ajaxRender(json_encode([
+                'success' => false,
+                'error' => 'Unable to get apple pay session',
+            ]));
+        }
+
+        if (is_array($response) && empty($response['success'])) {
+            $logger->error(sprintf('%s - Apple Pay merchant validation failed.', self::FILE_NAME), [
+                'context' => [
+                    'cartId' => $cartId,
+                    'validationUrl' => $validationUrl,
+                    'reason' => $response['error'] ?? '',
+                ],
+            ]);
+
+            if (!Configuration::get(Config::MOLLIE_DISPLAY_ERRORS)) {
+                $response['error'] = 'Apple Pay session validation failed';
+            }
         }
 
         // Bind the authorized cart id (session cart or freshly minted cart) to this session

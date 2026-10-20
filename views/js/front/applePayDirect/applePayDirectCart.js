@@ -67,11 +67,11 @@ function initApplePayDirect() {
                     cartId: cartId
                 },
                 success: (merchantSession) => {
-                    merchantSession = JSON.parse(merchantSession);
+                    merchantSession = parseJsonSafely(merchantSession);
                     if (merchantSession.success === true) {
                         session.completeMerchantValidation(JSON.parse(merchantSession.data))
                     } else {
-                        console.warn(merchantSession.data)
+                        console.warn(merchantSession.error)
                         session.abort()
                     }
                 },
