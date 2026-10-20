@@ -47,5 +47,5 @@ interface PaymentMethodRestrictionValidationInterface
     /**
      * @return bool
      */
-    public function isPaymentMethodValid(MolPaymentMethod $paymentMethod);
+    public function isPaymentMethodValid(MolPaymentMethod $paymentMethod, array $skippedValidators = []);
 }
