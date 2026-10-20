@@ -67,11 +67,11 @@ function initApplePayDirect() {
                     cartId: cartId
                 },
                 success: (merchantSession) => {
-                    merchantSession = JSON.parse(merchantSession);
+                    merchantSession = parseJsonSafely(merchantSession);
                     if (merchantSession.success === true) {
                         session.completeMerchantValidation(JSON.parse(merchantSession.data))
                     } else {
-                        console.warn(merchantSession.data)
+                        console.warn(merchantSession.error)
                         session.abort()
                     }
                 },
@@ -136,7 +136,7 @@ function initApplePayDirect() {
                             'amount': response.data.amount,
                             'label': totalLabel
                         },
-                        []
+                        response.data.lineItems || []
                     )
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
@@ -175,9 +175,7 @@ function initApplePayDirect() {
                                 'label': totalLabel,
                                 'amount': firstTotal.amount
                             },
-                            [
-                                response.paymentFee
-                            ]
+                            firstTotal.lineItems || []
                         );
 
                         return;
@@ -329,7 +327,8 @@ function createRequest(countryCode, currencyCode, totalLabel, subtotal) {
         requiredShippingContactFields: [
             'name',
             'postalAddress',
-            'email'
+            'email',
+            'phone'
         ],
         requiredBillingAddressFields: [
             'countryCode',

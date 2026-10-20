@@ -120,11 +120,6 @@ class Context
         return (int) PrestashopContext::getContext()->cart->id_address_invoice;
     }
 
-    public function getLanguageLocale(): string
-    {
-        return (string) PrestashopContext::getContext()->language->locale;
-    }
-
     public function getCountryId(): int
     {
         return (int) PrestashopContext::getContext()->country->id;
