@@ -329,7 +329,8 @@ function createRequest(countryCode, currencyCode, totalLabel, subtotal) {
         requiredShippingContactFields: [
             'name',
             'postalAddress',
-            'email'
+            'email',
+            'phone'
         ],
         requiredBillingAddressFields: [
             'countryCode',
