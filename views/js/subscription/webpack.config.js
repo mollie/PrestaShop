@@ -21,7 +21,7 @@ Encore
     .cleanupOutputBeforeBuild()
     .enableSourceMaps(!Encore.isProduction())
     .enableVersioning(Encore.isProduction())
-    .addEntry('subscription', './js/subscription.js')
+    .addEntry('subscription', './subscription.js')
     .enableSassLoader()
     .configureBabel((babelConfig) => {})
 Encore.disableSingleRuntimeChunk();
