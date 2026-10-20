@@ -31,13 +31,13 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
     }
 
     /** {@inheritdoc} */
-    public function findAll(int $langId = null): \PrestaShopCollection
+    public function findAll(?int $langId = null): \PrestaShopCollection
     {
         return new \PrestaShopCollection($this->fullyClassifiedClassName, $langId);
     }
 
     /** {@inheritdoc} */
-    public function findOneBy(array $keyValueCriteria, int $langId = null): ?\ObjectModel
+    public function findOneBy(array $keyValueCriteria, ?int $langId = null): ?\ObjectModel
     {
         $psCollection = new \PrestaShopCollection($this->fullyClassifiedClassName, $langId);
 
@@ -52,7 +52,7 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
     }
 
     /** {@inheritdoc} */
-    public function findAllBy(array $keyValueCriteria, int $langId = null): ?\PrestaShopCollection
+    public function findAllBy(array $keyValueCriteria, ?int $langId = null): ?\PrestaShopCollection
     {
         $psCollection = new \PrestaShopCollection($this->fullyClassifiedClassName, $langId);
 
@@ -67,7 +67,7 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
     }
 
     /** {@inheritdoc} */
-    public function findOrFail(array $keyValueCriteria, int $langId = null): \ObjectModel
+    public function findOrFail(array $keyValueCriteria, ?int $langId = null): \ObjectModel
     {
         try {
             $value = $this->findOneBy($keyValueCriteria, $langId);

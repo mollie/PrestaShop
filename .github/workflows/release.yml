@@ -36,7 +36,7 @@ jobs:
           cd ../../../..
 
           # Remove development and CI files
-          rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile
+          rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile patches
           rm -rf .docker docker-compose*.yml .gitignore bin codeception.yml
           rm -rf package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php
           rm -f views/js/subscription/webpack.config.js views/js/subscription/package.json views/js/subscription/package-lock.json
@@ -56,8 +56,9 @@ jobs:
           sed -i "/^SEGMENT_API_KEY=/d" .env
           echo "SEGMENT_API_KEY='${{ secrets.SEGMENT_API_KEY }}'" >> .env
 
-          # PrestaShop security requirement: every shipped directory must contain an index.php
-          find . -type d ! -path './.git' ! -path './.git/*' | while read -r dir; do [ -f "$dir/index.php" ] || cp index.php "$dir/index.php"; done
+          # PrestaShop security requirement: every shipped directory must contain an index.php, except src/Entity:
+          # PrestaShop 9 deletes index.php there on every container build and crashes when module files are read-only
+          find . -type d ! -path './.git' ! -path './.git/*' ! -path './src/Entity' | while read -r dir; do [ -f "$dir/index.php" ] || cp index.php "$dir/index.php"; done
 
           # Create module directory structure
           mkdir ${{ env.MODULE_NAME }}
