@@ -85,9 +85,7 @@ class CartLinesService
         $vatRatePrecision = Config::VAT_RATE_ROUNDING_PRECISION;
 
         $totalPrice = round($amount, $apiRoundingPrecision);
-        // Bill what the cart charges, not what the carrier costs. A free shipping rule without
-        // a code zeroes the summary shipping and leaves the carrier cost untouched, so the two
-        // disagree and only this one matches the amount the customer pays.
+        // A free shipping rule without a code zeroes the summary shipping but not the carrier cost.
         $roundedShippingCost = round($cartSummary['total_shipping'], $apiRoundingPrecision);
 
         $wrappingPrice = $psGiftWrapping ? round($cartSummary['total_wrapping'], $apiRoundingPrecision) : 0;
@@ -394,12 +392,10 @@ class CartLinesService
     {
         if (round($roundedShippingCost, 2) > 0) {
             $shippingTaxExcl = (float) $cartSummary['total_shipping_tax_exc'];
-            // A charged shipping line with no tax base means no VAT to report. Dividing by it
-            // is fatal on PHP 8.
             $shippingVatRate = 0.0;
 
             if ($shippingTaxExcl > 0) {
-                $shippingVatRate = round(($cartSummary['total_shipping'] - $shippingTaxExcl) / $shippingTaxExcl * 100, $apiRoundingPrecision);
+                $shippingVatRate = round(CalculationUtility::getActualVatRate($cartSummary['total_shipping'], $shippingTaxExcl), $apiRoundingPrecision);
             }
 
             $orderLines['shipping'] = [
@@ -407,9 +403,9 @@ class CartLinesService
                     'name' => $this->languageService->lang('Shipping'),
                     'type' => 'shipping_fee',
                     'quantity' => 1,
-                    'unitPrice' => round($roundedShippingCost, $apiRoundingPrecision),
-                    'totalAmount' => round($roundedShippingCost, $apiRoundingPrecision),
-                    'vatAmount' => round($roundedShippingCost * $shippingVatRate / ($shippingVatRate + 100), $apiRoundingPrecision),
+                    'unitPrice' => $roundedShippingCost,
+                    'totalAmount' => $roundedShippingCost,
+                    'vatAmount' => CalculationUtility::getVatAmount($roundedShippingCost, $shippingVatRate, $apiRoundingPrecision),
                     'vatRate' => $shippingVatRate,
                 ],
             ];
