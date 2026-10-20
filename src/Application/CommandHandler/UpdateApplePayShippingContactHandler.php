@@ -13,6 +13,7 @@
 namespace Mollie\Application\CommandHandler;
 
 use Address;
+use Cache;
 use Carrier;
 use Cart;
 use Configuration;
@@ -152,6 +153,11 @@ final class UpdateApplePayShippingContactHandler
                 $address->id_customer = $customerId;
                 $address->deleted = true;
                 $address->update();
+
+                // FrontController::init() already priced the cart against this address id, and
+                // Address::update() leaves that per-request entry behind, so the quote below would
+                // apply the previous country's VAT and shipping tax
+                Cache::clean('Address::initialize_' . (int) $address->id);
 
                 return $address;
             }

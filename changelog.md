@@ -8,6 +8,7 @@
 
 ## Changes in release 6.4.6.1
 + Improved payment validation when creating orders
++ Fixed the Apple Pay Direct sheet keeping the previous country's VAT and shipping tax after the shopper changed the delivery address to another country
 
 ## Changes in release 6.4.6
 + Apple Pay Direct now assigns each order to the shopper completing the payment
