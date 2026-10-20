@@ -150,6 +150,57 @@ class OrderDetailPresenterTest extends TestCase
         $this->assertArrayHasKey('cancelled_date', $result);
     }
 
+    public function testItPresentsOrderDetailWithoutImageWhenProductHasNoImages(): void
+    {
+        /** @var \Order $order */
+        $order = $this->createMock(\Order::class);
+        $order->id_lang = 1;
+
+        /** @var \OrderDetail $orderDetail */
+        $orderDetail = $this->createMock(\OrderDetail::class);
+        $orderDetail->unit_price_tax_incl = 1.11;
+
+        /** @var \Product $product */
+        $product = $this->createMock(\Product::class);
+
+        /** @var \Currency $currency */
+        $currency = $this->createMock(\Currency::class);
+        $currency->iso_code = 'EUR';
+
+        /** @var \MolRecurringOrder $recurringOrder */
+        $recurringOrder = $this->createMock(\MolRecurringOrder::class);
+        $recurringOrder->total_tax_incl = 1.11;
+        $recurringOrder->status = SubscriptionStatus::STATUS_ACTIVE;
+
+        /** @var \MolRecurringOrdersProduct $recurringProduct */
+        $recurringProduct = $this->createMock(\MolRecurringOrdersProduct::class);
+        $recurringProduct->id_product = 1;
+        $recurringProduct->id_product_attribute = 0;
+
+        $this->orderRepository->expects($this->once())->method('findOneBy')->willReturn($order);
+        $this->orderDetailRepository->expects($this->once())->method('findOneBy')->willReturn($orderDetail);
+        $this->productRepository->expects($this->once())->method('findOneBy')->willReturn($product);
+        $this->productRepository->expects($this->once())->method('getCombinationImageById')->willReturn(null);
+        $this->productRepository->expects($this->once())->method('getCover')->willReturn(null);
+        $this->currencyRepository->expects($this->once())->method('findOneBy')->willReturn($currency);
+
+        $this->context->expects($this->once())->method('getProductLink')->willReturn('test-link');
+        $this->context->expects($this->never())->method('getImageLink');
+        $this->context->expects($this->exactly(2))->method('formatPrice')->willReturn('123.33$');
+
+        $orderDetailPresenter = new OrderDetailPresenter(
+            $this->orderDetailRepository,
+            $this->context,
+            $this->orderRepository,
+            $this->productRepository,
+            $this->currencyRepository
+        );
+
+        $result = $orderDetailPresenter->present($recurringOrder, $recurringProduct);
+
+        $this->assertSame('', $result['img']);
+    }
+
     public function testItUnsuccessfullyPresentsOrderDetailMissingOrder(): void
     {
         /** @var \MolRecurringOrder $recurringOrder */
