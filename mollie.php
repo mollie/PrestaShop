@@ -47,6 +47,7 @@ use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\TabTranslationUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Utility\VersionUtility;
@@ -385,7 +386,7 @@ class Mollie extends PaymentModule
 
         Media::addJsDef([
             'profileId' => $profileIdProvider->getProfileId($apiClient),
-            'isoCode' => str_replace('-', '_', $this->context->language->locale),
+            'isoCode' => LocaleUtility::getWebShopLocale(),
             'isTestMode' => \Mollie\Config\Config::isTestMode(),
         ]);
         $this->context->controller->registerJavascript(
@@ -487,7 +488,7 @@ class Mollie extends PaymentModule
             'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'applePayDirectAjax'),
             'cartId' => $this->context->cart->id,
             'applePayButtonStyle' => (int) $configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
-            'applePayLocale' => $this->context->language->locale,
+            'applePayLocale' => LocaleUtility::getApplePayLocale(),
         ]);
 
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
