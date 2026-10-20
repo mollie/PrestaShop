@@ -26,6 +26,8 @@ interface PaymentMethodRepositoryInterface extends ReadOnlyRepositoryInterface
 
     public function getPaymentBy($column, $value);
 
+    public function getPaymentByTransactionIdForCart($transactionId, $cartId);
+
     public function getMethodsForCheckout($environment, $shopId);
 
     public function getMaxPosition($environment, $shopId): int;

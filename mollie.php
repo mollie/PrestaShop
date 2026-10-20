@@ -47,6 +47,7 @@ use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\TabTranslationUtility;
 use Mollie\Utility\TransactionUtility;
 use Mollie\Utility\VersionUtility;
@@ -55,7 +56,9 @@ use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Response;
 
-require_once __DIR__ . '/vendor/autoload.php';
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once __DIR__ . '/vendor/autoload.php';
+}
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -385,7 +388,7 @@ class Mollie extends PaymentModule
 
         Media::addJsDef([
             'profileId' => $profileIdProvider->getProfileId($apiClient),
-            'isoCode' => str_replace('-', '_', $this->context->language->locale),
+            'isoCode' => LocaleUtility::getWebShopLocale(),
             'isTestMode' => \Mollie\Config\Config::isTestMode(),
         ]);
         $this->context->controller->registerJavascript(
@@ -487,7 +490,7 @@ class Mollie extends PaymentModule
             'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'applePayDirectAjax'),
             'cartId' => $this->context->cart->id,
             'applePayButtonStyle' => (int) $configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
-            'applePayLocale' => $this->context->language->locale,
+            'applePayLocale' => LocaleUtility::getApplePayLocale(),
         ]);
 
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
@@ -773,6 +776,7 @@ class Mollie extends PaymentModule
 
             $shippingAmount = 0.0;
             $shippingRefunded = false;
+            $discounts = [];
             if ($mollieApiType === 'payments') {
                 $paymentApi = $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'refunds']);
                 $refundedByDetail = [];
@@ -815,6 +819,17 @@ class Mollie extends PaymentModule
                         'unitPrice' => $unitPrice,
                     ];
                 }
+
+                foreach ($order->getCartRules() as $orderCartRule) {
+                    if ((float) $orderCartRule['value'] <= 0) {
+                        continue;
+                    }
+
+                    $discounts[] = [
+                        'name' => (string) $orderCartRule['name'],
+                        'amount' => number_format(-(float) $orderCartRule['value'], 2, '.', ''),
+                    ];
+                }
             }
 
             $canShipAny = false;
@@ -855,6 +870,7 @@ class Mollie extends PaymentModule
                 'isAuthorizablePayment' => $isAuthorizablePayment,
                 'hasAnyShipment' => $hasAnyShipment,
                 'shipping_amount' => number_format($shippingAmount, 2, '.', ''),
+                'discounts' => $discounts,
                 'shipping_refunded' => $shippingRefunded,
                 'canShipAny' => $canShipAny,
                 'canCancelAny' => $canCancelAny,
