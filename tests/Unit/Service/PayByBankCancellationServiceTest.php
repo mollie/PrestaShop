@@ -13,6 +13,10 @@
 namespace Mollie\Tests\Unit\Service;
 
 use Mollie\Api\Types\PaymentStatus;
+use Mollie\Factory\ModuleFactory;
+use Mollie\Handler\CartRule\CartRuleQuantityResetHandlerInterface;
+use Mollie\Logger\LoggerInterface;
+use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\PayByBankCancellationService;
 use PHPUnit\Framework\TestCase;
 
@@ -129,6 +133,53 @@ class PayByBankCancellationServiceTest extends TestCase
             'authorized' => [PaymentStatus::STATUS_AUTHORIZED, false],
             'empty' => ['', false],
         ];
+    }
+
+    /**
+     * @dataProvider belongsToOrderDataProvider
+     *
+     * @param string $orderModule
+     * @param int $paymentOrderId
+     * @param bool $expected
+     */
+    public function testBelongsToOrder($orderModule, $paymentOrderId, $expected)
+    {
+        $order = $this->getMockBuilder(\Order::class)->disableOriginalConstructor()->getMock();
+        $order->id = 5;
+        $order->module = $orderModule;
+
+        $payment = [
+            'transaction_id' => 'tr_paybybank',
+            'order_id' => (string) $paymentOrderId,
+        ];
+
+        self::assertSame($expected, $this->createService()->belongsToOrder($payment, $order));
+    }
+
+    public function belongsToOrderDataProvider()
+    {
+        return [
+            'order paid with another module' => ['ps_wirepayment', 0, false],
+            'order of another module linked to the payment' => ['ps_wirepayment', 5, false],
+            'mollie order, abandoned payment never linked' => ['mollie', 0, false],
+            'mollie order paid by another mollie payment' => ['mollie', 7, false],
+            'mollie order created for this payment' => ['mollie', 5, true],
+        ];
+    }
+
+    private function createService()
+    {
+        $module = $this->getMockBuilder(\Mollie::class)->disableOriginalConstructor()->getMock();
+        $module->name = 'mollie';
+        $moduleFactory = $this->createMock(ModuleFactory::class);
+        $moduleFactory->method('getModule')->willReturn($module);
+
+        return new PayByBankCancellationService(
+            $moduleFactory,
+            $this->createMock(LoggerInterface::class),
+            $this->createMock(PaymentMethodRepository::class),
+            $this->createMock(CartRuleQuantityResetHandlerInterface::class)
+        );
     }
 
     private function createRealServiceForPureMethods()

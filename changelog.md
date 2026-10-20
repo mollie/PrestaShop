@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.7
++ Fixed an order paid with another payment method being cancelled when the same cart had an abandoned Pay by Bank payment
+
 ## Changes in release 6.4.6.1
 + Improved payment validation when creating orders
 

@@ -121,6 +121,20 @@ class PayByBankCancellationService
     }
 
     /**
+     * A cart can hold an abandoned Pay by Bank attempt and still be paid later by another
+     * payment, so only the order created for this exact transaction may be canceled.
+     *
+     * @param array $payment
+     * @param Order $order
+     *
+     * @return bool
+     */
+    public function belongsToOrder(array $payment, Order $order)
+    {
+        return $order->module === $this->module->name && (int) $payment['order_id'] === (int) $order->id;
+    }
+
+    /**
      * @param int $cartId
      * @param string $transactionId
      * @param string $mollieStatus
