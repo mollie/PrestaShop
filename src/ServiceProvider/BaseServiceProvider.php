@@ -20,7 +20,9 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\Link;
 use Mollie\Adapter\Shop;
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Builder\ApiTestFeedbackBuilder;
+use Mollie\Builder\PaymentHistoryBuilder;
 use Mollie\Calculator\PaymentFeeCalculator;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandler;
@@ -405,6 +407,9 @@ final class BaseServiceProvider
         $service = $this->addService($container, ApiTestFeedbackBuilder::class, ApiTestFeedbackBuilder::class);
         $this->addServiceArgument($service, $container->get(ModuleFactory::class)->getModuleVersion() ?? '');
         $this->addServiceArgument($service, ApiKeyService::class);
+
+        $service = $this->addService($container, PaymentHistoryBuilder::class, PaymentHistoryBuilder::class);
+        $this->addServiceArgument($service, ToolsAdapter::class);
 
         $service = $this->addService($container, ApiServiceInterface::class, ApiService::class);
         $this->addServiceArgument($service, PaymentMethodRepository::class);
