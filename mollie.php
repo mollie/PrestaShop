@@ -16,6 +16,7 @@ use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
+use Mollie\Builder\PaymentHistoryBuilder;
 use Mollie\Config\Config;
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Factory\ModuleFactory;
@@ -48,6 +49,7 @@ use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\TabTranslationUtility;
 use Mollie\Utility\TextFormatUtility;
 use Mollie\Utility\TransactionUtility;
@@ -57,7 +59,9 @@ use PrestaShop\PrestaShop\Core\Localization\Locale\Repository;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Response;
 
-require_once __DIR__ . '/vendor/autoload.php';
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once __DIR__ . '/vendor/autoload.php';
+}
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -387,7 +391,7 @@ class Mollie extends PaymentModule
 
         Media::addJsDef([
             'profileId' => $profileIdProvider->getProfileId($apiClient),
-            'isoCode' => str_replace('-', '_', $this->context->language->locale),
+            'isoCode' => LocaleUtility::getWebShopLocale(),
             'isTestMode' => \Mollie\Config\Config::isTestMode(),
         ]);
         $this->context->controller->registerJavascript(
@@ -561,7 +565,7 @@ class Mollie extends PaymentModule
             'ajaxUrl' => $this->context->link->getModuleLink('mollie', 'applePayDirectAjax'),
             'cartId' => $this->context->cart->id,
             'applePayButtonStyle' => (int) $configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE),
-            'applePayLocale' => $this->context->language->locale,
+            'applePayLocale' => LocaleUtility::getApplePayLocale(),
         ]);
 
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/apple_pay_direct.css');
@@ -752,16 +756,39 @@ class Mollie extends PaymentModule
             $order = new Order($params['id_order']);
 
             $bankStatus = isset($transaction['bank_status']) ? $transaction['bank_status'] : null;
-            if (in_array($bankStatus, ['created', 'pending', 'expired', 'failed', 'open'], true)) {
+            $isUnpaid = in_array($bankStatus, ['created', 'pending', 'expired', 'failed', 'open'], true);
+            if ($isUnpaid && $mollieApiType !== 'payments') {
                 return false;
             }
+            $historyOnly = $isUnpaid;
 
             if (TransactionUtility::isOrderTransaction($mollieTransactionId)) {
                 $mollieApiResource = $this->getApiClient()->orders->get($mollieTransactionId, ['embed' => 'payments']);
             } else {
-                $mollieApiResource = $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'payments']); // @phpstan-ignore-line
+                $mollieApiResource = $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'refunds,captures,chargebacks']); // @phpstan-ignore-line
             }
             $products = $mollieApiResource->lines;
+
+            $paymentHistory = [];
+            $paymentStatus = null;
+            if ($mollieApiType === 'payments') {
+                /** @var PaymentHistoryBuilder $paymentHistoryBuilder */
+                $paymentHistoryBuilder = $this->getService(PaymentHistoryBuilder::class);
+                // Mollie drops authorizedAt after capture, fall back to the oldest authorized order state
+                $authorizedAtFallback = null;
+                $authorizedStateId = (int) Configuration::get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED);
+                foreach ($order->getHistory($this->context->language->id) as $historyRow) {
+                    if ((int) $historyRow['id_order_state'] === $authorizedStateId) {
+                        $authorizedAtFallback = $historyRow['date_add'];
+                    }
+                }
+                $paymentHistory = $paymentHistoryBuilder->build($mollieApiResource, $authorizedAtFallback);
+                $paymentStatus = isset($mollieApiResource->status) ? (string) $mollieApiResource->status : null;
+                // The DB bank_status lags behind until the webhook lands, the API status is the truth
+                if ($paymentStatus !== null) {
+                    $historyOnly = in_array($paymentStatus, ['open', 'pending', 'expired', 'failed'], true);
+                }
+            }
 
             // Deep link to this exact payment/order in the Mollie dashboard, taken straight from the
             // API response so it always points at the correct organization and environment.
@@ -847,10 +874,14 @@ class Mollie extends PaymentModule
 
             $shippingAmount = 0.0;
             $shippingRefunded = false;
+            $discounts = [];
             if ($mollieApiType === 'payments') {
-                $paymentApi = $this->getApiClient()->payments->get($mollieTransactionId, ['embed' => 'refunds']);
+                // Refunds were embedded in the payment fetched above, no second round trip
+                $embeddedRefunds = isset($mollieApiResource->_embedded->refunds) && is_array($mollieApiResource->_embedded->refunds)
+                    ? $mollieApiResource->_embedded->refunds
+                    : [];
                 $refundedByDetail = [];
-                foreach ($paymentApi->refunds() as $refund) {
+                foreach ($embeddedRefunds as $refund) {
                     $meta = $refund->metadata;
                     if (is_string($meta)) {
                         $meta = json_decode($meta);
@@ -889,6 +920,17 @@ class Mollie extends PaymentModule
                         'unitPrice' => $unitPrice,
                     ];
                 }
+
+                foreach ($order->getCartRules() as $orderCartRule) {
+                    if ((float) $orderCartRule['value'] <= 0) {
+                        continue;
+                    }
+
+                    $discounts[] = [
+                        'name' => (string) $orderCartRule['name'],
+                        'amount' => number_format(-(float) $orderCartRule['value'], 2, '.', ''),
+                    ];
+                }
             }
 
             $canShipAny = false;
@@ -912,6 +954,41 @@ class Mollie extends PaymentModule
                 }
             }
 
+            $historyLabels = [
+                'created' => $this->l('Created'),
+                'authorized' => $this->l('Authorized'),
+                'paid' => $this->l('Paid'),
+                'captured' => $this->l('Captured'),
+                'refunded' => $this->l('Refund'),
+                'chargeback' => $this->l('Chargeback'),
+                'chargeback_reversed' => $this->l('Chargeback reversed'),
+                'canceled' => $this->l('Canceled'),
+                'expired' => $this->l('Expired'),
+                'failed' => $this->l('Failed'),
+            ];
+            $historyDetailLabels = [
+                'method' => $this->l('Payment method'),
+                'expires_at' => $this->l('Expires at'),
+                'due_date' => $this->l('Due date'),
+                'capture_before' => $this->l('Capture before'),
+                'capture_mode' => $this->l('Capture mode'),
+                'settlement_amount' => $this->l('Settlement amount'),
+                'reason' => $this->l('Reason'),
+            ];
+            $statusLabels = [
+                'open' => $this->l('Open'),
+                'pending' => $this->l('Pending'),
+                'authorized' => $this->l('Authorized'),
+                'paid' => $this->l('Paid'),
+                'canceled' => $this->l('Canceled'),
+                'expired' => $this->l('Expired'),
+                'failed' => $this->l('Failed'),
+                'refunded' => $this->l('Refunded'),
+                'queued' => $this->l('Queued'),
+                'processing' => $this->l('Processing'),
+                'succeeded' => $this->l('Paid'),
+            ];
+
             $this->context->smarty->assign([
                 'order_reference' => $order->reference,
                 'refundable_amount' => $refundableAmount,
@@ -929,10 +1006,17 @@ class Mollie extends PaymentModule
                 'isAuthorizablePayment' => $isAuthorizablePayment,
                 'hasAnyShipment' => $hasAnyShipment,
                 'shipping_amount' => number_format($shippingAmount, 2, '.', ''),
+                'discounts' => $discounts,
                 'shipping_refunded' => $shippingRefunded,
                 'canShipAny' => $canShipAny,
                 'canCancelAny' => $canCancelAny,
                 'canRefundAny' => $canRefundAny,
+                'payment_history' => $paymentHistory,
+                'payment_status' => $paymentStatus,
+                'history_only' => $historyOnly,
+                'history_labels' => $historyLabels,
+                'history_detail_labels' => $historyDetailLabels,
+                'status_labels' => $statusLabels,
             ]);
 
             return $this->display($this->getPathUri(), 'views/templates/hook/order_info.tpl');

@@ -24,11 +24,13 @@ use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExpressComponent\ExpressCartCarrierService;
 use Mollie\Service\MollieOrderCreationService;
+use Mollie\Service\MollieOrderNumberService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Subscription\Handler\SubscriptionCreationHandler;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Tests\Integration\BaseTestCase;
+use Mollie\Validator\PaymentAmountValidator;
 
 class OrderCreationHandlerExpressTest extends BaseTestCase
 {
@@ -77,6 +79,8 @@ class OrderCreationHandlerExpressTest extends BaseTestCase
             $this->mock(PrestaLoggerInterface::class),
             $orderRepository,
             $this->mock(MollieOrderCreationService::class),
+            new PaymentAmountValidator(),
+            $this->mock(MollieOrderNumberService::class),
             $this->mock(ExpressCartCarrierService::class)
         );
     }
@@ -116,17 +120,17 @@ class OrderCreationHandlerExpressTest extends BaseTestCase
         $this->handler->createOrder($payment, self::EMPTY_CART_ID);
     }
 
-    public function testAnExpressPaymentWhoseAmountNoLongerMatchesTheCartIsRefunded()
+    public function testAnExpressPaymentWhoseAmountNoLongerMatchesTheCartCreatesAnErrorOrder()
     {
         $payment = $this->payment('10.00', true);
 
-        $payment->expects($this->once())->method('refund')->with([
-            'amount' => ['currency' => $this->cartCurrencyIso(), 'value' => '10.00'],
-        ]);
+        $payment->expects($this->never())->method('refund');
         $this->paymentMethodRepository->expects($this->once())->method('updatePaymentReason')->with('tr_express', Config::WRONG_AMOUNT_REASON);
-        $this->module->expects($this->never())->method('validateOrder');
+        $this->module->expects($this->once())->method('validateOrder')
+            ->with($this->anything(), (int) \Configuration::get('PS_OS_ERROR'), 10.00);
 
-        $this->expectExceptionMessage('Wrong cart amount');
+        // validateOrder is mocked, so no order exists to attach the payment to and the handler stops there.
+        $this->expectException(\PrestaShopException::class);
 
         $this->handler->createOrder($payment, self::EMPTY_CART_ID);
     }
@@ -136,17 +140,17 @@ class OrderCreationHandlerExpressTest extends BaseTestCase
         return (string) (new \Currency((int) (new \Cart(self::EMPTY_CART_ID))->id_currency))->iso_code;
     }
 
-    public function testAnExpressPaymentInAnotherCurrencyIsRefundedEvenWhenTheNumberMatches()
+    public function testAnExpressPaymentInAnotherCurrencyCreatesAnErrorOrderEvenWhenTheNumberMatches()
     {
         $otherCurrency = 'JPY' === $this->cartCurrencyIso() ? 'CHF' : 'JPY';
         $payment = $this->payment('0.00', true, $otherCurrency);
 
-        $payment->expects($this->once())->method('refund')->with([
-            'amount' => ['currency' => $otherCurrency, 'value' => '0.00'],
-        ]);
-        $this->module->expects($this->never())->method('validateOrder');
+        $payment->expects($this->never())->method('refund');
+        $this->module->expects($this->once())->method('validateOrder')
+            ->with($this->anything(), (int) \Configuration::get('PS_OS_ERROR'));
 
-        $this->expectExceptionMessage('Wrong cart amount');
+        // validateOrder is mocked, so no order exists to attach the payment to and the handler stops there.
+        $this->expectException(\PrestaShopException::class);
 
         $this->handler->createOrder($payment, self::EMPTY_CART_ID);
     }

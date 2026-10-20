@@ -58,6 +58,7 @@ use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExpressComponent\ExpressCartCarrierService;
 use Mollie\Service\MollieOrderCreationService;
+use Mollie\Service\MollieOrderNumberService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentFeeTextService;
 use Mollie\Service\PaymentMethodService;
@@ -65,8 +66,8 @@ use Mollie\Subscription\Handler\SubscriptionCreationHandler;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\ExpressPaymentUtility;
-use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TextGeneratorUtility;
+use Mollie\Validator\PaymentAmountValidator;
 use MolPaymentMethod;
 use Order;
 use PrestaShop\Decimal\Number;
@@ -107,6 +108,10 @@ class OrderCreationHandler
     private $orderRepository;
     /** @var MollieOrderCreationService */
     private $mollieOrderCreationService;
+    /** @var PaymentAmountValidator */
+    private $paymentAmountValidator;
+    /** @var MollieOrderNumberService */
+    private $mollieOrderNumberService;
     /** @var ExpressCartCarrierService */
     private $expressCartCarrierService;
 
@@ -122,6 +127,8 @@ class OrderCreationHandler
         PrestaLoggerInterface $logger,
         OrderRepositoryInterface $orderRepository,
         MollieOrderCreationService $mollieOrderCreationService,
+        PaymentAmountValidator $paymentAmountValidator,
+        MollieOrderNumberService $mollieOrderNumberService,
         ExpressCartCarrierService $expressCartCarrierService
     ) {
         $this->module = $module->getModule();
@@ -135,6 +142,8 @@ class OrderCreationHandler
         $this->logger = $logger;
         $this->orderRepository = $orderRepository;
         $this->mollieOrderCreationService = $mollieOrderCreationService;
+        $this->paymentAmountValidator = $paymentAmountValidator;
+        $this->mollieOrderNumberService = $mollieOrderNumberService;
         $this->expressCartCarrierService = $expressCartCarrierService;
     }
 
@@ -191,17 +200,13 @@ class OrderCreationHandler
             return 0;
         }
 
-        // A session is bound to one total in one currency. If the cart moved after the session was
-        // created and the submit check did not catch it, the shopper paid a total this cart no
-        // longer has. The same number in another currency is not the same total.
-        if ($isExpressPayment && (
-            !NumberUtility::isEqual((float) $originalAmount, (float) $apiPayment->amount->value)
-            || !$this->isCartCurrency($cart, (string) $apiPayment->amount->currency)
-        )) {
-            $this->refundWrongAmount($apiPayment, $cartId, (float) $originalAmount);
-        }
-
         $paymentMethodName = $this->paymentMethodService->getPaymentMethodName($paymentMethod, $apiPayment);
+
+        $currency = new Currency($cart->id_currency);
+
+        if (!$this->paymentAmountValidator->validate((float) $originalAmount, (string) $currency->iso_code, $paymentFeeData, $apiPayment)) {
+            return $this->createPaymentErrorOrder($apiPayment, $cart, $paymentMethodName, (float) $originalAmount, $paymentFeeData);
+        }
 
         if (!$paymentFeeData->isActive()) {
             // Paid orders are created in the "awaiting" state and then moved to paid through the
@@ -229,13 +234,6 @@ class OrderCreationHandler
             $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method ?: $apiPayment->method);
 
             return $orderId;
-        }
-
-        $cartPrice = NumberUtility::plus($originalAmount, $paymentFeeData->getPaymentFeeTaxIncl());
-        $priceDifference = NumberUtility::minus($cartPrice, $apiPayment->amount->value);
-
-        if (abs($priceDifference) !== 0.00) {
-            $this->refundWrongAmount($apiPayment, $cartId, $cartPrice);
         }
 
         /** @var PaymentFeeTextService $paymentFeeTextService */
@@ -271,6 +269,42 @@ class OrderCreationHandler
         );
 
         $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method ?: $apiPayment->method);
+
+        return $orderId;
+    }
+
+    /**
+     * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
+     */
+    private function createPaymentErrorOrder($apiPayment, Cart $cart, string $paymentMethodName, float $cartTotal, PaymentFeeData $paymentFeeData): int
+    {
+        $this->logger->error(sprintf('%s - Wrong cart amount while creating order', self::FILE_NAME), [
+            'transaction_id' => $apiPayment->id,
+            'cart_id' => $cart->id,
+            'cart_amount' => $cartTotal,
+            'payment_fee' => $paymentFeeData->isActive() ? $paymentFeeData->getPaymentFeeTaxIncl() : 0,
+            'api_payment_amount' => $apiPayment->amount->value,
+            'api_payment_currency' => $apiPayment->amount->currency,
+        ]);
+
+        $this->paymentMethodRepository->updatePaymentReason($apiPayment->id, Config::WRONG_AMOUNT_REASON);
+
+        $this->module->validateOrder(
+            (int) $cart->id,
+            (int) Configuration::get('PS_OS_ERROR'),
+            (float) $apiPayment->amount->value,
+            $paymentMethodName,
+            null,
+            ['transaction_id' => $apiPayment->id],
+            null,
+            false,
+            $cart->secure_key
+        );
+
+        $orderId = $this->orderRepository->getOrderIdByCartId((int) $cart->id);
+
+        $order = new Order($orderId);
+        $order->addOrderPayment((float) $apiPayment->amount->value, $paymentMethodName, $apiPayment->id);
 
         return $orderId;
     }
@@ -406,13 +440,7 @@ class OrderCreationHandler
             $apiPayment->update();
         } else {
             $orderNumber = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
-            $apiPayment->orderNumber = $orderNumber;
-            $payments = $apiPayment->payments();
-            foreach ($payments as $payment) {
-                $payment->description = 'Order ' . $orderNumber;
-                $payment->update();
-            }
-            $apiPayment->update();
+            $this->mollieOrderNumberService->assign($this->module->getApiClient(), $apiPayment, $orderNumber);
         }
 
         $this->paymentMethodRepository->savePaymentStatus(
@@ -424,56 +452,6 @@ class OrderCreationHandler
         $this->mollieOrderCreationService->updateMolliePaymentReference($apiPayment->id, $order->reference);
 
         return $orderId;
-    }
-
-    /**
-     * The shopper paid a total the cart no longer has. Give the money back and leave a reason the
-     * return page can show, then stop: no order may be created for a mismatched payment.
-     *
-     * @param MolliePaymentAlias|MollieOrderAlias $apiPayment
-     *
-     * @throws \Exception
-     */
-    private function refundWrongAmount($apiPayment, int $cartId, float $cartPrice): void
-    {
-        $this->refundInFull($apiPayment);
-
-        $this->paymentMethodRepository->updatePaymentReason($apiPayment->id, Config::WRONG_AMOUNT_REASON);
-
-        $this->logger->error(sprintf('%s - Wrong cart amount while creating order', self::FILE_NAME), [
-            'cart_id' => $cartId,
-            'cart_amount' => $cartPrice,
-            'api_payment_amount' => $apiPayment->amount->value,
-            'price_diff' => NumberUtility::minus($cartPrice, (float) $apiPayment->amount->value),
-        ]);
-
-        throw new \Exception('Wrong cart amount');
-    }
-
-    private function isCartCurrency(Cart $cart, string $currencyIso): bool
-    {
-        $currency = new Currency((int) $cart->id_currency);
-
-        return \Tools::strtoupper((string) $currency->iso_code) === \Tools::strtoupper($currencyIso);
-    }
-
-    /**
-     * @param MolliePaymentAlias|MollieOrderAlias $apiPayment
-     */
-    private function refundInFull($apiPayment): void
-    {
-        if ($apiPayment->resource === Config::MOLLIE_API_STATUS_ORDER) {
-            $apiPayment->refundAll();
-
-            return;
-        }
-
-        $apiPayment->refund([
-            'amount' => [
-                'currency' => (string) $apiPayment->amount->currency,
-                'value' => $apiPayment->amount->value,
-            ],
-        ]);
     }
 
     private function createRecurringOrderEntity(Order $order, string $method): void

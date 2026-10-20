@@ -22,7 +22,9 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\Link;
 use Mollie\Adapter\Shop;
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Builder\ApiTestFeedbackBuilder;
+use Mollie\Builder\PaymentHistoryBuilder;
 use Mollie\Calculator\PaymentFeeCalculator;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandler;
@@ -166,6 +168,7 @@ use Mollie\Subscription\Utility\ClockInterface;
 use Mollie\Utility\Decoder\DecoderInterface;
 use Mollie\Utility\Decoder\JsonDecoder;
 use Mollie\Utility\NumberIdempotencyProvider;
+use Mollie\Validator\PaymentAmountValidator;
 use Mollie\Validator\PaymentFeeValidator;
 use Mollie\Verification\PaymentType\CanBeRegularPaymentType;
 use Mollie\Verification\PaymentType\PaymentTypeVerificationInterface;
@@ -403,6 +406,8 @@ final class BaseServiceProvider
         // Register PaymentFeeValidator - required by PaymentFeeProvider
         $this->addService($container, PaymentFeeValidator::class, PaymentFeeValidator::class);
 
+        $this->addService($container, PaymentAmountValidator::class, PaymentAmountValidator::class);
+
         $this->addService($container, PaymentFeeProviderInterface::class, $container->get(PaymentFeeProvider::class));
 
         $this->addService($container, PaymentOptionHandlerInterface::class, $container->get(PaymentOptionHandler::class));
@@ -410,6 +415,9 @@ final class BaseServiceProvider
         $service = $this->addService($container, ApiTestFeedbackBuilder::class, ApiTestFeedbackBuilder::class);
         $this->addServiceArgument($service, $container->get(ModuleFactory::class)->getModuleVersion() ?? '');
         $this->addServiceArgument($service, ApiKeyService::class);
+
+        $service = $this->addService($container, PaymentHistoryBuilder::class, PaymentHistoryBuilder::class);
+        $this->addServiceArgument($service, ToolsAdapter::class);
 
         $service = $this->addService($container, ApiServiceInterface::class, ApiService::class);
         $this->addServiceArgument($service, PaymentMethodRepository::class);

@@ -285,6 +285,7 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
             json_encode(
                 [
                     'cart_summary_totals' => $this->render('checkout/_partials/cart-summary-totals'),
+                    'cart_total' => $presentedCart['totals']['total']['value'] ?? '',
                 ]
             )
         );

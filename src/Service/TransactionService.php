@@ -94,6 +94,9 @@ class TransactionService
     /** @var OrderRepositoryInterface */
     private $orderRepository;
 
+    /** @var MollieOrderNumberService */
+    private $mollieOrderNumberService;
+
     public function __construct(
         ModuleFactory $module,
         OrderStatusService $orderStatusService,
@@ -106,7 +109,8 @@ class TransactionService
         PrestaLoggerInterface $logger,
         ExceptionService $exceptionService,
         ConfigurationAdapter $configurationAdapter,
-        OrderRepositoryInterface $orderRepository
+        OrderRepositoryInterface $orderRepository,
+        MollieOrderNumberService $mollieOrderNumberService
     ) {
         $this->module = $module->getModule();
         $this->orderStatusService = $orderStatusService;
@@ -120,6 +124,7 @@ class TransactionService
         $this->exceptionService = $exceptionService;
         $this->configurationAdapter = $configurationAdapter;
         $this->orderRepository = $orderRepository;
+        $this->mollieOrderNumberService = $mollieOrderNumberService;
     }
 
     /**
@@ -149,6 +154,14 @@ class TransactionService
         $orderDescription = $apiPayment->description ?? $apiPayment->orderNumber;
 
         $paymentMethod = $this->paymentMethodRepository->getPaymentBy('transaction_id', $apiPayment->id);
+
+        if ($paymentMethod && ($paymentMethod['reason'] ?? null) === Config::WRONG_AMOUNT_REASON) {
+            $this->logger->debug(sprintf('%s - Payment flagged with a wrong amount, webhook ignored', self::FILE_NAME), [
+                'transaction_id' => $apiPayment->id,
+            ]);
+
+            return $apiPayment;
+        }
 
         if (!$paymentMethod) {
             $this->mollieOrderCreationService->createMolliePayment(
@@ -348,7 +361,7 @@ class TransactionService
         return $apiPayment;
     }
 
-    public function updateOrderTransaction($transactionId, $orderReference)
+    public function updateOrderTransaction($transactionId, Order $order)
     {
         $transactionInfos = [];
         $isOrder = TransactionUtility::isOrderTransaction($transactionId);
@@ -370,7 +383,7 @@ class TransactionService
             $transactionInfos = $this->getPaymentTransactionInfo($transaction, $transactionInfos);
         }
 
-        $this->updateOrderPayments($transactionInfos, $orderReference);
+        $this->updateOrderPayments($transactionInfos, $order);
     }
 
     /**
@@ -385,7 +398,7 @@ class TransactionService
         $paymentMethod = $this->paymentMethodService->getPaymentMethod($transaction);
         $order = new Order($orderId);
         if (!$order->getOrderPayments()) {
-            $this->updateOrderTransaction($transaction->id, $order->reference);
+            $this->updateOrderTransaction($transaction->id, $order);
         } else {
             /** @var OrderPayment $orderPayment */
             foreach ($order->getOrderPayments() as $orderPayment) {
@@ -557,23 +570,27 @@ class TransactionService
     }
 
     /**
-     * @param string $orderReference
-     *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    private function updateOrderPayments(array $transactionInfos, $orderReference)
+    private function updateOrderPayments(array $transactionInfos, Order $order)
     {
         foreach ($transactionInfos as $transactionInfo) {
-            $orderPayment = new OrderPayment();
-            $orderPayment->order_reference = $orderReference;
-            $orderPayment->amount = $transactionInfo['amount'];
-            $orderPayment->payment_method = $transactionInfo['paymentName'];
-            $orderPayment->transaction_id = $transactionInfo['transactionId'];
-            $orderPayment->id_currency = Currency::getIdByIsoCode($transactionInfo['currency']);
-
-            $orderPayment->add();
+            self::buildOrderPayment($transactionInfo, $order)->add();
         }
+    }
+
+    public static function buildOrderPayment(array $transactionInfo, Order $order): OrderPayment
+    {
+        $orderPayment = new OrderPayment();
+        $orderPayment->order_reference = $order->reference;
+        $orderPayment->amount = $transactionInfo['amount'];
+        $orderPayment->payment_method = $transactionInfo['paymentName'];
+        $orderPayment->transaction_id = $transactionInfo['transactionId'];
+        $orderPayment->id_currency = Currency::getIdByIsoCode($transactionInfo['currency']);
+        $orderPayment->conversion_rate = $order->conversion_rate;
+
+        return $orderPayment;
     }
 
     private function updateOrderDescription($apiPayment, int $orderId)
@@ -582,15 +599,7 @@ class TransactionService
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
         $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
         $orderNumber = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
-        $apiPayment->orderNumber = $orderNumber;
-        $payments = $apiPayment->payments();
-
-        /** @var Payment $payment */
-        foreach ($payments as $payment) {
-            $payment->description = 'Order ' . $orderNumber;
-            $payment->update();
-        }
-        $apiPayment->update();
+        $this->mollieOrderNumberService->assign($this->module->getApiClient(), $apiPayment, $orderNumber);
 
         return $apiPayment;
     }
