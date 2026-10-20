@@ -22,11 +22,11 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_6_4_7($module)
 {
     // Shops that installed before displayBackOfficeHeader joined the install hook list never got it,
-    // so the manual order screen lacks the payment email checkbox. Registered for every shop, as the
-    // upgrade runs in a single shop context. A failure is logged and never fails the upgrade, the
-    // merchant can still hook the module in Design > Positions.
+    // so the manual order screen lacks the payment email checkbox. Active shops only: for any other
+    // shop Hook::registerHook also deletes the module's module_shop row, disabling Mollie there.
+    // A failure is logged and never fails the upgrade, the hook can still be set in Design > Positions.
     try {
-        if (!$module->registerHook('displayBackOfficeHeader', Shop::getShops(false, null, true))) {
+        if (!$module->registerHook('displayBackOfficeHeader', Shop::getShops(true, null, true))) {
             PrestaShopLogger::addLog(
                 'Mollie module upgrade to 6.4.7 could not register the displayBackOfficeHeader hook',
                 3,
