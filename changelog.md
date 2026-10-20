@@ -3,6 +3,10 @@
 # Changelog #
 
 ## Changes in release 6.4.7
++ Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
+
+## Changes in release 6.4.6.1
++ Improved payment validation when creating orders
 + Fixed discounts being added to the order a second time, and voucher stock used twice, when the order confirmation email is sent after payment
 + The Mollie panel on the order page now lists the order's discounts for Payments API orders
 
