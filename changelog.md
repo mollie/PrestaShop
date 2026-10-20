@@ -23,6 +23,7 @@
 + The order page now fetches a Payments API payment from Mollie once instead of up to three times
 + Fixed checkout failing when an automatic free shipping cart rule applies to a paid carrier
 + Fixed PHP deprecation notices filling the error log on every page load on PHP 8.4 and 8.5, and made the module ready to load on PHP 9
++ Fixed the API Configuration page showing an empty API key field after an upgrade, when a stored key fails the current format check
 
 ## Changes in release 6.4.6.1
 + Improved payment validation when creating orders
