@@ -27,6 +27,7 @@
     {/if}
     {if $mollie_api_type == 'payments'}
     {* Payments API is amount-based: compact refund/capture controls, each input paired with its button. *}
+    {if !$history_only}
     <div class="row mollie-amount-actions">
       <div class="col-md-6">
         <div class="form-group mollie-amount-action">
@@ -52,6 +53,7 @@
       </div>
     </div>
     <hr />
+    {/if}
     {/if}
     <table class="table table-bordered table-condensed">
       <thead>
@@ -111,6 +113,14 @@
               <td>{$shipping_amount|escape:'html':'UTF-8'}</td>
             </tr>
             {/if}
+            {if $product@last}
+              {foreach from=$discounts item=discount}
+                <tr>
+                  <td><strong>{l s='Discount' mod='mollie'}</strong> {$discount.name|escape:'html':'UTF-8'}</td>
+                  <td>{$discount.amount|escape:'html':'UTF-8'}</td>
+                </tr>
+              {/foreach}
+            {/if}
           {elseif isset($product->description)}
             <tr>
               <td><strong>{$product->quantity|escape:'html':'UTF-8'}x</strong> {$product->description|escape:'html':'UTF-8'}</td>
@@ -120,6 +130,7 @@
         {/foreach}
       </tbody>
     </table>
+    {if $mollie_api_type == 'payments'}{include file="module:mollie/views/templates/hook/partials/payment_history.tpl"}{/if}
     {if $mollie_api_type == 'orders'}
       <div class="mollie-bulk-actions">
         <button type="button" class="btn btn-default" id="mollie-refund-all-orders" {if !$canRefundAny || ($isAuthorizablePayment && !$hasAnyShipment)}disabled{/if}>
