@@ -14,6 +14,8 @@
 + Fixed Mollie payment methods not showing at checkout when the shop language is Norwegian, Chinese, Serbian or another language Mollie does not support
 + Credit card field messages and the Apple Pay Direct button now follow the shop language for Norwegian shops instead of falling back to English
 + Apple Pay Direct session validation failures are now recorded in the Mollie log with the reason, for example a missing or invalid live API key, and the browser only shows the reason when Debug mode is on
++ Fixed discounts being added to the order a second time, and voucher stock used twice, when the order confirmation email is sent after payment
++ The Mollie panel on the order page now lists the order's discounts for Payments API orders
 
 ## Changes in release 6.4.6
 + Apple Pay Direct now assigns each order to the shopper completing the payment
