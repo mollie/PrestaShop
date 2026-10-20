@@ -14,6 +14,7 @@ use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExceptionService;
 use Mollie\Service\MollieOrderCreationService;
+use Mollie\Service\MollieOrderNumberService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Service\TransactionService;
@@ -93,7 +94,8 @@ class TransactionServiceTest extends TestCase
             $this->createMock(PrestaLoggerInterface::class),
             $this->createMock(ExceptionService::class),
             $this->createMock(ConfigurationAdapter::class),
-            $this->createMock(OrderRepositoryInterface::class)
+            $this->createMock(OrderRepositoryInterface::class),
+            $this->createMock(MollieOrderNumberService::class)
         );
     }
 
