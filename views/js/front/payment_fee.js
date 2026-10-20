@@ -10,38 +10,64 @@
  */
 
 $(document).ready(function () {
+    var paymentFeeClass = 'mollie-payment-fee';
+    var totalCartPriceRequest = null;
+
     displayPaymentFee();
     updateCartTotal();
 
+    // The one-page checkout renders the payment list after the page has loaded, replaces it on every
+    // address, carrier or cart change and refreshes the summary and pay button with the total without the fee.
+    if (window.prestashop && typeof window.prestashop.on === 'function') {
+        $.each(['opcPaymentMethodsUpdated', 'opcPaymentMethodsRefreshed', 'opcCartSummaryUpdated'], function (index, eventName) {
+            window.prestashop.on(eventName, function () {
+                displayPaymentFee();
+                updateCartTotal();
+            });
+        });
+    }
+
+    $(document).on('change', 'input[name="payment-option"]', function () {
+        updateCartTotal();
+    });
+
+    // Classic, Hummingbird and the one-page checkout all render the option form as #pay-with-<option id>-form
+    // and the option label as label[for=<option id>], while the markup between them differs per theme.
+    function getPaymentOptionForm(paymentOptionId) {
+        return $(document.getElementById('pay-with-' + paymentOptionId + '-form'));
+    }
+
     function displayPaymentFee() {
-        var paymentFees = $('input[name="payment-fee-price-display"]');
-        paymentFees.each(function () {
-            var $prev = $(this).closest('.js-payment-option-form').prev();
-            if ($prev.hasClass('additional-information')) {
-                $prev.prev().find('label').append("<span class='h6'>" + $(this).val() + "</span>");
-            } else {
-                $prev.find('label').append("<span class='h6'>" + $(this).val() + "</span>");
+        $('input[name="payment-option"]').each(function () {
+            var paymentFee = getPaymentOptionForm(this.id).find('input[name="payment-fee-price-display"]');
+            if (paymentFee.length === 0) {
+                return;
             }
+
+            var $label = $('label[for="' + this.id + '"]');
+            if ($label.find('.' + paymentFeeClass).length) {
+                return;
+            }
+
+            $label.append($('<span>', {'class': 'h6 ' + paymentFeeClass}).text(paymentFee.val()));
         });
     }
 
     function updateCartTotal() {
-        const selectedPayment = $('input[name="payment-option"]:checked');
-        if (selectedPayment.length === 0) {
+        if ($('input[name="payment-option"]').length === 0) {
             return;
         }
 
-        const nextDiv = selectedPayment.closest('.payment-option').parent().next();
-        let paymentMethodId = 0;
+        // Without a selected option the request carries no method id and gets the total without a fee back,
+        // which resets the summary after the one-page checkout re-renders the list and drops the selection.
+        const selectedPayment = $('input[name="payment-option"]:checked');
+        const paymentMethodId = getPaymentOptionForm(selectedPayment.attr('id')).find('input[name="payment-method-id"]').val();
 
-        if (nextDiv.hasClass('js-payment-option-form')) {
-            paymentMethodId = nextDiv.find('input[name="payment-method-id"]').val();
-        } else {
-            paymentMethodId = nextDiv.next().find('input[name="payment-method-id"]').val();
+        if (totalCartPriceRequest) {
+            totalCartPriceRequest.abort();
         }
 
-
-        $.ajax({
+        totalCartPriceRequest = $.ajax({
             url: ajaxUrl,
             method: 'GET',
             data: {
@@ -57,12 +83,16 @@ $(document).ready(function () {
                     return;
                 }
 
-                $('.card-block.cart-summary-totals').replaceWith(response.cart_summary_totals);
+                // PS 1.7.6 Classic renders the totals without the js-cart-summary-totals class.
+                $('.js-cart-summary-totals, .card-block.cart-summary-totals').replaceWith(response.cart_summary_totals);
+
+                if (response.cart_total) {
+                    $('#opc-pay-amount').text(response.cart_total);
+                }
+            },
+            complete: function () {
+                totalCartPriceRequest = null;
             }
         });
     }
-
-    $('input[name="payment-option"]').on('change', function () {
-        updateCartTotal();
-    });
 });
