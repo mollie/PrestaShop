@@ -59,15 +59,22 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
-        $jsUrl = $this->module->getPathUri() . 'views/js/admin/library/dist/assets/authorization.js?v=' . $this->module->version;
-        $this->context->smarty->assign('mollieAuthJsUrl', $jsUrl);
+        $jsPath = 'views/js/admin/library/dist/assets/authorization.js';
+        $isBuilt = file_exists($this->module->getLocalPath() . $jsPath);
+        $this->context->smarty->assign('mollieAuthJsUrl', $isBuilt ? $this->module->getPathUri() . $jsPath . '?v=' . $this->module->version : '');
 
-        $this->context->controller->addCSS(
-            $this->module->getPathUri() . 'views/css/admin/library/globals.css?v=' . $this->module->version,
-            'all',
-            null,
-            false
-        );
+        if (!$isBuilt) {
+            $this->errors[] = $this->module->l('This page cannot be displayed because its compiled files are missing. Reinstall the module from the official release ZIP, or build the files as described in README_DEV.md.', self::FILE_NAME);
+        }
+
+        if ($isBuilt) {
+            $this->context->controller->addCSS(
+                $this->module->getPathUri() . 'views/css/admin/library/globals.css?v=' . $this->module->version,
+                'all',
+                null,
+                false
+            );
+        }
 
         Media::addJsDef([
             'mollieAuthAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAuthentication'),
@@ -436,8 +443,6 @@ class AdminMollieAuthenticationController extends ModuleAdminController
 
             $environmentValue = ($environment === 'live') ? Config::ENVIRONMENT_LIVE : Config::ENVIRONMENT_TEST;
 
-            $this->configuration->updateValue(Config::MOLLIE_ENVIRONMENT, $environmentValue);
-
             $testApiKey = $this->configuration->get(Config::MOLLIE_API_KEY_TEST);
             $liveApiKey = $this->configuration->get(Config::MOLLIE_API_KEY);
 
@@ -455,6 +460,8 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 $isConnected = $keyInfo['status'] && !$keyInfo['warning'];
                 $apiKey = $testApiKey;
             }
+
+            $this->configuration->updateValue(Config::MOLLIE_ENVIRONMENT, $environmentValue);
 
             $this->ajaxRender(json_encode([
                 'success' => true,

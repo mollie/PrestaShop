@@ -12,5 +12,7 @@
 <div id="mollie-authentication-root"></div>
 
 {* Load ES module JavaScript *}
+{if $mollieAuthJsUrl}
 <script type="module" src="{$mollieAuthJsUrl|escape:'html':'UTF-8'}"></script>
+{/if}
 
