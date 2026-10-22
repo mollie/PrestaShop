@@ -299,9 +299,9 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
     }
 
     /**
-     * The Apple Pay express button can be switched on before the component, and its domain file is
-     * only written when the Apple Pay card is saved. Placing it again here covers a file that went
-     * missing in between, so the Apple Pay button shows as soon as the component is turned on.
+     * Shops from the 6.4.7 beta can have the Apple Pay express flag on while the component is off,
+     * and the domain file is only written when the Apple Pay card is saved. Placing it here covers
+     * those shops and a file removed in between, so Apple Pay shows once the component is on.
      */
     private function placeApplePayDomainFile(): void
     {
