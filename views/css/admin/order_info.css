@@ -257,6 +257,10 @@
     color: var(--mollie-status-failed);
 }
 
+.mollie-order-info-panel .mollie-timeline__item--released .mollie-timeline__amount {
+    color: #6c757d;
+}
+
 .mollie-order-info-panel .mollie-timeline__item--authorized .mollie-timeline__disc {
     background: var(--mollie-status-authorized);
 }

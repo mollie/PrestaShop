@@ -28,6 +28,7 @@ class PaymentHistoryTranslationsTest extends TestCase
         'Mollie reference',
         '%s events',
         '1 event',
+        '%s left to capture',
     ];
 
     const MODULE_STRINGS = [
@@ -53,6 +54,7 @@ class PaymentHistoryTranslationsTest extends TestCase
         'Pending',
         'Queued',
         'Processing',
+        'Released',
     ];
 
     public function testShippedCatalogsTranslateThePaymentHistoryLabels()
