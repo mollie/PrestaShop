@@ -39,7 +39,7 @@
           <span class="mollie-status mollie-status--authorized">{$history_detail_labels.capture_before|escape:'html':'UTF-8'} {$detail.value|escape:'html':'UTF-8'}</span>
           {/if}
           {if $detail.label == 'remaining_to_capture'}
-          <span class="mollie-status mollie-status--authorized">{l s='%s left to capture' sprintf=[$detail.value|escape:'html':'UTF-8'] mod='mollie'}</span>
+          <span class="mollie-status mollie-status--authorized">{l s='%s left to capture' sprintf=[$detail.value] mod='mollie'}</span>
           {/if}
           {/foreach}
           {/if}

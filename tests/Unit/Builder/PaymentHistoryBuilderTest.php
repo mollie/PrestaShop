@@ -267,6 +267,8 @@ class PaymentHistoryBuilderTest extends BaseTestCase
         $this->assertSame(['captured', 'paid', 'released', 'authorized', 'created'], array_column($events, 'type'));
         $this->assertSame('EUR 4.00', $events[0]['amount_formatted']);
         $this->assertNull($events[1]['amount_formatted']);
+        $this->assertSame([], $events[1]['details']);
+        $this->assertSame('39.20', $events[2]['amount']);
         $this->assertSame('EUR 39.20', $events[2]['amount_formatted']);
         $this->assertFalse($events[2]['negative']);
     }
@@ -285,7 +287,7 @@ class PaymentHistoryBuilderTest extends BaseTestCase
         );
     }
 
-    public function testPendingCaptureCountsTowardsCaptured(): void
+    public function testPendingCaptureHidesRemainingToCapture(): void
     {
         $payment = $this->partiallyCapturedPayment('authorized');
         $payment->_embedded->captures[] = (object) [
@@ -297,18 +299,13 @@ class PaymentHistoryBuilderTest extends BaseTestCase
 
         $events = $this->builder->build($payment);
 
-        $this->assertSame(
-            [
-                ['label' => 'capture_mode', 'value' => 'manual'],
-                ['label' => 'remaining_to_capture', 'value' => 'EUR 9.20'],
-            ],
-            $events[2]['details']
-        );
+        $this->assertSame([['label' => 'capture_mode', 'value' => 'manual']], $events[2]['details']);
     }
 
-    public function testPaidKeepsSettlementWhenCapturesCarryNone(): void
+    public function testFullCaptureWithoutCaptureSettlementKeepsPaymentSettlement(): void
     {
         $payment = $this->partiallyCapturedPayment('paid');
+        $payment->_embedded->captures[0]->amount = $this->amount('43.20');
 
         $events = $this->builder->build($payment);
 

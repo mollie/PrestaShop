@@ -106,12 +106,11 @@ class PaymentHistoryBuilder
         $this->addEvent($events, 'authorized', $authorizedAt, $amount, null, null, $authorizedDetails);
 
         $paidDetails = [];
-        if (!$hasCaptureSettlement) {
+        if (!$hasCaptureSettlement && $uncapturedAmount === null) {
             $this->addDetail($paidDetails, 'settlement_amount', $this->formatAmount($this->getField($payment, 'settlementAmount')));
         }
         $this->addEvent($events, 'paid', $this->getField($payment, 'paidAt'), null, null, null, $paidDetails);
 
-        // Without multiple captures Mollie releases the uncaptured rest once a partial capture marks the payment paid
         if ($status === 'paid' && $uncapturedAmount !== null) {
             $this->addEvent($events, 'released', $this->getField($payment, 'paidAt'), $uncapturedAmount);
         }
@@ -122,7 +121,7 @@ class PaymentHistoryBuilder
     }
 
     /**
-     * Pending captures count as captured, Mollie no longer offers that part for capture.
+     * Null while a capture is pending, Mollie has not yet decided whether the rest stays on hold or is released.
      *
      * @return \stdClass|null authorized amount not captured on a partially captured manual payment
      */
@@ -134,7 +133,11 @@ class PaymentHistoryBuilder
 
         $capturedValue = 0.0;
         foreach ($captures as $capture) {
-            if (in_array($this->getField($capture, 'status'), ['succeeded', 'pending'], true)) {
+            $captureStatus = $this->getField($capture, 'status');
+            if ($captureStatus === 'pending') {
+                return null;
+            }
+            if ($captureStatus === 'succeeded') {
                 $capturedValue = NumberUtility::plus($capturedValue, (float) $this->getAmountField($this->getField($capture, 'amount'), 'value'));
             }
         }
@@ -145,7 +148,7 @@ class PaymentHistoryBuilder
         }
 
         return (object) [
-            'value' => (string) $uncapturedValue,
+            'value' => number_format($uncapturedValue, 2, '.', ''),
             'currency' => $this->getAmountField($amount, 'currency'),
         ];
     }
