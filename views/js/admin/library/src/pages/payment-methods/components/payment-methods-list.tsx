@@ -58,7 +58,12 @@ export default function PaymentMethodsPage() {
   const [onlyOrderMethods, setOnlyOrderMethods] = useState<string[]>([])
   const [showApplePayLiveKeyWarning, setShowApplePayLiveKeyWarning] = useState(false)
   const [expressComponentEnabled, setExpressComponentEnabled] = useState(false)
-  const [showExpressPromo, setShowExpressPromo] = useState(false)
+  const [environment, setEnvironment] = useState<string>()
+  const [expressPromoDismissed, setExpressPromoDismissed] = useState(false)
+  const [expressLiveReady, setExpressLiveReady] = useState(false)
+  const isTestMode = environment === 'test'
+  const showExpressBadges = expressLiveReady && !expressPromoDismissed
+  const showExpressPromo = showExpressBadges && !expressComponentEnabled
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
   const [savingMethodId, setSavingMethodId] = useState<string | null>(null)
@@ -97,9 +102,9 @@ export default function PaymentMethodsPage() {
         setOnlyOrderMethods(response.data.onlyOrderMethods || [])
         setShowApplePayLiveKeyWarning(response.data.environment === 'test' && !response.data.hasLiveApiKey)
         setExpressComponentEnabled(response.data.expressComponentEnabled ?? false)
-        setShowExpressPromo(
-          response.data.environment === 'live' && !response.data.expressComponentEnabled && !response.data.expressPromoDismissed
-        )
+        setEnvironment(response.data.environment)
+        setExpressPromoDismissed(response.data.expressPromoDismissed ?? false)
+        setExpressLiveReady(response.data.expressLiveReady ?? false)
       } else {
         setErrorMessage(response.message || t('loadingError'))
       }
@@ -120,7 +125,7 @@ export default function PaymentMethodsPage() {
   }, []) // Empty dependency array - only run once on mount
 
   const dismissExpressPromo = () => {
-    setShowExpressPromo(false)
+    setExpressPromoDismissed(true)
     paymentMethodsApiService.dismissExpressPromo().catch((error) => {
       console.error('Failed to dismiss the Express checkout banner:', error)
     })
@@ -405,6 +410,8 @@ export default function PaymentMethodsPage() {
           carriers={carriers}
           showApplePayLiveKeyWarning={showApplePayLiveKeyWarning}
           expressComponentEnabled={expressComponentEnabled}
+          showExpressBadges={showExpressBadges}
+          isTestMode={isTestMode}
           customerGroups={customerGroups}
           languages={languages}
           onlyPaymentsMethods={onlyPaymentsMethods}

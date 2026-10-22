@@ -7,7 +7,8 @@ import { skipIfDisconnected } from '../../helpers/module-state';
 /**
  * The Express Component is live-only (the Sessions API beta has no test mode), so what a
  * test-key shop can prove is the gating around it: the back office card persists its
- * switches without touching the Apple Pay Direct ones, the payment step stays free of the
+ * switches without touching the Apple Pay Direct ones, shows no promo pill and notes that
+ * the switch only takes effect in live mode, the payment step stays free of the
  * mount div and of console errors while the setting is on in test mode, and the Apple Pay
  * Direct cart button is unaffected by the component.
  *
@@ -52,7 +53,9 @@ test('the wallet card saves its express switch and leaves Apple Pay Direct alone
 
   const appleCard = await methods.revealCard('applepay', 5_000);
   test.skip((await appleCard.count()) === 0, 'applepay is not offered by the Mollie test profile');
+  await expect(page.getByTestId('payment-method-applepay-express-badge')).toHaveCount(0);
   await methods.toggleSettings('applepay');
+  await expect(page.getByTestId('payment-method-applepay-express-test-mode')).toBeVisible();
   const applePayExpress = page.getByTestId('payment-method-applepay-express-switch');
   await expect(applePayExpress).toBeVisible();
   await expect(applePayExpress).toBeDisabled();

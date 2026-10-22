@@ -623,6 +623,7 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_121d184230ba68
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_053b1215936e60069f2e47848845916b'] = 'Google Pay express button on the checkout payment step';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_6584a54c68371d0eb52b347de190199e'] = 'Shows Google Pay as a one-tap button at the top of checkout. Turn on the Mollie Express Component under [1]Advanced Settings[/1] first. Google Pay runs on card payments, so keep this method enabled.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_95c949d02bfa03cefad254385eac7d7d'] = 'The Mollie Express Component is switched off. Turn it on under [1]Advanced Settings[/1] for this button to show.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_d27c7543a308a128ef74c6502f1510ef'] = 'Express buttons show only in live mode. Your shop is in test mode.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_da0b3991aeecbd69850aab09cb2688f2'] = 'New: Express checkout (beta).';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_af9011e0368e44ea8acac6ed30bbd20d'] = 'One-tap Apple Pay, Google Pay and PayPal at the top of checkout. Ask Mollie to activate it, then switch it on.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_756afe30c6e6df0fe6757d19e0a19a08'] = 'Turn it on';
@@ -632,7 +633,7 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_1a31804ef0d9f3
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_eb4c6f94efd55bbd1876df96448e2c60'] = 'Express checkout (beta)';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0b06e7a6a8fdd7ebb1538faf7582aab8'] = 'Mollie Express Component';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0122b5b00af3de8e066e55c4d5afea6f'] = 'Show Apple Pay, Google Pay and PayPal as quick-pay buttons at the top of checkout, so customers can pay in one tap. Choose which buttons appear on the Payment Methods page.';
-$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_bd7f97a89cc3e8b3fbd5f35dadccb6d7'] = 'The Express Component is in beta and works only with a live API key in live mode. It stays hidden in test mode.';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_d8d0950b07b563ca7190363e69bf03f8'] = 'The Express Component is in beta. Mollie activates it per account, so contact Mollie before you switch it on. It works only with a live API key in live mode and stays hidden in test mode.';
 $_MODULE['<{mollie}prestashop>payment_history_6ecdeeece7dc4ee366197ea2e4b6b778'] = 'Payment history';
 $_MODULE['<{mollie}prestashop>payment_history_2a2d2c75ec43014500ef2d5f400cf7d1'] = 'No events yet';
 $_MODULE['<{mollie}prestashop>payment_history_b02dca32aecc6f71310f9e914757d56f'] = 'Mollie reference';
