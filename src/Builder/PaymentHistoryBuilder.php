@@ -79,7 +79,13 @@ class PaymentHistoryBuilder
     {
         $amount = $this->getField($payment, 'amount');
         $status = $this->getField($payment, 'status');
-        $hasCaptures = !empty($this->getEmbedded($payment, 'captures'));
+        $captures = $this->getEmbedded($payment, 'captures');
+        $hasCaptureSettlement = false;
+        $hasPendingCapture = false;
+        foreach ($captures as $capture) {
+            $hasCaptureSettlement = $hasCaptureSettlement || $this->getField($capture, 'settlementAmount') !== null;
+            $hasPendingCapture = $hasPendingCapture || $this->getField($capture, 'status') === 'pending';
+        }
         $uncapturedAmount = $this->getUncapturedAmount($payment);
 
         $createdDetails = [];
@@ -91,7 +97,8 @@ class PaymentHistoryBuilder
         $authorizedDetails = [];
         $this->addDetail($authorizedDetails, 'capture_before', $this->formatDate($this->getField($payment, 'captureBefore'), false));
         $this->addDetail($authorizedDetails, 'capture_mode', $this->getField($payment, 'captureMode'));
-        if ($status === 'authorized' && $uncapturedAmount !== null) {
+        // amountCaptured only counts succeeded captures, so a pending one would overstate what is left
+        if ($status === 'authorized' && $uncapturedAmount !== null && !$hasPendingCapture) {
             $this->addDetail($authorizedDetails, 'remaining_to_capture', $this->formatAmount($uncapturedAmount));
         }
         $authorizedAt = $this->getField($payment, 'authorizedAt');
@@ -102,7 +109,7 @@ class PaymentHistoryBuilder
 
         // Each capture carries its own settlement, the payment-level one would repeat the authorized amount
         $paidDetails = [];
-        if (!$hasCaptures) {
+        if (!$hasCaptureSettlement) {
             $this->addDetail($paidDetails, 'settlement_amount', $this->formatAmount($this->getField($payment, 'settlementAmount')));
         }
         $this->addEvent($events, 'paid', $this->getField($payment, 'paidAt'), null, null, null, $paidDetails);

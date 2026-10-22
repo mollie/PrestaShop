@@ -94,6 +94,7 @@ class PaymentHistoryBuilderTest extends BaseTestCase
                         'amount' => $this->amount('100.00'),
                         'createdAt' => '2026-10-12T10:30:00+00:00',
                         'status' => 'succeeded',
+                        'settlementAmount' => $this->amount('98.50'),
                     ],
                 ],
             ],
@@ -266,7 +267,6 @@ class PaymentHistoryBuilderTest extends BaseTestCase
         $this->assertSame(['captured', 'paid', 'released', 'authorized', 'created'], array_column($events, 'type'));
         $this->assertSame('EUR 4.00', $events[0]['amount_formatted']);
         $this->assertNull($events[1]['amount_formatted']);
-        $this->assertSame([], $events[1]['details']);
         $this->assertSame('EUR 39.20', $events[2]['amount_formatted']);
         $this->assertFalse($events[2]['negative']);
     }
@@ -286,6 +286,31 @@ class PaymentHistoryBuilderTest extends BaseTestCase
             ],
             $events[1]['details']
         );
+    }
+
+    public function testPendingCaptureHidesRemainingToCapture(): void
+    {
+        $payment = $this->partiallyCapturedPayment('authorized');
+        unset($payment->paidAt);
+        $payment->_embedded->captures[] = (object) [
+            'id' => 'cpt_two',
+            'amount' => $this->amount('39.20'),
+            'createdAt' => '2026-10-22T08:25:00+00:00',
+            'status' => 'pending',
+        ];
+
+        $events = $this->builder->build($payment);
+
+        $this->assertSame([['label' => 'capture_mode', 'value' => 'manual']], $events[2]['details']);
+    }
+
+    public function testPaidKeepsSettlementWhenCapturesCarryNone(): void
+    {
+        $payment = $this->partiallyCapturedPayment('paid');
+
+        $events = $this->builder->build($payment);
+
+        $this->assertSame([['label' => 'settlement_amount', 'value' => 'EUR 43.20']], $events[1]['details']);
     }
 
     public function testFullManualCaptureAddsNoReleasedEvent(): void
