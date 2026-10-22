@@ -60,8 +60,9 @@ export default function PaymentMethodsPage() {
   const [expressComponentEnabled, setExpressComponentEnabled] = useState(false)
   const [environment, setEnvironment] = useState<string>()
   const [expressPromoDismissed, setExpressPromoDismissed] = useState(false)
+  const [expressLiveReady, setExpressLiveReady] = useState(false)
   const isTestMode = environment === 'test'
-  const showExpressBadges = environment === 'live' && !expressPromoDismissed
+  const showExpressBadges = expressLiveReady && !expressPromoDismissed
   const showExpressPromo = showExpressBadges && !expressComponentEnabled
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
@@ -103,6 +104,7 @@ export default function PaymentMethodsPage() {
         setExpressComponentEnabled(response.data.expressComponentEnabled ?? false)
         setEnvironment(response.data.environment)
         setExpressPromoDismissed(response.data.expressPromoDismissed ?? false)
+        setExpressLiveReady(response.data.expressLiveReady ?? false)
       } else {
         setErrorMessage(response.message || t('loadingError'))
       }

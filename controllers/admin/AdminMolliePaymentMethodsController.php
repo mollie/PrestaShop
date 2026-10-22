@@ -541,6 +541,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                     'onlyPaymentsMethods' => Config::PAYMENT_API_ONLY_METHODS,
                     'environment' => $environment ? 'live' : 'test',
                     'hasLiveApiKey' => !empty($liveApiKey),
+                    'expressLiveReady' => Config::ENVIRONMENT_LIVE === $environment && 0 === strpos((string) $liveApiKey, 'live'),
                     'expressComponentEnabled' => (bool) (int) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED),
                     'expressPromoDismissed' => (bool) (int) $this->configuration->get(Config::MOLLIE_EXPRESS_PROMO_DISMISSED),
                     'is_connected' => !empty($formattedMethods),

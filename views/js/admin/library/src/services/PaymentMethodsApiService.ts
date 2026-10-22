@@ -122,6 +122,7 @@ export interface PaymentMethodsResponse {
     is_connected: boolean;
     expressComponentEnabled: boolean;
     expressPromoDismissed: boolean;
+    expressLiveReady: boolean;
   };
 }
 
