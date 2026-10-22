@@ -299,9 +299,9 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
     }
 
     /**
-     * The Apple Pay express button is on by default, but its domain file is only written when the
-     * Apple Pay card is saved. A merchant who never used Apple Pay Direct would turn the component
-     * on and never see the Apple Pay button.
+     * The Apple Pay express button can be switched on before the component, and its domain file is
+     * only written when the Apple Pay card is saved. Placing it again here covers a file that went
+     * missing in between, so the Apple Pay button shows as soon as the component is turned on.
      */
     private function placeApplePayDomainFile(): void
     {
