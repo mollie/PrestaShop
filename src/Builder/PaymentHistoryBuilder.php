@@ -14,6 +14,7 @@ namespace Mollie\Builder;
 
 use Currency;
 use Mollie\Adapter\ToolsAdapter;
+use Mollie\Utility\NumberUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -24,14 +25,15 @@ class PaymentHistoryBuilder
     const TYPE_RANKS = [
         'created' => 0,
         'authorized' => 1,
-        'paid' => 2,
-        'captured' => 3,
-        'refunded' => 4,
-        'chargeback' => 5,
-        'chargeback_reversed' => 6,
-        'canceled' => 7,
-        'expired' => 8,
-        'failed' => 9,
+        'released' => 2,
+        'paid' => 3,
+        'captured' => 4,
+        'refunded' => 5,
+        'chargeback' => 6,
+        'chargeback_reversed' => 7,
+        'canceled' => 8,
+        'expired' => 9,
+        'failed' => 10,
     ];
 
     const NEGATIVE_TYPES = ['refunded', 'chargeback', 'chargeback_reversed'];
@@ -56,8 +58,10 @@ class PaymentHistoryBuilder
     {
         $events = [];
 
-        $this->addPaymentEvents($events, $payment, $authorizedAtFallback);
-        $this->addCaptureEvents($events, $this->getEmbedded($payment, 'captures'));
+        $captures = $this->getEmbedded($payment, 'captures');
+
+        $this->addPaymentEvents($events, $payment, $captures, $authorizedAtFallback);
+        $this->addCaptureEvents($events, $captures);
         $this->addRefundEvents($events, $this->getEmbedded($payment, 'refunds'));
         $this->addChargebackEvents($events, $this->getEmbedded($payment, 'chargebacks'));
 
@@ -74,9 +78,14 @@ class PaymentHistoryBuilder
         return $events;
     }
 
-    private function addPaymentEvents(array &$events, $payment, $authorizedAtFallback)
+    private function addPaymentEvents(array &$events, $payment, array $captures, $authorizedAtFallback)
     {
         $amount = $this->getField($payment, 'amount');
+        $status = $this->getField($payment, 'status');
+        $uncapturedAmount = $this->getUncapturedAmount($payment, $amount, $status, $captures);
+        $hasCaptureSettlement = !empty(array_filter($captures, function ($capture) {
+            return $this->getField($capture, 'settlementAmount') !== null;
+        }));
 
         $createdDetails = [];
         $this->addDetail($createdDetails, 'method', $this->getField($payment, 'method'));
@@ -87,6 +96,9 @@ class PaymentHistoryBuilder
         $authorizedDetails = [];
         $this->addDetail($authorizedDetails, 'capture_before', $this->formatDate($this->getField($payment, 'captureBefore'), false));
         $this->addDetail($authorizedDetails, 'capture_mode', $this->getField($payment, 'captureMode'));
+        if ($status === 'authorized' && $uncapturedAmount !== null) {
+            $this->addDetail($authorizedDetails, 'remaining_to_capture', $this->formatAmount($uncapturedAmount));
+        }
         $authorizedAt = $this->getField($payment, 'authorizedAt');
         if ((!is_string($authorizedAt) || $authorizedAt === '') && is_string($authorizedAtFallback) && $authorizedAtFallback !== '') {
             $authorizedAt = $authorizedAtFallback;
@@ -94,12 +106,51 @@ class PaymentHistoryBuilder
         $this->addEvent($events, 'authorized', $authorizedAt, $amount, null, null, $authorizedDetails);
 
         $paidDetails = [];
-        $this->addDetail($paidDetails, 'settlement_amount', $this->formatAmount($this->getField($payment, 'settlementAmount')));
-        $this->addEvent($events, 'paid', $this->getField($payment, 'paidAt'), $amount, null, null, $paidDetails);
+        if (!$hasCaptureSettlement && $uncapturedAmount === null) {
+            $this->addDetail($paidDetails, 'settlement_amount', $this->formatAmount($this->getField($payment, 'settlementAmount')));
+        }
+        $this->addEvent($events, 'paid', $this->getField($payment, 'paidAt'), null, null, null, $paidDetails);
+
+        if ($status === 'paid' && $uncapturedAmount !== null) {
+            $this->addEvent($events, 'released', $this->getField($payment, 'paidAt'), $uncapturedAmount);
+        }
 
         $this->addEvent($events, 'canceled', $this->getField($payment, 'canceledAt'), $amount);
         $this->addEvent($events, 'expired', $this->getField($payment, 'expiredAt'), $amount);
         $this->addEvent($events, 'failed', $this->getField($payment, 'failedAt'), $amount);
+    }
+
+    /**
+     * Null while a capture is pending, Mollie has not yet decided whether the rest stays on hold or is released.
+     *
+     * @return \stdClass|null authorized amount not captured on a partially captured manual payment
+     */
+    private function getUncapturedAmount($payment, $amount, $status, array $captures)
+    {
+        if ($this->getField($payment, 'captureMode') !== 'manual' || !in_array($status, ['authorized', 'paid'], true)) {
+            return null;
+        }
+
+        $capturedValue = 0.0;
+        foreach ($captures as $capture) {
+            $captureStatus = $this->getField($capture, 'status');
+            if ($captureStatus === 'pending') {
+                return null;
+            }
+            if ($captureStatus === 'succeeded') {
+                $capturedValue = NumberUtility::plus($capturedValue, (float) $this->getAmountField($this->getField($capture, 'amount'), 'value'));
+            }
+        }
+
+        $uncapturedValue = NumberUtility::minus((float) $this->getAmountField($amount, 'value'), $capturedValue);
+        if (!NumberUtility::isGreaterThan($capturedValue, 0) || !NumberUtility::isGreaterThan($uncapturedValue, 0)) {
+            return null;
+        }
+
+        return (object) [
+            'value' => number_format($uncapturedValue, 2, '.', ''),
+            'currency' => $this->getAmountField($amount, 'currency'),
+        ];
     }
 
     private function addCaptureEvents(array &$events, array $captures)

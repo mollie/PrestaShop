@@ -669,6 +669,7 @@ $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_bd7f97a89cc3
 $_MODULE['<{mollie}prestashop>payment_history_6ecdeeece7dc4ee366197ea2e4b6b778'] = 'Betalingsgeschiedenis';
 $_MODULE['<{mollie}prestashop>payment_history_2a2d2c75ec43014500ef2d5f400cf7d1'] = 'Nog geen gebeurtenissen';
 $_MODULE['<{mollie}prestashop>payment_history_b02dca32aecc6f71310f9e914757d56f'] = 'Mollie-referentie';
+$_MODULE['<{mollie}prestashop>payment_history_eedad0161afe1b4842e67015737d9780'] = 'Nog %s vast te leggen';
 $_MODULE['<{mollie}prestashop>mollie_0eceeb45861f9585dd7a97a3e36f85c6'] = 'Aangemaakt';
 $_MODULE['<{mollie}prestashop>mollie_a206428462686af481cb072b8db11784'] = 'Geautoriseerd';
 $_MODULE['<{mollie}prestashop>mollie_e0010a0a1a3259ab5c06a19bad532851'] = 'Betaald';
@@ -685,6 +686,7 @@ $_MODULE['<{mollie}prestashop>mollie_2e79cbc13bbc903d989eab943a2e394f'] = 'Verva
 $_MODULE['<{mollie}prestashop>mollie_8435adfa4482a3a64d2e012da5c6de35'] = 'Vastleggen vóór';
 $_MODULE['<{mollie}prestashop>mollie_ba9127fb12c61eaff05c2522f9351605'] = 'Vastlegmodus';
 $_MODULE['<{mollie}prestashop>mollie_36af80e944c34b2f5310930d5b66d608'] = 'Uitbetalingsbedrag';
+$_MODULE['<{mollie}prestashop>mollie_ea1e34304a5d8ffa7c9b0ed8ede4ef1a'] = 'Vrijgegeven';
 $_MODULE['<{mollie}prestashop>mollie_fffcb4d1e12c96b2f571f77ad25878b8'] = 'Reden';
 $_MODULE['<{mollie}prestashop>mollie_c3bf447eabe632720a3aa1a7ce401274'] = 'Open';
 $_MODULE['<{mollie}prestashop>mollie_2d13df6f8b5e4c5af9f87e0dc39df69d'] = 'In behandeling';

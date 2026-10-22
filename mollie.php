@@ -959,6 +959,7 @@ class Mollie extends PaymentModule
                 'authorized' => $this->l('Authorized'),
                 'paid' => $this->l('Paid'),
                 'captured' => $this->l('Captured'),
+                'released' => $this->l('Released'),
                 'refunded' => $this->l('Refund'),
                 'chargeback' => $this->l('Chargeback'),
                 'chargeback_reversed' => $this->l('Chargeback reversed'),
