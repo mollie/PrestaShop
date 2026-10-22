@@ -15,7 +15,6 @@ namespace Mollie\Service;
 use Address;
 use AddressFormat;
 use Carrier;
-use CartRule;
 use Configuration;
 use Context;
 use Customer;
@@ -103,7 +102,7 @@ class MailService
      */
     public function sendOrderConfMail(Order $order, $orderStateId)
     {
-        $data = $this->getOrderConfData($order, $orderStateId);
+        $data = $this->getOrderConfData($order);
         $fileAttachment = $this->getFileAttachment($orderStateId, $order);
         $customer = $order->getCustomer();
         $orderLanguage = new Language((int) $order->id_lang);
@@ -201,15 +200,13 @@ class MailService
     }
 
     /**
-     * @param int $orderStateId
-     *
      * @return array<string, mixed>
      *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
      */
-    private function getOrderConfData(Order $order, $orderStateId)
+    private function getOrderConfData(Order $order)
     {
         $virtual_product = true;
         $carrier = new Carrier($order->id_carrier);
@@ -287,7 +284,7 @@ class MailService
             $product_list_html = $this->getEmailTemplateContent('order_conf_product_list.tpl', Mail::TYPE_HTML, $product_var_tpl_list);
         }
 
-        $cart_rules_list = $this->getCartRuleList($order, $orderStateId);
+        $cart_rules_list = $this->getCartRuleList($order, PS_TAX_EXC == Product::getTaxCalculationMethod());
         $cart_rules_list_txt = '';
         $cart_rules_list_html = '';
         if (count($cart_rules_list) > 0) {
@@ -349,136 +346,22 @@ class MailService
         ];
     }
 
-    private function getCartRuleList(Order $order, $orderStateId)
+    /**
+     * @param bool $isTaxExcluded
+     */
+    private function getCartRuleList(Order $order, $isTaxExcluded)
     {
-        $customer = $order->getCustomer();
-        $order_list = [];
-        $cart_rules = $this->context->cart->getCartRules();
-        $order_list[] = $order;
-        $cart_rule_used = [];
+        $cartRulesList = [];
+        $valueKey = $isTaxExcluded ? 'value_tax_excl' : 'value';
 
-        $cart_rules_list = [];
-        $total_reduction_value_ti = 0;
-        $total_reduction_value_tex = 0;
-        foreach ($cart_rules as $cart_rule) {
-            $package = [
-                'id_carrier' => $order->id_carrier,
-                'id_address' => $order->id_address_delivery,
-                'products' => $order->getProducts(),
-            ];
-            $values = [
-                'tax_incl' => $cart_rule['obj']->getContextualValue(true, $this->context, CartRule::FILTER_ACTION_ALL_NOCAP, $package),
-                'tax_excl' => $cart_rule['obj']->getContextualValue(false, $this->context, CartRule::FILTER_ACTION_ALL_NOCAP, $package),
-            ];
-
-            // If the reduction is not applicable to this order, then continue with the next one
-            if (!$values['tax_excl']) {
-                continue;
-            }
-
-            // IF
-            //  This is not multi-shipping
-            //  The value of the voucher is greater than the total of the order
-            //  Partial use is allowed
-            //  This is an "amount" reduction, not a reduction in % or a gift
-            // THEN
-            //  The voucher is cloned with a new value corresponding to the remainder
-            if (1 == count($order_list) && $values['tax_incl'] > ($order->total_products_wt - $total_reduction_value_ti) && 1 == $cart_rule['obj']->partial_use && $cart_rule['obj']->reduction_amount > 0) {
-                // Create a new voucher from the original
-                $voucher = new CartRule((int) $cart_rule['obj']->id); // We need to instantiate the CartRule without lang parameter to allow saving it
-                unset($voucher->id);
-
-                // Set a new voucher code
-                $voucher->code = empty($voucher->code) ? substr(md5($order->id . '-' . $order->id_customer . '-' . $cart_rule['obj']->id), 0, 16) : $voucher->code . '-2';
-                if (preg_match('/\-([0-9]{1,2})\-([0-9]{1,2})$/', $voucher->code, $matches) && $matches[1] == $matches[2]) {
-                    $voucher->code = preg_replace('/' . $matches[0] . '$/', '-' . (intval($matches[1]) + 1), $voucher->code);
-                }
-
-                // Set the new voucher value
-                if ($voucher->reduction_tax) {
-                    $voucher->reduction_amount = ($total_reduction_value_ti + $values['tax_incl']) - $order->total_products_wt;
-
-                    // Add total shipping amout only if reduction amount > total shipping
-                    if (1 == $voucher->free_shipping && $voucher->reduction_amount >= $order->total_shipping_tax_incl) {
-                        $voucher->reduction_amount -= $order->total_shipping_tax_incl;
-                    }
-                } else {
-                    $voucher->reduction_amount = ($total_reduction_value_tex + $values['tax_excl']) - $order->total_products;
-
-                    // Add total shipping amout only if reduction amount > total shipping
-                    if (1 == $voucher->free_shipping && $voucher->reduction_amount >= $order->total_shipping_tax_excl) {
-                        $voucher->reduction_amount -= $order->total_shipping_tax_excl;
-                    }
-                }
-                if ($voucher->reduction_amount <= 0) {
-                    continue;
-                }
-
-                if ($customer->isGuest()) {
-                    $voucher->id_customer = 0;
-                } else {
-                    $voucher->id_customer = $order->id_customer;
-                }
-
-                $voucher->quantity = 1;
-                $voucher->reduction_currency = $order->id_currency;
-                $voucher->quantity_per_user = 1;
-                if ($voucher->add()) {
-                    // If the voucher has conditions, they are now copied to the new voucher
-                    CartRule::copyConditions($cart_rule['obj']->id, $voucher->id);
-                    $orderLanguage = new Language((int) $order->id_lang);
-
-                    $params = [
-                        '{voucher_amount}' => $this->tools->displayPrice($voucher->reduction_amount, $this->context->currency),
-                        '{voucher_num}' => $voucher->code,
-                        '{firstname}' => $customer->firstname,
-                        '{lastname}' => $customer->lastname,
-                        '{id_order}' => $order->reference,
-                        '{order_name}' => $order->getUniqReference(),
-                    ];
-                    Mail::Send(
-                        (int) $order->id_lang,
-                        'voucher',
-                        $this->module->l(
-                            'New voucher for your order %s',
-                            self::FILE_NAME
-                        ),
-                        $params,
-                        $customer->email,
-                        implode(' ', [$customer->firstname, $customer->lastname]),
-                        null, null, null, null, _PS_MAIL_DIR_, false, (int) $order->id_shop
-                    );
-                }
-
-                $values['tax_incl'] = $order->total_products_wt - $total_reduction_value_ti;
-                $values['tax_excl'] = $order->total_products - $total_reduction_value_tex;
-                if (1 == $voucher->free_shipping) {
-                    $values['tax_incl'] += $order->total_shipping_tax_incl;
-                    $values['tax_excl'] += $order->total_shipping_tax_excl;
-                }
-            }
-            $total_reduction_value_ti += $values['tax_incl'];
-            $total_reduction_value_tex += $values['tax_excl'];
-
-            $order->addCartRule($cart_rule['obj']->id, $cart_rule['obj']->name, $values, 0, $cart_rule['obj']->free_shipping);
-
-            if ($orderStateId != Configuration::get('PS_OS_ERROR') && $orderStateId != Configuration::get('PS_OS_CANCELED')
-                && !in_array($cart_rule['obj']->id, $cart_rule_used)) {
-                $cart_rule_used[] = $cart_rule['obj']->id;
-
-                // Create a new instance of Cart Rule without id_lang, in order to update its quantity
-                $cart_rule_to_update = new CartRule((int) $cart_rule['obj']->id);
-                $cart_rule_to_update->quantity = max(0, $cart_rule_to_update->quantity - 1);
-                $cart_rule_to_update->update();
-            }
-
-            $cart_rules_list[] = [
-                'voucher_name' => $cart_rule['obj']->name,
-                'voucher_reduction' => (0.00 != $values['tax_incl'] ? '-' : '') . $this->tools->displayPrice($values['tax_incl'], $this->context->currency),
+        foreach ($order->getCartRules() as $orderCartRule) {
+            $cartRulesList[] = [
+                'voucher_name' => $orderCartRule['name'],
+                'voucher_reduction' => (0.00 != $orderCartRule['value'] ? '-' : '') . $this->tools->displayPrice($orderCartRule[$valueKey], $this->context->currency),
             ];
         }
 
-        return $cart_rules_list;
+        return $cartRulesList;
     }
 
     private function getFileAttachment($orderStatusId, Order $order)

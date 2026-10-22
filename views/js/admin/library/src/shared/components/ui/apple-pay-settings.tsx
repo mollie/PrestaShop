@@ -105,6 +105,7 @@ export function ApplePaySettings({
         <Label className={cn("text-sm font-medium col-span-3", isDisabled && "opacity-50")}>{t('applePayDirectProductPage')}</Label>
         <p className={cn("text-sm text-muted-foreground", isDisabled && "opacity-50")}>{t('enableApplePayProductPages')}</p>
         <Switch
+          data-testid="payment-method-applepay-direct-product-switch"
           checked={directProduct}
           onCheckedChange={(directProduct: boolean) => onUpdateSettings({ directProduct })}
           disabled={isDisabled}
@@ -115,6 +116,7 @@ export function ApplePaySettings({
         <Label className={cn("text-sm font-medium col-span-3 mt-4", isDisabled && "opacity-50")}>{t('applePayDirectCartPage')}</Label>
         <p className={cn("text-sm text-muted-foreground", isDisabled && "opacity-50")}>{t('enableApplePayCartPages')}</p>
         <Switch
+          data-testid="payment-method-applepay-direct-cart-switch"
           checked={directCart}
           onCheckedChange={(directCart: boolean) => onUpdateSettings({ directCart })}
           disabled={isDisabled}

@@ -2,6 +2,31 @@
 
 # Changelog #
 
+## Changes in release 6.4.7
++ Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
++ Fixed switching between Test and Live modes changing the mode even when the stored API key was rejected, which removed Mollie from the checkout while the back office still showed the previous mode
++ Apple Pay Direct now assigns each order to the shopper completing the payment
++ Fixed Apple Pay Direct orders being created without a phone number, the phone from the customer's Apple Wallet is now saved on the delivery and invoice address
++ Fixed the Apple Pay Direct sheet keeping the previous country's VAT and shipping tax after the shopper changed the delivery address to another country
++ The Apple Pay Direct sheet now lists products, discount, VAT, shipping, gift wrapping and payment fee above the total, so the amount no longer looks different from the product page
++ Fixed Apple Pay Direct on the cart page removing the shopper's voucher code and charging the full price
++ Fixed Mollie payment methods not showing at checkout when the shop language is Norwegian, Chinese, Serbian or another language Mollie does not support
++ Credit card field messages and the Apple Pay Direct button now follow the shop language for Norwegian shops instead of falling back to English
++ Apple Pay Direct session validation failures are now recorded in the Mollie log with the reason, for example a missing or invalid live API key, and the browser only shows the reason when Debug mode is on
++ Fixed discounts being added to the order a second time, and voucher stock used twice, when the order confirmation email is sent after payment
++ The Mollie panel on the order page now lists the order's discounts for Payments API orders
++ Fixed card payments made with Apple Pay on the Mollie payment page being refunded automatically when Apple Pay and Card have different payment fees
++ The module can now be installed with Composer, and the settings pages explain when module files are missing instead of staying blank
++ Fixed the subscription details page not opening for products without an image
++ Fixed the payment fee not being shown at checkout on the Hummingbird theme and the one page checkout, the fee now appears next to the method and in the order total
++ Added a Mollie payment history timeline to the order page for Payments API orders, including pending, open, expired and failed payments, and the amount Mollie releases or still holds for capture after a partial manual capture
++ The order page now fetches a Payments API payment from Mollie once instead of up to three times
++ Fixed checkout failing when an automatic free shipping cart rule applies to a paid carrier
++ Fixed PHP deprecation notices filling the error log on every page load on PHP 8.4 and 8.5, and made the module ready to load on PHP 9
++ Fixed the API Configuration page showing an empty API key field after an upgrade, when a stored key fails the current format check
++ New: Mollie Express Component, one-tap Apple Pay, Google Pay and PayPal buttons on the checkout payment step, switched on under Advanced Settings with a button switch per wallet on the Payment Methods page (live mode only, Mollie activates it per account)
++ Updated the Apple Pay domain verification file, shops that serve the previous Mollie file get the new one when the module is upgraded from the back office or the Apple Pay settings are saved
+
 ## Changes in release 6.4.6.1
 + Improved payment validation when creating orders
 

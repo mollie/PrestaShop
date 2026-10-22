@@ -16,8 +16,11 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Language;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
+use Mollie\Handler\Certificate\ApplePayDirectCertificateHandler;
+use Mollie\Logger\LoggerInterface;
 use Mollie\Service\MolCarrierInformationService;
 use Mollie\Service\MultistoreSettingsContextGuard;
+use Mollie\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -63,22 +66,29 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
 
         $version = time();
 
-        $this->context->controller->addCSS(
-            $this->module->getPathUri() . 'views/css/admin/library/globals.css?v=' . $version,
-            'all',
-            null,
-            false
-        );
+        $jsPath = 'views/js/admin/library/dist/assets/mollie-advanced-settings.js';
+        $isBuilt = file_exists($this->module->getLocalPath() . $jsPath);
+        $this->context->smarty->assign('mollieAdvancedSettingsJsUrl', $isBuilt ? $this->module->getPathUri() . $jsPath . '?v=' . $version : '');
 
-        $this->context->controller->addCSS(
-            $this->module->getPathUri() . 'views/css/admin/library/mollie-advanced-settings.css?v=' . $version,
-            'all',
-            null,
-            false
-        );
+        if (!$isBuilt) {
+            $this->errors[] = $this->module->l('This page cannot be displayed because its compiled files are missing. Reinstall the module from the official release ZIP, or build the files as described in README_DEV.md.', self::FILE_NAME);
+        }
 
-        $jsUrl = $this->module->getPathUri() . 'views/js/admin/library/dist/assets/mollie-advanced-settings.js?v=' . $version;
-        $this->context->smarty->assign('mollieAdvancedSettingsJsUrl', $jsUrl);
+        if ($isBuilt) {
+            $this->context->controller->addCSS(
+                $this->module->getPathUri() . 'views/css/admin/library/globals.css?v=' . $version,
+                'all',
+                null,
+                false
+            );
+
+            $this->context->controller->addCSS(
+                $this->module->getPathUri() . 'views/css/admin/library/mollie-advanced-settings.css?v=' . $version,
+                'all',
+                null,
+                false
+            );
+        }
 
         Media::addJsDef([
             'mollieAdvancedSettingsAjaxUrl' => $this->context->link->getAdminLink('AdminMollieAdvancedSettings'),
@@ -108,6 +118,10 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             'shippingSettings' => $this->module->l('Shipping Settings', self::FILE_NAME),
             'errorDebugging' => $this->module->l('Error Debugging', self::FILE_NAME),
             'visualSettings' => $this->module->l('Visual Settings', self::FILE_NAME),
+            'expressCheckout' => $this->module->l('Express checkout (beta)', self::FILE_NAME),
+            'expressCheckoutEnable' => $this->module->l('Mollie Express Component', self::FILE_NAME),
+            'expressCheckoutInfo' => $this->module->l('Show Apple Pay, Google Pay and PayPal as quick-pay buttons at the top of checkout, so customers can pay in one tap. Choose which buttons appear on the Payment Methods page.', self::FILE_NAME),
+            'expressCheckoutLiveOnly' => $this->module->l('The Express Component is in beta. Mollie activates it per account, so contact Mollie before you switch it on. It works only with a live API key in live mode and stays hidden in test mode.', self::FILE_NAME),
             'orderStatusMapping' => $this->module->l('Order Status Mapping', self::FILE_NAME),
             'orderStatusEmails' => $this->module->l('Order Status Emails', self::FILE_NAME),
             'invoiceOption' => $this->module->l('Select when to create the order invoice', self::FILE_NAME),
@@ -240,6 +254,10 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
                 'autoShipStatuses' => array_map('strval', json_decode($this->configuration->get(Config::MOLLIE_AUTO_SHIP_STATUSES) ?: '[]', true)),
                 'carriers' => $this->getCarriersData(),
 
+                'expressComponent' => (bool) (int) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED),
+                'expressLiveReady' => Config::ENVIRONMENT_LIVE === (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT)
+                    && 0 === strpos((string) $this->configuration->get(Config::MOLLIE_API_KEY), 'live'),
+
                 'debugMode' => (bool) $this->configuration->get(Config::MOLLIE_DISPLAY_ERRORS),
                 'logLevel' => ($logLevelRaw !== false && $logLevelRaw !== '' && $logLevelRaw !== null)
                     ? (string) $logLevelRaw
@@ -280,6 +298,32 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         }
     }
 
+    /**
+     * Shops from the 6.4.7 beta can have the Apple Pay express flag on while the component is off,
+     * and the domain file is only written when the Apple Pay card is saved. Placing it here covers
+     * those shops and a file removed in between, so Apple Pay shows once the component is on.
+     */
+    private function placeApplePayDomainFile(): void
+    {
+        if (!(bool) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY)) {
+            return;
+        }
+
+        try {
+            /** @var ApplePayDirectCertificateHandler $certificateHandler */
+            $certificateHandler = $this->module->getService(ApplePayDirectCertificateHandler::class);
+            $certificateHandler->handle();
+            $certificateHandler->refresh();
+        } catch (\Throwable $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+
+            $logger->warning('Apple Pay domain association file could not be placed when the express component was switched on', [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+        }
+    }
+
     private function ajaxSaveSettings(): void
     {
         try {
@@ -304,6 +348,15 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             }
             if (isset($data['carriers'])) {
                 $this->saveCarriersData($data['carriers']);
+            }
+
+            if (isset($data['expressComponent'])) {
+                $wasExpressEnabled = (bool) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED);
+                $this->configuration->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED, (bool) $data['expressComponent']);
+
+                if (!$wasExpressEnabled && (bool) $data['expressComponent']) {
+                    $this->placeApplePayDomainFile();
+                }
             }
 
             if (isset($data['debugMode'])) {

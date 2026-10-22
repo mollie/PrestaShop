@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
+import { AlertCircle } from "lucide-react"
 import "./advanced-settings.css"
 import { advancedSettingsApiService, type CarrierData, type SaveCarrierData } from "../../services/AdvancedSettingsApiService"
 import { AdvancedSettingsSkeleton } from "./components/advanced-settings-skeleton"
@@ -326,6 +327,8 @@ const AdvancedSettings: React.FC = () => {
   const [logoDisplay, setLogoDisplay] = useState("")
   const [translateMollie, setTranslateMollie] = useState("")
   const [cssPath, setCssPath] = useState("")
+  const [expressComponent, setExpressComponent] = useState(false)
+  const [expressLiveReady, setExpressLiveReady] = useState(true)
 
   const [carriers, setCarriers] = useState<CarrierRow[]>([])
 
@@ -390,6 +393,8 @@ const AdvancedSettings: React.FC = () => {
         setAutoShipStatuses(data.autoShipStatuses || [])
 
         setDebugMode(data.debugMode || false)
+        setExpressComponent(data.expressComponent || false)
+        setExpressLiveReady(data.expressLiveReady !== false)
         setLogLevel(data.logLevel || logLevelOpts[0]?.id || "")
 
         const mappedCarriers = data.carriers.map((carrier: CarrierData) => ({
@@ -434,6 +439,7 @@ const AdvancedSettings: React.FC = () => {
         logoDisplay,
         cssPath,
         translateMollie,
+        expressComponent,
         statusMappings,
         emailStatuses,
       })
@@ -754,6 +760,31 @@ const AdvancedSettings: React.FC = () => {
             options={translateMollieOptions.map(opt => ({ value: opt.id, label: opt.name }))}
             placeholder={t('selectOption')}
           />
+        </div>
+      </section>
+
+      <section className="settings-section">
+        <h2 className="section-title">{t('expressCheckout')}</h2>
+
+        {!expressLiveReady && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-5 flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+            <div className="flex-1 text-sm text-amber-800">{t('expressCheckoutLiveOnly')}</div>
+          </div>
+        )}
+
+        <div className="toggle-group">
+          <div className="toggle-content">
+            <div>
+              <div className="toggle-label">{t('expressCheckoutEnable')}</div>
+              <div className="toggle-description">{t('expressCheckoutInfo')}</div>
+            </div>
+            <label className="toggle-switch">
+              <input type="checkbox" checked={expressComponent} onChange={(e) => setExpressComponent(e.target.checked)} />
+              <span className="toggle-slider"></span>
+            </label>
+            <span className="toggle-status">{expressComponent ? t('enabled') : t('disabled')}</span>
+          </div>
         </div>
       </section>
 

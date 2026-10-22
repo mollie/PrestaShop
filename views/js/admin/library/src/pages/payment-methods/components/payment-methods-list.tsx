@@ -1,13 +1,39 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
-import { CheckCircle, XCircle } from "lucide-react"
+import { CheckCircle, XCircle, AlertTriangle, Zap, X } from "lucide-react"
 import { PaymentMethodTabs } from "./payment-method-tabs"
 import { PaymentMethodsList } from "./payment-methods-list-component"
 import { PaymentMethodsSkeleton } from "./payment-methods-skeleton"
 import { paymentMethodsApiService, type PaymentMethod, type Country, type Carrier, type CustomerGroup, type Language } from "../../../services/PaymentMethodsApiService"
 import { usePaymentMethodsTranslations } from "../../../shared/hooks/use-payment-methods-translations"
 import { MultistoreRestrictionNotice } from "../../../shared/components/ui/multistore-restriction-notice"
+
+type NotificationType = 'success' | 'error' | 'warning'
+
+interface PageNotification {
+  id: number
+  message: string
+  type: NotificationType
+}
+
+const NOTIFICATION_TIMEOUT_MS = 5000
+
+const notificationStyles: Record<NotificationType, { box: string; text: string }> = {
+  success: { box: 'bg-green-50 border-green-200', text: 'text-green-800' },
+  error: { box: 'bg-red-50 border-red-200', text: 'text-red-800' },
+  warning: { box: 'bg-amber-50 border-amber-200', text: 'text-amber-800' },
+}
+
+function NotificationIcon({ type }: { type: NotificationType }) {
+  if (type === 'success') {
+    return <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+  }
+  if (type === 'warning') {
+    return <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0" />
+  }
+  return <XCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
+}
 
 export default function PaymentMethodsPage() {
   const { t } = usePaymentMethodsTranslations()
@@ -20,7 +46,8 @@ export default function PaymentMethodsPage() {
     setDisabledMethods((prev) => prev.map((m) => ({ ...m, isExpanded: false })));
   }
 
-  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const [notifications, setNotifications] = useState<PageNotification[]>([])
+  const notificationIdRef = useRef(0)
   const [enabledMethods, setEnabledMethods] = useState<PaymentMethod[]>([])
   const [disabledMethods, setDisabledMethods] = useState<PaymentMethod[]>([])
   const [countries, setCountries] = useState<Country[]>([])
@@ -30,10 +57,28 @@ export default function PaymentMethodsPage() {
   const [onlyPaymentsMethods, setOnlyPaymentsMethods] = useState<string[]>([])
   const [onlyOrderMethods, setOnlyOrderMethods] = useState<string[]>([])
   const [showApplePayLiveKeyWarning, setShowApplePayLiveKeyWarning] = useState(false)
+  const [expressComponentEnabled, setExpressComponentEnabled] = useState(false)
+  const [environment, setEnvironment] = useState<string>()
+  const [expressPromoDismissed, setExpressPromoDismissed] = useState(false)
+  const [expressLiveReady, setExpressLiveReady] = useState(false)
+  const isTestMode = environment === 'test'
+  const showExpressBadges = expressLiveReady && !expressPromoDismissed
+  const showExpressPromo = showExpressBadges && !expressComponentEnabled
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
   const [savingMethodId, setSavingMethodId] = useState<string | null>(null)
   const [isReorderingSaving, setIsReorderingSaving] = useState(false)
+
+  const dismissNotification = (id: number) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id))
+  }
+
+  const showNotification = ({ message, type }: { message: string; type: NotificationType }) => {
+    notificationIdRef.current += 1
+    const id = notificationIdRef.current
+    setNotifications((prev) => [...prev, { id, message, type }])
+    setTimeout(() => dismissNotification(id), NOTIFICATION_TIMEOUT_MS)
+  }
 
   const loadPaymentMethods = useCallback(async () => {
     try {
@@ -56,6 +101,10 @@ export default function PaymentMethodsPage() {
         setOnlyPaymentsMethods(response.data.onlyPaymentsMethods || [])
         setOnlyOrderMethods(response.data.onlyOrderMethods || [])
         setShowApplePayLiveKeyWarning(response.data.environment === 'test' && !response.data.hasLiveApiKey)
+        setExpressComponentEnabled(response.data.expressComponentEnabled ?? false)
+        setEnvironment(response.data.environment)
+        setExpressPromoDismissed(response.data.expressPromoDismissed ?? false)
+        setExpressLiveReady(response.data.expressLiveReady ?? false)
       } else {
         setErrorMessage(response.message || t('loadingError'))
       }
@@ -74,6 +123,13 @@ export default function PaymentMethodsPage() {
   useEffect(() => {
     loadPaymentMethodsRef.current()
   }, []) // Empty dependency array - only run once on mount
+
+  const dismissExpressPromo = () => {
+    setExpressPromoDismissed(true)
+    paymentMethodsApiService.dismissExpressPromo().catch((error) => {
+      console.error('Failed to dismiss the Express checkout banner:', error)
+    })
+  }
 
   const toggleExpanded = (id: string) => {
     const updateMethods = (methods: PaymentMethod[]) =>
@@ -115,13 +171,13 @@ export default function PaymentMethodsPage() {
 
       if (response.success) {
         // Show success notification
-        setNotification({
+        showNotification({
           message: response.message || t('paymentMethodsOrderUpdated'),
           type: 'success'
         })
       } else {
         // Show error and revert to original order
-        setNotification({
+        showNotification({
           message: response.message || t('failedToUpdateOrder'),
           type: 'error'
         })
@@ -130,7 +186,7 @@ export default function PaymentMethodsPage() {
       }
     } catch (error) {
       console.error('Failed to update payment methods order:', error)
-      setNotification({
+      showNotification({
         message: t('failedToUpdateOrder'),
         type: 'error'
       })
@@ -149,7 +205,7 @@ export default function PaymentMethodsPage() {
       const method = [...enabledMethods, ...disabledMethods].find(m => m.id === methodId)
       if (!method) {
         console.error('Method not found:', methodId)
-        setNotification({ message: t('paymentMethodNotFound'), type: 'error' })
+        showNotification({ message: t('paymentMethodNotFound'), type: 'error' })
         setSavingMethodId(null)
         return
       }
@@ -159,7 +215,7 @@ export default function PaymentMethodsPage() {
 
       if (response.success) {
         // Show success notification FIRST (before any updates)
-        setNotification({ message: response.message || t('settingsSavedSuccessfully'), type: 'success' })
+        showNotification({ message: response.message || t('settingsSavedSuccessfully'), type: 'success' })
 
         // Reload ONLY the saved payment method data from server to ensure fresh state
         // This is more efficient than reloading all methods
@@ -206,26 +262,16 @@ export default function PaymentMethodsPage() {
         }
       } else {
         // Show error but DON'T clear all methods
-        setNotification({ message: response.message || t('failedToSaveSettings'), type: 'error' })
+        showNotification({ message: response.message || t('failedToSaveSettings'), type: 'error' })
       }
     } catch (error) {
       console.error('Failed to save payment method settings:', error)
       // Show error but DON'T clear all methods
-      setNotification({ message: t('failedToSaveSettings'), type: 'error' })
+      showNotification({ message: t('failedToSaveSettings'), type: 'error' })
     } finally {
       setSavingMethodId(null)
     }
   }
-
-  // Auto-hide notification after 5 seconds
-  useEffect(() => {
-    if (notification) {
-      const timer = setTimeout(() => {
-        setNotification(null)
-      }, 5000)
-      return () => clearTimeout(timer)
-    }
-  }, [notification])
 
   const currentMethods = activeTab === "enabled" ? enabledMethods : disabledMethods
 
@@ -266,32 +312,29 @@ export default function PaymentMethodsPage() {
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
-      {/* Notification Banner - Fixed position in right corner */}
-      {notification && (
-        <div
-          className={`fixed right-6 top-6 z-[9999] border rounded-lg p-4 flex items-center gap-3 shadow-lg min-w-[320px] max-w-[500px] ${
-            notification.type === 'success'
-              ? 'bg-green-50 border-green-200'
-              : 'bg-red-50 border-red-200'
-          }`}
-          style={{ animation: 'slideInRight 0.3s ease-out' }}
-        >
-          {notification.type === 'success' ? (
-            <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-          ) : (
-            <XCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
-          )}
-          <div className={`text-sm font-medium ${notification.type === 'success' ? 'text-green-800' : 'text-red-800'}`}>
-            {notification.message}
-          </div>
-          <button
-            onClick={() => setNotification(null)}
-            className="ml-auto text-gray-500 hover:text-gray-700"
-          >
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+      {/* Notification Banners - Fixed position in right corner, stacked */}
+      {notifications.length > 0 && (
+        <div className="fixed right-6 top-6 z-[9999] flex flex-col gap-3">
+          {notifications.map((notification) => (
+            <div
+              key={notification.id}
+              className={`border rounded-lg p-4 flex items-center gap-3 shadow-lg min-w-[320px] max-w-[500px] ${notificationStyles[notification.type].box}`}
+              style={{ animation: 'slideInRight 0.3s ease-out' }}
+            >
+              <NotificationIcon type={notification.type} />
+              <div className={`text-sm font-medium ${notificationStyles[notification.type].text}`}>
+                {notification.message}
+              </div>
+              <button
+                onClick={() => dismissNotification(notification.id)}
+                className="ml-auto text-gray-500 hover:text-gray-700"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          ))}
         </div>
       )}
 
@@ -316,8 +359,32 @@ export default function PaymentMethodsPage() {
         </div>
       </div>
 
+      {showExpressPromo && (
+        <div data-testid="express-promo-banner" className="bg-blue-50 border border-blue-200 rounded-lg py-2 pl-4 pr-2 flex items-center gap-3">
+          <Zap className="h-5 w-5 text-blue-700 flex-shrink-0" aria-hidden="true" />
+          <p className="flex-1 m-0 text-sm text-gray-800">
+            <strong className="font-semibold text-gray-900">{t('expressPromoTitle')}</strong> {t('expressPromoText')}
+          </p>
+          <a
+            href={window.mollieAdvancedSettingsUrl}
+            className="flex-shrink-0 inline-flex items-center h-9 px-4 rounded-md bg-blue-700 text-sm font-semibold text-white hover:bg-blue-800 hover:text-white"
+            style={{ textDecoration: 'none' }}
+          >
+            {t('expressPromoButton')}
+          </a>
+          <button
+            type="button"
+            onClick={dismissExpressPromo}
+            aria-label={t('expressPromoDismiss')}
+            className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-md text-gray-600 hover:bg-blue-100 hover:text-gray-900"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
       {/* Tabs */}
-  <PaymentMethodTabs activeTab={activeTab} onTabChange={handleTabChange} />
+      <PaymentMethodTabs activeTab={activeTab} onTabChange={handleTabChange} />
 
       {/* Reordering indicator */}
       {isReorderingSaving && (
@@ -342,6 +409,9 @@ export default function PaymentMethodsPage() {
           countries={countries}
           carriers={carriers}
           showApplePayLiveKeyWarning={showApplePayLiveKeyWarning}
+          expressComponentEnabled={expressComponentEnabled}
+          showExpressBadges={showExpressBadges}
+          isTestMode={isTestMode}
           customerGroups={customerGroups}
           languages={languages}
           onlyPaymentsMethods={onlyPaymentsMethods}

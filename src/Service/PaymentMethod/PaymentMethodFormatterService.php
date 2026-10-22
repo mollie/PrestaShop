@@ -148,6 +148,9 @@ class PaymentMethodFormatterService
                 'applePaySettings' => $methodId === 'applepay'
                     ? $this->formatApplePaySettings()
                     : null,
+                'expressButton' => isset(Config::EXPRESS_BUTTON_FLAGS[$methodId])
+                    ? (bool) (int) $this->configuration->get(Config::EXPRESS_BUTTON_FLAGS[$methodId])
+                    : null,
             ],
         ];
     }

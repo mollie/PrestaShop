@@ -96,9 +96,15 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             $data['auth'] = (int) $cart->id_customer === $customer->id;
             if ($data['auth']) {
                 if ($transactionId) {
-                    $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('transaction_id', (string) $transactionId);
+                    $data['mollie_info'] = $paymentMethodRepo->getPaymentByTransactionIdForCart((string) $transactionId, $idCart);
                 } else {
                     $data['mollie_info'] = $paymentMethodRepo->getPaymentBy('order_reference', (string) $orderNumber);
+
+                    if (is_array($data['mollie_info'])
+                        && (int) ($data['mollie_info']['cart_id'] ?? 0) !== $idCart
+                    ) {
+                        $data['mollie_info'] = false;
+                    }
                 }
             }
         }
@@ -321,8 +327,6 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             ]));
         }
 
-        $transactionId = Tools::getValue('transaction_id') ?: $data['mollie_info']['transaction_id'];
-
         $order = new Order((int) $orderId);
 
         if ((int) $cart->id_customer !== (int) $this->context->customer->id) {
@@ -330,6 +334,16 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 'success' => false,
             ]));
         }
+
+        $requestedTransactionId = Tools::getValue('transaction_id');
+        if ($requestedTransactionId
+            && false === $paymentMethodRepo->getPaymentByTransactionIdForCart((string) $requestedTransactionId, (int) $cart->id)
+        ) {
+            exit(json_encode([
+                'success' => false,
+            ]));
+        }
+        $transactionId = $requestedTransactionId ?: $data['mollie_info']['transaction_id'];
 
         if (!Tools::isSubmit('module')) {
             $_GET['module'] = $this->module->name;

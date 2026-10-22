@@ -144,6 +144,10 @@ class PaymentMethodSettingsHandler
             $this->handleCreditCardSettings($settings, $environment);
         }
 
+        if (isset($settings['expressButton'], Config::EXPRESS_BUTTON_FLAGS[$methodId])) {
+            $this->handleExpressButton($methodId, (bool) $settings['expressButton']);
+        }
+
         if ($methodId === Config::APPLEPAY && isset($settings['applePaySettings'])) {
             $this->handleApplePaySettings($settings['applePaySettings']);
         }
@@ -449,6 +453,29 @@ class PaymentMethodSettingsHandler
     }
 
     /**
+     * The express button of a wallet lives in that wallet's own card. Apple Pay in the component
+     * verifies the domain with the same association file as Apple Pay Direct; a failure to place
+     * it is logged, not fatal, since the file may already be served.
+     */
+    private function handleExpressButton(string $methodId, bool $enabled): void
+    {
+        $this->configuration->updateValue(Config::EXPRESS_BUTTON_FLAGS[$methodId], $enabled ? 1 : 0);
+
+        if ($methodId !== 'applepay' || !$enabled) {
+            return;
+        }
+
+        try {
+            $this->applePayDirectCertificateHandler->handle();
+            $this->applePayDirectCertificateHandler->refresh();
+        } catch (\Throwable $e) {
+            $this->logger->warning('Apple Pay domain association file could not be placed for the express button', [
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+        }
+    }
+
+    /**
      * Handle Apple Pay specific settings
      *
      * @param array $applePaySettings Apple Pay settings
@@ -473,6 +500,15 @@ class PaymentMethodSettingsHandler
                 $this->configuration->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_CART, 0);
 
                 throw new MollieException($this->module->l('Apple Pay Direct could not be enabled due to a certificate issue. Check the module logs for details.', 'PaymentMethodSettingsHandler'));
+            }
+
+            // The outdated Mollie file still verifies the domain, so a failed update must not disable Apple Pay Direct.
+            try {
+                $this->applePayDirectCertificateHandler->refresh();
+            } catch (\Throwable $e) {
+                $this->logger->warning('Apple Pay Direct certificate could not be updated', [
+                    'exceptions' => ExceptionUtility::getExceptions($e),
+                ]);
             }
         }
 

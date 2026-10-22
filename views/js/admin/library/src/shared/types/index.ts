@@ -234,6 +234,20 @@ export interface MolliePaymentMethodsTranslations {
   // Multi-store restriction
   multistoreRestrictedTitle: string;
   multistoreRestrictedMessage: string;
+
+  // Express Component
+  expressButtonMasterOff: string;
+  expressButtonTestMode: string;
+  expressButtonCheckout: string;
+  expressButtonCheckoutInfo: string;
+  expressButtonCheckoutGooglePay: string;
+  expressButtonCheckoutGooglePayInfo: string;
+  expressPromoTitle: string;
+  expressPromoText: string;
+  expressPromoButton: string;
+  expressPromoDismiss: string;
+  expressBadge: string;
+  expressBadgeGooglePay: string;
 }
 
 export interface MollieAdvancedSettingsTranslations {
@@ -243,6 +257,10 @@ export interface MollieAdvancedSettingsTranslations {
   shippingSettings: string;
   errorDebugging: string;
   visualSettings: string;
+  expressCheckout: string;
+  expressCheckoutEnable: string;
+  expressCheckoutInfo: string;
+  expressCheckoutLiveOnly: string;
   orderStatusMapping: string;
   orderStatusEmails: string;
   invoiceOption: string;
@@ -307,6 +325,7 @@ declare global {
     mollieAuthConfig?: { multistoreRestricted?: boolean };
     molliePaymentMethodsAjaxUrl: string;
     molliePaymentMethodsTranslations: MolliePaymentMethodsTranslations;
+    mollieAdvancedSettingsUrl?: string;
     mollieAdvancedSettingsAjaxUrl: string;
     mollieAdvancedSettingsTranslations: MollieAdvancedSettingsTranslations;
     mollieAdvancedSettingsConfig?: { multistoreRestricted?: boolean };

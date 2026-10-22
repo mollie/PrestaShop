@@ -90,30 +90,37 @@ export default function AuthorizationForm() {
   const [copySuccessMessage, setCopySuccessMessage] = useState("")
   const [copyErrorMessage, setCopyErrorMessage] = useState("")
 
+  // useTranslations returns a new t on every render, so the effect depends on the
+  // resolved string instead. A string compares equal, so the load still runs once.
+  const failedToLoadSettingsMessage = t('failedToLoadSettings')
+
   // Load current settings on component mount
   useEffect(() => {
-    loadCurrentSettings()
-  }, [])
-
-  const loadCurrentSettings = async () => {
-    try {
-      const response = await authApiService.getCurrentSettings()
-      if (response.success) {
-        setTestApiKey(response.data.test_api_key || "")
-        setLiveApiKey(response.data.live_api_key || "")
-        setMode(response.data.environment as "live" | "test")
-        setApiKey(response.data.environment === "live" ? response.data.live_api_key : response.data.test_api_key)
-        setIsConnected(response.data.is_connected || false)
-        setErrorMessage("")
-        setJustConnected(false) // Reset the "just connected" state on load
+    const loadCurrentSettings = async () => {
+      try {
+        const response = await authApiService.getCurrentSettings()
+        if (response.success) {
+          setTestApiKey(response.data.test_api_key || "")
+          setLiveApiKey(response.data.live_api_key || "")
+          setMode(response.data.environment as "live" | "test")
+          setApiKey(response.data.environment === "live" ? response.data.live_api_key : response.data.test_api_key)
+          setIsConnected(response.data.is_connected || false)
+          setErrorMessage("")
+          setJustConnected(false) // Reset the "just connected" state on load
+        } else {
+          // A failure body arrives as HTTP 200, so the catch below never sees it
+          setErrorMessage(response.message || failedToLoadSettingsMessage)
+        }
+      } catch (error) {
+        console.error('Failed to load settings:', error)
+        setErrorMessage(failedToLoadSettingsMessage)
+      } finally {
+        setInitialLoading(false) // Stop initial loading regardless of success/failure
       }
-    } catch (error) {
-      console.error('Failed to load settings:', error)
-      setErrorMessage("Failed to load current settings")
-    } finally {
-      setInitialLoading(false) // Stop initial loading regardless of success/failure
     }
-  }
+
+    loadCurrentSettings()
+  }, [failedToLoadSettingsMessage])
 
   const handleConnect = async () => {
     if (!apiKey.trim()) return
@@ -202,6 +209,18 @@ export default function AuthorizationForm() {
         }
 
         return true
+      }
+
+      // The stored key is not accepted, so the shop keeps its mode. The tab still opens so the
+      // merchant can replace the key, and Connect saves the new key together with the mode.
+      if (switchResponse.code === 'stored_key_rejected') {
+        setMode(pendingMode)
+        setIsConnected(false)
+        setApiKey(switchResponse.data?.api_key || "")
+        setCopyOnNextConnect(shouldCopy)
+        setErrorMessage(switchResponse.message || t('failedToSwitchEnvironment'))
+
+        return false
       }
 
       console.error('Failed to switch environment:', switchResponse.message)
