@@ -656,6 +656,7 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_121d184230ba68
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_053b1215936e60069f2e47848845916b'] = 'Google Pay express button on the checkout payment step';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_6584a54c68371d0eb52b347de190199e'] = 'Mostra o Google Pay como um botão de um só toque no topo do checkout. Ative primeiro o Mollie Express Component em [1]Definições avançadas[/1]. O Google Pay funciona com pagamentos por cartão, por isso mantenha este método ativo.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_95c949d02bfa03cefad254385eac7d7d'] = 'O Mollie Express Component está desativado. Ative-o em [1]Definições avançadas[/1] para que este botão seja apresentado.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_d27c7543a308a128ef74c6502f1510ef'] = 'Os botões Express só são apresentados no modo live. A sua loja está no modo de teste.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_da0b3991aeecbd69850aab09cb2688f2'] = 'Novidade: Express checkout (beta).';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_af9011e0368e44ea8acac6ed30bbd20d'] = 'Apple Pay, Google Pay e PayPal com um toque no topo do checkout. Peça à Mollie para o ativar e depois ligue-o.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_756afe30c6e6df0fe6757d19e0a19a08'] = 'Ativar';
@@ -665,7 +666,7 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_1a31804ef0d9f3
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_eb4c6f94efd55bbd1876df96448e2c60'] = 'Express checkout (beta)';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0b06e7a6a8fdd7ebb1538faf7582aab8'] = 'Mollie Express Component';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0122b5b00af3de8e066e55c4d5afea6f'] = 'Mostre Apple Pay, Google Pay e PayPal como botões de pagamento rápido no topo do checkout, para que os clientes paguem com um toque. Escolha quais botões aparecem na página Métodos de pagamento.';
-$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_bd7f97a89cc3e8b3fbd5f35dadccb6d7'] = 'The Express Component is in beta and works only with a live API key in live mode. It stays hidden in test mode.';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_d8d0950b07b563ca7190363e69bf03f8'] = 'O Express Component está em beta. A Mollie ativa-o por conta, por isso contacte a Mollie antes de o ativar. Funciona apenas com uma chave API live no modo live e fica oculto no modo de teste.';
 $_MODULE['<{mollie}prestashop>payment_history_6ecdeeece7dc4ee366197ea2e4b6b778'] = 'Histórico de pagamentos';
 $_MODULE['<{mollie}prestashop>payment_history_2a2d2c75ec43014500ef2d5f400cf7d1'] = 'Ainda sem eventos';
 $_MODULE['<{mollie}prestashop>payment_history_b02dca32aecc6f71310f9e914757d56f'] = 'Referência Mollie';

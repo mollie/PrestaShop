@@ -254,6 +254,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'applePayButtonWhiteDesc' => $this->module->l('White Apple Pay button', self::FILE_NAME),
 
                 'expressButtonMasterOff' => $this->module->l('The Mollie Express Component is switched off. Turn it on under [1]Advanced Settings[/1] for this button to show.', self::FILE_NAME),
+                'expressButtonTestMode' => $this->module->l('Express buttons show only in live mode. Your shop is in test mode.', self::FILE_NAME),
                 'expressButtonCheckout' => $this->module->l('Express button on the checkout payment step', self::FILE_NAME),
                 'expressButtonCheckoutInfo' => $this->module->l('Shows this wallet as a one-tap button at the top of checkout. Turn on the Mollie Express Component under [1]Advanced Settings[/1] first.', self::FILE_NAME),
                 'expressButtonCheckoutGooglePay' => $this->module->l('Google Pay express button on the checkout payment step', self::FILE_NAME),

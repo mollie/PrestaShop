@@ -656,6 +656,7 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_121d184230ba68
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_053b1215936e60069f2e47848845916b'] = 'Google Pay express button on the checkout payment step';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_6584a54c68371d0eb52b347de190199e'] = 'Visar Google Pay som en knapp med ett tryck högst upp i kassan. Aktivera först Mollie Express Component under [1]Avancerade inställningar[/1]. Google Pay använder kortbetalningar, så låt den här betalningsmetoden vara aktiverad.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_95c949d02bfa03cefad254385eac7d7d'] = 'Mollie Express Component är avstängd. Aktivera den under [1]Avancerade inställningar[/1] för att den här knappen ska visas.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_d27c7543a308a128ef74c6502f1510ef'] = 'Express-knappar visas bara i live-läge. Din butik är i testläge.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_da0b3991aeecbd69850aab09cb2688f2'] = 'Nyhet: Express checkout (beta).';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_af9011e0368e44ea8acac6ed30bbd20d'] = 'Apple Pay, Google Pay och PayPal med ett tryck högst upp i kassan. Be Mollie att aktivera det och slå sedan på det.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_756afe30c6e6df0fe6757d19e0a19a08'] = 'Slå på';
@@ -665,7 +666,7 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_1a31804ef0d9f3
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_eb4c6f94efd55bbd1876df96448e2c60'] = 'Express checkout (beta)';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0b06e7a6a8fdd7ebb1538faf7582aab8'] = 'Mollie Express Component';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0122b5b00af3de8e066e55c4d5afea6f'] = 'Visa Apple Pay, Google Pay och PayPal som snabbetalningsknappar högst upp i kassan, så att kunderna kan betala med ett tryck. Välj vilka knappar som visas på sidan Betalningsmetoder.';
-$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_bd7f97a89cc3e8b3fbd5f35dadccb6d7'] = 'The Express Component is in beta and works only with a live API key in live mode. It stays hidden in test mode.';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_d8d0950b07b563ca7190363e69bf03f8'] = 'Express Component är i beta. Mollie aktiverar den per konto, så kontakta Mollie innan du slår på den. Den fungerar bara med en live-API-nyckel i live-läge och förblir dold i testläge.';
 $_MODULE['<{mollie}prestashop>payment_history_6ecdeeece7dc4ee366197ea2e4b6b778'] = 'Betalningshistorik';
 $_MODULE['<{mollie}prestashop>payment_history_2a2d2c75ec43014500ef2d5f400cf7d1'] = 'Inga händelser ännu';
 $_MODULE['<{mollie}prestashop>payment_history_b02dca32aecc6f71310f9e914757d56f'] = 'Mollie-referens';

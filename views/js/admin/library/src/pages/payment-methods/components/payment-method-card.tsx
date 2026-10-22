@@ -17,6 +17,8 @@ interface PaymentMethodCardProps {
   carriers: Carrier[]
   showApplePayLiveKeyWarning?: boolean
   expressComponentEnabled?: boolean
+  showExpressPromo?: boolean
+  isTestMode?: boolean
   customerGroups: CustomerGroup[]
   languages: Language[]
   onlyPaymentsMethods: string[]
@@ -41,6 +43,8 @@ export function PaymentMethodCard({
   carriers,
   showApplePayLiveKeyWarning = false,
   expressComponentEnabled = false,
+  showExpressPromo = false,
+  isTestMode = false,
   customerGroups,
   languages,
   onlyPaymentsMethods,
@@ -58,9 +62,7 @@ export function PaymentMethodCard({
   isDragEnabled = true,
 }: PaymentMethodCardProps) {
   const { t } = usePaymentMethodsTranslations()
-  const showExpressBadge = method.status === "active"
-    && typeof method.settings.expressButton === "boolean"
-    && !(expressComponentEnabled && method.settings.expressButton)
+  const showExpressBadge = showExpressPromo && method.status === "active" && typeof method.settings.expressButton === "boolean"
   return (
     <Card
       data-testid={`payment-method-${method.id}`}
@@ -217,6 +219,7 @@ export function PaymentMethodCard({
                 carriers={carriers}
                 showApplePayLiveKeyWarning={showApplePayLiveKeyWarning}
                 expressComponentEnabled={expressComponentEnabled}
+                isTestMode={isTestMode}
                 customerGroups={customerGroups}
                 languages={languages}
                 onlyPaymentsMethods={onlyPaymentsMethods}

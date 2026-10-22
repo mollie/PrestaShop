@@ -656,6 +656,7 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_121d184230ba68
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_053b1215936e60069f2e47848845916b'] = 'Google Pay express button on the checkout payment step';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_6584a54c68371d0eb52b347de190199e'] = 'Rodo Google Pay kaip mokėjimo vienu paspaudimu mygtuką atsiskaitymo puslapio viršuje. Pirmiausia įjunkite Mollie Express Component skiltyje [1]Išplėstiniai nustatymai[/1]. Google Pay veikia per mokėjimus kortele, todėl palikite šį mokėjimo būdą įjungtą.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_95c949d02bfa03cefad254385eac7d7d'] = 'Mollie Express Component išjungtas. Kad šis mygtukas būtų rodomas, įjunkite jį skiltyje [1]Išplėstiniai nustatymai[/1].';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_d27c7543a308a128ef74c6502f1510ef'] = 'Express mygtukai rodomi tik tiesioginiu režimu. Jūsų parduotuvė veikia testiniu režimu.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_da0b3991aeecbd69850aab09cb2688f2'] = 'Nauja: Express checkout (beta).';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_af9011e0368e44ea8acac6ed30bbd20d'] = 'Apple Pay, Google Pay ir PayPal vienu prisilietimu atsiskaitymo puslapio viršuje. Paprašykite Mollie jį aktyvuoti, tada įjunkite.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_756afe30c6e6df0fe6757d19e0a19a08'] = 'Įjungti';
@@ -665,7 +666,7 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_1a31804ef0d9f3
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_eb4c6f94efd55bbd1876df96448e2c60'] = 'Express checkout (beta)';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0b06e7a6a8fdd7ebb1538faf7582aab8'] = 'Mollie Express Component';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0122b5b00af3de8e066e55c4d5afea6f'] = 'Rodykite Apple Pay, Google Pay ir PayPal kaip greito apmokėjimo mygtukus atsiskaitymo puslapio viršuje, kad pirkėjai galėtų sumokėti vienu prisilietimu. Kurie mygtukai bus rodomi, pasirinkite puslapyje Mokėjimo būdai.';
-$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_bd7f97a89cc3e8b3fbd5f35dadccb6d7'] = 'The Express Component is in beta and works only with a live API key in live mode. It stays hidden in test mode.';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_d8d0950b07b563ca7190363e69bf03f8'] = 'Express Component yra beta versijos. Mollie jį aktyvuoja kiekvienai paskyrai atskirai, todėl prieš įjungdami susisiekite su Mollie. Jis veikia tik su tiesioginiu (live) API raktu tiesioginiu režimu ir testiniu režimu lieka paslėptas.';
 $_MODULE['<{mollie}prestashop>payment_history_6ecdeeece7dc4ee366197ea2e4b6b778'] = 'Mokėjimų istorija';
 $_MODULE['<{mollie}prestashop>payment_history_2a2d2c75ec43014500ef2d5f400cf7d1'] = 'Įvykių dar nėra';
 $_MODULE['<{mollie}prestashop>payment_history_b02dca32aecc6f71310f9e914757d56f'] = 'Mollie nuoroda';

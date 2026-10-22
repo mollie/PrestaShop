@@ -237,6 +237,7 @@ export interface MolliePaymentMethodsTranslations {
 
   // Express Component
   expressButtonMasterOff: string;
+  expressButtonTestMode: string;
   expressButtonCheckout: string;
   expressButtonCheckoutInfo: string;
   expressButtonCheckoutGooglePay: string;

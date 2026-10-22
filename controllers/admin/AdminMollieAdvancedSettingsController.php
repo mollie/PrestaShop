@@ -121,7 +121,7 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             'expressCheckout' => $this->module->l('Express checkout (beta)', self::FILE_NAME),
             'expressCheckoutEnable' => $this->module->l('Mollie Express Component', self::FILE_NAME),
             'expressCheckoutInfo' => $this->module->l('Show Apple Pay, Google Pay and PayPal as quick-pay buttons at the top of checkout, so customers can pay in one tap. Choose which buttons appear on the Payment Methods page.', self::FILE_NAME),
-            'expressCheckoutLiveOnly' => $this->module->l('The Express Component is in beta and works only with a live API key in live mode. It stays hidden in test mode.', self::FILE_NAME),
+            'expressCheckoutLiveOnly' => $this->module->l('The Express Component is in beta. Mollie activates it per account, so contact Mollie before you switch it on. It works only with a live API key in live mode and stays hidden in test mode.', self::FILE_NAME),
             'orderStatusMapping' => $this->module->l('Order Status Mapping', self::FILE_NAME),
             'orderStatusEmails' => $this->module->l('Order Status Emails', self::FILE_NAME),
             'invoiceOption' => $this->module->l('Select when to create the order invoice', self::FILE_NAME),

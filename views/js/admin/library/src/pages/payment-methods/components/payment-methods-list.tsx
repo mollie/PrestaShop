@@ -59,6 +59,7 @@ export default function PaymentMethodsPage() {
   const [showApplePayLiveKeyWarning, setShowApplePayLiveKeyWarning] = useState(false)
   const [expressComponentEnabled, setExpressComponentEnabled] = useState(false)
   const [showExpressPromo, setShowExpressPromo] = useState(false)
+  const [isTestMode, setIsTestMode] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
   const [savingMethodId, setSavingMethodId] = useState<string | null>(null)
@@ -97,6 +98,7 @@ export default function PaymentMethodsPage() {
         setOnlyOrderMethods(response.data.onlyOrderMethods || [])
         setShowApplePayLiveKeyWarning(response.data.environment === 'test' && !response.data.hasLiveApiKey)
         setExpressComponentEnabled(response.data.expressComponentEnabled ?? false)
+        setIsTestMode(response.data.environment === 'test')
         setShowExpressPromo(
           response.data.environment === 'live' && !response.data.expressComponentEnabled && !response.data.expressPromoDismissed
         )
@@ -405,6 +407,8 @@ export default function PaymentMethodsPage() {
           carriers={carriers}
           showApplePayLiveKeyWarning={showApplePayLiveKeyWarning}
           expressComponentEnabled={expressComponentEnabled}
+          showExpressPromo={showExpressPromo}
+          isTestMode={isTestMode}
           customerGroups={customerGroups}
           languages={languages}
           onlyPaymentsMethods={onlyPaymentsMethods}
