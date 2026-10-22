@@ -19,12 +19,12 @@
 + The module can now be installed with Composer, and the settings pages explain when module files are missing instead of staying blank
 + Fixed the subscription details page not opening for products without an image
 + Fixed the payment fee not being shown at checkout on the Hummingbird theme and the one page checkout, the fee now appears next to the method and in the order total
-+ Added a Mollie payment history timeline to the order page for Payments API orders, including pending, open, expired and failed payments
++ Added a Mollie payment history timeline to the order page for Payments API orders, including pending, open, expired and failed payments, and the amount Mollie releases or still holds for capture after a partial manual capture
 + The order page now fetches a Payments API payment from Mollie once instead of up to three times
 + Fixed checkout failing when an automatic free shipping cart rule applies to a paid carrier
 + Fixed PHP deprecation notices filling the error log on every page load on PHP 8.4 and 8.5, and made the module ready to load on PHP 9
 + Fixed the API Configuration page showing an empty API key field after an upgrade, when a stored key fails the current format check
-+ New: Mollie Express Component, one-tap Apple Pay, Google Pay and PayPal buttons on the checkout payment step, switched on under Advanced Settings with a button switch per wallet on the Payment Methods page (live mode only)
++ New: Mollie Express Component, one-tap Apple Pay, Google Pay and PayPal buttons on the checkout payment step, switched on under Advanced Settings with a button switch per wallet on the Payment Methods page (live mode only, Mollie activates it per account)
 + Updated the Apple Pay domain verification file, shops that serve the previous Mollie file get the new one when the module is upgraded from the back office or the Apple Pay settings are saved
 
 ## Changes in release 6.4.6.1
