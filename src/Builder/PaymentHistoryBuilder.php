@@ -14,6 +14,7 @@ namespace Mollie\Builder;
 
 use Currency;
 use Mollie\Adapter\ToolsAdapter;
+use Mollie\Utility\NumberUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -57,8 +58,10 @@ class PaymentHistoryBuilder
     {
         $events = [];
 
-        $this->addPaymentEvents($events, $payment, $authorizedAtFallback);
-        $this->addCaptureEvents($events, $this->getEmbedded($payment, 'captures'));
+        $captures = $this->getEmbedded($payment, 'captures');
+
+        $this->addPaymentEvents($events, $payment, $captures, $authorizedAtFallback);
+        $this->addCaptureEvents($events, $captures);
         $this->addRefundEvents($events, $this->getEmbedded($payment, 'refunds'));
         $this->addChargebackEvents($events, $this->getEmbedded($payment, 'chargebacks'));
 
@@ -75,18 +78,14 @@ class PaymentHistoryBuilder
         return $events;
     }
 
-    private function addPaymentEvents(array &$events, $payment, $authorizedAtFallback)
+    private function addPaymentEvents(array &$events, $payment, array $captures, $authorizedAtFallback)
     {
         $amount = $this->getField($payment, 'amount');
         $status = $this->getField($payment, 'status');
-        $captures = $this->getEmbedded($payment, 'captures');
-        $hasCaptureSettlement = false;
-        $hasPendingCapture = false;
-        foreach ($captures as $capture) {
-            $hasCaptureSettlement = $hasCaptureSettlement || $this->getField($capture, 'settlementAmount') !== null;
-            $hasPendingCapture = $hasPendingCapture || $this->getField($capture, 'status') === 'pending';
-        }
-        $uncapturedAmount = $this->getUncapturedAmount($payment);
+        $uncapturedAmount = $this->getUncapturedAmount($payment, $amount, $status, $captures);
+        $hasCaptureSettlement = !empty(array_filter($captures, function ($capture) {
+            return $this->getField($capture, 'settlementAmount') !== null;
+        }));
 
         $createdDetails = [];
         $this->addDetail($createdDetails, 'method', $this->getField($payment, 'method'));
@@ -97,8 +96,7 @@ class PaymentHistoryBuilder
         $authorizedDetails = [];
         $this->addDetail($authorizedDetails, 'capture_before', $this->formatDate($this->getField($payment, 'captureBefore'), false));
         $this->addDetail($authorizedDetails, 'capture_mode', $this->getField($payment, 'captureMode'));
-        // amountCaptured only counts succeeded captures, so a pending one would overstate what is left
-        if ($status === 'authorized' && $uncapturedAmount !== null && !$hasPendingCapture) {
+        if ($status === 'authorized' && $uncapturedAmount !== null) {
             $this->addDetail($authorizedDetails, 'remaining_to_capture', $this->formatAmount($uncapturedAmount));
         }
         $authorizedAt = $this->getField($payment, 'authorizedAt');
@@ -107,7 +105,6 @@ class PaymentHistoryBuilder
         }
         $this->addEvent($events, 'authorized', $authorizedAt, $amount, null, null, $authorizedDetails);
 
-        // Each capture carries its own settlement, the payment-level one would repeat the authorized amount
         $paidDetails = [];
         if (!$hasCaptureSettlement) {
             $this->addDetail($paidDetails, 'settlement_amount', $this->formatAmount($this->getField($payment, 'settlementAmount')));
@@ -125,25 +122,30 @@ class PaymentHistoryBuilder
     }
 
     /**
-     * @return \stdClass|null authorized amount minus captured amount for a partially captured manual payment
+     * Pending captures count as captured, Mollie no longer offers that part for capture.
+     *
+     * @return \stdClass|null authorized amount not captured on a partially captured manual payment
      */
-    private function getUncapturedAmount($payment)
+    private function getUncapturedAmount($payment, $amount, $status, array $captures)
     {
-        $amount = $this->getField($payment, 'amount');
-        $authorizedValue = (float) $this->getAmountField($amount, 'value');
-        $capturedValue = (float) $this->getAmountField($this->getField($payment, 'amountCaptured'), 'value');
-
-        if ($this->getField($payment, 'captureMode') !== 'manual' || $capturedValue <= 0) {
+        if ($this->getField($payment, 'captureMode') !== 'manual' || !in_array($status, ['authorized', 'paid'], true)) {
             return null;
         }
 
-        $uncapturedValue = round($authorizedValue - $capturedValue, 2);
-        if ($uncapturedValue <= 0) {
+        $capturedValue = 0.0;
+        foreach ($captures as $capture) {
+            if (in_array($this->getField($capture, 'status'), ['succeeded', 'pending'], true)) {
+                $capturedValue = NumberUtility::plus($capturedValue, (float) $this->getAmountField($this->getField($capture, 'amount'), 'value'));
+            }
+        }
+
+        $uncapturedValue = NumberUtility::minus((float) $this->getAmountField($amount, 'value'), $capturedValue);
+        if (!NumberUtility::isGreaterThan($capturedValue, 0) || !NumberUtility::isGreaterThan($uncapturedValue, 0)) {
             return null;
         }
 
         return (object) [
-            'value' => number_format($uncapturedValue, 2, '.', ''),
+            'value' => (string) $uncapturedValue,
             'currency' => $this->getAmountField($amount, 'currency'),
         ];
     }

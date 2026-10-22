@@ -273,10 +273,7 @@ class PaymentHistoryBuilderTest extends BaseTestCase
 
     public function testPartialCaptureStillAuthorizedShowsRemainingToCapture(): void
     {
-        $payment = $this->partiallyCapturedPayment('authorized');
-        unset($payment->paidAt);
-
-        $events = $this->builder->build($payment);
+        $events = $this->builder->build($this->partiallyCapturedPayment('authorized'));
 
         $this->assertSame(['captured', 'authorized', 'created'], array_column($events, 'type'));
         $this->assertSame(
@@ -288,20 +285,25 @@ class PaymentHistoryBuilderTest extends BaseTestCase
         );
     }
 
-    public function testPendingCaptureHidesRemainingToCapture(): void
+    public function testPendingCaptureCountsTowardsCaptured(): void
     {
         $payment = $this->partiallyCapturedPayment('authorized');
-        unset($payment->paidAt);
         $payment->_embedded->captures[] = (object) [
             'id' => 'cpt_two',
-            'amount' => $this->amount('39.20'),
+            'amount' => $this->amount('30.00'),
             'createdAt' => '2026-10-22T08:25:00+00:00',
             'status' => 'pending',
         ];
 
         $events = $this->builder->build($payment);
 
-        $this->assertSame([['label' => 'capture_mode', 'value' => 'manual']], $events[2]['details']);
+        $this->assertSame(
+            [
+                ['label' => 'capture_mode', 'value' => 'manual'],
+                ['label' => 'remaining_to_capture', 'value' => 'EUR 9.20'],
+            ],
+            $events[2]['details']
+        );
     }
 
     public function testPaidKeepsSettlementWhenCapturesCarryNone(): void
@@ -316,7 +318,7 @@ class PaymentHistoryBuilderTest extends BaseTestCase
     public function testFullManualCaptureAddsNoReleasedEvent(): void
     {
         $payment = $this->partiallyCapturedPayment('paid');
-        $payment->amountCaptured = $this->amount('43.20');
+        $payment->_embedded->captures[0]->amount = $this->amount('43.20');
 
         $this->assertSame(
             ['captured', 'paid', 'authorized', 'created'],
@@ -342,14 +344,13 @@ class PaymentHistoryBuilderTest extends BaseTestCase
 
     private function partiallyCapturedPayment(string $status): \stdClass
     {
-        return (object) [
+        $payment = (object) [
             'status' => $status,
             'captureMode' => 'manual',
             'createdAt' => '2026-10-22T08:18:05+00:00',
             'authorizedAt' => '2026-10-22T08:18:28+00:00',
             'paidAt' => '2026-10-22T08:20:33+00:00',
             'amount' => $this->amount('43.20'),
-            'amountCaptured' => $this->amount('4.00'),
             'settlementAmount' => $this->amount('43.20'),
             '_embedded' => (object) [
                 'captures' => [
@@ -362,6 +363,12 @@ class PaymentHistoryBuilderTest extends BaseTestCase
                 ],
             ],
         ];
+
+        if ($status !== 'paid') {
+            unset($payment->paidAt);
+        }
+
+        return $payment;
     }
 
     private function amount(string $value): \stdClass
