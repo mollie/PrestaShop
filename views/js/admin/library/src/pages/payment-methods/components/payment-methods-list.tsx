@@ -59,6 +59,7 @@ export default function PaymentMethodsPage() {
   const [showApplePayLiveKeyWarning, setShowApplePayLiveKeyWarning] = useState(false)
   const [expressComponentEnabled, setExpressComponentEnabled] = useState(false)
   const [showExpressPromo, setShowExpressPromo] = useState(false)
+  const [showExpressBadges, setShowExpressBadges] = useState(false)
   const [isTestMode, setIsTestMode] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
@@ -102,6 +103,7 @@ export default function PaymentMethodsPage() {
         setShowExpressPromo(
           response.data.environment === 'live' && !response.data.expressComponentEnabled && !response.data.expressPromoDismissed
         )
+        setShowExpressBadges(response.data.environment === 'live' && !response.data.expressPromoDismissed)
       } else {
         setErrorMessage(response.message || t('loadingError'))
       }
@@ -123,6 +125,7 @@ export default function PaymentMethodsPage() {
 
   const dismissExpressPromo = () => {
     setShowExpressPromo(false)
+    setShowExpressBadges(false)
     paymentMethodsApiService.dismissExpressPromo().catch((error) => {
       console.error('Failed to dismiss the Express checkout banner:', error)
     })
@@ -407,7 +410,7 @@ export default function PaymentMethodsPage() {
           carriers={carriers}
           showApplePayLiveKeyWarning={showApplePayLiveKeyWarning}
           expressComponentEnabled={expressComponentEnabled}
-          showExpressPromo={showExpressPromo}
+          showExpressBadges={showExpressBadges}
           isTestMode={isTestMode}
           customerGroups={customerGroups}
           languages={languages}
