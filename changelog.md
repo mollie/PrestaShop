@@ -26,6 +26,7 @@
 + Fixed the API Configuration page showing an empty API key field after an upgrade, when a stored key fails the current format check
 + New: Mollie Express Component, one-tap Apple Pay, Google Pay and PayPal buttons on the checkout payment step, switched on under Advanced Settings with a button switch per wallet on the Payment Methods page (live mode only)
 + Updated the Apple Pay domain verification file, shops that serve the previous Mollie file get the new one when the module is upgraded from the back office or the Apple Pay settings are saved
++ Fixed the back office Orders page crashing when the shop has a Mollie order from 2023 with a dot in its reference, for example ord_1.zih1s5
 
 ## Changes in release 6.4.6.1
 + Improved payment validation when creating orders
