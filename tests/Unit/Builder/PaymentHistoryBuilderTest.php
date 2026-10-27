@@ -94,6 +94,7 @@ class PaymentHistoryBuilderTest extends BaseTestCase
                         'amount' => $this->amount('100.00'),
                         'createdAt' => '2026-10-12T10:30:00+00:00',
                         'status' => 'succeeded',
+                        'settlementAmount' => $this->amount('98.50'),
                     ],
                 ],
             ],
@@ -117,11 +118,9 @@ class PaymentHistoryBuilderTest extends BaseTestCase
         $this->assertSame('succeeded', $events[2]['status']);
         $this->assertFalse($events[2]['negative']);
         $this->assertFalse($events[3]['negative']);
-        $this->assertSame('EUR 100.00', $events[3]['amount_formatted']);
-        $this->assertSame(
-            [['label' => 'settlement_amount', 'value' => 'EUR 98.50']],
-            $events[3]['details']
-        );
+        $this->assertNull($events[3]['amount']);
+        $this->assertNull($events[3]['amount_formatted']);
+        $this->assertSame([], $events[3]['details']);
     }
 
     public function testCapturedPaymentFallsBackToOrderHistoryForAuthorizedDate(): void
@@ -259,6 +258,114 @@ class PaymentHistoryBuilderTest extends BaseTestCase
             [['label' => 'settlement_amount', 'value' => '-EUR 20.00']],
             $events[0]['details']
         );
+    }
+
+    public function testPartialCaptureAddsReleasedEventBelowPaid(): void
+    {
+        $events = $this->builder->build($this->partiallyCapturedPayment('paid'));
+
+        $this->assertSame(['captured', 'paid', 'released', 'authorized', 'created'], array_column($events, 'type'));
+        $this->assertSame('EUR 4.00', $events[0]['amount_formatted']);
+        $this->assertNull($events[1]['amount_formatted']);
+        $this->assertSame([], $events[1]['details']);
+        $this->assertSame('39.20', $events[2]['amount']);
+        $this->assertSame('EUR 39.20', $events[2]['amount_formatted']);
+        $this->assertFalse($events[2]['negative']);
+    }
+
+    public function testPartialCaptureStillAuthorizedShowsRemainingToCapture(): void
+    {
+        $events = $this->builder->build($this->partiallyCapturedPayment('authorized'));
+
+        $this->assertSame(['captured', 'authorized', 'created'], array_column($events, 'type'));
+        $this->assertSame(
+            [
+                ['label' => 'capture_mode', 'value' => 'manual'],
+                ['label' => 'remaining_to_capture', 'value' => 'EUR 39.20'],
+            ],
+            $events[1]['details']
+        );
+    }
+
+    public function testPendingCaptureHidesRemainingToCapture(): void
+    {
+        $payment = $this->partiallyCapturedPayment('authorized');
+        $payment->_embedded->captures[] = (object) [
+            'id' => 'cpt_two',
+            'amount' => $this->amount('30.00'),
+            'createdAt' => '2026-10-22T08:25:00+00:00',
+            'status' => 'pending',
+        ];
+
+        $events = $this->builder->build($payment);
+
+        $this->assertSame([['label' => 'capture_mode', 'value' => 'manual']], $events[2]['details']);
+    }
+
+    public function testFullCaptureWithoutCaptureSettlementKeepsPaymentSettlement(): void
+    {
+        $payment = $this->partiallyCapturedPayment('paid');
+        $payment->_embedded->captures[0]->amount = $this->amount('43.20');
+
+        $events = $this->builder->build($payment);
+
+        $this->assertSame([['label' => 'settlement_amount', 'value' => 'EUR 43.20']], $events[1]['details']);
+    }
+
+    public function testFullManualCaptureAddsNoReleasedEvent(): void
+    {
+        $payment = $this->partiallyCapturedPayment('paid');
+        $payment->_embedded->captures[0]->amount = $this->amount('43.20');
+
+        $this->assertSame(
+            ['captured', 'paid', 'authorized', 'created'],
+            array_column($this->builder->build($payment), 'type')
+        );
+    }
+
+    public function testPaidPaymentWithoutCapturesKeepsSettlementAmount(): void
+    {
+        $payment = (object) [
+            'status' => 'paid',
+            'createdAt' => '2026-10-12T10:00:00+00:00',
+            'paidAt' => '2026-10-12T10:01:00+00:00',
+            'amount' => $this->amount('20.00'),
+            'settlementAmount' => $this->amount('19.70'),
+        ];
+
+        $events = $this->builder->build($payment);
+
+        $this->assertSame('paid', $events[0]['type']);
+        $this->assertSame([['label' => 'settlement_amount', 'value' => 'EUR 19.70']], $events[0]['details']);
+    }
+
+    private function partiallyCapturedPayment(string $status): \stdClass
+    {
+        $payment = (object) [
+            'status' => $status,
+            'captureMode' => 'manual',
+            'createdAt' => '2026-10-22T08:18:05+00:00',
+            'authorizedAt' => '2026-10-22T08:18:28+00:00',
+            'paidAt' => '2026-10-22T08:20:33+00:00',
+            'amount' => $this->amount('43.20'),
+            'settlementAmount' => $this->amount('43.20'),
+            '_embedded' => (object) [
+                'captures' => [
+                    (object) [
+                        'id' => 'cpt_one',
+                        'amount' => $this->amount('4.00'),
+                        'createdAt' => '2026-10-22T08:20:33+00:00',
+                        'status' => 'succeeded',
+                    ],
+                ],
+            ],
+        ];
+
+        if ($status !== 'paid') {
+            unset($payment->paidAt);
+        }
+
+        return $payment;
     }
 
     private function amount(string $value): \stdClass
