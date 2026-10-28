@@ -55,6 +55,7 @@ class HookInstaller extends AbstractInstaller
     {
         return [
             'actionFrontControllerSetMedia',
+            'actionPresentPaymentOptions',
             'actionValidateOrder',
             'actionCartUpdateQuantityBefore',
             'actionObjectAddressAddAfter',
