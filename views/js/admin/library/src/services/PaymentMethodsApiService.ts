@@ -85,6 +85,7 @@ export interface PaymentMethod {
       enabled: boolean
       statuses: string[]
     } | null
+    expressButton?: boolean
   }
 }
 
@@ -119,6 +120,9 @@ export interface PaymentMethodsResponse {
     environment: 'test' | 'live';
     hasLiveApiKey: boolean;
     is_connected: boolean;
+    expressComponentEnabled: boolean;
+    expressPromoDismissed: boolean;
+    expressLiveReady: boolean;
   };
 }
 
@@ -177,6 +181,20 @@ export class PaymentMethodsApiService {
     return response.json();
   }
 
+
+  async dismissExpressPromo(): Promise<{ success: boolean }> {
+    const url = new URL(this.baseUrl, window.location.origin);
+
+    const formData = new FormData();
+    formData.append('ajax', '1');
+    formData.append('action', 'dismissExpressPromo');
+
+    const response = await fetch(url.toString(), {
+      method: 'POST',
+      body: formData
+    });
+    return response.json();
+  }
 
   /**
    * Check if Apple Pay domain association file has a conflict with another provider

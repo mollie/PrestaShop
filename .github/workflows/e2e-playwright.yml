@@ -70,9 +70,9 @@ jobs:
           # legs produce identical filenames that overwrite each other when the
           # merge job flattens all artifacts into one directory.
           PLAYWRIGHT_BLOB_OUTPUT_FILE: blob-report/connect-local-${{ matrix.prestashop }}.zip
-      - name: Run admin + webhook + mobile projects
+      - name: Run unit + admin + webhook + mobile projects
         working-directory: tests/e2e
-        run: npx playwright test --project=admin --project=webhook --project=mobile
+        run: npx playwright test --project=unit --project=admin --project=webhook --project=mobile
         env:
           E2E_BASE_URL: http://localhost:8002
           MOLLIE_TEST_API_KEY: ${{ secrets.MOLLIE_TEST_API_KEY }}

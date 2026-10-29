@@ -344,6 +344,7 @@ class PaymentMethodService
             'cart_id' => $cartId,
             'order_reference' => $orderReference,
             'secure_key' => $key,
+            'method_id' => $molPaymentMethod->id_method,
         ];
 
         if (Mollie\Config\Config::MOLLIE_ORDERS_API !== $molPaymentMethod->method) {
@@ -411,7 +412,6 @@ class PaymentMethodService
                     $paymentFeeData,
                     $currency,
                     $cart->getSummaryDetails(),
-                    $cart->getTotalShippingCost(null, true),
                     $cart->getProducts(),
                     (bool) Configuration::get('PS_GIFT_WRAPPING'),
                     Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
@@ -499,7 +499,6 @@ class PaymentMethodService
                     $paymentFeeData,
                     $currency->iso_code,
                     $cart->getSummaryDetails(),
-                    $cart->getTotalShippingCost(null, true),
                     $cart->getProducts(),
                     (bool) Configuration::get('PS_GIFT_WRAPPING'),
                     $selectedVoucherCategory,
@@ -601,7 +600,7 @@ class PaymentMethodService
             [
                 'resource' => 'orders',
                 'includeWallets' => 'applepay',
-                'locale' => $this->context->getLanguageLocale(),
+                'locale' => LocaleUtility::getWebShopLocale(),
                 'billingCountry' => $country->iso_code,
                 'amount' => [
                     'value' => (string) TextFormatUtility::formatNumber($cartAmount, 2),
@@ -639,13 +638,27 @@ class PaymentMethodService
 
     public function getPaymentMethod($apiPayment): MolPaymentMethod
     {
-        $transactionMethod = $this->getWallet($apiPayment) ?: $apiPayment->method;
-
         $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
 
         return new MolPaymentMethod(
-            $this->methodRepository->getPaymentMethodIdByMethodId($transactionMethod, $environment)
+            $this->methodRepository->getPaymentMethodIdByMethodId($this->getCheckoutMethodId($apiPayment), $environment)
         );
+    }
+
+    /**
+     * The payment fee belongs to the method the shopper chose at checkout. A card can still be
+     * settled through a wallet on the Mollie page, so the wallet only decides for payments
+     * created before the chosen method was stored in the metadata.
+     *
+     * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
+     */
+    public function getCheckoutMethodId($apiPayment): string
+    {
+        if (!empty($apiPayment->metadata->method_id)) {
+            return (string) $apiPayment->metadata->method_id;
+        }
+
+        return $this->getWallet($apiPayment) ?: (string) $apiPayment->method;
     }
 
     /**

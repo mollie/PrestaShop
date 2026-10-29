@@ -36,9 +36,9 @@ class UpdateSubscriptionRequest
     public function __construct(
         string $customerId,
         string $subscriptionId,
-        string $mandateId = null,
-        array $metadata = null,
-        Amount $amount = null
+        ?string $mandateId = null,
+        ?array $metadata = null,
+        ?Amount $amount = null
     ) {
         $this->customerId = $customerId;
         $this->subscriptionId = $subscriptionId;

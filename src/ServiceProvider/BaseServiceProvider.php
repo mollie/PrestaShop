@@ -16,11 +16,15 @@ namespace Mollie\ServiceProvider;
 
 use League\Container\Container;
 use Mollie;
+use Mollie\Adapter\API\MollieSessionApiAdapter;
+use Mollie\Adapter\API\MollieSessionApiAdapterInterface;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\Link;
 use Mollie\Adapter\Shop;
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Builder\ApiTestFeedbackBuilder;
+use Mollie\Builder\PaymentHistoryBuilder;
 use Mollie\Calculator\PaymentFeeCalculator;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\Api\OrderEndpointPaymentTypeHandler;
@@ -85,6 +89,8 @@ use Mollie\Repository\GenderRepository;
 use Mollie\Repository\GenderRepositoryInterface;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\MolCustomerRepositoryInterface;
+use Mollie\Repository\MolExpressSessionRepository;
+use Mollie\Repository\MolExpressSessionRepositoryInterface;
 use Mollie\Repository\MolLogRepository;
 use Mollie\Repository\MolLogRepositoryInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepository;
@@ -207,6 +213,10 @@ final class BaseServiceProvider
 
         $service = $this->addService($container, MolCustomerRepository::class, MolCustomerRepository::class);
         $this->addServiceArgument($service, 'MolCustomer');
+
+        $this->addService($container, MolExpressSessionRepository::class, MolExpressSessionRepository::class);
+        $this->addService($container, MolExpressSessionRepositoryInterface::class, $container->get(MolExpressSessionRepository::class));
+        $this->addService($container, MollieSessionApiAdapterInterface::class, $container->get(MollieSessionApiAdapter::class));
 
         $this->addService($container, UninstallerInterface::class, $container->get(Mollie\Install\DatabaseTableUninstaller::class));
 
@@ -405,6 +415,9 @@ final class BaseServiceProvider
         $service = $this->addService($container, ApiTestFeedbackBuilder::class, ApiTestFeedbackBuilder::class);
         $this->addServiceArgument($service, $container->get(ModuleFactory::class)->getModuleVersion() ?? '');
         $this->addServiceArgument($service, ApiKeyService::class);
+
+        $service = $this->addService($container, PaymentHistoryBuilder::class, PaymentHistoryBuilder::class);
+        $this->addServiceArgument($service, ToolsAdapter::class);
 
         $service = $this->addService($container, ApiServiceInterface::class, ApiService::class);
         $this->addServiceArgument($service, PaymentMethodRepository::class);

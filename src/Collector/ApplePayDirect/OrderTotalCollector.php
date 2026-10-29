@@ -13,6 +13,7 @@
 namespace Mollie\Collector\ApplePayDirect;
 
 use Cart;
+use Mollie\Builder\ApplePayDirect\ApplePayLineItemsBuilder;
 use Mollie\Config\Config;
 use Mollie\DTO\ApplePay\Carrier\Carrier as AppleCarrier;
 use Mollie\Service\OrderPaymentFeeService;
@@ -25,10 +26,13 @@ class OrderTotalCollector
 {
     /** @var OrderPaymentFeeService */
     private $orderPaymentFeeService;
+    /** @var ApplePayLineItemsBuilder */
+    private $lineItemsBuilder;
 
-    public function __construct(OrderPaymentFeeService $orderPaymentFeeService)
+    public function __construct(OrderPaymentFeeService $orderPaymentFeeService, ApplePayLineItemsBuilder $lineItemsBuilder)
     {
         $this->orderPaymentFeeService = $orderPaymentFeeService;
+        $this->lineItemsBuilder = $lineItemsBuilder;
     }
 
     /**
@@ -68,6 +72,7 @@ class OrderTotalCollector
                 'label' => $carrier->getName(),
                 'amount' => number_format($orderTotal + $paymentFee, 2, '.', ''),
                 'amountWithoutFee' => $orderTotal,
+                'lineItems' => $this->lineItemsBuilder->build($cart, $orderTotal, $paymentFee),
             ];
         }, $applePayCarriers);
 

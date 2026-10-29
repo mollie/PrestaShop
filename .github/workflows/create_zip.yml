@@ -34,7 +34,7 @@ jobs:
           cd views/js/admin/library && npm install && npm run build
           rm -rf node_modules src
           cd ../../../..
-          rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile .docker docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php
+          rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile patches .docker docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php
           # Keep this list in sync with release.yml, the validator flags build configs that ship
           rm -f views/js/subscription/webpack.config.js views/js/subscription/package.json views/js/subscription/package-lock.json
           rm -f views/js/admin/library/package.json views/js/admin/library/package-lock.json
@@ -42,8 +42,9 @@ jobs:
           rm -f views/js/admin/library/vite.config.ts views/js/admin/library/eslint.config.js
           rm -f views/js/admin/library/postcss.config.js views/js/admin/library/tailwind.config.js views/js/admin/library/README.md
           rm -rf vendor/segmentio/analytics-php/.buildscript vendor/segmentio/analytics-php/.circleci vendor/segmentio/analytics-php/.github
-          # PrestaShop security requirement: every shipped directory must contain an index.php
-          find . -type d ! -path './.git' ! -path './.git/*' | while read -r dir; do [ -f "$dir/index.php" ] || cp index.php "$dir/index.php"; done
+          # PrestaShop security requirement: every shipped directory must contain an index.php, except src/Entity:
+          # PrestaShop 9 deletes index.php there on every container build and crashes when module files are read-only
+          find . -type d ! -path './.git' ! -path './.git/*' ! -path './src/Entity' | while read -r dir; do [ -f "$dir/index.php" ] || cp index.php "$dir/index.php"; done
           mkdir ${{ env.MODULE_NAME }}
           rsync -Rr ./ ./${{ env.MODULE_NAME }}
           shopt -s extglob

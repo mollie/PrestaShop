@@ -14,7 +14,7 @@
       <div class="row product-info">
         <div class="col-12 col-lg-6 product-img">
           <img class="img"
-               src="{$order.img|escape:'htmlall':'UTF-8'}"
+               src="{$order.img|default:$urls.no_picture_image.medium.url|escape:'htmlall':'UTF-8'}"
                itemprop="image" width="200">
         </div>
         <div class="col-12 col-lg-6">

@@ -18,6 +18,9 @@ interface PaymentMethodsListProps {
   countries: Country[]
   carriers: Carrier[]
   showApplePayLiveKeyWarning?: boolean
+  expressComponentEnabled?: boolean
+  showExpressBadges?: boolean
+  isTestMode?: boolean
   customerGroups: CustomerGroup[]
   languages: Language[]
   onlyPaymentsMethods: string[]
@@ -35,6 +38,9 @@ export function PaymentMethodsList({
   countries,
   carriers,
   showApplePayLiveKeyWarning = false,
+  expressComponentEnabled = false,
+  showExpressBadges = false,
+  isTestMode = false,
   customerGroups,
   languages,
   onlyPaymentsMethods,
@@ -313,6 +319,9 @@ export function PaymentMethodsList({
             countries={countries}
             carriers={carriers}
             showApplePayLiveKeyWarning={showApplePayLiveKeyWarning}
+            expressComponentEnabled={expressComponentEnabled}
+            showExpressBadges={showExpressBadges}
+            isTestMode={isTestMode}
             customerGroups={customerGroups}
             languages={languages}
             onlyPaymentsMethods={onlyPaymentsMethods}

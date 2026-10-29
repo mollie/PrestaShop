@@ -56,13 +56,16 @@ use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Service\ExpressComponent\ExpressCartCarrierService;
 use Mollie\Service\MollieOrderCreationService;
+use Mollie\Service\MollieOrderNumberService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentFeeTextService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Subscription\Handler\SubscriptionCreationHandler;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\ExpressPaymentUtility;
 use Mollie\Utility\TextGeneratorUtility;
 use Mollie\Validator\PaymentAmountValidator;
 use MolPaymentMethod;
@@ -107,6 +110,10 @@ class OrderCreationHandler
     private $mollieOrderCreationService;
     /** @var PaymentAmountValidator */
     private $paymentAmountValidator;
+    /** @var MollieOrderNumberService */
+    private $mollieOrderNumberService;
+    /** @var ExpressCartCarrierService */
+    private $expressCartCarrierService;
 
     public function __construct(
         ModuleFactory $module,
@@ -120,7 +127,9 @@ class OrderCreationHandler
         PrestaLoggerInterface $logger,
         OrderRepositoryInterface $orderRepository,
         MollieOrderCreationService $mollieOrderCreationService,
-        PaymentAmountValidator $paymentAmountValidator
+        PaymentAmountValidator $paymentAmountValidator,
+        MollieOrderNumberService $mollieOrderNumberService,
+        ExpressCartCarrierService $expressCartCarrierService
     ) {
         $this->module = $module->getModule();
         $this->paymentMethodRepository = $paymentMethodRepository;
@@ -134,6 +143,8 @@ class OrderCreationHandler
         $this->orderRepository = $orderRepository;
         $this->mollieOrderCreationService = $mollieOrderCreationService;
         $this->paymentAmountValidator = $paymentAmountValidator;
+        $this->mollieOrderNumberService = $mollieOrderNumberService;
+        $this->expressCartCarrierService = $expressCartCarrierService;
     }
 
     /**
@@ -156,6 +167,14 @@ class OrderCreationHandler
 
         $cart = new Cart($cartId);
 
+        $isExpressPayment = ExpressPaymentUtility::isExpressPayment($apiPayment);
+
+        // A one page checkout save can land between the session and this webhook and leave the
+        // shopper's carrier choice under its temporary address again.
+        if ($isExpressPayment) {
+            $this->expressCartCarrierService->restoreCarrierChoice($cart);
+        }
+
         $originalAmount = $cart->getOrderTotal(
             true,
             Cart::BOTH
@@ -163,7 +182,11 @@ class OrderCreationHandler
 
         $paymentMethod = $this->paymentMethodService->getPaymentMethod($apiPayment);
 
-        $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmount);
+        // The Express Component picks the method inside Mollie's sheet, so no per-method fee was
+        // quoted to the shopper and none may be charged, even when the matching method row has one.
+        $paymentFeeData = $isExpressPayment
+            ? new PaymentFeeData(0.00, 0.00, 0.00, false)
+            : $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmount);
 
         $existingOrderId = (int) Order::getIdByCartId((int) $cartId);
         if ($existingOrderId) {
@@ -417,13 +440,7 @@ class OrderCreationHandler
             $apiPayment->update();
         } else {
             $orderNumber = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
-            $apiPayment->orderNumber = $orderNumber;
-            $payments = $apiPayment->payments();
-            foreach ($payments as $payment) {
-                $payment->description = 'Order ' . $orderNumber;
-                $payment->update();
-            }
-            $apiPayment->update();
+            $this->mollieOrderNumberService->assign($this->module->getApiClient(), $apiPayment, $orderNumber);
         }
 
         $this->paymentMethodRepository->savePaymentStatus(

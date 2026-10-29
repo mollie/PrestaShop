@@ -28,6 +28,8 @@ export default defineConfig({
     ignoreHTTPSErrors: !isPubliclyReachableBaseUrl(),
   },
   projects: [
+    // Browserless: pure-function tests for the front scripts, run through Node only.
+    { name: 'unit', testDir: './unit' },
     { name: 'bo-auth', testMatch: /bo-auth\.setup\.ts/ },
     // Connects the module's test API key before anything that depends on the
     // module having one. Without it a shop straight out of `e2eh<VERSION>_local`

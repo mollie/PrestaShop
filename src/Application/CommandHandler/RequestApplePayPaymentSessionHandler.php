@@ -55,7 +55,6 @@ final class RequestApplePayPaymentSessionHandler
         try {
             $response = $this->apiService->requestApplePayPaymentSession($this->getApplePaySessionApiClient(), $command->getValidationUrl());
         } catch (MollieApiException $e) {
-            /* Message is only displayed in console */
             return [
                 'success' => false,
                 'error' => $e->getMessage(),

@@ -67,8 +67,10 @@ class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionVali
 
     /**
      * At least one payment restriction validator is present at all times (BasePaymentRestrictionValidation)
+     *
+     * @param string[] $skippedValidators validator class names that do not apply to this caller
      */
-    public function isPaymentMethodValid(MolPaymentMethod $paymentMethod): bool
+    public function isPaymentMethodValid(MolPaymentMethod $paymentMethod, array $skippedValidators = []): bool
     {
         $success = false;
 
@@ -76,6 +78,10 @@ class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionVali
          * @var PaymentMethodRestrictionValidatorInterface $paymentRestrictionValidator
          */
         foreach ($this->paymentRestrictionValidators as $paymentRestrictionValidator) {
+            if ($this->isSkipped($paymentRestrictionValidator, $skippedValidators)) {
+                continue;
+            }
+
             try {
                 if ($paymentRestrictionValidator->supports($paymentMethod)) {
                     $success = $paymentRestrictionValidator->isValid($paymentMethod);
@@ -103,5 +109,19 @@ class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionVali
         }
 
         return $success;
+    }
+
+    /**
+     * @param string[] $skippedValidators
+     */
+    private function isSkipped(PaymentMethodRestrictionValidatorInterface $validator, array $skippedValidators): bool
+    {
+        foreach ($skippedValidators as $skippedValidator) {
+            if ($validator instanceof $skippedValidator) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
