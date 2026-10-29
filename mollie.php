@@ -82,6 +82,9 @@ class Mollie extends PaymentModule
     /** @var bool Indicates whether the Smarty cache has been cleared during updates */
     public static $cacheCleared;
 
+    /** @var bool the Apple Pay Direct mount point is printed once per request */
+    private static $applePayDirectMountPointRendered = false;
+
     // The Addons version does not include the GitHub updater
     const ADDONS = false;
 
@@ -1678,7 +1681,7 @@ class Mollie extends PaymentModule
     public function hookDisplayProductActions($params)
     {
         if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.6.0')) {
-            return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
+            return $this->renderApplePayDirectMountPoint();
         }
 
         return '';
@@ -1686,13 +1689,13 @@ class Mollie extends PaymentModule
 
     public function hookDisplayExpressCheckout($params)
     {
-        return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
+        return $this->renderApplePayDirectMountPoint();
     }
 
     public function hookDisplayProductAdditionalInfo()
     {
         if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.6.0')) {
-            return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
+            return $this->renderApplePayDirectMountPoint();
         }
 
         /** @var LoggerInterface $logger */
@@ -1704,6 +1707,25 @@ class Mollie extends PaymentModule
         ]);
 
         return '';
+    }
+
+    /**
+     * The Apple Pay Direct button is mounted by its script into #mollie-applepay-direct-button, the
+     * first one of the page. The module listens to several hooks so that it works with themes that
+     * only call one of them, but a product page calls both displayProductActions and
+     * displayProductAdditionalInfo (Classic, Hummingbird...): the mount point was printed twice, with a
+     * duplicated id. It is now printed once per request, by the first of these hooks; an AJAX refresh
+     * of the product renders the hooks again in its own request, in the same order.
+     */
+    private function renderApplePayDirectMountPoint(): string
+    {
+        if (self::$applePayDirectMountPointRendered) {
+            return '';
+        }
+
+        self::$applePayDirectMountPointRendered = true;
+
+        return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
     }
 
     public function hookActionCartUpdateQuantityBefore($params): void
