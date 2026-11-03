@@ -234,8 +234,8 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE, 0);
 
         $this->configurationAdapter->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED, 0);
-        $this->configurationAdapter->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY, 1);
-        $this->configurationAdapter->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY, 1);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY, 0);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY, 0);
         $this->configurationAdapter->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_PAYPAL, 0);
 
         $this->configurationAdapter->updateValue(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID, 0);
