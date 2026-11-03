@@ -176,8 +176,28 @@
       wrapper: null,
       opcBusyUntil: 0,
       hiddenWhileBusy: false,
-      busyRetries: 0
+      busyRetries: 0,
+      sdkSettled: false,
+      waitingForSdk: false
     };
+
+    // Mollie.js v2 is loaded async, so it can still be on its way when the payment step is ready.
+    function waitForSdk() {
+      if (state.sdkSettled || !root.MollieSdk) {
+        return false;
+      }
+
+      if (!state.waitingForSdk) {
+        state.waitingForSdk = true;
+        root.MollieSdk.whenSettled(root, 'Mollie2', 'js.mollie.com/v2/', function () {
+          state.sdkSettled = true;
+          state.waitingForSdk = false;
+          maybeRecreate();
+        });
+      }
+
+      return true;
+    }
 
     function log(message, data) {
       if (config.debug && root.console && root.console.warn) {
@@ -478,6 +498,10 @@
       }
 
       if (!root.Mollie2 || typeof root.Mollie2.Checkout !== 'function') {
+        if (waitForSdk()) {
+          return;
+        }
+
         log('Mollie.js v2 is not loaded');
         state.phase = 'unavailable';
         endPlaceholder();
