@@ -23,18 +23,36 @@ class TextFormatUtility
     }
 
     /**
-     * Percent-encodes every byte that is not allowed raw in a URL. PrestaShop keeps
-     * symbols and non-Latin letters in link_rewrite when accented URLs are enabled,
-     * and Mollie rejects such raw URLs. The encoded URL still resolves to the same page.
+     * Makes a URL valid for the Mollie API: punycode for the host, percent-encoding for the rest.
      */
     public static function encodeUrl(string $url): string
     {
+        if (!preg_match('~^([a-z][a-z0-9+.-]*://)([^/?#:]*)(.*)$~is', $url, $parts)) {
+            return self::percentEncode($url);
+        }
+
+        return $parts[1] . self::encodeHost($parts[2]) . self::percentEncode($parts[3]);
+    }
+
+    private static function encodeHost(string $host): string
+    {
+        if (!function_exists('idn_to_ascii') || !preg_match('/[^\x21-\x7E]/', $host)) {
+            return $host;
+        }
+
+        $ascii = idn_to_ascii($host, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+
+        return $ascii === false ? $host : $ascii;
+    }
+
+    private static function percentEncode(string $value): string
+    {
         return (string) preg_replace_callback(
-            '/[^\x21-\x7E]|["<>\\\\^`{|}]/',
+            '/[^\x21-\x7E]|["<>\\\\^`{|}\[\]]|%(?![0-9A-Fa-f]{2})/',
             static function (array $match): string {
                 return rawurlencode($match[0]);
             },
-            $url
+            $value
         );
     }
 }

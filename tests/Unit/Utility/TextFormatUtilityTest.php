@@ -72,6 +72,23 @@ class TextFormatUtilityTest extends TestCase
         $this->assertSame('https://shop.test/2/café-n°53-去除-ʿarab-€-😀 a|b.jpg', rawurldecode($result));
     }
 
+    public function testEncodeUrlTurnsInternationalHostIntoPunycode()
+    {
+        if (!function_exists('idn_to_ascii')) {
+            $this->markTestSkipped('Punycode needs the intl extension');
+        }
+
+        $result = TextFormatUtility::encodeUrl('https://möbel-shop.de/5-stühle.html');
+
+        $this->assertSame('https://xn--mbel-shop-07a.de/5-st%C3%BChle.html', $result);
+        $this->assertNotFalse(filter_var($result, FILTER_VALIDATE_URL));
+    }
+
+    public function testEncodeUrlWithoutSchemeEncodesEverything()
+    {
+        $this->assertSame('/2/cleaner-n%C2%B053.jpg', TextFormatUtility::encodeUrl('/2/cleaner-n°53.jpg'));
+    }
+
     public function urlDataProvider()
     {
         return [
@@ -106,6 +123,18 @@ class TextFormatUtilityTest extends TestCase
             'ascii symbols that are not url safe are percent-encoded' => [
                 'url' => 'https://shop.test/2/a|b<c>^d`e f.jpg',
                 'expected' => 'https://shop.test/2/a%7Cb%3Cc%3E%5Ed%60e%20f.jpg',
+            ],
+            'brackets are percent-encoded' => [
+                'url' => 'https://shop.test/2/a[1].html?q[color]=red',
+                'expected' => 'https://shop.test/2/a%5B1%5D.html?q%5Bcolor%5D=red',
+            ],
+            'percent sign without escape is percent-encoded' => [
+                'url' => 'https://shop.test/2/100%-cotton.jpg?off=5%',
+                'expected' => 'https://shop.test/2/100%25-cotton.jpg?off=5%25',
+            ],
+            'host with port keeps the port' => [
+                'url' => 'http://localhost:8992/2/cleaner-n°53.jpg',
+                'expected' => 'http://localhost:8992/2/cleaner-n%C2%B053.jpg',
             ],
             'existing percent escapes are kept' => [
                 'url' => 'https://shop.test/2/already%20encoded.jpg?x=1&y=2#top',
