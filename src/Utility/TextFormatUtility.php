@@ -31,18 +31,7 @@ class TextFormatUtility
             return self::percentEncode($url);
         }
 
-        return $parts[1] . self::encodeHost($parts[2]) . self::percentEncode($parts[3]);
-    }
-
-    private static function encodeHost(string $host): string
-    {
-        if (!function_exists('idn_to_ascii') || !preg_match('/[^\x21-\x7E]/', $host)) {
-            return $host;
-        }
-
-        $ascii = idn_to_ascii($host, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
-
-        return $ascii === false ? $host : $ascii;
+        return $parts[1] . MollieApiInputSanitizer::toAsciiDomain($parts[2]) . self::percentEncode($parts[3]);
     }
 
     private static function percentEncode(string $value): string

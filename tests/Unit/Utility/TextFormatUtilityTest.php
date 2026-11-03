@@ -63,15 +63,6 @@ class TextFormatUtilityTest extends TestCase
         $this->assertNotFalse(filter_var($result, FILTER_VALIDATE_URL));
     }
 
-    public function testEncodeUrlLeavesOnlyUrlSafeAscii()
-    {
-        $result = TextFormatUtility::encodeUrl('https://shop.test/2/café-n°53-去除-ʿarab-€-😀 a|b.jpg');
-
-        $this->assertRegExp('/^[\x21-\x7E]+$/', $result);
-        $this->assertNotRegExp('/["<>\\\\^`{|}]/', $result);
-        $this->assertSame('https://shop.test/2/café-n°53-去除-ʿarab-€-😀 a|b.jpg', rawurldecode($result));
-    }
-
     public function testEncodeUrlTurnsInternationalHostIntoPunycode()
     {
         if (!function_exists('idn_to_ascii')) {
@@ -119,6 +110,10 @@ class TextFormatUtilityTest extends TestCase
             'symbols without ascii form are percent-encoded' => [
                 'url' => 'https://shop.test/2/price-€5-nⁿ.jpg',
                 'expected' => 'https://shop.test/2/price-%E2%82%AC5-n%E2%81%BF.jpg',
+            ],
+            'emoji and modifier letters are percent-encoded' => [
+                'url' => 'https://shop.test/2/ʿarab-😀.jpg',
+                'expected' => 'https://shop.test/2/%CA%BFarab-%F0%9F%98%80.jpg',
             ],
             'ascii symbols that are not url safe are percent-encoded' => [
                 'url' => 'https://shop.test/2/a|b<c>^d`e f.jpg',
