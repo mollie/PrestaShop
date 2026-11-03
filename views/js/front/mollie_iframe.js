@@ -80,6 +80,7 @@ $(document).ready(function () {
     };
     var fieldErrors = {};
     var isCreatingToken = false;
+    var isWaitingForSdk = false;
 
     initMollieCardFields();
 
@@ -111,6 +112,11 @@ $(document).ready(function () {
           showAdditionalInformation($mollieContainers.closest(additionalInformationSelector))
         }
 
+        if (!mollie && typeof window.Mollie !== 'function') {
+            initWhenSdkReady();
+            return;
+        }
+
         // createToken() requires every component ever created on the instance to be mounted, so
         // the same four are reused and remounted rather than created again per rebuild.
         if (!mollie) {
@@ -125,6 +131,20 @@ $(document).ready(function () {
 
         fieldErrors = {};
         mountMollieComponents();
+    }
+
+    // Mollie.js is loaded async, so on a slow connection it arrives after this script has run.
+    function initWhenSdkReady() {
+        if (isWaitingForSdk || !window.MollieSdk) {
+            return;
+        }
+        isWaitingForSdk = true;
+        window.MollieSdk.whenSettled(window, 'Mollie', 'js.mollie.com/v1/', function () {
+            isWaitingForSdk = false;
+            if (typeof window.Mollie === 'function') {
+                initMollieCardFields();
+            }
+        });
     }
 
     $(document).on('change', 'input[data-module-name="mollie"]', function () {
