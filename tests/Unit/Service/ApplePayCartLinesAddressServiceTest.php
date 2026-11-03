@@ -64,8 +64,8 @@ class ApplePayCartLinesAddressServiceTest extends TestCase
     public function testItLeavesLinesAloneWhileTheCartSitsOnTheTemporaryAddress()
     {
         $this->addressRepository->method('isValid')->with(self::TEMPORARY_ADDRESS_ID)->willReturn(false);
+        $this->cartRepository->method('getTemporaryApplePayLineAddressIds')->willReturn([self::TEMPORARY_ADDRESS_ID]);
 
-        $this->cartRepository->expects($this->never())->method('getTemporaryApplePayLineAddressIds');
         $this->cartRepository->expects($this->never())->method('moveLinesToAddress');
 
         $this->createService()->moveLinesOffTemporaryAddresses($this->createCart(self::TEMPORARY_ADDRESS_ID));
@@ -83,11 +83,15 @@ class ApplePayCartLinesAddressServiceTest extends TestCase
         $this->createService()->moveLinesOffTemporaryAddresses($this->createCart(0));
     }
 
+    /**
+     * The hook runs on every cart save in the shop, so a cart that never saw the sheet
+     * costs one query and no address lookup.
+     */
     public function testItDoesNothingWhenNoLineSitsOnATemporaryAddress()
     {
-        $this->addressRepository->method('isValid')->willReturn(true);
         $this->cartRepository->method('getTemporaryApplePayLineAddressIds')->willReturn([]);
 
+        $this->addressRepository->expects($this->never())->method('isValid');
         $this->cartRepository->expects($this->never())->method('moveLinesToAddress');
 
         $this->createService()->moveLinesOffTemporaryAddresses($this->createCart(self::REAL_ADDRESS_ID));

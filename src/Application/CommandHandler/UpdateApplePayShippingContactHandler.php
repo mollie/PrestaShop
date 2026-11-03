@@ -22,6 +22,7 @@ use Customer;
 use Mollie\Application\Command\UpdateApplePayShippingContact;
 use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
 use Mollie\Collector\ApplePayDirect\OrderTotalCollector;
+use Mollie\Config\Config;
 use Mollie\Exception\GuestCheckoutNotAvailableException;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Service\ApplePayCartProductsService;
@@ -134,7 +135,7 @@ final class UpdateApplePayShippingContactHandler
     {
         if ($existingAddressId) {
             $address = new Address($existingAddressId);
-            if ($address->id && $address->alias === 'applePay') {
+            if ($address->id && $address->alias === Config::APPLE_PAY_DIRECT_ADDRESS_ALIAS) {
                 $address->postcode = $command->getPostalCode();
                 $address->id_country = Country::getByIso($command->getCountryCode());
                 $address->country = $command->getCountry();
@@ -157,7 +158,7 @@ final class UpdateApplePayShippingContactHandler
         $address->lastname = 'ApplePay';
         $address->firstname = 'ApplePay';
         $address->id_customer = $customerId;
-        $address->alias = 'applePay';
+        $address->alias = Config::APPLE_PAY_DIRECT_ADDRESS_ALIAS;
         $address->postcode = $command->getPostalCode();
         $address->id_country = Country::getByIso($command->getCountryCode());
         $address->country = $command->getCountry();

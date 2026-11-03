@@ -47,14 +47,14 @@ class ApplePayCartLinesAddressService
         $cartId = (int) $cart->id;
         $deliveryAddressId = (int) $cart->id_address_delivery;
 
-        // an invalid delivery address is the temporary one itself, while the sheet is still open
-        if (!$cartId || !$deliveryAddressId || !$this->addressRepository->isValid($deliveryAddressId)) {
+        if (!$cartId || !$deliveryAddressId) {
             return;
         }
 
         $temporaryAddressIds = $this->cartRepository->getTemporaryApplePayLineAddressIds($cartId);
 
-        if (empty($temporaryAddressIds)) {
+        // an invalid delivery address is the temporary one itself, while the sheet is still open
+        if (empty($temporaryAddressIds) || !$this->addressRepository->isValid($deliveryAddressId)) {
             return;
         }
 

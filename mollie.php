@@ -116,7 +116,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.4.7';
+        $this->version = '6.4.8';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -1734,8 +1734,12 @@ class Mollie extends PaymentModule
 
     public function hookActionCartSave(array $params): void
     {
-        // PS 1.7.6 fires this hook without parameters
-        $cart = $params['cart'] ?? $this->context->cart;
+        $cart = $params['cart'] ?? null;
+
+        // PS 1.7.6 fires this hook without parameters, and the context cart in memory can be older than its saved row
+        if (!$cart instanceof Cart && $this->context->cart instanceof Cart && $this->context->cart->id) {
+            $cart = new Cart((int) $this->context->cart->id);
+        }
 
         if (!$cart instanceof Cart) {
             return;
