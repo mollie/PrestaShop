@@ -11,8 +11,6 @@
 
 namespace Mollie\Utility;
 
-use Transliterator;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -25,22 +23,25 @@ class TextFormatUtility
     }
 
     /**
-     * Replace all accented chars by their equivalent non-accented chars.
-     *
-     * @param string $string
-     *
-     * @return string
+     * Makes a URL valid for the Mollie API: punycode for the host, percent-encoding for the rest.
      */
-    public static function replaceAccentedChars(string $string): string
+    public static function encodeUrl(string $url): string
     {
-        if (!class_exists(Transliterator::class)
-            || !method_exists(Transliterator::class, 'create')
-        ) {
-            return $string;
+        if (!preg_match('~^([a-z][a-z0-9+.-]*://)([^/?#:]*)(.*)$~is', $url, $parts)) {
+            return self::percentEncode($url);
         }
 
-        $transliterator = Transliterator::create('Any-Latin; Latin-ASCII');
+        return $parts[1] . MollieApiInputSanitizer::toAsciiDomain($parts[2]) . self::percentEncode($parts[3]);
+    }
 
-        return $transliterator->transliterate($string);
+    private static function percentEncode(string $value): string
+    {
+        return (string) preg_replace_callback(
+            '/[^\x21-\x7E]|["<>\\\\^`{|}\[\]]|%(?![0-9A-Fa-f]{2})/',
+            static function (array $match): string {
+                return rawurlencode($match[0]);
+            },
+            $value
+        );
     }
 }

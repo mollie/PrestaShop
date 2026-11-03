@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.8
++ Fixed payments failing to start for products whose friendly URL contains characters such as °, º, € or Chinese and Arabic text, when accented URLs are enabled
+
 ## Changes in release 6.4.7
 + Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
 + Fixed switching between Test and Live modes changing the mode even when the stored API key was rejected, which removed Mollie from the checkout while the back office still showed the previous mode
