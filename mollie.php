@@ -44,6 +44,7 @@ use Mollie\Subscription\Install\AttributeInstaller;
 use Mollie\Subscription\Install\DatabaseTableInstaller;
 use Mollie\Subscription\Install\HookInstaller;
 use Mollie\Subscription\Install\Installer;
+use Mollie\Subscription\Provider\SubscriptionCheckoutSummaryProvider;
 use Mollie\Subscription\Provider\SubscriptionProductProvider;
 use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
@@ -472,6 +473,46 @@ class Mollie extends PaymentModule
             return '';
         }
 
+        return $this->renderSubscriptionCheckoutSummary() . $this->renderExpressComponent();
+    }
+
+    /**
+     * Before paying for a subscription, the customer sees what every renewal will cost and how often,
+     * delivery included: the renewal uses the subscription carrier, so it can differ from today's
+     * total. Nothing is shown for a cart without a subscription product.
+     */
+    private function renderSubscriptionCheckoutSummary(): string
+    {
+        try {
+            /** @var SubscriptionCheckoutSummaryProvider $summaryProvider */
+            $summaryProvider = $this->getService(SubscriptionCheckoutSummaryProvider::class);
+            $summary = $summaryProvider->get($this->context->cart);
+        } catch (\Throwable $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->getService(LoggerInterface::class);
+
+            $logger->error(sprintf('%s - Error while computing the subscription checkout summary', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+
+            return '';
+        }
+
+        if (!$summary) {
+            return '';
+        }
+
+        $this->context->smarty->assign([
+            'mollieSubscriptionAmount' => $this->context->getCurrentLocale()->formatPrice($summary['amount'], $summary['currency']),
+            'mollieSubscriptionInterval' => $summary['interval'],
+            'mollieSubscriptionStartDate' => Tools::displayDate($summary['start_date']),
+        ]);
+
+        return $this->display(__FILE__, 'views/templates/hook/subscription_checkout_summary.tpl');
+    }
+
+    private function renderExpressComponent(): string
+    {
         /** @var ExpressComponentAvailabilityService $expressAvailability */
         $expressAvailability = $this->getService(ExpressComponentAvailabilityService::class);
 
