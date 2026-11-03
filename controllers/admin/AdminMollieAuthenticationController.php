@@ -148,6 +148,10 @@ class AdminMollieAuthenticationController extends ModuleAdminController
 
     private function initCloudSyncAndPsAccounts(): void
     {
+        if (!empty($_ENV['MOLLIE_FF_MBO_DISABLED'])) {
+            return;
+        }
+
         $mboInstaller = new Prestashop\ModuleLibMboInstaller\DependencyBuilder($this->module);
 
         if (!$mboInstaller->areDependenciesMet()) {
