@@ -11,8 +11,6 @@
 
 namespace Mollie\Utility;
 
-use Transliterator;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -25,22 +23,18 @@ class TextFormatUtility
     }
 
     /**
-     * Replace all accented chars by their equivalent non-accented chars.
-     *
-     * @param string $string
-     *
-     * @return string
+     * Percent-encodes every byte that is not allowed raw in a URL. PrestaShop keeps
+     * symbols and non-Latin letters in link_rewrite when accented URLs are enabled,
+     * and Mollie rejects such raw URLs. The encoded URL still resolves to the same page.
      */
-    public static function replaceAccentedChars(string $string): string
+    public static function encodeUrl(string $url): string
     {
-        if (!class_exists(Transliterator::class)
-            || !method_exists(Transliterator::class, 'create')
-        ) {
-            return $string;
-        }
-
-        $transliterator = Transliterator::create('Any-Latin; Latin-ASCII');
-
-        return $transliterator->transliterate($string);
+        return (string) preg_replace_callback(
+            '/[^\x21-\x7E]|["<>\\\\^`{|}]/',
+            static function (array $match): string {
+                return rawurlencode($match[0]);
+            },
+            $url
+        );
     }
 }

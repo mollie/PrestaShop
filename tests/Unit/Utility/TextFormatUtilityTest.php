@@ -52,6 +52,68 @@ class TextFormatUtilityTest extends TestCase
         $this->assertSame('0', $formatted);
     }
 
+    /**
+     * @dataProvider urlDataProvider
+     */
+    public function testEncodeUrl(string $url, string $expected)
+    {
+        $result = TextFormatUtility::encodeUrl($url);
+
+        $this->assertSame($expected, $result);
+        $this->assertNotFalse(filter_var($result, FILTER_VALIDATE_URL));
+    }
+
+    public function testEncodeUrlLeavesOnlyUrlSafeAscii()
+    {
+        $result = TextFormatUtility::encodeUrl('https://shop.test/2/café-n°53-去除-ʿarab-€-😀 a|b.jpg');
+
+        $this->assertRegExp('/^[\x21-\x7E]+$/', $result);
+        $this->assertNotRegExp('/["<>\\\\^`{|}]/', $result);
+        $this->assertSame('https://shop.test/2/café-n°53-去除-ʿarab-€-😀 a|b.jpg', rawurldecode($result));
+    }
+
+    public function urlDataProvider()
+    {
+        return [
+            'plain url is unchanged' => [
+                'url' => 'https://shop.test/2/hummingbird-printed-t-shirt.jpg',
+                'expected' => 'https://shop.test/2/hummingbird-printed-t-shirt.jpg',
+            ],
+            'accented letters are percent-encoded' => [
+                'url' => 'https://shop.test/5-café-crème.html',
+                'expected' => 'https://shop.test/5-caf%C3%A9-cr%C3%A8me.html',
+            ],
+            'degree sign is percent-encoded' => [
+                'url' => 'https://shop.test/2/cleaner-n°53.jpg',
+                'expected' => 'https://shop.test/2/cleaner-n%C2%B053.jpg',
+            ],
+            'ordinal indicator is percent-encoded' => [
+                'url' => 'https://shop.test/2/edge-rounded-180º.jpg',
+                'expected' => 'https://shop.test/2/edge-rounded-180%C2%BA.jpg',
+            ],
+            'chinese is percent-encoded' => [
+                'url' => 'https://shop.test/3-去除水泥.html',
+                'expected' => 'https://shop.test/3-%E5%8E%BB%E9%99%A4%E6%B0%B4%E6%B3%A5.html',
+            ],
+            'arabic is percent-encoded' => [
+                'url' => 'https://shop.test/4/منظف.jpg',
+                'expected' => 'https://shop.test/4/%D9%85%D9%86%D8%B8%D9%81.jpg',
+            ],
+            'symbols without ascii form are percent-encoded' => [
+                'url' => 'https://shop.test/2/price-€5-nⁿ.jpg',
+                'expected' => 'https://shop.test/2/price-%E2%82%AC5-n%E2%81%BF.jpg',
+            ],
+            'ascii symbols that are not url safe are percent-encoded' => [
+                'url' => 'https://shop.test/2/a|b<c>^d`e f.jpg',
+                'expected' => 'https://shop.test/2/a%7Cb%3Cc%3E%5Ed%60e%20f.jpg',
+            ],
+            'existing percent escapes are kept' => [
+                'url' => 'https://shop.test/2/already%20encoded.jpg?x=1&y=2#top',
+                'expected' => 'https://shop.test/2/already%20encoded.jpg?x=1&y=2#top',
+            ],
+        ];
+    }
+
     public function formatNumberDataProvider()
     {
         return [
