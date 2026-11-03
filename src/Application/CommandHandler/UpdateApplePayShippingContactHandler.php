@@ -22,8 +22,10 @@ use Customer;
 use Mollie\Application\Command\UpdateApplePayShippingContact;
 use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
 use Mollie\Collector\ApplePayDirect\OrderTotalCollector;
+use Mollie\Config\Config;
 use Mollie\Exception\GuestCheckoutNotAvailableException;
 use Mollie\Factory\ModuleFactory;
+use Mollie\Service\ApplePayCartProductsService;
 use Mollie\Utility\ApplePayDirect\ShippingMethodUtility;
 use Tools;
 
@@ -44,15 +46,19 @@ final class UpdateApplePayShippingContactHandler
     private $orderTotalCollector;
     /** @var \Mollie */
     private $module;
+    /** @var ApplePayCartProductsService */
+    private $applePayCartProductsService;
 
     public function __construct(
         ApplePayCarriersBuilder $applePayCarriersBuilder,
         OrderTotalCollector $orderTotalCollector,
-        ModuleFactory $module
+        ModuleFactory $module,
+        ApplePayCartProductsService $applePayCartProductsService
     ) {
         $this->applePayCarriersBuilder = $applePayCarriersBuilder;
         $this->orderTotalCollector = $orderTotalCollector;
         $this->module = $module->getModule();
+        $this->applePayCartProductsService = $applePayCartProductsService;
     }
 
     public function handle(UpdateApplePayShippingContact $command): array
@@ -62,7 +68,7 @@ final class UpdateApplePayShippingContactHandler
         $deliveryAddress = $this->getOrCreateAddress($cart->id_address_delivery, $customer->id, $command);
         $invoiceAddress = $this->getOrCreateAddress($cart->id_address_invoice, $customer->id, $command);
         $this->updateCart($cart, $customer, $deliveryAddress->id, $invoiceAddress->id);
-        $this->addProductToCart($cart, $command);
+        $this->applePayCartProductsService->addWantedProducts($cart, $command->getProducts());
         $cart = new Cart($cart->id);
         $this->updateContext($cart, $customer);
         $country = new Country($deliveryAddress->id_country);
@@ -129,7 +135,7 @@ final class UpdateApplePayShippingContactHandler
     {
         if ($existingAddressId) {
             $address = new Address($existingAddressId);
-            if ($address->id && $address->alias === 'applePay') {
+            if ($address->id && $address->alias === Config::APPLE_PAY_DIRECT_ADDRESS_ALIAS) {
                 $address->postcode = $command->getPostalCode();
                 $address->id_country = Country::getByIso($command->getCountryCode());
                 $address->country = $command->getCountry();
@@ -152,7 +158,7 @@ final class UpdateApplePayShippingContactHandler
         $address->lastname = 'ApplePay';
         $address->firstname = 'ApplePay';
         $address->id_customer = $customerId;
-        $address->alias = 'applePay';
+        $address->alias = Config::APPLE_PAY_DIRECT_ADDRESS_ALIAS;
         $address->postcode = $command->getPostalCode();
         $address->id_country = Country::getByIso($command->getCountryCode());
         $address->country = $command->getCountry();
@@ -198,23 +204,6 @@ final class UpdateApplePayShippingContactHandler
         $cart->id_address_invoice = $invoiceAddressId;
         $cart->id_customer = $customer->id;
         $cart->update();
-    }
-
-    private function addProductToCart(Cart $cart, UpdateApplePayShippingContact $command)
-    {
-        foreach ($command->getProducts() as $product) {
-            $quantity = max($product->getWantedQuantity(), 1);
-            $inCart = $cart->getProductQuantity($product->getProductId(), $product->getProductAttribute());
-
-            // deleteProduct() runs CartRule::autoRemoveFromCart() on the emptied cart, which drops
-            // vouchers the shopper entered by code, so a cart already holding the line is left alone
-            if ((int) ($inCart['quantity'] ?? 0) === $quantity) {
-                continue;
-            }
-
-            $cart->deleteProduct($product->getProductId(), $product->getProductAttribute());
-            $cart->updateQty($quantity, $product->getProductId(), $product->getProductAttribute());
-        }
     }
 
     private function updateContext(Cart $cart, Customer $customer)

@@ -191,6 +191,7 @@ class Installer implements InstallerInterface
             'displayCustomerAccount',
             'actionCarrierUpdate',
             'displayPaymentTop',
+            'actionCartSave',
         ];
     }
 
