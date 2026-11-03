@@ -28,6 +28,7 @@ use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Service\ApplePayCartLinesAddressService;
 use Mollie\Service\CancelService;
 use Mollie\Service\CaptureService;
 use Mollie\Service\ExceptionService;
@@ -1728,6 +1729,32 @@ class Mollie extends PaymentModule
             $product = $this->makeProductNotOrderable($params['product']);
 
             $params['product'] = $product;
+        }
+    }
+
+    public function hookActionCartSave(array $params): void
+    {
+        // PS 1.7.6 fires this hook without parameters
+        $cart = $params['cart'] ?? $this->context->cart;
+
+        if (!$cart instanceof Cart) {
+            return;
+        }
+
+        try {
+            /** @var ApplePayCartLinesAddressService $applePayCartLinesAddressService */
+            $applePayCartLinesAddressService = $this->getService(ApplePayCartLinesAddressService::class);
+            $applePayCartLinesAddressService->moveLinesOffTemporaryAddresses($cart);
+        } catch (\Throwable $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->getService(LoggerInterface::class);
+
+            $logger->error('Failed to move cart lines off the temporary Apple Pay address.', [
+                'context' => [
+                    'cartId' => (int) $cart->id,
+                ],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
         }
     }
 
