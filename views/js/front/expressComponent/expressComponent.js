@@ -181,7 +181,6 @@
       waitingForSdk: false
     };
 
-    // Mollie.js v2 is loaded async, so it can still be on its way when the payment step is ready.
     function waitForSdk() {
       if (state.sdkSettled || !root.MollieSdk) {
         return false;
