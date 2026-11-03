@@ -115,7 +115,7 @@ class Mollie extends PaymentModule
     {
         $this->name = 'mollie';
         $this->tab = 'payments_gateways';
-        $this->version = '6.4.7';
+        $this->version = '6.4.7.1';
         $this->author = 'Mollie B.V.';
         $this->need_instance = 1;
         $this->bootstrap = true;
@@ -397,9 +397,11 @@ class Mollie extends PaymentModule
         $this->context->controller->registerJavascript(
             'mollie_iframe_js',
             'https://js.mollie.com/v1/mollie.js',
-            ['server' => 'remote', 'position' => 'bottom', 'priority' => 150]
+            ['server' => 'remote', 'position' => 'bottom', 'priority' => 150, 'attributes' => 'async']
         );
-        $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe.js");
+        // Versioned so a browser cannot pair the async SDK with a mollie_iframe.js cached before it.
+        $this->registerVersionedScript('mollie-sdk-ready', 'views/js/front/mollie_sdk_ready.js');
+        $this->registerVersionedScript('mollie-iframe', 'views/js/front/mollie_iframe.js');
         $this->context->controller->addJS("{$this->_path}views/js/front/mollie_single_click.js");
         $this->context->controller->addJS("{$this->_path}views/js/front/bancontact/qr_code.js");
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/bancontact_qr_code.css');
@@ -441,7 +443,7 @@ class Mollie extends PaymentModule
         $this->context->controller->registerJavascript(
             'mollie_js_v2',
             Config::MOLLIE_JS_V2_URL,
-            ['server' => 'remote', 'position' => 'bottom', 'priority' => 151]
+            ['server' => 'remote', 'position' => 'bottom', 'priority' => 151, 'attributes' => 'async']
         );
         $this->registerVersionedScript('mollie-express-component', 'views/js/front/expressComponent/expressComponent.js', 160);
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/express_component.css');

@@ -80,6 +80,7 @@ $(document).ready(function () {
     };
     var fieldErrors = {};
     var isCreatingToken = false;
+    var isWaitingForSdk = false;
 
     initMollieCardFields();
 
@@ -111,6 +112,11 @@ $(document).ready(function () {
           showAdditionalInformation($mollieContainers.closest(additionalInformationSelector))
         }
 
+        if (!mollie && typeof window.Mollie !== 'function') {
+            initWhenSdkReady();
+            return;
+        }
+
         // createToken() requires every component ever created on the instance to be mounted, so
         // the same four are reused and remounted rather than created again per rebuild.
         if (!mollie) {
@@ -126,6 +132,29 @@ $(document).ready(function () {
         fieldErrors = {};
         mountMollieComponents();
     }
+
+    function initWhenSdkReady() {
+        if (isWaitingForSdk || !window.MollieSdk) {
+            return;
+        }
+        isWaitingForSdk = true;
+        window.MollieSdk.whenSettled(window, 'Mollie', 'js.mollie.com/v1/', function () {
+            isWaitingForSdk = false;
+            if (typeof window.Mollie === 'function') {
+                initMollieCardFields();
+            }
+        });
+    }
+
+    // Until the async SDK has mounted the card fields there is no token to send, so the
+    // card form must not reach the server.
+    $(document).on('submit', 'form', function (event) {
+        if (!isWaitingForSdk || !$(this).find('input[name="mollieCardToken"]').length || $('input[name="mollie-use-saved-card"]').is(':checked')) {
+            return;
+        }
+        event.preventDefault();
+        $('#payment-confirmation').find('button[type=submit]').prop('disabled', false);
+    });
 
     $(document).on('change', 'input[data-module-name="mollie"]', function () {
         var paymentOption = $(this).attr('id');
@@ -237,7 +266,7 @@ $(document).ready(function () {
     document.addEventListener('click', function (event) {
         var $payButton = $(event.target).closest('#opc-pay-button');
 
-        if (!$payButton.length || !mollie || isCreatingToken) {
+        if (!$payButton.length || isCreatingToken) {
             return;
         }
 
@@ -245,8 +274,16 @@ $(document).ready(function () {
             return;
         }
 
+        if (!mollie && !isWaitingForSdk) {
+            return;
+        }
+
         event.preventDefault();
         event.stopImmediatePropagation();
+
+        if (!mollie) {
+            return;
+        }
 
         mollie.createToken().then(function (token) {
             if (token.error) {

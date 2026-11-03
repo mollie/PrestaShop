@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.7.1
++ Fixed the checkout staying unresponsive for several seconds after the page appeared, for example ignoring a carrier change, while the Mollie card and Express Component scripts were loading
+
 ## Changes in release 6.4.7
 + Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
 + Fixed switching between Test and Live modes changing the mode even when the stored API key was rejected, which removed Mollie from the checkout while the back office still showed the previous mode
