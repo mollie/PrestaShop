@@ -21,20 +21,11 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_6_4_8($module)
 {
-    // install() is not replayed on an upgrade: shops that already run the module need the hook that
-    // moves cart lines off a cancelled Apple Pay Direct sheet's temporary address. Active shops only,
-    // as in 6.4.7: for any other shop Hook::registerHook also deletes the module's module_shop row.
-    // A failure is logged and never fails the upgrade, the hook can still be set in Design > Positions.
+    // Active shops only, as in 6.4.7: for any other shop Hook::registerHook also deletes the module's
+    // module_shop row. A failure never fails the upgrade, the hook can still be set in Design > Positions.
     try {
         if (!$module->registerHook('actionCartSave', Shop::getShops(true, null, true))) {
-            PrestaShopLogger::addLog(
-                'Mollie module upgrade to 6.4.8 could not register the actionCartSave hook',
-                3,
-                null,
-                'Module',
-                $module->id,
-                true
-            );
+            throw new Exception('registerHook returned false');
         }
     } catch (Throwable $e) {
         PrestaShopLogger::addLog(

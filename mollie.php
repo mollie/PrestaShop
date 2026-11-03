@@ -1737,11 +1737,12 @@ class Mollie extends PaymentModule
         $cart = $params['cart'] ?? null;
 
         // PS 1.7.6 fires this hook without parameters, and the context cart in memory can be older than its saved row
-        if (!$cart instanceof Cart && $this->context->cart instanceof Cart && $this->context->cart->id) {
+        if (!$cart instanceof Cart && !empty($this->context->cart->id)) {
             $cart = new Cart((int) $this->context->cart->id);
         }
 
-        if (!$cart instanceof Cart) {
+        // runs on every cart save and getService() builds the whole container, so most carts stop here
+        if (!$cart instanceof Cart || !(int) $cart->id || !(int) $cart->id_address_delivery) {
             return;
         }
 

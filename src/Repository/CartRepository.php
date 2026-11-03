@@ -45,7 +45,7 @@ class CartRepository extends AbstractRepository implements CartRepositoryInterfa
     {
         $where = '`id_cart` = ' . $cartId . ' AND `id_address_delivery` = ' . $fromAddressId;
 
-        // a customization row follows its line, never moves alone
+        // on a failed line update (for example a duplicate key), the customization rows stay with their line
         if (!Db::getInstance()->update('cart_product', ['id_address_delivery' => $toAddressId], $where)) {
             return;
         }

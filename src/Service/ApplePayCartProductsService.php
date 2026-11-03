@@ -27,9 +27,11 @@ class ApplePayCartProductsService
     public function addWantedProducts(Cart $cart, array $products): void
     {
         foreach ($products as $product) {
+            $customizationId = $product->getCustomizationId();
+
             // a customization row belongs to one cart and deleteProduct() drops it with the line,
             // so a customized line the cart already holds is quoted as it stands
-            if ($product->getCustomizationId() && $this->getQuantityInCart($cart, $product, $product->getCustomizationId())) {
+            if ($customizationId && $this->getQuantityInCart($cart, $product, $customizationId)) {
                 continue;
             }
 
@@ -37,7 +39,7 @@ class ApplePayCartProductsService
 
             // deleteProduct() runs CartRule::autoRemoveFromCart() on the emptied cart, which drops
             // vouchers the shopper entered by code, so a cart already holding the line is left alone
-            if ($this->getQuantityInCart($cart, $product, 0) === $quantity) {
+            if ($this->getQuantityInCart($cart, $product) === $quantity) {
                 continue;
             }
 
@@ -46,7 +48,7 @@ class ApplePayCartProductsService
         }
     }
 
-    private function getQuantityInCart(Cart $cart, Product $product, int $customizationId): int
+    private function getQuantityInCart(Cart $cart, Product $product, int $customizationId = 0): int
     {
         $inCart = $cart->getProductQuantity($product->getProductId(), $product->getProductAttribute(), $customizationId);
 
