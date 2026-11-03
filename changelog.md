@@ -4,6 +4,7 @@
 
 ## Changes in release 6.4.8
 + Fixed checkout showing no carriers after the shopper closed the Apple Pay Direct sheet on the cart page and continued with the normal checkout
++ Fixed the Apple Pay Direct sheet on the cart page adding an extra plain copy of each customized product to the cart
 
 ## Changes in release 6.4.7
 + Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
