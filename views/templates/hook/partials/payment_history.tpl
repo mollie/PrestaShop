@@ -8,7 +8,7 @@
  * @see        https://github.com/mollie/PrestaShop
  * @codingStandardsIgnoreStart
  *}
-{assign var=history_icons value=['created' => 'add', 'authorized' => 'lock', 'paid' => 'check', 'captured' => 'credit_card', 'refunded' => 'replay', 'chargeback' => 'report', 'chargeback_reversed' => 'undo', 'canceled' => 'close', 'expired' => 'schedule', 'failed' => 'close']}
+{assign var=history_icons value=['created' => 'add', 'authorized' => 'lock', 'paid' => 'check', 'captured' => 'credit_card', 'released' => 'lock_open', 'refunded' => 'replay', 'chargeback' => 'report', 'chargeback_reversed' => 'undo', 'canceled' => 'close', 'expired' => 'schedule', 'failed' => 'close']}
 <hr />
 <details class="mollie-payment-history" open>
   <summary class="mollie-payment-history__summary">
@@ -38,6 +38,9 @@
           {if $detail.label == 'capture_before'}
           <span class="mollie-status mollie-status--authorized">{$history_detail_labels.capture_before|escape:'html':'UTF-8'} {$detail.value|escape:'html':'UTF-8'}</span>
           {/if}
+          {if $detail.label == 'remaining_to_capture'}
+          <span class="mollie-status mollie-status--authorized">{l s='%s left to capture' sprintf=[$detail.value] mod='mollie'}</span>
+          {/if}
           {/foreach}
           {/if}
           <span class="mollie-timeline__date">{$event.date|escape:'html':'UTF-8'}</span>
@@ -55,7 +58,7 @@
           <dd><code>{$event.reference|escape:'html':'UTF-8'}</code></dd>
           {/if}
           {foreach from=$event.details item=detail}
-          {if $event.type != 'authorized' || $detail.label != 'capture_before'}
+          {if $event.type != 'authorized' || ($detail.label != 'capture_before' && $detail.label != 'remaining_to_capture')}
           <dt>{if isset($history_detail_labels[$detail.label])}{$history_detail_labels[$detail.label]|escape:'html':'UTF-8'}{else}{$detail.label|escape:'html':'UTF-8'}{/if}</dt>
           <dd>{$detail.value|escape:'html':'UTF-8'}</dd>
           {/if}

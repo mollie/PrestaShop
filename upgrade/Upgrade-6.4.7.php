@@ -72,8 +72,8 @@ function upgrade_module_6_4_7($module)
 
         $expressDefaults = [
             \Mollie\Config\Config::MOLLIE_EXPRESS_COMPONENT_ENABLED => 0,
-            \Mollie\Config\Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY => 1,
-            \Mollie\Config\Config::MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY => 1,
+            \Mollie\Config\Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY => 0,
+            \Mollie\Config\Config::MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY => 0,
             \Mollie\Config\Config::MOLLIE_EXPRESS_COMPONENT_PAYPAL => 0,
         ];
 

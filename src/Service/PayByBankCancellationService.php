@@ -121,25 +121,33 @@ class PayByBankCancellationService
     }
 
     /**
+     * @param array $payment
+     * @param Order $order
+     *
+     * @return bool
+     */
+    public function belongsToOrder(array $payment, Order $order)
+    {
+        return $order->module === $this->module->name && (int) $payment['order_id'] === (int) $order->id;
+    }
+
+    /**
      * @param int $cartId
+     * @param Order $order
      * @param string $transactionId
      * @param string $mollieStatus
      *
      * @return void
      */
-    public function cancelOrderAndRestoreCart($cartId, $transactionId, $mollieStatus)
+    public function cancelOrderAndRestoreCart($cartId, Order $order, $transactionId, $mollieStatus)
     {
         $context = Context::getContext();
-        $orderId = (int) Order::getIdByCartId($cartId);
+        $orderId = (int) $order->id;
         $canceledStateId = (int) Configuration::get(Config::MOLLIE_STATUS_CANCELED);
 
-        if ($orderId) {
-            $order = new Order($orderId);
-
-            if ((int) $order->current_state !== $canceledStateId) {
-                $order->setCurrentState($canceledStateId);
-                $this->logger->info(sprintf('Pay by Bank payment canceled, order %d set to canceled', $orderId));
-            }
+        if ((int) $order->current_state !== $canceledStateId) {
+            $order->setCurrentState($canceledStateId);
+            $this->logger->info(sprintf('Pay by Bank payment canceled, order %d set to canceled', $orderId));
         }
 
         $this->paymentMethodRepository->savePaymentStatus(

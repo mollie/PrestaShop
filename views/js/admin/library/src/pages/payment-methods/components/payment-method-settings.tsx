@@ -27,6 +27,7 @@ interface PaymentMethodSettingsProps {
   carriers: Carrier[]
   showApplePayLiveKeyWarning?: boolean
   expressComponentEnabled?: boolean
+  isTestMode?: boolean
   customerGroups: CustomerGroup[]
   languages: Language[]
   onlyPaymentsMethods: string[]
@@ -113,7 +114,7 @@ function RadioSelect({ value, onValueChange, options, placeholder, className }: 
 
 const EXPRESS_BUTTON_METHODS = ["applepay", "creditcard", "paypal"]
 
-export function PaymentMethodSettings({ method, countries, carriers, showApplePayLiveKeyWarning = false, expressComponentEnabled = false, customerGroups, languages, onlyPaymentsMethods, onlyOrderMethods, onUpdateSettings, onSaveSettings, isSaving = false }: PaymentMethodSettingsProps) {
+export function PaymentMethodSettings({ method, countries, carriers, showApplePayLiveKeyWarning = false, expressComponentEnabled = false, isTestMode = false, customerGroups, languages, onlyPaymentsMethods, onlyOrderMethods, onUpdateSettings, onSaveSettings, isSaving = false }: PaymentMethodSettingsProps) {
   const { t } = usePaymentMethodsTranslations()
 
   const forcePaymentsApi = onlyPaymentsMethods.includes(method.id)
@@ -560,6 +561,9 @@ export function PaymentMethodSettings({ method, countries, carriers, showApplePa
               />
               {!expressComponentEnabled && (
                 <p className="text-xs text-gray-400 col-span-3">{withAdvancedSettingsLink(t('expressButtonMasterOff'))}</p>
+              )}
+              {isTestMode && (
+                <p data-testid={`payment-method-${method.id}-express-test-mode`} className="text-xs text-gray-400 col-span-3">{t('expressButtonTestMode')}</p>
               )}
             </div>
           </div>
