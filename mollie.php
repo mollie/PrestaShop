@@ -48,6 +48,7 @@ use Mollie\Subscription\Provider\SubscriptionProductProvider;
 use Mollie\Subscription\Repository\LanguageRepository as LanguageAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Validator\CanProductBeAddedToCartValidator;
+use Mollie\Subscription\Validator\SubscriptionProductValidator;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\TabTranslationUtility;
@@ -464,6 +465,63 @@ class Mollie extends PaymentModule
                 ],
             ],
         ]);
+    }
+
+    /**
+     * A subscription is charged again by Mollie only when the first payment was made through Mollie,
+     * which creates the mandate. Any other payment module (bank wire, cash on delivery...) would create
+     * the order without any subscription, so they are removed from the checkout for a cart that holds a
+     * subscription product.
+     *
+     * @param array $params ['paymentOptions' => array<string, PaymentOption[]>] passed by reference
+     */
+    public function hookActionPresentPaymentOptions(array $params)
+    {
+        if (!isset($params['paymentOptions']) || !is_array($params['paymentOptions'])) {
+            return;
+        }
+
+        if (!(int) Configuration::get(Config::MOLLIE_SUBSCRIPTION_ENABLED)) {
+            return;
+        }
+
+        $cart = $this->context->cart;
+
+        if (!Validate::isLoadedObject($cart)) {
+            return;
+        }
+
+        try {
+            /** @var SubscriptionProductValidator $subscriptionProductValidator */
+            $subscriptionProductValidator = $this->getService(SubscriptionProductValidator::class);
+
+            $hasSubscriptionProduct = false;
+
+            foreach ($cart->getProducts() as $product) {
+                if ($subscriptionProductValidator->validate((int) $product['id_product_attribute'])) {
+                    $hasSubscriptionProduct = true;
+
+                    break;
+                }
+            }
+
+            if (!$hasSubscriptionProduct) {
+                return;
+            }
+
+            foreach (array_keys($params['paymentOptions']) as $moduleName) {
+                if ($moduleName !== $this->name) {
+                    unset($params['paymentOptions'][$moduleName]);
+                }
+            }
+        } catch (\Throwable $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->getService(LoggerInterface::class);
+
+            $logger->error(sprintf('%s - Error while filtering payment options for a subscription cart', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+        }
     }
 
     public function hookDisplayPaymentTop(array $params)
