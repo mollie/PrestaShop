@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.8
++ Fixed the Apple Pay Direct sheet offering carriers the product may not ship with, or that are not available to the shopper's customer group, so the sheet now rejects addresses the normal checkout cannot deliver to
+
 ## Changes in release 6.4.7
 + Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
 + Fixed switching between Test and Live modes changing the mode even when the stored API key was rejected, which removed Mollie from the checkout while the back office still showed the previous mode
