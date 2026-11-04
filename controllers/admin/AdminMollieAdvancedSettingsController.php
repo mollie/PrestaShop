@@ -162,6 +162,9 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             'module' => $this->module->l('Module', self::FILE_NAME),
             'debugModeLabel' => $this->module->l('Debug Mode', self::FILE_NAME),
             'debugModeDescription' => $this->module->l('Enable detailed error logging', self::FILE_NAME),
+            'psAccountsOnboardingTitle' => $this->module->l('PrestaShop Account and CloudSync', self::FILE_NAME),
+            'psAccountsOnboardingLabel' => $this->module->l('Show PrestaShop Account and CloudSync', self::FILE_NAME),
+            'psAccountsOnboardingDescription' => $this->module->l('Shows the PrestaShop Account and CloudSync setup on the API configuration page.', self::FILE_NAME),
             'logLevelLabel' => $this->module->l('Log Level', self::FILE_NAME),
             'checkoutPreview' => $this->module->l('Checkout preview:', self::FILE_NAME),
             'customCssPath' => $this->module->l('Custom CSS File Path', self::FILE_NAME),
@@ -259,6 +262,7 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
                     && 0 === strpos((string) $this->configuration->get(Config::MOLLIE_API_KEY), 'live'),
 
                 'debugMode' => (bool) $this->configuration->get(Config::MOLLIE_DISPLAY_ERRORS),
+                'psAccountsOnboarding' => (bool) $this->configuration->get(Config::MOLLIE_PS_ACCOUNTS_ONBOARDING_ENABLED),
                 'logLevel' => ($logLevelRaw !== false && $logLevelRaw !== '' && $logLevelRaw !== null)
                     ? (string) $logLevelRaw
                     : (string) Config::DEBUG_LOG_ERRORS,
@@ -361,6 +365,10 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
 
             if (isset($data['debugMode'])) {
                 $this->configuration->updateValue(Config::MOLLIE_DISPLAY_ERRORS, (bool) $data['debugMode']);
+            }
+
+            if (isset($data['psAccountsOnboarding'])) {
+                $this->configuration->updateValue(Config::MOLLIE_PS_ACCOUNTS_ONBOARDING_ENABLED, (bool) $data['psAccountsOnboarding']);
             }
             if (isset($data['logLevel'])) {
                 $this->configuration->updateValue(Config::MOLLIE_DEBUG_LOG, $data['logLevel']);

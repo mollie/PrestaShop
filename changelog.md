@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.8
++ Added a switch in Advanced Settings to show or hide the PrestaShop Account and CloudSync setup on the API configuration page. New installs have it off, shops that upgrade keep it on
+
 ## Changes in release 6.4.7
 + Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
 + Fixed switching between Test and Live modes changing the mode even when the stored API key was rejected, which removed Mollie from the checkout while the back office still showed the previous mode
