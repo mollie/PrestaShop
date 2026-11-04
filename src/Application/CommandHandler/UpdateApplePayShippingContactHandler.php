@@ -24,6 +24,7 @@ use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
 use Mollie\Collector\ApplePayDirect\OrderTotalCollector;
 use Mollie\Exception\GuestCheckoutNotAvailableException;
 use Mollie\Factory\ModuleFactory;
+use Mollie\Utility\ApplePayDirect\DeliveryOptionUtility;
 use Mollie\Utility\ApplePayDirect\ShippingMethodUtility;
 use Tools;
 
@@ -67,7 +68,14 @@ final class UpdateApplePayShippingContactHandler
         $this->updateContext($cart, $customer);
         $country = new Country($deliveryAddress->id_country);
 
-        $applePayCarriers = $this->applePayCarriersBuilder->build(Carrier::getCarriersForOrder($country->id_zone), $country->id_zone);
+        // checkout decides shipping through the delivery option list (product carriers, customer
+        // groups, ranges, carrier filtering modules); the sheet must offer the same carriers
+        $carriers = DeliveryOptionUtility::filterUsableCarriers(
+            Carrier::getCarriersForOrder($country->id_zone, Customer::getGroupsStatic((int) $cart->id_customer), $cart),
+            $cart->getDeliveryOptionList(null, true),
+            (int) $cart->id_address_delivery
+        );
+        $applePayCarriers = $this->applePayCarriersBuilder->build($carriers, $country->id_zone);
 
         // the sheet preselects the first listed method without firing onshippingmethodselected,
         // so the cart must already carry it or the authorized total diverges from the charged one
@@ -234,19 +242,24 @@ final class UpdateApplePayShippingContactHandler
      * Context::updateCustomer() reassigns both cart addresses to Address::getFirstCustomerAddressId(),
      * which ignores soft-deleted rows and therefore never returns the temporary Apple Pay address:
      * 0 for the throwaway guest, the customer's oldest saved address for a logged-in shopper.
-     * Put back the addresses the Apple Pay sheet is being quoted against.
+     * Put back the addresses the Apple Pay sheet is being quoted against, and move the cart lines
+     * there too: PS 1.7 and 8 key the delivery options by each line's address, and a line can sit on
+     * the address the core call forced or on another saved address of a logged-in shopper.
      */
     private function restoreCartAddresses(Cart $cart, int $deliveryAddressId, int $invoiceAddressId): void
     {
-        if ((int) $cart->id_address_delivery === $deliveryAddressId && (int) $cart->id_address_invoice === $invoiceAddressId) {
-            return;
+        if ((int) $cart->id_address_delivery !== $deliveryAddressId || (int) $cart->id_address_invoice !== $invoiceAddressId) {
+            $cart->id_address_delivery = $deliveryAddressId;
+            $cart->id_address_invoice = $invoiceAddressId;
+            $cart->update();
         }
 
-        // Remaps ps_cart_product rows away from the address the core call just forced onto the cart.
-        $cart->updateAddressId((int) $cart->id_address_delivery, $deliveryAddressId);
+        foreach (array_unique(array_column($cart->getProducts(true), 'id_address_delivery')) as $lineAddressId) {
+            if ((int) $lineAddressId === $deliveryAddressId) {
+                continue;
+            }
 
-        $cart->id_address_delivery = $deliveryAddressId;
-        $cart->id_address_invoice = $invoiceAddressId;
-        $cart->update();
+            $cart->updateAddressId((int) $lineAddressId, $deliveryAddressId);
+        }
     }
 }
