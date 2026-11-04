@@ -323,6 +323,7 @@ const AdvancedSettings: React.FC = () => {
   const [autoShip, setAutoShip] = useState(true)
   const [autoShipStatuses, setAutoShipStatuses] = useState<string[]>(["shipped"])
   const [debugMode, setDebugMode] = useState(false)
+  const [psAccountsOnboarding, setPsAccountsOnboarding] = useState(false)
   const [logLevel, setLogLevel] = useState("")
   const [logoDisplay, setLogoDisplay] = useState("")
   const [translateMollie, setTranslateMollie] = useState("")
@@ -393,6 +394,7 @@ const AdvancedSettings: React.FC = () => {
         setAutoShipStatuses(data.autoShipStatuses || [])
 
         setDebugMode(data.debugMode || false)
+        setPsAccountsOnboarding(data.psAccountsOnboarding || false)
         setExpressComponent(data.expressComponent || false)
         setExpressLiveReady(data.expressLiveReady !== false)
         setLogLevel(data.logLevel || logLevelOpts[0]?.id || "")
@@ -435,6 +437,7 @@ const AdvancedSettings: React.FC = () => {
         autoShipStatuses,
         carriers: carriersData,
         debugMode,
+        psAccountsOnboarding,
         logLevel,
         logoDisplay,
         cssPath,
@@ -705,6 +708,24 @@ const AdvancedSettings: React.FC = () => {
                 {option.name}
               </button>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="settings-section">
+        <h2 className="section-title">{t('psAccountsOnboardingTitle')}</h2>
+
+        <div className="toggle-group">
+          <div className="toggle-content">
+            <div>
+              <div className="toggle-label">{t('psAccountsOnboardingLabel')}</div>
+              <div className="toggle-description">{t('psAccountsOnboardingDescription')}</div>
+            </div>
+            <label className="toggle-switch">
+              <input type="checkbox" checked={psAccountsOnboarding} onChange={(e) => setPsAccountsOnboarding(e.target.checked)} />
+              <span className="toggle-slider"></span>
+            </label>
+            <span className="toggle-status">{psAccountsOnboarding ? t('enabled') : t('disabled')}</span>
           </div>
         </div>
       </section>

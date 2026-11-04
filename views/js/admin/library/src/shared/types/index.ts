@@ -301,6 +301,9 @@ export interface MollieAdvancedSettingsTranslations {
   module: string;
   debugModeLabel: string;
   debugModeDescription: string;
+  psAccountsOnboardingTitle: string;
+  psAccountsOnboardingLabel: string;
+  psAccountsOnboardingDescription: string;
   logLevelLabel: string;
   checkoutPreview: string;
   customCssPath: string;
