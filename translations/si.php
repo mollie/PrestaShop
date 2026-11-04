@@ -667,6 +667,9 @@ $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_eb4c6f94efd5
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0b06e7a6a8fdd7ebb1538faf7582aab8'] = 'Mollie Express Component';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0122b5b00af3de8e066e55c4d5afea6f'] = 'Prikažite Apple Pay, Google Pay in PayPal kot gumbe za hitro plačilo na vrhu blagajne, da lahko kupci plačajo z enim dotikom. Na strani Načini plačila izberite, kateri gumbi so prikazani.';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_d8d0950b07b563ca7190363e69bf03f8'] = 'Express Component je v beta različici. Mollie ga aktivira za vsak račun posebej, zato se pred vklopom obrnite na Mollie. Deluje samo z živim API ključem v živem načinu in v testnem načinu ostane skrit.';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_cd0a7141acd267dddc63b99afd8f34a6'] = 'Preslikanih %s od %s statusov';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_51523256f7c0583870d9304f6560341e'] = 'Vklopljenih %s od %s e-poštnih sporočil';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_fe1a8f570baa07aad594712eda82e45a'] = 'Eden od izbranih statusov naročila v tej trgovini ne obstaja več. Izberite drug status in znova shranite.';
 $_MODULE['<{mollie}prestashop>payment_history_6ecdeeece7dc4ee366197ea2e4b6b778'] = 'Zgodovina plačil';
 $_MODULE['<{mollie}prestashop>payment_history_2a2d2c75ec43014500ef2d5f400cf7d1'] = 'Še ni dogodkov';
 $_MODULE['<{mollie}prestashop>payment_history_b02dca32aecc6f71310f9e914757d56f'] = 'Mollie sklic';

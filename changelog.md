@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.8
++ The Order Status Mapping and Order Status Emails sections in Advanced Settings now start collapsed with a summary in the header, so the rest of the page and the Save button are easier to reach
+
 ## Changes in release 6.4.7
 + Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
 + Fixed switching between Test and Live modes changing the mode even when the stored API key was rejected, which removed Mollie from the checkout while the back office still showed the previous mode
