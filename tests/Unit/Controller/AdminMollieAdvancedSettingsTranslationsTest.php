@@ -17,10 +17,6 @@ use RuntimeException;
 
 class AdminMollieAdvancedSettingsTranslationsTest extends TestCase
 {
-    /**
-     * The strings PIPRES-845 added for the PrestaShop Account and CloudSync onboarding switch.
-     * Pre-existing gaps in other Advanced Settings strings are out of scope for this test.
-     */
     const SOURCES = [
         'PrestaShop Account and CloudSync',
         'Show PrestaShop Account and CloudSync',
