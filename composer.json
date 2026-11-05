@@ -29,8 +29,7 @@
     "require-dev": {
         "invertus/prestashop-models": "^1.0",
         "prestashop/php-dev-tools": "*",
-        "phpunit/phpunit": "^7.5",
-        "friendsofphp/php-cs-fixer": "^2.19"
+        "phpunit/phpunit": "^7.5"
     },
     "autoload-dev": {
         "psr-4": {

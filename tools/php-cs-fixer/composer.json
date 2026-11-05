@@ -1,0 +1,11 @@
+{
+    "require": {
+        "friendsofphp/php-cs-fixer": "3.95.28",
+        "prestashop/php-dev-tools": "^5"
+    },
+    "config": {
+        "platform": {
+            "php": "8.2.0"
+        }
+    }
+}
