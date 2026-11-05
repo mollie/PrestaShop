@@ -553,8 +553,8 @@ $_MODULE['<{mollie}prestashop>captureservice_52779730bec52b4ddcf095c8f750cfcb'] 
 $_MODULE['<{mollie}prestashop>mailservice_ed13b3693357ebed3751cb71cb639e65'] = 'Ei kuriiria';
 $_MODULE['<{mollie}prestashop>mailservice_fca7e8d1c86db11246e429e40aa10c81'] = 'Uusi kuponki tilauksellesi %s';
 $_MODULE['<{mollie}prestashop>exceptionservice_c2f73af3130be4b4967a475ab846c546'] = 'Maksua alustattaessa tapahtui virhe. Ota yhteyttä asiakastukeemme.';
-$_MODULE['<{mollie}prestashop>exceptionservice_8fd8f922a86b3622988898a8da551885'] = "Näyttää siltä, \u{200b}\u{200b}että olet syöttänyt väärän puhelinnumeromuodon laskutusosoite vaiheessa. Vaihda numero ja yritä uudelleen.";
-$_MODULE['<{mollie}prestashop>exceptionservice_68b9bbd9d890e51e2127e4e90b0b5b5f'] = "Näyttää siltä, \u{200b}\u{200b}että olet syöttänyt väärän puhelinnumeromuodon toimitusosoite vaiheessa. Vaihda numero ja yritä uudelleen.";
+$_MODULE['<{mollie}prestashop>exceptionservice_8fd8f922a86b3622988898a8da551885'] = 'Näyttää siltä, että olet syöttänyt väärän puhelinnumeromuodon laskutusosoite vaiheessa. Vaihda numero ja yritä uudelleen.';
+$_MODULE['<{mollie}prestashop>exceptionservice_68b9bbd9d890e51e2127e4e90b0b5b5f'] = 'Näyttää siltä, että olet syöttänyt väärän puhelinnumeromuodon toimitusosoite vaiheessa. Vaihda numero ja yritä uudelleen.';
 $_MODULE['<{mollie}prestashop>exceptionservice_108f5defcbead775ce45ff2a78e588e5'] = 'Valittu maksuvaihtoehto ei ole käytettävissä tilauksen loppusummalle. Harkitse toisen maksutavan käyttämistä ja yritä uudelleen.';
 $_MODULE['<{mollie}prestashop>exceptionservice_3ee897d775504d415d5799ce95b38008'] = 'Etunimi on virheellinen. Tarkista ja yritä uudelleen.';
 $_MODULE['<{mollie}prestashop>exceptionservice_ae62de3f53551addfecd7dae6bdb1580'] = 'Sukunimi on virheellinen. Tarkista ja yritä uudelleen.';
