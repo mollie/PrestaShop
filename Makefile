@@ -1,7 +1,8 @@
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 module = mollie
 
-PHP_CS_FIXER = docker run --rm -v $(ROOT_DIR):/app -w /app php:8.3-cli tools/php-cs-fixer/vendor/bin/php-cs-fixer
+# --user keeps tools/php-cs-fixer/vendor and the fixer cache owned by the host user on Linux hosts and CI runners.
+PHP_CS_FIXER = docker run --rm --user $$(id -u):$$(id -g) -v $(ROOT_DIR):/app -w /app php:8.3-cli tools/php-cs-fixer/vendor/bin/php-cs-fixer
 
 # target: fix-lint			- Launch php cs fixer
 fix-lint: tools/php-cs-fixer/vendor/bin/php-cs-fixer
@@ -12,7 +13,7 @@ lint: tools/php-cs-fixer/vendor/bin/php-cs-fixer
 	$(PHP_CS_FIXER) fix --dry-run --diff
 
 tools/php-cs-fixer/vendor/bin/php-cs-fixer: tools/php-cs-fixer/composer.json tools/php-cs-fixer/composer.lock
-	docker run --rm -v $(ROOT_DIR):/app -w /app composer:2 composer install -d tools/php-cs-fixer --no-interaction --no-progress
+	docker run --rm --user $$(id -u):$$(id -g) -e COMPOSER_HOME=/tmp/composer -v $(ROOT_DIR):/app -w /app composer:2 composer install -d tools/php-cs-fixer --no-interaction --no-progress
 	touch $@
 
 # target: lint-php85		- Fail on PHP 8.5 compile-time deprecations in shipped code (module + production vendor).
