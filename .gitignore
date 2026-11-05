@@ -17,6 +17,7 @@ tools/php-cs-fixer/vendor/
 vendor
 node_modules
 composer.lock
+!tools/php-cs-fixer/composer.lock
 ngrok
 .DS_Store
 test-results/

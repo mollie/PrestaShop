@@ -2,15 +2,16 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 module = mollie
 
 # target: fix-lint			- Launch php cs fixer
-fix-lint: install-php-cs-fixer
-	docker run --rm -v $(ROOT_DIR):/app -w /app php:8.3-cli tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --using-cache=no
+fix-lint: tools/php-cs-fixer/vendor/bin/php-cs-fixer
+	docker run --rm -v $(ROOT_DIR):/app -w /app php:8.3-cli tools/php-cs-fixer/vendor/bin/php-cs-fixer fix
 
 # target: lint				- Report php cs fixer violations without changing files (same check as CI)
-lint: install-php-cs-fixer
-	docker run --rm -v $(ROOT_DIR):/app -w /app php:8.3-cli tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --diff --using-cache=no
+lint: tools/php-cs-fixer/vendor/bin/php-cs-fixer
+	docker run --rm -v $(ROOT_DIR):/app -w /app php:8.3-cli tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --diff
 
-install-php-cs-fixer:
+tools/php-cs-fixer/vendor/bin/php-cs-fixer: tools/php-cs-fixer/composer.json tools/php-cs-fixer/composer.lock
 	docker run --rm -v $(ROOT_DIR):/app -w /app composer:2 composer install -d tools/php-cs-fixer --no-interaction --no-progress
+	touch $@
 
 # target: lint-php85		- Fail on PHP 8.5 compile-time deprecations in shipped code (module + production vendor).
 # PHP 9 turns these into compile errors, so one hit in mollie.php stops the whole module loading.

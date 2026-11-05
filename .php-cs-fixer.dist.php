@@ -15,6 +15,7 @@ $config
     ->getFinder()
     ->in(__DIR__)
     ->exclude('vendor')
+    ->exclude('node_modules')
     ->exclude('tools');
 
 return $config;

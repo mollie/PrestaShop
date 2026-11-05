@@ -15,17 +15,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Cache composer folder
-        uses: actions/cache@v4
-        with:
-          path: ~/.composer/cache
-          key: php-composer-cache
-
-      - name: Install PHP-CS-Fixer
-        run: composer install -d tools/php-cs-fixer --no-interaction --no-progress
-
+      # Same command as a local run: composer:2 installs tools/php-cs-fixer, php:8.3-cli runs the fixer.
       - name: Run PHP-CS-Fixer
-        run: tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --diff --using-cache=no
+        run: make lint
 
   eslint:
     name: ESLint
