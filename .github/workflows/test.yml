@@ -15,7 +15,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Same command as a local run: composer:2 installs tools/php-cs-fixer, php:8.3-cli runs the fixer.
       - name: Run PHP-CS-Fixer
         run: make lint
 

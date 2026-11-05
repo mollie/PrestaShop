@@ -1,13 +1,15 @@
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 module = mollie
 
+PHP_CS_FIXER = docker run --rm -v $(ROOT_DIR):/app -w /app php:8.3-cli tools/php-cs-fixer/vendor/bin/php-cs-fixer
+
 # target: fix-lint			- Launch php cs fixer
 fix-lint: tools/php-cs-fixer/vendor/bin/php-cs-fixer
-	docker run --rm -v $(ROOT_DIR):/app -w /app php:8.3-cli tools/php-cs-fixer/vendor/bin/php-cs-fixer fix
+	$(PHP_CS_FIXER) fix
 
 # target: lint				- Report php cs fixer violations without changing files (same check as CI)
 lint: tools/php-cs-fixer/vendor/bin/php-cs-fixer
-	docker run --rm -v $(ROOT_DIR):/app -w /app php:8.3-cli tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --diff
+	$(PHP_CS_FIXER) fix --dry-run --diff
 
 tools/php-cs-fixer/vendor/bin/php-cs-fixer: tools/php-cs-fixer/composer.json tools/php-cs-fixer/composer.lock
 	docker run --rm -v $(ROOT_DIR):/app -w /app composer:2 composer install -d tools/php-cs-fixer --no-interaction --no-progress

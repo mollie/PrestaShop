@@ -11,7 +11,6 @@ $config = new class() extends PrestaShop\CodingStandards\CsFixer\Config {
 };
 
 $config
-    ->setUsingCache(true)
     ->getFinder()
     ->in(__DIR__)
     ->exclude('vendor')

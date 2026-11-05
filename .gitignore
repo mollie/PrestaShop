@@ -10,14 +10,11 @@ mails/
 views/img/customLogo/*.jpg
 cypress/videos
 cypress/screenshots
-.php_cs.cache
 .php-cs-fixer.cache
-tools/php-cs-fixer/vendor/
 .env
 vendor
 node_modules
-composer.lock
-!tools/php-cs-fixer/composer.lock
+/composer.lock
 ngrok
 .DS_Store
 test-results/
