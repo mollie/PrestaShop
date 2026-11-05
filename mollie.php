@@ -123,7 +123,7 @@ class Mollie extends PaymentModule
 
         parent::__construct();
 
-        $this->ps_versions_compliancy = ['min' => '1.7.6', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = ['min' => '1.7.6', 'max' => '9.99.99'];
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 
