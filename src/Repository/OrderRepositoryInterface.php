@@ -7,13 +7,13 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Repository;
 
 use Mollie\Shared\Infrastructure\Repository\ReadOnlyRepositoryInterface;
-use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -24,7 +24,7 @@ interface OrderRepositoryInterface extends ReadOnlyRepositoryInterface
     /**
      * @param int $id_cart
      *
-     * @return Order|null
+     * @return \Order|null
      *
      * @throws \PrestaShopException
      */

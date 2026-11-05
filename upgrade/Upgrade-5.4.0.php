@@ -8,10 +8,6 @@
  *
  * @see        https://github.com/mollie/PrestaShop
  */
-
-use Mollie\Config\Config;
-use Mollie\Install\Installer;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }

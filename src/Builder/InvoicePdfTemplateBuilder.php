@@ -7,16 +7,14 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Builder;
 
-use Currency;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
-use MolOrderPaymentFee;
-use Order;
 use PrestaShop\PrestaShop\Core\Localization\Locale;
 
 if (!defined('_PS_VERSION_')) {
@@ -26,7 +24,7 @@ if (!defined('_PS_VERSION_')) {
 final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
 {
     /**
-     * @var Order
+     * @var \Order
      */
     private $order;
     /** @var MolOrderPaymentFeeRepositoryInterface */
@@ -44,7 +42,7 @@ final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
         $this->currencyRepository = $currencyRepository;
     }
 
-    public function setOrder(Order $order): InvoicePdfTemplateBuilder
+    public function setOrder(\Order $order): InvoicePdfTemplateBuilder
     {
         $this->order = $order;
 
@@ -60,7 +58,7 @@ final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
 
     public function buildParams(): array
     {
-        /** @var MolOrderPaymentFee|null $molOrderPaymentFee */
+        /** @var \MolOrderPaymentFee|null $molOrderPaymentFee */
         $molOrderPaymentFee = $this->molOrderPaymentFeeRepository->findOneBy([
             'id_order' => (int) $this->order->id,
         ]);
@@ -69,7 +67,7 @@ final class InvoicePdfTemplateBuilder implements TemplateBuilderInterface
             return [];
         }
 
-        /** @var Currency|null $orderCurrency */
+        /** @var \Currency|null $orderCurrency */
         $orderCurrency = $this->currencyRepository->findOneBy([
             'id_currency' => $this->order->id_currency,
             'deleted' => 0,

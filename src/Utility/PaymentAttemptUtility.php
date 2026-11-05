@@ -7,13 +7,13 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Utility;
 
 use Mollie\Config\Config;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -29,7 +29,7 @@ if (!defined('_PS_VERSION_')) {
  */
 class PaymentAttemptUtility
 {
-    const REASON_MAX_LENGTH = 64;
+    public const REASON_MAX_LENGTH = 64;
 
     /**
      * Returns the terminal failure status to persist, or null when the attempt is
@@ -75,7 +75,7 @@ class PaymentAttemptUtility
             return '';
         }
 
-        return (string) Tools::substr($code, 0, self::REASON_MAX_LENGTH);
+        return (string) \Tools::substr($code, 0, self::REASON_MAX_LENGTH);
     }
 
     /**

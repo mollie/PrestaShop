@@ -7,13 +7,11 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Utility;
-
-use Customer;
-use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -28,9 +26,9 @@ class CustomerUtility
      */
     public static function getCustomerFullName($id)
     {
-        $customer = new Customer($id);
+        $customer = new \Customer($id);
 
-        if (!Validate::isLoadedObject($customer)) {
+        if (!\Validate::isLoadedObject($customer)) {
             return '';
         }
 

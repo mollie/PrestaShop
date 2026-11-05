@@ -7,13 +7,13 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Exception;
 
 use Mollie\Exception\Code\ExceptionCode;
-use Throwable;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -21,16 +21,16 @@ if (!defined('_PS_VERSION_')) {
 
 class MollieException extends \Exception
 {
-    const CUSTOMER_EXCEPTION = 1;
+    public const CUSTOMER_EXCEPTION = 1;
 
-    const API_CONNECTION_EXCEPTION = 2;
+    public const API_CONNECTION_EXCEPTION = 2;
 
-    final public function __construct($message = '', $code = 0, ?Throwable $previous = null)
+    final public function __construct($message = '', $code = 0, ?\Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }
 
-    public static function unknownError(Throwable $exception): self
+    public static function unknownError(\Throwable $exception): self
     {
         return new static(
             'An unknown error error occurred. Please check system logs or contact Klarna payment support.',

@@ -7,12 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Subscription\Form\Options;
 
-use Module;
 use PrestaShop\PrestaShop\Core\Form\FormChoiceProviderInterface;
 use PrestaShopBundle\Form\Admin\Type\SwitchType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
@@ -29,7 +29,7 @@ class SubscriptionOptionsType extends TranslatorAwareType
 {
     /** @var FormChoiceProviderInterface */
     private $carrierOptionProvider;
-    /** @var Module */
+    /** @var \Module */
     private $module;
 
     /** @var NewTranslatorInterface|OldTranslatorInterface */
@@ -40,7 +40,7 @@ class SubscriptionOptionsType extends TranslatorAwareType
         $translator,
         array $locales,
         FormChoiceProviderInterface $carrierOptionProvider,
-        Module $module
+        \Module $module
     ) {
         parent::__construct($translator, $locales);
 

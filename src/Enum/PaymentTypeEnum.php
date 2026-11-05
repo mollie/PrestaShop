@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -18,7 +19,7 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentTypeEnum
 {
-    const PAYMENT_TYPE_PAYMENT = 0;
+    public const PAYMENT_TYPE_PAYMENT = 0;
 
-    const PAYMENT_TYPE_ORDER = 1;
+    public const PAYMENT_TYPE_ORDER = 1;
 }

@@ -11,14 +11,13 @@
 
 namespace Mollie\DTO;
 
-use JsonSerializable;
 use Mollie\DTO\Object\Amount;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class PaymentLine implements JsonSerializable
+class PaymentLine implements \JsonSerializable
 {
     /**
      * @var string
@@ -63,7 +62,7 @@ class PaymentLine implements JsonSerializable
     /**
      * @var Amount|null
      */
-    private $discountAmount = null;
+    private $discountAmount;
 
     /**
      * @var Amount
@@ -78,7 +77,7 @@ class PaymentLine implements JsonSerializable
     /**
      * @var string|null
      */
-    private $description = null;
+    private $description;
 
     /**
      * @return ?string

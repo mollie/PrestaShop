@@ -7,15 +7,13 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Utility;
 
-use Configuration;
-use Context;
 use Language;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -29,7 +27,7 @@ class LocaleUtility
     public static function getWebShopLocale()
     {
         // Current language
-        $language = Context::getContext()->language->iso_code;
+        $language = \Context::getContext()->language->iso_code;
 
         $supportedLanguages = [
             'de',
@@ -76,11 +74,11 @@ class LocaleUtility
             'lt_LT',
         ];
 
-        $langIso = Tools::strtolower($language);
+        $langIso = \Tools::strtolower($language);
         if (!in_array($langIso, $supportedLanguages)) {
             $langIso = 'en';
         }
-        $countryIso = Tools::strtoupper(Configuration::get('PS_LOCALE_COUNTRY'));
+        $countryIso = \Tools::strtoupper(\Configuration::get('PS_LOCALE_COUNTRY'));
         if (!in_array("{$langIso}_{$countryIso}", $supportedLocales)) {
             switch ($langIso) {
                 case 'de':
@@ -147,9 +145,9 @@ class LocaleUtility
      */
     public static function getApplePayLocale()
     {
-        $language = Context::getContext()->language;
+        $language = \Context::getContext()->language;
 
-        if (in_array(Tools::strtolower($language->iso_code), ['no', 'nn'], true)) {
+        if (in_array(\Tools::strtolower($language->iso_code), ['no', 'nn'], true)) {
             return 'nb-NO';
         }
 

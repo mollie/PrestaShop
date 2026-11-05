@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,14 +15,13 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\DTO;
 
-use JsonSerializable;
 use Mollie\Api\Types\SequenceType;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CreateFreeOrderData implements JsonSerializable
+class CreateFreeOrderData implements \JsonSerializable
 {
     /** @var string */
     private $currencyIso;

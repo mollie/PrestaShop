@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -23,12 +24,12 @@ if (!defined('_PS_VERSION_')) {
 
 class CaptureService
 {
-    const FILE_NAME = 'CaptureService';
+    public const FILE_NAME = 'CaptureService';
 
-    /** @var Mollie */
+    /** @var \Mollie */
     private $module;
 
-    public function __construct(Mollie $module)
+    public function __construct(\Mollie $module)
     {
         $this->module = $module;
     }
@@ -204,8 +205,8 @@ class CaptureService
             $history->changeIdOrderState($paidStatusId, $orderId, true);
             $history->add();
         } catch (\Throwable $e) {
-            /** @var \Mollie\Logger\LoggerInterface $logger */
-            $logger = $this->module->getService(\Mollie\Logger\LoggerInterface::class);
+            /** @var Mollie\Logger\LoggerInterface $logger */
+            $logger = $this->module->getService(Mollie\Logger\LoggerInterface::class);
             $logger->error(sprintf('%s - Failed to update order status to paid for order %d: %s', self::FILE_NAME, $orderId, $e->getMessage()));
         }
     }

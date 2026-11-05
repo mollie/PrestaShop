@@ -7,12 +7,11 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Utility;
-
-use DateTime;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -20,9 +19,9 @@ if (!defined('_PS_VERSION_')) {
 
 class TimeUtility
 {
-    const HOURS_IN_DAY = 24;
-    const MINUTES_IN_HOUR = 60;
-    const SECONDS_IN_MINUTE = 60;
+    public const HOURS_IN_DAY = 24;
+    public const MINUTES_IN_HOUR = 60;
+    public const SECONDS_IN_MINUTE = 60;
 
     public static function getNowTs()
     {
@@ -41,6 +40,6 @@ class TimeUtility
 
     public static function getCurrentTimeStamp()
     {
-        return (new DateTime())->getTimestamp();
+        return (new \DateTime())->getTimestamp();
     }
 }

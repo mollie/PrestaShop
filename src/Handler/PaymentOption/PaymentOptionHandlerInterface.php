@@ -31,12 +31,12 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Handler\PaymentOption;
 
-use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 if (!defined('_PS_VERSION_')) {
@@ -48,5 +48,5 @@ interface PaymentOptionHandlerInterface
     /**
      * @return PaymentOption
      */
-    public function handle(MolPaymentMethod $paymentMethod);
+    public function handle(\MolPaymentMethod $paymentMethod);
 }

@@ -7,12 +7,11 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Utility;
-
-use Customer;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -22,9 +21,9 @@ class OrderRecoverUtility
 {
     public static function recoverCreatedOrder($context, int $customerId)
     {
-        $customer = new Customer($customerId);
+        $customer = new \Customer($customerId);
         $customer->logged = true;
-        $context->customer = new Customer($customerId);
+        $context->customer = new \Customer($customerId);
         $context->cookie->id_customer = (int) $customerId;
         $context->customer = $customer;
         $context->cookie->id_customer = (int) $customer->id;

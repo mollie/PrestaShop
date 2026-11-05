@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -215,8 +216,8 @@ class MolliePaymentModuleFrontController extends ModuleFrontController
 
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
-        /** @var \Mollie\Service\SegmentTracker $segmentTracker */
-        $segmentTracker = $this->module->getService(\Mollie\Service\SegmentTracker::class);
+        /** @var Mollie\Service\SegmentTracker $segmentTracker */
+        $segmentTracker = $this->module->getService(Mollie\Service\SegmentTracker::class);
         $segmentTracker->trackFirstPaymentCreated(
             $method,
             $paymentMethodObj->method_name,

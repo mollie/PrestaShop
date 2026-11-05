@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -115,7 +116,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
 
         try {
             $response = $handler->handle($command);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $logger->error(sprintf('%s - Failed to get apple pay session.', self::FILE_NAME), [
                 'context' => [
                     'cartId' => $cartId,
@@ -180,7 +181,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
 
         try {
             $response = $handler->handle($command);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $logger->error(sprintf('%s - Failed to update shipping method.', self::FILE_NAME), [
                 'context' => [
                     'shippingMethodId' => $shippingMethodDetails['identifier'],
@@ -302,7 +303,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
                 json_encode(Tools::getValue('token'))
             );
             $response = $handler->handle($command);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $logger->error(sprintf('%s - Failed to create apple pay order.', self::FILE_NAME), [
                 'context' => [
                     'cartId' => $cartId,
@@ -346,7 +347,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
         // cannot restore and then overwrite an address that now belongs to a placed order.
         $this->unbindCartAddressesFromSession();
 
-        //we need to recover created order with customer settings so that we can show order confirmation page
+        // we need to recover created order with customer settings so that we can show order confirmation page
         OrderRecoverUtility::recoverCreatedOrder($this->context, $cart->id_customer);
 
         $this->ajaxRender(json_encode($response));

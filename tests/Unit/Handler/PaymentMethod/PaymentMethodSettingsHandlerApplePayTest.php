@@ -7,12 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Tests\Unit\Handler\PaymentMethod;
 
-use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
@@ -21,9 +21,6 @@ use Mollie\Handler\Certificate\Exception\ApplePayDirectCertificateCreation;
 use Mollie\Handler\PaymentMethod\PaymentMethodSettingsHandler;
 use Mollie\Logger\LoggerInterface;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
-use ReflectionMethod;
-use ReflectionProperty;
 
 class PaymentMethodSettingsHandlerApplePayTest extends TestCase
 {
@@ -93,12 +90,12 @@ class PaymentMethodSettingsHandlerApplePayTest extends TestCase
 
     private function handleApplePaySettings(array $settings): void
     {
-        $module = $this->createMock(Mollie::class);
+        $module = $this->createMock(\Mollie::class);
         $module->method('l')->willReturnArgument(0);
 
         // CountryRepository and CustomerRepository are final, so the handler is built without its
         // constructor and only gets the collaborators handleApplePaySettings() uses.
-        $handler = (new ReflectionClass(PaymentMethodSettingsHandler::class))->newInstanceWithoutConstructor();
+        $handler = (new \ReflectionClass(PaymentMethodSettingsHandler::class))->newInstanceWithoutConstructor();
 
         $dependencies = [
             'configuration' => $this->configuration,
@@ -108,12 +105,12 @@ class PaymentMethodSettingsHandlerApplePayTest extends TestCase
         ];
 
         foreach ($dependencies as $name => $dependency) {
-            $property = new ReflectionProperty(PaymentMethodSettingsHandler::class, $name);
+            $property = new \ReflectionProperty(PaymentMethodSettingsHandler::class, $name);
             $property->setAccessible(true);
             $property->setValue($handler, $dependency);
         }
 
-        $method = new ReflectionMethod(PaymentMethodSettingsHandler::class, 'handleApplePaySettings');
+        $method = new \ReflectionMethod(PaymentMethodSettingsHandler::class, 'handleApplePaySettings');
         $method->setAccessible(true);
         $method->invoke($handler, $settings);
     }

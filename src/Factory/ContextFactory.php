@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -20,29 +21,29 @@ if (!defined('_PS_VERSION_')) {
 // TODO: Duplicate of Context.php
 class ContextFactory
 {
-    public static function getContext(): Context
+    public static function getContext(): \Context
     {
-        return Context::getContext();
+        return \Context::getContext();
     }
 
     public static function getLanguage(): \Language
     {
-        return Context::getContext()->language;
+        return \Context::getContext()->language;
     }
 
     public static function getCurrency(): \Currency
     {
-        return Context::getContext()->currency;
+        return \Context::getContext()->currency;
     }
 
     public static function getSmarty(): \Smarty
     {
-        return Context::getContext()->smarty;
+        return \Context::getContext()->smarty;
     }
 
     public static function getShop(): \Shop
     {
-        return Context::getContext()->shop;
+        return \Context::getContext()->shop;
     }
 
     /**
@@ -50,31 +51,31 @@ class ContextFactory
      */
     public static function getController()
     {
-        return Context::getContext()->controller;
+        return \Context::getContext()->controller;
     }
 
     public static function getCookie(): \Cookie
     {
-        return Context::getContext()->cookie;
+        return \Context::getContext()->cookie;
     }
 
     public static function getLink(): \Link
     {
-        return Context::getContext()->link;
+        return \Context::getContext()->link;
     }
 
     public static function getCountry(): \Country
     {
-        return Context::getContext()->country;
+        return \Context::getContext()->country;
     }
 
     public static function getCustomer(): \Customer
     {
-        return Context::getContext()->customer;
+        return \Context::getContext()->customer;
     }
 
     public static function getCart(): \Cart
     {
-        return Context::getContext()->cart;
+        return \Context::getContext()->cart;
     }
 }

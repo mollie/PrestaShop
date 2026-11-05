@@ -31,6 +31,7 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 

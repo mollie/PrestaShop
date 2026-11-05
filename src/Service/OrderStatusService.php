@@ -7,24 +7,18 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use Configuration;
 use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Repository\OrderRepository;
 use Mollie\Utility\OrderStatusUtility;
 use Order;
-use OrderDetail;
-use OrderHistory;
-use PrestaShopDatabaseException;
-use PrestaShopException;
-use Tools;
-use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -53,8 +47,8 @@ class OrderStatusService
      *
      * @return void
      *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      *
      * @since 3.3.2 Accept both Order ID and Order object
      * @since 3.3.2 Accept both Mollie status string and PrestaShop status ID
@@ -85,14 +79,14 @@ class OrderStatusService
             return;
         }
 
-        $order = new Order((int) $orderId);
+        $order = new \Order((int) $orderId);
         $orderHistory = $order->getHistory($order->id_lang, $statusId);
 
         if (!empty($orderHistory)) {
             return;
         }
 
-        if (!Validate::isLoadedObject($order)) {
+        if (!\Validate::isLoadedObject($order)) {
             return;
         }
 
@@ -103,7 +97,7 @@ class OrderStatusService
             return;
         }
 
-        if (!Validate::isLoadedObject($order)
+        if (!\Validate::isLoadedObject($order)
             || !$status
         ) {
             return;
@@ -115,7 +109,7 @@ class OrderStatusService
         $orders = $this->orderRepository->findAllByCartId($order->id_cart);
         if (count($orders) > 1) {
             foreach ($orders as $subOrder) {
-                $history = new OrderHistory();
+                $history = new \OrderHistory();
                 $history->id_order = $subOrder->id;
                 $history->changeIdOrderState($statusId, $subOrder->id, $useExistingPayment);
 
@@ -125,14 +119,14 @@ class OrderStatusService
                     $this->mailService->sendOrderConfMail($subOrder, $statusId);
                 }
 
-                if ('0' === Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($status))) {
+                if ('0' === \Configuration::get('MOLLIE_MAIL_WHEN_' . \Tools::strtoupper($status))) {
                     $history->add();
                 } else {
                     $history->addWithemail(true, $templateVars);
                 }
             }
         } else {
-            $history = new OrderHistory();
+            $history = new \OrderHistory();
             $history->id_order = $order->id;
             $history->changeIdOrderState($statusId, $orderId, $useExistingPayment);
 
@@ -142,7 +136,7 @@ class OrderStatusService
                 $this->mailService->sendOrderConfMail($order, $statusId);
             }
 
-            if ('0' === Configuration::get('MOLLIE_MAIL_WHEN_' . Tools::strtoupper($status))) {
+            if ('0' === \Configuration::get('MOLLIE_MAIL_WHEN_' . \Tools::strtoupper($status))) {
                 $history->add();
             } else {
                 $history->addWithemail(true, $templateVars);
@@ -163,7 +157,7 @@ class OrderStatusService
 
     private function checkIfOrderConfNeedsToBeSend($statusId)
     {
-        if (Config::NEW_ORDER_MAIL_SEND_ON_PAID !== (int) Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION)) {
+        if (Config::NEW_ORDER_MAIL_SEND_ON_PAID !== (int) \Configuration::get(Config::MOLLIE_SEND_ORDER_CONFIRMATION)) {
             return false;
         }
 
@@ -172,14 +166,14 @@ class OrderStatusService
 
     private function isOrderBackOrder($orderId)
     {
-        if (!Configuration::get('PS_STOCK_MANAGEMENT')) {
+        if (!\Configuration::get('PS_STOCK_MANAGEMENT')) {
             return false;
         }
 
-        $order = new Order($orderId);
+        $order = new \Order($orderId);
         $orderDetails = $order->getOrderDetailList();
         foreach ($orderDetails as $detail) {
-            $orderDetail = new OrderDetail($detail['id_order_detail']);
+            $orderDetail = new \OrderDetail($detail['id_order_detail']);
             if (self::isBackOrder(
                 (bool) $orderDetail->getStockState(),
                 (int) $orderDetail->product_quantity_in_stock,
@@ -213,8 +207,8 @@ class OrderStatusService
 
     private function isStatusPaid($statusId)
     {
-        return ((int) $statusId === (int) Configuration::get(Config::MOLLIE_STATUS_PAID)) ||
-            ((int) $statusId === (int) Configuration::get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID)) ||
-            ((int) $statusId === (int) Configuration::get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED));
+        return ((int) $statusId === (int) \Configuration::get(Config::MOLLIE_STATUS_PAID))
+            || ((int) $statusId === (int) \Configuration::get(Config::STATUS_PS_OS_OUTOFSTOCK_PAID))
+            || ((int) $statusId === (int) \Configuration::get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED));
     }
 }

@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,7 +15,6 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\DTO;
 
-use JsonSerializable;
 use Mollie\Subscription\Config\Config;
 use Webmozart\Assert\Assert;
 
@@ -22,7 +22,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CreateMandateData implements JsonSerializable
+class CreateMandateData implements \JsonSerializable
 {
     /**
      * one of MandateMethod::class methods

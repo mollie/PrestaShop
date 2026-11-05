@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -18,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 class OrderEndpointPaymentTypeHandlerTest extends TestCase
 {
     /**
-     * @var \Mollie\Verification\PaymentType\CanBeRegularPaymentType|MockObject
+     * @var Mollie\Verification\PaymentType\CanBeRegularPaymentType|MockObject
      */
     private $canBeRegularPaymentType;
 
@@ -27,7 +28,7 @@ class OrderEndpointPaymentTypeHandlerTest extends TestCase
         parent::setUp();
 
         $this->canBeRegularPaymentType = $this
-            ->getMockBuilder(\Mollie\Verification\PaymentType\CanBeRegularPaymentType::class)
+            ->getMockBuilder(Mollie\Verification\PaymentType\CanBeRegularPaymentType::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;

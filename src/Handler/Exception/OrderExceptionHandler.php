@@ -7,12 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Handler\Exception;
 
-use Exception;
 use Mollie\Exception\OrderCreationException;
 
 if (!defined('_PS_VERSION_')) {
@@ -24,7 +24,7 @@ class OrderExceptionHandler implements ExceptionHandlerInterface
     /**
      * @return OrderCreationException
      */
-    public function handle(Exception $e)
+    public function handle(\Exception $e)
     {
         // TODO: refactor use switch statement
         if (strpos($e->getMessage(), 'billingAddress.phone')) {

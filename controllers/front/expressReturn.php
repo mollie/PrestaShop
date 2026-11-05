@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -30,13 +31,13 @@ if (!defined('_PS_VERSION_')) {
  */
 class MollieExpressReturnModuleFrontController extends AbstractMollieController
 {
-    const FILE_NAME = 'expressReturn';
+    public const FILE_NAME = 'expressReturn';
 
     /** The wait template polls 10 times at 3 seconds; a completed session earns a few more rounds. */
-    const MAX_WAIT_ROUNDS = 3;
+    public const MAX_WAIT_ROUNDS = 3;
 
-    const STATUS_WAITING = 1;
-    const STATUS_REDIRECT = 2;
+    public const STATUS_WAITING = 1;
+    public const STATUS_REDIRECT = 2;
 
     /** @var bool */
     public $ssl = true;
@@ -180,7 +181,7 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
             $sessionApi = $this->module->getService(MollieSessionApiAdapterInterface::class);
 
             return $sessionApi->get((string) $stored->session_id)->isCompleted();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             /** @var LoggerInterface $logger */
             $logger = $this->module->getService(LoggerInterface::class);
 
@@ -230,7 +231,7 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
             $sessionApi = $this->module->getService(MollieSessionApiAdapterInterface::class);
 
             $description = $sessionApi->get((string) $stored->session_id)->getDescription();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             /** @var LoggerInterface $logger */
             $logger = $this->module->getService(LoggerInterface::class);
 

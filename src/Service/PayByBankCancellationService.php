@@ -7,15 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use Cart;
-use CartRule;
-use Configuration;
-use Context;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
@@ -25,7 +22,6 @@ use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Utility\ArrayUtility;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\TransactionUtility;
-use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,7 +29,7 @@ if (!defined('_PS_VERSION_')) {
 
 class PayByBankCancellationService
 {
-    const TERMINAL_FAILURE_STATUSES = [
+    public const TERMINAL_FAILURE_STATUSES = [
         PaymentStatus::STATUS_CANCELED,
         PaymentStatus::STATUS_EXPIRED,
         PaymentStatus::STATUS_FAILED,
@@ -122,28 +118,28 @@ class PayByBankCancellationService
 
     /**
      * @param array $payment
-     * @param Order $order
+     * @param \Order $order
      *
      * @return bool
      */
-    public function belongsToOrder(array $payment, Order $order)
+    public function belongsToOrder(array $payment, \Order $order)
     {
         return $order->module === $this->module->name && (int) $payment['order_id'] === (int) $order->id;
     }
 
     /**
      * @param int $cartId
-     * @param Order $order
+     * @param \Order $order
      * @param string $transactionId
      * @param string $mollieStatus
      *
      * @return void
      */
-    public function cancelOrderAndRestoreCart($cartId, Order $order, $transactionId, $mollieStatus)
+    public function cancelOrderAndRestoreCart($cartId, \Order $order, $transactionId, $mollieStatus)
     {
-        $context = Context::getContext();
+        $context = \Context::getContext();
         $orderId = (int) $order->id;
-        $canceledStateId = (int) Configuration::get(Config::MOLLIE_STATUS_CANCELED);
+        $canceledStateId = (int) \Configuration::get(Config::MOLLIE_STATUS_CANCELED);
 
         if ((int) $order->current_state !== $canceledStateId) {
             $order->setCurrentState($canceledStateId);
@@ -159,15 +155,15 @@ class PayByBankCancellationService
 
         $currentCartId = (int) $context->cookie->id_cart;
 
-        if ($currentCartId > 0 && $currentCartId !== (int) $cartId && !Order::getIdByCartId($currentCartId)) {
+        if ($currentCartId > 0 && $currentCartId !== (int) $cartId && !\Order::getIdByCartId($currentCartId)) {
             $this->logger->info(sprintf('Pay by Bank cart %d already restored (current cart: %d), skipping duplication', $cartId, $currentCartId));
 
             return;
         }
 
-        $cart = new Cart($cartId);
+        $cart = new \Cart($cartId);
 
-        $cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
+        $cartRules = $cart->getCartRules(\CartRule::FILTER_ACTION_ALL, false);
         if (!empty($cartRules)) {
             $this->cartRuleQuantityResetHandler->handle($cart, $cartRules);
             $this->logger->info(sprintf('Cart rule quantities restored for canceled Pay by Bank order %d', $orderId));
@@ -181,7 +177,7 @@ class PayByBankCancellationService
                 $newCart->addCartRule((int) $cartRule['id_cart_rule']);
             }
 
-            CartRule::autoAddToCart($context);
+            \CartRule::autoAddToCart($context);
 
             $context->cart = $newCart;
             $context->cookie->id_cart = $newCart->id;

@@ -7,12 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Validator;
 
-use Mollie;
 use Mollie\Adapter\Customer;
 use Mollie\Utility\SecureKeyUtility;
 
@@ -28,11 +28,11 @@ class OrderCallBackValidator
     private $customer;
 
     /**
-     * @var Mollie
+     * @var \Mollie
      */
     private $module;
 
-    public function __construct(Customer $customer, Mollie $module)
+    public function __construct(Customer $customer, \Mollie $module)
     {
         $this->module = $module;
         $this->customer = $customer;
@@ -54,9 +54,9 @@ class OrderCallBackValidator
     public function isSignatureMatches($key, $cartId)
     {
         return $key === SecureKeyUtility::generateReturnKey(
-                $this->customer->getCustomer()->id,
-                $cartId,
-                $this->module->name
-            );
+            $this->customer->getCustomer()->id,
+            $cartId,
+            $this->module->name
+        );
     }
 }

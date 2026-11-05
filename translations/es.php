@@ -1,7 +1,7 @@
 <?php
 
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{mollie}prestashop>mollie_7c478959c218087ffc4ad5d96e7f66a6'] = 'Mollie';
 $_MODULE['<{mollie}prestashop>mollie_95b3b272e06dcc3cc2aa62f6887aebc5'] = 'Pagos Mollie';
 $_MODULE['<{mollie}prestashop>mollie_6bedf641eb10773a0069acb02fd7f8ac'] = 'Estás usando la versión antiguande PHP. Actualiza tu versión para usar este módulo. El módulo Mollie admite versiones PHP 7.2.0 y superiores.';

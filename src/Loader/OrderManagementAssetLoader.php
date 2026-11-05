@@ -7,13 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Loader;
 
-use Media;
-use Mollie;
 use Mollie\Adapter\Link;
 
 if (!defined('_PS_VERSION_')) {
@@ -22,13 +21,13 @@ if (!defined('_PS_VERSION_')) {
 
 class OrderManagementAssetLoader implements OrderManagementAssetLoaderInterface
 {
-    const FILE_NAME = 'OrderManagementAssetLoader';
+    public const FILE_NAME = 'OrderManagementAssetLoader';
 
     private $module;
     private $link;
 
     public function __construct(
-        Mollie $module,
+        \Mollie $module,
         Link $link
     ) {
         $this->module = $module;
@@ -37,7 +36,7 @@ class OrderManagementAssetLoader implements OrderManagementAssetLoaderInterface
 
     public function register($controller, $vars = []): void
     {
-        Media::addJsDef([
+        \Media::addJsDef([
             'mollieOrderInfoConfig' => [
                 'ajax_url' => $this->link->getAdminLink('AdminMollieAjax'),
                 'transaction_id' => $vars['transaction_id'],

@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -38,9 +39,9 @@ if (!defined('_PS_VERSION_')) {
  */
 class ExpressSessionService
 {
-    const FILE_NAME = 'ExpressSessionService';
+    public const FILE_NAME = 'ExpressSessionService';
     /** Stored once the submit check let a payment through; Mollie allows one payment per session. */
-    const STATUS_PAYMENT_STARTED = 'payment_started';
+    public const STATUS_PAYMENT_STARTED = 'payment_started';
 
     /** @var ExpressSessionRequestBuilder */
     private $requestBuilder;

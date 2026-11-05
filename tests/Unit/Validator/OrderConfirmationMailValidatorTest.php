@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -40,7 +41,7 @@ class OrderConfirmationMailValidatorTest extends UnitTestCase
             ->withConsecutive([Config::MOLLIE_SEND_ORDER_CONFIRMATION], [Config::MOLLIE_STATUS_PAID], [Config::STATUS_PS_OS_OUTOFSTOCK_PAID])
             ->willReturnOnConsecutiveCalls($sendOrderConfirmation, $paidOrderState, $outOfStockOrderState);
 
-        $orderConfMailValidator = new \Mollie\Validator\OrderConfMailValidator($this->configurationAdapter);
+        $orderConfMailValidator = new Mollie\Validator\OrderConfMailValidator($this->configurationAdapter);
         $result = $orderConfMailValidator->validate($orderStateId);
 
         $this->assertEquals($expected, $result);

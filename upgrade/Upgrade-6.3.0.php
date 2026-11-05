@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -23,7 +24,7 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_6_3_0($module)
 {
-    \Configuration::updateValue(Config::MOLLIE_MAIL_WHEN_FAILED, false);
+    Configuration::updateValue(Config::MOLLIE_MAIL_WHEN_FAILED, false);
 
     return true;
 }

@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -34,7 +35,7 @@ if (!defined('_PS_VERSION_')) {
 
 class UpdateSubscriptionCarrierHandler
 {
-    const FILE_NAME = 'UpdateSubscriptionCarrierHandler';
+    public const FILE_NAME = 'UpdateSubscriptionCarrierHandler';
 
     /** @var ConfigurationAdapter */
     private $configuration;

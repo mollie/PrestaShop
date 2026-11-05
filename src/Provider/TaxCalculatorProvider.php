@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,8 +15,6 @@ namespace Mollie\Provider;
 
 use Mollie\Repository\TaxRepositoryInterface;
 use Mollie\Repository\TaxRuleRepositoryInterface;
-use Tax;
-use TaxCalculator;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -36,7 +35,7 @@ class TaxCalculatorProvider
         $this->taxRepository = $taxRepository;
     }
 
-    public function getTaxCalculator(int $taxRulesGroupId, int $countryId, int $stateId): TaxCalculator
+    public function getTaxCalculator(int $taxRulesGroupId, int $countryId, int $stateId): \TaxCalculator
     {
         $taxRules = $this->taxRuleRepository->getTaxRule(
             $taxRulesGroupId,
@@ -49,7 +48,7 @@ class TaxCalculatorProvider
         $firstRow = true;
 
         foreach ($taxRules as $taxRule) {
-            /** @var Tax|null $tax */
+            /** @var \Tax|null $tax */
             $tax = $this->taxRepository->findOneBy([
                 'id_tax' => $taxRule['id_tax'],
             ]);
@@ -71,6 +70,6 @@ class TaxCalculatorProvider
             }
         }
 
-        return new TaxCalculator($taxes, $behavior);
+        return new \TaxCalculator($taxes, $behavior);
     }
 }

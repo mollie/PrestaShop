@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -110,7 +111,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
             $this->handleException($exception, HttpStatusCode::HTTP_BAD_REQUEST, 'Api request failed', $transactionId);
         } catch (TransactionException $exception) {
             $this->handleException($exception, $exception->getCode(), 'Failed to handle transaction', $transactionId);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->handleException($exception, HttpStatusCode::HTTP_BAD_REQUEST, 'Failed to handle webhook', $transactionId);
         }
 
@@ -149,7 +150,7 @@ class MollieWebhookModuleFrontController extends AbstractMollieController
                 'transaction_id' => $transactionId,
             ]);
 
-            throw new \Exception(sprintf('Missing Cart ID. Transaction ID: [%s]', $transactionId), HttpStatusCode::HTTP_NOT_FOUND);
+            throw new Exception(sprintf('Missing Cart ID. Transaction ID: [%s]', $transactionId), HttpStatusCode::HTTP_NOT_FOUND);
         }
 
         $cart = new Cart((int) $cartId);

@@ -7,17 +7,16 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Provider;
 
-use Configuration;
 use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Utility\CustomLogoUtility;
 use Mollie\Utility\ImageUtility;
-use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -56,10 +55,10 @@ final class CreditCardLogoProvider extends AbstractCustomLogoProvider
         return $this->pathUri;
     }
 
-    public function getMethodOptionLogo(MolPaymentMethod $methodObj)
+    public function getMethodOptionLogo(\MolPaymentMethod $methodObj)
     {
         $isCustomLogoEnabled = CustomLogoUtility::isCustomLogoEnabled($methodObj->id_method);
-        $imageConfig = Configuration::get(Config::MOLLIE_IMAGES);
+        $imageConfig = \Configuration::get(Config::MOLLIE_IMAGES);
 
         if (Config::LOGOS_HIDE !== $imageConfig && $isCustomLogoEnabled && $this->logoExists()) {
             $dateStamp = time();

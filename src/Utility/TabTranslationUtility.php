@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -31,7 +32,7 @@ if (!defined('_PS_VERSION_')) {
 class TabTranslationUtility
 {
     /** Every Mollie tab, so a repair can rewrite names persisted in the wrong language. */
-    const TAB_NAMES = [
+    public const TAB_NAMES = [
         'AdminMollieModuleMTR' => 'Mollie',
         'AdminMollieModule' => 'Settings',
         'AdminMollieAuthenticationParent' => 'API Configuration',
@@ -58,22 +59,22 @@ class TabTranslationUtility
      * files, repairing rows an earlier install or upgrade persisted in the wrong
      * language. Tabs that do not exist on this shop are skipped.
      *
-     * @param Module $module
+     * @param \Module $module
      *
      * @return void
      */
-    public static function repairTabNames(Module $module)
+    public static function repairTabNames(\Module $module)
     {
-        $languages = Language::getLanguages(false);
+        $languages = \Language::getLanguages(false);
 
         foreach (self::TAB_NAMES as $className => $englishName) {
-            $tabId = (int) Tab::getIdFromClassName($className);
+            $tabId = (int) \Tab::getIdFromClassName($className);
 
             if (!$tabId) {
                 continue;
             }
 
-            $tab = new Tab($tabId);
+            $tab = new \Tab($tabId);
 
             foreach ($languages as $language) {
                 $tab->name[$language['id_lang']] = self::getTabName($module, $englishName, $language['iso_code']);
@@ -84,16 +85,16 @@ class TabTranslationUtility
     }
 
     /**
-     * @param Module $module
+     * @param \Module $module
      * @param string $englishName
      *
      * @return array tab name per language, keyed by iso code as Module::getTabs() expects
      */
-    public static function getTabNames(Module $module, $englishName)
+    public static function getTabNames(\Module $module, $englishName)
     {
         $names = [];
 
-        foreach (Language::getLanguages(false) as $language) {
+        foreach (\Language::getLanguages(false) as $language) {
             $names[$language['iso_code']] = self::getTabName($module, $englishName, $language['iso_code']);
         }
 
@@ -101,13 +102,13 @@ class TabTranslationUtility
     }
 
     /**
-     * @param Module $module
+     * @param \Module $module
      * @param string $englishName
      * @param string $isoCode
      *
      * @return string
      */
-    public static function getTabName(Module $module, $englishName, $isoCode)
+    public static function getTabName(\Module $module, $englishName, $isoCode)
     {
         return self::translate(
             _PS_MODULE_DIR_ . $module->name . '/translations',

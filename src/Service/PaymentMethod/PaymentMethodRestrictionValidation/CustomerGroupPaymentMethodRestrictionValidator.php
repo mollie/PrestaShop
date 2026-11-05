@@ -7,16 +7,14 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
-use Context;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
-use MolPaymentMethod;
-use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -24,7 +22,7 @@ if (!defined('_PS_VERSION_')) {
 
 class CustomerGroupPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
-    const FILE_NAME = 'CustomerGroupPaymentMethodRestrictionValidator';
+    public const FILE_NAME = 'CustomerGroupPaymentMethodRestrictionValidator';
 
     /** @var PaymentMethodRepositoryInterface */
     private $paymentMethodRepository;
@@ -43,11 +41,11 @@ class CustomerGroupPaymentMethodRestrictionValidator implements PaymentMethodRes
     /**
      * {@inheritDoc}
      */
-    public function isValid(MolPaymentMethod $paymentMethod): bool
+    public function isValid(\MolPaymentMethod $paymentMethod): bool
     {
-        $customer = Context::getContext()->customer;
+        $customer = \Context::getContext()->customer;
 
-        if (!Validate::isLoadedObject($customer)) {
+        if (!\Validate::isLoadedObject($customer)) {
             $this->logger->debug(sprintf('%s - Customer cannot be loaded', self::FILE_NAME));
 
             return true;
@@ -77,7 +75,7 @@ class CustomerGroupPaymentMethodRestrictionValidator implements PaymentMethodRes
     /**
      * {@inheritDoc}
      */
-    public function supports(MolPaymentMethod $paymentMethod): bool
+    public function supports(\MolPaymentMethod $paymentMethod): bool
     {
         return true;
     }

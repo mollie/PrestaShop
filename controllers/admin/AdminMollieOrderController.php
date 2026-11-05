@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -28,7 +29,7 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminMollieOrderController extends ModuleAdminController
 {
-    const FILE_NAME = 'AdminMollieOrderController';
+    public const FILE_NAME = 'AdminMollieOrderController';
 
     /** @var Mollie */
     public $module;
@@ -49,7 +50,7 @@ class AdminMollieOrderController extends ModuleAdminController
         $tools = $this->module->getService(ToolsAdapter::class);
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
-        $cookie = \Context::getContext()->cookie;
+        $cookie = Context::getContext()->cookie;
 
         $orderId = $tools->getValueAsInt('orderId');
         $errors = json_decode($cookie->__get('mollie_order_management_errors'), false) ?: [];
@@ -60,7 +61,7 @@ class AdminMollieOrderController extends ModuleAdminController
                 /** @var CaptureService $captureService */
                 $captureService = $this->module->getService(CaptureService::class);
                 $captureService->handleCapture($orderId, $amount);
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $errors[$orderId] = 'Capture failed. See logs.';
                 $cookie->__set('mollie_order_management_errors', json_encode($errors));
                 $logger->error('Failed to capture order.', [
@@ -77,7 +78,7 @@ class AdminMollieOrderController extends ModuleAdminController
                 /** @var RefundService $refundService */
                 $refundService = $this->module->getService(RefundService::class);
                 $refundService->handleRefund($orderId, $amount);
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $errors[$orderId] = 'Refund failed. See logs.';
                 $cookie->__set('mollie_order_management_errors', json_encode($errors));
                 $logger->error('Failed to refund order.', [
@@ -93,7 +94,7 @@ class AdminMollieOrderController extends ModuleAdminController
                 /** @var ShipService $shipService */
                 $shipService = $this->module->getService(ShipService::class);
                 $shipService->handleShip($orderId);
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $errors[$orderId] = 'Shipping failed. See logs.';
                 $cookie->__set('mollie_order_management_errors', json_encode($errors));
                 $logger->error('Failed to ship order.', [
@@ -110,7 +111,7 @@ class AdminMollieOrderController extends ModuleAdminController
 
     private function redirectToOrderController(string $controller, int $orderId): void
     {
-        $url = \Context::getContext()->link->getAdminLink($controller, true, [], ['id_order' => $orderId, 'vieworder' => 1]);
-        \Tools::redirectAdmin($url);
+        $url = Context::getContext()->link->getAdminLink($controller, true, [], ['id_order' => $orderId, 'vieworder' => 1]);
+        Tools::redirectAdmin($url);
     }
 }

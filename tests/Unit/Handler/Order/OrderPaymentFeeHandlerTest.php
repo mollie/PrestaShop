@@ -7,13 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Tests\Unit\Handler\Order;
 
-use Cart;
-use Exception;
 use Mollie\Action\CreateOrderPaymentFeeAction;
 use Mollie\Action\UpdateOrderTotalsAction;
 use Mollie\Api\Resources\Payment;
@@ -31,8 +30,6 @@ use Mollie\Repository\CartRepositoryInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Tests\Unit\BaseTestCase;
-use MolPaymentMethod;
-use Order;
 
 class OrderPaymentFeeHandlerTest extends BaseTestCase
 {
@@ -72,17 +69,17 @@ class OrderPaymentFeeHandlerTest extends BaseTestCase
 
     public function testItSuccessfullyHandlesOrderPaymentFee(): void
     {
-        $order = $this->createMock(Order::class);
+        $order = $this->createMock(\Order::class);
         $order->id_cart = 1;
 
         $this->orderRepository->expects($this->once())->method('findOneBy')->willReturn($order);
 
-        $cart = $this->createMock(Cart::class);
+        $cart = $this->createMock(\Cart::class);
         $cart->expects($this->exactly(2))->method('getOrderTotal')->willReturn(12.1);
 
         $this->cartRepository->expects($this->once())->method('findOneBy')->willReturn($cart);
 
-        $molPaymentMethod = $this->createMock(MolPaymentMethod::class);
+        $molPaymentMethod = $this->createMock(\MolPaymentMethod::class);
 
         $this->paymentMethodService->expects($this->once())->method('getPaymentMethod')->willReturn($molPaymentMethod);
 
@@ -118,13 +115,13 @@ class OrderPaymentFeeHandlerTest extends BaseTestCase
 
     public function testItUnsuccessfullyHandlesOrderPaymentFeeUnknownError(): void
     {
-        $order = $this->createMock(Order::class);
+        $order = $this->createMock(\Order::class);
         $order->id_cart = 1;
 
         $this->orderRepository->expects($this->once())->method('findOneBy')->willReturn($order);
 
-        $cart = $this->createMock(Cart::class);
-        $cart->expects($this->exactly(1))->method('getOrderTotal')->willThrowException(new Exception());
+        $cart = $this->createMock(\Cart::class);
+        $cart->expects($this->exactly(1))->method('getOrderTotal')->willThrowException(new \Exception());
 
         $this->cartRepository->expects($this->once())->method('findOneBy')->willReturn($cart);
 
@@ -149,12 +146,12 @@ class OrderPaymentFeeHandlerTest extends BaseTestCase
 
     public function testItUnsuccessfullyHandlesOrderPaymentFeeFailedToRetrievePaymentMethod(): void
     {
-        $order = $this->createMock(Order::class);
+        $order = $this->createMock(\Order::class);
         $order->id_cart = 1;
 
         $this->orderRepository->expects($this->once())->method('findOneBy')->willReturn($order);
 
-        $cart = $this->createMock(Cart::class);
+        $cart = $this->createMock(\Cart::class);
         $cart->expects($this->exactly(2))->method('getOrderTotal')->willReturn(12.1);
 
         $this->cartRepository->expects($this->once())->method('findOneBy')->willReturn($cart);
@@ -182,17 +179,17 @@ class OrderPaymentFeeHandlerTest extends BaseTestCase
 
     public function testItUnsuccessfullyHandlesOrderPaymentFeeFailedToRetrievePaymentFee(): void
     {
-        $order = $this->createMock(Order::class);
+        $order = $this->createMock(\Order::class);
         $order->id_cart = 1;
 
         $this->orderRepository->expects($this->once())->method('findOneBy')->willReturn($order);
 
-        $cart = $this->createMock(Cart::class);
+        $cart = $this->createMock(\Cart::class);
         $cart->expects($this->exactly(2))->method('getOrderTotal')->willReturn(12.1);
 
         $this->cartRepository->expects($this->once())->method('findOneBy')->willReturn($cart);
 
-        $molPaymentMethod = $this->createMock(MolPaymentMethod::class);
+        $molPaymentMethod = $this->createMock(\MolPaymentMethod::class);
 
         $this->paymentMethodService->expects($this->once())->method('getPaymentMethod')->willReturn($molPaymentMethod);
 
@@ -219,17 +216,17 @@ class OrderPaymentFeeHandlerTest extends BaseTestCase
 
     public function testItUnsuccessfullyHandlesOrderPaymentFeeFailedToCreateOrderPaymentFee(): void
     {
-        $order = $this->createMock(Order::class);
+        $order = $this->createMock(\Order::class);
         $order->id_cart = 1;
 
         $this->orderRepository->expects($this->once())->method('findOneBy')->willReturn($order);
 
-        $cart = $this->createMock(Cart::class);
+        $cart = $this->createMock(\Cart::class);
         $cart->expects($this->exactly(2))->method('getOrderTotal')->willReturn(12.1);
 
         $this->cartRepository->expects($this->once())->method('findOneBy')->willReturn($cart);
 
-        $molPaymentMethod = $this->createMock(MolPaymentMethod::class);
+        $molPaymentMethod = $this->createMock(\MolPaymentMethod::class);
 
         $this->paymentMethodService->expects($this->once())->method('getPaymentMethod')->willReturn($molPaymentMethod);
 
@@ -262,17 +259,17 @@ class OrderPaymentFeeHandlerTest extends BaseTestCase
 
     public function testItUnsuccessfullyHandlesOrderPaymentFeeFailedToUpdateOrderTotalWithPaymentFee(): void
     {
-        $order = $this->createMock(Order::class);
+        $order = $this->createMock(\Order::class);
         $order->id_cart = 1;
 
         $this->orderRepository->expects($this->once())->method('findOneBy')->willReturn($order);
 
-        $cart = $this->createMock(Cart::class);
+        $cart = $this->createMock(\Cart::class);
         $cart->expects($this->exactly(2))->method('getOrderTotal')->willReturn(12.1);
 
         $this->cartRepository->expects($this->once())->method('findOneBy')->willReturn($cart);
 
-        $molPaymentMethod = $this->createMock(MolPaymentMethod::class);
+        $molPaymentMethod = $this->createMock(\MolPaymentMethod::class);
 
         $this->paymentMethodService->expects($this->once())->method('getPaymentMethod')->willReturn($molPaymentMethod);
 

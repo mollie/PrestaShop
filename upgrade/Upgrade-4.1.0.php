@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -45,8 +46,8 @@ function upgrade_module_4_1_0($module)
         return false;
     }
 
-    /** @var \Mollie\Repository\PaymentMethodRepositoryInterface $paymentMethodsRepo */
-    $paymentMethodsRepo = $module->getService(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
+    /** @var Mollie\Repository\PaymentMethodRepositoryInterface $paymentMethodsRepo */
+    $paymentMethodsRepo = $module->getService(Mollie\Repository\PaymentMethodRepositoryInterface::class);
     $paymentMethods = $paymentMethodsRepo->findAll();
 
     /** @var Installer $installer */

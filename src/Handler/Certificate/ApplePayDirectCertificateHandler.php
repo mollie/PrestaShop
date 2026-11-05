@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -22,19 +23,19 @@ if (!defined('_PS_VERSION_')) {
 
 class ApplePayDirectCertificateHandler implements CertificateHandlerInterface
 {
-    const FILE_NAME = 'ApplePayDirectCertificateHandler';
+    public const FILE_NAME = 'ApplePayDirectCertificateHandler';
 
-    const APPLE_PAY_CERTIFICATE_PS_FILE = 'apple-developer-merchantid-domain-association';
-    const APPLE_PAY_CERTIFICATE_FOLDER = '/.well-known/';
-    const APPLE_PAY_CERTIFICATE_FILE_LOCATION = __DIR__ . '/Files/apple-developer-merchantid-domain-association';
+    public const APPLE_PAY_CERTIFICATE_PS_FILE = 'apple-developer-merchantid-domain-association';
+    public const APPLE_PAY_CERTIFICATE_FOLDER = '/.well-known/';
+    public const APPLE_PAY_CERTIFICATE_FILE_LOCATION = __DIR__ . '/Files/apple-developer-merchantid-domain-association';
 
     /**
-     * @var Mollie
+     * @var \Mollie
      */
     private $mollie;
     private $serverRoot;
 
-    public function __construct(Mollie $mollie)
+    public function __construct(\Mollie $mollie)
     {
         $this->mollie = $mollie;
         $this->serverRoot = $_SERVER['DOCUMENT_ROOT'];

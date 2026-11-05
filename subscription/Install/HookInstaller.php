@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,7 +15,6 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Install;
 
-use Mollie;
 use Mollie\Utility\VersionUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -23,11 +23,11 @@ if (!defined('_PS_VERSION_')) {
 
 class HookInstaller extends AbstractInstaller
 {
-    /** @var Mollie */
+    /** @var \Mollie */
     private $module;
 
     public function __construct(
-        Mollie $module
+        \Mollie $module
     ) {
         $this->module = $module;
     }

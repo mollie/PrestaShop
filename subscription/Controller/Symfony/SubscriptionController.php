@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,7 +15,6 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Controller\Symfony;
 
-use Exception;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Shop;
 use Mollie\Config\Config;
@@ -213,7 +213,7 @@ class SubscriptionController extends AbstractSymfonyController
         return $this->redirectToRoute('admin_subscription_index');
     }
 
-    private function getErrorMessage(Exception $e): string
+    private function getErrorMessage(\Exception $e): string
     {
         $errors = [];
 

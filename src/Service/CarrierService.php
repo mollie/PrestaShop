@@ -7,14 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use Carrier;
-use Configuration;
-use Context;
 use Mollie\Config\Config;
 
 if (!defined('_PS_VERSION_')) {
@@ -36,13 +34,13 @@ class CarrierService
             $trackingUrls = [];
         }
 
-        $carriers = Carrier::getCarriers(
-            Context::getContext()->language->id,
+        $carriers = \Carrier::getCarriers(
+            \Context::getContext()->language->id,
             false,
             false,
             false,
             null,
-            Carrier::ALL_CARRIERS
+            \Carrier::ALL_CARRIERS
         );
 
         $configCarriers = [];
@@ -58,7 +56,7 @@ class CarrierService
             ];
         }
         if (count($trackingUrls) !== count($configCarriers)) {
-            Configuration::updateValue(Config::MOLLIE_TRACKING_URLS, json_encode($configCarriers));
+            \Configuration::updateValue(Config::MOLLIE_TRACKING_URLS, json_encode($configCarriers));
         }
 
         return $configCarriers;

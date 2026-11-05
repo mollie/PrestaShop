@@ -7,12 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use Mollie;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Utility\ExceptionUtility;
@@ -24,12 +24,12 @@ if (!defined('_PS_VERSION_')) {
 
 class CancelService
 {
-    const FILE_NAME = 'CancelService';
+    public const FILE_NAME = 'CancelService';
 
     private $module;
     private $logger;
 
-    public function __construct(Mollie $module)
+    public function __construct(\Mollie $module)
     {
         $this->module = $module;
         $this->logger = $this->module->getService(LoggerInterface::class);

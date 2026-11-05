@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -32,16 +33,16 @@ if (!defined('_PS_VERSION_')) {
  */
 class ExpressComponentAvailabilityService
 {
-    const FILE_NAME = 'ExpressComponentAvailabilityService';
+    public const FILE_NAME = 'ExpressComponentAvailabilityService';
 
-    const VISIBILITY_AUTOMATIC = 'automatic';
-    const VISIBILITY_HIDDEN = 'hidden';
+    public const VISIBILITY_AUTOMATIC = 'automatic';
+    public const VISIBILITY_HIDDEN = 'hidden';
 
     /**
      * Component button => [config flag, mol_payment_method id_method the button settles through].
      * Google Pay has no row of its own; its payments are card payments.
      */
-    const BUTTONS = [
+    public const BUTTONS = [
         'applepay' => [Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY, 'applepay'],
         'googlepay' => [Config::MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY, 'creditcard'],
         'paypal' => [Config::MOLLIE_EXPRESS_COMPONENT_PAYPAL, 'paypal'],

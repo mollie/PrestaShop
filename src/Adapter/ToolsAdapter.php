@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -16,7 +17,6 @@ use Currency;
 use Mollie\Adapter\Context as ContextAdapter;
 use Mollie\Utility\VersionUtility;
 use PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -26,17 +26,17 @@ class ToolsAdapter
 {
     public function strlen($str): string
     {
-        return Tools::strlen($str);
+        return \Tools::strlen($str);
     }
 
     public function substr($str, $start, $length = false): string
     {
-        return Tools::substr($str, $start, $length);
+        return \Tools::substr($str, $start, $length);
     }
 
     /**
      * @param float $price
-     * @param int|Currency|array|null $currency Current currency (object, id_currency, NULL => context currency)
+     * @param int|\Currency|array|null $currency Current currency (object, id_currency, NULL => context currency)
      *
      * @return string
      *
@@ -53,33 +53,33 @@ class ToolsAdapter
             return $contextAdapter->formatPrice($price, $isoCode);
         }
 
-        return Tools::displayPrice($price, $currency);
+        return \Tools::displayPrice($price, $currency);
     }
 
     public function getValue(string $key, ?string $defaultValue = null)
     {
-        $result = Tools::getValue($key, $defaultValue);
+        $result = \Tools::getValue($key, $defaultValue);
 
         return !empty($result) ? $result : null;
     }
 
     public function isSubmit(string $string): bool
     {
-        return (bool) Tools::isSubmit($string);
+        return (bool) \Tools::isSubmit($string);
     }
 
     public function getValueAsInt($value, $defaultValue = 0)
     {
-        return (int) Tools::getValue($value, $defaultValue);
+        return (int) \Tools::getValue($value, $defaultValue);
     }
 
     public function displayDate($date, $full = false)
     {
         if (VersionUtility::isPsVersionGreaterOrEqualTo('9.0.0')) {
-            return Tools::displayDate($date, $full);
+            return \Tools::displayDate($date, $full);
         }
 
-        return Tools::displayDate($date, null, $full);
+        return \Tools::displayDate($date, null, $full);
     }
 
     /**

@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -36,7 +37,7 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminMolliePaymentMethodsController extends ModuleAdminController
 {
-    const FILE_NAME = 'AdminMolliePaymentMethodsController';
+    public const FILE_NAME = 'AdminMolliePaymentMethodsController';
 
     /** @var Mollie */
     public $module;
@@ -596,8 +597,8 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             }
 
             if ($enabled) {
-                /** @var \Mollie\Service\SegmentTracker $segmentTracker */
-                $segmentTracker = $this->module->getService(\Mollie\Service\SegmentTracker::class);
+                /** @var Mollie\Service\SegmentTracker $segmentTracker */
+                $segmentTracker = $this->module->getService(Mollie\Service\SegmentTracker::class);
                 $segmentTracker->trackPaymentMethodEnabled($paymentMethod, $preEnableCount);
             }
 
@@ -776,7 +777,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
         $shopId = $this->context->shop->id;
 
         try {
-            $languages = \Language::getLanguages(false, $shopId);
+            $languages = Language::getLanguages(false, $shopId);
 
             foreach ($languages as $language) {
                 $langId = (int) $language['id_lang'];
@@ -793,7 +794,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                     $titles[$langId] = $defaultName;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error('Error getting payment method titles', [
                 'method_id' => $methodId,
                 'exception' => $e->getMessage(),
@@ -829,8 +830,8 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
 
             $savedPaymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($methodId, $environment, $shopId);
             if ($savedPaymentMethodId) {
-                /** @var \Mollie\Service\SegmentTracker $segmentTracker */
-                $segmentTracker = $this->module->getService(\Mollie\Service\SegmentTracker::class);
+                /** @var Mollie\Service\SegmentTracker $segmentTracker */
+                $segmentTracker = $this->module->getService(Mollie\Service\SegmentTracker::class);
                 $segmentTracker->trackPaymentMethodConfigured(new MolPaymentMethod((int) $savedPaymentMethodId), $hasCountryRestrictions);
             }
 
@@ -956,14 +957,14 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
     {
         $languages = [];
         $shopId = $this->context->shop->id;
-        $availableLanguages = \Language::getLanguages(false, $shopId);
+        $availableLanguages = Language::getLanguages(false, $shopId);
 
         foreach ($availableLanguages as $language) {
             $languages[] = [
                 'id' => (int) $language['id_lang'],
                 'name' => $language['name'],
                 'iso_code' => $language['iso_code'],
-                'is_default' => (bool) ((int) $language['id_lang'] === (int) \Configuration::get('PS_LANG_DEFAULT')),
+                'is_default' => (bool) ((int) $language['id_lang'] === (int) Configuration::get('PS_LANG_DEFAULT')),
             ];
         }
 
@@ -989,7 +990,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
     private function getCustomLogoUrl(): ?string
     {
         try {
-            $creditCardLogoProvider = $this->module->getService(\Mollie\Provider\CreditCardLogoProvider::class);
+            $creditCardLogoProvider = $this->module->getService(Mollie\Provider\CreditCardLogoProvider::class);
 
             if ($creditCardLogoProvider->logoExists()) {
                 return $creditCardLogoProvider->getLogoPathUri() . '?' . time();
@@ -1006,7 +1007,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
     private function ajaxUploadCustomLogo(): void
     {
         try {
-            $creditCardLogoProvider = $this->module->getService(\Mollie\Provider\CreditCardLogoProvider::class);
+            $creditCardLogoProvider = $this->module->getService(Mollie\Provider\CreditCardLogoProvider::class);
             $targetFile = $creditCardLogoProvider->getLocalLogoPath();
             $isUploaded = 1;
             $imageFileType = pathinfo($targetFile, PATHINFO_EXTENSION);

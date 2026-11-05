@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -112,7 +113,7 @@ class MollieSubscriptionUpdateWebhookModuleFrontController extends AbstractMolli
 
         try {
             $subscriptionPaymentMethodUpdateHandler->handle($transactionId, $subscriptionId);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $errorHandler->handle($exception, null, false);
 
             $this->releaseLock();

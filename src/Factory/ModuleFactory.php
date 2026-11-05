@@ -7,13 +7,11 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Factory;
-
-use Module;
-use Mollie;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -54,10 +52,10 @@ class ModuleFactory
         return $module->getPathUri();
     }
 
-    public function getModule(): ?Mollie
+    public function getModule(): ?\Mollie
     {
-        /** @var ?Mollie $module */
-        $module = Module::getInstanceByName('mollie') ?: null;
+        /** @var ?\Mollie $module */
+        $module = \Module::getInstanceByName('mollie') ?: null;
 
         return $module;
     }

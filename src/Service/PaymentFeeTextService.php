@@ -56,7 +56,7 @@ class PaymentFeeTextService
     /**
      * @param string $paymentMethodName
      * @param float $feeAmount
-     * @param int|Currency|array|null $currency Current currency (object, id_currency, NULL => context currency)
+     * @param int|\Currency|array|null $currency Current currency (object, id_currency, NULL => context currency)
      *
      * @return string
      */

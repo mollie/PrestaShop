@@ -7,17 +7,16 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use Mollie;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Utility\TransactionUtility;
-use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -25,14 +24,14 @@ if (!defined('_PS_VERSION_')) {
 
 class ShipService
 {
-    const FILE_NAME = 'ShipService';
+    public const FILE_NAME = 'ShipService';
 
     /**
-     * @var Mollie
+     * @var \Mollie
      */
     private $module;
 
-    public function __construct(Mollie $module)
+    public function __construct(\Mollie $module)
     {
         $this->module = $module;
     }
@@ -147,14 +146,14 @@ class ShipService
 
     private function validateTracking(array $tracking): array
     {
-        if (!empty($tracking['tracking_url']) && !Validate::isAbsoluteUrl($tracking['tracking_url'])) {
+        if (!empty($tracking['tracking_url']) && !\Validate::isAbsoluteUrl($tracking['tracking_url'])) {
             return [
                 'success' => false,
                 'message' => $this->module->l('Invalid tracking URL provided', self::FILE_NAME),
             ];
         }
 
-        if (!Validate::isString($tracking['carrier']) || !Validate::isString($tracking['code'])) {
+        if (!\Validate::isString($tracking['carrier']) || !\Validate::isString($tracking['code'])) {
             return [
                 'success' => false,
                 'message' => $this->module->l('Invalid tracking data provided', self::FILE_NAME),

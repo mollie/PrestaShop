@@ -7,13 +7,13 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service\Content;
 
 use Mollie\Builder\TemplateBuilderInterface;
-use Smarty;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -26,5 +26,5 @@ interface TemplateParserInterface
      *
      * @return string
      */
-    public function parseTemplate(Smarty $smarty, TemplateBuilderInterface $templateBuilder, $templatePath);
+    public function parseTemplate(\Smarty $smarty, TemplateBuilderInterface $templateBuilder, $templatePath);
 }

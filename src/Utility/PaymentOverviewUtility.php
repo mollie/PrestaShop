@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -27,7 +28,7 @@ class PaymentOverviewUtility
     /**
      * Statuses that are terminal failures and therefore always belong on the overview.
      */
-    const TERMINAL_STATUSES = [
+    public const TERMINAL_STATUSES = [
         PaymentStatus::STATUS_FAILED,
         PaymentStatus::STATUS_CANCELED,
         PaymentStatus::STATUS_EXPIRED,
@@ -36,7 +37,7 @@ class PaymentOverviewUtility
     /**
      * Statuses that only belong on the overview once they have gone stale.
      */
-    const STUCK_STATUSES = [
+    public const STUCK_STATUSES = [
         PaymentStatus::STATUS_OPEN,
         PaymentStatus::STATUS_PENDING,
     ];
@@ -46,7 +47,7 @@ class PaymentOverviewUtility
      * can translate every one of them. See the Cards section of the method-specific parameters
      * reference.
      */
-    const CARD_FAILURE_REASONS = [
+    public const CARD_FAILURE_REASONS = [
         'authentication_abandoned',
         'authentication_failed',
         'authentication_required',

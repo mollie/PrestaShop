@@ -7,14 +7,13 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 declare(strict_types=1);
 
 namespace Mollie\Subscription\Install;
-
-use Db;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -25,7 +24,7 @@ final class DatabaseTableUninstaller extends AbstractUninstaller
     public function uninstall(): bool
     {
         foreach ($this->getCommands() as $query) {
-            if (false == Db::getInstance()->execute($query)) {
+            if (false == \Db::getInstance()->execute($query)) {
                 return false;
             }
         }

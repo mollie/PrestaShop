@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,15 +15,13 @@ declare(strict_types=1);
 
 namespace Mollie\Service;
 
-use Module;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 class PrestashopModuleTracking
 {
-    public static function track($apiKey, Module $module, $eventName, array $properties = [])
+    public static function track($apiKey, \Module $module, $eventName, array $properties = [])
     {
         try {
             if (empty($apiKey)) {

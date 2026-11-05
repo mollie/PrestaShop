@@ -7,10 +7,11 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{mollie}prestashop>mollie_7c478959c218087ffc4ad5d96e7f66a6'] = 'Mollie';
 $_MODULE['<{mollie}prestashop>mollie_95b3b272e06dcc3cc2aa62f6887aebc5'] = 'Mollie platby';
 $_MODULE['<{mollie}prestashop>mollie_6bedf641eb10773a0069acb02fd7f8ac'] = 'Používate zastaranú verziu PHP. Ak chcete používať tento modul, aktualizujte svoju verziu PHP. Modul Mollie podporuje verzie PHP 7.2.0 a vyššie.';

@@ -7,12 +7,11 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Utility;
-
-use Language;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -25,7 +24,7 @@ class MultiLangUtility
         $result = [];
 
         if (!$languageIds) {
-            $languageIds = Language::getIDs(false);
+            $languageIds = \Language::getIDs(false);
         }
 
         foreach ($languageIds as $languageId) {

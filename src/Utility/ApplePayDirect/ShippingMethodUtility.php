@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -28,7 +29,7 @@ class ShippingMethodUtility
      *
      * @throws \Exception
      */
-    public static function collectShippingMethodData(array $carriers, Cart $cart)
+    public static function collectShippingMethodData(array $carriers, \Cart $cart)
     {
         $originalDeliveryOption = $cart->delivery_option;
 
@@ -44,7 +45,7 @@ class ShippingMethodUtility
             return [
                 'identifier' => (string) $carrier->getCarrierId(),
                 'label' => $carrier->getName(),
-                'amount' => number_format($cart->getOrderTotal(true, Cart::ONLY_SHIPPING), 2, '.', ''),
+                'amount' => number_format($cart->getOrderTotal(true, \Cart::ONLY_SHIPPING), 2, '.', ''),
                 'detail' => $carrier->getDelay(),
             ];
         }, $carriers);

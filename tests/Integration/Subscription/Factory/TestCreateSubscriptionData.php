@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -65,7 +66,7 @@ class TestCreateSubscriptionData extends BaseTestCase
                 'mandate_id' => 'test-mandate-id',
             ]
         );
-        $combinationMock = $this->createMock(\Combination::class);
+        $combinationMock = $this->createMock(Combination::class);
         $combinationMock->method('getWsProductOptionValues')->willReturn(
             [
                 [
@@ -79,7 +80,7 @@ class TestCreateSubscriptionData extends BaseTestCase
 
         $customerRepository = new MolCustomerRepository('MolCustomer');
 
-        $link = $this->createMock(\Mollie\Adapter\Link::class);
+        $link = $this->createMock(Mollie\Adapter\Link::class);
         $link->method('getModuleLink')->willReturn('test-link');
 
         /** @var CreateSubscriptionDataFactory $createSubscriptionData */
@@ -124,15 +125,15 @@ class TestCreateSubscriptionData extends BaseTestCase
         $this->assertEquals(
             [
                 'amount' => [
-                        'value' => '19.99',
-                        'currency' => 'EUR',
-                    ],
+                    'value' => '19.99',
+                    'currency' => 'EUR',
+                ],
                 'interval' => '1 day',
                 'description' => 'subscription-REFERENCE123',
                 'webhookUrl' => 'test-link',
                 'mandateId' => 'test-mandate-id',
                 'metadata' => [
-                    'secure_key' => $subscriptionData->getMetaData()['secure_key'], //NOTE: cannot really mock static methods.
+                    'secure_key' => $subscriptionData->getMetaData()['secure_key'], // NOTE: cannot really mock static methods.
                 ],
             ],
             $subscriptionData->jsonSerialize()

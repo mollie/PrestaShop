@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -78,9 +79,9 @@ class MollieFailModuleFrontController extends ModuleFrontController
             Tools::redirect($redirectLink . (Tools::isSubmit('slowvalidation') ? '&slowvalidation' : ''));
         }
 
-        if ((string) $this->secure_key !== (string) $order->secure_key ||
-            (int) $order->id_customer !== (int) $this->context->customer->id ||
-            !Validate::isLoadedObject($order)
+        if ((string) $this->secure_key !== (string) $order->secure_key
+            || (int) $order->id_customer !== (int) $this->context->customer->id
+            || !Validate::isLoadedObject($order)
         ) {
             Tools::redirect($redirectLink);
         }

@@ -7,12 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Tests\Integration\Repository;
 
-use Db;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
@@ -24,7 +24,7 @@ use Mollie\Tests\Integration\BaseTestCase;
  */
 class PaymentMethodRepositoryAttemptStatusTest extends BaseTestCase
 {
-    const TRANSACTION_ID = 'tr_pipres786_attempt';
+    public const TRANSACTION_ID = 'tr_pipres786_attempt';
 
     /** @var PaymentMethodRepositoryInterface */
     private $paymentMethodRepository;
@@ -133,9 +133,9 @@ class PaymentMethodRepositoryAttemptStatusTest extends BaseTestCase
 
     private function insertPayment($bankStatus, $reason = '', $orderId = 0)
     {
-        Db::getInstance()->delete('mollie_payments', '`transaction_id` = \'' . pSQL(self::TRANSACTION_ID) . '\'');
+        \Db::getInstance()->delete('mollie_payments', '`transaction_id` = \'' . pSQL(self::TRANSACTION_ID) . '\'');
 
-        Db::getInstance()->insert('mollie_payments', [
+        \Db::getInstance()->insert('mollie_payments', [
             'transaction_id' => pSQL(self::TRANSACTION_ID),
             'cart_id' => 99999,
             'order_id' => (int) $orderId,
@@ -149,7 +149,7 @@ class PaymentMethodRepositoryAttemptStatusTest extends BaseTestCase
 
     private function getPayment()
     {
-        return Db::getInstance()->getRow(
+        return \Db::getInstance()->getRow(
             'SELECT * FROM `' . _DB_PREFIX_ . 'mollie_payments` WHERE `transaction_id` = \''
             . pSQL(self::TRANSACTION_ID) . '\''
         );

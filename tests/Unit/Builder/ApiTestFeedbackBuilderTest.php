@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -18,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 class ApiTestFeedbackBuilderTest extends TestCase
 {
-    const MODULE_VERSION = '6.4.6';
+    public const MODULE_VERSION = '6.4.6';
 
     public function testItReportsAnUnusableKeyWithoutThrowing(): void
     {

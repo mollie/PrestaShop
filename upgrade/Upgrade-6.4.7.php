@@ -7,9 +7,9 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -71,10 +71,10 @@ function upgrade_module_6_4_7($module)
         }
 
         $expressDefaults = [
-            \Mollie\Config\Config::MOLLIE_EXPRESS_COMPONENT_ENABLED => 0,
-            \Mollie\Config\Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY => 0,
-            \Mollie\Config\Config::MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY => 0,
-            \Mollie\Config\Config::MOLLIE_EXPRESS_COMPONENT_PAYPAL => 0,
+            Mollie\Config\Config::MOLLIE_EXPRESS_COMPONENT_ENABLED => 0,
+            Mollie\Config\Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY => 0,
+            Mollie\Config\Config::MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY => 0,
+            Mollie\Config\Config::MOLLIE_EXPRESS_COMPONENT_PAYPAL => 0,
         ];
 
         foreach ($expressDefaults as $key => $value) {
@@ -100,7 +100,7 @@ function upgrade_module_6_4_7($module)
     // previous file still verifies the domain, so a failed update is logged and never fails the
     // upgrade. Bypasses the service container, which is not reliably available during an upgrade.
     try {
-        (new \Mollie\Handler\Certificate\ApplePayDirectCertificateHandler($module))->refresh();
+        (new Mollie\Handler\Certificate\ApplePayDirectCertificateHandler($module))->refresh();
     } catch (Throwable $e) {
         PrestaShopLogger::addLog(
             'Mollie module upgrade to 6.4.7 could not update the Apple Pay domain association file: ' . $e->getMessage(),

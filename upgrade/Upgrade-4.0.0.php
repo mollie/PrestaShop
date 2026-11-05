@@ -8,7 +8,6 @@
  *
  * @see        https://github.com/mollie/PrestaShop
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -36,7 +35,6 @@ function upgrade_module_4_0_0(Mollie $module)
 				`surcharge_limit` decimal(20,6),
 				`images_json` TEXT
 			) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
-
 
     $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mol_order_fee` (
 				`id_mol_order_fee`  INT(64)  NOT NULL PRIMARY KEY AUTO_INCREMENT,

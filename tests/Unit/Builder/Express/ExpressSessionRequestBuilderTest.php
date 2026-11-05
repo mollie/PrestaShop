@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -117,7 +118,7 @@ class ExpressSessionRequestBuilderTest extends BaseTestCase
 
     public function testItStripsFieldsTheSessionsApiRejects(): void
     {
-        $line = new class() implements \JsonSerializable {
+        $line = new class implements \JsonSerializable {
             public function jsonSerialize(): array
             {
                 return [

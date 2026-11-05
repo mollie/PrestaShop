@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -21,8 +22,6 @@ use Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProviderInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ShipmentServiceInterface;
 use Mollie\Verification\IsPaymentInformationAvailable;
-use Order;
-use OrderState;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -76,7 +75,7 @@ class CanSendShipment implements ShipmentVerificationInterface
     /**
      * {@inheritDoc}
      */
-    public function verify(Order $order, OrderState $orderState): bool
+    public function verify(\Order $order, \OrderState $orderState): bool
     {
         if (!$this->isAutomaticShipmentAvailable((int) $orderState->id)) {
             return false;

@@ -7,12 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Builder\ApplePayDirect;
 
-use Carrier;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\DTO\ApplePay\Carrier\Carrier as AppleCarrier;
@@ -45,9 +45,9 @@ class ApplePayCarriersBuilder
                 continue;
             }
 
-            $carrierObj = new Carrier($carrier['id_carrier']);
+            $carrierObj = new \Carrier($carrier['id_carrier']);
             if ($carrierObj->getRangeTable()) {
-                $priceRanges = Carrier::getDeliveryPriceByRanges($carrierObj->getRangeTable(), (int) $carrier['id_carrier']);
+                $priceRanges = \Carrier::getDeliveryPriceByRanges($carrierObj->getRangeTable(), (int) $carrier['id_carrier']);
                 foreach ($priceRanges as $priceRange) {
                     if ((int) $priceRange['id_zone'] === $idZone) {
                         $price = (float) $priceRange['price'];

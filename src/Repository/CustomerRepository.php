@@ -7,12 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Repository;
 
-use Db;
 use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -39,7 +39,7 @@ class CustomerRepository extends AbstractRepository implements CustomerRepositor
                     FROM `' . _DB_PREFIX_ . 'mol_excluded_customer_groups`
                     WHERE id_payment_method = "' . (int) $methodId . '"';
 
-        $customerGroupsId = Db::getInstance()->executeS($sql);
+        $customerGroupsId = \Db::getInstance()->executeS($sql);
         $customerIdsArray = [];
         foreach ($customerGroupsId as $customerGroupId) {
             $customerIdsArray[] = $customerGroupId['id_customer_group'];
@@ -57,7 +57,7 @@ class CustomerRepository extends AbstractRepository implements CustomerRepositor
     public function updatePaymentMethodExcludedCustomerGroups(?int $idMethod, $idCustomerGroups)
     {
         $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'mol_excluded_customer_groups WHERE `id_payment_method` = "' . (int) $idMethod . '"';
-        if (!Db::getInstance()->execute($sql)) {
+        if (!\Db::getInstance()->execute($sql)) {
             return false;
         }
 
@@ -72,7 +72,7 @@ class CustomerRepository extends AbstractRepository implements CustomerRepositor
 
             $sql .= '"' . (int) $idMethod . '", ' . (int) $idCustomerGroup . ')';
 
-            if (!Db::getInstance()->execute($sql)) {
+            if (!\Db::getInstance()->execute($sql)) {
                 $response = false;
             }
         }

@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -81,23 +82,23 @@ class CalculationUtilityTest extends TestCase
     {
         return [
             'case1' => [
-                    'totalPrice' => 10,
-                    'shippingPrice' => 1,
-                    'wrappingPrice' => 1,
-                    'result' => 8,
-                ],
+                'totalPrice' => 10,
+                'shippingPrice' => 1,
+                'wrappingPrice' => 1,
+                'result' => 8,
+            ],
             'case2' => [
-                    'totalPrice' => 150,
-                    'shippingPrice' => 100,
-                    'wrappingPrice' => 6,
-                    'result' => 44,
-                ],
+                'totalPrice' => 150,
+                'shippingPrice' => 100,
+                'wrappingPrice' => 6,
+                'result' => 44,
+            ],
             'case3' => [
-                    'totalPrice' => 30,
-                    'shippingPrice' => 0,
-                    'wrappingPrice' => 0,
-                    'result' => 30,
-                ],
+                'totalPrice' => 30,
+                'shippingPrice' => 0,
+                'wrappingPrice' => 0,
+                'result' => 30,
+            ],
         ];
     }
 
@@ -105,20 +106,20 @@ class CalculationUtilityTest extends TestCase
     {
         return [
             'case1' => [
-                    'unitPrice' => 100,
-                    'targetVat' => 21,
-                    'result' => 82.64,
-                ],
+                'unitPrice' => 100,
+                'targetVat' => 21,
+                'result' => 82.64,
+            ],
             'case2' => [
-                    'unitPrice' => 70,
-                    'targetVat' => 12,
-                    'result' => 62.5,
-                ],
+                'unitPrice' => 70,
+                'targetVat' => 12,
+                'result' => 62.5,
+            ],
             'case3' => [
-                    'unitPrice' => 1234,
-                    'targetVat' => 24,
-                    'result' => 995.16,
-                ],
+                'unitPrice' => 1234,
+                'targetVat' => 24,
+                'result' => 995.16,
+            ],
         ];
     }
 
@@ -126,29 +127,29 @@ class CalculationUtilityTest extends TestCase
     {
         return [
             'standard rate small amount' => [
-                    'totalAmount' => 100.0,
-                    'vatRate' => 21.0,
-                    'precision' => 2,
-                    'result' => 17.36,
-                ],
+                'totalAmount' => 100.0,
+                'vatRate' => 21.0,
+                'precision' => 2,
+                'result' => 17.36,
+            ],
             'high value line (PIPRES-781)' => [
-                    'totalAmount' => 12865.50,
-                    'vatRate' => 19.0,
-                    'precision' => 2,
-                    'result' => 2054.16,
-                ],
+                'totalAmount' => 12865.50,
+                'vatRate' => 19.0,
+                'precision' => 2,
+                'result' => 2054.16,
+            ],
             'high value line from Mollie 422 log' => [
-                    'totalAmount' => 17671.79,
-                    'vatRate' => 19.0,
-                    'precision' => 2,
-                    'result' => 2821.55,
-                ],
+                'totalAmount' => 17671.79,
+                'vatRate' => 19.0,
+                'precision' => 2,
+                'result' => 2821.55,
+            ],
             'zero rate returns zero' => [
-                    'totalAmount' => 100.0,
-                    'vatRate' => 0.0,
-                    'precision' => 2,
-                    'result' => 0.0,
-                ],
+                'totalAmount' => 100.0,
+                'vatRate' => 0.0,
+                'precision' => 2,
+                'result' => 0.0,
+            ],
         ];
     }
 
@@ -156,23 +157,23 @@ class CalculationUtilityTest extends TestCase
     {
         return [
             'case1' => [
-                    'unitPrice' => 100,
-                    'quantity' => 1,
-                    'unitPriceNoTax' => 82.64,
-                    'result' => 21,
-                ],
+                'unitPrice' => 100,
+                'quantity' => 1,
+                'unitPriceNoTax' => 82.64,
+                'result' => 21,
+            ],
             'case2' => [
-                    'unitPrice' => 100,
-                    'quantity' => 5,
-                    'unitPriceNoTax' => 86.21,
-                    'result' => 16,
-                ],
+                'unitPrice' => 100,
+                'quantity' => 5,
+                'unitPriceNoTax' => 86.21,
+                'result' => 16,
+            ],
             'case3' => [
-                    'unitPrice' => 2,
-                    'quantity' => 1,
-                    'unitPriceNoTax' => 1.67,
-                    'result' => 20,
-                ],
+                'unitPrice' => 2,
+                'quantity' => 1,
+                'unitPriceNoTax' => 1.67,
+                'result' => 20,
+            ],
         ];
     }
 }

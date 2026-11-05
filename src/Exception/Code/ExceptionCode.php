@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -28,7 +29,7 @@ class ExceptionCode
     public const INFRASTRUCTURE_FAILED_TO_FIND_RECORD = 1006;
     public const INFRASTRUCTURE_GUEST_CHECKOUT_NOT_AVAILABLE = 1007;
 
-    //Order error codes starts from 3000
+    // Order error codes starts from 3000
 
     public const ORDER_FAILED_TO_UPDATE_ORDER_TOTALS = 3001;
     public const ORDER_FAILED_TO_INSERT_ORDER_PAYMENT_FEE = 3002;

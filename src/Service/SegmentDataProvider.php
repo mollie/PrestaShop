@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,7 +15,6 @@ declare(strict_types=1);
 
 namespace Mollie\Service;
 
-use Context;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
@@ -48,7 +48,7 @@ class SegmentDataProvider
     public function getEnabledMethodsCount(): int
     {
         $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
-        $shopId = (int) Context::getContext()->shop->id;
+        $shopId = (int) \Context::getContext()->shop->id;
 
         return $this->paymentMethodRepository->countEnabledMethods($environment, $shopId);
     }

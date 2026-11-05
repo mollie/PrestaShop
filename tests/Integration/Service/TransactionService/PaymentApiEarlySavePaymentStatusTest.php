@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -45,7 +46,7 @@ class PaymentApiEarlySavePaymentStatusTest extends TestCase
         // Verify the insert worked before continuing
         $inserted = $this->getPaymentByTransactionId(self::TRANSACTION_ID);
         if (empty($inserted)) {
-            throw new \RuntimeException('Test setup failed: could not insert initial payment record. ' . 'Transaction ID: ' . self::TRANSACTION_ID . ', ' . 'DB Error: ' . Db::getInstance()->getMsgError());
+            throw new RuntimeException('Test setup failed: could not insert initial payment record. Transaction ID: ' . self::TRANSACTION_ID . ', DB Error: ' . Db::getInstance()->getMsgError());
         }
     }
 
@@ -186,7 +187,7 @@ class PaymentApiEarlySavePaymentStatusTest extends TestCase
         ]);
 
         if (!$result) {
-            throw new \RuntimeException('Failed to insert test payment data. DB Error: ' . Db::getInstance()->getMsgError());
+            throw new RuntimeException('Failed to insert test payment data. DB Error: ' . Db::getInstance()->getMsgError());
         }
     }
 
@@ -194,7 +195,7 @@ class PaymentApiEarlySavePaymentStatusTest extends TestCase
      * Simulates TransactionService::savePaymentStatus() — the exact DB update
      * that writes order_id to mollie_payments.
      *
-     * @see \Mollie\Service\TransactionService::savePaymentStatus()
+     * @see Mollie\Service\TransactionService::savePaymentStatus()
      */
     private function simulateSavePaymentStatus(string $transactionId, string $status, int $orderId): void
     {
@@ -209,14 +210,14 @@ class PaymentApiEarlySavePaymentStatusTest extends TestCase
         );
 
         if (!$result) {
-            throw new \RuntimeException('Failed to update payment status. DB Error: ' . Db::getInstance()->getMsgError());
+            throw new RuntimeException('Failed to update payment status. DB Error: ' . Db::getInstance()->getMsgError());
         }
     }
 
     /**
      * Simulates MollieOrderCreationService::updateMolliePaymentReference()
      *
-     * @see \Mollie\Service\MollieOrderCreationService::updateMolliePaymentReference()
+     * @see Mollie\Service\MollieOrderCreationService::updateMolliePaymentReference()
      */
     private function simulateUpdateMolliePaymentReference(string $transactionId, string $newReference): void
     {
@@ -230,7 +231,7 @@ class PaymentApiEarlySavePaymentStatusTest extends TestCase
         );
 
         if (!$result) {
-            throw new \RuntimeException('Failed to update payment reference. DB Error: ' . Db::getInstance()->getMsgError());
+            throw new RuntimeException('Failed to update payment reference. DB Error: ' . Db::getInstance()->getMsgError());
         }
     }
 

@@ -11,13 +11,11 @@
 
 namespace Mollie\DTO\ApplePay\Carrier;
 
-use JsonSerializable;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class Carrier implements JsonSerializable
+class Carrier implements \JsonSerializable
 {
     /**
      * @var string

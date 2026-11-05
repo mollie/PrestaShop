@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -18,6 +19,6 @@ if (!defined('_PS_VERSION_')) {
 
 class MollieApiException extends \Exception
 {
-    const MOLLIE_API_IS_NULL = 1;
-    const APPLE_PAY_LIVE_KEY_REQUIRED = 2;
+    public const MOLLIE_API_IS_NULL = 1;
+    public const APPLE_PAY_LIVE_KEY_REQUIRED = 2;
 }

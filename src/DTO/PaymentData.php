@@ -7,14 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\DTO;
 
-use Address;
-use Country;
-use JsonSerializable;
 use Mollie\Config\Config;
 use Mollie\DTO\Object\Amount;
 use Mollie\Utility\MollieApiInputSanitizer;
@@ -23,7 +21,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class PaymentData implements JsonSerializable
+class PaymentData implements \JsonSerializable
 {
     /**
      * @var Amount
@@ -71,12 +69,12 @@ class PaymentData implements JsonSerializable
     private $customerId;
 
     /**
-     * @var Address
+     * @var \Address
      */
     private $billingAddress;
 
     /**
-     * @var Address
+     * @var \Address
      */
     private $shippingAddress;
     /**
@@ -288,33 +286,33 @@ class PaymentData implements JsonSerializable
     }
 
     /**
-     * @return Address
+     * @return \Address
      */
-    public function getBillingAddress(): Address
+    public function getBillingAddress(): \Address
     {
         return $this->billingAddress;
     }
 
     /**
-     * @param Address $billingAddress
+     * @param \Address $billingAddress
      */
-    public function setBillingAddress(Address $billingAddress): void
+    public function setBillingAddress(\Address $billingAddress): void
     {
         $this->billingAddress = $billingAddress;
     }
 
     /**
-     * @return Address
+     * @return \Address
      */
-    public function getShippingAddress(): Address
+    public function getShippingAddress(): \Address
     {
         return $this->shippingAddress;
     }
 
     /**
-     * @param Address $shippingAddress
+     * @param \Address $shippingAddress
      */
-    public function setShippingAddress(Address $shippingAddress): void
+    public function setShippingAddress(\Address $shippingAddress): void
     {
         $this->shippingAddress = $shippingAddress;
     }
@@ -473,7 +471,7 @@ class PaymentData implements JsonSerializable
                 'streetAdditional' => $this->cleanUpInput($this->getBillingAddress()->address2, null),
                 'city' => $this->cleanUpInput($this->getBillingAddress()->city),
                 'postalCode' => $this->cleanUpInput($this->getBillingAddress()->postcode),
-                'country' => $this->cleanUpInput(Country::getIsoById($this->getBillingAddress()->id_country)),
+                'country' => $this->cleanUpInput(\Country::getIsoById($this->getBillingAddress()->id_country)),
                 'title' => $this->cleanUpInput($this->getTitle()),
                 'phone' => $this->getBillingPhoneNumber(),
             ],
@@ -485,7 +483,7 @@ class PaymentData implements JsonSerializable
                 'streetAdditional' => $this->cleanUpInput($this->getShippingAddress()->address2, null),
                 'city' => $this->cleanUpInput($this->getShippingAddress()->city),
                 'postalCode' => $this->cleanUpInput($this->getShippingAddress()->postcode),
-                'country' => $this->cleanUpInput(Country::getIsoById($this->getShippingAddress()->id_country)),
+                'country' => $this->cleanUpInput(\Country::getIsoById($this->getShippingAddress()->id_country)),
             ],
             'description' => $this->getDescription(),
             'redirectUrl' => $this->getRedirectUrl(),

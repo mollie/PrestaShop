@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -31,7 +32,7 @@ class SubscriptionOrderValidator
     }
 
     /** Returns true if cart has subscription product */
-    public function validate(Cart $cart): bool
+    public function validate(\Cart $cart): bool
     {
         $products = $cart->getProducts();
 

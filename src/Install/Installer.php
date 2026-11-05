@@ -7,17 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Install;
 
-use Db;
-use DbQuery;
-use Exception;
-use Feature;
-use FeatureValue;
-use Language;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
@@ -26,11 +21,7 @@ use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Utility\MultiLangUtility;
 use Mollie\Utility\TabTranslationUtility;
-use OrderState;
-use PrestaShopException;
 use Tab;
-use Tools;
-use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -38,11 +29,11 @@ if (!defined('_PS_VERSION_')) {
 
 class Installer implements InstallerInterface
 {
-    const FILE_NAME = 'Installer';
+    public const FILE_NAME = 'Installer';
 
     /** Root menu tab class name used before 6.4.6, replaced because PrestaShop cannot resolve
      * permission slugs for class names containing an underscore. */
-    const LEGACY_ROOT_TAB_CLASS_NAME = 'AdminMollieModule_MTR';
+    public const LEGACY_ROOT_TAB_CLASS_NAME = 'AdminMollieModule_MTR';
 
     /**
      * @var array
@@ -50,7 +41,7 @@ class Installer implements InstallerInterface
     private $errors = [];
 
     /**
-     * @var Mollie
+     * @var \Mollie
      */
     private $module;
 
@@ -101,7 +92,7 @@ class Installer implements InstallerInterface
 
         try {
             $this->initConfig();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $errorHandler->handle($e, $e->getCode(), false);
             $this->errors[] = $this->module->l('Unable to install config', self::FILE_NAME);
 
@@ -109,7 +100,7 @@ class Installer implements InstallerInterface
         }
         try {
             $this->setDefaultCarrierStatuses();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $errorHandler->handle($e, $e->getCode(), false);
             $this->errors[] = $this->module->l('Unable to install default carrier statuses', self::FILE_NAME);
 
@@ -120,7 +111,7 @@ class Installer implements InstallerInterface
 
         try {
             $this->installVoucherFeatures();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $errorHandler->handle($e, $e->getCode(), false);
             $this->errors[] = $this->module->l('Unable to install voucher attributes', self::FILE_NAME);
 
@@ -244,16 +235,16 @@ class Installer implements InstallerInterface
 
     public function setDefaultCarrierStatuses()
     {
-        $sql = new DbQuery();
-        $sql->select('`' . bqSQL(OrderState::$definition['primary']) . '`');
-        $sql->from(bqSQL(OrderState::$definition['table']));
+        $sql = new \DbQuery();
+        $sql->select('`' . bqSQL(\OrderState::$definition['primary']) . '`');
+        $sql->from(bqSQL(\OrderState::$definition['table']));
         $sql->where('`shipped` = 1');
 
-        $defaultStatuses = Db::getInstance()->executeS($sql);
+        $defaultStatuses = \Db::getInstance()->executeS($sql);
         if (!is_array($defaultStatuses)) {
             return;
         }
-        $defaultStatuses = array_map('intval', array_column($defaultStatuses, OrderState::$definition['primary']));
+        $defaultStatuses = array_map('intval', array_column($defaultStatuses, \OrderState::$definition['primary']));
         $this->configurationAdapter->updateValue(Config::MOLLIE_AUTO_SHIP_STATUSES, json_encode($defaultStatuses));
     }
 
@@ -264,15 +255,15 @@ class Installer implements InstallerInterface
      */
     private function deleteLegacyRootTab(): void
     {
-        $legacyTabId = (int) Tab::getIdFromClassName(self::LEGACY_ROOT_TAB_CLASS_NAME);
+        $legacyTabId = (int) \Tab::getIdFromClassName(self::LEGACY_ROOT_TAB_CLASS_NAME);
 
         if (!$legacyTabId) {
             return;
         }
 
-        $legacyTab = new Tab($legacyTabId);
+        $legacyTab = new \Tab($legacyTabId);
 
-        if (!Validate::isLoadedObject($legacyTab)) {
+        if (!\Validate::isLoadedObject($legacyTab)) {
             return;
         }
 
@@ -282,23 +273,23 @@ class Installer implements InstallerInterface
     public function installTab($className, $parent, $name, $active = true, $icon = '')
     {
         // Check if tab already exists
-        $tabId = Tab::getIdFromClassName($className);
+        $tabId = \Tab::getIdFromClassName($className);
         if ($tabId) {
             // Tab exists, update it
-            $moduleTab = new Tab($tabId);
+            $moduleTab = new \Tab($tabId);
         } else {
             // Create new tab
-            $moduleTab = new Tab();
+            $moduleTab = new \Tab();
             $moduleTab->class_name = $className;
         }
 
-        $idParent = is_int($parent) ? $parent : Tab::getIdFromClassName($parent);
+        $idParent = is_int($parent) ? $parent : \Tab::getIdFromClassName($parent);
 
         $moduleTab->id_parent = $idParent;
         $moduleTab->module = $this->module->name;
         $moduleTab->active = $active;
         $moduleTab->icon = $icon; /** @phpstan-ignore-line */
-        $languages = Language::getLanguages(true);
+        $languages = \Language::getLanguages(true);
 
         foreach ($languages as $language) {
             $moduleTab->name[$language['id_lang']] = TabTranslationUtility::getTabName($this->module, $name, $language['iso_code']);
@@ -316,7 +307,7 @@ class Installer implements InstallerInterface
      */
     public function copyEmailTemplates()
     {
-        $languages = Language::getLanguages(false);
+        $languages = \Language::getLanguages(false);
 
         foreach ($languages as $language) {
             if (Config::DEFAULT_EMAIL_LANGUAGE_ISO_CODE === $language['iso_code']) {
@@ -328,11 +319,11 @@ class Installer implements InstallerInterface
             }
 
             try {
-                Tools::recurseCopy(
+                \Tools::recurseCopy(
                     $this->module->getLocalPath() . 'mails/' . Config::DEFAULT_EMAIL_LANGUAGE_ISO_CODE,
                     $this->module->getLocalPath() . 'mails/' . $language['iso_code']
                 );
-            } catch (PrestaShopException $e) {
+            } catch (\PrestaShopException $e) {
                 $this->errors[] = $this->module->l('Could not copy email templates:', self::FILE_NAME) . ' ' . $e->getMessage();
 
                 return false;
@@ -346,19 +337,19 @@ class Installer implements InstallerInterface
     {
         $mollieVoucherId = $this->configurationAdapter->get(Config::MOLLIE_VOUCHER_FEATURE_ID);
         if ($mollieVoucherId) {
-            $mollieFeature = new Feature((int) $mollieVoucherId);
-            $doesFeatureExist = Validate::isLoadedObject($mollieFeature);
+            $mollieFeature = new \Feature((int) $mollieVoucherId);
+            $doesFeatureExist = \Validate::isLoadedObject($mollieFeature);
             if ($doesFeatureExist) {
                 return;
             }
         }
 
-        $feature = new Feature();
+        $feature = new \Feature();
         $feature->name = MultiLangUtility::createMultiLangField('Voucher');
         $feature->add();
 
         foreach (Config::MOLLIE_VOUCHER_CATEGORIES as $key => $categoryName) {
-            $featureValue = new FeatureValue();
+            $featureValue = new \FeatureValue();
             $featureValue->id_feature = $feature->id;
             $featureValue->value = MultiLangUtility::createMultiLangField($categoryName);
             $featureValue->add();

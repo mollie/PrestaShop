@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -28,7 +29,7 @@ use Mollie\Utility\HashUtility;
 
 class ExpressSessionServiceTest extends BaseTestCase
 {
-    const NOW = '2026-10-05 12:00:00';
+    public const NOW = '2026-10-05 12:00:00';
 
     /** @var ExpressSessionRequestBuilder|\PHPUnit\Framework\MockObject\MockObject */
     private $requestBuilder;

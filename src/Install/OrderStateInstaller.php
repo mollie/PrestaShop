@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -19,7 +20,6 @@ use Mollie\Enum\EmailTemplate;
 use Mollie\Exception\CouldNotInstallModule;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Service\OrderStateImageService;
-use OrderState;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -144,7 +144,7 @@ class OrderStateInstaller implements InstallerInterface
     private function validateIfStatusExists(string $key): bool
     {
         $existingStateId = (int) $this->configurationAdapter->get($key);
-        $orderState = new OrderState($existingStateId);
+        $orderState = new \OrderState($existingStateId);
 
         // if state already existed we won't install new one.
         return \Validate::isLoadedObject($orderState);
@@ -153,7 +153,7 @@ class OrderStateInstaller implements InstallerInterface
     private function enableState(string $key): void
     {
         $existingStateId = (int) $this->configurationAdapter->get($key);
-        $orderState = new OrderState($existingStateId);
+        $orderState = new \OrderState($existingStateId);
 
         $this->updateStateConfiguration($key, $orderState);
 
@@ -168,9 +168,9 @@ class OrderStateInstaller implements InstallerInterface
     /**
      * @throws CouldNotInstallModule
      */
-    private function createOrderState(OrderStateData $orderStateInstallerData): OrderState
+    private function createOrderState(OrderStateData $orderStateInstallerData): \OrderState
     {
-        $orderState = new OrderState();
+        $orderState = new \OrderState();
 
         $orderState->send_email = $orderStateInstallerData->isSendEmail();
         $orderState->color = $orderStateInstallerData->getColor();
@@ -202,7 +202,7 @@ class OrderStateInstaller implements InstallerInterface
         return $orderState;
     }
 
-    private function updateStateConfiguration(string $key, OrderState $orderState): void
+    private function updateStateConfiguration(string $key, \OrderState $orderState): void
     {
         $shops = \Shop::getShops();
         foreach ($shops as $shop) {

@@ -7,12 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Subscription\Controller\Symfony;
 
-use Mollie;
 use Mollie\Factory\ModuleFactory;
 use Mollie\PsCompat\AdminBaseController;
 
@@ -25,7 +25,7 @@ if (!defined('_PS_VERSION_')) {
  */
 abstract class AbstractSymfonyController extends AdminBaseController
 {
-    /** @var Mollie */
+    /** @var \Mollie */
     protected $module;
 
     public function __construct()

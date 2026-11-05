@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -20,7 +21,6 @@ use Mollie\Subscription\Exception\SubscriptionApiException;
 use Mollie\Subscription\Factory\CancelSubscriptionDataFactory;
 use Mollie\Subscription\Factory\GetSubscriptionDataFactory;
 use Mollie\Subscription\Utility\ClockInterface;
-use MolRecurringOrder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -59,14 +59,14 @@ class SubscriptionCancellationHandler
             $subscription = $this->subscriptionApi->getSubscription($getSubscriptionData);
         }
 
-        $recurringOrder = new MolRecurringOrder($subscriptionId);
+        $recurringOrder = new \MolRecurringOrder($subscriptionId);
 
         if ($subscription->status === $recurringOrder->status) {
             return $subscription;
         }
 
         $recurringOrder->status = $subscription->status;
-        $recurringOrder->cancelled_at = $this->clock->getDateFromTimeStamp(strtotime($subscription->canceledAt)); //todo: maybe we will need to change what date is added
+        $recurringOrder->cancelled_at = $this->clock->getDateFromTimeStamp(strtotime($subscription->canceledAt)); // todo: maybe we will need to change what date is added
         $recurringOrder->date_update = $this->clock->getCurrentDate();
         $recurringOrder->update();
 

@@ -1,9 +1,20 @@
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 module = mollie
 
+# --user keeps tools/php-cs-fixer/vendor and the fixer cache owned by the host user on Linux hosts and CI runners.
+PHP_CS_FIXER = docker run --rm --user $$(id -u):$$(id -g) -v $(ROOT_DIR):/app -w /app php:8.3-cli tools/php-cs-fixer/vendor/bin/php-cs-fixer
+
 # target: fix-lint			- Launch php cs fixer
-fix-lint:
-	docker compose run --rm php sh -c "vendor/bin/php-cs-fixer fix --using-cache=no"
+fix-lint: tools/php-cs-fixer/vendor/bin/php-cs-fixer
+	$(PHP_CS_FIXER) fix
+
+# target: lint				- Report php cs fixer violations without changing files (same check as CI)
+lint: tools/php-cs-fixer/vendor/bin/php-cs-fixer
+	$(PHP_CS_FIXER) fix --dry-run --diff
+
+tools/php-cs-fixer/vendor/bin/php-cs-fixer: tools/php-cs-fixer/composer.json tools/php-cs-fixer/composer.lock
+	docker run --rm --user $$(id -u):$$(id -g) -e COMPOSER_HOME=/tmp/composer -v $(ROOT_DIR):/app -w /app composer:2 composer install -d tools/php-cs-fixer --no-interaction --no-progress
+	touch $@
 
 # target: lint-php85		- Fail on PHP 8.5 compile-time deprecations in shipped code (module + production vendor).
 # PHP 9 turns these into compile errors, so one hit in mollie.php stops the whole module loading.
@@ -139,7 +150,7 @@ upgrading-module-test-$(VERSION):
 prepare-zip:
 	composer install --no-dev --optimize-autoloader --classmap-authoritative
 	composer dump-autoload --no-dev --optimize --classmap-authoritative
-	rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile patches docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php views/js/subscription/webpack.config.js views/js/subscription/package.json views/js/subscription/package-lock.json
+	rm -rf .git .docker .editorconfig .github tests .php-cs-fixer.php Makefile patches docker-compose*.yml .gitignore bin codeception.yml package-lock.json package.json .php_cs.dist .php-cs-fixer.dist .php-cs-fixer.dist.php tools views/js/subscription/webpack.config.js views/js/subscription/package.json views/js/subscription/package-lock.json
 	rm -rf views/js/admin/library/node_modules views/js/admin/library/src views/js/admin/library/package.json views/js/admin/library/package-lock.json views/js/admin/library/tsconfig.json views/js/admin/library/tsconfig.app.json views/js/admin/library/tsconfig.node.json views/js/admin/library/vite.config.ts views/js/admin/library/eslint.config.js views/js/admin/library/postcss.config.js views/js/admin/library/tailwind.config.js views/js/admin/library/README.md
 	# PrestaShop security requirement: every shipped directory must contain an index.php, except src/Entity:
 	# PrestaShop 9 deletes index.php there on every container build and crashes when module files are read-only

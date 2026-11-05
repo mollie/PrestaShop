@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,13 +15,11 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\DTO;
 
-use JsonSerializable;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CancelSubscriptionData implements JsonSerializable
+class CancelSubscriptionData implements \JsonSerializable
 {
     /** @var string */
     private $customerId;

@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -23,7 +24,7 @@ if (!defined('_PS_VERSION_')) {
 
 class CreateRecurringOrdersProductAction
 {
-    const FILE_NAME = 'CreateRecurringOrdersProductAction';
+    public const FILE_NAME = 'CreateRecurringOrdersProductAction';
     /** @var PrestaLoggerInterface */
     private $logger;
 
@@ -50,7 +51,7 @@ class CreateRecurringOrdersProductAction
 
             $recurringOrdersProduct->add();
         } catch (\Throwable $exception) {
-            throw CouldNotCreaterecurringOrdersProduct::unknownError($exception);
+            throw CouldNotCreateRecurringOrdersProduct::unknownError($exception);
         }
 
         $this->logger->debug(sprintf('%s - Function ended', self::FILE_NAME));

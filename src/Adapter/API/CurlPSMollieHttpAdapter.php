@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -27,27 +28,27 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
     /**
      * Default response timeout (in seconds).
      */
-    const DEFAULT_TIMEOUT = 30;
+    public const DEFAULT_TIMEOUT = 30;
 
     /**
      * Default connect timeout (in seconds).
      */
-    const DEFAULT_CONNECT_TIMEOUT = 2;
+    public const DEFAULT_CONNECT_TIMEOUT = 2;
 
     /**
      * HTTP status code for an empty ok response.
      */
-    const HTTP_NO_CONTENT = 204;
+    public const HTTP_NO_CONTENT = 204;
 
     /**
      * The maximum number of retries
      */
-    const MAX_RETRIES = 5;
+    public const MAX_RETRIES = 5;
 
     /**
      * The amount of milliseconds the delay is being increased with on each retry.
      */
-    const DELAY_INCREASE_MS = 1000;
+    public const DELAY_INCREASE_MS = 1000;
 
     /**
      * @param string $httpMethod
@@ -57,8 +58,8 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
      *
      * @return \stdClass|void|null
      *
-     * @throws \Mollie\Api\Exceptions\ApiException
-     * @throws \Mollie\Api\Exceptions\CurlConnectTimeoutException
+     * @throws ApiException
+     * @throws CurlConnectTimeoutException
      */
     public function send($httpMethod, $url, $headers, $httpBody)
     {
@@ -83,7 +84,7 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
      *
      * @return \stdClass|void|null
      *
-     * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws ApiException
      */
     protected function attemptRequest($httpMethod, $url, $headers, $httpBody)
     {
@@ -205,7 +206,7 @@ final class CurlPSMollieHttpAdapter implements MollieHttpAdapterInterface
      *
      * @return \stdClass|null
      *
-     * @throws \Mollie\Api\Exceptions\ApiException
+     * @throws ApiException
      */
     protected function parseResponseBody($response, $statusCode, $httpBody)
     {

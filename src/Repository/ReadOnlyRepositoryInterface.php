@@ -7,12 +7,11 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Repository;
-
-use ObjectModel;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -23,7 +22,7 @@ interface ReadOnlyRepositoryInterface
     /**
      * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
      *
-     * @return ObjectModel|null
+     * @return \ObjectModel|null
      */
     public function findOneBy(array $keyValueCriteria);
 }

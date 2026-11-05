@@ -7,16 +7,13 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Utility;
 
-use Context;
-use PrestaShopDatabaseException;
-use PrestaShopException;
 use Tab;
-use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -32,15 +29,15 @@ class MenuLocationUtility
      *
      * @return string
      *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      *
      * @since 3.3.2
      */
     public static function getMenuLocation($class, $idLang = null)
     {
         if (!$idLang) {
-            $idLang = Context::getContext()->language->id;
+            $idLang = \Context::getContext()->language->id;
         }
 
         return implode(' > ', array_reverse(array_unique(array_map(function ($tab) use ($idLang) {
@@ -53,10 +50,10 @@ class MenuLocationUtility
      *
      * @param string $class
      *
-     * @return Tab[]|null
+     * @return \Tab[]|null
      *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      *
      * @since 3.3.2
      */
@@ -64,11 +61,11 @@ class MenuLocationUtility
     {
         $tabs = [];
         $depth = 10;
-        $tab = Tab::getInstanceFromClassName($class);
-        while (Validate::isLoadedObject($tab) && $depth > 0) {
+        $tab = \Tab::getInstanceFromClassName($class);
+        while (\Validate::isLoadedObject($tab) && $depth > 0) {
             --$depth;
             $tabs[] = $tab;
-            $tab = new Tab($tab->id_parent);
+            $tab = new \Tab($tab->id_parent);
         }
 
         return $tabs;

@@ -26,7 +26,7 @@ if (!defined('_PS_VERSION_')) {
  */
 class AdminMollieViewInDashboardController
 {
-    const FILE_NAME = 'AdminMollieViewInDashboardController';
+    public const FILE_NAME = 'AdminMollieViewInDashboardController';
 
     /**
      * The host is hard-coded and the transaction id is constrained by the route requirement,

@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -74,11 +75,11 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
         $recurringOrderRepository = $this->module->getService(RecurringOrderRepositoryInterface::class);
 
         try {
-            /** @var \MolRecurringOrder $recurringOrder */
+            /** @var MolRecurringOrder $recurringOrder */
             $recurringOrder = $recurringOrderRepository->findOrFail([
                 'id_mol_recurring_order' => $recurringOrderId,
             ]);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $logger->error(sprintf('%s - Data retrieve failure', self::FILE_NAME), [
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
@@ -201,7 +202,7 @@ class MollieRecurringOrderDetailModuleFrontController extends AbstractMollieCont
         /** @var RecurringOrderRepositoryInterface $recurringOrderRepository */
         $recurringOrderRepository = $this->module->getService(RecurringOrderRepositoryInterface::class);
 
-        /** @var \MolRecurringOrder|null $recurringOrder */
+        /** @var MolRecurringOrder|null $recurringOrder */
         $recurringOrder = $recurringOrderRepository->findOneBy([
             'id_mol_recurring_order' => $recurringOrderId,
         ]);

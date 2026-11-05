@@ -7,13 +7,11 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Utility;
-
-use Context;
-use Customer;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -21,7 +19,7 @@ if (!defined('_PS_VERSION_')) {
 
 class ContextUtility
 {
-    public static function setCustomerToContext(Context $context, Customer $customer)
+    public static function setCustomerToContext(\Context $context, \Customer $customer)
     {
         $context->customer = $customer;
         $context->cookie->__set('id_customer', (int) $customer->id);

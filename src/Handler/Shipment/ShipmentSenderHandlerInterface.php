@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -15,8 +16,6 @@ namespace Mollie\Handler\Shipment;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
 use Mollie\Exception\ShipmentCannotBeSentException;
-use Order;
-use OrderState;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -28,5 +27,5 @@ interface ShipmentSenderHandlerInterface
      * @throws ShipmentCannotBeSentException
      * @throws ApiException
      */
-    public function handleShipmentSender(?MollieApiClient $apiClient, Order $order, OrderState $orderState);
+    public function handleShipmentSender(?MollieApiClient $apiClient, \Order $order, \OrderState $orderState);
 }

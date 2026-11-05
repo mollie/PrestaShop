@@ -31,12 +31,11 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
-
-use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -48,7 +47,7 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
     /**
      * {@inheritDoc}
      */
-    public function isValid(MolPaymentMethod $paymentMethod): bool
+    public function isValid(\MolPaymentMethod $paymentMethod): bool
     {
         if (!$this->isPaymentMethodEnabled($paymentMethod)) {
             return false;
@@ -60,12 +59,12 @@ class BasePaymentMethodRestrictionValidator implements PaymentMethodRestrictionV
     /**
      * {@inheritDoc}
      */
-    public function supports(MolPaymentMethod $paymentMethod): bool
+    public function supports(\MolPaymentMethod $paymentMethod): bool
     {
         return true;
     }
 
-    private function isPaymentMethodEnabled(MolPaymentMethod $paymentMethod): bool
+    private function isPaymentMethodEnabled(\MolPaymentMethod $paymentMethod): bool
     {
         return (bool) $paymentMethod->enabled;
     }

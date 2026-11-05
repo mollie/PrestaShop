@@ -7,12 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use Mollie;
 use Mollie\Exception\MollieException;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TransactionUtility;
@@ -23,12 +23,12 @@ if (!defined('_PS_VERSION_')) {
 
 class MollieOrderService
 {
-    const FILE_NAME = 'MollieOrderService';
+    public const FILE_NAME = 'MollieOrderService';
 
-    /** @var Mollie */
+    /** @var \Mollie */
     private $module;
 
-    public function __construct(Mollie $module)
+    public function __construct(\Mollie $module)
     {
         $this->module = $module;
     }

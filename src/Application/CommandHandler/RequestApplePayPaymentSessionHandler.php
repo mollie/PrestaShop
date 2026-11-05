@@ -7,14 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Application\CommandHandler;
 
-use Cart;
-use Configuration;
-use Mollie;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
 use Mollie\Application\Command\RequestApplePayPaymentSession;
@@ -31,7 +29,7 @@ if (!defined('_PS_VERSION_')) {
 final class RequestApplePayPaymentSessionHandler
 {
     /**
-     * @var Mollie
+     * @var \Mollie
      */
     private $module;
     /**
@@ -84,7 +82,7 @@ final class RequestApplePayPaymentSessionHandler
             return $this->module->getApiClient();
         }
 
-        $liveApiKey = Configuration::get(Config::MOLLIE_API_KEY);
+        $liveApiKey = \Configuration::get(Config::MOLLIE_API_KEY);
 
         if (!$liveApiKey) {
             throw new MollieApiException('Apple Pay requires a live API key for session validation even in test mode. Add your live API key in the module\'s Configuration tab.', MollieApiException::APPLE_PAY_LIVE_KEY_REQUIRED);
@@ -104,7 +102,7 @@ final class RequestApplePayPaymentSessionHandler
 
     private function createEmptyCart(int $currencyId, int $langId): int
     {
-        $cart = new Cart();
+        $cart = new \Cart();
         $cart->id_currency = $currencyId;
         $cart->id_lang = $langId;
         $cart->id_address_invoice = 1;

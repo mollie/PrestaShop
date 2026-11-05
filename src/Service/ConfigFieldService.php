@@ -7,12 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
@@ -26,7 +26,7 @@ if (!defined('_PS_VERSION_')) {
 class ConfigFieldService
 {
     /**
-     * @var Mollie
+     * @var \Mollie
      */
     private $module;
     /**

@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,7 +15,6 @@ namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
 use Mollie\Adapter\LegacyContext;
 use Mollie\Config\Config;
-use MolPaymentMethod;
 use PrestaShop\Decimal\Number;
 
 if (!defined('_PS_VERSION_')) {
@@ -36,7 +36,7 @@ class BillinkPaymentMethodRestrictionValidator implements PaymentMethodRestricti
     /**
      * {@inheritDoc}
      */
-    public function isValid(MolPaymentMethod $paymentMethod): bool
+    public function isValid(\MolPaymentMethod $paymentMethod): bool
     {
         if (Config::BILLINK_CURRENCY !== $this->context->getCurrencyIsoCode()) {
             return false;
@@ -59,7 +59,7 @@ class BillinkPaymentMethodRestrictionValidator implements PaymentMethodRestricti
     /**
      * {@inheritDoc}
      */
-    public function supports(MolPaymentMethod $paymentMethod): bool
+    public function supports(\MolPaymentMethod $paymentMethod): bool
     {
         return Config::BILLINK === $paymentMethod->getPaymentMethodName();
     }

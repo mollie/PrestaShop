@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -327,7 +328,7 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, ConfigurationAdapter::class);
         $this->addServiceArgument($service, LoggerInterface::class);
         $this->addServiceArgument($service, ApiService::class);
-        $this->addServiceArgument($service, Mollie::class);
+        $this->addServiceArgument($service, \Mollie::class);
         $this->addServiceArgument($service, ApplePayDirectCertificateHandler::class);
 
         $service = $this->addService($container, EnvironmentSettingsCopyService::class, EnvironmentSettingsCopyService::class);
@@ -336,7 +337,7 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, CountryRepositoryInterface::class);
         $this->addServiceArgument($service, ApiKeyService::class);
         $this->addServiceArgument($service, ConfigurationAdapter::class);
-        $this->addServiceArgument($service, Mollie::class);
+        $this->addServiceArgument($service, \Mollie::class);
         $this->addServiceArgument($service, LoggerInterface::class);
 
         $service = $this->addService($container, AutoCaptureService::class, AutoCaptureService::class);
@@ -350,7 +351,7 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, LoggerInterface::class);
 
         $service = $this->addService($container, CertificateHandlerInterface::class, ApplePayDirectCertificateHandler::class);
-        $this->addServiceArgument($service, Mollie::class);
+        $this->addServiceArgument($service, \Mollie::class);
 
         $this->addService($container, ProfileIdProviderInterface::class, ProfileIdProvider::class);
 
@@ -432,7 +433,7 @@ final class BaseServiceProvider
         $this->addServiceArgument($service, CustomerRepository::class);
 
         $service = $this->addService($container, OrderManagementAssetLoaderInterface::class, OrderManagementAssetLoader::class);
-        $this->addServiceArgument($service, Mollie::class);
+        $this->addServiceArgument($service, \Mollie::class);
         $this->addServiceArgument($service, PaymentMethodRepository::class);
         $this->addServiceArgument($service, Link::class);
     }
@@ -442,7 +443,7 @@ final class BaseServiceProvider
         return $container->add($className, $this->getService($className, $service));
     }
 
-    //NOTE need to call this as extended services should be initialized everywhere.
+    // NOTE need to call this as extended services should be initialized everywhere.
     public function getService($className, $service)
     {
         if (isset($this->extendedServices[$className])) {
@@ -456,8 +457,8 @@ final class BaseServiceProvider
     {
         if (method_exists($service, 'withArgument')) {
             return $service->withArgument($argument);
-        } else {
-            return $service->addArgument($argument);
         }
+
+        return $service->addArgument($argument);
     }
 }

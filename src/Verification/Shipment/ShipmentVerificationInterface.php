@@ -7,14 +7,13 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Verification\Shipment;
 
 use Mollie\Exception\ShipmentCannotBeSentException;
-use Order;
-use OrderState;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -27,5 +26,5 @@ interface ShipmentVerificationInterface
      *
      * @throws ShipmentCannotBeSentException
      */
-    public function verify(Order $order, OrderState $orderState);
+    public function verify(\Order $order, \OrderState $orderState);
 }

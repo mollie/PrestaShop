@@ -31,13 +31,12 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Handler\Order;
 
-use Cart;
-use Exception;
 use Mollie\Action\CreateOrderPaymentFeeAction;
 use Mollie\Action\UpdateOrderTotalsAction;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
@@ -55,7 +54,6 @@ use Mollie\Repository\CartRepositoryInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Utility\ExceptionUtility;
-use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -63,7 +61,7 @@ if (!defined('_PS_VERSION_')) {
 
 class OrderPaymentFeeHandler
 {
-    const FILE_NAME = 'OrderPaymentFeeHandler';
+    public const FILE_NAME = 'OrderPaymentFeeHandler';
 
     /** @var LoggerInterface */
     public $logger;
@@ -105,12 +103,12 @@ class OrderPaymentFeeHandler
      */
     public function addOrderPaymentFee(int $orderId, $apiPayment): void
     {
-        /** @var Order $order */
+        /** @var \Order $order */
         $order = $this->orderRepository->findOneBy([
             'id_order' => $orderId,
         ]);
 
-        /** @var Cart $cart */
+        /** @var \Cart $cart */
         $cart = $this->cartRepository->findOneBy([
             'id_cart' => $order->id_cart,
         ]);
@@ -118,14 +116,14 @@ class OrderPaymentFeeHandler
         try {
             $originalAmountWithTax = (float) $cart->getOrderTotal(
                 true,
-                Cart::BOTH
+                \Cart::BOTH
             );
 
             $originalAmountWithoutTax = (float) $cart->getOrderTotal(
                 false,
-                Cart::BOTH
+                \Cart::BOTH
             );
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $this->logger->error(sprintf('%s - General exception while adding payment fee', self::FILE_NAME), [
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);

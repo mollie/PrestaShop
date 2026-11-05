@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,7 +15,6 @@ namespace Mollie\Handler\Exception;
 
 use Mollie\Exception\Code\ExceptionCode;
 use Mollie\Exception\MollieException;
-use Throwable;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -22,7 +22,7 @@ if (!defined('_PS_VERSION_')) {
 
 class CouldNotHandleOrderPaymentFee extends MollieException
 {
-    public static function failedToRetrievePaymentMethod(Throwable $exception): self
+    public static function failedToRetrievePaymentMethod(\Throwable $exception): self
     {
         return new self(
             'Failed to retrieve payment method',
@@ -31,7 +31,7 @@ class CouldNotHandleOrderPaymentFee extends MollieException
         );
     }
 
-    public static function failedToRetrievePaymentFee(Throwable $exception): self
+    public static function failedToRetrievePaymentFee(\Throwable $exception): self
     {
         return new self(
             'Failed to retrieve payment fee',
@@ -40,7 +40,7 @@ class CouldNotHandleOrderPaymentFee extends MollieException
         );
     }
 
-    public static function failedToCreateOrderPaymentFee(Throwable $exception): self
+    public static function failedToCreateOrderPaymentFee(\Throwable $exception): self
     {
         return new self(
             'Failed to create order payment fee',
@@ -49,7 +49,7 @@ class CouldNotHandleOrderPaymentFee extends MollieException
         );
     }
 
-    public static function failedToUpdateOrderTotalWithPaymentFee(Throwable $exception): self
+    public static function failedToUpdateOrderTotalWithPaymentFee(\Throwable $exception): self
     {
         return new self(
             'Failed to update order total with payment fee.',

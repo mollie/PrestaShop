@@ -7,9 +7,9 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -19,7 +19,7 @@ function upgrade_module_6_4_0(Mollie $module): bool
     try {
         // Helper function to install a tab without dependency injection
         // This bypasses the service container to avoid dependency issues during upgrade
-        $installTabFunction = function($module, $className, $parent, $name, $active = true, $icon = '') {
+        $installTabFunction = function ($module, $className, $parent, $name, $active = true, $icon = '') {
             $tabId = Tab::getIdFromClassName($className);
             if ($tabId) {
                 $moduleTab = new Tab($tabId);

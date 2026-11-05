@@ -31,12 +31,11 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service\PaymentMethod;
-
-use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -47,5 +46,5 @@ interface PaymentMethodRestrictionValidationInterface
     /**
      * @return bool
      */
-    public function isPaymentMethodValid(MolPaymentMethod $paymentMethod, array $skippedValidators = []);
+    public function isPaymentMethodValid(\MolPaymentMethod $paymentMethod, array $skippedValidators = []);
 }

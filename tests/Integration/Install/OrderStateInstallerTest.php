@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -33,7 +34,7 @@ class OrderStateInstallerTest extends BaseTestCase
             'name' => $key,
         ]);
 
-        //NOTE cannot just check by "name"  Field name is declared as lang field but is used in non multilang context
+        // NOTE cannot just check by "name"  Field name is declared as lang field but is used in non multilang context
         $this->assertDatabaseHas(\OrderState::class, [
             'id_order_state' => (int) \Configuration::get($key),
             'color' => $color,

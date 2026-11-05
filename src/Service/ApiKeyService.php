@@ -7,18 +7,17 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use Context;
 use Mollie\Adapter\API\CurlPSMollieHttpAdapter;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,18 +32,18 @@ class ApiKeyService
     {
         $api = new MollieApiClient(new CurlPSMollieHttpAdapter());
 
-        $context = Context::getContext();
+        $context = \Context::getContext();
 
         if ($apiKey) {
             try {
                 $this->validateApiKey($apiKey, $environment);
 
                 $api->setApiKey($apiKey);
-            } catch (ApiException | MollieException $e) {
+            } catch (ApiException|MollieException $e) {
                 return null;
             }
-        } elseif (!empty($context->employee) && Tools::getValue('Mollie_Api_Key')) {
-            $api->setApiKey(Tools::getValue('Mollie_Api_Key'));
+        } elseif (!empty($context->employee) && \Tools::getValue('Mollie_Api_Key')) {
+            $api->setApiKey(\Tools::getValue('Mollie_Api_Key'));
         }
 
         if (defined('_TB_VERSION_')) {

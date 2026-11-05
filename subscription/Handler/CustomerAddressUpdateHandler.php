@@ -7,13 +7,13 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Subscription\Handler;
 
 use Mollie\Subscription\Utility\ClockInterface;
-use MolRecurringOrder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -30,7 +30,7 @@ class CustomerAddressUpdateHandler
     }
 
     /**
-     * @param MolRecurringOrder[] $orders
+     * @param \MolRecurringOrder[] $orders
      *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException

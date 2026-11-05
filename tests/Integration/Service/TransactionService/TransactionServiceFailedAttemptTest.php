@@ -7,12 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Tests\Integration\Service\TransactionService;
 
-use Db;
 use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Config\Config;
@@ -30,8 +30,8 @@ use Order;
  */
 class TransactionServiceFailedAttemptTest extends BaseTestCase
 {
-    const TRANSACTION_ID = 'tr_pipres786_service';
-    const ORDER_TRANSACTION_ID = 'ord_pipres786_service';
+    public const TRANSACTION_ID = 'tr_pipres786_service';
+    public const ORDER_TRANSACTION_ID = 'ord_pipres786_service';
 
     /** @var TransactionService */
     private $transactionService;
@@ -87,7 +87,7 @@ class TransactionServiceFailedAttemptTest extends BaseTestCase
 
         $this->transactionService->processTransaction($this->buildPayment());
 
-        $this->assertEmpty(Order::getIdByCartId((int) $this->cart->id));
+        $this->assertEmpty(\Order::getIdByCartId((int) $this->cart->id));
     }
 
     public function testItLeavesANonTerminalAttemptAlone()
@@ -170,9 +170,9 @@ class TransactionServiceFailedAttemptTest extends BaseTestCase
 
     private function insertPayment($transactionId, $method)
     {
-        Db::getInstance()->delete('mollie_payments', '`transaction_id` = \'' . pSQL($transactionId) . '\'');
+        \Db::getInstance()->delete('mollie_payments', '`transaction_id` = \'' . pSQL($transactionId) . '\'');
 
-        Db::getInstance()->insert('mollie_payments', [
+        \Db::getInstance()->insert('mollie_payments', [
             'transaction_id' => pSQL($transactionId),
             'cart_id' => (int) $this->cart->id,
             'order_id' => 0,
@@ -186,7 +186,7 @@ class TransactionServiceFailedAttemptTest extends BaseTestCase
 
     private function getPayment($transactionId)
     {
-        return Db::getInstance()->getRow(
+        return \Db::getInstance()->getRow(
             'SELECT * FROM `' . _DB_PREFIX_ . 'mollie_payments` WHERE `transaction_id` = \''
             . pSQL($transactionId) . '\''
         );

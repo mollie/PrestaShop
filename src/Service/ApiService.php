@@ -7,12 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use Exception;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\Shop;
@@ -34,9 +34,6 @@ use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Service\PaymentMethod\PaymentMethodSortProviderInterface;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\VersionUtility;
-use MolPaymentMethod;
-use PrestaShopDatabaseException;
-use PrestaShopException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -138,7 +135,7 @@ class ApiService implements ApiServiceInterface
                     unset($apiMethods[$key]);
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $errorHandler = \Mollie\Handler\ErrorHandler\ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), false);
             $this->errors[] = $e->getMessage();
@@ -208,7 +205,7 @@ class ApiService implements ApiServiceInterface
         $this->environment = (int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT);
 
         $methods = [];
-        $emptyPaymentMethod = new MolPaymentMethod();
+        $emptyPaymentMethod = new \MolPaymentMethod();
         $emptyPaymentMethod->enabled = false;
         $emptyPaymentMethod->method = 'payments';
         $emptyPaymentMethod->description = '';
@@ -225,7 +222,7 @@ class ApiService implements ApiServiceInterface
             $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($apiMethod['id'], $this->environment);
 
             if ($paymentId) {
-                $paymentMethod = new MolPaymentMethod((int) $paymentId);
+                $paymentMethod = new \MolPaymentMethod((int) $paymentId);
 
                 $paymentMethod = $this->toPrecisionForDecimalNumbers($paymentMethod);
 
@@ -311,7 +308,7 @@ class ApiService implements ApiServiceInterface
      *
      * @return array
      *
-     * @throws PrestaShopDatabaseException
+     * @throws \PrestaShopDatabaseException
      */
     private function getExcludedCustomerGroupsForConfig(array &$methods): array
     {
@@ -330,8 +327,8 @@ class ApiService implements ApiServiceInterface
      * @return array|null
      *
      * @throws ApiException
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      *
      * @since 3.3.0
      * @since 3.3.2 $process option
@@ -403,8 +400,8 @@ class ApiService implements ApiServiceInterface
             [
                 'embed' => 'payments',
                 'include' => [
-                        'details' => 'remainderDetails',
-                    ],
+                    'details' => 'remainderDetails',
+                ],
             ]
         );
 
@@ -487,7 +484,7 @@ class ApiService implements ApiServiceInterface
         );
     }
 
-    private function toPrecisionForDecimalNumbers(MolPaymentMethod $paymentMethod): MolPaymentMethod
+    private function toPrecisionForDecimalNumbers(\MolPaymentMethod $paymentMethod): \MolPaymentMethod
     {
         $paymentMethod->surcharge_percentage = NumberUtility::toPrecision(
             (float) $paymentMethod->surcharge_percentage,

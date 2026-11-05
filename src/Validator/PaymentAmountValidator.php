@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -23,7 +24,7 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentAmountValidator
 {
-    const MOLLIE_AMOUNT_PRECISION = 2;
+    public const MOLLIE_AMOUNT_PRECISION = 2;
 
     /**
      * @param MollieOrderAlias|MolliePaymentAlias $apiPayment

@@ -11,9 +11,6 @@
 
 namespace Mollie\Service;
 
-use Context;
-use Tools;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -22,7 +19,7 @@ class ErrorDisplayService
 {
     public function showCookieError($id)
     {
-        $context = Context::getContext();
+        $context = \Context::getContext();
         if (isset($context->cookie->$id)) {
             $context->controller->warning = $this->stripSlashesDeep(json_decode($context->cookie->$id));
             unset($context->cookie->$id);
@@ -34,7 +31,7 @@ class ErrorDisplayService
     {
         $value = is_array($value) ?
             array_map('stripslashes', $value) :
-            Tools::stripslashes($value);
+            \Tools::stripslashes($value);
 
         return $value;
     }

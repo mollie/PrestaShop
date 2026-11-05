@@ -7,19 +7,19 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Tests\Unit\Handler\Certificate;
 
-use Mollie;
 use Mollie\Handler\Certificate\ApplePayDirectCertificateHandler;
 use Mollie\Handler\Certificate\Exception\ApplePayDirectCertificateCreation;
 use PHPUnit\Framework\TestCase;
 
 class ApplePayDirectCertificateHandlerTest extends TestCase
 {
-    const MOLLIE_PSP_ID = 'D9C7F701C8C6F2C6F3D656C09944E32200B176F152E58D9140C1C53AA8246E60';
+    public const MOLLIE_PSP_ID = 'D9C7F701C8C6F2C6F3D656C09944E32200B176F152E58D9140C1C53AA8246E60';
 
     /** @var string */
     private $documentRoot;
@@ -195,7 +195,7 @@ class ApplePayDirectCertificateHandlerTest extends TestCase
 
     private function createHandler(): ApplePayDirectCertificateHandler
     {
-        $module = $this->createMock(Mollie::class);
+        $module = $this->createMock(\Mollie::class);
         $module->method('l')->willReturnArgument(0);
 
         return new ApplePayDirectCertificateHandler($module);

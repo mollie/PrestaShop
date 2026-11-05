@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -528,9 +529,9 @@ class CartLinesService
 
             if (isset($item['discount'])) {
                 $line->setDiscountAmount(new Amount(
-                        $currency,
-                        TextFormatUtility::formatNumber($item['discount'], $apiRoundingPrecision, '.', '')
-                    )
+                    $currency,
+                    TextFormatUtility::formatNumber($item['discount'], $apiRoundingPrecision, '.', '')
+                )
                 );
             }
 

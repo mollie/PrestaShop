@@ -7,13 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Builder;
 
-use Cart;
-use Mollie;
 use Mollie\Builder\ApplePayDirect\ApplePayLineItemsBuilder;
 use Mollie\Factory\ModuleFactory;
 use PHPUnit\Framework\TestCase;
@@ -29,13 +28,13 @@ class ApplePayLineItemsBuilderTest extends TestCase
         float $paymentFee,
         array $expected
     ): void {
-        $module = $this->createMock(Mollie::class);
+        $module = $this->createMock(\Mollie::class);
         $module->method('l')->willReturnArgument(0);
 
         $moduleFactory = $this->createMock(ModuleFactory::class);
         $moduleFactory->method('getModule')->willReturn($module);
 
-        $cart = $this->createMock(Cart::class);
+        $cart = $this->createMock(\Cart::class);
         $cart->method('getOrderTotal')->willReturnCallback(
             function ($withTaxes, $type) use ($cartTotals) {
                 $key = $type . ($withTaxes ? '_incl' : '_excl');
@@ -104,10 +103,10 @@ class ApplePayLineItemsBuilderTest extends TestCase
     private function cartTotals(float $productsTaxExcl, float $shipping, float $discountsTaxExcl, float $wrapping): array
     {
         return [
-            Cart::ONLY_PRODUCTS . '_excl' => $productsTaxExcl,
-            Cart::ONLY_SHIPPING . '_incl' => $shipping,
-            Cart::ONLY_DISCOUNTS . '_excl' => $discountsTaxExcl,
-            Cart::ONLY_WRAPPING . '_incl' => $wrapping,
+            \Cart::ONLY_PRODUCTS . '_excl' => $productsTaxExcl,
+            \Cart::ONLY_SHIPPING . '_incl' => $shipping,
+            \Cart::ONLY_DISCOUNTS . '_excl' => $discountsTaxExcl,
+            \Cart::ONLY_WRAPPING . '_incl' => $wrapping,
         ];
     }
 }

@@ -31,6 +31,7 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -47,7 +48,6 @@ use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Service\Content\TemplateParserInterface;
 use Mollie\Service\LanguageService;
-use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 if (!defined('_PS_VERSION_')) {
@@ -56,9 +56,9 @@ if (!defined('_PS_VERSION_')) {
 
 class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
 {
-    const FILE_NAME = 'IdealPaymentOptionProvider';
+    public const FILE_NAME = 'IdealPaymentOptionProvider';
 
-    /** @var Mollie */
+    /** @var \Mollie */
     private $module;
 
     /** @var LegacyContext */
@@ -105,7 +105,7 @@ class IdealPaymentOptionProvider implements PaymentOptionProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function getPaymentOption(MolPaymentMethod $paymentMethod): PaymentOption
+    public function getPaymentOption(\MolPaymentMethod $paymentMethod): PaymentOption
     {
         $paymentOption = new PaymentOption();
 

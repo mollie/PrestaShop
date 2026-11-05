@@ -7,27 +7,16 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use Address;
-use Carrier;
-use Context;
-use Country;
-use Language;
-use MolCarrierInformation;
 use Mollie\Config\Config;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Repository\MolCarrierInformationRepository;
 use Mollie\Repository\OrderShipmentRepository;
-use Order;
-use OrderCarrier;
-use PrestaShopDatabaseException;
-use PrestaShopException;
-use Tools;
-use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -60,32 +49,32 @@ class ShipmentService implements ShipmentServiceInterface
      *
      * @return array|null
      *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      *
      * @since 3.3.0
      */
     public function getShipmentInformation($orderReference)
     {
-        $orders = Order::getByReference($orderReference);
+        $orders = \Order::getByReference($orderReference);
 
-        /** @var Order $order */
+        /** @var \Order $order */
         $order = $orders->getFirst();
 
-        if (!Validate::isLoadedObject($order)) {
+        if (!\Validate::isLoadedObject($order)) {
             return null;
         }
 
-        $invoiceAddress = new Address($order->id_address_invoice);
-        $deliveryAddress = new Address($order->id_address_delivery);
+        $invoiceAddress = new \Address($order->id_address_invoice);
+        $deliveryAddress = new \Address($order->id_address_delivery);
 
         $carrierInformationId = $this->informationRepository->getMollieCarrierInformationIdByCarrierId($order->id_carrier);
 
-        $carrierInformation = new MolCarrierInformation($carrierInformationId);
+        $carrierInformation = new \MolCarrierInformation($carrierInformationId);
 
-        if (!Validate::isLoadedObject($invoiceAddress)
-            || !Validate::isLoadedObject($deliveryAddress)
-            || !Validate::isLoadedObject($carrierInformation)
+        if (!\Validate::isLoadedObject($invoiceAddress)
+            || !\Validate::isLoadedObject($deliveryAddress)
+            || !\Validate::isLoadedObject($carrierInformation)
         ) {
             return [];
         }
@@ -94,10 +83,10 @@ class ShipmentService implements ShipmentServiceInterface
             return [];
         }
 
-        $langId = Context::getContext()->language->id;
+        $langId = \Context::getContext()->language->id;
 
         if (Config::MOLLIE_CARRIER_MODULE === $carrierInformation->url_source) {
-            $carrier = new Carrier($order->id_carrier);
+            $carrier = new \Carrier($order->id_carrier);
 
             if (in_array($carrier->external_module_name, ['postnl', 'myparcel'])) {
                 $table = 'postnl' === $carrier->external_module_name ? 'postnlmod_order' : 'myparcel_order';
@@ -106,9 +95,9 @@ class ShipmentService implements ShipmentServiceInterface
                     $info = $this->orderShipmentRepository->getShipmentInformation($table, $order->id);
 
                     if ($info['tracktrace'] && $info['postcode']) {
-                        $postcode = Tools::strtoupper(str_replace(' ', '', $info['postcode']));
-                        $langIso = Tools::strtoupper(Language::getIsoById($langId));
-                        $countryIso = Tools::strtoupper(Country::getIsoById($deliveryAddress->id_country));
+                        $postcode = \Tools::strtoupper(str_replace(' ', '', $info['postcode']));
+                        $langIso = \Tools::strtoupper(\Language::getIsoById($langId));
+                        $countryIso = \Tools::strtoupper(\Country::getIsoById($deliveryAddress->id_country));
 
                         $tracktrace = $info['tracktrace'];
 
@@ -120,7 +109,7 @@ class ShipmentService implements ShipmentServiceInterface
                             ],
                         ];
                     }
-                } catch (PrestaShopDatabaseException $e) {
+                } catch (\PrestaShopDatabaseException $e) {
                     $errorHandler = ErrorHandler::getInstance();
                     $errorHandler->handle($e, $e->getCode(), false);
 
@@ -132,8 +121,8 @@ class ShipmentService implements ShipmentServiceInterface
         }
 
         if (Config::MOLLIE_CARRIER_CARRIER === $carrierInformation->url_source) {
-            $carrier = new Carrier($order->id_carrier);
-            $orderCarrier = new OrderCarrier($order->getIdOrderCarrier());
+            $carrier = new \Carrier($order->id_carrier);
+            $orderCarrier = new \OrderCarrier($order->getIdOrderCarrier());
 
             if (!$carrier->id || !$orderCarrier->id || !$carrier->name || !$orderCarrier->tracking_number) {
                 return [];
@@ -149,19 +138,19 @@ class ShipmentService implements ShipmentServiceInterface
         }
 
         if (Config::MOLLIE_CARRIER_CUSTOM === $carrierInformation->url_source) {
-            $carrier = new Carrier($order->id_carrier);
-            $orderCarrier = new OrderCarrier($order->getIdOrderCarrier());
+            $carrier = new \Carrier($order->id_carrier);
+            $orderCarrier = new \OrderCarrier($order->getIdOrderCarrier());
 
             if (!$carrier->id || !$orderCarrier->id || !$carrier->name || !$orderCarrier->tracking_number) {
                 return [];
             }
 
-            $invoicePostcode = Tools::strtoupper(str_replace(' ', '', $invoiceAddress->postcode));
-            $invoiceCountryIso = Tools::strtoupper(Country::getIsoById($invoiceAddress->id_country));
-            $deliveryPostcode = Tools::strtoupper(str_replace(' ', '', $deliveryAddress->postcode));
-            $deliveryCountryIso = Tools::strtoupper(Country::getIsoById($deliveryAddress->id_country));
+            $invoicePostcode = \Tools::strtoupper(str_replace(' ', '', $invoiceAddress->postcode));
+            $invoiceCountryIso = \Tools::strtoupper(\Country::getIsoById($invoiceAddress->id_country));
+            $deliveryPostcode = \Tools::strtoupper(str_replace(' ', '', $deliveryAddress->postcode));
+            $deliveryCountryIso = \Tools::strtoupper(\Country::getIsoById($deliveryAddress->id_country));
 
-            $langIso = Tools::strtoupper(Language::getIsoById($langId));
+            $langIso = \Tools::strtoupper(\Language::getIsoById($langId));
 
             $info = [
                 '@' => $orderCarrier->tracking_number,

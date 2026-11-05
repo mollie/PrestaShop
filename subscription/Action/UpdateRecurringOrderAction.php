@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -26,7 +27,7 @@ if (!defined('_PS_VERSION_')) {
 
 class UpdateRecurringOrderAction
 {
-    const FILE_NAME = 'UpdateRecurringOrderAction';
+    public const FILE_NAME = 'UpdateRecurringOrderAction';
     /** @var PrestaLoggerInterface */
     private $logger;
     /** @var ClockInterface */

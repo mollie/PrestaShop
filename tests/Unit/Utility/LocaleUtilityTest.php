@@ -7,20 +7,18 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Tests\Unit\Utility;
 
-use Configuration;
-use Context;
-use Language;
 use Mollie\Tests\Unit\BaseTestCase;
 use Mollie\Utility\LocaleUtility;
 
 class LocaleUtilityTest extends BaseTestCase
 {
-    /** @var Language|null */
+    /** @var \Language|null */
     private $originalLanguage;
 
     /** @var string|false */
@@ -30,14 +28,14 @@ class LocaleUtilityTest extends BaseTestCase
     {
         parent::setUp();
 
-        $this->originalLanguage = Context::getContext()->language;
-        $this->originalCountry = Configuration::get('PS_LOCALE_COUNTRY');
+        $this->originalLanguage = \Context::getContext()->language;
+        $this->originalCountry = \Configuration::get('PS_LOCALE_COUNTRY');
     }
 
     protected function tearDown(): void
     {
-        Context::getContext()->language = $this->originalLanguage;
-        Configuration::set('PS_LOCALE_COUNTRY', $this->originalCountry);
+        \Context::getContext()->language = $this->originalLanguage;
+        \Configuration::set('PS_LOCALE_COUNTRY', $this->originalCountry);
 
         parent::tearDown();
     }
@@ -47,10 +45,10 @@ class LocaleUtilityTest extends BaseTestCase
      */
     public function testGetWebShopLocale($languageIso, $shopCountryIso, $expected)
     {
-        $language = new Language();
+        $language = new \Language();
         $language->iso_code = $languageIso;
-        Context::getContext()->language = $language;
-        Configuration::set('PS_LOCALE_COUNTRY', $shopCountryIso);
+        \Context::getContext()->language = $language;
+        \Configuration::set('PS_LOCALE_COUNTRY', $shopCountryIso);
 
         $this->assertSame($expected, LocaleUtility::getWebShopLocale());
     }
@@ -73,10 +71,10 @@ class LocaleUtilityTest extends BaseTestCase
      */
     public function testGetApplePayLocale($languageIso, $languageLocale, $expected)
     {
-        $language = new Language();
+        $language = new \Language();
         $language->iso_code = $languageIso;
         $language->locale = $languageLocale;
-        Context::getContext()->language = $language;
+        \Context::getContext()->language = $language;
 
         $this->assertSame($expected, LocaleUtility::getApplePayLocale());
     }

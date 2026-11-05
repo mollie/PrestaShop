@@ -7,13 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Repository;
 
-use Country;
-use Db;
 use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -24,14 +23,14 @@ final class CountryRepository extends AbstractRepository implements CountryRepos
 {
     public function __construct()
     {
-        parent::__construct(Country::class);
+        parent::__construct(\Country::class);
     }
 
     public function getMethodCountryIds($methodId)
     {
         $sql = 'SELECT id_country FROM `' . _DB_PREFIX_ . 'mol_country` WHERE id_method = "' . pSQL($methodId) . '"';
 
-        $countryIds = Db::getInstance()->executeS($sql);
+        $countryIds = \Db::getInstance()->executeS($sql);
         $countryIdsArray = [];
         if (!$countryIds) {
             return [];
@@ -47,7 +46,7 @@ final class CountryRepository extends AbstractRepository implements CountryRepos
     public function updatePaymentMethodCountries($idMethod, $idCountries)
     {
         $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'mol_country WHERE `id_method` = "' . (int) $idMethod . '"';
-        if (!Db::getInstance()->execute($sql)) {
+        if (!\Db::getInstance()->execute($sql)) {
             return false;
         }
 
@@ -65,7 +64,7 @@ final class CountryRepository extends AbstractRepository implements CountryRepos
             }
             $sql .= '"' . pSQL($idMethod) . '", ' . (int) $idCountry . ', ' . (int) $allCountries . ')';
 
-            if (!Db::getInstance()->execute($sql)) {
+            if (!\Db::getInstance()->execute($sql)) {
                 $response = false;
             }
         }
@@ -79,7 +78,7 @@ final class CountryRepository extends AbstractRepository implements CountryRepos
                     FROM `' . _DB_PREFIX_ . 'mol_excluded_country`
                     WHERE id_method = "' . pSQL($methodId) . '"';
 
-        $countryIds = Db::getInstance()->executeS($sql);
+        $countryIds = \Db::getInstance()->executeS($sql);
         $countryIdsArray = [];
         foreach ($countryIds as $countryId) {
             $countryIdsArray[] = $countryId['id_country'];
@@ -91,7 +90,7 @@ final class CountryRepository extends AbstractRepository implements CountryRepos
     public function updatePaymentMethodExcludedCountries($idMethod, $idCountries)
     {
         $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'mol_excluded_country WHERE `id_method` = "' . (int) $idMethod . '"';
-        if (!Db::getInstance()->execute($sql)) {
+        if (!\Db::getInstance()->execute($sql)) {
             return false;
         }
 
@@ -110,7 +109,7 @@ final class CountryRepository extends AbstractRepository implements CountryRepos
             }
             $sql .= '"' . pSQL($idMethod) . '", ' . (int) $idCountry . ', ' . (int) $allCountries . ')';
 
-            if (!Db::getInstance()->execute($sql)) {
+            if (!\Db::getInstance()->execute($sql)) {
                 $response = false;
             }
         }

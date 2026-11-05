@@ -31,13 +31,12 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Provider;
 
-use Configuration;
-use Mollie;
 use Mollie\Adapter\Context;
 use Mollie\Calculator\PaymentFeeCalculator;
 use Mollie\Config\Config;
@@ -46,8 +45,6 @@ use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Validator\PaymentFeeValidator;
-use MolPaymentMethod;
-use Throwable;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -60,7 +57,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
     /** @var Context */
     private $context;
 
-    /** @var Mollie */
+    /** @var \Mollie */
     private $module;
 
     /** @var PaymentFeeValidator */
@@ -89,14 +86,14 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl): PaymentFeeData
+    public function getPaymentFee(\MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl): PaymentFeeData
     {
         try {
             $surchargeFixedPriceTaxExcl = (float) $paymentMethod->surcharge_fixed_amount_tax_excl;
             $surchargePercentage = (float) $paymentMethod->surcharge_percentage;
             $surchargeLimit = (float) $paymentMethod->surcharge_limit;
 
-            $defaultCountryId = (int) Configuration::get('PS_COUNTRY_DEFAULT');
+            $defaultCountryId = (int) \Configuration::get('PS_COUNTRY_DEFAULT');
 
             $taxCalculator = $this->taxCalculatorProvider->getTaxCalculator(
                 (int) $paymentMethod->tax_rules_group_id,
@@ -132,7 +129,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
             }
 
             return $paymentFeeData;
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $this->logger->error(sprintf('%s - Error while calculating payment fee', self::FILE_NAME), [
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);

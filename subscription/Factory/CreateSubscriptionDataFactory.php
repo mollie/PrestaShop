@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,7 +15,6 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Factory;
 
-use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
 use Mollie\Config\Config;
@@ -31,7 +31,6 @@ use Mollie\Subscription\Provider\SubscriptionOrderAmountProvider;
 use Mollie\Subscription\Provider\SubscriptionStartDateProvider;
 use Mollie\Subscription\Repository\CombinationRepository;
 use Mollie\Utility\SecureKeyUtility;
-use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -47,7 +46,7 @@ class CreateSubscriptionDataFactory
     private $subscriptionDescription;
     /** @var PaymentMethodRepositoryInterface */
     private $methodRepository;
-    /** @var Mollie */
+    /** @var \Mollie */
     private $module;
     /** @var Context */
     private $context;
@@ -87,7 +86,7 @@ class CreateSubscriptionDataFactory
     /**
      * @throws MollieSubscriptionException
      */
-    public function build(Order $order, array $subscriptionProduct): SubscriptionDataDTO
+    public function build(\Order $order, array $subscriptionProduct): SubscriptionDataDTO
     {
         // TODO modify mol_customer table to hold id_customer (default PS customer ID as it holds id_shop). Then we won't need separate id_shop and id_shop_group column
 

@@ -31,6 +31,7 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -38,8 +39,6 @@ namespace Mollie\Service\PaymentMethod;
 
 use Mollie\Logger\LoggerInterface;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\PaymentMethodRestrictionValidatorInterface;
-use MolPaymentMethod;
-use Throwable;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -47,7 +46,7 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionValidationInterface
 {
-    const FILE_NAME = 'PaymentMethodRestrictionValidation';
+    public const FILE_NAME = 'PaymentMethodRestrictionValidation';
 
     /**
      * @var PaymentMethodRestrictionValidatorInterface[]
@@ -70,7 +69,7 @@ class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionVali
      *
      * @param string[] $skippedValidators validator class names that do not apply to this caller
      */
-    public function isPaymentMethodValid(MolPaymentMethod $paymentMethod, array $skippedValidators = []): bool
+    public function isPaymentMethodValid(\MolPaymentMethod $paymentMethod, array $skippedValidators = []): bool
     {
         $success = false;
 
@@ -99,7 +98,7 @@ class PaymentMethodRestrictionValidation implements PaymentMethodRestrictionVali
                         return false;
                     }
                 }
-            } catch (Throwable $exception) {
+            } catch (\Throwable $exception) {
                 $this->logger->error(
                     sprintf('%s has caught error: %s', self::FILE_NAME, $exception->getMessage())
                 );

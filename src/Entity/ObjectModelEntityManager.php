@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -26,7 +27,7 @@ class ObjectModelEntityManager implements EntityManagerInterface
     }
 
     /**
-     * @param \ObjectModel $model
+     * @param ObjectModel $model
      * @param string $unitOfWorkType
      * @param string|null $specificKey
      *                                 for example external_id key to make it easier to keep
@@ -43,10 +44,10 @@ class ObjectModelEntityManager implements EntityManagerInterface
     }
 
     /**
-     * @return array<\ObjectModel>
+     * @return array<ObjectModel>
      *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function flush(): array
     {

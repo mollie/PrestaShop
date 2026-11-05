@@ -7,14 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use Cart;
-use Currency;
-use Db;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Exceptions\ApiException;
@@ -43,12 +41,7 @@ use Mollie\Utility\PaymentAttemptUtility;
 use Mollie\Utility\SecureKeyUtility;
 use Mollie\Utility\TextGeneratorUtility;
 use Mollie\Utility\TransactionUtility;
-use MolPaymentMethod;
 use Order;
-use OrderPayment;
-use PrestaShopDatabaseException;
-use PrestaShopException;
-use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -56,9 +49,9 @@ if (!defined('_PS_VERSION_')) {
 
 class TransactionService
 {
-    const FILE_NAME = 'TransactionService';
+    public const FILE_NAME = 'TransactionService';
 
-    /** @var Mollie */
+    /** @var \Mollie */
     private $module;
 
     /** @var OrderStatusService */
@@ -132,8 +125,8 @@ class TransactionService
      *
      * @return string|Payment Returns a single payment (in case of Orders API it returns the highest prio Payment object) or status string
      *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      * @throws ApiException
      * @throws TransactionException
      *
@@ -174,9 +167,9 @@ class TransactionService
         }
 
         /** @var int $orderId */
-        $orderId = Order::getIdByCartId((int) $apiPayment->metadata->cart_id);
+        $orderId = \Order::getIdByCartId((int) $apiPayment->metadata->cart_id);
 
-        $cart = new Cart($apiPayment->metadata->cart_id);
+        $cart = new \Cart($apiPayment->metadata->cart_id);
 
         $key = SecureKeyUtility::generateReturnKey(
             $cart->id_customer,
@@ -284,7 +277,7 @@ class TransactionService
                         ]);
                     }
 
-                    $order = new Order($orderId);
+                    $order = new \Order($orderId);
 
                     try {
                         $this->shipmentSenderHandler->handleShipmentSender($this->module->getApiClient(), $order, new \OrderState($order->current_state));
@@ -348,7 +341,7 @@ class TransactionService
 
             return 'Order with given transaction was not found';
         }
-        $order = new Order($orderId);
+        $order = new \Order($orderId);
 
         $this->mollieOrderCreationService->updateMolliePaymentReference($apiPayment->id, $order->reference);
 
@@ -361,7 +354,7 @@ class TransactionService
         return $apiPayment;
     }
 
-    public function updateOrderTransaction($transactionId, Order $order)
+    public function updateOrderTransaction($transactionId, \Order $order)
     {
         $transactionInfos = [];
         $isOrder = TransactionUtility::isOrderTransaction($transactionId);
@@ -390,17 +383,17 @@ class TransactionService
      * @param int $orderId
      * @param Payment|MollieOrderAlias $transaction
      *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function updateTransaction($orderId, $transaction)
     {
         $paymentMethod = $this->paymentMethodService->getPaymentMethod($transaction);
-        $order = new Order($orderId);
+        $order = new \Order($orderId);
         if (!$order->getOrderPayments()) {
             $this->updateOrderTransaction($transaction->id, $order);
         } else {
-            /** @var OrderPayment $orderPayment */
+            /** @var \OrderPayment $orderPayment */
             foreach ($order->getOrderPayments() as $orderPayment) {
                 if ($orderPayment->transaction_id) {
                     continue;
@@ -411,17 +404,17 @@ class TransactionService
             }
         }
 
-        $this->updateOrderTotalPaidReal(new Order($orderId));
+        $this->updateOrderTotalPaidReal(new \Order($orderId));
     }
 
-    private function updateOrderTotalPaidReal(Order $order): void
+    private function updateOrderTotalPaidReal(\Order $order): void
     {
-        if (!Validate::isLoadedObject($order)) {
+        if (!\Validate::isLoadedObject($order)) {
             return;
         }
 
         $totalPaidReal = 0.0;
-        /** @var OrderPayment $orderPayment */
+        /** @var \OrderPayment $orderPayment */
         foreach ($order->getOrderPaymentCollection() as $orderPayment) {
             if ((int) $orderPayment->id_currency !== (int) $order->id_currency) {
                 continue;
@@ -485,13 +478,13 @@ class TransactionService
      *
      * @return bool
      *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     private function savePaymentStatus($transactionId, $status, $orderId)
     {
         try {
-            $result = Db::getInstance()->update(
+            $result = \Db::getInstance()->update(
                 'mollie_payments',
                 [
                     'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
@@ -500,7 +493,7 @@ class TransactionService
                 ],
                 '`transaction_id` = \'' . pSQL($transactionId) . '\''
             );
-        } catch (PrestaShopDatabaseException $e) {
+        } catch (\PrestaShopDatabaseException $e) {
             $this->logger->error(sprintf('%s - Could not save Mollie payment status', self::FILE_NAME), [
                 'exception' => ExceptionUtility::getExceptions($e),
             ]);
@@ -570,24 +563,24 @@ class TransactionService
     }
 
     /**
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
-    private function updateOrderPayments(array $transactionInfos, Order $order)
+    private function updateOrderPayments(array $transactionInfos, \Order $order)
     {
         foreach ($transactionInfos as $transactionInfo) {
             self::buildOrderPayment($transactionInfo, $order)->add();
         }
     }
 
-    public static function buildOrderPayment(array $transactionInfo, Order $order): OrderPayment
+    public static function buildOrderPayment(array $transactionInfo, \Order $order): \OrderPayment
     {
-        $orderPayment = new OrderPayment();
+        $orderPayment = new \OrderPayment();
         $orderPayment->order_reference = $order->reference;
         $orderPayment->amount = $transactionInfo['amount'];
         $orderPayment->payment_method = $transactionInfo['paymentName'];
         $orderPayment->transaction_id = $transactionInfo['transactionId'];
-        $orderPayment->id_currency = Currency::getIdByIsoCode($transactionInfo['currency']);
+        $orderPayment->id_currency = \Currency::getIdByIsoCode($transactionInfo['currency']);
         $orderPayment->conversion_rate = $order->conversion_rate;
 
         return $orderPayment;
@@ -595,9 +588,9 @@ class TransactionService
 
     private function updateOrderDescription($apiPayment, int $orderId)
     {
-        $environment = (int) $this->configurationAdapter->get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+        $environment = (int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT);
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
-        $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
+        $paymentMethodObj = new \MolPaymentMethod((int) $paymentMethodId);
         $orderNumber = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
         $this->mollieOrderNumberService->assign($this->module->getApiClient(), $apiPayment, $orderNumber);
 
@@ -613,9 +606,9 @@ class TransactionService
 
             throw new TransactionException('Order does not exist', HttpStatusCode::HTTP_METHOD_NOT_ALLOWED);
         }
-        $environment = (int) $this->configurationAdapter->get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+        $environment = (int) $this->configurationAdapter->get(Config::MOLLIE_ENVIRONMENT);
         $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($apiPayment->method, $environment);
-        $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
+        $paymentMethodObj = new \MolPaymentMethod((int) $paymentMethodId);
         $apiPayment->description = TextGeneratorUtility::generateDescriptionFromCart($paymentMethodObj->description, $orderId);
         $apiPayment->update();
 
@@ -631,7 +624,7 @@ class TransactionService
         }
 
         if ($paymentMethod) {
-            $orderId = Order::getIdByCartId($paymentMethod['cart_id']);
+            $orderId = \Order::getIdByCartId($paymentMethod['cart_id']);
             if (!$orderId) {
                 return;
             }
@@ -652,7 +645,7 @@ class TransactionService
         }
 
         if ($paymentMethod) {
-            $orderId = Order::getIdByCartId($paymentMethod['cart_id']);
+            $orderId = \Order::getIdByCartId($paymentMethod['cart_id']);
             if (!$orderId) {
                 return;
             }
@@ -686,7 +679,7 @@ class TransactionService
 
     private function isManualCapturePayment($apiPayment): bool
     {
-        if ($apiPayment->status !== \Mollie\Api\Types\PaymentStatus::STATUS_AUTHORIZED) {
+        if ($apiPayment->status !== PaymentStatus::STATUS_AUTHORIZED) {
             return false;
         }
 

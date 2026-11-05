@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -31,8 +32,8 @@ if (!defined('_PS_VERSION_')) {
  */
 class ExpressCartCarrierService
 {
-    const FILE_NAME = 'ExpressCartCarrierService';
-    const ONE_PAGE_CHECKOUT_TEMPORARY_ALIAS_PREFIX = 'temp_opc_';
+    public const FILE_NAME = 'ExpressCartCarrierService';
+    public const ONE_PAGE_CHECKOUT_TEMPORARY_ALIAS_PREFIX = 'temp_opc_';
 
     /** @var PrestaLoggerInterface */
     private $logger;

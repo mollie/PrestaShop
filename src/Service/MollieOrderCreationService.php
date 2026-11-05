@@ -7,14 +7,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use Db;
-use Exception;
-use Mollie;
 use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment as MolliePaymentAlias;
 use Mollie\Api\Types\PaymentStatus;
@@ -24,8 +22,6 @@ use Mollie\DTO\PaymentData;
 use Mollie\Exception\OrderCreationException;
 use Mollie\Handler\ErrorHandler\ErrorHandler;
 use Mollie\Handler\Exception\OrderExceptionHandler;
-use MolPaymentMethod;
-use PrestaShopException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -38,11 +34,11 @@ class MollieOrderCreationService
      */
     private $exceptionHandler;
     /**
-     * @var Mollie
+     * @var \Mollie
      */
     private $module;
 
-    public function __construct(OrderExceptionHandler $exceptionHandler, Mollie $module)
+    public function __construct(OrderExceptionHandler $exceptionHandler, \Mollie $module)
     {
         $this->exceptionHandler = $exceptionHandler;
         $this->module = $module;
@@ -53,11 +49,11 @@ class MollieOrderCreationService
      *
      * @return false|MollieOrderAlias|MolliePaymentAlias
      */
-    public function createMollieOrder($data, MolPaymentMethod $paymentMethodObj)
+    public function createMollieOrder($data, \MolPaymentMethod $paymentMethodObj)
     {
         try {
             $apiPayment = $this->createPayment($data, $paymentMethodObj->method);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             if ($data instanceof OrderData) {
                 $data->setDeliveryPhoneNumber(null);
                 $data->setBillingPhoneNumber(null);
@@ -68,7 +64,7 @@ class MollieOrderCreationService
                 $apiPayment = $this->createPayment($data, $paymentMethodObj->method);
             } catch (OrderCreationException $e) {
                 throw $e;
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 throw $e;
             }
         }
@@ -82,16 +78,16 @@ class MollieOrderCreationService
      *
      * @return false|MollieOrderAlias|MolliePaymentAlias
      *
-     * @throws PrestaShopException
+     * @throws \PrestaShopException
      */
-    public function createMollieApplePayDirectOrder($data, MolPaymentMethod $paymentMethodObj)
+    public function createMollieApplePayDirectOrder($data, \MolPaymentMethod $paymentMethodObj)
     {
         try {
             $apiPayment = $this->createPayment($data, $paymentMethodObj->method);
         } catch (OrderCreationException $e) {
             $errorHandler = ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), true);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $errorHandler = ErrorHandler::getInstance();
             $errorHandler->handle($e, $e->getCode(), true);
         }
@@ -113,7 +109,7 @@ class MollieOrderCreationService
             $mandateId = $apiPayment->mandateId;
         }
 
-        Db::getInstance()->insert(
+        \Db::getInstance()->insert(
             'mollie_payments',
             [
                 'cart_id' => (int) $cartId,
@@ -130,7 +126,7 @@ class MollieOrderCreationService
 
     public function updateMolliePaymentReference(string $transactionId, string $orderReference)
     {
-        Db::getInstance()->update(
+        \Db::getInstance()->update(
             'mollie_payments',
             [
                 'order_reference' => pSQL($orderReference),
@@ -142,7 +138,7 @@ class MollieOrderCreationService
 
     public function addTransactionMandate(string $transactionId, string $mandateId)
     {
-        Db::getInstance()->update(
+        \Db::getInstance()->update(
             'mollie_payments',
             [
                 'mandate_id' => pSQL($mandateId),
@@ -179,7 +175,7 @@ class MollieOrderCreationService
             }
 
             return $payment;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $this->exceptionHandler->handle($e);
         }
     }

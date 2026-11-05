@@ -7,13 +7,13 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Exception;
 
 use Mollie\Exception\Code\ExceptionCode;
-use Throwable;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -21,7 +21,7 @@ if (!defined('_PS_VERSION_')) {
 
 class GuestCheckoutNotAvailableException extends MollieException
 {
-    public static function guestCheckoutDisabled(?Throwable $exception = null): self
+    public static function guestCheckoutDisabled(?\Throwable $exception = null): self
     {
         return new self(
             'Guest checkout is not available.',

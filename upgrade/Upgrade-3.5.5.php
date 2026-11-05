@@ -8,7 +8,6 @@
  *
  * @see        https://github.com/mollie/PrestaShop
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }

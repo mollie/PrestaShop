@@ -7,6 +7,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -89,7 +90,7 @@ class mollieSubscriptionsModuleFrontController extends ModuleFrontController
             /** @var RecurringOrdersPresenter $recurringOrdersPresenter */
             $recurringOrdersPresenter = $this->module->getService(RecurringOrdersPresenter::class);
 
-            /** @var ?\MolCustomer $molCustomer */
+            /** @var ?MolCustomer $molCustomer */
             $molCustomer = $molCustomerRepository->findOneBy([
                 'email' => $this->context->customer->email,
             ]);
@@ -99,7 +100,7 @@ class mollieSubscriptionsModuleFrontController extends ModuleFrontController
             );
 
             $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $logger->error(sprintf('%s - Error in subscriptions controller', self::FILE_NAME), [
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);

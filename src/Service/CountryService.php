@@ -7,14 +7,11 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
-
-use Context;
-use Country;
-use Mollie;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -22,23 +19,23 @@ if (!defined('_PS_VERSION_')) {
 
 class CountryService
 {
-    const FILE_NAME = 'CountryService';
+    public const FILE_NAME = 'CountryService';
 
     /**
-     * @var Mollie
+     * @var \Mollie
      */
     private $module;
 
-    public function __construct(Mollie $module)
+    public function __construct(\Mollie $module)
     {
         $this->module = $module;
     }
 
     public function getActiveCountriesList($onlyActive = true)
     {
-        $context = Context::getContext();
+        $context = \Context::getContext();
         $langId = $context->language->id;
-        $countries = Country::getCountries($langId, $onlyActive);
+        $countries = \Country::getCountries($langId, $onlyActive);
         $countriesWithNames = [];
         $countriesWithNames[] = [
             'id' => 0,
