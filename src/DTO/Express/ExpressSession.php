@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -24,12 +26,12 @@ if (!defined('_PS_VERSION_')) {
  */
 class ExpressSession
 {
-    const STATUS_OPEN = 'open';
-    const STATUS_CREATED = 'created';
-    const STATUS_READY_FOR_PROCESSING = 'ready_for_processing';
-    const STATUS_COMPLETED = 'completed';
-    const STATUS_EXPIRED = 'expired';
-    const STATUS_FAILED = 'failed';
+    public const STATUS_OPEN = 'open';
+    public const STATUS_CREATED = 'created';
+    public const STATUS_READY_FOR_PROCESSING = 'ready_for_processing';
+    public const STATUS_COMPLETED = 'completed';
+    public const STATUS_EXPIRED = 'expired';
+    public const STATUS_FAILED = 'failed';
 
     /** @var string */
     private $id;

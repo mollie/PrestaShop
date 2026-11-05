@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -17,7 +19,6 @@ use Mollie\DTO\PaymentFeeData;
 use Mollie\Exception\InvalidPaymentFeePercentageException;
 use Mollie\Exception\PaymentFeeExceedsCartAmountException;
 use Mollie\Validator\PaymentFeeValidator;
-use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
 
 class PaymentFeeValidatorTest extends TestCase
@@ -33,7 +34,7 @@ class PaymentFeeValidatorTest extends TestCase
 
     public function testItValidatesValidPercentageFee(): void
     {
-        $paymentMethod = $this->createMock(MolPaymentMethod::class);
+        $paymentMethod = $this->createMock(\MolPaymentMethod::class);
         $paymentMethod->surcharge = Config::FEE_PERCENTAGE;
         $paymentMethod->surcharge_percentage = -50;
 
@@ -44,7 +45,7 @@ class PaymentFeeValidatorTest extends TestCase
 
     public function testItValidatesValidFixedAndPercentageFee(): void
     {
-        $paymentMethod = $this->createMock(MolPaymentMethod::class);
+        $paymentMethod = $this->createMock(\MolPaymentMethod::class);
         $paymentMethod->surcharge = Config::FEE_FIXED_FEE_AND_PERCENTAGE;
         $paymentMethod->surcharge_percentage = -75;
 
@@ -55,7 +56,7 @@ class PaymentFeeValidatorTest extends TestCase
 
     public function testItThrowsExceptionForInvalidPercentageFee(): void
     {
-        $paymentMethod = $this->createMock(MolPaymentMethod::class);
+        $paymentMethod = $this->createMock(\MolPaymentMethod::class);
         $paymentMethod->surcharge = Config::FEE_PERCENTAGE;
         $paymentMethod->surcharge_percentage = -150;
 
@@ -67,7 +68,7 @@ class PaymentFeeValidatorTest extends TestCase
 
     public function testItThrowsExceptionForInvalidFixedAndPercentageFee(): void
     {
-        $paymentMethod = $this->createMock(MolPaymentMethod::class);
+        $paymentMethod = $this->createMock(\MolPaymentMethod::class);
         $paymentMethod->surcharge = Config::FEE_FIXED_FEE_AND_PERCENTAGE;
         $paymentMethod->surcharge_percentage = -200;
 
@@ -79,7 +80,7 @@ class PaymentFeeValidatorTest extends TestCase
 
     public function testItThrowsExceptionForExceedingUpperLimitPercentageFee(): void
     {
-        $paymentMethod = $this->createMock(MolPaymentMethod::class);
+        $paymentMethod = $this->createMock(\MolPaymentMethod::class);
         $paymentMethod->surcharge = Config::FEE_PERCENTAGE;
         $paymentMethod->surcharge_percentage = 150;
 

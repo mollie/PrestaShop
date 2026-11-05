@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -31,6 +32,7 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');

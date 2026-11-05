@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Tests\Unit\Collector\ApplePayDirect;
 
-use Cart;
 use Mollie\Builder\ApplePayDirect\ApplePayLineItemsBuilder;
 use Mollie\Collector\ApplePayDirect\OrderTotalCollector;
 use Mollie\DTO\ApplePay\Carrier\Carrier as AppleCarrier;
@@ -33,7 +34,7 @@ class OrderTotalCollectorTest extends TestCase
         $orderPaymentFeeService = $this->createMock(OrderPaymentFeeService::class);
         $orderPaymentFeeService->method('getPaymentFee')->willReturn($paymentFeeData);
 
-        $cart = $this->createMock(Cart::class);
+        $cart = $this->createMock(\Cart::class);
         $cart->method('getOrderTotal')->willReturn(1.95);
 
         $lineItems = [['type' => 'final', 'label' => 'VAT', 'amount' => '0.33']];

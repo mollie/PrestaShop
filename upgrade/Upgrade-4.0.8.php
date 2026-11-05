@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -24,8 +25,8 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_4_0_8(Mollie $module)
 {
-    /** @var \Mollie\Adapter\ConfigurationAdapter $configuration */
-    $configuration = $module->getService(\Mollie\Adapter\ConfigurationAdapter::class);
+    /** @var Mollie\Adapter\ConfigurationAdapter $configuration */
+    $configuration = $module->getService(Mollie\Adapter\ConfigurationAdapter::class);
 
     $configuration->updateValue(Config::MOLLIE_ENVIRONMENT, Config::ENVIRONMENT_LIVE);
     $configuration->updateValue(Config::MOLLIE_SINGLE_CLICK_PAYMENT, 0);

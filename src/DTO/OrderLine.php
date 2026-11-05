@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -11,14 +12,13 @@
 
 namespace Mollie\DTO;
 
-use JsonSerializable;
 use Mollie\DTO\Object\Amount;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class OrderLine implements JsonSerializable
+class OrderLine implements \JsonSerializable
 {
     /**
      * @var string
@@ -73,7 +73,7 @@ class OrderLine implements JsonSerializable
     /**
      * @var Amount|null
      */
-    private $discountAmount = null;
+    private $discountAmount;
 
     /**
      * @var Amount

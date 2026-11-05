@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -28,21 +30,21 @@ if (!defined('_PS_VERSION_')) {
 
 class OrderPendingStatusHandler
 {
-    const FILE_NAME = 'OrderPendingStatusHandler';
+    public const FILE_NAME = 'OrderPendingStatusHandler';
 
     /** Customer returned while Mollie payment is still open — no order created, redirect to payment step. */
-    const ACTION_OPEN = 'open';
+    public const ACTION_OPEN = 'open';
 
     /** Payment is pending processing — pending PS order created, redirect to order confirmation. */
-    const ACTION_CONFIRM = 'confirm';
+    public const ACTION_CONFIRM = 'confirm';
 
     /** Payment is paid/authorized — show wait spinner until webhook creates/updates order. */
-    const ACTION_POLL = 'poll';
+    public const ACTION_POLL = 'poll';
 
     /** Payment failed/expired/canceled — redirect customer to cart. */
-    const ACTION_FAILED = 'failed';
+    public const ACTION_FAILED = 'failed';
 
-    /** @var Mollie */
+    /** @var \Mollie */
     private $module;
     /** @var OrderCreationHandler */
     private $orderCreationHandler;
@@ -122,7 +124,7 @@ class OrderPendingStatusHandler
     }
 
     /**
-     * @param \Mollie\Api\Resources\Order|\Mollie\Api\Resources\Payment $transaction
+     * @param Mollie\Api\Resources\Order|Mollie\Api\Resources\Payment $transaction
      */
     private function createPendingOrder($transaction, int $cartId): void
     {

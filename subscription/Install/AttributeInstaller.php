@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,17 +16,12 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Install;
 
-use AttributeGroup;
-use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Subscription\Config\Config;
 use Mollie\Subscription\Repository\LanguageRepository;
-use PrestaShopDatabaseException;
-use PrestaShopException;
 use Psr\Log\LogLevel;
-use Validate;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -37,7 +34,7 @@ class AttributeInstaller extends AbstractInstaller
     /** @var ConfigurationAdapter */
     private $configuration;
 
-    /** @var Mollie */
+    /** @var \Mollie */
     private $module;
 
     /** @var LanguageRepository */
@@ -52,7 +49,7 @@ class AttributeInstaller extends AbstractInstaller
     public function __construct(
         PrestaLoggerInterface $logger,
         ConfigurationAdapter $configuration,
-        Mollie $module,
+        \Mollie $module,
         LanguageRepository $language,
         ProductAttributeAdapter $productAttributeAdapter
     ) {
@@ -70,7 +67,7 @@ class AttributeInstaller extends AbstractInstaller
             $attributeGroup = $this->createAttributeGroup($languages);
 
             $this->createAttributes($languages, (int) $attributeGroup->id);
-        } catch (PrestaShopDatabaseException|PrestaShopException $e) {
+        } catch (\PrestaShopDatabaseException|\PrestaShopException $e) {
             $this->errors[] = $this->module->l('Failed to add attributes', self::FILE_NAME);
             $this->logger->log(LogLevel::ERROR, $e->getMessage());
 
@@ -83,14 +80,14 @@ class AttributeInstaller extends AbstractInstaller
     /**
      * @param array<string, array<string, string>> $languages
      */
-    private function createAttributeGroup(array $languages): AttributeGroup
+    private function createAttributeGroup(array $languages): \AttributeGroup
     {
-        $existingAttributeGroup = new AttributeGroup((int) $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_GROUP));
-        if (Validate::isLoadedObject($existingAttributeGroup)) {
+        $existingAttributeGroup = new \AttributeGroup((int) $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_GROUP));
+        if (\Validate::isLoadedObject($existingAttributeGroup)) {
             return $existingAttributeGroup;
         }
 
-        $attributeGroup = new AttributeGroup();
+        $attributeGroup = new \AttributeGroup();
         foreach ($languages as $language) {
             /* @phpstan-ignore-next-line */
             $attributeGroup->name[$language['id_lang']] = 'Mollie Subscription';
@@ -112,7 +109,7 @@ class AttributeInstaller extends AbstractInstaller
     {
         foreach (Config::getSubscriptionAttributeOptions() as $attributeName => $attributeConfigKey) {
             $existingAttribute = $this->productAttributeAdapter->getProductAttribute((int) $this->configuration->get($attributeConfigKey));
-            if (Validate::isLoadedObject($existingAttribute)) {
+            if (\Validate::isLoadedObject($existingAttribute)) {
                 continue;
             }
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -119,20 +121,20 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             }
             if (false === $data['mollie_info']) {
                 $data['mollie_info'] = [];
-                //NOTE: information instead of error as this might occur due to cancellation of the payment
+                // NOTE: information instead of error as this might occur due to cancellation of the payment
                 $logger->debug(sprintf('%s - Unable to find order in first try', self::FILE_NAME));
 
                 $data['msg_details'] = $this->module->l('Your payment was not successful. Try again.', self::FILE_NAME);
                 $this->setWarning($data['msg_details']);
 
                 Tools::redirect($this->context->link->getPageLink(
-                        'cart',
-                        true,
-                        [
-                            'action' => 'show',
-                            'checkout' => true,
-                        ]
-                    )
+                    'cart',
+                    true,
+                    [
+                        'action' => 'show',
+                        'checkout' => true,
+                    ]
+                )
                 );
             } elseif (
                 isset($data['mollie_info']['bank_status'])
@@ -283,12 +285,12 @@ class MollieReturnModuleFrontController extends AbstractMollieController
 
             try {
                 $mailService->sendFailedPaymentMail($this->context->customer);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 /** @var Logger $logger */
                 $logger = $this->module->getService(LoggerInterface::class);
 
                 $logger->error(sprintf('%s - Error sending failed payment mail', self::FILE_NAME), [
-                        'exceptions' => ExceptionUtility::getExceptions($e),
+                    'exceptions' => ExceptionUtility::getExceptions($e),
                 ]);
             }
 
@@ -383,22 +385,22 @@ class MollieReturnModuleFrontController extends AbstractMollieController
             case PaymentStatus::STATUS_PAID:
             case PaymentStatus::STATUS_AUTHORIZED:
                 $transactionInfo = $paymentMethodRepo->getPaymentBy('transaction_id', $transaction->id);
-            if ($transaction->resource === Config::MOLLIE_API_STATUS_PAYMENT && $transaction->hasRefunds()) {
+                if ($transaction->resource === Config::MOLLIE_API_STATUS_PAYMENT && $transaction->hasRefunds()) {
+                    if (isset($transactionInfo['reason']) && $transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
+                        $this->setWarning($wrongAmountMessage);
+                    } else {
+                        $this->setWarning($notSuccessfulPaymentMessage);
+                    }
+                    $response = $paymentReturnService->handleFailedStatus($transaction);
+                    break;
+                }
+
                 if (isset($transactionInfo['reason']) && $transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
                     $this->setWarning($wrongAmountMessage);
-                } else {
-                    $this->setWarning($notSuccessfulPaymentMessage);
+                    $response = $paymentReturnService->handleFailedStatus($transaction);
+                    break;
                 }
-                $response = $paymentReturnService->handleFailedStatus($transaction);
-                break;
-            }
-
-            if (isset($transactionInfo['reason']) && $transactionInfo['reason'] === Config::WRONG_AMOUNT_REASON) {
-                $this->setWarning($wrongAmountMessage);
-                $response = $paymentReturnService->handleFailedStatus($transaction);
-                break;
-            }
-            $response = $paymentReturnService->handleStatus(
+                $response = $paymentReturnService->handleStatus(
                     $order,
                     $transaction,
                     $paymentReturnService::DONE
@@ -417,7 +419,7 @@ class MollieReturnModuleFrontController extends AbstractMollieController
                 $response = $paymentReturnService->handleFailedStatus($transaction);
                 break;
             default:
-                exit();
+                exit;
         }
 
         exit(json_encode($response));
@@ -435,16 +437,16 @@ class MollieReturnModuleFrontController extends AbstractMollieController
     {
         $orderId = (int) Order::getIdByCartId($idCart);
         Tools::redirect($this->context->link->getPageLink(
-                'order-confirmation',
-                true,
-                null,
-                [
-                    'id_cart' => (int) $idCart,
-                    'id_module' => (int) $this->module->id,
-                    'id_order' => $orderId,
-                    'key' => $cart->secure_key,
-                ]
-            )
+            'order-confirmation',
+            true,
+            null,
+            [
+                'id_cart' => (int) $idCart,
+                'id_module' => (int) $this->module->id,
+                'id_order' => $orderId,
+                'key' => $cart->secure_key,
+            ]
+        )
         );
     }
 }

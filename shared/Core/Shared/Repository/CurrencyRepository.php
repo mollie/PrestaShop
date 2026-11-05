@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -31,12 +32,12 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Shared\Core\Shared\Repository;
 
-use Currency;
 use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -47,6 +48,6 @@ class CurrencyRepository extends AbstractRepository implements CurrencyRepositor
 {
     public function __construct()
     {
-        parent::__construct(Currency::class);
+        parent::__construct(\Currency::class);
     }
 }

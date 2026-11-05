@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,7 +16,6 @@ namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Types\PaymentMethod;
-use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,7 +34,7 @@ class B2bPaymentMethodRestrictionValidator implements PaymentMethodRestrictionVa
     /**
      * {@inheritDoc}
      */
-    public function isValid(MolPaymentMethod $paymentMethod): bool
+    public function isValid(\MolPaymentMethod $paymentMethod): bool
     {
         if (!$this->isB2bEnabled()) {
             return false;
@@ -45,7 +46,7 @@ class B2bPaymentMethodRestrictionValidator implements PaymentMethodRestrictionVa
     /**
      * {@inheritDoc}
      */
-    public function supports(MolPaymentMethod $paymentMethod): bool
+    public function supports(\MolPaymentMethod $paymentMethod): bool
     {
         return $paymentMethod->getPaymentMethodName() === PaymentMethod::BILLIE;
     }

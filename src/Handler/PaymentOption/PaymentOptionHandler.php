@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -31,6 +32,7 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -44,7 +46,6 @@ use Mollie\Provider\PaymentOption\BasePaymentOptionProvider;
 use Mollie\Provider\PaymentOption\CreditCardPaymentOptionProvider;
 use Mollie\Provider\PaymentOption\CreditCardSingleClickPaymentOptionProvider;
 use Mollie\Provider\PaymentOption\IdealPaymentOptionProvider;
-use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -95,7 +96,7 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
     /**
      * {@inheritDoc}
      */
-    public function handle(MolPaymentMethod $paymentMethod)
+    public function handle(\MolPaymentMethod $paymentMethod)
     {
         if ($this->isIdealPaymentMethod($paymentMethod)) {
             return $this->idealPaymentOptionProvider->getPaymentOption($paymentMethod);
@@ -115,7 +116,7 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
     /**
      * @return bool
      */
-    private function isIdealPaymentMethod(MolPaymentMethod $paymentMethod)
+    private function isIdealPaymentMethod(\MolPaymentMethod $paymentMethod)
     {
         if ($paymentMethod->getPaymentMethodName() !== PaymentMethod::IDEAL) {
             return false;
@@ -124,12 +125,12 @@ class PaymentOptionHandler implements PaymentOptionHandlerInterface
         return true;
     }
 
-    private function isCreditCardPaymentMethod(MolPaymentMethod $paymentMethod): bool
+    private function isCreditCardPaymentMethod(\MolPaymentMethod $paymentMethod): bool
     {
         return PaymentMethod::CREDITCARD === $paymentMethod->getPaymentMethodName();
     }
 
-    private function isBancontactWithQRCodePaymentMethod(MolPaymentMethod $paymentMethod): bool
+    private function isBancontactWithQRCodePaymentMethod(\MolPaymentMethod $paymentMethod): bool
     {
         return PaymentMethod::BANCONTACT === $paymentMethod->getPaymentMethodName();
     }

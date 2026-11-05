@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,20 +8,17 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Tests\Unit\Tools;
 
-use Cart;
-use Currency;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\LegacyContext;
 use Mollie\Api\Resources\Method;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
-use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 class UnitTestCase extends TestCase
 {
@@ -32,8 +30,8 @@ class UnitTestCase extends TestCase
             ->getMock()
         ;
 
-        $method->minimumAmount = new stdClass();
-        $method->maximumAmount = new stdClass();
+        $method->minimumAmount = new \stdClass();
+        $method->maximumAmount = new \stdClass();
         $method->minimumAmount->value = $minimumAmountValue;
         $method->maximumAmount->value = $maximumAmountValue;
 
@@ -90,7 +88,7 @@ class UnitTestCase extends TestCase
 
     public function mockPaymentMethod($paymentName, $enabled)
     {
-        $paymentMethod = $this->getMockBuilder(MolPaymentMethod::class)
+        $paymentMethod = $this->getMockBuilder(\MolPaymentMethod::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -112,7 +110,7 @@ class UnitTestCase extends TestCase
         $paymentMethodRepository
             ->method('findAll')
             ->willReturn(
-                new \PrestaShopCollection(MolPaymentMethod::class)
+                new \PrestaShopCollection(\MolPaymentMethod::class)
             )
         ;
     }
@@ -134,7 +132,7 @@ class UnitTestCase extends TestCase
 
     protected function mockCart($totalOrderAmount)
     {
-        $cartMock = $this->getMockBuilder(Cart::class)
+        $cartMock = $this->getMockBuilder(\Cart::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -148,7 +146,7 @@ class UnitTestCase extends TestCase
 
     protected function mockCurrency($currencyIsoCode, $conversionRate)
     {
-        $cartMock = $this->getMockBuilder(Currency::class)
+        $cartMock = $this->getMockBuilder(\Currency::class)
             ->disableOriginalConstructor()
             ->getMock();
 

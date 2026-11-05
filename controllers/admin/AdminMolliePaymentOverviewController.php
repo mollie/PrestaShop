@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -29,7 +31,7 @@ class AdminMolliePaymentOverviewController extends ModuleAdminController
     /** @var Mollie */
     public $module;
 
-    const FILE_NAME = 'AdminMolliePaymentOverviewController';
+    public const FILE_NAME = 'AdminMolliePaymentOverviewController';
 
     /** @var array */
     private $statusLabels;

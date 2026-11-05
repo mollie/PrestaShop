@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,11 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Provider;
-
-use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -53,5 +53,5 @@ interface CustomLogoProviderInterface
     /**
      * @return string
      */
-    public function getMethodOptionLogo(MolPaymentMethod $methodObj);
+    public function getMethodOptionLogo(\MolPaymentMethod $methodObj);
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -236,7 +238,7 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
 
         try {
             $canProductBeAddedToCartValidator->validate((int) ($product['id_product_attribute'] ?? 0));
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             if ($exception->getCode() === ExceptionCode::CART_ALREADY_HAS_SUBSCRIPTION_PRODUCT) {
                 $this->ajaxResponse(JsonResponse::error(
                     $this->module->l('Please note: Only one subscription product can be added to the cart at a time.', self::FILE_NAME),
@@ -275,10 +277,10 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         }
 
         $this->context->smarty->assign(array_merge([
-                'configuration' => $this->getTemplateVarConfiguration(),
-                'cart' => $presentedCart,
-                'display_transaction_updated_info' => Tools::getIsset('updatedTransaction'),
-            ], $errorData)
+            'configuration' => $this->getTemplateVarConfiguration(),
+            'cart' => $presentedCart,
+            'display_transaction_updated_info' => Tools::getIsset('updatedTransaction'),
+        ], $errorData)
         );
 
         $this->ajaxRender(

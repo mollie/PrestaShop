@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -16,7 +18,6 @@ namespace Mollie\Subscription\Factory;
 
 use Mollie\Adapter\Link;
 use Mollie\Subscription\DTO\CreateFreeOrderData;
-use MolRecurringOrder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,7 +34,7 @@ class CreateFreeOrderDataFactory
         $this->link = $link;
     }
 
-    public function build(MolRecurringOrder $recurringOrder, $newMethod)
+    public function build(\MolRecurringOrder $recurringOrder, $newMethod)
     {
         $currencyIso = new \Currency($recurringOrder->id_currency);
         $redirectUrl = $this->link->getModuleLink('mollie', 'recurringOrderDetail', ['id_mol_recurring_order' => $recurringOrder->id]);

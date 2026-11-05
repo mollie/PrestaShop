@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -26,7 +28,6 @@ use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ApiService;
 use Mollie\Utility\ExceptionUtility;
-use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -107,9 +108,9 @@ class PaymentMethodSettingsHandler
             $shopId
         );
 
-        $paymentMethod = new MolPaymentMethod();
+        $paymentMethod = new \MolPaymentMethod();
         if ($paymentMethodId) {
-            $paymentMethod = new MolPaymentMethod((int) $paymentMethodId);
+            $paymentMethod = new \MolPaymentMethod((int) $paymentMethodId);
         }
 
         $apiMethodData = $this->fetchMethodFromApi($methodId);
@@ -166,7 +167,7 @@ class PaymentMethodSettingsHandler
     /**
      * Handle basic payment method settings
      *
-     * @param MolPaymentMethod $paymentMethod Payment method object
+     * @param \MolPaymentMethod $paymentMethod Payment method object
      * @param string $methodId Method ID
      * @param array $settings Settings data
      * @param int $environment Environment
@@ -174,7 +175,7 @@ class PaymentMethodSettingsHandler
      * @param array|null $apiMethodData Data from Mollie API
      */
     private function handleBasicSettings(
-        MolPaymentMethod $paymentMethod,
+        \MolPaymentMethod $paymentMethod,
         string $methodId,
         array $settings,
         int $environment,
@@ -227,7 +228,7 @@ class PaymentMethodSettingsHandler
      *
      * @param array|null $apiMethodData Data from Mollie API
      */
-    private function resolveMethodName(MolPaymentMethod $paymentMethod, string $methodId, ?array $apiMethodData): string
+    private function resolveMethodName(\MolPaymentMethod $paymentMethod, string $methodId, ?array $apiMethodData): string
     {
         if (!empty($apiMethodData['name'])) {
             return (string) $apiMethodData['name'];
@@ -243,12 +244,12 @@ class PaymentMethodSettingsHandler
     /**
      * Handle payment fees settings
      *
-     * @param MolPaymentMethod $paymentMethod Payment method object
+     * @param \MolPaymentMethod $paymentMethod Payment method object
      * @param array $paymentFees Payment fees data
      *
      * @throws MollieException
      */
-    private function handlePaymentFees(MolPaymentMethod $paymentMethod, array $paymentFees): void
+    private function handlePaymentFees(\MolPaymentMethod $paymentMethod, array $paymentFees): void
     {
         $feeType = 0;
 
@@ -285,10 +286,10 @@ class PaymentMethodSettingsHandler
     /**
      * Set payment restrictions flag before save
      *
-     * @param MolPaymentMethod $paymentMethod Payment method object
+     * @param \MolPaymentMethod $paymentMethod Payment method object
      * @param array $restrictions Restrictions data
      */
-    private function handlePaymentRestrictionsFlag(MolPaymentMethod $paymentMethod, array $restrictions): void
+    private function handlePaymentRestrictionsFlag(\MolPaymentMethod $paymentMethod, array $restrictions): void
     {
         $paymentMethod->is_countries_applicable = (bool) (($restrictions['acceptFrom'] ?? 'all') === 'selected');
     }
@@ -296,10 +297,10 @@ class PaymentMethodSettingsHandler
     /**
      * Handle payment restrictions (requires saved payment method ID)
      *
-     * @param MolPaymentMethod $paymentMethod Payment method object
+     * @param \MolPaymentMethod $paymentMethod Payment method object
      * @param array $restrictions Restrictions data
      */
-    private function handlePaymentRestrictions(MolPaymentMethod $paymentMethod, array $restrictions): void
+    private function handlePaymentRestrictions(\MolPaymentMethod $paymentMethod, array $restrictions): void
     {
         $selectedCountries = [];
         $excludedCountries = [];

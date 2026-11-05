@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Command;
 
-use Mollie;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,18 +24,18 @@ if (!defined('_PS_VERSION_')) {
 
 class UploadTranslationsFromCsvFileConsoleCommand extends Command
 {
-    const CSV_POSITION_ID = 0;
-    const CSV_POSITION_EN = 1;
-    const CSV_POSITION_NL = 2;
-    const CSV_POSITION_DE = 3;
-    const CSV_POSITION_FR = 4;
+    public const CSV_POSITION_ID = 0;
+    public const CSV_POSITION_EN = 1;
+    public const CSV_POSITION_NL = 2;
+    public const CSV_POSITION_DE = 3;
+    public const CSV_POSITION_FR = 4;
 
     /**
-     * @var Mollie
+     * @var \Mollie
      */
     private $module;
 
-    public function __construct(Mollie $module)
+    public function __construct(\Mollie $module)
     {
         parent::__construct();
         $this->module = $module;
@@ -68,8 +69,8 @@ class UploadTranslationsFromCsvFileConsoleCommand extends Command
                 while (($line = fgets($handle)) !== false) {
                     $line = preg_replace("/\r|\n/", '', $line);
                     $values = explode(';', $line);
-                    if ('ID' === $values[self::CSV_POSITION_ID] ||
-                        '' === $values[self::CSV_POSITION_ID]
+                    if ('ID' === $values[self::CSV_POSITION_ID]
+                        || '' === $values[self::CSV_POSITION_ID]
                     ) {
                         continue;
                     }

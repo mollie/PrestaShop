@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -11,7 +12,6 @@
 
 namespace Mollie\Controller;
 
-use Mollie;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\LoggerInterface;
 use Mollie\PsCompat\AdminBaseController;
@@ -24,11 +24,11 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminMollieEmailController extends AdminBaseController
 {
-    const FILE_NAME = 'AdminMollieEmailController';
+    public const FILE_NAME = 'AdminMollieEmailController';
 
     public function sendSecondChanceMessage($orderId, Request $request)
     {
-        /** @var Mollie $mollie */
+        /** @var \Mollie $mollie */
         $mollie = (new ModuleFactory())->getModule();
 
         /** @var LoggerInterface $logger */

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -17,8 +19,6 @@ use Mollie\Api\MollieApiClient;
 use Mollie\Exception\ShipmentCannotBeSentException;
 use Mollie\Service\Shipment\ShipmentInformationSenderInterface;
 use Mollie\Verification\Shipment\ShipmentVerificationInterface;
-use Order;
-use OrderState;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -48,7 +48,7 @@ class ShipmentSenderHandler implements ShipmentSenderHandlerInterface
      * @throws ShipmentCannotBeSentException
      * @throws ApiException
      */
-    public function handleShipmentSender(?MollieApiClient $apiClient, Order $order, OrderState $orderState): void
+    public function handleShipmentSender(?MollieApiClient $apiClient, \Order $order, \OrderState $orderState): void
     {
         if (!$this->canSendShipment->verify($order, $orderState)) {
             return;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -16,7 +18,6 @@ use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Repository\TaxRepositoryInterface;
 use Mollie\Repository\TaxRuleRepositoryInterface;
 use PHPUnit\Framework\TestCase;
-use Tax;
 
 class TaxCalculatorProviderTest extends TestCase
 {
@@ -37,7 +38,7 @@ class TaxCalculatorProviderTest extends TestCase
     {
         $taxRule = ['id_tax' => 1, 'behavior' => 0];
 
-        $tax = $this->createMock(Tax::class);
+        $tax = $this->createMock(\Tax::class);
 
         $tax->id = 1;
         $tax->rate = 10;

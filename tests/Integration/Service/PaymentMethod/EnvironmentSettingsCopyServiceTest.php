@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Tests\Integration\Service\PaymentMethod;
 
-use Module;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Endpoints\MethodEndpoint;
 use Mollie\Api\MollieApiClient;
@@ -25,7 +26,6 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ApiKeyService;
 use Mollie\Service\PaymentMethod\EnvironmentSettingsCopyService;
 use Mollie\Tests\Integration\BaseTestCase;
-use MolPaymentMethod;
 
 class EnvironmentSettingsCopyServiceTest extends BaseTestCase
 {
@@ -126,10 +126,10 @@ class EnvironmentSettingsCopyServiceTest extends BaseTestCase
         $this->assertCount(4, $this->getPaymentMethodRows(Config::ENVIRONMENT_TEST, $this->shopId));
         $this->assertCount(1, $this->getPaymentMethodRows(Config::ENVIRONMENT_TEST, $this->shopId + 1));
 
-        $bancontactRow = new MolPaymentMethod($bancontactLiveId);
+        $bancontactRow = new \MolPaymentMethod($bancontactLiveId);
         $this->assertSame(3, (int) $bancontactRow->position);
 
-        $siblingRow = new MolPaymentMethod($siblingShopTestId);
+        $siblingRow = new \MolPaymentMethod($siblingShopTestId);
         $this->assertSame($this->shopId + 1, (int) $siblingRow->id_shop);
     }
 
@@ -199,14 +199,14 @@ class EnvironmentSettingsCopyServiceTest extends BaseTestCase
             $this->countryRepository,
             $apiKeyService,
             $this->getService(ConfigurationAdapter::class),
-            Module::getInstanceByName('mollie'),
+            \Module::getInstanceByName('mollie'),
             $this->getService(LoggerInterface::class)
         );
     }
 
     private function seedPaymentMethod(string $methodId, int $environment, int $shopId, int $position, array $overrides = []): int
     {
-        $paymentMethod = new MolPaymentMethod();
+        $paymentMethod = new \MolPaymentMethod();
         $paymentMethod->id_method = $methodId;
         $paymentMethod->method_name = $methodId;
         $paymentMethod->method = 'payments';

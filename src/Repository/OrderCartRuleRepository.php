@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,14 +8,13 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Repository;
 
-use Db;
 use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
-use OrderCartRule;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -24,7 +24,7 @@ final class OrderCartRuleRepository extends AbstractRepository implements OrderC
 {
     public function __construct()
     {
-        parent::__construct(OrderCartRule::class);
+        parent::__construct(\OrderCartRule::class);
     }
 
     /**
@@ -32,7 +32,7 @@ final class OrderCartRuleRepository extends AbstractRepository implements OrderC
      */
     public function decreaseCustomerUsedCartRuleQuantity($orderId, $cartRuleId)
     {
-        return (bool) Db::getInstance()->delete(
+        return (bool) \Db::getInstance()->delete(
             'order_cart_rule',
             'id_order= ' . (int) $orderId . ' AND id_cart_rule= ' . (int) $cartRuleId,
             1

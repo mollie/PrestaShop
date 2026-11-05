@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -18,7 +20,7 @@ if (!defined('_PS_VERSION_')) {
 
 class ExceptionCode
 {
-    //Order error codes starts from 1000
+    // Order error codes starts from 1000
 
     public const ORDER_FAILED_TO_APPLY_SELECTED_CARRIER = 1001;
     public const ORDER_FAILED_TO_GET_SELECTED_CARRIER_PRICE = 1002;
@@ -40,14 +42,14 @@ class ExceptionCode
     public const ORDER_FAILED_TO_PROVIDE_SUBSCRIPTION_ORDER_AMOUNT = 1018;
     public const ORDER_FAILED_TO_UPDATE_SUBSCRIPTION = 1019;
 
-    //Cart error codes starts from 2000
+    // Cart error codes starts from 2000
 
     public const CART_INVALID_SUBSCRIPTION_SETTINGS = 2001;
     public const CART_ALREADY_HAS_SUBSCRIPTION_PRODUCT = 2002;
     public const CART_SUBSCRIPTION_SERVICE_DISABLED = 2003;
     public const CART_SUBSCRIPTION_CARRIER_INVALID = 2004;
 
-    //Recurring order error codes starts from 3000
+    // Recurring order error codes starts from 3000
 
     public const RECURRING_ORDER_FAILED_TO_FIND_SELECTED_CARRIER = 3001;
     public const RECURRING_ORDER_FAILED_TO_APPLY_SELECTED_CARRIER = 3002;

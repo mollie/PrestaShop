@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -31,6 +32,7 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -38,7 +40,6 @@ namespace Mollie\Provider;
 
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
-use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -49,7 +50,7 @@ interface PaymentFeeProviderInterface
     /**
      * @throws FailedToProvidePaymentFeeException
      */
-    public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl): PaymentFeeData;
+    public function getPaymentFee(\MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl): PaymentFeeData;
 
     /**
      * Get payment fee text based on the fee amount

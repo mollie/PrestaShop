@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,9 +8,9 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -53,7 +54,7 @@ function upgrade_module_6_4_6($module)
                 // global keyed without a language dimension, so a language the module ships no
                 // translations/<iso>.php for returns the strings of whichever language was
                 // merged before it. The utility reads each file in isolation instead.
-                $moduleTab->name[$language['id_lang']] = \Mollie\Utility\TabTranslationUtility::getTabName(
+                $moduleTab->name[$language['id_lang']] = Mollie\Utility\TabTranslationUtility::getTabName(
                     $module,
                     $name,
                     $language['iso_code']
@@ -111,7 +112,7 @@ function upgrade_module_6_4_6($module)
         // PrestaShop merged before them, and the install path wrote the installing employee's
         // language everywhere. Those rows are only rewritten when a tab is created or updated,
         // so shops that already upgraded need an explicit repair.
-        \Mollie\Utility\TabTranslationUtility::repairTabNames($module);
+        Mollie\Utility\TabTranslationUtility::repairTabNames($module);
 
         return true;
     } catch (Throwable $e) {

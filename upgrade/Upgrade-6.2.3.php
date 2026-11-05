@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -39,7 +40,7 @@ function upgrade_module_6_2_3(Mollie $module): bool
     /** @var ModuleTabRegister $tabRegister */
     $tabRegister = $module->getService('prestashop.adapter.module.tab.register');
 
-    $moduleAdapter = new \PrestaShop\PrestaShop\Adapter\Module\Module();
+    $moduleAdapter = new PrestaShop\PrestaShop\Adapter\Module\Module();
     $moduleAdapter->instance = $module;
     $moduleAdapter->disk = new ParameterBag(
         [

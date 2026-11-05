@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,11 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Install;
-
-use Db;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -23,7 +23,7 @@ final class DatabaseTableUninstaller implements UninstallerInterface
     public function uninstall(): bool
     {
         foreach ($this->getCommands() as $query) {
-            if (false == Db::getInstance()->execute($query)) {
+            if (false == \Db::getInstance()->execute($query)) {
                 return false;
             }
         }

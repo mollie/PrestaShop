@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,11 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Install;
-
-use Db;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -25,7 +25,7 @@ final class DatabaseTableInstaller implements InstallerInterface
         $commands = $this->getCommands();
 
         foreach ($commands as $query) {
-            if (!Db::getInstance()->execute($query)) {
+            if (!\Db::getInstance()->execute($query)) {
                 return false;
             }
         }
@@ -211,7 +211,7 @@ final class DatabaseTableInstaller implements InstallerInterface
             return true;
         }
 
-        return (bool) Db::getInstance()->execute('
+        return (bool) \Db::getInstance()->execute('
             ALTER TABLE `' . _DB_PREFIX_ . 'mollie_payments`
             ADD COLUMN `mandate_id` VARCHAR(64);
         ');
@@ -238,7 +238,7 @@ final class DatabaseTableInstaller implements InstallerInterface
                 continue;
             }
 
-            $added = Db::getInstance()->execute('
+            $added = \Db::getInstance()->execute('
                 ALTER TABLE `' . _DB_PREFIX_ . 'mollie_payments`
                 ADD INDEX `' . bqSQL($name) . '` (' . $columns . ');
             ');
@@ -253,7 +253,7 @@ final class DatabaseTableInstaller implements InstallerInterface
 
     private function columnExists(string $table, string $column): bool
     {
-        return (bool) Db::getInstance()->getValue('
+        return (bool) \Db::getInstance()->getValue('
             SELECT COUNT(*) > 0
             FROM information_schema.columns
             WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '"
@@ -264,7 +264,7 @@ final class DatabaseTableInstaller implements InstallerInterface
 
     private function indexExists(string $table, string $index): bool
     {
-        return (bool) Db::getInstance()->getValue('
+        return (bool) \Db::getInstance()->getValue('
             SELECT COUNT(*) > 0
             FROM information_schema.statistics
             WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '"

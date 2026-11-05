@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,11 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Subscription\Controller;
-
-use ModuleAdminController;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -21,7 +21,7 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Class AbstractAdminController - an abstraction for all admin module controllers
  */
-abstract class AbstractAdminController extends ModuleAdminController
+abstract class AbstractAdminController extends \ModuleAdminController
 {
     public function __construct()
     {

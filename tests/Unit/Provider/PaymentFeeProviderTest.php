@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Tests\Unit\Provider;
 
-use Mollie;
 use Mollie\Adapter\Context;
 use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
@@ -20,25 +21,23 @@ use Mollie\Logger\LoggerInterface;
 use Mollie\Provider\PaymentFeeProvider;
 use Mollie\Provider\TaxCalculatorProvider;
 use Mollie\Validator\PaymentFeeValidator;
-use MolPaymentMethod;
 use PHPUnit\Framework\TestCase;
-use TaxCalculator;
 
 class PaymentFeeProviderTest extends TestCase
 {
     /** @var Context */
     private $context;
 
-    /** @var MolPaymentMethod */
+    /** @var \MolPaymentMethod */
     private $molPaymentMethod;
 
-    /** @var TaxCalculator */
+    /** @var \TaxCalculator */
     private $taxCalculator;
 
     /** @var ModuleFactory */
     private $moduleFactory;
 
-    /** @var Mollie */
+    /** @var \Mollie */
     private $module;
 
     /** @var PaymentFeeValidator */
@@ -55,10 +54,10 @@ class PaymentFeeProviderTest extends TestCase
         parent::setUp();
 
         $this->context = $this->createMock(Context::class);
-        $this->molPaymentMethod = $this->createMock(MolPaymentMethod::class);
-        $this->taxCalculator = $this->createMock(TaxCalculator::class);
+        $this->molPaymentMethod = $this->createMock(\MolPaymentMethod::class);
+        $this->taxCalculator = $this->createMock(\TaxCalculator::class);
 
-        $this->module = $this->createMock(Mollie::class);
+        $this->module = $this->createMock(\Mollie::class);
         $this->moduleFactory = $this->createMock(ModuleFactory::class);
         $this->moduleFactory->method('getModule')->willReturn($this->module);
         $this->paymentFeeValidator = $this->createMock(PaymentFeeValidator::class);

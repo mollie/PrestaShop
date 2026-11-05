@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -31,16 +33,16 @@ if (!defined('_PS_VERSION_')) {
  */
 class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieController
 {
-    const FILE_NAME = 'expressComponentAjax';
+    public const FILE_NAME = 'expressComponentAjax';
 
-    const ACTION_CREATE_SESSION = 'mollie_express_create_session';
-    const ACTION_VALIDATE_CART = 'mollie_express_validate_cart';
+    public const ACTION_CREATE_SESSION = 'mollie_express_create_session';
+    public const ACTION_VALIDATE_CART = 'mollie_express_validate_cart';
 
-    const ERROR_NOT_AVAILABLE = 'not_available';
-    const ERROR_ORDER_EXISTS = 'order_exists';
-    const ERROR_FORBIDDEN = 'forbidden';
-    const ERROR_API = 'api_error';
-    const ERROR_CART_BUSY = 'cart_busy';
+    public const ERROR_NOT_AVAILABLE = 'not_available';
+    public const ERROR_ORDER_EXISTS = 'order_exists';
+    public const ERROR_FORBIDDEN = 'forbidden';
+    public const ERROR_API = 'api_error';
+    public const ERROR_CART_BUSY = 'cart_busy';
 
     /** @var bool */
     public $ssl = true;
@@ -72,7 +74,7 @@ class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieCont
         try {
             $cartCarrierService->restoreCarrierChoice($this->context->cart);
             $isAvailable = $availability->isAvailable($this->context->cart);
-        } catch (\PrestaShopException $exception) {
+        } catch (PrestaShopException $exception) {
             // The temporary address this request loaded was deleted underneath it.
             $logger->debug(sprintf('%s - Cart changed while it was read', self::FILE_NAME), [
                 'exceptions' => ExceptionUtility::getExceptions($exception),
@@ -109,7 +111,7 @@ class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieCont
                 default:
                     $response = JsonResponse::error('unknown_action', JsonResponse::HTTP_BAD_REQUEST);
             }
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $logger->error(sprintf('%s - Express Component request failed', self::FILE_NAME), [
                 'action' => Tools::getValue('action'),
                 'cart_id' => (int) $this->context->cart->id,

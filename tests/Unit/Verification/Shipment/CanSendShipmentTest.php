@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -19,41 +21,41 @@ use PHPUnit\Framework\TestCase;
 class CanSendShipmentTest extends TestCase
 {
     /**
-     * @var \Mollie\Adapter\ConfigurationAdapter|\PHPUnit\Framework\MockObject\MockObject
+     * @var Mollie\Adapter\ConfigurationAdapter|PHPUnit\Framework\MockObject\MockObject
      */
     private $configurationAdapter;
 
     /**
-     * @var \Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider|\PHPUnit\Framework\MockObject\MockObject
+     * @var Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider|PHPUnit\Framework\MockObject\MockObject
      */
     private $automaticShipmentSenderStatusesProvider;
 
     /**
-     * @var \Mollie\Handler\Api\OrderEndpointPaymentTypeHandler|\PHPUnit\Framework\MockObject\MockObject
+     * @var Mollie\Handler\Api\OrderEndpointPaymentTypeHandler|PHPUnit\Framework\MockObject\MockObject
      */
     private $orderEndpointPaymentTypeHandler;
 
     /**
-     * @var \Mollie\Repository\PaymentMethodRepository|\PHPUnit\Framework\MockObject\MockObject
+     * @var Mollie\Repository\PaymentMethodRepository|PHPUnit\Framework\MockObject\MockObject
      */
     private $paymentMethodRepository;
 
     /**
-     * @var \Mollie\Service\ShipmentService|\PHPUnit\Framework\MockObject\MockObject
+     * @var Mollie\Service\ShipmentService|PHPUnit\Framework\MockObject\MockObject
      */
     private $shipmentService;
 
     /**
-     * @var Order|\PHPUnit\Framework\MockObject\MockObject
+     * @var Order|PHPUnit\Framework\MockObject\MockObject
      */
     private $order;
 
     /**
-     * @var OrderState|\PHPUnit\Framework\MockObject\MockObject
+     * @var OrderState|PHPUnit\Framework\MockObject\MockObject
      */
     private $orderState;
 
-    /** @var \Mollie\Verification\isPaymentInformationAvailable|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var IsPaymentInformationAvailable|PHPUnit\Framework\MockObject\MockObject */
     private $isPaymentInformationAvailable;
 
     protected function setUp(): void
@@ -61,31 +63,31 @@ class CanSendShipmentTest extends TestCase
         parent::setUp();
 
         $this->configurationAdapter = $this
-            ->getMockBuilder(\Mollie\Adapter\ConfigurationAdapter::class)
+            ->getMockBuilder(Mollie\Adapter\ConfigurationAdapter::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
 
         $this->automaticShipmentSenderStatusesProvider = $this
-            ->getMockBuilder(\Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider::class)
+            ->getMockBuilder(Mollie\Provider\Shipment\AutomaticShipmentSenderStatusesProvider::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
 
         $this->orderEndpointPaymentTypeHandler = $this
-            ->getMockBuilder(\Mollie\Handler\Api\OrderEndpointPaymentTypeHandler::class)
+            ->getMockBuilder(Mollie\Handler\Api\OrderEndpointPaymentTypeHandler::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
 
         $this->paymentMethodRepository = $this
-            ->getMockBuilder(\Mollie\Repository\PaymentMethodRepository::class)
+            ->getMockBuilder(Mollie\Repository\PaymentMethodRepository::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
 
         $this->shipmentService = $this
-            ->getMockBuilder(\Mollie\Service\ShipmentService::class)
+            ->getMockBuilder(Mollie\Service\ShipmentService::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -161,7 +163,7 @@ class CanSendShipmentTest extends TestCase
             ;
         }
 
-        $canSendShipment = new \Mollie\Verification\Shipment\CanSendShipment(
+        $canSendShipment = new Mollie\Verification\Shipment\CanSendShipment(
             $this->configurationAdapter,
             $this->automaticShipmentSenderStatusesProvider,
             $this->orderEndpointPaymentTypeHandler,
@@ -188,7 +190,7 @@ class CanSendShipmentTest extends TestCase
                     'testData' => 'testData',
                 ],
                 'configuration' => [
-                    Config::MOLLIE_AUTO_SHIP_MAIN => true, //isAutomaticShipmentInformationSenderEnabled
+                    Config::MOLLIE_AUTO_SHIP_MAIN => true, // isAutomaticShipmentInformationSenderEnabled
                 ],
                 'automaticShipmentSenderStatuses' => [0, 1, 2, 3],
                 'paymentInformation' => [
@@ -202,7 +204,7 @@ class CanSendShipmentTest extends TestCase
             'Has no shipping information' => [
                 'shipmentInformation' => [],
                 'configuration' => [
-                    Config::MOLLIE_AUTO_SHIP_MAIN => true, //isAutomaticShipmentInformationSenderEnabled
+                    Config::MOLLIE_AUTO_SHIP_MAIN => true, // isAutomaticShipmentInformationSenderEnabled
                 ],
                 'automaticShipmentSenderStatuses' => [0, 1, 2, 3],
                 'paymentInformation' => [
@@ -218,7 +220,7 @@ class CanSendShipmentTest extends TestCase
                     'testData' => 'testData',
                 ],
                 'configuration' => [
-                    Config::MOLLIE_AUTO_SHIP_MAIN => false, //isAutomaticShipmentInformationSenderEnabled
+                    Config::MOLLIE_AUTO_SHIP_MAIN => false, // isAutomaticShipmentInformationSenderEnabled
                 ],
                 'automaticShipmentSenderStatuses' => [0, 1, 2, 3],
                 'paymentInformation' => [
@@ -234,7 +236,7 @@ class CanSendShipmentTest extends TestCase
                     'testData' => 'testData',
                 ],
                 'configuration' => [
-                    Config::MOLLIE_AUTO_SHIP_MAIN => true, //isAutomaticShipmentInformationSenderEnabled
+                    Config::MOLLIE_AUTO_SHIP_MAIN => true, // isAutomaticShipmentInformationSenderEnabled
                 ],
                 'automaticShipmentSenderStatuses' => [0, 2, 3],
                 'paymentInformation' => [
@@ -250,7 +252,7 @@ class CanSendShipmentTest extends TestCase
                     'testData' => 'testData',
                 ],
                 'configuration' => [
-                    Config::MOLLIE_AUTO_SHIP_MAIN => true, //isAutomaticShipmentInformationSenderEnabled
+                    Config::MOLLIE_AUTO_SHIP_MAIN => true, // isAutomaticShipmentInformationSenderEnabled
                 ],
                 'automaticShipmentSenderStatuses' => [0, 1, 2, 3],
                 'paymentInformation' => [],
@@ -267,7 +269,7 @@ class CanSendShipmentTest extends TestCase
                     'testData' => 'testData',
                 ],
                 'configuration' => [
-                    Config::MOLLIE_AUTO_SHIP_MAIN => true, //isAutomaticShipmentInformationSenderEnabled
+                    Config::MOLLIE_AUTO_SHIP_MAIN => true, // isAutomaticShipmentInformationSenderEnabled
                 ],
                 'automaticShipmentSenderStatuses' => [0, 1, 2, 3],
                 'paymentInformation' => [
@@ -286,7 +288,7 @@ class CanSendShipmentTest extends TestCase
                     'testData' => 'testData',
                 ],
                 'configuration' => [
-                    Config::MOLLIE_AUTO_SHIP_MAIN => true, //isAutomaticShipmentInformationSenderEnabled
+                    Config::MOLLIE_AUTO_SHIP_MAIN => true, // isAutomaticShipmentInformationSenderEnabled
                 ],
                 'automaticShipmentSenderStatuses' => [0, 1, 2, 3],
                 'paymentInformation' => [

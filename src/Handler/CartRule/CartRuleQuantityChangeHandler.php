@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,18 +8,16 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Handler\CartRule;
 
 use Cart;
-use CartRule;
 use Mollie\Repository\CartRuleRepositoryInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
-use MolPendingOrderCartRule;
-use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -54,9 +53,9 @@ class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInte
     /**
      * {@inheritDoc}
      */
-    public function handle(Cart $cart, $cartRules = [])
+    public function handle(\Cart $cart, $cartRules = [])
     {
-        /** @var Order|null $order */
+        /** @var \Order|null $order */
         $order = $this->orderRepository->findOneByCartId($cart->id);
 
         if (empty($order)) {
@@ -64,7 +63,7 @@ class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInte
         }
 
         foreach ($cartRules as $cartRuleContent) {
-            /** @var CartRule|null $cartRule */
+            /** @var \CartRule|null $cartRule */
             $cartRule = $this->cartRuleRepository->findOneBy(
                 ['id_cart_rule' => (int) $cartRuleContent['id_cart_rule']]
             );
@@ -72,7 +71,7 @@ class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInte
             if (empty($cartRule)) {
                 continue;
             }
-            /** @var MolPendingOrderCartRule|null $pendingOrderCartRule */
+            /** @var \MolPendingOrderCartRule|null $pendingOrderCartRule */
             $pendingOrderCartRule = $this->pendingOrderCartRuleRepository->findOneBy([
                 'id_order' => (int) $order->id,
                 'id_cart_rule' => (int) $cartRule->id,
@@ -88,12 +87,12 @@ class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInte
     }
 
     /**
-     * @param MolPendingOrderCartRule $pendingOrderCartRule
+     * @param \MolPendingOrderCartRule $pendingOrderCartRule
      *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    private function setQuantities(Order $order, CartRule $cartRule, $pendingOrderCartRule)
+    private function setQuantities(\Order $order, \CartRule $cartRule, $pendingOrderCartRule)
     {
         $this->decreaseAvailableCartRuleQuantity($cartRule);
         $this->increaseCustomerUsedCartRuleQuantity($order, $cartRule, $pendingOrderCartRule);
@@ -103,13 +102,13 @@ class CartRuleQuantityChangeHandler implements CartRuleQuantityChangeHandlerInte
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    private function decreaseAvailableCartRuleQuantity(CartRule $cartRule)
+    private function decreaseAvailableCartRuleQuantity(\CartRule $cartRule)
     {
         $cartRule->quantity = max(0, $cartRule->quantity - 1);
         $cartRule->update();
     }
 
-    private function increaseCustomerUsedCartRuleQuantity(Order $order, CartRule $cartRule, MolPendingOrderCartRule $pendingOrderCartRule)
+    private function increaseCustomerUsedCartRuleQuantity(\Order $order, \CartRule $cartRule, \MolPendingOrderCartRule $pendingOrderCartRule)
     {
         $this->pendingOrderCartRuleRepository->usePendingOrderCartRule($order, $pendingOrderCartRule);
         $this->pendingOrderCartRuleRepository->removePreviousPendingOrderCartRule($order->id, $cartRule->id);

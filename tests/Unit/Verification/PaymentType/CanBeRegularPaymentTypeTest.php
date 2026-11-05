@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -15,12 +17,12 @@ use PHPUnit\Framework\TestCase;
 class CanBeRegularPaymentTypeTest extends TestCase
 {
     /**
-     * @var \Mollie\Provider\PaymentType\RegularInterfacePaymentTypeIdentification|\PHPUnit\Framework\MockObject\MockObject
+     * @var Mollie\Provider\PaymentType\RegularInterfacePaymentTypeIdentification|PHPUnit\Framework\MockObject\MockObject
      */
     private $regularPaymentTypeIdentification;
 
     /**
-     * @var \Mollie\Adapter\ToolsAdapter|\PHPUnit\Framework\MockObject\MockObject
+     * @var Mollie\Adapter\ToolsAdapter|PHPUnit\Framework\MockObject\MockObject
      */
     private $toolsAdapter;
 
@@ -29,13 +31,13 @@ class CanBeRegularPaymentTypeTest extends TestCase
         parent::setUp();
 
         $this->regularPaymentTypeIdentification = $this
-            ->getMockBuilder(\Mollie\Provider\PaymentType\RegularInterfacePaymentTypeIdentification::class)
+            ->getMockBuilder(Mollie\Provider\PaymentType\RegularInterfacePaymentTypeIdentification::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
 
         $this->toolsAdapter = $this
-            ->getMockBuilder(\Mollie\Adapter\ToolsAdapter::class)
+            ->getMockBuilder(Mollie\Adapter\ToolsAdapter::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -67,7 +69,7 @@ class CanBeRegularPaymentTypeTest extends TestCase
             ->willReturn($transactionIdSubstr)
         ;
 
-        $canBeRegularPaymentType = new \Mollie\Verification\PaymentType\CanBeRegularPaymentType(
+        $canBeRegularPaymentType = new Mollie\Verification\PaymentType\CanBeRegularPaymentType(
             $this->toolsAdapter,
             $this->regularPaymentTypeIdentification
         );

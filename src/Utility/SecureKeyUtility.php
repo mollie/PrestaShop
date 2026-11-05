@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -23,7 +25,7 @@ class SecureKeyUtility
         return HashUtility::hash($customerId . $cartId . $moduleName);
     }
 
-    //todo: remove it after few releases
+    // todo: remove it after few releases
     public static function deprecatedGenerateReturnKey($secureKey, $customerId, $cartId, $moduleName)
     {
         return HashUtility::hash($secureKey . $customerId . $cartId . $moduleName);

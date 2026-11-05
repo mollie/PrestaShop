@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -24,7 +26,6 @@ use Mollie\Subscription\Exception\MollieSubscriptionException;
 use Mollie\Subscription\Factory\CreateSubscriptionDataFactory;
 use Mollie\Subscription\Provider\SubscriptionProductProvider;
 use Mollie\Subscription\Validator\SubscriptionSettingsValidator;
-use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -64,7 +65,7 @@ class SubscriptionCreationHandler
     /**
      * @throws MollieSubscriptionException
      */
-    public function handle(Order $order, string $method): void
+    public function handle(\Order $order, string $method): void
     {
         try {
             $this->subscriptionSettingsValidator->validate();

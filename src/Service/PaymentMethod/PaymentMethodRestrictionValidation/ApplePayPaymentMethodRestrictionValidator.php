@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -31,6 +32,7 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -40,7 +42,6 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Utility\VersionUtility;
-use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -48,7 +49,7 @@ if (!defined('_PS_VERSION_')) {
 
 class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrictionValidatorInterface
 {
-    const FILE_NAME = 'ApplePayPaymentMethodRestrictionValidator';
+    public const FILE_NAME = 'ApplePayPaymentMethodRestrictionValidator';
 
     /**
      * @var ConfigurationAdapter
@@ -69,7 +70,7 @@ class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrict
     /**
      * {@inheritDoc}
      */
-    public function isValid(MolPaymentMethod $paymentMethod): bool
+    public function isValid(\MolPaymentMethod $paymentMethod): bool
     {
         if (!$this->isSslEnabledEverywhere()) {
             $this->logHidden(sprintf('store SSL is not enabled (%s)', $this->getSslConfigKey()));
@@ -96,7 +97,7 @@ class ApplePayPaymentMethodRestrictionValidator implements PaymentMethodRestrict
     /**
      * {@inheritDoc}
      */
-    public function supports(MolPaymentMethod $paymentMethod): bool
+    public function supports(\MolPaymentMethod $paymentMethod): bool
     {
         return $paymentMethod->getPaymentMethodName() === PaymentMethod::APPLEPAY;
     }

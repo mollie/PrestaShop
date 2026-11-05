@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -25,7 +27,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SubscriptionAvailabilityProvider
 {
-    const FILE_NAME = 'SubscriptionAvailabilityProvider';
+    public const FILE_NAME = 'SubscriptionAvailabilityProvider';
 
     /** @var ConfigurationAdapter */
     private $configuration;

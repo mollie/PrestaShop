@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -42,7 +43,7 @@ function upgrade_module_6_0_0(Mollie $module): bool
     /** @var ModuleTabRegister $tabRegister */
     $tabRegister = $module->getService('prestashop.adapter.module.tab.register');
 
-    $moduleAdapter = new \PrestaShop\PrestaShop\Adapter\Module\Module();
+    $moduleAdapter = new PrestaShop\PrestaShop\Adapter\Module\Module();
     $moduleAdapter->instance = $module;
     $moduleAdapter->disk = new ParameterBag(
         [
@@ -97,7 +98,7 @@ function deleteOldTabs($module): bool
         $preparedTabIds[] = (int) $tabId['id_tab'];
     }
 
-    $preparedTabIds = implode(", ", $preparedTabIds);
+    $preparedTabIds = implode(', ', $preparedTabIds);
 
     $sql = '
     DELETE FROM `' . _DB_PREFIX_ . 'tab`
@@ -166,7 +167,7 @@ function modifyExistingTables(): bool
     WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND TABLE_NAME = "' . _DB_PREFIX_ . 'mollie_payments" AND COLUMN_NAME = "mandate_id"
     ';
 
-    /** only add it if it doesn't exist */
+    /* only add it if it doesn't exist */
     if (!Db::getInstance()->getValue($sql)) {
         $sql = '
         ALTER TABLE ' . _DB_PREFIX_ . 'mollie_payments
@@ -188,7 +189,7 @@ function modifyExistingTables(): bool
     WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND table_name = "' . _DB_PREFIX_ . 'mol_payment_method" AND column_name = "min_amount";
     ';
 
-    /** only add it if it doesn't exist */
+    /* only add it if it doesn't exist */
     if (!Db::getInstance()->getValue($sql)) {
         $sql = '
         ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method

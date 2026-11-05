@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Provider;
 
-use Address;
 use Mollie\Provider\PhoneNumberProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -26,7 +27,7 @@ class PhoneNumberProviderTest extends TestCase
      */
     public function testGetFromAddress($phoneNumber, $result)
     {
-        $address = new Address();
+        $address = new \Address();
         $address->phone = $phoneNumber;
 
         $phoneNumberProvider = new PhoneNumberProvider();

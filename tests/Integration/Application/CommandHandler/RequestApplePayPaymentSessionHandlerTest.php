@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -41,21 +43,21 @@ class RequestApplePayPaymentSessionHandlerTest extends BaseTestCase
     {
         return [
             'new cart case' => [
-                    'command' => new RequestApplePayPaymentSession(
-                        'test-validation-url',
-                        1,
-                        1,
-                        0
-                    ),
-                ],
+                'command' => new RequestApplePayPaymentSession(
+                    'test-validation-url',
+                    1,
+                    1,
+                    0
+                ),
+            ],
             'cart exist case' => [
-                    'command' => new RequestApplePayPaymentSession(
-                        'test-validation-url',
-                        1,
-                        1,
-                        3
-                    ),
-                ],
+                'command' => new RequestApplePayPaymentSession(
+                    'test-validation-url',
+                    1,
+                    1,
+                    3
+                ),
+            ],
         ];
     }
 }

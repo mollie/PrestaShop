@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -17,7 +19,6 @@ namespace Mollie\Service;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
-use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -133,7 +134,7 @@ class SegmentTracker
         }
     }
 
-    public function trackPaymentMethodEnabled(MolPaymentMethod $paymentMethod, int $preEnableCount): void
+    public function trackPaymentMethodEnabled(\MolPaymentMethod $paymentMethod, int $preEnableCount): void
     {
         try {
             $properties = [
@@ -149,7 +150,7 @@ class SegmentTracker
         }
     }
 
-    public function trackPaymentMethodConfigured(MolPaymentMethod $paymentMethod, bool $hasCountryRestrictions): void
+    public function trackPaymentMethodConfigured(\MolPaymentMethod $paymentMethod, bool $hasCountryRestrictions): void
     {
         try {
             $properties = [

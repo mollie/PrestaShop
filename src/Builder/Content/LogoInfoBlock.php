@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Builder\Content;
 
-use Mollie;
 use Mollie\Builder\TemplateBuilderInterface;
 
 if (!defined('_PS_VERSION_')) {
@@ -22,11 +23,11 @@ if (!defined('_PS_VERSION_')) {
 class LogoInfoBlock implements TemplateBuilderInterface
 {
     /**
-     * @var Mollie
+     * @var \Mollie
      */
     private $module;
 
-    public function __construct(Mollie $module)
+    public function __construct(\Mollie $module)
     {
         $this->module = $module;
     }

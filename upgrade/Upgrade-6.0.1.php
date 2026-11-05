@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -42,7 +43,7 @@ function modifyExistingTables601(): bool
     WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND table_name = "' . _DB_PREFIX_ . 'mol_payment_method" AND column_name = "tax_rules_group_id";
     ';
 
-    /** only add it if it doesn't exist */
+    /* only add it if it doesn't exist */
     if (!(int) Db::getInstance()->getValue($sql)) {
         $sql = '
         ALTER TABLE ' . _DB_PREFIX_ . 'mol_payment_method
@@ -67,7 +68,7 @@ function modifyExistingTables601(): bool
     WHERE TABLE_SCHEMA = "' . _DB_NAME_ . '" AND table_name = "' . _DB_PREFIX_ . 'mol_order_payment_fee";
     ';
 
-    /** only add it if it doesn't exist */
+    /* only add it if it doesn't exist */
     if (!(int) Db::getInstance()->getValue($sql)) {
         $sql = 'ALTER TABLE ' . _DB_PREFIX_ . 'mol_order_fee MODIFY id_mol_order_fee INT(64)';
 

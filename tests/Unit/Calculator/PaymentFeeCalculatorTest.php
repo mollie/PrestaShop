@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -15,11 +17,10 @@ namespace Unit\Calculator;
 use Mollie\Adapter\Context;
 use Mollie\Calculator\PaymentFeeCalculator;
 use PHPUnit\Framework\TestCase;
-use TaxCalculator;
 
 class PaymentFeeCalculatorTest extends TestCase
 {
-    /** @var TaxCalculator */
+    /** @var \TaxCalculator */
     private $taxCalculator;
     /** @var Context */
     private $context;
@@ -28,7 +29,7 @@ class PaymentFeeCalculatorTest extends TestCase
     {
         parent::setUp();
 
-        $this->taxCalculator = $this->createMock(TaxCalculator::class);
+        $this->taxCalculator = $this->createMock(\TaxCalculator::class);
         $this->context = $this->createMock(Context::class);
     }
 

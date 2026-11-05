@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,16 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use Cart;
-use Context;
-use Customer;
-use Exception;
-use Mollie;
 use Mollie\Api\MollieApiClient;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Types\PaymentStatus;
@@ -25,7 +22,6 @@ use Mollie\Repository\PaymentMethodRepository;
 use Mollie\Utility\HashUtility;
 use Mollie\Utility\SecureKeyUtility;
 use Mollie\Utility\TransactionUtility;
-use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,7 +29,7 @@ if (!defined('_PS_VERSION_')) {
 
 class MolliePaymentMailService
 {
-    const FILE_NAME = 'MolliePaymentMailService';
+    public const FILE_NAME = 'MolliePaymentMailService';
 
     /**
      * @var PaymentMethodRepository
@@ -41,7 +37,7 @@ class MolliePaymentMailService
     private $paymentMethodRepository;
 
     /**
-     * @var Mollie
+     * @var \Mollie
      */
     private $module;
 
@@ -62,7 +58,7 @@ class MolliePaymentMailService
 
     public function sendSecondChanceMail($orderId)
     {
-        $order = new Order($orderId);
+        $order = new \Order($orderId);
         $payment = $this->paymentMethodRepository->getPaymentBy('cart_id', $order->id_cart);
         if (!$payment) {
             return false;
@@ -75,7 +71,7 @@ class MolliePaymentMailService
 
         $transactionId = $payment['transaction_id'];
 
-        $customer = new Customer($order->id_customer);
+        $customer = new \Customer($order->id_customer);
 
         $this->module->updateApiKey((int) $order->id_shop);
         /** @var MollieApiClient $api */
@@ -87,7 +83,7 @@ class MolliePaymentMailService
             } else {
                 $response = $this->sendSecondChanceMailWithPaymentApi($api, $transactionId);
             }
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $response['message'] = $this->module->l('Failed to create second chance email - API error', self::FILE_NAME);
 
             return $response;
@@ -132,7 +128,7 @@ class MolliePaymentMailService
 
     public function sendSecondChanceMailWithPaymentApi(MollieApiClient $api, $transactionId)
     {
-        $context = Context::getContext();
+        $context = \Context::getContext();
         $paymentApi = $api->payments->get($transactionId);
 
         if ($paymentApi->isPaid() || $paymentApi->isAuthorized()) {
@@ -153,8 +149,8 @@ class MolliePaymentMailService
             ];
         }
 
-        $cart = new Cart($paymentApi->metadata->cart_id);
-        $customer = new Customer($cart->id_customer);
+        $cart = new \Cart($paymentApi->metadata->cart_id);
+        $customer = new \Customer($cart->id_customer);
 
         $key = SecureKeyUtility::generateReturnKey($customer->id, $cart->id, $this->module->name);
 
@@ -214,8 +210,8 @@ class MolliePaymentMailService
         $checkoutUrl = '';
         /** @var Payment $molliePayment */
         foreach ($molliePayments as $molliePayment) {
-            if (PaymentStatus::STATUS_OPEN === $molliePayment->status ||
-                PaymentStatus::STATUS_PENDING === $molliePayment->status
+            if (PaymentStatus::STATUS_OPEN === $molliePayment->status
+                || PaymentStatus::STATUS_PENDING === $molliePayment->status
             ) {
                 return $molliePayment->getCheckoutUrl();
             }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -8,7 +9,6 @@
  *
  * @see        https://github.com/mollie/PrestaShop
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -38,8 +38,8 @@ function upgrade_module_4_3_0($module)
         }
     }
 
-    /** @var \Mollie\Repository\PaymentMethodRepositoryInterface $paymentMethodRepo */
-    $paymentMethodRepo = $module->getService(\Mollie\Repository\PaymentMethodRepositoryInterface::class);
+    /** @var Mollie\Repository\PaymentMethodRepositoryInterface $paymentMethodRepo */
+    $paymentMethodRepo = $module->getService(Mollie\Repository\PaymentMethodRepositoryInterface::class);
 
     $sql = new DbQuery();
     $sql->select('`id_mol_country`, `id_method`');

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,14 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\DTO;
 
-use Address;
-use Country;
-use JsonSerializable;
 use Mollie\DTO\Object\Amount;
 use Mollie\DTO\Object\Payment;
 use Mollie\Utility\MollieApiInputSanitizer;
@@ -23,7 +22,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class OrderData implements JsonSerializable
+class OrderData implements \JsonSerializable
 {
     /**
      * @var Amount
@@ -66,12 +65,12 @@ class OrderData implements JsonSerializable
     private $customerId;
 
     /**
-     * @var Address
+     * @var \Address
      */
     private $billingAddress;
 
     /**
-     * @var Address
+     * @var \Address
      */
     private $shippingAddress;
 
@@ -252,7 +251,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @return Address
+     * @return \Address
      */
     public function getBillingAddress()
     {
@@ -260,7 +259,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @param Address $billingAddress
+     * @param \Address $billingAddress
      */
     public function setBillingAddress($billingAddress)
     {
@@ -268,7 +267,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @return Address
+     * @return \Address
      */
     public function getShippingAddress()
     {
@@ -308,7 +307,7 @@ class OrderData implements JsonSerializable
     }
 
     /**
-     * @param Address $shippingAddress
+     * @param \Address $shippingAddress
      */
     public function setShippingAddress($shippingAddress)
     {
@@ -436,7 +435,7 @@ class OrderData implements JsonSerializable
                 'streetAdditional' => $this->cleanUpInput($this->getBillingAddress()->address2, null),
                 'city' => $this->cleanUpInput($this->getBillingAddress()->city),
                 'postalCode' => $this->cleanUpInput($this->getBillingAddress()->postcode),
-                'country' => $this->cleanUpInput(Country::getIsoById($this->getBillingAddress()->id_country)),
+                'country' => $this->cleanUpInput(\Country::getIsoById($this->getBillingAddress()->id_country)),
                 'givenName' => $this->cleanUpInput($this->getBillingAddress()->firstname),
                 'familyName' => $this->cleanUpInput($this->getBillingAddress()->lastname),
                 'email' => MollieApiInputSanitizer::sanitizeEmail($this->getEmail()),
@@ -449,7 +448,7 @@ class OrderData implements JsonSerializable
                 'streetAdditional' => $this->cleanUpInput($this->getShippingAddress()->address2, null),
                 'city' => $this->cleanUpInput($this->getShippingAddress()->city),
                 'postalCode' => $this->cleanUpInput($this->getShippingAddress()->postcode),
-                'country' => $this->cleanUpInput(Country::getIsoById($this->getShippingAddress()->id_country)),
+                'country' => $this->cleanUpInput(\Country::getIsoById($this->getShippingAddress()->id_country)),
                 'givenName' => $this->cleanUpInput($this->getShippingAddress()->firstname),
                 'familyName' => $this->cleanUpInput($this->getShippingAddress()->lastname),
                 'email' => MollieApiInputSanitizer::sanitizeEmail($this->getEmail()),

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -28,7 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminMollieAdvancedSettingsController extends ModuleAdminController
 {
-    const FILE_NAME = 'AdminMollieAdvancedSettingsController';
+    public const FILE_NAME = 'AdminMollieAdvancedSettingsController';
 
     /** @var Mollie */
     public $module;
@@ -314,7 +316,7 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             $certificateHandler = $this->module->getService(ApplePayDirectCertificateHandler::class);
             $certificateHandler->handle();
             $certificateHandler->refresh();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             /** @var LoggerInterface $logger */
             $logger = $this->module->getService(LoggerInterface::class);
 

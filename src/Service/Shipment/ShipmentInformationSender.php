@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -16,7 +18,6 @@ use Mollie\Api\MollieApiClient;
 use Mollie\Api\Resources\Order as ApiOrder;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ShipmentServiceInterface;
-use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -45,7 +46,7 @@ class ShipmentInformationSender implements ShipmentInformationSenderInterface
     /**
      * {@inheritDoc}
      */
-    public function sendShipmentInformation(?MollieApiClient $apiGateway, Order $order): void
+    public function sendShipmentInformation(?MollieApiClient $apiGateway, \Order $order): void
     {
         if (empty($apiGateway)) {
             return;

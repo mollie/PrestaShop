@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,7 +16,6 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\DTO;
 
-use JsonSerializable;
 use Mollie\Subscription\DTO\Object\Amount;
 use Mollie\Subscription\DTO\Object\Interval;
 
@@ -22,7 +23,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CreateSubscriptionData implements JsonSerializable
+class CreateSubscriptionData implements \JsonSerializable
 {
     /** @var string */
     private $customerId;

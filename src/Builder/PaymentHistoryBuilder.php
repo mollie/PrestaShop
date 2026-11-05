@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Builder;
 
-use Currency;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Utility\NumberUtility;
 
@@ -22,7 +23,7 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentHistoryBuilder
 {
-    const TYPE_RANKS = [
+    public const TYPE_RANKS = [
         'created' => 0,
         'authorized' => 1,
         'released' => 2,
@@ -36,7 +37,7 @@ class PaymentHistoryBuilder
         'failed' => 10,
     ];
 
-    const NEGATIVE_TYPES = ['refunded', 'chargeback', 'chargeback_reversed'];
+    public const NEGATIVE_TYPES = ['refunded', 'chargeback', 'chargeback_reversed'];
 
     /**
      * @var ToolsAdapter
@@ -297,7 +298,7 @@ class PaymentHistoryBuilder
 
         $currencyObject = null;
         if ($currency !== null) {
-            $currencyObject = new Currency();
+            $currencyObject = new \Currency();
             $currencyObject->iso_code = (string) $currency;
         }
 

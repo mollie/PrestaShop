@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,19 +8,15 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use Cart;
-use CartRule;
-use Context;
-use Mollie;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\CartRule\CartRuleQuantityChangeHandlerInterface;
 use Mollie\Repository\PaymentMethodRepository;
-use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -27,17 +24,17 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentReturnService
 {
-    const PENDING = 1;
-    const DONE = 2;
-    const FILE_NAME = 'PaymentReturnService';
+    public const PENDING = 1;
+    public const DONE = 2;
+    public const FILE_NAME = 'PaymentReturnService';
 
     /**
-     * @var Mollie
+     * @var \Mollie
      */
     private $module;
 
     /**
-     * @var Context
+     * @var \Context
      */
     private $context;
 
@@ -69,55 +66,55 @@ class PaymentReturnService
         CartRuleQuantityChangeHandlerInterface $cartRuleQuantityChangeHandlerInterface
     ) {
         $this->module = $module->getModule();
-        $this->context = Context::getContext();
+        $this->context = \Context::getContext();
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->orderLinkFactory = $orderLinkFactory;
         $this->transactionService = $transactionService;
         $this->cartRuleQuantityChangeHandlerInterface = $cartRuleQuantityChangeHandlerInterface;
     }
 
-    public function handleStatus(Order $order, $transaction, $status)
+    public function handleStatus(\Order $order, $transaction, $status)
     {
-        $cart = new Cart($order->id_cart);
+        $cart = new \Cart($order->id_cart);
 
         /* @phpstan-ignore-next-line */
-        $cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
+        $cartRules = $cart->getCartRules(\CartRule::FILTER_ACTION_ALL, false);
         $this->cartRuleQuantityChangeHandlerInterface->handle($cart, $cartRules);
 
         return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
     }
 
-    public function handlePendingStatus(Order $order, $transaction)
+    public function handlePendingStatus(\Order $order, $transaction)
     {
-        $cart = new Cart($order->id_cart);
+        $cart = new \Cart($order->id_cart);
         $status = static::PENDING;
 
         /* @phpstan-ignore-next-line */
-        $cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
+        $cartRules = $cart->getCartRules(\CartRule::FILTER_ACTION_ALL, false);
         $this->cartRuleQuantityChangeHandlerInterface->handle($cart, $cartRules);
 
         return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
     }
 
-    public function handlePaidStatus(Order $order, $transaction)
+    public function handlePaidStatus(\Order $order, $transaction)
     {
-        $cart = new Cart($order->id_cart);
+        $cart = new \Cart($order->id_cart);
         $status = static::DONE;
 
         /* @phpstan-ignore-next-line */
-        $cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
+        $cartRules = $cart->getCartRules(\CartRule::FILTER_ACTION_ALL, false);
         $this->cartRuleQuantityChangeHandlerInterface->handle($cart, $cartRules);
 
         return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
     }
 
-    public function handleAuthorizedStatus(Order $order, $transaction)
+    public function handleAuthorizedStatus(\Order $order, $transaction)
     {
-        $cart = new Cart($order->id_cart);
+        $cart = new \Cart($order->id_cart);
         $status = static::DONE;
 
         /* @phpstan-ignore-next-line */
-        $cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_ALL, false);
+        $cartRules = $cart->getCartRules(\CartRule::FILTER_ACTION_ALL, false);
         $this->cartRuleQuantityChangeHandlerInterface->handle($cart, $cartRules);
 
         return $this->getStatusResponse($transaction, $status, $cart->id, $cart->secure_key);
@@ -149,7 +146,7 @@ class PaymentReturnService
     private function getStatusResponse($transaction, $status, $cartId, $cartSecureKey)
     {
         /* @phpstan-ignore-next-line */
-        $orderId = (int) Order::getIdByCartId((int) $cartId);
+        $orderId = (int) \Order::getIdByCartId((int) $cartId);
 
         $successUrl = $this->context->link->getPageLink(
             'order-confirmation',

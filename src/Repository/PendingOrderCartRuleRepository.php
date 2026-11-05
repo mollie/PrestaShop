@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,16 +8,13 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Repository;
 
-use Db;
 use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
-use MolPendingOrderCartRule;
-use Order;
-use OrderCartRule;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -26,7 +24,7 @@ final class PendingOrderCartRuleRepository extends AbstractRepository implements
 {
     public function __construct()
     {
-        parent::__construct(MolPendingOrderCartRule::class);
+        parent::__construct(\MolPendingOrderCartRule::class);
     }
 
     /**
@@ -34,7 +32,7 @@ final class PendingOrderCartRuleRepository extends AbstractRepository implements
      */
     public function removePreviousPendingOrderCartRule($orderId, $cartRuleId)
     {
-        Db::getInstance()->delete('mol_pending_order_cart_rule',
+        \Db::getInstance()->delete('mol_pending_order_cart_rule',
             'id_order= ' . (int) $orderId . ' AND id_cart_rule= ' . (int) $cartRuleId
         );
     }
@@ -42,13 +40,13 @@ final class PendingOrderCartRuleRepository extends AbstractRepository implements
     /**
      * {@inheritDoc}
      */
-    public function createPendingOrderCartRule($orderId, $cartRuleId, OrderCartRule $orderCartRule)
+    public function createPendingOrderCartRule($orderId, $cartRuleId, \OrderCartRule $orderCartRule)
     {
         if (empty($orderCartRule)) {
             return;
         }
 
-        $pendingOrderCartRule = new MolPendingOrderCartRule();
+        $pendingOrderCartRule = new \MolPendingOrderCartRule();
         $pendingOrderCartRule->name = $orderCartRule->name;
         $pendingOrderCartRule->id_order = (int) $orderId;
         $pendingOrderCartRule->id_cart_rule = (int) $cartRuleId;
@@ -63,7 +61,7 @@ final class PendingOrderCartRuleRepository extends AbstractRepository implements
     /**
      * {@inheritDoc}
      */
-    public function usePendingOrderCartRule(Order $order, MolPendingOrderCartRule $pendingOrderCartRule)
+    public function usePendingOrderCartRule(\Order $order, \MolPendingOrderCartRule $pendingOrderCartRule)
     {
         if (empty($pendingOrderCartRule)) {
             return;

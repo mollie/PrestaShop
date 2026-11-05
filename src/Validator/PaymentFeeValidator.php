@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -16,7 +18,6 @@ use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Exception\InvalidPaymentFeePercentageException;
 use Mollie\Exception\PaymentFeeExceedsCartAmountException;
-use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -27,10 +28,10 @@ class PaymentFeeValidator
     private const MAX_NEGATIVE_PERCENTAGE = -100;
     private const MAX_POSITIVE_PERCENTAGE = 100;
 
-    public function validatePaymentFeePercentage(MolPaymentMethod $paymentMethod): void
+    public function validatePaymentFeePercentage(\MolPaymentMethod $paymentMethod): void
     {
-        if ($paymentMethod->surcharge == Config::FEE_PERCENTAGE ||
-            $paymentMethod->surcharge == Config::FEE_FIXED_FEE_AND_PERCENTAGE) {
+        if ($paymentMethod->surcharge == Config::FEE_PERCENTAGE
+            || $paymentMethod->surcharge == Config::FEE_FIXED_FEE_AND_PERCENTAGE) {
             $percentage = (float) $paymentMethod->surcharge_percentage;
 
             if ($percentage <= self::MAX_NEGATIVE_PERCENTAGE) {

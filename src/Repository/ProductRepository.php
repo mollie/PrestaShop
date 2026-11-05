@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Repository;
 
-use Context;
 use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -33,7 +34,7 @@ class ProductRepository extends AbstractRepository implements ProductRepositoryI
         return empty($result) ? null : $result;
     }
 
-    public function getCover(int $productId, ?Context $context = null): ?array
+    public function getCover(int $productId, ?\Context $context = null): ?array
     {
         $result = \Product::getCover($productId, $context);
 

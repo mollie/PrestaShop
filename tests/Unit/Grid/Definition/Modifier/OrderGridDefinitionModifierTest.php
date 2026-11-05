@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -33,10 +35,10 @@ use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
  */
 class OrderGridDefinitionModifierTest extends TestCase
 {
-    const TRANSLATION_SOURCE = 'OrderGridDefinitionModifier';
-    const HEADER = 'Resend payment link';
-    const TOOLTIP = 'You will resend email with payment link to the customer';
-    const VIEW_IN_MOLLIE = 'View in Mollie';
+    public const TRANSLATION_SOURCE = 'OrderGridDefinitionModifier';
+    public const HEADER = 'Resend payment link';
+    public const TOOLTIP = 'You will resend email with payment link to the customer';
+    public const VIEW_IN_MOLLIE = 'View in Mollie';
 
     /**
      * The shipped catalogs must contain the exact keys that Mollie::l() looks up for this modifier,
@@ -138,8 +140,8 @@ class OrderGridDefinitionModifierTest extends TestCase
             }
         }
 
-        /** @var Mollie $module */
-        $module = $this->createMock(Mollie::class);
+        /** @var \Mollie $module */
+        $module = $this->createMock(\Mollie::class);
         $module->method('l')->willReturnCallback(function ($string, $source) {
             // Both strings must be scoped to this modifier's own translation source.
             Assert::assertSame(self::TRANSLATION_SOURCE, $source);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -28,11 +30,11 @@ class AdminMollieLogsController extends ModuleAdminController
     /** @var Mollie */
     public $module;
 
-    const FILE_NAME = 'AdminMollieLogsController';
+    public const FILE_NAME = 'AdminMollieLogsController';
 
-    const LOG_INFORMATION_TYPE_REQUEST = 'request';
-    const LOG_INFORMATION_TYPE_RESPONSE = 'response';
-    const LOG_INFORMATION_TYPE_CONTEXT = 'context';
+    public const LOG_INFORMATION_TYPE_REQUEST = 'request';
+    public const LOG_INFORMATION_TYPE_RESPONSE = 'response';
+    public const LOG_INFORMATION_TYPE_CONTEXT = 'context';
 
     public function __construct()
     {
@@ -251,8 +253,8 @@ class AdminMollieLogsController extends ModuleAdminController
 
     public function displayAjaxGetLog()
     {
-        /** @var \Mollie\Adapter\ToolsAdapter $tools */
-        $tools = $this->module->getService(\Mollie\Adapter\ToolsAdapter::class);
+        /** @var Mollie\Adapter\ToolsAdapter $tools */
+        $tools = $this->module->getService(Mollie\Adapter\ToolsAdapter::class);
 
         /** @var MolLogRepositoryInterface $logRepository */
         $logRepository = $this->module->getService(MolLogRepositoryInterface::class);
@@ -267,12 +269,12 @@ class AdminMollieLogsController extends ModuleAdminController
         $log = null;
 
         try {
-            /** @var \MolLog|null $log */
+            /** @var MolLog|null $log */
             $log = $logRepository->findOneBy([
                 'id_log' => $logId,
                 'id_shop' => $shopContext->getShop()->id,
             ]);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $logger->error(sprintf('%s - Failed to find log', self::FILE_NAME), [
                 'context' => [
                     'id_log' => $logId,
@@ -318,7 +320,7 @@ class AdminMollieLogsController extends ModuleAdminController
      *
      * @return void
      *
-     * @throws \PrestaShopException
+     * @throws PrestaShopException
      */
     protected function ajaxResponse($value = null, $controller = null, $method = null): void
     {
@@ -327,7 +329,7 @@ class AdminMollieLogsController extends ModuleAdminController
 
         try {
             $this->ajaxRender($value, $controller, $method);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $logger->error(sprintf('%s - Could not return ajax response', self::FILE_NAME), [
                 'context' => [
                     'response' => json_encode($value ?: []),
@@ -363,7 +365,7 @@ class AdminMollieLogsController extends ModuleAdminController
             'PrestaShop Version' => _PS_VERSION_,
             'PHP Version' => phpversion(),
             'Module Version' => $this->module->version,
-            'MySQL Version' => \Db::getInstance()->getVersion(),
+            'MySQL Version' => Db::getInstance()->getVersion(),
             'Shop URL' => $context->getShopDomain(),
             'Shop Name' => $context->getShopName(),
         ];
@@ -403,7 +405,7 @@ class AdminMollieLogsController extends ModuleAdminController
         fputcsv($fd, [$moduleConfigurationsInfo], ';', $textDelimiter);
         fputcsv($fd, [$psSettingsInfo], ';', $textDelimiter);
 
-        $query = new \DbQuery();
+        $query = new DbQuery();
 
         $query
             ->select('ml.id_log, l.severity, l.message, ml.request, ml.response, ml.context, ml.date_add')
@@ -412,7 +414,7 @@ class AdminMollieLogsController extends ModuleAdminController
             ->orderBy('ml.id_log DESC')
             ->limit(1000);
 
-        $result = \Db::getInstance()->executeS($query);
+        $result = Db::getInstance()->executeS($query);
 
         $firstRow = $result[0];
         $headers = [];

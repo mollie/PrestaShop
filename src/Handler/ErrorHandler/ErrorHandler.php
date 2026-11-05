@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,13 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Handler\ErrorHandler;
 
-use Configuration;
-use Mollie;
 use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\Logger;
@@ -29,10 +29,10 @@ class ErrorHandler
     /** @var ErrorHandler */
     private static $instance;
 
-    /** @var Mollie */
+    /** @var \Mollie */
     private $module;
 
-    public function __construct(Mollie $module)
+    public function __construct(\Mollie $module)
     {
         $this->module = $module;
     }
@@ -42,7 +42,7 @@ class ErrorHandler
      */
     public function handle(\Throwable $error, ?int $code = null, ?bool $throw = true): void
     {
-        if ((int) Configuration::get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_ERRORS) {
+        if ((int) \Configuration::get(Config::MOLLIE_DEBUG_LOG) === Config::DEBUG_LOG_ERRORS) {
             /** @var Logger $logger * */
             $logger = $this->module->getService(LoggerInterface::class);
 
@@ -57,7 +57,7 @@ class ErrorHandler
         }
     }
 
-    public static function getInstance(?Mollie $module = null): ErrorHandler
+    public static function getInstance(?\Mollie $module = null): ErrorHandler
     {
         if (!$module) {
             $module = (new ModuleFactory())->getModule();

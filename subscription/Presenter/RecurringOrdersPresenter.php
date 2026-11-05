@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,7 +16,6 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Presenter;
 
-use Currency;
 use Mollie\Adapter\Context;
 use Mollie\Adapter\Language;
 use Mollie\Adapter\Link;
@@ -22,8 +23,6 @@ use Mollie\Adapter\ToolsAdapter;
 use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Repository\RecurringOrdersProductRepositoryInterface;
 use Mollie\Utility\NumberUtility;
-use MolRecurringOrder;
-use Product;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -83,7 +82,7 @@ class RecurringOrdersPresenter
 
         $recurringOrdersPresentData = [];
 
-        /** @var MolRecurringOrder $recurringOrder */
+        /** @var \MolRecurringOrder $recurringOrder */
         foreach ($recurringOrders as $recurringOrder) {
             try {
                 /** @var \MolRecurringOrdersProduct $recurringProduct */
@@ -96,13 +95,13 @@ class RecurringOrdersPresenter
                 continue;
             }
 
-            $product = new Product($recurringProduct->id_product, false, $this->language->getDefaultLanguageId());
+            $product = new \Product($recurringProduct->id_product, false, $this->language->getDefaultLanguageId());
 
             $recurringOrderData = [];
             $recurringOrderData['recurring_order'] = $recurringOrder;
             $recurringOrderData['details_url'] = $this->link->getModuleLink('mollie', 'recurringOrderDetail', ['id_mol_recurring_order' => $recurringOrder->id]);
             $recurringOrderData['product_name'] = is_array($product->name) ? $product->name[$this->context->getLanguageId()] : $product->name;
-            $recurringOrderData['total_price'] = $this->tools->displayPrice(NumberUtility::toPrecision((float) $recurringOrder->total_tax_incl, 2), new Currency($recurringOrder->id_currency));
+            $recurringOrderData['total_price'] = $this->tools->displayPrice(NumberUtility::toPrecision((float) $recurringOrder->total_tax_incl, 2), new \Currency($recurringOrder->id_currency));
             $recurringOrderData['currency'] = new \Currency($recurringOrder->id_currency);
             $recurringOrdersPresentData[] = $recurringOrderData;
         }

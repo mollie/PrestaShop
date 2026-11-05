@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,8 +16,6 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Handler;
 
-use Cart;
-use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Resources\Payment;
 use Mollie\Api\Resources\Subscription as MollieSubscription;
@@ -39,8 +39,6 @@ use Mollie\Subscription\Repository\RecurringOrderRepositoryInterface;
 use Mollie\Subscription\Utility\ClockInterface;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\SecureKeyUtility;
-use MolRecurringOrder;
-use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -48,7 +46,7 @@ if (!defined('_PS_VERSION_')) {
 
 class RecurringOrderHandler
 {
-    const FILE_NAME = 'RecurringOrderHandler';
+    public const FILE_NAME = 'RecurringOrderHandler';
 
     /** @var SubscriptionApi */
     private $subscriptionApi;
@@ -56,7 +54,7 @@ class RecurringOrderHandler
     private $subscriptionDataFactory;
     /** @var RecurringOrderRepositoryInterface */
     private $recurringOrderRepository;
-    /** @var Mollie */
+    /** @var \Mollie */
     private $mollie;
     /** @var MollieOrderCreationService */
     private $mollieOrderCreationService;
@@ -83,7 +81,7 @@ class RecurringOrderHandler
         SubscriptionApi $subscriptionApi,
         GetSubscriptionDataFactory $subscriptionDataFactory,
         RecurringOrderRepositoryInterface $recurringOrderRepository,
-        Mollie $mollie,
+        \Mollie $mollie,
         MollieOrderCreationService $mollieOrderCreationService,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         OrderStatusService $orderStatusService,
@@ -160,7 +158,7 @@ class RecurringOrderHandler
     /**
      * @throws \Throwable
      */
-    private function createSubscription(Payment $transaction, MolRecurringOrder $recurringOrder, MollieSubscription $subscription): void
+    private function createSubscription(Payment $transaction, \MolRecurringOrder $recurringOrder, MollieSubscription $subscription): void
     {
         try {
             $newCart = $this->cloneOriginalSubscriptionCartHandler->run(
@@ -210,7 +208,7 @@ class RecurringOrderHandler
         $methodName = $paymentMethod->method_name ?: Config::$methods[$transaction->method];
 
         $subscriptionPaidTotal = (float) $subscription->amount->value;
-        $cartTotal = (float) $newCart->getOrderTotal(true, Cart::BOTH);
+        $cartTotal = (float) $newCart->getOrderTotal(true, \Cart::BOTH);
 
         if (!NumberUtility::isEqual($cartTotal, $subscriptionPaidTotal)) {
             // TODO when improved logging with context will be implemented, remove this logging
@@ -238,8 +236,8 @@ class RecurringOrderHandler
             throw $exception;
         }
 
-        $orderId = (int) Order::getIdByCartId((int) $newCart->id);
-        $order = new Order($orderId);
+        $orderId = (int) \Order::getIdByCartId((int) $newCart->id);
+        $order = new \Order($orderId);
 
         $this->mollieOrderCreationService->createMolliePayment($transaction, (int) $newCart->id, $order->reference, (int) $orderId, PaymentStatus::STATUS_PAID);
 

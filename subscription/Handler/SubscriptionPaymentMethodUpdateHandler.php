@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,7 +16,6 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Handler;
 
-use Mollie;
 use Mollie\Errors\Http\HttpStatusCode;
 use Mollie\Exception\TransactionException;
 use Mollie\Subscription\Api\PaymentApi;
@@ -43,7 +44,7 @@ class SubscriptionPaymentMethodUpdateHandler
     private $clock;
     /** @var GetSubscriptionDataFactory */
     private $getSubscriptionDataFactory;
-    /** @var Mollie */
+    /** @var \Mollie */
     private $mollie;
 
     public function __construct(
@@ -53,7 +54,7 @@ class SubscriptionPaymentMethodUpdateHandler
         PaymentApi $paymentApi,
         ClockInterface $clock,
         GetSubscriptionDataFactory $getSubscriptionDataFactory,
-        Mollie $mollie
+        \Mollie $mollie
     ) {
         $this->subscriptionApi = $subscriptionApi;
         $this->recurringOrderRepository = $recurringOrderRepository;

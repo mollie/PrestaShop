@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -74,8 +76,8 @@ class CloneOriginalSubscriptionCartHandler
 
         foreach ($cartProducts as $cartProduct) {
             if (
-                (int) $cartProduct['id_product'] === (int) $subscriptionProduct->id_product &&
-                (int) $cartProduct['id_product_attribute'] === (int) $subscriptionProduct->id_product_attribute
+                (int) $cartProduct['id_product'] === (int) $subscriptionProduct->id_product
+                && (int) $cartProduct['id_product_attribute'] === (int) $subscriptionProduct->id_product_attribute
             ) {
                 continue;
             }

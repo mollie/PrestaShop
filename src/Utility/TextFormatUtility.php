@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -10,8 +11,6 @@
  */
 
 namespace Mollie\Utility;
-
-use Transliterator;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,13 +32,13 @@ class TextFormatUtility
      */
     public static function replaceAccentedChars(string $string): string
     {
-        if (!class_exists(Transliterator::class)
-            || !method_exists(Transliterator::class, 'create')
+        if (!class_exists(\Transliterator::class)
+            || !method_exists(\Transliterator::class, 'create')
         ) {
             return $string;
         }
 
-        $transliterator = Transliterator::create('Any-Latin; Latin-ASCII');
+        $transliterator = \Transliterator::create('Any-Latin; Latin-ASCII');
 
         return $transliterator->transliterate($string);
     }

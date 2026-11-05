@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -21,12 +23,12 @@ if (!defined('_PS_VERSION_')) {
  */
 class ExpressSubmitCheck implements \JsonSerializable
 {
-    const REASON_ORDER_EXISTS = 'order_exists';
-    const REASON_CART_NOT_READY = 'cart_not_ready';
-    const REASON_AMOUNT_CHANGED = 'amount_changed';
-    const REASON_CART_OWNER_CHANGED = 'cart_owner_changed';
-    const REASON_PAYMENT_STARTED = 'payment_started';
-    const REASON_SESSION_CHANGED = 'session_changed';
+    public const REASON_ORDER_EXISTS = 'order_exists';
+    public const REASON_CART_NOT_READY = 'cart_not_ready';
+    public const REASON_AMOUNT_CHANGED = 'amount_changed';
+    public const REASON_CART_OWNER_CHANGED = 'cart_owner_changed';
+    public const REASON_PAYMENT_STARTED = 'payment_started';
+    public const REASON_SESSION_CHANGED = 'session_changed';
 
     /** @var bool */
     private $ok;

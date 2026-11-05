@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -31,12 +32,12 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Provider\PaymentOption;
 
-use MolCustomer;
 use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Context;
@@ -52,7 +53,6 @@ use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodLangRepositoryInterface;
 use Mollie\Service\LanguageService;
 use Mollie\Utility\CustomerUtility;
-use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 if (!defined('_PS_VERSION_')) {
@@ -61,10 +61,10 @@ if (!defined('_PS_VERSION_')) {
 
 class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
 {
-    const FILE_NAME = 'CreditCardPaymentOptionProvider';
+    public const FILE_NAME = 'CreditCardPaymentOptionProvider';
 
     /**
-     * @var Mollie
+     * @var \Mollie
      */
     private $module;
 
@@ -133,7 +133,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function getPaymentOption(MolPaymentMethod $paymentMethod): PaymentOption
+    public function getPaymentOption(\MolPaymentMethod $paymentMethod): PaymentOption
     {
         $paymentOption = new PaymentOption();
 
@@ -163,7 +163,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
         ));
         $fullName = CustomerUtility::getCustomerFullName($this->customer->getCustomer()->id);
 
-        /** @var MolCustomer|null $molCustomer */
+        /** @var \MolCustomer|null $molCustomer */
         $molCustomer = $this->customerRepository->findOneBy(
             [
                 'name' => $fullName,
@@ -201,7 +201,7 @@ class CreditCardPaymentOptionProvider implements PaymentOptionProviderInterface
             'price' => $this->orderTotalProvider->getOrderTotal(),
             'priceSign' => $this->context->getCurrencySign(),
             'methodId' => $paymentMethod->getPaymentMethodName(),
-            'isSingleClickPayment' => (bool) (int) $this->configurationAdapter->get(Mollie\Config\Config::MOLLIE_SINGLE_CLICK_PAYMENT),
+            'isSingleClickPayment' => (bool) (int) $this->configurationAdapter->get(Config::MOLLIE_SINGLE_CLICK_PAYMENT),
             'mollieUseSavedCard' => $useSavedUser,
             'isGuest' => $this->customer->getCustomer()->isGuest(),
         ]);

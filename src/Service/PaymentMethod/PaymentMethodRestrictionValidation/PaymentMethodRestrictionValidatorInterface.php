@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -31,12 +32,11 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
-
-use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -47,10 +47,10 @@ interface PaymentMethodRestrictionValidatorInterface
     /**
      * Returns if payment is valid
      */
-    public function isValid(MolPaymentMethod $paymentMethod): bool;
+    public function isValid(\MolPaymentMethod $paymentMethod): bool;
 
     /**
      * Returns if payment restriction validator is supported by payment name
      */
-    public function supports(MolPaymentMethod $paymentMethod): bool;
+    public function supports(\MolPaymentMethod $paymentMethod): bool;
 }

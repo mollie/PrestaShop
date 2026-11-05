@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,14 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use Carrier;
-use Context;
-use MolCarrierInformation;
 use Mollie\Config\Config;
 use Mollie\Repository\MolCarrierInformationRepository;
 
@@ -37,25 +36,25 @@ class MolCarrierInformationService
     public function getAllCarriersInformation($langId = null)
     {
         if (!$langId) {
-            $langId = Context::getContext()->language->id;
+            $langId = \Context::getContext()->language->id;
         }
 
-        $carriers = Carrier::getCarriers(
+        $carriers = \Carrier::getCarriers(
             $langId,
             false,
             false,
             false,
             null,
-            Carrier::ALL_CARRIERS
+            \Carrier::ALL_CARRIERS
         );
 
         $configCarriers = [];
-        /** @var Carrier $carrier */
+        /** @var \Carrier $carrier */
         foreach ($carriers as $carrier) {
-            $carrier = new Carrier($carrier['id_carrier']);
+            $carrier = new \Carrier($carrier['id_carrier']);
             $carrierInfoId = $this->informationRepository->getMollieCarrierInformationIdByCarrierId($carrier->id);
             if ($carrierInfoId) {
-                $carrierInfo = new MolCarrierInformation($carrierInfoId);
+                $carrierInfo = new \MolCarrierInformation($carrierInfoId);
                 $configCarriers[] = [
                     'id_carrier' => $carrier->id,
                     'name' => $carrier->name,
@@ -82,7 +81,7 @@ class MolCarrierInformationService
     public function saveMolCarrierInfo($carrierId, $urlSource, $customUrl = null)
     {
         $carrierInformationId = $this->informationRepository->getMollieCarrierInformationIdByCarrierId($carrierId);
-        $carrierInformation = new MolCarrierInformation($carrierInformationId);
+        $carrierInformation = new \MolCarrierInformation($carrierInformationId);
         $carrierInformation->id_carrier = $carrierId;
         $carrierInformation->url_source = $urlSource;
         $carrierInformation->custom_url = $customUrl;

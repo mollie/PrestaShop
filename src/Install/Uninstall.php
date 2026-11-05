@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -15,7 +17,6 @@ namespace Mollie\Install;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Service\SegmentTracker;
-use Tab;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -118,13 +119,13 @@ class Uninstall
         ];
 
         foreach ($tabs as $tab) {
-            $idTab = Tab::getIdFromClassName($tab);
+            $idTab = \Tab::getIdFromClassName($tab);
 
             if (!$idTab) {
                 continue;
             }
 
-            $tab = new Tab($idTab);
+            $tab = new \Tab($idTab);
             if (!$tab->delete()) {
                 return false;
             }

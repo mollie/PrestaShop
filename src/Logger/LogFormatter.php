@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -18,7 +20,7 @@ if (!defined('_PS_VERSION_')) {
 
 class LogFormatter implements LogFormatterInterface
 {
-    const MOLLIE_LOG_PREFIX = 'MOLLIE_MODULE_LOG:';
+    public const MOLLIE_LOG_PREFIX = 'MOLLIE_MODULE_LOG:';
 
     public function getMessage(string $message): string
     {

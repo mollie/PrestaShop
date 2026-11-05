@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -20,9 +22,9 @@ use PHPUnit\Framework\TestCase;
  */
 class PaymentHistoryTranslationsTest extends TestCase
 {
-    const MIN_LOCALIZED_RATIO = 0.8;
+    public const MIN_LOCALIZED_RATIO = 0.8;
 
-    const TEMPLATE_STRINGS = [
+    public const TEMPLATE_STRINGS = [
         'Payment history',
         'No events yet',
         'Mollie reference',
@@ -31,7 +33,7 @@ class PaymentHistoryTranslationsTest extends TestCase
         '%s left to capture',
     ];
 
-    const MODULE_STRINGS = [
+    public const MODULE_STRINGS = [
         'Created',
         'Authorized',
         'Paid',

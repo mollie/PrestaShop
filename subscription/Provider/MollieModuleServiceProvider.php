@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,7 +16,6 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Provider;
 
-use Mollie;
 use Mollie\Factory\ModuleFactory;
 
 if (!defined('_PS_VERSION_')) {
@@ -25,7 +26,7 @@ class MollieModuleServiceProvider
 {
     public function get(string $service)
     {
-        /** @var Mollie $mollie */
+        /** @var \Mollie $mollie */
         $mollie = (new ModuleFactory())->getModule();
 
         return $mollie->getService($service);

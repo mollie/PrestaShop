@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -28,7 +30,6 @@ use Mollie\Service\MollieOrderNumberService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Service\TransactionService;
-use Order;
 use PHPUnit\Framework\TestCase;
 
 class TransactionServiceTest extends TestCase
@@ -94,7 +95,7 @@ class TransactionServiceTest extends TestCase
      */
     public function testOrderPaymentTakesConversionRateFromOrder($orderConversionRate)
     {
-        $order = new Order();
+        $order = new \Order();
         $order->reference = 'ABCDEFGHI';
         $order->conversion_rate = $orderConversionRate;
 

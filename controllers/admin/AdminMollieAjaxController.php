@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -273,7 +275,7 @@ class AdminMollieAjaxController extends ModuleAdminController
             $status = $refundService->handleRefund($transactionId, $refundAmount, $orderLineId, $quantity, $orderId, $refundType);
 
             $this->ajaxRender(json_encode($status));
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->ajaxRender(
                 json_encode([
                     'success' => false,
@@ -307,7 +309,7 @@ class AdminMollieAjaxController extends ModuleAdminController
             $status = $shipService->handleShip($transactionId, $orderlineId, $tracking, $quantity);
 
             $this->ajaxRender(json_encode($status));
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->ajaxRender(
                 json_encode([
                     'success' => false,
@@ -345,7 +347,7 @@ class AdminMollieAjaxController extends ModuleAdminController
             }
 
             $this->ajaxRender(json_encode(['success' => true, 'tracking' => null]));
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->ajaxRender(json_encode(['success' => false]));
         }
     }
@@ -369,7 +371,7 @@ class AdminMollieAjaxController extends ModuleAdminController
             $status = $captureService->handleCapture($transactionId, $amount, $orderId);
 
             $this->ajaxRender(json_encode($status));
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->ajaxRender(
                 json_encode([
                     'success' => false,
@@ -401,7 +403,7 @@ class AdminMollieAjaxController extends ModuleAdminController
             $status = $cancelService->handleCancel($transactionId, $orderlineId, $quantity);
 
             $this->ajaxRender(json_encode($status));
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->ajaxRender(
                 json_encode([
                     'success' => false,

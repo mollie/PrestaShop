@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -28,7 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminMollieAuthenticationController extends ModuleAdminController
 {
-    const FILE_NAME = 'AdminMollieAuthenticationController';
+    public const FILE_NAME = 'AdminMollieAuthenticationController';
 
     /** @var Mollie */
     public $module;
@@ -193,7 +195,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
 
             // Retrieve Account CDN
             $this->context->smarty->assign('urlAccountsCdn', $accountsService->getAccountsCdn());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->context->controller->errors[] = $e->getMessage();
 
             $logger->error(sprintf('%s - Failed to load ps accounts CDN', self::FILE_NAME), [
@@ -202,7 +204,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         }
 
         if ($moduleManager->isInstalled('ps_eventbus')) {
-            $eventbusModule = \Module::getInstanceByName('ps_eventbus');
+            $eventbusModule = Module::getInstanceByName('ps_eventbus');
             if ($eventbusModule && version_compare($eventbusModule->version, '1.9.0', '>=')) {
                 /** @phpstan-ignore-next-line PHPStan does not recognize the event bus module, so it doesn't know it has getService function */
                 $eventbusPresenterService = $eventbusModule->getService('PrestaShop\Module\PsEventbus\Service\PresenterService');
@@ -216,8 +218,6 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         }
 
         $this->content .= $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/cloudsync.tpl');
-
-        return;
     }
 
     public function displayAjax(): void
@@ -418,8 +418,8 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             $environmentValue = ($environment === 'live') ? Config::ENVIRONMENT_LIVE : Config::ENVIRONMENT_TEST;
             $this->configuration->updateValue(Config::MOLLIE_ENVIRONMENT, $environmentValue);
 
-            /** @var \Mollie\Service\SegmentTracker $segmentTracker */
-            $segmentTracker = $this->module->getService(\Mollie\Service\SegmentTracker::class);
+            /** @var Mollie\Service\SegmentTracker $segmentTracker */
+            $segmentTracker = $this->module->getService(Mollie\Service\SegmentTracker::class);
             $segmentTracker->trackModuleConfigured(
                 !empty($this->configuration->get(Config::MOLLIE_API_KEY_TEST)),
                 !empty($this->configuration->get(Config::MOLLIE_API_KEY))

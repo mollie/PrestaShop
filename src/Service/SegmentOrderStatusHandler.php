@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,12 +16,9 @@ declare(strict_types=1);
 
 namespace Mollie\Service;
 
-use Currency;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
-use MolPaymentMethod;
-use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -44,18 +43,18 @@ class SegmentOrderStatusHandler
         $this->segmentTracker = $segmentTracker;
     }
 
-    public function trackFirstPaymentCompleted(Order $order): void
+    public function trackFirstPaymentCompleted(\Order $order): void
     {
         $molliePayment = $this->paymentMethodRepository->getPaymentBy('cart_id', (int) $order->id_cart);
 
         $methodId = is_array($molliePayment) ? ($molliePayment['method'] ?? '') : '';
         $transactionId = is_array($molliePayment) ? ($molliePayment['transaction_id'] ?? '') : '';
         $apiType = !empty($transactionId) && strpos($transactionId, 'ord_') === 0 ? 'orders' : 'payments';
-        $currency = Currency::getCurrencyInstance((int) $order->id_currency)->iso_code ?? '';
+        $currency = \Currency::getCurrencyInstance((int) $order->id_currency)->iso_code ?? '';
 
         $environment = (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT);
         $pmId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($methodId, $environment);
-        $methodName = $pmId ? (new MolPaymentMethod((int) $pmId))->method_name ?: $methodId : $methodId;
+        $methodName = $pmId ? (new \MolPaymentMethod((int) $pmId))->method_name ?: $methodId : $methodId;
 
         $this->segmentTracker->trackFirstPaymentCompleted($methodId, $methodName, $apiType, $currency);
     }

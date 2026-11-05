@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -8,7 +9,6 @@
  *
  * @see        https://github.com/mollie/PrestaShop
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -26,7 +26,7 @@ function upgrade_module_6_2_5(Mollie $module): bool
 
     $result = Db::getInstance()->execute($sql);
 
-    if(!$result) {
+    if (!$result) {
         return false;
     }
 
@@ -41,10 +41,11 @@ function upgrade_module_6_2_5(Mollie $module): bool
     return Db::getInstance()->execute($sql);
 }
 
-function updatePaymentMethodTitles() {
+function updatePaymentMethodTitles()
+{
     $sql = 'SELECT `id_method`, `title` FROM `' . _DB_PREFIX_ . 'mol_payment_method`';
 
-    $methodsList = \Db::getInstance()->executeS($sql);
+    $methodsList = Db::getInstance()->executeS($sql);
 
     foreach ($methodsList as $method) {
         if (empty($method['title'])) {
@@ -55,13 +56,14 @@ function updatePaymentMethodTitles() {
     }
 }
 
-function insertNewTitlesIntoDatabase($method) {
-    foreach (\Shop::getCompleteListOfShopsID() as $idShop) {
-        foreach (\Language::getLanguages() as $idLang) {
+function insertNewTitlesIntoDatabase($method)
+{
+    foreach (Shop::getCompleteListOfShopsID() as $idShop) {
+        foreach (Language::getLanguages() as $idLang) {
             $sql = 'INSERT INTO `' . _DB_PREFIX_ . 'mol_payment_method_lang` (`id_method`, `id_lang`, `id_shop`, `text`)
-                    VALUES ("' . pSQL($method['id_method']) . '", ' . (int)$idLang['id_lang'] . ', ' . (int)$idShop . ', "' . pSQL($method['title']) . '")';
+                    VALUES ("' . pSQL($method['id_method']) . '", ' . (int) $idLang['id_lang'] . ', ' . (int) $idShop . ', "' . pSQL($method['title']) . '")';
 
-            \Db::getInstance()->execute($sql);
+            Db::getInstance()->execute($sql);
         }
     }
 }

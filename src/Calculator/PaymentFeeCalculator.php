@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -15,7 +17,6 @@ namespace Mollie\Calculator;
 use Mollie\Adapter\Context;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Utility\NumberUtility;
-use TaxCalculator;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -25,12 +26,12 @@ class PaymentFeeCalculator
 {
     private const MAX_PERCENTAGE = 100;
 
-    /** @var TaxCalculator */
+    /** @var \TaxCalculator */
     private $taxCalculator;
     /** @var Context */
     private $context;
 
-    public function __construct(TaxCalculator $taxCalculator, Context $context)
+    public function __construct(\TaxCalculator $taxCalculator, Context $context)
     {
         $this->taxCalculator = $taxCalculator;
         $this->context = $context;

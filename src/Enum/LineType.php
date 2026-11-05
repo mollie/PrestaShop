@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -23,10 +25,10 @@ class LineType
      *
      * Will be deprecated in the end of 2025.
      */
-    const ORDER = 'OrderLine';
+    public const ORDER = 'OrderLine';
 
     /**
      * For Payments API
      */
-    const PAYMENT = 'PaymentLine';
+    public const PAYMENT = 'PaymentLine';
 }

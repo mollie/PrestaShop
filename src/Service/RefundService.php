@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -21,7 +23,6 @@ use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\RefundUtility;
 use Mollie\Utility\TextFormatUtility;
 use Mollie\Utility\TransactionUtility;
-use Throwable;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -29,15 +30,15 @@ if (!defined('_PS_VERSION_')) {
 
 class RefundService
 {
-    const FILE_NAME = 'RefundService';
+    public const FILE_NAME = 'RefundService';
 
-    /** @var Mollie */
+    /** @var \Mollie */
     private $module;
 
     /** @var LoggerInterface */
     private $logger;
 
-    public function __construct(Mollie $module, LoggerInterface $logger)
+    public function __construct(\Mollie $module, LoggerInterface $logger)
     {
         $this->module = $module;
         $this->logger = $logger;
@@ -110,7 +111,7 @@ class RefundService
             }
 
             return $this->createErrorResponse('The order could not be refunded!', $e);
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             return $this->createErrorResponse('Something went wrong while processing the refund.', $e);
         }
     }
@@ -209,11 +210,11 @@ class RefundService
 
     /**
      * @param string $message
-     * @param Throwable|null $e
+     * @param \Throwable|null $e
      *
      * @return array
      */
-    private function createErrorResponse(string $message, ?Throwable $e = null): array
+    private function createErrorResponse(string $message, ?\Throwable $e = null): array
     {
         $this->logger->error(sprintf('%s - Error while processing the refund.', self::FILE_NAME), [
             'exceptions' => ExceptionUtility::getExceptions($e),

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,17 +8,15 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Tests\Integration;
 
-use Module;
-use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Tests\Integration\Subscription\Tool\ContextBuilder;
 use PHPUnit\Framework\TestCase;
-use Shop;
 
 class BaseTestCase extends TestCase
 {
@@ -100,14 +99,14 @@ class BaseTestCase extends TestCase
 
     public function getContextShopId()
     {
-        //NOTE returns null value if without multishop
-        return Shop::getContextShopID(true) ? (int) Shop::getContextShopID(true) : null;
+        // NOTE returns null value if without multishop
+        return \Shop::getContextShopID(true) ? (int) \Shop::getContextShopID(true) : null;
     }
 
     protected function getService($serviceName)
     {
-        /** @var Mollie $mollie */
-        $mollie = Module::getInstanceByName('mollie');
+        /** @var \Mollie $mollie */
+        $mollie = \Module::getInstanceByName('mollie');
 
         return $mollie->getService($serviceName);
     }

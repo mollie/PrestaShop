@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use Mollie;
 use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Api\Types\RefundStatus;
@@ -24,14 +25,14 @@ if (!defined('_PS_VERSION_')) {
 
 class LanguageService
 {
-    const FILE_NAME = 'LanguageService';
+    public const FILE_NAME = 'LanguageService';
 
     /**
-     * @var Mollie
+     * @var \Mollie
      */
     private $module;
 
-    public function __construct(Mollie $module)
+    public function __construct(\Mollie $module)
     {
         $this->module = $module;
     }
@@ -47,8 +48,8 @@ class LanguageService
             RefundStatus::STATUS_REFUNDED => $this->module->l('Refunded', self::FILE_NAME),
             PaymentStatus::STATUS_OPEN => $this->module->l('Open', self::FILE_NAME),
             Config::MOLLIE_AWAITING_PAYMENT => $this->module->l('Awaiting', self::FILE_NAME),
-            Mollie\Config\Config::PARTIAL_REFUND_CODE => $this->module->l('Partially refunded', self::FILE_NAME),
-            Mollie\Config\Config::MOLLIE_CHARGEBACK => $this->module->l('Chargeback', self::FILE_NAME),
+            Config::PARTIAL_REFUND_CODE => $this->module->l('Partially refunded', self::FILE_NAME),
+            Config::MOLLIE_CHARGEBACK => $this->module->l('Chargeback', self::FILE_NAME),
             'Payment fee' => $this->module->l('Payment fee', self::FILE_NAME),
             'Shipping' => $this->module->l('Shipping', self::FILE_NAME),
             'Gift wrapping' => $this->module->l('Gift wrapping', self::FILE_NAME),

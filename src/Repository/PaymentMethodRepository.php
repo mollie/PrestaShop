@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,21 +8,15 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Repository;
 
-use Context;
 use Db;
-use DbQuery;
-use Exception;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
-use MolPaymentMethod;
-use mysqli_result;
-use PDOStatement;
-use PrestaShopDatabaseException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -35,7 +30,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 {
     public function __construct()
     {
-        parent::__construct(MolPaymentMethod::class);
+        parent::__construct(\MolPaymentMethod::class);
     }
 
     /**
@@ -47,7 +42,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
     {
         $escapedMethods = array_map(static function ($str) { return pSQL($str); }, $savedPaymentMethods);
 
-        return Db::getInstance()->delete(
+        return \Db::getInstance()->delete(
             'mol_payment_method',
             'id_method NOT IN ("' . implode('", "', $escapedMethods) . '")
             AND `live_environment` = ' . (int) $environment . ' AND `id_shop` = ' . (int) $shopId
@@ -63,27 +58,27 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
     public function getPaymentMethodIdByMethodId($paymentMethodId, $environment, $shopId = null)
     {
         if (!$shopId) {
-            $shopId = Context::getContext()->shop->id;
+            $shopId = \Context::getContext()->shop->id;
         }
 
         $sql = 'SELECT id_payment_method FROM `' . _DB_PREFIX_ . 'mol_payment_method`
         WHERE id_method = "' . pSQL($paymentMethodId) . '" AND live_environment = "' . (int) $environment . '"
         AND id_shop = ' . (int) $shopId;
 
-        return Db::getInstance()->getValue($sql);
+        return \Db::getInstance()->getValue($sql);
     }
 
     public function isManualCapture(string $methodId, int $environment, ?int $shopId = null): bool
     {
         if (!$shopId) {
-            $shopId = Context::getContext()->shop->id;
+            $shopId = \Context::getContext()->shop->id;
         }
 
         $sql = 'SELECT is_manual_capture FROM `' . _DB_PREFIX_ . 'mol_payment_method`
         WHERE id_method = "' . pSQL($methodId) . '" AND live_environment = "' . (int) $environment . '"
         AND id_shop = ' . (int) $shopId;
 
-        return (bool) Db::getInstance()->getValue($sql);
+        return (bool) \Db::getInstance()->getValue($sql);
     }
 
     /**
@@ -94,12 +89,12 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
      *
      * @return array|bool|object|null
      *
-     * @throws PrestaShopDatabaseException
+     * @throws \PrestaShopDatabaseException
      */
     public function getPaymentBy($column, $value)
     {
         try {
-            $paidPayment = Db::getInstance()->getRow(
+            $paidPayment = \Db::getInstance()->getRow(
                 sprintf(
                     'SELECT * FROM `%s` WHERE `%s` = \'%s\' AND `bank_status` IN(\'%s\', \'%s\')',
                     _DB_PREFIX_ . 'mollie_payments',
@@ -109,7 +104,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
                     PaymentStatus::STATUS_AUTHORIZED
                 )
             );
-        } catch (PrestaShopDatabaseException $e) {
+        } catch (\PrestaShopDatabaseException $e) {
             throw $e;
         }
 
@@ -118,7 +113,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
         }
 
         try {
-            $nonPaidPayment = Db::getInstance()->getRow(
+            $nonPaidPayment = \Db::getInstance()->getRow(
                 sprintf(
                     'SELECT * FROM `%s` WHERE `%s` = \'%s\' ORDER BY `created_at` DESC',
                     _DB_PREFIX_ . 'mollie_payments',
@@ -126,7 +121,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
                     pSQL($value)
                 )
             );
-        } catch (PrestaShopDatabaseException $e) {
+        } catch (\PrestaShopDatabaseException $e) {
             throw $e;
         }
 
@@ -143,11 +138,11 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
      *
      * @return array|false
      *
-     * @throws PrestaShopDatabaseException
+     * @throws \PrestaShopDatabaseException
      */
     public function getPaymentByTransactionIdForCart($transactionId, $cartId)
     {
-        $payment = Db::getInstance()->getRow(
+        $payment = \Db::getInstance()->getRow(
             sprintf(
                 'SELECT * FROM `%s` WHERE `transaction_id` = \'%s\' AND `cart_id` = %d',
                 _DB_PREFIX_ . 'mollie_payments',
@@ -164,30 +159,30 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
     }
 
     /**
-     * @return array|false|mysqli_result|PDOStatement|resource|null
+     * @return array|false|\mysqli_result|\PDOStatement|resource|null
      *
-     * @throws PrestaShopDatabaseException
+     * @throws \PrestaShopDatabaseException
      */
     public function getMethodsForCheckout($environment, $shopId)
     {
-        $sql = new DbQuery();
+        $sql = new \DbQuery();
         $sql->select('*');
         $sql->from('mol_payment_method');
         $sql->where('live_environment = ' . (int) $environment);
         $sql->where('id_shop = ' . (int) $shopId);
 
-        return Db::getInstance()->executeS($sql);
+        return \Db::getInstance()->executeS($sql);
     }
 
     public function getMaxPosition($environment, $shopId): int
     {
-        $sql = new DbQuery();
+        $sql = new \DbQuery();
         $sql->select('MAX(position)');
         $sql->from('mol_payment_method');
         $sql->where('live_environment = ' . (int) $environment);
         $sql->where('id_shop = ' . (int) $shopId);
 
-        return (int) Db::getInstance()->getValue($sql, false);
+        return (int) \Db::getInstance()->getValue($sql, false);
     }
 
     /**
@@ -198,7 +193,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
      */
     public function updateTransactionId($oldTransactionId, $newTransactionId)
     {
-        return Db::getInstance()->update(
+        return \Db::getInstance()->update(
             'mollie_payments',
             [
                 'transaction_id' => pSQL($newTransactionId),
@@ -210,7 +205,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
     public function savePaymentStatus($transactionId, $status, $orderId, $paymentMethod)
     {
         try {
-            return Db::getInstance()->update(
+            return \Db::getInstance()->update(
                 'mollie_payments',
                 [
                     'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
@@ -220,14 +215,14 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
                 ],
                 '`transaction_id` = \'' . pSQL($transactionId) . '\''
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
 
     public function addOpenStatusPayment($cartId, $orderPayment, $transactionId, $orderId, $orderReference)
     {
-        return Db::getInstance()->insert(
+        return \Db::getInstance()->insert(
             'mollie_payments',
             [
                 'cart_id' => (int) $cartId,
@@ -264,7 +259,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
             $data['reason'] = pSQL($reason);
         }
 
-        $updated = Db::getInstance()->update(
+        $updated = \Db::getInstance()->update(
             'mollie_payments',
             $data,
             sprintf(
@@ -279,13 +274,13 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
             return false;
         }
 
-        return Db::getInstance()->Affected_Rows() > 0;
+        return \Db::getInstance()->Affected_Rows() > 0;
     }
 
     public function updatePaymentReason($transactionId, $reason)
     {
         try {
-            return Db::getInstance()->update(
+            return \Db::getInstance()->update(
                 'mollie_payments',
                 [
                     'updated_at' => ['type' => 'sql', 'value' => 'NOW()'],
@@ -293,7 +288,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
                 ],
                 '`transaction_id` = \'' . pSQL($transactionId) . '\''
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -307,7 +302,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
      */
     public function getCustomerGroupsForPaymentMethod(int $paymentMethodId): array
     {
-        $sql = new DbQuery();
+        $sql = new \DbQuery();
         $sql->select('id_customer_group')
             ->from('mol_excluded_customer_groups')
             ->where('id_payment_method = ' . (int) $paymentMethodId);
@@ -323,7 +318,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 
     public function countEnabledMethods(int $environment, int $shopId): int
     {
-        $result = Db::getInstance()->getValue(
+        $result = \Db::getInstance()->getValue(
             'SELECT COUNT(*) FROM `' . _DB_PREFIX_ . 'mol_payment_method`
             WHERE `live_environment` = ' . (int) $environment . '
             AND `id_shop` = ' . (int) $shopId . '
@@ -335,7 +330,7 @@ class PaymentMethodRepository extends AbstractRepository implements PaymentMetho
 
     public function hasAnySuccessfulPayment(): bool
     {
-        $result = Db::getInstance()->getValue(
+        $result = \Db::getInstance()->getValue(
             'SELECT 1 FROM `' . _DB_PREFIX_ . 'mollie_payments`
             WHERE `bank_status` IN (\'paid\', \'authorized\')'
         );

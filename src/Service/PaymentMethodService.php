@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,19 +8,13 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
-use Address;
-use Cart;
-use Configuration;
-use Country;
-use Currency;
-use Customer;
 use Exception;
-use MolCustomer;
 use Mollie;
 use Mollie\Adapter\CartAdapter;
 use Mollie\Adapter\ConfigurationAdapter;
@@ -56,10 +51,6 @@ use Mollie\Utility\HashUtility;
 use Mollie\Utility\LocaleUtility;
 use Mollie\Utility\SecureKeyUtility;
 use Mollie\Utility\TextFormatUtility;
-use MolPaymentMethod;
-use PrestaShopDatabaseException;
-use PrestaShopException;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -67,7 +58,7 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentMethodService
 {
-    /** @var Mollie */
+    /** @var \Mollie */
     private $module;
 
     /** @var PaymentMethodRepositoryInterface */
@@ -167,35 +158,35 @@ class PaymentMethodService
     public function savePaymentMethod($method)
     {
         $shopId = $this->shop->getShop()->id;
-        $environment = Tools::getValue(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+        $environment = \Tools::getValue(Config::MOLLIE_ENVIRONMENT);
         $paymentId = $this->methodRepository->getPaymentMethodIdByMethodId($method['id'], $environment, $shopId);
-        $paymentMethod = new MolPaymentMethod();
+        $paymentMethod = new \MolPaymentMethod();
         if ($paymentId) {
-            $paymentMethod = new MolPaymentMethod((int) $paymentId);
+            $paymentMethod = new \MolPaymentMethod((int) $paymentId);
         }
 
-        $this->validateSurchargePercentage((float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_PERCENTAGE . $method['id']));
+        $this->validateSurchargePercentage((float) \Tools::getValue(Config::MOLLIE_METHOD_SURCHARGE_PERCENTAGE . $method['id']));
 
         $paymentMethod->id_method = $method['id'];
         $paymentMethod->method_name = $method['name'];
-        $paymentMethod->enabled = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_ENABLED . $method['id']);
-        $paymentMethod->method = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_API . $method['id']);
-        $paymentMethod->description = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_DESCRIPTION . $method['id']);
-        $paymentMethod->is_countries_applicable = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_APPLICABLE_COUNTRIES . $method['id']);
-        $paymentMethod->minimal_order_value = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MINIMUM_ORDER_VALUE . $method['id']);
-        $paymentMethod->max_order_value = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_ORDER_VALUE . $method['id']);
-        $paymentMethod->surcharge = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_TYPE . $method['id']);
-        $paymentMethod->surcharge_fixed_amount_tax_excl = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_EXCL . $method['id']);
-        $paymentMethod->tax_rules_group_id = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_TAX_RULES_GROUP_ID . $method['id']);
-        $paymentMethod->surcharge_percentage = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_PERCENTAGE . $method['id']);
-        $paymentMethod->surcharge_limit = Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_LIMIT . $method['id']) === ''
-            ? (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_AMOUNT . $method['id'])
-            : Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_SURCHARGE_LIMIT . $method['id']);
+        $paymentMethod->enabled = \Tools::getValue(Config::MOLLIE_METHOD_ENABLED . $method['id']);
+        $paymentMethod->method = \Tools::getValue(Config::MOLLIE_METHOD_API . $method['id']);
+        $paymentMethod->description = \Tools::getValue(Config::MOLLIE_METHOD_DESCRIPTION . $method['id']);
+        $paymentMethod->is_countries_applicable = \Tools::getValue(Config::MOLLIE_METHOD_APPLICABLE_COUNTRIES . $method['id']);
+        $paymentMethod->minimal_order_value = \Tools::getValue(Config::MOLLIE_METHOD_MINIMUM_ORDER_VALUE . $method['id']);
+        $paymentMethod->max_order_value = \Tools::getValue(Config::MOLLIE_METHOD_MAX_ORDER_VALUE . $method['id']);
+        $paymentMethod->surcharge = \Tools::getValue(Config::MOLLIE_METHOD_SURCHARGE_TYPE . $method['id']);
+        $paymentMethod->surcharge_fixed_amount_tax_excl = \Tools::getValue(Config::MOLLIE_METHOD_SURCHARGE_FIXED_AMOUNT_TAX_EXCL . $method['id']);
+        $paymentMethod->tax_rules_group_id = \Tools::getValue(Config::MOLLIE_METHOD_TAX_RULES_GROUP_ID . $method['id']);
+        $paymentMethod->surcharge_percentage = \Tools::getValue(Config::MOLLIE_METHOD_SURCHARGE_PERCENTAGE . $method['id']);
+        $paymentMethod->surcharge_limit = \Tools::getValue(Config::MOLLIE_METHOD_SURCHARGE_LIMIT . $method['id']) === ''
+            ? (float) \Tools::getValue(Config::MOLLIE_METHOD_MAX_AMOUNT . $method['id'])
+            : \Tools::getValue(Config::MOLLIE_METHOD_SURCHARGE_LIMIT . $method['id']);
         $paymentMethod->images_json = json_encode($method['image']);
         $paymentMethod->live_environment = $environment;
         $paymentMethod->id_shop = $shopId;
-        $paymentMethod->min_amount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MIN_AMOUNT . $method['id']);
-        $paymentMethod->max_amount = (float) Tools::getValue(Mollie\Config\Config::MOLLIE_METHOD_MAX_AMOUNT . $method['id']);
+        $paymentMethod->min_amount = (float) \Tools::getValue(Config::MOLLIE_METHOD_MIN_AMOUNT . $method['id']);
+        $paymentMethod->max_amount = (float) \Tools::getValue(Config::MOLLIE_METHOD_MAX_AMOUNT . $method['id']);
 
         if (!$paymentMethod->id) {
             $paymentMethod->position = $this->methodRepository->getMaxPosition($environment, $shopId) + 1;
@@ -203,7 +194,7 @@ class PaymentMethodService
 
         $paymentMethod->save();
 
-        foreach (Tools::getValue(Config::MOLLIE_METHOD_TITLE . $method['id']) as $idLang => $title) {
+        foreach (\Tools::getValue(Config::MOLLIE_METHOD_TITLE . $method['id']) as $idLang => $title) {
             $this->paymentMethodLangRepository->savePaymentTitleTranslation($method['id'], $idLang, $title, $this->context->getShopId());
         }
 
@@ -215,8 +206,8 @@ class PaymentMethodService
      *
      * @return array
      *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      *
      * @since 3.0.0
      * @since 3.4.0 public
@@ -230,10 +221,10 @@ class PaymentMethodService
             return [];
         }
         /* @phpstan-ignore-next-line */
-        if (false === Configuration::get(Config::MOLLIE_STATUS_AWAITING)) {
+        if (false === \Configuration::get(Config::MOLLIE_STATUS_AWAITING)) {
             return [];
         }
-        $apiEnvironment = Configuration::get(Config::MOLLIE_ENVIRONMENT);
+        $apiEnvironment = \Configuration::get(Config::MOLLIE_ENVIRONMENT);
         $methods = $this->methodRepository->getMethodsForCheckout($apiEnvironment, $this->shop->getShop()->id) ?: [];
 
         $isSubscriptionOrder = $this->subscriptionOrder->validate($this->cartAdapter->getCart());
@@ -248,7 +239,7 @@ class PaymentMethodService
         $methods = $this->removeNotSupportedMethods($methods, $mollieMethods);
 
         foreach ($methods as $index => $method) {
-            /** @var MolPaymentMethod|null $paymentMethod */
+            /** @var \MolPaymentMethod|null $paymentMethod */
             $paymentMethod = $this->methodRepository->findOneBy(['id_payment_method' => (int) $method['id_payment_method']]);
 
             if (!$paymentMethod || !$this->paymentMethodRestrictionValidation->isPaymentMethodValid($paymentMethod)) {
@@ -276,7 +267,7 @@ class PaymentMethodService
      * @param float|string $amount
      * @param string $currency
      * @param string $method
-     * @param int|Cart $cartId
+     * @param int|\Cart $cartId
      * @param string $secureKey
      * @param string $orderReference
      * @param string $cardToken
@@ -291,7 +282,7 @@ class PaymentMethodService
         $method,
         $cartId,
         $secureKey,
-        MolPaymentMethod $molPaymentMethod,
+        \MolPaymentMethod $molPaymentMethod,
         $orderReference,
         $cardToken = '',
         $saveCard = true,
@@ -299,8 +290,8 @@ class PaymentMethodService
         string $applePayToken = ''
     ) {
         $totalAmount = TextFormatUtility::formatNumber($amount, 2);
-        $cart = new Cart($cartId);
-        $customer = new Customer($cart->id_customer);
+        $cart = new \Cart($cartId);
+        $customer = new \Customer($cart->id_customer);
 
         $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($molPaymentMethod, $totalAmount);
 
@@ -308,7 +299,7 @@ class PaymentMethodService
             $totalAmount += $paymentFeeData->getPaymentFeeTaxIncl();
         }
 
-        $currency = (string) ($currency ? Tools::strtoupper($currency) : 'EUR');
+        $currency = (string) ($currency ? \Tools::strtoupper($currency) : 'EUR');
         $value = (float) TextFormatUtility::formatNumber($totalAmount, 2);
         $amountObj = new Amount($currency, $value);
 
@@ -347,13 +338,13 @@ class PaymentMethodService
             'method_id' => $molPaymentMethod->id_method,
         ];
 
-        if (Mollie\Config\Config::MOLLIE_ORDERS_API !== $molPaymentMethod->method) {
+        if (Config::MOLLIE_ORDERS_API !== $molPaymentMethod->method) {
             $paymentData = new PaymentData($amountObj, $orderReference, $redirectUrl, $webhookUrl);
 
-            if (in_array($molPaymentMethod->id_method, Mollie\Config\Config::MOLLIE_MANUAL_CAPTURE_METHODS)) {
+            if (in_array($molPaymentMethod->id_method, Config::MOLLIE_MANUAL_CAPTURE_METHODS)) {
                 $paymentData->setCaptureMode('manual');
-            } elseif (in_array($molPaymentMethod->id_method, Mollie\Config\Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS)) {
-                $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+            } elseif (in_array($molPaymentMethod->id_method, Config::MOLLIE_MANUAL_CAPTURE_ELIGIBLE_METHODS)) {
+                $environment = (int) \Configuration::get(Config::MOLLIE_ENVIRONMENT);
                 if ($this->methodRepository->isManualCapture($molPaymentMethod->id_method, $environment)) {
                     $paymentData->setCaptureMode('manual');
                 }
@@ -377,12 +368,12 @@ class PaymentMethodService
             }
 
             if (isset($cart->id_address_invoice)) {
-                $billingAddress = new Address((int) $cart->id_address_invoice);
+                $billingAddress = new \Address((int) $cart->id_address_invoice);
                 $paymentData->setBillingAddress($billingAddress);
                 $paymentData->setBillingPhoneNumber($this->phoneNumberProvider->getFromAddress($billingAddress));
             }
             if (isset($cart->id_address_delivery)) {
-                $shippingAddress = new Address((int) $cart->id_address_delivery);
+                $shippingAddress = new \Address((int) $cart->id_address_delivery);
                 $paymentData->setShippingAddress($shippingAddress);
             }
 
@@ -413,13 +404,13 @@ class PaymentMethodService
                     $currency,
                     $cart->getSummaryDetails(),
                     $cart->getProducts(),
-                    (bool) Configuration::get('PS_GIFT_WRAPPING'),
-                    Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
+                    (bool) \Configuration::get('PS_GIFT_WRAPPING'),
+                    \Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY),
                     LineType::PAYMENT
                 )
             );
 
-            if ($this->subscriptionOrder->validate(new Cart($cartId))) {
+            if ($this->subscriptionOrder->validate(new \Cart($cartId))) {
                 $paymentData->setSubscriptionOrder(true);
 
                 $molCustomer = $this->getCustomerInfo($cart->id_customer, true, false);
@@ -449,11 +440,11 @@ class PaymentMethodService
             return $paymentData;
         }
 
-        if (Mollie\Config\Config::MOLLIE_ORDERS_API === $molPaymentMethod->method) {
+        if (Config::MOLLIE_ORDERS_API === $molPaymentMethod->method) {
             $orderData = new OrderData($amountObj, $redirectUrl, $webhookUrl);
 
             if (isset($cart->id_address_invoice)) {
-                $billingAddress = new Address((int) $cart->id_address_invoice);
+                $billingAddress = new \Address((int) $cart->id_address_invoice);
 
                 if (!empty($billingAddress->vat_number) && !empty($customer->siret)) {
                     $company = new Company();
@@ -465,7 +456,7 @@ class PaymentMethodService
                 $orderData->setBillingPhoneNumber($this->phoneNumberProvider->getFromAddress($billingAddress));
             }
             if (isset($cart->id_address_delivery)) {
-                $shippingAddress = new Address((int) $cart->id_address_delivery);
+                $shippingAddress = new \Address((int) $cart->id_address_delivery);
 
                 $orderData->setShippingAddress($shippingAddress);
                 $orderData->setDeliveryPhoneNumber($this->phoneNumberProvider->getFromAddress($shippingAddress));
@@ -491,8 +482,8 @@ class PaymentMethodService
                 $orderData->setConsumerDateOfBirth((string) $customer->birthday);
             }
 
-            $currency = new Currency($cart->id_currency);
-            $selectedVoucherCategory = Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY);
+            $currency = new \Currency($cart->id_currency);
+            $selectedVoucherCategory = \Configuration::get(Config::MOLLIE_VOUCHER_CATEGORY);
             $orderData->setLines(
                 $this->cartLinesService->getCartLines(
                     $amount,
@@ -500,7 +491,7 @@ class PaymentMethodService
                     $currency->iso_code,
                     $cart->getSummaryDetails(),
                     $cart->getProducts(),
-                    (bool) Configuration::get('PS_GIFT_WRAPPING'),
+                    (bool) \Configuration::get('PS_GIFT_WRAPPING'),
                     $selectedVoucherCategory,
                     LineType::ORDER
                 ));
@@ -590,8 +581,8 @@ class PaymentMethodService
 
     private function getSupportedMollieMethods(?string $sequenceType = null): array
     {
-        $address = new Address($this->context->getInvoiceAddressId());
-        $country = new Country($address->id_country);
+        $address = new \Address($this->context->getInvoiceAddressId());
+        $country = new \Country($address->id_country);
 
         $cartAmount = $this->orderTotalProvider->getOrderTotal();
 
@@ -613,7 +604,7 @@ class PaymentMethodService
         return $methods->getArrayCopy();
     }
 
-    public function handleCustomerInfo(int $customerId, bool $saveCard, bool $useSavedCard): ?MolCustomer
+    public function handleCustomerInfo(int $customerId, bool $saveCard, bool $useSavedCard): ?\MolCustomer
     {
         $isSingleClickPaymentEnabled = (bool) (int) $this->configurationAdapter->get(Config::MOLLIE_SINGLE_CLICK_PAYMENT);
         if (!$this->isCustomerSaveEnabled($isSingleClickPaymentEnabled)) {
@@ -623,7 +614,7 @@ class PaymentMethodService
         return $this->getCustomerInfo($customerId, $saveCard, $useSavedCard);
     }
 
-    public function getCustomerInfo(int $customerId, bool $saveCard, bool $useSavedCard): ?MolCustomer
+    public function getCustomerInfo(int $customerId, bool $saveCard, bool $useSavedCard): ?\MolCustomer
     {
         if ($saveCard) {
             $apiCustomer = $this->customerService->processCustomerCreation($customerId);
@@ -636,11 +627,11 @@ class PaymentMethodService
         return $apiCustomer;
     }
 
-    public function getPaymentMethod($apiPayment): MolPaymentMethod
+    public function getPaymentMethod($apiPayment): \MolPaymentMethod
     {
-        $environment = (int) Configuration::get(Mollie\Config\Config::MOLLIE_ENVIRONMENT);
+        $environment = (int) \Configuration::get(Config::MOLLIE_ENVIRONMENT);
 
-        return new MolPaymentMethod(
+        return new \MolPaymentMethod(
             $this->methodRepository->getPaymentMethodIdByMethodId($this->getCheckoutMethodId($apiPayment), $environment)
         );
     }
@@ -701,7 +692,7 @@ class PaymentMethodService
      *
      * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
      */
-    public function getPaymentMethodName(MolPaymentMethod $paymentMethod, $apiPayment): string
+    public function getPaymentMethodName(\MolPaymentMethod $paymentMethod, $apiPayment): string
     {
         $wallet = $this->getWallet($apiPayment);
 
@@ -726,9 +717,9 @@ class PaymentMethodService
      */
     public function getMethodName(string $methodId): string
     {
-        $environment = (int) Configuration::get(Config::MOLLIE_ENVIRONMENT);
+        $environment = (int) \Configuration::get(Config::MOLLIE_ENVIRONMENT);
 
-        $paymentMethod = new MolPaymentMethod(
+        $paymentMethod = new \MolPaymentMethod(
             (int) $this->methodRepository->getPaymentMethodIdByMethodId($methodId, $environment)
         );
 
@@ -738,7 +729,7 @@ class PaymentMethodService
     private function validateSurchargePercentage(float $surchargePercentage): void
     {
         if ($surchargePercentage <= -100 || $surchargePercentage >= 100) {
-            throw new Exception(sprintf('Surcharge percentage must be between -100%% and 100%%. Current value: %.2f%%', $surchargePercentage));
+            throw new \Exception(sprintf('Surcharge percentage must be between -100%% and 100%%. Current value: %.2f%%', $surchargePercentage));
         }
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -45,8 +47,8 @@ class OrderStatusUtility
      */
     public static function transformPaymentStatusToRefunded($transaction)
     {
-        if (null === $transaction->amountRefunded ||
-            null === $transaction->amountCaptured) {
+        if (null === $transaction->amountRefunded
+            || null === $transaction->amountCaptured) {
             return $transaction->status;
         }
 

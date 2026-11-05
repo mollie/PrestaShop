@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,7 +16,6 @@ namespace Mollie\Repository;
 
 use Mollie\Shared\Infrastructure\Repository\ReadOnlyRepositoryInterface;
 use MolPendingOrderCartRule;
-use Order;
 use OrderCartRule;
 
 if (!defined('_PS_VERSION_')) {
@@ -35,10 +36,10 @@ interface PendingOrderCartRuleRepositoryInterface extends ReadOnlyRepositoryInte
      * @param int $orderId
      * @param int $cartRuleId
      */
-    public function createPendingOrderCartRule($orderId, $cartRuleId, OrderCartRule $orderCartRule);
+    public function createPendingOrderCartRule($orderId, $cartRuleId, \OrderCartRule $orderCartRule);
 
     /**
      * Used to create OrderCartRule from MolPendingOrderCartRule
      */
-    public function usePendingOrderCartRule(Order $order, MolPendingOrderCartRule $pendingOrderCartRule);
+    public function usePendingOrderCartRule(\Order $order, \MolPendingOrderCartRule $pendingOrderCartRule);
 }

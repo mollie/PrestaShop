@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -31,13 +32,13 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
 use Mollie\Adapter\LegacyContext;
-use MolPaymentMethod;
 use PrestaShop\Decimal\Number;
 
 if (!defined('_PS_VERSION_')) {
@@ -59,7 +60,7 @@ class AmountPaymentMethodRestrictionValidator implements PaymentMethodRestrictio
     /**
      * {@inheritDoc}
      */
-    public function isValid(MolPaymentMethod $paymentMethod): bool
+    public function isValid(\MolPaymentMethod $paymentMethod): bool
     {
         $orderTotal = $this->context->getCart()->getOrderTotal();
 
@@ -85,7 +86,7 @@ class AmountPaymentMethodRestrictionValidator implements PaymentMethodRestrictio
     /**
      * {@inheritDoc}
      */
-    public function supports(MolPaymentMethod $paymentMethod): bool
+    public function supports(\MolPaymentMethod $paymentMethod): bool
     {
         return true;
     }

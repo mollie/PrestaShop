@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -31,12 +32,12 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Provider\PaymentOption;
 
-use MolPaymentMethod;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 if (!defined('_PS_VERSION_')) {
@@ -45,5 +46,5 @@ if (!defined('_PS_VERSION_')) {
 
 interface PaymentOptionProviderInterface
 {
-    public function getPaymentOption(MolPaymentMethod $paymentMethod): PaymentOption;
+    public function getPaymentOption(\MolPaymentMethod $paymentMethod): PaymentOption;
 }

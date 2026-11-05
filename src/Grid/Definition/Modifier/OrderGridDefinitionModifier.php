@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Grid\Definition\Modifier;
 
-use Mollie;
 use Mollie\Config\Config;
 use Mollie\Grid\Action\Type\SecondChanceRowAction;
 use Mollie\Grid\Action\Type\ViewInMollieRowAction;
@@ -29,7 +30,7 @@ class OrderGridDefinitionModifier implements GridDefinitionModifierInterface
 {
     private $module;
 
-    public function __construct(Mollie $module)
+    public function __construct(\Mollie $module)
     {
         $this->module = $module;
     }
@@ -47,7 +48,7 @@ class OrderGridDefinitionModifier implements GridDefinitionModifierInterface
                         ->add((new SecondChanceRowAction('transaction_id'))
                             ->setName($this->module->l('You will resend email with payment link to the customer', 'OrderGridDefinitionModifier'))
                             ->setOptions([
-                                'route' => Mollie\Config\Config::ROUTE_RESEND_SECOND_CHANCE_PAYMENT_MESSAGE,
+                                'route' => Config::ROUTE_RESEND_SECOND_CHANCE_PAYMENT_MESSAGE,
                                 'route_param_field' => 'id_order',
                                 'route_param_name' => 'orderId',
                                 'use_inline_display' => true,

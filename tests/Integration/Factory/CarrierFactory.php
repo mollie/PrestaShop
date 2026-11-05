@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -22,10 +24,10 @@ class CarrierFactory implements FactoryInterface
         $carrier->active = $data['active'] ?? true;
         $carrier->delay = $data['delay'] ?? '28 days later';
 
-        //NOTE to if true would add PS_SHIPPING_HANDLING from configuration to shipping price.
+        // NOTE to if true would add PS_SHIPPING_HANDLING from configuration to shipping price.
         $carrier->shipping_handling = $data['shipping_handling'] ?? false;
 
-        //NOTE need to do it like this because otherwise it would not show up as option.
+        // NOTE need to do it like this because otherwise it would not show up as option.
         if (isset($data['price']) && !empty((int) $data['price'])) {
             $carrier->shipping_method = \Carrier::SHIPPING_METHOD_PRICE;
         } else {

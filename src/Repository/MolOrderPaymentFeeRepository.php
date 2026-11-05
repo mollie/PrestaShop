@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,13 +8,13 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Repository;
 
 use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
-use MolOrderPaymentFee;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -23,6 +24,6 @@ class MolOrderPaymentFeeRepository extends AbstractRepository implements MolOrde
 {
     public function __construct()
     {
-        parent::__construct(MolOrderPaymentFee::class);
+        parent::__construct(\MolOrderPaymentFee::class);
     }
 }

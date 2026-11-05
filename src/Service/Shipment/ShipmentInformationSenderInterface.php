@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,7 +16,6 @@ namespace Mollie\Service\Shipment;
 
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
-use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -26,5 +27,5 @@ interface ShipmentInformationSenderInterface
      * @throws ApiException
      * @throws \Exception
      */
-    public function sendShipmentInformation(?MollieApiClient $apiGateway, Order $order): void;
+    public function sendShipmentInformation(?MollieApiClient $apiGateway, \Order $order): void;
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,13 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Repository;
 
-use Db;
-use DbQuery;
 use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -29,7 +29,7 @@ class TaxRulesGroupRepository extends AbstractRepository implements TaxRulesGrou
 
     public function getTaxRulesGroups(int $shopId): array
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
 
         $query->select('trg.id_tax_rules_group as id, trg.name')
             ->from('tax_rules_group', 'trg')
@@ -38,7 +38,7 @@ class TaxRulesGroupRepository extends AbstractRepository implements TaxRulesGrou
             ->where('trg.active = 1')
             ->where('trgs.id_shop = ' . (int) $shopId);
 
-        $result = Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS($query);
+        $result = \Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS($query);
 
         if (empty($result)) {
             return [];

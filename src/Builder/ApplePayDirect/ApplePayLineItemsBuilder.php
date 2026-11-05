@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -21,7 +23,7 @@ if (!defined('_PS_VERSION_')) {
 
 class ApplePayLineItemsBuilder
 {
-    const FILE_NAME = 'ApplePayLineItemsBuilder';
+    public const FILE_NAME = 'ApplePayLineItemsBuilder';
 
     /** @var \Mollie */
     private $module;
@@ -35,13 +37,13 @@ class ApplePayLineItemsBuilder
      * Splits the cart total (without payment fee) into the lines shown above the sheet total.
      * Priced through the cart's current delivery option, so callers set it first.
      */
-    public function build(Cart $cart, float $orderTotal, float $paymentFee): array
+    public function build(\Cart $cart, float $orderTotal, float $paymentFee): array
     {
-        $productsTaxExcl = $this->round($cart->getOrderTotal(false, Cart::ONLY_PRODUCTS));
-        $shipping = $this->round($cart->getOrderTotal(true, Cart::ONLY_SHIPPING));
-        $wrapping = $this->round($cart->getOrderTotal(true, Cart::ONLY_WRAPPING));
+        $productsTaxExcl = $this->round($cart->getOrderTotal(false, \Cart::ONLY_PRODUCTS));
+        $shipping = $this->round($cart->getOrderTotal(true, \Cart::ONLY_SHIPPING));
+        $wrapping = $this->round($cart->getOrderTotal(true, \Cart::ONLY_WRAPPING));
         // Tax excluded like the products line, so the voucher's own tax comes off the VAT line
-        $discounts = $this->round($cart->getOrderTotal(false, Cart::ONLY_DISCOUNTS));
+        $discounts = $this->round($cart->getOrderTotal(false, \Cart::ONLY_DISCOUNTS));
 
         // VAT takes the remainder, so the lines always add up to the charged total
         // even when PrestaShop rounds per line or per item

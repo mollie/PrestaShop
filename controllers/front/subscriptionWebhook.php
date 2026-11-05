@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -100,7 +102,7 @@ class MollieSubscriptionWebhookModuleFrontController extends AbstractMollieContr
 
         try {
             $recurringOrderHandler->handle($transactionId);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $errorHandler->handle($exception, null, false);
 
             $this->releaseLock();

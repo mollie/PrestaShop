@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,13 +8,13 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Service;
 
 use MolCustomer;
-use Mollie;
 use Mollie\Exception\MollieException;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Utility\CustomerUtility;
@@ -25,7 +26,7 @@ if (!defined('_PS_VERSION_')) {
 class CustomerService
 {
     /**
-     * @var Mollie
+     * @var \Mollie
      */
     private $mollie;
 
@@ -34,14 +35,14 @@ class CustomerService
      */
     private $customerRepository;
 
-    public function __construct(Mollie $mollie, MolCustomerRepository $customerRepository)
+    public function __construct(\Mollie $mollie, MolCustomerRepository $customerRepository)
     {
         $this->mollie = $mollie;
         $this->customerRepository = $customerRepository;
     }
 
     /**
-     * @return MolCustomer|null
+     * @return \MolCustomer|null
      *
      * @throws MollieException
      * @throws \PrestaShopDatabaseException
@@ -52,7 +53,7 @@ class CustomerService
         $customer = new \Customer($customerId);
 
         $fullName = CustomerUtility::getCustomerFullName($customer->id);
-        /** @var MolCustomer|null $molCustomer */
+        /** @var \MolCustomer|null $molCustomer */
         $molCustomer = $this->getCustomer($customerId);
 
         if ($molCustomer) {
@@ -61,7 +62,7 @@ class CustomerService
 
         $mollieCustomer = $this->createCustomer($fullName, $customer->email);
 
-        $molCustomer = new MolCustomer();
+        $molCustomer = new \MolCustomer();
         $molCustomer->name = $fullName;
         $molCustomer->email = $customer->email;
         $molCustomer->customer_id = $mollieCustomer->id;

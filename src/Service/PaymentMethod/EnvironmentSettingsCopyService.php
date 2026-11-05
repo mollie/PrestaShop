@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,8 +16,6 @@ declare(strict_types=1);
 
 namespace Mollie\Service\PaymentMethod;
 
-use Db;
-use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Config\Config;
 use Mollie\Logger\LoggerInterface;
@@ -24,7 +24,6 @@ use Mollie\Repository\CustomerRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ApiKeyService;
 use Mollie\Utility\ExceptionUtility;
-use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -32,7 +31,7 @@ if (!defined('_PS_VERSION_')) {
 
 class EnvironmentSettingsCopyService
 {
-    const FILE_NAME = 'EnvironmentSettingsCopyService';
+    public const FILE_NAME = 'EnvironmentSettingsCopyService';
 
     /** @var PaymentMethodRepositoryInterface */
     private $paymentMethodRepository;
@@ -49,7 +48,7 @@ class EnvironmentSettingsCopyService
     /** @var ConfigurationAdapter */
     private $configuration;
 
-    /** @var Mollie */
+    /** @var \Mollie */
     private $module;
 
     /** @var LoggerInterface */
@@ -61,7 +60,7 @@ class EnvironmentSettingsCopyService
         CountryRepositoryInterface $countryRepository,
         ApiKeyService $apiKeyService,
         ConfigurationAdapter $configuration,
-        Mollie $module,
+        \Mollie $module,
         LoggerInterface $logger
     ) {
         $this->paymentMethodRepository = $paymentMethodRepository;
@@ -88,7 +87,7 @@ class EnvironmentSettingsCopyService
 
         $plan = $this->buildCopyPlan($shopId, $liveMethodIds);
 
-        $db = Db::getInstance();
+        $db = \Db::getInstance();
         $db->execute('START TRANSACTION');
 
         try {
@@ -173,7 +172,7 @@ class EnvironmentSettingsCopyService
             $shopId
         );
 
-        $paymentMethod = $liveId ? new MolPaymentMethod((int) $liveId) : new MolPaymentMethod();
+        $paymentMethod = $liveId ? new \MolPaymentMethod((int) $liveId) : new \MolPaymentMethod();
 
         $paymentMethod->id_method = $testRow['id_method'];
         $paymentMethod->method_name = $testRow['method_name'];
@@ -256,7 +255,7 @@ class EnvironmentSettingsCopyService
         foreach (array_merge($orderedRows, $liveOnlyRows) as $row) {
             ++$position;
 
-            Db::getInstance()->update(
+            \Db::getInstance()->update(
                 'mol_payment_method',
                 ['position' => $position],
                 'id_payment_method = ' . (int) $row['id_payment_method']

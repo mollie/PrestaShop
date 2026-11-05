@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Tests\Integration\Repository;
 
-use Db;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Tests\Integration\BaseTestCase;
@@ -24,10 +25,10 @@ use Mollie\Tests\Integration\BaseTestCase;
  */
 class PaymentMethodRepositoryCartBindingTest extends BaseTestCase
 {
-    const OWNED_TRANSACTION = 'tr_pipres850_owned';
-    const OTHER_TRANSACTION = 'tr_pipres850_other';
-    const OWNED_CART = 850001;
-    const OTHER_CART = 850002;
+    public const OWNED_TRANSACTION = 'tr_pipres850_owned';
+    public const OTHER_TRANSACTION = 'tr_pipres850_other';
+    public const OWNED_CART = 850001;
+    public const OTHER_CART = 850002;
 
     /** @var PaymentMethodRepositoryInterface */
     private $paymentMethodRepository;
@@ -81,9 +82,9 @@ class PaymentMethodRepositoryCartBindingTest extends BaseTestCase
 
     private function insertPayment($transactionId, $cartId)
     {
-        Db::getInstance()->delete('mollie_payments', '`transaction_id` = \'' . pSQL($transactionId) . '\'');
+        \Db::getInstance()->delete('mollie_payments', '`transaction_id` = \'' . pSQL($transactionId) . '\'');
 
-        Db::getInstance()->insert('mollie_payments', [
+        \Db::getInstance()->insert('mollie_payments', [
             'transaction_id' => pSQL($transactionId),
             'cart_id' => (int) $cartId,
             'order_id' => 0,
@@ -97,9 +98,9 @@ class PaymentMethodRepositoryCartBindingTest extends BaseTestCase
 
     private function insertPaymentWithNullCart($transactionId)
     {
-        Db::getInstance()->delete('mollie_payments', '`transaction_id` = \'' . pSQL($transactionId) . '\'');
+        \Db::getInstance()->delete('mollie_payments', '`transaction_id` = \'' . pSQL($transactionId) . '\'');
 
-        Db::getInstance()->execute(
+        \Db::getInstance()->execute(
             'INSERT INTO `' . _DB_PREFIX_ . 'mollie_payments` (`transaction_id`, `cart_id`, `order_id`, `order_reference`, `method`, `bank_status`, `reason`, `created_at`)'
             . ' VALUES (\'' . pSQL($transactionId) . '\', NULL, 0, \'mol_pipres850\', \'creditcard\', \'' . pSQL(PaymentStatus::STATUS_OPEN) . '\', \'\', NOW())'
         );

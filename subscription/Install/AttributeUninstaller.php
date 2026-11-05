@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,13 +16,11 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\Install;
 
-use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Subscription\Config\Config;
-use PrestaShopException;
 use Psr\Log\LogLevel;
 
 if (!defined('_PS_VERSION_')) {
@@ -34,7 +34,7 @@ class AttributeUninstaller extends AbstractUninstaller
     /** @var ConfigurationAdapter */
     private $configuration;
 
-    /** @var Mollie */
+    /** @var \Mollie */
     private $module;
 
     /** @var LoggerInterface */
@@ -64,7 +64,7 @@ class AttributeUninstaller extends AbstractUninstaller
 
             $attributeGroup = new \AttributeGroup((int) $this->configuration->get(Config::SUBSCRIPTION_ATTRIBUTE_GROUP));
             $attributeGroup->delete();
-        } catch (PrestaShopException $e) {
+        } catch (\PrestaShopException $e) {
             $this->errors[] = $this->module->l('Failed to delete attributes', self::FILE_NAME);
             $this->logger->log(LogLevel::ERROR, $e->getMessage());
 

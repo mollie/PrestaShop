@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,11 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Handler\CartRule;
-
-use Cart;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -23,5 +23,5 @@ interface CartRuleQuantityResetHandlerInterface
     /**
      * @param array $cartRules
      */
-    public function handle(Cart $cart, $cartRules = []);
+    public function handle(\Cart $cart, $cartRules = []);
 }

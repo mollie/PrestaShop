@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Tests\Unit\Service\PaymentMethod;
 
-use Mollie;
 use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Api\Endpoints\MethodEndpoint;
 use Mollie\Api\MollieApiClient;
@@ -27,7 +28,7 @@ use PHPUnit\Framework\TestCase;
 
 class EnvironmentSettingsCopyServiceTest extends TestCase
 {
-    const SHOP_ID = 1;
+    public const SHOP_ID = 1;
 
     /** @var PaymentMethodRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $paymentMethodRepository;
@@ -95,7 +96,7 @@ class EnvironmentSettingsCopyServiceTest extends TestCase
 
     private function buildService(): EnvironmentSettingsCopyService
     {
-        $module = $this->createMock(Mollie::class);
+        $module = $this->createMock(\Mollie::class);
         $module->version = '6.4.5';
 
         return new EnvironmentSettingsCopyService(

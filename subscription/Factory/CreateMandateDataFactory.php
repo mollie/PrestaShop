@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -17,7 +19,6 @@ namespace Mollie\Subscription\Factory;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Subscription\DTO\CreateMandateData as CreateMandateDataDTO;
-use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -39,7 +40,7 @@ class CreateMandateDataFactory
         $this->methodRepository = $methodRepository;
     }
 
-    public function buildFromOrder(Order $order): CreateMandateDataDTO
+    public function buildFromOrder(\Order $order): CreateMandateDataDTO
     {
         $customer = $order->getCustomer();
         /** @var \MolCustomer $molCustomer */

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -31,12 +32,11 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Adapter;
-
-use Context;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -46,7 +46,7 @@ class LegacyContext
 {
     public function getContext()
     {
-        return Context::getContext();
+        return \Context::getContext();
     }
 
     public function getCookieValue($key)

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,10 +16,6 @@ namespace Mollie\Application\CommandHandler;
 
 use Address;
 use Cart;
-use Configuration;
-use Country;
-use Currency;
-use Mollie;
 use Mollie\Adapter\Link;
 use Mollie\Application\Command\CreateApplePayOrder;
 use Mollie\Config\Config;
@@ -30,9 +28,7 @@ use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Utility\OrderNumberUtility;
-use MolPaymentMethod;
 use Order;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -40,7 +36,7 @@ if (!defined('_PS_VERSION_')) {
 
 final class CreateApplePayOrderHandler
 {
-    const FILE_NAME = 'CreateApplePayOrderHandler';
+    public const FILE_NAME = 'CreateApplePayOrderHandler';
 
     /**
      * @var PaymentMethodRepositoryInterface
@@ -59,7 +55,7 @@ final class CreateApplePayOrderHandler
      */
     private $link;
     /**
-     * @var Mollie
+     * @var \Mollie
      */
     private $module;
     /** @var RetryHandlerInterface */
@@ -83,7 +79,7 @@ final class CreateApplePayOrderHandler
 
     public function handle(CreateApplePayOrder $command): array
     {
-        $cart = new Cart($command->getCartId());
+        $cart = new \Cart($command->getCartId());
 
         // Core wipes soft-deleted address ids off the session cart on request init; the ajax
         // controller restores them from the session, so hitting zero here means the sheet's
@@ -116,8 +112,8 @@ final class CreateApplePayOrderHandler
         $this->updateCardInfo($cart->id_address_invoice, $command->getOrder()->getBillingContent(), $phoneNumber);
         $this->updateCustomer($cart->id_customer, $command->getOrder()->getShippingContent());
 
-        $shippingCountryId = Country::getByIso($command->getOrder()->getShippingContent()->getCountryCode());
-        $shippingCountry = new Country($shippingCountryId);
+        $shippingCountryId = \Country::getByIso($command->getOrder()->getShippingContent()->getCountryCode());
+        $shippingCountry = new \Country($shippingCountryId);
 
         if (!$shippingCountryId || !$shippingCountry->active) {
             return [
@@ -168,13 +164,13 @@ final class CreateApplePayOrderHandler
 
         // we need to wait for webhook to create the order. That's why we wait here for few seconds and check if order is created
         $proc = function () use ($command) {
-            $orderId = Order::getIdByCartId($command->getCartId());
+            $orderId = \Order::getIdByCartId($command->getCartId());
             /* @phpstan-ignore-next-line */
             if (!$orderId) {
                 throw new OrderCreationException('Order was not created in webhook', OrderCreationException::ORDER_IS_NOT_CREATED);
             }
 
-            return new Order($orderId);
+            return new \Order($orderId);
         };
 
         try {
@@ -209,7 +205,7 @@ final class CreateApplePayOrderHandler
             [
                 'id_cart' => (int) $cart->id,
                 'id_module' => (int) $this->module->id,
-                'id_order' => Order::getIdByCartId($cart->id),
+                'id_order' => \Order::getIdByCartId($cart->id),
                 'key' => $cart->secure_key,
             ]
         );
@@ -223,12 +219,12 @@ final class CreateApplePayOrderHandler
 
     private function updateCardInfo(int $addressId, ShippingContent $shippingContent, string $phoneNumber)
     {
-        $address = new Address($addressId);
+        $address = new \Address($addressId);
         $address->firstname = $shippingContent->getGivenName();
         $address->lastname = $shippingContent->getFamilyName();
         $address->city = $shippingContent->getLocality();
         $address->country = $shippingContent->getCountry();
-        $address->id_country = Country::getByIso($shippingContent->getCountryCode());
+        $address->id_country = \Country::getByIso($shippingContent->getCountryCode());
         $address->postcode = $shippingContent->getPostalCode();
         if (isset($shippingContent->getAddressLines()[0])) {
             $address->address1 = $shippingContent->getAddressLines()[0];
@@ -262,16 +258,16 @@ final class CreateApplePayOrderHandler
         $customer->update();
     }
 
-    private function createMollieTransaction(Cart $cart, string $cardToken)
+    private function createMollieTransaction(\Cart $cart, string $cardToken)
     {
-        $currency = new Currency($cart->id_currency);
-        $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId(Config::APPLEPAY, Configuration::get(Config::MOLLIE_ENVIRONMENT));
+        $currency = new \Currency($cart->id_currency);
+        $paymentMethodId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId(Config::APPLEPAY, \Configuration::get(Config::MOLLIE_ENVIRONMENT));
 
-        $paymentMethodObj = new MolPaymentMethod((int) $paymentMethodId);
+        $paymentMethodObj = new \MolPaymentMethod((int) $paymentMethodId);
 
         $paymentData = $this->paymentMethodService->getPaymentData(
-            $cart->getOrderTotal(true, Cart::BOTH),
-            Tools::strtoupper($currency->iso_code),
+            $cart->getOrderTotal(true, \Cart::BOTH),
+            \Tools::strtoupper($currency->iso_code),
             Config::APPLEPAY,
             (int) $cart->id,
             $cart->secure_key,
@@ -286,10 +282,10 @@ final class CreateApplePayOrderHandler
         return $this->mollieOrderCreationService->createMollieApplePayDirectOrder($paymentData, $paymentMethodObj);
     }
 
-    private function duplicateAddress(int $addressId): Address
+    private function duplicateAddress(int $addressId): \Address
     {
-        $original = new Address($addressId);
-        $copy = new Address();
+        $original = new \Address($addressId);
+        $copy = new \Address();
         $copy->id_customer = $original->id_customer;
         $copy->alias = $original->alias;
         $copy->firstname = $original->firstname;
@@ -308,7 +304,7 @@ final class CreateApplePayOrderHandler
 
     private function deleteAddress(int $addressId)
     {
-        $address = new Address($addressId);
+        $address = new \Address($addressId);
         $address->deleted = true;
         $address->update();
     }

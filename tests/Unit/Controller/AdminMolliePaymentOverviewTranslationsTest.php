@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,13 +8,13 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Tests\Unit\Controller;
 
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 
 /**
  * The payment overview is the module's only screen that is pure text: every cell is a label, a
@@ -29,7 +30,7 @@ class AdminMolliePaymentOverviewTranslationsTest extends TestCase
      * Terms that are the same word in English and in the target language. Anything outside this
      * list that comes back byte identical to the English source is an untranslated copy paste.
      */
-    const ACCEPTED_COGNATES = ['Status', 'Date', 'Transaction', 'Order'];
+    public const ACCEPTED_COGNATES = ['Status', 'Date', 'Transaction', 'Order'];
 
     /**
      * @dataProvider provideCatalogs
@@ -88,7 +89,7 @@ class AdminMolliePaymentOverviewTranslationsTest extends TestCase
         }
 
         if (count($cases) < 2) {
-            throw new RuntimeException('No translation catalogs were found, the glob is broken.');
+            throw new \RuntimeException('No translation catalogs were found, the glob is broken.');
         }
 
         return $cases;

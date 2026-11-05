@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -14,14 +16,13 @@ declare(strict_types=1);
 
 namespace Mollie\Subscription\DTO\Object;
 
-use JsonSerializable;
 use Webmozart\Assert\Assert;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class Amount implements JsonSerializable
+class Amount implements \JsonSerializable
 {
     /** @var float */
     private $value;

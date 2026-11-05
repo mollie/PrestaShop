@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -8,10 +9,6 @@
  *
  * @see        https://github.com/mollie/PrestaShop
  */
-
-use Mollie\Adapter\ConfigurationAdapter;
-use Mollie\Config\Config;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }

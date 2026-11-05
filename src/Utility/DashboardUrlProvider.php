@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -18,7 +20,7 @@ if (!defined('_PS_VERSION_')) {
 
 class DashboardUrlProvider
 {
-    const DASHBOARD_BASE_URL = 'https://my.mollie.com/dashboard';
+    public const DASHBOARD_BASE_URL = 'https://my.mollie.com/dashboard';
 
     /**
      * Builds a link to the payment/order in the Mollie dashboard from its transaction id.

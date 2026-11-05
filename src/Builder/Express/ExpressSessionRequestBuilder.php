@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -36,10 +38,10 @@ if (!defined('_PS_VERSION_')) {
  */
 class ExpressSessionRequestBuilder
 {
-    const RETURN_CONTROLLER = 'expressReturn';
+    public const RETURN_CONTROLLER = 'expressReturn';
 
     /** Fields the Payments API line accepts but the Sessions API line does not. */
-    const UNSUPPORTED_LINE_FIELDS = ['categories'];
+    public const UNSUPPORTED_LINE_FIELDS = ['categories'];
 
     /** @var CartLinesService */
     private $cartLinesService;

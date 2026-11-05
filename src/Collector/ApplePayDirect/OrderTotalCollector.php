@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -42,7 +44,7 @@ class OrderTotalCollector
      *
      * @throws \Exception
      */
-    public function getOrderTotals($applePayCarriers, Cart $cart)
+    public function getOrderTotals($applePayCarriers, \Cart $cart)
     {
         $originalDeliveryOption = $cart->delivery_option;
 
@@ -57,7 +59,7 @@ class OrderTotalCollector
             ]);
 
             $orderTotal = (float) number_format(
-                $cart->getOrderTotal(true, Cart::BOTH),
+                $cart->getOrderTotal(true, \Cart::BOTH),
                 2,
                 '.',
                 ''

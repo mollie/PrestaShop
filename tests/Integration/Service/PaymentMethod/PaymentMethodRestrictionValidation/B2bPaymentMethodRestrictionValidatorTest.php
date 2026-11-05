@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Tests\Integration\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
-use Configuration;
 use Mollie\Api\Types\PaymentMethod;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\B2bPaymentMethodRestrictionValidator;
 use Mollie\Tests\Integration\BaseTestCase;
@@ -24,21 +25,21 @@ class B2bPaymentMethodRestrictionValidatorTest extends BaseTestCase
 
     public function setUp(): void
     {
-        $this->originalB2bValue = (int) Configuration::get('PS_B2B_ENABLE');
+        $this->originalB2bValue = (int) \Configuration::get('PS_B2B_ENABLE');
 
         parent::setUp();
     }
 
     public function tearDown(): void
     {
-        Configuration::set('PS_B2B_ENABLE', $this->originalB2bValue);
+        \Configuration::set('PS_B2B_ENABLE', $this->originalB2bValue);
 
         parent::tearDown();
     }
 
     public function testItSuccessfullyValidatedIsValid(): void
     {
-        Configuration::set('PS_B2B_ENABLE', 1);
+        \Configuration::set('PS_B2B_ENABLE', 1);
 
         $molPaymentMethod = new \MolPaymentMethod();
         $molPaymentMethod->id_method = PaymentMethod::BILLIE;
@@ -56,7 +57,7 @@ class B2bPaymentMethodRestrictionValidatorTest extends BaseTestCase
 
     public function testItUnsuccessfullyValidatedIsValidB2bNotEnabled(): void
     {
-        Configuration::set('PS_B2B_ENABLE', 0);
+        \Configuration::set('PS_B2B_ENABLE', 0);
 
         $molPaymentMethod = new \MolPaymentMethod();
         $molPaymentMethod->id_method = PaymentMethod::BILLIE;

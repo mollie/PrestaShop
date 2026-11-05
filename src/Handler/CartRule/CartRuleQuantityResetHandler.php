@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,19 +8,17 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Handler\CartRule;
 
 use Cart;
-use CartRule;
 use Mollie\Repository\CartRuleRepositoryInterface;
 use Mollie\Repository\OrderCartRuleRepositoryInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PendingOrderCartRuleRepositoryInterface;
-use Order;
-use OrderCartRule;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -62,9 +61,9 @@ class CartRuleQuantityResetHandler implements CartRuleQuantityResetHandlerInterf
     /**
      * {@inheritDoc}
      */
-    public function handle(Cart $cart, $cartRules = [], $paymentSuccessful = false)
+    public function handle(\Cart $cart, $cartRules = [], $paymentSuccessful = false)
     {
-        /** @var Order|null $order */
+        /** @var \Order|null $order */
         $order = $this->orderRepository->findOneByCartId($cart->id);
 
         if (empty($order)) {
@@ -72,7 +71,7 @@ class CartRuleQuantityResetHandler implements CartRuleQuantityResetHandlerInterf
         }
 
         foreach ($cartRules as $cartRuleContent) {
-            /** @var CartRule|null $cartRule */
+            /** @var \CartRule|null $cartRule */
             $cartRule = $this->cartRuleRepository->findOneBy(
                 ['id_cart_rule' => (int) $cartRuleContent['id_cart_rule']]
             );
@@ -81,7 +80,7 @@ class CartRuleQuantityResetHandler implements CartRuleQuantityResetHandlerInterf
                 continue;
             }
 
-            /** @var OrderCartRule|null $orderCartRule */
+            /** @var \OrderCartRule|null $orderCartRule */
             $orderCartRule = $this->orderCartRuleRepository->findOneBy([
                 'id_order' => (int) $order->id,
                 'id_cart_rule' => (int) $cartRule->id,
@@ -102,7 +101,7 @@ class CartRuleQuantityResetHandler implements CartRuleQuantityResetHandlerInterf
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    private function resetQuantities($orderId, CartRule $cartRule, OrderCartRule $orderCartRule)
+    private function resetQuantities($orderId, \CartRule $cartRule, \OrderCartRule $orderCartRule)
     {
         $this->increaseAvailableCartRuleQuantity($cartRule);
         $this->decreaseCustomerUsedCartRuleQuantity($orderId, $cartRule, $orderCartRule);
@@ -114,7 +113,7 @@ class CartRuleQuantityResetHandler implements CartRuleQuantityResetHandlerInterf
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    private function decreaseCustomerUsedCartRuleQuantity($orderId, CartRule $cartRule, OrderCartRule $orderCartRule)
+    private function decreaseCustomerUsedCartRuleQuantity($orderId, \CartRule $cartRule, \OrderCartRule $orderCartRule)
     {
         $this->pendingOrderCartRuleRepository->removePreviousPendingOrderCartRule($orderId, $cartRule->id);
         $this->pendingOrderCartRuleRepository->createPendingOrderCartRule($orderId, $cartRule->id, $orderCartRule);
@@ -125,7 +124,7 @@ class CartRuleQuantityResetHandler implements CartRuleQuantityResetHandlerInterf
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    private function increaseAvailableCartRuleQuantity(CartRule $cartRule)
+    private function increaseAvailableCartRuleQuantity(\CartRule $cartRule)
     {
         $cartRule->quantity = $cartRule->quantity + 1;
         $cartRule->update();

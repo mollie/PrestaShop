@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -56,40 +58,40 @@ class TextFormatUtilityTest extends TestCase
     {
         return [
             'null price formats as zero' => [
-                    'unitPrice' => null,
-                    'apiRoundingPrecision' => 0,
-                    'docPoint' => '.',
-                    'thousandSep' => '',
-                    'result' => '0',
-                ],
+                'unitPrice' => null,
+                'apiRoundingPrecision' => 0,
+                'docPoint' => '.',
+                'thousandSep' => '',
+                'result' => '0',
+            ],
             'rounds to the requested precision' => [
-                    'unitPrice' => 1234.5678,
-                    'apiRoundingPrecision' => 2,
-                    'docPoint' => '.',
-                    'thousandSep' => '',
-                    'result' => '1234.57',
-                ],
+                'unitPrice' => 1234.5678,
+                'apiRoundingPrecision' => 2,
+                'docPoint' => '.',
+                'thousandSep' => '',
+                'result' => '1234.57',
+            ],
             'zero precision rounds to whole units' => [
-                    'unitPrice' => 12.7,
-                    'apiRoundingPrecision' => 0,
-                    'docPoint' => '.',
-                    'thousandSep' => '',
-                    'result' => '13',
-                ],
+                'unitPrice' => 12.7,
+                'apiRoundingPrecision' => 0,
+                'docPoint' => '.',
+                'thousandSep' => '',
+                'result' => '13',
+            ],
             'numeric string is accepted' => [
-                    'unitPrice' => '5',
-                    'apiRoundingPrecision' => 0,
-                    'docPoint' => '.',
-                    'thousandSep' => '',
-                    'result' => '5',
-                ],
+                'unitPrice' => '5',
+                'apiRoundingPrecision' => 0,
+                'docPoint' => '.',
+                'thousandSep' => '',
+                'result' => '5',
+            ],
             'honours separators' => [
-                    'unitPrice' => 1234.5,
-                    'apiRoundingPrecision' => 2,
-                    'docPoint' => ',',
-                    'thousandSep' => '.',
-                    'result' => '1.234,50',
-                ],
+                'unitPrice' => 1234.5,
+                'apiRoundingPrecision' => 2,
+                'docPoint' => ',',
+                'thousandSep' => '.',
+                'result' => '1.234,50',
+            ],
         ];
     }
 }

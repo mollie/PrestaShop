@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2012-2020, Mollie B.V.
  * All rights reserved.
@@ -31,6 +32,7 @@
  * @category   Mollie
  *
  * @see       https://www.mollie.nl
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -38,7 +40,6 @@ namespace Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation;
 
 use Mollie\Adapter\LegacyContext;
 use Mollie\Repository\MethodCountryRepository;
-use MolPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -68,7 +69,7 @@ class EnvironmentVersionSpecificPaymentMethodRestrictionValidator implements Pay
     /**
      * {@inheritDoc}
      */
-    public function isValid(MolPaymentMethod $paymentMethod): bool
+    public function isValid(\MolPaymentMethod $paymentMethod): bool
     {
         if (!$this->isCountryAvailable($paymentMethod)) {
             return false;
@@ -80,12 +81,12 @@ class EnvironmentVersionSpecificPaymentMethodRestrictionValidator implements Pay
     /**
      * {@inheritDoc}
      */
-    public function supports(MolPaymentMethod $paymentMethod): bool
+    public function supports(\MolPaymentMethod $paymentMethod): bool
     {
         return true;
     }
 
-    private function isCountryAvailable(MolPaymentMethod $paymentMethod): bool
+    private function isCountryAvailable(\MolPaymentMethod $paymentMethod): bool
     {
         if ($paymentMethod->is_countries_applicable) {
             return $this->methodCountryRepository->checkIfMethodIsAvailableInCountry(

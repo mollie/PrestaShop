@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -35,7 +37,7 @@ use Mollie\Validator\PaymentAmountValidator;
 class OrderCreationHandlerExpressTest extends BaseTestCase
 {
     /** A cart id no fixture shop has, so the handler works on an empty cart with a 0.00 total. */
-    const EMPTY_CART_ID = 987654321;
+    public const EMPTY_CART_ID = 987654321;
 
     /** @var PaymentFeeProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $paymentFeeProvider;

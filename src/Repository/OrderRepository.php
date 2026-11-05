@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,14 +8,13 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Repository;
 
-use Db;
 use Mollie\Shared\Infrastructure\Repository\AbstractRepository;
-use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -24,7 +24,7 @@ final class OrderRepository extends AbstractRepository implements OrderRepositor
 {
     public function __construct()
     {
-        parent::__construct(Order::class);
+        parent::__construct(\Order::class);
     }
 
     /**
@@ -57,7 +57,7 @@ final class OrderRepository extends AbstractRepository implements OrderRepositor
             FROM `' . _DB_PREFIX_ . 'orders`
             WHERE `id_cart` = ' . (int) $cartId;
 
-        $result = Db::getInstance()->getValue($sql, false);
+        $result = \Db::getInstance()->getValue($sql, false);
 
         return !empty($result) ? (int) $result : 0;
     }

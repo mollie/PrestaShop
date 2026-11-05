@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,6 +8,7 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
@@ -15,7 +17,6 @@ namespace Mollie\Tests\Unit\Builder;
 use Mollie\Builder\InvoicePdfTemplateBuilder;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Shared\Core\Shared\Repository\CurrencyRepositoryInterface;
-use MolOrderPaymentFee;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\PrestaShop\Core\Localization\Locale;
 
@@ -36,7 +37,7 @@ class InvoicePdfTemplateBuilderTest extends TestCase
 
     public function testItSuccessfullyBuildsTemplate(): void
     {
-        $molOrderPaymentFee = $this->createMock(MolOrderPaymentFee::class);
+        $molOrderPaymentFee = $this->createMock(\MolOrderPaymentFee::class);
         $molOrderPaymentFee->fee_tax_incl = 10.00;
 
         $this->molOrderPaymentFeeRepository->expects($this->once())->method('findOneBy')->willReturn($molOrderPaymentFee);
@@ -103,7 +104,7 @@ class InvoicePdfTemplateBuilderTest extends TestCase
 
     public function testItUnsuccessfullyBuildsTemplateFailedToFindOrderCurrency(): void
     {
-        $molOrderPaymentFee = $this->createMock(MolOrderPaymentFee::class);
+        $molOrderPaymentFee = $this->createMock(\MolOrderPaymentFee::class);
         $molOrderPaymentFee->fee_tax_incl = 10.00;
 
         $this->molOrderPaymentFeeRepository->expects($this->once())->method('findOneBy')->willReturn($molOrderPaymentFee);

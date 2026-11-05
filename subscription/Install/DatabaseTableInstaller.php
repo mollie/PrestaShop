@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,14 +8,13 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 declare(strict_types=1);
 
 namespace Mollie\Subscription\Install;
-
-use Db;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -27,7 +27,7 @@ final class DatabaseTableInstaller extends AbstractInstaller
         $commands = $this->getCommands();
 
         foreach ($commands as $query) {
-            if (!Db::getInstance()->execute($query)) {
+            if (!\Db::getInstance()->execute($query)) {
                 return false;
             }
         }
@@ -83,7 +83,7 @@ final class DatabaseTableInstaller extends AbstractInstaller
         ';
 
         /* only run if it doesn't exist */
-        if (Db::getInstance()->getValue($query)) {
+        if (\Db::getInstance()->getValue($query)) {
             return true;
         }
 
@@ -92,7 +92,7 @@ final class DatabaseTableInstaller extends AbstractInstaller
             ADD COLUMN total_tax_incl decimal(20, 6) NOT NULL;
         ';
 
-        if (!Db::getInstance()->execute($query)) {
+        if (!\Db::getInstance()->execute($query)) {
             return false;
         }
 
@@ -102,7 +102,7 @@ final class DatabaseTableInstaller extends AbstractInstaller
             SET ro.total_tax_incl = o.total_paid_tax_incl;
         ';
 
-        if (!Db::getInstance()->execute($query)) {
+        if (!\Db::getInstance()->execute($query)) {
             return false;
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Exception;
 
-use Exception;
 use Mollie\Exception\Code\ExceptionCode;
 
 if (!defined('_PS_VERSION_')) {
@@ -21,7 +22,7 @@ if (!defined('_PS_VERSION_')) {
 
 class CouldNotUpdateOrderTotals extends MollieException
 {
-    public static function failedToUpdateOrderTotals(Exception $exception): self
+    public static function failedToUpdateOrderTotals(\Exception $exception): self
     {
         return new self(
             'Failed to update order totals.',

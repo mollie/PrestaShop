@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,16 +8,15 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Application\CommandHandler;
 
 use Address;
-use Cache;
 use Carrier;
 use Cart;
-use Configuration;
 use Country;
 use Customer;
 use Mollie\Application\Command\UpdateApplePayShippingContact;
@@ -25,7 +25,6 @@ use Mollie\Collector\ApplePayDirect\OrderTotalCollector;
 use Mollie\Exception\GuestCheckoutNotAvailableException;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Utility\ApplePayDirect\ShippingMethodUtility;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,7 +32,7 @@ if (!defined('_PS_VERSION_')) {
 
 final class UpdateApplePayShippingContactHandler
 {
-    const FILE_NAME = 'UpdateApplePayShippingContactHandler';
+    public const FILE_NAME = 'UpdateApplePayShippingContactHandler';
 
     /**
      * @var ApplePayCarriersBuilder
@@ -57,17 +56,17 @@ final class UpdateApplePayShippingContactHandler
 
     public function handle(UpdateApplePayShippingContact $command): array
     {
-        $cart = new Cart($command->getCartId());
+        $cart = new \Cart($command->getCartId());
         $customer = $this->getOrCreateCustomer($command->getCustomerId(), $cart);
         $deliveryAddress = $this->getOrCreateAddress($cart->id_address_delivery, $customer->id, $command);
         $invoiceAddress = $this->getOrCreateAddress($cart->id_address_invoice, $customer->id, $command);
         $this->updateCart($cart, $customer, $deliveryAddress->id, $invoiceAddress->id);
         $this->addProductToCart($cart, $command);
-        $cart = new Cart($cart->id);
+        $cart = new \Cart($cart->id);
         $this->updateContext($cart, $customer);
-        $country = new Country($deliveryAddress->id_country);
+        $country = new \Country($deliveryAddress->id_country);
 
-        $applePayCarriers = $this->applePayCarriersBuilder->build(Carrier::getCarriersForOrder($country->id_zone), $country->id_zone);
+        $applePayCarriers = $this->applePayCarriersBuilder->build(\Carrier::getCarriersForOrder($country->id_zone), $country->id_zone);
 
         // the sheet preselects the first listed method without firing onshippingmethodselected,
         // so the cart must already carry it or the authorized total diverges from the charged one
@@ -102,7 +101,7 @@ final class UpdateApplePayShippingContactHandler
      * (Apple keeps the Pay button blocked while an addressUnserviceable error is present) and
      * the update dictionary requires a total, so the shipping-less cart total is returned for it.
      */
-    private function buildUnshippableAddressResponse(Cart $cart): array
+    private function buildUnshippableAddressResponse(\Cart $cart): array
     {
         return [
             'success' => false,
@@ -111,8 +110,8 @@ final class UpdateApplePayShippingContactHandler
                 'totals' => [],
                 'fallbackTotal' => [
                     'type' => 'final',
-                    'label' => Configuration::get('PS_SHOP_NAME'),
-                    'amount' => number_format((float) $cart->getOrderTotal(true, Cart::BOTH_WITHOUT_SHIPPING), 2, '.', ''),
+                    'label' => \Configuration::get('PS_SHOP_NAME'),
+                    'amount' => number_format((float) $cart->getOrderTotal(true, \Cart::BOTH_WITHOUT_SHIPPING), 2, '.', ''),
                 ],
             ],
             'errors' => [
@@ -125,13 +124,13 @@ final class UpdateApplePayShippingContactHandler
         ];
     }
 
-    private function getOrCreateAddress(int $existingAddressId, int $customerId, UpdateApplePayShippingContact $command): Address
+    private function getOrCreateAddress(int $existingAddressId, int $customerId, UpdateApplePayShippingContact $command): \Address
     {
         if ($existingAddressId) {
-            $address = new Address($existingAddressId);
+            $address = new \Address($existingAddressId);
             if ($address->id && $address->alias === 'applePay') {
                 $address->postcode = $command->getPostalCode();
-                $address->id_country = Country::getByIso($command->getCountryCode());
+                $address->id_country = \Country::getByIso($command->getCountryCode());
                 $address->country = $command->getCountry();
                 $address->city = $command->getLocality();
                 $address->id_customer = $customerId;
@@ -141,20 +140,20 @@ final class UpdateApplePayShippingContactHandler
                 // FrontController::init() already priced the cart against this address id, and
                 // Address::update() leaves that per-request entry behind, so the quote below would
                 // apply the previous country's VAT and shipping tax
-                Cache::clean('Address::initialize_' . (int) $address->id);
+                \Cache::clean('Address::initialize_' . (int) $address->id);
 
                 return $address;
             }
         }
 
-        $address = new Address();
+        $address = new \Address();
         $address->address1 = 'ApplePay';
         $address->lastname = 'ApplePay';
         $address->firstname = 'ApplePay';
         $address->id_customer = $customerId;
         $address->alias = 'applePay';
         $address->postcode = $command->getPostalCode();
-        $address->id_country = Country::getByIso($command->getCountryCode());
+        $address->id_country = \Country::getByIso($command->getCountryCode());
         $address->country = $command->getCountry();
         $address->city = $command->getLocality();
         // Soft-deleted on purpose: this is a temporary Apple Pay sheet address. Keeping it deleted hides it from the customer's address book if the payment is abandoned; real data is written on order creation.
@@ -164,26 +163,26 @@ final class UpdateApplePayShippingContactHandler
         return $address;
     }
 
-    private function getOrCreateCustomer(int $customerId, Cart $cart): Customer
+    private function getOrCreateCustomer(int $customerId, \Cart $cart): \Customer
     {
         if ($customerId) {
-            return new Customer($customerId);
+            return new \Customer($customerId);
         }
 
         if ($cart->id_customer) {
-            return new Customer($cart->id_customer);
+            return new \Customer($cart->id_customer);
         }
 
-        if (!Configuration::get('PS_GUEST_CHECKOUT_ENABLED')) {
+        if (!\Configuration::get('PS_GUEST_CHECKOUT_ENABLED')) {
             throw GuestCheckoutNotAvailableException::guestCheckoutDisabled();
         }
 
-        $customer = new Customer();
+        $customer = new \Customer();
         $customer->is_guest = true;
         $customer->firstname = 'applePay';
         $customer->lastname = 'applePay';
         $customer->email = 'applepay-' . (int) $cart->id . '@mollie.com';
-        $customer->passwd = Tools::hash(microtime());
+        $customer->passwd = \Tools::hash(microtime());
         // Soft-deleted on purpose: hides this throwaway guest from the Customers list if the payment is abandoned; it is restored on order creation.
         $customer->deleted = true;
         $customer->add();
@@ -191,7 +190,7 @@ final class UpdateApplePayShippingContactHandler
         return $customer;
     }
 
-    private function updateCart(Cart $cart, Customer $customer, int $deliveryAddressId, int $invoiceAddressId): void
+    private function updateCart(\Cart $cart, \Customer $customer, int $deliveryAddressId, int $invoiceAddressId): void
     {
         $cart->secure_key = $customer->secure_key;
         $cart->id_address_delivery = $deliveryAddressId;
@@ -200,7 +199,7 @@ final class UpdateApplePayShippingContactHandler
         $cart->update();
     }
 
-    private function addProductToCart(Cart $cart, UpdateApplePayShippingContact $command)
+    private function addProductToCart(\Cart $cart, UpdateApplePayShippingContact $command)
     {
         foreach ($command->getProducts() as $product) {
             $quantity = max($product->getWantedQuantity(), 1);
@@ -217,7 +216,7 @@ final class UpdateApplePayShippingContactHandler
         }
     }
 
-    private function updateContext(Cart $cart, Customer $customer)
+    private function updateContext(\Cart $cart, \Customer $customer)
     {
         $context = \Context::getContext();
         $context->cart = $cart;
@@ -236,7 +235,7 @@ final class UpdateApplePayShippingContactHandler
      * 0 for the throwaway guest, the customer's oldest saved address for a logged-in shopper.
      * Put back the addresses the Apple Pay sheet is being quoted against.
      */
-    private function restoreCartAddresses(Cart $cart, int $deliveryAddressId, int $invoiceAddressId): void
+    private function restoreCartAddresses(\Cart $cart, int $deliveryAddressId, int $invoiceAddressId): void
     {
         if ((int) $cart->id_address_delivery === $deliveryAddressId && (int) $cart->id_address_invoice === $invoiceAddressId) {
             return;

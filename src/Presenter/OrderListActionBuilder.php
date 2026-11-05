@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Mollie       https://www.mollie.nl
  *
@@ -7,12 +8,12 @@
  * @license     https://github.com/mollie/PrestaShop/blob/master/LICENSE.md
  *
  * @see        https://github.com/mollie/PrestaShop
+ *
  * @codingStandardsIgnoreStart
  */
 
 namespace Mollie\Presenter;
 
-use Mollie;
 use Mollie\Adapter\Smarty;
 
 if (!defined('_PS_VERSION_')) {
@@ -21,15 +22,15 @@ if (!defined('_PS_VERSION_')) {
 
 class OrderListActionBuilder
 {
-    const FILE_NAME = 'OrderListActionBuilder';
+    public const FILE_NAME = 'OrderListActionBuilder';
     /**
-     * @var Mollie
+     * @var \Mollie
      */
     private $mollie;
     /** @var Smarty */
     private $smarty;
 
-    public function __construct(Mollie $mollie, Smarty $smarty)
+    public function __construct(\Mollie $mollie, Smarty $smarty)
     {
         $this->mollie = $mollie;
         $this->smarty = $smarty;
