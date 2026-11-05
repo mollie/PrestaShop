@@ -21,32 +21,27 @@ class ModuleVersionCompliancyTest extends TestCase
         $this->assertTrue(\Module::getInstanceByName('mollie')->checkCompliancy());
     }
 
-    /** @dataProvider supportedVersionsDataProvider */
-    public function testItAcceptsSupportedVersion(string $version)
+    /** @dataProvider versionsDataProvider */
+    public function testItSupportsOnlyVersionsInsideTheDeclaredRange(string $version, bool $supported)
     {
         $range = \Module::getInstanceByName('mollie')->ps_versions_compliancy;
 
-        $this->assertTrue(version_compare($version, $range['min'], '>='));
-        $this->assertTrue(version_compare($version, $range['max'], '<='));
+        $insideRange = version_compare($version, $range['min'], '>=') && version_compare($version, $range['max'], '<=');
+
+        $this->assertSame($supported, $insideRange);
     }
 
-    /** @dataProvider unsupportedVersionsDataProvider */
-    public function testItRejectsUnsupportedVersion(string $version)
+    public function versionsDataProvider()
     {
-        $range = \Module::getInstanceByName('mollie')->ps_versions_compliancy;
-
-        $this->assertTrue(
-            version_compare($version, $range['min'], '<') || version_compare($version, $range['max'], '>')
-        );
-    }
-
-    public function supportedVersionsDataProvider()
-    {
-        return [['1.7.6.0'], ['1.7.8.11'], ['8.2.3'], ['9.1.5'], ['9.2.0'], ['9.99.99']];
-    }
-
-    public function unsupportedVersionsDataProvider()
-    {
-        return [['1.7.5.3'], ['10.0.0']];
+        return [
+            ['1.7.5.3', false],
+            ['1.7.6.0', true],
+            ['1.7.8.11', true],
+            ['8.2.3', true],
+            ['9.1.5', true],
+            ['9.2.0', true],
+            ['9.99.99', true],
+            ['10.0.0', false],
+        ];
     }
 }
