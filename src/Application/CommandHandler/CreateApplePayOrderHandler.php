@@ -27,6 +27,7 @@ use Mollie\Exception\RetryOverException;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Handler\RetryHandlerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Service\MinimumPurchaseService;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Utility\OrderNumberUtility;
@@ -64,6 +65,8 @@ final class CreateApplePayOrderHandler
     private $module;
     /** @var RetryHandlerInterface */
     private $retryHandler;
+    /** @var MinimumPurchaseService */
+    private $minimumPurchaseService;
 
     public function __construct(
         PaymentMethodRepositoryInterface $paymentMethodRepository,
@@ -71,7 +74,8 @@ final class CreateApplePayOrderHandler
         MollieOrderCreationService $mollieOrderCreationService,
         Link $link,
         ModuleFactory $module,
-        RetryHandlerInterface $retryHandler
+        RetryHandlerInterface $retryHandler,
+        MinimumPurchaseService $minimumPurchaseService
     ) {
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentMethodService = $paymentMethodService;
@@ -79,6 +83,7 @@ final class CreateApplePayOrderHandler
         $this->link = $link;
         $this->module = $module->getModule();
         $this->retryHandler = $retryHandler;
+        $this->minimumPurchaseService = $minimumPurchaseService;
     }
 
     public function handle(CreateApplePayOrder $command): array
@@ -88,19 +93,15 @@ final class CreateApplePayOrderHandler
         // Core wipes soft-deleted address ids off the session cart on request init; the ajax
         // controller restores them from the session, so hitting zero here means the sheet's
         // addresses are unrecoverable and duplicating address 0 would throw a validation error.
-        // The JS error mapper only renders messages that carry a contactField.
         if (!(int) $cart->id_address_delivery || !(int) $cart->id_address_invoice) {
-            return [
-                'success' => false,
-                'status' => 'STATUS_FAILURE',
-                'errors' => [
-                    [
-                        'code' => 'shippingContactInvalid',
-                        'contactField' => 'postalAddress',
-                        'message' => $this->module->l('Failed to load the delivery address. Please close the payment window and try again.', self::FILE_NAME),
-                    ],
-                ],
-            ];
+            return $this->failure('shippingContactInvalid', 'postalAddress', $this->module->l('Failed to load the delivery address. Please close the payment window and try again.', self::FILE_NAME));
+        }
+
+        // The cart may have changed in another tab after the sheet opened; checked before any customer or address write
+        $minimumNotReached = $this->minimumPurchaseService->getNotReachedMessage($cart);
+
+        if ($minimumNotReached) {
+            return $this->failure('addressUnserviceable', 'postalAddress', $minimumNotReached);
         }
 
         if ($cart->id_address_delivery == $cart->id_address_invoice) {
@@ -120,50 +121,20 @@ final class CreateApplePayOrderHandler
         $shippingCountry = new Country($shippingCountryId);
 
         if (!$shippingCountryId || !$shippingCountry->active) {
-            return [
-                'success' => false,
-                'status' => 'STATUS_FAILURE',
-                'errors' => [
-                    [
-                        'code' => 'shippingContactInvalid',
-                        'contactField' => 'countryCode',
-                        'message' => $this->module->l('Delivery to this country is not available.', self::FILE_NAME),
-                    ],
-                ],
-            ];
+            return $this->failure('shippingContactInvalid', 'countryCode', $this->module->l('Delivery to this country is not available.', self::FILE_NAME));
         }
 
         // The carrier is only written when the sheet fires shippingmethodselected, which never
         // happens for an address with no shipping methods, so an unset carrier here means the
         // shopper authorized an unshippable address.
         if (!(int) $cart->id_carrier) {
-            return [
-                'success' => false,
-                'status' => 'STATUS_FAILURE',
-                'errors' => [
-                    [
-                        'code' => 'addressUnserviceable',
-                        'contactField' => 'postalAddress',
-                        'message' => $this->module->l('Delivery to this address is not available. Please select a different delivery address.', self::FILE_NAME),
-                    ],
-                ],
-            ];
+            return $this->failure('addressUnserviceable', 'postalAddress', $this->module->l('Delivery to this address is not available. Please select a different delivery address.', self::FILE_NAME));
         }
 
         try {
             $apiPayment = $this->createMollieTransaction($cart, $command->getCardToken());
         } catch (\Exception $e) {
-            return [
-                'success' => false,
-                'status' => 'STATUS_FAILURE',
-                'errors' => [
-                    [
-                        'code' => 'unknown',
-                        'contactField' => null,
-                        'message' => $this->module->l('Failed to create mollie transaction.', self::FILE_NAME),
-                    ],
-                ],
-            ];
+            return $this->failure('unknown', null, $this->module->l('Failed to create mollie transaction.', self::FILE_NAME));
         }
 
         // we need to wait for webhook to create the order. That's why we wait here for few seconds and check if order is created
@@ -186,17 +157,7 @@ final class CreateApplePayOrderHandler
                 ]
             );
         } catch (RetryOverException $e) {
-            return [
-                'success' => false,
-                'status' => 'STATUS_FAILURE',
-                'errors' => [
-                    [
-                        'code' => 'unknown',
-                        'contactField' => null,
-                        'message' => $this->module->l('Couldn\'t find order by cart.', self::FILE_NAME),
-                    ],
-                ],
-            ];
+            return $this->failure('unknown', null, $this->module->l('Couldn\'t find order by cart.', self::FILE_NAME));
         }
 
         $this->deleteAddress($order->id_address_delivery);
@@ -218,6 +179,22 @@ final class CreateApplePayOrderHandler
             'success' => true,
             'successUrl' => $successUrl,
             'responseToApple' => ['status' => 0],
+        ];
+    }
+
+    /** The JS error mapper only renders messages that carry a contactField. */
+    private function failure(string $code, ?string $contactField, string $message): array
+    {
+        return [
+            'success' => false,
+            'status' => 'STATUS_FAILURE',
+            'errors' => [
+                [
+                    'code' => $code,
+                    'contactField' => $contactField,
+                    'message' => $message,
+                ],
+            ],
         ];
     }
 

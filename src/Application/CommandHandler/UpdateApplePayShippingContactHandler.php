@@ -19,12 +19,15 @@ use Cart;
 use Configuration;
 use Country;
 use Customer;
+use Mollie\Adapter\Context;
 use Mollie\Application\Command\UpdateApplePayShippingContact;
 use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
 use Mollie\Collector\ApplePayDirect\OrderTotalCollector;
 use Mollie\Exception\GuestCheckoutNotAvailableException;
 use Mollie\Factory\ModuleFactory;
+use Mollie\Service\MinimumPurchaseService;
 use Mollie\Utility\ApplePayDirect\ShippingMethodUtility;
+use Product;
 use Tools;
 
 if (!defined('_PS_VERSION_')) {
@@ -44,15 +47,23 @@ final class UpdateApplePayShippingContactHandler
     private $orderTotalCollector;
     /** @var \Mollie */
     private $module;
+    /** @var MinimumPurchaseService */
+    private $minimumPurchaseService;
+    /** @var Context */
+    private $context;
 
     public function __construct(
         ApplePayCarriersBuilder $applePayCarriersBuilder,
         OrderTotalCollector $orderTotalCollector,
-        ModuleFactory $module
+        ModuleFactory $module,
+        MinimumPurchaseService $minimumPurchaseService,
+        Context $context
     ) {
         $this->applePayCarriersBuilder = $applePayCarriersBuilder;
         $this->orderTotalCollector = $orderTotalCollector;
         $this->module = $module->getModule();
+        $this->minimumPurchaseService = $minimumPurchaseService;
+        $this->context = $context;
     }
 
     public function handle(UpdateApplePayShippingContact $command): array
@@ -62,9 +73,16 @@ final class UpdateApplePayShippingContactHandler
         $deliveryAddress = $this->getOrCreateAddress($cart->id_address_delivery, $customer->id, $command);
         $invoiceAddress = $this->getOrCreateAddress($cart->id_address_invoice, $customer->id, $command);
         $this->updateCart($cart, $customer, $deliveryAddress->id, $invoiceAddress->id);
-        $this->addProductToCart($cart, $command);
+        $productError = $this->addProductToCart($cart, $command);
         $cart = new Cart($cart->id);
         $this->updateContext($cart, $customer);
+
+        $rejection = $productError ?: $this->minimumPurchaseService->getNotReachedMessage($cart);
+
+        if ($rejection) {
+            return $this->buildRejectedContactResponse($cart, $rejection);
+        }
+
         $country = new Country($deliveryAddress->id_country);
 
         $applePayCarriers = $this->applePayCarriersBuilder->build(Carrier::getCarriersForOrder($country->id_zone), $country->id_zone);
@@ -85,7 +103,10 @@ final class UpdateApplePayShippingContactHandler
         $totals = $this->orderTotalCollector->getOrderTotals($applePayCarriers, $cart);
 
         if (!$totals) {
-            return $this->buildUnshippableAddressResponse($cart);
+            return $this->buildRejectedContactResponse(
+                $cart,
+                $this->module->l('Delivery to this address is not available. Please select a different delivery address.', self::FILE_NAME)
+            );
         }
 
         return [
@@ -98,11 +119,10 @@ final class UpdateApplePayShippingContactHandler
     }
 
     /**
-     * No carrier can deliver this cart to the selected zone. The sheet must reject the contact
-     * (Apple keeps the Pay button blocked while an addressUnserviceable error is present) and
-     * the update dictionary requires a total, so the shipping-less cart total is returned for it.
+     * addressUnserviceable is the error Apple keeps the Pay button blocked for, and the update
+     * dictionary requires a total, so the shipping-less cart total is returned for it.
      */
-    private function buildUnshippableAddressResponse(Cart $cart): array
+    private function buildRejectedContactResponse(Cart $cart, string $message): array
     {
         return [
             'success' => false,
@@ -119,7 +139,7 @@ final class UpdateApplePayShippingContactHandler
                 [
                     'code' => 'addressUnserviceable',
                     'contactField' => 'postalAddress',
-                    'message' => $this->module->l('Delivery to this address is not available. Please select a different delivery address.', self::FILE_NAME),
+                    'message' => $message,
                 ],
             ],
         ];
@@ -200,7 +220,10 @@ final class UpdateApplePayShippingContactHandler
         $cart->update();
     }
 
-    private function addProductToCart(Cart $cart, UpdateApplePayShippingContact $command)
+    /**
+     * @return string the reason a product could not be added, empty when every product is in the cart
+     */
+    private function addProductToCart(Cart $cart, UpdateApplePayShippingContact $command): string
     {
         foreach ($command->getProducts() as $product) {
             $quantity = max($product->getWantedQuantity(), 1);
@@ -213,8 +236,43 @@ final class UpdateApplePayShippingContactHandler
             }
 
             $cart->deleteProduct($product->getProductId(), $product->getProductAttribute());
-            $cart->updateQty($quantity, $product->getProductId(), $product->getProductAttribute());
+            /** @var bool|int $added -1 below the minimal quantity, which the PS 1.7 docblock omits */
+            $added = $cart->updateQty($quantity, $product->getProductId(), $product->getProductAttribute());
+
+            if ($added !== true) {
+                return $this->getProductRefusedMessage($product->getProductId(), $product->getProductAttribute(), $added === -1);
+            }
         }
+
+        return '';
+    }
+
+    /**
+     * Cart::updateQty() returns -1 below the product's minimal quantity and false when the product
+     * is out of stock, not available for order or the shop is in catalog mode. The texts are the
+     * cart page's own, from the core Shop.Notifications.Error domain.
+     */
+    private function getProductRefusedMessage(int $productId, int $productAttributeId, bool $belowMinimalQuantity): string
+    {
+        $productName = (string) Product::getProductName($productId, $productAttributeId ?: null, $this->context->getLanguageId());
+
+        if ($belowMinimalQuantity) {
+            $minimalQuantity = $productAttributeId
+                ? (int) (new \Combination($productAttributeId))->minimal_quantity
+                : (int) (new Product($productId))->minimal_quantity;
+
+            return $this->context->trans(
+                'The minimum purchase order quantity for the product %product% is %quantity%.',
+                ['%product%' => $productName, '%quantity%' => $minimalQuantity],
+                'Shop.Notifications.Error'
+            );
+        }
+
+        return $this->context->trans(
+            'This product (%product%) is no longer available.',
+            ['%product%' => $productName],
+            'Shop.Notifications.Error'
+        );
     }
 
     private function updateContext(Cart $cart, Customer $customer)

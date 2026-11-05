@@ -2,6 +2,10 @@
 
 # Changelog #
 
+## Changes in release 6.4.8
++ Fixed Apple Pay Direct accepting payments below the shop's minimum purchase total, the sheet now shows the same minimum amount message as the cart page
++ Fixed the Apple Pay Direct sheet showing a 0.00 total for products that cannot be ordered (out of stock, not available for order, below their minimum quantity or catalog mode), the sheet now says why the product cannot be ordered
+
 ## Changes in release 6.4.7
 + Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
 + Fixed switching between Test and Live modes changing the mode even when the stored API key was rejected, which removed Mollie from the checkout while the back office still showed the previous mode
