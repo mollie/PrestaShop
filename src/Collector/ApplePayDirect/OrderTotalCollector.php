@@ -63,7 +63,7 @@ class OrderTotalCollector
                 ''
             );
 
-            $paymentFeeData = $this->orderPaymentFeeService->getPaymentFee($orderTotal, Config::APPLEPAY);
+            $paymentFeeData = $this->orderPaymentFeeService->getPaymentFee($orderTotal, Config::APPLEPAY, $cart);
 
             $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
 

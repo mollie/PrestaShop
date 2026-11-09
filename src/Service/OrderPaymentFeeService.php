@@ -12,6 +12,7 @@
 
 namespace Mollie\Service;
 
+use Cart;
 use Configuration;
 use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
@@ -47,7 +48,7 @@ class OrderPaymentFeeService
         $this->paymentFeeProvider = $paymentFeeProvider;
     }
 
-    public function getPaymentFee(float $totalAmount, string $method): PaymentFeeData
+    public function getPaymentFee(float $totalAmount, string $method, ?Cart $cart = null): PaymentFeeData
     {
         // TODO order and payment fee in same service? Separate logic as this is probably used in cart context
 
@@ -55,6 +56,6 @@ class OrderPaymentFeeService
         $paymentId = $this->paymentMethodRepository->getPaymentMethodIdByMethodId($method, $environment, $this->shop->id);
         $molPaymentMethod = new MolPaymentMethod($paymentId);
 
-        return $this->paymentFeeProvider->getPaymentFee($molPaymentMethod, $totalAmount);
+        return $this->paymentFeeProvider->getPaymentFee($molPaymentMethod, $totalAmount, $cart);
     }
 }

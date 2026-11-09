@@ -36,7 +36,7 @@
 
 namespace Mollie\Provider;
 
-use Configuration;
+use Cart;
 use Mollie;
 use Mollie\Adapter\Context;
 use Mollie\Calculator\PaymentFeeCalculator;
@@ -89,19 +89,16 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl): PaymentFeeData
+    public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl, ?Cart $cart = null): PaymentFeeData
     {
         try {
             $surchargeFixedPriceTaxExcl = (float) $paymentMethod->surcharge_fixed_amount_tax_excl;
             $surchargePercentage = (float) $paymentMethod->surcharge_percentage;
             $surchargeLimit = (float) $paymentMethod->surcharge_limit;
 
-            $defaultCountryId = (int) Configuration::get('PS_COUNTRY_DEFAULT');
-
-            $taxCalculator = $this->taxCalculatorProvider->getTaxCalculator(
+            $taxCalculator = $this->taxCalculatorProvider->getCartTaxCalculator(
                 (int) $paymentMethod->tax_rules_group_id,
-                $defaultCountryId,
-                0
+                $cart ?: $this->context->getCart()
             );
 
             $paymentFeeCalculator = new PaymentFeeCalculator($taxCalculator, $this->context);

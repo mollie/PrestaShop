@@ -302,7 +302,7 @@ class PaymentMethodService
         $cart = new Cart($cartId);
         $customer = new Customer($cart->id_customer);
 
-        $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($molPaymentMethod, $totalAmount);
+        $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($molPaymentMethod, $totalAmount, $cart);
 
         if ($paymentFeeData->isActive()) {
             $totalAmount += $paymentFeeData->getPaymentFeeTaxIncl();
