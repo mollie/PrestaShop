@@ -29,6 +29,14 @@ export class AdvancedSettingsPage {
       .catch(() => false);
   }
 
+  statusMappingHeader() {
+    return this.page.getByTestId('advanced-settings-status-mapping-toggle');
+  }
+
+  emailStatusesHeader() {
+    return this.page.getByTestId('advanced-settings-email-statuses-toggle');
+  }
+
   async save() {
     await this.page.getByTestId('advanced-settings-save').click();
   }

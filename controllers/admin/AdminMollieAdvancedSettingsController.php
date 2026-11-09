@@ -124,6 +124,8 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             'expressCheckoutLiveOnly' => $this->module->l('The Express Component is in beta. Mollie activates it per account, so contact Mollie before you switch it on. It works only with a live API key in live mode and stays hidden in test mode.', self::FILE_NAME),
             'orderStatusMapping' => $this->module->l('Order Status Mapping', self::FILE_NAME),
             'orderStatusEmails' => $this->module->l('Order Status Emails', self::FILE_NAME),
+            'statusMappingSummary' => $this->module->l('%s of %s statuses mapped', self::FILE_NAME),
+            'emailStatusSummary' => $this->module->l('%s of %s emails on', self::FILE_NAME),
             'invoiceOption' => $this->module->l('Select when to create the order invoice', self::FILE_NAME),
             'confirmationEmail' => $this->module->l('Send order confirmation email', self::FILE_NAME),
             'autoShip' => $this->module->l('Automatically ship on marked statuses', self::FILE_NAME),
@@ -333,6 +335,17 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
                 throw new Exception('Invalid data');
             }
 
+            $rejected = isset($data['statusMappings']) ? $this->unknownStatusMappings($data['statusMappings']) : [];
+            if (!empty($rejected)) {
+                $this->ajaxRender(json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('One of the selected order statuses no longer exists in this shop. Pick another status and save again.', self::FILE_NAME),
+                    'fieldErrors' => $rejected,
+                ]));
+
+                return;
+            }
+
             if (isset($data['invoiceOption'])) {
                 $this->configuration->updateValue(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS, $data['invoiceOption']);
             }
@@ -459,6 +472,31 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         }
 
         return $statuses;
+    }
+
+    private function unknownStatusMappings(array $mappings): array
+    {
+        $validStatusIds = array_map('intval', array_column($this->getOrderStatuses(), 'id'));
+        $unknown = [];
+
+        foreach ($mappings as $mapping) {
+            if (!isset($mapping['configKey'], $mapping['prestashopStatus'])) {
+                continue;
+            }
+
+            $statusId = (int) $mapping['prestashopStatus'];
+
+            // Unmapped and already stored values are accepted as before, so an old mapping to a deleted state does not block every save.
+            if ($statusId === 0 || $statusId === (int) $this->configuration->get($mapping['configKey'])) {
+                continue;
+            }
+
+            if (!in_array($statusId, $validStatusIds, true)) {
+                $unknown[] = $mapping['configKey'];
+            }
+        }
+
+        return $unknown;
     }
 
     private function saveStatusMappings(array $mappings): void
