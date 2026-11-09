@@ -12,10 +12,13 @@
 
 namespace Mollie\Provider;
 
+use Address;
+use Cart;
 use Mollie\Repository\TaxRepositoryInterface;
 use Mollie\Repository\TaxRuleRepositoryInterface;
 use Tax;
 use TaxCalculator;
+use TaxManagerFactory;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -72,5 +75,16 @@ class TaxCalculatorProvider
         }
 
         return new TaxCalculator($taxes, $behavior);
+    }
+
+    /**
+     * Taxes the way PrestaShop taxes the cart products: the cart tax address, or the
+     * context country while the cart has no address yet.
+     */
+    public function getCartTaxCalculator(int $taxRulesGroupId, ?Cart $cart): TaxCalculator
+    {
+        $address = Address::initialize($cart ? (int) $cart->getTaxAddressId() : 0, true);
+
+        return TaxManagerFactory::getManager($address, (string) $taxRulesGroupId)->getTaxCalculator();
     }
 }

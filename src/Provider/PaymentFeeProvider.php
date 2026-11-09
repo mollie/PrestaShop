@@ -36,9 +36,7 @@
 
 namespace Mollie\Provider;
 
-use Address;
 use Cart;
-use Configuration;
 use Mollie;
 use Mollie\Adapter\Context;
 use Mollie\Calculator\PaymentFeeCalculator;
@@ -46,7 +44,6 @@ use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\LoggerInterface;
-use Mollie\Repository\AddressRepositoryInterface;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Validator\PaymentFeeValidator;
 use MolPaymentMethod;
@@ -75,23 +72,18 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
     /** @var TaxCalculatorProvider */
     private $taxCalculatorProvider;
 
-    /** @var AddressRepositoryInterface */
-    private $addressRepository;
-
     public function __construct(
         Context $context,
         ModuleFactory $module,
         PaymentFeeValidator $paymentFeeValidator,
         LoggerInterface $logger,
-        TaxCalculatorProvider $taxCalculatorProvider,
-        AddressRepositoryInterface $addressRepository
+        TaxCalculatorProvider $taxCalculatorProvider
     ) {
         $this->context = $context;
         $this->module = $module->getModule();
         $this->paymentFeeValidator = $paymentFeeValidator;
         $this->logger = $logger;
         $this->taxCalculatorProvider = $taxCalculatorProvider;
-        $this->addressRepository = $addressRepository;
     }
 
     /**
@@ -104,12 +96,9 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
             $surchargePercentage = (float) $paymentMethod->surcharge_percentage;
             $surchargeLimit = (float) $paymentMethod->surcharge_limit;
 
-            [$countryId, $stateId] = $this->getTaxCountryAndState($cart);
-
-            $taxCalculator = $this->taxCalculatorProvider->getTaxCalculator(
+            $taxCalculator = $this->taxCalculatorProvider->getCartTaxCalculator(
                 (int) $paymentMethod->tax_rules_group_id,
-                $countryId,
-                $stateId
+                $cart ?: $this->context->getCart()
             );
 
             $paymentFeeCalculator = new PaymentFeeCalculator($taxCalculator, $this->context);
@@ -156,29 +145,5 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
         }
 
         return $paymentFeeTaxIncl < 0 ? $this->module->l('Discount: %1s', self::FILE_NAME) : $this->module->l('Payment Fee: %1s', self::FILE_NAME);
-    }
-
-    /**
-     * Same address PrestaShop taxes the cart products by, shop default country while the cart has none yet.
-     *
-     * @return int[] [countryId, stateId]
-     */
-    private function getTaxCountryAndState(?Cart $cart): array
-    {
-        $defaultCountry = [(int) Configuration::get('PS_COUNTRY_DEFAULT'), 0];
-        $addressId = $cart ? (int) $cart->getTaxAddressId() : $this->context->getCartTaxAddressId();
-
-        if (!$addressId) {
-            return $defaultCountry;
-        }
-
-        /** @var Address|null $address */
-        $address = $this->addressRepository->findOneBy(['id_address' => $addressId]);
-
-        if (!$address || !$address->id || !$address->id_country) {
-            return $defaultCountry;
-        }
-
-        return [(int) $address->id_country, (int) $address->id_state];
     }
 }

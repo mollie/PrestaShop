@@ -12,6 +12,7 @@
 
 namespace Mollie\Adapter;
 
+use Cart;
 use Configuration as PrestashopConfiguration;
 use Context as PrestashopContext;
 
@@ -120,16 +121,10 @@ class Context
         return (int) PrestashopContext::getContext()->cart->id_address_invoice;
     }
 
-    public function getCartTaxAddressId(): int
+    public function getCart(): ?Cart
     {
-        $cart = PrestashopContext::getContext()->cart;
-
         /* @phpstan-ignore-next-line */
-        if (!$cart) {
-            return 0;
-        }
-
-        return (int) $cart->getTaxAddressId();
+        return PrestashopContext::getContext()->cart ?: null;
     }
 
     public function getCountryId(): int

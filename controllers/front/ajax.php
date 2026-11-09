@@ -106,7 +106,7 @@ class MollieAjaxModuleFrontController extends AbstractMollieController
         $paymentFeeData = null;
 
         try {
-            $paymentFeeData = $paymentFeeProvider->getPaymentFee($molPaymentMethod, (float) $cart->getOrderTotal());
+            $paymentFeeData = $paymentFeeProvider->getPaymentFee($molPaymentMethod, (float) $cart->getOrderTotal(), $cart);
         } catch (FailedToProvidePaymentFeeException $exception) {
             $logger->error('Failed to get payment fee data.', [
                 'exceptions' => ExceptionUtility::getExceptions($exception),
