@@ -76,6 +76,7 @@ class Uninstall
             Config::MOLLIE_CSS,
             Config::MOLLIE_DEBUG_LOG,
             Config::MOLLIE_DISPLAY_ERRORS,
+            Config::MOLLIE_PS_ACCOUNTS_ONBOARDING_ENABLED,
             Config::MOLLIE_MAIL_WHEN_SHIPPING,
             Config::MOLLIE_MAIL_WHEN_OPEN,
             Config::MOLLIE_MAIL_WHEN_PAID,

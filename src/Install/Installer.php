@@ -213,6 +213,7 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_METHOD_COUNTRIES, 0);
         $this->configurationAdapter->updateValue(Config::MOLLIE_METHOD_COUNTRIES_DISPLAY, 0);
         $this->configurationAdapter->updateValue(Config::MOLLIE_DISPLAY_ERRORS, false);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_PS_ACCOUNTS_ONBOARDING_ENABLED, 0);
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_OPEN, $this->configurationAdapter->get(Config::MOLLIE_STATUS_AWAITING));
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_PAID, $this->configurationAdapter->get('PS_OS_PAYMENT'));
         $this->configurationAdapter->updateValue(Config::MOLLIE_STATUS_COMPLETED, $this->configurationAdapter->get(Config::MOLLIE_STATUS_ORDER_COMPLETED));

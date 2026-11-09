@@ -36,6 +36,7 @@ export interface AdvancedSettingsData {
   autoShipStatuses: string[];
   carriers: CarrierData[];
   debugMode: boolean;
+  psAccountsOnboarding: boolean;
   logLevel: string;
   logoDisplay: string;
   cssPath: string;
@@ -67,6 +68,7 @@ export interface SaveAdvancedSettingsData {
   autoShipStatuses?: string[];
   carriers?: SaveCarrierData[];
   debugMode?: boolean;
+  psAccountsOnboarding?: boolean;
   logLevel?: string;
   logoDisplay?: string;
   cssPath?: string;
