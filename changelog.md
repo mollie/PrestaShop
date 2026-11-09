@@ -3,6 +3,13 @@
 # Changelog #
 
 ## Changes in release 6.4.8
++ Fixed the back office Orders page crashing when the shop has a Mollie order from 2023 with a dot in its reference, for example ord_1.zih1s5
++ Fixed a duplicate Apple Pay Direct element on product pages, which left an empty gap below the product buttons
++ Fixed payments failing to start for products whose friendly URL contains characters such as °, º, € or Chinese and Arabic text, when accented URLs are enabled
++ The module now declares support for PrestaShop 1.7.6 up to the last 9.x version, as PrestaShop's technical standards require, instead of accepting any future PrestaShop version
++ Fixed the Apple Pay Direct sheet offering carriers the product may not ship with, or that are not available to the shopper's customer group, so the sheet now rejects addresses the normal checkout cannot deliver to
++ Fixed Apple Pay Direct accepting payments below the shop's minimum purchase total, the sheet now shows the same minimum amount message as the cart page
++ Fixed the Apple Pay Direct sheet showing a 0.00 total for products that cannot be ordered (out of stock, not available for order, below their minimum quantity or catalog mode), the sheet now says why the product cannot be ordered
 + The Order Status Mapping and Order Status Emails sections in Advanced Settings now start collapsed with a summary in the header, so the rest of the page and the Save button are easier to reach
 
 ## Changes in release 6.4.7

@@ -19,12 +19,16 @@ use Cart;
 use Configuration;
 use Country;
 use Customer;
+use Mollie\Adapter\Context;
 use Mollie\Application\Command\UpdateApplePayShippingContact;
 use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
 use Mollie\Collector\ApplePayDirect\OrderTotalCollector;
 use Mollie\Exception\GuestCheckoutNotAvailableException;
 use Mollie\Factory\ModuleFactory;
+use Mollie\Utility\ApplePayDirect\DeliveryOptionUtility;
+use Mollie\Service\MinimumPurchaseService;
 use Mollie\Utility\ApplePayDirect\ShippingMethodUtility;
+use Product;
 use Tools;
 
 if (!defined('_PS_VERSION_')) {
@@ -44,15 +48,23 @@ final class UpdateApplePayShippingContactHandler
     private $orderTotalCollector;
     /** @var \Mollie */
     private $module;
+    /** @var MinimumPurchaseService */
+    private $minimumPurchaseService;
+    /** @var Context */
+    private $context;
 
     public function __construct(
         ApplePayCarriersBuilder $applePayCarriersBuilder,
         OrderTotalCollector $orderTotalCollector,
-        ModuleFactory $module
+        ModuleFactory $module,
+        MinimumPurchaseService $minimumPurchaseService,
+        Context $context
     ) {
         $this->applePayCarriersBuilder = $applePayCarriersBuilder;
         $this->orderTotalCollector = $orderTotalCollector;
         $this->module = $module->getModule();
+        $this->minimumPurchaseService = $minimumPurchaseService;
+        $this->context = $context;
     }
 
     public function handle(UpdateApplePayShippingContact $command): array
@@ -62,12 +74,26 @@ final class UpdateApplePayShippingContactHandler
         $deliveryAddress = $this->getOrCreateAddress($cart->id_address_delivery, $customer->id, $command);
         $invoiceAddress = $this->getOrCreateAddress($cart->id_address_invoice, $customer->id, $command);
         $this->updateCart($cart, $customer, $deliveryAddress->id, $invoiceAddress->id);
-        $this->addProductToCart($cart, $command);
+        $productError = $this->addProductToCart($cart, $command);
         $cart = new Cart($cart->id);
         $this->updateContext($cart, $customer);
+
+        $rejection = $productError ?: $this->minimumPurchaseService->getNotReachedMessage($cart);
+
+        if ($rejection) {
+            return $this->buildRejectedContactResponse($cart, $rejection);
+        }
+
         $country = new Country($deliveryAddress->id_country);
 
-        $applePayCarriers = $this->applePayCarriersBuilder->build(Carrier::getCarriersForOrder($country->id_zone), $country->id_zone);
+        // checkout decides shipping through the delivery option list (product carriers, customer
+        // groups, ranges, carrier filtering modules); the sheet must offer the same carriers
+        $carriers = DeliveryOptionUtility::filterUsableCarriers(
+            Carrier::getCarriersForOrder($country->id_zone, Customer::getGroupsStatic((int) $cart->id_customer), $cart),
+            $cart->getDeliveryOptionList(null, true),
+            (int) $cart->id_address_delivery
+        );
+        $applePayCarriers = $this->applePayCarriersBuilder->build($carriers, $country->id_zone);
 
         // the sheet preselects the first listed method without firing onshippingmethodselected,
         // so the cart must already carry it or the authorized total diverges from the charged one
@@ -85,7 +111,10 @@ final class UpdateApplePayShippingContactHandler
         $totals = $this->orderTotalCollector->getOrderTotals($applePayCarriers, $cart);
 
         if (!$totals) {
-            return $this->buildUnshippableAddressResponse($cart);
+            return $this->buildRejectedContactResponse(
+                $cart,
+                $this->module->l('Delivery to this address is not available. Please select a different delivery address.', self::FILE_NAME)
+            );
         }
 
         return [
@@ -98,11 +127,10 @@ final class UpdateApplePayShippingContactHandler
     }
 
     /**
-     * No carrier can deliver this cart to the selected zone. The sheet must reject the contact
-     * (Apple keeps the Pay button blocked while an addressUnserviceable error is present) and
-     * the update dictionary requires a total, so the shipping-less cart total is returned for it.
+     * addressUnserviceable is the error Apple keeps the Pay button blocked for, and the update
+     * dictionary requires a total, so the shipping-less cart total is returned for it.
      */
-    private function buildUnshippableAddressResponse(Cart $cart): array
+    private function buildRejectedContactResponse(Cart $cart, string $message): array
     {
         return [
             'success' => false,
@@ -119,7 +147,7 @@ final class UpdateApplePayShippingContactHandler
                 [
                     'code' => 'addressUnserviceable',
                     'contactField' => 'postalAddress',
-                    'message' => $this->module->l('Delivery to this address is not available. Please select a different delivery address.', self::FILE_NAME),
+                    'message' => $message,
                 ],
             ],
         ];
@@ -200,7 +228,10 @@ final class UpdateApplePayShippingContactHandler
         $cart->update();
     }
 
-    private function addProductToCart(Cart $cart, UpdateApplePayShippingContact $command)
+    /**
+     * @return string the reason a product could not be added, empty when every product is in the cart
+     */
+    private function addProductToCart(Cart $cart, UpdateApplePayShippingContact $command): string
     {
         foreach ($command->getProducts() as $product) {
             $quantity = max($product->getWantedQuantity(), 1);
@@ -213,8 +244,43 @@ final class UpdateApplePayShippingContactHandler
             }
 
             $cart->deleteProduct($product->getProductId(), $product->getProductAttribute());
-            $cart->updateQty($quantity, $product->getProductId(), $product->getProductAttribute());
+            /** @var bool|int $added -1 below the minimal quantity, which the PS 1.7 docblock omits */
+            $added = $cart->updateQty($quantity, $product->getProductId(), $product->getProductAttribute());
+
+            if ($added !== true) {
+                return $this->getProductRefusedMessage($product->getProductId(), $product->getProductAttribute(), $added === -1);
+            }
         }
+
+        return '';
+    }
+
+    /**
+     * Cart::updateQty() returns -1 below the product's minimal quantity and false when the product
+     * is out of stock, not available for order or the shop is in catalog mode. The texts are the
+     * cart page's own, from the core Shop.Notifications.Error domain.
+     */
+    private function getProductRefusedMessage(int $productId, int $productAttributeId, bool $belowMinimalQuantity): string
+    {
+        $productName = (string) Product::getProductName($productId, $productAttributeId ?: null, $this->context->getLanguageId());
+
+        if ($belowMinimalQuantity) {
+            $minimalQuantity = $productAttributeId
+                ? (int) (new \Combination($productAttributeId))->minimal_quantity
+                : (int) (new Product($productId))->minimal_quantity;
+
+            return $this->context->trans(
+                'The minimum purchase order quantity for the product %product% is %quantity%.',
+                ['%product%' => $productName, '%quantity%' => $minimalQuantity],
+                'Shop.Notifications.Error'
+            );
+        }
+
+        return $this->context->trans(
+            'This product (%product%) is no longer available.',
+            ['%product%' => $productName],
+            'Shop.Notifications.Error'
+        );
     }
 
     private function updateContext(Cart $cart, Customer $customer)
@@ -234,19 +300,24 @@ final class UpdateApplePayShippingContactHandler
      * Context::updateCustomer() reassigns both cart addresses to Address::getFirstCustomerAddressId(),
      * which ignores soft-deleted rows and therefore never returns the temporary Apple Pay address:
      * 0 for the throwaway guest, the customer's oldest saved address for a logged-in shopper.
-     * Put back the addresses the Apple Pay sheet is being quoted against.
+     * Put back the addresses the Apple Pay sheet is being quoted against, and move the cart lines
+     * there too: PS 1.7 and 8 key the delivery options by each line's address, and a line can sit on
+     * the address the core call forced or on another saved address of a logged-in shopper.
      */
     private function restoreCartAddresses(Cart $cart, int $deliveryAddressId, int $invoiceAddressId): void
     {
-        if ((int) $cart->id_address_delivery === $deliveryAddressId && (int) $cart->id_address_invoice === $invoiceAddressId) {
-            return;
+        if ((int) $cart->id_address_delivery !== $deliveryAddressId || (int) $cart->id_address_invoice !== $invoiceAddressId) {
+            $cart->id_address_delivery = $deliveryAddressId;
+            $cart->id_address_invoice = $invoiceAddressId;
+            $cart->update();
         }
 
-        // Remaps ps_cart_product rows away from the address the core call just forced onto the cart.
-        $cart->updateAddressId((int) $cart->id_address_delivery, $deliveryAddressId);
+        foreach (array_unique(array_column($cart->getProducts(true), 'id_address_delivery')) as $lineAddressId) {
+            if ((int) $lineAddressId === $deliveryAddressId) {
+                continue;
+            }
 
-        $cart->id_address_delivery = $deliveryAddressId;
-        $cart->id_address_invoice = $invoiceAddressId;
-        $cart->update();
+            $cart->updateAddressId((int) $lineAddressId, $deliveryAddressId);
+        }
     }
 }
