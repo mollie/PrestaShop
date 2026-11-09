@@ -23,8 +23,10 @@ class ApplePayCartProductsService
 {
     /**
      * @param Product[] $products
+     *
+     * @return array{product: Product, belowMinimalQuantity: bool}|null the first product the cart refused, null when every product is in the cart
      */
-    public function addWantedProducts(Cart $cart, array $products): void
+    public function addWantedProducts(Cart $cart, array $products)
     {
         foreach ($products as $product) {
             $customizationId = $product->getCustomizationId();
@@ -44,8 +46,15 @@ class ApplePayCartProductsService
             }
 
             $cart->deleteProduct($product->getProductId(), $product->getProductAttribute());
-            $cart->updateQty($quantity, $product->getProductId(), $product->getProductAttribute());
+            /** @var bool|int $added -1 below the minimal quantity, which the PS 1.7 docblock omits */
+            $added = $cart->updateQty($quantity, $product->getProductId(), $product->getProductAttribute());
+
+            if ($added !== true) {
+                return ['product' => $product, 'belowMinimalQuantity' => $added === -1];
+            }
         }
+
+        return null;
     }
 
     private function getQuantityInCart(Cart $cart, Product $product, int $customizationId = 0): int

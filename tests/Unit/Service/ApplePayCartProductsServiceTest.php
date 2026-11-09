@@ -77,4 +77,36 @@ class ApplePayCartProductsServiceTest extends TestCase
 
         (new ApplePayCartProductsService())->addWantedProducts($cart, [new Product(self::PRODUCT_ID, 0, 1, self::CUSTOMIZATION_ID)]);
     }
+
+    public function testItReturnsTheProductTheCartRefused()
+    {
+        $product = new Product(self::PRODUCT_ID, 3, 2);
+        $cart = $this->createMock(Cart::class);
+        $cart->method('getProductQuantity')->willReturn(['quantity' => 0]);
+        $cart->method('updateQty')->willReturn(false);
+
+        $refusal = (new ApplePayCartProductsService())->addWantedProducts($cart, [$product]);
+
+        $this->assertSame(['product' => $product, 'belowMinimalQuantity' => false], $refusal);
+    }
+
+    public function testItFlagsAProductBelowItsMinimalQuantity()
+    {
+        $cart = $this->createMock(Cart::class);
+        $cart->method('getProductQuantity')->willReturn(['quantity' => 0]);
+        $cart->method('updateQty')->willReturn(-1);
+
+        $refusal = (new ApplePayCartProductsService())->addWantedProducts($cart, [new Product(self::PRODUCT_ID, 3, 1)]);
+
+        $this->assertTrue($refusal['belowMinimalQuantity']);
+    }
+
+    public function testItReturnsNullWhenEveryProductIsInTheCart()
+    {
+        $cart = $this->createMock(Cart::class);
+        $cart->method('getProductQuantity')->willReturn(['quantity' => 0]);
+        $cart->method('updateQty')->willReturn(true);
+
+        $this->assertNull((new ApplePayCartProductsService())->addWantedProducts($cart, [new Product(self::PRODUCT_ID, 3, 1)]));
+    }
 }

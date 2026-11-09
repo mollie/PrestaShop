@@ -781,6 +781,66 @@ input:checked + .toggle-slider:before {
   cursor: not-allowed;
 }
 
+/* Collapsible status sections */
+.section-title.section-title-collapsible {
+  padding: 0;
+}
+
+.section-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  margin: 0;
+  background: none;
+  border: none;
+  border-radius: inherit;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.section-toggle:hover {
+  background-color: #f3f4f6;
+}
+
+.section-toggle:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: -2px;
+}
+
+.section-summary {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 400;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.section-toggle-icon {
+  width: 16px;
+  height: 16px;
+  color: #6b7280;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.section-toggle[aria-expanded="true"] .section-toggle-icon {
+  transform: rotate(180deg);
+}
+
+.settings-section.is-collapsed {
+  padding-bottom: 0;
+}
+
+.settings-section.is-collapsed .section-title {
+  margin-bottom: 0 !important;
+  border-bottom: none;
+  border-radius: 8px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .advanced-settings {
@@ -799,6 +859,10 @@ input:checked + .toggle-slider:before {
     font-size: 15px;
     padding: 12px 16px;
     margin: 0 -16px 16px -16px;
+  }
+
+  .section-toggle {
+    padding: 12px 16px;
   }
 
   /* Updated responsive carrier table layout */

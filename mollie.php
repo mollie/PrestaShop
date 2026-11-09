@@ -121,10 +121,10 @@ class Mollie extends PaymentModule
         $this->need_instance = 1;
         $this->bootstrap = true;
         $this->module_key = 'a48b2f8918358bcbe6436414f48d8915';
+        $this->ps_versions_compliancy = ['min' => '1.7.6', 'max' => '9.99.99'];
 
         parent::__construct();
 
-        $this->ps_versions_compliancy = ['min' => '1.7.6', 'max' => _PS_VERSION_];
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 

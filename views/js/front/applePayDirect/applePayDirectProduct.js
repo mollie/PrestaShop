@@ -10,8 +10,17 @@
  */
 
 $(document).ready(function () {
+    removeDuplicateMountPoints()
+    if (typeof prestashop !== 'undefined') {
+        prestashop.on('updatedProduct', removeDuplicateMountPoints)
+    }
+
     whenApplePaySessionAvailable(initApplePayDirect)
 })
+
+function removeDuplicateMountPoints() {
+    $('[id="mollie-applepay-direct-button"]').slice(1).remove()
+}
 
 function initApplePayDirect() {
     const applePayMethodElement = document.querySelector(

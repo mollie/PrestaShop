@@ -781,6 +781,9 @@ $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_eb4c6f94efd5
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0b06e7a6a8fdd7ebb1538faf7582aab8'] = 'Mollie Express Component';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0122b5b00af3de8e066e55c4d5afea6f'] = 'Zobrazte Apple Pay, Google Pay a PayPal ako tlačidlá rýchlej platby v hornej časti pokladne, aby zákazníci mohli zaplatiť jedným ťuknutím. Na stránke Platobné metódy vyberte, ktoré tlačidlá sa zobrazia.';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_d8d0950b07b563ca7190363e69bf03f8'] = 'Express Component je vo verzii beta. Mollie ho aktivuje pre každý účet zvlášť, preto sa pred zapnutím obráťte na Mollie. Funguje iba so živým API kľúčom v živom režime a v testovacom režime zostáva skrytý.';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_cd0a7141acd267dddc63b99afd8f34a6'] = 'Namapované %s z %s stavov';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_51523256f7c0583870d9304f6560341e'] = 'Zapnuté %s z %s e-mailov';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_fe1a8f570baa07aad594712eda82e45a'] = 'Jeden z vybraných stavov objednávky už v tomto obchode neexistuje. Vyberte iný stav a uložte znova.';
 $_MODULE['<{mollie}prestashop>payment_history_6ecdeeece7dc4ee366197ea2e4b6b778'] = 'História platieb';
 $_MODULE['<{mollie}prestashop>payment_history_2a2d2c75ec43014500ef2d5f400cf7d1'] = 'Zatiaľ žiadne udalosti';
 $_MODULE['<{mollie}prestashop>payment_history_b02dca32aecc6f71310f9e914757d56f'] = 'Referencia Mollie';
