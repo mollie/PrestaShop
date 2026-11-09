@@ -566,13 +566,13 @@ class CartLinesService
 
             if (isset($item['product_url'])) {
                 $line->setProductUrl(
-                    TextFormatUtility::replaceAccentedChars((string) $item['product_url']) ?: ''
+                    TextFormatUtility::encodeUrl((string) $item['product_url'])
                 );
             }
 
             if (isset($item['image_url'])) {
                 $line->setImageUrl(
-                    TextFormatUtility::replaceAccentedChars((string) $item['image_url']) ?: ''
+                    TextFormatUtility::encodeUrl((string) $item['image_url'])
                 );
             }
 
