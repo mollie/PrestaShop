@@ -3,6 +3,7 @@
 # Changelog #
 
 ## Changes in release 6.4.8
++ Fixed the back office Orders page crashing when the shop has a Mollie order from 2023 with a dot in its reference, for example ord_1.zih1s5
 + Fixed a duplicate Apple Pay Direct element on product pages, which left an empty gap below the product buttons
 
 ## Changes in release 6.4.7
