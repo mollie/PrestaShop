@@ -120,6 +120,22 @@ class Context
         return (int) PrestashopContext::getContext()->cart->id_address_invoice;
     }
 
+    public function getCartTaxAddressId(): int
+    {
+        $cart = PrestashopContext::getContext()->cart;
+
+        /* @phpstan-ignore-next-line */
+        if (!$cart) {
+            return 0;
+        }
+
+        if (PrestashopConfiguration::get('PS_TAX_ADDRESS_TYPE') === 'id_address_invoice') {
+            return (int) $cart->id_address_invoice;
+        }
+
+        return (int) $cart->id_address_delivery;
+    }
+
     public function getCountryId(): int
     {
         return (int) PrestashopContext::getContext()->country->id;
