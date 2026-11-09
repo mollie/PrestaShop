@@ -23,10 +23,12 @@ use Mollie\Adapter\Context;
 use Mollie\Application\Command\UpdateApplePayShippingContact;
 use Mollie\Builder\ApplePayDirect\ApplePayCarriersBuilder;
 use Mollie\Collector\ApplePayDirect\OrderTotalCollector;
+use Mollie\Config\Config;
 use Mollie\Exception\GuestCheckoutNotAvailableException;
 use Mollie\Factory\ModuleFactory;
-use Mollie\Utility\ApplePayDirect\DeliveryOptionUtility;
+use Mollie\Service\ApplePayCartProductsService;
 use Mollie\Service\MinimumPurchaseService;
+use Mollie\Utility\ApplePayDirect\DeliveryOptionUtility;
 use Mollie\Utility\ApplePayDirect\ShippingMethodUtility;
 use Product;
 use Tools;
@@ -52,19 +54,23 @@ final class UpdateApplePayShippingContactHandler
     private $minimumPurchaseService;
     /** @var Context */
     private $context;
+    /** @var ApplePayCartProductsService */
+    private $applePayCartProductsService;
 
     public function __construct(
         ApplePayCarriersBuilder $applePayCarriersBuilder,
         OrderTotalCollector $orderTotalCollector,
         ModuleFactory $module,
         MinimumPurchaseService $minimumPurchaseService,
-        Context $context
+        Context $context,
+        ApplePayCartProductsService $applePayCartProductsService
     ) {
         $this->applePayCarriersBuilder = $applePayCarriersBuilder;
         $this->orderTotalCollector = $orderTotalCollector;
         $this->module = $module->getModule();
         $this->minimumPurchaseService = $minimumPurchaseService;
         $this->context = $context;
+        $this->applePayCartProductsService = $applePayCartProductsService;
     }
 
     public function handle(UpdateApplePayShippingContact $command): array
@@ -74,7 +80,10 @@ final class UpdateApplePayShippingContactHandler
         $deliveryAddress = $this->getOrCreateAddress($cart->id_address_delivery, $customer->id, $command);
         $invoiceAddress = $this->getOrCreateAddress($cart->id_address_invoice, $customer->id, $command);
         $this->updateCart($cart, $customer, $deliveryAddress->id, $invoiceAddress->id);
-        $productError = $this->addProductToCart($cart, $command);
+        $refusal = $this->applePayCartProductsService->addWantedProducts($cart, $command->getProducts());
+        $productError = $refusal
+            ? $this->getProductRefusedMessage($refusal['product']->getProductId(), $refusal['product']->getProductAttribute(), $refusal['belowMinimalQuantity'])
+            : '';
         $cart = new Cart($cart->id);
         $this->updateContext($cart, $customer);
 
@@ -157,7 +166,7 @@ final class UpdateApplePayShippingContactHandler
     {
         if ($existingAddressId) {
             $address = new Address($existingAddressId);
-            if ($address->id && $address->alias === 'applePay') {
+            if ($address->id && $address->alias === Config::APPLE_PAY_DIRECT_ADDRESS_ALIAS) {
                 $address->postcode = $command->getPostalCode();
                 $address->id_country = Country::getByIso($command->getCountryCode());
                 $address->country = $command->getCountry();
@@ -180,7 +189,7 @@ final class UpdateApplePayShippingContactHandler
         $address->lastname = 'ApplePay';
         $address->firstname = 'ApplePay';
         $address->id_customer = $customerId;
-        $address->alias = 'applePay';
+        $address->alias = Config::APPLE_PAY_DIRECT_ADDRESS_ALIAS;
         $address->postcode = $command->getPostalCode();
         $address->id_country = Country::getByIso($command->getCountryCode());
         $address->country = $command->getCountry();
@@ -226,33 +235,6 @@ final class UpdateApplePayShippingContactHandler
         $cart->id_address_invoice = $invoiceAddressId;
         $cart->id_customer = $customer->id;
         $cart->update();
-    }
-
-    /**
-     * @return string the reason a product could not be added, empty when every product is in the cart
-     */
-    private function addProductToCart(Cart $cart, UpdateApplePayShippingContact $command): string
-    {
-        foreach ($command->getProducts() as $product) {
-            $quantity = max($product->getWantedQuantity(), 1);
-            $inCart = $cart->getProductQuantity($product->getProductId(), $product->getProductAttribute());
-
-            // deleteProduct() runs CartRule::autoRemoveFromCart() on the emptied cart, which drops
-            // vouchers the shopper entered by code, so a cart already holding the line is left alone
-            if ((int) ($inCart['quantity'] ?? 0) === $quantity) {
-                continue;
-            }
-
-            $cart->deleteProduct($product->getProductId(), $product->getProductAttribute());
-            /** @var bool|int $added -1 below the minimal quantity, which the PS 1.7 docblock omits */
-            $added = $cart->updateQty($quantity, $product->getProductId(), $product->getProductAttribute());
-
-            if ($added !== true) {
-                return $this->getProductRefusedMessage($product->getProductId(), $product->getProductAttribute(), $added === -1);
-            }
-        }
-
-        return '';
     }
 
     /**

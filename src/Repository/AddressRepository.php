@@ -29,4 +29,9 @@ class AddressRepository extends AbstractRepository implements AddressRepositoryI
     {
         return \Address::getZoneById($id_address_delivery);
     }
+
+    public function isValid(int $addressId): bool
+    {
+        return (bool) \Address::isValid($addressId);
+    }
 }

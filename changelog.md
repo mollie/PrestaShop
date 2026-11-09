@@ -11,6 +11,8 @@
 + Fixed Apple Pay Direct accepting payments below the shop's minimum purchase total, the sheet now shows the same minimum amount message as the cart page
 + Fixed the Apple Pay Direct sheet showing a 0.00 total for products that cannot be ordered (out of stock, not available for order, below their minimum quantity or catalog mode), the sheet now says why the product cannot be ordered
 + The Order Status Mapping and Order Status Emails sections in Advanced Settings now start collapsed with a summary in the header, so the rest of the page and the Save button are easier to reach
++ Fixed checkout showing no carriers after the shopper closed the Apple Pay Direct sheet on the cart page and continued with the normal checkout
++ Fixed the Apple Pay Direct sheet on the cart page adding an extra plain copy of each customized product to the cart
 
 ## Changes in release 6.4.7
 + Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version
