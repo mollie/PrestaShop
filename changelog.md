@@ -8,6 +8,8 @@
 + Fixed payments failing to start for products whose friendly URL contains characters such as °, º, € or Chinese and Arabic text, when accented URLs are enabled
 + The module now declares support for PrestaShop 1.7.6 up to the last 9.x version, as PrestaShop's technical standards require, instead of accepting any future PrestaShop version
 + Fixed the Apple Pay Direct sheet offering carriers the product may not ship with, or that are not available to the shopper's customer group, so the sheet now rejects addresses the normal checkout cannot deliver to
++ Fixed Apple Pay Direct accepting payments below the shop's minimum purchase total, the sheet now shows the same minimum amount message as the cart page
++ Fixed the Apple Pay Direct sheet showing a 0.00 total for products that cannot be ordered (out of stock, not available for order, below their minimum quantity or catalog mode), the sheet now says why the product cannot be ordered
 
 ## Changes in release 6.4.7
 + Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version

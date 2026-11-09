@@ -18,6 +18,7 @@ use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Service\MinimumPurchaseService;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
@@ -61,6 +62,8 @@ class ExpressComponentAvailabilityService
     private $moduleFactory;
     /** @var PrestaLoggerInterface */
     private $logger;
+    /** @var MinimumPurchaseService */
+    private $minimumPurchaseService;
     /** @var string */
     private $unavailableReason = '';
     /** @var array<int, bool> hookDisplayHeader and hookDisplayPaymentTop ask for the same cart in one request */
@@ -73,7 +76,8 @@ class ExpressComponentAvailabilityService
         PaymentMethodRestrictionValidationInterface $restrictionValidation,
         SubscriptionOrderValidator $subscriptionOrderValidator,
         ModuleFactory $moduleFactory,
-        PrestaLoggerInterface $logger
+        PrestaLoggerInterface $logger,
+        MinimumPurchaseService $minimumPurchaseService
     ) {
         $this->configuration = $configuration;
         $this->context = $context;
@@ -82,6 +86,7 @@ class ExpressComponentAvailabilityService
         $this->subscriptionOrderValidator = $subscriptionOrderValidator;
         $this->moduleFactory = $moduleFactory;
         $this->logger = $logger;
+        $this->minimumPurchaseService = $minimumPurchaseService;
     }
 
     /** The merchant switched the component on and the shop can talk to Mollie in live mode. */
@@ -160,7 +165,7 @@ class ExpressComponentAvailabilityService
             return $this->unavailable('cart total is zero');
         }
 
-        if ($this->isBelowMinimumPurchase($cart)) {
+        if ($this->minimumPurchaseService->isBelowMinimum($cart)) {
             return $this->unavailable('cart is below the minimum purchase total');
         }
 
@@ -171,24 +176,6 @@ class ExpressComponentAvailabilityService
         }
 
         return true;
-    }
-
-    /**
-     * PrestaShop enforces the minimum purchase total in ModuleFrontController::initContent() for
-     * the regular payment controller only; the session and the webhook never pass through it.
-     */
-    private function isBelowMinimumPurchase(\Cart $cart): bool
-    {
-        $minimum = (float) $this->configuration->get('PS_PURCHASE_MINIMUM');
-
-        if ($minimum <= 0) {
-            return false;
-        }
-
-        $minimalPurchase = \Tools::convertPrice($minimum, new \Currency((int) $cart->id_currency));
-        \Hook::exec('overrideMinimalPurchasePrice', ['minimalPurchase' => &$minimalPurchase]);
-
-        return $cart->getOrderTotal(false, \Cart::ONLY_PRODUCTS) < $minimalPurchase;
     }
 
     public function getUnavailableReason(): string
