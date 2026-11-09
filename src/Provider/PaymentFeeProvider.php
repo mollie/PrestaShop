@@ -37,6 +37,7 @@
 namespace Mollie\Provider;
 
 use Address;
+use Cart;
 use Configuration;
 use Mollie;
 use Mollie\Adapter\Context;
@@ -96,14 +97,14 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl): PaymentFeeData
+    public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl, ?Cart $cart = null): PaymentFeeData
     {
         try {
             $surchargeFixedPriceTaxExcl = (float) $paymentMethod->surcharge_fixed_amount_tax_excl;
             $surchargePercentage = (float) $paymentMethod->surcharge_percentage;
             $surchargeLimit = (float) $paymentMethod->surcharge_limit;
 
-            [$countryId, $stateId] = $this->getTaxCountryAndState();
+            [$countryId, $stateId] = $this->getTaxCountryAndState($cart);
 
             $taxCalculator = $this->taxCalculatorProvider->getTaxCalculator(
                 (int) $paymentMethod->tax_rules_group_id,
@@ -162,10 +163,10 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
      *
      * @return int[] [countryId, stateId]
      */
-    private function getTaxCountryAndState(): array
+    private function getTaxCountryAndState(?Cart $cart): array
     {
         $defaultCountry = [(int) Configuration::get('PS_COUNTRY_DEFAULT'), 0];
-        $addressId = $this->context->getCartTaxAddressId();
+        $addressId = $cart ? (int) $cart->getTaxAddressId() : $this->context->getCartTaxAddressId();
 
         if (!$addressId) {
             return $defaultCountry;
@@ -174,7 +175,7 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
         /** @var Address|null $address */
         $address = $this->addressRepository->findOneBy(['id_address' => $addressId]);
 
-        if (!$address || !$address->id) {
+        if (!$address || !$address->id || !$address->id_country) {
             return $defaultCountry;
         }
 

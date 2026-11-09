@@ -36,6 +36,7 @@
 
 namespace Mollie\Provider;
 
+use Cart;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Exception\FailedToProvidePaymentFeeException;
 use MolPaymentMethod;
@@ -47,9 +48,11 @@ if (!defined('_PS_VERSION_')) {
 interface PaymentFeeProviderInterface
 {
     /**
+     * The fee VAT follows the tax address of $cart, or of the context cart when none is given.
+     *
      * @throws FailedToProvidePaymentFeeException
      */
-    public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl): PaymentFeeData;
+    public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl, ?Cart $cart = null): PaymentFeeData;
 
     /**
      * Get payment fee text based on the fee amount

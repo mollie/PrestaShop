@@ -144,7 +144,7 @@ class OrderPaymentFeeHandler
         }
 
         try {
-            $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmountWithTax);
+            $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmountWithTax, $cart);
         } catch (FailedToProvidePaymentFeeException $exception) {
             $this->logger->error(sprintf('%s - Failed to provide payment fee', self::FILE_NAME), [
                 'exceptions' => ExceptionUtility::getExceptions($exception),

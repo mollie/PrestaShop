@@ -186,7 +186,7 @@ class OrderCreationHandler
         // quoted to the shopper and none may be charged, even when the matching method row has one.
         $paymentFeeData = $isExpressPayment
             ? new PaymentFeeData(0.00, 0.00, 0.00, false)
-            : $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmount);
+            : $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmount, $cart);
 
         $existingOrderId = (int) Order::getIdByCartId((int) $cartId);
         if ($existingOrderId) {
@@ -326,7 +326,7 @@ class OrderCreationHandler
         $paymentMethodName = $paymentMethodObj->method_name
             ?: (Config::$methods[$paymentData->getMethod()] ?? $this->module->name);
 
-        $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethodObj, $cart->getOrderTotal());
+        $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethodObj, $cart->getOrderTotal(), $cart);
 
         /** @var PaymentFeeTextService $paymentFeeTextService */
         $paymentFeeTextService = $this->module->getService(PaymentFeeTextService::class);
@@ -375,7 +375,7 @@ class OrderCreationHandler
                 $paymentMethodRepository->getPaymentMethodIdByMethodId($paymentData->getMethod(), $environment)
             );
 
-            $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmount);
+            $paymentFeeData = $this->paymentFeeProvider->getPaymentFee($paymentMethod, (float) $originalAmount, $cart);
 
             $paymentFee = $paymentFeeData->getPaymentFeeTaxIncl();
         } else {

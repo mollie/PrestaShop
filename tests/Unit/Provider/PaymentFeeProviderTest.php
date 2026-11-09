@@ -13,6 +13,7 @@
 namespace Mollie\Tests\Unit\Provider;
 
 use Address;
+use Cart;
 use Configuration;
 use Mollie;
 use Mollie\Adapter\Context;
@@ -302,6 +303,50 @@ class PaymentFeeProviderTest extends TestCase
 
         $this->context->method('getCartTaxAddressId')->willReturn(439);
         $this->addressRepository->method('findOneBy')->willReturn(null);
+
+        $this->taxCalculatorProvider->expects($this->once())
+            ->method('getTaxCalculator')
+            ->with(12, (int) Configuration::get('PS_COUNTRY_DEFAULT'), 0)
+            ->willReturn($this->taxCalculator);
+
+        $this->createProvider()->getPaymentFee($this->molPaymentMethod, 10);
+    }
+
+    public function testItPrefersTheGivenCartOverTheContextCart(): void
+    {
+        $this->setFixedFeeMethod();
+
+        $address = new Address();
+        $address->id = 441;
+        $address->id_country = 18;
+        $address->id_state = 0;
+
+        $cart = $this->createMock(Cart::class);
+        $cart->method('getTaxAddressId')->willReturn(441);
+
+        $this->context->expects($this->never())->method('getCartTaxAddressId');
+        $this->addressRepository->method('findOneBy')
+            ->with(['id_address' => 441])
+            ->willReturn($address);
+
+        $this->taxCalculatorProvider->expects($this->once())
+            ->method('getTaxCalculator')
+            ->with(12, 18, 0)
+            ->willReturn($this->taxCalculator);
+
+        $this->createProvider()->getPaymentFee($this->molPaymentMethod, 10, $cart);
+    }
+
+    public function testItFallsBackToShopDefaultCountryWhenTaxAddressHasNoCountry(): void
+    {
+        $this->setFixedFeeMethod();
+
+        $address = new Address();
+        $address->id = 439;
+        $address->id_country = 0;
+
+        $this->context->method('getCartTaxAddressId')->willReturn(439);
+        $this->addressRepository->method('findOneBy')->willReturn($address);
 
         $this->taxCalculatorProvider->expects($this->once())
             ->method('getTaxCalculator')

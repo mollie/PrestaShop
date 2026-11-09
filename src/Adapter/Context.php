@@ -129,11 +129,7 @@ class Context
             return 0;
         }
 
-        if (PrestashopConfiguration::get('PS_TAX_ADDRESS_TYPE') === 'id_address_invoice') {
-            return (int) $cart->id_address_invoice;
-        }
-
-        return (int) $cart->id_address_delivery;
+        return (int) $cart->getTaxAddressId();
     }
 
     public function getCountryId(): int
