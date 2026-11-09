@@ -670,6 +670,9 @@ $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_eb4c6f94efd5
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0b06e7a6a8fdd7ebb1538faf7582aab8'] = 'Mollie Express Component';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0122b5b00af3de8e066e55c4d5afea6f'] = 'Zeigen Sie Apple Pay, Google Pay und PayPal als Schnellzahlungs-Buttons oben im Checkout an, damit Kunden mit einem Fingertipp bezahlen können. Wählen Sie auf der Seite Zahlungsmethoden aus, welche Buttons angezeigt werden.';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_d8d0950b07b563ca7190363e69bf03f8'] = 'Die Express Component befindet sich in der Beta-Phase. Mollie aktiviert sie pro Konto, wenden Sie sich daher an Mollie, bevor Sie sie einschalten. Sie funktioniert nur mit einem Live-API-Schlüssel im Live-Modus und bleibt im Testmodus ausgeblendet.';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_cd0a7141acd267dddc63b99afd8f34a6'] = '%s von %s Status zugeordnet';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_51523256f7c0583870d9304f6560341e'] = '%s von %s E-Mails aktiv';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_fe1a8f570baa07aad594712eda82e45a'] = 'Einer der ausgewählten Bestellstatus existiert in diesem Shop nicht mehr. Wählen Sie einen anderen Status und speichern Sie erneut.';
 $_MODULE['<{mollie}prestashop>payment_history_6ecdeeece7dc4ee366197ea2e4b6b778'] = 'Zahlungsverlauf';
 $_MODULE['<{mollie}prestashop>payment_history_2a2d2c75ec43014500ef2d5f400cf7d1'] = 'Noch keine Ereignisse';
 $_MODULE['<{mollie}prestashop>payment_history_b02dca32aecc6f71310f9e914757d56f'] = 'Mollie-Referenz';

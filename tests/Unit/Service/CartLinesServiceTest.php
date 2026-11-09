@@ -92,6 +92,54 @@ class CartLinesServiceTest extends TestCase
         self::assertEquals($result, $cartLines);
     }
 
+    /**
+     * @dataProvider lineTypeProvider
+     */
+    public function testGetCartLinesSendsEncodedProductAndImageUrls(string $lineType)
+    {
+        $case = array_values($this->cartLinesProvider())[0];
+
+        $languageService = $this->getMockBuilder(LanguageService::class)->disableOriginalConstructor()->getMock();
+        $languageService->method('lang')->willReturnArgument(0);
+
+        $voucherService = $this->getMockBuilder(VoucherService::class)->disableOriginalConstructor()->getMock();
+        $context = $this->getMockBuilder(Context::class)->getMock();
+        $context->method('getProductLink')->willReturn('https://shop.test/2-cleaner-n°53.html');
+        $context->method('getImageLink')->willReturn('https://shop.test/21/去除水泥.jpg');
+
+        $cartLineService = new CartLinesService($languageService, $voucherService, $this->getMockBuilder(ToolsAdapter::class)->getMock(), $context);
+
+        $cartLines = $cartLineService->getCartLines(
+            $case['amount'],
+            $case['paymentFee'],
+            $case['currencyIsoCode'],
+            $case['cartSummary'],
+            $case['cartItems'],
+            $case['psGiftWrapping'],
+            $case['selectedVoucherCategory'],
+            $lineType
+        );
+
+        $productLines = array_filter($cartLines, static function ($line) {
+            return $line->getType() === 'physical';
+        });
+
+        self::assertNotEmpty($productLines);
+
+        foreach ($productLines as $line) {
+            self::assertSame('https://shop.test/2-cleaner-n%C2%B053.html', $line->getProductUrl());
+            self::assertSame('https://shop.test/21/%E5%8E%BB%E9%99%A4%E6%B0%B4%E6%B3%A5.jpg', $line->getImageUrl());
+        }
+    }
+
+    public function lineTypeProvider()
+    {
+        return [
+            'orders api' => [LineType::ORDER],
+            'payments api' => [LineType::PAYMENT],
+        ];
+    }
+
     public function cartLinesProvider()
     {
         $productName_1 = 'Hummingbird printed sweater';

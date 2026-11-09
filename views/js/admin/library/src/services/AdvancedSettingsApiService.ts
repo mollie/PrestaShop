@@ -82,6 +82,7 @@ export interface AdvancedSettingsResponse {
   success: boolean;
   message?: string;
   error?: string;
+  fieldErrors?: string[];
   not_configured?: boolean;
   data?: AdvancedSettingsData;
 }

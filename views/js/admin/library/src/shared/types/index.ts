@@ -263,6 +263,8 @@ export interface MollieAdvancedSettingsTranslations {
   expressCheckoutLiveOnly: string;
   orderStatusMapping: string;
   orderStatusEmails: string;
+  statusMappingSummary: string;
+  emailStatusSummary: string;
   invoiceOption: string;
   confirmationEmail: string;
   autoShip: string;

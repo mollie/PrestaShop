@@ -28,6 +28,7 @@ use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Provider\ProfileIdProviderInterface;
 use Mollie\Repository\MolOrderPaymentFeeRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
+use Mollie\Service\ApplePayCartLinesAddressService;
 use Mollie\Service\CancelService;
 use Mollie\Service\CaptureService;
 use Mollie\Service\ExceptionService;
@@ -120,10 +121,10 @@ class Mollie extends PaymentModule
         $this->need_instance = 1;
         $this->bootstrap = true;
         $this->module_key = 'a48b2f8918358bcbe6436414f48d8915';
+        $this->ps_versions_compliancy = ['min' => '1.7.6', 'max' => '9.99.99'];
 
         parent::__construct();
 
-        $this->ps_versions_compliancy = ['min' => '1.7.6', 'max' => _PS_VERSION_];
         $this->displayName = $this->l('Mollie');
         $this->description = $this->l('Mollie Payments');
 
@@ -1728,6 +1729,37 @@ class Mollie extends PaymentModule
             $product = $this->makeProductNotOrderable($params['product']);
 
             $params['product'] = $product;
+        }
+    }
+
+    public function hookActionCartSave(array $params): void
+    {
+        $cart = $params['cart'] ?? null;
+
+        // PS 1.7.6 fires this hook without parameters, and the context cart in memory can be older than its saved row
+        if (!$cart instanceof Cart && !empty($this->context->cart->id)) {
+            $cart = new Cart((int) $this->context->cart->id);
+        }
+
+        // runs on every cart save and getService() builds the whole container, so most carts stop here
+        if (!$cart instanceof Cart || !(int) $cart->id || !(int) $cart->id_address_delivery) {
+            return;
+        }
+
+        try {
+            /** @var ApplePayCartLinesAddressService $applePayCartLinesAddressService */
+            $applePayCartLinesAddressService = $this->getService(ApplePayCartLinesAddressService::class);
+            $applePayCartLinesAddressService->moveLinesOffTemporaryAddresses($cart);
+        } catch (\Throwable $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->getService(LoggerInterface::class);
+
+            $logger->error('Failed to move cart lines off the temporary Apple Pay address.', [
+                'context' => [
+                    'cartId' => (int) $cart->id,
+                ],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
         }
     }
 
