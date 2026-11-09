@@ -263,6 +263,8 @@ export interface MollieAdvancedSettingsTranslations {
   expressCheckoutLiveOnly: string;
   orderStatusMapping: string;
   orderStatusEmails: string;
+  statusMappingSummary: string;
+  emailStatusSummary: string;
   invoiceOption: string;
   confirmationEmail: string;
   autoShip: string;
@@ -301,6 +303,9 @@ export interface MollieAdvancedSettingsTranslations {
   module: string;
   debugModeLabel: string;
   debugModeDescription: string;
+  psAccountsOnboardingTitle: string;
+  psAccountsOnboardingLabel: string;
+  psAccountsOnboardingDescription: string;
   logLevelLabel: string;
   checkoutPreview: string;
   customCssPath: string;

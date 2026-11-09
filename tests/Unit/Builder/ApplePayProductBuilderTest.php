@@ -13,6 +13,7 @@
 namespace Builder;
 
 use Mollie\Builder\ApplePayDirect\ApplePayOrderBuilder;
+use Mollie\Builder\ApplePayDirect\ApplePayProductBuilder;
 use PHPUnit\Framework\TestCase;
 
 class ApplePayProductBuilderTest extends TestCase
@@ -48,6 +49,17 @@ class ApplePayProductBuilderTest extends TestCase
 
         $this->assertSame('+49 30 1234567', $order->getShippingContent()->getPhoneNumber());
         $this->assertSame('', $order->getBillingContent()->getPhoneNumber());
+    }
+
+    public function testProductBuilderKeepsTheCustomizationId()
+    {
+        $products = (new ApplePayProductBuilder())->build([
+            ['id_product' => '19', 'id_product_attribute' => '0', 'id_customization' => '4', 'quantity_wanted' => '2'],
+            ['id_product' => '5', 'id_product_attribute' => '19', 'quantity_wanted' => '1'],
+        ]);
+
+        $this->assertSame(4, $products[0]->getCustomizationId());
+        $this->assertSame(0, $products[1]->getCustomizationId());
     }
 
     public function getTestProductData()

@@ -635,6 +635,9 @@ $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_812a48ba719d
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_e55f75a29310d7b60f7ac1d390c8ae42'] = 'Eining';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_a82c4ea6352017b8cbe19837e6f2a4af'] = 'Villuleitarhamur';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_cedd173e4f6569b22839a1434ff6c0a6'] = 'Virkja nákvæma villuannála';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_31a0091d12ae9395003298074c5c1b46'] = 'PrestaShop Account og CloudSync';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_3c95387cd354eb55bf7fe0b6d300c21c'] = 'Sýna PrestaShop Account og CloudSync';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_6d384b6a7a17e9cfdf2e0323e6842f62'] = 'Sýnir uppsetningu PrestaShop Account og CloudSync á síðu API-stillinga.';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_a74ccc444d6b765cef99475095bcbaaa'] = 'Annálastig';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_e140acca419f335153f5afefefc9c922'] = 'Forskoðun greiðsluferlis:';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_63880cd9c753cd3f118c635f49e506e6'] = 'Slóð sérsniðinnar CSS skráar';
@@ -780,6 +783,9 @@ $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_eb4c6f94efd5
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0b06e7a6a8fdd7ebb1538faf7582aab8'] = 'Mollie Express Component';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0122b5b00af3de8e066e55c4d5afea6f'] = 'Sýndu Apple Pay, Google Pay og PayPal sem flýtigreiðsluhnappa efst í greiðsluferlinu svo viðskiptavinir geti greitt með einni snertingu. Veldu hvaða hnappar birtast á síðunni Greiðslumátar.';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_d8d0950b07b563ca7190363e69bf03f8'] = 'Express Component er í beta. Mollie virkjar það fyrir hvern reikning, svo hafðu samband við Mollie áður en þú kveikir á því. Það virkar aðeins með live API-lykli í live-ham og er falið í prófunarham.';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_cd0a7141acd267dddc63b99afd8f34a6'] = '%s af %s stöðum varpað';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_51523256f7c0583870d9304f6560341e'] = '%s af %s tölvupóstum virkir';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_fe1a8f570baa07aad594712eda82e45a'] = 'Ein af völdu pöntunarstöðunum er ekki lengur til í þessari verslun. Veldu aðra stöðu og vistaðu aftur.';
 $_MODULE['<{mollie}prestashop>payment_history_6ecdeeece7dc4ee366197ea2e4b6b778'] = 'Greiðslusaga';
 $_MODULE['<{mollie}prestashop>payment_history_2a2d2c75ec43014500ef2d5f400cf7d1'] = 'Engir atburðir enn';
 $_MODULE['<{mollie}prestashop>payment_history_b02dca32aecc6f71310f9e914757d56f'] = 'Mollie-tilvísun';

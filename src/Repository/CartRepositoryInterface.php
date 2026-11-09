@@ -20,4 +20,10 @@ if (!defined('_PS_VERSION_')) {
 
 interface CartRepositoryInterface extends ReadOnlyRepositoryInterface
 {
+    /**
+     * @return int[] ids of the soft-deleted Apple Pay Direct sheet addresses the cart's lines sit on
+     */
+    public function getTemporaryApplePayLineAddressIds(int $cartId): array;
+
+    public function moveLinesToAddress(int $cartId, int $fromAddressId, int $toAddressId): void;
 }

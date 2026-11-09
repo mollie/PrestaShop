@@ -50,5 +50,20 @@ parameters:
     - '#Access to undefined constant PrestaShopLogger::LOG_SEVERITY_LEVEL_ERROR.#'
     - '#Access to undefined constant PrestaShopLogger::LOG_SEVERITY_LEVEL_MAJOR.#'
     - '#The use statement with non-compound name ''OrderState'' has no effect#'
+    -
+      message: '#Static method ToolsCore::displayDate\(\) invoked with 3 parameters, 1-2 required.#'
+      path: %currentWorkingDirectory%/src/Adapter/ToolsAdapter.php
+    -
+      message: '#Parameter \#2 \$full of static method ToolsCore::displayDate\(\) expects bool, null given.#'
+      path: %currentWorkingDirectory%/src/Adapter/ToolsAdapter.php
+    -
+      message: '#Parameter \#1 \$amount_paid of method OrderCore::addOrderPayment\(\) expects string, float given.#'
+      path: %currentWorkingDirectory%/src/Handler/Order/OrderCreationHandler.php
+    -
+      message: '#Parameter \#2 \$type of static method TaxManagerFactoryCore::getManager\(\) expects int, string given.#'
+      path: %currentWorkingDirectory%/src/Provider/PaymentMethod/PaymentMethodConfigProvider.php
+    -
+      message: '#Unreachable statement - code above always terminates.#'
+      path: %currentWorkingDirectory%/src/Utility/NumberUtility.php
 
   level: 5

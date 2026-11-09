@@ -6,6 +6,7 @@ import { AlertCircle } from "lucide-react"
 import "./advanced-settings.css"
 import { advancedSettingsApiService, type CarrierData, type SaveCarrierData } from "../../services/AdvancedSettingsApiService"
 import { AdvancedSettingsSkeleton } from "./components/advanced-settings-skeleton"
+import { CollapsibleSection } from "./components/collapsible-section"
 import { useAdvancedSettingsTranslations } from "../../shared/hooks/use-advanced-settings-translations"
 import { MultistoreRestrictionNotice } from "../../shared/components/ui/multistore-restriction-notice"
 
@@ -323,6 +324,7 @@ const AdvancedSettings: React.FC = () => {
   const [autoShip, setAutoShip] = useState(true)
   const [autoShipStatuses, setAutoShipStatuses] = useState<string[]>(["shipped"])
   const [debugMode, setDebugMode] = useState(false)
+  const [psAccountsOnboarding, setPsAccountsOnboarding] = useState(false)
   const [logLevel, setLogLevel] = useState("")
   const [logoDisplay, setLogoDisplay] = useState("")
   const [translateMollie, setTranslateMollie] = useState("")
@@ -334,6 +336,8 @@ const AdvancedSettings: React.FC = () => {
 
   const [statusMappings, setStatusMappings] = useState<StatusMapping[]>([])
   const [emailStatuses, setEmailStatuses] = useState<EmailStatus[]>([])
+  const [statusMappingOpen, setStatusMappingOpen] = useState(false)
+  const [emailStatusesOpen, setEmailStatusesOpen] = useState(false)
   const [orderStatuses, setOrderStatuses] = useState<OrderStatus[]>([])
   const [invoiceOptions, setInvoiceOptions] = useState<{ id: string; name: string }[]>([])
   const [confirmationEmailOptions, setConfirmationEmailOptions] = useState<{ id: string; name: string }[]>([])
@@ -393,6 +397,7 @@ const AdvancedSettings: React.FC = () => {
         setAutoShipStatuses(data.autoShipStatuses || [])
 
         setDebugMode(data.debugMode || false)
+        setPsAccountsOnboarding(data.psAccountsOnboarding || false)
         setExpressComponent(data.expressComponent || false)
         setExpressLiveReady(data.expressLiveReady !== false)
         setLogLevel(data.logLevel || logLevelOpts[0]?.id || "")
@@ -435,6 +440,7 @@ const AdvancedSettings: React.FC = () => {
         autoShipStatuses,
         carriers: carriersData,
         debugMode,
+        psAccountsOnboarding,
         logLevel,
         logoDisplay,
         cssPath,
@@ -448,6 +454,10 @@ const AdvancedSettings: React.FC = () => {
         setNotification({ message: t('saveSuccess'), type: 'success' })
       } else {
         setNotification({ message: response.message || t('saveError'), type: 'error' })
+        const fieldErrors = response.fieldErrors ?? []
+        if (statusMappings.some((mapping) => fieldErrors.includes(mapping.configKey))) {
+          setStatusMappingOpen(true)
+        }
       }
     } catch (error) {
       console.error('Failed to save settings:', error)
@@ -508,6 +518,9 @@ const AdvancedSettings: React.FC = () => {
       </div>
     )
   }
+
+  const mappedStatusCount = statusMappings.filter((mapping) => orderStatuses.some((status) => status.id === mapping.prestashopStatus)).length
+  const enabledEmailCount = emailStatuses.filter((email) => email.enabled).length
 
   return (
     <div className="advanced-settings">
@@ -710,6 +723,24 @@ const AdvancedSettings: React.FC = () => {
       </section>
 
       <section className="settings-section">
+        <h2 className="section-title">{t('psAccountsOnboardingTitle')}</h2>
+
+        <div className="toggle-group">
+          <div className="toggle-content">
+            <div>
+              <div className="toggle-label">{t('psAccountsOnboardingLabel')}</div>
+              <div className="toggle-description">{t('psAccountsOnboardingDescription')}</div>
+            </div>
+            <label className="toggle-switch">
+              <input type="checkbox" checked={psAccountsOnboarding} onChange={(e) => setPsAccountsOnboarding(e.target.checked)} />
+              <span className="toggle-slider"></span>
+            </label>
+            <span className="toggle-status">{psAccountsOnboarding ? t('enabled') : t('disabled')}</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="settings-section">
         <h2 className="section-title">{t('visualSettings')}</h2>
 
         <div className="form-group">
@@ -788,8 +819,13 @@ const AdvancedSettings: React.FC = () => {
         </div>
       </section>
 
-      <section className="settings-section">
-        <h2 className="section-title">{t('orderStatusMapping')}</h2>
+      <CollapsibleSection
+        title={t('orderStatusMapping')}
+        summary={t('statusMappingSummary', String(mappedStatusCount), String(statusMappings.length))}
+        open={statusMappingOpen}
+        onToggle={() => setStatusMappingOpen((v) => !v)}
+        testId="advanced-settings-status-mapping-toggle"
+      >
 
         <div className="info-box">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="info-icon">
@@ -823,10 +859,15 @@ const AdvancedSettings: React.FC = () => {
             </div>
           ))}
         </div>
-      </section>
+      </CollapsibleSection>
 
-      <section className="settings-section">
-        <h2 className="section-title">{t('orderStatusEmails')}</h2>
+      <CollapsibleSection
+        title={t('orderStatusEmails')}
+        summary={t('emailStatusSummary', String(enabledEmailCount), String(emailStatuses.length))}
+        open={emailStatusesOpen}
+        onToggle={() => setEmailStatusesOpen((v) => !v)}
+        testId="advanced-settings-email-statuses-toggle"
+      >
 
         <div className="info-box">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="info-icon">
@@ -856,7 +897,7 @@ const AdvancedSettings: React.FC = () => {
             </div>
           ))}
         </div>
-      </section>
+      </CollapsibleSection>
 
       <div className="settings-footer">
         <button

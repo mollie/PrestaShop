@@ -148,6 +148,10 @@ class AdminMollieAuthenticationController extends ModuleAdminController
 
     private function initCloudSyncAndPsAccounts(): void
     {
+        if (!(bool) $this->configuration->get(Config::MOLLIE_PS_ACCOUNTS_ONBOARDING_ENABLED)) {
+            return;
+        }
+
         $mboInstaller = new Prestashop\ModuleLibMboInstaller\DependencyBuilder($this->module);
 
         if (!$mboInstaller->areDependenciesMet()) {

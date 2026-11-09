@@ -29,15 +29,21 @@ class Product
      * @var int
      */
     private $wantedQuantity;
+    /**
+     * @var int
+     */
+    private $customizationId;
 
     public function __construct(
         int $productId,
         int $productAttribute,
-        int $wantedQuantity
+        int $wantedQuantity,
+        int $customizationId = 0
     ) {
         $this->productId = $productId;
         $this->productAttribute = $productAttribute;
         $this->wantedQuantity = $wantedQuantity;
+        $this->customizationId = $customizationId;
     }
 
     public function getProductId(): int
@@ -53,5 +59,10 @@ class Product
     public function getWantedQuantity(): int
     {
         return $this->wantedQuantity;
+    }
+
+    public function getCustomizationId(): int
+    {
+        return $this->customizationId;
     }
 }

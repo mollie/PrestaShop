@@ -99,8 +99,9 @@ jobs:
     name: PHPStan
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        presta-versions: [ '1.7.6.8', '1.7.7.0', 'nightly-apache' ]
+        presta-versions: [ '1.7.6.8', '1.7.7.0', '8.2.x-7.4-apache' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4

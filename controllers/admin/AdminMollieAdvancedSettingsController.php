@@ -124,6 +124,8 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             'expressCheckoutLiveOnly' => $this->module->l('The Express Component is in beta. Mollie activates it per account, so contact Mollie before you switch it on. It works only with a live API key in live mode and stays hidden in test mode.', self::FILE_NAME),
             'orderStatusMapping' => $this->module->l('Order Status Mapping', self::FILE_NAME),
             'orderStatusEmails' => $this->module->l('Order Status Emails', self::FILE_NAME),
+            'statusMappingSummary' => $this->module->l('%s of %s statuses mapped', self::FILE_NAME),
+            'emailStatusSummary' => $this->module->l('%s of %s emails on', self::FILE_NAME),
             'invoiceOption' => $this->module->l('Select when to create the order invoice', self::FILE_NAME),
             'confirmationEmail' => $this->module->l('Send order confirmation email', self::FILE_NAME),
             'autoShip' => $this->module->l('Automatically ship on marked statuses', self::FILE_NAME),
@@ -162,6 +164,9 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             'module' => $this->module->l('Module', self::FILE_NAME),
             'debugModeLabel' => $this->module->l('Debug Mode', self::FILE_NAME),
             'debugModeDescription' => $this->module->l('Enable detailed error logging', self::FILE_NAME),
+            'psAccountsOnboardingTitle' => $this->module->l('PrestaShop Account and CloudSync', self::FILE_NAME),
+            'psAccountsOnboardingLabel' => $this->module->l('Show PrestaShop Account and CloudSync', self::FILE_NAME),
+            'psAccountsOnboardingDescription' => $this->module->l('Shows the PrestaShop Account and CloudSync setup on the API configuration page.', self::FILE_NAME),
             'logLevelLabel' => $this->module->l('Log Level', self::FILE_NAME),
             'checkoutPreview' => $this->module->l('Checkout preview:', self::FILE_NAME),
             'customCssPath' => $this->module->l('Custom CSS File Path', self::FILE_NAME),
@@ -259,6 +264,7 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
                     && 0 === strpos((string) $this->configuration->get(Config::MOLLIE_API_KEY), 'live'),
 
                 'debugMode' => (bool) $this->configuration->get(Config::MOLLIE_DISPLAY_ERRORS),
+                'psAccountsOnboarding' => (bool) $this->configuration->get(Config::MOLLIE_PS_ACCOUNTS_ONBOARDING_ENABLED),
                 'logLevel' => ($logLevelRaw !== false && $logLevelRaw !== '' && $logLevelRaw !== null)
                     ? (string) $logLevelRaw
                     : (string) Config::DEBUG_LOG_ERRORS,
@@ -333,6 +339,17 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
                 throw new Exception('Invalid data');
             }
 
+            $rejected = isset($data['statusMappings']) ? $this->unknownStatusMappings($data['statusMappings']) : [];
+            if (!empty($rejected)) {
+                $this->ajaxRender(json_encode([
+                    'success' => false,
+                    'message' => $this->module->l('One of the selected order statuses no longer exists in this shop. Pick another status and save again.', self::FILE_NAME),
+                    'fieldErrors' => $rejected,
+                ]));
+
+                return;
+            }
+
             if (isset($data['invoiceOption'])) {
                 $this->configuration->updateValue(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS, $data['invoiceOption']);
             }
@@ -361,6 +378,10 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
 
             if (isset($data['debugMode'])) {
                 $this->configuration->updateValue(Config::MOLLIE_DISPLAY_ERRORS, (bool) $data['debugMode']);
+            }
+
+            if (isset($data['psAccountsOnboarding'])) {
+                $this->configuration->updateValue(Config::MOLLIE_PS_ACCOUNTS_ONBOARDING_ENABLED, (bool) $data['psAccountsOnboarding']);
             }
             if (isset($data['logLevel'])) {
                 $this->configuration->updateValue(Config::MOLLIE_DEBUG_LOG, $data['logLevel']);
@@ -459,6 +480,31 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         }
 
         return $statuses;
+    }
+
+    private function unknownStatusMappings(array $mappings): array
+    {
+        $validStatusIds = array_map('intval', array_column($this->getOrderStatuses(), 'id'));
+        $unknown = [];
+
+        foreach ($mappings as $mapping) {
+            if (!isset($mapping['configKey'], $mapping['prestashopStatus'])) {
+                continue;
+            }
+
+            $statusId = (int) $mapping['prestashopStatus'];
+
+            // Unmapped and already stored values are accepted as before, so an old mapping to a deleted state does not block every save.
+            if ($statusId === 0 || $statusId === (int) $this->configuration->get($mapping['configKey'])) {
+                continue;
+            }
+
+            if (!in_array($statusId, $validStatusIds, true)) {
+                $unknown[] = $mapping['configKey'];
+            }
+        }
+
+        return $unknown;
     }
 
     private function saveStatusMappings(array $mappings): void
