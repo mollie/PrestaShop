@@ -710,23 +710,42 @@ class TransactionService
      */
     private function isPaymentAmountValidForOrder($apiPayment, int $orderId, Cart $cart): bool
     {
-        $order = new Order($orderId);
-        $currentStateId = (int) $order->current_state;
-        $isOrderSettled = (bool) (new OrderState($currentStateId))->paid
-            || $currentStateId === (int) $this->configurationAdapter->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED);
-
-        if (!$this->orderPaymentAmountValidator->isApplicable((string) $apiPayment->status, $isOrderSettled, $this->hasRefundsOrChargebacks($apiPayment))) {
+        if (!$this->orderPaymentAmountValidator->appliesToStatus((string) $apiPayment->status)) {
             return true;
         }
 
-        return $this->orderPaymentAmountValidator->validate(
+        $order = new Order($orderId);
+
+        if ($this->isOrderSettled($order) || $this->hasRefundsOrChargebacks($apiPayment)) {
+            return true;
+        }
+
+        $currencyIso = (string) (new Currency((int) $order->id_currency))->iso_code;
+
+        if ($this->orderPaymentAmountValidator->matchesOrderTotal($apiPayment, (float) $order->total_paid_tax_incl, $currencyIso)) {
+            return true;
+        }
+
+        return $this->orderPaymentAmountValidator->matchesCartTotal(
             $apiPayment,
-            (float) $order->total_paid_tax_incl,
             (float) $cart->getOrderTotal(true, Cart::BOTH),
-            (string) (new Currency((int) $order->id_currency))->iso_code,
+            $currencyIso,
             $this->paymentMethodService->getPaymentMethod($apiPayment),
             ExpressPaymentUtility::isExpressPayment($apiPayment)
         );
+    }
+
+    private function isOrderSettled(Order $order): bool
+    {
+        $currentStateId = (int) $order->current_state;
+
+        if ((bool) (new OrderState($currentStateId))->paid) {
+            return true;
+        }
+
+        $authorizedStateId = (int) $this->configurationAdapter->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED);
+
+        return $authorizedStateId > 0 && $currentStateId === $authorizedStateId;
     }
 
     /**

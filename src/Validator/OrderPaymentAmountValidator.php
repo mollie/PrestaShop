@@ -14,6 +14,7 @@ namespace Mollie\Validator;
 
 use Mollie\Api\Resources\Order as MollieOrderAlias;
 use Mollie\Api\Resources\Payment as MolliePaymentAlias;
+use Mollie\Api\Types\OrderStatus;
 use Mollie\Api\Types\PaymentStatus;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Provider\PaymentFeeProviderInterface;
@@ -25,6 +26,13 @@ if (!defined('_PS_VERSION_')) {
 
 class OrderPaymentAmountValidator
 {
+    const VALIDATED_STATUSES = [
+        PaymentStatus::STATUS_PAID,
+        PaymentStatus::STATUS_AUTHORIZED,
+        OrderStatus::STATUS_SHIPPING,
+        OrderStatus::STATUS_COMPLETED,
+    ];
+
     /** @var PaymentAmountValidator */
     private $paymentAmountValidator;
 
@@ -37,36 +45,38 @@ class OrderPaymentAmountValidator
         $this->paymentFeeProvider = $paymentFeeProvider;
     }
 
-    public function isApplicable(string $paymentStatus, bool $isOrderSettled, bool $hasRefundsOrChargebacks): bool
+    public function appliesToStatus(string $paymentStatus): bool
     {
-        if ($isOrderSettled || $hasRefundsOrChargebacks) {
-            return false;
-        }
-
-        return in_array($paymentStatus, [PaymentStatus::STATUS_PAID, PaymentStatus::STATUS_AUTHORIZED], true);
+        return in_array($paymentStatus, self::VALIDATED_STATUSES, true);
     }
 
     /**
      * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
      */
-    public function validate(
+    public function matchesOrderTotal($apiPayment, float $orderTotal, string $currencyIso): bool
+    {
+        return $this->paymentAmountValidator->validate($orderTotal, $currencyIso, $this->noFee(), $apiPayment);
+    }
+
+    /**
+     * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
+     */
+    public function matchesCartTotal(
         $apiPayment,
-        float $orderTotal,
         float $cartTotal,
         string $currencyIso,
         MolPaymentMethod $paymentMethod,
         bool $isExpressPayment
     ): bool {
-        $noFee = new PaymentFeeData(0.00, 0.00, 0.00, false);
-
-        if ($this->paymentAmountValidator->validate($orderTotal, $currencyIso, $noFee, $apiPayment)) {
-            return true;
-        }
-
         $paymentFeeData = $isExpressPayment
-            ? $noFee
+            ? $this->noFee()
             : $this->paymentFeeProvider->getPaymentFee($paymentMethod, $cartTotal);
 
         return $this->paymentAmountValidator->validate($cartTotal, $currencyIso, $paymentFeeData, $apiPayment);
+    }
+
+    private function noFee(): PaymentFeeData
+    {
+        return new PaymentFeeData(0.00, 0.00, 0.00, false);
     }
 }

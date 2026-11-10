@@ -21,49 +21,74 @@ class OrderPaymentAmountValidatorTest extends TestCase
         $this->paymentFeeProvider = $this->createMock(PaymentFeeProviderInterface::class);
     }
 
-    /** @dataProvider applicableProvider */
-    public function testIsApplicable(string $status, bool $isOrderSettled, bool $hasRefundsOrChargebacks, bool $expected): void
+    /** @dataProvider statusProvider */
+    public function testAppliesToStatus(string $status, bool $expected): void
     {
-        $this->assertSame($expected, $this->validator()->isApplicable($status, $isOrderSettled, $hasRefundsOrChargebacks));
+        $this->assertSame($expected, $this->validator()->appliesToStatus($status));
     }
 
-    public function applicableProvider(): array
+    public function statusProvider(): array
     {
         return [
-            'paid, order not settled' => ['paid', false, false, true],
-            'authorized, order not settled' => ['authorized', false, false, true],
-            'paid, order settled' => ['paid', true, false, false],
-            'authorized, order settled' => ['authorized', true, false, false],
-            'paid with refunds or chargebacks' => ['paid', false, true, false],
-            'order shipping' => ['shipping', false, false, false],
-            'order completed' => ['completed', false, false, false],
-            'expired' => ['expired', false, false, false],
-            'canceled' => ['canceled', false, false, false],
-            'open' => ['open', false, false, false],
+            'paid' => ['paid', true],
+            'authorized' => ['authorized', true],
+            'order shipping' => ['shipping', true],
+            'order completed' => ['completed', true],
+            'open' => ['open', false],
+            'pending' => ['pending', false],
+            'expired' => ['expired', false],
+            'canceled' => ['canceled', false],
+            'failed' => ['failed', false],
+            'order created' => ['created', false],
         ];
     }
 
-    public function testPaymentMatchingOrderTotalIsValid(): void
+    /** @dataProvider orderTotalProvider */
+    public function testMatchesOrderTotal(float $orderTotal, string $orderCurrency, string $paidValue, string $paidCurrency, bool $expected): void
+    {
+        $this->assertSame($expected, $this->validator()->matchesOrderTotal(
+            $this->apiPayment($paidValue, $paidCurrency),
+            $orderTotal,
+            $orderCurrency
+        ));
+    }
+
+    public function orderTotalProvider(): array
+    {
+        return [
+            'equal amount' => [387.84, 'EUR', '387.84', 'EUR', true],
+            'lower amount' => [387.84, 'EUR', '43.20', 'EUR', false],
+            'higher amount' => [100.0, 'EUR', '120.00', 'EUR', false],
+            'different currency' => [100.0, 'EUR', '100.00', 'USD', false],
+        ];
+    }
+
+    public function testMatchesOrderTotalDoesNotLookUpFee(): void
     {
         $this->paymentFeeProvider->expects($this->never())->method('getPaymentFee');
 
-        $this->assertTrue($this->validator()->validate(
-            $this->apiPayment('387.84', 'EUR'),
-            387.84,
-            387.84,
-            'EUR',
-            $this->paymentMethod(),
-            false
-        ));
+        $this->validator()->matchesOrderTotal($this->apiPayment('100.00', 'EUR'), 100.0, 'EUR');
     }
 
-    public function testPaymentMatchingCartTotalWithFeeIsValid(): void
+    public function testMatchesCartTotalWithFee(): void
     {
         $this->paymentFeeProvider->method('getPaymentFee')->willReturn(new PaymentFeeData(2.42, 2.0, 21.0, true));
 
-        $this->assertTrue($this->validator()->validate(
+        $this->assertTrue($this->validator()->matchesCartTotal(
             $this->apiPayment('102.42', 'EUR'),
             100.0,
+            'EUR',
+            $this->paymentMethod(),
+            false
+        ));
+    }
+
+    public function testMatchesCartTotalWithoutRequiredFee(): void
+    {
+        $this->paymentFeeProvider->method('getPaymentFee')->willReturn(new PaymentFeeData(2.42, 2.0, 21.0, true));
+
+        $this->assertFalse($this->validator()->matchesCartTotal(
+            $this->apiPayment('100.00', 'EUR'),
             100.0,
             'EUR',
             $this->paymentMethod(),
@@ -71,41 +96,25 @@ class OrderPaymentAmountValidatorTest extends TestCase
         ));
     }
 
-    public function testPaymentLowerThanOrderAndCartIsInvalid(): void
+    public function testMatchesCartTotalLowerAmount(): void
     {
         $this->paymentFeeProvider->method('getPaymentFee')->willReturn(new PaymentFeeData(0.0, 0.0, 0.0, false));
 
-        $this->assertFalse($this->validator()->validate(
+        $this->assertFalse($this->validator()->matchesCartTotal(
             $this->apiPayment('43.20', 'EUR'),
             387.84,
-            387.84,
             'EUR',
             $this->paymentMethod(),
             false
         ));
     }
 
-    public function testPaymentHigherThanOrderAndCartIsInvalid(): void
+    public function testMatchesCartTotalDifferentCurrency(): void
     {
         $this->paymentFeeProvider->method('getPaymentFee')->willReturn(new PaymentFeeData(0.0, 0.0, 0.0, false));
 
-        $this->assertFalse($this->validator()->validate(
-            $this->apiPayment('120.00', 'EUR'),
-            100.0,
-            100.0,
-            'EUR',
-            $this->paymentMethod(),
-            false
-        ));
-    }
-
-    public function testPaymentInDifferentCurrencyIsInvalid(): void
-    {
-        $this->paymentFeeProvider->method('getPaymentFee')->willReturn(new PaymentFeeData(0.0, 0.0, 0.0, false));
-
-        $this->assertFalse($this->validator()->validate(
+        $this->assertFalse($this->validator()->matchesCartTotal(
             $this->apiPayment('100.00', 'USD'),
-            100.0,
             100.0,
             'EUR',
             $this->paymentMethod(),
@@ -117,9 +126,8 @@ class OrderPaymentAmountValidatorTest extends TestCase
     {
         $this->paymentFeeProvider->expects($this->never())->method('getPaymentFee');
 
-        $this->assertTrue($this->validator()->validate(
+        $this->assertTrue($this->validator()->matchesCartTotal(
             $this->apiPayment('100.00', 'EUR'),
-            102.42,
             100.0,
             'EUR',
             $this->paymentMethod(),
