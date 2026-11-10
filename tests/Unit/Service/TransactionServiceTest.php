@@ -28,6 +28,7 @@ use Mollie\Service\MollieOrderNumberService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Service\TransactionService;
+use Mollie\Validator\OrderPaymentAmountValidator;
 use Order;
 use PHPUnit\Framework\TestCase;
 
@@ -139,7 +140,8 @@ class TransactionServiceTest extends TestCase
             $this->createMock(ExceptionService::class),
             $this->createMock(ConfigurationAdapter::class),
             $this->createMock(OrderRepositoryInterface::class),
-            $this->createMock(MollieOrderNumberService::class)
+            $this->createMock(MollieOrderNumberService::class),
+            $this->createMock(OrderPaymentAmountValidator::class)
         );
     }
 

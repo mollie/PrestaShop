@@ -36,6 +36,7 @@ use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\ExpressPaymentUtility;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\OrderNumberUtility;
@@ -43,9 +44,11 @@ use Mollie\Utility\PaymentAttemptUtility;
 use Mollie\Utility\SecureKeyUtility;
 use Mollie\Utility\TextGeneratorUtility;
 use Mollie\Utility\TransactionUtility;
+use Mollie\Validator\OrderPaymentAmountValidator;
 use MolPaymentMethod;
 use Order;
 use OrderPayment;
+use OrderState;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 use Validate;
@@ -97,6 +100,9 @@ class TransactionService
     /** @var MollieOrderNumberService */
     private $mollieOrderNumberService;
 
+    /** @var OrderPaymentAmountValidator */
+    private $orderPaymentAmountValidator;
+
     public function __construct(
         ModuleFactory $module,
         OrderStatusService $orderStatusService,
@@ -110,7 +116,8 @@ class TransactionService
         ExceptionService $exceptionService,
         ConfigurationAdapter $configurationAdapter,
         OrderRepositoryInterface $orderRepository,
-        MollieOrderNumberService $mollieOrderNumberService
+        MollieOrderNumberService $mollieOrderNumberService,
+        OrderPaymentAmountValidator $orderPaymentAmountValidator
     ) {
         $this->module = $module->getModule();
         $this->orderStatusService = $orderStatusService;
@@ -125,6 +132,7 @@ class TransactionService
         $this->configurationAdapter = $configurationAdapter;
         $this->orderRepository = $orderRepository;
         $this->mollieOrderNumberService = $mollieOrderNumberService;
+        $this->orderPaymentAmountValidator = $orderPaymentAmountValidator;
     }
 
     /**
@@ -201,6 +209,19 @@ class TransactionService
 
         if (!$isPaymentFinished && $isGeneratedOrderNumber) {
             $this->persistFailedAttempt($apiPayment, (int) $orderId);
+
+            return $apiPayment;
+        }
+
+        if ($orderId && $isPaymentFinished && !$this->isPaymentAmountValidForOrder($apiPayment, (int) $orderId, $cart)) {
+            $this->paymentMethodRepository->updatePaymentReason($apiPayment->id, Config::WRONG_AMOUNT_REASON);
+
+            $this->logger->error(sprintf('%s - Payment amount does not match the order', self::FILE_NAME), [
+                'transaction_id' => $apiPayment->id,
+                'order_id' => (int) $orderId,
+                'api_payment_amount' => $apiPayment->amount->value,
+                'api_payment_currency' => $apiPayment->amount->currency,
+            ]);
 
             return $apiPayment;
         }
@@ -682,6 +703,44 @@ class TransactionService
     private function paymentHasChargedBacks(Payment $apiPayment): bool
     {
         return $apiPayment->hasChargebacks();
+    }
+
+    /**
+     * @param Payment|MollieOrderAlias $apiPayment
+     */
+    private function isPaymentAmountValidForOrder($apiPayment, int $orderId, Cart $cart): bool
+    {
+        $order = new Order($orderId);
+        $currentStateId = (int) $order->current_state;
+        $isOrderSettled = (bool) (new OrderState($currentStateId))->paid
+            || $currentStateId === (int) $this->configurationAdapter->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED);
+
+        if (!$this->orderPaymentAmountValidator->isApplicable((string) $apiPayment->status, $isOrderSettled, $this->hasRefundsOrChargebacks($apiPayment))) {
+            return true;
+        }
+
+        return $this->orderPaymentAmountValidator->validate(
+            $apiPayment,
+            (float) $order->total_paid_tax_incl,
+            (float) $cart->getOrderTotal(true, Cart::BOTH),
+            (string) (new Currency((int) $order->id_currency))->iso_code,
+            $this->paymentMethodService->getPaymentMethod($apiPayment),
+            ExpressPaymentUtility::isExpressPayment($apiPayment)
+        );
+    }
+
+    /**
+     * @param Payment|MollieOrderAlias $apiPayment
+     */
+    private function hasRefundsOrChargebacks($apiPayment): bool
+    {
+        if ($apiPayment->resource === Config::MOLLIE_API_STATUS_ORDER) {
+            $amountRefunded = isset($apiPayment->amountRefunded->value) ? (float) $apiPayment->amountRefunded->value : 0.0;
+
+            return $amountRefunded > 0 || $this->orderHasChargedBacks($apiPayment);
+        }
+
+        return $apiPayment->hasRefunds() || $this->paymentHasChargedBacks($apiPayment);
     }
 
     private function isManualCapturePayment($apiPayment): bool
