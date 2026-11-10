@@ -51,6 +51,22 @@ class OrderPaymentAmountValidator
     }
 
     /**
+     * @param int[] $unpaidStateIds
+     */
+    public function isOrderSettled(int $currentStateId, bool $isCurrentStatePaid, int $authorizedStateId, array $unpaidStateIds): bool
+    {
+        if (in_array($currentStateId, $unpaidStateIds, true)) {
+            return false;
+        }
+
+        if ($isCurrentStatePaid) {
+            return true;
+        }
+
+        return $authorizedStateId > 0 && $currentStateId === $authorizedStateId;
+    }
+
+    /**
      * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
      */
     public function matchesOrderTotal($apiPayment, float $orderTotal, string $currencyIso): bool

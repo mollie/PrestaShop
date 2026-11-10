@@ -43,6 +43,29 @@ class OrderPaymentAmountValidatorTest extends TestCase
         ];
     }
 
+    /** @dataProvider settledProvider */
+    public function testIsOrderSettled(int $currentStateId, bool $isCurrentStatePaid, int $authorizedStateId, bool $expected): void
+    {
+        $unpaidStateIds = [15, 20, 8];
+
+        $this->assertSame($expected, $this->validator()->isOrderSettled($currentStateId, $isCurrentStatePaid, $authorizedStateId, $unpaidStateIds));
+    }
+
+    public function settledProvider(): array
+    {
+        return [
+            'paid state' => [2, true, 18, true],
+            'authorized state' => [18, false, 18, true],
+            'open state' => [15, false, 18, false],
+            'awaiting state' => [20, false, 18, false],
+            'error state' => [8, false, 18, false],
+            'authorized mapped to the awaiting state' => [20, false, 20, false],
+            'open mapped to a paid state' => [15, true, 18, false],
+            'authorized setting empty, state without paid flag' => [0, false, 0, false],
+            'other unpaid state' => [6, false, 18, false],
+        ];
+    }
+
     /** @dataProvider orderTotalProvider */
     public function testMatchesOrderTotal(float $orderTotal, string $orderCurrency, string $paidValue, string $paidCurrency, bool $expected): void
     {

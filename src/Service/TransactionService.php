@@ -739,13 +739,16 @@ class TransactionService
     {
         $currentStateId = (int) $order->current_state;
 
-        if ((new OrderState($currentStateId))->paid) {
-            return true;
-        }
-
-        $authorizedStateId = (int) $this->configurationAdapter->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED);
-
-        return $authorizedStateId > 0 && $currentStateId === $authorizedStateId;
+        return $this->orderPaymentAmountValidator->isOrderSettled(
+            $currentStateId,
+            (bool) (new OrderState($currentStateId))->paid,
+            (int) $this->configurationAdapter->get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED),
+            [
+                (int) $this->configurationAdapter->get(Config::MOLLIE_STATUS_OPEN),
+                (int) $this->configurationAdapter->get(Config::MOLLIE_STATUS_AWAITING),
+                (int) $this->configurationAdapter->get('PS_OS_ERROR'),
+            ]
+        );
     }
 
     /**
