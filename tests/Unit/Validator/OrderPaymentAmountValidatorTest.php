@@ -70,56 +70,31 @@ class OrderPaymentAmountValidatorTest extends TestCase
         $this->validator()->matchesOrderTotal($this->apiPayment('100.00', 'EUR'), 100.0, 'EUR');
     }
 
-    public function testMatchesCartTotalWithFee(): void
+    /** @dataProvider cartTotalProvider */
+    public function testMatchesCartTotal(PaymentFeeData $fee, float $cartTotal, string $paidValue, string $paidCurrency, bool $expected): void
     {
-        $this->paymentFeeProvider->method('getPaymentFee')->willReturn(new PaymentFeeData(2.42, 2.0, 21.0, true));
+        $this->paymentFeeProvider->method('getPaymentFee')->willReturn($fee);
 
-        $this->assertTrue($this->validator()->matchesCartTotal(
-            $this->apiPayment('102.42', 'EUR'),
-            100.0,
+        $this->assertSame($expected, $this->validator()->matchesCartTotal(
+            $this->apiPayment($paidValue, $paidCurrency),
+            $cartTotal,
             'EUR',
             $this->paymentMethod(),
             false
         ));
     }
 
-    public function testMatchesCartTotalWithoutRequiredFee(): void
+    public function cartTotalProvider(): array
     {
-        $this->paymentFeeProvider->method('getPaymentFee')->willReturn(new PaymentFeeData(2.42, 2.0, 21.0, true));
+        $noFee = new PaymentFeeData(0.0, 0.0, 0.0, false);
+        $fee = new PaymentFeeData(2.42, 2.0, 21.0, true);
 
-        $this->assertFalse($this->validator()->matchesCartTotal(
-            $this->apiPayment('100.00', 'EUR'),
-            100.0,
-            'EUR',
-            $this->paymentMethod(),
-            false
-        ));
-    }
-
-    public function testMatchesCartTotalLowerAmount(): void
-    {
-        $this->paymentFeeProvider->method('getPaymentFee')->willReturn(new PaymentFeeData(0.0, 0.0, 0.0, false));
-
-        $this->assertFalse($this->validator()->matchesCartTotal(
-            $this->apiPayment('43.20', 'EUR'),
-            387.84,
-            'EUR',
-            $this->paymentMethod(),
-            false
-        ));
-    }
-
-    public function testMatchesCartTotalDifferentCurrency(): void
-    {
-        $this->paymentFeeProvider->method('getPaymentFee')->willReturn(new PaymentFeeData(0.0, 0.0, 0.0, false));
-
-        $this->assertFalse($this->validator()->matchesCartTotal(
-            $this->apiPayment('100.00', 'USD'),
-            100.0,
-            'EUR',
-            $this->paymentMethod(),
-            false
-        ));
+        return [
+            'fee included' => [$fee, 100.0, '102.42', 'EUR', true],
+            'fee missing' => [$fee, 100.0, '100.00', 'EUR', false],
+            'lower amount' => [$noFee, 387.84, '43.20', 'EUR', false],
+            'different currency' => [$noFee, 100.0, '100.00', 'USD', false],
+        ];
     }
 
     public function testExpressPaymentIgnoresMethodFee(): void

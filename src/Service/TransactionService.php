@@ -728,7 +728,7 @@ class TransactionService
 
         return $this->orderPaymentAmountValidator->matchesCartTotal(
             $apiPayment,
-            (float) $cart->getOrderTotal(true, Cart::BOTH),
+            $cart->getOrderTotal(true, Cart::BOTH),
             $currencyIso,
             $this->paymentMethodService->getPaymentMethod($apiPayment),
             ExpressPaymentUtility::isExpressPayment($apiPayment)
@@ -739,7 +739,7 @@ class TransactionService
     {
         $currentStateId = (int) $order->current_state;
 
-        if ((bool) (new OrderState($currentStateId))->paid) {
+        if ((new OrderState($currentStateId))->paid) {
             return true;
         }
 
