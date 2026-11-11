@@ -25,6 +25,7 @@ use Mollie\Service\ShipmentServiceInterface;
 use Mollie\Service\ShipService;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TransactionUtility;
+use Mollie\Verification\Employee\CanEditOrders;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -254,8 +255,26 @@ class AdminMollieAjaxController extends ModuleAdminController
         );
     }
 
+    private function denyWithoutOrderEditRight(): bool
+    {
+        if ((new CanEditOrders())->verify($this->context->employee)) {
+            return false;
+        }
+
+        $this->ajaxRender(json_encode([
+            'success' => false,
+            'message' => $this->trans('You do not have permission to edit this.', [], 'Admin.Notifications.Error'),
+        ]));
+
+        return true;
+    }
+
     private function processRefund(): void
     {
+        if ($this->denyWithoutOrderEditRight()) {
+            return;
+        }
+
         try {
             $transactionId = Tools::getValue('transactionId');
             $refundAmount = (float) Tools::getValue('refundAmount') ?: null;
@@ -286,6 +305,10 @@ class AdminMollieAjaxController extends ModuleAdminController
 
     private function processShip(): void
     {
+        if ($this->denyWithoutOrderEditRight()) {
+            return;
+        }
+
         $orderId = (int) Tools::getValue('orderId');
         $orderLines = Tools::getValue('orderLines') ?: [];
         $tracking = Tools::getValue('tracking');
@@ -352,6 +375,10 @@ class AdminMollieAjaxController extends ModuleAdminController
 
     private function processCapture(): void
     {
+        if ($this->denyWithoutOrderEditRight()) {
+            return;
+        }
+
         $orderId = (int) Tools::getValue('orderId');
         $captureAmount = Tools::getValue('captureAmount') ?: null;
 
@@ -382,6 +409,10 @@ class AdminMollieAjaxController extends ModuleAdminController
 
     private function processCancel(): void
     {
+        if ($this->denyWithoutOrderEditRight()) {
+            return;
+        }
+
         $orderId = (int) Tools::getValue('orderId');
         $orderlineId = Tools::getValue('orderline') ?: null;
         $quantity = Tools::getValue('quantity') ? (int) Tools::getValue('quantity') : null;
