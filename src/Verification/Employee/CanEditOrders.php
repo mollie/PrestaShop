@@ -19,32 +19,17 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CanRunOrderAction
+class CanEditOrders
 {
-    const ORDER_ACTIONS = [
-        'refund',
-        'refundAll',
-        'capture',
-        'captureAll',
-        'ship',
-        'shipAll',
-        'cancel',
-        'cancelAll',
-    ];
-
     /**
      * @param Employee|null $employee
      */
-    public function verify(string $action, $employee): bool
+    public function verify($employee): bool
     {
-        if (!in_array($action, self::ORDER_ACTIONS, true)) {
-            return true;
-        }
-
         if (!$employee instanceof Employee || !Validate::isLoadedObject($employee)) {
             return false;
         }
 
-        return (bool) $employee->can('edit', 'AdminOrders');
+        return $employee->can('edit', 'AdminOrders');
     }
 }
