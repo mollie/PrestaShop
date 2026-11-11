@@ -25,6 +25,7 @@ use Mollie\Service\ShipmentServiceInterface;
 use Mollie\Service\ShipService;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TransactionUtility;
+use Mollie\Verification\Employee\CanRunOrderAction;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -42,6 +43,18 @@ class AdminMollieAjaxController extends ModuleAdminController
         }
 
         $action = Tools::getValue('action');
+
+        /** @var CanRunOrderAction $canRunOrderAction */
+        $canRunOrderAction = $this->module->getService(CanRunOrderAction::class);
+
+        if (!$canRunOrderAction->verify((string) $action, $this->context->employee)) {
+            $this->ajaxRender(json_encode([
+                'success' => false,
+                'message' => $this->trans('You do not have permission to edit this.', [], 'Admin.Notifications.Error'),
+            ]));
+
+            return;
+        }
 
         $this->context->smarty->assign('bootstrap', true);
 
