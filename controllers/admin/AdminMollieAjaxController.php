@@ -47,7 +47,7 @@ class AdminMollieAjaxController extends ModuleAdminController
         /** @var CanRunOrderAction $canRunOrderAction */
         $canRunOrderAction = $this->module->getService(CanRunOrderAction::class);
 
-        if (!$canRunOrderAction->verify((string) $action, $this->context->employee)) {
+        if (!$canRunOrderAction->verify(is_string($action) ? $action : '', $this->context->employee)) {
             $this->ajaxRender(json_encode([
                 'success' => false,
                 'message' => $this->trans('You do not have permission to edit this.', [], 'Admin.Notifications.Error'),
