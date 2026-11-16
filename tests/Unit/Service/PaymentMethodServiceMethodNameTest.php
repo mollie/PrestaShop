@@ -36,6 +36,23 @@ class PaymentMethodServiceMethodNameTest extends BaseTestCase
         $this->assertSame($expected, $this->createService()->getPaymentMethodName(new MolPaymentMethod(), $payment));
     }
 
+    public function testItKeepsTheLabelOfAPaymentWithAMethod(): void
+    {
+        $payment = new Payment($this->mock(MollieApiClient::class));
+        $payment->id = 'tr_test';
+        $payment->resource = 'payment';
+        $payment->method = 'banktransfer';
+        $payment->metadata = (object) ['cart_id' => 1, 'method_id' => 'ideal'];
+        $payment->details = null;
+
+        $this->assertSame('Bank', $this->createService()->getPaymentMethodName(new MolPaymentMethod(), $payment));
+    }
+
+    public function testItNamesAnEmptyMethodIdAfterTheModule(): void
+    {
+        $this->assertSame('Mollie', $this->createService()->getMethodName(''));
+    }
+
     public function methodlessPaymentProvider(): array
     {
         return [

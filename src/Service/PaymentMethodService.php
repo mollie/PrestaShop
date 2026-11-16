@@ -717,22 +717,21 @@ class PaymentMethodService
             return (string) $paymentMethod->method_name;
         }
 
-        // Mollie reports no method until the shopper picks one on the hosted page
-        $methodId = (string) ($apiPayment->method ?: $this->getCheckoutMethodId($apiPayment));
-
-        if ($methodId === '') {
-            return (string) $this->module->displayName;
-        }
-
-        return $this->getMethodName($methodId);
+        return $this->getMethodName($apiPayment->method ?: $this->getCheckoutMethodId($apiPayment));
     }
 
     /**
      * Mollie's own method name is preferred, the static list is only a fallback for methods
-     * that were never saved, so that a raw method id is never shown to the merchant.
+     * that were never saved, so that a raw method id is never shown to the merchant. Mollie
+     * reports no method until the shopper picks one on its payment page, so the module name
+     * stands in for it.
      */
     public function getMethodName(string $methodId): string
     {
+        if ($methodId === '') {
+            return (string) $this->module->displayName;
+        }
+
         $environment = (int) Configuration::get(Config::MOLLIE_ENVIRONMENT);
 
         $paymentMethod = new MolPaymentMethod(
