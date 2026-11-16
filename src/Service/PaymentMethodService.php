@@ -697,7 +697,9 @@ class PaymentMethodService
     /**
      * Resolves the label stored on the order and its payment. A wallet has no method of its own
      * to configure, so it is labelled through the method that settled it, for example
-     * "Card (Apple Pay)", which keeps it recognisable as a card payment.
+     * "Card (Apple Pay)", which keeps it recognisable as a card payment. The label follows the
+     * method that settled the payment, the method chosen at checkout only stands in while Mollie
+     * reports none.
      *
      * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
      */
@@ -705,7 +707,7 @@ class PaymentMethodService
     {
         $wallet = $this->getWallet($apiPayment);
 
-        if ($wallet && $wallet !== $apiPayment->method) {
+        if ($wallet && $apiPayment->method && $wallet !== $apiPayment->method) {
             return sprintf(
                 '%s (%s)',
                 $this->getMethodName($apiPayment->method),
@@ -717,15 +719,21 @@ class PaymentMethodService
             return (string) $paymentMethod->method_name;
         }
 
-        return $this->getMethodName($apiPayment->method);
+        return $this->getMethodName($apiPayment->method ?: $this->getCheckoutMethodId($apiPayment));
     }
 
     /**
      * Mollie's own method name is preferred, the static list is only a fallback for methods
-     * that were never saved, so that a raw method id is never shown to the merchant.
+     * that were never saved, so that a raw method id is never shown to the merchant. Mollie
+     * reports no method until the shopper picks one on its payment page, so the module name
+     * stands in for it.
      */
-    public function getMethodName(string $methodId): string
+    public function getMethodName(?string $methodId): string
     {
+        if ($methodId === null || $methodId === '') {
+            return (string) $this->module->displayName;
+        }
+
         $environment = (int) Configuration::get(Config::MOLLIE_ENVIRONMENT);
 
         $paymentMethod = new MolPaymentMethod(
