@@ -30,6 +30,14 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
 {
     const FILE_NAME = 'AdminMollieAdvancedSettingsController';
 
+    // Orders are created in these statuses, so "Skip this status" (0) would make order creation fail.
+    const STATUSES_WITHOUT_SKIP = [
+        Config::MOLLIE_STATUS_AWAITING,
+        Config::MOLLIE_STATUS_OPEN,
+        Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED,
+        Config::MOLLIE_STATUS_PAID,
+    ];
+
     /** @var Mollie */
     public $module;
 
@@ -471,15 +479,13 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             Config::MOLLIE_STATUS_CHARGEBACK => $this->module->l('Chargeback', self::FILE_NAME),
         ];
 
-        $statusesWithoutSkip = [Config::MOLLIE_STATUS_AWAITING, Config::MOLLIE_STATUS_OPEN];
-
         foreach ($statusKeys as $key => $name) {
             $prestashopStatusId = (int) $this->configuration->get($key);
             $statuses[] = [
                 'mollieStatus' => $name,
                 'prestashopStatus' => (string) $prestashopStatusId,
                 'configKey' => $key,
-                'allowSkip' => !in_array($key, $statusesWithoutSkip, true),
+                'allowSkip' => !in_array($key, self::STATUSES_WITHOUT_SKIP, true),
             ];
         }
 
@@ -498,8 +504,12 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
 
             $statusId = (int) $mapping['prestashopStatus'];
 
-            // Unmapped and already stored values are accepted as before, so an old mapping to a deleted state does not block every save.
-            if ($statusId === 0 || $statusId === (int) $this->configuration->get($mapping['configKey'])) {
+            // Already stored values are accepted as before, so an old mapping to a deleted state does not block every save.
+            if ($statusId === (int) $this->configuration->get($mapping['configKey'])) {
+                continue;
+            }
+
+            if ($statusId === 0 && !in_array($mapping['configKey'], self::STATUSES_WITHOUT_SKIP, true)) {
                 continue;
             }
 

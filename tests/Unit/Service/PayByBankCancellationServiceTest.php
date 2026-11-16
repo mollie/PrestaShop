@@ -164,6 +164,29 @@ class PayByBankCancellationServiceTest extends TestCase
         ];
     }
 
+    /**
+     * @dataProvider shouldSetCanceledStateDataProvider
+     *
+     * @param int $currentStateId
+     * @param int $canceledStateId
+     * @param bool $expected
+     */
+    public function testShouldSetCanceledState($currentStateId, $canceledStateId, $expected)
+    {
+        $service = $this->createRealServiceForPureMethods();
+
+        self::assertSame($expected, $service->shouldSetCanceledState($currentStateId, $canceledStateId));
+    }
+
+    public function shouldSetCanceledStateDataProvider()
+    {
+        return [
+            'order not canceled yet' => [10, 6, true],
+            'order already canceled' => [6, 6, false],
+            'canceled status mapped to skip' => [10, 0, false],
+        ];
+    }
+
     private function createService()
     {
         $module = $this->getMockBuilder(\Mollie::class)->disableOriginalConstructor()->getMock();

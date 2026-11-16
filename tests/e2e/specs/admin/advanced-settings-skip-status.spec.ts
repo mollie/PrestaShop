@@ -6,7 +6,13 @@ import { callAdvancedSettingsAjax, type StatusMapping } from '../../helpers/adva
 
 const SKIP_LABEL = 'Skip this status';
 const SKIP_STATUS_ID = '0';
-const WITHOUT_SKIP = ['MOLLIE_STATUS_AWAITING', 'MOLLIE_STATUS_OPEN'];
+// Orders are created in these statuses, so they never offer the skip choice.
+const WITHOUT_SKIP = [
+  'MOLLIE_STATUS_AWAITING',
+  'MOLLIE_STATUS_OPEN',
+  'MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED',
+  'MOLLIE_STATUS_PAID',
+];
 
 const openStatusMapping = async (page: Page) => {
   const settings = new AdvancedSettingsPage(page);
@@ -29,7 +35,7 @@ const readMappings = async (page: Page): Promise<StatusMapping[]> => {
   return mappings ?? [];
 };
 
-test('every status mapping except Awaiting and Open offers "Skip this status" first', async ({ page }) => {
+test('every status mapping except the order creation ones offers "Skip this status" first', async ({ page }) => {
   const settings = await openStatusMapping(page);
   const mappings = await readMappings(page);
   expect(mappings.length).toBeGreaterThan(WITHOUT_SKIP.length);
@@ -53,7 +59,7 @@ test('the auto-ship status picker does not offer "Skip this status"', async ({ p
   skipIfDisconnected(!(await settings.waitForForm()), 'the advanced settings form did not render');
 
   await page.locator('.multi-select-button').first().click();
-  const labels = await page.locator('.radio-select-option-label').allInnerTexts();
+  const labels = await page.locator('.dropdown-open .radio-select-option-label').allInnerTexts();
 
   expect(labels.length).toBeGreaterThan(0);
   expect(labels).not.toContain(SKIP_LABEL);
@@ -82,4 +88,21 @@ test('a skipped status saves as 0 and is shown as "Skip this status" after reloa
   } finally {
     await callAdvancedSettingsAjax(page, 'saveSettings', { statusMappings: [original] });
   }
+});
+
+test('save rejects "Skip this status" for a status orders are created in', async ({ page }) => {
+  await openStatusMapping(page);
+  const paid = (await readMappings(page)).find((mapping) => mapping.configKey === 'MOLLIE_STATUS_PAID');
+  expect(paid).toBeDefined();
+  test.skip(paid?.prestashopStatus === SKIP_STATUS_ID, 'Paid is already stored as 0 on this shop');
+
+  const result = await callAdvancedSettingsAjax(page, 'saveSettings', {
+    statusMappings: [{ ...paid, prestashopStatus: SKIP_STATUS_ID }],
+  });
+
+  expect(result.success).toBe(false);
+  expect(result.fieldErrors).toEqual(['MOLLIE_STATUS_PAID']);
+
+  const after = (await readMappings(page)).find((mapping) => mapping.configKey === 'MOLLIE_STATUS_PAID');
+  expect(after?.prestashopStatus).toBe(paid?.prestashopStatus);
 });

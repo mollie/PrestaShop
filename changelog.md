@@ -3,7 +3,7 @@
 # Changelog #
 
 ## Changes in release 6.4.9
-+ Restored the "Skip this status" choice in the Advanced Settings order status mapping (all statuses except Awaiting and Open), so the module can again leave the order status unchanged for a Mollie payment status
++ Restored the "Skip this status" choice in the Advanced Settings order status mapping (all statuses except Awaiting, Open, Authorized and Paid, which orders are created in), so the module can again leave the order status unchanged for a Mollie payment status
 
 ## Changes in release 6.4.8
 + Fixed the back office Orders page crashing when the shop has a Mollie order from 2023 with a dot in its reference, for example ord_1.zih1s5
