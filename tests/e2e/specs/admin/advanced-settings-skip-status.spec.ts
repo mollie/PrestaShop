@@ -48,11 +48,11 @@ test('every status mapping except the order creation ones offers "Skip this stat
 test('the auto-ship status picker does not offer "Skip this status"', async ({ page }) => {
   await openAdvancedSettingsForm(page);
 
+  const options = page.locator('.dropdown-open .radio-select-option-label');
   await page.locator('.multi-select-button').first().click();
-  const labels = await page.locator('.dropdown-open .radio-select-option-label').allInnerTexts();
+  await options.first().waitFor();
 
-  expect(labels.length).toBeGreaterThan(0);
-  expect(labels).not.toContain(SKIP_LABEL);
+  expect(await options.allInnerTexts()).not.toContain(SKIP_LABEL);
 });
 
 test('a skipped status saves as 0 and is shown as "Skip this status" after reload', async ({ page }) => {

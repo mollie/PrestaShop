@@ -44,8 +44,11 @@ export class AdvancedSettingsPage {
 
   /** Opens the row's dropdown, returns its option labels and closes it again. */
   async statusMappingOptions(configKey: string): Promise<string[]> {
+    const options = this.statusMappingRow(configKey).locator('.radio-select-option-label');
     await this.statusMappingButton(configKey).click();
-    const labels = await this.statusMappingRow(configKey).locator('.radio-select-option-label').allInnerTexts();
+    // allInnerTexts() does not wait, so wait for the dropdown to render first.
+    await options.first().waitFor();
+    const labels = await options.allInnerTexts();
     await this.statusMappingButton(configKey).click();
 
     return labels;
