@@ -1,18 +1,10 @@
 import { test, expect } from '../../fixtures/base';
-import type { Locator, Page } from '@playwright/test';
-import { AdvancedSettingsPage } from '../../pages/admin/advanced-settings-page';
-import { skipIfDisconnected } from '../../helpers/module-state';
-import { callAdvancedSettingsAjax as callAjax, type StatusMapping } from '../../helpers/advanced-settings';
-
-const openForm = async (page: Page) => {
-  const settings = new AdvancedSettingsPage(page);
-  await settings.goto();
-
-  const rendered = await settings.waitForForm();
-  skipIfDisconnected(!rendered, 'the advanced settings form did not render');
-
-  return settings;
-};
+import type { Locator } from '@playwright/test';
+import {
+  callAdvancedSettingsAjax as callAjax,
+  findStatusMapping,
+  openAdvancedSettingsForm as openForm,
+} from '../../helpers/advanced-settings';
 
 /**
  * The status sections are collapsed by default and reopen when a save fails on
@@ -22,13 +14,7 @@ const openForm = async (page: Page) => {
 test('save rejects an unknown order status and reports the field', async ({ page }) => {
   await openForm(page);
 
-  const readOpenStatus = async () => {
-    const json = await callAjax(page, 'getSettings');
-    const mappings: StatusMapping[] | undefined = json.data?.statusMappings;
-    test.skip(mappings === undefined, 'getSettings returned no data, module disconnected');
-
-    return mappings?.find((mapping) => mapping.configKey === 'MOLLIE_STATUS_OPEN')?.prestashopStatus;
-  };
+  const readOpenStatus = async () => (await findStatusMapping(page, 'MOLLIE_STATUS_OPEN'))?.prestashopStatus;
 
   const before = await readOpenStatus();
   expect(before).toBeDefined();

@@ -1,8 +1,12 @@
 import { test, expect } from '../../fixtures/base';
 import type { Page } from '@playwright/test';
-import { AdvancedSettingsPage } from '../../pages/admin/advanced-settings-page';
-import { skipIfDisconnected } from '../../helpers/module-state';
-import { callAdvancedSettingsAjax, type StatusMapping } from '../../helpers/advanced-settings';
+import {
+  callAdvancedSettingsAjax,
+  findStatusMapping,
+  openAdvancedSettingsForm,
+  type StatusMapping,
+} from '../../helpers/advanced-settings';
+import { getGlobalConfig, restoreGlobalConfig } from '../../helpers/config';
 
 const SKIP_LABEL = 'Skip this status';
 const SKIP_STATUS_ID = '0';
@@ -15,29 +19,17 @@ const WITHOUT_SKIP = [
 ];
 
 const openStatusMapping = async (page: Page) => {
-  const settings = new AdvancedSettingsPage(page);
-  await settings.goto();
-
-  const rendered = await settings.waitForForm();
-  skipIfDisconnected(!rendered, 'the advanced settings form did not render');
-
+  const settings = await openAdvancedSettingsForm(page);
   await settings.statusMappingHeader().click();
   await expect(settings.statusMappingHeader()).toHaveAttribute('aria-expanded', 'true');
 
   return settings;
 };
 
-const readMappings = async (page: Page): Promise<StatusMapping[]> => {
-  const json = await callAdvancedSettingsAjax(page, 'getSettings');
-  const mappings: StatusMapping[] | undefined = json.data?.statusMappings;
-  test.skip(mappings === undefined, 'getSettings returned no data, module disconnected');
-
-  return mappings ?? [];
-};
-
 test('every status mapping except the order creation ones offers "Skip this status" first', async ({ page }) => {
   const settings = await openStatusMapping(page);
-  const mappings = await readMappings(page);
+  const json = await callAdvancedSettingsAjax(page, 'getSettings');
+  const mappings: StatusMapping[] = json.data?.statusMappings ?? [];
   expect(mappings.length).toBeGreaterThan(WITHOUT_SKIP.length);
 
   for (const mapping of mappings) {
@@ -54,9 +46,7 @@ test('every status mapping except the order creation ones offers "Skip this stat
 });
 
 test('the auto-ship status picker does not offer "Skip this status"', async ({ page }) => {
-  const settings = new AdvancedSettingsPage(page);
-  await settings.goto();
-  skipIfDisconnected(!(await settings.waitForForm()), 'the advanced settings form did not render');
+  await openAdvancedSettingsForm(page);
 
   await page.locator('.multi-select-button').first().click();
   const labels = await page.locator('.dropdown-open .radio-select-option-label').allInnerTexts();
@@ -67,32 +57,27 @@ test('the auto-ship status picker does not offer "Skip this status"', async ({ p
 
 test('a skipped status saves as 0 and is shown as "Skip this status" after reload', async ({ page }) => {
   const configKey = 'MOLLIE_STATUS_CHARGEBACK';
+  const previous = getGlobalConfig(configKey);
   const settings = await openStatusMapping(page);
-  const original = (await readMappings(page)).find((mapping) => mapping.configKey === configKey);
-  expect(original).toBeDefined();
 
   try {
-    const row = settings.statusMappingRow(configKey);
-    await row.locator('.radio-select-button').click();
-    await row.locator('.radio-select-option', { hasText: SKIP_LABEL }).click();
-    await expect(row.locator('.radio-select-button')).toHaveText(SKIP_LABEL);
+    await settings.selectStatusMapping(configKey, SKIP_LABEL);
+    await expect(settings.statusMappingButton(configKey)).toHaveText(SKIP_LABEL);
 
     await settings.save();
     await settings.expectSavedSuccessfully();
-
-    const saved = (await readMappings(page)).find((mapping) => mapping.configKey === configKey);
-    expect(saved?.prestashopStatus).toBe(SKIP_STATUS_ID);
+    expect((await findStatusMapping(page, configKey))?.prestashopStatus).toBe(SKIP_STATUS_ID);
 
     await openStatusMapping(page);
-    await expect(settings.statusMappingRow(configKey).locator('.radio-select-button')).toHaveText(SKIP_LABEL);
+    await expect(settings.statusMappingButton(configKey)).toHaveText(SKIP_LABEL);
   } finally {
-    await callAdvancedSettingsAjax(page, 'saveSettings', { statusMappings: [original] });
+    restoreGlobalConfig(configKey, previous);
   }
 });
 
 test('save rejects "Skip this status" for a status orders are created in', async ({ page }) => {
-  await openStatusMapping(page);
-  const paid = (await readMappings(page)).find((mapping) => mapping.configKey === 'MOLLIE_STATUS_PAID');
+  await openAdvancedSettingsForm(page);
+  const paid = await findStatusMapping(page, 'MOLLIE_STATUS_PAID');
   expect(paid).toBeDefined();
   test.skip(paid?.prestashopStatus === SKIP_STATUS_ID, 'Paid is already stored as 0 on this shop');
 
@@ -102,7 +87,5 @@ test('save rejects "Skip this status" for a status orders are created in', async
 
   expect(result.success).toBe(false);
   expect(result.fieldErrors).toEqual(['MOLLIE_STATUS_PAID']);
-
-  const after = (await readMappings(page)).find((mapping) => mapping.configKey === 'MOLLIE_STATUS_PAID');
-  expect(after?.prestashopStatus).toBe(paid?.prestashopStatus);
+  expect((await findStatusMapping(page, 'MOLLIE_STATUS_PAID'))?.prestashopStatus).toBe(paid?.prestashopStatus);
 });

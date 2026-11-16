@@ -4,7 +4,7 @@ import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { AlertCircle } from "lucide-react"
 import "./advanced-settings.css"
-import { advancedSettingsApiService, type CarrierData, type SaveCarrierData } from "../../services/AdvancedSettingsApiService"
+import { advancedSettingsApiService, type CarrierData, type SaveCarrierData, type StatusMapping } from "../../services/AdvancedSettingsApiService"
 import { AdvancedSettingsSkeleton } from "./components/advanced-settings-skeleton"
 import { CollapsibleSection } from "./components/collapsible-section"
 import { useAdvancedSettingsTranslations } from "../../shared/hooks/use-advanced-settings-translations"
@@ -298,13 +298,6 @@ interface CarrierRow {
   emptyInput: string
 }
 
-interface StatusMapping {
-  mollieStatus: string
-  prestashopStatus: string
-  configKey: string
-  allowSkip: boolean
-}
-
 interface EmailStatus {
   status: string
   enabled: boolean
@@ -525,7 +518,11 @@ const AdvancedSettings: React.FC = () => {
   const orderStatusOptions = orderStatuses.map((status) => ({ value: status.id, label: status.name }))
   const statusMappingOptions = (mapping: StatusMapping) =>
     mapping.allowSkip ? [{ value: SKIP_STATUS_ID, label: t('skipThisStatus') }, ...orderStatusOptions] : orderStatusOptions
-  const mappedStatusCount = statusMappings.filter((mapping) => statusMappingOptions(mapping).some((option) => option.value === mapping.prestashopStatus)).length
+  const mappedStatusCount = statusMappings.filter(
+    (mapping) =>
+      (mapping.allowSkip && mapping.prestashopStatus === SKIP_STATUS_ID) ||
+      orderStatuses.some((status) => status.id === mapping.prestashopStatus)
+  ).length
   const enabledEmailCount = emailStatuses.filter((email) => email.enabled).length
 
   return (
