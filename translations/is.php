@@ -544,6 +544,7 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_dcd700acd4c672
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_538566013720550a531fbbf3a1b420ad'] = 'Lágmarkspöntunarupphæð';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_56a9d0bdafae909817588f9c58de83a0'] = 'Hámarkspöntunarupphæð';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a11219319fe9b07e73866d600ad2e3ce'] = 'Bættu \"(payment_fee)\" við í tölvupóstþýðingum til að birta það í tölvupóstsniðmátinu þínu.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_0284429f7030b4a9f77451dd57936e07'] = 'Gjaldupphæðir eru í sjálfgefnum gjaldmiðli verslunarinnar (%s). Viðskiptavinir sem greiða í öðrum gjaldmiðli greiða umreiknaða upphæð.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a64602905a89a4a1621e416286a8b3e8'] = 'Pöntunartakmarkanir';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_c9cc8cce247e49bae79f15173ce97354'] = 'Vista';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_575f5f86d2c7ea113c6710c1037c4465'] = 'Vistar...';

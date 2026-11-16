@@ -129,6 +129,8 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             'mollieAdvancedSettingsUrl' => $this->context->link->getAdminLink('AdminMollieAdvancedSettings'),
         ]);
 
+        $defaultCurrency = Currency::getDefaultCurrency();
+
         Media::addJsDef([
             'molliePaymentMethodsTranslations' => [
                 'paymentMethods' => $this->module->l('Payment Methods', self::FILE_NAME),
@@ -217,6 +219,10 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'minOrderAmount' => $this->module->l('Min order amount', self::FILE_NAME),
                 'maxOrderAmount' => $this->module->l('Max order amount', self::FILE_NAME),
                 'paymentFeeEmailHelp' => $this->module->l('Add "(payment_fee)" in email translations to display it in your email template.', self::FILE_NAME),
+                'paymentFeeCurrencyHelp' => sprintf(
+                    $this->module->l('Fee amounts are in the shop default currency (%s). Shoppers who pay in another currency are charged the converted amount.', self::FILE_NAME),
+                    $defaultCurrency ? $defaultCurrency->iso_code : ''
+                ),
 
                 'orderRestrictions' => $this->module->l('Order restrictions', self::FILE_NAME),
 

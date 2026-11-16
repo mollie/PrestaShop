@@ -280,6 +280,7 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_dcd700acd4c672
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_538566013720550a531fbbf3a1b420ad'] = 'Valor mínimo da encomenda';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_56a9d0bdafae909817588f9c58de83a0'] = 'Valor máximo da encomenda';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a11219319fe9b07e73866d600ad2e3ce'] = 'Adicione \"(payment_fee)\" nas traduções de email para exibi-lo no seu modelo de email.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_0284429f7030b4a9f77451dd57936e07'] = 'Os valores das taxas estão na moeda predefinida da loja (%s). Aos clientes que pagam noutra moeda é cobrado o valor convertido.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a64602905a89a4a1621e416286a8b3e8'] = 'Restrições de encomenda';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_c9cc8cce247e49bae79f15173ce97354'] = 'Guardar';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_575f5f86d2c7ea113c6710c1037c4465'] = 'A guardar...';

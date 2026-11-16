@@ -543,6 +543,7 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_dcd700acd4c672
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_538566013720550a531fbbf3a1b420ad'] = 'Ελάχιστο ποσό παραγγελίας';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_56a9d0bdafae909817588f9c58de83a0'] = 'Μέγιστο ποσό παραγγελίας';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a11219319fe9b07e73866d600ad2e3ce'] = 'Προσθέστε \"(payment_fee)\" στις μεταφράσεις email για να το εμφανίσετε στο πρότυπο email σας.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_0284429f7030b4a9f77451dd57936e07'] = 'Τα ποσά των χρεώσεων είναι στο προεπιλεγμένο νόμισμα του καταστήματος (%s). Στους πελάτες που πληρώνουν σε άλλο νόμισμα χρεώνεται το μετατρεπόμενο ποσό.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a64602905a89a4a1621e416286a8b3e8'] = 'Περιορισμοί παραγγελίας';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_c9cc8cce247e49bae79f15173ce97354'] = 'Αποθήκευση';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_575f5f86d2c7ea113c6710c1037c4465'] = 'Αποθήκευση...';

@@ -256,6 +256,7 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_dcd700acd4c672
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_538566013720550a531fbbf3a1b420ad'] = 'Min order amount';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_56a9d0bdafae909817588f9c58de83a0'] = 'Max order amount';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a11219319fe9b07e73866d600ad2e3ce'] = 'Add \"(payment_fee)\" in email translations to display it in your email template.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_0284429f7030b4a9f77451dd57936e07'] = 'Fee amounts are in the shop default currency (%s). Shoppers who pay in another currency are charged the converted amount.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a64602905a89a4a1621e416286a8b3e8'] = 'Order restrictions';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_c9cc8cce247e49bae79f15173ce97354'] = 'Save';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_575f5f86d2c7ea113c6710c1037c4465'] = 'Saving...';
