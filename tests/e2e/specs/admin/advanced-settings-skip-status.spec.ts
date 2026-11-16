@@ -49,7 +49,8 @@ test('the auto-ship status picker does not offer "Skip this status"', async ({ p
   await openAdvancedSettingsForm(page);
 
   const options = page.locator('.dropdown-open .radio-select-option-label');
-  await page.locator('.multi-select-button').first().click();
+  // The button's centre can be a selected status tag or its remove button, so open it by the chevron.
+  await page.locator('.multi-select-button .radio-select-icon').first().click();
   await options.first().waitFor();
 
   expect(await options.allInnerTexts()).not.toContain(SKIP_LABEL);
