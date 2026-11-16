@@ -280,6 +280,7 @@ $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_dcd700acd4c672
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_538566013720550a531fbbf3a1b420ad'] = 'Importe mínimo del pedido';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_56a9d0bdafae909817588f9c58de83a0'] = 'Importe máximo del pedido';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a11219319fe9b07e73866d600ad2e3ce'] = 'Añade \"(payment_fee)\" en las traducciones de email para mostrarlo en tu plantilla de correo.';
+$_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_0284429f7030b4a9f77451dd57936e07'] = 'Los importes de las comisiones están en la moneda predeterminada de la tienda (%s). A los clientes que pagan en otra moneda se les cobra el importe convertido.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_a64602905a89a4a1621e416286a8b3e8'] = 'Restricciones de pedido';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_c9cc8cce247e49bae79f15173ce97354'] = 'Guardar';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_575f5f86d2c7ea113c6710c1037c4465'] = 'Guardando...';

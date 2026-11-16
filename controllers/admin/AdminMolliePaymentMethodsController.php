@@ -220,7 +220,7 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
                 'maxOrderAmount' => $this->module->l('Max order amount', self::FILE_NAME),
                 'paymentFeeEmailHelp' => $this->module->l('Add "(payment_fee)" in email translations to display it in your email template.', self::FILE_NAME),
                 'paymentFeeCurrencyHelp' => sprintf(
-                    $this->module->l('Fixed fee and maximum fee are in the shop default currency (%s). Shoppers who pay in another currency are charged the converted amount.', self::FILE_NAME),
+                    $this->module->l('Fee amounts are in the shop default currency (%s). Shoppers who pay in another currency are charged the converted amount.', self::FILE_NAME),
                     $defaultCurrency ? $defaultCurrency->iso_code : ''
                 ),
 
