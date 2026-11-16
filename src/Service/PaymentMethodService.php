@@ -697,7 +697,9 @@ class PaymentMethodService
     /**
      * Resolves the label stored on the order and its payment. A wallet has no method of its own
      * to configure, so it is labelled through the method that settled it, for example
-     * "Card (Apple Pay)", which keeps it recognisable as a card payment.
+     * "Card (Apple Pay)", which keeps it recognisable as a card payment. The label follows the
+     * method that settled the payment, the method chosen at checkout only stands in while Mollie
+     * reports none.
      *
      * @param MollieOrderAlias|MolliePaymentAlias $apiPayment
      */
@@ -726,9 +728,9 @@ class PaymentMethodService
      * reports no method until the shopper picks one on its payment page, so the module name
      * stands in for it.
      */
-    public function getMethodName(string $methodId): string
+    public function getMethodName(?string $methodId): string
     {
-        if ($methodId === '') {
+        if ($methodId === null || $methodId === '') {
             return (string) $this->module->displayName;
         }
 

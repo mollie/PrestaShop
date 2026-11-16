@@ -22,52 +22,54 @@ use MolPaymentMethod;
 class PaymentMethodServiceMethodNameTest extends BaseTestCase
 {
     /**
-     * @dataProvider methodlessPaymentProvider
+     * @dataProvider paymentProvider
      */
-    public function testItLabelsAPaymentWithoutAMethod(?array $metadata, ?string $wallet, string $expected): void
+    public function testItLabelsAPaymentWithoutAStoredMethod(?string $method, ?array $metadata, ?string $wallet, string $expected): void
     {
         $payment = new Payment($this->mock(MollieApiClient::class));
         $payment->id = 'tr_test';
         $payment->resource = 'payment';
-        $payment->method = null;
+        $payment->method = $method;
         $payment->metadata = $metadata === null ? null : (object) $metadata;
         $payment->details = $wallet === null ? null : (object) ['wallet' => $wallet];
 
         $this->assertSame($expected, $this->createService()->getPaymentMethodName(new MolPaymentMethod(), $payment));
     }
 
-    public function testItKeepsTheLabelOfAPaymentWithAMethod(): void
-    {
-        $payment = new Payment($this->mock(MollieApiClient::class));
-        $payment->id = 'tr_test';
-        $payment->resource = 'payment';
-        $payment->method = 'banktransfer';
-        $payment->metadata = (object) ['cart_id' => 1, 'method_id' => 'ideal'];
-        $payment->details = null;
-
-        $this->assertSame('Bank', $this->createService()->getPaymentMethodName(new MolPaymentMethod(), $payment));
-    }
-
-    public function testItNamesAnEmptyMethodIdAfterTheModule(): void
-    {
-        $this->assertSame('Mollie', $this->createService()->getMethodName(''));
-    }
-
-    public function methodlessPaymentProvider(): array
+    public function paymentProvider(): array
     {
         return [
-            'no method chosen yet, no stored method' => [
-                ['cart_id' => 1], null, 'Mollie',
+            'no method chosen yet' => [
+                null, ['cart_id' => 1], null, 'Mollie',
             ],
-            'no metadata at all' => [
-                null, null, 'Mollie',
+            'no method and no metadata' => [
+                null, null, null, 'Mollie',
             ],
-            'method chosen at checkout is kept in the metadata' => [
-                ['cart_id' => 1, 'method_id' => 'banktransfer'], null, 'Bank',
+            'no method, method chosen at checkout is kept in the metadata' => [
+                null, ['cart_id' => 1, 'method_id' => 'banktransfer'], null, 'Bank',
             ],
-            'wallet reported without a method' => [
-                ['cart_id' => 1], 'applepay', 'Apple Pay',
+            'no method, wallet reported' => [
+                null, ['cart_id' => 1], 'applepay', 'Apple Pay',
             ],
+            'method reported wins over the checkout metadata' => [
+                'banktransfer', ['cart_id' => 1, 'method_id' => 'ideal'], null, 'Bank',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider emptyMethodIdProvider
+     */
+    public function testItNamesAnEmptyMethodIdAfterTheModule(?string $methodId): void
+    {
+        $this->assertSame('Mollie', $this->createService()->getMethodName($methodId));
+    }
+
+    public function emptyMethodIdProvider(): array
+    {
+        return [
+            'null' => [null],
+            'empty string' => [''],
         ];
     }
 
