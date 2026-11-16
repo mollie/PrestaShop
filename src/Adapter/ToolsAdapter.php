@@ -75,7 +75,7 @@ class ToolsAdapter
 
     public function displayDate($date, $full = false)
     {
-        if (VersionUtility::isPsVersionGreaterOrEqualTo('9.0.0')) {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('8.0.0')) {
             return Tools::displayDate($date, $full);
         }
 
