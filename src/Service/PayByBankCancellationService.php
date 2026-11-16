@@ -132,6 +132,19 @@ class PayByBankCancellationService
     }
 
     /**
+     * A Canceled mapping of 0 means the merchant chose "Skip this status".
+     *
+     * @param int $currentStateId
+     * @param int $canceledStateId
+     *
+     * @return bool
+     */
+    public function shouldSetCanceledState($currentStateId, $canceledStateId)
+    {
+        return $canceledStateId > 0 && $currentStateId !== $canceledStateId;
+    }
+
+    /**
      * @param int $cartId
      * @param Order $order
      * @param string $transactionId
@@ -145,7 +158,7 @@ class PayByBankCancellationService
         $orderId = (int) $order->id;
         $canceledStateId = (int) Configuration::get(Config::MOLLIE_STATUS_CANCELED);
 
-        if ((int) $order->current_state !== $canceledStateId) {
+        if ($this->shouldSetCanceledState((int) $order->current_state, $canceledStateId)) {
             $order->setCurrentState($canceledStateId);
             $this->logger->info(sprintf('Pay by Bank payment canceled, order %d set to canceled', $orderId));
         }

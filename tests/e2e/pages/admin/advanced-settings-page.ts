@@ -33,6 +33,32 @@ export class AdvancedSettingsPage {
     return this.page.getByTestId('advanced-settings-status-mapping-toggle');
   }
 
+  statusMappingRow(configKey: string) {
+    return this.page.getByTestId(`status-mapping-row-${configKey}`);
+  }
+
+  /** The row's dropdown button, its text is the selected status. */
+  statusMappingButton(configKey: string) {
+    return this.statusMappingRow(configKey).locator('.radio-select-button');
+  }
+
+  /** Opens the row's dropdown, returns its option labels and closes it again. */
+  async statusMappingOptions(configKey: string): Promise<string[]> {
+    const options = this.statusMappingRow(configKey).locator('.radio-select-option-label');
+    await this.statusMappingButton(configKey).click();
+    // allInnerTexts() does not wait, so wait for the dropdown to render first.
+    await options.first().waitFor();
+    const labels = await options.allInnerTexts();
+    await this.statusMappingButton(configKey).click();
+
+    return labels;
+  }
+
+  async selectStatusMapping(configKey: string, label: string) {
+    await this.statusMappingButton(configKey).click();
+    await this.statusMappingRow(configKey).locator('.radio-select-option', { hasText: label }).click();
+  }
+
   emailStatusesHeader() {
     return this.page.getByTestId('advanced-settings-email-statuses-toggle');
   }

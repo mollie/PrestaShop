@@ -1,41 +1,10 @@
 import { test, expect } from '../../fixtures/base';
-import type { Locator, Page } from '@playwright/test';
-import { AdvancedSettingsPage } from '../../pages/admin/advanced-settings-page';
-import { skipIfDisconnected } from '../../helpers/module-state';
-
-type StatusMapping = { configKey: string; prestashopStatus: string; mollieStatus: string };
-
-const callAjax = (page: Page, action: string, data?: Record<string, unknown>) =>
-  page.evaluate(
-    async ([action, data]) => {
-      let base = (window as unknown as { mollieAdvancedSettingsAjaxUrl: string }).mollieAdvancedSettingsAjaxUrl;
-      if (location.protocol === 'https:' && base.startsWith('http:')) {
-        base = base.replace('http:', 'https:');
-      }
-      const url = new URL(base, location.origin);
-      url.searchParams.set('ajax', '1');
-
-      const formData = new FormData();
-      formData.append('action', action);
-      if (data !== undefined) {
-        formData.append('data', JSON.stringify(data));
-      }
-      const response = await fetch(url.toString(), { method: 'POST', body: formData });
-
-      return response.json();
-    },
-    [action, data] as const
-  );
-
-const openForm = async (page: Page) => {
-  const settings = new AdvancedSettingsPage(page);
-  await settings.goto();
-
-  const rendered = await settings.waitForForm();
-  skipIfDisconnected(!rendered, 'the advanced settings form did not render');
-
-  return settings;
-};
+import type { Locator } from '@playwright/test';
+import {
+  callAdvancedSettingsAjax as callAjax,
+  findStatusMapping,
+  openAdvancedSettingsForm as openForm,
+} from '../../helpers/advanced-settings';
 
 /**
  * The status sections are collapsed by default and reopen when a save fails on
@@ -45,13 +14,7 @@ const openForm = async (page: Page) => {
 test('save rejects an unknown order status and reports the field', async ({ page }) => {
   await openForm(page);
 
-  const readOpenStatus = async () => {
-    const json = await callAjax(page, 'getSettings');
-    const mappings: StatusMapping[] | undefined = json.data?.statusMappings;
-    test.skip(mappings === undefined, 'getSettings returned no data, module disconnected');
-
-    return mappings?.find((mapping) => mapping.configKey === 'MOLLIE_STATUS_OPEN')?.prestashopStatus;
-  };
+  const readOpenStatus = async () => (await findStatusMapping(page, 'MOLLIE_STATUS_OPEN'))?.prestashopStatus;
 
   const before = await readOpenStatus();
   expect(before).toBeDefined();

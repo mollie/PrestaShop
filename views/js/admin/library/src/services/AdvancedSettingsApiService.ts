@@ -16,6 +16,7 @@ export interface StatusMapping {
   mollieStatus: string;
   prestashopStatus: string;
   configKey: string;
+  allowSkip: boolean;
 }
 
 export interface EmailStatus {

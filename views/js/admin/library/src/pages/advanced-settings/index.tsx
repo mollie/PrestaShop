@@ -4,7 +4,7 @@ import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { AlertCircle } from "lucide-react"
 import "./advanced-settings.css"
-import { advancedSettingsApiService, type CarrierData, type SaveCarrierData } from "../../services/AdvancedSettingsApiService"
+import { advancedSettingsApiService, type CarrierData, type SaveCarrierData, type StatusMapping } from "../../services/AdvancedSettingsApiService"
 import { AdvancedSettingsSkeleton } from "./components/advanced-settings-skeleton"
 import { CollapsibleSection } from "./components/collapsible-section"
 import { useAdvancedSettingsTranslations } from "../../shared/hooks/use-advanced-settings-translations"
@@ -26,6 +26,8 @@ const ChevronDown = ({ className }: { className?: string }) => (
     <polyline points="6 9 12 15 18 9"></polyline>
   </svg>
 )
+
+const SKIP_STATUS_ID = '0'
 
 function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ")
@@ -296,12 +298,6 @@ interface CarrierRow {
   emptyInput: string
 }
 
-interface StatusMapping {
-  mollieStatus: string
-  prestashopStatus: string
-  configKey: string
-}
-
 interface EmailStatus {
   status: string
   enabled: boolean
@@ -519,7 +515,14 @@ const AdvancedSettings: React.FC = () => {
     )
   }
 
-  const mappedStatusCount = statusMappings.filter((mapping) => orderStatuses.some((status) => status.id === mapping.prestashopStatus)).length
+  const orderStatusOptions = orderStatuses.map((status) => ({ value: status.id, label: status.name }))
+  const statusMappingOptions = (mapping: StatusMapping) =>
+    mapping.allowSkip ? [{ value: SKIP_STATUS_ID, label: t('skipThisStatus') }, ...orderStatusOptions] : orderStatusOptions
+  const mappedStatusCount = statusMappings.filter(
+    (mapping) =>
+      (mapping.allowSkip && mapping.prestashopStatus === SKIP_STATUS_ID) ||
+      orderStatuses.some((status) => status.id === mapping.prestashopStatus)
+  ).length
   const enabledEmailCount = emailStatuses.filter((email) => email.enabled).length
 
   return (
@@ -840,7 +843,7 @@ const AdvancedSettings: React.FC = () => {
 
         <div className="status-mapping-table">
           {statusMappings.map((mapping) => (
-            <div key={mapping.configKey} className="status-mapping-row">
+            <div key={mapping.configKey} className="status-mapping-row" data-testid={`status-mapping-row-${mapping.configKey}`}>
               <div className="status-mapping-col">
                 <div className="status-label">{mapping.mollieStatus}</div>
                 <div className="status-sublabel">{t('molliePaymentStatus')}</div>
@@ -852,7 +855,7 @@ const AdvancedSettings: React.FC = () => {
                 <RadioSelect
                   value={mapping.prestashopStatus}
                   onValueChange={(value) => handleStatusMappingChange(mapping.configKey, value)}
-                  options={orderStatuses.map(status => ({ value: status.id, label: status.name }))}
+                  options={statusMappingOptions(mapping)}
                   placeholder={t('selectStatus')}
                 />
               </div>

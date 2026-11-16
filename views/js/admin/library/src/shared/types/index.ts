@@ -313,6 +313,7 @@ export interface MollieAdvancedSettingsTranslations {
   molliePaymentStatus: string;
   prestashopOrderStatus: string;
   selectStatus: string;
+  skipThisStatus: string;
   emailStatusInfo: string;
   sendEmailOnStatus: string;
   saving: string;
