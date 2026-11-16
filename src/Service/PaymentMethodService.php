@@ -705,7 +705,7 @@ class PaymentMethodService
     {
         $wallet = $this->getWallet($apiPayment);
 
-        if ($wallet && $wallet !== $apiPayment->method) {
+        if ($wallet && $apiPayment->method && $wallet !== $apiPayment->method) {
             return sprintf(
                 '%s (%s)',
                 $this->getMethodName($apiPayment->method),
@@ -717,7 +717,14 @@ class PaymentMethodService
             return (string) $paymentMethod->method_name;
         }
 
-        return $this->getMethodName($apiPayment->method);
+        // Mollie reports no method until the shopper picks one on the hosted page
+        $methodId = (string) ($apiPayment->method ?: $this->getCheckoutMethodId($apiPayment));
+
+        if ($methodId === '') {
+            return (string) $this->module->displayName;
+        }
+
+        return $this->getMethodName($methodId);
     }
 
     /**
