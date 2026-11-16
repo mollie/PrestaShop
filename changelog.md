@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.9
++ Fixed the fixed payment fee and the maximum fee being charged unconverted when the shopper pays in a currency other than the shop's default, and the Payment fees settings now say the amounts are in the shop's default currency
+
 ## Changes in release 6.4.8
 + Fixed the back office Orders page crashing when the shop has a Mollie order from 2023 with a dot in its reference, for example ord_1.zih1s5
 + Fixed a duplicate Apple Pay Direct element on product pages, which left an empty gap below the product buttons

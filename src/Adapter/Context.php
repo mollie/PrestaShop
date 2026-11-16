@@ -41,6 +41,11 @@ class Context
         return (string) PrestashopContext::getContext()->currency->iso_code;
     }
 
+    public function convertFromDefaultCurrency(float $amount): float
+    {
+        return (float) \Tools::convertPrice($amount);
+    }
+
     public function getCustomerId(): int
     {
         /* @phpstan-ignore-next-line */

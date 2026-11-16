@@ -92,9 +92,9 @@ class PaymentFeeProvider implements PaymentFeeProviderInterface
     public function getPaymentFee(MolPaymentMethod $paymentMethod, float $totalCartPriceTaxIncl): PaymentFeeData
     {
         try {
-            $surchargeFixedPriceTaxExcl = (float) $paymentMethod->surcharge_fixed_amount_tax_excl;
+            $surchargeFixedPriceTaxExcl = $this->context->convertFromDefaultCurrency((float) $paymentMethod->surcharge_fixed_amount_tax_excl);
             $surchargePercentage = (float) $paymentMethod->surcharge_percentage;
-            $surchargeLimit = (float) $paymentMethod->surcharge_limit;
+            $surchargeLimit = $this->context->convertFromDefaultCurrency((float) $paymentMethod->surcharge_limit);
 
             $defaultCountryId = (int) Configuration::get('PS_COUNTRY_DEFAULT');
 

@@ -55,6 +55,7 @@ class PaymentFeeProviderTest extends TestCase
         parent::setUp();
 
         $this->context = $this->createMock(Context::class);
+        $this->context->method('convertFromDefaultCurrency')->willReturnArgument(0);
         $this->molPaymentMethod = $this->createMock(MolPaymentMethod::class);
         $this->taxCalculator = $this->createMock(TaxCalculator::class);
 
@@ -186,6 +187,76 @@ class PaymentFeeProviderTest extends TestCase
         $this->assertEquals(0.0, $result->getPaymentFeeTaxExcl());
         $this->assertEquals(0.0, $result->getTaxRate());
         $this->assertEquals(false, $result->isActive());
+    }
+
+    public function testItConvertsFixedFeeToCartCurrency(): void
+    {
+        $this->molPaymentMethod->surcharge = Config::FEE_FIXED_FEE;
+        $this->molPaymentMethod->surcharge_percentage = 0;
+        $this->molPaymentMethod->surcharge_limit = 0;
+        $this->molPaymentMethod->surcharge_fixed_amount_tax_excl = 10;
+        $this->molPaymentMethod->tax_rules_group_id = 0;
+
+        $this->taxCalculator->method('addTaxes')->willReturnArgument(0);
+        $this->taxCalculator->method('getTotalRate')->willReturn(0);
+        $this->taxCalculatorProvider->method('getTaxCalculator')->willReturn($this->taxCalculator);
+
+        $result = $this->createProviderWithConversionRate(0.834578)->getPaymentFee($this->molPaymentMethod, 19.15);
+
+        $this->assertEquals(8.35, $result->getPaymentFeeTaxIncl());
+        $this->assertEquals(8.35, $result->getPaymentFeeTaxExcl());
+    }
+
+    public function testItConvertsFixedPartAndLimitOfCombinedFeeToCartCurrency(): void
+    {
+        $this->molPaymentMethod->surcharge = Config::FEE_FIXED_FEE_AND_PERCENTAGE;
+        $this->molPaymentMethod->surcharge_percentage = 10;
+        $this->molPaymentMethod->surcharge_limit = 0;
+        $this->molPaymentMethod->surcharge_fixed_amount_tax_excl = 10;
+        $this->molPaymentMethod->tax_rules_group_id = 0;
+
+        $this->taxCalculator->method('addTaxes')->willReturnArgument(0);
+        $this->taxCalculator->method('removeTaxes')->willReturnArgument(0);
+        $this->taxCalculator->method('getTotalRate')->willReturn(0);
+        $this->taxCalculatorProvider->method('getTaxCalculator')->willReturn($this->taxCalculator);
+
+        $result = $this->createProviderWithConversionRate(10)->getPaymentFee($this->molPaymentMethod, 200);
+
+        $this->assertEquals(120.0, $result->getPaymentFeeTaxIncl());
+    }
+
+    public function testItConvertsPercentageFeeLimitToCartCurrency(): void
+    {
+        $this->molPaymentMethod->surcharge = Config::FEE_PERCENTAGE;
+        $this->molPaymentMethod->surcharge_percentage = 10;
+        $this->molPaymentMethod->surcharge_limit = 10;
+        $this->molPaymentMethod->surcharge_fixed_amount_tax_excl = 0;
+        $this->molPaymentMethod->tax_rules_group_id = 0;
+
+        $this->taxCalculator->method('removeTaxes')->willReturnArgument(0);
+        $this->taxCalculator->method('getTotalRate')->willReturn(0);
+        $this->taxCalculatorProvider->method('getTaxCalculator')->willReturn($this->taxCalculator);
+
+        $result = $this->createProviderWithConversionRate(0.834578)->getPaymentFee($this->molPaymentMethod, 200);
+
+        $this->assertEquals(8.35, $result->getPaymentFeeTaxIncl());
+    }
+
+    private function createProviderWithConversionRate(float $rate): PaymentFeeProvider
+    {
+        $context = $this->createMock(Context::class);
+        $context->method('getComputingPrecision')->willReturn(2);
+        $context->method('convertFromDefaultCurrency')->willReturnCallback(function (float $amount) use ($rate) {
+            return $amount * $rate;
+        });
+
+        return new PaymentFeeProvider(
+            $context,
+            $this->moduleFactory,
+            $this->paymentFeeValidator,
+            $this->logger,
+            $this->taxCalculatorProvider
+        );
     }
 
     public function testItReturnsCorrectTextForPositivePaymentFee(): void
