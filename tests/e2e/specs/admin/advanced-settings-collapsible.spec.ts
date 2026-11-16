@@ -2,30 +2,7 @@ import { test, expect } from '../../fixtures/base';
 import type { Locator, Page } from '@playwright/test';
 import { AdvancedSettingsPage } from '../../pages/admin/advanced-settings-page';
 import { skipIfDisconnected } from '../../helpers/module-state';
-
-type StatusMapping = { configKey: string; prestashopStatus: string; mollieStatus: string };
-
-const callAjax = (page: Page, action: string, data?: Record<string, unknown>) =>
-  page.evaluate(
-    async ([action, data]) => {
-      let base = (window as unknown as { mollieAdvancedSettingsAjaxUrl: string }).mollieAdvancedSettingsAjaxUrl;
-      if (location.protocol === 'https:' && base.startsWith('http:')) {
-        base = base.replace('http:', 'https:');
-      }
-      const url = new URL(base, location.origin);
-      url.searchParams.set('ajax', '1');
-
-      const formData = new FormData();
-      formData.append('action', action);
-      if (data !== undefined) {
-        formData.append('data', JSON.stringify(data));
-      }
-      const response = await fetch(url.toString(), { method: 'POST', body: formData });
-
-      return response.json();
-    },
-    [action, data] as const
-  );
+import { callAdvancedSettingsAjax as callAjax, type StatusMapping } from '../../helpers/advanced-settings';
 
 const openForm = async (page: Page) => {
   const settings = new AdvancedSettingsPage(page);
