@@ -736,6 +736,11 @@ export function PaymentMethodSettings({ method, countries, carriers, showApplePa
                 <p className="text-xs text-muted-foreground mt-1">
                   {t('paymentFeeEmailHelp')}
                 </p>
+                {method.settings.paymentFees.type !== 'none' && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {t('paymentFeeCurrencyHelp')}
+                  </p>
+                )}
               </div>
 
               {/* Fixed Fee Fields - Show for: fixed, combined */}

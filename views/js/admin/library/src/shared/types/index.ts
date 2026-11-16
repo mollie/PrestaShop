@@ -152,6 +152,7 @@ export interface MolliePaymentMethodsTranslations {
   minOrderAmount: string;
   maxOrderAmount: string;
   paymentFeeEmailHelp: string;
+  paymentFeeCurrencyHelp: string;
 
   // Order Restrictions
   orderRestrictions: string;
