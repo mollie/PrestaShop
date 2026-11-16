@@ -27,6 +27,8 @@ const ChevronDown = ({ className }: { className?: string }) => (
   </svg>
 )
 
+const SKIP_STATUS_ID = '0'
+
 function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ")
 }
@@ -300,6 +302,7 @@ interface StatusMapping {
   mollieStatus: string
   prestashopStatus: string
   configKey: string
+  allowSkip: boolean
 }
 
 interface EmailStatus {
@@ -519,7 +522,10 @@ const AdvancedSettings: React.FC = () => {
     )
   }
 
-  const mappedStatusCount = statusMappings.filter((mapping) => orderStatuses.some((status) => status.id === mapping.prestashopStatus)).length
+  const orderStatusOptions = orderStatuses.map((status) => ({ value: status.id, label: status.name }))
+  const statusMappingOptions = (mapping: StatusMapping) =>
+    mapping.allowSkip ? [{ value: SKIP_STATUS_ID, label: t('skipThisStatus') }, ...orderStatusOptions] : orderStatusOptions
+  const mappedStatusCount = statusMappings.filter((mapping) => statusMappingOptions(mapping).some((option) => option.value === mapping.prestashopStatus)).length
   const enabledEmailCount = emailStatuses.filter((email) => email.enabled).length
 
   return (
@@ -840,7 +846,7 @@ const AdvancedSettings: React.FC = () => {
 
         <div className="status-mapping-table">
           {statusMappings.map((mapping) => (
-            <div key={mapping.configKey} className="status-mapping-row">
+            <div key={mapping.configKey} className="status-mapping-row" data-testid={`status-mapping-row-${mapping.configKey}`}>
               <div className="status-mapping-col">
                 <div className="status-label">{mapping.mollieStatus}</div>
                 <div className="status-sublabel">{t('molliePaymentStatus')}</div>
@@ -852,7 +858,7 @@ const AdvancedSettings: React.FC = () => {
                 <RadioSelect
                   value={mapping.prestashopStatus}
                   onValueChange={(value) => handleStatusMappingChange(mapping.configKey, value)}
-                  options={orderStatuses.map(status => ({ value: status.id, label: status.name }))}
+                  options={statusMappingOptions(mapping)}
                   placeholder={t('selectStatus')}
                 />
               </div>

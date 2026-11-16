@@ -174,6 +174,7 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             'molliePaymentStatus' => $this->module->l('Mollie Payment Status', self::FILE_NAME),
             'prestashopOrderStatus' => $this->module->l('PrestaShop order status', self::FILE_NAME),
             'selectStatus' => $this->module->l('Select status', self::FILE_NAME),
+            'skipThisStatus' => $this->module->l('Skip this status', self::FILE_NAME),
             'emailStatusInfo' => $this->module->l('If enabled, customers will receive an email when the order status changes', self::FILE_NAME),
             'sendEmailOnStatus' => $this->module->l('Send email on status', self::FILE_NAME),
             'saving' => $this->module->l('Saving...', self::FILE_NAME),
@@ -470,12 +471,15 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             Config::MOLLIE_STATUS_CHARGEBACK => $this->module->l('Chargeback', self::FILE_NAME),
         ];
 
+        $statusesWithoutSkip = [Config::MOLLIE_STATUS_AWAITING, Config::MOLLIE_STATUS_OPEN];
+
         foreach ($statusKeys as $key => $name) {
             $prestashopStatusId = (int) $this->configuration->get($key);
             $statuses[] = [
                 'mollieStatus' => $name,
                 'prestashopStatus' => (string) $prestashopStatusId,
                 'configKey' => $key,
+                'allowSkip' => !in_array($key, $statusesWithoutSkip, true),
             ];
         }
 

@@ -23,12 +23,29 @@ class AdminMollieAdvancedSettingsTranslationsTest extends TestCase
         'Shows the PrestaShop Account and CloudSync setup on the API configuration page.',
     ];
 
+    const SKIP_STATUS_SOURCES = [
+        'Skip this status',
+    ];
+
     /**
      * @dataProvider provideCatalogs
      */
     public function testOnboardingSwitchStringsAreTranslated(string $locale, array $catalog): void
     {
-        foreach (self::SOURCES as $source) {
+        $this->assertSourcesTranslated(self::SOURCES, $locale, $catalog);
+    }
+
+    /**
+     * @dataProvider provideCatalogs
+     */
+    public function testSkipStatusOptionIsTranslated(string $locale, array $catalog): void
+    {
+        $this->assertSourcesTranslated(self::SKIP_STATUS_SOURCES, $locale, $catalog);
+    }
+
+    private function assertSourcesTranslated(array $sources, string $locale, array $catalog): void
+    {
+        foreach ($sources as $source) {
             $key = '<{mollie}prestashop>adminmollieadvancedsettingscontroller_' . md5($source);
 
             $this->assertArrayHasKey($key, $catalog, sprintf('%s.php is missing "%s".', $locale, $source));

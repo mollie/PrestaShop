@@ -644,6 +644,7 @@ $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_12e55b884c48
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_45b6de29a9a31e50bdb57020108a8c5a'] = 'Κατάσταση πληρωμής Mollie';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0c573dd42480d097bee61cdc975e16d8'] = 'Κατάσταση παραγγελίας PrestaShop';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_9aadb017cc5b335be77ba090d5029259'] = 'Επιλέξτε κατάσταση';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_7aace0dc23ee8b74744bdf79c98a2605'] = 'Παραλείψτε αυτή την κατάσταση';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_4064200b2a98dad3bc6eb5f5d0b2920b'] = 'Αν είναι ενεργοποιημένο, οι πελάτες θα λαμβάνουν email όταν αλλάζει η κατάσταση παραγγελίας';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_817086a4925624b2bb044259bf7e0d6e'] = 'Αποστολή email κατά την αλλαγή κατάστασης';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_575f5f86d2c7ea113c6710c1037c4465'] = 'Αποθήκευση...';
