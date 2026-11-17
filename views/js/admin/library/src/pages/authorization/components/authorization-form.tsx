@@ -78,8 +78,7 @@ export default function AuthorizationForm() {
   const [isConnected, setIsConnected] = useState(false)
   const [showApiKey, setShowApiKey] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [hasTestKey, setHasTestKey] = useState(false)
-  const [hasLiveKey, setHasLiveKey] = useState(false)
+  const [storedKeys, setStoredKeys] = useState({ live: false, test: false })
   const [errorMessage, setErrorMessage] = useState("")
   const [justConnected, setJustConnected] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
@@ -100,10 +99,11 @@ export default function AuthorizationForm() {
       try {
         const response = await authApiService.getCurrentSettings()
         if (response.success) {
-          setHasTestKey(response.data.has_test_key || false)
-          setHasLiveKey(response.data.has_live_key || false)
+          setStoredKeys({
+            live: response.data.has_live_key || false,
+            test: response.data.has_test_key || false,
+          })
           setMode(response.data.environment as "live" | "test")
-          setApiKey("")
           setIsConnected(response.data.is_connected || false)
           setErrorMessage("")
           setJustConnected(false) // Reset the "just connected" state on load
@@ -133,11 +133,7 @@ export default function AuthorizationForm() {
       if (saveResponse.success) {
         setIsConnected(true)
         setJustConnected(true) // Show success message only after successful connect
-        if (mode === "live") {
-          setHasLiveKey(true)
-        } else {
-          setHasTestKey(true)
-        }
+        setStoredKeys(keys => ({ ...keys, [mode]: true }))
         setErrorMessage("")
 
         if (mode === "live" && copyOnNextConnect) {
@@ -191,12 +187,7 @@ export default function AuthorizationForm() {
         setApiKey("")
 
         const targetHasKey = switchResponse.data.has_stored_key || false
-
-        if (pendingMode === "live") {
-          setHasLiveKey(targetHasKey)
-        } else {
-          setHasTestKey(targetHasKey)
-        }
+        setStoredKeys(keys => ({ ...keys, [pendingMode]: targetHasKey }))
 
         if (shouldCopy) {
           // Without a Live key the copy cannot run yet, so it waits for the merchant to connect one
@@ -396,7 +387,7 @@ export default function AuthorizationForm() {
                     type={showApiKey ? "text" : "password"}
                     value={apiKey}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApiKey(e.target.value)}
-                    placeholder={(mode === "live" ? hasLiveKey : hasTestKey) ? t('apiKeySavedPlaceholder') : t('apiKeyPlaceholder')}
+                    placeholder={storedKeys[mode] ? t('apiKeySavedPlaceholder') : t('apiKeyPlaceholder')}
                     className="pr-20 h-12 text-base border-gray-300"
                   />
                   {apiKey && (
