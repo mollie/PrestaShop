@@ -35,7 +35,7 @@ class CartRepository extends AbstractRepository implements CartRepositoryInterfa
         $query->from('cart_product', 'cp');
         $query->innerJoin('address', 'a', 'a.`id_address` = cp.`id_address_delivery`');
         $query->where('cp.`id_cart` = ' . $cartId);
-        $query->where('a.`alias` = \'' . pSQL(Config::APPLE_PAY_DIRECT_ADDRESS_ALIAS) . '\'');
+        $query->where('a.`alias` IN (\'' . pSQL(Config::APPLE_PAY_DIRECT_ADDRESS_ALIAS) . '\', \'' . pSQL(Config::EXPRESS_ADDRESS_ALIAS) . '\')');
         $query->where('a.`deleted` = 1');
 
         return array_map('intval', array_column(Db::getInstance()->executeS($query) ?: [], 'id_address_delivery'));
