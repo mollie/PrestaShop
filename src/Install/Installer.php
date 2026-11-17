@@ -192,6 +192,7 @@ class Installer implements InstallerInterface
             'actionCarrierUpdate',
             'displayPaymentTop',
             'actionCartSave',
+            'displayPersonalInformationTop',
         ];
     }
 
@@ -235,10 +236,13 @@ class Installer implements InstallerInterface
         $this->configurationAdapter->updateValue(Config::MOLLIE_API, Config::MOLLIE_ORDERS_API);
         $this->configurationAdapter->updateValue(Config::MOLLIE_APPLE_PAY_DIRECT_STYLE, 0);
 
-        $this->configurationAdapter->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED, 0);
-        $this->configurationAdapter->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY, 0);
-        $this->configurationAdapter->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY, 0);
-        $this->configurationAdapter->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_PAYPAL, 0);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED, 1);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY, 1);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY, 1);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_PAYPAL, 1);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_PLACEMENT_CART, 1);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_PLACEMENT_CHECKOUT, 1);
+        $this->configurationAdapter->updateValue(Config::MOLLIE_EXPRESS_COMPONENT_PLACEMENT_PAYMENT, 1);
 
         $this->configurationAdapter->updateValue(Config::MOLLIE_SUBSCRIPTION_ORDER_CARRIER_ID, 0);
         $this->configurationAdapter->updateValue(Config::MOLLIE_SUBSCRIPTION_ENABLED, 0);

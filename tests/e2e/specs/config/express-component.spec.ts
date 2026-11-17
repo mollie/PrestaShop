@@ -1,4 +1,5 @@
 import { test, expect } from '../../fixtures/base';
+import { AdvancedSettingsPage } from '../../pages/admin/advanced-settings-page';
 import { PaymentMethodsPage } from '../../pages/admin/payment-methods-page';
 import { CheckoutPage } from '../../pages/front/checkout-page';
 import { getGlobalConfig, restoreGlobalConfig, setGlobalConfig, setMethodConfig } from '../../helpers/config';
@@ -9,8 +10,9 @@ import { skipIfDisconnected } from '../../helpers/module-state';
  * test-key shop can prove is the gating around it: the back office card persists its
  * switches without touching the Apple Pay Direct ones, shows no promo pill and notes that
  * the switch only takes effect in live mode, the payment step stays free of the
- * mount div and of console errors while the setting is on in test mode, and the Apple Pay
- * Direct cart button is unaffected by the component.
+ * mount div and of console errors while the setting is on in test mode, the Apple Pay
+ * Direct cart button is unaffected by the component, and the placement switches in
+ * Advanced Settings follow the master switch and persist.
  *
  * Serial: every test here rewrites global configuration.
  */
@@ -21,6 +23,9 @@ const EXPRESS_KEYS = [
   'MOLLIE_EXPRESS_COMPONENT_APPLEPAY',
   'MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY',
   'MOLLIE_EXPRESS_COMPONENT_PAYPAL',
+  'MOLLIE_EXPRESS_COMPONENT_PLACEMENT_CART',
+  'MOLLIE_EXPRESS_COMPONENT_PLACEMENT_CHECKOUT',
+  'MOLLIE_EXPRESS_COMPONENT_PLACEMENT_PAYMENT',
   'MOLLIE_APPLE_PAY_DIRECT_CART',
   'MOLLIE_APPLE_PAY_DIRECT_PRODUCT',
 ] as const;
@@ -109,4 +114,35 @@ test('the Apple Pay Direct cart button stays while the component is enabled', as
   setGlobalConfig('MOLLIE_EXPRESS_COMPONENT_ENABLED', '1');
   const withBoth = await (await page.request.get('/en/cart?action=show')).text();
   expect(withBoth).toContain('id="mollie-applepay-direct-button"');
+});
+
+test('the placement switches follow the master switch and save', async ({ page }) => {
+  test.setTimeout(90_000);
+  setGlobalConfig('MOLLIE_EXPRESS_COMPONENT_ENABLED', '0');
+  setGlobalConfig('MOLLIE_EXPRESS_COMPONENT_PLACEMENT_CART', '0');
+  setGlobalConfig('MOLLIE_EXPRESS_COMPONENT_PLACEMENT_CHECKOUT', '0');
+  setGlobalConfig('MOLLIE_EXPRESS_COMPONENT_PLACEMENT_PAYMENT', '1');
+
+  const settings = new AdvancedSettingsPage(page);
+  await settings.goto();
+  skipIfDisconnected(!(await settings.waitForForm()), 'the advanced settings form did not render');
+
+  for (const placement of ['cart', 'checkout', 'payment'] as const) {
+    await expect(settings.expressPlacementSwitch(placement)).toBeDisabled();
+  }
+  await expect(settings.expressPlacementSwitch('cart')).not.toBeChecked();
+  await expect(settings.expressPlacementSwitch('checkout')).not.toBeChecked();
+  await expect(settings.expressPlacementSwitch('payment')).toBeChecked();
+
+  setGlobalConfig('MOLLIE_EXPRESS_COMPONENT_ENABLED', '1');
+  await settings.goto();
+  await settings.waitForForm();
+  await expect(settings.expressPlacementSwitch('cart')).toBeEnabled();
+
+  await settings.toggleExpressPlacement('cart');
+  await settings.save();
+  await settings.expectSavedSuccessfully();
+  await expect.poll(() => getGlobalConfig('MOLLIE_EXPRESS_COMPONENT_PLACEMENT_CART'), { timeout: 15_000 }).toBe('1');
+  expect(getGlobalConfig('MOLLIE_EXPRESS_COMPONENT_PLACEMENT_CHECKOUT')).toBe('0');
+  expect(getGlobalConfig('MOLLIE_EXPRESS_COMPONENT_PLACEMENT_PAYMENT')).toBe('1');
 });

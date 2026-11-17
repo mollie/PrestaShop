@@ -4,7 +4,7 @@ import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { AlertCircle } from "lucide-react"
 import "./advanced-settings.css"
-import { advancedSettingsApiService, type CarrierData, type SaveCarrierData } from "../../services/AdvancedSettingsApiService"
+import { advancedSettingsApiService, type CarrierData, type ExpressPlacements, type SaveCarrierData } from "../../services/AdvancedSettingsApiService"
 import { AdvancedSettingsSkeleton } from "./components/advanced-settings-skeleton"
 import { CollapsibleSection } from "./components/collapsible-section"
 import { useAdvancedSettingsTranslations } from "../../shared/hooks/use-advanced-settings-translations"
@@ -330,6 +330,7 @@ const AdvancedSettings: React.FC = () => {
   const [translateMollie, setTranslateMollie] = useState("")
   const [cssPath, setCssPath] = useState("")
   const [expressComponent, setExpressComponent] = useState(false)
+  const [expressPlacements, setExpressPlacements] = useState<ExpressPlacements>({ cart: false, checkout: false, payment: true })
   const [expressLiveReady, setExpressLiveReady] = useState(true)
 
   const [carriers, setCarriers] = useState<CarrierRow[]>([])
@@ -344,6 +345,12 @@ const AdvancedSettings: React.FC = () => {
   const [logLevelOptions, setLogLevelOptions] = useState<{ id: string; name: string }[]>([])
   const [logoDisplayOptions, setLogoDisplayOptions] = useState<{ id: string; name: string }[]>([])
   const [translateMollieOptions, setTranslateMollieOptions] = useState<{ id: string; name: string }[]>([])
+
+  const expressPlacementToggles: { placement: keyof ExpressPlacements; label: string; description?: string }[] = [
+    { placement: "cart", label: t('expressPlacementCart'), description: t('expressPlacementCollectInfo') },
+    { placement: "checkout", label: t('expressPlacementCheckout'), description: t('expressPlacementCollectInfo') },
+    { placement: "payment", label: t('expressPlacementPayment') },
+  ]
 
   const carrierUrlOptions = [
     { value: "do_not_auto_ship", label: t('doNotAutoShip') },
@@ -399,6 +406,9 @@ const AdvancedSettings: React.FC = () => {
         setDebugMode(data.debugMode || false)
         setPsAccountsOnboarding(data.psAccountsOnboarding || false)
         setExpressComponent(data.expressComponent || false)
+        if (data.expressPlacements) {
+          setExpressPlacements(data.expressPlacements)
+        }
         setExpressLiveReady(data.expressLiveReady !== false)
         setLogLevel(data.logLevel || logLevelOpts[0]?.id || "")
 
@@ -446,6 +456,7 @@ const AdvancedSettings: React.FC = () => {
         cssPath,
         translateMollie,
         expressComponent,
+        expressPlacements,
         statusMappings,
         emailStatuses,
       })
@@ -805,7 +816,7 @@ const AdvancedSettings: React.FC = () => {
         )}
 
         <div className="toggle-group">
-          <div className="toggle-content">
+          <div className="toggle-content toggle-content--aligned">
             <div>
               <div className="toggle-label">{t('expressCheckoutEnable')}</div>
               <div className="toggle-description">{t('expressCheckoutInfo')}</div>
@@ -817,6 +828,28 @@ const AdvancedSettings: React.FC = () => {
             <span className="toggle-status">{expressComponent ? t('enabled') : t('disabled')}</span>
           </div>
         </div>
+
+        {expressPlacementToggles.map(({ placement, label, description }) => (
+          <div key={placement} className={`toggle-group${expressComponent ? '' : ' is-disabled'}`}>
+            <div className="toggle-content toggle-content--aligned">
+              <div>
+                <div className="toggle-label">{label}</div>
+                {description && <div className="toggle-description">{description}</div>}
+              </div>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  data-testid={`advanced-settings-express-placement-${placement}`}
+                  checked={expressPlacements[placement]}
+                  disabled={!expressComponent}
+                  onChange={(e) => setExpressPlacements((current) => ({ ...current, [placement]: e.target.checked }))}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+              <span className="toggle-status">{expressPlacements[placement] ? t('enabled') : t('disabled')}</span>
+            </div>
+          </div>
+        ))}
       </section>
 
       <CollapsibleSection
