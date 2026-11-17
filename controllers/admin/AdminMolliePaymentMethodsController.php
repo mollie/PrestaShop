@@ -29,6 +29,7 @@ use Mollie\Service\CountryService;
 use Mollie\Service\MultistoreSettingsContextGuard;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Verification\Employee\DeniesAjaxWithoutTabRight;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -36,6 +37,8 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminMolliePaymentMethodsController extends ModuleAdminController
 {
+    use DeniesAjaxWithoutTabRight;
+
     const FILE_NAME = 'AdminMolliePaymentMethodsController';
 
     /** @var Mollie */
@@ -337,6 +340,12 @@ class AdminMolliePaymentMethodsController extends ModuleAdminController
             'uploadCustomLogo',
             'dismissExpressPromo',
         ];
+
+        $requiredRight = in_array($action, $settingsMutatingActions, true) ? 'edit' : 'view';
+
+        if ($this->denyAjaxWithoutTabRight($requiredRight, 'AdminMolliePaymentMethods')) {
+            return;
+        }
 
         if (in_array($action, $settingsMutatingActions, true) && !$this->multistoreSettingsContextGuard->canEditSettings()) {
             $this->ajaxRender(json_encode([

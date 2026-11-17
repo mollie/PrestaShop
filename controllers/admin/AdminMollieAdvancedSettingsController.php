@@ -21,6 +21,7 @@ use Mollie\Logger\LoggerInterface;
 use Mollie\Service\MolCarrierInformationService;
 use Mollie\Service\MultistoreSettingsContextGuard;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Verification\Employee\DeniesAjaxWithoutTabRight;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -28,6 +29,8 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminMollieAdvancedSettingsController extends ModuleAdminController
 {
+    use DeniesAjaxWithoutTabRight;
+
     const FILE_NAME = 'AdminMollieAdvancedSettingsController';
 
     /** @var Mollie */
@@ -191,6 +194,12 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
         }
 
         $action = $this->tools->getValue('action');
+
+        $requiredRight = 'saveSettings' === $action ? 'edit' : 'view';
+
+        if ($this->denyAjaxWithoutTabRight($requiredRight, 'AdminMollieAdvancedSettings')) {
+            return;
+        }
 
         if ('saveSettings' === $action && !$this->multistoreSettingsContextGuard->canEditSettings()) {
             $this->ajaxRender(json_encode([

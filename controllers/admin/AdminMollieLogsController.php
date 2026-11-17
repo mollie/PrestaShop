@@ -19,6 +19,7 @@ use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\MolLogRepositoryInterface;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\VersionUtility;
+use Mollie\Verification\Employee\CanAccessTab;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -251,6 +252,13 @@ class AdminMollieLogsController extends ModuleAdminController
 
     public function displayAjaxGetLog()
     {
+        if (!(new CanAccessTab())->verify($this->context->employee, 'view', 'AdminMollieLogs')) {
+            $this->ajaxResponse(json_encode([
+                'error' => true,
+                'message' => $this->trans('You do not have permission to view this.', [], 'Admin.Notifications.Error'),
+            ]));
+        }
+
         /** @var \Mollie\Adapter\ToolsAdapter $tools */
         $tools = $this->module->getService(\Mollie\Adapter\ToolsAdapter::class);
 

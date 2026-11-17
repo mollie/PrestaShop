@@ -25,6 +25,7 @@ use Mollie\Service\ShipmentServiceInterface;
 use Mollie\Service\ShipService;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TransactionUtility;
+use Mollie\Verification\Employee\DeniesAjaxWithoutTabRight;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -32,6 +33,18 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminMollieAjaxController extends ModuleAdminController
 {
+    use DeniesAjaxWithoutTabRight;
+
+    private const ACTION_RIGHTS = [
+        'togglePaymentMethod' => ['edit', 'AdminMolliePaymentMethods'],
+        'validateLogo' => ['edit', 'AdminMolliePaymentMethods'],
+        'updateFixedPaymentFeePrice' => ['view', 'AdminMolliePaymentMethods'],
+        'testApiKeys' => ['view', 'AdminMollieAuthentication'],
+        'resendPaymentMail' => ['edit', 'AdminOrders'],
+        'retrieve' => ['view', 'AdminOrders'],
+        'getShipmentInfo' => ['view', 'AdminOrders'],
+    ];
+
     /** @var Mollie */
     public $module;
 
@@ -44,6 +57,10 @@ class AdminMollieAjaxController extends ModuleAdminController
         $action = Tools::getValue('action');
 
         $this->context->smarty->assign('bootstrap', true);
+
+        if (is_string($action) && $this->denyWithoutActionRight($action)) {
+            return;
+        }
 
         switch ($action) {
             case 'togglePaymentMethod':
@@ -86,6 +103,17 @@ class AdminMollieAjaxController extends ModuleAdminController
             default:
                 break;
         }
+    }
+
+    private function denyWithoutActionRight(string $action): bool
+    {
+        if (!isset(self::ACTION_RIGHTS[$action])) {
+            return false;
+        }
+
+        list($right, $tab) = self::ACTION_RIGHTS[$action];
+
+        return $this->denyAjaxWithoutTabRight($right, $tab);
     }
 
     /**

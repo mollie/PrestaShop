@@ -21,6 +21,7 @@ use Mollie\Logger\LoggerInterface;
 use Mollie\Service\MultistoreSettingsContextGuard;
 use Mollie\Service\PaymentMethod\EnvironmentSettingsCopyService;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Verification\Employee\DeniesAjaxWithoutTabRight;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -28,6 +29,8 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminMollieAuthenticationController extends ModuleAdminController
 {
+    use DeniesAjaxWithoutTabRight;
+
     const FILE_NAME = 'AdminMollieAuthenticationController';
 
     /** @var Mollie */
@@ -233,6 +236,12 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         $action = $this->tools->getValue('action');
 
         $settingsMutatingActions = ['saveApiKey', 'switchEnvironment', 'copyTestSettingsToLive'];
+
+        $requiredRight = in_array($action, $settingsMutatingActions, true) ? 'edit' : 'view';
+
+        if ($this->denyAjaxWithoutTabRight($requiredRight, 'AdminMollieAuthentication')) {
+            return;
+        }
 
         if (in_array($action, $settingsMutatingActions, true) && !$this->multistoreSettingsContextGuard->canEditSettings()) {
             $this->ajaxRender(json_encode([
