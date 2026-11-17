@@ -132,7 +132,8 @@ class ExpressShippingOptionsService
         }
 
         if (!in_array(ExpressComponentAvailabilityService::VISIBILITY_AUTOMATIC, $this->availability->getButtonVisibility(), true)) {
-            throw ExpressShippingRejectedException::unsupportedCountry(sprintf('No express payment method is offered for country "%s"', $countryIso));
+            // the payment methods also judge amount, currency and group here, not only the country
+            throw ExpressShippingRejectedException::unsupportedAddress(sprintf('No express payment method is offered for this cart with country "%s"', $countryIso));
         }
 
         $options = $this->buildOptions($cart, $addressId, $sessionAmount, $this->context->getCurrencyIso());

@@ -312,7 +312,7 @@ class ExpressShippingOptionsServiceTest extends BaseTestCase
         $service->method('applyPlaceholderAddress')->willReturn(self::ADDRESS_ID);
         $service->expects($this->never())->method('getUsableCarriers');
 
-        $this->assertRejected(ExpressShippingRejectedException::UNSUPPORTED_COUNTRY, $service);
+        $this->assertRejected(ExpressShippingRejectedException::UNSUPPORTED_ADDRESS, $service);
     }
 
     public function testItRejectsAnAddressNoCarrierServes(): void
