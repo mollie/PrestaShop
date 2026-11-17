@@ -81,14 +81,21 @@ class ExpressSessionService
 
     /**
      * @param bool $forceNew skip the stored session, e.g. one that already carries a payment
+     * @param bool $collectDetails Mollie collects the customer, addresses and shipping option
      */
-    public function getOrCreateSession(\Cart $cart, bool $forceNew = false): ExpressSession
+    public function getOrCreateSession(\Cart $cart, bool $forceNew = false, bool $collectDetails = false): ExpressSession
     {
-        $amount = $this->getCartAmount($cart);
+        if ($collectDetails && empty($cart->secure_key)) {
+            // The webhook token is a hash of this key, so an anonymous cart must not keep it empty.
+            $cart->secure_key = md5(random_bytes(16));
+            $cart->save();
+        }
+
+        $amount = $this->getCartAmount($cart, $collectDetails);
         $currency = \Tools::strtoupper($this->context->getCurrencyIso());
         $stored = $this->sessionRepository->findLatestByCartId((int) $cart->id);
 
-        if (!$forceNew && $stored && $this->isReusable($stored, $amount, $currency, $cart)) {
+        if (!$forceNew && $stored && $this->isReusable($stored, $amount, $currency, $cart, $collectDetails)) {
             $session = $this->loadOpenSession($stored);
 
             if ($session) {
@@ -96,10 +103,10 @@ class ExpressSessionService
             }
         }
 
-        $session = $this->sessionApi->create($this->requestBuilder->build($cart));
+        $session = $this->sessionApi->create($this->requestBuilder->build($cart, $collectDetails));
 
         $this->sessionRepository->deleteByCartId((int) $cart->id);
-        $this->sessionRepository->persist($this->buildRow($cart, $session, $amount, $currency));
+        $this->sessionRepository->persist($this->buildRow($cart, $session, $amount, $currency, $collectDetails));
 
         $this->logger->debug(sprintf('%s - Express session created', self::FILE_NAME), [
             'cart_id' => (int) $cart->id,
@@ -128,39 +135,32 @@ class ExpressSessionService
             return ExpressSubmitCheck::rejected(ExpressSubmitCheck::REASON_ORDER_EXISTS);
         }
 
-        if (!$this->availability->isAvailable($cart)) {
+        $stored = $this->sessionRepository->findLatestByCartId((int) $cart->id);
+        $collectDetails = $stored && (bool) $stored->collect_details;
+        $isAvailable = $collectDetails ? $this->availability->isAvailableForCollect($cart) : $this->availability->isAvailable($cart);
+
+        if (!$isAvailable) {
             return ExpressSubmitCheck::rejected(ExpressSubmitCheck::REASON_CART_NOT_READY);
         }
 
-        $stored = $this->sessionRepository->findLatestByCartId((int) $cart->id);
-
         if ($stored && !$this->isBuiltForCartOwner($stored, $cart)) {
-            $session = $this->getOrCreateSession($cart);
+            $session = $this->getOrCreateSession($cart, false, $collectDetails);
 
             return ExpressSubmitCheck::rejected(ExpressSubmitCheck::REASON_CART_OWNER_CHANGED, $session->getClientAccessToken());
-        }
-
-        // A shopper still on the checkout after a payment was started on this session abandoned
-        // it (3-D Secure cancelled or failed). Mollie keeps that payment open and refuses another
-        // one on the same session, so the retry gets a new session before any payment exists.
-        if ($stored && self::STATUS_PAYMENT_STARTED === (string) $stored->status) {
-            $session = $this->getOrCreateSession($cart, true);
-
-            return ExpressSubmitCheck::rejected(ExpressSubmitCheck::REASON_PAYMENT_STARTED, $session->getClientAccessToken());
         }
 
         // Another tab replaced the session this page still shows. Every check below reads the stored
         // row, so passing them would approve a payment on a session the shop no longer tracks,
         // possibly one whose webhook token the shop now refuses.
         if ($stored && '' !== $mountedSessionId && !hash_equals((string) $stored->session_id, $mountedSessionId)) {
-            $session = $this->getOrCreateSession($cart);
+            $session = $this->getOrCreateSession($cart, false, $collectDetails);
 
             return ExpressSubmitCheck::rejected(ExpressSubmitCheck::REASON_SESSION_CHANGED, $session->getClientAccessToken());
         }
 
         $isSameCurrency = $stored && \Tools::strtoupper((string) $stored->currency_iso) === \Tools::strtoupper($this->context->getCurrencyIso());
 
-        if ($isSameCurrency && NumberUtility::isEqual((float) $stored->amount, (float) $this->getCartAmount($cart))) {
+        if ($isSameCurrency && NumberUtility::isEqual((float) $stored->amount, (float) $this->getCartAmount($cart, $collectDetails))) {
             $stored->status = self::STATUS_PAYMENT_STARTED;
             $stored->updated_at = $this->clock->getCurrentDate();
             $this->sessionRepository->persist($stored);
@@ -168,13 +168,17 @@ class ExpressSessionService
             return ExpressSubmitCheck::ok();
         }
 
-        $session = $this->getOrCreateSession($cart);
+        $session = $this->getOrCreateSession($cart, false, $collectDetails);
 
         return ExpressSubmitCheck::rejected(ExpressSubmitCheck::REASON_AMOUNT_CHANGED, $session->getClientAccessToken());
     }
 
-    private function isReusable(\MolExpressSession $stored, string $amount, string $currency, \Cart $cart): bool
+    private function isReusable(\MolExpressSession $stored, string $amount, string $currency, \Cart $cart, bool $collectDetails): bool
     {
+        if ((bool) $stored->collect_details !== $collectDetails) {
+            return false;
+        }
+
         if (!NumberUtility::isEqual((float) $stored->amount, (float) $amount)) {
             return false;
         }
@@ -235,7 +239,7 @@ class ExpressSessionService
         return $session->isOpen() ? $session : null;
     }
 
-    private function buildRow(\Cart $cart, ExpressSession $session, string $amount, string $currency): \MolExpressSession
+    private function buildRow(\Cart $cart, ExpressSession $session, string $amount, string $currency, bool $collectDetails): \MolExpressSession
     {
         $now = $this->clock->getCurrentDate();
 
@@ -247,14 +251,15 @@ class ExpressSessionService
         $row->currency_iso = $currency;
         $row->webhook_token = $this->getWebhookToken($cart);
         $row->status = $session->getStatus() ?: ExpressSession::STATUS_OPEN;
+        $row->collect_details = $collectDetails;
         $row->created_at = $now;
         $row->updated_at = $now;
 
         return $row;
     }
 
-    private function getCartAmount(\Cart $cart): string
+    private function getCartAmount(\Cart $cart, bool $collectDetails): string
     {
-        return TextFormatUtility::formatNumber($cart->getOrderTotal(true, \Cart::BOTH), Config::API_ROUNDING_PRECISION);
+        return TextFormatUtility::formatNumber($this->requestBuilder->getSessionAmount($cart, $collectDetails), Config::API_ROUNDING_PRECISION);
     }
 }

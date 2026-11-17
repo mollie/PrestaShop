@@ -38,6 +38,8 @@ class ExpressSessionRequest implements \JsonSerializable
     private $metadata;
     /** @var string[] */
     private $requiredCustomerDetails;
+    /** @var array */
+    private $shipping;
 
     public function __construct(
         string $currency,
@@ -47,7 +49,8 @@ class ExpressSessionRequest implements \JsonSerializable
         string $redirectUrl,
         string $webhookUrl,
         array $metadata,
-        array $requiredCustomerDetails = []
+        array $requiredCustomerDetails = [],
+        array $shipping = []
     ) {
         $this->currency = $currency;
         $this->amount = $amount;
@@ -57,6 +60,7 @@ class ExpressSessionRequest implements \JsonSerializable
         $this->webhookUrl = $webhookUrl;
         $this->metadata = $metadata;
         $this->requiredCustomerDetails = $requiredCustomerDetails;
+        $this->shipping = $shipping;
     }
 
     public function getCurrency(): string
@@ -99,9 +103,14 @@ class ExpressSessionRequest implements \JsonSerializable
         return $this->requiredCustomerDetails;
     }
 
+    public function getShipping(): array
+    {
+        return $this->shipping;
+    }
+
     public function jsonSerialize(): array
     {
-        return [
+        $body = [
             'amount' => [
                 'currency' => $this->currency,
                 'value' => $this->amount,
@@ -115,5 +124,11 @@ class ExpressSessionRequest implements \JsonSerializable
             ],
             'requiredCustomerDetails' => $this->requiredCustomerDetails,
         ];
+
+        if (!empty($this->shipping)) {
+            $body['shipping'] = $this->shipping;
+        }
+
+        return $body;
     }
 }

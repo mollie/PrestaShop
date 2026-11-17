@@ -109,4 +109,89 @@ class ExpressSessionTest extends BaseTestCase
             'requiredCustomerDetails' => [],
         ], $request->jsonSerialize());
     }
+
+    public function testRequestSerializesTheShippingCallbackOnlyWhenSet(): void
+    {
+        $request = new ExpressSessionRequest(
+            'EUR',
+            '54.90',
+            'mol_abc',
+            [],
+            'https://shop.test/return',
+            'https://shop.test/webhook',
+            [],
+            ['email', 'billing-address', 'shipping-address'],
+            ['callbackUrl' => 'https://shop.test/shipping']
+        );
+
+        $body = $request->jsonSerialize();
+
+        $this->assertSame(['callbackUrl' => 'https://shop.test/shipping'], $body['shipping']);
+        $this->assertSame(['callbackUrl' => 'https://shop.test/shipping'], $request->getShipping());
+        $this->assertSame(['email', 'billing-address', 'shipping-address'], $body['requiredCustomerDetails']);
+
+        $withoutShipping = new ExpressSessionRequest('EUR', '54.90', 'mol_abc', [], 'r', 'w', [], ['email']);
+
+        $this->assertArrayNotHasKey('shipping', $withoutShipping->jsonSerialize());
+        $this->assertSame([], $withoutShipping->getShipping());
+    }
+
+    public function testItReadsTheCollectedAddressesAndTheChosenShippingOption(): void
+    {
+        $address = [
+            'givenName' => 'Jane',
+            'familyName' => 'Customer',
+            'email' => 'jane.customer@example.test',
+            'streetAndNumber' => 'Teststraat 1',
+            'city' => 'Amsterdam',
+            'region' => 'Noord-Holland',
+            'postalCode' => '1000 AA',
+            'country' => 'NL',
+        ];
+
+        $resource = new Session($this->mock(MollieApiClient::class));
+        $resource->id = 'sess_123';
+        $resource->status = 'completed';
+        $resource->billingAddress = (object) $address;
+        $resource->shippingAddress = (object) array_merge($address, ['city' => 'Utrecht']);
+        $resource->lines = [
+            (object) ['type' => 'physical', 'description' => 'T-shirt', 'sku' => 'tshirt'],
+            (object) ['type' => 'shipping_fee', 'description' => 'Courier', 'reference' => '12', 'sku' => 'carrier_sku'],
+        ];
+
+        $session = ExpressSession::fromResource($resource);
+
+        $this->assertSame($address, $session->getBillingAddress());
+        $this->assertSame('Utrecht', $session->getShippingAddress()['city']);
+        $this->assertSame('12', $session->getShippingReference());
+    }
+
+    public function testTheShippingReferenceFallsBackToTheSku(): void
+    {
+        $resource = new Session($this->mock(MollieApiClient::class));
+        $resource->id = 'sess_123';
+        $resource->status = 'completed';
+        $resource->lines = [(object) ['type' => 'shipping_fee', 'sku' => '15']];
+
+        $this->assertSame('15', ExpressSession::fromResource($resource)->getShippingReference());
+    }
+
+    public function testMissingAddressesAndShippingGiveNull(): void
+    {
+        $resource = new Session($this->mock(MollieApiClient::class));
+        $resource->id = 'sess_123';
+        $resource->status = 'open';
+        $resource->lines = [(object) ['type' => 'physical', 'sku' => 'tshirt']];
+
+        $session = ExpressSession::fromResource($resource);
+
+        $this->assertNull($session->getBillingAddress());
+        $this->assertNull($session->getShippingAddress());
+        $this->assertNull($session->getShippingReference());
+
+        $bare = new ExpressSession('sess_1', '', 'open', '1.00', 'EUR', '');
+
+        $this->assertNull($bare->getBillingAddress());
+        $this->assertNull($bare->getShippingReference());
+    }
 }

@@ -51,12 +51,16 @@ class ExpressSessionServiceTest extends BaseTestCase
         $this->requestBuilder->method('build')->willReturn(
             new ExpressSessionRequest('EUR', '59.90', 'mol_1', [], 'r', 'w', [])
         );
+        $this->requestBuilder->method('getSessionAmount')->willReturnCallback(static function (\Cart $cart, bool $collectDetails) {
+            return $collectDetails ? 54.9 : 59.9;
+        });
         $this->sessionApi = $this->mock(MollieSessionApiAdapterInterface::class);
         $this->sessionRepository = $this->mock(MolExpressSessionRepositoryInterface::class);
         $this->orderRepository = $this->mock(OrderRepositoryInterface::class);
         $this->orderRepository->method('getOrderIdByCartId')->willReturn(0);
         $this->availability = $this->mock(ExpressComponentAvailabilityService::class);
         $this->availability->method('isAvailable')->willReturn(true);
+        $this->availability->method('isAvailableForCollect')->willReturn(true);
 
         $clock = $this->mock(ClockInterface::class);
         $clock->method('getCurrentDate')->willReturn(self::NOW);
@@ -80,9 +84,10 @@ class ExpressSessionServiceTest extends BaseTestCase
         );
     }
 
-    private function storedSession(float $amount = 59.9, string $createdAt = '2026-10-05 11:50:00', string $currency = 'EUR'): \MolExpressSession
+    private function storedSession(float $amount = 59.9, string $createdAt = '2026-10-05 11:50:00', string $currency = 'EUR', bool $collectDetails = false): \MolExpressSession
     {
         $row = new \MolExpressSession();
+        $row->collect_details = $collectDetails;
         $row->id_cart = 7;
         $row->session_id = 'sess_stored';
         $row->amount = $amount;
@@ -268,19 +273,14 @@ class ExpressSessionServiceTest extends BaseTestCase
         $this->assertTrue($this->service->validateBeforeSubmit($this->cart)->isOk());
     }
 
-    public function testARetryAfterAStartedPaymentGetsANewSession(): void
+    public function testARetryAfterAnUnfinishedPaymentGoesThroughOnTheSameSession(): void
     {
         $started = $this->storedSession();
         $started->status = ExpressSessionService::STATUS_PAYMENT_STARTED;
         $this->sessionRepository->method('findLatestByCartId')->willReturn($started);
-        $this->sessionApi->expects($this->never())->method('get');
-        $this->sessionApi->expects($this->once())->method('create')->willReturn($this->remoteSession('sess_new', 'open'));
+        $this->sessionApi->expects($this->never())->method('create');
 
-        $check = $this->service->validateBeforeSubmit($this->cart);
-
-        $this->assertFalse($check->isOk());
-        $this->assertSame(ExpressSubmitCheck::REASON_PAYMENT_STARTED, $check->getReason());
-        $this->assertSame('token_sess_new', $check->getClientAccessToken());
+        $this->assertTrue($this->service->validateBeforeSubmit($this->cart, 'sess_stored')->isOk());
     }
 
     public function testASessionWithAStartedPaymentIsNotReusedOnReload(): void
@@ -343,5 +343,174 @@ class ExpressSessionServiceTest extends BaseTestCase
         $this->assertSame(ExpressSubmitCheck::REASON_AMOUNT_CHANGED, $check->getReason());
         $this->assertSame('token_sess_new', $check->getClientAccessToken());
         $this->assertSame(['ok' => false, 'reason' => 'amount_changed', 'clientAccessToken' => 'token_sess_new'], $check->jsonSerialize());
+    }
+
+    public function testAPaymentModeSessionIsNotReusedForACollectRequest(): void
+    {
+        $this->sessionRepository->method('findLatestByCartId')->willReturn($this->storedSession(54.9));
+        $this->sessionApi->expects($this->never())->method('get');
+        $this->sessionApi->expects($this->once())->method('create')->willReturn($this->remoteSession('sess_new', 'open'));
+
+        $this->assertSame('sess_new', $this->service->getOrCreateSession($this->cart, false, true)->getId());
+    }
+
+    public function testACollectModeSessionIsNotReusedForAPaymentRequest(): void
+    {
+        $this->sessionRepository->method('findLatestByCartId')->willReturn($this->storedSession(59.9, '2026-10-05 11:50:00', 'EUR', true));
+        $this->sessionApi->expects($this->never())->method('get');
+        $this->sessionApi->expects($this->once())->method('create')->willReturn($this->remoteSession('sess_new', 'open'));
+
+        $this->assertSame('sess_new', $this->service->getOrCreateSession($this->cart)->getId());
+    }
+
+    public function testACollectModeSessionIsReusedForACollectRequestAtTheTotalWithoutShipping(): void
+    {
+        $this->sessionRepository->method('findLatestByCartId')->willReturn($this->storedSession(54.9, '2026-10-05 11:50:00', 'EUR', true));
+        $this->sessionApi->expects($this->once())->method('get')->willReturn($this->remoteSession('sess_stored', 'open'));
+        $this->sessionApi->expects($this->never())->method('create');
+
+        $this->assertSame('sess_stored', $this->service->getOrCreateSession($this->cart, false, true)->getId());
+    }
+
+    public function testANewCollectSessionStoresItsModeAndAmount(): void
+    {
+        $this->sessionRepository->method('findLatestByCartId')->willReturn(null);
+        $this->sessionApi->method('create')->willReturn($this->remoteSession('sess_new', 'open'));
+        $this->sessionRepository->expects($this->once())->method('persist')->with($this->callback(static function (\MolExpressSession $row) {
+            return true === $row->collect_details && 54.9 === (float) $row->amount;
+        }));
+
+        $this->service->getOrCreateSession($this->cart, false, true);
+    }
+
+    public function testANewPaymentSessionStoresThePaymentMode(): void
+    {
+        $this->sessionRepository->method('findLatestByCartId')->willReturn(null);
+        $this->sessionApi->method('create')->willReturn($this->remoteSession('sess_new', 'open'));
+        $this->sessionRepository->expects($this->once())->method('persist')->with($this->callback(static function (\MolExpressSession $row) {
+            return false === $row->collect_details;
+        }));
+
+        $this->service->getOrCreateSession($this->cart);
+    }
+
+    public function testAnAnonymousCartGetsARandomSecureKeyBeforeTheCollectSessionIsBuilt(): void
+    {
+        $cart = $this->cart;
+        $cart->secure_key = '';
+        $cart->expects($this->once())->method('save');
+        $this->sessionRepository->method('findLatestByCartId')->willReturn(null);
+        $keyAtCreate = null;
+        $this->sessionApi->method('create')->willReturnCallback(function () use ($cart, &$keyAtCreate) {
+            $keyAtCreate = $cart->secure_key;
+
+            return $this->remoteSession('sess_new', 'open');
+        });
+        $storedToken = null;
+        $this->sessionRepository->method('persist')->willReturnCallback(static function (\MolExpressSession $row) use (&$storedToken) {
+            $storedToken = $row->webhook_token;
+        });
+
+        $this->service->getOrCreateSession($cart, false, true);
+
+        $this->assertRegExp('/^[0-9a-f]{32}$/', (string) $keyAtCreate);
+        $this->assertSame($keyAtCreate, $cart->secure_key);
+        $this->assertSame(HashUtility::hash($keyAtCreate), $storedToken);
+    }
+
+    public function testAnExistingSecureKeyIsKeptForACollectSession(): void
+    {
+        $this->cart->expects($this->never())->method('save');
+        $this->sessionRepository->method('findLatestByCartId')->willReturn(null);
+        $this->sessionApi->method('create')->willReturn($this->remoteSession('sess_new', 'open'));
+
+        $this->service->getOrCreateSession($this->cart, false, true);
+
+        $this->assertSame('customer_secure_key', $this->cart->secure_key);
+    }
+
+    public function testSubmitOnACollectSessionIsComparedToTheTotalWithoutShipping(): void
+    {
+        $this->sessionRepository->method('findLatestByCartId')->willReturn($this->storedSession(54.9, '2026-10-05 11:50:00', 'EUR', true));
+        $this->sessionApi->expects($this->never())->method('create');
+
+        $this->assertTrue($this->service->validateBeforeSubmit($this->cart, 'sess_stored')->isOk());
+    }
+
+    public function testSubmitOnAChangedCollectSessionGetsANewCollectSession(): void
+    {
+        $this->sessionRepository->method('findLatestByCartId')->willReturn($this->storedSession(59.9, '2026-10-05 11:50:00', 'EUR', true));
+        $this->sessionApi->expects($this->once())->method('create')->willReturn($this->remoteSession('sess_new', 'open'));
+        $persisted = [];
+        $this->sessionRepository->method('persist')->willReturnCallback(static function (\MolExpressSession $row) use (&$persisted) {
+            $persisted[] = $row;
+        });
+
+        $check = $this->service->validateBeforeSubmit($this->cart, 'sess_stored');
+
+        $this->assertSame(ExpressSubmitCheck::REASON_AMOUNT_CHANGED, $check->getReason());
+        $this->assertCount(1, $persisted);
+        $this->assertTrue($persisted[0]->collect_details);
+        $this->assertSame(54.9, (float) $persisted[0]->amount);
+    }
+
+    public function testARetryAfterAnUnfinishedCollectPaymentGoesThroughOnTheSameSession(): void
+    {
+        $started = $this->storedSession(54.9, '2026-10-05 11:50:00', 'EUR', true);
+        $started->status = ExpressSessionService::STATUS_PAYMENT_STARTED;
+        $this->sessionRepository->method('findLatestByCartId')->willReturn($started);
+        $this->sessionApi->expects($this->never())->method('create');
+
+        $this->assertTrue($this->service->validateBeforeSubmit($this->cart, 'sess_stored')->isOk());
+    }
+
+    public function testSubmitOnACollectSessionChecksTheCollectRules(): void
+    {
+        $availability = $this->mock(ExpressComponentAvailabilityService::class);
+        $availability->expects($this->never())->method('isAvailable');
+        $availability->expects($this->once())->method('isAvailableForCollect')->with($this->cart)->willReturn(true);
+        $this->sessionRepository->method('findLatestByCartId')->willReturn($this->storedSession(54.9, '2026-10-05 11:50:00', 'EUR', true));
+
+        $this->assertTrue($this->serviceWith($availability)->validateBeforeSubmit($this->cart, 'sess_stored')->isOk());
+    }
+
+    public function testSubmitOnACollectSessionIsRejectedWhenTheCollectRulesFail(): void
+    {
+        $availability = $this->mock(ExpressComponentAvailabilityService::class);
+        $availability->method('isAvailable')->willReturn(true);
+        $availability->method('isAvailableForCollect')->willReturn(false);
+        $this->sessionRepository->method('findLatestByCartId')->willReturn($this->storedSession(54.9, '2026-10-05 11:50:00', 'EUR', true));
+        $this->sessionApi->expects($this->never())->method('create');
+
+        $check = $this->serviceWith($availability)->validateBeforeSubmit($this->cart, 'sess_stored');
+
+        $this->assertSame(ExpressSubmitCheck::REASON_CART_NOT_READY, $check->getReason());
+    }
+
+    public function testSubmitOnAPaymentSessionChecksThePaymentStepRules(): void
+    {
+        $availability = $this->mock(ExpressComponentAvailabilityService::class);
+        $availability->expects($this->once())->method('isAvailable')->with($this->cart)->willReturn(true);
+        $availability->expects($this->never())->method('isAvailableForCollect');
+        $this->sessionRepository->method('findLatestByCartId')->willReturn($this->storedSession());
+
+        $this->assertTrue($this->serviceWith($availability)->validateBeforeSubmit($this->cart, 'sess_stored')->isOk());
+    }
+
+    private function serviceWith(ExpressComponentAvailabilityService $availability): ExpressSessionService
+    {
+        $clock = $this->mock(ClockInterface::class);
+        $clock->method('getCurrentDate')->willReturn(self::NOW);
+
+        return new ExpressSessionService(
+            $this->requestBuilder,
+            $this->sessionApi,
+            $this->sessionRepository,
+            $this->orderRepository,
+            $availability,
+            $this->context,
+            $clock,
+            $this->mock(PrestaLoggerInterface::class)
+        );
     }
 }
