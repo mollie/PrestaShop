@@ -89,6 +89,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 'testApiKey' => $this->module->l('Test API Key', self::FILE_NAME),
                 'liveApiKey' => $this->module->l('Live API Key', self::FILE_NAME),
                 'apiKeyPlaceholder' => $this->module->l('Enter your API key here', self::FILE_NAME),
+                'apiKeySavedPlaceholder' => $this->module->l('A key is saved. Enter a new key to replace it.', self::FILE_NAME),
                 'apiKeyDescription' => $this->module->l('Required for connecting to the %s mode.', self::FILE_NAME),
                 'connect' => $this->module->l('Connect', self::FILE_NAME),
                 'connecting' => $this->module->l('Connecting...', self::FILE_NAME),
@@ -479,7 +480,6 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                     'message' => $this->module->l('The stored API key for this mode is not accepted. Enter a new key and connect to switch.', self::FILE_NAME),
                     'data' => [
                         'environment' => $environment,
-                        'api_key' => '',
                     ],
                 ]));
 
@@ -494,7 +494,6 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 'data' => [
                     'environment' => $environment,
                     'is_connected' => $isConnected,
-                    'api_key' => '',
                     'has_stored_key' => !empty($apiKey),
                 ],
             ]));

@@ -19,6 +19,7 @@ export interface MollieAuthTranslations {
   testApiKey: string;
   liveApiKey: string;
   apiKeyPlaceholder: string;
+  apiKeySavedPlaceholder: string;
   apiKeyDescription: string;
   connect: string;
   connecting: string;

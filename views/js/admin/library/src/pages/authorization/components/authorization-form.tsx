@@ -190,18 +190,17 @@ export default function AuthorizationForm() {
         setIsConnected(switchResponse.data.is_connected || false)
         setApiKey("")
 
-        // The response only says whether a key is stored for the target mode, never the key itself
         const targetHasKey = switchResponse.data.has_stored_key || false
 
         if (pendingMode === "live") {
-          setHasLiveKey(targetHasKey || hasLiveKey)
+          setHasLiveKey(targetHasKey)
         } else {
-          setHasTestKey(targetHasKey || hasTestKey)
+          setHasTestKey(targetHasKey)
         }
 
         if (shouldCopy) {
           // Without a Live key the copy cannot run yet, so it waits for the merchant to connect one
-          if (targetHasKey || hasLiveKey) {
+          if (targetHasKey) {
             await copyTestSettingsToLive()
           } else {
             setCopyOnNextConnect(true)
@@ -397,7 +396,7 @@ export default function AuthorizationForm() {
                     type={showApiKey ? "text" : "password"}
                     value={apiKey}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApiKey(e.target.value)}
-                    placeholder={t('apiKeyPlaceholder')}
+                    placeholder={(mode === "live" ? hasLiveKey : hasTestKey) ? t('apiKeySavedPlaceholder') : t('apiKeyPlaceholder')}
                     className="pr-20 h-12 text-base border-gray-300"
                   />
                   {apiKey && (
