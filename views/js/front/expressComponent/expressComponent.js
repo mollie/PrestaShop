@@ -496,7 +496,7 @@
     function pageAmount() {
       var node = wrapper();
 
-      return normalizeAmount(node && node.getAttribute('data-amount')) || normalizeAmount(config.amount);
+      return normalizeAmount(node && node.getAttribute('data-amount'));
     }
 
     function teardown() {
@@ -657,7 +657,7 @@
           var checkout = root.Mollie2.Checkout(session.clientAccessToken, { locale: config.locale });
           checkout.on('submit', onSubmit);
 
-          var component = checkout.create('express-component', buildButtonOptions(session.buttons || config.buttons));
+          var component = checkout.create('express-component', buildButtonOptions(session.buttons));
 
           return Promise.resolve(component.mount(target)).then(function () {
             state.checkout = checkout;

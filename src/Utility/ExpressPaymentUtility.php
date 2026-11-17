@@ -42,6 +42,44 @@ class ExpressPaymentUtility
     }
 
     /**
+     * Mollie resources hold nested addresses as stdClass objects.
+     *
+     * @param object|array|null $value
+     */
+    public static function toArray($value): array
+    {
+        if (null === $value) {
+            return [];
+        }
+
+        $decoded = json_decode((string) json_encode($value), true);
+
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    /**
+     * The reference of the shipping option the shopper picked rides on the shipping_fee line.
+     *
+     * @param array|null $lines
+     */
+    public static function findShippingReference($lines): string
+    {
+        if (!is_array($lines)) {
+            return '';
+        }
+
+        foreach ($lines as $line) {
+            $line = (array) $line;
+
+            if (Config::EXPRESS_SHIPPING_FEE_LINE_TYPE === ($line['type'] ?? null)) {
+                return (string) ($line['reference'] ?? $line['sku'] ?? '');
+            }
+        }
+
+        return '';
+    }
+
+    /**
      * @param object|null $apiPayment
      */
     private static function hasMetadataFlag($apiPayment, string $flag): bool

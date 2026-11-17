@@ -16,12 +16,10 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Language;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
-use Mollie\Handler\Certificate\ApplePayDirectCertificateHandler;
-use Mollie\Logger\LoggerInterface;
+use Mollie\Service\ExpressComponent\ExpressApplePayDomainFileService;
 use Mollie\Service\ExpressComponent\ExpressComponentAvailabilityService;
 use Mollie\Service\MolCarrierInformationService;
 use Mollie\Service\MultistoreSettingsContextGuard;
-use Mollie\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -333,23 +331,9 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
      */
     private function placeApplePayDomainFile(): void
     {
-        if (!(bool) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY)) {
-            return;
-        }
-
-        try {
-            /** @var ApplePayDirectCertificateHandler $certificateHandler */
-            $certificateHandler = $this->module->getService(ApplePayDirectCertificateHandler::class);
-            $certificateHandler->handle();
-            $certificateHandler->refresh();
-        } catch (\Throwable $exception) {
-            /** @var LoggerInterface $logger */
-            $logger = $this->module->getService(LoggerInterface::class);
-
-            $logger->warning('Apple Pay domain association file could not be placed when the express component was switched on', [
-                'exceptions' => ExceptionUtility::getExceptions($exception),
-            ]);
-        }
+        /** @var ExpressApplePayDomainFileService $domainFileService */
+        $domainFileService = $this->module->getService(ExpressApplePayDomainFileService::class);
+        $domainFileService->placeForExpress();
     }
 
     private function ajaxSaveSettings(): void

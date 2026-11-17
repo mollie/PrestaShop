@@ -21,6 +21,8 @@ use Mollie\Exception\RetryOverException;
 use Mollie\Handler\RetryHandlerInterface;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\MolExpressSessionRepositoryInterface;
+use Mollie\Utility\ExpressAddressUtility;
+use Mollie\Utility\ExpressPaymentUtility;
 use Mollie\Utility\PostcodeUtility;
 use PrestaShop\PrestaShop\Core\Crypto\Hashing;
 
@@ -39,8 +41,6 @@ class ExpressCustomerDetailsService
 
     /** Mollie can fill the addresses a moment after the webhook fires, and gives the webhook 15 seconds. */
     const DETAILS_MAX_ATTEMPTS = 3;
-
-    const SHIPPING_FEE_LINE_TYPE = 'shipping_fee';
 
     const ADDRESS_FIELDS = ['firstname', 'lastname', 'address1', 'address2', 'city', 'postcode'];
     const CUSTOMER_FIELDS = ['firstname', 'lastname', 'email'];
@@ -97,7 +97,7 @@ class ExpressCustomerDetailsService
             ? $deliveryAddressId
             : $this->getOrCreateAddress((int) $cart->id_address_invoice, $customerId, $cartId, $this->buildAddressFields($invoice, $customerFields));
 
-        $this->moveCartLines($cart, $deliveryAddressId);
+        ExpressAddressUtility::moveCartLines($cart, $deliveryAddressId);
 
         $cart->id_customer = $customerId;
         $cart->id_address_delivery = $deliveryAddressId;
@@ -193,9 +193,9 @@ class ExpressCustomerDetailsService
     private function resolveDetails(int $cartId, $apiPayment, bool $isVirtual): array
     {
         $details = [
-            'billing' => $this->toArray($apiPayment->billingAddress ?? null),
-            'shipping' => $this->toArray($apiPayment->shippingAddress ?? null),
-            'reference' => $this->findShippingReference($apiPayment->lines ?? null),
+            'billing' => ExpressPaymentUtility::toArray($apiPayment->billingAddress ?? null),
+            'shipping' => ExpressPaymentUtility::toArray($apiPayment->shippingAddress ?? null),
+            'reference' => ExpressPaymentUtility::findShippingReference($apiPayment->lines ?? null),
         ];
 
         if ($this->isComplete($details, $isVirtual)) {
@@ -297,21 +297,6 @@ class ExpressCustomerDetailsService
     }
 
     /**
-     * PS 1.7 and 8 key the delivery options by each cart line's address, and the lines of an
-     * anonymous cart sit on address 0.
-     */
-    private function moveCartLines(\Cart $cart, int $deliveryAddressId): void
-    {
-        foreach (array_unique(array_column($cart->getProducts(true), 'id_address_delivery')) as $lineAddressId) {
-            if ((int) $lineAddressId === $deliveryAddressId) {
-                continue;
-            }
-
-            $cart->updateAddressId((int) $lineAddressId, $deliveryAddressId);
-        }
-    }
-
-    /**
      * @throws ExpressCustomerDetailsException
      */
     protected function loadCustomer(int $customerId): \Customer
@@ -384,7 +369,7 @@ class ExpressCustomerDetailsService
         $address->alias = Config::EXPRESS_ADDRESS_ALIAS;
         $address->id_customer = $customerId;
         $address->id_country = $countryId;
-        $address->id_state = $this->findStateId($countryId, $fields['region']);
+        $address->id_state = ExpressAddressUtility::findStateId($countryId, $fields['region']);
 
         foreach (self::ADDRESS_FIELDS as $field) {
             $address->{$field} = $fields[$field];
@@ -438,23 +423,6 @@ class ExpressCustomerDetailsService
         }
     }
 
-    private function findStateId(int $countryId, string $region): int
-    {
-        if ('' === $region) {
-            return 0;
-        }
-
-        $stateId = (int) \State::getIdByIso($region, $countryId);
-
-        if ($stateId) {
-            return $stateId;
-        }
-
-        $stateId = (int) \State::getIdByName($region);
-
-        return $stateId && (int) (new \State($stateId))->id_country === $countryId ? $stateId : 0;
-    }
-
     /**
      * @throws ExpressCustomerDetailsException
      */
@@ -467,40 +435,6 @@ class ExpressCustomerDetailsService
                 throw ExpressCustomerDetailsException::invalidField($entity, $field, (string) $result);
             }
         }
-    }
-
-    /**
-     * @param object|array|null $value
-     */
-    private function toArray($value): array
-    {
-        if (null === $value) {
-            return [];
-        }
-
-        $decoded = json_decode((string) json_encode($value), true);
-
-        return is_array($decoded) ? $decoded : [];
-    }
-
-    /**
-     * @param array|null $lines
-     */
-    private function findShippingReference($lines): string
-    {
-        if (!is_array($lines)) {
-            return '';
-        }
-
-        foreach ($lines as $line) {
-            $line = (array) $line;
-
-            if (self::SHIPPING_FEE_LINE_TYPE === ($line['type'] ?? null)) {
-                return (string) ($line['reference'] ?? $line['sku'] ?? '');
-            }
-        }
-
-        return '';
     }
 
     private function text(array $data, string $key): string

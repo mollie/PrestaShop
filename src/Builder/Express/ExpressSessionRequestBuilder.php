@@ -39,7 +39,6 @@ class ExpressSessionRequestBuilder
 {
     const RETURN_CONTROLLER = 'expressReturn';
     const SHIPPING_CONTROLLER = 'expressShipping';
-    const SHIPPING_FEE_LINE_TYPE = 'shipping_fee';
 
     /** Fields the Payments API line accepts but the Sessions API line does not. */
     const UNSUPPORTED_LINE_FIELDS = ['categories'];
@@ -131,37 +130,29 @@ class ExpressSessionRequestBuilder
             Config::EXPRESS_METADATA_FLAG => 1,
         ];
 
-        if (!$collectDetails) {
-            return new ExpressSessionRequest(
-                $currencyIso,
-                TextFormatUtility::formatNumber($amount, Config::API_ROUNDING_PRECISION),
-                $orderReference,
-                $lines,
-                $redirectUrl,
-                $webhookUrl,
-                $metadata
-            );
-        }
-
-        $this->assertCollectLinesMatchAmount($lines, $amount, $cartId);
-
-        $metadata[Config::EXPRESS_COLLECT_METADATA_FLAG] = 1;
-        $requiredCustomerDetails = ['email', 'billing-address'];
+        $requiredCustomerDetails = [];
         $shipping = [];
 
-        if (!$cart->isVirtualCart()) {
-            $requiredCustomerDetails[] = 'shipping-address';
-            $shipping = [
-                'callbackUrl' => $this->context->getModuleLink(
-                    $moduleName,
-                    self::SHIPPING_CONTROLLER,
-                    [
-                        'cart_id' => $cartId,
-                        'token' => $this->getShippingCallbackToken($cart),
-                    ],
-                    true
-                ),
-            ];
+        if ($collectDetails) {
+            $this->assertCollectLinesMatchAmount($lines, $amount, $cartId);
+
+            $metadata[Config::EXPRESS_COLLECT_METADATA_FLAG] = 1;
+            $requiredCustomerDetails = ['email', 'billing-address'];
+
+            if (!$cart->isVirtualCart()) {
+                $requiredCustomerDetails[] = 'shipping-address';
+                $shipping = [
+                    'callbackUrl' => $this->context->getModuleLink(
+                        $moduleName,
+                        self::SHIPPING_CONTROLLER,
+                        [
+                            'cart_id' => $cartId,
+                            'token' => $this->getShippingCallbackToken($cart),
+                        ],
+                        true
+                    ),
+                ];
+            }
         }
 
         return new ExpressSessionRequest(
@@ -207,7 +198,7 @@ class ExpressSessionRequestBuilder
         $total = 0.0;
 
         foreach ($lines as $line) {
-            if (self::SHIPPING_FEE_LINE_TYPE === ($line['type'] ?? null)) {
+            if (Config::EXPRESS_SHIPPING_FEE_LINE_TYPE === ($line['type'] ?? null)) {
                 throw new MollieException(sprintf('Express collect session for cart %d has a shipping line', $cartId));
             }
 

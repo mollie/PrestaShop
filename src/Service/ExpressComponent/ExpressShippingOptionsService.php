@@ -20,7 +20,9 @@ use Mollie\Repository\ModuleRestrictionRepositoryInterface;
 use Mollie\Repository\MolExpressSessionRepositoryInterface;
 use Mollie\Service\MinimumPurchaseService;
 use Mollie\Utility\ApplePayDirect\DeliveryOptionUtility;
+use Mollie\Utility\ExpressAddressUtility;
 use Mollie\Utility\PostcodeUtility;
+use Mollie\Utility\TextFormatUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -268,7 +270,7 @@ class ExpressShippingOptionsService
 
     private function formatAmount(float $amount): string
     {
-        return number_format(round($amount, 2), 2, '.', '');
+        return TextFormatUtility::formatNumber($amount, Config::API_ROUNDING_PRECISION);
     }
 
     /**
@@ -295,29 +297,9 @@ class ExpressShippingOptionsService
         return (bool) \Country::isNeedDniByCountryId($countryId);
     }
 
-    /**
-     * Wallets send the region as an ISO code (Apple Pay, Google Pay) or as a name.
-     * State::getIdByName() is not scoped to a country, so its match is checked.
-     */
     protected function findStateId(string $region, int $countryId): int
     {
-        if ('' === $region) {
-            return 0;
-        }
-
-        $stateId = (int) \State::getIdByIso($region, $countryId);
-
-        if ($stateId) {
-            return $stateId;
-        }
-
-        $stateId = (int) \State::getIdByName($region);
-
-        if (!$stateId || (int) (new \State($stateId))->id_country !== $countryId) {
-            return 0;
-        }
-
-        return $stateId;
+        return ExpressAddressUtility::findStateId($countryId, $region);
     }
 
     /**
@@ -355,13 +337,7 @@ class ExpressShippingOptionsService
 
         $cart->update();
 
-        foreach (array_unique(array_column($cart->getProducts(true), 'id_address_delivery')) as $lineAddressId) {
-            if ((int) $lineAddressId === $addressId) {
-                continue;
-            }
-
-            $cart->updateAddressId((int) $lineAddressId, $addressId);
-        }
+        ExpressAddressUtility::moveCartLines($cart, $addressId);
 
         \Context::getContext()->country = new \Country($countryId, (int) $cart->id_lang);
 

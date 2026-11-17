@@ -385,7 +385,7 @@ class Mollie extends PaymentModule
             $expressAvailability = $this->getService(ExpressComponentAvailabilityService::class);
 
             if ($expressAvailability->isEnabled() && $expressAvailability->isPlacementEnabled(Config::EXPRESS_PLACEMENT_CART)) {
-                $this->registerExpressComponentAssets($expressAvailability);
+                $this->registerExpressComponentAssets();
             }
 
             return '';
@@ -442,7 +442,7 @@ class Mollie extends PaymentModule
             || $expressAvailability->isPlacementEnabled(Config::EXPRESS_PLACEMENT_CHECKOUT);
 
         if ($hasCheckoutPlacement && $expressAvailability->isEnabled()) {
-            $this->registerExpressComponentAssets($expressAvailability);
+            $this->registerExpressComponentAssets();
         }
 
         return $this->display(__FILE__, 'views/templates/front/custom_css.tpl');
@@ -452,7 +452,7 @@ class Mollie extends PaymentModule
      * Mollie.js v2 is loaded in compatibility mode (`Mollie2`) because the card iframe above
      * already owns the v1 `Mollie` global on this page.
      */
-    private function registerExpressComponentAssets(ExpressComponentAvailabilityService $expressAvailability): void
+    private function registerExpressComponentAssets(): void
     {
         $this->context->controller->registerJavascript(
             'mollie_js_v2',
@@ -468,9 +468,6 @@ class Mollie extends PaymentModule
                 'createSessionAction' => MollieExpressComponentAjaxModuleFrontController::ACTION_CREATE_SESSION,
                 'validateCartAction' => MollieExpressComponentAjaxModuleFrontController::ACTION_VALIDATE_CART,
                 'locale' => $this->context->language->locale,
-                'amount' => TextFormatUtility::formatNumber($this->context->cart->getOrderTotal(true, Cart::BOTH), Config::API_ROUNDING_PRECISION),
-                'currency' => $this->context->currency->iso_code,
-                'buttons' => $expressAvailability->getButtonVisibility(),
                 'tokenTtlSeconds' => Config::EXPRESS_SESSION_REUSE_MAX_AGE_SECONDS,
                 'debug' => (bool) Configuration::get(Config::MOLLIE_DISPLAY_ERRORS),
                 'i18n' => [
@@ -585,12 +582,9 @@ class Mollie extends PaymentModule
      * it would show a second one for the same cart. Direct is still rendered, hidden, because only
      * the browser learns whether Mollie draws the strip (Express may not be activated on the account).
      */
-    private function isCartApplePayDirectOnStandby(): bool
+    private function isCartApplePayDirectOnStandby(ExpressComponentAvailabilityService $expressAvailability, bool $isExpressShown): bool
     {
-        /** @var ExpressComponentAvailabilityService $expressAvailability */
-        $expressAvailability = $this->getService(ExpressComponentAvailabilityService::class);
-
-        if (!$this->isCartExpressComponentShown($expressAvailability) || !$expressAvailability->isAvailableForCollect($this->context->cart)) {
+        if (!$isExpressShown || !$expressAvailability->isAvailableForCollect($this->context->cart)) {
             return false;
         }
 
@@ -1812,12 +1806,13 @@ class Mollie extends PaymentModule
         $expressAvailability = $this->getService(ExpressComponentAvailabilityService::class);
 
         $expressComponent = '';
+        $isExpressShown = $this->isCartExpressComponentShown($expressAvailability);
 
-        if ($this->isCartExpressComponentShown($expressAvailability)) {
+        if ($isExpressShown) {
             $expressComponent = $this->renderCollectExpressComponent(Config::EXPRESS_PLACEMENT_CART, $expressAvailability);
         }
 
-        $this->context->smarty->assign('mollieApplePayDirectStandby', $this->isCartApplePayDirectOnStandby());
+        $this->context->smarty->assign('mollieApplePayDirectStandby', $this->isCartApplePayDirectOnStandby($expressAvailability, $isExpressShown));
 
         return $expressComponent . $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
     }

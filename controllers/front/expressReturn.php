@@ -50,6 +50,9 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
     /** @var bool an anonymous visitor returning from the collect session their browser started */
     private $isCollectVisitor = false;
 
+    /** @var \MolExpressSession|null the cart's stored session, read once per request */
+    private $storedSession;
+
     public function initContent()
     {
         /** @var LoggerInterface $logger */
@@ -183,10 +186,7 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
 
     private function isSessionCompleted(Cart $cart): bool
     {
-        /** @var ExpressSessionService $sessionService */
-        $sessionService = $this->module->getService(ExpressSessionService::class);
-
-        $stored = $sessionService->findStoredSession($cart);
+        $stored = $this->storedSession;
 
         if (!$stored) {
             return false;
@@ -233,10 +233,7 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
             return false;
         }
 
-        /** @var ExpressSessionService $sessionService */
-        $sessionService = $this->module->getService(ExpressSessionService::class);
-
-        $stored = $sessionService->findStoredSession($cart);
+        $stored = $this->storedSession;
 
         if (!$stored || empty($payment['order_reference'])) {
             return false;
@@ -271,9 +268,8 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
         /** @var ExpressSessionService $sessionService */
         $sessionService = $this->module->getService(ExpressSessionService::class);
 
-        $stored = $sessionService->findStoredSession($cart);
-
-        $this->isCollectSession = $stored && (bool) $stored->collect_details;
+        $this->storedSession = $sessionService->findStoredSession($cart);
+        $this->isCollectSession = $this->storedSession && (bool) $this->storedSession->collect_details;
         $this->isCollectVisitor = $this->isCollectSession
             && !(int) $this->context->customer->id
             && (int) $this->context->cookie->__get(Config::EXPRESS_CART_COOKIE) === (int) $cart->id;

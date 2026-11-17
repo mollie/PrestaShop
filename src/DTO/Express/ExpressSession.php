@@ -13,6 +13,7 @@
 namespace Mollie\DTO\Express;
 
 use Mollie\Api\Resources\Session;
+use Mollie\Utility\ExpressPaymentUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -99,39 +100,17 @@ class ExpressSession
      */
     private static function toArray($value): ?array
     {
-        if (null === $value) {
-            return null;
-        }
-
-        $decoded = json_decode((string) json_encode($value), true);
-
-        return is_array($decoded) ? $decoded : null;
+        return ExpressPaymentUtility::toArray($value) ?: null;
     }
 
     /**
-     * The reference of the shipping option the shopper picked rides on the session's shipping_fee line.
-     *
      * @param array|null $lines
      */
     private static function findShippingReference($lines): ?string
     {
-        if (!is_array($lines)) {
-            return null;
-        }
+        $reference = ExpressPaymentUtility::findShippingReference($lines);
 
-        foreach ($lines as $line) {
-            $line = (array) $line;
-
-            if ('shipping_fee' !== ($line['type'] ?? null)) {
-                continue;
-            }
-
-            $reference = $line['reference'] ?? $line['sku'] ?? null;
-
-            return null === $reference ? null : (string) $reference;
-        }
-
-        return null;
+        return '' === $reference ? null : $reference;
     }
 
     public function getId(): string

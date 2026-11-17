@@ -277,6 +277,7 @@ class Config
     const EXPRESS_SESSION_REUSE_MAX_AGE_SECONDS = 780;
     const EXPRESS_METADATA_FLAG = 'express_component';
     const EXPRESS_COLLECT_METADATA_FLAG = 'express_collect';
+    const EXPRESS_SHIPPING_FEE_LINE_TYPE = 'shipping_fee';
     const EXPRESS_ADDRESS_ALIAS = 'mollieExpress';
     const EXPRESS_CART_COOKIE = 'mollie_express_cart_id';
     const EXPRESS_PLACEMENT_COOKIE = 'mollie_express_placement';
