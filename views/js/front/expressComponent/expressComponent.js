@@ -42,6 +42,7 @@
   var PLACEMENT_CART = 'cart';
   var STRIP_SELECTOR = '.mollie-express-component';
   var MOUNTED_ATTRIBUTE = 'data-mollie-mounted';
+  var DIRECT_FALLBACK_SELECTOR = '[data-mollie-express-fallback]';
   var REFRESH_MARGIN_SECONDS = 180;
   var RECHECK_DEBOUNCE_MS = 250;
   var BUTTON_WAIT_ATTEMPTS = 15;
@@ -231,12 +232,28 @@
       wrapper: null,
       opcBusyUntil: 0,
       hiddenWhileBusy: false,
-      busyRetries: 0
+      busyRetries: 0,
+      directFallback: false
     };
 
     function log(message, data) {
       if (config.debug && root.console && root.console.warn) {
         root.console.warn('[Mollie Express] ' + message, data || '');
+      }
+    }
+
+    // Apple Pay Direct waits hidden on the cart page while the strip offers Apple Pay, and comes
+    // back when the strip cannot show, so the cart page never ends up without Apple Pay.
+    function setDirectFallback(show) {
+      state.directFallback = show;
+      applyDirectFallback();
+    }
+
+    function applyDirectFallback() {
+      var direct = document.querySelector(DIRECT_FALLBACK_SELECTOR);
+
+      if (direct && direct.hidden === state.directFallback) {
+        direct.hidden = !state.directFallback;
       }
     }
 
@@ -615,6 +632,7 @@
         state.phase = 'unavailable';
         endPlaceholder();
         node.hidden = true;
+        setDirectFallback(true);
 
         return;
       }
@@ -659,6 +677,7 @@
               state.hiddenWhileBusy = false;
               endPlaceholder();
               node.hidden = !hasButtons;
+              setDirectFallback(!hasButtons);
 
               if (!hasButtons) {
                 log('no wallet button available in this browser');
@@ -686,6 +705,7 @@
         state.failedAmount = pageAmount();
         state.failedNode = node;
         endPlaceholder();
+        setDirectFallback(true);
 
         if (node) {
           node.hidden = true;
@@ -719,6 +739,9 @@
     }
 
     function maybeRecreate() {
+      // the cart page re-renders its blocks on every cart update, Direct comes back hidden
+      applyDirectFallback();
+
       var placement = currentPlacement();
 
       if (!placement) {

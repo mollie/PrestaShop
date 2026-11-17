@@ -582,9 +582,10 @@ class Mollie extends PaymentModule
 
     /**
      * The express strip on the cart page brings its own Apple Pay button; Apple Pay Direct next to
-     * it would show a second one for the same cart.
+     * it would show a second one for the same cart. Direct is still rendered, hidden, because only
+     * the browser learns whether Mollie draws the strip (Express may not be activated on the account).
      */
-    private function isCartApplePayDirectReplaced(): bool
+    private function isCartApplePayDirectOnStandby(): bool
     {
         /** @var ExpressComponentAvailabilityService $expressAvailability */
         $expressAvailability = $this->getService(ExpressComponentAvailabilityService::class);
@@ -647,7 +648,7 @@ class Mollie extends PaymentModule
         $isApplePayDirectCartEnabled = (int) $configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART);
 
         $canDisplayInProductPage = $controller instanceof ProductControllerCore && $isApplePayDirectProductEnabled;
-        $canDisplayInCartPage = $controller instanceof CartControllerCore && $isApplePayDirectCartEnabled && !$this->isCartApplePayDirectReplaced();
+        $canDisplayInCartPage = $controller instanceof CartControllerCore && $isApplePayDirectCartEnabled;
         if ($canDisplayInProductPage || $canDisplayInCartPage) {
             $this->context->controller->registerJavascript(
                 'mollie-apple-pay-sdk',
@@ -1816,9 +1817,7 @@ class Mollie extends PaymentModule
             $expressComponent = $this->renderCollectExpressComponent(Config::EXPRESS_PLACEMENT_CART, $expressAvailability);
         }
 
-        if ($this->isCartApplePayDirectReplaced()) {
-            return $expressComponent;
-        }
+        $this->context->smarty->assign('mollieApplePayDirectStandby', $this->isCartApplePayDirectOnStandby());
 
         return $expressComponent . $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
     }
