@@ -87,6 +87,8 @@ use Mollie\Repository\CustomerRepository;
 use Mollie\Repository\CustomerRepositoryInterface;
 use Mollie\Repository\GenderRepository;
 use Mollie\Repository\GenderRepositoryInterface;
+use Mollie\Repository\ModuleRestrictionRepository;
+use Mollie\Repository\ModuleRestrictionRepositoryInterface;
 use Mollie\Repository\MolCustomerRepository;
 use Mollie\Repository\MolCustomerRepositoryInterface;
 use Mollie\Repository\MolExpressSessionRepository;
@@ -247,6 +249,7 @@ final class BaseServiceProvider
         $this->addService($container, TaxRuleRepositoryInterface::class, $container->get(TaxRuleRepository::class));
         $this->addService($container, TaxRepositoryInterface::class, $container->get(TaxRepository::class));
         $this->addService($container, CartRepositoryInterface::class, $container->get(CartRepository::class));
+        $this->addService($container, ModuleRestrictionRepositoryInterface::class, $container->get(ModuleRestrictionRepository::class));
 
         $service = $this->addService($container, PaymentMethodLangRepositoryInterface::class, PaymentMethodLangRepository::class);
         $this->addServiceArgument($service, 'MolPaymentMethodLang');
