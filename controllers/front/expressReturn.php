@@ -338,12 +338,18 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
 
     private function getPaymentStepUrl(): string
     {
-        // A collect session started on the cart page, before the shopper had any checkout data.
-        if ($this->isCollectSession) {
-            return $this->context->link->getPageLink('cart', true, $this->context->language->id, ['action' => 'show']);
+        $languageId = $this->context->language->id;
+
+        if (!$this->isCollectSession) {
+            return $this->context->link->getPageLink('order', true, $languageId, ['step' => 'payment']);
         }
 
-        return $this->context->link->getPageLink('order', true, $this->context->language->id, ['step' => 'payment']);
+        // A collect session started from the strip above the personal information form or on the cart page.
+        if (Config::EXPRESS_PLACEMENT_CHECKOUT === (string) $this->context->cookie->__get(Config::EXPRESS_PLACEMENT_COOKIE)) {
+            return $this->context->link->getPageLink('order', true, $languageId);
+        }
+
+        return $this->context->link->getPageLink('cart', true, $languageId, ['action' => 'show']);
     }
 
     /** Read back by ErrorDisplayService::showCookieError on the cart and order pages. */

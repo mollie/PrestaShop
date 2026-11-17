@@ -279,6 +279,7 @@ class Config
     const EXPRESS_COLLECT_METADATA_FLAG = 'express_collect';
     const EXPRESS_ADDRESS_ALIAS = 'mollieExpress';
     const EXPRESS_CART_COOKIE = 'mollie_express_cart_id';
+    const EXPRESS_PLACEMENT_COOKIE = 'mollie_express_placement';
     // Compatibility mode exposes Mollie.js v2 as `Mollie2`, next to the v1 `Mollie` the card iframe uses.
     const MOLLIE_JS_V2_URL = 'https://js.mollie.com/v2/mollie.js?compatible';
 

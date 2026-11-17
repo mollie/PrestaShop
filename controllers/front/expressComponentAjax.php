@@ -101,7 +101,7 @@ class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieCont
                     $response = $this->createSession($availability, $collectDetails);
                     break;
                 case self::ACTION_VALIDATE_CART:
-                    $response = $this->validateCart();
+                    $response = $this->validateCart($placement);
                     break;
                 default:
                     $response = JsonResponse::error('unknown_action', JsonResponse::HTTP_BAD_REQUEST);
@@ -173,10 +173,14 @@ class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieCont
         ]);
     }
 
-    private function validateCart(): JsonResponse
+    private function validateCart(string $placement): JsonResponse
     {
         /** @var ExpressSessionService $sessionService */
         $sessionService = $this->module->getService(ExpressSessionService::class);
+
+        // expressReturn sends a cancelled or failed payment back to the strip it was started from.
+        $this->context->cookie->__set(Config::EXPRESS_PLACEMENT_COOKIE, $placement);
+        $this->context->cookie->write();
 
         /** @var ExpressSubmitCheck $check */
         $check = $sessionService->validateBeforeSubmit($this->context->cart, (string) Tools::getValue('sessionId'));
