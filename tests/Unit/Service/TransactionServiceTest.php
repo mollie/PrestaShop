@@ -28,6 +28,7 @@ use Mollie\Service\MollieOrderNumberService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Service\PaymentMethodService;
 use Mollie\Service\TransactionService;
+use Mollie\Utility\SecureKeyUtility;
 use Order;
 use PHPUnit\Framework\TestCase;
 
@@ -88,6 +89,41 @@ class TransactionServiceTest extends TestCase
     }
 
     /**
+     * A collect session is built while the cart has no customer, so its key carries customer id 0
+     * even after the guest is attached to the cart.
+     */
+    public function testCollectPaymentAcceptsTheKeyBuiltForTheAnonymousCart(): void
+    {
+        $this->paymentMethodRepository->method('getPaymentBy')->willReturn([
+            'transaction_id' => 'tr_collect',
+            'cart_id' => 999999,
+            'order_id' => 0,
+            'reason' => null,
+        ]);
+
+        $apiPayment = $this->openGeneratedPayment('tr_collect');
+        $apiPayment->metadata->{Config::EXPRESS_METADATA_FLAG} = 1;
+        $apiPayment->metadata->{Config::EXPRESS_COLLECT_METADATA_FLAG} = 1;
+
+        $this->assertSame($apiPayment, $this->service()->processTransaction($apiPayment));
+    }
+
+    public function testRegularPaymentRefusesTheAnonymousCartKey(): void
+    {
+        $this->paymentMethodRepository->method('getPaymentBy')->willReturn([
+            'transaction_id' => 'tr_regular',
+            'cart_id' => 999999,
+            'order_id' => 0,
+            'reason' => null,
+        ]);
+
+        $this->expectException(TransactionException::class);
+        $this->expectExceptionMessage('Security key is incorrect.');
+
+        $this->service()->processTransaction($this->openGeneratedPayment('tr_regular'));
+    }
+
+    /**
      * @dataProvider conversionRateProvider
      *
      * @param float $orderConversionRate
@@ -141,6 +177,19 @@ class TransactionServiceTest extends TestCase
             $this->createMock(OrderRepositoryInterface::class),
             $this->createMock(MollieOrderNumberService::class)
         );
+    }
+
+    /**
+     * An unfinished payment with a generated order number stops right after the key check.
+     */
+    private function openGeneratedPayment(string $id): \stdClass
+    {
+        $payment = $this->apiPayment($id);
+        $payment->status = 'open';
+        $payment->description = 'mol_999999';
+        $payment->metadata->secure_key = SecureKeyUtility::generateReturnKey(0, null, null);
+
+        return $payment;
     }
 
     private function apiPayment(string $id): \stdClass

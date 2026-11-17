@@ -57,6 +57,7 @@ use Mollie\Provider\PaymentFeeProviderInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExpressComponent\ExpressCartCarrierService;
+use Mollie\Service\ExpressComponent\ExpressCustomerDetailsService;
 use Mollie\Service\MollieOrderCreationService;
 use Mollie\Service\MollieOrderNumberService;
 use Mollie\Service\OrderStatusService;
@@ -168,6 +169,15 @@ class OrderCreationHandler
         $cart = new Cart($cartId);
 
         $isExpressPayment = ExpressPaymentUtility::isExpressPayment($apiPayment);
+        $isCollectPayment = $isExpressPayment && ExpressPaymentUtility::isCollectPayment($apiPayment);
+
+        /** @var ExpressCustomerDetailsService|null $expressCustomerDetailsService */
+        $expressCustomerDetailsService = $isCollectPayment ? $this->module->getService(ExpressCustomerDetailsService::class) : null;
+
+        // Mollie's sheet collected the customer, the addresses and the shipping option.
+        if ($expressCustomerDetailsService) {
+            $expressCustomerDetailsService->applyToCart($cart, $apiPayment);
+        }
 
         // A one page checkout save can land between the session and this webhook and leave the
         // shopper's carrier choice under its temporary address again.
@@ -205,7 +215,13 @@ class OrderCreationHandler
         $currency = new Currency($cart->id_currency);
 
         if (!$this->paymentAmountValidator->validate((float) $originalAmount, (string) $currency->iso_code, $paymentFeeData, $apiPayment)) {
-            return $this->createPaymentErrorOrder($apiPayment, $cart, $paymentMethodName, (float) $originalAmount, $paymentFeeData);
+            $orderId = $this->createPaymentErrorOrder($apiPayment, $cart, $paymentMethodName, (float) $originalAmount, $paymentFeeData);
+
+            if ($expressCustomerDetailsService) {
+                $expressCustomerDetailsService->hideOrderAddresses(new Order($orderId));
+            }
+
+            return $orderId;
         }
 
         if (!$paymentFeeData->isActive()) {
@@ -229,6 +245,10 @@ class OrderCreationHandler
 
             if (!$isAuthorizablePayment) {
                 $this->orderStatusService->setOrderStatus($orderId, PaymentStatus::STATUS_PAID);
+            }
+
+            if ($expressCustomerDetailsService) {
+                $expressCustomerDetailsService->hideOrderAddresses(new Order($orderId));
             }
 
             $this->createRecurringOrderEntity(new Order($orderId), $paymentMethod->id_method ?: $apiPayment->method);
