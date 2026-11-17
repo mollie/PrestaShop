@@ -10,6 +10,7 @@
  * @codingStandardsIgnoreStart
  */
 
+use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\DTO\Express\ExpressSubmitCheck;
 use Mollie\Infrastructure\Response\JsonResponse;
@@ -25,9 +26,10 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Serves the Express Component on the checkout payment step: hands the browser a Checkout Session
- * token for the current cart total, and answers the component's submit event right before Mollie
- * creates the payment.
+ * Serves the Express Component: hands the browser a Checkout Session token for the current cart
+ * total, and answers the component's submit event right before Mollie creates the payment. On the
+ * payment step the cart is complete; on the cart page and the top of the checkout Mollie collects
+ * the customer, addresses and carrier, so the visitor may still be anonymous.
  */
 class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieController
 {
@@ -41,6 +43,7 @@ class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieCont
     const ERROR_FORBIDDEN = 'forbidden';
     const ERROR_API = 'api_error';
     const ERROR_CART_BUSY = 'cart_busy';
+    const ERROR_UNKNOWN_PLACEMENT = 'unknown_placement';
 
     /** @var bool */
     public $ssl = true;
@@ -52,34 +55,28 @@ class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieCont
 
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
-        if (!$this->isCartOwnedByVisitor()) {
-            $this->ajaxResponse(JsonResponse::error(self::ERROR_FORBIDDEN, JsonResponse::HTTP_FORBIDDEN));
+        $placement = (string) Tools::getValue('placement', Config::EXPRESS_PLACEMENT_PAYMENT);
+
+        if (!isset(Config::EXPRESS_PLACEMENT_FLAGS[$placement])) {
+            $this->ajaxResponse(JsonResponse::error(self::ERROR_UNKNOWN_PLACEMENT, JsonResponse::HTTP_BAD_REQUEST));
         }
 
-        /** @var ExpressCartCarrierService $cartCarrierService */
-        $cartCarrierService = $this->module->getService(ExpressCartCarrierService::class);
+        $collectDetails = Config::EXPRESS_PLACEMENT_PAYMENT !== $placement;
+
+        if (!$this->isCartOwnedByVisitor($this->allowsAnonymousVisitor($collectDetails))) {
+            $this->ajaxResponse(JsonResponse::error(self::ERROR_FORBIDDEN, JsonResponse::HTTP_FORBIDDEN));
+        }
 
         /** @var ExpressComponentAvailabilityService $availability */
         $availability = $this->module->getService(ExpressComponentAvailabilityService::class);
 
-        // A one page checkout request may be rewriting this cart right now; the script asks again.
-        if ($cartCarrierService->isCartBeingRewritten($this->context->cart)) {
-            $this->ajaxResponse(JsonResponse::error(self::ERROR_CART_BUSY, JsonResponse::HTTP_CONFLICT));
+        if (!$availability->isPlacementEnabled($placement)) {
+            $this->ajaxResponse(JsonResponse::error(self::ERROR_NOT_AVAILABLE, JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
         }
 
-        $isAvailable = false;
-
-        try {
-            $cartCarrierService->restoreCarrierChoice($this->context->cart);
-            $isAvailable = $availability->isAvailable($this->context->cart);
-        } catch (\PrestaShopException $exception) {
-            // The temporary address this request loaded was deleted underneath it.
-            $logger->debug(sprintf('%s - Cart changed while it was read', self::FILE_NAME), [
-                'exceptions' => ExceptionUtility::getExceptions($exception),
-            ]);
-
-            $this->ajaxResponse(JsonResponse::error(self::ERROR_CART_BUSY, JsonResponse::HTTP_CONFLICT));
-        }
+        $isAvailable = $collectDetails
+            ? $availability->isAvailableForCollect($this->context->cart)
+            : $this->isAvailableOnPaymentStep($availability, $logger);
 
         if (!$isAvailable) {
             $this->ajaxResponse(JsonResponse::error(self::ERROR_NOT_AVAILABLE, JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
@@ -101,10 +98,10 @@ class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieCont
         try {
             switch (Tools::getValue('action')) {
                 case self::ACTION_CREATE_SESSION:
-                    $response = $this->createSession($availability);
+                    $response = $this->createSession($availability, $collectDetails);
                     break;
                 case self::ACTION_VALIDATE_CART:
-                    $response = $this->validateCart();
+                    $response = $this->validateCart($placement);
                     break;
                 default:
                     $response = JsonResponse::error('unknown_action', JsonResponse::HTTP_BAD_REQUEST);
@@ -126,12 +123,44 @@ class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieCont
         $this->ajaxResponse($response);
     }
 
-    private function createSession(ExpressComponentAvailabilityService $availability): JsonResponse
+    private function isAvailableOnPaymentStep(ExpressComponentAvailabilityService $availability, LoggerInterface $logger): bool
+    {
+        /** @var ExpressCartCarrierService $cartCarrierService */
+        $cartCarrierService = $this->module->getService(ExpressCartCarrierService::class);
+
+        // A one page checkout request may be rewriting this cart right now; the script asks again.
+        if ($cartCarrierService->isCartBeingRewritten($this->context->cart)) {
+            $this->ajaxResponse(JsonResponse::error(self::ERROR_CART_BUSY, JsonResponse::HTTP_CONFLICT));
+        }
+
+        try {
+            $cartCarrierService->restoreCarrierChoice($this->context->cart);
+
+            return $availability->isAvailable($this->context->cart);
+        } catch (\PrestaShopException $exception) {
+            // The temporary address this request loaded was deleted underneath it.
+            $logger->debug(sprintf('%s - Cart changed while it was read', self::FILE_NAME), [
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+
+            $this->ajaxResponse(JsonResponse::error(self::ERROR_CART_BUSY, JsonResponse::HTTP_CONFLICT));
+        }
+
+        return false;
+    }
+
+    private function createSession(ExpressComponentAvailabilityService $availability, bool $collectDetails): JsonResponse
     {
         /** @var ExpressSessionService $sessionService */
         $sessionService = $this->module->getService(ExpressSessionService::class);
 
-        $session = $sessionService->getOrCreateSession($this->context->cart);
+        $session = $sessionService->getOrCreateSession($this->context->cart, false, $collectDetails);
+
+        if ($collectDetails) {
+            // expressReturn lets an anonymous visitor in only from the browser that started the session.
+            $this->context->cookie->__set(Config::EXPRESS_CART_COOKIE, (int) $this->context->cart->id);
+            $this->context->cookie->write();
+        }
 
         return JsonResponse::success([
             'sessionId' => $session->getId(),
@@ -144,10 +173,14 @@ class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieCont
         ]);
     }
 
-    private function validateCart(): JsonResponse
+    private function validateCart(string $placement): JsonResponse
     {
         /** @var ExpressSessionService $sessionService */
         $sessionService = $this->module->getService(ExpressSessionService::class);
+
+        // expressReturn sends a cancelled or failed payment back to the strip it was started from.
+        $this->context->cookie->__set(Config::EXPRESS_PLACEMENT_COOKIE, $placement);
+        $this->context->cookie->write();
 
         /** @var ExpressSubmitCheck $check */
         $check = $sessionService->validateBeforeSubmit($this->context->cart, (string) Tools::getValue('sessionId'));
@@ -158,14 +191,33 @@ class MollieExpressComponentAjaxModuleFrontController extends AbstractMollieCont
     /**
      * The session is always built for the visitor's own cart; a cart id from the request is never
      * accepted. Guests have a customer record too, so the check is ownership, not login state.
+     * An anonymous visitor owns a cart without a customer, which only a collect session accepts.
      */
-    private function isCartOwnedByVisitor(): bool
+    private function isCartOwnedByVisitor(bool $allowAnonymous): bool
     {
         $customerId = (int) ($this->context->customer->id ?? 0);
         $cart = $this->context->cart;
 
-        return $customerId > 0
+        return ($customerId > 0 || $allowAnonymous)
             && (int) $cart->id > 0
             && (int) $cart->id_customer === $customerId;
+    }
+
+    /**
+     * A session is created in the mode of the placement asking for it; the submit check pays the
+     * session already stored for the cart, so that row decides.
+     */
+    private function allowsAnonymousVisitor(bool $collectDetails): bool
+    {
+        if (self::ACTION_VALIDATE_CART !== Tools::getValue('action')) {
+            return $collectDetails;
+        }
+
+        /** @var ExpressSessionService $sessionService */
+        $sessionService = $this->module->getService(ExpressSessionService::class);
+
+        $stored = $sessionService->findStoredSession($this->context->cart);
+
+        return $stored && (bool) $stored->collect_details;
     }
 }

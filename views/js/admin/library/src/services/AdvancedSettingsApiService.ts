@@ -29,6 +29,12 @@ export interface OrderStatus {
   name: string;
 }
 
+export interface ExpressPlacements {
+  cart: boolean;
+  checkout: boolean;
+  payment: boolean;
+}
+
 export interface AdvancedSettingsData {
   invoiceOption: string;
   confirmationEmail: string;
@@ -42,6 +48,7 @@ export interface AdvancedSettingsData {
   cssPath: string;
   translateMollie: string;
   expressComponent: boolean;
+  expressPlacements: ExpressPlacements;
   expressLiveReady: boolean;
   statusMappings: StatusMapping[];
   emailStatuses: EmailStatus[];
@@ -74,6 +81,7 @@ export interface SaveAdvancedSettingsData {
   cssPath?: string;
   translateMollie?: string;
   expressComponent?: boolean;
+  expressPlacements?: ExpressPlacements;
   statusMappings?: StatusMapping[];
   emailStatuses?: EmailStatus[];
 }

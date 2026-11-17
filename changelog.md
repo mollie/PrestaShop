@@ -14,6 +14,8 @@
 + Fixed checkout showing no carriers after the shopper closed the Apple Pay Direct sheet on the cart page and continued with the normal checkout
 + Fixed the Apple Pay Direct sheet on the cart page adding an extra plain copy of each customized product to the cart
 + Added a switch in Advanced Settings to show or hide the PrestaShop Account and CloudSync setup on the API configuration page. New installs have it off, shops that upgrade keep it on
++ Express checkout (beta) can now show on the cart page and at the start of checkout, where the wallet collects the shopper's email, addresses and carrier, so a visitor can pay without filling in the checkout. New installs show it everywhere, shops that upgrade keep it on the payment step only and can turn on the new places in Advanced Settings
++ Express checkout now follows the module limits set in Payment > Preferences (currencies, countries, customer groups and carriers)
 
 ## Changes in release 6.4.7
 + Fixed the payment email checkbox missing when creating an order in the back office, on shops that upgraded from an older version

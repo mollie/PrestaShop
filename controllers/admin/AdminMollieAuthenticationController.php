@@ -18,6 +18,7 @@ use Mollie\Builder\ApiTestFeedbackBuilder;
 use Mollie\Config\Config;
 use Mollie\Exception\MollieException;
 use Mollie\Logger\LoggerInterface;
+use Mollie\Service\ExpressComponent\ExpressApplePayDomainFileService;
 use Mollie\Service\MultistoreSettingsContextGuard;
 use Mollie\Service\PaymentMethod\EnvironmentSettingsCopyService;
 use Mollie\Utility\ExceptionUtility;
@@ -422,6 +423,10 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             $environmentValue = ($environment === 'live') ? Config::ENVIRONMENT_LIVE : Config::ENVIRONMENT_TEST;
             $this->configuration->updateValue(Config::MOLLIE_ENVIRONMENT, $environmentValue);
 
+            if ($environment === 'live') {
+                $this->placeExpressApplePayDomainFile();
+            }
+
             /** @var \Mollie\Service\SegmentTracker $segmentTracker */
             $segmentTracker = $this->module->getService(\Mollie\Service\SegmentTracker::class);
             $segmentTracker->trackModuleConfigured(
@@ -448,6 +453,13 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 'message' => $this->module->l('Failed to save API key', self::FILE_NAME),
             ]));
         }
+    }
+
+    private function placeExpressApplePayDomainFile(): void
+    {
+        /** @var ExpressApplePayDomainFileService $domainFileService */
+        $domainFileService = $this->module->getService(ExpressApplePayDomainFileService::class);
+        $domainFileService->placeForExpress();
     }
 
     private function ajaxSwitchEnvironment(): void
@@ -484,6 +496,10 @@ class AdminMollieAuthenticationController extends ModuleAdminController
             }
 
             $this->configuration->updateValue(Config::MOLLIE_ENVIRONMENT, $environmentValue);
+
+            if ($environment === 'live' && $isConnected) {
+                $this->placeExpressApplePayDomainFile();
+            }
 
             $this->ajaxRender(json_encode([
                 'success' => true,

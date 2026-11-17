@@ -11,12 +11,15 @@
  */
 
 use Mollie\Adapter\API\MollieSessionApiAdapterInterface;
+use Mollie\Config\Config;
 use Mollie\Controller\AbstractMollieController;
 use Mollie\Logger\LoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExpressComponent\ExpressSessionService;
 use Mollie\Utility\ExceptionUtility;
 use Mollie\Utility\MollieStatusUtility;
+use Mollie\Utility\OrderRecoverUtility;
+use Mollie\Utility\SecureKeyUtility;
 use Mollie\Validator\OrderCallBackValidator;
 
 if (!defined('_PS_VERSION_')) {
@@ -41,6 +44,15 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
     /** @var bool */
     public $ssl = true;
 
+    /** @var bool the cart's stored session let Mollie collect the customer details */
+    private $isCollectSession = false;
+
+    /** @var bool an anonymous visitor returning from the collect session their browser started */
+    private $isCollectVisitor = false;
+
+    /** @var \MolExpressSession|null the cart's stored session, read once per request */
+    private $storedSession;
+
     public function initContent()
     {
         /** @var LoggerInterface $logger */
@@ -54,13 +66,19 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
         /** @var OrderCallBackValidator $orderCallBackValidator */
         $orderCallBackValidator = $this->module->getService(OrderCallBackValidator::class);
 
-        if (!$cartId || !$orderCallBackValidator->validate($key, $cartId)) {
+        if (!$cartId) {
             Tools::redirect('index.php');
         }
 
         $cart = new Cart($cartId);
 
-        if ((int) $cart->id_customer !== (int) $this->context->customer->id) {
+        $this->resolveCollectSession($cart);
+
+        if (!$orderCallBackValidator->validate($key, $cartId) && !$this->isCollectVisitorKey($key, $cartId)) {
+            Tools::redirect('index.php');
+        }
+
+        if ((int) $cart->id_customer !== (int) $this->context->customer->id && !$this->isCollectVisitor) {
             Tools::redirect('index.php');
         }
 
@@ -117,6 +135,8 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
         $orderId = (int) Order::getIdByCartId((int) $cart->id);
 
         if ($orderId) {
+            $this->logInCollectVisitor($cart);
+
             exit(json_encode([
                 'success' => true,
                 'status' => self::STATUS_REDIRECT,
@@ -166,10 +186,7 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
 
     private function isSessionCompleted(Cart $cart): bool
     {
-        /** @var ExpressSessionService $sessionService */
-        $sessionService = $this->module->getService(ExpressSessionService::class);
-
-        $stored = $sessionService->findStoredSession($cart);
+        $stored = $this->storedSession;
 
         if (!$stored) {
             return false;
@@ -216,10 +233,7 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
             return false;
         }
 
-        /** @var ExpressSessionService $sessionService */
-        $sessionService = $this->module->getService(ExpressSessionService::class);
-
-        $stored = $sessionService->findStoredSession($cart);
+        $stored = $this->storedSession;
 
         if (!$stored || empty($payment['order_reference'])) {
             return false;
@@ -245,8 +259,54 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
         return '' !== $description && hash_equals($description, (string) $payment['order_reference']);
     }
 
+    /**
+     * The collect session was built while the cart had no customer, and the webhook attached a
+     * guest to it since. The visitor is let through when their browser started that session.
+     */
+    private function resolveCollectSession(Cart $cart): void
+    {
+        /** @var ExpressSessionService $sessionService */
+        $sessionService = $this->module->getService(ExpressSessionService::class);
+
+        $this->storedSession = $sessionService->findStoredSession($cart);
+        $this->isCollectSession = $this->storedSession && (bool) $this->storedSession->collect_details;
+        $this->isCollectVisitor = $this->isCollectSession
+            && !(int) $this->context->customer->id
+            && (int) $this->context->cookie->__get(Config::EXPRESS_CART_COOKIE) === (int) $cart->id;
+    }
+
+    /**
+     * OrderCallBackValidator rebuilds the key from the context customer id, which is null for a
+     * visitor, while the session key was built with customer id 0.
+     */
+    private function isCollectVisitorKey(string $key, int $cartId): bool
+    {
+        return $this->isCollectVisitor
+            && hash_equals(SecureKeyUtility::generateReturnKey(0, $cartId, $this->module->name), $key);
+    }
+
+    /**
+     * Order confirmation only shows an order to its own customer.
+     */
+    private function logInCollectVisitor(Cart $cart): void
+    {
+        if (!$this->isCollectVisitor) {
+            return;
+        }
+
+        $customer = new Customer((int) $cart->id_customer);
+
+        if (!Validate::isLoadedObject($customer) || !$customer->is_guest) {
+            return;
+        }
+
+        OrderRecoverUtility::recoverCreatedOrder($this->context, (int) $customer->id);
+    }
+
     private function redirectToOrderConfirmation(Cart $cart, int $orderId): void
     {
+        $this->logInCollectVisitor($cart);
+
         Tools::redirect($this->getOrderConfirmationUrl($cart, $orderId));
     }
 
@@ -274,7 +334,18 @@ class MollieExpressReturnModuleFrontController extends AbstractMollieController
 
     private function getPaymentStepUrl(): string
     {
-        return $this->context->link->getPageLink('order', true, $this->context->language->id, ['step' => 'payment']);
+        $languageId = $this->context->language->id;
+
+        if (!$this->isCollectSession) {
+            return $this->context->link->getPageLink('order', true, $languageId, ['step' => 'payment']);
+        }
+
+        // A collect session started from the strip above the personal information form or on the cart page.
+        if (Config::EXPRESS_PLACEMENT_CHECKOUT === (string) $this->context->cookie->__get(Config::EXPRESS_PLACEMENT_COOKIE)) {
+            return $this->context->link->getPageLink('order', true, $languageId);
+        }
+
+        return $this->context->link->getPageLink('cart', true, $languageId, ['action' => 'show']);
     }
 
     /** Read back by ErrorDisplayService::showCookieError on the cart and order pages. */

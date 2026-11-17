@@ -17,6 +17,7 @@ use Mollie\Adapter\Context;
 use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\PrestaLoggerInterface;
+use Mollie\Repository\ModuleRestrictionRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\MinimumPurchaseService;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
@@ -37,6 +38,9 @@ class ExpressComponentAvailabilityService
 
     const VISIBILITY_AUTOMATIC = 'automatic';
     const VISIBILITY_HIDDEN = 'hidden';
+
+    /** Address fields the wallet sheet hands over in collect mode. */
+    const COLLECTED_ADDRESS_FIELDS = ['firstname', 'lastname', 'address1', 'city', 'postcode', 'id_country', 'Country:name', 'id_state', 'State:name'];
 
     /**
      * Component button => [config flag, mol_payment_method id_method the button settles through].
@@ -64,9 +68,11 @@ class ExpressComponentAvailabilityService
     private $logger;
     /** @var MinimumPurchaseService */
     private $minimumPurchaseService;
+    /** @var ModuleRestrictionRepositoryInterface */
+    private $moduleRestrictionRepository;
     /** @var string */
     private $unavailableReason = '';
-    /** @var array<int, bool> hookDisplayHeader and hookDisplayPaymentTop ask for the same cart in one request */
+    /** @var array<string, bool> hookDisplayHeader and hookDisplayPaymentTop ask for the same cart in one request */
     private $cartAvailability = [];
 
     public function __construct(
@@ -77,7 +83,8 @@ class ExpressComponentAvailabilityService
         SubscriptionOrderValidator $subscriptionOrderValidator,
         ModuleFactory $moduleFactory,
         PrestaLoggerInterface $logger,
-        MinimumPurchaseService $minimumPurchaseService
+        MinimumPurchaseService $minimumPurchaseService,
+        ModuleRestrictionRepositoryInterface $moduleRestrictionRepository
     ) {
         $this->configuration = $configuration;
         $this->context = $context;
@@ -87,6 +94,7 @@ class ExpressComponentAvailabilityService
         $this->moduleFactory = $moduleFactory;
         $this->logger = $logger;
         $this->minimumPurchaseService = $minimumPurchaseService;
+        $this->moduleRestrictionRepository = $moduleRestrictionRepository;
     }
 
     /** The merchant switched the component on and the shop can talk to Mollie in live mode. */
@@ -113,24 +121,83 @@ class ExpressComponentAvailabilityService
         return true;
     }
 
+    /** A switch the merchant never saved keeps the payment step on, as before placements existed. */
+    public function isPlacementEnabled(string $placement): bool
+    {
+        if (!isset(Config::EXPRESS_PLACEMENT_FLAGS[$placement])) {
+            return false;
+        }
+
+        $value = $this->getPlacementSetting(Config::EXPRESS_PLACEMENT_FLAGS[$placement]);
+
+        if (false === $value || null === $value) {
+            return Config::EXPRESS_PLACEMENT_PAYMENT === $placement;
+        }
+
+        return (bool) (int) $value;
+    }
+
     /** The cart on the payment step has everything a session needs: customer, addresses, carrier, total. */
     public function isAvailable(\Cart $cart): bool
     {
-        $cartId = (int) $cart->id;
+        return $this->rememberAvailability($cart, false);
+    }
 
-        if (isset($this->cartAvailability[$cartId])) {
-            return $this->cartAvailability[$cartId];
+    /**
+     * Mollie's wallet sheet collects the email, the addresses and the carrier, so the cart only
+     * needs products and a visitor who may become a customer.
+     */
+    public function isAvailableForCollect(\Cart $cart): bool
+    {
+        return $this->rememberAvailability($cart, true);
+    }
+
+    private function rememberAvailability(\Cart $cart, bool $collectDetails): bool
+    {
+        $cartId = (int) $cart->id;
+        $key = ($collectDetails ? 'collect-' : 'payment-') . $cartId;
+
+        if (isset($this->cartAvailability[$key])) {
+            return $this->cartAvailability[$key];
         }
 
-        $available = $this->checkCart($cart);
+        $available = $collectDetails ? $this->checkCollectCart($cart) : $this->checkCart($cart);
 
         if (!$available) {
             $this->logger->debug(sprintf('%s - Express Component not shown: %s', self::FILE_NAME, $this->unavailableReason), [
                 'cart_id' => $cartId,
+                'collect_details' => $collectDetails,
             ]);
         }
 
-        return $this->cartAvailability[$cartId] = $available;
+        return $this->cartAvailability[$key] = $available;
+    }
+
+    private function checkCollectCart(\Cart $cart): bool
+    {
+        if (!$this->isEnabled()) {
+            return false;
+        }
+
+        if (!$cart->id || !$cart->hasProducts()) {
+            return $this->unavailable('cart has no products');
+        }
+
+        if (!(int) $cart->id_customer && !(int) $this->configuration->get('PS_GUEST_CHECKOUT_ENABLED')) {
+            return $this->unavailable('visitor cannot become a customer: guest checkout is disabled');
+        }
+
+        $missingFields = array_values(array_diff($this->getRequiredAddressFields(), self::COLLECTED_ADDRESS_FIELDS));
+
+        if ($missingFields) {
+            return $this->unavailable(sprintf('shop requires address fields the wallet cannot supply: %s', implode(', ', $missingFields)));
+        }
+
+        if (!$this->checkModuleRestrictions($cart)) {
+            return false;
+        }
+
+        return $this->checkContents($cart, \Cart::BOTH_WITHOUT_SHIPPING);
     }
 
     private function checkCart(\Cart $cart): bool
@@ -153,15 +220,105 @@ class ExpressComponentAvailabilityService
         // PrestaShop falls back to its default carrier when the cart holds no choice yet (the page
         // shows it and the order gets it), so only a cart no carrier can serve is refused. A stale
         // id_carrier is no proof either: it survives an address no carrier serves.
-        if (!$isVirtualCart && !$cart->getDeliveryOption(null, false, false)) {
+        $deliveryOption = $isVirtualCart ? [] : $cart->getDeliveryOption(null, false, false);
+
+        if (!$isVirtualCart && !$deliveryOption) {
             return $this->unavailable('no carrier serves the delivery address');
         }
 
+        if (!$this->checkModuleRestrictions($cart)) {
+            return false;
+        }
+
+        $moduleId = $this->getModuleId();
+        $shopId = $this->context->getShopId();
+
+        if (!$this->moduleRestrictionRepository->isCountryAllowed($moduleId, $shopId, $this->getAddressCountryId((int) $cart->id_address_delivery))) {
+            return $this->unavailable('delivery country not allowed for the module');
+        }
+
+        foreach ($this->getCarrierIds($deliveryOption) as $carrierId) {
+            if (!$this->moduleRestrictionRepository->isCarrierReferenceAllowed($moduleId, $shopId, $this->getCarrierReference($carrierId))) {
+                return $this->unavailable('carrier not allowed for the module');
+            }
+        }
+
+        return $this->checkContents($cart, \Cart::BOTH);
+    }
+
+    /**
+     * The currency and customer group restrictions of Payment > Preferences, which PrestaShop
+     * applies to the regular payment options.
+     */
+    private function checkModuleRestrictions(\Cart $cart): bool
+    {
+        $moduleId = $this->getModuleId();
+        $shopId = $this->context->getShopId();
+
+        if (!$this->moduleRestrictionRepository->isCurrencyAllowed($moduleId, $shopId, (int) $cart->id_currency)) {
+            return $this->unavailable('currency not allowed for the module');
+        }
+
+        if (!(int) $this->configuration->get('PS_GROUP_FEATURE_ACTIVE')) {
+            return true;
+        }
+
+        if (!$this->moduleRestrictionRepository->isAnyGroupAllowed($moduleId, $shopId, $this->getVisitorGroupIds((int) $cart->id_customer))) {
+            return $this->unavailable('customer group not allowed for the module');
+        }
+
+        return true;
+    }
+
+    /** isEnabled() has already made sure the module loads. */
+    private function getModuleId(): int
+    {
+        return (int) $this->moduleFactory->getModule()->id;
+    }
+
+    /**
+     * @return int[]
+     */
+    private function getVisitorGroupIds(int $customerId): array
+    {
+        // a cart without a customer is placed by a guest, so it is judged as one
+        if (!$customerId) {
+            return [(int) $this->configuration->get('PS_GUEST_GROUP')];
+        }
+
+        return $this->getCustomerGroupIds($customerId);
+    }
+
+    /**
+     * @param array<int, string> $deliveryOption address id => "carrier id,carrier id,"
+     *
+     * @return int[]
+     */
+    private function getCarrierIds(array $deliveryOption): array
+    {
+        $carrierIds = [];
+
+        foreach ($deliveryOption as $carrierList) {
+            foreach (explode(',', (string) $carrierList) as $carrierId) {
+                if ((int) $carrierId) {
+                    $carrierIds[] = (int) $carrierId;
+                }
+            }
+        }
+
+        return array_values(array_unique($carrierIds));
+    }
+
+    /**
+     * @param int $totalType the total the session is created for: without shipping when Mollie collects it
+     */
+    private function checkContents(\Cart $cart, int $totalType): bool
+    {
         if ($this->subscriptionOrderValidator->validate($cart)) {
             return $this->unavailable('cart contains a subscription product');
         }
 
-        if ($cart->getOrderTotal(true, \Cart::BOTH) <= 0) {
+        if ($cart->getOrderTotal(true, $totalType) <= 0) {
             return $this->unavailable('cart total is zero');
         }
 
@@ -225,6 +382,46 @@ class ExpressComponentAvailabilityService
         return $paymentMethod
             && (bool) $paymentMethod->enabled
             && $this->restrictionValidation->isPaymentMethodValid($paymentMethod, $skippedValidators);
+    }
+
+    /**
+     * Read raw: the adapter returns null for a saved "0" as well, and an unsaved switch has its own default.
+     *
+     * @return string|false|null
+     */
+    protected function getPlacementSetting(string $key)
+    {
+        return \Configuration::get($key, null, $this->context->getShopGroupId(), $this->context->getShopId());
+    }
+
+    /**
+     * Address fields the merchant made required in the back office plus the ones every address format needs.
+     *
+     * @return string[]
+     */
+    protected function getRequiredAddressFields(): array
+    {
+        return \AddressFormat::getFieldsRequired();
+    }
+
+    /**
+     * @return int[]
+     */
+    protected function getCustomerGroupIds(int $customerId): array
+    {
+        return array_map('intval', \Customer::getGroupsStatic($customerId));
+    }
+
+    protected function getAddressCountryId(int $addressId): int
+    {
+        $countryAndState = \Address::getCountryAndState($addressId);
+
+        return $countryAndState ? (int) $countryAndState['id_country'] : 0;
+    }
+
+    protected function getCarrierReference(int $carrierId): int
+    {
+        return (int) (new \Carrier($carrierId))->id_reference;
     }
 
     private function unavailable(string $reason): bool

@@ -538,6 +538,23 @@ input:checked + .toggle-slider:before {
   transform: translateX(20px);
 }
 
+/* Rows stacked under each other keep their switches in one column, whatever the text length. */
+.toggle-content--aligned > div:first-child {
+  flex: 1;
+}
+
+.toggle-content--aligned .toggle-status {
+  min-width: 64px;
+}
+
+.toggle-group.is-disabled {
+  opacity: 0.5;
+}
+
+.toggle-switch input:disabled + .toggle-slider {
+  cursor: not-allowed;
+}
+
 .tag-container {
   display: flex;
   flex-wrap: wrap;

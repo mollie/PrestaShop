@@ -16,11 +16,10 @@ use Mollie\Adapter\ConfigurationAdapter;
 use Mollie\Adapter\Language;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Config\Config;
-use Mollie\Handler\Certificate\ApplePayDirectCertificateHandler;
-use Mollie\Logger\LoggerInterface;
+use Mollie\Service\ExpressComponent\ExpressApplePayDomainFileService;
+use Mollie\Service\ExpressComponent\ExpressComponentAvailabilityService;
 use Mollie\Service\MolCarrierInformationService;
 use Mollie\Service\MultistoreSettingsContextGuard;
-use Mollie\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -120,7 +119,11 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
             'visualSettings' => $this->module->l('Visual Settings', self::FILE_NAME),
             'expressCheckout' => $this->module->l('Express checkout (beta)', self::FILE_NAME),
             'expressCheckoutEnable' => $this->module->l('Mollie Express Component', self::FILE_NAME),
-            'expressCheckoutInfo' => $this->module->l('Show Apple Pay, Google Pay and PayPal as quick-pay buttons at the top of checkout, so customers can pay in one tap. Choose which buttons appear on the Payment Methods page.', self::FILE_NAME),
+            'expressCheckoutInfo' => $this->module->l('Show Apple Pay, Google Pay and PayPal as quick-pay buttons, so customers can pay in one tap. Choose where they show below, and which buttons appear on the Payment Methods page.', self::FILE_NAME),
+            'expressPlacementCart' => $this->module->l('Cart page', self::FILE_NAME),
+            'expressPlacementCheckout' => $this->module->l('Top of checkout', self::FILE_NAME),
+            'expressPlacementPayment' => $this->module->l('Payment step', self::FILE_NAME),
+            'expressPlacementCollectInfo' => $this->module->l('Here the wallet collects the address and shipping choice, so the shopper skips the checkout steps.', self::FILE_NAME),
             'expressCheckoutLiveOnly' => $this->module->l('The Express Component is in beta. Mollie activates it per account, so contact Mollie before you switch it on. It works only with a live API key in live mode and stays hidden in test mode.', self::FILE_NAME),
             'orderStatusMapping' => $this->module->l('Order Status Mapping', self::FILE_NAME),
             'orderStatusEmails' => $this->module->l('Order Status Emails', self::FILE_NAME),
@@ -260,6 +263,7 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
                 'carriers' => $this->getCarriersData(),
 
                 'expressComponent' => (bool) (int) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_ENABLED),
+                'expressPlacements' => $this->getExpressPlacements(),
                 'expressLiveReady' => Config::ENVIRONMENT_LIVE === (int) $this->configuration->get(Config::MOLLIE_ENVIRONMENT)
                     && 0 === strpos((string) $this->configuration->get(Config::MOLLIE_API_KEY), 'live'),
 
@@ -305,29 +309,31 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
     }
 
     /**
+     * @return array<string, bool> placement => shown
+     */
+    private function getExpressPlacements(): array
+    {
+        /** @var ExpressComponentAvailabilityService $expressAvailability */
+        $expressAvailability = $this->module->getService(ExpressComponentAvailabilityService::class);
+        $placements = [];
+
+        foreach (array_keys(Config::EXPRESS_PLACEMENT_FLAGS) as $placement) {
+            $placements[$placement] = $expressAvailability->isPlacementEnabled($placement);
+        }
+
+        return $placements;
+    }
+
+    /**
      * Shops from the 6.4.7 beta can have the Apple Pay express flag on while the component is off,
      * and the domain file is only written when the Apple Pay card is saved. Placing it here covers
      * those shops and a file removed in between, so Apple Pay shows once the component is on.
      */
     private function placeApplePayDomainFile(): void
     {
-        if (!(bool) $this->configuration->get(Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY)) {
-            return;
-        }
-
-        try {
-            /** @var ApplePayDirectCertificateHandler $certificateHandler */
-            $certificateHandler = $this->module->getService(ApplePayDirectCertificateHandler::class);
-            $certificateHandler->handle();
-            $certificateHandler->refresh();
-        } catch (\Throwable $exception) {
-            /** @var LoggerInterface $logger */
-            $logger = $this->module->getService(LoggerInterface::class);
-
-            $logger->warning('Apple Pay domain association file could not be placed when the express component was switched on', [
-                'exceptions' => ExceptionUtility::getExceptions($exception),
-            ]);
-        }
+        /** @var ExpressApplePayDomainFileService $domainFileService */
+        $domainFileService = $this->module->getService(ExpressApplePayDomainFileService::class);
+        $domainFileService->placeForExpress();
     }
 
     private function ajaxSaveSettings(): void
@@ -373,6 +379,14 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
 
                 if (!$wasExpressEnabled && (bool) $data['expressComponent']) {
                     $this->placeApplePayDomainFile();
+                }
+            }
+
+            if (isset($data['expressPlacements']) && is_array($data['expressPlacements'])) {
+                foreach (Config::EXPRESS_PLACEMENT_FLAGS as $placement => $configKey) {
+                    if (isset($data['expressPlacements'][$placement])) {
+                        $this->configuration->updateValue($configKey, $data['expressPlacements'][$placement] ? 1 : 0);
+                    }
                 }
             }
 

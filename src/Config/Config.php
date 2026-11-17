@@ -253,6 +253,19 @@ class Config
     const MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY = 'MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY';
     const MOLLIE_EXPRESS_COMPONENT_PAYPAL = 'MOLLIE_EXPRESS_COMPONENT_PAYPAL';
     const MOLLIE_EXPRESS_PROMO_DISMISSED = 'MOLLIE_EXPRESS_PROMO_DISMISSED';
+    const MOLLIE_EXPRESS_QUOTE_CUSTOMER_ID = 'MOLLIE_EXPRESS_QUOTE_CUSTOMER_ID';
+    const MOLLIE_EXPRESS_COMPONENT_PLACEMENT_CART = 'MOLLIE_EXPRESS_COMPONENT_PLACEMENT_CART';
+    const MOLLIE_EXPRESS_COMPONENT_PLACEMENT_CHECKOUT = 'MOLLIE_EXPRESS_COMPONENT_PLACEMENT_CHECKOUT';
+    const MOLLIE_EXPRESS_COMPONENT_PLACEMENT_PAYMENT = 'MOLLIE_EXPRESS_COMPONENT_PLACEMENT_PAYMENT';
+    const EXPRESS_PLACEMENT_CART = 'cart';
+    const EXPRESS_PLACEMENT_CHECKOUT = 'checkout';
+    const EXPRESS_PLACEMENT_PAYMENT = 'payment';
+    /** Express Component placement => the switch that shows it there. */
+    const EXPRESS_PLACEMENT_FLAGS = [
+        self::EXPRESS_PLACEMENT_CART => self::MOLLIE_EXPRESS_COMPONENT_PLACEMENT_CART,
+        self::EXPRESS_PLACEMENT_CHECKOUT => self::MOLLIE_EXPRESS_COMPONENT_PLACEMENT_CHECKOUT,
+        self::EXPRESS_PLACEMENT_PAYMENT => self::MOLLIE_EXPRESS_COMPONENT_PLACEMENT_PAYMENT,
+    ];
     /** Mollie method id => the express button flag that method's settings card controls (Google Pay rides on cards). */
     const EXPRESS_BUTTON_FLAGS = [
         'applepay' => self::MOLLIE_EXPRESS_COMPONENT_APPLEPAY,
@@ -263,6 +276,11 @@ class Config
     // is reused for a short while only; the script refreshes its token on the same interval.
     const EXPRESS_SESSION_REUSE_MAX_AGE_SECONDS = 780;
     const EXPRESS_METADATA_FLAG = 'express_component';
+    const EXPRESS_COLLECT_METADATA_FLAG = 'express_collect';
+    const EXPRESS_SHIPPING_FEE_LINE_TYPE = 'shipping_fee';
+    const EXPRESS_ADDRESS_ALIAS = 'mollieExpress';
+    const EXPRESS_CART_COOKIE = 'mollie_express_cart_id';
+    const EXPRESS_PLACEMENT_COOKIE = 'mollie_express_placement';
     // Compatibility mode exposes Mollie.js v2 as `Mollie2`, next to the v1 `Mollie` the card iframe uses.
     const MOLLIE_JS_V2_URL = 'https://js.mollie.com/v2/mollie.js?compatible';
 

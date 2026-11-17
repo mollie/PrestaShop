@@ -16,6 +16,7 @@ use Mollie\Builder\Express\ExpressSessionRequestBuilder;
 use Mollie\Config\Config;
 use Mollie\DTO\PaymentFeeData;
 use Mollie\Enum\LineType;
+use Mollie\Exception\MollieException;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Service\CartLinesService;
 use Mollie\Tests\Unit\BaseTestCase;
@@ -145,5 +146,131 @@ class ExpressSessionRequestBuilderTest extends BaseTestCase
         $this->assertSame('https://shop.test/img.png', $lines[0]['imageUrl']);
         $this->assertSame('physical', $lines[0]['type']);
         $this->assertSame(['description' => 'Shipping', 'type' => 'shipping_fee'], $lines[1]);
+    }
+
+    public function testPaymentModeAsksForNoCustomerDetailsAndNoShippingCallback(): void
+    {
+        $this->cartLinesService->method('getCartLines')->willReturn([]);
+
+        $body = $this->builder->build($this->cart, false)->jsonSerialize();
+
+        $this->assertSame([], $body['requiredCustomerDetails']);
+        $this->assertArrayNotHasKey('shipping', $body);
+        $this->assertArrayNotHasKey(Config::EXPRESS_COLLECT_METADATA_FLAG, $body['metadata']);
+        $this->assertSame(59.9, $this->builder->getSessionAmount($this->cart, false));
+    }
+
+    public function testCollectModeAsksMollieForTheCustomerAndTheShippingOption(): void
+    {
+        $cart = $this->collectCart(false);
+        $this->cartLinesService->method('getCartLines')->willReturn([$this->line('physical', '54.90')]);
+
+        $body = $this->builder->build($cart, true)->jsonSerialize();
+
+        $this->assertSame(['currency' => 'EUR', 'value' => '54.90'], $body['amount']);
+        $this->assertSame(['email', 'billing-address', 'shipping-address'], $body['requiredCustomerDetails']);
+        $this->assertSame(1, $body['metadata'][Config::EXPRESS_METADATA_FLAG]);
+        $this->assertSame(1, $body['metadata'][Config::EXPRESS_COLLECT_METADATA_FLAG]);
+        $this->assertSame(7, $body['metadata']['cart_id']);
+        $this->assertNotContains('shipping_fee', array_column($body['lines'], 'type'));
+
+        $callbackUrl = $body['shipping']['callbackUrl'];
+        parse_str((string) parse_url($callbackUrl, PHP_URL_QUERY), $callbackQuery);
+        $this->assertStringContainsString('/mollie/' . ExpressSessionRequestBuilder::SHIPPING_CONTROLLER . '?', $callbackUrl);
+        $this->assertSame('7', $callbackQuery['cart_id']);
+        $this->assertSame(HashUtility::hash('cart-secure-key' . 'shipping'), $callbackQuery['token']);
+        $this->assertSame($callbackQuery['token'], $this->builder->getShippingCallbackToken($cart));
+    }
+
+    public function testCollectModeBuildsLinesFromTheTotalAndSummaryWithoutShipping(): void
+    {
+        $cart = $this->collectCart(false);
+        $this->cartLinesService
+            ->expects($this->once())
+            ->method('getCartLines')
+            ->with(
+                54.9,
+                $this->anything(),
+                'EUR',
+                $this->callback(static function (array $summary) {
+                    return 0 === $summary['total_shipping']
+                        && 0 === $summary['total_shipping_tax_exc']
+                        && 0 === $summary['total_wrapping'];
+                }),
+                [],
+                true,
+                'meal',
+                LineType::PAYMENT
+            )
+            ->willReturn([$this->line('physical', '54.90')]);
+
+        $this->builder->build($cart, true);
+    }
+
+    public function testCollectModeForAVirtualCartAsksForNoShippingAddress(): void
+    {
+        $cart = $this->collectCart(true);
+        $this->cartLinesService->method('getCartLines')->willReturn([$this->line('digital', '54.90')]);
+
+        $body = $this->builder->build($cart, true)->jsonSerialize();
+
+        $this->assertSame(['email', 'billing-address'], $body['requiredCustomerDetails']);
+        $this->assertArrayNotHasKey('shipping', $body);
+    }
+
+    /**
+     * @dataProvider inconsistentCollectLinesProvider
+     */
+    public function testCollectModeRefusesLinesThatDoNotMatchTheAmount(array $lines): void
+    {
+        $cart = $this->collectCart(false);
+        $this->cartLinesService->method('getCartLines')->willReturn($lines);
+
+        $this->expectException(MollieException::class);
+
+        $this->builder->build($cart, true);
+    }
+
+    public function inconsistentCollectLinesProvider(): array
+    {
+        return [
+            'lines short of the amount' => [[$this->line('physical', '50.00')]],
+            'shipping fee line left in' => [[$this->line('physical', '49.90'), $this->line('shipping_fee', '5.00')]],
+        ];
+    }
+
+    /**
+     * @return \Cart|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function collectCart(bool $isVirtual)
+    {
+        $cart = $this->mock(\Cart::class);
+        $cart->id = 7;
+        $cart->id_customer = 3;
+        $cart->secure_key = 'cart-secure-key';
+        $cart->method('getOrderTotal')->willReturnCallback(static function ($withTaxes, $type) {
+            return \Cart::BOTH_WITHOUT_SHIPPING === $type ? 54.9 : 59.9;
+        });
+        $cart->method('getSummaryDetails')->willReturn([
+            'total_wrapping' => 0,
+            'total_shipping' => 5.0,
+            'total_shipping_tax_exc' => 4.13,
+        ]);
+        $cart->method('getProducts')->willReturn([]);
+        $cart->method('isVirtualCart')->willReturn($isVirtual);
+
+        return $cart;
+    }
+
+    private function line(string $type, string $total): array
+    {
+        return [
+            'description' => 'Line ' . $type,
+            'quantity' => 1,
+            'type' => $type,
+            'unitPrice' => ['currency' => 'EUR', 'value' => $total],
+            'totalAmount' => ['currency' => 'EUR', 'value' => $total],
+            'vatAmount' => ['currency' => 'EUR', 'value' => '0.00'],
+        ];
     }
 }

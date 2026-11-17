@@ -38,4 +38,24 @@ class ExpressPaymentUtilityTest extends TestCase
             'not an object' => [null, false],
         ];
     }
+
+    /**
+     * @dataProvider collectPaymentProvider
+     */
+    public function testItRecognisesCollectPaymentsByTheirMetadataFlag($apiPayment, bool $expected): void
+    {
+        $this->assertSame($expected, ExpressPaymentUtility::isCollectPayment($apiPayment));
+    }
+
+    public function collectPaymentProvider(): array
+    {
+        return [
+            'object metadata with flag' => [(object) ['metadata' => (object) [Config::EXPRESS_METADATA_FLAG => 1, Config::EXPRESS_COLLECT_METADATA_FLAG => 1]], true],
+            'array metadata with flag' => [(object) ['metadata' => [Config::EXPRESS_COLLECT_METADATA_FLAG => '1']], true],
+            'flag set to zero' => [(object) ['metadata' => (object) [Config::EXPRESS_COLLECT_METADATA_FLAG => 0]], false],
+            'express payment without collect flag' => [(object) ['metadata' => (object) [Config::EXPRESS_METADATA_FLAG => 1]], false],
+            'null metadata' => [(object) ['metadata' => null], false],
+            'not an object' => [null, false],
+        ];
+    }
 }

@@ -37,6 +37,15 @@ export class AdvancedSettingsPage {
     return this.page.getByTestId('advanced-settings-email-statuses-toggle');
   }
 
+  /** The checkbox is visually hidden behind its slider: assert on it, click its `.toggle-switch` label. */
+  expressPlacementSwitch(placement: 'cart' | 'checkout' | 'payment') {
+    return this.page.getByTestId(`advanced-settings-express-placement-${placement}`);
+  }
+
+  async toggleExpressPlacement(placement: 'cart' | 'checkout' | 'payment') {
+    await this.page.locator('.toggle-switch', { has: this.expressPlacementSwitch(placement) }).click();
+  }
+
   async save() {
     await this.page.getByTestId('advanced-settings-save').click();
   }

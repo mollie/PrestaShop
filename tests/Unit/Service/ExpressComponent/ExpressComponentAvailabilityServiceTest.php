@@ -17,6 +17,7 @@ use Mollie\Api\MollieApiClient;
 use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\PrestaLoggerInterface;
+use Mollie\Repository\ModuleRestrictionRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExpressComponent\ExpressComponentAvailabilityService;
 use Mollie\Service\MinimumPurchaseService;
@@ -37,6 +38,12 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
     private $restrictionValidation;
     /** @var array<string, mixed> */
     private $config;
+    /** @var ModuleRestrictionRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $moduleRestrictionRepository;
+    /** @var array<string, bool> repository method => answer */
+    private $restrictions;
+    /** @var array<string, array[]> repository method => arguments of each call */
+    private $restrictionCalls = [];
 
     protected function setUp(): void
     {
@@ -49,8 +56,25 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
         $this->restrictionValidation->method('isPaymentMethodValid')->willReturn(true);
 
         $module = $this->mock(\Mollie::class);
+        $module->id = 42;
         $module->method('getApiClient')->willReturn($this->mock(MollieApiClient::class));
         $this->moduleFactory->method('getModule')->willReturn($module);
+
+        $this->restrictions = [
+            'isCurrencyAllowed' => true,
+            'isCountryAllowed' => true,
+            'isCarrierReferenceAllowed' => true,
+            'isAnyGroupAllowed' => true,
+        ];
+        $this->moduleRestrictionRepository = $this->mock(ModuleRestrictionRepositoryInterface::class);
+
+        foreach (array_keys($this->restrictions) as $restriction) {
+            $this->moduleRestrictionRepository->method($restriction)->willReturnCallback(function () use ($restriction) {
+                $this->restrictionCalls[$restriction][] = func_get_args();
+
+                return $this->restrictions[$restriction];
+            });
+        }
 
         $this->config = [
             Config::MOLLIE_EXPRESS_COMPONENT_ENABLED => '1',
@@ -59,6 +83,8 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
             Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY => '1',
             Config::MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY => '1',
             Config::MOLLIE_EXPRESS_COMPONENT_PAYPAL => '0',
+            'PS_GROUP_FEATURE_ACTIVE' => '1',
+            'PS_GUEST_GROUP' => '2',
         ];
         $this->configuration->method('get')->willReturnCallback(function ($key) {
             return $this->config[$key] ?? null;
@@ -70,6 +96,7 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
         $this->cart->id_address_delivery = 4;
         $this->cart->id_address_invoice = 4;
         $this->cart->id_carrier = 2;
+        $this->cart->id_currency = 1;
         $this->cart->method('getOrderTotal')->willReturn(59.9);
         $this->cart->method('getDeliveryOption')->willReturn([4 => '2,']);
     }
@@ -79,18 +106,33 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
         return new MinimumPurchaseService($this->configuration, $this->mock(ToolsAdapter::class), $this->context);
     }
 
-    private function service(): ExpressComponentAvailabilityService
+    /**
+     * @return ExpressComponentAvailabilityService|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function service()
     {
-        return new ExpressComponentAvailabilityService(
-            $this->configuration,
-            $this->context,
-            $this->paymentMethodRepository,
-            $this->restrictionValidation,
-            $this->subscriptionOrderValidator,
-            $this->moduleFactory,
-            $this->mock(PrestaLoggerInterface::class),
-            $this->minimumPurchaseService()
-        );
+        $service = $this->getMockBuilder(ExpressComponentAvailabilityService::class)
+            ->setConstructorArgs([
+                $this->configuration,
+                $this->context,
+                $this->paymentMethodRepository,
+                $this->restrictionValidation,
+                $this->subscriptionOrderValidator,
+                $this->moduleFactory,
+                $this->mock(PrestaLoggerInterface::class),
+                $this->minimumPurchaseService(),
+                $this->moduleRestrictionRepository,
+            ])
+            ->setMethods(['getCustomerGroupIds', 'getAddressCountryId', 'getCarrierReference'])
+            ->getMock();
+
+        $service->method('getCustomerGroupIds')->willReturn([3, 5]);
+        $service->method('getAddressCountryId')->willReturn(17);
+        $service->method('getCarrierReference')->willReturnCallback(static function (int $carrierId) {
+            return $carrierId + 100;
+        });
+
+        return $service;
     }
 
     public function testItIsEnabledInLiveModeWithALiveKey(): void
@@ -133,7 +175,8 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
             $this->subscriptionOrderValidator,
             $moduleFactory,
             $this->mock(PrestaLoggerInterface::class),
-            $this->minimumPurchaseService()
+            $this->minimumPurchaseService(),
+            $this->moduleRestrictionRepository
         );
 
         $this->assertFalse($service->isEnabled());
@@ -224,7 +267,8 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
             $this->subscriptionOrderValidator,
             $this->moduleFactory,
             $this->mock(PrestaLoggerInterface::class),
-            $this->minimumPurchaseService()
+            $this->minimumPurchaseService(),
+            $this->moduleRestrictionRepository
         );
 
         $this->assertSame(['applepay' => 'automatic', 'googlepay' => 'automatic', 'paypal' => 'automatic'], $service->getButtonVisibility());
@@ -321,7 +365,8 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
             $this->subscriptionOrderValidator,
             $this->moduleFactory,
             $this->mock(PrestaLoggerInterface::class),
-            $this->minimumPurchaseService()
+            $this->minimumPurchaseService(),
+            $this->moduleRestrictionRepository
         );
 
         $this->assertSame([
@@ -329,5 +374,315 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
             'googlepay' => 'hidden',
             'paypal' => 'hidden',
         ], $service->getButtonVisibility());
+    }
+
+    /**
+     * @param array<string, string|false> $placementSettings
+     * @param string[] $requiredAddressFields
+     *
+     * @return ExpressComponentAvailabilityService|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function collectService(array $placementSettings = [], array $requiredAddressFields = ['firstname', 'lastname', 'address1', 'city', 'Country:name'])
+    {
+        $service = $this->getMockBuilder(ExpressComponentAvailabilityService::class)
+            ->setConstructorArgs([
+                $this->configuration,
+                $this->context,
+                $this->paymentMethodRepository,
+                $this->restrictionValidation,
+                $this->subscriptionOrderValidator,
+                $this->moduleFactory,
+                $this->mock(PrestaLoggerInterface::class),
+                $this->minimumPurchaseService(),
+                $this->moduleRestrictionRepository,
+            ])
+            ->setMethods(['getPlacementSetting', 'getRequiredAddressFields', 'getCustomerGroupIds'])
+            ->getMock();
+
+        $service->method('getCustomerGroupIds')->willReturn([3, 5]);
+
+        $service->method('getPlacementSetting')->willReturnCallback(static function (string $key) use ($placementSettings) {
+            return array_key_exists($key, $placementSettings) ? $placementSettings[$key] : false;
+        });
+        $service->method('getRequiredAddressFields')->willReturn($requiredAddressFields);
+
+        return $service;
+    }
+
+    /**
+     * @return \Cart|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private function anonymousCart(float $totalWithoutShipping = 54.9, bool $hasProducts = true)
+    {
+        $cart = $this->mock(\Cart::class);
+        $cart->id = 21;
+        $cart->id_customer = 0;
+        $cart->id_address_delivery = 0;
+        $cart->id_address_invoice = 0;
+        $cart->id_carrier = 0;
+        $cart->method('hasProducts')->willReturn($hasProducts);
+        $cart->method('getDeliveryOption')->willReturn([]);
+        $cart->method('getOrderTotal')->willReturnCallback(static function ($withTaxes, $type) use ($totalWithoutShipping) {
+            return \Cart::BOTH_WITHOUT_SHIPPING === $type ? $totalWithoutShipping : $totalWithoutShipping + 5;
+        });
+
+        return $cart;
+    }
+
+    public function testThePaymentPlacementIsOnUntilTheMerchantSavesIt(): void
+    {
+        $service = $this->collectService();
+
+        $this->assertTrue($service->isPlacementEnabled(Config::EXPRESS_PLACEMENT_PAYMENT));
+        $this->assertFalse($service->isPlacementEnabled(Config::EXPRESS_PLACEMENT_CART));
+        $this->assertFalse($service->isPlacementEnabled(Config::EXPRESS_PLACEMENT_CHECKOUT));
+    }
+
+    public function testSavedPlacementSwitchesWin(): void
+    {
+        $service = $this->collectService([
+            Config::MOLLIE_EXPRESS_COMPONENT_PLACEMENT_PAYMENT => '0',
+            Config::MOLLIE_EXPRESS_COMPONENT_PLACEMENT_CART => '1',
+            Config::MOLLIE_EXPRESS_COMPONENT_PLACEMENT_CHECKOUT => '1',
+        ]);
+
+        $this->assertFalse($service->isPlacementEnabled(Config::EXPRESS_PLACEMENT_PAYMENT));
+        $this->assertTrue($service->isPlacementEnabled(Config::EXPRESS_PLACEMENT_CART));
+        $this->assertTrue($service->isPlacementEnabled(Config::EXPRESS_PLACEMENT_CHECKOUT));
+    }
+
+    public function testAnUnknownPlacementIsNeverEnabled(): void
+    {
+        $this->assertFalse($this->collectService()->isPlacementEnabled('product'));
+    }
+
+    public function testAnAnonymousCartIsAvailableForCollectWhenGuestsMayCheckOut(): void
+    {
+        $this->config['PS_GUEST_CHECKOUT_ENABLED'] = '1';
+        $this->subscriptionOrderValidator->method('validate')->willReturn(false);
+        $this->offerEveryMethod();
+
+        $this->assertTrue($this->collectService()->isAvailableForCollect($this->anonymousCart()));
+    }
+
+    public function testACustomersCartIsAvailableForCollectWithoutGuestCheckout(): void
+    {
+        $this->subscriptionOrderValidator->method('validate')->willReturn(false);
+        $this->offerEveryMethod();
+        $cart = $this->anonymousCart();
+        $cart->id_customer = 3;
+
+        $this->assertTrue($this->collectService()->isAvailableForCollect($cart));
+    }
+
+    public function testCollectDoesNotChangeWhatThePaymentStepGets(): void
+    {
+        $this->config['PS_GUEST_CHECKOUT_ENABLED'] = '1';
+        $this->subscriptionOrderValidator->method('validate')->willReturn(false);
+        $this->offerEveryMethod();
+        $service = $this->collectService();
+        $cart = $this->anonymousCart();
+
+        $this->assertTrue($service->isAvailableForCollect($cart));
+        $this->assertFalse($service->isAvailable($cart));
+        $this->assertSame('cart has no customer', $service->getUnavailableReason());
+    }
+
+    /**
+     * @dataProvider collectRefusalProvider
+     */
+    public function testACartIsNotAvailableForCollect(callable $arrange, string $reason): void
+    {
+        $this->config['PS_GUEST_CHECKOUT_ENABLED'] = '1';
+        $this->offerEveryMethod();
+        $cart = $this->anonymousCart();
+        $requiredAddressFields = ['firstname', 'lastname', 'address1', 'city', 'Country:name', 'postcode', 'id_state', 'State:name', 'id_country'];
+
+        $subscription = false;
+        $arrange($this, $cart, $requiredAddressFields, $subscription);
+        $this->subscriptionOrderValidator->method('validate')->willReturn($subscription);
+
+        $service = $this->collectService([], $requiredAddressFields);
+
+        $this->assertFalse($service->isAvailableForCollect($cart));
+        $this->assertSame($reason, $service->getUnavailableReason());
+    }
+
+    public function collectRefusalProvider(): array
+    {
+        return [
+            'express switched off' => [static function (self $test) {
+                $test->config[Config::MOLLIE_EXPRESS_COMPONENT_ENABLED] = '0';
+            }, 'disabled in settings'],
+            'no cart' => [static function (self $test, $cart) {
+                $cart->id = 0;
+            }, 'cart has no products'],
+            'subscription product' => [static function (self $test, $cart, array &$fields, bool &$subscription) {
+                $subscription = true;
+            }, 'cart contains a subscription product'],
+            'every button off' => [static function (self $test) {
+                $test->config[Config::MOLLIE_EXPRESS_COMPONENT_APPLEPAY] = '0';
+                $test->config[Config::MOLLIE_EXPRESS_COMPONENT_GOOGLEPAY] = '0';
+            }, 'no express button is offered for this cart'],
+            'minimum purchase' => [static function (self $test, $cart) {
+                $test->config['PS_PURCHASE_MINIMUM'] = '500';
+                $cart->id_currency = 1;
+            }, 'cart is below the minimum purchase total'],
+            'no guest checkout' => [static function (self $test) {
+                $test->config['PS_GUEST_CHECKOUT_ENABLED'] = '0';
+            }, 'visitor cannot become a customer: guest checkout is disabled'],
+            'phone required' => [static function (self $test, $cart, array &$fields) {
+                $fields[] = 'phone';
+            }, 'shop requires address fields the wallet cannot supply: phone'],
+            'company and VAT number required' => [static function (self $test, $cart, array &$fields) {
+                $fields[] = 'company';
+                $fields[] = 'vat_number';
+            }, 'shop requires address fields the wallet cannot supply: company, vat_number'],
+        ];
+    }
+
+    public function testAnEmptyCartIsNotAvailableForCollect(): void
+    {
+        $this->config['PS_GUEST_CHECKOUT_ENABLED'] = '1';
+        $service = $this->collectService();
+
+        $this->assertFalse($service->isAvailableForCollect($this->anonymousCart(54.9, false)));
+        $this->assertSame('cart has no products', $service->getUnavailableReason());
+    }
+
+    public function testACollectCartWhoseProductsCostNothingIsNotAvailable(): void
+    {
+        $this->config['PS_GUEST_CHECKOUT_ENABLED'] = '1';
+        $this->subscriptionOrderValidator->method('validate')->willReturn(false);
+        $this->offerEveryMethod();
+        $service = $this->collectService();
+
+        $this->assertFalse($service->isAvailableForCollect($this->anonymousCart(0.0)));
+        $this->assertSame('cart total is zero', $service->getUnavailableReason());
+    }
+
+    /**
+     * @dataProvider paymentStepRestrictionProvider
+     */
+    public function testAPaymentStepCartTheModuleIsRestrictedForIsNotAvailable(string $restriction, string $reason): void
+    {
+        $this->subscriptionOrderValidator->method('validate')->willReturn(false);
+        $this->offerEveryMethod();
+        $this->restrictions[$restriction] = false;
+
+        $service = $this->service();
+
+        $this->assertFalse($service->isAvailable($this->cart));
+        $this->assertSame($reason, $service->getUnavailableReason());
+    }
+
+    public function paymentStepRestrictionProvider(): array
+    {
+        return [
+            'currency' => ['isCurrencyAllowed', 'currency not allowed for the module'],
+            'customer group' => ['isAnyGroupAllowed', 'customer group not allowed for the module'],
+            'delivery country' => ['isCountryAllowed', 'delivery country not allowed for the module'],
+            'carrier' => ['isCarrierReferenceAllowed', 'carrier not allowed for the module'],
+        ];
+    }
+
+    public function testThePaymentStepAsksForTheCartsRestrictionValues(): void
+    {
+        $this->subscriptionOrderValidator->method('validate')->willReturn(false);
+        $this->offerEveryMethod();
+
+        $this->assertTrue($this->service()->isAvailable($this->cart));
+        $this->assertSame([
+            'isCurrencyAllowed' => [[42, 1, 1]],
+            'isAnyGroupAllowed' => [[42, 1, [3, 5]]],
+            'isCountryAllowed' => [[42, 1, 17]],
+            'isCarrierReferenceAllowed' => [[42, 1, 102]],
+        ], $this->restrictionCalls);
+    }
+
+    public function testAVirtualCartSkipsTheCarrierRestriction(): void
+    {
+        $cart = $this->mock(\Cart::class);
+        $cart->id = 9;
+        $cart->id_customer = 3;
+        $cart->id_address_delivery = 4;
+        $cart->id_address_invoice = 4;
+        $cart->id_currency = 1;
+        $cart->method('isVirtualCart')->willReturn(true);
+        $cart->method('getDeliveryOption')->willReturn([4 => '2,']);
+        $cart->method('getOrderTotal')->willReturn(10.8);
+        $this->subscriptionOrderValidator->method('validate')->willReturn(false);
+        $this->offerEveryMethod();
+        $this->restrictions['isCarrierReferenceAllowed'] = false;
+
+        $this->assertTrue($this->service()->isAvailable($cart));
+        $this->assertArrayNotHasKey('isCarrierReferenceAllowed', $this->restrictionCalls);
+    }
+
+    public function testTheGroupRestrictionIsIgnoredWhileTheShopDoesNotUseGroups(): void
+    {
+        $this->subscriptionOrderValidator->method('validate')->willReturn(false);
+        $this->offerEveryMethod();
+        $this->config['PS_GROUP_FEATURE_ACTIVE'] = '0';
+        $this->restrictions['isAnyGroupAllowed'] = false;
+
+        $this->assertTrue($this->service()->isAvailable($this->cart));
+        $this->assertArrayNotHasKey('isAnyGroupAllowed', $this->restrictionCalls);
+    }
+
+    /**
+     * @dataProvider collectRestrictionProvider
+     */
+    public function testACollectCartTheModuleIsRestrictedForIsNotAvailable(string $restriction, string $reason): void
+    {
+        $this->config['PS_GUEST_CHECKOUT_ENABLED'] = '1';
+        $this->subscriptionOrderValidator->method('validate')->willReturn(false);
+        $this->offerEveryMethod();
+        $this->restrictions[$restriction] = false;
+        $service = $this->collectService();
+
+        $this->assertFalse($service->isAvailableForCollect($this->anonymousCart()));
+        $this->assertSame($reason, $service->getUnavailableReason());
+    }
+
+    public function collectRestrictionProvider(): array
+    {
+        return [
+            'currency' => ['isCurrencyAllowed', 'currency not allowed for the module'],
+            'customer group' => ['isAnyGroupAllowed', 'customer group not allowed for the module'],
+        ];
+    }
+
+    public function testAnAnonymousCollectCartIsJudgedAsAGuest(): void
+    {
+        $this->config['PS_GUEST_CHECKOUT_ENABLED'] = '1';
+        $this->subscriptionOrderValidator->method('validate')->willReturn(false);
+        $this->offerEveryMethod();
+        $this->assertTrue($this->collectService()->isAvailableForCollect($this->anonymousCart()));
+        $this->assertSame([[42, 1, [2]]], $this->restrictionCalls['isAnyGroupAllowed']);
+    }
+
+    public function testACustomersCollectCartIsJudgedByTheCustomersGroups(): void
+    {
+        $this->subscriptionOrderValidator->method('validate')->willReturn(false);
+        $this->offerEveryMethod();
+        $cart = $this->anonymousCart();
+        $cart->id_customer = 3;
+
+        $this->assertTrue($this->collectService()->isAvailableForCollect($cart));
+        $this->assertSame([[42, 1, [3, 5]]], $this->restrictionCalls['isAnyGroupAllowed']);
+    }
+
+    public function testCollectLeavesTheCountryAndCarrierToTheShippingCallback(): void
+    {
+        $this->config['PS_GUEST_CHECKOUT_ENABLED'] = '1';
+        $this->subscriptionOrderValidator->method('validate')->willReturn(false);
+        $this->offerEveryMethod();
+        $this->restrictions['isCountryAllowed'] = false;
+        $this->restrictions['isCarrierReferenceAllowed'] = false;
+
+        $this->assertTrue($this->collectService()->isAvailableForCollect($this->anonymousCart()));
+        $this->assertArrayNotHasKey('isCountryAllowed', $this->restrictionCalls);
+        $this->assertArrayNotHasKey('isCarrierReferenceAllowed', $this->restrictionCalls);
     }
 }

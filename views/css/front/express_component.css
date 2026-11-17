@@ -61,3 +61,21 @@
 .step__content .mollie-express-component {
   margin-top: 0.5rem;
 }
+
+/* Under the cart's checkout button: Classic centres that block, Hummingbird lays it out as a grid. */
+.mollie-express-component--cart {
+  width: 100%;
+  margin: 1rem 0 0;
+  text-align: left;
+}
+
+/* Above the personal information form, separated from the login and guest tabs below. */
+.mollie-express-component--checkout {
+  margin: 0 0 1.5rem;
+}
+
+/* ps_onepagecheckout puts its express slot in a flex row and draws its own separator below. */
+.opc-express-checkout__buttons .mollie-express-component {
+  flex: 1 1 100%;
+  margin-bottom: 0;
+}

@@ -36,6 +36,7 @@ use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\OrderRepositoryInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Utility\ExpressPaymentUtility;
 use Mollie\Utility\MollieStatusUtility;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\OrderNumberUtility;
@@ -192,7 +193,15 @@ class TransactionService
             $this->module->name
         );
 
-        if ($key !== $apiPayment->metadata->secure_key && $deprecatedKey !== $apiPayment->metadata->secure_key) {
+        // A collect session is built for an anonymous cart; the guest is attached to it only
+        // when the order is created, so every later webhook would recompute a different key.
+        $isAnonymousCartKey = ExpressPaymentUtility::isCollectPayment($apiPayment)
+            && SecureKeyUtility::generateReturnKey(0, $cart->id, $this->module->name) === $apiPayment->metadata->secure_key;
+
+        if ($key !== $apiPayment->metadata->secure_key
+            && $deprecatedKey !== $apiPayment->metadata->secure_key
+            && !$isAnonymousCartKey
+        ) {
             throw new TransactionException('Security key is incorrect.', HttpStatusCode::HTTP_UNAUTHORIZED);
         }
 

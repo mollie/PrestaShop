@@ -137,6 +137,7 @@ final class DatabaseTableInstaller implements InstallerInterface
                 `currency_iso` VARCHAR(3) NOT NULL,
                 `webhook_token` VARCHAR(32) NOT NULL DEFAULT \'\',
                 `status` VARCHAR(32) NOT NULL DEFAULT \'open\',
+                `collect_details` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
                 `created_at` DATETIME NOT NULL,
                 `updated_at` DATETIME NOT NULL,
                 INDEX `idx_mol_express_session_cart` (`id_cart`)
