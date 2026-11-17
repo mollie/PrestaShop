@@ -21,6 +21,7 @@ use Mollie\Logger\LoggerInterface;
 use Mollie\Service\MolCarrierInformationService;
 use Mollie\Service\MultistoreSettingsContextGuard;
 use Mollie\Utility\ExceptionUtility;
+use Mollie\Verification\Employee\CanAccessTab;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -192,6 +193,12 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
 
         $action = $this->tools->getValue('action');
 
+        $requiredRight = 'saveSettings' === $action ? 'edit' : 'view';
+
+        if ($this->denyWithoutTabRight($requiredRight)) {
+            return;
+        }
+
         if ('saveSettings' === $action && !$this->multistoreSettingsContextGuard->canEditSettings()) {
             $this->ajaxRender(json_encode([
                 'success' => false,
@@ -215,6 +222,26 @@ class AdminMollieAdvancedSettingsController extends ModuleAdminController
                 ]));
                 break;
         }
+    }
+
+    private function denyWithoutTabRight(string $right): bool
+    {
+        if ((new CanAccessTab())->verify($this->context->employee, $right, 'AdminMollieAdvancedSettings')) {
+            return false;
+        }
+
+        $message = $this->trans('You do not have permission to view this.', [], 'Admin.Notifications.Error');
+
+        if ('edit' === $right) {
+            $message = $this->trans('You do not have permission to edit this.', [], 'Admin.Notifications.Error');
+        }
+
+        $this->ajaxRender(json_encode([
+            'success' => false,
+            'message' => $message,
+        ]));
+
+        return true;
     }
 
     private function ajaxGetSettings(): void
