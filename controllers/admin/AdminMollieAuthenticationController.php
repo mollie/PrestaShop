@@ -335,8 +335,11 @@ class AdminMollieAuthenticationController extends ModuleAdminController
         $this->ajaxRender(json_encode([
             'success' => true,
             'data' => [
-                'test_api_key' => $testApiKey ?: '',
-                'live_api_key' => $liveApiKey ?: '',
+                // An admin bundle from an earlier version reads these as strings and fails to render without them
+                'test_api_key' => '',
+                'live_api_key' => '',
+                'has_test_key' => !empty($testApiKey),
+                'has_live_key' => !empty($liveApiKey),
                 'environment' => $environment ? 'live' : 'test',
                 'is_configured' => !empty($testApiKey) || !empty($liveApiKey),
                 'is_connected' => $environment ? $liveKeyValid : $testKeyValid,
@@ -476,7 +479,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                     'message' => $this->module->l('The stored API key for this mode is not accepted. Enter a new key and connect to switch.', self::FILE_NAME),
                     'data' => [
                         'environment' => $environment,
-                        'api_key' => $apiKey,
+                        'api_key' => '',
                     ],
                 ]));
 
@@ -491,7 +494,8 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 'data' => [
                     'environment' => $environment,
                     'is_connected' => $isConnected,
-                    'api_key' => $apiKey,
+                    'api_key' => '',
+                    'has_stored_key' => !empty($apiKey),
                 ],
             ]));
         } catch (MollieException $e) {
