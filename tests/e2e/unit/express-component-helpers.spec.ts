@@ -88,4 +88,44 @@ test.describe('express component helpers', () => {
     expect(helpers.allRequiredConditionsAccepted([{ checked: true }, { checked: true }])).toBe(true);
     expect(helpers.allRequiredConditionsAccepted([{ checked: true }, { checked: false }])).toBe(false);
   });
+
+  test('isCollectPlacement is true for the cart and checkout strips only', () => {
+    expect(helpers.isCollectPlacement('cart')).toBe(true);
+    expect(helpers.isCollectPlacement('checkout')).toBe(true);
+    expect(helpers.isCollectPlacement('payment')).toBe(false);
+    expect(helpers.isCollectPlacement(null)).toBe(false);
+  });
+
+  test('pickActivePlacement keeps the payment strip while the payment step is current', () => {
+    expect(helpers.pickActivePlacement({ payment: true, checkout: true }, true, false)).toBe('payment');
+    expect(helpers.pickActivePlacement({ payment: true }, true, false)).toBe('payment');
+  });
+
+  test('pickActivePlacement uses the checkout strip only while personal information is current', () => {
+    expect(helpers.pickActivePlacement({ payment: true, checkout: true }, false, true)).toBe('checkout');
+    expect(helpers.pickActivePlacement({ payment: true, checkout: true }, false, false)).toBeNull();
+    expect(helpers.pickActivePlacement({ payment: true }, false, true)).toBeNull();
+  });
+
+  test('pickActivePlacement falls back to the cart strip and to nothing', () => {
+    expect(helpers.pickActivePlacement({ cart: true }, true, false)).toBe('cart');
+    expect(helpers.pickActivePlacement({}, true, true)).toBeNull();
+    expect(helpers.pickActivePlacement(null, true, true)).toBeNull();
+  });
+
+  test('shouldKeepMount only for the same session on a mounted node', () => {
+    expect(helpers.shouldKeepMount('sess_1', { sessionId: 'sess_1' }, true)).toBe(true);
+    expect(helpers.shouldKeepMount('sess_1', { sessionId: 'sess_2' }, true)).toBe(false);
+    expect(helpers.shouldKeepMount('sess_1', { sessionId: 'sess_1' }, false)).toBe(false);
+    expect(helpers.shouldKeepMount(null, { sessionId: undefined }, true)).toBe(false);
+    expect(helpers.shouldKeepMount('sess_1', null, true)).toBe(false);
+  });
+
+  test('collectAction mounts, rechecks after a cart change, and leaves a refused node alone', () => {
+    expect(helpers.collectAction(false, false, false)).toBe('create');
+    expect(helpers.collectAction(true, false, false)).toBe('none');
+    expect(helpers.collectAction(true, true, false)).toBe('recheck');
+    expect(helpers.collectAction(false, false, true)).toBe('none');
+    expect(helpers.collectAction(false, true, true)).toBe('create');
+  });
 });

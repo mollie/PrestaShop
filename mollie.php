@@ -16,6 +16,7 @@ use Mollie\Adapter\ProductAttributeAdapter;
 use Mollie\Adapter\ToolsAdapter;
 use Mollie\Api\Exceptions\ApiException;
 use Mollie\Api\MollieApiClient;
+use Mollie\Builder\Express\ExpressSessionRequestBuilder;
 use Mollie\Builder\PaymentHistoryBuilder;
 use Mollie\Config\Config;
 use Mollie\Exception\ShipmentCannotBeSentException;
@@ -379,6 +380,17 @@ class Mollie extends PaymentModule
 
     public function hookDisplayHeader(array $params)
     {
+        if ($this->context->controller->php_self === 'cart') {
+            /** @var ExpressComponentAvailabilityService $expressAvailability */
+            $expressAvailability = $this->getService(ExpressComponentAvailabilityService::class);
+
+            if ($expressAvailability->isEnabled() && $expressAvailability->isPlacementEnabled(Config::EXPRESS_PLACEMENT_CART)) {
+                $this->registerExpressComponentAssets($expressAvailability);
+            }
+
+            return '';
+        }
+
         if ($this->context->controller->php_self !== 'order') {
             return '';
         }
@@ -426,7 +438,10 @@ class Mollie extends PaymentModule
 
         // Enabled, not available: a one page checkout completes the cart without reloading, so
         // the script has to be on the page before the carrier is chosen and ask again later.
-        if ($expressAvailability->isEnabled()) {
+        $hasCheckoutPlacement = $expressAvailability->isPlacementEnabled(Config::EXPRESS_PLACEMENT_PAYMENT)
+            || $expressAvailability->isPlacementEnabled(Config::EXPRESS_PLACEMENT_CHECKOUT);
+
+        if ($hasCheckoutPlacement && $expressAvailability->isEnabled()) {
             $this->registerExpressComponentAssets($expressAvailability);
         }
 
@@ -461,7 +476,6 @@ class Mollie extends PaymentModule
                 'i18n' => [
                     'acceptTerms' => $this->l('Please accept the terms and conditions before paying.'),
                     'cartChanged' => $this->l('Your cart total changed. Please try the express payment again.'),
-                    'retryPayment' => $this->l('The previous payment was not completed. Please choose an express button again.'),
                 ],
             ],
         ]);
@@ -478,22 +492,110 @@ class Mollie extends PaymentModule
 
         // The mount point is rendered hidden whenever the component is enabled; the script decides
         // when the cart is ready. A one page checkout never reloads between the steps.
-        if (!$expressAvailability->isEnabled()) {
+        if (!$expressAvailability->isEnabled() || !$expressAvailability->isPlacementEnabled(Config::EXPRESS_PLACEMENT_PAYMENT)) {
             return '';
         }
 
-        $this->context->smarty->assign([
-            'mollieExpressAmount' => TextFormatUtility::formatNumber($this->context->cart->getOrderTotal(true, Cart::BOTH), Config::API_ROUNDING_PRECISION),
-            'mollieExpressCurrency' => $this->context->currency->iso_code,
-            // A cart that can already have a session gets the block with a placeholder from the
-            // first paint, so the buttons replace it in place instead of pushing the list down.
-            'mollieExpressExpected' => $expressAvailability->isAvailable($this->context->cart),
+        return $this->renderExpressComponent(
+            Config::EXPRESS_PLACEMENT_PAYMENT,
+            $expressAvailability->isAvailable($this->context->cart),
+            (float) $this->context->cart->getOrderTotal(true, Cart::BOTH),
             // Shown from the first paint when the shop asks for its terms; the script hides it
             // once they are ticked, so the strip does not grow when the script starts.
-            'mollieExpressTermsRequired' => (bool) Configuration::get('PS_CONDITIONS'),
+            (bool) Configuration::get('PS_CONDITIONS')
+        );
+    }
+
+    /**
+     * Above the personal information form of the 5 step checkout, for a visitor who has not signed
+     * in yet. The native one page checkout has no such step.
+     */
+    public function hookDisplayPersonalInformationTop(array $params)
+    {
+        return $this->renderCheckoutExpressComponent(false);
+    }
+
+    /**
+     * The 5 step checkout shows the strip above the personal information form; the native one page
+     * checkout has no such step and offers its own express slot above the form instead
+     * (displayExpressCheckout), so exactly one of the two hooks renders it.
+     */
+    private function renderCheckoutExpressComponent(bool $forOnePageCheckout): string
+    {
+        if ($this->context->controller->php_self !== 'order' || $this->context->customer->isLogged()) {
+            return '';
+        }
+
+        $isOnePageCheckout = Module::isEnabled('ps_onepagecheckout') && Configuration::get('PS_ONE_PAGE_CHECKOUT_ENABLED');
+
+        if ($forOnePageCheckout !== (bool) $isOnePageCheckout) {
+            return '';
+        }
+
+        /** @var ExpressComponentAvailabilityService $expressAvailability */
+        $expressAvailability = $this->getService(ExpressComponentAvailabilityService::class);
+
+        if (!$expressAvailability->isEnabled() || !$expressAvailability->isPlacementEnabled(Config::EXPRESS_PLACEMENT_CHECKOUT)) {
+            return '';
+        }
+
+        return $this->renderCollectExpressComponent(Config::EXPRESS_PLACEMENT_CHECKOUT, $expressAvailability);
+    }
+
+    private function renderCollectExpressComponent(string $placement, ExpressComponentAvailabilityService $expressAvailability): string
+    {
+        /** @var ExpressSessionRequestBuilder $requestBuilder */
+        $requestBuilder = $this->getService(ExpressSessionRequestBuilder::class);
+
+        return $this->renderExpressComponent(
+            $placement,
+            $expressAvailability->isAvailableForCollect($this->context->cart),
+            $requestBuilder->getSessionAmount($this->context->cart, true),
+            false
+        );
+    }
+
+    /**
+     * @param bool $expected a cart that can already have a session gets the block with a placeholder
+     *                       from the first paint, so the buttons replace it in place instead of pushing
+     *                       the page down
+     */
+    private function renderExpressComponent(string $placement, bool $expected, float $amount, bool $termsRequired): string
+    {
+        $this->context->smarty->assign([
+            'mollieExpressPlacement' => $placement,
+            'mollieExpressAmount' => TextFormatUtility::formatNumber($amount, Config::API_ROUNDING_PRECISION),
+            'mollieExpressCurrency' => $this->context->currency->iso_code,
+            'mollieExpressExpected' => $expected,
+            'mollieExpressTermsRequired' => $termsRequired,
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/express_component.tpl');
+    }
+
+    private function isCartExpressComponentShown(ExpressComponentAvailabilityService $expressAvailability): bool
+    {
+        return $this->context->controller instanceof CartControllerCore
+            && $expressAvailability->isEnabled()
+            && $expressAvailability->isPlacementEnabled(Config::EXPRESS_PLACEMENT_CART);
+    }
+
+    /**
+     * The express strip on the cart page brings its own Apple Pay button; Apple Pay Direct next to
+     * it would show a second one for the same cart.
+     */
+    private function isCartApplePayDirectReplaced(): bool
+    {
+        /** @var ExpressComponentAvailabilityService $expressAvailability */
+        $expressAvailability = $this->getService(ExpressComponentAvailabilityService::class);
+
+        if (!$this->isCartExpressComponentShown($expressAvailability) || !$expressAvailability->isAvailableForCollect($this->context->cart)) {
+            return false;
+        }
+
+        $buttons = $expressAvailability->getButtonVisibility();
+
+        return ExpressComponentAvailabilityService::VISIBILITY_AUTOMATIC === ($buttons['applepay'] ?? '');
     }
 
     /**
@@ -545,7 +647,7 @@ class Mollie extends PaymentModule
         $isApplePayDirectCartEnabled = (int) $configuration->get(Config::MOLLIE_APPLE_PAY_DIRECT_CART);
 
         $canDisplayInProductPage = $controller instanceof ProductControllerCore && $isApplePayDirectProductEnabled;
-        $canDisplayInCartPage = $controller instanceof CartControllerCore && $isApplePayDirectCartEnabled;
+        $canDisplayInCartPage = $controller instanceof CartControllerCore && $isApplePayDirectCartEnabled && !$this->isCartApplePayDirectReplaced();
         if ($canDisplayInProductPage || $canDisplayInCartPage) {
             $this->context->controller->registerJavascript(
                 'mollie-apple-pay-sdk',
@@ -1698,7 +1800,27 @@ class Mollie extends PaymentModule
 
     public function hookDisplayExpressCheckout($params)
     {
-        return $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
+        // The one page checkout calls this hook above its form and draws an "or" separator under
+        // any output, so the order page gets the express strip or nothing, never the Apple Pay
+        // Direct mount point whose script only loads on the cart and product pages.
+        if ($this->context->controller->php_self === 'order') {
+            return $this->renderCheckoutExpressComponent(true);
+        }
+
+        /** @var ExpressComponentAvailabilityService $expressAvailability */
+        $expressAvailability = $this->getService(ExpressComponentAvailabilityService::class);
+
+        $expressComponent = '';
+
+        if ($this->isCartExpressComponentShown($expressAvailability)) {
+            $expressComponent = $this->renderCollectExpressComponent(Config::EXPRESS_PLACEMENT_CART, $expressAvailability);
+        }
+
+        if ($this->isCartApplePayDirectReplaced()) {
+            return $expressComponent;
+        }
+
+        return $expressComponent . $this->display(__FILE__, 'views/templates/front/apple_pay_direct.tpl');
     }
 
     public function hookDisplayProductAdditionalInfo()

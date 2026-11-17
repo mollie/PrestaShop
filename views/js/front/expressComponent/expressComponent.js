@@ -11,8 +11,10 @@
 
 /**
  * Mounts the Mollie Express Component (Apple Pay, Google Pay, PayPal) on the checkout payment
- * step. A Checkout Session is bound to one cart total, so the component is re-created whenever
- * the total it was mounted for no longer matches the one rendered on the page.
+ * step, on the cart page, or above the personal information form. A Checkout Session is bound to
+ * one cart total, so on the payment step the component is re-created whenever the total it was
+ * mounted for no longer matches the one rendered on the page. On the other two placements Mollie
+ * collects the customer, addresses and carrier, so the shop decides whether the session changed.
  *
  * Pure helpers are exported for the Node test runner; everything that touches the DOM lives in
  * init() and only runs in a browser.
@@ -35,6 +37,10 @@
   'use strict';
 
   var CURRENT_STEP_CLASS = 'js-current-step';
+  var PLACEMENT_PAYMENT = 'payment';
+  var PLACEMENT_CHECKOUT = 'checkout';
+  var PLACEMENT_CART = 'cart';
+  var STRIP_SELECTOR = '.mollie-express-component';
   var MOUNTED_ATTRIBUTE = 'data-mollie-mounted';
   var REFRESH_MARGIN_SECONDS = 180;
   var RECHECK_DEBOUNCE_MS = 250;
@@ -147,6 +153,51 @@
     return null;
   }
 
+  function isCollectPlacement(placement) {
+    return placement === PLACEMENT_CART || placement === PLACEMENT_CHECKOUT;
+  }
+
+  // One strip is active at a time: the payment step keeps today's rule, the checkout strip only
+  // while the personal information step is open, the cart strip on the cart page. Null keeps
+  // whatever is active now.
+  function pickActivePlacement(present, paymentStepCurrent, personalStepCurrent) {
+    var nodes = present || {};
+
+    if (nodes[PLACEMENT_PAYMENT] && paymentStepCurrent) {
+      return PLACEMENT_PAYMENT;
+    }
+
+    if (nodes[PLACEMENT_CHECKOUT] && personalStepCurrent) {
+      return PLACEMENT_CHECKOUT;
+    }
+
+    if (nodes[PLACEMENT_CART]) {
+      return PLACEMENT_CART;
+    }
+
+    return null;
+  }
+
+  // A collect session's amount leaves out shipping, so the page total cannot tell whether it is
+  // still right; the server answers with the session it would pay through now.
+  function shouldKeepMount(mountedSessionId, session, nodeMounted) {
+    return !!(nodeMounted && mountedSessionId && session && session.sessionId === mountedSessionId);
+  }
+
+  // 'create' mounts a node that has none, 'recheck' asks the server about a mounted one after a
+  // cart change. A node the server already refused stays hidden until the cart changes.
+  function collectAction(mounted, stale, refusedHere) {
+    if (mounted) {
+      return stale ? 'recheck' : 'none';
+    }
+
+    if (refusedHere && !stale) {
+      return 'none';
+    }
+
+    return 'create';
+  }
+
   function allRequiredConditionsAccepted(checkboxes) {
     for (var i = 0; i < checkboxes.length; i++) {
       if (!checkboxes[i].checked) {
@@ -165,6 +216,10 @@
     }
 
     var state = {
+      placement: null,
+      generation: 0,
+      collectStale: false,
+      failedNode: null,
       phase: 'idle',
       pending: false,
       mountedAmount: null,
@@ -185,8 +240,74 @@
       }
     }
 
+    function findStrip(placement) {
+      var nodes = document.querySelectorAll(STRIP_SELECTOR);
+
+      for (var i = 0; i < nodes.length; i++) {
+        if ((nodes[i].getAttribute('data-placement') || PLACEMENT_PAYMENT) === placement) {
+          return nodes[i];
+        }
+      }
+
+      return null;
+    }
+
     function wrapper() {
-      return document.getElementById('mollie-express-component');
+      return state.placement ? findStrip(state.placement) : null;
+    }
+
+    function isCollect() {
+      return isCollectPlacement(state.placement);
+    }
+
+    function currentPlacement() {
+      var paymentStep = document.getElementById('checkout-payment-step');
+      var personalStep = document.getElementById('checkout-personal-information-step');
+
+      var hasCheckoutStrip = !!findStrip(PLACEMENT_CHECKOUT);
+      // The one page checkout shows its top strip and the payment strip on one page; the top one
+      // is the express entry there, the way the personal information step is in 5 steps.
+      var onePageTop = hasCheckoutStrip && isOnePageCheckout();
+
+      return pickActivePlacement(
+        {
+          payment: !!findStrip(PLACEMENT_PAYMENT),
+          checkout: hasCheckoutStrip,
+          cart: !!findStrip(PLACEMENT_CART)
+        },
+        !onePageTop && isPaymentStepCurrent(paymentStep ? paymentStep.classList : null),
+        onePageTop || !!(personalStep && personalStep.classList.contains(CURRENT_STEP_CLASS))
+      );
+    }
+
+    // The strip that was active gives its mount back; a session request still in flight for it is
+    // dropped through the generation counter.
+    function switchPlacement(next) {
+      var previous = wrapper();
+
+      state.generation += 1;
+      teardown();
+
+      if (previous) {
+        var previousMount = previous.querySelector('.mollie-express-component__mount');
+
+        previous.removeAttribute(MOUNTED_ATTRIBUTE);
+        previous.hidden = true;
+
+        if (previousMount) {
+          previousMount.innerHTML = '';
+        }
+      }
+
+      state.placement = next;
+      state.phase = 'idle';
+      state.mountedAmount = null;
+      state.mountedSessionId = null;
+      state.failedAmount = null;
+      state.failedNode = null;
+      state.collectStale = false;
+      state.hiddenWhileBusy = false;
+      state.busyRetries = 0;
     }
 
     function mountNode() {
@@ -223,6 +344,7 @@
       var body = new URLSearchParams();
       body.set('action', action);
       body.set('ajax', '1');
+      body.set('placement', state.placement || PLACEMENT_PAYMENT);
 
       Object.keys(data || {}).forEach(function (key) {
         body.set(key, data[key]);
@@ -262,6 +384,11 @@
     function markOpcBusy() {
       var node = wrapper();
 
+      // The wallet collects the address for a collect strip, so the form being typed changes nothing.
+      if (isCollect()) {
+        return;
+      }
+
       state.opcBusyUntil = Date.now() + OPC_BUSY_MAX_MS;
 
       if (node && node.hasAttribute(MOUNTED_ATTRIBUTE) && !node.hidden) {
@@ -294,7 +421,8 @@
     function updateTermsLock() {
       var node = wrapper();
 
-      if (!node) {
+      // Mollie collects the details first; the terms are accepted on the order Mollie's sheet completes.
+      if (!node || isCollect()) {
         return;
       }
 
@@ -377,7 +505,7 @@
 
       var checkboxes = document.querySelectorAll('#conditions-to-approve input[type="checkbox"][required]');
 
-      if (!allRequiredConditionsAccepted(checkboxes)) {
+      if (!isCollect() && !allRequiredConditionsAccepted(checkboxes)) {
         showError(config.i18n.acceptTerms);
         event.reject();
 
@@ -398,7 +526,7 @@
         }
 
         event.reject();
-        showError(result && result.reason === 'payment_started' ? config.i18n.retryPayment : config.i18n.cartChanged);
+        showError(config.i18n.cartChanged);
 
         if (result && result.clientAccessToken) {
           state.mountedAmount = null;
@@ -469,9 +597,14 @@
       }, delay);
     }
 
-    function recreate() {
+    /**
+     * @param {boolean} keepSameSession a cart change on a collect strip: the mount stays when the
+     *                                  shop still answers with the session it shows
+     */
+    function recreate(keepSameSession) {
       var node = wrapper();
       var target = mountNode();
+      var generation = state.generation;
 
       if (!node || !target || state.pending) {
         return;
@@ -490,6 +623,16 @@
       state.phase = 'creating';
 
       post(config.createSessionAction, {}).then(function (session) {
+        if (generation !== state.generation) {
+          return;
+        }
+
+        if (keepSameSession && shouldKeepMount(state.mountedSessionId, session, node.hasAttribute(MOUNTED_ATTRIBUTE) && document.body.contains(node))) {
+          state.phase = 'mounted';
+
+          return;
+        }
+
         return teardown().then(function () {
           target.innerHTML = '';
 
@@ -524,6 +667,10 @@
           });
         });
       }).catch(function (error) {
+        if (generation !== state.generation) {
+          return;
+        }
+
         if (isCartBusyError(error) && state.busyRetries < BUSY_RETRY_ATTEMPTS) {
           state.busyRetries += 1;
           log('cart is being updated, retrying', state.busyRetries);
@@ -537,6 +684,7 @@
         state.mountedAmount = null;
         // Remember the total this failed for, so DOM churn does not retry until the cart changes.
         state.failedAmount = pageAmount();
+        state.failedNode = node;
         endPlaceholder();
 
         if (node) {
@@ -544,19 +692,52 @@
         }
       }).then(function () {
         state.pending = false;
+
+        if (generation !== state.generation || state.collectStale) {
+          debouncedRecheck();
+        }
       });
     }
 
-    function maybeRecreate() {
-      var step = document.getElementById('checkout-payment-step');
-
-      if (!isPaymentStepCurrent(step ? step.classList : null)) {
+    function maybeRecreateCollect(node) {
+      if (state.pending) {
         return;
+      }
+
+      var action = collectAction(
+        node.hasAttribute(MOUNTED_ATTRIBUTE),
+        state.collectStale,
+        state.phase === 'unavailable' && node === state.failedNode
+      );
+
+      if (action === 'none') {
+        return;
+      }
+
+      state.collectStale = false;
+      recreate(action === 'recheck');
+    }
+
+    function maybeRecreate() {
+      var placement = currentPlacement();
+
+      if (!placement) {
+        return;
+      }
+
+      if (placement !== state.placement) {
+        switchPlacement(placement);
       }
 
       var node = wrapper();
 
       if (!node) {
+        return;
+      }
+
+      if (isCollect()) {
+        maybeRecreateCollect(node);
+
         return;
       }
 
@@ -586,11 +767,18 @@
     }
 
     function onCartUpdated(event) {
-      var node = wrapper();
+      var node = findStrip(PLACEMENT_PAYMENT);
       var amount = amountFromCartEvent(event, root.prestashop && root.prestashop.cart);
 
       if (node && amount !== null) {
         node.setAttribute('data-amount', amount);
+      }
+
+      if (isCollect()) {
+        state.collectStale = true;
+        debouncedRecheck();
+
+        return;
       }
 
       // ps_onepagecheckout follows a cart change with its own carrier and payment reloads.
@@ -624,11 +812,13 @@
     }
 
     function observe() {
-      var step = document.getElementById('checkout-payment-step');
+      ['checkout-payment-step', 'checkout-personal-information-step'].forEach(function (id) {
+        var step = document.getElementById(id);
 
-      if (step && root.MutationObserver) {
-        new root.MutationObserver(debouncedRecheck).observe(step, { attributes: true, attributeFilter: ['class'] });
-      }
+        if (step && root.MutationObserver) {
+          new root.MutationObserver(debouncedRecheck).observe(step, { attributes: true, attributeFilter: ['class'] });
+        }
+      });
 
       // One page checkout modules replace the payment list through AJAX; the mount div comes back unmounted.
       if (root.MutationObserver) {
@@ -670,7 +860,7 @@
     }
 
     function start() {
-      if (!wrapper()) {
+      if (!document.querySelector(STRIP_SELECTOR)) {
         return;
       }
 
@@ -694,6 +884,10 @@
     normalizeAmount: normalizeAmount,
     shouldRecreate: shouldRecreate,
     isPaymentStepCurrent: isPaymentStepCurrent,
+    isCollectPlacement: isCollectPlacement,
+    pickActivePlacement: pickActivePlacement,
+    shouldKeepMount: shouldKeepMount,
+    collectAction: collectAction,
     amountFromCartEvent: amountFromCartEvent,
     allRequiredConditionsAccepted: allRequiredConditionsAccepted,
     init: init
