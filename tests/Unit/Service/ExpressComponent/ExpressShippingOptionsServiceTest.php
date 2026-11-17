@@ -60,6 +60,10 @@ class ExpressShippingOptionsServiceTest extends BaseTestCase
     private $productTotal = self::SESSION_AMOUNT;
     /** @var array<int, float> carrier id => shipping price */
     private $shippingPrices = [];
+    /** @var array[] rows Cart::getCartRules() returns */
+    private $cartRules = [];
+    /** @var array<int, int[]> cart rule id => carrier ids it is limited to */
+    private $cartRuleCarriers = [];
     /** @var array<int, float> carrier id => cart total with that carrier, when a cart rule makes it differ from products + shipping */
     private $mismatchedTotals = [];
 
@@ -106,6 +110,12 @@ class ExpressShippingOptionsServiceTest extends BaseTestCase
         $this->cart->id = 7;
         $this->cart->id_customer = 0;
         $this->cart->delivery_option = '{"3":"1,"}';
+        $this->cart->method('getCartRules')->willReturnCallback(function () {
+            return $this->cartRules;
+        });
+        $this->cart->method('getPackageShippingCost')->willReturnCallback(function ($carrierId) {
+            return $this->shippingPrices[(int) $carrierId] ?? 0.0;
+        });
         $this->cart->method('getOrderTotal')->willReturnCallback(function ($withTaxes, $type) {
             return $this->getOrderTotal((int) $type);
         });
@@ -120,12 +130,15 @@ class ExpressShippingOptionsServiceTest extends BaseTestCase
                 $this->moduleFactory,
                 $this->quoteCustomerService,
             ])
-            ->setMethods(['findCountry', 'needsDni', 'findStateId', 'applyPlaceholderAddress', 'getUsableCarriers'])
+            ->setMethods(['findCountry', 'needsDni', 'findStateId', 'applyPlaceholderAddress', 'getUsableCarriers', 'isCarrierAllowedForCartRule'])
             ->getMock();
 
         $this->service->method('findCountry')->willReturn($this->country(true, false));
         $this->service->method('needsDni')->willReturn(false);
         $this->service->method('applyPlaceholderAddress')->willReturn(self::ADDRESS_ID);
+        $this->service->method('isCarrierAllowedForCartRule')->willReturnCallback(function ($cartRuleId, $carrierId) {
+            return in_array((int) $carrierId, $this->cartRuleCarriers[(int) $cartRuleId] ?? [], true);
+        });
     }
 
     public function testItRejectsAnInactiveCountry(): void
@@ -146,7 +159,7 @@ class ExpressShippingOptionsServiceTest extends BaseTestCase
     {
         $service = $this->getMockBuilder(ExpressShippingOptionsService::class)
             ->setConstructorArgs([$this->sessionRepository, $this->minimumPurchaseService, $this->availability, $this->context, $this->moduleRestrictionRepository, $this->moduleFactory, $this->quoteCustomerService])
-            ->setMethods(['needsDni', 'findStateId', 'applyPlaceholderAddress', 'getUsableCarriers'])
+            ->setMethods(['needsDni', 'findStateId', 'applyPlaceholderAddress', 'getUsableCarriers', 'isCarrierAllowedForCartRule'])
             ->getMock();
         $service->expects($this->never())->method('applyPlaceholderAddress');
 
@@ -403,6 +416,54 @@ class ExpressShippingOptionsServiceTest extends BaseTestCase
         $this->assertSame('{"3":"1,"}', $this->cart->delivery_option);
     }
 
+    public function testAFreeShippingVoucherLimitedToAnotherCarrierIsLeftOutOfTheQuote(): void
+    {
+        $this->shippingPrices = [3 => 4.99, 4 => 6.5];
+        // the voucher makes every total shipping-free while it sits on the cart; core drops it for carrier 3
+        $this->mismatchedTotals = [3 => self::SESSION_AMOUNT, 4 => self::SESSION_AMOUNT];
+        $this->cartRules = [$this->cartRuleRow(71, true, true)];
+        $this->cartRuleCarriers = [71 => [4]];
+        $this->service->method('getUsableCarriers')->willReturn([
+            $this->carrierRow(3, 103, 'PostNL'),
+            $this->carrierRow(4, 104, 'DHL'),
+        ]);
+
+        $options = $this->service->getOptions($this->cart, self::ADDRESS);
+
+        $this->assertSame(['103' => '4.99', '104' => '0.00'], array_combine(
+            array_column($options, 'reference'),
+            array_column(array_column($options, 'amount'), 'value')
+        ));
+    }
+
+    public function testACarrierIsNotOfferedWhenAProductVoucherIsLimitedToAnotherCarrier(): void
+    {
+        $this->shippingPrices = [3 => 4.99, 4 => 6.5];
+        $this->cartRules = [$this->cartRuleRow(72, true, false, 10.0)];
+        $this->cartRuleCarriers = [72 => [4]];
+        $this->service->method('getUsableCarriers')->willReturn([
+            $this->carrierRow(3, 103, 'PostNL'),
+            $this->carrierRow(4, 104, 'DHL'),
+        ]);
+
+        $options = $this->service->getOptions($this->cart, self::ADDRESS);
+
+        $this->assertSame(['104'], array_column($options, 'reference'));
+    }
+
+    public function testAnUnrestrictedFreeShippingVoucherKeepsEveryCarrierFree(): void
+    {
+        $this->shippingPrices = [3 => 4.99];
+        $this->mismatchedTotals = [3 => self::SESSION_AMOUNT];
+        $this->cartRules = [$this->cartRuleRow(73, false, true), $this->cartRuleRow(74, true, true)];
+        $this->cartRuleCarriers = [74 => [4]];
+        $this->service->method('getUsableCarriers')->willReturn([$this->carrierRow(3, 103, 'PostNL')]);
+
+        $options = $this->service->getOptions($this->cart, self::ADDRESS);
+
+        $this->assertSame('0.00', $options[0]['amount']['value']);
+    }
+
     public function testAnAnonymousCartIsQuotedForTheGuestGroupAndKeepsNoCustomer(): void
     {
         $this->shippingPrices = [3 => 4.99];
@@ -504,7 +565,7 @@ class ExpressShippingOptionsServiceTest extends BaseTestCase
                 $this->moduleFactory,
                 $this->quoteCustomerService,
             ])
-            ->setMethods(['findCountry', 'needsDni', 'findStateId', 'applyPlaceholderAddress', 'getUsableCarriers'])
+            ->setMethods(['findCountry', 'needsDni', 'findStateId', 'applyPlaceholderAddress', 'getUsableCarriers', 'isCarrierAllowedForCartRule'])
             ->getMock();
     }
 
@@ -531,6 +592,18 @@ class ExpressShippingOptionsServiceTest extends BaseTestCase
         $country->contains_states = $containsStates;
 
         return $country;
+    }
+
+    private function cartRuleRow(int $id, bool $carrierRestriction, bool $freeShipping, float $reductionPercent = 0.0): array
+    {
+        return [
+            'id_cart_rule' => (string) $id,
+            'carrier_restriction' => $carrierRestriction ? '1' : '0',
+            'free_shipping' => $freeShipping ? '1' : '0',
+            'reduction_percent' => number_format($reductionPercent, 2, '.', ''),
+            'reduction_amount' => '0.000000',
+            'gift_product' => '0',
+        ];
     }
 
     private function carrierRow(int $carrierId, int $referenceId, string $name, string $delay = ''): array

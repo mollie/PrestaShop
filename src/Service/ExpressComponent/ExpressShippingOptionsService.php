@@ -155,6 +155,7 @@ class ExpressShippingOptionsService
     private function buildOptions(\Cart $cart, int $addressId, float $sessionAmount, string $currencyIso): array
     {
         $originalDeliveryOption = $cart->delivery_option;
+        $originalCarrierId = (int) $cart->id_carrier;
         $originalCustomerId = (int) $cart->id_customer;
         $options = [];
 
@@ -166,8 +167,16 @@ class ExpressShippingOptionsService
                 // raw assignment on purpose: Cart::setDeliveryOption() fires CartRule::autoRemoveFromCart(),
                 // which deletes vouchers from the shopper's cart while this loop is only quoting
                 $cart->delivery_option = json_encode([$addressId => (int) $carrier['id_carrier'] . ',']);
+                // a voucher limited to some carriers is only valid for the cart's id_carrier
+                $cart->id_carrier = (int) $carrier['id_carrier'];
 
-                $optionAmount = $this->getOptionAmount((float) $cart->getOrderTotal(true, \Cart::BOTH), $sessionAmount);
+                $totalWithCarrier = $this->getTotalWithCarrier($cart, (int) $carrier['id_carrier']);
+
+                if (null === $totalWithCarrier) {
+                    continue;
+                }
+
+                $optionAmount = $this->getOptionAmount($totalWithCarrier, $sessionAmount);
 
                 if ($optionAmount < 0) {
                     continue;
@@ -177,11 +186,60 @@ class ExpressShippingOptionsService
             }
         } finally {
             $cart->delivery_option = $originalDeliveryOption;
+            $cart->id_carrier = $originalCarrierId;
             $cart->id_customer = $originalCustomerId;
             $this->cleanCarrierCache();
         }
 
         return $options;
+    }
+
+    /**
+     * Core removes a voucher limited to other carriers once the order gets this carrier
+     * (Cart::setDeliveryOption() -> CartRule::autoRemoveFromCart()), but its totals still count the
+     * voucher while the carrier is only being quoted. A free shipping voucher is taken out of the
+     * quote, so the charge equals the order. A voucher that also discounts products would change the
+     * product total after payment, so the carrier is not offered (null).
+     */
+    private function getTotalWithCarrier(\Cart $cart, int $carrierId): ?float
+    {
+        $hasFreeShipping = false;
+        $dropsFreeShipping = false;
+
+        foreach ($cart->getCartRules(\CartRule::FILTER_ACTION_ALL, false) as $rule) {
+            $isValid = !(int) $rule['carrier_restriction'] || $this->isCarrierAllowedForCartRule((int) $rule['id_cart_rule'], $carrierId);
+
+            if ($isValid) {
+                $hasFreeShipping = $hasFreeShipping || (int) $rule['free_shipping'];
+                continue;
+            }
+
+            if ((float) $rule['reduction_percent'] || (float) $rule['reduction_amount'] || (int) $rule['gift_product']) {
+                return null;
+            }
+
+            $dropsFreeShipping = $dropsFreeShipping || (int) $rule['free_shipping'];
+        }
+
+        if (!$dropsFreeShipping || $hasFreeShipping) {
+            return (float) $cart->getOrderTotal(true, \Cart::BOTH);
+        }
+
+        // the free shipping voucher is a discount line, so the products keep their discounts and the
+        // carrier is charged in full, as core charges it once the voucher is gone
+        return (float) $cart->getOrderTotal(true, \Cart::BOTH_WITHOUT_SHIPPING) + (float) $cart->getPackageShippingCost($carrierId, true);
+    }
+
+    /**
+     * Same check as CartRule::checkValidity(): cart_rule_carrier holds carrier references.
+     */
+    protected function isCarrierAllowedForCartRule(int $cartRuleId, int $carrierId): bool
+    {
+        return (bool) \Db::getInstance()->getValue(
+            'SELECT crc.id_cart_rule FROM `' . _DB_PREFIX_ . 'cart_rule_carrier` crc
+            INNER JOIN `' . _DB_PREFIX_ . 'carrier` c ON (c.id_reference = crc.id_carrier AND c.deleted = 0)
+            WHERE crc.id_cart_rule = ' . $cartRuleId . ' AND c.id_carrier = ' . $carrierId
+        );
     }
 
     /**
