@@ -21,7 +21,7 @@ use Mollie\Logger\LoggerInterface;
 use Mollie\Service\MultistoreSettingsContextGuard;
 use Mollie\Service\PaymentMethod\EnvironmentSettingsCopyService;
 use Mollie\Utility\ExceptionUtility;
-use Mollie\Verification\Employee\CanAccessTab;
+use Mollie\Verification\Employee\DeniesAjaxWithoutTabRight;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -29,6 +29,8 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminMollieAuthenticationController extends ModuleAdminController
 {
+    use DeniesAjaxWithoutTabRight;
+
     const FILE_NAME = 'AdminMollieAuthenticationController';
 
     /** @var Mollie */
@@ -237,7 +239,7 @@ class AdminMollieAuthenticationController extends ModuleAdminController
 
         $requiredRight = in_array($action, $settingsMutatingActions, true) ? 'edit' : 'view';
 
-        if ($this->denyWithoutTabRight($requiredRight)) {
+        if ($this->denyAjaxWithoutTabRight($requiredRight, 'AdminMollieAuthentication')) {
             return;
         }
 
@@ -273,26 +275,6 @@ class AdminMollieAuthenticationController extends ModuleAdminController
                 ]));
                 break;
         }
-    }
-
-    private function denyWithoutTabRight(string $right): bool
-    {
-        if ((new CanAccessTab())->verify($this->context->employee, $right, 'AdminMollieAuthentication')) {
-            return false;
-        }
-
-        $message = $this->trans('You do not have permission to view this.', [], 'Admin.Notifications.Error');
-
-        if ('edit' === $right) {
-            $message = $this->trans('You do not have permission to edit this.', [], 'Admin.Notifications.Error');
-        }
-
-        $this->ajaxRender(json_encode([
-            'success' => false,
-            'message' => $message,
-        ]));
-
-        return true;
     }
 
     private function ajaxCopyTestSettingsToLive(): void

@@ -31,9 +31,9 @@ class AdminAjaxRightsTest extends TestCase
 
     public function testAjaxControllerChecksTheRightBeforeDispatch(): void
     {
-        $postProcess = $this->between($this->source('AdminMollieAjaxController'), 'public function postProcess()', 'private function denyWithoutActionRight');
+        $beforeDispatch = $this->between($this->source('AdminMollieAjaxController'), 'public function postProcess()', 'switch ($action)');
 
-        $this->assertLessThan(strpos($postProcess, 'switch ($action)'), strpos($postProcess, '$this->denyWithoutActionRight($action)'));
+        $this->assertContains('$this->denyWithoutActionRight($action)', $beforeDispatch);
     }
 
     /**
@@ -42,10 +42,10 @@ class AdminAjaxRightsTest extends TestCase
     public function testSettingsControllerChecksTheRightBeforeDispatch(string $controller, string $tab): void
     {
         $source = $this->source($controller);
-        $displayAjax = $this->between($source, 'public function displayAjax(): void', 'private function denyWithoutTabRight');
+        $beforeDispatch = $this->between($source, 'public function displayAjax(): void', 'switch ($action)');
 
-        $this->assertLessThan(strpos($displayAjax, 'switch ($action)'), strpos($displayAjax, '$this->denyWithoutTabRight($requiredRight)'));
-        $this->assertContains("\$this->context->employee, \$right, '" . $tab . "')", $source);
+        $this->assertContains("\$this->denyAjaxWithoutTabRight(\$requiredRight, '" . $tab . "')", $beforeDispatch);
+        $this->assertSame(0, preg_match('/function (displayAjax[A-Z]|ajaxProcess)/', $source), 'A dedicated ajax method skips the check in displayAjax().');
     }
 
     public function provideSettingsControllers(): array
