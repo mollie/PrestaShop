@@ -75,3 +75,51 @@ test.describe('Express strips on the one page checkout', () => {
     await expect(paymentStrip(page).locator('.mollie-express-component__mount button')).toHaveCount(1);
   });
 });
+
+test.describe('Express strips when the page changes after load', () => {
+  test('a re-rendered one page checkout payment section does not bring the empty strip back', async ({ page }) => {
+    await openCheckout(page, ['checkout', 'payment']);
+    await expect(topStrip(page).locator('.mollie-express-component__mount button')).toHaveCount(1);
+
+    await page.evaluate((html) => {
+      const section = document.querySelector('.js-opc-payment-section');
+      if (section) section.innerHTML = html;
+    }, strip('payment'));
+
+    await expect(paymentStrip(page)).toBeHidden();
+    await expect(topStrip(page)).toBeVisible();
+  });
+
+  test('the 5 step payment strip shows its placeholder as soon as the payment step opens', async ({ page }) => {
+    const fiveSteps = `<!doctype html><html><body>
+      <section id="checkout-personal-information-step" class="checkout-step js-current-step">${strip('checkout')}</section>
+      <section id="checkout-payment-step" class="checkout-step">${strip('payment')}</section>
+      <script>
+        window.mollieExpressComponent = { ajaxUrl: '${SHOP}/ajax', createSessionAction: 'createSession', validateCartAction: 'validateCart', tokenTtlSeconds: 900, locale: 'en_US', buttons: {}, i18n: {} };
+        window.Mollie2 = { Checkout: function () { return { on: function () {}, create: function () {
+          return { mount: function (target) { return new Promise(function (resolve) { setTimeout(function () {
+            var b = document.createElement('button'); b.textContent = 'Google Pay'; target.appendChild(b); resolve();
+          }, window.mountDelay || 0); }); }, unmount: function () {} };
+        } }; } };
+      </script>
+      <script>${SCRIPT}</script>
+    </body></html>`;
+    await page.route(`${SHOP}/ajax`, (route) => route.fulfill({ contentType: 'application/json', body: JSON.stringify({ success: true, data: SESSION }) }));
+    await page.route(`${SHOP}/order`, (route) => route.fulfill({ contentType: 'text/html', body: fiveSteps }));
+    await page.goto(`${SHOP}/order`);
+
+    await expect(topStrip(page).locator('.mollie-express-component__mount button')).toHaveCount(1);
+    await expect(paymentStrip(page)).toBeHidden();
+
+    await page.evaluate(() => {
+      (window as unknown as { mountDelay: number }).mountDelay = 4000;
+      document.getElementById('checkout-personal-information-step')?.classList.remove('js-current-step');
+      document.getElementById('checkout-payment-step')?.classList.add('js-current-step');
+    });
+
+    await expect(paymentStrip(page)).toBeVisible({ timeout: 2000 });
+    await expect(paymentStrip(page).locator('.mollie-express-component__placeholder')).toHaveCount(1);
+    await expect(topStrip(page)).toBeHidden();
+    await expect(paymentStrip(page).locator('.mollie-express-component__mount button')).toHaveCount(1, { timeout: 10000 });
+  });
+});

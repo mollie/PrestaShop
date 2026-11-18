@@ -273,16 +273,20 @@
       return state.placement ? findStrip(state.placement) : null;
     }
 
-    // The server draws a strip with its placeholder whenever the cart can have a session, so a
-    // strip that is not the active one would stay on the page as an empty block (the payment step
-    // strip under the one page checkout's top strip after a reload).
-    function hideInactiveStrips() {
+    // A strip keeps its placeholder until its first mount attempt ends, so an active strip that
+    // still has one was only hidden while another strip was active.
+    function showOnlyActiveStrip() {
       var nodes = document.querySelectorAll(STRIP_SELECTOR);
       var active = wrapper();
 
       for (var i = 0; i < nodes.length; i++) {
-        if (nodes[i] !== active && !nodes[i].hidden) {
+        if (nodes[i] !== active) {
           nodes[i].hidden = true;
+          continue;
+        }
+
+        if (active.hidden && active.querySelector('.mollie-express-component__placeholder')) {
+          active.hidden = false;
         }
       }
     }
@@ -766,7 +770,7 @@
         switchPlacement(placement);
       }
 
-      hideInactiveStrips();
+      showOnlyActiveStrip();
 
       var node = wrapper();
 
