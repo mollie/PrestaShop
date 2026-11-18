@@ -12,8 +12,9 @@
 /**
  * Mollie.js is loaded with `async` so a slow js.mollie.com never holds back the checkout page,
  * which means it can arrive after DOMContentLoaded. wait() holds a callback until the SDK global
- * exists, its script failed, or the page finished loading without it. One wait is kept per global,
- * so every caller shares it and a callback passed twice runs once.
+ * exists, its script failed, the page finished loading without it, or WAIT_TIMEOUT_MS passed.
+ * One wait is kept per global, so every caller shares it and a callback passed twice runs once.
+ * An SDK that arrives after the timeout still runs the callbacks once more.
  *
  * This file is registered before the SDK tags, so the capturing listeners below also see an SDK
  * script that fails before any caller asked to wait.
@@ -31,14 +32,18 @@
 })(typeof window !== 'undefined' ? window : undefined, function () {
   'use strict';
 
+  var WAIT_TIMEOUT_MS = 10000;
+  var SDK_HOST = 'js.mollie.com';
+
   function create(root) {
     var finishedScripts = [];
+    var timedOut = {};
     var waits = {};
 
     var recordScript = function (event) {
       var target = event.target;
 
-      if (target && target.tagName === 'SCRIPT' && target.src) {
+      if (target && target.tagName === 'SCRIPT' && target.src && target.src.indexOf(SDK_HOST) !== -1) {
         finishedScripts.push(target.src);
       }
     };
@@ -53,7 +58,7 @@
     }
 
     function hasSettled(globalName, scriptSrcPart) {
-      if (root[globalName] || root.document.readyState === 'complete') {
+      if (root[globalName] || timedOut[globalName] || root.document.readyState === 'complete') {
         return true;
       }
 
@@ -63,16 +68,34 @@
     }
 
     function startWait(globalName, scriptSrcPart) {
-      var entry = { callbacks: [] };
-      var settle = function () {
-        if (waits[globalName] !== entry) {
-          return;
-        }
-        delete waits[globalName];
+      var entry = { callbacks: [], ranAfterTimeout: false };
+      var runCallbacks = function () {
         entry.callbacks.forEach(function (callback) {
           callback();
         });
       };
+      var settle = function () {
+        if (waits[globalName] === entry) {
+          root.clearTimeout(timer);
+          delete waits[globalName];
+          runCallbacks();
+
+          return;
+        }
+
+        if (timedOut[globalName] && root[globalName] && !entry.ranAfterTimeout) {
+          entry.ranAfterTimeout = true;
+          runCallbacks();
+        }
+      };
+      var timer = root.setTimeout(function () {
+        if (waits[globalName] !== entry) {
+          return;
+        }
+        timedOut[globalName] = true;
+        delete waits[globalName];
+        runCallbacks();
+      }, WAIT_TIMEOUT_MS);
 
       sdkScripts(scriptSrcPart).forEach(function (script) {
         script.addEventListener('load', settle);
@@ -116,6 +139,7 @@
   }
 
   return {
-    create: create
+    create: create,
+    WAIT_TIMEOUT_MS: WAIT_TIMEOUT_MS
   };
 });

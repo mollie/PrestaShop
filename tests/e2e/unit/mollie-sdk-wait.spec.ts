@@ -52,13 +52,26 @@ function fakePage(readyState = 'interactive', srcs: string[] = [V1_SRC, V2_SRC])
     readyState,
     querySelectorAll: (selector: string) => scripts.filter((script) => selector.includes(script.src.split('/')[3])),
   };
+  const timers = new Map<number, () => void>();
+  let nextTimer = 1;
+  root.setTimeout = (callback: () => void) => {
+    timers.set(nextTimer, callback);
+
+    return nextTimer++;
+  };
+  root.clearTimeout = (id: number) => timers.delete(id);
+  const runTimers = () => {
+    const due = Array.from(timers.values());
+    timers.clear();
+    due.forEach((callback) => callback());
+  };
   const finish = (type: 'load' | 'error', src: string) => {
     const script = scripts.find((candidate) => candidate.src === src)!;
     root.capture(type, script);
     script.fire(type);
   };
 
-  return { root, sdk: sdkWait.create(root), finish };
+  return { root, sdk: sdkWait.create(root), finish, runTimers, timers };
 }
 
 function counter() {
@@ -159,6 +172,43 @@ test.describe('Mollie SDK wait', () => {
     expect(sdk.wait('Mollie', 'js.mollie.com/v1/', callback)).toBe(true);
     root.fire('load');
 
+    expect(calls.count).toBe(1);
+  });
+
+  test('gives up after the timeout when the SDK script never answers', () => {
+    const { sdk, runTimers } = fakePage();
+    const { calls, callback } = counter();
+
+    sdk.wait('Mollie', 'js.mollie.com/v1/', callback);
+    runTimers();
+
+    expect(calls.count).toBe(1);
+    expect(sdk.isWaiting('Mollie')).toBe(false);
+    expect(sdk.wait('Mollie', 'js.mollie.com/v1/', callback)).toBe(false);
+  });
+
+  test('runs the callbacks once more when the SDK arrives after the timeout', () => {
+    const { root, sdk, finish, runTimers } = fakePage();
+    const { calls, callback } = counter();
+
+    sdk.wait('Mollie', 'js.mollie.com/v1/', callback);
+    runTimers();
+    root.Mollie = () => undefined;
+    finish('load', V1_SRC);
+    root.fire('load');
+
+    expect(calls.count).toBe(2);
+  });
+
+  test('clears the timeout once the SDK settles', () => {
+    const { sdk, finish, timers } = fakePage();
+    const { calls, callback } = counter();
+
+    sdk.wait('Mollie', 'js.mollie.com/v1/', callback);
+    expect(timers.size).toBe(1);
+    finish('error', V1_SRC);
+
+    expect(timers.size).toBe(0);
     expect(calls.count).toBe(1);
   });
 });

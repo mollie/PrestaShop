@@ -400,9 +400,7 @@ class Mollie extends PaymentModule
             'https://js.mollie.com/v1/mollie.js',
             ['server' => 'remote', 'position' => 'bottom', 'priority' => 150, 'attributes' => 'async']
         );
-        // New file names, so neither a browser nor a CDN that ignores the ?v= query string can
-        // pair the async SDK with card field code cached before it. The wait helper has to be
-        // registered before the SDK tags, it listens for an SDK script that fails early.
+        // Registered before the SDK tags, so it also sees an SDK script that fails early.
         $this->registerVersionedScript('mollie-sdk-wait', 'views/js/front/mollie_sdk_wait.js');
         $this->registerVersionedScript('mollie-card-fields', 'views/js/front/mollie_card_fields.js');
         $this->context->controller->addJS("{$this->_path}views/js/front/mollie_single_click.js");
@@ -438,8 +436,8 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * Mollie.js v2 is loaded in compatibility mode (`Mollie2`) because the card iframe above
-     * already owns the v1 `Mollie` global on this page.
+     * Mollie.js v2 is loaded in compatibility mode, which always exposes it as `Mollie2`, so the
+     * v1 `Mollie` global of the card iframe above is kept whichever async tag runs first.
      */
     private function registerExpressComponentAssets(ExpressComponentAvailabilityService $expressAvailability): void
     {

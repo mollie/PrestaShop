@@ -134,8 +134,21 @@ $(document).ready(function () {
         mountMollieComponents();
     }
 
+    var orderButtonSelector = '#payment-confirmation button[type=submit], #opc-pay-button';
+
     function isWaitingForSdk() {
         return !!window.MollieSdk && window.MollieSdk.isWaiting('Mollie');
+    }
+
+    // The order button stays greyed while the SDK loads, so the shopper sees why the click did
+    // nothing and can place the order once the card fields are there.
+    function holdOrderButtonUntilSdkSettles() {
+        $(orderButtonSelector).prop('disabled', true).addClass('disabled');
+        window.MollieSdk.wait('Mollie', 'js.mollie.com/v1/', releaseOrderButton);
+    }
+
+    function releaseOrderButton() {
+        $(orderButtonSelector).prop('disabled', false).removeClass('disabled');
     }
 
     // Until the async SDK has mounted the card fields there is no token to send, so the
@@ -145,8 +158,7 @@ $(document).ready(function () {
             return;
         }
         event.preventDefault();
-        // Core greys the button with a class right before it submits, so that goes too.
-        $('#payment-confirmation').find('button[type=submit]').prop('disabled', false).removeClass('disabled');
+        holdOrderButtonUntilSdkSettles();
     });
 
     $(document).on('change', 'input[data-module-name="mollie"]', function () {
@@ -275,6 +287,7 @@ $(document).ready(function () {
         event.stopImmediatePropagation();
 
         if (!mollie) {
+            holdOrderButtonUntilSdkSettles();
             return;
         }
 
