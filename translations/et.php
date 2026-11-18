@@ -634,6 +634,9 @@ $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_812a48ba719d
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_e55f75a29310d7b60f7ac1d390c8ae42'] = 'Moodul';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_a82c4ea6352017b8cbe19837e6f2a4af'] = 'Silumisrezsiim';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_cedd173e4f6569b22839a1434ff6c0a6'] = 'Luba uksikasjalik vigade logimine';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_31a0091d12ae9395003298074c5c1b46'] = 'PrestaShop Account ja CloudSync';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_3c95387cd354eb55bf7fe0b6d300c21c'] = 'Näita PrestaShop Account ja CloudSync';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_6d384b6a7a17e9cfdf2e0323e6842f62'] = 'Näitab API seadistuste lehel PrestaShop Account ja CloudSync seadistust.';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_a74ccc444d6b765cef99475095bcbaaa'] = 'Logimise tase';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_e140acca419f335153f5afefefc9c922'] = 'Kassa eelvaade:';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_63880cd9c753cd3f118c635f49e506e6'] = 'Kohandatud CSS faili asukoht';
@@ -779,6 +782,9 @@ $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_eb4c6f94efd5
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0b06e7a6a8fdd7ebb1538faf7582aab8'] = 'Mollie Express Component';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0122b5b00af3de8e066e55c4d5afea6f'] = 'Kuva Apple Pay, Google Pay ja PayPal kiirmakse nuppudena kassa ülaosas, et kliendid saaksid maksta ühe puudutusega. Vali lehel Makseviisid, millised nupud kuvatakse.';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_d8d0950b07b563ca7190363e69bf03f8'] = 'Express Component on beetaversioonis. Mollie aktiveerib selle iga konto jaoks eraldi, seega võtke enne sisselülitamist Molliega ühendust. See töötab ainult live API-võtmega live-režiimis ja jääb testrežiimis peidetuks.';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_cd0a7141acd267dddc63b99afd8f34a6'] = '%s / %s olekut vastendatud';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_51523256f7c0583870d9304f6560341e'] = '%s / %s e-kirja sees';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_fe1a8f570baa07aad594712eda82e45a'] = 'Üht valitud tellimuse olekut ei ole selles poes enam olemas. Valige teine olek ja salvestage uuesti.';
 $_MODULE['<{mollie}prestashop>payment_history_6ecdeeece7dc4ee366197ea2e4b6b778'] = 'Maksete ajalugu';
 $_MODULE['<{mollie}prestashop>payment_history_2a2d2c75ec43014500ef2d5f400cf7d1'] = 'Sündmusi veel pole';
 $_MODULE['<{mollie}prestashop>payment_history_b02dca32aecc6f71310f9e914757d56f'] = 'Mollie viide';

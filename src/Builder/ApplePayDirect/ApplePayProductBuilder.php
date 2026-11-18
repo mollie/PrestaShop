@@ -27,7 +27,8 @@ class ApplePayProductBuilder
             $products[] = new Product(
                 $product['id_product'],
                 $product['id_product_attribute'],
-                $product['quantity_wanted']
+                $product['quantity_wanted'],
+                (int) ($product['id_customization'] ?? 0)
             );
         }
 

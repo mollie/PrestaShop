@@ -12,7 +12,7 @@ mollie_module_admin_view_in_dashboard:
     defaults:
         _controller: 'Mollie\Controller\AdminMollieViewInDashboardController::viewInDashboard'
     requirements:
-        transactionId: "[A-Za-z0-9_]+"
+        transactionId: "[A-Za-z0-9_.-]+"
 
 admin_subscription_index:
     path: admin-subscription

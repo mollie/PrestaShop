@@ -12,12 +12,14 @@
 
 namespace Mollie\Tests\Unit\Service\ExpressComponent;
 
+use Mollie\Adapter\ToolsAdapter;
 use Mollie\Api\MollieApiClient;
 use Mollie\Config\Config;
 use Mollie\Factory\ModuleFactory;
 use Mollie\Logger\PrestaLoggerInterface;
 use Mollie\Repository\PaymentMethodRepositoryInterface;
 use Mollie\Service\ExpressComponent\ExpressComponentAvailabilityService;
+use Mollie\Service\MinimumPurchaseService;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidation\ApplePayPaymentMethodRestrictionValidator;
 use Mollie\Service\PaymentMethod\PaymentMethodRestrictionValidationInterface;
 use Mollie\Subscription\Validator\SubscriptionOrderValidator;
@@ -72,6 +74,11 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
         $this->cart->method('getDeliveryOption')->willReturn([4 => '2,']);
     }
 
+    private function minimumPurchaseService(): MinimumPurchaseService
+    {
+        return new MinimumPurchaseService($this->configuration, $this->mock(ToolsAdapter::class), $this->context);
+    }
+
     private function service(): ExpressComponentAvailabilityService
     {
         return new ExpressComponentAvailabilityService(
@@ -81,7 +88,8 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
             $this->restrictionValidation,
             $this->subscriptionOrderValidator,
             $this->moduleFactory,
-            $this->mock(PrestaLoggerInterface::class)
+            $this->mock(PrestaLoggerInterface::class),
+            $this->minimumPurchaseService()
         );
     }
 
@@ -124,7 +132,8 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
             $this->restrictionValidation,
             $this->subscriptionOrderValidator,
             $moduleFactory,
-            $this->mock(PrestaLoggerInterface::class)
+            $this->mock(PrestaLoggerInterface::class),
+            $this->minimumPurchaseService()
         );
 
         $this->assertFalse($service->isEnabled());
@@ -214,7 +223,8 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
             $restrictionValidation,
             $this->subscriptionOrderValidator,
             $this->moduleFactory,
-            $this->mock(PrestaLoggerInterface::class)
+            $this->mock(PrestaLoggerInterface::class),
+            $this->minimumPurchaseService()
         );
 
         $this->assertSame(['applepay' => 'automatic', 'googlepay' => 'automatic', 'paypal' => 'automatic'], $service->getButtonVisibility());
@@ -310,7 +320,8 @@ class ExpressComponentAvailabilityServiceTest extends BaseTestCase
             $restrictionValidation,
             $this->subscriptionOrderValidator,
             $this->moduleFactory,
-            $this->mock(PrestaLoggerInterface::class)
+            $this->mock(PrestaLoggerInterface::class),
+            $this->minimumPurchaseService()
         );
 
         $this->assertSame([

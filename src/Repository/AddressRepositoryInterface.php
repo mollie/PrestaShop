@@ -21,4 +21,6 @@ if (!defined('_PS_VERSION_')) {
 interface AddressRepositoryInterface extends ReadOnlyRepositoryInterface
 {
     public function getZoneById(int $id_address_delivery): int;
+
+    public function isValid(int $addressId): bool;
 }

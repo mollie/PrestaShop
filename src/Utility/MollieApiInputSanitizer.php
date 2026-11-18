@@ -108,13 +108,17 @@ class MollieApiInputSanitizer
         $local = substr($email, 0, $atPos);
         $domain = substr($email, $atPos + 1);
 
-        if (function_exists('idn_to_ascii') && preg_match('/[^\x20-\x7E]/', $domain)) {
-            $ascii = idn_to_ascii($domain, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
-            if ($ascii !== false) {
-                $domain = $ascii;
-            }
+        return $local . '@' . self::toAsciiDomain($domain);
+    }
+
+    public static function toAsciiDomain(string $domain): string
+    {
+        if (!function_exists('idn_to_ascii') || !preg_match('/[^\x00-\x7F]/', $domain)) {
+            return $domain;
         }
 
-        return $local . '@' . $domain;
+        $ascii = idn_to_ascii($domain, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+
+        return $ascii === false ? $domain : $ascii;
     }
 }

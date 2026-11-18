@@ -140,6 +140,11 @@ class Context
         return PrestashopContext::getContext()->shop->name;
     }
 
+    public function trans(string $id, array $parameters, string $domain): string
+    {
+        return (string) PrestashopContext::getContext()->getTranslator()->trans($id, $parameters, $domain);
+    }
+
     public function formatPrice(float $price, string $isoCode): string
     {
         $locale = PrestashopContext::getContext()->getCurrentLocale();

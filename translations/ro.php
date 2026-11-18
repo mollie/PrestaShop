@@ -635,6 +635,9 @@ $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_812a48ba719d
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_e55f75a29310d7b60f7ac1d390c8ae42'] = 'Modul';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_a82c4ea6352017b8cbe19837e6f2a4af'] = 'Mod depanare';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_cedd173e4f6569b22839a1434ff6c0a6'] = 'Activeaza jurnalizarea detaliata a erorilor';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_31a0091d12ae9395003298074c5c1b46'] = 'PrestaShop Account și CloudSync';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_3c95387cd354eb55bf7fe0b6d300c21c'] = 'Afișează PrestaShop Account și CloudSync';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_6d384b6a7a17e9cfdf2e0323e6842f62'] = 'Afișează configurarea PrestaShop Account și CloudSync pe pagina de configurare API.';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_a74ccc444d6b765cef99475095bcbaaa'] = 'Nivel jurnal';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_e140acca419f335153f5afefefc9c922'] = 'Previzualizare checkout:';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_63880cd9c753cd3f118c635f49e506e6'] = 'Cale fisier CSS personalizat';
@@ -909,6 +912,9 @@ $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_eb4c6f94efd5
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0b06e7a6a8fdd7ebb1538faf7582aab8'] = 'Mollie Express Component';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0122b5b00af3de8e066e55c4d5afea6f'] = 'Afișați Apple Pay, Google Pay și PayPal ca butoane de plată rapidă în partea de sus a paginii de finalizare a comenzii, astfel încât clienții să plătească dintr-o singură atingere. Alegeți ce butoane apar pe pagina Metode de plată.';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_d8d0950b07b563ca7190363e69bf03f8'] = 'Express Component este în versiune beta. Mollie îl activează pentru fiecare cont în parte, așa că luați legătura cu Mollie înainte de a-l activa. Funcționează doar cu o cheie API live în modul live și rămâne ascuns în modul de test.';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_cd0a7141acd267dddc63b99afd8f34a6'] = '%s din %s statusuri mapate';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_51523256f7c0583870d9304f6560341e'] = '%s din %s emailuri active';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_fe1a8f570baa07aad594712eda82e45a'] = 'Unul dintre statusurile de comandă selectate nu mai există în acest magazin. Alegeți alt status și salvați din nou.';
 $_MODULE['<{mollie}prestashop>payment_history_6ecdeeece7dc4ee366197ea2e4b6b778'] = 'Istoricul plăților';
 $_MODULE['<{mollie}prestashop>payment_history_2a2d2c75ec43014500ef2d5f400cf7d1'] = 'Încă nu există evenimente';
 $_MODULE['<{mollie}prestashop>payment_history_b02dca32aecc6f71310f9e914757d56f'] = 'Referință Mollie';

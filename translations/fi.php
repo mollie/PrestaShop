@@ -591,6 +591,9 @@ $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_812a48ba719d
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_e55f75a29310d7b60f7ac1d390c8ae42'] = 'Moduuli';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_a82c4ea6352017b8cbe19837e6f2a4af'] = 'Virheenkorjaustila';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_cedd173e4f6569b22839a1434ff6c0a6'] = 'Ota yksityiskohtainen virhekirjaus käyttöön';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_31a0091d12ae9395003298074c5c1b46'] = 'PrestaShop Account ja CloudSync';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_3c95387cd354eb55bf7fe0b6d300c21c'] = 'Näytä PrestaShop Account ja CloudSync';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_6d384b6a7a17e9cfdf2e0323e6842f62'] = 'Näyttää PrestaShop Account ja CloudSync -käyttöönoton API-määrityssivulla.';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_a74ccc444d6b765cef99475095bcbaaa'] = 'Lokitaso';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_e140acca419f335153f5afefefc9c922'] = 'Kassan esikatselu:';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_63880cd9c753cd3f118c635f49e506e6'] = 'Mukautetun CSS-tiedoston polku';
@@ -667,6 +670,9 @@ $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_eb4c6f94efd5
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0b06e7a6a8fdd7ebb1538faf7582aab8'] = 'Mollie Express Component';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_0122b5b00af3de8e066e55c4d5afea6f'] = 'Näytä Apple Pay, Google Pay ja PayPal pikamaksupainikkeina kassan yläosassa, jotta asiakkaat voivat maksaa yhdellä napautuksella. Valitse näytettävät painikkeet Maksutavat-sivulla.';
 $_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_d8d0950b07b563ca7190363e69bf03f8'] = 'Express Component on beetavaiheessa. Mollie aktivoi sen tilikohtaisesti, joten ota yhteyttä Mollieen ennen kuin otat sen käyttöön. Se toimii vain live-API-avaimella live-tilassa ja pysyy piilossa testitilassa.';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_cd0a7141acd267dddc63b99afd8f34a6'] = '%s / %s tilaa kartoitettu';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_51523256f7c0583870d9304f6560341e'] = '%s / %s sähköpostia käytössä';
+$_MODULE['<{mollie}prestashop>adminmollieadvancedsettingscontroller_fe1a8f570baa07aad594712eda82e45a'] = 'Yhtä valituista tilauksen tiloista ei enää ole tässä kaupassa. Valitse toinen tila ja tallenna uudelleen.';
 $_MODULE['<{mollie}prestashop>payment_history_6ecdeeece7dc4ee366197ea2e4b6b778'] = 'Maksuhistoria';
 $_MODULE['<{mollie}prestashop>payment_history_2a2d2c75ec43014500ef2d5f400cf7d1'] = 'Ei vielä tapahtumia';
 $_MODULE['<{mollie}prestashop>payment_history_b02dca32aecc6f71310f9e914757d56f'] = 'Mollie-viite';

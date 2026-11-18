@@ -476,7 +476,7 @@ class MollieApplePayDirectAjaxModuleFrontController extends AbstractMollieContro
         $address = new Address($addressId);
 
         return (int) $address->id === $addressId
-            && $address->alias === 'applePay'
+            && $address->alias === Config::APPLE_PAY_DIRECT_ADDRESS_ALIAS
             && (int) $address->id_customer === $cartCustomerId
             && !$address->isUsed();
     }
