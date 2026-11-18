@@ -41,6 +41,7 @@
   var PLACEMENT_CHECKOUT = 'checkout';
   var PLACEMENT_CART = 'cart';
   var STRIP_SELECTOR = '.mollie-express-component';
+  var PLACEHOLDER_SELECTOR = '.mollie-express-component__placeholder';
   var MOUNTED_ATTRIBUTE = 'data-mollie-mounted';
   var DIRECT_FALLBACK_SELECTOR = '[data-mollie-express-fallback]';
   var REFRESH_MARGIN_SECONDS = 180;
@@ -273,6 +274,23 @@
       return state.placement ? findStrip(state.placement) : null;
     }
 
+    // A strip keeps its placeholder until its first mount attempt ends, so an active strip that
+    // still has one was only hidden while another strip was active.
+    function showOnlyActiveStrip() {
+      var nodes = document.querySelectorAll(STRIP_SELECTOR);
+      var active = wrapper();
+
+      for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i] !== active) {
+          nodes[i].hidden = true;
+        }
+      }
+
+      if (active && active.hidden && active.querySelector(PLACEHOLDER_SELECTOR)) {
+        active.hidden = false;
+      }
+    }
+
     function isCollect() {
       return isCollectPlacement(state.placement);
     }
@@ -309,7 +327,6 @@
         var previousMount = previous.querySelector('.mollie-express-component__mount');
 
         previous.removeAttribute(MOUNTED_ATTRIBUTE);
-        previous.hidden = true;
 
         if (previousMount) {
           previousMount.innerHTML = '';
@@ -475,7 +492,7 @@
     // them (or the component turned out unavailable), so the strip never jumps.
     function endPlaceholder() {
       var node = wrapper();
-      var placeholder = node ? node.querySelector('.mollie-express-component__placeholder') : null;
+      var placeholder = node ? node.querySelector(PLACEHOLDER_SELECTOR) : null;
       var mount = mountNode();
 
       if (placeholder) {
@@ -751,6 +768,8 @@
       if (placement !== state.placement) {
         switchPlacement(placement);
       }
+
+      showOnlyActiveStrip();
 
       var node = wrapper();
 

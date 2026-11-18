@@ -493,9 +493,13 @@ class Mollie extends PaymentModule
             return '';
         }
 
+        // The one page checkout offers express at the top of the page, so the payment step strip
+        // starts hidden there instead of drawing a placeholder that never fills.
+        $onePageCheckoutTopStripShown = $this->isCheckoutStripShown(true);
+
         return $this->renderExpressComponent(
             Config::EXPRESS_PLACEMENT_PAYMENT,
-            $expressAvailability->isAvailable($this->context->cart),
+            !$onePageCheckoutTopStripShown && $expressAvailability->isAvailable($this->context->cart),
             (float) $this->context->cart->getOrderTotal(true, Cart::BOTH),
             // Shown from the first paint when the shop asks for its terms; the script hides it
             // once they are ticked, so the strip does not grow when the script starts.
@@ -519,24 +523,32 @@ class Mollie extends PaymentModule
      */
     private function renderCheckoutExpressComponent(bool $forOnePageCheckout): string
     {
-        if ($this->context->controller->php_self !== 'order' || $this->context->customer->isLogged()) {
-            return '';
-        }
-
-        $isOnePageCheckout = Module::isEnabled('ps_onepagecheckout') && Configuration::get('PS_ONE_PAGE_CHECKOUT_ENABLED');
-
-        if ($forOnePageCheckout !== (bool) $isOnePageCheckout) {
+        if (!$this->isCheckoutStripShown($forOnePageCheckout)) {
             return '';
         }
 
         /** @var ExpressComponentAvailabilityService $expressAvailability */
         $expressAvailability = $this->getService(ExpressComponentAvailabilityService::class);
 
-        if (!$expressAvailability->isEnabled() || !$expressAvailability->isPlacementEnabled(Config::EXPRESS_PLACEMENT_CHECKOUT)) {
-            return '';
+        return $this->renderCollectExpressComponent(Config::EXPRESS_PLACEMENT_CHECKOUT, $expressAvailability);
+    }
+
+    private function isCheckoutStripShown(bool $forOnePageCheckout): bool
+    {
+        if ($this->context->controller->php_self !== 'order' || $this->context->customer->isLogged()) {
+            return false;
         }
 
-        return $this->renderCollectExpressComponent(Config::EXPRESS_PLACEMENT_CHECKOUT, $expressAvailability);
+        $isOnePageCheckout = Module::isEnabled('ps_onepagecheckout') && Configuration::get('PS_ONE_PAGE_CHECKOUT_ENABLED');
+
+        if ($forOnePageCheckout !== (bool) $isOnePageCheckout) {
+            return false;
+        }
+
+        /** @var ExpressComponentAvailabilityService $expressAvailability */
+        $expressAvailability = $this->getService(ExpressComponentAvailabilityService::class);
+
+        return $expressAvailability->isEnabled() && $expressAvailability->isPlacementEnabled(Config::EXPRESS_PLACEMENT_CHECKOUT);
     }
 
     private function renderCollectExpressComponent(string $placement, ExpressComponentAvailabilityService $expressAvailability): string
