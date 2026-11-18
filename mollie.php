@@ -400,9 +400,11 @@ class Mollie extends PaymentModule
             'https://js.mollie.com/v1/mollie.js',
             ['server' => 'remote', 'position' => 'bottom', 'priority' => 150, 'attributes' => 'async']
         );
-        // Versioned so a browser cannot pair the async SDK with a mollie_iframe.js cached before it.
-        $this->registerVersionedScript('mollie-sdk-ready', 'views/js/front/mollie_sdk_ready.js');
-        $this->registerVersionedScript('mollie-iframe', 'views/js/front/mollie_iframe.js');
+        // New file names, so neither a browser nor a CDN that ignores the ?v= query string can
+        // pair the async SDK with card field code cached before it. The wait helper has to be
+        // registered before the SDK tags, it listens for an SDK script that fails early.
+        $this->registerVersionedScript('mollie-sdk-wait', 'views/js/front/mollie_sdk_wait.js');
+        $this->registerVersionedScript('mollie-card-fields', 'views/js/front/mollie_card_fields.js');
         $this->context->controller->addJS("{$this->_path}views/js/front/mollie_single_click.js");
         $this->context->controller->addJS("{$this->_path}views/js/front/bancontact/qr_code.js");
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/bancontact_qr_code.css');

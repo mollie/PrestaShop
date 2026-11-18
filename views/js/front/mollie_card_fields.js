@@ -80,7 +80,6 @@ $(document).ready(function () {
     };
     var fieldErrors = {};
     var isCreatingToken = false;
-    var isWaitingForSdk = false;
 
     initMollieCardFields();
 
@@ -113,7 +112,9 @@ $(document).ready(function () {
         }
 
         if (!mollie && typeof window.Mollie !== 'function') {
-            initWhenSdkReady();
+            if (window.MollieSdk) {
+                window.MollieSdk.wait('Mollie', 'js.mollie.com/v1/', initMollieCardFields);
+            }
             return;
         }
 
@@ -133,23 +134,14 @@ $(document).ready(function () {
         mountMollieComponents();
     }
 
-    function initWhenSdkReady() {
-        if (isWaitingForSdk || !window.MollieSdk) {
-            return;
-        }
-        isWaitingForSdk = true;
-        window.MollieSdk.whenSettled(window, 'Mollie', 'js.mollie.com/v1/', function () {
-            isWaitingForSdk = false;
-            if (typeof window.Mollie === 'function') {
-                initMollieCardFields();
-            }
-        });
+    function isWaitingForSdk() {
+        return !!window.MollieSdk && window.MollieSdk.isWaiting('Mollie');
     }
 
     // Until the async SDK has mounted the card fields there is no token to send, so the
     // card form must not reach the server.
     $(document).on('submit', 'form', function (event) {
-        if (!isWaitingForSdk || !$(this).find('input[name="mollieCardToken"]').length || $('input[name="mollie-use-saved-card"]').is(':checked')) {
+        if (!isWaitingForSdk() || !$(this).find('input[name="mollieCardToken"]').length || $('input[name="mollie-use-saved-card"]').is(':checked')) {
             return;
         }
         event.preventDefault();
@@ -274,7 +266,7 @@ $(document).ready(function () {
             return;
         }
 
-        if (!mollie && !isWaitingForSdk) {
+        if (!mollie && !isWaitingForSdk()) {
             return;
         }
 

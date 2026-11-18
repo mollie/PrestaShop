@@ -176,26 +176,11 @@
       wrapper: null,
       opcBusyUntil: 0,
       hiddenWhileBusy: false,
-      busyRetries: 0,
-      sdkSettled: false,
-      waitingForSdk: false
+      busyRetries: 0
     };
 
     function waitForSdk() {
-      if (state.sdkSettled || !root.MollieSdk) {
-        return false;
-      }
-
-      if (!state.waitingForSdk) {
-        state.waitingForSdk = true;
-        root.MollieSdk.whenSettled(root, 'Mollie2', 'js.mollie.com/v2/', function () {
-          state.sdkSettled = true;
-          state.waitingForSdk = false;
-          maybeRecreate();
-        });
-      }
-
-      return true;
+      return !!root.MollieSdk && root.MollieSdk.wait('Mollie2', 'js.mollie.com/v2/', maybeRecreate);
     }
 
     function log(message, data) {

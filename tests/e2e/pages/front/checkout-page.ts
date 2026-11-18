@@ -254,7 +254,7 @@ export class CheckoutPage {
     // Polled from page.url() rather than page.waitForURL. Submitting hands off
     // to a module controller that immediately 302s on to Mollie, and with card
     // components the module JS additionally cancels the first submit, tokenises,
-    // and resubmits (views/js/front/mollie_iframe.js) — so the click starts
+    // and resubmits (views/js/front/mollie_card_fields.js) — so the click starts
     // navigations that are legitimately abandoned along the way. waitForURL
     // binds to one navigation and surfaces such a cancelled hop as
     // net::ERR_ABORTED ("maybe frame was detached?") even though the browser
