@@ -41,6 +41,7 @@
   var PLACEMENT_CHECKOUT = 'checkout';
   var PLACEMENT_CART = 'cart';
   var STRIP_SELECTOR = '.mollie-express-component';
+  var PLACEHOLDER_SELECTOR = '.mollie-express-component__placeholder';
   var MOUNTED_ATTRIBUTE = 'data-mollie-mounted';
   var DIRECT_FALLBACK_SELECTOR = '[data-mollie-express-fallback]';
   var REFRESH_MARGIN_SECONDS = 180;
@@ -282,12 +283,11 @@
       for (var i = 0; i < nodes.length; i++) {
         if (nodes[i] !== active) {
           nodes[i].hidden = true;
-          continue;
         }
+      }
 
-        if (active.hidden && active.querySelector('.mollie-express-component__placeholder')) {
-          active.hidden = false;
-        }
+      if (active && active.hidden && active.querySelector(PLACEHOLDER_SELECTOR)) {
+        active.hidden = false;
       }
     }
 
@@ -327,7 +327,6 @@
         var previousMount = previous.querySelector('.mollie-express-component__mount');
 
         previous.removeAttribute(MOUNTED_ATTRIBUTE);
-        previous.hidden = true;
 
         if (previousMount) {
           previousMount.innerHTML = '';
@@ -493,7 +492,7 @@
     // them (or the component turned out unavailable), so the strip never jumps.
     function endPlaceholder() {
       var node = wrapper();
-      var placeholder = node ? node.querySelector('.mollie-express-component__placeholder') : null;
+      var placeholder = node ? node.querySelector(PLACEHOLDER_SELECTOR) : null;
       var mount = mountNode();
 
       if (placeholder) {
