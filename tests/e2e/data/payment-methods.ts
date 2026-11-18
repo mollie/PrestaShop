@@ -45,7 +45,7 @@ export const paymentMethods: MethodDef[] = [
   // fields render inline in four Mollie iframes on the shop's own payment
   // step. checkout.spec.ts types a test card into them (MollieComponentsForm)
   // before placing the order; the module then tokenises client-side and
-  // resubmits (views/js/front/mollie_iframe.js).
+  // resubmits (views/js/front/mollie_card_fields.js).
   {
     id: 'creditcard',
     label: /card/i,

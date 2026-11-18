@@ -75,7 +75,7 @@ class MolliePayScreenModuleFrontController extends ModuleFrontController
         Media::addJsDef([
             'profileId' => $profileIdProvider->getProfileId($this->module->getApiClient()),
         ]);
-        $this->addJS("{$this->module->getPathUri()}views/js/front/mollie_iframe.js");
+        $this->addJS("{$this->module->getPathUri()}views/js/front/mollie_card_fields.js");
         $this->addCSS("{$this->module->getPathUri()}views/css/mollie_iframe.css");
 
         return parent::setMedia();

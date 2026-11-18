@@ -179,6 +179,10 @@
       busyRetries: 0
     };
 
+    function waitForSdk() {
+      return !!root.MollieSdk && root.MollieSdk.wait('Mollie2', 'js.mollie.com/v2/', maybeRecreate);
+    }
+
     function log(message, data) {
       if (config.debug && root.console && root.console.warn) {
         root.console.warn('[Mollie Express] ' + message, data || '');
@@ -478,6 +482,10 @@
       }
 
       if (!root.Mollie2 || typeof root.Mollie2.Checkout !== 'function') {
+        if (waitForSdk()) {
+          return;
+        }
+
         log('Mollie.js v2 is not loaded');
         state.phase = 'unavailable';
         endPlaceholder();

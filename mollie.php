@@ -398,9 +398,11 @@ class Mollie extends PaymentModule
         $this->context->controller->registerJavascript(
             'mollie_iframe_js',
             'https://js.mollie.com/v1/mollie.js',
-            ['server' => 'remote', 'position' => 'bottom', 'priority' => 150]
+            ['server' => 'remote', 'position' => 'bottom', 'priority' => 150, 'attributes' => 'async']
         );
-        $this->context->controller->addJS("{$this->_path}views/js/front/mollie_iframe.js");
+        // Registered before the SDK tags, so it also sees an SDK script that fails early.
+        $this->registerVersionedScript('mollie-sdk-wait', 'views/js/front/mollie_sdk_wait.js');
+        $this->registerVersionedScript('mollie-card-fields', 'views/js/front/mollie_card_fields.js');
         $this->context->controller->addJS("{$this->_path}views/js/front/mollie_single_click.js");
         $this->context->controller->addJS("{$this->_path}views/js/front/bancontact/qr_code.js");
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/bancontact_qr_code.css');
@@ -434,15 +436,15 @@ class Mollie extends PaymentModule
     }
 
     /**
-     * Mollie.js v2 is loaded in compatibility mode (`Mollie2`) because the card iframe above
-     * already owns the v1 `Mollie` global on this page.
+     * Mollie.js v2 is loaded in compatibility mode, which always exposes it as `Mollie2`, so the
+     * v1 `Mollie` global of the card iframe above is kept whichever async tag runs first.
      */
     private function registerExpressComponentAssets(ExpressComponentAvailabilityService $expressAvailability): void
     {
         $this->context->controller->registerJavascript(
             'mollie_js_v2',
             Config::MOLLIE_JS_V2_URL,
-            ['server' => 'remote', 'position' => 'bottom', 'priority' => 151]
+            ['server' => 'remote', 'position' => 'bottom', 'priority' => 151, 'attributes' => 'async']
         );
         $this->registerVersionedScript('mollie-express-component', 'views/js/front/expressComponent/expressComponent.js', 160);
         $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/express_component.css');
