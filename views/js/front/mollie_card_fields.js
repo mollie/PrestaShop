@@ -145,7 +145,8 @@ $(document).ready(function () {
             return;
         }
         event.preventDefault();
-        $('#payment-confirmation').find('button[type=submit]').prop('disabled', false);
+        // Core greys the button with a class right before it submits, so that goes too.
+        $('#payment-confirmation').find('button[type=submit]').prop('disabled', false).removeClass('disabled');
     });
 
     $(document).on('change', 'input[data-module-name="mollie"]', function () {
